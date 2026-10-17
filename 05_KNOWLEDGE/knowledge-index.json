@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:52:24.121Z",
+  "last_updated": "2026-10-17T08:56:43.461Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10387,10 +10387,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-m3",
       "source_version": "hf-baai-bge-m3",
-      "content_hash": "f79f5c03a192a3e3faa25704d46511a58cf3c02e7922de0b4320c682230561c3",
+      "content_hash": "d656323f1ff3e2cfbd4f29c98b5d3c5cb0790b3259868a790e5d4a96e50829ab",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1402,
+          "title": "Invariant Offset Handling in Absolute Position Embedding Layers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1403,
+          "title": "Multi-Functional Token Weight Aggregation without Vocabulary Explosion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1404,
+          "title": "Evaluation Query-Leakage Prohibition in Information Retrieval Harnesses",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -10409,7 +10425,7 @@
         "learn-huggingface-hf-baai-bge-m3-mv4910r9",
         "learn-huggingface-hf-baai-bge-m3-mv4meu5h"
       ],
-      "verified_at": "2026-10-17T00:58:48.921Z",
+      "verified_at": "2026-10-17T08:56:43.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

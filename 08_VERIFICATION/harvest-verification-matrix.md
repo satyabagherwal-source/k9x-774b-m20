@@ -2084,3 +2084,4 @@
 | `CYCLE-20261017-K1UV` | `2026-10-17T08:46:30.247Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1400, Rule 1401` | Yes (`ec457c1e...`) |
 | `CYCLE-20261017-NXA9` | `2026-10-17T08:49:30.945Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`bb26ae21...`) |
 | `CYCLE-20261017-RMXC` | `2026-10-17T08:52:24.144Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`fb4e9747...`) |
+| `CYCLE-20261017-X718` | `2026-10-17T08:56:43.484Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1402, Rule 1403, Rule 1404` | Yes (`d656323f...`) |
