@@ -1981,3 +1981,4 @@
 | `CYCLE-20261017-W29X` | `2026-10-17T02:51:55.653Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`fb24b74f...`) |
 | `CYCLE-20261017-0TT7` | `2026-10-17T02:55:37.963Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`593628c9...`) |
 | `CYCLE-20261017-4JAA` | `2026-10-17T02:58:30.946Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`c51bb687...`) |
+| `CYCLE-20261017-8JBZ` | `2026-10-17T03:01:37.631Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`bc4a10b1...`) |
