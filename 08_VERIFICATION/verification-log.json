@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-2QIJ",
-    "timestamp": "2026-10-15T19:41:32.731Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "a113cc2c64379122a671f63effcf685c782d99d12ebe4e25335d23b74dcac945",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-76EB",
     "timestamp": "2026-10-15T19:44:59.939Z",
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
     "contentHash": "04b0637782672b887ef04db6b6f2d8a87b2911718f6f35e91447ef3323cc4d04",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-MIIX",
+    "timestamp": "2026-10-17T00:24:32.073Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "b1d9cd1353237690ac3a5b4a384b71498a9dfcd9634855fb610e3441ffd0ccd0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
