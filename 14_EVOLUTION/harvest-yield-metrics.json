@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T04:47:05.715Z",
-  "total_cycles_completed": 1992,
-  "total_learnings_persisted": 1992,
-  "total_rules_promoted": 1083,
+  "last_updated": "2026-10-17T04:51:18.849Z",
+  "total_cycles_completed": 1993,
+  "total_learnings_persisted": 1993,
+  "total_rules_promoted": 1085,
   "history": [
-    {
-      "timestamp": "2026-10-16T17:38:54.325Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T17:42:52.883Z",
       "repository": "hexgrad/Kokoro-82M",
@@ -1403,6 +1396,13 @@
       "repository": "convaiinnovations/laya",
       "learningId": "learn-huggingface-convaiinnovations-laya",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T04:51:18.849Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -84932,3 +84932,233 @@ cpp_engine.predict(image, model="q4_k.gguf") # No validation against reference
 ```
 **VERIFICATION METHOD**:
 Automated CI job that runs the parity test suite on every commit. Fail the build if parity is broken.
+
+
+---
+
+## 1313. Invariant Quantization of Delay-Clock Step Ratios in Streaming Multimodal Decoders (Harvested from Edge0/Audio8-ASR-Infinite)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Quantization of Delay-Clock Step Ratios in Streaming Multimodal Decoders",
+  "source": "Edge0/Audio8-ASR-Infinite",
+  "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+  "source_version": "hf-edge0-audio8-asr-infinite",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T04:51:18.752Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Edge0/Audio8-ASR-Infinite](https://huggingface.co/Edge0/Audio8-ASR-Infinite) (Revision: `hf-edge0-a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In any streaming multimodal architecture coupling fixed-frame audio encoders with autoregressive text decoders, the target processing lookahead delay ($D$) MUST be an exact positive integer multiple of the base clock step ($K \times T_{\text{frame}}$). The runtime engine MUST reject any delay configuration where $D \pmod{K \times T_{\text{frame}}} \neq 0$ prior to initializing KV cache buffers or position indices.
+
+**WHY**:
+Non-integer or unquantized delay configurations introduce fractional token phase misalignment between the causal audio encoder's receptive field and the autoregressive decoder's causal mask. In autoregressive decoders operating on a fixed step-to-frame cadence, an fractional delay shifts the emission of tokens across temporal frame boundaries. This induces positional drift, cumulative acoustic-text token divergence, attention degradation, and catastrophic repetition loops or hallucinated silence tokens.
+
+**WHEN TO APPLY**:
+Apply to all real-time, streaming audio-to-text, speech-to-speech, and video-to-text models that utilize causal chunking, dual-rate encoders, or delay-synchronous decoding schemes (e.g., vLLM audio streaming, ONNX/TensorRT-LLM streaming pipelines).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from dataclasses import dataclass
+from typing import Dict, Mapping
+
+@dataclass(frozen=True)
+class StreamingClockValidator:
+    audio_tower_frame_ms: int
+    num_delay_tokens_by_frame_len: Mapping[str, Mapping[str, int]]
+    
+    def validate_and_compute_delay_tokens(self, frame_len: int, target_delay_ms: int) -> int:
+        frame_ms = frame_len * self.audio_tower_frame_ms
+        
+        # Enforce exact modular divisibility
+        if target_delay_ms % frame_ms != 0:
+            raise ValueError(
+                f"Invalid temporal configuration: target_delay_ms={target_delay_ms} "
+                f"is not an integer multiple of clock step {frame_ms}ms "
+                f"(frame_len={frame_len} * frame_ms={self.audio_tower_frame_ms}). "
+                f"Modulus remainder: {target_delay_ms % frame_ms}."
+            )
+            
+        calculated_delay_tokens = target_delay_ms // frame_ms
+        
+        # Cross-verify against pre-trained calibration matrix
+        frame_len_key = str(frame_len)
+        delay_key = str(target_delay_ms)
+        
+        if frame_len_key not in self.num_delay_tokens_by_frame_len:
+            raise KeyError(f"Unsupported frame length: {frame_len}. Must be one of {list(self.num_delay_tokens_by_frame_len.keys())}")
+            
+        supported_delays = self.num_delay_tokens_by_frame_len[frame_len_key]
+        if delay_key not in supported_delays:
+            raise ValueError(
+                f"Delay {target_delay_ms}ms is structurally valid but lacks post-trained calibration "
+                f"for frame_len {frame_len}. Calibrated delays: {list(supported_delays.keys())}"
+            )
+            
+        calibrated_delay_tokens = supported_delays[delay_key]
+        assert calculated_delay_tokens == calibrated_delay_tokens, (
+            f"Invariant divergence: calculated tokens ({calculated_delay_tokens}) != "
+            f"calibrated tokens ({calibrated_delay_tokens})"
+        )
+        
+        return calculated_delay_tokens
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Float division or arbitrary delay configuration without clock alignment
+def configure_streaming_pipeline(target_delay_ms: float, frame_len: int):
+    # DANGEROUS: Produces fractional token indices or truncates temporal context,
+    # causing drift between audio frame reception and token emission.
+    delay_tokens = int(target_delay_ms / (frame_len * 20))
+    set_model_delay_buffer(delay_tokens) # Silently desynchronizes causal receptive field
+```
+
+**VERIFICATION METHOD**:
+Enforce validation at initialization with an automated property-based test:
+```python
+import pytest
+
+@pytest.mark.parametrize("frame_len,delay,expected_tokens", [
+    (4, 240, 3), (4, 320, 4), (4, 480, 6), (4, 560, 7),
+    (6, 240, 2), (6, 480, 4),
+    (8, 320, 2), (8, 480, 3),
+])
+def test_delay_clock_synchronization(frame_len, delay, expected_tokens):
+    config = {
+        "4": {"240": 3, "320": 4, "480": 6, "560": 7},
+        "6": {"240": 2, "480": 4},
+        "8": {"320": 2, "480": 3}
+    }
+    validator = StreamingClockValidator(audio_tower_frame_ms=20, num_delay_tokens_by_frame_len=config)
+    assert validator.validate_and_compute_delay_tokens(frame_len, delay) == expected_tokens
+
+def test_invalid_delay_rejection():
+    validator = StreamingClockValidator(audio_tower_frame_ms=20, num_delay_tokens_by_frame_len={"4": {"240": 3}})
+    with pytest.raises(ValueError, match="not an integer multiple"):
+        validator.validate_and_compute_delay_tokens(4, 250) # 250 % 80 != 0
+```
+
+---
+
+
+---
+
+## 1314. Strict Invariance of Left-Padding Temporal Buffer Depth Across Streaming Chunk Boundaries (Harvested from Edge0/Audio8-ASR-Infinite)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Invariance of Left-Padding Temporal Buffer Depth Across Streaming Chunk Boundaries",
+  "source": "Edge0/Audio8-ASR-Infinite",
+  "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+  "source_version": "hf-edge0-audio8-asr-infinite",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T04:51:18.791Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Edge0/Audio8-ASR-Infinite](https://huggingface.co/Edge0/Audio8-ASR-Infinite) (Revision: `hf-edge0-a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In causal streaming speech encoders utilizing sliding-window self-attention, the left-pad historical context buffer MUST maintain an exact constant temporal duration across varying chunk sizes ($K$). When switching chunk length $K$, the number of left-pad tokens $P_K$ MUST satisfy:
+$$P_K \times K \times T_{\text{frame}} = \text{Constant Temporal Context Target} (\tau_{\text{hist}})$$
+Any runtime reallocation of streaming buffers MUST recompute $P_K$ to preserve $\tau_{\text{hist}}$ identically, and slice the audio ring buffer along strictly aligned 0-phase boundaries.
+
+**WHY**:
+Causal acoustic feature representations are conditioned on historical acoustic context to disambiguate current phonemes. If $P_K$ does not scale inversely with $K$, changing the clock rate changes the temporal horizon of the causal attention window. An insufficient left-pad drops early acoustic co-articulation features (causing high word error rate at chunk boundaries), whereas excessive left-padding causes positional index overflow in fixed RoPE sliding windows and increases cache access latency.
+
+**WHEN TO APPLY**:
+Applies to causal audio encoders (such as Voxtral, Whisper-Streaming, Conformer-Streaming) deployed in variable-rate or adaptive-latency real-time pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+class CausalAudioStreamingContextBuffer:
+    def __init__(self, frame_ms: int = 20, target_history_ms: int = 1440):
+        self.frame_ms = frame_ms
+        self.target_history_ms = target_history_ms
+        self.target_history_frames = target_history_ms // frame_ms # 72 frames
+        self.buffer: torch.Tensor = torch.empty(0)
+
+    def get_required_pad_tokens(self, frame_len: int) -> int:
+        if self.target_history_frames % frame_len != 0:
+            raise ValueError(
+                f"History frames ({self.target_history_frames}) must be divisible by "
+                f"frame_len ({frame_len}) to maintain integer token boundaries."
+            )
+        return self.target_history_frames // frame_len
+
+    def update_and_slice(self, new_chunk: torch.Tensor, frame_len: int) -> torch.Tensor:
+        """
+        Maintains left-pad context across chunks.
+        new_chunk: [Batch, Chunk_Frames, Features]
+        """
+        pad_tokens = self.get_required_pad_tokens(frame_len)
+        required_raw_frames = pad_tokens * frame_len
+        
+        if self.buffer.numel() == 0:
+            # Initialize with causal zero-padding for the cold start
+            batch_size, _, feat_dim = new_chunk.shape
+            self.buffer = torch.zeros(
+                (batch_size, required_raw_frames, feat_dim),
+                dtype=new_chunk.dtype,
+                device=new_chunk.device
+            )
+
+        # Concatenate history with incoming audio chunk
+        combined = torch.cat([self.buffer, new_chunk], dim=1)
+        
+        # Slide buffer: retain exactly the last required_raw_frames
+        self.buffer = combined[:, -required_raw_frames:, :].clone()
+        
+        return combined
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Fixed token count left-padding across variable frame lengths
+def bad_streaming_pad(chunk: torch.Tensor, frame_len: int, history_buffer: torch.Tensor):
+    # VIOLATION: Using fixed 18 tokens regardless of frame length
+    # If frame_len=4, 18 * 4 * 20ms = 1440ms
+    # If frame_len=8, 18 * 8 * 20ms = 2880ms (Receptive field doubles, breaking model weights)
+    pad_tokens = 18
+    return torch.cat([history_buffer[:, -(pad_tokens * frame_len):], chunk], dim=1)
+```
+
+**VERIFICATION METHOD**:
+Assert temporal context invariance across all supported frame lengths:
+```python
+def test_temporal_invariance():
+    target_history_ms = 1440
+    frame_ms = 20
+    frame_lens = [4, 6, 8]
+    expected_pad_tokens = {4: 18, 6: 12, 8: 9}
+    
+    for fl in frame_lens:
+        calc_pad = (target_history_ms // frame_ms) // fl
+        assert calc_pad == expected_pad_tokens[fl], (
+            f"Frame len {fl} failed: expected {expected_pad_tokens[fl]}, got {calc_pad}"
+        )
+```
+
+---

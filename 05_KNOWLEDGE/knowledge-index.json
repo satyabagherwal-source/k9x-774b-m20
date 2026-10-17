@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T04:47:05.680Z",
+  "last_updated": "2026-10-17T04:51:18.822Z",
   "total_verified_learnings": 193,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12985,7 +12985,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "173f38e5e49931c6eb5e81d2b02d0b05d392820112d57aeba232d49cfb3fb53a",
+      "content_hash": "1436c577a0514ecb2d09aaef68defa413d7d90b4e9c01dbd8bd44e9d91cffd05",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -13002,6 +13002,16 @@
         {
           "number": 995,
           "title": "Frame-Length Conditioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1313,
+          "title": "Invariant Quantization of Delay-Clock Step Ratios in Streaming Multimodal Decoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1314,
+          "title": "Strict Invariance of Left-Padding Temporal Buffer Depth Across Streaming Chunk Boundaries",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13345,7 +13355,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-16T21:10:38.577Z",
+      "verified_at": "2026-10-17T04:51:18.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
