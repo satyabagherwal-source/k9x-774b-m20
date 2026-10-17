@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-TQ5O",
-    "timestamp": "2026-10-16T04:54:24.684Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "e2d81cb6158022c4bf33cd2feffab65f983a78094d4c22a8ac90f685858cd6ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-X9J3",
     "timestamp": "2026-10-16T04:57:09.759Z",
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -7492,6 +7477,21 @@
     "contentHash": "776c81cf503bb22aca0294145e77056a3d341d0f00e4ec53a3a94e843f9aa180",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-0TKU",
+    "timestamp": "2026-10-17T09:55:31.902Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3",
+    "contentHash": "a6c9266af005a7d7495de5a2d3a58476e4ba8e76b462b0526e135de23edbe8ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
