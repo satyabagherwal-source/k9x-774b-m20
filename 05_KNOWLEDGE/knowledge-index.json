@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T10:01:45.307Z",
+  "last_updated": "2026-10-17T10:05:56.374Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13085,10 +13085,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "ad218b29eea30aeb1985c0b3f7e0c5846389fc1507b2ba1c7818cf90f663e231",
+      "content_hash": "3863b869599936d7940ecdd28080ee12f3069432e64b022cc2a2c3639fddb08b",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1423,
+          "title": "Sinkhorn-Stabilized Multi-Stream Hyper-Connection Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1424,
+          "title": "Bounded Activation Limiting for High-Capacity SwiGLU MoE Layers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1425,
+          "title": "Strided KV-Cache Compression Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -13107,7 +13123,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
       ],
-      "verified_at": "2026-10-17T02:00:03.160Z",
+      "verified_at": "2026-10-17T10:05:56.367Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

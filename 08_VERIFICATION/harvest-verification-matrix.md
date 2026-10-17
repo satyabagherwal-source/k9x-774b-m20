@@ -2104,3 +2104,4 @@
 | `CYCLE-20261017-0TKU` | `2026-10-17T09:55:31.902Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`a6c9266a...`) |
 | `CYCLE-20261017-4L5J` | `2026-10-17T09:58:27.607Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`b8f09d87...`) |
 | `CYCLE-20261017-8TQ5` | `2026-10-17T10:01:45.341Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`09139adb...`) |
+| `CYCLE-20261017-E7FY` | `2026-10-17T10:05:56.398Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1423, Rule 1424, Rule 1425` | Yes (`3863b869...`) |

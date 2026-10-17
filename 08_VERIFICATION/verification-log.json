@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-9SLG",
-    "timestamp": "2026-10-16T05:06:54.340Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "9a70619b96810300c1ff2e140ba76d1573e1816d361de3f071154c62f37e75e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-DL7X",
     "timestamp": "2026-10-16T05:09:51.405Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7492,6 +7477,21 @@
     "contentHash": "09139adbd39653168fbc8967f69ad448c125ae3cbfa89121422dcf5449f3e81c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-E7FY",
+    "timestamp": "2026-10-17T10:05:56.398Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "3863b869599936d7940ecdd28080ee12f3069432e64b022cc2a2c3639fddb08b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
