@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:00:03.167Z",
+  "last_updated": "2026-10-17T02:03:10.691Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17942,7 +17942,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "48cb85afdabd1f0ed81fee395777de68166628e91cfbfa4469669a430cccc55f",
+      "content_hash": "4e9f471780bcd850f217198792b552067597ea1492e1019aa93ed6edaddb690c",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -17980,7 +17980,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-16T18:10:07.608Z",
+      "verified_at": "2026-10-17T02:03:10.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

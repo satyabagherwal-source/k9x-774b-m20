@@ -1963,3 +1963,4 @@
 | `CYCLE-20261017-TAI0` | `2026-10-17T01:53:47.112Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`9b70b7a8...`) |
 | `CYCLE-20261017-XA72` | `2026-10-17T01:56:53.342Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`7ab31350...`) |
 | `CYCLE-20261017-1COW` | `2026-10-17T02:00:03.200Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`ad218b29...`) |
+| `CYCLE-20261017-5DDW` | `2026-10-17T02:03:10.724Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`4e9f4717...`) |
