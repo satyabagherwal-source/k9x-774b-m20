@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-YMHT",
-    "timestamp": "2026-10-15T20:06:20.513Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "32bbb0a2340d314460e76d54bbd285c555fdc785528fac03531a9e354804bbce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-3SZP",
     "timestamp": "2026-10-15T20:10:22.213Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7475,21 @@
     "repository": "Cloudflare/clef",
     "learningId": "learn-huggingface-cloudflare-clef",
     "contentHash": "a7021e96a7cd1cb3871b3d50fea10949af9152594d242edc5dc5c9a31900ac33",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-F4SX",
+    "timestamp": "2026-10-17T00:46:47.313Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-cloudflare-clef-flash",
+    "contentHash": "65e3fde107dfa5d91c27229e5e380959553c42e35a431716c618f823481c3d1d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
