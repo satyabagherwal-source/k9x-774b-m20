@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CZ2S",
-    "timestamp": "2026-10-16T06:05:21.940Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "359e7a131e82550c800b980206c9fd6ab6a7ec5af7d8f8c3cfece2ae5516e399",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-GW01",
     "timestamp": "2026-10-16T06:08:24.577Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7492,6 +7477,21 @@
     "contentHash": "e3a3f7581a40e974aaa58da9f83a2e8250418a962e2bdae7768012486051f10b",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-LY9Q",
+    "timestamp": "2026-10-17T11:07:56.990Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "f8b5d349d03833736bbbcd785ae0eebb105c812e98d16e3eda688d2ed057fd7d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

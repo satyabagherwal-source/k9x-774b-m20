@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "bc4a10b10e224e5245ebd8407fade6f7202a7b4523c25866d57f966327e68eb1",
-    "lastHarvestedAt": "2026-10-17T03:01:37.634Z",
+    "contentHash": "f8b5d349d03833736bbbcd785ae0eebb105c812e98d16e3eda688d2ed057fd7d",
+    "lastHarvestedAt": "2026-10-17T11:07:56.992Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {

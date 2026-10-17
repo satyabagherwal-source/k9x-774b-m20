@@ -2123,3 +2123,4 @@
 | `CYCLE-20261017-8CC3` | `2026-10-17T10:57:22.035Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`3589fb4a...`) |
 | `CYCLE-20261017-EA1L` | `2026-10-17T11:01:59.001Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1434, Rule 1435, Rule 1436` | Yes (`16b75094...`) |
 | `CYCLE-20261017-I26O` | `2026-10-17T11:04:55.440Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1437, Rule 1438` | Yes (`e3a3f758...`) |
+| `CYCLE-20261017-LY9Q` | `2026-10-17T11:07:56.990Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`f8b5d349...`) |
