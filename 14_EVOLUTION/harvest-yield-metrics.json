@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T04:24:45.542Z",
-  "total_cycles_completed": 1985,
-  "total_learnings_persisted": 1985,
+  "last_updated": "2026-10-17T04:27:55.301Z",
+  "total_cycles_completed": 1986,
+  "total_learnings_persisted": 1986,
   "total_rules_promoted": 1080,
   "history": [
-    {
-      "timestamp": "2026-10-16T17:06:26.568Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T17:13:22.368Z",
       "repository": "Zen4-bit/Proxima",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T04:24:45.542Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T04:27:55.301Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
