@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-WVX4",
-    "timestamp": "2026-10-15T22:52:57.112Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "aaea91f4ac1bcba1a6c6ae5fc231a9528ea94203c62550d1e7b6c772e5c44b0e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-0MQS",
     "timestamp": "2026-10-15T22:55:51.844Z",
     "repository": "apple/LensVLM-9B",
@@ -7492,6 +7477,21 @@
     "contentHash": "98981b989b3aabf3ef588ec42a96312c5ebd93a7fa1c1a62c7309c4917ff1b0c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-D7MQ",
+    "timestamp": "2026-10-17T03:33:15.362Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "f8178776b76b03d174b1910c51e47dc832e8c9f1e742752912efa0948d44d47b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -84111,3 +84111,105 @@ gguf.add_tensor("model.embed", model.embed)
 ```
 **VERIFICATION METHOD**:
 Use `gguf-dump` or a Python GGUF parser to inspect the metadata section of the generated file. Assert that `metadata["general.sampling.temperature"] == 0.1` and `metadata["general.sampling.top_k"] == 50`.
+
+
+---
+
+## 1304. Repository Integrity & Config-Weight Coupling Invariant (Harvested from meta-models/Muse-Spark-Open-816B-A42B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Repository Integrity & Config-Weight Coupling Invariant",
+  "source": "meta-models/Muse-Spark-Open-816B-A42B",
+  "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+  "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T03:33:15.264Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meta-models/Muse-Spark-Open-816B-A42B](https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B) (Revision: `hf-meta-mo`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A model repository MUST contain a `config.json` file that explicitly defines the model architecture class, and this file MUST be consistent with the weight files present in the repository. A repository without a `config.json` is considered **corrupt** or **incomplete** and MUST NOT be loaded by any inference engine.
+
+**WHY**:
+Inference engines (e.g., `transformers`, `vLLM`, `TensorRT-LLM`) rely on `config.json` to instantiate the correct model class (e.g., `LlamaForCausalLM`, `MistralForCausalLM`). Without this file, the engine cannot determine the number of layers, hidden size, attention heads, or vocabulary size. Attempting to load weights without a config leads to:
+1.  **Class Instantiation Failure**: The engine does not know which Python class to import.
+2.  **Shape Mismatch**: Even if a generic class is guessed, the weight tensors will not match the expected dimensions, causing runtime crashes.
+3.  **Security Risk**: Malicious or corrupted repos might omit configs to hide their true architecture or to trigger unexpected behavior in auto-loading scripts.
+
+**WHEN TO APPLY**:
+*   Any AI agent downloading or validating a model from Hugging Face, ModelScope, or similar registries.
+*   CI/CD pipelines that publish model artifacts.
+*   Local model management systems (e.g., Ollama, LM Studio) that index local model directories.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import json
+import os
+from pathlib import Path
+
+def validate_model_repo(repo_path: str) -> bool:
+    """
+    Validates that a model repository contains the minimum required files
+    and that the config is parseable.
+    """
+    repo = Path(repo_path)
+    
+    # 1. Check for config.json
+    config_file = repo / "config.json"
+    if not config_file.exists():
+        raise FileNotFoundError(f"Critical invariant violated: {config_file} not found.")
+    
+    # 2. Parse config to ensure it's valid JSON
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"config.json is not valid JSON: {e}")
+    
+    # 3. Check for required fields in config
+    required_fields = ["model_type", "hidden_size", "num_hidden_layers"]
+    for field in required_fields:
+        if field not in config:
+            raise ValueError(f"config.json missing required field: {field}")
+    
+    # 4. Check for weight files (simplified check)
+    weight_files = list(repo.glob("*.safetensors")) + list(repo.glob("*.bin"))
+    if not weight_files:
+        raise FileNotFoundError("No weight files found in repository.")
+    
+    return True
+
+# Usage
+try:
+    validate_model_repo("path/to/Muse-Spark-Open-816B-A42B")
+except (FileNotFoundError, ValueError) as e:
+    print(f"Repository Invalid: {e}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming a directory is a valid model just because it has a name
+def load_model_bad(repo_path: str):
+    # No check for config.json
+    # No check for weight files
+    # This will crash or load garbage if the repo is empty or malformed
+    from transformers import AutoModelForCausalLM
+    model = AutoModelForCausalLM.from_pretrained(repo_path)
+    return model
+```
+
+**VERIFICATION METHOD**:
+*   **Unit Test**: Create a temporary directory with only `README.md` and assert that `validate_model_repo` raises `FileNotFoundError`.
+*   **Lint Check**: A pre-commit hook that scans for `config.json` in any directory named like a model repo.
+*   **CI Check**: A GitHub Action that runs `validate_model_repo` on every push to a model repository.

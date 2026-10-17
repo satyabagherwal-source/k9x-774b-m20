@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T23:11:52.470Z",
+  "last_updated": "2026-10-17T03:33:15.369Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1454,6 +1454,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-apple-lensvlm-9b"
+    },
+    {
+      "id": "CD-D7MX",
+      "directive_title": "Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-models/Muse-Spark-Open-816B-A42B",
+      "source_commit": "hf-meta-mode",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Invalid or missing rule title",
+      "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
     }
   ]
 }
