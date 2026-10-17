@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:29:55.494Z",
-  "total_cycles_completed": 2322,
-  "total_learnings_persisted": 2322,
+  "last_updated": "2026-10-17T23:33:11.292Z",
+  "total_cycles_completed": 2323,
+  "total_learnings_persisted": 2323,
   "total_rules_promoted": 1346,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:19:55.258Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:23:04.961Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T23:29:55.494Z",
       "repository": "Comfy-Org/Qwen-Image-2.1",
       "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:33:11.292Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
