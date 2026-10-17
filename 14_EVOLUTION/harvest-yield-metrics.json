@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T01:56:53.346Z",
-  "total_cycles_completed": 1939,
-  "total_learnings_persisted": 1939,
+  "last_updated": "2026-10-17T02:00:03.205Z",
+  "total_cycles_completed": 1940,
+  "total_learnings_persisted": 1940,
   "total_rules_promoted": 1060,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:20:19.397Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T14:26:53.170Z",
       "repository": "Lightricks/LTX-2.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T01:56:53.346Z",
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:00:03.205Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
