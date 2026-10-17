@@ -2223,3 +2223,4 @@ Every entry in this ledger must capture:
 | `learn-onlinefreeprotractor-rule1492` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `production-verified-phase3` | `docs/seo-repair/COMPLETE_GSC_SUBMISSION_LIST.md` | 2026-10-17T15:58:00Z |
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-17T16:23:05.194Z |
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-17T16:26:32.321Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-17T16:29:33.465Z |
