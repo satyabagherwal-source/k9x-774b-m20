@@ -2028,3 +2028,4 @@
 | `CYCLE-20261017-AGJB` | `2026-10-17T05:23:05.399Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`fef8b8cd...`) |
 | `CYCLE-20261017-ESAI` | `2026-10-17T05:26:27.258Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1315, Rule 669, Rule 1251` | Yes (`a1b46647...`) |
 | `CYCLE-20261017-ION5` | `2026-10-17T05:29:29.153Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`78706571...`) |
+| `CYCLE-20261017-ME2E` | `2026-10-17T05:32:22.070Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`667e7446...`) |
