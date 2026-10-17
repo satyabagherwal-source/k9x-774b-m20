@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T01:02:14.831Z",
-  "total_cycles_completed": 1922,
-  "total_learnings_persisted": 1922,
+  "last_updated": "2026-10-17T01:05:20.938Z",
+  "total_cycles_completed": 1923,
+  "total_learnings_persisted": 1923,
   "total_rules_promoted": 1052,
   "history": [
-    {
-      "timestamp": "2026-10-16T13:26:10.504Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T13:29:00.109Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T01:02:14.831Z",
       "repository": "Qwen/Qwen3-0.6B",
       "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T01:05:20.938Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
