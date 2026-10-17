@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CQH4",
-    "timestamp": "2026-10-16T15:53:02.728Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "c20f51b3ac5d830176a6d35ea4641478c45890f86effc04fd63809321c77d113",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-IAKQ",
     "timestamp": "2026-10-16T15:57:22.058Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "97d717981aac0fb47e42b94a8ffd6b73111e45437d4ceb25127bb200c9608e86",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-2T21",
+    "timestamp": "2026-10-17T20:12:56.089Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "3fccfcb920235a4e78abd2c2b472222f02f807f0c41801c059547bbce938ac96",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
