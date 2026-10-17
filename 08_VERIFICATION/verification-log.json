@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-3ZXQ",
-    "timestamp": "2026-10-16T12:58:17.390Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "dd4a96eb84bf1f8ffba978d386ba42e1d48e51ca94c2942e37829e984a258a1b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-813X",
     "timestamp": "2026-10-16T13:01:25.533Z",
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "da445aa2d382d7758efffe9dd00a08e9d5d4fb2b0e404962e3c35890b11d14f4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-9PYR",
+    "timestamp": "2026-10-17T17:30:20.979Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "a6a042d36986058b913e20d3cb77d9d5dc9a32b0b7db293a6348a265c25656e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
