@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "a27a5b40339688a1561e01ea243d00d3729936b1f2b548df4f39b285721c69c2",
-    "lastHarvestedAt": "2026-10-17T07:10:41.331Z",
+    "contentHash": "9ccc26ee3d68310ce8bfb389f78ead74ffb9f871ba97fff61bbee58e914fa843",
+    "lastHarvestedAt": "2026-10-17T15:35:45.987Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {

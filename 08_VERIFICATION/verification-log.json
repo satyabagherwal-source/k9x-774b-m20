@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-3EPW",
-    "timestamp": "2026-10-16T11:05:51.428Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "997ec3dbb6b67b81b8181575beb7cf41e5463bf88bb6823c19c2083cc09a8267",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-7N2W",
     "timestamp": "2026-10-16T11:09:08.888Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7492,6 +7477,21 @@
     "contentHash": "08b197418d98fbcdc05c928860904b8d69717ea26611d2e3e32b0bcaf5461638",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-6D6P",
+    "timestamp": "2026-10-17T15:35:45.985Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "9ccc26ee3d68310ce8bfb389f78ead74ffb9f871ba97fff61bbee58e914fa843",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

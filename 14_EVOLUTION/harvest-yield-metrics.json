@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:32:50.405Z",
-  "total_cycles_completed": 2178,
-  "total_learnings_persisted": 2178,
+  "last_updated": "2026-10-17T15:35:45.989Z",
+  "total_cycles_completed": 2179,
+  "total_learnings_persisted": 2179,
   "total_rules_promoted": 1266,
   "history": [
-    {
-      "timestamp": "2026-10-17T04:05:33.970Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T04:08:29.170Z",
       "repository": "google/gemma-4-31B-it",
@@ -1403,6 +1396,13 @@
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:35:45.989Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
