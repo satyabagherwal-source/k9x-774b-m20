@@ -17899,5 +17899,17 @@
     "downloads": 125004,
     "qualityScore": 3490,
     "discoveredAt": "2026-10-17T01:12:20.556Z"
+  },
+  {
+    "name": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "fullName": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/Qwen3.8-Flash-Next-FP4-Local (148 likes, 771 downloads)",
+    "likes": 148,
+    "downloads": 771,
+    "qualityScore": 2251,
+    "discoveredAt": "2026-10-17T01:31:08.427Z"
   }
 ]

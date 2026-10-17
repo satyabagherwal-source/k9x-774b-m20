@@ -1953,3 +1953,4 @@
 | `CYCLE-20261017-OMV3` | `2026-10-17T01:22:10.239Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`e2cefa87...`) |
 | `CYCLE-20261017-SQWH` | `2026-10-17T01:25:22.097Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`2ed0a836...`) |
 | `CYCLE-20261017-WN70` | `2026-10-17T01:28:23.916Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`6cd2a661...`) |
+| `CYCLE-20261017-0EMW` | `2026-10-17T01:31:19.448Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`a1870e20...`) |

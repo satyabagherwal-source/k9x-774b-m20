@@ -4076,3 +4076,7 @@ https://github.com/dapr/dapr
 # --- Automatically Discovered by AI Scout Engine [2026-10-17T01:12:20.557Z] ---
 # [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-V-4.7-35B-A3B-gguf (3490 score) - Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-35B-A3B-gguf (149 likes, 1250
 https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-17T01:31:08.428Z] ---
+# [HUGGINGFACE-AI-MODELS] nvidia/Qwen3.8-Flash-Next-FP4-Local (2251 score) - Verified Hugging Face Model: nvidia/Qwen3.8-Flash-Next-FP4-Local (148 likes, 771
+https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local
