@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-1GMA",
-    "timestamp": "2026-10-16T16:12:16.354Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "28ebd5726774bd2e0c5f92e77213c3ace5d249a85eef93e0c17285a1203d16d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-5KKD",
     "timestamp": "2026-10-16T16:15:28.093Z",
     "repository": "facebook/sam3",
@@ -7490,6 +7475,21 @@
     "repository": "Bingsu/adetailer",
     "learningId": "learn-huggingface-bingsu-adetailer",
     "contentHash": "ffee6f1ef12a6ef73ce2b9f428468aa417807f5e41239609c551f95bf884324a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-N4X7",
+    "timestamp": "2026-10-17T20:28:44.587Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "b78b38e534fa262827e429e71c511e2936ef783294f93f780c22df4dcea8cd95",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
