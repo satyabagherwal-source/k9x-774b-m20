@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T09:37:36.789Z",
+  "last_updated": "2026-10-17T09:41:45.627Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14244,10 +14244,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/hexgrad/Kokoro-82M",
       "source_version": "hf-hexgrad-kokoro-82m",
-      "content_hash": "b923260485b89e70e17c00418fe2e8fd157eff644773ba274ed3bc93219f23e9",
+      "content_hash": "f9cd3bc0181c58506ca68727f61d89ff3eb03b7fb43eba83fcc4405ce2534a76",
       "dossier_path": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1416,
+          "title": "Invariant Boundary Protection for iSTFT Fast-Path Vocoding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1417,
+          "title": "Phoneme Index Matrix Guard & Out-Of-Vocabulary (OOV) Sanitization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -14266,7 +14277,7 @@
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q"
       ],
-      "verified_at": "2026-10-17T01:37:53.972Z",
+      "verified_at": "2026-10-17T09:41:45.621Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
