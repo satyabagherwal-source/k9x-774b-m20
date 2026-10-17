@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:49:36.841Z",
-  "total_cycles_completed": 2132,
-  "total_learnings_persisted": 2132,
+  "last_updated": "2026-10-17T12:52:46.618Z",
+  "total_cycles_completed": 2133,
+  "total_learnings_persisted": 2133,
   "total_rules_promoted": 1229,
   "history": [
-    {
-      "timestamp": "2026-10-17T01:37:54.037Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T01:40:59.399Z",
       "repository": "vllm-sr/d3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T12:49:36.841Z",
       "repository": "autotrust/JEV-27B-VL",
       "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:52:46.618Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
