@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T06:23:42.963Z",
+  "last_updated": "2026-10-17T06:26:48.191Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18402,7 +18402,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "efdd2ff178b6bed31d0a41ec45f96545370d8bccab69a80695a4747305672604",
+      "content_hash": "342a8452f93c847cadfe48d0617fcdd0d53caecd27c7c8290f87723df55932cb",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -18432,7 +18432,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-10-16T22:50:26.744Z",
+      "verified_at": "2026-10-17T06:26:48.186Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

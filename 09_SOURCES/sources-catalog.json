@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "efdd2ff178b6bed31d0a41ec45f96545370d8bccab69a80695a4747305672604",
-    "lastHarvestedAt": "2026-10-16T22:50:26.776Z",
+    "contentHash": "342a8452f93c847cadfe48d0617fcdd0d53caecd27c7c8290f87723df55932cb",
+    "lastHarvestedAt": "2026-10-17T06:26:48.221Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
