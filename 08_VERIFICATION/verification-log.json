@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-DGSH",
-    "timestamp": "2026-10-16T00:57:49.121Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "77bf6ae1f4b36cb49e1aa11eaf6ae0a585f59ac53091760adf84101c0a2f68d7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-HGHS",
     "timestamp": "2026-10-16T01:00:55.360Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7490,6 +7475,21 @@
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
     "contentHash": "7f6540fe98189b41d0292d544d40a8f53cf165eb1645083188f6c285a80c5820",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YWGE",
+    "timestamp": "2026-10-17T05:42:05.774Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+    "contentHash": "076951e9d8e46f82cd69c34dc7637e0a88adfaff1fb9f64741c4dbcabaf6df79",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

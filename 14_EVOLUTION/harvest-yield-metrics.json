@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T05:39:03.455Z",
-  "total_cycles_completed": 2008,
-  "total_learnings_persisted": 2008,
+  "last_updated": "2026-10-17T05:42:05.778Z",
+  "total_cycles_completed": 2009,
+  "total_learnings_persisted": 2009,
   "total_rules_promoted": 1090,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:32:37.028Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:35:54.238Z",
       "repository": "meta-llama/Llama-2-7b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T05:39:03.455Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T05:42:05.778Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
