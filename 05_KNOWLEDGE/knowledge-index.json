@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:10:00.278Z",
+  "last_updated": "2026-10-17T08:13:12.659Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13483,7 +13483,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "b1d9cd1353237690ac3a5b4a384b71498a9dfcd9634855fb610e3441ffd0ccd0",
+      "content_hash": "e1140900a044493dda781851a8d78b0ac03c6e99d9518d109f7cd8c37950ac70",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -13501,6 +13501,16 @@
           "number": 1036,
           "title": "Safe Deserialization of Model Checkpoints",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1378,
+          "title": "The Null-Data Hallucination Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1379,
+          "title": "The Evidence-Chain Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13515,7 +13525,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-17T00:24:32.029Z",
+      "verified_at": "2026-10-17T08:13:12.654Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

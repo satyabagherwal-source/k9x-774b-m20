@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-01GQ",
-    "timestamp": "2026-10-16T03:07:20.810Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "7259312c5ccb546adb3ade7656410bbebf5997fb7e6dd7eef090caa4abea3a25",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4A77",
     "timestamp": "2026-10-16T03:10:38.755Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
     "contentHash": "7d879bb5ea3624d6127766af72953d79addc1c892d450799202d840b551c7c05",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-D8J0",
+    "timestamp": "2026-10-17T08:13:12.684Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "e1140900a044493dda781851a8d78b0ac03c6e99d9518d109f7cd8c37950ac70",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {
