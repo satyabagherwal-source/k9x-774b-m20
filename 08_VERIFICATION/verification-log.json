@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-KKIN",
-    "timestamp": "2026-10-16T17:23:07.103Z",
-    "repository": "dapr/dapr",
-    "learningId": "learn-github-dapr-dapr",
-    "contentHash": "6da40ca2bf10c2428cca93e8dfcf569796c239cbc55bb0f7ecf3e2d79d7b7d35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-OK70",
     "timestamp": "2026-10-16T17:26:13.308Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/d1-3B",
     "learningId": "learn-huggingface-liquidai-d1-3b",
     "contentHash": "33f425a2826e9b4b542328a4733a03a0772758eca6c28d441504588837ca6e5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-TRGN",
+    "timestamp": "2026-10-17T21:29:52.968Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "9cc0ad7d2d7c3efc90f48346c01a86e7f9602b22d05a5f609ff32ab851e2bbee",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

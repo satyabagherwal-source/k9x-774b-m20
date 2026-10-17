@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T21:26:50.692Z",
+  "last_updated": "2026-10-17T21:29:52.972Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -184,14 +184,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "da74bd456f132ebb0f2ec7bacf479ca84936f0728179a43124f8b42068219ca6",
-      "verified_at": "2026-10-17T13:46:15.396Z",
+      "content_hash": "9cc0ad7d2d7c3efc90f48346c01a86e7f9602b22d05a5f609ff32ab851e2bbee",
+      "verified_at": "2026-10-17T21:29:52.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T13:46:15.396Z"
+      "last_updated": "2026-10-17T21:29:52.972Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",

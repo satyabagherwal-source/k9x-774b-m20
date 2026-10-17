@@ -2310,3 +2310,4 @@
 | `CYCLE-20261017-HMVQ` | `2026-10-17T21:20:27.158Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`79e91657...`) |
 | `CYCLE-20261017-LYS2` | `2026-10-17T21:23:49.202Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1529, Rule 1530, Rule 1531` | Yes (`614232b6...`) |
 | `CYCLE-20261017-PUTB` | `2026-10-17T21:26:50.687Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`33f425a2...`) |
+| `CYCLE-20261017-TRGN` | `2026-10-17T21:29:52.968Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`9cc0ad7d...`) |
