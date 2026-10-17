@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-SRCC",
-    "timestamp": "2026-10-16T15:09:31.116Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "ab2a3674cec530ff94234788b403daeda7c49c7da909b59198c39e375fde2471",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-WNGS",
     "timestamp": "2026-10-16T15:12:32.716Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
     "contentHash": "3b61664eba065b907aa1961594f2aaf53a94d91fa7054e551c680e648d47af2d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-PL68",
+    "timestamp": "2026-10-17T19:34:39.728Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "168d7c31af4efb93c03a31375db114aa8e1c6b4e880625e840dead96731f3b9e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
