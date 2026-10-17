@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T10:40:29.546Z",
+  "last_updated": "2026-10-17T10:43:54.350Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10913,7 +10913,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "f2e7277f7b7923d2b55e77dd8eca91b27e659b82fc4c49f79c51dd5299e4e5c4",
+      "content_hash": "29e8cba2839ad13e11f1d6370cb09b25b0a7d2ae3602a5ed93c0ec68b097bf70",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -10934,7 +10934,7 @@
         "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
         "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt"
       ],
-      "verified_at": "2026-10-17T02:39:38.818Z",
+      "verified_at": "2026-10-17T10:43:54.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

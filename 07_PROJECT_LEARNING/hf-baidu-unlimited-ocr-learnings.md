@@ -3,7 +3,7 @@
 > **Source Version**: `hf-baidu-unl`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T02:39:38.773Z  
+> **Timestamp**: 2026-10-17T10:43:54.297Z  
 > **Learning ID**: `learn-huggingface-baidu-unlimited-ocr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/baidu/Unlimited-OCR](https://huggingface.co/baidu/Unlimited-OCR))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T02:39:37.933Z  
+> **Harvest Timestamp**: 2026-10-17T10:43:53.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1262307 downloads | 4751 likes
+- **Stars / Engagement**: 1476672 downloads | 4757 likes
 
 ---
 
