@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0ZA3",
-    "timestamp": "2026-10-16T06:52:01.563Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "a52c6ed59536053355166f2bcea223d3000f442196f3a6af0f3cb325be2788b5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4XD5",
     "timestamp": "2026-10-16T06:55:05.705Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -7490,6 +7475,21 @@
     "repository": "nomic-ai/nomic-embed-text-v1.5",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
     "contentHash": "4bede7d15f3b1344585e252d338f09993196fad4a7f8ad8a99f8da560a165b12",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-CJ1R",
+    "timestamp": "2026-10-17T11:56:36.591Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "a4c128122ce9539b68eeb7fd1d7286e0918a390d959ae55cd521f5cbc848bfa5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

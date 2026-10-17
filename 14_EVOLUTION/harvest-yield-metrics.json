@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:53:19.955Z",
-  "total_cycles_completed": 2115,
-  "total_learnings_persisted": 2115,
+  "last_updated": "2026-10-17T11:56:36.595Z",
+  "total_cycles_completed": 2116,
+  "total_learnings_persisted": 2116,
   "total_rules_promoted": 1220,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:43:36.065Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:46:47.315Z",
       "repository": "Cloudflare/clef-flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T11:53:19.955Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T11:56:36.595Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
