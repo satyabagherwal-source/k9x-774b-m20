@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T19:22:03.734Z",
-  "total_cycles_completed": 2250,
-  "total_learnings_persisted": 2250,
+  "last_updated": "2026-10-17T19:25:07.513Z",
+  "total_cycles_completed": 2251,
+  "total_learnings_persisted": 2251,
   "total_rules_promoted": 1296,
   "history": [
-    {
-      "timestamp": "2026-10-17T08:13:12.689Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-facebook-sam3",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T08:17:31.602Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "black-forest-labs/flux-3-image-klein",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:25:07.513Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-GOR9",
-    "timestamp": "2026-10-16T15:00:07.893Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "efdef16c51c77ff76a3a40531e333764bbc45ceb33f073bb832a5e748df12b6d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-KQ64",
     "timestamp": "2026-10-16T15:03:16.348Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "83c1e91d194e930d14082ad92e43a5b4f3d3c228b37dcd31ffb7346d46ccf090",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-DBN8",
+    "timestamp": "2026-10-17T19:25:07.508Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "9cb71c72f8198e983e40d9a58e0e15515355d70cb538d2074f729bc5b1992727",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
