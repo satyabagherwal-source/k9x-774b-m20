@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:00:39.679Z",
-  "total_cycles_completed": 2313,
-  "total_learnings_persisted": 2313,
+  "last_updated": "2026-10-17T23:03:42.722Z",
+  "total_cycles_completed": 2314,
+  "total_learnings_persisted": 2314,
   "total_rules_promoted": 1334,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:50:17.373Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:53:19.955Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T23:00:39.679Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:03:42.722Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
