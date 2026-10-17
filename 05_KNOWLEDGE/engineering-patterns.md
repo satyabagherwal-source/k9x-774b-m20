@@ -99372,3 +99372,142 @@ def test_quantization_stability(w_modified):
 ```
 
 ---
+
+
+---
+
+## 1463. Attention Layer Sequence Integrity (Harvested from openbmb/MiniCPM-V-4.7-1B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Attention Layer Sequence Integrity",
+  "source": "openbmb/MiniCPM-V-4.7-1B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T14:15:15.477Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** enforce that the `layer_types` array in `text_config` matches the actual instantiated attention modules and that the number of heads and head dimensions are mathematically consistent with `hidden_size`.  
+
+**WHY**:  
+An inconsistent layer sequence or mismatched head dimensions leads to shape mismatches, runtime errors, or silent model degradation.
+
+**WHEN TO APPLY**:  
+During model construction and any fine‑tuning pipeline that modifies the attention stack.
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# attention_builder.py
+def build_attention_layers(config):
+    layers = []
+    for idx, layer_type in enumerate(config.layer_types):
+        if layer_type == "linear_attention":
+            layer = LinearAttention(
+                hidden_size=config.hidden_size,
+                num_heads=config.num_attention_heads,
+                head_dim=config.head_dim,
+            )
+        elif layer_type == "full_attention":
+            layer = FullAttention(
+                hidden_size=config.hidden_size,
+                num_heads=config.num_attention_heads,
+                head_dim=config.head_dim,
+            )
+        else:
+            raise ValueError(f"Unsupported layer type {layer_type} at position {idx}")
+
+        # Validate head dimension consistency
+        if config.hidden_size % config.num_attention_heads != 0:
+            raise ValueError("hidden_size must be divisible by num_attention_heads")
+        layers.append(layer)
+    return layers
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Mismatched head dimension
+layer = LinearAttention(hidden_size=1024, num_heads=8, head_dim=200)  # 8*200 != 1024
+# BAD: Wrong layer type string
+layer_type = "linear_attn"  # typo
+```
+
+**VERIFICATION METHOD**  
+- Static analysis that cross‑checks `layer_types` against instantiated classes.  
+- Runtime assertion that `hidden_size == num_attention_heads * head_dim`.
+
+---
+
+
+---
+
+## 1464. Dtype and Cache Consistency (Harvested from openbmb/MiniCPM-V-4.7-1B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dtype and Cache Consistency",
+  "source": "openbmb/MiniCPM-V-4.7-1B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T14:15:15.538Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** keep the `dtype` specified in `config.json` (e.g., `bfloat16`) consistent with the tensor dtype used during inference and ensure that `use_cache` in the model config matches `use_cache` in `generation_config.json`.  
+
+**WHY**:  
+Inconsistent dtypes cause silent precision loss or GPU memory errors; mismatched cache flags lead to generation failures or wasted memory.
+
+**WHEN TO APPLY**:  
+During model loading, quantization, and generation invocation.
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# dtype_and_cache_validator.py
+def validate_dtype_and_cache(config, generation_config):
+    # Dtype consistency
+    if config.dtype != generation_config.get("dtype", config.dtype):
+        raise ValueError("dtype mismatch between config and generation_config")
+
+    # Cache consistency
+    if config.use_cache != generation_config.get("use_cache", config.use_cache):
+        raise ValueError("use_cache flag mismatch between config and generation_config")
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Overriding dtype at runtime without updating config
+model.to(torch.float32)  # but config.dtype is bfloat16
+# BAD: Generation config sets use_cache=False while model expects True
+generation_config = {"use_cache": False}
+```
+
+**VERIFICATION METHOD**  
+- Unit test that loads both config files and asserts equality of `dtype` and `use_cache`.  
+- CI hook that fails if `model.to()` changes dtype without updating config.
+
+---

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-6RYM",
-    "timestamp": "2026-10-16T09:44:29.710Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "6013af8fe95a07bfdfada83609d146aed402616f1e91a93cb52cb6c8a65f1763",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ATDN",
     "timestamp": "2026-10-16T09:47:38.171Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7492,6 +7477,21 @@
     "contentHash": "5ed558211ae3846855b67695ce5209766abe57021b59747e48c77c49ab1e53d0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-AU1E",
+    "timestamp": "2026-10-17T14:15:15.602Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+    "contentHash": "a24d911a6d382c9d02f428ef1b83690c244e8474dfe69a88145238c143508f77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

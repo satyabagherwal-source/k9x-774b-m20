@@ -2178,3 +2178,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-17T14:05:41.655Z |
 | `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-17T14:08:53.406Z |
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-17T14:12:02.311Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-17T14:15:15.607Z |

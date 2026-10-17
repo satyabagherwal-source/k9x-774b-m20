@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T14:12:02.315Z",
+  "last_updated": "2026-10-17T14:15:15.610Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2136,14 +2136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "f8e7c9cc2a9db74a8e91cae85db181219c6864381666c5d18a60f0536d35455a",
-      "verified_at": "2026-10-17T05:47:59.636Z",
+      "content_hash": "a24d911a6d382c9d02f428ef1b83690c244e8474dfe69a88145238c143508f77",
+      "verified_at": "2026-10-17T14:15:15.609Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T05:47:59.636Z"
+      "last_updated": "2026-10-17T14:15:15.609Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",

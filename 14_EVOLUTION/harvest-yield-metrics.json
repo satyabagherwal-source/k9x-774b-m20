@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T14:12:02.313Z",
-  "total_cycles_completed": 2153,
-  "total_learnings_persisted": 2153,
-  "total_rules_promoted": 1240,
+  "last_updated": "2026-10-17T14:15:15.608Z",
+  "total_cycles_completed": 2154,
+  "total_learnings_persisted": 2154,
+  "total_rules_promoted": 1243,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:45:48.412Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:48:47.027Z",
       "repository": "Qwen/Qwen3-4B",
@@ -1403,6 +1396,13 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T14:15:15.608Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
