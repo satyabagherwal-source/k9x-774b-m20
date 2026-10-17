@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-CJXO",
-    "timestamp": "2026-10-15T23:33:07.692Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "31d53ca575ec5e97f827e6013501a3bcc1159eca14434eb67c52a9f80356d37b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-GBAP",
     "timestamp": "2026-10-15T23:36:03.121Z",
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-base-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
     "contentHash": "a2539a96da30c00d73072b2029a03fa3bdf84308562cab853fd0ca0f1b60a93c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-UJM8",
+    "timestamp": "2026-10-17T04:14:43.664Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "c4c40f93deb4b6c56a2d9be8d871f017bb0ad27358a550c74530804b379e25a6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
