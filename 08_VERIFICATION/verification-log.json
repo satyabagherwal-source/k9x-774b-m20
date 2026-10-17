@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-B3TN",
-    "timestamp": "2026-10-16T04:11:56.315Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "d2a3c5785933d4f9115a9d1092a6a8a66a9d30190b21ed265f4260ef83321f81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-FDUM",
     "timestamp": "2026-10-16T04:15:15.934Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7490,6 +7475,21 @@
     "repository": "amazon/chronos-2",
     "learningId": "learn-huggingface-amazon-chronos-2",
     "contentHash": "b6ae9f386008d8486cbb6022f49403181482ef8654cd130790cefebaa1f4a946",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-1APM",
+    "timestamp": "2026-10-17T09:27:54.490Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "d78038e5571ee065e25b9ff00cc9c22252c1f12303b1fb9be303d5ab99cc908d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
