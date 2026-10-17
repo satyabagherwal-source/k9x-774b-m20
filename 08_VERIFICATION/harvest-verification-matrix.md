@@ -1979,3 +1979,4 @@
 | `CYCLE-20261017-O6WL` | `2026-10-17T02:45:48.405Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1300, Rule 1301` | Yes (`b67a597c...`) |
 | `CYCLE-20261017-S0Q8` | `2026-10-17T02:48:47.024Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`bc39e6f7...`) |
 | `CYCLE-20261017-W29X` | `2026-10-17T02:51:55.653Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`fb24b74f...`) |
+| `CYCLE-20261017-0TT7` | `2026-10-17T02:55:37.963Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`593628c9...`) |
