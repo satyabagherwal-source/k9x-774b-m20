@@ -101365,3 +101365,206 @@ def test_mrope_pass_through_invariance():
 ```
 
 ---
+
+
+---
+
+## 1489. Mixed-Precision Quantization Integrity & KLD Validation (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mixed-Precision Quantization Integrity & KLD Validation",
+  "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T16:07:48.010Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing quantized LLM artifacts, you MUST provide a **Kullback-Leibler Divergence (KLD)** metric against the full-precision (BF16/FP16) reference model, measured on a standardized, non-training dataset. You MUST NOT distribute quantized weights without documenting the specific quantization algorithm (e.g., GSQ-RCO, GPTQ, AWQ) and the per-tensor bit-width allocation strategy.
+
+**WHY**:
+Uniform quantization (e.g., "4-bit") is a misleading abstraction. Different tensors (embeddings, attention heads, MLPs) have vastly different sensitivities to quantization noise. Without KLD metrics, users cannot predict the semantic drift or "hallucination rate" of the quantized model. GSQ-RCO specifically optimizes for this by varying bit-widths, making the KLD value the only reliable proxy for quality loss.
+
+**WHEN TO APPLY**:
+Any project involving the quantization, compression, or distillation of neural network weights for deployment on resource-constrained hardware.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// release-manifest.json
+{
+  "model_id": "Swift-1.5-Qwen3.8-27B-GSQ-RCO",
+  "quantizations": [
+    {
+      "tier": "IQ2_XS",
+      "file": "Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf",
+      "size_gb": 8.42,
+      "kld_dev": 0.189979,
+      "quantization_method": "GSQ-RCO",
+      "bit_width_allocation": "mixed",
+      "reference_model": "ukisai/Swift-1.5-Qwen3.8-27b",
+      "evaluation_dataset": "wiki.test.raw",
+      "context_length": 512
+    }
+  ]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// BAD: Vague quantization metadata
+{
+  "model_id": "MyModel-4bit",
+  "file": "model.gguf",
+  "quantization": "4-bit", // MISLEADING: Does not specify if it's uniform, mixed, or which tensors are at what precision
+  "quality": "good" // SUBJECTIVE: No measurable metric
+}
+```
+
+**VERIFICATION METHOD**:
+1.  Load the quantized model and the BF16 reference model.
+2.  Run both on a fixed set of 100 prompts from a held-out dataset (e.g., `wiki.test.raw`).
+3.  Compute the KLD between the next-token probability distributions of both models.
+4.  Assert that the KLD value is below a predefined threshold (e.g., < 0.2 for IQ2_XS) and matches the value in the manifest within a tolerance of 0.01.
+
+
+---
+
+## 1490. Cryptographic Integrity for Large Binary Artifacts (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cryptographic Integrity for Large Binary Artifacts",
+  "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T16:07:48.056Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For any repository distributing binary artifacts larger than 1GB, you MUST provide a `SHA256SUMS` file and a `release-manifest.json` that maps human-readable tier names to specific file hashes. You MUST NOT rely solely on the platform's file listing for integrity verification.
+
+**WHY**:
+Large model files are prone to corruption during download (network errors, disk failures). Without cryptographic hashes, users cannot verify that the file they downloaded is identical to the one intended by the author. This is critical for reproducibility and security (preventing tampered weights).
+
+**WHEN TO APPLY**:
+Any Hugging Face, GitHub, or S3 bucket distributing large binary files (models, datasets, container images).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# SHA256SUMS
+a1b2c3d4e5f6... Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf
+f6e5d4c3b2a1... Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_S.gguf
+```
+
+```json
+// release-manifest.json
+{
+  "artifacts": {
+    "IQ2_XS": {
+      "filename": "Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf",
+      "sha256": "a1b2c3d4e5f6...",
+      "size_bytes": 9040000000
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# BAD: No checksums, or only MD5 (weak)
+# No SHA256SUMS file
+# Or:
+d41d8cd98f00b204e9800998ecf8427e  model.gguf # MD5 is cryptographically broken
+```
+
+**VERIFICATION METHOD**:
+1.  Download the artifact.
+2.  Compute the SHA256 hash of the downloaded file.
+3.  Compare it against the hash in `SHA256SUMS` and `release-manifest.json`.
+4.  Fail the build/deployment if there is a mismatch.
+
+
+---
+
+## 1491. Separation of Base Model and Speculative Decoding Heads (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Separation of Base Model and Speculative Decoding Heads",
+  "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T16:07:48.099Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When providing models with Multi-Token Prediction (MTP) or speculative decoding capabilities, you MUST provide separate artifacts for the base model and the model with the MTP head. You MUST NOT bake the MTP head into the base model file if the target runtime does not support it, as this will cause loading errors or wasted memory.
+
+**WHY**:
+MTP heads are optional enhancements. Many runtimes (e.g., older versions of `llama.cpp`) do not support MTP. If the MTP head is included in the base GGUF file, these runtimes may fail to load the model or may allocate memory for unused tensors, reducing performance. Separating them allows for graceful degradation.
+
+**WHEN TO APPLY**:
+Any LLM distribution that includes speculative decoding, MTP, or other optional inference acceleration features.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```text
+# Directory Structure
+Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf       # Base model, no MTP
+Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS-mtp.gguf  # Base model + MTP head
+```
+
+```json
+// README.md
+| Tier | Standard GGUF | With MTP head |
+| --- | ---: | ---: |
+| IQ2_XS | [8.42 GB](...-IQ2_XS.gguf) | [8.77 GB](...-IQ2_XS-mtp.gguf) |
+```
+
+**NEGATIVE CONSTRAINT**:
+```text
+# BAD: Single file with MTP head, no option for non-MTP runtimes
+Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf # Contains MTP head, breaks older runtimes
+```
+
+**VERIFICATION METHOD**:
+1.  Load the "Standard GGUF" file in a runtime that does not support MTP.
+2.  Assert that the model loads successfully and generates text.
+3.  Load the "With MTP head" file in a runtime that supports MTP.
+4.  Assert that the MTP head is detected and used for speculative decoding.

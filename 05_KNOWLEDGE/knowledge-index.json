@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T16:04:41.764Z",
+  "last_updated": "2026-10-17T16:07:48.136Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18819,7 +18819,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "41da7520d7eb047383b9593c5059e9d25ba7b42a0434feefccd5ca278632b1f9",
+      "content_hash": "892cc82fa0bdcb837aba55ee7f13dc44d307184dca0ea8beb82d4457f7685717",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -18857,6 +18857,21 @@
           "number": 1369,
           "title": "Multi-Token Prediction (MTP) Speculative Head KV-Cache Decoupling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1489,
+          "title": "Mixed-Precision Quantization Integrity & KLD Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1490,
+          "title": "Cryptographic Integrity for Large Binary Artifacts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1491,
+          "title": "Separation of Base Model and Speculative Decoding Heads",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18877,7 +18892,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-17T07:53:05.897Z",
+      "verified_at": "2026-10-17T16:07:48.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
