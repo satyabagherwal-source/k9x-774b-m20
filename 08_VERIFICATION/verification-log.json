@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-SD94",
-    "timestamp": "2026-10-16T03:29:22.456Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "e5b36788054cd8b8b72a71815125886d389f1f87e6fb92a6c7c92b4dbc0b1e63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-WB3O",
     "timestamp": "2026-10-16T03:32:26.292Z",
     "repository": "google/vit-base-patch16-224",
@@ -7490,6 +7475,21 @@
     "repository": "Cloudflare/clef",
     "learningId": "learn-huggingface-cloudflare-clef",
     "contentHash": "aa3d5c5885ac4c1ca57a54d1ad36f17ede6de342f13ee1a450a331f97511458e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-E0XG",
+    "timestamp": "2026-10-17T08:41:49.108Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-cloudflare-clef-flash",
+    "contentHash": "2672d112edc931d8b5d3528c3f91e100aac746fc84de14fbb292959f23c85e22",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

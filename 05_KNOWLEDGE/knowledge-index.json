@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:37:19.829Z",
+  "last_updated": "2026-10-17T08:41:49.079Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11411,7 +11411,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "65e3fde107dfa5d91c27229e5e380959553c42e35a431716c618f823481c3d1d",
+      "content_hash": "2672d112edc931d8b5d3528c3f91e100aac746fc84de14fbb292959f23c85e22",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -11516,6 +11516,21 @@
           "number": 1284,
           "title": "Joint Head Output Shape Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1397,
+          "title": "Zero-Autoregressive Joint Classification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1398,
+          "title": "Decoupled Vocab-Head Memory Pruning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1399,
+          "title": "Multimodal Rotary Coordinate Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11536,7 +11551,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-17T00:46:47.293Z",
+      "verified_at": "2026-10-17T08:41:49.069Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
