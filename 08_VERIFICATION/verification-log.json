@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-8O9L",
-    "timestamp": "2026-10-15T23:02:07.065Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "7db46bd5c7a5c6b226cc44a70c403d5e93168e10937fe969cdb0ea8c757f2d2d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-CD2L",
     "timestamp": "2026-10-15T23:04:59.181Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-openai-community-gpt2",
     "contentHash": "4e2c047179871bf1d72a954d878f49bf9172d3da32b6a1e181203124fa16fdcf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-P6UF",
+    "timestamp": "2026-10-17T03:42:34.215Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "f6cf8cb77bdc05938fcc24fbdf78133ba0634198ac2ab1f576a5a8e125b3c590",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
