@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T06:42:41.384Z",
+  "last_updated": "2026-10-17T06:45:43.722Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9763,7 +9763,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "8b2d076eff5f3a98edf507ca5084d470a1f143abe252704fbf83345afc02cf7b",
+      "content_hash": "261a2bf2e1d8b02038ac16ba16c997dda2a9e918cc8ff525f6ff2d524f81af07",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -9839,6 +9839,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 1024,
+          "title": "Tokenization Consistency Rule",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1085,
           "title": "**Special‑Token Uniqueness Across Modalities**",
           "status": "PROMOTED_AND_VERIFIED"
@@ -9872,6 +9877,16 @@
           "number": 1255,
           "title": "**Special‑Token Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1331,
+          "title": "Image‑Token Uniqueness Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1332,
+          "title": "Mixed‑Precision Memory Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9892,7 +9907,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-16T23:11:52.432Z",
+      "verified_at": "2026-10-17T06:45:43.718Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

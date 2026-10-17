@@ -86430,3 +86430,129 @@ def evaluate_bad(model, dataset):
 
 **VERIFICATION METHOD**:
 Audit the evaluation script to ensure that `abstention` is not counted as a correct prediction unless the gold label is explicitly `abstain`.
+
+
+---
+
+## 1331. Image‑Token Uniqueness Rule (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Image‑Token Uniqueness Rule",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T06:45:43.676Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** assign a unique integer ID to `image_token_id` that does not collide with any other special token ID (e.g., `eos_token_id`, `pad_token_id`, `video_token_id`).  
+
+**WHY**:  
+Token ID collisions cause the decoder to misinterpret image boundaries as text boundaries, leading to corrupted outputs or infinite loops during decoding.  
+
+**WHEN TO APPLY**:  
+During tokenizer initialization for any VLM that embeds visual tokens.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```json
+{
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "eos_token_id": 248046,
+  "pad_token_id": 248044
+}
+```
+
+**NEGATIVE CONSTRAINT**  
+```json
+{
+  "image_token_id": 248046,   // same as eos_token_id
+  "video_token_id": 248057,
+  "eos_token_id": 248046,
+  "pad_token_id": 248044
+}
+```
+
+**VERIFICATION METHOD**  
+*Static analysis* – lint rule that checks for duplicate values among special token IDs.  
+```bash
+python -m tokenizer_linter --check-unique-special-ids tokenizer_config.json
+```
+
+---
+
+
+---
+
+## 1332. Mixed‑Precision Memory Rule (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mixed‑Precision Memory Rule",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T06:45:43.701Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** store all model weights in `bfloat16` format when the target hardware supports it, but **MUST NOT** perform any intermediate tensor conversion to `float32` unless required for numerical stability.  
+
+**WHY**:  
+`bfloat16` reduces memory footprint by 50 % while preserving dynamic range. Converting back to `float32` negates the benefit and can introduce rounding errors that propagate through the decoder.  
+
+**WHEN TO APPLY**:  
+During model loading and inference on GPUs/TPUs that support `bfloat16`.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+model = Qwen3_5ForConditionalGeneration.from_pretrained(
+    "apple/LensVLM-9B",
+    torch_dtype=torch.bfloat16,
+    device_map="auto"
+)
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+model = Qwen3_5ForConditionalGeneration.from_pretrained(
+    "apple/LensVLM-9B",
+    torch_dtype=torch.float32,  # forces float32
+    device_map="auto"
+)
+```
+
+**VERIFICATION METHOD**  
+*Runtime check* – assert that all parameters are `bfloat16`.  
+```python
+def test_bfloat16_weights():
+    for p in model.parameters():
+        assert p.dtype == torch.bfloat16
+```
+
+---
