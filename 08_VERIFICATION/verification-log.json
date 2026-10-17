@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-PSO3",
-    "timestamp": "2026-10-16T07:11:19.395Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "85bf05e80fe73b23c80ea38c9fb8f461573b6653d4af388e0ba7366ecc81b9fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ZJR2",
     "timestamp": "2026-10-16T07:18:54.398Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7492,6 +7477,21 @@
     "contentHash": "d14ee4a3fd16e199a9eba215fc82f46ee78c189906f2a49f530b763850d6fc5d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YMRF",
+    "timestamp": "2026-10-17T12:13:47.835Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "f81d1f3fa1dbb072285d4dfa8bfff77b7141092a9c9400c39c7715fb50689b30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

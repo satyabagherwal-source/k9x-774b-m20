@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:09:34.636Z",
-  "total_cycles_completed": 2120,
-  "total_learnings_persisted": 2120,
-  "total_rules_promoted": 1223,
+  "last_updated": "2026-10-17T12:13:47.842Z",
+  "total_cycles_completed": 2121,
+  "total_learnings_persisted": 2121,
+  "total_rules_promoted": 1225,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:58:48.968Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T01:02:14.831Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1403,6 +1396,13 @@
       "repository": "Qwen/Qwen3-8B",
       "learningId": "learn-huggingface-qwen-qwen3-8b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:13:47.842Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-google-vit-base-patch16-224",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

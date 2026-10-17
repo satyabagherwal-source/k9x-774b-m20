@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T12:09:34.603Z",
+  "last_updated": "2026-10-17T12:13:47.810Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14235,7 +14235,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "b187162eb9d1c57f57d1e13f3c664892ae47fbba047067bfea6a2301e1a838de",
+      "content_hash": "f81d1f3fa1dbb072285d4dfa8bfff77b7141092a9c9400c39c7715fb50689b30",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -14247,6 +14247,16 @@
         {
           "number": 968,
           "title": "Immutable Configuration-Weight Consistency Check",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1446,
+          "title": "Spatial-to-Sequence Dynamic Positional Embedding Interpolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1447,
+          "title": "Contiguous Memory Re-stride Invariant in Transformer Multi-Head Self-Attention",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14267,7 +14277,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-17T04:05:33.910Z",
+      "verified_at": "2026-10-17T12:13:47.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
