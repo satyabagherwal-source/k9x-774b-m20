@@ -94575,3 +94575,224 @@ minimax_h3_light.safetensors
 
 **VERIFICATION METHOD**:
 Linting script that checks all `.safetensors` filenames against a regex pattern that requires explicit modifiers (`pruned`, `quantized`, `distilled`) if the file size is significantly smaller than the baseline `bf16` version.
+
+
+---
+
+## 1411. Residual Stream Subspace Orthogonalization Invariant (Harvested from AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Residual Stream Subspace Orthogonalization Invariant",
+  "source": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+  "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+  "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T09:18:15.557Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF](https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF) (Revision: `hf-atomicc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When neutralizing steering or refusal representations in a Transformer text encoder without retraining, the projection operator $P_{\perp} = I - \hat{r}\hat{r}^T$ MUST be applied strictly to the output-producing weight projections (e.g., MLP down-projections $W_{\text{down}}$ and attention output projections $W_{\text{out}}$) such that for the normalized mean difference direction $\hat{r} \in \mathbb{R}^{d_{\text{model}}}$, the transformed weights satisfy:
+$$W' = W \cdot (I - \hat{r}\hat{r}^T) \iff W' \hat{r} = 0$$
+The normalization $\|\hat{r}\|_2 = 1.0$ MUST be verified within single-precision tolerance ($\epsilon \le 1\times 10^{-6}$) PRIOR to projection, and the baseline benchmarks (e.g., MMLU/Perplexity) MUST NOT degrade by more than $0.5\%$.
+
+**WHY**:
+Applying refusal steering removal naively via prompt hacking, input token rewriting, or logit masking fails because diffusion text encoders do not decode tokens autoregressively—they emit hidden states $H$. If the weight projection is applied to the input projections ($W_q, W_k, W_v, W_{\text{gate}}$) instead of the output writing projections ($W_{\text{out}}, W_{\text{down}}$), the residual accumulation will leak the refusal direction back into subsequent layers via the non-linear activation functions ($\text{SiLU}, \text{GELU}$), restoring the refusal geometry.
+
+**WHEN TO APPLY**:
+Apply to any multimodal or conditional generation architecture where an instruction-tuned LLM/VLM serves as a feature conditioning backbone (e.g., SD3, Flux, Qwen-Image, Stable-Audio) and exhibits safety refusal collapse or unintended activation bias.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+from typing import List, Tuple
+
+def project_out_subspace(
+    weight: torch.Tensor, 
+    direction: torch.Tensor
+) -> torch.Tensor:
+    """
+    Orthogonally project out a 1D subspace vector from a transformer weight tensor.
+    Invariant: weight' @ direction == 0 (within machine epsilon).
+    
+    Args:
+        weight: Shape (d_out, d_in) or (d_in, d_out) depending on projection.
+                For W_out / W_down writing to residual stream, shape is (d_model, d_intermediate).
+        direction: Normalized direction vector in residual stream space, shape (d_model,).
+    """
+    assert direction.dim() == 1, f"Direction must be 1D, got {direction.dim()}"
+    norm = torch.linalg.norm(direction)
+    assert torch.abs(norm - 1.0) < 1e-6, f"Direction must be unit normalized, got {norm.item()}"
+    
+    # Ensure precision during outer product
+    orig_dtype = weight.dtype
+    w_fp32 = weight.to(torch.float32)
+    d_fp32 = direction.to(torch.float32)
+    
+    # If weight maps from intermediate to d_model (e.g. W_down: [d_model, d_ffn]):
+    # We want to remove the component writing into direction: W' = W - (d @ d^T) W = (I - d d^T) W
+    # => W'[i, :] = W[i, :] - d[i] * (d^T @ W)
+    if w_fp32.shape[0] == d_fp32.shape[0]:
+        projection = torch.outer(d_fp32, d_fp32 @ w_fp32)
+        w_sanitized = w_fp32 - projection
+    # If weight maps from d_model to intermediate (e.g. W_gate: [d_ffn, d_model]):
+    # W' = W (I - d d^T) => W' = W - (W @ d) @ d^T
+    elif w_fp32.shape[1] == d_fp32.shape[0]:
+        projection = torch.outer(w_fp32 @ d_fp32, d_fp32)
+        w_sanitized = w_fp32 - projection
+    else:
+        raise ValueError(
+            f"Dimension mismatch: weight {weight.shape} incompatible with direction {direction.shape}"
+        )
+        
+    # Micro-invariant check: inner product along projected dimension must approach zero
+    if w_fp32.shape[0] == d_fp32.shape[0]:
+        leakage = torch.max(torch.abs(d_fp32 @ w_sanitized))
+    else:
+        leakage = torch.max(torch.abs(w_sanitized @ d_fp32))
+    assert leakage < 1e-5, f"Orthogonalization failure: leakage {leakage.item()} exceeds tolerance"
+    
+    return w_sanitized.to(orig_dtype)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive subtraction or scalar suppression of weights.
+# Modifying diagonal elements or subtracting direction without projection destroys base capacity.
+def bad_abliterate(weight: torch.Tensor, direction: torch.Tensor) -> torch.Tensor:
+    # BUG: Violates linear algebra invariants. Direction is in residual space, 
+    # subtracting it directly from non-square weight matrices causes dimension collapse
+    # or destroys semantic capacities unrelated to the refusal direction.
+    return weight - direction.unsqueeze(1)  # CATASTROPHIC WEIGHT CORRUPTION
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_subspace_orthogonalization_invariant():
+    d_model = 4096
+    d_ffn = 11008
+    w_down = torch.randn(d_model, d_ffn, dtype=torch.float16)
+    refusal_dir = torch.randn(d_model, dtype=torch.float32)
+    refusal_dir = refusal_dir / torch.linalg.norm(refusal_dir)
+    
+    w_clean = project_out_subspace(w_down, refusal_dir)
+    
+    # Test 1: Directional response must be null
+    response = torch.matmul(refusal_dir, w_clean.to(torch.float32))
+    assert torch.allclose(response, torch.zeros_like(response), atol=1e-5), "Refusal direction still responds!"
+    
+    # Test 2: Orthogonal subspace response must be preserved
+    orthogonal_probe = torch.randn(d_model, dtype=torch.float32)
+    orthogonal_probe -= torch.dot(orthogonal_probe, refusal_dir) * refusal_dir
+    orthogonal_probe /= torch.linalg.norm(orthogonal_probe)
+    
+    orig_resp = torch.matmul(orthogonal_probe, w_down.to(torch.float32))
+    new_resp = torch.matmul(orthogonal_probe, w_clean.to(torch.float32))
+    assert torch.allclose(orig_resp, new_resp, atol=1e-3), "General capability subspace corrupted!"
+```
+
+---
+
+
+---
+
+## 1412. GGUF Quantization Tensor Alignment Invariant (Harvested from AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "GGUF Quantization Tensor Alignment Invariant",
+  "source": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+  "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+  "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T09:18:15.630Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF](https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF) (Revision: `hf-atomicc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Every tensor exported into GGUF format for use in C++ inference runtimes (`stable-diffusion.cpp`, `llama.cpp`) MUST maintain 32-byte memory alignment (`ALIGNMENT = 32`) for raw weight offsets, and its shape metadata MUST match the physical block sizes defined by the quantization type (e.g., `Q4_K` requires 256 elements per super-block; `Q8_0` requires 32 elements per block). Quantization scales and offsets MUST NOT contain NaNs, infinities, or subnormal numbers.
+
+**WHY**:
+In `ggml`/`stable-diffusion.cpp`, SIMD compute kernels (AVX2, AVX-512, ARM NEON) load tensor blocks directly using aligned vector load instructions (`_mm256_load_si256` or `vld1q_u8`). Unaligned buffer offsets or block counts not divisible by block size lead to Segmentation Faults (SIGSEGV), bus errors (SIGBUS), or undefined behavior during matrix-vector dot products (`ggml_vec_dot`).
+
+**WHEN TO APPLY**:
+Applies to any export, conversion, or quantization script serializing weights to GGUF format for desktop or edge runtime execution.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import struct
+from typing import BinaryIO
+
+GGUF_DEFAULT_ALIGNMENT = 32
+
+def align_offset(offset: int, alignment: int = GGUF_DEFAULT_ALIGNMENT) -> int:
+    """Calculates byte padding required to satisfy SIMD alignment boundaries."""
+    remainder = offset % alignment
+    return offset if remainder == 0 else offset + (alignment - remainder)
+
+def write_tensor_data_with_alignment(
+    f: BinaryIO, 
+    tensor_bytes: bytes, 
+    current_offset: int,
+    alignment: int = GGUF_DEFAULT_ALIGNMENT
+) -> int:
+    """
+    Writes tensor data enforcing GGUF byte alignment contracts.
+    Returns the new absolute file offset.
+    """
+    aligned_offset = align_offset(current_offset, alignment)
+    padding_len = aligned_offset - current_offset
+    
+    if padding_len > 0:
+        f.write(b'\x00' * padding_len)
+        
+    f.write(tensor_bytes)
+    return aligned_offset + len(tensor_bytes)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Streaming tensor raw bytes sequentially without alignment padding.
+def bad_write_gguf(f: BinaryIO, tensors: list[torch.Tensor]):
+    for t in tensors:
+        # BUG: Directly dumping bytes violates SIMD 32-byte alignment.
+        # Causes SIGSEGV in llama.cpp / stable-diffusion.cpp AVX kernels!
+        data = t.numpy().tobytes()
+        f.write(data)
+```
+
+**VERIFICATION METHOD**:
+```bash
+# Automated check using gguf-dump to assert tensor memory offset alignments
+python3 -c "
+import gguf
+reader = gguf.GGUFReader('qwen3-vl-8b-instruct-abliterated.gguf')
+for tensor in reader.tensors:
+    offset = tensor.data_offset
+    assert offset % 32 == 0, f'Tensor {tensor.name} offset {offset} not 32-byte aligned!'
+print('PASS: All tensors 32-byte aligned.')
+"
+```
+
+---

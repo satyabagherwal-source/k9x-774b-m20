@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T09:14:08.814Z",
-  "total_cycles_completed": 2067,
-  "total_learnings_persisted": 2067,
-  "total_rules_promoted": 1187,
+  "last_updated": "2026-10-17T09:18:15.708Z",
+  "total_cycles_completed": 2068,
+  "total_learnings_persisted": 2068,
+  "total_rules_promoted": 1189,
   "history": [
-    {
-      "timestamp": "2026-10-16T22:02:04.669Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T22:06:06.788Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T09:18:15.708Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

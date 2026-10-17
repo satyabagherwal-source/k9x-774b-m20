@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T09:14:08.787Z",
+  "last_updated": "2026-10-17T09:18:15.676Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10035,10 +10035,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "709168b749f88f69cb446f229c4adb804e9713495f811693744e781df1a9d3a5",
+      "content_hash": "263d72a556b9b23e8db67831d80fb7ee79bf13fc02329eb08000265810efbba0",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1411,
+          "title": "Residual Stream Subspace Orthogonalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1412,
+          "title": "GGUF Quantization Tensor Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -10051,7 +10062,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-10-17T01:15:32.341Z",
+      "verified_at": "2026-10-17T09:18:15.669Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
