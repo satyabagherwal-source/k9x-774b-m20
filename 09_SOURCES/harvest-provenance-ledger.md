@@ -2244,3 +2244,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-17T17:26:54.333Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-17T17:30:20.985Z |
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-17T17:33:22.596Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-17T17:36:30.786Z |
