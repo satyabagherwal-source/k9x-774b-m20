@@ -2048,3 +2048,4 @@
 | `CYCLE-20261017-KE8R` | `2026-10-17T06:26:48.219Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`342a8452...`) |
 | `CYCLE-20261017-OINQ` | `2026-10-17T06:30:00.566Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`1776fd09...`) |
 | `CYCLE-20261017-S94J` | `2026-10-17T06:32:54.835Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`09727c18...`) |
+| `CYCLE-20261017-WJMN` | `2026-10-17T06:36:15.071Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1328, Rule 1329, Rule 1330` | Yes (`28092a3b...`) |

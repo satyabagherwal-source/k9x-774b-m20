@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T06:32:54.838Z",
-  "total_cycles_completed": 2025,
-  "total_learnings_persisted": 2025,
-  "total_rules_promoted": 1102,
+  "last_updated": "2026-10-17T06:36:15.074Z",
+  "total_cycles_completed": 2026,
+  "total_learnings_persisted": 2026,
+  "total_rules_promoted": 1105,
   "history": [
-    {
-      "timestamp": "2026-10-16T19:28:15.097Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T19:32:14.209Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1403,6 +1396,13 @@
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T06:36:15.074Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

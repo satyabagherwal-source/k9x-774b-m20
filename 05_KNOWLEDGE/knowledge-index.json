@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T06:32:54.815Z",
+  "last_updated": "2026-10-17T06:36:15.046Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17811,7 +17811,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "f01a684e15f9dabe9772b7599a43e9cfc2d3f58ec70f5f6903251245c1231d53",
+      "content_hash": "28092a3b087d8cce965221df7df6d16894638e85af3cb3e7288c5e70571161be",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -17842,6 +17842,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
           "verified_at": "2026-10-11T18:19:02.648Z"
+        },
+        {
+          "number": 1328,
+          "title": "Closed-Set Decision Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1329,
+          "title": "Multilingual Tokenization Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1330,
+          "title": "Benchmark Protocol Strictness Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17862,7 +17877,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-16T23:01:09.591Z",
+      "verified_at": "2026-10-17T06:36:15.039Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
