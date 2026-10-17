@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T10:51:04.994Z",
-  "total_cycles_completed": 2096,
-  "total_learnings_persisted": 2096,
+  "last_updated": "2026-10-17T10:54:16.104Z",
+  "total_cycles_completed": 2097,
+  "total_learnings_persisted": 2097,
   "total_rules_promoted": 1211,
   "history": [
-    {
-      "timestamp": "2026-10-16T23:41:41.969Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T23:44:39.314Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T10:51:04.994Z",
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T10:54:16.104Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

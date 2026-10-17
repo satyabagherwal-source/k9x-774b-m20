@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-WR84",
-    "timestamp": "2026-10-16T05:52:45.268Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "d12052bb671511dab235b6df4ed5f9360516fdbb9e8588acd19a6969ed4b6e16",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0TIU",
     "timestamp": "2026-10-16T05:55:54.870Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7490,6 +7475,21 @@
     "repository": "speridlabs/iris-3b",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
     "contentHash": "9052fd58212d31ea3a473832bd1e3771ac47343bb3cef90697998a7ae6407229",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4CV8",
+    "timestamp": "2026-10-17T10:54:16.100Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "e1b553764fd9f29192a556c9ab43861bb76b2638bdd3ba167b665e1d72952f0f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
