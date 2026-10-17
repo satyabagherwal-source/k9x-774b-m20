@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:42:31.895Z",
+  "last_updated": "2026-10-17T02:45:48.380Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17470,7 +17470,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "4eed39aa1679972478c0f88202b3d3e9b9bb06b67d8f7b877dd15043bdfcc7e5",
+      "content_hash": "b67a597cca7f810a6db6d5cc15e5544397b7db7d68368ac5b3c2c597f75b6554",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -17508,6 +17508,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3",
           "verified_at": "2026-10-11T21:28:36.840Z"
+        },
+        {
+          "number": 1300,
+          "title": "Pixel-Space Generative Prior Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1301,
+          "title": "Turbo Distillation Step-Count Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17518,7 +17528,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-16T18:51:35.138Z",
+      "verified_at": "2026-10-17T02:45:48.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
