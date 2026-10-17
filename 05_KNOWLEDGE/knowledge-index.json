@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T04:54:20.458Z",
+  "last_updated": "2026-10-17T04:57:36.371Z",
   "total_verified_learnings": 193,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16952,7 +16952,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "157b122d948058bf8a316c6b5c7ffc808a6364797e574ef0208691fb9363244c",
+      "content_hash": "f23f6d1e40409de30506e69b17cb9f88bbe7e5c03c596e0b6384bc78b4152d2f",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -16972,8 +16972,8 @@
         },
         {
           "number": 996,
-          "title": "Masked Mean Pooling Invariant for Variable-Length Sequences",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": "EXISTING",
@@ -17325,7 +17325,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-16T21:17:02.284Z",
+      "verified_at": "2026-10-17T04:57:36.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
