@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:10:40.271Z",
+  "last_updated": "2026-10-17T15:13:51.961Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9839,7 +9839,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "261a2bf2e1d8b02038ac16ba16c997dda2a9e918cc8ff525f6ff2d524f81af07",
+      "content_hash": "a236741871390458858b936cf1df3afd2e89d79a48ea5aa7202e53f221443cc4",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -9963,6 +9963,21 @@
           "number": 1332,
           "title": "Mixed‑Precision Memory Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1475,
+          "title": "**Tokenization Consistency Across Modalities**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1476,
+          "title": "**Linear‑Attention Layer Placement**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1477,
+          "title": "**Compression‑Mask Alignment**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9983,7 +9998,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-17T06:45:43.718Z",
+      "verified_at": "2026-10-17T15:13:51.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

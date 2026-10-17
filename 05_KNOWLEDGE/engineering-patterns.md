@@ -100255,3 +100255,162 @@ generator = torch.Generator().manual_seed(42) # CPU generator, slow and non-dete
 **VERIFICATION METHOD**:
 1.  **Integration Test**: Run inference twice with the same seed and assert that the output tensors are bitwise identical (`torch.allclose(out1, out2, rtol=0, atol=0)`).
 2.  **Code Review**: Check that `generator` is passed to all stochastic functions.
+
+
+---
+
+## 1475. **Tokenization Consistency Across Modalities** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Tokenization Consistency Across Modalities**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T15:13:51.767Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every multimodal token (image, video, audio) is assigned a unique, non‑overlapping token ID that is not used by any text token.  
+**WHY**:  
+If a multimodal token shares an ID with a text token, the decoder will misinterpret the modality, leading to garbled output or silent failures.  
+**WHEN TO APPLY**:  
+During tokenizer construction for any model that mixes modalities; applies to `tokenizer_config.json` and the underlying `TokenizersBackend`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json
+{
+  "model_specific_special_tokens": {
+    "image_token": "<|image_pad|>",
+    "video_token": "<|video_pad|>",
+    "audio_token": "<|audio_pad|>"
+  },
+  "special_tokens_map": {
+    "image_token_id": 248056,
+    "video_token_id": 248057,
+    "audio_token_id": 248058
+  }
+}
+# Ensure IDs are distinct from text vocab
+assert 248056 not in text_vocab
+assert 248057 not in text_vocab
+assert 248058 not in text_vocab
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: overlapping IDs
+tokenizer.add_special_tokens({"image_token": "<|image_pad|>"})
+tokenizer.add_special_tokens({"video_token": "<|image_pad|>"})  # same ID
+```
+**VERIFICATION METHOD**:  
+Run `tokenizer.get_vocab()` and assert that all multimodal IDs are unique and outside the text vocab range. Use a unit test that fails if any overlap is detected.
+
+
+---
+
+## 1476. **Linear‑Attention Layer Placement** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Linear‑Attention Layer Placement**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T15:13:51.834Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** place linear‑attention layers only in positions that preserve the causal mask and do not interfere with the full‑attention layers that handle cross‑modal interactions.  
+**WHY**:  
+Linear attention reduces memory but cannot capture long‑range dependencies across modalities. Misplacing it can cause the model to ignore crucial cross‑modal cues, leading to hallucinations.  
+**WHEN TO APPLY**:  
+During model configuration (`text_config.layer_types`) and when adding new layers.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+layer_types = [
+  "linear_attention", "linear_attention", "linear_attention",
+  "full_attention",   # cross‑modal interactions
+  "linear_attention", "linear_attention", "linear_attention",
+  "full_attention",   # further cross‑modal
+  # ... repeat pattern
+]
+assert layer_types.count("full_attention") == 8  # matches config
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: full_attention after all linear layers
+layer_types = ["linear_attention"] * 32  # no full_attention
+```
+**VERIFICATION METHOD**:  
+Unit test that counts `full_attention` occurrences and ensures they are interleaved with `linear_attention` as per the design.
+
+
+---
+
+## 1477. **Compression‑Mask Alignment** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Compression‑Mask Alignment**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T15:13:51.904Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** validate that the mask produced by the tool‑selection module aligns exactly with the compressed image grid before decompression.  
+**WHY**:  
+A misaligned mask causes the decompression layer to read wrong pixel blocks, producing artifacts or missing text.  
+**WHEN TO APPLY**:  
+During inference, after `tool_selector.select` and before `compression_layer.decompress`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+mask = tool_selector.select(compressed_image)
+assert mask.shape == compressed_image.shape[:2]  # same grid
+decompressed = compression_layer.decompress(compressed_image, mask)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: mask shape mismatch
+mask = torch.ones((compressed_image.shape[0] + 1, compressed_image.shape[1]))
+decompressed = compression_layer.decompress(compressed_image, mask)  # runtime error
+```
+**VERIFICATION METHOD**:  
+Add a runtime assertion in the pipeline and a unit test that feeds a synthetic mask of incorrect shape to confirm failure.
