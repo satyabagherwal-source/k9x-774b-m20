@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:52:46.618Z",
-  "total_cycles_completed": 2133,
-  "total_learnings_persisted": 2133,
+  "last_updated": "2026-10-17T12:55:57.228Z",
+  "total_cycles_completed": 2134,
+  "total_learnings_persisted": 2134,
   "total_rules_promoted": 1229,
   "history": [
-    {
-      "timestamp": "2026-10-17T01:40:59.399Z",
-      "repository": "vllm-sr/d3",
-      "learningId": "learn-huggingface-vllm-sr-d3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T01:44:04.141Z",
       "repository": "openai/whisper-large-v3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T12:52:46.618Z",
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:55:57.228Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
