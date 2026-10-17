@@ -1993,3 +1993,4 @@
 | `CYCLE-20261017-8Y6Y` | `2026-10-17T03:29:56.506Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`98981b98...`) |
 | `CYCLE-20261017-D7MQ` | `2026-10-17T03:33:15.362Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1304, Rule 779` | Yes (`f8178776...`) |
 | `CYCLE-20261017-H20H` | `2026-10-17T03:36:14.705Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`88c0e5ce...`) |
+| `CYCLE-20261017-KRBH` | `2026-10-17T03:39:07.469Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`4e2c0471...`) |

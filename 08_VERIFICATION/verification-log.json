@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-4GJ1",
-    "timestamp": "2026-10-15T22:58:50.413Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "4ebb9032b75f368702ffea595d6dfe380bfacfc2d37b0945a9264936133ffa62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-8O9L",
     "timestamp": "2026-10-15T23:02:07.065Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "FacebookAI/xlm-roberta-base",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
     "contentHash": "88c0e5cec2a3790f1ddc8840a63adc495f72006376a8ac55feaefd172177446b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-KRBH",
+    "timestamp": "2026-10-17T03:39:07.469Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "4e2c047179871bf1d72a954d878f49bf9172d3da32b6a1e181203124fa16fdcf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
