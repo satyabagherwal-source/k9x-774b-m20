@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-X430",
-    "timestamp": "2026-10-16T00:45:06.156Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "3e3fbb3412d5f014d5e35ad884db3e850a3d2bf0fe8371965e7d00a5da7fccdd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-15RQ",
     "timestamp": "2026-10-16T00:48:14.966Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7492,6 +7477,21 @@
     "contentHash": "a1b46647230fd4a5d445a39751fa209a59260a7da4489c95b795b31832d5309d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ION5",
+    "timestamp": "2026-10-17T05:29:29.153Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "7870657116c0c933519f34a608248eb0d674f8f62a73df17ac9142fc315ad022",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
