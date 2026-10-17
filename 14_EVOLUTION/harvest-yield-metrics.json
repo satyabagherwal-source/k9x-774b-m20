@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:55:37.967Z",
-  "total_cycles_completed": 1957,
-  "total_learnings_persisted": 1957,
+  "last_updated": "2026-10-17T02:58:30.949Z",
+  "total_cycles_completed": 1958,
+  "total_learnings_persisted": 1958,
   "total_rules_promoted": 1069,
   "history": [
-    {
-      "timestamp": "2026-10-16T15:22:17.434Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T15:25:28.981Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T02:55:37.967Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:58:30.949Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

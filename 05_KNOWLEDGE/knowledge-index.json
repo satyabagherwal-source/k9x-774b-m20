@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:55:37.929Z",
+  "last_updated": "2026-10-17T02:58:30.925Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16197,7 +16197,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "e91a3aa722e6c3f007573fadb0b1303ed32748c58a0e3627d4755cd67cd41487",
+      "content_hash": "c51bb68770c31dabf3cc0a75117420266d9819d48d5faaba0a16128ab762de37",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -16249,7 +16249,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-16T19:04:19.369Z",
+      "verified_at": "2026-10-17T02:58:30.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

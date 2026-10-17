@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-OCKX",
-    "timestamp": "2026-10-15T22:18:19.185Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "ebcfabed946330c76a06ee170b1840f74ee8ad110b07693b188c1ce73483fa06",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-S1X4",
     "timestamp": "2026-10-15T22:21:11.992Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
     "contentHash": "593628c95380856f2f308629e4fa9e437abd6f54fa2151b958d2ff521fecac18",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4JAA",
+    "timestamp": "2026-10-17T02:58:30.946Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "c51bb68770c31dabf3cc0a75117420266d9819d48d5faaba0a16128ab762de37",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

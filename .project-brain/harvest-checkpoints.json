@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T02:55:37.968Z",
+  "last_updated": "2026-10-17T02:58:30.950Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1397,14 +1397,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "e91a3aa722e6c3f007573fadb0b1303ed32748c58a0e3627d4755cd67cd41487",
-      "verified_at": "2026-10-16T19:04:19.395Z",
+      "content_hash": "c51bb68770c31dabf3cc0a75117420266d9819d48d5faaba0a16128ab762de37",
+      "verified_at": "2026-10-17T02:58:30.949Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T19:04:19.395Z"
+      "last_updated": "2026-10-17T02:58:30.949Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
