@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T04:51:18.849Z",
-  "total_cycles_completed": 1993,
-  "total_learnings_persisted": 1993,
+  "last_updated": "2026-10-17T04:54:20.502Z",
+  "total_cycles_completed": 1994,
+  "total_learnings_persisted": 1994,
   "total_rules_promoted": 1085,
   "history": [
-    {
-      "timestamp": "2026-10-16T17:42:52.883Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T17:46:01.286Z",
       "repository": "vllm-sr/d3",
@@ -1403,6 +1396,13 @@
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T04:54:20.502Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

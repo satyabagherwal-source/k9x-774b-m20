@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-OP68",
-    "timestamp": "2026-10-16T00:10:33.968Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "5d797d047c0e9d16f12794c925d65efdb26473776667a05b0e53ee2c2731a5b3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-SRGR",
     "timestamp": "2026-10-16T00:13:43.563Z",
     "repository": "canberkkkkkk/ema-lightning",
@@ -7492,6 +7477,21 @@
     "contentHash": "1436c577a0514ecb2d09aaef68defa413d7d90b4e9c01dbd8bd44e9d91cffd05",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-9HLC",
+    "timestamp": "2026-10-17T04:54:20.496Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "10351f1a6f14a2e9d481e07ea8a810017e6be1d89733cddf542ecaece986403e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
