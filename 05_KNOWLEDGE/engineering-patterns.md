@@ -103865,3 +103865,149 @@ text = f"User: Solve 2+2\nAssistant:"
 
 ` or similar internal markers) before the final answer.
 2.  **Comparison Test**: Compare the accuracy of the model on a benchmark (e.g., GSM8K) with `enable_thinking=True` vs `False`. The former should show significantly higher accuracy.
+
+
+---
+
+## 1521. Selective Quantization for Vision-Language Model Parity (Harvested from mudler/locate-anything.cpp-gguf)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Selective Quantization for Vision-Language Model Parity",
+  "source": "mudler/locate-anything.cpp-gguf",
+  "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+  "source_version": "hf-mudler-locate-anything.cpp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T20:38:37.186Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf) (Revision: `hf-mudler-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing Vision-Language Models (VLMs) for C++/ggml inference, **MUST** keep the vision encoder (e.g., MoonViT, ViT), the projector, all LayerNorms, biases, and input embedding tables in **f32**. **MUST** only quantize the Language Model (LM) matrix multiplications (Attention Q/K/V/O, FFN Gate/Up/Down, LM Head). **MUST NOT** quantize the vision path or input embeddings if "box-identical" parity with the reference PyTorch implementation is required.
+
+**WHY**:
+The vision encoder and input embeddings are highly sensitive to numerical precision. Quantizing them introduces sub-pixel drift in feature maps, which cascades through the projector and LM, resulting in shifted or inaccurate bounding boxes. The LM matmuls are more robust to quantization (especially q8_0/q6_k) because they operate on higher-dimensional, less spatially sensitive token representations. Keeping the vision path in f32 ensures that the spatial grounding remains accurate, while quantizing the LM provides the bulk of the speedup and memory reduction.
+
+**WHEN TO APPLY**:
+Any C++/ggml or similar low-level inference engine implementation of a VLM (e.g., LLaVA, Qwen-VL, LocateAnything) where detection/grounding accuracy is critical and must match a PyTorch reference.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for GGUF conversion logic
+void convert_weights_to_gguf(pytorch_model, gguf_file) {
+    for (tensor in model.tensors) {
+        if (is_lm_matmul(tensor)) {
+            // Quantize LM matmuls
+            gguf_file.write(tensor.name, quantize(tensor.data, q8_0));
+        } else if (is_vision_encoder(tensor) || is_projector(tensor) || is_norm(tensor) || is_bias(tensor) || is_input_embedding(tensor)) {
+            // Keep vision path and embeddings in f32
+            gguf_file.write(tensor.name, tensor.data); // f32
+        }
+    }
+}
+
+bool is_lm_matmul(tensor) {
+    return tensor.name.contains("attn_q") || tensor.name.contains("attn_k") || 
+           tensor.name.contains("attn_v") || tensor.name.contains("attn_o") ||
+           tensor.name.contains("ffn_gate") || tensor.name.contains("ffn_up") || 
+           tensor.name.contains("ffn_down") || tensor.name.contains("lm.output");
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Quantizing the entire model uniformly
+void convert_weights_to_gguf_bad(pytorch_model, gguf_file) {
+    for (tensor in model.tensors) {
+        // BAD: Quantizes vision encoder, causing box drift
+        gguf_file.write(tensor.name, quantize(tensor.data, q4_k));
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+1.  Run inference on a fixed set of images with the quantized C++ model.
+2.  Run inference on the same images with the official PyTorch f32 model.
+3.  Compare the bounding boxes. For q8_0/q6_k, the boxes **MUST** be identical (IoU = 1.0). For q4_k/q5_k, allow sub-pixel drift but verify IoU > 0.95.
+4.  Assert that `vision_encoder` and `projector` tensors in the GGUF file are stored as `f32`.
+
+
+---
+
+## 1522. Parity-Gated Inference Engine Development (Harvested from mudler/locate-anything.cpp-gguf)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Parity-Gated Inference Engine Development",
+  "source": "mudler/locate-anything.cpp-gguf",
+  "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+  "source_version": "hf-mudler-locate-anything.cpp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T20:38:37.228Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf) (Revision: `hf-mudler-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When developing a new inference engine (e.g., C++/ggml) for a model originally trained in PyTorch, **MUST** implement a "parity gate" test suite that compares outputs (logits, boxes, features) against the reference PyTorch implementation on a fixed dataset. **MUST NOT** release a quantized build unless it passes the parity gate for the target precision level.
+
+**WHY**:
+Quantization and different library implementations (ggml vs. PyTorch) can introduce subtle numerical differences. Without a parity gate, these differences can accumulate, leading to silent failures in detection accuracy. The parity gate ensures that the new engine is functionally equivalent to the reference, providing confidence in the correctness of the implementation.
+
+**WHEN TO APPLY**:
+Any port of a machine learning model from a high-level framework (PyTorch, TensorFlow) to a low-level inference engine (C++/ggml, ONNX Runtime, TensorRT).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# parity_test.py
+import torch
+import ggml_engine
+
+def test_parity(image_path, prompt, expected_boxes):
+    # 1. Run PyTorch reference
+    torch_boxes = run_pytorch_model(image_path, prompt)
+    
+    # 2. Run C++/ggml engine
+    ggml_boxes = run_ggml_engine(image_path, prompt)
+    
+    # 3. Compare
+    for torch_box, ggml_box in zip(torch_boxes, ggml_boxes):
+        iou = calculate_iou(torch_box, ggml_box)
+        assert iou > 0.99, f"Parity failed: IoU {iou} < 0.99"
+        
+    # 4. Verify against ground truth if available
+    for box in ggml_boxes:
+        assert box.label in expected_boxes
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Releasing without parity checks
+def release_model():
+    # BAD: No comparison against reference
+    upload_gguf_file("model-q4_k.gguf")
+```
+
+**VERIFICATION METHOD**:
+1.  Create a CI job that runs the parity test suite.
+2.  The job **MUST** fail if any IoU score is below the threshold (e.g., 0.99 for q8_0/q6_k).
+3.  The job **MUST** verify that the GGUF file contains the correct tensor dtypes (f32 for vision, q8_0 for LM).

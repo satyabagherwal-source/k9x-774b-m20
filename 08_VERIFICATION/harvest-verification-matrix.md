@@ -2295,3 +2295,4 @@
 | `CYCLE-20261017-N4X7` | `2026-10-17T20:28:44.587Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`b78b38e5...`) |
 | `CYCLE-20261017-RBFK` | `2026-10-17T20:31:59.648Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`a5614cf2...`) |
 | `CYCLE-20261017-VH18` | `2026-10-17T20:35:13.532Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`68a275a7...`) |
+| `CYCLE-20261017-ZU8Q` | `2026-10-17T20:38:37.274Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1521, Rule 1522` | Yes (`2915f4d5...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T20:35:13.500Z",
+  "last_updated": "2026-10-17T20:38:37.259Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16169,7 +16169,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "1629d037fd493ade88f1b8a1a6454937a0c6da802a4b7290852300021dc4763a",
+      "content_hash": "2915f4d55312852b5ba528ca2c1ac141525afa6063eec0e0bba812fe3cc195c1",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -16202,6 +16202,16 @@
           "number": 1451,
           "title": "Parity-Gated Inference for Critical Spatial Tasks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1521,
+          "title": "Selective Quantization for Vision-Language Model Parity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1522,
+          "title": "Parity-Gated Inference Engine Development",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16221,7 +16231,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-17T12:40:28.973Z",
+      "verified_at": "2026-10-17T20:38:37.255Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T20:35:13.539Z",
+  "last_updated": "2026-10-17T20:38:37.281Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1742,14 +1742,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "1629d037fd493ade88f1b8a1a6454937a0c6da802a4b7290852300021dc4763a",
-      "verified_at": "2026-10-17T12:40:29.013Z",
+      "content_hash": "2915f4d55312852b5ba528ca2c1ac141525afa6063eec0e0bba812fe3cc195c1",
+      "verified_at": "2026-10-17T20:38:37.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T12:40:29.013Z"
+      "last_updated": "2026-10-17T20:38:37.280Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",

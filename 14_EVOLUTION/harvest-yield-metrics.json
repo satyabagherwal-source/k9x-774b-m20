@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:35:13.537Z",
-  "total_cycles_completed": 2272,
-  "total_learnings_persisted": 2272,
-  "total_rules_promoted": 1300,
+  "last_updated": "2026-10-17T20:38:37.279Z",
+  "total_cycles_completed": 2273,
+  "total_learnings_persisted": 2273,
+  "total_rules_promoted": 1302,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:34:11.508Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:37:36.829Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1403,6 +1396,13 @@
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-zai-org-glm-5-3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:38:37.279Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
