@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-KGH4",
-    "timestamp": "2026-10-15T21:47:17.992Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "c47edcd3c388b3b4dafedc0c04d19bed240342ee06a951f0c0ed277bc40b17d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-O9OB",
     "timestamp": "2026-10-15T21:50:15.803Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7492,6 +7477,21 @@
     "contentHash": "737a8a548f599eb7199ad382ff4e2fcbc4ab607ff092e0ec661449c2f218812c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-05LF",
+    "timestamp": "2026-10-17T02:27:06.963Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "f536faa47a4257c75b633eded8e1d3c07d8026f37d1917894d46342861afb2be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

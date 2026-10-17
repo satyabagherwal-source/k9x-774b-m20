@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:23:02.483Z",
+  "last_updated": "2026-10-17T02:27:06.940Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14619,7 +14619,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "97c4c0b8f8271cfd6503783b780323bfdd802cd78e93b25c66182b896256d92f",
+      "content_hash": "f536faa47a4257c75b633eded8e1d3c07d8026f37d1917894d46342861afb2be",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -14636,6 +14636,16 @@
         {
           "number": 1051,
           "title": "KV-Cache Memory Boundaries & OOM Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1298,
+          "title": "Zero-Leak Structural Prompt Template Sanitization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1299,
+          "title": "Autoregressive KV-Cache Dimension Invariant Verification",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14656,7 +14666,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-16T18:32:36.984Z",
+      "verified_at": "2026-10-17T02:27:06.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

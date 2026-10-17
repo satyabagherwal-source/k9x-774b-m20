@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:23:02.520Z",
-  "total_cycles_completed": 1947,
-  "total_learnings_persisted": 1947,
-  "total_rules_promoted": 1065,
+  "last_updated": "2026-10-17T02:27:06.970Z",
+  "total_cycles_completed": 1948,
+  "total_learnings_persisted": 1948,
+  "total_rules_promoted": 1067,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:51:09.088Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T14:54:06.754Z",
       "repository": "apple/LensVLM-9B",
@@ -1403,6 +1396,13 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-openai-gpt-oss-20b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:27:06.970Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
