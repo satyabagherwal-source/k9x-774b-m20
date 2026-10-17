@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:06:43.306Z",
-  "total_cycles_completed": 1942,
-  "total_learnings_persisted": 1942,
+  "last_updated": "2026-10-17T02:09:48.654Z",
+  "total_cycles_completed": 1943,
+  "total_learnings_persisted": 1943,
   "total_rules_promoted": 1060,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:35:26.400Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T14:38:32.000Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T02:06:43.306Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:09:48.654Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1965,3 +1965,4 @@
 | `CYCLE-20261017-1COW` | `2026-10-17T02:00:03.200Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`ad218b29...`) |
 | `CYCLE-20261017-5DDW` | `2026-10-17T02:03:10.724Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`4e9f4717...`) |
 | `CYCLE-20261017-9XEU` | `2026-10-17T02:06:43.302Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`c36a1e31...`) |
+| `CYCLE-20261017-DWFE` | `2026-10-17T02:09:48.650Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`6aba8d74...`) |
