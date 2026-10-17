@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-AL0Z",
-    "timestamp": "2026-10-16T19:07:19.667Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "068bbe5536c28a08332da29a5a6474431d3078d71bf86a0ca9e93c1cc926178c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-EKHM",
     "timestamp": "2026-10-16T19:10:25.594Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "33e79a917c1627899beca648d39ed6062cfdd856374477b79eacf887ae8feb23",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-VO5X",
+    "timestamp": "2026-10-17T23:23:20.469Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "1d64a93ad9fe5da8e44d1405d2933f81b8f1ff1ba720979a7c376744d047e9ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

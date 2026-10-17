@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T23:19:55.599Z",
+  "last_updated": "2026-10-17T23:23:20.442Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18776,7 +18776,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "e1dd60682031d084fb4a395902922ecf1bf53dfe90f99e544aa0baa3ce6ade2d",
+      "content_hash": "1d64a93ad9fe5da8e44d1405d2933f81b8f1ff1ba720979a7c376744d047e9ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -18911,6 +18911,21 @@
           "number": 1482,
           "title": "**Context Length Alignment Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1560,
+          "title": "Consistent Token‑ID Mapping Across All Sub‑systems",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1561,
+          "title": "Enforce Down‑sampling Ratio Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1562,
+          "title": "Preserve Context‑Length Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18931,7 +18946,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-17T15:29:52.347Z",
+      "verified_at": "2026-10-17T23:23:20.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:19:55.624Z",
-  "total_cycles_completed": 2319,
-  "total_learnings_persisted": 2319,
-  "total_rules_promoted": 1343,
+  "last_updated": "2026-10-17T23:23:20.476Z",
+  "total_cycles_completed": 2320,
+  "total_learnings_persisted": 2320,
+  "total_rules_promoted": 1346,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:09:34.636Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:13:47.842Z",
       "repository": "google/vit-base-patch16-224",
@@ -1403,6 +1396,13 @@
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:23:20.476Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
