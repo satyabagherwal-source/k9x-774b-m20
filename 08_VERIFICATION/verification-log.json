@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-J3J2",
-    "timestamp": "2026-10-16T09:54:04.574Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "e5e7277d6e3be4b6588d0133f588f8316865ab50a16e2ec0687ad19e6f4fdbcc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-N4WV",
     "timestamp": "2026-10-16T09:57:12.991Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B",
     "learningId": "learn-huggingface-autotrust-jev-35b",
     "contentHash": "501918ebc31ad2f639bd1733418021cde8339c5fc69c818a2bd4fc6c69beedb7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-N91R",
+    "timestamp": "2026-10-17T14:24:54.927Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "b197b6ae12392fc3c82c8548a9b1fe0ccec78e606e6f4ff9fc59a77e40d38191",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
