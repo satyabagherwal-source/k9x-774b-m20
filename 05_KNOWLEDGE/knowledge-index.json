@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T21:12:18.007Z",
+  "last_updated": "2026-10-17T21:17:25.637Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42552,7 +42552,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "533164c398eb033e9a2313f140c5ce5ac98cf400f0797b5e05c0007af76606d3",
+      "content_hash": "ebe22ea9e3ba004239ee43ffaabab11bb526d41102b9d0dd3047dfba64704b72",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -42565,6 +42565,21 @@
           "number": 1004,
           "title": "Linear Attention State Precision Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1526,
+          "title": "Asymmetric Quantization Invariant for Mixture-of-Experts (MoE) Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1527,
+          "title": "Recurrent SSM State Accumulation Invariant in Hybrid Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1528,
+          "title": "Multi-EOS Token Termination Completeness",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42572,7 +42587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T13:32:08.732Z",
+      "verified_at": "2026-10-17T21:17:25.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
