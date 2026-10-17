@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T17:14:16.985Z",
-  "total_cycles_completed": 2210,
-  "total_learnings_persisted": 2210,
+  "last_updated": "2026-10-17T17:17:22.700Z",
+  "total_cycles_completed": 2211,
+  "total_learnings_persisted": 2211,
   "total_rules_promoted": 1281,
   "history": [
-    {
-      "timestamp": "2026-10-17T05:47:59.636Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T05:51:03.101Z",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T17:14:16.985Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T17:17:22.700Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

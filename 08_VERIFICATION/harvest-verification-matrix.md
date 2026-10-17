@@ -2233,3 +2233,4 @@
 | `CYCLE-20261017-GRUI` | `2026-10-17T17:07:50.394Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`163d2232...`) |
 | `CYCLE-20261017-L0F8` | `2026-10-17T17:11:08.132Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1502` | Yes (`26585636...`) |
 | `CYCLE-20261017-P252` | `2026-10-17T17:14:16.982Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`c272470c...`) |
+| `CYCLE-20261017-T1FS` | `2026-10-17T17:17:22.696Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`f414700e...`) |

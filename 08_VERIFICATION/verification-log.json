@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-NUL0",
-    "timestamp": "2026-10-16T12:45:43.956Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "229d959a4d50204f2c3f9cf91c8e346e9f47f917f5c78682a04a538c2e1b5b8d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-RUVF",
     "timestamp": "2026-10-16T12:48:50.955Z",
     "repository": "autotrust/GEV-26B-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
     "contentHash": "c272470c5e7bca118e254a63ce21b7f5384839a67d7c79a812fa581eaabb4fef",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-T1FS",
+    "timestamp": "2026-10-17T17:17:22.696Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "f414700ea274254c567ad6d8a81527a048054ab34bdeee334ba45803eb0dc3bc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
