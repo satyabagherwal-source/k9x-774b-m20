@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-7BM0",
-    "timestamp": "2026-10-16T12:32:52.872Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "fbf012963ade4fbd65d27c8bd657e4343dfaf6d72544f0c9319c812ffabbfe33",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-BDTT",
     "timestamp": "2026-10-16T12:36:02.369Z",
     "repository": "zai-org/GLM-5.3",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
     "contentHash": "49e750293feb4e57052b4a75b29b7603a29d37aa38471288b2225d12d3ea826a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-COK5",
+    "timestamp": "2026-10-17T17:04:39.509Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "675baba1fba960579a9a94754835a91124658e24d9ef30e45560aae91cc893c9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
