@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T10:12:12.431Z",
-  "total_cycles_completed": 2084,
-  "total_learnings_persisted": 2084,
+  "last_updated": "2026-10-17T10:15:05.601Z",
+  "total_cycles_completed": 2085,
+  "total_learnings_persisted": 2085,
   "total_rules_promoted": 1205,
   "history": [
-    {
-      "timestamp": "2026-10-16T23:01:09.631Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T23:05:24.313Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T10:15:05.601Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

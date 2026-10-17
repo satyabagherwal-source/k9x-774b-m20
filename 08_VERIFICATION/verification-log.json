@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-LD13",
-    "timestamp": "2026-10-16T05:15:54.039Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "3cd15ebb2c27d917acea8e32b5abc454cae077be763d66ef48b43ec5e45a8829",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-P1GM",
     "timestamp": "2026-10-16T05:18:45.670Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "dd693e0b26b5efa7dcec566fc7209dd73e311eaf621050a60a53b390ab954e14",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-PZ7H",
+    "timestamp": "2026-10-17T10:15:05.597Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "9542eb3c2d30e0281a1a0142c1177b4a7152ac89c895034ffa584a85306d68c5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
