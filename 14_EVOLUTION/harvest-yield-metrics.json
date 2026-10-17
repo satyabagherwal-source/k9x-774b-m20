@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:07:02.172Z",
-  "total_cycles_completed": 2315,
-  "total_learnings_persisted": 2315,
-  "total_rules_promoted": 1337,
+  "last_updated": "2026-10-17T23:10:12.802Z",
+  "total_cycles_completed": 2316,
+  "total_learnings_persisted": 2316,
+  "total_rules_promoted": 1340,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:56:36.595Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:59:47.018Z",
       "repository": "google/gemma-4-26B-A4B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T23:07:02.172Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:10:12.802Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

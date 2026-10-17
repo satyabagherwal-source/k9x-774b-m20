@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T23:07:02.140Z",
+  "last_updated": "2026-10-17T23:10:12.777Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9627,7 +9627,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "9acf2453fff88bebb0276bdd423c06ea146e6a3d4e86bbc0aeee31fa936e6ccb",
+      "content_hash": "3efb3455deb90fa3180b17801383e4c6e009adf5f772f169ed70297080b50a1a",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -9776,6 +9776,21 @@
           "number": 1480,
           "title": "Sampling Hyper‑Parameters Must Not Exceed Model Context Length",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1554,
+          "title": "Consistent Data‑Type Alignment Across Model, Tokenizer, and Serving",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1555,
+          "title": "Tokenizer‑Model Token ID Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1556,
+          "title": "Generation Stop‑Token Coverage",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9796,7 +9811,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-17T15:17:15.115Z",
+      "verified_at": "2026-10-17T23:10:12.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

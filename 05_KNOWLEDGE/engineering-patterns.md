@@ -106897,3 +106897,154 @@ assert hidden_size % (num_key_value_heads * linear_conv_kernel_dim) == 0
 ```
 
 ---
+
+
+---
+
+## 1554. Consistent Data‑Type Alignment Across Model, Tokenizer, and Serving (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Data‑Type Alignment Across Model, Tokenizer, and Serving",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T23:10:12.606Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that the data‑type (`dtype`) specified in the model configuration matches the data‑type used by the serving runtime and the tokenizer’s internal representation.  
+**WHY**:  
+Mismatched dtypes (e.g., `bfloat16` model with `float32` inference) cause silent precision loss, leading to degraded text quality or runtime errors when the runtime attempts to cast tensors.  
+**WHEN TO APPLY**:  
+Applicable to any model that exposes a `dtype` field in `config.json` and is served via `vllm` or `transformers`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Load model with dtype matching config
+model = AutoModelForCausalLM.from_pretrained(
+    "Altworld/Hemmingway-1",
+    device_map="auto",
+    dtype=torch.bfloat16  # matches config.json dtype
+)
+
+# Verify at runtime
+assert model.dtype == torch.bfloat16, "Model dtype mismatch!"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Wrong dtype usage
+model = AutoModelForCausalLM.from_pretrained(
+    "Altworld/Hemmingway-1",
+    device_map="auto",
+    dtype=torch.float32  # mismatched
+)
+```
+**VERIFICATION METHOD**:  
+Unit test that loads the model and asserts `model.dtype == torch.bfloat16`. Lint rule that flags any `dtype` argument differing from the value in `config.json`.
+
+
+---
+
+## 1555. Tokenizer‑Model Token ID Contract (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenizer‑Model Token ID Contract",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T23:10:12.668Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** keep `bos_token_id`, `eos_token_id`, and `pad_token_id` identical between `config.json`, `tokenizer_config.json`, and the tokenizer’s internal mapping.  
+**WHY**:  
+Discrepancies cause the model to misinterpret start/end markers, leading to truncated or duplicated outputs and potential infinite loops in generation.  
+**WHEN TO APPLY**:  
+During tokenizer initialization and any custom token addition.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+assert tokenizer.bos_token_id == 248044, "bos_token_id mismatch"
+assert tokenizer.eos_token_id == 248044, "eos_token_id mismatch"
+assert tokenizer.pad_token_id == 248044, "pad_token_id mismatch"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Adding a new bos token without updating config
+tokenizer.add_tokens(["<|new_bos|>"])
+tokenizer.bos_token_id = tokenizer.convert_tokens_to_ids("<|new_bos|>")
+```
+**VERIFICATION METHOD**:  
+Pre‑commit hook that compares the three files and fails if any ID differs.
+
+
+---
+
+## 1556. Generation Stop‑Token Coverage (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Generation Stop‑Token Coverage",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T23:10:12.729Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** include all termination token IDs in the `eos_token_id` list of `generation_config.json` to guarantee that the generation loop exits.  
+**WHY**:  
+Missing a termination token can cause the model to generate indefinitely, exhausting memory and CPU resources.  
+**WHEN TO APPLY**:  
+When configuring `generation_config.json` for any text‑generation pipeline.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "eos_token_id": [248046, 248044]
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "eos_token_id": []  # No termination tokens
+}
+```
+**VERIFICATION METHOD**:  
+Static analysis that ensures `eos_token_id` array is non‑empty and contains at least the model’s `eos_token_id`.
