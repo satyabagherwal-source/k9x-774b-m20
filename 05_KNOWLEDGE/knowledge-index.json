@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:29:48.583Z",
+  "last_updated": "2026-10-17T08:34:25.394Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18490,7 +18490,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "911040ad619c244a2049ff9ff1f15f2c748daac765c9a7c49607cb330b214233",
+      "content_hash": "172eaf05d3b3b03fdab4ab9d8f23d0fd580bf505cde1f1cee9a4ac577a37b2fd",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [
@@ -18507,6 +18507,21 @@
         {
           "number": 1278,
           "title": "GGUF Quantization Precision Map Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1391,
+          "title": "Post-Truncation L2-Normalization for Matryoshka Embeddings",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1392,
+          "title": "GGUF Memory Alignment and Struct Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1393,
+          "title": "Selective Dynamic Quantization for Projection & Pooling Bridges",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -18528,7 +18543,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-17T00:40:23.932Z",
+      "verified_at": "2026-10-17T08:34:25.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

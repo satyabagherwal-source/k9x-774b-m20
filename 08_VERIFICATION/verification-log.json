@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-K3OQ",
-    "timestamp": "2026-10-16T03:22:56.810Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "5f72df1a72eb1e75e26131a821eab9464d2b609364ca5f029737bad28848e9a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-OE68",
     "timestamp": "2026-10-16T03:26:17.024Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7490,6 +7475,21 @@
     "repository": "google/embeddinggemma-2",
     "learningId": "learn-huggingface-google-embeddinggemma-2",
     "contentHash": "b62cacdcdc7b01a6a7b7240a2285a71be1be5e6c4dd78913eb23f1e58ea31b58",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4IKR",
+    "timestamp": "2026-10-17T08:34:25.419Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "172eaf05d3b3b03fdab4ab9d8f23d0fd580bf505cde1f1cee9a4ac577a37b2fd",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

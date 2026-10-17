@@ -2078,3 +2078,4 @@
 | `CYCLE-20261017-OPTP` | `2026-10-17T08:22:08.317Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1382, Rule 1383, Rule 1384` | Yes (`662c7647...`) |
 | `CYCLE-20261017-UMBC` | `2026-10-17T08:26:43.704Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1385, Rule 1386, Rule 1387` | Yes (`6e3d48ae...`) |
 | `CYCLE-20261017-YKZ7` | `2026-10-17T08:29:48.595Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1388, Rule 1389, Rule 1390` | Yes (`b62cacdc...`) |
+| `CYCLE-20261017-4IKR` | `2026-10-17T08:34:25.419Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1391, Rule 1392, Rule 1393` | Yes (`172eaf05...`) |
