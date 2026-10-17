@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-96MU",
-    "timestamp": "2026-10-16T15:22:17.430Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "371da13f4013e7e8b0c76949ecb4b915ab688c7c5f3618d3a7ac4b6fdd905d86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-DAFL",
     "timestamp": "2026-10-16T15:25:28.977Z",
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-openai-community-gpt2",
     "contentHash": "913029f952db99de458fb28629cbc57d664265ea90f8b4b5843fa18c4fd7293f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-66BD",
+    "timestamp": "2026-10-17T19:47:33.625Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "3e048692552f41ca0b62e9f019049cecee163f07e6a1ea11624daf11c714410e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
