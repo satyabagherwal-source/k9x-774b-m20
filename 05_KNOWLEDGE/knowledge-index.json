@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T16:51:51.531Z",
+  "last_updated": "2026-10-17T16:55:02.302Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14060,7 +14060,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "fb4e974744ba5eead87834b6cc938f6c9d10b1be112aea4724f0e69551d25b6e",
+      "content_hash": "26b3b4e903b59529229401f64822c3ec8a964328f984ba626d4a33e7454fb830",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
@@ -14097,7 +14097,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-10-17T08:52:24.117Z",
+      "verified_at": "2026-10-17T16:55:02.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
