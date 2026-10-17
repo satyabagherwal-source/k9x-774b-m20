@@ -17947,5 +17947,20 @@
     "downloads": 0,
     "qualityScore": 1740,
     "discoveredAt": "2026-10-17T08:59:31.639Z"
+  },
+  {
+    "name": "Pake",
+    "fullName": "tw93/Pake",
+    "url": "https://github.com/tw93/Pake",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.",
+    "stars": 62146,
+    "forks": 12783,
+    "openIssues": 1,
+    "language": "Rust",
+    "qualityScore": 35060,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-17T12:58:44.741Z"
   }
 ]
