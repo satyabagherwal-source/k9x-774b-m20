@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0BL6",
-    "timestamp": "2026-10-16T02:39:34.314Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-    "contentHash": "f3f641a7762289d79c4500da184a1fe7baaff64d951aa1ea87d0966b4d43fa18",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4AQK",
     "timestamp": "2026-10-16T02:42:39.837Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
     "contentHash": "18ee56fb366ea495cb594dcd95aa86270743dfcdb4cfb70608edf2d58ffa0bc0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-1W6C",
+    "timestamp": "2026-10-17T07:36:23.844Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "0423c3e66935336ef6e029d88829dd55ced9058e3ae238b560a7950d2ce27d60",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

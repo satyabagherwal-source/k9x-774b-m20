@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T07:32:04.383Z",
+  "last_updated": "2026-10-17T07:36:23.853Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -663,14 +663,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "content_hash": "d02ba248e6e9eac52be181442ee1a4a9fb94b554c7421c7a33c6ac6c317cb9fc",
-      "verified_at": "2026-10-16T23:53:51.690Z",
+      "content_hash": "0423c3e66935336ef6e029d88829dd55ced9058e3ae238b560a7950d2ce27d60",
+      "verified_at": "2026-10-17T07:36:23.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T23:53:51.690Z"
+      "last_updated": "2026-10-17T07:36:23.853Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",

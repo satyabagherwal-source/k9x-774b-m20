@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:32:04.355Z",
+  "last_updated": "2026-10-17T07:36:23.820Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18412,7 +18412,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "d02ba248e6e9eac52be181442ee1a4a9fb94b554c7421c7a33c6ac6c317cb9fc",
+      "content_hash": "0423c3e66935336ef6e029d88829dd55ced9058e3ae238b560a7950d2ce27d60",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [
@@ -18429,6 +18429,16 @@
         {
           "number": 1105,
           "title": "Text Encoder Quantization Trade-off Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1358,
+          "title": "Dynamic Sensitivity-Guided Bit-Width Allocation for Multi-Modal Diffusion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1359,
+          "title": "Heterogeneous Memory Alignment and Decoupled Modular Loading Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -18450,7 +18460,7 @@
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
       ],
-      "verified_at": "2026-10-16T23:53:51.652Z",
+      "verified_at": "2026-10-17T07:36:23.815Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
