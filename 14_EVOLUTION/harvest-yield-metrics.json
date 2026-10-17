@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T17:23:40.530Z",
-  "total_cycles_completed": 2213,
-  "total_learnings_persisted": 2213,
+  "last_updated": "2026-10-17T17:26:54.334Z",
+  "total_cycles_completed": 2214,
+  "total_learnings_persisted": 2214,
   "total_rules_promoted": 1281,
   "history": [
-    {
-      "timestamp": "2026-10-17T05:58:20.067Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T06:01:19.863Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T17:23:40.530Z",
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T17:26:54.334Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

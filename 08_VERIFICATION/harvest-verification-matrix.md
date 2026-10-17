@@ -2236,3 +2236,4 @@
 | `CYCLE-20261017-T1FS` | `2026-10-17T17:17:22.696Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`f414700e...`) |
 | `CYCLE-20261017-X2DK` | `2026-10-17T17:20:30.536Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`9393584b...`) |
 | `CYCLE-20261017-14Z1` | `2026-10-17T17:23:40.525Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`c67cb622...`) |
+| `CYCLE-20261017-5AII` | `2026-10-17T17:26:54.330Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`da445aa2...`) |
