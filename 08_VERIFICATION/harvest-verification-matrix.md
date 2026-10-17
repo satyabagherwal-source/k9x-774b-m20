@@ -2337,3 +2337,4 @@
 | `CYCLE-20261017-YB37` | `2026-10-17T22:57:23.875Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`c7604653...`) |
 | `CYCLE-20261017-2I62` | `2026-10-17T23:00:39.674Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`464cd556...`) |
 | `CYCLE-20261017-6FEK` | `2026-10-17T23:03:42.716Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`d418d940...`) |
+| `CYCLE-20261017-APAT` | `2026-10-17T23:07:02.165Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 525, Rule 1553, Rule EXISTING` | Yes (`d6c116fb...`) |

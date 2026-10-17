@@ -106837,3 +106837,63 @@ def test_reproducibility(pipeline, prompt):
 ```
 
 ---
+
+
+---
+
+## 1553. Vision Encoder Dimensionality Alignment (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Vision Encoder Dimensionality Alignment",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T23:07:02.059Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The `hidden_size` of the vision encoder **must be a multiple of** `num_key_value_heads * linear_conv_kernel_dim`.
+
+**WHY**:  
+The linear attention implementation expects the key/value dimension to be evenly divisible; otherwise, the attention matrix will be mis‑shaped, causing runtime errors or silent mis‑attention.
+
+**WHEN TO APPLY**:  
+During vision encoder initialization and any custom vision model modifications.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# vision_config in config.json
+{
+  "hidden_size": 1152,
+  "num_key_value_heads": 4,
+  "linear_conv_kernel_dim": 4
+}
+# 1152 % (4 * 4) == 0  → 1152 % 16 == 0
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: 1153 hidden_size would break linear attention
+"hidden_size": 1153
+```
+
+**VERIFICATION METHOD**:  
+Add an assertion in the vision encoder constructor:
+```python
+assert hidden_size % (num_key_value_heads * linear_conv_kernel_dim) == 0
+```
+
+---

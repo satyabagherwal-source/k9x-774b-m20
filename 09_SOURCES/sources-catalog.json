@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "a236741871390458858b936cf1df3afd2e89d79a48ea5aa7202e53f221443cc4",
-    "lastHarvestedAt": "2026-10-17T15:13:51.990Z",
+    "contentHash": "d6c116fb7765e712582d25df0f065eb8ad48eed00e5e887e97bb60ff777f3053",
+    "lastHarvestedAt": "2026-10-17T23:07:02.171Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-QC95",
-    "timestamp": "2026-10-16T18:51:35.177Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "4eed39aa1679972478c0f88202b3d3e9b9bb06b67d8f7b877dd15043bdfcc7e5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-UIWK",
     "timestamp": "2026-10-16T18:54:50.420Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7492,6 +7477,21 @@
     "contentHash": "d418d9402ad30078534bba71db02cc773c47fc90c0af5f3fedb73b64572ee4d8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-APAT",
+    "timestamp": "2026-10-17T23:07:02.165Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "d6c116fb7765e712582d25df0f065eb8ad48eed00e5e887e97bb60ff777f3053",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

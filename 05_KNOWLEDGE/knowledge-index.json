@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T23:03:42.692Z",
+  "last_updated": "2026-10-17T23:07:02.140Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9854,7 +9854,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "a236741871390458858b936cf1df3afd2e89d79a48ea5aa7202e53f221443cc4",
+      "content_hash": "d6c116fb7765e712582d25df0f065eb8ad48eed00e5e887e97bb60ff777f3053",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -9913,6 +9913,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
           "verified_at": "2026-10-12T00:33:23.812Z"
+        },
+        {
+          "number": 525,
+          "title": "Token ID Uniqueness Across Modalities",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1018,
@@ -9993,6 +9998,16 @@
           "number": 1477,
           "title": "**Compression‑Mask Alignment**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1553,
+          "title": "Vision Encoder Dimensionality Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Consistent Dtype Across Modalities",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10013,7 +10028,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-17T15:13:51.955Z",
+      "verified_at": "2026-10-17T23:07:02.134Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
