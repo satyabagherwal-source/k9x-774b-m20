@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T12:43:38.250Z",
+  "last_updated": "2026-10-17T12:46:30.202Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1757,14 +1757,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
-      "content_hash": "40714af897cba0d670262bce5b9395bda8e12462cd3c963730e92b30d75b4ede",
-      "verified_at": "2026-10-17T04:37:35.182Z",
+      "content_hash": "76c491356daa14dd9af485c3a4236a9b1998eec18de942676c5643ae1669efa9",
+      "verified_at": "2026-10-17T12:46:30.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T04:37:35.182Z"
+      "last_updated": "2026-10-17T12:46:30.202Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",

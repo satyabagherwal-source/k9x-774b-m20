@@ -2153,3 +2153,4 @@
 | `CYCLE-20261017-S7NH` | `2026-10-17T12:36:47.933Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`ac8328c9...`) |
 | `CYCLE-20261017-WY8C` | `2026-10-17T12:40:29.004Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1450, Rule 1451` | Yes (`1629d037...`) |
 | `CYCLE-20261017-1091` | `2026-10-17T12:43:38.245Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`2be040c8...`) |
+| `CYCLE-20261017-4OXI` | `2026-10-17T12:46:30.198Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`76c49135...`) |
