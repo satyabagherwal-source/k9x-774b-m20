@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:04:10.128Z",
+  "last_updated": "2026-10-17T15:07:35.386Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42597,7 +42597,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "f824f0cf9ff41dd84ee4e85b92226c8c8a07af6d3f5501015adfbbb403b90b5f",
+      "content_hash": "fc7e5df74e373ee032d702891cfb0867800c82955fadf196d264e69dd6ecb2e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -42606,7 +42606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T06:39:23.781Z",
+      "verified_at": "2026-10-17T15:07:35.378Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
