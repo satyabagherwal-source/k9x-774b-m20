@@ -2244,3 +2244,4 @@
 | `CYCLE-20261017-POXS` | `2026-10-17T17:42:46.144Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`f2913a4f...`) |
 | `CYCLE-20261017-U3WM` | `2026-10-17T17:46:12.166Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`cc118c3d...`) |
 | `CYCLE-20261017-YISK` | `2026-10-17T17:49:38.084Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1506, Rule 1507` | Yes (`ac46ae6a...`) |
+| `CYCLE-20261017-2FJB` | `2026-10-17T17:52:40.487Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`2f4ccb42...`) |
