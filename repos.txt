@@ -4072,3 +4072,7 @@ https://github.com/Zen4-bit/Proxima
 # --- Automatically Discovered by AI Scout Engine [2026-10-16T17:19:10.398Z] ---
 # [AI-AGENTS] dapr/dapr (14074 score) - Dapr is a portable runtime for building distributed applications across cloud an
 https://github.com/dapr/dapr
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-17T01:12:20.557Z] ---
+# [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-V-4.7-35B-A3B-gguf (3490 score) - Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-35B-A3B-gguf (149 likes, 1250
+https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf

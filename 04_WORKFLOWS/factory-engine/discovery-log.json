@@ -17887,5 +17887,17 @@
     "qualityScore": 14074,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-16T17:18:11.500Z"
+  },
+  {
+    "name": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "fullName": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-35B-A3B-gguf (149 likes, 125004 downloads)",
+    "likes": 149,
+    "downloads": 125004,
+    "qualityScore": 3490,
+    "discoveredAt": "2026-10-17T01:12:20.556Z"
   }
 ]

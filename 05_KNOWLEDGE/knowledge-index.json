@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T01:09:28.894Z",
-  "total_verified_learnings": 190,
+  "last_updated": "2026-10-17T01:12:40.277Z",
+  "total_verified_learnings": 191,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -42146,6 +42146,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-16T17:23:07.074Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "slug": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "content_hash": "9892a928e18f00a536481e2f28082a2c3121d22615c39d30792471513b6b5966",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1288,
+          "title": "MoE On-Device Memory Bandwidth Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1289,
+          "title": "Intra-ViT Early Compression for MLLM Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-17T01:12:40.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

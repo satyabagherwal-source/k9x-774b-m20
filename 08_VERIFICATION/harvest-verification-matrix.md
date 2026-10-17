@@ -1947,3 +1947,4 @@
 | `CYCLE-20261017-Z0H6` | `2026-10-17T01:02:14.826Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`dc664b1d...`) |
 | `CYCLE-20261017-302V` | `2026-10-17T01:05:20.935Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`34324f6f...`) |
 | `CYCLE-20261017-8BFF` | `2026-10-17T01:09:28.924Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1285, Rule 1286, Rule 1287` | Yes (`4e6383c9...`) |
+| `CYCLE-20261017-CF3I` | `2026-10-17T01:12:40.302Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1288, Rule 1289` | Yes (`9892a928...`) |

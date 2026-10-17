@@ -1648,5 +1648,15 @@
     "contentHash": "6da40ca2bf10c2428cca93e8dfcf569796c239cbc55bb0f7ecf3e2d79d7b7d35",
     "lastHarvestedAt": "2026-10-16T17:23:07.106Z",
     "learningId": "learn-github-dapr-dapr"
+  },
+  "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf": {
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+    "license": "Open-Source",
+    "contentHash": "9892a928e18f00a536481e2f28082a2c3121d22615c39d30792471513b6b5966",
+    "lastHarvestedAt": "2026-10-17T01:12:40.306Z",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   }
 }
