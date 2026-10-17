@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T22:23:07.119Z",
+  "last_updated": "2026-10-17T22:26:19.192Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -348,14 +348,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "f3479cb4e289d43e275fba19da99d255f25ef4851745bf219490ea2ca0aaf24e",
-      "verified_at": "2026-10-17T14:35:43.383Z",
+      "content_hash": "265fec8fe61c162de6b7b69fae8e168fb505ee9cacdf514ec3b16d0848da5278",
+      "verified_at": "2026-10-17T22:26:19.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T14:35:43.383Z"
+      "last_updated": "2026-10-17T22:26:19.192Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
