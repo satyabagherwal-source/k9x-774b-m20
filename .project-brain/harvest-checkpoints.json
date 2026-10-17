@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T11:18:31.409Z",
+  "last_updated": "2026-10-17T11:21:33.652Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2353,14 +2353,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "8f0d22a7239fcfbb9edc6796bd0c070cf7a258003a7c945a9820aefde5f22e7e",
-      "verified_at": "2026-10-17T03:14:22.204Z",
+      "content_hash": "ee6e0dae061cf8da326aeace3a8088898f4f614bc0b445d93bf3f38a38f68f5e",
+      "verified_at": "2026-10-17T11:21:33.652Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T03:14:22.204Z"
+      "last_updated": "2026-10-17T11:21:33.652Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
