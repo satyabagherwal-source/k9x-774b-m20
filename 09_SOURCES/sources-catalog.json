@@ -1205,8 +1205,8 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "f0eb460c34dcc5b92124718788810abf0a237303efb9756fc8fc43c7c2609164",
-    "lastHarvestedAt": "2026-10-17T03:55:57.119Z",
+    "contentHash": "448c26b08f269965bddd56f26d4e8185cb33a11ccc24d69e9bb6c38eb186a35e",
+    "lastHarvestedAt": "2026-10-17T12:02:58.726Z",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small"
   },
   "hf-argmaxinc-whisperkit-coreml": {

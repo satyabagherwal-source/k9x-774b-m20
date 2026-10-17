@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-95YH",
-    "timestamp": "2026-10-16T06:58:23.465Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "997f425f3b79c30905038acfd53456bbe3ee8cec9327932197288e465ac8aaed",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-FSO5",
     "timestamp": "2026-10-16T07:03:32.837Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "94adc50f2683d85af507a8dd912ac932a80bb2a224539b28941846d58ec22cca",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-KPWH",
+    "timestamp": "2026-10-17T12:02:58.721Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "448c26b08f269965bddd56f26d4e8185cb33a11ccc24d69e9bb6c38eb186a35e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

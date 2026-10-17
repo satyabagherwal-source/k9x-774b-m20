@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:59:47.018Z",
-  "total_cycles_completed": 2117,
-  "total_learnings_persisted": 2117,
-  "total_rules_promoted": 1220,
+  "last_updated": "2026-10-17T12:02:58.728Z",
+  "total_cycles_completed": 2118,
+  "total_learnings_persisted": 2118,
+  "total_rules_promoted": 1223,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:49:34.223Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:52:40.294Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1403,6 +1396,13 @@
       "repository": "google/gemma-4-26B-A4B-it",
       "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:02:58.728Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
