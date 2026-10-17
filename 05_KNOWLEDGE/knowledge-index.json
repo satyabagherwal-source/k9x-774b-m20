@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T10:57:22.005Z",
+  "last_updated": "2026-10-17T11:01:58.977Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14420,10 +14420,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "593628c95380856f2f308629e4fa9e437abd6f54fa2151b958d2ff521fecac18",
+      "content_hash": "16b7509414bc2371e5fbc15eef9daf5b89fd7abe3961621b414d58df82cc5f90",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1434,
+          "title": "Schema-Informed Agentic Parameter Extraction",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1435,
+          "title": "Heterogeneous Bitrate Allocation in Large-Scale Sparse MoEs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1436,
+          "title": "Exhaustive Multi-EOS Token Generation Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -14441,7 +14457,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-17T02:55:37.923Z",
+      "verified_at": "2026-10-17T11:01:58.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4S6G",
-    "timestamp": "2026-10-16T05:58:59.752Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "9e5a91fe6be71728c8ce5758567c019bc650914a6b44e4ac8cf5ecb658c91f4b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-92SX",
     "timestamp": "2026-10-16T06:02:20.145Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "3589fb4acb5bad70e8b4d4bbbd426034fe11192fb95c9ab4547e4cb228cb9897",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-EA1L",
+    "timestamp": "2026-10-17T11:01:59.001Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "16b7509414bc2371e5fbc15eef9daf5b89fd7abe3961621b414d58df82cc5f90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
