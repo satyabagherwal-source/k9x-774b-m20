@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-OU11",
-    "timestamp": "2026-10-15T22:46:41.413Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "4d1d9fcf8d6b2e038280b64d78f6293cbb378dfb89bfa8c36a736edae635f6a5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-SSZB",
     "timestamp": "2026-10-15T22:49:46.679Z",
     "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
     "contentHash": "ec68263f530d4180ee46305700c02f58f33161b124ad86c58a94f83736c1b5d2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4XYK",
+    "timestamp": "2026-10-17T03:26:49.580Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "914143122016b4096386602ad02f06c423be6978244220e1562f32b1ce5a8f5f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

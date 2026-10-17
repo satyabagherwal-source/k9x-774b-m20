@@ -1989,3 +1989,4 @@
 | `CYCLE-20261017-SIJ7` | `2026-10-17T03:17:09.715Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`38d851c1...`) |
 | `CYCLE-20261017-WJD6` | `2026-10-17T03:20:17.418Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`537fcdf8...`) |
 | `CYCLE-20261017-0IOY` | `2026-10-17T03:23:23.170Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`ec68263f...`) |
+| `CYCLE-20261017-4XYK` | `2026-10-17T03:26:49.580Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`91414312...`) |
