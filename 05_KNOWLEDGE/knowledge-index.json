@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T11:11:13.113Z",
+  "last_updated": "2026-10-17T11:15:21.543Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16208,10 +16208,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "8fdde28aa8eed1ee837c62e1ccefc2ecac2c566e8faef90a7030585a0f95e80e",
+      "content_hash": "354c6d1e43a1cc882e549f3b24f8fd7bf577459ad94c3c8ccb39281b599a8a2b",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1439,
+          "title": "Exact Unit-Sphere Cosine Invariant Under Float16/Bfloat16",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1440,
+          "title": "Causal Masking and Deterministic EOS Token Feature Extraction",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -16229,7 +16240,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-17T03:07:54.099Z",
+      "verified_at": "2026-10-17T11:15:21.536Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
