@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-K8HM",
-    "timestamp": "2026-10-16T02:55:03.418Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "d4e0bcac4051a13c2be1a4b0cae9222e4baaaa7657920873c135ac6acd3bd52e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-O4XJ",
     "timestamp": "2026-10-16T02:58:05.431Z",
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7490,6 +7475,21 @@
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
     "contentHash": "41da7520d7eb047383b9593c5059e9d25ba7b42a0434feefccd5ca278632b1f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-SHSV",
+    "timestamp": "2026-10-17T07:57:04.927Z",
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "6fd6f62515f69afa4dcfeb3fb61682aca885d127b0a6399275006bb872316505",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T07:53:05.920Z",
-  "total_cycles_completed": 2046,
-  "total_learnings_persisted": 2046,
-  "total_rules_promoted": 1146,
+  "last_updated": "2026-10-17T07:57:04.932Z",
+  "total_cycles_completed": 2047,
+  "total_learnings_persisted": 2047,
+  "total_rules_promoted": 1148,
   "history": [
-    {
-      "timestamp": "2026-10-16T20:52:17.425Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T20:55:13.149Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T07:53:05.920Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T07:57:04.932Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
