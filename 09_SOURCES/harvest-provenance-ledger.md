@@ -2161,3 +2161,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-17T12:55:57.227Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `acf4f934` | Multi-dimensional audit evidence | 2026-10-17T13:03:38.393Z |
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-17T13:16:00.699Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-17T13:19:26.692Z |

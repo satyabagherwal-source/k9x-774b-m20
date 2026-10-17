@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-E1CQ",
-    "timestamp": "2026-10-16T08:26:09.626Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "8463454a0b55e2c511fbeee201448a384bc591e9eb95d6476508697c8a7b1b39",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-I20X",
     "timestamp": "2026-10-16T08:29:17.121Z",
     "repository": "Cloudflare/clef-flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "c20ec459496264cf915025c2578db63ff5d8bc7753c039e91e46f3271ae17242",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-B1ZY",
+    "timestamp": "2026-10-17T13:19:26.686Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "08cf46a785633b32c3a3c22571fa0f8386e18464985fdacb2577cebe666284a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

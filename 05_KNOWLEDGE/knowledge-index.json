@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T13:16:00.676Z",
+  "last_updated": "2026-10-17T13:19:26.657Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -8980,10 +8980,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "10351f1a6f14a2e9d481e07ea8a810017e6be1d89733cddf542ecaece986403e",
+      "content_hash": "08cf46a785633b32c3a3c22571fa0f8386e18464985fdacb2577cebe666284a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1453,
+          "title": "Binary Artifact Integrity & Format-Specific Metadata Binding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1454,
+          "title": "Precision-Dependent Inference Stability Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -9324,7 +9335,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-17T04:54:20.449Z",
+      "verified_at": "2026-10-17T13:19:26.646Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

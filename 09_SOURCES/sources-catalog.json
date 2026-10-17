@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "10351f1a6f14a2e9d481e07ea8a810017e6be1d89733cddf542ecaece986403e",
-    "lastHarvestedAt": "2026-10-17T04:54:20.500Z",
+    "contentHash": "08cf46a785633b32c3a3c22571fa0f8386e18464985fdacb2577cebe666284a2",
+    "lastHarvestedAt": "2026-10-17T13:19:26.692Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
