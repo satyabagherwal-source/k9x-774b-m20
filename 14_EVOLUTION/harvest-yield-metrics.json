@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T09:27:54.494Z",
-  "total_cycles_completed": 2071,
-  "total_learnings_persisted": 2071,
-  "total_rules_promoted": 1189,
+  "last_updated": "2026-10-17T09:31:14.267Z",
+  "total_cycles_completed": 2072,
+  "total_learnings_persisted": 2072,
+  "total_rules_promoted": 1192,
   "history": [
-    {
-      "timestamp": "2026-10-16T22:15:33.668Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T22:18:56.682Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1403,6 +1396,13 @@
       "repository": "CompVis/stable-diffusion-v1-4",
       "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T09:31:14.267Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
