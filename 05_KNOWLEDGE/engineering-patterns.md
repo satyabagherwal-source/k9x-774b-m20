@@ -107672,3 +107672,86 @@ During **generation configuration** for any inference request.
 ```
 **VERIFICATION METHOD**:  
 CI lint that checks `eos_token_id` array length > 0 and contains at least the base EOS IDs.
+
+
+---
+
+## 1566. Temporal Continuity State Management in Video Generation (Harvested from akatz-ai/MiniMax-H3-Character-Swap-LoRA)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Temporal Continuity State Management in Video Generation",
+  "source": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+  "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+  "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T23:46:22.952Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [akatz-ai/MiniMax-H3-Character-Swap-LoRA](https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA) (Revision: `hf-akatz-a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In iterative video generation workflows (frame-by-frame or chunk-by-chunk), the inference engine MUST maintain an explicit **Continuation History** buffer. This buffer MUST contain the latent representations of the last $N$ frames from the previous chunk to ensure temporal consistency across chunk boundaries.
+
+**WHY**:
+Diffusion models are autoregressive in time. If you generate frames 0-23, then frames 24-47 independently, frame 24 will not "know" the exact state of frame 23. This causes **temporal flickering**, **identity drift**, and **motion discontinuities** at the seam. The "Relay" pattern mentioned in the README implies a mechanism to pass state forward. Without this, the video looks like a slideshow of independent images.
+
+**WHEN TO APPLY**:
+Any video generation system that processes data in chunks (due to VRAM constraints) or uses iterative refinement.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class VideoGenerator:
+    def __init__(self, model, history_length=5):
+        self.model = model
+        self.history_length = history_length
+        self.latent_history = [] # Stores last N latents
+
+    def generate_chunk(self, prompt, reference_image, current_latents=None):
+        # 1. Prepare conditioning
+        # 2. If this is not the first chunk, inject history
+        if self.latent_history:
+            # Concatenate history latents with current noise/latents
+            # This allows the model to "see" the past
+            conditioned_latents = self.model.condition_with_history(
+                current_latents, 
+                self.latent_history
+            )
+        else:
+            conditioned_latents = current_latents
+            
+        # 3. Denoise
+        output_latents = self.model.denoise(conditioned_latents, prompt, reference_image)
+        
+        # 4. Update History (Sliding Window)
+        self.latent_history.append(output_latents)
+        if len(self.latent_history) > self.history_length:
+            self.latent_history.pop(0) # Remove oldest
+            
+        return output_latents
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Stateless Chunk Generation
+def generate_video(model, frames):
+    outputs = []
+    for i in range(0, len(frames), chunk_size):
+        chunk = frames[i:i+chunk_size]
+        # No state passed between chunks. Frame 24 is generated without knowing Frame 23.
+        out = model.generate(chunk) 
+        outputs.append(out)
+    return outputs # Result: Flickering at every chunk boundary
+```
+
+**VERIFICATION METHOD**:
+Integration test that generates a 100-frame video in 2 chunks of 50 frames. Compute the optical flow or pixel difference between frame 49 and 50. Assert that the difference is within a threshold consistent with natural motion, not a sudden jump.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:42:49.271Z",
-  "total_cycles_completed": 2326,
-  "total_learnings_persisted": 2326,
-  "total_rules_promoted": 1349,
+  "last_updated": "2026-10-17T23:46:23.017Z",
+  "total_cycles_completed": 2327,
+  "total_learnings_persisted": 2327,
+  "total_rules_promoted": 1351,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:33:36.906Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:36:47.937Z",
       "repository": "zai-org/GLM-5.3",
@@ -1403,6 +1396,13 @@
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:46:23.017Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

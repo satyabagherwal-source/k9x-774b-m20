@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-6M7Y",
-    "timestamp": "2026-10-16T19:32:14.206Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "31592e1f1fb5485f74bdaed739e26b1fe0f342f8fe17f87402e362261a933374",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-AKE3",
     "timestamp": "2026-10-16T19:35:18.459Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -7492,6 +7477,21 @@
     "contentHash": "cc1d48a6b5cdb5bdd2b4cda0951f13c2ffe01269a9ea574b74dda8d54cf0759c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-PAXY",
+    "timestamp": "2026-10-17T23:46:23.014Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "f5aa99691150bf4ef0855e3aa7056acc14296fa8cf72cff8a162aa408d9823c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
