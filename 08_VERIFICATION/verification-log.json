@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-XS2A",
-    "timestamp": "2026-10-16T18:29:22.642Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "e0013dc2bf3d218aa2004a18c65a4a9454869afeb04f6d54808359572ed08f69",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-1Y1S",
     "timestamp": "2026-10-16T18:32:37.024Z",
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7492,6 +7477,21 @@
     "contentHash": "f9c41cad9d627842416bcab17e5e15484a8479c31ececebbee9af01b1705276a",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-HB9T",
+    "timestamp": "2026-10-17T22:44:10.961Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "b883147ac51fd34cf15cc31798e5c8b700e2cbeeb2d1cde5a933cc9981703c33",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
