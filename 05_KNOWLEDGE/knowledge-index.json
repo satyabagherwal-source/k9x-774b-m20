@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T16:16:56.274Z",
+  "last_updated": "2026-10-17T16:19:58.955Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14723,7 +14723,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "7d879bb5ea3624d6127766af72953d79addc1c892d450799202d840b551c7c05",
+      "content_hash": "6bee6c30c228a89b379c15bf3b257f0460e22bc2e4339bfcfadeba794c7733a5",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -14766,7 +14766,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-17T08:10:00.273Z",
+      "verified_at": "2026-10-17T16:19:58.949Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

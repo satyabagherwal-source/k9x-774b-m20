@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T16:16:56.299Z",
+  "last_updated": "2026-10-17T16:19:58.991Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -768,14 +768,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "content_hash": "7d879bb5ea3624d6127766af72953d79addc1c892d450799202d840b551c7c05",
-      "verified_at": "2026-10-17T08:10:00.311Z",
+      "content_hash": "6bee6c30c228a89b379c15bf3b257f0460e22bc2e4339bfcfadeba794c7733a5",
+      "verified_at": "2026-10-17T16:19:58.990Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T08:10:00.311Z"
+      "last_updated": "2026-10-17T16:19:58.990Z"
     },
     "unsloth/Qwen3.8-27B-GGUF": {
       "repository": "unsloth/Qwen3.8-27B-GGUF",
