@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-F9JX",
-    "timestamp": "2026-10-16T16:50:59.997Z",
-    "repository": "google/electra-base-discriminator",
-    "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "0d0c8ed9214663d806c750789d9796742fb00f791d0e35067f2585d3c740723f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-J4CY",
     "timestamp": "2026-10-16T16:53:59.890Z",
     "repository": "BAAI/bge-m3",
@@ -7490,6 +7475,21 @@
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
     "contentHash": "b09fe2f5739ac63ecdec9511e8bc97c59995ead3bc08487363fd5ef10a454d31",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WGMK",
+    "timestamp": "2026-10-17T21:03:59.276Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "1e06d33d1b739b8ccd8d4b4bc431cb4e3b33dd5548b4e253673cf84fc71a45d5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

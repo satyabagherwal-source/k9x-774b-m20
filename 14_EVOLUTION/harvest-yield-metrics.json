@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T21:00:44.582Z",
-  "total_cycles_completed": 2280,
-  "total_learnings_persisted": 2280,
+  "last_updated": "2026-10-17T21:03:59.281Z",
+  "total_cycles_completed": 2281,
+  "total_learnings_persisted": 2281,
   "total_rules_promoted": 1302,
   "history": [
-    {
-      "timestamp": "2026-10-17T10:01:45.346Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T10:05:56.406Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T21:00:44.582Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T21:03:59.281Z",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "a4ec98f688a4fc732b1df01a486b8dbe8a540ce6cba9221de63b1e46c1176b6d",
-    "lastHarvestedAt": "2026-10-17T13:22:29.660Z",
+    "contentHash": "1e06d33d1b739b8ccd8d4b4bc431cb4e3b33dd5548b4e253673cf84fc71a45d5",
+    "lastHarvestedAt": "2026-10-17T21:03:59.279Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
