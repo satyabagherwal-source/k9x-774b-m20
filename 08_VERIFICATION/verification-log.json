@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-4N36",
-    "timestamp": "2026-10-15T21:07:00.450Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "b2fdd441eba8423f5deaccaaa883dff3be529af313145ad4083f90a4ce71ad18",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-8KGN",
     "timestamp": "2026-10-15T21:10:03.671Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "vllm-sr/d3",
     "learningId": "learn-huggingface-vllm-sr-d3",
     "contentHash": "be32a8a5bfd277361fbc71d13223ddd9b2ce30abf6753a0fb1c716e63839e370",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-GSO9",
+    "timestamp": "2026-10-17T01:44:04.137Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "a8b253206676ffc7adee5b0906c591be34aedc7c3fd3c1964c654070f84290f4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

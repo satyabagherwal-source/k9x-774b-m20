@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T01:40:59.401Z",
+  "last_updated": "2026-10-17T01:44:04.143Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1082,14 +1082,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "e0c9c34bb9b6f090abcb73d80a60d25cf20c80df0e423d8be96fc1395c0d0ab1",
-      "verified_at": "2026-10-16T17:49:14.441Z",
+      "content_hash": "a8b253206676ffc7adee5b0906c591be34aedc7c3fd3c1964c654070f84290f4",
+      "verified_at": "2026-10-17T01:44:04.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T17:49:14.441Z"
+      "last_updated": "2026-10-17T01:44:04.142Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
