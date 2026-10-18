@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T07:39:22.027Z",
-  "total_verified_learnings": 222,
+  "last_updated": "2026-10-18T07:44:29.129Z",
+  "total_verified_learnings": 223,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47298,6 +47298,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T07:39:22.020Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-fastify-fastify": {
+      "learning_id": "learn-github-fastify-fastify",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fastify/fastify",
+      "repository": "fastify/fastify",
+      "slug": "fastify-fastify",
+      "platform": "github",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "e03b48ba",
+      "content_hash": "dcd8204b46f153c2989fad92c330f7bd046663e005bd1ff8c02c8fdd0a467f93",
+      "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1669,
+          "title": "Clamped HTTP Status Codes with Deterministic Range Guarding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1670,
+          "title": "Defensive Shallow Copying of Shared Multi-Value Header Buffers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1671,
+          "title": "Non-Unwrapping Contract Isolation for Asynchronous Validation Results",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T07:44:29.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

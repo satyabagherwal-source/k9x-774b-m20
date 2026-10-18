@@ -1998,5 +1998,15 @@
     "contentHash": "1d83358b78a1d8f1f3eac09bbe0005b5c0bd72c6e16b34e4e0d738f59f06cc67",
     "lastHarvestedAt": "2026-10-18T07:39:22.055Z",
     "learningId": "learn-github-pallets-flask"
+  },
+  "fastify-fastify": {
+    "repository": "fastify/fastify",
+    "platform": "github",
+    "sourceUrl": "https://github.com/fastify/fastify",
+    "sourceVersion": "e03b48ba",
+    "license": "MIT",
+    "contentHash": "dcd8204b46f153c2989fad92c330f7bd046663e005bd1ff8c02c8fdd0a467f93",
+    "lastHarvestedAt": "2026-10-18T07:44:29.159Z",
+    "learningId": "learn-github-fastify-fastify"
   }
 }

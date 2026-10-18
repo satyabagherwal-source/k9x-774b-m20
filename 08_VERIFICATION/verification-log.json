@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-TAI0",
-    "timestamp": "2026-10-17T01:53:47.112Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "9b70b7a8444ac44f0a240cbfa4437a3aad10e01195fb20d54fc8f2c0ea14e34b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-XA72",
     "timestamp": "2026-10-17T01:56:53.342Z",
     "repository": "fishaudio/drama-3",
@@ -7492,6 +7477,21 @@
     "contentHash": "1d83358b78a1d8f1f3eac09bbe0005b5c0bd72c6e16b34e4e0d738f59f06cc67",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-S5B8",
+    "timestamp": "2026-10-18T07:44:29.156Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "dcd8204b46f153c2989fad92c330f7bd046663e005bd1ff8c02c8fdd0a467f93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

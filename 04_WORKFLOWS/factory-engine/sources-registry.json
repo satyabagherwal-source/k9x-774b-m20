@@ -25379,5 +25379,22 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fastify-fastify": {
+    "name": "fastify/fastify",
+    "officialUrl": "https://github.com/fastify/fastify",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-18T07:43:25.133Z",
+    "lastVerified": "2026-10-18T07:43:25.133Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "dcd8204b46f153c2989fad92c330f7bd046663e005bd1ff8c02c8fdd0a467f93",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

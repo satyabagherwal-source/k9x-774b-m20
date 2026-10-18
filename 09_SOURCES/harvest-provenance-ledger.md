@@ -2467,3 +2467,4 @@ Every entry in this ledger must capture:
 | `learn-github-syntax-tree-mdast` | `https://github.com/syntax-tree/mdast` | `c034ec9d` | Multi-dimensional audit evidence | 2026-10-18T07:33:55.679Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `b23d78f2` | Multi-dimensional audit evidence | 2026-10-18T07:39:13.270Z |
 | `learn-github-pallets-flask` | `https://github.com/pallets/flask` | `d086db85` | Multi-dimensional audit evidence | 2026-10-18T07:39:22.055Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `e03b48ba` | Multi-dimensional audit evidence | 2026-10-18T07:44:29.159Z |
