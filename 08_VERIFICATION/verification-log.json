@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-1ZAW",
-    "timestamp": "2026-10-17T00:08:34.040Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "bb150f8ba007290205ebe7ef750f29f93dfb040e0ec58df0e5c0b1ed5c2724db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-5QCL",
     "timestamp": "2026-10-17T00:11:29.061Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7490,6 +7475,21 @@
     "repository": "tencent/Hy-Memory-30B-A3B",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
     "contentHash": "74a6aa9144636848215096353efa44188f1e0009936c1759820ff04a10099e81",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-U6A4",
+    "timestamp": "2026-10-18T04:30:06.412Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "80b0091a47f0e1c9a033ecc5a94a8d90df0818bdac6b58b91b65c0ac76893c74",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

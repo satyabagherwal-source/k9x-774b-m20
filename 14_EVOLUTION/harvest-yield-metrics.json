@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:26:31.393Z",
-  "total_cycles_completed": 2404,
-  "total_learnings_persisted": 2404,
+  "last_updated": "2026-10-18T04:30:06.416Z",
+  "total_cycles_completed": 2405,
+  "total_learnings_persisted": 2405,
   "total_rules_promoted": 1392,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:58:28.212Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T17:01:34.560Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T04:26:31.393Z",
       "repository": "tencent/Hy-Memory-30B-A3B",
       "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:30:06.416Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

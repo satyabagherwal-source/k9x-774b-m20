@@ -2427,3 +2427,4 @@
 | `CYCLE-20261018-FAA2` | `2026-10-18T04:18:31.754Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`37f59f31...`) |
 | `CYCLE-20261018-LDCM` | `2026-10-18T04:23:15.670Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`2e5abfeb...`) |
 | `CYCLE-20261018-PKD8` | `2026-10-18T04:26:31.388Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`74a6aa91...`) |
+| `CYCLE-20261018-U6A4` | `2026-10-18T04:30:06.412Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`80b0091a...`) |
