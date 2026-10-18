@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
+> **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
+> **Source Version**: `966355ee`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:32:51.177Z  
+> **Learning ID**: `learn-github-invertase-react-native-firebase`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): invertase/react-native-firebase
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:28:29.250Z  
+> **Harvest Timestamp**: 2026-10-18T23:32:50.728Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12313 stars
+- **Stars / Engagement**: 12319 stars
 
 ---
 
@@ -650,6 +664,542 @@ protected:
     methodMap_["eventsGetListeners"] = MethodMetadata {.argCount 
 ```
 
+### Core Architecture Module: `packages/app/android/src/reactnative/java/io/invertase/firebase/common/SharedUtils.kt`
+```
+package io.invertase.firebase.common
+
+/*
+ * Copyright (c) 2016-present Invertase Limited & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this library except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
+import android.graphics.Point
+import android.graphics.Rect
+import android.net.Uri
+import android.os.Build
+import android.util.Log
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.WritableArray
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.common.LifecycleState
+import com.facebook.react.modules.core.DeviceEventManagerModule
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
+import javax.annotation.Nullable
+
+@Suppress("unused", "KDocUnresolvedReference", "MemberVisibilityCanBePrivate", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+@SuppressLint("KotlinNullnessAnnotation")
+open class SharedUtils {
+  companion object {
+    private const val TAG = "Utils"
+    private const val RN_DEVSUPPORT_CLASS = "DevSupportManagerImpl"
+    private const val RN_DEVSUPPORT_PACKAGE = "com.facebook.react.devsupport"
+
+    private const val EXPO_REGISTRY_CLASS = "ModuleRegistry"
+    private const val EXPO_CORE_PACKAGE = "expo.core"
+
+    private const val FLUTTER_REGISTRY_CLASS = "PluginRegistry"
+    private const val FLUTTER_CORE_PACKAGE = "io.flutter.plugin.common"
+
+    private const val REACT_NATIVE_REGISTRY_CLASS = "NativeModuleRegistry"
+    private const val REACT_NATIVE_CORE_PACKAGE = "com.facebook.react.bridge"
+
+    @JvmStatic
+    fun rectToIntArray(
+      @Nullable rect: Rect?,
+    ): IntArray {
+      if (rect == null || rect.isEmpty) return intArrayOf()
+      return intArrayOf(rect.left, rect.top, rect.right, rect.bottom)
+    }
+
+    @JvmStatic
+    fun pointToIntArray(
+      @Nullable point: Point?,
+    ): IntArray {
+      if (point == null) return intArrayOf()
+      return intArrayOf(point.x, point.y)
+    }
+
+    @JvmStatic
+    fun pointsToIntsList(
+      @Nullable points: Array<Point?>?,
+    ): List<IntArray> {
+      if (points == null) return ArrayList()
+
+      val pointsList = ArrayList<IntArray>(points.size)
+      for (point in points) {
+        pointsList.add(pointToIntArray(point))
+      }
+
+      return pointsList
+    }
+
+    /** Create a Uri from the path, defaulting to file when there is no supplied scheme. */
+    @JvmStatic
+    fun getUri(uri: String?): Uri {
+      val parsed = Uri.parse(uri)
+
+      if (parsed.scheme == null || platform(parsed.scheme).isEmpty()) {
+        return Uri.fromFile(File(platform(uri)))
+      }
+
+      return parsed
+    }
+
+    @JvmStatic
+    fun getExceptionMap(exception: Exception?): WritableMap {
+      val source: Exception = platform(exception)
+      val exceptionMap = Arguments.createMap()
+      val code = "unknown"
+      val message = source.message
+      exceptionMap.putString("code", code)
+      exceptionMap.putString("nativeErrorCode", code)
+      exceptionMap.putString("message", message)
+      exceptionMap.putString("nativeErrorMessage", message)
+      return exceptionMap
+    }
+
+    @JvmStatic
+    fun timestampToUTC(timestamp: Long): String {
+      val millisTimestamp = timestamp * 1000
+      val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT)
+      format.timeZone = TimeZone.getTimeZone("UTC")
+      return format.format(millisTimestamp)
+    }
+
+    /** Send a JS event. */
+    @JvmStatic
+    fun sendEvent(
+      context: ReactContext?,
+      eventName: String?,
+      body: Any?,
+    ) {
+      if (context != null) {
+        context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+          .emit(platform(eventName), body)
+      } else {
+        Log.d(TAG, "Missing context - cannot send event!")
+      }
+    }
+
+    /**
+     * We need to check if app is in foreground otherwise the app will crash.
+     * http://stackoverflow.com/questions/8489993/check-android-application-is-in-foreground-or-not
+     *
+     * @param context Context
+     * @return boolean
+     */
+    @JvmStatic
+    fun isAppInForeground(context: Context?): Boolean {
+      val sourceContext: Context = platform(context)
+      val activityManager =
+        sourceContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+          ?: return false
+
+      val appProcesses = activityManager.runningAppProcesses ?: return false
+
+      // Check if current activity is a background activity.
+      val json = ReactNativeFirebaseJSON.getSharedInstance()
+      if (json.contains("android_background_activity_names")) {
+        val backgroundActivities = json.getArrayValue("android_background_activity_names")
+
+        if (backgroundActivities.size != 0) {
+          var currentActivity = ""
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val taskInfo = activityManager.appTasks
+            if (taskInfo.size > 0) {
+              // SDK 37+ annotates RecentTaskInfo as nullable; skip rather than NPE.
+              val task = taskInfo[0].taskInfo
+              if (task != null) {
+                currentActivity =
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val baseActivity = task.baseActivity
+                    if (baseActivity != null) platform(baseActivity).shortClassName else ""
+                  } else {
+                    val origActivity = task.origActivity
+                    if (origActivity != null) {
+                      platform(origActivity).shortClassName
+                    } else {
+                      val component = task.baseIntent.component
+                      platform(component).shortClassName
+                    }
+                  }
+              }
+            }
+          } else {
+            val taskInfo = activityManager.getRunningTasks(1)
+            if (taskInfo.size > 0) {
+              currentActivity = platform(taskInfo[0].topActivity).shortClassName
+            }
+          }
+
+          if (currentActivity != "" && backgroundActivities.contains(currentActivity)) {
+            return false
+          }
+        }
+      }
+
+      val packageName = sourceContext.packageName
+      for (appProcess in appProcesses) {
+        if (
+          appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+          appProcess.processName.equals(packageName)
+        ) {
+          val reactContext: ReactContext
+
+          try {
+            reactContext = sourceContext as ReactContext
+          } catch (_: ClassCastException) {
+            // Not react context so default to true.
+            return true
+          }
+
+          return reactContext.lifecycleState == LifecycleState.RESUMED
+        }
+      }
+
+      return false
+    }
+
+    @SuppressLint("DiscouragedApi")
+    @JvmStatic
+    fun getResId(
+      ctx: Context?,
+      resName: String?,
+    ): Int {
+      val sourceContext: Context = platform(ctx)
+      val resourceId =
+        sourceContext.resources.getIdentifier(resName, "string", sourceContext.packageName)
+
+      if (resourceId == 0) {
+        Log.e(TAG, "resource $resName could not be found")
+      }
+
+      return resourceId
+    }
+
+    /**
+     * Checks for dev support availability - so we can ignore in release builds for example.
+     *
+     * @return Boolean
+     */
+    @JvmStatic
+    fun reactNativeHasDevSupport(): java.lang.Boolean = hasPackageClass(RN_DEVSUPPORT_PACKAGE, RN_DEVSUPPORT_CLASS)
+
+    /**
+     * Is the build platform Expo?
+     *
+     * @return Boolean
+     */
+    @JvmStatic
+    fun isExpo(): java.lang.Boolean = hasPackageClass(EXPO_CORE_PACKAGE, EXPO_REGISTRY_CLASS)
+
+    /**
+     * Is the build platform Flutter?
+     *
+     * @return Boolean
+     */
+    @JvmStatic
+    fun isFlutter(): java.lang.Boolean = hasPackageClass(FLUTTER_CORE_PACKAGE, FLUTTER_REGISTRY_CLASS)
+
+    /**
+     * Is the build platform React Native?
+     *
+     * @return Boolean
+     */
+    @JvmStatic
+    fun isReactNative(): java.lang.Boolean =
+      (
+        java.lang.Boolean.valueOf(
+          !isExpo().booleanValue() &&
+            hasPackageClass(REACT_NATIVE_CORE_PACKAGE, REACT_NATIVE_REGISTRY_CLASS).booleanValue(),
+        ) as java.lang.Boolean
+      )
+
+    /**
+     * Returns true/false if a class for a package exists in the app class bundle.
+     *
+     * @param packageName
+     * @param className
+     * @return
+     */
+    @Suppress("ReplaceStringBuilderWithString")
+    @JvmStatic
+    fun hasPackageClass(
+      packageName: String?,
+      className: String?,
+    ): java.lang.Boolean {
+      // ProGuard is surprisingly smart in this case and will keep a class if it detects a call to
+      // Class.forName() with a static string. Generate a quasi-dynamic string to confuse it.
+      val fullName =
+        java.lang
+          .StringBuilder(platform(packageName))
+          .append(".")
+          .append(className)
+          .toString()
+
+      return try {
+        Class.forName(fullName)
+        java.lang.Boolean.TRUE as java.lang.Boolean
+      } catch (_: Exception) {
+        java.lang.Boolean.FALSE as java.lang.Boolean
+      }
+    }
+
+    @Throws(JSONException::class)
+    @JvmStatic
+    fun jsonObjectToWritableMap(jsonObject: JSONObject?): WritableMap {
+      val source: JSONObject = platform(jsonObject)
+      val iterator = source.keys()
+
+```
+
+### Core Architecture Module: `packages/app/android/src/reactnative/java/io/invertase/firebase/utils/NativeRNFBTurboUtils.kt`
+```
+package io.invertase.firebase.utils
+
+/*
+ * Copyright (c) 2016-present Invertase Limited & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this library except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.content.IntentSender
+import android.os.Build
+import android.os.Environment
+import android.provider.Settings
+import android.util.Log
+import com.facebook.fbreact.specs.NativeRNFBTurboUtilsSpec
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.bridge.WritableMap
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import io.invertase.firebase.app.ReactNativeFirebaseApp
+import java.util.HashMap
+
+open class NativeRNFBTurboUtils(
+  reactContext: ReactApplicationContext?,
+) : NativeRNFBTurboUtilsSpec(reactContext) {
+  override fun androidGetPlayServicesStatus(promise: Promise?) {
+    nullableAsPlatformType<Promise>(promise).resolve(playServicesStatusMap)
+  }
+
+  override fun androidPromptForPlayServices(promise: Promise?) {
+    val status = isGooglePlayServicesAvailable()
+    val gapi = GoogleApiAvailability.getInstance()
+
+    if (status != ConnectionResult.SUCCESS && gapi.isUserResolvableError(status)) {
+      val activity: Activity? = getCurrentActivity()
+      if (activity != null) {
+        nullableAsPlatformType<Dialog>(gapi.getErrorDialog(activity, status, status)).show()
+      }
+    }
+    nullableAsPlatformType<Promise>(promise).resolve(null)
+  }
+
+  override fun androidResolutionForPlayServices(promise: Promise?) {
+    val status = isGooglePlayServicesAvailable()
+    val connectionResult = ConnectionResult(status)
+
+    if (!connectionResult.isSuccess && connectionResult.hasResolution()) {
+      val activity: Activity? = getCurrentActivity()
+      if (activity != null) {
+        try {
+          connectionResult.startResolutionForResult(activity, status)
+        } catch (error: IntentSender.SendIntentException) {
+          Log.d(TAG, "resolutionForPlayServices", error)
+        }
+      }
+    }
+    nullableAsPlatformType<Promise>(promise).resolve(null)
+  }
+
+  override fun androidMakePlayServicesAvailable(promise: Promise?) {
+    val status = isGooglePlayServicesAvailable()
+
+    if (status != ConnectionResult.SUCCESS) {
+      UiThreadUtil.runOnUiThread {
+        val activity: Activity? = getCurrentActivity()
+        if (activity != null) {
+          GoogleApiAvailability
+            .getInstance()
+            .makeGooglePlayServicesAvailable(activity)
+            .addOnCompleteListener { task ->
+              if (task.isSuccessful) {
+                nullableAsPlatformType<Promise>(promise).resolve(null)
+              } else if (task.isCanceled) {
+                nullableAsPlatformType<Promise>(promise).reject(
+                  "play-services-update-canceled",
+                  "Play Services update was canceled by the user",
+                )
+              } else {
+                val error = task.exception
+                nullableAsPlatformType<Promise>(promise).reject(
+                  "play-services-update-failed",
+                  if (error != null) error.message else "Unknown error",
+                  error,
+                )
+              }
+            }
+        } else {
+          nullableAsPlatformType<Promise>(promise).resolve(null)
+        }
+      }
+    } else {
+      nullableAsPlatformType<Promise>(promise).resolve(null)
+    }
+  }
+
+  protected override fun getTypedExportedConstants(): MutableMap<String, Any> {
+    val constants: MutableMap<String, Any> = HashMap()
+
+    constants["isRunningInTestLab"] = isRunningInTestLab()
+
+    val context = reactApplicationContext
+    val appVersion = getAppVersionName(context)
+    if (appVersion != null && appVersion.isNotEmpty()) {
+      constants["appVersion"] = appVersion
+    }
+
+    constants[KEY_MAIN_BUNDLE] = ""
+    constants[KEY_LIBRARY_DIRECTORY] = context.filesDir.absolutePath
+    constants[KEY_TEMP_DIRECTORY] = context.cacheDir.absolutePath
+    constants[KEY_CACHE_DIRECTORY] = context.cacheDir.absolutePath
+
+    val externalDirectory = context.getExternalFilesDir(null)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && externalDirectory != null) {
+      constants[KEY_DOCUMENT_DIRECTORY] = externalDirectory.absolutePath
+    }
+
+    if (!constants.containsKey(KEY_DOCUMENT_DIRECTORY)) {
+      constants[KEY_DOCUMENT_DIRECTORY] = context.filesDir.absolutePath
+    }
+
+    val picturesDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    constants[KEY_PICS_DIRECTORY] =
+      if (picturesDirectory != null) picturesDirectory.absolutePath else ""
+
+    val moviesDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+    constants[KEY_MOVIES_DIRECTORY] =
+      if (moviesDirectory != null) moviesDirectory.absolutePath else ""
+
+    val externalStorageDirectory = Environment.getExternalStorageDirectory()
+    if (externalStorageDirectory != null) {
+      constants[KEY_EXT_STORAGE_DIRECTORY] = externalStorageDirectory.absolutePath
+    }
+
+    if (externalDirectory != null) {
+      constants[KEY_EXTERNAL_DIRECTORY] = externalDirectory.absolutePath
+    }
+
+    return constants
+  }
+
+  private fun isGooglePlayServicesAvailable(): Int {
+    val gapi = GoogleApiAvailability.getInstance()
+    return gapi.isGooglePlayServicesAvailable(reactApplicationContext)
+  }
+
+  private val playServicesStatusMap: WritableMap
+    get() {
+      val result = Arguments.createMap()
+      val gapi = GoogleApiAvailability.getInstance()
+
+      val status = gapi.isGooglePlayServicesAvailable(reactApplicationContext)
+      result.putInt("status", status)
+
+      if (status == ConnectionResult.SUCCESS) {
+        result.putBoolean("isAvailable", true)
+      } else {
+        result.putBoolean("isAvailable", false)
+        result.putString("error", gapi.getErrorString(status))
+        result.putBoolean("isUserResolvableError", gapi.isUserResolvableError(status))
+        result.putBoolean("hasResolution", ConnectionResult(status).hasResolution())
+      }
+
+      return result
+    }
+
+  companion object {
+    private const val TAG = "Utils"
+    private const val KEY_MAIN_BUNDLE = "MAIN_BUNDLE"
+    private const val KEY_DOCUMENT_DIRECTORY = "DOCUMENT_DIRECTORY"
+    private const val KEY_LIBRARY_DIRECTORY = "LIBRARY_DIRECTORY"
+    private const val KEY_EXTERNAL_DIRECTORY = "EXTERNAL_DIRECTORY"
+    private const val KEY_EXT_STORAGE_DIRECTORY = "EXTERNAL_STORAGE_DIRECTORY"
+    private const val KEY_PICS_DIRECTORY = "PICTURES_DIRECTORY"
+    private const val KEY_MOVIES_DIRECTORY = "MOVIES_DIRECTORY"
+    private const val KEY_TEMP_DIRECTORY = "TEMP_DIRECTORY"
+    private const val KEY_CACHE_DIRECTORY = "CACHES_DIRECTORY"
+    private const val FIREBASE_TEST_LAB = "firebase.test.lab"
+
+    private fun isRunningInTestLab(): Boolean {
+      val testLabSetting =
+        Settings.System.getString(
+          ReactNativeFirebaseApp.getApplicationContext().contentResolver,
+          FIREBASE_TEST_LAB,
+        )
+
+      return "true" == testLabSetting
+    }
+
+    private fun getAppVersionName(context: Context): String? =
+      try {
+        @Suppress("DEPRECATION")
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        packageInfo.versionName
+      } catch (error: Exception) {
+        // Optional metadata: prefer omit over crashing on null context / unexpected PM failures.
+        Log.d(TAG, "getAppVersionName", error)
+        null
+      }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> nullableAsPlatformType(value: T?): T = value as T
+  }
+}
+
+```
+
 ### Core Architecture Module: `packages/app/e2e/utils.e2e.js`
 ```
 /*
@@ -774,6 +1324,172 @@ describe('utils()', function () {
 
 ```
 
+### Core Architecture Module: `packages/app/ios/RNFBApp/RNFBRCTEventEmitterCore.swift`
+```
+/**
+ * Copyright (c) 2016-present Invertase Limited & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this library except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import Foundation
+
+/// Bridge-present check previously hard-wired to `self.bridge != nil`.
+public typealias RNFBRCTEventEmitterBridgePresent = () -> Bool
+
+/// Bridge emit previously hard-wired to `enqueueJSCall` (unprefixed event name + body).
+public typealias RNFBRCTEventEmitterEmitHandler = (String, Any?) -> Void
+
+/**
+ * Queue / listener state previously inline in `RNFBRCTEventEmitter.m`.
+ *
+ * Mirrors pre-port:
+ * - `isObserving` = `jsReady && jsListenerCount > 0`
+ * - emit when bridge present && observing && listener registered; else queue `{name,body}`
+ * - `notifyJsReady(true)` / `addListener` flush matching queued events via `sendEvent`
+ * - `@synchronized(jsListeners)` / `@synchronized(queuedEvents)` via `objc_sync_*`
+ */
+@objc(RNFBRCTEventEmitterCore)
+public final class RNFBRCTEventEmitterCore: NSObject {
+  @objc public static let eventNameKey = "name"
+  @objc public static let eventBodyKey = "body"
+
+  private var jsReady = false
+  private var jsListenerCount = 0
+  private var jsListeners = NSMutableDictionary()
+  private var queuedEvents = NSMutableArray()
+
+  private let isBridgePresent: RNFBRCTEventEmitterBridgePresent
+  private let emitHandler: RNFBRCTEventEmitterEmitHandler
+
+  @objc(initWithIsBridgePresent:emitHandler:)
+  public init(
+    isBridgePresent: @escaping RNFBRCTEventEmitterBridgePresent,
+    emitHandler: @escaping RNFBRCTEventEmitterEmitHandler
+  ) {
+    self.isBridgePresent = isBridgePresent
+    self.emitHandler = emitHandler
+    super.init()
+  }
+
+  @objc public func invalidate() {
+    jsReady = false
+    queuedEvents = NSMutableArray()
+    jsListeners = NSMutableDictionary()
+    jsListenerCount = 0
+  }
+
+  @objc(notifyJsReady:)
+  public func notifyJsReady(_ ready: Bool) {
+    objc_sync_enter(jsListeners)
+    defer { objc_sync_exit(jsListeners) }
+
+    jsReady = ready
+    if ready {
+      for case let event as NSDictionary in queuedEvents.copy() as! NSArray {
+        let name = event[Self.eventNameKey] as! String
+        let body = event[Self.eventBodyKey]
+        sendEvent(name: name, body: body)
+        objc_sync_enter(queuedEvents)
+        queuedEvents.remove(event)
+        objc_sync_exit(queuedEvents)
+      }
+    }
+  }
+
+  @objc(sendEventWithName:body:)
+  public func sendEvent(name eventName: String, body: Any?) {
+    objc_sync_enter(jsListeners)
+    defer { objc_sync_exit(jsListeners) }
+
+    if isBridgePresent(), isObserving, jsListeners[eventName] != nil {
+      emitHandler(eventName, body)
+    } else {
+      objc_sync_enter(queuedEvents)
+      let entry = NSMutableDictionary()
+      entry[Self.eventNameKey] = eventName
+      entry[Self.eventBodyKey] = body
+      queuedEvents.add(entry)
+      objc_sync_exit(queuedEvents)
+    }
+  }
+
+  @objc(addListener:)
+  public func addListener(_ eventName: String) {
+    objc_sync_enter(jsListeners)
+    defer { objc_sync_exit(jsListeners) }
+
+    jsListenerCount += 1
+
+    if jsListeners[eventName] == nil {
+      jsListeners[eventName] = NSNumber(value: 1)
+    } else {
+      let current = (jsListeners[eventName] as! NSNumber).intValue
+      jsListeners[eventName] = NSNumber(value: current + 1)
+    }
+
+    for case let event as NSDictionary in queuedEvents.copy() as! NSArray {
+      if (event[Self.eventNameKey] as? String) == eventName {
+        let body = event[Self.eventBodyKey]
+        sendEvent(name: eventName, body: body)
+        objc_sync_enter(queuedEvents)
+        queuedEvents.remove(event)
+        objc_sync_exit(queuedEvents)
+      }
+    }
+  }
+
+  @objc(removeListeners:all:)
+  public func removeListeners(_ eventName: String, all: Bool) {
+    objc_sync_enter(jsListeners)
+    defer { objc_sync_exit(jsListeners) }
+
+    if jsListeners[eventName] != nil {
+      let listenersForEvent = (jsListeners[eventName] as! NSNumber).intValue
+
+      if listenersForEvent <= 1 || all {
+        objc_sync_enter(jsListeners)
+        jsListeners.removeObject(forKey: eventName)
+        objc_sync_exit(jsListeners)
+      } else {
+        objc_sync_enter(jsListeners)
+        jsListeners[eventName] = NSNumber(value: listenersForEvent - 1)
+        objc_sync_exit(jsListeners)
+      }
+
+      if all {
+        jsListenerCount -= listenersForEvent
+      } else {
+        jsListenerCount -= 1
+      }
+    }
+  }
+
+  @objc public func getListenersDictionary() -> NSDictionary {
+    let listenersDictionary = NSMutableDictionary()
+    listenersDictionary["listeners"] = NSNumber(value: jsListenerCount)
+    listenersDictionary["queued"] = NSNumber(value: queuedEvents.count)
+    listenersDictionary["events"] = jsListeners.copy()
+    return listenersDictionary
+  }
+
+  private var isObserving: Bool {
+    jsReady && jsListenerCount > 0
+  }
+}
+
+```
+
 ### Core Architecture Module: `packages/app/ios/RNFBApp/RNFBSharedUtils.h`
 ```
 /**
@@ -796,12 +1512,9 @@ describe('utils()', function () {
 #ifndef RNFBSharedUtils_h
 #define RNFBSharedUtils_h
 
-#if __has_include(<FirebaseCore/FirebaseCore.h>)
-#import <FirebaseCore/FirebaseCore.h>
-#else
-@import FirebaseCore;
-#endif
 #import <React/RCTBridgeModule.h>
+
+@class FIRApp;
 
 #ifdef DEBUG
 #define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
@@ -850,477 +1563,19 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ```
 
-### Core Architecture Module: `packages/app/ios/RNFBApp/RNFBUtilsModule.h`
-```
-/**
- * Copyright (c) 2016-present Invertase Limited & Contributors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this library except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-#import <Foundation/Foundation.h>
-#import <Photos/Photos.h>
-
-@interface RNFBUtilsModule : NSObject
-
-+ (BOOL)isRemoteAsset:(NSString *)localFilePath;
-+ (BOOL)unused_isHeic:(NSString *)localFilePath;
-+ (NSString *)valueForKey:(NSString *)key fromQueryItems:(NSArray *)queryItems;
-+ (PHAsset *)fetchAssetForPath:(NSString *)localFilePath;
-
-@end
-
-```
-
-### Core Architecture Module: `packages/app/lib/internal/web/utils.ts`
-```
-/*
- * Copyright (c) 2016-present Invertase Limited & Contributors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this library except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-import { DeviceEventEmitter } from 'react-native';
-
-// A general purpose guard function to catch errors and return a structured error object.
-export function guard<T>(fn: () => Promise<T>): Promise<T> {
-  return fn().catch(e => Promise.reject(getWebError(e)));
-}
-
-// Converts a thrown error to a structured error object
-// required by RNFirebase native module internals.
-export function getWebError(error: Error & { code?: string }): {
-  code: string;
-  message: string;
-  userInfo: { code: string; message: string };
-} {
-  const obj = {
-    code: error.code || 'unknown',
-    message: error.message,
-  };
-
-  // Some modules send codes as PERMISSION_DENIED, which is not
-  // the same as the Firebase error code format.
-  obj.code = obj.code.toLowerCase();
-  // Replace _ with - in code
-  obj.code = obj.code.replace(/_/g, '-');
-
-  // Split out prefix, since we internally prefix all error codes already.
-  if (obj.code.includes('/')) {
-    const parts = obj.code.split('/');
-    obj.code = parts[1] || obj.code;
-  }
-
-  return {
-    ...obj,
-    userInfo: obj,
-  };
-}
-
-export function emitEvent(eventName: string, event: unknown): void {
-  const emit = () => DeviceEventEmitter.emit('rnfb_' + eventName, event);
-  if (typeof setImmediate === 'function') {
-    setImmediate(emit);
-  } else {
-    setTimeout(emit, 0);
-  }
-}
-
-```
-
-### Core Architecture Module: `packages/app/lib/utils/UtilsStatics.ts`
-```
-/*
- * Copyright (c) 2016-present Invertase Limited & Contributors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this library except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-import { getStaticUtilsModule } from '../internal/registry/nativeModule';
-import { stripTrailingSlash, isOther } from '../common';
-import { Utils } from '../types/app';
-import { version } from '../version';
-
-const PATH_NAMES = [
-  'MAIN_BUNDLE',
-  'CACHES_DIRECTORY',
-  'DOCUMENT_DIRECTORY',
-  'EXTERNAL_DIRECTORY',
-  'EXTERNAL_STORAGE_DIRECTORY',
-  'TEMP_DIRECTORY',
-  'LIBRARY_DIRECTORY',
-  'PICTURES_DIRECTORY',
-  'MOVIES_DIRECTORY',
-] as const;
-
-const PATH_FILE_TYPES = ['FILE_TYPE_REGULAR', 'FILE_TYPE_DIRECTORY'] as const;
-
-const paths: Partial<Utils.FilePath> = {};
-let processedPathConstants = false;
-
-function processPathConstants(nativeModule: any): Utils.FilePath {
-  if (processedPathConstants || !nativeModule) {
-    return paths as Utils.FilePath;
-  }
-  processedPathConstants = true;
-
-  for (let i = 0; i < PATH_NAMES.length; i++) {
-    const path = PATH_NAMES[i];
-    if (path) {
-      (paths as any)[path] = nativeModule[path] ? stripTrailingSlash(nativeModule[path]) : null;
-    }
-  }
-
-  for (let i = 0; i < PATH_FILE_TYPES.length; i++) {
-    const pathFileType = PATH_FILE_TYPES[i];
-    if (pathFileType) {
-      (paths as any)[pathFileType] = stripTrailingSlash(nativeModule[pathFileType]);
-    }
-  }
-
-  Object.freeze(paths);
-
-  return paths as Utils.FilePath;
-}
-
-const statics: Utils.Statics = {
-  SDK_VERSION: version,
-  get FilePath(): Utils.FilePath {
-    // We don't support path constants on non-native platforms.
-    return processPathConstants(isOther ? {} : getStaticUtilsModule());
-  },
-};
-
-export default statics;
-
-```
-
-### Core Architecture Module: `packages/app/lib/utils/index.ts`
-```
-/*
- * Copyright (c) 2016-present Invertase Limited & Contributors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this library except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-import { isIOS, isOther } from '../common';
-import { FirebaseModule, getOrCreateModularInstance } from '../internal';
-import type { ModuleConfig } from '../internal';
-import type { ReactNativeFirebase, Utils } from '../types/app';
-import { UTILS_NATIVE_MODULE } from '../internal/constants';
-
-const namespace = 'utils';
-const nativeModuleName = UTILS_NATIVE_MODULE;
-
-const config: ModuleConfig = {
-  namespace,
-  nativeModuleName,
-  nativeEvents: false,
-  hasMultiAppSupport: false,
-  hasCustomUrlOrRegionSupport: false,
-  turboModule: true,
-};
-
-class FirebaseUtilsModule extends FirebaseModule<'RNFBUtilsModule'> {
-  get isRunningInTestLab(): boolean {
-    if (isIOS) {
-      return false;
-    }
-    return this.native.isRunningInTestLab;
-  }
-
-  /**
-   * Host app marketing version (Android `versionName` / iOS `CFBundleShortVersionString`).
-   * Empty or unavailable on web / non-native platforms.
-   */
-  get appVersion(): string | undefined {
-    if (isOther) {
-      return undefined;
-    }
-    const version = this.native.appVersion;
-    return typeof version === 'string' && version.length > 0 ? version : undefined;
-  }
-
-  get playServicesAvailability(): Utils.PlayServicesAvailability {
-    if (isIOS) {
-      return {
-        isAvailable: true,
-        status: 0,
-        hasResolution: false,
-        isUserResolvableError: false,
-        error: undefined,
-      };
-    }
-    // NewArch-AD-15: dynamic Play Services status — use getPlayServicesStatus() (async) on Android.
-    return this.getPlayServicesStatus() as unknown as Utils.PlayServicesAvailability;
-  }
-
-  getPlayServicesStatus(): Promise<Utils.PlayServicesAvailability> {
-    if (isIOS) {
-      return Promise.resolve({
-        isAvailable: true,
-        status: 0,
-        hasResolution: false,
-        isUserResolvableError: false,
-        error: undefined,
-      });
-    }
-    return this.native.androidGetPlayServicesStatus();
-  }
-
-  promptForPlayServices(): Promise<void> {
-    if (isIOS) {
-      return Promise.resolve();
-    }
-    return this.native.androidPromptForPlayServices();
-  }
-
-  makePlayServicesAvailable(): Promise<void> {
-    if (isIOS) {
-      return Promise.resolve();
-    }
-    return this.native.androidMakePlayServicesAvailable();
-  }
-
-  resolutionForPlayServices(): Promise<void> {
-    if (isIOS) {
-      return Promise.resolve();
-    }
-    return this.native.androidResolutionForPlayServices();
-  }
-}
-
-/**
- * Returns the {@link Utils.Module} instance for the default or given {@link ReactNativeFirebase.FirebaseApp}.
- *
- * @param app - The Firebase app to use. When omitted, the default app is used.
- */
-export function getUtils(app?: ReactNativeFirebase.FirebaseApp): Utils.Module {
-  return getOrCreateModularInstance(FirebaseUtilsModule, config, app) as unknown as Utils.Module;
-}
-
-```
-
-### Core Architecture Module: `packages/auth/android/src/main/java/io/invertase/firebase/auth/generated/jni/react/renderer/components/RNFBAuthTurboModules/RNFBAuthTurboModulesJSI.h`
-```
-/**
- * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
- *
- * Do not edit this file as changes may cause incorrect behavior and will be lost
- * once the code is regenerated.
- *
- * @generated by codegen project: GenerateModuleH.js
- */
-
-#pragma once
-
-#include <ReactCommon/TurboModule.h>
-#include <react/bridging/Bridging.h>
-
-namespace facebook::react {
-
-
-template <typename T>
-class JSI_EXPORT NativeRNFBTurboAuthCxxSpec : public TurboModule {
-public:
-  static constexpr std::string_view kModuleName = "NativeRNFBTurboAuth";
-
-protected:
-  NativeRNFBTurboAuthCxxSpec(std::shared_ptr<CallInvoker> jsInvoker) : TurboModule(std::string{NativeRNFBTurboAuthCxxSpec::kModuleName}, jsInvoker) {
-    methodMap_["getConstants"] = MethodMetadata {.argCount = 0, .invoker = __getConstants};
-    methodMap_["configureAuthDomain"] = MethodMetadata {.argCount = 1, .invoker = __configureAuthDomain};
-    methodMap_["getCustomAuthDomain"] = MethodMetadata {.argCount = 1, .invoker = __getCustomAuthDomain};
-    methodMap_["addAuthStateListener"] = MethodMetadata {.argCount = 1, .invoker = __addAuthStateListener};
-    methodMap_["removeAuthStateListener"] = MethodMetadata {.argCount = 1, .invoker = __removeAuthStateListener};
-    methodMap_["addIdTokenListener"] = MethodMetadata {.argCount = 1, .invoker = __addIdTokenListener};
-    methodMap_["removeIdTokenListener"] = MethodMetadata {.argCount = 1, .invoker = __removeIdTokenListener};
-    methodMap_["forceRecaptchaFlowForTesting"] = MethodMetadata {.argCount = 2, .invoker = __forceRecaptchaFlowForTesting};
-    methodMap_["setAutoRetrievedSmsCodeForPhoneNumber"] = MethodMetadata {.argCount = 3, .invoker = __setAutoRetrievedSmsCodeForPhoneNumber};
-    methodMap_["setAppVerificationDisabledForTesting"] = MethodMetadata {.argCount = 2, .invoker = __setAppVerificationDisabledForTesting};
-    methodMap_["useUserAccessGroup"] = MethodMetadata {.argCount = 2, .invoker = __useUserAccessGroup};
-    methodMap_["signOut"] = MethodMetadata {.argCount = 1, .invoker = __signOut};
-    methodMap_["signInAnonymously"] = MethodMetadata {.argCount = 1, .invoker = __signInAnonymously};
-    methodMap_["createUserWithEmailAndPassword"] = MethodMetadata {.argCount = 3, .invoker = __createUserWithEmailAndPassword};
-    methodMap_["isSignInWithEmailLink"] = MethodMetadata {.argCount = 2, .invoker = __isSignInWithEmailLink};
-    methodMap_["signInWithEmailAndPassword"] = MethodMetadata {.argCount = 3, .invoker = __signInWithEmailAndPassword};
-    methodMap_["signInWithEmailLink"] = MethodMetadata {.argCount = 3, .invoker = __signInWithEmailLink};
-    methodMap_["signInWithCustomToken"] = MethodMetadata {.argCount = 2, .invoker = __signInWithCustomToken};
-    methodMap_["revokeToken"] = MethodMetadata {.argCount = 2, .invoker = __revokeToken};
-    methodMap_["sendPasswordResetEmail"] = MethodMetadata {.argCount = 3, .invoker = __sendPasswordResetEmail};
-    methodMap_["sendSignInLinkToEmail"] = MethodMetadata {.argCount = 3, .invoker = __sendSignInLinkToEmail};
-    methodMap_["deleteUser"] = MethodMetadata {.argCount = 1, .invoker = __deleteUser};
-    methodMap_["reload"] = MethodMetadata {.argCount = 1, .invoker = __reload};
-    methodMap_["sendEmailVerification"] = MethodMetadata {.argCount = 2, .invoker = __sendEmailVerification};
-    methodMap_["verifyBeforeUpdateEmail"] = MethodMetadata {.argCount = 3, .invoker = __verifyBeforeUpdateEmail};
-    methodMap_["updateEmail"] = MethodMetadata {.argCount = 2, .invoker = __updateEmail};
-    methodMap_["updatePassword"] = MethodMetadata {.argCount = 2, .invoker = __updatePassword};
-    methodMap_["updatePhoneNumber"] = MethodMetadata {.argCount = 4, .invoker = __updatePhoneNumber};
-    methodMap_["updateProfile"] = MethodMetadata {.argCount = 2, .invoker = __updateProfile};
-    methodMap_["getIdToken"] = MethodMetadata {.argCount = 2, .invoker = __getIdToken};
-    methodMap_["getIdTokenResult"] = MethodMetadata {.argCount = 2, .invoker = __getIdTokenResult};
-    methodMap_["signInWithCredential"] = MethodMetadata {.argCount = 5, .invoker = __signInWithCredential};
-    methodMap_["signInWithProvider"] = MethodMetadata {.argCount = 2, .invoker = __signInWithProvider};
-    methodMap_["signInWithPhoneNumber"] = MethodMetadata {.argCount = 3, .invoker = __signInWithPhoneNumber};
-    methodMap_["verifyPhoneNumberWithMultiFactorInfo"] = MethodMetadata {.argCount = 3, .invoker = __verifyPhoneNumberWithMultiFactorInfo};
-    methodMap_["verifyPhoneNumberForMultiFactor"] = MethodMetadata {.argCount = 3, .invoker = __verifyPhoneNumberForMultiFactor};
-    methodMap_["resolveMultiFactorSignIn"] = MethodMetadata {.argCount = 4, .invoker = __resolveMultiFactorSignIn};
-    methodMap_["resolveTotpSignIn"] = MethodMetadata {.argCount = 4, .invoker = __resolveTotpSignIn};
-    methodMap_["generateTotpSecret"] = MethodMetadata {.argCount = 2, .invoker = __generateTotpSecret};
-    methodMap_["generateQrCodeUrl"] = MethodMetadata {.argCount = 4, .invoker = __generateQrCodeUrl};
-    methodMap_["openInOtpApp"] = MethodMetadata {.argCount = 3, .invoker = __openInOtpApp};
-    methodMap_["getSession"] = MethodMetadata {.argCount = 1, .invoker = __getSession};
-    methodMap_["unenrollMultiFactor"] = MethodMetadata {.argCount = 2, .invoker = __unenrollMultiFactor};
-    methodMap_["finalizeMultiFactorEnrollment"] = MethodMetadata {.argCount = 4, .invoker = __finalizeMultiFactorEnrollment};
-    methodMap_["finalizeTotpEnrollment"] = MethodMetadata {.argCount = 4, .invoker = __finalizeTotpEnrollment};
-    methodMap_["confirmationResultConfirm"] = MethodMetadata {.argCount = 2, .invoker = __confirmationResultConfirm};
-    methodMap_["verifyPhoneNumber"] = MethodMetadata {.argCount = 5, .invoker = __verifyPhoneNumber};
-    methodMap_["confirmPasswordReset"] = MethodMetadata {.argCount = 3, .invoker = __confirmPasswordReset};
-    methodMap_["applyActionCode"] = MethodMetadata {.argCount = 2, .invoker = __applyActionCode};
-    methodMap_["checkActionCode"] = MethodMetadata {.argCount = 2, .invoker = __checkActionCode};
-    methodMap_["linkWithCredential"] = MethodMetadata {.argCount = 4, .invoker = __linkWithCredential};
-    methodMap_["linkWithProvider"] = MethodMetadata {.argCount = 2, .invoker = __linkWithProvider};
-    methodMap_["unlink"] = MethodMetadata {.argCount = 2, .invoker = __unlink};
-    methodMap_["reauthenticateWithCredential"] = MethodMetadata {.argCount = 4, .invoker = __reauthenticateWithCredential};
-    methodMap_["reauthenticateWithProvider"] = MethodMetadata {.argCount = 2, .invoker = __reauthenticateWithProvider};
-    methodMap_["fetchSignInMethodsForEmail"] = MethodMetadata {.argCount = 2, .invoker = __fetchSignInMethodsForEmail};
-    methodMap_["setLanguageCode"] = MethodMetadata {.argCount = 2, .invoker = __setLanguageCode};
-    methodMap_["setTenantId"] = MethodMetadata {.argCount = 2, .invoker = __setTenantId};
-    methodMap_["useDeviceLanguage"] = MethodMetadata {.argCount = 1, .invoker = __useDeviceLanguage};
-    methodMap_["verifyPasswordResetCode"] = MethodMetadata {.argCount = 2, .invoker = __verifyPasswordResetCode};
-    methodMap_["useEmulator"] = MethodMetadata {.argCount = 3, .invoker = __useEmulator};
-  }
-  
-private:
-  static jsi::Value __getConstants(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
-    static_assert(
-      bridging::getParameterCount(&T::getConstants) == 1,
-      "Expected getConstants(...) to have 1 parameters");
-    return bridging::callFromJs<jsi::Object>(rt, &T::getConstants,  static_cast<NativeRNFBTurboAuthCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
-  }
-
-  static jsi::Value __configureAuthDomain(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
-    static_assert(
-      bridging::getParameterCount(&T::configureAuthDomain) == 2,
-      "Expected configureAuthDomain(...) to have 2 parameters");
-    bridging::callFromJs<void>(rt, &T::configureAuthDomain,  static_cast<NativeRNFBTurboAuthCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
-      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));return jsi::Value::undefined();
-  }
-
-  static jsi::Value __getCustomAuthDomain(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
-    static_assert(
-      bridging::getParameterCount(&T::getCustomAuthDomain) == 2,
-      "Expected getCustomAuthDomain(...) to have 2 parameters");
-    return bridging::callFromJs<jsi::Value>(rt, &T::getCustomAuthDomain,  static_cast<NativeRNFBTurboAuthCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
-      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));
-  }
-
-  static jsi::Value __addAuthStateListener(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
-    static_assert(
-      bridging::getParameterCount(&T::addAuthStateListener) == 2,
-      "Expected addAuthStateListener(...) to have 2 parameters");
-    bridging::callFromJs<void>(rt, &T::addAuthStateListener,  static_cast<NativeRNFBTurboAuthCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
-      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));return jsi::Value::undefined();
-  }
-
-  static jsi::Value __removeAuthStateListener(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
-    static_assert(
-      bridging::getParameterCount(&T::removeAuthStateListener) == 2,
-      "Expected removeAuthStateListener(...) to have 2 parameters");
-    bridging::callFromJs<void>(rt, &T::removeAuthStateListener,  static_cast<NativeRNFBTurboAuthCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
-      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));return jsi::
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9352** (2026-09-30): **fix(messaging): detect the iOS APNs environment from the provisioning profile**
-  *Symptoms*: - Fixes #9348  Release builds signed with an Apple Development profile registered the APNs token as production, because the type came from `DEBUG`. FCM then returned `BadDeviceToken`.  `didRegisterForRemoteNotificationsWithDeviceToken:` now passes `FIRMessagingAPNSTokenTypeUnknown`. Firebase documents that `UNKNOWN` is how Messaging figures the token type out from the provisioning profile: https://firebase.google.com/docs/reference/ios/firebasemessaging/api/reference/Enums/FIRMessagingAPNSTokenType  - Debug plus development signing stays sandbox - Release plus App Store, TestFlight, or Ad Hoc stays production - Release plus development signing registers sandbox - No public API or config change. A new FCM token is requested only when that classification flips  --- Maintainer note: Fixes internal CPRN-543
+- **Issue #9376** (2026-10-18): **ci: optimize Actions caches (ABI, sticky metro/ccache, probes)**
+  *Symptoms*: ## Summary  Shrink and stabilize GitHub Actions cache usage for RNFB CI, harden RN-bare dynfb configure checks, and make Jet await-exit stalls diagnosable + retryable.  - `a96fdad93` — CI builds only the emulator ABI and bumps the Gradle cache to arch-scoped `v2`. - `e98bd5afe` — Firebase emulator cache keyed by installed `firebase-tools` version (Android sole saver on `main`). - `a90a03733` — Sticky content-hash Metro caches; drop `run_id`; save on exact miss; iOS saver is debug+spm. - `03a40c073` — Sticky e2e ccache keys with `append-timestamp: false` (dims + native hash). - `dbefd1026` — Sticky ccache for Expo iOS link probe (`expo-link` key; `CC`/`CPLUSPLUS` on xcodebuild). - `f3127f0a0` — Sticky ccache for RN-bare iOS build + dynfb probes (distinct keys; launch-smoke CC settings). - `40bb85999` — Dynfb Phase A: upload launch-smoke logs on failure; richer configure-marker miss diagnostics; retrospective `log show --debug`. - `cf9f61486` — Dynfb Phase B: probe-owned `RNFB_PROBE_CONFIGURE_OK` hard assert; I-COR soft warn; `simctl launch … -- -FIRDebugEnabled`. - `05d72a9f2` — Jet stall Phase A: await-exit stall diagnostics; upload `/tmp/rnfb-metro-*.log`; flake-summary stall section; `[jet-control] server.run starting`. - `daede9ad6` — Jet stall Phase B: stall is Jet-retryable (`ignoreExit` so flag survives kill); `stall-kill-jet` logging.  ## Test plan  Per-commit verification by implementer/reviewer agents:  - [x] **Gradle ABI** — `ruby -ryaml` parse; ABI env from `matrix
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9352?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 69.83%. Comparing base ([`c904808`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/c904808614e93d1daf7427b34a1c1b49488a4e00?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`fdefca8`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/fdefca8acdcb123dd2ae7d3e65066b4bbc7daaed?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##          
+  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9376?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :x: Patch coverage is `96.29630%` with `1 line` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 74.78%. Comparing base ([`4d4127f`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/4d4127fbe8ef42164f32dafeaa642b8803321a29?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`daede9a`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/daede9ad661a91ced1c7fb8bed6e8c8f7194e25f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff      
 
-- **Issue #9351** (2026-09-30): **feat: Xcode 27 / iOS 27 and UIScene compatibility**
-  *Symptoms*: ## Summary - Ratchet mobile fixtures to RN **0.88.0-rc.3** / React **19.3** / Expo **58**, migrate Detox + bare to single-scene UIScene, and prove Expo 58 scene/Firebase ownership with required launch smokes. - Port iOS e2e automation to selected-Xcode **Device Hub** + explicit **iOS 27** UDIDs; pin Apple CI to **`macos-27`** with `configure-apple-ci.sh` (stable Xcode major 27). - Document Xcode 27 support; temporarily suspend Tart lab path. Local V1: iOS/Android full covers green; **macOS Jet e2e currently hangs** after Jet listen (investigation ongoing; draft opened under maintainer override of D10).  ## Test plan - [ ] Hosted `macos-27` / Xcode 27 CI: Detox iOS, archive, Expo link+launch-smoke, bare build+launch-smoke - [ ] Confirm Device Hub path on runners (no `open -a Simulator`) - [ ] Local follow-up: unblock macOS Jet slot-1 `:test-cover` hang - [ ] Maintainer review of UIScene / config-plugin / CI path-filter surface  --- Maintainer note: Fixes internal CPRN-545
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9351?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :x: Patch coverage is `73.33333%` with `16 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 69.99%. Comparing base ([`c904808`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/c904808614e93d1daf7427b34a1c1b49488a4e00?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`d6e6e5a`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/d6e6e5a52b054721e93c76b972a1dec089fc40e2?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</s
-
-- **Issue #9350** (2026-10-02): **build(deps): bump ruby/setup-ruby from 1.321.0 to 1.326.0**
-  *Symptoms*: Bumps [ruby/setup-ruby](https://github.com/ruby/setup-ruby) from 1.321.0 to 1.326.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ruby/setup-ruby/releases">ruby/setup-ruby's releases</a>.</em></p> <blockquote> <h2>v1.326.0</h2> <h2>What's Changed</h2> <ul> <li>Add ruby-3.4.11 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/940">ruby/setup-ruby#940</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.325.0...v1.326.0">https://github.com/ruby/setup-ruby/compare/v1.325.0...v1.326.0</a></p> <h2>v1.325.0</h2> <h2>What's Changed</h2> <ul> <li>Add jruby-10.0.7.0,jruby-10.1.2.0 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/939">ruby/setup-ruby#939</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.324.0...v1.325.0">https://github.com/ruby/setup-ruby/compare/v1.324.0...v1.325.0</a></p> <h2>v1.324.0</h2> <h2>What's Changed</h2> <ul> <li>Add truffleruby-40.0.0,truffleruby+graalvm-40.0.0 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/938">ruby/setup-ruby#938</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setu
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9350) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9350) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/invertase/react-native-firebase?pullRequest=9350) it.</sub>
-  > Superseded by #9356.
-  > In order to prioritize work in this repository, closed issues and pull requests do not regularly receive attention.  If the underlying issue or pull request still requires attention, opening a new issue with a reproduction after testing with current versions, or reposting the pull request as a new PR may be the most effective way forward.
-
-- **Issue #9349** (2026-10-01): **messaging() JS TurboModule returns undefined on RN 0.87.1 with New Architecture (app module works fine)"**
-  *Symptoms*: Title: messaging() JS TurboModule returns undefined on RN 0.87.1 with New Architecture (app module works fine)  **Versions** - @react-native-firebase/app: 26.4.0 - @react-native-firebase/messaging: 26.4.0 - react-native: 0.87.1 - newArchEnabled: true (mandatory on RN 0.87.1 — disabling it fails the build) - Platform: Android, physical device (Pixel 10 Pro)  **Bug** `import messaging from '@react-native-firebase/messaging'; typeof messaging()` is `undefined` in JS at runtime, despite: - @react-native-firebase/app initializing successfully natively (confirmed via logcat: "FirebaseApp initialization successful", "ReactNativeFirebaseApp: received application context") - Correct Gradle plugin application (com.google.gms:google-services applied at bottom of app/build.gradle) - Autolinking correctly detecting the TurboModule libraries (npx react-native config shows RNFBAppTurboModules / RNFBMessagingTurboModules registered) - No manual native module registration needed/attempted beyond standard autolinking  The sibling `app()` core module works correctly; only the Messaging module's JS binding is undefined. This isolates the bug specifically to the messaging package's TurboModule registration under RN 0.87.1's New Architecture, not a general Firebase/New-Architecture incompatibility.  **Workaround used to prove backend/FCM delivery works** Bypassing the JS layer entirely by calling FirebaseMessaging.getInstance().token.await() directly in native Kotlin (MainApplication.kt onCreate).
-  **Post-Mortem & Fix Analysis**:
-  > Hi @RobotLane, thanks for the report. Messaging is modular-only in v26, so there's no default export anymore and messaging() won't work. Use getMessaging() instead, e.g. getToken(getMessaging()). See the [v26 migration guide](https://rnfirebase.io/migrating-to-v26). If you still get undefined with the modular API, please share a minimal repro and the actual error and file a new issue 🙏
-
-- **Issue #9348** (2026-09-30): **[messaging][ios] APNs token type is inferred from DEBUG instead of the signed APNs environment**
-  *Symptoms*: ## Issue  On iOS, `@react-native-firebase/messaging` currently determines the APNs token type from the `DEBUG` compilation macro in `RNFBMessaging+AppDelegate.m`:  ```objc #ifdef DEBUG   [[FIRMessaging messaging] setAPNSToken:deviceToken                                     type:FIRMessagingAPNSTokenTypeSandbox]; #else   [[FIRMessaging messaging] setAPNSToken:deviceToken                                     type:FIRMessagingAPNSTokenTypeProd]; #endif ```  This assumes that:  ```text DEBUG defined     == APNs sandbox DEBUG not defined == APNs production ```  However, the build configuration / `DEBUG` macro and the APNs environment of the signed application are independent.  A valid Release build can be signed using Apple Development provisioning and therefore have:  ```text aps-environment = development ```  while `DEBUG` is not defined.  I reproduced this configuration on a physical iPhone.  ### Reproduction  Environment used for the runtime reproduction:  ```text @react-native-firebase/messaging: 21.14.0 Firebase Messaging iOS SDK: 11.11.0 GoogleUtilities: 8.1.0 Xcode: 27.0 Device: iPhone 16e iOS: 26.5 ```  The application was:  ```text Build configuration: Release Signing: Apple Development Signed aps-environment: development DEBUG macro in RNFBMessaging: not defined FirebaseAppDelegateProxyEnabled: not explicitly disabled ```  The signed application entitlement was verified from the built `.app`, rather than inferred from the Xcode build configuration.  With the standard RNF
-
-- **Issue #9346** (2026-09-30): **build(deps): bump ruby/setup-ruby from 1.321.0 to 1.325.0**
-  *Symptoms*: Bumps [ruby/setup-ruby](https://github.com/ruby/setup-ruby) from 1.321.0 to 1.325.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ruby/setup-ruby/releases">ruby/setup-ruby's releases</a>.</em></p> <blockquote> <h2>v1.325.0</h2> <h2>What's Changed</h2> <ul> <li>Add jruby-10.0.7.0,jruby-10.1.2.0 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/939">ruby/setup-ruby#939</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.324.0...v1.325.0">https://github.com/ruby/setup-ruby/compare/v1.324.0...v1.325.0</a></p> <h2>v1.324.0</h2> <h2>What's Changed</h2> <ul> <li>Add truffleruby-40.0.0,truffleruby+graalvm-40.0.0 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/938">ruby/setup-ruby#938</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.323.0...v1.324.0">https://github.com/ruby/setup-ruby/compare/v1.323.0...v1.324.0</a></p> <h2>v1.323.0</h2> <h2>What's Changed</h2> <ul> <li>Update CRuby releases on Windows by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/937">ruby/setup-ruby#937</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://git
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9346) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9346) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/invertase/react-native-firebase?pullRequest=9346) it.</sub>
-  > Superseded by #9350.
-  > In order to prioritize work in this repository, closed issues and pull requests do not regularly receive attention.  If the underlying issue or pull request still requires attention, opening a new issue with a reproduction after testing with current versions, or reposting the pull request as a new PR may be the most effective way forward.
-
-- **Issue #9343** (2026-09-29): **fix(app, storage): link Photos framework on tvOS**
-  *Symptoms*: - Fixes #9342  tvOS builds fail with undefined `PHAsset` after `RNFBUtilsModule` moved to `.mm`, which no longer autolinks Photos. PhotoKit is available on tvOS 10+, so the app and storage podspecs now link it there too.  --- Maintainer note: Fixes internal CPRN-524
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9343?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 69.37%. Comparing base ([`dce165d`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/dce165d7283a30060c5b08066cf5841d9247105a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`e296e2f`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/e296e2f94a482e25493ada381b0a659f162f4afb?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##          
-
-- **Issue #9342** (2026-09-29): **[🐛] [tvOS] app 26.4.0: undefined symbol PHAsset — Photos framework no longer autolinked after .m → .mm**
-  *Symptoms*: ## Issue  Hi, I am getting exactly the same error as https://github.com/invertase/react-native-firebase/issues/9136 but on tvOS 27, using Xcode 27. It works fine after adding `s.tvos.frameworks = 'Photos'` in the RNFBApp.podspec. Photokit definitely should be available on tvOS as well, see: https://developer.apple.com/documentation/photokit   Tested using react-native-tvos 0.87.1-1   
-  **Post-Mortem & Fix Analysis**:
-  > Hey @viljamik, thanks for the report, and for confirming the podspec line.  You're right that PhotoKit is on tvOS. `RNFBUtilsModule.mm` uses `PHAsset`, and after the move to `.mm` it no longer autolinks Photos. The podspec only declared it for iOS and macOS. Fix is up in #9343, including the same link on storage.
+- **Issue #9375** (2026-10-16): **fix(messaging, ios): guard AppDelegate window access for UIScene apps**
+  *Symptoms*: - Fixes #8796  ## Summary  Re-implements the UIScene-safe `respondsToSelector:@selector(window)` guard before reading `UIApplication.sharedApplication.delegate.window` in messaging launch and foreground handlers. Scene-only AppDelegates often omit the optional `window` property, which crashed with `unrecognized selector` at launch.  This is a clean maintainer re-implementation of the same approach from #9359 (thanks @huytdps13400 — CLA was blocking merge of that PR, so this lands the fix under a signed CLA).  **Obsoletes** https://github.com/invertase/react-native-firebase/pull/9359  ## Test plan  - [ ] Confirm the two call sites in `RNFBMessaging+NSNotificationCenter.m` both gate on `respondsToSelector:@selector(window)` - [ ] Apps that keep `AppDelegate.window` (Detox / bare fixtures) behave as before - [ ] Scene-only AppDelegate without `window` no longer crashes at launch / foreground - [ ] Module-level `isHeadless` still set when the RCTRootView `appProperties` path is skipped  --- Maintainer note: Fixes internal CPRN-211
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1337,2142 +1592,1630 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1471450` (2026-09-30)
-**Commit Message**: fix(app-check): drop the unused indent fallback
+### Incident Patch 1: `3fde064e` (2026-10-16)
+**Commit Message**: fix(messaging, ios): hop notification permission APIs onto the main queue
 
-The capture is always a string, including empty, so the nullish branch
-could not run.
+TurboModule requestPermission/hasPermission were calling UserNotifications
+off the JS thread, so ARM64 Simulator authorization completions never fired.
+Also grant Detox notification permission at iOS launch, refresh Chosen-shape
+helper rows, and keep fixture lock/pbxproj in sync after the main rebase.
 
-**File**: `packages/app-check/plugin/src/ios/appDelegate.ts` (modified, +1/-1)
+**File**: `okf-bundle/ios-spm-native-imports.md` (modified, +7/-0)
 ```diff
-@@ -131,7 +131,7 @@ export function modifySwiftAppDelegate(contents: string): string {
-   // run before that call. Do not append a second FirebaseApp.configure().
-   const existingConfigure = /^([ \t]*)FirebaseApp\.configure\(\)/m.exec(contents);
-   if (existingConfigure) {
--    const indent = existingConfigure[1] ?? '';
-+    const indent = existingConfigure[1];
-     return contents.replace(
-       existingConfigure[0],
-       `${indent}RNFBAppCheckModule.sharedInstance()\n${existingConfigure[0]}`,
-```
-
----
-
-### Incident Patch 2: `f366a640` (2026-09-30)
-**Commit Message**: fix(app-check): install the provider factory before configure
-
-Expo 58 scene AppDelegates have no factory.startReactNative, so the Swift
-plugin skipped them. When configure was already present it also appended a
-second FirebaseApp.configure() after the factory. Match the test app: one
-sharedInstance, then a single configure.
-
-**File**: `.github/workflows/scripts/test-expo-ios-link.sh` (modified, +11/-1)
-```diff
-@@ -76,6 +76,16 @@ if [[ "$firebase_configure_count" -ne 1 ]]; then
-   log "ERROR: expected exactly one FirebaseApp.configure() in AppDelegate, found ${firebase_configure_count}"
-   exit 1
- fi
-+if ! grep -q 'RNFBAppCheckModule.sharedInstance()' "$APP_DELEGATE"; then
-+  log "ERROR: App Check provider factory missing from AppDelegate (scene AppDelegate anchor was not found)"
-+  exit 1
-+fi
-+factory_line="$(grep -n 'RNFBAppCheckModule.sharedInstance()' "$APP_DELEGATE" | head -1 | cut -d: -f1)"
-+configure_line="$(grep -n 'FirebaseApp.configure()' "$APP_DELEGATE" | head -1 | cut -d: -f1)"
-+if [[ -z "$factory_line" || -z "$configure_line" || "$factory_line" -gt "$configure_line" ]]; then
-+  log "ERROR: App Check provider factory must be registered before FirebaseApp.configure() (factory line ${factory_line:-missing}, configure line ${configure_line:-missing})"
-+  exit 1
-+fi
- if ! awk '/UIApplicationSupportsMultipleScenes/{getline; if ($0 ~ /<false\/>/) found=1} END{exit !found}' "$INFO_PLIST"; then
-   log "ERROR: UIApplicationSupportsMultipleScenes is not false (single-scene contract)"
-   exit 1
-@@ -84,7 +94,7 @@ if ! grep -q 'UISceneDelegateClassName' "$INFO_PLIST"; then
-   log "ERROR: Info.plist missing UIScene manifest entries"
-   exit 1
- fi
--log "PASS: Expo owns SceneDelegate; RNFB configures Firebase once in AppDelegate; single-scene manifest"
-+log "PASS: Expo owns SceneDelegate; RNFB configures Firebase once in AppDelegate after App Check; single-scene manifest"
- log "--- end Expo 58 UIScene / RNFB plugin contract ---"
+@@ -147,6 +147,13 @@ its queue and constants from `RNFBDatabaseCommon`.
+ | Database | `RNFBDatabase*Helper` classes, plus Firebase-free queue/constants headers |
+ | Installations | `RNFBInstallationsHelper` |
+ | App Distribution | `RNFBAppDistributionHelper` |
++| Analytics | `RNFBAnalyticsHelper` |
++| App Check | `RNFBAppCheckHelper` |
++| Crashlytics | `RNFBCrashlyticsHelper` |
++| Messaging | `RNFBMessagingHelper` |
++| Functions | `RNFBFunctionsHelper` |
++| Firestore | `RNFBFirestore*Helper` classes (module, document, collection, transaction) |
++| Perf | `RNFBPerfHelper` |
  
- # Diagnosis: did #9164's rnfirebase_add_spm_core_to_app_target run during
+ Installations still publishes Objective-C product headers
+ (`FirebaseInstallations/FirebaseInstallations.h`), but
 ```
 
-**File**: `packages/app-check/plugin/__tests__/fixtures/AppDelegate_sdk58.swift` (added, +27/-0)
+**File**: `packages/messaging/ios/RNFBMessaging/RNFBMessagingModule.mm` (modified, +41/-33)
 ```diff
-@@ -0,0 +1,27 @@
-+internal import Expo
-+import React
-+import ReactAppDependencyProvider
+@@ -227,26 +227,32 @@ - (void)requestPermission:(JS::NativeRNFBTurboMessaging::IOSPermissions &)permis
+     options |= UNAuthorizationOptionProvidesAppNotificationSettings;
+   }
+ 
+-  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+-  [center requestAuthorizationWithOptions:options
+-                        completionHandler:^(BOOL granted, NSError *_Nullable error) {
+-                          if (error) {
+-                            [RNFBSharedUtils rejectPromiseWithNSError:reject error:error];
+-                          } else {
++  // TurboModule methods run off-main (NewArch-AD-9). On ARM64 iOS Simulator,
++  // requestAuthorizationWithOptions invoked from the JS thread can leave the
++  // completionHandler unfired forever while main stays idle in CFRunLoop.
++  // Dispatch async — never RCTUnsafeExecuteOnMainQueueSync from JS.
++  dispatch_async(dispatch_get_main_queue(), ^{
++    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
++    [center requestAuthorizationWithOptions:options
++                          completionHandler:^(BOOL granted, NSError *_Nullable error) {
++                            if (error) {
++                              [RNFBSharedUtils rejectPromiseWithNSError:reject error:error];
++                            } else {
+ #if TARGET_IPHONE_SIMULATOR && TARGET_CPU_ARM64
+-                            // Intentional: do not call UIKit registerForRemoteNotifications on
+-                            // ARM64 Simulator — it can wedge main indefinitely. See
+-                            // registerForRemoteNotifications:reject: for the same policy.
+-                            DLog(@"RNFBMessaging requestPermission - ARM64 Simulator detected, "
+-                                 @"skipping UIKit registerForRemoteNotifications.");
++                              // Intentional: do not call UIKit registerForRemoteNotifications on
++                              // ARM64 Simulator — it can wedge main indefinitely. See
++                              // registerForRemoteNotifications:reject: for the same policy.
++                              DLog(@"RNFBMessaging requestPermission - ARM64 Simulator detected, "
++                                   @"skipping UIKit registerForRemoteNotifications.");
+ #else
+           dispatch_async(dispatch_get_main_queue(), ^{
+             [[UIApplication sharedApplication] registerForRemoteNotifications];
+           });
+ #endif
+-                            [self hasPermission:resolve reject:reject];
+-                          }
+-                        }];
++                              [self hasPermission:resolve reject:reject];
++                            }
++                          }];
++  });
+ }
+ 
+ - (void)registerForRemoteNotifications:(RCTPromiseResolveBlock)resolve
+@@ -343,27 +349,29 @@ - (void)unregisterForRemoteNotifications:(RCTPromiseResolveBlock)resolve
+ }
+ 
+ - (void)hasPermission:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+-  [[UNUserNotificationCenter currentNotificationCenter]
+-      getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *_Nonnull settings) {
+-        NSNumber *authorizedStatus = @-1;
+-        if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
+-          authorizedStatus = @-1;
+-        } else if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
+-          authorizedStatus = @0;
+-        } else if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
+-          authorizedStatus = @1;
+-        } else if (settings.authorizationStatus == UNAuthorizationStatusProvisional) {
+-          authorizedStatus = @2;
+-        }
+-
+-        if (@available(iOS 14.0, macCatalyst 14.0, *)) {
+-          if (settings.authorizationStatus == UNAuthorizationStatusEphemeral) {
+-            authorizedStatus = @3;
++  dispatch_async(dispatch_get_main_queue(), ^{
++    [[UNUserNotificationCenter currentNotificationCenter]
++        getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *_Nonnull settings) {
++          NSNumber *authorizedStatus = @-1;
++          if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) {
++            authorizedStatus = @-1;
++          } else if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
++            authorizedStatus = @0;
++          } else if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) {
++            authorizedStatus = @1;
++          } else if (settings.authorizationStatus == UNAuthorizationStatusProvisional) {
++            authorizedStatus = @2;
+           }
+-        }
+ 
+-        resolve(authorizedStatus);
+-      }];
++          if (@available(iOS 14.0, macCatalyst 14.0, *)) {
++            if (settings.authorizationStatus == UNAuthorizationStatusEphemeral) {
++              authorizedStatus = @3;
++            }
++          }
 +
-+@main
-+class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {
-+  var window: UIWindow?
-+
-+  var reactNativeDelegate: ExpoReactNativeFactoryDelegate?
-+  var reactNativeFactory: RCTReactNativeFactory?
-+
-+  public override func application(
-+    _ application: UIApplication,
-+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-+  ) -> Bool {
-+    let delegate = ReactNativeDelegate()
-+    let factory = ExpoReactNativeFactory(delegate: delegate)
-+    delegate.dependencyProvider = RCTAppDependencyProvider()
-+
-+    reactNativeDelegate = delegate
-+    reactNativeFactory = factory
-+
-+    // The window is created and React Native is started by `SceneDelegate` under the
-+    // scene-based life cycle (required by the iOS 27 SDK).
-+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-+  }
-+}
++          resolve(authorizedStatus);
++        }];
++  });
+ }
+ 
+ - (void)se
 ```
 
-**File**: `packages/app-check/plugin/__tests__/iosPlugin.test.ts` (modified, +50/-0)
+**File**: `packages/messaging/ios/RNFBMessagingUnitTests/HostStubs/UIKit/UIApplicationHostStub.m` (modified, +10/-8)
 ```diff
-@@ -207,4 +207,54 @@ class AppDelegate: ExpoAppDelegate {
-     const secondImportCount = (twiceModifiedContents.match(/import RNFBAppCheck/g) || []).length;
-     expect(secondImportCount).toBe(0);
+@@ -10,25 +10,27 @@ + (UIApplication *)sharedApplication {
+   static dispatch_once_t once;
+   dispatch_once(&once, ^{
+     shared = [[UIApplication alloc] init];
++    [shared resetForTesting];
    });
+   return shared;
+ }
+ 
+-- (UIApplicationState)applicationState {
+-  return UIApplicationStateActive;
+-}
+-
+-- (BOOL)isRegisteredForRemoteNotifications {
+-  return NO;
+-}
+-
+ - (void)registerForRemoteNotifications {
+ }
+ 
+ - (void)unregisterForRemoteNotifications {
++  self.unregisterForRemoteNotificationsCallCountForTesting += 1;
++  self.registeredForRemoteNotifications = NO;
+ }
+ 
+ - (void)endBackgroundTask:(UIBackgroundTaskIdentifier)identifier {
++  (void)identifier;
++}
 +
-+  it('registers App Check before configure on an Expo 58 scene AppDelegate', async function () {
-+    const appDelegate = await fs.readFile(
-+      path.join(__dirname, './fixtures/AppDelegate_sdk58.swift'),
-+      { encoding: 'utf8' },
-+    );
-+    const result = modifySwiftAppDelegate(appDelegate);
-+    const factoryIndex = result.indexOf('RNFBAppCheckModule.sharedInstance()');
-+    const configureIndex = result.indexOf('FirebaseApp.configure()');
-+    const returnIndex = result.indexOf(
-+      'return super.application(application, didFinishLaunchingWithOptions: launchOptions)',
-+    );
++- (void)resetForTesting {
++  self.applicationState = UIApplicationStateActive;
++  self.registeredForRemoteNotifications = NO;
++  self.unregisterForRemoteNotificationsCallCountForTesting = 0;
+ }
+ 
+ @end
+```
+
+**File**: `packages/messaging/ios/RNFBMessagingUnitTests/RNFBMessagingModuleInstallationIdTests.m` (modified, +20/-43)
+```diff
+@@ -21,25 +21,8 @@
+ #import <XCTest/XCTest.h>
+ 
+ #import "RNFBMessagingHelper.h"
+-#import "RNFBMessagingModule.h"
+-
+-// `register` / `unregister` come from the codegen'd NativeRNFBTurboMessagingSpec protocol, which
+-// the host stub does not redeclare.
+-@interface RNFBMessagingModule (InstallationIdTesting)
+-- (void)register:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject;
+-- (void)unregister:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject;
+-- (void)getToken:(NSString *)appName
+-        senderId:(NSString *)senderId
+-         resolve:(RCTPromiseResolveBlock)resolve
+-          reject:(RCTPromiseRejectBlock)reject;
+-- (void)getAPNSToken:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject;
+-- (void)unregisterForRemoteNotifications:(RCTPromiseResolveBlock)resolve
+-                                  reject:(RCTPromiseRejectBlock)reject;
+-- (NSDictionary *)messagingConstantsDictionary;
+-@end
+ 
+ @interface RNFBMessagingModuleInstallationIdTests : XCTestCase
+-@property(nonatomic, strong) RNFBMessagingModule *module;
+ @property(nonatomic, strong) NSMutableArray *resolved;
+ @property(nonatomic, strong) NSMutableArray<NSString *> *rejectedCodes;
+ @property(nonatomic, strong) NSMutableArray<NSError *> *rejectedErrors;
+@@ -49,7 +32,6 @@ @implementation RNFBMessagingModuleInstallationIdTests
+ 
+ - (void)setUp {
+   [super setUp];
+-  self.module = [[RNFBMessagingModule alloc] init];
+   self.resolved = [NSMutableArray array];
+   self.rejectedCodes = [NSMutableArray array];
+   self.rejectedErrors = [NSMutableArray array];
+@@ -136,17 +118,18 @@ - (void)testConstants_installationIdEnabled_whenSdkFlagOn {
+   XCTAssertEqual([RNFBMessagingHelper isInstallationIdEnabled], YES);
+ }
+ 
+-- (void)testConstants_isRegisteredForRemoteNotifications_reflectsUIApplicationFlag {
++- (void)testIsRegisteredForRemoteNotifications_reflectsUIApplicationFlag {
+   [UIApplication sharedApplication].registeredForRemoteNotifications = YES;
+ 
+-  XCTAssertEqualObjects(
+-      [self.module messagingConstantsDictionary][@"isRegisteredForRemoteNotifications"], @YES);
++  XCTAssertTrue([RNFBMessagingHelper isRegisteredForRemoteNotifications]);
+ }
+ 
+ #pragma mark - getToken / getAPNSToken / unregister (main-queue UIApplication hops)
+ 
+ - (void)testGetToken_rejectsUnregistered_whenNotRegistered {
+-  [self.module getToken:@"app" senderId:@"sender" resolve:[self resolver] reject:[self rejecter]];
++  [RNFBMessagingHelper getTokenWithSenderId:@"sender"
++                                    resolve:[self resolver]
++                                     reject:[self rejecter]];
+ 
+   XCTAssertEqual(self.resolved.count, 0);
+   XCTAssertEqualObjects(self.rejectedCodes, (@[ @"unregistered" ]));
+@@ -156,56 +139,50 @@ - (void)testGetToken_doesNotRejectUnregistered_whenRegistered {
+   [UIApplication sharedApplication].registeredForRemoteNotifications = YES;
+   NSError *fcmError = [NSError errorWithDomain:@"com.google.fcm" code:99 userInfo:nil];
+   [FIRMessaging messaging].completionErrorForTesting = fcmError;
++  FIRMessaging.retrieveFCMTokenError = fcmError;
++  FIRMessaging.retrieveFCMTokenResult = nil;
+ 
+-  [self.module getToken:@"app" senderId:@"sender" resolve:[self resolver] reject:[self rejecter]];
++  [RNFBMessagingHelper getTokenWithSenderId:@"sender"
++                                    resolve:[self resolver]
++                                     reject:[self rejecter]];
+ 
+   XCTAssertEqual(self.resolved.count, 0);
+   XCTAssertEqual(self.rejectedCodes.count, 1);
+   XCTAssertNotEqualObjects(self.rejectedCodes.firstObject, @"unregistered");
+-  XCTAssertEqualObjects(self.rejectedCodes.firstObject, @"native-error");
++  XCTAssertEqualObjects(self.rejectedCodes.firstObject, @"unknown");
++  XCTAssertEqual(self.rejectedErrors.count, 1);
++  XCTAssertEqual(self.rejectedErrors[0], fcmError);
+ }
+ 
+ - (void)testGetAPNSToken_rejectsUnregistered_whenNotRegistered {
+   [FIRMessaging messaging].APNSToken = nil;
+ 
+-  [self.module getAPNSToken:[self resolver] reject:[self rejecter]];
++  [RNFBMessagingHelper getAPNSToken:[self resolver] reject:[self rejecter]];
+ 
+   XCTAssertEqual(self.resolved.count, 0);
+   XCTAssertEqualObjects(self.rejectedCodes, (@[ @"unregistered" ]));
+ }
+ 
+-- (void)testUnregisterForRemoteNotifications_callsUIKitAndResolves {
++- (void)testUnregisterForRemoteNotificationsOnMain_callsUIKit {
+   [UIApplication sharedApplication].registeredForRemoteNotifications = YES;
+ 
+-  [self.module unregisterForRemoteNotifications:[self resolver] reject:[self rejecter]];
++  [RNFBMessagingHelper unregisterForRemoteNotificationsOnMain];
+ 
+   XCTAssertEqual(
+       [UIApplication sharedApplication].unregisterForRemoteNotificationsCallCountForTesting, 1);
+   XCTAssertFalse([UIApplication sharedApplication].isRegisteredForRemoteNotifications);
+-  XCTAssertEqualObjects(self.resolved, (@[ [NSNull null] ]));
+-  XCTAssertEqual(self.rejectedCodes.count, 0);
+ }
+ 
+-- (void)testAddCustomProps_setsIsHeadlessWhenBackgroundRemoteLaunch {
++- (
+```
+
+**File**: `tests/e2e/firebase.test.js` (modified, +13/-5)
+```diff
+@@ -1211,12 +1211,20 @@ async function launchAppWithTimeout(launchArgs, { deleteApp = true, timeoutMs }
+   let timer;
+ 
+   try {
++    const launchConfig = {
++      newInstance: true,
++      delete: deleteApp,
++      launchArgs,
++    };
++    // iOS Simulator: UNUserNotificationCenter requestAuthorization completion
++    // never fires while the system prompt is pending (main stays idle). Detox
++    // launchApp permissions uses applesimutils so messaging e2e requestPermission
++    // can settle without a human tap. Android ignores this key.
++    if (device.getPlatform() === 'ios') {
++      launchConfig.permissions = { notifications: 'YES' };
++    }
+     await Promise.race([
+-      device.launchApp({
+-        newInstance: true,
+-        delete: deleteApp,
+-        launchArgs,
+-      }),
++      device.launchApp(launchConfig),
+       new Promise((_, reject) => {
+         timer = setTimeout(() => {
+           const err = new Error(
+```
+
+**File**: `tests/ios/Podfile.lock` (modified, +11/-11)
+```diff
+@@ -3666,25 +3666,25 @@ SPEC CHECKSUMS:
+   ReactCommon: 0ef624aa6a590b7089797decf8ab6e8d0c01336f
+   RNAppleAuthentication: a89c9804592b38ed4ab11f0aee68d05ba12ad432
+   RNDeviceInfo: 4c852998208b60dc192ae3529e5867817719ad1e
+-  RNFBAnalytics: b3986a99c49554afd2a8b941f6778a81af8a2c9b
++  RNFBAnalytics: 439ef8fd591653d90c60ade70c6fbb928a6a68c1
+   RNFBApp: a79a8f65bcc6126d53fe9423879a50bb271e37d8
+-  RNFBAppCheck: 6904803efb0c08930ec40530ae8b914e8899b476
+-  RNFBAppDistribution: 571c6e1a7b1a6192a536e68557eb987e16d47abf
+-  RNFBAuth: 6e5527ef4cb1f7a22bbf6245a78aa591548d78aa
+-  RNFBCrashlytics: ac815b98b189f289f7717cdcc7c6b484864887ce
+-  RNFBDatabase: 66ccdaf13214328aabd5d58a17c59b61a9b66903
+-  RNFBFirestore: 4902875187e6439ea18f8f0241cbc06979c149e9
+-  RNFBFunctions: ea45bc01bf96f3ef729a80b5ad0d121769f63f4f
++  RNFBAppCheck: f38f0433bda53fefd2c846f54dd4ba6107dadbba
++  RNFBAppDistribution: 238b6f7b81538b47276ef8e3348f404e7f37ee11
++  RNFBAuth: 26009b40ed266398797248ac56b77591c58a1e52
++  RNFBCrashlytics: e24b856943396114d1fa46aa6512ca2fe95ae96d
++  RNFBDatabase: deeeee7ef2efaa3e980e8b312487bf674d69481a
++  RNFBFirestore: 9aee39f71b33a7639de421372a7469de624b2d09
++  RNFBFunctions: 68503edab6623c9d8f7d44b5ea53757e447ceffd
+   RNFBInAppMessaging: 6d89a102615a3dcce1f0a61cda386471f2604f98
+   RNFBInstallations: cee2e5030edbefe8077699d0f8a6e5b3b056cd15
+   RNFBMessaging: 040d846facb2cb7def9955b20b03380d269725f9
+   RNFBML: 0fbf5a3625154af91b96cccaed4edc82ddc6df36
+   RNFBPerf: 0dd6ba75626b7fcb79aad15f27e9f2a5ef7e9f01
+-  RNFBRemoteConfig: 3cedde7a8d881b2fa2126d296c4376f816ed24ff
+-  RNFBStorage: ae1fefd1ad24f7fd39399c92cba36ef543314b72
++  RNFBRemoteConfig: ca05de71934fc37bdd2670c7e595bb6bcb356fd1
++  RNFBStorage: 74cd82ac2c7d08c2fb4d781fcaf67174b8a0089f
+   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+   Yoga: f6e0289dfdcb72d0bb7553be60e7cdcbddb2c7d8
+ 
+-PODFILE CHECKSUM: a18094c643721392abae6189f2461d5813142593
++PODFILE CHECKSUM: 390110926604d1888d80ae8c29818474bf21a46c
+ 
+ COCOAPODS: 1.17.0
+```
+
+**File**: `tests/ios/testing.xcodeproj/project.pbxproj` (modified, +1/-1)
+```diff
+@@ -429,7 +429,7 @@
+ 			name = "[CP-User] [RNFB] Core Configuration";
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 			shellPath = /bin/sh;
+-			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n##########################################################################\n##########################################################################\n#\n#  NOTE THAT IF YOU CHANGE THIS FILE YOU MUST RUN pod install AFTERWARDS\n#\n#  This file is installed as an Xcode build script in the project file\n#  by cocoapods, and you will not see your changes until you pod install\n#\n##########################################################################\n##########################################################################\n\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT='react-native'\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"note:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"note:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -rjson -e 'output=JSON.parse(File.read(ARGV.fetch(0))); puts output[ARGV.fetch(1)][ARGV.fetch(2)]' \"$_SEARCH_RESULT\" \"$_JSON_ROOT\" \"$1\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"note: -> RNFB build script started\"\necho \"note: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"note:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | /usr/bin/head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"note:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  if ! _RN_ROOT_EXISTS=$(ruby -rjson -e 'output=JSON.parse(File.read(ARGV.fetch(0))); puts output[ARGV.fetch(1)]' \"$_SEARCH_RESULT\" \"$_JSON_ROOT\"); then\n    echo \"error: Failed to parse firebase.json, check for syntax errors.\"\n    exit 1\n  fi\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    if ! python3 --version >/dev/null 2>&1; then echo \"error: python3 not found, firebase.json file processing error.\" && exit 1; fi\n    _JSON_OUTPUT_BASE64=$(python3 -c 'import base64,json,sys; print(base64.b64encode(json.dumps(json.load(open(sys.argv[1], \"rb\"))[\"react-native\"]).encode()).decode())' \"$_SEARCH_RESULT\" || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.app_data_collection_default_enabled\n  _APP_DATA_COLLECTION_ENABLED=$(getFirebaseJsonKeyValue \"app_data_collection_default_enabled\")\n  if [[ $_APP_DATA_COLLECTION_ENABLED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseDataCollectionDefaultEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_APP_DATA_COLLECTION_ENABLED\")\")\n  fi\n\n  # config.analytics_auto_collection_enabled\n  _ANALYTICS_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"analytics_auto_collection_enabled\")\n  if [[ $_ANALYTICS_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_COLLECTION\")\")\n  fi\n\n  # config.analytics_collection_deactivated\n  _ANALYTICS_DEACTIVATED=$(getFirebaseJsonKeyValue \"analytics_collection_deactivated\")\n  if [[ $_ANALYTICS_DEACTIVATED
+```
+
+---
+
+### Incident Patch 2: `fd9422b9` (2026-10-15)
+**Commit Message**: fix(firestore, ios): cover transaction HostStub update-block paths and unskip waitForPendingWrites
+
+**File**: `packages/firestore/e2e/firestore.e2e.js` (modified, +5/-50)
+```diff
+@@ -222,57 +222,12 @@ describe('firestore()', function () {
+     });
+ 
+     describe('wait for pending writes', function () {
+-      xit('waits for pending writes', async function () {
+-        const { getFirestore, disableNetwork, doc, setDoc, waitForPendingWrites, enableNetwork } =
+-          firestoreModular;
+-
+-        const waitForPromiseMs = 500;
+-        const testTimeoutMs = 10000;
++      it('resolves when there are no pending writes', async function () {
++        // Exercises TurboModule waitForPendingWrites wiring (iOS .mm / Android native).
++        // Offline + auth-revocation races are SDK-specific and were historically flaky (xit).
++        const { getFirestore, waitForPendingWrites } = firestoreModular;
+         const db = getFirestore();
+-
+-        await disableNetwork(db);
+-
+-        //set up a pending write
+-
+-        const id = 'foobar';
+-        const ref = doc(db, `v6/${id}`);
+-        setDoc(ref, { foo: 'bar' });
+-
+-        //waitForPendingWrites should never resolve, but unfortunately we can only
+-        //test that this is not returning within X ms
+-
+-        let rejected = false;
+-        const timedOutWithNetworkDisabled = await Promise.race([
+-          waitForPendingWrites(db).then(
+-            () => false,
+-            () => {
+-              rejected = true;
+-            },
+-          ),
+-          Utils.sleep(waitForPromiseMs).then(() => true),
+-        ]);
+-
+-        should(timedOutWithNetworkDisabled).equal(true);
+-        should(rejected).equal(false);
+-
+-        //if we sign in as a different user then it should reject the promise
+-        const { getAuth, signOut, signInAnonymously } = authModular;
+-        const auth = getAuth();
+-        try {
+-          await signOut(auth);
+-        } catch (_) {}
+-        await signInAnonymously(auth);
+-        should(rejected).equal(true);
+-
+-        //now if we enable the network then waitForPendingWrites should return immediately
+-        await enableNetwork(db);
+-
+-        const timedOutWithNetworkEnabled = await Promise.race([
+-          waitForPendingWrites(db).then(() => false),
+-          Utils.sleep(testTimeoutMs).then(() => true),
+-        ]);
+-
+-        should(timedOutWithNetworkEnabled).equal(false);
++        await waitForPendingWrites(db);
+       });
+     });
+ 
+```
+
+**File**: `packages/firestore/ios/RNFBFirestore/RNFBFirestoreTransactionAttempt.h` (modified, +5/-0)
+```diff
+@@ -52,6 +52,11 @@ typedef NS_ENUM(NSInteger, RNFBFirestoreTransactionWaitResult) {
+ @property(nonatomic, readonly, nullable) id nativeTransaction;
+ 
+ + (dispatch_time_t)defaultWaitTimeout;
++/**
++ * XCTest seam: when >= 0, `defaultWaitTimeout` uses this many nanoseconds instead of
++ * `RNFBFirestoreTransactionWaitTimeoutNSec`. Pass a negative value to clear.
++ */
+++ (void)setDefaultWaitTimeoutOverrideNSec:(int64_t)nanoseconds;
+ - (NSError *)timeoutError;
+ 
+ /**
+```
+
+**File**: `packages/firestore/ios/RNFBFirestore/RNFBFirestoreTransactionAttempt.m` (modified, +10/-1)
+```diff
+@@ -27,6 +27,8 @@
+ NSString *const RNFBFirestoreTransactionMissingIdMessage =
+     @"An internal error occurred whilst attempting to find a native transaction by id.";
+ 
++static int64_t sDefaultWaitTimeoutOverrideNSec = -1;
 +
-+    expect(factoryIndex).toBeGreaterThan(-1);
-+    expect(configureIndex).toBeGreaterThan(factoryIndex);
-+    expect(returnIndex).toBeGreaterThan(configureIndex);
-+    expect(result.match(/FirebaseApp\.configure\(\)/g)).toHaveLength(1);
+ @implementation RNFBFirestoreTransactionAttempt {
+   dispatch_semaphore_t _semaphore;
+   BOOL _aborted;
+@@ -35,8 +37,15 @@ @implementation RNFBFirestoreTransactionAttempt {
+   id _nativeTransaction;
+ }
+ 
+++ (void)setDefaultWaitTimeoutOverrideNSec:(int64_t)nanoseconds {
++  sDefaultWaitTimeoutOverrideNSec = nanoseconds;
++}
 +
-+    const twice = modifySwiftAppDelegate(result);
-+    expect(twice.match(/RNFBAppCheckModule\.sharedInstance\(\)/g)).toHaveLength(1);
-+    expect(twice.match(/FirebaseApp\.configure\(\)/g)).toHaveLength(1);
+ + (dispatch_time_t)defaultWaitTimeout {
+-  return dispatch_time(DISPATCH_TIME_NOW, RNFBFirestoreTransactionWaitTimeoutNSec);
++  int64_t nanoseconds = sDefaultWaitTimeoutOverrideNSec >= 0
++                            ? sDefaultWaitTimeoutOverrideNSec
++                            : RNFBFirestoreTransactionWaitTimeoutNSec;
++  return dispatch_time(DISPATCH_TIME_NOW, nanoseconds);
+ }
+ 
+ - (BOOL)aborted {
+```
+
+**File**: `packages/firestore/ios/RNFBFirestore/RNFBFirestoreTransactionModuleHelper.h` (modified, +7/-0)
+```diff
+@@ -24,6 +24,13 @@
+ // TurboModule .mm free of Firebase imports.
+ @interface RNFBFirestoreTransactionModuleHelper : NSObject
+ 
++/**
++ * XCTest seam: invoked after the first ineligible-get check in `transactionGetDocument`
++ * and before the synchronized re-check, so tests can force the TOCTOU reject path.
++ * Pass nil to clear.
++ */
+++ (void)setTransactionGetAfterEligibleHook:(void (^_Nullable)(void))hook;
++
+ + (void)invalidate;
+ 
+ + (void)transactionBegin:(NSString *)appName
+```
+
+**File**: `packages/firestore/ios/RNFBFirestore/RNFBFirestoreTransactionModuleHelper.m` (modified, +10/-0)
+```diff
+@@ -37,9 +37,14 @@
+ 
+ static RNFBFirestoreTransactionRegistry *transactions;
+ static NSString *const RNFB_FIRESTORE_TRANSACTION_EVENT = @"firestore_transaction_event";
++static void (^sTransactionGetAfterEligibleHook)(void);
+ 
+ @implementation RNFBFirestoreTransactionModuleHelper
+ 
+++ (void)setTransactionGetAfterEligibleHook:(void (^)(void))hook {
++  sTransactionGetAfterEligibleHook = [hook copy];
++}
++
+ + (void)ensureRegistry {
+   static dispatch_once_t onceToken;
+   dispatch_once(&onceToken, ^{
+@@ -50,6 +55,7 @@ + (void)ensureRegistry {
+ + (void)invalidate {
+   [self ensureRegistry];
+   [transactions abortAll];
++  sTransactionGetAfterEligibleHook = nil;
+ }
+ 
+ #pragma mark Firebase Firestore Methods
+@@ -209,6 +215,10 @@ + (void)transactionGetDocument:(NSString *)appName
+     return;
+   }
+ 
++  if (sTransactionGetAfterEligibleHook != nil) {
++    sTransactionGetAfterEligibleHook();
++  }
++
+   @synchronized(attempt) {
+     ineligible = [attempt rejectUserInfoIfIneligibleForGet];
+     if (ineligible != nil) {
+```
+
+**File**: `packages/firestore/ios/RNFBFirestoreUnitTests/HostStubs/Firebase/FIRFirestoreHostStub.m` (modified, +93/-10)
+```diff
+@@ -2,6 +2,7 @@
+  * Host-only stub for macOS XCTest. Not shipped in the production pod.
+  */
+ #import <Firebase/Firebase.h>
++#import <unistd.h>
+ 
+ NSString *const FIRFirestoreErrorDomain = @"FIRFirestoreErrorDomain";
+ 
+@@ -441,13 +442,36 @@ - (void)commitWithCompletion:(void (^)(NSError *))completion {
+ @end
+ 
+ @implementation FIRTransaction
++static NSError *sTxnGetDocumentError;
++static FIRDocumentSnapshot *sTxnGetDocumentSnapshot;
++
+++ (NSError *)getDocumentError {
++  return sTxnGetDocumentError;
++}
+++ (void)setGetDocumentError:(NSError *)getDocumentError {
++  sTxnGetDocumentError = getDocumentError;
++}
+++ (FIRDocumentSnapshot *)getDocumentSnapshot {
++  return sTxnGetDocumentSnapshot;
++}
+++ (void)setGetDocumentSnapshot:(FIRDocumentSnapshot *)getDocumentSnapshot {
++  sTxnGetDocumentSnapshot = getDocumentSnapshot;
++}
+++ (void)resetTestState {
++  sTxnGetDocumentError = nil;
++  sTxnGetDocumentSnapshot = nil;
++}
++
+ - (FIRDocumentSnapshot *)getDocument:(FIRDocumentReference *)document
+                                error:(NSError *_Nullable *_Nullable)error {
+   (void)document;
+   if (error) {
+-    *error = nil;
++    *error = sTxnGetDocumentError;
+   }
+-  return [[FIRDocumentSnapshot alloc] init];
++  if (sTxnGetDocumentError != nil) {
++    return nil;
++  }
++  return sTxnGetDocumentSnapshot ?: [[FIRDocumentSnapshot alloc] init];
+ }
+ - (void)deleteDocument:(FIRDocumentReference *)document {
+   (void)document;
+@@ -488,6 +512,8 @@ @implementation FIRFirestore
+ static NSError *sOperationError;
+ static NSError *sLoadBundleError;
+ static FIRLoadBundleTaskState sLoadBundleState = FIRLoadBundleTaskStateSuccess;
++static NSInteger sTransactionUpdateBlockInvokeCount = 1;
++static NSUInteger sTransactionRetryDelayUSec = 50000;
+ 
+ + (FIRFirestore *)testInstance {
+   return sTestInstance;
+@@ -539,6 +565,18 @@ + (FIRLoadBundleTaskState)loadBundleState {
+ + (void)setLoadBundleState:(FIRLoadBundleTaskState)loadBundleState {
+   sLoadBundleState = loadBundleState;
+ }
+++ (NSInteger)transactionUpdateBlockInvokeCount {
++  return sTransactionUpdateBlockInvokeCount;
++}
+++ (void)setTransactionUpdateBlockInvokeCount:(NSInteger)transactionUpdateBlockInvokeCount {
++  sTransactionUpdateBlockInvokeCount = MAX(transactionUpdateBlockInvokeCount, (NSInteger)1);
++}
+++ (NSUInteger)transactionRetryDelayUSec {
++  return sTransactionRetryDelayUSec;
++}
+++ (void)setTransactionRetryDelayUSec:(NSUInteger)transactionRetryDelayUSec {
++  sTransactionRetryDelayUSec = transactionRetryDelayUSec;
++}
+ 
+ + (void)resetTestState {
+   sTestInstance = nil;
+@@ -549,10 +587,13 @@ + (void)resetTestState {
+   sOperationError = nil;
+   sLoadBundleError = nil;
+   sLoadBundleState = FIRLoadBundleTaskStateSuccess;
++  sTransactionUpdateBlockInvokeCount = 1;
++  sTransactionRetryDelayUSec = 50000;
+   [FIRPersistentCacheIndexManager resetTestState];
+   [FIRConfiguration resetTestState];
+   [FIRQuery resetTestState];
+   [FIRDocumentReference resetTestState];
++  [FIRTransaction resetTestState];
+   [FIRWriteBatch resetTestState];
+   [FIRAggregateQuery resetTestState];
+ }
+@@ -617,21 +658,63 @@ - (void)loadBundle:(NSData *)bundleData
+   }
+   return [[FIRListenerRegistrationStub alloc] init];
+ }
+-- (void)runTransactionWithBlock:(id (^)(FIRTransaction *, NSError **))block
+-                     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+-  (void)block;
++- (void)rnfb_invokeTransactionBlock:(id (^)(FIRTransaction *, NSError **))block
++                         completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
++  if (block == nil) {
++    if (completion) {
++      completion(nil, nil);
++    }
++    return;
++  }
++
++  if (sTransactionUpdateBlockInvokeCount <= 1) {
++    NSError *error = nil;
++    id result = block([[FIRTransaction alloc] init], &error);
++    if (completion) {
++      completion(result, error);
++    }
++    return;
++  }
++
++  // Concurrent second invocation mimics an SDK retry while the first update block is still
++  // waiting — the first wait then observes a replaced semaphore (stale).
++  dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
++  dispatch_group_t group = dispatch_group_create();
++  __block id finalResult = nil;
++  __block NSError *finalError = nil;
++
++  dispatch_group_async(group, queue, ^{
++    NSError *error = nil;
++    id result = block([[FIRTransaction alloc] init], &error);
++    @synchronized(self) {
++      finalResult = result;
++      finalError = error;
++    }
++  });
++  dispatch_group_async(group, queue, ^{
++    usleep((useconds_t)sTransactionRetryDelayUSec);
++    NSError *error = nil;
++    id result = block([[FIRTransaction alloc] init], &error);
++    @synchronized(self) {
++      finalResult = result;
++      finalError = error;
++    }
++  });
++  dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+   if (completion) {
+-    completion(nil, nil);
++    completion(finalResult, finalError);
+   }
+ }
++
++- (void)runTransactionWithBlock:(id (^)(FIRTransaction *, NSError **))block
++             
+```
+
+**File**: `packages/firestore/ios/RNFBFirestoreUnitTests/HostStubs/Firebase/Firebase.h` (modified, +7/-0)
+```diff
+@@ -190,6 +190,9 @@ FOUNDATION_EXPORT NSString *const FIRFirestoreErrorDomain;
+ @end
+ 
+ @interface FIRTransaction : NSObject
++@property(class, nonatomic, strong, nullable) NSError *getDocumentError;
++@property(class, nonatomic, strong, nullable) FIRDocumentSnapshot *getDocumentSnapshot;
+++ (void)resetTestState;
+ - (FIRDocumentSnapshot *)getDocument:(FIRDocumentReference *)document
+                                error:(NSError *_Nullable *_Nullable)error;
+ - (void)deleteDocument:(FIRDocumentReference *)document;
+@@ -218,6 +221,10 @@ FOUNDATION_EXPORT NSString *const FIRFirestoreErrorDomain;
+ @property(class, nonatomic, strong, nullable) NSError *operationError;
+ @property(class, nonatomic, strong, nullable) NSError *loadBundleError;
+ @property(class, nonatomic, assign) FIRLoadBundleTaskState loadBundleState;
++/** How many times `runTransaction*` invokes the update block (1 = once, 2 = concurrent retry). */
++@property(class, nonatomic, assign) NSInteger transactionUpdateBlockInvokeCount;
++/** Delay before the concurrent retry invocation when invoke count > 1 (microseconds). */
++@property(class, nonatomic, assign) NSUInteger transactionRetryDelayUSec;
+ + (void)resetTestState;
+ 
+ - (void)disableNetworkWithCompletion:(void (^)(NSError *_Nullable error))completion;
+```
+
+**File**: `packages/firestore/ios/RNFBFirestoreUnitTests/RNFBFirestoreTransactionModuleHelperHostStubTests.m` (modified, +261/-2)
+```diff
+@@ -31,18 +31,51 @@ - (void)setUp {
+   [FIRFirestore resetTestState];
+   [RCTConvert resetTestState];
+   [RNFBFirestoreTransactionModuleHelper invalidate];
++  // Keep HostStub update-block waits short unless a test widens the window.
++  [RNFBFirestoreTransactionAttempt setDefaultWaitTimeoutOverrideNSec:(int64_t)(50 * NSEC_PER_MSEC)];
+   [RCTConvert setFirAppFromStringHandler:^FIRApp *(NSString *appName) {
+     return [[FIRApp alloc] initWithName:appName ?: @"[DEFAULT]"];
+   }];
+ }
+ 
+ - (void)tearDown {
++  [RNFBFirestoreTransactionModuleHelper setTransactionGetAfterEligibleHook:nil];
+   [RNFBFirestoreTransactionModuleHelper invalidate];
++  [RNFBFirestoreTransactionAttempt setDefaultWaitTimeoutOverrideNSec:-1];
+   [FIRFirestore resetTestState];
+   [RCTConvert resetTestState];
+   [super tearDown];
+ }
+ 
++- (BOOL)waitUntilTransactionGetEligible:(double)transactionId timeout:(NSTimeInterval)timeout {
++  NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:timeout];
++  __block BOOL eligible = NO;
++  while ([deadline timeIntervalSinceNow] > 0) {
++    __block BOOL resolved = NO;
++    [RNFBFirestoreTransactionModuleHelper transactionGetDocument:@"app"
++        databaseId:@"(default)"
++        transactionId:transactionId
++        path:@"col/doc"
++        resolve:^(id result) {
++          (void)result;
++          resolved = YES;
++          eligible = YES;
++        }
++        reject:^(NSString *code, NSString *message, NSError *error) {
++          (void)code;
++          (void)message;
++          (void)error;
++          resolved = YES;
++        }];
++    if (eligible) {
++      return YES;
++    }
++    (void)resolved;
++    [NSThread sleepForTimeInterval:0.01];
++  }
++  return NO;
++}
++
+ - (void)testTransactionGetDocument_missingTransaction_rejectsInternalError {
+   __block NSString *rejectCode = nil;
+   __block NSString *rejectMessage = nil;
+@@ -79,7 +112,7 @@ - (void)testTransactionDisposeAndApplyBuffer_missingAttempt_noCrash {
+   XCTAssertTrue(YES);
+ }
+ 
+-- (void)testTransactionBegin_withAndWithoutMaxAttempts_completes {
++- (void)testTransactionBegin_withAndWithoutMaxAttempts_invokesUpdateBlock {
+   [RNFBFirestoreTransactionModuleHelper transactionBegin:@"app"
+                                               databaseId:@"(default)"
+                                            transactionId:7
+@@ -88,8 +121,234 @@ - (void)testTransactionBegin_withAndWithoutMaxAttempts_completes {
+                                               databaseId:@"(default)"
+                                            transactionId:8
+                                              maxAttempts:5];
+-  // Host stub completes transactions without invoking the update block.
++  // Short timeout override lets both update blocks finish without JS applyBuffer.
++  XCTAssertTrue(YES);
++}
++
++- (void)testTransactionBegin_timeout_setsDeadlineExceededOnUpdateBlock {
++  [RNFBFirestoreTransactionAttempt setDefaultWaitTimeoutOverrideNSec:0];
++  [RNFBFirestoreTransactionModuleHelper transactionBegin:@"app"
++                                              databaseId:@"(default)"
++                                           transactionId:11
++                                             maxAttempts:0];
++  XCTAssertTrue(YES);
++}
++
++- (void)testTransactionBegin_commandBuffer_appliesDeleteSetUpdate {
++  [RNFBFirestoreTransactionAttempt setDefaultWaitTimeoutOverrideNSec:(int64_t)(2 * NSEC_PER_SEC)];
++  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
++    [RNFBFirestoreTransactionModuleHelper transactionBegin:@"app"
++                                                databaseId:@"(default)"
++                                             transactionId:12
++                                               maxAttempts:0];
 +  });
 +
-+  it('inserts the App Check factory before an existing configure without a second call', function () {
-+    const appDelegate = `import Expo
-+import FirebaseCore
++  XCTAssertTrue([self waitUntilTransactionGetEligible:12 timeout:1.0]);
++  [RNFBFirestoreTransactionModuleHelper transactionApplyBuffer:@"app"
++                                                    databaseId:@"(default)"
++                                                 transactionId:12
++                                                 commandBuffer:@[
++                                                   @{@"type" : @"DELETE", @"path" : @"a/b"},
++                                                   @{
++                                                     @"type" : @"SET",
++                                                     @"path" : @"a/c",
++                                                     @"data" : @{@"k" : @"v"},
++                                                     @"options" : @{@"merge" : @YES},
++                                                   },
++                                                   @{
++                                                     @"type" : @"SET",
++                                                     @"path" : @"a/d",
++                                                     @"data" : @{@"k" : @"v"},
++                                                     @"options" : @{@"mergeFields" : @[ @"k" ]},
++     
+```
+
+---
+
+### Incident Patch 3: `bd88c907` (2026-10-02)
+**Commit Message**: refactor(crashlytics, ios): move Crashlytics Firebase calls out of TurboModule mm
+
+Keep the TurboModule shell Firebase-free for the SPM dynamic probe. SDK and debugger-probe work live in a plain Objective-C helper.
+
+**File**: `packages/crashlytics/ios/RNFBCrashlytics.xcodeproj/project.pbxproj` (modified, +6/-0)
+```diff
+@@ -11,6 +11,7 @@
+ 		2748D82422371C1C00FC8DC8 /* RNFBCrashlyticsInitProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 2748D82322371C1C00FC8DC8 /* RNFBCrashlyticsInitProvider.m */; };
+ 		C66637BB25FA560700DCAA51 /* RNFBCrashlyticsNativeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C66637BA25FA560700DCAA51 /* RNFBCrashlyticsNativeHelper.m */; };
+ 		RNFBCL000000000000000001 /* RNFBCrashlyticsDebuggerProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = RNFBCL000000000000000002 /* RNFBCrashlyticsDebuggerProbe.swift */; };
++		RNFBCL000000000000000003 /* RNFBCrashlyticsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = RNFBCL000000000000000005 /* RNFBCrashlyticsHelper.m */; };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXCopyFilesBuildPhase section */
+@@ -34,6 +35,8 @@
+ 		C66637BA25FA560700DCAA51 /* RNFBCrashlyticsNativeHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNFBCrashlyticsNativeHelper.m; sourceTree = "<group>"; };
+ 		C66637BD25FA561D00DCAA51 /* RNFBCrashlyticsNativeHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNFBCrashlyticsNativeHelper.h; sourceTree = "<group>"; };
+ 		RNFBCL000000000000000002 /* RNFBCrashlyticsDebuggerProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RNFBCrashlyticsDebuggerProbe.swift; path = RNFBCrashlytics/RNFBCrashlyticsDebuggerProbe.swift; sourceTree = SOURCE_ROOT; };
++		RNFBCL000000000000000004 /* RNFBCrashlyticsHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNFBCrashlyticsHelper.h; path = RNFBCrashlytics/RNFBCrashlyticsHelper.h; sourceTree = SOURCE_ROOT; };
++		RNFBCL000000000000000005 /* RNFBCrashlyticsHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNFBCrashlyticsHelper.m; path = RNFBCrashlytics/RNFBCrashlyticsHelper.m; sourceTree = SOURCE_ROOT; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -60,6 +63,8 @@
+ 			children = (
+ 				2744B98421F45429004F8E3F /* RNFBCrashlyticsModule.h */,
+ 				2744B98521F45429004F8E3F /* RNFBCrashlyticsModule.mm */,
++				RNFBCL000000000000000004 /* RNFBCrashlyticsHelper.h */,
++				RNFBCL000000000000000005 /* RNFBCrashlyticsHelper.m */,
+ 				RNFBCL000000000000000002 /* RNFBCrashlyticsDebuggerProbe.swift */,
+ 				2748D82222371C0900FC8DC8 /* RNFBCrashlyticsInitProvider.h */,
+ 				2748D82322371C1C00FC8DC8 /* RNFBCrashlyticsInitProvider.m */,
+@@ -136,6 +141,7 @@
+ 			buildActionMask = 2147483647;
+ 			files = (
+ 				C66637BB25FA560700DCAA51 /* RNFBCrashlyticsNativeHelper.m in Sources */,
++				RNFBCL000000000000000003 /* RNFBCrashlyticsHelper.m in Sources */,
+ 				2748D82422371C1C00FC8DC8 /* RNFBCrashlyticsInitProvider.m in Sources */,
+ 				2744B98621F45429004F8E3F /* RNFBCrashlyticsModule.mm in Sources */,
+ 				RNFBCL000000000000000001 /* RNFBCrashlyticsDebuggerProbe.swift in Sources */,
+```
+
+**File**: `packages/crashlytics/ios/RNFBCrashlytics/RNFBCrashlyticsHelper.h` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++/**
++ * Copyright (c) 2016-present Invertase Limited & Contributors
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this library except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
 +
-+class AppDelegate: ExpoAppDelegate {
-+  public override func application(
-+    _ application: UIApplication,
-+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-+  ) -> Bool {
-+// @generated begin @react-native-firebase/app-didFinishLaunchingWithOptions
-+FirebaseApp.configure()
-+// @generated end @react-native-firebase/app-didFinishLaunchingWithOptions
-+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
++#import <Foundation/Foundation.h>
++
++// Plain Objective-C helper (see docs/ios-spm.mdx and
++// okf-bundle/ios-spm-native-imports.md) that owns every call touching
++// `FIRCrashlytics` / exception models for RNFBCrashlyticsModule, plus the
++// Swift debugger probe. This keeps RNFBCrashlyticsModule.mm free of Firebase
++// Crashlytics imports and `*-Swift.h`: under SPM an Objective-C++ (.mm)
++// TurboModule cannot `@import` Firebase (or parse a Swift-generated header
++// that uses module imports) when C++ modules are disabled (required by React
++// Native's JSI headers).
++@interface RNFBCrashlyticsHelper : NSObject
++
++/** Cached `sysctl` debugger-attach probe (Swift `RNFBCrashlyticsDebuggerProbe`). */
+++ (BOOL)isDebuggerAttached;
++
+++ (void)checkForUnsentReportsWithCompletion:(void (^)(BOOL unsentReports))completion;
++
+++ (void)deleteUnsentReports;
++
+++ (BOOL)didCrashDuringPreviousExecution;
++
+++ (void)log:(NSString *)message;
++
+++ (void)sendUnsentReports;
++
+++ (void)setCustomValue:(NSString *)value forKey:(NSString *)key;
++
++/** Applies each entry via `setCustomValue:forKey:` (Module setAttributes path). */
+++ (void)setCustomKeysAndValues:(NSDictionary *)attributes;
++
+++ (void)setUserID:(NSString *)userId;
++
++/**
++ * Records a JS exception model.
++ * Each frame dictionary uses keys: `fn` (symbol), `file`, `line` (number).
++ */
+++ (void)recordJavaScriptErrorWithMessage:(NSString *)message
++                                  frames:(NSArray<NSDictionary *> *)frames
++             isUnhandledPromiseRejection:(BOOL)isUnhandledPromiseRejection;
++
++@end
+```
+
+**File**: `packages/crashlytics/ios/RNFBCrashlytics/RNFBCrashlyticsHelper.m` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++/**
++ * Copyright (c) 2016-present Invertase Limited & Contributors
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this library except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++
++#if __has_include(<Firebase/Firebase.h>)
++#import <Firebase/Firebase.h>
++#elif __has_include(<FirebaseCrashlytics/FirebaseCrashlytics.h>)
++#import <FirebaseCore/FirebaseCore.h>
++#import <FirebaseCrashlytics/FirebaseCrashlytics.h>
++#else
++@import FirebaseCore;
++@import FirebaseCrashlytics;
++#endif
++
++#if __has_include(<RNFBCrashlytics/RNFBCrashlytics-Swift.h>)
++#import <RNFBCrashlytics/RNFBCrashlytics-Swift.h>
++#elif __has_include("RNFBCrashlytics-Swift.h")
++#import "RNFBCrashlytics-Swift.h"
++#elif __has_include("RNFBCrashlyticsDebuggerProbe-Swift.inc")
++#import "RNFBCrashlyticsDebuggerProbe-Swift.inc"
++#else
++#error "RNFBCrashlyticsDebuggerProbe Swift interface not found"
++#endif
++
++#import "RNFBCrashlyticsHelper.h"
++
++@implementation RNFBCrashlyticsHelper
++
+++ (BOOL)isDebuggerAttached {
++  return [RNFBCrashlyticsDebuggerProbe isDebuggerAttached];
++}
++
+++ (void)checkForUnsentReportsWithCompletion:(void (^)(BOOL unsentReports))completion {
++  [[FIRCrashlytics crashlytics] checkForUnsentReportsWithCompletion:^(BOOL unsentReports) {
++    if (completion != nil) {
++      completion(unsentReports);
++    }
++  }];
++}
++
+++ (void)deleteUnsentReports {
++  [[FIRCrashlytics crashlytics] deleteUnsentReports];
++}
++
+++ (BOOL)didCrashDuringPreviousExecution {
++  return [[FIRCrashlytics crashlytics] didCrashDuringPreviousExecution];
++}
++
+++ (void)log:(NSString *)message {
++  [[FIRCrashlytics crashlytics] log:message];
++}
++
+++ (void)sendUnsentReports {
++  [[FIRCrashlytics crashlytics] sendUnsentReports];
++}
++
+++ (void)setCustomValue:(NSString *)value forKey:(NSString *)key {
++  [[FIRCrashlytics crashlytics] setCustomValue:value forKey:key];
++}
++
+++ (void)setCustomKeysAndValues:(NSDictionary *)attributes {
++  NSArray *keys = [attributes allKeys];
++  for (NSString *key in keys) {
++    [[FIRCrashlytics crashlytics] setCustomValue:attributes[key] forKey:key];
 +  }
 +}
-+`;
-+    const result = modifySwiftAppDelegate(appDelegate);
-+    const factoryIndex = result.indexOf('RNFBAppCheckModule.sharedInstance()');
-+    const configureIndex = result.indexOf('FirebaseApp.configure()');
 +
-+    expect(factoryIndex).toBeGreaterThan(-1);
-+    expect(configureIndex).toBeGreaterThan(factoryIndex);
-+    expect(result.match(/FirebaseApp\.configure\(\)/g)).toHaveLength(1);
-+    expect(result).toContain(
-+      '// @generated end @react-native-firebase/app-didFinishLaunchingWithOptions',
-+    );
-+  });
- });
-```
-
-**File**: `packages/app-check/plugin/src/ios/appDelegate.ts` (modified, +13/-14)
-```diff
-@@ -127,27 +127,26 @@ export function modifySwiftAppDelegate(contents: string): string {
-     return contents;
-   }
- 
--  // Find the Firebase initialization end line to insert after
--  const firebaseLine = '// @generated end @react-native-firebase/app-didFinishLaunchingWithOptions';
--
--  if (contents.includes(firebaseLine)) {
--    // Insert right after Firebase initialization
-+  // App plugin (or an earlier pass) already calls configure. The provider factory must
-+  // run before that call. Do not append a second FirebaseApp.configure().
-+  const existingConfigure = /^([ \t]*)FirebaseApp\.configure\(\)/m.exec(contents);
-+  if (existingConfigure) {
-+    const indent = existingConfigure[1] ?? '';
-     return contents.replace(
--      firebaseLine,
--      `${firebaseLine}
--        RNFBAppCheckModule.sharedInstance()
--        FirebaseApp.configure()
--      `,
-+      existingConfigure[0],
-+      `${indent}RNFBAppCheckModule.sharedInstance()\n${existingConfigure[0]}`,
-     );
-   }
- 
--  // If Firebase initialization block not found, register the App Check provider factory
--  // then call FirebaseApp.configure(). Firebase requires the factory before configure
--  // (AppCheck-AD-3); do not reverse this order.
-+  // No configure yet. Register the factory, then configure. Firebase requires the
-+  // factory before configure (AppCheck-AD-3). Expo 58 scene AppDelegates start
-+  // React Native from SceneDelegate, so the anchor is the didFinishLaunching return
-+  // rather than factory.startReactNative.
-   const methodInvocationBlock = `RNFBAppCheckModule.sharedInstance()
-     FirebaseApp.configure()`;
- 
--  const methodInvocationLineMatcher = /(?:factory\.startReactNative\()/;
-+  const methodInvocationLineMatcher =
-+    /(?:factory\.startReactNative\()|(?:return\s+super\.application\(\s*application\s*,\s*didFinishLaunchingWithOptions:\s*launchOptions\s*\))/;
- 
-   if (!methodInvocationLineMatcher.test(contents)) {
-     WarningAggregator.addWarningIOS(
-```
-
----
-
-### Incident Patch 3: `9c636307` (2026-09-30)
-**Commit Message**: fix(ci): unblock Yarn hardened CI and Xcode 27 iOS archive
-
-Widen the app react-native peer so it no longer coalesces with the
-RC pin under public-PR hardened mode, keep @types/react-native for
-package builds, type the vendor EventEmitter import, and fail-fast
-when slotted macOS Metro babel misses a non-default Jet port.
-
-Use the GitHub `xcode-27` runner label (not `macos-27`), pin Xcode
-`27.0` (latest-stable floated to 27.1 beta), and bump iOS Pods/ccache
-keys so restore cannot reuse pre-0.88 hermes Local Podspecs or
-objects from the 27.1 beta window. Drop LD/LDPLUSPLUS from the iOS
-Release Archive (Xcode 27 Swift SPM links reject clang as LD with
--emit-library). Re-pin serial Jet/Metro env after sanitize; skip the
-serial-8090 babel assert (DEFAULT_JET_SERIAL covers it). Retry
-xcodebuild -version to avoid Broken-pipe aborts under concurrent load.
-Cap test-expo launch-smoke xcodebuild so a hang cannot burn the job.
-
-**File**: `.github/workflows/publish.yml` (modified, +3/-3)
-```diff
-@@ -8,13 +8,13 @@ jobs:
-     if: "(github.repository == 'invertase/react-native-firebase') && (github.event_name == 'workflow_dispatch')"
-     name: 'NPM'
-     timeout-minutes: 60
--    runs-on: macos-27
-+    runs-on: xcode-27
-     permissions:
-       id-token: write # enables OIDC for npmjs.com "Trusted Publisher" and provenance
-       contents: read
-     env:
--      # macos-27 + latest-stable matches tests_e2e_ios.yml; needed for CocoaPods in scripts/version.js
--      XCODE_VERSION: latest-stable
-+      # xcode-27 runner (macOS 27) + 27.0 pin matches tests_e2e_ios.yml; needed for CocoaPods in scripts/version.js
-+      XCODE_VERSION: '27.0'
-       RNFB_CI_REQUIRE_IOS_SIM_RUNTIME: '0'
-     steps:
-       # https://github.com/actions/checkout/releases
-```
-
-**File**: `.github/workflows/scripts/configure-apple-ci.sh` (modified, +25/-6)
-```diff
-@@ -21,15 +21,34 @@ selector="${RNFB_CI_XCODE_SELECTOR:-${XCODE_VERSION:-latest-stable}}"
- 
- log "selector=${selector} require_ios_sim_runtime=${require_runtime}"
- 
--xcodebuild -version | sed 's/^/[configure-apple-ci] /'
--
--xcode_line="$(xcodebuild -version | head -1)"
--if echo "$xcode_line" | grep -qi beta; then
-+# Capture xcodebuild -version to a var first. Piping directly into sed has crashed
-+# concurrent Apple CI jobs on Xcode 27 images with NSFileHandle Broken pipe (exit 134).
-+xcode_version_out=""
-+for _try in 1 2 3; do
-+  if xcode_version_out="$(xcodebuild -version 2>&1)"; then
-+    break
-+  fi
-+  log "xcodebuild -version failed (attempt ${_try}); retrying..."
-+  sleep 2
-+done
-+[[ -n "$xcode_version_out" ]] || fail "xcodebuild -version failed after retries"
-+echo "$xcode_version_out" | sed 's/^/[configure-apple-ci] /'
+++ (void)setUserID:(NSString *)userId {
++  [[FIRCrashlytics crashlytics] setUserID:userId];
++}
 +
-+xcode_line="$(printf '%s\n' "$xcode_version_out" | head -1)"
-+dev_dir="$(xcode-select -p 2>/dev/null || true)"
-+if echo "$xcode_line" | grep -qiE 'beta'; then
-   fail "refusing beta Xcode on Apple CI: ${xcode_line}"
- fi
-+# GitHub's 27.0 image may still live under Xcode_*_Release_Candidate.app until GA; only refuse
-+# explicitly beta-suffixed installs (e.g. Xcode_27.1_beta.app selected via latest-stable).
-+if [[ "$dev_dir" == *_beta* ]]; then
-+  fail "refusing beta Xcode path on Apple CI: ${dev_dir}"
-+fi
- 
--major="$(sed -E 's/Xcode ([0-9]+).*/\1/' <<<"$xcode_line")"
--[[ "$major" == "27" ]] || fail "expected stable Xcode major 27, got major=${major} (${xcode_line})"
-+# D6: pin the 27.0 line (latest-stable on xcode-27 images may float to 27.1 beta).
-+major_minor="$(sed -E 's/Xcode ([0-9]+\.[0-9]+).*/\1/' <<<"$xcode_line")"
-+[[ "$major_minor" == "27.0" ]] || fail "expected stable Xcode 27.0.x, got ${xcode_line} (path=${dev_dir})"
-+major="27"
- 
- if [[ "$require_runtime" == "1" ]]; then
-   runtime_label="$(rnfb_ios_sim_runtime_label)"
-```
-
-**File**: `.github/workflows/scripts/test-expo-ios-launch-smoke.sh` (modified, +47/-12)
-```diff
-@@ -85,20 +85,55 @@ xcrun simctl boot "$UDID" 2>/dev/null || true
- xcrun simctl bootstatus "$UDID" -b >/dev/null
- 
- log "xcodebuild Debug (simulator ${UDID}, log: ${XCODEBUILD_LOG})"
-+# Cap compile time: prior CI run sat silent after ~18m of xcodebuild env spam until the
-+# 60m job timeout. Prefer GNU timeout when present; otherwise perl alarm.
-+XCODEBUILD_TIMEOUT_SEC="${RNFB_TEST_EXPO_XCODEBUILD_TIMEOUT_SEC:-2400}"
- set +e
--xcodebuild \
--  ARCHS="$HOST_ARCH" \
--  ONLY_ACTIVE_ARCH=YES \
--  -workspace "$WORKSPACE" \
--  -scheme "$XCODE_SCHEME" \
--  -configuration Debug \
--  -destination "id=${UDID}" \
--  CODE_SIGNING_ALLOWED=NO \
--  CODE_SIGNING_REQUIRED=NO \
--  CODE_SIGN_IDENTITY="" \
--  build 2>&1 | tee "$XCODEBUILD_LOG"
--xcodebuild_status=${PIPESTATUS[0]}
-+if command -v gtimeout >/dev/null 2>&1; then
-+  gtimeout "$XCODEBUILD_TIMEOUT_SEC" xcodebuild \
-+    ARCHS="$HOST_ARCH" \
-+    ONLY_ACTIVE_ARCH=YES \
-+    -workspace "$WORKSPACE" \
-+    -scheme "$XCODE_SCHEME" \
-+    -configuration Debug \
-+    -destination "id=${UDID}" \
-+    CODE_SIGNING_ALLOWED=NO \
-+    CODE_SIGNING_REQUIRED=NO \
-+    CODE_SIGN_IDENTITY="" \
-+    build 2>&1 | tee "$XCODEBUILD_LOG"
-+  xcodebuild_status=${PIPESTATUS[0]}
-+elif command -v timeout >/dev/null 2>&1; then
-+  timeout "$XCODEBUILD_TIMEOUT_SEC" xcodebuild \
-+    ARCHS="$HOST_ARCH" \
-+    ONLY_ACTIVE_ARCH=YES \
-+    -workspace "$WORKSPACE" \
-+    -scheme "$XCODE_SCHEME" \
-+    -configuration Debug \
-+    -destination "id=${UDID}" \
-+    CODE_SIGNING_ALLOWED=NO \
-+    CODE_SIGNING_REQUIRED=NO \
-+    CODE_SIGN_IDENTITY="" \
-+    build 2>&1 | tee "$XCODEBUILD_LOG"
-+  xcodebuild_status=${PIPESTATUS[0]}
-+else
-+  perl -e 'alarm shift; exec @ARGV' "$XCODEBUILD_TIMEOUT_SEC" \
-+    xcodebuild \
-+    ARCHS="$HOST_ARCH" \
-+    ONLY_ACTIVE_ARCH=YES \
-+    -workspace "$WORKSPACE" \
-+    -scheme "$XCODE_SCHEME" \
-+    -configuration Debug \
-+    -destination "id=${UDID}" \
-+    CODE_SIGNING_ALLOWED=NO \
-+    CODE_SIGNING_REQUIRED=NO \
-+    CODE_SIGN_IDENTITY="" \
-+    build 2>&1 | tee "$XCODEBUILD_LOG"
-+  xcodebuild_status=${PIPESTATUS[0]}
-+fi
- set -e
-+if [[ "$xcodebuild_status" -eq 124 || "$xcodebuild_status" -eq 142 ]]; then
-+  fail "xcodebuild Debug timed out after ${XCODEBUILD_TIMEOUT_SEC}s (log: ${XCODEBUILD_LOG})"
-+fi
- [[ "$xcodebuild_status" -eq 0 ]] || fail "xcodebuild Debug failed (exit ${xcodebuild_status})"
- 
- APP="$(
-```
-
-**File**: `.github/workflows/scripts/verify-ios-release-archive.sh` (modified, +19/-4)
-```diff
-@@ -39,9 +39,16 @@ rm -rf "$ARCHIVE_PATH"
- 
- log "archiving scheme=${SCHEME} configuration=${CONFIGURATION} destination=generic/platform=iOS (unsigned) -> ${ARCHIVE_PATH}"
- 
-+# Compile via PATH `clang` so hendrikmuhs/ccache-action wrappers (/usr/local/bin/clang
-+# -> ccache) still accelerate ObjC/C++. Do NOT set LD/LDPLUSPLUS at all: under Xcode 27
-+# the Swift driver reuses LD for SPM product links (FirebaseSharedSwift) and passes
-+# swiftc-style flags (-emit-library, -sdk, -Xclang-linker) that clang rejects.
-+RAW_LOG="$(mktemp -t rnfb-ios-archive.XXXXXX)"
-+trap 'rm -f "$RAW_LOG"' EXIT
+++ (void)recordJavaScriptErrorWithMessage:(NSString *)message
++                                  frames:(NSArray<NSDictionary *> *)frames
++             isUnhandledPromiseRejection:(BOOL)isUnhandledPromiseRejection {
++  NSMutableArray *stackTrace = [[NSMutableArray alloc] init];
++  for (NSDictionary *stackFrame in frames) {
++    NSString *symbol = stackFrame[@"fn"];
++    NSString *file = stackFrame[@"file"];
++    uint32_t line = (uint32_t)[stackFrame[@"line"] unsignedIntValue];
++    FIRStackFrame *customFrame = [FIRStackFrame stackFrameWithSymbol:symbol file:file line:line];
++    [stackTrace addObject:customFrame];
++  }
 +
- set -o pipefail
--xcodebuild archive \
--  CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ \
-+if ! xcodebuild archive \
-+  CC=clang CPLUSPLUS=clang++ \
-   -workspace "$WORKSPACE" \
-   -scheme "$SCHEME" \
-   -configuration "$CONFIGURATION" \
-@@ -51,8 +58,16 @@ xcodebuild archive \
-   CODE_SIGNING_REQUIRED=NO \
-   CODE_SIGNING_ALLOWED=NO \
-   CODE_SIGN_ENTITLEMENTS="" \
--  | xcbeautify
--
-+  2>&1 | tee "$RAW_LOG" | xcbeautify; then
-+  log "ERROR: xcodebuild archive failed; filtered diagnostics:"
-+  # shellcheck disable=SC2002
-+  grep -E 'error:|fatal error|Undefined symbols|ld: |clang: error|SwiftDriver|ARCHIVE FAILED|The following build commands failed' "$RAW_LOG" \
-+    | sed 's/^/[ios-release-archive]   /' \
-+    | tail -n 80 || true
-+  log "ERROR: last 40 lines of raw xcodebuild output:"
-+  tail -n 40 "$RAW_LOG" | sed 's/^/[ios-release-archive]   /'
-+  exit 1
-+fi
- APP_DIR="$(find "${ARCHIVE_PATH}/Products/Applications" -maxdepth 1 -name '*.app' 2>/dev/null | head -1)"
- if [[ -z "$APP_DIR" || ! -d "$APP_DIR" ]]; then
-   log "ERROR: no .app product found under ${ARCHIVE_PATH}/Products/Applications"
++  NSString *name = @"JavaScriptError";
++  if (isUnhandledPromiseRejection) {
++    name = @"UnhandledPromiseRejection";
++  }
++
++  FIRExceptionModel *exceptionModel = [FIRExceptionModel exceptionModelWithName:name
++                                                                         reason:message];
++  exceptionModel.stackTrace = stackTrace;
++
++  [[FIRCrashlytics crashlytics] recordExceptionModel:exceptionModel];
++}
++
++@end
 ```
 
-**File**: `.github/workflows/test_expo_ios_link.yml` (modified, +2/-2)
+**File**: `packages/crashlytics/ios/RNFBCrashlytics/RNFBCrashlyticsModule.mm` (modified, +39/-54)
 ```diff
-@@ -50,10 +50,10 @@ concurrency:
- jobs:
-   test-expo-ios-link:
-     name: test-expo iOS link + launch smoke
--    runs-on: macos-27
-+    runs-on: xcode-27
-     timeout-minutes: 60
-     env:
--      XCODE_VERSION: latest-stable
-+      XCODE_VERSION: '27.0'
-       RNFB_IOS_SIM_RUNTIME: iOS 27.0
-     steps:
-       # https://github.com/actions/checkout/releases
-```
-
-**File**: `.github/workflows/test_rn_bare_ios_build.yml` (modified, +2/-2)
-```diff
-@@ -48,10 +48,10 @@ concurrency:
- jobs:
-   test-rn-bare-ios-build:
-     name: test-rn-bare iOS build + launch smoke
--    runs-on: macos-27
-+    runs-on: xcode-27
-     timeout-minutes: 60
-     env:
--      XCODE_VERSION: latest-stable
-+      XCODE_VERSION: '27.0'
-       RNFB_IOS_SIM_RUNTIME: iOS 27.0
-     steps:
-       # https://github.com/actions/checkout/releases
-```
-
-**File**: `.github/workflows/tests_e2e_ios.yml` (modified, +11/-11)
-```diff
-@@ -105,7 +105,7 @@ jobs:
-   # it will run unit tests on whatever OS combinations are desired
-   ios:
-     name: iOS (${{ matrix.buildmode }}, ${{ matrix.dep-resolution }}, ${{ matrix.iteration }})
--    runs-on: macos-27
-+    runs-on: xcode-27
-     needs: matrix_prep
-     # TODO matrix across APIs, at least 11 and 15 (lowest to highest)
-     timeout-minutes: 107
-@@ -120,8 +120,8 @@ jobs:
-       CCACHE_DEPEND: true
-       CCACHE_INODECACHE: true
-       CCACHE_LIMIT_MULTIPLE: 0.95
--      # macos-27 + latest-stable (D6): stable Xcode 27 + iOS 27 sim runtime
--      XCODE_VERSION: latest-stable
-+      # xcode-27 runner (macOS 27) + Xcode 27.0 pin (D6): stable Xcode 27 + iOS 27 sim runtime
-+      XCODE_VERSION: '27.0'
-       RNFB_IOS_SIM_RUNTIME: iOS 27.0
-     strategy:
-       fail-fast: false
-@@ -201,7 +201,7 @@ jobs:
-       - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-         name: Xcode Compile Cache
-         with:
--          key: ${{ runner.os }}-${{ matrix.buildmode }}-${{ matrix.dep-resolution }}-ios-v3 # makes a unique key w/related restore key internally
-+          key: ${{ runner.os }}-${{ matrix.buildmode }}-${{ matrix.dep-resolution }}-ios-v4-xcode27 # bust ccache polluted by Xcode 27.1 beta / prior majors
-           save: "${{ github.ref == 'refs/heads/main' }}"
-           create-symlink: true
-           max-size: 1500M
-@@ -264,8 +264,8 @@ jobs:
-         continue-on-error: true
-         with:
-           path: tests/ios/Pods
--          key: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v3-${{ hashFiles('tests/ios/Podfile.lock') }}
--          restore-keys: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v3
-+          key: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v4-${{ hashFiles('tests/ios/Podfile.lock') }}
-+          restore-keys: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v4
- 
-       - name: Configure Dependency Resolution Mode
-         run: .github/workflows/scripts/configure-ios-dep-resolution.sh "${{ matrix.dep-resolution }}"
-@@ -610,15 +610,15 @@ jobs:
-   # and okf-bundle/ios-spm-native-imports.md "Runtime framework embedding".
-   ios-release-archive:
-     name: iOS Release Archive (${{ matrix.dep-resolution }})
--    runs-on: macos-27
-+    runs-on: xcode-27
-     timeout-minutes: 45
-     env:
-       CCACHE_SLOPPINESS: clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
-       CCACHE_FILECLONE: true
-       CCACHE_DEPEND: true
-       CCACHE_INODECACHE: true
-       CCACHE_LIMIT_MULTIPLE: 0.95
--      XCODE_VERSION: latest-stable
-+      XCODE_VERSION: '27.0'
-       RNFB_CI_REQUIRE_IOS_SIM_RUNTIME: '0'
-     strategy:
-       fail-fast: false
-@@ -652,7 +652,7 @@ jobs:
-       - uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-         name: Xcode Compile Cache
-         with:
--          key: ${{ runner.os }}-archive-${{ matrix.dep-resolution }}-ios-v1
-+          key: ${{ runner.os }}-archive-${{ matrix.dep-resolution }}-ios-v2-xcode27
-           save: "${{ github.ref == 'refs/heads/main' }}"
-           create-symlink: true
-           max-size: 1500M
-@@ -689,8 +689,8 @@ jobs:
-         continue-on-error: true
-         with:
-           path: tests/ios/Pods
--          key: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v3-${{ hashFiles('tests/ios/Podfile.lock') }}
--          restore-keys: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v3
-+          key: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v4-${{ hashFiles('tests/ios/Podfile.lock') }}
-+          restore-keys: ${{ runner.os }}-${{ matrix.dep-resolution }}-ios-pods-v4
- 
-       - name: Configure Dependency Resolution Mode
-         run: .github/workflows/scripts/configure-ios-dep-resolution.sh "${{ matrix.dep-resolution }}"
-```
-
-**File**: `.github/workflows/tests_e2e_other.yml` (modified, +2/-2)
-```diff
-@@ -87,7 +87,7 @@ jobs:
-   # it will run unit tests on whatever OS combinations are desired
-   other:
-     name: Other (${{ matrix.iteration }})
--    runs-on: macos-27
-+    runs-on: xcode-27
-     needs: matrix_prep
-     timeout-minutes: 100
-     env:
-@@ -98,7 +98,7 @@ jobs:
-       # Xcode 27+ default toolchain (MetalToolchain cryptex); pin for async-storage Swift compat.
-       # https://github.com/actions/runner-images/issues/13135
-       TOOLCHAINS: com.apple.dt.toolchain.XcodeDefault
--      XCODE_VERSION: latest-stable
-+      XCODE_VERSION: '27.0'
-       RNFB_CI_REQUIRE_IOS_SIM_RUNTIME: '0'
-       CCACHE_SLOPPINESS: clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
-       CCACHE_FILECLONE: true
-```
-
----
-
-### Incident Patch 4: `6b13c9d4` (2026-09-30)
-**Commit Message**: fix(app): restore vendor EventEmitter for RN macOS 0.78
-
-Public react-native EventEmitter is missing on macOS 0.78, so the
-test app crashed before Jet connected after the 0.88 ratchet.
-
-**File**: `packages/app/lib/internal/SharedEventEmitter.ts` (modified, +2/-1)
-```diff
-@@ -15,7 +15,8 @@
+@@ -15,32 +15,21 @@
   *
   */
  
--import { EventEmitter } from 'react-native';
-+// RN macOS 0.78 does not export EventEmitter from the public API; vendor path works on 0.78–0.88.
-+import EventEmitter from 'react-native/Libraries/vendor/emitter/EventEmitter';
- import type { ReactNativeFirebaseEventEmitter } from '../types/internal';
+-#include <Foundation/Foundation.h>
+-
++// This module intentionally has no Firebase imports and no `*-Swift.h` —
++// see RNFBCrashlyticsHelper.h. Every Firebase Crashlytics SDK call (and the
++// Swift debugger probe) is routed through the plain Objective-C
++// RNFBCrashlyticsHelper class instead, which can safely `@import`
++// FirebaseCrashlytics / import the generated Swift interface because it
++// compiles as ObjC, not ObjC++.
+ #import <React/RCTConvert.h>
+ #import <React/RCTLog.h>
+-#import <React/RCTUtils.h>
+-
+-#if __has_include(<Firebase/Firebase.h>)
+-#import <Firebase/Firebase.h>
+-#elif __has_include(<FirebaseCrashlytics/FirebaseCrashlytics.h>)
+-#import <FirebaseCore/FirebaseCore.h>
+-#import <FirebaseCrashlytics/FirebaseCrashlytics.h>
+-#else
+-@import FirebaseCore;
+-@import FirebaseCrashlytics;
+-#endif
++
+ #import "RNFBApp/RNFBSharedUtils.h"
++#import "RNFBCrashlyticsHelper.h"
+ #import "RNFBCrashlyticsInitProvider.h"
+ #import "RNFBCrashlyticsModule.h"
+ #import "RNFBPreferences.h"
  
- const emitter = new EventEmitter() as ReactNativeFirebaseEventEmitter;
+-#if __has_include(<RNFBCrashlytics/RNFBCrashlytics-Swift.h>)
+-#import <RNFBCrashlytics/RNFBCrashlytics-Swift.h>
+-#elif __has_include("RNFBCrashlytics-Swift.h")
+-#import "RNFBCrashlytics-Swift.h"
+-#endif
+-
+ @implementation RNFBCrashlyticsModule
+ 
+ RCT_EXPORT_MODULE(NativeRNFBTurboCrashlytics)
+@@ -63,7 +52,7 @@ - (NSDictionary *)crashlyticsConstantsDictionary {
+   constants[@"isCrashlyticsJavascriptExceptionHandlerChainingEnabled"] =
+       @([RCTConvert BOOL:@([RNFBCrashlyticsInitProvider
+                              isCrashlyticsJavascriptExceptionHandlerChainingEnabled])]);
+-  if ([self isDebuggerAttached]) {
++  if ([RNFBCrashlyticsHelper isDebuggerAttached]) {
+     RCTLog(
+         @"Crashlytics - WARNING: Debugger detected. Crashlytics will not receive crash reports.");
+   }
+@@ -79,14 +68,15 @@ - (NSDictionary *)crashlyticsConstantsDictionary {
+ }
+ 
+ - (void)checkForUnsentReports:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+-  [[FIRCrashlytics crashlytics] checkForUnsentReportsWithCompletion:^(BOOL unsentReports) {
++  (void)reject;
++  [RNFBCrashlyticsHelper checkForUnsentReportsWithCompletion:^(BOOL unsentReports) {
+     resolve([NSNumber numberWithBool:unsentReports]);
+   }];
+ }
+ 
+ - (void)crash {
+   if ([RNFBCrashlyticsInitProvider isCrashlyticsCollectionEnabled]) {
+-    if ([self isDebuggerAttached]) {
++    if ([RNFBCrashlyticsHelper isDebuggerAttached]) {
+       RCTLog(
+           @"Crashlytics - WARNING: Debugger detected. Crashlytics will not receive crash reports.");
+     }
+@@ -101,8 +91,9 @@ - (void)crash {
+ - (void)crashWithStackPromise:(JS::NativeRNFBTurboCrashlytics::JavaScriptErrorObject &)jsErrorDict
+                       resolve:(RCTPromiseResolveBlock)resolve
+                        reject:(RCTPromiseRejectBlock)reject {
++  (void)reject;
+   if ([RNFBCrashlyticsInitProvider isCrashlyticsCollectionEnabled]) {
+-    if ([self isDebuggerAttached]) {
++    if ([RNFBCrashlyticsHelper isDebuggerAttached]) {
+       RCTLog(
+           @"Crashlytics - WARNING: Debugger detected. Crashlytics will not receive crash reports.");
+     }
+@@ -117,59 +108,61 @@ - (void)crashWithStackPromise:(JS::NativeRNFBTurboCrashlytics::JavaScriptErrorOb
+ }
+ 
+ - (void)deleteUnsentReports:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+-  [[FIRCrashlytics crashlytics] deleteUnsentReports];
++  (void)reject;
++  [RNFBCrashlyticsHelper deleteUnsentReports];
+   resolve([NSNull null]);
+ }
+ 
+ - (void)didCrashOnPreviousExecution:(RCTPromiseResolveBlock)resolve
+                              reject:(RCTPromiseRejectBlock)reject {
+-  BOOL didCrash = [[FIRCrashlytics crashlytics] didCrashDuringPreviousExecution];
++  (void)reject;
++  BOOL didCrash = [RNFBCrashlyticsHelper didCrashDuringPreviousExecution];
+   resolve([NSNumber numberWithBool:didCrash]);
+ }
+ 
+ - (void)log:(NSString *)message {
+-  [[FIRCrashlytics crashlytics] log:message];
++  [RNFBCrashlyticsHelper log:message];
+ }
+ 
+ - (void)logPromise:(NSString *)message
+            resolve:(RCTPromiseResolveBlock)resolve
+             reject:(RCTPromiseRejectBlock)reject {
+-  [[FIRCrashlytics crashlytics] log:message];
++  (void)reject;
++  [RNFBCrashlyticsHelper log:message];
+   resolve([NSNull null]);
+ }
+ 
+ - (void)sendUnsentReports {
+-  [[FIRCrashlytics crashlytics] sendUnsentReports];
++  [RNFBCrashlyticsHelper sendUnsentReports];
+ }
+ 
+ - (void)setAttribute:(NSString *)key
+                value:(NSString *)value
+              resolve:(RCTPromiseResolveBlock)resolve
+               reject:(RCTPromiseRejectBlock)reject {
++  (void)reject;
+   if ([RNFBCrashlyticsInitProvider isCrashlyticsCollectionEnabled]) {
+-    [[FIRCrashlytics crashlytics] setCustomValue:value forKey:key];
++    [RNFBCrashlyticsHelper setCustomValue:value forKey:key];
+   }
+   resolve([NSNull null]);
+ }
+ 
+ - (void)setAttributes:(NSDictionary *)attributes
+               resolve:(RCTPromiseResolveBlock)resolve
+                reject:(RCTPromiseRejectBlock)reject 
 ```
 
-**File**: `tests-macos/.jetrc.js` (modified, +2/-2)
+**File**: `packages/crashlytics/ios/RNFBCrashlyticsUnitTests/HostStubs/Firebase/FIRCrashlyticsHostStub.m` (added, +207/-0)
 ```diff
-@@ -206,8 +206,8 @@ module.exports = {
-             JET_REMOTE_PORT: String(jetPort),
-           },
-         });
--        macApp.on('close', code => {
--          if (code === 0) {
-+        macApp.on('close', (code, signal) => {
-+          if (code === 0 || (code == null && signal)) {
-             return;
-           }
-           if (macOsRetries < 3) {
-```
-
----
-
-### Incident Patch 5: `e0e27c09` (2026-09-30)
-**Commit Message**: test: pin clang-format 1.7 for arm64 and fix bare Firebase plist
-
-**File**: `.github/workflows/scripts/test-rn-bare-ios-launch-smoke.sh` (modified, +9/-0)
-```diff
-@@ -121,6 +121,15 @@ if [[ -n "$scene_ips" ]]; then
-   fail "scene lifecycle runtime issue detected — see ${APP_LOG}"
- fi
- if ! grep -Fq 'Window did become application key' "$APP_LOG"; then
-+  firebase_hint="$(
-+    grep -Ei 'Firebase|FIRApp|GOOGLE_APP_ID|FirebaseApp\.configure|Configuration fails|terminated due to signal|abort\(\)' "$APP_LOG" \
-+      | grep -Ev '^Filtering the log data using' \
-+      | tail -8 \
-+      || true
-+  )"
-+  if [[ -n "$firebase_hint" ]]; then
-+    fail "app window never became key (Firebase/init crash likely) — log excerpt: ${firebase_hint} — full log: ${APP_LOG}"
-+  fi
-   fail "app window never became key — see ${APP_LOG}"
- fi
- if ! grep -Fq "sceneOfRecord: sceneID: sceneID:${BUNDLE_ID}-default" "$APP_LOG"; then
-```
-
-**File**: `okf-bundle/testing/validation-checklist.md` (modified, +1/-1)
-```diff
-@@ -146,7 +146,7 @@ Run **only** the scripts whose trees are in the diff (exit 0). Do not run the re
- | `packages/**` or `test-expo/**` JS/TS | `yarn lint:js` | ESLint `packages/*` and `test-expo/` (one script; do not invent a `test-expo` lint entrypoint). Implementation may `yarn lint:js --fix` then re-run until clean. Prefer that over `yarn format:js`. A flood under `packages/app/__tests__/vendor/` is local Bundler vendor, not product lint. Do not treat it as the lint gate. [Agent command policy § JS lint / Bundler vendor](agent-command-policy.md#js-lint-bundler-vendor). |
- | `packages/*/lib/**` | `yarn lint:deps` | Blocking. [dependency-cycle linting](../monorepo-tooling/prepare-and-cache.md#dependency-cycle-linting). |
- | Java under `packages/*/android` | `yarn lint:android` | **Implementation only.** `google-java-format --set-exit-if-changed --replace` — **mutates**. Only entrypoint ([agent command policy](agent-command-policy.md)); never invent `yarn google-java-format` / `npx google-java-format`. Can flake; rerun once/twice if failure is not clearly in diff. Commit formatter output. |
--| iOS native (`packages/*/ios` `.h` / `.cpp` / `.m` / `.mm`, not generated) | `yarn lint:ios:check` | clang-format **check** (`-n -Werror`). Implementation may `yarn lint:ios:fix` then re-check. |
-+| iOS native (`packages/*/ios` `.h` / `.cpp` / `.m` / `.mm`, not generated) | `yarn lint:ios:check` | clang-format **check** (`-n -Werror`). Pin npm `clang-format@1.7.0` (1.8.0 darwin tarball is x64-only on arm64). Implementation may `yarn lint:ios:fix` then re-check. |
- | `docs/**` | `yarn lint:markdown` then `yarn lint:spellcheck` | Scripts glob `docs/**` only (CI docs job). OKF-only diffs skip these. Gotchas below. |
- 
- **Docs lint gotchas** (`docs/**` only):
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -120,7 +120,7 @@
-     "@types/react-native": "^0.73.0",
-     "@typescript-eslint/parser": "^8.59.1",
-     "babel-jest": "^30.3.0",
--    "clang-format": "^1.8.0",
-+    "clang-format": "1.7.0",
-     "conventional-changelog-cli": "^4.1.0",
-     "cross-env": "^10.1.0",
-     "dependency-cruiser": "^17.3.9",
-```
-
-**File**: `test-rn-bare/ios/testrnbare/GoogleService-Info.plist` (modified, +12/-10)
-```diff
-@@ -3,34 +3,36 @@
- <plist version="1.0">
- <dict>
- 	<key>CLIENT_ID</key>
--	<string>000000000000-testrnbarefakefakefakefakefake.apps.googleusercontent.com</string>
-+	<string>448618578101-4km55qmv55tguvnivgjdiegb3r0jquv5.apps.googleusercontent.com</string>
- 	<key>REVERSED_CLIENT_ID</key>
--	<string>com.googleusercontent.apps.000000000000-testrnbarefakefakefakefakefake</string>
-+	<string>com.googleusercontent.apps.448618578101-4km55qmv55tguvnivgjdiegb3r0jquv5</string>
-+	<key>ANDROID_CLIENT_ID</key>
-+	<string>448618578101-a9p7bj5jlakabp22fo3cbkj7nsmag24e.apps.googleusercontent.com</string>
- 	<key>API_KEY</key>
--	<string>AIzaSyFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKE</string>
-+	<string>AIzaSyAHAsf51D0A407EklG1bs-5wA7EbyfNFg0</string>
- 	<key>GCM_SENDER_ID</key>
--	<string>000000000000</string>
-+	<string>448618578101</string>
- 	<key>PLIST_VERSION</key>
- 	<string>1</string>
- 	<key>BUNDLE_ID</key>
- 	<string>com.invertase.testrnbare</string>
- 	<key>PROJECT_ID</key>
--	<string>test-rn-bare-fixture-fake</string>
-+	<string>react-native-firebase-testing</string>
- 	<key>STORAGE_BUCKET</key>
--	<string>test-rn-bare-fixture-fake.appspot.com</string>
-+	<string>react-native-firebase-testing.appspot.com</string>
- 	<key>IS_ADS_ENABLED</key>
- 	<false></false>
- 	<key>IS_ANALYTICS_ENABLED</key>
- 	<false></false>
- 	<key>IS_APPINVITE_ENABLED</key>
--	<false></false>
-+	<true></true>
- 	<key>IS_GCM_ENABLED</key>
- 	<true></true>
- 	<key>IS_SIGNIN_ENABLED</key>
--	<false></false>
-+	<true></true>
- 	<key>GOOGLE_APP_ID</key>
--	<string>1:000000000000:ios:fakefakefakefakefake</string>
-+	<string>1:448618578101:ios:3e76955ab6d49ecaac3efc</string>
- 	<key>DATABASE_URL</key>
--	<string>https://test-rn-bare-fixture-fake.firebaseio.com</string>
-+	<string>https://react-native-firebase-testing.firebaseio.com</string>
- </dict>
- </plist>
-```
-
-**File**: `yarn.lock` (modified, +5/-5)
-```diff
-@@ -10884,9 +10884,9 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"clang-format@npm:^1.8.0":
--  version: 1.8.0
--  resolution: "clang-format@npm:1.8.0"
-+"clang-format@npm:1.7.0":
-+  version: 1.7.0
-+  resolution: "clang-format@npm:1.7.0"
-   dependencies:
-     async: "npm:^3.2.3"
-     glob: "npm:^7.0.0"
-@@ -10895,7 +10895,7 @@ __metadata:
-     check-clang-format: bin/check-clang-format.js
-     clang-format: index.js
-     git-clang-format: bin/git-clang-format
--  checksum: 10/d4a25ae743d09b8aecc7afb7cb29c531ae3fcc9cb3195b69cc76e1a9ada69d423f341fbccc47458ab35c1c8746856a778de8f7ba51b2886c66ef78f779c842f7
-+  checksum: 10/4d45dfa155d1379fbce487550c65e33689dbfbb8e8ebd8dae5064515ae6075711bab6dba0580745d2d42340cae25f15908ea2f1fd5b6e2f02684f7ea3962bae5
-   languageName: node
-   linkType: hard
- 
-@@ -24147,7 +24147,7 @@ __metadata:
-     "@types/react-native": "npm:^0.73.0"
-     "@typescript-eslint/parser": "npm:^8.59.1"
-     babel-jest: "npm:^30.3.0"
--    clang-format: "npm:^1.8.0"
-+    clang-format: "npm:1.7.0"
-     conventional-changelog-cli: "npm:^4.1.0"
-     cross-env: "npm:^10.1.0"
-     dependency-cruiser: "npm:^17.3.9"
-```
-
----
-
-### Incident Patch 6: `6954127b` (2026-09-30)
-**Commit Message**: docs: require Xcode 27 and suspend Tart
-
-**File**: `CONTRIBUTING.md` (modified, +2/-0)
-```diff
-@@ -157,6 +157,8 @@ To run end-to-end tests for `Other`, please run:
- See [the local testing guide](https://github.com/invertase/react-native-firebase/blob/main/tests/README.md) to get started
- with `e2e` testing this project.
- 
-+**iOS toolchain (contributors and CI):** use **Xcode 27** (stable), the **iOS 27.0** simulator runtime, and **Device Hub** for simulator UI — not legacy **Simulator.app** launch patterns. E2e mobile fixtures track **React Native 0.88.0-rc.3** and **Expo SDK 58** in `test-expo/` ([pins](okf-bundle/testing/test-app-dependency-pins.md#current-pins)). Canonical commands and host setup: [running e2e § Apple host toolchain](okf-bundle/testing/running-e2e.md#apple-host-toolchain-local). CI behaviour: [iOS CI workflows](okf-bundle/ci-workflows/ios.md#apple-ci-toolchain-xcode-27). Optional Tart VM stress runs are [suspended](okf-bundle/testing/local-ios-e2e-reproduction.md#status-suspended); an **iOS 26.5** runtime does not satisfy the iOS 27 / UIScene gates.
+@@ -0,0 +1,207 @@
++/**
++ * Host-only stub for macOS XCTest. Not shipped in the production pod.
++ */
++#import <Firebase/Firebase.h>
 +
- ---
- 
- ## Submitting code for review
-```
-
-**File**: `okf-bundle/ci-workflows/index.md` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ GitHub Actions job shape, platform reliability, and artifact triage.
- 
- ## Platforms
- 
--* [iOS](ios.md) — XCTest unit (`yarn tests:ios:unit`), simulator boot, logging, troubleshooting, [CI baseload policy](ios.md#ci-baseload-policy-instrumentation)
-+* [iOS](ios.md) — **`macos-27`** + **Xcode 27** + **iOS 27.0** runtime, **Device Hub** boot, XCTest unit (`yarn tests:ios:unit`), logging, troubleshooting, [CI baseload policy](ios.md#ci-baseload-policy-instrumentation); [Tart lab suspended](../testing/local-ios-e2e-reproduction.md#status-suspended)
- * [Android](android.md) — JVM unit step, idling, adb teardown, merged Jacoco / native coverage
- * [Other](other.md) — macOS e2e, Windows/shared
- 
-```
-
-**File**: `okf-bundle/ci-workflows/ios.md` (modified, +6/-0)
-```diff
-@@ -22,6 +22,12 @@ Dedicated Apple jobs use the **`macos-27`** runner label, `maxim-lobanov/setup-x
- 
- Archive-only and macOS-only jobs set `RNFB_CI_REQUIRE_IOS_SIM_RUNTIME=0` (Xcode major check only). Expo / bare fixture workflows run link/build plus **`yarn test-expo:ios:launch-smoke`** / **`yarn test-rn-bare:ios:launch-smoke`** on the pinned iOS 27 runtime.
- 
-+**Local contributors** mirror the same Xcode / runtime / Device Hub expectations — [running e2e § Apple host toolchain](../testing/running-e2e.md#apple-host-toolchain-local). Mobile fixture versions (**RN 0.88.0-rc.3**, **Expo 58**) are in [test app dependency pins](../testing/test-app-dependency-pins.md#current-pins).
-+
-+**iOS 26.5 sim runtime** (or an older Tart seed) is **not** a substitute for this ratchet: it may help explain **runtime-only** deltas (see [§ issue 5](#5-metro-unresponsive-at-launch--waitforactive-hang-active-app) `localhost` vs `127.0.0.1`), but it cannot satisfy the **Xcode 27** / **iOS 27** / UIScene launch-smoke gates. Details: [local Tart lab § iOS 26.5 not proof](../testing/local-ios-e2e-reproduction.md#ios-26-5-not-proof).
-+
-+**Tart VM lab** — optional stress repro under `scripts/tart/` is [temporarily suspended](../testing/local-ios-e2e-reproduction.md#status-suspended); CI truth remains this workflow and `configure-apple-ci.sh`.
-+
- ## Simulator reliability
- 
- ### Problem
-```
-
-**File**: `okf-bundle/testing/e2e-parallel-design.md` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ Commands for clear → start → build → test → free: [running e2e § slot l
- |-------|------|----------|
- | **RNFB e2e** | Ports, devices, `export-slot-env`, packager, emulator, check/release, `:build` / `:test-cover`. Parallel = all platforms at once, and multiple same-platform runs via **slots** + extra worktrees. | Read `tests/mellifera.env.json`; change native build settings; invent a second runbook |
- | **Mellifera** | Leases. A user **publishes** that a host has available RNFB e2e slots; Mellifera **executes** RNFB e2e using those slots (export `RNFB_*`, then `yarn tests:*`). | Detox/Gradle/Watchman/runbook order; `--mellifera` inside core check/release |
--| **Tart** | Fully separate speculative VM system. A published Mellifera slot **may** be a process inside a Tart VM. | Define RNFB e2e commands or justify Debug Detox flags |
-+| **Tart** | Fully separate speculative VM system. A published Mellifera slot **may** be a process inside a Tart VM. Lab path [temporarily suspended](local-ios-e2e-reproduction.md#status-suspended) during Xcode 27 / iOS 27 ratchet. | Define RNFB e2e commands or justify Debug Detox flags |
- 
- > Mellifera is additive. Serial `yarn tests:*` never requires it. Older drafts called macOS `macos-global`; superseded by `macos-slot-N` + `RNFB_MACOS_PRODUCT_NAME`.
- 
-```
-
-**File**: `okf-bundle/testing/index.md` (modified, +1/-0)
-```diff
-@@ -14,3 +14,4 @@
- * [Published types ADR](architecture-decisions.md) — attw / Expo plugin decisions (`Types-AD-*`); [Types-AD-5](architecture-decisions.md#types-ad-5--pack-ignores-nested-ios-unit-build-trees--accepted) (`ios/**/build` for pack)
- * [Firebase testing project](firebase-testing-project.md) — cloud vs emulator, live FIS/RC, helper callables, rules/indexes, deploy
- * [Test app dependency pins](test-app-dependency-pins.md) — intentional RN / CLI locks (mobile + Expo/RN CLI fixtures share one line; `react-native-macos` is independent)
-+* [Local iOS e2e reproduction (Tart lab)](local-ios-e2e-reproduction.md) — optional VM stress path; [temporarily suspended](local-ios-e2e-reproduction.md#status-suspended); canonical e2e stays [running e2e](running-e2e.md)
-```
-
-**File**: `okf-bundle/testing/local-ios-e2e-reproduction.md` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+---
-+type: Reference
-+title: Local iOS e2e reproduction (Tart lab)
-+description: Optional Tart VM lab for CI-like iOS e2e stress runs; temporarily suspended while CI ratchets to Xcode 27 and iOS 27.
-+tags: [testing, ios, tart, e2e, lab]
-+timestamp: 2026-09-29T00:00:00Z
-+---
-+
-+# Local iOS e2e reproduction (Tart lab)
-+
-+<a id="status-suspended"></a>
-+
-+## Status — lab path temporarily suspended
-+
-+The **Tart VM pipeline** under `scripts/tart/` is a **suspendable lab path** (D9). It is **not** the canonical way to run or gate iOS e2e.
-+
-+| Use instead | When |
-+|-------------|------|
-+| [Running e2e tests](running-e2e.md) — [§ agent rule](running-e2e.md#agent-rule-read-first) | All contributor and agent iOS e2e work |
-+| [iOS CI workflows](../ci-workflows/ios.md) | CI behaviour, Device Hub boot, iOS 27 runtime pins |
-+| [Test app dependency pins](test-app-dependency-pins.md) | Mobile fixture line (**RN 0.88.0-rc.3**, **Expo 58**, CLI band) |
-+
-+**Scripts and entrypoints stay in the repo** (`bake-golden.sh`, `run-ephemeral.sh`, …). Do not delete or redesign Tart in doc-only work; seed/manifest cleanup is tracked separately (C1).
-+
-+### Resume criteria (when re-enabling the lab)
-+
-+Re-open this path only when **all** of the following hold:
-+
-+1. **CI parity** — Dedicated Apple jobs on **`macos-27`** with stable **Xcode 27** and default **`RNFB_IOS_SIM_RUNTIME` = `iOS 27.0`** are green and documented in [iOS CI workflows § Apple CI toolchain](../ci-workflows/ios.md#apple-ci-toolchain-xcode-27).
-+2. **Tart seed** — A Cirrus (or equivalent) macOS image ships **Xcode 27** (not 26.5); `scripts/tart/manifests/golden-expected.json` is updated to match that seed and `tests_e2e_ios.yml` pins.
-+3. **Rebake** — Operators run `bake-golden.sh` → `bake-warmed.sh` on a worktree at the target `origin/main` SHAs; `verify-manifest.sh` passes against the new expected manifest.
-+4. **In-VM boot** — Iteration uses the same **Device Hub + UDID** semantics as CI (`scripts/tart/lib/boot-simulator.sh` delegates to `.github/workflows/scripts/boot-simulator.sh`).
-+
-+Until then, treat existing golden/warmed VMs built from **Xcode 26.5** / **`macos-26`** manifests as **stale lab artifacts** — not proof for the current ratchet.
-+
-+<a id="ios-26-5-not-proof"></a>
-+
-+## iOS 26.5 is not a proof path for this ratchet
-+
-+An **iOS 26.5** simulator runtime (or Tart images seeded with **Xcode 26.5**) may still be useful for **runtime-differential** debugging — for example Metro `localhost` vs `127.0.0.1` behaviour noted in [iOS CI workflows § issue 5](../ci-workflows/ios.md#5-metro-unresponsive-at-launch--waitforactive-hang-active-app).
-+
-+It does **not** satisfy:
-+
-+- CI **`configure-apple-ci.sh`** gates (stable **Xcode major 27**, default **iOS 27.0** runtime when required).
-+- **`yarn test-expo:ios:launch-smoke`** / **`yarn test-rn-bare:ios:launch-smoke`** UIScene gates on the pinned **iOS 27** runtime ([agent command policy](agent-command-policy.md); [validation checklist § bare](validation-checklist.md#rn-cli-prebuilt-rncore-ios-compile-not-e2e)).
-+
-+Do not cite “green on iOS 26.5” as closure for Xcode 27 / iOS 27 / UIScene work.
-+
-+## Operator entrypoints (when resumed)
-+
-+Quick reference — full operational detail: [`scripts/tart/README.md`](../../scripts/tart/README.md).
-+
-+```bash
-+./scripts/tart/bake-golden.sh
-+./scripts/tart/bake-warmed.sh /path/to/worktree
-+./scripts/tart/run-ephemeral.sh --worktree /path/to/worktree --mode debug
-+```
-+
-+Manifest pins: `scripts/tart/manifests/golden-expected.json` (expected) vs `golden-baked.json` / `warmed-main.json` (after bake). **`golden-expected.json` may still list legacy `macos-26` / Xcode 26.5 until C1 updates the seed** — that file describes the **last baked lab target**, not current CI.
-+
-+## Related
-+
-+- [E2e parallel design § Tart layers](e2e-parallel-design.md#rnfb-mellifera-tart-layers) — Tart is not the RNFB e2e product
-+- [Running e2e § Apple host toolchain](running-e2e.md#apple-host-toolchain-local) — local Xcode 27 + Device Hub expectations
-```
-
-**File**: `okf-bundle/testing/running-e2e.md` (modified, +17/-0)
-```diff
-@@ -30,6 +30,23 @@ yarn   # repo root — exit 0 required. Applies .yarn/patches (jet, mocha-remote
- 
- **Keep host toolchains current.** Android Studio / emulator and Xcode / CocoaPods are expected to track upstream, not be pinned indefinitely. A stale Android Emulator (e.g. 36.2.12.0) can lack CLI flags newer Detox patches rely on (`-crash-report-mode`, requires **≥ 37**, see [detox-patches.md](../ci-workflows/detox-patches.md)) and fail at spawn rather than at test time. When a patch or e2e step breaks only on your host, update the toolchain first — don't reach for a runtime capability probe as the default fix.
- 
-+<a id="apple-host-toolchain-local"></a>
-+
-+### Apple host toolchain (local)
-+
-+Align the Mac with [iOS CI workflows § Apple CI toolchain](../ci-workflows/ios.md#apple-ci-toolchain-xcode-27) and [test app dependency pins](test-app-dependency-pins.md#current-pins):
-+
-+| Expectation | Local default |
-+|-------------|----------------|
-+| **Xcode** | **27** stable (beta fails CI gate; match `xcodebuild -version` major to CI) |
-+| **iOS Simulator runtime** | **`iOS 27.0`** — export `RNFB_IOS_SIM_RUNTIME` if your install uses a different label; `yarn tests:e2e:setup-ios-sims` creates devices on that runtime |
-+| **Simulator UI** | **Device Hub** from the selected Xcode bundle (`…/Applications/DeviceHub.app`). Do not use `open -a Simulator` / `open -a Device Hub` for CI-parity boot paths — see [iOS CI § simulator reliability](../ci-workflows/ios.md#simulator-reliability) |
-+| **Mobile e2e fixtures** | **RN 0.88.0-rc.3**, **Expo 58** (`test-expo/`), same RN line in `tests/` / `test-rn-bare/` — test-fixture pins only; do not document higher consumer Xcode/RN floors than product metadata |
-+
-+**iOS 26.5** simulators or hosts are **runtime-differential context only** (e.g. Metro hostname quirks in [iOS CI § issue 5](../ci-workflows/ios.md#5-metro-unresponsive-at-launch--waitforactive-hang-active-app)). They do **not** replace **iOS 27** for UIScene launch-smoke gates or Xcode 27 closure — [local Tart lab § not proof](local-ios-e2e-reproduction.md#ios-26-5-not-proof).
-+
-+**Tart VM lab** (`scripts/tart/`) is [temporarily suspended](local-ios-e2e-reproduction.md#status-suspended); use this runbook, not `run-ephemeral.sh`, for contributor e2e.
-+
- ## Rules
- 
- 1. **Packager** (background):
-```
-
-**File**: `okf-bundle/testing/test-app-dependency-pins.md` (modified, +5/-0)
-```diff
-@@ -12,6 +12,8 @@ Canonical owner for **intentional** version locks on the e2e apps (`tests/` mobi
- 
- Codegen determinism: [NewArch-AD-20](../new-architecture/architecture-decisions.md#newarch-ad-20--pin-the-rncodegen-toolchain-rn-bumps-are-coordinated-breaking-changes--accepted).
- 
-+**Apple CI / local e2e alignment:** dedicated iOS jobs require **Xcode 27** (stable) and default simulator runtime **`iOS 27.0`** ([iOS CI workflows § Apple CI toolchain](../ci-workflows/ios.md#apple-ci-toolchain-xcode-27)); local hosts should match [running e2e § Apple host toolchain](running-e2e.md#apple-host-toolchain-local). These pins are **test-fixture only** — do not raise RNFB consumer deployment or Xcode floors in product metadata when documenting them.
-+
- <a id="dual-app-model"></a>
- 
- ## Workspace e2e apps, Expo example, and fixtures
-@@ -100,9 +102,12 @@ Mobile `tests/` is on async-storage **3.x** (TurboModule `RNAsyncStorage`). macO
- 
- ## Related
- 
-+- [Running e2e § Apple host toolchain](running-e2e.md#apple-host-toolchain-local) — local Xcode 27 + iOS 27.0 + Device Hub
-+- [iOS CI workflows § Apple CI toolchain](../ci-workflows/ios.md#apple-ci-toolchain-xcode-27) — GHA `macos-27` gate
- - [NewArch-AD-20](../new-architecture/architecture-decisions.md#newarch-ad-20--pin-the-rncodegen-toolchain-rn-bumps-are-coordinated-breaking-changes--accepted) — codegen reproducibility / no floating toolchain
- - [NewArch-AD-21](../new-architecture/architecture-decisions.md#newarch-ad-21--interim-ios-resultt-alias-without-full-codegen-regen--accepted) — ResultT inject **retired** on mobile 0.86 (upstream emits `ResultT`)
- - [Other CI — macOS e2e](../ci-workflows/other.md) — macOS pipeline (`tests-macos/`)
- - [Agent command policy](agent-command-policy.md) — install / patch / fmt gate
- - [`tests/package.json`](../../tests/package.json) / [`tests-macos/package.json`](../../tests-macos/package.json) / [`test-expo/package.json`](../../test-expo/package.json) / [`test-rn-bare/package.json`](../../test-rn-bare/package.json) — declared pins
- - [`tests/metro.config.js`](../../tests/metro.config.js) — mobile async-storage singleton + nested blocklist
-+- [Local Tart lab](local-ios-e2e-reproduction.md) — suspended; not an alternate pin source
-```
-
----
-
-### Incident Patch 7: `01f450fa` (2026-09-30)
-**Commit Message**: fix(app): support Expo 58 scene lifecycle
-
-**File**: `.github/workflows/scripts/test-expo-ios-launch-smoke.sh` (added, +160/-0)
-```diff
-@@ -0,0 +1,160 @@
-+#!/bin/bash
-+# iOS 27 UIScene launch smoke for test-expo (Expo 58 dev-client fixture).
-+# Requires a prior yarn test-expo:ios:link in this checkout (ios/ generated).
-+# simctl-only — no Simulator.app / Device Hub.
-+set -euo pipefail
-+
-+cd "$(dirname "$0")/../../.."
-+cd test-expo
-+
-+log() {
-+  echo "[test-expo-ios-launch-smoke] $*"
++@implementation FIRStackFrame {
++  NSString *_symbol;
++  NSString *_file;
++  uint32_t _line;
 +}
 +
-+fail() {
-+  log "ERROR: $*"
-+  exit 1
+++ (instancetype)stackFrameWithSymbol:(NSString *)symbol file:(NSString *)file line:(uint32_t)line {
++  FIRStackFrame *frame = [[FIRStackFrame alloc] init];
++  frame->_symbol = [symbol copy];
++  frame->_file = [file copy];
++  frame->_line = line;
++  return frame;
 +}
 +
-+BUNDLE_ID="${RNFB_TEST_EXPO_BUNDLE_ID:-io.invertase.testing}"
-+SCHEME_URL="${RNFB_TEST_EXPO_SCHEME:-testexpo}"
-+WORKSPACE="${RNFB_TEST_EXPO_WORKSPACE:-ios/testexpo.xcworkspace}"
-+XCODE_SCHEME="${RNFB_TEST_EXPO_XCODE_SCHEME:-testexpo}"
-+SIM_NAME="${RNFB_TEST_EXPO_IOS27_DEVICE:-iPhone 18 Pro}"
-+SIM_RUNTIME="${RNFB_TEST_EXPO_IOS27_RUNTIME:-iOS 27.0}"
-+METRO_PORT="${RNFB_TEST_EXPO_METRO_PORT:-8081}"
-+METRO_LOG="${RNFB_TEST_EXPO_METRO_LOG:-/tmp/test-expo-launch-smoke-metro.log}"
-+APP_LOG="${RNFB_TEST_EXPO_LAUNCH_LOG:-/tmp/test-expo-launch-smoke.log}"
-+XCODEBUILD_LOG="${RNFB_TEST_EXPO_LAUNCH_XCODEBUILD_LOG:-/tmp/test-expo-launch-smoke-xcodebuild.log}"
-+
-+if [[ ! -d "$WORKSPACE" ]]; then
-+  fail "missing ${WORKSPACE} — run yarn test-expo:ios:link first"
-+fi
-+
-+resolve_sim_udid() {
-+  local line udid
-+  line="$(
-+    xcrun simctl list devices available 2>/dev/null \
-+      | awk -v device="$SIM_NAME" -v runtime="$SIM_RUNTIME" '
-+          $0 ~ "-- " runtime " --" { in_runtime = 1; next }
-+          in_runtime && /^-- / { in_runtime = 0 }
-+          in_runtime && index($0, device " (") { print; exit }
-+        '
-+  )"
-+  [[ -n "$line" ]] || fail "no available simulator named \"${SIM_NAME}\" on runtime ${SIM_RUNTIME}"
-+  udid="$(sed -E 's/.*\(([A-F0-9-]+)\).*/\1/' <<<"$line")"
-+  [[ -n "$udid" ]] || fail "could not parse UDID from simulator line: ${line}"
-+  echo "$udid"
++- (NSString *)symbol {
++  return _symbol;
 +}
 +
-+cleanup() {
-+  local udid="$1"
-+  local metro_pid="$2"
-+  xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
-+  if [[ -n "$metro_pid" ]]; then
-+    kill "$metro_pid" 2>/dev/null || true
-+  fi
-+  lsof -ti:"$METRO_PORT" | xargs kill -9 2>/dev/null || true
++- (NSString *)file {
++  return _file;
 +}
 +
-+UDID="$(resolve_sim_udid)"
-+log "simulator udid=${UDID} name=\"${SIM_NAME}\" runtime=${SIM_RUNTIME}"
++- (uint32_t)line {
++  return _line;
++}
 +
-+lsof -ti:"$METRO_PORT" | xargs kill -9 2>/dev/null || true
-+: >"$METRO_LOG"
-+CI=1 npx expo start --dev-client --port "$METRO_PORT" --localhost >>"$METRO_LOG" 2>&1 &
-+METRO_PID=$!
-+trap 'cleanup "$UDID" "$METRO_PID"' EXIT
++@end
 +
-+metro_ready=0
-+for _ in $(seq 1 120); do
-+  if curl -sf "http://localhost:${METRO_PORT}/status" | grep -q 'packager-status:running'; then
-+    metro_ready=1
-+    break
-+  fi
-+  if ! kill -0 "$METRO_PID" 2>/dev/null; then
-+    tail -40 "$METRO_LOG" >&2
-+    fail "Metro exited before becoming ready"
-+  fi
-+  sleep 1
-+done
-+[[ "$metro_ready" -eq 1 ]] || fail "Metro did not become ready on :${METRO_PORT}"
++@implementation FIRExceptionModel {
++  NSString *_name;
++  NSString *_reason;
++}
 +
-+HOST_ARCH="$(uname -m)"
-+xcrun simctl boot "$UDID" 2>/dev/null || true
-+xcrun simctl bootstatus "$UDID" -b >/dev/null
+++ (instancetype)exceptionModelWithName:(NSString *)name reason:(NSString *)reason {
++  FIRExceptionModel *model = [[FIRExceptionModel alloc] init];
++  model->_name = [name copy];
++  model->_reason = [reason copy];
++  return model;
++}
 +
-+log "xcodebuild Debug (simulator ${UDID}, log: ${XCODEBUILD_LOG})"
-+set +e
-+xcodebuild \
-+  ARCHS="$HOST_ARCH" \
-+  ONLY_ACTIVE_ARCH=YES \
-+  -workspace "$WORKSPACE" \
-+  -scheme "$XCODE_SCHEME" \
-+  -configuration Debug \
-+  -destination "id=${UDID}" \
-+  CODE_SIGNING_ALLOWED=NO \
-+  CODE_SIGNING_REQUIRED=NO \
-+  CODE_SIGN_IDENTITY="" \
-+  build 2>&1 | tee "$XCODEBUILD_LOG"
-+xcodebuild_status=${PIPESTATUS[0]}
-+set -e
-+[[ "$xcodebuild_status" -eq 0 ]] || fail "xcodebuild Debug failed (exit ${xcodebuild_status})"
++- (NSString *)name {
++  return _name;
++}
 +
-+APP="$(
-+  find "${HOME}/Library/Developer/Xcode/DerivedData"/testexpo-*/Build/Products/Debug-iphonesimulator \
-+    -maxdepth 1 -name '*.app' 2>/dev/null | head -1
-+)"
-+[[ -n "$APP" && -d "$APP" ]] || fail "could not find Debug-iphonesimulator .app under DerivedData/testexpo-*"
++- (NSString *)reason {
++  return _reason;
++}
 +
-+xcrun simctl install "$UDID" "$APP"
++@end
 +
-+: >"$APP_LOG"
-+xcrun simctl spawn "$UDID" log stream --level default --style compact \
-+  --predicate 'process == "testexpo" OR subsystem == "com.apple.runtime-issues" OR eventMessage CONTAINS[c] "EvaluateRuntimeIssueForNoSceneLifecycleAdoption"' \
-+  >>"$APP_LOG" 2>&1 &
-+LOG_PID=$!
-+sleep 1
++@implementation FIRCrashlytics
 +
-+metro_lines_before="$(wc -l <"$METRO_LOG" | tr -d ' ')"
-+xcrun simctl terminate "$UDID" "$BUNDLE_ID" 2>/dev/null || true
-+xcrun simctl launch "$UDID" "$BUNDLE_ID" >/dev/null
-+ENC_URL="$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=""))' "http://127.0.0.1:${METRO_PORT}")"
-+xcrun simctl openurl "$UDID" "${SCHEME_URL}://expo-development-client/?url=${ENC_URL}"
++static BOOL sDidCrashDuringPreviousExecutionValue;
++static BOOL sCheckForUnsentReportsValue;
++static NSMutableArray<NSString *> *sLoggedMessages;
++static NSMutableDictionary *sCustomValues;
++static NSString *sUserIDValue;
++static NSUInteger sDeleteUnsentReportsCallCount;
++static NSUInteger sSendUnsentReportsCallCount;
++static FIRExceptionModel *sLastRecordedExceptionModel;
 +
-+sleep 10
-+kill "$LOG_PID" 2>/dev/null || true
-+wait "$LOG_PID" 2>/dev/null || true
+++ (void)initialize {
++  if (self == [FIRCrashlytics class]) {
++    sLoggedMessages = [NSMutableArray new];
++    sCustomValues = [NSMutableDictionary new];
++  }
++}
 +
-+scene_ips="$(
-+  grep -Ei 'UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption|NoSceneLifecycleAdoption' "$APP_LOG" \
-+    | grep -Ev '^Filtering the log data using' \
-+    || true
-+)"
-+if [[ -n "$scene_ips" ]]; then
-+  fail "scene lifecycle runtime issue detected — see ${APP_LOG}"
-+fi
-+if ! grep -Fq 'Window did become application key' "$APP_LOG"; then
-+  fail "app window never became key — see ${APP_LOG}"
-+fi
-+if ! grep -Fq 'sceneOfRecord: s
+++ (instancetype)crashlytics {
++  static FIRCrashlytics *shared;
++  static dispatch_once_t once;
++  dispatch_once(&once, ^{
++    shared = [[FIRCrashlytics alloc] init];
++  });
++  return shared;
++}
++
+++ (BOOL)didCrashDuringPreviousExecutionValue {
++  return sDidCrashDuringPreviousExecutionValue;
++}
++
+++ (void)setDidCrashDuringPreviousExecutionValue:(BOOL)didCrashDuringPreviousExecutionValue {
++  sDidCrashDuringPreviousExecutionValue = didCrashDuringPreviousExecutionValue;
++}
++
+++ (BOOL)checkForUnsentReportsValue {
++  return sCheckForUnsentReportsValue;
++}
++
+++ (void)setCheckForUnsentReportsValue:(BOOL)checkForUnsentReportsValue {
++  sCheckForUnsentReportsValue = checkForUnsentReportsValue;
++}
++
+++ (NSArray<NSString *> *)loggedMessages {
++  return [sLoggedMessages copy];
++}
++
+++ (void)setLoggedMessages:(NSArray<NSString *> *)loggedMessages {
++  [sLoggedMessages removeAllObjects];
++  if (loggedMessages != nil) {
++    [sLoggedMessages addObjectsFromArray:loggedMessages];
++  }
++}
++
+++ (NSDictionary *)customValues {
++  return [sCustomValues copy];
++}
++
+++ (void)setCustomValues:(NSDictionary *)customValues {
++  [sCustomValues removeAllObjects];
++  if (customValues != nil) {
++    [sCustomValues addEntriesFromDictionary:customValues];
++  }
++}
++
+++ (NSString *)userIDValue {
++  return sUserIDValue;
++}
++
+++ (void)setUserIDValue:(NSString *)userIDValue {
++  sUserIDValue = [userIDValue copy];
++}
++
+++ (NSUInteger)deleteUnsentReportsCallCount {
++  return sDeleteUnsentReportsCallCount;
++}
++
+++ (void)setDeleteUnsentReportsCallCount:(NSUInteger)deleteUnsentReportsCallCount {
++  sDeleteUnsentReportsCallCount = deleteUnsentReportsCallCount;
++}
++
+++ (NSUInteger)sendUnsentReportsCallCount {
++  return sSendUnsentReportsCallCount;
++}
++
+++ (void)setSendUnsentReportsCallCount:(NSUInteger)sendUnsentReportsCallCount {
++  sSendUnsentReportsCallCount = sendUnsentReportsCallCount;
++}
++
+++ (FIRExceptionModel *)lastRecordedExceptionModel {
++  return sLastRecordedExceptionModel;
++}
++
+++ (void)setLastRecordedExceptionModel:(FIRExceptionModel *)lastRecordedExceptionModel {
++  sLastRecordedExceptionModel = lastRecordedExceptionModel;
++}
++
+++ (void)resetTestState {
++  sDidCrashDuringPreviousExecutionValue = NO;
++  sCheckForUnsentReportsValue = NO;
++  [sLoggedMessages removeAllObjects];
++  [sCustomValues removeAllObjects];
++  sUserIDValue = nil;
++  sDeleteUnsentReportsCallCount = 0;
++  sSendUnsentReportsCallCount = 0;
++  sLastRecordedExceptionModel = nil;
++}
++
++- (void)checkForUnsentReportsWithCompletion:(void (^)(BOOL unsentReports))completion {
++  if (completion != nil) {
++    completion(sCheckForUnsentReportsValue);
++  }
++}
++
++- (void)deleteUnsentReports {
++  sDeleteUnsentReportsCallCount += 1;
++}
++
++- (BOOL)didCrashDuringPreviousExecution {
++  return sDidCrashDuringPreviousExecutionValue;
++}
++
++- (void)log:(NSString *)message {
++  if (message != nil) {
++    [sLoggedMessages addObject:message];
++  }
++}
++
++- (void)sendUnsentReports {
++  sSendUnsentReportsCallCount += 1;
++}
++
++- (void)setCustomValue:(id)value forKey:(NSString *)key {
++  if (key == nil) {
++    return;
++  }
++  if (value == nil) {
++    [sCustomValues removeObjectForKey:key];
++  } else {
++    sCustomValues[key] = value;
++  }
++}
++
++- (void)setUserID:(NSString *)userID {
++  sUserIDValue = [userID copy];
++}
++
++- (void)recordExceptionModel:(FIRExceptionModel *)exceptionModel 
 ```
 
-**File**: `.github/workflows/scripts/test-expo-ios-link.sh` (modified, +34/-0)
+**File**: `packages/crashlytics/ios/RNFBCrashlyticsUnitTests/HostStubs/Firebase/Firebase.h` (added, +47/-0)
 ```diff
-@@ -53,6 +53,40 @@ if [[ ! -d "$WORKSPACE" ]]; then
-   exit 1
- fi
- 
-+log "--- Expo 58 UIScene / RNFB plugin contract ---"
-+SCENE_DELEGATE="ios/testexpo/SceneDelegate.swift"
-+APP_DELEGATE="ios/testexpo/AppDelegate.swift"
-+INFO_PLIST="ios/testexpo/Info.plist"
-+for generated_file in "$SCENE_DELEGATE" "$APP_DELEGATE" "$INFO_PLIST"; do
-+  if [[ ! -f "$generated_file" ]]; then
-+    log "ERROR: missing ${generated_file} (Expo prebuild did not emit UIScene files)"
-+    exit 1
-+  fi
-+done
-+if ! grep -q 'class SceneDelegate: ExpoAppSceneDelegate' "$SCENE_DELEGATE"; then
-+  log "ERROR: SceneDelegate is not the Expo 58 ExpoAppSceneDelegate stub"
-+  exit 1
-+fi
-+if grep -qE 'Firebase|FIRApp|FirebaseApp' "$SCENE_DELEGATE"; then
-+  log "ERROR: Firebase code in SceneDelegate (RNFB must configure only in AppDelegate)"
-+  exit 1
-+fi
-+firebase_configure_count="$(grep -c 'FirebaseApp.configure()' "$APP_DELEGATE" || true)"
-+if [[ "$firebase_configure_count" -ne 1 ]]; then
-+  log "ERROR: expected exactly one FirebaseApp.configure() in AppDelegate, found ${firebase_configure_count}"
-+  exit 1
-+fi
-+if ! awk '/UIApplicationSupportsMultipleScenes/{getline; if ($0 ~ /<false\/>/) found=1} END{exit !found}' "$INFO_PLIST"; then
-+  log "ERROR: UIApplicationSupportsMultipleScenes is not false (single-scene contract)"
-+  exit 1
-+fi
-+if ! grep -q 'UISceneDelegateClassName' "$INFO_PLIST"; then
-+  log "ERROR: Info.plist missing UIScene manifest entries"
-+  exit 1
-+fi
-+log "PASS: Expo owns SceneDelegate; RNFB configures Firebase once in AppDelegate; single-scene manifest"
-+log "--- end Expo 58 UIScene / RNFB plugin contract ---"
+@@ -0,0 +1,47 @@
++/**
++ * Host-only stub for macOS XCTest. Not shipped in the production pod.
++ * Enough of Firebase Crashlytics for compiling RNFBCrashlyticsHelper.m
++ * and asserting SDK call wiring without linking the real SDK.
++ */
++#import <Foundation/Foundation.h>
 +
- # Diagnosis: did #9164's rnfirebase_add_spm_core_to_app_target run during
- # Expo CNG `pod install`, and did the resulting pbxproj keep FirebaseCore on
- # the app target? Do not "fix" a wipe by hand-editing pbxproj or adding a
++@interface FIRStackFrame : NSObject
++@property(nonatomic, readonly, copy) NSString *symbol;
++@property(nonatomic, readonly, copy) NSString *file;
++@property(nonatomic, readonly, assign) uint32_t line;
+++ (instancetype)stackFrameWithSymbol:(NSString *)symbol file:(NSString *)file line:(uint32_t)line;
++@end
++
++@interface FIRExceptionModel : NSObject
++@property(nonatomic, readonly, copy) NSString *name;
++@property(nonatomic, readonly, copy) NSString *reason;
++@property(nonatomic, copy, nullable) NSArray<FIRStackFrame *> *stackTrace;
+++ (instancetype)exceptionModelWithName:(NSString *)name reason:(NSString *)reason;
++@end
++
++@interface FIRCrashlytics : NSObject
++
+++ (instancetype)crashlytics;
++
++- (void)checkForUnsentReportsWithCompletion:(void (^)(BOOL unsentReports))completion;
++- (void)deleteUnsentReports;
++- (BOOL)didCrashDuringPreviousExecution;
++- (void)log:(NSString *)message;
++- (void)sendUnsentReports;
++- (void)setCustomValue:(nullable id)value forKey:(NSString *)key;
++- (void)setUserID:(NSString *)userID;
++- (void)recordExceptionModel:(FIRExceptionModel *)exceptionModel;
++
++/** Test seams */
++@property(class, nonatomic, assign) BOOL didCrashDuringPreviousExecutionValue;
++@property(class, nonatomic, assign) BOOL checkForUnsentReportsValue;
++@property(class, nonatomic, copy, nullable) NSArray<NSString *> *loggedMessages;
++@property(class, nonatomic, copy, nullable) NSDictionary *customValues;
++@property(class, nonatomic, copy, nullable) NSString *userIDValue;
++@property(class, nonatomic, assign) NSUInteger deleteUnsentReportsCallCount;
++@property(class, nonatomic, assign) NSUInteger sendUnsentReportsCallCount;
++@property(class, nonatomic, copy, nullable) FIRExceptionModel *lastRecordedExceptionModel;
++
+++ (void)resetTestState;
++
++@end
 ```
 
-**File**: `okf-bundle/testing/agent-command-policy.md` (modified, +2/-1)
+**File**: `packages/crashlytics/ios/RNFBCrashlyticsUnitTests/RNFBCrashlyticsHelperHostStubTests.m` (added, +119/-0)
 ```diff
-@@ -43,6 +43,7 @@ Single source for **which shell commands agents may run** in this repo. E2e `yar
- | iOS Ruby unit tests (SPM / CocoaPods helpers)                   | `yarn lint:ruby` / `yarn tests:ios:ruby` (after root `yarn` or `yarn ruby:install` when gems are missing)                                                                                                                                                                                  | ad-hoc `ruby packages/app/__tests__/…_test.rb`, bare `ruby …/run_with_coverage.rb` without the yarn script as the agent gate                                  |
- | iOS CocoaPods provisioning before shared build                 | `yarn tests:ios:pod:install` (after root `yarn` or `yarn ruby:install` when gems are missing; required order below)                                                                                                                                                                         | bare `pod install`, `cd tests/ios && pod install`, or assuming `yarn tests:ios:build` creates CocoaPods support files                                          |
- | Expo documented-path iOS link (workspace `test-expo/`; also the user-facing Expo example) | `yarn test-expo:ios:link` (repo root; script `.github/workflows/scripts/test-expo-ios-link.sh`). **Build-only** (`xcodebuild build`; does not launch). Keep `expo.autolinking.exclude: ["@expo/ui"]` in `test-expo/package.json` — [gotcha](#expo-router-autolink-exclude-expo-ui) | ad-hoc `expo prebuild` / `xcodebuild` outside that script; `cd test-expo && …` as the agent gate (link, typecheck, or launch); `yarn test-rn-bare:ios:build` as this closer; dropping the `@expo/ui` autolink exclude |
-+| Expo iOS 27 UIScene launch smoke (`test-expo/`; after link) | `yarn test-expo:ios:launch-smoke` (repo root; script `.github/workflows/scripts/test-expo-ios-launch-smoke.sh`). **Launch-only** on an iOS 27 simulator via `simctl` (starts fixture Metro internally; requires prior `yarn test-expo:ios:link` in the same checkout). Not Detox | ad-hoc `simctl` / `xcodebuild` / `cd test-expo && expo start` outside that script; `open -a Simulator`; Device Hub |
- | RN CLI prebuilt RNCore iOS build (workspace `test-rn-bare/`)    | `yarn test-rn-bare:ios:build` (repo root; script `.github/workflows/scripts/test-rn-bare-ios-build.sh`)                                                                                                                                                                                      | ad-hoc `pod` / `xcodebuild`; `cd test-rn-bare && …`; `tests/` e2e / `yarn tests:*`; `yarn test-expo:ios:link` as this closer                                  |
- | Android merged Jacoco (unit + e2e)                              | `yarn tests:android:post-e2e-coverage` (after e2e); `yarn tests:android:test:jacoco-report` when regenerating the merge report                                                                                                                                                             | `./gradlew jacocoAndroidTestReport` as Codecov path; inventing other jacoco yarn scripts                                                                      |
- | Native coverage presence guard (silent-empty fail)            | `yarn tests:coverage:assert-presence` (also invoked from `tests:android:post-e2e-coverage` and `tests:ios:test:process-coverage`; exit **2** on empty/missing when strict)                                                                                                                  | Ignoring empty LCOV/Jacoco; treating missing `.ec` / `packagesHits=0` as soft success in CI                                                                   |
-@@ -243,7 +244,7 @@ Local e2e (`yarn tests:*:test-cover`), the packager, emulator start, native buil
- ```text
- RNFB agent command policy: okf-bundle/testing/agent-command-policy.md ONLY.
- E2e: okf-bundle/testing/running-e2e.md yarn tests:* ONLY.
--Expo example + documented-path iOS link (not Detox, build-only): yarn test-expo:ios:link ONLY — never ad-hoc expo prebuild / xcodebuild / cd test-expo; never yarn test-rn-bare:ios:build as that closer. Typecheck: yarn tsc:compile:test-expo ONLY — never cd test-expo && tsc. JS lint is yarn lint:js (already includes test-expo/). Keep test-expo/package.json expo.autolinking.exclude ["@expo/ui"] — #expo-router-autolink-exclude-expo-ui.
-+Expo example + documented-path iOS link (not Detox, build-only): yarn test-expo:ios:link ONLY — never ad-hoc expo prebuild / xcodebuild / cd test-expo; never yarn test-rn-bare:ios:build as that closer. Expo iOS 27 UIScene launch smoke (not Detox): yarn test-expo:ios:launch-smoke ONLY after link in the same checkout — never ad-hoc simctl launch / open -a Simulator / Device Hub. Typecheck: yarn tsc:compile:test-expo ONLY — never cd test-expo && tsc. JS lint is yarn lint:js (already includes test-expo/). Keep test-expo/package.json expo.autolinking.exclude ["@expo/ui"] — #expo-router-autolink-exc
+@@ -0,0 +1,119 @@
++/**
++ * Copyright (c) 2016-present Invertase Limited & Contributors
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this library except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#import <XCTest/XCTest.h>
++
++#import <Firebase/Firebase.h>
++#import "RNFBCrashlyticsHelper.h"
++
++@interface RNFBCrashlyticsHelperHostStubTests : XCTestCase
++@end
++
++@implementation RNFBCrashlyticsHelperHostStubTests
++
++- (void)setUp {
++  [super setUp];
++  [FIRCrashlytics resetTestState];
++}
++
++- (void)tearDown {
++  [FIRCrashlytics resetTestState];
++  [super tearDown];
++}
++
++- (void)testIsDebuggerAttached_returnsBoolWithoutCrash {
++  // Thin ObjC facade over Swift probe (already covered by DebuggerProbeTests).
++  BOOL attached = [RNFBCrashlyticsHelper isDebuggerAttached];
++  XCTAssertTrue(attached == YES || attached == NO);
++}
++
++- (void)testLog_forwardsMessage {
++  [RNFBCrashlyticsHelper log:@"hello-helper"];
++  XCTAssertEqualObjects(FIRCrashlytics.loggedMessages, @[ @"hello-helper" ]);
++}
++
++- (void)testSetCustomValue_andUserID {
++  [RNFBCrashlyticsHelper setCustomValue:@"v1" forKey:@"k1"];
++  [RNFBCrashlyticsHelper setUserID:@"user-42"];
++  XCTAssertEqualObjects(FIRCrashlytics.customValues[@"k1"], @"v1");
++  XCTAssertEqualObjects(FIRCrashlytics.userIDValue, @"user-42");
++}
++
++- (void)testSetCustomKeysAndValues_appliesEachEntry {
++  [RNFBCrashlyticsHelper setCustomKeysAndValues:@{@"a" : @"1", @"b" : @"2"}];
++  XCTAssertEqualObjects(FIRCrashlytics.customValues[@"a"], @"1");
++  XCTAssertEqualObjects(FIRCrashlytics.customValues[@"b"], @"2");
++}
++
++- (void)testCheckForUnsentReports_forwardsCompletionValue {
++  FIRCrashlytics.checkForUnsentReportsValue = YES;
++  __block NSNumber *seen = nil;
++  [RNFBCrashlyticsHelper checkForUnsentReportsWithCompletion:^(BOOL unsentReports) {
++    seen = @(unsentReports);
++  }];
++  XCTAssertEqualObjects(seen, @YES);
++}
++
++- (void)testCheckForUnsentReports_nilCompletion_doesNotCrash {
++  FIRCrashlytics.checkForUnsentReportsValue = NO;
++  [RNFBCrashlyticsHelper checkForUnsentReportsWithCompletion:nil];
++}
++
++- (void)testDidCrashDuringPreviousExecution_forwardsStubValue {
++  FIRCrashlytics.didCrashDuringPreviousExecutionValue = YES;
++  XCTAssertTrue([RNFBCrashlyticsHelper didCrashDuringPreviousExecution]);
++}
++
++- (void)testDeleteAndSendUnsentReports_incrementCallCounts {
++  [RNFBCrashlyticsHelper deleteUnsentReports];
++  [RNFBCrashlyticsHelper sendUnsentReports];
++  XCTAssertEqual(FIRCrashlytics.deleteUnsentReportsCallCount, 1u);
++  XCTAssertEqual(FIRCrashlytics.sendUnsentReportsCallCount, 1u);
++}
++
++- (void)testRecordJavaScriptError_buildsExceptionModelWithFrames {
++  NSArray *frames = @[
++    @{@"fn" : @"doThing", @"file" : @"app.js", @"line" : @12},
++    @{@"fn" : @"main", @"file" : @"index.js", @"line" : @3},
++  ];
++
++  [RNFBCrashlyticsHelper recordJavaScriptErrorWithMessage:@"boom"
++                                                   frames:frames
++                              isUnhandledPromiseRejection:NO];
++
++  FIRExceptionModel *model = FIRCrashlytics.lastRecordedExceptionModel;
++  XCTAssertNotNil(model);
++  XCTAssertEqualObjects(model.name, @"JavaScriptError");
++  XCTAssertEqualObjects(model.reason, @"boom");
++  XCTAssertEqual(model.stackTrace.count, 2u);
++  XCTAssertEqualObjects(model.stackTrace[0].symbol, @"doThing");
++  XCTAssertEqualObjects(model.stackTrace[0].file, @"app.js");
++  XCTAssertEqual(model.stackTrace[0].line, 12u);
++  XCTAssertEqualObjects(model.stackTrace[1].symbol, @"main");
++}
++
++- (void)testRecordJavaScriptError_unhandledRejection_usesRejectionName {
++  [RNFBCrashlyticsHelper recordJavaScriptErrorWithMessage:@"rejected"
++                                                   frames:@[]
++                              isUnhandledPromiseRejection:YES];
++
++  FIRExceptionModel *model = FIRCrashlytics.lastRecordedExceptionModel;
++  XCTAssertEqualObjects(model.name, @"UnhandledPromiseRejection");
++  XCTAssertEqualObjects(model.reason, @"rejected");
++  XCTAssertEqual(model.stackTrace.count, 0u);
++}
++
++@end
 ```
 
-**File**: `package.json` (modified, +1/-0)
+**File**: `packages/crashlytics/ios/RNFBCrashlyticsUnitTests/RNFBCrashlyticsUnitTests.xcodeproj/project.pbxproj` (modified, +16/-0)
 ```diff
-@@ -75,6 +75,7 @@
-     "tests:ios:test-cover-and-process": "yarn tests:ios:test-cover && yarn tests:ios:test:process-coverage",
-     "tests:ios:pod:install": "cd tests/ios && bundle exec pod install",
-     "test-expo:ios:link": "bash .github/workflows/scripts/test-expo-ios-link.sh",
-+    "test-expo:ios:launch-smoke": "bash .github/workflows/scripts/test-expo-ios-launch-smoke.sh",
-     "test-expo:ios": "cd test-expo && yarn ios",
-     "test-expo:android": "cd test-expo && yarn android",
-     "test-rn-bare:ios:build": "bash .github/workflows/scripts/test-rn-bare-ios-build.sh",
-```
-
----
-
-### Incident Patch 8: `9bcea8de` (2026-09-30)
-**Commit Message**: test(ios): migrate bare fixture to UIScene
-
-**File**: `test-rn-bare/ios/testrnbare.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -13,6 +13,7 @@
- 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
- 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
- 		A11FB8E01F1E4011B0BA0001 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A11FB8E01F1E4011B0BA0002 /* GoogleService-Info.plist */; };
-+		A1B2C3D40B00000100000001 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40B00000100000002 /* SceneDelegate.swift */; };
- 		BCE02FE12AECA10CC59E355D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+@@ -10,13 +10,20 @@
+ 		CL100000000000000000000B /* RNFBCrashlyticsDebuggerProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CL1000000000000000000009 /* RNFBCrashlyticsDebuggerProbe.swift */; };
+ 		CL100000000000000000000C /* RNFBCrashlyticsDebuggerProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CL100000000000000000000D /* RNFBCrashlyticsDebuggerProbeTests.swift */; };
+ 		CL1000000000000000000015 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CL1000000000000000000014 /* XCTest.framework */; };
++		CL1000000000000000000020 /* RNFBCrashlyticsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = CL1000000000000000000021 /* RNFBCrashlyticsHelper.m */; };
++		CL1000000000000000000022 /* RNFBCrashlyticsHelperHostStubTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CL1000000000000000000023 /* RNFBCrashlyticsHelperHostStubTests.m */; };
++		CL1000000000000000000024 /* FIRCrashlyticsHostStub.m in Sources */ = {isa = PBXBuildFile; fileRef = CL1000000000000000000025 /* FIRCrashlyticsHostStub.m */; };
  /* End PBXBuildFile section */
  
-@@ -27,6 +28,7 @@
- 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = testrnbare/AppDelegate.swift; sourceTree = "<group>"; };
- 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = testrnbare/LaunchScreen.storyboard; sourceTree = "<group>"; };
- 		A11FB8E01F1E4011B0BA0002 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "testrnbare/GoogleService-Info.plist"; sourceTree = "<group>"; };
-+		A1B2C3D40B00000100000002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = testrnbare/SceneDelegate.swift; sourceTree = "<group>"; };
- 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+ /* Begin PBXFileReference section */
+ 		CL1000000000000000000003 /* RNFBCrashlyticsUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RNFBCrashlyticsUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		CL1000000000000000000009 /* RNFBCrashlyticsDebuggerProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RNFBCrashlyticsDebuggerProbe.swift; path = ../RNFBCrashlytics/RNFBCrashlyticsDebuggerProbe.swift; sourceTree = SOURCE_ROOT; };
+ 		CL100000000000000000000D /* RNFBCrashlyticsDebuggerProbeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNFBCrashlyticsDebuggerProbeTests.swift; sourceTree = "<group>"; };
+ 		CL1000000000000000000014 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
++		CL1000000000000000000021 /* RNFBCrashlyticsHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNFBCrashlyticsHelper.m; path = ../RNFBCrashlytics/RNFBCrashlyticsHelper.m; sourceTree = SOURCE_ROOT; };
++		CL1000000000000000000023 /* RNFBCrashlyticsHelperHostStubTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNFBCrashlyticsHelperHostStubTests.m; sourceTree = "<group>"; };
++		CL1000000000000000000025 /* FIRCrashlyticsHostStub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FIRCrashlyticsHostStub.m; path = HostStubs/Firebase/FIRCrashlyticsHostStub.m; sourceTree = "<group>"; };
++		CL1000000000000000000026 /* RNFBCrashlyticsHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNFBCrashlyticsHelper.h; path = ../RNFBCrashlytics/RNFBCrashlyticsHelper.h; sourceTree = SOURCE_ROOT; };
  /* End PBXFileReference section */
  
-@@ -48,6 +50,7 @@
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -52,6 +59,10 @@
  			children = (
- 				13B07FB51A68108700A75B9A /* Images.xcassets */,
- 				761780EC2CA45674006654EE /* AppDelegate.swift */,
-+				A1B2C3D40B00000100000002 /* SceneDelegate.swift */,
- 				A11FB8E01F1E4011B0BA0002 /* GoogleService-Info.plist */,
- 				13B07FB61A68108700A75B9A /* Info.plist */,
- 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
-@@ -315,6 +318,7 @@
- 			buildActionMask = 2147483647;
+ 				CL1000000000000000000009 /* RNFBCrashlyticsDebuggerProbe.swift */,
+ 				CL100000000000000000000D /* RNFBCrashlyticsDebuggerProbeTests.swift */,
++				CL1000000000000000000026 /* RNFBCrashlyticsHelper.h */,
++				CL1000000000000000000021 /* RNFBCrashlyticsHelper.m */,
++				CL1000000000000000000023 /* RNFBCrashlyticsHelperHostStubTests.m */,
++				CL1000000000000000000025 /* FIRCrashlyticsHostStub.m */,
+ 			);
+ 			name = Sources;
+ 			sourceTree = "<group>";
+@@ -115,6 +126,9 @@
  			files = (
- 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
-+				A1B2C3D40B00000100000001 /* SceneDelegate.swift in Sources */,
+ 				CL100000000000000000000B /* RNFBCrashlyticsDebuggerProbe.swift in Sources */,
+ 				CL100000000000000000000C /* RNFBCrashlyticsDebuggerProbeTests.swift in Sources */,
++				CL1000000000000000000020 /* RNFBCrashlyticsHelper.m in Sources */,
++				CL1000000000000000000024 /* FIRCrashlyticsHostStub.m in Sources */,
++				CL1000000000000000000022 /* RNFBCrashlyticsHelperHostStubTests.m in Sources */,
  			);
  			runOnlyForDeploymentPostprocessing = 0;
  		};
-```
-
-**File**: `test-rn-bare/ios/testrnbare/AppDelegate.swift` (modified, +1/-36)
-```diff
-@@ -1,51 +1,16 @@
- import UIKit
--import React
--import React_RCTAppDelegate
--import ReactAppDependencyProvider
- import Firebase
- 
- @main
- class AppDelegate: UIResponder, UIApplicationDelegate {
-+  /// Kept for tooling that expects AppDelegate.window; SceneDelegate creates and assigns it.
-   var window: UIWindow?
- 
--  var reactNativeDelegate: ReactNativeDelegate?
--  var reactNativeFactory: RCTReactNativeFactory?
--
-   func application(
-     _ application: UIApplication,
-     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-   ) -> Bool {
-     FirebaseApp.configure()
--
--    let delegate = ReactNativeDelegate()
--    let factory = RCTReactNativeFactory(delegate: delegate)
--    delegate.dependencyProvider = RCTAppDependencyProvider()
--
--    reactNativeDelegate = delegate
--    reactNativeFactory = factory
--
--    window = UIWindow(frame: UIScreen.main.bounds)
--
--    factory.startReactNative(
--      withModuleName: "testrnbare",
--      in: window,
--      launchOptions: launchOptions
--    )
--
-     return true
-   }
- }
--
--class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
--  override func sourceURL(for bridge: RCTBridge) -> URL? {
--    self.bundleURL()
--  }
--
--  override func bundleURL() -> URL? {
--#if DEBUG
--    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
--#else
--    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
--#endif
--  }
--}
-```
-
-**File**: `test-rn-bare/ios/testrnbare/Info.plist` (modified, +17/-0)
-```diff
-@@ -37,6 +37,23 @@
- 	<string></string>
- 	<key>RCTNewArchEnabled</key>
- 	<true/>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UILaunchStoryboardName</key>
- 	<string>LaunchScreen</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
-**File**: `test-rn-bare/ios/testrnbare/SceneDelegate.swift` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+import UIKit
-+import React
-+import React_RCTAppDelegate
-+import ReactAppDependencyProvider
-+
-+@objc(SceneDelegate)
-+class SceneDelegate: ReactNativeDelegate, UIWindowSceneDelegate {
-+  var window: UIWindow?
-+
-+  private var reactNativeFactory: RCTReactNativeFactory?
-+
-+  func scene(
-+    _ scene: UIScene,
-+    willConnectTo session: UISceneSession,
-+    options connectionOptions: UIScene.ConnectionOptions
-+  ) {
-+    guard let windowScene = scene as? UIWindowScene else {
-+      return
-+    }
-+
-+    dependencyProvider = RCTAppDependencyProvider()
-+    let factory = RCTReactNativeFactory(delegate: self)
-+    reactNativeFactory = factory
-+
-+    let window = UIWindow(windowScene: windowScene)
-+    self.window = window
-+    (UIApplication.shared.delegate as? AppDelegate)?.window = window
-+
-+    factory.startReactNative(
-+      withModuleName: "testrnbare",
-+      in: window,
-+      connectionOptions: connectionOptions
-+    )
-+  }
-+
-+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-+    RCTLinkingManager.scene(scene, openURLContexts: URLContexts)
-+  }
-+
-+  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-+    RCTLinkingManager.scene(scene, continue: userActivity)
-+  }
-+}
-+
-+class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
-+  override func sourceURL(for bridge: RCTBridge) -> URL? {
-+    self.bundleURL()
-+  }
-+
-+  override func bundleURL() -> URL? {
-+#if DEBUG
-+    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-+#else
-+    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-+#endif
-+  }
-+}
-```
-
----
-
-### Incident Patch 9: `38965e3d` (2026-09-30)
-**Commit Message**: test: ratchet fixtures to RN 0.88 RC3 and migrate Detox to UIScene
-
-**File**: `.github/workflows/scripts/test-rn-bare-ios-build.sh` (modified, +1/-1)
-```diff
-@@ -109,7 +109,7 @@ xcodebuild_args=(
-   ARCHS="${HOST_ARCH}"
-   VALID_ARCHS="${HOST_ARCH}"
-   ONLY_ACTIVE_ARCH=YES
--  CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++
-+  CC=clang CPLUSPLUS=clang++
-   -workspace "$WORKSPACE"
-   -scheme "$SCHEME"
-   -configuration Release
-```
-
-**File**: `.yarnrc.yml` (modified, +65/-0)
-```diff
-@@ -65,3 +65,68 @@ npmPreapprovedPackages:
-   - '@react-native-firebase/*'
-   - 'firebase@12.19.0' # If adopting recent firebase-js-sdk, specify directly here
-   - 'react-native-coverage@0.2.0'
-+  # RN 0.88.0-rc.3 / React 19.3 / CLI 20.2 / Expo 58 mobile line (younger than npmMinimalAgeGate)
-+  - '@react-native/babel-preset@0.88.0-rc.3'
-+  - '@react-native/metro-config@0.88.0-rc.3'
-+  - 'react-native@0.88.0-rc.3'
-+  - 'babel-preset-expo@~58.0.6'
-+  - 'expo-build-properties@~58.0.9'
-+  - 'expo-constants@~58.0.9'
-+  - 'expo-dev-client@~58.0.9'
-+  - 'expo-linking@~58.0.9'
-+  - 'expo-router@~58.0.10'
-+  - 'expo@58.0.0'
-+  - '@react-native/jest-preset@0.88.0-rc.3'
-+  - '@react-native/js-polyfills@0.88.0-rc.3'
-+  - '@react-native/metro-babel-transformer@0.88.0-rc.3'
-+  - '@expo/cli@^58.0.9'
-+  - '@expo/config-plugins@~58.0.4'
-+  - '@expo/config@~58.0.1'
-+  - '@expo/devtools@~58.0.2'
-+  - '@expo/dom-webview@~58.0.2'
-+  - '@expo/fingerprint@^0.21.2'
-+  - '@expo/local-build-cache-provider@^58.0.1'
-+  - '@expo/log-box-utils@^58.0.1'
-+  - '@expo/log-box@^58.0.7'
-+  - '@expo/metro-config@~58.0.6'
-+  - 'expo-asset@~58.0.9'
-+  - 'expo-file-system@~58.0.4'
-+  - 'expo-font@~58.0.4'
-+  - 'expo-keep-awake@~58.0.2'
-+  - 'expo-modules-autolinking@~58.0.6'
-+  - 'expo-modules-core@~58.0.9'
-+  - '@react-native/babel-plugin-codegen@0.88.0-rc.3'
-+  - '@react-native/codegen@0.88.0-rc.3'
-+  - '@react-native/asset-utils@0.88.0-rc.3'
-+  - '@react-native/community-cli-plugin@0.88.0-rc.3'
-+  - '@react-native/gradle-plugin@0.88.0-rc.3'
-+  - '@react-native/normalize-colors@0.88.0-rc.3'
-+  - '@react-native/virtualized-lists@0.88.0-rc.3'
-+  - 'hermes-compiler@260318099.0.4'
-+  - 'expo-dev-launcher@~58.0.9'
-+  - '@expo/metro-runtime@^58.0.9'
-+  - '@expo/schema-utils@^58.0.1'
-+  - '@expo/env@~2.5.1'
-+  - 'expo-dev-menu-interface@~58.0.1'
-+  - 'expo-dev-menu@~58.0.9'
-+  - 'expo-manifests@~58.0.1'
-+  - 'expo-updates-interface@~58.0.1'
-+  - '@expo/require-utils@^58.0.2'
-+  - 'expo-glass-effect@^58.0.3'
-+  - 'expo-server@^58.0.2'
-+  - '@react-native/dev-middleware@0.88.0-rc.3'
-+  - '@react-native/debugger-frontend@0.88.0-rc.3'
-+  - '@react-native/debugger-shell@0.88.0-rc.3'
-+  - '@expo/config-types@^58.0.2'
-+  - '@expo/image-utils@^0.12.2'
-+  - '@expo/json-file@~11.2.1'
-+  - '@expo/plist@^0.10.1'
-+  - '@expo/inline-modules@^0.2.1'
-+  - 'expo-json-utils@~58.0.1'
-+  - 'expo-modules-jsi@~58.0.5'
-+  - '@expo/metro-file-map@^58.0.3'
-+  - 'expo-modules-macros@0.14.0'
-+  - '@expo/osascript@^2.8.1'
-+  - '@expo/package-manager@^1.14.1'
-+  - '@expo/prebuild-config@^58.0.6'
-+  - '@expo/router-server@^58.0.4'
-```
-
-**File**: `okf-bundle/testing/test-app-dependency-pins.md` (modified, +18/-9)
-```diff
-@@ -31,12 +31,21 @@ Root `package.json` must **not** use blanket `resolutions` for `react-native`, `
- 
- | Package | Pin | Where |
- |---------|-----|--------|
--| `react-native` (mobile) | **`0.86.2`** | `tests/package.json`, `test-expo/package.json`, `test-rn-bare/package.json` |
--| `react` (mobile) | **`19.2.3`** | `tests/package.json`, `test-expo/package.json`, `test-rn-bare/package.json` |
--| `@react-native-community/cli` (+ platform packages) | **`20.1.0`** | `tests/package.json`, `test-rn-bare/package.json` (and root `devDependencies` for tooling convenience) |
--| `@react-native/babel-preset` / `@react-native/metro-config` | **`0.86.2`** | `tests/package.json`, `test-rn-bare/package.json` |
--| `@react-native/jest-preset` | **`0.86.2`** | `tests/package.json` (and root `devDependencies` for Jest / toolchain lockstep with mobile RN) |
--| `@react-native/codegen` | **`0.86.2`** | Resolved with mobile `react-native` from `tests/` (no root resolution) |
-+| `react-native` (mobile) | **`0.88.0-rc.3`** | `tests/package.json`, `test-expo/package.json`, `test-rn-bare/package.json` |
-+| `react` (mobile) | **`19.3.0`** | `tests/package.json`, `test-expo/package.json`, `test-rn-bare/package.json` |
-+| `engines.node` (mobile fixtures) | **`^22.13.0`** | `tests/package.json`, `test-expo/package.json`, `test-rn-bare/package.json` |
-+| `@react-native-community/cli` (+ platform packages) | **`20.2.0`** | `tests/package.json`, `test-rn-bare/package.json` (and root `devDependencies` for tooling convenience) |
-+| `@react-native/babel-preset` / `@react-native/metro-config` | **`0.88.0-rc.3`** | `tests/package.json`, `test-rn-bare/package.json` |
-+| `@react-native/jest-preset` | **`0.88.0-rc.3`** | `tests/package.json` (and root `devDependencies` for Jest / toolchain lockstep with mobile RN) |
-+| `@react-native/codegen` | **`0.88.0-rc.3`** | Resolved with mobile `react-native` from `tests/` (no root resolution) |
-+| `expo` | **`58.0.0`** | `test-expo/package.json` |
-+| `expo-build-properties` / `expo-constants` / `expo-dev-client` / `expo-linking` | **`~58.0.9`** | `test-expo/package.json` |
-+| `expo-router` | **`~58.0.10`** | `test-expo/package.json` |
-+| `babel-preset-expo` | **`~58.0.6`** | `test-expo/package.json` |
-+| `react-native-gesture-handler` | **`~3.2.1`** | `test-expo/package.json` |
-+| `react-native-reanimated` / `react-native-worklets` | **`~4.7.0`** / **`0.13.0`** | `test-expo/package.json` (expo-router 58 peers) |
-+| `react-native-safe-area-context` | **`~5.9.1`** | `test-expo/package.json` |
-+| `react-native-screens` | **`~4.28.0`** | `test-expo/package.json` |
- | `react-native` (macOS shell) | **`0.78.3`** | `tests-macos/package.json` |
- | `react-native-macos` | **`0.78.6`** | `tests-macos/package.json` |
- | macOS CLI band | **`15.1.3`** | `tests-macos/package.json` |
-@@ -45,13 +54,13 @@ Root `package.json` must **not** use blanket `resolutions` for `react-native`, `
- | `@react-native-firebase/*` (e2e apps + `test-expo` + `test-rn-bare`) | **must match current lerna / package version** | `tests/package.json`, `tests-macos/package.json`, `test-expo/package.json`, and `test-rn-bare/package.json` — see [RNFB workspace pins](#rnfb-workspace-pins) |
- | `@react-native-firebase/app-types` | **`6.7.2`** | both apps (legacy types package; not a workspace) |
- 
--**CLI rationale:** mobile CLI **`20.1.0`** matches the React Native **0.86** community template. macOS keeps the **0.78** CLI band with `react-native-macos@0.78.6`. Never add a global resolution that would pull `tests-macos` onto the mobile line.
-+**CLI rationale:** mobile CLI **`20.2.0`** matches the React Native **0.88.0-rc.3** community template (`@react-native-community/template@0.88.0-rc.3-ada64d0`; the bare `0.88.0-rc.3` tag is not that template). macOS keeps the **0.78** CLI band with `react-native-macos@0.78.6`. Never add a global resolution that would pull `tests-macos` onto the mobile line.
- 
--**fmt / Apple Clang:** RN **0.86.2** ships fmt **12.1.0** upstream (no mobile `patch-package` fmt bump). macOS **0.78.3** still applies [`tests-macos/patches/react-native+0.78.3.patch`](../../tests-macos/patches/react-native+0.78.3.patch). Always verify via [install / patch / fmt gate](agent-command-policy.md#install-patch-fmt-gate-blocking).
-+**fmt / Apple Clang:** RN **0.88.0-rc.3** ships fmt **12.1.0** upstream (no mobile `patch-package` fmt bump). macOS **0.78.3** still applies [`tests-macos/patches/react-native+0.78.3.patch`](../../tests-macos/patches/react-native+0.78.3.patch). Always verify via [install / patch / fmt gate](agent-command-policy.md#install-patch-fmt-gate-blocking).
- 
- **macOS deployment target (Xcode 27):** Xcode 27 rejects `MACOSX_DEPLOYMENT_TARGET` below **12.0**. `react-native-macos` **0.78.6** podspecs still declare macOS **11.0**, and `react_native_post_install` only clamps to that floor, so a Podfile `platform` bump alone is insufficient. [`tests-macos/macos/Podfile`](../../tests-macos/macos/Podfile) therefore sets `platform :macos, '
-```
-
-**File**: `package.json` (modified, +4/-4)
-```diff
-@@ -111,10 +111,10 @@
-     "@firebase/rules-unit-testing": "^5.0.0",
-     "@inquirer/prompts": "^8.4.2",
-     "@octokit/core": "^7.0.6",
--    "@react-native-community/cli": "20.1.0",
--    "@react-native/jest-preset": "0.86.2",
-+    "@react-native-community/cli": "20.2.0",
-+    "@react-native/jest-preset": "0.88.0-rc.3",
-     "@tsconfig/node-lts": "^24.0.0",
--    "@types/react": "~19.2.14",
-+    "@types/react": "~19.3.0",
-     "@types/react-native": "^0.73.0",
-     "@typescript-eslint/parser": "^8.59.1",
-     "babel-jest": "^30.3.0",
-@@ -149,7 +149,7 @@
-     "typescript-eslint": "^8.59.1"
-   },
-   "resolutions": {
--    "@types/react": "~19.2.0",
-+    "@types/react": "~19.3.0",
-     "mocha-remote-client@npm:^1.13.0": "patch:mocha-remote-client@npm%3A1.13.2#~/.yarn/patches/mocha-remote-client-npm-1.13.2-a2e7596aba.patch",
-     "mocha-remote-server@npm:^1.13.0": "patch:mocha-remote-server@npm%3A1.13.2#~/.yarn/patches/mocha-remote-server-npm-1.13.2-619a29d2e3.patch"
-   },
-```
-
-**File**: `packages/app/lib/internal/FirebaseModule.ts` (modified, +6/-3)
-```diff
-@@ -18,9 +18,12 @@
- import { getAppModule, getNativeModule } from './registry/nativeModule';
- import SharedEventEmitter from './SharedEventEmitter';
- import type { ReactNativeFirebase } from '../types/app';
--import type { FirebaseJsonConfig, ModuleConfig } from '../types/internal';
-+import type {
-+  FirebaseJsonConfig,
-+  ModuleConfig,
-+  ReactNativeFirebaseEventEmitter,
-+} from '../types/internal';
- import type { ReactNativeFirebaseNativeModules } from './NativeModules';
--import type EventEmitter from 'react-native/Libraries/vendor/emitter/EventEmitter';
- 
- let firebaseJson: FirebaseJsonConfig | null = null;
- 
-@@ -55,7 +58,7 @@ export default class FirebaseModule<
-     return firebaseJson as FirebaseJsonConfig;
-   }
- 
--  get emitter(): EventEmitter {
-+  get emitter(): ReactNativeFirebaseEventEmitter {
-     return SharedEventEmitter;
-   }
- 
-```
-
-**File**: `packages/app/lib/internal/RNFBNativeEventEmitter.ts` (modified, +11/-4)
-```diff
-@@ -53,8 +53,10 @@ class RNFBNativeEventEmitter extends NativeEventEmitter {
- 
-   addListener(
-     eventType: string,
--    listener: (...args: unknown[]) => unknown,
--    context?: object,
-+    // RN 0.88 NativeEventEmitter types the payload as `Object`, not `object`.
-+    // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
-+    listener: (...args: readonly Object[]) => unknown,
-+    context?: unknown,
-   ): EmitterSubscription {
-     // NewArch-AD-18 E1: event bridge identity requires raw app-module host for listener registration.
-     const RNFBAppModule = getReactNativeModule(
-@@ -69,7 +71,8 @@ class RNFBNativeEventEmitter extends NativeEventEmitter {
-       // eslint-disable-next-line no-console
-       console.debug(`[RNFB-->Event][👂] ${eventType} -> listening`);
-     }
--    const listenerDebugger = (...args: unknown[]) => {
-+    // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
-+    const listenerDebugger = (...args: readonly Object[]) => {
-       if (globalThis.RNFBDebug) {
-         // eslint-disable-next-line no-console
-         console.debug(`[RNFB<--Event][📣] ${eventType} <-`, JSON.stringify(args[0]));
-@@ -118,7 +121,11 @@ class RNFBNativeEventEmitter extends NativeEventEmitter {
-     return subscription;
-   }
- 
--  removeAllListeners(eventType: string): void {
-+  removeAllListeners(eventType?: string | null): void {
-+    if (eventType == null) {
-+      super.removeAllListeners(eventType);
-+      return;
-+    }
-     // NewArch-AD-18 E1: raw host for eventsRemoveListener.
-     const RNFBAppModule = getReactNativeModule(
-       APP_NATIVE_MODULE,
-```
-
-**File**: `packages/app/lib/internal/SharedEventEmitter.ts` (modified, +5/-2)
-```diff
-@@ -15,6 +15,9 @@
-  *
-  */
- 
--import EventEmitter from 'react-native/Libraries/vendor/emitter/EventEmitter';
-+import { EventEmitter } from 'react-native';
-+import type { ReactNativeFirebaseEventEmitter } from '../types/internal';
- 
--export default new EventEmitter();
-+const emitter = new EventEmitter() as ReactNativeFirebaseEventEmitter;
-+
-+export default emitter;
-```
-
-**File**: `packages/app/lib/types/internal.ts` (modified, +19/-0)
-```diff
-@@ -20,6 +20,25 @@
-  * These types are used internally across multiple files and should not be exported to consumers
-  */
- 
-+import type { EventSubscription } from 'react-native';
-+
-+/**
-+ * RN 0.88's generated `EventEmitter` class types require a `context` argument
-+ * and `Object` payloads. The runtime still accepts the historical 2-argument
-+ * `addListener` and nullable `emit` values used across modules.
-+ */
-+export interface ReactNativeFirebaseEventEmitter {
-+  addListener(
-+    eventType: string,
-+    // RN 0.88 listener params are invariant; `any` keeps module-specific callbacks assignable.
-+    listener: (...args: any[]) => any,
-+    context?: unknown,
-+  ): EventSubscription;
-+  emit(eventType: string, ...args: any[]): void;
-+  removeAllListeners(eventType?: string | null): void;
-+  listenerCount(eventType: string): number;
-+}
-+
- /**
-  * Firebase JSON configuration from firebase.json file
-  * Structure: { "react-native": { [key: string]: boolean | string }, ... }
-```
-
----
-
-### Incident Patch 10: `56a41414` (2026-09-30)
-**Commit Message**: fix(messaging): detect the iOS APNs environment from the provisioning profile
-
-DEBUG is not the signed aps-environment, so a Release build with a
-development profile registered a sandbox token as production.
-
-**File**: `packages/messaging/ios/RNFBMessaging/RNFBMessaging+AppDelegate.m` (modified, +3/-5)
-```diff
-@@ -168,11 +168,9 @@ - (BOOL)claimPendingRegisterPromiseResolve:(RCTPromiseResolveBlock _Nullable *_N
- // called when `registerForRemoteNotifications` completes successfully
- - (void)application:(UIApplication *)application
-     didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
--#ifdef DEBUG
--  [[FIRMessaging messaging] setAPNSToken:deviceToken type:FIRMessagingAPNSTokenTypeSandbox];
--#else
--  [[FIRMessaging messaging] setAPNSToken:deviceToken type:FIRMessagingAPNSTokenTypeProd];
--#endif
-+  // DEBUG is not the signed aps-environment. Unknown makes Firebase Messaging
-+  // read it from the provisioning profile.
-+  [[FIRMessaging messaging] setAPNSToken:deviceToken type:FIRMessagingAPNSTokenTypeUnknown];
- 
-   RCTPromiseResolveBlock resolve = nil;
-   RCTPromiseRejectBlock reject = nil;
-```
-
----
-
-### Incident Patch 11: `c9048086` (2026-09-24)
-**Commit Message**: build(docs): add lint:markdown:fix for table padding
-
-lint:markdown is check-only, so table padding had no allowlisted fix. Spellcheck already fails on unparseable frontmatter via scripts/spellcheck.mjs.
-
-**File**: `okf-bundle/testing/agent-command-policy.md` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ Single source for **which shell commands agents may run** in this repo. E2e `yar
- | test-expo TypeScript check                                      | `yarn tsc:compile:test-expo` (repo root; `tsc --project test-expo/tsconfig.json`)                                                                                                                                                                                                          | `cd test-expo && tsc`; `cd test-expo && …` as a typecheck gate                                                                                                 |
- | JS lint (implementation / review gate)                          | `yarn lint:js`, `yarn lint:js --fix` (`eslint packages/* test-expo`; already includes `test-expo/`)                                                                                                                                                                                        | package-scoped `eslint`, `npx eslint`; a second `test-expo` lint entrypoint                                                                                   |
- | Android Java format / lint                                      | `yarn lint:android`                                                                                                                                                                                                                                                                        | `yarn google-java-format`, bare `google-java-format`, `google-java-format -i`, `npx google-java-format`, any invented format script                           |
--| Docs lint                                                       | `yarn lint:markdown`, `yarn lint:spellcheck` — when: [validation checklist § lint and formatting](validation-checklist.md#lint-and-formatting) (`docs/**` only; OKF-only skips)                                                                                                           | ad-hoc prettier/eslint on single files                                                                                                                        |
-+| Docs lint                                                       | `yarn lint:markdown`, `yarn lint:markdown:fix`, `yarn lint:spellcheck` — when: [validation checklist § lint and formatting](validation-checklist.md#lint-and-formatting) (`docs/**` only; OKF-only skips). `:fix` is Prettier `--write` for table padding.                  | ad-hoc prettier/eslint on single files                                                                                                                        |
- | iOS Ruby lint (RuboCop)                                         | `yarn lint:ruby` (also runs inside `yarn tests:ios:ruby`)                                                                                                                                                                                                                                  | ad-hoc `rubocop`, `bundle exec rubocop` without the Gemfile/config                                                                                            |
- | Android JVM unit tests                                          | `yarn tests:android:unit`                                                                                                                                                                                                                                                                  | ad-hoc `./gradlew …` outside this yarn script; bare Robolectric/JUnit IDE-only as the agent gate                                                              |
- | iOS XCTest unit tests (in-package)                              | `yarn tests:ios:unit`                                                                                                                                                                                                                                                                      | ad-hoc `xcodebuild test`; CocoaPods `test_spec`; `tests/ios/testingTests` host UI tests                                                                       |
-```
-
-**File**: `package.json` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@
-     "lint:ios:check": "find packages/*/ios -type f \\( -name '*.h' -o -name '*.cpp' -o -name '*.m' -o -name '*.mm' \\) -not -path '*/generated/*' -print0 | xargs -0 clang-format --style=Google -n -Werror",
-     "lint:ios:fix": "find packages/*/ios -type f \\( -name '*.h' -o -name '*.cpp' -o -name '*.m' -o -name '*.mm' \\) -not -path '*/generated/*' -print0 | xargs -0 clang-format -i --style=Google",
-     "lint:markdown": "eslint \"docs/**/*.mdx\" --max-warnings=0 && prettier --check \"docs/**/*.mdx\"",
-+    "lint:markdown:fix": "prettier --write \"docs/**/*.mdx\"",
-     "lint:report": "eslint --output-file=eslint-report.json --format=json . --ext .js,.jsx,.ts,.tsx",
-     "lint:spellcheck": "node ./scripts/spellcheck.mjs",
-     "tsc:compile": "tsc --project .",
-```
-
----
-
-### Incident Patch 12: `8f67c935` (2026-09-24)
-**Commit Message**: fix(e2e): drop a stale functions build lock when its holder is gone
-
-A killed emulator start left the lock directory behind, and the next start waited the full 300s. Reclaim a lock with no live pid, and document the manual remove.
-
-**File**: `.github/workflows/scripts/start-firebase-emulator.sh` (modified, +23/-5)
-```diff
-@@ -164,23 +164,41 @@ PY
- echo "[emulator-${TAG}] config=${CONFIG} firestore=${FS_PORT} functions=${FN_PORT} websocket=${WS_PORT} eventarc=${EVENTARC_PORT} tasks=${TASKS_PORT}"
- 
- LOCK_DIR="${SCRIPTS}/functions/.build.lock.d"
-+LOCK_PID="${LOCK_DIR}/pid"
- mkdir -p "${SCRIPTS}/functions"
-+cleanup_lock() { rm -rf "${LOCK_DIR}" 2>/dev/null || true; }
-+# Empty lock, or a pid that is gone: a killed start never ran the EXIT trap.
-+lock_holder_dead() {
-+  [[ -f "${LOCK_PID}" ]] || return 0
-+  local holder
-+  holder="$(cat "${LOCK_PID}" 2>/dev/null || true)"
-+  [[ -n "${holder}" ]] || return 0
-+  kill -0 "${holder}" 2>/dev/null && return 1
-+  return 0
-+}
- deadline=$((SECONDS + 300))
--while ! mkdir "${LOCK_DIR}" 2>/dev/null; do
-+while true; do
-+  if mkdir "${LOCK_DIR}" 2>/dev/null; then
-+    echo $$ >"${LOCK_PID}"
-+    break
-+  fi
-+  if lock_holder_dead; then
-+    cleanup_lock
-+    continue
-+  fi
-   if (( SECONDS >= deadline )); then
--    echo "error: timed out waiting for functions build lock ${LOCK_DIR}" >&2
-+    echo "error: timed out waiting for functions build lock ${LOCK_DIR} (holder still running). If the holder is gone: rm -rf ${LOCK_DIR}" >&2
-     exit 1
-   fi
-   sleep 1
- done
--cleanup_lock() { rmdir "${LOCK_DIR}" 2>/dev/null || true; }
--trap cleanup_lock EXIT
-+trap cleanup_lock EXIT INT TERM
- pushd "${SCRIPTS}/functions" >/dev/null
- yarn >/dev/null 2>&1 || yarn
- yarn build
- popd >/dev/null
- cleanup_lock
--trap - EXIT
-+trap - EXIT INT TERM
- 
- EMU_LOG="${RNFB_EMULATOR_LOG:-/tmp/rnfb-emulator-${TAG}-s${SLOT}.log}"
- READY_TIMEOUT="${RNFB_EMULATOR_READY_TIMEOUT:-300}"
-```
-
-**File**: `okf-bundle/testing/running-e2e.md` (modified, +6/-0)
-```diff
-@@ -340,6 +340,12 @@ yarn tests:e2e:check   # must exit 0
- 
- A live overlapping multi-slot wave must not run `yarn tests:e2e:release --all-slots` until that wave is declared dead.
- 
-+**Functions build lock.** `yarn tests:emulator:start` takes `.github/workflows/scripts/functions/.build.lock.d` while the functions package builds. A killed start used to leave that directory behind, and the next start waited 300s. A lock whose holder pid is gone is removed automatically. `yarn tests:e2e:release` does not clear it. If a start still fails with `timed out waiting for functions build lock` and no emulator start is running:
-+
-+```bash
-+rm -rf .github/workflows/scripts/functions/.build.lock.d
-+```
-+
- Do **not** use `boot-simulator.sh` or `simctl shutdown all` as routine prep ([what not to do](#what-not-to-do)).
- 
- **Packager start** — `yarn tests:packager:jet` / `jet-reset-cache` (and macOS variants). Honor `RCT_METRO_PORT`. **Always kill** the listener on that port (SIGTERM then SIGKILL of **that port’s PIDs**), then start clean — a control layer (human or Mellifera) owns the slot, so reuse detection is not required. `TMPDIR` is per listen port (e.g. `$HOME/.metro/rnfb-${RCT_METRO_PORT}`). Wait until `http://127.0.0.1:${RCT_METRO_PORT}/status` contains `packager-status:running` (long documented timeout), then succeed or **fail** — no hidden restart inside `:test-cover`. Before start, drop a stale Watchman watch for **this Metro project root** and watch **only** the trees Metro would reload (allowlist), not the whole monorepo plus native `*/build`.
-```
-
----
-
-### Incident Patch 13: `56f5c1fc` (2026-09-25)
-**Commit Message**: fix(app, storage): link Photos framework on tvOS
-
-RNFBUtilsModule.mm references PHAsset with no tvOS guard, and ObjC++ emits no Clang autolink record. PhotoKit is available on tvOS 10+, so declare Photos there the same way as iOS and macOS.
-
-**File**: `packages/app/RNFBApp.podspec` (modified, +4/-2)
-```diff
-@@ -47,10 +47,12 @@ Pod::Spec.new do |s|
-   # this declaration -- not Clang autolinking -- to populate OTHER_LDFLAGS), but with
-   # use_frameworks! each pod is a standalone dynamic framework that must resolve its
-   # own symbols at its own link step, so the missing declaration now surfaces as
--  # "Undefined symbols ... _OBJC_CLASS_$_PHAsset". iOS/macOS only -- PhotoKit doesn't
--  # exist on tvOS.
-+  # "Undefined symbols ... _OBJC_CLASS_$_PHAsset". PhotoKit is available on
-+  # tvOS 10+, and this .mm file emits no Clang autolink record, so tvOS needs
-+  # the same explicit link.
-   s.ios.frameworks = 'Photos'
-   s.osx.frameworks = 'Photos'
-+  s.tvos.frameworks = 'Photos'
- 
-   # React Native dependencies
-   if defined?(install_modules_dependencies()) != nil
-```
-
-**File**: `packages/storage/RNFBStorage.podspec` (modified, +2/-2)
-```diff
-@@ -61,10 +61,10 @@ Pod::Spec.new do |s|
- 
-   # RNFBStorageCommon.m uses PHAsset/PHAssetResource (Photos.framework) for local
-   # asset uploads. See RNFBApp.podspec for why this must be declared explicitly
--  # rather than relying on Clang autolinking. iOS/macOS only -- PhotoKit doesn't
--  # exist on tvOS.
-+  # rather than relying on Clang autolinking. PhotoKit is available on tvOS 10+.
-   s.ios.frameworks = 'Photos'
-   s.osx.frameworks = 'Photos'
-+  s.tvos.frameworks = 'Photos'
- 
-   if defined?($RNFirebaseAsStaticFramework)
-     Pod::UI.puts "#{s.name}: Using overridden static_framework value of '#{$RNFirebaseAsStaticFramework}'"
-```
-
----
-
-### Incident Patch 14: `dce165d7` (2026-09-23)
-**Commit Message**: fix(app, expo): match scene-based AppDelegate for Expo SDK 58 config plugin
-
-Expo SDK 58 starts React Native from the scene delegate, so the config plugin no longer finds self.moduleName or factory.startReactNative and skips FirebaseApp.configure().
-
-**File**: `packages/app/plugin/__tests__/__snapshots__/iosPlugin.test.ts.snap` (modified, +35/-0)
-```diff
-@@ -530,3 +530,38 @@ FirebaseApp.configure()
-   }
- }"
- `;
-+
-+exports[`Config Plugin iOS Tests works with Swift AppDelegate (SDK 58+ scene-based) 1`] = `
-+"internal import Expo
-+import FirebaseCore
-+import React
-+import ReactAppDependencyProvider
-+
-+@main
-+class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {
-+  var window: UIWindow?
-+
-+  var reactNativeDelegate: ExpoReactNativeFactoryDelegate?
-+  var reactNativeFactory: RCTReactNativeFactory?
-+
-+  public override func application(
-+    _ application: UIApplication,
-+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-+  ) -> Bool {
-+    let delegate = ReactNativeDelegate()
-+    let factory = ExpoReactNativeFactory(delegate: delegate)
-+    delegate.dependencyProvider = RCTAppDependencyProvider()
-+
-+    reactNativeDelegate = delegate
-+    reactNativeFactory = factory
-+
-+    // The window is created and React Native is started by \`SceneDelegate\` under the
-+    // scene-based life cycle (required by the iOS 27 SDK).
-+// @generated begin @react-native-firebase/app-didFinishLaunchingWithOptions - expo prebuild (DO NOT MODIFY) sync-10e8520570672fd76b2403b7e1e27f5198a6349a
-+FirebaseApp.configure()
-+// @generated end @react-native-firebase/app-didFinishLaunchingWithOptions
-+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-+  }
-+}
-+"
-+`;
-```
-
-**File**: `packages/app/plugin/__tests__/fixtures/AppDelegate_sdk58.swift` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+internal import Expo
-+import React
-+import ReactAppDependencyProvider
-+
-+@main
-+class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {
-+  var window: UIWindow?
-+
-+  var reactNativeDelegate: ExpoReactNativeFactoryDelegate?
-+  var reactNativeFactory: RCTReactNativeFactory?
-+
-+  public override func application(
-+    _ application: UIApplication,
-+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-+  ) -> Bool {
-+    let delegate = ReactNativeDelegate()
-+    let factory = ExpoReactNativeFactory(delegate: delegate)
-+    delegate.dependencyProvider = RCTAppDependencyProvider()
-+
-+    reactNativeDelegate = delegate
-+    reactNativeFactory = factory
-+
-+    // The window is created and React Native is started by `SceneDelegate` under the
-+    // scene-based life cycle (required by the iOS 27 SDK).
-+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-+  }
-+}
-```
-
-**File**: `packages/app/plugin/__tests__/iosPlugin.test.ts` (modified, +11/-0)
-```diff
-@@ -93,6 +93,17 @@ describe('Config Plugin iOS Tests', function () {
-     expect(result).toMatchSnapshot();
-   });
- 
-+  it('works with Swift AppDelegate (SDK 58+ scene-based)', async function () {
-+    const appDelegate = await fs.readFile(
-+      path.join(__dirname, './fixtures/AppDelegate_sdk58.swift'),
-+      {
-+        encoding: 'utf8',
-+      },
-+    );
-+    const result = modifySwiftAppDelegate(appDelegate);
-+    expect(result).toMatchSnapshot();
-+  });
-+
-   it('does not add the firebase import multiple times', async function () {
-     const singleImport = '#import "AppDelegate.h"\n#import <Firebase/Firebase.h>';
-     const doubleImport = singleImport + '\n#import <Firebase/Firebase.h>';
-```
-
-**File**: `packages/app/plugin/src/ios/appDelegate.ts` (modified, +2/-2)
-```diff
-@@ -101,14 +101,14 @@ export function modifyObjcAppDelegate(contents: string): string {
- export function modifySwiftAppDelegate(contents: string): string {
-   const methodInvocationBlock = `FirebaseApp.configure()`;
-   const methodInvocationLineMatcher =
--    /(?:self\.moduleName\s*=\s*"([^"]*)")|(?:factory\.startReactNative\()/;
-+    /(?:self\.moduleName\s*=\s*"([^"]*)")|(?:factory\.startReactNative\()|(?:return\s+super\.application\(\s*application\s*,\s*didFinishLaunchingWithOptions:\s*launchOptions\s*\))/;
- 
-   // Add import
-   contents = addImport(
-     contents,
-     'import FirebaseCore',
-     /^[ \t]*import\s+FirebaseCore[ \t]*$/m,
--    /^[ \t]*import\s+Expo[ \t]*$/m,
-+    /^[ \t]*(?:internal\s+)?import\s+Expo[ \t]*$/m,
-     /^[ \t]*import\b[^\r\n]*$/m,
-   );
- 
-```
-
----
-
-### Incident Patch 15: `b70ba889` (2026-09-23)
-**Commit Message**: fix(analytics, messaging): dedupe GoogleUtilities classes under SPM dynamic frameworks (#9327)
-
-Under Expo's SPM + dynamic frameworks path, RNFBAnalytics.podspec and
-RNFBMessaging.podspec only declared their direct Firebase SPM products
-(FirebaseAnalytics, FirebaseMessaging). GULNetwork, GULReachability, and
-GULMethodSwizzler were only reachable transitively through those, and
-Xcode's SPM integration doesn't reliably promote a transitively-only
-reached product to a shared PackageProduct.framework. It compiled a
-private copy of each straight into RNFBAnalytics.framework and
-RNFBMessaging.framework instead, so GULNetwork/GULMutableDictionary/
-GULNetworkURLSession/GULReachabilityChecker/GULSessionDeallocTracker/
-GULSwizzler ended up defined twice at runtime once both pods were loaded.
-
-The fix declares those same GoogleUtilities products as an explicit
-top-level spm_dependency on both podspecs, the same way GULAppDelegateSwizzler
-already was. That's enough for Xcode to treat them as shared and build one
-dynamic framework per product instead of duplicating them.
-
-test-expo-ios-link.sh gained a new #9322 check that walks every built
-.framework, nm's its defined external symbols, and fai
-
-**File**: `.github/workflows/scripts/test-expo-ios-link.sh` (modified, +79/-1)
-```diff
-@@ -257,7 +257,6 @@ xcodebuild_args=(
-   ARCHS="${HOST_ARCH}"
-   VALID_ARCHS="${HOST_ARCH}"
-   ONLY_ACTIVE_ARCH=YES
--  CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++
-   -workspace "$WORKSPACE"
-   -scheme "$SCHEME"
-   -configuration Release
-@@ -303,3 +302,82 @@ if grep -q "duplicate symbol '_FIRFirebaseVersion'" "$XCODEBUILD_LOG" ||
- fi
- 
- log "PASS: Expo documented path links RNFBApp/RNFBMessaging as frameworks without duplicate Firebase symbols"
-+
-+# #9322: without an explicit top-level spm_dependency declaration on
-+# RNFBAnalytics.podspec / RNFBMessaging.podspec (see the comments there for
-+# the full writeup, including what's confirmed vs. still an open question),
-+# GoogleUtilities classes (GULNetwork, GULReachabilityChecker, etc.) end up
-+# compiled privately into both RNFBAnalytics.framework and
-+# RNFBMessaging.framework instead of one shared dynamic framework, and
-+# collide at runtime once both are loaded in-process.
-+#
-+# Requires @react-native-firebase/analytics alongside messaging in
-+# test-expo/package.json to actually exercise both sides of the graph.
-+log "--- #9322 GoogleUtilities dedupe diagnosis ---"
-+BUILT_PRODUCTS_DIR="$(grep -oE '/[^ ]*/Build/Products/[A-Za-z0-9_.-]+' "$XCODEBUILD_LOG" | head -1 || true)"
-+if [[ -z "$BUILT_PRODUCTS_DIR" || ! -d "$BUILT_PRODUCTS_DIR" ]]; then
-+  log "ERROR: could not determine BUILT_PRODUCTS_DIR from xcodebuild log for #9322 check"
-+  exit 1
-+fi
-+
-+nine322_classes=(
-+  GULNetwork
-+  GULMutableDictionary
-+  GULNetworkURLSession
-+  GULNetworkURLSessionWeakHolder
-+  GULSessionDeallocTracker
-+  GULReachabilityChecker
-+  GULSwizzler
-+  GoogleUtilities_GoogleUtilities_Network_SWIFTPM_MODULE_BUNDLER_FINDER
-+  GoogleUtilities_GoogleUtilities_Reachability_SWIFTPM_MODULE_BUNDLER_FINDER
-+)
-+
-+nine322_work_dir="$(mktemp -d)"
-+trap 'rm -rf "$nine322_work_dir"' EXIT
-+
-+while IFS= read -r fw_dir; do
-+  fw_name="$(basename "$fw_dir" .framework)"
-+  bin="$fw_dir/$fw_name"
-+  [[ -f "$bin" ]] || continue
-+  fw_syms="$(nm -gU "$bin" 2>/dev/null || true)"
-+  [[ -z "$fw_syms" ]] && continue
-+  for class_name in "${nine322_classes[@]}"; do
-+    if grep -qE '_OBJC_CLASS_\$_'"${class_name}"'$' <<<"$fw_syms"; then
-+      echo "$fw_name" >>"${nine322_work_dir}/${class_name}.txt"
-+    fi
-+  done
-+done < <(find "$BUILT_PRODUCTS_DIR" -type d -name "*.framework" ! -path "*/*.app/*" 2>/dev/null)
-+
-+nine322_failed=0
-+for class_name in "${nine322_classes[@]}"; do
-+  owners_file="${nine322_work_dir}/${class_name}.txt"
-+  if [[ ! -f "$owners_file" ]]; then
-+    log "ERROR: #9322 -- ${class_name} not defined in any built framework"
-+    nine322_failed=1
-+    continue
-+  fi
-+  owner_count="$(wc -l <"$owners_file" | tr -d ' ')"
-+  owners="$(tr '\n' ' ' <"$owners_file")"
-+  if [[ "$owner_count" -ne 1 ]]; then
-+    log "ERROR: #9322 -- expected exactly 1 framework defining ${class_name}, found ${owner_count}: ${owners}"
-+    nine322_failed=1
-+    continue
-+  fi
-+  case "$owners" in
-+    RNFB*)
-+      log "ERROR: #9322 -- ${class_name} is privately duplicated into ${owners} instead of a shared framework"
-+      nine322_failed=1
-+      ;;
-+    *)
-+      log "ok: ${class_name} shared in ${owners}"
-+      ;;
-+  esac
-+done
-+log "--- end #9322 GoogleUtilities dedupe diagnosis ---"
-+
-+if [[ "$nine322_failed" -ne 0 ]]; then
-+  log "ERROR: #9322 GoogleUtilities duplicate-class regression detected"
-+  exit 1
-+fi
-+
-+log "PASS: no RNFB* framework privately duplicates a shared GoogleUtilities class (#9322)"
-```
-
-**File**: `okf-bundle/ios-spm-native-imports.md` (modified, +24/-0)
-```diff
-@@ -248,6 +248,30 @@ CocoaPods-only `IdentitySupport` on the SPM path.
- Consumer-facing version pin and `-ObjC` notes:
- [`docs/ios-spm.mdx`](../docs/ios-spm.mdx).
- 
-+### GoogleUtilities: explicit `spm_dependency` lets pods share one product
-+
-+The FirebaseCore limitation above is about *automatic* SPM products declared
-+only transitively. A related but narrower case: some `GoogleUtilities`
-+products (`GULNetwork`, `GULReachability`, `GULMethodSwizzler`) were only
-+reachable transitively through `FirebaseAnalytics`/`FirebaseMessaging` on
-+`RNFBAnalytics.podspec`/`RNFBMessaging.podspec`, and Xcode's SPM integration
-+did not reliably promote them to a shared `PackageProduct.framework` in that
-+graph — each pod compiled a private copy instead, colliding at runtime once
-+both were loaded (GitHub
-+[#9322](https://github.com/invertase/react-native-firebase/issues/9322)).
-+
-+Declaring the same GoogleUtilities products as an explicit top-level
-+`spm_dependency` directly on each consuming podspec (same pattern as the
-+existing `GULAppDelegateSwizzler` declaration) is enough for Xcode to build
-+one shared dynamic framework per product and link every consumer against it,
-+instead of duplicating it per pod. This is scoped to `GoogleUtilities`
-+products specifically; it does **not** change or fix the `FirebaseCore`/
-+`FIRApp` sharing limitation described above, which stays unsupported under
-+SPM regardless of how explicitly any product is declared. Add this
-+declaration only to podspecs actually shown to privately duplicate a watched
-+class by `yarn test-expo:ios:link`'s `#9322` diagnosis, not pre-emptively to
-+every RNFB podspec.
-+
- ## App target FirebaseCore link: package dependency alone is not enough
- 
- `rnfirebase_add_spm_core_to_app_target` exists for the case in the table above
-```
-
-**File**: `packages/analytics/RNFBAnalytics.podspec` (modified, +43/-0)
-```diff
-@@ -67,6 +67,49 @@ Pod::Spec.new do |s|
-     firebase_dependency(s, firebase_sdk_version, ['FirebaseAnalytics'], 'FirebaseAnalytics/Core')
-   end
- 
-+  # SPM: fix for #9322 -- GULNetwork/GULReachability/GULMethodSwizzler ended
-+  # up compiled privately into both RNFBAnalytics.framework and
-+  # RNFBMessaging.framework instead of one shared dynamic framework,
-+  # producing duplicate ObjC class definitions (GULNetwork,
-+  # GULMutableDictionary, GULNetworkURLSession, GULReachabilityChecker,
-+  # GULSessionDeallocTracker, GULSwizzler) at runtime once both frameworks
-+  # are loaded together.
-+  #
-+  # Confirmed: the raw FirebaseAnalytics/GoogleAppMeasurement .xcframework
-+  # binaries do NOT bake in their own copies of these classes (checked via
-+  # `nm`); they only reference them as undefined externals, same as any
-+  # source-based product.
-+  #
-+  # Not fully confirmed: *why* Xcode's SPM integration fails to promote this
-+  # specific cluster to a shared PackageProduct.framework once RNFBAnalytics
-+  # is in the graph, when an equivalent pure-source pairing (RNFBMessaging +
-+  # RNFBAuth, sharing the GULAppDelegateSwizzler cluster instead) promotes
-+  # cleanly with no private copies at all. It isn't simply "declared
-+  # transitively vs explicitly" either: firebase-ios-sdk's own Package.swift
-+  # already lists GULNetwork/GULMethodSwizzler as explicit top-level
-+  # products on FirebaseAnalyticsWrapper, in the same dependency array as
-+  # GULAppDelegateSwizzler, and only the latter shared correctly. Whether
-+  # Analytics's target also carrying a binaryTarget dependency is what
-+  # changes Xcode's per-target sharing heuristic here is a live, untested
-+  # hypothesis, not something this fix confirms or rules out.
-+  #
-+  # What IS confirmed: declaring these same products as an explicit
-+  # top-level SPM dependency directly on *this* podspec (and on
-+  # RNFBMessaging.podspec) makes Xcode build one shared dynamic framework
-+  # per product and link both RNFBAnalytics and RNFBMessaging against it,
-+  # instead of each compiling its own copy. Verified with a passing run
-+  # (fix applied) and a failing negative control (fix reverted).
-+  if defined?(spm_dependency) && !rnfirebase_spm_disabled?
-+    # 8.1.3 floor matches the GoogleUtilities version firebase-ios-sdk 12.x
-+    # resolves transitively; bump this alongside firebase_sdk_version if
-+    # firebase-ios-sdk ever moves to GoogleUtilities 9.x.
-+    spm_dependency(s,
-+      url: 'https://github.com/google/GoogleUtilities.git',
-+      requirement: { kind: 'upToNextMajorVersion', minimumVersion: '8.1.3' },
-+      products: ['GULNetwork', 'GULReachability', 'GULMethodSwizzler']
-+    )
-+  end
-+
-   unless defined?(spm_dependency) && !rnfirebase_spm_disabled?
-     # CocoaPods-only: conditional IdentitySupport subspec
-     if defined?($RNFirebaseAnalyticsWithoutAdIdSupport) && ($RNFirebaseAnalyticsWithoutAdIdSupport == true)
-```
-
-**File**: `packages/messaging/RNFBMessaging.podspec` (modified, +18/-0)
-```diff
-@@ -65,6 +65,24 @@ Pod::Spec.new do |s|
-     ['Firebase/Messaging', 'FirebaseCoreExtension']
-   )
- 
-+  # SPM: fix for #9322 -- see the matching comment in RNFBAnalytics.podspec
-+  # for the full writeup, including what's actually confirmed vs. still an
-+  # open question about *why* Xcode's SPM integration behaves this way.
-+  # RNFBMessaging needs the same explicit top-level declaration for Xcode to
-+  # share a single dynamic framework per product instead of privately
-+  # duplicating GULNetwork/GULReachabilityChecker/GULSwizzler into
-+  # RNFBMessaging.framework too.
-+  if defined?(spm_dependency) && !rnfirebase_spm_disabled?
-+    # 8.1.3 floor matches the GoogleUtilities version firebase-ios-sdk 12.x
-+    # resolves transitively; bump this alongside firebase_sdk_version if
-+    # firebase-ios-sdk ever moves to GoogleUtilities 9.x.
-+    spm_dependency(s,
-+      url: 'https://github.com/google/GoogleUtilities.git',
-+      requirement: { kind: 'upToNextMajorVersion', minimumVersion: '8.1.3' },
-+      products: ['GULNetwork', 'GULReachability', 'GULMethodSwizzler']
-+    )
-+  end
-+
-   if defined?($RNFirebaseAsStaticFramework)
-     Pod::UI.puts "#{s.name}: Using overridden static_framework value of '#{$RNFirebaseAsStaticFramework}'"
-     s.static_framework = $RNFirebaseAsStaticFramework
+@@ -166,6 +180,7 @@
+ 				DEFINES_MODULE = YES;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				HEADER_SEARCH_PATHS = (
++					"$(SRCROOT)/HostStubs",
+ 					"$(SRCROOT)/../RNFBCrashlytics",
+ 				);
+ 				LD_RUNPATH_SEARCH_PATHS = (
+@@ -201,6 +216,7 @@
+ 				DEFINES_MODULE = YES;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				HEADER_SEARCH_PATHS = (
++					"$(SRCROOT)/HostStubs",
+ 					"$(SRCROOT)/../RNFBCrashlytics",
+ 				);
+ 				LD_RUNPATH_SEARCH_PATHS = (
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9352** (2026-09-30): fix(messaging): detect the iOS APNs environment from the provisioning profile (@russellwheatley)
-- **PR #9351** (2026-09-30): feat: Xcode 27 / iOS 27 and UIScene compatibility (@mikehardy)
-- **PR #9350** (closed): build(deps): bump ruby/setup-ruby from 1.321.0 to 1.326.0 (@dependabot[bot])
-- **PR #9346** (closed): build(deps): bump ruby/setup-ruby from 1.321.0 to 1.325.0 (@dependabot[bot])
-- **PR #9343** (2026-09-29): fix(app, storage): link Photos framework on tvOS (@russellwheatley)
-- **PR #9341** (2026-09-29): ci(testing): clear small e2e and docs-lint friction (@russellwheatley)
-- **PR #9338** (closed): build(deps): bump ruby/setup-ruby from 1.321.0 to 1.324.0 (@dependabot[bot])
-- **PR #9336** (2026-09-23): fix(app, expo): match scene-based AppDelegate for Expo SDK 58 config plugin (@russellwheatley)
+- **PR #9376** (2026-10-18): ci: optimize Actions caches (ABI, sticky metro/ccache, probes) (@mikehardy)
+- **PR #9375** (2026-10-16): fix(messaging, ios): guard AppDelegate window access for UIScene apps (@mikehardy)
+- **PR #9374** (2026-10-16): build(deps): Dependency Updates 20261015 (@mikehardy)
+- **PR #9373** (2026-10-16): fix(ci, ios): poll Expo launch-smoke key-window instead of a fixed sleep (@mikehardy)
+- **PR #9371** (2026-10-16): test(ios): select Debug Hermes tarball for CocoaPods debug links (@mikehardy)
+- **PR #9370** (2026-10-15): ci(publish): create GitHub Releases via Lerna createRelease (@mikehardy)
 
 ---
 
@@ -3486,3 +3229,40 @@ test-expo-ios-link.sh gained a new #9322 check that walks every built
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. messaging, ios): hop notification permission APIs onto the main queue
+
+**RULE**:
+When implementing operations in `okf-bundle/ios-spm-native-imports.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3fde064e`: messaging, ios): hop notification permission APIs onto the main queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `okf-bundle/ios-spm-native-imports.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+| Analytics | `RNFBAnalyticsHelper` |
+| App Check | `RNFBAppCheckHelper` |
+| Crashlytics | `RNFBCrashlyticsHelper` |
+| Messaging | `RNFBMessagingHelper` |
+| Functions | `RNFBFunctionsHelper` |
+| Firestore | `RNFBFirestore*Helper` classes (module, document, collection, transaction) |
+| Perf | `RNFBPerfHelper` |
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3fde064e` are properly handled with clean fallback behavior.

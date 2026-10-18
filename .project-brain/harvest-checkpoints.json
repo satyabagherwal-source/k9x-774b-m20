@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:26:58.833Z",
+  "last_updated": "2026-10-18T23:32:57.325Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1742,14 +1742,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "2915f4d55312852b5ba528ca2c1ac141525afa6063eec0e0bba812fe3cc195c1",
-      "verified_at": "2026-10-17T20:38:37.280Z",
+      "content_hash": "82452a326803337f0bf456a5ac56cf339a19a400a89fdc9e942e92013037218e",
+      "verified_at": "2026-10-18T23:32:51.361Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:38:37.280Z"
+      "last_updated": "2026-10-18T23:32:51.361Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
@@ -5422,6 +5422,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:26:58.833Z"
+    },
+    "ant-design/pro-components": {
+      "repository": "ant-design/pro-components",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ant-design-pro-components",
+      "content_hash": "e9961ddf69440b20466741b37f947940637ff7d932da3d6db7391c08a72b2621",
+      "verified_at": "2026-10-18T23:32:44.252Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:32:44.252Z"
+    },
+    "ratatui/ratatui": {
+      "repository": "ratatui/ratatui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ratatui-ratatui",
+      "content_hash": "ef7239960f74cec9b897c8a87d6c18b50cb53edb90190698d547104504448598",
+      "verified_at": "2026-10-18T23:32:46.138Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:32:46.138Z"
+    },
+    "invertase/react-native-firebase": {
+      "repository": "invertase/react-native-firebase",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-invertase-react-native-firebase",
+      "content_hash": "792fdb22028b9ee82dc085255bc8167f098c971d7348bb009bd134d5604917f0",
+      "verified_at": "2026-10-18T23:32:51.341Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:32:51.341Z"
+    },
+    "PeerDB-io/peerdb": {
+      "repository": "PeerDB-io/peerdb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-peerdb-io-peerdb",
+      "content_hash": "bf12ff01a9294ab065ff777685f9fff73a8d67078a6cd5a5dafb6c79c8fd9ca3",
+      "verified_at": "2026-10-18T23:32:53.914Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:32:53.914Z"
+    },
+    "tailscale/tailscale": {
+      "repository": "tailscale/tailscale",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tailscale-tailscale",
+      "content_hash": "afdb92da970393584dfbb2c0a6a1a5ba9ec6bed677868941ee5fcb495ea514ca",
+      "verified_at": "2026-10-18T23:32:55.531Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:32:55.531Z"
+    },
+    "dingodb/dingo": {
+      "repository": "dingodb/dingo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dingodb-dingo",
+      "content_hash": "5946ad139816081eb2624eb4e1517fb0b5d4ff94809b1d3a7ddef2dcbe6e2120",
+      "verified_at": "2026-10-18T23:32:57.324Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:32:57.324Z"
     }
   },
   "repos": {

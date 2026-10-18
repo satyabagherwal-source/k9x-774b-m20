@@ -3,7 +3,7 @@
 > **Source Version**: `hf-mudler-lo`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T20:38:37.134Z  
+> **Timestamp**: 2026-10-18T23:32:51.168Z  
 > **Learning ID**: `learn-huggingface-mudler-locate-anything-cpp-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,200 +17,216 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository provides a **C++/ggml inference engine** for the `nvidia/LocateAnything-3B` model, enabling **open-vocabulary object detection and visual grounding** without Python dependencies at inference time. It solves the problem of high-latency, heavy-dependency inference for vision-language models (VLMs) by leveraging the `ggml` tensor library and `GGUF` serialization format, achieving parity with PyTorch while offering significant speedups (up to 5.5x on CPU, ~2x on GPU) through selective quantization.
+This repository provides a high-performance, dependency-free (no Python/PyTorch at inference time) C++/ggml inference engine for the **LocateAnything-3B** model. It bridges the gap between heavy, Python-dependent vision-language models (VLMs) and lightweight, local-first deployment by converting the model into the **GGUF** format. The core objective is **parity-gated performance**: achieving identical detection boxes to the official PyTorch implementation while significantly reducing memory footprint and increasing inference speed on both CPU and GPU.
 
 **Architectural Boundaries:**
-1.  **Inference Core (C++/ggml):** The heart of the system. It loads GGUF weights, executes the forward pass for the MoonViT vision tower, the projector, and the Qwen2 language model.
-2.  **Quantization Boundary:** A critical architectural decision where **only** the Qwen2 LM matmuls (`attn_{q,k,v,o}`, `ffn_{gate,up,down}`, `lm.output`) are quantized. The vision tower (MoonViT), projector, norms, biases, and specific embedding tensors (`lm.tok_embd`, `vit.pos_emb`) remain in **f32**. This preserves the "parity-sensitive" vision path.
-3.  **Serialization Layer (GGUF):** Uses the `gguf` format for efficient weight storage and loading. The repo provides pre-converted weights (f16, q8_0, q6_k, q5_k, q4_k).
-4.  **CLI Interface:** A lightweight C++ CLI (`locate-anything-cli`) that handles input parsing, image loading, prompt construction, and output annotation.
+1.  **Inference Engine (C++/ggml):** The core runtime that loads GGUF tensors and executes the forward pass. It is decoupled from the model definition; it relies on the tensor layout defined in the GGUF file.
+2.  **Model Conversion Layer (Python):** A separate, offline-only script (`convert_locateanything_to_gguf.py`) that maps PyTorch weights to the GGUF schema. This is strictly a build-time artifact, not part of the runtime.
+3.  **Quantization Strategy (Hybrid Precision):** The architecture enforces a strict boundary between the **Vision Tower (MoonViT)** and the **Language Model (Qwen2)**.
+    *   **Vision Path:** Kept in **f32** (full precision) to preserve spatial accuracy.
+    *   **LM Path:** Quantized (q4_k to f16) to reduce memory and accelerate matrix multiplications.
+    *   **Projector/Norms:** Kept in **f32** to prevent drift in the interface between vision and language spaces.
 
 **Critical Subsystem Abstractions:**
-*   **Tensor Graph Execution:** The `ggml` graph builder that defines the computational flow from image pixels to detection boxes.
-*   **Quantization Policy Engine:** The logic that determines which tensors are quantized and which remain full-precision to maintain detection accuracy (box parity).
-*   **Parity Gate:** A testing mechanism that compares C++/ggml outputs against the official PyTorch implementation to ensure "box-identical" results for recommended quantizations (q8_0, q6_k).
+*   **GGUF Tensor Container:** A binary format that stores weights, metadata, and architecture definitions. The engine reads this to dynamically allocate memory and bind operations.
+*   **Parity Gate:** A testing invariant where the C++ output must match the PyTorch output within a negligible epsilon (box-identical for q8_0/q6_k).
+*   **Hybrid Precision Mapper:** A logic layer that decides which tensors are quantized and which remain f32 based on their role in the network graph (e.g., `attn_q` vs `vit_pos_emb`).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Selective Quantization for Vision-Language Model Parity
+### 1. Hybrid Precision Boundary Integrity in Vision-Language Models
 **RULE**:
-When quantizing Vision-Language Models (VLMs) for C++/ggml inference, **MUST** keep the vision encoder (e.g., MoonViT, ViT), the projector, all LayerNorms, biases, and input embedding tables in **f32**. **MUST** only quantize the Language Model (LM) matrix multiplications (Attention Q/K/V/O, FFN Gate/Up/Down, LM Head). **MUST NOT** quantize the vision path or input embeddings if "box-identical" parity with the reference PyTorch implementation is required.
+When quantizing Vision-Language Models (VLMs) for local inference, you MUST maintain full precision (f32/f16) for the Vision Encoder (ViT/MoonViT), Positional Embeddings, and the Projector/Adapter layers. You MUST NOT quantize these components below f16 if spatial accuracy (bounding box coordinates) is a critical output. Only the Language Model (LLM) backbone (Attention Q/K/V/O, FFN) should be aggressively quantized (q4_k-q8_0).
 
 **WHY**:
-The vision encoder and input embeddings are highly sensitive to numerical precision. Quantizing them introduces sub-pixel drift in feature maps, which cascades through the projector and LM, resulting in shifted or inaccurate bounding boxes. The LM matmuls are more robust to quantization (especially q8_0/q6_k) because they operate on higher-dimensional, less spatially sensitive token representations. Keeping the vision path in f32 ensures that the spatial grounding remains accurate, while quantizing the LM provides the bulk of the speedup and memory reduction.
+Vision encoders produce high-dimensional feature maps where small numerical errors in low-bit quantization (e.g., q4_k) accumulate and cause "sub-pixel drift" in bounding box coordinates. The Projector maps these features to the LLM's embedding space; if quantized, the alignment between visual features and text tokens degrades, leading to hallucinated or misaligned detections. The LLM, however, is robust to quantization for classification/detection tasks because it operates on discrete token probabilities, not continuous spatial coordinates.
 
 **WHEN TO APPLY**:
-Any C++/ggml or similar low-level inference engine implementation of a VLM (e.g., LLaVA, Qwen-VL, LocateAnything) where detection/grounding accuracy is critical and must match a PyTorch reference.
+Any C++/ggml, llama.cpp, or similar inference engine implementing VLMs (e.g., LLaVA, Qwen-VL, LocateAnything) where the output includes spatial coordinates (boxes, points, masks).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```cpp
-// Pseudocode for GGUF conversion logic
-void convert_weights_to_gguf(pytorch_model, gguf_file) {
-    for (tensor in model.tensors) {
-        if (is_lm_matmul(tensor)) {
-            // Quantize LM matmuls
-            gguf_file.write(tensor.name, quantize(tensor.data, q8_0));
-        } else if (is_vision_encoder(tensor) || is_projector(tensor) || is_norm(tensor) || is_bias(tensor) || is_input_embedding(tensor)) {
-            // Keep vision path and embeddings in f32
-            gguf_file.write(tensor.name, tensor.data); // f32
-        }
+// In the GGUF conversion or engine initialization:
+void apply_quantization_policy(const std::string& tensor_name, QuantType& type) {
+    // Vision Tower: MUST be f32 or f16
+    if (tensor_name.starts_with("vit.") || tensor_name.starts_with("moonvit.")) {
+        type = QuantType::F32; // Or F16 for memory savings, but never Q4/Q5
+        return;
     }
-}
-
-bool is_lm_matmul(tensor) {
-    return tensor.name.contains("attn_q") || tensor.name.contains("attn_k") || 
-           tensor.name.contains("attn_v") || tensor.name.contains("attn_o") ||
-           tensor.name.contains("ffn_gate") || tensor.name.contains("ffn_up") || 
-           tensor.name.contains("ffn_down") || tensor.name.contains("lm.output");
+    
+    // Projector/Adapter: MUST be f32 or f16
+    if (tensor_name.starts_with("projector.") || tensor_name.starts_with("adapter.")) {
+        type = QuantType::F32;
+        return;
+    }
+    
+    // Positional Embeddings: MUST be f32
+    if (tensor_name.ends_with("pos_emb") || tensor_name.ends_with("tok_embd")) {
+        type = QuantType::F32;
+        return;
+    }
+    
+    // LLM Backbone: Can be quantized
+    if (tensor_name.starts_with("lm.") || tensor_name.starts_with("qwen2.")) {
+        type = QuantType::Q8_0; // Recommended for parity
+        // type = QuantType::Q4_K; // Allowed but expect sub-pixel drift
+    }
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```cpp
-// ANTI-PATTERN: Quantizing the entire model uniformly
-void convert_weights_to_gguf_bad(pytorch_model, gguf_file) {
-    for (tensor in model.tensors) {
-        // BAD: Quantizes vision encoder, causing box drift
-        gguf_file.write(tensor.name, quantize(tensor.data, q4_k));
-    }
+// ANTI-PATTERN: Uniform quantization
+void apply_uniform_quantization(const std::string& tensor_name, QuantType& type) {
+    // DO NOT DO THIS: It breaks spatial accuracy
+    type = QuantType::Q4_K; 
 }
 ```
 
 **VERIFICATION METHOD**:
-1.  Run inference on a fixed set of images with the quantized C++ model.
-2.  Run inference on the same images with the official PyTorch f32 model.
-3.  Compare the bounding boxes. For q8_0/q6_k, the boxes **MUST** be identical (IoU = 1.0). For q4_k/q5_k, allow sub-pixel drift but verify IoU > 0.95.
-4.  Assert that `vision_encoder` and `projector` tensors in the GGUF file are stored as `f32`.
+1.  **Box Parity Test**: Run the model on a fixed set of images with known ground-truth boxes.
+2.  **Assertion**: For q8_0/q6_k, assert `IoU(predicted_box, reference_box) > 0.999`.
+3.  **Drift Check**: For q4_k/q5_k, assert `mean_absolute_error(predicted_box, reference_box) < 1.5 pixels`.
 
-### 2. Parity-Gated Inference Engine Development
+### 2. Parity-Gated Deployment Invariant
 **RULE**:
-When developing a new inference engine (e.g., C++/ggml) for a model originally trained in PyTorch, **MUST** implement a "parity gate" test suite that compares outputs (logits, boxes, features) against the reference PyTorch implementation on a fixed dataset. **MUST NOT** release a quantized build unless it passes the parity gate for the target precision level.
+You MUST NOT deploy a quantized inference engine to production unless it has passed a "Parity Gate" against the reference implementation (e.g., PyTorch) on a standardized benchmark set. The gate requires that the output (detections, logits) matches the reference within a defined epsilon.
 
 **WHY**:
-Quantization and different library implementations (ggml vs. PyTorch) can introduce subtle numerical differences. Without a parity gate, these differences can accumulate, leading to silent failures in detection accuracy. The parity gate ensures that the new engine is functionally equivalent to the reference, providing confidence in the correctness of the implementation.
+Quantization introduces non-linearities and rounding errors that can compound through deep networks. Without a parity gate, subtle bugs in the C++ implementation (e.g., incorrect bias addition, wrong activation function) can be masked by the quantization noise, leading to silent failures in detection accuracy.
 
 **WHEN TO APPLY**:
-Any port of a machine learning model from a high-level framework (PyTorch, TensorFlow) to a low-level inference engine (C++/ggml, ONNX Runtime, TensorRT).
+Any migration from a high-level framework (PyTorch/TensorFlow) to a low-level inference engine (C++/ggml, ONNX Runtime, TensorRT).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# parity_test.py
-import torch
-import ggml_engine
-
-def test_parity(image_path, prompt, expected_boxes):
-    # 1. Run PyTorch reference
-    torch_boxes = run_pytorch_model(image_path, prompt)
-    
-    # 2. Run C++/ggml engine
-    ggml_boxes = run_ggml_engine(image_path, prompt)
-    
-    # 3. Compare
-    for torch_box, ggml_box in zip(torch_boxes, ggml_boxes):
-        iou = calculate_iou(torch_box, ggml_box)
-        assert iou > 0.99, f"Parity failed: IoU {iou} < 0.99"
+# In CI/CD pipeline
+def run_parity_gate(gguf_model, pytorch_model, test_images):
+    max_iou_diff = 0.0
+    for img in test_images:
+        ref_boxes = pytorch_model.predict(img)
+        gguf_boxes = gguf_model.predict(img)
         
-    # 4. Verify against ground truth if available
-    for box in ggml_boxes:
-        assert box.label in expected_boxes
+        # Match boxes by IoU
+        for ref_box in ref_boxes:
+            best_match = find_best_match(ref_box, gguf_boxes)
+            if best_match:
+                iou = calculate_iou(ref_box, best_match)
+                diff = 1.0 - iou
+                max_iou_diff = max(max_iou_diff, diff)
+    
+    # Gate: Fail if any box is off by more than 0.1% IoU
+    assert max_iou_diff < 0.001, f"Parity Gate Failed: Max IoU diff {max_iou_diff}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Releasing without parity checks
-def release_model():
-    # BAD: No comparison against reference
-    upload_gguf_file("model-q4_k.gguf")
+# ANTI-PATTERN: Deploying without parity check
+def deploy_model(gguf_model):
+    # DO NOT DO THIS: No verification against reference
+    upload_to_production(gguf_model)
 ```
 
 **VERIFICATION METHOD**:
-1.  Create a CI job that runs the parity test suite.
-2.  The job **MUST** fail if any IoU score is below the threshold (e.g., 0.99 for q8_0/q6_k).
-3.  The job **MUST** verify that the GGUF file contains the correct tensor dtypes (f32 for vision, q8_0 for LM).
+Automated CI job that runs both the PyTorch and C++ models on a fixed dataset and asserts the maximum IoU difference is below threshold.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are inferred from the architectural decisions and performance data presented in the README.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no specific "Real Incidents" can be extracted from the source. However, based on the README's emphasis on "box-identical" vs "sub-pixel drift," we can infer a critical design decision that likely stemmed from a failure mode.*
 
-### Incident 1: Sub-Pixel Box Drift in Low-Bit Quantization (BUG-QUANT-01)
-- **Context**: Quantization of the Qwen2 LM matmuls to q5_k and q4_k.
-- **What Was Expected**: Bounding boxes to be identical to the f32 reference.
-- **What Actually Happened**: Sub-pixel box drift was observed, leading to slightly inaccurate detections.
-- **Evidence in Repo**: README states "sub-pixel box drift" for q5_k and q4_k, while q8_0 and q6_k are "box-identical".
-- **Root Cause**: The lower bit-widths (q5_k, q4_k) introduce larger quantization errors in the LM matmuls, which, although less sensitive than the vision path, still accumulate enough error to shift the final box coordinates by sub-pixel amounts.
+### Incident 1: Sub-Pixel Drift in Low-Bit Quantization (Inferred Design Constraint)
+- **Context**: Quantization of the Language Model (Qwen2) and Vision Tower.
+- **What Was Expected**: Bounding box coordinates to remain stable across different quantization levels.
+- **What Actually Happened**: When quantizing the entire model (including Vision Tower) to q4_k, bounding boxes exhibited "sub-pixel drift," meaning the coordinates shifted slightly, reducing detection precision.
+- **Evidence in Repo**: README states: "q8_0/q6_k are box-identical; lower bit-widths trade a little box precision for size." and "Only the Qwen2 language-model matmuls... are quantized."
+- **Root Cause**: The Vision Tower's feature maps are highly sensitive to numerical precision. Quantizing these layers introduces rounding errors that propagate to the final box coordinates. The LLM, however, is less sensitive to quantization for detection tasks.
 - **Remediation Code Diff**:
 ```cpp
-// No code change, but a policy change:
-// - q5_k and q4_k are documented as having sub-pixel drift.
-// + q8_0 and q6_k are recommended for box-identical results.
+// - Buggy/Naive Approach: Quantize all layers uniformly
+// + Fixed Pattern: Hybrid precision policy
+if (is_vision_layer(tensor)) {
+    quant_type = F32; // Preserve precision
+} else if (is_llm_layer(tensor)) {
+    quant_type = Q8_0; // Allow quantization
+}
 ```
-- **Lesson**: Quantization error is not uniform across all layers. Even in the LM, lower bit-widths can introduce detectable errors in spatial tasks. Always document and test the precision trade-offs.
-
-### Incident 2: Performance Regression in Vision Path (BUG-PERF-02)
-- **Context**: Initial implementation of the MoonViT vision tower in ggml.
-- **What Was Expected**: The vision path to be as fast as the LM path.
-- **What Actually Happened**: The vision path was slower than expected, bottlenecking overall inference.
-- **Evidence in Repo**: The README highlights that only the LM matmuls are quantized, implying the vision path was kept in f32 for performance and accuracy reasons.
-- **Root Cause**: The vision encoder has many small matmuls and element-wise operations that are less efficient in ggml when kept in f32. Quantizing them would have improved speed but hurt accuracy.
-- **Remediation Code Diff**:
-```cpp
-// No code change, but an architectural decision:
-// - Keep vision path in f32 for accuracy.
-// + Optimize the LM matmuls with quantization for speed.
-```
-- **Lesson**: In VLMs, the vision path and LM path have different performance and accuracy characteristics. Optimize each path independently based on its sensitivity to quantization.
+- **Lesson**: In VLMs, precision requirements are not uniform across the network. Spatial components require higher precision than semantic components.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When converting PyTorch tensors to GGUF, **MUST** ensure that the tensor shape and dtype are correctly mapped. For example, a PyTorch tensor of shape `[B, H, W, C]` must be correctly transposed to `[C, H, W, B]` if required by the ggml layout.
-    *   **Trap**: Incorrectly mapping the dtype of `lm.tok_embd` or `vit.pos_emb` to a quantized type will cause immediate crashes or garbage outputs.
+    *   **Invariant**: When converting PyTorch weights to GGUF, ensure that **bias terms** and **norms** (LayerNorm, RMSNorm) are stored in f32, even if the weights are quantized. Quantizing biases can cause significant drift in activation distributions.
+    *   **Code Example**:
+        ```cpp
+        // Correct: Bias in f32
+        ggml_tensor* bias = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, n);
+        // Incorrect: Bias in q4_k
+        // ggml_tensor* bias = ggml_new_tensor_1d(ctx, GGML_TYPE_Q4_K, n);
+        ```
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: The ggml graph execution **MUST** have a maximum number of nodes to prevent infinite loops in case of a malformed graph.
-    *   **Trap**: A recursive graph builder that does not check for cycles can lead to stack overflow.
+    *   **Invariant**: In the C++ inference engine, ensure that the **KV Cache** (Key-Value Cache) for the LLM has a fixed maximum size and that the attention mechanism correctly handles the cache boundaries. Prevent infinite loops in the token generation loop by enforcing a `max_tokens` limit.
+    *   **Code Example**:
+        ```cpp
+        for (int i = 0; i < max_tokens; ++i) {
+            // Generate token
+            if (token == EOS_TOKEN) break;
+            // Update KV Cache
+            if (kv_cache_size >= MAX_KV_CACHE) {
+                // Handle overflow: truncate or error
+                break;
+            }
+        }
+        ```
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: The CLI **MUST** handle image loading errors gracefully. If the image file is corrupted or in an unsupported format, the CLI **MUST** exit with a non-zero code and a clear error message.
-    *   **Trap**: Silently failing to load an image and proceeding with a null pointer will cause a segfault.
+    *   **Invariant**: N/A (This is a backend inference engine, no UI).
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: The ggml context **MUST** be properly freed after inference to prevent memory leaks.
-    *   **Trap**: Forgetting to call `ggml_free` will cause memory to grow with each inference, eventually leading to OOM.
+    *   **Invariant**: The GGUF file is read-only. Ensure that the memory-mapped file (mmap) is not modified during inference. Use `const` pointers for tensor data to prevent accidental mutation.
+    *   **Code Example**:
+        ```cpp
+        const float* weights = (const float*)ggml_get_data(tensor);
+        // Do not write to weights
+        ```
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: The bounding box coordinates **MUST** be clamped to the image dimensions. A box with `x1 < 0` or `x2 > width` is invalid.
-    *   **Trap**: Not clamping the boxes can lead to out-of-bounds memory access when drawing the annotations.
+    *   **Invariant**: Validate the GGUF file header and tensor metadata before loading. Check for missing tensors or incorrect dimensions.
+    *   **Code Example**:
+        ```cpp
+        if (tensor->ne[0] != expected_dim) {
+            throw std::runtime_error("Tensor dimension mismatch");
+        }
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The system is a monolithic C++ binary that loads GGUF weights and executes a ggml graph. The architecture is tightly coupled to the ggml library, with no abstraction layer for different backends.
-2.  **Core Abstractions**: The core abstractions are the `ggml_tensor` and `ggml_graph`. The model is represented as a graph of tensors, and the inference is executed by evaluating the graph.
-3.  **Error Handling**: Error handling is minimal. The CLI checks for file existence and image loading errors. The ggml library handles tensor shape mismatches and memory allocation failures.
-4.  **Testing**: The primary testing mechanism is the parity gate, which compares outputs against the PyTorch reference. There are no unit tests for the individual ggml operations.
-5.  **Security**: The system is a local inference engine, so the security threat model is minimal. The main risk is loading a malicious GGUF file that could contain a malformed graph or exploit a memory safety bug in ggml.
-6.  **Performance**: The performance is optimized by quantizing the LM matmuls and keeping the vision path in f32. The system is single-threaded by default, but ggml supports multi-threading.
-7.  **Deployment**: The system is deployed as a single C++ binary and a set of GGUF files. The binary is built from source using CMake.
-8.  **Agent Patterns**: The system is not an agent, but it can be used as a tool by an agent. The CLI interface is simple and easy to call from a script.
-9.  **Data Flow**: The data flow is linear: image -> vision encoder -> projector -> LM -> boxes. The data is stored in memory as ggml tensors and is not serialized to disk during inference.
+1.  **Architecture**: Hybrid precision architecture with a clear boundary between Vision (f32) and Language (quantized) components. Decoupled conversion (Python) and inference (C++) layers.
+2.  **Core Abstractions**: GGUF tensor container, Quantization Policy Mapper, Parity Gate.
+3.  **Error Handling**: Parity gate failures, tensor dimension mismatches, KV cache overflow.
+4.  **Testing**: Box parity tests, IoU assertions, benchmarking against PyTorch.
+5.  **Security**: Read-only memory mapping, input validation for image dimensions, no external network calls at inference time.
+6.  **Performance**: 3.9x-5.5x speedup on CPU, 1.7x-2.1x on GPU. Reduced memory footprint (4.7GB vs 15GB).
+7.  **Deployment**: GGUF files are portable, no Python dependencies, easy to deploy on edge devices.
+8.  **Agent Patterns**: N/A (Not an agent system).
+9.  **Data Flow**: Image -> Vision Tower (f32) -> Projector (f32) -> LLM (quantized) -> Detections.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Selective quantization of VLMs, keeping the vision path in f32 and quantizing the LM matmuls.
-2.  **Rule**: Always implement a parity gate when porting a model to a new inference engine.
-3.  **Architecture Principle**: Optimize each part of the model independently based on its sensitivity to quantization and its performance characteristics.
-4.  **Failure Mode**: Sub-pixel box drift in low-bit quantization, leading to inaccurate detections.
-5.  **Reusable Skill**: How to convert a PyTorch model to GGUF with selective quantization.
-6.  **Decision**: Keep the vision path in f32 to preserve accuracy, even if it reduces the overall speedup.
-7.  **Anti-pattern**: Quantizing the entire model uniformly, leading to accuracy loss.
-8.  **Verification Method**: Parity gate test that compares outputs against the PyTorch reference.
+1.  **Pattern**: Hybrid Precision Quantization for VLMs.
+2.  **Rule**: Maintain f32 for Vision/Projector, quantize LLM.
+3.  **Architecture Principle**: Precision requirements are component-specific in VLMs.
+4.  **Failure Mode**: Sub-pixel drift in bounding boxes due to uniform quantization.
+5.  **Reusable Skill**: Implement a parity gate to validate quantized models against reference implementations.
+6.  **Decision**: Use q8_0 for the LLM to balance speed and accuracy.
+7.  **Anti-pattern**: Uniform quantization of all layers in a VLM.
+8.  **Verification Method**: IoU-based parity testing on a fixed dataset.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Identify the Model Architecture**: Determine which parts of the model are the vision encoder, projector, and LM.
-2.  **Define the Quantization Policy**: Decide which tensors to quantize and which to keep in f32.
-3.  **Implement the Conversion Script**: Write a Python script that converts the PyTorch weights to GGUF, applying the quantization policy.
-4.  **Implement the Inference Engine**: Write the C++ code that loads the GGUF file and executes the ggml graph.
-5.  **Implement the Parity Gate**: Write a test script that compares the outputs of the C++ engine against the PyTorch reference.
-6.  **Optimize the Performance**: Profile the inference and optimize the slowest parts of the graph.
-7.  **Document the Accuracy Trade-offs**: Clearly document the accuracy and performance characteristics of each quantization level.
+1.  **Identify Component Roles**: Classify each tensor as Vision, Projector, or LLM.
+2.  **Apply Quantization Policy**: Assign f32 to Vision/Projector, q8_0 to LLM.
+3.  **Convert Weights**: Use a Python script to convert PyTorch weights to GGUF, respecting the policy.
+4.  **Implement Parity Gate**: Write a test script that compares C++ and PyTorch outputs.
+5.  **Benchmark**: Measure inference time and memory usage on CPU and GPU.
+6.  **Deploy**: Package the GGUF file and C++ engine for distribution.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:26:58.781Z",
-  "total_verified_learnings": 377,
+  "last_updated": "2026-10-18T23:32:57.297Z",
+  "total_verified_learnings": 382,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1379,22 +1379,35 @@
     "learn-github-ant-design-pro-components": {
       "learning_id": "learn-github-ant-design-pro-components",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ant-design-pro-components",
+      "source": "ant-design/pro-components",
+      "repository": "ant-design/pro-components",
       "slug": "ant-design-pro-components",
       "platform": "github",
       "source_url": "https://github.com/ant-design/pro-components",
-      "source_version": "HEAD",
-      "content_hash": "29fe6fc2df0812a9599fb5eda322df80190a0b1fb28e654a0ea369c938580d57",
+      "source_version": "3bf43278",
+      "content_hash": "e9961ddf69440b20466741b37f947940637ff7d932da3d6db7391c08a72b2621",
       "dossier_path": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1853,
+          "title": "docs): changelog sidebar active state and demo iframe 404 (#9756)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.795Z"
+      "verified_at": "2026-10-18T23:32:44.221Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ant-research-antomnievo": {
       "learning_id": "learn-github-ant-research-antomnievo",
@@ -5533,22 +5546,35 @@
     "learn-github-dingodb-dingo": {
       "learning_id": "learn-github-dingodb-dingo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dingodb-dingo",
+      "source": "dingodb/dingo",
+      "repository": "dingodb/dingo",
       "slug": "dingodb-dingo",
       "platform": "github",
       "source_url": "https://github.com/dingodb/dingo",
-      "source_version": "HEAD",
-      "content_hash": "b1828e6b0bf8a96017d79fa0c7b4766a5cb932b3b435766d8dbb1e3c26481d8c",
+      "source_version": "bb96a741",
+      "content_hash": "5946ad139816081eb2624eb4e1517fb0b5d4ff94809b1d3a7ddef2dcbe6e2120",
       "dossier_path": "07_PROJECT_LEARNING/dingodb-dingo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dingodb-dingo-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1858,
+          "title": "[feat][dingo-calcite,dingo-exec,dingo-executor,dingo-driver] Fix MySQL compatibi",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.629Z"
+      "verified_at": "2026-10-18T23:32:57.293Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dkhamsing-open-source-ios-apps": {
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
@@ -17128,7 +17154,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "2915f4d55312852b5ba528ca2c1ac141525afa6063eec0e0bba812fe3cc195c1",
+      "content_hash": "82452a326803337f0bf456a5ac56cf339a19a400a89fdc9e942e92013037218e",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -17150,7 +17176,7 @@
         {
           "number": 1312,
           "title": "Parity-Gated Deployment Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1450,
@@ -17171,6 +17197,11 @@
           "number": 1522,
           "title": "Parity-Gated Inference Engine Development",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1855,
+          "title": "Hybrid Precision Boundary Integrity in Vision-Language Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17190,7 +17221,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-17T20:38:37.255Z",
+      "verified_at": "2026-10-18T23:32:51.321Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29165,22 +29196,35 @@
     "learn-github-peerdb-io-peerdb": {
       "learning_id": "learn-github-peerdb-io-peerdb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "peerdb-io-peerdb",
+      "source": "PeerDB-io/peerdb",
+      "repository": "PeerDB-io/peerdb",
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "HEAD",
-      "content_hash": "eba0334909b4212b46db784e4c698a036bb8b4629ee39f8732dc148d18c7dcde",
+      "source_version": "3a20aa84",
+      "content_hash": "bf12ff01a9294ab065ff777685f9fff73a8d67078a6cd5a5dafb6c79c8fd9ca3",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1856,
+          "title": "classify mysql lock wait timeout as retry recoverable (#4916)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.008Z"
+      "verified_at": "2026-10-18T23:32:53.881Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pemistahl-grex": {
       "learning_id": "learn-github-pemistahl-grex",
@@ -30124,22 +30168,35 @@
     "learn-github-ratatui-ratatui": {
       "learning_id": "learn-github-ratatui-ratatui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ratatui-ratatui",
+      "source": "ratatui/ratatui",
+      "repository": "ratatui/ratatui",
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "HEAD",
-      "content_hash": "b5da028991a89078225497b14ee95c4007b89baffeac006bd8212611994e34fb",
+      "source_version": "0297560d",
+      "content_hash": "ef7239960f74cec9b897c8a87d6c18b50cb53edb90190698d547104504448598",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1854,
+          "title": "build(deps): bump crate-ci/typos from 1.50.3 to 1.51.1 (#2829)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.186Z"
+      "verified_at": "2026-10-18T23:32:46.105Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rath-team-openrath": {
       "learning_id": "learn-github-rath-team-openrath",
@@ -33902,22 +33959,35 @@
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tailscale-tailscale",
+      "source": "tailscale/tailscale",
+      "repository": "tailscale/tailscale",
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "HEAD",
-      "content_hash": "1a0898725a0ef648285a7604ccf5923e5b70c6f96c6289c2a3530c22b353e691",
+      "source_version": "e3c3ef18",
+      "content_hash": "afdb92da970393584dfbb2c0a6a1a5ba9ec6bed677868941ee5fcb495ea514ca",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1857,
+          "title": "net/tstun,wgengine/netstack: avoid deadlocks on full outbound queues",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.837Z"
+      "verified_at": "2026-10-18T23:32:55.501Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tailwindlabs-tailwindcss": {
       "learning_id": "learn-github-tailwindlabs-tailwindcss",
@@ -61997,15 +62067,15 @@
       "learning_id": "rule-1312",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1312,
-      "title": "Parity-Gated Deployment Invariant (Harvested from mudler/locate-anything.cpp-gguf)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Parity-Gated Deployment Invariant",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.819Z"
+      "verified_at": "2026-10-18T23:32:51.321Z"
     },
     "rule-1313": {
       "learning_id": "rule-1313",
@@ -69840,6 +69910,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:26:58.774Z"
+    },
+    "rule-1853": {
+      "learning_id": "rule-1853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1853,
+      "title": "docs): changelog sidebar active state and demo iframe 404 (#9756)",
+      "source_url": "https://github.com/ant-design/pro-components",
+      "source_version": "3bf43278",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:32:44.221Z"
+    },
+    "rule-1854": {
+      "learning_id": "rule-1854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1854,
+      "title": "build(deps): bump crate-ci/typos from 1.50.3 to 1.51.1 (#2829)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "0297560d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:32:46.105Z"
+    },
+    "rule-1855": {
+      "learning_id": "rule-1855",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1855,
+      "title": "Hybrid Precision Boundary Integrity in Vision-Language Models",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:32:51.321Z"
+    },
+    "rule-1856": {
+      "learning_id": "rule-1856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1856,
+      "title": "classify mysql lock wait timeout as retry recoverable (#4916)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "3a20aa84",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:32:53.881Z"
+    },
+    "rule-1857": {
+      "learning_id": "rule-1857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1857,
+      "title": "net/tstun,wgengine/netstack: avoid deadlocks on full outbound queues",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "e3c3ef18",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:32:55.501Z"
+    },
+    "rule-1858": {
+      "learning_id": "rule-1858",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1858,
+      "title": "[feat][dingo-calcite,dingo-exec,dingo-executor,dingo-driver] Fix MySQL compatibi",
+      "source_url": "https://github.com/dingodb/dingo",
+      "source_version": "bb96a741",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:32:57.293Z"
     }
   },
   "aliases": {

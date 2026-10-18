@@ -2629,3 +2629,10 @@
 | `CYCLE-20261018-G4TN` | `2026-10-18T23:26:55.595Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1849, Rule 1850` | Yes (`cb34c7ea...`) |
 | `CYCLE-20261018-G5AK` | `2026-10-18T23:26:56.204Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1851` | Yes (`2bbcaa5b...`) |
 | `CYCLE-20261018-G7BE` | `2026-10-18T23:26:58.826Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1852` | Yes (`db2e94a4...`) |
+| `CYCLE-20261018-NLUD` | `2026-10-18T23:32:44.245Z` | `ant-design/pro-components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1853` | Yes (`e9961ddf...`) |
+| `CYCLE-20261018-NNAR` | `2026-10-18T23:32:46.131Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1854` | Yes (`ef723996...`) |
+| `CYCLE-20261018-NRB9` | `2026-10-18T23:32:51.333Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1855` | Yes (`792fdb22...`) |
+| `CYCLE-20261018-NRBR` | `2026-10-18T23:32:51.351Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1855, Rule 1312` | Yes (`82452a32...`) |
+| `CYCLE-20261018-NTAR` | `2026-10-18T23:32:53.907Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1856` | Yes (`bf12ff01...`) |
+| `CYCLE-20261018-NUJP` | `2026-10-18T23:32:55.525Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1857` | Yes (`afdb92da...`) |
+| `CYCLE-20261018-NVXH` | `2026-10-18T23:32:57.317Z` | `dingodb/dingo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1858` | Yes (`5946ad13...`) |

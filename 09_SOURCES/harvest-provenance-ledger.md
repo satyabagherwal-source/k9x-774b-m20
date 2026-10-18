@@ -2636,3 +2636,10 @@ Every entry in this ledger must capture:
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-18T23:26:55.598Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `cfeaa4a4` | Multi-dimensional audit evidence | 2026-10-18T23:26:56.207Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `8fba3bcd` | Multi-dimensional audit evidence | 2026-10-18T23:26:58.829Z |
+| `learn-github-ant-design-pro-components` | `https://github.com/ant-design/pro-components` | `3bf43278` | Multi-dimensional audit evidence | 2026-10-18T23:32:44.247Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `0297560d` | Multi-dimensional audit evidence | 2026-10-18T23:32:46.133Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `966355ee` | Multi-dimensional audit evidence | 2026-10-18T23:32:51.335Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-18T23:32:51.353Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `3a20aa84` | Multi-dimensional audit evidence | 2026-10-18T23:32:53.909Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e3c3ef18` | Multi-dimensional audit evidence | 2026-10-18T23:32:55.527Z |
+| `learn-github-dingodb-dingo` | `https://github.com/dingodb/dingo` | `bb96a741` | Multi-dimensional audit evidence | 2026-10-18T23:32:57.319Z |

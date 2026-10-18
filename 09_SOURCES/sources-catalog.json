@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "2915f4d55312852b5ba528ca2c1ac141525afa6063eec0e0bba812fe3cc195c1",
-    "lastHarvestedAt": "2026-10-17T20:38:37.278Z",
+    "contentHash": "82452a326803337f0bf456a5ac56cf339a19a400a89fdc9e942e92013037218e",
+    "lastHarvestedAt": "2026-10-18T23:32:51.353Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -3538,5 +3538,65 @@
     "contentHash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
     "lastHarvestedAt": "2026-10-18T23:26:58.829Z",
     "learningId": "learn-github-llphant-llphant"
+  },
+  "ant-design-pro-components": {
+    "repository": "ant-design/pro-components",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ant-design/pro-components",
+    "sourceVersion": "3bf43278",
+    "license": "MIT",
+    "contentHash": "e9961ddf69440b20466741b37f947940637ff7d932da3d6db7391c08a72b2621",
+    "lastHarvestedAt": "2026-10-18T23:32:44.247Z",
+    "learningId": "learn-github-ant-design-pro-components"
+  },
+  "ratatui-ratatui": {
+    "repository": "ratatui/ratatui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ratatui/ratatui",
+    "sourceVersion": "0297560d",
+    "license": "MIT",
+    "contentHash": "ef7239960f74cec9b897c8a87d6c18b50cb53edb90190698d547104504448598",
+    "lastHarvestedAt": "2026-10-18T23:32:46.133Z",
+    "learningId": "learn-github-ratatui-ratatui"
+  },
+  "invertase-react-native-firebase": {
+    "repository": "invertase/react-native-firebase",
+    "platform": "github",
+    "sourceUrl": "https://github.com/invertase/react-native-firebase",
+    "sourceVersion": "966355ee",
+    "license": "NOASSERTION",
+    "contentHash": "792fdb22028b9ee82dc085255bc8167f098c971d7348bb009bd134d5604917f0",
+    "lastHarvestedAt": "2026-10-18T23:32:51.335Z",
+    "learningId": "learn-github-invertase-react-native-firebase"
+  },
+  "peerdb-io-peerdb": {
+    "repository": "PeerDB-io/peerdb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/PeerDB-io/peerdb",
+    "sourceVersion": "3a20aa84",
+    "license": "AGPL-3.0",
+    "contentHash": "bf12ff01a9294ab065ff777685f9fff73a8d67078a6cd5a5dafb6c79c8fd9ca3",
+    "lastHarvestedAt": "2026-10-18T23:32:53.909Z",
+    "learningId": "learn-github-peerdb-io-peerdb"
+  },
+  "tailscale-tailscale": {
+    "repository": "tailscale/tailscale",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tailscale/tailscale",
+    "sourceVersion": "e3c3ef18",
+    "license": "BSD-3-Clause",
+    "contentHash": "afdb92da970393584dfbb2c0a6a1a5ba9ec6bed677868941ee5fcb495ea514ca",
+    "lastHarvestedAt": "2026-10-18T23:32:55.527Z",
+    "learningId": "learn-github-tailscale-tailscale"
+  },
+  "dingodb-dingo": {
+    "repository": "dingodb/dingo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dingodb/dingo",
+    "sourceVersion": "bb96a741",
+    "license": "Apache-2.0",
+    "contentHash": "5946ad139816081eb2624eb4e1517fb0b5d4ff94809b1d3a7ddef2dcbe6e2120",
+    "lastHarvestedAt": "2026-10-18T23:32:57.319Z",
+    "learningId": "learn-github-dingodb-dingo"
   }
 }
