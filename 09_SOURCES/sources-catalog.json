@@ -1868,5 +1868,15 @@
     "contentHash": "cbc78fdcd7fd7e177540e4f9588c227475798dc4384779e0092f1e0ca0d810a2",
     "lastHarvestedAt": "2026-10-18T06:36:31.903Z",
     "learningId": "learn-github-crawlcove-robots-txt-tester"
+  },
+  "crawlcove-crawlcove-hreflang-checker": {
+    "repository": "CrawlCove/hreflang-checker",
+    "platform": "github",
+    "sourceUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+    "sourceVersion": "68a78d31",
+    "license": "MIT",
+    "contentHash": "b194b4dff339d8ab0e5094d83548763bbc9546902697452021de2995bac01d42",
+    "lastHarvestedAt": "2026-10-18T06:40:04.327Z",
+    "learningId": "learn-github-crawlcove-hreflang-checker"
   }
 }

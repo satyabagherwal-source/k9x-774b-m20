@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T06:36:31.873Z",
-  "total_verified_learnings": 212,
+  "last_updated": "2026-10-18T06:40:04.297Z",
+  "total_verified_learnings": 213,
   "total_canonical_rules": 1627,
   "total_dossiers": 1435,
   "items": {
@@ -45016,22 +45016,36 @@
     "learn-github-crawlcove-hreflang-checker": {
       "learning_id": "learn-github-crawlcove-hreflang-checker",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "CrawlCove/crawlcove-hreflang-checker",
-      "slug": "crawlcove-hreflang-checker",
+      "source": "CrawlCove/hreflang-checker",
+      "repository": "CrawlCove/hreflang-checker",
+      "slug": "crawlcove-crawlcove-hreflang-checker",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-      "source_version": "main",
-      "content_hash": "297933edbc5f128fc703873d3643163fa6be306534ecd2a5e51cd66718ea5529",
-      "dossier_path": "07_PROJECT_LEARNING/crawlcove-hreflang-checker-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/crawlcove-hreflang-checker-learnings.md",
+      "source_version": "68a78d31",
+      "content_hash": "b194b4dff339d8ab0e5094d83548763bbc9546902697452021de2995bac01d42",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "promoted_rules": [
-        "Rule 1625"
+        "Rule 1625",
+        {
+          "number": 1633,
+          "title": "repository renamed to CrawlCove/hreflang-checker; point links, install commands",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T06:40:04.292Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mitrovicsinisaa-schemaorg-rs": {
       "learning_id": "learn-github-mitrovicsinisaa-schemaorg-rs",

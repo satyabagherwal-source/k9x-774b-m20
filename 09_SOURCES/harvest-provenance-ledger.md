@@ -2454,3 +2454,4 @@ Every entry in this ledger must capture:
 | `learn-github-serpapi-google-search-results-ruby` | `https://github.com/serpapi/google-search-results-ruby` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:15.438Z |
 | `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `caa1d0b5` | Multi-dimensional audit evidence | 2026-10-18T06:36:28.579Z |
 | `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `63245304` | Multi-dimensional audit evidence | 2026-10-18T06:36:31.903Z |
+| `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `68a78d31` | Multi-dimensional audit evidence | 2026-10-18T06:40:04.327Z |

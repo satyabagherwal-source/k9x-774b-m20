@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-CF3I",
-    "timestamp": "2026-10-17T01:12:40.302Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "9892a928e18f00a536481e2f28082a2c3121d22615c39d30792471513b6b5966",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-G3VC",
     "timestamp": "2026-10-17T01:15:32.376Z",
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "cbc78fdcd7fd7e177540e4f9588c227475798dc4384779e0092f1e0ca0d810a2",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-HB6Q",
+    "timestamp": "2026-10-18T06:40:04.322Z",
+    "repository": "CrawlCove/hreflang-checker",
+    "learningId": "learn-github-crawlcove-hreflang-checker",
+    "contentHash": "b194b4dff339d8ab0e5094d83548763bbc9546902697452021de2995bac01d42",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
