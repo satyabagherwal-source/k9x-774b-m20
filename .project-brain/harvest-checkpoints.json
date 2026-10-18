@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T22:29:35.126Z",
+  "last_updated": "2026-10-18T22:35:46.497Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2909,14 +2909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
-      "content_hash": "08a04c776cda6192fea8160e2cea3b50157ab06f733dcc7300e58d6d342f8fff",
-      "verified_at": "2026-10-18T06:36:28.582Z",
+      "content_hash": "5fa2c7f66608e5091fc5e32a6bde3365ac0ddbd9f4ab0a662a7c2679116bb0b2",
+      "verified_at": "2026-10-18T22:35:36.156Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T06:36:28.582Z"
+      "last_updated": "2026-10-18T22:35:36.156Z"
     },
     "CrawlCove/robots-txt-tester": {
       "repository": "CrawlCove/robots-txt-tester",
@@ -4612,6 +4612,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T22:29:35.125Z"
+    },
+    "Megabit/Blazorise": {
+      "repository": "Megabit/Blazorise",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-megabit-blazorise",
+      "content_hash": "3437382cfc9e108005f6b85b66f4c3f11d9bd1935983f997a0246c3195c0851f",
+      "verified_at": "2026-10-18T22:35:34.031Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:35:34.031Z"
+    },
+    "metalbear-co/mirrord": {
+      "repository": "metalbear-co/mirrord",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-metalbear-co-mirrord",
+      "content_hash": "4c9d65d391bd28f42d151544da19eb3c1123984f672bf8ef343163bf990f7b42",
+      "verified_at": "2026-10-18T22:35:34.060Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:35:34.060Z"
+    },
+    "openkruise/kruise": {
+      "repository": "openkruise/kruise",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-openkruise-kruise",
+      "content_hash": "0949587a25dc28d08737f7c306a5c723999a601696100355c3c2f29a90fa5001",
+      "verified_at": "2026-10-18T22:35:41.448Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:35:41.448Z"
+    },
+    "callstack/react-native-paper": {
+      "repository": "callstack/react-native-paper",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-callstack-react-native-paper",
+      "content_hash": "875861b1d2275902e4eafd58618e6e4e2e93900f3d054b070cd1cf3cc7a24ec3",
+      "verified_at": "2026-10-18T22:35:41.784Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:35:41.784Z"
+    },
+    "tensorchord/pgvecto.rs": {
+      "repository": "tensorchord/pgvecto.rs",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tensorchord-pgvecto-rs",
+      "content_hash": "0fcbccb0c5edfe590c6d2c99c57d69b620fb5510459a2a698c88df7b41142231",
+      "verified_at": "2026-10-18T22:35:46.351Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:35:46.351Z"
+    },
+    "RustCrypto/hashes": {
+      "repository": "RustCrypto/hashes",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rustcrypto-hashes",
+      "content_hash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
+      "verified_at": "2026-10-18T22:35:46.497Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:35:46.497Z"
     }
   },
   "repos": {

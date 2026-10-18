@@ -2565,3 +2565,10 @@
 | `CYCLE-20261018-EBE5` | `2026-10-18T22:29:31.565Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1783` | Yes (`6da2aa32...`) |
 | `CYCLE-20261018-ECAR` | `2026-10-18T22:29:32.739Z` | `cryfs/cryfs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1784` | Yes (`0b8945b8...`) |
 | `CYCLE-20261018-EE4T` | `2026-10-18T22:29:35.117Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1785` | Yes (`84ec959e...`) |
+| `CYCLE-20261018-M32C` | `2026-10-18T22:35:34.020Z` | `Megabit/Blazorise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1786` | Yes (`3437382c...`) |
+| `CYCLE-20261018-M337` | `2026-10-18T22:35:34.051Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1787` | Yes (`4c9d65d3...`) |
+| `CYCLE-20261018-M4PF` | `2026-10-18T22:35:36.147Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1788` | Yes (`5fa2c7f6...`) |
+| `CYCLE-20261018-M8SE` | `2026-10-18T22:35:41.438Z` | `openkruise/kruise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1789` | Yes (`0949587a...`) |
+| `CYCLE-20261018-M91O` | `2026-10-18T22:35:41.772Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1790` | Yes (`875861b1...`) |
+| `CYCLE-20261018-MCKP` | `2026-10-18T22:35:46.345Z` | `tensorchord/pgvecto.rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1791` | Yes (`0fcbccb0...`) |
+| `CYCLE-20261018-MCOK` | `2026-10-18T22:35:46.484Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1792` | Yes (`161cd9fa...`) |

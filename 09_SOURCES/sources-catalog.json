@@ -1855,8 +1855,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
     "sourceVersion": "caa1d0b5",
     "license": "MIT",
-    "contentHash": "08a04c776cda6192fea8160e2cea3b50157ab06f733dcc7300e58d6d342f8fff",
-    "lastHarvestedAt": "2026-10-18T06:36:28.579Z",
+    "contentHash": "5fa2c7f66608e5091fc5e32a6bde3365ac0ddbd9f4ab0a662a7c2679116bb0b2",
+    "lastHarvestedAt": "2026-10-18T22:35:36.149Z",
     "learningId": "learn-github-crawlcove-xml-sitemap-validator"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
@@ -2998,5 +2998,65 @@
     "contentHash": "84ec959e5dfd624930d28f05b37678eaa21cda4466fa4bb070f93ecb4068a6f5",
     "lastHarvestedAt": "2026-10-18T22:29:35.119Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
+  },
+  "megabit-blazorise": {
+    "repository": "Megabit/Blazorise",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Megabit/Blazorise",
+    "sourceVersion": "f48a88f9",
+    "license": "NOASSERTION",
+    "contentHash": "3437382cfc9e108005f6b85b66f4c3f11d9bd1935983f997a0246c3195c0851f",
+    "lastHarvestedAt": "2026-10-18T22:35:34.022Z",
+    "learningId": "learn-github-megabit-blazorise"
+  },
+  "metalbear-co-mirrord": {
+    "repository": "metalbear-co/mirrord",
+    "platform": "github",
+    "sourceUrl": "https://github.com/metalbear-co/mirrord",
+    "sourceVersion": "2a29e4d0",
+    "license": "MIT",
+    "contentHash": "4c9d65d391bd28f42d151544da19eb3c1123984f672bf8ef343163bf990f7b42",
+    "lastHarvestedAt": "2026-10-18T22:35:34.053Z",
+    "learningId": "learn-github-metalbear-co-mirrord"
+  },
+  "openkruise-kruise": {
+    "repository": "openkruise/kruise",
+    "platform": "github",
+    "sourceUrl": "https://github.com/openkruise/kruise",
+    "sourceVersion": "567ce15b",
+    "license": "NOASSERTION",
+    "contentHash": "0949587a25dc28d08737f7c306a5c723999a601696100355c3c2f29a90fa5001",
+    "lastHarvestedAt": "2026-10-18T22:35:41.441Z",
+    "learningId": "learn-github-openkruise-kruise"
+  },
+  "callstack-react-native-paper": {
+    "repository": "callstack/react-native-paper",
+    "platform": "github",
+    "sourceUrl": "https://github.com/callstack/react-native-paper",
+    "sourceVersion": "ce72155b",
+    "license": "MIT",
+    "contentHash": "875861b1d2275902e4eafd58618e6e4e2e93900f3d054b070cd1cf3cc7a24ec3",
+    "lastHarvestedAt": "2026-10-18T22:35:41.776Z",
+    "learningId": "learn-github-callstack-react-native-paper"
+  },
+  "tensorchord-pgvecto.rs": {
+    "repository": "tensorchord/pgvecto.rs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tensorchord/pgvecto.rs",
+    "sourceVersion": "2b290b34",
+    "license": "Apache-2.0",
+    "contentHash": "0fcbccb0c5edfe590c6d2c99c57d69b620fb5510459a2a698c88df7b41142231",
+    "lastHarvestedAt": "2026-10-18T22:35:46.348Z",
+    "learningId": "learn-github-tensorchord-pgvecto-rs"
+  },
+  "rustcrypto-hashes": {
+    "repository": "RustCrypto/hashes",
+    "platform": "github",
+    "sourceUrl": "https://github.com/RustCrypto/hashes",
+    "sourceVersion": "55b73b01",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
+    "lastHarvestedAt": "2026-10-18T22:35:46.486Z",
+    "learningId": "learn-github-rustcrypto-hashes"
   }
 }

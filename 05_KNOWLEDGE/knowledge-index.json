@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:29:35.089Z",
-  "total_verified_learnings": 322,
+  "last_updated": "2026-10-18T22:35:46.444Z",
+  "total_verified_learnings": 328,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3284,22 +3284,35 @@
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "callstack-react-native-paper",
+      "source": "callstack/react-native-paper",
+      "repository": "callstack/react-native-paper",
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "HEAD",
-      "content_hash": "fd4ce887aab8f00e1137e5ee35351d015d45a73708aa7bbaa6d61882d77146c5",
+      "source_version": "ce72155b",
+      "content_hash": "875861b1d2275902e4eafd58618e6e4e2e93900f3d054b070cd1cf3cc7a24ec3",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1790,
+          "title": "portal): replay queued portal operations in order (#5048)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.198Z"
+      "verified_at": "2026-10-18T22:35:41.727Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-camptocamp-terraboard": {
       "learning_id": "learn-github-camptocamp-terraboard",
@@ -24953,22 +24966,35 @@
     "learn-github-metalbear-co-mirrord": {
       "learning_id": "learn-github-metalbear-co-mirrord",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "metalbear-co-mirrord",
+      "source": "metalbear-co/mirrord",
+      "repository": "metalbear-co/mirrord",
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "HEAD",
-      "content_hash": "6a5539aa3604b80d5ba66cdd9f06841549bd9d2380959fd143b4d97a7fe381a3",
+      "source_version": "2a29e4d0",
+      "content_hash": "4c9d65d391bd28f42d151544da19eb3c1123984f672bf8ef343163bf990f7b42",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1787,
+          "title": "layer): drop a closed fd's layer state before the kernel close",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.271Z"
+      "verified_at": "2026-10-18T22:35:34.011Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-metatool-ai-metamcp": {
       "learning_id": "learn-github-metatool-ai-metamcp",
@@ -27966,22 +27992,35 @@
     "learn-github-openkruise-kruise": {
       "learning_id": "learn-github-openkruise-kruise",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "openkruise-kruise",
+      "source": "openkruise/kruise",
+      "repository": "openkruise/kruise",
       "slug": "openkruise-kruise",
       "platform": "github",
       "source_url": "https://github.com/openkruise/kruise",
-      "source_version": "HEAD",
-      "content_hash": "73dc7a77b04cdc4fd0ee65648ac292c6f6aec191ee81adf87841a44e0870977c",
+      "source_version": "567ce15b",
+      "content_hash": "0949587a25dc28d08737f7c306a5c723999a601696100355c3c2f29a90fa5001",
       "dossier_path": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1789,
+          "title": "ci): bump trivy-action to v0.36.0 to fix golangci-lint job failure",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.863Z"
+      "verified_at": "2026-10-18T22:35:41.404Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-openlit-openlit": {
       "learning_id": "learn-github-openlit-openlit",
@@ -30578,22 +30617,35 @@
     "learn-github-rustcrypto-hashes": {
       "learning_id": "learn-github-rustcrypto-hashes",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rustcrypto-hashes",
+      "source": "RustCrypto/hashes",
+      "repository": "RustCrypto/hashes",
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "HEAD",
-      "content_hash": "04388234666d182cc9e1fa35caed4b2520217a74bece40b5c0cb59d6a16cb032",
+      "source_version": "55b73b01",
+      "content_hash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1792,
+          "title": "jh: add long-input regression tests (#894)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.342Z"
+      "verified_at": "2026-10-18T22:35:46.439Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rustls-rustls": {
       "learning_id": "learn-github-rustls-rustls",
@@ -33643,22 +33695,35 @@
     "learn-github-tensorchord-pgvecto-rs": {
       "learning_id": "learn-github-tensorchord-pgvecto-rs",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tensorchord-pgvecto.rs",
+      "source": "tensorchord/pgvecto.rs",
+      "repository": "tensorchord/pgvecto.rs",
       "slug": "tensorchord-pgvecto.rs",
       "platform": "github",
       "source_url": "https://github.com/tensorchord/pgvecto.rs",
-      "source_version": "HEAD",
-      "content_hash": "ea141eeea165605477827bd33b140d8b97554d4c318b4655afaa79804c355844",
+      "source_version": "2b290b34",
+      "content_hash": "0fcbccb0c5edfe590c6d2c99c57d69b620fb5510459a2a698c88df7b41142231",
       "dossier_path": "07_PROJECT_LEARNING/tensorchord-pgvecto.rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tensorchord-pgvecto.rs-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1791,
+          "title": "change requirement fix security issue (#609)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.916Z"
+      "verified_at": "2026-10-18T22:35:46.274Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -68094,6 +68159,123 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:29:35.083Z"
+    },
+    "rule-1787": {
+      "learning_id": "rule-1787",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1787,
+      "title": "layer): drop a closed fd's layer state before the kernel close",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "2a29e4d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:35:34.011Z"
+    },
+    "learn-github-crawlcove-xml-sitemap-validator": {
+      "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CrawlCove/xml-sitemap-validator",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "slug": "crawlcove-crawlcove-sitemap-validator",
+      "platform": "github",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "caa1d0b5",
+      "content_hash": "5fa2c7f66608e5091fc5e32a6bde3365ac0ddbd9f4ab0a662a7c2679116bb0b2",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1788,
+          "title": "repository renamed to CrawlCove/xml-sitemap-validator; point links, install comm",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T22:35:36.106Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-1788": {
+      "learning_id": "rule-1788",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1788,
+      "title": "repository renamed to CrawlCove/xml-sitemap-validator; point links, install comm",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "caa1d0b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:35:36.106Z"
+    },
+    "rule-1789": {
+      "learning_id": "rule-1789",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1789,
+      "title": "ci): bump trivy-action to v0.36.0 to fix golangci-lint job failure",
+      "source_url": "https://github.com/openkruise/kruise",
+      "source_version": "567ce15b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:35:41.404Z"
+    },
+    "rule-1790": {
+      "learning_id": "rule-1790",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1790,
+      "title": "portal): replay queued portal operations in order (#5048)",
+      "source_url": "https://github.com/callstack/react-native-paper",
+      "source_version": "ce72155b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:35:41.727Z"
+    },
+    "rule-1791": {
+      "learning_id": "rule-1791",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1791,
+      "title": "change requirement fix security issue (#609)",
+      "source_url": "https://github.com/tensorchord/pgvecto.rs",
+      "source_version": "2b290b34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:35:46.274Z"
+    },
+    "rule-1792": {
+      "learning_id": "rule-1792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1792,
+      "title": "jh: add long-input regression tests (#894)",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "55b73b01",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:35:46.439Z"
     }
   },
   "aliases": {

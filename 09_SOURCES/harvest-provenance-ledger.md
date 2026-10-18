@@ -2572,3 +2572,10 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `694ac05c` | Multi-dimensional audit evidence | 2026-10-18T22:29:31.568Z |
 | `learn-github-cryfs-cryfs` | `https://github.com/cryfs/cryfs` | `ad1f72d5` | Multi-dimensional audit evidence | 2026-10-18T22:29:32.741Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `d961b09c` | Multi-dimensional audit evidence | 2026-10-18T22:29:35.119Z |
+| `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `f48a88f9` | Multi-dimensional audit evidence | 2026-10-18T22:35:34.022Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `2a29e4d0` | Multi-dimensional audit evidence | 2026-10-18T22:35:34.053Z |
+| `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `caa1d0b5` | Multi-dimensional audit evidence | 2026-10-18T22:35:36.149Z |
+| `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `567ce15b` | Multi-dimensional audit evidence | 2026-10-18T22:35:41.441Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `ce72155b` | Multi-dimensional audit evidence | 2026-10-18T22:35:41.776Z |
+| `learn-github-tensorchord-pgvecto-rs` | `https://github.com/tensorchord/pgvecto.rs` | `2b290b34` | Multi-dimensional audit evidence | 2026-10-18T22:35:46.348Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `55b73b01` | Multi-dimensional audit evidence | 2026-10-18T22:35:46.486Z |
