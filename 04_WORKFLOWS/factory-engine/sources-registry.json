@@ -2921,8 +2921,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:39:37.698Z",
-    "lastVerified": "2026-10-17T23:39:37.698Z",
+    "lastChecked": "2026-10-18T06:21:10.253Z",
+    "lastVerified": "2026-10-18T06:21:10.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:04:14.222Z",
-    "lastVerified": "2026-10-18T06:04:14.222Z",
+    "lastChecked": "2026-10-18T06:21:12.750Z",
+    "lastVerified": "2026-10-18T06:21:12.750Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24339,5 +24339,12 @@
     "lastChecked": "2026-10-18T06:17:58.818Z",
     "revisionIdentifier": "64b6a78344",
     "lastVerified": "2026-10-18T06:17:58.818Z"
+  },
+  "lokoe-mehdi-scouter": {
+    "name": "scouter",
+    "officialUrl": "https://github.com/lokoe-mehdi/scouter",
+    "lastChecked": "2026-10-18T06:21:00.252Z",
+    "revisionIdentifier": "4de023b517",
+    "lastVerified": "2026-10-18T06:21:00.252Z"
   }
 }
