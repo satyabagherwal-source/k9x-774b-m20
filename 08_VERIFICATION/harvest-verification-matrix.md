@@ -2377,3 +2377,4 @@
 | `CYCLE-20261018-V6MA` | `2026-10-18T01:14:56.194Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`38d5d6bd...`) |
 | `CYCLE-20261018-4A38` | `2026-10-18T01:22:00.596Z` | `chrisryugj/kordoc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1579` | Yes (`be28439a...`) |
 | `CYCLE-20261018-DA8U` | `2026-10-18T01:29:00.702Z` | `vibheksoni/stealth-browser-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1580` | Yes (`83578de8...`) |
+| `CYCLE-20261018-LP5X` | `2026-10-18T01:35:33.285Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1581, Rule 1582` | Yes (`4a1d756a...`) |

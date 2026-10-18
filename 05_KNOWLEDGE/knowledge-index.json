@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T01:29:00.678Z",
+  "last_updated": "2026-10-18T01:35:33.265Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -43662,7 +43662,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "c272470c5e7bca118e254a63ce21b7f5384839a67d7c79a812fa581eaabb4fef",
+      "content_hash": "4a1d756a953954d085a25e8f31c383f9f594d18ca554dd3d2630b96fdc7b29c0",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
@@ -43675,6 +43675,16 @@
           "number": 1289,
           "title": "Intra-ViT Early Compression for MLLM Efficiency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1581,
+          "title": "MoE Weight Layout for Edge Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1582,
+          "title": "Visual Token Compression Ratio Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43682,7 +43692,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T17:14:16.948Z",
+      "verified_at": "2026-10-18T01:35:33.258Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
