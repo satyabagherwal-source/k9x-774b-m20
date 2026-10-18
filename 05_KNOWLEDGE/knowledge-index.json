@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:55:23.644Z",
-  "total_verified_learnings": 347,
+  "last_updated": "2026-10-18T23:02:12.689Z",
+  "total_verified_learnings": 353,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1122,22 +1122,35 @@
     "learn-github-aliyuncontainerservice-pouch": {
       "learning_id": "learn-github-aliyuncontainerservice-pouch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aliyuncontainerservice-pouch",
+      "source": "AliyunContainerService/pouch",
+      "repository": "AliyunContainerService/pouch",
       "slug": "aliyuncontainerservice-pouch",
       "platform": "github",
       "source_url": "https://github.com/AliyunContainerService/pouch",
-      "source_version": "HEAD",
-      "content_hash": "90c7e8b473e5c4d9b5952796f32218c8c9ab6865e83765e97f21a4dfdbde568d",
+      "source_version": "ba854f2d",
+      "content_hash": "3b5f710f1bf83465c3e980ea976527cb64affa0aceb3cefce2683c975bea7575",
       "dossier_path": "07_PROJECT_LEARNING/aliyuncontainerservice-pouch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aliyuncontainerservice-pouch-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1819,
+          "title": "containerd CVE-2023-25153",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.752Z"
+      "verified_at": "2026-10-18T23:02:08.104Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alookai-alook": {
       "learning_id": "learn-github-alookai-alook",
@@ -5663,22 +5676,35 @@
     "learn-github-doobidoo-mcp-memory-service": {
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "doobidoo-mcp-memory-service",
+      "source": "doobidoo/mcp-memory-service",
+      "repository": "doobidoo/mcp-memory-service",
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "HEAD",
-      "content_hash": "cab27cdaaf45bdc03e1ab427e3b3df56b6eec0c3d0b4a516f73816183c047290",
+      "source_version": "e022bce9",
+      "content_hash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1821,
+          "title": "discovery): clear discovery/client.py of unsanitised logger calls (#1146) (#1577",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.675Z"
+      "verified_at": "2026-10-18T23:02:12.681Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dosco-graphjin": {
       "learning_id": "learn-github-dosco-graphjin",
@@ -7533,22 +7559,35 @@
     "learn-github-flox-flox": {
       "learning_id": "learn-github-flox-flox",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "flox-flox",
+      "source": "flox/flox",
+      "repository": "flox/flox",
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "HEAD",
-      "content_hash": "f3d83c73860f72a52f7a8f40cec1895ff5b22989f45e04a76864e542737d09dc",
+      "source_version": "ee4b1147",
+      "content_hash": "530c890fea6a49068aa1fee66e88a666ee965bb37232fd1d288f9472307428c4",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1817,
+          "title": "buildenv): distinguish expired token from logged-out on empty store-info",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.967Z"
+      "verified_at": "2026-10-18T23:02:00.429Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-flux-iac-tofu-controller": {
       "learning_id": "learn-github-flux-iac-tofu-controller",
@@ -19071,13 +19110,18 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "9dd6e540d03dab7474a44b48082758a2dce3dddd3c2e5ff20213d74afd4a0872",
+      "content_hash": "660586bb280f5107dcdd47db6cf9056e7b265c430d9bc3785bbde5383a48f9fd",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
         {
           "number": "EXISTING",
           "title": "Attention-Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 498,
+          "title": "Tokenizer-Model Alignment Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -19107,7 +19151,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-17T20:22:32.960Z",
+      "verified_at": "2026-10-18T23:02:06.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36091,42 +36135,62 @@
     "learn-github-wix-react-native-calendars": {
       "learning_id": "learn-github-wix-react-native-calendars",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "wix-react-native-calendars",
+      "source": "wix/react-native-calendars",
+      "repository": "wix/react-native-calendars",
       "slug": "wix-react-native-calendars",
       "platform": "github",
       "source_url": "https://github.com/wix/react-native-calendars",
-      "source_version": "HEAD",
-      "content_hash": "3b62b02ee6a88223a1380c168d3a6863248db3953155710133ffb1683f33ce56",
+      "source_version": "808c6e10",
+      "content_hash": "0bbeb1356b86552793907262a89ab7a1cc8ed7414f7bfda145d201ad29874189",
       "dossier_path": "07_PROJECT_LEARNING/wix-react-native-calendars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-react-native-calendars-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.333Z"
+      "verified_at": "2026-10-18T23:01:58.193Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-wix-react-native-navigation": {
       "learning_id": "learn-github-wix-react-native-navigation",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "wix-react-native-navigation",
+      "source": "wix/react-native-navigation",
+      "repository": "wix/react-native-navigation",
       "slug": "wix-react-native-navigation",
       "platform": "github",
       "source_url": "https://github.com/wix/react-native-navigation",
-      "source_version": "HEAD",
-      "content_hash": "13ebb860e9dbc4ae97c2a69580617d32d55c70e3469de83e65a21e95fe0dc965",
+      "source_version": "1de39e0d",
+      "content_hash": "b7fae8fb024fe87354c87118427a2dd058e23d329955a6189c17b812e58608c1",
       "dossier_path": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1818,
+          "title": "crash attaching custom row to non-AppCompat activities (#8337)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.336Z"
+      "verified_at": "2026-10-18T23:02:06.189Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-wix-react-native-ui-lib": {
       "learning_id": "learn-github-wix-react-native-ui-lib",
@@ -36824,22 +36888,35 @@
     "learn-github-zama-ai-tfhe-rs": {
       "learning_id": "learn-github-zama-ai-tfhe-rs",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zama-ai-tfhe-rs",
+      "source": "zama-ai/tfhe-rs",
+      "repository": "zama-ai/tfhe-rs",
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "HEAD",
-      "content_hash": "1e81307bde342666d9a873176a6593ab8d5d1ae582e86a64a71a3831f8c3c184",
+      "source_version": "bcdba2b0",
+      "content_hash": "c5719b6091795eb582476deb1a63bdc2a46692d5672f6877dc2e10e1c8e39810",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1820,
+          "title": "integer): overflow flag of signed overflowing scalar add/sub for out-of-range sc",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.502Z"
+      "verified_at": "2026-10-18T23:02:10.483Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zarf-dev-zarf": {
       "learning_id": "learn-github-zarf-dev-zarf",
@@ -50168,15 +50245,15 @@
       "learning_id": "rule-498",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 498,
-      "title": "Tokenizer-Model Alignment Invariant (Harvested from meta-llama/Llama-2-7b-chat-hf)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer-Model Alignment Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-10-18T23:02:06.089Z"
     },
     "rule-499": {
       "learning_id": "rule-499",
@@ -57140,15 +57217,15 @@
       "learning_id": "rule-996",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 996,
-      "title": "Masked Mean Pooling Invariant for Variable-Length Sequences (Harvested from sentence-transformers/all-MiniLM-L6-v2)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Masked Mean Pooling Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-18T23:02:06.089Z"
     },
     "rule-997": {
       "learning_id": "rule-997",
@@ -68903,6 +68980,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:55:23.637Z"
+    },
+    "rule-1817": {
+      "learning_id": "rule-1817",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1817,
+      "title": "buildenv): distinguish expired token from logged-out on empty store-info",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "ee4b1147",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:02:00.429Z"
+    },
+    "rule-1818": {
+      "learning_id": "rule-1818",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1818,
+      "title": "crash attaching custom row to non-AppCompat activities (#8337)",
+      "source_url": "https://github.com/wix/react-native-navigation",
+      "source_version": "1de39e0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:02:06.189Z"
+    },
+    "rule-1819": {
+      "learning_id": "rule-1819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1819,
+      "title": "containerd CVE-2023-25153",
+      "source_url": "https://github.com/AliyunContainerService/pouch",
+      "source_version": "ba854f2d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:02:08.104Z"
+    },
+    "rule-1820": {
+      "learning_id": "rule-1820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1820,
+      "title": "integer): overflow flag of signed overflowing scalar add/sub for out-of-range sc",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "bcdba2b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:02:10.483Z"
+    },
+    "rule-1821": {
+      "learning_id": "rule-1821",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1821,
+      "title": "discovery): clear discovery/client.py of unsanitised logger calls (#1146) (#1577",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "e022bce9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:02:12.681Z"
     }
   },
   "aliases": {

@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "9dd6e540d03dab7474a44b48082758a2dce3dddd3c2e5ff20213d74afd4a0872",
-    "lastHarvestedAt": "2026-10-17T20:22:33.004Z",
+    "contentHash": "660586bb280f5107dcdd47db6cf9056e7b265c430d9bc3785bbde5383a48f9fd",
+    "lastHarvestedAt": "2026-10-18T23:02:06.149Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -3238,5 +3238,65 @@
     "contentHash": "9495da80305b4e6f0ead7eef8b44b9e4a1785198c7b19467eba67ae751c7646e",
     "lastHarvestedAt": "2026-10-18T22:55:23.682Z",
     "learningId": "learn-github-tambo-ai-tambo"
+  },
+  "wix-react-native-calendars": {
+    "repository": "wix/react-native-calendars",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wix/react-native-calendars",
+    "sourceVersion": "808c6e10",
+    "license": "MIT",
+    "contentHash": "0bbeb1356b86552793907262a89ab7a1cc8ed7414f7bfda145d201ad29874189",
+    "lastHarvestedAt": "2026-10-18T23:01:58.243Z",
+    "learningId": "learn-github-wix-react-native-calendars"
+  },
+  "flox-flox": {
+    "repository": "flox/flox",
+    "platform": "github",
+    "sourceUrl": "https://github.com/flox/flox",
+    "sourceVersion": "ee4b1147",
+    "license": "GPL-2.0",
+    "contentHash": "530c890fea6a49068aa1fee66e88a666ee965bb37232fd1d288f9472307428c4",
+    "lastHarvestedAt": "2026-10-18T23:02:00.475Z",
+    "learningId": "learn-github-flox-flox"
+  },
+  "wix-react-native-navigation": {
+    "repository": "wix/react-native-navigation",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wix/react-native-navigation",
+    "sourceVersion": "1de39e0d",
+    "license": "MIT",
+    "contentHash": "b7fae8fb024fe87354c87118427a2dd058e23d329955a6189c17b812e58608c1",
+    "lastHarvestedAt": "2026-10-18T23:02:06.234Z",
+    "learningId": "learn-github-wix-react-native-navigation"
+  },
+  "aliyuncontainerservice-pouch": {
+    "repository": "AliyunContainerService/pouch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AliyunContainerService/pouch",
+    "sourceVersion": "ba854f2d",
+    "license": "Apache-2.0",
+    "contentHash": "3b5f710f1bf83465c3e980ea976527cb64affa0aceb3cefce2683c975bea7575",
+    "lastHarvestedAt": "2026-10-18T23:02:08.153Z",
+    "learningId": "learn-github-aliyuncontainerservice-pouch"
+  },
+  "zama-ai-tfhe-rs": {
+    "repository": "zama-ai/tfhe-rs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
+    "sourceVersion": "bcdba2b0",
+    "license": "NOASSERTION",
+    "contentHash": "c5719b6091795eb582476deb1a63bdc2a46692d5672f6877dc2e10e1c8e39810",
+    "lastHarvestedAt": "2026-10-18T23:02:10.529Z",
+    "learningId": "learn-github-zama-ai-tfhe-rs"
+  },
+  "doobidoo-mcp-memory-service": {
+    "repository": "doobidoo/mcp-memory-service",
+    "platform": "github",
+    "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
+    "sourceVersion": "e022bce9",
+    "license": "Apache-2.0",
+    "contentHash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
+    "lastHarvestedAt": "2026-10-18T23:02:12.729Z",
+    "learningId": "learn-github-doobidoo-mcp-memory-service"
   }
 }

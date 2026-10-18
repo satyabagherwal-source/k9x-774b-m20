@@ -2593,3 +2593,10 @@
 | `CYCLE-20261018-AD7L` | `2026-10-18T22:54:26.913Z` | `nexus-xyz/nexus-zkvm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1812` | Yes (`6aa8a119...`) |
 | `CYCLE-20261018-AELS` | `2026-10-18T22:54:28.720Z` | `featureform/featureform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1813` | Yes (`cefbcac8...`) |
 | `CYCLE-20261018-BL0G` | `2026-10-18T22:55:23.680Z` | `tambo-ai/tambo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1814, Rule 1815, Rule 1816` | Yes (`9495da80...`) |
+| `CYCLE-20261018-K1GG` | `2026-10-18T23:01:58.240Z` | `wix/react-native-calendars` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wix-react-native-calendars-learnings.md` | Yes (`0bbeb135...`) |
+| `CYCLE-20261018-K36G` | `2026-10-18T23:02:00.472Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1817` | Yes (`530c890f...`) |
+| `CYCLE-20261018-K7K2` | `2026-10-18T23:02:06.146Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule 498` | Yes (`660586bb...`) |
+| `CYCLE-20261018-K7MF` | `2026-10-18T23:02:06.231Z` | `wix/react-native-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1818` | Yes (`b7fae8fb...`) |
+| `CYCLE-20261018-K93Q` | `2026-10-18T23:02:08.150Z` | `AliyunContainerService/pouch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1819` | Yes (`3b5f710f...`) |
+| `CYCLE-20261018-KAXQ` | `2026-10-18T23:02:10.526Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1820` | Yes (`c5719b60...`) |
+| `CYCLE-20261018-KCMU` | `2026-10-18T23:02:12.726Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1821` | Yes (`7dd15ae6...`) |

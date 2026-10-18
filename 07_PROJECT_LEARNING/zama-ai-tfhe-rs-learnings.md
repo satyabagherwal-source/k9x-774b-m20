@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
+> **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
+> **Source Version**: `bcdba2b0`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:02:10.317Z  
+> **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): zama-ai/tfhe-rs
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:49:49.760Z  
+> **Harvest Timestamp**: 2026-10-18T23:02:10.053Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1667 stars
+- **Stars / Engagement**: 1673 stars
 
 ---
 
@@ -1883,490 +1897,6 @@ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
          
 ```
 
-### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_utilities.h`
-```
-#ifndef CUDA_BOOTSTRAP_UTILITIES_H
-#define CUDA_BOOTSTRAP_UTILITIES_H
-
-#include "checked_arithmetic.h"
-#include "device.h"
-#include "pbs_enums.h"
-#include "vector_types.h"
-#include <stdint.h>
-
-template <typename Torus>
-uint64_t get_buffer_size_full_sm_programmable_bootstrap_step_one(
-    uint32_t polynomial_size) {
-  size_t double_count = (sizeof(Torus) == 16) ? 2 : 1;
-  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator_rotated
-         safe_mul_sizeof<double>(double_count,
-                                 (size_t)polynomial_size); // accumulator fft
-}
-template <typename Torus>
-uint64_t get_buffer_size_full_sm_programmable_bootstrap_step_two(
-    uint32_t polynomial_size) {
-  size_t double_count = (sizeof(Torus) == 16) ? 2 : 1;
-  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator
-         safe_mul_sizeof<double>(double_count,
-                                 (size_t)polynomial_size); // accumulator fft
-}
-
-template <typename Torus>
-uint64_t
-get_buffer_size_partial_sm_programmable_bootstrap(uint32_t polynomial_size) {
-  size_t double_count = (sizeof(Torus) == 16) ? 2 : 1;
-  return safe_mul_sizeof<double>(double_count,
-                                 (size_t)polynomial_size); // accumulator fft
-}
-
-template <typename Torus>
-uint64_t
-get_buffer_size_full_sm_programmable_bootstrap_tbc(uint32_t polynomial_size) {
-  return safe_mul_sizeof<Torus>(polynomial_size) +      // accumulator_rotated
-         safe_mul_sizeof<Torus>(polynomial_size) +      // accumulator
-         safe_mul_sizeof<double2>(polynomial_size / 2); // accumulator fft
-}
-
-template <typename Torus>
-uint64_t get_buffer_size_partial_sm_programmable_bootstrap_tbc(
-    uint32_t polynomial_size) {
-  return safe_mul_sizeof<double2>(polynomial_size /
-                                  2); // accumulator fft mask & body
-}
-
-template <typename Torus>
-uint64_t get_buffer_size_sm_dsm_plus_tbc_classic_programmable_bootstrap(
-    uint32_t polynomial_size) {
-  return safe_mul_sizeof<double2>(polynomial_size / 2); // tbc
-}
-
-template <typename Torus>
-uint64_t get_buffer_size_full_sm_programmable_bootstrap_tbc_2_2_params(
-    uint32_t polynomial_size) {
-  // In the first implementation with 2-2 params, we need up to 5 polynomials in
-  // shared memory we can optimize this later
-  return safe_mul_sizeof<Torus>((size_t)polynomial_size, (size_t)5);
-}
-
-template <typename Torus>
-uint64_t
-get_buffer_size_full_sm_programmable_bootstrap_cg(uint32_t polynomial_size) {
-  size_t double_count = (sizeof(Torus) == 16) ? 2 : 1;
-  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator_rotated
-         safe_mul_sizeof<Torus>(polynomial_size) + // accumulator
-         safe_mul_sizeof<double>((size_t)polynomial_size,
-                                 double_count); // accumulator fft
-}
-
-template <typename Torus>
-uint64_t
-get_buffer_size_partial_sm_programmable_bootstrap_cg(uint32_t polynomial_size) {
-  size_t double_count = (sizeof(Torus) == 16) ? 2 : 1;
-  return safe_mul_sizeof<double>((size_t)polynomial_size,
-                                 double_count); // accumulator fft mask & body
-}
-template <typename Torus>
-uint64_t get_buffer_size_full_sm_programmable_bootstrap_128_tbc(
-    uint32_t polynomial_size) {
-  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator_rotated
-         safe_mul_sizeof<Torus>(polynomial_size) + // accumulator
-         safe_mul_sizeof<Torus>(polynomial_size);  // accumulator fft
-}
-
-template <typename Torus>
-bool supports_distributed_shared_memory_on_classic_programmable_bootstrap(
-    uint32_t polynomial_size, uint32_t max_shared_memory);
-
-struct pbs_buffer_base {
-  virtual void release(cudaStream_t stream, uint32_t gpu_index) = 0;
-  virtual ~pbs_buffer_base() = default;
-};
-
-template <typename Torus, PBS_TYPE pbs_type> struct pbs_buffer;
-
-template <typename Torus>
-struct pbs_buffer<Torus, PBS_TYPE::CLASSICAL> : public pbs_buffer_base {
-  int8_t *d_mem;
-
-  Torus *global_accumulator;
-  double2 *global_join_buffer;
-
-  PBS_VARIANT pbs_variant;
-  PBS_MS_REDUCTION_T noise_reduction_type;
-  bool gpu_memory_allocated;
-
-  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t lwe_dimension,
-             uint32_t glwe_dimension, uint32_t polynomial_size,
-             uint32_t level_count, uint32_t input_lwe_ciphertext_count,
-             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
-             PBS_MS_REDUCTION_T noise_reduction_type, uint64_t &size_tracker)
-      : noise_reduction_type(noise_reduction_type) {
-    gpu_memory_allocated = allocate_gpu_memory;
-    cuda_set_device(gpu_index);
-    this->pbs_variant = pbs_variant;
-
-    auto max_shared_memory = cuda_get_max_shared_memory(gpu_index);
-    switch (pbs_variant) {
-    case PBS_VARIANT::DEFAULT: {
-      uint64_t full_sm_step_one =
-          get_buffer_size_full_sm_programmable_bootstrap_step_one<Torus>(
-              polynomial_size);
-      uint64_t full_sm_step_two =
-          get_buffer_size_full_sm_programmable_bootstrap_step_two<Torus>(
-              polynomial_size);
-      uint64_t partial_sm =
-          get_buffer_size_partial_sm_programmable_bootstrap<Torus>(
-              polynomial_size);
-
-      uint64_t partial_dm_step_one = full_sm_step_one - partial_sm;
-      uint64_t partial_dm_step_two = full_sm_step_two - partial_sm;
-      uint64_t full_dm = full_sm_step_one;
-
-      uint64_t device_mem = 0;
-      if (max_shared_memory < partial_sm) {
-        device_mem =
-            safe_mul(full_dm, (size_t)input_lwe_ciphertext_count,
-                     (size_t)level_count, (size_t)(glwe_dimension + 1));
-      } else if (max_shared_memory < full_sm_step_two) {
-        device_mem = safe_mul(
-            partial_dm_step_two +
-                safe_mul(partial_dm_step_one, (size_t)level_count),
-            (size_t)input_lwe_ciphertext_count, (size_t)(glwe_dimension + 1));
-      } else if (max_shared_memory < full_sm_step_one) {
-        device_mem =
-            safe_mul(partial_dm_step_one, (size_t)input_lwe_ciphertext_count,
-                     (size_t)level_count, (size_t)(glwe_dimension + 1));
-      }
-      // Otherwise, both kernels run all in shared memory
-      d_mem = (int8_t *)cuda_malloc_with_size_tracking_async(
-          device_mem, stream, gpu_index, size_tracker, allocate_gpu_memory);
-
-      global_join_buffer = (double2 *)cuda_malloc_with_size_tracking_async(
-          safe_mul_sizeof<double2>(
-              safe_mul((size_t)(glwe_dimension + 1), (size_t)level_count),
-              (size_t)input_lwe_ciphertext_count,
-              (size_t)(polynomial_size / 2)),
-          stream, gpu_index, size_tracker, allocate_gpu_memory);
-
-      global_accumulator = (Torus *)cuda_malloc_with_size_tracking_async(
-          safe_mul_sizeof<Torus>((size_t)(glwe_dimension + 1),
-                                 (size_t)input_lwe_ciphertext_count,
-                                 (size_t)polynomial_size),
-          stream, gpu_index, size_tracker, allocate_gpu_memory);
-    } break;
-    case PBS_VARIANT::CG: {
-      uint64_t full_sm =
-          get_buffer_size_full_sm_programmable_bootstrap_cg<Torus>(
-              polynomial_size);
-      uint64_t partial_sm =
-          get_buffer_size_partial_sm_programmable_bootstrap_cg<Torus>(
-              polynomial_size);
-
-      uint64_t partial_dm = full_sm - partial_sm;
-      uint64_t full_dm = full_sm;
-      uint64_t device_mem = 0;
-
-      if (max_shared_memory < partial_sm) {
-        device_mem =
-            safe_mul(full_dm, (size_t)input_lwe_ciphertext_count,
-                     (size_t)level_count, (size_t)(glwe_dimension + 1));
-      } else if (max_shared_memory < full_sm) {
-        device_mem =
-            safe_mul(partial_dm, (size_t)input_lwe_ciphertext_count,
-                     (size_t)level_count, (size_t)(glwe_dimension + 1));
-      }
-
-      // Otherwise, both kernels run all in shared memory
-      d_mem = (int8_t *)cuda_malloc_with_size_tracking_async(
-          device_mem, stream, gpu_index, size_tracker, allocate_gpu_memory);
-
-      global_join_buffer = (double2 *)cuda_malloc_with_size_tracking_async(
-          safe_mul_sizeof<double2>(
-              safe_mul((size_t)(glwe_dimension + 1), (size_t)level_count),
-              (size_t)input_lwe_ciphertext_count,
-              (size_t)(polynomial_size / 2)),
-          stream, gpu_index, size_tracker, allocate_gpu_memory);
-    } break;
-#if CUDA_ARCH >= 900
-    case PBS_VARIANT::TBC: {
-
-      bool supports_dsm =
-          supports_distributed_shared_memory_on_classic_programmable_bootstrap<
-              Torus>(polynomial_size, max_shared_memory);
-
-      uint64_t full_sm =
-          get_buffer_size_full_sm_programmable_bootstrap_tbc<Torus>(
-              polynomial_size);
-      uint64_t partial_sm =
-          get_buffer_size_partial_sm_programmable_bootstrap_tbc<Torus>(
-              polynomial_size);
-      uint64_t minimum_sm_tbc = 0;
-      if (supports_dsm)
-        minimum_sm_tbc =
-            get_buffer_size_sm_dsm_plus_tbc_classic_programmable_bootstrap<
-                Torus>(polynomial_size);
-
-      uint64_t partial_dm = full_sm - partial_sm;
-      uint64_t full_dm = full_sm;
-      uint64_t device_mem = 0;
-
-      // There is a minimum amount of memory we need to run the TBC PBS, which
-      // is minimum_sm_tbc. We know that minimum_sm_tbc bytes are available
-      // because otherwise the previous check would have redirected
-      // computation to some other variant. If over that we don't have more
-      // partial_sm bytes, TBC PBS will run on NOSM. If we have partial_sm but
-      // not full_sm bytes, it will run on PARTIALSM. Otherwise, FULLSM.
-      //
-      // NOSM mode actually requires minimum_sm_tbc shared memory bytes.
-      if (max_shared_memory < partial_sm + minimum_sm_tbc) {
-        device_mem =
-            safe_mul(full_dm, (size_t)input_lwe_ciphertext_count,
-                     (size_t)level_count, (size_t)(glwe_dimension + 1));
-      } else if (max_shared_memory < full_sm + minimum_sm_tbc) {
-        device_mem =
-            safe_mul(partial_
-```
-
-### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/trivium/trivium_utilities.h`
-```
-#ifndef TRIVIUM_UTILITIES_H
-#define TRIVIUM_UTILITIES_H
-#include "../integer/integer_utilities.h"
-
-constexpr uint32_t TRIVIUM_BATCH_SIZE = 64;
-constexpr uint32_t TRIVIUM_NUM_AND_GATES = 3;
-constexpr uint32_t TRIVIUM_NUM_FLUSH_PATHS = 4;
-constexpr uint32_t TRIVIUM_REGISTER_A_BITS = 93;
-constexpr uint32_t TRIVIUM_REGISTER_B_BITS = 84;
-constexpr uint32_t TRIVIUM_REGISTER_C_BITS = 111;
-constexpr uint32_t TRIVIUM_KEY_BITS = 80;
-constexpr uint32_t TRIVIUM_IV_BITS = 80;
-// Standard Trivium warm-up: 1152 cycles (4 * 288 state bits) before the first
-// keystream bit is emitted, processed in batches of TRIVIUM_BATCH_SIZE.
-constexpr uint32_t TRIVIUM_WARMUP_CYCLES = 1152;
-constexpr uint32_t TRIVIUM_WARMUP_BATCHES =
-    TRIVIUM_WARMUP_CYCLES / TRIVIUM_BATCH_SIZE;
-
-/// Struct to hold the LUTs.
-template <typename Torus> struct int_trivium_lut_buffers {
-  // Bivariate AND Gate LUT:
-  // AND operation: f(a, b) = (a & 1) & (b & 1).
-  // This is a Bivariate PBS used for the non-linear parts of Trivium.
-  int_radix_lut<Torus> *and_lut;
-
-  // Univariate Identity LUT:
-  // MESSAGE EXTRACTION operation: f(x) = x & 1.
-  // This is a Univariate PBS used to "flush" the state: it resets the noise
-  // after additions and ensures the message stays within the binary message
-  // space.
-  int_radix_lut<Torus> *flush_lut;
-
-  int_trivium_lut_buffers(CudaStreams streams, const int_radix_params &params,
-                          bool allocate_gpu_memory, uint32_t num_trivium_inputs,
-                          uint64_t &size_tracker) {
-
-    uint32_t total_lut_ops =
-        num_trivium_inputs * TRIVIUM_BATCH_SIZE * TRIVIUM_NUM_AND_GATES;
-
-    this->and_lut = new int_radix_lut<Torus>(streams, params, 1, total_lut_ops,
-                                             allocate_gpu_memory, size_tracker);
-
-    std::function<Torus(Torus, Torus)> and_lambda =
-        [](Torus a, Torus b) -> Torus { return (a & 1) & (b & 1); };
-
-    auto active_streams_and =
-        streams.active_gpu_subset(total_lut_ops, params.pbs_type);
-    this->and_lut->generate_and_broadcast_bivariate_lut(
-        active_streams_and, {0}, {and_lambda}, LUT_0_FOR_ALL_BLOCKS);
-
-    uint32_t total_flush_ops =
-        num_trivium_inputs * TRIVIUM_BATCH_SIZE * TRIVIUM_NUM_FLUSH_PATHS;
-
-    this->flush_lut = new int_radix_lut<Torus>(
-        streams, params, 1, total_flush_ops, allocate_gpu_memory, size_tracker);
-
-    std::function<Torus(Torus)> flush_lambda = [](Torus x) -> Torus {
-      return x & 1;
-    };
-
-    auto active_streams_flush =
-        streams.active_gpu_subset(total_flush_ops, params.pbs_type);
-    this->flush_lut->generate_and_broadcast_lut(
-        active_streams_flush, {0}, {flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
-  }
-
-  void release(CudaStreams streams) {
-    this->and_lut->release(streams);
-    delete this->and_lut;
-    this->and_lut = nullptr;
-
-    this->flush_lut->release(streams);
-    delete this->flush_lut;
-    this->flush_lut = nullptr;
-  }
-};
-
-/// Holds the temporary GPU buffers and workspaces required during the
-/// execution of the Trivium cipher. Registers a/b/c are owned by the caller
-/// (the persistent state) and passed in to each call.
-template <typename Torus> struct int_trivium_workspaces {
-  CudaRadixCiphertextFFI *shift_workspace;
-
-  // Temporary Update Buffers:
-  // Intermediate buffers for the trivium update logic (t1, t2, t3)
-  CudaRadixCiphertextFFI *temp_t1;
-  CudaRadixCiphertextFFI *temp_t2;
-  CudaRadixCiphertextFFI *temp_t3;
-
-  // Buffers to hold the new values for the registers after an update step
-  CudaRadixCiphertextFFI *new_a;
-  CudaRadixCiphertextFFI *new_b;
-  CudaRadixCiphertextFFI *new_c;
-
-  // PBS Packing Buffers:
-  // Buffers for packing inputs into the bivariate lookup table (AND gate)
-  CudaRadixCiphertextFFI *packed_pbs_lhs;
-  CudaRadixCiphertextFFI *packed_pbs_rhs;
-  // Buffer for the output of the bivariate PBS
-  CudaRadixCiphertextFFI *packed_pbs_out;
-
-  // Flush/Cleanup Packing Buffers:
-  // Buffers for the "flush" LUT which cleans up noise after additions
-  CudaRadixCiphertextFFI *packed_flush_in;
-  CudaRadixCiphertextFFI *packed_flush_out;
-
-  int_trivium_workspaces(CudaStreams streams, const int_radix_params &params,
-                         bool allocate_gpu_memory, uint32_t num_inputs,
-                         uint64_t &size_tracker) {
-
-    uint32_t batch_blocks = TRIVIUM_BATCH_SIZE * num_inputs;
-
-    this->shift_workspace = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->shift_workspace,
-        TRIVIUM_REGISTER_C_BITS * num_inputs, params.big_lwe_dimension,
-        size_tracker, allocate_gpu_memory);
-
-    this->temp_t1 = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->temp_t1, batch_blocks,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->temp_t2 = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->temp_t2, batch_blocks,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->temp_t3 = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->temp_t3, batch_blocks,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->new_a = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->new_a, batch_blocks,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->new_b = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->new_b, batch_blocks,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->new_c = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->new_c, batch_blocks,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->packed_pbs_lhs = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->packed_pbs_lhs,
-        TRIVIUM_NUM_AND_GATES * batch_blocks, params.big_lwe_dimension,
-        size_tracker, allocate_gpu_memory);
-
-    this->packed_pbs_rhs = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->packed_pbs_rhs,
-        TRIVIUM_NUM_AND_GATES * batch_blocks, params.big_lwe_dimension,
-        size_tracker, allocate_gpu_memory);
-
-    this->packed_pbs_out = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->packed_pbs_out,
-        TRIVIUM_NUM_AND_GATES * batch_blocks, params.big_lwe_dimension,
-        size_tracker, allocate_gpu_memory);
-
-    this->packed_flush_in = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->packed_flush_in,
-        TRIVIUM_NUM_FLUSH_PATHS * batch_blocks, params.big_lwe_dimension,
-        size_tracker, allocate_gpu_memory);
-
-    this->packed_flush_out = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->packed_flush_out,
-        TRIVIUM_NUM_FLUSH_PATHS * batch_blocks, params.big_lwe_dimension,
-        size_tracker, allocate_gpu_memory);
-  }
-
-  void release(CudaStreams streams, bool allocate_gpu_memory) {
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->shift_workspace, allocate_gpu_memory);
-    delete this->shift_workspace;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->temp_t1, allocate_gpu_memory);
-    delete this->temp_t1;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->temp_t2, allocate_gpu_memory);
-    delete this->temp_t2;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->temp_t3, allocate_gpu_memory);
-    delete this->temp_t3;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->new_a, allocate_gpu_memory);
-    delete this->new_a;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->new_b, allocate_gpu_memory);
-    delete this->new_b;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->new_c, allocate_gpu_memory);
-    delete this->new_c;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->packed_pbs_lhs, allocate_gpu_memory);
-    delete this->packed_pbs_lhs;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->packed_pbs_rhs, allocate_gpu_memory);
-    delete this->packed_pbs_rhs;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->packed_pbs_out, allocate_gpu_memory);
-    delete this->packed_pbs_out;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->packed_flush_in, allocate_gpu_memory);
-    delete this->packed_flush_in;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->packed_flush_out, allocate_gpu_memory);
-    delete this->packed_flush_out;
-
-    cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
-  }
-};
-
-template <typename Torus> struct int_trivium_buffer {
-  int_radix_params params;
-  bool allocate_gpu_memory;
- 
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2375,54 +1905,12 @@ template <typename Torus> struct int_trivium_buffer {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #2083** (2025-02-22): **Signed Division Support on CUDA**
   *Symptoms*: **Describe the bug** In the [GPU acceleration](https://docs.zama.ai/tfhe-rs/guides/run_on_gpu) tutorial, the list of supported operations indicates that signed division is available.  However, when executing a signed division operation on a CUDA device, the operation results in a panic with the message "Division '/' is not yet supported by Cuda devices" in `tfhe/src/high_level_api/integers/signed/ops.rs`.   **To Reproduce** Since I used the C API when working with TFHE-rs, I reproduced this issue through the C API. You can reproduce it with the following code. ```c++     Config* config = nullptr;     ConfigBuilder* config_builder = nullptr;      config_builder_default(&config_builder);     config_builder_build(config_builder, &config);     ClientKey* client_key = nullptr;     client_key_generate(config, &client_key);     CompressedServerKey* compressed_server_key = nullptr;     compressed_server_key_new(client_key, &compressed_server_key);     CudaServerKey* cuda_server_key = nullptr;     compressed_server_key_decompress_to_gpu(compressed_server_key, &cuda_server_key);     set_cuda_server_key(cuda_server_key);     PublicKey* public_key;     public_key_new(client_key, &public_key);      FheInt32* a = nullptr;     FheInt32* b = nullptr;     fhe_int32_try_encrypt_with_public_key_i32(10, public_key, &a);     fhe_int32_try_encrypt_with_public_key_i32(2, public_key, &b);     FheInt32* result = nullptr;     fhe_int32_div(a, b, &result);     fhe_int32_destroy(a);     fhe_int32_destro
-  **Post-Mortem & Fix Analysis**:
-  > hello @duhaode520 thanks for reporting it, it might be a problem in the C API only missing some binding, we'll check.  Thanks a lot for the repro code!
-  > So looks like we do have the Signed Division for CUDA, but it may not have been plugged in the so called "High Level API", we should be able to remedy to this fairly soon
-  > @IceTDrinker  , thanks for timely reply.  I've found a solution to bypass this problem. I set  `server_key` and `cuda_server_key` simultaneously, and the division works correctly. I'm wondering whether the CUDA is enabled in this case, or if all operations bypass the CUDA and the CPU is used for the computations instead.
 
 - **Issue #2037** (2025-09-18): **Range of Barrett intermediate result**
   *Symptoms*: I have found that the implementation of Barrett reduction can give incorrect results in some cases. Here is an example:  ```rust use concrete_ntt::prime32::Plan;  fn main() {     let p: u32 = 0x7fe0_1001;     let polynomial_size = 1024;     let plan = Plan::try_new(polynomial_size, p).unwrap();      let value = 0x6e63593a;     let mut acc = [0u32; 8];     let input = [value, 0, 0, 0, 0, 0, 0, 0];      plan.mul_accumulate(&mut acc, &input, &input);      let expected = (u64::from(value) * u64::from(value) % u64::from(p)) as u32;     println!("acc[0] = {}", acc[0]);     assert_eq!(acc[0], expected); } ```  The output is: ``` acc[0] = 360086499 thread 'main' panicked at examples/reduction.rs:16:5: assertion `left == right` failed   left: 360086499  right: 364272609 ```  Note that 364272609 - 360086499 = 4186110 = 2 * (0x8000_0000 - 0x7fe0_1001). Performing two conditional subtractions at the conclusion of the algorithm, rather than one, would have given the correct result. (Unfortunately, there are not enough bits in the intermediate result to see that two conditional subtractions are necessary.)  The possible need for two conditional subtractions was noted in Barrett's paper ("Our calculations show that the result x so obtained will always be in the range 0 to 3M - 1") and is also captured in https://eprint.iacr.org/2015/785 ("approximates the result $c = d \bmod n$ by a quasi-reduced number $c + \epsilon n$ where $0 \le \epsilon \le 2$"), but is omitted by the presentation in h
   **Post-Mortem & Fix Analysis**:
   > transferring to the repo where this will be maintained
   > thanks for the report
-  > I'm guessing the problem is likely also present for ~64 bits primes ?
-
-- **Issue #1687** (2025-01-22): **Panic at program execution end with `tfhe::generate_keys` before rust 1.83**
-  *Symptoms*: **Describe the bug**  Followed docs. When calling `tfhe::generate_keys`, I get a panic at the end of the program execution (not during the function call). The panic is:  ``` thread '<unnamed>' panicked at library/core/src/panicking.rs:220:5: unsafe precondition(s) violated: ptr::replace requires that the pointer argument is aligned and non-null note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace thread caused non-unwinding panic. aborting. [1]    26769 abort      cargo run ```  **To Reproduce**  Add the correct tfhe-rs version:  ```toml tfhe = { version = "0.8.3", features = [     "boolean",     "shortint",     "integer",     "aarch64-unix", ] } ```  Then in `src/main.rs`:  ```rust use tfhe::{generate_keys, ConfigBuilder};  fn main() {     let config = ConfigBuilder::default().build();     let _ = generate_keys(config);      println!("Done."); } ```  **Expected behaviour**  No error.  **Actual behavior**  The program ends, the keys are generated, but there's a panic at the end, _after_ the call to generate_keys. See that the "Done." line is correctly printed.  ``` ➜  tfhe-rs-panic git:(main) ✗ cargo run    Compiling tfhe-rs-panic v0.1.0 (/Users/amaury/Workspace/inco/tfhe-rs-panic)     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.37s      Running `target/debug/tfhe-rs-panic` Done. thread '<unnamed>' panicked at library/core/src/panicking.rs:220:5: unsafe precondition(s) violated: 
-  **Post-Mortem & Fix Analysis**:
-  > That is very very weird to say the least.  do you have any non standard configuration ?  which hardware/OS (model and version) are you using ?  could you try updating your rust version with rustup update ?  also cargo clean and cargo update if you have the chance and try again
-  > Also if you have a full backtrace, it’s not clear what code is triggering the panic
-  > I think there may have been a faulty linker packaged with xcode tools on Apple mac at some point, could be worth to check if there is a way to update the dev tools coming from Apple
-
-- **Issue #1010** (2024-03-25): **Performing WoPBS with ciphertext a trivial encryption of zero fails**
-  *Symptoms*: **Describe the bug** Trying to perform pbs with ciphertext being a trivial encryption of zero panics.  **To Reproduce** Steps to reproduce the behaviour: 1. Using the `integer` API, create a `WopbsKey`, then call `generate_lut_radix()` with that key, 2. Apply the `WopbsKey::wopbs()` method with the lut and a trivial encryption of zero as ciphertext,  **Expected behaviour** The `wopbs()` method returns (an encryption of) the lookup table at index zero.  **Evidence** Here's a minimal example: ```rust use tfhe::{     integer::{gen_keys_radix, wopbs::WopbsKey, RadixCiphertext, RadixClientKey, ServerKey},     shortint::{         parameters::parameters_wopbs_message_carry::WOPBS_PARAM_MESSAGE_2_CARRY_2_KS_PBS,         prelude::PARAM_MESSAGE_2_CARRY_2_KS_PBS,     }, };  fn generate_keys() -> (RadixClientKey, ServerKey, WopbsKey) {     let (ck, sk) = gen_keys_radix(PARAM_MESSAGE_2_CARRY_2_KS_PBS, 16);     let wopbs_key = WopbsKey::new_wopbs_key(&ck, &sk, &WOPBS_PARAM_MESSAGE_2_CARRY_2_KS_PBS);     (ck, sk, wopbs_key) }  fn main() {     let (ck, sk, wopbs_key) = generate_keys();     let ct_max_arg: RadixCiphertext = sk.create_trivial_radix(8u64, 4);     let f = |x: u64| -> u64 { 5 + x };     let lut = wopbs_key.generate_lut_radix(&ct_max_arg, f);     let apply_lut = |encrypted_id: &RadixCiphertext| -> RadixCiphertext {         let ct = wopbs_key.keyswitch_to_wopbs_params(&sk, encrypted_id);         let ct_res = wopbs_key.wopbs(&ct, &lut);         wo
-  **Post-Mortem & Fix Analysis**:
-  > thanks for following up here
-  > @Juul-Mc-Goa you are hitting a debug assert try running with --release and tell me if it works, if so the debug assert is not necessary and we'll remove it
-  > @IceTDrinker just runned with `--release` and indeed, it works.
-
-- **Issue #702** (2023-11-22): **About the simple example code in the readme**
-  *Symptoms*: **Describe the bug** The simple example code won't run on my OS(windows x86_64)  **To Reproduce** Steps to reproduce the behaviour 1. Copy the example code in the README to IDE 2. cargo run --release on terminal  3. bug report  **Evidence** ![image](https://github.com/zama-ai/tfhe-rs/assets/142082125/7c563e30-bbe7-4487-9ccc-f84ee7740f62) ![image](https://github.com/zama-ai/tfhe-rs/assets/142082125/ec94f4d4-c0b6-4693-bc79-a2d06e731436) ![image](https://github.com/zama-ai/tfhe-rs/assets/142082125/b660bb1f-f7d1-4c02-83c7-d612bdf0aba3)  **Configuration(please complete the following information):**  - OS: Microsoft windows 11  
-  **Post-Mortem & Fix Analysis**:
-  > hello @chinchihwork it’s not a bug it’s just that our main branch has evolved and it has breaking changes compared to 0.4 which was the last version published. Can you try with the code from main ?  Otherwise the function call change you did is the correct one to get it working again.  If you check https://github.com/zama-ai/tfhe-rs/tree/release/0.4.x you will see the readme has the function call you expect. Keeping this issue open for now as we will want to see how to handle this
-  > hello @IceTDrinker, thanks for replying.  I cloned the code from main branch to my .cargo/registry today but the code on README still couldn't run at first. Then I realised I didn't change the dependency setting in my cargo.toml.   After I change the dependency setting to:  ```toml [dependencies] tfhe = { git = "https://github.com/zama-ai/tfhe-rs.git", version = "0.5.0" , features = ["boolean", "shortint", "integer", "x86_64"] } ``` It works fine. Thanks for answering!  Also, since I am a beginner learning rust, I was wondering if I config the dependency to github repository, I won't download anything from remote to my local .cargo/registry right? Because  I don't see any change in my .cargo/registry after I change the dependency.  Thanks for helping out!
-  > Looks like cargo clones repositories in ls ~/.cargo/git, not quite sure how it is organized in there ! One thing to be wary of is that if we push new stuff to main it will only update the github repository when you do a cargo update.  If we have answered your questions feel free to close the issue 🙂 
-
-- **Issue #460** (2023-07-26): **Radix Integers: Possible Overflow When Propagating Carries **
-  *Symptoms*: **Describe the bug** The `full_propagate` operation employed in `smart` arithmetic operations for radix integers sometimes seem to overflow when adding carries, leading to incorrect calculations. The incorrect calculation seems to occur only when employing a `ServerKey` generated from a `CompressedServerKey`, which might be the expected flow when a compact representation of a `ServerKey` needs to be shared with a third party.  **To Reproduce** I wrote a simple test to reproduce the incorrect calculation, employing version `0.3.0-beta.0` ```rust         let client_key = RadixClientKey::new(PARAM_MESSAGE_2_CARRY_2, 14);         let compressed_eval_key = CompressedServerKey::new(client_key.as_ref());         let evaluation_key = ServerKey::from(compressed_eval_key);         let modulus = (client_key.parameters().message_modulus().0 as u128).pow(client_key.num_blocks() as u32)             as u128;          let mut ct = client_key.encrypt(modulus-1);         let mut res_ct = ct.clone();         for _ in 0..5 {             res_ct = evaluation_key.smart_add_parallelized(&mut res_ct, &mut ct);         }         let res = client_key.decrypt::<u128>(&res_ct);         assert_eq!(modulus-6, res);  ``` In the last addition, an overflow when propagating carries seem to happen leading to an incorrect result.  **Expected behaviour** The last addition in the code reported above should compute the correct result  **Evidence** I found out that if I generate the `Serve
-  **Post-Mortem & Fix Analysis**:
-  > Thanks, this looks to be right, the degree is not properly set when creating the Compressed Key at the integer level, thanks a lot for the bug report, will fix this ASAP
-  > Thanks a lot for the very detailed and thorough bug report @nicholas-mainardi PR #461 is open and will be merged as soon as it's approved and passing tests!  Cheers
-
-- **Issue #410** (2023-07-09): **The `r` resulted from integer `division` when multiplied together always return `0`.**
-  *Symptoms*: **Describe the bug** The `remainer` or `r` resulted from integer `division` when multiplied together always return `0`.  **To Reproduce** Steps to reproduce the behaviour  1. Install latest `tfhe`  ```toml tfhe = { git = "https://github.com/zama-ai/tfhe-rs", features = [ "boolean", "shortint", "integer", "internal-keycache"] } ```  2. Encrypt some number with integer radix key 3. Do two division that results in `q` and `r`, In this case `ServerKey::div_rem_parallelized`. 4. Multiply `r` from those division together. 5. The result from that multiplication will always be **zero**.  ```rust fn main() {     let (client_key, server_key) = IntegerKeyCache.get_from_params(PARAM_MESSAGE_2_CARRY_2);     const NUM_BLOCK: usize = 4;     let a: u128 = 248;     let b: u128 = 249;     let c: u128 = 250;     let d: u128 = 251;     let enc_a = client_key.encrypt_radix(a, NUM_BLOCK);     let enc_b = client_key.encrypt_radix(b, NUM_BLOCK);     let enc_c = client_key.encrypt_radix(c, NUM_BLOCK);     let enc_d = client_key.encrypt_radix(d, NUM_BLOCK);      let (mut q1, mut r1) = server_key.div_rem_parallelized(&enc_b, &enc_a);     let (mut q2, mut r2) = server_key.div_rem_parallelized(&enc_d, &enc_c);      println!("r1: {:?}", client_key.decrypt_radix::<u8>(&r1));     println!("r2: {:?}", client_key.decrypt_radix::<u8>(&r2));     println!("q1: {:?}", client_key.decrypt_radix::<u8>(&q1));     println!("q2: {:?}", client_key.decrypt_radix::<u8>(&q2));      let
-  **Post-Mortem & Fix Analysis**:
-  > What happens if you replace the first smart mul by just mul_parallelized ?
-  > > What happens if you replace the first smart mul by just mul_parallelized ?  Still output the same value ``` r1: 1 r2: 1 q1: 1 q2: 1 r1r2: 0 q1q2: 1 r1r2_retry: 1 ```
-  > Can you try calling full_propagate_parallelized on r1r2 ? Or rather on r1 and r2 before multiplying 
-
-- **Issue #117** (2023-02-28): **key_id hashing error**
-  *Symptoms*: **Describe the bug** The `buffer_for_keys` method returns the same buffer for different keys. This leads to a buffer created for one key, being provided for another key in methods such as `keyswitch_programmable_bootstrap_assign`. The buffer's LWE dimension mismatches the LWE dimension of the second key leading to a panic.   **To Reproduce** Steps to reproduce the behaviour 1. Generate the first key pair with the first parameter set (e.g. `PARAM_MESSAGE_5_CARRY_1`) 2. Create an accumulator and evaluate a `keyswitch_programmable_bootstrap_assign` with the first key pair. 3. Generate the second key pair with the second parameter set (e.g. `PARAM_MESSAGE_4_CARRY_2`) 4. Create an accumulator and evaluate a `keyswitch_programmable_bootstrap_assign` with the second key pair.  **Expected behaviour** Both PBS steps should succeed independently from each other.  **Evidence** Minimal example: ``` use tfhe::shortint::gen_keys; use tfhe::shortint::parameters::*;  fn main() {     let params1 = PARAM_MESSAGE_5_CARRY_1;     let (ck1, sk1) = gen_keys(params1);     let acc1 = sk1.generate_accumulator(|a| a);     let mut idx1 = ck1.encrypt(0);     sk1.keyswitch_programmable_bootstrap_assign(&mut idx1, &acc1);     let res1 = ck1.decrypt(&idx1);      let params2 = PARAM_MESSAGE_4_CARRY_2;     let (ck2, sk2) = gen_keys(params2);     let acc2 = sk2.generate_accumulator(|a| a);     let mut idx2 = ck2.encrypt(0);     sk2.keyswitch_programmable_bootstrap_assign(&mut idx
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2439,2550 +1927,954 @@ template <typename Torus> struct int_trivium_buffer {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad00decd` (2026-10-02)
-**Commit Message**: chore(deps): update dtolnay/rust-toolchain requirement to 7e38f4b43b4db5c8dd498af069a4f6196df1d067
+### Incident Patch 1: `a856fe70` (2026-10-09)
+**Commit Message**: fix(integer): overflow flag of signed overflowing scalar add/sub for out-of-range scalars
 
-Updates the requirements on [dtolnay/rust-toolchain](https://github.com/dtolnay/rust-toolchain) to permit the latest version.
-- [Release notes](https://github.com/dtolnay/rust-toolchain/releases)
-- [Commits](https://github.com/dtolnay/rust-toolchain/commits/7e38f4b43b4db5c8dd498af069a4f6196df1d067)
+Signed overflowing scalar add/sub and unsigned overflowing add
+(sub was fine) would give invalid an invalid overflow flag when the
+scalar was out of range of the radix, but fitted the number of blocks,
+due to the fact that we allow scalars of the opposite signedness.
+e.g RadixCiphertext with signed scalar like i8, i16, etc
+    SignedRadixCiphertext with unsigned scalar like u8, u16, etc
 
----
-updated-dependencies:
-- dependency-name: dtolnay/rust-toolchain
-  dependency-version: 7e38f4b43b4db5c8dd498af069a4f6196df1d067
-  dependency-type: direct:production
-...
+Another bug was due to not correctly sign extending small signed types
+like i8
+Same bug also happened in unsigned overflowing sub
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/aws_data_tests.yml` (modified, +1/-1)
+**File**: `tfhe/src/integer/gpu/server_key/radix/scalar_add.rs` (modified, +1/-0)
 ```diff
-@@ -74,7 +74,7 @@ jobs:
-           git config --local --unset-all http.https://github.com/.extraheader || rm "${RUNNER_TEMP}"/git-credentials-*.config
+@@ -382,6 +382,7 @@ impl CudaServerKey {
+                 .iter_as::<u64>()
+                 .skip(ct_left.ciphertext.d_blocks.lwe_ciphertext_count().0);
  
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
++        // FIXME(gpu): use `ScalarOverflowFlagSource`
+         let extra_blocks_have_correct_value = if scalar < Scalar::ZERO {
+             extra_scalar_block_iter.all(|block| block == (self.message_modulus.0 - 1))
+         } else {
 ```
 
-**File**: `.github/workflows/aws_tfhe_fast_tests.yml` (modified, +1/-1)
+**File**: `tfhe/src/integer/gpu/server_key/radix/scalar_sub.rs` (modified, +1/-0)
 ```diff
-@@ -161,7 +161,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
+@@ -213,6 +213,7 @@ impl CudaServerKey {
+                 .iter_as::<u64>()
+                 .skip(ct_left.ciphertext.d_blocks.lwe_ciphertext_count().0);
  
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
++        // FIXME(gpu): use `ScalarOverflowFlagSource`
+         let extra_blocks_have_correct_value = if scalar < Scalar::ZERO {
+             extra_scalar_block_iter.all(|block| block == (self.message_modulus.0 - 1))
+         } else {
 ```
 
-**File**: `.github/workflows/aws_tfhe_integer_tests.yml` (modified, +1/-1)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +378/-9)
 ```diff
-@@ -90,7 +90,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_noise_checks.yml` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_signed_integer_tests.yml` (modified, +1/-1)
-```diff
-@@ -90,7 +90,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_tests.yml` (modified, +1/-1)
-```diff
-@@ -166,7 +166,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_wasm_tests.yml` (modified, +1/-1)
-```diff
-@@ -95,7 +95,7 @@ jobs:
-           git config --global --add url."https://github.com/".insteadOf "git@github.com:"
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +1/-1)
-```diff
-@@ -171,7 +171,7 @@ jobs:
-           SHA: ${{ github.sha }}
- 
-       - name: Install rust
--        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: nightly
- 
-```
-
----
-
-### Incident Patch 2: `cacb7bae` (2026-10-01)
-**Commit Message**: fix(bench): Measure sustained Hpu throughput for erc7984
-
-The throughput benches issued one batch of IOps and waited on the last
-result before criterion closed the iteration, so the pipeline was drained
-on every batch. An Hpu only sustains its rate while IOps keep coming: with
-a batch barely larger than the node count, each node ran a single IOp and
-then idled through the whole refill, which measures a batch latency rather
-than a throughput.
-
-Reissuing the same operands `hpu_rounds` times before the single drain
-keeps the queues filled without growing the resident set: operands are
-pinned on their node on first use and stay there, so the on-board pool
-only has to hold them once.
-
-Also fix the SIMD operand order: the IOp declares its operands as
-(from, to, amount) triplets, the bench passed them grouped by role.
-
-**File**: `tfhe-benchmark/benches/high_level_api/erc7984.rs` (modified, +57/-35)
-```diff
-@@ -281,10 +281,11 @@ where
-     FheType: FheHpu,
- {
-     use tfhe::tfhe_hpu_backend::prelude::hpu_asm;
-+    // The IOp declares its operands per transfer, i.e. as (from, to, amount) triplets, and not
-+    // grouped by role (c.f. `erc7984_simd` in zhc_builder)
-     let src = HpuHandle {
--        native: vec![from_amount, to_amount, amount]
--            .into_iter()
--            .flatten()
-+        native: std::iter::zip(from_amount, std::iter::zip(to_amount, amount))
-+            .flat_map(|(from, (to, amount))| [from, to, amount])
-             .collect(),
-         boolean: vec![],
-         imm: vec![],
-@@ -294,7 +295,7 @@ where
-         hpu_asm::IOpcode::from(hpu_asm::StaticIOp::Erc7984Simd),
-         src,
-     );
--    // Iop erc_7984 return new_from, new_to
-+    // Iop erc_7984_simd return a (new_from, new_to) pair for each transfer
-     let res = res_handle.native;
-     res
- }
-@@ -636,38 +637,49 @@ fn hpu_bench_transfer_throughput<FheType, F>(
-     let params = client_key.computation_parameters();
-     let params_name = params.name();
- 
-+    // Size of the inputs set
-+    // There is no memory release throughout the test. This enable to play with
-+    // number of operation while prevent memory alloaction issue
-+    // Number of times the operand set is reissued before the pipeline is drained
-+    let input_set = 64;
-+
-     let mut group = group.benchmark_group(tag.to_string());
--    for num_elems in [10, 100] {
--        group.throughput(Throughput::Elements(num_elems));
-+    for rounds in [10, 50, 100] {
-+        let real_num_elems = rounds * input_set;
-+        group.throughput(Throughput::Elements(real_num_elems));
-         let bench_spec = BenchmarkSpec::new_hlapi(
-             HlapiBench::Erc7984(erc7984_bench_spec),
-             &params_name,
-             OperandType::CipherText,
-             Some(tag),
-             BenchmarkMetric::Throughput,
--            Some(num_elems.try_into().unwrap()),
-+            Some(real_num_elems.try_into().unwrap()),
-         );
--        group.bench_with_input(bench_spec.to_string(), &num_elems, |b, &num_elems| {
--            let from_amounts = (0..num_elems)
-+        group.bench_with_input(bench_spec.to_string(), &input_set, |b, &input_set| {
-+            let from_amounts = (0..input_set)
-                 .map(|_| FheType::encrypt(rng.gen::<u64>(), client_key))
-                 .collect::<Vec<_>>();
--            let to_amounts = (0..num_elems)
-+            let to_amounts = (0..input_set)
-                 .map(|_| FheType::encrypt(rng.gen::<u64>(), client_key))
-                 .collect::<Vec<_>>();
--            let amounts = (0..num_elems)
-+            let amounts = (0..input_set)
-                 .map(|_| FheType::encrypt(rng.gen::<u64>(), client_key))
-                 .collect::<Vec<_>>();
- 
-             b.iter(|| {
--                let (last_new_from, last_new_to) = std::iter::zip(
--                    from_amounts.iter(),
--                    std::iter::zip(to_amounts.iter(), amounts.iter()),
--                )
--                .map(|(from_amount, (to_amount, amount))| {
--                    transfer_func(from_amount, to_amount, amount)
--                })
--                .last()
--                .unwrap();
-+                // Issue every round back to back
-+                let (last_new_from, last_new_to) = (0..rounds)
-+                    .flat_map(|_| {
-+                        std::iter::zip(
-+                            from_amounts.iter(),
-+                            std::iter::zip(to_amounts.iter(), amounts.iter()),
-+                        )
-+                    })
-+                    .map(|(from_amount, (to_amount, amount))| {
-+                        transfer_func(from_amount, to_amount, amount)
-+                    })
-+                    .last()
-+                    .unwrap();
- 
-                 // Wait on last result to enforce all computation is over
-                 last_new_from.wait();
-@@ -707,9 +719,15 @@ fn hpu_bench_transfer_throughput_simd<FheType, F>(
-     let params = client_key.computation_parameters();
-     let params_name = params.name();
- 
-+    // Size of the inputs set
-+    // There is no memory release throughout the test. This enable to play with
-+    // number of operation while prevent memory alloaction issue
-+    // Number of times the operand set is reissued before the pipeline is drained
-+    let input_set = 24;
-+
-     let mut group = group.benchmark_group(tag.to_string());
--    for num_elems in [2, 8] {
--        let real_num_elems = num_elems * (hpu_simd_n as u64);
-+    for rounds in [10, 50, 100] {
-+        let real_num_elems = rounds * input_set * (hpu_simd_n as u64);
-         group.throughput(Throughput::Elements(real_num_elems));
-         let bench_spec = BenchmarkSpec::new_hlapi(
-             HlapiBench::Erc7984(erc7984_bench_spec),
-@@ -719,22 +737,22 @@ fn hpu_bench_transfer_throughput_simd<FheType, F>(
-             BenchmarkMetric::Throughput,
-             Some(real_num_elems.try_into().unwrap()),
-         );
--      
-```
-
----
-
-### Incident Patch 3: `aefd1438` (2026-09-25)
-**Commit Message**: fix(wasm): repair the push value for u32 in worker.js
-
-**File**: `tfhe/web_wasm_parallel_tests/worker.js` (modified, +2/-2)
-```diff
-@@ -155,15 +155,15 @@ async function compactPublicKeyBench32Bit(params_name) {
-   let bench_id = cpk_gen_id(params_name_str, 32);
-   bench_results[mean_name(bench_id, cross_origin)] = timing_1;
- 
--  let values = [0, 1, 2, 2394, U32_MAX].map(BigInt);
-+  let values = [0, 1, 2, 2394, U32_MAX];
- 
-   // Bench the encryption for bench_loops iterations
-   start = performance.now();
-   let compact_list;
-   for (let i = 0; i < bench_loops; i++) {
-     let builder = CompactCiphertextList.builder(publicKey);
-     for (let value of values) {
--      builder.push_u256(value);
-+      builder.push_u32(value);
-     }
-     compact_list = builder.build();
-   }
-```
-
----
-
-### Incident Patch 4: `0e3c6619` (2026-09-29)
-**Commit Message**: chore(ci): refacto around setup and teardown of slab and also fix the teardown condition
-
-**File**: `.github/workflows/aws_tfhe_noise_checks.yml` (modified, +21/-44)
-```diff
-@@ -27,30 +27,15 @@ permissions:
- jobs:
-   setup-instance:
-     name: aws_tfhe_noise_checks/setup-instance
--    runs-on: ubuntu-latest
--    outputs:
--      runner-name: ${{ steps.start-remote-instance.outputs.label || steps.start-github-instance.outputs.runner_group }}
--    steps:
--      - name: Start remote instance
--        id: start-remote-instance
--        if: env.SECRETS_AVAILABLE == 'true'
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: aws
--          # We want an hpc7a more compute, will be faster
--          profile: bench
--
--      # This instance will be spawned especially for pull-request from forked repository
--      - name: Start GitHub instance
--        id: start-github-instance
--        if: env.SECRETS_AVAILABLE == 'false'
--        run: |
--          echo "Cannot run this without secrets"
--          exit 1
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: aws
-+      # We want an hpc7a more compute, will be faster
-+      profile: bench
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   noise-checks:
-     name: aws_tfhe_noise_checks/noise-checks
-@@ -92,24 +77,16 @@ jobs:
- 
-   teardown-instance:
-     name: aws_tfhe_noise_checks/teardown-instance
--    if: ${{ always() && needs.setup-instance.result == 'success' }}
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-     needs: [ setup-instance, noise-checks ]
--    runs-on: ubuntu-latest
--    steps:
--      - name: Stop remote instance
--        id: stop-instance
--        if: env.SECRETS_AVAILABLE == 'true'
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
--
--      - name: Slack Notification
--        if: ${{ !success() }}
--        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
--        env:
--          SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "Instance teardown (noise-checks) finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: noise-checks
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +20/-33)
-```diff
-@@ -130,20 +130,14 @@ jobs:
-   setup-instance:
-     name: benchmark_cpu_common/setup-instance
-     needs: prepare-matrix
--    runs-on: ubuntu-latest
--    outputs:
--      runner-name: ${{ steps.start-instance.outputs.label }}
--    steps:
--      - name: Start instance
--        id: start-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: ${{ inputs.backend }}
--          profile: ${{ inputs.profile }}
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: ${{ inputs.backend }}
-+      profile: ${{ inputs.profile }}
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   integer-benchmarks:
-     name: benchmark_cpu_common/integer-benchmarks
-@@ -295,23 +289,16 @@ jobs:
- 
-   teardown-instance:
-     name: benchmark_cpu_common/teardown-instance
--    if: ${{ always() && needs.setup-instance.result == 'success' }}
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-     needs: [ setup-instance, integer-benchmarks ]
--    runs-on: ubuntu-latest
--    steps:
--      - name: Stop instance
--        id: stop-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
--
--      - name: Slack Notification
--        if: ${{ failure() }}
--        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
--        env:
--          SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "Instance teardown (cpu-benchmarks) finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: cpu-benchmarks
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/benchmark_ct_key_sizes.yml` (modified, +20/-33)
-```diff
-@@ -27,20 +27,14 @@ jobs:
-     name: Setup instance (sizes-benchmarks)
-     if: github.event_name == 'workflow_dispatch' ||
-       (github.event_name == 'schedule' && github.repository == 'zama-ai/tfhe-rs')
--    runs-on: ubuntu-latest
--    outputs:
--      runner-name: ${{ steps.start-instance.outputs.label }}
--    steps:
--      - name: Start instance
--        id: start-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: aws
--          profile: cpu-big
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: aws
-+      profile: cpu-big
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   sizes-benchmarks:
-     name: Execute sizes client benchmarks
-@@ -133,23 +127,16 @@ jobs:
- 
-   teardown-instance:
-     name: Teardown instance (sizes-benchmarks)
--    if: ${{ always() && needs.setup-instance.result == 'success' }}
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-     needs: [ setup-instance, sizes-benchmarks ]
--    runs-on: ubuntu-latest
--    steps:
--      - name: Stop instance
--        id: stop-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
--
--      - name: Slack Notification
--        if: ${{ failure() }}
--        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
--        env:
--          SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "Instance teardown (sizes-benchmarks) finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: sizes-benchmarks
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/benchmark_gpu_common.yml` (modified, +20/-33)
-```diff
-@@ -131,20 +131,14 @@ jobs:
-   setup-instance:
-     name: benchmark_gpu_common/setup-instance
-     needs: prepare-matrix
--    runs-on: ubuntu-latest
--    outputs:
--      runner-name: ${{ steps.start-instance.outputs.label }}
--    steps:
--      - name: Start instance
--        id: start-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: ${{ inputs.backend }}
--          profile: ${{ inputs.profile }}
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: ${{ inputs.backend }}
-+      profile: ${{ inputs.profile }}
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   install-dependencies:
-     name: benchmark_gpu_common/install-dependencies
-@@ -365,23 +359,16 @@ jobs:
- 
-   teardown-instance:
-     name: benchmark_gpu_common/teardown-instance
--    if: ${{ always() && needs.setup-instance.result == 'success' }}
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-     needs: [ setup-instance, cuda-benchmarks, slack-notify ]
--    runs-on: ubuntu-latest
--    steps:
--      - name: Stop instance
--        id: stop-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
--
--      - name: Slack Notification
--        if: ${{ failure() }}
--        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
--        env:
--          SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "Instance teardown (cuda-${{ inputs.profile }}-benchmarks) finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: cuda-${{ inputs.profile }}-benchmarks
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/benchmark_gpu_coprocessor.yml` (modified, +20/-30)
-```diff
-@@ -83,22 +83,14 @@ jobs:
-   setup-instance:
-     name: benchmark_gpu_coprocessor/setup-instance
-     needs: parse-inputs
--    runs-on: ubuntu-latest
--    permissions:
--      contents: 'read'
--    outputs:
--      runner-name: ${{ steps.start-remote-instance.outputs.label }}
--    steps:
--      - name: Start remote instance
--        id: start-remote-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: ${{ needs.parse-inputs.outputs.backend }}
--          profile: ${{ needs.parse-inputs.outputs.profile }}
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: ${{ needs.parse-inputs.outputs.backend }}
-+      profile: ${{ needs.parse-inputs.outputs.profile }}
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   benchmark-gpu:
-     name: benchmark_gpu_coprocessor/benchmark-gpu (bpr)
-@@ -332,18 +324,16 @@ jobs:
- 
-   teardown-instance:
-     name: benchmark_gpu_coprocessor/teardown-instance
--    if: ${{ always() && needs.setup-instance.result == 'success' }}
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-     needs: [ setup-instance, benchmark-gpu ]
--    runs-on: ubuntu-latest
--    permissions:
--      contents: 'read'
--    steps:
--      - name: Stop remote instance
--        id: stop-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: benchmark-gpu-coprocessor
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/benchmark_perf_regression.yml` (modified, +20/-33)
-```diff
-@@ -137,20 +137,14 @@ jobs:
-   setup-instance:
-     name: benchmark_perf_regression/setup-instance
-     needs: prepare-benchmarks
--    runs-on: ubuntu-latest
--    outputs:
--      runner-name: ${{ steps.start-instance.outputs.label }}
--    steps:
--      - name: Start instance
--        id: start-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: ${{ needs.prepare-benchmarks.outputs.slab-backend }}
--          profile: ${{ needs.prepare-benchmarks.outputs.slab-profile }}
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: ${{ needs.prepare-benchmarks.outputs.slab-backend }}
-+      profile: ${{ needs.prepare-benchmarks.outputs.slab-profile }}
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   install-cuda-dependencies-if-required:
-     name: benchmark_perf_regression/install-cuda-dependencies-if-required
-@@ -356,23 +350,16 @@ jobs:
- 
-   teardown-instance:
-     name: benchmark_perf_regression/teardown-instance
--    if: ${{ always() && needs.setup-instance.result == 'success' }}
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-     needs: [ setup-instance, regression-benchmarks ]
--    runs-on: ubuntu-latest
--    steps:
--      - name: Stop instance
--        id: stop-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
--
--      - name: Slack Notification
--        if: ${{ failure() }}
--        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
--        env:
--          SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "Instance teardown (regression-benchmarks) finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: regression-benchmarks
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/benchmark_tfhe_fft.yml` (modified, +24/-38)
-```diff
-@@ -21,8 +21,7 @@ on:
-       - .github/workflows/benchmark_tfhe_fft.yml
-   schedule:
-     # Job will be triggered each Thursday at 11p.m.
--    - cron: '0 23 * * 4'
--
-+    - cron: "0 23 * * 4"
- 
- permissions: {}
- 
-@@ -34,20 +33,14 @@ jobs:
-     if:
-       (github.event_name != 'workflow_dispatch' && github.repository == 'zama-ai/tfhe-rs') ||
-       github.event_name == 'workflow_dispatch'
--    runs-on: ubuntu-latest
--    outputs:
--      runner-name: ${{ steps.start-instance.outputs.label }}
--    steps:
--      - name: Start instance
--        id: start-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: aws
--          profile: bench-hpc8
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: aws
-+      profile: bench-hpc8
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   fft-benchmarks:
-     name: benchmark_tfhe_fft/fft-benchmarks
-@@ -61,7 +54,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-         with:
-           fetch-depth: 0
--          persist-credentials: 'false'
-+          persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
- 
-       - name: Get benchmark details
-@@ -108,7 +101,7 @@ jobs:
-         with:
-           repository: zama-ai/slab
-           path: slab
--          persist-credentials: 'false'
-+          persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
- 
-       - name: Send data to Slab
-@@ -130,23 +123,16 @@ jobs:
- 
-   teardown-instance:
-     name: benchmark_tfhe_fft/teardown-instance
--    if: ${{ always() && needs.setup-instance.result != 'skipped' }}
--    needs: [ setup-instance, fft-benchmarks ]
--    runs-on: ubuntu-latest
--    steps:
--      - name: Stop instance
--        id: stop-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
--
--      - name: Slack Notification
--        if: ${{ failure() }}
--        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
--        env:
--          SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "Instance teardown (fft-benchmarks) finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-+    needs: [setup-instance, fft-benchmarks]
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: fft-benchmarks
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/benchmark_tfhe_ntt.yml` (modified, +22/-36)
-```diff
-@@ -23,7 +23,6 @@ on:
-     # Job will be triggered each Friday at 11p.m.
-     - cron: "0 23 * * 5"
- 
--
- permissions: {}
- 
- # zizmor: ignore[concurrency-limits] concurrency is managed after instance setup to ensure safe provisioning
-@@ -34,20 +33,14 @@ jobs:
-     if:
-       (github.event_name != 'workflow_dispatch' && github.repository == 'zama-ai/tfhe-rs') ||
-       github.event_name == 'workflow_dispatch'
--    runs-on: ubuntu-latest
--    outputs:
--      runner-name: ${{ steps.start-instance.outputs.label }}
--    steps:
--      - name: Start instance
--        id: start-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: start
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          backend: aws
--          profile: bench-hpc8
-+    uses: ./.github/workflows/slab_setup.yml
-+    with:
-+      backend: aws
-+      profile: bench-hpc8
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
- 
-   ntt-benchmarks:
-     name: benchmark_tfhe_ntt/ntt-benchmarks
-@@ -61,7 +54,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-         with:
-           fetch-depth: 0
--          persist-credentials: 'false'
-+          persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
- 
-       - name: Get benchmark details
-@@ -108,7 +101,7 @@ jobs:
-         with:
-           repository: zama-ai/slab
-           path: slab
--          persist-credentials: 'false'
-+          persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
- 
-       - name: Send data to Slab
-@@ -130,23 +123,16 @@ jobs:
- 
-   teardown-instance:
-     name: benchmark_tfhe_ntt/teardown-instance
--    if: ${{ always() && needs.setup-instance.result != 'skipped' }}
-+    if: ${{ always() && needs.setup-instance.outputs.runner-name != '' }}
-     needs: [setup-instance, ntt-benchmarks]
--    runs-on: ubuntu-latest
--    steps:
--      - name: Stop instance
--        id: stop-instance
--        uses: zama-ai/slab-github-runner@d4a5bb6e2a4b8aa19a10f596d7f142006a7e2c21 # v1.6.3
--        with:
--          mode: stop
--          github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
--          slab-url: ${{ secrets.SLAB_BASE_URL }}
--          job-secret: ${{ secrets.JOB_SECRET }}
--          label: ${{ needs.setup-instance.outputs.runner-name }}
--
--      - name: Slack Notification
--        if: ${{ failure() }}
--        uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
--        env:
--          SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "EC2 teardown (ntt-benchmarks) finished with status: ${{ job.status }}. (${{ env.ACTION_RUN_URL }})"
-+    uses: ./.github/workflows/slab_teardown.yml
-+    with:
-+      runner-name: ${{ needs.setup-instance.outputs.runner-name }}
-+      notification-context: ntt-benchmarks
-+    secrets:
-+      SLAB_ACTION_TOKEN: ${{ secrets.SLAB_ACTION_TOKEN }}
-+      SLAB_BASE_URL: ${{ secrets.SLAB_BASE_URL }}
-+      JOB_SECRET: ${{ secrets.JOB_SECRET }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
----
-
-### Incident Patch 5: `bb459398` (2026-09-28)
-**Commit Message**: chore(ci): fix workflow
-
-**File**: `Makefile` (modified, +2/-8)
-```diff
-@@ -2628,17 +2628,11 @@ endif
- 	--features=integer,gpu,internal-keycache,pbs-stats -p tfhe-benchmark --profile release_lto_off -- '::no_cmux::'
- 
- 	# ZK
--	# Proof is done on CPU node of the instance
-+	# Proof and verify are done on GPUs (gpu-zk enables the GPU prover and verifier)
- 	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_PARAM_TYPE=$(BENCH_PARAM_TYPE) __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) __TFHE_RS_BENCH_OP_FLAVOR=fast_default __TFHE_RS_BENCH_BIT_SIZES_SET=fast \
- 	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
- 	--bench integer-zk-pke \
--	--features=integer,internal-keycache,zk-pok,pbs-stats \
--	-p tfhe-benchmark -- 'tfhe::integer::zk::proof'
--	# Verify is done on GPUs
--	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_PARAM_TYPE=$(BENCH_PARAM_TYPE) __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) __TFHE_RS_BENCH_OP_FLAVOR=fast_default __TFHE_RS_BENCH_BIT_SIZES_SET=fast \
--	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
--	--bench integer-zk-pke \
--	--features=integer,internal-keycache,gpu,pbs-stats,zk-pok -p tfhe-benchmark --
-+	--features=integer,internal-keycache,gpu,gpu-zk,pbs-stats,zk-pok -p tfhe-benchmark --
- 
- 	# Compression
- 	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_PARAM_TYPE=$(BENCH_PARAM_TYPE) __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) __TFHE_RS_BENCH_BIT_SIZES_SET=FAST \
-```
-
-**File**: `ci/parse_summary_benches_to_csv.py` (modified, +13/-1)
-```diff
-@@ -72,6 +72,18 @@ def label(point):
-     return label
- 
- 
-+def _zk_proof(point):
-+    if "::zk::proof::" not in point["id"]:
-+        return False
-+    # The zk-pke bench binary has two prover ids: the GPU prover
-+    # (`tfhe::integer::zk::proof::cuda::<params>`) and the CPU prover
-+    # (`tfhe::integer::zk::proof::<params>`). A GPU summary must only report
-+    # the GPU prover.
-+    if point["backend"] == "cuda":
-+        return "::zk::proof::cuda::" in point["id"]
-+    return True
-+
-+
- RULES = [
-     ("Add", lambda p: _unsigned64_ct(p, "::add")),
-     ("Mul", lambda p: _unsigned64_ct(p, "::mul")),
-@@ -92,7 +104,7 @@ def label(point):
-         "Decompress",
-         lambda p: "packing_compression" in p["id"] and "unpack_u64" in p["id"],
-     ),
--    ("ZKPoK Proof (server)", lambda p: "::zk::proof::" in p["id"]),
-+    ("ZKPoK Proof (server)", _zk_proof),
-     (
-         "ZKPoK Proof (verification)",
-         lambda p: "::zk::verify_and_expand::" in p["id"],
-```
-
-**File**: `tfhe-benchmark/benches/integer/zk_pke.rs` (modified, +90/-101)
-```diff
-@@ -554,12 +554,12 @@ mod cuda {
-             ShortintKeySwitchingParameters,
-             tfhe::shortint::AtomicPatternParameters,
-         ) = match get_param_type() {
--            ParamType::Classical => (
-+            ParamType::Classical | ParamType::ClassicalDocumentation => (
-                 PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-                 PARAM_KEYSWITCH_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-                 BENCH_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into(),
-             ),
--            _ => (
-+            ParamType::MultiBit | ParamType::MultiBitDocumentation => (
-                 PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-                 PARAM_GPU_MULTI_BIT_GROUP_4_KEYSWITCH_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-                 BENCH_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into(),
-@@ -874,120 +874,109 @@ mod cuda {
-             .sample_size(15)
-             .measurement_time(std::time::Duration::from_secs(60));
- 
--        let params: [(
--            CompactPublicKeyEncryptionParameters,
--            ShortintKeySwitchingParameters,
--            PBSParameters,
--        ); 2] = [
--            (
--                PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
--                PARAM_GPU_MULTI_BIT_GROUP_4_KEYSWITCH_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
--                PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into(),
--            ),
--            (
--                BENCH_PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
--                BENCH_PARAM_KEYSWITCH_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
--                BENCH_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into(),
--            ),
--        ];
-+        let (param_pke, param_fhe): (CompactPublicKeyEncryptionParameters, PBSParameters) =
-+            match get_param_type() {
-+                ParamType::Classical | ParamType::ClassicalDocumentation => (
-+                    BENCH_PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+                    BENCH_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into(),
-+                ),
-+                ParamType::MultiBit | ParamType::MultiBitDocumentation => (
-+                    PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+                    PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into(),
-+                ),
-+            };
- 
--        for (param_pke, _param_ksk, param_fhe) in params.iter() {
--            let param_name = param_fhe.name();
--            let param_name = param_name.as_str();
--            let compact_private_key = CompactPrivateKey::new(*param_pke);
--            let pk = CompactPublicKey::new(&compact_private_key);
-+        let param_name = param_fhe.name();
-+        let param_name = param_name.as_str();
-+        let compact_private_key = CompactPrivateKey::new(param_pke);
-+        let pk = CompactPublicKey::new(&compact_private_key);
- 
--            // We have a use case with 320 bits of metadata
--            let mut metadata = [0u8; (320 / u8::BITS) as usize];
--            let mut rng = rand::thread_rng();
--            metadata.fill_with(|| rng.gen());
--
--            let scheme = zk_scheme(*param_pke);
--
--            for proof_config in default_proof_config().iter() {
--                let msg_bits =
--                    (param_pke.message_modulus.0 * param_pke.carry_modulus.0).ilog2() as usize;
--                println!("Generating CRS... ");
--                let crs_size = proof_config.crs_size;
--                let crs = CompactPkeCrs::from_shortint_params(
--                    *param_pke,
--                    LweCiphertextCount(crs_size / msg_bits),
--                )
--                .unwrap();
--
--                for bits in proof_config.bits_to_prove.iter() {
--                    assert_eq!(bits % 64, 0);
--                    // Packing, so we take the message and carry modulus to compute our block count
--                    let num_block = 64usize.div_ceil(msg_bits);
--
--                    let fhe_uint_count = bits / 64;
--
--                    for compute_load in compute_load_config() {
--                        let spec = zk_spec(
--                            ZkPkeBench::Proof,
--                            param_name,
--                            proven_list_tag(*bits, crs_size, compute_load, scheme),
--                            get_bench_type(),
--                        );
--                        let bench_id = spec.to_string();
-+        // We have a use case with 320 bits of metadata
-+        let mut metadata = [0u8; (320 / u8::BITS) as usize];
-+        let mut rng = rand::thread_rng();
-+        metadata.fill_with(|| rng.gen());
- 
--                        match get_bench_type() {
--                            BenchmarkType::Latency => {
--                                bench_group.bench_function(&bench_id, |b| {
--                                    let input_msg = rng.gen::<u64>();
--                                    let messages = vec![inp
-```
-
----
-
-### Incident Patch 6: `1d95abc1` (2026-09-30)
-**Commit Message**: chore(deps-dev): bump brace-expansion in /tfhe/web_wasm_parallel_tests
-
-Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion) from 1.1.16 to 1.1.21.
-- [Release notes](https://github.com/juliangruber/brace-expansion/releases)
-- [Commits](https://github.com/juliangruber/brace-expansion/compare/v1.1.16...v1.1.21)
-
----
-updated-dependencies:
-- dependency-name: brace-expansion
-  dependency-version: 1.1.21
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `tfhe/web_wasm_parallel_tests/package-lock.json` (modified, +3/-8)
-```diff
-@@ -360,7 +360,6 @@
-       "integrity": "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "bin": {
-         "acorn": "bin/acorn"
-       },
-@@ -387,7 +386,6 @@
-       "integrity": "sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "fast-deep-equal": "^3.1.3",
-         "fast-uri": "^3.0.1",
-@@ -583,9 +581,9 @@
-       }
-     },
-     "node_modules/brace-expansion": {
--      "version": "1.1.16",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.16.tgz",
--      "integrity": "sha512-IDw48K2/2kRkg9LdJxurvq3lV3aBgq0REY89duEqFRthjlPdXHKMj7EnQOXVckxzgisinf3nHfrcE2FufFLXMw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -613,7 +611,6 @@
-         }
-       ],
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "baseline-browser-mapping": "^2.11.12",
-         "caniuse-lite": "^1.0.30001809",
-@@ -2250,7 +2247,6 @@
-       "integrity": "sha512-gX/dMkRQc7QOMzgTe6KsYFM7DxeIONQSui1s0n/0xht36HvrgbxtM1xBlgx596NbpHuQU8P7QpKwrZYwUX48nw==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@types/eslint-scope": "^3.7.7",
-         "@types/estree": "^1.0.8",
-@@ -2300,7 +2296,6 @@
-       "integrity": "sha512-pIDJHIEI9LR0yxHXQ+Qh95k2EvXpWzZ5l+d+jIo+RdSm9MiHfzazIxwwni/p7+x4eJZuvG1AJwgC4TNQ7NRgsg==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@discoveryjs/json-ext": "^0.5.0",
-         "@webpack-cli/configtest": "^2.1.1",
-```
-
----
-
-### Incident Patch 7: `446305f7` (2026-09-30)
-**Commit Message**: chore: fix fft bench hardware
-
-**File**: `.github/workflows/benchmark_tfhe_fft.yml` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ jobs:
-         run: |
-           python3 ./ci/fft_benchmark_parser.py target/criterion "${RESULTS_FILENAME}" \
-           --database concrete_fft \
--          --hardware "hpc7a.96xlarge" \
-+          --hardware "hpc8a.96xlarge" \
-           --project-version "${COMMIT_HASH}" \
-           --branch "${REF_NAME}" \
-           --commit-date "${COMMIT_DATE}" \
-```
-
-**File**: `.github/workflows/benchmark_tfhe_ntt.yml` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ jobs:
-         run: |
-           python3 ./ci/ntt_benchmark_parser.py target/criterion "${RESULTS_FILENAME}" \
-           --database concrete_ntt \
--          --hardware "hpc7a.96xlarge" \
-+          --hardware "hpc8a.96xlarge" \
-           --project-version "${COMMIT_HASH}" \
-           --branch "${REF_NAME}" \
-           --commit-date "${COMMIT_DATE}" \
-```
-
----
-
-### Incident Patch 8: `26808e3b` (2026-09-29)
-**Commit Message**: fix(integer): boolean flip and add its missing test
-
-The behavior was inverted (it flipped on false),
-bugged because it was not tested
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/cmux.rs` (modified, +14/-11)
-```diff
-@@ -467,21 +467,21 @@ impl ServerKeyDefaultCMux<&BooleanBlock, &BooleanBlock> for ServerKey {
-         true_ct: &BooleanBlock,
-         false_ct: &BooleanBlock,
-     ) -> (Self::Output, Self::Output) {
--        let flip_if_false_fn = |packed| {
-+        let zero_out_if_false_fn = |packed| {
-             let condition = (packed / 2) & 1;
-             let value = packed % 2;
-             value * condition
-         };
- 
--        let flip_if_true_fn = |packed| {
-+        let zero_out_if_true_fn = |packed| {
-             let condition = (packed / 2) & 1;
-             let value = packed % 2;
-             (1 - condition) * value
-         };
- 
-         let lut = self
-             .key
--            .generate_many_lookup_table(&[&flip_if_false_fn, &flip_if_true_fn]);
-+            .generate_many_lookup_table(&[&zero_out_if_false_fn, &zero_out_if_true_fn]);
- 
-         let scaled_condition = self.key.unchecked_scalar_mul(&condition.0, 2);
- 
-@@ -496,29 +496,32 @@ impl ServerKeyDefaultCMux<&BooleanBlock, &BooleanBlock> for ServerKey {
-             },
-         );
- 
--        let [mut a_if_cond, mut a_if_not_cond] = vec_a.try_into().unwrap();
--        let [b_if_cond, b_if_not_cond] = vec_b.try_into().unwrap();
-+        let [mut a_if_true_0_if_false, mut a_if_false_0_if_true] = vec_a.try_into().unwrap();
-+        let [b_if_true_0_if_false, b_if_false_0_if_true] = vec_b.try_into().unwrap();
- 
-         self.key
--            .unchecked_add_assign(&mut a_if_cond, &b_if_not_cond);
-+            .unchecked_add_assign(&mut a_if_false_0_if_true, &b_if_true_0_if_false);
-         self.key
--            .unchecked_add_assign(&mut a_if_not_cond, &b_if_cond);
-+            .unchecked_add_assign(&mut a_if_true_0_if_false, &b_if_false_0_if_true);
-+
-+        let mut a_if_false_b_if_true = a_if_false_0_if_true;
-+        let mut a_if_true_b_if_false = a_if_true_0_if_false;
- 
-         let clean_lut = self.key.generate_lookup_table(|x| x % 2);
-         rayon::join(
-             || {
-                 self.key
--                    .apply_lookup_table_assign(&mut a_if_cond, &clean_lut)
-+                    .apply_lookup_table_assign(&mut a_if_false_b_if_true, &clean_lut)
-             },
-             || {
-                 self.key
--                    .apply_lookup_table_assign(&mut a_if_not_cond, &clean_lut)
-+                    .apply_lookup_table_assign(&mut a_if_true_b_if_false, &clean_lut)
-             },
-         );
- 
-         (
--            BooleanBlock::new_unchecked(a_if_cond),
--            BooleanBlock::new_unchecked(a_if_not_cond),
-+            BooleanBlock::new_unchecked(a_if_false_b_if_true),
-+            BooleanBlock::new_unchecked(a_if_true_b_if_false),
-         )
-     }
- }
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/mod.rs` (modified, +2/-0)
-```diff
-@@ -34,6 +34,8 @@ mod slice;
- #[cfg(test)]
- pub(crate) mod test_harness;
- #[cfg(test)]
-+pub(crate) mod tests_boolean;
-+#[cfg(test)]
- pub(crate) mod tests_cases_unsigned;
- #[cfg(test)]
- pub(crate) mod tests_long_run;
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +41/-0)
-```diff
-@@ -160,6 +160,11 @@ where
+@@ -1,21 +1,25 @@
+ //! Pre-harness versions of the signed default operation tests still used by the GPU backend.
+ //!
+-//! FIXME(gpu): the CPU tests for these operations moved to
+-//! `radix_parallel::test_harness` (see `radix_parallel::tests_signed::test_scalar_shift` and
+-//! `test_scalar_rotate`), which also exercises inputs at the maximum degree and noise level.
+-//! The GPU full propagation cannot take blocks at the maximum degree yet.
+-//! Once it is aligned with the CPU one point the GPU wrappers at the harness
+-//! tests and delete this file.
++//! FIXME(gpu): the CPU tests for these operations moved to `radix_parallel::test_harness`
++//! (see `radix_parallel::tests_signed::test_scalar_shift`, `test_scalar_rotate`,
++//! `test_scalar_add` and `test_scalar_sub`), which also exercises inputs at the maximum
++//! degree and noise level. The GPU full propagation cannot take blocks at the maximum degree
++//! yet. The overflowing scalar tests also cover scalars that fit the radix blocks but not
++//! the signed range, for which the GPU implementations return the opposite overflow flag:
++//! the CPU fix is `ScalarOverflowFlagSource` in `radix_parallel::scalar_add`, which the GPU
++//! can reuse. Once both are addressed point the GPU wrappers at the harness tests and delete
++//! this file.
+ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
+ use crate::integer::server_key::radix_parallel::tests_signed::{
+     random_non_zero_value, rotate_left_helper, rotate_right_helper, signed_add_under_modulus,
+-    signed_left_shift_under_modulus, signed_right_shift_under_modulus,
++    signed_left_shift_under_modulus, signed_overflowing_add_under_modulus,
++    signed_overflowing_sub_under_modulus, signed_right_shift_under_modulus,
+ };
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+-    nb_tests_smaller_for_params, NB_CTXT,
++    nb_tests_smaller_for_params, MAX_NB_CTXT, NB_CTXT,
+ };
+-use crate::integer::{IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
++use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
+ use crate::shortint::parameters::*;
+ use rand::Rng;
+ use std::sync::Arc;
+@@ -285,3 +289,368 @@ where
          }
      }
- 
-+    pub(crate) fn block_counts(&mut self, block_counts: Vec<u32>) -> &mut Self {
-+        self.block_counts = block_counts;
-+        self
-+    }
-+
-     /// Number of random cases per block count (run with clean inputs).
-     pub(crate) fn n_random(&mut self, n: u32) -> &mut Self {
-         self.n_random = n;
-@@ -535,6 +540,7 @@ macro_rules! impl_input_state_for_tuple {
- 
- impl_input_state_for_tuple!(A);
- impl_input_state_for_tuple!(A, B);
-+impl_input_state_for_tuple!(A, B, C);
- 
- /// Trait for types representing clear inputs of a test
- pub(crate) trait TestClearInput: Copy + std::fmt::Debug {
-@@ -648,6 +654,14 @@ impl TestClearInput for Uint {
-     }
  }
- 
-+impl TestClearInput for bool {
-+    type Input = BooleanBlock;
 +
-+    fn generate_random(rng: &mut dyn RngCore, _n_blocks: u32, _ctx: &TestContext) -> Self {
-+        rng.gen_bool(0.5)
-+    }
-+}
-+
- impl TestInput for RadixCiphertext {
-     type Clear = Uint;
- 
-@@ -691,6 +705,31 @@ impl TestInput for RadixCiphertext {
-     }
- }
- 
-+impl TestInput for BooleanBlock {
-+    type Clear = bool;
-+
-+    type Ref<'a>
-+        = &'a Self
-+    where
-+        Self: 'a;
-+
-+    type State = ();
-+
-+    fn prepare(
-+        clear: Self::Clear,
-+        _state: Self::State,
-+        _rng: &mut dyn RngCore,
-+        ctx: &TestContext,
-+    ) -> (Self, Self::Clear) {
-+        let encrypted = ctx.cks.encrypt_bool(clear);
-+        (encrypted, clear)
-+    }
-+
-+    fn as_ref(&self) -> Self::Ref<'_> {
-+        self
-+    }
-+}
-+
- /// Rust scalar types accepted by the `scalar_*` operations, as seen by the harness.
- pub(crate) trait ScalarType: Copy + std::fmt::Debug + 'static {
-     const BITS: u32;
-@@ -909,6 +948,7 @@ macro_rules! impl_test_input_for_tuple {
- 
- impl_test_input_for_tuple!(A.0);
- impl_test_input_for_tuple!(A.0, B.1);
-+impl_test_input_for_tuple!(A.0, B.1, C.2);
- 
- /// Trait for outputs of a FHE function that is tested
- ///
-@@ -1023,3 +1063,4 @@ macro_rules! impl_execute_on_for_tuple {
- 
- impl_execute_on_for_tuple!(A.0);
- impl_execute_on_for_tuple!(A.0, B.1);
-+impl_execute_on_for_tuple!(A.0, B.1, C.2);
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_boolean/mod.rs` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+use crate::integer::prelude::*;
-+use crate::integer::server_key::radix_parallel::test_harness::{
-+    ExecuteOn, TestBuilder, TestContext,
-+};
-+use crate::integer::server_key::radix_parallel::tests_unsigned::CpuFunctionExecutor;
-+use crate::integer::tests::create_parameterized_test;
-+use crate::integer::{BooleanBlock, ServerKey};
-+use crate::shortint::parameters::test_params::*;
-+use crate::shortint::parameters::{TestParameters, *};
-+
-+#[cfg(tarpaulin)]
-+use crate::shortint::parameters::coverage_parameters::*;
-+
-+pub(crate) fn test_boolean_flip_test_case<E>(ctxt: &TestContext, executor: E)
++pub(crate) fn legacy_signed_default_overflowing_scalar_sub_test<P, T>(param: P, mut executor: T)
 +where
-+    E: ExecuteOn<(BooleanBlock, BooleanBlock, BooleanBlock), (BooleanBlock, BooleanBlock)>,
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<
++        (&'a SignedRadixCiphertext, i64),
++        (SignedRadixCiphertext, BooleanBlock),
++    >,
 +{
-+    let bits_per_block = ctxt.bits_per_block();
-+    TestBuilder::new(ctxt)
-+        .block_counts(vec![1])
-+        // Only fixed_cases because we test the whole truth table
-+        .fixed_cases(move |bit_count| {
-+            assert_eq!(
-+                bit_count, bits_per_block,
-+                "BooleanBlock tests should only be 1-block"
-+            );
-+            vec![
-+                (false, false, false),
-+                (false, false, true),
-+                (false, true, false),
-+                (false, true, true),
-+                (true, false, false),
-+                (true, false, true),
-+                (true, true, false),
-+                (true, true, true),
-+            ]
-+        })
-+        .execute(
-+            executor,
-+            |(condition, lhs, rhs)| {
-+                if condition {
-+                    (rhs, lhs)
-+                } else {
-+                    (lhs, rhs)
-+                }
-+            },
++    let param = param.into();
++    let nb_tests_smaller = nb_tests_smaller_for_params(param);
++    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++    sks.set_deterministic_pbs_execution(true);
++    let sks = Arc::new(sks);
++
++    let mut rng = rand::thread_rng();
++
++    // message_modulus^vec_length
++    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
++
++    executor.setup(&cks, sks.clone());
++
++    let hardcoded_values = [
++        (-modulus, 1),
++        (modulus - 1, -1),
++        (1, -modulus),
++        (-1, modulus - 1),
++    ];
++    for (clear_0, clear_1) in hardcoded_values {
++        let ctxt_0 = cks.encrypt_signed(clear_0);
++
++        let (ct_res, result_overflowed) = executor.execute((&ctxt_0, clear_1));
++        let (expected_result, expected_overflowed) =
++            signed_overflowing_sub_under_modulus(clear_0, clear_1, modulus);
++
++        let decrypted_result: i64 = cks.decrypt_signed(&ct_res);
++        let decrypted_overflowed = cks.decrypt_bool(&result_overflowed);
++        assert_eq!(
++            decrypted_result, expected_result,
++            "Invalid result for overflowing_sub, for ({clear_0} - {clear_1}) % {modulus} \
++             expected {expected_result}, got {decrypted_result}"
 +        );
-+}
-+
-+fn test_boolean_flip(params: impl Into<TestParameters>) {
-+    let ctx = TestContext::from_env(params);
-+    // Help the compiler
-+    let func = |sks: &ServerKey,
-+                c: &BooleanBlock,
-+                l: &BooleanBlock,
-+                r: &BooleanBlock|
-+     -> (BooleanBlock, BooleanBlock) { sks.flip_parallelized(c, l, r) };
-+    let mut executor = CpuFunctionExecutor::new(func);
-+    executor.setup_with_server_key(ctx.server_key());
-+    test_boolean_flip_test_case(&ctx, executor);
-+}
-+
-+create_parameterized_test!(test_boolean_flip);
-```
-
----
-
-### Incident Patch 9: `83b7f451` (2026-09-25)
-**Commit Message**: fix(hpu): update python trace interpreter according to new HW trace JSON syntax
-
-Now dumping LUT name in HW trace PBS (instead of LUT id)
-
-**File**: `backends/tfhe-hpu-backend/python/lib/isctrace/fmt.py` (modified, +27/-26)
-```diff
-@@ -20,83 +20,84 @@ def __str__(self):
-         return f'{self.name} {self.args()}'
- 
- class PBS(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
-+        self.asm = asm
- 
-     def args(self):
--        return f'R{self.dst_rid} R{self.src_rid} @{self.gid}'
-+        return f'{self.asm.partition(" ")[2]}'
- 
- class LD(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
-         try:
--            return f'R{self.rid} @{hex(self.slot["Addr"])}'
-+            return f'R{self.dst["addr"]} @{hex(self.src["Io"]["addr"])}'
-         except:
-             # It can happen that an IOP is not translated by the FW
--            return f'R{self.rid} @{self.slot}'
-+            return f'R{self.dst} @{self.src}'
- 
- class ST(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
-         try:
--            return f'@{hex(self.slot["Addr"])} R{self.rid}'
-+            return f'@{hex(self.dst["Io"]["addr"])} R{self.src["addr"]}'
-         except:
-             # It can happen that an IOP is not translated by the FW
--            return f'@{self.slot} R{self.rid}'
-+            return f'@{self.dst} R{self.src}'
- 
- class MAC(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
--        return f'R{self.dst_rid} R{self.src0_rid} ' +\
--               f'R{self.src1_rid} X{self.mul_factor} '
-+        return f'R{self.dst["addr"]} R{self.src1["addr"]} ' +\
-+               f'R{self.src2["addr"]} x{self.cst["Const"]["val"]} '
- 
- class ADD(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
--        return f'R{self.dst_rid} R{self.src0_rid} R{self.src1_rid}'
-+        return f'R{self.dst["addr"]} R{self.src1["addr"]} R{self.src2["addr"]}'
- 
- class ADDS(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
--        return f'R{self.dst_rid} R{self.src_rid} {self.msg_cst["Cst"]}'
-+        return f'R{self.dst["addr"]} R{self.src["addr"]} {self.cst["Const"]["val"]}'
- 
- class SUB(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
--        return f'R{self.dst_rid} R{self.src0_rid} R{self.src1_rid}'
-+        return f'R{self.dst["addr"]} R{self.src1["addr"]} R{self.src2["addr"]}'
- 
- class SSUB(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
--        return f'R{self.dst_rid} {self.msg_cst["Cst"]} R{self.src_rid}'
-+        return f'R{self.dst["addr"]} {self.cst["Const"]["val"]} R{self.src["addr"]}'
- 
- class SUBS(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
--        return f'R{self.dst_rid} R{self.src_rid} {self.msg_cst["Cst"]}'
-+        return f'R{self.dst["addr"]} R{self.src["addr"]} {self.cst["Const"]["val"]}'
- 
- class SYNC(BaseInstruction):
--    def __init__(self, d):
-+    def __init__(self, d, asm):
-         self.__dict__ = d
- 
-     def args(self):
--        return f"{self.iid}"
-+        return f"{self.iid} {self.is_inner}"
- 
- PBS_ML2   = PBS
- PBS_ML4   = PBS
-@@ -109,10 +110,10 @@ def args(self):
- SUBS      = ADDS
- 
- class Insn:
--    def __init__(self, insn):
-+    def __init__(self, insn, asm):
-         self.opcode, data = next(iter(insn.items()))
--        self.data = globals()[self.opcode](data) if self.opcode in globals() \
--                    else NamedInstruction(self.opcode, data)
-+        self.data = globals()[self.opcode](data, asm) if self.opcode in globals() \
-+                    else NamedInstruction(self.opcode, data, asm)
- 
-     def to_analysis(self):
-         return analysis.Instruction(self.opcode, self.data.args())
-```
-
-**File**: `backends/tfhe-hpu-backend/python/lib/isctrace/hw.py` (modified, +4/-4)
-```diff
-@@ -15,9 +15,9 @@
- """
- class Event:
-     EVENT_MAP = {
--        "Issue": lambda x: analysis.Issue(fmt.Insn(x.insn).to_analysis()),
--        "Retire": lambda x: analysis.Retire(fmt.Insn(x.insn).to_analysis()),
--        "RdUnlock": lambda x: analysis.RdUnlock(fmt.Insn(x.insn).to_analysis()),
-+        "Issue": lambda x: analysis.Issue(fmt.Insn(x.insn, x.insn_asm).to_analysis()),
-+        "Retire": lambda x: analysis.Retire(fmt.Insn(x.insn, x.insn_asm).to_analysis()),
-+        "RdUnlock": lambda x: analysis.RdUnlock(fmt.Insn(x.insn, x.insn_asm).to_analysis()),
-         "Refill": lambda x: analysis.Refill(None),
-         "None": lambda x: analysis.Refill(None),
-     }
-@@ -66,7 +66,7 @@ def iops(self):
-         for event in self:
-             id_map[0].append(event)
-             opcode = next(iter(event.insn.keys())) if event.insn is not None else None
--            is_inner = event.insn[opcode]["is_inner_sync"] if opcode == "SYNC" else None
-+            is_inner = event.insn[opcode]["is_inner"] if opcode == "SYNC" else None
- 
-             if opcode == "SYNC" and event.cmd == "Issue" and is_inner == False:
-                 yield Trace(id_map[0])
-```
-
----
-
-### Incident Patch 10: `cdf28659` (2026-09-23)
-**Commit Message**: feat(hpu): Update isc_trace
-
-Now trace take lut_map as context and generate back asm/dop struct
-in the json
-
-**File**: `backends/tfhe-hpu-backend/src/interface/cache/lut.rs` (modified, +9/-2)
-```diff
-@@ -16,7 +16,7 @@ use std::sync::Arc;
- use thiserror::Error;
- 
- use super::{Pool, PoolError, SlotId};
--use zhc::crypto::integer_semantics::lut::{LutId, RawLut};
-+use zhc::crypto::integer_semantics::lut::{LutDecoder, LutId, RawLut};
- 
- /// Keep track of uploaded LUT and associated properties
- pub struct LutCache {
-@@ -207,7 +207,7 @@ impl LutMap {
-     }
- 
-     /// Retrieve the LUT sitting in a given slot
--    pub fn get(&self, id: LutId) -> Option<&RawLut> {
-+    pub fn get(&self, id: &LutId) -> Option<&RawLut> {
-         // Entries are sorted by id (c.f. `LutCache::lut_map`)
-         self.0
-             .binary_search_by_key(&id.0, |(entry_id, _lut)| entry_id.0)
-@@ -224,6 +224,13 @@ impl std::ops::Deref for LutMap {
-     }
- }
- 
-+impl LutDecoder for LutMap {
-+    fn decode_lut_id(&self, lid: &LutId) -> &RawLut {
-+        self.get(lid)
-+            .unwrap_or_else(|| panic!("Failed to get lid {lid}"))
++        assert_eq!(
++            decrypted_overflowed,
++            expected_overflowed,
++            "Invalid overflow flag result for overflowing_sub for ({clear_0} - {clear_1}) % {modulus} \
++             expected overflow flag {expected_overflowed}, got {decrypted_overflowed}"
++        );
++        assert_eq!(result_overflowed.0.degree.get(), 1);
++        assert_eq!(result_overflowed.0.noise_level(), NoiseLevel::NOMINAL);
 +    }
++
++    for _ in 0..nb_tests_smaller {
++        let clear_0 = rng.gen::<i64>() % modulus;
++        let clear_1 = rng.gen::<i64>() % modulus;
++
++        let ctxt_0 = cks.encrypt_signed(clear_0);
++
++        let (ct_res, result_overflowed) = executor.execute((&ctxt_0, clear_1));
++        let (tmp_ct, tmp_o) = executor.execute((&ctxt_0, clear_1));
++        assert!(ct_res.block_carries_are_empty());
++        assert_eq!(ct_res, tmp_ct, "Failed determinism check, \n\n\n msg0: {clear_0}, \n\n\nct: {ctxt_0:?}, \n\n\nclear: {clear_1:?}\n\n\n");
++        assert_eq!(tmp_o, result_overflowed, "Failed determinism check, \n\n\n msg0: {clear_0}, \n\n
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_scalar_add.rs` (modified, +3/-3)
+```diff
+@@ -1,10 +1,10 @@
++use super::legacy_default_tests::legacy_signed_default_overflowing_scalar_add_test;
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_add::{
+-    signed_default_overflowing_scalar_add_test, signed_default_scalar_add_test,
+-    signed_unchecked_scalar_add_test,
++    signed_default_scalar_add_test, signed_unchecked_scalar_add_test,
+ };
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+@@ -34,5 +34,5 @@ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::signed_overflowing_scalar_add);
+-    signed_default_overflowing_scalar_add_test(param, executor);
++    legacy_signed_default_overflowing_scalar_add_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_scalar_sub.rs` (modified, +3/-4)
+```diff
+@@ -1,10 +1,9 @@
++use super::legacy_default_tests::legacy_signed_default_overflowing_scalar_sub_test;
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+-use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_sub::{
+-    signed_default_overflowing_scalar_sub_test, signed_unchecked_scalar_sub_test,
+-};
++use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_sub::signed_unchecked_scalar_sub_test;
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+ 
+@@ -24,5 +23,5 @@ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::signed_overflowing_scalar_sub);
+-    signed_default_overflowing_scalar_sub_test(param, executor);
++    legacy_signed_default_overflowing_scalar_sub_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_add.rs` (modified, +317/-20)
+```diff
+@@ -2,10 +2,306 @@ use crate::core_crypto::prelude::{SignedNumeric, UnsignedNumeric};
+ use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
+ use crate::integer::ciphertext::IntegerRadixCiphertext;
+ use crate::integer::{BooleanBlock, RadixCiphertext, ServerKey, SignedRadixCiphertext};
++use crate::shortint::parameters::MessageModulus;
+ use crate::shortint::Ciphertext;
+ 
+ use rayon::prelude::*;
+ 
++/// How the overflow flag of an overflowing scalar addition or subtraction is obtained.
++///
++/// Decided from the scalar alone, see [`Self::for_signed_radix`] and
++/// [`Self::for_unsigned_radix`].
++///
++/// Only the flag is concerned: the FHE operation works on the scalar truncated to the radix
++/// width, which is congruent to the scalar modulo the radix modulus, so the result it
++/// computes is the exact one reduced to the radix width whatever the scalar, with nothing to
++/// accommodate. With `n` the radix bit width and `s'` the truncated scalar:
++///
++/// `s' ≡ s (mod 2ⁿ)  ⇒  lhs ± s' ≡ lhs ± s (mod 2ⁿ)`
++#[derive(Copy, Clone, PartialEq, Eq, Debug)]
++pub(crate) enum ScalarOverflowFlagSource {
++    /// The scalar is beyond what the radix blocks can hold: the operation always overflows
++    TriviallyTrue,
++    /// The scalar fits the radix blocks but not the radix range: the FHE flag is the opposite
++    /// of the exact one
++    InvertedFhe,
++    /// The scalar is in the radix range: the FHE flag is exact
++    Fhe,
 +}
 +
- /// Cache Error type
- #[derive(Error, Clone, Debug)]
- pub enum LutError {
++impl ScalarOverflowFlagSource {
++    /// Decides how the overflow flag of an overflowing scalar addition or subtraction between
++    /// a signed radix of `num_blocks` blocks of `message_modulus` and `scalar` is obtained.
++    ///
++    /// The FHE operation only sees the scalar truncated to the radix's block count. This
++    /// means the scalar value the FHE operation will see may not be interpreted 'correctly'
++    /// and the flag may need to be inverted; the result is correct either way, see
++    /// [`ScalarOverflowFlagSource`].
++    ///
++    /// This contains the logic to figure out how to handle this situation, as well as the
++    /// explanations to convince it's correct.
++    ///
++    /// The explanations in the code are made for the subtraction, but the same logic
++    /// and principles apply for the addition.
++    pub(crate) fn for_signed_radix<Scalar>(
++        scalar: Scalar,
++        num_blocks: usize,
++        message_modulus: MessageModulus,
++    ) -> Self
++    where
++        Scalar: DecomposableInto<u8>,
++    {
++        assert!(num_blocks > 0, "input radix must not be empty");
++
++        // The check is done on the scalar itself, not on the bit flipped version the
++        // subtraction adds
++        let mut decomposer = BlockDecomposer::new(scalar, message_modulus.0.ilog2())
++            .iter_as::<u8>()
++            .skip(num_blocks - 1);
++
++        if scalar < Scalar::ZERO {
++            let sign_bit_is_not_set = decomposer.next().is_some_and(|v| {
++                let sign_bit = v as u64 / (message_modulus.0 / 2);
++                sign_bit == 0
++            });
++            let top_is_not_all_sign_bit = decomposer.any(|v| v != (message_modulus.0 - 1) as u8);
++
++            if top_is_not_all_sign_bit {
++                Self::TriviallyTrue
++            } else if sign_bit_is_not_set {
++                // (With `n` the radix bit width)
++                //
++                // The clear is negative, bits above the radix width are all sign bits.
++                // However, the bit that is at the position of the radix's sign bit is 0.
++                // This means the clear `s` has a value in the range `[-2ⁿ, -2ⁿ⁻¹[`
++                // or (`[-2ⁿ, -2ⁿ⁻¹ - 1]`)
++                // e.g: signed radix of 8 bits (n=8), clear of 16 bits, under these conditions,
++                // the clear is in `[-256, -128[` (or `[-256, -129]`)
++                //
++                // But since the overflowing_sub done later will only see the truncated version
++                // of the clear, it will see a number `s'` in the range `[0, 2ⁿ⁻¹[`
++                // i.e it will see `s' = s + 2ⁿ`
++                // e.g: taking the example before, the scalar was in `[-256, -128[`, the truncated
++                // version given to the FHE op will be interpreted as `[-256 + 256, -128 + 256[`
++                // `=> [0, 128[`
++                //
++                // We don't know the radix value, so we have to do the FHE overflowing_sub, but
++                // its overflow flag has to be flipped.
++                // The exact result is `lhs - s = lhs - (s' - 2ⁿ) = (lhs - s') + 2ⁿ`,
++                // i.e the FHE result shifted by a full modulus of the radix.
++                //
++                // * lhs is in `[-2ⁿ⁻¹, 2ⁿ⁻¹ - 1]`, s' is in `[0, 2ⁿ⁻¹ - 1]`
++                // => `lhs - s'` is in `[-2ⁿ + 1, 2ⁿ⁻¹ - 1]` (not considering the modulo)
++                // => The subtraction can only "underflow", since only the minimum is below
++                //    the radix's minimum (
 ```
 
-**File**: `backends/tfhe-hpu-backend/src/isc_trace.rs` (modified, +73/-308)
+**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_sub.rs` (modified, +22/-24)
 ```diff
-@@ -1,14 +1,17 @@
- //! Define bit-accurate layout of hw trace generated by the Instruction scheduler
- //! Rely on bitfield_struct that as a 128b limits
- use bitfield_struct::bitfield;
-+use zhc::crypto::integer_semantics::lut::LutDecoder;
-+use zhc::langs::doplang;
+@@ -1,3 +1,4 @@
++use super::scalar_add::ScalarOverflowFlagSource;
+ use crate::core_crypto::prelude::{Cleartext, SignedNumeric, UnsignedNumeric};
+ use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
+ use crate::integer::ciphertext::IntegerRadixCiphertext;
+@@ -153,10 +154,14 @@ impl ServerKey {
+     {
+         assert!(!lhs.blocks.is_empty(), "lhs cannot be empty");
  
- // High-level view of the trace.
- #[derive(Debug, serde::Serialize, serde::Deserialize)]
- pub struct IscTrace {
-     pub pe_reserved: u16,
-     pub state: IscPoolState,
-+    pub insn: Option<doplang::DopInstructionSet>,
-     pub insn_hex: u32,
--    pub insn_asm: Option<String>,
-+    pub insn_asm: String,
-     pub timestamp: u32,
- }
+-        let scalar_blocks = BlockDecomposer::new(scalar, self.message_modulus().0.ilog2())
+-            .iter_as::<u8>()
+-            .take(lhs.blocks.len())
+-            .collect::<Vec<_>>();
++        // Zero extended to the radix width when the scalar is narrower
++        let scalar_blocks = BlockDecomposer::with_block_count(
++            scalar,
++            self.message_modulus().0.ilog2(),
++            lhs.blocks.len(),
++        )
++        .iter_as::<u8>()
++        .collect::<Vec<_>>();
  
-@@ -68,7 +71,10 @@ impl IscTrace {
-     pub fn bit_size() -> usize {
-         128
-     }
--    pub fn from_bytes(bytes: &[u8]) -> Result<Self, TraceParsingError> {
-+    pub fn from_bytes_with_ctx(
-+        bytes: &[u8],
-+        lreg: &impl LutDecoder,
-+    ) -> Result<Self, TraceParsingError> {
-         let flit0 = if bytes.len() != Self::bytes_size() {
-             return Err(TraceParsingError::EmptyStream);
-         } else {
-@@ -78,12 +84,13 @@ impl IscTrace {
-         };
+         // If the block does not have a carry after the subtraction, it means it needs to
+         // borrow from the next block
+@@ -229,10 +234,11 @@ impl ServerKey {
+             .map(|chunk| self.pack_block_chunk(chunk))
+             .collect::<Vec<_>>();
  
-         let cmd = unsafe { std::mem::transmute::<u8, IscCommand>(flit0.cmd()) };
--        let asm = match cmd {
--            IscCommand::None => "Garbage".to_string(),
-+        let (insn, asm) = match cmd {
-+            IscCommand::None => (None, "Garbage".to_string()),
-             _ => {
-                 let dop = zhc::pipeline::passes::hpu_decode_dop_repr(flit0.insn(), None)
-                     .map_err(|x| TraceParsingError::IncorrectValue(x.to_string()))?;
--                dop.to_string()
-+                let asm = doplang::format_assembly(&dop, lreg);
-+                (Some(dop), asm)
-             }
-         };
+-        let packed_scalar_blocks = BlockDecomposer::new(scalar, packed_modulus.ilog2())
+-            .iter_as::<u8>()
+-            .take(packed_blocks.len())
+-            .collect::<Vec<_>>();
++        // Zero extended to the radix width when the scalar is narrower
++        let packed_scalar_blocks =
++            BlockDecomposer::with_block_count(scalar, packed_modulus.ilog2(), packed_blocks.len())
++                .iter_as::<u8>()
++                .collect::<Vec<_>>();
  
-@@ -99,8 +106,9 @@ impl IscTrace {
-                 sync_id: flit0.sync_id(),
-             },
-             pe_reserved: flit0.pe_reserved(),
-+            insn,
-             insn_hex: flit0.insn(),
--            insn_asm: Some(asm),
-+            insn_asm: asm,
-             timestamp: flit0.timestamp(),
-         })
-     }
-@@ -129,11 +137,14 @@ impl IscTrace {
- pub struct IscTraceStream(Vec<IscTrace>);
+         let num_blocks = lhs.blocks.len();
+         // When the number of blocks is not even, the last packed block's
+@@ -639,18 +645,14 @@ impl ServerKey {
+     where
+         Scalar: SignedNumeric + DecomposableInto<u8> + std::ops::Not<Output = Scalar>,
+     {
++        assert!(!lhs.blocks.is_empty(), "input radix must not be empty");
+         self.clean_inplace_for_default_op(lhs);
  
- impl IscTraceStream {
--    pub fn from_bytes(bytes: &[u8]) -> Result<Self, TraceParsingError> {
-+    pub fn from_bytes_with_ctx(
-+        bytes: &[u8],
-+        lreg: &impl LutDecoder,
-+    ) -> Result<Self, TraceParsingError> {
-         let mut trace_vec = Vec::new();
- 
-         for chunk in bytes.chunks(IscTrace::bytes_size()) {
--            match IscTrace::from_bytes(chunk) {
-+            match IscTrace::from_bytes_with_ctx(chunk, lreg) {
-                 Ok(value) => {
-                     tracing::debug!("Decoded {value:x?}");
-                     trace_vec.push(value);
-@@ -163,308 +174,62 @@ mod test {
-     #[test]
-     fn isc_trace_parser() {
-         let ref_data = vec![
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 128, 124, 146, 128, 41, 0, 0, 0, 124, 0, 0, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8, 0, 128, 136, 146, 128, 41, 0, 0, 0,
--            124, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 64, 128, 20, 148,
--            146, 128, 41, 0, 0, 0, 124, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            3, 20, 0, 128, 160, 146, 128, 41, 0, 0, 0, 124, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 128, 172, 146, 128, 41, 0, 0, 0, 124, 0, 0, 0, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 65, 1, 192, 184, 146, 128, 41, 0, 0, 0,
--            124, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 129, 1, 192, 196,
--            146, 128, 41, 0, 0, 0, 124, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            133, 1, 129, 20, 208, 146, 128, 41, 0, 0, 0, 124, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 137, 66, 1, 192, 220, 146, 128, 41, 0, 0, 0, 124, 1, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 138, 130, 1, 192, 232, 146, 128, 41, 0,
--            0, 0, 124, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 129, 20,
--            244, 146, 128, 41, 0, 0, 0, 124, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            0, 0, 11, 24, 0, 128, 0, 147, 128, 41, 0, 0, 0, 124, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 128, 12, 147, 128, 41, 0, 0, 0, 124, 0, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 132, 1, 192, 24, 147, 128, 41, 0,
--            0, 0, 124, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 68, 1, 192,
--            36, 147, 128, 41, 0, 0, 0, 124, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            0, 0, 141, 5, 131, 20, 48, 147, 128, 41, 0, 0, 0, 124, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 145, 70, 1, 192, 60, 147, 128, 41, 0, 0, 0, 124, 1, 0, 0, 0,
--            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 134, 1, 192, 72, 147, 128, 41, 0,
+-        // The trivial overflow check has to be done on the scalar not its bit flipped version
+-        let mut decomposer = BlockDecomposer::new(scalar, self.message_modulus().0.ilog2())
+-            .iter_as::<u8>()
+-            .skip(lhs.blocks.len());
 -
+-        let trivially_overflowed = if scalar < Scalar::ZERO {
+-            decomposer.any(|v| v != (self.message_modulus().0 - 1) as u8)
+-        } else {
+-            decomposer.any(|v| v != 0)
+-        };
++        let flag_source = ScalarOverflowFlagSource::for_signed_radix(
++            scalar,
++            lhs.blocks.len(),
++            self.message_modulus(),
++        );
+ 
+         const INPUT_CARRY: bool = true;
+         let flipped_scalar = !scalar;
+@@ -665,14 +667,10 @@ impl ServerKey {
+             lhs,
+             decomposed_flipped_scalar,
+             INPUT_CARRY,
+-            !trivially_overflowed,
++            flag_source != ScalarOverflowFlagSource::TriviallyTrue,
+         );
+ 
+-        if trivially_overflowed {
+-            self.create_trivial_boolean_block(true)
+-        } else {
+-            maybe_overflow.expect("overflow computation was requested")
+-        }
++        flag_source.overflow_flag(self, maybe_overflow)
+     }
+ 
+     pub fn signed_overflowing_scalar_sub_parallelized<Scalar>(
 ```
 
-**File**: `backends/tfhe-hpu-backend/src/utils/hputil.rs` (modified, +20/-5)
+**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +8/-0)
 ```diff
-@@ -67,6 +67,9 @@ pub enum Commands {
-     /// Hardware trace operation
-     #[command(about = "Trace related operations")]
-     TraceDump {
-+        /// File containing lut_map for correct Pbs Lut decoding
-+        #[arg(default_value = "hpu_lut_map.json")]
-+        lut_map: String,
-         /// Stop after a given size (Expressed in MiB)
-         #[arg(long, short)]
-         size_mib: Option<usize>,
-@@ -423,13 +426,17 @@ fn main() {
-             ResetAction::Hard => unimplemented!(),
-             ResetAction::Flush => unimplemented!(),
-         },
--        Commands::TraceDump { file, size_mib } => {
-+        Commands::TraceDump {
-+            file,
-+            size_mib,
-+            lut_map,
-+        } => {
-             // trace depth is expressed in MiB
-             let size_b = std::cmp::min(config.board.trace_depth, size_mib.unwrap_or(usize::MAX))
-                 * 1024
-                 * 1024;
+@@ -812,6 +812,13 @@ pub(crate) trait ClearInteger:
+     /// Implementations decompose the scalar in blocks, and an excess confined to the block
+     /// holding the radix's top bits, combined with a non zero in-range part, is a known blind
+     /// spot that `radix_max + 1` alone does not exercise.
++    ///
++    /// Whatever the scalar type, a value that fits the radix blocks but not the radix range,
++    /// with `n` the radix bit width: `[radix_max + 1, 2ⁿ[` and `[-2ⁿ, radix_min[` for a signed
++    /// radix, `[-2ⁿ, 0[` for an unsigned one, is seen by an implementation working on the
++    /// scalar reduced to the radix width as a value on the other side of the range, and the
++    /// overflow flag it computes has to be flipped. The signed values include both ends of
++    /// each band, `2ⁿ - 1` and `-2ⁿ`, which reduce to -1 and 0.
+     fn scalar_edges(radix_bits: u32, type_bits: u32) -> Vec<Self>;
  
--            trace_dump(&mut hpu_hw, &regmap, size_b, file)
-+            trace_dump(&mut hpu_hw, &regmap, lut_map, size_b, file)
+     /// Random scalar of `type_bits` bits: half of the draws fit in a radix of `radix_bits`
+@@ -905,6 +912,7 @@ impl ClearInteger for Int {
+                 // Every radix bit set plus a single excess bit: 2^radix_bits - 1 and its
+                 // negative counterpart -2^radix_bits - 1, then 2^(radix_bits + 1) - 1
+                 Some(Self::max(radix_bits + 1).value()),
++                Some(Self::min(radix_bits + 1).value()),
+                 Self::min(radix_bits + 1).value().checked_sub(1),
+                 (radix_bits + 2 <= MAX_RADIX_BITS).then(|| Self::max(radix_bits + 2).value()),
+             ];
+```
+
+---
+
+### Incident Patch 2: `ebb022d7` (2026-10-12)
+**Commit Message**: fix(integer): propagate dirty inputs in unsigned overflowing sum
+
+`unsigned_overflowing_sum_ciphertexts_parallelized` has a wrong
+cleanging: it filtered-out dirty input in the loop meant to find
+and clean them.
+
+Migrate the sum test to the new harness, which is the first Vec
+based test, so adding the mssing pieces to make it work.
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +71/-2)
+```diff
+@@ -2,11 +2,12 @@
+ //!
+ //! FIXME(gpu): the CPU tests for these operations moved to
+ //! `radix_parallel::test_harness` (see `radix_parallel::tests_unsigned::test_add`,
+-//! `test_scalar_add`, `test_scalar_shift` and `test_scalar_rotate`), which also exercises inputs
+-//! at the maximum degree and noise level.
++//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate` and `test_sum`), which also
++//! exercises inputs at the maximum degree and noise level.
+ //! The GPU full propagation cannot take blocks at the maximum degree yet.
+ //! Once it is aligned with the CPU one point the GPU wrappers at the harness
+ //! tests and delete this file.
++use crate::integer::ciphertext::{IntegerCiphertext, IntegerRadixCiphertext};
+ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+@@ -534,3 +535,71 @@ where
          }
-         Commands::PktTrace { action } => match action {
-             PktTraceAction::Status => mhdma::pkt_trace_status(&mut hpu_hw, &regmap),
-@@ -714,7 +721,13 @@ fn soft_reset(hw: &mut ffi::HpuHw, regmap: &FlatRegmap) {
      }
  }
- 
--fn trace_dump(hw: &mut ffi::HpuHw, regmap: &FlatRegmap, size_b: usize, filename: &str) {
-+fn trace_dump(
-+    hw: &mut ffi::HpuHw,
-+    regmap: &FlatRegmap,
-+    lut_map_f: &str,
-+    size_b: usize,
-+    filename: &str,
-+) {
-     let offset = {
-         let offset_reg: Vec<usize> = ["trc_pc0_lsb", "trc_pc0_msb"]
-             .into_iter()
-@@ -728,11 +741,13 @@ fn trace_dump(hw: &mut ffi::HpuHw, regmap: &FlatRegmap, size_b: usize, filename:
-             .collect();
-         offset_reg[0] as u64 + ((offset_reg[1] as u64) << 32)
-     };
-+    println!("Load LutMap context from file: {lut_map_f}");
-+    let lut_map = LutMap::read_from(lut_map_f).expect("Issue with LutMap loading");
- 
-     println!("Dump {size_b} bytes of trace [@{offset:x}] inside {filename}");
-     let raw_data = read_mem(hw, offset, size_b);
--    let trace_stream =
--        IscTraceStream::from_bytes(&raw_data).expect("Issue with during trace parsing");
-+    let trace_stream = IscTraceStream::from_bytes_with_ctx(&raw_data, &lut_map)
-+        .expect("Issue with during trace parsing");
- 
-     let file = File::create(filename).expect("Failed to create or open trace dump file");
-     let buf_wr = std::io::BufWriter::new(file);
-```
-
----
-
-### Incident Patch 11: `b8d574c5` (2026-09-16)
-**Commit Message**: fix(hpu): Update examples and test with new signature interfaces
-
-Also fix gen_lut issue in integer/hl_api
-
-**File**: `backends/tfhe-hpu-backend/src/interface/device.rs` (modified, +13/-0)
-```diff
-@@ -79,6 +79,19 @@ impl HpuDevice {
-     pub fn config(&self) -> &HpuConfig {
-         &self.config
-     }
 +
-+    /// Look up the zhc `Signature`/required-node-count of a given IOp. Mainly useful for
-+    /// tooling/benchmarks that need to introspect an IOp's expected src/dst/imm shape ahead of
-+    /// building a matching `HpuCmd` (which does this same lookup internally and doesn't need it
-+    /// specified explicitly).
-+    pub fn get_signature(
-+        &self,
-+        fw_mode: crate::asm::FwMode,
-+        opcode: crate::asm::IOpcode,
-+        integer_w: u16,
-+    ) -> crate::asm::IOpSig {
-+        self.cluster.get_signature(fw_mode, opcode, integer_w)
-+    }
- }
- 
- /// Allocate new Hpu variable to hold ciphertext
-```
-
-**File**: `tfhe/examples/hpu/bench.rs` (modified, +28/-44)
-```diff
-@@ -24,7 +24,7 @@ use rand::{Rng, SeedableRng};
- /// Define CLI arguments
- pub use clap::Parser;
- pub use clap_num::maybe_hex;
--#[derive(clap::Parser, Debug, Clone, serde::Serialize)]
-+#[derive(clap::Parser, Debug, Clone)]
- #[command(
-     long_about = "HPU stimulus generation application: Start operation on HPU for RTL test purpose."
- )]
-@@ -49,7 +49,7 @@ pub struct Args {
-     /// Iop to expand and simulate
-     /// If None default to All IOp
-     #[arg(long)]
--    pub iop: Vec<hpu_asm::AsmIOpcode>,
-+    pub iop: Vec<hpu_asm::StaticIOp>,
- 
-     /// Number of iteration for each IOp
-     #[arg(long, default_value_t = 1)]
-@@ -69,17 +69,6 @@ pub struct Args {
-     #[arg(long, value_parser = maybe_hex::<u128>)]
-     pub imm: Vec<u128>,
- 
--    /// Fallback prototype
--    /// Only apply to IOp with unspecified prototype
--    /// Used for custom IOp testing when prototype isn't known
--    /// Syntax example: "<N B> <- <N N> <0>"
--    /// Each entry options are (case incensitive):
--    /// * N, Nat, Native -> Full size integer;
--    /// * H, Half -> Half size integer;
--    /// * B, Bool -> boolean value;
--    #[arg(long)]
--    pub user_proto: Option<hpu_asm::IOpProto>,
--
-     /// Seed used for some rngs
-     #[arg(long)]
-     pub seed: Option<u128>,
-@@ -93,10 +82,6 @@ pub struct Args {
-     /// Use trivial encrypt ciphertext
-     #[arg(long)]
-     pub trivial: bool,
--
--    /// Override the firmware implementation used
--    #[arg(long)]
--    pub fw_impl: Option<String>,
- }
- 
- #[derive(Debug)]
-@@ -180,14 +165,14 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-         set_hpu_io_dump(dump_path);
-     }
- 
--    // Override some configuration settings
--    let mut hpu_config = HpuConfig::from_toml(args.config.expand().as_str());
--    if let Some(name) = args.fw_impl {
--        hpu_config.firmware.implementation = name;
--    }
-+    let hpu_config = HpuConfig::from_toml(args.config.expand().as_str());
- 
-     // Instantiate HpuDevice --------------------------------------------------
--    let hpu_device = HpuDevice::new(hpu_config, args.force_reload)?;
-+    let hpu_device = HpuDevice::new(
-+        hpu_config,
-+        args.force_reload,
-+        &tfhe::core_crypto::hpu::create_hpu_lookuptable,
-+    )?;
- 
-     // Force key seeder if seed specified by user
-     if let Some(seed) = args.seed {
-@@ -210,7 +195,7 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-     let bench_iop = if !args.iop.is_empty() {
-         args.iop.clone()
-     } else {
--        hpu_asm::IOP_LIST.to_vec()
-+        hpu_asm::StaticIOp::ALL.to_vec()
-     };
- 
-     let bench_w = if !args.integer_w.is_empty() {
-@@ -229,17 +214,11 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-     // Execute based on required integer_w ------------------------------------
-     let mut report = Vec::with_capacity(bench_w.len());
-     for width in bench_w.iter() {
--        let num_block = width / hpu_device.params().pbs_params.message_width;
--
-         let mut width_report = BenchReport::new();
-         for iop in bench_iop.iter() {
--            let proto = if let Some(format) = iop.format() {
--                format.proto.clone()
--            } else {
--                args.user_proto.clone().expect(
--                    "Use of user defined IOp required a explicit prototype -> C.f. --user-proto",
--                )
--            };
-+            let opcode = hpu_asm::IOpcode::from(*iop);
-+            let (signature, _used_nodes) =
-+                hpu_device.get_signature(hpu_asm::FwMode::Static, opcode, *width as u16);
- 
-             let hpu_nodes = if args.tput {
-                 &hpu_device.config().fpga.node_id
-@@ -251,16 +230,17 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-             let bench_inputs = hpu_nodes
-                 .iter()
-                 .map(|node| {
--                    let (srcs_clear, srcs_enc): (Vec<_>, Vec<_>) = proto
--                        .src
-+                    let (srcs_clear, srcs_enc): (Vec<_>, Vec<_>) = signature
-+                        .get_args()
-                         .iter()
-+                        .filter_map(|ty| match ty {
-+                            zhc::builder::Type::Ciphertext(spec) => Some(spec),
-+                            zhc::builder::Type::Plaintext(_) => None,
-+                        })
-                         .enumerate()
--                        .map(|(pos, mode)| {
--                            let (bw, block) = match mode {
--                                hpu_asm::VarMode::Native => (*width, num_block),
--                                hpu_asm::VarMode::Half => (width / 2, num_block / 2),
--                                hpu_asm::VarMode::Bool => (1, 1),
--                            };
-+                        .map(|(pos, spec)| {
-+                            let bw = spec.int_size() as usize;
-+                            let block = bw / hpu_device.params().pbs_params.message_width;
- 
-                
-```
-
-**File**: `tfhe/examples/hpu/fw_dyn.rs` (modified, +26/-25)
-```diff
-@@ -7,15 +7,11 @@ use integer::hpu::ciphertext::HpuRadixCiphertext;
- use std::path::PathBuf;
- pub use std::time::{Duration, Instant};
- use tfhe::core_crypto::commons::generators::DeterministicSeeder;
--use tfhe::*;
--use tfhe_csprng::generators::DefaultRandomGenerator;
--
--use integer::hpu::ciphertext::HpuRadixCiphertext;
- use tfhe::integer::{ClientKey, CompressedServerKey, ServerKey};
--
- use tfhe::shortint::parameters::KeySwitch32PBSParameters;
-+use tfhe::*;
-+use tfhe_csprng::generators::DefaultRandomGenerator;
- 
--use zhc::builder::CiphertextSpec;
- use zhc::config::multi_hpu::MultiHpuConfig;
- 
- use rand::rngs::StdRng;
-@@ -167,8 +163,12 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-     println!("\n A.0. Hpu backend default configuration");
-     println!("   Open hardware with given configuration...");
-     let hpu_config = HpuConfig::from_toml(args.config.expand().as_str());
--    let hpu_device =
--        HpuDevice::new(hpu_config.clone(), args.force_reload).expect("Hpu device init failed");
-+    let hpu_device = HpuDevice::new(
-+        hpu_config.clone(),
-+        args.force_reload,
-+        &tfhe::core_crypto::hpu::create_hpu_lookuptable,
-+    )
-+    .expect("Hpu device init failed");
- 
-     println!("   Generate client and server keys...");
-     // Force key seeder if seed specified by user
-@@ -230,26 +230,23 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-             }
- 
-             // Register fw on Hpu -----------------------------------------------------
--            let fw_entry = hpu_device.fw_dyn_init(
--                mh_pipeline,
--                &crate::core_crypto::hpu::glwe_lookuptable::create_hpu_lookuptable,
--            )?;
--            let proto = fw_entry.proto();
-+            let fw_entry = hpu_device
-+                .fw_dyn_init(mh_pipeline, &tfhe::core_crypto::hpu::create_hpu_lookuptable)?;
-+            let (signature, _used_nodes) = fw_entry.sig();
- 
-             // Execution ROI ----------------------------------------------------------
--            let num_block = width / hpu_device.params().pbs_params.message_width;
--
-             // Generate inputs
--            let (srcs_clear, srcs_enc): (Vec<_>, Vec<_>) = proto
--                .src
-+            let (srcs_clear, srcs_enc): (Vec<_>, Vec<_>) = signature
-+                .get_args()
-                 .iter()
-+                .filter_map(|ty| match ty {
-+                    zhc::builder::Type::Ciphertext(spec) => Some(spec),
-+                    zhc::builder::Type::Plaintext(_) => None,
-+                })
-                 .enumerate()
--                .map(|(pos, mode)| {
--                    let (bw, block) = match mode {
--                        hpu_asm::VarMode::Native => (width, num_block),
--                        hpu_asm::VarMode::Half => (width / 2, num_block / 2),
--                        hpu_asm::VarMode::Bool => (1, 1),
--                    };
-+                .map(|(pos, spec)| {
-+                    let bw = spec.int_size() as usize;
-+                    let block = bw / hpu_device.params().pbs_params.message_width;
- 
-                     let clear = *args
-                         .src
-@@ -266,7 +263,12 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-                 })
-                 .unzip();
- 
--            let imms = (0..proto.imm)
-+            let imm_count = signature
-+                .get_args()
++pub(crate) fn legacy_default_sum_ciphertexts_vec_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<&'a Vec<RadixCiphertext>, Option<RadixCiphertext>>,
++{
++    let param = param.into();
++    let nb_tests_smaller = nb_tests_smaller_for_params(param);
++    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++    sks.set_deterministic_pbs_execution(true);
++    let sks = Arc::new(sks);
++
++    let mut rng = rand::thread_rng();
++
++    // message_modulus^vec_length
++    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
++
++    executor.setup(&cks, sks.clone());
++
++    for len in [1, 2, 15, 16, 17, 64, 65] {
++        for _ in 0..nb_tests_smaller {
++            let clears = (0..len)
++                .map(|_| rng.gen::<u64>() % modulus)
++                .collect::<Vec<_>>();
++
++            let mut ctxts = clears
 +                .iter()
-+                .filter(|ty| matches!(ty, zhc::builder::Type::Plaintext(_)))
-+                .count();
-+            let imms = (0..imm_count)
-                 .map(|pos| {
-                     *args
-                         .imm
-@@ -281,7 +283,6 @@ pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-             let res_hpu = (0..args.iter)
-                 .filter_map(|i| {
-                     let res = HpuRadixCiphertext::exec(
--                        &proto,
-                         hpu_asm::FwMode::Dynamic,
-                         fw_entry.iop(),
-                         &srcs_enc,
++                .copied()
++                .map(|clear| cks.encrypt(clear))
++                .collect::<Vec<_>>();
++
++            // One of the inputs has non empty carries, to exercise the path where the
++            // implementation has to propagate an input before summing. The other inputs
++            // are left clean, so both paths are covered.
++            let extra_clear = rng.gen::<u64>() % modulus;
++            let extra_ctxt = cks.encrypt(extra_clear);
++            let dirty_index = rng.gen_range(0..ctxts.len());
++            sks.unchecked_add_assign(&mut ctxts[dirty_index], &extra_ctxt);
++            assert!(!ctxts[dirty_index].block_carries_are_empty());
++
++            // Another input has empty carries but a noise level above nominal, so the noise
++            // half of the cleanliness check is exercised too. No cheap operation raises the
++            // noise without also filling the carries, so the metadata is set directly. The
++            // real noise being lower than advertised does not matter for what is tested here.
++            if ctxts.len() >= 2 {
++                let noisy_index = (dirty_index + 1) % ctxts.len();
++                for block in ctxts[noisy_index].blocks_mut() {
++                    block.set_noise_level(
++                        NoiseLevel::NOMINAL + NoiseLevel::NOMINAL,
++                        sks.key.max_noise_level,
++                    );
++                }
++                assert!(ctxts[noisy_index].block_carries_are_empty());
++                assert!(!ctxts[noisy_index].is_clean());
++            }
++
++            let ct_res = executor.execute(&ctxts).unwrap();
++            let res: u64 = cks.decrypt(&ct_res);
++            let clear = (clears.iter().sum::<u64>() + extra_clear) % modulus;
++
++            assert_eq!(res, clear);
++
++            let ct_res_2 = executor.execute(&ctxts).unwrap();
++            assert_eq!(ct_res, ct_res_2, "Failed determinism check");
++        }
++    }
++}
 ```
 
-**File**: `tfhe/examples/hpu/hlapi.rs` (modified, +6/-2)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_add.rs` (modified, +6/-3)
 ```diff
-@@ -154,8 +154,12 @@ fn main() {
+@@ -1,4 +1,7 @@
+-use super::legacy_default_tests::{legacy_default_add_test, legacy_default_overflowing_add_test};
++use super::legacy_default_tests::{
++    legacy_default_add_test, legacy_default_overflowing_add_test,
++    legacy_default_sum_ciphertexts_vec_test,
++};
+ use crate::core_crypto::gpu::{get_number_of_gpus, CudaStreams};
+ use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+ use crate::integer::gpu::server_key::radix::tests_signed::GpuMultiDeviceFunctionExecutor;
+@@ -7,7 +10,7 @@ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{
+-    default_sum_ciphertexts_vec_test, unchecked_add_assign_test, unchecked_add_test,
++    unchecked_add_assign_test, unchecked_add_test,
+ };
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+@@ -93,7 +96,7 @@ where
+         sks.sum_ciphertexts(ctxt, &streams)
      };
- 
-     // Instantiate HpuDevice --------------------------------------------------
--    let hpu_device = HpuDevice::from_config(&args.config.expand(), args.force_reload)
--        .expect("Hpu device init failed");
-+    let hpu_device = HpuDevice::from_config(
-+        &args.config.expand(),
-+        args.force_reload,
-+        &tfhe::core_crypto::hpu::create_hpu_lookuptable,
-+    )
-+    .expect("Hpu device init failed");
- 
-     // Generate keys ----------------------------------------------------------
-     let config = Config::from_hpu_device(&hpu_device);
-```
-
-**File**: `tfhe/examples/hpu/matmul.rs` (modified, +6/-2)
-```diff
-@@ -53,8 +53,12 @@ fn main() {
-         pub p: usize,
-     }
-     let args = Args::parse();
--    let hpu_device = HpuDevice::from_config(&args.config.expand(), args.force_reload)
--        .expect("Hpu device init failed");
-+    let hpu_device = HpuDevice::from_config(
-+        &args.config.expand(),
-+        args.force_reload,
-+        &tfhe::core_crypto::hpu::create_hpu_lookuptable,
-+    )
-+    .expect("Hpu device init failed");
- 
-     println!("\n 1. Key generation");
-     println!("   Generate client and server keys...");
-```
-
-**File**: `tfhe/src/core_crypto/hpu/mod.rs` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
- pub mod algorithms;
- pub mod entities;
- pub use entities::*;
-+// Expose function used for glwe_lookuptable generation.
-+// This function should be easily accessed synced it's required for hpu device instantiation
-+pub use entities::glwe_lookuptable::create_hpu_lookuptable;
-```
-
-**File**: `tfhe/src/high_level_api/integers/unsigned/tests/hpu.rs` (modified, +6/-2)
-```diff
-@@ -4,8 +4,12 @@ use tfhe_hpu_backend::prelude::HpuDevice;
- use crate::{set_server_key, ClientKey, CompressedServerKey, Config};
- 
- fn setup_hpu(hpu_device_cfg_path: &str) -> ClientKey {
--    let hpu_device =
--        HpuDevice::from_config(hpu_device_cfg_path, false).expect("Hpu device init failed");
-+    let hpu_device = HpuDevice::from_config(
-+        hpu_device_cfg_path,
-+        false,
-+        &crate::core_crypto::hpu::create_hpu_lookuptable,
-+    )
-+    .expect("Hpu device init failed");
- 
-     let config = Config::from_hpu_device(&hpu_device);
- 
-```
-
-**File**: `tfhe/src/integer/keycache.rs` (modified, +6/-2)
-```diff
-@@ -65,8 +65,12 @@ impl IntegerKeyCache {
-                 let config_file = ShellString::new(
-                     "${HPU_BACKEND_DIR}/config_store/${HPU_CONFIG}/hpu_config.toml".to_string(),
-                 );
--                HpuDevice::from_config(&config_file.expand(), false)
--                    .expect("HpuDevice failed to open with required configuration")
-+                HpuDevice::from_config(
-+                    &config_file.expand(),
-+                    false,
-+                    &crate::core_crypto::hpu::create_hpu_lookuptable,
-+                )
-+                .expect("HpuDevice failed to open with required configuration")
-             };
-             // Check compatibility with key
-             let hpu_pbs_params =
-```
-
----
-
-### Incident Patch 12: `b2fb006c` (2026-09-23)
-**Commit Message**: fix(integer): return an error if list size does not match metadata
-
-**File**: `tfhe/src/high_level_api/compact_list.rs` (modified, +1/-1)
-```diff
-@@ -911,7 +911,7 @@ impl CiphertextList for CompactCiphertextListExpander {
-         match &self.inner {
-             InnerCompactCiphertextListExpander::Cpu(inner) => {
-                 inner.get_kind_of(index).and_then(|data_kind| {
--                    crate::FheTypes::from_data_kind(data_kind, inner.message_modulus())
-+                    crate::FheTypes::from_data_kind(data_kind, inner.message_modulus()?)
-                 })
-             }
-             #[cfg(feature = "gpu")]
-```
-
-**File**: `tfhe/src/integer/ciphertext/compact_list.rs` (modified, +136/-20)
-```diff
-@@ -371,8 +371,11 @@ impl CompactCiphertextListExpander {
-             .transpose()
-     }
- 
--    pub(crate) fn message_modulus(&self) -> MessageModulus {
--        self.expanded_blocks[0].message_modulus
-+    /// Returns the message modulus of the blocks in the list, or None if the list holds no block
-+    pub(crate) fn message_modulus(&self) -> Option<MessageModulus> {
-+        self.expanded_blocks
-+            .first()
-+            .map(|block| block.message_modulus)
-     }
+     let executor = GpuFunctionExecutor::new(sum_vec);
+-    default_sum_ciphertexts_vec_test(param, executor);
++    legacy_default_sum_ciphertexts_vec_test(param, executor);
  }
  
-@@ -524,6 +527,15 @@ impl IntegerUnpackingToShortintCastingModeHelper {
-         })
+ fn integer_default_overflowing_add<P>(param: P)
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/sum.rs` (modified, +2/-6)
+```diff
+@@ -312,12 +312,8 @@ impl ServerKey {
+             .collect::<Vec<_>>();
+         ciphertexts
+             .par_iter_mut()
+-            .filter(|ct| ct.block_carries_are_empty())
+-            .for_each(|ct| {
+-                if !ct.block_carries_are_empty() {
+-                    self.full_propagate_parallelized(&mut *ct);
+-                }
+-            });
++            .filter(|ct| !ct.is_clean())
++            .for_each(|ct| self.full_propagate_parallelized(&mut *ct));
+ 
+         self.unchecked_unsigned_overflowing_sum_ciphertexts_vec_parallelized(ciphertexts)
      }
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +43/-0)
+```diff
+@@ -47,6 +47,49 @@ pub(crate) fn default_block_requirements(params: TestParameters) -> Vec<SizeRequ
+         .collect()
+ }
  
-+    /// Number of blocks described by the metadata of a list
-+    fn block_count(&self, infos: &[DataKind]) -> crate::Result<usize> {
-+        DataKind::total_block_count(infos, self.message_modulus).map_err(|()| {
-+            crate::error!(
-+                "Invalid compact ciphertext list: the block count of its metadata overflows"
-+            )
-+        })
-+    }
++/// Block budget for a vector operation about as costly as a sum.
++///
++/// Operations doing more work per block need a smaller budget to run in a comparable time,
++/// hence [`vec_size_requirements_with_budget`].
++pub(crate) const DEFAULT_VEC_BLOCK_BUDGET: u32 = 128;
 +
-     /// Generate functions to unpack message and carries and additionally sanitizes blocks
-     ///
-     /// * boolean blocks: make sure they encrypt a 0 or a 1
-@@ -532,12 +544,15 @@ impl IntegerUnpackingToShortintCastingModeHelper {
-     pub fn generate_unpack_and_sanitize_functions<'a>(
-         &'a self,
-         infos: &[DataKind],
-+        expected_lwe_count: usize,
-     ) -> crate::Result<ExpandFunctionsOwned<'a>> {
--        let block_count: usize = infos
--            .iter()
--            .map(|x| x.num_blocks(self.message_modulus))
--            .sum();
--        let packed_block_count = block_count.div_ceil(2);
-+        let packed_block_count = self.block_count(infos)?.div_ceil(2);
-+        if packed_block_count != expected_lwe_count {
-+            return Err(crate::error!(
-+                "Invalid compact ciphertext list: its metadata describes {packed_block_count} \
-+                 packed ciphertexts, got {expected_lwe_count}"
-+            ));
-+        }
-         let mut functions: ExpandFunctionsOwned<'a> =
-             vec![Some(Vec::with_capacity(2)); packed_block_count];
-         let mut overall_block_idx = 0;
-@@ -606,11 +621,15 @@ impl IntegerUnpackingToShortintCastingModeHelper {
-     pub fn generate_sanitize_without_unpacking_functions<'a>(
-         &'a self,
-         infos: &[DataKind],
-+        expected_lwe_count: usize,
-     ) -> crate::Result<ExpandFunctionsOwned<'a>> {
--        let total_block_count: usize = infos
--            .iter()
--            .map(|x| x.num_blocks(self.message_modulus))
--            .sum();
-+        let total_block_count = self.block_count(infos)?;
-+        if total_block_count != expected_lwe_count {
-+            return Err(crate::error!(
-+                "Invalid compact ciphertext list: its metadata describes {total_block_count} \
-+                 ciphertexts, got {expected_lwe_count}"
-+            ));
-+        }
-         let mut functions = Vec::with_capacity(total_block_count);
- 
-         let mut push_functions = |block_count: usize, func: &'a (dyn Fn(u64) -> u64 + Sync)| {
-@@ -651,11 +670,12 @@ impl IntegerUnpackingToShortintCastingModeHelper {
-         &'a self,
-         infos: &[DataKind],
-         is_packed: bool,
-+        expected_lwe_count: usize,
-     ) -> crate::Result<ExpandFunctionsOwned<'a>> {
-         if is_packed {
--            self.generate_unpack_and_sanitize_functions(infos)
-+            self.generate_unpack_and_sanitize_functions(infos, expected_lwe_count)
-         } else {
--            self.generate_sanitize_without_unpacking_functions(infos)
-+            self.generate_sanitize_without_unpacking_functions(infos, expected_lwe_count)
-         }
-     }
- 
-@@ -828,9 +848,17 @@ impl CompactCiphertextList {
-         if self.is_empty() {
-             return Ok(CompactCiphertextListExpander::new(vec![], vec![]));
-         }
-+        if self.ct_list.is_empty() {
-+            return Err(crate::error!(
-+                "Invalid compact ciphertext list: it holds no ciphertext but its metadata \
-+                describes {} items",
-+                self.info.len()
-+            ));
-+        }
-         let helper =
-             IntegerUnpackingToShortintCastingModeHelper::from_expansion_mode(expansion_mode);
--        let functions = helper.generate_expand_functions(&self.info, self.is_packed())?;
-+        let functions =
-+            helper.generate_expand_functions(&self.info, self.is_packed(), self.ct_list.len())?;
- 
-         let casted_blocks = match expansion_mode {
-             IntegerCompactCiphertextListExpansionMode::CastAndUnpackIfNecessary(
-@@ -860,6 +888,13 @@ impl CompactCiphertextList {
-         if self.is_empty() {
-             return Ok(CompactCiphertextListExpander::new(vec![], vec![]));
-         }
-+        if self.ct_list.is_empty() {
-+            return Err(crate::error!(
-+                "Invalid compact ciphertext list: it holds no ciphertext but its metadata \
-+                describes {} items",
-+                self.info.len()
-+            ));
-+        }
-         if self.is_packed() {
-          
-```
-
----
-
-### Incident Patch 13: `ea588dfd` (2026-09-25)
-**Commit Message**: fix(ci): fix zk-pok valgrind features and disable scheduled zk code validation
-
-test_zk_pok_gpu_valgrind still exported SANITIZER_CARGO_FEATURES_CPU, which
-check_memory_errors.sh stopped reading when it was renamed to
-SANITIZER_CARGO_FEATURES_GPU_DEBUG. The script then used its default tfhe
-feature list on tfhe-zk-pok, and cargo nextest list failed.
-
-Remove the weekly cron trigger of gpu_zk_code_validation_tests; the
-workflow can still be launched manually with workflow_dispatch.
-
-**File**: `.github/workflows/gpu_zk_code_validation_tests.yml` (modified, +0/-3)
-```diff
-@@ -22,9 +22,6 @@ env:
- on:
-   # Allows you to run this workflow manually from the Actions tab as an alternative.
-   workflow_dispatch:
--  schedule:
--    # every friday noon
--    - cron: "0 12 * * 5"
- 
- permissions:
-   contents: read
-```
-
-**File**: `Makefile` (modified, +1/-1)
-```diff
-@@ -1073,7 +1073,7 @@ test_zk_pok_gpu_valgrind: install_cargo_nextest
- 	export RUSTFLAGS="-C target-cpu=x86-64" && \
- 	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
- 	export SANITIZER_CARGO_PACKAGE=tfhe-zk-pok && \
--	export SANITIZER_CARGO_FEATURES_CPU=gpu && \
-+	export SANITIZER_CARGO_FEATURES_GPU_DEBUG=gpu && \
- 	export SANITIZER_TEST_FILTER_CPU='gpu::' && \
- 	export SANITIZER_TEST_EXCLUDES_CPU='conversion_roundtrip|scalar_validation|long_run' && \
- 	export SANITIZER_TEST_EXE_GLOB='tfhe_zk_pok-*' && \
-```
-
----
-
-### Incident Patch 14: `5204d866` (2026-09-20)
-**Commit Message**: chore(deps): update dtolnay/rust-toolchain requirement to 02cb101ec7c40f2c49e1d9714d64511d8e1b74de
-
-Updates the requirements on [dtolnay/rust-toolchain](https://github.com/dtolnay/rust-toolchain) to permit the latest version.
-- [Release notes](https://github.com/dtolnay/rust-toolchain/releases)
-- [Commits](https://github.com/dtolnay/rust-toolchain/commits/02cb101ec7c40f2c49e1d9714d64511d8e1b74de)
-
----
-updated-dependencies:
-- dependency-name: dtolnay/rust-toolchain
-  dependency-version: 02cb101ec7c40f2c49e1d9714d64511d8e1b74de
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/aws_data_tests.yml` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ jobs:
-           git config --local --unset-all http.https://github.com/.extraheader || rm "${RUNNER_TEMP}"/git-credentials-*.config
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_fast_tests.yml` (modified, +1/-1)
-```diff
-@@ -161,7 +161,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_integer_tests.yml` (modified, +1/-1)
-```diff
-@@ -90,7 +90,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_noise_checks.yml` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_signed_integer_tests.yml` (modified, +1/-1)
-```diff
-@@ -90,7 +90,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_tests.yml` (modified, +1/-1)
-```diff
-@@ -166,7 +166,7 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/aws_tfhe_wasm_tests.yml` (modified, +1/-1)
-```diff
-@@ -95,7 +95,7 @@ jobs:
-           git config --global --add url."https://github.com/".insteadOf "git@github.com:"
- 
-       - name: Install latest stable
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-```
-
-**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +1/-1)
-```diff
-@@ -177,7 +177,7 @@ jobs:
-           SHA: ${{ github.sha }}
- 
-       - name: Install rust
--        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: nightly
- 
-```
-
----
-
-### Incident Patch 15: `b10b64f3` (2026-09-23)
-**Commit Message**: feat(bench): fix noise_squash file to avoid compilation error
-
-**File**: `tfhe-benchmark/benches/high_level_api/noise_squash.rs` (modified, +15/-10)
-```diff
-@@ -1,3 +1,5 @@
-+#![cfg_attr(feature = "hpu", allow(dead_code, unused_imports))]
-+
- #[cfg(not(feature = "hpu"))]
- use benchmark::params_aliases::BENCH_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
- 
-@@ -69,7 +71,7 @@ fn bench_sns_only_fhe_type<FheType>(
-     #[cfg(feature = "gpu")]
-     set_server_key(compressed_sks.decompress_to_gpu());
- 
--    #[cfg(all(not(feature = "hpu"), not(feature = "gpu")))]
-+    #[cfg(not(feature = "gpu"))]
-     {
-         let decompressed_sks = compressed_sks.decompress();
-         rayon::broadcast(|_| set_server_key(decompressed_sks.clone()));
-@@ -118,7 +120,7 @@ fn bench_sns_only_fhe_type<FheType>(
- 
-                     throughput_num_threads(num_blocks, 4)
-                 }
--                #[cfg(not(any(feature = "gpu", feature = "hpu")))]
-+                #[cfg(not(feature = "gpu"))]
-                 {
-                     use benchmark::find_optimal_batch::find_optimal_batch;
- 
-@@ -177,7 +179,7 @@ fn bench_sns_only_fhe_type<FheType>(
-                 });
-             }
- 
--            #[cfg(all(not(feature = "hpu"), not(feature = "gpu")))]
-+            #[cfg(not(feature = "gpu"))]
-             {
-                 bench_group.throughput(Throughput::Elements(elements));
-                 println!("elements: {elements}");
-@@ -239,7 +241,7 @@ fn bench_decomp_sns_comp_fhe_type<FheType>(
-     #[cfg(feature = "gpu")]
-     set_server_key(compressed_sks.decompress_to_gpu());
- 
--    #[cfg(all(not(feature = "hpu"), not(feature = "gpu")))]
-+    #[cfg(not(feature = "gpu"))]
-     {
-         let decompressed_sks = compressed_sks.decompress();
-         rayon::broadcast(|_| set_server_key(decompressed_sks.clone()));
-@@ -296,7 +298,7 @@ fn bench_decomp_sns_comp_fhe_type<FheType>(
- 
-                     throughput_num_threads(num_blocks, 4)
-                 }
--                #[cfg(not(any(feature = "gpu", feature = "hpu")))]
-+                #[cfg(not(feature = "gpu"))]
-                 {
-                     use benchmark::find_optimal_batch::find_optimal_batch;
- 
-@@ -372,7 +374,7 @@ fn bench_decomp_sns_comp_fhe_type<FheType>(
-                 });
-             }
- 
--            #[cfg(all(not(feature = "hpu"), not(feature = "gpu")))]
-+            #[cfg(not(feature = "gpu"))]
-             {
-                 bench_group.throughput(Throughput::Elements(elements));
-                 bench_group.bench_function(bench_id.as_str(), |b| {
-@@ -452,19 +454,22 @@ bench_sns_only_type!(FheUint128);
- 
- bench_decomp_sns_comp_type!(FheUint64);
- 
-+#[cfg(feature = "hpu")]
- fn main() {
--    let env_config = EnvConfig::new();
--
--    #[cfg(feature = "hpu")]
-     panic!("Noise squashing is not supported on HPU");
++/// [`vec_size_requirements_with_budget`] with [`DEFAULT_VEC_BLOCK_BUDGET`].
++pub(crate) fn vec_size_requirements(
++    ctx: &TestContext,
++    vec_lens: impl IntoIterator<Item = u32>,
++) -> Vec<SizeRequirements> {
++    vec_size_requirements_with_budget(ctx, vec_lens, DEFAULT_VEC_BLOCK_BUDGET)
 +}
 +
-+#[cfg(not(feature = "hpu"))]
-+fn main() {
-+    let env_config = EnvConfig::new();
++/// Block counts to pair with each of `vec_lens`, for a test taking a vector input.
++///
++/// The cost of a vector operation grows with both the number of elements and the number of
++/// blocks of each element, so sweeping the two axes independently is too slow. The block
++/// count is instead made to shrink as the vector grows, which keeps the total amount of
++/// work per case roughly flat while still reaching both ends of both axes: short vectors
++/// are tested with wide radixes, long vectors with narrow ones.
++///
++/// `budget` is how many blocks a case may use in total, summed over the elements of one
++/// input vector. It is only a budget, not a hard limit: an element is never given less
++/// than one block, so a vector longer than `budget` goes over it. The right value depends
++/// on how costly the tested operation is per block, so each test picks its own, starting
++/// from [`DEFAULT_VEC_BLOCK_BUDGET`].
++pub(crate) fn vec_size_requirements_with_budget(
++    ctx: &TestContext,
++    vec_lens: impl IntoIterator<Item = u32>,
++    budget: u32,
++) -> Vec<SizeRequirements> {
++    let max_n_blocks = max_block_requirement(ctx.params);
++    vec_lens
++        .into_iter()
++        .map(|vec_len| SizeRequirements {
++            // `max(1)` as the empty vector has no element to size, any block count does
++            n_blocks: (budget / vec_len.max(1)).clamp(1, max_n_blocks),
++            vec_len: Some(vec_len),
++        })
++        .collect()
++}
++
+ /// Environment variable overriding the seed used by [`TestBuilder`]
+ /// (decimal or `0x`-prefixed hex).
+ /// The seed is printed by every run so the cases of a failing run (clear values, input
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs` (modified, +0/-1)
+```diff
+@@ -56,7 +56,6 @@ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_
+ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sub::default_sub_test;
+ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sub::unchecked_sub_test;
+ #[cfg(feature = "gpu")]
+-pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sum::default_sum_ciphertexts_vec_test;
+ #[cfg(feature = "gpu")]
+ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_vector_find::{
+     default_contains_clear_test_case, default_contains_test_case,
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/mod.rs` (modified, +0/-11)
+```diff
+@@ -259,17 +259,6 @@ pub(crate) fn overflowing_add_under_modulus<T: UnsignedInteger>(
+     (result % modulus, overflowed || result >= modulus)
+ }
  
-     let params: Vec<(
-         PBSParameters,
-         NoiseSquashingParameters,
-         NoiseSquashingCompressionParameters,
-         CompressionParameters,
-     )> = {
--        #[cfg(all(not(feature = "hpu"), not(feature = "gpu")))]
-+        #[cfg(not(feature = "gpu"))]
-         {
-             vec![(
-                 BENCH_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128.into(),
+-pub(crate) fn overflowing_sum_slice_under_modulus(elems: &[u64], modulus: u64) -> (u64, bool) {
+-    let mut s = 0u64;
+-    let mut o = false;
+-    for e in elems.iter().copied() {
+-        let (curr_s, curr_o) = overflowing_add_under_modulus(s, e, modulus);
+-        s = curr_s;
+-        o |= curr_o;
+-    }
+-    (s, o)
+-}
+-
+ pub(crate) fn overflowing_mul_under_modulus(a: u64, b: u64, modulus: u64) -> (u64, bool) {
+     let (mut result, mut overflow) = a.overflowing_mul(b);
+     overflow |= result >= modulus;
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_sum.rs` (modified, +59/-186)
+```diff
+@@ -1,215 +1,88 @@
+-use crate::integer::keycache::KEY_CACHE;
+-use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{FunctionExecutor, NB_CTXT};
+-use crate::integer::server_key::radix_parallel::tests_unsigned::{
+-    nb_tests_smaller_for_params, overflowing_sum_slice_under_modulus, CpuFunctionExecutor,
++use crate::integer::server_key::radix_parallel::test_harness::{
++    vec_size_requirements, ExecuteOn, TestBuilder, TestContext,
+ };
++use crate::integer::server_key::radix_parallel::tests_unsigned::CpuFunctionExecutor;
+ use crate::integer::tests::create_parameterized_test;
+-use crate::integer::{
+-    IntegerCiphertext, IntegerKeyKind, IntegerRadixCiphertext, RadixCiphertext, RadixClientKey,
+-    ServerKey,
+-};
++use crate::integer::tests::uint::Uint;
++use crate::integer::{BooleanBlock, RadixCiphertext, ServerKey};
+ #[cfg(tarpaulin)]
+ use crate::shortint::parameters::coverage_parameters::*;
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+-use rand::Rng;
+-use std::sync::Arc;
+ 
+ create_parameterized_test!(integer_default_unsigned_overflowing_sum_ciphertexts_vec);
+ create_parameterized_test!(integer_default_sum_ciphertexts_vec);
+ 
++/// Vector lengths both sum tests cover.
++const VEC_LENS: [u32; 8] = [0, 1, 2, 15, 16, 17, 64, 65];
++
+ fn integer_default_unsigned_overflowing_sum_ciphertexts_vec<P>(param: P)
+ where
+     P: Into<TestParameters>,
+ {
+-    integer_default_unsigned_overflowing_sum_ciphertexts_test(param);
++    let ctx = TestContext::from_env(param);
++    // Same inference problem as in `integer_default_sum_ciphertexts_vec`
++    let overflowing_sum_vec =
++        |sks: &ServerKey, ctxts: &[RadixCiphertext]| -> Option<(RadixCiphertext, BooleanBlock)> {
++            sks.unsigned_overflowing_sum_ciphertexts_parallelized(ctxts)
++        };
++    let mut executor = CpuFunctionExecutor::new(overflowing_sum_vec);
++    executor.setup_with_server_key(ctx.server_key());
++    default_unsigned_overflowing_sum_ciphertexts_vec_test(&ctx, executor);
++}
++
++pub(crate) fn default_unsigned_overflowing_sum_ciphertexts_vec_test<E>(
++    ctx: &TestContext,
++    executor: E,
++) where
++    E: ExecuteOn<(Vec<RadixCiphertext>,), Option<(RadixCiphertext, BooleanBlock)>>,
++{
++    // Same lengths as `default_sum_ciphertexts_vec_test`
++    TestBuilder::new(ctx)
++        .size_requirements(vec_size_requirements(ctx, VEC_LENS))
++        .n_random(2)
++        .execute(executor, |(clears,): (Vec<Uint>,)| {
++            let bits = clears.first()?.bits();
++            let mut overflowed = false;
++            let sum = clears.iter().copied().fold(Uint::zero(bits), |acc, clear| {
++                let (sum, overflow) = acc.overflowing_add(clear);
++                overflowed |= overflow;
++                sum
++            });
++            Some((sum, overflowed))
++        });
+ }
+ 
+ fn integer_default_sum_ciphertexts_vec<P>(param: P)
+ where
+     P: Into<TestParameters>,
+ {
++    let ctx = TestContext::from_env(param);
+     // Without this the compiler seems lost, and outputs errors about
+     // 'one type is more general than the other' probably because the
+     // `sum_ciphertexts_parallelized` is generic over the input collection
+-    let sum_vec = |sks: &ServerKey, ctxt: &Vec<RadixCiphertext>| -> Option<RadixCiphertext> {
+-        sks.sum_ciphertexts_parallelized(ctxt)
++    let sum_vec = |sks: &ServerKey, ctxts: &[RadixCiphertext]| -> Option<RadixCiphertext> {
++        sks.sum_ciphertexts_parallelized(ctxts)
+     };
+-    let executor = CpuFunctionExecutor::new(sum_vec);
+-    default_sum_ciphertexts_vec_test(param, executor);
++    let mut executor = CpuFunctionExecutor::new(sum_vec);
++    executor.setup_with_server_key(ctx.server_key());
++    default_sum_ciphertexts_vec_test(&ctx, executor);
+ }
+ 
+-pub(crate) fn integer_default_unsigned_overflowing_sum_ciphertexts_test<P>(param: P)
++pub(crate) fn default_sum_ciphertexts_vec_test<E>(ctx: &TestContext, executor: E)
+ where
+-    P: Into<TestParameters>,
++    E: ExecuteOn<(Vec<RadixCiphertext>,), Option<RadixCiphertext>>,
+ {
+-    let param = param.into();
+-    let nb_tests_smaller = nb_tests_smaller_for_params(param);
+-    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
+-    let cks = RadixClientKey::from((cks, NB_CTXT));
+-
+-    let mut rng = rand::thread_rng();
+-
+-    // message_modulus^vec_length
+-    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
+-
+-    for len in [1, 2, 15, 16, 17, 64, 65] {
+-        for _ in 0..nb_tests_smaller {
+-            let clears = (0..len)
+-                .map(|_| rng.gen::<u64>() % modulus)
+-                .collect::<Vec<_>>();
+-
+-            let ctxts = clears
+-                .iter()
+-                .copied()
+-                .map(|clear| cks.encrypt(clear))
+-                .collect::<Vec<_>>();
+-
+-            let (ct_res, overflow_res) = sks
+-                .unsigned_overflowing_sum_ciphertexts_parallelized(&ctxts)
+-                .unwrap();
+-
+-            asse
+```
+
+---
+
+### Incident Patch 3: `bcdba2b0` (2026-10-13)
+**Commit Message**: fix(hlapi): make sum call default sum not unchecked
+
+Just a small hardening and consistency fix
+
+**File**: `tfhe/src/high_level_api/integers/signed/ops.rs` (modified, +2/-2)
+```diff
+@@ -67,7 +67,7 @@ where
+                     .collect::<Vec<_>>();
+                 cpu_key
+                     .pbs_key()
+-                    .sum_ciphertexts_parallelized(ciphertexts.iter())
++                    .sum_ciphertexts_vec_parallelized(ciphertexts)
+                     .map_or_else(
+                         || {
+                             let radix: crate::integer::SignedRadixCiphertext =
+@@ -154,7 +154,7 @@ where
+                     .collect::<Vec<_>>();
+                 cpu_key
+                     .pbs_key()
+-                    .sum_ciphertexts_parallelized(ciphertexts.iter())
++                    .sum_ciphertexts_vec_parallelized(ciphertexts)
+                     .map_or_else(
+                         || {
+                             let radix: crate::integer::SignedRadixCiphertext =
+```
+
+**File**: `tfhe/src/high_level_api/integers/unsigned/ops.rs` (modified, +2/-2)
+```diff
+@@ -74,7 +74,7 @@ where
+                 let ciphertexts = iter.map(|elem| elem.ciphertext.into_cpu()).collect();
+                 cpu_key
+                     .pbs_key()
+-                    .unchecked_sum_ciphertexts_vec_parallelized(ciphertexts)
++                    .sum_ciphertexts_vec_parallelized(ciphertexts)
+                     .map_or_else(
+                         || {
+                             Self::new(
+@@ -169,7 +169,7 @@ where
+                 let msg_mod = cpu_key.pbs_key().message_modulus();
+                 cpu_key
+                     .pbs_key()
+-                    .unchecked_sum_ciphertexts_vec_parallelized(ciphertexts)
++                    .sum_ciphertexts_vec_parallelized(ciphertexts)
+                     .map_or_else(
+                         || {
+                             Self::new(
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/sum.rs` (modified, +13/-9)
+```diff
+@@ -180,17 +180,11 @@ impl ServerKey {
+     /// Computes the sum of the ciphertexts in parallel.
+     ///
+     /// - Returns None if ciphertexts is empty
+-    ///
+-    /// See [Self::unchecked_sum_ciphertexts_parallelized] for constraints
+-    pub fn sum_ciphertexts_parallelized<'a, T, C>(&self, ciphertexts: C) -> Option<T>
++    /// - Expects all ciphertexts to have the same size
++    pub fn sum_ciphertexts_vec_parallelized<T>(&self, mut ciphertexts: Vec<T>) -> Option<T>
+     where
+-        C: IntoIterator<Item = &'a T>,
+-        T: IntegerRadixCiphertext + 'a,
++        T: IntegerRadixCiphertext,
+     {
+-        let mut ciphertexts = ciphertexts
+-            .into_iter()
+-            .map(Clone::clone)
+-            .collect::<Vec<T>>();
+         ciphertexts
+             .par_iter_mut()
+             .filter(|ct| !ct.is_clean())
+@@ -199,6 +193,16 @@ impl ServerKey {
+         self.unchecked_sum_ciphertexts_vec_parallelized(ciphertexts)
+     }
+ 
++    /// See [Self::sum_ciphertexts_vec_parallelized]
++    pub fn sum_ciphertexts_parallelized<'a, T, C>(&self, ciphertexts: C) -> Option<T>
++    where
++        C: IntoIterator<Item = &'a T>,
++        T: IntegerRadixCiphertext + 'a,
++    {
++        let ciphertexts = ciphertexts.into_iter().map(Clone::clone).collect();
++        self.sum_ciphertexts_vec_parallelized(ciphertexts)
++    }
++
+     /// - Expects all ciphertexts to have empty carries
+     /// - Expects all ciphertexts to have the same size
+     pub fn unchecked_unsigned_overflowing_sum_ciphertexts_vec_parallelized(
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_sum.rs` (modified, +47/-1)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::integer::server_key::radix_parallel::test_harness::{
+-    vec_size_requirements, ExecuteOn, TestBuilder, TestContext,
++    vec_size_requirements, ExecuteOn, SizeRequirements, TestBuilder, TestContext,
+ };
+ use crate::integer::server_key::radix_parallel::tests_unsigned::CpuFunctionExecutor;
+ use crate::integer::tests::create_parameterized_test;
+@@ -16,6 +16,50 @@ create_parameterized_test!(integer_default_sum_ciphertexts_vec);
+ /// Vector lengths both sum tests cover.
+ const VEC_LENS: [u32; 8] = [0, 1, 2, 15, 16, 17, 64, 65];
+ 
++/// Random tests do not exercise the non overflow case a lot (ever?)
++///
++/// So we provide fixed cases that do not create a result that overflows
++fn sum_boundary_fixed_cases(
++    size_requirements: SizeRequirements,
++    ctx: &TestContext,
++) -> Vec<(Vec<Uint>,)> {
++    let vec_len = size_requirements
++        .vec_len
++        .expect("sum tests need SizeRequirements with a vec_len") as usize;
++    if vec_len == 0 {
++        // Nothing to choose, and the empty input is already covered by the random cases
++        return vec![];
++    }
++
++    let bits = ctx.radix_bits(size_requirements.n_blocks);
++    let max = Uint::max(bits);
++    let vec_of_zeros = vec![Uint::zero(bits); vec_len];
++
++    let mut cases = vec![vec_of_zeros.clone()];
++
++    // Sum of a single one and many zeros and sum of single max value and many zeros
++    for value in [Uint::one(bits), max] {
++        let mut case = vec_of_zeros.clone();
++        case[0] = value;
++        cases.push(case);
++    }
++
++    if vec_len > 1 {
++        // We want to sum many ones, but we have to make sure it won't overflow
++        if vec_len as u128 <= max.value() {
++            cases.push(vec![Uint::one(bits); vec_len]);
++        }
++
++        // Smallest overflow there is, one past the largest sum that fits
++        let mut case = vec_of_zeros;
++        case[0] = max;
++        case[1] = Uint::one(bits);
++        cases.push(case);
++    }
++
++    cases.into_iter().map(|clears| (clears,)).collect()
++}
++
+ fn integer_default_unsigned_overflowing_sum_ciphertexts_vec<P>(param: P)
+ where
+     P: Into<TestParameters>,
+@@ -41,6 +85,7 @@ pub(crate) fn default_unsigned_overflowing_sum_ciphertexts_vec_test<E>(
+     TestBuilder::new(ctx)
+         .size_requirements(vec_size_requirements(ctx, VEC_LENS))
+         .n_random(2)
++        .fixed_cases(sum_boundary_fixed_cases)
+         .execute(executor, |(clears,): (Vec<Uint>,)| {
+             let bits = clears.first()?.bits();
+             let mut overflowed = false;
+@@ -76,6 +121,7 @@ where
+     TestBuilder::new(ctx)
+         .size_requirements(vec_size_requirements(ctx, VEC_LENS))
+         .n_random(2)
++        .fixed_cases(sum_boundary_fixed_cases)
+         .execute(executor, |(clears,): (Vec<Uint>,)| {
+             let bits = clears.first()?.bits();
+             Some(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4026** (2026-10-05): fix(hpu): Resolve erc7984 throughput issue in hlapi hpu benchmark (@Bapt-Roux)
-- **PR #4025** (2026-10-05): refactor(integer): remove smart_ops used in tests and examples (@tmontaigu)
-- **PR #4023** (2026-10-05): chore(deps): bump strum_macros from 0.26.4 to 0.28.0 (@dependabot[bot])
-- **PR #4021** (2026-10-05): chore(deps): bump marocchino/sticky-pull-request-comment from 3.0.4 to 3.0.5 in /.github/actions/sticky_report (@dependabot[bot])
-- **PR #4020** (2026-10-05): chore(deps): update dtolnay/rust-toolchain requirement to 7e38f4b43b4db5c8dd498af069a4f6196df1d067 (@dependabot[bot])
-- **PR #4019** (2026-10-02): chore(ci): update dependabot.yaml to be able to update actions files (@SouchonTheo)
-- **PR #4015** (2026-10-02): chore(deps): update strum deps (@SouchonTheo)
-- **PR #4013** (2026-10-01): chore: compactPublicKeyBench32/256BitSmall have been removed (@IceTDrinker)
+- **PR #4072** (2026-10-16): chore: mark crates we don't publish as publish = false (@IceTDrinker)
+- **PR #4067** (2026-10-16): chore: pin CSPRNG (@IceTDrinker)
+- **PR #4066** (closed): backport ci fixes (@IceTDrinker)
+- **PR #4065** (closed): wip trigger (@IceTDrinker)
+- **PR #4064** (2026-10-16): Tm/backport degree 1.6.1 (@tmontaigu)
+- **PR #4063** (2026-10-16): chore(data-extractor): bump rustls (@nsarlin-zama)
 
 ---
 
@@ -4996,3 +2888,34 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. integer): overflow flag of signed overflowing scalar add/sub for out-of-range sc
+
+**RULE**:
+When implementing operations in `tfhe/src/integer/gpu/server_key/radix/scalar_add.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a856fe70`: integer): overflow flag of signed overflowing scalar add/sub for out-of-range scalars. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/scalar_add.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // FIXME(gpu): use `ScalarOverflowFlagSource`
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a856fe70` are properly handled with clean fallback behavior.

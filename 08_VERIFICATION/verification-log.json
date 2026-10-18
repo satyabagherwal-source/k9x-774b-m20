@@ -1,110 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-1APM",
-    "timestamp": "2026-10-17T09:27:54.490Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "d78038e5571ee065e25b9ff00cc9c22252c1f12303b1fb9be303d5ab99cc908d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-5KUT",
-    "timestamp": "2026-10-17T09:31:14.261Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "b2f1e29dc57f23b9a2cf5157519a850fbe6a1d231072e9cce86da8a5e475b581",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-9DM9",
-    "timestamp": "2026-10-17T09:34:11.505Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "92a3b9af314e034a9292f46d37c9423457444dac548473472f3a50642072d9e4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-DS1L",
-    "timestamp": "2026-10-17T09:37:36.825Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "26c93014360a7c238e81220b789c1f3be4074efe2fd3c4b3de42e4a76c4f0b17",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-J41J",
-    "timestamp": "2026-10-17T09:41:45.656Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "f9cd3bc0181c58506ca68727f61d89ff3eb03b7fb43eba83fcc4405ce2534a76",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-OF5A",
-    "timestamp": "2026-10-17T09:45:53.326Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "8d3b9a008d24f7f692932cf42f2930790f541b644dce58f801d6a47baba7b4ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-SC4G",
-    "timestamp": "2026-10-17T09:48:56.032Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "1cbeb33d2b00cd57ef4fecfa4cfb034aabca72b42e55802c6311a65626173485",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-WJFF",
     "timestamp": "2026-10-17T09:52:12.123Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7492,6 +7387,111 @@
     "contentHash": "9495da80305b4e6f0ead7eef8b44b9e4a1785198c7b19467eba67ae751c7646e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K1GG",
+    "timestamp": "2026-10-18T23:01:58.240Z",
+    "repository": "wix/react-native-calendars",
+    "learningId": "learn-github-wix-react-native-calendars",
+    "contentHash": "0bbeb1356b86552793907262a89ab7a1cc8ed7414f7bfda145d201ad29874189",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K36G",
+    "timestamp": "2026-10-18T23:02:00.472Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "530c890fea6a49068aa1fee66e88a666ee965bb37232fd1d288f9472307428c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K7K2",
+    "timestamp": "2026-10-18T23:02:06.146Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "660586bb280f5107dcdd47db6cf9056e7b265c430d9bc3785bbde5383a48f9fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K7MF",
+    "timestamp": "2026-10-18T23:02:06.231Z",
+    "repository": "wix/react-native-navigation",
+    "learningId": "learn-github-wix-react-native-navigation",
+    "contentHash": "b7fae8fb024fe87354c87118427a2dd058e23d329955a6189c17b812e58608c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K93Q",
+    "timestamp": "2026-10-18T23:02:08.150Z",
+    "repository": "AliyunContainerService/pouch",
+    "learningId": "learn-github-aliyuncontainerservice-pouch",
+    "contentHash": "3b5f710f1bf83465c3e980ea976527cb64affa0aceb3cefce2683c975bea7575",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-KAXQ",
+    "timestamp": "2026-10-18T23:02:10.526Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "c5719b6091795eb582476deb1a63bdc2a46692d5672f6877dc2e10e1c8e39810",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-KCMU",
+    "timestamp": "2026-10-18T23:02:12.726Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

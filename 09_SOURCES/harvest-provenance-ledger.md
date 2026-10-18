@@ -2600,3 +2600,10 @@ Every entry in this ledger must capture:
 | `learn-github-nexus-xyz-nexus-zkvm` | `https://github.com/nexus-xyz/nexus-zkvm` | `f2ad1265` | Multi-dimensional audit evidence | 2026-10-18T22:54:26.915Z |
 | `learn-github-featureform-featureform` | `https://github.com/featureform/featureform` | `dc8b9fca` | Multi-dimensional audit evidence | 2026-10-18T22:54:28.723Z |
 | `learn-github-tambo-ai-tambo` | `https://github.com/tambo-ai/tambo` | `6e2c1bff` | Multi-dimensional audit evidence | 2026-10-18T22:55:23.682Z |
+| `learn-github-wix-react-native-calendars` | `https://github.com/wix/react-native-calendars` | `808c6e10` | Multi-dimensional audit evidence | 2026-10-18T23:01:58.243Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `ee4b1147` | Multi-dimensional audit evidence | 2026-10-18T23:02:00.475Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-18T23:02:06.149Z |
+| `learn-github-wix-react-native-navigation` | `https://github.com/wix/react-native-navigation` | `1de39e0d` | Multi-dimensional audit evidence | 2026-10-18T23:02:06.234Z |
+| `learn-github-aliyuncontainerservice-pouch` | `https://github.com/AliyunContainerService/pouch` | `ba854f2d` | Multi-dimensional audit evidence | 2026-10-18T23:02:08.153Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `bcdba2b0` | Multi-dimensional audit evidence | 2026-10-18T23:02:10.529Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `e022bce9` | Multi-dimensional audit evidence | 2026-10-18T23:02:12.729Z |

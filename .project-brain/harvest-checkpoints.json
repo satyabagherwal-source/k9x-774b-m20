@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T22:55:23.690Z",
+  "last_updated": "2026-10-18T23:02:12.736Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1667,14 +1667,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "9dd6e540d03dab7474a44b48082758a2dce3dddd3c2e5ff20213d74afd4a0872",
-      "verified_at": "2026-10-17T20:22:33.008Z",
+      "content_hash": "660586bb280f5107dcdd47db6cf9056e7b265c430d9bc3785bbde5383a48f9fd",
+      "verified_at": "2026-10-18T23:02:06.156Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:22:33.008Z"
+      "last_updated": "2026-10-18T23:02:06.156Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -4972,6 +4972,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T22:55:23.690Z"
+    },
+    "wix/react-native-calendars": {
+      "repository": "wix/react-native-calendars",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wix-react-native-calendars",
+      "content_hash": "0bbeb1356b86552793907262a89ab7a1cc8ed7414f7bfda145d201ad29874189",
+      "verified_at": "2026-10-18T23:01:58.249Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:01:58.249Z"
+    },
+    "flox/flox": {
+      "repository": "flox/flox",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-flox-flox",
+      "content_hash": "530c890fea6a49068aa1fee66e88a666ee965bb37232fd1d288f9472307428c4",
+      "verified_at": "2026-10-18T23:02:00.482Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:02:00.482Z"
+    },
+    "wix/react-native-navigation": {
+      "repository": "wix/react-native-navigation",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wix-react-native-navigation",
+      "content_hash": "b7fae8fb024fe87354c87118427a2dd058e23d329955a6189c17b812e58608c1",
+      "verified_at": "2026-10-18T23:02:06.242Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:02:06.242Z"
+    },
+    "AliyunContainerService/pouch": {
+      "repository": "AliyunContainerService/pouch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-aliyuncontainerservice-pouch",
+      "content_hash": "3b5f710f1bf83465c3e980ea976527cb64affa0aceb3cefce2683c975bea7575",
+      "verified_at": "2026-10-18T23:02:08.161Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:02:08.161Z"
+    },
+    "zama-ai/tfhe-rs": {
+      "repository": "zama-ai/tfhe-rs",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zama-ai-tfhe-rs",
+      "content_hash": "c5719b6091795eb582476deb1a63bdc2a46692d5672f6877dc2e10e1c8e39810",
+      "verified_at": "2026-10-18T23:02:10.536Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:02:10.536Z"
+    },
+    "doobidoo/mcp-memory-service": {
+      "repository": "doobidoo/mcp-memory-service",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-doobidoo-mcp-memory-service",
+      "content_hash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
+      "verified_at": "2026-10-18T23:02:12.736Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:02:12.736Z"
     }
   },
   "repos": {
