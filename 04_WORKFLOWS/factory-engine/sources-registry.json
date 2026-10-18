@@ -2086,8 +2086,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T01:55:46.786Z",
-    "lastVerified": "2026-10-18T01:55:46.786Z",
+    "lastChecked": "2026-10-18T05:20:23.185Z",
+    "lastVerified": "2026-10-18T05:20:23.185Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -21892,8 +21892,8 @@
     "officialUrl": "https://github.com/pathwaycom/serviette",
     "sourceType": "github",
     "technology": "Jupyter Notebook",
-    "lastChecked": "2026-10-17T22:47:33.358Z",
-    "lastVerified": "2026-10-17T22:47:33.358Z",
+    "lastChecked": "2026-10-18T05:20:25.659Z",
+    "lastVerified": "2026-10-18T05:20:25.659Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette-mv8c0rd1",
@@ -23837,5 +23837,12 @@
     "lastChecked": "2026-10-18T05:16:56.854Z",
     "revisionIdentifier": "HEAD",
     "lastVerified": "2026-10-18T05:16:56.854Z"
+  },
+  "hartemyaakoub-seo-toolkit": {
+    "name": "seo-toolkit",
+    "officialUrl": "https://github.com/hartemyaakoub/seo-toolkit",
+    "lastChecked": "2026-10-18T05:20:15.666Z",
+    "revisionIdentifier": "HEAD",
+    "lastVerified": "2026-10-18T05:20:15.666Z"
   }
 }
