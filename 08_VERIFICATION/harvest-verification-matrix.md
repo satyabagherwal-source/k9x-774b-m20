@@ -2420,3 +2420,4 @@
 | `CYCLE-20261018-L1A3` | `2026-10-18T03:55:00.411Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`892e2a51...`) |
 | `CYCLE-20261018-PBI1` | `2026-10-18T03:58:20.281Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`0670755a...`) |
 | `CYCLE-20261018-TKTW` | `2026-10-18T04:01:38.996Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`89d23009...`) |
+| `CYCLE-20261018-XU0Y` | `2026-10-18T04:04:57.538Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`72ad35f7...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:01:39.000Z",
-  "total_cycles_completed": 2397,
-  "total_learnings_persisted": 2397,
+  "last_updated": "2026-10-18T04:04:57.542Z",
+  "total_cycles_completed": 2398,
+  "total_learnings_persisted": 2398,
   "total_rules_promoted": 1389,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:35:50.766Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-google-embeddinggemma-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:39:09.322Z",
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T04:01:39.000Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:04:57.542Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
