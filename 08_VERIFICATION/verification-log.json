@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-ASQX",
-    "timestamp": "2026-10-17T00:15:25.449Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "df8667c65abc6d7c401480e8dcccc3298698cb58f1e192448746439b0bb95f9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-EG14",
     "timestamp": "2026-10-17T00:18:15.592Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
     "contentHash": "4691a500aef8ee82a4200e9268d5f9c62b5b0f14265c654256140588ff8c028e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-2MU5",
+    "timestamp": "2026-10-18T04:36:41.117Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "778e4158d25dc8dbfcd04c8f1c7d282697c49316e05e1fa6894af96434f7e1ea",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

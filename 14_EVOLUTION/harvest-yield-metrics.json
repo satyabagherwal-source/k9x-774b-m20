@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:33:18.375Z",
-  "total_cycles_completed": 2406,
-  "total_learnings_persisted": 2406,
+  "last_updated": "2026-10-18T04:36:41.122Z",
+  "total_cycles_completed": 2407,
+  "total_learnings_persisted": 2407,
   "total_rules_promoted": 1392,
   "history": [
-    {
-      "timestamp": "2026-10-17T17:04:39.513Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T17:07:50.398Z",
       "repository": "google-t5/t5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T04:33:18.375Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:36:41.122Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

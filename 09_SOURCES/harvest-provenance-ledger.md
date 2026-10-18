@@ -2436,3 +2436,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-18T04:26:31.391Z |
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-18T04:30:06.414Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-18T04:33:18.374Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-18T04:36:41.120Z |

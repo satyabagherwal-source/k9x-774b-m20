@@ -2429,3 +2429,4 @@
 | `CYCLE-20261018-PKD8` | `2026-10-18T04:26:31.388Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`74a6aa91...`) |
 | `CYCLE-20261018-U6A4` | `2026-10-18T04:30:06.412Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`80b0091a...`) |
 | `CYCLE-20261018-YAEB` | `2026-10-18T04:33:18.371Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`4691a500...`) |
+| `CYCLE-20261018-2MU5` | `2026-10-18T04:36:41.117Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`778e4158...`) |
