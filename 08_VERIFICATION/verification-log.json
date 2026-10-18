@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-UETQ",
-    "timestamp": "2026-10-16T20:18:43.982Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "6956f709adaa0ff49737e2ea863508e0a5069e3253fb6a08b5494c10550d34bb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-YKZ1",
     "timestamp": "2026-10-16T20:21:58.573Z",
     "repository": "google/gemma-4-31B-it",
@@ -7490,6 +7475,21 @@
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "contentHash": "e9c6de91198110f0d84cfc7a5650e2cb1213758162817a9fc6ed846249beb5df",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-C1DO",
+    "timestamp": "2026-10-18T00:32:03.324Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+    "contentHash": "090fe1e27d31fa1913f22754bc5ad9185df404de4da2902beb6abaf58df83ce5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
