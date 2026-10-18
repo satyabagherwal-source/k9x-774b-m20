@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:20:23.148Z",
+  "last_updated": "2026-10-18T02:26:54.870Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -43268,16 +43268,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fishaudio/drama-3",
       "source_version": "hf-fishaudio-drama-3",
-      "content_hash": "56f6fe53a0efa04b0e524cb564781786b10373c548f47ae8061a19f839ff6d78",
+      "content_hash": "f4616de61edf1b5905a8809344a2268c15d1f65560f731532dfeaa16d6951d27",
       "dossier_path": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1588,
+          "title": "Dual-Cadence Multi-Codebook MTP Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1589,
+          "title": "Zero-Centered Gamma LayerNorm with Offset Clamping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1590,
+          "title": "Partial Rotary Embedding (RoPE) Interleaved Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T17:58:53.649Z",
+      "verified_at": "2026-10-18T02:26:54.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
