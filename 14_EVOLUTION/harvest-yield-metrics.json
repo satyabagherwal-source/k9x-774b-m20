@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T01:45:18.032Z",
-  "total_cycles_completed": 2358,
-  "total_learnings_persisted": 2358,
+  "last_updated": "2026-10-18T01:48:30.953Z",
+  "total_cycles_completed": 2359,
+  "total_learnings_persisted": 2359,
   "total_rules_promoted": 1368,
   "history": [
-    {
-      "timestamp": "2026-10-17T14:31:17.909Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T14:35:43.381Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T01:45:18.032Z",
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T01:48:30.953Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
