@@ -145,8 +145,9 @@ export async function shouldHarvestSource(targetMeta, options = { force: false }
   let currentRevision = null;
   if (targetMeta.type === 'huggingface' || targetMeta.apiUrl?.includes('huggingface.co')) {
     currentRevision = await fetchHuggingFaceHead(targetMeta.apiUrl);
-  } else if (targetMeta.cleanUrl) {
-    currentRevision = fetchRemoteGitHead(targetMeta.cleanUrl);
+  } else if (targetMeta.cleanUrl || targetMeta.webUrl) {
+    const gitUrl = targetMeta.cleanUrl || (targetMeta.webUrl ? `${targetMeta.webUrl}.git` : null);
+    currentRevision = fetchRemoteGitHead(gitUrl);
   } else if (targetMeta.isLocal && targetMeta.path) {
     currentRevision = fetchLocalProjectHead(targetMeta.path);
   }

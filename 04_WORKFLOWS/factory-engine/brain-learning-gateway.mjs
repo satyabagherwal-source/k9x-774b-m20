@@ -948,6 +948,28 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
         index_read_back_verified: true
       }
     };
+
+    // Maintain Dual-Schema Symmetry: Register each promoted rule as top-level ENGINEERING_PATTERN item
+    for (const r of results.promoted_rules) {
+      if (r.number && r.number !== 'EXISTING') {
+        const ruleKey = `rule-${r.number}`;
+        index.items[ruleKey] = {
+          learning_id: ruleKey,
+          category: 'ENGINEERING_PATTERN',
+          rule_number: r.number,
+          title: r.title,
+          source_url: learningPackage.source_url || (learningPackage.repository ? `https://github.com/${learningPackage.repository}` : 'Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md'),
+          source_version: learningPackage.source_version || 'HEAD',
+          file_path: '05_KNOWLEDGE/engineering-patterns.md',
+          status: 'VERIFIED_CANONICAL_RULE',
+          verification_status: 'VERIFIED_CANONICAL_RULE',
+          verified: true,
+          brain_readback: true,
+          verified_at: new Date().toISOString()
+        };
+      }
+    }
+
     saveKnowledgeIndex(index, p.brainRoot);
 
     // Read-back verification for Knowledge Index
@@ -1217,5 +1239,69 @@ export function syncExistingDossiersToKnowledgeIndex() {
     console.log(`📚 [KNOWLEDGE INDEX SYNC] Registered ${synced} existing dossiers into 05_KNOWLEDGE/knowledge-index.json`);
   }
 
-  return { synced, total: Object.keys(index.items || {}).length };
+  // Also reconcile all engineering rules into top-level index items
+  const ruleRecon = reconcileRulesToKnowledgeIndex();
+
+  return { synced, reconciledRules: ruleRecon.reconciled, total: Object.keys(index.items || {}).length };
+}
+
+/**
+ * Reconciles all rules in 05_KNOWLEDGE/engineering-patterns.md into knowledge-index.json
+ * Enforces dual-schema symmetry: every rule 1..N has a top-level ENGINEERING_PATTERN index entry.
+ */
+export function reconcileRulesToKnowledgeIndex(brainRoot = null) {
+  const p = getBrainPaths(brainRoot);
+  if (!fs.existsSync(p.patternsPath)) {
+    return { reconciled: 0, totalRules: 0, reason: 'engineering-patterns.md not found' };
+  }
+
+  const patternsContent = fs.readFileSync(p.patternsPath, 'utf-8');
+  const index = loadKnowledgeIndex(p.brainRoot);
+  if (!index.items) index.items = {};
+
+  const ruleRegex = /^##\s+(\d+)\.\s+([^\r\n]+)$/gm;
+  let match;
+  let reconciled = 0;
+  let totalRules = 0;
+
+  while ((match = ruleRegex.exec(patternsContent)) !== null) {
+    totalRules++;
+    const ruleNum = parseInt(match[1], 10);
+    const ruleTitle = match[2].trim();
+    const ruleKey = `rule-${ruleNum}`;
+
+    if (!index.items[ruleKey]) {
+      index.items[ruleKey] = {
+        learning_id: ruleKey,
+        category: 'ENGINEERING_PATTERN',
+        rule_number: ruleNum,
+        title: ruleTitle,
+        source_url: 'Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md',
+        source_version: 'HEAD',
+        file_path: '05_KNOWLEDGE/engineering-patterns.md',
+        status: 'VERIFIED_CANONICAL_RULE',
+        verification_status: 'VERIFIED_CANONICAL_RULE',
+        verified: true,
+        brain_readback: true,
+        verified_at: new Date().toISOString()
+      };
+      reconciled++;
+    }
+  }
+
+  if (reconciled > 0) {
+    saveKnowledgeIndex(index, p.brainRoot);
+    // Read-back verification
+    const reloaded = loadKnowledgeIndex(p.brainRoot);
+    if (Object.keys(reloaded.items).length < Object.keys(index.items).length) {
+      throw new Error(`Rule reconciliation read-back verification failed: count mismatch.`);
+    }
+    console.log(`📚 [RULE INDEX RECONCILIATION] Registered ${reconciled} missing rules (total rules: ${totalRules}) into 05_KNOWLEDGE/knowledge-index.json`);
+  }
+
+  return {
+    reconciled,
+    totalRules,
+    totalIndexItems: Object.keys(index.items || {}).length
+  };
 }

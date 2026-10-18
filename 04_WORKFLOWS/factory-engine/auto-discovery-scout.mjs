@@ -7,8 +7,10 @@ import { acquireTargetLock, releaseTargetLock } from './concurrency-coordinator.
 import {
   checkServiceAvailability,
   inspectAndRecordHeaders,
+  acquireSharedRateLimitToken,
   MASTER_SERVICES
 } from './master-circuit-breaker.mjs';
+import { getGitHubToken } from './ai-provider-pool.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -175,11 +177,14 @@ async function compliantFetch(url, customHeaders = {}) {
 
   // Master Circuit Breaker Pre-flight: Never query if circuit is in cooldown
   if (isGithub) {
-    const avail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+    const isSearch = url.includes('/search/');
+    const ghService = isSearch ? MASTER_SERVICES.GITHUB_SEARCH_API : MASTER_SERVICES.GITHUB_REST_API;
+    const avail = checkServiceAvailability(ghService);
     if (!avail.available) {
-      console.warn(`[SCOUT PRE-FLIGHT BLOCKED] GitHub API is on cooldown until ${avail.resetAt} (${avail.waitSec}s left). Skipping query to prevent API ban.`);
+      console.warn(`[SCOUT PRE-FLIGHT BLOCKED] ${ghService} is on cooldown until ${avail.resetAt} (${avail.waitSec}s left). Skipping query to prevent API ban.`);
       return null;
     }
+    await acquireSharedRateLimitToken(ghService);
   } else if (isHf) {
     const avail = checkServiceAvailability(MASTER_SERVICES.HUGGINGFACE_API);
     if (!avail.available) {
@@ -194,7 +199,7 @@ async function compliantFetch(url, customHeaders = {}) {
     ...customHeaders
   };
 
-  const token = process.env.GITHUB_TOKEN;
+  const token = getGitHubToken() || process.env.GITHUB_TOKEN;
   if (token && isGithub) {
     headers['Authorization'] = `token ${token}`;
   }
@@ -209,9 +214,11 @@ async function compliantFetch(url, customHeaders = {}) {
 
     // Inspect headers & trip circuit if limit reached
     if (isGithub) {
-      const isHealthy = inspectAndRecordHeaders(MASTER_SERVICES.GITHUB_API, res.headers, res.status, url);
+      const isSearch = url.includes('/search/');
+      const ghService = isSearch ? MASTER_SERVICES.GITHUB_SEARCH_API : MASTER_SERVICES.GITHUB_REST_API;
+      const isHealthy = inspectAndRecordHeaders(ghService, res.headers, res.status, url);
       if (!isHealthy) {
-        console.warn(`[SCOUT CIRCUIT TRIPPED] GitHub API rate limit reached. All queries paused until reset.`);
+        console.warn(`[SCOUT CIRCUIT TRIPPED] ${ghService} rate limit reached. All queries paused until reset.`);
         return null;
       }
     } else if (isHf) {
@@ -448,10 +455,10 @@ async function scoutGitHubDomain(domainKey, domainConfig, knownRepos, maxCandida
 
   if (queries.length === 0) return candidates;
 
-  // Master Switch Check: Do not attempt any search queries if GitHub is resting
-  const ghAvail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+  // Master Switch Check: Do not attempt any search queries if GitHub Search is resting
+  const ghAvail = checkServiceAvailability(MASTER_SERVICES.GITHUB_SEARCH_API);
   if (!ghAvail.available) {
-    console.log(`⏳ [SCOUT PAUSED] GitHub API Master Switch is OFF until ${ghAvail.resetAt} (${ghAvail.waitSec}s left). Skipping domain search.`);
+    console.log(`⏳ [SCOUT PAUSED] GitHub Search API Master Switch is OFF until ${ghAvail.resetAt} (${ghAvail.waitSec}s left). Skipping domain search.`);
     return candidates;
   }
 
@@ -461,8 +468,8 @@ async function scoutGitHubDomain(domainKey, domainConfig, knownRepos, maxCandida
 
   while (candidates.length < maxCandidates && attempts < queries.length * 2) {
     // Re-check master switch on every query
-    if (!checkServiceAvailability(MASTER_SERVICES.GITHUB_API).available) {
-      console.log(`⏳ [SCOUT HALTED] GitHub API entered cooldown. Breaking query loop.`);
+    if (!checkServiceAvailability(MASTER_SERVICES.GITHUB_SEARCH_API).available) {
+      console.log(`⏳ [SCOUT HALTED] GitHub Search API entered cooldown. Breaking query loop.`);
       break;
     }
 
@@ -474,11 +481,11 @@ async function scoutGitHubDomain(domainKey, domainConfig, knownRepos, maxCandida
     console.log(`🔍 [SCOUTING GITHUB] Domain: ${domainKey} | Query [${queryIdx + 1}/${queries.length}]: "${currentQuery}" | Page: ${page}`);
 
     const data = await compliantFetch(searchUrl);
-    await sleep(1500); // Respect search API rate limits
+    await sleep(1500); // Respect search API rate limits (30 req/min)
 
     if (!data || !Array.isArray(data.items) || data.items.length === 0) {
       // If circuit was tripped, abort immediately
-      if (!checkServiceAvailability(MASTER_SERVICES.GITHUB_API).available) {
+      if (!checkServiceAvailability(MASTER_SERVICES.GITHUB_SEARCH_API).available) {
         break;
       }
       // Query exhausted or no results: move to next query and reset page to 1
@@ -755,7 +762,7 @@ export function getUnharvestedQueueCount() {
  * Ensures queue ALWAYS has fresh unharvested top repositories.
  * If unharvested count falls below buffer, immediately discovers next batch!
  */
-export async function ensureQueueReplenished(minBuffer = 15, targetBatch = 24) {
+export async function ensureQueueReplenished(minBuffer = 30, targetBatch = 24) {
   const currentUnharvested = getUnharvestedQueueCount();
   console.log(`📊 [QUEUE BUFFER INSPECTION] Current Unharvested Targets: ${currentUnharvested} (Minimum Buffer: ${minBuffer})`);
 

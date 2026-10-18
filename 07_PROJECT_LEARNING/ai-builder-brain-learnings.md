@@ -41,6 +41,19 @@ AI-Builder-Brain is a centralized, project-agnostic intelligence engine designed
   2. Replenished `repos.txt` with verified, active repositories.
   3. Codified Rule 1669 into canonical knowledge.
 
+### Incident 3: INC-003 — Deep Learning Pipeline Stagnation, Index Asymmetry & API Quota Burst
+- **Defect**: Cloud and local harvesters failed to progress new engineering rules into `05_KNOWLEDGE/engineering-patterns.md`, while producing ghost commits and hitting rate limits.
+- **Root Causes**:
+  1. *Ghost Commits*: Fleet orchestrator unconditionally pushed commits even when 0 new learnings were verified.
+  2. *API Quota Burst*: `harvestGitHubZeroClone` made up to 28 GitHub REST calls per repo (15 commit diffs + 8 issue threads). Across 9 parallel workers, GitHub token rate limits were exhausted in ~12 minutes.
+  3. *Missing Local Token Bridge*: Local environment lacked `GITHUB_TOKEN` environment variable, falling back to anonymous 60 req/hr limits despite valid GitHub CLI keyring authentication (`gh auth token`).
+  4. *Dual-Schema Index Asymmetry*: Only Rules 1 to 414 existed as top-level `ENGINEERING_PATTERN` entries in `knowledge-index.json`. Rules 415 to 1686 were nested inside dossier objects without top-level index items.
+- **Remediation**:
+  1. Strict verification barrier in `multi-agent-fleet.mjs` requiring `totalVerifiedThisRun > 0` before git push.
+  2. Integrated automatic `gh auth token` discovery in `ai-provider-pool.mjs` (`loadAllAiKeys` and `getGitHubToken()`).
+  3. Throttled commit patch fetches to 5 and issue post-mortems to 3 in `zero-clone-harvester.mjs` (saving ~65% of API calls).
+  4. Added top-level rule index registration in `brain-learning-gateway.mjs` and executed `reconcileRulesToKnowledgeIndex()`, reconciling 1,271 rules (415-1686) into `05_KNOWLEDGE/knowledge-index.json` with read-back verification.
+
 ---
 
 ## 3. Reusable Meta-Patterns & Engineering Invariants Harvested

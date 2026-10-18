@@ -468,8 +468,11 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null) {
       invertedIndex[term].push({ docIdx: i, freq });
     }
 
+    const resolvedRuleNum = doc.ruleNumber ?? (typeof doc.id === 'string' && doc.id.startsWith('Rule ') ? parseInt(doc.id.replace('Rule ', ''), 10) : null);
     docMetadata.push({
       id: doc.id,
+      ruleNumber: resolvedRuleNum,
+      rule_number: resolvedRuleNum,
       title: doc.title,
       category: doc.category,
       filePath: doc.filePath,
@@ -603,6 +606,8 @@ export function searchBrain(query, options = {}) {
     const doc = index.documents[docIdx];
     return {
       id: doc.id,
+      ruleNumber: doc.ruleNumber ?? null,
+      rule_number: doc.ruleNumber ?? null,
       title: doc.title,
       category: doc.category,
       score: parseFloat(scores[docIdx].toFixed(4)),

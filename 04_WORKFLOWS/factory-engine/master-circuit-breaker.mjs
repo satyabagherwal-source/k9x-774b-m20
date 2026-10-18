@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getGitHubToken } from './ai-provider-pool.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -8,15 +9,26 @@ const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 
 const LOCKS_DIR = path.join(BRAIN_ROOT, '.harvest-locks');
 const CIRCUIT_FILE = path.join(LOCKS_DIR, 'master-circuit-breaker.json');
+const RATE_LIMIT_LOCK = path.join(LOCKS_DIR, 'shared-rate-limiter.json');
 const CONTROL_PATH = path.join(BRAIN_ROOT, 'harvest-control.json');
 
-// Supported Master Infrastructure Services
+// Supported Master Infrastructure Services (Core REST and Search decoupled!)
 export const MASTER_SERVICES = {
-  GITHUB_API: 'GITHUB_API',             // GitHub REST API (rate limit / quota)
-  GITHUB_ACTIONS: 'GITHUB_ACTIONS',     // GitHub Actions runner minutes (2,000 mins/mo on private repo)
-  HUGGINGFACE_API: 'HUGGINGFACE_API',   // Hugging Face REST endpoints
-  AI_PROVIDERS: 'AI_PROVIDERS'          // AI Key Pool (Gemini, Groq, Claude, OpenAI, Ollama)
+  GITHUB_REST_API: 'GITHUB_REST_API',       // GitHub Core REST API (5,000 req/hr authenticated)
+  GITHUB_SEARCH_API: 'GITHUB_SEARCH_API',   // GitHub Search API (30 req/min authenticated)
+  GITHUB_API: 'GITHUB_REST_API',           // Backward compatibility alias
+  GITHUB_ACTIONS: 'GITHUB_ACTIONS',         // GitHub Actions runner minutes (2,000 mins/mo on private repo)
+  HUGGINGFACE_API: 'HUGGINGFACE_API',       // Hugging Face REST endpoints
+  AI_PROVIDERS: 'AI_PROVIDERS'              // AI Key Pool (Gemini, Groq, Claude, OpenAI, Ollama)
 };
+
+/**
+ * Normalizes service name for backward compatibility
+ */
+export function normalizeServiceName(serviceName) {
+  if (serviceName === 'GITHUB_API') return MASTER_SERVICES.GITHUB_REST_API;
+  return serviceName || MASTER_SERVICES.GITHUB_REST_API;
+}
 
 /**
  * Ensures lock directory exists
@@ -32,16 +44,36 @@ function ensureLocksDir() {
  */
 export function loadMasterCircuits() {
   ensureLocksDir();
+  let registry = {};
   if (fs.existsSync(CIRCUIT_FILE)) {
     try {
-      return JSON.parse(fs.readFileSync(CIRCUIT_FILE, 'utf-8'));
+      registry = JSON.parse(fs.readFileSync(CIRCUIT_FILE, 'utf-8'));
     } catch (e) {}
   }
-  return {
-    GITHUB_API: {
-      service: 'GITHUB_API',
+
+  // Handle migration from legacy GITHUB_API to decoupled GITHUB_REST_API
+  if (registry.GITHUB_API && !registry.GITHUB_REST_API) {
+    registry.GITHUB_REST_API = {
+      ...registry.GITHUB_API,
+      service: MASTER_SERVICES.GITHUB_REST_API
+    };
+  }
+
+  const defaultRegistry = {
+    GITHUB_REST_API: {
+      service: 'GITHUB_REST_API',
       status: 'HEALTHY',
       remaining: 5000,
+      resetEpoch: 0,
+      resetAt: null,
+      trippedAt: null,
+      reason: null,
+      consecutiveBlocks: 0
+    },
+    GITHUB_SEARCH_API: {
+      service: 'GITHUB_SEARCH_API',
+      status: 'HEALTHY',
+      remaining: 30,
       resetEpoch: 0,
       resetAt: null,
       trippedAt: null,
@@ -64,6 +96,11 @@ export function loadMasterCircuits() {
       trippedAt: null,
       reason: null
     }
+  };
+
+  return {
+    ...defaultRegistry,
+    ...registry
   };
 }
 
@@ -93,10 +130,11 @@ export function saveMasterCircuits(registry) {
  * Inspects whether a specific service is available to make requests.
  * Automatic Recovery: If cooldown has passed, restores status to HEALTHY!
  * 
- * @param {string} serviceName - One of MASTER_SERVICES
+ * @param {string} rawServiceName - One of MASTER_SERVICES
  * @returns {{ available: boolean, status: string, waitSec: number, resetAt: string, reason: string }}
  */
-export function checkServiceAvailability(serviceName) {
+export function checkServiceAvailability(rawServiceName) {
+  const serviceName = normalizeServiceName(rawServiceName);
   const registry = loadMasterCircuits();
   const circuit = registry[serviceName] || {
     service: serviceName,
@@ -108,7 +146,7 @@ export function checkServiceAvailability(serviceName) {
 
   const now = Date.now();
 
-  // Check if currently cooling down
+  // Check if currently cooling down or exhausted
   if (circuit.status !== 'HEALTHY' && circuit.resetEpoch) {
     if (now >= circuit.resetEpoch) {
       // Cooldown expired! Auto-reset to HEALTHY
@@ -117,6 +155,7 @@ export function checkServiceAvailability(serviceName) {
       circuit.resetEpoch = 0;
       circuit.resetAt = null;
       circuit.reason = null;
+      circuit.isSecondaryRateLimit = false;
       registry[serviceName] = circuit;
       saveMasterCircuits(registry);
       return { available: true, status: 'HEALTHY', waitSec: 0, resetAt: null, reason: null };
@@ -139,12 +178,13 @@ export function checkServiceAvailability(serviceName) {
  * Trips a master circuit breaker, putting the service on hard lockdown until resetEpoch.
  * ZERO network requests will be permitted to this service until reset time.
  * 
- * @param {string} serviceName
+ * @param {string} rawServiceName
  * @param {number|Date} resetEpochOrDate - Unix epoch in ms, or Date object, or unix epoch in seconds
  * @param {string} reason
  * @param {object} extraMeta
  */
-export function tripMasterCircuit(serviceName, resetEpochOrDate, reason, extraMeta = {}) {
+export function tripMasterCircuit(rawServiceName, resetEpochOrDate, reason, extraMeta = {}) {
+  const serviceName = normalizeServiceName(rawServiceName);
   const registry = loadMasterCircuits();
   const circuit = registry[serviceName] || { service: serviceName };
 
@@ -152,7 +192,6 @@ export function tripMasterCircuit(serviceName, resetEpochOrDate, reason, extraMe
   if (resetEpochOrDate instanceof Date) {
     epochMs = resetEpochOrDate.getTime();
   } else if (typeof resetEpochOrDate === 'number') {
-    // If passed in seconds (e.g. GitHub epoch 1711234567), convert to ms
     epochMs = resetEpochOrDate < 10000000000 ? resetEpochOrDate * 1000 : resetEpochOrDate;
   } else if (typeof resetEpochOrDate === 'string') {
     epochMs = new Date(resetEpochOrDate).getTime();
@@ -171,6 +210,7 @@ export function tripMasterCircuit(serviceName, resetEpochOrDate, reason, extraMe
   circuit.trippedAt = new Date().toISOString();
   circuit.reason = reason || 'Quota or Rate Limit Exhausted';
   circuit.consecutiveBlocks = (circuit.consecutiveBlocks || 0) + 1;
+  circuit.isSecondaryRateLimit = false;
   Object.assign(circuit, extraMeta);
 
   registry[serviceName] = circuit;
@@ -186,42 +226,155 @@ export function tripMasterCircuit(serviceName, resetEpochOrDate, reason, extraMe
 }
 
 /**
+ * Puts a service into short temporary cooldown for secondary rate limit / abuse detection
+ * Does NOT freeze the primary 1-hour quota bucket.
+ */
+export function recordRateLimitSecondaryBackoff(rawServiceName, waitSec = 60, reason = 'Secondary Rate Limit Detected') {
+  const serviceName = normalizeServiceName(rawServiceName);
+  const registry = loadMasterCircuits();
+  const circuit = registry[serviceName] || { service: serviceName };
+  const waitMs = (parseInt(waitSec, 10) || 60) * 1000 + 1000;
+  const epochMs = Date.now() + waitMs;
+  const resetIso = new Date(epochMs).toISOString();
+
+  circuit.status = 'COOLING_DOWN';
+  circuit.resetEpoch = epochMs;
+  circuit.resetAt = resetIso;
+  circuit.trippedAt = new Date().toISOString();
+  circuit.reason = reason;
+  circuit.isSecondaryRateLimit = true;
+
+  registry[serviceName] = circuit;
+  saveMasterCircuits(registry);
+
+  console.warn(`\x1b[33m⚠️ [SECONDARY RATE-LIMIT BACKOFF] ${serviceName} paused for ${Math.round(waitMs / 1000)}s until ${resetIso}. Reason: ${reason}\x1b[0m`);
+  return circuit;
+}
+
+/**
+ * Shared Atomic Rate Limiter and Inter-Request Pacing Queue
+ * Enforces inter-request spacing and RPM limit across all child processes and parallel fleet agents.
+ *
+ * @param {string} rawServiceName - e.g. GITHUB_REST_API or GITHUB_SEARCH_API
+ * @param {object} options - { minIntervalMs, maxRpm }
+ */
+export async function acquireSharedRateLimitToken(rawServiceName, options = {}) {
+  const serviceName = normalizeServiceName(rawServiceName);
+  const isSearch = serviceName === MASTER_SERVICES.GITHUB_SEARCH_API;
+  const minIntervalMs = options.minIntervalMs ?? (isSearch ? 2000 : 250);
+  const maxRpm = options.maxRpm ?? (isSearch ? 25 : 80);
+
+  ensureLocksDir();
+  const now = Date.now();
+  // Resilient multi-process read with spin-retry
+  let limiterState = { services: {} };
+  for (let rAttempt = 0; rAttempt < 5; rAttempt++) {
+    if (fs.existsSync(RATE_LIMIT_LOCK)) {
+      try {
+        limiterState = JSON.parse(fs.readFileSync(RATE_LIMIT_LOCK, 'utf-8'));
+        break;
+      } catch (e) {
+        await new Promise(r => setTimeout(r, 10 + Math.floor(Math.random() * 15)));
+      }
+    } else {
+      break;
+    }
+  }
+
+  if (!limiterState.services) limiterState.services = {};
+  if (!limiterState.services[serviceName]) {
+    limiterState.services[serviceName] = {
+      lastRequestAt: 0,
+      recentRequests: []
+    };
+  }
+
+  const sState = limiterState.services[serviceName];
+  // Filter out timestamps older than 60 seconds
+  sState.recentRequests = (sState.recentRequests || []).filter(t => (now - t) < 60000);
+
+  // 1. Sliding window RPM check
+  if (sState.recentRequests.length >= maxRpm) {
+    const oldest = sState.recentRequests[0];
+    const waitTime = Math.max(100, 60000 - (now - oldest) + 50);
+    console.warn(`[RATE LIMITER PACING] ${serviceName} reached sliding RPM limit (${sState.recentRequests.length}/${maxRpm}). Pausing ${waitTime}ms...`);
+    await new Promise(r => setTimeout(r, waitTime));
+    return acquireSharedRateLimitToken(serviceName, options);
+  }
+
+  // 2. Inter-request interval check
+  const elapsedSinceLast = now - (sState.lastRequestAt || 0);
+  if (elapsedSinceLast < minIntervalMs) {
+    const waitInterval = minIntervalMs - elapsedSinceLast;
+    await new Promise(r => setTimeout(r, waitInterval));
+  }
+
+  const actualNow = Date.now();
+  sState.lastRequestAt = actualNow;
+  sState.recentRequests.push(actualNow);
+
+  // Resilient multi-process atomic write
+  const tempPath = `${RATE_LIMIT_LOCK}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 6)}.tmp`;
+  for (let wAttempt = 0; wAttempt < 5; wAttempt++) {
+    try {
+      fs.writeFileSync(tempPath, JSON.stringify(limiterState, null, 2), 'utf-8');
+      fs.renameSync(tempPath, RATE_LIMIT_LOCK);
+      break;
+    } catch (e) {
+      try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (_) {}
+      await new Promise(r => setTimeout(r, 15 + Math.floor(Math.random() * 20)));
+    }
+  }
+
+  return true;
+}
+
+/**
  * Automatically inspects HTTP response headers and status codes.
- * If 403, 429, or x-ratelimit-remaining == 0 is detected, trips the circuit immediately.
+ * Distinguishes Primary Quota Exhaustion from Secondary Rate Limits and 403 Forbidden.
+ * Routes to GITHUB_SEARCH_API vs GITHUB_REST_API automatically.
  * 
- * @param {string} serviceName
+ * @param {string} rawServiceName
  * @param {Headers|object} headers
  * @param {number} statusCode
  * @param {string} url
  */
-export function inspectAndRecordHeaders(serviceName, headers, statusCode = 200, url = '') {
-  if (!headers) return;
+export function inspectAndRecordHeaders(rawServiceName, headers, statusCode = 200, url = '') {
+  if (!headers) return true;
 
   const getHeader = (name) => {
     if (typeof headers.get === 'function') return headers.get(name);
     return headers[name] || headers[name.toLowerCase()] || null;
   };
 
+  const resource = getHeader('x-ratelimit-resource');
+  let targetService = normalizeServiceName(rawServiceName);
+
+  // Auto-route to GITHUB_SEARCH_API if resource is search or url path is /search/
+  if (url.includes('/search/') || resource === 'search') {
+    targetService = MASTER_SERVICES.GITHUB_SEARCH_API;
+  } else if (targetService === MASTER_SERVICES.GITHUB_REST_API || targetService === 'GITHUB_API') {
+    targetService = MASTER_SERVICES.GITHUB_REST_API;
+  }
+
   const remaining = getHeader('x-ratelimit-remaining');
   const resetHeader = getHeader('x-ratelimit-reset');
   const retryAfter = getHeader('retry-after');
 
   const registry = loadMasterCircuits();
-  const circuit = registry[serviceName] || { service: serviceName };
+  const circuit = registry[targetService] || { service: targetService };
 
   if (remaining !== null && remaining !== undefined) {
     circuit.remaining = parseInt(remaining, 10);
   }
 
-  // 1. Check for Rate Limit Exceeded or Quota Exhaustion
-  const isRateLimited =
-    statusCode === 429 ||
+  // 1. Primary Rate Limit Exceeded
+  const isPrimaryLimit =
     (statusCode === 403 && remaining === '0') ||
     (remaining !== null && parseInt(remaining, 10) === 0);
 
-  if (isRateLimited) {
+  if (isPrimaryLimit) {
     let resetEpoch = null;
-
     if (resetHeader) {
       const rawReset = parseInt(resetHeader, 10);
       if (!isNaN(rawReset)) {
@@ -232,23 +385,38 @@ export function inspectAndRecordHeaders(serviceName, headers, statusCode = 200, 
       resetEpoch = Date.now() + waitSeconds * 1000;
     }
 
-    // Fallback: GitHub resets every hour, default 60 minutes
     if (!resetEpoch || resetEpoch <= Date.now()) {
-      resetEpoch = Date.now() + 60 * 60 * 1000;
+      resetEpoch = Date.now() + (targetService === MASTER_SERVICES.GITHUB_SEARCH_API ? 60 * 1000 : 60 * 60 * 1000);
     }
 
     tripMasterCircuit(
-      serviceName,
+      targetService,
       resetEpoch,
-      `Rate limit exceeded (HTTP ${statusCode} | Remaining: ${remaining || 0} | URL: ${url})`,
-      { remaining: 0 }
+      `Primary rate limit exhausted (HTTP ${statusCode} | Remaining: 0 | Resource: ${resource || 'core'} | URL: ${url})`,
+      { remaining: 0, resource: resource || 'core' }
     );
     return false;
   }
 
-  // 2. Near-limit warning (< 5 remaining)
-  if (remaining !== null && parseInt(remaining, 10) < 5 && parseInt(remaining, 10) > 0) {
-    console.warn(`\x1b[33m⚠️ [MASTER CIRCUIT WARNING] ${serviceName} remaining requests low: ${remaining}\x1b[0m`);
+  // 2. Secondary Rate Limit / Abuse Mechanism or HTTP 429
+  const isSecondaryLimit =
+    statusCode === 429 ||
+    (statusCode === 403 && (retryAfter || (remaining !== null && parseInt(remaining, 10) > 0)));
+
+  if (isSecondaryLimit) {
+    const waitSeconds = retryAfter ? (parseInt(retryAfter, 10) || 60) : 60;
+    recordRateLimitSecondaryBackoff(
+      targetService,
+      waitSeconds,
+      `Secondary rate limit or HTTP ${statusCode} backoff (Remaining: ${remaining || 'N/A'} | Resource: ${resource || 'unknown'} | URL: ${url})`
+    );
+    return false;
+  }
+
+  // 3. Near-limit warnings
+  const limitThreshold = targetService === MASTER_SERVICES.GITHUB_SEARCH_API ? 3 : 20;
+  if (remaining !== null && parseInt(remaining, 10) < limitThreshold && parseInt(remaining, 10) > 0) {
+    console.warn(`\x1b[33m⚠️ [MASTER CIRCUIT WARNING] ${targetService} remaining requests low: ${remaining} (Threshold: ${limitThreshold})\x1b[0m`);
   }
 
   saveMasterCircuits(registry);
@@ -258,7 +426,8 @@ export function inspectAndRecordHeaders(serviceName, headers, statusCode = 200, 
 /**
  * Returns remaining milliseconds until reset for a service (0 if available)
  */
-export function getServiceResetWaitMs(serviceName) {
+export function getServiceResetWaitMs(rawServiceName) {
+  const serviceName = normalizeServiceName(rawServiceName);
   const availability = checkServiceAvailability(serviceName);
   if (availability.available) return 0;
   return availability.waitSec * 1000;
@@ -281,4 +450,21 @@ export function getMasterCircuitsReport() {
       reason: avail.reason
     };
   });
+}
+
+/**
+ * Diagnostic helper to independently verify Local vs GitHub Actions Cloud authentication
+ */
+export function getGitHubAuthDiagnostics() {
+  const token = getGitHubToken() || process.env.GITHUB_TOKEN || null;
+  const isLocalGhCli = !process.env.GITHUB_TOKEN && !!token;
+  const isCloudActions = !!process.env.GITHUB_ACTIONS || !!process.env.CI;
+
+  return {
+    authenticated: !!token,
+    source: token ? (isLocalGhCli ? 'LOCAL_GH_CLI' : (isCloudActions ? 'GITHUB_ACTIONS_RUNNER' : 'ENV_GITHUB_TOKEN')) : 'UNAUTHENTICATED',
+    masked: token ? '***REDACTED_SECRET***' : 'NONE',
+    estimatedQuotaPerHour: token ? 5000 : 60,
+    searchQuotaPerMinute: token ? 30 : 10
+  };
 }

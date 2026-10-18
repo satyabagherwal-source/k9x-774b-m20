@@ -78,13 +78,15 @@ export function matchKnowledgeToTask(contract, options = {}) {
   const expandedQuery = terms.join(' ');
 
   // Retrieve candidate pool
+  const effectiveBrainRoot = options.brainRoot || contract.context?.brainRoot || null;
   const retrieval = retrieveKnowledge(expandedQuery, {
     maxTokens: budget * 3,
     topK: 12,
-    format: 'compact'
+    format: 'compact',
+    brainRoot: effectiveBrainRoot
   });
 
-  const allPatterns = parseEngineeringPatterns();
+  const allPatterns = parseEngineeringPatterns(effectiveBrainRoot);
   const patternMap = new Map();
   for (const p of allPatterns) {
     patternMap.set(p.id, p);
@@ -284,10 +286,12 @@ export function resolveTaskContext(contract, options = {}) {
   const budget = contract.constraints.max_tokens_budget || 1200;
 
   // Retrieve precision knowledge within token budget
+  const effectiveBrainRoot = options.brainRoot || contract.context?.brainRoot || null;
   const retrieval = retrieveKnowledge(query, {
     maxTokens: budget,
     topK: contract.task_type === 'MICRO_FIX' ? 2 : 4,
-    format: 'compact'
+    format: 'compact',
+    brainRoot: effectiveBrainRoot
   });
 
   contract.context.relevant_rules = retrieval.items.map(item => ({

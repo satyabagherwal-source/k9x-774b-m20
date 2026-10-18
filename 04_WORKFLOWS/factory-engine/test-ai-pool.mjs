@@ -11,7 +11,7 @@ async function testPool() {
   console.log(`📊 [CONFIGURED PROVIDER ASSETS]`);
   console.log(`   - Google Gemini Keys : ${keys.gemini.length} account(s) loaded`);
   keys.gemini.forEach((k, i) => {
-    console.log(`     [${i + 1}] ${k.slice(0, 4)}...${k.slice(-4)}`);
+    console.log(`     [${i + 1}] Gemini Account ${i + 1} (***REDACTED_SECRET***)`);
   });
   console.log(`   - Groq Free Keys     : ${keys.groq.length} key(s) loaded`);
   console.log(`   - Hugging Face Tokens: ${keys.huggingface.length} token(s) loaded`);

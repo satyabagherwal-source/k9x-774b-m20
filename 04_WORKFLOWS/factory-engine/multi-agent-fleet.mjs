@@ -326,7 +326,7 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
         isFleetScoutingActive = false;
         if (scoutOutput.includes('RATE LIMIT EXCEEDED') || scoutOutput.includes('rate limit reached') || code === 42) {
           if (agentConfig.domain !== 'huggingface-ai-models') {
-            tripMasterCircuit(MASTER_SERVICES.GITHUB_API, Date.now() + 600_000, 'GitHub Search Rate Limit in Scout');
+            tripMasterCircuit(MASTER_SERVICES.GITHUB_SEARCH_API, Date.now() + 600_000, 'GitHub Search Rate Limit in Scout');
           }
           tripWorkerCooldown(agentConfig.id, 600_000, 'Scout domain rate limit');
           return resolve({ agent: agentConfig.id, status: 'TRIPPED_COOLDOWN', code });

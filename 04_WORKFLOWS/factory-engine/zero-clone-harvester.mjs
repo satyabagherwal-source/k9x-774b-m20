@@ -20,9 +20,26 @@ import {
 import {
   checkServiceAvailability,
   inspectAndRecordHeaders,
+  acquireSharedRateLimitToken,
   MASTER_SERVICES
 } from './master-circuit-breaker.mjs';
 import { captureHarvestFailureIncident } from './learning-manager.mjs';
+import { getGitHubToken } from './ai-provider-pool.mjs';
+import { getSourcesRegistry } from './upgrade-checker.mjs';
+import {
+  getCachedRepoMeta,
+  setCachedRepoMeta,
+  getCachedTree,
+  setCachedTree,
+  getCachedPatch,
+  setCachedPatch,
+  getCachedIssueComments,
+  setCachedIssueComments,
+  getCachedPRs,
+  setCachedPRs,
+  getCacheTelemetry,
+  resetCacheTelemetry
+} from './harvest-cache.mjs';
 
 
 
@@ -91,25 +108,43 @@ export function isHarvesterActive(agentName = process.env.AGENT_NAME) {
  */
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// In-memory telemetry for isolated request tracking
+let harvestCallCount = 0;
+export function getHarvestApiMetrics() {
+  return {
+    harvestCallCount,
+    cacheTelemetry: getCacheTelemetry()
+  };
+}
+export function resetHarvestApiMetrics() {
+  harvestCallCount = 0;
+  resetCacheTelemetry();
+}
+
 /**
- * Polite HTTP Fetch with Rate-Limit & ToS Compliance
+ * Polite HTTP Fetch with Shared Rate-Limit & ToS Compliance
  */
-async function compliantFetch(url, customHeaders = {}) {
+async function compliantFetch(url, customHeaders = {}, retryCount = 0) {
   const isGithub = url.includes('api.github.com');
   const isHf = url.includes('huggingface.co');
+  const isGithubSearch = url.includes('api.github.com/search/');
+  const ghService = isGithubSearch ? MASTER_SERVICES.GITHUB_SEARCH_API : MASTER_SERVICES.GITHUB_REST_API;
 
   // 1. Master Switch Pre-flight Check: Never ping if circuit is currently tripped/cooling down
   if (isGithub) {
-    const avail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+    const avail = checkServiceAvailability(ghService);
     if (!avail.available) {
-      console.warn(`[CIRCUIT BREAKER PRE-FLIGHT] GitHub API is on cooldown until ${avail.resetAt} (${avail.waitSec}s left). Blocking call to prevent IP/API ban.`);
-      const err = new Error(`GITHUB_API_CIRCUIT_TRIPPED_UNTIL_${avail.resetAt}`);
+      console.warn(`[CIRCUIT BREAKER PRE-FLIGHT] ${ghService} is on cooldown until ${avail.resetAt} (${avail.waitSec}s left). Blocking call to prevent IP/API ban.`);
+      const err = new Error(`${ghService}_CIRCUIT_TRIPPED_UNTIL_${avail.resetAt}`);
       err.code = 'RATE_LIMIT_TRIPPED';
+      err.service = ghService;
       err.resetAt = avail.resetAt;
       err.waitSec = avail.waitSec;
       err.isPreflightCooldown = true;
       throw err;
     }
+    // Shared rate limiter / pacing ticket across parallel fleet workers
+    await acquireSharedRateLimitToken(ghService);
   } else if (isHf) {
     const avail = checkServiceAvailability(MASTER_SERVICES.HUGGINGFACE_API);
     if (!avail.available) {
@@ -121,29 +156,30 @@ async function compliantFetch(url, customHeaders = {}) {
     }
   }
 
-  // Proactive inter-request pacing sleep to prevent temporary secondary rate-limit blocks
-  await sleep(400);
-
   const headers = {
     'User-Agent': USER_AGENT,
     Accept: 'application/json',
     ...customHeaders
   };
 
-  const token = process.env.GITHUB_TOKEN;
+  const token = getGitHubToken() || process.env.GITHUB_TOKEN;
   if (token && isGithub) {
     headers['Authorization'] = `token ${token}`;
   }
 
   try {
+    if (isGithub) {
+      harvestCallCount++;
+    }
     const res = await fetch(url, { headers });
 
     // 2. Master Circuit Breaker Header Inspection
     if (isGithub) {
-      const isHealthy = inspectAndRecordHeaders(MASTER_SERVICES.GITHUB_API, res.headers, res.status, url);
+      const isHealthy = inspectAndRecordHeaders(ghService, res.headers, res.status, url);
       if (!isHealthy) {
-        const err = new Error(`GITHUB_API_RATE_LIMIT_TRIPPED`);
+        const err = new Error(`${ghService}_RATE_LIMIT_TRIPPED`);
         err.code = 'RATE_LIMIT_TRIPPED';
+        err.service = ghService;
         throw err;
       }
     } else if (isHf) {
@@ -157,13 +193,15 @@ async function compliantFetch(url, customHeaders = {}) {
 
     // Handle Retry-After header if server requests a temporary pause
     const retryAfter = res.headers.get('retry-after');
-    if (retryAfter) {
+    if (retryAfter && retryCount < 1) {
       const waitSec = parseInt(retryAfter, 10) || 5;
       console.warn(`[RETRY-AFTER DETECTED] Server requested backoff for ${waitSec} seconds. Sleeping...`);
       await sleep((waitSec + 1) * 1000);
+      return compliantFetch(url, customHeaders, retryCount + 1);
     }
 
     if (!res.ok) {
+      // Differentiate 404 (safe null), 403 (handled above), 429 (handled above)
       return null;
     }
 
@@ -175,6 +213,13 @@ async function compliantFetch(url, customHeaders = {}) {
   } catch (err) {
     if (err.code === 'RATE_LIMIT_TRIPPED') {
       throw err; // Propagate circuit trip error immediately to stop batch loop
+    }
+    // Transient network errors (retry up to 2 times with jittered backoff)
+    if (retryCount < 2 && /ETIMEDOUT|ECONNRESET|fetch failed|network|socket/i.test(err.message)) {
+      const backoffMs = (retryCount + 1) * 1000 + Math.floor(Math.random() * 500);
+      console.warn(`[NETWORK RETRY] ${url} failed (${err.message}). Retrying in ${backoffMs}ms...`);
+      await sleep(backoffMs);
+      return compliantFetch(url, customHeaders, retryCount + 1);
     }
     console.warn(`[FETCH ERROR] ${url} - ${err.message}`);
     return null;
@@ -199,7 +244,8 @@ export function parseSourceUrl(rawUrl) {
       repo,
       slug: `${owner}-${repo}`.toLowerCase(),
       apiUrl: `https://api.github.com/repos/${owner}/${repo}`,
-      webUrl: `https://github.com/${owner}/${repo}`
+      webUrl: `https://github.com/${owner}/${repo}`,
+      cleanUrl: `https://github.com/${owner}/${repo}.git`
     };
   }
 
@@ -214,7 +260,8 @@ export function parseSourceUrl(rawUrl) {
       repo: model,
       slug: `hf-${owner}-${model}`.toLowerCase(),
       apiUrl: `https://huggingface.co/api/models/${owner}/${model}`,
-      webUrl: `https://huggingface.co/${owner}/${model}`
+      webUrl: `https://huggingface.co/${owner}/${model}`,
+      cleanUrl: `https://huggingface.co/${owner}/${model}`
     };
   }
 
@@ -234,13 +281,29 @@ export function loadSourcesQueue(sourcePath = path.join(BRAIN_ROOT, 'repos.txt')
 }
 
 /**
- * Zero-Clone GitHub Harvest: Deep forensic extraction of real commit patches, diffs, issue post-mortems, and core source code
+ * Zero-Clone GitHub Harvest: Deep forensic extraction with Quota Optimization
+ * Features:
+ * - Safe 24h metadata disk caching
+ * - Incremental commit scanning with early termination
+ * - High-signal priority commit ranking
+ * - Immutable patch & tree disk caching
+ * - Evidence-based issue comments filtering (zero calls if comments === 0)
  */
 async function harvestGitHubZeroClone(target) {
   console.log(`\n[DEEP FORENSIC GITHUB HARVEST] Harvesting: ${target.owner}/${target.repo}`);
 
-  // 1. Repo Metadata & License / Terms Check
-  const repoMeta = await compliantFetch(target.apiUrl);
+  // Helper to strip third-party personal developer emails from commit diffs & issues
+  const stripPii = (text) => (typeof text === 'string' ? text.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[REDACTED_EMAIL]') : '');
+
+  // 1. Repo Metadata & License Check (Cached 24h)
+  let repoMeta = getCachedRepoMeta(target.slug);
+  if (!repoMeta) {
+    repoMeta = await compliantFetch(target.apiUrl);
+    if (repoMeta) {
+      setCachedRepoMeta(target.slug, repoMeta);
+    }
+  }
+
   if (!repoMeta) {
     console.warn(`[WARN] Could not retrieve metadata for ${target.owner}/${target.repo}`);
     return null;
@@ -249,12 +312,31 @@ async function harvestGitHubZeroClone(target) {
   const defaultBranch = repoMeta.default_branch || 'main';
   const license = repoMeta.license?.spdx_id || repoMeta.license?.name || 'PERMISSIVE_OPEN_SOURCE';
 
-  // Helper to strip third-party personal developer emails from commit diffs & issues
-  const stripPii = (text) => (typeof text === 'string' ? text.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[REDACTED_EMAIL]') : '');
+  // Check existing recorded revision for incremental harvesting
+  const registry = getSourcesRegistry();
+  const regEntry = registry[target.slug] || registry[target.repo.toLowerCase()] || null;
+  const recordedSha = regEntry?.revisionIdentifier || regEntry?.lastCommitSha || null;
 
-  // 2. Recent Commits & Deep Patch Extraction (Exhaustive Forensic Sweep)
-  const commitsRaw = await compliantFetch(`${target.apiUrl}/commits?per_page=100`) || [];
-  const commits = (Array.isArray(commitsRaw) ? commitsRaw : []).map((c) => ({
+  // 2. Incremental Commits & Forensic Patch Extraction
+  const commitsRaw = await compliantFetch(`${target.apiUrl}/commits?per_page=30`) || [];
+  const rawCommitsList = Array.isArray(commitsRaw) ? commitsRaw : [];
+
+  let incrementalCommits = [];
+  let reachedRecordedSha = false;
+
+  for (const c of rawCommitsList) {
+    if (recordedSha && (c.sha === recordedSha || c.sha?.startsWith(recordedSha) || recordedSha.startsWith(c.sha))) {
+      reachedRecordedSha = true;
+      break; // Stop scanning older commits that were already processed in earlier cycles
+    }
+    incrementalCommits.push(c);
+  }
+
+  const activeCommitsSource = (reachedRecordedSha && incrementalCommits.length > 0)
+    ? incrementalCommits
+    : rawCommitsList;
+
+  const commits = activeCommitsSource.map((c) => ({
     sha: c.sha?.slice(0, 8),
     fullSha: c.sha,
     date: c.commit?.author?.date?.slice(0, 10),
@@ -266,16 +348,37 @@ async function harvestGitHubZeroClone(target) {
     /(fix|bug|leak|race|crash|deadlock|regression|memory|security|revert|gotcha|workaround|infinite|loop|overflow|null|panic|timeout|ui|ux|css|render|debounce|throttle)/i.test(c.message)
   );
 
-  const targetFixCommits = candidateFixCommits.length > 0
-    ? candidateFixCommits.slice(0, 15)
-    : commits.slice(0, 8);
+  // Evidence-based commit ranking: Prioritize architectural & security fixes
+  const scoreCommitPriority = (c) => {
+    let score = 0;
+    const msg = (c.fullMessage || c.message).toLowerCase();
+    if (/security|vulnerability|cve|injection|overflow|exploit|untrusted/i.test(msg)) score += 10;
+    if (/deadlock|race\s*condition|concurrency|atomicity|thread|mutex|lock/i.test(msg)) score += 8;
+    if (/memory\s*leak|out\s*of\s*memory|oom|cleanup|dispose|drain/i.test(msg)) score += 7;
+    if (/crash|panic|null\s*pointer|exception|segfault/i.test(msg)) score += 6;
+    if (/infinite\s*loop|timeout|backpressure|hang/i.test(msg)) score += 5;
+    if (/regression|broken|fail/i.test(msg)) score += 3;
+    return score;
+  };
 
-  // FORENSIC DIFF EXTRACTION: Fetch the exact changed files and code patches
+  const sortedFixCommits = [...candidateFixCommits].sort((a, b) => scoreCommitPriority(b) - scoreCommitPriority(a));
+  const targetFixCommits = sortedFixCommits.length > 0
+    ? sortedFixCommits.slice(0, 3)
+    : commits.slice(0, 2);
+
+  // FORENSIC DIFF EXTRACTION with Immutable Disk Caching
   console.log(`[MICROSCOPIC FORENSIC EXTRACTION] Fetching complete code patches for ${targetFixCommits.length} critical fix commits...`);
   const deepFixPatches = [];
   for (const fix of targetFixCommits) {
     if (!fix.fullSha) continue;
-    const commitDetail = await compliantFetch(`${target.apiUrl}/commits/${fix.fullSha}`);
+    let commitDetail = getCachedPatch(fix.fullSha);
+    if (!commitDetail) {
+      commitDetail = await compliantFetch(`${target.apiUrl}/commits/${fix.fullSha}`);
+      if (commitDetail) {
+        setCachedPatch(fix.fullSha, commitDetail);
+      }
+    }
+
     if (commitDetail && Array.isArray(commitDetail.files)) {
       const filesWithPatches = commitDetail.files
         .filter((f) => f.patch)
@@ -285,7 +388,7 @@ async function harvestGitHubZeroClone(target) {
           status: f.status,
           additions: f.additions,
           deletions: f.deletions,
-          patchSnippet: f.patch.slice(0, 5000) // Deep empirical code diff
+          patchSnippet: f.patch.slice(0, 5000)
         }));
 
       deepFixPatches.push({
@@ -297,19 +400,34 @@ async function harvestGitHubZeroClone(target) {
     }
   }
 
-  // 3. Closed Bug Issues & Deep Post-Mortems
-  const closedIssuesRaw = await compliantFetch(`${target.apiUrl}/issues?state=closed&labels=bug&per_page=20`) || [];
+  // 3. Closed Bug Issues & Deep Post-Mortems (Evidence-gated comments)
+  const closedIssuesRaw = await compliantFetch(`${target.apiUrl}/issues?state=closed&labels=bug&per_page=6`) || [];
   const candidateIssues = (Array.isArray(closedIssuesRaw) && closedIssuesRaw.length > 0)
     ? closedIssuesRaw
-    : (await compliantFetch(`${target.apiUrl}/issues?state=closed&per_page=15`) || []);
+    : (await compliantFetch(`${target.apiUrl}/issues?state=closed&per_page=6`) || []);
 
   const deepIssues = [];
-  for (const issue of (Array.isArray(candidateIssues) ? candidateIssues.slice(0, 8) : [])) {
-    // Fetch comments to see the root cause analysis and resolution discussion
-    const commentsRaw = await compliantFetch(`${target.apiUrl}/issues/${issue.number}/comments?per_page=3`) || [];
-    const comments = Array.isArray(commentsRaw)
-      ? commentsRaw.map((c) => (c.body ? c.body.slice(0, 1000).replace(/\r?\n/g, ' ') : '')).filter(Boolean)
-      : [];
+  for (const issue of (Array.isArray(candidateIssues) ? candidateIssues.slice(0, 2) : [])) {
+    let comments = [];
+    // EVIDENCE-BASED OPTIMIZATION:
+    // Only call /comments endpoint if issue has comments > 0 AND issue body doesn't already contain full root-cause/resolution
+    const hasComments = (issue.comments || 0) > 0;
+    const bodyIsComprehensive = issue.body && issue.body.length > 600 && /(cause|reproduce|fix|solution|resolved)/i.test(issue.body);
+
+    if (hasComments && !bodyIsComprehensive) {
+      const cachedComments = getCachedIssueComments(target.slug, issue.number);
+      if (cachedComments) {
+        comments = cachedComments;
+      } else {
+        const commentsRaw = await compliantFetch(`${target.apiUrl}/issues/${issue.number}/comments?per_page=2`) || [];
+        comments = Array.isArray(commentsRaw)
+          ? commentsRaw.map((c) => (c.body ? c.body.slice(0, 1000).replace(/\r?\n/g, ' ') : '')).filter(Boolean)
+          : [];
+        if (comments.length > 0) {
+          setCachedIssueComments(target.slug, issue.number, comments);
+        }
+      }
+    }
 
     deepIssues.push({
       number: issue.number,
@@ -320,21 +438,34 @@ async function harvestGitHubZeroClone(target) {
     });
   }
 
-  // 4. Closed Pull Requests
-  const closedPRsRaw = await compliantFetch(`${target.apiUrl}/pulls?state=closed&per_page=15`) || [];
-  const closedPRs = (Array.isArray(closedPRsRaw) ? closedPRsRaw : []).slice(0, 8).map((pr) => ({
-    number: pr.number,
-    title: pr.title,
-    mergedAt: pr.merged_at?.slice(0, 10),
-    author: pr.user?.login,
-    bodySnippet: pr.body ? pr.body.slice(0, 800).replace(/\r?\n/g, ' ') : ''
-  }));
+  // 4. Closed Pull Requests (Cached 12h)
+  let closedPRs = getCachedPRs(target.slug);
+  if (!closedPRs) {
+    const closedPRsRaw = await compliantFetch(`${target.apiUrl}/pulls?state=closed&per_page=10`) || [];
+    closedPRs = (Array.isArray(closedPRsRaw) ? closedPRsRaw : []).slice(0, 6).map((pr) => ({
+      number: pr.number,
+      title: pr.title,
+      mergedAt: pr.merged_at?.slice(0, 10),
+      author: pr.user?.login,
+      bodySnippet: pr.body ? pr.body.slice(0, 800).replace(/\r?\n/g, ' ') : ''
+    }));
+    if (closedPRs.length > 0) {
+      setCachedPRs(target.slug, closedPRs);
+    }
+  }
 
-  // 5. Codebase Directory Tree Analysis
+  // 5. Codebase Directory Tree Analysis (Keyed by Commit SHA - Immutable)
+  const headCommitSha = (rawCommitsList[0]?.sha) || defaultBranch;
   let treeSample = [];
   let coreSourceCandidates = [];
   try {
-    const treeMeta = await compliantFetch(`${target.apiUrl}/git/trees/${defaultBranch}?recursive=1`);
+    let treeMeta = getCachedTree(headCommitSha);
+    if (!treeMeta) {
+      treeMeta = await compliantFetch(`${target.apiUrl}/git/trees/${headCommitSha}?recursive=1`);
+      if (treeMeta && Array.isArray(treeMeta.tree)) {
+        setCachedTree(headCommitSha, treeMeta);
+      }
+    }
     if (treeMeta && Array.isArray(treeMeta.tree)) {
       const allBlobs = treeMeta.tree.filter((t) => t.type === 'blob').map((t) => t.path);
       treeSample = allBlobs.slice(0, 60);
@@ -344,16 +475,15 @@ async function harvestGitHubZeroClone(target) {
           return /\.(ts|js|mjs|py|rs|go|cpp|c|h|tsx|jsx|swift|kt)$/i.test(p);
         })
         .sort((a, b) => {
-          // Prioritize architectural core, state, concurrency, render, and utility files
           const aPriority = /(core|state|hook|concurren|queue|render|util|worker|engine|lifecycle|loop)/i.test(a) ? 1 : 0;
           const bPriority = /(core|state|hook|concurren|queue|render|util|worker|engine|lifecycle|loop)/i.test(b) ? 1 : 0;
           return bPriority - aPriority;
         })
-        .slice(0, 12);
+        .slice(0, 10);
     }
   } catch (e) {}
 
-  // 6. Deep Key Source File Sampling (Real internal implementation code)
+  // 6. Deep Key Source File Sampling (Raw CDN requests do NOT hit API quota)
   console.log(`[DEEP CORE SOURCE INSPECTION] Sampling ${coreSourceCandidates.length} foundational source modules...`);
   const discoveredSourceSnippets = {};
   for (const filePath of coreSourceCandidates) {
@@ -364,7 +494,7 @@ async function harvestGitHubZeroClone(target) {
     }
   }
 
-  // 7. Raw Manifest / Architecture Probing
+  // 7. Raw Manifest Probing (Raw CDN requests do NOT hit API quota)
   const manifestCandidates = ['package.json', 'pyproject.toml', 'Cargo.toml', 'go.mod', 'README.md', 'Dockerfile'];
   const discoveredManifests = {};
 

@@ -20,7 +20,6 @@ concurrency:
 
 permissions:
   contents: write
-  actions: write
 
 jobs:
   cloud-multi-agent-fleet:
@@ -43,6 +42,7 @@ jobs:
 
       - name: Verify Server-to-Server Multi-AI Swarm Pool (Live Inference Health Check)
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
           GEMINI_KEY_2: ${{ secrets.GEMINI_KEY_2 }}

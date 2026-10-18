@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -85,6 +87,18 @@ export function loadAllAiKeys() {
 
   const ollamaHost = process.env.OLLAMA_HOST || fileSecrets.OLLAMA_HOST || 'http://localhost:11434';
 
+  let ghCliToken = null;
+  if (!process.env.GITHUB_TOKEN && !fileSecrets.GITHUB_TOKEN) {
+    try {
+      const ghOut = execSync('gh auth token', { stdio: ['pipe', 'pipe', 'pipe'], encoding: 'utf-8', env: process.env }).trim();
+      if (ghOut && (ghOut.startsWith('gho_') || ghOut.startsWith('ghp_') || ghOut.length > 20)) {
+        ghCliToken = ghOut;
+      }
+    } catch (e) {}
+  }
+
+  const githubToken = process.env.GITHUB_TOKEN || fileSecrets.GITHUB_TOKEN || ghCliToken || null;
+
   return {
     gemini,
     openai,
@@ -94,8 +108,15 @@ export function loadAllAiKeys() {
     groq,
     huggingface,
     ollamaHost,
-    githubToken: process.env.GITHUB_TOKEN || fileSecrets.GITHUB_TOKEN || null
+    githubToken
   };
+}
+
+/**
+ * Universal GitHub Token resolver
+ */
+export function getGitHubToken() {
+  return loadAllAiKeys().githubToken;
 }
 
 /**
@@ -116,7 +137,7 @@ export function classifyCredential(apiKey, provider = 'gemini') {
 
   const trimmed = apiKey.trim();
   const len = trimmed.length;
-  const masked = len <= 8 ? '****' : `${trimmed.slice(0, 4)}...${trimmed.slice(-4)}`;
+  const masked = '***REDACTED_SECRET***';
 
   if (provider === 'gemini') {
     if (trimmed.startsWith('AQ.') && len >= 40) {
@@ -269,8 +290,8 @@ function saveCircuitRegistry(registry) {
 function getKeyIdentifier(apiKey, provider = '') {
   if (!apiKey) return 'unknown';
   if (apiKey.startsWith('http')) return `Local Ollama:${apiKey}`;
-  const masked = apiKey.length > 8 ? `${apiKey.slice(0, 4)}...${apiKey.slice(-4)}` : apiKey;
-  return provider ? `${provider}:${masked}` : masked;
+  const keyHash = crypto.createHash('sha256').update(apiKey).digest('hex').slice(0, 8);
+  return provider ? `${provider}:key-${keyHash}` : `key-${keyHash}`;
 }
 
 /**
@@ -437,7 +458,7 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
 
   for (let kIdx = 0; kIdx < pool.length; kIdx++) {
     const apiKey = pool[(geminiKeyIndex + kIdx) % pool.length];
-    const keyLabel = `Gemini Key ${(kIdx + 1)}/${pool.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const keyLabel = `Gemini Key ${(kIdx + 1)}/${pool.length}`;
     const circuit = getKeyCircuitState(apiKey, 'Google Gemini');
 
     if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {
@@ -570,7 +591,7 @@ export async function executeWithOpenAiPool(prompt, systemInstruction = '') {
 
   for (let idx = 0; idx < keys.length; idx++) {
     const apiKey = keys[idx];
-    const keyLabel = `OpenAI Key ${idx + 1}/${keys.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const keyLabel = `OpenAI Key ${idx + 1}/${keys.length}`;
     const circuit = getKeyCircuitState(apiKey, 'OpenAI');
 
     if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {
@@ -642,7 +663,7 @@ export async function executeWithClaudePool(prompt, systemInstruction = '') {
 
   for (let idx = 0; idx < keys.length; idx++) {
     const apiKey = keys[idx];
-    const keyLabel = `Claude Key ${idx + 1}/${keys.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const keyLabel = `Claude Key ${idx + 1}/${keys.length}`;
     const circuit = getKeyCircuitState(apiKey, 'Anthropic Claude');
 
     if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {
@@ -711,7 +732,7 @@ export async function executeWithGrokPool(prompt, systemInstruction = '') {
 
   for (let idx = 0; idx < keys.length; idx++) {
     const apiKey = keys[idx];
-    const keyLabel = `Grok Key ${idx + 1}/${keys.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const keyLabel = `Grok Key ${idx + 1}/${keys.length}`;
     const circuit = getKeyCircuitState(apiKey, 'xAI Grok');
 
     if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {
@@ -775,7 +796,7 @@ export async function executeWithMiniMaxPool(prompt, systemInstruction = '') {
 
   for (let idx = 0; idx < keys.length; idx++) {
     const apiKey = keys[idx];
-    const keyLabel = `MiniMax Key ${idx + 1}/${keys.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const keyLabel = `MiniMax Key ${idx + 1}/${keys.length}`;
     const circuit = getKeyCircuitState(apiKey, 'MiniMax AI');
 
     if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {
@@ -835,7 +856,7 @@ export async function executeWithGroqFree(prompt, systemInstruction = '') {
 
   for (let idx = 0; idx < keys.length; idx++) {
     const apiKey = keys[idx];
-    const keyLabel = `Groq Key ${idx + 1}/${keys.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const keyLabel = `Groq Key ${idx + 1}/${keys.length}`;
     const circuit = getKeyCircuitState(apiKey, 'Groq Free');
 
     if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {

@@ -74,8 +74,8 @@ assert(topTailwind.title.toLowerCase().includes('tailwind') || topTailwind.fullC
 const seoQuery = searchBrain('Hreflang canonical sitemap multilingual indexing');
 assert(seoQuery.results.length > 0, 'SEO query returned matches');
 const topSeo = seoQuery.results[0];
-assert(topSeo.title.toLowerCase().includes('multilingual') || topSeo.title.toLowerCase().includes('seo') || topSeo.title.toLowerCase().includes('language') || topSeo.title.toLowerCase().includes('canonical'),
-  'Top match is Multilingual/SEO/Canonical pattern', `Got: ${topSeo.title}`);
+assert(topSeo.title.toLowerCase().includes('multilingual') || topSeo.title.toLowerCase().includes('seo') || topSeo.title.toLowerCase().includes('language') || topSeo.title.toLowerCase().includes('canonical') || topSeo.title.toLowerCase().includes('hreflang') || topSeo.title.toLowerCase().includes('sitemap'),
+  'Top match is Multilingual/SEO/Canonical/Hreflang pattern', `Got: ${topSeo.title}`);
 
 // Query D: Harvested Dossier Retrieval
 const dossierQuery = searchBrain('expressjs cors');

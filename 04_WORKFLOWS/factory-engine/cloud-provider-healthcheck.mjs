@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { loadAllAiKeys, classifyCredential, GEMINI_MODELS } from './ai-provider-pool.mjs';
+import { getGitHubAuthDiagnostics } from './master-circuit-breaker.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -143,6 +144,57 @@ async function testGroqSlot(key, slotNum, model = 'qwen/qwen3.8-27b') {
   }
 }
 
+async function testGitHubHealth(token) {
+  const diag = getGitHubAuthDiagnostics();
+  const start = Date.now();
+  try {
+    const headers = { 'User-Agent': 'AI-Builder-Brain-HealthCheck/1.0' };
+    if (token) headers['Authorization'] = `token ${token}`;
+    const res = await fetch('https://api.github.com/rate_limit', { headers });
+    const latency = Date.now() - start;
+    if (res.ok) {
+      const data = await res.json();
+      const core = data.resources?.core || {};
+      const search = data.resources?.search || {};
+      return {
+        slot: `GitHub Token (${diag.source})`,
+        provider: 'GitHub REST API',
+        model: `Core: ${core.remaining}/${core.limit} | Search: ${search.remaining}/${search.limit}`,
+        masked: diag.masked,
+        httpStatus: res.status,
+        latencyMs: latency,
+        inferenceSuccess: true,
+        category: 'HEALTHY',
+        error: null
+      };
+    } else {
+      return {
+        slot: `GitHub Token (${diag.source})`,
+        provider: 'GitHub REST API',
+        model: 'Rate Limit Endpoint',
+        masked: diag.masked,
+        httpStatus: res.status,
+        latencyMs: latency,
+        inferenceSuccess: false,
+        category: res.status === 401 ? 'AUTH_INVALID' : 'RATE_LIMITED',
+        error: `HTTP ${res.status}`
+      };
+    }
+  } catch (err) {
+    return {
+      slot: `GitHub Token (${diag.source})`,
+      provider: 'GitHub REST API',
+      model: 'Rate Limit Endpoint',
+      masked: diag.masked,
+      httpStatus: 0,
+      latencyMs: Date.now() - start,
+      inferenceSuccess: false,
+      category: 'NETWORK_TIMEOUT',
+      error: err.message
+    };
+  }
+}
+
 export async function runCloudProviderHealthCheck() {
   console.log('======================================================================');
   console.log('🚀 AI-BUILDER-BRAIN CLOUD-STARTUP PROVIDER HEALTH CHECK');
@@ -153,7 +205,13 @@ export async function runCloudProviderHealthCheck() {
   const keys = loadAllAiKeys();
   const results = [];
 
-  console.log(`Discovered Credential Slots: ${keys.gemini.length} Gemini slot(s), ${keys.groq.length} Groq slot(s).\n`);
+  console.log(`Discovered Credential Slots: ${keys.gemini.length} Gemini slot(s), ${keys.groq.length} Groq slot(s), GitHub Token: ${keys.githubToken ? 'PRESENT' : 'NONE'}.\n`);
+
+  // Test GitHub Token Auth & Quotas
+  if (keys.githubToken) {
+    const ghRes = await testGitHubHealth(keys.githubToken);
+    results.push(ghRes);
+  }
 
   for (let i = 0; i < keys.gemini.length; i++) {
     if (i > 0) await new Promise((r) => setTimeout(r, 1000));
