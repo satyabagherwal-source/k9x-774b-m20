@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:04:57.542Z",
-  "total_cycles_completed": 2398,
-  "total_learnings_persisted": 2398,
-  "total_rules_promoted": 1389,
+  "last_updated": "2026-10-18T04:08:24.314Z",
+  "total_cycles_completed": 2399,
+  "total_learnings_persisted": 2399,
+  "total_rules_promoted": 1392,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:39:09.322Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:42:27.534Z",
       "repository": "Cloudflare/clef",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:08:24.314Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T04:04:57.507Z",
+  "last_updated": "2026-10-18T04:08:24.288Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15060,7 +15060,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "168d7c31af4efb93c03a31375db114aa8e1c6b4e880625e840dead96731f3b9e",
+      "content_hash": "fc46f6f449b53307de8d899a5870b84bfb136ed6b49d345b577e81cb527ef66f",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -15072,6 +15072,21 @@
         {
           "number": 950,
           "title": "CTC Decoding Requires Attention Mask Propagation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1602,
+          "title": "Audio Sampling Rate Invariance & Preprocessing Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1603,
+          "title": "CTC Decoding Padding & Attention Mask Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1604,
+          "title": "Vocabulary Size & Tokenizer Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15092,7 +15107,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-17T19:34:39.686Z",
+      "verified_at": "2026-10-18T04:08:24.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

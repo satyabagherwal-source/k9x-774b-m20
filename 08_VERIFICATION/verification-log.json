@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-B9TH",
-    "timestamp": "2026-10-16T23:47:47.957Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "fe528259f29440e1cec919fa8c36b8782b994b20b054aef492fb114b50d65a82",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-F9RX",
     "timestamp": "2026-10-16T23:50:54.525Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7492,6 +7477,21 @@
     "contentHash": "72ad35f73607d507a0498fbf0e03084273643c188f83ce3955995a003db09793",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-29KM",
+    "timestamp": "2026-10-18T04:08:24.310Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "fc46f6f449b53307de8d899a5870b84bfb136ed6b49d345b577e81cb527ef66f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
