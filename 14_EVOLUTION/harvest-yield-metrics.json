@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:22:15.256Z",
-  "total_cycles_completed": 2385,
-  "total_learnings_persisted": 2385,
+  "last_updated": "2026-10-18T03:25:17.720Z",
+  "total_cycles_completed": 2386,
+  "total_learnings_persisted": 2386,
   "total_rules_promoted": 1387,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:58:21.489Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:01:33.411Z",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T03:22:15.256Z",
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:25:17.720Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
