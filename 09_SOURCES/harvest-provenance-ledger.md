@@ -2558,3 +2558,10 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `98118f47` | Multi-dimensional audit evidence | 2026-10-18T22:16:32.265Z |
 | `learn-github-vearch-vearch` | `https://github.com/vearch/vearch` | `bae78b18` | Multi-dimensional audit evidence | 2026-10-18T22:16:33.970Z |
 | `learn-github-themesberg-flowbite` | `https://github.com/themesberg/flowbite` | `232ebdb3` | Multi-dimensional audit evidence | 2026-10-18T22:17:14.170Z |
+| `learn-github-ahmadhassan-bted-openopc-shadow-adapter` | `https://github.com/AhmadHassan-BTed/OpenOPC-Shadow-Adapter` | `f38d1e5c` | Multi-dimensional audit evidence | 2026-10-18T22:23:08.888Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `cab41a8c` | Multi-dimensional audit evidence | 2026-10-18T22:23:10.656Z |
+| `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `68a78d31` | Multi-dimensional audit evidence | 2026-10-18T22:23:14.382Z |
+| `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `572574e3` | Multi-dimensional audit evidence | 2026-10-18T22:23:17.036Z |
+| `learn-github-litmuschaos-litmus` | `https://github.com/litmuschaos/litmus` | `c367fafb` | Multi-dimensional audit evidence | 2026-10-18T22:23:21.675Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b63526c5` | Multi-dimensional audit evidence | 2026-10-18T22:23:23.235Z |
+| `learn-github-vasu-devs-justhireme` | `https://github.com/vasu-devs/JustHireMe` | `accdcdb5` | Multi-dimensional audit evidence | 2026-10-18T22:23:26.065Z |

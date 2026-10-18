@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:32:39.382Z",
+  "last_updated": "2026-10-18T22:23:08.890Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1597,6 +1597,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-alexellis-k3sup"
+    },
+    {
+      "id": "CD-644A",
+      "directive_title": "resolve compatibility crashes by implementing required adapter methods, fixing t",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "AhmadHassan-BTed/OpenOPC-Shadow-Adapter",
+      "source_commit": "f38d1e5c",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-ahmadhassan-bted-openopc-shadow-adapter"
     }
   ]
 }

@@ -4298,3 +4298,7 @@ https://github.com/bvaughn/react-virtualized
 # --- Automatically Discovered by AI Scout Engine [2026-10-18T21:07:26.812Z] ---
 # [AI-AGENTS] trhhubsd/ARTEX (942 score) - ARTEX · AI autonomous penetration testing system (multi-agent LLM, Go + Next.js)
 https://github.com/trhhubsd/ARTEX
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-18T22:23:00.009Z] ---
+# [AI-AGENTS] AhmadHassan-BTed/OpenOPC-Shadow-Adapter (804 score) - Zero-modification Human-in-the-Loop adapter for OpenOPC's agentic DAG runtime.
+https://github.com/AhmadHassan-BTed/OpenOPC-Shadow-Adapter

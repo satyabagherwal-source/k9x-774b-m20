@@ -1,110 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-8QEW",
-    "timestamp": "2026-10-17T06:45:43.736Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "261a2bf2e1d8b02038ac16ba16c997dda2a9e918cc8ff525f6ff2d524f81af07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-CPEI",
-    "timestamp": "2026-10-17T06:48:49.050Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "4c6178a22ac971dec690905ef1f23eada238382a2aa1dfa046461d5d606d4314",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-GQHE",
-    "timestamp": "2026-10-17T06:51:57.074Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "d549536255e69a2dc815dd97abeca01ff8568697c03561fe7fce2421927c21a7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-L061",
-    "timestamp": "2026-10-17T06:55:16.249Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "90a5cfaf3d19cb9359e82b5a9b0ce4e5ba3222119e558079d0731abc0e48488b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-OZIQ",
-    "timestamp": "2026-10-17T06:58:22.034Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "dfd3b2265df090bfef67b7d1bd4f5f07545c1afaba0db860f2d8aa6cf178f3fb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-U0EM",
-    "timestamp": "2026-10-17T07:02:16.462Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "00d8de3e68058c78dc31a2a8059e1aeec191c4dda75407bbedb17fce97276fe1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-Z21O",
-    "timestamp": "2026-10-17T07:06:11.868Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "59e4e8c02d1efd71f8f88f215229242f76af163cbcb268951d9a4ec4b4f58b70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-4TYO",
     "timestamp": "2026-10-17T07:10:41.328Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7492,6 +7387,111 @@
     "contentHash": "fa8ac8822e6662bbac1d92790323afbad88c7307992ed7adbeb7406d0788d08b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-6445",
+    "timestamp": "2026-10-18T22:23:08.885Z",
+    "repository": "AhmadHassan-BTed/OpenOPC-Shadow-Adapter",
+    "learningId": "learn-github-ahmadhassan-bted-openopc-shadow-adapter",
+    "contentHash": "03a67347722a5b8ac730c20608db129cbec42b90b9a89bd0c76eb999864891f9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-65HA",
+    "timestamp": "2026-10-18T22:23:10.654Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "42169437da3a3b13dce676826f31a84101157cc4aa2fdc51f930cda4413b1058",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-68CS",
+    "timestamp": "2026-10-18T22:23:14.380Z",
+    "repository": "CrawlCove/hreflang-checker",
+    "learningId": "learn-github-crawlcove-hreflang-checker",
+    "contentHash": "705f619c014ee293a4d6914a76acdf1ca3a24b4e57b7c1e3a205ac97f7ef87fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-6AEI",
+    "timestamp": "2026-10-18T22:23:17.034Z",
+    "repository": "feathersjs/feathers",
+    "learningId": "learn-github-feathersjs-feathers",
+    "contentHash": "c42b5ad96f97e525d8ff3dbe39905d09552de47d72d5fe8e26d7c9dc63f1e617",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-6DZD",
+    "timestamp": "2026-10-18T22:23:21.673Z",
+    "repository": "litmuschaos/litmus",
+    "learningId": "learn-github-litmuschaos-litmus",
+    "contentHash": "17b6d77c529806bc87e1e8179ce01914a2de570fa99c1a77dfebef3f53f8e0c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-6F6O",
+    "timestamp": "2026-10-18T22:23:23.232Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "842eee5a66b5a762891a14fb7b7580410b3f8d0bb62610316aa67ee5acc96457",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-6HDB",
+    "timestamp": "2026-10-18T22:23:26.063Z",
+    "repository": "vasu-devs/JustHireMe",
+    "learningId": "learn-github-vasu-devs-justhireme",
+    "contentHash": "73f6aebdad37a2679cf3a54b5b1d1319432519a4867cc811cd6f716712bc6f17",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

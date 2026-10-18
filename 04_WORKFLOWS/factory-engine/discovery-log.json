@@ -18085,5 +18085,20 @@
     "qualityScore": 942,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-18T21:03:42.750Z"
+  },
+  {
+    "name": "OpenOPC-Shadow-Adapter",
+    "fullName": "AhmadHassan-BTed/OpenOPC-Shadow-Adapter",
+    "url": "https://github.com/AhmadHassan-BTed/OpenOPC-Shadow-Adapter",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Zero-modification Human-in-the-Loop adapter for OpenOPC's agentic DAG runtime.",
+    "stars": 1107,
+    "forks": 1,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 804,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-18T22:19:29.478Z"
   }
 ]
