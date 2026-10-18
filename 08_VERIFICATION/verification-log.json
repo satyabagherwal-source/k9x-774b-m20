@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-XNAO",
-    "timestamp": "2026-10-16T23:37:12.240Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "c7e05ec503e976b8039c05856fb4bc19b318c58f02e67786bc8a0f96a2f0db9f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-3FF0",
     "timestamp": "2026-10-16T23:41:41.964Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/flux-3-image-klein",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
     "contentHash": "892e2a517aac3f01ff52e8d6125807acf2494af316b105c5c02aabddcc0d379b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-PBI1",
+    "timestamp": "2026-10-18T03:58:20.281Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "0670755a92e1e45d7ca6f12a6f5201ed26609fb2b117adfdab62e557e8cc0d90",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

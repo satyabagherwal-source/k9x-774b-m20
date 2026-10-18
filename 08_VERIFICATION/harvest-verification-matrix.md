@@ -2418,3 +2418,4 @@
 | `CYCLE-20261018-C46E` | `2026-10-18T03:48:04.262Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`af79f935...`) |
 | `CYCLE-20261018-GE66` | `2026-10-18T03:51:23.838Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`8a94401a...`) |
 | `CYCLE-20261018-L1A3` | `2026-10-18T03:55:00.411Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`892e2a51...`) |
+| `CYCLE-20261018-PBI1` | `2026-10-18T03:58:20.281Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`0670755a...`) |
