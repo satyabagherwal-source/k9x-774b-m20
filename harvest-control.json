@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-18T06:49:45.872Z",
+  "lastUpdated": "2026-10-18T06:53:24.529Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -216,12 +216,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-18T06:50:05.353Z",
-        "lastActiveAt": "2026-10-18T06:35:05.287Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-18T06:52:56.271Z",
         "lastHarvestedAt": "2026-10-18T04:49:48.845Z",
         "totalHarvested": 4525,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Epsilon",
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T06:49:45.987Z",
+        "lastActiveAt": "2026-10-18T06:53:03.771Z",
         "lastHarvestedAt": "2026-10-18T06:40:06.850Z",
         "totalHarvested": 1111,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T06:49:48.476Z",
+        "lastActiveAt": "2026-10-18T06:53:06.280Z",
         "lastHarvestedAt": "2026-10-18T06:36:34.428Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 0,
+      "remaining": 20,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-18T06:49:27.734Z",
+      "trippedAt": "2026-10-18T06:52:45.524Z",
       "reason": null,
       "consecutiveBlocks": 1
     },
