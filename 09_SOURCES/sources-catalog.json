@@ -1878,5 +1878,85 @@
     "contentHash": "b194b4dff339d8ab0e5094d83548763bbc9546902697452021de2995bac01d42",
     "lastHarvestedAt": "2026-10-18T06:40:04.327Z",
     "learningId": "learn-github-crawlcove-hreflang-checker"
+  },
+  "alecxe-scrapy-fake-useragent": {
+    "repository": "alecxe/scrapy-fake-useragent",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alecxe/scrapy-fake-useragent",
+    "sourceVersion": "371254aa",
+    "license": "MIT",
+    "contentHash": "7a9373e5db40078196e21c047a02c6e4e47c06baf76ab10fe437ac4728784683",
+    "lastHarvestedAt": "2026-10-18T07:28:39.444Z",
+    "learningId": "learn-github-alecxe-scrapy-fake-useragent"
+  },
+  "webpack-webpack": {
+    "repository": "webpack/webpack",
+    "platform": "github",
+    "sourceUrl": "https://github.com/webpack/webpack",
+    "sourceVersion": "36f36bc4",
+    "license": "MIT",
+    "contentHash": "05c6d86641e3fcb7b5de062357eb085c61c4f01acb2f69df962babd19ec34a7d",
+    "lastHarvestedAt": "2026-10-18T07:28:43.311Z",
+    "learningId": "learn-github-webpack-webpack"
+  },
+  "rollup-rollup": {
+    "repository": "rollup/rollup",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rollup/rollup",
+    "sourceVersion": "a45f569e",
+    "license": "NOASSERTION",
+    "contentHash": "2fce22d1f90114e4563ea2eacc42a15d5af7d2873c189f6299f7d0ef94e0c5c3",
+    "lastHarvestedAt": "2026-10-18T07:28:47.905Z",
+    "learningId": "learn-github-rollup-rollup"
+  },
+  "rmax-scrapy-redis": {
+    "repository": "rmax/scrapy-redis",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rmax/scrapy-redis",
+    "sourceVersion": "b4f333ae",
+    "license": "MIT",
+    "contentHash": "a28d29e471552cb504dfc3e3535e56bf1ca23ee6a63319207e42794a0ad70497",
+    "lastHarvestedAt": "2026-10-18T07:28:48.618Z",
+    "learningId": "learn-github-rmax-scrapy-redis"
+  },
+  "cypress-io-cypress": {
+    "repository": "cypress-io/cypress",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cypress-io/cypress",
+    "sourceVersion": "884f743e",
+    "license": "MIT",
+    "contentHash": "c49adfb1b1015b3a9bd9137e80ce9eac0eda5d0ebc16a6f3de899c2cbfaf6ee7",
+    "lastHarvestedAt": "2026-10-18T07:28:49.885Z",
+    "learningId": "learn-github-cypress-io-cypress"
+  },
+  "syntax-tree-unist": {
+    "repository": "syntax-tree/unist",
+    "platform": "github",
+    "sourceUrl": "https://github.com/syntax-tree/unist",
+    "sourceVersion": "8b10b611",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "53f90625d98f211a5feb631a10ad32024c13495df236ce5927af24d0242e1f1e",
+    "lastHarvestedAt": "2026-10-18T07:28:53.114Z",
+    "learningId": "learn-github-syntax-tree-unist"
+  },
+  "scrapinghub-scrapy-poet": {
+    "repository": "scrapinghub/scrapy-poet",
+    "platform": "github",
+    "sourceUrl": "https://github.com/scrapinghub/scrapy-poet",
+    "sourceVersion": "e87c2d01",
+    "license": "BSD-3-Clause",
+    "contentHash": "a16b28250061973926f37475ed3321af72a72d995fd03c05d72ef95a1c4f77ce",
+    "lastHarvestedAt": "2026-10-18T07:28:57.300Z",
+    "learningId": "learn-github-scrapinghub-scrapy-poet"
+  },
+  "webdriverio-webdriverio": {
+    "repository": "webdriverio/webdriverio",
+    "platform": "github",
+    "sourceUrl": "https://github.com/webdriverio/webdriverio",
+    "sourceVersion": "eebbd1b0",
+    "license": "MIT",
+    "contentHash": "7e931bb5772fc4c38ce5a73941db9269ec7d6ec4496bb1a0b8e5986fc508c774",
+    "lastHarvestedAt": "2026-10-18T07:28:58.040Z",
+    "learningId": "learn-github-webdriverio-webdriverio"
   }
 }

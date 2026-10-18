@@ -1,66 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T06:40:04.329Z",
-  "total_cycles_completed": 2425,
-  "total_learnings_persisted": 2425,
-  "total_rules_promoted": 1403,
+  "last_updated": "2026-10-18T07:28:58.041Z",
+  "total_cycles_completed": 2433,
+  "total_learnings_persisted": 2433,
+  "total_rules_promoted": 1426,
   "history": [
-    {
-      "timestamp": "2026-10-17T18:05:24.444Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:08:43.555Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:11:33.213Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:14:32.922Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:17:57.386Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:21:01.991Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:24:13.417Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-openai-gpt-oss-20b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:27:33.250Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T18:30:36.323Z",
       "repository": "meta-llama/Llama-2-7b",
@@ -1403,6 +1347,62 @@
       "repository": "CrawlCove/hreflang-checker",
       "learningId": "learn-github-crawlcove-hreflang-checker",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:39.446Z",
+      "repository": "alecxe/scrapy-fake-useragent",
+      "learningId": "learn-github-alecxe-scrapy-fake-useragent",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:43.313Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:47.906Z",
+      "repository": "rollup/rollup",
+      "learningId": "learn-github-rollup-rollup",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:48.620Z",
+      "repository": "rmax/scrapy-redis",
+      "learningId": "learn-github-rmax-scrapy-redis",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:49.887Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:53.116Z",
+      "repository": "syntax-tree/unist",
+      "learningId": "learn-github-syntax-tree-unist",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:57.302Z",
+      "repository": "scrapinghub/scrapy-poet",
+      "learningId": "learn-github-scrapinghub-scrapy-poet",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:28:58.041Z",
+      "repository": "webdriverio/webdriverio",
+      "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

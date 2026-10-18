@@ -2455,3 +2455,11 @@ Every entry in this ledger must capture:
 | `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `caa1d0b5` | Multi-dimensional audit evidence | 2026-10-18T06:36:28.579Z |
 | `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `63245304` | Multi-dimensional audit evidence | 2026-10-18T06:36:31.903Z |
 | `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `68a78d31` | Multi-dimensional audit evidence | 2026-10-18T06:40:04.327Z |
+| `learn-github-alecxe-scrapy-fake-useragent` | `https://github.com/alecxe/scrapy-fake-useragent` | `371254aa` | Multi-dimensional audit evidence | 2026-10-18T07:28:39.444Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `36f36bc4` | Multi-dimensional audit evidence | 2026-10-18T07:28:43.311Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `a45f569e` | Multi-dimensional audit evidence | 2026-10-18T07:28:47.905Z |
+| `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `b4f333ae` | Multi-dimensional audit evidence | 2026-10-18T07:28:48.618Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `884f743e` | Multi-dimensional audit evidence | 2026-10-18T07:28:49.885Z |
+| `learn-github-syntax-tree-unist` | `https://github.com/syntax-tree/unist` | `8b10b611` | Multi-dimensional audit evidence | 2026-10-18T07:28:53.114Z |
+| `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `e87c2d01` | Multi-dimensional audit evidence | 2026-10-18T07:28:57.300Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `eebbd1b0` | Multi-dimensional audit evidence | 2026-10-18T07:28:58.040Z |
