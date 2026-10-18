@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-9EBS",
-    "timestamp": "2026-10-16T20:58:22.792Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "8456623ce832f2283d7280f8d136da5ba13928533f1527c9f63300235dfaf162",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-DFXP",
     "timestamp": "2026-10-16T21:01:31.501Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-m3",
     "learningId": "learn-huggingface-baai-bge-m3",
     "contentHash": "c9b6d0ba31bcef39a552cde7455ff7307bc6662a25d4dbd4ba4bc75c29bb9eb6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-ICAF",
+    "timestamp": "2026-10-18T01:04:57.015Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "4a44016216ab5e0125fef85aff7885d5d2b648d98571f83cc9ed6009a59b7f3a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
