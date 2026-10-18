@@ -1926,8 +1926,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:07:04.842Z",
-    "lastVerified": "2026-10-17T23:07:04.842Z",
+    "lastChecked": "2026-10-18T05:44:27.371Z",
+    "lastVerified": "2026-10-18T05:44:27.371Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17514,8 +17514,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:27:14.987Z",
-    "lastVerified": "2026-10-18T05:27:14.987Z",
+    "lastChecked": "2026-10-18T05:44:29.871Z",
+    "lastVerified": "2026-10-18T05:44:29.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -20376,8 +20376,8 @@
     "sourceType": "github",
     "technology": "code-repository",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T02:44:43.667Z",
-    "lastVerified": "2026-10-18T02:44:43.667Z",
+    "lastChecked": "2026-10-18T05:44:24.884Z",
+    "lastVerified": "2026-10-18T05:44:24.884Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24009,5 +24009,12 @@
     "lastChecked": "2026-10-18T05:40:55.892Z",
     "revisionIdentifier": "HEAD",
     "lastVerified": "2026-10-18T05:40:55.892Z"
+  },
+  "seo-skills-seo-audit-skill": {
+    "name": "seo-audit-skill",
+    "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
+    "lastChecked": "2026-10-18T05:44:17.379Z",
+    "revisionIdentifier": "fac4b75f20",
+    "lastVerified": "2026-10-18T05:44:17.379Z"
   }
 }
