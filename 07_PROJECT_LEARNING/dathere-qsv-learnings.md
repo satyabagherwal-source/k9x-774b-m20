@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `95656516`  
+> **Source Version**: `d263bda4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:20:23.382Z  
+> **Timestamp**: 2026-10-18T23:51:53.342Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:20:23.373Z  
+> **Harvest Timestamp**: 2026-10-18T23:51:53.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,627 +2252,275 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b395d13b` (2026-10-18)
-**Commit Message**: deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces) (#4838)
+### Incident Patch 1: `05577e2e` (2026-10-18)
+**Commit Message**: fix(geoconvert): GeoJSON to CSV handles features with different properties (#4837)
 
-* deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces)
+geozero's CsvWriter takes its columns from the first feature, and panics
+unless every later feature has the same properties in the same order. So
+GeoJSON to CSV panicked when a later feature listed its properties in
+another order or had one the first feature lacked, and failed with "found
+record with N fields, but the previous record has M fields" when a feature
+left a property out or had it null. geozero's reader skips null values but
+still counts them in the property index, so even when every feature had
+the same properties, a null one that was not the last panicked (index out
+of bounds) from the second feature on.
 
-Moves the dathere/plotly pin from a21da1f to 55555b2, the final commit of the
-0.15.0 release branch. The new commits add the remaining 13 plotly.js 3.7 trace
-types; the only breaking change (mesh3d::LightPosition) is not used by qsv.
-Only plotly, plotly_derive and plotly_static move in Cargo.lock.
+Scan the document for every property name that has a value in at least
+one feature, in the order first seen, and run the features through the
+field-order wrapper SHP to CSV already uses (renamed from DbfFieldOrder to
+FieldOrder), so each row has a cell for every column, empty where the
+feature has no value. A feature whose properties are null still gets a
+blank cell per column.
 
-Verified: viz unit + integration suites pass, qsvmcp (viz_static) builds, and a
-full gallery regen differs only in per-run timestamps.
+Fixes #2749
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #4838
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`qsvpy314` binary variant** ([#4832](https://github.com/dathere/qsv/pull/4832)), built with Python 3.14, alongside `qsvpy311`, `qsvpy312` and `qsvpy313`.
- 
- ### Changed
--- **deps: plotly.rs 0.15.0** ([#4836](https://github.com/dathere/qsv/pull/4836)). `viz` now builds against the plotly.rs 0.15.0 release branch ([plotly/plotly.rs#442](https://github.com/plotly/plotly.rs/pull/442)) until it is published to crates.io. qsv doesn't use the Kaleido backend or EPS export that 0.15.0 removes, and the embedded plotly.js bundle is unchanged (3.7.0). The viz gallery dashboards were regenerated with 25.0.0.
-+- **deps: plotly.rs 0.15.0** ([#4836](https://github.com/dathere/qsv/pull/4836)). `viz` now builds against the plotly.rs 0.15.0 release branch ([plotly/plotly.rs#442](https://github.com/plotly/plotly.rs/pull/442)) until it is published to crates.io. qsv doesn't use the Kaleido backend or EPS export that 0.15.0 removes, and the embedded plotly.js bundle is unchanged (3.7.0). The viz gallery dashboards were regenerated with 25.0.0. The pin now tracks the branch's final commit ([#4838](https://github.com/dathere/qsv/pull/4838)), which exposes every plotly.js 3.7 trace type; existing `viz` output is unchanged.
- - **deps: bump pyo3 from 0.29.3 to 0.30.1** ([#4832](https://github.com/dathere/qsv/pull/4832)). No changes to the `py` command. pyo3 0.30 drops Python 3.8 support; qsv already requires Python 3.11 or later, so nothing changes for users.
- - **deps: webdriver-downloader, csvs_convert and spreadsheet-ods now use zip 9** ([#4828](https://github.com/dathere/qsv/pull/4828)). zip-rs yanked every release before 9.0.3 over security advisories ([zip-rs/zip2#1075](https://github.com/zip-rs/zip2/issues/1075)), which broke a fresh `cargo update`. webdriver-downloader is patched to our fork until [ik1ne/webdriver-downloader#67](https://github.com/ik1ne/webdriver-downloader/pull/67) is released. calamine, rust_xlsxwriter and self_update still use zip 8 until their upstream bumps land. None of them calls the `extract()` APIs the published advisories affect.
- 
-```
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -5981,7 +5981,7 @@ dependencies = [
- [[package]]
- name = "plotly"
- version = "0.15.0"
--source = "git+https://github.com/dathere/plotly?rev=a21da1f14717728b7f9fbc84fa99118eab52a8fd#a21da1f14717728b7f9fbc84fa99118eab52a8fd"
-+source = "git+https://github.com/dathere/plotly?rev=55555b2fad67f29c1963e77a86ef55feae98983d#55555b2fad67f29c1963e77a86ef55feae98983d"
- dependencies = [
-  "askama",
-  "async-trait",
-@@ -6003,7 +6003,7 @@ dependencies = [
- [[package]]
- name = "plotly_derive"
- version = "0.15.0"
--source = "git+https://github.com/dathere/plotly?rev=a21da1f14717728b7f9fbc84fa99118eab52a8fd#a21da1f14717728b7f9fbc84fa99118eab52a8fd"
-+source = "git+https://github.com/dathere/plotly?rev=55555b2fad67f29c1963e77a86ef55feae98983d#55555b2fad67f29c1963e77a86ef55feae98983d"
- dependencies = [
-  "darling 0.24.1",
-  "proc-macro2",
-@@ -6014,7 +6014,7 @@ dependencies = [
- [[package]]
- name = "plotly_static"
- version = "0.2.0"
--source = "git+https://github.com/dathere/plotly?rev=a21da1f14717728b7f9fbc84fa99118eab52a8fd#a21da1f14717728b7f9fbc84fa99118eab52a8fd"
-+source = "git+https://github.com/dathere/plotly?rev=55555b2fad67f29c1963e77a86ef55feae98983d#55555b2fad67f29c1963e77a86ef55feae98983d"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -9152,7 +9152,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.4.3",
-+ "getrandom 0.3.4",
-  "once_cell",
-  "rustix",
-  "windows-sys 0.61.2",
-```
-
-**File**: `Cargo.toml` (modified, +3/-2)
-```diff
-@@ -545,8 +545,9 @@ csvs_convert = { git = "https://github.com/jqnatividad/csvs_convert", branch = "
- # use our patched fork of whatlang to bump hashbrown until our PR is merged
- whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-hashbrown-to-16" }
- 
--# plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442) until 0.15.0 is on crates.io.
--plotly = { git = "https://github.com/dathere/plotly", rev = "a21da1f14717728b7f9fbc84fa99118eab52a8fd" }
-+# plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442: full plotly.js 3.7 trace coverage)
-+# until 0.15.0 is on crates.io.
-+plotly = { git = "https://github.com/dathere/plotly", rev = "55555b2fad67f29c1963e77a86ef55feae98983d" }
- 
- # use our patched fork until our PR is merged with bumped deps and quick-xml RUSTSEC fixes
- spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", branch = "deps-bump-202607" }
-```
-
----
-
-### Incident Patch 2: `e7ceeaee` (2026-10-18)
-**Commit Message**: feat(viz): parcoords chart, smart parallel-coordinates panel, gallery WebGL lazy rendering (#4839)
-
-* feat(viz): add parcoords (parallel coordinates) chart and smart panel
-
-- `viz parcoords`: one line per row across the numeric --cols (default: all
-  numeric, minus near-unique integer IDs), colored by an optional numeric
-  --color column (which need not be an axis). Stride-sampled to the
-  QSV_VIZ_MAX_POINTS budget with a "(sampled)" title cue. --size is rejected.
-- `viz smart`: a parallel-coordinates overview panel when 3+ measures
-  correlate at |r| >= 0.3, built from the columns and matrix already read for
-  the correlation heatmap (no extra data pass). Up to 6 axes, chained so
-  neighbors are the strongest pairs; lines colored by the strongest pair's
-  first member; capped at 5,000 lines. HTML-only, like parcats.
-- i18n: viz.title.parcoords, viz.title.parcoords_dims and
-  viz.tour.explain.parcoords in all 8 locales; tour token `@parcoords`.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(viz gallery): lazy-render WebGL figures and Data Schematic iframes
-
-Chrome keeps ~16 live WebGL contexts per page (same-origin iframes share the
-budget) and silently drops the oldes
-
-**File**: `.claude/skills/CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -5,6 +5,11 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
-+## [Unreleased]
-+
-+### Changed
-+- **`qsv-viz` skill regenerated for the new `parcoords` subcommand** ([#4839](https://github.com/dathere/qsv/pull/4839)): parallel coordinates across numeric `--cols`, with `--color` coloring the lines. The `--cols` and `--color` descriptions cover it, and a usage example was added. New `--no-parcoords` option turns off the matching `smart` panel, and the `--max-charts` description now says auto draws up to 65 panels.
-+
- ## [25.0.0] - 2026-10-14
- 
- Companion release to qsv 25.0.0, "The Spatiotemporal Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 25.0.0 because the regenerated skill JSONs advertise subcommands and options that only exist in the new binary (`geocode census`/`geoclient`, `sqlp`'s `read_csv()` named options and `generate_series()`/`range()`). The headline for MCP/Cowork users is **`qsv-geocode`'s two new online geocoders**: the keyless US Census Geocoder (with vintages, so you get *when* as well as *where*) and NYC's Geoclient. The skill count stays at **57**. Update your qsv binary first.
-```
-
-**File**: `.claude/skills/qsv/qsv-viz.json` (modified, +14/-4)
-```diff
-@@ -10,7 +10,7 @@
-         "name": "subcommand",
-         "type": "string",
-         "required": true,
--        "description": "Subcommand to execute. Valid values: bar, box, candlestick, choropleth, contour, funnel, geo, heatmap, histogram, icicle, line, map, ohlc, parcats, pie, radar, sankey, scatter, scatter3d, smart, splom, sunburst, treemap, violin",
-+        "description": "Subcommand to execute. Valid values: bar, box, candlestick, choropleth, contour, funnel, geo, heatmap, histogram, icicle, line, map, ohlc, parcats, parcoords, pie, radar, sankey, scatter, scatter3d, smart, splom, sunburst, treemap, violin",
-         "enum": [
-           "bar",
-           "box",
-@@ -26,6 +26,7 @@
-           "map",
-           "ohlc",
-           "parcats",
-+          "parcoords",
-           "pie",
-           "radar",
-           "sankey",
-@@ -90,7 +91,7 @@
-       {
-         "flag": "--color",
-         "type": "string",
--        "description": "For scatter/scatter3d/map/geo: a numeric column to encode as marker color (a continuous colorscale with a colorbar). For categorical coloring, use the --series option instead. Cannot be combined with --series. In map density mode, this column is the heatmap weight."
-+        "description": "For scatter/scatter3d/map/geo: a numeric column to encode as marker color (a continuous colorscale with a colorbar). For categorical coloring, use the --series option instead. Cannot be combined with --series. In map density mode, this column is the heatmap weight. For parcoords: the numeric column that colors each line (default: the first axis)."
-       },
-       {
-         "flag": "--color-scale",
-@@ -101,7 +102,7 @@
-       {
-         "flag": "--cols",
-         "type": "string",
--        "description": "Columns to use. For heatmap: numeric columns for the correlation matrix (default: all numeric). For radar: the numeric axes to plot. For treemap/sunburst/icicle: the categorical dimensions that form the hierarchy levels, outermost first (e.g. region,category,subcategory). For splom: the numeric columns to cross-plot (default: all numeric). For parcats: the categorical dimensions to flow across (best with 3-4)."
-+        "description": "Columns to use. For heatmap: numeric columns for the correlation matrix (default: all numeric). For radar: the numeric axes to plot. For treemap/sunburst/icicle: the categorical dimensions that form the hierarchy levels, outermost first (e.g. region,category,subcategory). For splom: the numeric columns to cross-plot (default: all numeric). For parcats: the categorical dimensions to flow across (best with 3-4). For parcoords: the numeric axes, in order (default: all numeric)."
-       },
-       {
-         "flag": "--dataset-pid",
-@@ -263,7 +264,7 @@
-       {
-         "flag": "--max-charts",
-         "type": "number",
--        "description": "Maximum number of panels in the Data Schematic. 0 (the default) means auto: draw every eligible column (up to 64), for both HTML and static image export. Up to 8 cartesian panels render as one typed subplot grid; beyond 8, HTML switches to an inline-div grid and static export uses domain-positioned axes to fit one image. Set a positive <n> to cap the panel count instead; eligible columns beyond the cap are reported but not drawn.",
-+        "description": "Maximum number of panels in the Data Schematic. 0 (the default) means auto: draw every eligible column (up to 65), for both HTML and static image export. Up to 8 cartesian panels render as one typed subplot grid; beyond 8, HTML switches to an inline-div grid and static export uses domain-positioned axes to fit one image. Set a positive <n> to cap the panel count instead; eligible columns beyond the cap are reported but not drawn.",
-         "default": 0
-       },
-       {
-@@ -281,6 +282,11 @@
-         "type": "flag",
-         "description": "Omit the \"Other (N)\" aggregate bar from frequency bar charts. It collects the categories beyond --limit (N = how many distinct categories were rolled up) and is shown by default. When just ONE category is left over, it is charted under its own name instead of as an opaque \"Other (1)\" bar."
-       },
-+      {
-+        "flag": "--no-parcoords",
-+        "type": "flag",
-+        "description": "Don't add the parallel-coordinates panel, which `smart` otherwise draws when 3 or more numeric columns correlate (|r| >= 0.3). Only affects `smart`."
-+      },
-       {
-         "flag": "--no-snap",
-         "type": "flag",
-@@ -557,6 +563,10 @@
-       "description": "Radar chart comparing numeric metrics, one trace per team",
-       "command": "qsv viz radar teams.csv --cols speed,power,range,accuracy --series team -o radar.html"
-     },
-+    {
-+      "description": "Parallel coordinates across four measures, each line colored by price",
-+      "command": "qsv viz parcoords cars.csv --cols mpg,horsepower,weight,acceleration --color price -o parcoords.html"
-+    },
-     {
-       "description": "Point map of earthquakes, marker color by magnitude 
-```
+Co-authored-by: ybai08 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`--delimiter` no longer overrides extension delimiters or `QSV_DEFAULT_DELIMITER` in `excel`, `jsonl`, `readstat`, `scoresql`, `sqlp` and `template`** ([#4819](https://github.com/dathere/qsv/pull/4819)). Like `count` before #4817, they declared a docopt `[default: ,]`. `template` read a `.tsv` as a single column, `sqlp` and `scoresql` ignored `QSV_DEFAULT_DELIMITER`, and `excel`/`jsonl` wrote commas to `-o out.tsv`. **Behavior change:** `excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output too, as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout as well. Also fixed `sqlp --cache-schema` and `schema --polars` dropping date columns on single-column files: schema inference let `sniff` guess the delimiter, and it guessed `/`. A `.csv` extension still beats `QSV_DEFAULT_DELIMITER` in `sqlp`, `scoresql` and `readstat -o`, and `scoresql` now caches each input's stats with that file's own delimiter ([#4821](https://github.com/dathere/qsv/pull/4821)). Piped stdin still uses `QSV_DEFAULT_DELIMITER` in `sqlp` and `scoresql` ([#4822](https://github.com/dathere/qsv/pull/4822)).
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
- ### Added
-+- **`viz parcoords` and a parallel-coordinates panel in `viz smart`** ([#4839](https://github.com/dathere/qsv/pull/4839)), using the new plotly.js 3.7 trace types from [#4838](https://github.com/dathere/qsv/pull/4838). `viz parcoords` draws one line per row across the numeric `--cols` and colors the lines by an optional numeric `--color` column; drag along an axis to filter rows. It is the numeric counterpart of `viz parcats`. `viz smart` adds the panel when 3 or more measures correlate (|r| ≥ 0.3), reusing the columns it already reads for the correlation heatmap. It shows up to 6 axes, ordered so neighboring axes are the strongest pairs, and samples down to 5,000 lines. Pass `--no-parcoords` to leave it out. The auto `--max-charts 0` ceiling rises from 64 to 65 panels, so the new panel doesn't push a per-column chart out of a wide Data Schematic. The viz gallery now renders WebGL figures and Data Schematic iframes only near the viewport: with every figure live at once it exceeded Chrome's limit on WebGL contexts, which left splom, 3D and map figures blank.
- - **`qsvpy314` binary variant** ([#4832](https://github.com/dathere/qsv/pull/4832)), built with Python 3.14, alongside `qsvpy311`, `qsvpy312` and `qsvpy313`.
- 
- ### Changed
+ ### Fixed
++- **`geoconvert` GeoJSON to CSV no longer fails when features have different properties** ([#4837](https://github.com/dathere/qsv/pull/4837)). geozero's CSV writer takes its columns from the first feature, so it panicked ("CSV features must all have the same column names", or index out of bounds) when a later feature listed its properties in another order or had one the first feature lacked, or (even when every feature had the same properties) when a `null` property came before others, and failed with "found record with 2 fields, but the previous record has 3 fields" when a feature left a property out or had it `null`. The CSV now has a column for every property that has a value in at least one feature, in the order first seen, and a cell is empty where a feature has no value for that property, as SHP to CSV already does for null fields.
+ - **`schema --ignore-case` schemas no longer reject the CSV they were inferred from** ([#4831](https://github.com/dathere/qsv/pull/4831)). The `enum` and `const` values of String columns were lowercased, and `validate` is case-sensitive, so `True`/`TRUE` failed `"enum": ["false","true"]`. They are now written as an equivalent case-insensitive regex, e.g. `"pattern": "^(?i:false|true)$"`. Integer enums are unchanged, and `tojsonl` is unaffected.
+ - **`schema` and `tojsonl` now apply `--enum-threshold` consistently** ([#4830](https://github.com/dathere/qsv/pull/4830)). Which columns got `enum`, `const` and `--strict-formats` constraints depended on the *other* columns in the file. If no column was at or under the threshold, every column got an exhaustive `enum`. If at least one was, constant columns lost their `const`, `--strict-formats` skipped high-cardinality String columns, and `--ignore-case` (always on in `tojsonl`) missed columns that only fall under the threshold once case-folded, so `tojsonl` stopped inferring booleans like `True`/`false`. `tojsonl` also no longer converts a whitespace-padded boolean like ` True ` to `false` when `--trim` isn't used. Now only columns at or under the threshold get an `enum` (counted case-insensitively with `--ignore-case`), constant columns always get `const`, and `--strict-formats` checks every String column, which uses more memory on large files with many distinct text values. **Note: generated schemas can be stricter.** A column that holds a single value in the input now always gets a `const` constraint, which most files with a low-cardinality column used to lose, so `validate` rejects later data with any other value there (e.g. a changed phone number or URL). Generate the schema from a representative dataset, and loosen or remove `const`/`enum` constraints in the JSON Schema where values are expected to change.
+ - **`schema` now infers Unicode character lengths instead of UTF-8 byte lengths for non-ASCII strings.** ([#4827](https://github.com/dathere/qsv/pull/4827)) Generated `minLength` and `maxLength` constraints now use JSON Schema's character-count semantics, so validating the original CSV no longer rejects short non-ASCII values such as `李`. ASCII bounds are unchanged.
 ```
 
-**File**: `docs/help/viz.md` (modified, +14/-3)
+**File**: `src/cmd/geoconvert.rs` (modified, +112/-44)
 ```diff
-@@ -67,6 +67,9 @@ splom       Scatter-plot matrix: every pair of numeric --cols in a grid, with ea
- parcats     Parallel categories: ribbons showing how rows flow across the
-             categorical --cols (best with 3-4). Complements sankey, which takes
-             2 columns.
-+parcoords   Parallel coordinates: one line per row across the numeric --cols
-+            (default: all numeric), with an optional numeric --color column.
-+            The numeric twin of parcats. Drag along an axis to filter rows.
- map         Point map (or --density heatmap) on MapLibre tile basemaps. Pick the
-             coordinate columns with the lat/lon options below.
- geo         Point map on a projection basemap - coastlines/land/countries, no tiles
-@@ -240,6 +243,12 @@ qsv viz sunburst web.csv --cols source,campaign,landing_page -o sunburst.html
- qsv viz radar teams.csv --cols speed,power,range,accuracy --series team -o radar.html
- ```
+@@ -588,34 +588,60 @@ impl OwnedValue {
+     }
+ }
  
-+> Parallel coordinates across four measures, each line colored by price
+-/// Sits between geozero's shapefile reader and an output writer, fixing two
+-/// problems with how the reader drives the writer:
+-/// - It yields each record's fields in `HashMap` order, which differs from record to record, and
+-///   leaves out null fields. `CsvWriter` panics unless every feature has the same columns in the
+-///   same order. So each feature's properties are buffered and re-emitted in the .dbf's field
+-///   order; with `fill_missing` (CSV), a null field is written as an empty string.
+-/// - It discards the result of most writer calls (`.ok()`), so a failed write would go unnoticed.
+-///   The first error is kept for `take_error`.
+-struct DbfFieldOrder<'a, P> {
+-    inner:        &'a mut P,
+-    fields:       Vec<String>,
+-    values:       Vec<Option<OwnedValue>>,
+-    fill_missing: bool,
+-    error:        Option<geozero::error::GeozeroError>,
++/// Sits between a geozero reader and an output writer, and re-emits each
++/// feature's properties in a fixed field order. `CsvWriter` takes its columns from
++/// the first feature, and panics unless every later feature has the same columns
++/// in the same order, but:
++/// - the shapefile reader yields each record's fields in `HashMap` order, which differs from
++///   record to record, and leaves out null fields. The field order is the .dbf's.
++/// - GeoJSON features can list their properties in any order, leave some out, have them null
++///   (the reader leaves those out) or have no properties at all. The field order is every
++///   property name, in the order first seen (see `geojson_property_names`).
++///
++/// So each feature's properties are buffered and re-emitted in field order; with
++/// `fill_missing` (CSV), a missing field is written as an empty string.
++///
++/// The shapefile reader also discards the result of most writer calls (`.ok()`), so a failed
++/// write would go unnoticed. The first error is kept for `take_error`.
++struct FieldOrder<'a, P> {
++    inner:              &'a mut P,
++    fields:             Vec<String>,
++    values:             Vec<Option<OwnedValue>>,
++    fill_missing:       bool,
++    properties_written: bool,
++    error:              Option<geozero::error::GeozeroError>,
+ }
+ 
+-impl<'a, P: FeatureProcessor> DbfFieldOrder<'a, P> {
++impl<'a, P: FeatureProcessor> FieldOrder<'a, P> {
+     fn new(inner: &'a mut P, fields: Vec<String>, fill_missing: bool) -> Self {
+         let values = fields.iter().map(|_| None).collect();
+         Self {
+             inner,
+             fields,
+             values,
+             fill_missing,
++            properties_written: false,
+             error: None,
+         }
+     }
+ 
++    /// Write the buffered properties to `inner`, in field order.
++    fn write_properties(&mut self) -> geozero::error::Result<()> {
++        self.properties_written = true;
++        let mut idx = 0;
++        for (name, value) in self.fields.iter().zip(&self.values) {
++            match value {
++                Some(value) => self.inner.property(idx, name, &value.as_column_value())?,
++                None if self.fill_missing => {
++                    self.inner.property(idx, name, &ColumnValue::String(""))?
++                },
++                None => continue,
++            };
++            idx += 1;
++        }
++        Ok(())
++    }
 +
-+```console
-+qsv viz parcoords cars.csv --cols mpg,horsepower,weight,acceleration --color price -o parcoords.html
-+```
-+
- > Point map of earthquakes, marker color by magnitude and size by depth
+     fn track(&mut self, result: geozero::error::Result<()>) -> geozero::error::Result<()> {
+         if let Err(err) = result
+             && self.error.is_none()
+@@ -633,7 +659,7 @@ impl<'a, P: FeatureProcessor> DbfFieldOrder<'a, P> {
+     }
+ }
  
- ```console
-@@ -327,6 +336,7 @@ qsv viz sunburst    [options] <input>
- qsv viz icicle      [options] <input>
- qsv viz splom       [options] <input>
- qsv viz parcats     [options] <input>
-+qsv viz parcoords   [options] <input>
- qsv viz --help
- ```
+-impl<P: FeatureProcessor> PropertyProcessor for DbfFieldOrder<'_, P> {
++impl<P: FeatureProcessor> PropertyProcessor for FieldOrder<'_, P> {
+     fn property(
+         &mut self,
+         _idx: usize,
+@@ -647,7 +673,7 @@ impl<P: FeatureProcessor> PropertyProcessor for DbfFieldOrder<'_, P> {
+     }
+ }
  
-@@ -339,9 +349,9 @@ qsv viz --help
- | &nbsp;`‑x,`<br>`‑‑x`&nbsp; | string | Column for the x-axis / category / bin / group. |  |
- | &nbsp;`‑y,`<br>`‑‑y`&nbsp; | string | Column for the y-axis / value. |  |
- | &nbsp;`‑z,`<br>`‑‑z`&nbsp; | string | The z column: a heatmap pivot value (with --x and --y), or the third numeric axis for scatter3d. |  |
--| &nbsp;`‑‑cols`&nbsp; | string | Columns to use. For heatmap: numeric columns for the correlation matrix (default: all numeric). For radar: the numeric axes to plot. For treemap/sunburst/icicle: the categorical dimensions that form the hierarchy levels, outermost first (e.g. region,category,subcategory). For splom: the numeric columns to cross-plot (default: all numeric). For parcats: the categorical dimensions to flow across (best with 3-4). |  |
-+| &nbsp;`‑‑cols`&nbsp; | string | Columns to use. For heatmap: numeric columns for the correlation matrix (default: all numeric). For radar: the numeric axes to plot. For treemap/sunburst/icicle: the categorical dimensions that form the hierarchy levels, outermost first (e.g. region,category,subcategory). For splom: the numeric columns to cross-plot (default: all numeric). For parcats: the categorical dimensions to flow across (best with 3-4). For parcoords: the numeric axes, in order (default: all numeric). |  |
- | &nbsp;`‑‑series`&nbsp; | string | Column to split into multiple series (one trace per distinct value). Applies to bar, line, scatter, scatter3d, radar, map and geo. |  |
--| &nbsp;`‑‑color`&nbsp; | string | For scatter/scatter3d/map/geo: a numeric column to encode as marker color (a continuous colorscale with a colorbar). For categorical coloring, use the --series option instead. Cannot be combined with --series. In map density mode, this column is the heatmap weight. |  |
-+| &nbsp;`‑‑color`&nbsp; | string | For scatter/scatter3d/map/geo: a numeric column to encode as marker color (a continuous colorscale with a colorbar). For categorical coloring, use the --series option instead. Cannot be combined with --series. In map density mode, this column is the heatmap weight. For parcoords: the numeric column that colors each line (default: the first axis). |  |
- | &nbsp;`‑‑size`&nbsp; | string | For scatter/scatter3d/map/geo: a numeric column to encode as marker size, producing a bubble chart (values are rescaled to a readable pixel range). Cannot be combined with --series, EXCEPT on an animated scatter (see the --slider option), where the --series column names the entity and this column is the third data variable. In map density mode, this column is the heatmap weight. |  |
- | &nbsp;`‑‑donut`&nbsp; | flag | Render a pie chart as a donut (with a center hole). |  |
- | &nbsp;`‑‑ohlc‑open`&nbsp; | string | Open-price column for candlestick/ohlc charts. |  |
-@@ -406,7 +416,7 @@ qsv viz --help
+-impl<P: FeatureProcessor> FeatureProcessor for DbfFieldOrder<'_, P> {
++impl<P: FeatureProcessor> FeatureProcessor for FieldOrder<'_, P> {
+     fn dataset_begin(&mut self, name: Option<&str>) -> geozero::error::Result<()> {
+         let result = self.inner.dataset_begin(name);
+         self.track(result)
+@@ -659,12 +685,24 @@ impl<P: FeatureProcessor> FeatureProcessor for DbfFieldOrder<'_, P> {
+     }
  
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
- |--------|------|-------------|--------|
--| &nbsp;`‑‑max‑charts`&nbsp; | integer | Maximum number of panels in the Data Schematic. 0 (the default) means auto: draw every eligible column (up to 64), for both HTML and static image export. Up to 8 cartesian panels render as one typed subplot grid; beyond 8, HTML switches to an inline-div grid and static export uses domain-positioned axes to fit one image. Set a positive <n> to cap the panel count instead; eligible columns beyond the cap are reported but not drawn. | `0` |
-+| &nbsp;`‑‑max‑charts`&nbsp; | integer | Ma
+     fn feature_begin(&mut self, idx: u64) -> geozero::error::Result<()> {
++        self.properties_written = false;
+         let result = self.inner.feature_begin(idx);
+         self.track(result)
+     }
+ 
+     fn feature_end(&mut self, idx: u64) -> geozero::error::Result<()> {
+-        let result = self.inner.feature_end(idx);
++        // A GeoJSON feature with no properties never calls properties_begin/end, but
++        // with fill_missing its row still needs a (blank) value for every field.
++        let mut result = Ok(());
++        if self.fill_missing && !self.properties_written && !self.fields.is_empty() {
++            self.values.iter_mut().for_each(|value| *value = None);
++ 
 ```
 
-**File**: `examples/viz/README.md` (modified, +4/-0)
+**File**: `tests/test_geoconvert.rs` (modified, +100/-0)
 ```diff
-@@ -440,6 +440,10 @@ qsv viz icicle sales_sample.csv --cols region,product_category,payment_method -o
- # auto-picks this over a treemap/sunburst for 3-4 associated many-to-many categoricals
- qsv viz parcats sales_sample.csv --cols region,product_category,payment_method -o parcats.html
+@@ -136,6 +136,106 @@ fn geoconvert_geojson_to_csv_max_length_inline() {
+     assert!(got[1][1].ends_with("..."));
+ }
  
-+# parcoords — parallel coordinates: one line per row across the numeric --cols, colored by
-+# --color; drag along an axis to filter. viz smart auto-adds it when 3+ measures are correlated
-+qsv viz parcoords sales_sample.csv --cols units_sold,revenue,discount_pct,profit_margin_pct --color revenue -o parcoords.html
++#[test]
++fn geoconvert_geojson_to_csv_properties_in_different_order() {
++    // geozero's CsvWriter takes the columns from the first feature and panicked
++    // ("CSV features must all have the same column names") when a later feature
++    // listed the same properties in another order.
++    let wrk = Workdir::new("geoconvert_geojson_to_csv_properties_in_different_order");
++    wrk.create_from_string(
++        "data.geojson",
++        r#"{"type": "FeatureCollection", "features": [
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [1, 2]},
++   "properties": {"name": "a", "pop": 1}},
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [3, 4]},
++   "properties": {"pop": 2, "name": "b"}}
++]}"#,
++    );
++    let mut cmd = wrk.command("geoconvert");
++    cmd.args(["data.geojson", "geojson", "csv"]);
 +
- # splom — scatter-plot matrix: every pairwise scatter of --cols in an N x N grid with shared axes,
- # so correlation structure is legible at a glance. Standalone only — viz smart covers the same
- # ground with its correlation heatmap plus the strongest-pair scatter and 3D scatter drill-downs
-```
-
-**File**: `examples/viz/gen_gallery.py` (modified, +86/-10)
-```diff
-@@ -289,6 +289,68 @@
-     "[\"wheel\",\"touchstart\",\"keydown\",\"pointerdown\"].forEach(function(t){"
-     "addEventListener(t,us,{capture:true,passive:true});});})();</script>")
- 
-+# Trace types plotly.js draws with WebGL. Chrome keeps only ~16 live WebGL contexts per page (and
-+# same-origin iframes share that budget), dropping the OLDEST when a new one is created — the lost
-+# plots go blank and plotly never recovers them. With 50+ figures and ~17 Data Schematic iframes the
-+# gallery needs well over that (parcoords alone uses 3), so figures with any of these traces are
-+# rendered lazily by LAZY_GL_JS instead of all at once.
-+WEBGL_TRACE_TYPES = {
-+    "scatter3d", "surface", "mesh3d", "cone", "streamtube", "volume", "isosurface",
-+    "splom", "parcoords", "scattergl", "scatterpolargl",
-+    "scattermap", "densitymap", "choroplethmap",
-+    "scattermapbox", "densitymapbox", "choroplethmapbox",
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    let expected = vec![
++        svec!["geometry", "name", "pop"],
++        svec!["POINT(1 2)", "a", "1"],
++        svec!["POINT(3 4)", "b", "2"],
++    ];
++    assert_eq!(got, expected);
 +}
 +
-+# Keeps the page's live WebGL contexts under the browser cap. `qsvLazy(id, render)` registers a
-+# WebGL figure: `render()` (its newPlot call) runs when the figure comes within a viewport of the
-+# screen, and `Plotly.purge` releases it once it scrolls further away, pinning its height so the
-+# layout doesn't jump. The Data Schematic iframes get the same treatment by swapping their `src`
-+# for about:blank (height pinned the same way; RESIZE_LISTENER_JS re-sizes them on reload). An
-+# element in fullscreen is never released. Without IntersectionObserver everything renders
-+# eagerly, as before.
-+LAZY_GL_JS = (
-+    "var qsvLazy=(function(){"
-+    "var M=\"100% 0px\",reg=new Map(),io=null;"
-+    "function fsHolds(el){var f=document.fullscreenElement;return !!f&&(f===el||el.contains(f));}"
-+    "function show(el){var r=reg.get(el);if(r.live)return;r.live=true;"
-+    "Promise.resolve(r.render()).then(function(){el.style.minHeight=\"\";"
-+    "if(typeof qsvInitPlot===\"function\")qsvInitPlot(el);},function(){});}"
-+    # purge drops plotly's event handlers, so clear the init flag for the next render to redo
-+    # them. Keep __qsvBaked: qsvApplyCamera writes the fitted zoom into the FIGS layout that the
-+    # next render reuses, so re-capturing it would re-apply the size correction and drift the
-+    # zoom on every revisit. The gl3d wheel fix is a plain DOM listener on the same element and
-+    # survives purge, so its flag stays too.
-+    "function hide(el){var r=reg.get(el);if(!r.live||fsHolds(el))return;"
-+    "el.style.minHeight=el.offsetHeight+\"px\";r.live=false;"
-+    "delete el.__qsvInitFit;Plotly.purge(el);}"
-+    "if(window.IntersectionObserver){"
-+    "io=new IntersectionObserver(function(es){es.forEach(function(e){"
-+    "(e.isIntersecting?show:hide)(e.target);});},{rootMargin:M});"
-+    "var fo=new IntersectionObserver(function(es){es.forEach(function(e){var f=e.target;"
-+    "if(e.isIntersecting){if(f.dataset.src&&f.getAttribute(\"src\")===\"about:blank\")"
-+    "f.setAttribute(\"src\",f.dataset.src);}"
-+    "else if(!fsHolds(f)&&f.getAttribute(\"src\")!==\"about:blank\"){"
-+    "if(!f.dataset.src)f.dataset.src=f.getAttribute(\"src\");"
-+    "if(f.clientHeight>0)f.style.height=f.clientHeight+\"px\";"
-+    "f.setAttribute(\"src\",\"about:blank\");}});},{rootMargin:M});"
-+    "var d=document.getElementsByClassName(\"dash\");"
-+    "for(var i=0;i<d.length;i++)fo.observe(d[i]);}"
-+    "return function(id,render){var el=document.getElementById(id);"
-+    "if(!io||!el){render();return;}reg.set(el,{render:render,live:false});io.observe(el);};"
-+    "})();")
++#[test]
++fn geoconvert_geojson_to_csv_missing_and_null_properties() {
++    // A property can be absent or null in some features, a feature's properties
++    // can be null, and a property can first appear after the first feature. Every
++    // property becomes a column (in the order first seen), and is empty where a
++    // feature has no value for it. geozero's CsvWriter used to fail with "found
++    // record with 2 fields, but the previous record has 3 fields", or panic
++    // with an index out of bounds.
++    let wrk = Workdir::new("geoconvert_geojson_to_csv_missing_and_null_properties");
++    wrk.create_from_string(
++        "data.geojson",
++        r#"{"type": "FeatureCollection", "features": [
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [1, 2]},
++   "properties": {"name": "a", "pop": null}},
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [3, 4]},
++   "properties": {"name": "b", "pop": 2, "area": 5.5}},
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [5, 6]},
++   "properties": {"area": 7.5}},
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [7, 8]},
++   "properties": null}
++]}"#,
++    );
++    let expected = vec![
++        svec!["geometry", "name", "pop", "area"],
++        svec!["POINT(1 2)", "a", "", ""],
++        svec!["POINT(3 4)", "b", "2", "5.5"],
++        svec!["POINT(5 6)", "", "", "7.5"],
++        svec!["POINT(7 8)", "", "", ""],
++    ];
 +
++    let mut cmd = wrk.command("geoconvert");
++    cmd.args(["data.geojson", "geojson", "csv"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(got, expected);
 +
-+def uses_webgl(fig):
-+    """True when any trace in a plotly figure dict is drawn with WebGL (see WEBGL_TRACE_TYPES)."""
-+    return any(t.get("type") in WEBGL_TRACE_TYPES for t in (fig or {}).get("data") or [])
++    // same from stdin, and through the --max-length path
++    let mut cmd = wrk.command("geoconvert");
++    cmd.args(["-", "geojson", "csv", "--max-length", "3"])
++        .stdin(std::fs::File::open(wrk.path("data.geojson")).unwrap());
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(got[0], expected[0]);
++    assert_eq!(got[2], svec!["POI...", "b", "2", "5.5"]);
++    assert_eq!(got[4], svec!["POI...", "", "", ""]);
++}
 +
++#[test]
++fn geoconvert_geojson_to_csv_null_before_other_properties() {
++    // Even when every feature has the same properties, a null one that is not the
++    // last made geozero's CsvWriter panic (index out of bounds) from the second
++    // feature on: the reader skips nulls but still counts them in the property
++    // index. A property that is null in every feature gets no column, as before.
++    let wrk = Workdir::new("geoconvert_geojson_to_csv_null_before_other_properties");
++    wrk.create_from_string(
++        "data.geojson",
++        r#"{"type": "FeatureCollection", "features": [
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [1, 2]},
++   "properties": {"name": "a", "pop": null, "area": 1.5}},
++  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [3, 4]},
++   "properties": {"name": "b", "pop": null, "area": 2.5}}
++]}"#,
++    );
++    let mut cmd = wrk.command("geoconvert");
++    cmd.args(["data.geojson", "geojson", "csv"]);
 +
-+def lazy_if_webgl(fig, div_id, call):
-+    """Wrap a figure's `Plotly.newPlot(...)` statement in `qsvLazy` when it uses WebGL."""
-+    if not uses_webgl(fig):
-+        return call
-+    return f'qsvLazy("{div_id}",function(){{return {call.rstrip(";")};}});'
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    let expected = vec![
++        svec!["geometry", "name", "area"],
++        svec!["POINT(1 2)", "a", "1.5"],
++        svec!["POINT(3 4)", "b", "2.5"],
++    ];
++    assert_eq!(got, expected);
++}
 +
- # Added to the gallery once: sizes each iframe to the height its Data Schematic reports (matched by
- # comparing window references, which is allowed cross-origin). The reported height is
- # content-derived (see RESIZE_REPORTER_JS) and therefore viewport-independent, so applying it can
-@@ -430,19 +492,22 @@
-     'function qsvInstallGl3dFix(gd){if(gd.__qsvGl3dFix||!qsvSceneKeys(gd).length)return;'
-     'gd.__qsvGl3dFix=true;gd.addEventListener("wheel",function(e){'
-     'if(document.fullscreenElement!==gd)e.stopPropagation();},{capture:true,passive:true});}'
--    'var qsvTries=0;function qsvInitFit(){if(typeof Plotly==="undefined"){'
--    'if(qsvTries++<100)setTimeout(qsvInitFit,50);return;}var pending=false;'
--    'document.querySelectorAll(".js-plotly-plot").forEach(function(gd){if(gd.__qsvInitFit)return;'
--    'if(gd.data){gd.__qsvInitFit=true;qsvFitNow(gd);qsvApplyScrollZoom(gd);qsvInstallGl3dFix(gd);'
-+    # Per-plot setup, also called by qsvLazy after each lazy render (a
-```
-
-**File**: `examples/viz/smart_geo_outliers.html` (modified, +18/-10)
-```diff
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-17 17:26 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-18 13:49 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 25.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -128,51 +128,59 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
- </script>
-       </div>
-     </div>
--    <div class="qsv-viz-cell">
--      <div class="qsv-viz-plot" style="height:320px">
-+    <div class="qsv-viz-cell full-width">
-+      <div class="qsv-viz-plot" style="height:420px">
- <div id="qsv-viz-panel-6" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-6", {"data":[{"type":"bar","x":["East","Central","West","North","South"],"y":[47.0,45.0,43.0,33.0,32.0],"name":"zone","textposition":"outside","texttemplate":["47","45","43","33","32"],"hovertext":["East","Central","West","North","South"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#B279A2","#B279A2","#B279A2","#B279A2","#B279A2"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"zone"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0],"ticktext":["East","Central","West","North","South"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,54.05],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
-+    Plotly.newPlot("qsv-viz-panel-6", {"data":[{"type":"parcoords","dimensions":[{"values":[3.0,4.0,1.0,2.0,7.0,11.0,3.0,3.0,1.0,11.0,6.0,11.0,11.0,12.0,3.0,2.0,2.0,5.0,11.0,10.0,9.0,4.0,12.0,4.0,9.0,7.0,8.0,5.0,9.0,11.0,7.0,7.0,2.0,3.0,11.0,12.0,11.0,9.0,7.0,11.0,3.0,5.0,5.0,6.0,10.0,7.0,6.0,11.0,10.0,8.0,5.0,4.0,12.0,4.0,3.0,9.0,11.0,3.0,7.0,8.0,8.0,3.0,8.0,7.0,11.0,11.0,3.0,12.0,10.0,8.0,10.0,2.0,6.0,9.0,8.0,9.0,4.0,12.0,4.0,12.0,8.0,2.0,9.0,10.0,5.0,5.0,7.0,10.0,9.0,4.0,3.0,8.0,11.0,9.0,11.0,1.0,4.0,7.0,2.0,10.0,8.0,6.0,1.0,1.0,10.0,9.0,11.0,6.0,10.0,5.0,10.0,2.0,1.0,10.0,11.0,12.0,8.0,11.0,5.0,11.0,12.0,9.0,7.0,4.0,5.0,1.0,10.0,3.0,1.0,9.0,11.0,5.0,10.0,10.0,9.0,5.0,10.0,9.0,5.0,13.0,4.0,15.0,4.0,10.0,12.0,8.0,5.0,13.0,15.0,8.0,9.0,13.0,14.0,11.0,11.0,11.0,13.0,4.0,10.0,8.0,9.0,14.0,14.0,7.0,14.0,15.0,12.0,11.0,8.0,5.0,9.0,4.0,15.0,6.0,7.0,14.0,6.0,10.0,7.0,14.0,15.0,12.0,14.0,6.0,10.0,11.0,8.0,6.0,10.0,12.0,12.0,5.0,15.0,12.0,11.0,10.0,8.0,5.0,10.0,11.0],"label":"packages"},{"values":[6.3,8.3,2.3,3.0,16.9,24.4,5.7,5.1,2.9,22.7,14.5,23.6,26.7,27.5,5.8,8.1,4.0,8.3,22.9,22.1,20.0,9.6,29.1,9.6,22.2,14.0,16.9,11.1,22.0,25.5,14.0,17.4,2.1,4.3,27.5,24.7,22.8,19.1,16.6,24.2,10.2,12.7,12.7,11.9,23.5,16.4,8.8,22.5,20.1,14.8,8.2,9.2,25.6,11.1,7.5,18.7,24.3,7.7,18.9,19.5,18.0,9.1,18.2,15.4,24.7,27.9,7.5,27.3,22.4,21.6,22.9,4.0,13.8,20.6,17.8,17.7,9.7,23.2,7.7,29.1,14.8,1.7,20.0,23.7,10.4,12.6,16.5,22.0,17.7,12.5,3.7,16.6,27.7,19.8,23.6,4.9,13.2,18.2,3.8,19.4,21.3,13.1,5.8,1.8,21.0,20.5,23.9,12.4,23.9,8.9,20.4,4.6,0.4,22.5,23.2,25.2,19.2,23.3,8.9,24.2,25.7,21.2,13.3,9.4,11.4,2.5,22.9,3.1,2.5,18.0,23.9,12.4,24.5,20.6,18.8,10.9,20.2,21.7,11.2,32.0,9.3,31.1,10.7,21.5,26.1,17.4,8.4,26.2,33.8,17.6,16.8,30.5,33.1,26.2,23.5,19.9,27.5,8.8,22.5,17.6,18.7,31.7,29.7,16.6,29.0,31.1,26.8,24.6,19.8,11.1,21.7,8.4,34.6,10.1,12.3,29.3,12.8,22.4,15.1,32.4,33.4,23.4,30.3,10.9,19.0,22.5,15.3,14.9,22.5,25.2,29.0,11.5,35.3,27.3,25.0,22.3,18.0,11.0,25.2,24.5],"label":"weight_kg"},{"values":[19.8,6.0,10.5,8.9,14.6,3.6,7.3,20.5,3.3,6.9,12.2,9.6,17.4,12.0,21.1,18.6,21.6,21.3,12.4,14.6,6.3,5.8,14.9,10.4,12.8,10.0,16.6,16.7,3.1,20.8,8.3,11.1,4.6,8.1,7.3,19.1,2.1,4.2,20.0,17.6,19
-```
-
-**File**: `examples/viz/smart_sales.html` (modified, +8/-8)
-```diff
-@@ -74,15 +74,15 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-17 17:26 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-18 13:49 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 25.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-     <div class="qsv-viz-cell full-width">
-       <div class="qsv-viz-plot" style="height:230px">
- <div id="qsv-viz-panel-0" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-0", {"data":[{"type":"indicator","mode":"number","value":158.086,"domain":{"x":[0.01,0.24],"y":[0.1,1.0]},"number":{"valueformat":",.2f"}},{"type":"indicator","mode":"number","value":2.6215,"domain":{"x":[0.26,0.49],"y":[0.1,1.0]},"number":{"valueformat":".3~g","suffix":"M"}},{"type":"indicator","mode":"number","value":8109.0,"domain":{"x":[0.51,0.74],"y":[0.1,1.0]},"number":{"valueformat":",.0f"}},{"type":"indicator","mode":"number","value":0.1775,"domain":{"x":[0.76,0.99],"y":[0.1,1.0]},"number":{"valueformat":",.2f"}}],"layout":{"showlegend":false,"margin":{"l":20,"r":20,"t":20,"b":20,"pad":4},"height":230,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","annotations":[{"text":"Mean unit_price","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":13},"showarrow":false,"xref":"paper","x":0.125,"xanchor":"center","yref":"paper","y":0.24,"yanchor":"top","name":"qsv-kpi-label"},{"text":"Total revenue","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":13},"showarrow":false,"xref":"paper","x":0.375,"xanchor":"center","yref":"paper","y":0.24,"yanchor":"top","name":"qsv-kpi-label"},{"text":"Total shipping_cost","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":13},"showarrow":false,"xref":"paper","x":0.625,"xanchor":"center","yref":"paper","y":0.24,"yanchor":"top","name":"qsv-kpi-label"},{"text":"Mean discount_pct","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":13},"showarrow":false,"xref":"paper","x":0.875,"xanchor":"center","yref":"paper","y":0.24,"yanchor":"top","name":"qsv-kpi-label"}]},"config":{"responsive":true},"frames":null});
-+    Plotly.newPlot("qsv-viz-panel-0", {"data":[{"type":"indicator","mode":"number","value":158.086,"domain":{"x":[0.01,0.3233333333333333],"y":[0.1,1.0]},"number":{"valueformat":",.2f"}},{"type":"indicator","mode":"number","value":2.6215,"domain":{"x":[0.3433333333333333,0.6566666666666666],"y":[0.1,1.0]},"number":{"valueformat":".3~g","suffix":"M"}},{"type":"indicator","mode":"number","value":0.1775,"domain":{"x":[0.6766666666666666,0.99],"y":[0.1,1.0]},"number":{"valueformat":",.2f"}}],"layout":{"showlegend":false,"margin":{"l":20,"r":20,"t":20,"b":20,"pad":4},"height":230,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","annotations":[{"text":"Mean unit_price","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":13},"showarrow":false,"xref":"paper","x":0.16666666666666666,"xanchor":"center","yref":"paper","y":0.24,"yanchor":"top","name":"qsv-kpi-label"},{"text":"Total revenue","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":13},"showarrow":false,"xref":"paper","x":0.5,"xanchor":"center","yref":"paper","y":0.24,"yanchor":"top","name":"qsv-kpi-label"},{"text":"Mean discount_pct","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":13},"showarrow":false,"xref":"paper","x":0.8333333333333333,"xanchor":"center","yref":"paper","y":0.24,"yanchor":"top","name":"qsv-kpi-label"}]},"config":{"responsive":true},"frames":null});
- </script>
-       </div>
-     </div>
-@@ -118,27 +118,27 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- </script>
-       </div>
-     </div>
--    <div class="qsv-viz-cell">
--      <div class="qsv-viz-plot" style="height:320px">
-+    <div class="qsv-viz-cell full-width">
-+      <div class="qsv-viz-plot" style="height:420px">
- <div id="qsv-viz-panel-5" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-5", {
-```
-
----
-
-### Incident Patch 3: `ba0b6742` (2026-10-17)
-**Commit Message**: deps: Patch calamine to upstream git rev with zip fix and other improvements
-
-Add a [patch] entry pointing calamine at tafia/calamine rev b05d6cd to pick up the zip 9 fix and other recent improvements.
-
-This lets calamine share the zip 9.x dependency, dropping the duplicate zip 8.6.0 from the lockfile. Also bumps zip to 9.0.5 and ureq-proto to 0.6.5, and adds quick-xml 0.42.0 alongside 0.41.0.
-
-**File**: `Cargo.lock` (modified, +27/-32)
-```diff
-@@ -1309,8 +1309,7 @@ checksum = "f5813789573ae815c8b4be58c4428e0e7ae05f0227678ba9de332ded585b9159"
- [[package]]
- name = "calamine"
- version = "0.36.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5fa68281b1a76b54a62156474adb06bb380a67e07dd60656e3217152b42183f3"
-+source = "git+https://github.com/tafia/calamine?rev=b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f#b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f"
- dependencies = [
-  "atoi_simd",
-  "byteorder",
-@@ -1319,9 +1318,9 @@ dependencies = [
-  "encoding_rs",
-  "fast-float2",
-  "log",
-- "quick-xml",
-+ "quick-xml 0.42.0",
-  "serde",
-- "zip 8.6.0",
-+ "zip",
- ]
- 
- [[package]]
-@@ -2051,7 +2050,7 @@ dependencies = [
-  "threadpool",
-  "typed-builder",
-  "walkdir",
-- "zip 9.0.4",
-+ "zip",
- ]
- 
- [[package]]
-@@ -3213,7 +3212,7 @@ dependencies = [
-  "rkyv",
-  "serde",
-  "tokio",
-- "zip 9.0.4",
-+ "zip",
- ]
- 
- [[package]]
-@@ -5468,7 +5467,7 @@ dependencies = [
-  "nix 0.31.3",
-  "parking_lot",
-  "percent-encoding",
-- "quick-xml",
-+ "quick-xml 0.41.0",
-  "rand 0.10.3",
-  "reqwest",
-  "rustls-pki-types",
-@@ -7147,7 +7146,7 @@ dependencies = [
-  "whatlang",
-  "xxhash-rust",
-  "yaml_serde",
-- "zip 9.0.4",
-+ "zip",
-  "zmij",
-  "zstd 0.14.3",
- ]
-@@ -7247,6 +7246,16 @@ dependencies = [
-  "serde",
- ]
- 
-+[[package]]
-+name = "quick-xml"
-+version = "0.42.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
-+dependencies = [
-+ "encoding_rs",
-+ "memchr",
-+]
-+
- [[package]]
- name = "quickcheck"
- version = "1.1.0"
-@@ -8065,7 +8074,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c44904ffb6c57b148ffcc8ce3011c28bc49b97e1a8343b2d632283cd566e1393"
- dependencies = [
-  "tempfile",
-- "zip 9.0.4",
-+ "zip",
- ]
- 
- [[package]]
-@@ -8342,7 +8351,7 @@ dependencies = [
-  "tempfile",
-  "ureq",
-  "urlencoding",
-- "zip 9.0.4",
-+ "zip",
-  "zipsign-api",
- ]
- 
-@@ -8824,11 +8833,11 @@ dependencies = [
-  "lazy_static",
-  "nom 7.1.3",
-  "nom_locate",
-- "quick-xml",
-+ "quick-xml 0.41.0",
-  "rust_decimal",
-  "rust_decimal_macros",
-  "string_cache",
-- "zip 9.0.4",
-+ "zip",
- ]
- 
- [[package]]
-@@ -9937,9 +9946,9 @@ dependencies = [
- 
- [[package]]
- name = "ureq-proto"
--version = "0.6.4"
-+version = "0.6.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f86fd172ccca569e458f61b6bdd6220965a9ef36e672a6852953b51a0e1583be"
-+checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
- dependencies = [
-  "base64 0.23.1",
-  "http 1.5.0",
-@@ -10239,7 +10248,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "338e30461b3a2b67d70eb30a6d89f8e0c93a833e07d2ae89085cd070c4a00ac0"
- dependencies = [
-  "proc-macro2",
-- "quick-xml",
-+ "quick-xml 0.41.0",
-  "quote",
- ]
- 
-@@ -10318,7 +10327,7 @@ dependencies = [
-  "tokio",
-  "tracing",
-  "which",
-- "zip 9.0.4",
-+ "zip",
- ]
- 
- [[package]]
-@@ -10966,23 +10975,9 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "8.6.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2d04a6b5381502aa6087c94c669499eb1602eb9c5e8198e534de571f7154809b"
--dependencies = [
-- "crc32fast",
-- "flate2",
-- "indexmap 2.14.2",
-- "memchr",
-- "typed-path",
-- "zopfli",
--]
--
--[[package]]
--name = "zip"
--version = "9.0.4"
-+version = "9.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
-+checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
- dependencies = [
-  "aes",
-  "bzip2",
-```
-
-**File**: `Cargo.toml` (modified, +3/-0)
-```diff
-@@ -533,6 +533,9 @@ csv-index = { git = "https://github.com/dathere/rust-csv", branch = "qsv-tuned"
- # csv-core = { path = "../rust-csv/csv-core" }
- # csv-index = { path = "../rust-csv/csv-index" }
- 
-+# use latest upstream of calamine with zip 9 fix and other recent improvements
-+calamine = { git = "https://github.com/tafia/calamine", rev = "b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f" }
-+
- # use latest upstream now that our PR has been merged
- csvlens = { git = "https://github.com/YS-L/csvlens", rev = "6acf060" }
- 
+ #[test]
+ fn geoconvert_csv_partial_latlon_flag_errors() {
+     // Regression: only one of --latitude/--longitude must produce a clear error,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4842** (2026-10-18): feat(viz): funnel --area draws a funnel area (@jqnatividad)
+- **PR #4841** (2026-10-18): feat(viz): ternary plot of three parts of a whole (@jqnatividad)
 - **PR #4840** (2026-10-18): feat(viz): barpolar wind rose; clock-face polar bars for the smart seasonality panel (@jqnatividad)
 - **PR #4839** (2026-10-18): feat(viz): parcoords chart, smart parallel-coordinates panel, gallery WebGL lazy rendering (@jqnatividad)
 - **PR #4838** (2026-10-18): deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces) (@jqnatividad)
-- **PR #4836** (2026-10-17): deps: use plotly.rs 0.15.0 release branch; regenerate viz gallery (@jqnatividad)
-- **PR #4832** (2026-10-16): deps: bump pyo3 from 0.29.3 to 0.30.1; add qsvpy314 binary variant (@jqnatividad)
-- **PR #4831** (2026-10-16): fix(schema): write --ignore-case enum/const as case-insensitive patterns (@jqnatividad)
+- **PR #4837** (2026-10-18): fix(geoconvert): GeoJSON to CSV handles features with different properties (@ybai08)
 
 ---
 
@@ -2892,13 +2540,13 @@ This lets calamine share the zip 9.x dependency, dropping the duplicate zip 8.6.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces
+## X. geoconvert): GeoJSON to CSV handles features with different properties (#4837)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b395d13b`: deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces) (#4838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05577e2e`: geoconvert): GeoJSON to CSV handles features with different properties (#4837). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2906,14 +2554,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **deps: plotly.rs 0.15.0** ([#4836](https://github.com/dathere/qsv/pull/4836)). `viz` now builds against the plotly.rs 0.15.0 release branch ([plotly/plotly.rs#442](https://github.com/plotly/plotly.rs/pull/442)) until it is published to crates.io. qsv doesn't use the Kaleido backend or EPS export that 0.15.0 removes, and the embedded plotly.js bundle is unchanged (3.7.0). The viz gallery dashboards were regenerated with 25.0.0. The pin now tracks the branch's final commit ([#4838](https://github.com/dathere/qsv/pull/4838)), which exposes every plotly.js 3.7 trace type; existing `viz` output is unchanged.
+- **`geoconvert` GeoJSON to CSV no longer fails when features have different properties** ([#4837](https://github.com/dathere/qsv/pull/4837)). geozero's CSV writer takes its columns from the first feature, so it panicked ("CSV features must all have the same column names", or index out of bounds) when a later feature listed its properties in another order or had one the first feature lacked, or (even when every feature had the same properties) when a `null` property came before others, and failed with "found record with 2 fields, but the previous record has 3 fields" when a feature left a property out or had it `null`. The CSV now has a column for every property that has a value in at least one feature, in the order first seen, and a cell is empty where a feature has no value for that property, as SHP to CSV already does for null fields.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **deps: plotly.rs 0.15.0** ([#4836](https://github.com/dathere/qsv/pull/4836)). `viz` now builds against the plotly.rs 0.15.0 release branch ([plotly/plotly.rs#442](https://github.com/plotly/plotly.rs/pull/442)) until it is published to crates.io. qsv doesn't use the Kaleido backend or EPS export that 0.15.0 removes, and the embedded plotly.js bundle is unchanged (3.7.0). The viz gallery dashboards were regenerated with 25.0.0.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b395d13b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05577e2e` are properly handled with clean fallback behavior.

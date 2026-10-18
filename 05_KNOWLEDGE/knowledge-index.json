@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:45:35.693Z",
-  "total_verified_learnings": 394,
+  "last_updated": "2026-10-18T23:51:53.508Z",
+  "total_verified_learnings": 400,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1081,22 +1081,35 @@
     "learn-github-alibaba-sentinel-golang": {
       "learning_id": "learn-github-alibaba-sentinel-golang",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alibaba-sentinel-golang",
+      "source": "alibaba/sentinel-golang",
+      "repository": "alibaba/sentinel-golang",
       "slug": "alibaba-sentinel-golang",
       "platform": "github",
       "source_url": "https://github.com/alibaba/sentinel-golang",
-      "source_version": "HEAD",
-      "content_hash": "4c87ff149426786df4e406e3ef96b79b723fbf130651e21166628a6f24578a1b",
+      "source_version": "f7a7f957",
+      "content_hash": "20ab7a1a0adfe485b4c3d59c8eeb2fd9e69af3d8470815f2d38932e5c692c229",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-sentinel-golang-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-sentinel-golang-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1879,
+          "title": "Fix batch count exceeding threshold issue caused by first time access or expired",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.731Z"
+      "verified_at": "2026-10-18T23:51:48.204Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alibaba-spring-ai-alibaba": {
       "learning_id": "learn-github-alibaba-spring-ai-alibaba",
@@ -5085,14 +5098,19 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "95656516",
-      "content_hash": "3c5e0c4d56980e86aa33266f17fe5bbea4fd8d2f1d512c78c0757972cf58e2a1",
+      "source_version": "d263bda4",
+      "content_hash": "9fea7c3af986b5e62c1cb16db389dc374b9369b07f26d219fbee90913407b34e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
         {
           "number": 1719,
           "title": "deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1882,
+          "title": "geoconvert): GeoJSON to CSV handles features with different properties (#4837)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5101,7 +5119,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:20:23.532Z",
+      "verified_at": "2026-10-18T23:51:53.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8978,22 +8996,35 @@
     "learn-github-gregberge-svgr": {
       "learning_id": "learn-github-gregberge-svgr",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gregberge-svgr",
+      "source": "gregberge/svgr",
+      "repository": "gregberge/svgr",
       "slug": "gregberge-svgr",
       "platform": "github",
       "source_url": "https://github.com/gregberge/svgr",
-      "source_version": "HEAD",
-      "content_hash": "ef5dc97964a34d4b509e0372ccb9a07ccf7b23b20111d25f8485d8b257419eb0",
+      "source_version": "975215ef",
+      "content_hash": "eed26716f85feb5a550e03687816700ba7cf6d101103ddce04b3a9b061a4213f",
       "dossier_path": "07_PROJECT_LEARNING/gregberge-svgr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gregberge-svgr-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1877,
+          "title": "react-native): fix duplicate import (#894)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.202Z"
+      "verified_at": "2026-10-18T23:51:45.701Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-greptimeteam-greptimedb": {
       "learning_id": "learn-github-greptimeteam-greptimedb",
@@ -11065,7 +11096,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "7f5420ff2c38f5582b9a2c517a0bee1b14c46df576f0e29bdd34ce7ad8618051",
+      "content_hash": "fc79ac052c66cfb2ed188a10ac0a292e557a944654735404777cea5d029dd342",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -11082,6 +11113,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp",
           "verified_at": "2026-10-11T08:52:44.791Z"
+        },
+        {
+          "number": 737,
+          "title": "Hybrid Attention Interval Invariant for Long-Context Efficiency",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 987,
@@ -11102,6 +11138,11 @@
           "number": 1060,
           "title": "Dual-State Cache Lifecycle Invariant in Hybrid Transformer-RNN Architectures",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1878,
+          "title": "Calibrated Decision Output Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11121,7 +11162,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-17T20:47:48.750Z",
+      "verified_at": "2026-10-18T23:51:46.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21213,22 +21254,35 @@
     "learn-github-honojs-hono": {
       "learning_id": "learn-github-honojs-hono",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "honojs-hono",
+      "source": "honojs/hono",
+      "repository": "honojs/hono",
       "slug": "honojs-hono",
       "platform": "github",
       "source_url": "https://github.com/honojs/hono",
-      "source_version": "HEAD",
-      "content_hash": "93087e99980aff9dad8fae2c1359ab5a7040ec1a2aae8923a6c86c530dca1cad",
+      "source_version": "5ca49b07",
+      "content_hash": "fa7082a056b92478ffc6ccc0c19d4c965a33ed54c4d657b70338a4d5b64dd1ee",
       "dossier_path": "07_PROJECT_LEARNING/honojs-hono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/honojs-hono-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1875,
+          "title": "css): Fix multiline CSS handling in style replacement (#5405)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.493Z"
+      "verified_at": "2026-10-18T23:51:37.771Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-htmlstreamofficial-preline": {
       "learning_id": "learn-github-htmlstreamofficial-preline",
@@ -25798,22 +25852,35 @@
     "learn-github-microsoft-security-101": {
       "learning_id": "learn-github-microsoft-security-101",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "microsoft-security-101",
+      "source": "microsoft/Security-101",
+      "repository": "microsoft/Security-101",
       "slug": "microsoft-security-101",
       "platform": "github",
       "source_url": "https://github.com/microsoft/Security-101",
-      "source_version": "HEAD",
-      "content_hash": "c3806b61fa74739aeb69eb72cca2abdf0acf83a69d30ac935e95e2b721ca7ae3",
+      "source_version": "b0a31ff7",
+      "content_hash": "08fc1c2d8cdf0af6fc2dbe2ebf863b2c99dd48b81aa97805288eb7fe225ba29d",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-security-101-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-security-101-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1880,
+          "title": "link formatting in data security document",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.331Z"
+      "verified_at": "2026-10-18T23:51:49.651Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-midudev-preguntas-entrevista-react": {
       "learning_id": "learn-github-midudev-preguntas-entrevista-react",
@@ -28829,22 +28896,35 @@
     "learn-github-orange-opensource-hurl": {
       "learning_id": "learn-github-orange-opensource-hurl",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "orange-opensource-hurl",
+      "source": "Orange-OpenSource/hurl",
+      "repository": "Orange-OpenSource/hurl",
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "HEAD",
-      "content_hash": "d863a863ca50d40091009f3a11eddabebcc5b468315ad2ebddd18e42e6920fcc",
+      "source_version": "026b66e6",
+      "content_hash": "6346b83e9d0cf860d008db5b401fa42a3086e7ef3ce4483fc4ccfbfd071523f0",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1876,
+          "title": "hurlfmt panic when importing curl commands without a URL",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.912Z"
+      "verified_at": "2026-10-18T23:51:40.451Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-orbitinghail-sqlsync": {
       "learning_id": "learn-github-orbitinghail-sqlsync",
@@ -30986,22 +31066,35 @@
     "learn-github-risingwavelabs-risingwave": {
       "learning_id": "learn-github-risingwavelabs-risingwave",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "risingwavelabs-risingwave",
+      "source": "risingwavelabs/risingwave",
+      "repository": "risingwavelabs/risingwave",
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "HEAD",
-      "content_hash": "2e67cce00c8a1e475a7faef17995fb9c7e2e908d9c77469dffc3d5a914f5bd81",
+      "source_version": "10f34562",
+      "content_hash": "9f7dfef835d0244382dfd1ddff02f78c7d4883c1d42d7c73a1447f2b3cd111e0",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1881,
+          "title": "stream): support changelog over a singleton input (#27524)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.288Z"
+      "verified_at": "2026-10-18T23:51:52.542Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ritz078-transform": {
       "learning_id": "learn-github-ritz078-transform",
@@ -54193,15 +54286,15 @@
       "learning_id": "rule-737",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 737,
-      "title": "Hybrid Attention Interval Invariant for Long-Context Efficiency (Harvested from autotrust/JEV-27B-VL)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Hybrid Attention Interval Invariant for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-18T23:51:46.094Z"
     },
     "rule-738": {
       "learning_id": "rule-738",
@@ -70394,6 +70487,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:45:35.686Z"
+    },
+    "rule-1875": {
+      "learning_id": "rule-1875",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1875,
+      "title": "css): Fix multiline CSS handling in style replacement (#5405)",
+      "source_url": "https://github.com/honojs/hono",
+      "source_version": "5ca49b07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:37.771Z"
+    },
+    "rule-1876": {
+      "learning_id": "rule-1876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1876,
+      "title": "hurlfmt panic when importing curl commands without a URL",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "026b66e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:40.451Z"
+    },
+    "rule-1877": {
+      "learning_id": "rule-1877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1877,
+      "title": "react-native): fix duplicate import (#894)",
+      "source_url": "https://github.com/gregberge/svgr",
+      "source_version": "975215ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:45.701Z"
+    },
+    "rule-1878": {
+      "learning_id": "rule-1878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1878,
+      "title": "Calibrated Decision Output Contract",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:46.094Z"
+    },
+    "rule-1879": {
+      "learning_id": "rule-1879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1879,
+      "title": "Fix batch count exceeding threshold issue caused by first time access or expired",
+      "source_url": "https://github.com/alibaba/sentinel-golang",
+      "source_version": "f7a7f957",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:48.204Z"
+    },
+    "rule-1880": {
+      "learning_id": "rule-1880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1880,
+      "title": "link formatting in data security document",
+      "source_url": "https://github.com/microsoft/Security-101",
+      "source_version": "b0a31ff7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:49.651Z"
+    },
+    "rule-1881": {
+      "learning_id": "rule-1881",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1881,
+      "title": "stream): support changelog over a singleton input (#27524)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "10f34562",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:52.542Z"
+    },
+    "rule-1882": {
+      "learning_id": "rule-1882",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1882,
+      "title": "geoconvert): GeoJSON to CSV handles features with different properties (#4837)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "d263bda4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:51:53.501Z"
     }
   },
   "aliases": {

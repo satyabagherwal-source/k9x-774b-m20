@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "7f5420ff2c38f5582b9a2c517a0bee1b14c46df576f0e29bdd34ce7ad8618051",
-    "lastHarvestedAt": "2026-10-17T20:47:48.795Z",
+    "contentHash": "fc79ac052c66cfb2ed188a10ac0a292e557a944654735404777cea5d029dd342",
+    "lastHarvestedAt": "2026-10-18T23:51:46.141Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "95656516",
+    "sourceVersion": "d263bda4",
     "license": "NOASSERTION",
-    "contentHash": "3c5e0c4d56980e86aa33266f17fe5bbea4fd8d2f1d512c78c0757972cf58e2a1",
-    "lastHarvestedAt": "2026-10-18T21:20:23.576Z",
+    "contentHash": "9fea7c3af986b5e62c1cb16db389dc374b9369b07f26d219fbee90913407b34e",
+    "lastHarvestedAt": "2026-10-18T23:51:53.547Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3718,5 +3718,65 @@
     "contentHash": "77257fe69f683314f26cb6d391e91cc413344e242d04453242c15a3689b61cd0",
     "lastHarvestedAt": "2026-10-18T23:45:35.732Z",
     "learningId": "learn-github-pixeltable-pixeltable"
+  },
+  "honojs-hono": {
+    "repository": "honojs/hono",
+    "platform": "github",
+    "sourceUrl": "https://github.com/honojs/hono",
+    "sourceVersion": "5ca49b07",
+    "license": "MIT",
+    "contentHash": "fa7082a056b92478ffc6ccc0c19d4c965a33ed54c4d657b70338a4d5b64dd1ee",
+    "lastHarvestedAt": "2026-10-18T23:51:37.817Z",
+    "learningId": "learn-github-honojs-hono"
+  },
+  "orange-opensource-hurl": {
+    "repository": "Orange-OpenSource/hurl",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
+    "sourceVersion": "026b66e6",
+    "license": "Apache-2.0",
+    "contentHash": "6346b83e9d0cf860d008db5b401fa42a3086e7ef3ce4483fc4ccfbfd071523f0",
+    "lastHarvestedAt": "2026-10-18T23:51:40.496Z",
+    "learningId": "learn-github-orange-opensource-hurl"
+  },
+  "gregberge-svgr": {
+    "repository": "gregberge/svgr",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gregberge/svgr",
+    "sourceVersion": "975215ef",
+    "license": "MIT",
+    "contentHash": "eed26716f85feb5a550e03687816700ba7cf6d101103ddce04b3a9b061a4213f",
+    "lastHarvestedAt": "2026-10-18T23:51:45.762Z",
+    "learningId": "learn-github-gregberge-svgr"
+  },
+  "alibaba-sentinel-golang": {
+    "repository": "alibaba/sentinel-golang",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alibaba/sentinel-golang",
+    "sourceVersion": "f7a7f957",
+    "license": "Apache-2.0",
+    "contentHash": "20ab7a1a0adfe485b4c3d59c8eeb2fd9e69af3d8470815f2d38932e5c692c229",
+    "lastHarvestedAt": "2026-10-18T23:51:48.253Z",
+    "learningId": "learn-github-alibaba-sentinel-golang"
+  },
+  "microsoft-security-101": {
+    "repository": "microsoft/Security-101",
+    "platform": "github",
+    "sourceUrl": "https://github.com/microsoft/Security-101",
+    "sourceVersion": "b0a31ff7",
+    "license": "CC0-1.0",
+    "contentHash": "08fc1c2d8cdf0af6fc2dbe2ebf863b2c99dd48b81aa97805288eb7fe225ba29d",
+    "lastHarvestedAt": "2026-10-18T23:51:49.696Z",
+    "learningId": "learn-github-microsoft-security-101"
+  },
+  "risingwavelabs-risingwave": {
+    "repository": "risingwavelabs/risingwave",
+    "platform": "github",
+    "sourceUrl": "https://github.com/risingwavelabs/risingwave",
+    "sourceVersion": "10f34562",
+    "license": "Apache-2.0",
+    "contentHash": "9f7dfef835d0244382dfd1ddff02f78c7d4883c1d42d7c73a1447f2b3cd111e0",
+    "lastHarvestedAt": "2026-10-18T23:51:52.586Z",
+    "learningId": "learn-github-risingwavelabs-risingwave"
   }
 }

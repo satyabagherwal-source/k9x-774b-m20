@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:45:35.740Z",
+  "last_updated": "2026-10-18T23:51:53.555Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1772,14 +1772,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "7f5420ff2c38f5582b9a2c517a0bee1b14c46df576f0e29bdd34ce7ad8618051",
-      "verified_at": "2026-10-17T20:47:48.798Z",
+      "content_hash": "fc79ac052c66cfb2ed188a10ac0a292e557a944654735404777cea5d029dd342",
+      "verified_at": "2026-10-18T23:51:46.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:47:48.798Z"
+      "last_updated": "2026-10-18T23:51:46.148Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
@@ -3674,14 +3674,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "3c5e0c4d56980e86aa33266f17fe5bbea4fd8d2f1d512c78c0757972cf58e2a1",
-      "verified_at": "2026-10-18T21:20:23.580Z",
+      "content_hash": "9fea7c3af986b5e62c1cb16db389dc374b9369b07f26d219fbee90913407b34e",
+      "verified_at": "2026-10-18T23:51:53.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:20:23.580Z"
+      "last_updated": "2026-10-18T23:51:53.555Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5692,6 +5692,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:45:35.739Z"
+    },
+    "honojs/hono": {
+      "repository": "honojs/hono",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-honojs-hono",
+      "content_hash": "fa7082a056b92478ffc6ccc0c19d4c965a33ed54c4d657b70338a4d5b64dd1ee",
+      "verified_at": "2026-10-18T23:51:37.826Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:51:37.826Z"
+    },
+    "Orange-OpenSource/hurl": {
+      "repository": "Orange-OpenSource/hurl",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-orange-opensource-hurl",
+      "content_hash": "6346b83e9d0cf860d008db5b401fa42a3086e7ef3ce4483fc4ccfbfd071523f0",
+      "verified_at": "2026-10-18T23:51:40.504Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:51:40.504Z"
+    },
+    "gregberge/svgr": {
+      "repository": "gregberge/svgr",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gregberge-svgr",
+      "content_hash": "eed26716f85feb5a550e03687816700ba7cf6d101103ddce04b3a9b061a4213f",
+      "verified_at": "2026-10-18T23:51:45.765Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:51:45.765Z"
+    },
+    "alibaba/sentinel-golang": {
+      "repository": "alibaba/sentinel-golang",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alibaba-sentinel-golang",
+      "content_hash": "20ab7a1a0adfe485b4c3d59c8eeb2fd9e69af3d8470815f2d38932e5c692c229",
+      "verified_at": "2026-10-18T23:51:48.263Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:51:48.263Z"
+    },
+    "microsoft/Security-101": {
+      "repository": "microsoft/Security-101",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-microsoft-security-101",
+      "content_hash": "08fc1c2d8cdf0af6fc2dbe2ebf863b2c99dd48b81aa97805288eb7fe225ba29d",
+      "verified_at": "2026-10-18T23:51:49.703Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:51:49.703Z"
+    },
+    "risingwavelabs/risingwave": {
+      "repository": "risingwavelabs/risingwave",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-risingwavelabs-risingwave",
+      "content_hash": "9f7dfef835d0244382dfd1ddff02f78c7d4883c1d42d7c73a1447f2b3cd111e0",
+      "verified_at": "2026-10-18T23:51:52.594Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:51:52.594Z"
     }
   },
   "repos": {

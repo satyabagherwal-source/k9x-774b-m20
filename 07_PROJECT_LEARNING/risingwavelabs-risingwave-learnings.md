@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
+> **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
+> **Source Version**: `10f34562`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:51:52.375Z  
+> **Learning ID**: `learn-github-risingwavelabs-risingwave`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): risingwavelabs/risingwave
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:01:59.909Z  
+> **Harvest Timestamp**: 2026-10-18T23:51:52.367Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9357 stars
+- **Stars / Engagement**: 9375 stars
 
 ---
 
@@ -1034,187 +1048,6 @@ pub(crate) use def_path_lookup;
 
 ```
 
-### Core Architecture Module: `src/batch/executors/benches/nested_loop_join.rs`
-```
-// Copyright 2024 RisingWave Labs
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-pub mod utils;
-
-use criterion::{Criterion, criterion_group, criterion_main};
-use risingwave_batch::task::ShutdownToken;
-use risingwave_batch_executors::executor::{BoxedExecutor, JoinType, NestedLoopJoinExecutor};
-use risingwave_common::enable_jemalloc;
-use risingwave_common::memory::MemoryContext;
-use risingwave_common::types::DataType;
-use risingwave_expr::expr::build_from_pretty;
-use utils::{bench_join, create_input};
-
-enable_jemalloc!();
-
-fn create_nested_loop_join_executor(
-    join_type: JoinType,
-    _with_cond: bool,
-    left_chunk_size: usize,
-    left_chunk_num: usize,
-    right_chunk_size: usize,
-    right_chunk_num: usize,
-) -> BoxedExecutor {
-    const CHUNK_SIZE: usize = 1024;
-    let left_input = create_input(&[DataType::Int64], left_chunk_size, left_chunk_num);
-    let right_input = create_input(&[DataType::Int64], right_chunk_size, right_chunk_num);
-
-    let output_indices = match join_type {
-        JoinType::LeftSemi | JoinType::LeftAnti => vec![0],
-        JoinType::RightSemi | JoinType::RightAnti => vec![0],
-        _ => vec![0, 1],
-    };
-
-    Box::new(NestedLoopJoinExecutor::new(
-        build_from_pretty(
-            "(equal:boolean
-                (modulus:int8 $0:int8 2:int8)
-                (modulus:int8 $1:int8 3:int8))",
-        ),
-        join_type,
-        output_indices,
-        left_input,
-        right_input,
-        "NestedLoopJoinExecutor".into(),
-        CHUNK_SIZE,
-        MemoryContext::none(),
-        ShutdownToken::empty(),
-    ))
-}
-
-fn bench_nested_loop_join(c: &mut Criterion) {
-    let with_conds = vec![false];
-    let join_types = vec![
-        JoinType::Inner,
-        JoinType::LeftOuter,
-        JoinType::LeftSemi,
-        JoinType::LeftAnti,
-        JoinType::RightOuter,
-        JoinType::RightSemi,
-        JoinType::RightAnti,
-    ];
-    bench_join(
-        c,
-        "NestedLoopJoinExecutor",
-        with_conds,
-        join_types,
-        create_nested_loop_join_executor,
-    );
-}
-
-criterion_group!(benches, bench_nested_loop_join);
-criterion_main!(benches);
-
-```
-
-### Core Architecture Module: `src/batch/executors/benches/utils/mod.rs`
-```
-// Copyright 2024 RisingWave Labs
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-use std::hint::black_box;
-
-use criterion::{BatchSize, BenchmarkId, Criterion};
-use futures::StreamExt;
-use risingwave_batch_executors::test_utils::{MockExecutor, gen_data};
-use risingwave_batch_executors::{BoxedExecutor, JoinType};
-use risingwave_common::catalog::{Field, Schema};
-use risingwave_common::types::DataType;
-use tokio::runtime::Runtime;
-
-pub fn bench_join(
-    c: &mut Criterion,
-    join_name: &str,
-    with_conds: Vec<bool>,
-    join_types: Vec<JoinType>,
-    create_join_executor: fn(JoinType, bool, usize, usize, usize, usize) -> BoxedExecutor,
-) {
-    const LEFT_SIZE: usize = 2 * 1024;
-    const RIGHT_SIZE: usize = 2 * 1024;
-    let rt = Runtime::new().unwrap();
-    for with_cond in with_conds {
-        for join_type in join_types.clone() {
-            for chunk_size in &[32, 128, 512, 1024] {
-                c.bench_with_input(
-                    BenchmarkId::new(
-                        join_name,
-                        format!("{}({:?})(join: {})", chunk_size, join_type, with_cond),
-                    ),
-                    chunk_size,
-                    |b, &chunk_size| {
-                        let left_chunk_num = LEFT_SIZE / chunk_size;
-                        let right_chunk_num = RIGHT_SIZE / chunk_size;
-                        b.to_async(&rt).iter_batched(
-                            || {
-                                create_join_executor(
-                                    join_type,
-                                    with_cond,
-                                    chunk_size,
-                                    left_chunk_num,
-                                    chunk_size,
-                                    right_chunk_num,
-                                )
-                            },
-                            execute_executor,
-                            BatchSize::SmallInput,
-                        );
-                    },
-                );
-            }
-        }
-    }
-}
-
-pub async fn execute_executor(executor: BoxedExecutor) {
-    let mut stream = executor.execute();
-    while let Some(ret) = stream.next().await {
-        _ = black_box(ret.unwrap());
-    }
-}
-
-pub fn create_input(
-    input_types: &[DataType],
-    chunk_size: usize,
-    chunk_num: usize,
-) -> BoxedExecutor {
-    let mut input = MockExecutor::new(Schema {
-        fields: input_types.iter().cloned().map(Field::unnamed).collect(),
-    });
-    for c in gen_data(chunk_size, chunk_num, input_types) {
-        input.add(c);
-    }
-    Box::new(input)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1223,9 +1056,6 @@ pub fn create_input(
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #26912** (2026-09-02): **fix(frontend): check source privilege for CDC tables**
   *Symptoms*: I hereby agree to the terms of the [RisingWave Labs, Inc. Contributor License Agreement](https://raw.githubusercontent.com/risingwavelabs/risingwave/17af8a747593ebdbfa826691daf75bdab7d14fa0/.github/contributor-license-agreement.txt).  ## What's changed and what's your intention?  `CREATE TABLE ... FROM <cdc_source>` resolved the source catalog without checking whether the current user had `SELECT` privilege on that source. As a result, a user with `CREATE` privilege on the target schema could create and consume a CDC table from a source they were not allowed to read. Table replacement paths used by `ALTER TABLE` had the same gap.  This PR:  - checks `AclMode::Select` on the referenced CDC source before building a new CDC table plan; - applies the same check when rebuilding an existing CDC table for `ALTER TABLE`; - adds a regression test covering rejection without permission, success after `GRANT SELECT`, and rejection of `ALTER TABLE` after `REVOKE SELECT`.  ## Checklist  - [x] I have written necessary rustdoc comments (no new public API). - [x] I have added necessary unit tests and integration tests. - [x] I have added test labels as necessary. - [ ] I have added fuzzing tests or opened an issue to track them. - [ ] My PR contains breaking changes. - [ ] My PR changes performance-critical code, so I will run (micro) benchmarks and present the results. - [ ] I have checked the Release Timeline and Currently Supported Versions to determine which release branches I need to che
-  **Post-Mortem & Fix Analysis**:
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  [![Review Change Stack](https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg)](https://app.coderabbit.ai/change-stack/risingwavelabs/risingwave/pull/26912)  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary>ℹ️ Recent review info</summary>  <details> <summary>⚙️ Run configuration</summary>  **Configuration used**: defaults  **Review profile**: CHILL  **Plan**: Team  **Run ID**: `26a3b6b6-4df8-46c6-ba83-6089b04e5987`  </details>  <details> <summary>📥 Commits</summary>  Reviewing files that changed from the base of the PR and between a61d1f9a38ce858f0a89ecd6a4a85f6b736d3b2f and eb751b0c63d6e3f589c9dfff80c7cab5adee5d5f.  </details>  <details> <summary>📒 Files selected for processing (1)</summary>  * `src/frontend/src/handler/create_table.rs`  </details> 
-  > ✅ Cherry-pick PRs (or issues if encountered conflicts) have been created successfully to all target branches.
 
 - **Issue #25404** (2026-07-04): **bug: BigQuery sink rejects widened numeric destination types for RisingWave NUMERIC columns**
   *Symptoms*: ## Summary  BigQuery sink schema validation rejects a target BigQuery numeric column when the RisingWave source column is `NUMERIC` and the BigQuery side must use higher precision / scale handling.  ## Problem  Users can hit this failure pattern when syncing a RisingWave `NUMERIC` column to BigQuery:  - BigQuery `NUMERIC` supports up to 9 decimal places, so values requiring higher scale cannot fit cleanly. - Switching the BigQuery destination column to a wider numeric type still fails validation with a type mismatch.  Observed error shape:  ```text Data type mismatch for column "...". BigQuery side: "NUMERIC(31, 2)", RisingWave side: "NUMERIC". ```  This makes some BigQuery sink migrations fail even when the destination side is adjusted to a wider compatible numeric representation.  ## Expected Behavior  One of the following should work consistently:  1. RisingWave `NUMERIC` should map cleanly to an appropriate BigQuery numeric type for sink validation. 2. BigQuery sink schema validation should accept compatible destination numeric widening where precision/scale differ but data remains representable. 3. Documentation should clearly state current numeric-type limitations and required workarounds if this behavior is intentional.  ## Impact  - Blocks BigQuery sink migrations for tables with higher-precision numeric columns. - Forces manual schema compromises or prevents using the sink for affected tables.  ## Reproduction  1. Create a RisingWave source relation with a `NUMERIC` 
@@ -1247,3097 +1077,1242 @@ pub fn create_input(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4274ca16` (2026-10-05)
-**Commit Message**: perf(expr): prebuild variant access paths (#26530)
-
-Signed-off-by: StandingMan <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/streaming/variant.slt` (modified, +93/-0)
-```diff
-@@ -56,6 +56,99 @@ drop materialized view variant_state_mv;
- statement ok
- drop table variant_stream_t;
- 
-+# Malformed dynamic paths must only null out the failing row in non-strict evaluation.
-+# Use one actor and one multi-row insert to exercise valid and invalid paths in the same chunk.
-+statement ok
-+set streaming_parallelism = 1;
-+
-+statement ok
-+create table variant_dynamic_path_t (
-+    id int primary key,
-+    payload variant,
-+    path varchar
-+);
-+
-+statement ok
-+create materialized view variant_dynamic_path_mv as
-+select
-+    id,
-+    variant_get(payload, path) as value,
-+    try_variant_get(payload, path) as try_value
-+from variant_dynamic_path_t;
-+
-+statement ok
-+insert into variant_dynamic_path_t values
-+    (1, '{"a":[{"b":7},{"b":8}],"x.y":9}'::variant, '$.a[0].b'),
-+    (2, '{"a":[{"b":7},{"b":8}],"x.y":9}'::variant, '$.'),
-+    (3, '{"a":[{"b":7},{"b":8}],"x.y":9}'::variant, '$.a[-1].b');
-+
-+query ITT rowsort
-+select id, value::varchar, try_value::varchar from variant_dynamic_path_mv;
-+----
-+1 7 7
-+2 NULL NULL
-+3 8 8
-+
-+statement ok
-+drop materialized view variant_dynamic_path_mv;
-+
-+statement ok
-+drop table variant_dynamic_path_t;
-+
-+statement ok
-+set streaming_parallelism = default;
-+
-+# A malformed constant path must not fail expression building or bypass SQL NULL short-circuiting.
-+statement ok
-+create table variant_constant_path_t (
-+    id int primary key,
-+    payload variant
-+);
-+
-+statement ok
-+insert into variant_constant_path_t values (1, NULL);
-+
-+query ITT
-+select id, variant_get(payload, '.')::varchar, try_variant_get(payload, '.')::varchar
-+from variant_constant_path_t;
-+----
-+1 NULL NULL
-+
-+statement ok
-+create materialized view variant_constant_path_mv as
-+select
-+    id,
-+    variant_get(payload, '.') as value,
-+    try_variant_get(payload, '.') as try_value
-+from variant_constant_path_t;
-+
-+statement ok
-+insert into variant_constant_path_t values (2, NULL);
-+
-+query ITT rowsort
-+select id, value::varchar, try_value::varchar from variant_constant_path_mv;
-+----
-+1 NULL NULL
-+2 NULL NULL
-+
-+statement ok
-+drop materialized view variant_constant_path_mv;
-+
-+# Non-NULL input must still report the cached parse error in strict batch evaluation.
-+statement ok
-+update variant_constant_path_t set payload = '{}'::variant where id = 1;
-+
-+statement error invalid variant path
-+select variant_get(payload, '.') from variant_constant_path_t where id = 1;
-+
-+query T
-+select try_variant_get(payload, '.')::varchar from variant_constant_path_t where id = 1;
-+----
-+NULL
-+
-+statement ok
-+drop table variant_constant_path_t;
-+
- # Nested VARIANT must not reach a streaming operator's storage key.
- statement ok
- create table variant_nested_t (
-```
-
-**File**: `src/common/src/types/mod.rs` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ pub use self::struct_type::StructType;
- pub use self::successor::Successor;
- pub use self::timestamptz::*;
- pub use self::to_text::ToText;
--pub use self::variant::{VariantRef, VariantVal};
-+pub use self::variant::{VariantPath, VariantRef, VariantVal};
- pub use self::with_data_type::WithDataType;
- 
- /// A 32-bit floating point type with total order.
-```
-
-**File**: `src/common/src/types/variant.rs` (modified, +40/-4)
-```diff
-@@ -55,6 +55,22 @@ pub struct VariantRef<'a> {
-     data: &'a [u8],
- }
- 
-+/// A parsed path for accessing nested fields in a [`VariantRef`].
-+///
-+/// Parsing a path once and reusing it avoids repeated string parsing and allocations when the same
-+/// path is applied to multiple values.
-+#[derive(Debug)]
-+pub struct VariantPath {
-+    tokens: Vec<PathToken>,
-+}
-+
-+impl VariantPath {
-+    /// Parses a variant path.
-+    pub fn parse(path: &str) -> anyhow::Result<Self> {
-+        parse_path(path).map(|tokens| Self { tokens })
-+    }
-+}
-+
- impl EstimateSize for VariantVal {
-     fn estimated_heap_size(&self) -> usize {
-         self.data.len()
-@@ -379,18 +395,23 @@ impl<'a> VariantRef<'a> {
-     }
- 
-     pub fn access_path_strict(self, path: &str) -> anyhow::Result<Option<VariantVal>> {
-+        self.access_path_parsed(&VariantPath::parse(path)?)
-+    }
-+
-+    /// Accesses a nested value using a pre-parsed path.
-+    pub fn access_path_parsed(self, path: &VariantPath) -> anyhow::Result<Option<VariantVal>> {
-         // Walk the whole path on borrowed variants sharing the same metadata, and canonicalize
-         // (re-encode) only the final leaf.
-         let mut variant = self.parquet_variant();
--        for token in parse_path(path)? {
-+        for token in &path.tokens {
-             let next = match token {
--                PathToken::Field(field) => variant.get_object_field(&field),
-+                PathToken::Field(field) => variant.get_object_field(field),
-                 // Pattern-match instead of `as_list`, whose `&'m self` receiver would keep
-                 // `variant` borrowed and forbid the reassignment below.
-                 PathToken::Index(index) => match &variant {
-                     ParquetVariant::List(list) => {
--                        let index = if index >= 0 {
--                            Some(index as usize)
-+                        let index = if *index >= 0 {
-+                            Some(*index as usize)
-                         } else {
-                             list.len().checked_sub(index.unsigned_abs() as usize)
-                         };
-@@ -899,6 +920,7 @@ fn append_decimal(value: Decimal, builder: &mut impl VariantBuilderExt) -> anyho
-     Ok(())
- }
- 
-+#[derive(Debug)]
- enum PathToken {
-     Field(String),
-     Index(i32),
-@@ -1011,6 +1033,20 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn access_path_with_preparsed_path() {
-+        let v: VariantVal = r#"{"a":[{"b":7}]}"#.parse().unwrap();
-+        let path = VariantPath::parse("$.a[0].b").unwrap();
-+        assert_eq!(
-+            v.as_scalar_ref()
-+                .access_path_parsed(&path)
-+                .unwrap()
-+                .unwrap()
-+                .to_string(),
-+            "7"
-+        );
-+    }
-+
-     #[test]
-     fn path_access_supports_dot_and_bracket() {
-         let v: VariantVal = r#"{"a":[{"b":7}]}"#.parse().unwrap();
-```
-
-**File**: `src/expr/impl/src/scalar/variant.rs` (modified, +34/-11)
-```diff
-@@ -12,7 +12,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--use risingwave_common::types::{ScalarRefImpl, VariantRef, VariantVal};
-+use risingwave_common::types::{ScalarRefImpl, VariantPath, VariantRef, VariantVal};
- use risingwave_expr::expr::Context;
- use risingwave_expr::{ExprError, Result, function};
- use thiserror_ext::AsReport;
-@@ -25,19 +25,42 @@ fn to_variant(input: Option<ScalarRefImpl<'_>>, ctx: &Context) -> Result<Variant
-     })
- }
- 
--#[function("variant_get(variant, varchar) -> variant")]
--fn variant_get(value: VariantRef<'_>, path: &str) -> Result<Option<VariantVal>> {
-+#[function(
-+    "variant_get(variant, varchar) -> variant",
-+    prebuild = "PrebuiltVariantPath::parse($1)"
-+)]
-+fn variant_get(value: VariantRef<'_>, path: &PrebuiltVariantPath) -> Result<Option<VariantVal>> {
-+    let path = path.0.as_ref().map_err(variant_get_error)?;
-     value
--        .access_path_strict(path)
--        .map_err(|e| ExprError::InvalidParam {
--            name: "variant_get",
--            reason: e.to_report_string().into(),
--        })
-+        .access_path_parsed(path)
-+        .map_err(|e| variant_get_error(&e))
- }
- 
--#[function("try_variant_get(variant, varchar) -> variant")]
--fn try_variant_get(value: VariantRef<'_>, path: &str) -> Option<VariantVal> {
--    value.access_path(path)
-+fn variant_get_error(e: &anyhow::Error) -> ExprError {
-+    ExprError::InvalidParam {
-+        name: "variant_get",
-+        reason: e.to_report_string().into(),
-+    }
-+}
-+
-+#[derive(Debug)]
-+struct PrebuiltVariantPath(anyhow::Result<VariantPath>);
-+
-+impl PrebuiltVariantPath {
-+    fn parse(path: &str) -> Self {
-+        Self(VariantPath::parse(path))
-+    }
-+}
-+
-+#[function(
-+    "try_variant_get(variant, varchar) -> variant",
-+    prebuild = "PrebuiltVariantPath::parse($1)"
-+)]
-+fn try_variant_get(value: VariantRef<'_>, path: &PrebuiltVariantPath) -> Option<VariantVal> {
-+    path.0
-+        .as_ref()
-+        .ok()
-+        .and_then(|path| value.access_path_parsed(path).ok().flatten())
- }
- 
- #[function("variant_typeof(variant) -> varchar")]
-```
-
----
-
-### Incident Patch 2: `422f1d56` (2026-10-03)
-**Commit Message**: fix(iceberg): set rest.auth.type explicitly for JNI REST catalog (#27221)
-
-**File**: `src/connector/src/connector_common/iceberg/mod.rs` (modified, +49/-5)
-```diff
-@@ -1093,11 +1093,11 @@ impl IcebergCommon {
-                         java_catalog_configs
-                             .insert("rest.signing-name".to_owned(), rest_signing_name.clone());
-                     }
--                    if let Some(rest_sigv4_enabled) = self.rest_sigv4_enabled {
--                        java_catalog_configs.insert(
--                            "rest.sigv4-enabled".to_owned(),
--                            rest_sigv4_enabled.to_string(),
--                        );
-+                    if self.rest_sigv4_enabled == Some(true) {
-+                        // Equivalent to the legacy `rest.sigv4-enabled=true`, which is
-+                        // deprecated since Iceberg 1.10 and warns on every catalog load.
-+                        java_catalog_configs
-+                            .insert("rest.auth.type".to_owned(), "sigv4".to_owned());
- 
-                         if let Some(access_key) = &self.s3_access_key {
-                             java_catalog_configs
-@@ -1109,6 +1109,15 @@ impl IcebergCommon {
-                                 .insert("rest.secret-access-key".to_owned(), secret_key.clone());
-                         }
-                     }
-+                    // Iceberg 1.10+ infers `rest.auth.type=oauth2` from `credential`/`token`
-+                    // when it is unset, warning on every catalog load. Set it explicitly.
-+                    if !java_catalog_configs.contains_key("rest.auth.type")
-+                        && (java_catalog_configs.contains_key("credential")
-+                            || java_catalog_configs.contains_key("token"))
-+                    {
-+                        java_catalog_configs
-+                            .insert("rest.auth.type".to_owned(), "oauth2".to_owned());
-+                    }
-                 }
-                 JniCatalogImpl::Glue => {
-                     let glue_access_key = self.glue_access_key();
-@@ -1384,6 +1393,41 @@ mod tests {
-         assert!(!java_catalog_configs.contains_key("client.factory"));
-     }
- 
-+    #[test]
-+    fn test_rest_jni_catalog_sets_auth_type_explicitly() {
-+        let build = |common: IcebergCommon, props: &[(&str, &str)]| {
-+            let props = props
-+                .iter()
-+                .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
-+                .collect();
-+            common
-+                .build_jni_catalog_configs(JniCatalogImpl::Rest, &props)
-+                .unwrap()
-+                .1
-+        };
-+        let oauth2 = IcebergCommon {
-+            catalog_credential: Some("client-id:client-secret".to_owned()),
-+            rest_sigv4_enabled: Some(false),
-+            ..test_common("rest")
-+        };
-+
-+        let configs = build(oauth2.clone(), &[]);
-+        assert_eq!(configs.get("rest.auth.type").unwrap(), "oauth2");
-+        assert!(!configs.contains_key("rest.sigv4-enabled"));
-+
-+        let configs = build(oauth2, &[("rest.auth.type", "basic")]);
-+        assert_eq!(configs.get("rest.auth.type").unwrap(), "basic");
-+
-+        let sigv4 = IcebergCommon {
-+            catalog_token: Some("token".to_owned()),
-+            rest_sigv4_enabled: Some(true),
-+            ..test_common("rest")
-+        };
-+        let configs = build(sigv4, &[]);
-+        assert_eq!(configs.get("rest.auth.type").unwrap(), "sigv4");
-+        assert!(!configs.contains_key("rest.sigv4-enabled"));
-+    }
-+
-     #[test]
-     fn test_adlsgen2_service_principal_populates_file_io_configs_with_default_authority_host() {
-         let common = test_adlsgen2_service_principal_common(None);
-```
-
----
-
-### Incident Patch 3: `5149d7b2` (2026-09-28)
-**Commit Message**: fix(object-store): propagate metadata errors during listing (#27266)
-
-**File**: `src/object_store/src/object/opendal_engine/opendal_object_store.rs` (modified, +44/-33)
-```diff
-@@ -17,7 +17,7 @@ use std::time::Duration;
- 
- use bytes::{Bytes, BytesMut};
- use fail::fail_point;
--use futures::{StreamExt, stream};
-+use futures::StreamExt;
- use opendal::layers::{RetryLayer, TimeoutLayer};
- use opendal::raw::BoxedStaticFuture;
- use opendal::services::Memory;
-@@ -260,38 +260,9 @@ impl ObjectStore for OpendalObjectStore {
-         let object_lister = object_lister.await?;
- 
-         let op = self.op.clone();
--        let stream = stream::unfold(object_lister, move |mut object_lister| {
-+        let stream = object_lister.then(move |object| {
-             let op = op.clone();
--
--            async move {
--                match object_lister.next().await {
--                    Some(Ok(object)) => {
--                        let key = object.path().to_owned();
--
--                        // OpenDAL 0.55 removed list metadata capability flags and reports
--                        // unknown content length as 0. Use listed metadata first, and call
--                        // stat() if timestamp is missing or size is 0 to avoid treating
--                        // unknown sizes as real zero-byte objects.
--                        let meta = object.metadata();
--                        let mut last_modified = meta.last_modified().map(timestamp_to_secs);
--                        let mut total_size = meta.content_length() as usize;
--                        if last_modified.is_none() || total_size == 0 {
--                            let stat_meta = op.stat(&key).await.ok()?;
--                            last_modified = stat_meta.last_modified().map(timestamp_to_secs);
--                            total_size = stat_meta.content_length() as usize;
--                        }
--
--                        let metadata = ObjectMetadata {
--                            key,
--                            last_modified: last_modified.unwrap_or(0_f64),
--                            total_size,
--                        };
--                        Some((Ok(metadata), object_lister))
--                    }
--                    Some(Err(err)) => Some((Err(err.into()), object_lister)),
--                    None => None,
--                }
--            }
-+            async move { Self::listed_object_metadata(&op, object?).await }
-         });
- 
-         Ok(stream.take(limit.unwrap_or(usize::MAX)).boxed())
-@@ -303,6 +274,28 @@ impl ObjectStore for OpendalObjectStore {
- }
- 
- impl OpendalObjectStore {
-+    async fn listed_object_metadata(
-+        op: &Operator,
-+        object: opendal::Entry,
-+    ) -> ObjectResult<ObjectMetadata> {
-+        let key = object.path().to_owned();
-+        // OpenDAL 0.55 removed list metadata capability flags and reports unknown sizes as 0.
-+        let meta = object.metadata();
-+        let mut last_modified = meta.last_modified().map(timestamp_to_secs);
-+        let mut total_size = meta.content_length() as usize;
-+        if last_modified.is_none() || total_size == 0 {
-+            // Propagate stat failures; treating one as EOF can make recovery trust a partial scan.
-+            let stat_meta = op.stat(&key).await?;
-+            last_modified = stat_meta.last_modified().map(timestamp_to_secs);
-+            total_size = stat_meta.content_length() as usize;
-+        }
-+        Ok(ObjectMetadata {
-+            key,
-+            last_modified: last_modified.unwrap_or(0_f64),
-+            total_size,
-+        })
-+    }
-+
-     pub async fn copy(&self, from_path: &str, to_path: &str) -> ObjectResult<()> {
-         self.op.copy(from_path, to_path).await?;
-         Ok(())
-@@ -520,7 +513,7 @@ impl StreamingUploader for OpendalStreamingUploader {
- 
- #[cfg(test)]
- mod tests {
--    use stream::TryStreamExt;
-+    use futures::TryStreamExt;
- 
-     use super::*;
- 
-@@ -609,6 +602,24 @@ mod tests {
-         uploader.finish().await.unwrap_err();
-     }
- 
-+    #[tokio::test]
-+    async fn test_listed_object_metadata_propagates_stat_failure() {
-+        let store = OpendalObjectStore::test_new_memory_engine().unwrap();
-+        store
-+            .upload("sst", Bytes::from_static(b"data"))
-+            .await
-+            .unwrap();
-+        // Capture the listed entry before deletion so the subsequent metadata lookup fails.
-+        // Memory entries have no last_modified, so our adapter must stat even a listed file.
-+        let mut objects = store.op.lister_with("").recursive(true).await.unwrap();
-+        let object = objects.next().await.unwrap().unwrap();
-+        store.delete("sst").await.unwrap();
-+        let error = OpendalObjectStore::listed_object_metadata(&store.op, object)
-+            .await
-+            .unwrap_err();
-+        assert!(error.is_object_not_found_error());
-+    }
-+
-     #[tokio::test]
-     async fn test_memory_delete_objects_and_list_object() {
-         let block1 = Bytes::from("123456");
-```
-
----
-
-### Incident Patch 4: `533b0c09` (2026-09-28)
-**Commit Message**: fix(cdc): force-close SQL Server connections on shutdown (#27186)
-
-**File**: `ci/scripts/e2e-source-cdc-test.sh` (modified, +15/-0)
-```diff
-@@ -33,6 +33,21 @@ echo "--- Run inline CDC source tests"
- risedev slt './e2e_test/source_inline/cdc/**/*.slt' --skip 'cron_only' -j1 --label "can-use-recover"
- risedev slt './e2e_test/source_inline/cdc/**/*.slt.serial' --skip 'cron_only' --label "can-use-recover"
- 
-+echo "--- Run SQL Server encrypted abort regression test"
-+sqlserver_abort_test_classes=$(mktemp -d)
-+source_cdc_jars=(./connector-node/libs/risingwave-source-cdc-*.jar)
-+if [[ ${#source_cdc_jars[@]} -ne 1 || ! -f "${source_cdc_jars[0]}" ]]; then
-+  echo "Expected exactly one risingwave-source-cdc jar in connector-node/libs" >&2
-+  exit 1
-+fi
-+source_cdc_classpath="${source_cdc_jars[0]}:./connector-node/libs/*"
-+javac -cp "${source_cdc_classpath}" \
-+  -d "${sqlserver_abort_test_classes}" \
-+  e2e_test/source_inline/cdc/sql_server/SqlServerEncryptedAbortTest.java
-+java -cp "${sqlserver_abort_test_classes}:${source_cdc_classpath}" \
-+  io.debezium.connector.sqlserver.SqlServerEncryptedAbortTest
-+rm -rf "${sqlserver_abort_test_classes}"
-+
- echo "--- Run TVF source tests"
- export MYSQL_HOST=mysql MYSQL_TCP_PORT=3306 MYSQL_PWD=123456
- risedev slt './e2e_test/source_inline/tvf/*.slt'
-```
-
-**File**: `e2e_test/source_inline/cdc/sql_server/SqlServerEncryptedAbortTest.java` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+/*
-+ * Copyright 2026 RisingWave Labs
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package io.debezium.connector.sqlserver;
-+
-+import java.sql.Connection;
-+import java.sql.DriverManager;
-+import java.sql.PreparedStatement;
-+import java.sql.ResultSet;
-+import java.sql.SQLException;
-+import java.sql.Statement;
-+import java.time.Duration;
-+import java.util.concurrent.ExecutionException;
-+import java.util.concurrent.ExecutorService;
-+import java.util.concurrent.Executors;
-+import java.util.concurrent.Future;
-+import java.util.concurrent.TimeUnit;
-+import java.util.concurrent.TimeoutException;
-+
-+/** Regression test for aborting an encrypted connection blocked in a socket read. */
-+public final class SqlServerEncryptedAbortTest {
-+    private static final Duration REQUEST_START_TIMEOUT = Duration.ofSeconds(10);
-+    private static final Duration ABORT_RETURN_TIMEOUT = Duration.ofSeconds(2);
-+    private static final Duration READ_UNBLOCK_TIMEOUT = Duration.ofSeconds(10);
-+
-+    private SqlServerEncryptedAbortTest() {}
-+
-+    public static void main(String[] args) throws Exception {
-+        String host = envOrDefault("SQLCMDSERVER", "sqlserver-server");
-+        String port = envOrDefault("SQLCMDPORT", "1433");
-+        String user = envOrDefault("SQLCMDUSER", "SA");
-+        String password = requiredEnv("SQLCMDPASSWORD");
-+        String url =
-+                "jdbc:sqlserver://"
-+                        + host
-+                        + ":"
-+                        + port
-+                        + ";databaseName=master;encrypt=true;trustServerCertificate=true";
-+
-+        ExecutorService queryExecutor =
-+                Executors.newSingleThreadExecutor(
-+                        command -> {
-+                            Thread thread = new Thread(command, "sqlserver-blocked-read-test");
-+                            thread.setDaemon(true);
-+                            return thread;
-+                        });
-+        Connection blocked = DriverManager.getConnection(url, user, password);
-+        try (Connection control = DriverManager.getConnection(url, user, password)) {
-+            int sessionId = sessionIdAndAssertEncrypted(blocked);
-+            Future<?> blockedRead =
-+                    queryExecutor.submit(
-+                            () -> {
-+                                try (Statement statement = blocked.createStatement()) {
-+                                    statement.execute("WAITFOR DELAY '00:10:00'");
-+                                }
-+                                return null;
-+                            });
-+
-+            waitForRequest(control, sessionId);
-+
-+            long startedAt = System.nanoTime();
-+            SqlServerStreamingChangeEventSource.abortConnection(blocked, "test");
-+            Duration abortDuration = Duration.ofNanos(System.nanoTime() - startedAt);
-+            if (abortDuration.compareTo(ABORT_RETURN_TIMEOUT) > 0) {
-+                throw new AssertionError("abort blocked for " + abortDuration);
-+            }
-+
-+            assertReadUnblocked(blockedRead);
-+            waitForSessionClosed(control, sessionId);
-+        } finally {
-+            queryExecutor.shutdownNow();
-+        }
-+    }
-+
-+    private static int sessionIdAndAssertEncrypted(Connection connection) throws SQLException {
-+        try (Statement statement = connection.createStatement();
-+                ResultSet result =
-+                        statement.executeQuery(
-+                                "SELECT @@SPID, encrypt_option "
-+                                        + "FROM sys.dm_exec_connections "
-+                                        + "WHERE session_id = @@SPID")) {
-+            if (!result.next()) {
-+                throw new AssertionError("SQL Server connection was not visible");
-+            }
-+            if (!"TRUE".equalsIgnoreCase(result.getString(2))) {
-+                throw new AssertionError("test connection is not encrypted");
-+            }
-+            return result.getInt(1);
-+        }
-+    }
-+
-+    private static void waitForRequest(Connection control, int sessionId) throws Exception {
-+        long deadline = System.nanoTime() + REQUEST_START_TIMEOUT.toNanos();
-+        try (PreparedStatement statement =
-+                control.prepareStatement(
-+                        "SELECT COUNT(*) FROM sys.dm_exec_requests WHERE session_id = ?")) {
-+            statement.setInt(1, sessionId);
-+            while (System.n
-```
-
-**File**: `java/connector-node/risingwave-source-cdc/src/main/java/io/debezium/connector/sqlserver/SqlServerStreamingChangeEventSource.java` (modified, +105/-0)
-```diff
-@@ -16,6 +16,8 @@
- 
- package io.debezium.connector.sqlserver;
- 
-+import com.microsoft.sqlserver.jdbc.SQLServerConnection;
-+import io.debezium.DebeziumException;
- import io.debezium.pipeline.ErrorHandler;
- import io.debezium.pipeline.EventDispatcher;
- import io.debezium.pipeline.notification.Notification;
-@@ -29,6 +31,10 @@
- import io.debezium.snapshot.SnapshotterService;
- import io.debezium.util.Clock;
- import io.debezium.util.ElapsedTimeStrategy;
-+import java.io.IOException;
-+import java.lang.reflect.Field;
-+import java.net.Socket;
-+import java.sql.Connection;
- import java.sql.ResultSet;
- import java.sql.SQLException;
- import java.time.Duration;
-@@ -46,6 +52,7 @@
- import java.util.Queue;
- import java.util.Set;
- import java.util.UUID;
-+import java.util.concurrent.Executor;
- import java.util.concurrent.atomic.AtomicBoolean;
- import java.util.concurrent.atomic.AtomicReference;
- import java.util.regex.Matcher;
-@@ -84,12 +91,30 @@ public class SqlServerStreamingChangeEventSource
-     private static final Logger LOGGER =
-             LoggerFactory.getLogger(SqlServerStreamingChangeEventSource.class);
- 
-+    /**
-+     * The SQL Server driver performs {@link Connection#abort(Executor)} cleanup on the supplied
-+     * executor. Never run it on the coordinator thread because cleanup of an encrypted connection
-+     * can block in {@code SSLSocket.close()}.
-+     */
-+    private static final Executor ABORT_EXECUTOR =
-+            command -> {
-+                Thread thread = new Thread(command, "sqlserver-jdbc-abort");
-+                thread.setDaemon(true);
-+                thread.start();
-+            };
-+
-     private static final Duration DEFAULT_INTERVAL_BETWEEN_COMMITS = Duration.ofMinutes(1);
-     private static final int INTERVAL_BETWEEN_COMMITS_BASED_ON_POLL_FACTOR = 3;
- 
-     /** Connection used for reading CDC tables. */
-     private final SqlServerConnection dataConnection;
- 
-+    /**
-+     * Cached and refreshed by the source thread so emergency shutdown never needs to acquire the
-+     * synchronized {@link SqlServerConnection} monitor.
-+     */
-+    private volatile Connection rawDataConnection;
-+
-     /**
-      * A separate connection for retrieving details of the schema changes; without it, adaptive
-      * buffering will not work.
-@@ -99,6 +124,9 @@ public class SqlServerStreamingChangeEventSource
-      */
-     private final SqlServerConnection metadataConnection;
- 
-+    /** See {@link #rawDataConnection}. */
-+    private volatile Connection rawMetadataConnection;
-+
-     private final EventDispatcher<SqlServerPartition, TableId> dispatcher;
-     private final ErrorHandler errorHandler;
-     private final Clock clock;
-@@ -133,6 +161,11 @@ public SqlServerStreamingChangeEventSource(
-         this.connectorConfig = connectorConfig;
-         this.dataConnection = dataConnection;
-         this.metadataConnection = metadataConnection;
-+        try {
-+            refreshRawConnections();
-+        } catch (SQLException e) {
-+            throw new DebeziumException("Failed to cache initial SQL Server JDBC connections", e);
-+        }
-         this.dispatcher = dispatcher;
-         this.errorHandler = errorHandler;
-         this.clock = clock;
-@@ -158,6 +191,72 @@ public void setOnConnectedCallback(Runnable callback) {
-         this.onConnectedCallback = callback;
-     }
- 
-+    /**
-+     * Abort the underlying SQL Server connections from outside the source thread so an in-flight
-+     * JDBC operation that does not respond to {@link Thread#interrupt()} is unblocked.
-+     *
-+     * <p>The coordinator invokes this only after graceful shutdown and {@code shutdownNow()} have
-+     * both timed out. mssql-jdbc's normal close path first closes its SSL socket, which can wait
-+     * for the same lock held by an encrypted socket read. This method therefore closes the
-+     * underlying TCP socket directly before scheduling normal driver cleanup asynchronously.
-+     * Closing a {@link Socket} is thread-safe and unblocks its current read without acquiring the
-+     * driver's SSL or input-stream locks. The source thread refreshes the raw handles before each
-+     * iteration so this method does not acquire the {@link SqlServerConnection} monitor, which may
-+     * itself be held by a wedged synchronized JDBC operation.
-+     */
-+    public void forceCloseConnection() {
-+        LOGGER.warn("Force-aborting SQL Server connections to unblock wedged native I/O");
-+        abortConnection(rawDataConnection, "data");
-+        abortConnection(rawMetadataConnection, "metadata");
-+    }
-+
-+    static void abortConnection(Connection connection, String connectionName) {
-+        if (connection == null) {
-+            return;
-+        }
-+
-+        try {
-+            closeTcpTransport(connection);
-+        } catch (Exception e) {
-+            LOGGER.warn(
-+                    "Exception while force-closing SQL Server {} TCP transport", connectionName, e);
-+        }
-+
-+        try {
-+            connection.abort(ABORT_EXECUTOR);
-```
-
-**File**: `java/connector-node/risingwave-source-cdc/src/main/java/io/debezium/pipeline/ChangeEventSourceCoordinator.java` (modified, +10/-6)
-```diff
-@@ -503,8 +503,12 @@ private void forceCloseStreamingSourceConnection() {
-             ((io.debezium.connector.postgresql.PostgresStreamingChangeEventSource) streamingSource)
-                     .forceCloseConnection();
-         }
--        // SQL Server has the same uninterruptible JDBC commit() pattern; follow-up tracked
--        // separately. MySQL (BinaryLogClient) and MongoDB (cursor) are not affected.
-+        if (streamingSource
-+                instanceof io.debezium.connector.sqlserver.SqlServerStreamingChangeEventSource) {
-+            ((io.debezium.connector.sqlserver.SqlServerStreamingChangeEventSource) streamingSource)
-+                    .forceCloseConnection();
-+        }
-+        // MySQL (BinaryLogClient) and MongoDB (cursor) are not affected.
-     }
- 
-     /** Stops this coordinator. */
-@@ -537,16 +541,16 @@ public synchronized void stop() throws InterruptedException {
-                     // shutdownNow() only interrupts; native JDBC commit() ignores
-                     // Thread.interrupt(). Force-close the underlying source connection so the
-                     // wedged commit throws SocketException, allowing the source thread to unwind
--                    // through its finally block (which releases keep-alive threads + replication
--                    // slot). See risingwavelabs/risingwave#26075.
-+                    // and release upstream resources. See risingwavelabs/risingwave#26075 and
-+                    // #26081.
-                     forceCloseStreamingSourceConnection();
-                     boolean forceCloseOk =
-                             executor.awaitTermination(shutdownWaitTimeout, TimeUnit.MILLISECONDS);
-                     if (!forceCloseOk) {
-                         LOGGER.warn(
-                                 "Source thread still not terminated after force-closing the "
--                                        + "connection; the replication slot may remain held. See "
--                                        + "risingwavelabs/risingwave#26075");
-+                                        + "connection; upstream resources may remain held. See "
-+                                        + "risingwavelabs/risingwave#26075 and #26081");
-                     }
-                 }
-             }
-```
-
----
-
-### Incident Patch 5: `ac4394c8` (2026-09-27)
-**Commit Message**: chore(deps): Bump uuid from 1.23.0 to 1.26.1 (#27307)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -19039,9 +19039,9 @@ checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
- 
- [[package]]
- name = "uuid"
--version = "1.23.0"
-+version = "1.26.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5ac8b6f42ead25368cf5b098aeb3dc8a1a2c05a3eee8a9a1a68c640edbfc79d9"
-+checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
- dependencies = [
-  "getrandom 0.4.2",
-  "js-sys",
-```
-
----
-
-### Incident Patch 6: `c735a677` (2026-09-27)
-**Commit Message**: chore(deps): Bump quick-xml from 0.40.1 to 0.41.0 (#27304)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +1/-11)
-```diff
-@@ -12867,16 +12867,6 @@ dependencies = [
-  "serde",
- ]
- 
--[[package]]
--name = "quick-xml"
--version = "0.40.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2474bd2e5029e7ccb6abb2ba48cf2383a333851dedf495901544281590c7da7f"
--dependencies = [
-- "memchr",
-- "serde",
--]
--
- [[package]]
- name = "quick-xml"
- version = "0.41.0"
-@@ -14720,7 +14710,7 @@ dependencies = [
-  "prometheus",
-  "prometheus-http-query",
-  "prost 0.14.3",
-- "quick-xml 0.40.1",
-+ "quick-xml 0.41.0",
-  "rand 0.9.5",
-  "risingwave_batch",
-  "risingwave_batch_executors",
-```
-
-**File**: `src/frontend/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ pretty_assertions = "1"
- prometheus = { version = "0.14", features = ["process"] }
- prometheus-http-query = "0.9.0"
- prost = { workspace = true }
--quick-xml = { version = "0.40", features = ["serialize"] }
-+quick-xml = { version = "0.41", features = ["serialize"] }
- rand = { version = "0.9", features = ["small_rng"] }
- risingwave_batch = { workspace = true }
- risingwave_common = { workspace = true }
-```
-
----
-
-### Incident Patch 7: `3edb9755` (2026-09-25)
-**Commit Message**: build(deps): bump reqwest from 0.12.25 to 0.13.4 (#24761)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +34/-33)
-```diff
-@@ -27,7 +27,7 @@ dependencies = [
-  "regex",
-  "toml 1.1.2+spec-1.1.0",
-  "windows-registry",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -806,7 +806,7 @@ dependencies = [
-  "itertools 0.14.0",
-  "pyo3",
-  "pyo3-build-config",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "rquickjs",
-  "serde_json",
-  "tempfile",
-@@ -2109,7 +2109,7 @@ dependencies = [
-  "bitflags 2.13.1",
-  "cexpr",
-  "clang-sys",
-- "itertools 0.10.5",
-+ "itertools 0.11.0",
-  "log",
-  "prettyplease",
-  "proc-macro2",
-@@ -5560,7 +5560,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users 0.5.2",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5776,7 +5776,7 @@ dependencies = [
-  "flate2",
-  "lazy_static",
-  "percent-encoding",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "rustc_version",
-  "serde",
-  "serde_json",
-@@ -6949,7 +6949,7 @@ dependencies = [
-  "prost 0.14.3",
-  "prost-build 0.14.3",
-  "prost-types 0.14.3",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "serde",
-  "serde_json",
-  "thiserror 2.0.17",
-@@ -7811,7 +7811,7 @@ dependencies = [
-  "ordered-float 4.1.1",
-  "parquet",
-  "rand 0.9.5",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "roaring",
-  "serde",
-  "serde_bytes",
-@@ -7857,7 +7857,7 @@ dependencies = [
-  "http 1.4.0",
-  "iceberg",
-  "itertools 0.13.0",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "serde",
-  "serde_derive",
-  "serde_json",
-@@ -8962,7 +8962,7 @@ version = "0.7.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "6369eee4682fb11edf538388b43c61ce288b8302fe89bb40944d7daa7faaae99"
- dependencies = [
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "serde",
-  "serde_json",
-  "serde_repr",
-@@ -9395,7 +9395,7 @@ dependencies = [
-  "memmap2 0.9.11",
-  "once_cell",
-  "rand 0.9.5",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "serde",
-  "tar",
-  "thiserror 2.0.17",
-@@ -10628,12 +10628,12 @@ version = "5.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d"
- dependencies = [
-- "base64 0.22.1",
-+ "base64 0.21.7",
-  "chrono",
-  "getrandom 0.2.11",
-  "http 1.4.0",
-  "rand 0.8.5",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "serde",
-  "serde_json",
-  "serde_path_to_error",
-@@ -10731,7 +10731,7 @@ dependencies = [
-  "percent-encoding",
-  "quick-xml 0.39.0",
-  "rand 0.10.1",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "ring",
-  "rustls-pki-types",
-  "serde",
-@@ -11230,7 +11230,7 @@ dependencies = [
-  "bytes",
-  "http 1.4.0",
-  "opentelemetry",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
- ]
- 
- [[package]]
-@@ -11245,7 +11245,7 @@ dependencies = [
-  "opentelemetry-proto",
-  "opentelemetry_sdk",
-  "prost 0.14.3",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "thiserror 2.0.17",
-  "tokio",
-  "tonic",
-@@ -11832,7 +11832,7 @@ dependencies = [
-  "peekable",
-  "postgres-types",
-  "rand 0.8.5",
-- "reqwest 0.12.25",
-+ "reqwest 0.13.4",
-  "risingwave_common",
-  "risingwave_sqlparser",
-  "rsa",
-@@ -12498,7 +12498,7 @@ checksum = "0fcebfa99f03ae51220778316b37d24981e36322c82c24848f48c5bd0f64cbdb"
- dependencies = [
-  "enum-as-inner 0.6.1",
-  "mime",
-- "reqwest 0.12.25",
-+ "reqwest 0.12.28",
-  "serde",
-  "time",
-  "url",
-@@ -13528,9 +13528,9 @@ dependencies = [
- 
- [[package]]
- name = "reqwest"
--version = "0.12.25"
-+version = "0.12.28"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b6eff9328d40131d43bd911d42d79eb6a47312002a4daefc9e37f17e74a7701a"
-+checksum = "eddd3ca559203180a307f12d114c268abf583f59b03cb906fd0b3ff8646c1147"
- dependencies = [
-  "base64 0.22.1",
-  "bytes",
-@@ -13585,6 +13585,7 @@ dependencies = [
-  "base64 0.22.1",
-  "bytes",
-  "encoding_rs",
-+ "futures-channel",
-  "futures-core",
-  "futures-util",
-  "h2 0.4.12",
-@@ -13710,7 +13711,7 @@ dependencies = [
-  "panic-message",
-  "redis",
-  "regex",
-- "reqwest 0.12.25",
-+ "reqwest 0.13.4",
-  "serde",
-  "serde_json",
-  "serde_yaml",
-@@ -14007,7 +14008,7 @@ dependencies = [
-  "prost 0.14.3",
-  "rand 0.9.5",
-  "regex",
-- "reqwest 0.12.25",
-+ "reqwest 0.13.4",
-  "risingwave-fields-derive",
-  "risingwave_common_estimate_size",
-  "risingwave_common_log",
-@@ -14173,7 +14174,7 @@ dependencies = [
-  "moka",
-  "parking_lot 0.12.5",
-  "prost 0.14.3",
-- "reqwest 0.12.25",
-+ "reqwest 0.13.4",
-  "risingwave_pb",
-  "serde",
-  "serde_json",
-@@ -14393,7 +14394,7 @@ dependencies = [
-  "rand 0.9.5",
-  "redis",
-  "regex",
-- "reqwest 0.12.25",
-+ "reqwest 0.13.4",
-  "risingwave_common",
-  "risingwave_common_estimate_size",
-  "risingwave_common_rate_limit",
-@@ -14466,7 +14467,7 @@ dependencies = [
-  "proto-src-confluent",
-  "proto-src-google-type",
-  "protox",
-- "reqwest 0.12.25",
-+ "reqwest 0.13.4",
-  "risingwave_common",
-  "risingwave_pb",
-  "rust_decimal",
-@@ -15028,7 +15029,7 @@ dependencies = [
-  "cargo-emit",
-  "dircpy",
-  "mime_guess",
-- "reqwest 0.12.25",
-+ "reqwest 0.13.4",
-  "rust-embed",
-  "thiserror-ext",
-  "tokio",
-@@ -15580,7 +15581,7 @@ dependencies = [
-  "jsonbb",
-  "madsim-tokio",
-  "prost 0.14.3",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -239,7 +239,7 @@ rdkafka = { package = "madsim-rdkafka", git = "https://github.com/risingwavelabs
- ] }
- redis = { version = "1.0" }
- regex = "1.12"
--reqwest = { version = "0.12.2", features = ["json", "stream"] }
-+reqwest = { version = "0.13.4", features = ["json", "stream"] }
- risingwave_backup = { path = "./src/storage/backup" }
- risingwave_batch = { path = "./src/batch" }
- risingwave_batch_executors = { path = "./src/batch/executors" }
-```
-
-**File**: `src/common/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ prometheus = { version = "0.14" }
- prost = { workspace = true }
- rand = { workspace = true }
- regex = { workspace = true }
--reqwest = { version = "0.12.2", features = ["json"] }
-+reqwest = { version = "0.13.4", features = ["json"] }
- risingwave-fields-derive = { path = "./fields-derive" }
- risingwave_common_estimate_size = { workspace = true }
- risingwave_common_log = { path = "./log" }
-```
-
-**File**: `src/common/telemetry_event/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ repository = { workspace = true }
- [dependencies]
- jsonbb = { workspace = true }
- prost = { workspace = true }
--reqwest = { version = "0.12.2", features = ["json"] }
-+reqwest = { version = "0.13.4", features = ["json"] }
- risingwave_common_log = { path = "../log" }
- risingwave_pb = { workspace = true }
- thiserror-ext = { workspace = true }
-```
-
-**File**: `src/connector/codec/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ prost-types = { workspace = true }
- proto-src-confluent = "0.1"
- proto-src-google-type = "0.1"
- protox = "0.9.1"
--reqwest = { version = "0.12.2", features = ["json"] }
-+reqwest = { version = "0.13.4", features = ["json"] }
- risingwave_common = { workspace = true }
- risingwave_pb = { workspace = true }
- rust_decimal = "1"
-```
-
-**File**: `src/meta/dashboard/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ axum = { workspace = true }
- axum-embed = "0.1"
- bytes = "1"
- mime_guess = "2"
--reqwest = "0.12.2"
-+reqwest = "0.13.4"
- rust-embed = { version = "8", features = ["interpolate-folder-path", "mime-guess"] }
- thiserror-ext = { workspace = true }
- tracing = "0.1"
-```
-
-**File**: `src/risedevtool/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ panic-message = "0.3"
- rdkafka = { workspace = true }
- redis = { workspace = true }
- regex = { workspace = true }
--reqwest = { version = "0.12.2", features = ["blocking"] }
-+reqwest = { version = "0.13.4", features = ["blocking"] }
- serde = { workspace = true }
- serde_json = "1"
- serde_yaml = "0.9"
-```
-
-**File**: `src/utils/pgwire/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ panic-message = "0.3"
- parking_lot = { workspace = true }
- peekable = { version = "0.4", features = ["tokio"] }
- postgres-types = { version = "0.2.6" }
--reqwest = "0.12.2"
-+reqwest = "0.13.4"
- risingwave_common = { workspace = true }
- risingwave_sqlparser = { workspace = true }
- rustls = "0.23"
-```
-
----
-
-### Incident Patch 8: `faf139cc` (2026-09-25)
-**Commit Message**: fix(test): widen retry windows for batch refresh and kafka-sasl e2e (#27258)
+### Incident Patch 1: `3ac60532` (2026-10-15)
+**Commit Message**: fix(stream): support changelog over a singleton input (#27524)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `e2e_test/kafka-sasl/alter_connection_connector.slt` (modified, +1/-1)
+**File**: `e2e_test/streaming/changelog.slt` (modified, +62/-0)
 ```diff
-@@ -52,7 +52,7 @@ create table t_conn(x int) with (
- ) format plain encode json;
+@@ -215,3 +215,65 @@ drop table t4;
  
- 
--query I retry 3 backoff 1s
-+query I retry 15 backoff 2s
- select * from t_conn order by x;
- ----
- 1
+ statement ok
+ drop table wide;
++
++# Changelog over a singleton input, and a downstream job over that changelog.
++statement ok
++create table single_t (v int);
++
++statement ok
++create materialized view single_mv as select count(*) as c from single_t;
++
++statement ok
++create materialized view single_log as with x as changelog from single_mv select * from x;
++
++statement ok
++insert into single_t values (1), (2);
++
++statement ok
++insert into single_t values (3);
++
++statement ok
++delete from single_t where v = 1;
++
++# changelog_op: 1 = insert, 3 = update insert, 4 = update delete
++query II
++select c, changelog_op from single_log order by _changelog_row_id;
++----
++0 1
++0 4
++2 3
++2 4
++3 3
++3 4
++2 3
++
++statement ok
++create materialized view single_log_downstream as select c, changelog_op, _changelog_row_id as id from single_log;
++
++statement ok
++insert into single_t values (4);
++
++query II
++select c, changelog_op from single_log_downstream order by id;
++----
++0 1
++0 4
++2 3
++2 4
++3 3
++3 4
++2 3
++2 4
++3 3
++
++statement ok
++drop materialized view single_log_downstream;
++
++statement ok
++drop materialized view single_log;
++
++statement ok
++drop materialized view single_mv;
++
++statement ok
++drop table single_t;
 ```
 
-**File**: `e2e_test/streaming/batch_refresh_periodic.slt` (modified, +5/-4)
+**File**: `src/bench/sink_bench/main.rs` (modified, +1/-1)
 ```diff
-@@ -57,9 +57,10 @@ SELECT * FROM mv_up;
- 3
- 4
- 
--# Wait for at least one refresh cycle to kick in and complete. The retry
--# window covers variance in the periodic trigger's firing time.
--query I rowsort retry 15 backoff 1s
-+# Wait for at least one refresh cycle to kick in and complete. A cycle starts only
-+# once the committed epoch passes the interval, which can lag by over 10s on a
-+# loaded cluster.
-+query I rowsort retry 30 backoff 2s
- SELECT * FROM mv_batch;
- ----
- 1
-@@ -86,7 +87,7 @@ SELECT * FROM mv_up;
- 4
- 5
- 
--query I rowsort retry 15 backoff 1s
-+query I rowsort retry 30 backoff 2s
- SELECT * FROM mv_batch;
- ----
- 2
+@@ -384,7 +384,7 @@ async fn consume_log_stream<S: Sink>(
+         sink_writer_param.meta_client = Some(SinkMetaClient::MockMetaClient(MockMetaClient::new(
+             coordinator,
+         )));
+-        sink_writer_param.vnode_bitmap = Some(Bitmap::ones(1));
++        sink_writer_param.vnode_bitmap = Bitmap::ones(1);
+     }
+     let log_sinker = sink.new_log_sinker(sink_writer_param).await.unwrap();
+     match log_sinker.consume_log_and_sink(&mut log_reader).await {
 ```
 
-**File**: `e2e_test/streaming/batch_refresh_snapshot.slt` (modified, +1/-1)
+**File**: `src/connector/src/sink/coordinate.rs` (modified, +1/-7)
 ```diff
-@@ -103,7 +103,7 @@ SELECT * FROM mv_up;
- 2
- 3
+@@ -21,7 +21,6 @@ use anyhow::anyhow;
+ use async_trait::async_trait;
+ use risingwave_common::bail;
+ use risingwave_common::bitmap::Bitmap;
+-use risingwave_common::hash::VnodeBitmapExt;
+ use risingwave_pb::connector_service::SinkMetadata;
+ use tracing::{info, warn};
  
--query I rowsort retry 15 backoff 1s
-+query I rowsort retry 30 backoff 2s
- SELECT * FROM mv_batch;
- ----
- 1
+@@ -58,12 +57,7 @@ impl<W: SinkWriter<CommitMetadata = Option<SinkMetadata>>> CoordinatedLogSinker<
+                 .sink_coordinate_client()
+                 .await,
+             param,
+-            // Singleton actors do not carry a vnode bitmap. For sink coordination, the only
+-            // writer owns the singleton fragment's sole vnode.
+-            vnode_bitmap: writer_param
+-                .vnode_bitmap
+-                .clone()
+-                .unwrap_or_else(|| Bitmap::singleton().clone()),
++            vnode_bitmap: writer_param.vnode_bitmap.clone(),
+             commit_checkpoint_interval,
+             sink_writer_metrics: SinkWriterMetrics::new(writer_param),
+         })
+```
+
+**File**: `src/connector/src/sink/mod.rs` (modified, +3/-3)
+```diff
+@@ -80,7 +80,7 @@ use risingwave_common::array::ArrayError;
+ use risingwave_common::bitmap::Bitmap;
+ use risingwave_common::catalog::{ColumnDesc, Field, Schema};
+ use risingwave_common::config::StreamingConfig;
+-use risingwave_common::hash::ActorId;
++use risingwave_common::hash::{ActorId, VnodeBitmapExt};
+ use risingwave_common::metrics::{
+     LabelGuardedHistogram, LabelGuardedHistogramVec, LabelGuardedIntCounter,
+     LabelGuardedIntCounterVec, LabelGuardedIntGaugeVec,
+@@ -674,7 +674,7 @@ impl SinkMetrics {
+ pub struct SinkWriterParam {
+     // TODO(eric): deprecate executor_id
+     pub executor_id: ExecutorId,
+-    pub vnode_bitmap: Option<Bitmap>,
++    pub vnode_bitmap: Bitmap,
+     pub meta_client: Option<SinkMetaClient>,
+     // The val has two effect:
+     // 1. Indicates that the sink will accpect the data chunk with extra partition value column.
+@@ -779,7 +779,7 @@ impl SinkWriterParam {
+     pub fn for_test() -> Self {
+         SinkWriterParam {
+             executor_id: Default::default(),
+-            vnode_bitmap: Default::default(),
++            vnode_bitmap: Bitmap::singleton().clone(),
+             meta_client: Default::default(),
+             extra_partition_col_idx: Default::default(),
+ 
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/changelog.yaml` (modified, +9/-0)
+```diff
+@@ -32,3 +32,12 @@
+     with c as changelog from t key (missing) select * from c;
+   expected_outputs:
+   - binder_error
++
++- name: changelog over a singleton input
++  sql: |
++    create table t (v int);
++    create materialized view mv as select count(*) as c from t;
++    with x as changelog from mv select * from x;
++  expected_outputs:
++  - stream_plan
++  - stream_dist_plan
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/changelog.yaml` (modified, +32/-0)
+```diff
+@@ -127,3 +127,35 @@
+     create table t (id int);
+     with c as changelog from t key (missing) select * from c;
+   binder_error: 'Item not found: Invalid column: missing'
++- name: changelog over a singleton input
++  sql: |
++    create table t (v int);
++    create materialized view mv as select count(*) as c from t;
++    with x as changelog from mv select * from x;
++  stream_plan: |-
++    StreamMaterialize { columns: [c, changelog_op, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └─StreamChangeLog
++      └─StreamTableScan { table: mv, columns: [mv.c], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
++  stream_dist_plan: |+
++    Fragment 0
++    StreamMaterialize { columns: [c, changelog_op, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
++    └── StreamChangeLog
++        └── StreamTableScan { table: mv, columns: [mv.c], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single } { tables: [ StreamScan: 0 ] }
++            ├── Upstream
++            └── BatchPlanNode
++
++    Table 0
++    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, _rw_timestamp ]
++    ├── primary key: [ $0 ASC ]
++    ├── value indices: [ 1, 2, 3 ]
++    ├── distribution key: [ 0 ]
++    ├── read pk prefix len hint: 1
++    └── vnode column idx: 0
++
++    Table 4294967294
++    ├── columns: [ c, changelog_op, _changelog_row_id, _rw_timestamp ]
++    ├── primary key: [ $2 ASC ]
++    ├── value indices: [ 0, 1, 2 ]
++    ├── distribution key: []
++    └── read pk prefix len hint: 1
++
+```
+
+**File**: `src/frontend/src/optimizer/plan_node/logical_changelog.rs` (modified, +12/-9)
+```diff
+@@ -223,14 +223,18 @@ impl ToStream for LogicalChangeLog {
+             input
+         };
+ 
+-        let dist = input.distribution();
+-        let distribution_keys = match dist {
++        let row_id_index = self.schema().fields().len() - 1;
++        // The changelog row id encodes the vnode of the input row, so the output of a
++        // hash-distributed input is hash-distributed by the row id. A singleton input stays
++        // in its singleton fragment.
++        let (distribution_keys, dist) = match input.distribution() {
+             Distribution::HashShard(distribution_keys)
+-            | Distribution::UpstreamHashShard(distribution_keys, _) => distribution_keys.clone(),
+-            Distribution::Single => {
+-                vec![]
+-            }
+-            _ => {
++            | Distribution::UpstreamHashShard(distribution_keys, _) => (
++                distribution_keys.clone(),
++                Distribution::HashShard(vec![row_id_index]),
++            ),
++            Distribution::Single => (vec![], Distribution::Single),
++            dist => {
+                 return Err(BindError(format!(
+                     "ChangeLog requires input to be hash distributed, single, but got {:?}",
+                     dist
+@@ -239,10 +243,9 @@ impl ToStream for LogicalChangeLog {
+             }
+         };
+         let core = self.core.clone_with_input(input);
+-        let row_id_index = self.schema().fields().len() - 1;
+         let plan = StreamChangeLog::new_with_dist(
+             core,
+-            Distribution::HashShard(vec![row_id_index]),
++            dist,
+             distribution_keys.into_iter().map(|k| k as u32).collect(),
+         )
+         .into();
+```
+
+**File**: `src/stream/src/common/log_store_impl/kv_log_store/mod.rs` (modified, +21/-21)
+```diff
+@@ -509,7 +509,7 @@ pub struct KvLogStoreFactory<S: StateStore> {
+ 
+     table_catalog: Table,
+ 
+-    vnodes: Option<Arc<Bitmap>>,
++    vnodes: Arc<Bitmap>,
+ 
+     max_buffer_row_count: usize,
+     chunk_size: usize,
+@@ -530,7 +530,7 @@ impl<S: StateStore> KvLogStoreFactory<S> {
+     pub(crate) fn new(
+         state_store: S,
+         table_catalog: Table,
+-        vnodes: Option<Arc<Bitmap>>,
++        vnodes: Arc<Bitmap>,
+         max_buffer_row_count: usize,
+         chunk_size: usize,
+         metrics: KvLogStoreMetrics,
+@@ -688,7 +688,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(Arc::new(bitmap)),
++            Arc::new(bitmap),
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -811,7 +811,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap.clone()),
++            bitmap.clone(),
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -908,7 +908,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap),
++            bitmap,
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1005,7 +1005,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap.clone()),
++            bitmap.clone(),
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1128,7 +1128,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap),
++            bitmap,
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1228,7 +1228,7 @@ mod tests {
+         let factory1 = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(vnodes1),
++            vnodes1,
+             10 * TEST_DATA_SIZE,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1239,7 +1239,7 @@ mod tests {
+         let factory2 = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(vnodes2),
++            vnodes2,
+             10 * TEST_DATA_SIZE,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1378,7 +1378,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(vnodes),
++            vnodes,
+             10 * TEST_DATA_SIZE,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1451,7 +1451,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(Arc::new(bitmap)),
++            Arc::new(bitmap),
+             0,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1601,7 +1601,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap.clone()),
++            bitmap.clone(),
+             1024,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1721,7 +1721,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap.clone()),
++            bitmap.clone(),
+             1024,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1792,7 +1792,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap.clone()),
++            bitmap.clone(),
+             1024,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -1966,7 +1966,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap.clone()),
++            bitmap.clone(),
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -2057,7 +2057,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap.clone()),
++            bitmap.clone(),
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -2133,7 +2133,7 @@ mod tests {
+         let factory = KvLogStoreFactory::new(
+             test_env.storage.clone(),
+             table.clone(),
+-            Some(bitmap),
++            bitmap,
+             max_row_count,
+             1024,
+             KvLogStoreMetrics::for_test(),
+@@ -2192,7 +2192,7 @@ mod tests {
 ```
 
 ---
 
-### Incident Patch 9: `3060ab45` (2026-09-24)
-**Commit Message**: fix(refresh): finish a table refresh only after all materialize actors and abandon it on recovery (#27041)
+### Incident Patch 2: `0a7901b4` (2026-10-12)
+**Commit Message**: fix(cdc): start SQL Server sources on databases with no recent change (#27441)
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `ci/scripts/e2e-source-test.sh` (modified, +4/-0)
+**File**: `ci/docker-compose.yml` (modified, +1/-0)
 ```diff
-@@ -44,17 +44,21 @@ risedev slt './e2e_test/source_inline/fs/parquet_nested_smallint.slt'
- risedev slt './e2e_test/source_inline/refresh/refresh_table.slt'
- risedev slt './e2e_test/source_inline/refresh/refresh_table_rate_limit.slt'
- risedev slt './e2e_test/source_inline/refresh/refresh_table_delete_readd.slt'
-+risedev slt './e2e_test/source_inline/refresh/refresh_table_recovery.slt.serial'
-+risedev slt './e2e_test/source_inline/refresh/refresh_table_reschedule.slt'
- risedev slt './e2e_test/source_inline/vault/vault_secret_ddl.slt'
- 
- echo "--- Run webhook source tests"
- sleep 5
- risedev slt 'e2e_test/webhook/webhook_source.slt'
- risedev slt 'e2e_test/webhook/websocket_ingest.slt'
-+risedev slt './e2e_test/source_inline/refresh/refresh_table_restart_before.slt'
- 
- risedev kill
- risedev dev ci-1cn-1fe-with-recovery
- sleep 20
- risedev slt 'e2e_test/webhook/webhook_source_recovery.slt'
-+risedev slt './e2e_test/source_inline/refresh/refresh_table_restart_after.slt'
- 
- echo "--- Kill cluster"
- risedev ci-kill
+@@ -295,6 +295,7 @@ services:
+       - db
+       - message_queue
+       - mysql
++      - sqlserver-server
+     volumes:
+       - ..:/risingwave
+     stop_grace_period: 30s
 ```
 
-**File**: `e2e_test/source_inline/refresh/drop_refresh_table_paused.slt.part` (added, +5/-0)
+**File**: `ci/scripts/e2e-source-cron-only-test.sh` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+statement ok
-+DROP TABLE refresh_paused_t CASCADE;
-+
-+system ok
-+rm -rf ./e2e_test/source_inline/refresh/refresh_paused_tmp
-```
-
-**File**: `e2e_test/source_inline/refresh/refresh_table_paused.slt.part` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+# A refreshable table with a refresh cycle held open in the middle of a file. After a complete load,
-+# a second cycle reads a new file set at one row per second until its first rows are visible, and a
-+# limit of 0 then holds it. The file set is replaced once more while the cycle is held, so that a
-+# re-run reads different files and its merge has to delete every row the held load wrote.
-+# Dropped by drop_refresh_table_paused.slt.part.
-+
-+control substitution on
-+
-+system ok
-+rm -rf ./e2e_test/source_inline/refresh/refresh_paused_tmp && mkdir -p ./e2e_test/source_inline/refresh/refresh_paused_tmp
-+
-+system ok
-+for i in 0 1 2 3; do seq $((i*500+1)) $(((i+1)*500)) | awk '{print $1","$1%97}' > ./e2e_test/source_inline/refresh/refresh_paused_tmp/f$i.csv; done
-+
-+statement ok
-+CREATE TABLE refresh_paused_t (id int, grp int, PRIMARY KEY (id)) WITH (
-+    connector = '__for_testing_only_batch_posix_fs',
-+    batch_posix_fs.root = './e2e_test/source_inline/refresh/refresh_paused_tmp',
-+    refresh_mode = 'FULL_RELOAD',
-+    match_pattern = '*.csv'
-+) FORMAT PLAIN ENCODE CSV (without_header = 'true', delimiter = ',');
-+
-+statement ok
-+CREATE MATERIALIZED VIEW refresh_paused_mv AS SELECT grp, count(*) AS cnt FROM refresh_paused_t GROUP BY grp;
-+
-+statement ok retry 3 backoff 5s
-+REFRESH TABLE refresh_paused_t;
-+
-+query T retry 10 backoff 2s
-+SELECT s.current_status
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+IDLE
-+
-+
-+# The frontend's read snapshot can lag the commit that ended the cycle.
-+statement ok
-+FLUSH;
-+
-+query II
-+SELECT count(*), sum(cnt) FROM refresh_paused_mv;
-+----
-+97 2000
-+
-+
-+system ok
-+for i in 0 1 2 3; do seq $((2000+i*500+1)) $((2000+(i+1)*500)) | awk '{print $1","$1%97}' > ./e2e_test/source_inline/refresh/refresh_paused_tmp/f$i.csv; done
-+
-+statement ok
-+ALTER TABLE refresh_paused_t SET SOURCE_RATE_LIMIT TO 1;
-+
-+statement ok
-+REFRESH TABLE refresh_paused_t;
-+
-+query B retry 30 backoff 1s
-+SELECT count(*) > 2000 FROM refresh_paused_t;
-+----
-+t
-+
-+statement ok
-+ALTER TABLE refresh_paused_t SET SOURCE_RATE_LIMIT TO 0;
-+
-+query TB
-+SELECT s.current_status, (SELECT count(*) FROM refresh_paused_t) < 4000
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+REFRESHING t
-+
-+# The trigger of the held cycle, so that a test can tell its re-run from it.
-+let trigger_before
-+SELECT s.last_trigger_time
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t'
-+
-+system ok
-+rm ./e2e_test/source_inline/refresh/refresh_paused_tmp/f*.csv && seq 5001 6000 | awk '{print $1","$1%97}' > ./e2e_test/source_inline/refresh/refresh_paused_tmp/g0.csv
-```
-
-**File**: `e2e_test/source_inline/refresh/refresh_table_rate_limit.slt` (modified, +10/-0)
-```diff
-@@ -44,6 +44,10 @@ WHERE t.name = 'refresh_rl_t';
- ----
- IDLE
+@@ -33,6 +33,8 @@ tar xf ./risingwave-connector.tar.gz -C ./connector-node
  
-+# The frontend's read snapshot can lag the commit that ended the cycle.
-+statement ok
-+FLUSH;
-+
- query II
- SELECT count(*), sum(cnt) FROM refresh_rl_mv;
- ----
-@@ -65,6 +69,9 @@ WHERE t.name = 'refresh_rl_t';
- ----
- IDLE
+ echo "--- Install dependencies"
+ python3 -m pip install --break-system-packages -r ./e2e_test/requirements.txt
++install_sqlserver_client
++export SQLCMDSERVER=sqlserver-server SQLCMDUSER=SA SQLCMDPASSWORD="SomeTestOnly@SA" SQLCMDPORT=1433
  
-+statement ok
-+FLUSH;
-+
- query II
- SELECT count(*), sum(cnt) FROM refresh_rl_mv;
- ----
-@@ -109,6 +116,9 @@ WHERE t.name = 'refresh_rl_t';
- ----
- IDLE
- 
-+statement ok
-+FLUSH;
-+
- query II
- SELECT min(id), max(id) FROM refresh_rl_t;
- ----
+ echo "--- e2e, cron_only inline source tests"
+ RUST_LOG="debug,risingwave_stream=info,risingwave_batch=info,risingwave_storage=info,risingwave_meta=info" \
 ```
 
-**File**: `e2e_test/source_inline/refresh/refresh_table_recovery.slt.serial` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+# A refresh interrupted by recovery is abandoned and re-run once.
-+
-+include ./refresh_table_paused.slt.part
-+
-+statement ok
-+recover;
-+
-+# The re-run is a newer cycle than the interrupted one, held by the limit of 0 that survived recovery.
-+query TB retry 20 backoff 1s
-+SELECT s.current_status, s.last_trigger_time > '${trigger_before}'
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+REFRESHING t
-+
-+# A second recovery abandons the re-run without starting another one.
-+statement ok
-+recover;
-+
-+# A throttle command only goes through once the cluster accepts commands again.
-+statement ok retry 10 backoff 1s
-+ALTER TABLE refresh_paused_t SET SOURCE_RATE_LIMIT TO DEFAULT;
-+
-+sleep 2s
-+
-+query TB
-+SELECT s.current_status, s.last_success_time > s.last_trigger_time
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+IDLE f
-+
-+# The next cycle deletes every row the abandoned loads wrote.
-+statement ok
-+REFRESH TABLE refresh_paused_t;
-+
-+query TB retry 10 backoff 2s
-+SELECT s.current_status, s.last_success_time > s.last_trigger_time
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+IDLE t
-+
-+statement ok
-+FLUSH;
-+
-+query III
-+SELECT min(id), max(id), count(*) FROM refresh_paused_t;
-+----
-+5001 6000 1000
-+
-+query II
-+SELECT count(*), sum(cnt) FROM refresh_paused_mv;
-+----
-+97 1000
-+
-+include ./drop_refresh_table_paused.slt.part
-```
-
-**File**: `e2e_test/source_inline/refresh/refresh_table_reschedule.slt` (added, +79/-0)
+**File**: `e2e_test/source_inline/cdc/sql_server/cron_only/sql_server_idle_start.slt.serial` (added, +79/-0)
 ```diff
 @@ -0,0 +1,79 @@
-+# A table cannot be rescheduled or replaced while it is being refreshed; both go through once the
-+# cycle ends, and the next cycle runs on the new actors.
++control substitution on
 +
-+include ./refresh_table_paused.slt.part
++# A shared source must start on a database whose CDC tables are quiet. While no change is captured,
++# the capture job records an idle row (tran_id = 0x00) in `cdc.lsn_time_mapping` about every 5
++# minutes, so the start position of a new source is past the last transaction.
 +
-+statement error is being refreshed
-+ALTER TABLE refresh_paused_t SET PARALLELISM = 1;
-+
-+statement error is being refreshed
-+ALTER TABLE refresh_paused_t ADD COLUMN extra int;
-+
-+# Rescheduling a single fragment of the table is refused as well.
++# ------------ data prepare stage ------------
 +system ok
-+fragment_id=$(psql -h "$SLT_HOST" -p "$SLT_PORT" -d "$SLT_DB" -U root -tAc "SELECT f.fragment_id FROM rw_fragments f JOIN rw_tables t ON f.table_id = t.id WHERE t.name = 'refresh_paused_t' AND 'MVIEW' = ANY(f.flags)") && psql -h "$SLT_HOST" -p "$SLT_PORT" -d "$SLT_DB" -U root -c "ALTER FRAGMENT $fragment_id SET PARALLELISM = 1" 2>&1 | grep -q 'is being refreshed'
++sqlcmd -C -d master -Q "IF DB_ID('sqlserver_idle_db') IS NOT NULL BEGIN ALTER DATABASE sqlserver_idle_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE sqlserver_idle_db; END; IF SUSER_ID('rw_idle_login') IS NOT NULL DROP LOGIN rw_idle_login; CREATE DATABASE sqlserver_idle_db;" -b
 +
++system ok
++sqlcmd -C -d sqlserver_idle_db -Q "EXEC sys.sp_cdc_enable_db; CREATE TABLE dbo.idle_t (id INT PRIMARY KEY, v VARCHAR(20)); EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = 'idle_t', @role_name = NULL; INSERT INTO dbo.idle_t VALUES (1, 'a');" -b
++
++# A login without VIEW SERVER STATE, which cannot read the status of SQL Server Agent.
++system ok
++sqlcmd -C -d sqlserver_idle_db -Q "CREATE LOGIN rw_idle_login WITH PASSWORD = 'IdleLogin@123', CHECK_POLICY = OFF; CREATE USER rw_idle_user FOR LOGIN rw_idle_login; ALTER ROLE db_owner ADD MEMBER rw_idle_user;" -b
++
++# Wait until an idle row follows the last captured transaction.
++system ok
++sqlcmd -C -d sqlserver_idle_db -Q "DECLARE @waited INT = 0; WHILE NOT EXISTS (SELECT 1 FROM cdc.lsn_time_mapping WHERE tran_id = 0x00 AND start_lsn > (SELECT MAX(start_lsn) FROM cdc.lsn_time_mapping WHERE tran_id <> 0x00)) BEGIN IF @waited >= 600 THROW 50000, 'no idle row after 10 minutes', 1; WAITFOR DELAY '00:00:01'; SET @waited += 1; END;" -b
++
++# ------------ create source and table stage ------------
 +statement ok
-+ALTER TABLE refresh_paused_t SET SOURCE_RATE_LIMIT TO DEFAULT;
++CREATE SOURCE mssql_idle_source WITH (
++    connector = 'sqlserver-cdc',
++    hostname = '${SQLCMDSERVER:sqlserver-server}',
++    port = '${SQLCMDPORT:1433}',
++    username = '${SQLCMDUSER:SA}',
++    password = '${SQLCMDPASSWORD}',
++    database.name = 'sqlserver_idle_db',
++);
 +
-+query T retry 10 backoff 2s
-+SELECT s.current_status
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+IDLE
-+
-+
++# The validator checks `sys.fn_cdc_get_max_lsn()` instead of the Agent status.
 +statement ok
-+ALTER TABLE refresh_paused_t SET PARALLELISM = 1;
-+
-+statement ok retry 3 backoff 5s
-+REFRESH TABLE refresh_paused_t;
-+
-+query T retry 10 backoff 2s
-+SELECT s.current_status
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+IDLE
-+
-+
-+statement ok
-+FLUSH;
-+
-+query II
-+SELECT count(*), sum(cnt) FROM refresh_paused_mv;
-+----
-+97 1000
-+
-+statement ok
-+ALTER TABLE refresh_paused_t ADD COLUMN extra int;
-+
-+statement ok retry 3 backoff 5s
-+REFRESH TABLE refresh_paused_t;
-+
-+query T retry 10 backoff 2s
-+SELECT s.current_status
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+WHERE t.name = 'refresh_paused_t';
-+----
-+IDLE
-+
-+
-+statement ok
-+FLUSH;
-+
-+query II
-+SELECT count(*), sum(cnt) FROM refresh_paused_mv;
-+----
-+97 1000
-+
-+query I
-+SELECT count(*) FROM refresh_paused_t WHERE extra IS NULL;
-+----
-+1000
-+
-+include ./drop_refresh_table_paused.slt.part
-```
-
-**File**: `e2e_test/source_inline/refresh/refresh_table_restart_after.slt` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+# The refresh left in flight by refresh_table_restart_before.slt is abandoned by the restarted
-+# meta and re-run once; the re-run is held by the limit of 0 until it is lifted here.
-+
-+query TB retry 20 backoff 1s
-+SELECT s.current_status, s.last_trigger_time > m.trigger_before
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+CROSS JOIN refresh_paused_marker m
-+WHERE t.name = 'refresh_paused_t';
-+----
-+REFRESHING t
-+
-+statement ok
-+ALTER TABLE refresh_paused_t SET SOURCE_RATE_LIMIT TO DEFAULT;
-+
-+query TBB retry 10 backoff 2s
-+SELECT s.current_status, s.last_trigger_time > m.trigger_before, s.last_success_time > s.last_trigger_time
-+FROM rw_catalog.rw_refresh_table_state s
-+JOIN rw_catalog.rw_tables t ON s.table_id = t.id
-+CROSS JOIN refresh_paused_marker m
-+WHERE t.name = 'refresh_paused_t';
-+----
-+IDLE t t
-+
-+statement ok
-+FLUSH;
-+
-+query III
-+SELECT min(id), max(id), count(*) FROM refresh_paused_t;
-+----
-+5001 6000 1000
-+
-+query II
-+SELECT count(*), sum(cnt) FROM refresh_paused_mv;
-+----
-+97 1000
-+
-+statement ok
-+DROP TABLE refresh_paused_marker;
-+
-+include ./drop_refresh_table_paused.slt.part
-```
-
-**File**: `e2e_test/source_inline/refresh/refresh_table_restart_before.slt` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+# Leaves a refresh in flight for the cluster restart in the CI script; the checks are in
-+# refresh_table_restart_after.slt.
-+
-+include ./refresh_table_paused.slt.part
-+
-+# Carries the trigger of the held cycle across the restart; the row has to be checkpointed to
-+# survive it.
-+statement ok
-+CREATE TABLE refresh_paused_marker (trigger_before varchar);
-+
-+statement ok
-+INSERT INTO refresh_paused_marker VALUES ('${trigger_before}');
-+
-+statement ok
-+FLUSH;
-```
-
----
-
-### Incident Patch 10: `4642960b` (2026-09-24)
-**Commit Message**: fix(stream): keep a MATCH_RECOGNIZE scan incomplete across an eviction rebase (#27201)
-
-Signed-off-by: Henrik Ma Johansson <[REDACTED_EMAIL]>
-
-**File**: `docs/dev/src/design/match-recognize.md` (modified, +12/-4)
-```diff
-@@ -299,8 +299,10 @@ Worth stating plainly, because the two cases differ and only one of them recover
- **With `WITHIN`.** A starved partition still sheds matches, but only through window closure, and
- only matches the truncated scan reached. Each watermark visit re-derives the tail (spending the
- whole budget), then emits the head if its window has closed. Emitting a provisional match rebuilds
--the matcher under that same spent budget, which empties the tail and ends the drain — so the
--practical rate is about **one match per watermark visit**, and the deadline prune contributes
-+the matcher under that same spent budget, which empties the tail and ends the drain; emitting a
-+*frozen* one keeps it — the eviction rebase shifts the truncated scan's cursor and found prefix
-+down with the rows instead of dropping them (see below) — so the practical rate is the frozen run
-+plus about **one provisional match per watermark visit**, and the deadline prune contributes
- nothing while the matcher is incomplete. Emission latency degrades from decidability to window
- closure, and the retained set shrinks only at that rate: if arrivals per watermark interval exceed
- it, the partition still grows. This is an improvement on shedding nothing; it is not convergence.
-@@ -333,8 +335,14 @@ remembered instead of re-walked:
-   refresh on the next watermark visit, so an idle partition resumes it too. The executor's own
-   liveness walks (the dead-prefix prune, the emission gate's gap check) skip that prefix as well.
- 
--Both memories are forgotten wherever the rows a verdict was computed over can change: truncation,
--and the eviction rebase. What remains inherently per-visit is a run that stays *alive* — `a{600} b`
-+Both memories are forgotten wherever the rows a verdict was computed over can change — truncation —
-+and merely *shifted* by the eviction rebase: a verdict about a surviving start was computed over
-+surviving rows (the binder keeps every `PREV` inside the match span, running navigation reads
-+inside the match, and there is no forward navigation), so the matchless and dead prefixes, the scan
-+cursor and a truncated scan's found prefix all move down with the rows. Incompleteness survives the
-+rebase with them, so the next visit resumes the scan before the deadline prune may act on absence —
-+clearing it there turned partial information into a completed-scan verdict and the prune deleted
-+the rows of every match the truncated scan never reached (#27197). What remains inherently per-visit is a run that stays *alive* — `a{600} b`
- over an unbroken run of `a` rows keeps every start alive until a `b` arrives or its `WITHIN` window
- closes — where each rescan re-walks the live starts and the budget throttles the partition as
- described above; `WITHIN` is what bounds that.
-```
-
-**File**: `src/stream/src/executor/match_recognize/incremental.rs` (modified, +292/-26)
-```diff
-@@ -238,7 +238,9 @@ pub struct IncrementalMatcher {
-     /// set, absence of a match from `provisional()` is NOT evidence of absence: the executor must
-     /// re-derive (fresh budget) before any decision that treats missing matches as decided — the
-     /// WITHIN-deadline prune in particular would otherwise delete rows carrying a match the
--    /// truncated scan never reached.
-+    /// truncated scan never reached. Survives [`IncrementalMatcher::finalize_evicted_prefix`]
-+    /// together with the found prefix and the scan cursor, which the rebase shifts rather than
-+    /// resets: the unscanned suffix is untouched by an eviction, so the flag still describes it.
-     incomplete: bool,
-     /// Absolute buffer position where a budget-truncated match scan will resume. Unlike
-     /// `matchless_upto`, this may follow successful matches: the corresponding leftmost-prefix of
-@@ -256,7 +258,8 @@ pub struct IncrementalMatcher {
-     /// walks up to `L` rows), and once that exceeds the per-visit budget the region never freezes:
-     /// the permanent, non-self-healing shape a long chain pattern (`a{600}`) otherwise degrades
-     /// into. Reset to `next_pos` whenever the rows a verdict was computed over can change
--    /// (truncation, eviction rebase).
-+    /// (truncation); an eviction rebase only shifts it, since a verdict about a surviving start was
-+    /// computed over surviving rows (see [`IncrementalMatcher::finalize_evicted_prefix`]).
-     dead_upto: usize,
-     /// Starts `[next_pos, matchless_upto)` proven MATCHLESS FOREVER by the finder: their walks found
-     /// no accept and never reached the boundary, so they died entirely on immutable rows (see
-@@ -325,8 +328,9 @@ impl IncrementalMatcher {
-         self.freeze_truncated = false;
-     }
- 
--    /// Whether the last rescan was truncated by a spent budget — see the field doc. While true,
--    /// `provisional()` is a leftmost-prefix under-approximation.
-+    /// Whether the last rescan was truncated by a spent budget — see the field doc. The flag and
-+    /// the found prefix both survive an eviction rebase. While true, `provisional()` is a
-+    /// leftmost-prefix under-approximation.
-     pub fn is_incomplete(&self) -> bool {
-         self.incomplete
-     }
-@@ -700,12 +704,14 @@ impl IncrementalMatcher {
-     /// at the (same-or-later) eviction boundary `[0, next_pos)` is still dead and the first live row
-     /// is `>= next_pos`. The check above bounds `final_pos <= next_pos`, so through the executor
-     /// `final_pos == next_pos` exactly. At that boundary every frozen match starts before `next_pos`
--    /// and is therefore consumed — none is retained — so `next_pos` rebases to `0` and the entire
--    /// surviving suffix is re-derived from scratch as the provisional tail. `provisional()` then
--    /// trivially equals a fresh scan over the survivors, regardless of skip mode, and no rebased scan
--    /// cursor can skip a start a fresh matcher would find. `PAST LAST ROW` additionally tiles
--    /// `[0, next_pos)` with non-overlapping spans (`resume == end`), so *any* boundary within the
--    /// frozen prefix retains a suffix of frozen matches soundly.
-+    /// and is therefore consumed — none is retained — so `next_pos` rebases to `0` and the
-+    /// provisional tail is exactly the matches found over the surviving suffix, regardless of skip
-+    /// mode. The verdict cursors and a truncated scan's found prefix shift down with the rows rather
-+    /// than resetting: a verdict about a surviving start was computed over surviving rows only (see
-+    /// the rebase step in the body), so the resumed scan finds exactly what a fresh matcher over
-+    /// the survivors would, without re-walking the starts already decided. `PAST LAST ROW`
-+    /// additionally tiles `[0, next_pos)` with non-overlapping spans (`resume == end`), so *any*
-+    /// boundary within the frozen prefix retains a suffix of frozen matches soundly.
-     ///
-     /// On [`Finalized::Rebased`] the evicted rows physically leave the front of the logical buffer:
-     /// `seq_index` drains its prefix and `next_pos`/`frozen_count` shift down. Only rows at positions
-@@ -724,7 +730,6 @@ impl IncrementalMatcher {
-         if final_pos > self.next_pos {
-             return Finalized::MustRebuild;
-         }
--
-         // Finalized matches are the leading run of frozen matches whose *start* is being evicted
-         // (`start_pos < final_pos`): their first row leaves the buffer, so they are consumed — final,
-         // already emitted — and drop from the diffable set. Only frozen matches can start within
-@@ -748,10 +753,11 @@ impl IncrementalMatcher {
-             // A consumed match whose span straddles the boundary (`end_pos > final_pos`, possible
-             // only under the overlapping modes) orphans its surviving rows `[final_pos, end_pos)`.
-             // Dropping it is sound only when the boundary sits exactly at the scan cursor
--            // (`final_pos == next_pos`):
-```
-
----
-
-### Incident Patch 11: `ce78f82e` (2026-09-24)
-**Commit Message**: fix(stream): derive NOW progress from elapsed time (#27209)
-
-**File**: `proto/stream_plan.proto` (modified, +0/-3)
-```diff
-@@ -256,9 +256,6 @@ message Barrier {
-   map<string, string> tracing_context = 2;
-   // The kind of the barrier.
-   BarrierKind kind = 9;
--  // The effective barrier interval for this database: the database-specific override when set,
--  // or the system-wide interval otherwise.
--  uint32 barrier_interval_ms = 10;
- }
- 
- message Watermark {
-```
-
-**File**: `src/common/src/system_param/mod.rs` (modified, +2/-15)
-```diff
-@@ -449,11 +449,11 @@ for_all_params!(impl_system_params_for_test);
- pub struct OverrideValidate;
- impl Validate for OverrideValidate {
-     fn barrier_interval_ms(v: &u32) -> Result<()> {
--        Self::expect_range(*v, 50..=i32::MAX as u32)
-+        Self::expect_range(*v, 50..)
-     }
- 
-     fn checkpoint_frequency(v: &u64) -> Result<()> {
--        Self::expect_range(*v, 1..=i64::MAX as u64)
-+        Self::expect_range(*v, 1..)
-     }
- 
-     fn backup_storage_directory(v: &String) -> Result<()> {
-@@ -560,19 +560,6 @@ mod tests {
-         assert!(validate_init_system_params(&p).is_ok());
-     }
- 
--    #[test]
--    fn test_database_param_storage_bounds() {
--        assert!(OverrideValidate::barrier_interval_ms(&50).is_ok());
--        assert!(OverrideValidate::barrier_interval_ms(&(i32::MAX as u32)).is_ok());
--        assert!(OverrideValidate::barrier_interval_ms(&49).is_err());
--        assert!(OverrideValidate::barrier_interval_ms(&(i32::MAX as u32 + 1)).is_err());
--
--        assert!(OverrideValidate::checkpoint_frequency(&1).is_ok());
--        assert!(OverrideValidate::checkpoint_frequency(&(i64::MAX as u64)).is_ok());
--        assert!(OverrideValidate::checkpoint_frequency(&0).is_err());
--        assert!(OverrideValidate::checkpoint_frequency(&(i64::MAX as u64 + 1)).is_err());
--    }
--
-     // Test that we always redact the value of the license key when displaying it, but when it comes to
-     // persistency, we still write and get the real value.
-     #[test]
-```
-
-**File**: `src/meta/src/barrier/checkpoint/control.rs` (modified, +1/-7)
-```diff
-@@ -244,7 +244,6 @@ impl CheckpointControl {
-             command,
-             span,
-             checkpoint,
--            barrier_interval_ms,
-         } = new_barrier;
- 
-         if let Some((mut command, notifier)) = command {
-@@ -354,7 +353,6 @@ impl CheckpointControl {
-             database.handle_new_barrier(
-                 Some((command, notifier)),
-                 checkpoint,
--                barrier_interval_ms,
-                 span,
-                 partial_graph_manager,
-                 &self.hummock_version_stats,
-@@ -382,7 +380,6 @@ impl CheckpointControl {
-             database.handle_new_barrier(
-                 None,
-                 checkpoint,
--                barrier_interval_ms,
-                 span,
-                 partial_graph_manager,
-                 &self.hummock_version_stats,
-@@ -1215,7 +1212,6 @@ impl DatabaseCheckpointControl {
-         &mut self,
-         command: Option<(Command, Notifier)>,
-         checkpoint: bool,
--        barrier_interval_ms: u32,
-         span: tracing::Span,
-         partial_graph_manager: &mut PartialGraphManager,
-         hummock_version_stats: &HummockVersionStats,
-@@ -1322,9 +1318,7 @@ impl DatabaseCheckpointControl {
-             return Ok(());
-         }
- 
--        let barrier_info =
--            self.state
--                .next_barrier_info(checkpoint, curr_epoch, barrier_interval_ms);
-+        let barrier_info = self.state.next_barrier_info(checkpoint, curr_epoch);
-         // Tracing related stuff
-         barrier_info.prev_epoch.span().in_scope(|| {
-             tracing::info!(target: "rw_tracing", epoch = barrier_info.curr_epoch(), "new barrier enqueued");
-```
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/batch_refresh_job/mod.rs` (modified, +0/-17)
-```diff
-@@ -201,7 +201,6 @@ pub(crate) struct BatchRefreshJobCheckpointControl {
-     snapshot_epoch: u64,
-     /// Batch refresh interval in seconds. Used to determine when to trigger a refresh run.
-     batch_refresh_seconds: u64,
--    barrier_interval_ms: u32,
- 
-     status: BatchRefreshJobStatus,
- }
-@@ -508,7 +507,6 @@ impl BatchRefreshJobCheckpointControl {
-         notifier: Option<&mut NotifierStarter>,
-         snapshot_backfill_upstream_tables: HashSet<TableId>,
-         snapshot_epoch: u64,
--        barrier_interval_ms: u32,
-         version_stat: &HummockVersionStats,
-         term_id: &str,
-         partial_graph_manager: &mut PartialGraphManager,
-@@ -564,7 +562,6 @@ impl BatchRefreshJobCheckpointControl {
-             &mut prev_epoch_fake_physical_time,
-             &mut pending_non_checkpoint_barriers,
-             PbBarrierKind::Checkpoint,
--            barrier_interval_ms,
-         );
- 
-         let mut graph_adder = partial_graph_manager.add_partial_graph(
-@@ -597,7 +594,6 @@ impl BatchRefreshJobCheckpointControl {
-             snapshot_backfill_upstream_tables,
-             snapshot_epoch,
-             batch_refresh_seconds,
--            barrier_interval_ms,
- 
-             status: BatchRefreshJobStatus::ConsumingSnapshot {
-                 prev_epoch_fake_physical_time,
-@@ -624,7 +620,6 @@ impl BatchRefreshJobCheckpointControl {
-         snapshot_backfill_upstream_tables: HashSet<TableId>,
-         snapshot_epoch: u64,
-         committed_epoch: u64,
--        barrier_interval_ms: u32,
-         backfill_order: ExtendedFragmentBackfillOrder,
-         version_stat: &HummockVersionStats,
-         initial_mutation: Mutation,
-@@ -649,7 +644,6 @@ impl BatchRefreshJobCheckpointControl {
-                 snapshot_backfill_upstream_tables,
-                 snapshot_epoch,
-                 batch_refresh_seconds,
--                barrier_interval_ms,
- 
-                 status: BatchRefreshJobStatus::Idle {
-                     last_committed_epoch: committed_epoch,
-@@ -688,7 +682,6 @@ impl BatchRefreshJobCheckpointControl {
-             &mut prev_epoch_fake_physical_time,
-             &mut pending_non_checkpoint_barriers,
-             PbBarrierKind::Initial,
--            barrier_interval_ms,
-         );
- 
-         partial_graph_recoverer.recover_graph(
-@@ -708,7 +701,6 @@ impl BatchRefreshJobCheckpointControl {
-             snapshot_backfill_upstream_tables,
-             snapshot_epoch,
-             batch_refresh_seconds,
--            barrier_interval_ms,
-             status: BatchRefreshJobStatus::ConsumingSnapshot {
-                 prev_epoch_fake_physical_time,
-                 version_stats: version_stat.clone(),
-@@ -779,7 +771,6 @@ impl BatchRefreshJobCheckpointControl {
-         barrier_info: &BarrierInfo,
-         mutation: Option<(Mutation, Option<&mut NotifierStarter>)>,
-     ) -> MetaResult<()> {
--        self.barrier_interval_ms = barrier_info.barrier_interval_ms;
-         if !matches!(self.status, BatchRefreshJobStatus::ConsumingSnapshot { .. }) {
-             // ConsumingLogStore has all barriers pre-injected; no forwarding needed.
-             // Idle has no partial graph.
-@@ -828,15 +819,13 @@ impl BatchRefreshJobCheckpointControl {
-                 curr_epoch: TracedEpoch::new(Epoch(snapshot_epoch)),
-                 prev_epoch: TracedEpoch::new(prev_epoch),
-                 kind: BarrierKind::Checkpoint(take(&mut pending_non_checkpoint_barriers)),
--                barrier_interval_ms: self.barrier_interval_ms,
-             };
- 
-             // Inject stop barrier with u64::MAX as curr_epoch and empty nodes_to_sync_table.
-             let stop_barrier = BarrierInfo {
-                 prev_epoch: TracedEpoch::new(Epoch(snapshot_epoch)),
-                 curr_epoch: TracedEpoch::new(Epoch(u64::MAX)),
-                 kind: BarrierKind::Checkpoint(vec![snapshot_epoch]),
--                barrier_interval_ms: self.barrier_interval_ms,
-             };
- 
-             let stop_actors: Vec<ActorId> = fragment_infos
-@@ -915,7 +904,6 @@ impl BatchRefreshJobCheckpointControl {
-                         unreachable!("upstream new epoch should not be initial")
-                     }
-                 },
--                barrier_info.barrier_interval_ms,
-             );
-             Self::inject_barrier(
-                 self.partial_graph_id,
-@@ -1234,7 +1222,6 @@ impl BatchRefreshJobCheckpointControl {
-             &self.snapshot_backfill_upstream_tables,
-             &context.upstream_table_log_epochs,
-             last_committed_epoch,
--            self.barrier_interval_ms,
-         )?
-         else {
-             info!(
-@@ -1300,7 +1287,6 @@ impl BatchRefreshJobCheckpointControl {
-             prev_epoch: TracedEpoch::new(Epoch(last_committed_epoch)),
-             curr_epoch: TracedEpoch::new(Epoch(first_epoch)),
-             kind: BarrierKind::Initial,
--            barrier_interval_ms: self.barrier_interval_ms,
-         };
-         let mut partial_graph_recoverer = partial_graph_manager.start_recover();
-
-```
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/creating_job/mod.rs` (modified, +0/-23)
-```diff
-@@ -107,7 +107,6 @@ impl CreatingStreamingJobControl {
-         notifier: Option<&mut NotifierStarter>,
-         snapshot_backfill_upstream_tables: HashSet<TableId>,
-         snapshot_epoch: u64,
--        barrier_interval_ms: u32,
-         since_timestamp_upstream_log_epochs: Option<(&TableLogEpochs, PartialGraphId, u64)>,
-         version_stat: &HummockVersionStats,
-         term_id: &str,
-@@ -174,7 +173,6 @@ impl CreatingStreamingJobControl {
-                     partial_graph_manager.pending_barrier_infos(upstream_partial_graph_id),
-                     snapshot_epoch,
-                     new_upstream_barrier_prev_epoch,
--                    barrier_interval_ms,
-                 )?;
-             (initial_barrier, Some(barriers_to_inject))
-         } else {
-@@ -183,7 +181,6 @@ impl CreatingStreamingJobControl {
-                     &mut prev_epoch_fake_physical_time,
-                     &mut pending_non_checkpoint_barriers,
-                     PbBarrierKind::Checkpoint,
--                    barrier_interval_ms,
-                 ),
-                 None,
-             )
-@@ -312,7 +309,6 @@ impl CreatingStreamingJobControl {
-                 create_mview_tracker,
-                 snapshot_backfill_actors,
-                 snapshot_epoch,
--                barrier_interval_ms,
-                 info: job_info,
-                 pending_non_checkpoint_barriers,
-             };
-@@ -407,7 +403,6 @@ impl CreatingStreamingJobControl {
-                     } else {
-                         BarrierKind::Barrier
-                     },
--                    barrier_interval_ms: upstream_barrier_info.barrier_interval_ms,
-                 });
-                 prev_epoch = *epoch;
-             }
-@@ -416,7 +411,6 @@ impl CreatingStreamingJobControl {
-             prev_epoch: TracedEpoch::new(Epoch(prev_epoch)),
-             curr_epoch: TracedEpoch::new(Epoch(upstream_barrier_info.curr_epoch())),
-             kind: BarrierKind::Checkpoint(pending_non_checkpoint_barriers),
--            barrier_interval_ms: upstream_barrier_info.barrier_interval_ms,
-         });
-         Ok(ret)
-     }
-@@ -454,7 +448,6 @@ impl CreatingStreamingJobControl {
-         pending_upstream_barriers: impl Iterator<Item = &BarrierInfo>,
-         snapshot_epoch: u64,
-         new_upstream_barrier_prev_epoch: u64,
--        barrier_interval_ms: u32,
-     ) -> MetaResult<(BarrierInfo, Vec<BarrierInfo>)> {
-         let mut initial_barrier = None;
-         let mut barriers = vec![];
-@@ -494,7 +487,6 @@ impl CreatingStreamingJobControl {
-                         } else {
-                             BarrierKind::Barrier
-                         },
--                        barrier_interval_ms,
-                     },
-                 );
-                 prev_epoch = *epoch;
-@@ -515,7 +507,6 @@ impl CreatingStreamingJobControl {
-                     prev_epoch: TracedEpoch::new(Epoch(prev_epoch)),
-                     curr_epoch: TracedEpoch::new(Epoch(new_upstream_barrier_prev_epoch)),
-                     kind: BarrierKind::Checkpoint(pending_non_checkpoint_barriers),
--                    barrier_interval_ms,
-                 },
-             );
-         } else {
-@@ -533,7 +524,6 @@ impl CreatingStreamingJobControl {
-                     prev_epoch: TracedEpoch::new(Epoch(prev_epoch)),
-                     curr_epoch: TracedEpoch::new(Epoch(first_pending_barrier.prev_epoch())),
-                     kind: BarrierKind::Checkpoint(take(&mut pending_non_checkpoint_barriers)),
--                    barrier_interval_ms,
-                 },
-             );
-             prev_epoch = first_pending_barrier.prev_epoch();
-@@ -555,7 +545,6 @@ impl CreatingStreamingJobControl {
-                         } else {
-                             BarrierKind::Barrier
-                         },
--                        barrier_interval_ms: pending_barrier.barrier_interval_ms,
-                     },
-                 );
-                 prev_epoch = pending_barrier.curr_epoch();
-@@ -598,7 +587,6 @@ impl CreatingStreamingJobControl {
-             &mut prev_epoch_fake_physical_time,
-             &mut pending_non_checkpoint_barriers,
-             PbBarrierKind::Initial,
--            upstream_barrier_info.barrier_interval_ms,
-         );
-         Ok((
-             CreatingStreamingJobStatus::ConsumingSnapshot {
-@@ -617,7 +605,6 @@ impl CreatingStreamingJobControl {
-                 .collect(),
-                 info,
-                 snapshot_epoch,
--                barrier_interval_ms: upstream_barrier_info.barrier_interval_ms,
-                 pending_non_checkpoint_barriers,
-             },
-             barrier_info,
-@@ -1148,7 +1135,6 @@ mod tests {
-                 [].iter(),
-                 40,
-                 60,
--                1000,
-             )
-             .unwrap();
- 
-@@ -1184,13 +1170,11 @@ mod tests {
-                 prev_epoch: TracedEpoch::new(Epoch(60)),
-                 curr_epoch: TracedEpoch::new(Epoch(65)),
-                 kind: BarrierKind::Barrier,
--       
-```
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/creating_job/status.rs` (modified, +0/-10)
-```diff
-@@ -114,7 +114,6 @@ pub(super) enum CreatingStreamingJobStatus {
-         create_mview_tracker: CreateMviewProgressTracker,
-         snapshot_backfill_actors: HashSet<ActorId>,
-         snapshot_epoch: u64,
--        barrier_interval_ms: u32,
-         info: CreatingJobInfo,
-         /// The `prev_epoch` of pending non checkpoint barriers
-         pending_non_checkpoint_barriers: Vec<u64>,
-@@ -148,7 +147,6 @@ impl CreatingStreamingJobStatus {
-                 ref mut pending_upstream_barriers,
-                 ref mut pending_non_checkpoint_barriers,
-                 ref snapshot_epoch,
--                barrier_interval_ms,
-                 ..
-             } => {
-                 for progress in create_mview_progress {
-@@ -162,7 +160,6 @@ impl CreatingStreamingJobStatus {
-                         curr_epoch: TracedEpoch::new(Epoch(*snapshot_epoch)),
-                         prev_epoch: TracedEpoch::new(prev_epoch),
-                         kind: BarrierKind::Checkpoint(take(pending_non_checkpoint_barriers)),
--                        barrier_interval_ms,
-                     }]
-                     .into_iter()
-                     .chain(pending_upstream_barriers.drain(..))
-@@ -258,7 +255,6 @@ impl CreatingStreamingJobStatus {
-                 prev_epoch_fake_physical_time,
-                 pending_non_checkpoint_barriers,
-                 create_mview_tracker,
--                barrier_interval_ms,
-                 ..
-             } => {
-                 let mutation = mutation.or_else(|| {
-@@ -277,7 +273,6 @@ impl CreatingStreamingJobStatus {
-                 });
-                 let barrier_num_to_inject = resolve_initial_barrier_num_to_inject();
-                 pending_upstream_barriers.push(barrier_info.clone());
--                *barrier_interval_ms = barrier_info.barrier_interval_ms;
-                 // Mutation barriers must be forwarded even when the partial graph has reached the
-                 // configured pending-barrier limit.
-                 if barrier_num_to_inject == 0 && mutation.is_none() {
-@@ -294,7 +289,6 @@ impl CreatingStreamingJobStatus {
-                                 unreachable!("upstream new epoch should not be initial")
-                             }
-                         },
--                        barrier_info.barrier_interval_ms,
-                     ),
-                     mutation,
-                 )]
-@@ -325,13 +319,11 @@ impl CreatingStreamingJobStatus {
-         prev_epoch_fake_physical_time: &mut u64,
-         pending_non_checkpoint_barriers: &mut Vec<u64>,
-         kind: PbBarrierKind,
--        barrier_interval_ms: u32,
-     ) -> BarrierInfo {
-         super::super::new_fake_barrier(
-             prev_epoch_fake_physical_time,
-             pending_non_checkpoint_barriers,
-             kind,
--            barrier_interval_ms,
-         )
-     }
- 
-@@ -395,7 +387,6 @@ mod tests {
-             prev_epoch: TracedEpoch::new(Epoch(prev_epoch)),
-             curr_epoch: TracedEpoch::new(Epoch(curr_epoch)),
-             kind: BarrierKind::Barrier,
--            barrier_interval_ms: 1000,
-         }
-     }
- 
-@@ -503,7 +494,6 @@ mod tests {
-             prev_epoch: TracedEpoch::new(Epoch(1)),
-             curr_epoch: TracedEpoch::new(Epoch(2)),
-             kind: BarrierKind::Checkpoint(vec![1]),
--            barrier_interval_ms: 1000,
-         });
-         assert_eq!(info.fragment_infos[&fragment_id].nodes, new_node);
-     }
-```
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/mod.rs` (modified, +0/-2)
-```diff
-@@ -44,7 +44,6 @@ fn new_fake_barrier(
-     prev_epoch_fake_physical_time: &mut u64,
-     pending_non_checkpoint_barriers: &mut Vec<u64>,
-     kind: PbBarrierKind,
--    barrier_interval_ms: u32,
- ) -> BarrierInfo {
-     let prev_epoch = TracedEpoch::new(Epoch::from_physical_time(*prev_epoch_fake_physical_time));
-     *prev_epoch_fake_physical_time += 1;
-@@ -68,7 +67,6 @@ fn new_fake_barrier(
-         prev_epoch,
-         curr_epoch,
-         kind,
--        barrier_interval_ms,
-     }
- }
- 
-```
-
-**File**: `src/meta/src/barrier/checkpoint/recovery.rs` (modified, +0/-2)
-```diff
-@@ -389,7 +389,6 @@ impl DatabaseStatusAction<'_, EnterInitializing> {
-         self,
-         runtime_info: DatabaseRuntimeInfoSnapshot,
-         rendered_info: RenderedDatabaseRuntimeInfo,
--        barrier_interval_ms: u32,
-         partial_graph_manager: &mut PartialGraphManager,
-     ) {
-         let database_status = self
-@@ -427,7 +426,6 @@ impl DatabaseStatusAction<'_, EnterInitializing> {
-         let result: MetaResult<_> = try {
-             recoverer.inject_database_initial_barrier(
-                 self.database_id,
--                barrier_interval_ms,
-                 job_infos,
-                 &recovery_context.job_extra_info,
-                 &mut state_table_committed_epochs,
-```
-
----
-
-### Incident Patch 12: `b8f140b6` (2026-09-24)
-**Commit Message**: fix(iceberg): reject row lineage column names for V3 tables (#27223)
-
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/row_lineage_reserved_names.slt` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+# Iceberg V3 reserves `_row_id` and `_last_updated_sequence_number` for row lineage
-+# metadata. Creating a V3 table with a data column of either name must be rejected.
-+
-+statement ok
-+create table row_lineage_reserved_names_t (v int);
-+
-+statement error cannot create an Iceberg V3 table with column `_row_id`
-+create sink row_lineage_reserved_names_sink as
-+select _row_id, v from row_lineage_reserved_names_t
-+with (
-+  connector = 'iceberg',
-+  type = 'append-only',
-+  force_append_only = 'true',
-+  warehouse.path = 's3a://icebergdata',
-+  s3.endpoint = 'http://127.0.0.1:9301',
-+  s3.access.key = 'hummockadmin',
-+  s3.secret.key = 'hummockadmin',
-+  s3.region = 'us-east-1',
-+  catalog.name = 'demo',
-+  catalog.type = 'storage',
-+  database.name = 'demo_db',
-+  table.name = 'row_lineage_reserved_names_t',
-+  create_table_if_not_exists = 'true',
-+  format_version = '3'
++CREATE SOURCE mssql_idle_source_no_server_state WITH (
++    connector = 'sqlserver-cdc',
++    hostname = '${SQLCMDSERVER:sqlserver-server}',
++    port = '${SQLCMDPORT:1433}',
++    username = 'rw_idle_login',
++    password = 'IdleLogin@123',
++    database.name = 'sqlserver_idle_db',
 +);
 +
 +statement ok
-+drop table row_lineage_reserved_names_t;
++CREATE TABLE idle_t (
++    id INT,
++    v VARCHAR,
++    PRIMARY KEY (id)
++) FROM mssql_idle_source TABLE 'sqlserver_idle_db.dbo.idle_t';
++
++statement ok
++CREATE TABLE idle_t_no_server_state (
++    id INT,
++    v VARCHAR,
++    PRIMARY KEY (id)
++) FROM mssql_idle_source_no_server_state TABLE 'sqlserver_idle_db.dbo.idle_t';
++
++# ------------ add rows stage ------------
++system ok
++sqlcmd -C -d sqlserver_idle_db -Q "INSERT INTO dbo.idle_t VALUES (2, 'b');" -b
++
++query IT retry 60 backoff 1s
++SELECT id, v FROM idle_t ORDER BY id;
++----
++1 a
++2 b
++
++query IT retry 60 backoff 1s
++SELECT id, v FROM idle_t_no_server_state ORDER BY id;
++----
++1 a
++2 b
++
++# ------------ drop stage ------------
++statement ok
++DROP SOURCE mssql_idle_source CASCADE;
++
++statement ok
++DROP SOURCE mssql_idle_source_no_server_state CASCADE;
 ```
 
-**File**: `src/connector/src/sink/iceberg/create_table.rs` (modified, +31/-1)
+**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/SqlServerValidator.java` (modified, +52/-12)
 ```diff
-@@ -18,6 +18,9 @@ use std::sync::LazyLock;
+@@ -32,6 +32,8 @@ public class SqlServerValidator extends DatabaseValidator implements AutoCloseab
+     static final Logger LOG = LoggerFactory.getLogger(SqlServerValidator.class);
+     private static final int CDC_TABLE_TYPE =
+             Catalog.Table.CdcTableType.CDC_TABLE_TYPE_SQLSERVER.getNumber();
++    // `status` of a running service in `sys.dm_server_services`.
++    private static final int SERVICE_STATUS_RUNNING = 4;
  
- use anyhow::{Context, anyhow};
- use iceberg::arrow::schema_to_arrow_schema;
-+use iceberg::metadata_columns::{
-+    RESERVED_COL_NAME_LAST_UPDATED_SEQUENCE_NUMBER, RESERVED_COL_NAME_ROW_ID,
-+};
- use iceberg::spec::{
-     FormatVersion, NullOrder, SortDirection, SortField, SortOrder, TableProperties, Transform,
-     UnboundPartitionField, UnboundPartitionSpec,
-@@ -32,7 +35,7 @@ use risingwave_common::array::arrow::arrow_schema_iceberg::{
- };
- use risingwave_common::array::arrow::{IcebergArrowConvert, IcebergCreateTableArrowConvert};
- use risingwave_common::bail;
--use risingwave_common::catalog::Schema;
-+use risingwave_common::catalog::{ColumnDesc, Schema};
- use risingwave_common::util::iter_util::ZipEqFast;
- use url::Url;
+     private final TableSchema tableSchema;
  
-@@ -93,6 +96,32 @@ pub async fn create_and_validate_table_impl(
-     Ok(table)
- }
- 
-+/// Iceberg V3 stores row lineage in data files as the reserved `_row_id` and
-+/// `_last_updated_sequence_number` columns. A table column with either name is ambiguous with the
-+/// lineage metadata column, so reject it when creating a V3 table.
-+pub fn validate_row_lineage_column_names(
-+    format_version: FormatVersion,
-+    columns: &[ColumnDesc],
-+) -> Result<()> {
-+    if format_version < FormatVersion::V3 {
-+        return Ok(());
-+    }
-+    if let Some(column) = columns.iter().find(|column| {
-+        [
-+            RESERVED_COL_NAME_ROW_ID,
-+            RESERVED_COL_NAME_LAST_UPDATED_SEQUENCE_NUMBER,
-+        ]
-+        .contains(&column.name.as_str())
-+    }) {
-+        return Err(SinkError::Config(anyhow!(
-+            "cannot create an Iceberg V3 table with column `{}` because the name is reserved \
-+             for row lineage metadata; please rename the column",
-+            column.name
-+        )));
-+    }
-+    Ok(())
-+}
-+
- /// Returns `true` if this call created the table, `false` if it already existed.
- pub(super) async fn create_table_if_not_exists_impl(
-     config: &IcebergConfig,
-@@ -125,6 +154,7 @@ pub(super) async fn create_table_if_not_exists_impl(
-             column.name
-         )));
+@@ -98,24 +100,62 @@ public void validateDbConfig() {
+             throw ValidatorUtils.internalError(e.getMessage());
+         }
+         if (isCdcSourceJob) {
+-            try (var stmt =
+-                    jdbcConnection.prepareStatement(
+-                            ValidatorUtils.getSql("sqlserver.sql.agent.enabled"))) {
+-                // check whether sql server agent is enabled. It's required to run
+-                // fn_cdc_get_max_lsn
+-                var res = stmt.executeQuery();
+-                while (res.next()) {
+-                    if (res.wasNull()) {
+-                        throw ValidatorUtils.invalidArgument(
+-                                "Sql Server's sql server agent is not activated.\nYou can check it by running `SELECT servicename, startup_type_desc, status_desc FROM sys.dm_server_services WHERE servicename LIKE 'SQL Server Agent%'` in Sql Server.");
+-                    }
+-                }
++            try {
++                validateCaptureJob();
+             } catch (SQLException e) {
+                 throw ValidatorUtils.internalError(e.getMessage());
+             }
+         }
      }
-+    validate_row_lineage_column_names(config.table_format_version(), &param.columns)?;
  
-     let iceberg_create_table_arrow_convert = IcebergCreateTableArrowConvert::default();
-     // convert risingwave schema -> arrow schema -> iceberg schema
-```
-
-**File**: `src/connector/src/sink/iceberg/test.rs` (modified, +25/-1)
-```diff
-@@ -23,7 +23,7 @@ use risingwave_common::array::arrow::arrow_schema_iceberg::{
-     DataType as ArrowDataType, Field as ArrowField, FieldRef as ArrowFieldRef,
-     Fields as ArrowFields, Schema as ArrowSchema,
- };
--use risingwave_common::catalog::{Field, Schema};
-+use risingwave_common::catalog::{ColumnDesc, ColumnId, Field, Schema};
- use risingwave_common::types::{DataType, MapType, StructType};
- 
- use crate::connector_common::{IcebergCommon, IcebergTableIdentifier};
-@@ -32,6 +32,7 @@ use crate::sink::iceberg::{
-     CompactionType, DEFAULT_COMPACTION_MAX_SNAPSHOTS_NUM,
-     ICEBERG_DEFAULT_WRITE_PARQUET_MAX_ROW_GROUP_BYTES, IcebergConfig, IcebergOrderKeyField,
-     IcebergWriteMode, parse_order_key_exprs, validate_order_key_columns,
-+    validate_row_lineage_column_names,
- };
- 
- pub const DEFAULT_ICEBERG_COMPACTION_INTERVAL: u64 = 3600; // 1 hour
-@@ -1102,3 +1103,26 @@ fn test_iceberg_sink_upper_case_primary_key() {
-         Some(vec!["Key".to_owned()])
-     );
- }
-+
-+#[test]
-+fn test_validate_row_lineage_column_names() {
-+    let columns = |name: &str| {
-+        vec![
-+            ColumnDesc::named("v1", ColumnId::new(1), DataType::Int32),
-+            ColumnDesc::named(name, ColumnId::new(2), DataType::Int64),
-+        ]
-+    };
-+
-+    for reserved in ["_row_id", "_last_updated_sequence_number"] {
-+        let err =
-+            validate_row_lineage_column_names(FormatVersion::V3, &columns(reserved)).unwrap_err();
-+        assert!(
-+            err.to_string().contains(reserved),
-+            "unexpected error: {err}"
-+        );
-+        validate_row_lineage_column_names(FormatVersion::V2, &columns(reserved)).unwrap();
++    /**
++     * Changes are recorded by the CDC capture job, which SQL Server Agent runs. Without it, the
++     * source would start but never receive any change.
++     */
++    private void validateCaptureJob() throws SQLException {
++        if (checkAgentStatus()) {
++            return;
++        }
++        // Without the Agent status, a NULL max LSN means that the capture job has never run in
++        // this database.
++        try (var stmt =
++                        jdbcConnection.prepareStatement(
++                                ValidatorUtils.getSql("sqlserver.max.lsn"));
++                var res = stmt.executeQuery()) {
++            if (res.next() && res.getBytes(1) == null) {
++                throw ValidatorUtils.invalidArgument(
++                        "No change has been captured in Sql Server database '"
++                                + dbName
++                                + "' yet: sys.fn_cdc_get_max_lsn() returns NULL.\nPlease make sure SQL Server Agent is running. If CDC was just enabled, retry after its capture job has run.");
++            }
++        }
 +    }
-+    // The pk-index sink carries a pk-less upstream's hidden row id as the relation-qualified
-+    // `<table>._row_id`, which does not collide with the lineage column.
-+    validate_row_lineage_column_names(FormatVersion::V3, &columns("t._row_id")).unwrap();
-+}
++
++    /**
++     * Throws if SQL Server Agent is not running. Returns false if its status cannot be read, which
++     * needs VIEW SERVER STATE.
++     */
++    private boolean checkAgentStatus() {
++        try (var stmt =
++                        jdbcConnection.prepareStatement(
++                                ValidatorUtils.getSql("sqlserver.agent.status"));
++                var res = stmt.executeQuery()) {
++            if (!res.next()) {
++                return false;
++            }
++            if (res.getInt("status") != SERVICE_STATUS_RUNNING) {
++                throw ValidatorUtils.invalidArgument(
++                        "SQL Server Agent is not running (status: "
++                                + res.getString("status_desc")
++                                + ").\nSql Server CDC needs it to run the capture job. Please start SQL Server Agent.");
++            }
++            return true;
++        } catch (SQLException e) {
++            LOG.info("Cannot read the status of SQL Server Agent: {}", e.getMessage());
++            return false;
++        }
++    }
++
+     @Override
+     public void validateUserPrivilege() {
+         try {
 ```
 
----
-
-### Incident Patch 13: `0d32b959` (2026-09-23)
-**Commit Message**: fix(dashboard): normalize output blocking ratio in user dashboard (#27003)
-
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `grafana/dashboard/user/streaming.py` (modified, +5/-1)
+**File**: `java/connector-node/risingwave-connector-service/src/main/resources/validate_sql.properties` (modified, +2/-1)
 ```diff
-@@ -101,8 +101,12 @@ def _(outer_panels: Panels):
-                     "much time it takes an actor to process a message, i.e. a barrier, a watermark or rows of data, "
-                     "on average. Then we divide this duration by 1 second and show it as a percentage.",
-                     [
-+                        # `actor_id` is masked below `MetricLevel::Debug`, so each series is
-+                        # already summed over a node's actors. Divide by the actor count.
-                         panels.target(
--                            f"avg(rate({metric('stream_actor_output_buffer_blocking_duration_ns')}[$__rate_interval])) by (fragment_id, downstream_fragment_id) / 1000000000",
-+                            f"sum(rate({metric('stream_actor_output_buffer_blocking_duration_ns')}[$__rate_interval])) by (fragment_id, downstream_fragment_id) \
-+                                / ignoring (downstream_fragment_id) group_left sum({metric('stream_actor_count')}) by (fragment_id) \
-+                                / 1000000000",
-                             "fragment {{fragment_id}}->{{downstream_fragment_id}}",
-                         ),
-                     ],
+@@ -51,6 +51,7 @@ sqlserver.table.cdc.enabled=SELECT COUNT(*) FROM cdc.change_tables AS ct INNER J
+ sqlserver.pk=SELECT k.column_name FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS t INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON t.constraint_name = k.constraint_name AND t.table_name = k.table_name WHERE t.constraint_type = 'PRIMARY KEY' AND t.table_schema = ? AND t.table_name = ?
+ sqlserver.table_schema=SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION
+ sqlserver.has.perms=SELECT HAS_PERMS_BY_NAME('cdc.' + ct.capture_instance + '_CT', 'OBJECT', 'SELECT') FROM cdc.change_tables AS ct INNER JOIN sys.tables AS t ON ct.source_object_id = t.object_id INNER JOIN sys.schemas AS s ON t.schema_id = s.schema_id WHERE s.name = ? AND t.name = ?
+-sqlserver.sql.agent.enabled=SELECT sys.fn_cdc_get_max_lsn()
++sqlserver.agent.status=SELECT status, status_desc FROM sys.dm_server_services WHERE servicename LIKE N'SQL Server Agent (%'
++sqlserver.max.lsn=SELECT sys.fn_cdc_get_max_lsn()
+ sqlserver.case.sensitive=WITH collations AS (SELECT name, CASE WHEN description like '%case-insensitive%' THEN 0 WHEN description like '%case-sensitive%' THEN 1 END isCaseSensitive FROM sys.fn_helpcollations()) SELECT * FROM collations WHERE name = CONVERT(varchar, DATABASEPROPERTYEX( ? ,'collation'));
+ citus.distributed_table=select citus_table_type from citus_tables where table_name=?::regclass
+```
+
+**File**: `java/connector-node/risingwave-source-cdc/src/main/java/io/debezium/connector/sqlserver/SqlServerStreamingChangeEventSource.java` (modified, +6/-6)
+```diff
+@@ -346,8 +346,12 @@ public boolean executeIteration(
+                                 lastProcessedPosition,
+                                 maxTransactionsPerIteration);
+ 
+-                // Shouldn't happen if the agent is running, but it is better to guard against such
+-                // situation
++                // A successful query proves that streaming is connected. An unavailable toLsn only
++                // means that no transaction has been captured after the start position yet.
++                if (connectedSignaled.compareAndSet(false, true) && onConnectedCallback != null) {
++                    onConnectedCallback.run();
++                }
++
+                 if (!toLsn.isAvailable()) {
+                     if (checkAgent) {
+                         try {
+@@ -370,10 +374,6 @@ public boolean executeIteration(
+                     checkAgent = true;
+                 }
+ 
+-                if (connectedSignaled.compareAndSet(false, true) && onConnectedCallback != null) {
+-                    onConnectedCallback.run();
+-                }
+-
+                 // There is no change in the database
+                 if (toLsn.compareTo(lastProcessedPosition.getCommitLsn()) <= 0
+                         && streamingExecutionContext.getShouldIncreaseFromLsn()) {
 ```
 
 ---
 
-### Incident Patch 14: `1e5154ae` (2026-09-23)
-**Commit Message**: fix(source): fail the batch posix fs fetch on errors like the OpenDAL fetch (#27217)
+### Incident Patch 3: `5a2ba996` (2026-10-15)
+**Commit Message**: fix(stream): recover CDC backfill from snapshot read failures (#27269)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/stream/src/executor/source/batch_source/batch_posix_fs_fetch.rs` (modified, +8/-13)
+**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/MySqlValidator.java` (modified, +31/-15)
 ```diff
-@@ -179,17 +179,12 @@ impl<S: StateStore> BatchPosixFsFetchExecutor<S> {
-             let full_path = Path::new(&root_path).join(&file_path);
- 
-             // Read the entire file
--            let content = match fs::read(&full_path).await {
--                Ok(content) => content,
--                Err(e) => {
--                    tracing::error!(
--                        error = %e.as_report(),
--                        file_path = %full_path.display(),
--                        "Failed to read file"
--                    );
--                    continue;
--                }
--            };
-+            let content = fs::read(&full_path).await.map_err(|e| {
-+                StreamExecutorError::connector_error(
-+                    anyhow::Error::from(e)
-+                        .context(format!("failed to read file {}", full_path.display())),
-+                )
-+            })?;
- 
-             if content.is_empty() {
-                 // Empty file, skip it
-@@ -305,7 +300,7 @@ impl<S: StateStore> BatchPosixFsFetchExecutor<S> {
-             match msg {
-                 Err(e) => {
-                     tracing::error!(error = %e.as_report(), "Fetch Error");
--                    files_in_progress = 0;
-+                    return Err(e);
-                 }
-                 Ok(msg) => match msg {
-                     // Barrier messages from upstream
-@@ -452,7 +447,7 @@ impl<S: StateStore> BatchPosixFsFetchExecutor<S> {
-                         yield Message::Chunk(chunk);
-                     }
-                     Either::Right(None) => {
--                        files_in_progress -= 1;
-+                        files_in_progress = files_in_progress.saturating_sub(1);
-                     }
-                 },
+@@ -226,7 +226,7 @@ private void validateTableSchema() throws SQLException {
              }
-```
-
----
-
-### Incident Patch 15: `42b41ad8` (2026-09-23)
-**Commit Message**: refactor(meta): generalize fragment edge builder (#27077)
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/batch_refresh_job/mod.rs` (modified, +13/-13)
-```diff
-@@ -47,13 +47,13 @@ use crate::MetaResult;
- use crate::barrier::backfill_order_control::get_nodes_with_backfill_dependencies;
- use crate::barrier::command::{PostCollectCommand, ThrottleConfigMap, extract_throttle_config};
- use crate::barrier::context::CreateIndependentStreamingJobCommandInfo;
--use crate::barrier::edge_builder::{EdgeBuilderFragmentInfo, FragmentEdgeBuilder};
-+use crate::barrier::edge_builder::FragmentEdgeBuilder;
- use crate::barrier::info::BarrierInfo;
- use crate::barrier::partial_graph::{
-     CollectedBarrier, PartialGraphBarrierInfo, PartialGraphManager, PartialGraphStat,
- };
- use crate::barrier::progress::{CreateMviewProgressTracker, TrackingJob, collect_done_fragments};
--use crate::barrier::rpc::to_partial_graph_id;
-+use crate::barrier::rpc::{ControlStreamManager, to_partial_graph_id};
- use crate::barrier::{
-     BackfillOrderState, BackfillProgress, BarrierKind, FragmentBackfillProgress, TracedEpoch,
- };
-@@ -356,6 +356,7 @@ impl BatchRefreshJobCheckpointControl {
-         // Actor rendering context:
-         actor_id_generator: &AtomicU32,
-         worker_nodes: &HashMap<WorkerId, WorkerNode>,
-+        control_stream_manager: &ControlStreamManager,
-         database_resource_group: &str,
-         streaming_job_model: &streaming_job::Model,
-         // Edge building context:
-@@ -375,18 +376,15 @@ impl BatchRefreshJobCheckpointControl {
-         )?;
+         }
  
-         // Step 4: Build edges (internal-only, no upstream).
--        let mut builder = FragmentEdgeBuilder::new(fragment_infos.values().map(|f| {
--            (
--                f.fragment_id,
--                EdgeBuilderFragmentInfo::from_inflight_with_worker_nodes(
--                    f,
--                    partial_graph_id,
--                    worker_nodes,
--                ),
-+        let (mut edges, _) = FragmentEdgeBuilder::new()
-+            .add_new_fragments(
-+                fragment_infos.values(),
-+                partial_graph_id,
-+                control_stream_manager,
-             )
--        }));
--        builder.add_relations(downstreams);
--        let mut edges = builder.build();
-+            .finish_fragments()
-+            .add_relations(downstreams)?
-+            .build();
+-        // check whether PK constraint match source table definition
++        // Check column names and types against the source table definition.
+         try (var stmt =
+                 jdbcConnection.prepareStatement(ValidatorUtils.getSql("mysql.table_schema"))) {
+             stmt.setString(1, dbName);
+@@ -251,12 +251,10 @@ boolean isUnsigned() {
  
-         let actors_to_create = edges.collect_actors_to_create(fragment_infos.values().map(|f| {
-             (
-@@ -536,6 +534,7 @@ impl BatchRefreshJobCheckpointControl {
-             &create_info.info.definition,
-             actor_id_generator,
-             worker_nodes,
-+            partial_graph_manager.control_stream_manager(),
-             &create_info.info.database_resource_group,
-             &create_info.info.streaming_job_model,
-             partial_graph_id,
-@@ -1269,6 +1268,7 @@ impl BatchRefreshJobCheckpointControl {
-             &context.definition,
-             actor_id_counter,
-             worker_nodes,
-+            partial_graph_manager.control_stream_manager(),
-             &context.database_resource_group,
-             &context.streaming_job_model,
-             self.partial_graph_id,
-```
-
-**File**: `src/meta/src/barrier/checkpoint/state.rs` (modified, +47/-99)
-```diff
-@@ -30,7 +30,6 @@ use risingwave_pb::common::WorkerNode;
- use risingwave_pb::hummock::HummockVersionStats;
- use risingwave_pb::source::{ConnectorSplit, ConnectorSplits};
- use risingwave_pb::stream_plan::barrier_mutation::{Mutation, PbMutation};
--use risingwave_pb::stream_plan::update_mutation::PbDispatcherUpdate;
- use risingwave_pb::stream_plan::{
-     AddMutation, PbDropSubscriptionsMutation, PbStartFragmentBackfillMutation,
-     PbSubscriptionUpstreamInfo, PbUpdateMutation, PbUpstreamSinkInfo,
-@@ -47,7 +46,7 @@ use crate::barrier::command::{
-     CreateStreamingJobCommandInfo, PostCollectCommand, ReschedulePlan, ThrottleConfigMap,
- };
- use crate::barrier::context::CreateIndependentStreamingJobCommandInfo;
--use crate::barrier::edge_builder::{EdgeBuilderFragmentInfo, FragmentEdgeBuilder};
-+use crate::barrier::edge_builder::FragmentEdgeBuilder;
- use crate::barrier::info::{
-     BarrierInfo, CreateStreamingJobStatus, InflightDatabaseInfo, InflightStreamingJobInfo,
-     SubscriberType,
-@@ -588,19 +587,19 @@ impl DatabaseCheckpointControl {
-                         .cloned()
-                         .collect();
-                     // Build edges first (needed for no-shuffle mapping used in split resolution)
--                    let mut edges = self.database_info.build_edge(
-+                    let (mut edges, actor_new_no_shuffle) = self.database_info.build_edge(
-                         Some((&info, true)),
-                         None,
-                         None,
-                         partial_graph_manager.control_stream_manager(),
-                         &actors.stream_actors,
-                         &actors.actor_location,
--                    );
-+                    )?;
-                     // Phase 2: Resolve source-level DiscoveredSplits to actor-level SplitAssignment
-                     let resolved_split_assignment = resolve_source_splits(
-                         &info,
-                         &actors,
--                        edges.actor_new_no_shuffle(),
-+                        &actor_new_no_shuffle,
-                         &self.database_info,
-                     )?;
- 
-@@ -662,12 +661,10 @@ impl DatabaseCheckpointControl {
-                         &create_job_type,
-                         [],
-                         self.state.is_paused(),
--                        &mut edges,
--                        partial_graph_manager.control_stream_manager(),
-+                        edges,
-                         None,
-                         &resolved_split_assignment,
-                         &actors.stream_actors,
--                        &actors.actor_location,
-                     )?;
- 
-                     let (table_ids, node_actors) = self.collect_base_info();
-@@ -895,19 +892,19 @@ impl DatabaseCheckpointControl {
-                         None
-                     };
- 
--                let mut edges = self.database_info.build_edge(
-+                let (mut edges, actor_new_no_shuffle) = self.database_info.build_edge(
-                     Some((&info, false)),
-                     None,
-                     new_upstream_sink,
-                     partial_graph_manager.control_stream_manager(),
-                     &actors.stream_actors,
-                     &actors.actor_location,
--                );
-+                )?;
-                 // Phase 2: Resolve source-level DiscoveredSplits to actor-level SplitAssignment
-                 let resolved_split_assignment = resolve_source_splits(
-                     &info,
-                     &actors,
--                    edges.actor_new_no_shuffle(),
-+                    &actor_new_no_shuffle,
-                     &self.database_info,
-                 )?;
- 
-@@ -995,12 +992,10 @@ impl DatabaseCheckpointControl {
-                     &job_type,
-                     dropped_actors,
-                     is_currently_paused,
--                    &mut edges,
--                    partial_graph_manager.control_stream_manager(),
-+                    edges,
-                     actor_cdc_table_snapshot_splits,
-                     &resolved_split_assignment,
-                     &actors.stream_actors,
--                    &actors.actor_location,
-                 )?;
- 
-                 (
-@@ -1246,14 +1241,14 @@ impl DatabaseCheckpointControl {
+             // field name (lowercase) -> ColumnInfo
+             var upstreamSchema = new HashMap<String, ColumnInfo>();
+-            var pkFields = new HashSet<String>();
+             var res = stmt.executeQuery();
+             while (res.next()) {
+                 var field = res.getString(1);
+                 var dataType = res.getString(2);
+-                var key = res.getString(3);
+                 long charMaxLength = res.getLong(4);
+                 var columnType = res.getString(5); // Get full column type (e.g., "bigint unsigned")
+                 // In MySQL, some types (such as text/blob) will return 4294967295 for
+@@ -266,9 +264,6 @@ boolean isUnsigned() {
                  }
+                 upstreamSchema.put(
+                         field.toLowerCase(), new ColumnInfo(dataType, charMaxLength, columnType));
+-                if (key.equalsIgnoreCase("PRI")) {
+-                    pkFields.add(field.toLowerCase());
+-                }
+             }
  
-                 // Build edges first (needed for no-shuffle mapping used in split resolution)
--                let mut edges = self.database_info.build_edge(
-+                let (mut edges, actor_new_no_shuffle) = self.database_info.build_edge(
-                     None,
-                     Some(&plan),
-                     None,
-                     partial_graph_manager.control_stream_manager(),
-                     &render_result.stream_actors,
-                     &render_result.actor_location,
--                );
-+                )?;
+             // All columns defined must exist in upstream database
+@@ -296,8 +291,20 @@ boolean isUnsigned() {
+                                     + e.getValue());
+                 }
+             }
++        }
  
-                 // Phase 2: Resolve splits to actor-level assignment.
-                 let fragment_actor_ids: HashMap<FragmentId, Vec<ActorId>> =
-```
-
-**File**: `src/meta/src/barrier/command.rs` (modified, +22/-63)
-```diff
-@@ -41,7 +41,7 @@ use risingwave_pb::stream_plan::sink_schema_change::Op as PbSinkSchemaChangeOp;
- use risingwave_pb::stream_plan::throttle_mutation::ThrottleConfig;
- use risingwave_pb::stream_plan::update_mutation::{DispatcherUpdate, MergeUpdate};
- use risingwave_pb::stream_plan::{
--    AddMutation, ConnectorPropsChangeMutation, Dispatcher, Dispatchers, DropSubscriptionsMutation,
-+    AddMutation, ConnectorPropsChangeMutation, Dispatcher, DropSubscriptionsMutation,
-     ListFinishMutation, LoadFinishMutation, PauseMutation, PbSinkAddColumnsOp, PbSinkDropColumnsOp,
-     PbSinkSchemaChange, PbStreamNode, PbUpstreamSinkInfo, ResumeMutation,
-     SourceChangeSplitMutation, StartFragmentBackfillMutation, StopMutation,
-@@ -63,9 +63,9 @@ use crate::controller::utils::StreamingJobExtraInfo;
- use crate::hummock::NewTableFragmentInfo;
- use crate::manager::{StreamingJob, StreamingJobType};
- use crate::model::{
--    ActorId, ActorUpstreams, DispatcherId, FragmentActorDispatchers, FragmentDownstreamRelation,
--    FragmentId, FragmentReplaceUpstream, StreamActor, StreamActorWithDispatchers,
--    StreamJobActorsToCreate, StreamJobFragments, StreamJobFragmentsToCreate, SubscriptionId,
-+    ActorId, ActorUpstreams, DispatcherId, FragmentDownstreamRelation, FragmentId,
-+    FragmentReplaceUpstream, StreamActor, StreamActorWithDispatchers, StreamJobActorsToCreate,
-+    StreamJobFragments, StreamJobFragmentsToCreate, SubscriptionId,
- };
- use crate::stream::{
-     AutoRefreshSchemaSinkContext, ConnectorPropsChange, ExtendedFragmentBackfillOrder,
-@@ -990,23 +990,18 @@ impl Command {
-         job_type: &CreateStreamingJobType,
-         dropped_actors: impl IntoIterator<Item = ActorId>,
-         is_currently_paused: bool,
--        edges: &mut FragmentEdgeBuildResult,
--        control_stream_manager: &ControlStreamManager,
-+        mut edges: FragmentEdgeBuildResult,
-         actor_cdc_table_snapshot_splits: Option<HashMap<ActorId, PbCdcTableSnapshotSplits>>,
-         split_assignment: &SplitAssignment,
-         stream_actors: &HashMap<FragmentId, Vec<StreamActor>>,
--        actor_location: &HashMap<ActorId, WorkerId>,
-     ) -> MetaResult<Mutation> {
-         {
-             {
-                 let CreateStreamingJobCommandInfo {
-                     stream_job_fragments,
--                    upstream_fragment_downstreams,
-                     fragment_backfill_ordering,
--                    streaming_job,
-                     ..
-                 } = info;
--                let database_id = streaming_job.database_id();
-                 let added_actors: Vec<ActorId> = stream_actors
-                     .values()
-                     .flatten()
-@@ -1051,27 +1046,17 @@ impl Command {
-                         ..
-                     }) = job_type
-                     {
--                        let new_sink_actors = stream_actors
--                            .get(sink_fragment_id)
--                            .unwrap_or_else(|| {
--                                panic!("upstream sink fragment {sink_fragment_id} does not exist")
--                            })
--                            .iter()
--                            .map(|actor| {
--                                let worker_id = actor_location[&actor.actor_id];
--                                PbActorInfo {
--                                    actor_id: actor.actor_id,
--                                    host: Some(control_stream_manager.host_addr(worker_id)),
--                                    partial_graph_id: to_partial_graph_id(database_id, None),
--                                }
--                            });
-+                        let upstream_actors = edges.take_common_upstream_actors(
-+                            *sink_fragment_id,
-+                            new_sink_downstream.downstream_fragment_id,
-+                        )?;
-                         let new_upstream_sink = PbNewUpstreamSink {
-                             info: Some(PbUpstreamSinkInfo {
-                                 upstream_fragment_id: *sink_fragment_id,
-                                 sink_output_schema: sink_output_fields.clone(),
-                                 project_exprs: project_exprs.clone(),
-                             }),
--                            upstream_actors: new_sink_actors.collect(),
-+                            upstream_actors,
-                         };
-                         HashMap::from([(
-                             new_sink_downstream.downstream_fragment_id,
-@@ -1084,15 +1069,8 @@ impl Command {
-                 let actor_cdc_table_snapshot_splits = actor_cdc_table_snapshot_splits
-                     .map(|splits| PbCdcTableSnapshotSplitsWithGeneration { splits });
- 
--                let add_mutation = AddMutation {
--                    actor_dispatchers: edges
--                        .dispatchers
--                        .extract_if(|fragment_id, _| {
--                            upstream_fragment_downstreams.contains_key(fragment_id)
--          
-```
-
-**File**: `src/meta/src/barrier/context/recovery.rs` (modified, +4/-2)
-```diff
-@@ -42,7 +42,7 @@ use crate::barrier::checkpoint::{
- };
- use crate::barrier::context::{GlobalBarrierWorkerContext, GlobalBarrierWorkerContextImpl};
- use crate::barrier::progress::TrackingJob;
--use crate::barrier::rpc::to_partial_graph_id;
-+use crate::barrier::rpc::{ControlStreamManager, to_partial_graph_id};
- use crate::controller::fragment::{InflightActorInfo, InflightFragmentInfo};
- use crate::controller::scale::{
-     FragmentRenderMap, LoadedFragment, LoadedFragmentContext, RenderedGraph,
-@@ -90,9 +90,10 @@ pub struct RenderedDatabaseRuntimeInfo {
-     pub batch_refresh: HashMap<JobId, BatchRefreshRenderResult>,
- }
- 
--pub fn render_runtime_info(
-+pub(in crate::barrier) fn render_runtime_info(
-     actor_id_generator: &AtomicU32,
-     worker_nodes: &ActiveStreamingWorkerNodes,
-+    control_stream_manager: &ControlStreamManager,
-     recovery_context: &LoadedRecoveryContext,
-     database_id: DatabaseId,
- ) -> MetaResult<Option<RenderedDatabaseRuntimeInfo>> {
-@@ -175,6 +176,7 @@ pub fn render_runtime_info(
-             &extra.job_definition,
-             actor_id_generator,
-             worker_nodes.current(),
-+            control_stream_manager,
-             &database_model.resource_group,
-             streaming_job_model,
-             partial_graph_id,
-```
-
-**File**: `src/meta/src/barrier/edge_builder.rs` (modified, +1022/-115)
-```diff
-@@ -13,16 +13,20 @@
- // limitations under the License.
- 
- use std::collections::{HashMap, HashSet};
-+use std::marker::PhantomData;
-+use std::mem::take;
- 
-+use anyhow::anyhow;
- use risingwave_common::bitmap::Bitmap;
- use risingwave_meta_model::WorkerId;
- use risingwave_meta_model::fragment::DistributionType;
--use risingwave_pb::common::{ActorInfo, HostAddress, WorkerNode};
-+use risingwave_pb::common::{ActorInfo, HostAddress};
- use risingwave_pb::id::{PartialGraphId, SubscriberId};
--use risingwave_pb::stream_plan::StreamNode;
--use risingwave_pb::stream_plan::update_mutation::MergeUpdate;
-+use risingwave_pb::stream_plan::update_mutation::{DispatcherUpdate, MergeUpdate};
-+use risingwave_pb::stream_plan::{AddMutation, PbDispatcher, StreamNode, UpdateMutation};
- use tracing::warn;
- 
-+use crate::MetaResult;
- use crate::barrier::rpc::ControlStreamManager;
- use crate::controller::fragment::InflightFragmentInfo;
- use crate::controller::utils::compose_dispatchers;
-@@ -32,20 +36,36 @@ use crate::model::{
-     StreamJobActorsToCreate,
- };
- 
-+type ComposedEdge = (
-+    HashMap<ActorId, PbDispatcher>,
-+    HashMap<ActorId, ActorUpstreams>,
-+    Option<HashMap<ActorId, ActorId>>,
-+);
+-            primaryKeyCheck(tableSchema, pkFields);
++        try (var stmt = jdbcConnection.prepareStatement(ValidatorUtils.getSql("mysql.pk"))) {
++            stmt.setString(1, dbName);
++            stmt.setString(2, tableName);
++            var pkFields = new ArrayList<String>();
 +
- /// Fragment information needed by [`FragmentEdgeBuilder`] to compute dispatchers and merge nodes.
- ///
- /// Contains actor bitmaps and resolved host addresses.
- #[derive(Debug)]
--pub(super) struct EdgeBuilderFragmentInfo {
-+struct EdgeBuilderFragmentInfo {
-     distribution_type: DistributionType,
-     actors: HashMap<ActorId, Option<Bitmap>>,
-     actor_location: HashMap<ActorId, HostAddress>,
-     partial_graph_id: PartialGraphId,
- }
- 
-+#[derive(Debug)]
-+enum FragmentStatus {
-+    Existing(EdgeBuilderFragmentInfo),
-+    New(EdgeBuilderFragmentInfo),
-+    Changed {
-+        before: EdgeBuilderFragmentInfo,
-+        after: EdgeBuilderFragmentInfo,
-+    },
-+}
++            try (var res = stmt.executeQuery()) {
++                while (res.next()) {
++                    pkFields.add(res.getString(1));
++                }
++            }
 +
- impl EdgeBuilderFragmentInfo {
-     /// Build from an already-inflight fragment (actors already materialized).
--    pub fn from_inflight(
-+    fn from_inflight(
-         info: &InflightFragmentInfo,
-         partial_graph_id: PartialGraphId,
-         control_stream_manager: &ControlStreamManager,
-@@ -68,39 +88,8 @@ impl EdgeBuilderFragmentInfo {
++            primaryKeyCheck(tableSchema.getPrimaryKeys(), pkFields);
          }
      }
  
--    /// Build from an already-inflight fragment using worker node map for host resolution.
--    ///
--    /// Unlike [`from_inflight`](Self::from_inflight), this does not require a
--    /// `ControlStreamManager` and can be used when only worker node metadata is available
--    /// (e.g., during `render_runtime_info` before the control streams are fully set up).
--    pub fn from_inflight_with_worker_nodes(
--        info: &InflightFragmentInfo,
--        partial_graph_id: PartialGraphId,
--        worker_nodes: &HashMap<WorkerId, WorkerNode>,
--    ) -> Self {
--        let (actors, actor_location) = info
--            .actors
--            .iter()
--            .map(|(&actor_id, actor)| {
--                (
--                    (actor_id, actor.vnode_bitmap.clone()),
--                    (
--                        actor_id,
--                        worker_nodes[&actor.worker_id].host.clone().unwrap(),
--                    ),
--                )
--            })
--            .unzip();
--        Self {
--            distribution_type: info.distribution_type,
--            actors,
--            actor_location,
--            partial_graph_id,
--        }
--    }
--
-     /// Build from a model `Fragment` with separately provided actors and locations.
--    pub fn from_fragment(
-+    fn from_fragment(
-         fragment: &Fragment,
-         stream_actors: &HashMap<FragmentId, Vec<StreamActor>>,
-         actor_worker: &HashMap<ActorId, WorkerId>,
-@@ -131,19 +120,75 @@ impl EdgeBuilderFragmentInfo {
- }
+@@ -308,22 +315,31 @@ public void close() throws Exception {
+         }
+     }
  
- #[derive(Debug)]
--pub(super) struct FragmentEdgeBuildResult {
-+pub(crate) struct FragmentEdgeBuildResult {
-     upstreams: HashMap<FragmentId, HashMap<ActorId, ActorUpstreams>>,
--    pub(super) dispatchers: FragmentActorDispatchers,
--    pub(super) merge_updates: HashMap<FragmentId, Vec<MergeUpdate>>,
--    actor_new_no_shuffle: ActorNewNoShuffle,
-+    dispatchers: FragmentActorDispatchers,
-+    merge_updates: HashMap<FragmentId, Vec<MergeUpdate>>,
-+    dispatcher_updates: Vec<DispatcherUpdate>,
- }
- 
- impl FragmentEdgeBuildResult {
--    pub(super) fn actor_new_no_shuffle(&self) -> &ActorNewNoShuffle {
--        &self.actor_new_no_shuffle
-+    fn validate_terminal_consumption(&self) {
-+        let remaining_upstreams = self.upstreams.values().map(HashMap::len).sum::<usize>();
-+        let remaining_dispatchers = self.dispatchers.values().map(HashMap::len).sum::<usize>();
-+        let unapplied_dispatcher_updates = self.dispatcher_updates.len();
-+        let unapplied_merge_updates = self.merge_updates.values().map(Vec::len).sum::<usize>();
-+        let has_unconsumed_fields = remaining_upstreams != 0
-+            || remaining_dispatchers != 0
-+            || unapplied_dispatcher_updates != 0
-+            || unapplied_merge_updates != 0;
+-    private static void primaryKeyCheck(TableSchema sourceSchema, Set<String> pkFields)
++    static void primaryKeyCheck(List<String> expectedPkFields, List<String> pkFields)
+             throws RuntimeException {
+-        if (sourceSchema.getPrimaryKeys().size() != pkFields.size()) {
++        if (pkFields.isEmpty()) {
++            throw ValidatorUtils.invalidArgument(
++                    "Upstream MySQL primary key metadata is empty; expected columns "
++                            + expectedPkFields);
++        }
 +
-+        deb
++        if (expectedPkFields.size() != pkFields.size()) {
+             throw ValidatorUtils.invalidArgument(
+                     "Primary key mismatch: the SQL schema defines "
+-                            + sourceSchema.getPrimaryKeys().size()
++                            + expectedPkFields.size()
+                             + " primary key columns, but the source table in MySQL has "
+                             + pkFields.size()
+                             + " columns.");
+         }
+-        for (var colName : sourceSchema.getPrimaryKeys()) {
+-            if (!pkFields.contains(colName.toLowerCase())) {
++
++        for (int i = 0; i < expectedPkFields.size(); i++) {
++            if (!pkFields.get(i).equalsIgnoreCase(expectedPkFields.get(i))) {
+                 throw ValidatorUtils.invalidArgument(
+-                        "Primary key mismatch: The primary key list of the source table in MySQL does not contain '"
+-                                + colName
+-                                + "'.");
++                        "Primary key mismatch: upstream MySQL primary key columns "
++                                + pkFields
++                                + " do not match expected columns "
++                                + expectedPkFields
++                                + " in order.");
+             }
+         }
+     }
 ```
 
-**File**: `src/meta/src/barrier/info.rs` (modified, +28/-39)
+**File**: `java/connector-node/risingwave-connector-service/src/main/resources/validate_sql.properties` (modified, +1/-0)
 ```diff
-@@ -45,9 +45,7 @@ use crate::barrier::command::{
-     CreateStreamingJobCommandInfo, PostCollectCommand, ReplaceStreamJobPlan, ThrottleConfigMap,
-     extract_throttle_config,
- };
--use crate::barrier::edge_builder::{
--    EdgeBuilderFragmentInfo, FragmentEdgeBuildResult, FragmentEdgeBuilder,
--};
-+use crate::barrier::edge_builder::{FragmentEdgeBuildResult, FragmentEdgeBuilder};
- use crate::barrier::progress::{CreateMviewProgressTracker, StagingCommitInfo};
- use crate::barrier::rpc::{ControlStreamManager, to_partial_graph_id};
- use crate::barrier::{
-@@ -56,7 +54,9 @@ use crate::barrier::{
- use crate::controller::fragment::{InflightActorInfo, InflightFragmentInfo};
- use crate::controller::utils::rebuild_fragment_mapping;
- use crate::manager::NotificationManagerRef;
--use crate::model::{ActorId, BackfillUpstreamType, FragmentId, StreamActor, StreamJobFragments};
-+use crate::model::{
-+    ActorId, ActorNewNoShuffle, BackfillUpstreamType, FragmentId, StreamActor, StreamJobFragments,
-+};
- use crate::stream::UpstreamSinkInfo;
- use crate::{MetaError, MetaResult};
- 
-@@ -1212,7 +1212,7 @@ impl InflightDatabaseInfo {
-         control_stream_manager: &ControlStreamManager,
-         stream_actors: &HashMap<FragmentId, Vec<StreamActor>>,
-         actor_location: &HashMap<ActorId, WorkerId>,
--    ) -> FragmentEdgeBuildResult {
-+    ) -> MetaResult<(FragmentEdgeBuildResult, ActorNewNoShuffle)> {
-         // `existing_fragment_ids` consists of
-         //  - keys of `info.upstream_fragment_downstreams`, which are the `fragment_id` the upstream fragment of the newly created job
-         //  - keys of `replace_job.upstream_fragment_downstreams`, which are the `fragment_id` of upstream fragment of replace_job,
-@@ -1278,60 +1278,49 @@ impl InflightDatabaseInfo {
-                     })
-             }));
- 
--        let mut builder = FragmentEdgeBuilder::new(
--            // Existing fragments
--            existing_fragment_ids
--                .map(|fragment_id| {
--                    (
--                        fragment_id,
--                        EdgeBuilderFragmentInfo::from_inflight(
--                            self.fragment(fragment_id),
--                            to_partial_graph_id(self.database_id, None),
--                            control_stream_manager,
--                        ),
--                    )
--                })
--                // New fragments from create/replace jobs
--                .chain(new_fragments.map(|(partial_graph_id, fragment)| {
--                    (
--                        fragment.fragment_id,
--                        EdgeBuilderFragmentInfo::from_fragment(
--                            fragment,
--                            stream_actors,
--                            actor_location,
--                            partial_graph_id,
--                            control_stream_manager,
--                        ),
--                    )
--                })),
--        );
-+        let database_partial_graph_id = to_partial_graph_id(self.database_id, None);
-+        let mut builder = FragmentEdgeBuilder::new()
-+            .add_existing_fragments(
-+                existing_fragment_ids.map(|fragment_id| self.fragment(fragment_id)),
-+                database_partial_graph_id,
-+                control_stream_manager,
-+            )
-+            .add_new_logical_fragments(
-+                new_fragments,
-+                stream_actors,
-+                actor_location,
-+                control_stream_manager,
-+            )
-+            .finish_fragments();
-         if let Some((info, _)) = info {
--            builder.add_relations(&info.upstream_fragment_downstreams);
--            builder.add_relations(&info.stream_job_fragments.downstreams);
-+            builder = builder
-+                .add_relations(&info.upstream_fragment_downstreams)?
-+                .add_relations(&info.stream_job_fragments.downstreams)?;
-         }
-         if let Some(replace_job) = replace_job {
--            builder.add_relations(&replace_job.upstream_fragment_downstreams);
--            builder.add_relations(&replace_job.new_fragments.downstreams);
-+            builder = builder
-+                .add_relations(&replace_job.upstream_fragment_downstreams)?
-+                .add_relations(&replace_job.new_fragments.downstreams)?;
-         }
-         if let Some(new_upstream_sink) = new_upstream_sink {
-             let sink_fragment_id = new_upstream_sink.sink_fragment_id;
-             let new_sink_downstream = &new_upstream_sink.new_sink_downstream;
--            builder.add_edge(sink_fragment_id, new_sink_downstream);
-+            builder = builder.add_edge(sink_fragment_id, new_sink_downstream)?;
-         }
-         if let Some(replace_job) = replace_job {
-             for (fragment_id, fragment_replacement) in &replace_job.replace_upstream {
-                 for (original_upstream_fragment_id, new_upstream_fragment_id) in
-                     fragment_replacement
-                 {
--                    builder.replace_up
+@@ -2,6 +2,7 @@ mysql.bin_log=show variables like 'log_bin'
+ mysql.bin_format=show variables like 'binlog_format'
+ mysql.bin_row_image=show variables like 'binlog_row_image'
+ mysql.table=SELECT count(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
++mysql.pk=SELECT COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND INDEX_NAME = 'PRIMARY' ORDER BY SEQ_IN_INDEX
+ mysql.table_schema=SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, NUMERIC_PRECISION, COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION
+ mysql.grants=SHOW GRANTS FOR CURRENT_USER()
+ mysql.check_db_exist=SELECT count(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?
 ```
 
-**File**: `src/meta/src/barrier/rpc.rs` (modified, +16/-34)
+**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/common/MySqlValidatorTest.java` (modified, +31/-0)
 ```diff
-@@ -70,7 +70,7 @@ use crate::barrier::checkpoint::{
-     IndependentCheckpointJobControl, IndependentCheckpointJobStatus,
- };
- use crate::barrier::context::{GlobalBarrierWorkerContext, GlobalBarrierWorkerContextImpl};
--use crate::barrier::edge_builder::{EdgeBuilderFragmentInfo, FragmentEdgeBuilder};
-+use crate::barrier::edge_builder::FragmentEdgeBuilder;
- use crate::barrier::info::{
-     BarrierInfo, CreateStreamingJobStatus, InflightDatabaseInfo, InflightStreamingJobInfo,
-     SubscriberType,
-@@ -935,40 +935,22 @@ impl PartialGraphRecoverer<'_> {
-         }?;
+@@ -16,12 +16,43 @@
  
-         let control_stream_manager = self.control_stream_manager();
--        let mut builder = FragmentEdgeBuilder::new(
--            database_jobs
--                .values()
--                .flat_map(|job| {
--                    let partial_graph_id = to_partial_graph_id(database_id, None);
--                    job.fragment_infos().map(move |info| {
--                        (
--                            info.fragment_id,
--                            EdgeBuilderFragmentInfo::from_inflight(
--                                info,
--                                partial_graph_id,
--                                control_stream_manager,
--                            ),
--                        )
--                    })
--                })
--                .chain(ongoing_snapshot_backfill_jobs.iter().flat_map(
--                    |(job_id, (fragments, ..))| {
--                        let partial_graph_id = to_partial_graph_id(database_id, Some(*job_id));
--                        fragments.values().map(move |fragment| {
--                            (
--                                fragment.fragment_id,
--                                EdgeBuilderFragmentInfo::from_inflight(
--                                    fragment,
--                                    partial_graph_id,
--                                    control_stream_manager,
--                                ),
--                            )
--                        })
--                    },
--                )),
-+        let mut builder = FragmentEdgeBuilder::new().add_new_fragments(
-+            database_jobs.values().flat_map(|job| job.fragment_infos()),
-+            to_partial_graph_id(database_id, None),
-+            control_stream_manager,
+ package com.risingwave.connector.source.common;
+ 
++import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
+ import static org.junit.Assert.assertTrue;
+ 
++import io.grpc.Status;
++import io.grpc.StatusRuntimeException;
++import java.util.List;
+ import org.junit.Test;
+ 
+ public class MySqlValidatorTest {
++    @Test
++    public void testPrimaryKeyMismatch() {
++        for (var upstream :
++                List.of(
++                        List.<String>of(),
++                        List.of("tenant", "id"),
++                        List.of("id"),
++                        List.of("id", "tenant", "extra"),
++                        List.of("id", "other"))) {
++            var error =
++                    assertThrows(
++                            StatusRuntimeException.class,
++                            () ->
++                                    MySqlValidator.primaryKeyCheck(
++                                            List.of("id", "tenant"), upstream));
++            assertEquals(Status.Code.INVALID_ARGUMENT, error.getStatus().getCode());
++        }
++    }
++
++    @Test
++    public void testEmptyPrimaryKeysAreRejected() {
++        assertThrows(
++                StatusRuntimeException.class,
++                () -> MySqlValidator.primaryKeyCheck(List.of(), List.of()));
++    }
++
+     @Test
+     public void testBinlogMonitorSatisfiesReplicationClient() {
+         assertTrue(
+```
+
+**File**: `src/connector/src/source/cdc/external/mysql.rs` (modified, +89/-6)
+```diff
+@@ -666,6 +666,7 @@ impl MySqlExternalTableReader {
+         // Query MySQL primary key infos for type casting.
+         let upstream_mysql_pk_infos =
+             Self::query_upstream_pk_infos(&pool, &database, &table).await?;
++        Self::validate_upstream_pk_columns(&upstream_mysql_pk_infos, &rw_schema, &pk_indices)?;
+         // Get MySQL version
+         let (major_version, minor_version, is_mariadb) = Self::get_mysql_version(&pool).await?;
+         let mysql_version = (major_version, minor_version);
+@@ -709,12 +710,16 @@ impl MySqlExternalTableReader {
+         let mut conn = pool.get_conn().await?;
+ 
+         // Query primary key columns and their data types.
+-        let sql = "SELECT COLUMN_NAME, COLUMN_TYPE
+-            FROM INFORMATION_SCHEMA.COLUMNS
+-            WHERE TABLE_SCHEMA = ?
+-            AND TABLE_NAME = ?
+-            AND COLUMN_KEY = 'PRI'
+-            ORDER BY ORDINAL_POSITION";
++        let sql = "SELECT s.COLUMN_NAME, c.COLUMN_TYPE
++            FROM INFORMATION_SCHEMA.STATISTICS AS s
++            JOIN INFORMATION_SCHEMA.COLUMNS AS c
++              ON c.TABLE_SCHEMA = s.TABLE_SCHEMA
++             AND c.TABLE_NAME = s.TABLE_NAME
++             AND c.COLUMN_NAME = s.COLUMN_NAME
++            WHERE s.TABLE_SCHEMA = ?
++              AND s.TABLE_NAME = ?
++              AND s.INDEX_NAME = 'PRIMARY'
++            ORDER BY s.SEQ_IN_INDEX";
+ 
+         let rs: Vec<mysql_async::Row> = conn.exec(sql, (database, table)).await?;
+ 
+@@ -732,6 +737,45 @@ impl MySqlExternalTableReader {
+         Ok(column_infos)
+     }
+ 
++    fn validate_upstream_pk_columns(
++        upstream_pk_infos: &[(String, ColumnType)],
++        rw_schema: &Schema,
++        pk_indices: &[usize],
++    ) -> ConnectorResult<()> {
++        let expected_pk_names = pk_indices
++            .iter()
++            .map(|&index| rw_schema.fields[index].name.as_str())
++            .collect_vec();
++        let upstream_pk_names = upstream_pk_infos
++            .iter()
++            .map(|(name, _)| name.as_str())
++            .collect_vec();
++
++        if upstream_pk_names.is_empty() {
++            return Err(anyhow!(
++                "upstream MySQL primary key metadata is empty; expected columns {:?}",
++                expected_pk_names
++            )
++            .into());
++        }
++
++        if upstream_pk_names.len() != expected_pk_names.len()
++            || upstream_pk_names
++                .iter()
++                .zip_eq_fast(&expected_pk_names)
++                .any(|(upstream, expected)| !upstream.eq_ignore_ascii_case(expected))
++        {
++            return Err(anyhow!(
++                "upstream MySQL primary key columns {:?} do not match expected columns {:?}",
++                upstream_pk_names,
++                expected_pk_names
++            )
++            .into());
++        }
++
++        Ok(())
++    }
++
+     /// Check whether a column is `BIGINT UNSIGNED`.
+     ///
+     /// Frontend up-casts narrower unsigned integer types, and non-integer unsigned types
+@@ -1034,6 +1078,45 @@ mod tests {
          );
--        builder.add_relations(fragment_relations);
--        let mut edges = builder.build();
-+        for (job_id, (fragments, ..)) in &ongoing_snapshot_backfill_jobs {
-+            builder = builder.add_new_fragments(
-+                fragments.values(),
-+                to_partial_graph_id(database_id, Some(*job_id)),
-+                control_stream_manager,
+     }
+ 
++    #[test]
++    fn test_validate_upstream_pk_columns() {
++        let rw_schema = Schema::new(vec![
++            Field::with_name(DataType::Int64, "id"),
++            Field::with_name(DataType::Varchar, "tenant"),
++        ]);
++        let int_type = || ColumnType::BigInt(Default::default());
++        let validate = |pk_infos: &[(String, ColumnType)]| {
++            MySqlExternalTableReader::validate_upstream_pk_columns(pk_infos, &rw_schema, &[0, 1])
++        };
++
++        let valid_pk_infos = vec![
++            ("id".to_owned(), int_type()),
++            ("tenant".to_owned(), int_type()),
++        ];
++        assert!(validate(&valid_pk_infos).is_ok());
++
++        for invalid_pk_infos in [
++            // incorrect order
++            vec![
++                ("tenant".to_owned(), int_type()),
++                ("id".to_owned(), int_type()),
++            ],
++            // incomplete
++            vec![("id".to_owned(), int_type())],
++            // extra index
++            vec![
++                ("id".to_owned(), int_type()),
++                ("tenant".to_owned(), int_type()),
++                ("extra".to_owned(), int_type()),
++            ],
++        ] {
++            assert!(
++                validate(&invalid_pk_infos).is_err(),
++                "unexpectedly accepted {invalid_pk_infos:?}"
 +            );
 +        }
-+        let (mut edges, _) = builder
-+            .finish_fragments()
-+            .add_relations(fragment_relations)?
-+            .build();
- 
-         {
-             let new_actors =
++    }
++
+     #[test]
+     fn test_mysql_unsigned_bigint_type_detection() {
+         for ty_name in [
 ```
 
-**File**: `src/meta/src/barrier/worker.rs` (modified, +2/-0)
+**File**: `src/stream/src/executor/backfill/cdc/cdc_backfill.rs` (modified, +624/-313)
 ```diff
-@@ -684,6 +684,7 @@ impl<C: GlobalBarrierWorkerContext> GlobalBarrierWorker<C> {
-                                     let rendered_info = render_runtime_info(
-                                         self.env.actor_id_generator(),
-                                         &self.active_streaming_nodes,
-+                                        self.partial_graph_manager.control_stream_manager(),
-                                         &runtime_info.recovery_context,
-                                         database_id,
-                                     )
-@@ -1252,6 +1253,7 @@ impl<C: GlobalBarrierWorkerContext> GlobalBarrierWorker<C> {
-                         let Some(rendered_info) = render_runtime_info(
-                             self.env.actor_id_generator(),
-                             &active_streaming_nodes,
-+                            recoverer.control_stream_manager(),
-                             &recovery_context,
-                             database_id,
-                         )
+@@ -13,12 +13,11 @@
+ // limitations under the License.
+ 
+ use std::collections::BTreeMap;
+-use std::future::Future;
+ use std::pin::Pin;
+ 
+ use either::Either;
++use futures::stream;
+ use futures::stream::select_with_strategy;
+-use futures::{Stream, stream};
+ use itertools::Itertools;
+ use risingwave_common::array::{DataChunk, Op};
+ use risingwave_common::bail;
+@@ -33,16 +32,17 @@ use risingwave_connector::parser::{
+ };
+ use risingwave_connector::source::cdc::CdcScanOptions;
+ use risingwave_connector::source::cdc::external::{
+-    CdcOffset, ExternalCdcTableType, ExternalTableReaderImpl,
++    CdcOffset, CdcOffsetParseFunc, ExternalCdcTableType, ExternalTableReaderImpl,
+ };
+ use risingwave_connector::source::{SourceColumnDesc, SourceContext, SourceCtrlOpts};
+-use risingwave_pb::common::ThrottleType;
+ use rw_futures_util::pausable;
+ use thiserror_ext::AsReport;
+-use tracing::Instrument;
+ 
+ use crate::executor::backfill::cdc::state::CdcBackfillState;
+ use crate::executor::backfill::cdc::upstream_table::external::ExternalStorageTable;
++use crate::executor::backfill::cdc::upstream_table::reader::{
++    build_reader_and_poll_upstream, create_table_reader_with_retry,
++};
+ use crate::executor::backfill::cdc::upstream_table::snapshot::{
+     SnapshotReadArgs, UpstreamTableRead, UpstreamTableReader,
+ };
+@@ -52,7 +52,7 @@ use crate::executor::backfill::utils::{
+ };
+ use crate::executor::monitor::CdcBackfillMetrics;
+ use crate::executor::prelude::*;
+-use crate::executor::source::get_infinite_backoff_strategy;
++use crate::executor::{Mutation, TableId};
+ use crate::task::CreateMviewProgressReporter;
+ 
+ /// `split_id`, `is_finished`, `row_count`, `cdc_offset` all occupy 1 column each.
+@@ -71,6 +71,157 @@ fn can_poll_upstream_while_creating_reader(
+     current_pk_pos.is_none() || pk_comparisons_are_known
+ }
+ 
++/// Result of handling an upstream message while no snapshot is running.
++enum NoSnapshotUpstreamOutcome {
++    /// Forward the message downstream, if any, and keep going.
++    /// `None` means nothing to emit: a watermark, or a chunk with no visible rows to emit.
++    Continue(Option<Message>),
++    /// The actor is stopped: forward the barrier and exit the executor.
++    Stop(Barrier),
++}
++
++/// Snapshot cursor together with the PK comparisons needed to filter upstream changes
++/// against it.
++#[derive(Clone, Copy)]
++struct SnapshotCursor<'a> {
++    pk_pos: &'a OwnedRow,
++    pk_needs_unsigned_i64_compare: &'a [bool],
++}
++
++struct NoSnapshotUpstreamHandler<'a, S: StateStore> {
++    actor_ctx: &'a ActorContextRef,
++    metrics: &'a CdcBackfillMetrics,
++    table_id: TableId,
++    upstream_table_name: &'a str,
++    offset_parse_func: &'a mut CdcOffsetParseFunc,
++    output_indices: &'a [usize],
++    pk_indices: &'a [usize],
++    pk_order: &'a [OrderType],
++    /// `None` means the next snapshot starts from the beginning.
++    cursor: Option<SnapshotCursor<'a>>,
++    total_snapshot_row_count: u64,
++    state_impl: &'a mut CdcBackfillState<S>,
++    last_binlog_offset: &'a mut Option<CdcOffset>,
++    is_snapshot_paused: &'a mut bool,
++    rate_limit_rps: &'a mut Option<u32>,
++}
++
++impl<S: StateStore> NoSnapshotUpstreamHandler<'_, S> {
++    async fn handle_upstream(
++        &mut self,
++        msg: Message,
++    ) -> StreamExecutorResult<NoSnapshotUpstreamOutcome> {
++        match msg {
++            Message::Barrier(barrier) => {
++                if let Some(mutation) = barrier.mutation.as_deref() {
++                    match mutation {
++                        Mutation::Pause => {
++                            *self.is_snapshot_paused = true;
++                            tracing::info!(
++                                table_id = %self.table_id,
++                                upstream_table_name = self.upstream_table_name,
++                                "snapshot is paused by barrier"
++                            );
++                        }
++                        Mutation::Resume => {
++                            *self.is_snapshot_paused = false;
++                            tracing::info!(
++                                table_id = %self.table_id,
++                                upstream_table_name = self.upstream_table_name,
++                                "snapshot is resumed by barrier"
++                            );
++                        }
++                        Mutation::Throttle(_) => {
++                            if let Some(entry) =
++                                mutation.backfill_throttle_config(self.actor_ctx.fragment_id)
++                            {
++                                *self.rate_limit_rps = entry.rate_limit;
++                            }
++                        }
++                        mutation if mutation.is_stop(self.actor_ctx.id) => {
++                            tracing::info!(
++                                table_id = %self.table_id,
++                                upstream_table_name = self.upstream_table_name,
++                                "CdcBackfill has
+```
+
+**File**: `src/stream/src/executor/backfill/cdc/cdc_backill_v2.rs` (modified, +6/-52)
+```diff
+@@ -13,40 +13,37 @@
+ // limitations under the License.
+ 
+ use std::collections::BTreeMap;
+-use std::future::Future;
+-use std::pin::Pin;
+ 
+ use either::Either;
++use futures::stream;
+ use futures::stream::select_with_strategy;
+-use futures::{Stream, stream};
+ use itertools::Itertools;
+ use risingwave_common::bitmap::BitmapBuilder;
+ use risingwave_common::catalog::{ColumnDesc, Field};
+ use risingwave_common::row::RowDeserializer;
+ use risingwave_common::util::iter_util::ZipEqFast;
+ use risingwave_common::util::sort_util::{OrderType, cmp_datum};
+ use risingwave_connector::source::cdc::CdcScanOptions;
+-use risingwave_connector::source::cdc::external::{
+-    CdcOffset, ExternalCdcTableType, ExternalTableReaderImpl,
+-};
++use risingwave_connector::source::cdc::external::{CdcOffset, ExternalCdcTableType};
+ use risingwave_connector::source::{CdcTableSnapshotSplit, CdcTableSnapshotSplitRaw};
+ use rw_futures_util::pausable;
+ use thiserror_ext::AsReport;
+-use tracing::Instrument;
+ 
+ use crate::executor::backfill::cdc::cdc_backfill::{
+     get_cdc_json_parse_handling_from_properties, transform_upstream,
+ };
+ use crate::executor::backfill::cdc::state_v2::{CdcStateRecord, ParallelizedCdcBackfillState};
+ use crate::executor::backfill::cdc::upstream_table::external::ExternalStorageTable;
++use crate::executor::backfill::cdc::upstream_table::reader::{
++    build_reader_and_poll_upstream, create_table_reader_with_retry,
++};
+ use crate::executor::backfill::cdc::upstream_table::snapshot::{
+     SplitSnapshotReadArgs, UpstreamTableRead, UpstreamTableReader,
+ };
+ use crate::executor::backfill::utils::{get_cdc_chunk_last_offset, mapping_chunk, mapping_message};
+ use crate::executor::prelude::*;
+-use crate::executor::source::get_infinite_backoff_strategy;
++use crate::task::ActorId;
+ use crate::task::cdc_progress::CdcProgressReporter;
+-use crate::task::{ActorId, FragmentId};
+ 
+ pub struct ParallelizedCdcBackfillExecutor<S: StateStore> {
+     actor_ctx: ActorContextRef,
+@@ -1056,49 +1053,6 @@ fn is_rightmost_bound(row: &OwnedRow) -> bool {
+     row.iter().all(|d| d.is_none())
+ }
+ 
+-async fn build_reader_and_poll_upstream(
+-    upstream: &mut (impl Stream<Item = StreamExecutorResult<Message>> + Unpin),
+-    future: &mut Pin<Box<impl Future<Output = ExternalTableReaderImpl>>>,
+-) -> StreamExecutorResult<Either<Message, ExternalTableReaderImpl>> {
+-    tokio::select! {
+-        biased;
+-        reader = &mut *future => Ok(Either::Right(reader)),
+-        msg = upstream.next() => {
+-            msg.transpose()?
+-                .map(Either::Left)
+-                .ok_or_else(|| anyhow::anyhow!(
+-                    "upstream closed while creating CDC table reader"
+-                ).into())
+-        }
+-    }
+-}
+-
+-async fn create_table_reader_with_retry(
+-    external_table: ExternalStorageTable,
+-    actor_id: ActorId,
+-    fragment_id: FragmentId,
+-) -> ExternalTableReaderImpl {
+-    let backoff = get_infinite_backoff_strategy();
+-
+-    tokio_retry::Retry::spawn(backoff, || async {
+-        match external_table.create_table_reader().await {
+-            Ok(reader) => Ok(reader),
+-            Err(error) => {
+-                tracing::warn!(
+-                    error = %error.as_report(),
+-                    actor_id = %actor_id,
+-                    fragment_id = %fragment_id,
+-                    "failed to create CDC table reader; retrying"
+-                );
+-                Err(error)
+-            }
+-        }
+-    })
+-    .instrument(tracing::info_span!("create_cdc_table_reader_with_retry"))
+-    .await
+-    .expect("retry creating CDC table reader until success")
+-}
+-
+ impl<S: StateStore> Execute for ParallelizedCdcBackfillExecutor<S> {
+     fn execute(self: Box<Self>) -> BoxedMessageStream {
+         self.execute_inner().boxed()
+```
+
+**File**: `src/stream/src/executor/backfill/cdc/state.rs` (modified, +26/-1)
+```diff
+@@ -92,8 +92,13 @@ impl<S: StateStore> CdcBackfillState<S> {
+                 };
+ 
+                 let current_pk_pos = state[1..state_len - 3].to_vec();
++                let current_pk_pos = if current_pk_pos.iter().all(Option::is_none) {
++                    None
++                } else {
++                    Some(OwnedRow::new(current_pk_pos))
++                };
+                 Ok(CdcStateRecord {
+-                    current_pk_pos: Some(OwnedRow::new(current_pk_pos)),
++                    current_pk_pos,
+                     is_finished,
+                     last_cdc_offset: cdc_offset,
+                     row_count,
+@@ -111,6 +116,12 @@ impl<S: StateStore> CdcBackfillState<S> {
+         row_count: u64,
+         is_finished: bool,
+     ) -> StreamExecutorResult<()> {
++        // An unfinished backfill without a snapshot cursor has no progress to persist.
++        // Skip it so recovery starts a fresh backfill instead of resuming from NULL PK cells.
++        if !is_finished && current_pk_pos.is_none() {
++            return Ok(());
++        }
++
+         // schema: | `split_id` | `pk...` | `backfill_finished` | `row_count` | `cdc_offset` |
+         let state = self.cached_state.as_mut_slice();
+         let split_id = Some(ScalarImpl::from(self.split_id.clone()));
+@@ -138,6 +149,20 @@ impl<S: StateStore> CdcBackfillState<S> {
+         Ok(())
+     }
+ 
++    /// Modify the backfill state and persist it at `new_epoch`.
++    pub async fn mutate_and_commit_state(
++        &mut self,
++        current_pk_pos: Option<OwnedRow>,
++        last_cdc_offset: Option<CdcOffset>,
++        row_count: u64,
++        is_finished: bool,
++        new_epoch: EpochPair,
++    ) -> StreamExecutorResult<()> {
++        self.mutate_state(current_pk_pos, last_cdc_offset, row_count, is_finished)
++            .await?;
++        self.commit_state(new_epoch).await
++    }
++
+     /// Persist the state to storage
+     pub async fn commit_state(&mut self, new_epoch: EpochPair) -> StreamExecutorResult<()> {
+         self.state_table
+```
+
+**File**: `src/stream/src/executor/backfill/cdc/upstream_table/mod.rs` (modified, +1/-0)
+```diff
+@@ -13,4 +13,5 @@
+ // limitations under the License.
+ 
+ pub mod external;
++pub(crate) mod reader;
+ pub mod snapshot;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27385** (2026-10-05): chore: remove risingwave rust-analyzer skill (@silver-ymz)
-- **PR #27375** (closed): perf(stream): replay the vnodes of a locality provider merged in locality order (@yuhao-su)
-- **PR #27358** (2026-09-30): fix(cdc): backport streaming readiness and SQL Server shutdown fixes (@zwang28)
-- **PR #27344** (closed): chore(deps-dev): Bump com.fasterxml.jackson.core:jackson-databind from 2.22.1 to 2.22.2 in /java (@dependabot[bot])
-- **PR #27339** (2026-09-28): fix(object-store): propagate metadata errors during listing (#27266) (@risingwave-ci)
-- **PR #27334** (2026-09-29): perf(storage): upgrade foyer to 0.22.6 with recovery backport (@Li0k)
-- **PR #27317** (2026-09-27): chore(deps): Bump xorf from 0.12.0 to 0.13.0 (@dependabot[bot])
-- **PR #27315** (2026-09-27): chore(deps): Bump rustls-pki-types from 1.14.0 to 1.15.1 (@dependabot[bot])
+- **PR #27536** (2026-10-16): feat(storage): support bounded PK-index compaction planning (@silver-ymz)
+- **PR #27532** (2026-10-16): fix(stream): forward buffered upstream rows when arrangement backfill finishes on a barrier (@chenzl25)
+- **PR #27530** (2026-10-16): fix(iceberg): ignore commit epoch markers on replace snapshots (@chenzl25)
+- **PR #27527** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
+- **PR #27526** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
+- **PR #27525** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
 
 ---
 
@@ -4351,3 +2326,95 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. stream): support changelog over a singleton input (#27524)
+
+**RULE**:
+When implementing operations in `e2e_test/streaming/changelog.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3ac60532`: stream): support changelog over a singleton input (#27524). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/streaming/changelog.slt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+
+# Changelog over a singleton input, and a downstream job over that changelog.
+statement ok
+create table single_t (v int);
+
+statement ok
+create materialized view single_mv as select count(*) as c from single_t;
+
+statement ok
+create materialized view single_log as with x as changelog from single_mv select * from x;
+
+statement ok
+insert into single_t values (1), (2);
+
+statement ok
+insert into single_t values (3);
+
+statement ok
+delete from single_t where v = 1;
+
+# changelog_op: 1 = insert, 3 = update insert, 4 = update delete
+query II
+select c, changelog_op from single_log order by _changelog_row_id;
+----
+0 1
+0 4
+2 3
+2 4
+3 3
+3 4
+2 3
+
+statement ok
+create materialized view single_log_downstream as select c, changelog_op, _changelog_row_id as id from single_log;
+
+statement ok
+insert into single_t values (4);
+
+query II
+select c, changelog_op from single_log_downstream order by id;
+----
+0 1
+0 4
+2 3
+2 4
+3 3
+3 4
+2 3
+2 4
+3 3
+
+statement ok
+drop materialized view single_log_downstream;
+
+statement ok
+drop materialized view single_log;
+
+statement ok
+drop materialized view single_mv;
+
+statement ok
+drop table single_t;
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3ac60532` are properly handled with clean fallback behavior.

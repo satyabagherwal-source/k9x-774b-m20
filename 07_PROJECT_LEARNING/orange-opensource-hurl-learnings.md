@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
+> **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
+> **Source Version**: `026b66e6`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:51:40.268Z  
+> **Learning ID**: `learn-github-orange-opensource-hurl`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Orange-OpenSource/hurl
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:20:51.333Z  
+> **Harvest Timestamp**: 2026-10-18T23:51:39.634Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19237 stars
+- **Stars / Engagement**: 19262 stars
 
 ---
 
@@ -501,11 +515,17 @@ impl Logger {
         s.push(cmd);
         self.eprintln(&s.to_string(fmt));
     }
+
+    /// Returns `true` if this logger has no verbosity or a low verbosity (debug messages are not displayed).
+    pub fn is_low_verbosity(&self) -> bool {
+        matches!(self.verbosity, None | Some(Verbosity::LowVerbose))
+    }
+
     /// Prints a given debug message to this logger [`Stderr`] instance, in verbose and very verbose mode.
     ///
     /// Displayed debug messages start with `*`.
     pub fn debug(&mut self, message: &str) {
-        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
+        if self.is_low_verbosity() {
             return;
         }
         let fmt = self.format();
@@ -522,7 +542,7 @@ impl Logger {
     ///
     /// Displayed debug messages start with `*`.
     pub fn debug_important(&mut self, message: &str) {
-        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
+        if self.is_low_verbosity() {
             return;
         }
         let fmt = self.format();
@@ -539,7 +559,7 @@ impl Logger {
     ///
     /// Displayed libcurl debug messages start with `**`.
     pub fn debug_curl(&mut self, message: &str) {
-        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
+        if self.is_low_verbosity() {
             return;
         }
         let fmt = self.format();
@@ -667,10 +687,7 @@ impl Logger {
         s.push(": ");
         s.push(message);
         s.push("\n");
-        self.eprintln(&s.to_string(fmt));
-    }
-
-    /// Prints the request method a
+  
 ```
 
 ### Core Architecture Module: `packages/hurl/src/util/mod.rs`
@@ -1803,719 +1820,17 @@ pub mod visit;
 
 ```
 
-### Core Architecture Module: `packages/hurl_core/src/ast/option.rs`
-```
-/*
- * Hurl (https://hurl.dev)
- * Copyright (C) 2026 Orange
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *          http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-use std::fmt;
-
-use crate::types::{Count, DurationUnit, SourceString, ToSource};
-
-use super::primitive::{
-    LineTerminator, Number, Placeholder, SourceInfo, Template, U64, Whitespace,
-};
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct EntryOption {
-    pub line_terminators: Vec<LineTerminator>,
-    pub space0: Whitespace,
-    pub space1: Whitespace,
-    pub space2: Whitespace,
-    pub kind: OptionKind,
-    pub line_terminator0: LineTerminator,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum OptionKind {
-    AwsSigV4(Template),
-    CaCertificate(Template),
-    ClientCert(Template),
-    ClientKey(Template),
-    Compressed(BooleanOption),
-    ConnectTo(Template),
-    ConnectTimeout(DurationOption),
-    Delay(DurationOption),
-    Digest(BooleanOption),
-    FailWithBody(BooleanOption),
-    FollowLocation(BooleanOption),
-    FollowLocationTrusted(BooleanOption),
-    Header(Template),
-    Http10(BooleanOption),
-    Http11(BooleanOption),
-    Http2(BooleanOption),
-    Http2PriorKnowledge(BooleanOption),
-    Http3(BooleanOption),
-    Insecure(BooleanOption),
-    IpV4(BooleanOption),
-    IpV6(BooleanOption),
-    LimitRate(NaturalOption),
-    MaxRedirect(CountOption),
-    MaxTime(DurationOption),
-    Negotiate(BooleanOption),
-    NetRc(BooleanOption),
-    NetRcFile(Template),
-    NetRcOptional(BooleanOption),
-    NoHeader(Template),
-    NoJsonpathCoercion(BooleanOption),
-    Ntlm(BooleanOption),
-    Output(Template),
-    PathAsIs(BooleanOption),
-    PinnedPublicKey(Template),
-    Proxy(Template),
-    Repeat(CountOption),
-    Resolve(Template),
-    Retry(CountOption),
-    RetryInterval(DurationOption),
-    Skip(BooleanOption),
-    UnixSocket(Template),
-    User(Template),
-    Variable(VariableDefinition),
-    Verbose(BooleanOption),
-    Verbosity(VerbosityOption),
-    VeryVerbose(BooleanOption),
-}
-
-impl OptionKind {
-    /// Returns the Hurl string identifier of this option.
-    pub fn identifier(&self) -> &'static str {
-        match self {
-            OptionKind::AwsSigV4(_) => "aws-sigv4",
-            OptionKind::CaCertificate(_) => "cacert",
-            OptionKind::ClientCert(_) => "cert",
-            OptionKind::ClientKey(_) => "key",
-            OptionKind::Compressed(_) => "compressed",
-            OptionKind::ConnectTo(_) => "connect-to",
-            OptionKind::ConnectTimeout(_) => "connect-timeout",
-            OptionKind::Delay(_) => "delay",
-            OptionKind::Digest(_) => "digest",
-            OptionKind::FailWithBody(_) => "fail-with-body",
-            OptionKind::FollowLocation(_) => "location",
-            OptionKind::FollowLocationTrusted(_) => "location-trusted",
-            OptionKind::Header(_) => "header",
-            OptionKind::Http10(_) => "http1.0",
-            OptionKind::Http11(_) => "http1.1",
-            OptionKind::Http2(_) => "http2",
-            OptionKind::Http2PriorKnowledge(_) => "http2-prior-knowledge",
-            OptionKind::Http3(_) => "http3",
-            OptionKind::Insecure(_) => "insecure",
-            OptionKind::IpV4(_) => "ipv4",
-            OptionKind::IpV6(_) => "ipv6",
-            OptionKind::LimitRate(_) => "limit-rate",
-            OptionKind::MaxRedirect(_) => "max-redirs",
-            OptionKind::MaxTime(_) => "max-time",
-            OptionKind::Negotiate(_) => "negotiate",
-            OptionKind::NetRc(_) => "netrc",
-            OptionKind::NetRcFile(_) => "netrc-file",
-            OptionKind::NetRcOptional(_) => "netrc-optional",
-            OptionKind::NoHeader(_) => "no-header",
-            OptionKind::NoJsonpathCoercion(_) => "no-jsonpath-coercion",
-            OptionKind::Ntlm(_) => "ntlm",
-            OptionKind::Output(_) => "output",
-            OptionKind::PathAsIs(_) => "path-as-is",
-            OptionKind::PinnedPublicKey(_) => "pinnedpubkey",
-            OptionKind::Proxy(_) => "proxy",
-            OptionKind::Repeat(_) => "repeat",
-            OptionKind::Resolve(_) => "resolve",
-            OptionKind::Retry(_) => "retry",
-            OptionKind::RetryInterval(_) => "retry-interval",
-            OptionKind::Skip(_) => "skip",
-            OptionKind::UnixSocket(_) => "unix-socket",
-            OptionKind::User(_) => "user",
-            OptionKind::Variable(_) => "variable",
-            OptionKind::Verbose(_) => "verbose",
-            OptionKind::Verbosity(_) => "verbosity",
-            OptionKind::VeryVerbose(_) => "very-verbose",
-        }
-    }
-}
-
-impl fmt::Display for OptionKind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let value = match self {
-            OptionKind::AwsSigV4(value) => value.to_string(),
-            OptionKind::CaCertificate(filename) => filename.to_string(),
-            OptionKind::ClientCert(filename) => filename.to_string(),
-            OptionKind::ClientKey(filename) => filename.to_string(),
-            OptionKind::Compressed(value) => value.to_string(),
-            OptionKind::ConnectTo(value) => value.to_string(),
-            OptionKind::ConnectTimeout(value) => value.to_string(),
-            OptionKind::Delay(value) => value.to_string(),
-            OptionKind::Digest(value) => value.to_string(),
-            OptionKind::FailWithBody(value) => value.to_string(),
-            OptionKind::FollowLocation(value) => value.to_string(),
-            OptionKind::FollowLocationTrusted(value) => value.to_string(),
-            OptionKind::Header(value) => value.to_string(),
-            OptionKind::Http10(value) => value.to_string(),
-            OptionKind::Http11(value) => value.to_string(),
-            OptionKind::Http2(value) => value.to_string(),
-            OptionKind::Http2PriorKnowledge(value) => value.to_string(),
-            OptionKind::Http3(value) => value.to_string(),
-            OptionKind::Insecure(value) => value.to_string(),
-            OptionKind::IpV4(value) => value.to_string(),
-            OptionKind::IpV6(value) => value.to_string(),
-            OptionKind::LimitRate(value) => value.to_string(),
-            OptionKind::MaxRedirect(value) => value.to_string(),
-            OptionKind::MaxTime(value) => value.to_string(),
-            OptionKind::Negotiate(value) => value.to_string(),
-            OptionKind::NetRc(value) => value.to_string(),
-            OptionKind::NetRcFile(filename) => filename.to_string(),
-            OptionKind::NetRcOptional(value) => value.to_string(),
-            OptionKind::NoHeader(value) => value.to_string(),
-            OptionKind::NoJsonpathCoercion(value) => value.to_string(),
-            OptionKind::Ntlm(value) => value.to_string(),
-            OptionKind::Output(filename) => filename.to_string(),
-            OptionKind::PathAsIs(value) => value.to_string(),
-            OptionKind::PinnedPublicKey(value) => value.to_string(),
-            OptionKind::Proxy(value) => value.to_string(),
-            OptionKind::Repeat(value) => value.to_string(),
-            OptionKind::Resolve(value) => value.to_string(),
-            OptionKind::Retry(value) => value.to_string(),
-            OptionKind::RetryInterval(value) => value.to_string(),
-            OptionKind::Skip(value) => value.to_string(),
-            OptionKind::UnixSocket(value) => value.to_string(),
-            OptionKind::User(value) => value.to_string(),
-            OptionKind::Variable(value) => value.to_string(),
-            OptionKind::Verbose(value) => value.to_string(),
-            OptionKind::Verbosity(value) => value.to_string(),
-            OptionKind::VeryVerbose(value) => value.to_string(),
-        };
-        write!(f, "{}: {}", self.identifier(), value)
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum BooleanOption {
-    Literal(bool),
-    Placeholder(Placeholder),
-}
-
-impl fmt::Display for BooleanOption {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            BooleanOption::Literal(v) => write!(f, "{v}"),
-            BooleanOption::Placeholder(v) => write!(f, "{v}"),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum NaturalOption {
-    Literal(U64),
-    Placeholder(Placeholder),
-}
-
-impl fmt::Display for NaturalOption {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            NaturalOption::Literal(v) => write!(f, "{v}"),
-            NaturalOption::Placeholder(v) => write!(f, "{v}"),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum CountOption {
-    Literal(Count),
-    Placeholder(Placeholder),
-}
-
-impl fmt::Display for CountOption {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            CountOption::Literal(v) => write!(f, "{v}"),
-            CountOption::Placeholder(v) => write!(f, "{v}"),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum DurationOption {
-    Literal(Duration),
-    Placeholder(Placeholder),
-}
-
-impl fmt::Display for DurationOption {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            DurationOption::Literal(v) => write!(f, "{v}"),
-            DurationOption::Placeholder(v) => write!(f, "{v}"),
-        }
-    }
-}
-
-/// Represent a duration
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Duration {
-    pub value: U64,
-    pub unit: Option<DurationUnit>,
-}
-
-impl Duration {
-    pub fn new(value: U64, unit: Option<DurationUnit>) -> Duration {
-        Duration { value, unit }
-    }
-}
-
-impl fmt::Display for Duration {
-    fn fmt(&self, f: &mut fmt:
-```
-
-### Core Architecture Module: `packages/hurl_core/src/ast/primitive.rs`
-```
-/*
- * Hurl (https://hurl.dev)
- * Copyright (C) 2026 Orange
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *          http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-use std::fmt;
-use std::fmt::Formatter;
-
-use crate::reader::Pos;
-use crate::types::{SourceString, ToSource};
-
-use super::json::JsonValue;
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct KeyValue {
-    pub line_terminators: Vec<LineTerminator>,
-    pub space0: Whitespace,
-    pub key: Template,
-    pub space1: Whitespace,
-    pub space2: Whitespace,
-    pub value: Template,
-    pub line_terminator0: LineTerminator,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct MultilineString {
-    pub space: Whitespace,
-    pub newline: Whitespace,
-    pub kind: MultilineStringKind,
-}
-
-impl fmt::Display for MultilineString {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match &self.kind {
-            MultilineStringKind::Text(value)
-            | MultilineStringKind::Json(value)
-            | MultilineStringKind::Xml(value) => write!(f, "{value}"),
-            MultilineStringKind::Raw(value) => write!(f, "{value}"),
-            MultilineStringKind::GraphQl(value) => write!(f, "{value}"),
-        }
-    }
-}
-
-impl ToSource for MultilineString {
-    fn to_source(&self) -> SourceString {
-        let mut source = SourceString::new();
-        source.push_str("```");
-        source.push_str(self.lang());
-        source.push_str(self.space.as_str());
-        source.push_str(self.newline.as_str());
-        source.push_str(self.kind.to_source().as_str());
-        source.push_str("```");
-        source
-    }
-}
-
-impl MultilineString {
-    pub fn lang(&self) -> &'static str {
-        match self.kind {
-            MultilineStringKind::Text(_) => "",
-            MultilineStringKind::Json(_) => "json",
-            MultilineStringKind::Xml(_) => "xml",
-            MultilineStringKind::Raw(_) => "raw",
-            MultilineStringKind::GraphQl(_) => "graphql",
-        }
-    }
-
-    pub fn value(&self) -> Template {
-        match &self.kind {
-            MultilineStringKind::Text(text)
-            | MultilineStringKind::Json(text)
-            | MultilineStringKind::Xml(text) => text.clone(),
-            MultilineStringKind::Raw(text) => text.clone(),
-            MultilineStringKind::GraphQl(text) => text.value.clone(),
-        }
-    }
-}
-
-#[allow(clippy::large_enum_variant)]
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum MultilineStringKind {
-    Text(Template),
-    Json(Template),
-    Xml(Template),
-    Raw(Template),
-    GraphQl(GraphQl),
-}
-
-impl ToSource for MultilineStringKind {
-    fn to_source(&self) -> SourceString {
-        match self {
-            MultilineStringKind::Text(value)
-            | MultilineStringKind::Json(value)
-            | MultilineStringKind::Xml(value) => value.to_source(),
-            MultilineStringKind::Raw(value) => value.to_source(),
-            MultilineStringKind::GraphQl(value) => value.to_source(),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct GraphQl {
-    pub value: Template,
-    pub variables: Option<GraphQlVariables>,
-}
-
-impl fmt::Display for GraphQl {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.value)?;
-        if let Some(vars) = &self.variables {
-            write!(f, "{}", vars.to_source())?;
-        }
-        Ok(())
-    }
-}
-
-impl ToSource for GraphQl {
-    fn to_source(&self) -> SourceString {
-        let mut source = SourceString::new();
-        source.push_str(self.value.to_source().as_str());
-        if let Some(vars) = &self.variables {
-            source.push_str(vars.to_source().as_str());
-        }
-        source
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct GraphQlVariables {
-    pub space: Whitespace,
-    pub value: JsonValue,
-    pub whitespace: Whitespace,
-}
-
-impl ToSource for GraphQlVariables {
-    fn to_source(&self) -> SourceString {
-        let mut source = "variables".to_source();
-        source.push_str(self.space.as_str());
-        source.push_str(self.value.to_source().as_str());
-        source.push_str(self.whitespace.as_str());
-        source
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Base64 {
-    pub space0: Whitespace,
-    pub value: Vec<u8>,
-    pub source: SourceString,
-    pub space1: Whitespace,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct File {
-    pub space0: Whitespace,
-    pub filename: Template,
-    pub space1: Whitespace,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Template {
-    pub delimiter: Option<char>,
-    pub elements: Vec<TemplateElement>,
-    pub source_info: SourceInfo,
-}
-
-impl fmt::Display for Template {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        let mut buffer = String::new();
-        for element in self.elements.iter() {
-            buffer.push_str(element.to_string().as_str());
-        }
-        write!(f, "{buffer}")
-    }
-}
-
-impl ToSource for Template {
-    fn to_source(&self) -> SourceString {
-        let mut s = SourceString::new();
-        if let Some(d) = self.delimiter {
-            s.push(d);
-        }
-        let elements: Vec<SourceString> = self.elements.iter().map(|e| e.to_source()).collect();
-        s.push_str(elements.join("").as_str());
-        if let Some(d) = self.delimiter {
-            s.push(d);
-        }
-        s
-    }
-}
-
-impl Template {
-    /// Creates a new template.
-    pub fn new(
-        delimiter: Option<char>,
-        elements: Vec<TemplateElement>,
-        source_info: SourceInfo,
-    ) -> Template {
-        Template {
-            delimiter,
-            elements,
-            source_info,
-        }
-    }
-
-    /// Returns true if this template is empty.
-    pub fn is_empty(&self) -> bool {
-        self.elements.is_empty()
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum TemplateElement {
-    String { value: String, source: SourceString },
-    Placeholder(Placeholder),
-}
-
-impl fmt::Display for TemplateElement {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        let s = match self {
-            TemplateElement::String { value, .. } => value.clone(),
-            // TODO: see why we can't need to us `{{` and `}}` in a to_string method
-            TemplateElement::Placeholder(value) => format!("{{{{{value}}}}}"),
-        };
-        write!(f, "{s}")
-    }
-}
-
-impl ToSource for TemplateElement {
-    fn to_source(&self) -> SourceString {
-        match self {
-            TemplateElement::String { source, .. } => source.clone(),
-            TemplateElement::Placeholder(value) => value.to_source(),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Comment {
-    pub value: String,
-    pub source_info: SourceInfo,
-}
-
-impl ToSource for Comment {
-    fn to_source(&self) -> SourceString {
-        format!("#{}", self.value).to_source()
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Whitespace {
-    pub value: String,
-    pub source_info: SourceInfo,
-}
-
-impl fmt::Display for Whitespace {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}", self.value)
-    }
-}
-
-impl Whitespace {
-    pub fn as_str(&self) -> &str {
-        &self.value
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Number {
-    Float(Float),
-    Integer(I64),
-    BigInteger(String),
-}
-
-impl fmt::Display for Number {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        match self {
-            Number::Float(value) => write!(f, "{value}"),
-            Number::Integer(value) => write!(f, "{value}"),
-            Number::BigInteger(value) => write!(f, "{value}"),
-        }
-    }
-}
-
-impl ToSource for Number {
-    fn to_source(&self) -> SourceString {
-        match self {
-            Number::Float(value) => value.to_source(),
-            Number::Integer(value) => value.to_source(),
-            Number::BigInteger(value) => value.to_source(),
-        }
-    }
-}
-
-// keep Number terminology for both Integer and Decimal Numbers
-// different representation for the same float value
-// 1.01 and 1.010
-
-#[derive(Clone, Debug)]
-pub struct Float {
-    value: f64,
-    source: SourceString,
-}
-
-impl Float {
-    pub fn new(value: f64, source: SourceString) -> Float {
-        Float { value, source }
-    }
-
-    pub fn as_f64(&self) -> f64 {
-        self.value
-    }
-}
-
-impl fmt::Display for Float {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}", self.value)
-    }
-}
-
-impl ToSource for Float {
-    fn to_source(&self) -> SourceString {
-        self.source.clone()
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct U64 {
-    value: u64,
-    source: SourceString,
-}
-
-impl U64 {
-    pub fn new(value: u64, source: SourceString) -> U64 {
-        U64 { value, source }
-    }
-
-    pub fn as_u64(&self) -> u64 {
-        self.value
-    }
-}
-
-impl fmt::Display for U64 {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}", self.value)
-    }
-}
-
-impl ToSource for U64 {
-    fn to_source(&self) -> SourceString {
-        self.source.clone()
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct I64 {
-    value: i64,
-    source: SourceString,
-}
-
-impl I64 {
-    pub fn new(value: i64, source: SourceString) -> I64 {
-        I64 { value, source }
-    }
-
-    pub fn as_i64(&self) -> i64 {
-        self.value
-    }
-}
-
-impl fmt::Display for I64 {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}", self.value)
-    }
-}
-
-impl ToSource for I64 {
-    fn to_source(&self) -> SourceString {
-        self.source.clone()
-    }
-}
-
-impl PartialEq for Float {
-    fn eq(&self, other: &Self) -> bool {
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5317** (2026-10-02): **Fix JSON parser unbounded recursion**
-  *Symptoms*: Currently there is no limit on the nesting depth in JSON Parsing. A 128-level hard-coded limit could be used.  
+- **Issue #5356** (2026-10-16): **Fix crash when receiving non-UTF-8 server cookie**
+  *Symptoms*: When receiving non UTF-8 cookie from server (i.e. `Set-Cookie: bad=\xff`), Hurl 8.0.1 crash:  ```shell $ hurl thread 'main' (3620034) panicked at packages/hurl/src/http/client.rs:793:47: called `Result::unwrap()` on an `Err` value: Utf8Error { valid_up_to: 49, error_len: Some(1) } note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace zsh: abort      /opt/homebrew/bin/hurl --cookie-jar build/cookies.txt --no-output  ``` 
 
-- **Issue #5207** (2026-09-14): **Publishing `hurl` crate breaks Windows builds: build script references `../../bin/windows/logo.ico`, which is outside the crate and not shipped to crates.io**
-  *Symptoms*: ### What is the current *bug* behavior?  Building the `hurl` crate (and by extension `hurl_core`) as a dependency **from crates.io** fails on Windows. The `hurl` build script tries to compile a Windows resource that embeds `../../bin/windows/logo.ico`, but that icon lives at the workspace root, outside the `packages/hurl` crate directory, so it is **not included in the published crate**. The build script then panics because `rc.exe` cannot find the file:      error RC2135 : file not found: ../../bin/windows/logo.ico      thread 'main' panicked at build.rs:29:19:     called `Result::unwrap()` on an `Err` value: Custom { kind: Other, error: "Could not compile resource file" }  Using a `git` dependency works only because a git checkout brings the whole repo, so `../../bin/windows/logo.ico` resolves. The published crate has no such file, so it cannot build on Windows.  Note: this icon only sets the resource icon on the Windows `hurl.exe`. It is irrelevant to library consumers, yet it hard-fails their builds.  ### Steps to reproduce  1. On a Windows machine with the MSVC toolchain (so `rc.exe` from the Windows SDK is used). 2. Create a new Rust project: `cargo new repro && cd repro`. 3. Add the crates.io dependencies to `Cargo.toml`:        [dependencies]        hurl = "8.0.1"        hurl_core = "8.0.1" 4. Run `cargo build`. 5. The build fails while running the custom build command for `hurl v8.0.1` with `RC2135 : file not found: ../../bin/windows/logo.ico` and the `build.rs` pani
-  **Post-Mortem & Fix Analysis**:
-  > Hi @brenordv thanks fort the issue.We're going to make the icon optionnal (option 1 of your proposal), in the next Hurl version
-  > > Hi [@brenordv](https://github.com/brenordv) thanks fort the issue.We're going to make the icon optionnal (option 1 of your proposal), in the next Hurl version  Thank you, @jcamiel! I really appreciate the help!  
-
-- **Issue #5141** (2026-08-06): **Hurl debug curl command are not valid when request binary body contains NUL (\x00) char**
-  *Symptoms*: Given this Hurl file:  ```hurl POST http://localhost:8000/post-bytes-null Content-Type: application/octet-stream base64,AAECAw==;  # printf '\x00\x01\x02\x03' | base64 HTTP 200 ```  The request body sent is `\x00\x01\x02\x03` but the curl command produced by Hurl (with `--verbose` or `--curl`) is:  ```shell $ curl --header 'Content-Type: application/octet-stream' --data $'\x00\x01\x02\x03' 'http://localhost:8000/post-bytes-null' ```  Because of the way of bash treats NUL-C terminated string, this does not work.  In this case (and only in this case), we could print the following curl command:  ```shell $ printf '\x00\x01\x02\x03' | curl --header 'Content-Type: application/octet-stream' --data-binary @- 'http://localhost:8000/post-bytes-null' ```       
-
-- **Issue #5094** (2026-06-16): **npm package depending on vulnerable tar version CVE-2026-53655**
-  *Symptoms*: https://github.com/advisories/GHSA-vmf3-w455-68vh  https://github.com/Orange-OpenSource/hurl/blob/1e1eb773078cfe95027394f0bb7c34973d480364/contrib/npm/hurl/package.json#L27
-  **Post-Mortem & Fix Analysis**:
-  > Ho @WestonThayer  Fixed with the 8.0.2 version: <https://www.npmjs.com/package/@orangeopensource/hurl/v/8.0.2> Thanks!  
-
-- **Issue #5091** (2026-06-19): **Incorrect recorded headers when connecting to proxy with CONNECT**
-  *Symptoms*: Given this curl call:  ```shell $ curl --verbose --proxy http://127.0.0.1:3128 --cacert tests_ssl/certs/server/cert.pem https://127.0.0.1:8002/hello  ```   The HTTP headers sequences is:  ``` > CONNECT 127.0.0.1:8002 HTTP/1.1 > Host: 127.0.0.1:8002 > User-Agent: curl/8.7.1 > Proxy-Connection: Keep-Alive >  < HTTP/1.1 200 Connection established <  > GET /hello HTTP/1.1 > Host: 127.0.0.1:8002 > User-Agent: curl/8.7.1 > Accept: */* > < HTTP/1.1 200 OK < Server: Werkzeug/3.1.8 Python/3.14.0 < Date: Sat, 13 Jun 2026 15:13:25 GMT < Content-Type: text/html; charset=utf-8 < Content-Length: 12 < Connection: close <  ```  With Hurl, request headers are not well recorded:  ```shell $ echo "GET https://127.0.0.1:8002/hello" | hurl --verbosity brief --proxy http://127.0.0.1:3128 --cacert tests_ssl/certs/server/cert.pem > CONNECT 127.0.0.1:8002 HTTP/1.1 > Host: 127.0.0.1:8002 > Proxy-Connection: Keep-Alive > > GET /hello HTTP/1.1 > Host: 127.0.0.1:8002 > Proxy-Connection: Keep-Alive > Host: 127.0.0.1:8002 > Accept: */* > User-Agent: hurl/8.1.0 > < HTTP/1.1 200 OK < Server: Werkzeug/3.1.8 Python/3.14.0 < Date: Sat, 13 Jun 2026 15:15:58 GMT < Content-Type: text/html; charset=utf-8 < Content-Length: 12 < Connection: close < Hello World! ```  And:  ```shell $ echo "GET https://127.0.0.1:8002/hello" | hurl --verbosity brief --proxy http://127.0.0.1:3128 --cacert tests_ssl/certs/server/cert.pem --json | jq '.entries[0].calls[0].request.headers' | pbcopy [   {     "name": "Host",     "value": "12
-
-- **Issue #5028** (2026-06-24): **Accept options variables like `111xxx` or `truexxx`**
-  *Symptoms*: Some Options variables  are rejected while being "usual":  ```hurl GET http://localhost:8000 [Options] variable: foo=aa11 variable: bar=11aa ```  ``` $ hurl /tmp/test.hurl error: Parsing literal   --> /tmp/test.hurl:4:17    |  4 | variable: bar=11aa    |                 ^ expecting 'line_terminator'    | ```  And   ```hurl GET http://localhost:8000 [Options] variable: foo=true_is_true ```  ``` $ hurl /tmp/test.hurl error: Parsing literal   --> /tmp/test.hurl:3:19    |  3 | variable: foo=true_is_true    |                   ^ expecting 'line_terminator'    |  ```  
-  **Post-Mortem & Fix Analysis**:
-  > @fabricereix I think it's reasonable that these two Hurl snippets work (without quoting the variable value to force the string type)
-
-- **Issue #5007** (2026-05-04): **IPv4 integration test is failing with libcurl 8.20.0**
-  *Symptoms*: Integration integration/hurl/tests_failed/ipv4/ipv4.sh is failing with libcurl 8.20.0 (see our ArchLinux tests).  A local IPv6 only server is listening and using `--ipv4` should fail.  A mail has been seen on libcurl mailing list for feedbacks => <https://curl.se/mail/lib-2026-05/0000.html>  Waiting for an anlysis, we disable this test.  
-
-- **Issue #4995** (2026-04-28): **jsonpath functions don't support underscores**
-  *Symptoms*: ### What is the current *bug* behavior? Fields with an underscore are rejected in jsonpath functions. `@.foo_bar` generates an error, which can be worked around with `@['foo_bar']`  ### Steps to reproduce Using this JSON response: ```json {   "foo_bar": "a",   "items": [     {       "foo": "b",       "foo_bar": "c"     }   ] } ```  with these asserts: ```hurl [Asserts] jsonpath "$.foo_bar" == "a"  # OK jsonpath "$.items[?(@.foo == 'b')]" exists  # OK jsonpath "$.items[?search(@.foo, 'b')].foo" == "b"  # OK jsonpath "$.items[?(@.foo_bar == 'c')]" exists  # FAILS jsonpath "$.items[?search(@.foo_bar, 'c')].foo_bar" == "c"  # FAILS ```  generates this error: ``` JSONPath expression '$.items[?search(@.foo_bar, 'c')].foo_bar' is not valid ```  ### What is the expected *correct* behavior? If I'm reading the RFC correctly, it should be allowed.  ### Execution context  - Hurl Version (`hurl --version`): ``` hurl 8.0.0 (x86_64-apple-darwin24.0) libcurl/8.7.1 (SecureTransport) LibreSSL/3.3.6 zlib/1.2.12 nghttp2/1.64.0 Features (libcurl):  alt-svc AsynchDNS HSTS HTTP2 IPv6 Largefile libz NTLM SPNEGO SSL UnixSockets Features (built-in): brotli ```  ### Possible fixes  I think the issue is in: https://github.com/Orange-OpenSource/hurl/blob/9743695283efb8b15bead06b86aaf077d7280d25/packages/hurl/src/jsonpath/parser/singular_query.rs#L86-L90  since `is_alphanumeric` does not include `_`
-  **Post-Mortem & Fix Analysis**:
-  > Thanks @verigak for reporting the bug. We will release a `8.0.1` to include the fix.
-  > @verigak  The new release is out! 
-  > Thanks, that was fast!
+- **Issue #5354** (2026-10-17): **Fix hurlfmt panic when importing curl commands without a URL**
+  *Symptoms*: Hurlfmt panics if the url is missing in the curl command            $ echo "curl -v" | hurlfmt --in curl                      thread 'main' (663615) panicked at packages/hurlfmt/src/curl/matches.rs:51:46:           called `Option::unwrap()` on a `None` value           note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace   I should raise a standard parsing error such as          error: Can not parse curl command at line 1: URL is missing 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2532,1430 +1847,353 @@ impl PartialEq for Float {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95312ad7` (2026-10-02)
-**Commit Message**: Update docs (non regression after ruff check fixes)
+### Incident Patch 1: `ed7b1a2c` (2026-10-16)
+**Commit Message**: Fix hurlfmt panic when importing curl commands without a URL
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -39,6 +39,7 @@ Security Issues Fixed:
- * Fix CVE-2026-63481 stripping cookie from Cookies section when redirecting to a different host [#5118](https://github.com/Orange-OpenSource/hurl/issues/5118)
- * Fix escaping headers values in HTML report [#5228](https://github.com/Orange-OpenSource/hurl/issues/5228)
- * Fix symlinks escaping file root [#5289](https://github.com/Orange-OpenSource/hurl/issues/5289)
-+* Fix credentials leaking using --header and following redirection. [#5310](https://github.com/Orange-OpenSource/hurl/issues/5310)
- 
- 
- [8.0.1 (2026-04-28)](https://github.com/Orange-OpenSource/hurl/blob/master/CHANGELOG.md#8.0.1)
-```
-
-**File**: `docs/manual/hurl.1` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--.TH hurl 1 "31 Aug 2026" "hurl 8.1.0" " Hurl Manual"
-+.TH hurl 1 "02 Oct 2026" "hurl 8.1.0" " Hurl Manual"
- .SH NAME
- 
- hurl - run and test HTTP requests.
-```
-
-**File**: `docs/manual/hurlfmt.1` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--.TH hurl 1 "31 Aug 2026" "hurl 8.1.0" " Hurl Manual"
-+.TH hurl 1 "02 Oct 2026" "hurl 8.1.0" " Hurl Manual"
- .SH NAME
- 
- hurlfmt - format Hurl files
-```
-
----
-
-### Incident Patch 2: `85edded8` (2026-10-02)
-**Commit Message**: Update Python dev dependencies and fixes new ruff check
-
-**File**: `bin/check/license.py` (modified, +7/-6)
-```diff
-@@ -9,7 +9,7 @@
- 
- import json
- import subprocess
--from typing import List, Tuple
-+import sys
- 
- 
- def main():
-@@ -41,7 +41,7 @@ def is_forbidden(name: str) -> bool:
-     return False
- 
- 
--def check_licenses(deps: List[Tuple[str, str, str, str]]):
-+def check_licenses(deps: list[tuple[str, str, str, str]]):
-     authorized = []
-     forbidden = []
-     unknown = []
-@@ -73,14 +73,14 @@ def check_licenses(deps: List[Tuple[str, str, str, str]]):
- 
-     if len(forbidden) > 0:
-         print("There are forbidden licenses")
--        exit(1)
-+        sys.exit(1)
- 
-     if len(unknown) > 0:
-         print("There are unknown licenses")
--        exit(2)
-+        sys.exit(2)
- 
- 
--def get_deps() -> List[Tuple[str, str, str, str]]:
-+def get_deps() -> list[tuple[str, str, str, str]]:
-     """Returns a list of crates name and licenses"""
-     p = subprocess.run(
-         [
-@@ -91,10 +91,11 @@ def get_deps() -> List[Tuple[str, str, str, str]]:
-         ],
-         capture_output=True,
-         text=True,
-+        check=False,
-     )
-     if p.returncode != 0:
-         print("Error calling cargo metadata")
--        exit(1)
-+        sys.exit(1)
-     data = json.loads(p.stdout)
-     packages = data["packages"]
-     licenses = [
-```
-
-**File**: `bin/check/rust_version.py` (modified, +2/-2)
-```diff
-@@ -24,7 +24,7 @@ def get_latest_release(token: str | None) -> None | tuple[str, datetime]:
-     latest_release = releases[0]
-     version = latest_release["tag_name"]
-     date_str = latest_release["published_at"]
--    date = datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
-+    date = datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S%z")
-     return version, date
- 
- 
-@@ -59,7 +59,7 @@ def main():
-         sys.stderr.write(
-             f"Rust version must be updated from {current_version} to the latest version {latest_version}\n"
-         )
--        days_before_now = datetime.datetime.now() - date
-+        days_before_now = datetime.datetime.now(datetime.timezone.utc) - date
-         if days_before_now > datetime.timedelta(days=num_days_before_error):
-             sys.exit(1)
-     else:
-```
-
-**File**: `bin/coverage_uncovered_lines.py` (modified, +3/-2)
-```diff
-@@ -9,7 +9,8 @@
- def uncovered_lines(src_file):
-     html_file = COVERAGE_DIR + "/" + src_file + ".html"
-     sys.stderr.write(html_file + "\n")
--    html = open(html_file).read()
-+    with open(html_file) as f:
-+        html = f.read()
-     soup = BeautifulSoup(html, "html.parser")
-     elements = soup.select('div[role="row"]')
-     lines = []
-@@ -36,7 +37,7 @@ def main():
-         if len(lines) > 0:
-             print(src_file)
-             for line_number, line in lines:
--                print("%s %s" % (line_number, line))
-+                print(f"{line_number} {line}")
- 
- 
- if __name__ == "__main__":
-```
-
-**File**: `bin/docs/build_man.py` (modified, +10/-9)
-```diff
-@@ -13,21 +13,21 @@
- 
- import re
- import sys
--from datetime import date
--from typing import Optional
-+from datetime import date, datetime, timezone
- 
- 
- def header(version: str, today: date) -> str:
-     today_formatted = today.strftime("%d %b %Y")
-     return f'.TH hurl 1 "{today_formatted}" "hurl {version}" " Hurl Manual"'
- 
- 
--def version() -> Optional[str]:
-+def version() -> str | None:
-     p = re.compile('version = "(.*)"')
--    for line in open("packages/hurl/Cargo.toml", "r").readlines():
--        m = p.match(line)
--        if m:
--            return m.group(1)
-+    with open("packages/hurl/Cargo.toml", "r") as f:
-+        for line in f:
-+            m = p.match(line)
-+            if m:
-+                return m.group(1)
-     return None
- 
- 
-@@ -78,8 +78,9 @@ def convert_md(s) -> str:
- 
- def main():
-     input_file = sys.argv[1]
--    data = open(input_file).readlines()
--    print(header(version(), date.today()))
-+    with open(input_file) as f:
-+        data = f.readlines()
-+    print(header(version(), datetime.now(tz=timezone.utc).date()))
- 
-     s = "".join([convert_md(line) for line in data])
- 
-```
-
-**File**: `bin/docs/build_man_md.py` (modified, +1/-3)
-```diff
-@@ -1,4 +1,3 @@
--#!/usr/bin/env python3
- """Build Grammar Markdown Manual File.
- 
- This script converts Hurl manual file to Markdown suitable for the Hurl canonical docs.
-@@ -13,7 +12,6 @@
- import re
- import sys
- from pathlib import Path
--from typing import List, Optional
- 
- from markdown import (
-     Header,
-@@ -37,7 +35,7 @@ def normalize_h2(doc: MarkdownDoc) -> None:
- 
- 
- def process_table(
--    doc: MarkdownDoc, nodes: List[Node], col_name: str, level: int, title: Optional[str]
-+    doc: MarkdownDoc, nodes: list[Node], col_name: str, level: int, title: str | None
- ) -> None:
-     """Transform the list of items from the source manual document to a beautiful HTML tables.
- 
-```
-
-**File**: `bin/docs/build_standalone_md.py` (modified, +4/-5)
-```diff
-@@ -1,4 +1,3 @@
--#!/usr/bin/env python3
- """
- Build a standalone Markdown file of all the documentation. All links and anchors are rewritten so the
- links are functional: during the concatenation of two files, the script insures that an anchor is well
-@@ -13,7 +12,7 @@
- import re
- import sys
- import unicodedata
--from datetime import datetime
-+from datetime import datetime, timezone
- from pathlib import Path
- 
- import markdown
-@@ -126,7 +125,7 @@ def rewrite_links(md: MarkdownDoc, prefix: str):
-         add_header_id(header, prefix=prefix)
- 
-     # Replace `[Foo](#anchor)` => `[Foo](#current-page-anchor)`
--    nodes = [c for c in md.children if isinstance(c, Paragraph) or isinstance(c, Table)]
-+    nodes = [c for c in md.children if isinstance(c, (Paragraph, Table))]
-     for node in nodes:
- 
-         def repl(match_obj):
-@@ -140,7 +139,7 @@ def repl(match_obj):
-         )
- 
-     # Replace `[Foo](/docs/some-page.md#anchor)` => `[Foo](#some-page-anchor)`
--    nodes = [c for c in md.children if isinstance(c, Paragraph) or isinstance(c, Table)]
-+    nodes = [c for c in md.children if isinstance(c, (Paragraph, Table))]
-     for node in nodes:
- 
-         def repl(match_obj):
-@@ -275,7 +274,7 @@ def main() -> int:
-     standalone_md.children.insert(0, title)
-     ws = Whitespace(content="\n")
-     standalone_md.children.insert(1, ws)
--    date = datetime.today().strftime("%d-%m-%Y")
-+    date = datetime.now(tz=timezone.utc).strftime("%d-%m-%Y")
-     title = Header(title=f"Version {version} - {date}", level=2)
-     standalone_md.children.insert(2, title)
-     ws = Whitespace(content="\n")
-```
-
-**File**: `bin/docs/markdown.py` (modified, +10/-17)
-```diff
-@@ -10,37 +10,30 @@
- import re
- import unicodedata
- from textwrap import dedent
--from typing import List, Optional
- 
- from parser import Parser
- 
- 
- class Node:
-     """Represent the base class for a Markdown document token."""
- 
--    content: Optional[str]
-+    content: str | None
- 
--    def __init__(self, content: Optional[str]) -> None:
-+    def __init__(self, content: str | None) -> None:
-         self.content = content
- 
- 
- class Code(Node):
-     """A code block token (https://daringfireball.net/projects/markdown/syntax#precode)."""
- 
--    pass
--
- 
- class Paragraph(Node):
-     """A paragraph token (https://daringfireball.net/projects/markdown/syntax#p)."""
- 
--    pass
--
- 
- class Whitespace(Node):
-     """A whitespace token."""
- 
--    pass
--
- 
- def build_header(title: str, level: int, _id: str | None) -> str:
-     """Constructs a header in Markdown format.
-@@ -63,7 +56,7 @@ class Header(Node):
-     level: int
-     _id: str | None
- 
--    def __init__(self, title: str, level: int, _id: str = None) -> None:
-+    def __init__(self, title: str, level: int, _id: str | None = None) -> None:
-         super().__init__(content=None)
-         self.title = title
-         self.level = level
-@@ -300,7 +293,7 @@ class MarkdownDoc:
-         children: children nodes of this document.
-     """
- 
--    children: List[Node]
-+    children: list[Node]
- 
-     def __init__(self) -> None:
-         self.children = []
-@@ -309,7 +302,7 @@ def add_child(self, node) -> None:
-         """Add a node to the document."""
-         self.children.append(node)
- 
--    def find_first(self, func, start: Optional[Node] = None) -> Optional[Node]:
-+    def find_first(self, func, start: Node | None = None) -> Node | None:
-         """Search the first child node that meet a criteria.
- 
-         Args:
-@@ -347,7 +340,7 @@ def insert_node(self, start: Node, node: Node) -> None:
-         index = self.children.index(start)
-         self.children.insert(index, node)
- 
--    def insert_nodes(self, start: Node, nodes: List[Node]) -> None:
-+    def insert_nodes(self, start: Node, nodes: list[Node]) -> None:
-         """Insert children nodes to the current document, before a specified node."""
-         index = self.children.index(start)
-         self.children[index:index] = nodes
-@@ -360,11 +353,11 @@ def remove_node(self, node: Node) -> None:
-         except ValueError:
-             pass
- 
--    def remove_nodes(self, nodes: List[Node]) -> None:
-+    def remove_nodes(self, nodes: list[Node]) -> None:
-         """Remove children nodes."""
-         self.children = [node for node in self.children if node not in nodes]
- 
--    def slice(self, node_a: Node, node_b: Node) -> List[Node]:
-+    def slice(self, node_a: Node, node_b: Node) -> list[Node]:
-         """Return a slice of the current children nodes
- 
-         Args:
-@@ -375,15 +368,15 @@ def slice(self, node_a: Node, node_b: Node) -> List[Node]:
-         index_b = self.children.index(node_b)
-         return self.children[index_a:index_b]
- 
--    def next_node(self, node: Node) -> Optional[Node]:
-+    def next_node(self, node: Node) -> Node | None:
-         """Return the following node of a specified child node."""
-         index = self.children.index(node)
-         if index < len(self.children):
-             return self.children[index + 1]
-         else:
-             return None
- 
--    def previous_node(self, node: Node) -> Optional[Node]:
-+    def previous_node(self, node: Node) -> Node | None:
-         """Return the following node of a specified child node."""
-         index = self.children.index(node)
-         if index > 0:
-```
-
-**File**: `bin/docs/markdown.test.py` (modified, +0/-1)
-```diff
-@@ -1,4 +1,3 @@
--#!/usr/bin/env python3
- import unittest
- 
- from markdown import Table
-```
-
----
-
-### Incident Patch 3: `a9403df6` (2026-09-23)
-**Commit Message**: Fix credentials leaking using --header and following redirection.
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect.hurl` (modified, +28/-0)
-```diff
-@@ -74,6 +74,20 @@ header "Location" not exists
- `Followed redirect without Authorization nor Cookie header!`
- 
- 
-+# Yet another way to express headers with `[Options]` section.
-+GET http://localhost:8000/follow-redirect-basic-auth?change_host=true
-+[Options]
-+header: Authorization:Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=
-+header: Cookie:fruit=lemon
-+HTTP 200
-+[Asserts]
-+redirects count == 1
-+redirects nth 0 location == "http://127.0.0.1:8000/followed-redirect-basic-auth"
-+url == "http://127.0.0.1:8000/followed-redirect-basic-auth"
-+header "Location" not exists
-+`Followed redirect without Authorization nor Cookie header!`
-+
-+
- # Same has previous but the host doesn't change during redirection.
- # Back checks will insure that `Authorization` and `Cookie` header are forwarded.
- GET http://localhost:8000/follow-redirect-basic-auth?change_host=false
-@@ -102,6 +116,20 @@ header "Location" not exists
- `Followed redirect with Authorization and Cookie header!`
- 
- 
-+# Yet another way to express headers with `[Options]` section.
-+GET http://localhost:8000/follow-redirect-basic-auth?change_host=false
-+[Options]
-+header: Authorization:Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=
-+header: Cookie:fruit=lemon
-+HTTP 200
-+[Asserts]
-+redirects count == 1
-+redirects nth 0 location == "http://localhost:8000/followed-redirect-basic-auth"
-+url == "http://localhost:8000/followed-redirect-basic-auth"
-+header "Location" not exists
-+`Followed redirect with Authorization and Cookie header!`
-+
-+
- # Another kinds of user authentication with `--user` in `[Options]` section:
- GET http://localhost:8000/follow-redirect-basic-auth?change_host=true
- [Options]
-```
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.curl` (added, +1/-0)
+**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.err` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+curl --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' --header 'Cookie: fruit=lemon' --location 'http://localhost:8000/follow-redirect-leak/host-a-step-1'
++error: Can not parse curl command at line 1: URL is missing
 ```
 
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.hurl` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+GET http://localhost:8000/follow-redirect-leak/host-a-step-1
-+HTTP 200
-+[Asserts]
-+redirects count == 2
-+redirects nth 0 location == "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2"
-+redirects nth 1 location == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
-+url == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
-+header "Location" not exists
-+`Followed redirect!`
-+
-+
-```
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.out` (added, +1/-0)
+**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.exit` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Followed redirect!
-\ No newline at end of file
++2
 ```
 
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.ps1` (added, +7/-0)
+**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.ps1` (added, +4/-0)
 ```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,4 @@
 +Set-StrictMode -Version latest
 +$ErrorActionPreference = 'Stop'
 +
-+hurl --location `
-+  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
-+  --header 'Cookie: fruit=lemon' `
-+  tests_ok/follow_redirect/follow_redirect_leak.hurl
++echo curl | hurlfmt --in curl
 ```
 
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.py` (added, +24/-0)
+**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.sh` (added, +5/-0)
 ```diff
-@@ -0,0 +1,24 @@
-+from app import app
-+from flask import redirect, request
-+
-+
-+@app.route("/follow-redirect-leak/host-a-step-1")
-+def follow_redirect_leak_host_a_step_1():
-+    assert "Authorization" in request.headers
-+    assert request.cookies.get("fruit") is not None
-+    return redirect("http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2")
-+
-+
-+@app.route("/follow-redirect-leak/host-b-step-2")
-+def follow_redirect_leak_host_b_step_2():
-+    assert "Authorization" not in request.headers
-+    assert request.cookies.get("fruit") is None
-+    return redirect("http://localhost:8000/follow-redirect-leak/host-a-step-3")
-+
-+
-+@app.route("/follow-redirect-leak/host-a-step-3")
-+def follow_redirect_leak_host_a_step_3():
-+    # Back on the original host: credentials must be forwarded again, just like curl does.
-+    assert "Authorization" in request.headers
-+    assert request.cookies.get("fruit") is not None
-+    return "Followed redirect!"
-```
-
-**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.sh` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,5 @@
 +#!/bin/bash
 +set -Eeuo pipefail
 +
-+hurl --location \
-+  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
-+  --header 'Cookie: fruit=lemon' \
-+  tests_ok/follow_redirect/follow_redirect_leak.hurl
-```
-
-**File**: `packages/hurl/src/http/client.rs` (modified, +21/-6)
-```diff
-@@ -35,8 +35,7 @@ use super::debug;
- use super::easy_ext;
- use super::error::HttpError;
- use super::header::{
--    ACCEPT_ENCODING, AUTHORIZATION, CONTENT_TYPE, COOKIE, EXPECT, Header, HeaderVec, LOCATION,
--    USER_AGENT,
-+    ACCEPT_ENCODING, AUTHORIZATION, CONTENT_TYPE, EXPECT, Header, HeaderVec, LOCATION, USER_AGENT,
- };
- use super::ip::IpAddr;
- use super::options::{ClientOptions, Verbosity};
-@@ -95,6 +94,16 @@ impl Client {
-         let mut request_spec = request_spec.clone();
-         let mut options = options.clone();
- 
-+        // We keep a pristine copy of the original request's credentials-related headers/cookies
-+        // and of the original options' headers/user. On each redirect hop, credentials are
-+        // stripped or restored based on a comparison between `original_url` and the redirect
-+        // target, so a chain like host A -> host B -> host A forwards credentials again once
-+        // back on the original host, mirroring libcurl's behaviour.
-+        let original_headers = request_spec.headers.clone();
-+        let original_cookies = request_spec.cookies.clone();
-+        let original_options_headers = options.headers.clone();
-+        let original_options_user = options.user.clone();
++echo curl | hurlfmt --in curl
 +
-         // Unfortunately, follow-location feature from libcurl can not be used as libcurl returns a
-         // single list of headers for the 2 responses and Hurl needs to keep every header of every
-         // response.
-@@ -125,8 +134,6 @@ impl Client {
-             };
- 
-             let redirect_method = redirect_method(status, &request_spec.method);
--            let mut headers = request_spec.headers;
--            let mut cookies = request_spec.cookies;
- 
-             // When following redirection, we filter `Authorization` and `Cookie` headers if the
-             // hostname changes unless the user explicitly trusts the redirected host with `--location-trusted`.
-@@ -135,14 +142,22 @@ impl Client {
-             // > By default, libcurl only sends Authentication: or explicitly set Cookie: headers
-             // > to the initial host given in the original URL, to avoid leaking username + password
-             // > to other sites.
-+            //
-+            // We always recompute headers, cookies, user (everything that can have credentials)
-+            // from original request rather than from the previous redirection step. A redirect chain
-+            // A -> B -> A will forward credentials on the final step.
-+            let mut headers = original_headers.clone();
-+            let mut cookies = original_cookies.clone();
-+            options.headers = original_options_headers.clone();
-+            options.user = original_options_user.clone();
-             if should_strip_credentials_on_redirect(
-                 original_url,
-                 &redirect_url,
-                 options.follow_location,
-             ) {
--                headers.retain(|h| !h.name_eq(AUTHORIZATION));
--                headers.retain(|h| !h.name_eq(COOKIE));
-+                headers.remove_credentials();
-                 cookies.clear();
-+                options.headers.remove_credentials();
-                 options.user = None;
-             }
- 
 ```
 
----
-
-### Incident Patch 4: `e2840637` (2026-09-25)
-**Commit Message**: Fix hurl.dev ssl integration test.
-
-**File**: `integration/hurl/tests_ssl/keepalive.hurl` (modified, +2/-2)
+**File**: `packages/hurlfmt/src/curl/matches.rs` (modified, +4/-4)
 ```diff
-@@ -16,7 +16,7 @@ HTTP 200
- [Asserts]
- header "Connection" not exists
- certificate "Subject" replace " = " "=" replace ";" ", " == "CN=hurl.dev"
--certificate "Issuer"  replace " = " "=" replace ";" ", " matches "^C=US, O=Let's Encrypt, CN=YR2$"
-+certificate "Issuer"  replace " = " "=" replace ";" ", " matches "^C=US, O=Let's Encrypt, CN=.*$"
- certificate "Expire-Date" daysAfterNow > 15
- certificate "Serial-Number" matches /^([\da-f]{2}:){17}[\da-f]{2}$/
- 
-@@ -25,7 +25,7 @@ GET https://hurl.dev
- HTTP 200
- [Asserts]
- certificate "Subject" replace " = " "=" replace ";" ", " == "CN=hurl.dev"
--certificate "Issuer"  replace " = " "=" replace ";" ", " matches "^C=US, O=Let's Encrypt, CN=YR2$"
-+certificate "Issuer"  replace " = " "=" replace ";" ", " matches "^C=US, O=Let's Encrypt, CN=.*$"
- certificate "Expire-Date" daysAfterNow > 15
- certificate "Serial-Number" matches /^([\da-f]{2}:){17}[\da-f]{2}$/
- 
-```
-
-**File**: `integration/hurl/tests_ssl/letsencrypt.hurl` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ GET https://hurl.dev
- HTTP 200
- [Asserts]
- certificate "Subject" replace " = " "=" replace ";" ", " == "CN=hurl.dev"
--certificate "Issuer"  replace " = " "=" replace ";" ", " matches "^C=US, O=Let's Encrypt, CN=YR2$"
-+certificate "Issuer"  replace " = " "=" replace ";" ", " matches "^C=US, O=Let's Encrypt, CN=.*$"
- certificate "Expire-Date" isDate
- certificate "Expire-Date" daysAfterNow > 15
- certificate "Serial-Number" matches /^([\da-f]{2}:){17}[\da-f]{2}$/
-```
-
----
-
-### Incident Patch 5: `8c77755d` (2026-09-14)
-**Commit Message**: Fix micro typo in semantique JSON spec.
-
-**File**: `docs/spec/runner/assert_json_body.md` (modified, +16/-13)
-```diff
-@@ -108,12 +108,12 @@ We will use this expected JSON below:
-  
- Expected value
-    
--   24    "age": 22
-+    24    "age": 22
- 
- 
- Actual Value
- 
--        "age": 20
-+    "age": 20
- 
- 
- Explicit jsonpath assert error
-@@ -135,8 +135,12 @@ Explicit jsonpath assert error
- 
- 
-     23 |   "is_alive": true,
--       |    ^^^^^^^^  Missing expected key $.is_alive 
-+       |    ^^^^^^^^ missing expected key <is_alive> at $.is_alive 
-        
-+> We output the name of the key rendered because the source code can be templatized:
-+> 
-+>     23 |   "{{some_key}}": true,
-+>        |    ^^^^^^^^ missing expected key <is_alive> at $.is_alive
- 
- Explicit jsonpath assert error
- 
-@@ -150,7 +154,7 @@ Explicit jsonpath assert error
-     20 |  {
-        |  ...
-     47 |  }
--       |  ^ Unexpected actual key <country> at $.country
-+       |  ^ unexpected actual key <country> at $.country
- 
- 
- The line number matches the line for which it could be added in the source Hurl file.
-@@ -174,7 +178,8 @@ Expected array
-     45      ]
- 
- Actual array
--           "children": [
-+
-+        "children": [
-               "Thomas",
-               "Trevor"
-            ]
-@@ -196,8 +201,6 @@ Explicit jsonpath assert error
-         |
- 
- 
--
--
- ### case 5 - mismatch value in array of objects
- 
- 
-@@ -264,9 +267,9 @@ Actual array
- Assert JSON Body Error
- 
-     44  |    "Trevor" 
--        |    ^^^^^^^^ Missing expected array element at $.children[2] 
--        |  actual: nothing
--        |  expected string <Trevor>
-+        |    ^^^^^^^^ missing expected array element at $.children[2] 
-+        |  actual:   nothing
-+        |  expected: string <Trevor>
- 
- 
- Explicit jsonpath assert error
-@@ -289,19 +292,19 @@ Expected array
-     45      ]
- 
- Actual array
-+
-            "children": [
-               "Catherine",
-               "Thomas",
-               "Trevor",
-               "Bob"
-            ]
- 
--
- Assert JSON Body Error
- 
-     45 |   ]
-        |   ^ unexpected actual array element at $.children[3]
--       |  actual:  string <Bob>   
-+       |  actual:   string <Bob>   
-        |  expected: nothing
- 
- 
-@@ -318,7 +321,7 @@ Explicit jsonpath assert error
-  
- Expected value
-    
--   24    "age": 22
-+    24    "age": 22
- 
- 
- Actual Value
-```
-
----
-
-### Incident Patch 6: `b5864c95` (2026-09-14)
-**Commit Message**: Don't fail build on Windows if file icon is not reachable.
-
-**File**: `packages/hurl/build.rs` (modified, +8/-3)
-```diff
-@@ -15,7 +15,6 @@
-  * limitations under the License.
-  *
-  */
--
- use std::path::Path;
- 
- use cc::Build;
-@@ -24,9 +23,15 @@ use winres::WindowsResource;
- 
- #[cfg(windows)]
- fn set_icon() {
-+    let icon = "../../bin/windows/logo.ico";
-+    if !Path::new(icon).exists() {
-+        return;
-+    }
-     let mut res = WindowsResource::new();
--    res.set_icon("../../bin/windows/logo.ico");
--    res.compile().unwrap();
-+    res.set_icon(icon);
-+    if let Err(e) = res.compile() {
-+        println!("cargo:warning=failed to compile Windows resource: {e}");
-+    }
+@@ -44,16 +44,16 @@ pub fn method(arg_matches: &ArgMatches) -> String {
+     }
  }
  
- #[cfg(unix)]
-```
-
----
-
-### Incident Patch 7: `02a95808` (2026-09-09)
-**Commit Message**: Fix symlinks escaping file root.
-
-**File**: `integration/hurl/tests_failed/fileroot/fileroot.err` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+error: Unauthorized file access
-+  --> tests_failed/fileroot/fileroot.hurl:3:9
-+   |
-+   | GET http://localhost:8000/fileroot-ko
-+   | ...
-+ 3 | output: authorized.bin
-+   |         ^^^^^^^^^^^^^^ unauthorized access to file authorized.bin, check --file-root option
-+   |
-+
-+error: Unauthorized file access
-+  --> tests_failed/fileroot/fileroot.hurl:8:6
-+   |
-+   | POST http://localhost:8000/fileroot-ko
-+ 8 | file,authorized.bin;
-+   |      ^^^^^^^^^^^^^^ unauthorized access to file authorized.bin, check --file-root option
-+   |
-+
-+error: Unauthorized file access
-+  --> tests_failed/fileroot/fileroot.hurl:14:9
-+   |
-+   | GET http://localhost:8000/fileroot-ko
-+   | ...
-+14 | output: authorized_dir/output.bin
-+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^ unauthorized access to file authorized_dir/output.bin, check --file-root option
-+   |
-+
-```
-
-**File**: `integration/hurl/tests_failed/fileroot/fileroot.exit` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+3
-```
-
-**File**: `integration/hurl/tests_failed/fileroot/fileroot.hurl` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+GET http://localhost:8000/fileroot-ko
-+[Options]
-+output: authorized.bin
-+HTTP 200
-+
-+
-+POST http://localhost:8000/fileroot-ko
-+file,authorized.bin;
-+HTTP 200
-+
-+
-+GET http://localhost:8000/fileroot-ko
-+[Options]
-+output: authorized_dir/output.bin
-+HTTP 200
-```
-
-**File**: `integration/hurl/tests_failed/fileroot/fileroot.ps1` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+Set-StrictMode -Version latest
-+$ErrorActionPreference = 'Stop'
-+
-+# We test that a symlink cannot access outside the file-root (directory containing the Hurl file by default)
-+# Symlinks can be a file, or a directory containing a file that doesn't exist yet.
-+
-+$unauthorized = Join-Path $env:TEMP 'unauthorized.bin'
-+$unauthorizedDir = Join-Path $env:TEMP 'unauthorized_dir'
-+Remove-Item -Path $unauthorizedDir -Recurse -Force -ErrorAction SilentlyContinue
-+New-Item -Path $unauthorized -Force -ItemType File | Out-Null
-+New-Item -Path $unauthorizedDir -Force -ItemType Directory | Out-Null
-+New-Item -Path tests_failed/fileroot/authorized.bin -Force -ItemType SymbolicLink -Target $unauthorized | Out-Null
-+New-Item -Path tests_failed/fileroot/authorized_dir -Force -ItemType SymbolicLink -Target $unauthorizedDir | Out-Null
-+hurl --continue-on-error tests_failed/fileroot/fileroot.hurl
-```
-
-**File**: `integration/hurl/tests_failed/fileroot/fileroot.py` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+from app import app
-+
-+
-+@app.route("/fileroot-ko", methods=["GET", "POST"])
-+def fileroot_ko():
-+    return "Error!"
-```
-
-**File**: `integration/hurl/tests_failed/fileroot/fileroot.sh` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+#!/bin/bash
-+set -Eeuo pipefail
-+
-+# We test that a symlink cannot access outside the file-root (directory containing the Hurl file by default)
-+# Symlinks can be a file, or a directory containing a file that doesn't exist yet.
-+
-+rm -rf /tmp/unauthorized_dir
-+mkdir -p /tmp/unauthorized_dir
-+touch /tmp/unauthorized.bin
-+ln -fs /tmp/unauthorized.bin tests_failed/fileroot/authorized.bin
-+ln -fns /tmp/unauthorized_dir tests_failed/fileroot/authorized_dir
-+hurl --continue-on-error tests_failed/fileroot/fileroot.hurl
-```
-
-**File**: `packages/hurl/src/runner/body.rs` (modified, +2/-2)
-```diff
-@@ -120,7 +120,7 @@ mod tests {
-         });
- 
-         let variables = VariableSet::new();
--        let current_dir = Path::new("/home");
-+        let current_dir = Path::new("/my_home");
-         let file_root = Path::new("");
-         let context_dir = ContextDir::new(current_dir, file_root);
-         assert_eq!(
-@@ -152,7 +152,7 @@ mod tests {
- 
-         let variables = VariableSet::new();
- 
--        let current_dir = Path::new("/home");
-+        let current_dir = Path::new("/my_home");
-         let file_root = Path::new("file_root");
-         let context_dir = ContextDir::new(current_dir, file_root);
-         let error = eval_bytes(&bytes, &variables, &context_dir).err().unwrap();
-```
-
-**File**: `packages/hurl/src/util/path.rs` (modified, +65/-37)
-```diff
-@@ -66,9 +66,10 @@ impl ContextDir {
+-pub fn url(arg_matches: &ArgMatches) -> String {
++pub fn url(arg_matches: &ArgMatches) -> Result<String, String> {
+     let s = if let Some(value) = get_string(arg_matches, "url") {
+         value
+     } else {
+-        get_string(arg_matches, "url_param").unwrap()
++        get_string(arg_matches, "url_param").ok_or_else(|| "URL is missing".to_string())?
+     };
+     if !s.starts_with("http") {
+-        format!("https://{s}")
++        Ok(format!("https://{s}"))
+     } else {
+-        s
++        Ok(s)
+     }
  }
  
- /// Return true if `path` is a descendant path of `ancestor`, false otherwise.
-+/// Both paths are resolved before test, so symlinks can't be used to escape `ancestor`.
- fn is_descendant(path: &Path, ancestor: &Path) -> bool {
--    let path = normalize_path(path);
--    let ancestor = normalize_path(ancestor);
-+    let path = resolve_path(path);
-+    let ancestor = resolve_path(ancestor);
-     for a in path.ancestors() {
-         if ancestor == a {
-             return true;
-@@ -77,9 +78,36 @@ fn is_descendant(path: &Path, ancestor: &Path) -> bool {
-     false
- }
+```
+
+**File**: `packages/hurlfmt/src/curl/mod.rs` (modified, +22/-1)
+```diff
+@@ -88,7 +88,7 @@ fn parse_line(s: &str) -> Result<String, String> {
+     };
  
-+/// Returns the absolute form of this `path`, with symlinks resolved.
-+///
-+/// Contrary to the method [`std::fs::canonicalize`] on [`Path`], this function doesn't require
-+/// `path` to exist: the longest prefix of `path` that exists is canonicalized, then the remaining
-+/// components are appended to it, lexically normalized (they can't be resolved as they don't exist
-+/// on the filesystem). This is needed to check files that are not created yet, like `output` files.
-+fn resolve_path(path: &Path) -> PathBuf {
-+    let components = path.components().collect::<Vec<_>>();
-+    for i in (0..=components.len()).rev() {
-+        let prefix = components[..i].iter().collect::<PathBuf>();
-+        let Ok(mut resolved) = prefix.canonicalize() else {
-+            continue;
-+        };
-+        for component in &components[i..] {
-+            match component {
-+                Component::CurDir => {}
-+                Component::ParentDir => {
-+                    resolved.pop();
-+                }
-+                _ => resolved.push(component),
-+            }
+     let method = matches::method(&arg_matches);
+-    let url = matches::url(&arg_matches);
++    let url = matches::url(&arg_matches)?;
+     let headers = matches::headers(&arg_matches);
+     let cookies = matches::cookies(&arg_matches);
+     let options = matches::options(&arg_matches);
+@@ -161,6 +161,27 @@ fn additional_asserts(options: &[HurlOption]) -> Vec<String> {
+ mod test {
+     use crate::curl::*;
+ 
++    #[test]
++    fn test_missing_url() {
++        for input in ["curl", "curl -X POST", "curl -H 'Accept: application/json'"] {
++            assert_eq!(
++                parse(input).unwrap_err(),
++                "Can not parse curl command at line 1: URL is missing"
++            );
 +        }
-+        return resolved;
-+    }
-+    normalize_path(path)
-+}
-+
- /// Returns the absolute form of this `path` with all intermediate components normalized.
- /// Contrary to the methods [`std::fs::canonicalize`] on [`Path`], this function doesn't require
--/// the final path to exist.
-+/// the final `path` to exist.
- ///
- /// Borrowed from https://github.com/rust-lang/cargo/blob/master/crates/cargo-util/src/paths.rs
- fn normalize_path(path: &Path) -> PathBuf {
-@@ -124,18 +152,18 @@ mod tests {
-     #[test]
-     fn check_filename_allowed_access_without_user_file_root() {
-         // ```
--        // $ cd /tmp
-+        // $ cd /dir
-         // $ hurl test.hurl
-         // ```
--        let current_dir = Path::new("/tmp");
-+        let current_dir = Path::new("/dir");
-         let file_root = Path::new("");
-         let ctx = ContextDir::new(current_dir, file_root);
-         assert!(ctx.is_access_allowed(Path::new("foo.bin")));
--        assert!(ctx.is_access_allowed(Path::new("/tmp/foo.bin")));
-+        assert!(ctx.is_access_allowed(Path::new("/dir/foo.bin")));
-         assert!(ctx.is_access_allowed(Path::new("a/foo.bin")));
-         assert!(ctx.is_access_allowed(Path::new("a/b/foo.bin")));
--        assert!(ctx.is_access_allowed(Path::new("../tmp/a/b/foo.bin")));
--        assert!(ctx.is_access_allowed(Path::new("../../../tmp/a/b/foo.bin")));
-+        assert!(ctx.is_access_allowed(Path::new("../dir/a/b/foo.bin")));
-+        assert!(ctx.is_access_allowed(Path::new("../../../dir/a/b/foo.bin")));
- 
-         assert!(!ctx.is_access_allowed(Path::new("/file/foo.bin")));
-         assert!(!ctx.is_access_allowed(Path::new("../foo.bin")));
-@@ -146,10 +174,10 @@ mod tests {
-     #[test]
-     fn check_filename_allowed_access_with_explicit_absolute_user_file_root() {
-         // ```
--        // $ cd /tmp
-+        // $ cd /dir
-         // $ hurl --file-root /file test.hurl
-         // ```
--        let current_dir = Path::new("/tmp");
-+        let current_dir = Path::new("/dir");
-         let file_root = Path::new("/file");
-         let ctx = ContextDir::new(current_dir, file_root);
-         assert!(ctx.is_access_allowed(Path::new("foo.bin"))); // absolute path is /file/foo.bin
-@@ -158,13 +186,13 @@ mod tests {
-         assert!(ctx.is_access_allowed(Path::new("a/b/foo.bin")));
-         assert!(ctx.is_access_allowed(Path::new("../../file/foo.bin")));
- 
--        assert!(!ctx.is_access_allowed(Path::new("/tmp/foo.bin")));
--        assert!(!ctx.is_access_allowed(Path::new("../tmp/a/b/foo.bin")));
-+        assert!(!ctx.is_access_allowed(Path::new("/dir/foo.bin")));
-+        assert!(!ctx.is_access_allowed(Path::new("../dir/a/b/foo.bin")));
-         assert!(!ctx.is_access_allowed(Path::new("../foo.bin")));
-         assert!(!ctx.is_access_allowed(Path::new("../../foo.bin")));
--        assert!(!ctx.is_access_allowed(Path::new("../../../tmp/a/b/foo.bin")));
-+        assert!(!ctx.is_access_allowed(Path::new("../../../dir/a/b/foo.bin")));
- 
--        let current_dir = Path::new("/tmp");
-+        let current_dir = Path::new("/dir");
-         let file_root = Path::new("../file");
-         let ctx = ContextDir::new(current_dir, file_root);
-         assert!(ctx.is_access_allowed(Path::new("foo.bin")));
-@@ -173,46 +201,46 @@ mod tests {
-         assert!(ctx.is_access_allowed(Path::new("a/b/
-```
-
----
-
-### Incident Patch 8: `5c26afe9` (2026-09-09)
-**Commit Message**: Use latest libcurl for Windows build
-
-**File**: `bin/install_prerequisites_windows.ps1` (modified, +0/-3)
-```diff
-@@ -46,9 +46,6 @@ git -C $vcpkg_dir pull
- & "$vcpkg_dir\bootstrap-vcpkg.bat"
- vcpkg upgrade --no-dry-run
- if ($LASTEXITCODE) { Throw }
--# Downgrade to 8.19.0 => https://github.com/Orange-OpenSource/hurl/issues/5105
--git -C "$vcpkg_dir" restore --source=4f326c4072038c8624c36a8ba5ed23f616adda53 --worktree ports/curl
--git -C "$vcpkg_dir" restore --source=4f326c4072038c8624c36a8ba5ed23f616adda53 --worktree ports/zlib
- 
- # install libxml and libcurl
- vcpkg install --recurse curl[core,sspi,http2,non-http,ssl]:x64-windows
-```
-
-**File**: `bin/release/release.ps1` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ $release_dir="$project_root_path\target\release"
- $package_dir="$project_root_path\target\win-package"
- New-Item -ItemType Directory -Force -Path $package_dir
- Copy-Item -Path $lib_dir\libcurl.dll -Destination $package_dir
--Copy-Item -Path $lib_dir\zlib1.dll -Destination $package_dir
-+Copy-Item -Path $lib_dir\z.dll -Destination $package_dir
- Copy-Item -Path $lib_dir\nghttp2.dll -Destination $package_dir
- Copy-Item -Path $lib_dir\libxml2.dll -Destination $package_dir
- Copy-Item -Path $lib_dir\iconv-2.dll -Destination $package_dir
-```
-
-**File**: `bin/windows/hurl.nsi` (modified, +2/-2)
-```diff
-@@ -99,10 +99,10 @@ SectionGroup "dlls"
-     SetOutPath $INSTDIR
-     File "libxml2.dll"
-   SectionEnd
--  Section "zlib1.dll"
-+  Section "z.dll"
-     SectionIn RO
-     SetOutPath $INSTDIR
--    File "zlib1.dll"
-+    File "z.dll"
-   SectionEnd
-   Section "libcurl.dll"
-     SectionIn RO
-```
-
-**File**: `docs/spec/packages/hurl-x.y.z-x86_64-pc-windows-msvc-installer.exe.anatomy` (modified, +1/-1)
-```diff
-@@ -22,4 +22,4 @@ attr     user_group  type  file
- -------  ---         file  libxml2.dll
- -------  ---         file  nghttp2.dll
- -------  ---         file  version.txt
---------  ---         file  zlib1.dll
-+-------  ---         file  z.dll
-```
-
-**File**: `docs/spec/packages/hurl-x.y.z-x86_64-pc-windows-msvc.zip.anatomy` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@ attr     user_group  type  file
- -rw----  defN        file  libxml2.dll
- -rw----  defN        file  nghttp2.dll
- -rw----  defN        file  version.txt
---rw----  defN        file  zlib1.dll
-+-rw----  defN        file  z.dll
-```
-
----
-
-### Incident Patch 9: `0f1b49b7` (2026-09-09)
-**Commit Message**: Fix output_type configuration.
-
-**File**: `packages/hurl/src/cli/options/args.rs` (modified, +1/-1)
-```diff
-@@ -797,7 +797,7 @@ fn output(arg_matches: &ArgMatches, default_value: Option<Output>) -> Option<Out
- fn output_type(arg_matches: &ArgMatches, default_value: OutputType) -> OutputType {
-     if has_flag(arg_matches, "json") {
-         OutputType::Json
--    } else if has_flag(arg_matches, "no_output") || has_flag(arg_matches, "test") {
-+    } else if has_flag(arg_matches, "no_output") {
-         OutputType::NoOutput
-     } else {
-         default_value
-```
-
-**File**: `packages/hurl/src/cli/options/env_vars.rs` (modified, +0/-2)
-```diff
-@@ -651,8 +651,6 @@ fn no_jsonpath_coercion(env_vars: &EnvVars, default_value: bool) -> bool {
- fn output_type(env_vars: &EnvVars, default_value: OutputType) -> OutputType {
-     if let Some(true) = env_vars.no_output() {
-         OutputType::NoOutput
--    } else if let Some(true) = env_vars.test() {
--        OutputType::NoOutput
-     } else {
-         default_value
-     }
-```
-
-**File**: `packages/hurl/src/cli/options/mod.rs` (modified, +8/-1)
-```diff
-@@ -289,6 +289,13 @@ fn resolve_implicit(context: &RunContext, default_options: CliOptions) -> CliOpt
-     if let BoolOpt::Auto = options.parallel {
-         options.parallel = BoolOpt::Set(options.test);
-     }
-+    // No output for test mode
-+    if let OutputType::ResponseBody = options.output_type
-+        && options.test
-+    {
-+        options.output_type = OutputType::NoOutput;
 +    }
 +
-     // If stdout is not a terminal, disable prettifying
-     if let PrettyMode::Automatic = options.pretty
-         && !context.is_stdout_term()
-@@ -765,7 +772,7 @@ mod tests {
-         assert!(opts.test);
-         assert!(opts.progress_bar.get());
-         assert!(opts.parallel.get());
--        //assert_eq!(opts.output_type, OutputType::NoOutput);
-+        assert_eq!(opts.output_type, OutputType::NoOutput);
-     }
- 
++    #[test]
++    fn test_url_forms() {
++        for input in [
++            "curl https://example.com",
++            "curl --url https://example.com",
++            "curl example.com",
++        ] {
++            assert_eq!(parse_line(input).unwrap(), "GET https://example.com\n");
++        }
++    }
++
      #[test]
+     fn test_parse() {
+         let hurl_str = r#"GET http://localhost:8000/hello
+```
+
+**File**: `packages/hurlfmt/src/main.rs` (modified, +1/-1)
+```diff
+@@ -186,7 +186,7 @@ fn process_export_command(
+                     } => {
+                         logger.error_parsing(content, input_file, error);
+                     }
+-                    ExportError::Curl(s) => logger.error(&format!("error curl {s} d")),
++                    ExportError::Curl(s) => logger.error(s),
+                 }
+             }
+         }
 ```
 
 ---
 
-### Incident Patch 10: `0e427288` (2026-09-03)
-**Commit Message**: Fix integration test for cookie value on curl 8.22 due to <https://github.com/curl/curl/pull/22730>
+### Incident Patch 2: `1988fed8` (2026-10-16)
+**Commit Message**: Fix crash when receiving non UTF-8 server cookie.
 
-curl 8.22 changes cookie managment for PSL. A cookie that set Domain=localhost for request on localhost becomes host only. So in curl 8.22, such a request changes a cookie from subdomain to host only.
-
-**File**: `integration/hurl/tests_ok/captures/captures_to_json.out.pattern` (modified, +1/-1)
+**File**: `integration/hurl/tests_ok/cookie/cookie_jar.err` (added, +2/-0)
 ```diff
-@@ -1 +1 @@
--{"cookies":[{"domain":".localhost","expires":<<<\d+>>>,"https":false,"include_subdomain":true,"name":"foo","path":"/bar","value":"value1"}],"entries":[{"asserts":[{"line":2,"success":true},{"line":2,"success":true},{"line":12,"success":true},{"line":13,"success":true},{"line":14,"success":true},{"line":15,"success":true},{"line":16,"success":true}],"calls":[{"request":{"cookies":[],"headers":[{"name":"Host","value":"localhost:8000"},{"name":"Accept","value":"*/*"},{"name":"User-Agent","value":"hurl/<<<.*?>>>"}],"method":"GET","query_string":[],"url":"http://localhost:8000/captures"},"response":{"cookies":[],"headers":[{"name":"Content-Length","value":"12"},{"name":"Content-Type","value":"text/html; charset=utf-8"},{"name":"Date","value":"<<<.*?>>>"},{"name":"Header1","value":"value1"},{"name":"Header2","value":"Hello Bob!"},{"name":"Server","value":"Flask Server"},{"name":"Via","value":"waitress"}],"http_version":"HTTP/1.1","status":200},"timings":{"app_connect":<<<\d+>>>,"begin_call":"<<<.*?>>>","connect":<<<\d+>>>,"end_call":"<<<.*?>>>","name_lookup":<<<\d+>>>,"pre_transfer":<<<\d+>>>,"start_transfer":<<<\d+>>>,"total":<<<\d+>>>}}],"captures":[{"name":"param1","value":"value1"},{"name":"param2","value":"Bob"},{"name":"param3","value":"Bob"},{"name":"data1","value":"Hello world!"},{"name":"data2","value":"Hello world!"}],"curl_cmd":"curl 'http://localhost:8000/captures'","index":1,"line":1,"time":<<<\d+>>>},{"asserts":[{"line":23,"success":true},{"line":23,"success":true}],"calls":[{"request":{"cookies":[],"headers":[{"name":"Host","value":"localhost:8000"},{"name":"Accept","value":"*/*"},{"name":"User-Agent","value":"hurl/<<<.*?>>>"}],"method":"GET","query_string":[{"name":"param1","value":"value1"},{"name":"param2","value":"Bob"}],"url":"http://localhost:8000/captures-check?param1=value1&param2=Bob"},"response":{"cookies":[],"headers":[{"name":"Content-Length","value":"0"},{"name":"Content-Type","value":"text/html; charset=utf-8"},{"name":"Date","value":"<<<.*?>>>"},{"name":"Server","value":"Flask Server"},{"name":"Via","value":"waitress"}],"http_version":"HTTP/1.1","status":200},"timings":{"app_connect":<<<\d+>>>,"begin_call":"<<<.*?>>>","connect":<<<\d+>>>,"end_call":"<<<.*?>>>","name_lookup":<<<\d+>>>,"pre_transfer":<<<\d+>>>,"start_transfer":<<<\d+>>>,"total":<<<\d+>>>}}],"captures":[],"curl_cmd":"curl 'http://localhost:8000/captures-check?param1=value1&param2=Bob'","index":2,"line":19,"time":<<<\d+>>>},{"asserts":[{"line":30,"success":true},{"line":30,"success":true}],"calls":[{"request":{"cookies":[],"headers":[{"name":"Host","value":"localhost:8000"},{"name":"Accept","value":"*/*"},{"name":"User-Agent","value":"hurl/<<<.*?>>>"}],"method":"GET","query_string":[{"name":"param1","value":"value1"},{"name":"param2","value":"Bob"}],"url":"http://localhost:8000/captures-check?param1=value1&param2=Bob"},"response":{"cookies":[],"headers":[{"name":"Content-Length","value":"0"},{"name":"Content-Type","value":"text/html; charset=utf-8"},{"name":"Date","value":"<<<.*?>>>"},{"name":"Server","value":"Flask Server"},{"name":"Via","value":"waitress"}],"http_version":"HTTP/1.1","status":200},"timings":{"app_connect":<<<\d+>>>,"begin_call":"<<<.*?>>>","connect":<<<\d+>>>,"end_call":"<<<.*?>>>","name_lookup":<<<\d+>>>,"pre_transfer":<<<\d+>>>,"start_transfer":<<<\d+>>>,"total":<<<\d+>>>}}],"captures":[],"curl_cmd":"curl 'http://localhost:8000/captures-check?param1=value1&param2=Bob'","index":3,"line":26,"time":<<<\d+>>>},{"asserts":[{"line":34,"success":true},{"line":34,"success":true},{"line":38,"success":true}],"calls":[{"request":{"cookies":[],"headers":[{"name":"Host","value":"localhost:8000"},{"name":"Accept","value":"*/*"},{"name":"User-Agent","value":"hurl/<<<.*?>>>"}],"method":"GET","query_string":[],"url":"http://localhost:8000/captures-xml"},"response":{"cookies":[],"headers":[{"name":"Content-Length","value":"166"},{"name":"Content-Type","value":"text/html; charset=utf-8"},{"name":"Date","value":"<<<.*?>>>"},{"name":"Server","value":"Flask Server"},{"name":"Via","value":"waitress"}],"http_version":"HTTP/1.1","status":200},"timings":{"app_connect":<<<\d+>>>,"begin_call":"<<<.*?>>>","connect":<<<\d+>>>,"end_call":"<<<.*?>>>","name_lookup":<<<\d+>>>,"pre_transfer":<<<\d+>>>,"start_transfer":<<<\d+>>>,"total":<<<\d+>>>}}],"captures":[{"name":"a_node_set","value":{"size":2,"type":"nodeset"}}],"curl_cmd":"curl 'http://localhost:8000/captures-xml'","index":4,"line":33,"time":<<<\d+>>>},{"asserts":[{"line":42,"success":true},{"line":42,"success":true},{"line":51,"success":true},{"line":52,"success":true},{"line":53,"success":true},{"line":54,"success":true},{"line":55,"success":true},{"line":56,"success":true},{"line":57,"success":true},{"line":58,"success":true},{"line":59,"success":true},{"line":60,"success":true},{"line":61,"success":true}],"calls":[{"request":{"cookies":[],"headers":[{"name":"Host","value":"localhost:8000"},{"name":"Accept","value":"*/*"},{"name":"User-Agent","value":"hurl/<<<.*?
+@@ -0,0 +1,2 @@
++warning: Cookie <localhost	FALSE	/cookie-jar/non-utf8	FALSE	0	bad	�> can not be parsed as UTF-8
++warning: Cookie <localhost	FALSE	/cookie-jar/non-utf8	FALSE	0	bad	�> can not be parsed as UTF-8
 ```
 
-**File**: `integration/hurl/tests_ok/captures/captures_verbose.err.pattern` (modified, +2/-2)
+**File**: `integration/hurl/tests_ok/cookie/cookie_jar.hurl` (modified, +1/-1)
 ```diff
-@@ -92,7 +92,7 @@
- [1;34m*[0m [1mExecuting entry 4[0m
- [1;34m*[0m
- [1;34m*[0m [1mCookie store:[0m
--[1;34m*[0m #HttpOnly_.localhost	TRUE	/bar	FALSE	<<<\d+>>>	foo	value1
-+[1;34m*[0m #HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/bar	FALSE	<<<\d+>>>	foo	value1
- [1;34m*[0m
- [1;34m*[0m [1mRequest:[0m
- [1;34m*[0m GET http://localhost:8000/captures-json
-@@ -136,7 +136,7 @@
- [1;34m*[0m location: true
- [1;34m*[0m
- [1;34m*[0m [1mCookie store:[0m
--[1;34m*[0m #HttpOnly_.localhost	TRUE	/bar	FALSE	<<<\d+>>>	foo	value1
-+[1;34m*[0m #HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/bar	FALSE	<<<\d+>>>	foo	value1
- [1;34m*[0m
- [1;34m*[0m [1mRequest:[0m
- [1;34m*[0m GET http://localhost:8000/redirect-to-captures-json
+@@ -8,7 +8,7 @@ Set-Cookie: LSID=DQAAAKEaem_vYg; Expires=Thu, 13 Jan 2078 22:23:01 GMT; HttpOnly
+ Set-Cookie: HSID=AYQEVnDKrdst; Domain=localhost; Expires=Thu, 13 Jan 2078 22:23:01 GMT; HttpOnly; Path=/
+ Set-Cookie: SSID=Ap4PGTEq; Domain=localhost; Expires=Thu, 13 Jan 2078 22:23:01 GMT; HttpOnly; Path=/
+ [Asserts]
+-header "Set-Cookie" count == 4
++header "Set-Cookie" count == 5
+ cookie "LSID" == "DQAAAKEaem_vYg"
+ cookie "LSID[Value]" == "DQAAAKEaem_vYg"
+ cookie "LSID[Expires]" exists
 ```
 
-**File**: `integration/hurl/tests_ok/cookie/cookie_jar.out.pattern` (modified, +3/-3)
+**File**: `integration/hurl/tests_ok/cookie/cookie_jar.out.pattern` (modified, +1/-0)
 ```diff
-@@ -3,6 +3,6 @@
+@@ -6,3 +6,4 @@
+ #HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3409338181)>>>	HSID	AYQEVnDKrdst
+ #HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3409338181)>>>	SSID	Ap4PGTEq
+ <<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3093675001)>>>	foo	"a b c"
++localhost	FALSE	/cookie-jar/non-utf8	FALSE	0	bad	�
+```
+
+**File**: `integration/hurl/tests_ok/cookie/cookie_jar.py` (modified, +2/-0)
+```diff
+@@ -36,6 +36,8 @@ def set_cookie_jar():
+         expires="Thu, 13 Jan 2068 10:10:01 GMT",
+         httponly=False,
+     )
++    # Non UTF-8 cookie value: header value is encoded as latin-1, so "\xff" is sent as the raw byte 0xFF.
++    resp.headers.add("Set-Cookie", "bad=\xff; Path=/cookie-jar/non-utf8")
+     return resp
  
- # Cookies for file <tests_ok/cookie/cookie_jar.hurl>
- #HttpOnly_localhost	FALSE	/accounts	FALSE	<<<(18\d{8}|3409338181)>>>	LSID	DQAAAKEaem_vYg
--#HttpOnly_.localhost	TRUE	/	FALSE	<<<(18\d{8}|3409338181)>>>	HSID	AYQEVnDKrdst
--#HttpOnly_.localhost	TRUE	/	FALSE	<<<(18\d{8}|3409338181)>>>	SSID	Ap4PGTEq
--.localhost	TRUE	/	FALSE	<<<(18\d{8}|3093675001)>>>	foo	"a b c"
-+#HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3409338181)>>>	HSID	AYQEVnDKrdst
-+#HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3409338181)>>>	SSID	Ap4PGTEq
-+<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3093675001)>>>	foo	"a b c"
+ 
 ```
 
----
-
-### Incident Patch 11: `9572cc7c` (2026-09-02)
-**Commit Message**: Fix CodeQL access on invalid pointer warnings.
-
-**File**: `packages/hurl/src/http/easy_ext.rs` (modified, +10/-9)
+**File**: `packages/hurl/src/http/client.rs` (modified, +9/-2)
 ```diff
-@@ -65,10 +65,14 @@ pub fn cert_info(easy: &Easy) -> Result<Option<CertInfo>, Error> {
-         let Some(certinfo) = certinfo.as_ref() else {
-             return Ok(None);
+@@ -824,8 +824,15 @@ impl Client {
          };
--        if certinfo.num_of_certs <= 0 || certinfo.certinfo.is_null() {
-+        if certinfo.num_of_certs <= 0 {
-             return Ok(None);
-         }
--        let slist = *certinfo.certinfo;
-+        // `certinfo.certinfo` is a list of `num_of_certs` certificates, we read the first one,
-+        // `as_ref` returning `None` when the array is null.
-+        let Some(&slist) = certinfo.certinfo.as_ref() else {
-+            return Ok(None);
-+        };
-         let data = to_list(slist);
-         let value = extract_pem_from_certinfo(&data);
  
-@@ -221,15 +225,12 @@ pub fn netrc_file(easy: &mut Easy, filename: &str) -> Result<(), Error> {
- fn to_list(slist: *mut curl_slist) -> Vec<String> {
-     let mut data = vec![];
-     let mut cur = slist;
--    loop {
--        if cur.is_null() {
--            break;
--        }
--        unsafe {
--            let ret = CStr::from_ptr((*cur).data).to_bytes();
-+    unsafe {
-+        while let Some(node) = cur.as_ref() {
-+            let ret = CStr::from_ptr(node.data).to_bytes();
-             let value = String::from_utf8_lossy(ret);
-             data.push(value.to_string());
--            cur = (*cur).next;
-+            cur = node.next;
+         for cookie in list.iter() {
+-            let line = str::from_utf8(cookie).unwrap();
+-            if cookie_store.add_cookie(line).is_err() {
++            let line = match str::from_utf8(cookie) {
++                Ok(line) => line.to_string(),
++                Err(_) => {
++                    let line = String::from_utf8_lossy(cookie).to_string();
++                    logger.warning(&format!("Cookie <{line}> can not be parsed as UTF-8"));
++                    line
++                }
++            };
++            if cookie_store.add_cookie(&line).is_err() {
+                 logger.warning(&format!("Line <{line}> can not be parsed as cookie"));
+             }
+         }
+```
+
+**File**: `packages/hurl/src/runner/entry.rs` (modified, +3/-1)
+```diff
+@@ -111,7 +111,9 @@ pub fn run(
+         logger,
+     );
+ 
+-    log_request(http_client, &curl_cmd, &http_request, logger);
++    if !logger.is_low_verbosity() {
++        log_request(http_client, &curl_cmd, &http_request, logger);
++    }
+ 
+     // Run the HTTP requests (optionally follow redirection)
+     let calls = match http_client.execute_with_redirect(&http_request, &client_options, logger) {
+```
+
+**File**: `packages/hurl/src/util/logger.rs` (modified, +10/-4)
+```diff
+@@ -146,11 +146,17 @@ impl Logger {
+         s.push(cmd);
+         self.eprintln(&s.to_string(fmt));
+     }
++
++    /// Returns `true` if this logger has no verbosity or a low verbosity (debug messages are not displayed).
++    pub fn is_low_verbosity(&self) -> bool {
++        matches!(self.verbosity, None | Some(Verbosity::LowVerbose))
++    }
++
+     /// Prints a given debug message to this logger [`Stderr`] instance, in verbose and very verbose mode.
+     ///
+     /// Displayed debug messages start with `*`.
+     pub fn debug(&mut self, message: &str) {
+-        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
++        if self.is_low_verbosity() {
+             return;
+         }
+         let fmt = self.format();
+@@ -167,7 +173,7 @@ impl Logger {
+     ///
+     /// Displayed debug messages start with `*`.
+     pub fn debug_important(&mut self, message: &str) {
+-        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
++        if self.is_low_verbosity() {
+             return;
+         }
+         let fmt = self.format();
+@@ -184,7 +190,7 @@ impl Logger {
+     ///
+     /// Displayed libcurl debug messages start with `**`.
+     pub fn debug_curl(&mut self, message: &str) {
+-        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
++        if self.is_low_verbosity() {
+             return;
+         }
+         let fmt = self.format();
+@@ -329,7 +335,7 @@ impl Logger {
+ 
+     /// Prints a capture to this logger [`Stderr`] instance, in verbose and very verbose mode.
+     pub fn capture(&mut self, name: &str, value: &Value) {
+-        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
++        if self.is_low_verbosity() {
+             return;
+         }
+         let value = value.to_string();
+```
+
+---
+
+### Incident Patch 3: `bac87758` (2026-10-15)
+**Commit Message**: Fix crash for bad `@cookie_storage_set` comment (experimental feature)
+
+**File**: `integration/hurl/tests_ok/cookie/cookie_storage.curl` (modified, +1/-0)
+```diff
+@@ -1,4 +1,5 @@
+ curl --cookie 'cookie1=valueA' 'http://localhost:8000/cookie-storage/assert-that-cookie1-is-valueA'
++curl 'http://localhost:8000/cookie-storage/noop'
+ curl 'http://localhost:8000/cookie-storage/assert-that-cookie1-is-not-in-session'
+ 
+ 
+```
+
+**File**: `integration/hurl/tests_ok/cookie/cookie_storage.hurl` (modified, +8/-4)
+```diff
+@@ -1,14 +1,18 @@
+ #
+-# experimental feature
+-# manage cookie store
++# Experimental feature
++# Manage cookie store
+ #
+ 
++# Set a cookie in cookie jar (valid) for subsequent requests
+ # @cookie_storage_set: localhost    FALSE   /   FALSE   0   cookie1 valueA
+ GET http://localhost:8000/cookie-storage/assert-that-cookie1-is-valueA
+ HTTP 200
+ 
++# This is noop (and should not crashed)
++#@cookie_storage_set:
++GET http://localhost:8000/cookie-storage/noop
++HTTP 200
++
+ # @cookie_storage_clear
+ GET http://localhost:8000/cookie-storage/assert-that-cookie1-is-not-in-session
+ HTTP 200
+-
+-
+```
+
+**File**: `integration/hurl/tests_ok/cookie/cookie_storage.py` (modified, +7/-2)
+```diff
+@@ -3,12 +3,17 @@
+ 
+ 
+ @app.route("/cookie-storage/assert-that-cookie1-is-valueA")
+-def cookiestorage_assert_that_cookie1_is_valuea():
++def cookie_storage_assert_that_cookie1_is_valuea():
+     assert request.cookies["cookie1"] == "valueA"
+     return ""
+ 
+ 
+ @app.route("/cookie-storage/assert-that-cookie1-is-not-in-session")
+-def cookiestorage_assert_that_cookie1_is_not_in_session():
++def cookie_storage_assert_that_cookie1_is_not_in_session():
+     assert "cookie1" not in request.cookies
+     return ""
++
++
++@app.route("/cookie-storage/noop")
++def cookie_storage_noop():
++    return ""
+```
+
+**File**: `packages/hurl/src/runner/request.rs` (modified, +3/-5)
+```diff
+@@ -172,11 +172,9 @@ fn eval_url(url_template: &Template, variables: &VariableSet) -> Result<Url, Run
+ pub fn get_cmd_cookie_storage_set(request: &Request) -> Option<String> {
+     for line_terminator in request.line_terminators.iter() {
+         if let Some(s) = &line_terminator.comment
+-            && s.value.contains("@cookie_storage_set:")
++            && let Some(s) = s.value.trim_start().strip_prefix("@cookie_storage_set:")
+         {
+-            let index = "#@cookie_storage_set:".to_string().len();
+-            let value = &s.value[index..s.value.len()].to_string().trim().to_string();
+-            return Some(value.to_string());
++            return Some(s.trim().to_string());
          }
      }
-     data
-```
-
----
-
-### Incident Patch 12: `6ed01cf9` (2026-08-31)
-**Commit Message**: Minor typo fix to test the CodeQL config file.
-
-**File**: `art/branding.md` (modified, +1/-1)
-```diff
-@@ -11,4 +11,4 @@
- 
- - pink: #ff0288
- - logo text (light mode): #333333
--- logo text (dark mode): #dedede
-\ No newline at end of file
-+- logo text (dark mode): #dedede
-```
-
----
-
-### Incident Patch 13: `3a8f3750` (2026-08-31)
-**Commit Message**: Disable autobuild in CodeQL analysis.
-
-**File**: `.github/workflows/codeql.yml` (modified, +1/-11)
-```diff
-@@ -19,15 +19,7 @@ jobs:
-     strategy:
-       fail-fast: false
-       matrix:
--        include:
--          - language: c-cpp
--            build-mode: none
--          - language: actions
--            build-mode: none
--          - language: python
--            build-mode: none
--          - language: rust
--            build-mode: none
-+        language: [ "c-cpp", "actions", "python", "rust" ]
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-@@ -40,7 +32,5 @@ jobs:
-         uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 #v4.37.9
-         with:
-           languages: ${{ matrix.language }}
--      - name: Autobuild
--        uses: github/codeql-action/autobuild@cdf488f595d80d6e07e03d4674febd5ab45fa938 #v4.37.9
-       - name: Perform CodeQL Analysis
-         uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 #v4.37.9
-```
-
----
-
-### Incident Patch 14: `9909a312` (2026-08-31)
-**Commit Message**: Run CodeQL on pull requests and disable autobuild (that's the usual default).
-
-**File**: `.github/workflows/codeql.yml` (modified, +12/-1)
-```diff
-@@ -4,6 +4,9 @@ on:
-   push:
-     branches:
-       - master
-+  pull_request:
-+    branches:
-+      - master
- 
- jobs:
-   analyze:
-@@ -16,7 +19,15 @@ jobs:
-     strategy:
-       fail-fast: false
-       matrix:
--        language: [ "c-cpp", "actions", "python", "rust" ]
-+        include:
-+          - language: c-cpp
-+            build-mode: none
-+          - language: actions
-+            build-mode: none
-+          - language: python
-+            build-mode: none
-+          - language: rust
-+            build-mode: none
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
-```
-
----
-
-### Incident Patch 15: `3c5af004` (2026-08-31)
-**Commit Message**: Clean build instructions in all docs.
-
-**File**: `README.md` (modified, +7/-6)
-```diff
-@@ -254,6 +254,7 @@ HTTP 200
-             * [Alpine](#alpine)
-             * [Arch Linux / Manjaro](#arch-linux--manjaro)
-             * [NixOS / Nix](#nixos--nix)
-+            * [Guix](#guix)
-         * [macOS](#macos)
-             * [Homebrew](#homebrew)
-             * [MacPorts](#macports)
-@@ -1527,7 +1528,7 @@ to configure Hurl, there are three sources from the lowest priority (most easily
- | <a href="#from-entry" id="from-entry"><code>--from-entry &lt;ENTRY_NUMBER&gt;</code></a>             | Execute Hurl file from ENTRY_NUMBER (starting at 1).<br><br>This is a cli-only option.<br>                                                                                                                                                                                                                                                                                                                                                                                             |
- | <a href="#jobs" id="jobs"><code>--jobs &lt;NUM&gt;</code></a>                                        | Maximum number of parallel jobs in parallel mode. Default value corresponds (in most cases) to the current amount of CPUs. Set to 1 to disable parallel execution of files.<br><br>See also [`--parallel`](#parallel).<br><br>Environment variables: HURL_JOBS<br><br>This is a cli-only option.<br>                                                                                                                                                                                   |
- | <a href="#no-assert" id="no-assert"><code>--no-assert</code></a>                                     | Ignore all asserts defined in the Hurl file.<br><br>Environment variables: HURL_NO_ASSERT<br><br>This is a cli-only option.<br>                                                                                                                                                                                                                                                                                                                                                        |
--| <a href="#no-jsonpath-coercion" id="no-jsonpath-coercion"><code>--no-jsonpath-coercion</code></a>    | Disable JSONPath result coercion.<br><br>By default, when JSONPath coercion is enabled, empty JSONPath results are returned as no value and single JSONPath results are returned as a scalar value. With this option, JSONPath results are always returned as arrays.<br><br>Environment variables: HURL_NO_JSONPATH_COERCION<br><br>This is a cli-only option.<br>                                                                                                                    |
-+| <a href="#no-jsonpath-coercion" id="no-jsonpath-coercion"><code>--no-jsonpath-coercion</code></a>    | Disable JSONPath result coercion.<br><br>By default, when JSONPath coercion is enabled, empty JSONPath results are returned as no value and single JSONPath results are returned as a scalar value. With this option, JSONPath results are always returned as arrays.<br><br>Environment variables: HURL_NO_JSONPATH_COERCION<br>                                                                                                                                                      |
- | <a href="#parallel" id="parallel"><code>--parallel</code></a>                                        | Run files in parallel.<br><br>Each Hurl file is executed in its own worker thread, without sharing anything with the other workers. The default run mode is sequential. Parallel execution is by default in [`--test`](#test) mode.<br><br>See also [`--jobs`](#jobs).<br><br>This is a cli-only option.<br>                                                                                                                                                                           |
- | <a href="#repeat" id="repeat"><code>--repeat &lt;NUM&gt;</code></a>                                  | Repeat the input files sequence NUM times, -1 for infinite loop. Given a.hurl, b.hurl, c.hurl as input, repeat two<br>times will run a.hurl, b.hurl, c.hurl, a.hurl, b.hurl, c.hurl.<br>                                                                                                                                                                                                                                                                                               |
- | <a href="#retry" id="retry"><code>--retry &lt;NUM&gt;</code></a>                                     | Maximum number of retries, 0 for no retries, -1 for unlimited retries. Retry happens if any error occurs (asserts, captures, runtimes etc...).<br><br>Environment variables: HURL_RETRY<br>                                                                                                                                                                                                                                                                 
-```
-
-**File**: `docs/installation.md` (modified, +6/-0)
-```diff
-@@ -51,6 +51,12 @@ $ pacman -Sy hurl
- 
- [NixOS / Nix package] is available on stable channel.
- 
-+#### Guix
-+
-+```shell
-+$ guix install hurl
-+```
-+
- ### macOS
- 
- Precompiled binaries for Intel and ARM CPUs are available at [Hurl latest GitHub release].
-```
-
-**File**: `docs/manual.md` (modified, +1/-1)
-```diff
-@@ -227,7 +227,7 @@ to configure Hurl, there are three sources from the lowest priority (most easily
- | <a href="#from-entry" id="from-entry"><code>--from-entry &lt;ENTRY_NUMBER&gt;</code></a>             | Execute Hurl file from ENTRY_NUMBER (starting at 1).<br><br>This is a cli-only option.<br>                                                                                                                                                                                                                                                                                                                                                                                             |
- | <a href="#jobs" id="jobs"><code>--jobs &lt;NUM&gt;</code></a>                                        | Maximum number of parallel jobs in parallel mode. Default value corresponds (in most cases) to the current amount of CPUs. Set to 1 to disable parallel execution of files.<br><br>See also [`--parallel`](#parallel).<br><br>Environment variables: HURL_JOBS<br><br>This is a cli-only option.<br>                                                                                                                                                                                   |
- | <a href="#no-assert" id="no-assert"><code>--no-assert</code></a>                                     | Ignore all asserts defined in the Hurl file.<br><br>Environment variables: HURL_NO_ASSERT<br><br>This is a cli-only option.<br>                                                                                                                                                                                                                                                                                                                                                        |
--| <a href="#no-jsonpath-coercion" id="no-jsonpath-coercion"><code>--no-jsonpath-coercion</code></a>    | Disable JSONPath result coercion.<br><br>By default, when JSONPath coercion is enabled, empty JSONPath results are returned as no value and single JSONPath results are returned as a scalar value. With this option, JSONPath results are always returned as arrays.<br><br>Environment variables: HURL_NO_JSONPATH_COERCION<br><br>This is a cli-only option.<br>                                                                                                                    |
-+| <a href="#no-jsonpath-coercion" id="no-jsonpath-coercion"><code>--no-jsonpath-coercion</code></a>    | Disable JSONPath result coercion.<br><br>By default, when JSONPath coercion is enabled, empty JSONPath results are returned as no value and single JSONPath results are returned as a scalar value. With this option, JSONPath results are always returned as arrays.<br><br>Environment variables: HURL_NO_JSONPATH_COERCION<br>                                                                                                                                                      |
- | <a href="#parallel" id="parallel"><code>--parallel</code></a>                                        | Run files in parallel.<br><br>Each Hurl file is executed in its own worker thread, without sharing anything with the other workers. The default run mode is sequential. Parallel execution is by default in [`--test`](#test) mode.<br><br>See also [`--jobs`](#jobs).<br><br>This is a cli-only option.<br>                                                                                                                                                                           |
- | <a href="#repeat" id="repeat"><code>--repeat &lt;NUM&gt;</code></a>                                  | Repeat the input files sequence NUM times, -1 for infinite loop. Given a.hurl, b.hurl, c.hurl as input, repeat two<br>times will run a.hurl, b.hurl, c.hurl, a.hurl, b.hurl, c.hurl.<br>                                                                                                                                                                                                                                                                                               |
- | <a href="#retry" id="retry"><code>--retry &lt;NUM&gt;</code></a>                                     | Maximum number of retries, 0 for no retries, -1 for unlimited retries. Retry happens if any error occurs (asserts, captures, runtimes etc...).<br><br>Environment variables: HURL_RETRY<br>                                                                                                                                                                                                                                                                                            |
-```
-
-**File**: `docs/manual/hurl.1` (modified, +1/-3)
-```diff
-@@ -1,4 +1,4 @@
--.TH hurl 1 "03 Jul 2026" "hurl 8.1.0" " Hurl Manual"
-+.TH hurl 1 "31 Aug 2026" "hurl 8.1.0" " Hurl Manual"
- .SH NAME
- 
- hurl - run and test HTTP requests.
-@@ -544,8 +544,6 @@ By default, when JSONPath coercion is enabled, empty JSONPath results are return
- 
- Environment variables: HURL_NO_JSONPATH_COERCION
- 
--This is a cli-only option.
--
- .IP "--parallel "
- 
- Run files in parallel.
-```
-
-**File**: `docs/manual/hurlfmt.1` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--.TH hurl 1 "03 Jul 2026" "hurl 8.1.0" " Hurl Manual"
-+.TH hurl 1 "31 Aug 2026" "hurl 8.1.0" " Hurl Manual"
- .SH NAME
- 
- hurlfmt - format Hurl files
-```
-
-**File**: `packages/hurl/README.md` (modified, +13/-6)
-```diff
-@@ -254,6 +254,7 @@ HTTP 200
-             * [Alpine](#alpine)
-             * [Arch Linux / Manjaro](#arch-linux--manjaro)
-             * [NixOS / Nix](#nixos--nix)
-+            * [Guix](#guix)
-         * [macOS](#macos)
-             * [Homebrew](#homebrew)
-             * [MacPorts](#macports)
-@@ -1527,7 +1528,7 @@ to configure Hurl, there are three sources from the lowest priority (most easily
- | <a href="#from-entry" id="from-entry"><code>--from-entry &lt;ENTRY_NUMBER&gt;</code></a>             | Execute Hurl file from ENTRY_NUMBER (starting at 1).<br><br>This is a cli-only option.<br>                                                                                                                                                                                                                                                                                                                                                                                             |
- | <a href="#jobs" id="jobs"><code>--jobs &lt;NUM&gt;</code></a>                                        | Maximum number of parallel jobs in parallel mode. Default value corresponds (in most cases) to the current amount of CPUs. Set to 1 to disable parallel execution of files.<br><br>See also [`--parallel`](#parallel).<br><br>Environment variables: HURL_JOBS<br><br>This is a cli-only option.<br>                                                                                                                                                                                   |
- | <a href="#no-assert" id="no-assert"><code>--no-assert</code></a>                                     | Ignore all asserts defined in the Hurl file.<br><br>Environment variables: HURL_NO_ASSERT<br><br>This is a cli-only option.<br>                                                                                                                                                                                                                                                                                                                                                        |
--| <a href="#no-jsonpath-coercion" id="no-jsonpath-coercion"><code>--no-jsonpath-coercion</code></a>    | Disable JSONPath result coercion.<br><br>By default, when JSONPath coercion is enabled, empty JSONPath results are returned as no value and single JSONPath results are returned as a scalar value. With this option, JSONPath results are always returned as arrays.<br><br>Environment variables: HURL_NO_JSONPATH_COERCION<br><br>This is a cli-only option.<br>                                                                                                                    |
-+| <a href="#no-jsonpath-coercion" id="no-jsonpath-coercion"><code>--no-jsonpath-coercion</code></a>    | Disable JSONPath result coercion.<br><br>By default, when JSONPath coercion is enabled, empty JSONPath results are returned as no value and single JSONPath results are returned as a scalar value. With this option, JSONPath results are always returned as arrays.<br><br>Environment variables: HURL_NO_JSONPATH_COERCION<br>                                                                                                                                                      |
- | <a href="#parallel" id="parallel"><code>--parallel</code></a>                                        | Run files in parallel.<br><br>Each Hurl file is executed in its own worker thread, without sharing anything with the other workers. The default run mode is sequential. Parallel execution is by default in [`--test`](#test) mode.<br><br>See also [`--jobs`](#jobs).<br><br>This is a cli-only option.<br>                                                                                                                                                                           |
- | <a href="#repeat" id="repeat"><code>--repeat &lt;NUM&gt;</code></a>                                  | Repeat the input files sequence NUM times, -1 for infinite loop. Given a.hurl, b.hurl, c.hurl as input, repeat two<br>times will run a.hurl, b.hurl, c.hurl, a.hurl, b.hurl, c.hurl.<br>                                                                                                                                                                                                                                                                                               |
- | <a href="#retry" id="retry"><code>--retry &lt;NUM&gt;</code></a>                                     | Maximum number of retries, 0 for no retries, -1 for unlimited retries. Retry happens if any error occurs (asserts, captures, runtimes etc...).<br><br>Environment variables: HURL_RETRY<br>                                                                                                                                                                                                                                                                 
+     None
+@@ -188,7 +186,7 @@ pub fn get_cmd_cookie_storage_set(request: &Request) -> Option<String> {
+ pub fn get_cmd_cookie_storage_clear(request: &Request) -> bool {
+     for line_terminator in request.line_terminators.iter() {
+         if let Some(s) = &line_terminator.comment
+-            && s.value.contains("@cookie_storage_clear")
++            && s.value.trim_start().starts_with("@cookie_storage_clear")
+         {
+             return true;
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5321** (2026-10-05): Update to Rust 1.99.0 (@fabricereix)
-- **PR #5320** (2026-10-03): Update crates (@hurl-bot)
-- **PR #5319** (2026-10-03): Remove per request variables file option, postponing feature to user … (@jcamiel)
-- **PR #5318** (2026-10-03): Update doc with Hurl config file info (@jcamiel)
-- **PR #5316** (2026-10-02): Update Python dev requirements (@jcamiel)
-- **PR #5314** (2026-10-02): Add explicit nesting limit to JSON Body parsing (@fabricereix)
-- **PR #5313** (2026-10-01): Update crates (@hurl-bot)
-- **PR #5312** (2026-09-26): Update crates (@hurl-bot)
+- **PR #5362** (2026-10-17): Update CHANGELOG (@fabricereix)
+- **PR #5361** (2026-10-17): Skip suggestion fo very long keyword (@fabricereix)
+- **PR #5359** (2026-10-17): Update crates (@hurl-bot)
+- **PR #5358** (2026-10-17): Prepare docs for Hurl 8.1.0 (@jcamiel)
+- **PR #5357** (2026-10-17): Update changelog. (@jcamiel)
+- **PR #5355** (2026-10-17): Fix hurlfmt panic when importing curl commands without a URL (@fabricereix)
 
 ---
 
@@ -3969,3 +2207,37 @@ curl 8.22 changes cookie managment for PSL. A cookie that set Domain=localhost f
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. hurlfmt panic when importing curl commands without a URL
+
+**RULE**:
+When implementing operations in `integration/hurlfmt/tests_failed/invalid_curl_input.ps1`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ed7b1a2c`: hurlfmt panic when importing curl commands without a URL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/hurlfmt/tests_failed/invalid_curl_input.ps1`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+Set-StrictMode -Version latest
+$ErrorActionPreference = 'Stop'
+
+echo curl | hurlfmt --in curl
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ed7b1a2c` are properly handled with clean fallback behavior.

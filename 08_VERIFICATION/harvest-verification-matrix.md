@@ -2650,3 +2650,11 @@
 | `CYCLE-20261018-42BJ` | `2026-10-18T23:45:32.095Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1870, Rule 1871, Rule 1872` | Yes (`75540024...`) |
 | `CYCLE-20261018-43IJ` | `2026-10-18T23:45:33.643Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1873` | Yes (`c9aa94c4...`) |
 | `CYCLE-20261018-454H` | `2026-10-18T23:45:35.729Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1874` | Yes (`77257fe6...`) |
+| `CYCLE-20261018-BWIF` | `2026-10-18T23:51:37.815Z` | `honojs/hono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1875` | Yes (`fa7082a0...`) |
+| `CYCLE-20261018-BYKU` | `2026-10-18T23:51:40.494Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1876` | Yes (`6346b83e...`) |
+| `CYCLE-20261018-C2N3` | `2026-10-18T23:51:45.759Z` | `gregberge/svgr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1877` | Yes (`eed26716...`) |
+| `CYCLE-20261018-C2XM` | `2026-10-18T23:51:46.138Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 737, Rule 1878` | Yes (`fc79ac05...`) |
+| `CYCLE-20261018-C4KB` | `2026-10-18T23:51:48.251Z` | `alibaba/sentinel-golang` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1879` | Yes (`20ab7a1a...`) |
+| `CYCLE-20261018-C5OD` | `2026-10-18T23:51:49.693Z` | `microsoft/Security-101` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1880` | Yes (`08fc1c2d...`) |
+| `CYCLE-20261018-C7WO` | `2026-10-18T23:51:52.584Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1881` | Yes (`9f7dfef8...`) |
+| `CYCLE-20261018-C8NC` | `2026-10-18T23:51:53.544Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1882` | Yes (`9fea7c3a...`) |

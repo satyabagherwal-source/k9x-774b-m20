@@ -2657,3 +2657,11 @@ Every entry in this ledger must capture:
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-18T23:45:32.097Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `c5b3ecc3` | Multi-dimensional audit evidence | 2026-10-18T23:45:33.646Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `10f23bdb` | Multi-dimensional audit evidence | 2026-10-18T23:45:35.732Z |
+| `learn-github-honojs-hono` | `https://github.com/honojs/hono` | `5ca49b07` | Multi-dimensional audit evidence | 2026-10-18T23:51:37.817Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `026b66e6` | Multi-dimensional audit evidence | 2026-10-18T23:51:40.496Z |
+| `learn-github-gregberge-svgr` | `https://github.com/gregberge/svgr` | `975215ef` | Multi-dimensional audit evidence | 2026-10-18T23:51:45.762Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-18T23:51:46.141Z |
+| `learn-github-alibaba-sentinel-golang` | `https://github.com/alibaba/sentinel-golang` | `f7a7f957` | Multi-dimensional audit evidence | 2026-10-18T23:51:48.253Z |
+| `learn-github-microsoft-security-101` | `https://github.com/microsoft/Security-101` | `b0a31ff7` | Multi-dimensional audit evidence | 2026-10-18T23:51:49.696Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `10f34562` | Multi-dimensional audit evidence | 2026-10-18T23:51:52.586Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d263bda4` | Multi-dimensional audit evidence | 2026-10-18T23:51:53.547Z |

@@ -1,66 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T23:45:35.738Z",
-  "total_cycles_completed": 2627,
-  "total_learnings_persisted": 2627,
-  "total_rules_promoted": 1651,
+  "last_updated": "2026-10-18T23:51:53.553Z",
+  "total_cycles_completed": 2635,
+  "total_learnings_persisted": 2635,
+  "total_rules_promoted": 1660,
   "history": [
-    {
-      "timestamp": "2026-10-18T07:28:47.906Z",
-      "repository": "rollup/rollup",
-      "learningId": "learn-github-rollup-rollup",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:28:48.620Z",
-      "repository": "rmax/scrapy-redis",
-      "learningId": "learn-github-rmax-scrapy-redis",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:28:49.887Z",
-      "repository": "cypress-io/cypress",
-      "learningId": "learn-github-cypress-io-cypress",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:28:53.116Z",
-      "repository": "syntax-tree/unist",
-      "learningId": "learn-github-syntax-tree-unist",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:28:57.302Z",
-      "repository": "scrapinghub/scrapy-poet",
-      "learningId": "learn-github-scrapinghub-scrapy-poet",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:28:58.041Z",
-      "repository": "webdriverio/webdriverio",
-      "learningId": "learn-github-webdriverio-webdriverio",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:33:55.303Z",
-      "repository": "RubenVerborgh/SPARQL.js",
-      "learningId": "learn-github-rubenverborgh-sparql-js",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:33:55.681Z",
-      "repository": "syntax-tree/mdast",
-      "learningId": "learn-github-syntax-tree-mdast",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T07:39:13.278Z",
       "repository": "fastapi/fastapi",
@@ -1402,6 +1346,62 @@
       "timestamp": "2026-10-18T23:45:35.738Z",
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:37.824Z",
+      "repository": "honojs/hono",
+      "learningId": "learn-github-honojs-hono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:40.502Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:45.764Z",
+      "repository": "gregberge/svgr",
+      "learningId": "learn-github-gregberge-svgr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:46.146Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:48.261Z",
+      "repository": "alibaba/sentinel-golang",
+      "learningId": "learn-github-alibaba-sentinel-golang",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:49.701Z",
+      "repository": "microsoft/Security-101",
+      "learningId": "learn-github-microsoft-security-101",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:52.592Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:51:53.553Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
