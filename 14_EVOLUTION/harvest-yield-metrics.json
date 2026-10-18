@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T01:52:12.321Z",
-  "total_cycles_completed": 2360,
-  "total_learnings_persisted": 2360,
+  "last_updated": "2026-10-18T01:55:42.494Z",
+  "total_cycles_completed": 2361,
+  "total_learnings_persisted": 2361,
   "total_rules_promoted": 1368,
   "history": [
-    {
-      "timestamp": "2026-10-17T14:38:46.074Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T14:41:56.290Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T01:52:12.321Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T01:55:42.494Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

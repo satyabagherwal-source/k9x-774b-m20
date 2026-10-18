@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-MLOQ",
-    "timestamp": "2026-10-16T21:36:38.474Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "ef0b12a52f49e7ae8cfd6978c9f1c65d49027c314ffebdfafe6f9a7a0bfb3a49",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-QUKF",
     "timestamp": "2026-10-16T21:39:56.607Z",
     "repository": "Cactus-Compute/whistle",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Meta-Llama-3-8B",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
     "contentHash": "3c560fbd2e2193ddf7d2d55fb45e6f7eb909e613c4ab697ee9d1ea4219e5476d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-BM6Y",
+    "timestamp": "2026-10-18T01:55:42.490Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "cedde4622e8e1655b00dc2435a44fa86057a9abb4baae6b674404c2c06a7a9ce",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
