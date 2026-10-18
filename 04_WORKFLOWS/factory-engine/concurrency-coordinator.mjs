@@ -248,8 +248,19 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
       try {
         run('git pull --rebase origin main', cwd);
       } catch (pullErr) {
-        console.warn(`   Rebase encounter: ${pullErr.message}. Aborting rebase to keep clean tree.`);
+        console.warn(`   Rebase encounter: ${pullErr.message}. Aborting rebase and performing atomic soft-reset merge...`);
         try { run('git rebase --abort', cwd); } catch (e) {}
+        try {
+          cleanStaleIndexLock(cwd);
+          run('git fetch origin main', cwd);
+          run('git reset --soft origin/main', cwd);
+          cleanStaleIndexLock(cwd);
+          run('git add .', cwd);
+          run(`git commit -m "${commitMsg}"`, cwd);
+          console.log(`   [AUTO-HEAL SUCCESS] Successfully re-anchored commit onto latest origin/main!`);
+        } catch (healErr) {
+          console.warn(`   [AUTO-HEAL WARNING] ${healErr.message}`);
+        }
         sanitizeHarvestControl(cwd);
       }
 
