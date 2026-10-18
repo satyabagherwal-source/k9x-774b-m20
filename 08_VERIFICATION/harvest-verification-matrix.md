@@ -2607,3 +2607,10 @@
 | `CYCLE-20261018-SBVI` | `2026-10-18T23:08:24.990Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`81fe5ac4...`) |
 | `CYCLE-20261018-SFC1` | `2026-10-18T23:08:29.473Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1827` | Yes (`7f0a7cd6...`) |
 | `CYCLE-20261018-SFPX` | `2026-10-18T23:08:29.973Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1828` | Yes (`19ac9745...`) |
+| `CYCLE-20261018-ZUMS` | `2026-10-18T23:14:15.892Z` | `serafimcloud/21st` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1829` | Yes (`fa66db7a...`) |
+| `CYCLE-20261018-ZVJ7` | `2026-10-18T23:14:17.059Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1830` | Yes (`b10c962d...`) |
+| `CYCLE-20261018-ZZG5` | `2026-10-18T23:14:22.133Z` | `alibaba/formily` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1831` | Yes (`c0c60098...`) |
+| `CYCLE-20261018-01OC` | `2026-10-18T23:14:25.020Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1832, Rule 1833` | Yes (`ef602180...`) |
+| `CYCLE-20261018-027F` | `2026-10-18T23:14:25.707Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1834` | Yes (`4476c120...`) |
+| `CYCLE-20261018-038U` | `2026-10-18T23:14:27.054Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1835` | Yes (`357a195b...`) |
+| `CYCLE-20261018-068C` | `2026-10-18T23:14:30.924Z` | `parthsarthi03/raptor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1836` | Yes (`297b58a8...`) |

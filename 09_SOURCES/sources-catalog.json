@@ -45,8 +45,8 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "b78b38e534fa262827e429e71c511e2936ef783294f93f780c22df4dcea8cd95",
-    "lastHarvestedAt": "2026-10-17T20:28:44.590Z",
+    "contentHash": "ef602180d59ed245231beef9a9d5d05c58ef4f1b655cfd2b1d1d00be67df0e53",
+    "lastHarvestedAt": "2026-10-18T23:14:25.022Z",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle"
   },
   "hf-baai-bge-large-en-v1.5": {
@@ -3358,5 +3358,65 @@
     "contentHash": "19ac9745d2cbf18d60000b883fd15c75181cbecdf4dbe4a58cbcf7b994d274f9",
     "lastHarvestedAt": "2026-10-18T23:08:29.975Z",
     "learningId": "learn-github-seekstorm-seekstorm"
+  },
+  "serafimcloud-21st": {
+    "repository": "serafimcloud/21st",
+    "platform": "github",
+    "sourceUrl": "https://github.com/serafimcloud/21st",
+    "sourceVersion": "b96d84dc",
+    "license": "MIT",
+    "contentHash": "fa66db7af08952456425cf05f060a78592c807f70a83bf852b30e9f5957183bc",
+    "lastHarvestedAt": "2026-10-18T23:14:15.893Z",
+    "learningId": "learn-github-serafimcloud-21st"
+  },
+  "kuddev-pebrel": {
+    "repository": "Kuddev/pebrel",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Kuddev/pebrel",
+    "sourceVersion": "f0441e6d",
+    "license": "GPL-3.0",
+    "contentHash": "b10c962d3ecce9e256de840a7fd4bd98c05a10fb9be602074b1e47bf44ab5f1d",
+    "lastHarvestedAt": "2026-10-18T23:14:17.061Z",
+    "learningId": "learn-github-kuddev-pebrel"
+  },
+  "alibaba-formily": {
+    "repository": "alibaba/formily",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alibaba/formily",
+    "sourceVersion": "d9a46442",
+    "license": "MIT",
+    "contentHash": "c0c600984173ba975e7ed2ace53e255bb5e0f7e9a304c29495819ee7faf5a6e6",
+    "lastHarvestedAt": "2026-10-18T23:14:22.135Z",
+    "learningId": "learn-github-alibaba-formily"
+  },
+  "skyhook-io-radar": {
+    "repository": "skyhook-io/radar",
+    "platform": "github",
+    "sourceUrl": "https://github.com/skyhook-io/radar",
+    "sourceVersion": "b8e6f814",
+    "license": "Apache-2.0",
+    "contentHash": "4476c12054e123c107499988d6eb5825a30c53a05503daa4260e3cf84eba390c",
+    "lastHarvestedAt": "2026-10-18T23:14:25.711Z",
+    "learningId": "learn-github-skyhook-io-radar"
+  },
+  "mitmproxy-mitmproxy": {
+    "repository": "mitmproxy/mitmproxy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
+    "sourceVersion": "77355977",
+    "license": "MIT",
+    "contentHash": "357a195ba29e12610d34d68e856c3b8bfeeba0c189b15a9baf2ddab4bef41682",
+    "lastHarvestedAt": "2026-10-18T23:14:27.056Z",
+    "learningId": "learn-github-mitmproxy-mitmproxy"
+  },
+  "parthsarthi03-raptor": {
+    "repository": "parthsarthi03/raptor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/parthsarthi03/raptor",
+    "sourceVersion": "7da1d48a",
+    "license": "MIT",
+    "contentHash": "297b58a8fd1000e7af4f020692dde05d4c416425693964af7d919f74e8d48d78",
+    "lastHarvestedAt": "2026-10-18T23:14:30.926Z",
+    "learningId": "learn-github-parthsarthi03-raptor"
   }
 }

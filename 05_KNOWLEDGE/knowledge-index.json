@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:08:29.937Z",
-  "total_verified_learnings": 359,
+  "last_updated": "2026-10-18T23:14:30.904Z",
+  "total_verified_learnings": 365,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -995,22 +995,35 @@
     "learn-github-alibaba-formily": {
       "learning_id": "learn-github-alibaba-formily",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alibaba-formily",
+      "source": "alibaba/formily",
+      "repository": "alibaba/formily",
       "slug": "alibaba-formily",
       "platform": "github",
       "source_url": "https://github.com/alibaba/formily",
-      "source_version": "HEAD",
-      "content_hash": "7b2cbe386f1f37d042fe7a8ccc889e40b0f918d73b09e9e4b97c62e44dd4a8cb",
+      "source_version": "d9a46442",
+      "content_hash": "c0c600984173ba975e7ed2ace53e255bb5e0f7e9a304c29495819ee7faf5a6e6",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-formily-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-formily-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1831,
+          "title": "antd): fix form item overflow tooltip abnormal show when container zoom (#4190)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.719Z"
+      "verified_at": "2026-10-18T23:14:22.109Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alibaba-fusion-next": {
       "learning_id": "learn-github-alibaba-fusion-next",
@@ -15842,7 +15855,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "b78b38e534fa262827e429e71c511e2936ef783294f93f780c22df4dcea8cd95",
+      "content_hash": "ef602180d59ed245231beef9a9d5d05c58ef4f1b655cfd2b1d1d00be67df0e53",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -15896,6 +15909,16 @@
           "number": 1449,
           "title": "Camera Extrinsics Conditioning Decoupling Law",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1832,
+          "title": "Geometric Ground Truth Injection for Diffusion Editing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1833,
+          "title": "LoRA Strength and CFG Calibration for Conditional Editing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15915,7 +15938,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-17T20:28:44.553Z",
+      "verified_at": "2026-10-18T23:14:24.997Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23356,22 +23379,35 @@
     "learn-github-kuddev-pebrel": {
       "learning_id": "learn-github-kuddev-pebrel",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kuddev-pebrel",
+      "source": "Kuddev/pebrel",
+      "repository": "Kuddev/pebrel",
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "HEAD",
-      "content_hash": "d65bbd10b6a07294b658c99f1cf8f7e83caa9d9ce70515c68923c1fab9915160",
+      "source_version": "f0441e6d",
+      "content_hash": "b10c962d3ecce9e256de840a7fd4bd98c05a10fb9be602074b1e47bf44ab5f1d",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1830,
+          "title": "pin native input view cleanup for release validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.919Z"
+      "verified_at": "2026-10-18T23:14:17.036Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kudoleh-ios-clean-architecture-mvvm": {
       "learning_id": "learn-github-kudoleh-ios-clean-architecture-mvvm",
@@ -25882,22 +25918,35 @@
     "learn-github-mitmproxy-mitmproxy": {
       "learning_id": "learn-github-mitmproxy-mitmproxy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mitmproxy-mitmproxy",
+      "source": "mitmproxy/mitmproxy",
+      "repository": "mitmproxy/mitmproxy",
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "HEAD",
-      "content_hash": "3fa725b9cb944192fa73e81e34bb6b7417718d3f813d7bd6445d487293fce255",
+      "source_version": "77355977",
+      "content_hash": "357a195ba29e12610d34d68e856c3b8bfeeba0c189b15a9baf2ddab4bef41682",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1835,
+          "title": "build(deps): bump the github-actions group with 4 updates (#8466)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.389Z"
+      "verified_at": "2026-10-18T23:14:27.029Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mksglu-context-mode": {
       "learning_id": "learn-github-mksglu-context-mode",
@@ -28895,22 +28944,35 @@
     "learn-github-parthsarthi03-raptor": {
       "learning_id": "learn-github-parthsarthi03-raptor",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "parthsarthi03-raptor",
+      "source": "parthsarthi03/raptor",
+      "repository": "parthsarthi03/raptor",
       "slug": "parthsarthi03-raptor",
       "platform": "github",
       "source_url": "https://github.com/parthsarthi03/raptor",
-      "source_version": "HEAD",
-      "content_hash": "11ca5ef1c2dd8347f97bc1e7b3fe8917181fb75003637b6f1532d475f516773c",
+      "source_version": "7da1d48a",
+      "content_hash": "297b58a8fd1000e7af4f020692dde05d4c416425693964af7d919f74e8d48d78",
       "dossier_path": "07_PROJECT_LEARNING/parthsarthi03-raptor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parthsarthi03-raptor-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1836,
+          "title": "Merge pull request #16 from LLLeoLi/fix-bug-TypeError-Cannot-use-scipy.linalg.ei",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.990Z"
+      "verified_at": "2026-10-18T23:14:30.900Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pascalorg-editor": {
       "learning_id": "learn-github-pascalorg-editor",
@@ -31485,22 +31547,35 @@
     "learn-github-serafimcloud-21st": {
       "learning_id": "learn-github-serafimcloud-21st",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "serafimcloud-21st",
+      "source": "serafimcloud/21st",
+      "repository": "serafimcloud/21st",
       "slug": "serafimcloud-21st",
       "platform": "github",
       "source_url": "https://github.com/serafimcloud/21st",
-      "source_version": "HEAD",
-      "content_hash": "ea4eedcd6f8a8be3b9d77872e47e6a54191e717c5bf6062b7ff60e233fcd686e",
+      "source_version": "b96d84dc",
+      "content_hash": "fa66db7af08952456425cf05f060a78592c807f70a83bf852b30e9f5957183bc",
       "dossier_path": "07_PROJECT_LEARNING/serafimcloud-21st-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serafimcloud-21st-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1829,
+          "title": "multiple fixes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.445Z"
+      "verified_at": "2026-10-18T23:14:15.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sergdort-moderncleanarchitectureswiftui": {
       "learning_id": "learn-github-sergdort-moderncleanarchitectureswiftui",
@@ -32244,22 +32319,35 @@
     "learn-github-skyhook-io-radar": {
       "learning_id": "learn-github-skyhook-io-radar",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "skyhook-io-radar",
+      "source": "skyhook-io/radar",
+      "repository": "skyhook-io/radar",
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "HEAD",
-      "content_hash": "a4363bd41dcff8668eccd1d7f3b9e66197611b1abf2fda2428c699580f44cc2e",
+      "source_version": "b8e6f814",
+      "content_hash": "4476c12054e123c107499988d6eb5825a30c53a05503daa4260e3cf84eba390c",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1834,
+          "title": "MCP instructions: route suspect resources to diagnose, conclude on the cause, fi",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.578Z"
+      "verified_at": "2026-10-18T23:14:25.683Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-skytable-skytable": {
       "learning_id": "learn-github-skytable-skytable",
@@ -69230,6 +69318,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:08:29.930Z"
+    },
+    "rule-1829": {
+      "learning_id": "rule-1829",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1829,
+      "title": "multiple fixes",
+      "source_url": "https://github.com/serafimcloud/21st",
+      "source_version": "b96d84dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:15.868Z"
+    },
+    "rule-1830": {
+      "learning_id": "rule-1830",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1830,
+      "title": "pin native input view cleanup for release validation",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "f0441e6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:17.036Z"
+    },
+    "rule-1831": {
+      "learning_id": "rule-1831",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1831,
+      "title": "antd): fix form item overflow tooltip abnormal show when container zoom (#4190)",
+      "source_url": "https://github.com/alibaba/formily",
+      "source_version": "d9a46442",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:22.109Z"
+    },
+    "rule-1832": {
+      "learning_id": "rule-1832",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1832,
+      "title": "Geometric Ground Truth Injection for Diffusion Editing",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:24.997Z"
+    },
+    "rule-1833": {
+      "learning_id": "rule-1833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1833,
+      "title": "LoRA Strength and CFG Calibration for Conditional Editing",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:24.997Z"
+    },
+    "rule-1834": {
+      "learning_id": "rule-1834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1834,
+      "title": "MCP instructions: route suspect resources to diagnose, conclude on the cause, fi",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "b8e6f814",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:25.684Z"
+    },
+    "rule-1835": {
+      "learning_id": "rule-1835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1835,
+      "title": "build(deps): bump the github-actions group with 4 updates (#8466)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "77355977",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:27.029Z"
+    },
+    "rule-1836": {
+      "learning_id": "rule-1836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1836,
+      "title": "Merge pull request #16 from LLLeoLi/fix-bug-TypeError-Cannot-use-scipy.linalg.ei",
+      "source_url": "https://github.com/parthsarthi03/raptor",
+      "source_version": "7da1d48a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:14:30.900Z"
     }
   },
   "aliases": {

@@ -2614,3 +2614,10 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `fd757fbf` | Multi-dimensional audit evidence | 2026-10-18T23:08:24.993Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f70d0db4` | Multi-dimensional audit evidence | 2026-10-18T23:08:29.476Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `4faffc9c` | Multi-dimensional audit evidence | 2026-10-18T23:08:29.975Z |
+| `learn-github-serafimcloud-21st` | `https://github.com/serafimcloud/21st` | `b96d84dc` | Multi-dimensional audit evidence | 2026-10-18T23:14:15.893Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `f0441e6d` | Multi-dimensional audit evidence | 2026-10-18T23:14:17.061Z |
+| `learn-github-alibaba-formily` | `https://github.com/alibaba/formily` | `d9a46442` | Multi-dimensional audit evidence | 2026-10-18T23:14:22.135Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-18T23:14:25.022Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `b8e6f814` | Multi-dimensional audit evidence | 2026-10-18T23:14:25.711Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `77355977` | Multi-dimensional audit evidence | 2026-10-18T23:14:27.056Z |
+| `learn-github-parthsarthi03-raptor` | `https://github.com/parthsarthi03/raptor` | `7da1d48a` | Multi-dimensional audit evidence | 2026-10-18T23:14:30.926Z |

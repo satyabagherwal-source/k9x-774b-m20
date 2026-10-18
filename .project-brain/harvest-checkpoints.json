@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:08:29.983Z",
+  "last_updated": "2026-10-18T23:14:30.931Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1697,14 +1697,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "b78b38e534fa262827e429e71c511e2936ef783294f93f780c22df4dcea8cd95",
-      "verified_at": "2026-10-17T20:28:44.592Z",
+      "content_hash": "ef602180d59ed245231beef9a9d5d05c58ef4f1b655cfd2b1d1d00be67df0e53",
+      "verified_at": "2026-10-18T23:14:25.027Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:28:44.592Z"
+      "last_updated": "2026-10-18T23:14:25.027Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
@@ -5152,6 +5152,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:08:29.983Z"
+    },
+    "serafimcloud/21st": {
+      "repository": "serafimcloud/21st",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-serafimcloud-21st",
+      "content_hash": "fa66db7af08952456425cf05f060a78592c807f70a83bf852b30e9f5957183bc",
+      "verified_at": "2026-10-18T23:14:15.898Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:14:15.898Z"
+    },
+    "Kuddev/pebrel": {
+      "repository": "Kuddev/pebrel",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kuddev-pebrel",
+      "content_hash": "b10c962d3ecce9e256de840a7fd4bd98c05a10fb9be602074b1e47bf44ab5f1d",
+      "verified_at": "2026-10-18T23:14:17.066Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:14:17.066Z"
+    },
+    "alibaba/formily": {
+      "repository": "alibaba/formily",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alibaba-formily",
+      "content_hash": "c0c600984173ba975e7ed2ace53e255bb5e0f7e9a304c29495819ee7faf5a6e6",
+      "verified_at": "2026-10-18T23:14:22.142Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:14:22.142Z"
+    },
+    "skyhook-io/radar": {
+      "repository": "skyhook-io/radar",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-skyhook-io-radar",
+      "content_hash": "4476c12054e123c107499988d6eb5825a30c53a05503daa4260e3cf84eba390c",
+      "verified_at": "2026-10-18T23:14:25.716Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:14:25.716Z"
+    },
+    "mitmproxy/mitmproxy": {
+      "repository": "mitmproxy/mitmproxy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mitmproxy-mitmproxy",
+      "content_hash": "357a195ba29e12610d34d68e856c3b8bfeeba0c189b15a9baf2ddab4bef41682",
+      "verified_at": "2026-10-18T23:14:27.061Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:14:27.061Z"
+    },
+    "parthsarthi03/raptor": {
+      "repository": "parthsarthi03/raptor",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-parthsarthi03-raptor",
+      "content_hash": "297b58a8fd1000e7af4f020692dde05d4c416425693964af7d919f74e8d48d78",
+      "verified_at": "2026-10-18T23:14:30.931Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:14:30.931Z"
     }
   },
   "repos": {

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/parthsarthi03-raptor-learnings.md`  
+> **Source**: github ([https://github.com/parthsarthi03/raptor](https://github.com/parthsarthi03/raptor))  
+> **Source Version**: `7da1d48a`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:14:30.801Z  
+> **Learning ID**: `learn-github-parthsarthi03-raptor`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): parthsarthi03/raptor
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/parthsarthi03-raptor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/parthsarthi03/raptor](https://github.com/parthsarthi03/raptor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:53:12.837Z  
+> **Harvest Timestamp**: 2026-10-18T23:14:30.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: The official implementation of RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1761 stars
+- **Stars / Engagement**: 1772 stars
 
 ---
 
@@ -1533,39 +1547,6 @@ class TreeRetriever(BaseRetriever):
             0 <= start_layer <= s
 ```
 
-### Core Architecture Module: `raptor/tree_structures.py`
-```
-from typing import Dict, List, Set
-
-
-class Node:
-    """
-    Represents a node in the hierarchical tree structure.
-    """
-
-    def __init__(self, text: str, index: int, children: Set[int], embeddings) -> None:
-        self.text = text
-        self.index = index
-        self.children = children
-        self.embeddings = embeddings
-
-
-class Tree:
-    """
-    Represents the entire hierarchical tree structure.
-    """
-
-    def __init__(
-        self, all_nodes, root_nodes, leaf_nodes, num_layers, layer_to_nodes
-    ) -> None:
-        self.all_nodes = all_nodes
-        self.root_nodes = root_nodes
-        self.leaf_nodes = leaf_nodes
-        self.num_layers = num_layers
-        self.layer_to_nodes = layer_to_nodes
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1577,20 +1558,9 @@ class Tree:
   **Post-Mortem & Fix Analysis**:
   > Thanks for catching this! I've replicated the issue, we'll be pushing a fix for this soon. In the meantime, you can set `collapse_tree=False` and it should work. Also, if you want to answer question and not just retrieve the context, you should be using `RA.answer_question(question=question)`. 
   > @parthsarthi03 : yes, I already tried the `answer_question` and it works. I want to test/try and eventually use RAPTOR as a retriever =) Thank you
-  > I tried the `collapse_tree=False`, but it doesn't answer correctly. I hope `collapse_tree=True` will be able to provide the entire space to the retriever to discover the correct answer (it's a difficult question, actually; not the one above)
 
 - **Issue #8** (2024-03-11): **Sorry! We've encountered an issue with repetitive patterns in your prompt. Please try again with a different prompt**
   *Symptoms*: I wanted to try RAPTOR on some `.txt` files that I have  ```  Context to summarize:  .  . // VERY BIG NUMBER OF LINES WITH THESE DOTS AND THAT'S IT (I reduced the number here)  .  .  .   2024-03-08 18:43:52,574 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request" Error code: 400 - {'error': {'message': "Sorry! We've encountered an issue with repetitive patterns in your prompt. Please try again with a different prompt.", 'type': 'invalid_request_error', 'param': 'prompt', 'code': 'invalid_prompt'}} ```   Is RAPTOR creating a cluster of punctuation (dots) in this case? Because my docs don't have dots like this..
-  **Post-Mortem & Fix Analysis**:
-  > Hey! I think this might be due to an issue with the text splitting while creating the leaf nodes.  Can you look at the leaf nodes by doing the following and checking if you have a lot of chunks with just dots in them. ``` for key, node in RA.tree.leaf_nodes.items():     print(key, node.text[:50]) ```  
-  > @parthsarthi03 Alright, thanks. I will try that when it finishes. I have a lot of chunks.  BTW, I got this prompt... I left the script running but it halted on this prompted and waiting for the answer... it's not very practical.. should I open an issue for this ?  ![image](https://github.com/parthsarthi03/raptor/assets/3153107/1f34a407-2190-4371-8ee0-2c052b4215d3) 
-  > It's a precautionary check since we don't want people to accidentally overwrite their previously built trees. You should enter 'n' and it'll continue building the tree. 
-
-- **Issue #2** (2024-03-04): **RAPTOR_Clustering() takes no arguments**
-  *Symptoms*: I encountered an error when I imported a relatively long txt file. I did not encounter this error when using the txt in the demo. Could you please tell me how to deal with this problem. Thank you very much.  Traceback (most recent call last):   File "/home/jyc23/raptor-master/demo/demo.py", line 132, in <module>     RA.add_documents(text)   File "/home/jyc23/raptor-master/raptor/RetrievalAugmentation.py", line 217, in add_documents     self.tree = self.tree_builder.build_from_text(text=docs)   File "/home/jyc23/raptor-master/raptor/tree_builder.py", line 280, in build_from_text     root_nodes = self.construct_tree(all_nodes, all_nodes, layer_to_nodes)   File "/home/jyc23/raptor-master/raptor/cluster_tree_builder.py", line 102, in construct_tree     clusters = self.clustering_algorithm.perform_clustering(   File "/home/jyc23/raptor-master/raptor/cluster_utils.py", line 226, in perform_clustering     RAPTOR_Clustering( TypeError: RAPTOR_Clustering() takes no arguments
-  **Post-Mortem & Fix Analysis**:
-  > Hi, thank you for bringing this to our attention. https://github.com/parthsarthi03/raptor/commit/7a9e83fd7f166bb82841aa4fa17313bd1ef1b297 resolves the issue.
-  > How to ensure that the requirements of max_length_in_cluster can be satisfied after clustering with the same parameters? The current program seems at risk of becoming trapped in an infinite loop
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1607,7 +1577,27 @@ class Tree:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `956022c7` (2024-06-29)
+### Incident Patch 1: `2e3e83e5` (2024-03-21)
+**Commit Message**: Merge pull request #16 from LLLeoLi/fix-bug-TypeError-Cannot-use-scipy.linalg.eigh-for-sparse-A-with-k-=-N.-Use-scipy.linalg.eigh(A.toarray())-or-reduce-k-
+
+change the dim to a safe n_components
+
+**File**: `raptor/cluster_utils.py` (modified, +1/-1)
+```diff
+@@ -69,7 +69,7 @@ def GMM_cluster(embeddings: np.ndarray, threshold: float, random_state: int = 0)
+ def perform_clustering(
+     embeddings: np.ndarray, dim: int, threshold: float, verbose: bool = False
+ ) -> List[np.ndarray]:
+-    reduced_embeddings_global = global_cluster_embeddings(embeddings, dim)
++    reduced_embeddings_global = global_cluster_embeddings(embeddings, min(dim, len(embeddings) -2))
+     global_clusters, n_global_clusters = GMM_cluster(
+         reduced_embeddings_global, threshold
+     )
+```
+
+---
+
+### Incident Patch 2: `956022c7` (2024-06-29)
 **Commit Message**: Fix #38 : corrected chunk splitting for open ai embeddings
 
 **File**: `raptor/utils.py` (modified, +14/-5)
@@ -1643,26 +1633,6 @@ Observed empirical fixes and code patches:
                  
                  sub_chunk.append(sub_sentence)
                  sub_length += sub_token_count
-```
-
----
-
-### Incident Patch 2: `2e3e83e5` (2024-03-21)
-**Commit Message**: Merge pull request #16 from LLLeoLi/fix-bug-TypeError-Cannot-use-scipy.linalg.eigh-for-sparse-A-with-k-=-N.-Use-scipy.linalg.eigh(A.toarray())-or-reduce-k-
-
-change the dim to a safe n_components
-
-**File**: `raptor/cluster_utils.py` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ def GMM_cluster(embeddings: np.ndarray, threshold: float, random_state: int = 0)
- def perform_clustering(
-     embeddings: np.ndarray, dim: int, threshold: float, verbose: bool = False
- ) -> List[np.ndarray]:
--    reduced_embeddings_global = global_cluster_embeddings(embeddings, dim)
-+    reduced_embeddings_global = global_cluster_embeddings(embeddings, min(dim, len(embeddings) -2))
-     global_clusters, n_global_clusters = GMM_cluster(
-         reduced_embeddings_global, threshold
-     )
 ```
 
 ---
@@ -1767,343 +1737,6 @@ change the dim to a safe n_components
 \ No newline at end of file
 ```
 
----
-
-### Incident Patch 4: `c7034465` (2024-03-09)
-**Commit Message**: fixed text splitting bug
-
-**File**: `raptor/utils.py` (modified, +58/-25)
-```diff
-@@ -1,4 +1,5 @@
- import logging
-+import re
- from typing import Dict, List, Set
- 
- import numpy as np
-@@ -19,42 +20,74 @@ def reverse_mapping(layer_to_nodes: Dict[int, List[Node]]) -> Dict[Node, int]:
- 
- 
- def split_text(
--    text: str, tokenizer: tiktoken.get_encoding("cl100k_base"), max_tokens: int
--) -> List[str]:
-+    text: str, tokenizer: tiktoken.get_encoding("cl100k_base"), max_tokens: int, overlap: int = 0
-+):
-     """
-     Splits the input text into smaller chunks based on the tokenizer and maximum allowed tokens.
--
-+    
-     Args:
-         text (str): The text to be split.
-         tokenizer (CustomTokenizer): The tokenizer to be used for splitting the text.
-         max_tokens (int): The maximum allowed tokens.
--
-+        overlap (int, optional): The number of overlapping tokens between chunks. Defaults to 0.
-+    
-     Returns:
-         List[str]: A list of text chunks.
-     """
--    logging.info("Splitting Text")
--    sentences = text.split(". ")
-+    # Split the text into sentences using multiple delimiters
-+    delimiters = [".", "!", "?", "\n"]
-+    regex_pattern = "|".join(map(re.escape, delimiters))
-+    sentences = re.split(regex_pattern, text)
-+    
-+    # Calculate the number of tokens for each sentence
-     n_tokens = [len(tokenizer.encode(" " + sentence)) for sentence in sentences]
--
--    chunks: List[str] = []
--    tokens_so_far = 0
--    chunk = []
--
--    for sentence, token in zip(sentences, n_tokens):
--        if tokens_so_far + token > max_tokens:
--            chunks.append(". ".join(chunk) + ".")
--            chunk = []
--            tokens_so_far = 0
--
--        if token > max_tokens:
-+    
-+    chunks = []
-+    current_chunk = []
-+    current_length = 0
-+    
-+    for sentence, token_count in zip(sentences, n_tokens):
-+        # If the sentence is empty or consists only of whitespace, skip it
-+        if not sentence.strip():
-             continue
--
--        chunk.append(sentence)
--        tokens_so_far += token + 1
--
--    if chunk:
--        chunks.append(". ".join(chunk) + ".")
--
-+        
-+        # If the sentence is too long, split it into smaller parts
-+        if token_count > max_tokens:
-+            sub_sentences = re.split(r"[,;:]", sentence)
-+            sub_token_counts = [len(tokenizer.encode(" " + sub_sentence)) for sub_sentence in sub_sentences]
-+            
-+            sub_chunk = []
-+            sub_length = 0
-+            
-+            for sub_sentence, sub_token_count in zip(sub_sentences, sub_token_counts):
-+                if sub_length + sub_token_count > max_tokens:
-+                    chunks.append(" ".join(sub_chunk))
-+                    sub_chunk = sub_chunk[-overlap:] if overlap > 0 else []
-+                    sub_length = sum(sub_token_counts[max(0, len(sub_chunk) - overlap):len(sub_chunk)])
-+                
-+                sub_chunk.append(sub_sentence)
-+                sub_length += sub_token_count
-+            
-+            if sub_chunk:
-+                chunks.append(" ".join(sub_chunk))
-+        
-+        # If adding the sentence to the current chunk exceeds the max tokens, start a new chunk
-+        elif current_length + token_count > max_tokens:
-+            chunks.append(" ".join(current_chunk))
-+            current_chunk = current_chunk[-overlap:] if overlap > 0 else []
-+            current_length = sum(n_tokens[max(0, len(current_chunk) - overlap):len(current_chunk)])
-+            current_chunk.append(sentence)
-+            current_length += token_count
-+        
-+        # Otherwise, add the sentence to the current chunk
-+        else:
-+            current_chunk.append(sentence)
-+            current_length += token_count
-+    
-+    # Add the last chunk if it's not empty
-+    if current_chunk:
-+        chunks.append(" ".join(current_chunk))
-+    
-     return chunks
- 
- 
-```
-
----
-
-### Incident Patch 5: `7a9e83fd` (2024-03-04)
-**Commit Message**: fixed long document bug
-
-**File**: `README.md` (modified, +2/-0)
-```diff
-@@ -26,6 +26,8 @@ For detailed methodologies and implementations, refer to the original paper:
- 
- [![Paper page](https://huggingface.co/datasets/huggingface/badges/resolve/main/paper-page-sm.svg)](https://huggingface.co/papers/2401.18059)
- 
-+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/raptor-recursive-abstractive-processing-for/question-answering-on-quality)](https://paperswithcode.com/sota/question-answering-on-quality?p=raptor-recursive-abstractive-processing-for)
-+
- ## Installation
- 
- Before using RAPTOR, ensure Python 3.8+ is installed. Clone the RAPTOR repository and install necessary dependencies:
-```
-
-**File**: `raptor/cluster_utils.py` (modified, +1/-1)
-```diff
-@@ -175,7 +175,7 @@ def perform_clustering(
-                         f"reclustering cluster with {len(cluster_nodes)} nodes"
-                     )
-                 node_clusters.extend(
--                    RAPTOR_Clustering(
-+                    RAPTOR_Clustering.perform_clustering(
-                         cluster_nodes, embedding_model_name, max_length_in_cluster
-                     )
-                 )
-```
-
----
-
-### Incident Patch 6: `4f060cf0` (2024-02-27)
-**Commit Message**: fixed key leak 2
-
-**File**: `example.py` (removed, +0/-23)
-```diff
-@@ -1,23 +0,0 @@
--import os
--os.environ["OPENAI_API_KEY"] = "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"
--
--
--# Cinderella story defined in sample.txt
--with open('Demo/sample.txt', 'r') as file:
--    text = file.read()
--
--print(text[:100])
--
--from raptor import RetrievalAugmentation
--
--RA = RetrievalAugmentation()
--
--# construct the tree
--RA.add_documents(text)
--
--
--question = "How did Cinderella reach her happy ending"
--
--answer = RA.answer_question(question=question)
--
--print("Answer: ", answer)
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 7: `05d2479c` (2024-02-27)
-**Commit Message**: fixed key leak
-
-**File**: `demo.ipynb` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
-     "# NOTE: An OpenAI API key must be set here for application initialization, even if not in use.\n",
-     "# If you're not utilizing OpenAI models, assign a placeholder string (e.g., \"not_used\").\n",
-     "import os\n",
--    "os.environ[\"OPENAI_API_KEY\"] = \"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\""
-+    "os.environ[\"OPENAI_API_KEY\"] = \"your-openai-key\""
-    ]
-   },
-   {
-```
-
-**File**: `example.py` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+import os
-+os.environ["OPENAI_API_KEY"] = "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"
-+
-+
-+# Cinderella story defined in sample.txt
-+with open('Demo/sample.txt', 'r') as file:
-+    text = file.read()
-+
-+print(text[:100])
-+
-+from raptor import RetrievalAugmentation
-+
-+RA = RetrievalAugmentation()
-+
-+# construct the tree
-+RA.add_documents(text)
-+
-+
-+question = "How did Cinderella reach her happy ending"
-+
-+answer = RA.answer_question(question=question)
-+
-+print("Answer: ", answer)
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 8: `bc3e153c` (2024-02-27)
-**Commit Message**: minor readme fixes
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ print("Answer: ", answer)
- Save the constructed tree to a specified path:
- 
- ```python
--SAVE_PATH = "demo/cinderalla"
-+SAVE_PATH = "demo/cinderella"
- RA.save(SAVE_PATH)
- ```
- 
-```
-
-**File**: `demo.ipynb` (modified, +4/-4)
-```diff
-@@ -18,7 +18,7 @@
-     "# NOTE: An OpenAI API key must be set here for application initialization, even if not in use.\n",
-     "# If you're not utilizing OpenAI models, assign a placeholder string (e.g., \"not_used\").\n",
-     "import os\n",
--    "os.environ[\"OPENAI_API_KEY\"] = \"your-openai-key\""
-+    "os.environ[\"OPENAI_API_KEY\"] = \"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\""
-    ]
-   },
-   {
-@@ -29,7 +29,7 @@
-    "outputs": [],
-    "source": [
-     "# Cinderella story defined in sample.txt\n",
--    "with open('Demo/sample.txt', 'r') as file:\n",
-+    "with open('demo/sample.txt', 'r') as file:\n",
-     "    text = file.read()\n",
-     "\n",
-     "print(text[:100])"
-@@ -111,7 +111,7 @@
-    "outputs": [],
-    "source": [
-     "# Save the tree by calling RA.save(\"path/to/save\")\n",
--    "SAVE_PATH = \"Demo/cinderalla\"\n",
-+    "SAVE_PATH = \"demo/cinderella\"\n",
-     "RA.save(SAVE_PATH)"
-    ]
-   },
-@@ -292,7 +292,7 @@
-    "metadata": {},
-    "outputs": [],
-    "source": [
--    "with open('Demo/sample.txt', 'r') as file:\n",
-+    "with open('demo/sample.txt', 'r') as file:\n",
-     "    text = file.read()\n",
-     "    \n",
-     "RA.add_documents(text)"
-```
-
----
-
-### Incident Patch 9: `3316ad77` (2024-02-27)
-**Commit Message**: minor readme fix
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -20,8 +20,8 @@ For detailed methodologies and implementations, refer to the original paper:
- Before using RAPTOR, ensure Python 3.8+ is installed. Clone the RAPTOR repository and install necessary dependencies:
- 
- ```bash
--git clone https://github.com/parthsarthi03/RAPTOR.git
--cd RAPTOR
-+git clone https://github.com/parthsarthi03/raptor.git
-+cd raptor
- pip install -r requirements.txt
- ```
- 
-```
-
----
-
-### Incident Patch 10: `b118b86a` (2024-02-27)
-**Commit Message**: added urllib3 to requirements
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ print("Answer: ", answer)
- Save the constructed tree to a specified path:
- 
- ```python
--SAVE_PATH = "Demo/cinderalla"
-+SAVE_PATH = "demo/cinderalla"
- RA.save(SAVE_PATH)
- ```
- 
-```
-
-**File**: `requirements.txt` (modified, +2/-1)
-```diff
-@@ -4,7 +4,8 @@ openai==1.3.3
- scikit-learn
- sentence-transformers==2.2.2
- tenacity==8.2.3
--tiktoken==0.5.1
-+tiktoken==0.5.1 
- torch
- transformers==4.38.1
- umap-learn==0.5.5
-+urllib3==1.26.6 
-```
-
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bugfix/empty root search (@BenRogersNewsome)
 - **PR #51** (closed): Documentation (@jvbyrnes)
@@ -2111,8 +1744,6 @@ change the dim to a safe n_components
 - **PR #39** (closed): Fixed bug in tree_builder: now chunks are never empty (@Giustino98)
 - **PR #34** (closed): add more local llm model support through ollama (@DoraDong-2023)
 - **PR #16** (2024-03-21): change the dim to a safe n_components (@LLLeoLi)
-- **PR #12** (2024-03-11):  Add top_k Support for Tree Collapsing Functionality (@parthsarthi03)
-- **PR #6** (2024-03-08): Reduced OpenAI dependency by doing lazy initialization (only when class is used) (@ExtReMLapin)
 
 ---
 
@@ -2126,3 +1757,34 @@ change the dim to a safe n_components
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #16 from LLLeoLi/fix-bug-TypeError-Cannot-use-scipy.linalg.ei
+
+**RULE**:
+When implementing operations in `raptor/cluster_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in parthsarthi03/raptor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2e3e83e5`: Merge pull request #16 from LLLeoLi/fix-bug-TypeError-Cannot-use-scipy.linalg.eigh-for-sparse-A-with-k-=-N.-Use-scipy.linalg.eigh(A.toarray())-or-reduce-k-. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `raptor/cluster_utils.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    reduced_embeddings_global = global_cluster_embeddings(embeddings, min(dim, len(embeddings) -2))
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+    reduced_embeddings_global = global_cluster_embeddings(embeddings, dim)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2e3e83e5` are properly handled with clean fallback behavior.
