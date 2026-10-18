@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T02:26:54.900Z",
+  "last_updated": "2026-10-18T02:30:05.655Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1142,14 +1142,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "da5e7d568b0638be36d9ecd6451f9bf3c9440da7c202ae256bbbee337e44220a",
-      "verified_at": "2026-10-17T18:02:22.490Z",
+      "content_hash": "ef8c851881b016d9e130a7868b61c33182c6a03a17b5cb6f5c0faeaffeef94c3",
+      "verified_at": "2026-10-18T02:30:05.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T18:02:22.490Z"
+      "last_updated": "2026-10-18T02:30:05.655Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",

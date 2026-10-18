@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-SJH3",
-    "timestamp": "2026-10-16T22:09:15.159Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "83596eabc7818454c28d8638c5b03c0788c3b1161c74afcd35913f153075f64e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-X37E",
     "timestamp": "2026-10-16T22:12:47.354Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7492,6 +7477,21 @@
     "contentHash": "f4616de61edf1b5905a8809344a2268c15d1f65560f731532dfeaa16d6951d27",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-JU4X",
+    "timestamp": "2026-10-18T02:30:05.649Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "ef8c851881b016d9e130a7868b61c33182c6a03a17b5cb6f5c0faeaffeef94c3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

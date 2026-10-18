@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T02:26:54.898Z",
-  "total_cycles_completed": 2369,
-  "total_learnings_persisted": 2369,
+  "last_updated": "2026-10-18T02:30:05.654Z",
+  "total_cycles_completed": 2370,
+  "total_learnings_persisted": 2370,
   "total_rules_promoted": 1376,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:07:35.425Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:10:40.303Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1403,6 +1396,13 @@
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-fishaudio-drama-3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T02:30:05.654Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
