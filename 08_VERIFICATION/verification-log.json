@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-SX0J",
-    "timestamp": "2026-10-17T00:01:31.171Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "24fe8bfa080788f73c2b4ebcc56a8bbcca54c519832f3cef4a26e4b854d445c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-WNSN",
     "timestamp": "2026-10-17T00:04:25.847Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-openai-community-gpt2",
     "contentHash": "37f59f319e86a5c4d3092e918ed42c4276157a995fb28898a079c6878462c300",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-LDCM",
+    "timestamp": "2026-10-18T04:23:15.670Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "2e5abfebe1232e1a5a36d4f92041373494725f7beb42d71767a62674e5f5a70b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

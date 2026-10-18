@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T04:18:31.762Z",
+  "last_updated": "2026-10-18T04:23:15.676Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1532,14 +1532,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "3e048692552f41ca0b62e9f019049cecee163f07e6a1ea11624daf11c714410e",
-      "verified_at": "2026-10-17T19:47:33.631Z",
+      "content_hash": "2e5abfebe1232e1a5a36d4f92041373494725f7beb42d71767a62674e5f5a70b",
+      "verified_at": "2026-10-18T04:23:15.676Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T19:47:33.631Z"
+      "last_updated": "2026-10-18T04:23:15.676Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
