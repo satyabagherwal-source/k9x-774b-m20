@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-2VTW",
-    "timestamp": "2026-10-17T00:37:15.812Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "564dc2e62853c158e7c455a299a7468e4358d8ac4230ac908f71564b9eeed6f2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-6X02",
     "timestamp": "2026-10-17T00:40:23.954Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-base-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
     "contentHash": "b210e2c5429e886a01421d361d410f1ea97ff17ebf6babba5b1924fbb2240fe9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-VF7W",
+    "timestamp": "2026-10-18T04:59:04.268Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "93d0e0addfafe472e79ddda915218b144b3ee48ea5dad1db342074418aa733cc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
