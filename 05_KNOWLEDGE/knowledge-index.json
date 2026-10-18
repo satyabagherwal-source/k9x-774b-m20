@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T14:29:58.310Z",
-  "total_verified_learnings": 230,
+  "last_updated": "2026-10-18T16:46:52.445Z",
+  "total_verified_learnings": 231,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47607,6 +47607,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T14:29:58.303Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-bvaughn-react-virtualized": {
+      "learning_id": "learn-github-bvaughn-react-virtualized",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "bvaughn/react-virtualized",
+      "repository": "bvaughn/react-virtualized",
+      "slug": "bvaughn-react-virtualized",
+      "platform": "github",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "409d50e1",
+      "content_hash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
+      "dossier_path": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1690,
+          "title": "Revert stale.yml",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T16:46:52.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

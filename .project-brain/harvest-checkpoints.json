@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T14:29:58.342Z",
+  "last_updated": "2026-10-18T16:46:52.465Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3261,6 +3261,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T14:29:58.342Z"
+    },
+    "bvaughn/react-virtualized": {
+      "repository": "bvaughn/react-virtualized",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-bvaughn-react-virtualized",
+      "content_hash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
+      "verified_at": "2026-10-18T16:46:52.465Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T16:46:52.465Z"
     }
   },
   "repos": {

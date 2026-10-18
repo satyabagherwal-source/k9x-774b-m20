@@ -2476,3 +2476,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-18T08:17:29.324Z |
 | `learn-github-deeplethe-solid-glass` | `https://github.com/deeplethe/solid-glass` | `6e8903e4` | Multi-dimensional audit evidence | 2026-10-18T11:45:22.533Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-18T14:29:58.338Z |
+| `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `409d50e1` | Multi-dimensional audit evidence | 2026-10-18T16:46:52.463Z |

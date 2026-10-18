@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T14:29:58.340Z",
-  "total_cycles_completed": 2446,
-  "total_learnings_persisted": 2446,
-  "total_rules_promoted": 1457,
+  "last_updated": "2026-10-18T16:46:52.464Z",
+  "total_cycles_completed": 2447,
+  "total_learnings_persisted": 2447,
+  "total_rules_promoted": 1458,
   "history": [
-    {
-      "timestamp": "2026-10-17T19:12:12.100Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T19:15:31.565Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1403,6 +1396,13 @@
       "repository": "Comfy-Org/MOSS-Image",
       "learningId": "learn-huggingface-comfy-org-moss-image",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T16:46:52.464Z",
+      "repository": "bvaughn/react-virtualized",
+      "learningId": "learn-github-bvaughn-react-virtualized",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

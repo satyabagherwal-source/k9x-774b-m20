@@ -4290,3 +4290,7 @@ https://github.com/deeplethe/solid-glass
 # --- Automatically Discovered by AI Scout Engine [2026-10-18T14:28:32.214Z] ---
 # [HUGGINGFACE-AI-MODELS] Comfy-Org/MOSS-Image (3680 score) - Verified Hugging Face Model: Comfy-Org/MOSS-Image (168 likes, 354126 downloads)
 https://huggingface.co/Comfy-Org/MOSS-Image
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-18T16:46:04.931Z] ---
+# [FULLSTACK-UI] bvaughn/react-virtualized (14689 score) - React components for efficiently rendering large lists and tabular data
+https://github.com/bvaughn/react-virtualized

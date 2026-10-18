@@ -2088,5 +2088,15 @@
     "contentHash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
     "lastHarvestedAt": "2026-10-18T14:29:58.338Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
+  },
+  "bvaughn-react-virtualized": {
+    "repository": "bvaughn/react-virtualized",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bvaughn/react-virtualized",
+    "sourceVersion": "409d50e1",
+    "license": "MIT",
+    "contentHash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
+    "lastHarvestedAt": "2026-10-18T16:46:52.463Z",
+    "learningId": "learn-github-bvaughn-react-virtualized"
   }
 }

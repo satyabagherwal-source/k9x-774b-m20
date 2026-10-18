@@ -18055,5 +18055,20 @@
     "downloads": 354126,
     "qualityScore": 3680,
     "discoveredAt": "2026-10-18T14:28:32.212Z"
+  },
+  {
+    "name": "react-virtualized",
+    "fullName": "bvaughn/react-virtualized",
+    "url": "https://github.com/bvaughn/react-virtualized",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "React components for efficiently rendering large lists and tabular data",
+    "stars": 27068,
+    "forks": 3017,
+    "openIssues": 0,
+    "language": "TypeScript",
+    "qualityScore": 14689,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-18T16:46:01.368Z"
   }
 ]
