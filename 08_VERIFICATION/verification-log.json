@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-DP2E",
-    "timestamp": "2026-10-16T22:53:41.798Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "bd2f3f864c86c258605944fa118ae60660940e962c28037ca57f0449bfd33ade",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-JE2F",
     "timestamp": "2026-10-16T22:58:07.479Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
     "contentHash": "776b78ea8cc89c29e528318122b07c783c98fe5747e265ba4bda41757d454d19",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-6325",
+    "timestamp": "2026-10-18T03:15:23.261Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "cfc60bd9ac56e16ce20f982c7c63d2edc9b5024f967d16a3efc5e6d742e4e8d1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
