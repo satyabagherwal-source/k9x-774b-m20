@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-12MP",
-    "timestamp": "2026-10-16T23:11:52.465Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "8b2d076eff5f3a98edf507ca5084d470a1f143abe252704fbf83345afc02cf7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4R04",
     "timestamp": "2026-10-16T23:14:44.020Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7490,6 +7475,21 @@
     "repository": "FermionResearch/Phonon-2",
     "learningId": "learn-huggingface-fermionresearch-phonon-2",
     "contentHash": "d16adfc5079731fd40f353ad6e1dfca6d2254efebf91aee4c2c7bd121798ae7a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-QSZ2",
+    "timestamp": "2026-10-18T03:31:29.966Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "f2ed96535ecec80963d6cd22154d228ec24cea8dbec61c837cc9f0493bf9e6f8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
