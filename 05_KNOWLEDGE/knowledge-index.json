@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:45:56.757Z",
-  "total_verified_learnings": 280,
+  "last_updated": "2026-10-18T21:52:11.467Z",
+  "total_verified_learnings": 286,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2503,22 +2503,35 @@
     "learn-github-bee-san-ciphey": {
       "learning_id": "learn-github-bee-san-ciphey",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bee-san-ciphey",
+      "source": "bee-san/Ciphey",
+      "repository": "bee-san/Ciphey",
       "slug": "bee-san-ciphey",
       "platform": "github",
       "source_url": "https://github.com/bee-san/Ciphey",
-      "source_version": "HEAD",
-      "content_hash": "69f473831e11da78a547f7d47e1dbde6d8ea763fae31cdd89dc4d8c1744df20c",
+      "source_version": "c806543f",
+      "content_hash": "aa7de433ed9c5005f44d6a2faadb8374e5b52a2eb7be31510545ada9aea6afe2",
       "dossier_path": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1750,
+          "title": "search): accept answers longer than 820 characters (#1067)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.049Z"
+      "verified_at": "2026-10-18T21:52:09.199Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-beir-cellar-beir": {
       "learning_id": "learn-github-beir-cellar-beir",
@@ -4078,22 +4091,35 @@
     "learn-github-codewhale-hq-codewhale": {
       "learning_id": "learn-github-codewhale-hq-codewhale",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "codewhale-hq-codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "source": "codewhale-hq/Codewhale",
+      "repository": "codewhale-hq/Codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "HEAD",
-      "content_hash": "7e4005532e86d82d3ffdfd99d6ab76967b70680f9469bd3b366b09ade942fe70",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "7877c62d",
+      "content_hash": "a24fba2bc347f8c35ed8d1365d4a080299ab95a5c111d40c053bb07effba71b6",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1747,
+          "title": "engine): refuse a shell or gate command the safety check blocks before asking to",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.382Z"
+      "verified_at": "2026-10-18T21:52:00.302Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cognizant-ai-lab-neuro-san-studio": {
       "learning_id": "learn-github-cognizant-ai-lab-neuro-san-studio",
@@ -4894,22 +4920,35 @@
     "learn-github-davidhdev-react-bits": {
       "learning_id": "learn-github-davidhdev-react-bits",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "davidhdev-react-bits",
+      "source": "DavidHDev/react-bits",
+      "repository": "DavidHDev/react-bits",
       "slug": "davidhdev-react-bits",
       "platform": "github",
       "source_url": "https://github.com/DavidHDev/react-bits",
-      "source_version": "HEAD",
-      "content_hash": "a00175d3fc34c9f1321b3cb697a9c66db1b530ea9409bbc3c606a1a310eec50b",
+      "source_version": "c2a1408d",
+      "content_hash": "48ba7500082bde8deef68155f3cbb0b19e7c9bc059576837080e0c213e0b2ea3",
       "dossier_path": "07_PROJECT_LEARNING/davidhdev-react-bits-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/davidhdev-react-bits-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1746,
+          "title": "Merge pull request #1107 from justelson/feat/fix-shape-magic-gpu-hang",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.549Z"
+      "verified_at": "2026-10-18T21:51:58.828Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-decodingai-magazine-llm-twin-course": {
       "learning_id": "learn-github-decodingai-magazine-llm-twin-course",
@@ -8152,22 +8191,35 @@
     "learn-github-goodrain-rainbond": {
       "learning_id": "learn-github-goodrain-rainbond",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "goodrain-rainbond",
+      "source": "goodrain/rainbond",
+      "repository": "goodrain/rainbond",
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "HEAD",
-      "content_hash": "a38305b759cf9bd04273497f77513c5744840e430befd4dae23869f3b54d77bb",
+      "source_version": "9bd5ec92",
+      "content_hash": "004bd1e987eb0799063b0bcd92e5a56c7061997f517de8b7b1fef631919a472d",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1749,
+          "title": "prevent index file download redirects (#2706)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.128Z"
+      "verified_at": "2026-10-18T21:52:07.031Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-google-adk-java": {
       "learning_id": "learn-github-google-adk-java",
@@ -28520,22 +28572,29 @@
     "learn-github-pingcap-autoflow": {
       "learning_id": "learn-github-pingcap-autoflow",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pingcap-autoflow",
+      "source": "pingcap/autoflow",
+      "repository": "pingcap/autoflow",
       "slug": "pingcap-autoflow",
       "platform": "github",
       "source_url": "https://github.com/pingcap/autoflow",
-      "source_version": "HEAD",
-      "content_hash": "0b9421358e2210b4ab163b50289826688e47d5a65c0391a10864e4d922134f67",
+      "source_version": "c4cb19d8",
+      "content_hash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-autoflow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-autoflow-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.032Z"
+      "verified_at": "2026-10-18T21:52:11.454Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pingcap-talent-plan": {
       "learning_id": "learn-github-pingcap-talent-plan",
@@ -36451,22 +36510,35 @@
     "learn-github-zulip-zulip": {
       "learning_id": "learn-github-zulip-zulip",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zulip-zulip",
+      "source": "zulip/zulip",
+      "repository": "zulip/zulip",
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "HEAD",
-      "content_hash": "eb0a9a4abe700f9c75ec28a23bc3c04ce27b260dec7f919e1e983e322202272d",
+      "source_version": "68812981",
+      "content_hash": "3824c31bed5adc6bd206e5d2080f799d860fa520ab41a94f0b4cb797369286cc",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1748,
+          "title": "test_microsoft_teams_importer: Fix check that never ran.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.590Z"
+      "verified_at": "2026-10-18T21:52:04.120Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zvec-ai-zvec-grep": {
       "learning_id": "learn-github-zvec-ai-zvec-grep",
@@ -66974,6 +67046,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:45:56.751Z"
+    },
+    "rule-1746": {
+      "learning_id": "rule-1746",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1746,
+      "title": "Merge pull request #1107 from justelson/feat/fix-shape-magic-gpu-hang",
+      "source_url": "https://github.com/DavidHDev/react-bits",
+      "source_version": "c2a1408d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:51:58.828Z"
+    },
+    "rule-1747": {
+      "learning_id": "rule-1747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1747,
+      "title": "engine): refuse a shell or gate command the safety check blocks before asking to",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "7877c62d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:52:00.302Z"
+    },
+    "rule-1748": {
+      "learning_id": "rule-1748",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1748,
+      "title": "test_microsoft_teams_importer: Fix check that never ran.",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "68812981",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:52:04.120Z"
+    },
+    "rule-1749": {
+      "learning_id": "rule-1749",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1749,
+      "title": "prevent index file download redirects (#2706)",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "9bd5ec92",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:52:07.031Z"
+    },
+    "rule-1750": {
+      "learning_id": "rule-1750",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1750,
+      "title": "search): accept answers longer than 820 characters (#1067)",
+      "source_url": "https://github.com/bee-san/Ciphey",
+      "source_version": "c806543f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:52:09.199Z"
     }
   },
   "aliases": {

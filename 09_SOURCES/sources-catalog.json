@@ -2588,5 +2588,65 @@
     "contentHash": "b343628b520189526e8e0fd34827af945379732376745136d6946cfbe56e015d",
     "lastHarvestedAt": "2026-10-18T21:45:56.799Z",
     "learningId": "learn-github-pinecone-io-examples"
+  },
+  "davidhdev-react-bits": {
+    "repository": "DavidHDev/react-bits",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DavidHDev/react-bits",
+    "sourceVersion": "c2a1408d",
+    "license": "NOASSERTION",
+    "contentHash": "48ba7500082bde8deef68155f3cbb0b19e7c9bc059576837080e0c213e0b2ea3",
+    "lastHarvestedAt": "2026-10-18T21:51:58.884Z",
+    "learningId": "learn-github-davidhdev-react-bits"
+  },
+  "hmbown-codewhale": {
+    "repository": "codewhale-hq/Codewhale",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Hmbown/Codewhale",
+    "sourceVersion": "7877c62d",
+    "license": "MIT",
+    "contentHash": "a24fba2bc347f8c35ed8d1365d4a080299ab95a5c111d40c053bb07effba71b6",
+    "lastHarvestedAt": "2026-10-18T21:52:00.343Z",
+    "learningId": "learn-github-codewhale-hq-codewhale"
+  },
+  "zulip-zulip": {
+    "repository": "zulip/zulip",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zulip/zulip",
+    "sourceVersion": "68812981",
+    "license": "Apache-2.0",
+    "contentHash": "3824c31bed5adc6bd206e5d2080f799d860fa520ab41a94f0b4cb797369286cc",
+    "lastHarvestedAt": "2026-10-18T21:52:04.162Z",
+    "learningId": "learn-github-zulip-zulip"
+  },
+  "goodrain-rainbond": {
+    "repository": "goodrain/rainbond",
+    "platform": "github",
+    "sourceUrl": "https://github.com/goodrain/rainbond",
+    "sourceVersion": "9bd5ec92",
+    "license": "NOASSERTION",
+    "contentHash": "004bd1e987eb0799063b0bcd92e5a56c7061997f517de8b7b1fef631919a472d",
+    "lastHarvestedAt": "2026-10-18T21:52:07.075Z",
+    "learningId": "learn-github-goodrain-rainbond"
+  },
+  "bee-san-ciphey": {
+    "repository": "bee-san/Ciphey",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bee-san/Ciphey",
+    "sourceVersion": "c806543f",
+    "license": "MIT",
+    "contentHash": "aa7de433ed9c5005f44d6a2faadb8374e5b52a2eb7be31510545ada9aea6afe2",
+    "lastHarvestedAt": "2026-10-18T21:52:09.244Z",
+    "learningId": "learn-github-bee-san-ciphey"
+  },
+  "pingcap-autoflow": {
+    "repository": "pingcap/autoflow",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pingcap/autoflow",
+    "sourceVersion": "c4cb19d8",
+    "license": "Apache-2.0",
+    "contentHash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
+    "lastHarvestedAt": "2026-10-18T21:52:11.506Z",
+    "learningId": "learn-github-pingcap-autoflow"
   }
 }

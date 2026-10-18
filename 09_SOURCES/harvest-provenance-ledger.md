@@ -2529,3 +2529,9 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `e1312b80` | Multi-dimensional audit evidence | 2026-10-18T21:45:54.691Z |
 | `learn-github-chrispybacon-dev-dockflare` | `https://github.com/ChrispyBacon-dev/DockFlare` | `9c7bed82` | Multi-dimensional audit evidence | 2026-10-18T21:45:56.585Z |
 | `learn-github-pinecone-io-examples` | `https://github.com/pinecone-io/examples` | `db002421` | Multi-dimensional audit evidence | 2026-10-18T21:45:56.799Z |
+| `learn-github-davidhdev-react-bits` | `https://github.com/DavidHDev/react-bits` | `c2a1408d` | Multi-dimensional audit evidence | 2026-10-18T21:51:58.884Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `7877c62d` | Multi-dimensional audit evidence | 2026-10-18T21:52:00.343Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `68812981` | Multi-dimensional audit evidence | 2026-10-18T21:52:04.162Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `9bd5ec92` | Multi-dimensional audit evidence | 2026-10-18T21:52:07.075Z |
+| `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `c806543f` | Multi-dimensional audit evidence | 2026-10-18T21:52:09.244Z |
+| `learn-github-pingcap-autoflow` | `https://github.com/pingcap/autoflow` | `c4cb19d8` | Multi-dimensional audit evidence | 2026-10-18T21:52:11.506Z |

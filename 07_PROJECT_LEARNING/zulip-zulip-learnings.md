@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
+> **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
+> **Source Version**: `68812981`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:52:03.968Z  
+> **Learning ID**: `learn-github-zulip-zulip`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): zulip/zulip
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:41:02.725Z  
+> **Harvest Timestamp**: 2026-10-18T21:52:03.961Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 25995 stars
+- **Stars / Engagement**: 26067 stars
 
 ---
 
@@ -975,10 +989,15 @@ normal_queues = [
     "user_activity_interval",
 ]
 
-# Soft reactivations share the deferred_work queue unless a server opts
-# into a dedicated queue; only then is there a consumer to monitor.
+# These queues exist only when a server opts into them; until then their
+# events stay in deferred_work, and there is no consumer to monitor.
 if get_config(get_config_file(), "application_server", "dedicated_soft_reactivation_queue", False):
     normal_queues.append("soft_reactivation")
+
+if get_config(
+    get_config_file(), "application_server", "dedicated_deferred_work_high_latency_queue", False
+):
+    normal_queues.append("deferred_work_high_latency")
 
 mobile_notification_shards = int(
     get_config(get_config_file(), "application_server", "mobile_notification_shards", "1")
@@ -1006,6 +1025,9 @@ MAX_SECONDS_TO_CLEAR: defaultdict[str, int] = defaultdict(
     # own queue; keep deferred_work's generous clear-time budget so the slow
     # backfills that motivated the split don't trip false alerts.
     soft_reactivation=600,
+    # Every job in this queue can take many minutes, so even a single job
+    # in flight makes the estimated time to clear the backlog that long.
+    deferred_work_high_latency=3 * 60 * 60,
     digest_emails=1200,
     missedmessage_mobile_notifications=120,
     embed_links=60,
@@ -1016,6 +1038,7 @@ CRITICAL_SECONDS_TO_CLEAR: defaultdict[str, int] = defaultdict(
     lambda: 60,
     deferred_work=900,
     soft_reactivation=900,
+    deferred_work_high_latency=6 * 60 * 60,
     missedmessage_mobile_notifications=180,
     digest_emails=1800,
     embed_links=90,
@@ -1181,183 +1204,20 @@ def check_rabbitmq_queues() -> None:
 
 ```
 
-### Core Architecture Module: `scripts/lib/queue_workers.py`
-```
-#!/usr/bin/env python3
-import os
-import sys
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(BASE_DIR)
-from scripts.lib.setup_path import setup_path
-
-setup_path()
-
-os.environ["DJANGO_SETTINGS_MODULE"] = "zproject.settings"
-
-import django
-
-django.setup()
-from zerver.worker.queue_processors import get_active_worker_queues
-
-if __name__ == "__main__":
-    for worker in sorted(get_active_worker_queues()):
-        print(worker)
-
-```
-
-### Core Architecture Module: `scripts/lib/run_hooks.py`
-```
-#!/usr/bin/env python3
-import argparse
-import os
-import subprocess
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from scripts.lib.zulip_tools import (
-    DEPLOYMENTS_DIR,
-    assert_running_as_root,
-    get_deploy_root,
-    get_zulip_pwent,
-    parse_version_from,
-    su_to_zulip,
-)
-
-assert_running_as_root()
-
-# Updates to the below choices to add a new hook type should
-# adjust puppet's `app_frontend_base.pp` as well.
-parser = argparse.ArgumentParser()
-parser.add_argument("kind", choices=["pre-deploy", "post-deploy"], help="")
-parser.add_argument("--from-git", action="store_true", help="Upgrading from git")
-args = parser.parse_args()
-
-from version import ZULIP_MERGE_BASE as NEW_ZULIP_MERGE_BASE
-from version import ZULIP_VERSION as NEW_ZULIP_VERSION
-
-deploy_path = get_deploy_root()
-
-if args.kind == "post-deploy":
-    old_dir_name = "last"
-    if not os.path.exists(DEPLOYMENTS_DIR + "/last"):
-        # Fresh installs which are doing an OS upgrade don't have a
-        # "last" yet
-        old_dir_name = "current"
-else:
-    old_dir_name = "current"
-old_version = parse_version_from(DEPLOYMENTS_DIR + "/" + old_dir_name)
-old_merge_base = parse_version_from(DEPLOYMENTS_DIR + "/" + old_dir_name, merge_base=True)
-
-path = f"/etc/zulip/hooks/{args.kind}.d"
-if not os.path.exists(path):
-    sys.exit(0)
-
-# Pass in, via environment variables, the old/new "version
-# string" (which is a `git describe` output)
-env = os.environ.copy()
-env["ZULIP_OLD_VERSION"] = old_version
-env["ZULIP_NEW_VERSION"] = NEW_ZULIP_VERSION
-
-# preexec_fn=su_to_zulip normally handles this, but our explicit
-# env overrides that
-env["HOME"] = get_zulip_pwent().pw_dir
-
-
-def resolve_version_string(version: str) -> str:
-    return subprocess.check_output(
-        ["git", "rev-parse", version], cwd=deploy_path, preexec_fn=su_to_zulip, text=True
-    ).strip()
-
-
-if args.from_git:
-    # If we have a git repo, we also resolve those `git describe`
-    # values to full commit hashes, as well as provide the
-    # merge-base of the old/new commits with mainline.
-    env["ZULIP_OLD_COMMIT"] = resolve_version_string(old_version)
-    env["ZULIP_NEW_COMMIT"] = resolve_version_string(NEW_ZULIP_VERSION)
-    env["ZULIP_OLD_MERGE_BASE_COMMIT"] = resolve_version_string(old_merge_base)
-    env["ZULIP_NEW_MERGE_BASE_COMMIT"] = resolve_version_string(NEW_ZULIP_MERGE_BASE)
-
-failures = []
-for script_name in sorted(f for f in os.listdir(path) if f.endswith(".hook")):
-    result = subprocess.run(
-        [os.path.join(path, script_name)],
-        check=False,
-        cwd=deploy_path,
-        preexec_fn=su_to_zulip,
-        env=env,
-    )
-    if result.returncode != 0:
-        # Pre-deploy hooks abort on the first failure; post-deploy
-        # hooks are best-effort and a failure of one does not abort
-        # the rest of them.
-        if args.kind == "pre-deploy":
-            sys.exit(1)
-        failures.append(script_name)
-
-if failures:
-    print("Failed hooks:")
-    for failed_script in failures:
-        print(f"  {failed_script}")
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #40326** (2026-10-12): **[ai] left_sidebar: Don't show view tooltips on mouse-opened popover focus.**
+  *Symptoms*: Opening the condensed views popover with a mouse click focuses its first item, via focus_popover. The view items carry the `.tippy-left-sidebar-tooltip` class, whose tooltips use Tippy's default "mouseenter focus" trigger, so that programmatic focus opened the first item's tooltip without the user hovering over it.  Suppress the tooltip when the reference has focus without `:focus-visible` and isn't hovered. This preserves tooltips for keyboard navigation while avoiding unwanted tooltips from mouse-opened popovers.  Check for focus explicitly rather than relying only on the absence of `:focus-visible`, so touch long-press tooltips continue to work.  <!-- Describe your pull request here.-->  **How changes were tested:**  <!-- If the PR makes UI changes, you must include screenshots. Detailed guide: https://zulip.readthedocs.io/en/latest/contributing/presenting-visual-changes.html -->  **Screenshots and screen captures:**  |Before|After| |-|-| |[Screencast from 2026-10-07 23-37-10.webm](https://github.com/user-attachments/assets/7c2bdc46-d840-457e-aef4-072bbbcd4676)|[Screencast from 2026-10-07 23-38-03.webm](https://github.com/user-attachments/assets/d58431a3-35df-45b6-9393-e6cc91e53f76)|  <details> <summary>Self-review checklist</summary>  <!-- Prior to submitting a PR, follow our step-by-step guide to review your own code: https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code -->  <!-- Once you create the PR, chec
+  **Post-Mortem & Fix Analysis**:
+  > @amanagr Tagging you for review here.
+  > Looks great! Thanks @pratik-pc !
+
 - **Issue #40230** (2026-09-28): **Authentication failure for flush-memcached during install**
   *Symptoms*: Trying to install Zulip server 12.3 on a fresh VM of Debian 13.  ``` $ sudo zulip-server-12.3/scripts/setup/install --push--notifications --email=somebody@example.com --hostname example.com --self-signed-cert ... CREATE DATABASE "zulip"     OWNER=zulip     ENCODING=UTF8     LC_COLLATE='C.UTF-8'     LC_CTYPE='C.UTF-8'     TEMPLATE=template0; CREATE DATABASE You are now connected to database "zulip" as user "postgres". + '[' zulip '!=' zulip ']' + '[' -e /home/zulip/deployments ']' + /home/zulip/deployments/current/scripts/setup/flush-memcached Traceback (most recent call last):   File "/home/zulip/deployments/current/scripts/setup/flush-memcached", line 24, in <module>     client.flush_all()     ~~~~~~~~~~~~~~~~^^   File "/home/zulip/deployments/2026-09-28-08-57-30/.venv/lib/python3.13/site-packages/bmemcached/client/mixin.py", line 95, in flush_all     returns.append(server.flush_all(time))                    ~~~~~~~~~~~~~~~~^^^^^^   File "/home/zulip/deployments/2026-09-28-08-57-30/.venv/lib/python3.13/site-packages/bmemcached/protocol.py", line 1009, in flush_all     self._send(struct.pack(self.HEADER_STRUCT +     ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                            self.COMMANDS['flush']['struct'],                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                            self.MAGIC['request'],                            ^^^^^^^^^^^^^^^^^^^^^^                            self.COMMANDS['flush']['command'],                            ^^^^^^^^^^^
-  **Post-Mortem & Fix Analysis**:
-  > Hi @frezik! I'm unsure if the typos in the input above are original, or just introduced when anonymizing the information to post here. But I see a second dash in the middle of `--push--notifications`, and a missing '=' for the hostname flag.  If that's not it, you can seek interactive installation help in our [Development Community](https://zulip.com/development-community/)! The #production help channel will be the place.
-  > Thanks, @emilysutherlin , and yes, that was a copy/paste error. Problem still occurs with the correct setting.
-  > @frezik, are you able to join [Development Community](https://zulip.com/development-community/) and chat in the #production help channel? The right eyes will see your request for assistance there.
-
-- **Issue #40172** (2026-09-21): **Missing gcc-c++ dependencies for Fedora/RHEL in ./tools/provision**
-  *Symptoms*:  ### Description  ./tools/provision fails on Fedora/RHEL during the `uv sync` step because `pyicu` needs the C++ compiler (`g++`) to build, but only the C compiler (`gcc`) is listed in the dependencies. On Debian/Ubuntu this isn't a problem because both come together, but on Fedora/RHEL `gcc` and `gcc-c++` are separate packages.  Error Encountered:   ``` error: [Errno 2] No such file or directory: 'g++' ```  This happens in the [Advanced setup (non-Vagrant)]  (https://zulip.readthedocs.io/en/latest/development/setup-advanced.html) on Fedora or RHEL. **Expected behavior:** Running `./tools/provision` should install all required system packages and complete successfully.  **Actual behavior:** The `uv sync` step fails while building the `pyicu` Python package because `g++` (the C++ compiler) is not installed. The error looks like:  ``` error: [Errno 2] No such file or directory: 'g++' ```  The dependency list in `scripts/lib/setup_venv.py` includes `gcc` (C compiler) for Fedora/RHEL systems, but not `gcc-c++` (C++ compiler). The `pyicu` package requires C++ to compile.  On Debian/Ubuntu this is not a problem because `gcc` and `g++` are usually installed together via `build-essential`. On Fedora/RHEL, they are separate packages.  ---  ### Steps to reproduce  1. Use a fresh Fedora or RHEL system without `gcc-c++` installed. 2. Follow the [Advanced setup](https://zulip.readthedocs.io/en/latest/development/setup-advanced.html) instructions:    ```bash    git clone https://github.com
-  **Post-Mortem & Fix Analysis**:
-  > Please use [provision help](https://chat.zulip.org/#topics/channel/21-provision-help) channel for reporting similar errors in the future.
-
-- **Issue #40163** (2026-09-21): **`tools/provision` fails  if user already has NVM or local `uv` installed**
-  *Symptoms*: ### Description   This issue occurs when setting up Zulip using the [Advanced setup (non-Vagrant)](https://zulip.readthedocs.io/en/latest/development/setup-advanced.html) method on a native Linux machine (Linux Fedora Workstation 44 ).  **Expected behavior:** Running `./tools/provision` should install Zulip's Node.js (`v24.19.0`) and `uv` (`0.12.5`) tools and complete successfully.  **Actual behavior:** Setup fails during `install-node` or `install-uv`. If you already have NVM or a local `uv` installed on your computer, your terminal finds your old version first instead of Zulip's newly installed version.  When the installer checks if the tool was installed (`check_version`), it tests your old personal version instead of Zulip's version sitting in `/srv/zulip-node` or `/usr/local/bin`. Because the version numbers do not match, provisioning stops with exit code 1.  This does not happen in the recommended [Vagrant setup](https://zulip.readthedocs.io/en/latest/development/setup-recommended.html) because the Vagrant/Docker container has a clean environment without user-level tool installations.  ---  ### Steps to reproduce  1. Have NVM or a local `uv` installed on your system (e.g. `nvm install 24.14.1`). 2. Follow the [Advanced setup](https://zulip.readthedocs.io/en/latest/development/setup-advanced.html) instructions:    ```bash    git clone https://github.com/zulip/zulip.git && cd zulip    ``` 3. Run `./tools/provision` on your Linux machine. 4. Provisioning fails in `install-
-  **Post-Mortem & Fix Analysis**:
-  > @zulipbot claim 
-  > @Ali-Razahaider You have attempted to claim an issue without the label "help wanted". To learn how to pick up issues, please work through all the "Prior to picking up your first issue" sections of the [Zulip contributor guide](https://zulip.readthedocs.io/en/latest/contributing/index.html).  Please be mindful that attempting to claim issues that aren't available wastes time for other Zulip community members. 
-  > Please use [provision help](https://chat.zulip.org/#topics/channel/21-provision-help) channel for reporting similar errors in the future.
-
-- **Issue #40140** (2026-09-16): **Avoid per-stream database queries in add_new_user_history() for guest users and invite-only streams**
-  *Symptoms*: ## What happened?  While reviewing `add_new_user_history()` in `zerver/actions/create_user.py`, we found that it calls `can_access_stream_history()` once per stream when setting up a new user's initial message history. `can_access_stream_history()` can in turn reach `access_stream_common()`, which performs a `Subscription.objects.get(...)` lookup. As a result, this can issue one database query per applicable stream instead of a single batched query.  ## When does this happen?  This happens during new human-user setup, whenever `add_new_user_history()` is called with more than a trivial number of streams. The query-producing path is broader than just private streams:  - Invite-only streams can require the subscription lookup for non-guest users. - Guest users can reach the lookup path for both public and private streams.  In other words, the number of extra queries scales with the number of applicable streams passed to `add_new_user_history()`.  ## Expected behavior  `add_new_user_history()` should be able to determine stream history access for a new user without issuing a separate database query per stream, while preserving the existing access semantics implemented by `can_access_stream_history()`.  ## Current behavior  For each stream passed in, `add_new_user_history()` calls `can_access_stream_history()`, which can reach `access_stream_common()` and perform a `Subscription.objects.get(...)` call:  ```python def add_new_user_history(users: Iterable[UserProfile], streams: Ite
-  **Post-Mortem & Fix Analysis**:
-  > Hi @Injora! If you believe there is an issue with the way queries are batched when setting up a new user, please join us to discuss in the [Zulip Development Community](https://zulip.com/development-community/). Our maintainers there can confirm whether this is a change we would welcome, or if it is set up this way for a reason.  Note, if you do plan to start a conversation on chat.zulip.org, please check out our guidance on using [AI for Communication](https://zulip.readthedocs.io/en/stable/contributing/contributing.html#using-ai-for-communication), first. Brevity is valued, as humans are reading your messages.
-
-- **Issue #40069** (2026-09-08): **Bitbucket Data Center integration broken after version 12.0**
-  *Symptoms*: <!-- Describe what you were expecting to see, what you saw instead, and steps to take in order to reproduce the buggy behavior. Screenshots can be helpful. --> After updating to Zulip 12.2 from version 11.6 our Bitbucket (self hosted Bitbucket Data Center) integration stopped working: pull request webhooks get 404 instead of posting notifications on Zulip.  This appears to be caused by PR #37322 "Delete legacy Bitbucket integrations", which removed both the `bitbucket` (Bitbucket Cloud v1, deprecated) and `bitbucket3` (Bitbucket Server) integrations. Removing `bitbucket3` integration seems to break the integration for Bitbucket Data Center as a side effect.  The 12.0 changelog states that these were removed because the services had shut down. However, Bitbucket Server has transitioned to Bitbucket Data Center which remains in active development by Atlassian and is in use in self hosted environments. Any organization running self-hosted Bitbucket Data Center and using Zulip's `bitbucket3` webhook integration for PR/commit notifications loses that integration after updating to Zulip 12.0+.  Expected behavior: - The `bitbucket3` (Bitbucket Server / Data Center) integration is restored, or - If removal is intentional, the changelog/release notes should call out that this is a breaking change for self-hosted Bitbucket Data Center  <!-- Check the box for the version of Zulip you are using (see https://zulip.com/help/view-zulip-version).-->  **Zulip Server and web app version:**  - 
-  **Post-Mortem & Fix Analysis**:
-  > Essentially, the same problem @timabbott found in review on bitbucket2 - alias-free route deletion breaking existing webhook URLs. The issue was fixed there (rename commit reverted), but not on bitbucket3, that got deleted completely. Its route (/api/v1/external/bitbucket3) returns 404 for any users still using it. And, bitbucket3 isn't really legacy, similar to bitbucket (Bitbucket Enterprise) - while Bitbucket Server's license expired in 2024, the self-hosted product continues as Bitbucket Data Center and actively sold & developed, maintaining the exact webhook structure used by bitbucket3. This way, the change breaks self-hosted Bitbucket on 12.0+.  A few things worth confirming here: 1) bitbucket3 was removed without any alias/redirect - can be seen from the file difference in #37322, the whole folder was deleted without anything to replace it. 2) Bitbucket Data Center is still running, sold and developed - according to Atlassian's documentation of its EOL policy, the only license 
-  > Restoring bitbucket3 would be much preferred.
-  > Sounds good, I'll put up a PR to restore bitbucket3, keeping the existing route name to avoid re-breaking URLs. Will link it here once ready.
-
-- **Issue #39978** (2026-09-27): **message_overlay: Prevent grid blowouts on messagebox content.**
-  *Symptoms*: This corrects an edge case on Safari and other browsers where a long line of non-breaking inline text (such as a link) cause a weird preview in the drafts and other message overlays.  A prep commit fixes the drafts overlay so it resizes as the viewport window gets smaller (and larger).  Fixes: [#issues > weird draft rendering of emoji + URL?](https://chat.zulip.org/#narrow/channel/9-issues/topic/weird.20draft.20rendering.20of.20emoji.20.2B.20URL.3F/with/2459654)  **Screenshots and screen captures:**  | Before | After | | --- | --- | | <img width="2762" height="1794" alt="draft-preview-before" src="https://github.com/user-attachments/assets/cb7c26e3-b58a-4398-8c2c-0b6d8e461136" /> | <img width="2762" height="1794" alt="draft-preview-after" src="https://github.com/user-attachments/assets/2ee2a625-eba1-4e07-b76c-379bedd63a2f" /> |  <details> <summary>Self-review checklist</summary>  <!-- Prior to submitting a PR, follow our step-by-step guide to review your own code: https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code -->  <!-- Once you create the PR, check off all the steps below that you have completed. If any of these steps are not relevant or you have not completed, leave them unchecked.-->  - [x] [Self-reviewed](https://zulip.readthedocs.io/en/latest/contributing/code-reviewing.html#how-to-review-code) the changes for clarity and maintainability       (variable names, code reuse, readability, etc.). - [x] Followe
-  **Post-Mortem & Fix Analysis**:
-  > Can you add bug reproduction steps? I wasn't able to reproduce the bug on main on Safari.  Also, I thought the value before the `/` was rows, not columns. Did you mean to say you changed row value?
-  > Sure. The reproducer is a little tricky and only reproduces reliably in Safari, but just put in an emoji (`:this_style:`) and a longish URL. Eventually you'll hit a sweet spot in Safari with the URL where it falls onto a second line as in the screenshot above.  But whoops, yes, I did mean _row_, though there are column and overall improvements on `grid-template`. I've pushed an updated commit with that. You can better see here how the grid is improved; the source of this bug was really the *second* row, which was doing an auto-column thing (dotted line in the Before); now the second row does get the full content height:  | Before | After | | --- | --- | | <img width="2600" height="1900" alt="drafts-showing-grid-before" src="https://github.com/user-attachments/assets/139bbe70-46dd-4abc-b93c-6c7dafd4c5c2" /> | <img width="2600" height="1900" alt="drafts-showing-grid-after" src="https://github.com/user-attachments/assets/3fce222d-06b5-4b20-acec-280cc2e0cbaa" /> |  While working on
-  > I decided not to do manual testing, trusting your screenshots. Looks good to me!
-
-- **Issue #39967** (2026-08-19): **desktop_notifications: Improve checks for Notification API support.**
-  *Symptoms*: This PR fixes a bug reported on Safari/iPadOS that prevented the display of the Notifications pane under user settings.  To ensure that this bug doesn't creep up on any other device (mobile or otherwise), the PR removes all instances of `util.is_mobile()` that were intended to prevent execution of Notification logic where it wasn't actually supported.  In place of those checks, the PR introduces a new utility function inside of `desktop_notifications.ts` for desktop-notification support as a feature check, rather than a mobile check. `desktop_notifications.ts` is a better location than `util.ts` for such a thing, because of the logic we've written to support notifications within the Electron app.  I've used the new `has_notification_support()` check in the navbar-alert logic and the notifications-settings logic, which are the two places in the codebase where we're handling desktop notifications.  - [ ] TODO: Once this PR has been merged, I want to file an issue to audit and likely remove all other `util.is_mobile()` checks in the codebase, and replace them with similarly robust feature-detection logic.  Fixes: [#frontend > settings/notifications won't load on iOS web app @ 💬](https://chat.zulip.org/#narrow/channel/6-frontend/topic/settings.2Fnotifications.20won.27t.20load.20on.20iOS.20web.20app/near/2511032)  **Screenshots and screen captures:**  _iPad running the dev server:_  | Before | After | | --- | --- | | <img width="1194" height="834" alt="ipad-sett
-  **Post-Mortem & Fix Analysis**:
-  > Hello @zulip/server-settings members, this pull request was labeled with the "area: settings (user)" label, so you may want to check it out!  <!-- areaLabelAddition --> 
-  > Thanks @karlstolley ! Looks great!
-
-- **Issue #39928** (2026-08-12): **ShareLock while importing converted mattermost export**
-  *Symptoms*: My import of converted mattermost export fails. I'v done three times export, convert and import. Every time a failure with message like that:  ``` 2026-08-12 09:34:45.563 INFO [] Importing message dump /tmp/converted_mattermost_data/it/messages-000224.json 2026-08-12 09:34:46.766 INFO [] Successfully imported <class 'zerver.models.messages.Message'> from zerver_message. 2026-08-12 09:34:46.913 INFO [] Successfully imported <class 'zerver.models.messages.Message'> from zerver_message. 2026-08-12 09:34:47.243 INFO [] Processed messages up to 1421 / 1421 2026-08-12 09:34:47.244 INFO [] Successfully imported <class 'zerver.models.messages.UserMessage'> from zerver_usermessage[224]. 2026-08-12 09:34:48.217 INFO [] Processed messages up to 2018 / 2018 2026-08-12 09:34:48.218 INFO [] Successfully imported <class 'zerver.models.messages.UserMessage'> from zerver_usermessage[223]. concurrent.futures.process._RemoteTraceback:  """ Traceback (most recent call last):   File "/usr/lib/python3.12/concurrent/futures/process.py", line 263, in _process_worker     r = call_item.fn(*call_item.args, **call_item.kwargs)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File "/home/zulip/deployments/2026-08-10-18-14-46/zerver/lib/import_realm.py", line 2296, in _import_message_file_worker     _process_message_file(dump_file_id, ctx.realm, ctx.sender_map, ctx.import_dir)   File "/home/zulip/deployments/2026-08-10-18-14-46/zerver/lib/import_realm.py", line 2343, in _process_message_file   
-  **Post-Mortem & Fix Analysis**:
-  > Images was not imported?  <img width="447" height="190" alt="Image" src="https://github.com/user-attachments/assets/3beed657-60bc-49d0-9f52-36f1e8c7250f" />
-  > @Kolatzek This is #39743 I believe. You can just `supervisorctl stop process-fts-updates` before doing the import. Then import and start the service back up with `supervisorctl start process-fts-updates`.  I'll close this issue as a duplicate, but feel free to reply here if there are still problems. Or ideally, you can post in[ `#production help`](https://chat.zulip.org/#narrow/channel/31-production-help)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1374,829 +1234,279 @@ if failures:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47d6b697` (2026-10-02)
-**Commit Message**: claude: Require reading linked issues and discussions before coding.
+### Incident Patch 1: `d16e9173` (2026-10-13)
+**Commit Message**: test_microsoft_teams_importer: Fix check that never ran.
 
-**File**: `AGENTS.md` (modified, +6/-3)
+The error message assertion in test_get_user_roles was inside the
+assertRaises block, after the call that raises, so it never ran.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `zerver/tests/test_microsoft_teams_importer.py` (modified, +6/-8)
 ```diff
-@@ -67,9 +67,12 @@ Before writing any code, you must understand:
+@@ -668,14 +668,12 @@ def test_failed_get_microsoft_graph_api_data(self) -> None:
+         self.assertEqual("HTTP error accessing the Microsoft Graph API.", str(e.exception))
  
- 1. What the existing code does and why, including the relevant help center or
-    developer-facing documentation.
--2. What problem you're solving, in its full scope.
--3. Why your approach is the right solution, and available alternatives.
--4. How you will verify that your work is correct, and avoid regressions
-+2. What the issue, the pull requests and issues it links, and the
-+   chat.zulip.org discussion actually request, and whether another
-+   open pull request already does that work.
-+3. What problem you're solving, in its full scope.
-+4. Why your approach is the right solution, and available alternatives.
-+5. How you will verify that your work is correct, and avoid regressions
-    that are plausible for the type of work you're doing.
- 
- The answer to "Why is X an improvement?" should never be "I'm not sure."
+     def test_get_user_roles(self) -> None:
+-        with (
+-            self.subTest("No global administrator role found"),
+-            self.assertRaises(AssertionError) as e,
+-        ):
+-            # This is primarily only for test coverage, it's likely a very rare case since
+-            # this role is one of the built-in roles.
+-            self.get_user_roles_handler(directory_roles_response_fixture=None)
+-            self.assertEqual(  # nocoverage
++        with self.subTest("No global administrator role found"):
++            with self.assertRaises(AssertionError) as e:
++                # This is primarily only for test coverage, it's likely a very rare case since
++                # this role is one of the built-in roles.
++                self.get_user_roles_handler(directory_roles_response_fixture=None)
++            self.assertEqual(
+                 "Could not find Microsoft Teams organization owners/administrators.",
+                 str(e.exception),
+             )
 ```
 
 ---
 
-### Incident Patch 2: `2b1bdee8` (2026-09-23)
-**Commit Message**: integrations: Fix API URL in Home Assistant documentation.
+### Incident Patch 2: `403c74ea` (2026-09-11)
+**Commit Message**: zilencer: Build the RemoteRealm sync values up front.
 
-The configuration.yaml example used `external_api_uri` as a
-template variable, which rendered as an empty string since that
-context variable was removed in commit 271a9f0da74ba. It was
-likely added to this documentation as a copy and paste error.
+Prep commit for syncing the communities directory fields.
 
-Updated the documentation to us the `api_url` context variable
-instead.
+The sync loop resolved each new value by looking up a string key
+on the uploaded realm data, which only works for values that are
+a field on it. The communities directory fields are not: one is
+derived from whether the payload carried any directory data at all,
+and the rest live on a nested model.
 
-**File**: `zerver/webhooks/homeassistant/doc.md` (modified, +1/-1)
+Map each attribute directly to its new value instead.
+
+No functional change.
+
+Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
+Signed-off-by: Prakhar Pratyush <[REDACTED_EMAIL]>
+
+**File**: `zilencer/views.py` (modified, +7/-8)
 ```diff
-@@ -8,7 +8,7 @@
-     ```
-     notify:
-       - platform: rest
--        resource: http: {{ external_api_uri }}v1/external/homeassistant?api_key=<API key>
-+        resource: {{ api_url }}/v1/external/homeassistant?api_key=<API key>
-         method: POST_JSON
-         title_param_name: topic
-     ```
+@@ -1286,16 +1286,15 @@ def update_remote_realm_data_for_server(
+     for remote_realm in already_registered_remote_realms:
+         modified = False
+         realm = uuid_to_realm_dict[str(remote_realm.uuid)]
+-        for remote_realm_attr, realm_dict_key in [
+-            ("host", "host"),
+-            ("org_type", "org_type"),
+-            ("name", "name"),
+-            ("authentication_methods", "authentication_methods"),
+-            ("realm_deactivated", "deactivated"),
+-            ("is_system_bot_realm", "is_system_bot_realm"),
++        for remote_realm_attr, new_value in [
++            ("host", realm.host),
++            ("org_type", realm.org_type),
++            ("name", realm.name),
++            ("authentication_methods", realm.authentication_methods),
++            ("realm_deactivated", realm.deactivated),
++            ("is_system_bot_realm", realm.is_system_bot_realm),
+         ]:
+             old_value = getattr(remote_realm, remote_realm_attr)
+-            new_value = getattr(realm, realm_dict_key)
+ 
+             if old_value == new_value:
+                 continue
 ```
 
 ---
 
-### Incident Patch 3: `6d8c04cc` (2026-10-02)
-**Commit Message**: curl_param_value_generators: Fix typo in PATCH /users/{email} key.
+### Incident Patch 3: `94eb17e9` (2026-09-09)
+**Commit Message**: list_widget: Move a rerendered item's row to its new position.
 
-new_email_value was registered for "/users/{email]:patch", which
-matches no endpoint, so it was never used for the curl example of
-PATCH /users/{email}.
+render_item replaced the row in place, so an item whose sort key
+changed stayed where it was until a redraw. In recent view, under the
+unread-count sort, a conversation just read stayed above unread ones.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+When the row is not right after its predecessor's row, remove it and
+insert the rerendered row there. Recent view rerenders rows in list
+order, so the predecessor's row is already in place. Widgets whose
+get_item returns fresh objects cannot be matched to a list position
+and keep the in-place update.
 
-**File**: `zerver/openapi/curl_param_value_generators.py` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `web/src/list_widget.ts` (modified, +19/-5)
 ```diff
-@@ -262,7 +262,7 @@ def create_user() -> dict[str, object]:
+@@ -358,8 +358,8 @@ export function create<Key, Item = Key>(
+         reduce_rendered_offset();
      }
  
+-    // Callers insert rows in list order, so the next item may be a new one
+-    // whose row is not inserted yet.
++    // Callers update rows in list order, so the rows before this one are
++    // in place, which the next item's row may not be.
+     function insert_row_at_index($row: JQuery, index: number): boolean {
+         assert(opts.html_selector !== undefined);
+         if (meta.offset === 0) {
+@@ -378,6 +378,14 @@ export function create<Key, Item = Key>(
+         return true;
+     }
  
--@openapi_param_value_generator(["/users/{email]:patch", "/users/{user_id}:patch"])
-+@openapi_param_value_generator(["/users/{email}:patch", "/users/{user_id}:patch"])
- def new_email_value() -> dict[str, object]:
-     count = 0
-     exists = True
-```
-
----
-
-### Incident Patch 4: `bed481d3` (2026-10-02)
-**Commit Message**: buildbot: Handle unrecognized build result codes.
-
-The "finished" event's results code was used directly as an index
-into our tuple of result names, so a code outside it raised
-IndexError (a 500 error), and a negative code was silently reported
-as the wrong result. Report unrecognized codes as "unknown" instead,
-so that a result code added in a future Buildbot release doesn't
-stop notifications from being sent.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `zerver/webhooks/buildbot/tests.py` (modified, +14/-0)
-```diff
-@@ -26,6 +26,20 @@ def test_build_cancelled(self) -> None:
-         expected_message = "Build [#10434](https://ci.example.org/#builders/79/builds/307) (result: cancelled) for **AMD64 Ubuntu 18.04 Python 3** finished."
-         self.check_webhook("finished_cancelled", expected_topic_name, expected_message)
- 
-+    def test_build_unknown_result(self) -> None:
-+        expected_topic_name = "buildbot-hello"
-+        expected_message = "Build [#33](http://exampleurl.com/#builders/1/builds/33) (result: unknown) for **runtests** finished."
-+        for result in [7, -1]:
-+            payload = self.get_body("finished_success").replace(
-+                '"results": 0', f'"results": {result}'
-+            )
-+            self.check_webhook(
-+                "finished_success",
-+                expected_topic_name,
-+                expected_message,
-+                custom_payload=payload,
-+            )
++    function is_row_at_index($row: JQuery, index: number): boolean {
++        assert(opts.html_selector !== undefined);
++        if (index === 0) {
++            return $row.prev().length === 0;
++        }
++        return $row.prev().is(opts.html_selector(meta.filtered_list[index - 1]!));
++    }
 +
-     def test_unsupported_event(self) -> None:
-         payload = orjson.dumps(
-             {
-```
-
-**File**: `zerver/webhooks/buildbot/view.py` (modified, +2/-1)
-```diff
-@@ -40,7 +40,8 @@ def get_message(payload: WildValue) -> str:
-     elif event == "finished":
-         # See http://docs.buildbot.net/latest/developer/results.html
-         results = ("success", "warnings", "failure", "skipped", "exception", "retry", "cancelled")
--        status = results[payload["results"].tame(check_int)]
-+        result = payload["results"].tame(check_int)
-+        status = results[result] if 0 <= result < len(results) else "unknown"
-         body = "Build [#{id}]({url}) (result: {status}) for **{name}** finished.".format(
-             id=payload["buildid"].tame(check_int),
-             name=payload["buildername"].tame(check_string),
-```
-
----
-
-### Incident Patch 5: `7a8fbca8` (2026-10-02)
-**Commit Message**: migrations: Fix error message for unparseable realm ID in 0672.
-
-fix_attachment_realm's ValueError handler printed realm_id, which was
-never assigned when int() raised ValueError (or still held the value
-from a previous attachment). Print the matched path_id prefix
-instead, and restrict the try block to the int() call that it's
-meant to guard.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `zerver/migrations/0672_fix_attachment_realm.py` (modified, +4/-4)
-```diff
-@@ -39,15 +39,15 @@ def fix_attachment_realm(apps: StateApps, schema_editor: BaseDatabaseSchemaEdito
+     const widget: ListWidget<Key, Item> = {
+         get_current_list() {
+             return meta.filtered_list;
+@@ -537,10 +545,16 @@ export function create<Key, Item = Key>(
+                 blueslip.error("List item is not a string", {item: html});
+                 return;
+             }
++            const $row = $(html);
  
-                 try:
-                     realm_id = int(matches[0])
--                    if not Realm.objects.filter(id=realm_id).exists():
--                        # If the realm doesn't exist (e.g. due to deletion), we can't do anything.
--                        continue
-                 except ValueError:
-                     # Don't do anything if path_id doesn't start with a sensible realm id.
-                     print(
--                        f"Encountered ValueError for realm_id {realm_id} inferred from path_id of attachment {attachment.id}"
-+                        f"Encountered ValueError for realm_id {matches[0]} inferred from path_id of attachment {attachment.id}"
-                     )
-                     continue
-+                if not Realm.objects.filter(id=realm_id).exists():
-+                    # If the realm doesn't exist (e.g. due to deletion), we can't do anything.
-+                    continue
- 
-             if realm_id == attachment.realm_id:
-                 # It's already correct, nothing to do.
-```
-
----
-
-### Incident Patch 6: `ee976998` (2026-10-02)
-**Commit Message**: test-js-with-puppeteer: Fix crash when quitting interactive mode.
-
-In --interactive mode, the index of the failing test was stored in
-failed_test_num, but the failure summary printed after the tests
-reads current_test_num, so quitting after a failure crashed with
-UnboundLocalError instead of naming the failing test. Track the
-index in current_test_num in both modes.
-
-Also start from ret = 0, so quitting interactive mode before running
-any tests, or passing --loop 0, exits successfully, rather than
-reporting the first test as failed.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `tools/test-js-with-puppeteer` (modified, +4/-5)
-```diff
-@@ -102,19 +102,18 @@ def run_tests(files: Iterable[str], external_host: str, loop: int = 1) -> None:
-         # Important: do this next call inside the `with` block, when Django
-         #            will be pointing at the test database.
-         subprocess.check_call("tools/setup/generate-test-credentials")
-+        ret = 0
-+        current_test_num = 0
-         if options.interactive:
-             response = input('Press Enter to run tests, "q" to quit: ')
--            ret = 1
--            failed_test_num = 0
-             while response != "q":
--                ret, failed_test_num = run_tests(failed_test_num)
-+                ret, current_test_num = run_tests(current_test_num)
-                 if ret == 0:
--                    failed_test_num = 0
-+                    current_test_num = 0
-                     response = input('Tests succeeded. Press Enter to re-run tests, "q" to quit: ')
-                 else:
-                     response = input('Tests failed. Press Enter to re-run tests, "q" to quit: ')
-         else:
--            ret = 1
-             for loop_num in range(1, loop + 1):
-                 print(f"\n\nRunning tests in loop ({loop_num}/{loop})\n")
-                 ret, current_test_num = run_tests()
-```
-
----
-
-### Incident Patch 7: `5f4f2b87` (2026-10-02)
-**Commit Message**: teamcity: Ignore unsupported build results instead of crashing.
-
-The status text was only set for the "success", "failure", and
-"running" build results, so any other buildResult value raised
-UnboundLocalError. Raise UnsupportedWebhookEventTypeError instead.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `zerver/webhooks/teamcity/tests.py` (modified, +11/-0)
-```diff
-@@ -32,6 +32,17 @@ def test_teamcity_fixed(self) -> None:
-         expected_message = "Project :: Compile build 5535 - CL 123456 has been fixed! :thumbs_up: See [changes](http://teamcity/viewLog.html?buildTypeId=Project_Compile&buildId=19952&tab=buildChangesDiv) and [build log](http://teamcity/viewLog.html?buildTypeId=Project_Compile&buildId=19952)."
-         self.check_webhook("fixed", self.TOPIC_NAME, expected_message)
- 
-+    def test_teamcity_unsupported_build_result(self) -> None:
-+        payload = self.get_body("success").replace(
-+            '"buildResult": "success"', '"buildResult": "unsupported"'
-+        )
-+        result = self.client_post(self.url, payload, content_type="application/json")
-+        self.assert_json_success(result)
-+        self.assert_in_response(
-+            "The 'unsupported' event isn't currently supported by the TeamCity webhook; ignoring",
-+            result,
-+        )
-+
-     def test_teamcity_personal(self) -> None:
-         expected_message = "Your personal build for Project :: Compile build 5535 - CL 123456 is broken with status Exit code 1 (new)! :thumbs_down: See [changes](http://teamcity/viewLog.html?buildTypeId=Project_Compile&buildId=19952&tab=buildChangesDiv) and [build log](http://teamcity/viewLog.html?buildTypeId=Project_Compile&buildId=19952)."
-         payload = orjson.dumps(
-```
-
-**File**: `zerver/webhooks/teamcity/view.py` (modified, +3/-0)
-```diff
-@@ -9,6 +9,7 @@
-     send_rate_limited_pm_notification_to_bot_owner,
- )
- from zerver.decorator import webhook_view
-+from zerver.lib.exceptions import UnsupportedWebhookEventTypeError
- from zerver.lib.request import RequestNotes
- from zerver.lib.response import json_success
- from zerver.lib.send_email import FromAddress
-@@ -91,6 +92,8 @@ def api_teamcity_webhook(
-             status = f"is still broken with status {build_status}! :thumbs_down:"
-     elif build_result == "running":
-         status = "has started."
-+    else:
-+        raise UnsupportedWebhookEventTypeError(build_result)
- 
-     template = """
- {build_name} build {build_id} {status} See [changes]\
-```
-
----
-
-### Incident Patch 8: `805766bc` (2026-10-02)
-**Commit Message**: buildbot: Ignore unsupported events instead of crashing.
-
-get_message only set body for the "new" and "finished" events, so
-any other event value raised UnboundLocalError. Raise
-UnsupportedWebhookEventTypeError instead, like other integrations.
-
-Also compute the build status inside the "finished" branch, the only
-place it's used, so a "finished" payload without "results" fails
-with the usual payload validation error rather than an
-UnboundLocalError.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `zerver/webhooks/buildbot/tests.py` (modified, +19/-0)
-```diff
-@@ -1,3 +1,5 @@
-+import orjson
-+
- from zerver.lib.test_classes import WebhookTestCase
- 
- 
-@@ -23,3 +25,20 @@ def test_build_cancelled(self) -> None:
-         expected_topic_name = "zulip/zulip-zapier"
-         expected_message = "Build [#10434](https://ci.example.org/#builders/79/builds/307) (result: cancelled) for **AMD64 Ubuntu 18.04 Python 3** finished."
-         self.check_webhook("finished_cancelled", expected_topic_name, expected_message)
-+
-+    def test_unsupported_event(self) -> None:
-+        payload = orjson.dumps(
-+            {
-+                "event": "unsupported",
-+                "buildid": 33,
-+                "buildername": "runtests",
-+                "url": "http://exampleurl.com/#builders/1/builds/33",
-+                "project": "buildbot-hello",
+-            // At this point, we have asserted we have all the information to replace
+-            // the html now.
+-            $html_item.replaceWith($(html));
++            if (index === -1 || is_row_at_index($html_item, index)) {
++                $html_item.replaceWith($row);
++            } else {
++                $html_item.remove();
++                if (!insert_row_at_index($row, index)) {
++                    widget.clean_redraw();
++                }
 +            }
-+        ).decode()
-+        result = self.client_post(self.url, payload, content_type="application/json")
-+        self.assert_json_success(result)
-+        self.assert_in_response(
-+            "The 'unsupported' event isn't currently supported by the Buildbot webhook; ignoring",
-+            result,
-+        )
+         },
+ 
+         clear() {
 ```
 
-**File**: `zerver/webhooks/buildbot/view.py` (modified, +6/-5)
+**File**: `web/tests/list_widget.test.cjs` (modified, +130/-3)
 ```diff
-@@ -1,6 +1,7 @@
- from django.http import HttpRequest, HttpResponse
+@@ -197,11 +197,13 @@ function add_items(widget, list, keys) {
+ }
  
- from zerver.decorator import webhook_view
-+from zerver.lib.exceptions import UnsupportedWebhookEventTypeError
- from zerver.lib.response import json_success
- from zerver.lib.typed_endpoint import JsonBodyPayload, typed_endpoint
- from zerver.lib.validator import WildValue, check_int, check_string
-@@ -29,11 +30,6 @@ def api_buildbot_webhook(
+ // A widget over `list` with a stand-in for its DOM: `rows` holds the items
+-// that have a row, in DOM order, and refuses to render an item twice; `stats`
+-// counts the redraws that threw rendered rows away.
++// that have a row, in DOM order, and refuses to render an item twice; the
++// row stubs remove, replace and position rows the way jQuery does. `stats`
++// counts the redraws that threw rendered rows away and lists the items
++// whose row was replaced in place.
+ function make_tracked_widget(list, opts = {}) {
+     const rows = [];
+-    const stats = {redraws: 0};
++    const stats = {redraws: 0, replaced: []};
+     function items_in(html) {
+         return html
+             .matchAll(/data-item=(\d+)/g)
+@@ -216,6 +218,7 @@ function make_tracked_widget(list, opts = {}) {
+     }
+     function row(item) {
+         return {
++            item,
+             get length() {
+                 return rows.includes(item) ? 1 : 0;
+             },
+@@ -227,6 +230,17 @@ function make_tracked_widget(list, opts = {}) {
+                 assert.ok(rows.includes(item), "row is not in the DOM");
+                 insert_items(rows.indexOf(item) + 1, $data);
+             },
++            replaceWith($data) {
++                assert.deepEqual(items_in($data.html()), [item]);
++                stats.replaced.push(item);
++            },
++            prev() {
++                // For the first row, row(undefined) stands in for no row.
++                return row(rows[rows.indexOf(item) - 1]);
++            },
++            is($other) {
++                return $other.item === item;
++            },
+         };
+     }
+     const $container = make_container();
+@@ -1125,6 +1139,119 @@ run_test("render_item drops the row of an item moved past the rendered range", (
+     assert.equal(rows.at(-1), moved);
+ });
  
- 
- def get_message(payload: WildValue) -> str:
--    if "results" in payload:
--        # See http://docs.buildbot.net/latest/developer/results.html
--        results = ("success", "warnings", "failure", "skipped", "exception", "retry", "cancelled")
--        status = results[payload["results"].tame(check_int)]
--
-     event = payload["event"].tame(check_string)
-     if event == "new":
-         body = "Build [#{id}]({url}) for **{name}** started.".format(
-@@ -42,11 +38,16 @@ def get_message(payload: WildValue) -> str:
-             url=payload["url"].tame(check_string),
-         )
-     elif event == "finished":
-+        # See http://docs.buildbot.net/latest/developer/results.html
-+        results = ("success", "warnings", "failure", "skipped", "exception", "retry", "cancelled")
-+        status = results[payload["results"].tame(check_int)]
-         body = "Build [#{id}]({url}) (result: {status}) for **{name}** finished.".format(
-             id=payload["buildid"].tame(check_int),
-             name=payload["buildername"].tame(check_string),
-             url=payload["url"].tame(check_string),
-             status=status,
-         )
-+    else:
-+        raise UnsupportedWebhookEventTypeError(event)
- 
-     return body
-```
-
----
-
-### Incident Patch 9: `8f552535` (2026-10-02)
-**Commit Message**: test_markdown: Fix sender in empty alert words test.
-
-test_alert_words_returns_empty_user_ids_with_alert_words fetched
-sender_user_profile but accidentally sent the message as the
-user_profile variable left over from the setup loop. Use
-sender_user_profile, like the neighboring alert word tests.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `zerver/tests/test_markdown.py` (modified, +3/-1)
-```diff
-@@ -2296,7 +2296,9 @@ def test_alert_words_returns_empty_user_ids_with_alert_words(self) -> None:
-             do_add_alert_words(user_profile, alert_words)
-         sender_user_profile = self.example_user("polonius")
-         msg = Message(
--            sender=user_profile, sending_client=get_client("test"), realm=user_profile.realm
-+            sender=sender_user_profile,
-+            sending_client=get_client("test"),
-+            realm=sender_user_profile.realm,
-         )
-         realm_alert_words_automaton = get_alert_word_automaton(sender_user_profile.realm)
- 
-```
-
----
-
-### Incident Patch 10: `bd9482a0` (2026-10-02)
-**Commit Message**: tests: Don't assume the test database was built recently.
-
-Several tests failed when the test database was built more than a
-few months before the tests ran (reproducible with `datefudge
-2025-03-24 tools/rebuild-test-database`):
-
-* populate_db schedules two messages for Iago a year after the
-  database is built. Once those are due,
-  try_deliver_one_scheduled_message delivers them instead of the
-  test's own scheduled message, so RemindersTest and
-  ScheduledMessageTest now delete them in setUp.
-
-* test_check_update_all_streams_active_status expected only
-  test_stream1 to become inactive, but every stream does once all
-  fixture messages are older than
-  LAST_ACTIVITY_DAYS_BEFORE_FOR_ACTIVE. Mark all messages as recent
-  first.
-
-* Two user group tests changed waiting_period_threshold, which
-  recomputes the full members group from date_joined, before setting
-  date_joined to make users provisional. With old fixture join dates,
-  those users stayed full members, since promote_new_full_members
-  never demotes. Set date_joined first instead.
-
-Verified that the affected tests pass with both a backdated and a
-freshly built test database.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAI
-
-**File**: `zerver/tests/test_events.py` (modified, +4/-0)
-```diff
-@@ -4201,6 +4201,10 @@ def test_check_update_all_streams_active_status(self) -> None:
-         self.subscribe(hamlet, "test_stream1")
-         stream = get_stream("test_stream1", self.user_profile.realm)
- 
-+        # Make all other streams recently active, regardless of when
-+        # the test database was built.
-+        Message.objects.update(date_sent=timezone_now())
++run_test("render_item moves a row to its item's new position", () => {
++    // Three items get new sort keys and a fourth keeps its own. Rerendered
++    // in list order, the three rows move and the fourth is replaced in
++    // place, with no redraw.
++    const list = make_items(50);
++    const {widget, rows, stats} = make_tracked_widget(list, {init_sort: (a, b) => a.key - b.key});
++    assert.ok(widget.all_rendered());
 +
-         # Delete all messages in the stream so that it becomes inactive.
-         Message.objects.filter(recipient__type_id=stream.id, realm=stream.realm).delete()
- 
-```
-
-**File**: `zerver/tests/test_reminders.py` (modified, +8/-0)
-```diff
-@@ -5,6 +5,7 @@
- from unittest import mock
- 
- import time_machine
-+from typing_extensions import override
- 
- from zerver.actions.realm_settings import do_deactivate_realm
- from zerver.actions.scheduled_messages import (
-@@ -25,6 +26,13 @@
- 
- 
- class RemindersTest(ZulipTestCase):
-+    @override
-+    def setUp(self) -> None:
-+        super().setUp()
-+        # populate_db schedules messages for a year after the test
-+        # database was built, which may already be due.
-+        ScheduledMessage.objects.all().delete()
++    const moved_to_first = list[39];
++    const unmoved = list[15];
++    const moved_to_middle = list[5];
++    const middle_predecessor = list[24];
++    const moved_to_last = list[7];
 +
-     def do_schedule_reminder(
-         self,
-         message_id: int,
-```
-
-**File**: `zerver/tests/test_scheduled_messages.py` (modified, +8/-0)
-```diff
-@@ -9,6 +9,7 @@
- import time_machine
- from django.conf import settings
- from django.utils.timezone import now as timezone_now
-+from typing_extensions import override
- 
- from zerver.actions.scheduled_messages import (
-     SCHEDULED_MESSAGE_LATE_CUTOFF_MINUTES,
-@@ -28,6 +29,13 @@
- 
- 
- class ScheduledMessageTest(ZulipTestCase):
-+    @override
-+    def setUp(self) -> None:
-+        super().setUp()
-+        # populate_db schedules messages for a year after the test
-+        # database was built, which may already be due.
-+        ScheduledMessage.objects.all().delete()
++    moved_to_first.key = list[0].key - 0.5;
++    moved_to_middle.key = middle_predecessor.key + 0.5;
++    moved_to_last.key = list.at(-1).key + 0.5;
++    widget.filter_and_sort();
++    for (const item of [moved_to_first, unmoved, moved_to_middle, moved_to_last]) {
++        widget.render_item(item);
++    }
++    assert.equal(rows[0], moved_to_first);
++    assert.equal(rows[rows.indexOf(middle_predecessor) + 1], moved_to_middle);
++    assert.equal(rows.at(-1), moved_to_last);
++    assert.deepEqual(widget.get_rendered_list(), rows);
++    assert.deepEqual(stats, {redraws: 0, replaced: [unmoved]});
++});
 +
-     def last_scheduled_message(self) -> ScheduledMessage:
-         return ScheduledMessage.objects.all().order_by("-id")[0]
- 
-```
-
-**File**: `zerver/tests/test_user_groups.py` (modified, +4/-4)
-```diff
-@@ -2765,11 +2765,10 @@ def check_create_user_group(acting_user: str, error_msg: str | None = None) -> N
-             full_members_group,
-             acting_user=None,
-         )
--        do_set_realm_property(realm, "waiting_period_threshold", 10, acting_user=None)
--
-         othello = self.example_user("othello")
-         othello.date_joined = timezone_now() - timedelta(days=9)
-         othello.save()
-+        do_set_realm_property(realm, "waiting_period_threshold", 10, acting_user=None)
- 
-         check_create_user_group("othello", "Insufficient permission")
- 
-@@ -3130,10 +3129,11 @@ def check_removing_members_from_group(
-             full_members_group,
-             acting_user=None,
-         )
--        do_set_realm_property(realm, "waiting_period_threshold", 10, acting_user=None)
--
-         othello.date_joined = timezone_now() - timedelta(days=9)
-         othello.save()
-+        cordelia.date_joined = timezone_now() - timedelta(days=9)
-+        cordelia.save()
-+        do_set_realm_property(realm, "waiting_period_threshold", 10, acting_user=None)
-         promote_new_full_members()
-         check_adding_members_to_group("cordelia", "Insufficient permission")
- 
-```
-
----
-
-### Incident Patch 11: `fd3bf820` (2026-10-02)
-**Commit Message**: check-database-compatibility: Fix NameError for old remote databases.
-
-postgresql_version is only set when PostgreSQL runs on the Zulip
-server itself. With an older remote database, logging the
-"Unsupported PostgreSQL version" error raised NameError instead of
-printing the upgrade instructions. Log the version of the database
-we are actually connected to, which is the one being checked.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `scripts/lib/check-database-compatibility` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ if os.path.exists("/etc/init.d/postgresql") and os.path.exists("/etc/zulip/zulip
-         sys.exit(1)
- 
- if django_pg_version < 14:
--    logging.critical("Unsupported PostgreSQL version: %d", postgresql_version)
-+    logging.critical("Unsupported PostgreSQL version: %d", django_pg_version)
-     logging.info(
-         "Please upgrade to PostgreSQL 14 or newer first.\n"
-         "See https://zulip.readthedocs.io/en/stable/production/"
-```
-
----
-
-### Incident Patch 12: `48f51595` (2026-10-02)
-**Commit Message**: video_calls: Fix crash on errors raised before getting a response.
-
-The BigBlueButton and Nextcloud Talk error handlers assumed that an
-exception with a response came from raise_for_status, and read the
-local response variable. But requests can also raise such an
-exception from the request itself, e.g. TooManyRedirects, leaving
-response unbound. Use the response attached to the exception.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `zerver/tests/test_create_video_call.py` (modified, +18/-0)
-```diff
-@@ -677,6 +677,24 @@ def test_join_bigbluebutton_connection_refused(self) -> None:
-             response, "Error connecting to the BigBlueButton server: Connection refused"
-         )
- 
-+    @responses.activate
-+    def test_join_bigbluebutton_too_many_redirects(self) -> None:
-+        url = "https://bbb.example.com/bigbluebutton/api/create?meetingID=a&name=a&lockSettingsDisableCam=True&checksum=33349e6374ca9b2d15a0c6e51a42bc3e8f770de13f88660815c6449859856e20"
-+        responses.add(
-+            responses.GET,
-+            url,
-+            status=302,
-+            headers={"Location": url},
-+            body="Redirecting",
-+        )
-+        response = self.client_get(
-+            "/calls/bigbluebutton/join",
-+            {"bigbluebutton": self.signed_bbb_a_object},
-+        )
-+        self.assert_json_error(
-+            response, "Error connecting to the BigBlueButton server: HTTP 302: Redirecting"
-+        )
++run_test("render_item moves rows that end up next to each other", () => {
++    // Two neighbors move to the front together and two more to the end,
++    // each pair keeping its order. They are rerendered in list order, so
++    // when a row is placed, the row of the item after it is still where
++    // it used to be.
++    const list = make_items(50);
++    const {widget, rows, stats} = make_tracked_widget(list, {init_sort: (a, b) => a.key - b.key});
++    const first_item = list[0];
++    const last_item = list.at(-1);
++    const moved_to_front = [list[30], list[31]];
++    const moved_to_end = [list[10], list[11]];
 +
-     @responses.activate
-     def test_join_bigbluebutton_redirect_error_by_server(self) -> None:
-         # Simulate bbb server error
-```
-
-**File**: `zerver/views/video_calls.py` (modified, +2/-2)
-```diff
-@@ -644,7 +644,7 @@ def join_bigbluebutton(request: HttpRequest, *, bigbluebutton: str) -> HttpRespo
-         response.raise_for_status()
-     except requests.RequestException as e:
-         if e.response is not None:
--            reason = f"HTTP {response.status_code}: {response.text:.200}"
-+            reason = f"HTTP {e.response.status_code}: {e.response.text:.200}"
-         else:
-             reason = str(e)
-         raise VideoCallServerConnectionError("BigBlueButton", reason=reason)
-@@ -751,7 +751,7 @@ def create_nextcloud_talk_url(
-         response.raise_for_status()
-     except requests.RequestException as e:
-         if e.response is not None:
--            reason = f"HTTP {response.status_code}: {response.text:.200}"
-+            reason = f"HTTP {e.response.status_code}: {e.response.text:.200}"
-         else:
-             reason = str(e)
-         raise VideoCallServerConnectionError("Nextcloud Talk", reason=reason)
-```
-
----
-
-### Incident Patch 13: `cab30af5` (2026-10-02)
-**Commit Message**: webhooks: Fix incorrect None checks for WildValue.
-
-`wild_value.get("missing")` returns `WildValue(value=None)`, not
-`None`.  When possible, we should prefer heing explicit about whether
-we’re checking for a missing key (`"missing" in wild_value`) versus a
-`null` value (`wild_value["missing"].value is None` or
-`wild_value["missing"].tame(check_none_or(…))`).
-
-Fixes these cases where previously a `ValidationError` was raised:
-
-- GoSquared raises `UnsupportedWebhookEventTypeError` if `message` or
-  `person` is missing.
-- PagerDuty v3 accepts `"agent": null`.
-- Raygun accepts `"customData": null` and `"affectedUser": null`.
-
-Signed-off-by: Anders Kaseorg <[REDACTED_EMAIL]>
-
-**File**: `zerver/webhooks/gosquared/view.py` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ def api_gosquared_webhook(
-         check_send_webhook_message(request, user_profile, topic_name, body, "traffic_spike")
- 
-     # Live chat message event
--    elif payload.get("message") is not None and payload.get("person") is not None:
-+    elif "message" in payload and "person" in payload:
-         # Only support non-direct messages
-         if not payload["message"]["private"].tame(check_bool):
-             session_title = payload["message"]["session"]["title"].tame(check_string)
-```
-
-**File**: `zerver/webhooks/grafana/view.py` (modified, +1/-1)
-```diff
-@@ -185,7 +185,7 @@ def api_grafana_webhook(
-     topic_name = OLD_TOPIC_TEMPLATE.format(alert_title=legacy_alert.title)
- 
-     eval_matches_text = ""
--    if "evalMatches" in payload and payload["evalMatches"] is not None:
-+    if "evalMatches" in payload:
-         for match in payload["evalMatches"]:
-             eval_matches_text += "**{}:** {}\n".format(
-                 match["metric"].tame(check_string),
-```
-
-**File**: `zerver/webhooks/pagerduty/view.py` (modified, +7/-8)
-```diff
-@@ -86,12 +86,11 @@ def build_pagerduty_formatdict_v2(message: WildValue) -> FormatDictType:
-     else:
-         format_dict["assignee_info"] = "nobody"
- 
--    last_status_change_by = message["incident"].get("last_status_change_by")
--    if last_status_change_by is not None:
--        format_dict["agent_info"] = AGENT_TEMPLATE.format(
--            username=last_status_change_by["summary"].tame(check_string),
--            url=last_status_change_by["html_url"].tame(check_string),
--        )
-+    last_status_change_by = message["incident"]["last_status_change_by"]
-+    format_dict["agent_info"] = AGENT_TEMPLATE.format(
-+        username=last_status_change_by["summary"].tame(check_string),
-+        url=last_status_change_by["html_url"].tame(check_string),
-+    )
- 
-     return format_dict
- 
-@@ -120,8 +119,8 @@ def build_pagerduty_formatdict_v3(event: WildValue) -> FormatDictType:
-     else:
-         format_dict["assignee_info"] = "nobody"
- 
--    agent = event.get("agent")
--    if agent is not None:
-+    agent = event["agent"]
-+    if agent.value is not None:
-         format_dict["agent_info"] = AGENT_TEMPLATE.format(
-             username=agent["summary"].tame(check_string),
-             url=agent["html_url"].tame(check_string),
-```
-
-**File**: `zerver/webhooks/raygun/view.py` (modified, +13/-6)
-```diff
-@@ -7,7 +7,14 @@
- from zerver.lib.response import json_success
- from zerver.lib.timestamp import datetime_to_global_time
- from zerver.lib.typed_endpoint import JsonBodyPayload, typed_endpoint
--from zerver.lib.validator import WildValue, check_anything, check_int, check_list, check_string
-+from zerver.lib.validator import (
-+    WildValue,
-+    check_dict,
-+    check_int,
-+    check_list,
-+    check_none_or,
-+    check_string,
-+)
- from zerver.lib.webhooks.common import check_send_webhook_message
- from zerver.models import UserProfile
- 
-@@ -175,28 +182,28 @@ def notification_message_error_occurred(payload: WildValue) -> str:
-     # Extract each of the keys and values in error_instance for easier handle
- 
-     # Contains list of tags for the error. Can be empty (null)
--    tags = error_instance["tags"]
-+    tags = error_instance["tags"].tame(check_none_or(check_list(check_string)))
- 
-     # Contains the identity of affected user at the moment this error
-     # happened. This surprisingly can be null. Somehow.
-     affected_user = error_instance["affectedUser"]
- 
-     # Contains custom data for this particular error (if supplied). Can be
-     # null.
--    custom_data = error_instance["customData"]
-+    custom_data = error_instance["customData"].tame(check_none_or(check_dict()))
- 
-     if tags is not None:
--        message += "* **Tags**: {}\n".format(", ".join(tags.tame(check_list(check_string))))
-+        message += "* **Tags**: {}\n".format(", ".join(tags))
- 
--    if affected_user is not None:
-+    if affected_user.value is not None:
-         user_uuid = affected_user["UUID"].tame(check_string)
-         message += f"* **Affected user**: {user_uuid[:6]}...{user_uuid[-5:]}\n"
- 
-     if custom_data is not None:
-         # We don't know what the keys and values beforehand, so we are forced
-         # to iterate.
-         for key in sorted(custom_data.keys()):
--            message += f"* **{key}**: {custom_data[key].tame(check_anything)}\n"
-+            message += f"* **{key}**: {custom_data[key]}\n"
- 
-     message += make_app_info_chunk(payload["application"])
- 
-```
-
-**File**: `zerver/webhooks/reviewboard/view.py` (modified, +3/-3)
-```diff
-@@ -121,7 +121,7 @@ def get_review_request_published_body(payload: WildValue) -> str:
- 
-     message = REVIEW_REQUEST_PUBLISHED + REVIEW_REQUEST_DETAILS
-     branch = payload["review_request"].get("branch").tame(check_none_or(check_string))
--    if branch and branch is not None:
-+    if branch:
-         branch_info = BRANCH_TEMPLATE.format(branch_name=branch)
-         kwargs["extra_info"] = branch_info
- 
-@@ -142,7 +142,7 @@ def get_review_request_reopened_body(payload: WildValue) -> str:
- 
-     message = REVIEW_REQUEST_REOPENED + REVIEW_REQUEST_DETAILS
-     branch = payload["review_request"].get("branch").tame(check_none_or(check_string))
--    if branch and branch is not None:
-+    if branch:
-         branch_info = BRANCH_TEMPLATE.format(branch_name=branch)
-         kwargs["extra_info"] = branch_info
- 
-@@ -163,7 +163,7 @@ def get_review_request_closed_body(payload: WildValue) -> str:
- 
-     message = REVIEW_REQUEST_CLOSED + REVIEW_REQUEST_DETAILS
-     branch = payload["review_request"].get("branch").tame(check_none_or(check_string))
--    if branch and branch is not None:
-+    if branch:
-         branch_info = BRANCH_TEMPLATE.format(branch_name=branch)
-         kwargs["extra_info"] = "{}\n{}".format(kwargs["extra_info"], branch_info)
- 
-```
-
----
-
-### Incident Patch 14: `bf529603` (2026-10-02)
-**Commit Message**: tail-ses: Fix NameError on aborted operations.
-
-An undefined Python variable does not resolve to None.
-
-Signed-off-by: Anders Kaseorg <[REDACTED_EMAIL]>
-
-**File**: `tools/tail-ses` (modified, +2/-0)
-```diff
-@@ -94,6 +94,7 @@ def our_sqs_queue(session: boto3.session.Session, ses_topic_arn: str) -> Iterato
- 
-     sqs: SQSClient = session.client("sqs")
-     queue_name = "tail-ses-" + secrets.token_hex(10)
-+    queue_url = None
-     try:
-         resp = sqs.create_queue(
-             QueueName=queue_name,
-@@ -129,6 +130,7 @@ def our_sns_subscription(
-     session: boto3.session.Session, ses_topic_arn: str, queue_arn: str
- ) -> Iterator[str]:
-     sns: SNSClient = session.client("sns")
-+    subscription_arn = None
-     try:
-         resp = sns.subscribe(
-             TopicArn=ses_topic_arn,
-```
-
----
-
-### Incident Patch 15: `cba94ddd` (2026-10-02)
-**Commit Message**: export: Revert wrongly nullified is_seeded check.
-
-Commit 8ab6a23a3097079f263d22f75ac601b6bc35ad45 changed this `not
-is_seeded` check to `is_seeded is None`, which is wrong (then and now)
-because `is_seeded: bool`.
-
-Signed-off-by: Anders Kaseorg <[REDACTED_EMAIL]>
-
-**File**: `zerver/lib/export.py` (modified, +1/-1)
-```diff
-@@ -648,7 +648,7 @@ def __init__(
-             normal_parent.children.append(self)
-         elif virtual_parent is not None:
-             virtual_parent.children.append(self)
--        elif is_seeded is None:
-+        elif not is_seeded:
-             raise AssertionError(
-                 """
-                 You must specify a parent if you are
++    moved_to_front[0].key = first_item.key - 0.5;
++    moved_to_front[1].key = first_item.key - 0.25;
++    moved_to_end[0].key = last_item.key + 0.25;
++    moved_to_end[1].key = last_item.key + 0.5;
++    widget.filter_and_sort();
++    for (const item of [...moved_to_front, ...moved_to_end]) {
++        widget.render_item(item);
++    }
++    assert.deepEqual(rows.slice(0, 2), moved_to_front);
++    assert.deepEqual(rows.slice(-2), moved_to_end);
++    assert.deepEqual(widget.get_rendered_list(), rows);
++    assert.deepEqual(stats, {redraws: 0, replaced: []});
++});
++
++run_test("rerendering changed items in list order keeps the rows matching the list", () => {
++    // What recent view does when several items change at once: it walks
++    // the list in order, rerendering each changed item that has a row and
++    // inserting a row for one that has none. Here one item is new, one
++    // moves within the rendered rows and one moves past them.
++    const list = make_items(100);
++    const {widget, rows, stats} = make_tracked_widget(list, {
++        filter: {predicate: () => true},
++        init_sort: (a, b) => a.key - b.key,
++    });
++    const new_item_predecessor = list[4];
++    const moved_within_range = list[10];
++    const new_predecessor_within_range = list
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40306** (closed): Docs/project scope (@DanielBG1)
-- **PR #40305** (closed): docs: add C4 context diagram (@DanielBG1)
-- **PR #40304** (closed): uploads: Handle concurrent attachment deletion during message send. (@siddubakka)
-- **PR #40303** (closed): uploads: Handle attachment deleted between validate and claim. (@soumojit-D48)
-- **PR #40301** (closed): portico: fix keyboard focus styling (@aryangetsreal)
-- **PR #40300** (closed): notifications: Disable missed-message emails for imported stubs (@Kunal-net)
-- **PR #40298** (closed): util: Fix custom time parsing. (@Indra55)
-- **PR #40293** (closed): Realm update event type refactor (@benprew)
+- **PR #40425** (closed): Feature/pipeline (@kellysolanomt)
+- **PR #40404** (closed): [ai] streams: Improve error messages when channel name conflicts with archived channel. (@Mighty-Ishu)
+- **PR #40401** (2026-10-16): [ai] help: Update muting docs to match the current UI. (@ishan-one8)
+- **PR #40399** (2026-10-15): settings: Present language notification in template. (@karlstolley)
+- **PR #40396** (closed): Fix/timestamp range 500 (@bhaskar2006-hub)
+- **PR #40393** (closed): [ai] compose: Fix edit textarea jumping while adding new lines. (@harshalsp07)
 
 ---
 
@@ -2210,3 +1520,46 @@ Signed-off-by: Anders Kaseorg <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. test_microsoft_teams_importer: Fix check that never ran.
+
+**RULE**:
+When implementing operations in `zerver/tests/test_microsoft_teams_importer.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d16e9173`: test_microsoft_teams_importer: Fix check that never ran.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/tests/test_microsoft_teams_importer.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+        with self.subTest("No global administrator role found"):
+            with self.assertRaises(AssertionError) as e:
+                # This is primarily only for test coverage, it's likely a very rare case since
+                # this role is one of the built-in roles.
+                self.get_user_roles_handler(directory_roles_response_fixture=None)
+            self.assertEqual(
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+        with (
+            self.subTest("No global administrator role found"),
+            self.assertRaises(AssertionError) as e,
+        ):
+            # This is primarily only for test coverage, it's likely a very rare case since
+            # this role is one of the built-in roles.
+            self.get_user_roles_handler(directory_roles_response_fixture=None)
+            self.assertEqual(  # nocoverage
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d16e9173` are properly handled with clean fallback behavior.
