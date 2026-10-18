@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T11:45:22.536Z",
+  "last_updated": "2026-10-18T14:29:58.342Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3246,6 +3246,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T11:45:22.535Z"
+    },
+    "Comfy-Org/MOSS-Image": {
+      "repository": "Comfy-Org/MOSS-Image",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-comfy-org-moss-image",
+      "content_hash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+      "verified_at": "2026-10-18T14:29:58.342Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T14:29:58.342Z"
     }
   },
   "repos": {

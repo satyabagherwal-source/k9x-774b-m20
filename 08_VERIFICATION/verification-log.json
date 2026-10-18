@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-R2SP",
-    "timestamp": "2026-10-17T02:20:03.433Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "98e6c0a1f54856aa693590f70c879a270d19039373a32ad3c044f73e4c58761d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-UWZ8",
     "timestamp": "2026-10-17T02:23:02.516Z",
     "repository": "openai/gpt-oss-20b",
@@ -7492,6 +7477,21 @@
     "contentHash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-9LTR",
+    "timestamp": "2026-10-18T14:29:58.335Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

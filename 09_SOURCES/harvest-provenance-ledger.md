@@ -2475,3 +2475,4 @@ Every entry in this ledger must capture:
 | `learn-github-unjs-ofetch` | `https://github.com/unjs/ofetch` | `1dbc37fd` | Multi-dimensional audit evidence | 2026-10-18T08:05:29.313Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-18T08:17:29.324Z |
 | `learn-github-deeplethe-solid-glass` | `https://github.com/deeplethe/solid-glass` | `6e8903e4` | Multi-dimensional audit evidence | 2026-10-18T11:45:22.533Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-18T14:29:58.338Z |

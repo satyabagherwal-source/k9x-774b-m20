@@ -2078,5 +2078,15 @@
     "contentHash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
     "lastHarvestedAt": "2026-10-18T11:45:22.533Z",
     "learningId": "learn-github-deeplethe-solid-glass"
+  },
+  "hf-comfy-org-moss-image": {
+    "repository": "Comfy-Org/MOSS-Image",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
+    "sourceVersion": "hf-comfy-org-moss-image",
+    "license": "Open-Source",
+    "contentHash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+    "lastHarvestedAt": "2026-10-18T14:29:58.338Z",
+    "learningId": "learn-huggingface-comfy-org-moss-image"
   }
 }

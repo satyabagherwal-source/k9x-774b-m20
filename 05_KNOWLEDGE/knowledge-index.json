@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T11:45:22.512Z",
-  "total_verified_learnings": 229,
+  "last_updated": "2026-10-18T14:29:58.310Z",
+  "total_verified_learnings": 230,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47569,6 +47569,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T11:45:22.507Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-comfy-org-moss-image": {
+      "learning_id": "learn-huggingface-comfy-org-moss-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/MOSS-Image",
+      "repository": "Comfy-Org/MOSS-Image",
+      "slug": "hf-comfy-org-moss-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "content_hash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1688,
+          "title": "Heterogeneous Subsystem Precision Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1689,
+          "title": "Header-Validated Immutable File System Layout Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T14:29:58.303Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

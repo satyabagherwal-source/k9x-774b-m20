@@ -18043,5 +18043,17 @@
     "qualityScore": 1262,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-18T11:44:32.829Z"
+  },
+  {
+    "name": "Comfy-Org/MOSS-Image",
+    "fullName": "Comfy-Org/MOSS-Image",
+    "url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Comfy-Org/MOSS-Image (168 likes, 354126 downloads)",
+    "likes": 168,
+    "downloads": 354126,
+    "qualityScore": 3680,
+    "discoveredAt": "2026-10-18T14:28:32.212Z"
   }
 ]
