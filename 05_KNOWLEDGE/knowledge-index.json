@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:26:22.677Z",
-  "total_verified_learnings": 263,
+  "last_updated": "2026-10-18T21:33:30.018Z",
+  "total_verified_learnings": 268,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -922,22 +922,29 @@
     "learn-github-alexellis-k3sup": {
       "learning_id": "learn-github-alexellis-k3sup",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alexellis-k3sup",
+      "source": "alexellis/k3sup",
+      "repository": "alexellis/k3sup",
       "slug": "alexellis-k3sup",
       "platform": "github",
       "source_url": "https://github.com/alexellis/k3sup",
-      "source_version": "HEAD",
-      "content_hash": "968b51e0c0902e3760a535e41c684f173ed1ecfbfd66d714b9ac5992799149cc",
+      "source_version": "2fa773c9",
+      "content_hash": "3d7437311c9bc96e680395bec9f71e811dd97ce7fe8c5e91967e645be14efadc",
       "dossier_path": "07_PROJECT_LEARNING/alexellis-k3sup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alexellis-k3sup-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.710Z"
+      "verified_at": "2026-10-18T21:32:39.323Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alexpasmantier-television": {
       "learning_id": "learn-github-alexpasmantier-television",
@@ -3054,22 +3061,40 @@
     "learn-github-burntsushi-ripgrep": {
       "learning_id": "learn-github-burntsushi-ripgrep",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "burntsushi-ripgrep",
+      "source": "BurntSushi/ripgrep",
+      "repository": "BurntSushi/ripgrep",
       "slug": "burntsushi-ripgrep",
       "platform": "github",
       "source_url": "https://github.com/BurntSushi/ripgrep",
-      "source_version": "HEAD",
-      "content_hash": "f9e642742725b6bcb2d8984fa2161aea09d8116e4c04cccbda8201d68f02ca2e",
+      "source_version": "3fce3b5b",
+      "content_hash": "2e076f8dd69975ae192d205cc1e09be93fa9e6317ba538da7e64ed6ad11e2536",
       "dossier_path": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1732,
+          "title": "Pre-Spawn Construction Invariant for Worker Threads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1733,
+          "title": "Lossless System Boundary Argument Parsing (Bstr/OsStr Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.162Z"
+      "verified_at": "2026-10-18T21:33:30.011Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bytebase-dbhub": {
       "learning_id": "learn-github-bytebase-dbhub",
@@ -4970,22 +4995,35 @@
     "learn-github-defguard-defguard": {
       "learning_id": "learn-github-defguard-defguard",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "defguard-defguard",
+      "source": "DefGuard/defguard",
+      "repository": "DefGuard/defguard",
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "HEAD",
-      "content_hash": "10516a63abdc5222d2d5277359ef5b93ee5bb9cbdf0f03b6d31dc279c895ae51",
+      "source_version": "b6b437f9",
+      "content_hash": "ea945c14f705f4d768e0364dd5dcbb8abcb6dcbc7c866731407af666af49469a",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1727,
+          "title": "LDAP): handle escaped commas when parsing DNs (#3703)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.579Z"
+      "verified_at": "2026-10-18T21:32:42.267Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-demondamon-finnewshunter": {
       "learning_id": "learn-github-demondamon-finnewshunter",
@@ -21389,22 +21427,35 @@
     "learn-github-jaredpalmer-formik": {
       "learning_id": "learn-github-jaredpalmer-formik",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jaredpalmer-formik",
+      "source": "jaredpalmer/formik",
+      "repository": "jaredpalmer/formik",
       "slug": "jaredpalmer-formik",
       "platform": "github",
       "source_url": "https://github.com/jaredpalmer/formik",
-      "source_version": "HEAD",
-      "content_hash": "1c999f8fbbe7bccdcf86de9b8c45b936cbb9d4270e5be43a8d0065629f4a1da3",
+      "source_version": "91475adb",
+      "content_hash": "627dcc2530b040de45ca8f8989dc131243b58c3a617a1eb0dc206bd803ea4f59",
       "dossier_path": "07_PROJECT_LEARNING/jaredpalmer-formik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jaredpalmer-formik-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1726,
+          "title": "Render children in MySelect component to display options (#3998)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.652Z"
+      "verified_at": "2026-10-18T21:32:36.674Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jasonjmcghee-rem": {
       "learning_id": "learn-github-jasonjmcghee-rem",
@@ -32729,22 +32780,45 @@
     "learn-github-tamagui-tamagui": {
       "learning_id": "learn-github-tamagui-tamagui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tamagui-tamagui",
+      "source": "tamagui/tamagui",
+      "repository": "tamagui/tamagui",
       "slug": "tamagui-tamagui",
       "platform": "github",
       "source_url": "https://github.com/tamagui/tamagui",
-      "source_version": "HEAD",
-      "content_hash": "f5d933db4c1eec1c67a311435842781a022853d229a8d958c4b807119f895273",
+      "source_version": "b35c47e3",
+      "content_hash": "7e4ab00674c1e1a1287c971cb125d69941b37e2b427cdcb7f60ee9ce41921fb7",
       "dossier_path": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1729,
+          "title": "Viewport Edge Seeding for Parked Off-Screen Elements",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1730,
+          "title": "Synchronization of Native Fast-Path Styles Post Subtree Thaw",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1731,
+          "title": "Immediate Frame-Origin Inversion for Zero-Duration Writes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.846Z"
+      "verified_at": "2026-10-18T21:33:23.629Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tambo-ai-tambo": {
       "learning_id": "learn-github-tambo-ai-tambo",
@@ -43971,14 +44045,19 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "2ef42256",
-      "content_hash": "236bf6fadf0eb7b638a4e67fcf39c2dbe1c143a5d03b6410d3f61dac9b7b74bc",
+      "source_version": "9cd77861",
+      "content_hash": "a8f631225abb501d52f56116c1a84b8880dbc0f94b3702ef4e7e3d4c0a81b54a",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
         {
           "number": 1125,
           "title": "resource): report a queued reason commit as accepted (#6157)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1728,
+          "title": "session): release archive lock before task registration (#6175)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43987,7 +44066,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T09:00:01.696Z",
+      "verified_at": "2026-10-18T21:32:43.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66459,6 +66538,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:26:22.673Z"
+    },
+    "rule-1726": {
+      "learning_id": "rule-1726",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1726,
+      "title": "Render children in MySelect component to display options (#3998)",
+      "source_url": "https://github.com/jaredpalmer/formik",
+      "source_version": "91475adb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:32:36.674Z"
+    },
+    "rule-1727": {
+      "learning_id": "rule-1727",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1727,
+      "title": "LDAP): handle escaped commas when parsing DNs (#3703)",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "b6b437f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:32:42.267Z"
+    },
+    "rule-1728": {
+      "learning_id": "rule-1728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1728,
+      "title": "session): release archive lock before task registration (#6175)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "9cd77861",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:32:43.677Z"
+    },
+    "rule-1729": {
+      "learning_id": "rule-1729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1729,
+      "title": "Viewport Edge Seeding for Parked Off-Screen Elements",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "b35c47e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:33:23.629Z"
+    },
+    "rule-1730": {
+      "learning_id": "rule-1730",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1730,
+      "title": "Synchronization of Native Fast-Path Styles Post Subtree Thaw",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "b35c47e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:33:23.629Z"
+    },
+    "rule-1731": {
+      "learning_id": "rule-1731",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1731,
+      "title": "Immediate Frame-Origin Inversion for Zero-Duration Writes",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "b35c47e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:33:23.629Z"
+    },
+    "rule-1732": {
+      "learning_id": "rule-1732",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1732,
+      "title": "Pre-Spawn Construction Invariant for Worker Threads",
+      "source_url": "https://github.com/BurntSushi/ripgrep",
+      "source_version": "3fce3b5b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:33:30.011Z"
+    },
+    "rule-1733": {
+      "learning_id": "rule-1733",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1733,
+      "title": "Lossless System Boundary Argument Parsing (Bstr/OsStr Invariant)",
+      "source_url": "https://github.com/BurntSushi/ripgrep",
+      "source_version": "3fce3b5b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:33:30.011Z"
     }
   },
   "aliases": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:13:50.230Z",
+  "last_updated": "2026-10-18T21:32:39.382Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1586,6 +1586,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-tusen-ai-naive-ui"
+    },
+    {
+      "id": "CD-D6JA",
+      "directive_title": "Fixes in README",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "alexellis/k3sup",
+      "source_commit": "2fa773c9",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-alexellis-k3sup"
     }
   ]
 }

@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "2ef42256",
+    "sourceVersion": "9cd77861",
     "license": "AGPL-3.0",
-    "contentHash": "236bf6fadf0eb7b638a4e67fcf39c2dbe1c143a5d03b6410d3f61dac9b7b74bc",
-    "lastHarvestedAt": "2026-10-16T09:00:01.729Z",
+    "contentHash": "a8f631225abb501d52f56116c1a84b8880dbc0f94b3702ef4e7e3d4c0a81b54a",
+    "lastHarvestedAt": "2026-10-18T21:32:43.724Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2418,5 +2418,55 @@
     "contentHash": "61680081e3749c51f2a04cbf976cc13112a85a1af8176d06851e9ac11d3d265e",
     "lastHarvestedAt": "2026-10-18T21:26:22.699Z",
     "learningId": "learn-github-giancarloerra-socraticode"
+  },
+  "jaredpalmer-formik": {
+    "repository": "jaredpalmer/formik",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jaredpalmer/formik",
+    "sourceVersion": "91475adb",
+    "license": "Apache-2.0",
+    "contentHash": "627dcc2530b040de45ca8f8989dc131243b58c3a617a1eb0dc206bd803ea4f59",
+    "lastHarvestedAt": "2026-10-18T21:32:36.721Z",
+    "learningId": "learn-github-jaredpalmer-formik"
+  },
+  "alexellis-k3sup": {
+    "repository": "alexellis/k3sup",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alexellis/k3sup",
+    "sourceVersion": "2fa773c9",
+    "license": "NOASSERTION",
+    "contentHash": "3d7437311c9bc96e680395bec9f71e811dd97ce7fe8c5e91967e645be14efadc",
+    "lastHarvestedAt": "2026-10-18T21:32:39.380Z",
+    "learningId": "learn-github-alexellis-k3sup"
+  },
+  "defguard-defguard": {
+    "repository": "DefGuard/defguard",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DefGuard/defguard",
+    "sourceVersion": "b6b437f9",
+    "license": "NOASSERTION",
+    "contentHash": "ea945c14f705f4d768e0364dd5dcbb8abcb6dcbc7c866731407af666af49469a",
+    "lastHarvestedAt": "2026-10-18T21:32:42.311Z",
+    "learningId": "learn-github-defguard-defguard"
+  },
+  "tamagui-tamagui": {
+    "repository": "tamagui/tamagui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tamagui/tamagui",
+    "sourceVersion": "b35c47e3",
+    "license": "MIT",
+    "contentHash": "7e4ab00674c1e1a1287c971cb125d69941b37e2b427cdcb7f60ee9ce41921fb7",
+    "lastHarvestedAt": "2026-10-18T21:33:23.673Z",
+    "learningId": "learn-github-tamagui-tamagui"
+  },
+  "burntsushi-ripgrep": {
+    "repository": "BurntSushi/ripgrep",
+    "platform": "github",
+    "sourceUrl": "https://github.com/BurntSushi/ripgrep",
+    "sourceVersion": "3fce3b5b",
+    "license": "Unlicense",
+    "contentHash": "2e076f8dd69975ae192d205cc1e09be93fa9e6317ba538da7e64ed6ad11e2536",
+    "lastHarvestedAt": "2026-10-18T21:33:30.056Z",
+    "learningId": "learn-github-burntsushi-ripgrep"
   }
 }

@@ -2511,3 +2511,9 @@ Every entry in this ledger must capture:
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `68df9c23` | Multi-dimensional audit evidence | 2026-10-18T21:26:19.845Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b63526c5` | Multi-dimensional audit evidence | 2026-10-18T21:26:20.075Z |
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `eb94e073` | Multi-dimensional audit evidence | 2026-10-18T21:26:22.699Z |
+| `learn-github-jaredpalmer-formik` | `https://github.com/jaredpalmer/formik` | `91475adb` | Multi-dimensional audit evidence | 2026-10-18T21:32:36.721Z |
+| `learn-github-alexellis-k3sup` | `https://github.com/alexellis/k3sup` | `2fa773c9` | Multi-dimensional audit evidence | 2026-10-18T21:32:39.380Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `b6b437f9` | Multi-dimensional audit evidence | 2026-10-18T21:32:42.311Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `9cd77861` | Multi-dimensional audit evidence | 2026-10-18T21:32:43.724Z |
+| `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `b35c47e3` | Multi-dimensional audit evidence | 2026-10-18T21:33:23.673Z |
+| `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `3fce3b5b` | Multi-dimensional audit evidence | 2026-10-18T21:33:30.056Z |

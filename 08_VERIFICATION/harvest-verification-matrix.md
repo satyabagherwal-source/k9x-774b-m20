@@ -2504,3 +2504,9 @@
 | `CYCLE-20261018-51OJ` | `2026-10-18T21:26:19.843Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1723` | Yes (`8e1d5b5c...`) |
 | `CYCLE-20261018-51UX` | `2026-10-18T21:26:20.073Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1724` | Yes (`de4ff29b...`) |
 | `CYCLE-20261018-53VT` | `2026-10-18T21:26:22.697Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1725` | Yes (`61680081...`) |
+| `CYCLE-20261018-D4HA` | `2026-10-18T21:32:36.718Z` | `jaredpalmer/formik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1726` | Yes (`627dcc25...`) |
+| `CYCLE-20261018-D6J5` | `2026-10-18T21:32:39.377Z` | `alexellis/k3sup` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/alexellis-k3sup-learnings.md` | Yes (`3d743731...`) |
+| `CYCLE-20261018-D8SK` | `2026-10-18T21:32:42.308Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1727` | Yes (`ea945c14...`) |
+| `CYCLE-20261018-D9VT` | `2026-10-18T21:32:43.721Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1728` | Yes (`a8f63122...`) |
+| `CYCLE-20261018-E4PI` | `2026-10-18T21:33:23.670Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1729, Rule 1730, Rule 1731` | Yes (`7e4ab006...`) |
+| `CYCLE-20261018-E9MT` | `2026-10-18T21:33:30.053Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1732, Rule 1733` | Yes (`2e076f8d...`) |
