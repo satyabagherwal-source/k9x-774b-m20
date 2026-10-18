@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-M3MO",
-    "timestamp": "2026-10-17T02:16:11.232Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "f9b86b880f28786f452ee0eb8da86cc629eb3a344f5d0920d730cbd67124cbcf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-R2SP",
     "timestamp": "2026-10-17T02:20:03.433Z",
     "repository": "bigscience/bloom",
@@ -7492,6 +7477,21 @@
     "contentHash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-DXLV",
+    "timestamp": "2026-10-18T11:45:22.531Z",
+    "repository": "deeplethe/solid-glass",
+    "learningId": "learn-github-deeplethe-solid-glass",
+    "contentHash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

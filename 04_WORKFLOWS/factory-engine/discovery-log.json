@@ -18028,5 +18028,20 @@
     "downloads": 9452669,
     "qualityScore": 2840,
     "discoveredAt": "2026-10-18T08:15:46.102Z"
+  },
+  {
+    "name": "solid-glass",
+    "fullName": "deeplethe/solid-glass",
+    "url": "https://github.com/deeplethe/solid-glass",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "A design system for AI applications. Material, physical, tactile, technical.",
+    "stars": 2001,
+    "forks": 25,
+    "openIssues": 2,
+    "language": "TypeScript",
+    "qualityScore": 1262,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-18T11:44:32.829Z"
   }
 ]

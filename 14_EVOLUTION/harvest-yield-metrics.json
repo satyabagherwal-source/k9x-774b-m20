@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T08:17:29.326Z",
-  "total_cycles_completed": 2444,
-  "total_learnings_persisted": 2444,
-  "total_rules_promoted": 1454,
+  "last_updated": "2026-10-18T11:45:22.534Z",
+  "total_cycles_completed": 2445,
+  "total_learnings_persisted": 2445,
+  "total_rules_promoted": 1455,
   "history": [
-    {
-      "timestamp": "2026-10-17T19:05:54.916Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T19:09:06.551Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1403,6 +1396,13 @@
       "repository": "autogluon/chronos-2",
       "learningId": "learn-huggingface-autogluon-chronos-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T11:45:22.534Z",
+      "repository": "deeplethe/solid-glass",
+      "learningId": "learn-github-deeplethe-solid-glass",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

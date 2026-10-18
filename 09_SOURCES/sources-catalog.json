@@ -2068,5 +2068,15 @@
     "contentHash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
     "lastHarvestedAt": "2026-10-18T08:17:29.324Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
+  },
+  "deeplethe-solid-glass": {
+    "repository": "deeplethe/solid-glass",
+    "platform": "github",
+    "sourceUrl": "https://github.com/deeplethe/solid-glass",
+    "sourceVersion": "6e8903e4",
+    "license": "MIT",
+    "contentHash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
+    "lastHarvestedAt": "2026-10-18T11:45:22.533Z",
+    "learningId": "learn-github-deeplethe-solid-glass"
   }
 }
