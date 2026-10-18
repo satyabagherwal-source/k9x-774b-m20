@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T01:22:00.604Z",
+  "last_updated": "2026-10-18T01:29:00.711Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2721,6 +2721,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T01:22:00.604Z"
+    },
+    "vibheksoni/stealth-browser-mcp": {
+      "repository": "vibheksoni/stealth-browser-mcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vibheksoni-stealth-browser-mcp",
+      "content_hash": "83578de84921df6dc6015c21019c3137a9687521a2887d410f728499b4ec2ab7",
+      "verified_at": "2026-10-18T01:29:00.711Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T01:29:00.711Z"
     }
   },
   "repos": {

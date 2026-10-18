@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T01:22:00.603Z",
-  "total_cycles_completed": 2353,
-  "total_learnings_persisted": 2353,
-  "total_rules_promoted": 1365,
+  "last_updated": "2026-10-18T01:29:00.710Z",
+  "total_cycles_completed": 2354,
+  "total_learnings_persisted": 2354,
+  "total_rules_promoted": 1366,
   "history": [
-    {
-      "timestamp": "2026-10-17T14:15:15.608Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T14:18:45.510Z",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T01:22:00.603Z",
       "repository": "chrisryugj/kordoc",
       "learningId": "learn-github-chrisryugj-kordoc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T01:29:00.710Z",
+      "repository": "vibheksoni/stealth-browser-mcp",
+      "learningId": "learn-github-vibheksoni-stealth-browser-mcp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

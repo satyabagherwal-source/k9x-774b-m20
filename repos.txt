@@ -4104,3 +4104,7 @@ https://huggingface.co/datalab-to/indra-ocr
 # --- Automatically Discovered by AI Scout Engine [2026-10-18T01:17:47.273Z] ---
 # [AI-AGENTS] chrisryugj/kordoc (1662 score) - 모두 파싱해버리겠다 — HWP·HWPX·PDF·Office 문서를 Markdown으로. 양식 자동 채우기와 신구대조를 갖춘 CLI·MCP 서버 
 https://github.com/chrisryugj/kordoc
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-18T01:28:17.967Z] ---
+# [AI-AGENTS] vibheksoni/stealth-browser-mcp (1625 score) - Stealth browser automation for AI agents over MCP and the Chrome DevTools Protoc
+https://github.com/vibheksoni/stealth-browser-mcp

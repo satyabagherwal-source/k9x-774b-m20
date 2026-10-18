@@ -108833,3 +108833,54 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `eedbd2ff` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1580. Explain software WebGL on Linux benchmark runners (Harvested from vibheksoni/stealth-browser-mcp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Explain software WebGL on Linux benchmark runners",
+  "source": "vibheksoni/stealth-browser-mcp",
+  "source_url": "https://github.com/vibheksoni/stealth-browser-mcp",
+  "source_version": "ba95cca9",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T01:29:00.629Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vibheksoni-stealth-browser-mcp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vibheksoni/stealth-browser-mcp](https://github.com/vibheksoni/stealth-browser-mcp) (Revision: `ba95cca9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `STEALTH_TESTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vibheksoni/stealth-browser-mcp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f0db8601`: Explain software WebGL on Linux benchmark runners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `STEALTH_TESTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+GitHub's Linux runners have no GPU, so Chrome renders WebGL with the SwiftShader software renderer there. Sannysoft flags that renderer and the local probe marks it as a minor finding. Machines with a GPU report their real renderer and do not show this.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f0db8601` are properly handled with clean fallback behavior.

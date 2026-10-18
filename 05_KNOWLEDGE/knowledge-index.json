@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T01:22:00.576Z",
-  "total_verified_learnings": 198,
+  "last_updated": "2026-10-18T01:29:00.678Z",
+  "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -43905,6 +43905,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T01:22:00.570Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-vibheksoni-stealth-browser-mcp": {
+      "learning_id": "learn-github-vibheksoni-stealth-browser-mcp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vibheksoni/stealth-browser-mcp",
+      "repository": "vibheksoni/stealth-browser-mcp",
+      "slug": "vibheksoni-stealth-browser-mcp",
+      "platform": "github",
+      "source_url": "https://github.com/vibheksoni/stealth-browser-mcp",
+      "source_version": "ba95cca9",
+      "content_hash": "83578de84921df6dc6015c21019c3137a9687521a2887d410f728499b4ec2ab7",
+      "dossier_path": "07_PROJECT_LEARNING/vibheksoni-stealth-browser-mcp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vibheksoni-stealth-browser-mcp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1580,
+          "title": "Explain software WebGL on Linux benchmark runners",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T01:29:00.672Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1728,5 +1728,15 @@
     "contentHash": "be28439a1f6a3f53dd54a467667b22d4c4df23f55601bfa84972368352cd9e67",
     "lastHarvestedAt": "2026-10-18T01:22:00.601Z",
     "learningId": "learn-github-chrisryugj-kordoc"
+  },
+  "vibheksoni-stealth-browser-mcp": {
+    "repository": "vibheksoni/stealth-browser-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vibheksoni/stealth-browser-mcp",
+    "sourceVersion": "ba95cca9",
+    "license": "MIT",
+    "contentHash": "83578de84921df6dc6015c21019c3137a9687521a2887d410f728499b4ec2ab7",
+    "lastHarvestedAt": "2026-10-18T01:29:00.708Z",
+    "learningId": "learn-github-vibheksoni-stealth-browser-mcp"
   }
 }
