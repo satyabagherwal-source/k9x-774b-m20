@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T00:12:29.753Z",
-  "total_cycles_completed": 2335,
-  "total_learnings_persisted": 2335,
+  "last_updated": "2026-10-18T00:15:48.003Z",
+  "total_cycles_completed": 2336,
+  "total_learnings_persisted": 2336,
   "total_rules_promoted": 1353,
   "history": [
-    {
-      "timestamp": "2026-10-17T13:16:00.700Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T13:19:26.694Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T00:12:29.753Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T00:15:48.003Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-EP07",
-    "timestamp": "2026-10-16T20:06:30.679Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "736b5f3b00d44f3316862e2f158d9db7fde0dca4658d215d99805b7cb06f5e87",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-IKZZ",
     "timestamp": "2026-10-16T20:09:32.111Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
     "contentHash": "735dde92b3b26c26411fd828d746b607e5780f61e4f4324aa124443c6d93c4cf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-R4TA",
+    "timestamp": "2026-10-18T00:15:47.998Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "e277f54fd9b25f4c02cb2e862b7c5232f3abc6f8eaeae3a5be88604ad380dcb6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
