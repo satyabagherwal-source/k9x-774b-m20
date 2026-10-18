@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-18T09:13:06.221Z",
+  "lastUpdated": "2026-10-18T09:16:18.015Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -217,8 +217,8 @@
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-18T09:14:46.144Z",
-        "lastActiveAt": "2026-10-18T08:59:46.094Z",
+        "cooldownUntil": "2026-10-18T09:31:10.591Z",
+        "lastActiveAt": "2026-10-18T09:16:10.544Z",
         "lastHarvestedAt": "2026-10-18T07:29:00.566Z",
         "totalHarvested": 4526,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T09:13:08.730Z",
+        "lastActiveAt": "2026-10-18T09:16:18.098Z",
         "lastHarvestedAt": "2026-10-18T07:28:59.827Z",
         "totalHarvested": 1112,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T09:13:08.020Z",
+        "lastActiveAt": "2026-10-18T09:16:20.597Z",
         "lastHarvestedAt": "2026-10-18T08:05:31.837Z",
         "totalHarvested": 1101,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T09:13:10.516Z",
+        "lastActiveAt": "2026-10-18T09:16:23.095Z",
         "lastHarvestedAt": "2026-10-18T08:17:31.851Z",
         "totalHarvested": 1108,
         "lastError": null
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 4991,
+      "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-18T09:12:47.282Z",
+      "trippedAt": "2026-10-18T09:15:59.888Z",
       "reason": null,
       "consecutiveBlocks": 1
     },
