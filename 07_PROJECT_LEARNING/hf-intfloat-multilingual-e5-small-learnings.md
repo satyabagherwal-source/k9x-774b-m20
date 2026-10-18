@@ -3,7 +3,7 @@
 > **Source Version**: `hf-intfloat-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T19:59:59.550Z  
+> **Timestamp**: 2026-10-18T04:39:47.367Z  
 > **Learning ID**: `learn-huggingface-intfloat-multilingual-e5-small`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/intfloat/multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T19:59:58.797Z  
+> **Harvest Timestamp**: 2026-10-18T04:39:46.328Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

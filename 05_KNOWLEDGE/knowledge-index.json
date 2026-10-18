@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T04:36:41.084Z",
+  "last_updated": "2026-10-18T04:39:47.396Z",
   "total_verified_learnings": 200,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14758,7 +14758,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "f888ffb3a943be7a78bae025aeaf5e31bf0d98497e220f2992d411d86d9ed4f5",
+      "content_hash": "b4003197f6c2d4c692477de068cb4cb99a018fff9f17a9bfbec6758981fabad1",
       "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "promoted_rules": [
@@ -14809,7 +14809,7 @@
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0"
       ],
-      "verified_at": "2026-10-17T19:59:59.578Z",
+      "verified_at": "2026-10-18T04:39:47.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
