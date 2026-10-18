@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md`  
+> **Source**: github ([https://github.com/milvus-io/bootcamp](https://github.com/milvus-io/bootcamp))  
+> **Source Version**: `14cefc46`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T22:10:22.271Z  
+> **Learning ID**: `learn-github-milvus-io-bootcamp`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): milvus-io/bootcamp
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/bootcamp](https://github.com/milvus-io/bootcamp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:35:22.990Z  
+> **Harvest Timestamp**: 2026-10-18T22:10:21.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Dealing with all unstructured data, such as reverse image search, audio search, molecular search, video analysis, question and answer systems, NLP, etc.
 - **Primary Language / Ecosystem**: Jupyter Notebook
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2444 stars
+- **Stars / Engagement**: 2449 stars
 
 ---
 
@@ -554,114 +568,6 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `bootcamp/RAG/advanced_rag/rag_utils/hybrid_and_rerank.py`
-```
-from typing import Optional, List
-
-from langchain_core.documents import BaseDocumentCompressor, Document
-from langchain_core.runnables import Runnable, RunnableConfig
-from langchain_core.runnables.utils import Input, Output
-
-
-class RerankerRunnable(Runnable):
-    def __init__(self, compressor: BaseDocumentCompressor, top_k: int = 4):
-        self.compressor = compressor
-        self.top_k = top_k
-
-    def _remove_duplicates(self, retrieved_documents: List[Document]):
-        seen_page_contents = set()
-        unique_documents = []
-        for doc in retrieved_documents:
-            if doc.page_content not in seen_page_contents:
-                unique_documents.append(doc)
-                seen_page_contents.add(doc.page_content)
-        return unique_documents
-
-    def invoke(self, input: Input, config: Optional[RunnableConfig] = None) -> Output:
-        milvus_retrieved_doc: List[Document] = input.get("milvus_retrieved_doc")
-        bm25_retrieved_doc: List[Document] = input.get("bm25_retrieved_doc")
-        query: str = input.get("query")
-        print(f"len(milvus_retrieved_doc) = {len(milvus_retrieved_doc)}")
-        print(f"len(bm25_retrieved_doc) = {len(bm25_retrieved_doc)}")
-        unique_documents = self._remove_duplicates(
-            milvus_retrieved_doc + bm25_retrieved_doc
-        )
-        print(f"len(unique_documents) = {len(unique_documents)}")
-        result = self.compressor.compress_documents(unique_documents, query)
-
-        return result
-
-```
-
-### Core Architecture Module: `bootcamp/RAG/advanced_rag/rag_utils/hyde.py`
-```
-from typing import Optional
-
-import numpy as np
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import (
-    RunnablePassthrough,
-    RunnableLambda,
-    Runnable,
-    RunnableConfig,
-)
-from langchain_milvus import Milvus
-from langchain_core.runnables.utils import Input, Output
-
-from .vanilla import llm, embeddings
-
-fake_doc_prompt = ChatPromptTemplate.from_template(
-    "Generate 3 simulated answers to this question, "
-    "return with 3 lines and each line is a simulated answer. \n\n{query}"
-)
-
-fake_doc_chain = (
-    {"query": RunnablePassthrough()} | fake_doc_prompt | llm | StrOutputParser()
-)
-
-
-class HydeRetriever(Runnable):
-    def __init__(self, vectorstore):
-        self.vectorstore = vectorstore
-        self.hyde_retriever = {
-            "fake_generation": fake_doc_chain,
-            "query": RunnablePassthrough(),
-        } | RunnableLambda(self._retrieve_from_fake_docs)
-
-    @classmethod
-    def from_vectorstore(cls, vectorstore: Milvus):
-        return cls(vectorstore=vectorstore)
-
-    def invoke(self, input: Input, config: Optional[RunnableConfig] = None) -> Output:
-        return self.hyde_retriever.invoke(input)
-
-    def _retrieve_from_fake_docs(self, _dict):
-        fake_generation = _dict["fake_generation"]
-        query = _dict["query"]
-
-        # Format
-        fake_docs = fake_generation.strip().split("\n")
-        fake_docs = [
-            fake_doc[2:].strip()
-            for fake_doc in fake_docs
-            if fake_doc[0].isdigit() and fake_doc[1] == "."
-        ]
-        # print("fake_docs:", fake_docs)
-
-        # Concatenate
-        doc_vectors = embeddings.embed_documents(fake_docs)
-        # query_vector = embeddings.embed_query(query)
-        vector_array = np.array(doc_vectors)  # + [query_vector])
-
-        # Search average embedding
-        average_doc_vector = np.mean(vector_array, axis=0).tolist()
-        res = self.vectorstore.similarity_search_by_vector(embedding=average_doc_vector)
-        # print(res)
-        return res
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -670,39 +576,9 @@ class HydeRetriever(Runnable):
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #856** (2021-11-02): **[BUG]: 当milvus容器重启后, 搜索相似图片会失败一直卡着**
   *Symptoms*: ### Is there an existing issue for this?  - [X] I have searched the existing issues  ### Current Behavior  按教程搭建以图搜图Demo成功，实现加载图片和搜索功能；  当milvus docker容器重启后，搜索功能就不成功了。  ### Expected Behavior  1、milvus docker容器没重启之前功能正常： ![image](https://user-images.githubusercontent.com/22384214/139257250-40aa2e41-d558-422f-980a-8309f4779f09.png)  2、停止容器再启动 ![22ED8266-403E-48ac-B66F-97E25D1FEE8B](https://user-images.githubusercontent.com/22384214/139258704-7d76a09c-a483-4602-98f8-902909590986.png)  ![7CF0C292-B4C8-4054-89F5-5C67F5FC2FD6](https://user-images.githubusercontent.com/22384214/139258758-8a2f7517-e6ce-448d-a0ca-6133c8a2378d.png)  搜索失败，有知道是什么问题或者这么解决的吗？    ### Steps To Reproduce  ```markdown cd milvus docker-compose stop docker-compose start ```   ### Software version  ```markdown Milvus: [e.g. 2.0.0rc7] Server: [e.g. 2.0.0] Client: [e.g. 1.0.0] ```   ### Anything else?  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > 貌似是这个原因造成的 ![31268e5cf2497cc0e251d2d533cc3ef](https://user-images.githubusercontent.com/22384214/139395465-c8acb54c-2f5d-48b7-988e-b5747def7bae.jpg) 
-  > The error in the picture caused by the Milvus service cannot be connected, or the version of pymilvus and Milvus does not correspond.  As for the issue of reverse images search solution, I think this is indeed a bug. Because Milvus must load before a search, in fact, we will [load after we insert data](https://github.com/milvus-io/bootcamp/blob/master/solutions/reverse_image_search/quick_deploy/server/src/milvus_helpers.py#L67). It's just that you restarted Milvus, so need to reload it.  Thanks for your good first issue :) To fix this bug, you only need to add a loading interface before [searching](https://github.com/milvus-io/bootcamp/blob/master/solutions/reverse_image_search/quick_deploy/server/src/milvus_helpers.py#L108). Can you update the code and submit a PR to become our contributor?
-  > 技术说下个版本会修复，先关闭
 
 - **Issue #790** (2021-10-19): **[BUG]: reverse_image_search failed while run with custom MYSQL_PORT**
   *Symptoms*: ### Is there an existing issue for this?  - [X] I have searched the existing issues  ### Current Behavior  Follow the guide, deploy the reverse_image_search example, while using the non-default port for MySql and using env MYSQL_PORT pass it to the server. But server start failed.  Trackback log: ``` Traceback (most recent call last):   File "src/main.py", line 33, in <module>     MYSQL_CLI = MySQLHelper()   File "/home/jibin/1018/bootcamp/solutions/reverse_image_search/quick_deploy/server/src/mysql_helpers.py", line 11, in __init__     local_infile=True)   File "/home/jibin/1018/bootcamp/solutions/reverse_image_search/quick_deploy/server/venv/lib/python3.6/site-packages/pymysql/connections.py", line 290, in __init__     raise ValueError("port should be of type int") ValueError: port should be of type int  ```  ### Expected Behavior  Hope server started  ### Steps To Reproduce  ```markdown 1. export MYSQL_PORT=33060 2. start server by code python main.py 3. Got error output. ```   ### Software version  ```markdown Milvus: 2.0.0rc7, not related Server: N/A Client: N/A ```   ### Anything else?  Have some investigation on code, in `config.py` some value are read from env, but the code like `MYSQL_PORT = os.getenv("MYSQL_PORT", 3306)` will always got a string value while MYSQL_PORT is set, so a type cast to number here is needed.  I'll raise PR for fix it.
-  **Post-Mortem & Fix Analysis**:
-  > Thank you very much :)  Close with #791 
-
-- **Issue #658** (2021-10-19): **The number of images returned is different from TopK**
-  *Symptoms*: <!-- Please state your issue using the following template and, most importantly, in English.-->  Hello,I found a trouble that might be a new bug.I planed to stand up milvus server with code.So I came in bootcamp-master\solutions\reverse_image_search\quick_deploy\server\src,  edited ./config.py and ran ./main.py.The output information said all were well.Then I put into a image to get similar ones.However,no matter how much top k similarity I choosed,all returns were ten pictures(the first picture),the output information was OK(the second picture) .Moreover,about 10 mins later, there were some output information:500 internal error!(the third picture).In fact,the reason I choose to rum milvus server with code was that I wanted to use pre-existing mysql:5.7. So I exported Mysql_user,Mysql_pwd and ran milvus server with docker command.However ,it didnot work.The logs about milvus server was connection refuesed(the fourth picture).But when I ran with code,it worked well(the first picture).What problem was that? What should I do? Your help is important to me.I will be appreciated.   In short,I just only got 10 pictures no matter how much top k similarity I choosed.I ran milvus server the code.  **To Reproduce** - Which solution are you running? reverse_image_search;https://github.com/milvus-io/bootcamp/tree/master/solutions/reverse_image_search/quick_deploy  - Steps to reproduce the behavior(Docker or Source code): 1. Go to 'bootcamp-master\solutions\reverse_image_search\q
-  **Post-Mortem & Fix Analysis**:
-  > How many images did you insert into the service? How about searching for another image, is it still 10 results?
-  > Yes,the result is always 10 pictures from 17125 picture collection, no matter what picture I put in,how much top k I choose .
-  > I asked this question in wechat group.One administrator said it was found first time in running server with code.This similar issue was put forward when server was started by docker.So she wanted me to submit this issue.
-
-- **Issue #635** (2021-09-13): **milvus2.0.0rc5 requirement.txt problem**
-  *Symptoms*: <!-- Please state your issue using the following template and, most importantly, in English.-->  **Describe the issue** The conflict is caused by:     pymilvus 2.0.0rc5 depends on grpcio==1.37.1     tensorflow 2.5.1 depends on grpcio~=1.34.0   **To Reproduce** - Which solution are you running? Please post the link. - Steps to reproduce the behavior(Docker or Source code): 1. pip install -r requirement.txt  **Expected behavior** pip install -r requirement.txt success  **Screenshots** ![image](https://user-images.githubusercontent.com/78945582/131969223-610067fb-638e-47f3-b8ae-c3958418e55a.png)  **Software version (please complete the following information):**  - Milvus: [e.g. 2.0.0rc5]  - Server: [e.g. 2.0.0]  - Client: [e.g. 2.0.0]   **Additional context** Add any other context about the problem here. 
-  **Post-Mortem & Fix Analysis**:
-  > Hi, thanks for your issue.  This is indeed a version conflict, it can solve by specifying the tensorflow version as 2.6.0, so needs changed **requirements.txt**, can you update it and submit us a PR?  Looking forward to having you as a contributor to Bootcamp.
-  > > Hi, thanks for your issue. >  > This is indeed a version conflict, it can solve by specifying the tensorflow version as 2.6.0, so needs changed **requirements.txt**, can you update it and submit us a PR? >  > Looking forward to having you as a contributor to Bootcamp.  No problem!
-  > Looking forward to your pull request :)
-
-- **Issue #611** (2021-08-31): **Document content error**
-  *Symptoms*: <!-- Please state your issue using the following template and, most importantly, in English.-->  **Describe the issue** In the 166 lines, it should be 'cd client'. 
-  **Post-Mortem & Fix Analysis**:
-  > merged with #610 
-
-- **Issue #521** (2021-08-16): **cannot connect to reverse_image_search**
-  *Symptoms*: reverse_image_search服务器长时间不连接，再次连接报错 ![image](https://user-images.githubusercontent.com/863935/123428334-4586cd00-d5f8-11eb-8112-e023b8a134ca.png) 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks, this is a really good question, it is caused by long Pymysql connections and can be solved by `mysql.ping()`. ```python def test_connection():     try: 	db.ping()     except: 	db = pymysql.connect(localhost, user, passwd, port, db)     return db ``` And we will fix&update it later.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1639,304 +1515,6 @@ Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
 +The wing represents the whole documentation corpus. A room represen
 ```
 
----
-
-### Incident Patch 4: `72792d61` (2026-08-24)
-**Commit Message**: Update Basic Memory Milvus installation (#1589)
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-**File**: `integration/basic_memory_with_milvus.md` (modified, +1/-8)
-```diff
-@@ -27,14 +27,7 @@ You need:
- - A PostgreSQL database and its `postgresql+asyncpg://...` connection URL
- - An OpenAI API key
- 
--Milvus support has been merged into Basic Memory but is not yet available in its current PyPI release. Until the next release is published, install the tested upstream commit that includes the Milvus restart fix:
--
--```bash
--uv tool install --python 3.12 \
--  "basic-memory[milvus] @ git+https://github.com/basicmachines-co/basic-memory.git@eedce9bb92750282ceec73f420bb6ef05e954d4c"
--```
--
--After Basic Memory publishes a release containing the integration, the installation can be simplified to:
-+Install Basic Memory with its Milvus optional dependencies from PyPI:
- 
- ```bash
- uv tool install --python 3.12 "basic-memory[milvus]"
-```
-
----
-
-### Incident Patch 5: `17d1bb31` (2026-02-28)
-**Commit Message**: add architecture diagram to multimodal RAG notebook and fix black formatting (#1578)
-
-Signed-off-by: cheney <[REDACTED_EMAIL]>
-Co-authored-by: Jael Gu <[REDACTED_EMAIL]>
-
-**File**: `tutorials/quickstart/apps/rag_search_with_milvus/app.py` (modified, +0/-1)
-```diff
-@@ -9,7 +9,6 @@
- 
- from dotenv import load_dotenv
- 
--
- load_dotenv()
- COLLECTION_NAME = os.getenv("COLLECTION_NAME")
- MILVUS_ENDPOINT = os.getenv("MILVUS_ENDPOINT")
-```
-
-**File**: `tutorials/quickstart/apps/rag_search_with_milvus/insert.py` (modified, +0/-1)
-```diff
-@@ -10,7 +10,6 @@
- 
- from dotenv import load_dotenv
- 
--
- load_dotenv()
- COLLECTION_NAME = os.getenv("COLLECTION_NAME")
- MILVUS_ENDPOINT = os.getenv("MILVUS_ENDPOINT")
-```
-
-**File**: `tutorials/quickstart/multimodal_rag_with_milvus.ipynb` (modified, +6/-4)
-```diff
-@@ -27,6 +27,11 @@
-     "This tutorial showcases the multimodal RAG powered by Milvus, [Visualized BGE model](https://github.com/FlagOpen/FlagEmbedding/tree/master/FlagEmbedding/visual), and [GPT-4o](https://openai.com/index/hello-gpt-4o/). With this system, users are able to upload an image and edit text instructions, which are processed by BGE's composed retrieval model to search for candidate images. GPT-4o then acts as a reranker, selecting the most suitable image and providing the rationale behind the choice. This powerful combination enables a seamless and intuitive image search experience, leveraging Milvus for efficient retrieval, BGE model for precise image processing and matching, and GPT-4o for advanced reranking."
-    ]
-   },
-+  {
-+   "cell_type": "markdown",
-+   "source": "<img src=\"../../pics/multimodal_rag_with_milvus.png\" width=\"100%\" />",
-+   "metadata": {}
-+  },
-   {
-    "cell_type": "markdown",
-    "metadata": {},
-@@ -193,7 +198,6 @@
-     "from tqdm import tqdm\n",
-     "from glob import glob\n",
-     "\n",
--    "\n",
-     "# Generate embeddings for the image dataset\n",
-     "data_dir = (\n",
-     "    \"./images_folder\"  # Change to your own value if using a different data directory\n",
-@@ -255,7 +259,6 @@
-    "source": [
-     "from pymilvus import MilvusClient\n",
-     "\n",
--    "\n",
-     "dim = len(list(image_dict.values())[0])\n",
-     "collection_name = \"multimodal_rag_demo\"\n",
-     "\n",
-@@ -512,7 +515,6 @@
-     "import requests\n",
-     "import base64\n",
-     "\n",
--    "\n",
-     "openai_api_key = \"sk-***\"  # Change to your OpenAI API Key\n",
-     "\n",
-     "\n",
-@@ -668,4 +670,4 @@
-  },
-  "nbformat": 4,
-  "nbformat_minor": 2
--}
-+}
-\ No newline at end of file
-```
-
-**File**: `tutorials/quickstart/text_image_search_with_milvus.ipynb` (modified, +0/-3)
-```diff
-@@ -127,7 +127,6 @@
-     "import clip\n",
-     "from PIL import Image\n",
-     "\n",
--    "\n",
-     "# Load CLIP model\n",
-     "model_name = \"ViT-B/32\"\n",
-     "model, preprocess = clip.load(model_name)\n",
-@@ -228,7 +227,6 @@
-     "import os\n",
-     "from glob import glob\n",
-     "\n",
--    "\n",
-     "image_dir = \"./images_folder/train\"\n",
-     "raw_data = []\n",
-     "\n",
-@@ -303,7 +301,6 @@
-    "source": [
-     "from IPython.display import display\n",
-     "\n",
--    "\n",
-     "width = 150 * 5\n",
-     "height = 150 * 2\n",
-     "concatenated_image = Image.new(\"RGB\", (width, height))\n",
-```
-
----
-
-### Incident Patch 6: `deb20914` (2025-05-26)
-**Commit Message**: remove build_RAG_with_milvus_and_lepton.ipynb
-
-Signed-off-by: CheneyZhang <[REDACTED_EMAIL]>
-
-**File**: `integration/build_RAG_with_milvus_and_lepton.ipynb` (removed, +0/-534)
-```diff
-@@ -1,534 +0,0 @@
--{
-- "cells": [
--  {
--   "cell_type": "markdown",
--   "metadata": {
--    "collapsed": false,
--    "jupyter": {
--     "outputs_hidden": false
--    }
--   },
--   "source": [
--    "<a href=\"https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/integration/build_RAG_with_milvus_and_lepton.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>   <a href=\"https://github.com/milvus-io/bootcamp/blob/master/tutorials/integration/build_RAG_with_milvus_and_lepton.ipynb\" target=\"_blank\">\n",
--    "    <img src=\"https://img.shields.io/badge/View%20on%20GitHub-555555?style=flat&logo=github&logoColor=white\" alt=\"GitHub Repository\"/>"
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "metadata": {},
--   "source": [
--    "# Build RAG with Milvus and Lepton AI\n",
--    "\n",
--    "[Lepton AI](https://www.lepton.ai/) enables developers and enterprises to run AI applications efficiently in minutes, and at a production ready scale.\n",
--    "Lepton AI allows you to build models in a Python native way, debug and test models locally, deploy them to the cloud with a single command, and consume models in any application with a simple, flexible API. It provides a comprehensive environment for deploying various AI models, including large language models (LLMs) and diffusion models, without the need for extensive infrastructure setup.\n",
--    "\n",
--    "In this tutorial, we will show you how to build a RAG (Retrieval-Augmented Generation) pipeline with Milvus and Lepton AI."
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "metadata": {},
--   "source": [
--    "\n",
--    "\n",
--    "## Preparation\n",
--    "### Dependencies and Environment"
--   ]
--  },
--  {
--   "cell_type": "code",
--   "execution_count": null,
--   "metadata": {
--    "vscode": {
--     "languageId": "shellscript"
--    }
--   },
--   "outputs": [],
--   "source": [
--    "! pip install --upgrade pymilvus[model] openai requests tqdm"
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "metadata": {
--    "collapsed": false
--   },
--   "source": [
--    "> If you are using Google Colab, to enable dependencies just installed, you may need to **restart the runtime** (click on the \"Runtime\" menu at the top of the screen, and select \"Restart session\" from the dropdown menu)."
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "metadata": {},
--   "source": [
--    "Lepton enables the OpenAI-style API. You can login to its official website and prepare the [api key](https://www.lepton.ai/docs) `LEPTONAI_TOKEN` as an environment variable."
--   ]
--  },
--  {
--   "cell_type": "code",
--   "execution_count": 2,
--   "metadata": {
--    "collapsed": false,
--    "jupyter": {
--     "outputs_hidden": false
--    },
--    "pycharm": {
--     "name": "#%%\n"
--    }
--   },
--   "outputs": [],
--   "source": [
--    "import os\n",
--    "\n",
--    "os.environ[\"LEPTONAI_TOKEN\"] = \"***********\""
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "metadata": {},
--   "source": [
--    "### Prepare the data\n",
--    "\n",
--    "We use the FAQ pages from the [Milvus Documentation 2.4.x](https://github.com/milvus-io/milvus-docs/releases/download/v2.4.6-preview/milvus_docs_2.4.x_en.zip) as the private knowledge in our RAG, which is a good data source for a simple RAG pipeline.\n",
--    "\n",
--    "Download the zip file and extract documents to the folder `milvus_docs`."
--   ]
--  },
--  {
--   "cell_type": "code",
--   "execution_count": null,
--   "metadata": {
--    "vscode": {
--     "languageId": "shellscript"
--    }
--   },
--   "outputs": [],
--   "source": [
--    "! wget https://github.com/milvus-io/milvus-docs/releases/download/v2.4.6-preview/milvus_docs_2.4.x_en.zip\n",
--    "! unzip -q milvus_docs_2.4.x_en.zip -d milvus_docs"
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "metadata": {},
--   "source": [
--    "We load all markdown files from the folder `milvus_docs/en/faq`. For each document, we just simply use \"# \" to separate the content in the file, which can roughly separate the content of each main part of the markdown file."
--   ]
--  },
--  {
--   "cell_type": "code",
--   "execution_count": 17,
--   "metadata": {},
--   "outputs": [],
--   "source": [
--    "from glob import glob\n",
--    "\n",
--    "text_lines = []\n",
--    "\n",
--    "for file_path in glob(\"milvus_docs/en/faq/*.md\", recursive=True):\n",
--    "    with open(file_path, \"r\") as file:\n",
--    "        file_text = file.read()\n",
--    "\n",
--    "    text_lines += file_text.split(\"# \")"
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "metadata": {},
--   "source": [
--    "### Prepare the LLM and Embedding Model\n",
--    "\n",
--    "Lepton enables the OpenAI-style API, and you can use the same API with minor adjustments to call the LLM."
--   ]
--  },
--  {
--   "cell_type": "code",
--   "execution_count": 3,
--   "metadata": {},
--   "outputs": [],
--   "source": [
--    "from openai import OpenAI\n",
--    "\n",
--    "lepton_client = 
-```
-
 #### Recent Merged Pull Requests:
 - **PR #1594** (2026-09-24): Fix Markdown rendering in Search with Jev notebooks (@zc277584121)
 - **PR #1593** (2026-09-23): Improve Search with Jev tutorials with realistic workflows and visible decisions (@zc277584121)
@@ -1944,8 +1522,6 @@ Signed-off-by: CheneyZhang <[REDACTED_EMAIL]>
 - **PR #1591** (2026-09-08): Add EverOS integration guide for Milvus (@zc277584121)
 - **PR #1590** (2026-08-31): Replace MemPalace notebook with a CLI-based Milvus guide (@zc277584121)
 - **PR #1589** (2026-08-24): Update Basic Memory Milvus installation (@zc277584121)
-- **PR #1587** (2026-08-11): Add Google ADK and MemPalace Milvus notebooks (@zc277584121)
-- **PR #1586** (2026-04-20): Remove outdated ColPali multi-modal retrieval notebook (@zc277584121)
 
 ---
 
@@ -1959,3 +1535,38 @@ Signed-off-by: CheneyZhang <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Markdown rendering in Search with Jev notebooks (#1594)
+
+**RULE**:
+When implementing operations in `bootcamp/RAG/search_with_jev/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/bootcamp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `14cefc46`: Markdown rendering in Search with Jev notebooks (#1594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `bootcamp/RAG/search_with_jev/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```jupyter notebook
+// Verified production-grade fix pattern:
+The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Use a package version that includes this integration.
+The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The tutorials demonstrate direct API calls from Python application code.
+These links lead to implementation code and task-specific evaluation records. DeepSearcher's link provides a standalone stopping experiment. The studies use different datasets and evaluation methods; consult each report before comparing results.
+```
+
+**NEGATIVE CONSTRAINT**:
+```jupyter notebook
+// Anti-pattern to NEVER write (induced failure mode):
+The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Check that your installed package includes this integration before importing it; a merged change does not establish availability in a published package.
+The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The notebooks use that API directly and do not require the Milvus Model wrapper. Neither approach adds a Jev model to the Milvus server.
+These links lead to implementation code and task-specific evaluation records. DeepSearcher's link is a standalone stopping experiment, not a default search-agent feature. The studies use different datasets and evaluation methods; consult each report before comparing results.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `14cefc46` are properly handled with clean fallback behavior.

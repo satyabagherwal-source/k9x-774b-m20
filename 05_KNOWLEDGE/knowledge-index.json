@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:04:24.646Z",
-  "total_verified_learnings": 298,
+  "last_updated": "2026-10-18T22:10:22.378Z",
+  "total_verified_learnings": 303,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3198,22 +3198,35 @@
     "learn-github-cachix-devenv": {
       "learning_id": "learn-github-cachix-devenv",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cachix-devenv",
+      "source": "cachix/devenv",
+      "repository": "cachix/devenv",
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "HEAD",
-      "content_hash": "afda7afced8b0994abf5e4d8c5d957d863a1aa9be21461e1d8ab346391391c2d",
+      "source_version": "a86a087d",
+      "content_hash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1763,
+          "title": "tasks): wait for cancellation cleanup before scheduler exit (#3256)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.184Z"
+      "verified_at": "2026-10-18T22:10:09.750Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-callstack-agent-device": {
       "learning_id": "learn-github-callstack-agent-device",
@@ -22216,22 +22229,35 @@
     "learn-github-karmada-io-karmada": {
       "learning_id": "learn-github-karmada-io-karmada",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "karmada-io-karmada",
+      "source": "karmada-io/karmada",
+      "repository": "karmada-io/karmada",
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "HEAD",
-      "content_hash": "592bbecadc29ddad18bada18a881406fcf4c71b3d2c24ac350d507a038d89ee7",
+      "source_version": "aad2a753",
+      "content_hash": "541f946ccf186f4350ad4cd30dd094a07893cc2db35f1326e3fc7884bb82580a",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1692,
+          "title": "build(deps): bump github/codeql-action/upload-sarif",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.757Z"
+      "verified_at": "2026-10-18T22:10:18.104Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kartiklabhshetwar-better-shot": {
       "learning_id": "learn-github-kartiklabhshetwar-better-shot",
@@ -24215,22 +24241,29 @@
     "learn-github-markmead-hyperui": {
       "learning_id": "learn-github-markmead-hyperui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "markmead-hyperui",
+      "source": "markmead/hyperui",
+      "repository": "markmead/hyperui",
       "slug": "markmead-hyperui",
       "platform": "github",
       "source_url": "https://github.com/markmead/hyperui",
-      "source_version": "HEAD",
-      "content_hash": "63959aeb416db2521db4cce967a99daf3297a0b3aefff51da69fde0d7bbe575e",
+      "source_version": "252efcfe",
+      "content_hash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
       "dossier_path": "07_PROJECT_LEARNING/markmead-hyperui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/markmead-hyperui-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.157Z"
+      "verified_at": "2026-10-18T22:10:07.605Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-marlbenchmark-on-policy": {
       "learning_id": "learn-github-marlbenchmark-on-policy",
@@ -25283,22 +25316,35 @@
     "learn-github-milvus-io-bootcamp": {
       "learning_id": "learn-github-milvus-io-bootcamp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "milvus-io-bootcamp",
+      "source": "milvus-io/bootcamp",
+      "repository": "milvus-io/bootcamp",
       "slug": "milvus-io-bootcamp",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/bootcamp",
-      "source_version": "HEAD",
-      "content_hash": "1bd0ba987ec3713d2982d2891ea0a5ee1436a3c608cc55f3bff8df05160315cc",
+      "source_version": "14cefc46",
+      "content_hash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1765,
+          "title": "Markdown rendering in Search with Jev notebooks (#1594)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.356Z"
+      "verified_at": "2026-10-18T22:10:22.374Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-milvus-io-milvus": {
       "learning_id": "learn-github-milvus-io-milvus",
@@ -29117,22 +29163,35 @@
     "learn-github-pubkey-rxdb": {
       "learning_id": "learn-github-pubkey-rxdb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pubkey-rxdb",
+      "source": "pubkey/rxdb",
+      "repository": "pubkey/rxdb",
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "HEAD",
-      "content_hash": "0964ab484b9102e64a512b9dc34bbc2a8889aba2b6fec4f1b1e96726cf96b103",
+      "source_version": "30824176",
+      "content_hash": "b8cc5892c75c0d8ced4cf396b52070242036d73613daea26f39824d6c8fe5c0e",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1764,
+          "title": "incrementalModify() writing the unchanged document when the modifier throws (#92",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.126Z"
+      "verified_at": "2026-10-18T22:10:14.489Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pulumi-pulumi": {
       "learning_id": "learn-github-pulumi-pulumi",
@@ -66376,14 +66435,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1692,
       "title": "build(deps): bump github/codeql-action/upload-sarif",
-      "source_url": "https://github.com/moby/buildkit",
-      "source_version": "64aefaef",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "aad2a753",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T21:00:50.633Z"
+      "verified_at": "2026-10-18T22:10:18.104Z"
     },
     "rule-1693": {
       "learning_id": "rule-1693",
@@ -67440,6 +67499,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:04:24.641Z"
+    },
+    "rule-1763": {
+      "learning_id": "rule-1763",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1763,
+      "title": "tasks): wait for cancellation cleanup before scheduler exit (#3256)",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "a86a087d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:10:09.750Z"
+    },
+    "rule-1764": {
+      "learning_id": "rule-1764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1764,
+      "title": "incrementalModify() writing the unchanged document when the modifier throws (#92",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "30824176",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:10:14.489Z"
+    },
+    "rule-1765": {
+      "learning_id": "rule-1765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1765,
+      "title": "Markdown rendering in Search with Jev notebooks (#1594)",
+      "source_url": "https://github.com/milvus-io/bootcamp",
+      "source_version": "14cefc46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:10:22.374Z"
     }
   },
   "aliases": {

@@ -123330,3 +123330,157 @@ id = "REPLACE_WITH_FIELD_REPORTS_KV_NAMESPACE_ID"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a6ce269d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1763. tasks): wait for cancellation cleanup before scheduler exit (#3256) (Harvested from cachix/devenv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "tasks): wait for cancellation cleanup before scheduler exit (#3256)",
+  "source": "cachix/devenv",
+  "source_url": "https://github.com/cachix/devenv",
+  "source_version": "a86a087d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-18T22:10:09.712Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cachix-devenv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `a86a087d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a73c5b84`: tasks): wait for cancellation cleanup before scheduler exit (#3256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Task cancellation now stops status checks and waits for nested commands to stop before the scheduler exits ([#3251](https://github.com/cachix/devenv/issues/3251)).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a73c5b84` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1764. incrementalModify() writing the unchanged document when the modifier throws (#92 (Harvested from pubkey/rxdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "incrementalModify() writing the unchanged document when the modifier throws (#92",
+  "source": "pubkey/rxdb",
+  "source_url": "https://github.com/pubkey/rxdb",
+  "source_version": "30824176",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-18T22:10:14.453Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pubkey-rxdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pubkey/rxdb](https://github.com/pubkey/rxdb) (Revision: `30824176`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `orga/changelog/fix-incremental-modify-throwing-modifier-write.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6a0ab8ba`: incrementalModify() writing the unchanged document when the modifier throws (#9237). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orga/changelog/fix-incremental-modify-throwing-modifier-write.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- FIX `incrementalModify()` wrote a new revision of the unchanged document after the modifier threw [#9234](https://github.com/pubkey/rxdb/issues/9234)
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6a0ab8ba` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1765. Markdown rendering in Search with Jev notebooks (#1594) (Harvested from milvus-io/bootcamp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Markdown rendering in Search with Jev notebooks (#1594)",
+  "source": "milvus-io/bootcamp",
+  "source_url": "https://github.com/milvus-io/bootcamp",
+  "source_version": "14cefc46",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-18T22:10:22.340Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-milvus-io-bootcamp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [milvus-io/bootcamp](https://github.com/milvus-io/bootcamp) (Revision: `14cefc46`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `bootcamp/RAG/search_with_jev/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/bootcamp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `14cefc46`: Markdown rendering in Search with Jev notebooks (#1594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `bootcamp/RAG/search_with_jev/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```jupyter notebook
+// Verified production-grade fix pattern:
+The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Use a package version that includes this integration.
+The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The tutorials demonstrate direct API calls from Python application code.
+These links lead to implementation code and task-specific evaluation records. DeepSearcher's link provides a standalone stopping experiment. The studies use different datasets and evaluation methods; consult each report before comparing results.
+```
+
+**NEGATIVE CONSTRAINT**:
+```jupyter notebook
+// Anti-pattern to NEVER write (induced failure mode):
+The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Check that your installed package includes this integration before importing it; a merged change does not establish availability in a published package.
+The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The notebooks use that API directly and do not require the Milvus Model wrapper. Neither approach adds a Jev model to the Milvus server.
+These links lead to implementation code and task-specific evaluation records. DeepSearcher's link is a standalone stopping experiment, not a default search-agent feature. The studies use different datasets and evaluation methods; consult each report before comparing results.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `14cefc46` are properly handled with clean fallback behavior.

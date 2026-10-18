@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T22:04:24.684Z",
+  "last_updated": "2026-10-18T22:10:22.409Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4282,6 +4282,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T22:04:24.684Z"
+    },
+    "markmead/hyperui": {
+      "repository": "markmead/hyperui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-markmead-hyperui",
+      "content_hash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
+      "verified_at": "2026-10-18T22:10:07.638Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:10:07.638Z"
+    },
+    "cachix/devenv": {
+      "repository": "cachix/devenv",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cachix-devenv",
+      "content_hash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
+      "verified_at": "2026-10-18T22:10:09.784Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:10:09.784Z"
+    },
+    "pubkey/rxdb": {
+      "repository": "pubkey/rxdb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pubkey-rxdb",
+      "content_hash": "b8cc5892c75c0d8ced4cf396b52070242036d73613daea26f39824d6c8fe5c0e",
+      "verified_at": "2026-10-18T22:10:14.521Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:10:14.521Z"
+    },
+    "karmada-io/karmada": {
+      "repository": "karmada-io/karmada",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-karmada-io-karmada",
+      "content_hash": "541f946ccf186f4350ad4cd30dd094a07893cc2db35f1326e3fc7884bb82580a",
+      "verified_at": "2026-10-18T22:10:18.157Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:10:18.157Z"
+    },
+    "milvus-io/bootcamp": {
+      "repository": "milvus-io/bootcamp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-milvus-io-bootcamp",
+      "content_hash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
+      "verified_at": "2026-10-18T22:10:22.409Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:10:22.409Z"
     }
   },
   "repos": {

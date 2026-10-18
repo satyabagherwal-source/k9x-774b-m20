@@ -2768,5 +2768,55 @@
     "contentHash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
     "lastHarvestedAt": "2026-10-18T22:04:24.678Z",
     "learningId": "learn-github-xerj-org-xerj"
+  },
+  "markmead-hyperui": {
+    "repository": "markmead/hyperui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/markmead/hyperui",
+    "sourceVersion": "252efcfe",
+    "license": "MIT",
+    "contentHash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
+    "lastHarvestedAt": "2026-10-18T22:10:07.636Z",
+    "learningId": "learn-github-markmead-hyperui"
+  },
+  "cachix-devenv": {
+    "repository": "cachix/devenv",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cachix/devenv",
+    "sourceVersion": "a86a087d",
+    "license": "Apache-2.0",
+    "contentHash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
+    "lastHarvestedAt": "2026-10-18T22:10:09.778Z",
+    "learningId": "learn-github-cachix-devenv"
+  },
+  "pubkey-rxdb": {
+    "repository": "pubkey/rxdb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pubkey/rxdb",
+    "sourceVersion": "30824176",
+    "license": "Apache-2.0",
+    "contentHash": "b8cc5892c75c0d8ced4cf396b52070242036d73613daea26f39824d6c8fe5c0e",
+    "lastHarvestedAt": "2026-10-18T22:10:14.516Z",
+    "learningId": "learn-github-pubkey-rxdb"
+  },
+  "karmada-io-karmada": {
+    "repository": "karmada-io/karmada",
+    "platform": "github",
+    "sourceUrl": "https://github.com/karmada-io/karmada",
+    "sourceVersion": "aad2a753",
+    "license": "Apache-2.0",
+    "contentHash": "541f946ccf186f4350ad4cd30dd094a07893cc2db35f1326e3fc7884bb82580a",
+    "lastHarvestedAt": "2026-10-18T22:10:18.151Z",
+    "learningId": "learn-github-karmada-io-karmada"
+  },
+  "milvus-io-bootcamp": {
+    "repository": "milvus-io/bootcamp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/milvus-io/bootcamp",
+    "sourceVersion": "14cefc46",
+    "license": "Apache-2.0",
+    "contentHash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
+    "lastHarvestedAt": "2026-10-18T22:10:22.403Z",
+    "learningId": "learn-github-milvus-io-bootcamp"
   }
 }

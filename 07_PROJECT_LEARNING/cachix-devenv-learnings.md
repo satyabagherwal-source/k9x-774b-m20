@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
+> **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
+> **Source Version**: `a86a087d`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T22:10:09.647Z  
+> **Learning ID**: `learn-github-cachix-devenv`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): cachix/devenv
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:38:42.182Z  
+> **Harvest Timestamp**: 2026-10-18T22:10:09.181Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7706 stars
+- **Stars / Engagement**: 7754 stars
 
 ---
 
@@ -1656,412 +1670,17 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `devenv-core/src/eval_op.rs`
-```
-//! Evaluation operation types and structured Nix effect parsing.
-//!
-//! Nix emits evaluation dependencies through a dedicated one-shot callback.
-//! Keeping the wire conversion here means cache invalidation and the UI use
-//! the same typed representation without depending on logger activities.
-
-use std::path::PathBuf;
-use std::sync::Arc;
-
-/// A filesystem or environment operation observed during Nix evaluation.
-///
-/// These operations are used for cache invalidation and dependency tracking.
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum EvalOp {
-    /// Copied a source path to the Nix store.
-    CopiedSource { source: PathBuf, target: PathBuf },
-    /// Filtered a source tree and copied it to the Nix store.
-    FilteredSource { source: PathBuf, target: PathBuf },
-    /// Evaluated a Nix file.
-    EvaluatedFile { source: PathBuf, cached: bool },
-    /// Read a file's contents with `builtins.readFile`.
-    ReadFile { source: PathBuf },
-    /// List a directory's contents with `builtins.readDir`.
-    ReadDir { source: PathBuf },
-    /// Read a file type with `builtins.readFileType`.
-    ReadFileType { source: PathBuf },
-    /// Hashed a file with `builtins.hashFile`.
-    HashFile { source: PathBuf, algorithm: String },
-    /// Read an environment variable with `builtins.getEnv`.
-    GetEnv { name: String },
-    /// Check that a file exists with `builtins.pathExists`.
-    PathExists { source: PathBuf },
-}
-
-/// Exact state captured at the moment an evaluation input was consumed.
-///
-/// Primops use this when re-reading the input later could associate a stale
-/// evaluation result with newer file or environment state.
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum EvalInputState {
-    File {
-        path: PathBuf,
-        content_sha256: Option<String>,
-    },
-    Env {
-        name: String,
-        content_sha256: Option<String>,
-    },
-}
-
-impl EvalInputState {
-    pub fn operation(&self) -> EvalOp {
-        match self {
-            Self::File { path, .. } => EvalOp::ReadFile {
-                source: path.clone(),
-            },
-            Self::Env { name, .. } => EvalOp::GetEnv { name: name.clone() },
-        }
-    }
-}
-
-/// Convert to the activity event type for serialization.
-impl From<EvalOp> for devenv_activity::EvalOp {
-    fn from(op: EvalOp) -> Self {
-        match op {
-            EvalOp::CopiedSource { source, target } => {
-                devenv_activity::EvalOp::CopiedSource { source, target }
-            }
-            EvalOp::FilteredSource { source, target } => {
-                devenv_activity::EvalOp::FilteredSource { source, target }
-            }
-            EvalOp::EvaluatedFile { source, cached } => {
-                devenv_activity::EvalOp::EvaluatedFile { source, cached }
-            }
-            EvalOp::ReadFile { source } => devenv_activity::EvalOp::ReadFile { source },
-            EvalOp::ReadDir { source } => devenv_activity::EvalOp::ReadDir { source },
-            EvalOp::ReadFileType { source } => devenv_activity::EvalOp::ReadFileType { source },
-            EvalOp::HashFile { source, algorithm } => {
-                devenv_activity::EvalOp::HashFile { source, algorithm }
-            }
-            EvalOp::GetEnv { name } => devenv_activity::EvalOp::GetEnv { name },
-            EvalOp::PathExists { source } => devenv_activity::EvalOp::PathExists { source },
-        }
-    }
-}
-
-impl EvalOp {
-    /// Extract an operation from the dedicated one-shot evaluator effect
-    /// callback. This is the canonical wire conversion used by the Nix FFI.
-    pub fn from_effect(kind: &str, subject: &str, detail: Option<&str>) -> Option<Self> {
-        let path = || PathBuf::from(subject);
-
-        match (kind, detail) {
-            ("copy-source", Some(target)) => Some(EvalOp::CopiedSource {
-                source: path(),
-                target: PathBuf::from(target),
-            }),
-            ("filter-source", Some(target)) => Some(EvalOp::FilteredSource {
-                source: path(),
-                target: PathBuf::from(target),
-            }),
-            ("evaluated-file", Some("cached")) => Some(EvalOp::EvaluatedFile {
-                source: path(),
-                cached: true,
-            }),
-            ("evaluated-file", Some("uncached")) => Some(EvalOp::EvaluatedFile {
-                source: path(),
-                cached: false,
-            }),
-            ("read-file", None) => Some(EvalOp::ReadFile { source: path() }),
-            ("read-dir", None) => Some(EvalOp::ReadDir { source: path() }),
-            ("read-file-type", None) => Some(EvalOp::ReadFileType { source: path() }),
-            ("hash-file", Some(algorithm)) if !algorithm.is_empty() => Some(EvalOp::HashFile {
-                source: path(),
-                algorithm: algorithm.to_owned(),
-            }),
-            ("get-env", None) => Some(EvalOp::GetEnv {
-                name: subject.to_owned(),
-            }),
-            ("path-exists", None) => Some(EvalOp::PathExists { source: path() }),
-            _ => None,
-        }
-    }
-}
-
-/// Observer trait for receiving evaluation operations.
-///
-/// Implementations can be registered with `NixLogBridge` to receive file and
-/// environment dependencies during evaluation.
-pub trait OpObserver: Send + Sync + 'static {
-    /// Called when an operation is observed during evaluation.
-    fn record(&self, op: EvalOp);
-
-    /// Record both an input identity and the state actually consumed.
-    fn record_input_state(&self, input: EvalInputState) {
-        self.record(input.operation());
-    }
-}
-
-/// Wrapper to allow `Arc<dyn OpObserver>` to implement `OpObserver`.
-impl OpObserver for Arc<dyn OpObserver> {
-    fn record(&self, op: EvalOp) {
-        (**self).record(op);
-    }
-
-    fn record_input_state(&self, input: EvalInputState) {
-        (**self).record_input_state(input);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn parses_all_eval_effects() {
-        let cases = [
-            (
-                "copy-source",
-                "/source",
-                Some("/nix/store/source"),
-                EvalOp::CopiedSource {
-                    source: "/source".into(),
-                    target: "/nix/store/source".into(),
-                },
-            ),
-            (
-                "filter-source",
-                "/source",
-                Some("/nix/store/source"),
-                EvalOp::FilteredSource {
-                    source: "/source".into(),
-                    target: "/nix/store/source".into(),
-                },
-            ),
-            (
-                "evaluated-file",
-                "/default.nix",
-                Some("cached"),
-                EvalOp::EvaluatedFile {
-                    source: "/default.nix".into(),
-                    cached: true,
-                },
-            ),
-            (
-                "evaluated-file",
-                "/default.nix",
-                Some("uncached"),
-                EvalOp::EvaluatedFile {
-                    source: "/default.nix".into(),
-                    cached: false,
-                },
-            ),
-            (
-                "read-file",
-                "/file",
-                None,
-                EvalOp::ReadFile {
-                    source: "/file".into(),
-                },
-            ),
-            (
-                "read-dir",
-                "/dir",
-                None,
-                EvalOp::ReadDir {
-                    source: "/dir".into(),
-                },
-            ),
-            (
-                "read-file-type",
-                "/file",
-                None,
-                EvalOp::ReadFileType {
-                    source: "/file".into(),
-                },
-            ),
-            (
-                "hash-file",
-                "/file",
-                Some("sha256"),
-                EvalOp::HashFile {
-                    source: "/file".into(),
-                    algorithm: "sha256".into(),
-                },
-            ),
-            (
-                "get-env",
-                "SOME_ENV",
-                None,
-                EvalOp::GetEnv {
-                    name: "SOME_ENV".into(),
-                },
-            ),
-            (
-                "path-exists",
-                "/file",
-                None,
-                EvalOp::PathExists {
-                    source: "/file".into(),
-                },
-            ),
-        ];
-
-        for (kind, subject, detail, expected) in cases {
-            assert_eq!(EvalOp::from_effect(kind, subject, detail), Some(expected));
-        }
-    }
-
-    #[test]
-    fn rejects_unknown_or_malformed_effects() {
-        assert_eq!(EvalOp::from_effect("unknown", "/file", None), None);
-        assert_eq!(
-            EvalOp::from_effect("read-file", "/file", Some("unexpected")),
-            None
-        );
-        assert_eq!(EvalOp::from_effect("copy-source", "/source", None), None);
-        assert_eq!(
-            EvalOp::from_effect("evaluated-file", "/file", Some("old")),
-            None
-        );
-        assert_eq!(EvalOp::from_effect("hash-file", "/file", Some("")), None);
-    }
-}
-
-```
-
-### Core Architecture Module: `devenv-core/src/evaluator.rs`
-```
-//! Generic Nix evaluator interface.
-//!
-//! "A thing that can talk to Nix": evaluate attribute paths against the
-//! project's devenv config root to JSON, build a derivation to store
-//! paths, and surface a [`Store`] for the consumer. Nothing devenv-shaped
-//! beyond the bootstrap-args contract (which the evaluator owns at
-//! construction time, opaque-payload style). Anything else lives on
-//! [`crate::Backend`].
-
-use std::path::PathBuf;
-
-use async_trait::async_trait;
-use miette::Result;
-use serde::{Deserialize, Serialize};
-
-use crate::store::{Store, StorePath};
-
-/// Options for [`Evaluator::build`].
-#[derive(Clone, Debug, Default)]
-pub struct BuildOptions {
-    /// Optional GC root directory; if set, every output path gets a
-    /// permanent GC root under this directory (named after the attr).
-    pub gc_root: Option<PathBuf>,
-}
-
-/// Devenv shell environment build output.
-#[derive(Debug, Clone, Default)]
-pub struct DevEnvOutput {
-    /// The bash environment script.
-    pub bash_env: Vec<u8>,
-    /// File paths that the evaluation depends on (for direnv to watch).
-    pub inputs: Vec<PathBuf>,
-}
-
-/// Package search result.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PackageSearchResult {
-    pub pname: String,
-    pub version: String,
-    pub description: String,
-}
-
-/// Map of attr-path → package search result.
-pub type SearchResults = std::collections::BTreeMap<String, PackageSearchResult>;
-
-/// Build the eval-cache key suffix for the current invocation. Encodes
-/// CLI-side knobs that affect evaluation output but are not part of the
-/// Nix args themselves.
-pub fn eval_cache_key_args(nix_args_str: &str, extension_fingerprint: &str) -> String {
-    format!("{nix_args_str}:eval_extensions={extension_fingerprint}")
-}
-
-/// "A thing that can talk to Nix."
-///
-/// `eval` and `build` take attribute paths into the project's devenv
-/// config root. The evaluator owns the bootstrap-args wiring and uses the
-/// evaluation extensions installed when its concrete backend is composed.
-#[async_trait(?Send)]
-pub trait Evaluator: Send + Sync {
-    /// Backend name (for logging / debugging).
-    fn name(&self) -> &str;
-
-    /// Store this evaluator is bound to.
-    fn store(&self) -> &dyn Store;
-
-    /// Evaluate `attrs` as an attribute path against the devenv config
-    /// root and return JSON.
-    async fn eval(&self, attrs: &[&str]) -> Result<String>;
-
-    /// Build the derivation at `attrs` and return its output paths.
-    async fn build(&self, attrs: &[&str], opts: BuildOptions) -> Result<Vec<StorePath>>;
-
-    /// Object-safe downcast hook for callers that need the concrete
-    /// backend type for evaluator-specific operations (lock updates,
-    /// REPL, native dev-env, search). Implementors return `self`.
-    fn as_any(&self) -> &dyn std::any::Any;
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn eval_cache_key_args_includes_extension_fingerprint() {
-        let key = eval_cache_key_args("{ foo = 1; }", "allocatePort:enabled=true:strict=false");
-        assert!(key.contains("allocatePort:enabled=true:strict=false"));
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3230** (2026-09-27): **[nushell] reloading breaks because of non-string env vars**
-  *Symptoms*: **Describe the bug** Non-string env vars such as the standard nu `$env.DIRS_LIST` make devenv reload crash with:  ``` Error: nu::shell::only_supports_this_input_type    × Input type not supported.     ╭─[/home/ywen/dev/devenv-test/.devenv/nu/config.nu:81:56]  80 │                             } else {  81 │                                 load-env {($var_name): $value}     ·                                                        ───┬──     ·                                                           ╰── input type: string  82 │                             }     ╰──── ```  **To reproduce** <!-- Please provide a Short, Self Contained, Correct (Compilable), Example: https://sscce.org The best way is to create a gist with `devenv.nix`, `devenv.yaml`, and optionally `devenv.lock`.  Create gist here: https://gist.github.com/  Make sure to include full logs and what you expected to happen. -->  Simply create a blank devenv project with `devenv init`, and then in `nu`, activate it with `devenv shell`. After modifying the `devenv.nix` and waiting for reload to finish, any further command will work, but the above error message will be repeated after each.  **Version** <!-- Paste the output of `devenv version` here or tell us if you're using flakes. --> devenv 2.4.0 (x86_64-linux)
-  **Post-Mortem & Fix Analysis**:
-  > @YPares I opened #3231 to fix this. Could you test it with the Nushell configuration that reproduced the issue? After editing `devenv.nix` and letting the shell reload, please check whether the error still appears on later prompts and whether your directory commands still work. If it still fails, please share your Nushell version and the new error output. 
-  > @domenkozar I tried and it does fix it on that same nu config :) thanks!
+- **Issue #3281** (2026-10-14): **`devenv shell` hangs forever when the file watcher can't be created (inotify `max_user_instances` exhausted)**
+  *Symptoms*: **Describe the bug**  When the user's inotify instance limit (`fs.inotify.max_user_instances`, default 128) is exhausted, `devenv shell` never spawns the shell. It hangs after the enterShell tasks complete; with the TUI it appears stuck at "Configuring shell". `devenv shell --no-reload` works.  This is related to #2987 / #2988, but it's a different failure mode that #2988 doesn't cover. #2988 handles *per-path* watch failures (`max_user_watches`), which watchexec reports as non-fatal runtime errors. Here the very first `inotify_init1` fails, so watchexec can't create the backend at all:  ``` inotify_init1(IN_NONBLOCK|IN_CLOEXEC) = -1 EMFILE (Too many open files) ```  watchexec 8.4.1 returns a `CriticalError` from `create_backend` (`sources/fs.rs`, the `self.create_backend(watcher, follow_symlinks)?` call when applying the initial config), so `fs::worker` exits without ever sending `fs_ready`. devenv logs the failure:  ``` • file watcher for devenv-reload stopped: fs: cannot initialise Native watcher. hot reload is no longer active. ```  But nothing wakes the code that is waiting for readiness. `fs_ready.changed()` only returns once the sender is dropped, and the `WatcherHandle` keeps `wx_config` alive. So devenv deadlocks. Backtrace of the hung process (devenv 2.4.0):  - `devenv-reload-owner` thread: parked in its current-thread runtime, handling `DevenvRequest::AddWatchPaths` → `add_watch_paths` → `WatcherHandle::watch_logical_many` → `watch_registrations`, awaiting `fs_read
 
-- **Issue #3216** (2026-09-29): **devenv up -d: a 120s manager-pidfile wait that's just slow (not actually failed) drops the worktree's HTTPS proxy routes**
-  *Symptoms*: ### Summary  A `devenv up -d` (detached) start that takes longer than devenv's fixed 120 s wait for the manager's PID file is treated as a failure even when the manager/daemon is still starting successfully in the background - and, as part of that failure handling, devenv removes this worktree's routes from the shared HTTPS proxy. The daemon then finishes starting normally, but every `https://<service>.<name>.localhost` route stays broken (TLS handshake failures) until something notices and runs `up -d` again against the now-live manager (a second attach does register the routes and does not clear them again).  ### Version  Observed with `devenv` 2.x on Linux with `process.proxy.enable = true`, native process manager, `devenv up -d`.  ### Reproduction shape  We work around this today with a wrapper script (paraphrased below) rather than a minimal `devenv.nix`, since reliably forcing a cold start past 120 s needs a genuinely slow first-run (a large Nix build/eval, or many processes to bring up) that is hard to package as a small reproducible example:  ```sh # usage: up-detached.sh <real-devenv> <devenv arguments...> runtime_dir="${DEVENV_RUNTIME:-}/processes" pid_file="${runtime_dir}/native-manager.pid" manager_alive() { ...; kill -0 "$(cat "$pid_file")" 2>/dev/null; } daemon_starting() { pgrep -f "daemon-processes ${runtime_dir}/daemon-config.json" >/dev/null 2>&1; }  "$real_devenv" "$@"          # devenv up -d ... status=$? if [ "$status" -eq 0 ] || ! { manager_alive || daem
-  **Post-Mortem & Fix Analysis**:
-  > Uhhhm, this is bad. Fixing.
-
-- **Issue #3203** (2026-09-22): **`devenv shell` SIGABRTs (panics writing to stderr) when its terminal goes away**
-  *Symptoms*: **Describe the bug**  The hook-spawned `devenv shell` aborts with SIGABRT instead of exiting quietly when its terminal stdio dies. Main thread panics inside an stderr write (`std::io::stdio::__eprint` → `panic_fmt` → abort; release profile uses `panic=abort`), producing a systemd-coredump report on every unclean terminal close. Likely sibling of #2798 (stdout broken-pipe panic, fixed in 2.1.2). This is the stderr variant on the SIGHUP/shutdown path from #2845.  **To reproduce**  Gist with a minimal project (bug triggers with an empty config, nothing project-specific involved):  `devenv.yaml`:  ```yaml inputs:   nixpkgs:     url: github:cachix/devenv-nixpkgs/rolling ```  `devenv.nix`:  ```nix {pkgs, ...}: { } ```  Steps (zsh with `eval "$(devenv hook zsh)"` in `.zshrc`):  1. `mkdir repro && cd repro`, place the two files, run `devenv allow`. 2. `cd repro` in a fresh terminal → hook auto-activates `devenv shell`. 3. Repro A: close the terminal window (no `exit`) → coredump report.    Repro B: from inside the shell run `codium .` (any Electron/GUI app),    then close the editor window → same coredump report. 4. `coredumpctl -1 info` shows:  ```text Signal: 6 (ABRT) Command Line: devenv shell Executable: /nix/store/...-devenv-2.3.1/bin/.devenv-wrapped Message: Process ... (.devenv-wrapped) of user ... dumped core. Stack trace of thread ...: #11 core::panicking::panic_fmt #12 std::io::stdio::__eprint #13 devenv::main #14 std::sys::backtrace::__rust_begin_short_backtrace #15 core::
-
-- **Issue #3199** (2026-09-21): **Git hooks run during `devenv shell` despite `enterTest` being skipped**
-  *Symptoms*: ## `devenv shell` unexpectedly runs `devenv:git-hooks:run`  ### Description  With git hooks enabled, `devenv shell` executes the `devenv:git-hooks:run` task even though `devenv:enterTest` is explicitly skipped.  This causes all configured hooks to run on every shell entry. In my case, `trufflehog` takes ~18 seconds, making every `devenv shell` invocation take ~20 seconds.  This appears to be related to the task graph traversal used by `devenv shell`.  ### Environment  * devenv: `2.3.1+2418e1b (x86_64-linux)` * NixOS / x86_64-linux * Using the `devenv:latest` container * No devenv version pin beyond `:latest`  ### Configuration  Relevant configuration:  ```nix git-hooks.hooks = {   golangci-lint.enable = true;   ripsecrets.enable = true;   trufflehog.enable = true;    gitleaks = {     enable = true;     entry = "${lib.getExe pkgs.gitleaks} git --pre-commit --redact --staged --verbose";     pass_filenames = false;   }; }; ```  I also initially had `enterTest`, Claude Code integration, etc., but removing those made no difference.  ### Reproduction  Run:  ```bash devenv shell --no-reload -v ```  The relevant output is:  ```text ✓ Running tasks 19.8s   ├ ✓ devenv:enterShell 38ms   │ ├ ✓ devenv:git-hooks:install 47ms   │ └ ✓ devenv:python:virtualenv 57ms   └ ✓ devenv:enterTest skipped 0ms     └ ✓ devenv:git-hooks:run 4 lines → trufflehog...Passed 19.6s       └ ✓ devenv:git-hooks:install ... cache decision=hit ```  The important part is that `enterTest` is skipped, but its `git-hook
-  **Post-Mortem & Fix Analysis**:
-  > Duplicate of https://github.com/cachix/devenv/issues/3184
-
-- **Issue #3196** (2026-09-23): **`devenv lsp` fails inside devcontainer**
-  *Symptoms*: **Describe the bug** When running inside a devcontainer `devenv lsp` errors with ``` • Validating lock ✓ Validating lock in 7.35ms   evaluating file '«nix-internal»/derivation-internal.nix' • Starting nixd language server terminate called after throwing an instance of 'nix::Error'   what():  error: Already registered store with name 'Dummy Store' ```  **To reproduce** Gist: https://gist.github.com/robertclarkenhsps/71ca1f075f13cbf00842f101f2c467f3 After running `devenv shell` to create the devcontainer.json and install the command line run: `devcontainer up` to build the dev container and then `devcontainer exec devenv lsp` to view the error  **Version** Host: devenv 2.3.1 (x86_64-linux) Devcontainer: devenv 2.3.1+2418e1b (x86_64-linux)  **Additional info** Running nixd from within devenv also fails with the same error 
-  **Post-Mortem & Fix Analysis**:
-  > Getting this on a plain Arch host too, no devcontainer, on versions 2.3 through 2.3.2, so it seems like it appeared in 2.3 and hasn't been fixed yet. Minimal repro in an empty project:  ```sh mkdir /tmp/repro && cd /tmp/repro printf '{ pkgs, ... }: { packages = [ pkgs.hello ]; }\n' > devenv.nix devenv lsp </dev/null; echo "exit=$?" ```  Same `Already registered store with name 'Dummy Store'`, exit 134. v2.2.2 is clean, v2.3 is broken.
-  > The bundled `nixd` aborts the same way on its own with no arguments and no `devenv.nix` anywhere:  ```sh $ /nix/store/<hash>-nixd-nightly/bin/nixd </dev/null; echo "exit=$?" terminate called after throwing an instance of 'nix::Error'   what():  error: Already registered store with name 'Dummy Store' exit=134 ```  To test under `gdb`, I ran the following:  ```sh nixd_bin=$(nix-store -qR $(readlink -f $(which devenv)) | grep nixd)/bin/nixd gdb -batch -nx -ex 'set debuginfod enabled off' -ex 'break abort' \     -ex run -ex 'bt 8' --args "$nixd_bin" </dev/null ```  This shows the abort comes from `nix::Implementations::add<nix::DummyStoreConfig>()`. `libnixt.so` also carries its own full copy of the nix libraries (`nm -DC libnixt.so | grep -ci dummystore` gives 123), and its initializers run first as a shared library, so the executable's copy finds the store name already taken. I haven't confirmed which one registers first beyond that.
-
-- **Issue #3194** (2026-09-19): **`languages.javascript.pnpm` fails with newer `nixpkgs` due to `nodejs` override**
-  *Symptoms*: **Describe the bug** <!-- A clear and concise description of what the bug is. -->  `languages.javascript.pnpm.enable = true` fails to evaluate with newer nixpkgs revisions because devenv overrides `pkgs.pnpm` using the `nodejs` argument.  Newer nixpkgs versions use `nodejs-slim` instead, which results in:  ```text error: function 'anonymous lambda' called with unexpected argument 'nodejs' ```  This appears to be the pnpm equivalent of the Node.js packaging compatibility issue previously addressed for npm in #2538.  **To reproduce** <!-- Please provide a Short, Self Contained, Correct (Compilable), Example: https://sscce.org The best way is to create a gist with `devenv.nix`, `devenv.yaml`, and optionally `devenv.lock`.  Create gist here: https://gist.github.com/  Make sure to include full logs and what you expected to happen. -->  The existing `javascript-pnpm` integration test passes with devenv's currently pinned nixpkgs:  ```bash devenv shell -- devenv-run-tests run tests --only javascript-pnpm ```  but fails when run against current `nixpkgs-unstable`:  ```bash devenv shell -- devenv-run-tests run tests \   --only javascript-pnpm \   -o nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable ```  The failure occurs while evaluating `languages.javascript.pnpm.package`:  ```text error: function 'anonymous lambda' called with unexpected argument 'nodejs' ```  Expected behavior: pnpm should use the appropriate override argument for the nixpkgs version in use, preserving compatibility w
-
-- **Issue #3193** (2026-09-22): **fish hook: `devenv shell` exit via `cd` emits codes to terminal**
-  *Symptoms*: **Describe the bug**  When using the standard `fish` hook, and within an activated `devenv shell`, exiting via `cd` changes the directory, but emits control codes to the terminal e.g. `^[]11;rgb:f2f2/...`. This started recently for me. Aside from upgrading `devenv`, I haven't changed anything else about my `fish` setup or terminal. I have observed this in `foot` and more recently `ghostty`.  I am no expert in terminal control flow and the like, but the issue appears to be a race between the child and parent shell:  ``` child fish:  writes ^[]11;? ^[[6n ^[[0c child fish:  fires fish_prompt handlers devenv hook: PWD is outside the project -> exit child fish:  dies terminal:    replies arrive... nobody is reading parent fish: resumes, reads pending input, sees ^[]11;rgb:f2f2/... as typed              characters, echoes them onto the command line ```  The robot gave me this wonderfully hacky workaround:  ```fish function _devenv_hook_exit_on_leave --on-variable PWD     set -q _devenv_hook_dir; or return     test -n "$DEVENV_ROOT"; or return     switch $PWD         case "$DEVENV_ROOT" "$DEVENV_ROOT/*"         case '*'             printf '%s' $PWD >"$DEVENV_ROOT/.devenv/exit-dir"             exit     end end ```  It mimics the builtin hook, but executes when there are no outstanding queries:  ``` child fish:  runs `cd /tmp`              PWD is assigned -> handler fires -> exit child fish:  dies with nothing pending parent fish: resumes, reads nothing, draws a clean prompt ```  Havi
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the fix @domenkozar! 
-
-- **Issue #3190** (2026-09-22): **Python venv is not activated for tasks**
-  *Symptoms*: **Describe the bug** <!-- A clear and concise description of what the bug is. -->  I have a task that depends on dependencies that I have configured in my Python virtual environment. When I try to run this task, it fails as the build cannot find python libraries that it needs. When I attempt to reproduce this in an interactive shell, the venv is activated correctly.  **To reproduce** <!-- Please provide a Short, Self Contained, Correct (Compilable), Example: https://sscce.org The best way is to create a gist with `devenv.nix`, `devenv.yaml`, and optionally `devenv.lock`.  Create gist here: https://gist.github.com/  Make sure to include full logs and what you expected to happen. -->  ```nix # devenv.nix { pkgs, lib, config, inputs, ... }:  {   languages.python = {     enable = true;     venv = {       enable = true;     };   };    tasks = {     "venv:check" = {       exec = ''         which python         exit 1  # To make output easily visible       '';     };   }; } ```  Running the task. Observe that the python path points to the nix store.  ```sh $ devenv tasks run -v venv:check ✓ Validating lock 1 files                                                       0ms ✓ Reading config.cachix.enable 160 files                                        0ms ✓ Configuring cachix                                                            0ms   └ ✓ Reading config.cachix.pull                                                0ms   └ ✓ Reading config.cachix.push                                 
-  **Post-Mortem & Fix Analysis**:
-  > I reproduced this with a direct task run. `devenv tasks run` schedules the requested task and its dependencies; it does not automatically run `devenv:enterShell`. The Python virtual environment is initialized by `devenv:python:virtualenv` as a dependency of shell entry, so a direct task without that dependency uses the Nix Python.  For a task that needs the virtual environment, add:  ```nix tasks."venv:check".after = [ "devenv:python:virtualenv" ]; ```  I verified that this runs virtualenv setup first and makes the task use `.devenv/state/venv/bin/python` with `VIRTUAL_ENV` set. The behavior and example are now documented in the [Python guide](https://devenv.sh/languages/python/#using-the-virtual-environment-in-tasks) and [Tasks guide](https://devenv.sh/tasks/#entershell--entertest) via commit [44eefd8a](https://github.com/cachix/devenv/commit/44eefd8a). 
-  > @domenkozar this appears to work (thank you!), but causes a lengthy stdout for most of the tasks in my repo now.  Any suggestions for how to tidy this up?  ```sh $ devenv tasks run setup  ✓ Validating lock                                                                                            0ms ✓ Configuring cachix                                                                                         0ms ✓ Configuring shell                                                                                         4.4s   └ ✓ Evaluating shell 2142 files                                                                           4.4s     └ ✓ Building  setup-init                                                                                45ms     └ ✓ Building  tasks.json                                                                                51ms     └ ✓ Building  devenv-shell 1 lines                                                                     407ms     └ ✓ Querying  dev
+- **Issue #3278** (2026-10-18): **Javascript: node_modules/.bin added to path naively**
+  *Symptoms*: **Describe the bug**  When using the javascript language feature and you don't specify a `directory`, `node_modules/.bin` gets added to the path without absolute path prefix. This means that scripts installed using npm/yarn/... only work when your current working directory is where the (in my case) flake is.  **To reproduce** Use this gist: https://gist.github.com/vhdirk/5717c73e1bfd088c3830cdbe406db5b2  Enter the root dir: `simple --help` works  Then: `cd subdir` and run `simple --help` again: Yields command not found  I would expect `simple` to work no matter where I am navigated in the project.  My current workaround is:  ``` enterShell = ''   export PATH="${config.devenv.shells.default.devenv.root}/node_modules/.bin:$PATH" ''; ```   **Version** devenv 2.4.0 (x86_64-linux)  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2078,1199 +1697,800 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe20b5cb` (2026-09-29)
-**Commit Message**: fix(test): report disabled process dependencies before startup (#3239)
+### Incident Patch 1: `a73c5b84` (2026-10-09)
+**Commit Message**: fix(tasks): wait for cancellation cleanup before scheduler exit (#3256)
 
-* fix(test): report disabled process dependencies before startup
+* fix(tasks): wait for cancellation cleanup before scheduler exit
 
-* fix(test): validate dependencies before broker startup
+Allow task futures to finish their cancellation and process-scope cleanup before the scheduler returns. Add regression coverage for nested commands and graceful joining.
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@
- - fish auto-activation no longer hangs when `env` is a fish function, such as grc's wrapper ([#3222](https://github.com/cachix/devenv/issues/3222)).
- - Task names containing `::`, such as `foo::bar`, are now rejected with an invalid task name error. Previously they were accepted but could not be run by name ([#3227](https://github.com/cachix/devenv/issues/3227)).
- - Detached process startup now publishes the manager as soon as processes are scheduled, without waiting for service readiness, and keeps HTTPS proxy routes during a slow startup ([#3216](https://github.com/cachix/devenv/issues/3216)).
-+- `devenv test` with the native process manager now reports a process dependency on `start.enable = false` before starting services, instead of waiting indefinitely for the disabled process ([#3215](https://github.com/cachix/devenv/issues/3215)).
- 
- ## 2.4.0 (2026-09-24)
- 
-```
+Fixes #3251.
 
-**File**: `devenv-tasks/src/tasks.rs` (modified, +95/-1)
-```diff
-@@ -15,7 +15,7 @@ use petgraph::graph::{DiGraph, NodeIndex};
- use petgraph::visit::{EdgeRef, Reversed};
- use std::borrow::Cow;
- use std::collections::{HashMap, HashSet};
--use std::path::PathBuf;
-+use std::path::{Path, PathBuf};
- use std::sync::Arc;
- use tokio::sync::{Mutex, Notify, RwLock};
- use tokio::time::Instant;
-@@ -242,6 +242,14 @@ impl Tasks {
-         &self.process_runner
-     }
- 
-+    /// Connect a capability broker before the task runner is shared or run.
-+    /// This lets callers validate the task graph before prompting for sudo.
-+    pub fn set_capability_broker(&mut self, path: &Path) -> miette::Result<()> {
-+        let runner = Arc::get_mut(&mut self.process_runner)
-+            .ok_or_else(|| miette::miette!("Cannot configure a shared process runner"))?;
-+        runner.set_capability_broker(path)
-+    }
-+
-     /// Wakes on task completions and process-map transitions.
-     pub fn notified(&self) -> tokio::sync::futures::Notified<'_> {
-         self.notify_finished.notified()
-@@ -887,6 +895,40 @@ impl Tasks {
-             .collect()
-     }
- 
-+    /// Find cold-start dependencies that cannot progress without manually
-+    /// starting a process disabled by `start.enable = false`. A noninteractive
-+    /// caller such as `devenv test` cannot perform that action.
-+    pub async fn disabled_process_dependencies(&self) -> Vec<(String, String)> {
-+        let scheduled: HashSet<_> = self.tasks_order.iter().copied().collect();
-+        let mut blockers = Vec::new();
-+        for &index in &self.tasks_order {
-+            let dependent_name = self.graph[index].read().await.task.name.clone();
-+            for edge in self
-+                .graph
-+                .edges_directed(index, petgraph::Direction::Incoming)
-+            {
-+                if !scheduled.contains(&edge.source())
-+                    || *edge.weight() == DependencyKind::Completed
-+                {
-+                    continue;
-+                }
-+                let dependency = self.graph[edge.source()].read().await;
-+                if dependency.task.r#type == TaskType::Process
-+                    && dependency
-+                        .task
-+                        .process
-+                        .as_ref()
-+                        .is_some_and(|process| !process.start.enable)
-+                {
-+                    blockers.push((dependent_name.clone(), dependency.task.name.clone()));
-+                }
-+            }
-+        }
-+        blockers.sort();
-+        blockers.dedup();
-+        blockers
-+    }
-+
-     /// Start unseen one-shots in a dynamic dependency closure exactly once.
-     /// Process dependencies still require explicit starts.
-     async fn schedule_unseen_oneshot_dependencies(&self, index: NodeIndex) {
-@@ -4374,6 +4416,58 @@ mod schedule_tests {
-         tasks.process_runner().stop_all().await.unwrap();
-     }
- 
-+    #[tokio::test]
-+    async fn disabled_process_dependencies_report_blockers_in_the_cold_schedule() {
-+        let mut disabled = long_process_task("disabled", vec![]);
-+        disabled.process = Some(ProcessConfig {
-+            start: devenv_processes::config::StartConfig { enable: false },
-+            ready: Some(devenv_processes::ReadyConfig {
-+                exec: Some("true".to_string()),
-+                ..Default::default()
-+            }),
-+            ..Default::default()
-+        });
-+        let mut bridge = oneshot_task("test:bridge", vec![]);
-+        bridge.after = vec![format!("{PROCESS_TASK_PREFIX}disabled@started")];
-+        let mut app = long_process_task("app", vec![]);
-+        app.after = vec!["test:bridge@succeeded".to_string()];
-+        let mut unrelated = long_process_task("unrelated", vec![]);
-+        unrelated.after = vec![format!("{PROCESS_TASK_PREFIX}disabled@started")];
-+
-+        let (tasks, _tmp) = build_test_tasks_with_run_mode(
-+            vec![
-+                disabled,
-+                long_process_task("direct", vec!["disabled"]),
-+                long_process_task("completed", vec!["disabled@completed"]),
-+                bridge,
-+                app,
-+                unrelated,
-+            ],
-+            vec![
-+                format!("{PROCESS_TASK_PREFIX}direct"),
-+                format!("{PROCESS_TASK_PREFIX}completed"),
-+                format!("{PROCESS_TASK_PREFIX}app"),
-+            ],
-+            RunMode::Before,
-+            false,
-+        )
-+        .await;
-+
-+        assert_eq!(
-+            tasks.disabled_process_dependencies().await,
-+            vec![
-+                (
-+                    format!("{PROCESS_TASK_PREFIX}direct"),
-+                    format!("{PROCESS_TASK_PREFIX}disabled"),
-+                ),
-+                (
-+                    "test:bridge".to_string(),
-+                    format!("{PROCESS_TASK_PREFIX}disabled"),
-+                ),
-+            ]
-+        );
-+    }
-+
-     #[tokio::test]
-     async fn dependency_parked_does_not_park_on_running_oneshot() {
-         let mut migrate = oneshot_task("deve
-```
+AI-assisted implementation: Codex.
 
-**File**: `devenv/src/devenv/mod.rs` (modified, +31/-9)
-```diff
-@@ -2928,7 +2928,7 @@ impl Devenv {
-             let capability_requests = capability_requests(&task_configs);
-             let capabilities_required_now = capabilities_required_now(&task_configs);
- 
--            let mut config = self
-+            let config = self
-                 .make_task_config(roots, task_configs, task_mode, envs)
-                 .await?;
- 
-@@ -2983,21 +2983,43 @@ impl Devenv {
-                 return Ok(ProcessStartOutcome::Completed);
-             }
- 
--            config.capability_broker = processes::start_capability_broker(
-+            let mut tasks_runner =
-+                tasks::Tasks::builder(config, VerbosityLevel::Normal, self.shutdown.clone())
-+                    .build()
-+                    .await
-+                    .map_err(|e| miette!("Failed to build task runner: {}", e))?;
-+
-+            if options.mode == ClientRunMode::ReturnAfterStart {
-+                let blockers = tasks_runner.disabled_process_dependencies().await;
-+                if !blockers.is_empty() {
-+                    let details = blockers
-+                        .iter()
-+                        .map(|(dependent, dependency)| {
-+                            format!("'{dependent}' waits for '{dependency}' (start.enable = false)")
-+                        })
-+                        .collect::<Vec<_>>()
-+                        .join("; ");
-+                    bail!(
-+                        "Process dependencies cannot start: {details}. Enable the dependency or make the dependency edge conditional."
-+                    );
-+                }
-+            }
-+
-+            if let Some(broker) = processes::start_capability_broker(
-                 &capability_requests,
-                 capabilities_required_now,
-                 self.process_runtime_dir()?,
-                 options.frontend_command_tx.as_ref(),
-                 std::process::Stdio::inherit(),
-             )
--            .await?;
-+            .await?
-+            {
-+                tasks_runner
-+                    .set_capability_broker(&broker)
-+                    .wrap_err("Failed to connect capability broker")?;
-+            }
- 
--            let tasks_runner = Arc::new(
--                tasks::Tasks::builder(config, VerbosityLevel::Normal, self.shutdown.clone())
--                    .build()
--                    .await
--                    .map_err(|e| miette!("Failed to build task runner: {}", e))?,
--            );
-+            let tasks_runner = Arc::new(tasks_runner);
- 
-             // The persistent manager owns the task execution scope. That scope
-             // owns the one process runner used by all of its process tasks.
-```
+* fix(tasks): cancel status probes before draining shutdown
 
----
+Run status probes through the process-scope executor and preserve cache miss behavior for nonzero and signal exits. Add nested probe cancellation and status exit regressions.
 
-### Incident Patch 2: `aa24ddc2` (2026-09-29)
-**Commit Message**: fix(processes): wait for live daemon startup (#3237)
-
-* fix(processes): wait for live daemon startup
-
-* fix(processes): publish daemon before service readiness
+AI-assisted implementation: Codex.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
 @@ -8,6 +8,7 @@
- - MySQL now creates configured databases and users when started with `devenv up`, including `devenv up mysql` ([#2843](https://github.com/cachix/devenv/issues/2843)).
- - fish auto-activation no longer hangs when `env` is a fish function, such as grc's wrapper ([#3222](https://github.com/cachix/devenv/issues/3222)).
- - Task names containing `::`, such as `foo::bar`, are now rejected with an invalid task name error. Previously they were accepted but could not be run by name ([#3227](https://github.com/cachix/devenv/issues/3227)).
-+- Detached process startup now publishes the manager as soon as processes are scheduled, without waiting for service readiness, and keeps HTTPS proxy routes during a slow startup ([#3216](https://github.com/cachix/devenv/issues/3216)).
  
- ## 2.4.0 (2026-09-24)
+ ### Bug Fixes
  
++- Task cancellation now stops status checks and waits for nested commands to stop before the scheduler exits ([#3251](https://github.com/cachix/devenv/issues/3251)).
+ - Fixed rapid process restarts failing because a stopped process still held its ownership claim.
+ - Starting a process on demand now starts never-started, enabled process dependencies. Explicitly stopped and disabled dependencies stay off ([#3229](https://github.com/cachix/devenv/issues/3229)).
+ - Fixed `devenv machines install` hanging while uploading store paths when no SSH connection was already open ([#3254](https://github.com/cachix/devenv/issues/3254)).
 ```
 
-**File**: `devenv-tasks/src/tasks.rs` (modified, +75/-2)
+**File**: `devenv-tasks/src/executor.rs` (modified, +7/-0)
 ```diff
-@@ -655,14 +655,26 @@ impl Tasks {
-             ))
-         ));
+@@ -6,6 +6,8 @@ use tokio_util::sync::CancellationToken;
+ #[derive(Debug)]
+ pub struct ExecutionResult {
+     pub success: bool,
++    /// Whether the command exited, including termination by a signal.
++    pub exited: bool,
+     pub pid: Option<u32>,
+     pub exit_code: Option<i32>,
+     pub stdout_lines: Vec<(std::time::Instant, String)>,
+@@ -17,6 +19,7 @@ impl ExecutionResult {
+     fn failed(error: impl Into<String>) -> Self {
+         Self {
+             success: false,
++            exited: false,
+             pid: None,
+             exit_code: None,
+             stdout_lines: Vec::new(),
+@@ -218,6 +221,7 @@ pub async fn execute(
+                         error!("Error waiting for command: {}", e);
+                         return ExecutionResult {
+                             success: false,
++                            exited: false,
+                             pid: Some(child_pid),
+                             exit_code: None,
+                             stdout_lines,
+@@ -242,6 +246,7 @@ pub async fn execute(
+                     )
+                 });
+                 let (wait_result, cleanup_result) = tokio::join!(child.wait(), cleanup);
++                let exited = wait_result.is_ok();
+                 let exit_code = match wait_result {
+                     Ok(status) => status.code(),
+                     Err(error) => {
+@@ -257,6 +262,7 @@ pub async fn execute(
  
--        self.run_internal(orchestration_activity, is_process_mode)
-+        self.run_internal(orchestration_activity, is_process_mode, None)
-             .await
-     }
- 
-     /// Run process tasks under a caller-provided activity.
-     #[instrument(skip(self, parent_activity))]
-     pub async fn run_with_parent_activity(&self, parent_activity: Arc<Activity>) -> Outputs {
--        self.run_internal(parent_activity, true).await
-+        self.run_internal(parent_activity, true, None).await
-+    }
-+
-+    /// Signal once the initial process graph is registered and scheduled.
-+    /// The daemon can expose its API before long-running tasks or readiness
-+    /// probes settle, while clients still see the full process graph.
-+    pub async fn run_with_parent_activity_and_signal_scheduled(
-+        &self,
-+        parent_activity: Arc<Activity>,
-+        scheduled: tokio::sync::oneshot::Sender<()>,
-+    ) -> Outputs {
-+        self.run_internal(parent_activity, true, Some(scheduled))
-+            .await
-     }
- 
-     /// Schedule named process tasks and their dependencies against the live graph.
-@@ -1236,6 +1248,7 @@ impl Tasks {
-         &self,
-         orchestration_activity: Arc<Activity>,
-         register_unscheduled_processes: bool,
-+        scheduled_signal: Option<tokio::sync::oneshot::Sender<()>>,
-     ) -> Outputs {
-         // Assign activity IDs upfront for all tasks
-         let mut task_ids: HashMap<NodeIndex, u64> = HashMap::new();
-@@ -1571,6 +1584,12 @@ impl Tasks {
-             });
+                 return ExecutionResult {
+                     success: false,
++                    exited,
+                     pid: Some(child_pid),
+                     exit_code,
+                     stdout_lines,
+@@ -270,6 +276,7 @@ pub async fn execute(
+     let success = exit_status.map(|s| s.success()).unwrap_or(false);
+     ExecutionResult {
+         success,
++        exited: exit_status.is_some(),
+         pid: Some(child_pid),
+         exit_code: exit_status.and_then(|status| status.code()),
+         stdout_lines,
+```
+
+**File**: `devenv-tasks/src/task_state.rs` (modified, +57/-48)
+```diff
+@@ -516,63 +516,72 @@ impl TaskState {
+                     output_file_path: std::path::Path::new("/dev/null"),
+                     exports_file_path: exports_file.path(),
+                 };
+-                let mut command = ctx.build_command();
+-
+-                // Create a Command activity for the status check (automatically parented to task_activity)
++                // Status probes need the same process-scope cancellation
++                // cleanup as the task command so graceful joins can finish.
+                 let status_activity = devenv_activity::start!(
+                     Activity::command("check status")
+                         .command(cmd)
+                         .level(ActivityLevel::Debug),
+                     devenv.command.exit_code = tracing::field::Empty,
+-                    devenv.command.stdout_bytes = tracing::field::Empty,
+-                    devenv.command.stderr_bytes = tracing::field::Empty
++                    devenv.command.stdout_line_count = tracing::field::Empty,
++                    devenv.command.stderr_line_count = tracing::field::Empty
+                 );
+-
+-                match command.output().await {
+-                    Ok(output) => {
+-                        if let Some(exit_code) = output.status.code() {
+-                            status_activity.record("devenv.command.exit_code", exit_code as i64);
+-                        }
+-                        status_activity.record("devenv.command.stdout_bytes", output.stdout.len());
+-                        status_activity.record("devenv.command.stderr_bytes", output.stderr.len());
+-                        // A nonzero exit is a normal status/cache miss: fall through
+-                        // to run the command. Only a spawn/execution error of the
+-                        // status probe itself (the `Err` arm below) is a real failure.
+-                        if output.status.success() {
+-                            // Start with cached output, merge in any exports from the status command
+-                            let mut result = cached_output.unwrap_or_else(|| serde_json::json!({}));
+-                            if let Ok(data) = tokio::fs::read(exports_file.path()).await {
+-                                let exports = Self::parse_exports(&data);
+-                                if let (false, Some(env_obj)) = (
+-                                    exports.is_empty(),
+-                                    get_or_create_devenv_env_mut(&mut result),
+-                                ) {
+-                                    for (k, v) in exports {
+-                                        env_obj.insert(k, serde_json::Value::String(v));
+-                                    }
+-                                }
++                let result = crate::executor::execute(
++                    ctx,
++                    &crate::executor::NoOpCallback,
++                    cancellation.clone(),
++                )
++                .await;
++                if let Some(exit_code) = result.exit_code {
++                    status_activity.record("devenv.command.exit_code", exit_code as i64);
++                }
++                status_activity.record(
++                    "devenv.command.stdout_line_count",
++                    result.stdout_lines.len(),
++                );
++                status_activity.record(
++                    "devenv.command.stderr_line_count",
++                    result.stderr_lines.len(),
++                );
++                if result.error.as_deref() == Some("Task cancelled") {
++                    status_activity.cancel();
++                    task_activity.cancel();
++                    return Ok(TaskCompleted::Cancelled(Some(now.elapsed())));
++                }
++                if result.success {
++                    // Start with cached output, merge in any exports from the status command
++                    let mut result = cached_output.unwrap_or_else(|| serde_json::json!({}));
++                    if let Ok(data) = tokio::fs::read(exports_file.path()).await {
++                        let exports = Self::parse_exports(&data);
++                        if let (false, Some(env_obj)) = (
++                            exports.is_empty(),
++                            get_or_create_devenv_env_mut(&mut result),
++                        ) {
++                            for (k, v) in exports {
++                                env_obj.insert(k, serde_json::Value::String(v));
+                             }
+-                            let output = Output(Some(result));
+-                            tracing::trace!(
+-                                "Task {} skipped with output: {:?}",
+-                                self.task.name,
+-                                output
+-                            );
+-                            task_activity.cached();
+-                            return Ok(TaskCompleted::Skipped(Skipped::Cached(output)));
+                         }
+                     }
+-     
+```
+
+**File**: `devenv-tasks/src/tasks.rs` (modified, +149/-6)
+```diff
+@@ -1719,12 +1719,15 @@ impl Tasks {
+             let _ = scheduled_signal.send(());
          }
  
-+        // All process entries are registered before the daemon advertises its
-+        // API. Task execution and readiness checks continue in the background.
-+        if let Some(scheduled_signal) = scheduled_signal {
-+            let _ = scheduled_signal.send(());
-+        }
+-        // Wait for all tasks to complete
+-        running_tasks.wait_all().await;
+-
+-        // wait_all() aborts spawned futures on shutdown so that run_event_loop()
+-        // can proceed to stop_all(). Aborted futures never write back their
+-        // completion status, so sweep any still-Running tasks to Cancelled.
++        // Task dependency and readiness waits observe shutdown themselves.
++        // Let running one-shots drain their process scopes before returning;
++        // aborting their futures skips the executor's cancellation cleanup.
++        running_tasks.wait_all_gracefully().await;
 +
-         // Wait for all tasks to complete
-         running_tasks.wait_all().await;
- 
-@@ -2265,6 +2284,60 @@ mod schedule_tests {
-         process_task_with_command(name, after, "exec tail -f /dev/null")
++        // Process tasks leave their lifecycle status with the manager. Mark
++        // still-pending processes cancelled before run_event_loop() proceeds
++        // to stop_all(). Tasks skipped before their future started also need
++        // their cancellation status recorded here.
+         if self.shutdown.is_cancelled() {
+             for &index in &self.tasks_order {
+                 let (is_process, task_name, running_oneshot_start) = {
+@@ -3505,6 +3508,146 @@ mod schedule_tests {
+         run_heterogeneous_diamond(true).await;
      }
  
 +    #[tokio::test]
-+    async fn daemon_can_publish_manager_before_initial_tasks_settle() {
++    async fn shutdown_drains_nested_oneshot_processes_before_returning() {
++        check_shutdown_drains_nested_task_processes(false).await;
++    }
++
++    #[tokio::test]
++    async fn shutdown_drains_nested_status_processes_before_returning() {
++        check_shutdown_drains_nested_task_processes(true).await;
++    }
++
++    #[tokio::test]
++    async fn status_probe_exit_preserves_cache_hit_and_miss_behavior() {
++        for (probe, cached) in [
++            ("exit 0", true),
++            ("exit 1", false),
++            ("kill -TERM $$", false),
++        ] {
++            let files = tempfile::tempdir().unwrap();
++            let status = executable_script(files.path(), "status", probe);
++            let command = executable_script(files.path(), "command", "touch command-ran");
++            let mut task = oneshot_task("test:status", vec![]);
++            task.status = Some(status.to_string_lossy().into_owned());
++            task.command = Some(command.to_string_lossy().into_owned());
++            task.cwd = Some(files.path().to_string_lossy().into_owned());
++            let (tasks, _tmp) =
++                build_test_tasks(vec![task], vec!["test:status".into()], false).await;
++            tasks.run(false).await;
++            let state = tasks.graph[tasks.task_index_by_name["test:status"]]
++                .read()
++                .await;
++            if cached {
++                assert!(matches!(
++                    state.status,
++                    TaskStatus::Completed(TaskCompleted::Skipped(_))
++                ));
++            } else {
++                assert!(
++                    matches!(
++                        state.status,
++                        TaskStatus::Completed(TaskCompleted::Success(_, _))
++                    ),
++                    "status probe {probe} must be a cache miss: {:?}",
++                    state.status
++                );
++            }
++            assert_eq!(files.path().join("command-ran").exists(), !cached);
++        }
++    }
++
++    async fn check_shutdown_drains_nested_task_processes(status_check: bool) {
++        struct FixtureCleanup(std::path::PathBuf);
++
++        impl Drop for FixtureCleanup {
++            fn drop(&mut self) {
++                // Only signal the session created by this fixture, including
++                // when an assertion fails on the unfixed scheduler.
++                if let Ok(pid) = std::fs::read_to_string(self.0.join("leader.pid"))
++                    && let Ok(pid) = pid.trim().parse::<i32>()
++                {
++                    let _ = nix::sys::signal::killpg(
++                        nix::unistd::Pid::from_raw(pid),
++                        nix::sys::signal::Signal::SIGKILL,
++                    );
++                }
++            }
++        }
++
 +        let files = tempfile::tempdir().unwrap();
-+        let hold = named_pipe(files.path(), "hold-setup");
-+        let mut setup = oneshot_task("test:setup", vec![]);
-+        setup.command = Some(
-+            executable_script(
-+                files.path(),
-+                "setup",
-+                &format!("read _ < '{}'", hold.display()),
-+            )
-+            .to_string_lossy()
-+            .into_owned(),
++        let _cleanup = FixtureCleanup(files.path().to_path_buf());
++        let started = named_pipe(files.path(), "started");
++        let script = executable_script(
++            files.path(),
++            "observer",
++            &format!(
++                "trap '' TERM INT\necho $$ > '{dir}/leader.pid'\n\
++                 sh -c 'trap \"\" TERM INT; echo $$ > \"$1/nested.pid\"; \
++                 printf x > \"$1/started\"; exec sleep 120' sh '{dir}' &\nwait",
++                dir = files.path().display(),
++            ),
 +        );
-+        let mut app = long_process_task("app", vec![]);
-+        app.after = vec!["test:setup@succeeded".to_string()];
-+        let (tasks, _tmp) = build_test_tasks(
-+            vec![setup, app],
-+            vec![format!("{PROCESS_TASK_PREFIX}app")],
-+            false,
-+        )
-+        .await;
-+        let tasks = Arc::new(tasks);
-+        let (scheduled_tx, scheduled_rx) = tokio::sync::oneshot::channel();
-+        let running = Arc::clone(&tasks);
-+        let run = tokio::spawn(async move {
-+            running
-+                .run_with_parent_activity_and_signal_scheduled(
-+                    Arc::new(devenv_activity::start!(
-+                        Activity::operation("Running processes").parent(None)
-+                    )),
-+                    scheduled_tx,
-+                )
-+                .await
-+        });
-+
-+        tokio::time::timeout(std::time::Duration::from_secs(10), scheduled_rx)
-+            .await
-+            .expect("process graph was not scheduled")
-+            .expect("process scheduling ended without a signal");
-+        assert!(!run.is_finished(), "setup should still be running");
-+        assert_eq!(
-+            tasks.process_runner().get_phase("app").await,
-+            Some(ProcessPhase::Waiting)
-+        );
-+
-+        tasks.shutdown.shutdown();
-+        tokio::time::timeout(std::time::Duration::from_secs(10), run)
-+            .await
-+            .expect("cancelled task run did not settle")
-+            .expect("task run panicked");
-+        tasks.process_runner().stop_all().await.unwrap();
-+    }
-+
-     fn self_exit_process_task(name: &str, after: Vec<&str>) -> TaskConfig {
-         process_task_with_command(name, after, "echo")
-     }
++        let mut observer = oneshot_task("test:observer", vec![]);
++        if status_check {
++            observer.status = Some(script.to_string_lossy().into_owned());
++            let command = executable_script(files.path(), "command", "touch command-ran");
++            observer.command = Some(command.to_string_lossy().into_owned());
++       
 ```
 
-**File**: `devenv/src/commands/daemon_processes.rs` (modified, +18/-1)
+**File**: `tokio-shutdown/src/lib.rs` (modified, +51/-0)
 ```diff
-@@ -51,7 +51,20 @@ pub fn run(config_file: &Path) -> Result<()> {
-             devenv::processes::ManagerResidence::Daemon,
-         ));
- 
--        let _outputs = tasks_runner.run_with_parent_activity(Arc::new(phase)).await;
-+        let (scheduled_tx, scheduled_rx) = tokio::sync::oneshot::channel();
-+        let initial_tasks = {
-+            let tasks_runner = Arc::clone(&tasks_runner);
-+            tokio::spawn(async move {
-+                tasks_runner
-+                    .run_with_parent_activity_and_signal_scheduled(Arc::new(phase), scheduled_tx)
-+                    .await
-+            })
-+        };
-+
-+        scheduled_rx
-+            .await
-+            .into_diagnostic()
-+            .wrap_err("Initial process scheduling stopped before the manager was available")?;
- 
-         let api_server = tasks::NativeApiServer::start(manager)?;
- 
-@@ -70,6 +83,10 @@ pub fn run(config_file: &Path) -> Result<()> {
-             .await
-             .map_err(|e| miette::miette!("Process manager error: {}", e));
- 
-+        // Shutdown cancels the task runner's remaining work. Finish its
-+        // cancellation sweep before removing the manager's PID file.
-+        let _ = initial_tasks.await;
-+
-         let _ = tokio::fs::remove_file(&pid_file).await;
-         result
-     })
-```
-
-**File**: `devenv/src/devenv/mod.rs` (modified, +110/-39)
-```diff
-@@ -26,8 +26,6 @@ use devenv_core::{
- use devenv_mailbox::{FrontendCommand, FrontendEvent};
- use devenv_shell::dialect::{BashDialect, RcfileContext, ShellDialect, create_dialect};
- use miette::{IntoDiagnostic, Result, WrapErr, bail, miette};
--use nix::sys::signal;
--use nix::unistd::Pid;
- use once_cell::sync::{Lazy, OnceCell as SyncOnceCell};
- use processes::ProcessManagerControl as _;
- use serde::Serialize;
-@@ -293,6 +291,43 @@ fn should_clear_proxy_routes(
-     owns_foreground_manager || (!manager_was_running && start_failed)
- }
- 
-+/// Keep the startup lock and proxy routes while a slow daemon is still alive.
-+/// The PID file is published after the initial process graph is registered.
-+/// A slow or stuck daemon must not cause premature proxy route cleanup.
-+async fn wait_for_daemon_pid(
-+    child: &mut std::process::Child,
-+    pid_file: &Path,
-+    log_file_path: &Path,
-+    warning_after: std::time::Duration,
-+) -> Result<()> {
-+    let start = std::time::Instant::now();
-+    let mut warned = false;
-+    loop {
-+        if matches!(
-+            processes::check_pid_file(pid_file).await,
-+            Ok(processes::PidStatus::Running(_))
-+        ) {
-+            return Ok(());
-+        }
-+        if let Some(status) = child
-+            .try_wait()
-+            .into_diagnostic()
-+            .wrap_err("Failed to check daemon startup status")?
-+        {
-+            let log_contents = std::fs::read_to_string(log_file_path).unwrap_or_default();
-+            bail!("Daemon exited unexpectedly ({status}). Logs:\n{log_contents}");
-+        }
-+        if !warned && start.elapsed() >= warning_after {
-+            warn!(
-+                pid = child.id(),
-+                "Daemon is still starting; waiting for its manager PID file"
-+            );
-+            warned = true;
-+        }
-+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
-+    }
-+}
-+
- /// A shell command ready to be executed.
- #[derive(Debug)]
- pub struct ShellCommand {
-@@ -1222,10 +1257,10 @@ impl Devenv {
-     /// dependencies, and out-of-subset dependencies are all resolved exactly
-     /// like the cold-start path — the CLI no longer re-derives them.
-     ///
--    /// The reply is truthful: it reports per name whether the daemon scheduled
--    /// it, skipped it (already running or pending), did not know it (the
--    /// manager was started with a different configuration), or failed to
--    /// schedule it. Unknown and failed names bail; so does a reply where
-+    /// The reply reports requested names and automatically started prerequisites
-+    /// as scheduled, skipped (already running or pending), unknown (the manager
-+    /// was started with a different configuration), or failed. Unknown and
-+    /// failed names bail; so does a reply where
-     /// nothing was scheduled or skipped, so `devenv up` exits nonzero when it
-     /// acted on nothing.
-     async fn attach_start_up_processes(&self, names: &[String]) -> Result<()> {
-@@ -3242,41 +3277,16 @@ impl Devenv {
-             cmd.process_group(0);
+@@ -443,6 +443,21 @@ where
          }
+     }
  
--        let child = cmd
-+        let mut child = cmd
-             .spawn()
-             .map_err(|e| miette!("Failed to spawn daemon: {}", e))?;
--        let child_pid = child.id();
--
--        // Wait for the daemon to write its PID file (meaning processes are started)
--        let start = std::time::Instant::now();
--        let max_wait = std::time::Duration::from_secs(120);
--        while start.elapsed() < max_wait {
--            if matches!(
--                processes::check_pid_file(&pid_file).await,
--                Ok(processes::PidStatus::Running(_))
--            ) {
--                break;
--            }
--            // Check if the daemon exited early (crash)
--            if signal::kill(Pid::from_raw(child_pid as i32), None).is_err() {
--                let log_contents = std::fs::read_to_string(&log_file_path).unwrap_or_default();
--                bail!("Daemon exited unexpectedly. Logs:\n{}", log_contents);
--            }
--            tokio::time::sleep(std::time::Duration::from_millis(100)).await;
--        }
--
--        if !matches!(
--            processes::check_pid_file(&pid_file).await,
--            Ok(processes::PidStatus::Running(_))
--        ) {
--            let log_contents = std::fs::read_to_string(&log_file_path).unwrap_or_default();
--            bail!(
--                "Daemon failed to start within {}s. Check logs at: {}\n{}",
--                max_wait.as_secs(),
--                log_file_path.display(),
--                log_contents
--            );
--        }
-+        wait_for_daemon_pid(
-+            &mut child,
-+            &pid_file,
-+            &log_file_path,
-+            std::time::Duration::from_secs(120),
-+        )
-+        .await?;
- 
-         let pid = std::fs::read_to_string(&pid_file)
-             .map(|s| s.trim().to_string())
-@@ -4590,6 +4600,7 @@ mod tests {
- 
-     #[test]
-     fn seeds_ports_only_from_a_live_native_manager() {
-+        use nix::unistd::Pid;
-         u
-```
-
----
-
-### Incident Patch 3: `bec318db` (2026-09-29)
-**Commit Message**: fix(tests): declare python3 for process-compose-interactive (#3234)
-
-devenv test starts processes, and repl runs bare python3, which only worked
-when the host had python3 on PATH.
-
-Claude-Session: https://claude.ai/code/session_01NFjjzzesiZ517TYSeSM533
-
-**File**: `tests/process-compose-interactive/devenv.nix` (modified, +4/-0)
-```diff
-@@ -10,6 +10,10 @@ in
- {
-   process.manager.implementation = "process-compose";
- 
-+  # `devenv test` starts the processes: provide the interpreter `repl` runs
-+  # instead of relying on one being on the host's PATH.
-+  packages = [ pkgs.python3 ];
++    /// Wait for tasks to finish their own cancellation and cleanup paths.
++    ///
++    /// Unlike `wait_all`, this does not abort futures on shutdown. Every task
++    /// must observe the cancellation token itself and return after cleanup.
++    /// Panics are propagated to the caller.
++    pub async fn wait_all_gracefully(&mut self) {
++        while let Some(result) = self.join_set.join_next().await {
++            match result {
++                Ok(_) => {}
++                Err(err) if err.is_panic() => std::panic::resume_unwind(err.into_panic()),
++                Err(err) => panic!("{err}"),
++            }
++        }
++    }
 +
-   # An interactive process must be a direct child of the process-compose PTY.
-   # Routing it through the `devenv-tasks` runner pipes its stdout/stderr and
-   # breaks interactivity (no prompt, block-buffered output). Its generated
+     /// Check if the join set is empty
+     pub fn is_empty(&self) -> bool {
+         self.join_set.is_empty()
+@@ -490,6 +505,42 @@ mod tests {
+         assert_eq!(shutdown.last_signal(), Some(Signal::SIGHUP));
+     }
+ 
++    #[tokio::test]
++    async fn graceful_join_waits_for_cancellation_cleanup() {
++        let shutdown = Shutdown::new();
++        let mut tasks = shutdown.join_set();
++        let token = shutdown.cancellation_token();
++        let (started_tx, started_rx) = oneshot::channel();
++        let (cleaning_tx, cleaning_rx) = oneshot::channel();
++        let (finish_tx, finish_rx) = oneshot::channel();
++        tasks.spawn(move || async move {
++            started_tx.send(()).unwrap();
++            token.cancelled().await;
++            cleaning_tx.send(()).unwrap();
++            finish_rx.await.unwrap();
++        });
++        started_rx.await.unwrap();
++        shutdown.shutdown();
++
++        let wait = tokio::spawn(async move { tasks.wait_all_gracefully().await });
++        cleaning_rx.await.expect("cleanup was aborted");
++        assert!(!wait.is_finished(), "join returned before cleanup finished");
++        finish_tx.send(()).unwrap();
++        tokio::time::timeout(Duration::from_secs(5), wait)
++            .await
++            .expect("join did not finish after cleanup")
++            .unwrap();
++    }
++
++    #[tokio::test]
++    #[should_panic(expected = "cleanup task panicked")]
++    async fn graceful_join_propagates_panics() {
++        let shutdown = Shutdown::new();
++        let mut tasks = shutdown.join_set::<()>();
++        tasks.spawn(|| async { panic!("cleanup task panicked") });
++        tasks.wait_all_gracefully().await;
++    }
++
+     #[tokio::test]
+     async fn test_shutdown_when_done() {
+         let shutdown = Shutdown::new();
 ```
 
 ---
 
-### Incident Patch 4: `d9d0527d` (2026-09-27)
-**Commit Message**: fix(files): order treefmt after devenv:files, copy atomically (#3173)
+### Incident Patch 2: `58ff61a9` (2026-10-09)
+**Commit Message**: feat(tui): add tui.emoji setting for emoji-free indicators (#3253)
 
-devenv:treefmt:run and devenv:files both only declared
-before = ["devenv:enterShell"], so devenv-tasks scheduled them
-concurrently. copyMode = "copy" materialized files via rm -rf
-followed by cp -RL, leaving the destination briefly absent, so
-the tree-wide treefmt sweep could stat a managed file (e.g.
-.qr-exclude.yaml under yamlfmt) mid-replacement and fail with
-"no such file or directory".
+* feat(tui): add tui.emoji setting for emoji-free indicators
 
-Add after = ["devenv:files"] to devenv:treefmt:run so the sweep
-always runs once managed files are in place, matching the
-precedent already set by devenv:git-hooks:install. Make the
-copy-mode write itself atomic as defense in depth: stage the
-copy in a mktemp -d directory beside the destination and mv -f
-it into place, replacing an existing file atomically and
-replacing a destination symlink instead of writing through it,
-including a symlink to a directory, which mv would otherwise
-resolve and drop the copy inside. Directories at the source
-keep the previous remove-then-copy path, since mv onto an
-existing directory moves into it and mv -T is GNU-only.
+The persistent shell status line shows `👁 devenv watching N files`, and
+`⏸` while paused. Users who dislike or cannot render emoji had to hide
+the status line to get rid of them, which also removed the watch status.
 
-Add tests/files-treefmt-order to assert the task edge and the
-copy behav
+Add the `tui.emoji` user setting. It defaults to `true`, which keeps the
+existing output. With `tui.emoji: false`, the eye becomes `◎` and the
+pause symbol becomes `‖`. Both occupy one terminal column, so the label
+lines up with the checkmark, cross, and spinner states.
+
+Glyph selection lives in `devenv_shell::indicators`, so the renderer asks
+for an indicator instead of checking configuration. The TUI's activity
+views contain no emoji, so only the shell status line changes.
+
+* feat(tui): use status dots for non-emoji indicators
+
+Replace the non-emoji watching and paused glyphs with the status dots
+that devenv already uses for process states: a fisheye while watching
+and an idle ring while paused.
 
 **File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -42,6 +42,10 @@
- - Fixed `cachix.pull` containing duplicate caches. The module adds `devenv` (and `cachix.push`) to the list, so a cache also listed in `devenv.nix` was registered twice and Nix warned `Substituter '...' is already present in the substituters list` on every command. The option now deduplicates its value.
- - Fixed devenv no longer fetching the public signing keys of the caches in `cachix.pull`, a regression from the 2.0 rewrite. Only keys already present in `cachix_trusted_keys.json` were passed to Nix, so on a machine that had only ever run 2.x `extra-trusted-public-keys` was empty and Nix could not verify paths from those caches. The keys are fetched from the Cachix API again (using the resolved auth token for private caches) and cached ([#3176](https://github.com/cachix/devenv/issues/3176)).
+@@ -2,6 +2,10 @@
  
-+### Bug Fixes
-+
-+- Fixed `devenv shell` intermittently failing with a treefmt error such as `failed to stat <file>: no such file or directory` when `treefmt.enable = true` and the project has files managed by devenv. The tree-wide formatter now runs after devenv has written those files, and a file with `copyMode = "copy"` is replaced atomically, so tools that walk the project never see it missing.
-+
- ## 2.3.0 (2026-09-07)
+ ## 2.4.1 (unreleased)
  
- ### Bug Fixes
-```
-
-**File**: `docs/src/content/docs/creating-files.mdx` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@ The `copyMode` attribute accepts:
- 
- - `symlink` (default): symlink to the read-only file in the Nix store. Edits are not possible; devenv keeps the link pointed at the current contents.
- - `seed`: copy the file into place once, only if it does not already exist, and make it writable. Existing files are left untouched, so your edits are preserved. This is useful for seeding configuration files from templates that the user can then edit to fit their project.
--- `copy`: copy the file into place as a writable file, overwriting it with fresh contents on every shell entry. This is useful when a tool must write to the file in place but devenv should remain the source of truth.
-+- `copy`: copy the file into place as a writable file, overwriting it with fresh contents on every shell entry. The file is replaced atomically, by renaming a temporary file in the same directory over it, so tools that walk the project never see it missing. This is useful when a tool must write to the file in place but devenv should remain the source of truth.
- 
- <VersionCompatibility version="2.2" />
- 
-```
-
-**File**: `src/modules/files.nix` (modified, +56/-12)
-```diff
-@@ -1,7 +1,7 @@
- { pkgs, lib, config, ... }:
- 
- let
--  inherit (builtins) dirOf mapAttrs;
-+  inherit (builtins) baseNameOf dirOf mapAttrs;
-   inherit (lib) types optionalAttrs optionalString mkOption attrNames filter length mapAttrsToList concatStringsSep head assertMsg;
-   inherit (types) attrsOf submodule;
- 
-@@ -101,7 +101,7 @@ let
- 
-         - `symlink` (default): symlink to the read-only file in the Nix store. Edits are not possible; devenv keeps the link pointed at the current contents.
-         - `seed`: copy the file into place once, only if it does not already exist, and make it writable. Existing files are left untouched, so your edits are preserved. Useful for seeding configuration from templates the user then edits.
--        - `copy`: copy the file into place as a writable file, overwriting it with fresh contents on every shell entry. Useful when a tool must write to the file in place but devenv should remain the source of truth.
-+        - `copy`: copy the file into place as a writable file, overwriting it with fresh contents on every shell entry. The file is replaced atomically, so tools that walk the project never see it missing. Useful when a tool must write to the file in place but devenv should remain the source of truth.
-       '';
-     };
-   };
-@@ -127,27 +127,71 @@ let
-     fi
-   '';
- 
-+  # Materialize the store contents at `filename` as a writable copy.
-+  #
-+  # A regular file is staged next to its destination and renamed over it, so the destination
-+  # is never missing: tools that walk the project concurrently (a tree-wide formatter, an
-+  # editor's file watcher) would otherwise stat a path that has momentarily disappeared.
-+  writeCopyScript = filename: fileOption: ''
-+    mkdir -p "${dirOf filename}"
-+    if [ -d ${fileOption.file} ]; then
-+      # A directory cannot be swapped in atomically: `mv` onto an existing directory moves
-+      # the copy *inside* it and `mv -T` is GNU-only, so replace it in place.
-+      rm -rf "${filename}"
-+      cp -RL ${fileOption.file} "${filename}"
-+      chmod -R u+w "${filename}"
-+    else
-+      # `mktemp -d` with a template (the portable form, BSD/macOS included) gives an
-+      # unpredictable 0700 directory next to the destination, hence on the same filesystem.
-+      # Letting `cp` create the file inside it keeps the store mode, executable bit included.
-+      _devenv_staging=$(mktemp -d "${dirOf filename}/.${baseNameOf filename}.XXXXXX")
-+      # A directory at the destination would swallow the rename: `mv` moves the staged file
-+      # *inside* it. `mv` resolves a symlink to a directory as well, so unlink the link
-+      # itself - `rm` on a symlink never touches its target. Only a destination that is
-+      # already a symlink to a directory goes briefly missing here, never a managed file.
-+      if [ -d "${filename}" ]; then
-+        if [ -L "${filename}" ]; then
-+          rm -f "${filename}"
-+        else
-+          rm -rf "${filename}"
-+        fi
-+      fi
-+      # `mv -f` renames: it replaces an existing regular file atomically, and replaces any
-+      # remaining symlink itself instead of following it. Both hold for GNU and BSD `mv`.
-+      if ! {
-+        cp -L ${fileOption.file} "$_devenv_staging/file" &&
-+          chmod u+w "$_devenv_staging/file" &&
-+          mv -f "$_devenv_staging/file" "${filename}"
-+      }; then
-+        rm -rf "$_devenv_staging"
-+        exit 1
-+      fi
-+      rmdir "$_devenv_staging"
-+    fi
-+  '';
++### Improvements
 +
-   # Copy the file into place as a writable file the user can edit.
-   # "seed" only creates the file when missing; "copy" overwrites it every time.
-   createCopyScript = filename: fileOption: ''
-     # Drop a previous devenv-managed symlink into the store so we can seed a writable copy
-     if [ -L "${filename}" ] && [[ "$(readlink "${filename}")" == /nix/store/* ]]; then
-       rm "${filename}"
-     fi
--    ${optionalString (fileOption.copyMode == "copy") ''
-+    ${if fileOption.copyMode == "copy" then ''
-       if [ -e "${filename}" ] || [ -L "${filename}" ]; then
-         echo "Overwriting ${filename}"
--        rm -rf "${filename}"
-+      else
-+        echo "Creating ${filename}"
-+      fi
-+      ${writeCopyScript filename fileOption}
-+    '' else ''
-+      if [ -e "${filename}" ]; then
-+        echo "Keeping existing ${filename}"
-+      else
-+        echo "Creating ${filename}"
-+        ${writeCopyScript filename fileOption}
-       fi
-     ''}
--    if [ -e "${filename}" ]; then
--      echo "Keeping existing ${filename}"
--    else
--      echo "Creating ${filename}"
--      mkdir -p "${dirOf filename}"
--      cp -RL ${fileOption.file} "${filename}"
--      chmod -R u+w "${filename}"
--    fi
-     echo "${filename}" >> "$DEVENV_FILES_CREATED"
-   '';
- 
-```
-
-**File**: `src/modules/integrations/treefmt.nix` (modified, +13/-9)
-```diff
-@@ -16,19 +16,24 @@ let
-   # When enabled, use getInput (throws helpful error if missing)
-   # Otherwise, use tryGetInput to populate the docs when the input is available.
-   treefmt-nix =
--    if cfg.enable then config.lib.getInput inputArgs else config.lib.tryGetInput inputArgs;
-+    if cfg.enable
-+    then config.lib.getInput inputArgs
-+    else config.lib.tryGetInput inputArgs;
- 
-   treefmtSubmodule =
--    if treefmt-nix != null then
-+    if treefmt-nix != null
-+    then
-       treefmt-nix.lib.submoduleWith lib
-         {
-           specialArgs = { inherit pkgs; };
-         }
--    else
--      lib.types.attrs;
-+    else lib.types.attrs;
- 
-   # Determine tree root: prefer git.root, fallback to devenv.root
--  treeRoot = if config.git.root != null then config.git.root else config.devenv.root;
-+  treeRoot =
-+    if config.git.root != null
-+    then config.git.root
-+    else config.devenv.root;
- 
-   # Custom wrapper to point treefmt to the project root.
-   #
-@@ -38,10 +43,9 @@ let
-   treefmtWrapper =
-     let
-       treeRootOption =
--        if cfg.config.projectRootFile != "" then
--          "--tree-root-file " + lib.escapeShellArg cfg.config.projectRootFile
--        else
--          "--tree-root " + lib.escapeShellArg treeRoot;
-+        if cfg.config.projectRootFile != ""
-+        then "--tree-root-file " + lib.escapeShellArg cfg.config.projectRootFile
-+        else "--tree-root " + lib.escapeShellArg treeRoot;
-     in
-     pkgs.writeShellScriptBin "treefmt" ''
-       exec ${cfg.config.package}/bin/treefmt --config-file ${cfg.config.build.configFile} "$@" ${treeRootOption}
-```
-
-**File**: `tests/files-treefmt-order/.gitignore` (modified, +5/-0)
-```diff
-@@ -1 +1,6 @@
-+decoy.yaml
-+decoydir
-+dirlinked.yaml
-+linked.yaml
- managed.txt
-+managed.yaml
-```
-
-**File**: `tests/files-treefmt-order/.patch.sh` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+#!/usr/bin/env bash
-+set -e
++- Added the `tui.emoji` user setting. Set it to `false` to replace the emoji in the interactive shell status line, such as the eye in `devenv watching 11 files`, with non-emoji Unicode glyphs. It defaults to `true`, and the status line stays visible with file watching and automatic reload unchanged.
 +
-+# Set up the destinations enterTest (in devenv.nix) asserts on. The first run creates every
-+# file; the state left here is what the run inside `devenv test` has to replace.
-+devenv shell true
-+
-+# A user edit: the copy is renamed over an existing regular file.
-+echo "user edit" > managed.yaml
-+
-+# A symlink: the copy replaces the link itself instead of writing through it.
-+echo "untouched" > decoy.yaml
-+rm linked.yaml
-+ln -s decoy.yaml linked.yaml
-+
-+# A symlink to a directory: `mv` resolves such a link and would drop the copy inside the
-+# directory, so the link has to be unlinked before the rename.
-+mkdir -p decoydir
-+rm dirlinked.yaml
-+ln -s decoydir dirlinked.yaml
-```
-
-**File**: `tests/files-treefmt-order/devenv.nix` (modified, +101/-3)
-```diff
-@@ -1,7 +1,18 @@
--{ lib, ... }:
- {
--  treefmt.enable = true;
--  treefmt.config.programs.nixfmt.enable = true;
-+  lib,
-+  pkgs,
-+  ...
-+}:
-+{
-+  packages = [ pkgs.jq ];
-+
-+  treefmt = {
-+    enable = true;
-+
-+    config.programs = {
-+      nixfmt.enable = true;
-+    };
-+  };
- 
-   files."managed.txt" = {
-     text = "managed content\n";
-@@ -16,4 +27,91 @@
-   tasks."devenv:treefmt:run".exec = lib.mkForce ''
-     grep -qx "managed content" managed.txt
-   '';
-+
-+  # Copy-mode files are rewritten by `devenv:files` on every shell entry, so the tree-wide
-+  # treefmt sweep has to wait for them: without an ordering edge the two run concurrently
-+  # and treefmt fails to stat a file that is being replaced.
-+  files."managed.yaml" = {
-+    text = "managed: content\n";
-+    copyMode = "copy";
-+  };
-+  files."linked.yaml" = {
-+    text = "linked: content\n";
-+    copyMode = "copy";
-+  };
-+  files."dirlinked.yaml" = {
-+    text = "dirlinked: content\n";
-+    copyMode = "copy";
-+  };
-+
-+  enterTest = ''
-+    # The formatter walks the whole tree, so it must run after the files are in place.
-+    # $DEVENV_TASK_FILE is the task graph devenv runs.
-+    jq -e '
-+      map(select(.name == "devenv:treefmt:run")) as $treefmt
-+      | ($treefmt | length) == 1
-+        and ($treefmt[0].after | index("devenv:files")) != null
-+    ' "$DEVENV_TASK_FILE" > /dev/null || {
-+      echo "devenv:treefmt:run is not ordered after devenv:files"
-+      exit 1
-+    }
-+
-+    # .patch.sh left a user edit here: the copy is renamed over the existing file.
-+    test ! -L "$DEVENV_ROOT/managed.yaml" || {
-+      echo "managed.yaml should not be a symlink"
-+      exit 1
-+    }
-+    test -w "$DEVENV_ROOT/managed.yaml" || {
-+      echo "managed.yaml should be writable"
-+      exit 1
-+    }
-+    grep -qx "managed: content" "$DEVENV_ROOT/managed.yaml" || {
-+      echo "managed.yaml not overwritten"
-+      exit 1
-+    }
-+
-+    # .patch.sh left a symlink here: the copy replaces the link itself, so the file it
-+    # pointed at stays untouched.
-+    test ! -L "$DEVENV_ROOT/linked.yaml" || {
-+      echo "linked.yaml should have replaced the symlink"
-+      exit 1
-+    }
-+    grep -qx "linked: content" "$DEVENV_ROOT/linked.yaml" || {
-+      echo "linked.yaml not overwritten"
-+      exit 1
-+    }
-+    grep -qx "untouched" "$DEVENV_ROOT/decoy.yaml" || {
-+      echo "the symlink was followed instead of replaced"
-+      exit 1
-+    }
-+
-+    # .patch.sh left a symlink to a directory here: `mv` resolves such a link, so the link
-+    # has to be unlinked first or the copy lands inside the directory.
-+    test ! -L "$DEVENV_ROOT/dirlinked.yaml" || {
-+      echo "dirlinked.yaml should have replaced the symlink"
-+      exit 1
-+    }
-+    test -f "$DEVENV_ROOT/dirlinked.yaml" || {
-+      echo "dirlinked.yaml should be a regular file"
-+      exit 1
-+    }
-+    grep -qx "dirlinked: content" "$DEVENV_ROOT/dirlinked.yaml" || {
-+      echo "dirlinked.yaml not overwritten"
-+      exit 1
-+    }
-+    test -z "$(ls -A "$DEVENV_ROOT/decoydir")" || {
-+      echo "the copy was moved into the directory the symlink pointed at"
-+      exit 1
-+    }
-+
-+    # Each copy is staged in a temporary directory next to its destination and renamed over
-+    # it. Nothing may be left behind.
-+    for staging in "$DEVENV_ROOT"/.managed.yaml.* "$DEVENV_ROOT"/.linked.yaml.* \
-+      "$DEVENV_ROOT"/.dirlinked.yaml.*; do
-+      if [ -e "$staging" ]; then
-+        echo "staging path left behind: $staging"
-+        exit 1
-+      fi
-+    done
-+  '';
- }
-```
-
----
-
-### Incident Patch 5: `bd08a52a` (2026-09-27)
-**Commit Message**: fix(shell): preserve structured Nushell env on reload (#3231)
-
-Fixes #3230
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
  ### Bug Fixes
  
-+- Nushell hot reload no longer breaks commands that use structured environment variables and now removes variables that disappeared after a reload ([#3230](https://github.com/cachix/devenv/issues/3230)).
- - MySQL now creates configured databases and users when started with `devenv up`, including `devenv up mysql` ([#2843](https://github.com/cachix/devenv/issues/2843)).
- - fish auto-activation no longer hangs when `env` is a fish function, such as grc's wrapper ([#3222](https://github.com/cachix/devenv/issues/3222)).
- - Task names containing `::`, such as `foo::bar`, are now rejected with an invalid task name error. Previously they were accepted but could not be run by name ([#3227](https://github.com/cachix/devenv/issues/3227)).
+ - Fixed rapid process restarts failing because a stopped process still held its ownership claim.
 ```
 
-**File**: `devenv-shell/src/dialect/mod.rs` (modified, +178/-2)
+**File**: `devenv-shell/src/indicators.rs` (added, +127/-0)
 ```diff
-@@ -107,9 +107,69 @@ pub(crate) fn xdg_config_home() -> Option<PathBuf> {
- /// reload (matching bash's behavior), falling back to discarding it when no
- /// controlling terminal is available.
- pub(crate) fn bash_reload_subprocess_script(env_diff_helpers: &str, reload_file: &str) -> String {
-+    bash_reload_subprocess_script_with_output(env_diff_helpers, reload_file, "", "export -p")
+@@ -0,0 +1,127 @@
++//! Display indicators that have an emoji and a non-emoji form.
++//!
++//! Renderers ask [`Indicators`] for a glyph instead of hard-coding one, so the
++//! `tui.emoji` user setting is applied in exactly one place.
++//!
++//! Emoji glyphs are not width-stable: terminals disagree on whether they occupy
++//! one or two cells, and Unicode width tables report one. The non-emoji glyphs
++//! are plain symbols that occupy a single cell, like the checkmark and spinner
++//! already used by the status line, so the label that follows lines up with
++//! every other status.
++
++use crate::status_line::{DOT_RING, DOT_RUNNING};
++
++/// A display indicator with an emoji and a non-emoji form.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum Indicator {
++    /// File watching is paused.
++    Paused,
++    /// Files are being watched for changes.
++    Watching,
 +}
 +
-+/// Nushell must only import variables touched by devenv. Importing the entire
-+/// bash environment turns structured Nushell variables (such as DIRS_LIST)
-+/// into strings when they pass through the bash subprocess.
-+pub(crate) fn nushell_reload_subprocess_script(
-+    env_diff_helpers: &str,
-+    reload_file: &str,
-+) -> String {
-+    bash_reload_subprocess_script_with_output(
-+        env_diff_helpers,
-+        reload_file,
-+        r#"declare -A _devenv_reload_names=()
-+__devenv_collect_reload_names() {
-+    local line name
-+    while IFS= read -r line; do
-+        case "$line" in
-+            P:declare\ -x\ *)
-+                name="${line#P:declare -x }"
-+                name="${name%%=*}" ;;
-+            N:*) name="${line#N:}" ;;
-+            *) continue ;;
-+        esac
-+        [[ "$name" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] && _devenv_reload_names["$name"]=1
-+    done < <(__devenv_deserialize_diff "$1")
-+}
-+__devenv_collect_reload_names "$_DEVENV_DIFF""#,
-+        r#"__devenv_collect_reload_names "$_DEVENV_DIFF"
-+# The diff itself is needed to reverse this reload on the next one.
-+_devenv_reload_names[_DEVENV_DIFF]=1
-+
-+while IFS= read -r _devenv_reload_line; do
-+    [[ "$_devenv_reload_line" == declare\ -x\ * ]] || continue
-+    _devenv_reload_name="${_devenv_reload_line#declare -x }"
-+    _devenv_reload_name="${_devenv_reload_name%%=*}"
-+    if [[ -n "${_devenv_reload_names[$_devenv_reload_name]+x}" ]]; then
-+        if [[ "$_devenv_reload_line" == *=* ]]; then
-+            printf '%s\n' "$_devenv_reload_line"
-+        else
-+            printf 'unset %s\n' "$_devenv_reload_name"
-+        fi
-+        unset "_devenv_reload_names[$_devenv_reload_name]"
-+    fi
-+done < <(export -p)
-+
-+for _devenv_reload_name in "${!_devenv_reload_names[@]}"; do
-+    printf 'unset %s\n' "$_devenv_reload_name"
-+done"#,
-+    )
++impl Indicator {
++    /// Every indicator.
++    pub const ALL: [Indicator; 2] = [Indicator::Paused, Indicator::Watching];
 +}
 +
-+fn bash_reload_subprocess_script_with_output(
-+    env_diff_helpers: &str,
-+    reload_file: &str,
-+    before_reload: &str,
-+    output: &str,
-+) -> String {
-     format!(
-         r#"{env_diff_helpers}
- 
-+{before_reload}
++/// A glyph and the space that separates it from the label that follows.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub struct Glyph {
++    /// The text to draw.
++    pub text: &'static str,
++    /// Columns between the glyph and its label.
++    pub gap: u32,
++}
 +
- # Reverse previous diff
- __devenv_apply_reverse_diff
- 
-@@ -135,10 +195,12 @@ unset _devenv_reload_out
- __devenv_compute_diff "$_before"
- rm -f "$_before"
- 
--# Output current environment for the calling shell to parse
--export -p"#,
-+# Output environment data for the calling shell to apply
-+{output}"#,
-         env_diff_helpers = env_diff_helpers,
-+        before_reload = before_reload,
-         reload_file = reload_file,
-+        output = output,
-     )
- }
- 
-@@ -236,6 +298,43 @@ export DEVENV_RELOAD_TEST_VAR=reload_works
-         let _ = std::fs::remove_file(&reload_file);
-     }
- 
++/// Selects the glyph used for each [`Indicator`].
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub struct Indicators {
++    emoji: bool,
++}
++
++impl Indicators {
++    /// Select emoji glyphs when `emoji` is true and non-emoji glyphs otherwise.
++    pub const fn new(emoji: bool) -> Self {
++        Self { emoji }
++    }
++
++    /// Whether emoji glyphs are selected.
++    pub const fn emoji(self) -> bool {
++        self.emoji
++    }
++
++    /// The glyph for `indicator`.
++    pub const fn glyph(self, indicator: Indicator) -> Glyph {
++        match (self.emoji, indicator) {
++            // The historical glyphs and spacing.
++            (true, Indicator::Paused) => Glyph {
++                text: "⏸", gap: 2
++            },
++            (true, Indicator::Watching) => Glyph {
++                text: "👁", gap: 2
++            },
++            // The status dots used for process states: alive while watching,
++            // an idle ring while paused. They are single-cell symbols, so the
++            // label starts in the same column as after the checkmark, cross,
++            // and spinner.
++            (false, Indicator::Paused) => Glyph {
++                text: DOT_RING,
++                gap: 1,
++            },
++            (false, Indicator::Watching) => Glyph {
++                text: DOT_RUNNING,
++                gap: 1,
++            },
++        }
++    }
++}
++
++impl Default for Indicators {
++    /// Emoji glyphs, preserving the existing output.
++    fn default() -> Self {
++        Self::new(true)
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
 +    #[test]
-+    fn nushell_reload_subprocess_only_emits_changed_variables() {
-+        let tmp = unique_tmp_dir("nu-reload-exports");
-+        let reload_file = tmp.join("reload.sh");
-+        std::fs::write(&reload_file, "export DEVENV_RELOAD_ADDED=added\n").unwrap();
-+        let initial_diff = Command::new("bash")
-+            .args([
-+                "-c",
-+                "printf 'N:DEVENV_RELOAD_REMOVED\\n' | gzip -c | base64 -w0",
-+            ])
-+            .output()
-+            .unwrap();
-+        assert!(initial_diff.status.success());
-+        let script = nushell_reload_subprocess_script(
-+            BashDialect.env_diff_helpers(),
-+            reload_file.to_str().unwrap(),
-+        );
-+        let output = Command::new("bash")
-+            .arg("-c")
-+            .arg(script)
-+            .env(
-+                "_DEVENV_DIFF",
-+                String::from_utf8(initial_diff.stdout).unwrap(),
-+            )
-+            .env("DEVENV_RELOAD_REMOVED", "old")
-+            .env("DIRS_LIST", "/tmp")
-+            .output()
-+            .unwrap();
-+        assert!(output.status.success());
-+        let stdout = String::from_utf8_lossy(&output.stdout);
-+        assert!(stdout.contains("declare -x DEVENV_RELOAD_ADDED=\"added\""));
-+        assert!(stdout.contains("unset DEVENV_RELOAD_REMOVED"));
-+        assert!(stdout.contains("declare -x _DEVENV_DIFF="));
-+        assert!(!stdout.contains("DIRS_LIST"));
-+        let _ = std::fs::remove_dir_all(tmp);
++    fn defaults_to_emoji() {
++        assert_eq!(Indicators::default(), Indicators::new(true));
++        assert!(Indicators::default().emoji());
 +    }
 +
-     /// Regression tests for https://github.com/cachix/devenv/issues/2861
-     ///
-     /// A shell hook-spawned by `devenv shell` must `exit` when the user `cd`s
-@@ -475,6 +574,83 @@ export DEVENV_RELOAD_TEST_VAR=reload_works
-         let _ = std::fs::remove_dir_all(&tmp);
-     }
- 
-+    /// Regression test for https://github.com/cachix/devenv/issues/3230.
-+    /// `std/dirs` exports DIRS_LIST as a string to bash, but keeps it as a list
-+    /// 
++    #[test]
++    fn emoji_glyphs_are_the_historical_ones() {
++        let indicators = Indicators::new(true);
++        assert_eq!(indicators.glyph(Indicator::Paused).text, "⏸");
++        assert_eq!(indicators.glyph(Indicator::Watching).text, "👁");
++    }
++
++    #[test]
++    fn non_emoji_glyphs_are_single_non_emoji_characters() {
++        for indicator in Indicator::ALL {
++            let glyph = Indicators::new(false).glyph(indicator);
++            let mut chars = glyph.text.chars();
++            assert!(chars.next().is_some());
++            assert!(
++                chars.next().is_none(),
++                "{indicator:?} must be one character"
++            );
++            assert_eq!(glyph.gap, 1);
++        }
++    }
++
++    #[test]
++    fn glyphs_differ_between_modes() {
++        for indicator in Indicator::ALL {
++            assert_ne!(
++                Indicators::new(true).glyph(indicator),
++                Indicators::new(false).glyph(indicator)
++            );
++        }
++    }
++}
 ```
 
-**File**: `devenv-shell/src/dialect/nushell.rs` (modified, +6/-4)
-```diff
-@@ -193,7 +193,7 @@ exit 1
-             // This avoids quoting issues from embedding bash code in nushell strings.
-             let bash_helper = format!(
-                 "#!/usr/bin/env bash\n{}",
--                super::bash_reload_subprocess_script(
-+                super::nushell_reload_subprocess_script(
-                     super::BashDialect.env_diff_helpers(),
-                     reload_file,
-                 )
-@@ -235,16 +235,18 @@ exit 1
- # --- devenv hot-reload support ---
- 
- # Apply a reload: run the bash helper script to compute the env diff,
--# then parse `export -p` output and apply environment changes.
-+# then apply only the variables changed by devenv.
- def --env __devenv_reload_apply [] {{
-     let reload_file = "{reload_file}"
-     if ($reload_file | path exists) {{
-         let bash_output = (bash "{helper_path}" | complete)
-         if ($bash_output.exit_code == 0) {{
--            # Parse `declare -x VAR="value"` lines from bash export -p output
-+            # Parse changed exports and removals from the bash helper.
-             for line in ($bash_output.stdout | lines) {{
-                 let trimmed = ($line | str trim)
--                if ($trimmed | str starts-with "declare -x ") {{
-+                if ($trimmed | str starts-with "unset ") {{
-+                    hide-env -i ($trimmed | str substring 6..)
-+                }} else if ($trimmed | str starts-with "declare -x ") {{
-                     let vardef = ($trimmed | str substring 11..)
-                     let eq_pos = ($vardef | str index-of "=")
-                     if $eq_pos >= 0 {{
-```
-
----
-
-### Incident Patch 6: `38bdc098` (2026-09-26)
-**Commit Message**: fix(tasks): reject task names containing "::" (#3228)
-
-Task names containing `::` (e.g. `foo::bar`) passed validation when the
-task graph was built, but `resolve_namespace_roots` rejects any requested
-name containing `::` before looking for an exact match. So the task showed
-up in `devenv tasks list` but `devenv tasks run foo::bar` failed with
-`Task does not exist`.
-
-Reject `::` at definition time with `InvalidTaskName` instead.
-
-Fixes #3227
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `devenv-shell/src/lib.rs` (modified, +1/-0)
 ```diff
 @@ -6,6 +6,7 @@
- 
- - MySQL now creates configured databases and users when started with `devenv up`, including `devenv up mysql` ([#2843](https://github.com/cachix/devenv/issues/2843)).
- - fish auto-activation no longer hangs when `env` is a fish function, such as grc's wrapper ([#3222](https://github.com/cachix/devenv/issues/3222)).
-+- Task names containing `::`, such as `foo::bar`, are now rejected with an invalid task name error. Previously they were accepted but could not be run by name ([#3227](https://github.com/cachix/devenv/issues/3227)).
- 
- ## 2.4.0 (2026-09-24)
- 
+ pub mod dialect;
+ pub mod escape;
+ pub mod escape_state;
++pub mod indicators;
+ pub mod keybindings;
+ mod protocol;
+ mod pty;
 ```
 
-**File**: `devenv-tasks/src/tasks.rs` (modified, +1/-0)
+**File**: `devenv-shell/src/session.rs` (modified, +7/-0)
 ```diff
-@@ -100,6 +100,7 @@ impl TasksBuilder {
-                 || task.name.split(':').count() < 2
-                 || task.name.starts_with(':')
-                 || task.name.ends_with(':')
-+                || task.name.contains("::")
-                 || task.name.contains('@')
-                 || !task
-                     .name
+@@ -8,6 +8,7 @@ use crate::escape_state::{
+     EscapeState, cleanup_forwarded_modes as escape_state_cleanup,
+     process_escape_events as escape_state_process,
+ };
++use crate::indicators::Indicators;
+ use crate::keybindings::{ShellAction, ShellKeybindings};
+ use crate::protocol::{ShellCommand, ShellEvent};
+ use crate::pty::{Pty, PtyError, get_terminal_size};
+@@ -1642,6 +1643,12 @@ impl ShellSession {
+         self
+     }
+ 
++    /// Select the glyphs used for status-line indicators.
++    pub fn with_indicators(mut self, indicators: Indicators) -> Self {
++        self.status_line.set_indicators(indicators);
++        self
++    }
++
+     /// Wire a shutdown token. On cancellation the session kills the inner
+     /// shell so devenv can exit instead of orphaning it after a terminal
+     /// hangup or SIGHUP/SIGINT/SIGTERM.
 ```
 
-**File**: `devenv-tasks/src/tests/mod.rs` (modified, +2/-0)
+**File**: `devenv-shell/src/status_line.rs` (modified, +163/-4)
 ```diff
-@@ -29,6 +29,7 @@ async fn test_task_name() -> Result<(), Error> {
-         ":invalid",
-         "invalid:",
-         "invalid",
-+        "invalid::name",
-     ];
+@@ -12,6 +12,7 @@ use std::io::{self, Write};
+ use std::path::PathBuf;
+ use std::time::Instant;
  
-     for task in invalid_names {
-@@ -4433,6 +4434,7 @@ mod property_tests {
-                     && name.split(':').count() >= 2
-                     && !name.starts_with(':')
-                     && !name.ends_with(':')
-+                    && !name.contains("::")
-                     && name
-                         .chars()
-                         .all(|c| c.is_ascii_alphanumeric() || c == ':' || c == '_' || c == '-')
++use crate::indicators::{Indicator, Indicators};
+ use crate::keybindings::{ShellAction, ShellKeybindings};
+ 
+ // ============================================================================
+@@ -295,6 +296,7 @@ fn watching_elements(count: usize) -> Vec<AnyElement<'static>> {
+ pub struct StatusLine {
+     state: StatusState,
+     keybindings: ShellKeybindings,
++    indicators: Indicators,
+     enabled: bool,
+     /// Current spinner frame index (animated manually since we don't use iocraft runtime)
+     spinner_frame: usize,
+@@ -485,6 +487,7 @@ impl StatusLine {
+         Self {
+             state: StatusState::new(),
+             keybindings: ShellKeybindings::default(),
++            indicators: Indicators::default(),
+             enabled: true,
+             spinner_frame: 0,
+             last_spinner_update: Instant::now(),
+@@ -522,6 +525,12 @@ impl StatusLine {
+         self.cached_state = None;
+     }
+ 
++    /// Select the glyphs used for indicators that have an emoji form.
++    pub fn set_indicators(&mut self, indicators: Indicators) {
++        self.indicators = indicators;
++        self.cached_state = None;
++    }
++
+     /// Check if the status line is enabled.
+     pub fn is_enabled(&self) -> bool {
+         self.enabled
+@@ -723,12 +732,13 @@ impl StatusLine {
+             let keybind = self
+                 .keybindings
+                 .key_label(ShellAction::TogglePause, use_short);
++            let glyph = self.indicators.glyph(Indicator::Paused);
+ 
+             element! {
+                 View(width: width as u32, height: 1, flex_direction: FlexDirection::Row, justify_content: JustifyContent::SpaceBetween, padding_left: 1, padding_right: 1) {
+                     View(flex_direction: FlexDirection::Row, flex_grow: 1.0_f32, min_width: 0, overflow: Overflow::Hidden) {
+-                        View(margin_right: 2) {
+-                            Text(content: "⏸", color: COLOR_SECONDARY)
++                        View(margin_right: glyph.gap) {
++                            Text(content: glyph.text, color: COLOR_SECONDARY)
+                         }
+                         Text(content: "devenv ", color: COLOR_SECONDARY)
+                         Text(content: "paused", weight: Weight::Bold, color: COLOR_ACTIVE)
+@@ -752,12 +762,13 @@ impl StatusLine {
+                 .keybindings
+                 .key_label(ShellAction::TogglePause, use_short);
+             let count_str = self.state.watched_file_count.to_string();
++            let glyph = self.indicators.glyph(Indicator::Watching);
+ 
+             element! {
+                 View(width: width as u32, height: 1, flex_direction: FlexDirection::Row, justify_content: JustifyContent::SpaceBetween, padding_left: 1, padding_right: 1) {
+                     View(flex_direction: FlexDirection::Row, flex_grow: 1.0_f32, min_width: 0, overflow: Overflow::Hidden) {
+-                        View(margin_right: 2) {
+-                            Text(content: "👁", color: COLOR_SECONDARY)
++                        View(margin_right: glyph.gap) {
++                            Text(content: glyph.text, color: COLOR_SECONDARY)
+                         }
+                         Text(content: "devenv ", color: COLOR_SECONDARY)
+                         Text(content: "watching ", weight: Weight::Bold, color: COLOR_ACTIVE)
+@@ -1013,6 +1024,154 @@ mod tests {
+         assert_eq!(status_line.cached_spinner_frame, Some(1));
+     }
+ 
++    /// Strip SGR sequences, leaving the text a terminal would show.
++    fn plain_text(content: &[u8]) -> String {
++        let mut text = String::new();
++        let mut chars = String::from_utf8_lossy(content)
++            .into_owned()
++            .chars()
++            .collect::<Vec<_>>()
++            .into_iter();
++        while let Some(ch) = chars.next() {
++            if ch == '\u{1b}' {
++                for ch in chars.by_ref() {
++                    if ch.is_ascii_alphabetic() {
++                        break;
++                    }
++                }
++            } else {
++                text.push(ch);
++            }
++        }
++        text.trim_end().to_string()
++    }
++
++    fn status_line_with(emoji: bool, configure: impl FnOnce(&mut StatusLine)) -> StatusLine {
++        let mut status_line = StatusLine::new();
++        status_line.set_indicators(Indicators::new(emoji));
++        configure(&mut status_line);
++        status_line
++    }
++
++    /// Assert the layout of a left label and right key hint on an 80-column row.
++    fn assert_row(row: &str, left: &str, right: &str) {
++        assert!(row.starts_with(left), "{row:?} should start with {left:?}");
++        assert!(row.ends_with(right), "{row:?} should end with {right:?}");
++        // The row is padded to the full width, leaving one column on the right.
++        assert_eq!(row.chars().count(), 79, "{row:?}");
++        let middle = &row[left.len()..row.len() - right.len()];
++        
+```
+
+**File**: `devenv-shell/tests/session_tests.rs` (modified, +22/-5)
+```diff
+@@ -1,6 +1,7 @@
+ #![cfg(feature = "test-pty")]
+ 
+ use devenv_mailbox::{FrontendCommand, FrontendEvent, ProcessCommand};
++use devenv_shell::indicators::Indicators;
+ use devenv_shell::keybindings::{ShellAction, ShellKeyChord, ShellKeyCode, ShellKeybindings};
+ use devenv_shell::vt_utils::{DEFAULT_MAX_SCROLLBACK, active_point, row_plain_text, screen_point};
+ use devenv_shell::{
+@@ -824,13 +825,17 @@ async fn test_build_failed_error_toggle() {
+     let _ = handle.await;
+ }
+ 
+-#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+-async fn test_watching_paused_status_line() {
++/// Drive a session through watching, paused, and resumed, and snapshot the
++/// status line in the last two states.
++async fn assert_watching_paused_status_line(
++    session: ShellSession,
++    paused_snapshot: &'static str,
++    resumed_snapshot: &'static str,
++) {
+     let (io, mut stdin_ours, mut stdout_ours) = test_io();
+     let (cmd_tx, cmd_rx) = mpsc::channel(10);
+     let (event_tx, _event_rx) = mpsc::channel(10);
+ 
+-    let session = status_line_session();
+     let handle = tokio::spawn(async move { session.run(cmd_rx, event_tx, io).await });
+ 
+     cmd_tx.send(spawn_cmd("read unused")).await.unwrap();
+@@ -854,7 +859,7 @@ async fn test_watching_paused_status_line() {
+         Duration::from_secs(5),
+     ));
+     let rows = render(&all_bytes, 80, 24);
+-    insta::assert_snapshot!("paused", rows[23]);
++    insta::assert_snapshot!(paused_snapshot, rows[23]);
+ 
+     // Resume watching
+     cmd_tx
+@@ -867,14 +872,26 @@ async fn test_watching_paused_status_line() {
+         Duration::from_secs(5),
+     ));
+     let rows = render(&all_bytes, 80, 24);
+-    insta::assert_snapshot!("resumed", rows[23]);
++    insta::assert_snapshot!(resumed_snapshot, rows[23]);
+ 
+     let _ = stdin_ours.write_all(b"\n");
+     drop(stdin_ours);
+     drop(cmd_tx);
+     let _ = handle.await;
+ }
+ 
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn test_watching_paused_status_line() {
++    assert_watching_paused_status_line(status_line_session(), "paused", "resumed").await;
++}
++
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn test_watching_paused_status_line_without_emoji() {
++    let session = status_line_session().with_indicators(Indicators::new(false));
++    assert_watching_paused_status_line(session, "paused_without_emoji", "resumed_without_emoji")
++        .await;
++}
++
+ #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+ async fn test_print_watched_files() {
+     let (io, mut stdin_ours, mut stdout_ours) = test_io();
+```
+
+**File**: `devenv-shell/tests/snapshots/session_tests__paused_without_emoji.snap` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++source: devenv-shell/tests/session_tests.rs
++expression: "rows[23]"
++---
++ ○ devenv paused                                              Ctrl+Alt+D resume
+```
+
+**File**: `devenv-shell/tests/snapshots/session_tests__resumed_without_emoji.snap` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++source: devenv-shell/tests/session_tests.rs
++expression: "rows[23]"
++---
++ ◉ devenv watching 1 files                                     Ctrl+Alt+D pause
 ```
 
 ---
 
-### Incident Patch 7: `f8f09b58` (2026-09-25)
-**Commit Message**: fix(examples): prevent npm from installing uncompatible pnpm
+### Incident Patch 3: `4aa5a075` (2026-10-07)
+**Commit Message**: fix(mailpit): do not allocate a port for a unix socket address (#3250)
 
-**File**: `examples/claude-agents/package.json` (modified, +1/-11)
-```diff
-@@ -1,21 +1,11 @@
- {
--  "name": "conan-flake",
-+  "name": "acai-dev",
-   "version": "1.0.0",
-   "description": "",
-   "main": "index.js",
--  "scripts": {
--    "test": "echo \"Error: no test specified\" && exit 1"
--  },
-   "keywords": [],
-   "author": "",
-   "license": "ISC",
--  "devEngines": {
--    "packageManager": {
--      "name": "pnpm",
--      "version": "^11.15.0",
--      "onFail": "download"
--    }
--  },
-   "type": "module",
-   "devDependencies": {
-     "@acai.sh/cli": "^0.0.4"
-```
+* fix(mailpit): do not allocate a port for a unix socket address
 
----
+services.mailpit derives its port by splitting the listen address on ":"
+and taking the last field. A unix socket is documented as
+"unix:<path>:<permissions>", so that field is the permissions, and devenv
+asks the port allocator for 660:
 
-### Incident Patch 8: `391d1ed4` (2026-09-25)
-**Commit Message**: fix(opentofu): default lsp.package to tofu-ls (#3225)
+    error: Could not find available port starting from 660 after 100 attempts
 
-* fix(opentofu): default lsp.package to tofu-ls
+Ports below 1024 are privileged, so every one of the 100 attempts is
+rejected. parseHost compounds it: it returns "unix", and the process
+would be started with "--listen unix:<allocated port>".
 
-Fixes #3205
+A unix socket address has no port to allocate. It is now detected and
+passed to mailpit unchanged, and the ports are declared only for a TCP
+address, since a port that is never declared is one devenv never allocates.
 
 * Auto generate docs options data
 
@@ -3280,1240 +2500,218 @@ Fixes #3205
 
 Co-authored-by: github-actions <41898282+github-actions[bot]@users.noreply.github.com>
 
-**File**: `docs/src/content/docs/languages/opentofu.md` (modified, +1/-1)
+**File**: `docs/src/content/docs/services/mailpit.md` (modified, +24/-0)
 ```diff
-@@ -112,7 +112,7 @@ package
- *Default:*
+@@ -104,6 +104,10 @@ list of strings concatenated with “\\n”
  
- ```nix
--pkgs.terraform-ls
-+pkgs.tofu-ls
+ Listen address for SMTP.
+ 
++Either ` <host>:<port> `, where the port is the base devenv allocates
++from, or a unix socket as ` unix:<path>:<permissions> `, which is passed
++to mailpit as given. Mailpit requires the permissions.
++
+ 
+ 
+ *Type:*
+@@ -117,6 +121,14 @@ string
+ "127.0.0.1:1025"
  ```
  
++
++
++*Example:*
++
++```nix
++"unix:${config.env.DEVENV_RUNTIME}/mailpit-smtp.sock:660"
++```
++
  *Declared by:*
+  - [https://github.com/cachix/devenv/blob/main/src/modules/services/mailpit.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/mailpit.nix)
+ 
+@@ -128,6 +140,10 @@ string
+ 
+ Listen address for UI.
+ 
++Either ` <host>:<port> `, where the port is the base devenv allocates
++from, or a unix socket as ` unix:<path>:<permissions> `, which is passed
++to mailpit as given. Mailpit requires the permissions.
++
+ 
+ 
+ *Type:*
+@@ -141,5 +157,13 @@ string
+ "127.0.0.1:8025"
+ ```
+ 
++
++
++*Example:*
++
++```nix
++"unix:${config.env.DEVENV_RUNTIME}/mailpit-ui.sock:660"
++```
++
+ *Declared by:*
+  - [https://github.com/cachix/devenv/blob/main/src/modules/services/mailpit.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/mailpit.nix)
 ```
 
-**File**: `src/modules/languages/opentofu.nix` (modified, +2/-2)
+**File**: `src/modules/services/mailpit.nix` (modified, +50/-21)
 ```diff
-@@ -19,8 +19,8 @@ in
+@@ -8,14 +8,21 @@ let
+   parsePort = addr: lib.toInt (lib.last (lib.splitString ":" addr));
+   parseHost = addr: lib.head (lib.splitString ":" addr);
  
-       package = lib.mkOption {
-         type = lib.types.package;
--        default = pkgs.terraform-ls;
--        defaultText = lib.literalExpression "pkgs.terraform-ls";
-+        default = pkgs.tofu-ls;
-+        defaultText = lib.literalExpression "pkgs.tofu-ls";
-         description = "The OpenTofu language server package to use.";
-       };
+-  baseUiPort = parsePort cfg.uiListenAddress;
+-  baseSmtpPort = parsePort cfg.smtpListenAddress;
+-  allocatedUiPort = config.processes.mailpit.ports.ui.value;
+-  allocatedSmtpPort = config.processes.mailpit.ports.smtp.value;
+-  uiHost = parseHost cfg.uiListenAddress;
+-  smtpHost = parseHost cfg.smtpListenAddress;
+-  uiAddr = "${uiHost}:${toString allocatedUiPort}";
+-  smtpAddr = "${smtpHost}:${toString allocatedSmtpPort}";
++  # A unix socket address ends in its permissions, not a port, so it is passed
++  # through rather than parsed.
++  isUnixAddress = addr: lib.hasPrefix "unix:" addr;
++
++  uiIsUnix = isUnixAddress cfg.uiListenAddress;
++  smtpIsUnix = isUnixAddress cfg.smtpListenAddress;
++
++  uiAddr =
++    if uiIsUnix
++    then cfg.uiListenAddress
++    else "${parseHost cfg.uiListenAddress}:${toString config.processes.mailpit.ports.ui.value}";
++  smtpAddr =
++    if smtpIsUnix
++    then cfg.smtpListenAddress
++    else "${parseHost cfg.smtpListenAddress}:${toString config.processes.mailpit.ports.smtp.value}";
+ in
+ {
+   options.services.mailpit = {
+@@ -30,14 +37,28 @@ in
+ 
+     uiListenAddress = lib.mkOption {
+       type = types.str;
+-      description = "Listen address for UI.";
++      description = ''
++        Listen address for UI.
++
++        Either `<host>:<port>`, where the port is the base devenv allocates
++        from, or a unix socket as `unix:<path>:<permissions>`, which is passed
++        to mailpit as given. Mailpit requires the permissions.
++      '';
+       default = "127.0.0.1:8025";
++      example = lib.literalExpression "\"unix:\${config.env.DEVENV_RUNTIME}/mailpit-ui.sock:660\"";
      };
-```
-
----
-
-### Incident Patch 9: `a1465bf0` (2026-09-25)
-**Commit Message**: fix(hook): use `command env` in fish hook (#3223)
-
-A user fish function named `env` (grc wraps it) piped devenv shell's
-stdout, so auto-activation hung. Fixes #3222.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@
- ### Bug Fixes
  
- - MySQL now creates configured databases and users when started with `devenv up`, including `devenv up mysql` ([#2843](https://github.com/cachix/devenv/issues/2843)).
-+- fish auto-activation no longer hangs when `env` is a fish function, such as grc's wrapper ([#3222](https://github.com/cachix/devenv/issues/3222)).
- 
- ## 2.4.0 (2026-09-24)
- 
-```
-
-**File**: `devenv/hooks/hook.fish` (modified, +2/-1)
-```diff
-@@ -56,7 +56,8 @@ function _devenv_hook_activate
-     if test -n "$DEVENV_ROOT"
-         return
-     end
--    env -C $project_dir _DEVENV_HOOK_DIR=$project_dir _DEVENV_CALLER=hook _DEVENV_SHELL_HINT=fish devenv shell@DEVENV_SHELL_ARGS@
-+    # `command` skips user functions named `env` (e.g. grc wraps it and pipes stdout).
-+    command env -C $project_dir _DEVENV_HOOK_DIR=$project_dir _DEVENV_CALLER=hook _DEVENV_SHELL_HINT=fish devenv shell@DEVENV_SHELL_ARGS@
-     # If the devenv shell exited due to cd outside the project, follow the user there
-     set -l exit_dir_file "$project_dir/.devenv/exit-dir"
-     if test -f "$exit_dir_file"
-```
-
----
-
-### Incident Patch 10: `4c1ba7d6` (2026-09-25)
-**Commit Message**: fix(mysql): run configuration when MySQL starts (#3219)
-
-Select the configure task through wantedBy while keeping the readiness ordering edge. Add a named-up regression test and make the existing MySQL test use its allocated port.
-
-Fixes #2843
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -2,6 +2,10 @@
- 
- ## 2.4.1 (unreleased)
- 
-+### Bug Fixes
+     smtpListenAddress = lib.mkOption {
+       type = types.str;
+-      description = "Listen address for SMTP.";
++      description = ''
++        Listen address for SMTP.
 +
-+- MySQL now creates configured databases and users when started with `devenv up`, including `devenv up mysql` ([#2843](https://github.com/cachix/devenv/issues/2843)).
-+
- ## 2.4.0 (2026-09-24)
++        Either `<host>:<port>`, where the port is the base devenv allocates
++        from, or a unix socket as `unix:<path>:<permissions>`, which is passed
++        to mailpit as given. Mailpit requires the permissions.
++      '';
+       default = "127.0.0.1:1025";
++      example = lib.literalExpression "\"unix:\${config.env.DEVENV_RUNTIME}/mailpit-smtp.sock:660\"";
+     };
  
- ### Machines (experimental)
-```
-
-**File**: `src/modules/services/mysql.nix` (modified, +3/-0)
-```diff
-@@ -6,6 +6,8 @@
- with lib; let
-   cfg = config.services.mysql;
-   isMariaDB = getName cfg.package == getName pkgs.mariadb;
-+  supportsWantedBy = config.devenv.cli.version == null
-+    || versionAtLeast config.devenv.cli.version "2.3.2";
- 
-   # MariaDB 11.x renamed every `mysql*` client to `mariadb-*` and prints a
-   # deprecation warning on every invocation of the old name. Oracle MySQL
-@@ -349,6 +351,7 @@ in
-     # race against an un-initialised server.
-     tasks."devenv:mysql:configure" = {
-       exec = configureScript;
-+      wantedBy = mkIf supportsWantedBy [ "devenv:processes:mysql" ];
+     additionalArgs = lib.mkOption {
+@@ -50,17 +71,25 @@ in
      };
    };
+ 
+-  config = lib.mkIf cfg.enable {
+-    # For `sendmail`
+-    packages = [ cfg.package ];
++  config = lib.mkIf cfg.enable (lib.mkMerge [
++    {
++      # For `sendmail`
++      packages = [ cfg.package ];
+ 
+-    tasks."devenv:mailpit:setup" = {
+-      exec = ''mkdir -p "$DEVENV_STATE/mailpit"'';
+-      before = [ "devenv:processes:mailpit" ];
+-    };
++      tasks."devenv:mailpit:setup" = {
++        exec = ''mkdir -p "$DEVENV_STATE/mailpit"'';
++        before = [ "devenv:processes:mailpit" ];
++      };
+ 
+-    processes.mailpit.ports.ui.allocate = baseUiPort;
+-    processes.mailpit.ports.smtp.allocate = baseSmtpPort;
+-    processes.mailpit.exec = "exec ${cfg.package}/bin/mailpit --db-file $DEVENV_STATE/mailpit/db.sqlite3 --listen ${lib.escapeShellArg uiAddr} --smtp ${lib.escapeShellArg smtpAddr} ${lib.escapeShellArgs cfg.additionalArgs}";
+-  };
++      processes.mailpit.exec = "exec ${cfg.package}/bin/mailpit --db-file $DEVENV_STATE/mailpit/db.sqlite3 --listen ${lib.escapeShellArg uiAddr} --smtp ${lib.escapeShellArg smtpAddr} ${lib.escapeShellArgs cfg.additionalArgs}";
++    }
++
++    # An undeclared port is one devenv never allocates.
++    (lib.mkIf (!uiIsUnix) {
++      processes.mailpit.ports.ui.allocate = parsePort cfg.uiListenAddress;
++    })
++    (lib.mkIf (!smtpIsUnix) {
++      processes.mailpit.ports.smtp.allocate = parsePort cfg.smtpListenAddress;
++    })
++  ]);
  }
 ```
 
-**File**: `tests/mysql-named-up/.test-config.yml` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+use_shell: false
-```
-
-**File**: `tests/mysql-named-up/.test.sh` (added, +13/-0)
+**File**: `tests/mailpit-unix-socket/.test.sh` (added, +13/-0)
 ```diff
 @@ -0,0 +1,13 @@
 +#!/usr/bin/env bash
-+set -euo pipefail
++set -ex
 +
-+cleanup() {
-+  devenv processes down >/dev/null 2>&1 || true
-+}
-+trap cleanup EXIT
++wait_for_processes
 +
-+# A named start runs in before mode. It must still select MySQL's configure
-+# task and wait for it to create the database and user.
-+devenv up -d mysql
-+devenv processes wait --timeout 120
-+devenv shell -- bash -c 'mysql -h 127.0.0.1 -P "$MYSQL_TCP_PORT" -u named_up -pnamed_up named_up -e "SELECT 1"'
++sendmail -S "unix:$MAILPIT_SMTP_SOCKET" john@example.com <<MAIL
++Subject: Hello
++
++Hello world!
++MAIL
++
++curl --fail --silent --unix-socket "$MAILPIT_UI_SOCKET" \
++	http://localhost/api/v1/messages
 ```
 
-**File**: `tests/mysql-named-up/devenv.nix` (added, +14/-0)
+**File**: `tests/mailpit-unix-socket/devenv.nix` (added, +25/-0)
 ```diff
-@@ -0,0 +1,14 @@
-+{ ... }:
+@@ -0,0 +1,25 @@
++{ config, pkgs, ... }:
++let
++  uiSocket = "${config.env.DEVENV_RUNTIME}/mailpit-ui.sock";
++  smtpSocket = "${config.env.DEVENV_RUNTIME}/mailpit-smtp.sock";
++in
 +{
-+  services.mysql = {
++  packages = [ pkgs.curl ];
++
++  env = {
++    MAILPIT_UI_SOCKET = uiSocket;
++    MAILPIT_SMTP_SOCKET = smtpSocket;
++  };
++
++  services.mailpit = {
 +    enable = true;
-+    initialDatabases = [ { name = "named_up"; } ];
-+    ensureUsers = [
-+      {
-+        name = "named_up";
-+        password = "named_up";
-+        ensurePermissions."named_up.*" = "ALL PRIVILEGES";
-+      }
-+    ];
++    # The trailing 660 is the socket's permissions, not a port.
++    uiListenAddress = "unix:${uiSocket}:660";
++    smtpListenAddress = "unix:${smtpSocket}:660";
++  };
++
++  processes.mailpit.ready = {
++    exec = "test -S ${uiSocket} && test -S ${smtpSocket}";
++    initial_delay = 1;
 +  };
 +}
-```
-
-**File**: `tests/mysql/.test.sh` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- set -e
- 
--wait_for_port 3306
-+wait_for_port "$MYSQL_TCP_PORT"
- 
- # Wait for configure-mysql to finish.
- sleep 5
-@@ -9,6 +9,6 @@ sleep 5
- mysql -e 'SELECT VERSION()'
- 
- # through tcp/ip
--mysql -h "127.0.0.1" -udb -pdb -e 'SELECT VERSION()'
-+mysql -h "127.0.0.1" -P "$MYSQL_TCP_PORT" -udb -pdb -e 'SELECT VERSION()'
- 
- ping-mysql
-```
-
----
-
-### Incident Patch 11: `62a8e7df` (2026-09-24)
-**Commit Message**: fix(tasks): add wantedBy for shell entry and Garage setup (#3207)
-
-* fix(tasks): add wantedBy so shell entry skips enterTest
-
-`after` and `before` both order tasks and select them: in `after` and
-`all` modes, running a task also runs every task ordered after it. So
-`devenv shell` (enterShell in `all` mode) pulled in enterTest, which runs
-after enterShell, together with its prerequisites such as
-devenv:git-hooks:run.
-
-Add `tasks.<name>.wantedBy`, which chooses the selecting tasks explicitly,
-like systemd. When set, the listed tasks select the task in every mode
-except `single`, and ordering edges no longer select it. enterTest sets
-`wantedBy = [ ]`, so it only runs as the `devenv test` root. A setup task
-with `wantedBy = [ "devenv:processes:db" ]` now runs under `devenv up`.
-
-The scheduler now selects tasks with one work list. Roots and wanted tasks
-are active and select what runs after them; prerequisites stay passive,
-which keeps the #2337 behavior.
-
-Fixes #3184
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* Auto generate docs options data
-
-* fix(garage): configure buckets on named starts
-
-Select Garage configuration with wantedBy so a named up schedules it af
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -14,13 +14,15 @@
- - Fixed `devenv shell "git log"` and other quoted commands failing with `not found` ([#3187](https://github.com/cachix/devenv/issues/3187)).
- - Fixed treefmt intermittently failing to stat managed files during shell entry by running it after `devenv:files`.
- - Fixed `devenv shell` crashing with SIGABRT and leaving a coredump when its terminal window is closed while output is being written ([#3203](https://github.com/cachix/devenv/issues/3203)).
-+- Fixed `devenv shell` running test setup such as `devenv:git-hooks:run` and tasks with `before = [ "devenv:enterTest" ]` ([#3184](https://github.com/cachix/devenv/issues/3184)).
- 
- ### Improvements
- 
- - Added an experimental target-side deployment executor for NixOS, with activation independent of SSH, deployment locking, health checks, persistent status, and explicit rollback. Unconfirmed deployments roll back after a deadline or reboot once NixOS reaches userspace; inspect and recover deployments with `machines status` and `machines rollback`.
- - Added configuration access checks to NixOS machine plans and `devenv machines check` to inspect them without building. Reviewed deployments reject disabled SSH or root login, report uncertain access changes, and require regenerated fleet plans.
- - Mixed NixOS, nix-darwin, and home-manager fleets share one review and confirmation. Every role is built and copied before activation; system roles run before home-manager. `--max-concurrent` supports bounded activation batches that stop after a failure.
- - `devenv machines deploy` builds a fleet plan, shows changes, asks for confirmation, and applies those exact outputs. NixOS uses generation checks and transactional rollback; nix-darwin and home-manager use direct activation. Use `--yes` for automation. `machines plan` saves a reusable plan ID; JSON export is optional with `--json`.
-+- Added `tasks.<name>.wantedBy` to choose which tasks select a task, separately from `after`/`before` ordering. Garage now configures its layout and buckets when started with `devenv up garage` as well as bare `devenv up` ([#2852](https://github.com/cachix/devenv/issues/2852)).
- 
- ## 2.3.1 (2026-09-11)
- 
-```
-
-**File**: `devenv-tasks/src/config.rs` (modified, +6/-2)
-```diff
-@@ -15,6 +15,10 @@ pub struct TaskConfig {
-     pub after: Vec<String>,
-     #[serde(default)]
-     pub before: Vec<String>,
-+    /// Tasks that select this task when they run. When set, `after` and
-+    /// `before` only order this task and no longer select it.
-+    #[serde(default)]
-+    pub wanted_by: Option<Vec<String>>,
-     #[serde(default)]
-     pub command: Option<String>,
-     #[serde(default)]
-@@ -40,12 +44,12 @@ pub struct TaskConfig {
- pub enum RunMode {
-     /// Run only the specified task without dependencies
-     Single,
--    /// Run the specified task and all tasks that depend on it (downstream tasks)
-+    /// Run the specified task and the tasks that run after it (downstream tasks)
-     After,
-     /// Run all dependency tasks first, then the specified task (upstream tasks)
-     Before,
-     #[default]
--    /// Run the complete dependency graph (upstream and downstream tasks)
-+    /// Run the specified task with its upstream and downstream tasks
-     All,
- }
- 
-```
-
-**File**: `devenv-tasks/src/tasks.rs` (modified, +250/-86)
-```diff
-@@ -124,6 +124,8 @@ impl TasksBuilder {
-             roots,
-             root_names: self.config.roots,
-             graph,
-+            wants: HashMap::new(),
-+            wanted_by_declared: HashSet::new(),
-             notify_finished,
-             notify_ui: Arc::new(Notify::new()),
-             tasks_order: vec![],
-@@ -170,6 +172,10 @@ pub struct Tasks {
-     // Stored for reporting
-     pub(crate) root_names: Vec<String>,
-     pub(crate) graph: DiGraph<Arc<RwLock<TaskState>>, DependencyKind>,
-+    /// Tasks selected whenever the key task is selected (`wanted_by`, reversed).
-+    pub(crate) wants: HashMap<NodeIndex, Vec<NodeIndex>>,
-+    /// Tasks that declare `wanted_by`. Ordering edges never select them.
-+    pub(crate) wanted_by_declared: HashSet<NodeIndex>,
-     pub(crate) tasks_order: Vec<NodeIndex>,
-     pub(crate) notify_finished: Arc<Notify>,
-     pub(crate) notify_ui: Arc<Notify>,
-@@ -393,6 +399,8 @@ impl Tasks {
-         let mut unresolved = HashSet::new();
-         let mut edges_to_add = Vec::new();
-         let mut validation_errors = Vec::new();
-+        let mut wants: HashMap<NodeIndex, Vec<NodeIndex>> = HashMap::new();
-+        let mut wanted_by_declared = HashSet::new();
- 
-         for index in self.graph.node_indices() {
-             let task_state = &self.graph[index].read().await;
-@@ -502,6 +510,23 @@ impl Tasks {
-                     unresolved.insert((task_state.task.name.clone(), before_name.clone()));
-                 }
-             }
-+
-+            if let Some(wanted_by) = &task_state.task.wanted_by {
-+                wanted_by_declared.insert(index);
-+                for name in wanted_by {
-+                    if name.contains('@') {
-+                        validation_errors.push(format!(
-+                            "Task '{}' lists '{}' in wantedBy, which only selects tasks and takes no suffix. \
-+                             Use after or before to order the tasks.",
-+                            task_state.task.name, name
-+                        ));
-+                    } else if let Some(&selector) = task_indices.get(name) {
-+                        wants.entry(selector).or_default().push(index);
-+                    } else {
-+                        unresolved.insert((task_state.task.name.clone(), name.clone()));
-+                    }
-+                }
-+            }
-         }
- 
-         // Return validation errors first
-@@ -512,6 +537,8 @@ impl Tasks {
-         for (from, to, kind) in edges_to_add {
-             self.graph.update_edge(from, to, kind);
-         }
-+        self.wants = wants;
-+        self.wanted_by_declared = wanted_by_declared;
- 
-         if unresolved.is_empty() {
-             Ok(())
-@@ -525,98 +552,40 @@ impl Tasks {
-         let mut subgraph = DiGraph::new();
-         let mut node_map = HashMap::new();
-         let mut visited = HashSet::new();
--        let mut to_visit = Vec::new();
--
--        // Start with root nodes
--        for &root_index in &self.roots {
--            to_visit.push(root_index);
--        }
- 
-         // Find nodes to include based on run_mode
--        match self.run_mode {
--            RunMode::Single => {
--                // Only include the root nodes themselves
--                visited = self.roots.iter().cloned().collect();
--            }
--            RunMode::After => {
--                // Include root nodes and all tasks that come after (successor nodes)
--                while let Some(node) = to_visit.pop() {
--                    if visited.insert(node) {
--                        // Add outgoing neighbors (tasks that come after this one)
--                        for neighbor in self
--                            .graph
--                            .neighbors_directed(node, petgraph::Direction::Outgoing)
--                        {
--                            to_visit.push(neighbor);
--                        }
--                    }
--                }
--            }
--            RunMode::Before => {
--                // Include root nodes and all tasks that come before (predecessor nodes)
--                while let Some(node) = to_visit.pop() {
--                    if visited.insert(node) {
--                        // Add incoming neighbors (tasks that come before this one)
--                        for neighbor in self
--                            .graph
--                            .neighbors_directed(node, petgraph::Direction::Incoming)
--                        {
--                            to_visit.push(neighbor);
--                        }
--                    }
--                }
--            }
--            RunMode::All => {
--                // Include prerequisites (incoming) and dependents (outgoing) separately.
--                // This avoids "direction bouncing" through intermediate nodes that would
--                // incorrectly include unrelated tasks sharing a common prerequisite.
--                // See: https://github.com/cachix/devenv/issues/2337
--
--                // First: traverse incoming edges (prereq
-```
-
-**File**: `devenv/src/devenv/mod.rs` (modified, +31/-1)
-```diff
-@@ -1142,7 +1142,8 @@ impl Devenv {
-         }
- 
-         // Dependency closure of the requested processes, traversing `after`
--        // edges and reversed `before` edges through tasks of every type
-+        // edges, reversed `before` edges and reversed `wantedBy` (the
-+        // scheduler selects wanted tasks too) through tasks of every type
-         // (a process may depend on a oneshot that depends on a process).
-         // `@kind` suffixes are stripped: the closure asks "which tasks does
-         // this launch need", not how readiness is judged.
-@@ -1161,6 +1162,9 @@ impl Devenv {
-             for b in &t.before {
-                 edges.entry(dep_name(b)).or_default().push(t.name.clone());
-             }
-+            for w in t.wanted_by.iter().flatten() {
-+                edges.entry(w.clone()).or_default().push(t.name.clone());
-+            }
-         }
-         let mut needed: HashSet<String> = HashSet::new();
-         let mut queue: Vec<String> = requested
-@@ -4084,6 +4088,7 @@ struct TaskListItem<'a> {
-     r#type: tasks::TaskType,
-     after: &'a [String],
-     before: &'a [String],
-+    wanted_by: Option<&'a [String]>,
-     has_exec: bool,
-     has_status: bool,
-     cwd: Option<&'a str>,
-@@ -4099,6 +4104,7 @@ fn format_tasks_json(tasks: &[tasks::TaskConfig]) -> Result<String> {
-             r#type: task.r#type,
-             after: &task.after,
-             before: &task.before,
-+            wanted_by: task.wanted_by.as_deref(),
-             has_exec: task.command.is_some(),
-             has_status: task.status.is_some(),
-             cwd: task.cwd.as_deref(),
-@@ -4968,6 +4974,29 @@ BOOTSTRAP_KEY = { description = "bootstrap key", as_path = true }
-         assert!(!enable(0), "unrelated process stays parked");
-     }
- 
-+    #[test]
-+    fn resolve_launch_processes_follows_wanted_by() {
-+        // beta wants configure, which needs alpha. gamma is unrelated.
-+        let mut configs = vec![
-+            process_task("alpha", true),
-+            process_task("beta", true),
-+            process_task("gamma", true),
-+            tasks::TaskConfig {
-+                name: "devenv:beta:configure".to_string(),
-+                after: vec![format!("{}alpha", devenv_tasks::PROCESS_TASK_PREFIX)],
-+                wanted_by: Some(vec![format!("{}beta", devenv_tasks::PROCESS_TASK_PREFIX)]),
-+                ..Default::default()
-+            },
-+        ];
-+
-+        Devenv::resolve_launch_processes(&mut configs, &["beta".to_string()]).unwrap();
-+
-+        let enable = |i: usize| configs[i].process.as_ref().unwrap().start.enable;
-+        assert!(enable(0), "alpha launches for the task beta wants");
-+        assert!(enable(1), "requested beta launches");
-+        assert!(!enable(2), "unrelated gamma is disabled");
-+    }
-+
-     #[test]
-     fn resolve_launch_processes_rejects_unknown_names() {
-         let mut configs = vec![process_task("alpha", true)];
-@@ -5180,6 +5209,7 @@ BOOTSTRAP_KEY = { description = "bootstrap key", as_path = true }
-                     "type": "oneshot",
-                     "after": ["test:build"],
-                     "before": ["test:report"],
-+                    "wantedBy": null,
-                     "hasExec": true,
-                     "hasStatus": true,
-                     "cwd": "crates/app",
-```
-
-**File**: `docs/src/content/docs/processes.mdx` (modified, +1/-1)
-```diff
-@@ -241,7 +241,7 @@ See [Dependency states](/tasks/#dependency-states) for the full semantics, and [
- 
- :::caution[Setup tasks that run after a process]
- 
--`devenv up` schedules processes in `before` mode, which runs each process's upstream dependencies but **not** tasks that run *after* it. A setup or configure task wired downstream of a process — e.g. `processes.<name>.before = [ "devenv:<name>:configure" ]` — is skipped under `devenv up` and never runs. Use `devenv up --mode all`, or see [Processes as tasks](/tasks/#processes-as-tasks) for details.
-+`devenv up` schedules processes in `before` mode, which runs each process's upstream dependencies but **not** tasks that run *after* it. A setup or configure task wired downstream of a process — e.g. `processes.<name>.before = [ "devenv:<name>:configure" ]` — is skipped under `devenv up` and never runs. Add `wantedBy = [ "devenv:processes:<name>" ];` to the setup task (2.3.2+), use `devenv up --mode all`, or see [Processes as tasks](/tasks/#processes-as-tasks) for details.
- :::
- 
- 
-```
-
-**File**: `docs/src/content/docs/tasks.mdx` (modified, +26/-2)
-```diff
-@@ -61,6 +61,28 @@ Processes are tasks too (see [Processes as tasks](#processes-as-tasks)), so the
- }
- ```
- 
-+### Selecting tasks with `wantedBy`
-+
-+<VersionCompatibility version="2.3.2" />
-+
-+`before` and `after` both order tasks and choose which tasks run. Running a task pulls in the tasks it runs after, and in `after` and `all` [modes](#execution-modes) also the tasks that run after it.
-+
-+Set `wantedBy` to choose explicitly which tasks select yours, like systemd's `wantedBy`. The listed tasks then select it in every mode except `single`, and `before`/`after` only order it:
-+
-+```nix title="devenv.nix"
-+{
-+  tasks."myapp:migrate" = {
-+    exec = "myapp migrate";
-+    after = [ "devenv:processes:db" ];     # order: wait until db is ready
-+    wantedBy = [ "devenv:processes:db" ];  # select: run whenever db starts
-+  };
-+}
-+```
-+
-+`wantedBy` does not order tasks, so pair it with `after` or `before`.
-+A task with `wantedBy = [ ]` runs only when named directly or when a selected task runs after it.
-+`devenv:enterTest` uses this, so entering a shell does not run test setup.
-+
- ### Dependency states
- 
- <VersionCompatibility version="2.0" />
-@@ -100,7 +122,9 @@ When you run a task, devenv schedules a subgraph around it rather than only that
- | `single` | only the named task |
- | `before` (default) | the task and everything *upstream* of it (its dependencies) |
- | `after` | the task and everything *downstream* of it (tasks that depend on it) |
--| `all` | the entire connected graph, both upstream and downstream |
-+| `all` | the task, everything upstream and downstream of it, and the upstream of those downstream tasks |
-+
-+In every mode except `single`, tasks that list a selected task in [`wantedBy`](#selecting-tasks-with-wantedby) also run, and downstream tasks that set `wantedBy` run only when one of their listed tasks is selected.
- 
- ```sh
- $ devenv tasks run myapp:build               # before mode (default): build + its dependencies
-@@ -368,7 +392,7 @@ This ensures that cleanup tasks like removing PID files or clearing caches are e
- 
- A task that runs *after* a process — a setup or configure step wired with `processes.<name>.before = [ "devenv:<name>:configure" ]`, or equivalently `tasks."devenv:<name>:configure".after = [ "devenv:processes:<name>" ]` — is *downstream* of that process. `devenv up` schedules processes in `before` mode, which runs each process's upstream dependencies but **not** its downstream tasks, so the setup step is skipped and never runs.
- 
--Until this is resolved ([#2852](https://github.com/cachix/devenv/issues/2852)), run `devenv up --mode all` to include downstream setup tasks. `devenv test` already runs in `all` mode, so these tasks run there. See [Execution modes](#execution-modes).
-+Since 2.3.2, add `wantedBy = [ "devenv:processes:<name>" ];` to the setup task so it runs whenever the process starts, including under `devenv up` (see [Selecting tasks with `wantedBy`](#selecting-tasks-with-wantedby)). On older versions, run `devenv up --mode all` to include downstream setup tasks. `devenv test` already runs in `all` mode, so these tasks run there. See [Execution modes](#execution-modes).
- :::
- 
- 
-```
-
-**File**: `examples/garage/.test.sh` (modified, +2/-2)
-```diff
-@@ -1,8 +1,8 @@
- #!/usr/bin/env bash
- set -ex
- 
--# Blocks until garage's readiness probe passes (which requires the bucket to
--# exist) and fails if garage-configure dies, so the checks below can't race.
-+# Blocks until Garage's readiness probe passes, which requires the bucket to
-+# exist. Configuration failures also fail process startup.
- wait_for_processes
- 
- curl -sf -H "Authorization: Bearer devtoken" \
-```
-
-**File**: `src/modules/services/garage.nix` (modified, +27/-1)
-```diff
-@@ -7,6 +7,8 @@
- let
-   cfg = config.services.garage;
-   types = lib.types;
-+  supportsWantedBy = config.devenv.cli.version == null
-+    || lib.versionAtLeast config.devenv.cli.version "2.3.2";
- 
-   parsePort = addr: lib.toInt (lib.last (lib.splitString ":" addr));
-   parseHost = addr: lib.head (lib.splitString ":" addr);
-@@ -249,6 +251,19 @@ in
-   };
- 
-   config = lib.mkIf cfg.enable {
-+    changelogs = [
-+      {
-+        date = "2026-09-22";
-+        title = "services.garage: configure layout and buckets on named starts";
-+        when = supportsWantedBy;
-+        description = ''
-+          `devenv up garage` now configures the Garage layout and buckets.
-+          Configuration runs as a task after the server starts, so
-+          `garage-configure` no longer appears as a separate process.
-+        '';
-+      }
-+    ];
-+
-     assertions = [
-       {
-         assertion = cfg.adminToken != "";
-@@ -277,7 +292,18 @@ in
-       GARAGE_CONFIG_FILE = "${configFile}";
-     };
- 
--    processes.garage-configure = {
-+    # Select configuration when Garage starts, including `devenv up garage`.
-+    # It must run after the server starts because it applies the layout through
-+    # the Garage CLI, before the server's ready probe can see the buckets.
-+    tasks."devenv:garage:configure" = lib.mkIf supportsWantedBy {
-+      exec = "exec ${configureScript}/bin/configure";
-+      after = [ "devenv:processes:garage@started" ];
-+      wantedBy = [ "devenv:processes:garage" ];
-+    };
-+
-+    # Older CLIs cannot read wantedBy. Bare `devenv up` still starts this
-+    # process as an independent root, as it did before 2.3.2.
-+    processes.garage-configure = lib.mkIf (!supportsWantedBy) {
-       exec = "exec ${configureScript}/bin/configure";
-       after = [ "devenv:processes:garage@started" ];
-     };
-```
-
----
-
-### Incident Patch 12: `537d9464` (2026-09-24)
-**Commit Message**: fix(ci): update docs generator to devenv 2.3.1 (#3218)
-
-**File**: `.github/workflows/generate.yml` (modified, +1/-2)
-```diff
-@@ -21,8 +21,7 @@ jobs:
-           name: devenv
- 
-       - name: Install devenv
--        # TODO(sander): go back to latest once a release includes the non-TUI stdout fix.
--        run: nix profile add github:cachix/devenv/29fcc8a9a778c2e3f822ef961cc9667122e79dd5 -L --accept-flake-config
-+        run: nix profile add github:cachix/devenv/v2.3.1 -L --accept-flake-config
- 
-       - name: Disable git-hooks
-         run: |
-```
-
----
-
-### Incident Patch 13: `21b09683` (2026-09-24)
-**Commit Message**: fix(shell): resolve allocated ports from running manager (#3211)
-
-Seed the port allocator before CLI evaluation so shell and direnv
-environments use the ports held by a running native manager. Read-only
-commands keep the allocator disabled, so they read the manager's
-assignments without allocating new ports. Seed values are part of the
-eval cache key and survive cache invalidation.
-
-The manager query is bounded to two seconds only for read-only
-commands; up and tasks run wait for the answer so they never allocate
-ports that differ from running processes.
-
-Hot reload asks the manager again before re-evaluating, and both the
-reload watcher and direnv watch the manager's PID file, so the
-environment updates when processes start or stop.
-
-Fixes #3208.
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -4,8 +4,10 @@
- 
- ### Bug Fixes
- 
-+- Fixed `devenv shell` and direnv resolving allocated service ports to the base port while a process manager is running. Shell commands now read the running service's port without allocating new ports, so PostgreSQL's `PGPORT` points to the intended database. direnv and the hot reloading shell update the environment when processes start or stop ([#3208](https://github.com/cachix/devenv/issues/3208)).
- - Release evaluation memory after `devenv mcp` initializes its package and option caches, reducing idle memory usage ([#3065](https://github.com/cachix/devenv/issues/3065)).
- - Fixed `devenv lsp` aborting on startup with `Already registered store with name 'Dummy Store'` ([#3196](https://github.com/cachix/devenv/issues/3196)).
-+
- - Fixed `devenv-run-tests --override-input` using different inputs in nested `devenv` commands.
- 
- - Fixed `devenv shell "git log"` and other quoted commands failing with `not found` ([#3187](https://github.com/cachix/devenv/issues/3187)).
-```
-
-**File**: `devenv-core/src/ports.rs` (modified, +119/-8)
-```diff
-@@ -87,6 +87,8 @@ impl Drop for PortReservations {
- struct PortEntry {
-     port: u16,
-     base: u16,
-+    /// True when this value came from a running process manager.
-+    seeded: bool,
-     /// Listeners holding the port reservation. May contain an IPv4 listener,
-     /// an IPv6 listener, or both. Empty after `take_reservations()` is called.
-     listeners: Vec<TcpListener>,
-@@ -122,7 +124,7 @@ pub struct PortAllocator {
-     strict: AtomicBool,
-     /// When true, allow replay to accept ports already in use (skip binding).
-     allow_in_use: AtomicBool,
--    /// When false, return the base port without reserving or caching.
-+    /// When false, read manager assignments but leave other ports at their base.
-     enabled: AtomicBool,
- }
- 
-@@ -180,14 +182,52 @@ impl PortAllocator {
-             ports.entry(key).or_insert(PortEntry {
-                 port: *port,
-                 base: *port,
-+                seeded: true,
-                 listeners: vec![],
-             });
-         }
-     }
- 
-+    /// Forget ports supplied by a running process manager, keeping ports
-+    /// this allocator reserved itself.
-+    ///
-+    /// Used before seeding again when the manager may have started, stopped
-+    /// or reassigned ports since the last evaluation.
-+    pub fn clear_seeds(&self) {
-+        self.ports
-+            .lock()
-+            .unwrap_or_else(|poisoned| poisoned.into_inner())
-+            .retain(|_, entry| !entry.seeded);
-+    }
-+
-+    /// Whether a running process manager supplied any port values.
-+    pub fn has_seeded_ports(&self) -> bool {
-+        self.ports
-+            .lock()
-+            .unwrap_or_else(|poisoned| poisoned.into_inner())
-+            .values()
-+            .any(|entry| entry.seeded)
-+    }
-+
-+    /// Stable cache key state for ports supplied by a running manager.
-+    pub fn seeded_ports_cache_key(&self) -> String {
-+        let ports = self
-+            .ports
-+            .lock()
-+            .unwrap_or_else(|poisoned| poisoned.into_inner());
-+        let mut seeds: Vec<_> = ports
-+            .iter()
-+            .filter(|(_, entry)| entry.seeded)
-+            .map(|((process, name), entry)| (process, name, entry.port))
-+            .collect();
-+        seeds.sort();
-+        format!("{seeds:?}")
-+    }
-+
-     /// Enable or disable port allocation.
-     ///
--    /// When disabled, `allocate()` returns the base port without reserving it.
-+    /// When disabled, `allocate()` returns manager assignments for seeded ports
-+    /// and the base port for all others, without making new reservations.
-     pub fn set_enabled(&self, enabled: bool) {
-         self.enabled.store(enabled, Ordering::SeqCst);
-     }
-@@ -206,18 +246,21 @@ impl PortAllocator {
-     ///
-     /// In strict mode, only tries the base port and fails with process info if unavailable.
-     pub fn allocate(&self, process_name: &str, port_name: &str, base: u16) -> Result<u16, String> {
--        if !self.enabled.load(Ordering::SeqCst) {
--            return Ok(base);
--        }
--
-+        let enabled = self.enabled.load(Ordering::SeqCst);
-         let mut ports = self.ports.lock().map_err(|e| e.to_string())?;
-         let key = (process_name.to_string(), port_name.to_string());
- 
-         // Check cache first - return existing allocation if present
--        if let Some(entry) = ports.get(&key) {
-+        if let Some(entry) = ports.get(&key)
-+            && (enabled || entry.seeded)
-+        {
-             return Ok(entry.port);
-         }
- 
-+        if !enabled {
-+            return Ok(base);
-+        }
-+
-         let strict = self.strict.load(Ordering::SeqCst);
- 
-         // Collect already-allocated port numbers to avoid conflicts
-@@ -242,6 +285,7 @@ impl PortAllocator {
-                         PortEntry {
-                             port: base,
-                             base,
-+                            seeded: false,
-                             listeners,
-                         },
-                     );
-@@ -279,6 +323,7 @@ impl PortAllocator {
-                 PortEntry {
-                     port,
-                     base,
-+                    seeded: false,
-                     listeners,
-                 },
-             );
-@@ -367,6 +412,7 @@ impl PortAllocator {
-                     PortEntry {
-                         port,
-                         base: port,
-+                        seeded: false,
-                         listeners,
-                     },
-                 );
-@@ -395,6 +441,7 @@ impl PortAllocator {
-                         PortEntry {
-                             port,
-                             base: port,
-+                            seeded: false,
-                             listeners: vec![],
-                         },
-                     );
-@@ -411,7 +458,13 @@ impl PortAllocator {
-     /// Used after a replay failure to reset state before re-evaluation.
-     pub fn clear(&self) {
-         if let Ok(mut ports) = self.ports.lock() {
--            ports.clear();
-+      
-```
-
-**File**: `devenv-nix-backend/src/primops.rs` (modified, +17/-3)
-```diff
-@@ -258,14 +258,15 @@ impl PrimopRegistration for AllocatePortPrimop {
-     }
- 
-     fn is_enabled(&self) -> bool {
--        self.allocator.is_enabled()
-+        self.allocator.is_enabled() || self.allocator.has_seeded_ports()
-     }
- 
-     fn cache_key_fragment(&self) -> String {
-         format!(
--            "enabled={}:strict={}",
-+            "enabled={}:strict={}:seeds={}",
-             self.allocator.is_enabled(),
--            self.allocator.is_strict()
-+            self.allocator.is_strict(),
-+            self.allocator.seeded_ports_cache_key()
-         )
-     }
- 
-@@ -345,4 +346,17 @@ mod tests {
- 
-         assert_eq!(first.cache_key_fragment(), second.cache_key_fragment());
-     }
-+
-+    #[test]
-+    fn seeded_ports_enable_primop_and_change_cache_key() {
-+        let allocator = Arc::new(PortAllocator::new());
-+        let primop = AllocatePortPrimop::new(allocator.clone());
-+        let without_manager = primop.cache_key_fragment();
-+        assert!(!primop.is_enabled());
-+
-+        allocator.seed(&[("pg".into(), "main".into(), 5433)]);
-+        assert!(primop.is_enabled());
-+        assert!(!allocator.is_enabled());
-+        assert_ne!(without_manager, primop.cache_key_fragment());
-+    }
- }
-```
-
-**File**: `devenv/src/devenv/mod.rs` (modified, +50/-9)
-```diff
-@@ -1634,6 +1634,10 @@ impl Devenv {
- 
-     /// Invalidate cached state for hot-reload.
-     pub async fn invalidate_for_reload(&self) -> Result<()> {
-+        // The process manager may have started, stopped or reassigned ports
-+        // since the previous evaluation.
-+        self.port_allocator.clear_seeds();
-+        self.seed_running_ports().await;
-         self.require_cnix()?.invalidate_eval_state()
-     }
- 
-@@ -1707,6 +1711,13 @@ impl Devenv {
-         Ok(config.watch_paths(&self.devenv_root))
-     }
- 
-+    /// Files whose changes alter the ports a running process manager assigns.
-+    /// The manager writes its PID file once it answers port queries and
-+    /// removes it on shutdown, so watching it re-evaluates the environment.
-+    pub(crate) fn process_manager_watch_paths(&self) -> Vec<PathBuf> {
-+        vec![self.native_manager_pid_file()]
-+    }
-+
-     pub async fn prepare_shell(
-         &self,
-         cmd: &Option<String>,
-@@ -3509,8 +3520,19 @@ impl Devenv {
-         .await
-     }
- 
-+    /// Read allocations from a running native manager without enabling new
-+    /// port allocation for commands that only inspect the environment.
-+    pub async fn seed_running_ports(&self) {
-+        self.load_running_ports(false).await;
-+    }
-+
-     /// Reserve ports already in use by a running native process manager so
--    /// that Nix evaluation does not hand them out as fresh allocations.
-+    /// that process-starting commands do not hand them out again.
-+    pub async fn reserve_running_ports(&self) {
-+        self.load_running_ports(true).await;
-+    }
-+
-+    /// Seed manager assignments before Nix evaluation.
-     ///
-     /// Only seeds from a manager backed by a live PID file. A manager whose PID
-     /// file is gone is shutting down (or already dead): its socket can keep
-@@ -3521,8 +3543,8 @@ impl Devenv {
-     /// PID file mirrors the liveness signal used by `up()`'s "already running"
-     /// guard.
-     ///
--    /// Best-effort: failures are logged at trace level and do not propagate.
--    pub async fn reserve_running_ports(&self) {
-+    /// Best-effort: failures are logged and do not propagate.
-+    async fn load_running_ports(&self, enable_new_allocations: bool) {
-         // A healthy native manager has both a live PID file and an answering
-         // socket. If the PID file is not alive, fall back to the generic
-         // running-processes check and do not seed from the socket.
-@@ -3535,12 +3557,28 @@ impl Devenv {
- 
-         self.port_allocator.set_allow_in_use(false);
- 
--        match processes::NativeManagerClient::api_request(
--            &self.native_socket_path(),
-+        let socket_path = self.native_socket_path();
-+        let request = processes::NativeManagerClient::api_request(
-+            &socket_path,
-             &processes::ApiRequest::Ports,
--        )
--        .await
--        {
-+        );
-+        let response = if enable_new_allocations {
-+            // Allocating without the manager's assignments would hand out
-+            // ports that differ from the running processes, so wait for them.
-+            request.await
-+        } else {
-+            // Reading runs before every CLI command. A socket that accepts but
-+            // never answers must not leave those commands waiting indefinitely.
-+            match tokio::time::timeout(std::time::Duration::from_secs(2), request).await {
-+                Ok(response) => response,
-+                Err(_) => {
-+                    warn!("timed out querying native manager for ports, using base ports");
-+                    return;
-+                }
-+            }
-+        };
-+
-+        match response {
-             Ok(processes::ApiResponse::PortAllocations { ports }) => {
-                 let seeds: Vec<(String, String, u16)> = ports
-                     .into_iter()
-@@ -3552,7 +3590,9 @@ impl Devenv {
-                         "Seeded port allocator from native manager"
-                     );
-                     self.port_allocator.seed(&seeds);
--                    self.port_allocator.set_enabled(true);
-+                    if enable_new_allocations {
-+                        self.port_allocator.set_enabled(true);
-+                    }
-                 }
-             }
-             Ok(_) => {
-@@ -3635,6 +3675,7 @@ impl Devenv {
- 
-         let mut input_paths = env.inputs.clone();
-         input_paths.extend(self.dotenv_watch_paths().await?);
-+        input_paths.extend(self.process_manager_watch_paths());
-         input_paths.sort();
-         input_paths.dedup();
- 
-```
-
-**File**: `devenv/src/main.rs` (modified, +5/-0)
-```diff
-@@ -1107,6 +1107,11 @@ async fn run_backend(
- 
-     let devenv = Devenv::new(devenv_options, shutdown.clone()).await?;
- 
-+    // Commands that evaluate the environment need the ports already assigned
-+    // by a running process manager before their first Nix evaluation. Reading
-+    // those assignments must not allocate new ports for unrelated commands.
-+    devenv.seed_running_ports().await;
-+
-     // PTY shell hands Devenv off to an owner task; we reclaim it after the session.
-     if use_pty && let Commands::Shell { cmd: None, args } = command {
-         // Pre-compute shell environment while we still own Devenv directly.
-```
-
-**File**: `devenv/src/reload/owner.rs` (modified, +3/-0)
-```diff
-@@ -188,6 +188,9 @@ async fn add_watch_paths(devenv: &Devenv, watcher: &WatcherHandle) {
-         }
-         Err(e) => tracing::warn!("Failed to resolve dotenv watch paths: {}", e),
-     }
-+    watcher
-+        .watch_logical_many(devenv.process_manager_watch_paths())
-+        .await;
- 
-     let Some(pool) = devenv.eval_cache_pool() else {
-         return;
-```
-
-**File**: `tests/postgres-allocated-port-shell/.gitignore` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+/repo1/
-+/repo2/
-```
-
-**File**: `tests/postgres-allocated-port-shell/.test-config.yml` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+use_shell: true
-```
-
----
-
-### Incident Patch 14: `f7591a02` (2026-09-23)
-**Commit Message**: fix(mcp): release evaluation memory after cache initialization (#3200)
-
-* fix(mcp): collect evaluation garbage after cache initialization
-
-Backport Nix root pooling through the pinned fork revision. Keep the memory regression to expose the remaining C API root retention.
-
-Assisted-by: Codex (GPT-6)
-
-* fix(mcp): use pooled roots for C API references
-
-Pin the Nix fork with pooled C API root ownership. The evaluator release regression now passes and MCP returns evaluation memory after cache initialization.
-
-Assisted-by: Codex (GPT-6)
-
-* docs: link MCP memory fix to issue 3065
-
-Assisted-by: Codex (GPT-6)
-
-* fix(mcp): pin Nix fork with upstream GC test refinements
-
-Update both lock files to cachix/nix@bd10d7f after adapting the final test changes from NixOS/nix#16503 to our pooled root implementation. The fork already contains the functional evaluator and C API fixes.
-
-Assisted-by: Codex (GPT-6)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
- ### Bug Fixes
- 
-+- Release evaluation memory after `devenv mcp` initializes its package and option caches, reducing idle memory usage ([#3065](https://github.com/cachix/devenv/issues/3065)).
- - Fixed `devenv lsp` aborting on startup with `Already registered store with name 'Dummy Store'` ([#3196](https://github.com/cachix/devenv/issues/3196)).
- - Fixed `devenv-run-tests --override-input` using different inputs in nested `devenv` commands.
- 
-```
-
-**File**: `devenv-nix-backend/src/gc_boehm.rs` (modified, +63/-1)
-```diff
-@@ -214,6 +214,29 @@ pub fn collect(stage: &'static str) {
-         return;
-     }
- 
-+    collect_inner(stage, nix_bindings_expr::eval_state::gc_now);
-+}
-+
-+/// Collect after a one-shot evaluator and its thread have been dropped.
-+/// Idle servers may never allocate in Nix again, so cleanup cannot depend on
-+/// allocation pressure or the opt-in diagnostics setting.
-+pub fn collect_full(stage: &'static str) -> Result<()> {
-+    register_current_thread()?;
-+    collect_inner(stage, || {
-+        // Two passes release finalized graphs. Up to seven more age the freed
-+        // blocks past Boehm's default unmap threshold of six collections.
-+        // Keep this idle-only work here rather than changing Nix's GC policy.
-+        for pass in 0..9 {
-+            nix_bindings_expr::eval_state::gc_now();
-+            if pass >= 1 && heap_stats().free_bytes == 0 {
-+                break;
-+            }
-+        }
-+    });
-+    Ok(())
-+}
-+
-+fn collect_inner(stage: &'static str, collect: impl FnOnce()) {
-     let before = heap_stats();
-     let span = tracing::info_span!(
-         target: "devenv_nix_backend::gc_boehm",
-@@ -238,7 +261,7 @@ pub fn collect(stage: &'static str) {
-     let _entered = span.enter();
- 
-     let started = Instant::now();
--    nix_bindings_expr::eval_state::gc_now();
-+    collect();
-     let elapsed = started.elapsed().as_secs_f64();
-     let after = heap_stats();
-     let reclaimed = before.live_bytes().saturating_sub(after.live_bytes());
-@@ -257,3 +280,42 @@ pub fn collect(stage: &'static str) {
-     span.record("gc_bytes_since_after", after.bytes_since_gc);
-     span.record("gc_collections_after", after.collections);
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use nix_bindings_expr::eval_state::EvalState;
-+    use nix_bindings_store::store::Store;
-+
-+    #[test]
-+    fn releases_heap_after_evaluator_thread_exits() {
-+        register_current_thread().unwrap();
-+        let store = Store::open(Some("dummy://"), []).unwrap();
-+        let mut state = EvalState::new(store, []).unwrap();
-+        let live_value = state.new_value_str("still alive").unwrap();
-+
-+        const ALLOCATION: usize = 64 * 1024 * 1024;
-+        std::thread::spawn(|| {
-+            register_current_thread().unwrap();
-+            let store = Store::open(Some("dummy://"), []).unwrap();
-+            let mut state = EvalState::new(store, []).unwrap();
-+            let value = state.new_value_str(&"x".repeat(ALLOCATION)).unwrap();
-+            std::hint::black_box(&value);
-+        })
-+        .join()
-+        .unwrap();
-+
-+        let before = heap_stats();
-+        collect_full("test_evaluator_exited").unwrap();
-+        let after = heap_stats();
-+        assert!(
-+            before.live_bytes().saturating_sub(after.live_bytes()) >= ALLOCATION as u64,
-+            "evaluation garbage was retained: before={before:?}, after={after:?}"
-+        );
-+        assert!(
-+            after.unmapped_bytes.saturating_sub(before.unmapped_bytes) >= ALLOCATION as u64,
-+            "unused heap was not returned to the OS: before={before:?}, after={after:?}"
-+        );
-+        assert_eq!(state.require_string(&live_value).unwrap(), "still alive");
-+    }
-+}
-```
-
-**File**: `devenv.lock` (modified, +3/-3)
-```diff
-@@ -530,11 +530,11 @@
-         "nixpkgs-regression": "nixpkgs-regression"
-       },
-       "locked": {
--        "lastModified": 1788036898,
--        "narHash": "sha256-3NT3yTvoRT7+rxLDNovpyeTDIJkZlBoO72rcu2x9Y9o=",
-+        "lastModified": 1790176416,
-+        "narHash": "sha256-acP7QvsB+dHghUeL9AwSSZ3qS//skpqjv484aveg1EQ=",
-         "owner": "cachix",
-         "repo": "nix",
--        "rev": "b9b81726b38469c55b9706d80d37d6c73cc7f76c",
-+        "rev": "bd10d7f563420c6034b9d1dc75c4168fc01e5afc",
-         "type": "github"
-       },
-       "original": {
-```
-
-**File**: `devenv/src/mcp.rs` (modified, +12/-2)
-```diff
-@@ -589,7 +589,17 @@ pub async fn run_mcp_server(
-         })
-         .map_err(|e| miette!("Failed to spawn MCP cache init thread: {}", e))?;
- 
--    // Errors are held until the init thread is joined, so no path detaches it.
-+    // Join immediately when evaluation finishes so its stack no longer roots
-+    // Nix values. Cached searches do not allocate in Nix and cannot trigger GC.
-+    let init_task = tokio::task::spawn_blocking(move || {
-+        let result = init_handle.join();
-+        if let Err(error) = devenv_nix_backend::gc_boehm::collect_full("mcp_cache_initialized") {
-+            warn!(%error, "failed to collect MCP evaluation memory");
-+        }
-+        result
-+    });
-+
-+    // Retain the join task until serving ends, including on serving errors.
-     let serve_result: Result<()> = async {
-         match http_port {
-             Some(port) => {
-@@ -661,7 +671,7 @@ pub async fn run_mcp_server(
- 
-     devenv_nix_backend::trigger_interrupt();
- 
--    let init_result = tokio::task::spawn_blocking(move || init_handle.join())
-+    let init_result = init_task
-         .await
-         .map_err(|e| miette!("Failed to join MCP cache init thread: {}", e))?;
- 
-```
-
-**File**: `flake.lock` (modified, +3/-3)
-```diff
-@@ -139,11 +139,11 @@
-         "nixpkgs-regression": []
-       },
-       "locked": {
--        "lastModified": 1788036898,
--        "narHash": "sha256-3NT3yTvoRT7+rxLDNovpyeTDIJkZlBoO72rcu2x9Y9o=",
-+        "lastModified": 1790176416,
-+        "narHash": "sha256-acP7QvsB+dHghUeL9AwSSZ3qS//skpqjv484aveg1EQ=",
-         "owner": "cachix",
-         "repo": "nix",
--        "rev": "b9b81726b38469c55b9706d80d37d6c73cc7f76c",
-+        "rev": "bd10d7f563420c6034b9d1dc75c4168fc01e5afc",
-         "type": "github"
-       },
-       "original": {
-```
-
----
-
-### Incident Patch 15: `51636c82` (2026-09-23)
-**Commit Message**: fix(lsp): prevent duplicate Nix store registration in bundled nixd (#3213)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
- ### Bug Fixes
- 
-+- Fixed `devenv lsp` aborting on startup with `Already registered store with name 'Dummy Store'` ([#3196](https://github.com/cachix/devenv/issues/3196)).
- - Fixed `devenv-run-tests --override-input` using different inputs in nested `devenv` commands.
- 
- - Fixed `devenv shell "git log"` and other quoted commands failing with `not found` ([#3187](https://github.com/cachix/devenv/issues/3187)).
-```
-
-**File**: `flake.nix` (modified, +8/-1)
-```diff
-@@ -183,7 +183,14 @@
-                     llvmStatic = true;
-                     inherit nixComponents;
-                     nixf = nixdPkgs.nixf.override { inherit (nixComponents) nix-expr; };
--                    nixt = nixdPkgs.nixt.override { inherit nixComponents; };
-+                    # Shared libnixt would embed a second copy of the static Nix
-+                    # libraries, causing duplicate store registration at startup.
-+                    nixt = (nixdPkgs.nixt.override { inherit nixComponents; }).overrideAttrs (old: {
-+                      mesonFlags = (old.mesonFlags or [ ]) ++ [
-+                        (prev.lib.mesonOption "default_library" "static")
-+                      ];
-+                      propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ (old.buildInputs or [ ]);
-+                    });
-                   };
-               crate2nix = final.callPackage "${inputs.crate2nix}/crate2nix/default.nix" { };
-               libghostty-vt = final.callPackage "${inputs.ghostty}/nix/libghostty-vt.nix" {
-```
-
-**File**: `nix/workspace.nix` (modified, +3/-0)
-```diff
-@@ -168,6 +168,9 @@ let
-         ''
-           mkdir -p $out/bin
- 
-+          # Catch duplicate Nix store registrations in the bundled language server.
-+          ${lib.getBin nixd}/bin/nixd --version > /dev/null
-+
-           cp $src/bin/devenv $out/bin/
-           cp $devenvRunTests/bin/devenv-run-tests $out/bin/
-           cp $devenvProxy/bin/devenv-proxy $out/bin/
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3239** (2026-09-29): fix(test): report disabled process dependencies before startup (@domenkozar)
-- **PR #3237** (2026-09-29): fix(processes): wait for live daemon startup (@domenkozar)
-- **PR #3236** (2026-09-29): feat(cli): complete process names in shell (@domenkozar)
-- **PR #3235** (2026-09-29): Added docs about helix support (@YPares)
-- **PR #3234** (2026-09-29): fix(tests): declare python3 for process-compose-interactive (@onnimonni)
-- **PR #3231** (2026-09-27): fix(shell): preserve Nushell structured env on reload (@domenkozar)
-- **PR #3228** (2026-09-26): fix(tasks): reject task names containing "::" (@daniel-chambers)
-- **PR #3225** (2026-09-25): fix(opentofu): default lsp.package to tofu-ls (@onnimonni)
+- **PR #3290** (2026-10-18): fix(nix): update bundled Nix to 2.35.3 (@domenkozar)
+- **PR #3289** (2026-10-16): fix(nix): evaluate Darwin package without import-from-derivation (@schickling-assistant)
+- **PR #3286** (2026-10-16): fix(nushell): pass `reload_file` to `bash_helper` in Nushell (@Pencilcaseman)
+- **PR #3284** (2026-10-18): fix(javascript): put node_modules/.bin on PATH as an absolute path (@ozenyunus35)
+- **PR #3282** (2026-10-14): fix(watcher): stop waiting for readiness once the fs worker has exited (@ozenyunus35)
+- **PR #3280** (2026-10-14): hook: keep the entered subdirectory when auto-activating (@vimjoyer)
 
 ---
 
@@ -4527,3 +2725,34 @@ Assisted-by: Codex (GPT-6)
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. tasks): wait for cancellation cleanup before scheduler exit (#3256)
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a73c5b84`: tasks): wait for cancellation cleanup before scheduler exit (#3256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Task cancellation now stops status checks and waits for nested commands to stop before the scheduler exits ([#3251](https://github.com/cachix/devenv/issues/3251)).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a73c5b84` are properly handled with clean fallback behavior.

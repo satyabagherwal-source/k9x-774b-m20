@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-ZTZT",
-    "timestamp": "2026-10-17T06:10:48.857Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "131db1f0103dda0e946c842c239d25c1fe303ecfa231b462dca60543febf4152",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-3QYX",
-    "timestamp": "2026-10-17T06:13:51.561Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "d03001b11e8d57c0f7691e62fc39734be976cf5cb174c4e5af10e657835bff3a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-7TXO",
-    "timestamp": "2026-10-17T06:17:02.028Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "e640a9fca8c0417784ff5de80b7ce949e9b4cbe3b182d00285639b9804f9181b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-BZK6",
-    "timestamp": "2026-10-17T06:20:15.942Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "74084f94ad600c932584fb0b6bf25d592e51f20fa07d554ff5079908b16aef2c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-GFBN",
-    "timestamp": "2026-10-17T06:23:42.995Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "4b732ab788d122fae047d5a8d6262545885f4a3cfb0345d249090f5474affd81",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-KE8R",
     "timestamp": "2026-10-17T06:26:48.219Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7490,6 +7415,81 @@
     "repository": "xerj-org/xerj",
     "learningId": "learn-github-xerj-org-xerj",
     "contentHash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-PDAQ",
+    "timestamp": "2026-10-18T22:10:07.634Z",
+    "repository": "markmead/hyperui",
+    "learningId": "learn-github-markmead-hyperui",
+    "contentHash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-PEY8",
+    "timestamp": "2026-10-18T22:10:09.776Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-PILU",
+    "timestamp": "2026-10-18T22:10:14.514Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "b8cc5892c75c0d8ced4cf396b52070242036d73613daea26f39824d6c8fe5c0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-PLEN",
+    "timestamp": "2026-10-18T22:10:18.143Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "541f946ccf186f4350ad4cd30dd094a07893cc2db35f1326e3fc7884bb82580a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-POOX",
+    "timestamp": "2026-10-18T22:10:22.401Z",
+    "repository": "milvus-io/bootcamp",
+    "learningId": "learn-github-milvus-io-bootcamp",
+    "contentHash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2540,3 +2540,8 @@
 | `CYCLE-20261018-HXLK` | `2026-10-18T22:04:20.696Z` | `easegress-io/easegress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1760` | Yes (`72c406de...`) |
 | `CYCLE-20261018-HZMY` | `2026-10-18T22:04:23.338Z` | `mimblewimble/grin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1761` | Yes (`45bb49d0...`) |
 | `CYCLE-20261018-I0O4` | `2026-10-18T22:04:24.676Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1762` | Yes (`b78c5988...`) |
+| `CYCLE-20261018-PDAQ` | `2026-10-18T22:10:07.634Z` | `markmead/hyperui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/markmead-hyperui-learnings.md` | Yes (`e753c037...`) |
+| `CYCLE-20261018-PEY8` | `2026-10-18T22:10:09.776Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1763` | Yes (`c39e0e2d...`) |
+| `CYCLE-20261018-PILU` | `2026-10-18T22:10:14.514Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1764` | Yes (`b8cc5892...`) |
+| `CYCLE-20261018-PLEN` | `2026-10-18T22:10:18.143Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`541f946c...`) |
+| `CYCLE-20261018-POOX` | `2026-10-18T22:10:22.401Z` | `milvus-io/bootcamp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1765` | Yes (`4ea21a2e...`) |

@@ -2547,3 +2547,8 @@ Every entry in this ledger must capture:
 | `learn-github-easegress-io-easegress` | `https://github.com/easegress-io/easegress` | `48bacc2e` | Multi-dimensional audit evidence | 2026-10-18T22:04:20.699Z |
 | `learn-github-mimblewimble-grin` | `https://github.com/mimblewimble/grin` | `dbaff34f` | Multi-dimensional audit evidence | 2026-10-18T22:04:23.340Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `317f3af6` | Multi-dimensional audit evidence | 2026-10-18T22:04:24.678Z |
+| `learn-github-markmead-hyperui` | `https://github.com/markmead/hyperui` | `252efcfe` | Multi-dimensional audit evidence | 2026-10-18T22:10:07.636Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `a86a087d` | Multi-dimensional audit evidence | 2026-10-18T22:10:09.778Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `30824176` | Multi-dimensional audit evidence | 2026-10-18T22:10:14.516Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `aad2a753` | Multi-dimensional audit evidence | 2026-10-18T22:10:18.151Z |
+| `learn-github-milvus-io-bootcamp` | `https://github.com/milvus-io/bootcamp` | `14cefc46` | Multi-dimensional audit evidence | 2026-10-18T22:10:22.403Z |
