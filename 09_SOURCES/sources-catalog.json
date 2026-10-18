@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "b42973d1d23ec7cabd3321776d5ee5c33974d4d34e499c80c5f5658d6c3cff11",
-    "lastHarvestedAt": "2026-10-18T04:52:47.695Z",
+    "contentHash": "1ff8730553457306a1e69b739357a43b43bf59448f94dd39aca5cb37db33e0a9",
+    "lastHarvestedAt": "2026-10-17T20:16:06.656Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -1255,8 +1255,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "b210e2c5429e886a01421d361d410f1ea97ff17ebf6babba5b1924fbb2240fe9",
-    "lastHarvestedAt": "2026-10-18T04:55:49.005Z",
+    "contentHash": "610ef2712ce613c1bac6891095c666e1f247b1d73bda83570b1fe0fb62cbd6d0",
+    "lastHarvestedAt": "2026-10-17T20:19:07.980Z",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "93d0e0addfafe472e79ddda915218b144b3ee48ea5dad1db342074418aa733cc",
-    "lastHarvestedAt": "2026-10-18T04:59:04.271Z",
+    "contentHash": "9dd6e540d03dab7474a44b48082758a2dce3dddd3c2e5ff20213d74afd4a0872",
+    "lastHarvestedAt": "2026-10-17T20:22:33.004Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -1748,5 +1748,105 @@
     "contentHash": "74a6aa9144636848215096353efa44188f1e0009936c1759820ff04a10099e81",
     "lastHarvestedAt": "2026-10-18T04:26:31.391Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
+  },
+  "addy0-com-free-open-technical-seo-crawler": {
+    "repository": "Addy0-com/free-open-technical-SEO-crawler",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
+    "sourceVersion": "7e5d3c5",
+    "license": "Open-Source",
+    "contentHash": "150472c3270a9365dfe62cf3f8b9fae60252c3ac0e726d4ea9e63e8e42aa12c5",
+    "lastHarvestedAt": "2026-10-18T04:49:58.977Z",
+    "learningId": "learn-github-addy0-com-free-open-technical-seo-crawler"
+  },
+  "melnixdev-seo-crawl-audit": {
+    "repository": "MelnixDev/seo-crawl-audit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MelnixDev/seo-crawl-audit",
+    "sourceVersion": "082076c",
+    "license": "Open-Source",
+    "contentHash": "b14dd7161951d90edc4ee7f5c1a0747c11af4e74789919cc51773faf1ee402b9",
+    "lastHarvestedAt": "2026-10-18T04:51:28.844Z",
+    "learningId": "learn-github-melnixdev-seo-crawl-audit"
+  },
+  "istifano-seo-auditor": {
+    "repository": "ISTIFANO/seo-auditor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ISTIFANO/seo-auditor",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "25856b7326db72b881cb1122cb7c814729029c44ddaf6f9a4768eedef68be853",
+    "lastHarvestedAt": "2026-10-18T04:59:13.728Z",
+    "learningId": "learn-github-istifano-seo-auditor"
+  },
+  "code-forge-io-seo-tools": {
+    "repository": "code-forge-io/seo-tools",
+    "platform": "github",
+    "sourceUrl": "https://github.com/code-forge-io/seo-tools",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "46563d110affd5df74ce6c8acff12b26234bf4be3e68950911edbfb7b2f295ec",
+    "lastHarvestedAt": "2026-10-18T04:59:13.969Z",
+    "learningId": "learn-github-code-forge-io-seo-tools"
+  },
+  "hartemyaakoub-seo-toolkit": {
+    "repository": "hartemyaakoub/seo-toolkit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hartemyaakoub/seo-toolkit",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "04f8067e03f849d39e9c52baacb37957dcf9f589560ffbf405a4047f125c24be",
+    "lastHarvestedAt": "2026-10-18T04:59:14.219Z",
+    "learningId": "learn-github-hartemyaakoub-seo-toolkit"
+  },
+  "maatify-seo": {
+    "repository": "Maatify/seo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Maatify/seo",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "c4d354fc1fda891573de67d96c74b4f6cf2256846e7d6a2a2c15718cddf17877",
+    "lastHarvestedAt": "2026-10-18T04:59:14.453Z",
+    "learningId": "learn-github-maatify-seo"
+  },
+  "davo20019-seo-analysis": {
+    "repository": "davo20019/seo-analysis",
+    "platform": "github",
+    "sourceUrl": "https://github.com/davo20019/seo-analysis",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "8ceb4c4fab29399c39accaefa70b9553bc545c5108d0d5c2657a54f71741bd02",
+    "lastHarvestedAt": "2026-10-18T04:59:14.683Z",
+    "learningId": "learn-github-davo20019-seo-analysis"
+  },
+  "serpapi-google-search-results-nodejs": {
+    "repository": "serpapi/google-search-results-nodejs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/serpapi/google-search-results-nodejs",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "53727d4ead342bb2ddcacd57090e4d28cb62a7701007a1990e8e781401ed138a",
+    "lastHarvestedAt": "2026-10-18T04:59:14.934Z",
+    "learningId": "learn-github-serpapi-google-search-results-nodejs"
+  },
+  "serpapi-google-search-results-python": {
+    "repository": "serpapi/google-search-results-python",
+    "platform": "github",
+    "sourceUrl": "https://github.com/serpapi/google-search-results-python",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "a70f6842e25c16c60c41a46ca4fbbc5a01787432d51068a0dabb9fdaeb53c958",
+    "lastHarvestedAt": "2026-10-18T04:59:15.180Z",
+    "learningId": "learn-github-serpapi-google-search-results-python"
+  },
+  "serpapi-google-search-results-ruby": {
+    "repository": "serpapi/google-search-results-ruby",
+    "platform": "github",
+    "sourceUrl": "https://github.com/serpapi/google-search-results-ruby",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "a73c3b36c804dd371c56cf53c83b26e0be7451b835f6687fce56d93220ad7b5d",
+    "lastHarvestedAt": "2026-10-18T04:59:15.438Z",
+    "learningId": "learn-github-serpapi-google-search-results-ruby"
   }
 }

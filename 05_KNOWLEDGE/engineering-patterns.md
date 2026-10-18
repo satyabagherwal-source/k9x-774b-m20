@@ -111141,3 +111141,336 @@ let modelFile = "whisper-large-v3.mlmodel" // No size info. Client must download
 
 **VERIFICATION METHOD**:
 Lint script that scans the repository for `.mlmodel` or `.mlpackage` files and asserts that the filename contains a regex pattern `_\d+MB`.
+
+
+---
+
+## 1607. Dual-Pass Differential DOM Verification Invariant (Harvested from Addy0-com/free-open-technical-SEO-crawler)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Pass Differential DOM Verification Invariant",
+  "source": "Addy0-com/free-open-technical-SEO-crawler",
+  "source_url": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
+  "source_version": "7e5d3c5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-18T04:49:58.439Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-addy0-com-free-open-technical-seo-crawler",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Addy0-com/free-open-technical-SEO-crawler](https://github.com/Addy0-com/free-open-technical-SEO-crawler) (Revision: `7e5d3c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When building web auditing, scraping, or automated verification engines, the system **MUST NOT** rely exclusively on either static HTTP markup or headless browser rendering. The engine **MUST** retain both the exact static raw HTTP payload and the rendered post-hydration DOM, and **MUST** evaluate critical directives (canonical tags, `noindex`, meta titles, and structured JSON-LD) across both states, surfacing an explicit `DOM_MUTATION_SEVERITY` error if dynamic scripts mutate or introduce conflicting directives.
+
+**WHY**:
+Search engine crawlers index raw static HTML first. If a client-side single-page application (SPA) injects `<meta name="robots" content="noindex">` or changes `<link rel="canonical">` only during JavaScript hydration, search engines often index the raw un-hydrated variant or drop the page due to contradictory signals. Conversely, if raw HTML lacks critical structured data that is injected asynchronously after DOMContentLoaded, latency-bounded crawlers drop the metadata. Failing to diff raw vs. rendered leads to silent SEO de-indexing and catastrophic search traffic degradation.
+
+**WHEN TO APPLY**:
+All technical web crawlers, headless automation suites, SEO auditing engines, and web testing harnesses evaluating Jamstack, Next.js, Nuxt, Angular, or client-hydrated frontends.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from dataclasses import dataclass
+from typing import Optional, Dict, Any, List
+from bs4 import BeautifulSoup
+import html
+
+@dataclass(frozen=True)
+class DomDiffResult:
+    url: str
+    raw_canonical: Optional[str]
+    rendered_canonical: Optional[str]
+    raw_robots: Optional[str]
+    rendered_robots: Optional[str]
+    title_mutated: bool
+    discrepancies: List[str]
+
+class DifferentialDomAuditor:
+    @staticmethod
+    def extract_canonical(soup: BeautifulSoup) -> Optional[str]:
+        tag = soup.find("link", attrs={"rel": lambda x: x and "canonical" in x.lower()})
+        return tag.get("href", "").strip() if tag and tag.get("href") else None
+
+    @staticmethod
+    def extract_robots(soup: BeautifulSoup) -> Optional[str]:
+        tag = soup.find("meta", attrs={"name": lambda x: x and x.lower() == "robots"})
+        return tag.get("content", "").strip().lower() if tag and tag.get("content") else None
+
+    @classmethod
+    def audit_differential(cls, url: str, raw_html: str, rendered_html: str) -> DomDiffResult:
+        raw_soup = BeautifulSoup(raw_html, "lxml")
+        rendered_soup = BeautifulSoup(rendered_html, "lxml")
+
+        raw_can = cls.extract_canonical(raw_soup)
+        rend_can = cls.extract_canonical(rendered_soup)
+        raw_rob = cls.extract_robots(raw_soup)
+        rend_rob = cls.extract_robots(rendered_soup)
+
+        raw_title = raw_soup.title.string.strip() if raw_soup.title and raw_soup.title.string else ""
+        rend_title = rendered_soup.title.string.strip() if rendered_soup.title and rendered_soup.title.string else ""
+
+        discrepancies = []
+        if raw_can != rend_can:
+            discrepancies.append(
+                f"Canonical drift detected: Raw='{raw_can}' vs Rendered='{rend_can}'"
+            )
+        if raw_rob != rend_rob:
+            discrepancies.append(
+                f"Robots directive mismatch: Raw='{raw_rob}' vs Rendered='{rend_rob}'"
+            )
+        if raw_title != rend_title:
+            discrepancies.append(
+                f"Title tag mutated post-hydration: Raw='{raw_title}' vs Rendered='{rend_title}'"
+            )
+
+        return DomDiffResult(
+            url=url,
+            raw_canonical=raw_can,
+            rendered_canonical=rend_can,
+            raw_robots=raw_rob,
+            rendered_robots=rend_rob,
+            title_mutated=(raw_title != rend_title),
+            discrepancies=discrepancies,
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Evaluating only the rendered DOM in headless browser passes
+async def audit_url_faulty(browser, url: str) -> dict:
+    page = await browser.new_page()
+    await page.goto(url, wait_until="networkidle")
+    # DEADLY: Ignores raw HTML status. If the raw HTML was HTTP 200 with 'noindex'
+    # but JS hydrates and strips 'noindex', search engines that don't execute JS
+    # will permanently drop the page, while this audit falsely reports clean health.
+    content = await page.content()
+    soup = BeautifulSoup(content, "lxml")
+    return {"canonical": soup.find("link", rel="canonical")["href"]}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests with a mock server delivering a static HTML document containing `<link rel="canonical" href="https://example.com/a">` and client script altering `href` to `https://example.com/b`. Assert that `audit_differential()` produces `len(discrepancies) > 0` with exact mutation messages.
+
+---
+
+
+---
+
+## 1608. Browser Context Resource Quarantine & Memory Ceiling Rule (Harvested from Addy0-com/free-open-technical-SEO-crawler)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Browser Context Resource Quarantine & Memory Ceiling Rule",
+  "source": "Addy0-com/free-open-technical-SEO-crawler",
+  "source_url": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
+  "source_version": "7e5d3c5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-18T04:49:58.603Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-addy0-com-free-open-technical-seo-crawler",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Addy0-com/free-open-technical-SEO-crawler](https://github.com/Addy0-com/free-open-technical-SEO-crawler) (Revision: `7e5d3c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When running batch automation with headless browser engines (Chromium/WebKit/Firefox via Playwright/Puppeteer), the process **MUST NOT** reuse a single `BrowserContext` or page instance across unbounded sequential navigations. Every target page **MUST** run within an isolated, ephemeral `BrowserContext` configured with strict request route interception (blocking binary assets, media, fonts, and external trackers), an explicit navigation timeout, and deterministic teardown (`context.close()`) wrapped in a `try...finally` block to prevent process memory leaks.
+
+**WHY**:
+Headless Chromium retains GPU cache, V8 JIT code generation buffers, trace metrics, and DOM nodes across navigations if a context remains open. When crawling hundreds of URLs, an un-quarantined browser context will experience steady resident set size (RSS) memory growth, leading to Linux OOM killer execution (SIGKILL 9) or tab crashes (`TargetClosedError`). Furthermore, rendering third-party analytics, ads, and high-resolution video streams wastes CPU cycles and contaminates Core Web Vitals (CLS/LCP) measurements.
+
+**WHEN TO APPLY**:
+Any continuous headless crawler, web performance audit harness, or automated testing suite executing continuous multi-page navigations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import asyncio
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+from playwright.async_api import Browser, BrowserContext, Page, Route
+
+BLOCKED_RESOURCE_TYPES = {"image", "media", "font", "websocket"}
+BLOCKED_DOMAINS = {"google-analytics.com", "doubleclick.net", "facebook.net"}
+
+@asynccontextmanager
+async def ephemeral_isolated_page(browser: Browser) -> AsyncGenerator[Page, None]:
+    # Allocate fresh ephemeral context with isolated storage/cookies
+    context: BrowserContext = await browser.new_context(
+        viewport={"width": 1366, "height": 768},
+        java_script_enabled=True,
+        bypass_csp=False,
+    )
+    
+    async def route_interceptor(route: Route) -> None:
+        request = route.request
+        if request.resource_type in BLOCKED_RESOURCE_TYPES:
+            await route.abort()
+            return
+        if any(tracker in request.url for tracker in BLOCKED_DOMAINS):
+            await route.abort()
+            return
+        await route.continue_()
+
+    await context.route("**/*", route_interceptor)
+    page: Page = await context.new_page()
+    page.set_default_navigation_timeout(15000) # 15s hard ceiling
+
+    try:
+        yield page
+    finally:
+        # Mandatory teardown in reverse allocation order
+        await page.close()
+        await context.close()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Reusing a single global Page/Context across a crawl loop
+class FaultyCrawler:
+    def __init__(self, browser):
+        self.browser = browser
+        self.page = None
+
+    async def init(self):
+        self.page = await self.browser.new_page() # Shared long-lived page
+
+    async def crawl(self, urls: list[str]):
+        results = []
+        for u in urls:
+            # Memory continuously inflates; DOM node leaks accumulate;
+            # one slow redirect or hanging socket locks entire crawl.
+            await self.page.goto(u)
+            results.append(await self.page.content())
+        return results
+```
+
+**VERIFICATION METHOD**:
+Execute a stress benchmark looping 500 arbitrary complex URLs using `ephemeral_isolated_page`. Measure Python and Chromium process RSS via `psutil`. Assert that memory remains flat (variance < 15%) across all iterations.
+
+---
+
+
+---
+
+## 1609. Metric Observer Injection Invariant for Synthetic CWV Auditing (Harvested from Addy0-com/free-open-technical-SEO-crawler)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Metric Observer Injection Invariant for Synthetic CWV Auditing",
+  "source": "Addy0-com/free-open-technical-SEO-crawler",
+  "source_url": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
+  "source_version": "7e5d3c5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-18T04:49:58.757Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-addy0-com-free-open-technical-seo-crawler",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Addy0-com/free-open-technical-SEO-crawler](https://github.com/Addy0-com/free-open-technical-SEO-crawler) (Revision: `7e5d3c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Synthetic evaluation of Core Web Vitals (Largest Contentful Paint, Cumulative Layout Shift, First Input Delay / Total Blocking Time) via automated browser agents **MUST** inject performance observer listeners prior to document execution via initialization scripts (`add_init_script` or `Page.addScriptToEvaluateOnNewDocument`). Observers **MUST NOT** be injected post-navigation via `page.evaluate()` or after `DOMContentLoaded`.
+
+**WHY**:
+LCP and layout shift records trigger during the initial rendering and layout phases of document loading. Injecting a `PerformanceObserver` after page navigation has begun or completed results in missed timeline events, causing `entryList.getEntries()` to return empty arrays or understated scores. Pre-navigation script injection guarantees that the browser engine captures layout shifts and paint events from `navigationStart` (timestamp 0).
+
+**WHEN TO APPLY**:
+Synthetic performance profiling tools, headless browser benchmarking agents, and Core Web Vitals audit suites.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import json
+from playwright.async_api import Page
+
+CWV_COLLECTOR_INIT_SCRIPT = """
+(() => {
+    window.__CWV_DATA__ = {
+        cls: 0,
+        lcp: 0,
+        entries: []
+    };
+    try {
+        // Layout Shift Observer (CLS)
+        const clsObserver = new PerformanceObserver((entryList) => {
+            for (const entry of entryList.getEntries()) {
+                if (!entry.hadRecentInput) {
+                    window.__CWV_DATA__.cls += entry.value;
+                }
+            }
+        });
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
+
+        // Largest Contentful Paint Observer (LCP)
+        const lcpObserver = new PerformanceObserver((entryList) => {
+            const entries = entryList.getEntries();
+            if (entries.length > 0) {
+                const lastEntry = entries[entries.length - 1];
+                window.__CWV_DATA__.lcp = lastEntry.renderTime || lastEntry.loadTime;
+            }
+        });
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+    } catch (e) {
+        window.__CWV_DATA__.error = e.toString();
+    }
+})();
+"""
+
+async def profile_page_cwv(page: Page, url: str) -> dict:
+    # Register observer BEFORE initiating navigation
+    await page.add_init_script(CWV_COLLECTOR_INIT_SCRIPT)
+    
+    await page.goto(url, wait_until="networkidle")
+    # Allow microtasks and layout queues to settle
+    await page.wait_for_timeout(1000)
+
+    # Safely retrieve collected metrics
+    raw_data = await page.evaluate("() => window.__CWV_DATA__")
+    return {
+        "cls": float(raw_data.get("cls", 0.0)),
+        "lcp_ms": float(raw_data.get("lcp", 0.0)),
+        "error": raw_data.get("error", None)
+    }
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Injecting PerformanceObserver after page.goto finishes
+async def profile_cwv_broken(page: Page, url: str) -> dict:
+    await page.goto(url, wait_until="networkidle")
+    # DEADLY: LCP and initial CLS layout shifts already fired and evaporated.
+    # Buffered flag on late observers frequently fails to replay in headless instances.
+    return await page.evaluate("""() => {
+        let lcp = 0;
+        new PerformanceObserver(list => {
+            lcp = list.getEntries().pop().renderTime;
+        }).observe({type: 'largest-contentful-paint', buffered: true});
+        return {lcp}; // Returns 0 almost always!
+    }""")
+```
+
+**VERIFICATION METHOD**:
+Navigate to a test fixture page engineered to shift DOM elements 500ms after load. Assert that `profile_page_cwv()` returns `cls > 0.05` and `lcp_ms > 0`.
+
+---

@@ -2441,6 +2441,14 @@ Every entry in this ledger must capture:
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-18T04:43:07.428Z |
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-18T04:46:34.750Z |
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-18T04:49:46.325Z |
-| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-18T04:52:47.695Z |
-| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-18T04:55:49.005Z |
-| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-18T04:59:04.271Z |
+| `learn-github-addy0-com-free-open-technical-seo-crawler` | `https://github.com/Addy0-com/free-open-technical-SEO-crawler` | `7e5d3c5` | Multi-dimensional audit evidence | 2026-10-18T04:49:58.977Z |
+| `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `082076c` | Multi-dimensional audit evidence | 2026-10-18T04:51:28.844Z |
+| `learn-github-istifano-seo-auditor` | `https://github.com/ISTIFANO/seo-auditor` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:58:53.233Z |
+| `learn-github-istifano-seo-auditor` | `https://github.com/ISTIFANO/seo-auditor` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:13.728Z |
+| `learn-github-code-forge-io-seo-tools` | `https://github.com/code-forge-io/seo-tools` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:13.969Z |
+| `learn-github-hartemyaakoub-seo-toolkit` | `https://github.com/hartemyaakoub/seo-toolkit` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:14.219Z |
+| `learn-github-maatify-seo` | `https://github.com/Maatify/seo` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:14.453Z |
+| `learn-github-davo20019-seo-analysis` | `https://github.com/davo20019/seo-analysis` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:14.683Z |
+| `learn-github-serpapi-google-search-results-nodejs` | `https://github.com/serpapi/google-search-results-nodejs` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:14.934Z |
+| `learn-github-serpapi-google-search-results-python` | `https://github.com/serpapi/google-search-results-python` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:15.180Z |
+| `learn-github-serpapi-google-search-results-ruby` | `https://github.com/serpapi/google-search-results-ruby` | `HEAD` | Multi-dimensional audit evidence | 2026-10-18T04:59:15.438Z |
