@@ -2622,3 +2622,10 @@
 | `CYCLE-20261018-81PR` | `2026-10-18T23:20:38.319Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1842` | Yes (`bb808393...`) |
 | `CYCLE-20261018-8397` | `2026-10-18T23:20:40.315Z` | `supervc-stack/VectorChord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1843` | Yes (`3b11ad50...`) |
 | `CYCLE-20261018-84EV` | `2026-10-18T23:20:41.815Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1844` | Yes (`0acbcd65...`) |
+| `CYCLE-20261018-FWD8` | `2026-10-18T23:26:44.636Z` | `chakra-ui/zag` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1845` | Yes (`932260b5...`) |
+| `CYCLE-20261018-FXAG` | `2026-10-18T23:26:45.832Z` | `sharkdp/hyperfine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1846` | Yes (`034c0db6...`) |
+| `CYCLE-20261018-G187` | `2026-10-18T23:26:50.935Z` | `boardgameio/boardgame.io` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1847` | Yes (`8bc354bd...`) |
+| `CYCLE-20261018-G3BD` | `2026-10-18T23:26:53.641Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1848` | Yes (`8efb881b...`) |
+| `CYCLE-20261018-G4TN` | `2026-10-18T23:26:55.595Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1849, Rule 1850` | Yes (`cb34c7ea...`) |
+| `CYCLE-20261018-G5AK` | `2026-10-18T23:26:56.204Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1851` | Yes (`2bbcaa5b...`) |
+| `CYCLE-20261018-G7BE` | `2026-10-18T23:26:58.826Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1852` | Yes (`db2e94a4...`) |

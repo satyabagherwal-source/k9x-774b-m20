@@ -2629,3 +2629,10 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `f599c1e6` | Multi-dimensional audit evidence | 2026-10-18T23:20:38.322Z |
 | `learn-github-supervc-stack-vectorchord` | `https://github.com/supervc-stack/VectorChord` | `0768657e` | Multi-dimensional audit evidence | 2026-10-18T23:20:40.317Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a0ad5379` | Multi-dimensional audit evidence | 2026-10-18T23:20:41.818Z |
+| `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `ab6c43b9` | Multi-dimensional audit evidence | 2026-10-18T23:26:44.638Z |
+| `learn-github-sharkdp-hyperfine` | `https://github.com/sharkdp/hyperfine` | `c5161524` | Multi-dimensional audit evidence | 2026-10-18T23:26:45.835Z |
+| `learn-github-boardgameio-boardgame-io` | `https://github.com/boardgameio/boardgame.io` | `5e9a2c94` | Multi-dimensional audit evidence | 2026-10-18T23:26:50.937Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `0225491c` | Multi-dimensional audit evidence | 2026-10-18T23:26:53.644Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-18T23:26:55.598Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `cfeaa4a4` | Multi-dimensional audit evidence | 2026-10-18T23:26:56.207Z |
+| `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `8fba3bcd` | Multi-dimensional audit evidence | 2026-10-18T23:26:58.829Z |

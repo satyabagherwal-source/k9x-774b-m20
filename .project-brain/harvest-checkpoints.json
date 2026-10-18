@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:20:41.824Z",
+  "last_updated": "2026-10-18T23:26:58.833Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1727,14 +1727,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
-      "content_hash": "68a275a7bb6cdf7d30aae766fb7d36c2b103fce16be55e92f786826a741d58e3",
-      "verified_at": "2026-10-17T20:35:13.539Z",
+      "content_hash": "cb34c7ea8b00760ffc88b0b0747d9fb1c19922a6ec877b170d6a2582aba77c23",
+      "verified_at": "2026-10-18T23:26:55.606Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:35:13.539Z"
+      "last_updated": "2026-10-18T23:26:55.606Z"
     },
     "mudler/locate-anything.cpp-gguf": {
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -5332,6 +5332,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:20:40.324Z"
+    },
+    "chakra-ui/zag": {
+      "repository": "chakra-ui/zag",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chakra-ui-zag",
+      "content_hash": "932260b5f2290f880c688714e1b72b6dcb34ceb4969f491e73591ff14a401aa7",
+      "verified_at": "2026-10-18T23:26:44.646Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:26:44.646Z"
+    },
+    "sharkdp/hyperfine": {
+      "repository": "sharkdp/hyperfine",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sharkdp-hyperfine",
+      "content_hash": "034c0db6fd1b7a2da2e6c67853fea62f04265807315e7af9a7aa686ff330e493",
+      "verified_at": "2026-10-18T23:26:45.839Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:26:45.839Z"
+    },
+    "boardgameio/boardgame.io": {
+      "repository": "boardgameio/boardgame.io",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-boardgameio-boardgame-io",
+      "content_hash": "8bc354bd6981e9b46bcc45fe224c11ca0be39ad21d1121a270c63490586fb801",
+      "verified_at": "2026-10-18T23:26:50.944Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:26:50.944Z"
+    },
+    "dragonflyoss/dragonfly": {
+      "repository": "dragonflyoss/dragonfly",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dragonflyoss-dragonfly",
+      "content_hash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
+      "verified_at": "2026-10-18T23:26:53.651Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:26:53.651Z"
+    },
+    "sigstore/cosign": {
+      "repository": "sigstore/cosign",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sigstore-cosign",
+      "content_hash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
+      "verified_at": "2026-10-18T23:26:56.215Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:26:56.215Z"
+    },
+    "LLPhant/LLPhant": {
+      "repository": "LLPhant/LLPhant",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-llphant-llphant",
+      "content_hash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
+      "verified_at": "2026-10-18T23:26:58.833Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:26:58.833Z"
     }
   },
   "repos": {

@@ -1,110 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-I26O",
-    "timestamp": "2026-10-17T11:04:55.440Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "e3a3f7581a40e974aaa58da9f83a2e8250418a962e2bdae7768012486051f10b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-LY9Q",
-    "timestamp": "2026-10-17T11:07:56.990Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "f8b5d349d03833736bbbcd785ae0eebb105c812e98d16e3eda688d2ed057fd7d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-Q5MO",
-    "timestamp": "2026-10-17T11:11:13.152Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "30d5d579334d7caec7d6245f7356a80a11ff49461bcfd3fd94bb0927695bf356",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-VHB4",
-    "timestamp": "2026-10-17T11:15:21.568Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "354c6d1e43a1cc882e549f3b24f8fd7bf577459ad94c3c8ccb39281b599a8a2b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-ZJSB",
-    "timestamp": "2026-10-17T11:18:31.403Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-    "contentHash": "ea52083b86d34834d4fa184a4a576d59182b8b1d72a87d7c0a8d8d6cef328283",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-3GEN",
-    "timestamp": "2026-10-17T11:21:33.647Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "ee6e0dae061cf8da326aeace3a8088898f4f614bc0b445d93bf3f38a38f68f5e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-7O1A",
-    "timestamp": "2026-10-17T11:24:50.158Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "44acaa1961f3cb4bd86ca63d4d92c9bb739b21b127195a9d990c6ea57088a755",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-BK6Z",
     "timestamp": "2026-10-17T11:27:51.803Z",
     "repository": "pyannote/speaker-diarization-community-1",
@@ -7490,6 +7385,111 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "0acbcd6567e87bbffa91ef6c10cd06ec6dc19270a7371e277ef3e0a30232e9fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-FWD8",
+    "timestamp": "2026-10-18T23:26:44.636Z",
+    "repository": "chakra-ui/zag",
+    "learningId": "learn-github-chakra-ui-zag",
+    "contentHash": "932260b5f2290f880c688714e1b72b6dcb34ceb4969f491e73591ff14a401aa7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-FXAG",
+    "timestamp": "2026-10-18T23:26:45.832Z",
+    "repository": "sharkdp/hyperfine",
+    "learningId": "learn-github-sharkdp-hyperfine",
+    "contentHash": "034c0db6fd1b7a2da2e6c67853fea62f04265807315e7af9a7aa686ff330e493",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-G187",
+    "timestamp": "2026-10-18T23:26:50.935Z",
+    "repository": "boardgameio/boardgame.io",
+    "learningId": "learn-github-boardgameio-boardgame-io",
+    "contentHash": "8bc354bd6981e9b46bcc45fe224c11ca0be39ad21d1121a270c63490586fb801",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-G3BD",
+    "timestamp": "2026-10-18T23:26:53.641Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-G4TN",
+    "timestamp": "2026-10-18T23:26:55.595Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "cb34c7ea8b00760ffc88b0b0747d9fb1c19922a6ec877b170d6a2582aba77c23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-G5AK",
+    "timestamp": "2026-10-18T23:26:56.204Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-G7BE",
+    "timestamp": "2026-10-18T23:26:58.826Z",
+    "repository": "LLPhant/LLPhant",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

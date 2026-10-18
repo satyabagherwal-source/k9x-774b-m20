@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T23:20:41.823Z",
-  "total_cycles_completed": 2599,
-  "total_learnings_persisted": 2599,
-  "total_rules_promoted": 1619,
+  "last_updated": "2026-10-18T23:26:58.831Z",
+  "total_cycles_completed": 2606,
+  "total_learnings_persisted": 2606,
+  "total_rules_promoted": 1627,
   "history": [
-    {
-      "timestamp": "2026-10-18T04:11:53.137Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T04:15:11.318Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T04:18:31.760Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T04:23:15.675Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T04:26:31.393Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T04:30:06.416Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T04:33:18.375Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T04:36:41.122Z",
       "repository": "google/gemma-4-26B-A4B-it",
@@ -1402,6 +1353,55 @@
       "timestamp": "2026-10-18T23:20:41.823Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:26:44.644Z",
+      "repository": "chakra-ui/zag",
+      "learningId": "learn-github-chakra-ui-zag",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:26:45.837Z",
+      "repository": "sharkdp/hyperfine",
+      "learningId": "learn-github-sharkdp-hyperfine",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:26:50.943Z",
+      "repository": "boardgameio/boardgame.io",
+      "learningId": "learn-github-boardgameio-boardgame-io",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:26:53.649Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:26:55.604Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:26:56.213Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:26:58.831Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

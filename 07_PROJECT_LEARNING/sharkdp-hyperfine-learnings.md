@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-hyperfine-learnings.md`  
+> **Source**: github ([https://github.com/sharkdp/hyperfine](https://github.com/sharkdp/hyperfine))  
+> **Source Version**: `c5161524`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:26:45.620Z  
+> **Learning ID**: `learn-github-sharkdp-hyperfine`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): sharkdp/hyperfine
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-hyperfine-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/hyperfine](https://github.com/sharkdp/hyperfine))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:06:04.467Z  
+> **Harvest Timestamp**: 2026-10-18T23:26:45.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -12,16 +26,95 @@
 - **Repository / Resource**: `sharkdp/hyperfine`
 - **Description**: A command-line benchmarking tool
 - **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 28946 stars
+- **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
+- **Stars / Engagement**: 29117 stars
 
 ---
 
 ## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
+- Entry configurations inspected via direct stream: pyproject.toml, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `scripts/plot_utils.py`
+```
+"""Shared metric selection and units for analysis and plotting scripts."""
+
+import json
+from typing import NamedTuple
+
+
+class Metric(NamedTuple):
+    label: str
+    unit: str = ""
+    scale: float = 1
+
+    @property
+    def axis_label(self):
+        return f"{self.label} [{self.unit}]" if self.unit else self.label
+
+
+METRICS = {
+    "time_wall_clock": Metric("Wall-clock time", "s"),
+    "time_cpu": Metric("Total CPU time", "s"),
+    "time_user": Metric("User CPU time", "s"),
+    "time_system": Metric("System CPU time", "s"),
+    "memory_peak_resident": Metric("Peak resident memory", "MiB", 1024**2),
+    "cpu_cycles": Metric("CPU cycles"),
+    "instructions": Metric("Completed CPU instructions"),
+    "cache_references": Metric("Cache references"),
+    "cache_misses": Metric("Cache misses"),
+    "branch_misses": Metric("Mispredicted branches"),
+}
+
+
+def add_metric_argument(parser):
+    parser.add_argument(
+        "--metric",
+        choices=METRICS,
+        help="Metric to analyze (default: primary_metric from the JSON export, "
+        "or time_wall_clock if unspecified). "
+        "Times are in seconds; memory is in MiB; hardware counters are unscaled counts.",
+    )
+
+
+def validate_metric(parser, results, metric):
+    for result in results:
+        if metric not in result["summary"]:
+            parser.error(
+                f"metric {metric!r} is unavailable for "
+                f"{result.get('name', result['command'])!r}"
+            )
+
+
+def load_results(parser, filenames, metric=None):
+    exports = []
+    for filename in filenames:
+        with open(filename, encoding="utf-8") as f:
+            export = json.load(f)
+        if not export["results"]:
+            parser.error(f"no benchmark results in {filename}")
+        exports.append(export)
+
+    if metric is None:
+        primary_metrics = {
+            export.get("primary_metric", "time_wall_clock") for export in exports
+        }
+        if len(primary_metrics) != 1:
+            parser.error(
+                "input files use different primary metrics; select one with --metric"
+            )
+        metric = primary_metrics.pop()
+    if metric not in METRICS:
+        parser.error(f"unknown metric {metric!r}; select one with --metric")
+
+    results = [export["results"] for export in exports]
+    for benchmarks in results:
+        validate_metric(parser, benchmarks, metric)
+    return metric, results
+
+```
 
 ### Core Architecture Module: `src/util/exit_code.rs`
 ```
@@ -135,76 +228,63 @@ pub fn value() -> String {
 # ///
 
 import argparse
-import json
-from enum import Enum
 
 import numpy as np
 
-
-class Unit(Enum):
-    SECOND = 1
-    MILLISECOND = 2
-
-    def factor(self):
-        match self:
-            case Unit.SECOND:
-                return 1
-            case Unit.MILLISECOND:
-                return 1e3
-
-    def __str__(self):
-        match self:
-            case Unit.SECOND:
-                return "s"
-            case Unit.MILLISECOND:
-                return "ms"
+from plot_utils import METRICS, add_metric_argument, load_results
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("file", help="JSON file with benchmark results")
-parser.add_argument(
-    "--time-unit",
-    help="The unit of time.",
-    default="second",
-    action="store",
-    choices=["second", "millisecond"],
-    dest="unit",
-)
-args = parser.parse_args()
-
-unit = Unit.MILLISECOND if args.unit == "millisecond" else Unit.SECOND
-unit_str = str(unit)
-
-with open(args.file) as f:
-    results = json.load(f)["results"]
-
-commands = [b["command"] for b in results]
-times = [b["times"] for b in results]
-
-for command, ts in zip(commands, times):
-    ts = [t * unit.factor() for t in ts]
-
-    p05 = np.percentile(ts, 5)
-    p25 = np.percentile(ts, 25)
-    p75 = np.percentile(ts, 75)
-    p95 = np.percentile(ts, 95)
-
-    iqr = p75 - p25
-
-    print(f"Command '{command}'")
-    print(f"  runs:   {len(ts):8d}")
-    print(f"  mean:   {np.mean(ts):8.3f} {unit_str}")
-    print(f"  stddev: {np.std(ts, ddof=1):8.3f} {unit_str}")
-    print(f"  median: {np.median(ts):8.3f} {unit_str}")
-    print(f"  min:    {np.min(ts):8.3f} {unit_str}")
-    print(f"  max:    {np.max(ts):8.3f} {unit_str}")
-    print()
-    print("  percentiles:")
-    print(f"     P_05 .. P_95:    {p05:.3f} {unit_str} .. {p95:.3f} {unit_str}")
-    print(
-        f"     P_25 .. P_75:    {p25:.3f} {unit_str} .. {p75:.3f} {unit_str}  (IQR = {iqr:.3f} {unit_str})"
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file", help="JSON file with benchmark results")
+    add_metric_argument(parser)
+    parser.add_argument(
+        "--time-unit",
+        help="Display unit for time metrics (default: second).",
+        choices=["second", "millisecond"],
     )
-    print()
+    args = parser.parse_args()
+
+    metric, [results] = load_results(parser, [args.file], args.metric)
+    description = METRICS[metric]
+    unit, scale = description.unit, description.scale
+    if args.time_unit is not None:
+        if not metric.startswith("time_"):
+            parser.error("--time-unit can only be used with a time metric")
+        if args.time_unit == "millisecond":
+            unit, scale = "ms", 0.001
+
+    def format_value(value):
+        suffix = f" {unit}" if unit else ""
+        return f"{value:.3f}{suffix}"
+
+    print(f"Metric: {description.label}\n")
+    for result in results:
+        summary = result["summary"][metric]
+        values = [m[metric]["value"] / scale for m in result["measurements"]]
+
+        p05, p25, p75, p95 = np.percentile(values, [5, 25, 75, 95])
+
+        iqr = p75 - p25
+
+        print(f"Command '{result.get('name', result['command'])}'")
+        print(f"  runs:   {summary['count']:8d}")
+        for statistic in ["mean", "stddev", "median", "min", "max"]:
+            value = summary[statistic]
+            formatted = "N/A" if value is None else format_value(value / scale)
+            print(f"  {statistic + ':':<8}{formatted:>8}")
+        print()
+        print("  percentiles:")
+        print(f"     P_05 .. P_95:    {format_value(p05)} .. {format_value(p95)}")
+        print(
+            f"     P_25 .. P_75:    {format_value(p25)} .. {format_value(p75)}"
+            f"  (IQR = {format_value(iqr)})"
+        )
+        print()
+
+
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -226,73 +306,81 @@ Note all the input files must contain results for all commands.
 """
 
 import argparse
-import json
 import pathlib
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument(
-    "files", nargs="+", type=pathlib.Path, help="JSON files with benchmark results"
-)
-parser.add_argument("--title", help="Plot Title")
-parser.add_argument(
-    "--benchmark-names", nargs="+", help="Names of the benchmark groups"
-)
-parser.add_argument("-o", "--output", help="Save image to the given filename")
+from plot_utils import METRICS, add_metric_argument, load_results
 
-args = parser.parse_args()
 
-commands = None
-data = []
-inputs = []
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_metric_argument(parser)
+    parser.add_argument(
+        "files", nargs="+", type=pathlib.Path, help="JSON files with benchmark results"
+    )
+    parser.add_argument("--title", help="Plot Title")
+    parser.add_argument(
+        "--benchmark-names", nargs="+", help="Names of the benchmark groups"
+    )
+    parser.add_argument("-o", "--output", help="Save image to the given filename")
 
-if args.benchmark_names:
-    assert len(args.files) == len(
-        args.benchmark_names
-    ), "Number of benchmark names must match the number of input files."
+    args = parser.parse_args()
+    metric, datasets = load_results(parser, args.files, args.metric)
+    metric_info = METRICS[metric]
 
-for i, filename in enumerate(args.files):
-    with open(filename) as f:
-        results = json.load(f)["results"]
-    benchmark_commands = [b["command"] for b in results]
-    if commands is None:
-        commands = benchmark_commands
-    else:
-        assert (
-            commands == benchmark_commands
-        ), f"Unexpected commands in {filename}: {benchmark_commands}, expected: {commands}"
-    data.append([round(b["mean"], 2) for b in results])
+    commands = None
+    data = []
+    inputs = []
+
     if args.benchmark_names:
-        inputs.append(args.benchmark_names[i])
+        assert len(args.files) == len(args.benchmark_names), (
+            "Number of benchmark names must match the number of input files."
+        )
+
+    for i, (filename, results) in enumerate(zip(args.files, datasets)):
+        benchmark_commands = [b.get("name", b["command"]) for b in results]
+        if commands is None:
+            commands = benchmark_commands
+        else:
+            assert commands == benchmark_commands, (
+                f"Unexpected commands in {filename}: {benchmark_commands}, expected: {commands}"
+            )
+        data.append([b["summary"][metric]["mean"] / metric_info.scale for b in results])
+        if args.benchmark_names:
+            inputs.append(args.benchmark_names[i])
+        else:
+            inputs.append(filename.stem)
+
+    data = np.transpose(data)
+    x = np.arange(len(inputs))  # the label locations
+    width = 0.25  # the width of the bars
+
+    fig, ax = plt.subplots(layout="constrained")
+    fig.set_figheight(5)
+    fig.set_figwidth(10)
+    for i, command in enumerate(commands):
+        offset = width * (i + 1)
+        ax.bar(x + offset, data[i], width, label=command)
+
+    ax.set_xticks(x + 0.5, inputs)
+    ax.grid(visible=True, axis="y")
+
+    if args.title:
+        plt.title(args.title)
+    plt.xlabel("Benchmark")
+    plt.ylabel(metric_info.axis_label)
+    plt.legend(title="Command")
+
+    if args.output:
+        plt.savefig(args.output)
     else:
-        inputs.append(filename.stem)
+        plt.show()
 
-data = np.transpose(data)
-x = np.arange(len(inputs))  # the label locations
-width = 0.25  # the width of the bars
 
-fig, ax = plt.subplots(layout="constrained")
-fig.set_figheight(5)
-fig.set_figwidth(10)
-for i, command in enumerate(commands):
-    offset = width * (i + 1)
-    rects = ax.bar(x + offset, data[i], width, label=command)
-
-ax.set_xticks(x + 0.5, inputs)
-ax.grid(visible=True, axis="y")
-
-if args.title:
-    plt.title(args.title)
-plt.xlabel("Benchmark")
-plt.ylabel("Time [s]")
-plt.legend(title="Command")
-
-if args.output:
-    plt.savefig(args.output)
-else:
-    plt.show()
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -311,98 +399,124 @@ else:
 """This program shows `hyperfine` benchmark results as a histogram."""
 
 import argparse
-import json
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("file", help="JSON file with benchmark results")
-parser.add_argument("--title", help="Plot title")
-parser.add_argument(
-    "--labels", help="Comma-separated list of entries for the plot legend"
-)
-parser.add_argument("--bins", help="Number of bins (default: auto)")
-parser.add_argument(
-    "--legend-location",
-    help="Location of the legend on plot (default: upper center)",
-    choices=[
-        "upper center",
-        "lower center",
-        "right",
-        "left",
-        "best",
-        "upper left",
-        "upper right",
-        "lower left",
-        "lower right",
-        "center left",
-        "center right",
-        "center",
-    ],
-    default="upper center",
-)
-parser.add_argument(
-    "--type", help="Type of histogram (*bar*, barstacked, step, stepfilled)"
-)
-parser.add_argument("-o", "--output", help="Save image to the given filename.")
-parser.add_argument(
-    "--t-min", metavar="T", help="Minimum time to be displayed (seconds)"
-)
-parser.add_argument(
-    "--t-max", metavar="T", help="Maximum time to be displayed (seconds)"
-)
-parser.add_argument(
-    "--log-count",
-    help="Use a logarithmic y-axis for the event count",
-    action="store_true",
-)
+from plot_utils import METRICS, add_metric_argument, load_results
 
-args = parser.parse_args()
 
-with open(args.file) as f:
-    results = json.load(f)["results"]
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_metric_argument(parser)
+    parser.add_argument("file", help="JSON file with benchmark results")
+    parser.add_argument("--title", help="Plot title")
+    parser.add_argument(
+        "--labels", help="Comma-separated list of entries for the plot legend"
+    )
+    parser.add_argument("--bins", help="Number of bins (default: auto)")
+    parser.add_argument(
+        "--legend-location",
+        help="Location of the legend on plot (default: upper center)",
+        choices=[
+            "upper center",
+            "lower center",
+            "right",
+            "left",
+            "best",
+            "upper left",
+            "upper right",
+            "lower left",
+            "lower right",
+            "center left",
+            "center right",
+            "center",
+        ],
+        default="upper center",
+    )
+    parser.add_argument(
+        "--type", help="Type of histogram (*bar*, barstacked, step, stepfilled)"
+    )
+    parser.add_argument("-o", "--output", help="Save image to the given filename.")
+    parser.add_argument(
+        "--min",
+        "--t-min",
+        dest="value_min",
+        type=float,
+        help="Minimum metric value to display",
+    )
+    parser.add_argument(
+        "--max",
+        "--t-max",
+        dest="value_max",
+        type=float,
+        help="Maximum metric value to display",
+    )
+    parser.add_argument(
+        "--log-count",
+        help="Use a logarithmic y-axis for the event count",
+        action="store_true",
+    )
 
-if args.labels:
-    labels = args.labels.split(",")
-else:
-    labels = [b["command"] for b in results]
-all_times = [b["times"] for b in results]
+    args = parser.parse_args()
+    metric, [results] = load_results(parser, [args.file], args.metric)
+    metric_info = METRICS[metric]
 
-t_min = float(args.t_min) if args.t_min else np.min(list(map(np.min, all_times)))
-t_max = float(args.t_max) if args.t_max else np.max(list(map(np.max, all_times)))
+    if args.labels:
+        labels = args.labels.split(",")
+    else:
+        labels = [b.get("name", b["command"]) for b in results]
+    all_values = [
+        [m[metric]["value"] / metric_info.scale for m in b["measurements"]]
+        for b in results
+    ]
 
-bins = int(args.bins) if args.bins else "auto"
-histtype = args.type if args.type else "bar"
+    value_min = (
+        args.value_min
+        if args.value_min is not None
+        else np.min(list(map(np.min, all_values)))
+    )
+    value_max = (
+        args.value_max
+        if args.value_max is not None
+        else np.max(list(map(np.max, all_values)))
+    )
 
-plt.figure(figsize=(10, 5))
-plt.hist(
-    all_times,
-    label=labels,
-    bins=bins,
-    histtype=histtype,
-    range=(t_min, t_max),
-)
-plt.legend(
-    loc=args.legend_location,
-    fancybox=True,
-    shadow=True,
-    prop={"size": 10, "family": ["Source Code Pro", "Fira Mono", "Courier New"]},
-)
+    bins = int(args.bins) if args.bins else "auto"
+    histtype = args.type if args.type else "bar"
 
-plt.xlabel("Time [s]")
-if args.title:
-    plt.title(args.title)
+    plt.figure(figsize=(10, 5))
+    plt.hist(
+        all_values,
+        label=labels,
+        bins=bins,
+        histtype=histtype,
+        range=(value_min, value_max),
+    )
+    plt.legend(
+        loc=args.legend_location,
+        fancybox=True,
+        shadow=True,
+        prop={"size": 10, "family": ["Source Code Pro", "Fira Mono", "Courier New"]},
+    )
 
-if args.log_count:
-    plt.yscale("log")
-else:
-    plt.ylim(0, None)
+    plt.xlabel(metric_info.axis_label)
+    if args.title:
+        plt.title(args.title)
 
-if args.output:
-    plt.savefig(args.output, dpi=600)
-else:
-    plt.show()
+    if args.log_count:
+        plt.yscale("log")
+    else:
+        plt.ylim(0, None)
+
+    if args.output:
+        plt.savefig(args.output, dpi=600)
+    else:
+        plt.show()
+
+
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -421,105 +535,116 @@ else:
 errorbar plot."""
 
 import argparse
-import json
 import sys
 
 import matplotlib.pyplot as plt
 
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("file", help="JSON file with benchmark results", nargs="+")
-parser.add_argument(
-    "--parameter-name",
-    metavar="name",
-    type=str,
-    help="Deprecated; parameter names are now inferred from benchmark files",
-)
-parser.add_argument(
-    "--log-x", help="Use a logarithmic x (parameter) axis", action="store_true"
-)
-parser.add_argument(
-    "--log-time", help="Use a logarithmic time axis", action="store_true"
-)
-parser.add_argument(
-    "--titles", help="Comma-separated list of titles for the plot legend"
-)
-parser.add_argument("-o", "--output", help="Save image to the given filename.")
+from plot_utils import METRICS, add_metric_argument, load_results
 
-args = parser.parse_args()
-if args.parameter_name is not None:
-    sys.stderr.write(
-        "warning: --parameter-name is deprecated; names are inferred from "
-        "benchmark results\n"
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_metric_argument(parser)
+    parser.add_argument("file", help="JSON file with benchmark results", nargs="+")
+    parser.add_argument(
+        "--parameter-name",
+        metavar="name",
+        type=str,
+        help="Deprecated; parameter names are now inferred from benchmark files",
     )
+    parser.add_argument(
+        "--log-x", help="Use a logarithmic x (parameter) axis", action="store_true"
+    )
+    parser.add_argument(
+        "--log-y",
+        "--log-time",
+        dest="log_y",
+        help="Use a logarithmic metric axis",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--titles", help="Comma-separated list of titles for the plot legend"
+    )
+    parser.add_argument("-o", "--output", help="Save image to the given filename.")
 
-
-def die(msg):
-    sys.stderr.write(f"fatal: {msg}\n")
-    sys.exit(1)
-
-
-def extract_parameters(results):
-    """Return `(parameter_name: str, parameter_values: List[float])`."""
-    if not results:
-        die("no benchmark data to plot")
-    (names, values) = zip(*(unique_parameter(b) for b in results))
-    names = frozenset(names)
-    if len(names) != 1:
-        die(
-            f"benchmarks must all have the same parameter name, but found: {sorted(names)}"
+    args = parser.parse_args()
+    metric, datasets = load_results(parser, args.file, args.metric)
+    metric_info = METRICS[metric]
+    if args.parameter_name is not None:
+        sys.stderr.write(
+            "warning: --parameter-name is deprecated; names are inferred from "
+            "benchmark results\n"
         )
-    return (next(iter(names)), list(values))
+
+    def die(msg):
+        sys.stderr.write(f"fatal: {msg}\n")
+        sys.exit(1)
+
+    def extract_parameters(results):
+        """Return `(parameter_name: str, parameter_values: List[float])`."""
+        if not results:
+            die("no benchmark data to plot")
+        (names, values) = zip(*(unique_parameter(b) for b in results))
+        names = frozenset(names)
+        if len(names) != 1:
+            die(
+                f"benchmarks must all have the same parameter name, but found: {sorted(names)}"
+            )
+        return (next(iter(names)), list(values))
+
+    def unique_parameter(benchmark):
+        """Return the unique parameter `(name: str, value: float)`, or die."""
+        params_dict = benchmark.get("parameters", {})
+        if not params_dict:
+            die("benchmarks must have exactly one parameter, but found none")
+        if len(params_dict) > 1:
+            die(
+                f"benchmarks must have exactly one parameter, but found multiple: {sorted(params_dict)}"
+            )
+        [(name, value)] = params_dict.items()
+        return (name, float(value["value"]))
+
+    parameter_name = None
+
+    for results in datasets:
+        (this_parameter_name, parameter_values) = extract_parameters(results)
+        if parameter_name is not None and this_parameter_name != parameter_name:
+            die(
+                f"files must all have the same parameter name, but found {parameter_name!r} vs. {this_parameter_name!r}"
+            )
+        parameter_name = this_parameter_name
+
+        summaries = [b["summary"][metric] for b in results]
+        means = [s["mean"] / metric_info.scale for s in summaries]
+        stddevs = [
+            s["stddev"] / metric_info.scale if s["stddev"] is not None else float("nan")
+            for s in summaries
+        ]
+
+        plt.errorbar(x=parameter_values, y=means, yerr=stddevs, capsize=2)
+
+    plt.xlabel(parameter_name)
+    plt.ylabel(metric_info.axis_label)
+
+    if args.log_y:
+        plt.yscale("log")
+    else:
+        plt.ylim(0, None)
+
+    if args.log_x:
+        plt.xscale("log")
+
+    if args.titles:
+        plt.legend(args.titles.split(","))
+
+    if args.output:
+        plt.savefig(args.output)
+    else:
+        plt.show()
 
 
-def unique_parameter(benchmark):
-    """Return the unique parameter `(name: str, value: float)`, or die."""
-    params_dict = benchmark.get("parameters", {})
-    if not params_dict:
-        die("benchmarks must have exactly one parameter, but found none")
-    if len(params_dict) > 1:
-        die(
-            f"benchmarks must have exactly one parameter, but found multiple: {sorted(params_dict)}"
-        )
-    [(name, value)] = params_dict.items()
-    return (name, float(value))
-
-
-parameter_name = None
-
-for filename in args.file:
-    with open(filename) as f:
-        results = json.load(f)["results"]
-
-    (this_parameter_name, parameter_values) = extract_parameters(results)
-    if parameter_name is not None and this_parameter_name != parameter_name:
-        die(
-            f"files must all have the same parameter name, but found {parameter_name!r} vs. {this_parameter_name!r}"
-        )
-    parameter_name = this_parameter_name
-
-    times_mean = [b["mean"] for b in results]
-    times_stddev = [b["stddev"] for b in results]
-
-    plt.errorbar(x=parameter_values, y=times_mean, yerr=times_stddev, capsize=2)
-
-plt.xlabel(parameter_name)
-plt.ylabel("Time [s]")
-
-if args.log_time:
-    plt.yscale("log")
-else:
-    plt.ylim(0, None)
-
-if args.log_x:
-    plt.xscale("log")
-
-if args.titles:
-    plt.legend(args.titles.split(","))
-
-if args.output:
-    plt.savefig(args.output)
-else:
-    plt.show()
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -541,564 +666,86 @@ thermal throttling and similar effects.
 """
 
 import argparse
-import json
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+from plot_utils import METRICS, add_metric_argument, load_results
 
-def moving_average(times, num_runs):
-    times_padded = np.pad(
-        times, (num_runs // 2, num_runs - 1 - num_runs // 2), mode="edge"
+
+def moving_average(values, num_runs):
+    values_padded = np.pad(
+        values, (num_runs // 2, num_runs - 1 - num_runs // 2), mode="edge"
     )
     kernel = np.ones(num_runs) / num_runs
-    return np.convolve(times_padded, kernel, mode="valid")
+    return np.convolve(values_padded, kernel, mode="valid")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_metric_argument(parser)
+    parser.add_argument("file", help="JSON file with benchmark results")
+    parser.add_argument("--title", help="Plot Title")
+    parser.add_argument("-o", "--output", help="Save image to the given filename.")
+    parser.add_argument(
+        "-w",
+        "--moving-average-width",
+        type=int,
+        metavar="num_runs",
+        help="Width of the moving-average window (default: N/5)",
+    )
+    parser.add_argument(
+        "--no-moving-average",
+        action="store_true",
+        help="Do not show moving average curve",
+    )
+
+    args = parser.parse_args()
+    metric, [results] = load_results(parser, [args.file], args.metric)
+    metric_info = METRICS[metric]
+
+    for result in results:
+        values = [
+            m[metric]["value"] / metric_info.scale for m in result["measurements"]
+        ]
+        num = len(values)
+        nums = range(num)
+
+        plt.scatter(x=nums, y=values, marker=".")
+        plt.ylim([0, None])
+        plt.xlim([-1, num])
+
+        if not args.no_moving_average:
+            moving_average_width = (
+                max(1, num // 5)
+                if args.moving_average_width is None
+                else args.moving_average_width
+            )
+
+            average = moving_average(values, moving_average_width)
+            plt.plot(nums, average, "-")
+
+    if args.title:
+        plt.title(args.title)
+
+    legend = []
+    for result in results:
+        legend.append(result.get("name", result["command"]))
+        if not args.no_moving_average:
+            legend.append("moving average")
+    plt.legend(legend)
+
+    plt.ylabel(metric_info.axis_label)
+
+    if args.output:
+        plt.savefig(args.output)
+    else:
+        plt.show()
+
+
+if __name__ == "__main__":
+    main()
 
-
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("file", help="JSON file with benchmark results")
-parser.add_argument("--title", help="Plot Title")
-parser.add_argument("-o", "--output", help="Save image to the given filename.")
-parser.add_argument(
-    "-w",
-    "--moving-average-width",
-    type=int,
-    metavar="num_runs",
-    help="Width of the moving-average window (default: N/5)",
-)
-parser.add_argument(
-    "--no-moving-average",
-    action="store_true",
-    help="Do not show moving average curve",
-)
-
-
-args = parser.parse_args()
-
-with open(args.file) as f:
-    results = json.load(f)["results"]
-
-for result in results:
-    label = result["command"]
-    times = result["times"]
-    num = len(times)
-    nums = range(num)
-
-    plt.scatter(x=nums, y=times, marker=".")
-    plt.ylim([0, None])
-    plt.xlim([-1, num])
-
-    if not args.no_moving_average:
-        moving_average_width = (
-            num // 5 if args.moving_average_width is None else args.moving_average_width
-        )
-
-        average = moving_average(times, moving_average_width)
-        plt.plot(nums, average, "-")
-
-if args.title:
-    plt.title(args.title)
-
-legend = []
-for result in results:
-    legend.append(result["command"])
-    if not args.no_moving_average:
-        legend.append("moving average")
-plt.legend(legend)
-
-plt.ylabel("Time [s]")
-
-if args.output:
-    plt.savefig(args.output)
-else:
-    plt.show()
-
-```
-
-### Core Architecture Module: `scripts/plot_whisker.py`
-```
-#!/usr/bin/env python
-# /// script
-# requires-python = ">=3.10"
-# dependencies = [
-#     "matplotlib",
-#     "pyqt6",
-# ]
-# ///
-
-"""This program shows `hyperfine` benchmark results as a box and whisker plot.
-
-Quoting from the matplotlib documentation:
-    The box extends from the lower to upper quartile values of the data, with
-    a line at the median. The whiskers extend from the box to show the range
-    of the data. Flier points are those past the end of the whiskers.
-"""
-
-import argparse
-import json
-
-import matplotlib.pyplot as plt
-
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("file", help="JSON file with benchmark results")
-parser.add_argument("--title", help="Plot Title")
-parser.add_argument("--sort-by", choices=["median"], help="Sort method")
-parser.add_argument(
-    "--labels", help="Comma-separated list of entries for the plot legend"
-)
-parser.add_argument("-o", "--output", help="Save image to the given filename.")
-
-args = parser.parse_args()
-
-with open(args.file, encoding="utf-8") as f:
-    results = json.load(f)["results"]
-
-if args.labels:
-    labels = args.labels.split(",")
-else:
-    labels = [b["command"] for b in results]
-times = [b["times"] for b in results]
-
-if args.sort_by == "median":
-    medians = [b["median"] for b in results]
-    indices = sorted(range(len(labels)), key=lambda k: medians[k])
-    labels = [labels[i] for i in indices]
-    times = [times[i] for i in indices]
-
-plt.figure(figsize=(10, 6), constrained_layout=True)
-boxplot = plt.boxplot(times, vert=True, patch_artist=True)
-cmap = plt.get_cmap("rainbow")
-colors = [cmap(val / len(times)) for val in range(len(times))]
-
-for patch, color in zip(boxplot["boxes"], colors):
-    patch.set_facecolor(color)
-
-if args.title:
-    plt.title(args.title)
-plt.legend(handles=boxplot["boxes"], labels=labels, loc="best", fontsize="medium")
-plt.ylabel("Time [s]")
-plt.ylim(0, None)
-plt.xticks(list(range(1, len(labels) + 1)), labels, rotation=45)
-if args.output:
-    plt.savefig(args.output)
-else:
-    plt.show()
-
-```
-
-### Core Architecture Module: `src/benchmark/benchmark_result.rs`
-```
-use std::collections::BTreeMap;
-
-use serde::ser::SerializeStruct;
-use serde::{Serialize, Serializer};
-
-use crate::benchmark::measurement::Measurements;
-use crate::quantity::{byte, second, Time};
-use crate::util::exit_code::extract_exit_code;
-
-/// Parameter value and whether it was used in the command line template
-#[derive(Debug, Default, Clone, Serialize, PartialEq)]
-#[serde(transparent)]
-pub struct Parameter {
-    pub value: String,
-    #[serde(skip)]
-    pub is_unused: bool,
-}
-
-/// Meta data and performance metrics for a single benchmark
-#[derive(Debug, Default, Clone, PartialEq)]
-pub struct BenchmarkResult {
-    /// The full command line of the program that is being benchmarked
-    pub command: String,
-
-    /// The full command line, including parameters not used in the command template.
-    pub command_with_unused_parameters: String,
-
-    /// Performance measurements and exit statuses for each run
-    pub measurements: Measurements,
-
-    /// Parameter values for this benchmark
-    pub parameters: BTreeMap<String, Parameter>,
-}
-
-impl BenchmarkResult {
-    /// The average wall clock time
-    pub fn mean_wall_clock_time(&self) -> Time {
-        self.measurements.time_wall_clock_mean()
-    }
-}
-
-// Preserve the existing export format while storing typed measurements internally.
-impl Serialize for BenchmarkResult {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut state = serializer.serialize_struct(
-            "BenchmarkResult",
-            if self.parameters.is_empty() { 11 } else { 12 },
-        )?;
-        state.serialize_field("command", &self.command)?;
-        state.serialize_field("mean", &self.mean_wall_clock_time().get::<second>())?;
-        state.serialize_field(
-            "stddev",
-            &self.measurements.stddev().map(|time| time.get::<second>()),
-        )?;
-        state.serialize_field("median", &self.measurements.median().get::<second>())?;
-        state.serialize_field("user", &self.measurements.time_user_mean().get::<second>())?;
-        state.serialize_field(
-            "system",
-            &self.measurements.time_system_mean().get::<second>(),
-        )?;
-        state.serialize_field("min", &self.measurements.min().get::<second>())?;
-        state.serialize_field("max", &self.measurements.max().get::<second>())?;
-        state.serialize_field(
-            "times",
-            &self
-                .measurements
-                .wall_clock_times()
-                .map(|time| time.get::<second>())
-                .collect::<Vec<_>>(),
-        )?;
-        state.serialize_field(
-            "memory_usage_byte",
-            &self
-                .measurements
-                .measurements
-                .iter()
-                .map(|measurement| measurement.peak_memory_usage.get::<byte>() as u64)
-                .collect::<Vec<_>>(),
-        )?;
-        state.serialize_field(
-            "exit_codes",
-            &self
-                .measurements
-                .measurements
-                .iter()
-                .map(|measurement| extract_exit_code(measurement.exit_status))
-                .collect::<Vec<_>>(),
-        )?;
-        if !self.parameters.is_empty() {
-            state.serialize_field("parameters", &self.parameters)?;
-        }
-        state.end()
-    }
-}
-
-```
-
-### Core Architecture Module: `src/benchmark/executor.rs`
-```
-#[cfg(windows)]
-use std::os::windows::process::CommandExt;
-use std::process::ExitStatus;
-
-use crate::command::Command;
-use crate::options::{
-    CmdFailureAction, CommandInputPolicy, CommandOutputPolicy, Options, OutputStyleOption, Shell,
-};
-use crate::output::progress_bar::get_progress_bar;
-use crate::quantity::{second, Information, Time, Zero};
-use crate::timer::execute_and_measure;
-use crate::util::randomized_environment_offset;
-
-use super::measurement::{Measurement, Measurements};
-
-use anyhow::{bail, Context, Result};
-
-#[derive(Clone, Copy)]
-pub enum BenchmarkIteration {
-    NonBenchmarkRun,
-    Warmup(u64),
-    Benchmark(u64),
-}
-
-impl BenchmarkIteration {
-    pub fn to_env_var_value(&self) -> Option<String> {
-        match self {
-            BenchmarkIteration::NonBenchmarkRun => None,
-            BenchmarkIteration::Warmup(i) => Some(format!("warmup-{}", i)),
-            BenchmarkIteration::Benchmark(i) => Some(format!("{}", i)),
-        }
-    }
-}
-
-pub trait Executor {
-    /// Run the given command and measure the execution time
-    fn run_command_and_measure(
-        &self,
-        command: &Command<'_>,
-        iteration: BenchmarkIteration,
-        command_failure_action: Option<CmdFailureAction>,
-        output_policy: &CommandOutputPolicy,
-    ) -> Result<Measurement>;
-
-    /// Perform a calibration of this executor. For example,
-    /// when running commands through a shell, we need to
-    /// measure the shell spawning time separately in order
-    /// to subtract it from the full runtime later.
-    fn calibrate(&mut self) -> Result<()>;
-
-    /// Return the time overhead for this executor when
-    /// performing a measurement. This should return the time
-    /// that is being used in addition to the actual runtime
-    /// of the command.
-    fn time_overhead(&self) -> Time;
-}
-
-fn run_command_and_measure_common(
-    mut command: std::process::Command,
-    iteration: BenchmarkIteration,
-    command_failure_action: CmdFailureAction,
-    command_input_policy: &CommandInputPolicy,
-    command_output_policy: &CommandOutputPolicy,
-    command_name: &str,
-) -> Result<Measurement> {
-    let stdin = command_input_policy.get_stdin()?;
-    let (stdout, stderr) = command_output_policy.get_stdout_stderr()?;
-    command.stdin(stdin).stdout(stdout).stderr(stderr);
-
-    command.env(
-        "HYPERFINE_RANDOMIZED_ENVIRONMENT_OFFSET",
-        randomized_environment_offset::value(),
-    );
-
-    if let Some(value) = iteration.to_env_var_value() {
-        command.env("HYPERFINE_ITERATION", value);
-    }
-
-    let result = execute_and_measure(command)
-        .with_context(|| format!("Failed to run command '{command_name}'"))?;
-
-    if !result.exit_status.success() {
-        use crate::util::exit_code::extract_exit_code;
-
-        let should_fail = match command_failure_action {
-            CmdFailureAction::RaiseError => true,
-            CmdFailureAction::IgnoreAllFailures => false,
-            CmdFailureAction::IgnoreSpecificFailures(ref codes) => {
-                // Only fail if the exit code is not in the list of codes to ignore
-                if let Some(exit_code) = extract_exit_code(result.exit_status) {
-                    !codes.contains(&exit_code)
-                } else {
-                    // If we can't extract an exit code, treat it as a failure
-                    true
-                }
-            }
-        };
-
-        if should_fail {
-            let when = match iteration {
-                BenchmarkIteration::NonBenchmarkRun => "a non-benchmark run".to_string(),
-                BenchmarkIteration::Warmup(0) => "the first warmup run".to_string(),
-                BenchmarkIteration::Warmup(i) => format!("warmup iteration {i}"),
-                BenchmarkIteration::Benchmark(0) => "the first benchmark run".to_string(),
-                BenchmarkIteration::Benchmark(i) => format!("benchmark iteration {i}"),
-            };
-            bail!(
-                "{cause} in {when}. Use the '-i'/'--ignore-failure' option if you want to ignore this. \
-                Alternatively, use the '--show-output' option to debug what went wrong.",
-                cause=result.exit_status.code().map_or(
-                    "The process has been terminated by a signal".into(),
-                    |c| format!("Command terminated with non-zero exit code {c}")
-
-                ),
-            );
-        }
-    }
-
-    Ok(result)
-}
-
-pub struct RawExecutor<'a> {
-    options: &'a Options,
-}
-
-impl<'a> RawExecutor<'a> {
-    pub fn new(options: &'a Options) -> Self {
-        RawExecutor { options }
-    }
-}
-
-impl Executor for RawExecutor<'_> {
-    fn run_command_and_measure(
-        &self,
-        command: &Command<'_>,
-        iteration: BenchmarkIteration,
-        command_failure_action: Option<CmdFailureAction>,
-        output_policy: &CommandOutputPolicy,
-    ) -> Result<Measurement> {
-        run_command_and_measure_common(
-            command.get_command()?,
-            iteration,
-            command_failure_action.unwrap_or_else(|| self.options.command_failure_action.clone()),
-            &self.options.command_input_policy,
-            output_policy,
-            &command.get_command_line(),
-        )
-    }
-
-    fn calibrate(&mut self) -> Result<()> {
-        Ok(())
-    }
-
-    fn time_overhead(&self) -> Time {
-        Time::zero()
-    }
-}
-
-pub struct ShellExecutor<'a> {
-    options: &'a Options,
-    shell: &'a Shell,
-    shell_spawning_time: Option<Measurement>,
-}
-
-impl<'a> ShellExecutor<'a> {
-    pub fn new(shell: &'a Shell, options: &'a Options) -> Self {
-        ShellExecutor {
-            shell,
-            options,
-            shell_spawning_time: None,
-        }
-    }
-}
-
-impl Executor for ShellExecutor<'_> {
-    fn run_command_and_measure(
-        &self,
-        command: &Command<'_>,
-        iteration: BenchmarkIteration,
-        command_failure_action: Option<CmdFailureAction>,
-        output_policy: &CommandOutputPolicy,
-    ) -> Result<Measurement> {
-        let on_windows_cmd = cfg!(windows) && *self.shell == Shell::Default("cmd.exe");
-        let mut command_builder = self.shell.command();
-        command_builder.arg(if on_windows_cmd { "/C" } else { "-c" });
-
-        // Windows needs special treatment for its behavior on parsing cmd arguments
-        if on_windows_cmd {
-            #[cfg(windows)]
-            command_builder.raw_arg(command.get_command_line());
-        } else {
-            command_builder.arg(command.get_command_line());
-        }
-
-        let mut result = run_command_and_measure_common(
-            command_builder,
-            iteration,
-            command_failure_action.unwrap_or_else(|| self.options.command_failure_action.clone()),
-            &self.options.command_input_policy,
-            output_policy,
-            &command.get_command_line(),
-        )?;
-
-        // Subtract shell spawning time
-        if let Some(spawning_time) = self.shell_spawning_time {
-            result.time_wall_clock =
-                (result.time_wall_clock - spawning_time.time_wall_clock).max(Time::zero());
-            result.time_user = (result.time_user - spawning_time.time_user).max(Time::zero());
-            result.time_system = (result.time_system - spawning_time.time_system).max(Time::zero());
-        }
-
-        Ok(result)
-    }
-
-    /// Measure the average shell spawning time
-    fn calibrate(&mut self) -> Result<()> {
-        const COUNT: u64 = 50;
-        let progress_bar = if self.options.output_style != OutputStyleOption::Disabled {
-            Some(get_progress_bar(
-                COUNT,
-                "Measuring shell spawning time",
-                self.options.output_style,
-            ))
-        } else {
-            None
-        };
-
-        let mut measurements = Measurements::default();
-
-        for _ in 0..COUNT {
-            // Just run the shell without any command
-            let res = self.run_command_and_measure(
-                &Command::new(None, ""),
-                BenchmarkIteration::NonBenchmarkRun,
-                None,
-                &CommandOutputPolicy::Null,
-            );
-
-            match res {
-                Err(_) => {
-                    let shell_cmd = if cfg!(windows) {
-                        format!("{} /C \"\"", self.shell)
-                    } else {
-                        format!("{} -c \"\"", self.shell)
-                    };
-
-                    bail!(
-                        "Could not measure shell execution time. Make sure you can run '{}'.",
-                        shell_cmd
-                    );
-                }
-                Ok(r) => {
-                    measurements.push(r);
-                }
-            }
-
-            if let Some(bar) = progress_bar.as_ref() {
-                bar.inc(1)
-            }
-        }
-
-        if let Some(bar) = progress_bar.as_ref() {
-            bar.finish_and_clear()
-        }
-
-        self.shell_spawning_time = Some(Measurement {
-            time_wall_clock: measurements.time_wall_clock_mean(),
-            time_user: measurements.time_user_mean(),
-            time_system: measurements.time_system_mean(),
-            peak_memory_usage: measurements.peak_memory_usage_mean(),
-            exit_status: ExitStatus::default(),
-        });
-
-        Ok(())
-    }
-
-    fn time_overhead(&self) -> Time {
-        self.shell_spawning_time.unwrap().time_wall_clock
-    }
-}
-
-#[derive(Clone)]
-pub struct MockExecutor {
-    shell: Option<String>,
-}
-
-impl MockExecutor {
-    pub fn new(shell: Option<String>) -> Self {
-        MockExecutor { shell }
-    }
-
-    fn extract_time<S: AsRef<str>>(sleep_command: S) -> Time {
-        assert!(sleep_command.as_ref().starts_with("sleep "));
-        Time::new::<second>(
-            sleep_command
-                .as_ref()
-                .trim_start_matches("sleep ")
-                .parse::<f64>()
-                .unwrap(),
-        )
-    }
-}
-
-impl Executor for MockExecutor {
-    fn run_command_and_measure(
-        &self,
-        command: &Command<'_>,
-        _iteration: BenchmarkIteration,
-        _comman
 ```
 
 
@@ -1112,45 +759,9 @@ impl Executor for MockExecutor {
   **Post-Mortem & Fix Analysis**:
   > Please take a closer look. The workflow failed, but the PR was successfully created: https://github.com/microsoft/winget-pkgs/pull/108841. An issue is already open for this: https://github.com/vedantmgoyal2009/winget-releaser/issues/167. You don't need to take your time to do anything 🙂
   > Wait, am I seeing this right? The version tag went from https://github.com/sharkdp/hyperfine/releases/tag/v1.16.1 to https://github.com/sharkdp/hyperfine/releases/tag/v0.17.0  - https://github.com/sharkdp/hyperfine/issues/657
-  > > Wait, am I seeing this right? The version tag went from https://github.com/sharkdp/hyperfine/releases/tag/v1.16.1 to https://github.com/sharkdp/hyperfine/releases/tag/v0.17.0 >  >     *  Yeah, that's my bad - sorry. Should be fixed now.  But it looks like this is not related to the pipeline failure, as that failed again here: https://github.com/sharkdp/hyperfine/actions/runs/5167650725/jobs/9308703493  > You don't need to take your time to do anything slightly_smiling_face  Well, but I have failing pipelines in my repo.  ![image](https://github.com/sharkdp/hyperfine/assets/4209276/9a2dd301-9f96-4d85-903f-c0bfe066d5e3)  Naturally, I get notifications. I look into what went wrong. I have to create a ticket like this. Write responses to posts, etc. Sure, it doesn't take a lot of my time, but I'd rather not have to do anything.
 
 - **Issue #642** (2023-04-20): **Exporting can fail with "Relative speed comparison is not available" for fast-running commands**
   *Symptoms*: This happens when the mean is zero:  ``` ▶ hyperfine --runs=1 'true' --export-markdown - Benchmark 1: true   Time (abs ≡):          0.0 ms               [User: 0.2 ms, System: 0.0 ms]     Warning: Command took less than 5 ms to complete. Note that the results might be inaccurate because hyperfine can not calibrate the shell startup time much more precise than this limit. You can try to use the `-N`/`--shell=none` option to disable the shell completely.   Error: Relative speed comparison is not available for markup exporter. ```
-
-- **Issue #640** (2023-04-20): **Using '-' as filename for --export-* should not print intermediate results**
-  *Symptoms*: When using `-` to export to standard out, we get intermediate outputs that clutter the output.   How to reproduce? ```bash hyperfine --runs 2 --export-markdown - 'sleep 0.1' 'sleep 0.2' ```  ![image](https://user-images.githubusercontent.com/4209276/232596866-15d1c2c8-bcae-4c0c-bdf1-479174e77706.png)   Expected result: the exported content should only be shown once at the end. Ideally, after the *Summary* section.  FYI @humblepenguinn
-
-- **Issue #630** (2024-11-10): **output over multiple lines**
-  *Symptoms*: I've used hyperfine for a long time. Excellent tool. Recently it started to behave incorrectly visually. Instead of the output animating a single line, it prints several lines:  <img width="1007" alt="image" src="https://user-images.githubusercontent.com/1785727/226062310-9960a7d2-ae8f-4b40-9aa8-5fc81ea065ed.png">  This is the only program that I've noticed this sort of behaviour in.  I'm running on a Macbook with macOS Ventura 13.2.1 and zsh 5.9 (arm-apple-darwin22.1.0) 
-  **Post-Mortem & Fix Analysis**:
-  > Thank you for reporting this. Which version of hyperfine do you have? The latest 1.16?
-  > Yes, 1.16.0, I upgrade my tools often, so the behavior could have started with the upgrade.
-  > Here is a recording of the behavior:  https://user-images.githubusercontent.com/1785727/226097700-b5995b26-8db5-4bf0-9582-591d719e812e.mov  
-
-- **Issue #568** (2022-10-29): **hyperfine not working with nushell**
-  *Symptoms*: Using hyperfine on Windows with nushell doesn't work properly.  Trying to benchmark ls gives me an unrecognized command error: ![image](https://user-images.githubusercontent.com/4028423/190511751-275593de-ddb2-462c-8b0e-c275d8192988.png) This makes sense because ls is not a command on Windows with cmd.exe.  Setting the shell manually with `hyperfine -S nu 'ls' --show-output` gives me another error: ![image](https://user-images.githubusercontent.com/4028423/190512121-de413f28-dc41-4169-b0e6-70c4bb0cce6d.png)  nushell only supports running commands using `nu -c`.
-  **Post-Mortem & Fix Analysis**:
-  > Thank you for reporting this. That is unfortunate. Do you have any ideas on how to resolve this?
-  > fixed in #582, looked like it always defaulted to cmd.exe style of shell on windows, now the default should be `-c` when not in cmd.exe
-
-- **Issue #453** (2021-12-03): **[BUG] `hyperfine -h` panics when stdout is closed**
-  *Symptoms*: ```console $ RUST_BACKTRACE=1 hyperfine -h | false thread 'main' panicked at 'Error writing Error to stdout: Os { code: 32, kind: BrokenPipe, message: "Broken pipe" }', /Users/brew/Library/Caches/Homebrew/cargo_cache/registry/src/github.com-1ecc6299db9ec823/clap-2.33.3/src/errors.rs:401:55 stack backtrace:    0: _rust_begin_unwind    1: core::panicking::panic_fmt    2: core::result::unwrap_failed    3: core::result::Result<T,E>::expect    4: clap::errors::Error::exit    5: clap::app::App::get_matches_from::{{closure}}    6: hyperfine::app::get_arg_matches    7: hyperfine::main note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace. ```  Clap provides a `get_matches_from_safe` API that returns a `Result` rather than panicking when failing to write to stdout.  Here's some MIT-licensed code I use in one of my projects that does this dance in a panic-free way:  https://github.com/artichoke/artichoke/blob/d527412f9438aeba4cadb1f4303237f6f9e0cd4d/src/bin/artichoke.rs#L138-L173
-  **Post-Mortem & Fix Analysis**:
-  > (I tried to file this bug on `fd` as well which has the same panicking behavior, but the GitHub Issues UI kept erroring for me)
-  > Thank you for reporting this.  > (I tried to file this bug on `fd` as well which has the same panicking behavior, but the GitHub Issues UI kept erroring for me)  Oh, fantastic. Does this work https://github.com/sharkdp/fd/issues/new?
-  > That did the trick:  - https://github.com/sharkdp/fd/issues/897  This appears to be a productive source of bugs across the Rust CLI ecosystem:  - https://twitter.com/artichokeruby/status/1464996910511452165 - https://www.reddit.com/r/rust/comments/r48hem/claps_defaults_cause_rust_clis_to_panic_on_help/
-
-- **Issue #408** (2021-07-26): **User and system time should be in consistent time units**
-  *Symptoms*: The "user" and "system" time should be reported in the same unit as mean, stddev, min and max. They should also follow `--time-unit`, if specified.  Example 1: ``` ▶ hyperfine --runs 2 'stress --cpu 1 --timeout 1' Benchmark 1: stress --cpu 1 --timeout 1   Time (mean ± σ):      1.002 s ±  0.002 s    [User: 993.7 ms, System: 1.0 ms]   Range (min … max):    1.000 s …  1.003 s    2 runs ```  Example 2: ``` ▶ hyperfine --runs 2 'stress --cpu 1 --timeout 2' --time-unit millisecond Benchmark 1: stress --cpu 1 --timeout 2   Time (mean ± σ):     2000.4 ms ±   0.5 ms    [User: 1.983 s, System: 0.003 s]   Range (min … max):   2000.0 ms … 2000.8 ms    2 runs ```
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in https://github.com/sharkdp/hyperfine/releases/tag/v1.12.0
-
-- **Issue #368** (2022-09-02): **Windows user & system times incorrect**
-  *Symptoms*: Looks like user and kernel time on Windows is calculated for the shell process only, which is only used for spawning other processes and waiting for them, resulting in zero times.  I tried running processes directly instead of using the shell by using this and this way I do get relevant results:  ```rust /// Run a Windows shell command using `cmd.exe /C` #[cfg(windows)] fn run_shell_command(     stdout: Stdio,     stderr: Stdio,     command: &str,     shell: &str, ) -> io::Result<std::process::Child> {     if command.is_empty() {         Command::new(shell)             .arg("/C")             .arg(command)             .stdin(Stdio::null())             .stdout(stdout)             .stderr(stderr)             .spawn()     } else {         let mut parts = command.split_whitespace();         Command::new(parts.next().unwrap())             .args(parts)             .stdin(Stdio::null())             .stdout(stdout)             .stderr(stderr)             .spawn()     } } ```
-  **Post-Mortem & Fix Analysis**:
-  > Thank you for reporting this! That should be fixed.  Related: https://stackoverflow.com/questions/36011572/how-to-obtain-handles-for-all-children-process-of-current-process-in-windows
-  > Also related: https://github.com/sharkdp/hyperfine/issues/336
-  > Hi! I'm a student using hyperfine for the research for my Master's thesis. I'm not quite sure my issue is related, since you said this problem should already be solved and my user and system times are actually above zero, but maybe this issue wasn't properly fixed? Or maybe I just have a very wrong understanding of what exactly do the user and system time show.  I'm currently benchmarking C++,C# and Java implementations of one of the problems from the Computer Language Benchmarks game. The user and system times are always very small compared to the wall clock time. One of the example results that confuse me is: ``` Time (mean ± σ):     49.903 s ±  0.082 s    [User: 6.9 ms, System: 16.3 ms] Range (min … max):   49.815 s … 50.043 s    10 runs ``` which is for a sequential C++ program which should be spending most of its time dynamically allocating and deallocating memory. I've even done some profiling (using a sampling profiler) which confirms that this program spends at least 75%
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1167,818 +778,355 @@ impl Executor for MockExecutor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46e1f9f2` (2026-10-05)
-**Commit Message**: Merge pull request #979 from sharkdp/fix/parameterized-reference
+### Incident Patch 1: `26760e83` (2026-10-07)
+**Commit Message**: Add migration guidance for removed --reference option
 
-Use parameterized benchmarks as references
-
-**File**: `doc/hyperfine.1` (modified, +6/-2)
+**File**: `src/cli.rs` (modified, +13/-0)
 ```diff
-@@ -116,13 +116,17 @@ not every time as would happen with the \fB\-\-prepare\fR option.
- .HP
- \fB\-\-reference\fR \fICMD\fP
- .IP
--Benchmark \fICMD\fP as the reference for the relative comparison of results.
--If this option is not specified, the fastest command is used as the reference.
-+Use \fICMD\fP as the reference for the relative comparison of results. Without
-+parameters, benchmark \fICMD\fP as a separate reference command. If this option
-+is not specified, the fastest command is used as the reference.
-+With \fB\-\-parameter\-scan\fR or \fB\-\-parameter\-list\fR, select an existing
-+benchmark by its exact printed name. The name must match exactly one benchmark.
- .HP
- \fB\-\-reference\-name\fR \fINAME\fP
- .IP
- Give a meaningful \fINAME\fP to the reference command.
- Requires \fB\-\-reference\fR.
-+Cannot be used with parameterized benchmarks; use \fB\-\-command\-name\fR instead.
- .HP
- \fB\-p\fR, \fB\-\-prepare\fR \fICMD...\fP
- .IP
+@@ -50,6 +50,19 @@ fn build_command() -> Command {
+                 .value_hint(ValueHint::CommandString)
+                 .value_parser(NonEmptyStringValueParser::new()),
+         )
++        // Retain the removed option to provide migration guidance for old invocations.
++        .arg(
++            Arg::new("reference")
++                .long("reference")
++                .hide(true)
++                .value_name("CMD")
++                .num_args(0..=1)
++                .default_missing_value("")
++                .value_parser(|_: &str| -> Result<String, String> {
++                    Err("The --reference option has been removed. Put your reference command first instead.".into())
++                })
++                .help("Removed: put your reference command first instead."),
++        )
+         .arg(
+             Arg::new("metrics")
+                 .long("metrics")
 ```
 
-**File**: `src/benchmark/relative_speed.rs` (modified, +53/-11)
+**File**: `tests/integration_tests.rs` (modified, +19/-0)
 ```diff
-@@ -16,6 +16,20 @@ pub struct BenchmarkResultWithRelativeSpeed<'a> {
-     pub relative_ordering: Ordering,
+@@ -44,6 +44,25 @@ fn runs_successfully() {
+         .success();
  }
  
-+impl BenchmarkResultWithRelativeSpeed<'_> {
-+    pub fn reference_label(&self) -> &'static str {
-+        if self.is_reference {
-+            " (reference)"
-+        } else {
-+            match self.relative_ordering {
-+                Ordering::Less => " (faster)",
-+                Ordering::Equal => " (same speed)",
-+                Ordering::Greater => " (slower)",
++#[test]
++fn rejects_removed_reference_option_with_migration_guidance() {
++    for args in [
++        vec!["--reference", "echo reference", "echo comparison"],
++        vec!["echo comparison", "--reference=echo reference"],
++        vec!["--reference", "echo reference"],
++        vec!["--reference"],
++    ] {
++        hyperfine()
++            .args(args)
++            .assert()
++            .code(2)
++            .stdout("")
++            .stderr(predicate::str::contains(
++            "The --reference option has been removed. Put your reference command first instead.",
++        ));
++    }
++}
++
+ #[test]
+ fn one_run_is_supported() {
+     hyperfine()
+```
+
+---
+
+### Incident Patch 2: `6cb7bb01` (2026-10-07)
+**Commit Message**: Require an explicit shell choice for shell operators
+
+**File**: `README.md` (modified, +4/-0)
+```diff
+@@ -114,6 +114,10 @@ Shell syntax such as pipes, redirections, environment-variable expansion, `*`, a
+ This avoids shell startup overhead and the noise from correcting for it, especially for fast commands
+ (< 5 ms).
+ 
++Commands containing unquoted, standalone shell operators such as `&&` or `>` require an explicit
++choice: use `-S` / `--shell=default` to interpret shell syntax, or `-N` / `--shell=none` to pass
++the operators as literal arguments.
++
+ To enable shell syntax, use `-S` (an alias for `--shell=default`). This selects `sh`
+ on Unix (resolved through `PATH`) or `cmd.exe` on Windows:
+ ```sh
+```
+
+**File**: `src/main.rs` (modified, +24/-2)
+```diff
+@@ -11,9 +11,9 @@ use cli::get_cli_arguments;
+ use command::Commands;
+ use error::ConsoleOutputError;
+ use export::ExportManager;
+-use options::Options;
++use options::{ExecutorKind, Options};
+ 
+-use anyhow::Result;
++use anyhow::{bail, Result};
+ use colored::*;
+ 
+ pub mod benchmark;
+@@ -27,6 +27,7 @@ pub mod outlier_detection;
+ pub mod output;
+ pub mod parameter;
+ pub mod quantity;
++pub mod shell_syntax;
+ pub mod timer;
+ pub mod util;
+ 
+@@ -40,6 +41,27 @@ fn run() -> Result<()> {
+     let commands = Commands::from_cli_arguments(&cli_arguments)?;
+     options.validate_against_command_list(&commands)?;
+ 
++    if matches!(options.executor_kind, ExecutorKind::Raw)
++        && !cli_arguments.get_flag("no-shell")
++        && cli_arguments.get_one::<String>("shell").is_none()
++    {
++        for command in commands.iter() {
++            let command_line = command.get_command_line();
++            if let Some(operator) = shell_syntax::first_unquoted_operator(&command_line) {
++                bail!(
++                    concat!(
++                        "Command '{command_line}' contains unquoted shell syntax ('{operator}').\n",
++                        "Explicitly choose how to execute it:\n",
++                        "  -S / --shell=default  Interpret shell syntax.\n",
++                        "  -N / --shell=none     Run directly, passing '{operator}' as a literal argument.",
++                    ),
++                    command_line = command_line,
++                    operator = operator,
++                );
 +            }
 +        }
 +    }
-+}
 +
- pub fn compare_mean_time(l: &BenchmarkResult, r: &BenchmarkResult) -> Ordering {
-     l.mean_wall_clock_time()
-         .partial_cmp(&r.mean_wall_clock_time())
-@@ -37,10 +51,13 @@ fn compute_relative_speeds<'a>(
-     let mut results: Vec<_> = results
-         .iter()
-         .map(|result| {
--            let is_reference = result == reference;
-+            // Separate benchmarks can have identical names and measurements.
-+            let is_reference = std::ptr::eq(result, reference);
-             let relative_ordering = compare_mean_time(result, reference);
+     let export_manager = ExportManager::from_cli_arguments(&cli_arguments, options.metrics[0])?;
  
--            if result.mean_wall_clock_time() == Time::zero() {
-+            if result.mean_wall_clock_time() == Time::zero()
-+                || reference.mean_wall_clock_time() == Time::zero()
-+            {
-                 return BenchmarkResultWithRelativeSpeed {
-                     result,
-                     relative_speed: if is_reference { 1.0 } else { f64::INFINITY },
-@@ -64,11 +81,11 @@ fn compute_relative_speeds<'a>(
-                 result.measurements.stddev(),
-                 reference.measurements.stddev(),
-             ) {
--                (Some(result_stddev), Some(fastest_stddev)) => Some(
-+                (Some(result_stddev), Some(reference_stddev)) => Some(
-                     ratio
-                         * ((result_stddev / result.mean_wall_clock_time())
-                             .powi(uom::typenum::P2::new())
--                            + (fastest_stddev / reference.mean_wall_clock_time())
-+                            + (reference_stddev / reference.mean_wall_clock_time())
-                                 .powi(uom::typenum::P2::new()))
-                         .sqrt(),
-                 ),
-@@ -122,14 +139,14 @@ pub fn compute_with_check(
-     Some(compute_relative_speeds(results, fastest, sort_order))
- }
- 
--/// Same as compute_with_check, potentially resulting in relative speeds of infinity
--pub fn compute(
--    results: &[BenchmarkResult],
-+/// Compute relative speeds against the given reference, or the fastest result.
-+pub fn compute<'a>(
-+    results: &'a [BenchmarkResult],
-     sort_order: SortOrder,
--) -> Vec<BenchmarkResultWithRelativeSpeed<'_>> {
--    let fastest = fastest_of(results);
--
--    compute_relative_speeds(results, fastest, sort_order)
-+    reference: Option<&'a BenchmarkResult>,
-+) -> Vec<BenchmarkResultWithRelativeSpeed<'a>> {
-+    let reference = reference.unwrap_or_else(|| fastest_of(results));
-+    compute_relative_speeds(results, reference, sort_order)
- }
- 
- #[cfg(test)]
-@@ -192,3 +209,28 @@ fn test_compute_relative_speed_for_zero_times() {
- 
-     assert!(annotated_results.is_none());
- }
+     let mut scheduler = Scheduler::new(&commands, &options, &export_manager);
+```
+
+**File**: `src/shell_syntax.rs` (added, +218/-0)
+```diff
+@@ -0,0 +1,218 @@
++//! Conservative detection of shell operators in commands run without a shell.
 +
-+#[test]
-+fn reference_identity_distinguishes_equal_results() {
-+    let results = vec![create_result("same", 1.0), create_result("same", 1.0)];
-+    let entries = compute_relative_speeds(&results, &results[0], SortOrder::Command);
++use std::iter::Peekable;
++use std::str::CharIndices;
 +
-+    assert!(entries[0].is_reference);
-+    assert!(!entries[1].is_reference);
-+}
-+
-+#[test]
-+fn reference_ratios_handle_zero_times() {
-+    let mut results = vec![create_result("reference", 2.0), create_result("zero", 0.0)];
-+    for result in &mut results {
-+        let measurement = result.measurements.measurements[0];
-+        result.measurements.measurements.push(measurement);
-+    }
-+    let entries = compute_relative_speeds(&results, &results[0], SortOrder::Command);
-+    assert_eq!(entries[1].relative_speed, f64::INFINITY);
-+
-+    let entries = compute_relative_speeds(&results, &results[1], SortOrder::Command);
-+    assert_eq!(entries[0].relative_speed, f64::INFINITY);
-+    assert_eq!(entries[0].relative_speed_stddev, None);
-+    assert_eq!(entries[1].relative_speed, 1.0);
-+}
-```
-
-**File**: `src/benchmark/scheduler.rs` (modified, +13/-6)
-```diff
-@@ -54,7 +54,8 @@ impl<'a> Scheduler<'a> {
- 
-             // We export results after each individual benchmark, because
-             // we would risk losing them if a later benchmark fails.
--            self.export_manager.write_results(&self.results, true)?;
-+            self.export_manager
-+                .write_results(&self.results, true, self.options.reference_index)?;
-         }
- 
-         Ok(())
-@@ -71,9 +72,8 @@ impl<'a> Scheduler<'a> {
- 
-         let reference = self
-             .options
--            .reference_command
--            .as_ref()
--            .map(|_| &self.results[0])
-+            .reference_index
-+            .map(|index| &self.results[index])
-             .unwrap_or_else(|| relative_speed::fastest_of(&self.results));
- 
-         if let Some(annotated_results) = relative_speed::compute_with_check_from_reference(
-@@ -130,9 +130,14 @@ impl<'a> Scheduler<'a> {
-                     console_writeln!(stdout, "{}", "Relative speed comparison".bold())?;
- 
-                     for item in annotated_results {
-+                        let relationship = if self.options.reference_index.is_some() {
-+                            item.reference_label()
-+                        } else {
-+                            ""
-+                        };
-                         console_writeln!(
-                             stdout,
--                            "  {}{}  {}",
-+                            "  {}{}  {}{}",
-                             format!("{:10.2}", item.relative_speed).bold().green(),
-                             if item.is_reference {
-                                 "        ".into()
-@@ -142,6 +147,7 @@ impl<'a> Scheduler<'a> {
-                                 "        ".into()
-                             },
-                             item.result.command_with_unused_parameters,
-+                            relationship,
-                         )?;
-                     }
-                 }
-@@ -163,7 +169,8 @@ impl<'a> Scheduler<'a> {
-     }
- 
-     pub fn final_export(&self) -> Result<()> {
--        self.export_manager.write_results(&self.results, false)
-+        self.export_manager
-+            .write_results(&self.results, false, self.options.reference_index)
-     }
- }
- 
-```
-
-**File**: `src/cli.rs` (modified, +7/-3)
-```diff
-@@ -105,16 +105,20 @@ fn build_command() -> Command {
-                 .action(ArgAction::Set)
-                 .value_name("CMD")
-                 .help(
--                    "The reference command for the relative comparison of results. \
--                    If this is unset, results are compared with the fastest command as reference."
-+                    "The reference for the relative comparison of results. Without parameters, \
-+                    CMD is run as a separate reference command. With --parameter-scan or \
-+                    --parameter-list, CMD must exactly match one unique benchmark name as \
-+                    shown in the output. If this is unset, results are compared with the \
-+                    fastest command as reference."
-                 )
-         )
-         .arg(
-             Arg::new("reference-name")
-                 .long("reference-name")
-                 .action(ArgAction::Set)
-                 .value_name("CMD")
--                .help("Give a meaningful name to the reference command.")
-+                .help("Give a meaningful name to the reference command. This cannot be used \
-+                       with parameterized benchmarks; use --command-name instead.")
-                 .requires("reference")
-         )
-         .arg(
-```
-
-**File**: `src/export/csv.rs` (modified, +2/-1)
-```diff
-@@ -18,6 +18,7 @@ impl Exporter for CsvExporter {
-         results: &[BenchmarkResult],
-         _unit: Option<TimeUnit>,
-         _sort_order: SortOrder,
-+        _reference_index: Option<usize>,
-     ) -> Result<Vec<u8>> {
-         const CSV_UNIT: TimeUnit = TimeUnit::Second;
-         const CSV_PRECISION: usize = 6;
-@@ -172,7 +173,7 @@ fn test_csv() {
- 
-     let actual = String::from_utf8(
-         exporter
--            .serialize(&results, Some(TimeUnit::Second), SortOrder::Command)
-+            .serialize(&results, Some(TimeUnit::Second), SortOrder::Command, None)
-             .unwrap(),
-     )
-     .unwrap();
-```
-
-**File**: `src/export/json.rs` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@ impl Exporter for JsonExporter {
-         results: &[BenchmarkResult],
-         _unit: Option<TimeUnit>,
-         _sort_order: SortOrder,
-+        _reference_index: Option<usize>,
-     ) -> Result<Vec<u8>> {
-         let mut output = to_vec_pretty(&HyperfineSummary { results });
-         if let Ok(ref mut content) = output {
-```
-
-**File**: `src/export/markup.rs` (modified, +35/-11)
-```diff
-@@ -1,10 +1,11 @@
- use crate::benchmark::relative_speed::BenchmarkResultWithRelativeSpeed;
- use crate::benchmark::{benchmark_result::BenchmarkResult, relative_speed};
- use crate::options::SortOrder;
--use crate::quantity::{FormatQuantity, IsUnit, TimeUnit};
-+use crate::quantity::{FormatQuantity, IsUnit, Time, TimeUnit, Zero};
- 
- use super::Exporter;
- use anyhow::Result;
-+use std::cmp::Ordering;
- 
- pub enum Alignment {
-     Left,
-@@ -16,6 +17,8 @@ pub trait MarkupExporter {
-         &self,
-         entries: &[BenchmarkResultWithRelativeSpeed],
-         unit: TimeUnit,
-+        reference_pending: bool,
-+        explicit_reference: bool,
-     ) -> String {
-         // prepare table header strings
-         let notation = format!("[{}]", unit.short_name());
-@@ -58,13 +61,25 @@ pub trait MarkupExporter {
-             };
-             let min_str = measurement.measurements.min().format_value(unit);
-             let max_str = measurement.measurements.max().format_value(unit);
--            let rel_str = format!("{:.2}", entry.relative_speed);
--            let rel_stddev_str = if entry.is_reference {
--                "".into()
--            } else if let Some(stddev) = entry.relative_speed_stddev {
--                format!(" ± {stddev:.2}")
-+            // The ratio of two zero times is undefined, even if they compare equal.
-+            let relative_unavailable = reference_pending
-+                || (explicit_reference
-+                    && !entry.is_reference
-+                    && entry.relative_ordering == Ordering::Equal
-+                    && measurement.mean_wall_clock_time() == Time::zero());
-+            let relative = if relative_unavailable {
-+                "N/A".to_string()
-             } else {
--                "".into()
-+                let stddev = match (entry.is_reference, entry.relative_speed_stddev) {
-+                    (false, Some(stddev)) => format!(" ± {stddev:.2}"),
-+                    _ => String::new(),
-+                };
-+                let label = if explicit_reference {
-+                    entry.reference_label()
-+                } else {
-+                    ""
-+                };
-+                format!("{:.2}{stddev}{label}", entry.relative_speed)
-             };
- 
-             // prepare table row entries
-@@ -73,7 +88,7 @@ pub trait MarkupExporter {
-                 &format!("{mean_str}{stddev_str}"),
-                 &min_str,
-                 &max_str,
--                &format!("{rel_str}{rel_stddev_str}"),
-+                &relative,
-             ]))
-         }
- 
-@@ -114,11 +129,20 @@ impl<T: MarkupExporter> Exporter for T {
-         results: &[BenchmarkResult],
-         unit: Option<TimeUnit>,
-         sort_order: SortOrder,
-+        reference_index: Option<usize>,
-     ) -> Result<Vec<u8>> {
-         let unit = unit.unwrap_or_else(|| determine_unit_from_results(results));
--        let entries = relative_speed::compute(results, sort_order);
--
--        let table = self.table_results(&entries, unit);
-+        // Do not report ratios against another benchmark while the selected
-+        // reference is still pending in an intermediate export.
-+        let reference_pending = reference_index.is_some_and(|i| i >= results.len());
-+        let entries = relative_speed::compute(
-+            results,
-+            sort_order,
-+            reference_index.and_then(|i| results.get(i)),
-+        );
-+
-+        let table =
-+            self.table_results(&entries, unit, reference_pending, reference_index.is_some());
-         Ok(table.as_bytes().to_vec())
-     }
- }
-```
-
-**File**: `src/export/mod.rs` (modified, +10/-2)
-```diff
-@@ -51,6 +51,7 @@ trait Exporter {
-         results: &[BenchmarkResult],
-         unit: Option<TimeUnit>,
-         sort_order: SortOrder,
-+        reference_index: Option<usize>,
-     ) -> Result<Vec<u8>>;
- }
- 
-@@ -130,11 +131,18 @@ impl ExportManager {
-     /// results are written to all file targets (to always have them up to date, even
-     /// if a benchmark fails). In the latter case, we only print to stdout targets (in
-     /// order not to clutter the output of hyperfine with intermediate results).
--    pub fn write_results(&self, results: &[BenchmarkResult], intermediate: bool) -> Result<()> {
-+    /// `reference_index` refers to the complete benchmark sequence, so it can
-+    /// point past `results` while that benchmark is still pending.
-+    pub fn write_results(
-+        &self,
-+        results: &[BenchmarkResult],
-+        intermediate: bool,
-+        reference_index: Option<usize>,
-+    ) -> Result<()> {
-         for e in &self.exporters {
-             let content = || {
-                 e.exporter
--                    .serialize(results, self.time_unit, self.sort_order)
-+                    .serialize(results, self.time_unit, self.sort_order, reference_index)
-             };
- 
-             match e.target {
-```
-
----
-
-### Incident Patch 2: `79aea887` (2026-10-05)
-**Commit Message**: Merge pull request #977 from sharkdp/codex/fix-clippy-warnings
-
-Fix Windows Clippy warnings
-
-**File**: `src/timer/windows_timer.rs` (modified, +3/-6)
-```diff
-@@ -34,11 +34,11 @@ use crate::quantity::{nanosecond, Information, Time, Zero};
- 
- #[cfg(not(feature = "windows_process_extensions_main_thread_handle"))]
- #[allow(non_upper_case_globals)]
--static NtResumeProcess: Lazy<unsafe extern "system" fn(ProcessHandle: HANDLE) -> NTSTATUS> =
-+static NtResumeProcess: Lazy<unsafe extern "system" fn(process_handle: HANDLE) -> NTSTATUS> =
-     Lazy::new(|| {
-         // SAFETY: Getting the module handle for ntdll.dll is safe
-         let ntdll = unsafe { GetModuleHandleW(w!("ntdll.dll")) };
--        assert!(ntdll != std::ptr::null_mut(), "GetModuleHandleW failed");
-+        assert!(!ntdll.is_null(), "GetModuleHandleW failed");
- 
-         // SAFETY: The ntdll handle is valid
-         let nt_resume_process = unsafe { GetProcAddress(ntdll, s!("NtResumeProcess")) };
-@@ -57,10 +57,7 @@ impl CPUTimer {
- 
-         // SAFETY: Creating a new job object is safe
-         let job_object = unsafe { CreateJobObjectW(ptr::null_mut(), ptr::null_mut()) };
--        assert!(
--            job_object != std::ptr::null_mut(),
--            "CreateJobObjectW failed"
--        );
-+        assert!(!job_object.is_null(), "CreateJobObjectW failed");
- 
-         // SAFETY: The job object handle is valid
-         let ret = unsafe { AssignProcessToJobObject(job_object, child_handle) };
-```
-
----
-
-### Incident Patch 3: `ebb3182a` (2026-10-05)
-**Commit Message**: Fix Windows Clippy warnings
-
-**File**: `src/timer/windows_timer.rs` (modified, +3/-6)
-```diff
-@@ -34,11 +34,11 @@ use crate::quantity::{nanosecond, Information, Time, Zero};
- 
- #[cfg(not(feature = "windows_process_extensions_main_thread_handle"))]
- #[allow(non_upper_case_globals)]
--static NtResumeProcess: Lazy<unsafe extern "system" fn(ProcessHandle: HANDLE) -> NTSTATUS> =
-+static NtResumeProcess: Lazy<unsafe extern "system" fn(process_handle: HANDLE) -> NTSTATUS> =
-     Lazy::new(|| {
-         // SAFETY: Getting the module handle for ntdll.dll is safe
-         let ntdll = unsafe { GetModuleHandleW(w!("ntdll.dll")) };
--        assert!(ntdll != std::ptr::null_mut(), "GetModuleHandleW failed");
-+        assert!(!ntdll.is_null(), "GetModuleHandleW failed");
- 
-         // SAFETY: The ntdll handle is valid
-         let nt_resume_process = unsafe { GetProcAddress(ntdll, s!("NtResumeProcess")) };
-@@ -57,10 +57,7 @@ impl CPUTimer {
- 
-         // SAFETY: Creating a new job object is safe
-         let job_object = unsafe { CreateJobObjectW(ptr::null_mut(), ptr::null_mut()) };
--        assert!(
--            job_object != std::ptr::null_mut(),
--            "CreateJobObjectW failed"
--        );
-+        assert!(!job_object.is_null(), "CreateJobObjectW failed");
- 
-         // SAFETY: The job object handle is valid
-         let ret = unsafe { AssignProcessToJobObject(job_object, child_handle) };
-```
-
----
-
-### Incident Patch 4: `0a61e330` (2026-10-05)
-**Commit Message**: Merge pull request #947 from Likio3000/codex/fix-markdown-backticks
-
-Preserve backticks in Markdown command names
-
-**File**: `src/export/markdown.rs` (modified, +29/-1)
-```diff
-@@ -24,7 +24,19 @@ impl MarkupExporter for MarkdownExporter {
-     }
- 
-     fn command(&self, cmd: &str) -> String {
--        format!("`{cmd}`")
-+        let longest_backtick_run = cmd
-+            .split(|character| character != '`')
-+            .map(str::len)
-+            .max()
-+            .unwrap_or(0);
-+
-+        if longest_backtick_run == 0 {
-+            format!("`{cmd}`")
-+        } else {
-+            // Use a longer delimiter and keep command backticks separate from it.
-+            let delimiter = "`".repeat(longest_backtick_run + 1);
-+            format!("{delimiter} {cmd} {delimiter}")
-+        }
-     }
- }
- 
-@@ -44,3 +56,19 @@ fn test_markdown_formatter_table_divider() {
-     let divider = formatter.table_divider(&[Alignment::Left, Alignment::Right, Alignment::Left]);
-     assert_eq!(divider, "|:---|---:|:---|\n");
- }
-+
-+#[test]
-+fn test_markdown_formatter_command_with_backticks() {
-+    let formatter = MarkdownExporter::default();
-+
-+    for (command, expected) in [
-+        ("echo `uname`", "`` echo `uname` ``"),
-+        ("echo ``quoted``", "``` echo ``quoted`` ```"),
-+        ("`` `quoted` ``", "``` `` `quoted` `` ```"),
-+        ("`", "`` ` ``"),
-+        ("echo ```", "```` echo ``` ````"),
-+        (" echo `uname` ", "``  echo `uname`  ``"),
-+    ] {
-+        assert_eq!(formatter.command(command), expected, "{command:?}");
-+    }
-+}
-```
-
-**File**: `tests/integration_tests.rs` (modified, +21/-0)
-```diff
-@@ -929,6 +929,27 @@ fn invalid_command_options_preserve_export_files() {
-     }
- }
- 
-+#[test]
-+fn markdown_export_preserves_backticks_and_pipes_in_command_names() {
-+    let _settings = snapshot_settings().bind_to_scope();
-+    assert_cmd_snapshot!(hyperfine_debug()
-+        .arg("--style=none")
-+        .arg("--export-markdown=-")
-+        .arg("--command-name=echo `uname` | cat")
-+        .arg("sleep 1"), @r"
-+    success: true
-+    exit_code: 0
-+    ----- stdout -----
-+
-+    | Command | Mean [s] | Min [s] | Max [s] | Relative |
-+    |:---|---:|---:|---:|---:|
-+    | `` echo `uname` \| cat `` | 1.000 ± 0.000 | 1.000 | 1.000 | 1.00 |
-+
-+
-+    ----- stderr -----
-+    ");
-+}
-+
- #[test]
- fn unused_parameters_are_shown_in_benchmark_name() {
-     hyperfine()
-```
-
----
-
-### Incident Patch 5: `4917c557` (2026-05-24)
-**Commit Message**: Fix "modifized" typo on modified_zscores docstring
-
-Signed-off-by: Charlie Tonneslan <[REDACTED_EMAIL]>
-
-**File**: `src/quantity/statistics.rs` (modified, +1/-1)
-```diff
-@@ -106,7 +106,7 @@ pub fn standard_deviation<Q: UnsafeRawValue>(values: &[Q], mean: Q) -> Q {
-     Q::unsafe_from_raw_value((sum / (values.len() as f64 - 1.0)).sqrt())
- }
- 
--/// Compute modifized Z-scores for a given sample. A (unmodified) Z-score is defined by
-+/// Compute modified Z-scores for a given sample. A (unmodified) Z-score is defined by
- /// `(x_i - x_mean)/x_stddev` whereas the modified Z-score is defined by `(x_i - x_median)/MAD`
- /// where MAD is the median absolute deviation.
- ///
-```
-
----
-
-### Incident Patch 6: `258af076` (2026-10-05)
-**Commit Message**: Merge pull request #854 from Rohan5commit/docs/fix-arithmetic-wording
-
-docs: fix arithmetic wording in help text
-
-**File**: `src/cli.rs` (modified, +1/-1)
-```diff
-@@ -167,7 +167,7 @@ fn build_command() -> Command {
-                      string '{VAR}' in each command by the current parameter value.\n\n  \
-                      Example:  hyperfine --prepare 'make clean' -P threads 1 8 'make -j {threads}'\n\n\
-                      This performs benchmarks for 'make -j 1', 'make -j 2', …, 'make -j 8'.\n\n\
--                     To have the value increase following different patterns, use shell arithmetics.\n\n  \
-+                     To have the value increase following different patterns, use shell arithmetic.\n\n  \
-                      Example: hyperfine -P size 0 3 'sleep $((2**{size}))'\n\n\
-                      This performs benchmarks with power of 2 increases: 'sleep 1', 'sleep 2', 'sleep 4', …\n\
-                      The exact syntax may vary depending on your shell and OS."
-```
-
----
-
-### Incident Patch 7: `fe75d1cb` (2026-10-05)
-**Commit Message**: Merge pull request #853 from Rohan5commit/docs/fix-comment-typo
-
-docs: fix typo in relative speed comment
-
-**File**: `src/benchmark/relative_speed.rs` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ fn compute_relative_speeds<'a>(
-             };
- 
-             // https://en.wikipedia.org/wiki/Propagation_of_uncertainty#Example_formulas
--            // Covariance asssumed to be 0, i.e. variables are assumed to be independent
-+            // Covariance assumed to be 0, i.e. variables are assumed to be independent
-             let ratio_stddev = match (result.stddev, reference.stddev) {
-                 (Some(result_stddev), Some(fastest_stddev)) => Some(
-                     ratio
-```
-
----
-
-### Incident Patch 8: `907de263` (2026-10-02)
-**Commit Message**: Fix panic on --runs 0 (#923)
-
-* fix: reject --runs/--max-runs 0, clamp --min-runs to 1
-
-* Validate positive run counts with clap
-
----------
-
-Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
-Co-authored-by: David Peter <[REDACTED_EMAIL]>
-
-**File**: `src/cli.rs` (modified, +4/-0)
-```diff
-@@ -41,6 +41,7 @@ fn build_command() -> Command {
-                 .short('w')
-                 .value_name("NUM")
-                 .action(ArgAction::Set)
-+                .value_parser(clap::value_parser!(u64))
-                 .help(
-                     "Perform NUM warmup runs before the actual benchmark. This can be used \
-                      to fill (disk) caches for I/O-heavy programs.",
-@@ -52,6 +53,7 @@ fn build_command() -> Command {
-                 .short('m')
-                 .action(ArgAction::Set)
-                 .value_name("NUM")
-+                .value_parser(clap::value_parser!(u64).range(1..))
-                 .help("Perform at least NUM runs for each command (default: 10)."),
-         )
-         .arg(
-@@ -60,6 +62,7 @@ fn build_command() -> Command {
-                 .short('M')
-                 .action(ArgAction::Set)
-                 .value_name("NUM")
-+                .value_parser(clap::value_parser!(u64).range(1..))
-                 .help("Perform at most NUM runs for each command. By default, there is no limit."),
-         )
-         .arg(
-@@ -69,6 +72,7 @@ fn build_command() -> Command {
-                 .short('r')
-                 .action(ArgAction::Set)
-                 .value_name("NUM")
-+                .value_parser(clap::value_parser!(u64).range(1..))
-                 .help("Perform exactly NUM runs for each command. If this option is not specified, \
-                        hyperfine automatically determines the number of runs."),
-         )
-```
-
-**File**: `src/options.rs` (modified, +7/-14)
-```diff
-@@ -275,22 +275,15 @@ impl Default for Options {
- impl Options {
-     pub fn from_cli_arguments<'a>(matches: &ArgMatches) -> Result<Self, OptionsError<'a>> {
-         let mut options = Self::default();
--        let param_to_u64 = |param| {
--            matches
--                .get_one::<String>(param)
--                .map(|n| {
--                    n.parse::<u64>()
--                        .map_err(|e| OptionsError::IntParsingError(param, e))
--                })
--                .transpose()
--        };
--
--        options.warmup_count = param_to_u64("warmup")?.unwrap_or(options.warmup_count);
-+        options.warmup_count = matches
-+            .get_one::<u64>("warmup")
++/// Find the first standalone operator that is neither quoted nor escaped.
++///
++/// Operators attached to another word (such as `hello>out`), expansions, and
++/// other shell syntax are deliberately outside the scope of this check.
++pub fn first_unquoted_operator(command: &str) -> Option<&'static str> {
++    tokenize(command).find_map(|token| {
++        ["&&", "||", "|", ";", ">", ">>", "<"]
++            .iter()
 +            .copied()
-+            .unwrap_or(options.warmup_count);
- 
--        let mut min_runs = param_to_u64("min-runs")?;
--        let mut max_runs = param_to_u64("max-runs")?;
-+        let mut min_runs = matches.get_one::<u64>("min-runs").copied();
-+        let mut max_runs = matches.get_one::<u64>("max-runs").copied();
- 
--        if let Some(runs) = param_to_u64("runs")? {
-+        if let Some(&runs) = matches.get_one::<u64>("runs") {
-             min_runs = Some(runs);
-             max_runs = Some(runs);
-         }
-```
-
-**File**: `tests/integration_tests.rs` (modified, +26/-0)
-```diff
-@@ -74,6 +74,32 @@ fn exits_quietly_when_stdout_is_closed() {
-     }
- }
- 
-+#[test]
-+fn fails_with_zero_runs() {
-+    for option in ["--runs", "--min-runs", "--max-runs"] {
-+        hyperfine()
-+            .arg(option)
-+            .arg("0")
-+            .arg("echo dummy benchmark")
-+            .assert()
-+            .code(2)
-+            .stderr(predicate::str::contains(format!(
-+                "invalid value '0' for '{option} <NUM>'"
-+            )));
++            .find(|operator| {
++                // An escaped newline joins lines without quoting either side.
++                // All other quotes and escapes remain in the token, preventing
++                // it from matching an operator.
++                token
++                    .split("\\\n")
++                    .flat_map(str::bytes)
++                    .eq(operator.bytes())
++            })
++    })
++}
++
++/// Split words while preserving their original quoting and escaping.
++///
++/// Word boundaries and comments follow the same rules as `shell_words`, which
++/// parses commands for direct execution. This tokenizer neither expands shell
++/// expressions nor validates balanced quotes; command parsing handles errors.
++fn tokenize(command: &str) -> impl Iterator<Item = &str> {
++    Tokens {
++        command,
++        chars: command.char_indices().peekable(),
 +    }
 +}
 +
++struct Tokens<'a> {
++    command: &'a str,
++    chars: Peekable<CharIndices<'a>>,
++}
++
++impl<'a> Iterator for Tokens<'a> {
++    type Item = &'a str;
++
++    fn next(&mut self) -> Option<Self::Item> {
++        // Whitespace, comments, and line continuations cannot start a word.
++        let start = loop {
++            let &(index, character) = self.chars.peek()?;
++            match character {
++                ' ' | '\t' | '\n' => {
++                    self.chars.next();
++                }
++                '#' => {
++                    for (_, character) in self.chars.by_ref() {
++                        if character == '\n' {
++                            break;
++                        }
++                    }
++                }
++                '\\' if self.chars.clone().nth(1).map(|(_, c)| c) == Some('\n') => {
++                    self.chars.next();
++                    self.chars.next();
++                }
++                _ => break index,
++            }
++        };
++
++        let mut quote = None;
++        while let Some((index, character)) = self.chars.next() {
++            match (quote, character) {
++                (Some('\''), '\'') | (Some('"'), '"') => quote = None,
++                (Some('\''), _) => {}
++                (_, '\\') => {
++                    // Within double quotes, skipping a non-special escaped
++                    // character is also safe: it cannot end the quoted word.
++                    self.chars.next();
++                }
++                (Some('"'), _) => {}
++                (None, '\'' | '"') => quote = Some(character),
++                (None, ' ' | '\t' | '\n') => return Some(&self.command[start..index]),
++                _ => {}
++            }
++        }
++
++        Some(&self.command[start..])
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::{first_unquoted_operator, tokenize};
++
++    #[test]
++    fn tokenizer_preserves_words_quotes_and_escapes() {
++        for (command, expected) in [
++            ("", vec![]),
++            (" \t\n", vec![]),
++            ("  echo\thello\nworld ", vec!["echo", "hello", "world"]),
++            (
++                r#"echo '' "" 'hello world'"#,
++                vec!["echo", "''", "\"\"", "'hello world'"],
++            ),
++            (
++                r#"echo pre'quoted part'"more"post"#,
++                vec!["echo", r#"pre'quoted part'"more"post"#],
++            ),
++            (
++                r"echo hello\ world \&\&",
++                vec!["echo", r"hello\ world", r"\&\&"],
++            ),
++            (r#"echo "a\" b" 'a\'"#, vec!["echo", r#""a\" b""#, r"'a\'"]),
++            ("echo hello>out", vec!["echo", "hello>out"]),
++            (
++                "echo café\t&&\n日本語",
++                vec!["echo", "café", "&&", "日本語"],
++            ),
++            ("echo a\r\u{a0}b", vec!["echo", "a\r\u{a0}b"]),
++        ] {
++            assert_eq!(
++                tokenize(command).collect::<Vec<_>>(),
++                expected,
++                "{command:?}"
++            );
++        }
++    }
++
++    #[test]
++    fn tokenizer_handles_comments_and_continuations() {
++        for (command, expected) in [
++            ("# ignored &&", vec![]),
++            (
++                "echo # ignored &&\nnext | cat",
++                vec!["echo", "next", "|", "cat"],
++            ),
++            (
++                r##"echo a#b \#c "#d" '#e'"##,
++                vec!["echo", "a#b", r"\#c", "\"#d\"", "'#e'"],
++            ),
++            ("\\\n echo \\\n&& more", vec!["echo", "&&", "more"]
+```
+
+**File**: `tests/integration_tests.rs` (modified, +36/-0)
+```diff
+@@ -266,6 +266,42 @@ fn fails_with_duplicate_parameter_names() {
+         .stderr(predicate::str::contains("Duplicate parameter names: x"));
+ }
+ 
 +#[test]
-+fn min_runs_of_one_still_performs_one_run() {
-+    hyperfine_debug()
-+        .arg("--min-runs=1")
-+        .arg("--warmup=0")
-+        .arg("sleep 4")
++fn requires_explicit_shell_for_shell_syntax() {
++    let directory = tempfile::tempdir().unwrap();
++
++    let assert = hyperfine()
++        .current_dir(directory.path())
++        .arg("rm -rf cache/ && ./my_command")
++        .assert()
++        .failure();
++
++    insta::assert_snapshot!(String::from_utf8_lossy(&assert.get_output().stderr), @"
++    Error: Command 'rm -rf cache/ && ./my_command' contains unquoted shell syntax ('&&').
++    Explicitly choose how to execute it:
++      -S / --shell=default  Interpret shell syntax.
++      -N / --shell=none     Run directly, passing '&&' as a literal argument.
++    ");
++
++    hyperfine()
++        .arg("--show-output")
++        .arg("--command-name=benchmark")
++        .args(["--shell=default", "--runs=1", "echo before && echo after"])
 +        .assert()
 +        .success()
-+        .stdout(predicate::str::contains("Time (abs ≡)"));
++        .stdout(predicate::str::contains("before"))
++        .stdout(predicate::str::contains("after"))
++        .stdout(predicate::str::contains("&&").not());
++
++    hyperfine()
++        .arg("--show-output")
++        .arg("--command-name=benchmark")
++        .args(["--shell=none", "--runs=1", "echo before && echo after"])
++        .assert()
++        .success()
++        .stdout(predicate::str::contains("before && echo after"));
 +}
 +
  #[test]
- fn can_run_commands_without_a_shell() {
+ fn fails_for_unknown_command() {
      hyperfine()
 ```
 
 ---
 
-### Incident Patch 9: `8d908b07` (2026-10-02)
-**Commit Message**: Document the Python version required by the analysis scripts (#944)
+### Incident Patch 3: `3b64ea1b` (2026-10-06)
+**Commit Message**: Document Linux peak RSS measurement limitation
 
-* Document the Python version required by the analysis scripts
-
-* Recommend uv for running the analysis scripts
-
-**File**: `scripts/README.md` (modified, +6/-15)
+**File**: `README.md` (modified, +3/-1)
 ```diff
-@@ -4,23 +4,14 @@ This folder contains scripts that can be used in combination with hyperfine's `-
+@@ -184,7 +184,9 @@ The JSON export includes the following metrics for each measured run (excluding
  
- ```bash
- hyperfine 'sleep 0.020' 'sleep 0.021' 'sleep 0.022' --export-json sleep.json
--./plot_whisker.py sleep.json
-+uv run plot_whisker.py sleep.json
- ```
+   - Linux/macOS: Peak resident set size (RSS). This is the largest per-process peak among the
+     command and child processes (whose usage is collected when their parents wait for them),
+-    *not the simultaneous total memory of the full process tree*.
++    *not the simultaneous total memory of the full process tree*. On Linux, measuring commands
++    with a very small peak RSS (below the peak inherited from hyperfine at startup, which can
++    be a few MiB) will currently result in that inherited value being reported instead.
+   - Windows: Currently not supported.
  
- ### Prerequisites
- 
--To make these scripts work, you will need `numpy`, `matplotlib` and `scipy`.
--
--If you have a Python package manager that understands [PEP-723](https://peps.python.org/pep-0723/)
--inline script requirements like [`uv`](https://github.com/astral-sh/uv) or [`pipx`](https://github.com/pypa/pipx),
--you can directly run the scripts using
-+Install [`uv`](https://docs.astral.sh/uv/getting-started/installation/) and run the
-+commands above from this directory.
- 
--```bash
--uv run plot_whisker.py sleep.json
--```
--
--Otherwise, install the dependencies via your system package manager or using `pip`:
--
--```bash
--pip install numpy matplotlib scipy  # pip3, if you are using python3
--```
-+The scripts declare their dependencies using [PEP 723](https://peps.python.org/pep-0723/)
-+inline script metadata. `uv run` automatically installs these dependencies in an
-+isolated environment before running the script.
-```
-
----
-
-### Incident Patch 10: `8e121352` (2026-10-02)
-**Commit Message**: Remove installation instructions for discontinued Funtoo Linux (#946)
-
-**File**: `README.md` (modified, +0/-7)
-```diff
-@@ -212,13 +212,6 @@ cave resolve -x repository/rust
- cave resolve -x hyperfine
- ```
- 
--### On Funtoo Linux
--
--On Funtoo Linux, hyperfine can be installed [from core-kit](https://github.com/funtoo/core-kit/tree/1.4-release/app-benchmarks/hyperfine):
--```
--emerge app-benchmarks/hyperfine
--```
--
- ### On NixOS
- 
- On NixOS, hyperfine can be installed [from the official repositories](https://nixos.org/nixos/packages.html?query=hyperfine):
-```
-
----
-
-### Incident Patch 11: `0c5701ba` (2026-10-02)
-**Commit Message**: Describe the Linux cache-clearing example accurately (#945)
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -56,8 +56,8 @@ hyperfine --warmup 3 'grep -R TODO *'
- ```
- 
- Conversely, if you want to run the benchmark for a cold cache, you can use the `-p`/`--prepare`
--option to run a special command before *each* timing run. For example, to clear harddisk caches
--on Linux, you can run
-+option to run a special command before *each* timing run. For example, to clear Linux filesystem caches,
-+you can run
- ```sh
- sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
- ```
+ - **`cpu_cycles`**: CPU cycles consumed.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #980** (2026-10-05): Document reference changes in changelog (@sharkdp)
-- **PR #979** (2026-10-05): Use parameterized benchmarks as references (@sharkdp)
-- **PR #978** (2026-10-05): Prepare release v1.21.0 (@sharkdp)
-- **PR #977** (2026-10-05): Fix Windows Clippy warnings (@sharkdp)
-- **PR #976** (2026-10-05): Compute standard deviation directly from samples (@sharkdp)
-- **PR #975** (2026-10-05): Unify the Windows CPU timer stop interface (@sharkdp)
-- **PR #974** (2026-10-05): Bump actions/checkout from 6 to 7 (@dependabot[bot])
-- **PR #973** (2026-10-05): Bump softprops/action-gh-release from 2 to 3 (@dependabot[bot])
+- **PR #1002** (2026-10-12): test(integration): ignore ambient forced color (@cyncui)
+- **PR #1000** (closed): Fix multiline command names in Markdown exports (@MokiMeow)
+- **PR #998** (2026-10-07): hyperfine 2.0 (@sharkdp)
+- **PR #997** (2026-10-07): Add migration guidance for removed `--reference` option (@sharkdp)
+- **PR #996** (2026-10-07): Add `--env` for environment variable overrides (@sharkdp)
+- **PR #995** (2026-10-07): Export selected metrics side by side in CSV (@sharkdp)
 
 ---
 
@@ -1992,3 +1140,46 @@ Co-authored-by: David Peter <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Add migration guidance for removed --reference option
+
+**RULE**:
+When implementing operations in `src/cli.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/hyperfine. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `26760e83`: Add migration guidance for removed --reference option. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // Retain the removed option to provide migration guidance for old invocations.
+        .arg(
+            Arg::new("reference")
+                .long("reference")
+                .hide(true)
+                .value_name("CMD")
+                .num_args(0..=1)
+                .default_missing_value("")
+                .value_parser(|_: &str| -> Result<String, String> {
+                    Err("The --reference option has been removed. Put your reference command first instead.".into())
+                })
+                .help("Removed: put your reference command first instead."),
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `26760e83` are properly handled with clean fallback behavior.

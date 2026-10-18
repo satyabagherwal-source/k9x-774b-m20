@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:20:41.786Z",
-  "total_verified_learnings": 371,
+  "last_updated": "2026-10-18T23:26:58.781Z",
+  "total_verified_learnings": 377,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2879,22 +2879,35 @@
     "learn-github-boardgameio-boardgame-io": {
       "learning_id": "learn-github-boardgameio-boardgame-io",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "boardgameio-boardgame.io",
+      "source": "boardgameio/boardgame.io",
+      "repository": "boardgameio/boardgame.io",
       "slug": "boardgameio-boardgame.io",
       "platform": "github",
       "source_url": "https://github.com/boardgameio/boardgame.io",
-      "source_version": "HEAD",
-      "content_hash": "cdd9943df00c4622f0d677a214676f9e8970174efcd52fcf0650dab35c74004f",
+      "source_version": "5e9a2c94",
+      "content_hash": "8bc354bd6981e9b46bcc45fe224c11ca0be39ad21d1121a270c63490586fb801",
       "dossier_path": "07_PROJECT_LEARNING/boardgameio-boardgame.io-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/boardgameio-boardgame.io-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1847,
+          "title": "build(integration): stop test:integration modifying tracked files (#1315)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.106Z"
+      "verified_at": "2026-10-18T23:26:50.894Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bojieli-ai-agent-book": {
       "learning_id": "learn-github-bojieli-ai-agent-book",
@@ -3587,22 +3600,35 @@
     "learn-github-chakra-ui-zag": {
       "learning_id": "learn-github-chakra-ui-zag",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "chakra-ui-zag",
+      "source": "chakra-ui/zag",
+      "repository": "chakra-ui/zag",
       "slug": "chakra-ui-zag",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/zag",
-      "source_version": "HEAD",
-      "content_hash": "60640886db7264268ca1bf35355339c74212d209aa561fd0602efdb5e186090f",
+      "source_version": "ab6c43b9",
+      "content_hash": "932260b5f2290f880c688714e1b72b6dcb34ceb4969f491e73591ff14a401aa7",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1845,
+          "title": "drawer): only block text selection once a swipe has started",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.242Z"
+      "verified_at": "2026-10-18T23:26:44.595Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chaos-mesh-chaos-mesh": {
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
@@ -5813,22 +5839,35 @@
     "learn-github-dragonflyoss-dragonfly": {
       "learning_id": "learn-github-dragonflyoss-dragonfly",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dragonflyoss-dragonfly",
+      "source": "dragonflyoss/dragonfly",
+      "repository": "dragonflyoss/dragonfly",
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "HEAD",
-      "content_hash": "7825e3dc30f8589774b40484b3bc9386fefba2ac9160a065d1d0c5fc2c4f4e70",
+      "source_version": "0225491c",
+      "content_hash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1848,
+          "title": "deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp from",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.694Z"
+      "verified_at": "2026-10-18T23:26:53.594Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dtyq-magic": {
       "learning_id": "learn-github-dtyq-magic",
@@ -20722,7 +20761,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "68a275a7bb6cdf7d30aae766fb7d36c2b103fce16be55e92f786826a741d58e3",
+      "content_hash": "cb34c7ea8b00760ffc88b0b0747d9fb1c19922a6ec877b170d6a2582aba77c23",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [
@@ -20734,6 +20773,16 @@
         {
           "number": 981,
           "title": "Left-Padding Invariant for Causal LM Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1849,
+          "title": "Sparse Expert Routing Configuration Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1850,
+          "title": "Multi-Modal Token Boundary Isolation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -20754,7 +20803,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-17T20:35:13.493Z",
+      "verified_at": "2026-10-18T23:26:55.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24191,22 +24240,35 @@
     "learn-github-llphant-llphant": {
       "learning_id": "learn-github-llphant-llphant",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "llphant-llphant",
+      "source": "LLPhant/LLPhant",
+      "repository": "LLPhant/LLPhant",
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "HEAD",
-      "content_hash": "9a7fa39a8c7d6b1f59d645ac05bccd32b35e9efb945011477f0d2c15cc9bc445",
+      "source_version": "8fba3bcd",
+      "content_hash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1852,
+          "title": "Anthropic usage of functions with no parameters (#502)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.056Z"
+      "verified_at": "2026-10-18T23:26:58.774Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lobehub-lobe-ui": {
       "learning_id": "learn-github-lobehub-lobe-ui",
@@ -31825,22 +31887,35 @@
     "learn-github-sharkdp-hyperfine": {
       "learning_id": "learn-github-sharkdp-hyperfine",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sharkdp-hyperfine",
+      "source": "sharkdp/hyperfine",
+      "repository": "sharkdp/hyperfine",
       "slug": "sharkdp-hyperfine",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/hyperfine",
-      "source_version": "HEAD",
-      "content_hash": "f6ff3d5436805a1292a33870c0ed7c692ef1709b2aaff757b01c8adcdac245af",
+      "source_version": "c5161524",
+      "content_hash": "034c0db6fd1b7a2da2e6c67853fea62f04265807315e7af9a7aa686ff330e493",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-hyperfine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-hyperfine-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1846,
+          "title": "Add migration guidance for removed --reference option",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.471Z"
+      "verified_at": "2026-10-18T23:26:45.780Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sharkdp-pastel": {
       "learning_id": "learn-github-sharkdp-pastel",
@@ -32125,22 +32200,35 @@
     "learn-github-sigstore-cosign": {
       "learning_id": "learn-github-sigstore-cosign",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sigstore-cosign",
+      "source": "sigstore/cosign",
+      "repository": "sigstore/cosign",
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "HEAD",
-      "content_hash": "29b8c1907143bd0ab2f4b0ff46092a8f11d7dc1df10bd9324df3ef2b24ce9ad2",
+      "source_version": "cfeaa4a4",
+      "content_hash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1851,
+          "title": "include annotations in implied payload for offline verify",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.531Z"
+      "verified_at": "2026-10-18T23:26:56.160Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-silasmarvin-lsp-ai": {
       "learning_id": "learn-github-silasmarvin-lsp-ai",
@@ -69640,6 +69728,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:20:41.779Z"
+    },
+    "rule-1845": {
+      "learning_id": "rule-1845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1845,
+      "title": "drawer): only block text selection once a swipe has started",
+      "source_url": "https://github.com/chakra-ui/zag",
+      "source_version": "ab6c43b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:44.595Z"
+    },
+    "rule-1846": {
+      "learning_id": "rule-1846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1846,
+      "title": "Add migration guidance for removed --reference option",
+      "source_url": "https://github.com/sharkdp/hyperfine",
+      "source_version": "c5161524",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:45.780Z"
+    },
+    "rule-1847": {
+      "learning_id": "rule-1847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1847,
+      "title": "build(integration): stop test:integration modifying tracked files (#1315)",
+      "source_url": "https://github.com/boardgameio/boardgame.io",
+      "source_version": "5e9a2c94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:50.894Z"
+    },
+    "rule-1848": {
+      "learning_id": "rule-1848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1848,
+      "title": "deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp from",
+      "source_url": "https://github.com/dragonflyoss/dragonfly",
+      "source_version": "0225491c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:53.594Z"
+    },
+    "rule-1849": {
+      "learning_id": "rule-1849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1849,
+      "title": "Sparse Expert Routing Configuration Integrity",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:55.553Z"
+    },
+    "rule-1850": {
+      "learning_id": "rule-1850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1850,
+      "title": "Multi-Modal Token Boundary Isolation",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:55.553Z"
+    },
+    "rule-1851": {
+      "learning_id": "rule-1851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1851,
+      "title": "include annotations in implied payload for offline verify",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "cfeaa4a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:56.160Z"
+    },
+    "rule-1852": {
+      "learning_id": "rule-1852",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1852,
+      "title": "Anthropic usage of functions with no parameters (#502)",
+      "source_url": "https://github.com/LLPhant/LLPhant",
+      "source_version": "8fba3bcd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:26:58.774Z"
     }
   },
   "aliases": {

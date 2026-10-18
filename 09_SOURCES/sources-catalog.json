@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "68a275a7bb6cdf7d30aae766fb7d36c2b103fce16be55e92f786826a741d58e3",
-    "lastHarvestedAt": "2026-10-17T20:35:13.535Z",
+    "contentHash": "cb34c7ea8b00760ffc88b0b0747d9fb1c19922a6ec877b170d6a2582aba77c23",
+    "lastHarvestedAt": "2026-10-18T23:26:55.598Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -3478,5 +3478,65 @@
     "contentHash": "3b11ad50eb3ec613d9a8247ffec73f523a35c97245dfe76923fc7feb8662c7a0",
     "lastHarvestedAt": "2026-10-18T23:20:40.317Z",
     "learningId": "learn-github-supervc-stack-vectorchord"
+  },
+  "chakra-ui-zag": {
+    "repository": "chakra-ui/zag",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chakra-ui/zag",
+    "sourceVersion": "ab6c43b9",
+    "license": "MIT",
+    "contentHash": "932260b5f2290f880c688714e1b72b6dcb34ceb4969f491e73591ff14a401aa7",
+    "lastHarvestedAt": "2026-10-18T23:26:44.638Z",
+    "learningId": "learn-github-chakra-ui-zag"
+  },
+  "sharkdp-hyperfine": {
+    "repository": "sharkdp/hyperfine",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sharkdp/hyperfine",
+    "sourceVersion": "c5161524",
+    "license": "Apache-2.0",
+    "contentHash": "034c0db6fd1b7a2da2e6c67853fea62f04265807315e7af9a7aa686ff330e493",
+    "lastHarvestedAt": "2026-10-18T23:26:45.835Z",
+    "learningId": "learn-github-sharkdp-hyperfine"
+  },
+  "boardgameio-boardgame.io": {
+    "repository": "boardgameio/boardgame.io",
+    "platform": "github",
+    "sourceUrl": "https://github.com/boardgameio/boardgame.io",
+    "sourceVersion": "5e9a2c94",
+    "license": "MIT",
+    "contentHash": "8bc354bd6981e9b46bcc45fe224c11ca0be39ad21d1121a270c63490586fb801",
+    "lastHarvestedAt": "2026-10-18T23:26:50.937Z",
+    "learningId": "learn-github-boardgameio-boardgame-io"
+  },
+  "dragonflyoss-dragonfly": {
+    "repository": "dragonflyoss/dragonfly",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
+    "sourceVersion": "0225491c",
+    "license": "Apache-2.0",
+    "contentHash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
+    "lastHarvestedAt": "2026-10-18T23:26:53.644Z",
+    "learningId": "learn-github-dragonflyoss-dragonfly"
+  },
+  "sigstore-cosign": {
+    "repository": "sigstore/cosign",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sigstore/cosign",
+    "sourceVersion": "cfeaa4a4",
+    "license": "Apache-2.0",
+    "contentHash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
+    "lastHarvestedAt": "2026-10-18T23:26:56.207Z",
+    "learningId": "learn-github-sigstore-cosign"
+  },
+  "llphant-llphant": {
+    "repository": "LLPhant/LLPhant",
+    "platform": "github",
+    "sourceUrl": "https://github.com/LLPhant/LLPhant",
+    "sourceVersion": "8fba3bcd",
+    "license": "MIT",
+    "contentHash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
+    "lastHarvestedAt": "2026-10-18T23:26:58.829Z",
+    "learningId": "learn-github-llphant-llphant"
   }
 }
