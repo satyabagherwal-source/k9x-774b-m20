@@ -2038,5 +2038,25 @@
     "contentHash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
     "lastHarvestedAt": "2026-10-18T08:01:01.459Z",
     "learningId": "learn-github-h3js-h3"
+  },
+  "unjs-ufo": {
+    "repository": "unjs/ufo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unjs/ufo",
+    "sourceVersion": "f06c800d",
+    "license": "MIT",
+    "contentHash": "9f11581a348bd81b84978da25674b79b63085dfaa0e112d39c685608aab8422d",
+    "lastHarvestedAt": "2026-10-18T08:05:29.026Z",
+    "learningId": "learn-github-unjs-ufo"
+  },
+  "unjs-ofetch": {
+    "repository": "unjs/ofetch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unjs/ofetch",
+    "sourceVersion": "1dbc37fd",
+    "license": "MIT",
+    "contentHash": "15a835f51f0adc5f5b1643961825ea43487580c9ad9c868a6e2a17b784d1b7df",
+    "lastHarvestedAt": "2026-10-18T08:05:29.313Z",
+    "learningId": "learn-github-unjs-ofetch"
   }
 }

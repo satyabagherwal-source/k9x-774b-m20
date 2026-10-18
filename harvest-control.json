@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-18T07:59:38.856Z",
+  "lastUpdated": "2026-10-18T08:05:20.610Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T07:37:47.458Z",
+        "lastActiveAt": "2026-10-18T08:05:00.089Z",
         "lastHarvestedAt": "2026-10-18T07:28:59.827Z",
         "totalHarvested": 1112,
         "lastError": null
@@ -258,9 +258,9 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T07:59:18.337Z",
-        "lastHarvestedAt": "2026-10-18T07:55:08.478Z",
-        "totalHarvested": 1100,
+        "lastActiveAt": "2026-10-18T08:05:31.837Z",
+        "lastHarvestedAt": "2026-10-18T08:05:31.837Z",
+        "totalHarvested": 1101,
         "lastError": null
       },
       {
@@ -268,9 +268,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-18T08:01:03.984Z",
-        "lastHarvestedAt": "2026-10-18T08:01:03.984Z",
-        "totalHarvested": 1106,
+        "lastActiveAt": "2026-10-18T08:05:31.548Z",
+        "lastHarvestedAt": "2026-10-18T08:05:31.548Z",
+        "totalHarvested": 1107,
         "lastError": null
       }
     ],
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 4677,
+      "remaining": 4620,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-18T07:58:54.612Z",
+      "trippedAt": "2026-10-18T08:04:38.667Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

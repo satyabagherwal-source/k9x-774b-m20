@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T08:01:01.433Z",
-  "total_verified_learnings": 225,
+  "last_updated": "2026-10-18T08:05:29.279Z",
+  "total_verified_learnings": 227,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47427,6 +47427,72 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T08:01:01.427Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-unjs-ufo": {
+      "learning_id": "learn-github-unjs-ufo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unjs/ufo",
+      "repository": "unjs/ufo",
+      "slug": "unjs-ufo",
+      "platform": "github",
+      "source_url": "https://github.com/unjs/ufo",
+      "source_version": "f06c800d",
+      "content_hash": "9f11581a348bd81b84978da25674b79b63085dfaa0e112d39c685608aab8422d",
+      "dossier_path": "07_PROJECT_LEARNING/unjs-ufo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unjs-ufo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1682,
+          "title": "withoutBase): collapse leading slashes (#335)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T08:05:28.985Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-unjs-ofetch": {
+      "learning_id": "learn-github-unjs-ofetch",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unjs/ofetch",
+      "repository": "unjs/ofetch",
+      "slug": "unjs-ofetch",
+      "platform": "github",
+      "source_url": "https://github.com/unjs/ofetch",
+      "source_version": "1dbc37fd",
+      "content_hash": "15a835f51f0adc5f5b1643961825ea43487580c9ad9c868a6e2a17b784d1b7df",
+      "dossier_path": "07_PROJECT_LEARNING/unjs-ofetch-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unjs-ofetch-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1683,
+          "title": "fix typos in readme (#608)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T08:05:29.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

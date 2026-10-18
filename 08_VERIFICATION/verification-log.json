@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-9XEU",
-    "timestamp": "2026-10-17T02:06:43.302Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "c36a1e318cf8b26ef3a2d82e8882c4609cda21a57662846f9c9b6772b1d1e0ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-DWFE",
-    "timestamp": "2026-10-17T02:09:48.650Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "6aba8d74383fadda86ba5dd463cc83e10b16460ab2af660f5db9c2a7391433f2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-HXST",
     "timestamp": "2026-10-17T02:12:57.053Z",
     "repository": "zai-org/GLM-5.2",
@@ -7492,6 +7462,36 @@
     "contentHash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-J5FJ",
+    "timestamp": "2026-10-18T08:05:29.023Z",
+    "repository": "unjs/ufo",
+    "learningId": "learn-github-unjs-ufo",
+    "contentHash": "9f11581a348bd81b84978da25674b79b63085dfaa0e112d39c685608aab8422d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-J5NI",
+    "timestamp": "2026-10-18T08:05:29.310Z",
+    "repository": "unjs/ofetch",
+    "learningId": "learn-github-unjs-ofetch",
+    "contentHash": "15a835f51f0adc5f5b1643961825ea43487580c9ad9c868a6e2a17b784d1b7df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

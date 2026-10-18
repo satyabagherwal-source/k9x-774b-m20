@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T08:01:01.462Z",
+  "last_updated": "2026-10-18T08:05:29.317Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3186,6 +3186,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T08:01:01.462Z"
+    },
+    "unjs/ufo": {
+      "repository": "unjs/ufo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-unjs-ufo",
+      "content_hash": "9f11581a348bd81b84978da25674b79b63085dfaa0e112d39c685608aab8422d",
+      "verified_at": "2026-10-18T08:05:29.030Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T08:05:29.030Z"
+    },
+    "unjs/ofetch": {
+      "repository": "unjs/ofetch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-unjs-ofetch",
+      "content_hash": "15a835f51f0adc5f5b1643961825ea43487580c9ad9c868a6e2a17b784d1b7df",
+      "verified_at": "2026-10-18T08:05:29.317Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T08:05:29.317Z"
     }
   },
   "repos": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T08:01:01.460Z",
-  "total_cycles_completed": 2441,
-  "total_learnings_persisted": 2441,
-  "total_rules_promoted": 1449,
+  "last_updated": "2026-10-18T08:05:29.315Z",
+  "total_cycles_completed": 2443,
+  "total_learnings_persisted": 2443,
+  "total_rules_promoted": 1451,
   "history": [
-    {
-      "timestamp": "2026-10-17T18:56:33.719Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:59:37.783Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T19:02:46.709Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1403,6 +1389,20 @@
       "repository": "h3js/h3",
       "learningId": "learn-github-h3js-h3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T08:05:29.028Z",
+      "repository": "unjs/ufo",
+      "learningId": "learn-github-unjs-ufo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T08:05:29.315Z",
+      "repository": "unjs/ofetch",
+      "learningId": "learn-github-unjs-ofetch",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
