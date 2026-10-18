@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T00:22:37.861Z",
-  "total_cycles_completed": 2337,
-  "total_learnings_persisted": 2337,
+  "last_updated": "2026-10-18T00:25:49.009Z",
+  "total_cycles_completed": 2338,
+  "total_learnings_persisted": 2338,
   "total_rules_promoted": 1356,
   "history": [
-    {
-      "timestamp": "2026-10-17T13:22:29.661Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T13:25:22.979Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1403,6 +1396,13 @@
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-facebook-sam3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T00:25:49.009Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

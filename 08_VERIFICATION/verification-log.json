@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-MLFK",
-    "timestamp": "2026-10-16T20:12:39.296Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "2b1fcc5812f0f8ad71cbfa3d45cac99f11cdf2506692fd0265182420adfa7036",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-QFWY",
     "timestamp": "2026-10-16T20:15:38.770Z",
     "repository": "Qwen/Qwen3-8B",
@@ -7492,6 +7477,21 @@
     "contentHash": "b78e33a292eff68092867297f318128ab189fc7e43e1d72ead0110f8d675c90b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-40JX",
+    "timestamp": "2026-10-18T00:25:49.005Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "ab8f6336529bcce9c512cbad1227a9914f529e12300473885725576b38918e03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
