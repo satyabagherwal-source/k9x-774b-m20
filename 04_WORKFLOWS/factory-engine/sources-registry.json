@@ -1830,8 +1830,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:03:49.482Z",
-    "lastVerified": "2026-10-17T23:03:49.482Z",
+    "lastChecked": "2026-10-18T05:41:05.895Z",
+    "lastVerified": "2026-10-18T05:41:05.895Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3017,8 +3017,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T02:30:09.953Z",
-    "lastVerified": "2026-10-18T02:30:09.953Z",
+    "lastChecked": "2026-10-18T05:41:03.397Z",
+    "lastVerified": "2026-10-18T05:41:03.397Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17498,8 +17498,8 @@
     "sourceType": "github",
     "technology": "TypeScript",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:24:01.149Z",
-    "lastVerified": "2026-10-18T05:24:01.149Z",
+    "lastChecked": "2026-10-18T05:41:08.387Z",
+    "lastVerified": "2026-10-18T05:41:08.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24002,5 +24002,12 @@
     "promotedRulesCount": 1,
     "verificationMethod": "full-clone-forensic-audit",
     "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
+  },
+  "serpapi-google-search-results-ruby": {
+    "name": "google-search-results-ruby",
+    "officialUrl": "https://github.com/serpapi/google-search-results-ruby",
+    "lastChecked": "2026-10-18T05:40:55.892Z",
+    "revisionIdentifier": "HEAD",
+    "lastVerified": "2026-10-18T05:40:55.892Z"
   }
 }
