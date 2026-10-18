@@ -4125,3 +4125,14 @@ https://github.com/serpapi/google-search-results-nodejs
 https://github.com/serpapi/google-search-results-python
 https://github.com/serpapi/google-search-results-ruby
 
+
+# --- Batch 13: Deep SEO Skills, Audit Engines & AI Learning ---
+https://github.com/seo-skills/seo-audit-skill
+https://github.com/bourd-dev/seo-skills
+https://github.com/JeffLi1993/seo-audit-skill
+https://github.com/anonymousAAK/seo-skills
+https://github.com/Luzikov/codex-seo-skill
+https://github.com/SArfrz/NovaCrawl
+https://github.com/ildrm/northstar-seo
+https://github.com/booltools/booltools-seo-crawler
+https://github.com/TurboPress-X/seo-auditing-software

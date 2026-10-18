@@ -111474,3 +111474,284 @@ async def profile_cwv_broken(page: Page, url: str) -> dict:
 Navigate to a test fixture page engineered to shift DOM elements 500ms after load. Assert that `profile_page_cwv()` returns `cls > 0.05` and `lcp_ms > 0`.
 
 ---
+
+## 1610. Deterministic Score-Cap Operator for Catastrophic Search Exclusion (Harvested from seo-skills/seo-audit-skill)
+
+**RULE**:
+In multi-category weighted audit and scoring systems (especially SEO, compliance, or security auditing), never compute the final composite rating solely as an arithmetic or weighted average across category scores. The audit engine MUST implement deterministic ceiling caps (`ScoreCap`) that override the composite score when fatal gating conditions are triggered:
+1. **Indexability Directives**: A `noindex` meta tag, `X-Robots-Tag`, or `robots.txt Disallow` directive matching the target bot MUST cap the overall score to a maximum ceiling of **20/100** (F grade), regardless of whether security, headers, and performance scored 100%.
+2. **Content Absence & Thinness**: An empty page without title and body content MUST be capped at **30/100**, thin content (< 20 words) capped at **49/100**, and a missing document `<title>` capped at **69/100** (guaranteeing a failing CI exit code < 70).
+3. **Decoupled PageFacts Extraction**: Ground-truth facts (`noindex`, `robotsDisallowed`, `hasTitle`, `mainContentWords`) MUST be extracted directly from the raw HTTP stream and parsed DOM into an immutable facts record (`PageFacts`), rather than reading from user-configurable audit rule results (which may be disabled via `--disable-rules`).
+4. **Environment-Aware Waivers**: Staging environments (`--staging`) must waive indexability caps (recording them as launch reminders) while strictly enforcing content ceilings.
+5. **App-Shell Immunity**: Pages serving single-page application shells (`#root`, `#app`, `#__next`, `#__nuxt`, `#__svelte` with text length < 50 and <= 2 children) MUST NOT be penalized with an empty-page cap before headless rendering occurs.
+
+**WHY**:
+An arithmetic average of 20 categories cannot express "nothing else matters if search engines are forbidden from indexing". A page that returns HTTP 200 with flawless TLS, security headers, compression, and clean URLs will score 94/100 (Grade A) despite having a `noindex` meta tag or `robots.txt Disallow: /` blocking discovery. This deceives developers and passes CI/CD deployment gates.
+
+**WHEN TO APPLY**:
+Any automated website auditor, CLI scoring pipeline, CI/CD deployment gate, or compliance validator where fatal blockers must categorically fail the build.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+export interface PageFacts {
+  noindex: boolean;
+  robotsDisallowed: boolean;
+  hasTitle: boolean;
+  mainContentWords: number | null;
+}
+
+export interface ScoreCap {
+  id: string;
+  ceiling: number;
+  reason: string;
+}
+
+export function evaluateScoreCaps(facts: PageFacts, staging = false): ScoreCap[] {
+  const caps: ScoreCap[] = [];
+  if (facts.noindex && !staging) {
+    caps.push({ id: 'noindex', ceiling: 20, reason: 'Page has a noindex directive blocking search indexing.' });
+  }
+  if (facts.robotsDisallowed && !staging) {
+    caps.push({ id: 'robots-disallowed', ceiling: 20, reason: 'robots.txt blocks crawler access.' });
+  }
+  if (facts.mainContentWords !== null && facts.mainContentWords < 20) {
+    caps.push({ id: 'thin-content', ceiling: 49, reason: 'Page has fewer than 20 words of indexable main content.' });
+  }
+  if (!facts.hasTitle) {
+    caps.push({ id: 'no-title', ceiling: 69, reason: 'Document lacks a non-empty <title> tag.' });
+  }
+  return caps;
+}
+
+export function applyScoreCaps(averageScore: number, caps: ScoreCap[]): { finalScore: number; appliedCap: ScoreCap | null } {
+  if (caps.length === 0) return { finalScore: averageScore, appliedCap: null };
+  const lowestCap = caps.reduce((min, c) => (c.ceiling < min.ceiling ? c : min), caps[0]);
+  return {
+    finalScore: Math.min(averageScore, lowestCap.ceiling),
+    appliedCap: averageScore > lowestCap.ceiling ? lowestCap : null
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly returning weighted category averages
+function calculateAuditScore(categories: Map<string, number>): number {
+  let totalScore = 0, totalWeight = 0;
+  for (const [cat, score] of categories) {
+    totalScore += score * weights[cat];
+    totalWeight += weights[cat];
+  }
+  // DEADLY: Core category (title, indexability) is only 11% weight.
+  // A noindex page with 0 in Core still scores 89/100 (Passing CI)!
+  return Math.round(totalScore / totalWeight);
+}
+```
+
+**VERIFICATION METHOD**:
+Run audit against a test fixture containing `<meta name="robots" content="noindex">` with 100% scores in performance, security, and links. Assert that `finalScore <= 20` and `appliedCap.id === 'noindex'`.
+
+---
+
+## 1611. Raw HTTP Stream vs Rendered DOM Dual-Observer Verification Invariant (Harvested from bourd-dev/seo-skills & anonymousAAK/seo-skills)
+
+**RULE**:
+When building web audit engines or AI search evaluators, header directives and `<head>` elements (`X-Robots-Tag`, `canonical`, `robots` meta, `hreflang`, `JSON-LD`, `Open Graph`) MUST be observed and validated directly against the raw unrendered HTTP response stream (e.g. `curl -sIL` or raw socket body). The engine MUST NOT evaluate `<head>` tags through markdown converters, HTML-to-text sanitizers, or headless browser snapshot parsers alone. Conversely, body text, visual copy, and dynamic hydration graph MUST be audited via hydrated rendered DOM. The engine MUST enforce an explicit evidence contract classifying observations into distinct veracity classes (`observed-live`, `verified-preflight`, `inferred-from-source`, `requires-post-deploy-verification`), and reject any recommendation that cannot cite either direct empirical evidence or primary standards documentation (Google Search Essentials, Schema.org, RFCs).
+
+**WHY**:
+Markdown converters and accessibility tree serializers silently strip `<head>` tags, empty meta elements, and comments, producing false-negative reports that claim canonicals or hreflang tags are missing when they are actively served in HTTP headers or raw HTML.
+
+**WHEN TO APPLY**:
+Technical SEO audits, automated preflight CI checks, multi-agent web scrapers, and AI content analysis.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+export type EvidenceMode = 'observed-live' | 'verified-preflight' | 'inferred-from-source' | 'requires-post-deploy-verification';
+
+export interface AuditFinding {
+  id: string;
+  category: string;
+  severity: 'critical' | 'high' | 'medium' | 'low' | 'info';
+  scope: 'site' | 'template' | 'url' | 'asset';
+  summary: string;
+  evidence: {
+    mode: EvidenceMode;
+    rawHttpProof?: string;
+    renderedDomProof?: string;
+    primarySourceUrl: string;
+  };
+  recommendation: string;
+  verification: string;
+}
+
+export async function auditPageDualPass(url: string): Promise<AuditFinding[]> {
+  // Pass 1: Raw HTTP stream for headers and <head>
+  const rawResponse = await fetch(url, { redirect: 'manual' });
+  const rawHtml = await rawResponse.text();
+  const rawHeaders = Object.fromEntries(rawResponse.headers.entries());
+
+  // Pass 2: Headless DOM inspection for dynamic elements
+  // Only evaluate body content and hydration diffs in Pass 2
+  const findings: AuditFinding[] = [];
+  // Verify canonical and robots against rawHtml/rawHeaders first!
+  return findings;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Running SEO audit exclusively against Markdown converted from HTML
+async function auditWithMarkdownOnly(url: string) {
+  const md = await fetchHtmlAndConvertToMarkdown(url);
+  // DEADLY: html-to-markdown library strips <meta name="robots">, <link rel="canonical">,
+  // and <script type="application/ld+json">. Auditor emits bogus "Missing Canonical" errors!
+  if (!md.includes('canonical')) {
+    reportBug('No canonical tag found');
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Pass an HTML fixture containing canonical links and JSON-LD schema in the `<head>` and dynamic links in the body. Assert that `<head>` checks are performed against raw stream and body links against hydrated DOM, with zero stripped-tag false alarms.
+
+---
+
+## 1612. Crawler SSRF Quarantine & Inline Data-URI Memory Barrier (Harvested from ildrm/northstar-seo & TurboPress-X/seo-auditing-software)
+
+**RULE**:
+Web crawler and URL extraction pipelines MUST enforce a dual-layer input sanitization barrier before enqueueing any URL:
+1. **SSRF Hostname & IP Sanitizer (`assertPublicHttpUrl`)**: Reject private, local, and cloud metadata endpoints before opening socket connections. Specifically block IPv4 private/loopback/link-local ranges (`10.0.0.0/8`, `127.0.0.0/8`, `169.254.0.0/16`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10`), IPv6 private/unique-local/multicast (`::1`, `fc00::/7`, `fe80::/10`, `ff00::/8`), and IPv4-mapped IPv6 (`::ffff:x.x.x.x`), as well as internal metadata domains (`metadata.google.internal`, `169.254.169.254`).
+2. **Inline Data-URI Memory Barrier (`_is_data_uri`)**: Explicitly detect and discard `data:` URIs and base64 placeholders (such as `data:image/...;base64,...` or headless SVG placeholders like `image/svg+xml;base64,...`) from `<a>` `href`, `<img>` `src`, and `data-src` attributes before resolving URLs or pushing to the crawl queue.
+
+**WHY**:
+Attackers can weaponize web crawlers to probe internal microservices, AWS/GCP instance credentials, or local databases via SSRF. Simultaneously, unvetted DOM parsers that enqueue inline base64 images as crawl URLs bloat spider priority queues with megabytes of payload strings, causing URL parser exceptions, database queue bloat, and Out-Of-Memory (OOM) crashes.
+
+**WHEN TO APPLY**:
+All web spiders, crawlers, recursive link auditors, webhook dispatchers, and sitemap parsers.
+
+**IMPLEMENTATION PATTERN**:
+```python
+import ipaddress
+from urllib.parse import urlparse, urljoin, urldefrag
+
+FORBIDDEN_HOSTS = {"localhost", "localhost.localdomain", "metadata.google.internal"}
+
+def assert_public_http_url(url_str: str) -> str:
+    parsed = urlparse(url_str)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError(f"Prohibited protocol: {parsed.scheme}")
+    hostname = parsed.hostname.lower() if parsed.hostname else ""
+    if hostname in FORBIDDEN_HOSTS or hostname.endswith(".localhost"):
+        raise ValueError(f"Prohibited internal host: {hostname}")
+    try:
+        ip = ipaddress.ip_address(hostname)
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast:
+            raise ValueError(f"Prohibited IP address range: {ip}")
+    except ValueError:
+        pass # Domain name, not a raw IP
+    return url_str
+
+def is_data_uri(href: str) -> bool:
+    cleaned = href.strip().lower()
+    return cleaned.startswith("data:") or ";base64," in cleaned
+
+def extract_crawlable_links(soup, base_url: str) -> list[str]:
+    links = []
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip()
+        if not href or href.startswith("#") or is_data_uri(href):
+            continue
+        full_url = urldefrag(urljoin(base_url, href))[0]
+        try:
+            assert_public_http_url(full_url)
+            links.append(full_url)
+        except ValueError:
+            continue
+    return links
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Enqueueing any parsed href directly
+def enqueue_links_broken(soup, base_url):
+    for a in soup.find_all("a", href=True):
+        # DEADLY 1: href="data:image/png;base64,iVBOR..." bloats database queue with 500KB string
+        # DEADLY 2: href="http://169.254.169.254/latest/meta-data/" steals AWS IAM cloud credentials!
+        queue.push(urljoin(base_url, a["href"]))
+```
+
+**VERIFICATION METHOD**:
+Test with fixtures containing `data:text/html;base64,SGVsbG8=`, `http://127.0.0.1:8080/admin`, and `http://metadata.google.internal/computeMetadata/v1/`. Assert that all are discarded before socket initialization.
+
+---
+
+## 1613. Agent-Readiness & GEO Protocol Discovery Invariant (Harvested from booltools/booltools-seo-crawler)
+
+**RULE**:
+Modern automated crawl and site auditing engines MUST evaluate autonomous agent readiness and Generative Engine Optimization (GEO) protocols alongside classic search signals. Specifically, the engine MUST verify:
+1. **Machine-Readable Specifications**: Discovery and schema syntax of `llms.txt` and `llms-full.txt` (with validated H1, blockquote summaries, and structured markdown links), RFC 9727 API catalogs (`/.well-known/api-catalog`), MCP server cards (`/.well-known/mcp.json`), and Agent Skills manifests (`/.well-known/agent-skills.json` or `skills/INDEX.md`).
+2. **Content Negotiation for Agents**: RFC-compliant Markdown content negotiation (`Accept: text/markdown` or `Accept: text/x-markdown`).
+3. **AI Bot Access Control**: Explicit differentiation in `robots.txt` between search indexing bots (`OAI-SearchBot`, `PerplexityBot`, `Claude-SearchBot`, `Applebot`, `Google-Extended`) and model training scrapers (`GPTBot`, `CCBot`), ensuring search discoverability is preserved without granting unrestricted training data rights.
+
+**WHY**:
+As search discovery shifts to generative AI search engines and autonomous coding agents, classic HTML-only SEO audits fail to detect whether an application is discoverable, legible, and actionable for AI agents. Sites that block all AI bots blindly lose visibility in AI-generated answers, while sites without `llms.txt` or structured agent manifests fail to provide high-fidelity context to agentic callers.
+
+**WHEN TO APPLY**:
+Any modern SEO auditor, Generative Engine Optimization (GEO) pipeline, API gateway, or developer portal.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+export interface AgentReadinessReport {
+  llmsTxtFound: boolean;
+  mcpServerCardFound: boolean;
+  apiCatalogFound: boolean;
+  markdownContentNegotiationSupported: boolean;
+  aiSearchBotsAllowed: {
+    oaiSearchBot: boolean;
+    perplexityBot: boolean;
+    claudeSearchBot: boolean;
+  };
+  aiTrainingBotsBlocked: {
+    gptBot: boolean;
+    ccBot: boolean;
+  };
+}
+
+export async function auditAgentReadiness(domainUrl: string): Promise<AgentReadinessReport> {
+  const origin = new URL(domainUrl).origin;
+  const [llmsRes, mcpRes, apiRes, markdownRes] = await Promise.all([
+    fetch(`${origin}/llms.txt`),
+    fetch(`${origin}/.well-known/mcp.json`),
+    fetch(`${origin}/.well-known/api-catalog`),
+    fetch(domainUrl, { headers: { 'Accept': 'text/markdown' } })
+  ]);
+
+  return {
+    llmsTxtFound: llmsRes.status === 200,
+    mcpServerCardFound: mcpRes.status === 200,
+    apiCatalogFound: apiRes.status === 200,
+    markdownContentNegotiationSupported: (markdownRes.headers.get('content-type') || '').includes('markdown'),
+    aiSearchBotsAllowed: {
+      oaiSearchBot: true,
+      perplexityBot: true,
+      claudeSearchBot: true
+    },
+    aiTrainingBotsBlocked: {
+      gptBot: true,
+      ccBot: true
+    }
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Conflating AI search indexers with AI training scrapers
+// User blocks ALL bots via User-agent: * Disallow: / in robots.txt
+// Result: Site disappears completely from ChatGPT Search, Perplexity, and Claude Search answers!
+```
+
+**VERIFICATION METHOD**:
+Probe target site with `Accept: text/markdown` and query `/.well-known/mcp.json` and `/llms.txt`. Assert that response statuses and headers accurately populate the readiness audit matrix.
+
+---
