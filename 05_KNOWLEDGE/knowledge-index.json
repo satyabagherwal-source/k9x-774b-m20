@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T00:25:48.969Z",
+  "last_updated": "2026-10-18T00:29:04.975Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13135,7 +13135,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "edb951b0f010f2a18c1eb24472286278106d69f0380a74e568bf7fb61acc7f1a",
+      "content_hash": "e9c6de91198110f0d84cfc7a5650e2cb1213758162817a9fc6ed846249beb5df",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -13188,7 +13188,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-10-17T16:29:33.429Z",
+      "verified_at": "2026-10-18T00:29:04.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

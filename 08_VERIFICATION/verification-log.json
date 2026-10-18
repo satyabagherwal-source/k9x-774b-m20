@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-QFWY",
-    "timestamp": "2026-10-16T20:15:38.770Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "a717a9b44ffb46eea02fb62632a2854914ae6357acb9cf8fca7123358a1f0a60",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-UETQ",
     "timestamp": "2026-10-16T20:18:43.982Z",
     "repository": "google/vit-base-patch16-224",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen3.8-27B-GGUF",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
     "contentHash": "ab8f6336529bcce9c512cbad1227a9914f529e12300473885725576b38918e03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-87SN",
+    "timestamp": "2026-10-18T00:29:05.015Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "e9c6de91198110f0d84cfc7a5650e2cb1213758162817a9fc6ed846249beb5df",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T00:25:49.009Z",
-  "total_cycles_completed": 2338,
-  "total_learnings_persisted": 2338,
+  "last_updated": "2026-10-18T00:29:05.019Z",
+  "total_cycles_completed": 2339,
+  "total_learnings_persisted": 2339,
   "total_rules_promoted": 1356,
   "history": [
-    {
-      "timestamp": "2026-10-17T13:25:22.979Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T13:28:47.750Z",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T00:25:49.009Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T00:29:05.019Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
