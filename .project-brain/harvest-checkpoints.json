@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T01:11:39.072Z",
+  "last_updated": "2026-10-18T01:14:56.200Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -992,14 +992,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "265856368253bc2e8ea554d7b0bb7a875c639c394fa3c386a89a85c456008fc5",
-      "verified_at": "2026-10-17T17:11:08.142Z",
+      "content_hash": "38d5d6bd480fc2208b3fc594c276f48ab54b7c05fe61baeeee328dfe6a81ae65",
+      "verified_at": "2026-10-18T01:14:56.200Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T17:11:08.142Z"
+      "last_updated": "2026-10-18T01:14:56.200Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",

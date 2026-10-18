@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T01:11:39.029Z",
+  "last_updated": "2026-10-18T01:14:56.160Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11997,7 +11997,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "265856368253bc2e8ea554d7b0bb7a875c639c394fa3c386a89a85c456008fc5",
+      "content_hash": "38d5d6bd480fc2208b3fc594c276f48ab54b7c05fe61baeeee328dfe6a81ae65",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -12050,7 +12050,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-10-17T17:11:08.099Z",
+      "verified_at": "2026-10-18T01:14:56.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

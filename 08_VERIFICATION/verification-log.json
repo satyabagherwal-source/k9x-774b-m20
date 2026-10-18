@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-LJJS",
-    "timestamp": "2026-10-16T21:07:49.432Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "7efbd1b9e111ddfa5c5e7948909a6abf470ddf1e492d37b811d5e9450c11be70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-P632",
     "timestamp": "2026-10-16T21:10:38.606Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7490,6 +7475,21 @@
     "repository": "google-t5/t5-small",
     "learningId": "learn-huggingface-google-t5-t5-small",
     "contentHash": "9eedf2e48afe1304cbab3be6a5912df84647a7996369255cd0d8c8fd9a04d52a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-V6MA",
+    "timestamp": "2026-10-18T01:14:56.194Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "38d5d6bd480fc2208b3fc594c276f48ab54b7c05fe61baeeee328dfe6a81ae65",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
