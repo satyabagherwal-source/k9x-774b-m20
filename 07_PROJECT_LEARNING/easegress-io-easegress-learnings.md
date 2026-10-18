@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/easegress-io-easegress-learnings.md`  
+> **Source**: github ([https://github.com/easegress-io/easegress](https://github.com/easegress-io/easegress))  
+> **Source Version**: `48bacc2e`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T22:04:20.505Z  
+> **Learning ID**: `learn-github-easegress-io-easegress`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): easegress-io/easegress
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/easegress-io-easegress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/easegress-io/easegress](https://github.com/easegress-io/easegress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:28:31.358Z  
+> **Harvest Timestamp**: 2026-10-18T22:04:20.303Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A Cloud Native traffic orchestration system. (CNCF Project)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5867 stars
+- **Stars / Engagement**: 5869 stars
 
 ---
 
@@ -1958,616 +1972,20 @@ func (worker *Worker) encodeByAcceptType(accept string, jsonSt interface{}, xmlS
 
 ```
 
-### Core Architecture Module: `pkg/object/meshcontroller/worker/api_nacos.go`
-```
-/*
- * Copyright (c) 2017, The Easegress Authors
- * All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package worker
-
-import (
-	"fmt"
-	"net/http"
-
-	"github.com/go-chi/chi/v5"
-
-	"github.com/megaease/easegress/v2/pkg/api"
-	"github.com/megaease/easegress/v2/pkg/logger"
-	"github.com/megaease/easegress/v2/pkg/object/meshcontroller/registrycenter"
-	"github.com/megaease/easegress/v2/pkg/util/codectool"
-)
-
-func (worker *Worker) nacosAPIs() []*apiEntry {
-	APIs := []*apiEntry{
-		{
-			Path:    meshNacosPrefix + "/ns/instance/list",
-			Method:  "GET",
-			Handler: worker.nacosInstanceList,
-		},
-		{
-			Path:    meshNacosPrefix + "/ns/instance",
-			Method:  "POST",
-			Handler: worker.nacosRegister,
-		},
-		{
-			Path:    meshNacosPrefix + "/ns/instance",
-			Method:  "DELETE",
-			Handler: worker.emptyHandler,
-		},
-		{
-			Path:    meshNacosPrefix + "/ns/instance/beat",
-			Method:  "PUT",
-			Handler: worker.emptyHandler,
-		},
-		{
-			Path:    meshNacosPrefix + "/ns/instance",
-			Method:  "PUT",
-			Handler: worker.emptyHandler,
-		},
-		{
-			Path:    meshNacosPrefix + "/ns/instance",
-			Method:  "GET",
-			Handler: worker.nacosInstance,
-		},
-		{
-			Path:    meshNacosPrefix + "/ns/service/list",
-			Method:  "GET",
-			Handler: worker.nacosServiceList,
-		},
-		{
-			Path:    meshNacosPrefix + "/ns/service",
-			Method:  "GET",
-			Handler: worker.nacosService,
-		},
-	}
-
-	return APIs
-}
-
-func (worker *Worker) nacosRegister(w http.ResponseWriter, r *http.Request) {
-	err := worker.registryServer.CheckRegistryURL(w, r)
-	if err != nil {
-		api.HandleAPIError(w, r, http.StatusBadRequest,
-			fmt.Errorf("parse request url parameters failed: %v", err))
-		return
-	}
-
-	serviceSpec := worker.service.GetServiceSpec(worker.serviceName)
-	if serviceSpec == nil {
-		err := fmt.Errorf("registry to unknown service: %s", worker.serviceName)
-		api.HandleAPIError(w, r, http.StatusBadRequest, err)
-		return
-	}
-
-	worker.registryServer.Register(serviceSpec, worker.ingressServer.Ready, worker.egressServer.Ready)
-}
-
-func (worker *Worker) nacosInstanceList(w http.ResponseWriter, r *http.Request) {
-	serviceName := chi.URLParam(r, "serviceName")
-	if len(serviceName) == 0 {
-		api.HandleAPIError(w, r, http.StatusBadRequest,
-			fmt.Errorf("empty serviceName in url parameters"))
-		return
-	}
-	serviceName, err := worker.registryServer.SplitNacosServiceName(serviceName)
-	if err != nil {
-		logger.Errorf("nacos invalid servicename: %s", serviceName)
-		api.HandleAPIError(w, r, http.StatusBadRequest, err)
-		return
-	}
-	var serviceInfo *registrycenter.ServiceRegistryInfo
-
-	if serviceInfo, err = worker.registryServer.DiscoveryService(serviceName); err != nil {
-		logger.Errorf("discovery service: %s, err: %v ", serviceName, err)
-		api.HandleAPIError(w, r, http.StatusInternalServerError, err)
-		return
-	}
-
-	nacosSvc := worker.registryServer.ToNacosService(serviceInfo)
-
-	buff := codectool.MustMarshalJSON(nacosSvc)
-	worker.writeJSONBody(w, buff)
-}
-
-func (worker *Worker) nacosInstance(w http.ResponseWriter, r *http.Request) {
-	serviceName := chi.URLParam(r, "serviceName")
-	if len(serviceName) == 0 {
-		api.HandleAPIError(w, r, http.StatusBadRequest,
-			fmt.Errorf("empty serviceName in url parameters"))
-		return
-	}
-	serviceName, err := worker.registryServer.SplitNacosServiceName(serviceName)
-	if err != nil {
-		logger.Errorf("nacos invalid servicename: %s", serviceName)
-		api.HandleAPIError(w, r, http.StatusBadRequest, err)
-		return
-	}
-	var serviceInfo *registrycenter.ServiceRegistryInfo
-
-	if serviceInfo, err = worker.registryServer.DiscoveryService(serviceName); err != nil {
-		logger.Errorf("discovery service: %s, err: %v ", serviceName, err)
-		api.HandleAPIError(w, r, http.StatusInternalServerError, err)
-		return
-	}
-
-	nacosIns := worker.registryServer.ToNacosInstanceInfo(serviceInfo)
-
-	buff := codectool.MustMarshalJSON(nacosIns)
-	worker.writeJSONBody(w, buff)
-}
-
-func (worker *Worker) nacosServiceList(w http.ResponseWriter, r *http.Request) {
-	var (
-		err          error
-		serviceInfos []*registrycenter.ServiceRegistryInfo
-	)
-	if serviceInfos, err = worker.registryServer.Discovery(); err != nil {
-		logger.Errorf("discovery services err: %v ", err)
-		api.HandleAPIError(w, r, http.StatusInternalServerError, err)
-		return
-	}
-	serviceList := worker.registryServer.ToNacosServiceList(serviceInfos)
-
-	buff := codectool.MustMarshalJSON(serviceList)
-	worker.writeJSONBody(w, buff)
-}
-
-func (worker *Worker) nacosService(w http.ResponseWriter, r *http.Request) {
-	serviceName := chi.URLParam(r, "serviceName")
-	if len(serviceName) == 0 {
-		api.HandleAPIError(w, r, http.StatusBadRequest,
-			fmt.Errorf("empty serviceName in url parameters"))
-		return
-	}
-	serviceName, err := worker.registryServer.SplitNacosServiceName(serviceName)
-	if err != nil {
-		logger.Errorf("nacos invalid servicename: %s", serviceName)
-		api.HandleAPIError(w, r, http.StatusBadRequest, err)
-		return
-	}
-
-	var serviceInfo *registrycenter.ServiceRegistryInfo
-	if serviceInfo, err = worker.registryServer.DiscoveryService(serviceName); err != nil {
-		logger.Errorf("discovery service: %s, err: %v ", serviceName, err)
-		api.HandleAPIError(w, r, http.StatusInternalServerError, err)
-		return
-	}
-
-	nacosSvcDetail := worker.registryServer.ToNacosServiceDetail(serviceInfo)
-
-	buff := codectool.MustMarshalJSON(nacosSvcDetail)
-	worker.writeJSONBody(w, buff)
-}
-
-```
-
-### Core Architecture Module: `pkg/object/meshcontroller/worker/egress.go`
-```
-/*
- * Copyright (c) 2017, The Easegress Authors
- * All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package worker
-
-import (
-	"fmt"
-	"sync"
-
-	"github.com/megaease/easegress/v2/pkg/object/httpserver/routers"
-
-	"github.com/megaease/easegress/v2/pkg/logger"
-	"github.com/megaease/easegress/v2/pkg/object/httpserver"
-	"github.com/megaease/easegress/v2/pkg/object/meshcontroller/informer"
-	"github.com/megaease/easegress/v2/pkg/object/meshcontroller/service"
-	"github.com/megaease/easegress/v2/pkg/object/meshcontroller/spec"
-	"github.com/megaease/easegress/v2/pkg/object/meshcontroller/storage"
-	"github.com/megaease/easegress/v2/pkg/object/trafficcontroller"
-	"github.com/megaease/easegress/v2/pkg/supervisor"
-	"github.com/megaease/easegress/v2/pkg/util/codectool"
-)
-
-const egressRPCKey = "X-Mesh-Rpc-Service"
-
-type (
-	// EgressServer manages one/many ingress pipelines and one HTTPServer
-	EgressServer struct {
-		super     *supervisor.Supervisor
-		superSpec *supervisor.Spec
-
-		pipelines  map[string]*supervisor.ObjectEntity
-		httpServer *supervisor.ObjectEntity
-
-		tc         *trafficcontroller.TrafficController
-		namespace  string
-		inf        informer.Informer
-		instanceID string
-
-		chReloadEvent chan struct{}
-
-		serviceName      string
-		egressServerName string
-		service          *service.Service
-		mutex            sync.RWMutex
-	}
-
-	httpServerSpecBuilder struct {
-		Kind            string `json:"kind"`
-		Name            string `json:"name"`
-		httpserver.Spec `json:",inline"`
-		Cert            *spec.Certificate `json:"-"`
-	}
-)
-
-// NewEgressServer creates an initialized egress server
-func NewEgressServer(superSpec *supervisor.Spec, super *supervisor.Supervisor,
-	serviceName, instanceID string, service *service.Service,
-) *EgressServer {
-	entity, exists := super.GetSystemController(trafficcontroller.Kind)
-	if !exists {
-		panic(fmt.Errorf("BUG: traffic controller not found"))
-	}
-
-	tc, ok := entity.Instance().(*trafficcontroller.TrafficController)
-	if !ok {
-		panic(fmt.Errorf("BUG: want *TrafficController, got %T", entity.Instance()))
-	}
-
-	inf := informer.NewInformer(storage.New(superSpec.Name(), super.Cluster()), serviceName)
-
-	return &EgressServer{
-		super:     super,
-		superSpec: superSpec,
-
-		inf:         inf,
-		tc:          tc,
-		namespace:   superSpec.Name(),
-		pipelines:   make(map[string]*supervisor.ObjectEntity),
-		serviceName: serviceName,
-		service:     service,
-		instanceID:  instanceID,
-
-		chReloadEvent: make(chan struct{}, 1),
-	}
-}
-
-func newHTTPServerSpecBuilder(httpServerName string, spec *httpserver.Spec) *httpServerSpecBuilder {
-	return &httpServerSpecBuilder{
-		Kind: httpserver.Kind,
-		Name: httpServerName,
-		Spec: *spec,
-	}
-}
-
-func (b *httpServerSpecBuilder) jsonConfig() string {
-	buff, err := codectool.MarshalJSON(b)
-	if err != nil {
-		logger.Errorf("BUG: marshal %#v to json failed: %v", b, err)
-	}
-	return string(buff)
-}
-
-// InitEgress initializes the Egress HTTPServer.
-func (egs *EgressServer) InitEgress(service *spec.Service) error {
-	egs.mutex.Lock()
-	defer egs.mutex.Unlock()
-
-	if egs.httpServer != nil {
-		return nil
-	}
-
-	egs.egressServerName = service.SidecarEgressServerName()
-	admSpec := egs.superSpec.ObjectSpec().(*spec.Admin)
-	superSpec, err := service.SidecarEgressHTTPServerSpec(admSpec.WorkerSpec.Egress.KeepAlive, admSpec.WorkerSpec.Egress.KeepAliveTimeout)
-	if err != nil {
-		return err
-	}
-
-	entity, err := egs.tc.CreateTrafficGateForSpec(egs.namespace, superSpec)
-	if err != nil {
-		return fmt.Errorf("create http server %s failed: %v", superSpec.Name(), err)
-	}
-	egs.httpServer = entity
-
-	if err := egs.inf.OnAllServiceSpecs(egs.reloadBySpecs); err != nil {
-		// only return err when its type is not `AlreadyWatched`
-		if err != informer.ErrAlreadyWatched {
-			logger.Errorf("add service spec watching service: %s failed: %v", service.Name, err)
-			return err
-		}
-	}
-
-	if err := egs.inf.OnAllServiceInstanceSpecs(egs.reloadByInstances); err != nil {
-		if err != informer.ErrAlreadyWatched {
-			logger.Errorf("add service instance spec watching service: %s failed: %v", service.Name, err)
-			return err
-		}
-	}
-
-	if admSpec.EnablemTLS() {
-		logger.Infof("egress in mtls mode, start listen ID: %s's cert", egs.instanceID)
-		if err := egs.inf.OnServerCert(egs.serviceName, egs.instanceID, egs.reloadByCert); err != nil {
-			if err != informer.ErrAlreadyWatched {
-				logger.Errorf("add server cert spec watching service: %s failed: %v", service.Name, err)
-				return err
-			}
-		}
-	}
-
-	if err := egs.inf.OnAllHTTPRouteGroupSpecs(egs.reloadByHTTPRouteGroups); err != nil {
-		// only return err when its type is not `AlreadyWatched`
-		if err != informer.ErrAlreadyWatched {
-			logger.Errorf("add HTTP route group spec watching service: %s failed: %v", service.Name, err)
-			return err
-		}
-	}
-
-	if err := egs.inf.OnAllTrafficTargetSpecs(egs.reloadByTrafficTargets); err != nil {
-		// only return err when its type is not `AlreadyWatched`
-		if err != informer.ErrAlreadyWatched {
-			logger.Errorf("add traffic target spec watching service: %s failed: %v", service.Name, err)
-			return err
-		}
-	}
-
-	if err := egs.inf.OnAllServiceCanaries(egs.reloadByServiceCanaries); err != nil {
-		if err != informer.ErrAlreadyWatched {
-			logger.Errorf("add service canary watching service: %s failed: %v", service.Name, err)
-			return err
-		}
-	}
-
-	go egs.watch()
-
-	return nil
-}
-
-// Ready checks Egress HTTPServer has been created or not.
-// Not need to check pipelines, cause they will be dynamically added.
-func (egs *EgressServer) Ready() bool {
-	egs.mutex.RLock()
-	defer egs.mutex.RUnlock()
-	return egs._ready()
-}
-
-func (egs *EgressServer) _ready() bool {
-	return egs.httpServer != nil
-}
-
-func (egs *EgressServer) reloadByCert(event informer.Event, value *spec.Certificate) bool {
-	select {
-	case egs.chReloadEvent <- struct{}{}:
-	default:
-	}
-	return true
-}
-
-func (egs *EgressServer) reloadByInstances(value map[string]*spec.ServiceInstanceSpec) bool {
-	select {
-	case egs.chReloadEvent <- struct{}{}:
-	default:
-	}
-	return true
-}
-
-func (egs *EgressServer) reloadBySpecs(value map[string]*spec.Service) bool {
-	select {
-	case egs.chReloadEvent <- struct{}{}:
-	default:
-	}
-	return true
-}
-
-func (egs *EgressServer) reloadByHTTPRouteGroups(value map[string]*spec.HTTPRouteGroup) bool {
-	select {
-	case egs.chReloadEvent <- struct{}{}:
-	default:
-	}
-	return true
-}
-
-func (egs *EgressServer) reloadByTrafficTargets(value map[string]*spec.TrafficTarget) bool {
-	select {
-	case egs.chReloadEvent <- struct{}{}:
-	default:
-	}
-	return true
-}
-
-func (egs *EgressServer) reloadByServiceCanaries(value map[string]*spec.ServiceCanary) bool {
-	select {
-	case egs.chReloadEvent <- struct{}{}:
-	default:
-	}
-	return true
-}
-
-func (egs *EgressServer) listTrafficTargets(lgSvcs map[string]*spec.Service) []*spec.TrafficTarget {
-	var result []*spec.TrafficTarget
-
-	tts := egs.service.ListTrafficTargets()
-	for _, tt := range tts {
-		// the destination service is a local or global service, which is already accessible
-		if lgSvcs[tt.Destination.Name] != nil {
-			continue
-		}
-		for _, s := range tt.Sources {
-			if s.Name == egs.serviceName {
-				result = append(result, tt)
-				break
-			}
-		}
-	}
-
-	return result
-}
-
-func (egs *EgressServer) listHTTPRouteGroups(tts []*spec.TrafficTarget) map[string]*spec.HTTPRouteGroup {
-	result := map[string]*spec.HTTPRouteGroup{}
-
-	for _, tt := range tts {
-		for _, r := range tt.Rules {
-			if result[r.Name] != nil {
-				continue
-			}
-			g := egs.service.GetHTTPRouteGroup(r.Name)
-			if g != nil {
-				result[g.Name] = g
-			}
-		}
-	}
-
-	return result
-}
-
-// listLocalAndGlobalServices returns services which can be accessed without a traffic control rule
-func (egs *EgressServer) listLocalAndGlobalServices() map[string]*spec.Service {
-	result := map[string]*spec.Service{}
-
-	self := egs.service.GetServiceSpec(egs.serviceName)
-	if self == nil {
-		logger.Errorf("cannot find service: %s", egs.serviceName)
-		return result
-	}
-
-	tenant := egs.service.GetTenantSpec(self.RegisterTenant)
-	if tenant != nil {
-		for _, name := range tenant.Services {
-			if name == egs.serviceName {
-				continue
-			}
-
-			spec := egs.service.GetServiceSpec(name)
-			if spec != nil {
-				result[name] = spec
-			}
-		}
-	}
-
-	if self.RegisterTenant == spec.GlobalTenant {
-		return result
-	}
-
-	tenant = egs.service.GetTenantSpec(spec.GlobalTenant)
-	if tenant == nil {
-		return result
-	}
-
-	for _, name := range tenant.Services {
-		if name == egs.serviceName {
-			continue
-		}
-		if result[name] != nil {
-			continue
-		}
-		spec := egs.service.GetServiceSpec(name)
-		if spec != nil {
-			result[name] = spec
-		}
-	}
-
-	return result
-}
-
-func (egs *EgressServer) listServiceOfTrafficTarget(tts []*spec.TrafficTarget) map[string]*spec.Service {
-	result := map[string]*spec.Service{}
-
-	for _, tt := range tts {
-		name := tt.Destination.Name
-		if result[name] != nil {
-			continue
-		}
-		spec := egs.service.GetServiceSpec(name)
-		if spec == nil {
-			logger.Errorf("cannot find service %s of traffic target %s", egs.serviceName, tt.Name)
-			continue
-		}
-		result[name] = spec
-	}
-
-	return result
-}
-
-// regex rule: ^(\w+\.)*vet-services\.(\w+)\.svc\..+$
-//
-//	can match e.g. _tcp.vet-services.easemesh.svc.cluster.local
-//	 		   vet-services.easemesh.svc.cluster.local
-//	 		   _zip._tcp.vet-services.easemesh.svc.com
-func (egs *EgressServer) buildHostRegex(serviceName string) string {
-	return `^(\w+\.)*` + serviceName + `\.(\w+)\.svc\..+`
-}
-
-func (egs *EgressServer) buildMuxRule(pipelineName, serviceName string, matches []spec.HTTPMatch) []*ro
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1525** (2026-10-13): **[Bug]: The KafkaMQTT filter does not automatically reconnect to Kafka if the Kafka broker is unavailable when Easegress starts.**
+  *Symptoms*: **Describe the bug** The KafkaMQTT filter does not automatically reconnect to Kafka if the Kafka broker is unavailable when Easegress starts.  If Kafka is down during Easegress startup, the KafkaMQTT filter initialization fails once. After Kafka becomes available again, Easegress does not retry the connection and the filter remains unavailable until Easegress is restarted or the object configuration is updated.  **To Reproduce** Steps to reproduce the behavior:  1. Stop Kafka broker. 2. Start Easegress. 3. Configure a Pipeline with KafkaMQTT filter pointing to the unavailable Kafka broker. 4. Check Easegress logs.  The following error appears:   recover from Init, err: start sarama producer with address [127.0.0.1:9092] failed: kafka: client has run out of available brokers to talk to: dial tcp 127.0.0.1:9092: connect: connection refused   5. Start Kafka broker. 6. Wait for KafkaMQTT to reconnect.  No reconnect attempts are performed.  The only way to restore the filter is to restart Easegress or update the Pipeline object.  **Expected behavior** KafkaMQTT should automatically retry connecting to Kafka after the initial connection failure.  The filter should recover automatically when Kafka becomes available again without requiring Easegress restart or Pipeline update.  **Version** Easegress v2.11.0  **Configuration MQTT Proxy**  * Easegress Configuration ``` name: pipeline-mqtt-publish kind: Pipeline protocol: MQTT flow: - filter: publish-kafka-backend  filters: - name: publ
+
 - **Issue #1170** (2024-01-28): **[Bug]: easegress-server --signal-upgrade=true panic**
   *Symptoms*:  - Easegress v2.6.4 - 22.04.1-Ubuntu x86_64  ---  When I reload the easegress-server with command `easegress-server --signal-upgrade=true`. It will panic.  ``` panic: close of closed channel  goroutine 1 [running]: github.com/megaease/easegress/v2/pkg/api.(*dynamicMux).close(...)         github.com/megaease/easegress/v2/pkg/api/dynamicmux.go:139 github.com/megaease/easegress/v2/pkg/api.(*Server).Close(0xc000401900, 0x0?)         github.com/megaease/easegress/v2/pkg/api/server.go:131 +0x111 github.com/megaease/easegress/v2/cmd.RunServer()         github.com/megaease/easegress/v2/cmd/server.go:142 +0x78a main.main()         github.com/megaease/easegress/v2/cmd/server/main.go:27 +0x17 ```
   **Post-Mortem & Fix Analysis**:
   > Hi, thanks for you report, we will check what happens here...
   > Fixed
-
-- **Issue #1108** (2023-12-15): **[Bug]: Easegress obejct status api prefix issue**
-  *Symptoms*: Since Easegress support multi node. When call `/status/objects/{name}` api, Easegress use prefix to fetch status from all node.   For example, when call `/status/objects/httpserver-demo` it will return `/status/objects/httpserver-demo/node1` and `/status/objects/httpserver-demo/node2`.   But if there is a object called `/status/objects/httpserver-demo-123`, when call  `/status/objects/httpserver-demo`, it will return `/status/objects/httpserver-demo/node1`, `/status/objects/httpserver-demo/node2`, `/status/objects/httpserver-demo-123/node1`, `/status/objects/httpserver-demo-123/node2`.   To solve this problem, we should use `/status/objects/httpserver-demo/` as prefix not `/status/objects/httpserver-demo`. Add `/` to the end.
-
-- **Issue #1019** (2023-06-21): **[Bug]: wrong version of slim-sprig**
-  *Symptoms*: **Describe the bug** I think easegress used the wrong version of [slim-sprig](https://github.com/go-task/slim-sprig). v2.20.0 is an old version, in which the "get" API was not even available for dict. Therefore, this will affect obtaining the `data` in the pipeline.  **To Reproduce** Just try using `get $.data.PIPELINE` in v2.4.1 or later  
-  **Post-Mortem & Fix Analysis**:
-  > hi @hexinzhe , I checked `go.mod` and think we are using the correct version of `slim-sprig`.  could you please provide the full yaml configuration of your pipeline and the detailed error message?
-  > Just check https://github.com/go-task/slim-sprig/blob/v2.20.0/dict.go and https://github.com/go-task/slim-sprig/blob/master/dict.go, the `get` function in version v2.20.0 does not exist. 
-  > @localvar   ```yaml name: fallback kind: Pipeline flow:   - filter: proxy     jumpIf:       serverError: errResponse       "": END   - filter: errResponse filters:   - name: proxy     kind: Proxy     pools:       - servers:           - url: {PROXY_SERVER}    - name: errResponse     kind: ResponseBuilder     template: |       {{ $url := "null" }}       {{- range $k, $v := .requests.DEFAULT.Header -}}       {{$value := index $v 0}}       {{- if (regexMatch "^[0-9a-zA-Z].*"  $value) }}       {{- if (eq "server-name" (lower $k)) }}       {{ $u := get $.data.PIPELINE $value }}       {{ $url = $u.redirect }}       {{- end -}}       {{- end -}}       {{- end -}}       {{log "info" (printf "fallback to %s%s?%s" $url .requests.DEFAULT.URL.Path .requests.DEFAULT.URL.RawQuery)}}              statusCode: 302       headers:         Location: ["{{$url}}{{.requests.DEFAULT.URL.Path}}?{{.requests.DEFAULT.URL.RawQuery}}"]   - name: defaultResponse     kind: Response
-
-- **Issue #981** (2023-05-04): **[Bug]: The WebSocketProxy Filter does not work**
-  *Symptoms*: **Describe the bug** A clear and concise description of what the bug is.  Using `curl` to send a request will get a successful response by following the [WebSocket Cookbook](https://github.com/megaease/easegress/blob/main/doc/cookbook/websocket.md)   But after a real WebSocket server and client are deployed, the connection is not established.  The error in easegress's log:  > ERROR   httpproxy/wspool.go:183 websocketproxy#wsproxy#main: dial to ws://127.0.0.1:8765 failed: websocket.Dial ws://127.0.0.1:8765/ws: unsupported extensions    **To Reproduce** Steps to reproduce the behavior:  1. WebSocket server: ```python import asyncio import websockets  async def hello(websocket, path):     name = await websocket.recv()     print(f"Greetings {name}!")      greeting = f"Hello {name}!"     await websocket.send(greeting)  start_server = websockets.serve(hello, "localhost", 8765)  asyncio.get_event_loop().run_until_complete(start_server) asyncio.get_event_loop().run_forever() ``` 2. Websocket Client:  ```python import asyncio import websockets  async def hello():     async with websockets.connect("ws://localhost:8765/ws") as websocket:         name = "John"         await websocket.send(name)         greeting = await websocket.recv()         print(f"{greeting}")  asyncio.get_event_loop().run_until_complete(hello()) ```  the client was verified by sending to the server directly and through an Nginx reverse proxy.  4. config a Easegress ht
-
-- **Issue #938** (2023-03-03): **[Bug]: wasm apply data command not worked**
-  *Symptoms*: **Describe the bug** Hi guys, I found two kind of issues when walking through our [Flash Sale](https://github.com/megaease/easegress/blob/main/doc/cookbook/flash-sale.md) demo.  **Issue 1:** Parameters' type error in section 6.1 example spec  According to WasmHost filter's spec declaration, [parameters](https://github.com/megaease/easegress/blob/main/pkg/filters/wasmhost/wasmhost.go#L94)' value type should be `string`:  ```go type Spec struct {      Parameters     map[string]string `json:"parameters" jsonschema:"omitempty"`  } ```  But the example in section [6.1 Parameters](https://github.com/megaease/easegress/blob/main/doc/cookbook/flash-sale.md#61-parameters) used a number value: ```yaml filters:   - name: wasm     kind: WasmHost     parameters:                                        # +       startTime: "2021-08-08T00:00:00+00:00"           # +       blockRatio: 0.4                                  # +       maxPermission: 3                                 # + ``` So `egctl` client returned error: ```shell Error: 400: {"generalErrs":["*pipeline.Spec: filters: json: cannot unmarshal number into Go struct field Spec.parameters of type string"]} ``` ---  **Issue 2:** Wasm `apply-data` command not worked  When executing the command below, I got this error: ```shell $ echo ' id/user4: "true" id/user5: "true"' | egctl wasm apply-data flash-sale-pipeline wasm Error: name is empty: id/user4: "true" id/user5: "true" ```  I found that we 
-
-- **Issue #908** (2023-01-28): **[Bug]: API Aggregation cookbook examples not work for me.**
-  *Symptoms*: **Describe the bug** Hi there, I have some trouble when walking through our API Aggregation cookbook. Need HELP! 🆘   There's two kind of problems:  **Problem 1** In scenario 1 and 2, when using example specs, I got this error: ``` 2023-01-28T13:37:57.542+08:00   WARN    builder/responsebuilder.go:131  ResponseBuilder(buildResponse): failed to build response info: yaml: line 1: did not find expected key 2023-01-28T13:37:57.542+08:00   ERROR   httpserver/mux.go:225   server-demo: response is nil ``` And I found that, in line `pkg/filters/builder/builder.go:65`, the result which should be unmarshaled was an invalid YAML data: ``` statusCode: 200 body: "[{"mega":"ease"}, {"hello":"world"}, {"hello":"new world"}]" ----------^ ```` After changing the ResponseBuilder template like this: ```diff diff --git a/doc/cookbook/api-aggregation.md b/doc/cookbook/api-aggregation.md index 4107e7c0..e980c73a 100644 --- a/doc/cookbook/api-aggregation.md +++ b/doc/cookbook/api-aggregation.md @@ -68,7 +68,8 @@ filters:    kind: ResponseBuilder    template: |      statusCode: 200 -    body: "[{{.responses.demo1.Body}}, {{.responses.demo2.Body}}, {{.responses.demo3.Body}}]" +    body: | +      [{{.responses.demo1.Body}}, {{.responses.demo2.Body}}, {{.responses.demo3.Body}}]  @@ -147,7 +148,8 @@ filters:    kind: ResponseBuilder    template: |      statusCode: 200 -    body: "{{mergeObject .responses.demo1.JSONBody .responses.demo2.JSONBody .responses.demo3.JSONBod
-  **Post-Mortem & Fix Analysis**:
-  > Thanks @grootpiano for pointing these issues out, and much appreciate if you could submit a PR to fix them.
-  > > Thanks @grootpiano for pointing these issues out, and much appreciate if you could submit a PR to fix them.  That's so sure. It's my pleasure! Waiting, the PR is on the way. 🏃 
-
-- **Issue #850** (2022-11-08): **[Bug]: codectool duplicate Unmarshal json**
-  *Symptoms*: **Describe the bug**  I found duplicate Unmarshal in the course of reading the code  branch: master commit: b7ba81d9 path : `github.com/megaease/easegress/pkg/util/codectool`  ``` go // Unmarshal wraps json.Unmarshal. // It will convert yaml to json before unmarshal. // Since json is a subset of yaml, passing json through this method should be a no-op. func Unmarshal(data []byte, v interface{}) error { 	data, err := yamljsontool.YAMLToJSON(data) 	if err != nil { 		return fmt.Errorf("%s: convert yaml to json failed: %v", data, err) 	} 	json.Unmarshal(data, v)  	return json.Unmarshal(data, v) } ```  
-
-- **Issue #800** (2022-09-22): **[Bug]: EaseMonitorMetrics Status error**
-  *Symptoms*: **Describe the bug** I need to send the monitoring data to Kafka, but I find that it is not sent successfully  ```  - kafka:     brokers:         - 127.0.0.1:9092     topic: metrics   kind: EaseMonitorMetrics   name: easemonitor-metrics-example   version: easegress.megaease.com/v2  ```  When I change the following code (statussynccontroller.go)   ``` 					su := newStatusUnit(namespace, trafficObject.Name, 						unixTimestamp, trafficObject.TrafficObjectStatus)  ``` into  ``` 					su := newStatusUnit(namespace, trafficObject.Name, 						unixTimestamp, trafficObject.TrafficObjectStatus.Status) // change ```  The problem is solved  Hopefully it will be validated and submitted to new code    --- Thanks for contributing 🎉! 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks a lot for your issue.  It seems `EaseMonitorMetrics` only send status that implement `easemonitor.Metricer` interface to kafka backend. So for `trafficObject.TrafficObjectStatus` not implement this interface, but  `trafficObject.TrafficObjectStatus.Status` implements this interface.   Compare to change  ``` su := newStatusUnit(namespace, trafficObject.Name, 						unixTimestamp, trafficObject.TrafficObjectStatus.Status) ``` I prefer to implement `easemonitor.Metricer` to `trafficObject.TrafficObjectStatus`, so it will not influence previous code and solve this problem.  ``` func (s *TrafficObjectStatus) ToMetrics(service string) []*easemonitor.Metrics { 	metricer, ok := s.Status.(easemonitor.Metricer) 	if !ok { 		return nil 	} 	return metricer.ToMetrics(service) } ``` Any idea here?
-  > good，Thanks 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2584,29 +2002,7 @@ func (egs *EgressServer) buildMuxRule(pipelineName, serviceName string, matches 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3fd0fa89` (2026-06-04)
-**Commit Message**: fix: build/package/Dockerfile.builder to reduce vulnerabilities (#1519)
-
-The following vulnerabilities are fixed with an upgrade:
-- https://snyk.io/vuln/SNYK-ALPINE323-OPENSSL-15993266
-- https://snyk.io/vuln/SNYK-ALPINE323-OPENSSL-15993266
-- https://snyk.io/vuln/SNYK-ALPINE323-OPENSSL-15993253
-- https://snyk.io/vuln/SNYK-ALPINE323-OPENSSL-15993258
-- https://snyk.io/vuln/SNYK-ALPINE323-OPENSSL-15993259
-
-Co-authored-by: snyk-bot <[REDACTED_EMAIL]>
-
-**File**: `build/package/Dockerfile.builder` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--FROM golang:1.26.1-alpine
-+FROM golang:1.26.4-alpine
- RUN apk --no-cache add make git
-```
-
----
-
-### Incident Patch 2: `b6be769f` (2026-05-29)
+### Incident Patch 1: `b6be769f` (2026-05-29)
 **Commit Message**: fix(grpcproxy): do not degrade pool on gRPC application-level errors (fixes #1517) (#1518)
 
 * fix(grpcproxy): do not degrade pool on gRPC application-level errors
@@ -2796,71 +2192,7 @@ Example failure sequence this fixes:
 
 ---
 
-### Incident Patch 3: `592091ac` (2026-04-01)
-**Commit Message**: Add KubeStellar Console guided install reference (#1514)
-
-Add a reference to the KubeStellar Console guided installation mission
-for Easegress in both the install documentation and the README Community
-section. The guided experience provides step-by-step installation with
-pre-flight checks, validation, troubleshooting, and rollback.
-
-Link: https://console.kubestellar.io/missions/install-easegress
-
-Signed-off-by: Andrew Anderson <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +4/-0)
-```diff
-@@ -219,6 +219,10 @@ For full list, see [Tutorials](docs/02.Tutorials/README.md) and [Cookbook](docs/
- - [Join Slack Workspace](https://cloud-native.slack.com/messages/easegress) for requirement, issue and development.
- - [MegaEase on Twitter](https://twitter.com/megaease)
- 
-+### Community Tools
-+
-+- [KubeStellar Console Guided Install](https://console.kubestellar.io/missions/install-easegress) - Step-by-step guided installation with pre-flight checks, validation, troubleshooting, and rollback.
-+
- ## Contributing
- 
- See [Contributing guide](./CONTRIBUTING.md#contributing). The project welcomes contributions and suggestions that abide by the [CNCF Code of Conduct](./CODE_OF_CONDUCT.md).
-```
-
-**File**: `docs/01.Getting-Started/1.2.Install.md` (modified, +8/-0)
-```diff
-@@ -67,3 +67,11 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/megaease/easegres
-     ```bash
-     $ docker run megaease/easegress
-     ```
-+
-+### Guided Installation via KubeStellar Console
-+
-+[KubeStellar Console](https://console.kubestellar.io) offers a
-+[guided installation mission for Easegress](https://console.kubestellar.io/missions/install-easegress)
-+that walks you through the setup step by step. The guided experience includes
-+pre-flight checks, installation validation, troubleshooting tips, and rollback
-+instructions.
-```
-
----
-
-### Incident Patch 4: `beb02b19` (2026-03-10)
-**Commit Message**: fix: build/package/Dockerfile.builder to reduce vulnerabilities (#1504)
-
-The following vulnerabilities are fixed with an upgrade:
-- https://snyk.io/vuln/SNYK-ALPINE323-ZLIB-15435528
-- https://snyk.io/vuln/SNYK-ALPINE323-ZLIB-15435529
-
-Co-authored-by: snyk-bot <[REDACTED_EMAIL]>
-
-**File**: `build/package/Dockerfile.builder` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--FROM golang:1.24-alpine
-+FROM golang:1.25.4-alpine
- RUN apk --no-cache add make git
-```
-
----
-
-### Incident Patch 5: `a2577c8f` (2025-09-18)
+### Incident Patch 2: `a2577c8f` (2025-09-18)
 **Commit Message**: fix build 32-bit machine constant overflow (#1500)
 
 * fix build 32-bit machine constant overflow
@@ -2903,1278 +2235,436 @@ Co-authored-by: snyk-bot <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 6: `10874f48` (2025-09-09)
-**Commit Message**: Enhance HTTPserver to support nginx-like header vars and build-in backend pool (#1497)
+### Incident Patch 3: `48bacc2e` (2026-10-13)
+**Commit Message**: fix(kafka): retry mqtt producer startup (#1526)
 
-* HTTPServer: Support set headers with nginx-like vars
+* fix(kafka): retry mqtt producer startup
 
-* HTTPServer: test nginx-like vars
+* fix(kafka): restore health after successful delivery
 
-* HTTPServer: Implement backendPool with generating proxy pipeline
-
-* Support labels for metadata of object
-
-* Add httpserver owner label and fix unittest
-
-* Fix Validate of validator spec
-
-* Use cluster to manage generated pipeline instead traffic controller
-
-* Forbid updating generated objects
-
-* Update quick start to adopt backend pool in HTTPServer
-
-* Doc: Add nginx header vars
-
-* Doc: Update header size
-
-* Fix unit tests
-
-* Fix TestPathValidate
-
-**File**: `docs/01.Getting-Started/1.1.Quick-Start.md` (modified, +47/-15)
+**File**: `docs/03.Advanced-Cookbook/3.01.MQTT-Proxy.md` (modified, +2/-0)
 ```diff
-@@ -2,11 +2,10 @@
+@@ -111,6 +111,8 @@ Now, we support following filters for MQTTProxy:
+ - `TopicMapper`: map MQTT Publish packet multi-level topic into single topic and key-value headers.
+ - `MQTTClientAuth`: provide username and password checking for MQTT Connect packet.
+ - `KafkaMQTT`: send MQTT Publish message to Kafka backend. By default, `KafkaMQTT` filter will add `clientID`, `username`, `mqttTopic` to Kafka message headers.
++  If Kafka is unavailable when the filter starts, `KafkaMQTT` keeps retrying producer creation and returns `producerUnavailable` until the producer is ready.
++  A temporary delivery error appears in the filter's `health` status, which returns to `ready` after Kafka confirms a successful delivery.
  
- The basic usage of Easegress is to quickly set up a proxy for the backend servers.
- 
--### Launch Easegress
-+## Launch Easegress
- 
- Easegress can be installed from pre-built binaries or from source. For details, see [Install](1.2.Install.md).
- 
--
- Then we can execute the server:
- 
- ```bash
-@@ -17,7 +16,7 @@ $ easegress-server
- 
- By default, Easegress opens ports 2379, 2380, and 2381; however, you can modify these settings along with other arguments either in the configuration file or via command-line arguments. For a complete list of arguments, please refer to the `easegress-server --help` command.
- 
--After launching successfully, we could check the status of the one-node cluster. 
-+After launching successfully, we could check the status of the one-node cluster.
- 
- ```bash
- $ egctl get member
-@@ -27,40 +26,72 @@ $ egctl describe member
- ...
- ```
- 
--### Reverse Proxy
-+## Reverse Proxy
- 
- Assuming you have two backend HTTP services running at `127.0.0.1:9095` and `127.0.0.1:9096`, you can initiate an HTTP proxy from port 10080 to these backends using the following command:
- 
- ```bash
--$ egctl create httpproxy demo --port 10080 \ 
-+$ egctl create httpproxy demo --port 10080 \
-   --rule="/pipeline=http://127.0.0.1:9095,http://127.0.0.1:9096" \
-   --rule="/prefix*=http://127.0.0.1:9097"
- ```
- 
- Then try it:
-+
- ```bash
--$ curl -v 127.0.0.1:10080/pipeline
-+curl -v 127.0.0.1:10080/pipeline
- ```
- 
- The request will be forwarded to either `127.0.0.1:9095/pipeline` or `127.0.0.1:9096/pipeline`, utilizing a round-robin load-balancing policy.
- 
- ```bash
--$ curl -v 127.0.0.1:10080/prefix/123
-+curl -v 127.0.0.1:10080/prefix/123
- ```
--The request will be forwarded to `127.0.0.1:9097/prefix/123`. 
- 
-+The request will be forwarded to `127.0.0.1:9097/prefix/123`.
-+
-+## YAML Configuration
- 
--### YAML Configuration
-+The `egctl create httpproxy` command is convenient, but for production use, you'll want more control. Easegress uses two main resources: **HTTPServer** (handles incoming requests) and **Pipeline** (processes and routes requests).
- 
--The `egctl create httpproxy` command mentioned above is actually syntactic sugar; it creates two Easegress resources under the hood: `HTTPServer` and `Pipeline`.
-+### Method 1: HTTPServer with Built-in Backend Pool
- 
--Now let's create them using yaml files:
-+This approach automatically creates pipelines for you:
-+
-+```bash
-+$ echo 'kind: HTTPServer
-+name: demo-backend-pool
-+port: 10080
-+https: false
-+rules:
-+  - paths:
-+    - pathPrefix: /demo0
-+      backendPool:
-+        loadBalance:
-+          policy: roundRobin
-+        servers:
-+            - url: http://127.0.0.1:9091
-+            - url: http://127.0.0.1:9092
-+    - pathPrefix: /demo1
-+      backendPool:
-+        loadBalance:
-+          policy: roundRobin
-+        servers:
-+            - url: http://127.0.0.1:9093
-+            - url: http://127.0.0.1:9094' | egctl create -f -
-+```
-+
-+It will generate one pipeline for each backendPool. For example, `demo-backend-pool` generates pipeline`GENERATED-demo-backend-pool-0-0` and `GENERATED-demo-backend-pool-0-1` which couldn't be updated or deleted via `egctl` (User APIs).
-+
-+### Method 2: HTTPServer with Separate Pipelines
-+
-+Create HTTPServer:
- 
- ```bash
- $ echo '
- kind: HTTPServer
--name: demo
--port: 10080
-+name: demo-backend
-+port: 10081
- https: false
- rules:
-   - paths:
-@@ -69,7 +100,8 @@ rules:
-     - pathPrefix: /prefix
-       backend: demo-1 ' | egctl create -f -
- ```
--More details about [HTTPServer](../02.Tutorials/2.2.HTTP-Proxy-Usage.md).
-+
-+Create the Pipelines:
- 
- ```bash
- $ echo '
-@@ -98,7 +130,7 @@ filters:
-     - servers:
-       - url: http://127.0.0.1:9097' | egctl create -f -
- ```
-+
- More details about [Pipeline](../02.Tutorials/2.3.Pipeline-Explained.md).
- 
- You can also modify, update, or delete these resources using `egctl`; for more details, refer to the [egctl usage](../02.Tutorials/2.1.egctl-Usage.md) guide.
--
+ ## Topic Mapping
+ In MQTT, there are multi-levels in a topic. Topic mapping is used to map MQTT topic to a single topic with headers. For example:
 ```
 
-**File**: `docs/02.Tutorials/2.11.Nginx-Header-Vars.md` (added, +396/-0)
+**File**: `docs/07.Reference/7.02.Filters.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,396 @@
-+# Nginx-Style Header Variables
-+
-+Easegress HTTPServer supports nginx-style variables in the `setHeaders` configuration, allowing you to dynamically populate HTTP headers with request information. This feature provides powerful capabilities for debugging, logging, routing decisions, and passing contextual information to backend services.
-+
-+## Overview
-+
-+The nginx variable system in Easegress supports:
-+
-+- **Request line variables** (method, URI, query parameters)
-+- **Host and server variables**
-+- **Client information** (remote address, user agent)
-+- **Time and timestamp variables**
-+- **Content and protocol information**
-+- **HTTP header extraction**
-+- **Query parameter extraction**
-+- **Cookie value extraction**
-+- **Default value support** with `${variable:default}` syntax
-+- **String interpolation** for building complex values
-+
-+Easegress adopts nginx variables as much as possible for compatibility. For a complete reference of nginx variables, see the [official nginx variable index](https://nginx.org/en/docs/varindex.html).
-+
-+## Variable Syntax
-+
-+Easegress supports two nginx-compatible variable syntaxes:
-+
-+```yaml
-+# Simple variable reference
-+X-Method: "$request_method"
-+
-+# Variable with default value
-+X-Version: "${arg_version:v1.0}"
-+
-+# String interpolation
-+X-Backend-URL: "${scheme}://${host}-backend${uri}"
-+```
-+
-+## Complete Example
-+
-+See the complete example configuration at: [`example/config/test-nginx-header-vars.yaml`](../../example/config/test-nginx-header-vars.yaml)
-+
-+This example demonstrates all available variable types and usage patterns.
-+
-+## Variable Categories
-+
-+### 1. Request Line Variables
-+
-+Extract information from the HTTP request line:
-+
-+| Variable | Description | Example Value |
-+|----------|-------------|---------------|
-+| `$request_method` | HTTP method | `GET`, `POST`, `PUT` |
-+| `$request_uri` | Full request URI with query string | `/api/users?page=1` |
-+| `$uri` | Path portion of URI (without query) | `/api/users` |
-+| `$scheme` | Protocol scheme | `http`, `https` |
-+| `$query_string` | Query string portion | `page=1&limit=10` |
-+| `$args` | Alias for `$query_string` | `page=1&limit=10` |
-+| `$request` | Full request line | `GET /api/users HTTP/1.1` |
-+
-+### 2. Host and Server Variables
-+
-+Information about the server and request host:
-+
-+| Variable | Description | Example Value |
-+|----------|-------------|---------------|
-+| `$host` | Host from request (without port) | `api.example.com` |
-+| `$hostname` | Alias for `$host` | `api.example.com` |
-+| `$http_host` | Host header value (with port) | `api.example.com:8080` |
-+| `$server_name` | Server name | `api.example.com` |
-+| `$server_protocol` | HTTP protocol version | `HTTP/1.1`, `HTTP/2.0` |
-+
-+### 3. Client Information Variables
-+
-+Information about the client making the request:
-+
-+| Variable | Description | Example Value |
-+|----------|-------------|---------------|
-+| `$remote_addr` | Client IP address | `192.168.1.100` |
-+| `$remote_user` | Authenticated username | `john_doe` |
-+| `$proxy_add_x_forwarded_for` | X-Forwarded-For with client IP | `10.0.0.1, 192.168.1.100` |
-+
-+### 4. Time and Timestamp Variables
-+
-+Current time in various formats:
-+
-+| Variable | Description | Example Value |
-+|----------|-------------|---------------|
-+| `$time_iso8601` | ISO 8601 timestamp | `2025-09-05T10:30:45+08:00` |
-+| `$time_local` | Local time format | `05/Sep/2025:10:30:45 +0800` |
-+| `$msec` | Timestamp in milliseconds | `1725508245123` |
-+| `$request_time` | Request processing time | `0.045` |
-+
-+### 5. Content and Protocol Variables
-+
-+Information about request content:
-+
-+| Variable | Description | Example Value |
-+|----------|-------------|---------------|
-+| `$content_type` | Content-Type header | `application/json` |
-+| `$content_length` | Content-Length header | `1024` |
-+| `$request_length` | Total request size | `1024` |
-+
-+### 6. HTTP Header Variables
-+
-+Extract any HTTP header using the `$http_` prefix:
-+
-+| Variable Pattern | Description | Example |
-+|------------------|-------------|---------|
-+| `$http_user_agent` | User-Agent header | `Mozilla/5.0 (...)` |
-+| `$http_accept` | Accept header | `application/json` |
-+| `$http_x_forwarded_for` | X-Forwarded-For header | `10.0.0.1` |
-+| `$http_authorization` | Authorization header | `Bearer token123` |
-+| `$http_*` | Any header (replace * with header name) | Various |
-+
-+**Note:** Header names are converted using these rules:
-+
-+- Convert to lowercase
-+- Replace hyphens with underscores
-+- Add `http_` prefix
-+
-+Examples:
-+
-+- `Content-Type` → `$http_content_type`
-+- `X-API-Key` → `$http_x_api_key`
-+- `User-Agent` → `$http_user_agent`
-+
-+### 7. Query Parameter Variables
-+
-+Extract query parameters using the `$arg_` prefix:
-+
-+| Variable Pattern | Description | Example |
-+|------------------|-------------|---------|
-+| `$arg_page` | Extract `page` parameter | `1` |
-+| `$arg_limit` | Extract `limit` parameter | `50` |
-+| `$arg_api_k
-```
-
-**File**: `docs/02.Tutorials/README.md` (modified, +11/-7)
-```diff
-@@ -1,9 +1,13 @@
- # Tutorials
+@@ -1968,7 +1968,7 @@ Rules to revise request header.
  
--### [egctl Usage](2.1.egctl-Usage.md)
--### [HTTP Proxy Usage](2.2.HTTP-Proxy-Usage.md)
--### [Pipeline Explained](2.3.Pipeline-Explained.md)
--### [Advanced HTTP Proxy: Resilience](2.4.Resilience.md)
--### [HTTPS & Let's Encrypt & More](2.5.Traffic-Verification.md)
--### [Websocket](2.6.Websocket.md)
--### [gRPC](2.7.gRPC.md)
+ | Name   | Type     | Description                                                                                                  | Required |
+ | ------ | -------- | ------------------------------------------------------------------------------------------------------------ | -------- |
+-| url    | string   | Address of the server. The address should start with `http://` or `https://` (when used in the `WebSocketProxy`, it can also start with `ws://` and `wss://`), followed by the hostname or IP address of the server, and then optionally followed by `:{port number}`, for example: `https://www.megaease.com`, `http://10.10.10.10:8080`. When host name is used, the `Host` of a request sent to this server is always the hostname of the server, and therefore using a [RequestAdaptor](#requestadaptor) in the pipeline to modify it will not be possible; when IP address is used, the `Host` is the same as the original request, that can be modified by a [RequestAdaptor](#requestadaptor). See also `KeepHost`.         | Yes      |
++| url    | string   | Address of the server. The address should start with `http://` or `https://` (when used in the `WebSocketProxy`, it can also start with `ws://` and `wss://`), followed by the hostname or IP address of the server, and then optionally followed by `:{port number}`, for example: `https://www.megaease.cn`, `http://10.10.10.10:8080`. When host name is used, the `Host` of a request sent to this server is always the hostname of the server, and therefore using a [RequestAdaptor](#requestadaptor) in the pipeline to modify it will not be possible; when IP address is used, the `Host` is the same as the original request, that can be modified by a [RequestAdaptor](#requestadaptor). See also `KeepHost`.         | Yes      |
+ | tags   | []string | Tags of this server, refer `serverTags` in [proxy.PoolSpec](#proxyPoolSpec)                                  | No       |
+ | weight | int      | When load balance policy is `weightedRandom`, this value is used to calculate the possibility of this server | No       |
+ | keepHost | bool      | If true, the `Host` is the same as the original request, no matter what is the value of `url`. Default value is `false`. | No       |
+@@ -2433,4 +2433,4 @@ This configuration is for each object within the `cacheFileExtensionFilters` arr
+ | Name | Type | Description | Required |
+ | --- | --- | --- | --- |
+ | pattern | []string | A list of glob patterns to match files against (e.g., `["*.html", "*.css"]`). | Yes |
+-| etagMaxAge | integer | The `max-age` value, in seconds, to set for the `ETag` response header for files matching this pattern. Defaults to `3600`. | No |
 \ No newline at end of file
-+- [egctl Usage](2.1.egctl-Usage.md)
-+- [HTTP Proxy Usage](2.2.HTTP-Proxy-Usage.md)
-+- [Pipeline Explained](2.3.Pipeline-Explained.md)
-+- [Advanced HTTP Proxy: Resilience](2.4.Resilience.md)
-+- [Traffic Verification](2.5.Traffic-Verification.md)
-+- [Websocket](2.6.Websocket.md)
-+- [gRPC](2.7.gRPC.md)
-+- [HTTPS & Let's Encrypt](2.8.HTTPS-Lets-Encrypt.md)
-+- [AI Gateway](2.9.AI-Gateway.md)
-+- [Claude Proxy](2.10.Claude-Proxy.md)
-+- [Nginx Header Variables](2.11.Nginx-Header-Vars.md)
++| etagMaxAge | integer | The `max-age` value, in seconds, to set for the `ETag` response header for files matching this pattern. Defaults to `3600`. | No |
 ```
 
-**File**: `example/config/test-nginx-header-vars.yaml` (added, +79/-0)
+**File**: `pkg/filters/kafka/kafka.go` (modified, +182/-23)
 ```diff
-@@ -0,0 +1,79 @@
-+kind: HTTPServer
-+name: test-nginx-header-vars
-+port: 10080
-+rules:
-+    - paths:
-+        - backendPool:
-+            loadBalance:
-+                policy: roundRobin
-+            servers:
-+                - url: http://127.0.0.1:9091
-+                - url: http://127.0.0.1:9092
-+                - url: http://127.0.0.1:9093
-+          pathPrefix: /
-+          setHeaders:
-+            # Request line variables
-+            X-Request-Method: "$request_method"
-+            X-Request-URI: "$request_uri"
-+            X-URI-Path: "$uri"
-+            X-Scheme: "$scheme"
-+            X-Query-String: "$query_string"
-+            X-Args: "$args"
-+            X-Full-Request: "$request"
-+
-+            # Host variables
-+            X-Host: "$host"
-+            X-Hostname: "$hostname"
-+            X-HTTP-Host: "$http_host"
-+            X-Server-Name: "$server_name"
-+
-+            # Remote address variables
-+            X-Remote-Addr: "$remote_addr"
-+            X-Remote-User: "${remote_user:anonymous}"
-+            X-Proxy-Add-XFF: "$proxy_add_x_forwarded_for"
-+
-+            # Time variables
-+            X-Time-ISO8601: "$time_iso8601"
-+            X-Time-Local: "$time_local"
-+            X-Time-Msec: "$msec"
-+
-+            # Content variables
-+            X-Content-Type: "${content_type:none}"
-+            X-Content-Length: "${content_length:0}"
-+            X-Server-Protocol: "$server_protocol"
-+            X-Request-Time: "$request_time"
-+            X-Request-Length: "$request_length"
-+
-+            # HTTP headers examples
-+            X-Original-User-Agent: "${http_user_agent:unknown}"
-+            X-Original-Accept: "${http_accept:*/*}"
-+            X-Original-XFF: "${http_x_forwarded_for:none}"
-+            X-Original-Host: "${http_host:unknown}"
-+
-+            # Query parameters examples
-+            X-Param-Version: "${arg_version:v1}"
-+            X-Param-Debug: "${arg_debug:false}"
-+            X-Param-Token: "${arg_token:none}"
-+
-+            # Cookie examples
-+            X-Session-ID: "${cookie_session_id:no-session}"
-+            X-User-Pref: "${cookie_user_pref:default}"
-+
-+            # Complex string building examples
-+            X-Backend-URL: "${scheme}://${host}-backend${uri}"
-+            X-Client-Info: "IP: ${remote_addr}, Agent: ${http_user_agent:unknown}"
-+            X-Request-Info: "${request_method} ${uri}?${query_string} from ${remote_addr}"
-+            X-Proxy-Chain: "Forwarded: ${proxy_add_x_forwarded_for}"
-+
-+            # Default value examples
-+            X-API-Version: "${arg_api_version:v2}"
-+            X-Client-ID: "${http_x_client_id:default-client}"
-+            X-Trace-ID: "${http_x_trace_id:auto-generated}"
-+
-+            # Path parameters (will be populated if route has captures)
-+            X-Path-ID: "${id:no-id}"
-+            X-Path-Name: "${name:no-name}"
-+
-+            # Timestamp and protocol info
-+            X-Processing-Time: "Started at ${time_iso8601} using ${server_protocol}"
-+            X-Request-Summary: "Method=${request_method}, Host=${host}, Path=${uri}, Client=${remote_addr}"
-```
-
-**File**: `pkg/api/object.go` (modified, +17/-3)
-```diff
-@@ -142,7 +142,7 @@ func (s *Server) createObject(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 
--	if spec.Categroy() == supervisor.CategorySystemController {
-+	if spec.Category() == supervisor.CategorySystemController {
- 		HandleAPIError(w, r, http.StatusConflict, fmt.Errorf("can't create system controller object"))
- 	}
- 
-@@ -186,7 +186,7 @@ func (s *Server) deleteObject(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 
--	if spec.Categroy() == supervisor.CategorySystemController {
-+	if spec.Category() == supervisor.CategorySystemController {
- 		HandleAPIError(w, r, http.StatusBadRequest, fmt.Errorf("can't delete system controller object"))
- 		return
- 	}
-@@ -200,6 +200,13 @@ func (s *Server) deleteObject(w http.ResponseWriter, r *http.Request) {
- 		}
- 	}
- 
-+	objectOwner := spec.Labels()[supervisor.ObjectLabelKeyOwner]
-+	if objectOwner != "" && objectOwner != supervisor.ObjectLabelValueUserAPI {
-+		HandleAPIError(w, r, http.StatusBadRequest,
-+			fmt.Errorf("can't delete %s owned by %s via API", name, objectOwner))
-+		return
-+	}
-+
- 	s._deleteObject(name)
- 	s.upgradeConfigVersion(w, r)
- }
-@@ -212,7 +219,7 @@ func (s *Server) deleteObjects(w http.ResponseWriter, r *http.Request) {
- 
- 		specs := s._listObjects()
- 		for _, spec := range specs {
--			if spec.Categroy() == supervisor.CategorySystemController {
-+			if spec.Category() == supervisor.CategorySystemController {
- 				continue
- 			}
- 
-@@ -326,6 +333,13 @@ func (s *Server) updateObject(w http.ResponseWriter, r *http.Request) {
- 		}
- 	}
- 
-+	objectOwner := spec.Labels()[supervisor.ObjectLabelKeyOwner]
-+	if objectOwner != "" && objectOwner != supervisor.ObjectLabelValueUserAPI {
-+		HandleAPIError(w, r, http.StatusBadRequest,
-+			fmt.Errorf("can't update %s owned by %s via API", name, objectOwner))
-+		return
-+	}
-+
- 	s._putObject(spec)
- 	s.upgradeConfigVersion(w, r)
- }
-```
-
-**File**: `pkg/filters/validator/validator.go` (modified, +6/-3)
-```diff
-@@ -19,9 +19,8 @@
- package validator
+@@ -20,6 +20,9 @@ package kafka
  
  import (
--	"net/http"
--
  	"fmt"
-+	"net/http"
++	"sync"
++	"sync/atomic"
++	"time"
  
+ 	"github.com/Shopify/sarama"
  	"github.com/megaease/easegress/v2/pkg/context"
- 	"github.com/megaease/easegress/v2/pkg/filters"
-@@ -80,7 +79,11 @@ type (
+@@ -32,13 +35,14 @@ const (
+ 	// Kind is the kind of Kafka
+ 	Kind = "KafkaMQTT"
  
- // Validate verifies that at least one of the validations is defined.
- func (spec Spec) Validate() error {
--	if spec == (Spec{}) {
-+	if spec.Headers == nil &&
-+		spec.JWT == nil &&
-+		spec.Signature == nil &&
-+		spec.OAuth2 == nil &&
-+		spec.BasicAuth == nil {
- 		return fmt.Errorf("none of the validations are defined")
- 	}
- 	return nil
-```
-
-**File**: `pkg/object/httpserver/httpserver_test.go` (modified, +13/-4)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"testing"
- 	"time"
- 
-+	"github.com/megaease/easegress/v2/pkg/cluster"
- 	"github.com/megaease/easegress/v2/pkg/context/contexttest"
- 	"github.com/megaease/easegress/v2/pkg/logger"
- 	"github.com/megaease/easegress/v2/pkg/option"
-@@ -36,6 +37,16 @@ func TestMain(m *testing.M) {
- }
- 
- func TestHTTPServer(t *testing.T) {
-+	// NOTE: For loading system controller TrafficController.
-+	etcdDirName, err := os.MkdirTemp("", "trafficcontroller-test")
-+	if err != nil {
-+		t.Error(err.Error())
-+	}
-+	defer os.RemoveAll(etcdDirName)
-+
-+	cls := cluster.CreateClusterForTest(etcdDirName)
-+	supervisor.MustNew(&option.Options{}, cls)
-+
- 	assert := assert.New(t)
- 
- 	yamlConfig := `
-@@ -45,9 +56,7 @@ port: 38081
- keepAlive: true
- https: false
- `
--	super := supervisor.NewMock(option.New(), nil, nil,
--		nil, false, nil, nil)
--	superSpec, err := super.NewSpec(yamlConfig)
-+	superSpec, err := supervisor.NewSpec(yamlConfig)
- 	assert.NoError(err)
- 
- 	svr := &HTTPServer{}
-@@ -60,7 +69,7 @@ port: 38082
- keepAlive: true
- https: false
- `
--	superSpec, err = super.NewSpec(yamlConfig)
-+	superSpec, err = supervisor.NewSpec(yamlConfig)
- 	assert.NoError(err)
- 	svr2 := &HTTPServer{}
- 	svr2.Inherit(superSpec, svr, &contexttest.MockedMuxMapper{})
-```
-
-**File**: `pkg/object/httpserver/mux.go` (modified, +154/-3)
-```diff
-@@ -30,7 +30,9 @@ import (
- 	"text/template"
- 	"time"
- 
-+	"github.com/megaease/easegress/v2/pkg/filters/proxies/httpproxy"
- 	"github.com/megaease/easegress/v2/pkg/object/httpserver/routers"
-+	"github.com/megaease/easegress/v2/pkg/object/pipeline"
- 
- 	lru "github.com/hashicorp/golang-lru"
- 	"github.com/megaease/easegress/v2/pkg/object/globalfilter"
-@@ -42,6 +44,7 @@ import (
- 	"github.com/megaease/easegress/v2/pkg/protocols/httpprot/httpstat"
- 	"github.com/megaease/easegress/v2/pkg/supervisor"
- 	"github.com/megaease/easegress/v2/pkg/tracing"
-+	"github.com/megaease/easegress/v2/pkg/util/codectool"
- 	"github.com/megaease/easegress/v2/pkg/util/fasttime"
- 	"github.com/megaease/easegress/v2/pkg/util/ipfilter"
- 	"github.com/megaease/easegress/v2/pkg/util/readers"
-@@ -56,8 +59,9 @@ const (
- 
- type (
- 	mux struct {
--		httpStat *httpstat.HTTPStat
--		topN     *httpstat.TopN
-+		superSpec *supervisor.Spec
-+		httpStat  *httpstat.HTTPStat
-+		topN      *httpstat.TopN
- 
- 		inst atomic.Value // *muxInstance
- 	}
-@@ -151,6 +155,7 @@ func newMux(httpStat *httpstat.HTTPStat, topN *httpstat.TopN,
- }
- 
- func (m *mux) reload(superSpec *supervisor.Spec, muxMapper context.MuxMapper) {
-+	m.superSpec = superSpec
- 	spec := superSpec.ObjectSpec().(*Spec)
- 
- 	tracer := tracing.NoopTracer
-@@ -188,7 +193,7 @@ func (m *mux) reload(superSpec *supervisor.Spec, muxMapper context.MuxMapper) {
- 		tracer:             tracer,
- 		accessLogFormatter: newAccessLogFormatter(spec.AccessLogFormat),
- 	}
--	spec.Rules.Init()
-+	spec.Rules.Init(superSpec.Name())
- 	inst.router = routers.Create(routerKind, spec.Rules)
- 
- 	if spec.CacheSize > 0 {
-@@ -198,9 +203,135 @@ func (m *mux) reload(superSpec *supervisor.Spec, muxMapper context.MuxMapper) {
- 		}
- 		inst.cache = arc
- 	}
-+
-+	m.reloadBackendPipelines(superSpec)
-+
- 	m.inst.Store(inst)
- }
- 
-+func (m *mux) reloadBackendPipelines(superSpec *supervisor.Spec) {
-+	spec := superSpec.ObjectSpec().(*Spec)
-+
-+	pipelineNames := map[string]struct{}{}
-+	for ruleIndex, rule := range spec.Rules {
-+		for pathIndex, path := range rule.Paths {
-+			if path.BackendPool == nil {
-+				continue
-+			}
-+
-+			pipelineName := routers.GenerateBackendPoolPipeline(superSpec.Name(), ruleIndex, pathIndex)
-+
-+			pipelineSpec, err := m.newProxyPipelineSpec(superSpec, pipelineName, path.BackendPool)
-+			if err != nil {
-+				logger.Errorf("BUG: new proxy pipeline spec failed: %v", err)
-+				continue
-+			}
-+
-+			err = m._putObject(superSpec, pipelineSpec)
-+			if err != nil {
-+				logger.Errorf("httpserver %s put backend pipeline %s failed: %v", superSpec.Name(), pipelineName, err)
-+				continue
-+			}
-+
-+			logger.Debugf("httpserver %s apply backend pipeline %s", superSpec.Name(), pipelineName)
-+			pipelineNames[pipelineName] = struct{}{}
-+		}
-+	}
-+
-+	objects, err := m._listObjects(superSpec)
-+	if err != nil {
-+		logger.Errorf("httpserver %s list backend pipelines failed: %v", superSpec.Name(), err)
-+		return
-+	}
-+	for _, obj := range objects {
-+		category, name, labels := obj.Category(), obj.Name(), obj.Labels()
-+
-+		if category != supervisor.CategoryPipeline {
-+			continue
-+		}
-+
-+		if labels[supervisor.ObjectLabelKeyOwner] != superSpec.AsOwner() {
-+			continue
-+		}
-+
-+		if _, exists := pipelineNames[name]; !exists {
-+			m._deleteObject(superSpec, obj)
-+			logger.Debugf("httpserver %s delete backend pipeline %s", superSpec.Name(), name)
-+		}
-+	}
-+}
-+
-+func (m *mux) _putObject(superSpec *supervisor.Spec, pipelineSpec *supervisor.Spec) error {
-+	cluster := superSpec.Super().Cluster()
-+	err := cluster.Put(cluster.Layout().ConfigObjectKey(pipelineSpec.Name()),
-+		pipelineSpec.JSONConfig())
-+	return err
-+}
-+
-+func (m *mux) _deleteObject(superSpec *supervisor.Spec, pipelineSpec *supervisor.Spec) error {
-+	cluster := superSpec.Super().Cluster()
-+	return cluster.Delete(cluster.Layout().ConfigObjectKey(pipelineSpec.Name()))
-+}
-+
-+func (m *mux) _listObjects(superSpec *supervisor.Spec) ([]*supervisor.Spec, error) {
-+	cluster := superSpec.Super().Cluster()
-+
-+	kvs, err := cluster.GetPrefix(cluster.Layout().ConfigObjectPrefix())
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	specs := make([]*supervisor.Spec, 0, len(kvs))
-+	for _, v := range kvs {
-+		spec, err := superSpec.Super().NewSpec(v)
-+		if err != nil {
-+			return nil, err
-+		}
-+		specs = append(specs, spec)
-+	}
-+
-+	return specs, nil
-+}
-+
-+func (m *mux) newProxyPipelineSpec(superSpec *supervisor.Spec, pipelineName string, pool *httpproxy.ServerPoolSpec) (*supervisor.Spec, error) {
-+	proxyFilterName := "proxy"
-+	proxyMap := map[string]interface{}{
-+		"name":  proxyFilterName,
-+		"kind":  "Proxy",
-+		"pools": []interface{}{pool},
-+	}
-+
-+	pipelineMap := map[string]interface{}{
-+		"kind": "Pipeline",
-+		"name": pipelineName,
-+		"labels": map[string]interface{}{
-+			supervisor.ObjectLabelKeyOwner: superSpec.AsOwner(),
-+		},
-+		"createdAt": time.Now().UTC().Format(time.RFC3339Nano),
-+
-+		"flow": []pipeline.FlowNode{{FilterName: proxyFilterName}},
-+		"filters": []map[string]interface{}{
-+			proxyMap,
-+		},
-+	}
-
-```
-
----
-
-### Incident Patch 7: `ce7c3683` (2025-08-25)
-**Commit Message**: bump go version to 1.24 and fix 1.24 go vet (#1481)
-
-**File**: `.github/workflows/code.analysis.yml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ on:
-       - ".github/workflows/code.analysis.yml"
- 
- env:
--  GO_VERSION: "1.23"
-+  GO_VERSION: "1.24"
- 
- jobs:
-   analysis:
-```
-
-**File**: `.github/workflows/golangci.lint.yml` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ on:
-       - ".github/workflows/golangci.lint.yml"
- 
- env:
--  GO_VERSION: "1.23"
-+  GO_VERSION: "1.24"
- 
- jobs:
-   analysis:
-```
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ on:
-       - "v*"
- 
- env:
--  GO_VERSION: "1.23"
-+  GO_VERSION: "1.24"
- 
- permissions:
-   contents: write
-```
-
-**File**: `.github/workflows/test.yml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ on:
-       - ".github/workflows/test.yml"
- 
- env:
--  GO_VERSION: "1.23"
-+  GO_VERSION: "1.24"
- 
- jobs:
-   test-ubuntu:
-```
-
-**File**: `Makefile` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ INTEGRATION_TEST_PATH := build/test
- 
- # Image Name
- IMAGE_NAME?=megaease/easegress
--BUILDER_IMAGE_NAME?=megaease/golang:1.23-alpine
-+BUILDER_IMAGE_NAME?=megaease/golang:1.24-alpine
- 
- # Version
- RELEASE?=v2.9.0
-```
-
-**File**: `SECURITY.md` (modified, +2/-2)
-```diff
-@@ -6,9 +6,9 @@ Supported [Go versions](https://go.dev/dl/):
- 
- | Version | Supported          |
- | ------- | ------------------ |
-+| 1.25.x   | :white_check_mark: |
- | 1.24.x   | :white_check_mark: |
--| 1.23.x   | :white_check_mark: |
--| < 1.23  | :x:                |
-+| < 1.24  | :x:                |
- 
- # Reporting a Vulnerability
- 
-```
-
-**File**: `build/package/Dockerfile.builder` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--FROM golang:1.23-alpine
-+FROM golang:1.24-alpine
- RUN apk --no-cache add make git
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/megaease/easegress/v2
- 
--go 1.23.0
-+go 1.24
- 
- toolchain go1.24.5
- 
-```
-
----
-
-### Incident Patch 8: `c75b13a6` (2025-07-31)
-**Commit Message**: Docs: Fix some format and problems (#1467)
-
-* Docs: Fix markdown format problems
-
-* Docs: Fix markdown table
-
-**File**: `docs/02.Tutorials/2.9.AI-Gateway.md` (modified, +13/-8)
-```diff
-@@ -122,39 +122,44 @@ openai-provider(openai)  gpt-4o@https://api.openai.com  /v1/chat/completions 2
- deepseek-provider(deepseek) deepseek-chat@https://api.deepseek.com /v1/chat/completions 2  2/0  107  18/177
- ```
- 
--
- ## Benchmark
- 
- In this benchmark, we compare popular open-source solutions providing AI gateway capabilities, including our own `Easegress`, as well as `Kong` and `APISIX`. Our goal is to provide clear, reproducible data to help users choose the right gateway for their scenarios.
- 
- ### Test Environment
-+
- #### Machine
-+
- Benchmark machine: dual Intel Xeon Gold 5220R CPUs (96 cores, 192 threads), 251 GiB RAM.
- 
- #### Configs
--See scripts for benchmark in [here](../../scripts/benchmark/aigateway).
-+
-+See the benchmark scripts in [the benchmark scripts directory](../../scripts/benchmark/aigateway).
- 
- #### Mock LLM Server
--To ensure fair comparison and reproducibility, we used a mock LLM server to simulate inference requests and responses. This allows us to focus on the gateway performance itself. 
- 
--See mock server implementation [here](../../scripts/benchmark/aigateway/llm/).
-+To ensure fair comparison and reproducibility, we used a mock LLM server to simulate inference requests and responses. This allows us to focus on the gateway performance itself.
-+
-+See the [mock server implementation](../../scripts/benchmark/aigateway/llm/).
- 
- ### Benchmark Results
-+
- 1000 requests with 50 concurrency:
--| Name | QPS (Request/sec) | Latency (ms) | 
-+
-+| Name | QPS (Request/sec) | Latency (ms) |
- | ---- | ----------------- | ------------ |
- | Easegress | 11075 | 3.9 |
- | APISIX | 10979 | 4.2 |
- | Kong | 7528 | 6.2 |
- 
--
- 10000 requests with 1000 concurrency:
--| Name | QPS (Request/sec) | Latency (ms) | 
-+
-+| Name | QPS (Request/sec) | Latency (ms) |
- | ---- | ----------------- | ------------ |
- | Easegress | 13496 | 7.1 |
- | APISIX | 15055 | 6.4 |
- | Kong | 9061 | 10.7 |
- 
- The results demonstrate that `Easegress` delivers high throughput and low latency, outperforming `Kong` and matching or slightly trailing `APISIX` in certain high-concurrency scenarios.
- 
--See more details of result [here](../../scripts/benchmark/aigateway/result/).
-+See more details of the benchmark results in [the benchmark results directory](../../scripts/benchmark/aigateway/result/).
-```
-
-**File**: `docs/07.Reference/7.01.Controllers.md` (modified, +10/-0)
-```diff
-@@ -47,6 +47,14 @@
-   - [resilience.Policy](#resiliencepolicy)
-     - [Retry Policy](#retry-policy)
-     - [CircuitBreaker Policy](#circuitbreaker-policy)
-+  - [aigatewaycontroller.ProviderSpec](#aigatewaycontrollerproviderspec)
-+    - [Supported Providers](#supported-providers)
-+  - [aigatewaycontroller.MiddlewareSpec](#aigatewaycontrollermiddlewarespec)
-+  - [aigatewaycontroller.SemanticCacheSpec](#aigatewaycontrollersemanticcachespec)
-+  - [aigatewaycontroller.EmbeddingSpec](#aigatewaycontrollerembeddingspec)
-+  - [aigatewaycontroller.VectorDBSpec](#aigatewaycontrollervectordbspec)
-+  - [aigatewaycontroller.RedisSpec](#aigatewaycontrollerredisspec)
-+  - [aigatewaycontroller.PostgresSpec](#aigatewaycontrollerpostgresspec)
- 
- As the [architecture diagram](../imgs/architecture.png) shows, the controller is the core entity to control kinds of working. There are two kinds of controllers overall:
- 
-@@ -931,6 +939,8 @@ See more details about `Retry`, `CircuitBreaker`, or other resilience policies i
- | deploymentID | string            | Deployment ID (used for Azure OpenAI)                         | No       |
- | apiVersion   | string            | API version (used for Azure OpenAI)                           | No       |
- 
-+#### Supported Providers
-+
- The providerType can be one of the following:
- 
- - anthropic
-```
-
----
-
-### Incident Patch 9: `2d3791ae` (2025-07-25)
-**Commit Message**: fix release yaml (#1464)
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@ jobs:
-           go mod download
-           go test -v ./pkg/...
-   integration-test-ubuntu:
--    needs: [test, test-win]
-+    needs: [test-ubuntu, test-macos, test-win]
-     runs-on: ubuntu-latest
-     strategy:
-       fail-fast: false
-```
-
----
-
-### Incident Patch 10: `910619af` (2025-07-25)
-**Commit Message**: fix release fail (#1463)
-
-**File**: `.github/workflows/release.yml` (modified, +25/-2)
-```diff
-@@ -12,12 +12,12 @@ permissions:
-   contents: write
- 
- jobs:
--  test:
-+  test-ubuntu:
-     runs-on: ${{ matrix.os }}
-     strategy:
-       fail-fast: false
-       matrix:
--        os: [ubuntu-latest, macos-latest]
-+        os: [ubuntu-latest]
-     steps:
-       - name: Set up Go 1.x.y
-         uses: actions/setup-go@v4
-@@ -31,6 +31,27 @@ jobs:
-         shell: bash
-         run: |
-           make test TEST_FLAGS="-race -covermode=atomic"
-+  test-macos:
-+    runs-on: ${{ matrix.os }}
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        os: [macos-latest]
-+    steps:
-+      - name: Set up Go 1.x.y
-+        uses: actions/setup-go@v4
-+        with:
-+          go-version: ${{ env.GO_VERSION }}
-+
-+      - name: Checkout codebase
-+        uses: actions/checkout@v3
-+
-+      - name: Test
-+        shell: bash
-+        env:
-+          EASEGRESS_TEST_SKIP_DOCKER: "true"
-+        run: |
-+          make test TEST_FLAGS="-race -coverprofile=coverage.txt -covermode=atomic"
-   test-win:
-     runs-on: windows-latest
-     strategy:
-@@ -45,6 +66,8 @@ jobs:
-         uses: actions/checkout@v3
- 
-       - name: Test
-+        env:
-+          EASEGRESS_TEST_SKIP_DOCKER: "true"
-         run: |
-           go mod verify
-           go mod download
-```
-
----
-
-### Incident Patch 11: `54c1e6d9` (2025-06-26)
-**Commit Message**: Fix the match of register and unregister of APIs (#1448)
-
-**File**: `pkg/api/api.go` (modified, +10/-2)
-```diff
-@@ -74,7 +74,11 @@ func RegisterAPIs(apiGroup *Group) {
- 	apis[apiGroup.Group] = apiGroup
- 
- 	logger.Infof("register api group %s", apiGroup.Group)
--	apisChangeChan <- struct{}{}
-+
-+	select {
-+	case apisChangeChan <- struct{}{}:
-+	default:
-+	}
- }
- 
- // UnregisterAPIs unregisters the API group.
-@@ -91,7 +95,11 @@ func UnregisterAPIs(group string) {
- 	delete(apis, group)
- 
- 	logger.Infof("unregister api group %s", group)
--	apisChangeChan <- struct{}{}
-+
-+	select {
-+	case apisChangeChan <- struct{}{}:
-+	default:
-+	}
- }
- 
- func (s *Server) registerAPIs() {
-```
-
-**File**: `pkg/object/function/worker/api.go` (modified, +4/-5)
-```diff
-@@ -42,11 +42,11 @@ func (worker *Worker) faasAPIPrefix() string {
- 	return fmt.Sprintf("/faas/%s", worker.name)
- }
- 
--const apiGroupName = "faas_admin"
-+const APIGroupName = "faas_admin"
- 
- func (worker *Worker) registerAPIs() {
- 	group := &api.Group{
--		Group: apiGroupName,
-+		Group: APIGroupName,
- 		Entries: []*api.Entry{
- 			{Path: worker.faasAPIPrefix(), Method: "POST", Handler: worker.Create},
- 			{Path: worker.faasAPIPrefix(), Method: "GET", Handler: worker.List},
-@@ -61,9 +61,8 @@ func (worker *Worker) registerAPIs() {
- 	api.RegisterAPIs(group)
- }
- 
--// UnregisterAPIs unregister APIs
--func (worker *Worker) UnregisterAPIs() {
--	api.UnregisterAPIs(apiGroupName)
-+func (worker *Worker) unregisterAPIs() {
-+	api.UnregisterAPIs(APIGroupName)
- }
- 
- func (worker *Worker) readFunctionName(w http.ResponseWriter, r *http.Request) (string, error) {
-```
-
-**File**: `pkg/object/function/worker/worker.go` (modified, +2/-0)
-```diff
-@@ -188,6 +188,8 @@ func (worker *Worker) Close() {
- 	worker.mutex.Lock()
- 	defer worker.mutex.Unlock()
- 
-+	worker.unregisterAPIs()
-+
- 	close(worker.done)
- 	worker.ingress.Close()
- }
-```
-
-**File**: `pkg/object/meshcontroller/api/api.go` (modified, +3/-3)
-```diff
-@@ -127,7 +127,7 @@ type (
- 	}
+-	resultGetDataFailed = "getDataFailed"
++	resultGetDataFailed       = "getDataFailed"
++	resultProducerUnavailable = "producerUnavailable"
  )
  
--const apiGroupName = "mesh_admin"
-+const APIGroupName = "mesh_admin"
+ var kind = &filters.Kind{
+ 	Name:        Kind,
+ 	Description: "Kafka is a kafka proxy for MQTT requests",
+-	Results:     []string{resultGetDataFailed},
++	Results:     []string{resultGetDataFailed, resultProducerUnavailable},
+ 	DefaultSpec: func() filters.Spec {
+ 		return &Spec{}
+ 	},
+@@ -54,15 +58,26 @@ func init() {
+ type (
+ 	// Kafka is a kafka proxy for MQTT requests.
+ 	Kafka struct {
+-		spec     *Spec
+-		producer sarama.AsyncProducer
+-		done     chan struct{}
++		spec      *Spec
++		producer  sarama.AsyncProducer
++		done      chan struct{}
++		closeOnce sync.Once
++
++		mu           sync.RWMutex
++		reconnecting int32
++		lastErr      string
  
- // New creates a API
- func New(superSpec *supervisor.Spec) *API {
-@@ -148,12 +148,12 @@ func New(superSpec *supervisor.Spec) *API {
- 
- // Close unregisters a API
- func (a *API) Close() {
--	api.UnregisterAPIs(apiGroupName)
-+	api.UnregisterAPIs(APIGroupName)
- }
- 
- func (a *API) registerAPIs() {
- 	group := &api.Group{
--		Group: apiGroupName,
-+		Group: APIGroupName,
- 		Entries: []*api.Entry{
- 			{Path: MeshTenantPrefix, Method: "GET", Handler: a.listTenants},
- 			{Path: MeshTenantPrefix, Method: "POST", Handler: a.createTenant},
-```
-
-**File**: `pkg/object/mqttproxy/broker.go` (modified, +9/-3)
-```diff
-@@ -149,6 +149,9 @@ func newBroker(spec *Spec, store storage, muxMapper context.MuxMapper, memberURL
- 		broker.sessionCacheMgr = newSessionCacheManager(spec, broker.topicMgr)
+ 		defaultTopic string
+ 		topicKey     string
+ 		headerKey    string
+ 		payloadKey   string
  	}
- 	broker.connectWatcher()
 +
-+	broker.registerAPIs()
-+
- 	return broker
++	// Status is the runtime status of Kafka.
++	Status struct {
++		Health string `json:"health"`
++		Ready  bool   `json:"ready"`
++	}
+ )
+ 
+ var _ filters.Filter = (*Kafka)(nil)
+@@ -94,42 +109,151 @@ func (k *Kafka) setKV() {
+ 	}
  }
  
-@@ -326,7 +329,6 @@ func (b *Broker) handleNewSessionInCluster(clientID string, v *string, sessionIn
- 		c.ClientID(), info.EGName)
- 	c.kickOut()
- 	b.removeClient(clientID)
--
- }
+-var newAsyncProducer = sarama.NewAsyncProducer
++var (
++	newAsyncProducer        = sarama.NewAsyncProducer
++	producerRetryBackoff    = time.Second
++	producerMaxRetryBackoff = 30 * time.Second
++)
  
- func (b *Broker) deleteSession(clientID string) {
-@@ -470,7 +472,6 @@ func (b *Broker) handleConn(conn net.Conn) {
- 		b.clients[client.info.cid] = client
- 		return nil, nil
- 	}(client.info.cid)
--
+-func (k *Kafka) setProducer() {
++func (k *Kafka) setProducer() error {
+ 	config := sarama.NewConfig()
+ 	config.ClientID = k.spec.Name()
+ 	config.Version = sarama.V1_0_0_0
++	config.Producer.Return.Successes = true
+ 	producer, err := newAsyncProducer(k.spec.Backend, config)
  	if err != nil {
- 		// Concurrent connection exceed maxium quotas, returned
- 		return
-@@ -639,7 +640,6 @@ func (b *Broker) requestTransferToCertainInstances(span *model.SpanContext, publ
- 			resp.Body.Close()
- 		}
+-		panic(fmt.Errorf("start sarama producer with address %v failed: %v", k.spec.Backend, err))
++		return fmt.Errorf("start sarama producer with address %v failed: %v", k.spec.Backend, err)
  	}
--
- }
- 
- func (b *Broker) processBrokerModePublish(clientID string, publish *packets.PublishPacket) {
-@@ -859,6 +859,10 @@ func (b *Broker) registerAPIs() {
- 	api.RegisterAPIs(group)
- }
- 
-+func (b *Broker) unregisterAPIs() {
-+	api.UnregisterAPIs(b.name)
++	k.setReadyProducer(producer)
++	logger.Infof("kafka mqtt filter %s build sarama producer successfully", k.spec.Name())
++
++	go k.watchProducer(producer)
++	return nil
 +}
 +
- func (b *Broker) setClose() {
- 	atomic.StoreInt32(&b.closeFlag, 1)
- }
-@@ -869,6 +873,8 @@ func (b *Broker) closed() bool {
++func (k *Kafka) setReadyProducer(producer sarama.AsyncProducer) {
++	k.mu.Lock()
+ 	k.producer = producer
++	k.lastErr = ""
++	k.mu.Unlock()
++}
++
++func (k *Kafka) clearProducer(producer sarama.AsyncProducer) {
++	k.mu.Lock()
++	if k.producer == producer {
++		k.producer = nil
++	}
++	k.mu.Unlock()
++}
++
++func (k *Kafka) getProducer() sarama.AsyncProducer {
++	k.mu.RLock()
++	defer k.mu.RUnlock()
++	return k.producer
++}
++
++func (k *Kafka) setLastErr(err error) {
++	k.mu.Lock()
++	if err == nil {
++		k.lastErr = ""
++	} else {
++		k.lastErr = producerErrString(err)
++	}
++	k.mu.Unlock()
++}
++
++func producerErrString(err error) string {
++	if err == nil {
++		return ""
++	}
++	if producerErr, ok := err.(*sarama.ProducerError); ok && producerErr.Err == nil {
++		return "sarama producer failed"
++	}
++	return err.Error()
++}
++
++func (k *Kafka) scheduleReconnect() {
++	if !atomic.CompareAndSwapInt32(&k.reconnecting, 0, 1) {
++		return
++	}
++	retryBackoff := producerRetryBackoff
++	maxRetryBackoff := producerMaxRetryBackoff
+ 
+ 	go func() {
++		defer atomic.StoreInt32(&k.reconnecting, 0)
++		backoff := retryBackoff
+ 		for {
+-			select {
+-			case <-k.done:
+-				err := producer.Close()
+-				if err != nil {
+-					logger.Errorf("close kafka producer failed: %v", err)
+-				}
++			if !k.waitReconnect(backoff) {
+ 				return
+-			case err, ok := <-producer.Errors():
+-				if !ok {
+-					return
+-				}
+-				logger.SpanErrorf(nil, "sarama producer failed: %v", err)
+ 			}
++
++			err := k.setProducer()
++			if err == nil {
++				return
++			}
++			k.setLastErr(err)
++			logger.Errorf("%s kafka producer unavailable: %v", k.spec.Name(), err)
++			backoff = nextProducerBackoff(backoff, maxRetryBackoff)
+ 		}
+ 	}()
  }
  
- func (b *Broker) close() {
-+	b.unregisterAPIs()
++func (k *Kafka) waitReconnect(backoff time.Duration) bool {
++	timer := time.NewTimer(backoff)
++	defer timer.Stop()
 +
- 	b.setClose()
- 	close(b.done)
- 	b.listener.Close()
++	select {
++	case <-k.done:
++		return false
++	case <-timer.C:
++		return true
++	}
++}
++
++func nextProducerBackoff(backoff, maxBackoff time.Duration) time.Duration {
++	backoff *= 2
++	if backoff > maxBackoff {
++		return maxBackoff
++	}
++	return backoff
++}
++
++func (k *Kafka) watchProducer(producer sarama.AsyncProducer) {
++	successes := producer.Successes()
++	for {
++		select {
++		case <-k.done:
++			if err := producer.Close(); err != nil {
++				logger.Errorf("close kafka producer failed: %v", err)
++			}
++			return
++		case _, ok := <-successes:
++			if !ok {
++				successes = nil
++				continue
++			}
++			k.setLastErr(nil)
++		case err, ok := <-producer.Errors():
++			if !ok {
++				k.clearProducer(producer)
++				k.scheduleReconnect()
++				return
++			}
++			k.setLastErr(err)
++			logger.SpanErrorf(nil, "sarama producer failed: %s", producerErrString(err))
++		}
++	}
++}
++
+ // Init init Kafka
+ func (k *Kafka) Init() {
+ 	k.done = make(chan struct{})
+ 	k.setKV()
+-	k.setProducer()
++	if err
 ```
 
-**File**: `pkg/object/mqttproxy/mqttproxy.go` (modified, +0/-1)
+**File**: `pkg/filters/kafka/kafka_test.go` (modified, +187/-12)
 ```diff
-@@ -155,7 +155,6 @@ func (mp *MQTTProxy) Init(superSpec *supervisor.Spec, muxMapper context.MuxMappe
- 	if mp.broker == nil {
- 		panic(fmt.Sprintf("broker %v start failed", spec.Name))
+@@ -27,20 +27,23 @@ import (
+ 	"github.com/megaease/easegress/v2/pkg/filters"
+ 	"github.com/megaease/easegress/v2/pkg/logger"
+ 	"github.com/megaease/easegress/v2/pkg/protocols/mqttprot"
++	"github.com/megaease/easegress/v2/pkg/supervisor"
+ 
+ 	"github.com/Shopify/sarama"
+ 	"github.com/eclipse/paho.mqtt.golang/packets"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ )
+ 
+ func init() {
+ 	logger.InitNop()
+ }
+ 
+ type mockAsyncProducer struct {
+-	ch      chan *sarama.ProducerMessage
+-	errorCh chan *sarama.ProducerError
+-	closed  int32
++	ch        chan *sarama.ProducerMessage
++	errorCh   chan *sarama.ProducerError
++	successCh chan *sarama.ProducerMessage
++	closed    int32
+ }
+ 
+ func (m *mockAsyncProducer) IsTransactional() bool {
+@@ -72,7 +75,7 @@ func (m *mockAsyncProducer) AddMessageToTxn(msg *sarama.ConsumerMessage, groupID
+ }
+ 
+ func (m *mockAsyncProducer) AsyncClose()                               {}
+-func (m *mockAsyncProducer) Successes() <-chan *sarama.ProducerMessage { return nil }
++func (m *mockAsyncProducer) Successes() <-chan *sarama.ProducerMessage { return m.successCh }
+ func (m *mockAsyncProducer) Errors() <-chan *sarama.ProducerError      { return m.errorCh }
+ 
+ func (m *mockAsyncProducer) Input() chan<- *sarama.ProducerMessage {
+@@ -87,8 +90,9 @@ var _ sarama.AsyncProducer = (*mockAsyncProducer)(nil)
+ 
+ func newMockAsyncProducer() sarama.AsyncProducer {
+ 	return &mockAsyncProducer{
+-		ch:      make(chan *sarama.ProducerMessage, 100),
+-		errorCh: make(chan *sarama.ProducerError),
++		ch:        make(chan *sarama.ProducerMessage, 100),
++		errorCh:   make(chan *sarama.ProducerError),
++		successCh: make(chan *sarama.ProducerMessage),
  	}
--	mp.broker.registerAPIs()
  }
  
- // Inherit inherits previous generation of MQTTProxy.
-```
-
----
-
-### Incident Patch 12: `221cb89f` (2025-04-03)
-**Commit Message**: fix: build/package/Dockerfile.builder to reduce vulnerabilities (#1413)
-
-The following vulnerabilities are fixed with an upgrade:
-- https://snyk.io/vuln/SNYK-ALPINE320-MUSL-8720638
-- https://snyk.io/vuln/SNYK-ALPINE320-MUSL-8720638
-- https://snyk.io/vuln/SNYK-ALPINE320-OPENSSL-8235201
-- https://snyk.io/vuln/SNYK-ALPINE320-OPENSSL-8690013
-- https://snyk.io/vuln/SNYK-ALPINE320-OPENSSL-8710359
-
-Co-authored-by: snyk-bot <[REDACTED_EMAIL]>
-
-**File**: `build/package/Dockerfile.builder` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--FROM golang:1.22.7-alpine
-+FROM golang:1.24.2-alpine
- RUN apk --no-cache add make git
-```
-
----
-
-### Incident Patch 13: `75c81f4e` (2025-04-02)
-**Commit Message**: fix goreleaser (#1414)
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -83,6 +83,6 @@ jobs:
-       - uses: goreleaser/goreleaser-action@v4
-         with:
-           version: latest
--          args: release --rm-dist
-+          args: release --clean
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-**File**: `.goreleaser.yml` (modified, +2/-2)
-```diff
-@@ -1,3 +1,5 @@
-+version: 2
-+
- before:
-   hooks:
-     # You may remove this if you don't use go modules.
-@@ -9,8 +11,6 @@ snapshot:
-   name_template: "{{ .Version }}"
- checksum:
-   name_template: "checksums.txt"
--changelog:
--  skip: true
+@@ -111,29 +115,63 @@ func newContext(cid string, username string, topic string, payload []byte) *cont
+ 	req := mqttprot.NewRequest(packet, client)
  
- builds:
-   - id: client
+ 	ctx.SetInputRequest(req)
++	ctx.SetResponse(context.DefaultNamespace, mqttprot.NewResponse())
+ 	return ctx
+ }
+ 
++func setTestProducerRetryBackoff(t *testing.T, backoff time.Duration) {
++	t.Helper()
++	oldRetryBackoff := producerRetryBackoff
++	oldMaxRetryBackoff := producerMaxRetryBackoff
++	producerRetryBackoff = backoff
++	producerMaxRetryBackoff = backoff
++	t.Cleanup(func() {
++		producerRetryBackoff = oldRetryBackoff
++		producerMaxRetryBackoff = oldMaxRetryBackoff
++	})
++}
++
++func setTestProducerFactory(t *testing.T, factory func([]string, *sarama.Config) (sarama.AsyncProducer, error)) {
++	t.Helper()
++	oldFactory := newAsyncProducer
++	newAsyncProducer = factory
++	t.Cleanup(func() {
++		newAsyncProducer = oldFactory
++	})
++}
++
+ func TestKafka(t *testing.T) {
+ 	assert := assert.New(t)
++	setTestProducerRetryBackoff(t, 10*time.Millisecond)
++	setTestProducerFactory(t, func(addrs []string, conf *sarama.Config) (sarama.AsyncProducer, error) {
++		return nil, fmt.Errorf("mock producer unavailable")
++	})
++
+ 	spec := &Spec{
+ 		Backend: []string{"localhost:1234"},
+ 	}
+ 	filterSpec := defaultFilterSpec(spec)
+ 	k := kind.CreateInstance(filterSpec)
+ 	assert.Equal(&Spec{}, kind.DefaultSpec())
+-	assert.Panics(func() { k.Init() }, "kafka should panic for invalid backend")
++	assert.NotPanics(func() { k.Init() }, "kafka should retry for invalid backend")
++	defer k.Close()
+ 	assert.Equal(spec.BaseSpec.MetaSpec.Name, k.Name())
+ 	assert.Equal(kind, k.Kind())
+ 	assert.Equal(filterSpec, k.Spec())
+-	assert.Nil(k.Status())
++	status := k.Status().(*Status)
++	assert.False(status.Ready)
++	assert.Contains(status.Health, "mock producer unavailable")
++
++	mqttCtx := newContext("test", "user123", "a/b/c", []byte("text"))
++	assert.Equal(resultProducerUnavailable, k.Handle(mqttCtx))
++	assert.True(mqttCtx.GetOutputResponse().(*mqttprot.Response).Drop())
+ 
+ 	kafka := Kafka{
+ 		producer: newMockAsyncProducer(),
+ 		done:     make(chan struct{}),
+ 	}
+ 
+-	mqttCtx := newContext("test", "user123", "a/b/c", []byte("text"))
++	mqttCtx = newContext("test", "user123", "a/b/c", []byte("text"))
+ 	kafka.Handle(mqttCtx)
+ 	msg := <-kafka.producer.(*mockAsyncProducer).ch
+ 
+@@ -155,7 +193,8 @@ func TestKafka(t *testing.T) {
+ 	assert.Equal("text", string(value))
+ 
+ 	newK := kind.CreateInstance(filterSpec)
+-	assert.Panics(func() { newK.Inherit(k) })
++	assert.NotPanics(func() { newK.Inherit(k) })
++	newK.Close()
+ }
+ 
+ func TestKafkaWithKVMap(t *testing.T) {
+@@ -192,9 +231,9 @@ func TestKafkaWithKVMap(t *testing.T) {
+ func TestKafka2(t *testing.T) {
+ 	assert := assert.New(t)
+ 
+-	newAsyncProducer = func(addrs []string, conf *sarama.Config) (sarama.AsyncProducer, error) {
++	setTestProducerFactory(t, func(addrs []string, conf *sarama.Config) (sarama.AsyncProducer, error) {
+ 		return newMockAsyncProducer(), nil
+-	}
++	})
+ 	spec := &Spec{
+ 		Backend: []string{"localhost:1234"},
+ 		KVMap: &KVMap{
+@@ -210,6 +249,18 @@ func TestKafka2(t *testing.T) {
+ 	p := kafka.producer.(*mockAsyncProducer)
+ 	p.errorCh <- &sarama.ProducerError{}
+ 
++	for i := 0; i < 100; i++ {
++		status := kafka.Status().(*Status)
++		if status.Health == "sarama producer failed" {
++			assert.
 ```
 
----
-
-### Incident Patch 14: `b3c9f77e` (2025-01-07)
-**Commit Message**: fix: build/package/Dockerfile.builder to reduce vulnerabilities (#1330)
-
-The following vulnerabilities are fixed with an upgrade:
-- https://snyk.io/vuln/SNYK-ALPINE320-OPENSSL-7895537
-- https://snyk.io/vuln/SNYK-ALPINE320-OPENSSL-7895537
-
-Co-authored-by: snyk-bot <[REDACTED_EMAIL]>
-
-**File**: `build/package/Dockerfile.builder` (modified, +1/-1)
+**File**: `pkg/filters/kafka/spec.go` (modified, +1/-1)
 ```diff
-@@ -1,2 +1,2 @@
--FROM golang:1.21.12-alpine
-+FROM golang:1.22.7-alpine
- RUN apk --no-cache add make git
-```
-
----
-
-### Incident Patch 15: `5989d04d` (2024-07-03)
-**Commit Message**: fix: build/package/Dockerfile.builder to reduce vulnerabilities (#1305)
-
-The following vulnerabilities are fixed with an upgrade:
-- https://snyk.io/vuln/SNYK-ALPINE319-BUSYBOX-6913413
-- https://snyk.io/vuln/SNYK-ALPINE319-BUSYBOX-6928845
-- https://snyk.io/vuln/SNYK-ALPINE319-BUSYBOX-6928846
-- https://snyk.io/vuln/SNYK-ALPINE319-BUSYBOX-6928846
-- https://snyk.io/vuln/SNYK-ALPINE319-BUSYBOX-6928847
-
-Co-authored-by: snyk-bot <[REDACTED_EMAIL]>
-
-**File**: `build/package/Dockerfile.builder` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--FROM golang:1.21.7-alpine
-+FROM golang:1.21.12-alpine
- RUN apk --no-cache add make git
+@@ -26,7 +26,7 @@ type (
+ 
+ 		Backend []string `json:"backend" jsonschema:"required,uniqueItems=true"`
+ 		Topic   *Topic   `json:"topic" jsonschema:"required"`
+-		KVMap   *KVMap   `json:"mqtt" jsonschema:"required"`
++		KVMap   *KVMap   `json:"mqtt,omitempty"`
+ 	}
+ 
+ 	// Topic defined ways to get Kafka topic
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1526** (2026-10-13): fix(kafka): retry mqtt producer startup (@xxx7xxxx)
 - **PR #1524** (2026-07-01): Harden Helm admin API defaults (@xxx7xxxx)
 - **PR #1523** (closed): [codex] Harden Helm admin API defaults (@xxx7xxxx)
 - **PR #1521** (2026-06-26): Update contact info (@xxx7xxxx)
 - **PR #1519** (2026-06-04): [Snyk] Security upgrade golang from 1.26.1-alpine to 1.26.4-alpine (@caniszczyk)
 - **PR #1518** (2026-05-29): fix(grpcproxy): do not degrade pool on gRPC application-level errors (fixes #1517) (@akpradheeph)
-- **PR #1516** (closed): [Snyk] Security upgrade golang from 1.26.1-alpine to 1.26.3-alpine (@xxx7xxxx)
-- **PR #1515** (closed): [Snyk] Security upgrade golang from 1.26.1-alpine to 1.26.2-alpine (@xxx7xxxx)
-- **PR #1514** (2026-04-01): 📖 Add KubeStellar Console guided install reference (@clubanderson)
 
 ---
 
@@ -4188,3 +2678,47 @@ Co-authored-by: snyk-bot <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. grpcproxy): do not degrade pool on gRPC application-level errors (fixes #1517) (
+
+**RULE**:
+When implementing operations in `pkg/filters/proxies/grpcproxy/pool.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in easegress-io/easegress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b6be769f`: grpcproxy): do not degrade pool on gRPC application-level errors (fixes #1517) (#1518). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/filters/proxies/grpcproxy/pool.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+				// A well-formed gRPC status error means the backend communicated an
+				// application-level result (e.g. NOT_FOUND, INVALID_ARGUMENT) over a
+				// healthy connection. Marking the pool entry as resultServerError in
+				// that case degrades a perfectly usable backend connection and causes
+				// subsequent calls to stall waiting on pool.borrow(). Only return
+				// resultServerError for transport-level failures (non-gRPC errors)
+				// where the connection itself is broken.
+				if st, isGRPCStatus := status.FromError(s2cErr); isGRPCStatus {
+					// Preserve the backend's gRPC status so the caller receives the
+					// correct code (e.g. NOT_FOUND, INVALID_ARGUMENT). The connection
+					// itself is healthy so we still return nil to avoid pool degradation.
+					ctx.resp.SetStatus(st)
+					return nil
+				}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b6be769f` are properly handled with clean fallback behavior.

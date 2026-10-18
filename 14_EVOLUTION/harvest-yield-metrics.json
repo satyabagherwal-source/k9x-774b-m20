@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:58:18.679Z",
-  "total_cycles_completed": 2511,
-  "total_learnings_persisted": 2511,
-  "total_rules_promoted": 1524,
+  "last_updated": "2026-10-18T22:04:24.680Z",
+  "total_cycles_completed": 2517,
+  "total_learnings_persisted": 2517,
+  "total_rules_promoted": 1530,
   "history": [
-    {
-      "timestamp": "2026-10-17T22:57:23.878Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:00:39.679Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:03:42.722Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:07:02.172Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:10:12.802Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-altworld-hemmingway-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:13:35.138Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T23:16:59.331Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-18T21:58:18.679Z",
       "repository": "liyupi/yu-ai-agent",
       "learningId": "learn-github-liyupi-yu-ai-agent",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:04:11.378Z",
+      "repository": "Tencent/omi",
+      "learningId": "learn-github-tencent-omi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:04:13.214Z",
+      "repository": "googleworkspace/cli",
+      "learningId": "learn-github-googleworkspace-cli",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:04:18.044Z",
+      "repository": "react-navigation/react-navigation",
+      "learningId": "learn-github-react-navigation-react-navigation",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:04:20.700Z",
+      "repository": "easegress-io/easegress",
+      "learningId": "learn-github-easegress-io-easegress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:04:23.342Z",
+      "repository": "mimblewimble/grin",
+      "learningId": "learn-github-mimblewimble-grin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:04:24.680Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

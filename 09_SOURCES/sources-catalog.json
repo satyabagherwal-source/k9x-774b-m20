@@ -2708,5 +2708,65 @@
     "contentHash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
     "lastHarvestedAt": "2026-10-18T21:58:18.677Z",
     "learningId": "learn-github-liyupi-yu-ai-agent"
+  },
+  "tencent-omi": {
+    "repository": "Tencent/omi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Tencent/omi",
+    "sourceVersion": "117655cd",
+    "license": "NOASSERTION",
+    "contentHash": "a648c692785d376cd822cbf836b0ef4513c74c6f23bb1402204b325587a3c175",
+    "lastHarvestedAt": "2026-10-18T22:04:11.376Z",
+    "learningId": "learn-github-tencent-omi"
+  },
+  "googleworkspace-cli": {
+    "repository": "googleworkspace/cli",
+    "platform": "github",
+    "sourceUrl": "https://github.com/googleworkspace/cli",
+    "sourceVersion": "a3768d0e",
+    "license": "Apache-2.0",
+    "contentHash": "951cf9aebe41e1ce939679c347b1a90ef2dc5c3e8c27b9681125bac94ce2d591",
+    "lastHarvestedAt": "2026-10-18T22:04:13.212Z",
+    "learningId": "learn-github-googleworkspace-cli"
+  },
+  "react-navigation-react-navigation": {
+    "repository": "react-navigation/react-navigation",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-navigation/react-navigation",
+    "sourceVersion": "11e8bd2d",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "ce39cdff3bea627ad0c594122fb15677b3567a7fb5323ff43215bf7c5fb3ae5a",
+    "lastHarvestedAt": "2026-10-18T22:04:18.042Z",
+    "learningId": "learn-github-react-navigation-react-navigation"
+  },
+  "easegress-io-easegress": {
+    "repository": "easegress-io/easegress",
+    "platform": "github",
+    "sourceUrl": "https://github.com/easegress-io/easegress",
+    "sourceVersion": "48bacc2e",
+    "license": "Apache-2.0",
+    "contentHash": "72c406de9f113c4b64ba0fd4fe4d8480fabbfb8d820dcbdb0348cdf3fba246aa",
+    "lastHarvestedAt": "2026-10-18T22:04:20.699Z",
+    "learningId": "learn-github-easegress-io-easegress"
+  },
+  "mimblewimble-grin": {
+    "repository": "mimblewimble/grin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mimblewimble/grin",
+    "sourceVersion": "dbaff34f",
+    "license": "Apache-2.0",
+    "contentHash": "45bb49d0d206e492e17dbda2be718de17d85d03b513ff76c34e665d9e66a2db5",
+    "lastHarvestedAt": "2026-10-18T22:04:23.340Z",
+    "learningId": "learn-github-mimblewimble-grin"
+  },
+  "xerj-org-xerj": {
+    "repository": "xerj-org/xerj",
+    "platform": "github",
+    "sourceUrl": "https://github.com/xerj-org/xerj",
+    "sourceVersion": "317f3af6",
+    "license": "Apache-2.0",
+    "contentHash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
+    "lastHarvestedAt": "2026-10-18T22:04:24.678Z",
+    "learningId": "learn-github-xerj-org-xerj"
   }
 }

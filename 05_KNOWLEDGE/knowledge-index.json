@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:58:18.646Z",
-  "total_verified_learnings": 292,
+  "last_updated": "2026-10-18T22:04:24.646Z",
+  "total_verified_learnings": 298,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5825,22 +5825,35 @@
     "learn-github-easegress-io-easegress": {
       "learning_id": "learn-github-easegress-io-easegress",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "easegress-io-easegress",
+      "source": "easegress-io/easegress",
+      "repository": "easegress-io/easegress",
       "slug": "easegress-io-easegress",
       "platform": "github",
       "source_url": "https://github.com/easegress-io/easegress",
-      "source_version": "HEAD",
-      "content_hash": "8f7580e513fd968118e2e6114bf2c800dd7cea95a2a45761682e7ace6c54ecaa",
+      "source_version": "48bacc2e",
+      "content_hash": "72c406de9f113c4b64ba0fd4fe4d8480fabbfb8d820dcbdb0348cdf3fba246aa",
       "dossier_path": "07_PROJECT_LEARNING/easegress-io-easegress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/easegress-io-easegress-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1760,
+          "title": "grpcproxy): do not degrade pool on gRPC application-level errors (fixes #1517) (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.735Z"
+      "verified_at": "2026-10-18T22:04:20.652Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-edenfunf-reelmimic": {
       "learning_id": "learn-github-edenfunf-reelmimic",
@@ -8377,22 +8390,35 @@
     "learn-github-googleworkspace-cli": {
       "learning_id": "learn-github-googleworkspace-cli",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "googleworkspace-cli",
+      "source": "googleworkspace/cli",
+      "repository": "googleworkspace/cli",
       "slug": "googleworkspace-cli",
       "platform": "github",
       "source_url": "https://github.com/googleworkspace/cli",
-      "source_version": "HEAD",
-      "content_hash": "d452daae9b1713601c78b321cd65c3b31a3baa9cc17f73dfb0e6d901da5f45e2",
+      "source_version": "a3768d0e",
+      "content_hash": "951cf9aebe41e1ce939679c347b1a90ef2dc5c3e8c27b9681125bac94ce2d591",
       "dossier_path": "07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/googleworkspace-cli-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1758,
+          "title": "remove cargo-dist, use native fetch for npm installer (#646)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.168Z"
+      "verified_at": "2026-10-18T22:04:13.175Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gorhom-react-native-bottom-sheet": {
       "learning_id": "learn-github-gorhom-react-native-bottom-sheet",
@@ -25297,22 +25323,35 @@
     "learn-github-mimblewimble-grin": {
       "learning_id": "learn-github-mimblewimble-grin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mimblewimble-grin",
+      "source": "mimblewimble/grin",
+      "repository": "mimblewimble/grin",
       "slug": "mimblewimble-grin",
       "platform": "github",
       "source_url": "https://github.com/mimblewimble/grin",
-      "source_version": "HEAD",
-      "content_hash": "e57c62b7332997584ae2970e98b5e12f28ac8df13f6607e33a43a6fcfc638eb7",
+      "source_version": "dbaff34f",
+      "content_hash": "45bb49d0d206e492e17dbda2be718de17d85d03b513ff76c34e665d9e66a2db5",
       "dossier_path": "07_PROJECT_LEARNING/mimblewimble-grin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mimblewimble-grin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1761,
+          "title": "REST address bind fix (#3917)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.368Z"
+      "verified_at": "2026-10-18T22:04:23.295Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ming1016-swiftpamphletapp": {
       "learning_id": "learn-github-ming1016-swiftpamphletapp",
@@ -29664,22 +29703,35 @@
     "learn-github-react-navigation-react-navigation": {
       "learning_id": "learn-github-react-navigation-react-navigation",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-navigation-react-navigation",
+      "source": "react-navigation/react-navigation",
+      "repository": "react-navigation/react-navigation",
       "slug": "react-navigation-react-navigation",
       "platform": "github",
       "source_url": "https://github.com/react-navigation/react-navigation",
-      "source_version": "HEAD",
-      "content_hash": "a7b68f355bb62692046c170d918145ede55fd3999e09694fd9db7e03b7f41bd3",
+      "source_version": "11e8bd2d",
+      "content_hash": "ce39cdff3bea627ad0c594122fb15677b3567a7fb5323ff43215bf7c5fb3ae5a",
       "dossier_path": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1759,
+          "title": "restart card animation when StrictMode re-runs effects",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.222Z"
+      "verified_at": "2026-10-18T22:04:17.994Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-react-native": {
       "learning_id": "learn-github-react-react-native",
@@ -33323,22 +33375,35 @@
     "learn-github-tencent-omi": {
       "learning_id": "learn-github-tencent-omi",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tencent-omi",
+      "source": "Tencent/omi",
+      "repository": "Tencent/omi",
       "slug": "tencent-omi",
       "platform": "github",
       "source_url": "https://github.com/Tencent/omi",
-      "source_version": "HEAD",
-      "content_hash": "55e6a42219866e99505302edd3a9b3eb71f1c343ddfa5ce616dbee6350c80d8f",
+      "source_version": "117655cd",
+      "content_hash": "a648c692785d376cd822cbf836b0ef4513c74c6f23bb1402204b325587a3c175",
       "dossier_path": "07_PROJECT_LEARNING/tencent-omi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-omi-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1757,
+          "title": "Merge pull request #1001 from dvd233/codex/fix-event-capture-handlers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.909Z"
+      "verified_at": "2026-10-18T22:04:11.340Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
@@ -35566,22 +35631,35 @@
     "learn-github-xerj-org-xerj": {
       "learning_id": "learn-github-xerj-org-xerj",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "xerj-org-xerj",
+      "source": "xerj-org/xerj",
+      "repository": "xerj-org/xerj",
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "HEAD",
-      "content_hash": "5b1a1578f53aa5744dbeb493a7e3a8e2f9548b7348b3bd4b885f62a102b485e7",
+      "source_version": "317f3af6",
+      "content_hash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1762,
+          "title": "deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.361Z"
+      "verified_at": "2026-10-18T22:04:24.641Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-xerrors-yuxi": {
       "learning_id": "learn-github-xerrors-yuxi",
@@ -67278,6 +67356,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:58:18.640Z"
+    },
+    "rule-1757": {
+      "learning_id": "rule-1757",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1757,
+      "title": "Merge pull request #1001 from dvd233/codex/fix-event-capture-handlers",
+      "source_url": "https://github.com/Tencent/omi",
+      "source_version": "117655cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:04:11.340Z"
+    },
+    "rule-1758": {
+      "learning_id": "rule-1758",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1758,
+      "title": "remove cargo-dist, use native fetch for npm installer (#646)",
+      "source_url": "https://github.com/googleworkspace/cli",
+      "source_version": "a3768d0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:04:13.175Z"
+    },
+    "rule-1759": {
+      "learning_id": "rule-1759",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1759,
+      "title": "restart card animation when StrictMode re-runs effects",
+      "source_url": "https://github.com/react-navigation/react-navigation",
+      "source_version": "11e8bd2d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:04:17.995Z"
+    },
+    "rule-1760": {
+      "learning_id": "rule-1760",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1760,
+      "title": "grpcproxy): do not degrade pool on gRPC application-level errors (fixes #1517) (",
+      "source_url": "https://github.com/easegress-io/easegress",
+      "source_version": "48bacc2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:04:20.652Z"
+    },
+    "rule-1761": {
+      "learning_id": "rule-1761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1761,
+      "title": "REST address bind fix (#3917)",
+      "source_url": "https://github.com/mimblewimble/grin",
+      "source_version": "dbaff34f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:04:23.295Z"
+    },
+    "rule-1762": {
+      "learning_id": "rule-1762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1762,
+      "title": "deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "317f3af6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:04:24.641Z"
     }
   },
   "aliases": {

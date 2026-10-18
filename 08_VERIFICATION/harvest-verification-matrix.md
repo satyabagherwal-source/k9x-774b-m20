@@ -2534,3 +2534,9 @@
 | `CYCLE-20261018-A5N7` | `2026-10-18T21:58:17.875Z` | `Permify/permify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1754` | Yes (`add33db4...`) |
 | `CYCLE-20261018-A61C` | `2026-10-18T21:58:18.384Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1755` | Yes (`85c739ea...`) |
 | `CYCLE-20261018-A69F` | `2026-10-18T21:58:18.675Z` | `liyupi/yu-ai-agent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1756` | Yes (`56c3ff58...`) |
+| `CYCLE-20261018-HQEM` | `2026-10-18T22:04:11.374Z` | `Tencent/omi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1757` | Yes (`a648c692...`) |
+| `CYCLE-20261018-HRTL` | `2026-10-18T22:04:13.209Z` | `googleworkspace/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1758` | Yes (`951cf9ae...`) |
+| `CYCLE-20261018-HVJR` | `2026-10-18T22:04:18.039Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1759` | Yes (`ce39cdff...`) |
+| `CYCLE-20261018-HXLK` | `2026-10-18T22:04:20.696Z` | `easegress-io/easegress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1760` | Yes (`72c406de...`) |
+| `CYCLE-20261018-HZMY` | `2026-10-18T22:04:23.338Z` | `mimblewimble/grin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1761` | Yes (`45bb49d0...`) |
+| `CYCLE-20261018-I0O4` | `2026-10-18T22:04:24.676Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1762` | Yes (`b78c5988...`) |

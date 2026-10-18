@@ -2541,3 +2541,9 @@ Every entry in this ledger must capture:
 | `learn-github-permify-permify` | `https://github.com/Permify/permify` | `43ce9031` | Multi-dimensional audit evidence | 2026-10-18T21:58:17.878Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `bb2165fa` | Multi-dimensional audit evidence | 2026-10-18T21:58:18.387Z |
 | `learn-github-liyupi-yu-ai-agent` | `https://github.com/liyupi/yu-ai-agent` | `6d4608c5` | Multi-dimensional audit evidence | 2026-10-18T21:58:18.677Z |
+| `learn-github-tencent-omi` | `https://github.com/Tencent/omi` | `117655cd` | Multi-dimensional audit evidence | 2026-10-18T22:04:11.376Z |
+| `learn-github-googleworkspace-cli` | `https://github.com/googleworkspace/cli` | `a3768d0e` | Multi-dimensional audit evidence | 2026-10-18T22:04:13.212Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `11e8bd2d` | Multi-dimensional audit evidence | 2026-10-18T22:04:18.042Z |
+| `learn-github-easegress-io-easegress` | `https://github.com/easegress-io/easegress` | `48bacc2e` | Multi-dimensional audit evidence | 2026-10-18T22:04:20.699Z |
+| `learn-github-mimblewimble-grin` | `https://github.com/mimblewimble/grin` | `dbaff34f` | Multi-dimensional audit evidence | 2026-10-18T22:04:23.340Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `317f3af6` | Multi-dimensional audit evidence | 2026-10-18T22:04:24.678Z |

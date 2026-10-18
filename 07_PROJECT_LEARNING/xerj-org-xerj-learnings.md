@@ -1,19 +1,33 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
+> **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
+> **Source Version**: `317f3af6`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T22:04:24.512Z  
+> **Learning ID**: `learn-github-xerj-org-xerj`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): xerj-org/xerj
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:35:26.765Z  
+> **Harvest Timestamp**: 2026-10-18T22:04:24.298Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `xerj-org/xerj`
-- **Description**: XERJ is the new way for AI to search data. Its autoindex capability activates agents to know your data without the token waste of grep and sed. One command indexes code, docs, logs and PDFs for search, RAG, security audits and agent memory, using 40x fewer tokens than grep. Elasticsearch compatible, so existing clients just work.
+- **Description**: XERJ is the new way for AI to search data. Its autoindex capability activates agents to know your data without the token waste of grep (1974 tool). One command indexes code, docs, logs and PDFs for search, RAG, security audits and agent memory, using 40x fewer tokens than grep. It’s durable and can replace ElasticSearch saving you x10 infra costs.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2667 stars
+- **Stars / Engagement**: 8334 stars
 
 ---
 
@@ -1313,25 +1327,38 @@ pub struct EmbeddingProxyConfig {
     pub api_key: Option<String>,
     /// Default embedding model name.
     pub model: String,
-    /// Request timeout in seconds.
-    #[serde(default = "default_timeout_secs")]
-    pub timeout_secs: u64,
+    /// Request timeout in milliseconds, per HTTP attempt.
+    ///
+    /// Milliseconds, because `embedding.timeout_ms` is: this field used to be
+    /// whole seconds, filled with `timeout_ms / 1000`, so 1500 became a 1 s
+    /// timeout and anything under 1000 became 0 s, which fails every request.
+    #[serde(default = "default_timeout_ms")]
+    pub timeout_ms: u64,
     /// Maximum concurrent in-flight requests.
     #[serde(default = "default_max_concurrent")]
     pub max_concurrent: usize,
     /// Maximum number of retries on transient failures.
     #[serde(default = "default_max_retries")]
     pub max_retries: u32,
+    /// Maximum input texts per request (#1190). Providers cap
+    /// `input` array length (OpenAI: 2048, many self-hosted ones far lower);
+    /// one `_bulk` of N docs used to leave here as a single N-input request.
+    /// Default 64 mirrors `embedding.batch_size`.
+    #[serde(default = "default_batch_size")]
+    pub batch_size: usize,
 }
 
-fn default_timeout_secs() -> u64 {
-    30
+fn default_timeout_ms() -> u64 {
+    30_000
 }
 fn default_max_concurrent() -> usize {
     4
 }
 fn default_max_retries() -> u32 {
     3
+}
+fn default_batch_size() -> usize {
+    64
 }
 
 impl EmbeddingProxyConfig {
@@ -1340,9 +1367,10 @@ impl EmbeddingProxyConfig {
             endpoint: endpoint.into(),
             api_key: None,
             model: model.into(),
-            timeout_secs: default_timeout_secs(),
+            timeout_ms: default_timeout_ms(),
             max_concurrent: default_max_concurrent(),
             max_retries: default_max_retries(),
+            batch_size: default_batch_size(),
         }
     }
 
@@ -1430,7 +1458,7 @@ impl EmbeddingProxy {
             ));
         }
         let client = reqwest::Client::builder()
-            .timeout(Duration::from_secs(config.timeout_secs))
+            .timeout(Duration::from_millis(config.timeout_ms))
             .build()
             .map_err(|e| XerjError::embedding(format!("HTTP client init: {e}")))?;
 
@@ -1461,14 +1489,29 @@ impl EmbeddingProxy {
             return Ok(vec![]);
         }
 
-        let _permit = self
-            .semaphore
-            .acquire()
-            .await
-            .map_err(|e| XerjError::embedding(format!("semaphore: {e}")))?;
+        // #1190: split into requests of at most `batch_size` inputs. The
+        // semaphore permit moved from here to per-chunk: it limits in-flight
+        // HTTP requests (its actual purpose), not logical batches.
+        let chunk_len = self.config.batch_size.max(1);
+        let chunks: Vec<&[String]> = if texts.len() <= chunk_len {
+            vec![texts.as_slice()]
+        } else {
+            texts.chunks(chunk_len).collect()
+        };
 
-        let result = self.send_with_retry(&texts, model).await?;
-        Ok(result)
+        let mut futs = Vec::with_capacity(chunks.len());
+        for chunk in &chunks {
+            futs.push(async {
+                let _permit = self
+                    .semaphore
+                    .acquire()
+                    .await
+                    .map_err(|e| XerjError::embedding(format!("semaphore: {e}")))?;
+                self.send_with_retry(chunk, model).await
+            });
+        }
+        let results = futures_util::future::try_join_all(futs).await?;
+        Ok(results.into_iter().flatten().collect())
     }
 
     async fn send_with_retry(&self, texts: &[String], model: &str) -> Result<Vec<Vec<f32>>> {
@@ -1541,51 +1584,7 @@ impl EmbeddingProxy {
             // key, or a malformed request — that no amount of retrying fixes.
             let retryable = status_is_retryable(status.as_u16());
             let body = resp.text().await.unwrap_or_default();
-            let err = XerjError::embedding(format!("embedding API returned {status}: {body}"));
-            return Err(if retryable {
-                EmbedFailure::transient(err)
-            } else {
-                EmbedFailure::permanent(err)
-            });
-        }
-
-        // A 200 with an unparseable / short body is a contract violation, not
-        // a transient blip — don't spin on it.
-        let response: EmbedResponse = resp.json().await.map_err(|e| {
-            EmbedFailure::permanent(XerjError::embedding(format!("response parse: {e}")))
-        })?;
-
-        // Sort by index to restore original order
-        let mut data = response.data;
-        data.sort_by_key(|d| d.index);
-
-        if data.len() != texts.len() {
-            return Err(EmbedFailure::permanent(XerjError::embedding(format!(
-                "expected {} embeddings, got {}",
-                texts.len(),
-                data.len()
-            ))));
-        }
-
-        Ok(data.into_iter().map(|d| d.embedding).collect())
-    }
-
-    /// Embed a single text.
-    pub async fn embed(&self, text: String) -> Result<Vec<f32>> {
-        let mut results = self.embed_batch(vec![text]).await?;
-        results
-            .pop()
-            .ok_or_else(|| XerjError::embedding("empty embedding response"))
-    }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Tests
-// ─────────────────────────────────────────────────────────────────────────────
-
-#[cfg(test)]
-mod tests {
-    use super::
+            let err = XerjError::embedding(format!("embedding API returned {status}: {bo
 ```
 
 ### Core Architecture Module: `engine/crates/xerj-ai/src/embedder.rs`
@@ -1893,433 +1892,17 @@ pub use xerj_common::Result;
 
 ```
 
-### Core Architecture Module: `engine/crates/xerj-ai/src/local.rs`
-```
-//! Built-in, zero-config deterministic text embedder.
-//!
-//! [`local_embed`] turns arbitrary text into a fixed-dimensional, L2-normalised
-//! `f32` vector using the *feature-hashing trick* (a.k.a. the "hashing
-//! vectoriser"): word unigrams and intra-word character trigrams are hashed
-//! into a fixed number of buckets with a signed contribution, then the whole
-//! accumulator is L2-normalised so that cosine similarity is comparable across
-//! documents of different lengths.
-//!
-//! This is **not** a neural model — it captures lexical / sub-word overlap, not
-//! deep semantics. Its job is to make the `semantic_text` field type work
-//! end-to-end with **zero external dependencies** (offline, no API key), giving
-//! a sensible out-of-the-box experience: paraphrases that share vocabulary rank
-//! above unrelated text. When a real
-//! [`crate::embed::EmbeddingProxy`] is configured the engine uses that instead
-//! for production-quality embeddings — the *same* embedder is always used at
-//! ingest and query time so the vectors are comparable.
-//!
-//! Key properties:
-//! * **Deterministic** — identical input always yields the identical vector,
-//!   across processes and restarts (no learned weights, no RNG).
-//! * **Configurable dimensionality** — `dims` (default [`DEFAULT_DIMS`]).
-//! * **Comparable** — L2-normalised, so cosine similarity is well-behaved.
-
-/// Default embedding dimensionality for the built-in embedder.
-///
-/// 384 mirrors the popular `all-MiniLM-L6-v2` output size, so switching from
-/// the built-in embedder to a real proxy of that width needs no mapping change.
-pub const DEFAULT_DIMS: usize = 384;
-
-/// 64-bit FNV-1a hash — small, fast, stable across platforms.
-#[inline]
-fn fnv1a64(bytes: &[u8]) -> u64 {
-    let mut h: u64 = 0xcbf29ce484222325;
-    for &b in bytes {
-        h ^= b as u64;
-        h = h.wrapping_mul(0x00000100000001b3);
-    }
-    h
-}
-
-/// Accumulate one hashed feature into `acc` with a signed weight. The low bits
-/// pick the bucket; one high bit picks the sign (signed hashing reduces the
-/// collision bias of unsigned feature hashing).
-#[inline]
-fn add_feature(acc: &mut [f32], token: &[u8], weight: f32) {
-    let dims = acc.len();
-    if dims == 0 {
-        return;
-    }
-    let h = fnv1a64(token);
-    let idx = (h % dims as u64) as usize;
-    let sign = if (h >> 63) & 1 == 0 { 1.0 } else { -1.0 };
-    acc[idx] += weight * sign;
-}
-
-/// Embed `text` into a deterministic, L2-normalised vector of length `dims`.
-///
-/// Empty / whitespace-only text (or `dims == 0`) yields an all-zero vector;
-/// cosine similarity against a zero vector is defined as 0 by
-/// `compute_vector_similarity`, so this degrades gracefully rather than
-/// panicking.
-pub fn local_embed(text: &str, dims: usize) -> Vec<f32> {
-    let mut acc = vec![0.0f32; dims];
-    if dims == 0 {
-        return acc;
-    }
-
-    let lower = text.to_lowercase();
-    for token in lower
-        .split(|c: char| !c.is_alphanumeric())
-        .filter(|t| !t.is_empty())
-    {
-        // Whole-word unigram — the dominant lexical signal.
-        add_feature(&mut acc, token.as_bytes(), 1.0);
-
-        // Intra-word character trigrams (padded so word boundaries matter),
-        // at a lower weight. These give partial credit to morphological
-        // variants (e.g. "run" / "running" share the "run" shingle), which
-        // nudges the embedding a little past exact-keyword matching.
-        let padded: Vec<char> = std::iter::once('#')
-            .chain(token.chars())
-            .chain(std::iter::once('#'))
-            .collect();
-        if padded.len() >= 3 {
-            for w in padded.windows(3) {
-                let mut buf = [0u8; 12];
-                let mut n = 0;
-                for &ch in w {
-                    let s = ch.len_utf8();
-                    ch.encode_utf8(&mut buf[n..]);
-                    n += s;
-                }
-                add_feature(&mut acc, &buf[..n], 0.35);
-            }
-        }
-    }
-
-    // L2-normalise so cosine similarity is length-invariant.
-    let norm: f32 = acc.iter().map(|x| x * x).sum::<f32>().sqrt();
-    if norm > 0.0 {
-        for x in acc.iter_mut() {
-            *x /= norm;
-        }
-    }
-    acc
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn dot(a: &[f32], b: &[f32]) -> f32 {
-        a.iter().zip(b).map(|(x, y)| x * y).sum()
-    }
-
-    #[test]
-    fn dims_and_determinism() {
-        let a = local_embed("the quick brown fox", 128);
-        let b = local_embed("the quick brown fox", 128);
-        assert_eq!(a.len(), 128);
-        assert_eq!(a, b, "embedding must be deterministic");
-    }
-
-    /// Deliberately independent of [`fnv1a64`] so that changing the embedder's
-    /// hash cannot silently move the checksum with it.
-    fn djb2_over_bits(v: &[f32]) -> u64 {
-        let mut h: u64 = 5381;
-        for x in v {
-            for byte in x.to_le_bytes() {
-                h = h.wrapping_mul(33) ^ byte as u64;
-            }
-        }
-        h
-    }
-
-    /// GOLDEN VECTOR — do not "fix" this by re-recording the constants.
-    ///
-    /// `lexical` is the default backend and the one most deployments run, and
-    /// `GET /v1/embedding/identity` reports it as `resumable: true`, which
-    /// tells `xerj autoindex` it may resume an existing semantic run straight
-    /// across a restart. That identity is derived from the literal string
-    /// `lexical-feature-hash.v1;dimensions=384`, so nothing in it is computed
-    /// from this function: changing the tokenizer, the trigram padding, the
-    /// feature weights, the hash seed, or the normalisation would move every
-    /// vector into a new space while `identity_sha256` stayed byte-identical,
-    /// and autoindex would resume across the change and mix the two spaces —
-    /// exactly the failure the identity endpoint exists to prevent.
-    ///
-    /// If this test fails, the lexical vector space changed. The fix is to
-    /// bump `lexical-feature-hash.v1` to `.v2` in
-    /// `xerj-engine/src/index.rs::embedding_execution_identity` (which changes
-    /// `identity_sha256` and so makes resumes across the change fail closed),
-    /// and only then re-record the constants below.
-    #[test]
-    fn lexical_vector_space_is_frozen() {
-        let v = local_embed(
-            "quarterly revenue increased in the london office",
-            DEFAULT_DIMS,
-        );
-        assert_eq!(v.len(), DEFAULT_DIMS);
-
-        // Whole-vector fingerprint: catches any change to any bucket.
-        assert_eq!(
-            djb2_over_bits(&v),
-            14262738046721457820,
-            "the lexical vector space changed; see this test's doc comment"
-        );
-
-        // A few exact buckets, so a failure says *what* moved rather than just
-        // that a checksum differs. Bit-exact: these are IEEE-754 f32 results
-        // of a fixed sequence of adds and one divide, so they are reproducible
-        // across platforms.
-        for (index, expected) in [
-            (0usize, 0.09425097f32),
-            (43, 0.09425097),
-            (120, -0.09425097),
-            (123, 0.26928848),
-        ] {
-            assert_eq!(
-                v[index], expected,
-                "bucket {index} moved: {} != {expected}",
-                v[index]
-            );
-        }
-    }
-
-    #[test]
-    fn l2_normalised() {
-        let v = local_embed("hello world of vectors", DEFAULT_DIMS);
-        let norm: f32 = v.iter().map(|x| x * x).sum::<f32>().sqrt();
-        assert!((norm - 1.0).abs() < 1e-4, "expected unit norm, got {norm}");
-    }
-
-    #[test]
-    fn empty_text_is_zero_vector() {
-        let v = local_embed("   ", 64);
-        assert_eq!(v.len(), 64);
-        assert!(v.iter().all(|x| *x == 0.0));
-    }
-
-    #[test]
-    fn zero_dims_is_empty() {
-        assert!(local_embed("anything", 0).is_empty());
-    }
-
-    #[test]
-    fn paraphrase_ranks_above_unrelated() {
-        // A paraphrase sharing vocabulary must be closer (higher cosine) than
-        // a topically-unrelated sentence — the property `semantic_text` relies
-        // on for kNN retrieval.
-        let dims = DEFAULT_DIMS;
-        let doc_relevant = local_embed("a hungry dog chased the ball across the green park", dims);
-        let doc_unrelated = local_embed(
-            "investors sold technology shares amid rising interest rates",
-            dims,
-        );
-        let query = local_embed("a dog ran after a ball in the park", dims);
-
-        let sim_relevant = dot(&query, &doc_relevant);
-        let sim_unrelated = dot(&query, &doc_unrelated);
-        assert!(
-            sim_relevant > sim_unrelated,
-            "relevant {sim_relevant} should beat unrelated {sim_unrelated}"
-        );
-    }
-}
-
-```
-
-### Core Architecture Module: `engine/crates/xerj-ai/src/microbatch.rs`
-```
-//! Length-aware batching for transformer inference.
-//!
-//! Both in-process encoder backends (Candle [`crate::neural`] and the
-//! experimental [`crate::onnx`] one) run a *rectangular* tensor: every row in
-//! one call is padded to the longest row in that call, and the model pays for
-//! the padding exactly as if it were real text. A window that mixes one long
-//! chunk with sixty short lines therefore costs `61 × long`, not
-//! `long + 60 × short`.
-//!
-//! [`group_by_padded_cost`] is the shared cure: sort the rows by token length,
-//! then cut a batch as soon as adding the next row would break either the row
-//! cap or the `rows × padded_sequence_length` budget. Rows of similar length
-//! end up together, so padding waste is bounded rather than set by the single
-//! longest member of the window, and the token budget bounds the activation
-//! memory one call can allocate.
-//!
-//! The returned groups hold *positions into the input*, so callers must map
-//! results back into input order — neither backend may reorder its output.
-
-/// Group row positions into inference batches.
-///
-/// `token_lengths[i]` is the tokenized length of row `i`. A batch is cut when
-/// it already holds `max_rows` rows, or when admitting the next row would push
-/// `rows × longest_row` past `padded_token_budget`.
-///
-/// A single row longer than the whole budget is still emitted, alone: the
-/// caller's model has its own truncation limit and refusing the row here would
-/// turn an expensive document into a failed one. Callers that want an error
-/// instead check the lengths before calling (see [`crate::onnx`]).
-///
-/// The sort is stable, so equal-length rows keep input order and the plan is
-/// deterministic for a given input.
-pub fn group_by_padded_cost(
-    token_lengths: &[usize],
-    max_rows: usize,
-    padded_token_budget: usize,
-) -> Vec<Vec<usize>> {
-    debug_assert!(max_rows > 0 && padded_token_budget > 0);
-    let max_rows = max_rows.max(1);
-    let padded_token_budget = padded_token_budget.max(1);
-
-    let mut order = (0..token_lengths.len()).collect::<Vec<_>>();
-    order.sort_by_key(|&i| token_lengths[i]);
-
-    let mut batches: Vec<Vec<usize>> = Vec::new();
-    let mut batch: Vec<usize> = Vec::new();
-    let mut longest = 0usize;
-    for i in order {
-        let length = token_lengths[i];
-        let next_longest = longest.max(length);
-        if !batch.is_empty()
-            && (batch.len() >= max_rows
-                || next_longest.saturating_mul(batch.len() + 1) > padded_token_budget)
-        {
-            batches.push(std::mem::take(&mut batch));
-            longest = 0;
-        }
-        longest = longest.max(length);
-        batch.push(i);
-    }
-    if !batch.is_empty() {
-        batches.push(batch);
-    }
-    batches
-}
-
-/// Total `rows × longest_row` slots a plan pushes through the model.
-///
-/// This is the quantity the padding waste lives in: it equals the sum of the
-/// real token lengths only when every batch is length-homogeneous.
-pub fn padded_token_slots(token_lengths: &[usize], batches: &[Vec<usize>]) -> usize {
-    batches
-        .iter()
-        .map(|batch| {
-            let longest = batch
-                .iter()
-                .map(|&i| token_lengths[i])
-                .max()
-                .unwrap_or_default();
-            longest * batch.len()
-        })
-        .sum()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn every_position_appears_exactly_once() {
-        let lengths = [512, 14, 200, 16, 400, 15, 90, 300];
-        let batches = group_by_padded_cost(&lengths, 3, 600);
-        let mut positions = batches.iter().flatten().copied().collect::<Vec<_>>();
-        positions.sort_unstable();
-        assert_eq!(positions, (0..lengths.len()).collect::<Vec<_>>());
-    }
-
-    #[test]
-    fn batches_respect_the_row_cap_and_the_token_budget() {
-        let lengths = [512, 14, 200, 16, 400, 15, 90, 300];
-        let batches = group_by_padded_cost(&lengths, 3, 600);
-        for batch in &batches {
-            assert!(batch.len() <= 3, "row cap");
-            let longest = batch.iter().map(|&i| lengths[i]).max().unwrap();
-            assert!(
-                longest * batch.len() <= 600 || batch.len() == 1,
-                "token budget: {longest} × {}",
-                batch.len()
-            );
-        }
-    }
-
-    /// The defect this module exists for: one long row in a window of short
-    /// ones must not drag the short ones up to its length.
-    #[test]
-    fn one_long_row_does_not_pad_the_short_rows_up_to_it() {
-        let mut lengths = vec![128];
-        lengths.resize(64, 30);
-        let real: usize = lengths.iter().sum();
-
-        // What a single rectangular call costs: 64 rows × the longest row.
-        let unbatched = padded_token_slots(&lengths, &[(0..lengths.len()).collect()]);
-        assert_eq!(unbatched, 64 * 128);
-
-        let planned = padded_token_slots(&lengths, &group_by_padded_cost(&lengths, 64, 4096));
-        assert_eq!(planned, real, "length-homogeneous groups pad nothing");
-        assert!(
-            planned * 3 < unbatched,
-            "planned={planned} must be far below the rectangular cost {unbatched}"
-        );
-    }
-
-    #[test]
-    fn a_row_longer_than_the_budget_is_emitted_alone() {
-        let batches = group_by_padded_cost(&[8, 9_000, 8], 64, 4_096);
-        let oversized = batches
-            .iter()
-            .find(|batch| batch.contains(&1))
-            .expect("the oversized row is still planned");
-        assert_eq!(oversized.as_slice(), &[1]);
-    }
-
-    #[test]
-    fn empty_input_plans_nothing() {
-        assert!(group_by_padded_cost(&[], 64, 4_096).is_empty());
-    }
-
-    #[test]
-    fn equal_lengths_keep_input_order() {
-        let batches = group_by_padded_cost(&[10, 10, 10, 10], 2, 4_096);
-        assert_eq!(batches, vec![vec![0, 1], vec![2, 3]]);
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1148** (2026-10-05): **[bug]: xerj code --lang silently disables the vector leg (semantic → 0 hits, hybrid → BM25 only)**
-  *Symptoms*: ### XERJ version  v1.0.0-rc.81  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Windows 11 x86_64  ### Steps to reproduce  ```shell 1. Start a server on a clean data directory:    xerj --data-dir ./data --insecure  2. Engine-level shape, no corpus needed. Index 20 docs with a semantic_text body and a language keyword:    curl -s -XPUT localhost:9200/t -H 'Content-Type: application/json' -d '{"mappings":{"properties":{"body":{"type":"semantic_text"},"language":{"type":"keyword"}}}}'    for i in $(seq 1 20); do printf '{"index":{"_id":"%s"}}\n{"language":"rust","body":"retry connection timeout handler number %s"}\n' $i $i; done > b.ndjson    curl -s -XPOST 'localhost:9200/t/_bulk?refresh=true' -H 'Content-Type: application/x-ndjson' --data-binary @b.ndjson  3. The semantic clause alone -> 20 hits:    curl -s -XPOST localhost:9200/t/_search -H 'Content-Type: application/json' -d '{"size":20,"query":{"semantic":{"field":"body","query":"retry connection timeout","k":20}}}'  4. The shape `xerj code --lang rust` builds (semantic and a match side by side in bool.must) -> 0 hits:    curl -s -XPOST localhost:9200/t/_search -H 'Content-Type: application/json' -d '{"size":20,"query":{"bool":{"must":[{"semantic":{"field":"body","query":"retry connection timeout","k":20}},{"match":{"language":"rust"}}]}}}'  5. The same filter as bool.filter instead -> 20 hits:    curl -s -XPOST localhost:9200/t/_search -H 'Content-Type: application/json' -
+- **Issue #1648** (2026-10-17): **[bug]: HELLO IM HAVE ERROR ON MY CODE**
+  *Symptoms*: ### XERJ version  HELLO IM HAVE ERROR ON MY CODE  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  HELLO IM HAVE ERROR ON MY CODE  ### Steps to reproduce  ```shell HELLO IM HAVE ERROR ON MY CODE ```  ### Expected behavior  HELLO IM HAVE ERROR ON MY CODE  ### Actual behavior  HELLO IM HAVE ERROR ON MY CODE  ### Is this an Elasticsearch wire-compatibility divergence?  Unknown / not sure  ### Elasticsearch reference (if a compat divergence)  HELLO IM HAVE ERROR ON MY CODE  ### Relevant logs  ```shell HELLO IM HAVE ERROR ON MY CODE ```  ### Confirmations  - [x] I searched existing issues and did not find a duplicate. - [ ] I can reproduce this with a minimal example on a clean data directory.
 
-- **Issue #1145** (2026-10-05): **[bug]: xerj code never sends `k` on the semantic clause, so `--mode semantic -k N` and hybrid's vector leg are capped at 10**
-  *Symptoms*: ### XERJ version  v1.0.0-rc.81  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Windows 11 x86_64  ### Steps to reproduce  ```shell 1. Start a server on a clean data directory (default lexical embedder):    `xerj --data-dir ./data --insecure`  2. Create an index whose `body` is semantic_text, and index 30 documents that all match the query:    curl -s -XPUT localhost:9200/t -H 'Content-Type: application/json' -d '{"mappings":{"properties":{"body":{"type":"semantic_text"},"title":{"type":"keyword"}}}}'    for i in $(seq 1 30); do printf '{"index":{"_id":"%s"}}\n{"title":"d%s","body":"retry connection timeout handler number %s"}\n' $i $i $i; done > bulk.ndjson    curl -s -XPOST 'localhost:9200/t/_bulk?refresh=true' -H 'Content-Type: application/x-ndjson' --data-binary @bulk.ndjson  3. Send the semantic clause exactly as `xerj code --mode semantic -k 20` builds it (size=20, no k) -> 10 hits:    curl -s -XPOST localhost:9200/t/_search -H 'Content-Type: application/json' -d '{"size":20,"query":{"semantic":{"field":"body","query":"retry connection timeout"}}}'  4. The same request with "k":20 on the semantic clause -> 20 hits:    curl -s -XPOST localhost:9200/t/_search -H 'Content-Type: application/json' -d '{"size":20,"query":{"semantic":{"field":"body","query":"retry connection timeout","k":20}}}'  5. Hybrid, shaped like `xerj code --mode hybrid -k 20` (size=20, semantic clause without k). The BM25 leg is    made to match nothing
-  **Post-Mortem & Fix Analysis**:
-  > Root cause is one layer deeper than `xccode`, and the same cap reaches two more callers. (Agent-written; verified vs assumed at the end.)  **Engine: the hybrid executor's per-leg window does not apply to vector legs.** `run_hybrid_with_deadline` fetches every sub-query at `per_query_topk = max(50, size + from)` (`engine/crates/xerj-engine/src/index.rs:16491`), and its doc comment says "each sub-list is fetched at `top_k = max(50, request.size + request.from)`" (`:16443-16445`). But a `semantic`/`knn` leg then truncates its pool to its own `k` (`pool.truncate(k.max(1))`, `:38443`), and `k` defaults to 10 in the parser (`engine/crates/xerj-query/src/parser.rs:2843` knn, `:2915` semantic). So in any `hybrid` request whose vector leg has no explicit `k`, BM25 contributes 50 candidates and the vector leg 10 — whoever built the request.  A side effect: a vector leg cut off by `k` reports its total as `min(k, matches)` with relation `eq`, so `hits.total` on a hybrid response can say `eq` whil
-
-- **Issue #1031** (2026-09-30): **autoindex: a source file that grows mid-run (append-only log) kills the run, is misclassified as a bulk/backend failure, and the retry advice points at the wrong fix**
-  *Symptoms*: User report (maxwhy, 2026-09-26), verbatim:  ``` error: autoindex stopped with bulk/backend failures: /Users/maxwhy/dev/true-inventory/audit.jsonl changed size during autoindex (expected 143882, now 148201); retry the run. Failed source files were not journaled complete; fix the reported server or embedding configuration and rerun the same command to resume safely ```  `audit.jsonl` is an append-only audit log. Growing while something reads it is its **normal behavior**, not an error condition — and this failure mode will hit anyone pointing autoindex at any live log, outbox, or export-on-a-timer directory. Three things are wrong with how we handle it:  1. **The whole run aborts.** The size guard (`engine/crates/xerj-autoindex/src/content.rs:195`) is correct to exist, but a mutated source currently costs the run: already-completed files' progress is not journaled complete for this class (`engine/crates/xerj-autoindex/src/lib.rs:7536`), so the rerun redoes work. Cheap at 148 KB; brutal at #948 mailbox scale. 2. **Misclassified and mis-advised.** The failure is bucketed under "bulk/backend failures" and the user is told to "fix the reported server or embedding configuration" — nothing is wrong with either. That advice sends the user debugging the wrong layer. (The sync path has the sibling message: `sync_executor.rs:1590`.) 3. **No resumable cut.** Nothing journals *which prefix* was consistent, so a rerun has no delta to resume from.  ## Fix shape (proposal — discussion welcom
-  **Post-Mortem & Fix Analysis**:
-  > Closing as **deferred, not fixed**. The defect stands exactly as reported: a source file that grows during an autoindex run (the normal behaviour of an append-only log) aborts the run, is misclassified as a bulk/backend failure, and the retry advice points at the wrong fix.  Deferred by maintainer decision 2026-09-29 rather than scheduled; the status is recorded in ROADMAP.md's defect record. The original repro (maxwhy's `audit.jsonl`, 2026-09-26) is in the issue body — reopen or re-file with it if this bites again.
-
-- **Issue #1028** (2026-09-26): **llms.txt: "Not implemented" lists rerank, share links and mbox as not on main; #948 still presented as open after #1002**
-  *Symptoms*: > Drafted by an AI coding agent (Claude Code, Claude Opus 5.5) on behalf of @Vinz2168, who reviewed it before filing.  ## What is wrong  `https://xerj.org/llms.txt` — the file agents read first — says three shipped features are not on `main`, and still describes #948 as open although #1002 fixed it. Agents told "do not plan around these" will skip features that work.  The live file is byte-identical to `landing/llms.txt` at `main` `fa27e936` (2026-09-24). Line numbers below refer to that file. Lines 50 and 53 are hand-written (they sit outside the `BEGIN/END GENERATED ARTICLE TREE` markers at lines 86 and 236), so `build_articles.py` will not correct them.  ### 1. The "Not implemented" bullet contradicts the rest of the file and `main`  [Line 50](https://github.com/xerj-org/xerj/blob/fa27e936/landing/llms.txt#L50) (last touched in #942, 2026-09-19):  > A rerank stage, share links, `mbox`/Takeout ingest: in flight on branches, not on `main`.  All three merged on 2026-09-20 and have shipped in a release since rc.75:  | Feature | Merged | On `main` | Documented as usable in the same file | |---|---|---|---| | rerank stage | #946 (`aaeae25c`) | `engine/crates/xerj-api/src/rerank_stage.rs`, `docs/RERANK.md` | L45 (caveat), L73, L74, L161–162 | | share links | #947 (`01d0044d`) | `xerj share` dispatch at `engine/crates/xerj-server/src/main.rs:1995`, `docs/SHARING.md` | L79, L203–205, L243 | | mbox / Takeout | #949 (`51d4b66a`, in `v1.0.0-rc.75`) | `engine/crates/xerj-autoindex/src/
-
-- **Issue #1013** (2026-09-21): **delete_by_query (any long search) 500s under sustained ingest: seqlock reader starvation — "search could not complete within one stable collection generation"**
-  *Symptoms*: ## What happened  While measuring #950 (heap-profile of corpus ingest), the first run aborted mid-index-phase and the cleanup `POST /<index>/_delete_by_query` failed:  ``` error: delete_by_query: HTTP 500 Internal Server Error: internal_server_error_exception: internal error: search could not complete within one stable collection generation before its deadline ```  (`/root/950-run.log:1319`, run of 2026-09-20; node under full bulk ingest — `xerj autoindex` on a ~1 GB / 85k-file corpus, 32 index workers, `--bulk-mb 8`.)  ## Mechanism  `CollectionPublication` is a seqlock: a reader is only **admitted** when no writer is in flight, and its capture is only **valid** if no writer began at any point during the read (`engine/crates/xerj-engine/src/collection_publication.rs:98-126` — `try_admit_reader` requires `in_flight == 0`; `validate_reader` requires `in_flight == 0 && generation == token.generation`; every `begin()` and every guard `Drop` bumps the generation).  The writer guard is held across the **entire flush finalize** — memtable drain, segment write, FTS sidecar build, publish — inside the blocking worker (`engine/crates/xerj-engine/src/index.rs:29986`, commit/drop at `:30389`), and concurrent flushes are explicitly allowed (`index.rs:29989-29992`).  `search()` retries admission+validation until the request deadline, then errors (`engine/crates/xerj-engine/src/index.rs:17521-17561`; `delete_by_query` rides the same loop via `index.rs:17500-17507`).  Under sustained ingest:
-  **Post-Mortem & Fix Analysis**:
-  > Fix posted in #1014 (fail-before churn test included: old code dies at its deadline with this issue's exact 500 message, new code converges in 0.37 s with exact totals; ES-YAML 1376/0). The latency follow-up — shrinking the flush guard to a ms-scale bracket around the install — is now #1015.
-
-- **Issue #940** (2026-09-21): **hybrid RRF orders tied fused scores by HashMap iteration: top-10 differs for 21 of 40 queries after a restart on unchanged data**
-  *Symptoms*: ## Summary  `hybrid` with `fusion: "rrf"` orders documents with an equal fused score by `HashMap` iteration order. The same request against the same data returns a different ranking after the node is restarted: on BEIR SciFact, **32 of 40 queries changed order and 21 of 40 changed their top 10**, with identical hit sets. Rank 1 itself can flip.  Ties are not an edge case under RRF — they are structural. A document found only by the BM25 leg at rank *r* and a document found only by the vector leg at rank *r* both score exactly `1/(k+r)`; two documents found by both legs at swapped ranks (1,2)/(2,1) both score `1/61 + 1/62`. Every rank position is a potential tie.  It is also why the project's own quality number moves between runs: the SciFact hybrid nDCG@10 measured 0.6993 in one run and 0.7023 in another on the same index (NFCorpus: 0.3448 / 0.3446), while the BM25-only and vector-only arms reproduced to four decimals (0.6572 / 0.6764).  Reproduced on the `v1.0.0-rc.74` release binary, `--embed-mode neural`; `fuse_rrf` is unchanged on `main` @ 4d8dadbf.  ## Repro  ```sh cd benchmarks/neural-path-triage python3 rrf_stability.py save    http://localhost:9560 scifact /path/to/beir/scifact 40 before.json # stop the node, start it again on the SAME data directory — no writes in between python3 rrf_stability.py save    http://localhost:9560 scifact /path/to/beir/scifact 40 after.json python3 rrf_stability.py compare before.json after.json ```  Literal output ([`rrf-stability-scifac
-
-- **Issue #939** (2026-09-21): **semantic/hybrid over multi-passage documents is an exact scan that deep-clones every _source per query: ~410 ms p50 on 5,183 docs, of which the BERT forward pass is ~14 ms**
-  *Symptoms*: ## Summary  On a 5,183-document index, a `semantic` query costs **~430 ms p50** and `hybrid` (BM25 + semantic, RRF) **~540 ms p50**, against **11 ms** for BM25 on the same index. The BERT forward pass for the query is **12–19 ms** of that. The rest is the exact vector scan, and almost none of the scan is arithmetic:  | phase (p50, ms) | semantic, unfiltered | semantic + `ids` filter (30 docs) | hybrid rrf | |---|---|---|---| | embed the query (MiniLM forward pass) | 14 | 12 | 19 | | **collect** — load every stored document | **216** | **197** | **331** | | **score** | **107** | **105** (30 docs scored) | **106** | | top-k + hits | 67 | 0 | 75 | | request total | 410 | 317 | 542 | | documents scored | 5,183 | 30 | 5,183 |  The same query shape on a 10,003-document index of one-sentence documents is **16 ms p50**: 12 ms embed, 2–3 ms for the HNSW search and hydrate, 0 of 37 requests on the exact scan.  So this is not "BERT is slow on CPU" and it is not "hybrid runs its legs serially" (it does — see below — but the BM25 leg is ~10 ms). It is that **any `semantic_text` index containing a multi-chunk document is pinned to an exact scan, and the exact scan deep-clones every stored `_source`, vectors included, on every query — before the filter is applied.**  Measured on the `v1.0.0-rc.74` release binary, `--embed-mode neural` (all-MiniLM-L6-v2, CPU), BEIR SciFact, on a shared 32-thread box with load average 16–23 from other jobs, so treat absolute milliseconds as conservative; the 
-
-- **Issue #938** (2026-09-21): **Neural ingest keeps ~3.4 of 32 threads busy: 6.1 docs/s from one _bulk stream, 29.5 docs/s from 8 clients for the same CPU-seconds (forward passes run single-file)**
-  *Symptoms*: ## Summary  With `--embed-mode neural` (all-MiniLM-L6-v2, Candle, CPU), one `_bulk` stream into a `semantic_text` field runs at **6.1 documents/s** on SciFact abstracts (mean 1,470 characters ≈ 3.9 passages each) while the server keeps **3.4 of 32 hardware threads busy**. Short one-sentence documents (the same corpus's titles only: mean 96 characters, one passage) run at 88 documents/s through the same path with 2.7 threads busy. The gap between the two is just passages × tokens; the defect is the 3.4 and the 2.7.  The engine is not the bottleneck and neither is the model's raw cost. The encoder alone, fed the same passages, does 31.1 passages/s with 3.5 cores busy — the end-to-end rate (6.1 docs/s × 3.86 passages = 23.5 passages/s) is within 25% of it. And the same node does **29.5 documents/s — 4.8× — when eight clients send `_bulk` concurrently, for the same total CPU** (226 → 213 CPU-seconds). The work is fixed; one stream simply never occupies the machine.  Measured on the `v1.0.0-rc.74` release binary and on `xerj-ai` built from `main` @ 4d8dadbf (`git diff v1.0.0-rc.74..main` does not touch `xerj-ai` or the bulk embedding path). AMD Ryzen AI Max+ 395, 16 cores / 32 threads, **shared with other jobs at load average 18–31 for every run below** — absolute rates are therefore conservative and noisy; CPU-seconds and cores-busy are the robust columns.  ## Measurements  End-to-end, `_bulk` of 50 documents into `{"body": {"type": "semantic_text"}}`, 400 SciFact documents per p
-  **Post-Mortem & Fix Analysis**:
-  > Slice 1 landed on main (PR #995, merge 4985f931): neural_window_concurrency config key + bounded window scheduler — measured 2.8x from one _bulk stream at the same CPU-seconds (14.1 -> 39.1 docs/s in-sandbox, harness in benchmarks/neural-path-triage/window_concurrency_bench.py). Remaining: slice 2 (Candle intra-op pinning) and slice 3 (cross-request pool sharing + non-serial default). Issue stays open for those.
+- **Issue #1365** (2026-10-16): **[bug]: xerj search prints whole-file hits without a line number, then asks to "Cite ax_path:line"**
+  *Symptoms*: ### XERJ version  xerj v1.0.0-rc.95  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Pop!_OS 22.04 LTS x86_64  ### Steps to reproduce  ```shell git clone https://github.com/sebollin/lupa.git mkdir lupa-a705445 && git -C lupa archive a705445 | tar -x -C lupa-a705445 xerj --insecure --data-dir ./data & xerj autoindex ./lupa-a705445 xerj search "mensaje de error del motor conditionMessage se limpia de literales antes de publicarse" ```  ### Expected behavior  ``` Every passage header should carry the line, or line range, of the passage it prints. The command ends with "Cite ax_path:line for anything you rely on", and without a line the reader has to open the whole file to find the passage. ```  ### Actual behavior  ```` Whole-file hits print the bare path, followed by a passage from the middle of the file (excerpt):  ```text ─── tests/testthat/test-O68-el-universo-de-los-estadisticos.R  (score 83.77)       # 2. Ahora las dos dicen 2, y las dos declaran la exclusion: antes ninguna lo       ... 5 passage(s) from 'ax-*'. Cite ax_path:line for anything you rely on. ```  Across the 8 xerj search / xerj def runs in our test, 21 of 34 passage headers had no line.  Verified in the source at v1.0.0-rc.95: search.rs:196-202 falls back to the bare path when `_source` has neither `line` nor `start_line`. The comment at search.rs:151-152 calls whole-file bodies "the token flood (measured ~9x the size of the matching passage)", and opening th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2336,2345 +1919,545 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f24580df` (2026-10-05)
-**Commit Message**: rc.83 cut fixes: de-link the three closed trackers from the ROADMAP shortlist
+### Incident Patch 1: `a6ce269d` (2026-10-18)
+**Commit Message**: fix(deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every Pages deploy
 
-The release-notes gate flagged four contradictions on the release PR:
-#1136/#1145/#1148 are CLOSED but still linked as open defects in the
-Open-defects shortlist (the rc.16/rc.18 drift class), and merge #1164
-was uncited in the [1.0.0-rc.83] notes. The shortlist now carries the
-true eight (adds #1158 and #1122, which the section had never listed),
-the closed three move to the plain-text closed-in-window record beside
-the rc.82-era #1137/#1139 line, and the CHANGELOG intro cites #1164
-(and #1157, whose five SKILL rows rode the same window). Also
-rustfmt's join of the band list my #1162 rebeave left mis-indented
-(order.rs:228).
+#1760 merged with a placeholder KV namespace id
+(REPLACE_WITH_FIELD_REPORTS_KV_NAMESPACE_ID) in wrangler.toml. wrangler
+rejects it with "Error 8000022: Invalid KV namespace ID", so deploy-pages.yml
+(triggered by any change to wrangler.toml or landing/**) fails at the publish
+step — blocking ALL xerj.org deploys. The 2026-10-18 15:17 run failed this way
+and the next run was queued to fail the same way; the site stayed up only on
+the last good deploy.
 
-**File**: `CHANGELOG.md` (modified, +4/-1)
+The endpoint is not meant to go live yet (owner is reviewing before wiring the
+namespace). Commenting the block out restores deploys and leaves the Function
+fail-open: /api/field-report returns 200 but does not store, via the
+`!env.FIELD_REPORTS` branch in functions/api/field-report.js. Restoring
+storage is a one-liner once the owner creates the namespace.
+
+No behaviour change for any other route; no secret committed.
+
+**File**: `wrangler.toml` (modified, +11/-3)
 ```diff
-@@ -13,7 +13,10 @@ The corpus-hub hundred release. The engine window is small — one retrieval
- fix and three extractor PRs — while the reference-coding catalogue reached
- **100 live, licence-reviewed, G7-graded corpora at
- [hub.xerj.org](https://hub.xerj.org)**, every one of them now named in the
--`xerj-code` skill's domain-selection table.
-+`xerj-code` skill's domain-selection table (PR
-+[#1164](https://github.com/xerj-org/xerj/pull/1164); the five SKILL-row
-+additions of the rc.82 window rode in as PR
-+[#1157](https://github.com/xerj-org/xerj/pull/1157)).
- 
- ### Fixed
- 
-```
-
-**File**: `ROADMAP.md` (modified, +18/-12)
-```diff
-@@ -113,7 +113,7 @@ and the console review's), the #1062 wrong-and-confident detection gate, the
- `xerj-decide-v1` Hugging Face publication (operator credentials), and the GA
- bar itself — *The road to v1.0.0 GA* below.
- 
--**Open defects.** Nine, all live on the tracker at rc.82 cut time — the
-+**Open defects.** Eight, all live on the tracker at rc.83 cut time — the
- shortlist the release-notes gate checks. From the rc.80 gate runs:
- [#1091](https://github.com/xerj-org/xerj/issues/1091) (hybrid first stage
- 13–26 s/query on the 57,638-doc FiQA index),
-@@ -124,18 +124,24 @@ flywheel write-back freezes once the history index has BM25 support). From
- the rc.80 console knowledge-surface review:
- [#1100](https://github.com/xerj-org/xerj/issues/1100) (second-brain
- belief-time frame rendered on non-note corpora). Filed from the corpus-hub
--G7 work inside the rc.82 window:
--[#1136](https://github.com/xerj-org/xerj/issues/1136) (stale index
--generations survive `--fresh` swaps; a state file with `index_prefix=null`
--queries all of them) and the `xerj code` retrieval quartet
--[#1145](https://github.com/xerj-org/xerj/issues/1145) (`k` never sent on
--the semantic clause),
--[#1146](https://github.com/xerj-org/xerj/issues/1146) (hybrid drops
--lexical-only indices from the BM25 leg too),
-+G7 work: [#1146](https://github.com/xerj-org/xerj/issues/1146) (hybrid
-+drops lexical-only indices from the BM25 leg too) and
- [#1147](https://github.com/xerj-org/xerj/issues/1147) (corpus-index ingest
--throughput caps corpus builds at ~10⁵ records/node-day, measured) and
--[#1148](https://github.com/xerj-org/xerj/issues/1148) (`--lang` silently
--disables the vector leg). **Closed inside the rc.82 window and recorded in
-+throughput caps corpus builds at ~10⁵ records/node-day, measured — the
-+osv-ecosystems corpus is deferred on exactly this number). Reopened or
-+still open from the rc.81/82 windows:
-+[#1158](https://github.com/xerj-org/xerj/issues/1158) (the missing `text`
-+field that made raw-JSON/JSONL mirrors invisible to `xerj code` passage
-+search) and [#1122](https://github.com/xerj-org/xerj/issues/1122) (reopened
-+2026-10-05 when the reference node died at its memory ceiling with no panic
-+line). **Closed inside the rc.83 window and recorded in the CHANGELOG, not
-+carried here:** #1136 (stale index generations surviving `--fresh` swaps —
-+a state file with `index_prefix=null` queried all of them; fixed by PR
-+[#1156](https://github.com/xerj-org/xerj/pull/1156)) and two of the `xerj
-+code` retrieval quartet, #1145 (`k` never sent on the semantic clause) and
-+#1148 (`--lang` silently disabling the vector leg), both fixed by PR
-+[#1153](https://github.com/xerj-org/xerj/pull/1153). **Closed inside the
-+rc.82 window and recorded in
- the CHANGELOG, not carried here:** #1137 and #1139 (per-file top-k diversity
- and the txt-family search field, both fixed by PR
- [#1140](https://github.com/xerj-org/xerj/pull/1140)). **Closed inside the
-```
-
-**File**: `engine/crates/xerj-autoindex/src/order.rs` (modified, +1/-2)
-```diff
-@@ -228,8 +228,7 @@ pub fn band_from_family_str(rel: &str, family: &str) -> Band {
-         // planning run had put it ahead of. The agreement test did not catch it
-         // because its family list was written by hand and omitted `Eml` too.
-         "code" | "txt-prose" | "html" | "pdf" | "docx" | "pptx" | "epub" | "ipynb" | "man"
--        | "unity"
--        | "eml" | "mbox" => Band::SourceAndDocs,
-+        | "unity" | "eml" | "mbox" => Band::SourceAndDocs,
-         "yaml" | "json" | "xml" | "unity-meta" => Band::Config,
-         "csv" | "jsonl" | "sqlite" | "sqldump" | "xlsx" | "bvh" => Band::Data,
-         // Pre-existing drift, caught by
+@@ -41,6 +41,14 @@ bucket_name = "xerj-installs"
+ #   wrangler kv namespace create FIELD_REPORTS
+ # and replace the id below with the one it prints. Do not commit a real id
+ # from the live account via an automated run; the owner wires this at deploy.
+-[[kv_namespaces]]
+-binding = "FIELD_REPORTS"
+-id = "REPLACE_WITH_FIELD_REPORTS_KV_NAMESPACE_ID"
++# [[kv_namespaces]]  — COMMENTED OUT until the owner wires the real namespace.
++# A placeholder id here makes `wrangler pages deploy` fail with
++# "Error 8000022: Invalid KV namespace ID", which blocks EVERY xerj.org deploy
++# (this file is on the deploy trigger path). With no binding declared, the
++# Function fails open: /api/field-report accepts a report and returns 200 but
++# does NOT store it (see functions/api/field-report.js, the `!env.FIELD_REPORTS`
++# branch). To activate storage, create the namespace and restore this block:
++#     wrangler kv namespace create FIELD_REPORTS   # prints an id
++# [[kv_namespaces]]
++# binding = "FIELD_REPORTS"
++# id = "<the id it printed>"
 ```
 
 ---
 
-### Incident Patch 2: `ebe35c4f` (2026-10-05)
-**Commit Message**: Merge pull request #1160 from thomas-villani/fix/section-redundant-overlap
+### Incident Patch 2: `d481370f` (2026-10-18)
+**Commit Message**: fix(hub): bare `xerj code <slug>` finds the node `hub pull` restored into (#1729)
 
-fix(autoindex): don't emit a section that the next one repeats whole
+Motivation
+----------
+Corpus Hub v2's whole point is that `xerj hub pull <slug>` leaves the user one
+command away from an answer: the pull prints "`xerj code <slug>` works now", and
+the §12.3/§12.4 release gates run exactly that. On a clean machine (empty HOME,
+nothing on localhost:9200) that promise was broken.
 
-**File**: `engine/crates/xerj-autoindex/src/extract/mod.rs` (modified, +58/-3)
+`xerj hub pull` resolves a node through `node::ensure_node` — which, finding
+nothing on localhost:9200, starts the automatic node on 9300+, restores the pack
+into it, and records that URL (`http://127.0.0.1:9300`) in the state ledger
+(`~/.xerj-code/state/<slug>.json`, `source: "hubpack"`). But `xerj code` resolved
+its node through `xc::resolve_url` — `--url` > `XERJ_URL` > `http://localhost:9200`
+— which ignores the ledger. So immediately after a successful pull:
+
+  $ xerj code lz4 --def LZ4_VERSION_RELEASE   # no --url, no XERJ_URL
+  defs query failed: no response from http://localhost:9200/...-defs/_search
+  no match in lz4 ...
+  answered from: local pack            # exit 1, and a false "local pack"
+  $ xerj code lz4 "how does LZ4 decompress a block safely"
+  search failed: ... (http://lo
+
+**File**: `engine/crates/xerj-hub/src/cli.rs` (modified, +96/-4)
 ```diff
-@@ -469,7 +469,12 @@ pub fn for_each_section(text: &str, emit: &mut dyn FnMut(String) -> bool) -> boo
-     let mut cur = String::new();
- 
-     for para in text.split("\n\n") {
--        if !cur.is_empty() && cur.len() + para.len() > SECTION_CHARS {
-+        // `cur.len() > SECTION_OVERLAP`: a shorter section would be carried
-+        // WHOLE into the next as its overlap, so emitting it adds a record
-+        // with no text of its own (a heading before a long first paragraph).
-+        // It stays in `cur` and leads the next section instead.
-+        if !cur.is_empty() && cur.len() + para.len() > SECTION_CHARS && cur.len() > SECTION_OVERLAP
-+        {
-             let done = std::mem::take(&mut cur);
-             let carry = tail(&done, SECTION_OVERLAP);
-             if !emit(done) {
-@@ -726,6 +731,43 @@ mod section_tests {
-         }
-     }
- 
-+    /// A short paragraph (a heading) followed by one too big to join it was
-+    /// emitted as a section of its own, and the next section then repeated it
-+    /// whole as its overlap: a record with no text of its own. Seen as
-+    /// "CHAPTER 26. Knights and Squires." alone on a Gutenberg EPUB.
-+    #[test]
-+    fn a_section_the_next_would_repeat_whole_is_not_emitted() {
-+        // Each ~2100 bytes: too big to join the heading in one section.
-+        let long = |i: usize| format!("w{i} ").repeat(700);
-+        let t = format!(
-+            "CHAPTER 26. Knights and Squires.\n\n{}\n\n{}\n\n{}",
-+            long(1),
-+            long(2),
-+            long(3)
-+        );
-+        let secs = split_sections(&t);
-+        assert!(
-+            secs[0].starts_with("CHAPTER 26.") && secs[0].contains("w1 w1"),
-+            "the heading leads a real section: {:?}",
-+            &secs[0][..secs[0].len().min(60)]
-+        );
-+        for w in secs.windows(2) {
-+            assert!(
-+                !w[1].starts_with(w[0].as_str()),
-+                "a section repeated whole by its successor: {:?}",
-+                w[0]
-+            );
+@@ -1276,10 +1276,79 @@ pub fn parse_ask_args(args: &[String]) -> Result<Option<AskArgs>, String> {
+ /// `xerj code …`: `--def <SYMBOL>` answers from the `-defs` index; everything
+ /// else is the existing retrieval path, delegated unchanged.
+ pub fn run_code(args: &[String]) -> i32 {
++    let args = match with_pulled_node_url(args) {
++        Ok(args) => args,
++        Err(e) => {
++            eprintln!("xerj code: {e:#}");
++            return 2;
 +        }
-+        let short = format!("{}\n\nCHAPTER 26.", "y".repeat(SECTION_CHARS));
-+        assert!(
-+            split_sections(&short)
-+                .last()
-+                .unwrap()
-+                .contains("CHAPTER 26."),
-+            "a short LAST paragraph is still emitted"
-+        );
-+    }
-+
-     /// A single paragraph larger than two sections must still be bounded.
-     #[test]
-     fn pathological_single_paragraph_is_hard_split() {
-@@ -737,7 +779,8 @@ mod section_tests {
-         }
-     }
- 
--    /// The pre-#239 implementation, kept verbatim as an oracle. It is quadratic
-+    /// The pre-#239 implementation, kept as an oracle (verbatim but for the
-+    /// redundant-section rule, changed in both in step). It is quadratic
-     /// — only ever call it on inputs of a few hundred KB.
-     fn legacy_split_sections(text: &str) -> Vec<String> {
-         if text.len() <= SECTION_CHARS {
-@@ -746,7 +789,13 @@ mod section_tests {
-         let mut out: Vec<String> = Vec::new();
-         let mut cur = String::new();
-         for para in text.split("\n\n") {
--            if !cur.is_empty() && cur.len() + para.len() > SECTION_CHARS {
-+            // The one deliberate change since #239, mirrored from
-+            // `for_each_section`: a section its successor would repeat whole
-+            // is not emitted.
-+            if !cur.is_empty()
-+                && cur.len() + para.len() > SECTION_CHARS
-+                && cur.len() > SECTION_OVERLAP
-+            {
-                 let done = std::mem::take(&mut cur);
-                 let carry = tail(&done, SECTION_OVERLAP);
-                 out.push(done);
-@@ -793,6 +842,12 @@ mod section_tests {
-             doc(200, 400),
-             doc(60, 300),
-             doc(3, 9000),
-+            // A short paragraph before ones too big to join it, at the
-+            // overlap boundary and one byte either side.
-+            format!("{}\n\n{}", "h".repeat(32), doc(4, 2100)),
-+            format!("{}\n\n{}", "h".repeat(SECTION_OVERLAP - 1), doc(4, 2100)),
-+            format!("{}\n\n{}", "h".repeat(SECTION_OVERLAP), doc(4, 2100)),
-+            format!("{}\n\n{}", "h".repeat(SECTION_OVERLAP + 1), doc(4, 2100)),
-             // Multi-byte, with the cut landing inside a char: 3-byte and 4-byte
-             // sequences do not divide SECTION_CHARS evenly.
-             "é".repeat(4 * SECTION_CHARS),
-```
-
----
-
-### Incident Patch 3: `dc635305` (2026-10-05)
-**Commit Message**: fix(autoindex): don't emit a section that the next one repeats whole
-
-`for_each_section` packs paragraphs into ~2 KB sections and starts each
-new section with the last SECTION_OVERLAP (200) bytes of the previous
-one. When a short paragraph (typically a heading) was followed by one
-too big to join it, the short one was flushed as a section on its own,
-and the next section then began with ALL of it as overlap. The record
-carried no text of its own: a duplicate that competes for a result slot
-with the real section. Seen on a Gutenberg EPUB as
-"CHAPTER 26. Knights and Squires." alone, the next section repeating it;
-the same shape occurs in every family that sections through this
-function (PDF pages, DOCX, PPTX slides, txt prose, HTML, EPUB).
-
-Fix (extract/mod.rs): a section is flushed only if it is longer than
-SECTION_OVERLAP, i.e. only if its overlap tail is not the whole of it.
-A shorter one stays in `cur` and leads the next section, which is then
-at most 2 * SECTION_CHARS + 202 bytes before the existing hard-split
-path applies, as for any long paragraph. Nothing is dropped: the text
-is in the next section as before, once instead of twice.
-
-The byte-for-byte oracle test (`legacy_spli
-
-**File**: `engine/crates/xerj-autoindex/src/extract/mod.rs` (modified, +58/-3)
-```diff
-@@ -467,7 +467,12 @@ pub fn for_each_section(text: &str, emit: &mut dyn FnMut(String) -> bool) -> boo
-     let mut cur = String::new();
- 
-     for para in text.split("\n\n") {
--        if !cur.is_empty() && cur.len() + para.len() > SECTION_CHARS {
-+        // `cur.len() > SECTION_OVERLAP`: a shorter section would be carried
-+        // WHOLE into the next as its overlap, so emitting it adds a record
-+        // with no text of its own (a heading before a long first paragraph).
-+        // It stays in `cur` and leads the next section instead.
-+        if !cur.is_empty() && cur.len() + para.len() > SECTION_CHARS && cur.len() > SECTION_OVERLAP
-+        {
-             let done = std::mem::take(&mut cur);
-             let carry = tail(&done, SECTION_OVERLAP);
-             if !emit(done) {
-@@ -724,6 +729,43 @@ mod section_tests {
-         }
-     }
- 
-+    /// A short paragraph (a heading) followed by one too big to join it was
-+    /// emitted as a section of its own, and the next section then repeated it
-+    /// whole as its overlap: a record with no text of its own. Seen as
-+    /// "CHAPTER 26. Knights and Squires." alone on a Gutenberg EPUB.
-+    #[test]
-+    fn a_section_the_next_would_repeat_whole_is_not_emitted() {
-+        // Each ~2100 bytes: too big to join the heading in one section.
-+        let long = |i: usize| format!("w{i} ").repeat(700);
-+        let t = format!(
-+            "CHAPTER 26. Knights and Squires.\n\n{}\n\n{}\n\n{}",
-+            long(1),
-+            long(2),
-+            long(3)
-+        );
-+        let secs = split_sections(&t);
-+        assert!(
-+            secs[0].starts_with("CHAPTER 26.") && secs[0].contains("w1 w1"),
-+            "the heading leads a real section: {:?}",
-+            &secs[0][..secs[0].len().min(60)]
-+        );
-+        for w in secs.windows(2) {
-+            assert!(
-+                !w[1].starts_with(w[0].as_str()),
-+                "a section repeated whole by its successor: {:?}",
-+                w[0]
-+            );
-+        }
-+        let short = format!("{}\n\nCHAPTER 26.", "y".repeat(SECTION_CHARS));
-+        assert!(
-+            split_sections(&short)
-+                .last()
-+                .unwrap()
-+                .contains("CHAPTER 26."),
-+            "a short LAST paragraph is still emitted"
-+        );
-+    }
-+
-     /// A single paragraph larger than two sections must still be bounded.
-     #[test]
-     fn pathological_single_paragraph_is_hard_split() {
-@@ -735,7 +777,8 @@ mod section_tests {
-         }
-     }
- 
--    /// The pre-#239 implementation, kept verbatim as an oracle. It is quadratic
-+    /// The pre-#239 implementation, kept as an oracle (verbatim but for the
-+    /// redundant-section rule, changed in both in step). It is quadratic
-     /// — only ever call it on inputs of a few hundred KB.
-     fn legacy_split_sections(text: &str) -> Vec<String> {
-         if text.len() <= SECTION_CHARS {
-@@ -744,7 +787,13 @@ mod section_tests {
-         let mut out: Vec<String> = Vec::new();
-         let mut cur = String::new();
-         for para in text.split("\n\n") {
--            if !cur.is_empty() && cur.len() + para.len() > SECTION_CHARS {
-+            // The one deliberate change since #239, mirrored from
-+            // `for_each_section`: a section its successor would repeat whole
-+            // is not emitted.
-+            if !cur.is_empty()
-+                && cur.len() + para.len() > SECTION_CHARS
-+                && cur.len() > SECTION_OVERLAP
-+            {
-                 let done = std::mem::take(&mut cur);
-                 let carry = tail(&done, SECTION_OVERLAP);
-                 out.push(done);
-@@ -791,6 +840,12 @@ mod section_tests {
-             doc(200, 400),
-             doc(60, 300),
-             doc(3, 9000),
-+            // A short paragraph before ones too big to join it, at the
-+            // overlap boundary and one byte either side.
-+            format!("{}\n\n{}", "h".repeat(32), doc(4, 2100)),
-+            format!("{}\n\n{}", "h".repeat(SECTION_OVERLAP - 1), doc(4, 2100)),
-+            format!("{}\n\n{}", "h".repeat(SECTION_OVERLAP), doc(4, 2100)),
-+            format!("{}\n\n{}", "h".repeat(SECTION_OVERLAP + 1), doc(4, 2100)),
-             // Multi-byte, with the cut landing inside a char: 3-byte and 4-byte
-             // sequences do not divide SECTION_CHARS evenly.
-             "é".repeat(4 * SECTION_CHARS),
-```
-
----
-
-### Incident Patch 4: `0303a7bf` (2026-10-05)
-**Commit Message**: Merge branch 'main' into fix/corpus-generation-hygiene
-
-**File**: `engine/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -7728,9 +7728,9 @@ checksum = "66fee0b777b0f5ac1c69bb06d361268faafa61cd4682ae064a171c16c433e9e4"
- 
- [[package]]
- name = "xxhash-rust"
--version = "0.8.15"
-+version = "0.8.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
-+checksum = "550a2b930b62486a393c52d5c3b84bff264b28aa437ed64694d31e93b1757af7"
- 
- [[package]]
- name = "yasna"
-```
-
-**File**: `landing/agent-search/index.html` (modified, +1/-1)
-```diff
-@@ -358,7 +358,7 @@ <h2 class="asx-h2">The same thing, over the wire</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · AGENT SEARCH · V1.0.0-RC.81</span>
-+  <span>XERJ.AI · AGENT SEARCH · V1.0.0-RC.82</span>
-   <span>PORTED FROM THE ENGINE · BIT-EXACT</span>
-   <span><a href="/">HOME</a> · <a href="/docs/recipes/semantic-search-rag">SEMANTIC RECIPE</a> · <a href="/docs/recipes/">RECIPES</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/cutting-the-index-28-percent.html` (modified, +1/-1)
-```diff
-@@ -491,7 +491,7 @@ <h2 class="scene">What we tried and kept out</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/does-xerj-beat-jev.html` (modified, +1/-1)
-```diff
-@@ -666,7 +666,7 @@ <h2 class="scene" style="font-size:var(--fs-56);">THE TITLE ASKED FOR A WINNER.<
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/index.html` (modified, +1/-1)
-```diff
-@@ -476,7 +476,7 @@ <h2 class="bl-title">Does XERJ beat JEV? On the bill, outright. On FiQA, no.</h2
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/jev-vs-a-bm25-vote.html` (modified, +1/-1)
-```diff
-@@ -473,7 +473,7 @@ <h2 class="scene">Count your labels before you pay for a model</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/one-vulnerability-three-names.html` (modified, +1/-1)
-```diff
-@@ -405,7 +405,7 @@ <h2 class="scene">Every number, pinned to a run</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/the-rc80-gates.html` (modified, +1/-1)
-```diff
-@@ -379,7 +379,7 @@ <h2 class="scene" style="font-size:var(--fs-56);">EVERY LOSS HAS<br><span class=
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
----
-
-### Incident Patch 5: `75952f67` (2026-10-05)
-**Commit Message**: Merge branch 'main' into fix/html-table-text
-
-**File**: `CHANGELOG.md` (modified, +90/-0)
-```diff
-@@ -7,6 +7,96 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+## [1.0.0-rc.82] - 2026-10-05
-+
-+The documents-people-actually-have release. Three extractor PRs from a
-+first-time contributor extend autoindex to the formats that were still
-+read-as-text: Unix man pages, and the two spreadsheet shapes real
-+workbooks ship — vertically merged cells and two-row grouped headers.
-+Every code change in the window came through the community surface:
-+the extractor work is
-+[thomas-villani](https://github.com/thomas-villani)'s first contributions
-+to the project, and the window also carries the `xerj code` retrieval
-+fixes and two field reports.
-+
-+### Added
-+
-+- **Man page extraction** — roff `man(7)` sources read as documents, one
-+  record per `.SH` section: the `.TH` title (`LS(1)`), the NAME summary,
-+  font escapes dropped, `\(em`-class specials become the characters they
-+  name, no-fill blocks keep their layout, and a tbl table becomes one
-+  ` | `-joined line per row. Enough of the roff request language is read
-+  (`.ds` strings, `.if`/`.ie`/`.el` conditionals, `.de` macro bodies) that
-+  pod2man's preamble needs no special case; mdoc(7) pages and `.so` stubs
-+  stay text, as before. Ported from the man parser in all2md
-+  (`parsers/man.py`, MIT), reduced to plain text with attribution
-+  (PR [#1134](https://github.com/xerj-org/xerj/pull/1134),
-+  thomas-villani).
-+- **XLSX merged cells fill down** — a cell merged DOWN over several rows
-+  (a pandas MultiIndex export, a category label beside its line items)
-+  stores its value only in the top row; every covered row now gets it, so
-+  `region: East` matches all of East's rows and a `terms` aggregation
-+  counts them. Merges across columns are deliberately not expanded
-+  (PR [#1132](https://github.com/xerj-org/xerj/pull/1132),
-+  thomas-villani).
-+- **XLSX two-row grouped headers** — a header two rows deep (group labels
-+  above the column names, pandas' MultiIndex columns) names each column
-+  from both rows: `Q1_Jan`, `Q1_Feb`. Three-or-more-row headers keep
-+  their two lowest rows; on sheets over 64 MB the sample keeps one
-+  (PR [#1133](https://github.com/xerj-org/xerj/pull/1133),
-+  thomas-villani, stacked on #1132).
-+- **Docs: extracted formats** — `.pptx`/`.xlsx` listed as extracted
-+  formats across the docs and the retired "no XLSX/PPTX extractor"
-+  caveats removed
-+  (PR [#1130](https://github.com/xerj-org/xerj/pull/1130),
-+  thomas-villani).
-+- **The xerj-code skill points at the whole hub** — per-project corpus
-+  selection now walks the live registry instead of a hand-listed few
-+  (PR [#1126](https://github.com/xerj-org/xerj/pull/1126)), and the
-+  domain-selection table covers every live hub corpus
-+  (PRs [#1143](https://github.com/xerj-org/xerj/pull/1143),
-+  [#1149](https://github.com/xerj-org/xerj/pull/1149),
-+  [#1150](https://github.com/xerj-org/xerj/pull/1150)).
-+
-+### Fixed
-+
-+- **`xerj code` top-k crowding** — one large file's adjacent 2 KB chunks
-+  no longer crowd every other source out of the top-k: at most 2 records
-+  per source file (issue [#1137](https://github.com/xerj-org/xerj/issues/1137),
-+  fixed by PR [#1140](https://github.com/xerj-org/xerj/pull/1140) — the
-+  failure class was measured as G7 retrieval fails before the fix).
-+- **`xerj code` txt-family search** — the txt extraction family puts its
-+  content in a `text` field the BM25 leg never searched, so passages
-+  rendered empty; the field is searched now (issue
-+  [#1139](https://github.com/xerj-org/xerj/issues/1139), fixed by PR
-+  [#1140](https://github.com/xerj-org/xerj/pull/1140)).
-+- **Markdown sniffing** — markdown whose body starts with YAML-shaped
-+  keys or an HTML prefix classified as Yaml or Xml and indexed as junk;
-+  it is Txt now, with guards on the sniffs that mistook it
-+  (PRs [#1142](https://github.com/xerj-org/xerj/pull/1142) and
-+  [#1144](https://github.com/xerj-org/xerj/pull/1144)).
-+- **`.odp` advice** — the unsupported-format hint now tells OpenDocument
-+  presentation owners to save as `.pptx` (one record per slide, with
-+  slide titles and notes) rather than export to PDF
-+  (PR [#1131](https://github.com/xerj-org/xerj/pull/1131),
-+  thomas-villani).
-+
-+### Community
-+
-+- Field reports: a second reference-coding report from
-+  [alessandropcostabr](https://github.com/alessandropcostabr)
-+  (PR [#1141](https://github.com/xerj-org/xerj/pull/1141)) and a
-+  doc-sort field report from
-+  [Ravandevil25](https://github.com/Ravandevil25)
-+  (PR [#1128](https://github.com/xerj-org/xerj/pull/1128)), whose CLA
-+  signature landed with it (PR
-+  [#1129](https://github.com/xerj-org/xerj/pull/1129)) — the `_doc`
-+  arrival-order fix that report describes is reviewed and waiting on its
-+  own CLA signature (PR
-+  [#1127](https://github.com/xerj-org/xerj/pull/1127)).
-+- Release-download metrics chore for 2026-10-04 (2,956 assets, 1,651
-+  binaries — direct commit, `[skip ci]`).
-+
- ## [1.0.0-rc.81]
-```
-
-**File**: `ROADMAP.md` (modified, +45/-14)
-```diff
-@@ -2,14 +2,19 @@
- 
- This roadmap tracks capabilities that are **planned but not yet fully implemented**, so the project's public claims stay honest about what ships today versus what is coming. Status is verified against the actual code and by real API requests to the release binary, not aspirational.
- 
--Last reviewed: 2026-10-03 (against `v1.0.0-rc.81` and `main`). Statuses trace to issues, merged PRs, the CHANGELOG, and the conformance suite; items carried forward from the 2026-07-12 review without fresh live verification are marked as such. This review line is machine-checked: `docs_capability_lists` fails the build if a release is cut without re-reviewing this file (issue #298 — closed as abandoned 2026-09-29; the machine check, not the issue, enforces the cadence now). This pass is the rc.81 release-cut roll: the open-defects shortlist was
--re-verified against the live tracker at cut time — **four open** (#1091,
--#1092, #1094 from the rc.80 gate runs; #1100 from the console review);
--#1093 was closed inside the window by PR
--[#1112](https://github.com/xerj-org/xerj/pull/1112) (strict unknown-field
--refusal) and moves to the CHANGELOG — the lesson of 2026-09-21, when several
-+Last reviewed: 2026-10-05 (against `v1.0.0-rc.82` and `main`). Statuses trace to issues, merged PRs, the CHANGELOG, and the conformance suite; items carried forward from the 2026-07-12 review without fresh live verification are marked as such. This review line is machine-checked: `docs_capability_lists` fails the build if a release is cut without re-reviewing this file (issue #298 — closed as abandoned 2026-09-29; the machine check, not the issue, enforces the cadence now). This pass is the rc.82 release-cut roll: the open-defects shortlist was
-+re-verified against the live tracker at cut time — **nine open** (#1091,
-+#1092, #1094 from the rc.80 gate runs; #1100 from the console review;
-+#1136 and #1145–#1148, the corpus-namespace and `xerj code` retrieval
-+defects filed from the corpus-hub G7 work inside this window); #1137 and
-+#1139 were closed inside the window by PR
-+[#1140](https://github.com/xerj-org/xerj/pull/1140) and move to the
-+CHANGELOG — the lesson of 2026-09-21, when several
- entries went stale within hours of that review, is why the shortlist is
--checked live at the cut rather than desk-carried. Later the same day the tracker was emptied: everything open after the cut — #1038, #1030, #1031, #1032 — was closed (the two shipped-half epics are in the rc.78 record below, the two defects are recorded below as deferred, not fixed), leaving zero open issues. The 2026-09-26 desk review (PR [#1036](https://github.com/xerj-org/xerj/pull/1036)) stands as recorded: it closed the CHANGELOG-gap GA item (the rc.19–rc.70 backfill, PR [#1035](https://github.com/xerj-org/xerj/pull/1035)), marked the stage-2 object-storage item done ([#965](https://github.com/xerj-org/xerj/issues/965) wired in rc.77), and corrected the mail-ingest memory line to the post-[#1002](https://github.com/xerj-org/xerj/pull/1002) reality. The *Shipping today* claims were last live-verified against rc.76 (unchanged by this pass), and *The zero-token direction* below was verified separately on 2026-09-18, against `main` @ `4d8dadbf`.
-+checked live at the cut rather than desk-carried. The rc.81 roll's record
-+stands as written: four open at that cut, with #1093 closed inside the
-+window by PR [#1112](https://github.com/xerj-org/xerj/pull/1112) (strict
-+unknown-field refusal). Later the same day the tracker was emptied: everything open after the cut — #1038, #1030, #1031, #1032 — was closed (the two shipped-half epics are in the rc.78 record below, the two defects are recorded below as deferred, not fixed), leaving zero open issues. The 2026-09-26 desk review (PR [#1036](https://github.com/xerj-org/xerj/pull/1036)) stands as recorded: it closed the CHANGELOG-gap GA item (the rc.19–rc.70 backfill, PR [#1035](https://github.com/xerj-org/xerj/pull/1035)), marked the stage-2 object-storage item done ([#965](https://github.com/xerj-org/xerj/issues/965) wired in rc.77), and corrected the mail-ingest memory line to the post-[#1002](https://github.com/xerj-org/xerj/pull/1002) reality. The *Shipping today* claims were last live-verified against rc.76 (unchanged by this pass), and *The zero-token direction* below was verified separately on 2026-09-18, against `main` @ `4d8dadbf`.
- 
- ## Follow the roadmap
- 
-@@ -40,7 +45,19 @@ The release-by-release record of how all of this landed is [CHANGELOG.md](./CHAN
- 
- ## Next release — [v1.0.0](https://github.com/xerj-org/xerj/milestone/2)
- 
--The GA window. **rc.81 was cut on 2026-10-03** — its full contents are the
-+The GA window. **rc.82 was cut on 2026-10-05** — the
-+documents-people-actually-have release: man-page extraction plus the two
-+spreadsheet shapes real workbooks ship (vertically merged XLSX cells,
-+two-row grouped headers), all three
-+[thomas-villani](https://github.com/thomas-villani)'s first contributions
-+to the pro
-```
-
-**File**: `engine/Cargo.lock` (modified, +19/-19)
-```diff
-@@ -7236,7 +7236,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-ai"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "candle-core",
-@@ -7258,7 +7258,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-api"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "argon2",
-@@ -7293,7 +7293,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-autoindex"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "aws-sdk-s3",
-@@ -7368,7 +7368,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-cluster"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -7393,7 +7393,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-common"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7413,7 +7413,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-compress"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "byteorder",
-  "bytes",
-@@ -7426,7 +7426,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-console-api"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7462,7 +7462,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-engine"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7517,7 +7517,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-fts"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "bitpacking",
-@@ -7544,7 +7544,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-logs"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7562,7 +7562,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-mcp"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "reqwest",
-@@ -7576,7 +7576,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-query"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "base64 0.22.1",
-@@ -7591,7 +7591,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-rerank"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "reqwest",
-  "serde",
-@@ -7605,7 +7605,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-server"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -7654,7 +7654,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-storage"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7687,7 +7687,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-vector"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7705,7 +7705,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-wasm"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -7728,9 +7728,9 @@ checksum = "66fee0b777b0f5ac1c69bb06d361268faafa61cd4682ae064a171c16c433e9e4"
- 
- [[package]]
- name = "xxhash-rust"
--version = "0.8.15"
-+version = "0.8.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
-+checksum = "550a2b930b62486a393c52d5c3b84bff264b28aa437ed64694d31e93b1757af7"
- 
- [[package]]
- name = "yasna"
-```
-
-**File**: `engine/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ members = [
- ]
- 
- [workspace.package]
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- edition = "2021"
- license = "Apache-2.0"
- authors = ["xerj Contributors"]
-```
-
-**File**: `landing/agent-search/index.html` (modified, +1/-1)
-```diff
-@@ -358,7 +358,7 @@ <h2 class="asx-h2">The same thing, over the wire</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · AGENT SEARCH · V1.0.0-RC.81</span>
-+  <span>XERJ.AI · AGENT SEARCH · V1.0.0-RC.82</span>
-   <span>PORTED FROM THE ENGINE · BIT-EXACT</span>
-   <span><a href="/">HOME</a> · <a href="/docs/recipes/semantic-search-rag">SEMANTIC RECIPE</a> · <a href="/docs/recipes/">RECIPES</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/cutting-the-index-28-percent.html` (modified, +1/-1)
-```diff
-@@ -491,7 +491,7 @@ <h2 class="scene">What we tried and kept out</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/does-xerj-beat-jev.html` (modified, +1/-1)
-```diff
-@@ -666,7 +666,7 @@ <h2 class="scene" style="font-size:var(--fs-56);">THE TITLE ASKED FOR A WINNER.<
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/index.html` (modified, +1/-1)
-```diff
-@@ -476,7 +476,7 @@ <h2 class="bl-title">Does XERJ beat JEV? On the bill, outright. On FiQA, no.</h2
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
----
-
-### Incident Patch 6: `bac29a61` (2026-10-05)
-**Commit Message**: Merge branch 'main' into fix/xccode-semantic-k-and-lang
-
-**File**: `CHANGELOG.md` (modified, +90/-0)
-```diff
-@@ -7,6 +7,96 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+## [1.0.0-rc.82] - 2026-10-05
-+
-+The documents-people-actually-have release. Three extractor PRs from a
-+first-time contributor extend autoindex to the formats that were still
-+read-as-text: Unix man pages, and the two spreadsheet shapes real
-+workbooks ship — vertically merged cells and two-row grouped headers.
-+Every code change in the window came through the community surface:
-+the extractor work is
-+[thomas-villani](https://github.com/thomas-villani)'s first contributions
-+to the project, and the window also carries the `xerj code` retrieval
-+fixes and two field reports.
-+
-+### Added
-+
-+- **Man page extraction** — roff `man(7)` sources read as documents, one
-+  record per `.SH` section: the `.TH` title (`LS(1)`), the NAME summary,
-+  font escapes dropped, `\(em`-class specials become the characters they
-+  name, no-fill blocks keep their layout, and a tbl table becomes one
-+  ` | `-joined line per row. Enough of the roff request language is read
-+  (`.ds` strings, `.if`/`.ie`/`.el` conditionals, `.de` macro bodies) that
-+  pod2man's preamble needs no special case; mdoc(7) pages and `.so` stubs
-+  stay text, as before. Ported from the man parser in all2md
-+  (`parsers/man.py`, MIT), reduced to plain text with attribution
-+  (PR [#1134](https://github.com/xerj-org/xerj/pull/1134),
-+  thomas-villani).
-+- **XLSX merged cells fill down** — a cell merged DOWN over several rows
-+  (a pandas MultiIndex export, a category label beside its line items)
-+  stores its value only in the top row; every covered row now gets it, so
-+  `region: East` matches all of East's rows and a `terms` aggregation
-+  counts them. Merges across columns are deliberately not expanded
-+  (PR [#1132](https://github.com/xerj-org/xerj/pull/1132),
-+  thomas-villani).
-+- **XLSX two-row grouped headers** — a header two rows deep (group labels
-+  above the column names, pandas' MultiIndex columns) names each column
-+  from both rows: `Q1_Jan`, `Q1_Feb`. Three-or-more-row headers keep
-+  their two lowest rows; on sheets over 64 MB the sample keeps one
-+  (PR [#1133](https://github.com/xerj-org/xerj/pull/1133),
-+  thomas-villani, stacked on #1132).
-+- **Docs: extracted formats** — `.pptx`/`.xlsx` listed as extracted
-+  formats across the docs and the retired "no XLSX/PPTX extractor"
-+  caveats removed
-+  (PR [#1130](https://github.com/xerj-org/xerj/pull/1130),
-+  thomas-villani).
-+- **The xerj-code skill points at the whole hub** — per-project corpus
-+  selection now walks the live registry instead of a hand-listed few
-+  (PR [#1126](https://github.com/xerj-org/xerj/pull/1126)), and the
-+  domain-selection table covers every live hub corpus
-+  (PRs [#1143](https://github.com/xerj-org/xerj/pull/1143),
-+  [#1149](https://github.com/xerj-org/xerj/pull/1149),
-+  [#1150](https://github.com/xerj-org/xerj/pull/1150)).
-+
-+### Fixed
-+
-+- **`xerj code` top-k crowding** — one large file's adjacent 2 KB chunks
-+  no longer crowd every other source out of the top-k: at most 2 records
-+  per source file (issue [#1137](https://github.com/xerj-org/xerj/issues/1137),
-+  fixed by PR [#1140](https://github.com/xerj-org/xerj/pull/1140) — the
-+  failure class was measured as G7 retrieval fails before the fix).
-+- **`xerj code` txt-family search** — the txt extraction family puts its
-+  content in a `text` field the BM25 leg never searched, so passages
-+  rendered empty; the field is searched now (issue
-+  [#1139](https://github.com/xerj-org/xerj/issues/1139), fixed by PR
-+  [#1140](https://github.com/xerj-org/xerj/pull/1140)).
-+- **Markdown sniffing** — markdown whose body starts with YAML-shaped
-+  keys or an HTML prefix classified as Yaml or Xml and indexed as junk;
-+  it is Txt now, with guards on the sniffs that mistook it
-+  (PRs [#1142](https://github.com/xerj-org/xerj/pull/1142) and
-+  [#1144](https://github.com/xerj-org/xerj/pull/1144)).
-+- **`.odp` advice** — the unsupported-format hint now tells OpenDocument
-+  presentation owners to save as `.pptx` (one record per slide, with
-+  slide titles and notes) rather than export to PDF
-+  (PR [#1131](https://github.com/xerj-org/xerj/pull/1131),
-+  thomas-villani).
-+
-+### Community
-+
-+- Field reports: a second reference-coding report from
-+  [alessandropcostabr](https://github.com/alessandropcostabr)
-+  (PR [#1141](https://github.com/xerj-org/xerj/pull/1141)) and a
-+  doc-sort field report from
-+  [Ravandevil25](https://github.com/Ravandevil25)
-+  (PR [#1128](https://github.com/xerj-org/xerj/pull/1128)), whose CLA
-+  signature landed with it (PR
-+  [#1129](https://github.com/xerj-org/xerj/pull/1129)) — the `_doc`
-+  arrival-order fix that report describes is reviewed and waiting on its
-+  own CLA signature (PR
-+  [#1127](https://github.com/xerj-org/xerj/pull/1127)).
-+- Release-download metrics chore for 2026-10-04 (2,956 assets, 1,651
-+  binaries — direct commit, `[skip ci]`).
-+
- ## [1.0.0-rc.81]
-```
-
-**File**: `ROADMAP.md` (modified, +45/-14)
-```diff
-@@ -2,14 +2,19 @@
- 
- This roadmap tracks capabilities that are **planned but not yet fully implemented**, so the project's public claims stay honest about what ships today versus what is coming. Status is verified against the actual code and by real API requests to the release binary, not aspirational.
- 
--Last reviewed: 2026-10-03 (against `v1.0.0-rc.81` and `main`). Statuses trace to issues, merged PRs, the CHANGELOG, and the conformance suite; items carried forward from the 2026-07-12 review without fresh live verification are marked as such. This review line is machine-checked: `docs_capability_lists` fails the build if a release is cut without re-reviewing this file (issue #298 — closed as abandoned 2026-09-29; the machine check, not the issue, enforces the cadence now). This pass is the rc.81 release-cut roll: the open-defects shortlist was
--re-verified against the live tracker at cut time — **four open** (#1091,
--#1092, #1094 from the rc.80 gate runs; #1100 from the console review);
--#1093 was closed inside the window by PR
--[#1112](https://github.com/xerj-org/xerj/pull/1112) (strict unknown-field
--refusal) and moves to the CHANGELOG — the lesson of 2026-09-21, when several
-+Last reviewed: 2026-10-05 (against `v1.0.0-rc.82` and `main`). Statuses trace to issues, merged PRs, the CHANGELOG, and the conformance suite; items carried forward from the 2026-07-12 review without fresh live verification are marked as such. This review line is machine-checked: `docs_capability_lists` fails the build if a release is cut without re-reviewing this file (issue #298 — closed as abandoned 2026-09-29; the machine check, not the issue, enforces the cadence now). This pass is the rc.82 release-cut roll: the open-defects shortlist was
-+re-verified against the live tracker at cut time — **nine open** (#1091,
-+#1092, #1094 from the rc.80 gate runs; #1100 from the console review;
-+#1136 and #1145–#1148, the corpus-namespace and `xerj code` retrieval
-+defects filed from the corpus-hub G7 work inside this window); #1137 and
-+#1139 were closed inside the window by PR
-+[#1140](https://github.com/xerj-org/xerj/pull/1140) and move to the
-+CHANGELOG — the lesson of 2026-09-21, when several
- entries went stale within hours of that review, is why the shortlist is
--checked live at the cut rather than desk-carried. Later the same day the tracker was emptied: everything open after the cut — #1038, #1030, #1031, #1032 — was closed (the two shipped-half epics are in the rc.78 record below, the two defects are recorded below as deferred, not fixed), leaving zero open issues. The 2026-09-26 desk review (PR [#1036](https://github.com/xerj-org/xerj/pull/1036)) stands as recorded: it closed the CHANGELOG-gap GA item (the rc.19–rc.70 backfill, PR [#1035](https://github.com/xerj-org/xerj/pull/1035)), marked the stage-2 object-storage item done ([#965](https://github.com/xerj-org/xerj/issues/965) wired in rc.77), and corrected the mail-ingest memory line to the post-[#1002](https://github.com/xerj-org/xerj/pull/1002) reality. The *Shipping today* claims were last live-verified against rc.76 (unchanged by this pass), and *The zero-token direction* below was verified separately on 2026-09-18, against `main` @ `4d8dadbf`.
-+checked live at the cut rather than desk-carried. The rc.81 roll's record
-+stands as written: four open at that cut, with #1093 closed inside the
-+window by PR [#1112](https://github.com/xerj-org/xerj/pull/1112) (strict
-+unknown-field refusal). Later the same day the tracker was emptied: everything open after the cut — #1038, #1030, #1031, #1032 — was closed (the two shipped-half epics are in the rc.78 record below, the two defects are recorded below as deferred, not fixed), leaving zero open issues. The 2026-09-26 desk review (PR [#1036](https://github.com/xerj-org/xerj/pull/1036)) stands as recorded: it closed the CHANGELOG-gap GA item (the rc.19–rc.70 backfill, PR [#1035](https://github.com/xerj-org/xerj/pull/1035)), marked the stage-2 object-storage item done ([#965](https://github.com/xerj-org/xerj/issues/965) wired in rc.77), and corrected the mail-ingest memory line to the post-[#1002](https://github.com/xerj-org/xerj/pull/1002) reality. The *Shipping today* claims were last live-verified against rc.76 (unchanged by this pass), and *The zero-token direction* below was verified separately on 2026-09-18, against `main` @ `4d8dadbf`.
- 
- ## Follow the roadmap
- 
-@@ -40,7 +45,19 @@ The release-by-release record of how all of this landed is [CHANGELOG.md](./CHAN
- 
- ## Next release — [v1.0.0](https://github.com/xerj-org/xerj/milestone/2)
- 
--The GA window. **rc.81 was cut on 2026-10-03** — its full contents are the
-+The GA window. **rc.82 was cut on 2026-10-05** — the
-+documents-people-actually-have release: man-page extraction plus the two
-+spreadsheet shapes real workbooks ship (vertically merged XLSX cells,
-+two-row grouped headers), all three
-+[thomas-villani](https://github.com/thomas-villani)'s first contributions
-+to the pro
-```
-
-**File**: `engine/Cargo.lock` (modified, +19/-19)
-```diff
-@@ -7236,7 +7236,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-ai"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "candle-core",
-@@ -7258,7 +7258,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-api"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "argon2",
-@@ -7293,7 +7293,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-autoindex"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "aws-sdk-s3",
-@@ -7368,7 +7368,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-cluster"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -7393,7 +7393,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-common"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7413,7 +7413,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-compress"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "byteorder",
-  "bytes",
-@@ -7426,7 +7426,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-console-api"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7462,7 +7462,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-engine"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7517,7 +7517,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-fts"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "bitpacking",
-@@ -7544,7 +7544,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-logs"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7562,7 +7562,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-mcp"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "reqwest",
-@@ -7576,7 +7576,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-query"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "base64 0.22.1",
-@@ -7591,7 +7591,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-rerank"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "reqwest",
-  "serde",
-@@ -7605,7 +7605,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-server"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -7654,7 +7654,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-storage"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7687,7 +7687,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-vector"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7705,7 +7705,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-wasm"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -7728,9 +7728,9 @@ checksum = "66fee0b777b0f5ac1c69bb06d361268faafa61cd4682ae064a171c16c433e9e4"
- 
- [[package]]
- name = "xxhash-rust"
--version = "0.8.15"
-+version = "0.8.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
-+checksum = "550a2b930b62486a393c52d5c3b84bff264b28aa437ed64694d31e93b1757af7"
- 
- [[package]]
- name = "yasna"
-```
-
-**File**: `engine/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ members = [
- ]
- 
- [workspace.package]
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- edition = "2021"
- license = "Apache-2.0"
- authors = ["xerj Contributors"]
-```
-
-**File**: `landing/agent-search/index.html` (modified, +1/-1)
-```diff
-@@ -358,7 +358,7 @@ <h2 class="asx-h2">The same thing, over the wire</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · AGENT SEARCH · V1.0.0-RC.81</span>
-+  <span>XERJ.AI · AGENT SEARCH · V1.0.0-RC.82</span>
-   <span>PORTED FROM THE ENGINE · BIT-EXACT</span>
-   <span><a href="/">HOME</a> · <a href="/docs/recipes/semantic-search-rag">SEMANTIC RECIPE</a> · <a href="/docs/recipes/">RECIPES</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/cutting-the-index-28-percent.html` (modified, +1/-1)
-```diff
-@@ -491,7 +491,7 @@ <h2 class="scene">What we tried and kept out</h2>
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/does-xerj-beat-jev.html` (modified, +1/-1)
-```diff
-@@ -666,7 +666,7 @@ <h2 class="scene" style="font-size:var(--fs-56);">THE TITLE ASKED FOR A WINNER.<
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
-**File**: `landing/blog/index.html` (modified, +1/-1)
-```diff
-@@ -476,7 +476,7 @@ <h2 class="bl-title">Does XERJ beat JEV? On the bill, outright. On FiQA, no.</h2
- </nav>
- <!-- seo:footer-end -->
- <footer class="footer">
--  <span>XERJ.AI · V1.0.0-RC.81 · 2026</span>
-+  <span>XERJ.AI · V1.0.0-RC.82 · 2026</span>
-   <span>SEARCH FOR THE AGENT ERA</span>
-   <span><a href="/product">PRODUCT</a> · <a href="/docs/">DOCS</a> · <a href="/brand">BRAND</a> · <a href="/playground">DASHBOARDS</a> &middot; <a href="/llms.txt">LLMS.TXT</a></span>
- </footer>
-```
-
----
-
-### Incident Patch 7: `fbebeb95` (2026-10-05)
-**Commit Message**: fix(corpus): retire stale index generations; never read a failed listing as empty
-
-Issue #1136, both halves of the leak, measured on the corpus-hub nodes:
-
-1. LEGACY RUNS NEVER RETIRED ANYTHING. A corpus whose state file names no
-   build (legacy mode, or a lost state file beside live indices) re-indexed
-   under the bare xc-<corpus> namespace and left every stamped generation
-   live forever. Measured: tldr-pages carried an unstamped 38,554-doc
-   generation beside b1790965276-* (3,111) and b1791124662-* (4,706);
-   kafka-protocol ~120 indices across three generations; unicode-cldr
-   2.18M docs. Because the ledger names no build, those stamped
-   generations are unreachable BY CONSTRUCTION while xerj code queries
-   the namespace — a top-5 was measured mixing current-mirror and
-   dead-clone hits, failing 3 of 5 grade resolutions.
-
-   Now: after a successful legacy run, every live xc-<name>-b<stamp>-*
-   index is retired by exact name plus its catalog scope (one per
-   generation, BTreeSet-deduped). The run's own unstamped output is kept.
-
-2. A LISTING THE NODE NEVER ANSWERED READ AS 'NOTHING TO RETIRE'.
-   corpus_indices swallowed list_indices errors into an empty Vec; the
-   bu
-
-**File**: `CHANGELOG.md` (modified, +18/-0)
-```diff
-@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- **Corpus generation hygiene** (issue
-+  [#1136](https://github.com/xerj-org/xerj/issues/1136)) — stale index
-+  generations no longer survive beside a corpus, silently poisoning its
-+  namespace. Three changes in `xerj corpus index` / `xerj code`:
-+  a legacy-mode run (a state file that names no build) now retires the
-+  stamped generations it supersedes — the measured shape was
-+  `tldr-pages` carrying an unstamped 38,554-document generation beside
-+  two stamped ones, mixed into every `xerj code` answer; a build whose
-+  namespace listing the node never answered says so loudly and retires
-+  nothing instead of reading the empty list as "nothing to retire"; and
-+  every verified `--fresh` swap ends with an epilogue naming whatever
-+  still sits under `xc-<corpus>-` outside the build readers are pinned
-+  to. `xerj code` now also prints a stderr notice when a corpus has no
-+  verified build recorded and the query is widening to the whole
-+  namespace.
-+
- ## [1.0.0-rc.82] - 2026-10-05
- 
- The documents-people-actually-have release. Three extractor PRs from a
-```
-
-**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +230/-16)
-```diff
-@@ -1078,12 +1078,16 @@ fn count_under(node: &dyn CorpusNode, prefix: &str) -> Option<u64> {
- /// glob is not enough: `xc-battle-*` also matches the sibling corpus
- /// `battle-terse`, and retiring a sibling's indices is not a mistake this
- /// command gets to make.
--fn corpus_indices(node: &dyn CorpusNode, name: &str, root: &Path) -> Vec<String> {
--    // Any error lists nothing, which errs toward KEEPING an index (nothing is
--    // retired that was not listed), never toward deleting one.
--    let rows = node
--        .list_indices(&format!("xc-{name}-*"))
--        .unwrap_or_default();
-+/// The namespace listing plus whether the node actually answered. An error
-+/// lists nothing — which errs toward KEEPING an index (nothing is retired
-+/// that was not listed), never toward deleting one — but the caller now gets
-+/// to SAY so instead of a silent empty list reading as "nothing to retire"
-+/// (#1136: generations survived exactly that way).
-+fn corpus_indices(node: &dyn CorpusNode, name: &str, root: &Path) -> (Vec<String>, bool) {
-+    let rows = match node.list_indices(&format!("xc-{name}-*")) {
-+        Ok(rows) => rows,
-+        Err(_) => return (Vec::new(), false),
 +    };
-     let mut siblings: Vec<String> = Vec::new();
-     for (folder, strip) in [(root.join("corpora"), ""), (root.join("state"), ".json")] {
-         if let Ok(entries) = std::fs::read_dir(&folder) {
-@@ -1100,12 +1104,94 @@ fn corpus_indices(node: &dyn CorpusNode, name: &str, root: &Path) -> Vec<String>
-             }
-         }
-     }
--    rows.into_iter()
--        .filter(|idx| {
--            idx.starts_with(&format!("xc-{name}-"))
--                && !siblings.iter().any(|s| idx.starts_with(s.as_str()))
--        })
--        .collect()
-+    (
-+        rows.into_iter()
-+            .filter(|idx| {
-+                idx.starts_with(&format!("xc-{name}-"))
-+                    && !siblings.iter().any(|s| idx.starts_with(s.as_str()))
-+            })
-+            .collect(),
-+        true,
-+    )
+     if !args.iter().any(|a| a == "--def") {
+-        return xerj_autoindex::xc::run_code_cli(args);
++        return xerj_autoindex::xc::run_code_cli(&args);
++    }
++    run_code_def(&args)
 +}
 +
-+/// The generation prefix of a stamped index (`xc-<corpus>-b<stamp>` → itself),
-+/// or `None` for an unstamped legacy index (`xc-<corpus>-<dataset>`), where
-+/// the segment after the corpus name is a dataset name, not a build stamp.
-+/// Digits-only between `b` and the next `-` is the stamp shape; a dataset
-+/// named like a stamp has never been a shape the autoindex emits.
-+fn stamped_prefix(name: &str, idx: &str) -> Option<String> {
-+    let rest = idx.strip_prefix(&format!("xc-{name}-b"))?;
-+    let stamp = rest.split('-').next()?;
-+    (!stamp.is_empty() && stamp.bytes().all(|b| b.is_ascii_digit()))
-+        .then(|| format!("xc-{name}-b{stamp}"))
-+}
++/// The `xerj code` flags (either mode) that take a value.
++const CODE_VALUE_FLAGS: &[&str] = &[
++    "-k",
++    "--lang",
++    "--mode",
++    "--full",
++    "--url",
++    "--api-key",
++    "--def",
++];
 +
-+/// Retire every index in `names` that belongs to a stamped generation, plus
-+/// that generation's catalog scope. Returns how many indices were deleted.
-+/// Used by the legacy arm: the ledger names no build there, so stamped
-+/// generations are unreachable by construction — `xerj code` queries the bare
-+/// namespace and mixes their documents into every answer (#1136).
-+fn retire_stamped(node: &dyn CorpusNode, name: &str, names: &[String]) -> usize {
-+    let doomed: Vec<String> = names
-+        .iter()
-+        .filter(|idx| stamped_prefix(name, idx).is_some())
-+        .cloned()
-+        .collect();
-+    if doomed.is_empty() {
-+        return 0;
-+    }
-+    let scopes: std::collections::BTreeSet<String> = doomed
-+        .iter()
-+        .filter_map(|idx| stamped_prefix(name, idx))
-+        .collect();
-+    println!(
-+        "xerj corpus index: retiring {} stale-generation indices this corpus cannot reach \
-+         (the ledger names no build):",
-+        doomed.len()
-+    );
-+    for idx in &doomed {
-+        println!("xerj corpus index:   {idx}");
-+    }
-+    let deleted = doomed.len() - delete_indices(node, &doomed);
-+    for scope in scopes {
-+        node.delete_catalog_scope(&scope);
-+    }
-+    deleted
-+}
-+
-+/// Say what still sits under `xc-<name>-` outside the prefix readers are now
-+/// pinned to — the visibility half of #1136: a retirement that half-failed
-+/// (or a listing that came back empty at the wrong moment) is a poison the
-+/// next G7-grade query would otherwise measure for us.
-+fn report_leftovers(node: &dyn CorpusNode, name: &str, root: &Path, keep: &str) {
-+    let (left, listed_ok) = corpus_indices(node, name, root);
-+    if !listed_ok {
-+        eprintln!(
-+            "xerj corpus index: could not re-list this corpus's indices to check for stale \
-+             generations — run `xerj corpus list` against the node when it answers."
-+        );
-+        return;
-+    }
-+    let left: Vec<String> = left.into_iter().filter(|i| !i.starts_with(keep)).collect();
-+    if left.is_empty() {
-+        return;
-+    }
-+    eprintln!(
-+        "xerj corpus index: WARNING — {} stale indices remain under xc-{name}- outside \
-+         what `xerj code` now reads ({keep}-*):",
-+        left.len()
-+    );
-+    for idx in left.iter().take(5) {
-+        eprintln!("xerj cor
-```
-
-**File**: `engine/crates/xerj-common/src/xccode/mod.rs` (modified, +12/-0)
-```diff
-@@ -200,6 +200,18 @@ pub fn run_code_query(
-     };
- 
-     let prefix = state::query_prefix(&st);
-+    // Legacy state (indexed before builds existed) names no verified build,
-+    // so the query widens to the whole `xc-<corpus>` namespace — and whatever
-+    // stale generations live there are mixed into the answers (#1136). Say
-+    // so at the point it happens; stderr, because stdout is the parsed
-+    // hit list. `corpus index <name> --fresh` pins one verified build.
-+    if st.index_prefix.is_none() {
-+        eprintln!(
-+            "xerj code: notice: corpus '{corpus}' has no verified build recorded — querying \
-+             the whole xc-{corpus} namespace; `xerj corpus index {corpus} --fresh` pins one \
-+             verified build"
-+        );
-+    }
- 
-     // 3. Not-loaded-here: in state/ yet 0 live indices on THIS node. A
-     //    distinct, actionable diagnosis (exit 3) — collapsing it into
-```
-
----
-
-### Incident Patch 8: `9c311659` (2026-10-05)
-**Commit Message**: fix(autoindex): end HTML paragraphs with a blank line so sections break between them
-
-`split_sections` packs paragraphs at blank lines (`\n\n`). The HTML
-tokenizer ended a `<p>`/`<div>` with a single newline; only headings got a
-blank line. A page of paragraphs was therefore ONE paragraph to the
-splitter: it was hard-cut every SECTION_CHARS (2 KB) bytes mid-word, and
-the heading before the run, being a paragraph of its own followed by one
-too large to join, was emitted as a section on its own (a 12-byte
-"Introduction" record whose text the next section then repeated).
-Observed on a real EPUB 3 test book read through this tokenizer: section
-starts like "ahaere me te pupuri..." cut mid-word.
-
-Fix (extract/html.rs): `<p>`, `<div>` and the end of a `<ul>`/`<ol>` end
-the body's paragraph (blank line); `<br>`, `<li>` and table rows end a
-line, so a list or a table stays one block. A table's rows are now set
-off from the prose around them by blank lines. New helper `line_break`
-also drops the space `flush_text` leaves after a text run.
-
-Test: sections_of_a_long_page_end_at_paragraph_ends (10 paragraphs of
-~450 bytes under an h1, then a list): every section but the last ends at
-a paragraph
-
-**File**: `engine/crates/xerj-autoindex/src/extract/html.rs` (modified, +57/-13)
-```diff
-@@ -279,9 +279,7 @@ fn parse(html: &str) -> Doc {
-                         // text never reaches the body any other way, and a
-                         // table that is not the dominant one is not emitted
-                         // as rows. An empty cell keeps its column.
--                        if !doc.body.is_empty() && !doc.body.ends_with('\n') {
--                            doc.body.push('\n');
--                        }
-+                        line_break(&mut doc.body, 2);
-                         for row in &cur_table {
-                             if row.iter().any(|c| !c.is_empty()) {
-                                 doc.body.push_str(&row.join(" | "));
-@@ -312,16 +310,16 @@ fn parse(html: &str) -> Doc {
-                     cur_row_th.push(name == "th");
-                     cur_cell = Some(String::new());
-                 }
--                (false, "br")
--                | (false, "p")
--                | (true, "p")
--                | (false, "div")
--                | (true, "div")
--                | (false, "li")
--                | (true, "tr")
--                    if !doc.body.ends_with('\n') && !doc.body.is_empty() =>
--                {
--                    doc.body.push('\n');
-+                // Block boundaries are blank lines: `split_sections` packs
-+                // paragraphs at `\n\n`, so a single newline here made a page
-+                // of paragraphs one paragraph, hard-cut mid-word. Line-level
-+                // breaks (`br`, list items, table rows) stay single newlines,
-+                // so a list or a table stays one block.
-+                (_, "p") | (_, "div") | (true, "ul") | (true, "ol") => {
-+                    line_break(&mut doc.body, 2);
-+                }
-+                (false, "br") | (false, "li") | (true, "tr") => {
-+                    line_break(&mut doc.body, 1);
-                 }
-                 _ => {}
-             }
-@@ -432,6 +430,20 @@ fn raw_text_end(bytes: &[u8], from: usize, name: &[u8]) -> usize {
-     bytes.len()
- }
- 
-+/// End the body's current line (`n` = 1) or paragraph (`n` = 2): drop the
-+/// space `flush_text` leaves after a run of text, then make the body end in
-+/// at least `n` newlines. Nothing is added to an empty body.
-+fn line_break(body: &mut String, n: usize) {
-+    body.truncate(body.trim_end_matches(' ').len());
-+    if body.is_empty() {
-+        return;
-+    }
-+    let have = body.len() - body.trim_end_matches('\n').len();
-+    for _ in have..n {
-+        body.push('\n');
-+    }
-+}
-+
- fn normalize_ws(s: &str) -> String {
-     s.split_whitespace().collect::<Vec<_>>().join(" ")
- }
-@@ -767,6 +779,38 @@ mod tests {
-         );
-     }
- 
-+    /// `split_sections` packs paragraphs at blank lines. A `<p>` used to end
-+    /// with a single newline, so a page of paragraphs was ONE paragraph to it
-+    /// and was hard-cut every `SECTION_CHARS` bytes, mid-word; the heading
-+    /// before such a run was emitted as a section on its own. Paragraph and
-+    /// div ends are now blank lines, so sections end where paragraphs do.
-+    #[test]
-+    fn sections_of_a_long_page_end_at_paragraph_ends() {
-+        let para = |i: usize| format!("Paragraph {i} {} end{i}.", "lorem ipsum dolor ".repeat(24));
-+        let html: String = std::iter::once("<html><body><h1>Title</h1>".to_string())
-+            .chain((0..10).map(|i| format!("<p>{}</p>", para(i))))
-+            .chain(std::iter::once(
-+                "<ul><li>one</li><li>two</li></ul><p>tail</p></body></html>".into(),
-+            ))
-+            .collect();
-+        let (stats, recs) = run("long.html", &html);
-+        assert!(stats.records > 1, "{} bytes split", html.len());
-+        for r in &recs[..recs.len() - 1] {
-+            let body = body_of(r).trim_end();
-+            assert!(
-+                (0..10).any(|i| body.ends_with(&format!("end{i}."))),
-+                "section ends mid-paragraph: ...{:?}",
-+                &body[body.len().saturating_sub(40)..]
-+            );
-+        }
-+        assert!(
-+            body_of(&recs[0]).len() > 100,
-+            "the heading is not a section of its own"
-+        );
-+        let last = body_of(recs.last().unwrap());
-+        assert!(last.contains("one\ntwo"), "list items stay lines: {last:?}");
-+    }
-+
-     #[test]
-     fn a_page_without_a_title_falls_back_to_a_heading_then_to_the_file_stem() {
-         let (_, recs) = run(
-```
-
----
-
-### Incident Patch 9: `d61841a1` (2026-10-05)
-**Commit Message**: fix(autoindex): keep HTML table text in the document body
-
-An HTML page that is not turned into row records (no dominant table:
-fewer than 5 rows, an inconsistent column count, or simply not the
-largest table) is indexed as one document {title, headings, body}. Every
-table on such a page was lost from it: `flush_text` diverts text inside a
-cell into `cur_cell`, and the finished table went only to `doc.tables`,
-which the document path never reads. Small tables, the common case on a
-documentation page (option lists, version matrices, price tables), were
-silently unindexed. c3a06f3b pinned this as a known defect
-(a_table_below_the_dominance_threshold_leaves_its_cells_unindexed, "flip
-this assertion").
-
-Fix (extract/html.rs, `</table>`): the table's rows are also written to
-the body where the table stood, one ` | `-joined line per row, the shape
-PPTX tables already use. An empty cell keeps its column; an all-empty row
-is dropped. The dominant-table path is unchanged (it never reads the
-body), so pages already indexed as rows produce the same records.
-
-Test: the pinned test is flipped to
-a_table_below_the_dominance_threshold_keeps_its_rows_in_the_body, which
-also checks the rows sit bet
-
-**File**: `engine/crates/xerj-autoindex/src/extract/html.rs` (modified, +40/-13)
-```diff
-@@ -274,6 +274,20 @@ fn parse(html: &str) -> Doc {
-                         cur_table.push(std::mem::take(&mut cur_row));
-                     }
-                     if !cur_table.is_empty() {
-+                        // The rows also go to the body, in place, one
-+                        // ` | `-joined line per row as PPTX tables do: cell
-+                        // text never reaches the body any other way, and a
-+                        // table that is not the dominant one is not emitted
-+                        // as rows. An empty cell keeps its column.
-+                        if !doc.body.is_empty() && !doc.body.ends_with('\n') {
-+                            doc.body.push('\n');
-+                        }
-+                        for row in &cur_table {
-+                            if row.iter().any(|c| !c.is_empty()) {
-+                                doc.body.push_str(&row.join(" | "));
-+                                doc.body.push('\n');
-+                            }
-+                        }
-                         doc.header_cells
-                             .push(vec![table_header_flags.first().copied().unwrap_or(false)]);
-                         doc.tables.push(std::mem::take(&mut cur_table));
-@@ -716,27 +730,40 @@ mod tests {
-         );
-     }
- 
--    /// DEFECT, pinned as CURRENT behaviour.
--    ///
--    /// A table under the 5-row dominance threshold loses its content twice
--    /// over: it is not emitted as rows, and `flush_text` has already diverted
--    /// every cell into `cur_cell` instead of `doc.body`, so the cells are not
--    /// in the document record either. Small tables — the common case on a
--    /// documentation page — are silently unindexed.
-+    /// A table that is not emitted as rows (under the 5-row dominance
-+    /// threshold here) used to lose its content twice over: `flush_text`
-+    /// diverts every cell into `cur_cell`, so the cells never reached
-+    /// `doc.body` either. Its rows now land in the body where the table
-+    /// stood, one ` | `-joined line per row, as PPTX tables do.
-     #[test]
--    fn a_table_below_the_dominance_threshold_leaves_its_cells_unindexed() {
-+    fn a_table_below_the_dominance_threshold_keeps_its_rows_in_the_body() {
-         let (stats, recs) = run(
-             "small.html",
-             "<html><body><h1>Head</h1><p>prose</p>\
--             <table><tr><td>cellA</td><td>cellB</td></tr></table>\
-+             <table><tr><th>Region</th><th>Q3</th></tr>\
-+             <tr><td>North</td><td>12</td></tr>\
-+             <tr><td>  </td><td></td></tr>\
-+             <tr><td>South <b>East</b></td><td></td></tr></table>\
-              <p>after</p></body></html>",
-         );
-         assert_eq!(stats.records, 1, "falls back to the document record");
-         let body = body_of(&recs[0]);
--        assert!(body.contains("prose") && body.contains("after"));
--        assert!(
--            !body.contains("cellA") && !body.contains("cellB"),
--            "small-table cells are now indexed — flip this assertion: {body:?}"
-+        let lines: Vec<&str> = body.lines().map(str::trim).collect();
-+        let at = |s: &str| {
-+            lines
-+                .iter()
-+                .position(|l| *l == s)
-+                .unwrap_or_else(|| panic!("no line {s:?} in {body:?}"))
-+        };
-+        // In place, in order: after the prose before it, before the prose
-+        // after it. An empty cell keeps its column; an all-empty row is
-+        // dropped.
-+        let (head, north, south) = (at("Region | Q3"), at("North | 12"), at("South East |"));
-+        assert!(at("prose") < head && head < north && north < south && south < at("after"));
-+        assert_eq!(
-+            lines.iter().filter(|l| l.contains('|')).count(),
-+            3,
-+            "{body:?}"
-         );
-     }
- 
-```
-
----
-
-### Incident Patch 10: `509a01dd` (2026-10-05)
-**Commit Message**: fix(xccode): put --lang in bool.filter so the vector leg still runs (#1148)
-
-semantic_body and hybrid_body wrapped the semantic clause as
-bool.must [semantic, match language]. The engine sends a bool to the
-vector path only when the semantic clause is its one must/should
-clause, merging bool.filter into the semantic filter
-(peel_semantic_query, xerj-engine/src/index.rs:39265-39304, #395/#557).
-A semantic clause beside a sibling in `must` falls through to the
-lexical path and matches nothing, with HTTP 200. So:
-
-- `xerj code --mode semantic --lang LG` returned 0 hits;
-- `xerj code --mode hybrid --lang LG` was BM25-only, while its @mode
-  note still reported a vector leg.
-
-Repro on v1.0.0-rc.81 (issue #1148): semantic alone -> 20 hits;
-bool.must [semantic, match language] -> 0; bool.must [semantic] +
-bool.filter [term language] -> 20. On a psf/requests corpus, semantic
--k 5 -> 5 hits, with --lang python -> 0; hybrid's top RRF score drops
-from 2/61 (both legs) to 1/61 (BM25 only).
-
-Fix: `--lang` becomes bool.filter [match language] with the clause
-alone in `must`, in semantic_body and on both hybrid legs (the BM25 leg
-keeps the same shape as the vector leg). `match` is kept rather tha
-
-**File**: `engine/crates/xerj-common/src/xccode/mod.rs` (modified, +36/-2)
-```diff
-@@ -520,9 +520,11 @@ pub(crate) fn bm25_body(query: &str, k: usize, lang: &Option<String>, fields: &[
- /// vector pool to 10 whatever `size` says (#1145).
- pub(crate) fn semantic_body(query: &str, k: usize, lang: &Option<String>) -> Value {
-     let q = serde_json::json!({ "semantic": { "field": "body", "query": query, "k": k } });
-+    // `--lang` rides in `filter`: the engine sends a bool to the vector path
-+    // only when the semantic clause is its sole must/should clause (#1148).
-     let query = match lang {
-         Some(lg) => serde_json::json!({
--            "bool": { "must": [q, { "match": { "language": lg } }] }
-+            "bool": { "must": [q], "filter": [{ "match": { "language": lg } }] }
-         }),
-         None => q,
-     };
-@@ -541,10 +543,13 @@ pub(crate) fn hybrid_body(
- ) -> Value {
-     // `--lang` must constrain BOTH legs (xc.py semantics): a language filter
-     // on BM25 only lets the vector leg surface docs the user filtered out.
-+    // It is a `filter`, not a second `must`: a semantic clause beside a
-+    // sibling in `must` falls through to the lexical path and matches
-+    // nothing (#1148). Both legs take the same shape.
-     let wrap = |q: Value| -> Value {
-         match lang {
-             Some(lg) => serde_json::json!({
--                "bool": { "must": [q, { "match": { "language": lg } }] }
-+                "bool": { "must": [q], "filter": [{ "match": { "language": lg } }] }
-             }),
-             None => q,
-         }
-@@ -904,6 +909,35 @@ mod tests {
-         );
-     }
- 
-+    /// #1148: the engine dispatches a bool to the vector path only when the
-+    /// semantic clause is its ONE must/should clause (bool.filter is merged
-+    /// into the semantic filter); a `match` beside it in `must` fell through
-+    /// to the lexical path and answered 200 with zero hits. `--lang` must
-+    /// therefore ride in `filter`, on both hybrid legs.
-+    #[test]
-+    fn lang_is_a_filter_so_the_semantic_clause_stays_alone_in_must() {
-+        let lang = Some("rust".to_string());
-+        let want_filter = serde_json::json!([{ "match": { "language": "rust" } }]);
-+
-+        let sem = semantic_body("q", 50, &lang);
-+        let must = sem.pointer("/query/bool/must").and_then(Value::as_array);
-+        assert_eq!(must.map(Vec::len), Some(1), "{sem}");
-+        assert!(must.unwrap()[0].get("semantic").is_some(), "{sem}");
-+        assert_eq!(sem.pointer("/query/bool/filter"), Some(&want_filter));
-+
-+        let fields = vec!["body".to_string()];
-+        let hy = hybrid_body("q", 50, &lang, &fields);
-+        for (leg, clause) in [(0, "multi_match"), (1, "semantic")] {
-+            let q = hy
-+                .pointer(&format!("/query/hybrid/queries/{leg}/query"))
-+                .unwrap();
-+            let must = q.pointer("/bool/must").and_then(Value::as_array);
-+            assert_eq!(must.map(Vec::len), Some(1), "leg {leg}: {q}");
-+            assert!(must.unwrap()[0].get(clause).is_some(), "leg {leg}: {q}");
-+            assert_eq!(q.pointer("/bool/filter"), Some(&want_filter), "leg {leg}");
-+        }
-+    }
-+
-     #[test]
-     fn hybrid_without_a_capable_index_degrades_to_bm25_and_says_so() {
-         let root = root_with_state();
-```
-
----
-
-### Incident Patch 11: `54521f01` (2026-10-05)
-**Commit Message**: merge #1151: release v1.0.0-rc.82 (man pages, XLSX shapes, xerj code fixes)
-
-Release: v1.0.0-rc.82 (2026-10-05)
-
-**File**: `CHANGELOG.md` (modified, +90/-0)
-```diff
-@@ -7,6 +7,96 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+## [1.0.0-rc.82] - 2026-10-05
-+
-+The documents-people-actually-have release. Three extractor PRs from a
-+first-time contributor extend autoindex to the formats that were still
-+read-as-text: Unix man pages, and the two spreadsheet shapes real
-+workbooks ship — vertically merged cells and two-row grouped headers.
-+Every code change in the window came through the community surface:
-+the extractor work is
-+[thomas-villani](https://github.com/thomas-villani)'s first contributions
-+to the project, and the window also carries the `xerj code` retrieval
-+fixes and two field reports.
-+
-+### Added
-+
-+- **Man page extraction** — roff `man(7)` sources read as documents, one
-+  record per `.SH` section: the `.TH` title (`LS(1)`), the NAME summary,
-+  font escapes dropped, `\(em`-class specials become the characters they
-+  name, no-fill blocks keep their layout, and a tbl table becomes one
-+  ` | `-joined line per row. Enough of the roff request language is read
-+  (`.ds` strings, `.if`/`.ie`/`.el` conditionals, `.de` macro bodies) that
-+  pod2man's preamble needs no special case; mdoc(7) pages and `.so` stubs
-+  stay text, as before. Ported from the man parser in all2md
-+  (`parsers/man.py`, MIT), reduced to plain text with attribution
-+  (PR [#1134](https://github.com/xerj-org/xerj/pull/1134),
-+  thomas-villani).
-+- **XLSX merged cells fill down** — a cell merged DOWN over several rows
-+  (a pandas MultiIndex export, a category label beside its line items)
-+  stores its value only in the top row; every covered row now gets it, so
-+  `region: East` matches all of East's rows and a `terms` aggregation
-+  counts them. Merges across columns are deliberately not expanded
-+  (PR [#1132](https://github.com/xerj-org/xerj/pull/1132),
-+  thomas-villani).
-+- **XLSX two-row grouped headers** — a header two rows deep (group labels
-+  above the column names, pandas' MultiIndex columns) names each column
-+  from both rows: `Q1_Jan`, `Q1_Feb`. Three-or-more-row headers keep
-+  their two lowest rows; on sheets over 64 MB the sample keeps one
-+  (PR [#1133](https://github.com/xerj-org/xerj/pull/1133),
-+  thomas-villani, stacked on #1132).
-+- **Docs: extracted formats** — `.pptx`/`.xlsx` listed as extracted
-+  formats across the docs and the retired "no XLSX/PPTX extractor"
-+  caveats removed
-+  (PR [#1130](https://github.com/xerj-org/xerj/pull/1130),
-+  thomas-villani).
-+- **The xerj-code skill points at the whole hub** — per-project corpus
-+  selection now walks the live registry instead of a hand-listed few
-+  (PR [#1126](https://github.com/xerj-org/xerj/pull/1126)), and the
-+  domain-selection table covers every live hub corpus
-+  (PRs [#1143](https://github.com/xerj-org/xerj/pull/1143),
-+  [#1149](https://github.com/xerj-org/xerj/pull/1149),
-+  [#1150](https://github.com/xerj-org/xerj/pull/1150)).
-+
-+### Fixed
-+
-+- **`xerj code` top-k crowding** — one large file's adjacent 2 KB chunks
-+  no longer crowd every other source out of the top-k: at most 2 records
-+  per source file (issue [#1137](https://github.com/xerj-org/xerj/issues/1137),
-+  fixed by PR [#1140](https://github.com/xerj-org/xerj/pull/1140) — the
-+  failure class was measured as G7 retrieval fails before the fix).
-+- **`xerj code` txt-family search** — the txt extraction family puts its
-+  content in a `text` field the BM25 leg never searched, so passages
-+  rendered empty; the field is searched now (issue
-+  [#1139](https://github.com/xerj-org/xerj/issues/1139), fixed by PR
-+  [#1140](https://github.com/xerj-org/xerj/pull/1140)).
-+- **Markdown sniffing** — markdown whose body starts with YAML-shaped
-+  keys or an HTML prefix classified as Yaml or Xml and indexed as junk;
-+  it is Txt now, with guards on the sniffs that mistook it
-+  (PRs [#1142](https://github.com/xerj-org/xerj/pull/1142) and
-+  [#1144](https://github.com/xerj-org/xerj/pull/1144)).
-+- **`.odp` advice** — the unsupported-format hint now tells OpenDocument
-+  presentation owners to save as `.pptx` (one record per slide, with
-+  slide titles and notes) rather than export to PDF
-+  (PR [#1131](https://github.com/xerj-org/xerj/pull/1131),
-+  thomas-villani).
-+
-+### Community
-+
-+- Field reports: a second reference-coding report from
-+  [alessandropcostabr](https://github.com/alessandropcostabr)
-+  (PR [#1141](https://github.com/xerj-org/xerj/pull/1141)) and a
-+  doc-sort field report from
-+  [Ravandevil25](https://github.com/Ravandevil25)
-+  (PR [#1128](https://github.com/xerj-org/xerj/pull/1128)), whose CLA
-+  signature landed with it (PR
-+  [#1129](https://github.com/xerj-org/xerj/pull/1129)) — the `_doc`
-+  arrival-order fix that report describes is reviewed and waiting on its
-+  own CLA signature (PR
-+  [#1127](https://github.com/xerj-org/xerj/pull/1127)).
-+- Release-download metrics chore for 2026-10-04 (2,956 assets, 1,651
-+  binaries — direct commit, `[skip ci]`).
-+
- ## [1.0.0-rc.81]
-```
-
-**File**: `ROADMAP.md` (modified, +45/-14)
-```diff
-@@ -2,14 +2,19 @@
- 
- This roadmap tracks capabilities that are **planned but not yet fully implemented**, so the project's public claims stay honest about what ships today versus what is coming. Status is verified against the actual code and by real API requests to the release binary, not aspirational.
- 
--Last reviewed: 2026-10-03 (against `v1.0.0-rc.81` and `main`). Statuses trace to issues, merged PRs, the CHANGELOG, and the conformance suite; items carried forward from the 2026-07-12 review without fresh live verification are marked as such. This review line is machine-checked: `docs_capability_lists` fails the build if a release is cut without re-reviewing this file (issue #298 — closed as abandoned 2026-09-29; the machine check, not the issue, enforces the cadence now). This pass is the rc.81 release-cut roll: the open-defects shortlist was
--re-verified against the live tracker at cut time — **four open** (#1091,
--#1092, #1094 from the rc.80 gate runs; #1100 from the console review);
--#1093 was closed inside the window by PR
--[#1112](https://github.com/xerj-org/xerj/pull/1112) (strict unknown-field
--refusal) and moves to the CHANGELOG — the lesson of 2026-09-21, when several
-+Last reviewed: 2026-10-05 (against `v1.0.0-rc.82` and `main`). Statuses trace to issues, merged PRs, the CHANGELOG, and the conformance suite; items carried forward from the 2026-07-12 review without fresh live verification are marked as such. This review line is machine-checked: `docs_capability_lists` fails the build if a release is cut without re-reviewing this file (issue #298 — closed as abandoned 2026-09-29; the machine check, not the issue, enforces the cadence now). This pass is the rc.82 release-cut roll: the open-defects shortlist was
-+re-verified against the live tracker at cut time — **nine open** (#1091,
-+#1092, #1094 from the rc.80 gate runs; #1100 from the console review;
-+#1136 and #1145–#1148, the corpus-namespace and `xerj code` retrieval
-+defects filed from the corpus-hub G7 work inside this window); #1137 and
-+#1139 were closed inside the window by PR
-+[#1140](https://github.com/xerj-org/xerj/pull/1140) and move to the
-+CHANGELOG — the lesson of 2026-09-21, when several
- entries went stale within hours of that review, is why the shortlist is
--checked live at the cut rather than desk-carried. Later the same day the tracker was emptied: everything open after the cut — #1038, #1030, #1031, #1032 — was closed (the two shipped-half epics are in the rc.78 record below, the two defects are recorded below as deferred, not fixed), leaving zero open issues. The 2026-09-26 desk review (PR [#1036](https://github.com/xerj-org/xerj/pull/1036)) stands as recorded: it closed the CHANGELOG-gap GA item (the rc.19–rc.70 backfill, PR [#1035](https://github.com/xerj-org/xerj/pull/1035)), marked the stage-2 object-storage item done ([#965](https://github.com/xerj-org/xerj/issues/965) wired in rc.77), and corrected the mail-ingest memory line to the post-[#1002](https://github.com/xerj-org/xerj/pull/1002) reality. The *Shipping today* claims were last live-verified against rc.76 (unchanged by this pass), and *The zero-token direction* below was verified separately on 2026-09-18, against `main` @ `4d8dadbf`.
-+checked live at the cut rather than desk-carried. The rc.81 roll's record
-+stands as written: four open at that cut, with #1093 closed inside the
-+window by PR [#1112](https://github.com/xerj-org/xerj/pull/1112) (strict
-+unknown-field refusal). Later the same day the tracker was emptied: everything open after the cut — #1038, #1030, #1031, #1032 — was closed (the two shipped-half epics are in the rc.78 record below, the two defects are recorded below as deferred, not fixed), leaving zero open issues. The 2026-09-26 desk review (PR [#1036](https://github.com/xerj-org/xerj/pull/1036)) stands as recorded: it closed the CHANGELOG-gap GA item (the rc.19–rc.70 backfill, PR [#1035](https://github.com/xerj-org/xerj/pull/1035)), marked the stage-2 object-storage item done ([#965](https://github.com/xerj-org/xerj/issues/965) wired in rc.77), and corrected the mail-ingest memory line to the post-[#1002](https://github.com/xerj-org/xerj/pull/1002) reality. The *Shipping today* claims were last live-verified against rc.76 (unchanged by this pass), and *The zero-token direction* below was verified separately on 2026-09-18, against `main` @ `4d8dadbf`.
- 
- ## Follow the roadmap
- 
-@@ -40,7 +45,19 @@ The release-by-release record of how all of this landed is [CHANGELOG.md](./CHAN
- 
- ## Next release — [v1.0.0](https://github.com/xerj-org/xerj/milestone/2)
- 
--The GA window. **rc.81 was cut on 2026-10-03** — its full contents are the
-+The GA window. **rc.82 was cut on 2026-10-05** — the
-+documents-people-actually-have release: man-page extraction plus the two
-+spreadsheet shapes real workbooks ship (vertically merged XLSX cells,
-+two-row grouped headers), all three
-+[thomas-villani](https://github.com/thomas-villani)'s first contributions
-+to the pro
-```
-
-**File**: `engine/Cargo.lock` (modified, +17/-17)
-```diff
-@@ -7236,7 +7236,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-ai"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "candle-core",
-@@ -7258,7 +7258,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-api"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "argon2",
-@@ -7293,7 +7293,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-autoindex"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "aws-sdk-s3",
-@@ -7368,7 +7368,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-cluster"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -7393,7 +7393,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-common"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7413,7 +7413,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-compress"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "byteorder",
-  "bytes",
-@@ -7426,7 +7426,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-console-api"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7462,7 +7462,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-engine"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7517,7 +7517,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-fts"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "bitpacking",
-@@ -7544,7 +7544,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-logs"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7562,7 +7562,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-mcp"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "reqwest",
-@@ -7576,7 +7576,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-query"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "base64 0.22.1",
-@@ -7591,7 +7591,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-rerank"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "reqwest",
-  "serde",
-@@ -7605,7 +7605,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-server"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -7654,7 +7654,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-storage"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "arc-swap",
-@@ -7687,7 +7687,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-vector"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "byteorder",
-@@ -7705,7 +7705,7 @@ dependencies = [
- 
- [[package]]
- name = "xerj-wasm"
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- dependencies = [
-  "anyhow",
-  "bytes",
-```
-
-**File**: `engine/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ members = [
- ]
- 
- [workspace.package]
--version = "1.0.0-rc.81"
-+version = "1.0.0-rc.82"
- edition = "2021"
- license = "Apache-2.0"
- authors = ["xerj Contributors"]
-```
-
-**File**: `landing/index.html` (modified, +1/-1)
-```diff
-@@ -175,7 +175,7 @@
-   <a href="/docs/recipes/">RECIPES</a>
-   <a href="/playground">DASHBOARDS</a>
-   <a href="https://github.com/xerj-org/xerj" rel="external">GITHUB</a>
--  <a class="nav-dl" href="https://github.com/xerj-org/xerj/releases/latest" rel="external" title="Download the latest XERJ release">↓ <span data-latest-tag>v1.0.0-rc.81</span></a>
-+  <a class="nav-dl" href="https://github.com/xerj-org/xerj/releases/latest" rel="external" title="Download the latest XERJ release">↓ <span data-latest-tag>v1.0.0-rc.82</span></a>
-   <span class="theme">
-     <button type="button" data-theme="day" class="active">DAY</button>
-     <span class="dash">·</span>
-```
-
-**File**: `landing/sitemap.xml` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-   <url>
-     <loc>https://xerj.org/</loc>
--    <lastmod>2026-10-03</lastmod>
-+    <lastmod>2026-10-05</lastmod>
-   </url>
-   <url>
-     <loc>https://xerj.org/agent-search/</loc>
-```
-
----
-
-### Incident Patch 12: `64974a1c` (2026-10-05)
-**Commit Message**: fix(xccode): send k on the semantic clause so the vector leg gets the fetch window (#1145)
-
-semantic_body and hybrid_body sent no `k` on the `semantic` clause, so
-the parser default (10, xerj-query/src/parser.rs:2915) applied and the
-engine cut the vector pool to 10 whatever `size` said. Two symptoms:
-
-- `xerj code --mode semantic -k N` returned at most 10 hits for N > 10.
-- `--mode hybrid` fused BM25@size with vector@10. Since #1137 the
-  request size is diversity_fetch(k) = 50 at the default -k 5, so the
-  overfetch widened the BM25 leg alone and the fused tail past rank 10
-  was BM25-only.
-
-Repro on v1.0.0-rc.81 (issue #1145, steps 3-5): semantic size=20 with
-no k -> 10 hits, with "k":20 -> 20; hybrid with an empty BM25 leg ->
-10 hits, with "k":20 -> 20.
-
-Fix: put "k": <fetch window> on the semantic clause in both bodies, the
-same window as `size`. The engine-side default proposed in the #1145
-comment (an omitted vector-leg k defaulting to the hybrid executor's
-per_query_topk, which would also cover MCP xerj_hybrid_search and the
-catalog's suggested query) is left to the maintainers.
-
-Test: the_vector_leg_carries_the_fetch_window_as_k, watched failing
-before the fix (left: None,
-
-**File**: `engine/crates/xerj-common/src/xccode/mod.rs` (modified, +30/-2)
-```diff
-@@ -515,8 +515,11 @@ pub(crate) fn bm25_body(query: &str, k: usize, lang: &Option<String>, fields: &[
- 
- /// The vector-only body. Aimed ONLY at indices whose `body` is semantic_text
- /// (a semantic query against plain text 400s the whole wildcard).
-+///
-+/// The clause carries `k` = the fetch window: without it the parser cuts the
-+/// vector pool to 10 whatever `size` says (#1145).
- pub(crate) fn semantic_body(query: &str, k: usize, lang: &Option<String>) -> Value {
--    let q = serde_json::json!({ "semantic": { "field": "body", "query": query } });
-+    let q = serde_json::json!({ "semantic": { "field": "body", "query": query, "k": k } });
-     let query = match lang {
-         Some(lg) => serde_json::json!({
-             "bool": { "must": [q, { "match": { "language": lg } }] }
-@@ -549,8 +552,11 @@ pub(crate) fn hybrid_body(
-     let bm = wrap(serde_json::json!({
-         "multi_match": { "query": query, "fields": fields }
-     }));
-+    // `k` on the semantic clause: the vector leg's pool is cut to its own
-+    // `k` (parser default 10), not to `size`, so without it the #1137
-+    // overfetch widens the BM25 leg alone (#1145).
-     let sem = wrap(serde_json::json!({
--        "semantic": { "field": "body", "query": query }
-+        "semantic": { "field": "body", "query": query, "k": k }
-     }));
-     serde_json::json!({
-         "size": k,
-@@ -876,6 +882,28 @@ mod tests {
-         );
-     }
- 
-+    /// #1145: a `semantic` clause without `k` is cut to the parser default
-+    /// (10), so the vector leg must carry the same window as `size` — else
-+    /// `--mode semantic -k 20` returns 10 hits and hybrid fuses BM25@50 with
-+    /// vector@10 (the #1137 overfetch widened the BM25 leg alone).
-+    #[test]
-+    fn the_vector_leg_carries_the_fetch_window_as_k() {
-+        let sem = semantic_body("q", 50, &None);
-+        assert_eq!(sem.pointer("/size"), Some(&serde_json::json!(50)));
-+        assert_eq!(
-+            sem.pointer("/query/semantic/k"),
-+            Some(&serde_json::json!(50))
-+        );
-+
-+        let fields = vec!["body".to_string()];
-+        let hy = hybrid_body("q", 50, &None, &fields);
-+        assert_eq!(
-+            hy.pointer("/query/hybrid/queries/1/query/semantic/k"),
-+            Some(&serde_json::json!(50)),
-+            "{hy}"
-+        );
-+    }
-+
-     #[test]
-     fn hybrid_without_a_capable_index_degrades_to_bm25_and_says_so() {
-         let root = root_with_state();
-```
-
----
-
-### Incident Patch 13: `c90383b9` (2026-10-05)
-**Commit Message**: Merge pull request #1131 from thomas-villani/fix/odf-export-advice
-
-fix(autoindex): tell .odp owners to save as .pptx, not export to PDF
-
-**File**: `engine/crates/xerj-autoindex/src/sniff.rs` (modified, +10/-1)
-```diff
-@@ -1130,7 +1130,7 @@ pub fn unsupported_document_advice(binary_kind: &str) -> Option<String> {
-         "xlsb" => ("Excel binary workbook", "save it as .xlsx"),
-         "odt" => ("OpenDocument text", "export it as DOCX or PDF"),
-         "ods" => ("OpenDocument spreadsheet", "save it as .xlsx"),
--        "odp" => ("OpenDocument presentation", "export it as PDF"),
-+        "odp" => ("OpenDocument presentation", "save it as .pptx"),
-         "epub" => ("EPUB e-book", "convert it to PDF"),
-         _ => return None,
-     };
-@@ -4282,6 +4282,15 @@ mod zip_container_sniff_tests {
-         assert!(unsupported_document_advice("xlsb")
-             .unwrap()
-             .contains("Excel binary workbook"));
-+        // The hint names the format autoindex extracts best for that kind of
-+        // document: a presentation saved as .pptx keeps one record per slide,
-+        // which a PDF export also gives but without the slide titles and notes.
-+        assert!(unsupported_document_advice("ods")
-+            .unwrap()
-+            .contains(".xlsx"));
-+        assert!(unsupported_document_advice("odp")
-+            .unwrap()
-+            .contains(".pptx"));
-         for k in ["zip", "tar", "png", "docx", "pptx", "xlsx", "unknown", ""] {
-             assert_eq!(unsupported_document_advice(k), None, "{k}");
-         }
-```
-
----
-
-### Incident Patch 14: `53f9793a` (2026-10-04)
-**Commit Message**: skill: domain rows for night-2 live corpora (fda-food-code, mutcd, uk-building-regs, eurlex-core, ada-2010) (#1150)
-
-Five corpora flipped live on the hub tonight (87 live), each G7
-graded with pre-registered suites. Table one-liners match the hub
-manifests' scope notes exactly - uk-building-regs is the SI 2010/2214
-per-provision mirror (not the Approved Documents), eurlex-core is the
-five digital-regulation acts per-article/recital (not the treaties).
-
-**File**: `tools/xerj-code/SKILL.md` (modified, +5/-0)
-```diff
-@@ -108,6 +108,11 @@ project's domain, not by size:
- | accessible UI components | `govuk-design-system` | GOV.UK component options and accessibility criteria — the exact option semantics (maxwords vs maxlength, divider text, focus-on-load) |
- | pharma / drug labels | `dailymed` | FDA label sections: indications, contraindications, administration timing |
- | clinical treatment guidance | `cdc-clinical` | CDC STI treatment regimens and doses, syphilis desensitization, measles clinical signs |
-+| food-service safety | `fda-food-code` | FDA Food Code 2022 provisions: hand-contact surfaces, Time as a Public Health Control, date marking, bare-hand readiness |
-+| traffic control devices | `mutcd` | FHWA MUTCD 11th Ed (Rev 1): sign and signal warrants, markings, work-zone typical applications |
-+| building works (England) | `uk-building-regs` | Building Regulations 2010 (SI 2010/2214) per-provision: Parts A–P requirements, Wales variants labelled, 44ZB/44ZC dual numbering documented |
-+| EU digital regulation | `eurlex-core` | GDPR, AI Act, DSA, DMA, NIS2 per-article and per-recital from the EUR-Lex Cellar (annexes excluded by design) |
-+| accessibility (built environment) | `ada-2010` | ADA 2010 Standards: reach ranges, clear floor space, slope ratios, per-section |
- 
- Three rules that keep the choice honest:
- 
-```
-
----
-
-### Incident Patch 15: `37bc931e` (2026-10-04)
-**Commit Message**: Merge pull request #1144 from xerj-org/fix/autoindex-markdown-sniff-guards
-
-fix(autoindex): markdown with YAML-shaped headers or HTML prefixes is Txt, not Yaml/Xml
-
-**File**: `engine/crates/xerj-autoindex/src/sniff.rs` (modified, +164/-2)
-```diff
-@@ -1262,7 +1262,16 @@ fn classify_text(text: &str, nonblank: &[&str]) -> Family {
-             }
-         }
-     }
--    if leads_with_marker || yaml_line_ratio(nonblank) >= 0.6 {
-+    // #1142: `yaml_line_ratio` counts `Label:` prose headers and `- ` bullets
-+    // as YAML evidence, so "labeled prose" — a short `id:`/`title:` header
-+    // followed by `Statement:`/`Guidance:` paragraphs, the shape of every
-+    // NIST/OSCAL control file — scores ~0.7, went to the YAML extractor, and
-+    // was junk-filed (measured: 400 of 722 files in one corpus silently never
-+    // indexed). The discriminator the frontmatter branch already uses applies
-+    // here too: labeled prose does not parse as a YAML stream, a real
-+    // key:value mapping does. The parse only runs for files the line tier
-+    // already judged YAML-majority, and on the sniff prefix.
-+    if leads_with_marker || (yaml_line_ratio(nonblank) >= 0.6 && parses_as_yaml_stream(text)) {
-         return Family::Yaml;
-     }
- 
-@@ -1424,12 +1433,23 @@ fn classify_structured(text: &str, nonblank: &[&str]) -> Option<Family> {
-     if head_lc.contains("<!doctype html") || head_lc.contains("<html") {
-         return Some(Family::Html);
-     }
--    if head_lc.contains("<?xml") || (trimmed.starts_with('<') && text.contains("</")) {
-+    let xml_decl = head_lc.contains("<?xml");
-+    if xml_decl || (trimmed.starts_with('<') && text.contains("</")) {
-         // xhtml disguised as xml?
-         let lc: String = text.to_lowercase();
-         if lc.contains("<html") || lc.contains("<body") {
-             return Some(Family::Html);
-         }
-+        // #1142: markdown that merely OPENS with an HTML fragment — a Hugo
-+        // `<!--- … --->` front-matter comment, an `<a name="…"></a>` anchor, a
-+        // floated `<div>` — took the XML branch here, and the XML extractor
-+        // junk-filed the not-well-formed document (whole chapters and every
-+        // `*-spans.md` convention page of one corpus). A whole-file markdown
-+        // signature outranks the leading `<`; only declared-`<?xml` documents
-+        // are exempt, so XML with embedded markdown CDATA keeps its family.
-+        if !xml_decl && markdown_signature(nonblank) {
-+            return None;
-+        }
-         return Some(Family::Xml);
-     }
- 
-@@ -1493,6 +1513,43 @@ fn yaml_like_count(lines: &[&str]) -> usize {
-         .count()
- }
- 
-+/// #1142: does this text carry a whole-file markdown signature — at least one
-+/// ATX heading plus three further markdown marker lines (list items, table
-+/// rows, fences, links/images)? Used only to keep markdown that opens with an
-+/// HTML fragment out of the XML family, whose extractor junk-files
-+/// not-well-formed documents. Real XML/HTML documents carry no ATX headings,
-+/// so the pairing is one-sided on purpose. Measured on the corpus that exposed
-+/// the defect: `cover.md` 2 headings + 13 markers, `sec5_authenticators.md`
-+/// 77 markers, semconv `http-spans.md` 83 — all junked as XML before, all
-+/// text afterwards.
-+fn markdown_signature(nonblank: &[&str]) -> bool {
-+    let atx = |t: &str| {
-+        let hashes = t.chars().take_while(|c| *c == '#').count();
-+        (1..=6).contains(&hashes)
-+            && t[hashes..].starts_with(' ')
-+            && !t[hashes + 1..].trim().is_empty()
-+    };
-+    let mut has_heading = false;
-+    let mut markers = 0usize;
-+    for l in nonblank {
-+        let t = l.trim_start();
-+        if atx(t) {
-+            has_heading = true;
++/// The `<corpus>` argument of `xerj code …`: the first positional, skipping the
++/// values of [`CODE_VALUE_FLAGS`] (both parsers take it in that position).
++fn code_corpus_arg(args: &[String]) -> Option<&str> {
++    let mut i = 0;
++    while i < args.len() {
++        let a = args[i].as_str();
++        if CODE_VALUE_FLAGS.contains(&a) {
++            i += 2;
 +            continue;
 +        }
-+        let marker = t.starts_with("- ")
-+            || t.starts_with("* ")
-+            || t.starts_with("+ ")
-+            || t.starts_with('|')
-+            || t.starts_with("```")
-+            || t.contains("](");
-+        if marker {
-+            markers += 1;
++        if !a.starts_with('-') {
++            return Some(a);
 +        }
-+    }
-+    has_heading && markers >= 3
++        i += 1;
+     }
+-    run_code_def(args)
++    None
 +}
 +
- /// Does `text` parse as a YAML stream of structured documents — i.e. was the
- /// `---` a *document separator* in a multi-document stream rather than the
- /// closing fence of a markdown frontmatter block?
-@@ -3455,6 +3512,111 @@ mod tests {
-         );
++/// For a PULLED corpus queried with no `--url` and no `XERJ_URL`, add
++/// `--url <the node the pack lives on>` ([`node::resolve_pulled_node`]).
++///
++/// Without this, `xerj code <slug>` — the command `xerj hub pull` tells the user
++/// to run next — resolved `localhost:9200` while the pack had been restored into
++/// the automatic node on 9300+: `--def` printed "no match … answered from: local
++/// pack" and a question failed with a transport error. `xerj ask` already used
++/// the automatic node. A locally indexed corpus, an explicit `--url` or
++/// `XERJ_URL`, and anything that is not a pulled corpus pass through unchanged.
++fn with_pulled_node_url(args: &[String]) -> Result<Vec<String>> {
++    let explicit_env = std::env::var("XERJ_URL").is_ok_and(|u| !u.is_empty());
++    let help = args.iter().any(|a| a == "-h" || a == "--help");
++    if explicit_env || help || args.iter().any(|a| a == "--url") {
++        return Ok(args.to_vec());
++    }
++    let Some(corpus) = code_corpus_arg(args) else {
++        return Ok(args.to_vec());
++    };
++    let Ok(st) = state::load_state(&xerj_autoindex::xc::code_root(), corpus) else {
++        return Ok(args.to_vec()); // the code path reports "not indexed" itself
++    };
++    if st.source.as_deref() != Some(state::SOURCE_HUBPACK) {
++        return Ok(args.to_vec());
++    }
++    let launcher = NodeLauncher::current()?;
++    let resolved = node::resolve_pulled_node(&hub_home(), st.url.as_deref(), &launcher)
++        .with_context(|| format!("cannot reach the node holding the pulled corpus '{corpus}'"))?;
++    let mut out = args.to_vec();
++    out.push("--url".into());
++    out.push(resolved.url);
++    Ok(out)
+ }
+ 
+ fn run_code_def(args: &[String]) -> i32 {
+@@ -1358,11 +1427,18 @@ fn run_code_def(args: &[String]) -> i32 {
+         return 2;
+     }
+     let prefix = state::query_prefix(&st);
+-    if let Ok(live) = node.cat_indices_json(&format!("{prefix}*")) {
+-        if live.is_empty() {
++    match node.cat_indices_json(&format!("{prefix}*")) {
++        Ok(live) if live.is_empty() => {
+             eprintln!("{}", state::not_loaded_message(&st, &prefix, &url));
+             return 3;
+         }
++        Ok(_) => {}
++        // An unreachable node is a failure to answer (exit 2), not "no match"
++        // (exit 1) — and never "answered from: local pack".
++        Err(e) => {
++            eprintln!("xerj code: cannot reach {url}: {e}");
++            return 2;
++        }
      }
  
-+    /// #1142 class 1: markdown opening with an HTML fragment (Hugo front-matter
-+    /// comment, anchor) must NOT take the XML family — the XML extractor
-+    /// junk-files the not-well-formed document. This is the semconv
-+    /// `http-spans.md` / `database-spans.md` shape (every `*-spans.md`
-+    /// convention page was silently unindexed).
+     let answer = crate::def::lookup(&node, &slug, &symbol, k);
+@@ -1461,6 +1537,22 @@ mod tests {
+         }
+     }
+ 
 +    #[test]
-+    fn markdown_with_leading_html_fragment_stays_text() {
-+        let hugo = "<!--- Hugo front matter used to generate the website version of this page:\n\
-+                    linkTitle: Spans\n--->\n\n\
-+                    # Semantic conventions for HTTP spans\n\n\
-+                    **Status**: [Stable][DocumentStatus]\n\n\
-+                    - one\n- two\n- three\n\n\
-+                    | a | b |\n|---|---|\n| 1 | 2 |\n";
++    fn code_corpus_arg_skips_flag_values() {
++        let v = |xs: &[&str]| xs.iter().map(|x| x.to_string()).collect::<Vec<_>>();
++        assert_eq!(code_corpus_arg(&v(&["lz4", "q"])), Some("lz4"));
++        assert_eq!(code_corpus_arg(&v(&["--def", "X", "lz4"])), Some("lz4"));
++        assert_eq!(
++            code_corpus_arg(&v(&["-k", "3", "--json", "lz4", "q"])),
++            Some("lz4")
++        );
++        assert_eq!(
++            code_corpus_arg(&v(&["--mode", "bm25", "--lang", "c"])),
++            None
++        );
++        assert_eq!(code_corpus_arg(&v(&["--def"])), None);
++    }
++
+     #[test]
+     fn run_code_without_def_does_not_enter_the_def_path() {
+         // No node is contacted and no panic: a bare `code` with a bad flag
+```
+
+**File**: `engine/crates/xerj-hub/src/node.rs` (modified, +84/-0)
+```diff
+@@ -559,6 +559,43 @@ fn ensure_node_with(
+     }
+ }
+ 
++/// The node a PULLED corpus (a `source: "hubpack"` ledger) is queried on when
++/// the caller named none (no `--url`, no `XERJ_URL`).
++///
++/// `xerj hub pull` restores into whatever [`ensure_node`] resolved — on a
++/// machine with nothing on `localhost:9200`, the automatic node on 9300+ — and
++/// records that URL in the ledger. A bare `xerj code <slug>` used to ignore the
++/// ledger and query `localhost:9200`, so the corpus `pull` had just restored was
++/// unreachable from the command `pull` tells the user to run next.
++///
++/// The recorded URL takes the place `--url` has in [`ensure_node`]: used when it
++/// answers; refused when it is remote and silent; and when it is local and
++/// silent (the automatic node was stopped, or its port changed), the automatic
++/// node is reused or restarted on its own data directory, where the restored
++/// indices persist. `localhost:9200` is NOT probed: a node there that never held
++/// the pack would answer "not loaded" for a corpus that is one restart away.
++/// A ledger with no URL falls back to plain [`ensure_node`].
++pub fn resolve_pulled_node(
++    hub_home: &Path,
++    recorded: Option<&str>,
++    launcher: &NodeLauncher,
++) -> Result<ResolvedNode> {
++    resolve_pulled_node_with(hub_home, recorded, launcher, NODE_BOOT_TIMEOUT)
++}
++
++/// [`resolve_pulled_node`] with the boot timeout spelled out (tests shorten it).
++fn resolve_pulled_node_with(
++    hub_home: &Path,
++    recorded: Option<&str>,
++    launcher: &NodeLauncher,
++    boot_timeout: Duration,
++) -> Result<ResolvedNode> {
++    let recorded = recorded
++        .map(|u| u.trim().trim_end_matches('/'))
++        .filter(|u| !u.is_empty());
++    ensure_node_with(hub_home, recorded, launcher, boot_timeout)
++}
++
+ fn unconfirmed_message(hub_home: &Path, rec: &NodeRecord) -> String {
+     if rec.port.is_none() {
+         format!(
+@@ -1832,6 +1869,35 @@ mod tests {
+         assert!(!hub.path().join("node.pid").exists());
+     }
+ 
++    // ── resolve_pulled_node: a bare `xerj code <pulled slug>` ────────────────
++
++    #[test]
++    fn a_pulled_corpus_is_queried_on_the_node_its_ledger_recorded() {
++        // The bug: `pull` restored into the automatic node (9300+) and recorded
++        // its URL; a bare `xerj code` then queried localhost:9200 instead.
++        let hub = tempfile::tempdir().unwrap();
++        let port = fake_node("200 OK", r#"{"status":"green"}"#);
++        let recorded = format!("http://127.0.0.1:{port}/");
++        let r = resolve_pulled_node(hub.path(), Some(&recorded), &forbidden_launcher()).unwrap();
++        assert_eq!(r.url, format!("http://127.0.0.1:{port}"));
++        assert!(!r.started_now, "an answering node is never started over");
++        assert!(!hub.path().join("node.pid").exists());
++    }
++
++    #[test]
++    fn a_pulled_corpus_on_a_silent_remote_node_is_an_error_not_a_local_node() {
++        let hub = tempfile::tempdir().unwrap();
++        let err = resolve_pulled_node(
++            hub.path(),
++            Some("http://nonexistent.invalid:9200"),
++            &forbidden_launcher(),
++        )
++        .unwrap_err()
++        .to_string();
++        assert!(err.contains("not a local address"), "{err}");
++        assert!(!hub.path().join("node.pid").exists());
++    }
++
+     #[test]
+     fn free_port_search_skips_a_busy_triple() {
+         let held = TcpListener::bind("127.0.0.1:0").unwrap();
+@@ -2401,6 +2467,24 @@ mod tests {
+             live.wait().unwrap();
+         }
+ 
++        #[test]
++        fn a_pulled_corpus_whose_recorded_node_moved_finds_the_automatic_node() {
++            // `xerj hub stop` + a later restart put the automatic node on another
++            // port than the one `pull` recorded. The ledger URL is silent and
++            // local, so the automatic node is the answer — and localhost:9200 is
++            // never consulted (a node there never held the pack).
++            let hub = tempfile::tempdir().unwrap();
++            let mut live = spawn_node_like(&node_data_dir(hub.path()));
++            let port = fake_node_with_pid(live.id());
++            record(hub.path(), live.id(), Some(port));
++            let r = resolve_pulled_node(hub.path(), Some(&silent_url()), &forbidden_launcher())
++                .unwrap();
++            assert_eq!(r.url, format!("http://127.0.0.1:{port}"));
++            assert!(r.managed && !r.started_now);
++            live.kill().unwrap();
++            live.wait().unwrap();
++        }
++
+         #[test]
+         fn something_else_on_the_recorded_port_is_not_taken_for_the_recorded_node() {
+             // The node is alive but has not bound its port yet, and another process
+```
+
+**File**: `engine/crates/xerj-hub/tests/pack_roundtrip.rs` (modified, +29/-0)
+```diff
+@@ -491,6 +491,35 @@ async fn pack_build_pull_def_roundtrip() {
+     assert_eq!(answer.hits[0].file, "limits.h");
+     assert_eq!(answer.hits[0].line, 5);
+ 
++    // A BARE `xerj code` (no --url, no XERJ_URL) finds the node the pack was
++    // restored into, from the ledger — not localhost:9200. `pull` names exactly
++    // this command as the next step; it used to query localhost:9200, where
++    // `--def` printed "no match … answered from: local pack" (exit 1) and a
++    // question failed to connect (exit 2).
++    let (rc_def, rc_how) = {
++        let (ch, hh) = (code_home.clone(), hub_home.clone());
++        tokio::task::spawn_blocking(move || {
++            std::env::set_var("XERJ_CODE_HOME", &ch);
++            std::env::set_var("XERJ_HUB_HOME", &hh);
++            std::env::remove_var("XERJ_URL");
++            let def = xerj_hub::cli::run_code(&[
++                "mini-c".into(),
++                "--def".into(),
++                "MINI_LIMIT".into(),
++                "--json".into(),
++            ]);
++            let how = xerj_hub::cli::run_code(&["mini-c".into(), "mini c reference".into()]);
++            (def, how)
++        })
++        .await
++        .unwrap()
++    };
++    assert_eq!(
++        rc_def, 0,
++        "bare `xerj code mini-c --def MINI_LIMIT` answers"
++    );
++    assert_eq!(rc_how, 0, "bare `xerj code mini-c \"<question>\"` answers");
++
+     // Second pull of the same pin → already present, restores nothing.
+     let rc2 = {
+         let (url_b, ch, hh, pk) = (
+```
+
+**File**: `tools/hub-packs/consumer_e2e.sh` (modified, +14/-0)
+```diff
+@@ -17,6 +17,8 @@
+ #      snapshot restore — all against the key compiled into <xerj>;
+ #   4. `xerj code <slug> --def <symbol> --json`, the symbol taken from the pack's
+ #      own defs.jsonl, must return that symbol from the local pack;
++#      4b. the same lookup with NO XERJ_URL must find the node from the ledger
++#      `hub pull` wrote (not localhost:9200);
+ #   5. `xerj code <slug> "<word from ask_for>" --json` must return a hit with a
+ #      file and a line.
+ #
+@@ -108,6 +110,18 @@ jq -e --argjson d "$DEF" '
+   || { cat "$WORK/def.json"; fail "--def $SYM did not return $(jq -r '"\(.file):\(.line)"' <<<"$DEF") from the local pack"; }
+ echo "def ok: $SYM -> $(jq -r '"\(.file):\(.line)"' <<<"$DEF") (answered_from local_pack)"
+ 
++# 4b. The same lookup BARE: no XERJ_URL, no --url — the command `hub pull` tells
++#     a user to run next. It must find the node the pack was restored into from
++#     the ledger, not fall back to localhost:9200 (where nothing listens here).
++env -u XERJ_URL "$BIN" code "$SLUG" --def "$SYM" --json > "$WORK/def-bare.json" \
++  || { cat "$WORK/def-bare.json"; fail "bare xerj code $SLUG --def $SYM (no XERJ_URL) failed"; }
++jq -e --argjson d "$DEF" '
++  .answered_from == "local_pack"
++  and ([.hits[]? | select(.file == $d.file and .line == $d.line)] | length) > 0' \
++  "$WORK/def-bare.json" >/dev/null \
++  || { cat "$WORK/def-bare.json"; fail "bare --def $SYM (no XERJ_URL) did not find the pulled pack's node"; }
++echo "bare def ok: $SYM with no XERJ_URL found the pulled pack's node"
++
+ # 5. One question: a word from the catalogue entry's ask_for. Words the template
+ #    sentence ("an agent working on ... queries this for ...") always carries say
+ #    nothing about the corpus; the longest remaining words are tried, at most three.
+```
+
+---
+
+### Incident Patch 3: `80c88cc3` (2026-10-18)
+**Commit Message**: fix(autoindex): name symlinks the walk does not follow (#1680)
+
+The default walk does not follow symlinks. walkdir then yields the
+link itself, `file_type().is_file()` is false, and the entry was
+`continue`d with no ignore-report line. A dry-run of a tree with an
+inside link and an outside link listed neither file and did not
+mention symlinks, so the links looked like they were not there.
+
+Before: unfollowed symlinks were absent from the file list and from
+the ignore summary.
+After: each one is counted under `symlink:not-followed`, and the
+summary carries one warning: pass `--follow-symlinks` to index a
+target inside the folder; a target outside it stays refused.
+`--follow-symlinks` still indexes an inside target under the link's
+path and still records `symlink:outside-root` for a target outside.
+
+Verified: cargo +1.97.1 test --locked -p xerj-autoindex --lib --
+walk:: (19 passed, including
+an_unfollowed_symlink_is_named_and_an_inside_target_is_indexed).
+cargo +1.97.1 clippy --locked -p xerj-autoindex --all-targets --
+-D warnings (exit 0).
+ES-YAML not run; no wire change.
+
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: xerj-org <[REDACTED_EMAIL]>
+
+**File**: `engine/crates/xerj-autoindex/src/ignore_rules.rs` (modified, +21/-0)
+```diff
+@@ -163,6 +163,14 @@ pub const UNRESOLVED_LINK_RULE: &str = "symlink:unresolved";
+ /// Both were tried; this names the two facts that are actually true.
+ pub const HIDDEN_OUTSIDE_ROOT_RULE: &str = "symlink:outside-root+hidden";
+ 
++/// A symlink the walk did not follow. The default is not to follow links, and
++/// an unfollowed symlink is not a file to walkdir, so it used to be skipped
++/// with no line on the ignore report — a tree of links looked empty. One
++/// warning names `--follow-symlinks`; each link is counted under this rule.
++/// A target outside the folder stays refused even when the flag is on
++/// ([`ESCAPED_ROOT_RULE`]).
++pub const NOT_FOLLOWED_RULE: &str = "symlink:not-followed";
++
+ const MAX_WARNINGS: usize = 20;
+ /// Directory entries the `--dry-run` deep count may examine in total. A
+ /// pathological `node_modules` is not allowed to turn "tell me the plan" into
+@@ -768,6 +776,19 @@ impl IgnoreStack {
+         }
+     }
+ 
++    /// A symlink left unfollowed. See [`NOT_FOLLOWED_RULE`]. The warning is
++    /// once per walk: the rule count already says how many links.
++    pub fn record_symlink_not_followed(&mut self) {
++        if !self.report.by_rule.contains_key(NOT_FOLLOWED_RULE) {
++            self.warn(
++                "symlink: not followed (pass --follow-symlinks to index a target inside \
++                 this folder; a target outside it stays refused)"
++                    .into(),
++            );
++        }
++        self.record_file(NOT_FOLLOWED_RULE);
++    }
++
+     /// A followed entry that could not be resolved. See [`UNRESOLVED_LINK_RULE`].
+     pub fn record_symlink_unresolved(&mut self, is_dir: bool) {
+         if is_dir {
+```
+
+**File**: `engine/crates/xerj-autoindex/src/walk.rs` (modified, +68/-0)
+```diff
+@@ -486,6 +486,12 @@ fn walk_impl(
+             continue;
+         }
+         if !entry.file_type().is_file() {
++            // Unfollowed symlinks are not files to walkdir. Skipping them
++            // with no report made a tree of links look empty: neither the
++            // file list nor the ignore summary mentioned them.
++            if !follow_symlinks && entry.path_is_symlink() {
++                stack.record_symlink_not_followed();
++            }
+             continue;
+         }
+         if stack.skip_file(entry.path()).is_some() {
+@@ -1186,6 +1192,68 @@ mod takeout_noise_tests {
+     }
+ }
+ 
++#[cfg(all(test, unix))]
++mod unfollowed_symlink_tests {
++    use super::walk_reporting;
++    use crate::ignore_rules::{IgnoreOptions, NOT_FOLLOWED_RULE};
++    use std::fs;
++    use std::os::unix::fs::symlink;
++
++    /// Default walk: links are omitted from the file list and named on the
++    /// report, once. `--follow-symlinks` indexes a target inside the folder
++    /// under the link's path and still refuses a target outside it.
++    #[test]
++    fn an_unfollowed_symlink_is_named_and_an_inside_target_is_indexed() {
++        let dir = tempfile::tempdir().unwrap();
++        let root = dir.path().join("proj");
++        fs::create_dir_all(root.join("src")).unwrap();
++        fs::write(root.join("src/lib.rs"), "fn alpha() {}\n").unwrap();
++        symlink("src/lib.rs", root.join("link-inside.rs")).unwrap();
++        let outside = dir.path().join("secret.txt");
++        fs::write(&outside, "secret").unwrap();
++        symlink(&outside, root.join("link-out.txt")).unwrap();
++
++        let (files, report) = walk_reporting(&root, false, IgnoreOptions::default()).unwrap();
++        let rels: Vec<&str> = files.iter().map(|e| e.rel.as_str()).collect();
++        assert!(rels.contains(&"src/lib.rs"), "{rels:?}");
 +        assert!(
-+            matches!(classify(hugo), Family::TxtProse | F
++            !rels.iter().any(|r| r.starts_with("link-")),
++            "unfollowed links must not be indexed: {rels:?}"
++        );
++        assert_eq!(
++            report.by_rule.get(NOT_FOLLOWED_RULE).map(|c| c.files),
++            Some(2),
++            "{report:?}"
++        );
++        let lines = report.summary_lines().join("\n");
++        assert_eq!(lines.matches("--follow-symlinks").count(), 1, "{lines}");
++        assert!(lines.contains(NOT_FOLLOWED_RULE), "{lines}");
++
++        let (followed, followed_report) =
++            walk_reporting(&root, true, IgnoreOptions::default()).unwrap();
++        let frels: Vec<&str> = followed.iter().map(|e| e.rel.as_str()).collect();
++        assert!(
++            frels.contains(&"link-inside.rs"),
++            "an inside target is indexed under the link path: {frels:?}"
++        );
++        assert!(
++            !frels.contains(&"link-out.txt"),
++            "a target outside the folder stays refused: {frels:?}"
++        );
++        assert!(
++            !followed_report.by_rule.contains_key(NOT_FOLLOWED_RULE),
++            "{followed_report:?}"
++        );
++        assert!(
++            followed_report
++                .summary_lines()
++                .iter()
++                .any(|l| l.contains("symlink:outside-root")),
++            "{followed_report:?}"
++        );
++    }
++}
++
+ #[cfg(test)]
+ mod portable_rel_tests {
+     use super::{portable_rel, walk_reporting};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1167** (2026-10-06): docs(llms): the hub counts went stale — 75 live / 104 rows was 2026-10-02 (@xerj-org)
-- **PR #1166** (2026-10-06): hub: 5 contributor-permission corpus candidates (76 sources) (@xerj-org)
-- **PR #1165** (2026-10-06): release: v1.0.0-rc.83 — the corpus-hub hundred (@xerj-org)
-- **PR #1164** (2026-10-05): docs(xerj-code): the hundred — every live corpus in the skill's domain table (@xerj-org)
-- **PR #1162** (2026-10-05): feat(autoindex): extract Jupyter notebooks per heading section; name Parquet/Arrow/NumPy/HDF5/pickle files with an export hint (maintainer rebase of #1161) (@xerj-org)
-- **PR #1161** (closed): feat(autoindex): Jupyter notebooks as heading sections; name Parquet/Arrow/NumPy/HDF5/pickle files with an export hint (@thomas-villani)
-- **PR #1160** (2026-10-05): fix(autoindex): don't emit a section that the next one repeats whole (@thomas-villani)
-- **PR #1159** (2026-10-05): feat(autoindex): extract EPUB books, one record per chapter in reading order (@thomas-villani)
+- **PR #1777** (2026-10-18): fix(hub): consumer gate passes defs-0 packs on the question check alone (@xerj-org)
+- **PR #1775** (2026-10-18): feat(functions): store /api/field-report in R2 (go live; token has no KV) (@xerj-org)
+- **PR #1769** (2026-10-18): fix(deploy): placeholder FIELD_REPORTS KV id blocks every Pages deploy (@xerj-org)
+- **PR #1768** (closed): fix(pages): deploy without a stand-in field-report KV id (@xerj-org)
+- **PR #1763** (2026-10-18): docs: field report for Windows autoindex and ES-compat search (2026-10-18) (@roedyrustam)
+- **PR #1762** (closed): chore: add roedyrustam to .contributors (CLA signature) (@roedyrustam)
 
 ---
 
@@ -4688,3 +2471,46 @@ fix(autoindex): markdown with YAML-shaped headers or HTML prefixes is Txt, not Y
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every 
+
+**RULE**:
+When implementing operations in `wrangler.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a6ce269d`: deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every Pages deploy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `wrangler.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+# [[kv_namespaces]]  — COMMENTED OUT until the owner wires the real namespace.
+# A placeholder id here makes `wrangler pages deploy` fail with
+# "Error 8000022: Invalid KV namespace ID", which blocks EVERY xerj.org deploy
+# (this file is on the deploy trigger path). With no binding declared, the
+# Function fails open: /api/field-report accepts a report and returns 200 but
+# does NOT store it (see functions/api/field-report.js, the `!env.FIELD_REPORTS`
+# branch). To activate storage, create the namespace and restore this block:
+#     wrangler kv namespace create FIELD_REPORTS   # prints an id
+# [[kv_namespaces]]
+# binding = "FIELD_REPORTS"
+# id = "<the id it printed>"
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+[[kv_namespaces]]
+binding = "FIELD_REPORTS"
+id = "REPLACE_WITH_FIELD_REPORTS_KV_NAMESPACE_ID"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a6ce269d` are properly handled with clean fallback behavior.

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-AF23",
-    "timestamp": "2026-10-17T05:51:03.099Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "7ff4b13adae7849cc4f42a52eea7dd6b4eeaec57f8c4fdf0decb05f292a6d235",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-EFVF",
-    "timestamp": "2026-10-17T05:54:10.779Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "aea8425e477e0895fc2ab489499eb7233b0aacdab64a031254d6447309bcf019",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-JS7Z",
-    "timestamp": "2026-10-17T05:58:20.063Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "71df867ddd956c76e68413e9523f667a95b3c5b16e55e6ad1d61fbdb96752c2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-NMYC",
-    "timestamp": "2026-10-17T06:01:19.860Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "c63f67d2f2d3103c6b6709921fd9f6bbf02fb432edafd619690a30494d0ff0bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-RONK",
-    "timestamp": "2026-10-17T06:04:28.688Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "9f25b7dcddb0b758c52e9e31401d474c881595d347cca809c5e94c9631160cd1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-VVTC",
-    "timestamp": "2026-10-17T06:07:44.592Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "66fad62ef4ff9c8e7de0971a417b9d7a091aea84771a2596ee0acd6acf4b45a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-ZTZT",
     "timestamp": "2026-10-17T06:10:48.857Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7400,96 @@
     "repository": "liyupi/yu-ai-agent",
     "learningId": "learn-github-liyupi-yu-ai-agent",
     "contentHash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-HQEM",
+    "timestamp": "2026-10-18T22:04:11.374Z",
+    "repository": "Tencent/omi",
+    "learningId": "learn-github-tencent-omi",
+    "contentHash": "a648c692785d376cd822cbf836b0ef4513c74c6f23bb1402204b325587a3c175",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-HRTL",
+    "timestamp": "2026-10-18T22:04:13.209Z",
+    "repository": "googleworkspace/cli",
+    "learningId": "learn-github-googleworkspace-cli",
+    "contentHash": "951cf9aebe41e1ce939679c347b1a90ef2dc5c3e8c27b9681125bac94ce2d591",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-HVJR",
+    "timestamp": "2026-10-18T22:04:18.039Z",
+    "repository": "react-navigation/react-navigation",
+    "learningId": "learn-github-react-navigation-react-navigation",
+    "contentHash": "ce39cdff3bea627ad0c594122fb15677b3567a7fb5323ff43215bf7c5fb3ae5a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-HXLK",
+    "timestamp": "2026-10-18T22:04:20.696Z",
+    "repository": "easegress-io/easegress",
+    "learningId": "learn-github-easegress-io-easegress",
+    "contentHash": "72c406de9f113c4b64ba0fd4fe4d8480fabbfb8d820dcbdb0348cdf3fba246aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-HZMY",
+    "timestamp": "2026-10-18T22:04:23.338Z",
+    "repository": "mimblewimble/grin",
+    "learningId": "learn-github-mimblewimble-grin",
+    "contentHash": "45bb49d0d206e492e17dbda2be718de17d85d03b513ff76c34e665d9e66a2db5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-I0O4",
+    "timestamp": "2026-10-18T22:04:24.676Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
