@@ -4100,3 +4100,7 @@ https://github.com/tw93/Pake
 # --- Automatically Discovered by AI Scout Engine [2026-10-17T18:37:06.373Z] ---
 # [HUGGINGFACE-AI-MODELS] datalab-to/indra-ocr (2653 score) - Verified Hugging Face Model: datalab-to/indra-ocr (160 likes, 1053 downloads)
 https://huggingface.co/datalab-to/indra-ocr
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-18T01:17:47.273Z] ---
+# [AI-AGENTS] chrisryugj/kordoc (1662 score) - 모두 파싱해버리겠다 — HWP·HWPX·PDF·Office 문서를 Markdown으로. 양식 자동 채우기와 신구대조를 갖춘 CLI·MCP 서버 
+https://github.com/chrisryugj/kordoc
