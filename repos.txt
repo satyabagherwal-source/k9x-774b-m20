@@ -3778,7 +3778,6 @@ https://github.com/projectdiscovery/nuclei
 # [CYBERSECURITY-DEFENSES] TruffleHog - High-entropy credential and secret scanner
 https://github.com/trufflesecurity/trufflehog
 
-
 # --- Automatically Discovered by AI Scout Engine [2026-10-06T15:37:32.438Z] ---
 # [AI-AGENTS] lexmount/moli (5913 score) - Best headless browser for AI agents. Lite, Fast, High-Compatibility. Built in Ru
 https://github.com/lexmount/moli
@@ -3839,7 +3838,6 @@ https://github.com/prometheus/prometheus
 https://github.com/facebook/folly
 # [HIGH-PERF-SYSTEMS] google/tcmalloc - Fast, multi-threaded malloc implementation from Google
 https://github.com/google/tcmalloc
-
 
 # --- Automatically Discovered by AI Scout Engine [2026-10-07T21:22:18.379Z] ---
 # [FULLSTACK-UI] carbon-design-system/carbon (5899 score) - A design system built by IBM
@@ -4125,7 +4123,6 @@ https://github.com/serpapi/google-search-results-nodejs
 https://github.com/serpapi/google-search-results-python
 https://github.com/serpapi/google-search-results-ruby
 
-
 # --- Batch 13: Deep SEO Skills, Audit Engines & AI Learning ---
 https://github.com/seo-skills/seo-audit-skill
 https://github.com/bourd-dev/seo-skills
@@ -4194,11 +4191,9 @@ https://github.com/scrapy/scrapy
 https://github.com/scrapy-plugins/scrapy-playwright
 https://github.com/scrapy-plugins/scrapy-splash
 https://github.com/scrapy-plugins/scrapy-selenium
-https://github.com/scrapy-plugins/scrapy-redis
+
 https://github.com/scrapy-plugins/scrapy-deltafetch
-https://github.com/scrapy-plugins/scrapy-fake-useragent
-https://github.com/scrapy-plugins/scrapy-inline-requests
-https://github.com/scrapy-plugins/scrapy-poet
+
 https://github.com/scrapy-plugins/scrapy-zyte-api
 https://github.com/jina-ai/reader
 https://github.com/webrecorder/pywb
@@ -4206,17 +4201,16 @@ https://github.com/webrecorder/browsertrix-crawler
 https://github.com/ArchiveBox/ArchiveBox
 https://github.com/buriy/python-readability
 https://github.com/lxml/lxml
-https://github.com/beautifulsoup/beautifulsoup4
+
 https://github.com/html5lib/html5lib-python
-https://github.com/withfinite/selectolax
+
 https://github.com/fb55/htmlparser2
 https://github.com/inikulin/parse5
 https://github.com/fb55/css-select
 https://github.com/cheeriojs/dom-serializer
 https://github.com/unifiedjs/unified
 https://github.com/rehypejs/rehype
-https://github.com/rehypejs/rehype-parse
-https://github.com/rehypejs/rehype-stringify
+
 https://github.com/syntax-tree/hast-util-from-html
 https://github.com/syntax-tree/hast-util-to-html
 https://github.com/remarkjs/remark
@@ -4235,7 +4229,7 @@ https://github.com/RDFLib/pySHACL
 https://github.com/jsonld-java/jsonld-java
 https://github.com/digitalbazaar/pyld
 https://github.com/rdfjs/namespace
-https://github.com/rdfjs/sparqlalgebrajs
+
 https://github.com/rdfjs/quadstore
 https://github.com/AndyTheFactory/newspaper4k
 https://github.com/goose3/goose3
@@ -4266,3 +4260,21 @@ https://github.com/avajs/ava
 https://github.com/mochajs/mocha
 https://github.com/dubzzz/fast-check
 https://github.com/faker-js/faker
+
+# --- Batch 18: Unharvested Fresh Live High-Yield Repos ---
+https://github.com/rmax/scrapy-redis
+https://github.com/alecxe/scrapy-fake-useragent
+https://github.com/scrapinghub/scrapy-poet
+https://github.com/cupavalamac/selectolax
+https://github.com/syntax-tree/unist
+https://github.com/syntax-tree/mdast
+https://github.com/RubenVerborgh/SPARQL.js
+https://github.com/tiangolo/fastapi
+https://github.com/pallets/flask
+https://github.com/fastify/fastify
+https://github.com/expressjs/express
+https://github.com/unjs/nitro
+https://github.com/unjs/h3
+https://github.com/unjs/ofetch
+https://github.com/unjs/ufo
+https://github.com/facebook/docusaurus

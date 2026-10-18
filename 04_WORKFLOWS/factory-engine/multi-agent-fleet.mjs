@@ -204,6 +204,14 @@ export function getTargetForWorker(agentConfig, assignedSlugs = new Set()) {
 
       if (assignedSlugs.has(parsed.slug)) continue;
 
+      const key = (parsed.slug || parsed.repo || '').toLowerCase();
+      const entry = registry[key] || registry[parsed.slug] || null;
+
+      // Skip dead / 404 repositories so the fleet never gets trapped in infinite retry loops
+      if (entry?.harvestStatus === '404_OR_UNAVAILABLE' || entry?.harvestStatus === 'DEAD_OR_UNAVAILABLE') {
+        continue;
+      }
+
       // 1. Unharvested repos (Priority 1: First Pass)
       if (!isDeeplyHarvested(parsed.slug, BRAIN_ROOT)) {
         if (currentDomain === agentConfig.domain.toLowerCase()) {
@@ -213,8 +221,6 @@ export function getTargetForWorker(agentConfig, assignedSlugs = new Set()) {
         }
       } else {
         // 2. Harvested repos: Enqueued for Round-Robin Next Learning Pass
-        const key = (parsed.slug || parsed.repo || '').toLowerCase();
-        const entry = registry[key] || registry[parsed.slug] || null;
         const lastCheckedEpoch = entry?.lastChecked ? new Date(entry.lastChecked).getTime() : 0;
         const item = { ...parsed, lastCheckedEpoch };
 
