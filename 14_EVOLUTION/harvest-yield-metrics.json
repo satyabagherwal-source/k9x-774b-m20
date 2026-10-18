@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:07:53.422Z",
-  "total_cycles_completed": 2461,
-  "total_learnings_persisted": 2461,
-  "total_rules_promoted": 1474,
+  "last_updated": "2026-10-18T21:14:07.359Z",
+  "total_cycles_completed": 2468,
+  "total_learnings_persisted": 2468,
+  "total_rules_promoted": 1480,
   "history": [
-    {
-      "timestamp": "2026-10-17T19:59:59.608Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:06:26.022Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:09:52.750Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:12:56.094Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:16:06.657Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-google-gemma-4-31b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:19:07.981Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:22:33.006Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T20:25:41.061Z",
       "repository": "Bingsu/adetailer",
@@ -1403,6 +1354,55 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:13:50.234Z",
+      "repository": "tusen-ai/naive-ui",
+      "learningId": "learn-github-tusen-ai-naive-ui",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:13:52.347Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:13:57.467Z",
+      "repository": "sudheerj/reactjs-interview-questions",
+      "learningId": "learn-github-sudheerj-reactjs-interview-questions",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:14:00.783Z",
+      "repository": "fission/fission",
+      "learningId": "learn-github-fission-fission",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:14:01.779Z",
+      "repository": "smallstep/cli",
+      "learningId": "learn-github-smallstep-cli",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:14:05.437Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:14:07.359Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

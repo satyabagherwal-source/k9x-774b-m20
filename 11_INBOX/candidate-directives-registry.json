@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:07:53.418Z",
+  "last_updated": "2026-10-18T21:13:50.230Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1575,6 +1575,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-OZ9Y",
+      "directive_title": "equation, data-table): warning `injection \"n-config-provider\" not found` when us",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "tusen-ai/naive-ui",
+      "source_commit": "8b249214",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-tusen-ai-naive-ui"
     }
   ]
 }

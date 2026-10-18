@@ -2238,5 +2238,75 @@
     "contentHash": "f1a5d23739047155656c3c2f28bfb83ae08b5f4e8e3ed08d840e8ddb09ec06ac",
     "lastHarvestedAt": "2026-10-18T21:07:53.416Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
+  },
+  "tusen-ai-naive-ui": {
+    "repository": "tusen-ai/naive-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tusen-ai/naive-ui",
+    "sourceVersion": "8b249214",
+    "license": "MIT",
+    "contentHash": "d582d7fc4c6cd760b70c83d3ef6b5673034de7ad6a92974b3c1858b1d59e6442",
+    "lastHarvestedAt": "2026-10-18T21:13:50.228Z",
+    "learningId": "learn-github-tusen-ai-naive-ui"
+  },
+  "automattic-harper": {
+    "repository": "Automattic/harper",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Automattic/harper",
+    "sourceVersion": "04ba445a",
+    "license": "Apache-2.0",
+    "contentHash": "6057022327c2861049c454512812c79d5c6d911d6e13efaddac6c60efc4b0793",
+    "lastHarvestedAt": "2026-10-18T21:13:52.343Z",
+    "learningId": "learn-github-automattic-harper"
+  },
+  "sudheerj-reactjs-interview-questions": {
+    "repository": "sudheerj/reactjs-interview-questions",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sudheerj/reactjs-interview-questions",
+    "sourceVersion": "55b7d491",
+    "license": "MIT",
+    "contentHash": "f3d9b41173a93e678a22bbede1396188580626aadf947fca13407a3fd3f4de2f",
+    "lastHarvestedAt": "2026-10-18T21:13:57.464Z",
+    "learningId": "learn-github-sudheerj-reactjs-interview-questions"
+  },
+  "fission-fission": {
+    "repository": "fission/fission",
+    "platform": "github",
+    "sourceUrl": "https://github.com/fission/fission",
+    "sourceVersion": "a65daf70",
+    "license": "Apache-2.0",
+    "contentHash": "2e9957b103376e8773d9e2ef7b2788932e40831cd6bb732e1aa4c0621363536c",
+    "lastHarvestedAt": "2026-10-18T21:14:00.781Z",
+    "learningId": "learn-github-fission-fission"
+  },
+  "smallstep-cli": {
+    "repository": "smallstep/cli",
+    "platform": "github",
+    "sourceUrl": "https://github.com/smallstep/cli",
+    "sourceVersion": "4d900dd5",
+    "license": "Apache-2.0",
+    "contentHash": "194b4f7941755c97fe579bfd8f6e510142dfb9ae6e436ebc15df556d8536f302",
+    "lastHarvestedAt": "2026-10-18T21:14:01.777Z",
+    "learningId": "learn-github-smallstep-cli"
+  },
+  "ontos-ai-knowhere": {
+    "repository": "Ontos-AI/knowhere",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Ontos-AI/knowhere",
+    "sourceVersion": "2ed18896",
+    "license": "Apache-2.0",
+    "contentHash": "2d05eea0d5cf6abaacf2aa4d819c0398b4a118d0651987addd2ad9f56f2a0910",
+    "lastHarvestedAt": "2026-10-18T21:14:05.434Z",
+    "learningId": "learn-github-ontos-ai-knowhere"
+  },
+  "bitterbot-ai-bitterbot-desktop": {
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+    "sourceVersion": "a5cbbdd2",
+    "license": "MIT",
+    "contentHash": "54e02af92fd819098b2642d67f2f6d3ee2209638e85a9a68e1dc2afe59f73fc2",
+    "lastHarvestedAt": "2026-10-18T21:14:07.357Z",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   }
 }

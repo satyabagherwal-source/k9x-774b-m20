@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
+> **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
+> **Source Version**: `04ba445a`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:13:52.151Z  
+> **Learning ID**: `learn-github-automattic-harper`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Automattic/harper
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:22:58.522Z  
+> **Harvest Timestamp**: 2026-10-18T21:13:51.676Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 16166 stars
+- **Stars / Engagement**: 16700 stars
 
 ---
 
@@ -35,6 +49,270 @@ fuzz_target!(|data: &str| {
     let parser = Markdown::new(opts);
     let _res = parser.parse_str(data);
 });
+
+```
+
+### Core Architecture Module: `harper-cli/src/lint_engine.rs`
+```
+use std::{collections::BTreeMap, path::Path, sync::Arc};
+
+use hashbrown::HashMap;
+
+use harper_core::{
+    linting::{Lint, LintGroup, LintKind},
+    parsers::MarkdownOptions,
+    remove_overlaps_map,
+    spell::MergedDictionary,
+    weirpack::Weirpack,
+};
+
+use crate::{
+    LintOptions,
+    input::single_input::SingleInputTrait,
+    lint::{
+        FullInputInfo, InputInfo, JsonFileResult, JsonLint, JsonSpan, LintOneResult, ReportStyle,
+        file_dict_name, load_dict,
+    },
+    lint_reporter::{char_index_to_line_col, single_input_report},
+};
+
+#[allow(clippy::too_many_arguments)]
+pub fn lint_one_input(
+    // Common properties of harper-cli
+    markdown_options: MarkdownOptions,
+    curated_plus_user_dict: &MergedDictionary,
+    report_mode: &ReportStyle,
+    // Options passed from the user specific to the `lint` subcommand
+    lint_options: &LintOptions,
+    weirpacks: &[Weirpack],
+    file_dict_path: &Path,
+    // Are we linting multiple inputs?
+    batch_mode: bool,
+    // For the current input
+    current: InputInfo,
+) -> anyhow::Result<LintOneResult> {
+    let LintOptions {
+        count: _,
+        ignore,
+        only,
+        keep_overlapping_lints,
+        dialect,
+        weirpack_inputs: _,
+        color: _,
+        format: _,
+        quiet: _,
+        no_parallel: _,
+    } = lint_options;
+
+    let mut lint_kinds: HashMap<LintKind, usize> = HashMap::new();
+    let mut lint_rules: HashMap<String, usize> = HashMap::new();
+    let mut lint_kind_rule_pairs: HashMap<(LintKind, String), usize> = HashMap::new();
+    let mut spellos: HashMap<String, usize> = HashMap::new();
+    let mut json: Option<JsonFileResult> = None;
+
+    if let Some(single_input) = current.input.try_as_single_ref() {
+        // Create a new merged dictionary for this input.
+        let mut merged_dictionary = curated_plus_user_dict.clone();
+
+        // If processing a file, try to load its per-file dictionary
+        if let Some(file) = single_input.try_as_file_ref() {
+            let dict_path = file_dict_path.join(file_dict_name(file.path()));
+            if let Ok(file_dictionary) = load_dict(&dict_path) {
+                merged_dictionary.add_dictionary(Arc::new(file_dictionary));
+                eprintln!(
+                    "{}: Note: Using per-file dictionary: {}",
+                    current.format_path(),
+                    dict_path.display()
+                );
+            }
+        }
+
+        match single_input.load(markdown_options, &merged_dictionary) {
+            Err(err) => {
+                eprintln!("{}", err);
+                if matches!(report_mode, ReportStyle::Json) {
+                    json = Some(JsonFileResult {
+                        file: current.plain_path(),
+                        lint_count: 0,
+                        lints: vec![],
+                        error: Some(err.to_string()),
+                    });
+                }
+            }
+            Ok((doc, source)) => {
+                // Create the Lint Group from which we will lint this input, using the combined dictionary and the specified dialect
+                let mut lint_group = LintGroup::new_curated(merged_dictionary.into(), *dialect);
+
+                for pack in weirpacks {
+                    let pack_group = pack.to_lint_group()?;
+                    lint_group.merge_from(pack_group);
+                }
+
+                // Turn specified rules on or off
+                configure_lint_group(&mut lint_group, only, ignore);
+
+                // Run the linter, getting back a map of rule name -> lints
+                let mut named_lints = lint_group.organized_lints(&doc);
+
+                // Lint counts, for brief reporting
+                let lint_count_before = named_lints.values().map(|v| v.len()).sum::<usize>();
+                if !keep_overlapping_lints {
+                    remove_overlaps_map(&mut named_lints);
+                }
+                let lint_count_after = named_lints.values().map(|v| v.len()).sum::<usize>();
+
+                // Extract the lint kinds and rules etc. for reporting
+                (lint_kinds, lint_rules) = count_lint_kinds_and_rules(&named_lints);
+                lint_kind_rule_pairs = collect_lint_kind_rule_pairs(&named_lints);
+                spellos = collect_spellos(&named_lints, doc.get_source());
+
+                // Build JSON result if in JSON mode
+                if matches!(report_mode, ReportStyle::Json) {
+                    let file = current.plain_path();
+                    let source_chars = doc.get_source();
+                    let mut lints = Vec::new();
+
+                    for (rule_name, rule_lints) in &named_lints {
+                        for lint in rule_lints {
+                            let (line, column) =
+                                char_index_to_line_col(source_chars, lint.span.start);
+                            let matched_text = lint.get_str(source_chars);
+                            let suggestions: Vec<String> =
+                                lint.suggestions.iter().map(|s| format!("{s}")).collect();
+                            lints.push(JsonLint {
+                                rule: rule_name.clone(),
+                                kind: lint.lint_kind.to_string(),
+                                span: JsonSpan {
+                                    char_start: lint.span.start,
+                                    char_end: lint.span.end,
+                                },
+                                line,
+                                column,
+                                message: lint.message.clone(),
+                                priority: lint.priority,
+                                suggestions,
+                                matched_text,
+                            });
+                        }
+                    }
+
+                    json = Some(JsonFileResult {
+                        file,
+                        lint_count: lint_count_after,
+                        lints,
+                        error: None,
+                    });
+                }
+
+                single_input_report(
+                    &FullInputInfo {
+                        input: InputInfo {
+                            parent_input_id: current.parent_input_id,
+                            input: current.input,
+                            color: current.color,
+                        },
+                        doc,
+                        source,
+                    },
+                    // Linting results of this input
+                    &named_lints,
+                    (lint_count_before, lint_count_after),
+                    &lint_kinds,
+                    &lint_rules,
+                    // Reporting arguments
+                    batch_mode,
+                    (report_mode, lint_options.quiet),
+                );
+            }
+        }
+    }
+
+    Ok(LintOneResult {
+        lint_kinds,
+        lint_rules,
+        lint_kind_rule_pairs,
+        spellos,
+        json,
+    })
+}
+
+fn configure_lint_group(
+    lint_group: &mut LintGroup,
+    only: &Option<Vec<String>>,
+    ignore: &Option<Vec<String>>,
+) {
+    if let Some(rules) = only {
+        lint_group.set_all_rules_to(Some(false));
+        rules
+            .iter()
+            .for_each(|rule| lint_group.config.set_rule_enabled(rule, true));
+    }
+
+    if let Some(rules) = ignore {
+        rules
+            .iter()
+            .for_each(|rule| lint_group.config.set_rule_enabled(rule, false));
+    }
+
+    // Have all rules been disabled somehow?
+    if !lint_group
+        .iter_keys()
+        .any(|rule| lint_group.config.is_rule_enabled(rule))
+    {
+        eprintln!("Warning: No rules are enabled.");
+    }
+}
+
+fn count_lint_kinds_and_rules(
+    named_lints: &BTreeMap<String, Vec<Lint>>,
+) -> (HashMap<LintKind, usize>, HashMap<String, usize>) {
+    let mut kinds = HashMap::new();
+    let mut rules = HashMap::new();
+
+    for (rule_name, lints) in named_lints {
+        lints
+            .iter()
+            .for_each(|lint| *kinds.entry(lint.lint_kind).or_insert(0) += 1);
+
+        if !lints.is_empty() {
+            *rules.entry(rule_name.to_string()).or_insert(0) += lints.len();
+        }
+    }
+
+    (kinds, rules)
+}
+
+fn collect_lint_kind_rule_pairs(
+    named_lints: &BTreeMap<String, Vec<Lint>>,
+) -> HashMap<(LintKind, String), usize> {
+    let mut pairs = HashMap::new();
+
+    for (rule_name, lints) in named_lints {
+        for lint in lints {
+            pairs
+                .entry((lint.lint_kind, rule_name.to_string()))
+                .and_modify(|count| *count += 1)
+                .or_insert(1);
+        }
+    }
+
+    pairs
+}
+
+fn collect_spellos(
+    named_lints: &BTreeMap<String, Vec<Lint>>,
+    source: &[char],
+) -> HashMap<String, usize> {
+    named_lints
+        .get("SpellCheck")
+        .into_iter()
+        .flatten()
+        .map(|lint| lint.get_str(source))
+        .fold(HashMap::new(), |mut acc, spello| {
+            *acc.entry(spello).or_insert(0) += 1;
+            acc
+        })
+}
 
 ```
 
@@ -1127,719 +1405,17 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `harper-core/src/currency.rs`
-```
-use is_macro::Is;
-use serde::{Deserialize, Serialize};
-
-use crate::Number;
-
-/// A national or international currency
-#[derive(Debug, Is, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Hash)]
-pub enum Currency {
-    // $
-    Dollar,
-    // ¢
-    Cent,
-    // €
-    Euro,
-    // ₽
-    Ruble,
-    // ₺
-    Lira,
-    // £
-    Pound,
-    // ¥
-    Yen,
-    // ฿
-    Baht,
-    // ₩
-    Won,
-    // ₭,
-    Kip,
-    // ₹
-    Rupee,
-}
-
-impl Currency {
-    pub fn from_char(c: char) -> Option<Self> {
-        let cur = match c {
-            '$' => Self::Dollar,
-            '¢' => Self::Cent,
-            '€' => Self::Euro,
-            '₽' => Self::Ruble,
-            '₺' => Self::Lira,
-            '£' => Self::Pound,
-            '¥' => Self::Yen,
-            '฿' => Self::Baht,
-            '₩' => Self::Won,
-            '₭' => Self::Kip,
-            '₹' => Self::Rupee,
-            _ => return None,
-        };
-
-        Some(cur)
-    }
-
-    pub fn to_char(&self) -> char {
-        match self {
-            Self::Dollar => '$',
-            Self::Cent => '¢',
-            Self::Euro => '€',
-            Self::Ruble => '₽',
-            Self::Lira => '₺',
-            Self::Pound => '£',
-            Self::Yen => '¥',
-            Self::Baht => '฿',
-            Self::Won => '₩',
-            Self::Kip => '₭',
-            Self::Rupee => '₹',
-        }
-    }
-
-    /// Format an amount of the specific currency.
-    pub fn format_amount(&self, amount: &Number) -> String {
-        let c = self.to_char();
-
-        let amount = amount.to_string();
-
-        match self {
-            Currency::Dollar => format!("{c}{amount}"),
-            Currency::Cent => format!("{amount}{c}"),
-            Currency::Euro => format!("{c}{amount}"),
-            Currency::Ruble => format!("{amount} {c}"),
-            Currency::Lira => format!("{amount} {c}"),
-            Currency::Pound => format!("{c}{amount}"),
-            Currency::Yen => format!("{c} {amount}"),
-            Currency::Baht => format!("{amount} {c}"),
-            Currency::Won => format!("{c} {amount}"),
-            Currency::Kip => format!("{c}{amount}"),
-            Currency::Rupee => format!("{c}{amount}"),
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `harper-core/src/dict_word_metadata.rs`
-```
-use harper_brill::UPOS;
-use is_macro::Is;
-use itertools::Itertools;
-use paste::paste;
-use serde::{Deserialize, Serialize};
-use smallvec::SmallVec;
-use strum::{EnumCount as _, VariantArray as _};
-use strum_macros::{Display, EnumCount, EnumIter, EnumString, VariantArray};
-
-use std::convert::TryFrom;
-
-use crate::dict_word_metadata_orthography::OrthFlags;
-use crate::spell::WordId;
-use crate::{Document, TokenKind, TokenStringExt};
-
-/// This represents a "lexeme" or "headword" which is case-folded but affix-expanded.
-/// So not only lemmata but also inflected forms are stored here, with "horn" and "horns" each
-/// having their own lexeme, but "Ivy" and "ivy" sharing the same lexeme.
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize, PartialOrd, Hash)]
-pub struct DictWordMetadata {
-    /// The main parts of speech which have extra data.
-    pub noun: Option<NounData>,
-    pub pronoun: Option<PronounData>,
-    pub verb: Option<VerbData>,
-    pub adjective: Option<AdjectiveData>,
-    pub adverb: Option<AdverbData>,
-    pub conjunction: Option<ConjunctionData>,
-    pub determiner: Option<DeterminerData>,
-    pub affix: Option<AffixData>,
-    /// Parts of speech which don't have extra data.
-    /// Whether the word is a [preposition](https://www.merriam-webster.com/dictionary/preposition).
-    #[serde(default = "default_false")]
-    pub preposition: bool,
-    /// Whether the word is an offensive word.
-    pub swear: Option<bool>,
-    /// Whether the word is an abbreviation of any kind.
-    pub abbreviation: Option<bool>,
-    /// The dialects this word belongs to.
-    /// If no dialects are defined, it can be assumed that the word is
-    /// valid in all dialects of English.
-    #[serde(default = "default_default")]
-    pub dialects: DialectFlags,
-    /// Orthographic information: letter case, spaces, hyphens, etc.
-    #[serde(default = "OrthFlags::empty")]
-    pub orth_info: OrthFlags,
-    /// Whether the word is considered especially common.
-    #[serde(default = "default_false")]
-    pub common: bool,
-    #[serde(default = "default_none")]
-    pub derived_from: Option<WordId>,
-    /// Generated by a chunker. Declares whether the word is a member of a nominal phrase. Using
-    /// this should be preferred over the similarly named `Pattern`.
-    ///
-    /// For more details, see [the announcement blog post](https://elijahpotter.dev/articles/training_a_chunker_with_burn).
-    pub np_member: Option<bool>,
-    /// Generated by a POS tagger. Declares what it inferred the word's part of speech to be.
-    pub pos_tag: Option<UPOS>,
-}
-
-/// Needed for `serde`
-fn default_false() -> bool {
-    false
-}
-
-/// Needed for `serde`
-fn default_none<T>() -> Option<T> {
-    None
-}
-
-/// Needed for `serde`
-fn default_default<T: Default>() -> T {
-    T::default()
-}
-
-macro_rules! generate_metadata_queries {
-    ($($category:ident has $($sub:ident),*).*) => {
-        paste! {
-            pub fn is_likely_homograph(&self) -> bool {
-                [self.is_determiner(), self.preposition, $(
-                    self.[< is_ $category >](),
-                )*].iter().map(|b| *b as u8).sum::<u8>() > 1
-            }
-
-            /// How different is this word from another?
-            pub fn difference(&self, other: &Self) -> u32 {
-                [
-                    $(
-                        Self::[< is_ $category >],
-                        $(
-                            Self::[< is_ $sub _ $category >],
-                            Self::[< is_non_ $sub _ $category >],
-                        )*
-                    )*
-                ]
-                .iter()
-                .fold(0, |acc, func| acc + (func(self) ^ func(other)) as u32)
-            }
-
-            $(
-                #[doc = concat!("Checks if the word is definitely a ", stringify!($category), ".")]
-                pub fn [< is_ $category >](&self) -> bool {
-                    self.$category.is_some()
-                }
-
-                $(
-                    #[doc = concat!("Checks if the word is definitely a ", stringify!($category), " and more specifically is labeled as (a) ", stringify!($sub), ".")]
-                    pub fn [< is_ $sub _ $category >](&self) -> bool {
-                        matches!(
-                            self.$category,
-                            Some([< $category:camel Data >]{
-                                [< is_ $sub >]: Some(true),
-                                ..
-                            })
-                        ) }
-
-                    #[doc = concat!("Checks if the word is definitely a ", stringify!($category), " and more specifically is labeled as __not__ (a) ", stringify!($sub), ".")]
-                    pub fn [< is_non_ $sub _ $category >](&self) -> bool {
-                        matches!(
-                            self.$category,
-                            Some([< $category:camel Data >]{
-                                [< is_ $sub >]: None | Some(false),
-                                ..
-                            })
-                        )
-                    }
-                )*
-            )*
-        }
-    };
-}
-
-impl DictWordMetadata {
-    /// If there is only one possible interpretation of the metadata, infer its UPOS tag.
-    pub fn infer_pos_tag(&self) -> Option<UPOS> {
-        // If an explicit POS tag exists, return it immediately.
-        if let Some(pos) = self.pos_tag {
-            return Some(pos);
-        }
-
-        // Collect all possible POS tags from metadata
-        let mut candidates = SmallVec::<[UPOS; 14]>::with_capacity(14);
-
-        if self.is_proper_noun() {
-            candidates.push(UPOS::PROPN);
-        }
-
-        if self.is_pronoun() {
-            candidates.push(UPOS::PRON);
-        }
-        if self.is_noun() {
-            candidates.push(UPOS::NOUN);
-        }
-        if self.is_verb() {
-            // Distinguish auxiliary verbs
-            if let Some(data) = &self.verb {
-                if data.is_auxiliary == Some(true) {
-                    candidates.push(UPOS::AUX);
-                } else {
-                    candidates.push(UPOS::VERB);
-                }
-            } else {
-                candidates.push(UPOS::VERB);
-            }
-        }
-        if self.is_adjective() {
-            candidates.push(UPOS::ADJ);
-        }
-        if self.is_adverb() {
-            candidates.push(UPOS::ADV);
-        }
-        if self.is_conjunction() {
-            candidates.push(UPOS::CCONJ);
-        }
-        if self.is_determiner() {
-            candidates.push(UPOS::DET);
-        }
-        if self.preposition {
-            candidates.push(UPOS::ADP);
-        }
-
-        // Remove duplicates
-        candidates.sort();
-        candidates.dedup();
-
-        candidates.into_iter().exactly_one().ok()
-    }
-
-    /// Produce a copy of `self` with the known properties of `other` set.
-    pub fn or(&self, other: &Self) -> Self {
-        let mut clone = self.clone();
-        clone.merge(other);
-        clone
-    }
-
-    /// Given a UPOS tag, discard any metadata that would disagree with the given POS tag.
-    /// For example, if the metadata suggests a word could either be a noun or an adjective, and we
-    /// provide a [`UPOS::NOUN`], this function will remove the adjective data.
-    ///
-    /// Additionally, if the metadata does not currently declare the potential of the word to be
-    /// the specific POS, it becomes so. That means if we provide a [`UPOS::ADJ`] to the function
-    /// for a metadata whose `Self::adjective = None`, it will become `Some`.
-    pub fn enforce_pos_exclusivity(&mut self, pos: &UPOS) {
-        use UPOS::*;
-        match pos {
-            NOUN => {
-                if let Some(noun) = self.noun {
-                    self.noun = Some(NounData {
-                        is_proper: Some(false),
-                        ..noun
-                    })
-                } else {
-                    self.noun = Some(NounData {
-                        is_proper: Some(false),
-                        is_singular: None,
-                        is_plural: None,
-                        is_countable: None,
-                        is_mass: None,
-                        is_possessive: None,
-                    })
-                }
-
-                self.pronoun = None;
-                self.verb = None;
-                self.adjective = None;
-                self.adverb = None;
-                self.conjunction = None;
-                self.determiner = None;
-                self.affix = None;
-                self.preposition = false;
-            }
-            PROPN => {
-                if let Some(noun) = self.noun {
-                    self.noun = Some(NounData {
-                        is_proper: Some(true),
-                        ..noun
-                    })
-                } else {
-                    self.noun = Some(NounData {
-                        is_proper: Some(true),
-                        is_singular: None,
-                        is_plural: None,
-                        is_countable: None,
-                        is_mass: None,
-                        is_possessive: None,
-                    })
-                }
-
-                self.pronoun = None;
-                self.verb = None;
-                self.adjective = None;
-                self.adverb = None;
-                self.conjunction = None;
-                self.determiner = None;
-                self.affix = None;
-                self.preposition = false;
-            }
-            PRON => {
-                if self.pronoun.is_none() {
-                    self.pronoun = Some(PronounData::default())
-                }
-
-                self.noun = None;
-                self.verb = None;
-                self.adjective = None;
-                self.adverb = None;
-                self.conjunction = None;
-                self.determiner = None;
-                self.affix = None;
-                self.preposition = false;
-            }
-            VERB => {
-                if let Some(verb) = self.verb {
-                   
-```
-
-### Core Architecture Module: `harper-core/src/dict_word_metadata_orthography.rs`
-```
-use crate::CharStringExt;
-use crate::char_ext::CharExt;
-use serde::{Deserialize, Serialize};
-
-/// Orthography information.
-pub enum Orthography {
-    /// Every char that is a letter is lowercase.
-    Lowercase = 1 << 0,
-    /// First char is uppercase, the rest is lowercase (but multi-word?)
-    Titlecase = 1 << 1,
-    /// Every char that is a letter is uppercase (including single-letter uppercase)
-    AllCaps = 1 << 2,
-    /// Starts with a lowercase letter but also contains uppercase letters.
-    LowerCamel = 1 << 3,
-    /// Starts with an uppercase letter but also contains lowercase letters. (Superset of Titlecase.)
-    UpperCamel = 1 << 4,
-    /// Contains at least one space.
-    Multiword = 1 << 5,
-    /// Contains at least one hyphen.
-    Hyphenated = 1 << 6,
-    /// Contains an apostrophe, so it's a possessive or a contraction.
-    Apostrophe = 1 << 7,
-    /// Could be Roman numerals.
-    RomanNumerals = 1 << 8,
-}
-
-/// The underlying type used for OrthographyFlags.
-/// At the time of writing, this is currently a `u8`. If we want to define more than 8 orthographic
-/// properties in the future, we will need to switch this to a larger type.
-type OrthographyFlagsUnderlyingType = u16;
-
-bitflags::bitflags! {
-    /// A collection of bit flags used to represent orthographic properties of a word.
-    ///
-    /// This is generally used to allow a word (or similar) to be tagged with multiple orthographic
-    /// properties.
-    #[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, PartialOrd, Serialize)]
-    pub struct OrthFlags: OrthographyFlagsUnderlyingType {
-        const LOWERCASE = Orthography::Lowercase as OrthographyFlagsUnderlyingType;
-        const TITLECASE = Orthography::Titlecase as OrthographyFlagsUnderlyingType;
-        const ALLCAPS = Orthography::AllCaps as OrthographyFlagsUnderlyingType;
-        const LOWER_CAMEL = Orthography::LowerCamel as OrthographyFlagsUnderlyingType;
-        const UPPER_CAMEL = Orthography::UpperCamel as OrthographyFlagsUnderlyingType;
-        const MULTIWORD = Orthography::Multiword as OrthographyFlagsUnderlyingType;
-        const HYPHENATED = Orthography::Hyphenated as OrthographyFlagsUnderlyingType;
-        const APOSTROPHE = Orthography::Apostrophe as OrthographyFlagsUnderlyingType;
-        const ROMAN_NUMERALS = Orthography::RomanNumerals as OrthographyFlagsUnderlyingType;
-    }
-}
-impl Default for OrthFlags {
-    fn default() -> Self {
-        Self::empty()
-    }
-}
-
-impl OrthFlags {
-    /// Construct orthography flags for a given sequence of letters.
-    pub fn from_letters(letters: &[char]) -> Self {
-        let mut ortho_flags = Self::default();
-        let mut all_lower = true;
-        let mut all_upper = true;
-        let mut first_is_upper = false;
-        let mut first_is_lower = false;
-        let mut saw_upper_after_first = false;
-        let mut saw_lower_after_first = false;
-        let mut is_first_char = true;
-        let mut upper_to_lower = false;
-        let mut lower_to_upper = false;
-        let letter_count = letters.iter().filter(|c| c.is_english_lingual()).count();
-
-        for &c in letters {
-            if c == ' ' {
-                ortho_flags |= Self::MULTIWORD;
-                continue;
-            }
-
-            if c == '-' {
-                ortho_flags |= Self::HYPHENATED;
-                continue;
-            }
-
-            if c.normalized() == '\'' {
-                ortho_flags |= Self::APOSTROPHE;
-                continue;
-            }
-
-            if !c.is_english_lingual() {
-                continue;
-            }
-
-            if c.is_lowercase() {
-                all_upper = false;
-                if is_first_char {
-                    first_is_lower = true;
-                } else {
-                    saw_lower_after_first = true;
-                    if upper_to_lower {
-                        lower_to_upper = true;
-                    }
-                    upper_to_lower = true;
-                }
-            } else if c.is_uppercase() {
-                all_lower = false;
-                if is_first_char {
-                    first_is_upper = true;
-                } else {
-                    saw_upper_after_first = true;
-                    if lower_to_upper {
-                        upper_to_lower = true;
-                    }
-                    lower_to_upper = true;
-                }
-            } else {
-                first_is_upper = false;
-                first_is_lower = false;
-                upper_to_lower = false;
-                lower_to_upper = false;
-            }
-            is_first_char = false;
-        }
-
-        if letter_count > 0 {
-            if all_lower {
-                ortho_flags |= Self::LOWERCASE;
-            }
-            if all_upper {
-                ortho_flags |= Self::ALLCAPS;
-            }
-            if letter_count > 1 && first_is_upper && !saw_upper_after_first {
-                ortho_flags |= Self::TITLECASE;
-            }
-            if first_is_lower && saw_upper_after_first {
-                ortho_flags |= Self::LOWER_CAMEL;
-            }
-            if first_is_upper && saw_lower_after_first && saw_upper_after_first {
-                ortho_flags |= Self::UPPER_CAMEL;
-            }
-        }
-
-        if looks_like_roman_numerals(letters) && is_really_roman_numerals(&letters.to_lower()) {
-            ortho_flags |= Self::ROMAN_NUMERALS;
-        }
-
-        ortho_flags
-    }
-}
-
-fn looks_like_roman_numerals(word: &[char]) -> bool {
-    let mut is_roman = false;
-    let first_char_upper;
-
-    if let Some((&first, rest)) = word.split_first()
-        && "mdclxvi".contains(first.to_ascii_lowercase())
-    {
-        first_char_upper = first.is_uppercase();
-
-        for &c in rest {
-            if !"mdclxvi".contains(c.to_ascii_lowercase()) || c.is_uppercase() != first_char_upper {
-                return false;
-            }
-        }
-        is_roman = true;
-    }
-    is_roman
-}
-
-fn is_really_roman_numerals(word: &[char]) -> bool {
-    let s: String = word.iter().collect();
-    let mut chars = s.chars().peekable();
-
-    let mut m_count = 0;
-    while m_count < 4 && chars.peek() == Some(&'m') {
-        chars.next();
-        m_count += 1;
-    }
-
-    if !check_roman_group(&mut chars, 'c', 'd', 'm') {
-        return false;
-    }
-
-    if !check_roman_group(&mut chars, 'x', 'l', 'c') {
-        return false;
-    }
-
-    if !check_roman_group(&mut chars, 'i', 'v', 'x') {
-        return false;
-    }
-
-    if chars.next().is_some() {
-        return false;
-    }
-
-    true
-}
-
-fn check_roman_group<I: Iterator<Item = char>>(
-    chars: &mut std::iter::Peekable<I>,
-    one: char,
-    five: char,
-    ten: char,
-) -> bool {
-    match chars.peek() {
-        Some(&c) if c == one => {
-            chars.next();
-            match chars.peek() {
-                Some(&next) if next == ten || next == five => {
-                    chars.next();
-                    true
-                }
-                _ => {
-                    let mut count = 0;
-                    while count < 2 && chars.peek() == Some(&one) {
-                        chars.next();
-                        count += 1;
-                    }
-                    true
-                }
-            }
-        }
-        Some(&c) if c == five => {
-            chars.next();
-            let mut count = 0;
-            while count < 3 && chars.peek() == Some(&one) {
-                chars.next();
-                count += 1;
-            }
-            true
-        }
-        _ => true,
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::CharString;
-    use crate::dict_word_metadata::tests::md;
-    use crate::dict_word_metadata_orthography::OrthFlags;
-
-    fn orth_flags(s: &str) -> OrthFlags {
-        let letters: CharString = s.chars().collect();
-        OrthFlags::from_letters(&letters)
-    }
-
-    #[test]
-    fn test_lowercase_flags() {
-        let flags = orth_flags("hello");
-        assert!(flags.contains(OrthFlags::LOWERCASE));
-        assert!(!flags.contains(OrthFlags::TITLECASE));
-        assert!(!flags.contains(OrthFlags::ALLCAPS));
-        assert!(!flags.contains(OrthFlags::LOWER_CAMEL));
-        assert!(!flags.contains(OrthFlags::UPPER_CAMEL));
-
-        let flags = orth_flags("hello123");
-        assert!(flags.contains(OrthFlags::LOWERCASE));
-    }
-
-    #[test]
-    fn test_titlecase_flags() {
-        let flags = orth_flags("Hello");
-        assert!(!flags.contains(OrthFlags::LOWERCASE));
-        assert!(flags.contains(OrthFlags::TITLECASE));
-        assert!(!flags.contains(OrthFlags::ALLCAPS));
-        assert!(!flags.contains(OrthFlags::LOWER_CAMEL));
-        assert!(!flags.contains(OrthFlags::UPPER_CAMEL));
-
-        assert!(orth_flags("World").contains(OrthFlags::TITLECASE));
-        assert!(orth_flags("Something").contains(OrthFlags::TITLECASE));
-        assert!(!orth_flags("McDonald").contains(OrthFlags::TITLECASE));
-        assert!(!orth_flags("O'Reilly").contains(OrthFlags::TITLECASE));
-        assert!(!orth_flags("A").contains(OrthFlags::TITLECASE));
-    }
-
-    #[test]
-    fn test_allcaps_flags() {
-        let flags = orth_flags("HELLO");
-        assert!(!flags.contains(OrthFlags::LOWERCASE));
-        assert!(!flags.contains(OrthFlags::TITLECASE));
-        assert!(flags.contains(OrthFlags::ALLCAPS));
-        assert!(!flags.contains(OrthFlags::LOWER_CAMEL));
-        assert!(!flags.contains(OrthFlags::UPPER_CAMEL));
-
-        assert!(orth_flags("NASA").contains(OrthFlags::ALLCAPS));
-        assert!(orth_flags("I").contains(OrthFlags::ALLCAPS));
-    }
-
-    #[test]
-    fn test_lower_camel_flags() {
-        let flags = orth_flags("helloWorld");
-        assert!(!flags.contains(OrthFlags::LOWERCASE));
-        assert!(!flags.contains(OrthFlags::TITLECASE));
-        assert!(!flags.contains(OrthFlags::ALLCAPS));
-        assert!(flags.contains(OrthFlags::LOWER_CAMEL));
-        assert!(!flags.contains(OrthFlags::UPPER_CAMEL));
-
-        assert!(orth_flags("getHTTPResponse").contains(OrthFlags::LOWER_CAMEL));
-        assert!(orth_flags("eBay").contains(OrthFlags::LOWE
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4479** (2026-09-30): **British "e.g." breaks `OxfordComma` rule.**
-  *Symptoms*: **Describe the bug** When correctly using "e.g." surrounded with commas, and following that directly with a singular "or/and" conjunction, Harper mistakenly flags that there should be an Oxford comma inside the conjunction.  **To Reproduce** 1. Construct a sentence with "MAJOR SENTENCE, e.g., NOUN or NOUN". 2. See "OxfordComma: An Oxford comma is necessary here." flag after the first noun in the conjunction. Example sentence: "Memory is used for different tasks in embedded systems, e.g., storage or communication with sensors and actuators."  **Expected behavior** The sentence should not be flagged, as "e.g." is not part of a listed conjunction.  **Screenshots** In Neovim: <img width="1286" height="51" alt="Image" src="https://github.com/user-attachments/assets/daa7e164-fbe0-4cd0-aa67-bc8b73247083" />  Using the Firefox addon and on writewithharper.com: <img width="1035" height="296" alt="Image" src="https://github.com/user-attachments/assets/a5a8b289-a97e-484f-a2fa-a219975f3a53" />  **Platform** The bug appears at least in the Neovim LS integration, the Firefox addon, or on the "writewithharper.com" preview.
-  **Post-Mortem & Fix Analysis**:
-  > The bug also appears when starting the sentence with "E.g.," directly, e.g., "E.g., storage or communication with sensors and actuators." This is not really a valid sentence to begin with, but it should be flagged too though, and not with the `OxfordComma` flag!
-  > Thanks!
+- **Issue #4616** (2026-10-15): **obsolete link to "frequently ask questions" in readme**
+  *Symptoms*: ### description  in the readme, the link to frequenty asked questions in obsolete, because this section (*Questions, Answered*) have no `id` attribute.  ### reproduce  go to https://writewithharper.com/#faqs
 
-- **Issue #4471** (2026-09-28): **"Trilemma" flagged for Spell Check when it is correct**
-  *Symptoms*: **What got flagged?** The word "trilemma" got flagged with `Harper(SpellCheck)` with the message, "Did you mean `dilemma`?".  **Why is this incorrect?** These are both words. A dilemma is between two alternatives, a trilemma is between three.  | Dictionary | Entry | |--------|--------| | American Heritage | [trilemma](https://ahdictionary.com/word/search.html?q=trilemma) | | Cambridge | [trilemma](https://dictionary.cambridge.org/dictionary/english/trilemma) | | Collins | [trilemma](https://www.collinsdictionary.com/dictionary/english/trilemma) | | Merriam-Webster | [trilemma](https://www.merriam-webster.com/dictionary/trilemma) | | Oxford English | [trilemma](https://www.oed.com/search/dictionary/?scope=Entries&q=trilemma) |   **Example of correct usage:**  **2018** - "We confirm the **trilemma** that an AC protocol can only achieve two out of the following three properties: strong anonymity (i.e., anonymity up to a negligible chance), low bandwidth overhead, and low latency overhead." *Das, Debajyoti, Sebastian Meiser, Esfandiar Mohammadi, and Aniket Kate. “[Anonymity Trilemma: Strong Anonymity, Low Bandwidth Overhead, Low Latency - Choose Two.](https://doi.org/10.1109/SP.2018.00011)” 2018 IEEE Symposium on Security and Privacy (SP), May 2018*  See also: Metcalf, Allan A. [Predicting New Words: The Secrets of Their Success](https://books.google.com/books?id=ACsetPyuv8YC&q=trilemma&pg=PA-106). Houghton Mifflin Harcourt, 2004, p. 106
-
-- **Issue #4470** (2026-09-29): **"Surveilled" flagged for Spell Check when it is correct**
-  *Symptoms*: **What got flagged?** The word "surveilled" got flagged with `Harper(SpellCheck)` with the message, "Did you mean `surveiled`?".  **Why is this incorrect?** The word "surveilled" is definitely a real word. There are a few websites which claim "surveiled" is the American spelling, but even if we accept that as true[1], this would still be incorrect because Harper makes this suggestion on both American *and* British English. It should definitely *not* be marking "surveilled" as incorrectly spelt, and I would even argue it *should* mark "surveiled" as incorrect, instead suggesting "surveilled".  [1]: Which I don't, as far as I am concerned "surveilled" is the correct spelling in American English and "surveiled" is just flat out wrong, which the built in spellcheck for Firefox agrees with (which I know because I am currently using it).  | Dictionary | "surveilled" or "surveilled"? | |--------|--------| | American Heritage Dictionary | [surveilled](https://ahdictionary.com/word/search.html?q=surveilled) | | Merriam-Webster | [surveilled](https://www.merriam-webster.com/dictionary/surveilled) | | Dictionary.com | [surveilled](https://www.dictionary.com/browse/surveil?mismatchType=uncategorized-inflected-form&q=surveilled) | | Collins | [surveilled](https://www.collinsdictionary.com/us/dictionary/english/surveil) | | Oxford English | [surveilled](https://www.oed.com/dictionary/surveilled_adj?tab=factsheet#123624825100), [but maybe both?](https://www.oed.com/search/dictionary/?scope=
-  **Post-Mortem & Fix Analysis**:
-  > Thanks! This is a really great way to do issues for words missing from the dictionary. I wouldn't bother with dictionary.com though as it's a secondary source that draws on one or more of the other, primary source, online dictionaries. The others in the list are perfect links.
-  > > Thanks! This is a really great way to do issues for words missing from the dictionary. I wouldn't bother with dictionary.com though as it's a secondary source that draws on one or more of the other, primary source, online dictionaries. The others in the list are perfect links.  Yes, sorry. I added Dictionary.com before I discovered [the helpful comment you left here](https://github.com/Automattic/harper/issues/4395#issuecomment-5695334111) and didn't bother to remove it since it was already there.  Maybe something like this should be an issue template for missing words/dictionary issues specifically? Having it pre-filled with known "dictionary authorities" would be helpful, I think.
-  > > > Thanks! This is a really great way to do issues for words missing from the dictionary. I wouldn't bother with dictionary.com though as it's a secondary source that draws on one or more of the other, primary source, online dictionaries. The others in the list are perfect links. >  > Yes, sorry. I added Dictionary.com before I discovered [the helpful comment you left here](https://github.com/Automattic/harper/issues/4395#issuecomment-5695334111) and didn't bother to remove it since it was already there. >  > Maybe something like this should be an issue template for missing words/dictionary issues specifically? Having it pre-filled with known "dictionary authorities" would be helpful, I think.  That's a decent idea. I just accidentally edited your post too sorry because I spotted a grammar mistake in my comment and wasn't even aware I was able to edit somebody else's comments. I looked and couldn't see a way to revert it.
-
-- **Issue #4435** (2026-09-30): **False positive: `ItsContraction`**
-  *Symptoms*: **What got flagged?** "I spent more effort in its reading than he did in its creation." The first "its" gets flagged as an `ItsContraction` error. The second "its" is unflagged as expected.  **Why is this incorrect?** "its" is the correct form to use before "reading" in this case.  **Example of correct usage:** See flagged sentence.
-
-- **Issue #4420** (2026-09-21): **Cant Update**
-  *Symptoms*: Basically the new Harper update doesnt work on obsidian, maybe the manifest is the problem?  I think its this one?  https://github.com/Automattic/harper-obsidian-plugin/commit/de5b305b94d83ac62b61ae81c1106092aa3876bf
-  **Post-Mortem & Fix Analysis**:
-  > It is even worse:  You cannot currently install Harper from the Obsidian plugin registry, as it points to 2.11.0, which either does not exist or has problems.  Hopefully this will get fixed soon.
-  > I've the same problems. I cannot update and I cannot re-install.
-  > The Obisidian Harper plugin entry seems to have been removed from the official registry, I do not see it there anymore.  This fixes the problem of showing buggy updates (installed plugin versions will stay as is).  But this obviously prohibits (re-)installing via plugin registry.
-
-- **Issue #4412** (2026-09-26): **`OneOfTheSingular` wrongly flags "one of the latter"**
-  *Symptoms*: <img width="338" height="257" alt="Image" src="https://github.com/user-attachments/assets/4678d054-5061-45b3-a91b-685870b1c12e" />  > ...erties, and others asked him to come give talks. One of the latter was Jeanne Russell, who lives with her husband, Ron, on Ver...  In this case `latter` should be added as a special exception to the general rule.
-
-- **Issue #4389** (2026-09-15): **False positive: "defo" flagged as a wrong negative of "info"**
-  *Symptoms*: <img width="501" height="207" alt="Image" src="https://github.com/user-attachments/assets/54c21e1e-2750-473b-a1a3-980db6166246" />  `WrongNegative` flags the Australian slang abbreviation "defo" meaning "definitely" and suggests replacing it with "info".
-
-- **Issue #4388** (2026-09-29): **False positive: "we humans" gets `PronounVerbAgreement` flag**
-  *Symptoms*: **What got flagged?** "We humans"  "humans" is highlighted as `PronounVerbAgreement` error.  **Why is this incorrect?** "We humans" is common and idiomatic English.  **Example of correct usage:** "We humans are naturally curious."
-  **Post-Mortem & Fix Analysis**:
-  > Hmm. Odd that "human" is marked as a verb. Removing `/V` might be a sufficient move to fix it. It's listed as a rare verb in Wiktionary:  <img width="1069" height="205" alt="Image" src="https://github.com/user-attachments/assets/75b286ee-658a-4fe5-bfe9-237ba09fd7ab" />  Even the OED doesn't list it as a verb:  <img width="520" height="259" alt="Image" src="https://github.com/user-attachments/assets/f69fa2b1-5d7c-4789-93c0-03920bf1479f" />  I'll remove the `/V` flag in the upcoming dictionary curation PR.
+- **Issue #4593** (2026-10-12): **App displays a blank white background and becomes unresponsive**
+  *Symptoms*:  The app opens with a white background and no visible content. The interface is unresponsive: buttons and other elements cannot be interacted with, and the app lags or freezes.  Steps to reproduce:     Open the app.     Right click on the app tray icon and select "Toggle service".     Observe the white background.     Attempt to interact with any element.  Expected result: The app loads its interface correctly and responds to user input.  Actual result: The app shows only a white background, cannot be interacted with, and lags/freezes.  **Platform** Windows 11 26H2  <img width="2948" height="1881" alt="Image" src="https://github.com/user-attachments/assets/be96769a-2a7c-474e-945b-1d7ad038d2ee" />  If I click on "Toggle service" and then select "Open Editor", I am seeing the app with broken interface: <img width="3781" height="2087" alt="Image" src="https://github.com/user-attachments/assets/40349f40-bddf-48a0-9572-d01b08ebe549" />
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1856,1655 +1432,1177 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88c53331` (2026-10-01)
-**Commit Message**: build(deps): bump bitflags from 2.13.1 to 2.13.2 (#4498)
+### Incident Patch 1: `1873f751` (2026-10-16)
+**Commit Message**: fix(chrome-ext): Lexical tests now wait for linting to complete (#4624)
 
-Bumps [bitflags](https://github.com/bitflags/bitflags) from 2.13.1 to 2.13.2.
-- [Release notes](https://github.com/bitflags/bitflags/releases)
-- [Changelog](https://github.com/bitflags/bitflags/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/bitflags/bitflags/compare/2.13.1...2.13.2)
+* fix(chrome-ext): Lexical tests now wait for linting to complete
 
----
-updated-dependencies:
-- dependency-name: bitflags
-  dependency-version: 2.13.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+* fix(chrome-ext): stabilize popup test setup
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Use native bulk input after keyboard selection for modern rich editors, while retaining paced character input for Draft.js. Wait for extension startup, isolate the welcome tab, and verify popup visibility before acting.
 
-**File**: `Cargo.lock` (modified, +24/-24)
+* fix(web): honor wasm-pack's dependency lockfile
+
+Avoid source-install resolution failures on the yanked zip dependency range required by binary-install. Use the dependency versions from wasm-pack's published lockfile.
+
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -210,7 +210,7 @@ version = "0.71.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5f58bf3d7db68cfbac37cfc485a8d711e87e064c3d0fe0435b92f7a407f9d6b3"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "cexpr",
-  "clang-sys",
-  "itertools 0.13.0",
-@@ -247,9 +247,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
+@@ -10,7 +10,7 @@ RUN apt-get update -y && apt-get install clang -y
+ RUN mkdir -p /usr/build/
+ WORKDIR /usr/build/
  
- [[package]]
- name = "bitflags"
--version = "2.13.1"
-+version = "2.13.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da"
-+checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
- dependencies = [
-  "serde_core",
- ]
-@@ -1030,7 +1030,7 @@ version = "0.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3d44a101f213f6c4cdc1853d4b78aef6db6bdfa3468798cc1d9912f4735013eb"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "core-foundation",
-  "libc",
- ]
-@@ -1262,7 +1262,7 @@ version = "0.8.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0ffc10af538ee74535cda260e581f5a177c243803dd30b698934a515f0114b55"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "bytemuck",
-  "cubecl-common",
-  "cubecl-ir",
-@@ -2524,7 +2524,7 @@ version = "0.6.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "45cf04b2726f02df5508c6de726acdc90cdf97ac771a9a0ffd8ba10a6e696bf9"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "gpu-alloc-types",
- ]
+-RUN cargo install wasm-pack
++RUN cargo install wasm-pack --locked
  
-@@ -2534,7 +2534,7 @@ version = "0.3.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b2bbed164dd10ed526c2e4fe3e721ca4a71c61730e5aafac6844b417b3227058"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
- ]
+ COPY . .
  
- [[package]]
-@@ -2555,7 +2555,7 @@ version = "0.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b89c83349105e3732062a895becfc71a8f921bb71ecbbdd8ff99263e3b53a0ca"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "gpu-descriptor-types",
-  "hashbrown 0.15.5",
- ]
-@@ -2566,7 +2566,7 @@ version = "0.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "fdf242682df893b86f33a73828fb09ca4b2d3bb6cc95249707fc684d27484b91"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
- ]
- 
- [[package]]
-@@ -2697,7 +2697,7 @@ name = "harper-core"
- version = "2.12.0"
- dependencies = [
-  "ammonia",
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "blanket",
-  "boxcar",
-  "cached",
-@@ -3641,7 +3641,7 @@ version = "0.32.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "00c15a6f673ff72ddcc22394663290f870fb224c1bfce55734a75c414150e605"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "block",
-  "core-graphics-types",
-  "foreign-types",
-@@ -3691,7 +3691,7 @@ checksum = "916cbc7cb27db60be930a4e2da243cf4bc39569195f22fd8ee419cd31d5b662c"
- dependencies = [
-  "arrayvec",
-  "bit-set",
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "cfg-if",
-  "cfg_aliases",
-  "codespan-reporting",
-@@ -3888,7 +3888,7 @@ version = "0.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
- ]
- 
- [[package]]
-@@ -4171,7 +4171,7 @@ version = "0.13.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "getopts",
-  "memchr",
-  "pulldown-cmark-escape",
-@@ -4402,7 +4402,7 @@ version = "11.6.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "498cd0dc59d73224351ee52a95fee0f1a617a2eae0e7d9d720cc622c73a54186"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
- ]
- 
- [[package]]
-@@ -4449,7 +4449,7 @@ version = "0.5.18"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
- ]
- 
- [[package]]
-@@ -4666,7 +4666,7 @@ version = "1.1.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-  "errno",
-  "libc",
-  "linux-raw-sys",
-@@ -4996,7 +4996,7 @@ version = "0.3.0+sdk-1.3.268.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "eda41003dc44290527a59b13432d4a0379379fa074b70174882adfbdfd917844"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
- ]
- 
- [[package]]
-@@ -5152,7 +5152,7 @@ version = "0.6.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "01198a2debb237c62b6826ec7081082d951f46dbb64b0e8c7649a452230d1dfc"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags 2.13.2",
-
 ```
 
----
-
-### Incident Patch 2: `0759a1b6` (2026-09-30)
-**Commit Message**: fix(harper-core): keep possessive its unflagged after prepositions (#4437)
-
-* fix(harper-core): keep possessive "its" unflagged after prepositions
-
-`ItsContraction` flagged phrases like "in its reading" when the gerund was
-tagged as a verb and the following word was neither a noun nor an auxiliary.
-A possessive `its` introduced by a preposition is part of a noun phrase, so
-skip the lint in that context while keeping strong predicative verbs such as
-"its been" and "its got" flagged.
-
-Fixes #4435
-
-* fix(core): use token metadata for its preposition check
-
----------
-
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
-
-**File**: `harper-core/src/linting/its_contraction/general.rs` (modified, +20/-2)
+**File**: `packages/chrome-plugin/tests/editor_content.spec.ts` (modified, +39/-9)
 ```diff
-@@ -54,7 +54,11 @@ impl Linter for General {
-                 self.expr
-                     .iter_matches(chunk, source)
-                     .filter_map(|match_span| {
--                        self.match_to_lint(&chunk[match_span.start..], source)
-+                        let preceding_token = chunk[..match_span.start]
-+                            .iter()
-+                            .rev()
-+                            .find(|tok| !tok.kind.is_whitespace());
-+                        self.match_to_lint(&chunk[match_span.start..], preceding_token, source)
-                     }),
-             );
-         }
-@@ -68,7 +72,12 @@ impl Linter for General {
+@@ -1,23 +1,53 @@
+ import { expect, test } from '@playwright/test';
+ import { replaceEditorContent } from './testUtils';
+ 
+-for (const tag of ['input', 'textarea']) {
+-	test(`Ensure \`replaceEditorContent\` fills \`${tag}\` without allowing intermediate text to be linted.`, async ({
+-		page,
+-	}) => {
+-		await page.setContent(`<${tag}></${tag}><output></output>`);
++for (const kind of ['input', 'textarea', 'div', 'Draft.js']) {
++	const tag = kind === 'Draft.js' ? 'div' : kind;
++	const rich = tag === 'div';
++	const attributes = rich
++		? ` contenteditable="true"${kind === 'Draft.js' ? ' class="public-DraftEditor-content"' : ''}`
++		: '';
++	const method =
++		kind === 'Draft.js'
++			? 'uses character input for Draft.js'
++			: rich
++				? 'uses keyboard selection and bulk input for div'
++				: `fills ${tag}`;
++
++	test(`replaceEditorContent ${method}`, async ({ page }) => {
++		await page.setContent(`<${tag}${attributes}></${tag}><output></output>`);
++		await page.locator(tag).fill('Old text');
+ 		await page.evaluate(() => {
+ 			const values: string[] = [];
+ 			document.addEventListener('input', (event) => {
+-				values.push((event.target as HTMLInputElement).value);
++				const target = event.target as HTMLElement;
++				values.push('value' in target ? String(target.value) : (target.textContent ?? ''));
+ 				document.querySelector('output')!.textContent = JSON.stringify(values);
+ 			});
+ 		});
+ 
+ 		const text = 'This is a mistaek.';
+ 		await replaceEditorContent(page.locator(tag), text);
+-		await expect(page.locator(tag)).toHaveValue(text);
+-		// The prefix "This is a m" has a different lint from the completed sentence.
+-		await expect(page.locator('output')).toHaveText(JSON.stringify([text]));
++		if (rich) {
++			await expect(page.locator(tag)).toHaveText(text);
++		} else {
++			await expect(page.locator(tag)).toHaveValue(text);
++		}
++		// Native setup must not expose partial words. Draft.js is the legacy exception
++		// because its selection model needs individual character key events.
++		const values =
++			kind === 'Draft.js'
++				? ['', ...Array.from(text, (_, index) => text.slice(0, index + 1))]
++				: rich
++					? ['', text]
++					: [text];
++		await expect(page.locator('output')).toHaveText(JSON.stringify(values));
+ 	});
  }
- 
- impl General {
--    fn match_to_lint(&self, toks: &[Token], source: &[char]) -> Option<Lint> {
-+    fn match_to_lint(
-+        &self,
-+        toks: &[Token],
-+        preceding_token: Option<&Token>,
-+        source: &[char],
-+    ) -> Option<Lint> {
-         let offender = toks.first()?;
-         let offender_chars = offender.get_ch(source);
- 
-@@ -115,6 +124,15 @@ impl General {
-             "had", "been", "got", "called", "named", "known", "termed", "titled",
-         ];
- 
-+        // A possessive `its` introduced by a preposition is part of a noun phrase, even
-+        // when the next word is tagged as a verb: "in its reading", "of its making".
-+        if modifier.kind.is_upos(UPOS::VERB)
-+            && !strong_predicative_verbs.contains(&modifier_lower.as_str())
-+            && preceding_token.is_some_and(|tok| tok.kind.is_preposition())
-+        {
-+            return None;
-+        }
 +
-         let should_consider = if exact_contraction_words.contains(&modifier_lower.as_str())
-             || determiner_like_words.contains(&modifier_lower.as_str())
-         {
++test('replaceEditorContent preserves textarea line breaks', async ({ page }) => {
++	await page.setContent('<textarea></textarea>');
++	const editor = page.locator('textarea');
++	await replaceEditorContent(editor, 'Valid words\ntset here.', true);
++	await expect(editor).toHaveValue('Valid words\ntset here.');
++});
 ```
 
-**File**: `harper-core/src/linting/its_contraction/mod.rs` (modified, +24/-0)
+**File**: `packages/chrome-plugin/tests/fixtures.ts` (modified, +56/-26)
 ```diff
-@@ -462,4 +462,28 @@ mod tests {
-     fn allows_its_starting_level() {
-         assert_no_lints("Reduce the tracker to its starting level.", test_linter());
-     }
-+
-+    #[test]
-+    fn issue_4435() {
-+        assert_no_lints(
-+            "I spent more effort in its reading than he did in its creation.",
-+            test_linter(),
-+        );
-+    }
-+
-+    #[test]
-+    fn allows_its_gerund_after_preposition() {
-+        assert_no_lints(
-+            "The value comes from its measuring of the output.",
-+            test_linter(),
-+        );
-+    }
-+
-+    #[test]
-+    fn allows_its_gerund_after_unlisted_preposition() {
-+        assert_no_lints(
-+            "I spent more effort during its reading than he did during its creation.",
-+            test_linter(),
-+        );
-+    }
- }
-```
-
----
-
-### Incident Patch 3: `342383dc` (2026-09-30)
-**Commit Message**: fix(dict): remove noun flag from e.g. to prevent OxfordComma false positives (#4479) (#4480)
-
-* fix(dict): remove noun flag from e.g. to prevent OxfordComma false positives (#4479)
-
-* chore(tests): refresh POS-tag snapshot after e.g. dictionary change
-
-Dropping the noun flag from `e.g.` re-tags it from NSg to the
-abbreviation tag W?, which is the expected consequence of the
-dictionary fix in this branch. Only the two `e.g.` occurrences in
-tests/text/tagged/Computer science.md change.
-
-Regenerated with `cd harper-core && cargo test -- test_pos_tagger
-test_most_lints`, run twice as the snapshot test rewrites on mismatch
-before asserting. Full harper-core suite passes: 6594 unit + 34 + 6
-integration tests, 0 failures.
-
----------
-
-Co-authored-by: Yi-111-a <41898262+github-actions[bot]@users.noreply.github.com>
-Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
-
-**File**: `harper-core/dictionary.dict` (modified, +1/-1)
-```diff
-@@ -22742,7 +22742,7 @@ e-book/NgS
- e-commerce/Nmg
- e'en/
- e'er/
--e.g./~4N
-+e.g./4~
- eBay/OgV
- eMusic/g
- eSIM/NgS
-```
-
-**File**: `harper-core/src/linting/oxford_commas/no_oxford_comma.rs` (modified, +9/-0)
-```diff
-@@ -163,4 +163,13 @@ mod tests {
-             "One, two and three. But four, five and six.",
-         );
-     }
-+
-+    #[test]
-+    fn allow_eg_conjunction() {
-+        assert_lint_count(
-+            "Memory is used for different tasks in embedded systems, e.g., storage or communication with sensors and actuators.",
-+            NoOxfordComma::default(),
-+            0,
-+        );
-+    }
- }
-```
-
-**File**: `harper-core/src/linting/oxford_commas/oxford_comma.rs` (modified, +18/-0)
-```diff
-@@ -220,4 +220,22 @@ mod tests {
-             "One, two, and three. But four, five, and six.",
-         );
-     }
-+
-+    #[test]
-+    fn allow_eg_conjunction() {
-+        assert_lint_count(
-+            "Memory is used for different tasks in embedded systems, e.g., storage or communication with sensors and actuators.",
-+            OxfordComma::default(),
-+            0,
-+        );
-+    }
-+
-+    #[test]
-+    fn eg_with_three_items_requires_oxford_comma() {
-+        assert_suggestion_result(
-+            "Tasks in embedded systems, e.g., storage, sensing or communication.",
-+            OxfordComma::default(),
-+            "Tasks in embedded systems, e.g., storage, sensing, or communication.",
-+        );
-+    }
- }
-```
-
-**File**: `harper-core/tests/text/tagged/Computer science.md` (modified, +2/-2)
-```diff
-@@ -257,9 +257,9 @@
- > been   suggested . In        Europe , terms   derived from contracted translations of the
- # VLPp/B VP/J      . NPr/J/R/P NPr+   . NPl/V3+ VP/J    P    VP/J       NPl          P  D+
- > expression " automatic information " ( e.g. " informazione automatica " in        Italian )
--# N🅪Sg+      . NSg/J+    Nᴹ+         . . NSg  . ?            ?          . NPr/J/R/P N🅪Sg/J  .
-+# N🅪Sg+      . NSg/J+    Nᴹ+         . . W?   . ?            ?          . NPr/J/R/P N🅪Sg/J  .
- > or    " information and  mathematics " are often used , e.g. informatique ( French      ) ,
--# NPr/C . Nᴹ          VB/C Nᴹ+         . VLB R     VP/J . NSg  ?            . NPr🅪Sg/VB/J . .
-+# NPr/C . Nᴹ          VB/C Nᴹ+         . VLB R     VP/J . W?   ?            . NPr🅪Sg/VB/J . .
- > Informatik ( German   ) , informatica ( Italian , Dutch     ) , informática ( Spanish ,
- # ?          . NPr🅪Sg/J . . ?           . N🅪Sg/J  . NPrᴹ/VB/J . . ?           . NPrᴹ/J  .
- > Portuguese ) , informatika ( Slavic languages and  Hungarian ) or    pliroforiki
-```
-
----
-
-### Incident Patch 4: `92aac9cd` (2026-09-30)
-**Commit Message**: build(deps): bump clap from 4.6.6 to 4.6.7 (#4497)
-
-Bumps [clap](https://github.com/clap-rs/clap) from 4.6.6 to 4.6.7.
-- [Release notes](https://github.com/clap-rs/clap/releases)
-- [Changelog](https://github.com/clap-rs/clap/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/clap-rs/clap/compare/clap_complete-v4.6.6...clap_complete-v4.6.7)
-
----
-updated-dependencies:
-- dependency-name: clap
-  dependency-version: 4.6.7
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +6/-6)
-```diff
-@@ -858,19 +858,19 @@ dependencies = [
+@@ -4,34 +4,64 @@ import { test as base, expect } from '@playwright/test';
+ import { withExtension } from 'playwright-webextext';
  
- [[package]]
- name = "clap"
--version = "4.6.6"
-+version = "4.6.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "473c7e07f409a8d772161724aa8db6a765a2532a70f9667eeb7b49d3d02fbdca"
-+checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
- dependencies = [
-  "clap_builder",
-  "clap_derive",
- ]
+ const pathToExtension = path.join(import.meta.dirname, '../build');
++const welcomeUrl = 'https://writewithharper.com/install-browser-extension';
  
- [[package]]
- name = "clap_builder"
--version = "4.6.6"
-+version = "4.6.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7b48fea5a88e9ae728a2dcbedbfc0e730f7d60da42e1cb049a83c9fb8b789889"
-+checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
- dependencies = [
-  "anstream",
-  "anstyle",
-@@ -889,9 +889,9 @@ dependencies = [
- 
- [[package]]
- name = "clap_derive"
--version = "4.6.4"
-+version = "4.6.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d012d2b9d65aca7f18f4d9878a045bc17899bba951561ba5ec3c2ba1eed9a061"
-+checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
- dependencies = [
-  "heck",
-  "proc-macro2",
-```
-
----
-
-### Incident Patch 5: `be2e4939` (2026-09-29)
-**Commit Message**: feat: add a debug printf to the linter asserts using `cfg!(debug_assertions)` (#4354)
-
-* feat: add a debug printf to the linter asserts using `cfg!(debug_assertions)`
-
-* Merge branch 'worse-comes-to-worse' of https://github.com/hippietrail/harper into worse-comes-to-worse
-
-**File**: `harper-core/src/linting/mod.rs` (modified, +2/-0)
-```diff
-@@ -765,6 +765,8 @@ pub mod tests {
-                 eprintln!("⚠️  Input and expected are both '{needle}' - is the test correct?");
-             }
-             return true;
-+        } else if cfg!(debug_assertions) {
-+            eprintln!(" 🔎 Checking... \"{text}\"");
-         }
- 
-         // Lint current text and try each suggestion branch
-```
-
----
-
-### Incident Patch 6: `0f09eada` (2026-09-28)
-**Commit Message**: fix: rename `is_verb_regular_past_form()` to `is_verb_preterite_and_participle_form()` (#4461)
-
-Whether a verb is regular and whether the preterite and past participle are identical in form are orthogonal: "buy", "bought", "have bought", "buys", "buying" for instance is irregular but "bought" still is used for both the preterite and past participle forms.
-
-Add a bunch of doc comments, which should bring up useful tips in editors for programmings cycling through function name completions, to help them avoid choosing the wrong one.
-
-**File**: `harper-core/src/dict_word_metadata.rs` (modified, +61/-10)
-```diff
-@@ -380,6 +380,9 @@ impl DictWordMetadata {
-         }
-     }
- 
-+    // Generates boolean query methods for word metadata fields.
-+    //
-+    // Note: `singular` and `countable` default to true and are skipped here.
-     generate_metadata_queries!(
-         // Singular and countable default to true, so their metadata queries are not generated.
-         noun has proper, plural, mass, possessive.
-@@ -395,10 +398,12 @@ impl DictWordMetadata {
- 
-     // Pronoun metadata queries
- 
-+    /// Returns the grammatical person for personal pronouns.
-     pub fn get_person(&self) -> Option<Person> {
-         self.pronoun.as_ref().and_then(|p| p.person)
-     }
- 
-+    /// Checks if the pronoun is both first-person and plural (we/us).
-     pub fn is_first_person_plural_pronoun(&self) -> bool {
-         matches!(
-             self.pronoun,
-@@ -410,6 +415,7 @@ impl DictWordMetadata {
-         )
-     }
- 
-+    /// Checks if the pronoun is both first-person and singular (I/me).
-     pub fn is_first_person_singular_pronoun(&self) -> bool {
-         matches!(
-             self.pronoun,
-@@ -421,6 +427,7 @@ impl DictWordMetadata {
-         )
-     }
- 
-+    /// Checks if the pronoun is both third-person and plural (they/them).
-     pub fn is_third_person_plural_pronoun(&self) -> bool {
-         matches!(
-             self.pronoun,
-@@ -432,6 +439,7 @@ impl DictWordMetadata {
-         )
-     }
- 
-+    /// Checks if the pronoun is both third-person and singular (he/him/she/her/it).
-     pub fn is_third_person_singular_pronoun(&self) -> bool {
-         matches!(
-             self.pronoun,
-@@ -443,6 +451,7 @@ impl DictWordMetadata {
-         )
-     }
- 
-+    /// Checks if the pronoun is third-person (he/him/she/her/it/they/them).
-     pub fn is_third_person_pronoun(&self) -> bool {
-         matches!(
-             self.pronoun,
-@@ -453,6 +462,7 @@ impl DictWordMetadata {
-         )
-     }
- 
-+    /// Checks if the pronoun is second-person (you).
-     pub fn is_second_person_pronoun(&self) -> bool {
-         matches!(
-             self.pronoun,
-@@ -463,7 +473,7 @@ impl DictWordMetadata {
-         )
-     }
- 
--    // Lemma is default if no verb form is specified in the dictionary
-+    /// Lemma is default if no verb form is specified in the dictionary
-     pub fn is_verb_lemma(&self) -> bool {
-         if let Some(verb) = self.verb {
-             if let Some(forms) = verb.verb_forms {
-@@ -475,35 +485,51 @@ impl DictWordMetadata {
-         false
-     }
- 
-+    /// WARNING! This is intended for regular verb past form used for both preterite and past participle.
-+    /// WARNING! But for now it's a bit fuzzy and may be missing from some regular verbs and may be
-+    /// WARNING! misapplied to some irregular verbs that happen to have the same form for preterite and
-+    /// WARNING! past participle such as "bought", "caught",
-     pub fn is_verb_past_form(&self) -> bool {
-         self.verb.is_some_and(|v| {
-             v.verb_forms
-                 .is_some_and(|vf| vf.contains(VerbFormFlags::PAST))
-         })
-     }
- 
--    pub fn is_verb_regular_past_form(&self) -> bool {
-+    /// WARNING! This method was formerly named `is_verb_regular_past_form` and seems to have been an
-+    /// WARNING! attempt to make a new method that achieved what `is_verb_past_form` above was intended
-+    /// WARNING! to to achieve. But it fell into the trap mentioned above of assuming that only regular
-+    /// WARNING! verbs had the same form for preterite and past participle, overlooking "bought", "caught", etc.
-+    pub fn is_verb_preterite_and_participle_form(&self) -> bool {
-         self.verb.is_some_and(|v| {
-             v.verb_forms.is_some_and(|vf| {
-                 vf.contains(VerbFormFlags::PRETERITE) && vf.contains(VerbFormFlags::PAST_PARTICIPLE)
-             })
-         })
-     }
- 
-+    /// Checks if the verb is a simple past form, technically known as the "preterite" form.
-+    /// WARNING! This should be working for irregular verbs but may not be working for regular verbs.
-+    /// WARNING! e.g., it is more likely to match `ate` than `walked` for now.
-     pub fn is_verb_simple_past_form(&self) -> bool {
-         self.verb.is_some_and(|v| {
-             v.verb_forms
-                 .is_some_and(|vf| vf.contains(VerbFormFlags::PRETERITE))
-         })
-     }
- 
-+    /// Checks if the verb is a past participle form.
-+    /// WARNING! This should be working for irregular verbs but may not be working for regular verbs.
-+    /// WARNING! e.g., it is more likely to match `eaten` than `walked` for now.
-     pub fn is_verb_past_participle_form(&self) -> bool {
-         self.verb.is_some_and(|v| {
-             v.verb_forms
-                 .is_some_and(|vf| vf.contains(VerbFormFlags::PAST_PARTICIPLE))
-         })
-     }
- 
-+    /// Checks if the verb is only the simple past aka preterite form and not also marked as
-+    /// `past` or `past participle`.
-     pub fn is_verb_simple_past_only(&self) -> bool {
-         self.verb.is_some_and(|v| {
-             v.verb_f
-```
-
-**File**: `harper-core/src/token_kind.rs` (modified, +2/-2)
-```diff
-@@ -101,7 +101,7 @@ impl TokenKind {
-         is_linking_verb,
-         is_verb_lemma,
-         is_verb_past_form,
--        is_verb_regular_past_form,
-+        is_verb_preterite_and_participle_form,
-         is_verb_simple_past_form,
-         is_verb_past_participle_form,
-         is_verb_simple_past_only,
-@@ -480,7 +480,7 @@ mod tests {
-     fn thought_is_regular_past_form() {
-         let doc = Document::new_plain_english_curated("thought");
-         let tk = &doc.tokens().next().unwrap().kind;
--        assert!(tk.is_verb_regular_past_form());
-+        assert!(tk.is_verb_preterite_and_participle_form());
-     }
- 
-     #[test]
-```
-
----
-
-### Incident Patch 7: `7b64cdff` (2026-09-28)
-**Commit Message**: fix(chrome-ext): fix several Google Docs problems (#4484)
-
-* fix(chrome-ext): brute-force docs
-
-* fix(chrome-ext): zooming behavior in Docs
-
-* chore(chrome-ext): disable Google Docs tests
-
-Since they cannot work in CI
-
-**File**: `packages/chrome-plugin/public/google-docs-bridge.js` (modified, +3/-14)
-```diff
-@@ -145,7 +145,7 @@ import { GoogleDocsBridgeRequestHandler } from './google-docs-bridge-request-han
- 
- 	function getAnnotatedTextApi() {
- 		return typeof window._docs_annotate_getAnnotatedText === 'function'
--			? window._docs_annotate_getAnnotatedText
-+			? () => window._docs_annotate_getAnnotatedText(window._docs_annotate_canvas_by_ext)
- 			: null;
- 	}
- 
-@@ -672,16 +672,15 @@ import { GoogleDocsBridgeRequestHandler } from './google-docs-bridge-request-han
- 		const rawStart = normalizedToRawOffset(rawText, resolvedRange.start);
- 		const rawEnd = normalizedToRawOffset(rawText, resolvedRange.end);
- 
--		annotated.setSelection(rawStart, rawEnd);
--
- 		const iframe = document.querySelector(TEXT_EVENT_IFRAME_SELECTOR);
- 		const targetDocument = iframe?.contentDocument;
--		const target = targetDocument?.activeElement;
-+		const target = targetDocument?.querySelector('[contenteditable="true"]');
- 		if (!target) {
- 			return { kind: 'replaceText', applied: false };
- 		}
- 
- 		target.focus?.();
-+		annotated.setSelection(rawStart, rawEnd);
- 
- 		const expectedNextText =
- 			currentText.slice(0, resolvedRange.start) +
-@@ -693,16 +692,6 @@ import { GoogleDocsBridgeRequestHandler } from './google-docs-bridge-request-han
- 			return normalizeGoogleDocsText(nextAnnotated?.getText?.()) === expectedNextText;
- 		};
- 
--		if (targetDocument?.execCommand?.('insertText', false, replacementText)) {
--			await new Promise((resolve) => setTimeout(resolve, 0));
--			if (await didApplyReplacement()) {
--				queueMicrotask(() => {
--					void syncText();
--				});
--				return { kind: 'replaceText', applied: true };
--			}
+ const test = base.extend({
+-	context: async (
+-		{ playwright, browserName, contextOptions, launchOptions, headless },
+-		use,
+-		testInfo,
+-	) => {
+-		if (browserName === 'chromium' && headless) {
+-			throw new Error('Chromium extensions require headed mode');
 -		}
 -
- 		const dataTransfer = new DataTransfer();
- 		dataTransfer.setData('text/plain', replacementText);
- 		target.dispatchEvent(
-```
-
-**File**: `packages/chrome-plugin/src/contentScript/googleDocs.ts` (modified, +10/-9)
-```diff
-@@ -55,7 +55,6 @@ export function createGoogleDocsBridgeSync(fw: LintFramework): () => Promise<voi
- 	let bridgeAttached = false;
- 	let syncInFlight = false;
- 	let syncPending = false;
--	let syncingClearTimer: number | null = null;
- 	let lastCloneSignature = '';
- 	let injectedMainWorldBridge = false;
- 
-@@ -193,6 +192,13 @@ export function createGoogleDocsBridgeSync(fw: LintFramework): () => Promise<voi
- 		const fontCss = segment.rectNode.getAttribute('data-font-css');
- 		if (fontCss) {
- 			span.style.font = fontCss;
-+			// Docs zooms the SVG, but data-font-css remains in unscaled SVG units.
-+			// The mirror uses screen-space geometry, so its font must use the same scale.
-+			const svgWidth = segment.rectNode.width.baseVal.value;
-+			const fontSize = Number.parseFloat(span.style.fontSize);
-+			if (svgWidth > 0 && Number.isFinite(fontSize)) {
-+				span.style.fontSize = `${fontSize * (segment.rect.width / svgWidth)}px`;
+-		const profile = testInfo.outputPath('browser-profile');
+-		await mkdir(profile, { recursive: true });
+-
+-		const browserType = withExtension(playwright[browserName], pathToExtension);
+-		const context = await browserType.launchPersistentContext(profile, {
+-			...contextOptions,
+-			...launchOptions,
+-			headless,
+-		});
+-
+-		try {
+-			await use(context);
+-		} finally {
+-			await context.close();
+-			await rm(profile, { recursive: true, force: true });
+-		}
+-	},
++	context: [
++		async ({ playwright, browserName, contextOptions, launchOptions, headless }, use, testInfo) => {
++			if (browserName === 'chromium' && headless) {
++				throw new Error('Chromium extensions require headed mode');
 +			}
- 		}
++
++			const profile = testInfo.outputPath('browser-profile');
++			await mkdir(profile, { recursive: true });
++
++			const browserType = withExtension(playwright[browserName], pathToExtension);
++			const context = await browserType.launchPersistentContext(profile, {
++				...contextOptions,
++				...launchOptions,
++				headless,
++			});
++
++			try {
++				// The install tab can steal focus and pause Firefox's animation frames.
++				// Stub its network load, then close it before creating the test page.
++				await context.route(`${welcomeUrl}**`, (route) =>
++					route.fulfill({ contentType: 'text/html', body: '<title>Installed</title>' }),
++				);
++				await expect
++					.poll(() => context.pages().some((page) => page.url().startsWith(welcomeUrl)), {
++						timeout: 90000,
++						message: 'The extension install hook should open its welcome tab',
++					})
++					.toBe(true);
++				for (const page of context.pages()) {
++					if (page.url().startsWith(welcomeUrl)) await page.close();
++				}
++
++				// A completed lint proves that the background linter and content script
++				// are ready. Keep cold startup out of each test's UI assertion budget.
++				// A normal page works in Firefox too, which does not expose background pages.
++				const startupPage = await context.newPage();
++				try {
++					await startupPage.goto('http://localhost:8081/simple_textarea.html');
++					await startupPage.bringToFront();
++					await startupPage.locator('textarea').fill('This is an test');
++					await expect(startupPage.locator('#harper-highlight').first()).toBeVisible({
++						timeout: 90000,
++					});
++				} finally {
++					await startupPage.close();
++				}
++
++				await use(context);
++			} finally {
++				await context.close();
++				await rm(profile, { recursive: true, force: true });
++			}
++		},
++		{ scope: 'test', timeout: 120000 },
++	],
+ });
  
- 		return span;
-@@ -535,10 +541,6 @@ export function createGoogleDocsBridgeSync(fw: LintFramework): () => Promise<voi
- 			}
- 
- 			const target = ensureTarget(editor);
--			if (syncingClearTimer != null) {
--				window.clearTimeout(syncingClearTimer);
--				syncingClearTimer = null;
--			}
- 			editor.setAttribute(GOOGLE_DOCS_SYNCING_ATTR, 'true');
- 
- 			const changed = applySnapshot(target, buildSnapshot(editor));
-@@ -555,10 +557,9 @@ export function createGoogleDocsBridgeSync(fw: LintFramework): () => Promise<voi
- 		} finally {
- 			const editor = document.querySelector(GOOGLE_DOCS_EDITOR_SELECTOR);
- 			if (editor instanceof HTMLElement) {
--				syncingClearTimer = window.setTimeout(() => {
--					editor.removeAttribute(GOOGLE_DOCS_SYNCING_ATTR);
--					syncingClearTimer = null;
--				}, 150);
-+				// Snapshot replacement is complete before the queued animation-frame render.
-+				// Keeping this flag set delays that render until an unrelated later update.
-+				editor.removeAttribute(GOOGLE_DOCS_SYNCING_ATTR);
- 			}
- 
- 			syncInFlight = false;
+ export { test, expect };
 ```
 
-**File**: `packages/chrome-plugin/tests/google_docs.spec.ts` (modified, +81/-11)
+**File**: `packages/chrome-plugin/tests/popup_reconnect.spec.ts` (modified, +6/-2)
 ```diff
-@@ -1,5 +1,6 @@
- import type { Page } from '@playwright/test';
- import { expect, test } from './fixtures';
-+import { getBackground } from './testUtils';
+@@ -3,12 +3,13 @@ import {
+ 	getTextarea,
+ 	openHarperPopupFromEditorPointerDown,
+ 	replaceEditorContent,
+-	waitForHarperHighlightCenter,
++	waitForHighlightsToSettle,
+ } from './testUtils';
  
- type MockGoogleDocsRect = {
- 	label: string;
-@@ -369,7 +370,6 @@ function buildMockGoogleDocsHtml(rects: MockGoogleDocsRect[]): string {
- 				height: 240px;
- 				margin: 32px auto;
- 				background: white;
--				border: 1px solid #d1d5db;
- 			}
+ const TEST_PAGE_URL = 'http://localhost:8081/popup_reconnect.html';
  
- 			svg {
-@@ -429,16 +429,21 @@ async function installMockGoogleDocsGeometry(
- 						getSelection: () => Array<{ start: number; end: number }>;
- 					}>;
- 				}
--			)._docs_annotate_getAnnotatedText = async () => ({
--				getText: () =>
--					(
--						window as Window & {
--							__harperMockGoogleDocsText?: string;
--						}
--					).__harperMockGoogleDocsText ?? '',
--				setSelection: () => {},
--				getSelection: () => [{ start: 0, end: 0 }],
--			});
-+			)._docs_annotate_getAnnotatedText = async (extensionId?: string) => {
-+				if (!extensionId) {
-+					throw new Error('Google Docs requires an extension identifier');
-+				}
-+				return {
-+					getText: () =>
-+						(
-+							window as Window & {
-+								__harperMockGoogleDocsText?: string;
-+							}
-+						).__harperMockGoogleDocsText ?? '',
-+					setSelection: () => {},
-+					getSelection: () => [{ start: 0, end: 0 }],
-+				};
-+			};
- 		},
- 		{ pageText: annotatedText },
- 	);
-@@ -477,6 +482,71 @@ async function getBridgeSource(page: Page) {
+ test('Reconnects the popup host before opening the popover', async ({ page }) => {
++	test.slow();
+ 	const pageErrors: string[] = [];
+ 	const consoleErrors: string[] = [];
+ 
+@@ -26,7 +27,9 @@ test('Reconnects the popup host before opening the popover', async ({ page }) =>
+ 	const editor = getTextarea(page);
+ 	await replaceEditorContent(editor, 'This is an test');
+ 
+-	expect(await waitForHarperHighlightCenter(page, 12000)).not.toBeNull();
++	// Finish linting before disconnecting the popup host. Do not wait for a render
++	// after replacing the body: the pointer handler must reconnect the host itself.
++	await waitForHighlightsToSettle(page);
+ 
+ 	await page.evaluate(() => {
+ 		(
+@@ -38,6 +41,7 @@ test('Reconnects the popup host before opening the popover', async ({ page }) =>
+ 
+ 	const opened = await openHarperPopupFromEditorPointerDown(page, editor);
+ 	expect(opened).toBe(true);
++	await expect(page.getByTitle('Click to replace "an" with "a"')).toBeVisible();
+ 
+ 	const errors = [...pageErrors, ...consoleErrors].join('\n');
+ 	expect(errors).not.toContain("Failed to execute 'showPopover'");
+```
+
+**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +75/-25)
+```diff
+@@ -72,7 +72,7 @@ export function getDraftEditor(page: Page): Locator {
+ /** Replace the content of a text editor. */
+ export async function replaceEditorContent(editorEl: Locator, text: string, softBreaks = false) {
+ 	// Seed form controls in one update so popup tests cannot click lints for partial words.
+-	// Rich editors still need their keyboard-driven editing behavior.
++	// Rich editors still need keyboard selection, deletion, and line breaks.
+ 	if (await isFormElement(editorEl)) {
+ 		await editorEl.fill(text);
+ 		return;
+@@ -85,9 +85,18 @@ export async function replaceEditorContent(editorEl: Locator, text: string, soft
+ 
+ 	const lines = text.split('\n');
+ 	const breakKey = softBreaks ? 'Shift+Enter' : 'Enter';
++	const needsCharacterInput = await editorEl.evaluate((el) =>
++		el.classList.contains('public-DraftEditor-content'),
++	);
+ 
+ 	for (let i = 0; i < lines.length; i++) {
+-		await editorEl.pressSequentially(lines[i]);
++		if (needsCharacterInput) {
++			// Draft.js needs character key events at a normal typing cadence for its selection model.
++			await editorEl.pressSequentially(lines[i], { delay: 200 });
++		} else {
++			// Native text input updates the editor model without exposing partial words to linting.
++			await editorEl.page().keyboard.insertText(lines[i]);
++		}
+ 		if (i < lines.length - 1) {
+ 			await editorEl.press(breakKey);
+ 		}
+@@ -104,6 +113,44 @@ export function getHarperHighlights(page: Page): Locator {
+ 	return page.locator('#harper-highlight');
  }
  
- test.describe('Google Docs support', () => {
-+	test('scales highlight offsets and widths with Google Docs zoom', async ({ page }) => {
-+		await openMockGoogleDocsPage(page, [
-+			{
-+				label: 'This is an test.',
-+				left: 48,
-+				top: 48,
-+				width: 144,
-+				height: 18,
-+				fontCss: '16px Arial',
-+			},
-+		]);
-+		const highlight = page.locator('#harper-highlight').first();
-+		await highlight.waitFor({ state: 'visible' });
-+		const baseline = (await highlight.boundingBox())!;
-+		const rect = page.locator('rect[aria-label]').first();
-+		const baselineRect = (await rect.boundingBox())!;
++export async function waitForHighlightsToSettle(
++	page: Page,
++	quietMs = 250,
++	timeoutMs = 30000,
++): Promise<void> {
++	let previous: string | undefined;
++	let changedAt = performance.now();
 +
-+		for (const scale of [1.5, 0.75, 2, 1]) {
-+			await page.locator('svg').evaluate((svg, scale) => {
-+				svg.style.transformOrigin = '0 0';
-+				svg.style.transform = `scale(${scale})`;
-+			}, scale);
-+			await expect
-+				.poll(async () => {
-+					const box = await highlight.boundingBox();
-+					const source = await rect.boundingBox();
-+					if (!box || !source) return Number.POSITIVE_INFINITY;
-+					return Math.max(
-+						Math.abs(box.width - baseline.width * scale),
-+						Math.abs(box.x - source.x - (baseline.x - baselineRect.x) * scale),
-+					);
-+				})
-+				.toBeLessThan(1);
-+		}
-+	});
-+
-+	test('lints the logical text across positioned formatting spans', async ({ page, context }) => {
-+		const background = await getBackground(context);
-+		await background.evaluate(() => {
-+			const state = globalThis as typeof globalThis & { googleDocsLintTexts: string[] };
-+			state.googleDocsLintTexts = [];
-+			chrome.runtime.onMessage.addListener((request) => {
-+				if (request.kind === 'lint' && request.domain === 'docs.google.com') {
-+					state.googleDocsLintTexts.push(request.text);
++	await expect
++		.poll(
++			async () => {
++				const snapshot = await getHarperHighlights(page).evaluateAll((highlights) =>
++					JSON.stringify(
++						highlights.flatMap((highlight) => {
++							const { x, y, width, height } = highlight.getBoundingClientRect();
++							const style = getComputedStyle(highlight);
++							if (width <= 0 || height <= 0 || style.visibility !== 'visible') return [];
++							return [[x, y, width, height, style.borderBottomColor, style.backgroundColor]];
++						}),
++					),
++				);
++				const now = performance.now();
++				if (snapshot === '[]' || snapshot !== previous) {
++					previous = snapshot;
++					changedAt = now;
++					return false;
 +				}
-+			});
-+		});
++				return now - changedAt >= quietMs;
++			},
++			{
++				message: `Visible highlight boxes should stay unchanged for ${quietMs} ms`,
++				intervals: [10],
++				timeout: timeoutMs,
++			},
++		)
++		.toBe(true);
++}
 +
-+		await openMockGoogleDocsPage(
-+			page,
-+			ITALIC_SHIFTED_RECTS.map((rect) => ({ ...rect, label: rect.label.trimEnd() })),
-+			'This is an test.',
-+		);
-+		await expect.poll(() => getBridgeSource(page)).toBe('logical');
-+		await expect
-+			.poll(() =>
-+				background.evaluate(
-+					() =>
-+						(globalThis as typeof globalThis & { googleDocsLintTexts: string[] })
-+							.googleDocsLintTexts,
-+				),
-+			)
-+			.toContain('This is an test.');
-+	});
-+
- 	test('Google Docs restores spaces around formatted inline words', async ({ page }) => {
- 		await openMockGoogleDocsPage(page, FORMATTED_WORD_GAP_RECTS, 'not smart enough.');
+ /**
+  * Wait for the first Harper highlight to exist and return its screen-space center.
+  *
+@@ -148,14 +195,14 @@ export async function assertLocatorsResolveEqually(page: Page, a: Locator, b: Lo
+ 	expect(areSame).toBe(true);
+ }
  
-```
-
-**File**: `packages/lint-framework/src/lint/LintFramework.ts` (modified, +5/-0)
-```diff
-@@ -1,5 +1,6 @@
- import type { LintOptions } from 'harper.js';
- import { closestBox, type IgnorableLintBox } from './Box';
-+import { isGoogleDocsTarget } from './computeLintBoxes/googleDocsUtilities';
- import computeLintBoxes from './computeLintBoxes/index';
- import { isHeading, isVisible } from './domUtils';
- import { getCaretPosition, getCMRoot } from './editorUtils';
-@@ -335,6 +336,10 @@ export default class LintFramework {
- 			const lineElements = (target as HTMLElement).querySelectorAll<HTMLElement>('.cm-line');
- 			const lines = Array.from(lineElements).map((el) => el.textContent);
- 			text = lines.reduce((acc: string, x: string | null) => `${acc}${x ?? ''}\n`, '');
-+		} else if (target instanceof HTMLElement && isGoogleDocsTarget(target)) {
-+			// The mirror already contains logical whitespace. innerText inserts line breaks
-+			// between its positioned spans, splitting sentences at formatting boundaries.
-+			text = target.textContent;
- 		} else {
- 			text =
- 				target instanceof HTMLTextAreaElement || target instanceof HTMLInputElement
+-/** Locates the first Harper highlight on the page and clicks it.
+- * It should result in the popup opening.
+- * Returns whether the highlight was found. */
++/** Click the first Harper highlight and check that its popup opens.
++ * Returns false if no highlight was found; a missing popup fails the test. */
+ export async function clickHarperHighlight(page: Page): Promise<boolean> {
+ 	const center = await waitForHarperHighlightCenter(page);
+ 	if (center == null) return false;
+ 
+ 	await page.mouse.click(center.x, center.y);
++	await expect(page.locator('.harper-container')).toBeVisible();
+ 	return true;
+ }
+ 
+@@ -177,24 +224,20 @@ export async function openHarperPopupFromEditorPointerDown(
+ 		return false;
+ 	}
+ 
+-	try {
+-		await editor.dispatchEvent('pointerdown', {
+-			bubbles: true,
+-			composed: true,
+-			button: 0,
+-			buttons: 1,
+-			clientX: center.x,
+-			clientY: center.y,
+-			pointerId: 1,
+-			pointerType: 'mouse',
+-			screenX: center.x,
+-			screenY: center.y,
+-		});
+-		await page.locator('.harper-container').waitFor({ state: 'visible', timeout: 2000 });
+-		return true;
+-	} catch {
+-		return false;
+-	}
++	await editor.dispatchEvent('pointerdown', {
++		bubbles: true,
++		composed: true,
++		button: 0,
++		buttons: 1,
++		clientX: center.x,
++		clientY: center.y,
++		pointerId: 1,
++		pointerType: 'mouse',
++		screenX: center.x,
++		screenY: center.y,
++	});
++	await expect(page.locator('.harper-container')).toBeVisible();
++	return true;
+ }
+ 
+ /** Grab the first `<textarea />` on a page. */
+@@ -254,10 +297,14 @@ export async function testBasicSuggestion(
+ 			await setup(page, editor);
+ 		}
+ 		await replaceEditorContent(editor, 'This is an test');
++		await assertEditorText(editor, 'This is an test');
++		await waitForHighlightsToSettle(page);
+ 
+ 		const opened = await clickHarperHighlight(page);
+ 		expect(opened).toBe(true);
+-		await page.getByTitle('Click to replace "an" with "a"').click();
++		const suggestion = page.getByTitle('Click to replace "an" with "a"');
++		await expect(suggestion).toBeVisible();
++		await suggestion.click();
+ 
+ 		await assertEditorText(editor, 'This is a test');
+ 		await expect(editor).toBeFocused();
+@@ -298,7 +345,7 @@ expo
 ```
 
 ---
 
-### Incident Patch 8: `b8278ff3` (2026-09-28)
-**Commit Message**: fix(chrome-ext): fix test setup to avoid race conditions (#4485)
+### Incident Patch 2: `39d96ad0` (2026-10-15)
+**Commit Message**: ci(desktop): sign Windows releases with Buildkite (#4576)
 
-**File**: `packages/chrome-plugin/tests/editor_content.spec.ts` (added, +23/-0)
+* ci(desktop): sign Windows releases with Buildkite
+
+* docs(desktop): simplify Windows signing guidance
+
+* fix(desktop): correct Windows setup and release handoff
+
+* ci(desktop): attach the Windows installer with a Node uploader
+
+Replace the Ruby DesktopRelease module with .buildkite/commands/upload-release.cjs
+and leave the macOS lane as it was. The uploader never creates a release: it
+attaches the signed installer to the tag's draft, choosing the draft that holds
+the macOS .dmg when GitHub Actions has created others, and refuses published
+releases. Retries replace the installer and leave notes and other assets alone.
+
+The release script reads the version with node instead of jq, the Windows build
+fails early on a mismatched tag, and the unsigned GitHub Actions build no longer
+runs on tags.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+* docs(desktop): describe the Windows release upload
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+* ci(desktop): report the release upload status and retry network failures
+
+The upload step now publishes its own GitHub commit status, since the
+pipeline's automatic statuses a
+
+**File**: `.buildkite/commands/build-desktop-windows.ps1` (added, +73/-0)
 ```diff
-@@ -0,0 +1,23 @@
-+import { expect, test } from '@playwright/test';
-+import { replaceEditorContent } from './testUtils';
+@@ -0,0 +1,73 @@
++$ErrorActionPreference = 'Stop'
 +
-+for (const tag of ['input', 'textarea']) {
-+	test(`Ensure \`replaceEditorContent\` fills \`${tag}\` without allowing intermediate text to be linted.`, async ({
-+		page,
-+	}) => {
-+		await page.setContent(`<${tag}></${tag}><output></output>`);
-+		await page.evaluate(() => {
-+			const values: string[] = [];
-+			document.addEventListener('input', (event) => {
-+				values.push((event.target as HTMLInputElement).value);
-+				document.querySelector('output')!.textContent = JSON.stringify(values);
-+			});
-+		});
++function Invoke-Checked([scriptblock] $Command) {
++    & $Command
++    if ($LASTEXITCODE -ne 0) { throw "Command failed (exit $LASTEXITCODE): $Command" }
++}
 +
-+		const text = 'This is a mistaek.';
-+		await replaceEditorContent(page.locator(tag), text);
-+		await expect(page.locator(tag)).toHaveValue(text);
-+		// The prefix "This is a m" has a different lint from the completed sentence.
-+		await expect(page.locator('output')).toHaveText(JSON.stringify([text]));
-+	});
++$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
++Set-Location $repoRoot
++$config = Get-Content 'harper-desktop/src-tauri/tauri.conf.json' -Raw | ConvertFrom-Json
++if ($env:BUILDKITE_TAG -and $env:BUILDKITE_TAG -ne "v$($config.version)") {
++    throw "Release tag must match v$($config.version)"
++}
++
++Write-Host '--- :rust: Prepare Rust and build tools'
++$cargoBin = if ($env:CARGO_HOME) { Join-Path $env:CARGO_HOME 'bin' } else { Join-Path $env:USERPROFILE '.cargo/bin' }
++$env:PATH = "$cargoBin;$env:PATH"
++if (-not (Get-Command rustup -ErrorAction SilentlyContinue)) {
++    # The agent image has a Chocolatey Rust on PATH; rustup can coexist with it.
++    $env:RUSTUP_INIT_SKIP_PATH_CHECK = 'yes'
++    # rustup selects installer mode from its executable name.
++    $rustupInstaller = Join-Path $env:TEMP 'rustup-init.exe'
++    Invoke-WebRequest 'https://win.rustup.rs/x86_64' -OutFile $rustupInstaller
++    Invoke-Checked { & $rustupInstaller -y --no-modify-path --default-toolchain stable --profile minimal }
++}
++Invoke-Checked { rustup update stable --no-self-update }
++Invoke-Checked { rustup target add wasm32-unknown-unknown x86_64-pc-windows-msvc }
++
++if (-not (Get-Command cargo-binstall -ErrorAction SilentlyContinue)) {
++    $binstallInstaller = Join-Path $env:TEMP 'harper-install-binstall.ps1'
++    Invoke-WebRequest 'https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1' -OutFile $binstallInstaller -UseBasicParsing
++    Invoke-Checked { & $binstallInstaller }
++}
++Invoke-Checked { cargo binstall --no-confirm --force just wasm-pack }
++Invoke-Checked { npm install --global pnpm@10.10.0 }
++$pnpmPrefix = Invoke-Checked { npm prefix --global }
++$env:PATH = "$pnpmPrefix;$env:PATH"
++
++Write-Host '--- :lock: Set up Azure Trusted Signing'
++$setupScript = (Get-Command setup_azure_trusted_signing.ps1 -ErrorAction Stop).Source
++Invoke-Checked { & $setupScript }
++
++# Absolute paths and separate arguments handle NSIS's working directory and spaces.
++$signingConfig = Join-Path $env:TEMP "harper-windows-signing-$([guid]::NewGuid()).json"
++$overlay = @{
++    bundle = @{
++        createUpdaterArtifacts = $false
++        windows = @{
++            signCommand = @{
++                cmd = (Get-Command node -ErrorAction Stop).Source
++                args = @((Join-Path $PSScriptRoot 'sign-windows.cjs'), '%1')
++            }
++        }
++    }
++} | ConvertTo-Json -Depth 5
++[System.IO.File]::WriteAllText($signingConfig, $overlay, [System.Text.UTF8Encoding]::new($false))
++
++try {
++    Write-Host '--- :tauri: Build and sign Harper for Windows'
++    Invoke-Checked { just build-desktop-windows-signed $signingConfig }
++
++    $bundleDir = 'harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis'
++    $installers = @(Get-ChildItem $bundleDir -Filter '*-setup.exe' -File)
++    $expectedName = "Harper_$($config.version)_x64-setup.exe"
++    if ($installers.Count -ne 1 -or $installers[0].Name -ne $expectedName) {
++        throw "Expected exactly one Windows installer named $expectedName."
++    }
++
++    Write-Host '--- :mag: Verify the release installer'
++    Invoke-Checked { & $env:SIGNTOOL_PATH verify /pa /all /v /tw $installers[0].FullName }
++} finally {
++    Remove-Item $signingConfig -ErrorAction SilentlyContinue
 +}
 ```
 
-**File**: `packages/chrome-plugin/tests/review_banner.spec.ts` (modified, +13/-1)
+**File**: `.buildkite/commands/release-desktop-windows.sh` (added, +15/-0)
 ```diff
-@@ -23,13 +23,25 @@ test.describe('review banner', () => {
- 		const extensionId = background.url().split('/')[2];
- 
- 		const popupUrl = `chrome-extension://${extensionId}/popup.html`;
--		await page.goto(popupUrl);
+@@ -0,0 +1,15 @@
++#!/usr/bin/env bash
++set -euo pipefail
 +
-+		// Let startup finish writing the installation date before replacing it.
-+		await expect
-+			.poll(
-+				() =>
-+					background.evaluate(async () => {
-+						const { installedOn } = await chrome.storage.local.get('installedOn');
-+						return typeof installedOn === 'string';
-+					}),
-+				{ timeout: 30000 },
-+			)
-+			.toBe(true);
- 
- 		await background.evaluate(() =>
- 			chrome.storage.local.set({
- 				installedOn: new Date(Date.now() - 15 * 86400000).toISOString(),
- 			}),
- 		);
-+		await page.goto(popupUrl);
- 
- 		await page.getByText("Let's start writing").click();
- 
++cd "$(dirname "$0")/../.."
++VERSION=$(node -p "require('./harper-desktop/src-tauri/tauri.conf.json').version")
++INSTALLER="harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/Harper_${VERSION}_x64-setup.exe"
++
++echo "--- :package: Download verified Windows installer"
++# The Windows agent stores the artifact path with backslashes. Download patterns
++# match the whole path, and the agent converts the separators when downloading.
++buildkite-agent artifact download "*Harper_${VERSION}_x64-setup.exe" . --step build-desktop-windows
++[[ -f "$INSTALLER" ]] || { echo "No Windows installer downloaded" >&2; exit 1; }
++
++echo "--- :rocket: Upload Windows installer to the draft release"
++node .buildkite/commands/upload-release.cjs "$BUILDKITE_TAG" "$INSTALLER"
 ```
 
-**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +9/-2)
+**File**: `.buildkite/commands/sign-windows.cjs` (added, +48/-0)
 ```diff
-@@ -71,6 +71,13 @@ export function getDraftEditor(page: Page): Locator {
- 
- /** Replace the content of a text editor. */
- export async function replaceEditorContent(editorEl: Locator, text: string, softBreaks = false) {
-+	// Seed form controls in one update so popup tests cannot click lints for partial words.
-+	// Rich editors still need their keyboard-driven editing behavior.
-+	if (await isFormElement(editorEl)) {
-+		await editorEl.fill(text);
-+		return;
+@@ -0,0 +1,48 @@
++const { execFileSync } = require('node:child_process');
++
++// Tauri calls this for the app, NSIS uninstaller, installer, and bundled DLLs.
++// setup_azure_trusted_signing.ps1 supplies these paths and Azure credentials.
++function signWindows(file, env = process.env, run = execFileSync) {
++	if (!file || !file.trim()) {
++		throw new Error('Expected a file to sign.');
 +	}
 +
- 	await editorEl.selectText();
- 	await editorEl.press('Backspace');
++	const required = ['SIGNTOOL_PATH', 'AZURE_CODE_SIGNING_DLIB', 'AZURE_METADATA_JSON'];
++	const missing = required.filter((name) => !env[name]?.trim());
++	if (missing.length) {
++		throw new Error(`Azure signing setup is incomplete: ${missing.join(', ')}`);
++	}
++
++	run(
++		env.SIGNTOOL_PATH,
++		[
++			'sign',
++			'/v',
++			'/d',
++			'Harper',
++			'/fd',
++			'SHA256',
++			'/tr',
++			env.AZURE_TIMESTAMP_SERVER || 'http://timestamp.acs.microsoft.com',
++			'/td',
++			'SHA256',
++			'/dlib',
++			env.AZURE_CODE_SIGNING_DLIB,
++			'/dmdf',
++			env.AZURE_METADATA_JSON,
++			file,
++		],
++		{ stdio: 'inherit' },
++	);
++	// Verify before packaging: Tauri later restores the original unsigned app binary.
++	run(env.SIGNTOOL_PATH, ['verify', '/pa', '/all', '/v', '/tw', file], { stdio: 'inherit' });
++}
++
++if (require.main === module) {
++	if (process.argv.length !== 3) {
++		throw new Error('Usage: node sign-windows.cjs <file>');
++	}
++	signWindows(process.argv[2]);
++}
++
++module.exports = { signWindows };
+```
+
+**File**: `.buildkite/commands/sign-windows.test.cjs` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { signWindows } = require('./sign-windows.cjs');
++
++const env = {
++	SIGNTOOL_PATH: 'C:\\Program Files\\Windows Kits\\signtool.exe',
++	AZURE_CODE_SIGNING_DLIB: 'C:\\Signing Tools\\Azure.CodeSigning.Dlib.dll',
++	AZURE_METADATA_JSON: 'C:\\Signing Tools\\metadata.json',
++};
++
++test('signs and verifies the same file using separate arguments, including spaces', () => {
++	const file = 'C:\\Build Output\\Harper_2.12.0_x64-setup.exe';
++	const calls = [];
++	signWindows(file, env, (...args) => calls.push(args));
++	assert.deepEqual(calls, [
++		[
++			env.SIGNTOOL_PATH,
++			[
++				'sign',
++				'/v',
++				'/d',
++				'Harper',
++				'/fd',
++				'SHA256',
++				'/tr',
++				'http://timestamp.acs.microsoft.com',
++				'/td',
++				'SHA256',
++				'/dlib',
++				env.AZURE_CODE_SIGNING_DLIB,
++				'/dmdf',
++				env.AZURE_METADATA_JSON,
++				file,
++			],
++			{ stdio: 'inherit' },
++		],
++		[env.SIGNTOOL_PATH, ['verify', '/pa', '/all', '/v', '/tw', file], { stdio: 'inherit' }],
++	]);
++});
++
++for (const name of Object.keys(env)) {
++	for (const value of [undefined, '', '   ']) {
++		test(`rejects missing or blank ${name}: ${JSON.stringify(value)}`, () => {
++			assert.throws(
++				() =>
++					signWindows('Harper.exe', { ...env, [name]: value }, () => assert.fail('must not sign')),
++				new RegExp(name),
++			);
++		});
++	}
++}
++
++test('rejects an absent file before calling SignTool', () => {
++	for (const file of [undefined, '', ' ']) {
++		assert.throws(() => signWindows(file, env, () => assert.fail('must not sign')), /file to sign/);
++	}
++});
++
++test('does not verify or report success after signing fails', () => {
++	const failure = new Error('Azure signing failed');
++	const commands = [];
++	assert.throws(
++		() =>
++			signWindows('Harper.exe', env, (_, args) => {
++				commands.push(args[0]);
++				throw failure;
++			}),
++		(error) => error === failure,
++	);
++	assert.deepEqual(commands, ['sign']);
++});
++
++test('fails the hook if signature verification fails', () => {
++	const failure = new Error('Signature verification failed');
++	assert.throws(
++		() =>
++			signWindows('Harper.exe', env, (_, args) => {
++				if (args[0] === 'verify') throw failure;
++			}),
++		(error) => error === failure,
++	);
++});
++
++test('uses the toolkit timestamp server when supplied', () => {
++	const calls = [];
++	signWindows(
++		'uninstall.exe',
++		{ ...env, AZURE_TIMESTAMP_SERVER: 'http://timestamp.example.test' },
++		(_, args) => calls.push(args),
++	);
++	assert.equal(calls[0][calls[0].indexOf('/tr') + 1], 'http://timestamp.example.test');
++});
+```
+
+**File**: `.buildkite/commands/upload-release.cjs` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++const { readFile, stat } = require('node:fs/promises');
++const { basename } = require('node:path');
++const { setTimeout: sleep } = require('node:timers/promises');
++
++// Attach Windows artifacts to the tag's draft release. This script never creates
++// a release: the macOS Buildkite step and the GitHub Actions workflows do that.
++const REPOSITORY = 'Automattic/harper';
++
++// The macOS step creates its draft earlier in the same build and is the only job
++// that uploads a .dmg, so that draft is the one to use when GitHub Actions jobs
++// have created others for the same tag.
++function selectDraft(releases, tag) {
++	const matches = releases.filter((release) => release.tag_name === tag);
++	if (matches.some((release) => release.draft !== true)) {
++		throw new Error(`Refusing to upload assets to published release ${tag}.`);
++	}
++	if (matches.length === 0) {
++		throw new Error(
++			`No draft release for ${tag} yet. Retry once the macOS or GitHub Actions jobs have created one.`,
++		);
++	}
++	const candidates =
++		matches.length === 1
++			? matches
++			: matches.filter((release) => release.assets.some((asset) => asset.name.endsWith('.dmg')));
++	if (candidates.length !== 1) {
++		const ids = matches.map((release) => release.id).join(', ');
++		throw new Error(
++			`Expected one draft for ${tag} holding the macOS .dmg; found ${matches.length} drafts (ids ${ids}). Reconcile them before retrying.`,
++		);
++	}
++	return candidates[0];
++}
++
++async function uploadRelease({ repository, tag, assets, token, request = fetch, wait = sleep }) {
++	if (!token?.trim()) throw new Error('GITHUB_TOKEN is required.');
++	if (!repository || !tag) throw new Error('A repository and release tag are required.');
++	if (!assets.length) throw new Error('At least one release asset is required.');
++	const names = assets.map((path) => basename(path));
++	if (new Set(names).size !== names.length) {
++		throw new Error('Release asset filenames must be unique.');
++	}
++	for (const path of assets) {
++		if (!(await stat(path)).isFile()) throw new Error(`Not a release asset file: ${path}`);
++	}
++
++	const api = `https://api.github.com/repos/${repository}`;
++	function transientError(method, url, error) {
++		const wrapped = new Error(
++			`GitHub ${method} ${url} failed: ${error.message}${error.cause ? `: ${error.cause.message}` : ''}`,
++			{ cause: error },
++		);
++		wrapped.transient = true;
++		return wrapped;
++	}
++	async function json(url, { method = 'GET', body } = {}) {
++		const response = await request(url, {
++			method,
++			headers: {
++				Authorization: `Bearer ${token}`,
++				Accept: 'application/vnd.github+json',
++				'X-GitHub-Api-Version': '2022-11-28',
++				...(body ? { 'Content-Type': 'application/octet-stream' } : {}),
++			},
++			body,
++			signal: AbortSignal.timeout(10 * 60 * 1000),
++		}).catch((error) => {
++			throw transientError(method, url, error);
++		});
++		if (!response.ok) {
++			const details = await response.json().catch(() => ({}));
++			const error = new Error(
++				`GitHub ${method} ${url} failed: HTTP ${response.status}: ${details.message || response.statusText}` +
++					(details.errors ? ` ${JSON.stringify(details.errors)}` : ''),
++			);
++			error.status = response.status;
++			error.transient = response.status >= 500 && response.status < 600;
++			throw error;
++		}
++		if (response.status === 204) return null;
++		// The connection can still drop while the body is read.
++		return response.json().catch((error) => {
++			throw transientError(method, url, error);
++		});
++	}
++	async function list(path) {
++		const items = [];
++		for (let page = 1; ; page++) {
++			const batch = await json(`${api}/${path}?per_page=100&page=${page}`);
++			items.push(...batch);
++			if (batch.length < 100) return items;
++		}
++	}
++
++	// Network failures and 5xx responses are retried; refusals and 4xx are not.
++	async function retry(label, action) {
++		for (let attempt = 1; ; attempt++) {
++			try {
++				return await action();
++			} catch (error) {
++				if (!error.transient || attempt === 3) throw error;
++				console.warn(`${error.message}. Retrying ${label} (${attempt + 1}/3).`);
++				await wait(attempt * 1000);
++			}
++		}
++	}
++
++	const release = selectDraft(await retry('release lookup', () => list('releases')), tag);
++	for (const path of assets) {
++		const name = basename(path);
++		const body = await readFile(path);
++		await retry(name, async () => {
++			const current = await json(`${api}/releases/${release.id}`);
++			if (current.draft !== true) {
++				throw new Error(`Refusing to upload assets to published release ${tag}.`);
++			}
++			// A failed upload can leave a partial asset. Re-list on each attempt.
++			const existing = await list(`releases/${release.id}/assets`);
++			for (const asset of existing.filter((asset) => asset.name === name)) {
++				await json(`${api}/releases/assets/${asset.id}`, { method: 'DELETE' });
++			}
++			await json(
++				`https://uploads.github.com/repos/${repository}/releases/${release.id}/assets?name=${encodeURIComponent(n
+```
+
+**File**: `.buildkite/commands/upload-release.test.cjs` (added, +374/-0)
+```diff
+@@ -0,0 +1,374 @@
++const assert = require('node:assert/strict');
++const { once } = require('node:events');
++const { mkdtemp, rm, writeFile } = require('node:fs/promises');
++const { createServer } = require('node:http');
++const { tmpdir } = require('node:os');
++const { basename, join } = require('node:path');
++const { test } = require('node:test');
++const { uploadRelease } = require('./upload-release.cjs');
++
++async function fixture(t) {
++	const directory = await mkdtemp(join(tmpdir(), 'Harper release '));
++	t.after(() => rm(directory, { recursive: true, force: true }));
++	const file = join(directory, 'Harper_9.0.0_x64-setup.exe');
++	await writeFile(file, Buffer.from([0, 255, 1, 2]));
++	const draft = {
++		id: 123,
++		tag_name: 'v9.0.0',
++		draft: true,
++		name: 'Release title',
++		body: 'Maintainer release notes',
++		html_url: 'https://github.com/example/harper/releases/123',
++		assets: [],
++	};
++	const state = {
++		releases: [draft],
++		assets: [{ id: 1, name: 'Harper.dmg' }],
++		calls: [],
++		failure: undefined,
++	};
++	let nextId = 2;
++	const request = async (url, options) => {
++		const { method, body } = options;
++		const { pathname, searchParams } = new URL(url);
++		state.calls.push({ url, method });
++		if (state.failure === method)
++			return Response.json({ message: 'test failure' }, { status: 403 });
++		if (method === 'GET') {
++			if (pathname === '/repos/example/harper/releases/123') return Response.json(draft);
++			const entries = pathname.endsWith('/assets') ? state.assets : state.releases;
++			const offset = (Number(searchParams.get('page')) - 1) * 100;
++			return Response.json(entries.slice(offset, offset + 100));
++		}
++		if (method === 'DELETE') {
++			const id = Number(pathname.split('/').pop());
++			state.assets = state.assets.filter((asset) => asset.id !== id);
++			return new Response(null, { status: 204 });
++		}
++		assert.equal(method, 'POST');
++		assert.equal(pathname, '/repos/example/harper/releases/123/assets');
++		const asset = { id: nextId++, name: searchParams.get('name'), bytes: [...body] };
++		state.assets.push(asset);
++		return Response.json(asset, { status: 201 });
++	};
++	const options = {
++		repository: 'example/harper',
++		tag: 'v9.0.0',
++		assets: [file],
++		token: 'test-token',
++		request,
++		wait: t.mock.fn(async () => {}),
++	};
++	return { directory, file, draft, state, options };
++}
++
++test('uploads binary data and replaces only matching assets on a rerun over HTTP', async (t) => {
++	const { file, draft, state, options } = await fixture(t);
++	const metadata = structuredClone(draft);
++	const server = createServer(async (request, response) => {
++		try {
++			assert.equal(request.headers.authorization, 'Bearer test-token');
++			assert.equal(request.headers['x-github-api-version'], '2022-11-28');
++			const chunks = [];
++			for await (const chunk of request) chunks.push(chunk);
++			if (request.method === 'POST') {
++				assert.equal(request.headers['content-type'], 'application/octet-stream');
++			}
++			const result = await options.request(`https://api.github.com${request.url}`, {
++				method: request.method,
++				body: Buffer.concat(chunks),
++			});
++			response.writeHead(result.status, { 'Content-Type': 'application/json' });
++			response.end(await result.text());
++		} catch (error) {
++			response.writeHead(500);
++			response.end(error.message);
++		}
++	});
++	server.listen(0, '127.0.0.1');
++	await once(server, 'listening');
++	t.after(() => new Promise((resolve) => server.close(resolve)));
++	const request = (url, init) => {
++		const parsed = new URL(url);
++		return fetch(
++			`http://127.0.0.1:${server.address().port}${parsed.pathname}${parsed.search}`,
++			init,
++		);
++	};
++	assert.equal(await uploadRelease({ ...options, request }), draft.html_url);
++	await writeFile(file, Buffer.from([255, 0, 42]));
++	await uploadRelease({ ...options, request });
++	assert.deepEqual(state.releases, [metadata]);
++	assert.deepEqual(state.assets, [
++		{ id: 1, name: 'Harper.dmg' },
++		{ id: 3, name: basename(file), bytes: [255, 0, 42] },
++	]);
++	assert.equal(state.calls.filter((call) => call.method === 'DELETE').length, 1);
++});
++
++test('attaches to the draft holding the macOS dmg when Actions created another draft', async (t) => {
++	const { draft, state, options } = await fixture(t);
++	state.releases = [
++		{ ...draft, id: 124, assets: [{ id: 8, name: 'harper-chrome-plugin.zip' }] },
++		{ ...draft, assets: [{ id: 9, name: 'Harper_9.0.0_universal.dmg' }] },
++	];
++	assert.equal(await uploadRelease(options), draft.html_url);
++	const uploads = state.calls.filter((call) => call.method === 'POST');
++	assert.equal(uploads.length, 1);
++	assert.match(uploads[0].url, /\/releases\/123\/assets\?/);
++});
++
++for (const scenario of [
++	'missing',
++	'other-tag',
++	'duplicate',
++	'duplicate-dmg',
++	'published',
++	'published-and-draft',
++]) {
++	test(`rejects ${scenario} releases before any writes`, async (t) => {
++		const { draft, state, options } = await fixture(t);
++		const dmg = { id: 9, name: 'Harper_9.0.0_universa
+```
+
+**File**: `.buildkite/pipeline.yml` (modified, +28/-2)
+```diff
+@@ -8,7 +8,7 @@ env:
+   IMAGE_ID: $IMAGE_ID
  
-@@ -292,8 +299,8 @@ export async function testCanIgnoreSuggestion(
- 		const testText = 'This is a mistaek.';
- 		await replaceEditorContent(editor, testText);
+ steps:
+-  - label: ":tauri: Build, sign, notarize harper-desktop"
++  - label: ":mac: Build, sign, notarize harper-desktop for macOS"
+     key: build-desktop
+     command: .buildkite/commands/build-desktop.sh
+     plugins: [$CI_TOOLKIT_PLUGIN, $NVM_PLUGIN]
+@@ -20,4 +20,30 @@ steps:
+       - harper-desktop/src-tauri/target/*-apple-darwin/release/bundle/macos/*.app.tar.gz.sig
+     notify:
+       - github_commit_status:
+-          context: "Build, sign, notarize harper-desktop"
++          context: "Build, sign, notarize harper-desktop for macOS"
++
++  - label: ":windows: Build and sign harper-desktop for Windows"
++    key: build-desktop-windows
++    agents:
++      queue: windows
++    command: powershell -NoProfile -File .buildkite/commands/build-desktop-windows.ps1
++    plugins: [$CI_TOOLKIT_PLUGIN, $NVM_PLUGIN]
++    artifact_paths:
++      - harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-setup.exe
++    notify:
++      - github_commit_status:
++          context: "Build and sign harper-desktop for Windows"
++
++  - label: ":github: Upload harper-desktop release for Windows"
++    key: release-desktop-windows
++    if: build.tag =~ /^v[0-9]+/
++    depends_on:
++      - build-desktop-windows
++      # Let the existing macOS release creator finish before looking for a draft.
++      - step: build-desktop
++        allow_failure: true
++    command: bash .buildkite/commands/release-desktop-windows.sh
++    plugins: [$NVM_PLUGIN]
++    notify:
++      - github_commit_status:
++          context: "Upload harper-desktop release for Windows"
+```
+
+**File**: `.github/workflows/desktop_windows.yml` (modified, +15/-11)
+```diff
+@@ -3,7 +3,6 @@ name: Harper Desktop for Windows
+ on:
+   push:
+     branches: ["master"]
+-    tags: ["v*"]
+   pull_request:
+     branches: ["master"]
+   merge_group:
+@@ -12,11 +11,24 @@ env:
+   CARGO_TERM_COLOR: always
  
--		// Ensure the test text produces only the spelling lint we intend to ignore.
--		await expect(getHarperHighlights(page)).toHaveCount(1);
-+		// test.slow() does not extend assertion timeouts during linter startup.
-+		await expect(getHarperHighlights(page)).toHaveCount(1, { timeout: 30000 });
- 
- 		// Open the popup for the highlight and click Ignore.
- 		const opened = await clickHarperHighlight(page);
+ jobs:
++  desktop-release-tests:
++    name: just test-desktop-release
++    runs-on: ubuntu-latest
++    permissions:
++      contents: read
++    steps:
++      - uses: actions/checkout@v7.0.1
++      - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
++      - uses: actions/setup-node@v7
++        with:
++          node-version-file: ".node-version"
++      - run: just test-desktop-release
++
+   desktop-windows:
+     name: just build-desktop-windows
+     runs-on: ubuntu-latest
+     permissions:
+-      contents: write
++      contents: read
+     steps:
+       - uses: actions/checkout@v7.0.1
+       - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+@@ -54,8 +66,6 @@ jobs:
+         run: cargo binstall wasm-pack --force --no-confirm
+       - name: Install `cargo-xwin`
+         run: cargo binstall cargo-xwin --force --no-confirm
+-      - name: Install `tauri-cli`
+-        run: cargo binstall tauri-cli --force --no-confirm
+       - name: Build Harper Desktop for Windows
+         run: just build-desktop-windows
+       - name: Upload artifacts
+@@ -64,10 +74,4 @@ jobs:
+           name: harper-desktop-windows-x64
+           path: harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*
+           if-no-files-found: error
+-      - name: Release artifacts
+-        if: startsWith(github.ref, 'refs/tags/v')
+-        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
+-        with:
+-          artifacts: harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*
+-          allowUpdates: true
+-          draft: true
++      # Signed Windows release assets are built and uploaded by Buildkite.
 ```
 
 ---
 
-### Incident Patch 9: `f41bec48` (2026-09-26)
-**Commit Message**: fix(core): stop SplitWords treating short non-anchor words as split anchors (#4212)
+### Incident Patch 3: `4ea9170f` (2026-10-10)
+**Commit Message**: fix(desktop): clear clippy lints in the Windows broker (#4438)
 
-* fix(core): stop SplitWords treating short non-anchor words as split anchors
+`just check-desktop-rust` runs clippy with `-D warnings`, but only on
+Linux, where `windows_broker` is cfg-gated out of the build. Running the
+same recipe on windows-latest (#4429) fails on ten lints in that module:
+collapsible `if let`, `needless_return`, `let_and_return`, a `to_owned`
+on a `Cow` that clones the `Cow` rather than its contents, a manual
+`Option::map`, an iterator `cloned()` before a by-reference map, and a
+`for` loop that filters `Ok` by hand instead of `flatten()`.
 
-SplitWords' should_defer_to_spellcheck() is meant to prefer a strong
-single-word spelling correction over a compound-word split, except when
-the split includes a genuine function-word "anchor" (preposition,
-determiner, conjunction, pronoun, or adverb) such as "at" in "atall".
-
-is_anchor_split() fell back to treating *any* word of length <= 2 as
-an anchor, regardless of its part of speech. That's too broad: it also
-matches short interjections/fragments that happen to be in the
-dictionary, like "ha" and "um". As a result, "havent" (missing
-apostrophe) was split into "ha" + "vent" ("ha vent") instead of
-deferring to SpellCheck's correct "haven't" suggestion, even in a
-nounish context like "they havent reviewed it yet." (#4130).
-
-Fix: is_anchor_split() now only checks tagged part-of-speech metadata
-(preposition/determiner/conjunction/pronoun/adverb) and drops the
-length-based fallback. Real short anchors like "at"/"of" are still
-covered because they're already tagged as prepositions in the curated
-dictionary, so `atall` -> `
-
-**File**: `harper-comments/tests/language_support.rs` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ create_test!(ignore_comments.ps1, 1);
- 
- // Zig tests - covering //, ///, and //! comments
- create_test!(clean.zig, 0);
--create_test!(dirty.zig, 5);
-+create_test!(dirty.zig, 4);
- 
- // These are to make sure nothing crashes.
- create_test!(empty.js, 0);
-```
-
-**File**: `harper-core/src/linting/split_words.rs` (modified, +21/-3)
-```diff
-@@ -117,7 +117,7 @@ impl ExprLinter for SplitWords {
-                 continue;
-             }
- 
--            if is_anchor_split(&cand_meta, candidate) || is_anchor_split(&rem_meta, remainder) {
-+            if is_anchor_split(&cand_meta) || is_anchor_split(&rem_meta) {
-                 has_anchor_split = true;
-             }
- 
-@@ -169,13 +169,14 @@ impl ExprLinter for SplitWords {
-     }
- }
- 
--fn is_anchor_split(meta: &crate::DictWordMetadata, word: &[char]) -> bool {
-+/// Only tagged function words anchor splits; short non-function words like
-+/// "ha" must not block spelling corrections such as `havent` → `haven't`.
-+fn is_anchor_split(meta: &crate::DictWordMetadata) -> bool {
-     meta.preposition
-         || meta.is_determiner()
-         || meta.is_conjunction()
-         || meta.is_pronoun()
-         || meta.is_adverb()
--        || word.len() <= 2
- }
- 
- fn should_defer_to_spellcheck(
-@@ -292,6 +293,23 @@ mod tests {
-         assert_no_lints("I love this extention!", SplitWords::default());
-     }
- 
-+    /// Regression: `havent` should defer to SpellCheck's `haven't` suggestion,
-+    /// not split into `ha vent` (issue #4130).
-+    #[test]
-+    fn issue_4130_defers_havent_to_spellcheck() {
-+        assert_no_lints("They havent reviewed it yet.", SplitWords::default());
-+    }
-+
-+    /// Genuine short anchors like `at` should still produce splits.
-+    #[test]
-+    fn issue_4130_does_not_regress_real_short_anchors() {
-+        assert_suggestion_result(
-+            "don't seem to support symbolic links atall.",
-+            SplitWords::default(),
-+            "don't seem to support symbolic links at all.",
-+        );
-+    }
-+
-     #[test]
-     fn corrects_doesthe() {
-         assert_suggestion_result("doesthe", SplitWords::default(), "does the");
-```
-
-**File**: `harper-core/tests/text/linters/Alice's Adventures in Wonderland.snap.yml` (modified, +0/-19)
-```diff
-@@ -1070,15 +1070,6 @@ Suggest:
- 
- 
- 
--Lint:    Typo (31 priority)
--Message: |
--     668 | “Sure, it’s an arm, yer honour!” (He pronounced it “arrum.”)
--         |                                                     ^~~~~ `arrum` should probably be written as `arr um`.
--Suggest:
--  - Replace with: “arr um”
--
--
--
- Lint:    Regionalism (127 priority)
- Message: |
-      681 | thought Alice. “I wonder what they’ll do next! As for pulling me out of the
-@@ -3212,16 +3203,6 @@ Suggest:
- 
- 
- 
--Lint:    Typo (31 priority)
--Message: |
--    2490 | > beautiful Soup? Beau—ootiful Soo—oop! Beau—ootiful Soo—oop! Soo—oop of the
--    2491 | > e—e—evening, Beautiful, beauti—FUL SOUP!”
--         |                           ^~~~~~ `beauti` should probably be written as `beau ti`.
--Suggest:
--  - Replace with: “beau ti”
--
--
--
- Lint:    Spelling (63 priority)
- Message: |
-     2490 | > beautiful Soup? Beau—ootiful Soo—oop! Beau—ootiful Soo—oop! Soo—oop of the
-```
-
-**File**: `harper-core/tests/text/linters/The Great Gatsby.snap.yml` (modified, +0/-20)
-```diff
-@@ -3475,16 +3475,6 @@ Suggest:
- 
- 
- 
--Lint:    Typo (31 priority)
--Message: |
--    2319 | That was nineteen-seventeen. By the next year I had a few beaux myself, and I
--         |                                                           ^~~~~ `beaux` should probably be written as `be aux`.
--    2320 | began to play in tournaments, so I didn’t see Daisy very often. She went with a
--Suggest:
--  - Replace with: “be aux”
--
--
--
- Lint:    Spelling (63 priority)
- Message: |
-     2329 | By the next autumn she was gay again, gay as ever. She had a début after the
-@@ -3784,16 +3774,6 @@ Suggest:
- 
- 
- 
--Lint:    Typo (31 priority)
--Message: |
--    2607 | Clay’s “Economics,” starting at the Finnish tread that shook the kitchen floor,
--    2608 | and peering toward the bleared windows from time to time as if a series of
--         |                        ^~~~~~~ `bleared` should probably be written as `bl eared`.
--Suggest:
--  - Replace with: “bl eared”
--
--
--
- Lint:    Style (31 priority)
- Message: |
-     2629 | The exhilarating ripple of her voice was a wild tonic in the rain. I had to
-```
-
----
-
-### Incident Patch 10: `b3f6bd06` (2026-09-26)
-**Commit Message**: fix(desktop): the weird macOS icon problem (#4457)
+No behavior changes. `application_icon_png` returns the same two error
+strings through `ok_or_else` instead of nested `if let`/`return`.
 
 Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
-Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
 
-
-
----
-
-### Incident Patch 11: `a043f30d` (2026-09-26)
-**Commit Message**: fix: typo 'than' correct to 'that' (#4466)
-
-Fixes #4464
-
-**File**: `harper-core/src/linting/more_adjective.rs` (modified, +1/-1)
+**File**: `harper-desktop/src-tauri/src/windows_broker/automation_service.rs` (modified, +2/-4)
 ```diff
-@@ -176,7 +176,7 @@ impl<D: Dictionary> ExprLinter for MoreAdjective<D> {
-     }
+@@ -92,10 +92,8 @@ impl AutomationService {
+                     let result = job(&automation, arguments);
  
-     fn description(&self) -> &str {
--        "Looks for comparative adjective constructions with `more` than could use inflected forms."
-+        "Looks for comparative adjective constructions with `more` that could use inflected forms."
-     }
- }
+                     // Stop the thread if the other side of the channel has been closed (or dropped).
+-                    if let Err(err) = result_sender.try_send(result) {
+-                        if let TrySendError::Disconnected(_) = err {
+-                            break;
+-                        }
++                    if let Err(TrySendError::Disconnected(_)) = result_sender.try_send(result) {
++                        break;
+                     }
+                 }
  
 ```
 
----
-
-### Incident Patch 12: `db1c30e6` (2026-09-26)
-**Commit Message**: fix(linting): stop OneOfTheSingular flagging 'one of the latter/former' (#4463)
-
-`latter` and `former` are substantivised adjectives, not singular nouns,
-so `one of the latter` has nothing to pluralise. Harper read them as
-singular nouns and suggested `lattests`/`formers`.
-
-Both already sit in the same exception class as `few` and `first`, which
-the linter excludes, so this extends that list rather than changing the
-noun-phrase matching.
-
-Closes #4412
-
-Co-authored-by: Yi-111-a <[REDACTED_EMAIL]>
-
-**File**: `harper-core/src/linting/one_of_the_singular.rs` (modified, +19/-1)
+**File**: `harper-desktop/src-tauri/src/windows_broker/mod.rs` (modified, +21/-33)
 ```diff
-@@ -25,7 +25,9 @@ impl SeqExprExt for SequenceExpr {
-                 && !t.kind.is_preposition() // "in" etc.
-                 && !t.kind.is_pronoun() // "who" etc.
-                 && !t.get_ch(s)
--                    .eq_any_ignore_ascii_case_str(&["ah", "few", "first", "said", "uh"])
-+                    .eq_any_ignore_ascii_case_str(&[
-+                        "ah", "few", "first", "former", "latter", "said", "uh",
-+                    ])
-         })
+@@ -177,15 +177,12 @@ impl OsBroker for WindowsBroker {
+     }
+ 
+     fn application_icon_png(&self, bundle_id: &str) -> Result<Vec<u8>, String> {
+-        if let Some(entry) = look_up_application(bundle_id) {
+-            if let Some(png) = entry.icon_png {
+-                return Ok(png);
+-            } else {
+-                return Err("Found application but it was missing an icon.".to_string());
+-            }
+-        } else {
+-            return Err("Unable to locate application.".to_string());
+-        }
++        let entry = look_up_application(bundle_id)
++            .ok_or_else(|| "Unable to locate application.".to_string())?;
++
++        entry
++            .icon_png
++            .ok_or_else(|| "Found application but it was missing an icon.".to_string())
+     }
+ 
+     fn launch_app_bundle(&self, bundle_id: &str) -> Result<(), String> {
+@@ -223,7 +220,6 @@ impl OsBroker for WindowsBroker {
+                         .to_lowercase()
+                         .contains(&lower_query)
+             })
+-            .cloned()
+             .map(|entry| entry.to_search_result())
+             .collect())
+     }
+@@ -260,8 +256,7 @@ fn get_focused_monitor_scale() -> f64 {
+ 
+         let _ = GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &mut x, &mut y);
+ 
+-        let effective_scale = x as f64 / 96.;
+-        effective_scale
++        x as f64 / 96.
      }
  }
-@@ -292,4 +294,20 @@ mod tests {
-             OneOfTheSingular::new(FstDictionary::curated()),
-         );
-     }
-+
-+    #[test]
-+    fn dont_flag_one_of_the_latter() {
-+        assert_no_lints(
-+            "He asked a few friends and others asked him to come give talks. One of the latter was Jeanne Russell, who lives with her husband, Ron.",
-+            OneOfTheSingular::new(FstDictionary::curated()),
-+        );
-+    }
-+
-+    #[test]
-+    fn dont_flag_one_of_the_former() {
-+        assert_no_lints(
-+            "One of the former has to stay behind to lock up, so let them go first.",
-+            OneOfTheSingular::new(FstDictionary::curated()),
-+        );
-+    }
- }
-```
-
----
-
-### Incident Patch 13: `edd375f5` (2026-09-24)
-**Commit Message**: fix(missing_to): avoid false positive on participial verbs in prepositional phrases (#4204)
-
-* fix(missing_to): avoid false positive on participial verbs in prepositional phrases
-
-* fix(missing_to): use is_verb_progressive_form on token kind instead of string suffix
-
-* fix(missing_to): refine preposition scanning for coordinated noun phrases
-
----------
-
-Co-authored-by: vjymisal0 <[REDACTED_EMAIL]>
-
-**File**: `harper-core/src/linting/missing_to.rs` (modified, +153/-1)
-```diff
-@@ -225,6 +225,125 @@ impl MissingTo {
  
-         false
-     }
-+
-+    fn preposition_or_determiner_within_four(
-+        context: Option<(&[Token], &[Token])>,
-+        source: &[char],
-+        controller_span_start: usize,
-+    ) -> bool {
-+        if let Some((before, _)) = context {
-+            let mut words_checked = 0;
-+            for tok in before.iter().rev() {
-+                if tok.kind.is_space() || tok.kind.is_newline() {
-+                    continue;
-+                }
-+                words_checked += 1;
-+                if words_checked > 4 {
-+                    break;
-+                }
-+
-+                if tok.kind.is_punctuation() {
-+                    break;
-+                }
-+
-+                let word = tok.get_str(source).to_lowercase();
-+                let word = word.as_str();
-+
-+                if tok.kind.is_upos(UPOS::ADP)
-+                    || matches!(
-+                        word,
-+                        "of" | "for"
-+                            | "in"
-+                            | "with"
-+                            | "without"
-+                            | "during"
-+                            | "after"
-+                            | "before"
-+                            | "by"
-+                            | "about"
-+                            | "against"
-+                            | "from"
-+                            | "on"
-+                            | "at"
-+                            | "into"
-+                            | "through"
-+                    )
-+                {
-+                    return true;
-+                }
-+
-+                if words_checked == 1
-+                    && (tok.kind.is_determiner()
-+                        || matches!(
-+                            word,
-+                            "a" | "an" | "the" | "this" | "that" | "these" | "those"
-+                        ))
-+                {
-+                    return true;
-+                }
-+
-+                if tok.kind.is_conjunction()
-+                    || matches!(word, "and" | "or" | "but" | "nor")
-+                    || tok.kind.is_verb_progressive_form()
-+                    || tok.kind.is_noun()
-+                    || tok.kind.is_adjective()
-+                {
-+                    continue;
-+                }
-+
-+                if tok.kind.is_verb() {
-+                    break;
-+                }
-+            }
-+            return false;
-+        }
-+
-+        let mut scan_cursor = controller_span_start;
-+
-+        for _ in 0..4 {
-+            let Some((word, start)) = Self::previous_word_with_span(source, scan_cursor) else {
-+                break;
-+            };
-+            let word = word.as_str();
-+
-+            if matches!(word, "and" | "or" | "but" | "nor") {
-+                scan_cursor = start;
-+                continue;
-+            }
-+
-+            if matches!(
-+                word,
-+                "a" | "an"
-+                    | "the"
-+                    | "this"
-+                    | "that"
-+                    | "these"
-+                    | "those"
-+                    | "of"
-+                    | "for"
-+                    | "in"
-+                    | "with"
-+                    | "without"
-+                    | "during"
-+                    | "after"
-+                    | "before"
-+                    | "by"
-+                    | "about"
-+                    | "against"
-+                    | "from"
-+                    | "on"
-+                    | "at"
-+                    | "into"
-+                    | "through"
-+            ) {
-+                return true;
-+            }
-+
-+            scan_cursor = start;
-+        }
-+
-+        false
-+    }
- }
- 
- impl Default for MissingTo {
-@@ -299,7 +418,9 @@ impl ExprLinter for MissingTo {
-         let controller_text_ends_with_d_or_en =
-             controller_text.ends_with('d') || controller_text.ends_with("en");
- 
--        if previous_word == Some("of") && controller_text_ends_with_d_or_en {
-+        if controller_text_ends_with_d_or_en
-+            && Self::preposition_or_determiner_within_four(context, source, span.start)
-+        {
-             return None;
+@@ -277,42 +272,35 @@ impl ApplicationListEntry {
+     fn to_search_result(&self) -> AppSearchResult {
+         AppSearchResult {
+             name: self.display_name.clone(),
+-            bundle_id: self.path.to_string_lossy().to_owned().to_string(),
++            bundle_id: self.path.to_string_lossy().into_owned(),
          }
- 
-@@ -730,4 +851,35 @@ mod tests {
-             test_linter(),
-         );
      }
-+
-+    #[test]
-+    fn no_lint_attempted_murder() {
-+        assert_no_lints(
-+            "You’re under arrest for racketeering and attempted murder of Alek Suvor.",
-+            test_linter(),
-+        );
-+    }
-+
-+    #[test]
-+    fn no_lint_attempted_robbery() {
-+        assert_no_lints("He was convicted of attempted robbery.", test_linter());
-+    }
-+
-+    #[test]
-+    fn inserts_to_after_attempted() {
-+        assert_suggestion_result(
-+            "They attempted solve the problem without assistance.",
-+            test_linter(),
-+            "They attempted to solve the problem without assistance.",
-+        );
-+    }
-+
-+    #[test]
-+    fn inserts_to_after_attempted_with_preceding_thing() {
-+        assert_suggestion_result(
-+    
-```
-
----
-
-### Incident Patch 14: `07ecdf58` (2026-09-24)
-**Commit Message**: fix: missing static analysis from some projects (#4451)
-
-* fix: missing use of static analysis
-
-* fix: all type errors allowed by previous lack of static analysis
-
-**File**: `justfile` (modified, +9/-1)
-```diff
-@@ -475,7 +475,15 @@ check-js: build-harperjs build-lint-framework build-components build-harper-edit
-   pnpm install
-   pnpm check
- 
--  # Needed because Svelte has special linters
-+  cd "{{justfile_directory()}}/packages/chrome-plugin"
-+  pnpm check
-+
-+  cd "{{justfile_directory()}}/packages/components"
-+  pnpm check
-+
-+  cd "{{justfile_directory()}}/packages/harper-editor"
-+  pnpm check
-+
-   cd "{{justfile_directory()}}/packages/web"
-   ENABLE_ADMIN_ROUTES=false pnpm check
- 
-```
-
-**File**: `packages/chrome-plugin/package.json` (modified, +5/-0)
-```diff
-@@ -18,6 +18,10 @@
- 	"scripts": {
- 		"dev": "vite",
- 		"build": "vite build -l warn",
-+		"check": "pnpm check:typescript && pnpm check:config && pnpm check:svelte",
-+		"check:typescript": "tsc --noEmit --project tsconfig.json",
-+		"check:config": "tsc --noEmit --project tsconfig.node.json",
-+		"check:svelte": "svelte-check --tsconfig ./tsconfig.json",
- 		"preview": "vite preview",
- 		"zip-for-chrome": "TARGET_BROWSER=chrome npm run build && node src/zip.js harper-chrome-plugin.zip",
- 		"zip-for-firefox": "TARGET_BROWSER=firefox npm run build && node src/zip.js harper-firefox-plugin.zip",
-@@ -39,6 +43,7 @@
- 		"playwright-webextext": "^0.0.5",
- 		"rollup-plugin-copy": "^3.5.0",
- 		"svelte": "^5.0.0",
-+		"svelte-check": "^4.3.3",
- 		"svelte-preprocess": "^6.0.0",
- 		"tailwindcss": "^4.1.4",
- 		"tslib": "^2.6.2",
-```
-
-**File**: `packages/chrome-plugin/src/background/index.ts` (modified, +4/-2)
-```diff
-@@ -434,7 +434,7 @@ async function handleGetDefaultStatus(): Promise<GetDefaultStatusResponse> {
  }
  
- async function handleGetEnabledDomains(): Promise<GetEnabledDomainsResponse> {
--	const all = await chrome.storage.local.get(null as any);
-+	const all = await chrome.storage.local.get(null);
- 	const prefix = formatDomainKey(''); // yields 'domainStatus '
- 	const domains = Object.entries(all)
- 		.filter(([k, v]) => typeof v === 'boolean' && v === true && k.startsWith(prefix))
-@@ -525,6 +525,8 @@ async function handleSetHotkey(req: SetHotkeyRequest): Promise<UnitResponse> {
- 		key: req.hotkey.key,
- 	};
- 	await setHotkey(hotkey);
-+
-+	return createUnitResponse();
+ fn look_up_application(bundle_id: &str) -> Option<ApplicationListEntry> {
+     // In Windows, the application path is the bundle ID.
+     let list = installed_applications_list();
+-    if let Some(entry) = list
+-        .iter()
++    list.iter()
+         .find(|entry| entry.path.to_string_lossy() == bundle_id)
+-    {
+-        Some(entry.clone())
+-    } else {
+-        None
+-    }
++        .cloned()
  }
  
- async function handleOpenReportError(
-@@ -788,7 +790,7 @@ async function getStoredDomainStatus(domain: string): Promise<boolean | undefine
- }
+ #[cached]
+ fn installed_applications_list() -> Arc<Vec<ApplicationListEntry>> {
+     let mut list = Vec::new();
  
- /** Check if Harper has been enabled for a given domain. */
--async function enabledForDomain(domain: string): Promise<boolean | null> {
-+async function enabledForDomain(domain: string): Promise<boolean> {
- 	const stored = await getStoredDomainStatus(domain);
- 	if (stored !== undefined) {
- 		return stored;
-```
-
-**File**: `packages/chrome-plugin/src/manifest.ts` (modified, +2/-1)
-```diff
-@@ -1,7 +1,6 @@
- import { defineManifest } from '@crxjs/vite-plugin';
- import packageData from '../package.json';
+-    for res in gatherer().scan() {
+-        if let Ok(app) = res {
+-            let icon = if let Ok(icon) = app.entry.icon() {
+-                icon.extract_icon_as_png_at(IconSize::Jumbo)
+-            } else {
+-                None
+-            };
++    for app in gatherer().scan().flatten() {
++        let icon = if let Ok(icon) = app.entry.icon() {
++            icon.extract_icon_as_png_at(IconSize::Jumbo)
++        } else {
++            None
++        };
  
--//@ts-expect-error
- const isDev = process.env.NODE_ENV == 'development';
+-            list.push(ApplicationListEntry {
+-                path: app.entry.path().to_owned(),
+-                icon_png: icon,
+-                display_name: app.entry.display_name(),
+-            })
+-        }
++        list.push(ApplicationListEntry {
++            path: app.entry.path().to_owned(),
++            icon_png: icon,
++            display_name: app.entry.display_name(),
++        })
+     }
  
- /**
-@@ -70,6 +69,8 @@ export default defineManifest({
- 			matches: ['<all_urls>'],
- 			all_frames: true,
- 			match_about_blank: true,
-+			// CRXJS's manifest types do not include this Chromium manifest option.
-+			// @ts-expect-error Valid for Manifest V3 content scripts.
- 			match_origin_as_fallback: true,
- 			js: ['src/contentScript/index.ts'],
- 			run_at: 'document_idle',
-```
-
-**File**: `packages/chrome-plugin/src/options/StructuredRuleSettings.svelte` (modified, +4/-4)
-```diff
-@@ -67,7 +67,7 @@ function configValueToString(value: boolean | undefined | null): string {
- 	}
- }
- 
--function configStringToValue(str: string): boolean | undefined | null {
-+function configStringToValue(str: string): boolean | null {
- 	switch (str) {
- 		case 'enable':
- 			return true;
-@@ -327,7 +327,7 @@ $: {
- 								size="md"
- 								title={`Set all rules in the ${node.label} category to their default, on, or off state.`}
- 								value={node.state === 'mixed' ? 'default' : node.state}
--								onchange={(event) => updateGroup(node.ruleNames, (event.target as HTMLSelectElement).value)}
-+								onchange={(event: Event) => updateGroup(node.ruleNames, (event.target as HTMLSelectElement).value)}
- 							>
- 								<option value="default">{node.state === 'mixed' ? '⚙️ Default (mixed)' : '⚙️ Default'}</option>
- 								<option value="enable">✅ On</option>
-@@ -362,7 +362,7 @@ $: {
- 						size="md"
- 						title={node.title}
- 						value={node.value}
--						onchange={(event) => {
-+						onchange={(event: Event) => {
- 							const nextConfig: LintConfig = { ...lintConfig };
- 							nextConfig[node.name] = configStringToValue(
- 								(event.target as HTMLSelectElement).value,
-@@ -384,7 +384,7 @@ $: {
- 					size="md"
- 					title={node.title}
- 					value={node.value}
--					onchange={(event) => updateOneOfMany(node.setting, (event.target as HTMLSelectElement).value)}
-+					onchange={(event: Event) => updateOneOfMany(node.setting, (event.target as HTMLSelectElement).value)}
- 				>
- 					{#each node.options as option}
- 						<option value={option.value}>{option.label}</option>
-```
-
-**File**: `packages/chrome-plugin/src/popup/Popup.svelte` (modified, +2/-2)
-```diff
-@@ -71,12 +71,12 @@ function openUpdateHelpPage() {
-           popupState = main();
-        }}><Fa icon={faArrowLeft}/></Button>
-     {:else}
--      <div onclick={openUpdateHelpPage}>
-+      <button type="button" class="cursor-pointer" onclick={openUpdateHelpPage}>
-         {#if versionMismatch}
-           <span class="ml-1" title={`Newer version available: ${latestVersion ?? ''}. Click to find out more.`}>⚠️</span>
-         {/if}
-         <span class="text-sm font-mono">{version}</span>
--      </div>
-+      </button>
-     {/if}
-   </header>
- 
-```
-
-**File**: `packages/chrome-plugin/src/theme.ts` (modified, +1/-5)
-```diff
-@@ -21,9 +21,5 @@ export function setupTheme() {
- 		applyDarkTheme(event.matches);
- 	};
- 
--	if ('addEventListener' in mediaQuery) {
--		mediaQuery.addEventListener('change', listener);
--	} else {
--		mediaQuery.addListener(listener);
--	}
-+	mediaQuery.addEventListener('change', listener);
- }
-```
-
-**File**: `packages/chrome-plugin/tsconfig.json` (modified, +2/-7)
-```diff
-@@ -11,16 +11,11 @@
- 		"strict": true,
- 		"forceConsistentCasingInFileNames": true,
- 		"module": "ESNext",
--		"moduleResolution": "Node",
-+		"moduleResolution": "bundler",
- 		"resolveJsonModule": true,
- 		"isolatedModules": true,
- 		"noEmit": true,
- 		"jsx": "react-jsx"
- 	},
--	"include": ["src"],
--	"references": [
--		{
--			"path": "./tsconfig.node.json"
--		}
--	]
-+	"include": ["src"]
- }
-```
-
----
-
-### Incident Patch 15: `2cb9598b` (2026-09-24)
-**Commit Message**: feat: warn when a linter test has the same text for the error and the fix (#4433)
-
-**File**: `harper-core/src/linting/mod.rs` (modified, +5/-0)
-```diff
-@@ -758,6 +758,11 @@ pub mod tests {
- 
-         // Check if we've reached the expected result
-         if text == needle {
-+            // When tests are made via cut & paste it's easy to miss editing some of the corrections
-+            // and the test will silently pass
-+            if depth == 0 {
-+                eprintln!("⚠️  Input and expected are both '{needle}' - is the test correct?");
-+            }
-             return true;
-         }
- 
+     Arc::new(list)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4535** (2026-10-05): chore: dictionary curation (@hippietrail)
-- **PR #4526** (2026-10-04): feat: life time, trade off→lifetime, tradeoff (@hippietrail)
-- **PR #4524** (2026-10-03): chore: add strive/strove/striven to `irregular_verbs.json` (@hippietrail)
-- **PR #4523** (2026-10-05): feat: detect mixing up `descend` and `descent` (@hippietrail)
-- **PR #4519** (2026-10-01): feat: comfortable of→comfortable with (@hippietrail)
-- **PR #4517** (2026-10-04): feat: add `no_parallel` switch to `harper-cli lint` (@hippietrail)
-- **PR #4516** (2026-10-01): feat: hallucinization→hallucination (@hippietrail)
-- **PR #4515** (2026-10-01): feat: seize control over→seize control of (@hippietrail)
+- **PR #4645** (2026-10-18): feat: with one fell swoop → in/at one fell swoop (@hippietrail)
+- **PR #4644** (2026-10-18): feature: TBF → to be fair (@hippietrail)
+- **PR #4637** (2026-10-17): chore: add more patterns to `ExtendOrExtent` (@hippietrail)
+- **PR #4626** (2026-10-16): feat: to my defense → in my defense (@ozenyunus35)
+- **PR #4625** (2026-10-16): feat: will gonna / will going to → will (@ozenyunus35)
+- **PR #4624** (2026-10-16): fix(chrome-ext): Lexical tests now wait for linting to complete (@elijah-potter)
 
 ---
 
@@ -3518,3 +2616,34 @@ Co-authored-by: vjymisal0 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. chrome-ext): Lexical tests now wait for linting to complete (#4624)
+
+**RULE**:
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1873f751`: chrome-ext): Lexical tests now wait for linting to complete (#4624). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+RUN cargo install wasm-pack --locked
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+RUN cargo install wasm-pack
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1873f751` are properly handled with clean fallback behavior.

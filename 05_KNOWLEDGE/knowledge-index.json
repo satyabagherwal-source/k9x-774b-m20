@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:07:53.373Z",
-  "total_verified_learnings": 245,
+  "last_updated": "2026-10-18T21:14:07.321Z",
+  "total_verified_learnings": 252,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2227,22 +2227,35 @@
     "learn-github-automattic-harper": {
       "learning_id": "learn-github-automattic-harper",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "automattic-harper",
+      "source": "Automattic/harper",
+      "repository": "Automattic/harper",
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "HEAD",
-      "content_hash": "ee52dade6fa7e99436ceff2e99a5305f87e391ceb00a06bf35f3d40dd925dd06",
+      "source_version": "04ba445a",
+      "content_hash": "6057022327c2861049c454512812c79d5c6d911d6e13efaddac6c60efc4b0793",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1707,
+          "title": "chrome-ext): Lexical tests now wait for linting to complete (#4624)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.989Z"
+      "verified_at": "2026-10-18T21:13:52.300Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-autonomous-ai-openharness": {
       "learning_id": "learn-github-autonomous-ai-openharness",
@@ -2644,22 +2657,35 @@
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bitterbot-ai-bitterbot-desktop",
+      "source": "Bitterbot-AI/bitterbot-desktop",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "HEAD",
-      "content_hash": "dc3e4980039487550a3f179d6df1b5b69fa181c6f78945c6d665d433666972cd",
+      "source_version": "a5cbbdd2",
+      "content_hash": "54e02af92fd819098b2642d67f2f6d3ee2209638e85a9a68e1dc2afe59f73fc2",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1712,
+          "title": "pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwri",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.092Z"
+      "verified_at": "2026-10-18T21:14:07.314Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-blackjacx-wwdc": {
       "learning_id": "learn-github-blackjacx-wwdc",
@@ -7058,22 +7084,35 @@
     "learn-github-fission-fission": {
       "learning_id": "learn-github-fission-fission",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "fission-fission",
+      "source": "fission/fission",
+      "repository": "fission/fission",
       "slug": "fission-fission",
       "platform": "github",
       "source_url": "https://github.com/fission/fission",
-      "source_version": "HEAD",
-      "content_hash": "f6d2442244571fce63ff7da6cf6c3f500c704c3cdd9715475a9c92d92bac0d9b",
+      "source_version": "a65daf70",
+      "content_hash": "2e9957b103376e8773d9e2ef7b2788932e40831cd6bb732e1aa4c0621363536c",
       "dossier_path": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fission-fission-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1709,
+          "title": "Remove low-evidence Go patterns; fix --graceperiod defaulting to 0 (#3684)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.953Z"
+      "verified_at": "2026-10-18T21:14:00.737Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-flipkart-recyclerlistview": {
       "learning_id": "learn-github-flipkart-recyclerlistview",
@@ -27034,22 +27073,35 @@
     "learn-github-ontos-ai-knowhere": {
       "learning_id": "learn-github-ontos-ai-knowhere",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ontos-ai-knowhere",
+      "source": "Ontos-AI/knowhere",
+      "repository": "Ontos-AI/knowhere",
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "HEAD",
-      "content_hash": "d8c3358f02a2ae1c06425559613dded98a5c25cfff5479b815e5f7f6959a3fb7",
+      "source_version": "2ed18896",
+      "content_hash": "2d05eea0d5cf6abaacf2aa4d819c0398b4a118d0651987addd2ad9f56f2a0910",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1711,
+          "title": "Merge pull request #463 from Ontos-AI/fix/suguanYang/webhook-config-exception-de",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.793Z"
+      "verified_at": "2026-10-18T21:14:05.390Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-onyx-dot-app-onyx": {
       "learning_id": "learn-github-onyx-dot-app-onyx",
@@ -31212,22 +31264,35 @@
     "learn-github-smallstep-cli": {
       "learning_id": "learn-github-smallstep-cli",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "smallstep-cli",
+      "source": "smallstep/cli",
+      "repository": "smallstep/cli",
       "slug": "smallstep-cli",
       "platform": "github",
       "source_url": "https://github.com/smallstep/cli",
-      "source_version": "HEAD",
-      "content_hash": "a5382031757e21cfce1f6a378a90480e33981cca7cd6437ad1d3c3660ac21f1e",
+      "source_version": "4d900dd5",
+      "content_hash": "194b4f7941755c97fe579bfd8f6e510142dfb9ae6e436ebc15df556d8536f302",
       "dossier_path": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1710,
+          "title": "typo in kty flag",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.598Z"
+      "verified_at": "2026-10-18T21:14:01.732Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-smol-rs-smol": {
       "learning_id": "learn-github-smol-rs-smol",
@@ -31912,22 +31977,35 @@
     "learn-github-sudheerj-reactjs-interview-questions": {
       "learning_id": "learn-github-sudheerj-reactjs-interview-questions",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sudheerj-reactjs-interview-questions",
+      "source": "sudheerj/reactjs-interview-questions",
+      "repository": "sudheerj/reactjs-interview-questions",
       "slug": "sudheerj-reactjs-interview-questions",
       "platform": "github",
       "source_url": "https://github.com/sudheerj/reactjs-interview-questions",
-      "source_version": "HEAD",
-      "content_hash": "44b4ca4f6b446977fc5d8f7aec2b3fd3e3bdfba96ccf22b3ad8c1b1e031d068f",
+      "source_version": "55b7d491",
+      "content_hash": "f3d9b41173a93e678a22bbede1396188580626aadf947fca13407a3fd3f4de2f",
       "dossier_path": "07_PROJECT_LEARNING/sudheerj-reactjs-interview-questions-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sudheerj-reactjs-interview-questions-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1708,
+          "title": "Added redux questions",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.742Z"
+      "verified_at": "2026-10-18T21:13:57.420Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sumanth077-hands-on-ai-engineering": {
       "learning_id": "learn-github-sumanth077-hands-on-ai-engineering",
@@ -33728,22 +33806,29 @@
     "learn-github-tusen-ai-naive-ui": {
       "learning_id": "learn-github-tusen-ai-naive-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tusen-ai-naive-ui",
+      "source": "tusen-ai/naive-ui",
+      "repository": "tusen-ai/naive-ui",
       "slug": "tusen-ai-naive-ui",
       "platform": "github",
       "source_url": "https://github.com/tusen-ai/naive-ui",
-      "source_version": "HEAD",
-      "content_hash": "577882d4fda75fd709d704348cce3a9a05d2fcd4e4b7a8577dacfeb6b7db17a7",
+      "source_version": "8b249214",
+      "content_hash": "d582d7fc4c6cd760b70c83d3ef6b5673034de7ad6a92974b3c1858b1d59e6442",
       "dossier_path": "07_PROJECT_LEARNING/tusen-ai-naive-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tusen-ai-naive-ui-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.104Z"
+      "verified_at": "2026-10-18T21:13:50.172Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tutti-os-tutti": {
       "learning_id": "learn-github-tutti-os-tutti",
@@ -65953,6 +66038,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:07:49.037Z"
+    },
+    "rule-1707": {
+      "learning_id": "rule-1707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1707,
+      "title": "chrome-ext): Lexical tests now wait for linting to complete (#4624)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "04ba445a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:13:52.300Z"
+    },
+    "rule-1708": {
+      "learning_id": "rule-1708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1708,
+      "title": "Added redux questions",
+      "source_url": "https://github.com/sudheerj/reactjs-interview-questions",
+      "source_version": "55b7d491",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:13:57.420Z"
+    },
+    "rule-1709": {
+      "learning_id": "rule-1709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1709,
+      "title": "Remove low-evidence Go patterns; fix --graceperiod defaulting to 0 (#3684)",
+      "source_url": "https://github.com/fission/fission",
+      "source_version": "a65daf70",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:14:00.737Z"
+    },
+    "rule-1710": {
+      "learning_id": "rule-1710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1710,
+      "title": "typo in kty flag",
+      "source_url": "https://github.com/smallstep/cli",
+      "source_version": "4d900dd5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:14:01.732Z"
+    },
+    "rule-1711": {
+      "learning_id": "rule-1711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1711,
+      "title": "Merge pull request #463 from Ontos-AI/fix/suguanYang/webhook-config-exception-de",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "2ed18896",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:14:05.390Z"
+    },
+    "rule-1712": {
+      "learning_id": "rule-1712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1712,
+      "title": "pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwri",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "a5cbbdd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:14:07.314Z"
     }
   },
   "aliases": {

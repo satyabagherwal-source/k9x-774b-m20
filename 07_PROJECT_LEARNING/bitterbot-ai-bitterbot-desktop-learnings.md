@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
+> **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
+> **Source Version**: `a5cbbdd2`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:14:07.162Z  
+> **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Bitterbot-AI/bitterbot-desktop
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:07:46.529Z  
+> **Harvest Timestamp**: 2026-10-18T21:14:07.153Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2464 stars
+- **Stars / Engagement**: 2476 stars
 
 ---
 
@@ -509,14 +523,635 @@ export function persistFrameResponse(opts: {
 
 ```
 
+### Core Architecture Module: `benchmarks/longmemeval-v2/core.py`
+```
+"""Reproducible state, credential-free worker IPC and bounded API accounting."""
+from __future__ import annotations
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import time
+import urllib.request
+import urllib.error
+import uuid
+import selectors
+import sqlite3
+import fcntl
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parent.parent
+PINS = json.loads((HERE / "pins.json").read_text())
+def digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",",":")).encode()).hexdigest()
+def sha(path):
+    with Path(path).open("rb") as f:
+        return hashlib.file_digest(f, "sha256").hexdigest()
+def atomic(path, value):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with tmp.open("w") as f:
+        json.dump(value, f, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+    tmp.replace(path)
+def event(path, **value):
+    with Path(path).open("a") as f:
+        f.write(json.dumps({"wall_time":time.time(), **value}) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+def credentials(path):
+    # Never source repository shell code or log values; only approved model keys.
+    result = {}
+    for line in Path(path).read_text().splitlines():
+        key, sep, value = line.strip().removeprefix("export ").partition("=")
+        if sep and key in {"OPENAI_API_KEY","ANTHROPIC_API_KEY","OPENROUTER_API_KEY","OPENROUTER_KEY"}:
+            result[key] = value.strip().strip("'").strip('"')
+    return result
+
+class TransientAPIError(RuntimeError):
+    pass
+
+class Broker:
+    def __init__(self, root, config, keys):
+        self.root, self.config, self.keys = Path(root), config, keys
+        self.root.mkdir(parents=True, exist_ok=True)
+        self.budget_lock = (self.root/"budget.lock").open("a")
+        fcntl.flock(self.budget_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        self.ledger = self.root / "api-ledger.json"
+        self.database = sqlite3.connect(self.root/"accounting.sqlite")
+        self.database.execute("CREATE TABLE IF NOT EXISTS requests (id TEXT PRIMARY KEY, charged REAL NOT NULL, payload TEXT NOT NULL)")
+        if self.database.execute("SELECT count(*) FROM requests").fetchone()[0] == 0 and self.ledger.exists():
+            for index, row in enumerate(json.loads(self.ledger.read_text())):
+                row.setdefault("id","legacy-"+str(index))
+                self.database.execute("INSERT INTO requests VALUES (?,?,?)",(row["id"],row.get("cost_usd",row["reserved_usd"]),json.dumps(row)))
+            self.database.commit()
+        self.charged = self.database.execute("SELECT COALESCE(sum(charged),0) FROM requests").fetchone()[0]
+        self.stage = "initialization"
+        self.case = None
+        self.failed = False
+    def close(self):
+        self.database.close()
+        self.budget_lock.close()
+    @property
+    def entries(self):
+        return [json.loads(row[0]) for row in self.database.execute("SELECT payload FROM requests ORDER BY rowid")]
+    def save_request(self, row):
+        self.database.execute("INSERT INTO requests VALUES (?,?,?) ON CONFLICT(id) DO UPDATE SET charged=excluded.charged,payload=excluded.payload",
+            (row["id"],row.get("cost_usd",row["reserved_usd"]),json.dumps(row)))
+        self.database.commit()
+    def call(self, kind, body):
+        if self.failed:
+            raise RuntimeError("API circuit is open after an unrecovered failure; no call dispatched")
+        policy=self.config.get("retry_policy",{})
+        attempts=policy.get("max_attempts",1)
+        if not isinstance(attempts,int) or not 1<=attempts<=3:
+            raise RuntimeError("Retry attempts must be between one and three")
+        for attempt in range(1,attempts+1):
+            try:
+                return self._call_once(kind,body,attempt=attempt)
+            except TransientAPIError:
+                if attempt==attempts:
+                    self.failed=True
+                    raise
+                time.sleep(min(30,policy.get("backoff_seconds",2)*2**(attempt-1)))
+            except Exception:
+                self.failed=True
+                raise
+    def _call_once(self, kind, body, *, attempt):
+        spec = self.config["models"][kind]
+        body = dict(body)
+        if kind == "embedding":
+            if set(body) != {"model","input"} or body["model"] != spec["model"]:
+                raise RuntimeError("Unexpected embedding request")
+        elif kind == "dream":
+            if set(body) != {"messages"}:
+                raise RuntimeError("Unexpected dream request")
+            body.update(model=spec["model"], max_tokens=6144, temperature=0)
+        else:
+            if body.get("model") != spec["model"]:
+                raise RuntimeError("Unexpected evaluator model")
+        if kind == "reader" and spec.get("transport") == "openrouter":
+            from protocol import openrouter_body
+            body = openrouter_body(body, spec)
+        raw = json.dumps(body).encode()
+        output_limit = body.get("max_completion_tokens", body.get("max_tokens", 0))
+        # UTF-8 bytes + message overhead is a conservative upper bound for text BPE.
+        # Vision reader reservations use the endpoint context maximum instead.
+        input_bound = max(len(raw) + 4096, spec.get("input_reservation_tokens", 0))
+        reserve = (input_bound * spec["input_per_million"] + output_limit * spec["output_per_million"]) / 1e6
+        used = self.charged
+        if used + reserve > self.config["budget_usd"]:
+            self.failed = True
+            raise RuntimeError("API budget exhausted before request; no call dispatched")
+        row = {"id":uuid.uuid4().hex,"kind":kind,"stage":self.stage,"case":self.case,
+               "model":spec["model"],"request_sha256":hashlib.sha256(raw).hexdigest(),
+               "reserved_usd":reserve,"status":"inflight","started_at":time.time(),"attempt":attempt}
+        self.charged += reserve
+        self.save_request(row)
+        start = time.perf_counter()
+        try:
+            key = self.keys.get(spec["key_env"], os.environ.get(spec["key_env"],""))
+            if not key:
+                raise RuntimeError("Missing credential variable " + spec["key_env"])
+            suffix = "/embeddings" if kind == "embedding" else "/chat/completions"
+            req = urllib.request.Request(spec["base_url"].rstrip("/") + suffix, data=raw,
+                    headers={"Content-Type":"application/json","Authorization":"Bearer "+key})
+            with urllib.request.urlopen(req, timeout=spec.get("timeout",600)) as response:
+                payload = json.load(response)
+                row["request_id"] = response.headers.get("x-request-id")
+            usage = payload.get("usage")
+            if not isinstance(usage,dict) or "prompt_tokens" not in usage:
+                raise RuntimeError("Endpoint omitted usage; reserved charge retained")
+            if kind != "embedding" and "completion_tokens" not in usage:
+                raise RuntimeError("Endpoint omitted completion usage")
+            row["usage"] = usage
+            row["served_model"] = payload.get("model")
+            row["served_provider"] = payload.get("provider")
+            row["response_id"] = payload.get("id")
+            row["cost_usd"] = (usage["prompt_tokens"] * spec["input_per_million"] +
+                              usage.get("completion_tokens",0) * spec["output_per_million"]) / 1e6
+            if row["cost_usd"] > reserve:
+                raise RuntimeError("Endpoint exceeded conservative reservation; stop run")
+            row["status"] = "success"
+            return payload
+        except Exception as exc:
+            row["status"] = "error"
+            row["error"] = type(exc).__name__ # no response body or credential-bearing URL
+            transient=isinstance(exc,(TimeoutError,ConnectionResetError))
+            if isinstance(exc,urllib.error.HTTPError):
+                row["http_status"]=exc.code
+                transient=exc.code in {429,500,502,503,504,520}
+            elif isinstance(exc,urllib.error.URLError):
+                transient=isinstance(exc.reason,(TimeoutError,ConnectionResetError))
+            row["retryable"]=transient
+            error_type=TransientAPIError if transient else RuntimeError
+            raise error_type("API request failed: " + type(exc).__name__) from None
+        finally:
+            row["seconds"] = time.perf_counter()-start
+            self.charged += row.get("cost_usd",reserve)-reserve
+            self.save_request(row)
+
+def resolve_node(value):
+    """Resolve the configured Node binary: a path, or a command name looked up on PATH."""
+    if os.sep not in value:
+        found = shutil.which(value)
+        if found is None:
+            raise FileNotFoundError(f"node binary {value!r} not found on PATH")
+        value = found
+    return Path(value).expanduser().resolve(strict=True)
+
+class Worker:
+    def __init__(self, profile, cfg, broker, now):
+        self.profile, self.broker = Path(profile).resolve(), broker
+        self.profile.mkdir(parents=True,exist_ok=True)
+        for name in ["home","state","tmp","workspace","agent"]:
+            (self.profile/name).mkdir(exist_ok=True)
+        atomic(self.profile/"empty-config.json",{})
+        node = resolve_node(cfg["node"])
+        env = {"PATH":str(node.parent)+":/usr/bin:/bin","HOME":str(self.profile/"home"),
+               "BITTERBOT_HOME":str(self.profile/"home"),"BITTERBOT_STATE_DIR":str(self.profile/"state"),
+               "BITTERBOT_CONFIG_PATH":str(self.profile/"empty-config.json"),
+               "BITTERBOT_OAUTH_DIR":str(self.profile/"oauth"),"TMPDIR":str(self.profile/"tmp"),
+               "XDG_CONFIG_HOME":str(self.profile/"home"),"XDG_CACHE_HOME":str(self.profile/"home"),
+               "TZ":"UTC","NODE_ENV":"production","BITTERBOT_LOG_LEVEL":"debug"}
+        allowed = ["/usr","/lib","/lib64","/etc/ld.so.cache","/etc/ssl","/dev/urandom",
+                   str(node.p
+```
+
+### Core Architecture Module: `benchmarks/longmemeval-v2/diagnostics/score_pilot.py`
+```
+"""Post-capacity diagnostic scoring; shares the pilot's cumulative authorized ledger."""
+import sys
+from pathlib import Path
+BASE=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(BASE))
+import json,os,time,fcntl,subprocess,uuid,traceback,argparse
+from core import *
+from run import make_memory_class, snapshot_hashes
+import protocol
+
+ROOT=BASE/".runtime/capacity-pilot"
+OUT=ROOT/"accuracy"
+DATA=BASE/".runtime/data"
+UPSTREAM=Path("/tmp/bitterbot-lme-v2-upstream")
+def status(value,**kwargs):atomic(OUT/"status.json",{"status":value,"wall_time":time.time(),**kwargs})
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--domain",choices=["web","enterprise"])
+    args=parser.parse_args()
+    OUT.mkdir(parents=True,exist_ok=True)
+    lock=(OUT/"run.lock").open("a");fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    pilot=json.loads((ROOT/"manifest.json").read_text())
+    cfg=dict(pilot["config"]);cfg["models"]=dict(cfg["models"])
+    extra=json.loads((BASE/"openrouter-run.example.json").read_text())
+    for role in ("reader","judge"):cfg["models"][role]=extra["models"][role]
+    cfg["budget_usd"]=json.loads((BASE/"capacity-pilot.json").read_text())["budget_usd"]
+    identity={"pilot_manifest_sha256":sha(ROOT/"manifest.json"),"config":cfg,
+              "evaluator_source_sha256":sha(__file__),"protocol_sha256":sha(BASE/"protocol.py"),
+              "pins":PINS,"scope":"two diagnostic questions; not a full official score",
+              "limitation":"Hosted reader weight revision is not attested; BF16 provider pinned."}
+    if (OUT/"manifest.json").exists() and json.loads((OUT/"manifest.json").read_text())!=identity:
+        raise RuntimeError("Diagnostic identity drift")
+    atomic(OUT/"manifest.json",identity)
+    status("preparing official screenshots")
+    # Pinned release downloads and official extraction; no replacement images.
+    from prepare import download
+    expected={}
+    for line in (DATA/"checksums.sha256").read_text().splitlines():
+        value,name=line.split(maxsplit=1);expected[name.lstrip("*")]=value
+    for name,value in expected.items():
+        if name.startswith(("question_screenshots/","trajectory_screenshots/")):
+            file=download(DATA,name,PINS["dataset"]["revision"])
+            if sha(file)!=value:raise RuntimeError("Screenshot checksum mismatch")
+    archives={
+        "trajectory_screenshots/enterprise_screenshots_base.tar.gz":"5c4a67ae0856aa1ede9b040e7da7c7a2d0b76fdd6344ef87380bcdf9f4b6d7a3",
+        "trajectory_screenshots/web_screenshots.tar.gz":"68699c6842412e09a6f89d3c05c5ae8813275918002b52d82dec43ab24dd01fb"}
+    for name,value in archives.items():
+        status("downloading official screenshot archives",archive=name)
+        file=download(DATA,name,PINS["dataset"]["revision"])
+        if sha(file)!=value:raise RuntimeError("Pinned archive checksum mismatch")
+    atomic(OUT/"screenshot-hashes.json",archives)
+    subprocess.run([sys.executable,str(UPSTREAM/"data/prepare_data.py"),"--data-root",str(DATA),"--mode","copy"],check=True)
+    for name,value in PINS["dataset"]["sha256"].items():
+        if sha(DATA/name)!=value:raise RuntimeError("Dataset hash mismatch")
+    status("waiting for capacity controller to release the shared budget")
+    # No concurrent spender: the capacity controller holds this lock until it stops.
+    with (ROOT/"budget.lock").open("a") as guard:
+        while True:
+            try:fcntl.flock(guard,fcntl.LOCK_EX|fcntl.LOCK_NB);break
+            except BlockingIOError:time.sleep(30)
+        fcntl.flock(guard,fcntl.LOCK_UN)
+    keys=credentials(REPO/".env")
+    keys.update(credentials(Path("/mnt/d/Bitterbot/bitterbot-desktop/.env")))
+    broker=Broker(ROOT,cfg,keys)
+    try:
+        h=protocol.load(UPSTREAM)
+        from data.public_data import materialize_runtime_questions
+        from transformers import AutoProcessor
+        h.MEMORY_CONTEXT_PROCESSOR_LOCAL.processor=AutoProcessor.from_pretrained(
+            "Qwen/Qwen3.5-9B",revision=PINS["reader_processor_revision"])
+        histories=json.loads((DATA/"haystacks/lme_v2_medium.json").read_text())
+        results=[]
+        for domain,selected in pilot["selection"].items():
+            if args.domain and domain!=args.domain:continue
+            matches=sorted(qid for qid,history in histories.items() if history==selected["history"])
+            if not matches:raise RuntimeError("No question matches selected history")
+            qid=matches[0] # deterministic choice before reading any answer labels
+            case=OUT/domain;case.mkdir(exist_ok=True)
+            directory=ROOT/"histories"/selected["history_sha256"]
+            latest=directory/"latest.json"
+            if not latest.exists():
+                results.append({"domain":domain,"question_id":qid,"status":"blocked","reason":"No committed history"})
+                continue
+            checkpoint=directory/json.loads(latest.read_text())["generation"]
+            saved=json.loads((checkpoint/"checkpoint.json").read_text())
+            if saved["count"]!=len(selected["history"]):
+                results.append({"domain":domain,"question_id":qid,"status":"blocked",
+                                "reason":"History incomplete","ingested":saved["count"],"required":len(selected["history"])})
+                continue
+            if saved["history"]!=selected["history"] or snapshot_hashes(checkpoint/"profile")!=saved["sha256"]:
+                raise RuntimeError("Checkpoint identity/integrity mismatch")
+            if (case/"failed.json").exists():raise RuntimeError("Recorded diagnostic failure; inspect before explicit retry")
+            if (case/"record.json").exists():
+                results.append(json.loads((case/"record.json").read_text()));continue
+            status("scoring",domain=domain,question_id=qid)
+            broker.case="diagnostic-"+qid;broker.failed=False
+            try:
+                q=materialize_runtime_questions(data_root=DATA,domain=domain,question_ids=[qid],limit=None,output_path=case/"evaluator-question.json")[0]
+                if not (case/"prompt.json").exists():
+                    text,image=h.get_question_components(q["question"])
+                    item={"index":0,"stream_index":0,"question_item":q,"question_id":qid,
+                          "query_invocation_id":uuid.uuid4().hex,"question_type":q["question_type"],
+                          "category":h.category_from_question_type(q["question_type"]),"eval_function":q["eval_function"],
+                          "eval_name":h.eval_name(q["eval_function"]),"question_text":text,"question_image":image,"answer_gold":q["answer"]}
+                    broker.stage="diagnostic-retrieval"
+                    memory=make_memory_class(h,checkpoint,OUT/"query-profiles",cfg,broker,
+                                             ingestion_time(len(selected["history"])),DATA/"screenshots")
+                    row=h.build_prompt_row(item,haystack_ids=selected["history"],memory=memory,
+                                          system_prompt=h.get_system_prompt(domain),memory_context_max_tokens=200000)
+                    atomic(case/"prompt.json",row)
+                row=json.loads((case/"prompt.json").read_text())
+                if not (case/"reader.json").exists():
+                    broker.stage="diagnostic-reader"
+                    response=broker.call("reader",protocol.wire_body(h.build_reader_request(protocol.reader_args(cfg["models"]["reader"]),row["messages"])))
+                    served=response.get("provider")
+                    if served and "deepinfra" not in served.lower():raise RuntimeError("Unexpected reader provider")
+                    obj=protocol.objectify(response)
+                    raw=h.extract_text_from_response_message(obj.choices[0].message)
+                    if not raw:raise RuntimeError("Empty reader response")
+                    answer=h.extract_boxed_answer(raw)
+                    atomic(case/"reader.json",{"response_raw":raw,"response_parsed_boxed":answer,
+                          "is_unknown":h.is_unknown(answer),"usage":h.extract_usage_dict(obj),"served_provider":served})
+                row.update(json.loads((case/"reader.json").read_text()))
+                broker.stage="diagnostic-evaluation"
+                score,_,_=protocol.judge(h,row,broker)
+                row.update(domain=domain,status="scored",score_bool=bool(score),score=1.0 if score else 0.0,
+                           timestamp_utc=h.utc_now_iso(),diagnostic_only=True,reader_revision_verified=False)
+                row.pop("messages",None)
+                atomic(case/"record.json",row);results.append(row)
+            except BaseException as exc:
+                atomic(case/"failed.json",{"error":str(exc),"stage":broker.stage})
+                raise
+        previous=json.loads((OUT/"results.json").read_text())["results"] if (OUT/"results.json").exists() else []
+        merged={r["domain"]:r for r in previous}
+        merged.update({r["domain"]:r for r in results})
+        results=list(merged.values())
+        atomic(OUT/"results.json",{"results":results,"cumulative_pilot_usd":broker.charged,"official_score":None})
+        lines=["# Diagnostic accuracy results","","This is a tiny selected sample, not an overall benchmark score.",
+               "The official prompts and scoring functions were used; hosted Qwen weight revision remains unverified.",""]
+        for r in results:
+            lines.append(f"- {r['domain']} / {r['question_id']}: "+("correct" if r.get("score_bool") else "incorrect") if r["status"]=="scored" else f"- {r['domain']}: blocked — {r['reason']}")
+            if r["status"]=="scored":lines.append("  Reader answer: "+str(r["response_parsed_boxed"]))
+        (OUT/"report.md").write_text("\n".join(lines)+"\n")
+        status("completed" if all(r["status"]=="scored" for r in results) else "blocked by incomplete histories",
+               cumulative_pilot_usd=broker.charged,scored=sum(r["status"]=="scored" for r in results))
+ 
+```
+
+### Core Architecture Module: `benchmarks/longmemeval-v2/worker.ts`
+```
+// This process has no API credentials, evaluator files, personal HOME or network.
+import fs from "node:fs";
+import path from "node:path";
+import readline from "node:readline";
+import { DatabaseSync } from "node:sqlite";
+import type { BitterbotConfig } from "../../src/config/types.js";
+
+type Json = Record<string, unknown>;
+const send = (value: unknown) => process.stdout.write(JSON.stringify(value) + "\n");
+console.log = (...args: unknown[]) => console.error(...args);
+let now = Date.parse("2025-01-01T00:00:00Z");
+const NativeDate = Date;
+// Only wall-clock semantics are virtualized. perf_hooks/timers retain real elapsed time.
+globalThis.Date = new Proxy(NativeDate, {
+  construct(target, args) {
+    return Reflect.construct(target, args.length ? args : [now]);
+  },
+  apply() {
+    return new NativeDate(now).toString();
+  },
+  get(target, key) {
+    return key === "now" ? () => now : Reflect.get(target, key);
+  },
+});
+let apiId = 0;
+const pending = new Map<number, { resolve: (v: Json) => void; reject: (e: Error) => void }>();
+function api(kind: string, body: Json): Promise<Json> {
+  const id = ++apiId;
+  send({ type: "api", id, kind, body });
+  return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
+}
+globalThis.fetch = async (input, init) => {
+  const url = String(input);
+  if (url !== "https://benchmark.invalid/v1/embeddings" || init?.method !== "POST") {
+    throw new Error("Benchmark denied unexpected fetch: " + url.split("?")[0]);
+  }
+  const body = JSON.parse(String(init.body)) as Json;
+  const payload = await api("embedding", body);
+  return new Response(JSON.stringify(payload), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+};
+let manager: import("../../src/memory/manager.js").MemoryIndexManager;
+let profile: string;
+let config: Json;
+let sessionCount = 0;
+let managerConfig: BitterbotConfig;
+const agentId = "lme-isolated";
+function health() {
+  const db = new DatabaseSync(path.join(profile, "memory.sqlite"), { readOnly: true });
+  try {
+    const pendingRow = db
+      .prepare(
+        "SELECT count(*) AS n FROM chunks WHERE (model = 'pending' OR embedding IS NULL OR length(embedding) = 0 OR embedding = '[]') AND text IS NOT NULL AND length(trim(text)) > 0 AND (lifecycle_state IS NULL OR lifecycle_state <> 'forgotten')",
+      )
+      .get();
+    if (Number(pendingRow?.n) !== 0)
+      throw new Error("Incomplete embeddings: " + String(pendingRow?.n));
+    return { chunks: db.prepare("SELECT count(*) AS n FROM chunks").get()?.n };
+  } finally {
+    db.close();
+  }
+}
+async function drainEmbeddings() {
+  const backfill = manager as unknown as {
+    backfillPendingEmbeddings(opts?: {
+      limit?: number;
+    }): Promise<{ embedded: number; remaining: number }>;
+  };
+  for (;;) {
+    const result = await backfill.backfillPendingEmbeddings({ limit: 200 });
+    if (result.remaining === 0) return;
+    if (result.embedded === 0) throw new Error("Embedding backfill made no progress");
+  }
+}
+async function handle(request: Json): Promise<unknown> {
+  if (request.op === "init") {
+    profile = String(request.profile);
+    config = request.config as Json;
+    now = Number(request.now);
+    const workspace = path.join(profile, "workspace");
+    fs.mkdirSync(workspace, { recursive: true });
+    const complete = async (prompt: string) => {
+      const result = await api("dream", { messages: [{ role: "user", content: prompt }] });
+      const choices = result.choices as Array<{ message: { content: string } }>;
+      const content = choices?.[0]?.message?.content;
+      if (!content) throw new Error("Empty dream completion");
+      return content;
+    };
+    const cfg: BitterbotConfig = {
+      agents: {
+        defaults: {
+          workspace,
+          model: { primary: "openai/" + String(config.dreamModel) },
+          memorySearch: {
+            enabled: true,
+            provider: "openai",
+            model: String(config.embeddingModel),
+            fallback: "none",
+            remote: {
+              baseUrl: "https://benchmark.invalid/v1",
+              apiKey: "broker",
+              batch: { enabled: false },
+            },
+            sources: ["memory", "sessions"],
+            experimental: { sessionMemory: true },
+            store: { path: path.join(profile, "memory.sqlite"), vector: { enabled: true } },
+            sync: { intervalMinutes: 0, onSearch: false, onSessionStart: false, watch: false },
+            query: {
+              maxResults: Number(config.maxResults),
+              minScore: 0,
+              hybrid: {
+                enabled: true,
+                mergeStrategy: "rrf",
+                vectorWeight: 0.7,
+                textWeight: 0.3,
+                candidateMultiplier: 5,
+              },
+            },
+            cache: { enabled: true },
+            chunking: { tokens: 384, overlap: 48 },
+          },
+        },
+        list: [{ id: agentId, default: true, workspace, agentDir: path.join(profile, "agent") }],
+      },
+      memory: {
+        consolidation: { enabled: true, intervalMinutes: 0 },
+        dream: {
+          enabled: true,
+          intervalMinutes: 0,
+          synthesisMode: "llm",
+          model: "openai/" + String(config.dreamModel),
+          synthesisModel: "openai/" + String(config.dreamModel),
+          llmCall: complete,
+          synthesisLlmCall: complete,
+          maxLlmCallsPerCycle: Number(config.dreamCalls),
+          adaptiveInterval: { enabled: false },
+        },
+        emotional: { enabled: true, hormonal: { enabled: true } },
+        curiosity: { enabled: true, autoResearch: { enabled: false } },
+        digest: { enabled: false },
+        healthSweep: { enabled: false },
+        dreamBrief: { enabled: false },
+      },
+      skills: { skillSeekers: { trending: { enabled: false } }, evolution: { enabled: false } },
+    };
+    managerConfig = cfg;
+    const { MemoryIndexManager } = await import("../../src/memory/manager.js");
+    const created = await MemoryIndexManager.get({ cfg, agentId });
+    if (!created) throw new Error("Memory manager unavailable");
+    manager = created;
+    return { ready: true };
+  }
+  now = Number(request.now);
+  let seed = (Number(config.seed) ^ Math.floor(now / 1000)) >>> 0;
+  Math.random = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  if (!Number.isFinite(now)) throw new Error("Explicit historical timestamp required");
+  if (request.op === "ingest") {
+    if (sessionCount > 0) {
+      await manager.close();
+      const { MemoryIndexManager } = await import("../../src/memory/manager.js");
+      const reopened = await MemoryIndexManager.get({ cfg: managerConfig, agentId });
+      if (!reopened) throw new Error("Failed to reopen memory manager");
+      manager = reopened;
+    }
+    const trajectory = request.trajectory as {
+      id: string;
+      goal: string;
+      outcome: string;
+      start_url: string;
+      states: Json[];
+    };
+    if (!/^[a-zA-Z0-9_-]+$/.test(trajectory.id)) throw new Error("Invalid trajectory ID");
+    const dir = path.join(profile, "state", "agents", agentId, "sessions");
+    fs.mkdirSync(dir, { recursive: true });
+    const stamp = new Date(now).toISOString();
+    const records: Json[] = [
+      {
+        type: "session",
+        version: 3,
+        id: trajectory.id,
+        timestamp: stamp,
+        cwd: path.join(profile, "workspace"),
+      },
+    ];
+    records.push({
+      type: "message",
+      timestamp: stamp,
+      message: {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              trajectory: trajectory.id,
+              goal: trajectory.goal,
+              start_url: trajectory.start_url,
+            }),
+          },
+        ],
+      },
+    });
+    for (const state of trajectory.states) {
+      records.push({
+        type: "message",
+        timestamp: stamp,
+        message: {
+          role: "assistant",
+          content: [
+            { type: "text", text: JSON.stringify({ trajectory: trajectory.id, ...state }) },
+          ],
+        },
+      });
+    }
+    records.push({
+      type: "message",
+      timestamp: stamp,
+      message: {
+        role: "assistant",
+        content: [{ type: "text", text: JSON.stringify({ outcome: trajectory.outcome }) }],
+      },
+    });
+    const target = path.join(dir, trajectory.id + ".jsonl");
+    fs.writeFileSync(target, records.map((x) => JSON.stringify(x)).join("\n") + "\n", {
+      flag: "wx",
+    });
+    fs.utimesSync(target, now / 1000, now / 1000);
+    await manager.sync({ reason: "longmemeval-v2-transcript" });
+    await manager.probeVectorAvailability();
+    const status = manager.status();
+    if (status.fallback || !status.vector?.available || !status.fts?.available)
+      throw new Error(
+        "Memory backend degraded: " +
+          JSON.stringify({ vector: status.vector, fts: status.fts, fallback: status.fallback }),
+      );
+    sessionCount++;
+    return { sessionCount, ...health() };
+  }
+  if (request.op === "health") {
+    return manager.status();
+  }
+  if (request.op === "consolidate") {
+    const result = await manager.consolidate();
+    if (!result) throw new Error("Consolidation did not run");
+    return { result, ...health() };
+  }
+  if (request.op === "dream") {
+    const result = await manager.dream();
+    if (!result || result.cycle.error || result.cycle.completedAt === null) {
+      throw new Error("Dream incomplete: " + JSON.stringify(result?.cycle));
+    }
+    const { readWorkingMemoryProvenance } =
+      await import("../../src/memory/working-memory-snapshots.js");
+    const provenance = await readWorkingMemoryProvenance(path.join(profile, "workspace"));
+    if (
+      provenance.some(
+        (record) => record.trigger === result.cycle.cycleId && record.wasHeuristicFallback,
+      )
+    ) {
+      throw new Error("Production working-memory synthesis used heuristic fallback");
+    }
+    // Watchers are disabled; a normal manager r
+```
+
 ### Core Architecture Module: `desktop/renderer/src/App.tsx`
 ```
 import { useCallback, useEffect, useState } from "react";
 import { FirstRun } from "./components/first-run/FirstRun";
 import { AppShell } from "./components/layout/AppShell";
+import { SetupWizard } from "./components/setup/SetupWizard";
 import { Toaster } from "./components/ui/sonner";
 import { initDeepLinkJoin } from "./lib/deep-link";
 import { fetchSessionToken, persistGatewayCredentials } from "./lib/gateway-origin";
+import { isSetupPath } from "./lib/setup-route";
 import {
   readStoredGatewayToken,
   readStoredGatewayUrl,
@@ -524,6 +1159,20 @@ import {
 } from "./stores/gateway-store";
 
 export function App() {
+  // PLAN-56 Phase 4: `<basePath>/setup` is browser-first onboarding, with its
+  // own connection (a one-time setup token, wizard scope only).
+  if (typeof window !== "undefined" && isSetupPath(window.location.pathname)) {
+    return (
+      <>
+        <SetupWizard />
+        <Toaster richColors position="top-right" />
+      </>
+    );
+  }
+  return <ControlApp />;
+}
+
+function ControlApp() {
   const connect = useGatewayStore((s) => s.connect);
 
   // Decide at boot whether we already have a token. A stored one (from a prior
@@ -1121,695 +1770,6 @@ export function ChannelSetupDrawer({
 
 ```
 
-### Core Architecture Module: `desktop/renderer/src/components/channels/ChannelsView.tsx`
-```
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
-import { describeError } from "../../lib/describe-error";
-import { formatRelativeTime } from "../../lib/format";
-import { cn } from "../../lib/utils";
-import { useChannelsStore } from "../../stores/channels-store";
-import { useGatewayStore } from "../../stores/gateway-store";
-import { useConfirm } from "../ui/confirm-dialog";
-import { Switch } from "../ui/switch";
-import { CHANNEL_SETUP_DESCRIPTORS } from "./channel-setup-fields";
-import { ChannelSetupDrawer } from "./ChannelSetupDrawer";
-
-type ChannelAccount = {
-  accountId: string;
-  configured: boolean;
-  enabled?: boolean;
-  connected?: boolean;
-  loggedIn?: boolean;
-  status?: string;
-  lastInboundAt?: number;
-  lastOutboundAt?: number;
-  [key: string]: unknown;
-};
-
-type ChannelCapability = {
-  supported: boolean;
-  reason?: string;
-  platforms?: string[];
-};
-
-type ChannelData = {
-  channelId: string;
-  label: string;
-  accounts: ChannelAccount[];
-  summary?: Record<string, unknown>;
-  capability?: ChannelCapability;
-};
-
-function ChannelCard({
-  channel,
-  canToggle,
-  canConfigure,
-  togglingKey,
-  onToggle,
-  onLogout,
-  onSetup,
-}: {
-  channel: ChannelData;
-  canToggle: boolean;
-  canConfigure: boolean;
-  togglingKey: string | null;
-  onToggle: (channelId: string, accountId: string, enabled: boolean) => void;
-  onLogout: (channelId: string, accountId: string, channelLabel: string) => void;
-  onSetup: (channelId: string, accountId?: string) => void;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const primaryAccount = channel.accounts[0];
-  const isConnected = primaryAccount?.connected || primaryAccount?.loggedIn;
-  const unsupported = channel.capability?.supported === false;
-
-  return (
-    <div
-      className={cn(
-        "rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm overflow-hidden",
-        unsupported && "opacity-60",
-      )}
-    >
-      <div
-        className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-muted/30 transition-colors"
-        onClick={() => setExpanded(!expanded)}
-      >
-        <div
-          className={cn(
-            "w-2 h-2 rounded-full flex-shrink-0",
-            isConnected
-              ? "bg-success"
-              : primaryAccount?.configured
-                ? "bg-warning"
-                : "bg-muted-foreground/30",
-          )}
-        />
-        <div className="flex-1 min-w-0">
-          <span className="text-sm font-medium text-foreground">{channel.label}</span>
-        </div>
-        {unsupported ? (
-          <span
-            className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground"
-            title={channel.capability?.reason}
-          >
-            unavailable on this host
-          </span>
-        ) : (
-          <span
-            className={cn(
-              "text-xs px-2 py-0.5 rounded-full",
-              isConnected
-                ? "bg-success/10 text-success"
-                : primaryAccount?.configured
-                  ? "bg-warning/10 text-warning"
-                  : "bg-muted text-muted-foreground",
-            )}
-          >
-            {isConnected
-              ? "connected"
-              : primaryAccount?.configured
-                ? "configured"
-                : "not configured"}
-          </span>
-        )}
-        <span className="text-xs text-muted-foreground">{expanded ? "▲" : "▼"}</span>
-      </div>
-      {expanded && (
-        <div className="px-4 pb-3 border-t border-border/10 pt-3 space-y-3">
-          {unsupported && channel.capability?.reason && (
-            <p className="text-xs text-muted-foreground">{channel.capability.reason}</p>
-          )}
-          {canConfigure && !unsupported && CHANNEL_SETUP_DESCRIPTORS[channel.channelId] && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onSetup(channel.channelId, primaryAccount?.accountId);
-              }}
-              className="px-2 py-1 text-xs rounded bg-brand/10 text-brand hover:bg-brand/30 border border-brand/20"
-            >
-              {primaryAccount?.configured ? "Edit setup" : "Set up"}
-            </button>
-          )}
-          {channel.accounts.map((account) => {
-            const toggleKey = `${channel.channelId}:${account.accountId}`;
-            return (
-              <div key={account.accountId} className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-muted-foreground">
-                    {account.accountId}
-                  </span>
-                  {account.enabled === false && (
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-danger/10 text-danger">
-                      disabled
-                    </span>
-                  )}
-                  {canToggle && !unsupported && (
-                    <span className="ml-auto" onClick={(e) => e.stopPropagation()}>
-                      <Switch
-                        checked={account.enabled !== false}
-                        disabled={togglingKey === toggleKey}
-                        onCheckedChange={(checked) =>
-                          onToggle(channel.channelId, account.accountId, checked)
-                        }
-                        aria-label={`${account.enabled !== false ? "Disable" : "Enable"} ${channel.label} ${account.accountId}`}
-                      />
-                    </span>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {account.lastInboundAt && (
-                    <div>
-                      <span className="text-muted-foreground">Last inbound: </span>
-                      <span className="text-foreground">
-                        {formatRelativeTime(account.lastInboundAt)}
-                      </span>
-                    </div>
-                  )}
-                  {account.lastOutboundAt && (
-                    <div>
-                      <span className="text-muted-foreground">Last outbound: </span>
-                      <span className="text-foreground">
-                        {formatRelativeTime(account.lastOutboundAt)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                {(account.connected || account.loggedIn) && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onLogout(channel.channelId, account.accountId, channel.label);
-                    }}
-                    className="px-2 py-1 text-xs rounded bg-danger/10 text-danger hover:bg-danger/30 border border-danger/20"
-                  >
-                    Logout
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function ChannelsView() {
-  const [confirmDialog, confirmElement] = useConfirm();
-  const gwStatus = useGatewayStore((s) => s.status);
-  const request = useGatewayStore((s) => s.request);
-  const hello = useGatewayStore((s) => s.hello);
-  const loading = useChannelsStore((s) => s.loading);
-  const setLoading = useChannelsStore((s) => s.setLoading);
-  const [channels, setChannels] = useState<ChannelData[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [togglingKey, setTogglingKey] = useState<string | null>(null);
-  const [setupTarget, setSetupTarget] = useState<{
-    channelId: string;
-    label: string;
-    accountId?: string;
-  } | null>(null);
-
-  // Version skew: older gateways don't implement channels.update; hide the
-  // switches instead of rendering controls that error.
-  const methods = hello?.features?.methods;
-  const canToggle = methods ? methods.includes("channels.update") : true;
-  const canConfigure = methods ? methods.includes("channels.configure") : true;
-
-  const refresh = useCallback(
-    async (probe = false) => {
-      if (gwStatus !== "connected") return;
-      setLoading(true);
-      try {
-        const res = (await request("channels.status", { probe })) as {
-          channelOrder?: string[];
-          channelLabels?: Record<string, string>;
-          channelAccounts?: Record<string, ChannelAccount[]>;
-          channelCapabilities?: Record<string, ChannelCapability>;
-          channels?: Record<string, unknown>;
-        };
-        const order = res.channelOrder ?? Object.keys(res.channels ?? {});
-        const labels = res.channelLabels ?? {};
-        const accounts = res.channelAccounts ?? {};
-        const capabilities = res.channelCapabilities ?? {};
-        const channelSummaries = (res.channels ?? {}) as Record<string, Record<string, unknown>>;
-
-        const parsed: ChannelData[] = order.map((id) => ({
-          channelId: id,
-          label: labels[id] ?? id,
-          accounts: accounts[id] ?? [],
-          summary: channelSummaries[id],
-          capability: capabilities[id],
-        }));
-        setChannels(parsed);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load channels");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [gwStatus, request, setLoading],
-  );
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  const handleLogout = useCallback(
-    async (channelId: string, accountId: string, channelLabel: string) => {
-      if (
-        !(await confirmDialog({
-          title: `Logout ${channelLabel} account "${accountId}"?`,
-          actionLabel: "Logout",
-          destructive: true,
-        }))
-      )
-        return;
-      try {
-        await request("channels.logout", { channel: channelId, accountId });
-        refresh();
-      } catch (err) {
-        toast.error("Logout failed", {
-          description: describeError(err),
-        });
-      }
-    },
-    [request, refresh, confirmDialog],
-  );
-
-  const handleToggle = useCallback(
-    async (channelId: string, accountId: string, enabled:
-```
-
-### Core Architecture Module: `desktop/renderer/src/components/channels/QrPairingDialog.tsx`
-```
-import { Loader2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { useGatewayStore } from "../../stores/gateway-store";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
-
-interface QrPairingDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  channelId: string;
-  label: string;
-  accountId?: string;
-  onLinked?: () => void;
-}
-
-type Phase = "starting" | "scan" | "waiting" | "linked" | "error";
-
-/**
- * QR device-link dialog for QR-capable channels (WhatsApp, Signal).
- * web.login.start {channel} returns the QR as a data URL; web.login.wait
- * blocks until the phone scans it and the gateway brings the channel up.
- */
-export function QrPairingDialog({
-  open,
-  onOpenChange,
-  channelId,
-  label,
-  accountId,
-  onLinked,
-}: QrPairingDialogProps) {
-  const request = useGatewayStore((s) => s.request);
-  const [phase, setPhase] = useState<Phase>("starting");
-  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
-  const runRef = useRef(0);
-  // Callback props live in refs so parent re-renders (e.g. the refresh that
-  // onLinked itself triggers) can NEVER re-fire the flow effect: a restarted
-  // flow calls web.login.start, which stops the channel that just linked.
-  const onLinkedRef = useRef(onLinked);
-  onLinkedRef.current = onLinked;
-
-  const runFlow = useCallback(async () => {
-    const run = ++runRef.current;
-    setPhase("starting");
-    setQrDataUrl(null);
-    setMessage("");
-    try {
-      const start = await request<{ qrDataUrl?: string; message?: string }>(
-        "web.login.start",
-        { channel: channelId, ...(accountId ? { accountId } : {}) },
-        { timeoutMs: 60_000 },
-      );
-      if (run !== runRef.current) return;
-      if (!start?.qrDataUrl) {
-        setPhase("error");
-        setMessage(start?.message ?? "The gateway did not return a QR code.");
-        return;
-      }
-      setQrDataUrl(start.qrDataUrl);
-      setMessage(start.message ?? "Scan the QR with your phone.");
-      setPhase("scan");
-
-      const wait = await request<{ connected?: boolean; message?: string }>(
-        "web.login.wait",
-        { channel: channelId, ...(accountId ? { accountId } : {}), timeoutMs: 120_000 },
-        { timeoutMs: 150_000 },
-      );
-      if (run !== runRef.current) return;
-      if (wait?.connected) {
-        setPhase("linked");
-        setMessage(wait.message ?? "Linked.");
-        toast.success(`${label} linked`, { description: wait.message });
-        onLinkedRef.current?.();
-      } else {
-        setPhase("error");
-        setMessage(wait?.message ?? "Linking did not complete.");
-      }
-    } catch (err) {
-      if (run !== runRef.current) return;
-      setPhase("error");
-      setMessage(err instanceof Error ? err.message : String(err));
-    }
-  }, [channelId, accountId, label, request]);
-
-  useEffect(() => {
-    if (!open) {
-      // Invalidate any in-flight run so a stale response can't mutate state.
-      runRef.current += 1;
-      return;
-    }
-    void runFlow();
-    // runFlow's deps are stable for a given target (channelId/accountId);
-    // the flow starts once per open, not once per parent render.
-  }, [open, runFlow]);
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[380px]">
-        <DialogHeader>
-          <DialogTitle>Link {label}</DialogTitle>
-          <DialogDescription>
-            {channelId === "signal"
-              ? "Signal → Settings → Linked Devices → Link New Device."
-              : "WhatsApp → Settings → Linked Devices → Link a Device."}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-col items-center gap-3 py-2">
-          {phase === "starting" && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" /> Generating QR…
-            </div>
-          )}
-          {qrDataUrl && phase !== "error" && (
-            <img
-              src={qrDataUrl}
-              alt={`${label} pairing QR code`}
-              className="w-56 h-56 rounded-md bg-white p-2"
-            />
-          )}
-          {phase === "scan" && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" /> Waiting for scan…
-            </div>
-          )}
-          {phase === "linked" && <p className="text-sm text-success">{message}</p>}
-          {phase === "error" && (
-            <div className="space-y-2 text-center">
-              <p className="text-sm text-danger">{message}</p>
-              <button
-                onClick={() => void runFlow()}
-                className="text-xs px-2 py-1 rounded border border-border hover:bg-muted/90"
-              >
-                Try again
-              </button>
-            </div>
-          )}
-          {phase === "scan" && message && (
-            <p className="text-xs text-muted-foreground text-center">{message}</p>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-```
-
-### Core Architecture Module: `desktop/renderer/src/components/channels/channel-setup-fields.ts`
-```
-/**
- * Guided-setup field descriptors per channel. Keys are ChannelSetupInput
- * fields understood by each channel's setup.applyAccountConfig on the
- * gateway. Channels absent from this map fall back to the Config tab.
- */
-export interface SetupField {
-  key: string;
-  label: string;
-  help?: string;
-  placeholder?: string;
-  sensitive?: boolean;
-  optional?: boolean;
-}
-
-export interface ChannelSetupDescriptor {
-  fields: SetupField[];
-  /** True when the channel links via QR instead of (or in addition to) tokens. */
-  qrLogin?: boolean;
-  docsHint?: string;
-}
-
-export const CHANNEL_SETUP_DESCRIPTORS: Record<string, ChannelSetupDescriptor> = {
-  telegram: {
-    fields: [
-      {
-        key: "botToken",
-        label: "Bot token",
-        help: "Create a bot with @BotFather in Telegram and paste its token.",
-        placeholder: "123456:ABC-DEF...",
-        sensitive: true,
-      },
-    ],
-  },
-  discord: {
-    fields: [
-      {
-        key: "token",
-        label: "Bot token",
-        help: "Discord Developer Portal → your application → Bot → Reset Token.",
-        placeholder: "MTA...",
-        sensitive: true,
-      },
-    ],
-  },
-  slack: {
-    fields: [
-      {
-        key: "botToken",
-        label: "Bot token",
-        help: "Slack app → OAuth & Permissions → Bot User OAuth Token.",
-        placeholder: "xoxb-...",
-        sensitive: true,
-      },
-      {
-        key: "appToken",
-        label: "App token",
-        help: "Slack app → Basic Information → App-Level Tokens (Socket Mode, connections:write).",
-        placeholder: "xapp-...",
-        sensitive: true,
-      },
-    ],
-  },
-  signal: {
-    qrLogin: true,
-    fields: [
-      {
-        key: "signalNumber",
-        label: "Phone number",
-        help: "The Signal account number in E.164 format. Link the device via QR first if this gateway is a new linked device.",
-        placeholder: "+15551234567",
-      },
-      {
-        key: "cliPath",
-        label: "signal-cli path",
-        help: "Leave blank when signal-cli is on PATH.",
-        placeholder: "signal-cli",
-        optional: true,
-      },
-      {
-        key: "httpUrl",
-        label: "External daemon URL",
-        help: "Optional: URL of an already-running signal-cli HTTP daemon.",
-        placeholder: "http://127.0.0.1:8080",
-        optional: true,
-      },
-    ],
-  },
-  whatsapp: {
-    qrLogin: true,
-    fields: [],
-    docsHint: "WhatsApp links by scanning a QR from the phone - no tokens needed.",
-  },
-};
-
-```
-
-### Core Architecture Module: `desktop/renderer/src/components/chat/ActivityPanel.tsx`
-```
-import { Activity, Check, Clock, ShieldAlert, X } from "lucide-react";
-import { useEffect } from "react";
-import { cn } from "../../lib/utils";
-import { type ReviewAction, type ReviewStatus, useReviewStore } from "../../stores/review-store";
-
-/**
- * What the agent asked to do on the owner's behalf and what came of it
- * (PLAN-53 B5). One list, newest first, from the review store.
- */
-export function ActivityPanel() {
-  const history = useReviewStore((s) => s.history);
-  const loaded = useReviewStore((s) => s.loaded);
-  const unsupported = useReviewStore((s) => s.unsupported);
-  const listen = useReviewStore((s) => s.listen);
-
-  useEffect(() => listen(), [listen]);
-
-  if (unsupported) {
-    return (
-      <Empty text="This gateway build does not record reviewed actions yet. Update the gateway." />
-    );
-  }
-  if (loaded && history.length === 0) {
-    return <Empty text="Nothing has needed your approval yet." />;
-  }
-  return (
-    <div className="flex-1 overflow-auto">
-      <ul className="divide-y divide-border/30">
-        {history.map((action) => (
-          <ActivityRow key={action.id} action={action} />
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-const STATUS: Record<ReviewStatus, { label: string; tone: string; icon: typeof Check }> = {
-  pending: { label: "Waiting", tone: "text-warning", icon: ShieldAlert },
-  approved: { label: "Approved", tone: "text-success", icon: Check },
-  executed: { label: "Done", tone: "text-success", icon: Check },
-  failed: { label: "Failed", tone: "text-danger", icon: X },
-  denied: { label: "Denied", tone: "text-danger", icon: X },
-  expired: { label: "Expired", tone: "text-muted-foreground", icon: Clock },
-};
-
-function ActivityRow({ action }: { action: ReviewAction }) {
-  const meta = STATUS[action.status];
-  const Icon = meta.icon;
-  const when = new Date(action.decidedAt ?? action.createdAt).toLocaleString();
-  return (
-    <li className="px-3 py-2" data-testid="activity-row">
-      <div className="flex items-start gap-2">
-        <Icon className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", meta.tone)} />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={cn("text-badge font-medium uppercase tracking-wide", meta.tone)}>
-              {meta.label}
-            </span>
-            <span className="text-2xs text-muted-foreground">
-              {action.cls === "spend" ? "spend" : action.cls === "handoff" ? "handoff" : "post"} ·{" "}
-              {action.id}
-            </span>
-          </div>
-          <p className="text-xs text-foreground break-words">{action.preview}</p>
-          <p className="text-2xs text-muted-foreground">
-            {when}
-            {action.decidedBy ? ` · by ${action.decidedBy}` : ""}
-          </p>
-          {action.resultSummary && (
-            <p className="text-2xs text-muted-foreground font-mono break-words mt-0.5 line-clamp-3">
-              {action.resultSummary}
-            </p>
-          )}
-        </div>
-      </div>
-    </li>
-  );
-}
-
-function Empty({ text }: { text: string }) {
-  return (
-    <div className="flex-1 flex items-center justify-center">
-      <div className="text-center space-y-2 text-muted-foreground px-6">
-        <Activity className="w-8 h-8 mx-auto opacity-50" />
-        <p className="text-sm">{text}</p>
-      </div>
-    </div>
-  );
-}
-
-```
-
-### Core Architecture Module: `desktop/renderer/src/components/chat/ArtifactChip.tsx`
-```
-import { Code, Image, BarChart3, GitBranch, FileCode } from "lucide-react";
-import { useCallback } from "react";
-import { cn } from "../../lib/utils";
-import { useArtifactStore, type Artifact } from "../../stores/artifact-store";
-import { useUIStore } from "../../stores/ui-store";
-
-interface ArtifactChipProps {
-  artifactId: string;
-}
-
-function getArtifactIcon(type: string) {
-  switch (type) {
-    case "react":
-      return Code;
-    case "svg":
-      return Image;
-    case "mermaid":
-      return GitBranch;
-    case "javascript":
-      return FileCode;
-    default:
-      return BarChart3;
-  }
-}
-
-/**
- * Inline chip displayed in chat messages when an artifact is created or updated.
- * Clicking it opens the artifact in the right panel.
- */
-export function ArtifactChip({ artifactId }: ArtifactChipProps) {
-  const artifact = useArtifactStore((s) => s.artifacts.get(artifactId));
-  const openArtifact = useArtifactStore((s) => s.openArtifact);
-  const setToolPanelOpen = useUIStore((s) => s.setToolPanelOpen);
-
-  const handleClick = useCallback(() => {
-    openArtifact(artifactId);
-    setToolPanelOpen(true);
-  }, [artifactId, openArtifact, setToolPanelOpen]);
-
-  if (!artifact) return null;
-
-  const Icon = getArtifactIcon(artifact.type);
-
-  return (
-    <button
-      onClick={handleClick}
-      className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-2xs font-medium",
-        "border transition-all cursor-pointer hover:scale-[1.02]",
-        "bg-info/5 border-info/20 text-info hover:bg-info/20",
-      )}
-    >
-      <Icon className="w-3 h-3 flex-shrink-0" />
-      <span className="truncate max-w-[200px]">{artifact.title}</span>
-      <span className="text-muted-foreground/40">|</span>
-      <span className="text-muted-foreground/70 text-badge font-normal uppercase">
-        {artifact.type}
-      </span>
-    </button>
-  );
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1818,10 +1778,6 @@ export function ArtifactChip({ artifactId }: ArtifactChipProps) {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #54** (2026-06-07): **Wallet: x402 payment signing fails + send_usdc 'Unsupported network' on Base**
   *Symptoms*: ## Summary  Two wallet bugs discovered during first real-money testing of the economic layer:  ### Bug 1: x402 Payment Signing Fails (402 not resolved)  **Steps to reproduce:** 1. Fund wallet with USDC on Base 2. Enable x402 in config: `tools.wallet.x402.enabled: true` 3. Hit an x402 paywall (e.g. `https://agentsvc.io/api/v1/proxy/exchange-rates`) 4. Call `pay_for_resource` with the resource URL and amount  **Expected:** Wallet signs the USDC payment, attaches X-Payment header, receives content **Actual:** Tool returns the raw 402 response body without completing payment signing  The 402 response includes valid payment details: ```json {   "scheme": "exact",   "network": "base",    "maxAmountRequired": "1000",   "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",   "payTo": "0xC33336EB299d97aa76E61337906A677552878818" } ```  Likely cause: The x402 client library is not properly parsing the 402 response to extract payment params, or the Coinbase facilitator URL is not configured/reachable.  ### Bug 2: send_usdc fails with "Unsupported network for smart wallets: base"  **Steps to reproduce:** 1. Wallet on Base with USDC balance 2. Call `send_usdc` with a valid address and amount  **Expected:** USDC transfer completes on Base **Actual:** Error: `Failed to send USDC: Unsupported network for smart wallets: base`  Note: The wallet successfully *received* USDC on Base (from Kraken), so the address works. Only outbound sends fail.  Likely cause: Coinbase CDP SDK version issue — th
-  **Post-Mortem & Fix Analysis**:
-  > ## Root Cause Analysis  ### Bug 1: x402 payment signing (stays 402)  **File:** `src/services/wallet-service.ts` — `payForResource()` method (line ~340)  The current implementation does NOT follow the x402 protocol: - It signs a custom JSON blob with `provider.signMessage()` and base64-encodes it as `X-PAYMENT` - **No actual USDC transfer happens on-chain** — it is just a signature, not a payment - The x402 facilitator expects a proper payment authorization, not a self-signed message  **The official x402 flow:** 1. Client GETs the resource → receives 402 with payment requirements 2. Client signs a payment *authorization* using the x402 client SDK 3. Client sends the authorization to a **facilitator** (e.g. `https://x402.org/facilitator`) 4. Facilitator atomically verifies the authorization, executes the USDC transfer, and returns a payment receipt 5. Client retries the original request with the receipt  **Fix options:** - **Option A:** Use `@coinbase/x402` npm package which handles the 
-  > **Fixes pushed** on branch `fix/wallet-x402-discovery` (commit `ddacb6b`).  **Bug 2 (`send_usdc` "Unsupported network for smart wallets: base") — FIXED, verified with real funds.** Root cause was exactly as suspected. The config network `"base"` was passed straight to AgentKit's `CdpSmartWalletProvider`, which only accepts `"base-mainnet"` (it maps that to `"base"` internally); `"base"` hit the default case and threw. Fix normalizes `"base"` → `"base-mainnet"` at the provider boundary while keeping the `"base"` alias everywhere else (USDC contracts, account names, funding URLs). Confirmed by sending real USDC on mainnet.  **Bug 1 (x402 payment) — original problems fixed; one deeper limitation remains.** The old `pay_for_resource` never actually paid: it signed a custom JSON blob with `personal_sign`, base64'd it into an `X-PAYMENT` header, and reported success on any 200 — no on-chain transfer. Replaced it with AgentKit's `X402ActionProvider` running the real x402 protocol: pre-flight 
-  > **Resolved.** Both bugs are fixed and verified in production on Base mainnet with real USDC.  **Bug 2 (`send_usdc` "Unsupported network for smart wallets: base")** — fixed by normalizing the config network `"base"` to AgentKit's expected `"base-mainnet"` networkId. (commit `ddacb6b`)  **Bug 1 (x402 payment not settling)** — the root cause ran deeper than the original report. The placeholder `personal_sign` flow (which never moved funds) was replaced with the real x402 protocol (commit `ddacb6b`), but settlement still failed because the wallet was a **Coinbase Smart Wallet (ERC-4337)**: x402's "exact" scheme signs an EIP-3009 `TransferWithAuthorization` that USDC settles via `ecrecover`, which a smart-account ERC-1271 signature cannot satisfy.  The fix was to adopt the wallet type Coinbase actually intends for agents: a **CDP Server Wallet (MPC EOA)**, which signs a standard ECDSA authorization and settles x402 natively. The wallet is now a single EOA for receiving, `send_usdc`, and x40
 
 - **Issue #14** (2026-04-23): **Wallet funding via Stripe onramp is currently broken**
   *Symptoms*: Heads-up: the "Fund wallet" flow that uses the Stripe Crypto Onramp is not working in the current build. Anyone trying to top up their agent wallet through that path will hit an error when a session is requested.  ## Why  The desktop client at `src/services/hosted-onramp.ts` posts to our hosted onramp service at `onramp.bitterbot.ai`, which is expected to return a `clientSecret` + `publishableKey` that the Stripe Crypto Onramp widget in the wallet view then consumes. The hosted service lives in a separate repo (`bitterbot_funding_onramp`, a Hono app deployable to Cloudflare Workers or Railway, wrapping the Stripe Crypto Onramp API) and is not yet deployed. Every `/session` POST currently fails upstream.  ## Goal  Make agent-wallet funding as seamless and friction-free as possible. A user should be able to fund in a few clicks, without touching a Stripe dashboard or managing their own API keys.  ## Plan  The hosted onramp service is being deployed this week. It is already implemented end to end (rate-limited, network-gated for `base` and `base-sepolia`, validates wallet address format, separates test and live keys) and just needs DNS, secrets, and the healthcheck wired up on the hosting provider. ETA: a few days.  ## Workaround in the meantime  Users who need to fund now can configure their own Stripe Crypto Onramp keys. Run:  ``` pnpm bitterbot doctor-wallet ```  and follow the prompts, or edit the wallet config directly. The client in `src/services/stripe-onramp.ts` will fal
@@ -1843,3607 +1799,847 @@ export function ArtifactChip({ artifactId }: ArtifactChipProps) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4309e7cd` (2026-10-05)
-**Commit Message**: Merge pull request #156 from Bitterbot-AI/fix/plan53-live-test-bugs
+### Incident Patch 1: `300056e8` (2026-10-13)
+**Commit Message**: chore: pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwright revision) (#236)
 
-fix: live-test bugs, artifact tool loaded in chat, resizable computer pane
+* feat(gateway): report version, uptime and platform for the Overview cards
 
-**File**: `desktop/renderer/src/components/chat/ToolCallPanel.tsx` (modified, +39/-2)
+The Overview stat cards read version/uptime/platform fields that no RPC
+returned, so they always showed a dash, and the hello frame reported
+npm_package_version, which is "dev" outside `pnpm start`.
+
+- New GatewayRuntime protocol schema (version, uptimeMs, platform, arch,
+  nodeVersion, installKind), carried in the hello snapshot as `runtime`
+  and in the `status` RPC result.
+- hello-ok.server.version now uses the real package version (src/version.ts).
+- Control UI reads status.runtime, then the hello snapshot, then
+  hello.server.version; config path and state dir rows read the snapshot too.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(ui-build): hash every Control UI build input, not only the renderer
+
+The ui:build skip gate hashed desktop/renderer only, so a vite or plugin
+upgrade (lockfile), a vite.config.ts/package.json/tsconfig change, a vite
+.env file, the VITE_* environment, or a release version bump (baked in as
+VITE_APP_VERSION) left update.run and `pnpm build` shipping a sta
+
+**File**: `desktop/renderer/src/components/overview/OverviewView.tsx` (modified, +12/-14)
 ```diff
-@@ -22,7 +22,7 @@ import { useArtifactStore, type RightPanelMode } from "../../stores/artifact-sto
- import { useChatStore, type ActiveToolCall } from "../../stores/chat-store";
- import { useCoworkStore } from "../../stores/cowork-store";
- import { useReviewStore } from "../../stores/review-store";
--import { useUIStore } from "../../stores/ui-store";
-+import { TOOL_PANEL_DEFAULT_WIDTH, useUIStore } from "../../stores/ui-store";
- import { CoworkPanel } from "../cowork/CoworkPanel";
- import { WorkspaceFilesPanel } from "../workspace/WorkspaceFilesPanel";
- import { ActivityPanel } from "./ActivityPanel";
-@@ -148,6 +148,27 @@ type NavigationMode = "live" | "manual";
- export function ToolCallPanel() {
-   const toolCalls = useChatStore((s) => s.toolCalls);
-   const setToolPanelOpen = useUIStore((s) => s.setToolPanelOpen);
-+  const toolPanelWidth = useUIStore((s) => s.toolPanelWidth);
-+  const setToolPanelWidth = useUIStore((s) => s.setToolPanelWidth);
-+  const [resizing, setResizing] = useState(false);
-+
-+  // The pane sits on the right, so dragging its left edge leftwards widens it.
-+  const startResize = (e: React.MouseEvent) => {
-+    e.preventDefault();
-+    const startX = e.clientX;
-+    const startWidth = toolPanelWidth;
-+    const onMove = (ev: MouseEvent) => setToolPanelWidth(startWidth + (startX - ev.clientX));
-+    const onUp = () => {
-+      window.removeEventListener("mousemove", onMove);
-+      window.removeEventListener("mouseup", onUp);
-+      document.body.style.userSelect = "";
-+      setResizing(false);
-+    };
-+    document.body.style.userSelect = "none";
-+    setResizing(true);
-+    window.addEventListener("mousemove", onMove);
-+    window.addEventListener("mouseup", onUp);
-+  };
-   const panelMode = useArtifactStore((s) => s.panelMode);
-   const setPanelMode = useArtifactStore((s) => s.setPanelMode);
-   const hasArtifacts = useArtifactStore((s) => s.artifacts.size > 0);
-@@ -224,7 +245,23 @@ export function ToolCallPanel() {
-   }, [displayIndex, hasPrev, hasNext, navigateTo, setToolPanelOpen, panelMode]);
+@@ -6,6 +6,7 @@ import { useOverviewStore } from "../../stores/overview-store";
+ import { useUIStore } from "../../stores/ui-store";
+ import { GatewayControls } from "./GatewayControls";
+ import { GetStartedCard } from "./GetStartedCard";
++import { resolveOverviewStats } from "./overview-stats";
+ import { RepairsCard } from "./RepairsCard";
+ import { SpendCard } from "./SpendCard";
+ import { UpdateCard } from "./UpdateCard";
+@@ -107,9 +108,7 @@ export function OverviewView() {
+     refresh();
+   }, [refresh]);
  
-   return (
--    <div className="fixed inset-y-0 right-0 w-[550px] z-30 flex flex-col bg-card/95 backdrop-blur-xl border-l border-border/50">
-+    <div
-+      style={{ width: toolPanelWidth }}
-+      className="fixed inset-y-0 right-0 z-30 flex flex-col bg-card/95 backdrop-blur-xl border-l border-border/50"
-+    >
-+      <div
-+        role="separator"
-+        aria-orientation="vertical"
-+        aria-label="Resize pane"
-+        data-testid="tool-panel-resize"
-+        onMouseDown={startResize}
-+        onDoubleClick={() => setToolPanelWidth(TOOL_PANEL_DEFAULT_WIDTH)}
-+        title="Drag to resize · double-click to reset"
-+        className="absolute left-0 top-0 h-full w-1.5 -translate-x-1/2 cursor-col-resize z-40 hover:bg-brand/40"
-+      />
-+      {/* An artifact or the live browser is an iframe or an image that would
-+          swallow the mouse mid-drag; cover the pane while resizing. */}
-+      {resizing && <div className="absolute inset-0 z-30 cursor-col-resize" />}
-       {/* Header with tab bar */}
-       <div className="flex-shrink-0 border-b border-border/30">
-         {/* Branding */}
+-  const version = statusData?.version ?? hello?.version ?? "—";
+-  const uptime = statusData?.uptime ?? health?.uptime;
+-  const platform = statusData?.platform ?? "—";
++  const stats = resolveOverviewStats(statusData, hello);
+   const channels = health?.channels ?? {};
+   const configuredChannels = summarizeChannels(channels).filter((c) => c.configured);
+ 
+@@ -137,9 +136,12 @@ export function OverviewView() {
+ 
+       {/* Stats */}
+       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+-        <StatCard label="Version" value={String(version)} accent />
+-        <StatCard label="Uptime" value={typeof uptime === "number" ? formatUptime(uptime) : "—"} />
+-        <StatCard label="Platform" value={String(platform)} />
++        <StatCard label="Version" value={stats.version} accent />
++        <StatCard
++          label="Uptime"
++          value={stats.uptimeSeconds === null ? "—" : formatUptime(stats.uptimeSeconds)}
++        />
++        <StatCard label="Platform" value={stats.platform} sub={stats.platformSub} />
+         <StatCard label="Channels" value={String(configuredChannels.length)} sub="configured" />
+       </div>
+ 
+@@ -171,20 +173,16 @@ export function OverviewView() {
+               <span className="text-foreground">{formatRelativeTime(hello.ts)}</span>
+             </div>
+           )}
+-          {statusData?.configPath && (
++          {stats.configPath && (
+             <div className="col-span-2">
+               <span className="text-muted-foreground">Config: </span>
+-              <span className="text-foreground font-mono text-xs">
+-                {String(statusData.configPath)}
+-              </span>
++              <span className="text-foreground font-mono text-xs">{stats.configPath}</span>
+             </div>
+           )}
+-          {statusData?.stateDir && (
++          {stats.stateDir && (
+             <div className="col-span-2">
+               <span className="text-muted-foreground">State Dir: </span>
+-              <span className="text-foreground font-mono text-xs">
+-                {String(statusData.stateDir)}
+-              </span>
++              <span className="text-foreground font-mono text-xs">{stats.stateDir}</span>
+             </div>
+           )}
+         </div>
 ```
 
-**File**: `desktop/renderer/src/components/layout/AppShell.tsx` (modified, +5/-5)
+**File**: `desktop/renderer/src/components/overview/overview-stats.test.tsx` (added, +110/-0)
 ```diff
-@@ -1,4 +1,3 @@
--import { cn } from "../../lib/utils";
- import { useUIStore, type TabId } from "../../stores/ui-store";
- import { AgentsView } from "../agents/AgentsView";
- import { ChannelsView } from "../channels/ChannelsView";
-@@ -52,6 +51,7 @@ export function AppShell() {
-   const activeTab = useUIStore((s) => s.activeTab);
-   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
-   const toolPanelOpen = useUIStore((s) => s.toolPanelOpen);
-+  const toolPanelWidth = useUIStore((s) => s.toolPanelWidth);
- 
-   const isChat = activeTab === "chat";
- 
-@@ -62,10 +62,10 @@ export function AppShell() {
-       <CirclesGlobalSync />
-       {sidebarOpen && <Sidebar />}
-       <main
--        className={cn(
--          "flex-1 flex flex-col min-w-0 transition-all duration-200",
--          isChat && toolPanelOpen && "mr-[550px]",
--        )}
-+        className="flex-1 flex flex-col min-w-0"
-+        // The pane is fixed over the right edge; make room for it at its
-+        // current width, which the person can drag.
-+        style={isChat && toolPanelOpen ? { marginRight: toolPanelWidth } : undefined}
-       >
-         {/* Title bar area for drag region */}
-         <div className="h-8 flex-shrink-0 flex items-center justify-end px-4 drag-region">
-```
-
-**File**: `desktop/renderer/src/stores/ui-store.test.ts` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+import { beforeEach, describe, expect, it } from "vitest";
-+import {
-+  clampToolPanelWidth,
-+  TOOL_PANEL_DEFAULT_WIDTH,
-+  TOOL_PANEL_MIN_WIDTH,
-+  useUIStore,
-+} from "./ui-store";
+@@ -0,0 +1,110 @@
++import { render, screen, waitFor } from "@testing-library/react";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import type { GatewayHelloOk } from "../../lib/gateway-client";
++import { useGatewayStore } from "../../stores/gateway-store";
++import { useOverviewStore } from "../../stores/overview-store";
++import { formatPlatform, resolveOverviewStats } from "./overview-stats";
 +
-+describe("the computer pane's width", () => {
-+  beforeEach(() => {
-+    localStorage.clear();
-+    useUIStore.setState({ toolPanelWidth: TOOL_PANEL_DEFAULT_WIDTH });
-+  });
++vi.mock("./GatewayControls", () => ({ GatewayControls: () => null }));
++vi.mock("./GetStartedCard", () => ({ GetStartedCard: () => null }));
++vi.mock("./RepairsCard", () => ({ RepairsCard: () => null }));
++vi.mock("./SpendCard", () => ({ SpendCard: () => null }));
++vi.mock("./UpdateCard", () => ({ UpdateCard: () => null }));
 +
-+  it("stays usable and leaves room for the chat", () => {
-+    expect(clampToolPanelWidth(100, 1600)).toBe(TOOL_PANEL_MIN_WIDTH);
-+    expect(clampToolPanelWidth(5000, 1600)).toBe(1180);
-+    expect(clampToolPanelWidth(700.4, 1600)).toBe(700);
-+    // On a narrow window the pane keeps its minimum rather than going negative.
-+    expect(clampToolPanelWidth(900, 600)).toBe(TOOL_PANEL_MIN_WIDTH);
-+  });
++const { OverviewView } = await import("./OverviewView");
 +
-+  it("remembers what the person dragged it to", () => {
-+    useUIStore.getState().setToolPanelWidth(50);
-+
-+    expect(useUIStore.getState().toolPanelWidth).toBe(TOOL_PANEL_MIN_WIDTH);
-+    expect(localStorage.getItem("bitterbot-tool-panel-width")).toBe(String(TOOL_PANEL_MIN_WIDTH));
-+  });
-+});
-```
-
-**File**: `desktop/renderer/src/stores/ui-store.ts` (modified, +31/-0)
-```diff
-@@ -13,16 +13,39 @@ interface UIState {
-   sidebarOpen: boolean;
-   sidebarCollapsed: boolean;
-   toolPanelOpen: boolean;
-+  /** Width of the right-hand "computer" pane in pixels; the person can drag it. */
-+  toolPanelWidth: number;
-   theme: Theme;
-   setActiveTab: (tab: TabId) => void;
-   toggleSidebar: () => void;
-   setSidebarCollapsed: (collapsed: boolean) => void;
-   setToolPanelOpen: (open: boolean) => void;
-   toggleToolPanel: () => void;
-+  setToolPanelWidth: (width: number) => void;
-   setTheme: (theme: Theme) => void;
-   toggleTheme: () => void;
- }
- 
-+export const TOOL_PANEL_DEFAULT_WIDTH = 550;
-+export const TOOL_PANEL_MIN_WIDTH = 380;
-+/** Whatever the pane takes, the chat keeps at least this much. */
-+const TOOL_PANEL_CHAT_RESERVE = 420;
-+const TOOL_PANEL_WIDTH_KEY = "bitterbot-tool-panel-width";
-+
-+/** Keep the pane usable and leave room for the chat beside it. */
-+export function clampToolPanelWidth(width: number, viewport = window.innerWidth): number {
-+  const max = Math.max(TOOL_PANEL_MIN_WIDTH, viewport - TOOL_PANEL_CHAT_RESERVE);
-+  return Math.round(Math.min(max, Math.max(TOOL_PANEL_MIN_WIDTH, width)));
++function hello(partial: Partial<GatewayHelloOk>): GatewayHelloOk {
++  return { type: "hello-ok", protocol: 3, ...partial };
 +}
 +
-+function loadSavedToolPanelWidth(): number {
-+  try {
-+    const saved = Number(localStorage.getItem(TOOL_PANEL_WIDTH_KEY));
-+    if (Number.isFinite(saved) && saved > 0) return clampToolPanelWidth(saved);
-+  } catch {}
-+  return TOOL_PANEL_DEFAULT_WIDTH;
-+}
-+
- function applyTheme(theme: Theme) {
-   document.documentElement.classList.toggle("dark", theme === "dark");
-   localStorage.setItem("bitterbot-theme", theme);
-@@ -43,12 +66,20 @@ export const useUIStore = create<UIState>((set) => ({
-   sidebarOpen: true,
-   sidebarCollapsed: false,
-   toolPanelOpen: false,
-+  toolPanelWidth: loadSavedToolPanelWidth(),
-   theme: initialTheme,
-   setActiveTab: (tab) => set({ activeTab: tab }),
-   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
-   setToolPanelOpen: (open) => set({ toolPanelOpen: open }),
-   toggleToolPanel: () => set((s) => ({ toolPanelOpen: !s.toolPanelOpen })),
-+  setToolPanelWidth: (width) => {
-+    const toolPanelWidth = clampToolPanelWidth(width);
-+    try {
-+      localStorage.setItem(TOOL_PANEL_WIDTH_KEY, String(toolPanelWidth));
-+    } catch {}
-+    set({ toolPanelWidth });
-+  },
-   setTheme: (theme) => {
-     applyTheme(theme);
-     set({ theme });
-```
-
-**File**: `docs/tools/hot-set.md` (modified, +12/-8)
-```diff
-@@ -108,16 +108,19 @@ exec 64.8%, read 11.9%, process 4.3%, web_search 3.1%, web_fetch 2.5%,
- memory_search 2.1%, code_interpreter 1.9%, browser 1.3%, write 1.2%,
- edit 1.0%; everything else under 0.7%.
- 
--| lane      | always              | lane list                                                                                        | est. tokens |
--| --------- | ------------------- | ------------------------------------------------------------------------------------------------ | ----------- |
--| chat      | read, memory_search | exec, process, write, edit, web_search, web_fetch, code_interpreter, sessions_send, recall_range | ~3.4k       |
--| heartbeat | read, memory_search | message                                                                                          | ~3.7k       |
--| cron      | read, memory_search | same as chat minus browser/canvas                                                                | ~3.4k       |
--| subagent  | read, memory_search | chat list minus sessions_send (the subagent policy already denies memory_search/sessions_send)   | ~2.9k       |
-+| lane      | always              | lane list                                                                                                          | est. tokens |
-+| --------- | ------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------- |
-+| chat      | read, memory_search | exec, process, write, edit, web_search, web_fetch, code_interpreter, create_artifact, sessions_send, recall_range  | ~3.7k       |
-+| heartbeat | read, memory_search | message                                                                                                            | ~3.7k       |
-+| cron      | read, memory_search | same as chat minus browser/canvas/create_artifact                                                                  | ~3.4k       |
-+| subagent  | read, memory_search | chat list minus sessions_send and create_artifact (the subagent policy already denies memory_search/sessions_send) | ~2.9k       |
- 
- `message` (7.1k chars, 85 properties, 0.06% of calls) is deferred in chat and
- hot in heartbeat, where it is the delivery path. `browser` (3.2k chars) is
--deferred everywhere. `max` is 10 (11 with the default `recall_range` slot); the
-+deferred everywhere. `create_artifact` is hot in chat although it is rarely
-+called: it is what puts a page, chart or game in the person's side panel, and
-+when it was deferred the model wrote an HTML file with `write` and told the
-+user to open it themselves. `max` is 11 (12 with the default `recall_range` slot); the
- selection is a priority cut, `always` first, then the lane list, in the order
- written.
- 
-@@ -142,7 +145,7 @@ Edit `tools.hotSet` in `bitterbot.json` (global) or `agents.list[].tools.hotSet`
-   tools: {
-     hotSet: {
-       enabled: true, // default true; false = every schema on every call
--      max: 10,
-+      max: 11,
-       always: ["read", "memory_search"],
-       perLane: {
-         chat: [
-@@ -153,6 +156,7 @@ Edit `tools.hotSet` in `bitterbot.json` (global) or `agents.list[].tools.hotSet`
-           "web_search",
-           "web_fetch",
-           "code_interpreter",
-+          "create_artifact",
-           "sessions_send",
-           "message",
-         ],
-```
-
-**File**: `src/agents/tools/tool-registry-hot-set.test.ts` (modified, +4/-0)
-```diff
-@@ -117,6 +117,8 @@ describe("selectHotTools per lane", () => {
-       [...HOT_SET_DEFAULT_ALWAYS, ...HOT_SET_DEFAULT_PER_LANE.chat].toSorted(),
-     );
-     expect(sel.hot.length).toBeLessThanOrEqual(HOT_SET_DEFAULT_MAX);
-+    // What draws in the person's side panel must not need a search hop.
-+    expect(names(sel.hot)).toContain("create_artifact");
-     expect(names(sel.hot)).not.toContain("message");
-     expect(names(sel.hot)).not.toContain("browser");
-     expect(names(sel.deferred)).toContain("message");
-@@ -132,9 +134,11 @@ describe("selectHotTools per lane", () => {
-     const cron = selectHotTools({ tools: registry, lane: "cron", hotSet: defaults });
-     expect(names(cron.hot)).not.toContain("browser");
-     expect(names(cron.hot)).not.toContain("canvas");
-+    expect(names(cron.hot)).not.toContain("create_artifact");
-     expect(names(cron.hot)).toContain("exec");
-     const sub = selectHotTools({ tools: registry, lane: "subagent", hotSet: defaults });
-     expect(names(sub.hot)).not.toContain("sessions_send");
-+    expect(names(sub.hot)).not.toContain("create_artifact");
-     expect(names(sub.hot)).toContain("write");
-   });
- 
-```
-
-**File**: `src/agents/tools/tool-registry-hot-set.ts` (modified, +14/-3)
-```diff
-@@ -38,7 +38,7 @@ import { createListToolsTool, createUseToolTool } from "./tool-dispatcher-tool.j
- 
- const log = createSubsystemLogger("agents/tools/hot-set");
- 
--export const HOT_SET_DEFAULT_MAX = 10;
-+export const HOT_SET_DEFAULT_MAX = 11;
- /** chars / 2.6 is the estimate the audit uses for tool definitions. */
- export const TOOL_DEFINITION_CHARS_PER_TOKEN = 2.6;
- 
-@@ -51,6 +51,14 @@ export const TOOL_DEFINITION_CHARS_PER_TOKEN = 2.6;
-  * where it is the delivery path. `browser` (3.2k chars) stays deferred.
-  */
- export const HOT_SET_DEFAULT_ALWAYS: readonly string[] = ["read", "memory_search"];
-+/**
-+ * `create_artifact` is hot in chat although it is rarely called: it is what
-+ * puts a page, chart or game in front of the person, and a deferred tool the
-+ * model has to think to search for loses to `write`, which is always there.
-+ * Seen on 2026-10-04: asked for a fireworks display, the agent wrote an HTML
-+ * file and told the user to double-click it. The definition is about 300 tokens.
-+ */
-+export const HOT_SET_ARTIFACT_TOOL = "create_artifact";
- const CHAT_HOT: readonly string[] = [
-   "exec",
-   "process",
-@@ -59,17 +67,20 @@ const CHAT_HOT: readonly string[] = [
-   "web_search",
-   "web_fetch",
-   "code_interpreter",
-+  HOT_SET_ARTIFACT_TOOL,
-   "sessions_send",
- ];
-+/** Lanes with nobody watching a canvas do not carry the tools that draw on one. */
-+const NO_SCREEN: ReadonlySet<string> = new Set(["browser", "canvas", HOT_SET_ARTIFACT_TOOL]);
- export const HOT_SET_DEFAULT_PER_LANE: Readonly<Record<ToolHotSetLane, readonly string[]>> = {
-   chat: CHAT_HOT,
-   heartbeat: ["message"],
-   // Same as chat minus browser/canvas (neither is hot in chat either; kept
-   // explicit so a chat promotion of browser does not leak into cron).
--  cron: CHAT_HOT.filter((name) => name !== "browser" && name !== "canvas"),
-+  cron: CHAT_HOT.filter((name) => !NO_SCREEN.has(name)),
-   // The subagent policy already denies memory_search / sessions_send; the
-   // selection only picks from what survived the policy pipeline.
--  subagent: CHAT_HOT.filter((name) => name !== "sessions_send"),
-+  subagent: CHAT_HOT.filter((name) => name !== "sessions_send" && name !== HOT_SET_ARTIFACT_TOOL),
- };
- 
- export type ResolvedHotSet = {
-```
-
-**File**: `src/browser/chrome.ts` (modified, +8/-0)
-```diff
-@@ -28,6 +28,7 @@ import {
-   DEFAULT_BITTERBOT_BROWSER_COLOR,
-   DEFAULT_BITTERBOT_BROWSER_PROFILE_NAME,
- } from "./constants.js";
-+import { trackBrowserLaunch } from "./launch-activity.js";
- 
- const log = createSubsystemLogger("browser").child("chrome");
- 
-@@ -229,6 +230,13 @@ export async function isChromeCdpReady(
- export async function launchBitterbotChrome(
-   resolved: ResolvedBrowserConfig,
-   profile: ResolvedBrowserProfile,
-+): Promise<RunningChrome> {
-+  return await trackBrowserLaunch(() => launchChrome(resolved, profile));
-+}
-+
-+async function launchChrome(
-+  resolved: ResolvedBrowserConfig,
-+  profile: ResolvedBrowserProfile,
- ): Promise<RunningChrome> {
-   if (!profile.cdpIsLoopback) {
-     throw new Error(`Profile "${profile.name}" is remote; cannot launch local Chrome.`);
-```
-
----
-
-### Incident Patch 2: `e1e1c6bd` (2026-10-05)
-**Commit Message**: fix(lint): use a Set for the no-screen tool list
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `src/agents/tools/tool-registry-hot-set.ts` (modified, +2/-2)
-```diff
-@@ -71,13 +71,13 @@ const CHAT_HOT: readonly string[] = [
-   "sessions_send",
- ];
- /** Lanes with nobody watching a canvas do not carry the tools that draw on one. */
--const NO_SCREEN: readonly string[] = ["browser", "canvas", HOT_SET_ARTIFACT_TOOL];
-+const NO_SCREEN: ReadonlySet<string> = new Set(["browser", "canvas", HOT_SET_ARTIFACT_TOOL]);
- export const HOT_SET_DEFAULT_PER_LANE: Readonly<Record<ToolHotSetLane, readonly string[]>> = {
-   chat: CHAT_HOT,
-   heartbeat: ["message"],
-   // Same as chat minus browser/canvas (neither is hot in chat either; kept
-   // explicit so a chat promotion of browser does not leak into cron).
--  cron: CHAT_HOT.filter((name) => !NO_SCREEN.includes(name)),
-+  cron: CHAT_HOT.filter((name) => !NO_SCREEN.has(name)),
-   // The subagent policy already denies memory_search / sessions_send; the
-   // selection only picks from what survived the policy pipeline.
-   subagent: CHAT_HOT.filter((name) => name !== "sessions_send" && name !== HOT_SET_ARTIFACT_TOOL),
-```
-
----
-
-### Incident Patch 3: `7b82acce` (2026-10-05)
-**Commit Message**: fix: bugs found in live testing; artifact tool loaded in chat; resizable computer pane
-
-Browser cold start: the calls that may launch the browser (start, open tab)
-get 45 s, and a timeout during a launch says the browser was still starting
-and allows one more try, where it used to say "Do NOT retry". Seen live: the
-browser was ready 21 ms after a 15 s timeout.
-
-Queued notices on agent-command turns: turns started through the `agent`
-command or RPC now get the session's queued system events in front of the
-prompt, as chat turns do. An agent driven from the CLI was never told its
-held payment had been approved.
-
-Approved sends read as a sentence in Activity and chat, not raw JSON.
-
-create_artifact is hot in the chat lane (hot-set max 10 -> 11). Deferred
-behind tool search it lost to `write`: asked for a fireworks display, the
-agent wrote an HTML file and told the user to double-click it.
-
-The right-hand computer pane can be dragged wider or narrower from its left
-edge (double-click resets); the width is remembered.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `desktop/renderer/src/components/chat/ToolCallPanel.tsx` (modified, +39/-2)
-```diff
-@@ -22,7 +22,7 @@ import { useArtifactStore, type RightPanelMode } from "../../stores/artifact-sto
- import { useChatStore, type ActiveToolCall } from "../../stores/chat-store";
- import { useCoworkStore } from "../../stores/cowork-store";
- import { useReviewStore } from "../../stores/review-store";
--import { useUIStore } from "../../stores/ui-store";
-+import { TOOL_PANEL_DEFAULT_WIDTH, useUIStore } from "../../stores/ui-store";
- import { CoworkPanel } from "../cowork/CoworkPanel";
- import { WorkspaceFilesPanel } from "../workspace/WorkspaceFilesPanel";
- import { ActivityPanel } from "./ActivityPanel";
-@@ -148,6 +148,27 @@ type NavigationMode = "live" | "manual";
- export function ToolCallPanel() {
-   const toolCalls = useChatStore((s) => s.toolCalls);
-   const setToolPanelOpen = useUIStore((s) => s.setToolPanelOpen);
-+  const toolPanelWidth = useUIStore((s) => s.toolPanelWidth);
-+  const setToolPanelWidth = useUIStore((s) => s.setToolPanelWidth);
-+  const [resizing, setResizing] = useState(false);
-+
-+  // The pane sits on the right, so dragging its left edge leftwards widens it.
-+  const startResize = (e: React.MouseEvent) => {
-+    e.preventDefault();
-+    const startX = e.clientX;
-+    const startWidth = toolPanelWidth;
-+    const onMove = (ev: MouseEvent) => setToolPanelWidth(startWidth + (startX - ev.clientX));
-+    const onUp = () => {
-+      window.removeEventListener("mousemove", onMove);
-+      window.removeEventListener("mouseup", onUp);
-+      document.body.style.userSelect = "";
-+      setResizing(false);
-+    };
-+    document.body.style.userSelect = "none";
-+    setResizing(true);
-+    window.addEventListener("mousemove", onMove);
-+    window.addEventListener("mouseup", onUp);
-+  };
-   const panelMode = useArtifactStore((s) => s.panelMode);
-   const setPanelMode = useArtifactStore((s) => s.setPanelMode);
-   const hasArtifacts = useArtifactStore((s) => s.artifacts.size > 0);
-@@ -224,7 +245,23 @@ export function ToolCallPanel() {
-   }, [displayIndex, hasPrev, hasNext, navigateTo, setToolPanelOpen, panelMode]);
- 
-   return (
--    <div className="fixed inset-y-0 right-0 w-[550px] z-30 flex flex-col bg-card/95 backdrop-blur-xl border-l border-border/50">
-+    <div
-+      style={{ width: toolPanelWidth }}
-+      className="fixed inset-y-0 right-0 z-30 flex flex-col bg-card/95 backdrop-blur-xl border-l border-border/50"
-+    >
-+      <div
-+        role="separator"
-+        aria-orientation="vertical"
-+        aria-label="Resize pane"
-+        data-testid="tool-panel-resize"
-+        onMouseDown={startResize}
-+        onDoubleClick={() => setToolPanelWidth(TOOL_PANEL_DEFAULT_WIDTH)}
-+        title="Drag to resize · double-click to reset"
-+        className="absolute left-0 top-0 h-full w-1.5 -translate-x-1/2 cursor-col-resize z-40 hover:bg-brand/40"
-+      />
-+      {/* An artifact or the live browser is an iframe or an image that would
-+          swallow the mouse mid-drag; cover the pane while resizing. */}
-+      {resizing && <div className="absolute inset-0 z-30 cursor-col-resize" />}
-       {/* Header with tab bar */}
-       <div className="flex-shrink-0 border-b border-border/30">
-         {/* Branding */}
-```
-
-**File**: `desktop/renderer/src/components/layout/AppShell.tsx` (modified, +5/-5)
-```diff
-@@ -1,4 +1,3 @@
--import { cn } from "../../lib/utils";
- import { useUIStore, type TabId } from "../../stores/ui-store";
- import { AgentsView } from "../agents/AgentsView";
- import { ChannelsView } from "../channels/ChannelsView";
-@@ -52,6 +51,7 @@ export function AppShell() {
-   const activeTab = useUIStore((s) => s.activeTab);
-   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
-   const toolPanelOpen = useUIStore((s) => s.toolPanelOpen);
-+  const toolPanelWidth = useUIStore((s) => s.toolPanelWidth);
- 
-   const isChat = activeTab === "chat";
- 
-@@ -62,10 +62,10 @@ export function AppShell() {
-       <CirclesGlobalSync />
-       {sidebarOpen && <Sidebar />}
-       <main
--        className={cn(
--          "flex-1 flex flex-col min-w-0 transition-all duration-200",
--          isChat && toolPanelOpen && "mr-[550px]",
--        )}
-+        className="flex-1 flex flex-col min-w-0"
-+        // The pane is fixed over the right edge; make room for it at its
-+        // current width, which the person can drag.
-+        style={isChat && toolPanelOpen ? { marginRight: toolPanelWidth } : undefined}
-       >
-         {/* Title bar area for drag region */}
-         <div className="h-8 flex-shrink-0 flex items-center justify-end px-4 drag-region">
-```
-
-**File**: `desktop/renderer/src/stores/ui-store.test.ts` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+import { beforeEach, describe, expect, it } from "vitest";
-+import {
-+  clampToolPanelWidth,
-+  TOOL_PANEL_DEFAULT_WIDTH,
-+  TOOL_PANEL_MIN_WIDTH,
-+  useUIStore,
-+} from "./ui-store";
-+
-+describe("the computer pane's width", () => {
-+  beforeEach(() => {
-+    localStorage.clear();
-+    useUIStore.setState({ toolPanelWidth: TOOL_PANEL_DEFAULT_WIDTH });
-+  });
-+
-+  it("stays usable and leaves room for the chat", () => {
-+    expect(clampToolPanelWidth(100, 1600)).toBe(TOOL_PANEL_MIN_WIDTH);
-+    expect(clampToolPanelWidth(5000, 1600)).toBe(1180);
-+    expect(clampToolPanelWidth(700.4, 1600)).toBe(700);
-+    // On a narrow window the pane keeps its minimum rather than going negative.
-+    expect(clampToolPanelWidth(900, 600)).toBe(TOOL_PANEL_MIN_WIDTH);
-+  });
-+
-+  it("remembers what the person dragged it to", () => {
-+    useUIStore.getState().setToolPanelWidth(50);
-+
-+    expect(useUIStore.getState().toolPanelWidth).toBe(TOOL_PANEL_MIN_WIDTH);
-+    expect(localStorage.getItem("bitterbot-tool-panel-width")).toBe(String(TOOL_PANEL_MIN_WIDTH));
-+  });
-+});
-```
-
-**File**: `desktop/renderer/src/stores/ui-store.ts` (modified, +31/-0)
-```diff
-@@ -13,16 +13,39 @@ interface UIState {
-   sidebarOpen: boolean;
-   sidebarCollapsed: boolean;
-   toolPanelOpen: boolean;
-+  /** Width of the right-hand "computer" pane in pixels; the person can drag it. */
-+  toolPanelWidth: number;
-   theme: Theme;
-   setActiveTab: (tab: TabId) => void;
-   toggleSidebar: () => void;
-   setSidebarCollapsed: (collapsed: boolean) => void;
-   setToolPanelOpen: (open: boolean) => void;
-   toggleToolPanel: () => void;
-+  setToolPanelWidth: (width: number) => void;
-   setTheme: (theme: Theme) => void;
-   toggleTheme: () => void;
- }
- 
-+export const TOOL_PANEL_DEFAULT_WIDTH = 550;
-+export const TOOL_PANEL_MIN_WIDTH = 380;
-+/** Whatever the pane takes, the chat keeps at least this much. */
-+const TOOL_PANEL_CHAT_RESERVE = 420;
-+const TOOL_PANEL_WIDTH_KEY = "bitterbot-tool-panel-width";
-+
-+/** Keep the pane usable and leave room for the chat beside it. */
-+export function clampToolPanelWidth(width: number, viewport = window.innerWidth): number {
-+  const max = Math.max(TOOL_PANEL_MIN_WIDTH, viewport - TOOL_PANEL_CHAT_RESERVE);
-+  return Math.round(Math.min(max, Math.max(TOOL_PANEL_MIN_WIDTH, width)));
-+}
-+
-+function loadSavedToolPanelWidth(): number {
-+  try {
-+    const saved = Number(localStorage.getItem(TOOL_PANEL_WIDTH_KEY));
-+    if (Number.isFinite(saved) && saved > 0) return clampToolPanelWidth(saved);
-+  } catch {}
-+  return TOOL_PANEL_DEFAULT_WIDTH;
-+}
-+
- function applyTheme(theme: Theme) {
-   document.documentElement.classList.toggle("dark", theme === "dark");
-   localStorage.setItem("bitterbot-theme", theme);
-@@ -43,12 +66,20 @@ export const useUIStore = create<UIState>((set) => ({
-   sidebarOpen: true,
-   sidebarCollapsed: false,
-   toolPanelOpen: false,
-+  toolPanelWidth: loadSavedToolPanelWidth(),
-   theme: initialTheme,
-   setActiveTab: (tab) => set({ activeTab: tab }),
-   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
-   setToolPanelOpen: (open) => set({ toolPanelOpen: open }),
-   toggleToolPanel: () => set((s) => ({ toolPanelOpen: !s.toolPanelOpen })),
-+  setToolPanelWidth: (width) => {
-+    const toolPanelWidth = clampToolPanelWidth(width);
-+    try {
-+      localStorage.setItem(TOOL_PANEL_WIDTH_KEY, String(toolPanelWidth));
-+    } catch {}
-+    set({ toolPanelWidth });
-+  },
-   setTheme: (theme) => {
-     applyTheme(theme);
-     set({ theme });
-```
-
-**File**: `docs/tools/hot-set.md` (modified, +12/-8)
-```diff
-@@ -108,16 +108,19 @@ exec 64.8%, read 11.9%, process 4.3%, web_search 3.1%, web_fetch 2.5%,
- memory_search 2.1%, code_interpreter 1.9%, browser 1.3%, write 1.2%,
- edit 1.0%; everything else under 0.7%.
- 
--| lane      | always              | lane list                                                                                        | est. tokens |
--| --------- | ------------------- | ------------------------------------------------------------------------------------------------ | ----------- |
--| chat      | read, memory_search | exec, process, write, edit, web_search, web_fetch, code_interpreter, sessions_send, recall_range | ~3.4k       |
--| heartbeat | read, memory_search | message                                                                                          | ~3.7k       |
--| cron      | read, memory_search | same as chat minus browser/canvas                                                                | ~3.4k       |
--| subagent  | read, memory_search | chat list minus sessions_send (the subagent policy already denies memory_search/sessions_send)   | ~2.9k       |
-+| lane      | always              | lane list                                                                                                          | est. tokens |
-+| --------- | ------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------- |
-+| chat      | read, memory_search | exec, process, write, edit, web_search, web_fetch, code_interpreter, create_artifact, sessions_send, recall_range  | ~3.7k       |
-+| heartbeat | read, memory_search | message                                                                                                            | ~3.7k       |
-+| cron      | read, memory_search | same as chat minus browser/canvas/create_artifact                                                                  | ~3.4k       |
-+| subagent  | read, memory_search | chat list minus sessions_send and create_artifact (the subagent policy already denies memory_search/sessions_send) | ~2.9k       |
- 
- `message` (7.1k chars, 85 properties, 0.06% of calls) is deferred in chat and
- hot in heartbeat, where it is the delivery path. `browser` (3.2k chars) is
--deferred everywhere. `max` is 10 (11 with the default `recall_range` slot); the
-+deferred everywhere. `create_artifact` is hot in chat although it is rarely
-+called: it is what puts a page, chart or game in the person's side panel, and
-+when it was deferred the model wrote an HTML file with `write` and told the
-+user to open it themselves. `max` is 11 (12 with the default `recall_range` slot); the
- selection is a priority cut, `always` first, then the lane list, in the order
- written.
- 
-@@ -142,7 +145,7 @@ Edit `tools.hotSet` in `bitterbot.json` (global) or `agents.list[].tools.hotSet`
-   tools: {
-     hotSet: {
-       enabled: true, // default true; false = every schema on every call
--      max: 10,
-+      max: 11,
-       always: ["read", "memory_search"],
-       perLane: {
-         chat: [
-@@ -153,6 +156,7 @@ Edit `tools.hotSet` in `bitterbot.json` (global) or `agents.list[].tools.hotSet`
-           "web_search",
-           "web_fetch",
-           "code_interpreter",
-+          "create_artifact",
-           "sessions_send",
-           "message",
-         ],
-```
-
-**File**: `src/agents/tools/tool-registry-hot-set.test.ts` (modified, +4/-0)
-```diff
-@@ -117,6 +117,8 @@ describe("selectHotTools per lane", () => {
-       [...HOT_SET_DEFAULT_ALWAYS, ...HOT_SET_DEFAULT_PER_LANE.chat].toSorted(),
-     );
-     expect(sel.hot.length).toBeLessThanOrEqual(HOT_SET_DEFAULT_MAX);
-+    // What draws in the person's side panel must not need a search hop.
-+    expect(names(sel.hot)).toContain("create_artifact");
-     expect(names(sel.hot)).not.toContain("message");
-     expect(names(sel.hot)).not.toContain("browser");
-     expect(names(sel.deferred)).toContain("message");
-@@ -132,9 +134,11 @@ describe("selectHotTools per lane", () => {
-     const cron = selectHotTools({ tools: registry, lane: "cron", hotSet: defaults });
-     expect(names(cron.hot)).not.toContain("browser");
-     expect(names(cron.hot)).not.toContain("canvas");
-+    expect(names(cron.hot)).not.toContain("create_artifact");
-     expect(names(cron.hot)).toContain("exec");
-     const sub = selectHotTools({ tools: registry, lane: "subagent", hotSet: defaults });
-     expect(names(sub.hot)).not.toContain("sessions_send");
-+    expect(names(sub.hot)).not.toContain("create_artifact");
-     expect(names(sub.hot)).toContain("write");
-   });
- 
-```
-
-**File**: `src/agents/tools/tool-registry-hot-set.ts` (modified, +14/-3)
-```diff
-@@ -38,7 +38,7 @@ import { createListToolsTool, createUseToolTool } from "./tool-dispatcher-tool.j
- 
- const log = createSubsystemLogger("agents/tools/hot-set");
- 
--export const HOT_SET_DEFAULT_MAX = 10;
-+export const HOT_SET_DEFAULT_MAX = 11;
- /** chars / 2.6 is the estimate the audit uses for tool definitions. */
- export const TOOL_DEFINITION_CHARS_PER_TOKEN = 2.6;
- 
-@@ -51,6 +51,14 @@ export const TOOL_DEFINITION_CHARS_PER_TOKEN = 2.6;
-  * where it is the delivery path. `browser` (3.2k chars) stays deferred.
-  */
- export const HOT_SET_DEFAULT_ALWAYS: readonly string[] = ["read", "memory_search"];
-+/**
-+ * `create_artifact` is hot in chat although it is rarely called: it is what
-+ * puts a page, chart or game in front of the person, and a deferred tool the
-+ * model has to think to search for loses to `write`, which is always there.
-+ * Seen on 2026-10-04: asked for a fireworks display, the agent wrote an HTML
-+ * file and told the user to double-click it. The definition is about 300 tokens.
-+ */
-+export const HOT_SET_ARTIFACT_TOOL = "create_artifact";
- const CHAT_HOT: readonly string[] = [
-   "exec",
-   "process",
-@@ -59,17 +67,20 @@ const CHAT_HOT: readonly string[] = [
-   "web_search",
-   "web_fetch",
-   "code_interpreter",
-+  HOT_SET_ARTIFACT_TOOL,
-   "sessions_send",
- ];
-+/** Lanes with nobody watching a canvas do not carry the tools that draw on one. */
-+const NO_SCREEN: readonly string[] = ["browser", "canvas", HOT_SET_ARTIFACT_TOOL];
- export const HOT_SET_DEFAULT_PER_LANE: Readonly<Record<ToolHotSetLane, readonly string[]>> = {
-   chat: CHAT_HOT,
-   heartbeat: ["message"],
-   // Same as chat minus browser/canvas (neither is hot in chat either; kept
-   // explicit so a chat promotion of browser does not leak into cron).
--  cron: CHAT_HOT.filter((name) => name !== "browser" && name !== "canvas"),
-+  cron: CHAT_HOT.filter((name) => !NO_SCREEN.includes(name)),
-   // The subagent policy already denies memory_search / sessions_send; the
-   // selection only picks from what survived the policy pipeline.
--  subagent: CHAT_HOT.filter((name) => name !== "sessions_send"),
-+  subagent: CHAT_HOT.filter((name) => name !== "sessions_send" && name !== HOT_SET_ARTIFACT_TOOL),
- };
- 
- export type ResolvedHotSet = {
-```
-
-**File**: `src/browser/chrome.ts` (modified, +8/-0)
-```diff
-@@ -28,6 +28,7 @@ import {
-   DEFAULT_BITTERBOT_BROWSER_COLOR,
-   DEFAULT_BITTERBOT_BROWSER_PROFILE_NAME,
- } from "./constants.js";
-+import { trackBrowserLaunch } from "./launch-activity.js";
- 
- const log = createSubsystemLogger("browser").child("chrome");
- 
-@@ -229,6 +230,13 @@ export async function isChromeCdpReady(
- export async function launchBitterbotChrome(
-   resolved: ResolvedBrowserConfig,
-   profile: ResolvedBrowserProfile,
-+): Promise<RunningChrome> {
-+  return await trackBrowserLaunch(() => launchChrome(resolved, profile));
-+}
-+
-+async function launchChrome(
-+  resolved: ResolvedBrowserConfig,
-+  profile: ResolvedBrowserProfile,
- ): Promise<RunningChrome> {
-   if (!profile.cdpIsLoopback) {
-     throw new Error(`Profile "${profile.name}" is remote; cannot launch local Chrome.`);
-```
-
----
-
-### Incident Patch 4: `3b7df744` (2026-10-04)
-**Commit Message**: Merge pull request #154 from Bitterbot-AI/fix/review-malformed-spend
-
-fix(review): send a malformed spend call back to the agent instead of queuing it
-
-**File**: `src/review/classify.test.ts` (modified, +14/-0)
-```diff
-@@ -72,4 +72,18 @@ describe("classifyToolCall", () => {
- 
-     expect(long?.preview.length).toBeLessThan(260);
-   });
-+
-+  it("names the required parameters a spend call left out", () => {
-+    // Seen live: the model passed `to` where the wallet tool takes `address`.
-+    expect(
-+      classifyToolCall("wallet", { action: "send_usdc", to: "0xabc", amount: 0.01 })?.missing,
-+    ).toEqual(["address"]);
-+    expect(classifyToolCall("wallet", { action: "send_to_peer" })?.missing).toEqual([
-+      "peer_id",
-+      "amount",
-+    ]);
-+    expect(
-+      classifyToolCall("wallet", { action: "send_usdc", address: "0xabc", amount: 1 })?.missing,
-+    ).toBeUndefined();
-+  });
- });
-```
-
-**File**: `src/review/classify.ts` (modified, +16/-0)
-```diff
-@@ -19,6 +19,11 @@ export type Classification = {
-   payee?: string;
-   /** For spend: the amount in USD-equivalent (USDC is 1:1). */
-   amountUsd?: number;
-+  /**
-+   * Required parameters the call left out. Such a call can never execute, so
-+   * it is sent back to the agent to correct instead of being put to the owner.
-+   */
-+  missing?: string[];
- };
- 
- const isRecord = (value: unknown): value is Record<string, unknown> =>
-@@ -47,13 +52,22 @@ export function classifyToolCall(toolName: string, params: unknown): Classificat
-       return null;
-     }
-     const amountUsd = amount(params.amount);
-+    // The wallet tool requires these; name the ones the call left out.
-+    const target =
-+      action === "send_usdc" ? "address" : action === "send_to_peer" ? "peer_id" : "resource_url";
-+    const missing = [
-+      ...(text(params[target]) ? [] : [target]),
-+      ...(amountUsd === undefined ? ["amount"] : []),
-+    ];
-+    const invalid = missing.length > 0 ? { missing } : {};
-     if (action === "send_usdc") {
-       const payee = text(params.address) || "(no address)";
-       return {
-         cls: "spend",
-         preview: `Send ${money(amountUsd)} to ${payee}`,
-         payee,
-         amountUsd,
-+        ...invalid,
-       };
-     }
-     if (action === "send_to_peer") {
-@@ -63,6 +77,7 @@ export function classifyToolCall(toolName: string, params: unknown): Classificat
-         preview: `Send ${money(amountUsd)} to peer ${payee}`,
-         payee,
-         amountUsd,
-+        ...invalid,
-       };
-     }
-     const url = text(params.resource_url) || "(no URL)";
-@@ -72,6 +87,7 @@ export function classifyToolCall(toolName: string, params: unknown): Classificat
-       preview: `Pay ${money(amountUsd)} for ${url}${reason ? ` (${reason})` : ""}`,
-       payee: url,
-       amountUsd,
-+      ...invalid,
-     };
-   }
- 
-```
-
-**File**: `src/review/stage.test.ts` (modified, +13/-0)
-```diff
-@@ -76,4 +76,17 @@ describe("runReviewStage", () => {
-     expect(out.blocked && out.reason).toContain("review service failed");
-     expect(out.blocked && out.reason).toContain("not performed");
-   });
-+
-+  it("sends a malformed spend back to the agent without queuing it", async () => {
-+    svc.consider.mockReset();
-+
-+    const outcome = await runReviewStage({
-+      toolName: "wallet",
-+      params: { action: "send_usdc", to: "0xabc", amount: 0.01 },
++describe("resolveOverviewStats", () => {
++  it("is all dashes when nothing was reported", () => {
++    expect(resolveOverviewStats(null, null)).toEqual({
++      version: "—",
++      uptimeSeconds: null,
++      platform: "—",
++      platformSub: undefined,
++      configPath: undefined,
++      stateDir: undefined,
 +    });
-+
-+    expect(outcome.blocked).toBe(true);
-+    expect(outcome.blocked && outcome.reason).toContain("missing required parameter(s): address");
-+    expect(svc.consider).not.toHaveBeenCalled();
 +  });
- });
-```
-
-**File**: `src/review/stage.ts` (modified, +12/-1)
-```diff
-@@ -16,9 +16,20 @@ export async function runReviewStage(args: {
- }): Promise<StageOutcome> {
-   // The pure classifier decides whether this call is any of our business, so
-   // an unclassified tool never pays for the store or the config.
--  if (!classifyToolCall(args.toolName, args.params)) {
-+  const classification = classifyToolCall(args.toolName, args.params);
-+  if (!classification) {
-     return { blocked: false };
-   }
-+  // A call the tool would reject is the agent's to fix, not the owner's to
-+  // decide: asking a person to approve "send to (no address)" helps nobody.
-+  if (classification.missing?.length) {
-+    return {
-+      blocked: true,
-+      reason:
-+        `The ${args.toolName} call is missing required parameter(s): ${classification.missing.join(", ")}. ` +
-+        "Nothing was sent and nothing was queued for approval. Check the tool's parameter names and call it again.",
-+    };
-+  }
-   try {
-     const outcome = await getReviewService().consider(
-       args.toolName,
-```
-
----
-
-### Incident Patch 5: `9e68af49` (2026-10-04)
-**Commit Message**: Merge pull request #153 from Bitterbot-AI/fix/web-search-serply-followups
-
-feat(web-search): Serply provider (#152) plus onboarding env-detection fix
-
-**File**: `docs/help/environment.md` (modified, +1/-0)
-```diff
-@@ -111,6 +111,7 @@ All optional.
- | `PERPLEXITY_API_KEY` | Perplexity                       |
- | `FIRECRAWL_API_KEY`  | Firecrawl                        |
- | `TAVILY_API_KEY`     | Tavily                           |
-+| `SERPLY_API_KEY`     | Serply web search                |
- | `ELEVENLABS_API_KEY` | ElevenLabs TTS (or `XI_API_KEY`) |
- | `DEEPGRAM_API_KEY`   | Deepgram STT                     |
- 
-```
-
-**File**: `docs/network/egress.md` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@ below in one step.
- 
- ## Everything else is opt-in
- 
--Web search (Brave/Tavily/Perplexity/xAI with your key; Parallel Search MCP at
-+Web search (Brave/Tavily/Perplexity/xAI/Serply with your key; Parallel Search MCP at
- `search.parallel.ai` keyless and anonymous, so each query reaches Parallel with
- only a Bitterbot User-Agent), Skill Seekers ingestion
- (`skills.skillSeekers.enabled`, default off), channels (WhatsApp, Telegram,
-```
-
-**File**: `docs/tools/web-search.md` (modified, +46/-8)
-```diff
-@@ -1,14 +1,14 @@
- ---
--summary: "Web search provider setup: Tavily, Brave, Perplexity, Grok, Parallel"
-+summary: "Web search provider setup: Tavily, Brave, Perplexity, Grok, Serply, Parallel"
- read_when:
-   - You want to configure a web search provider
--  - You need API keys for Tavily, Brave, Perplexity, or Grok
-+  - You need API keys for Tavily, Brave, Perplexity, Grok, or Serply
- title: "Web Search Providers"
- ---
- 
- # Web Search Providers
- 
--Bitterbot supports 5 web search providers for the `web_search` tool. Pick one and configure its API key, or explicitly select Parallel for free, keyless search.
-+Bitterbot supports 6 web search providers for the `web_search` tool. Pick one and configure its API key, or explicitly select Parallel for free, keyless search.
- 
- | Provider       | Env Variable         | Free Tier       | Best For                              |
- | -------------- | -------------------- | --------------- | ------------------------------------- |
-@@ -17,10 +17,13 @@ Bitterbot supports 5 web search providers for the `web_search` tool. Pick one an
- | **Perplexity** | `PERPLEXITY_API_KEY` | Pay-per-use     | AI-synthesized answers with citations |
- | **Parallel**   | None                 | Free, keyless   | Web search with source excerpts       |
- | **Grok**       | `XAI_API_KEY`        | Varies          | X/Twitter integration                 |
-+| **Serply**     | `SERPLY_API_KEY`     | Trial credits   | Google results, country and freshness |
- 
- ## Quick Setup
- 
--The fastest path: pick a provider, set the env variable, done.
-+The fastest path: export one key before running `bitterbot onboard`, which stores
-+the matching provider. On an existing install, also set
-+`tools.web.search.provider` (Brave is the default and needs no provider setting).
- 
- ```bash
- # Option 1: Tavily (recommended for most users)
-@@ -34,6 +37,9 @@ export PERPLEXITY_API_KEY="pplx-..."
- 
- # Option 4: Grok
- export XAI_API_KEY="xai-..."
 +
-+# Option 5: Serply
-+export SERPLY_API_KEY="..."
- ```
- 
- Or add to your `.env` file in the Bitterbot root / gateway environment.
-@@ -144,16 +150,48 @@ Get your key at [perplexity.ai](https://www.perplexity.ai/). Also available via
- 
- Uses your `XAI_API_KEY` environment variable.
- 
-+### Serply
-+
-+```json5
-+{
-+  tools: {
-+    web: {
-+      search: {
-+        provider: "serply",
-+        maxResults: 5,
-+        serply: {
-+          apiKey: "...", // or set SERPLY_API_KEY
++  it("prefers the status RPC runtime block", () => {
++    const stats = resolveOverviewStats(
++      {
++        runtime: {
++          version: "1.5.0",
++          uptimeMs: 3_725_000,
++          platform: "linux",
++          arch: "x64",
++          installKind: "tarball",
 +        },
 +      },
-+    },
-+  },
++      hello({
++        server: { version: "1.4.0" },
++        snapshot: { uptimeMs: 1000, runtime: { version: "1.4.0", platform: "darwin" } },
++      }),
++    );
++    expect(stats.version).toBe("1.5.0");
++    expect(stats.uptimeSeconds).toBe(3725);
++    expect(stats.platform).toBe("Linux x64");
++    expect(stats.platformSub).toBe("installer (release tarball)");
++  });
++
++  it("falls back to the hello snapshot and server version", () => {
++    const stats = resolveOverviewStats(
++      { channelSummary: [] },
++      hello({
++        server: { version: "1.4.0", connId: "c1" },
++        snapshot: { uptimeMs: 61_000, configPath: "/cfg.json", stateDir: "/state" },
++      }),
++    );
++    expect(stats.version).toBe("1.4.0");
++    expect(stats.uptimeSeconds).toBe(61);
++    expect(stats.platform).toBe("—");
++    expect(stats.configPath).toBe("/cfg.json");
++    expect(stats.stateDir).toBe("/state");
++  });
++
++  it("names platforms", () => {
++    expect(formatPlatform("darwin", "arm64")).toBe("macOS arm64");
++    expect(formatPlatform("win32")).toBe("Windows");
++    expect(formatPlatform("sunos", "x64")).toBe("sunos x64");
++    expect(formatPlatform(undefined, "x64")).toBe("—");
++  });
++});
++
++describe("OverviewView stat cards", () => {
++  beforeEach(() => {
++    useOverviewStore.setState({ health: null, status: null, loading: false, error: null });
++  });
++
++  it("shows version, uptime and platform from the gateway's status RPC", async () => {
++    const request = vi.fn(async (method: string) =>
++      method === "status"
++        ? {
++            channelSummary: [],
++            runtime: {
++              version: "1.5.0",
++              uptimeMs: 7_200_000,
++              platform: "linux",
++              arch: "arm64",
++              installKind: "container",
++            },
++          }
++        : { ts: Date.now(), channels: {} },
++    );
++    useGatewayStore.setState({
++      status: "connected",
++      request,
++      hello: hello({ server: { version: "1.5.0", connId: "c1" } }),
++    } as never);
++    render(<OverviewView />);
++    await waitFor(() => expect(screen.getByText("Linux arm64")).toBeTruthy());
++    expect(screen.getByText("1.5.0")).toBeTruthy();
++    expect(screen.getByText("container image")).toBeTruthy();
++    expect(request).toHaveBeenCalledWith("status", {});
++    const uptimeCard = screen.getByText("Uptime").parentElement;
++    expect(uptimeCard?.textContent).not.toContain("—");
++  });
++});
+```
+
+**File**: `desktop/renderer/src/components/overview/overview-stats.ts` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++import type { GatewayHelloOk } from "../../lib/gateway-client";
++import type { GatewayRuntimeInfo, StatusSummary } from "../../stores/overview-store";
++
++/**
++ * The Overview stat cards, from what the gateway actually reports: the
++ * `runtime` block of the `status` RPC (fresh on every refresh), else the
++ * `runtime` block of the hello snapshot (as of connect), else the hello
++ * `server.version`. Any field nobody reported stays a dash.
++ */
++export type OverviewStats = {
++  version: string;
++  /** Uptime in seconds, or null when unknown. */
++  uptimeSeconds: number | null;
++  platform: string;
++  /** Install kind label under the platform card, when known. */
++  platformSub?: string;
++  configPath?: string;
++  stateDir?: string;
++};
++
++const PLATFORM_NAMES: Record<string, string> = {
++  linux: "Linux",
++  darwin: "macOS",
++  win32: "Windows",
++  freebsd: "FreeBSD",
++};
++
++const INSTALL_KIND_LABELS: Record<string, string> = {
++  git: "source checkout",
++  package: "package install",
++  container: "container image",
++  tarball: "installer (release tarball)",
++};
++
++function asRecord(value: unknown): Record<string, unknown> | undefined {
++  return value && typeof value === "object" ? (value as Record<string, unknown>) : undefined;
++}
++
++function nonEmpty(value: unknown): string | undefined {
++  return typeof value === "string" && value.trim() ? value : undefined;
++}
++
++export function formatPlatform(platform?: string, arch?: string): string {
++  if (!platform) {
++    return "—";
++  }
++  const name = PLATFORM_NAMES[platform] ?? platform;
++  return arch ? `${name} ${arch}` : name;
++}
++
++export function resolveOverviewStats(
++  status: StatusSummary | null | undefined,
++  hello: GatewayHelloOk | null | undefined,
++): OverviewStats {
++  const snapshot = asRecord(hello?.snapshot);
++  const helloRuntime = asRecord(snapshot?.runtime) as GatewayRuntimeInfo | undefined;
++  const runtime: GatewayRuntimeInfo | undefined = status?.runtime ?? helloRuntime;
++  const server = asRecord(hello?.server);
++
++  const version =
++    nonEmpty(runtime?.version) ?? nonEmpty(server?.version) ?? nonEmpty(hello?.version) ?? "—";
++  const runtimeUptime = runtime?.uptimeMs;
++  const snapshotUptime = snapshot?.uptimeMs;
++  const uptimeMs =
++    typeof runtimeUptime === "number"
++      ? runtimeUptime
++      : typeof snapshotUptime === "number"
++        ? snapshotUptime
++        : null;
++  const kind = runtime?.installKind;
++  return {
++    version,
++    uptimeSeconds: uptimeMs === null ? null : Math.floor(uptimeMs / 1000),
++    platform: formatPlatform(nonEmpty(runtime?.platform), nonEmpty(runtime?.arch)),
++    platformSub: kind ? INSTALL_KIND_LABELS[kind] : undefined,
++    configPath: nonEmpty(status?.configPath) ?? nonEmpty(snapshot?.configPath),
++    stateDir: nonEmpty(status?.stateDir) ?? nonEmpty(snapshot?.stateDir),
++  };
++}
+```
+
+**File**: `desktop/renderer/src/stores/overview-store.ts` (modified, +10/-8)
+```diff
+@@ -1,23 +1,25 @@
+ import { create } from "zustand";
+ 
++/** The `health` RPC result (HealthSummary in src/commands/health.ts). */
+ export type HealthSnapshot = {
+   ts: number;
+-  uptime?: number;
+-  version?: string;
+-  platform?: string;
+-  nodeVersion?: string;
+-  configPath?: string;
+   channels?: Record<string, unknown>;
+   [key: string]: unknown;
+ };
+ 
+-export type StatusSummary = {
++/** The gateway process's facts (GatewayRuntimeSchema in src/gateway/protocol/schema/snapshot.ts). */
++export type GatewayRuntimeInfo = {
+   version?: string;
+-  uptime?: number;
+-  pid?: number;
++  uptimeMs?: number;
+   platform?: string;
+   arch?: string;
+   nodeVersion?: string;
++  installKind?: "git" | "package" | "container" | "tarball" | "unknown";
++};
++
++/** The `status` RPC result: the CLI status summary plus `runtime`. */
++export type StatusSummary = {
++  runtime?: GatewayRuntimeInfo;
+   configPath?: string;
+   stateDir?: string;
+   agents?: unknown[];
+```
+
+**File**: `docs/gateway/protocol.md` (modified, +19/-0)
+```diff
+@@ -77,6 +77,25 @@ Gateway → Client:
+ }
+ ```
+ 
++`hello-ok.server.version` is the gateway's package version, and
++`hello-ok.snapshot.runtime` (also returned by the `status` method as `runtime`)
++describes the gateway process:
++
++```json
++{
++  "runtime": {
++    "version": "1.5.0",
++    "uptimeMs": 3725000,
++    "platform": "linux",
++    "arch": "x64",
++    "nodeVersion": "22.12.0",
++    "installKind": "tarball"
++  }
 +}
 +```
 +
-+Returns Google web results (titles, URLs and snippets) from
-+`https://api.serply.io/v1/search`, with the key sent in an `X-Api-Key` header.
-+`country` maps to Google's region (`gl`) and `freshness` accepts `pd`, `pw`, `pm`
-+and `py`. Date ranges, `search_lang` and `ui_lang` are rejected; put language
-+preferences in the query instead. Serply is only used when `provider` is
-+`"serply"`. Get a key at [serply.io](https://serply.io)
-+([API docs](https://serply.io/docs)); see their site for current trial terms.
++`installKind` is one of `git`, `package`, `container`, `tarball`, or `unknown`.
 +
- ## Auto-Detection
+ When a device token is issued, `hello-ok` also includes:
  
--If no provider is explicitly set, Bitterbot checks for API keys in this order:
-+At runtime, `web_search` uses the configured `provider`. If none is set it uses
-+Brave, so a key for any other provider also needs `provider` set.
-+
-+Onboarding (`bitterbot onboard`) does this for you. When no provider is
-+configured, it checks the environment in this order and stores the first match
-+as `tools.web.search.provider`:
- 
--1. `TAVILY_API_KEY` → Tavily
--2. `BRAVE_API_KEY` → Brave
-+1. `BRAVE_API_KEY` → Brave
-+2. `TAVILY_API_KEY` → Tavily
- 3. `PERPLEXITY_API_KEY` → Perplexity
- 4. `XAI_API_KEY` → Grok
-+5. `SERPLY_API_KEY` → Serply
- 
--Set the key and it just works.
-+Parallel is never selected automatically.
- 
- ## See Also
- 
+ ```json
 ```
 
-**File**: `src/agents/tools/web-search-serply.test.ts` (added, +153/-0)
+**File**: `docs/start/getting-started.md` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,153 @@
-+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-+import { VERSION } from "../../version.js";
-+import { __testing, createWebSearchTool, runConfiguredWebSearch } from "./web-search.js";
-+
-+const config = {
-+  tools: {
-+    web: { search: { provider: "serply" as const, cacheTtlMinutes: 0, serply: { apiKey: "k" } } },
-+  },
-+};
-+const body = {
-+  results: [
-+    {
-+      title: "Node.js Releases",
-+      link: "https://nodejs.org/en/about/previous-releases",
-+      description: "Node.js 22 is named Jod.",
-+    },
-+    { title: "Token", link: "CAESJxoH", description: "not a URL" },
-+    { title: "Invalid", link: "javascript:alert(1)", description: "unsafe" },
-+    { title: "Second", link: "http://example.com/", description: "plain http" },
-+  ],
-+};
-+const requests: Array<{ url: URL; headers: Headers }> = [];
-+let response: () => Response;
-+
-+beforeEach(() => {
-+  requests.length = 0;
-+  response = () => Response.json(body);
-+  vi.stubEnv("SERPLY_API_KEY", "");
-+  vi.stubGlobal(
-+    "fetch",
-+    vi.fn(async (url: URL | string, init: RequestInit = {}) => {
-+      requests.push({ url: new URL(String(url)), headers: new Headers(init.headers) });
-+      return response();
-+    }),
-+  );
-+});
-+afterEach(() => {
-+  vi.unstubAllGlobals();
-+  vi.unstubAllEnvs();
-+});
-+
-+describe("keyed Serply web search", () => {
-+  it("sends the key in a header, maps filters, and wraps http(s) results only", async () => {
-+    const result = await createWebSearchTool({ config })!.execute("serply", {
-+      query: "Node.js 22 codename",
-+      count: 10,
-+      country: "DE",
-+      freshness: "pw",
-+    });
-+    expect(requests).toHaveLength(1);
-+    const { url, headers } = requests[0];
-+    expect(`${url.origin}${url.pathname}`).toBe("https://api.serply.io/v1/search");
-+    expect(Object.fromEntries(url.searchParams)).toEqual({
-+      q: "Node.js 22 codename",
-+      num: "10",
-+      gl: "de",
-+      tbs: "qdr:w",
-+    });
-+    expect(headers.get("X-Api-Key")).toBe("k");
-+    expect(headers.get("User-Agent")).toBe(`Bitterbot/${VERSION}`);
-+    const details = result.details as {
-+      provider: string;
-+      count: number;
-+      externalContent: { untrusted: boolean };
-+      results: Array<{ url: string; description: string; siteName?: string }>;
-+    };
-+    expect(details).toMatchObject({ provider: "serply", count: 2 });
-+    expect(details.externalContent.untrusted).toBe(true);
-+    expect(details.results.map((entry) => entry.url)).toEqual([
-+      "https://nodejs.org/en/about/previous-releases",
-+      "http://example.com/",
-+    ]);
-+    expect(details.results[0].description).toContain("Node.js 22 is named Jod.");
-+    expect(details.results[0].description).not.toBe("Node.js 22 is named Jod.");
-+    expect(details.results[0].siteName).toBe("nodejs.org");
-+  });
-+
-+  it("omits gl for ALL and trims results to the requested count", async () => {
-+    const result = await createWebSearchTool({ config })!.execute("all", {
-+      query: "hello",
-+      count: 1,
-+      country: "ALL",
-+    });
-+    expect(requests[0].url.searchParams.has("gl")).toBe(false);
-+    expect(requests[0].url.searchParams.get("num")).toBe("1");
-+    expect(result.details).toMatchObject({ count: 1 });
-+  });
-+
-+  it("reads SERPLY_API_KEY for configured non-tool callers", async () => {
-+    vi.stubEnv("SERPLY_API_KEY", "env-key");
-+    const cfg = { tools: { web: { search: { provider: "serply" as const, cacheTtlMinutes: 0 } } } };
-+    expect(__testing.resolveSerplyApiKey({})).toBe("env-key");
-+    expect(await runConfiguredWebSearch(cfg, "Node.js releases", 1)).toEqual([
-+      expect.objectContaining({ url: body.results[0].link }),
-+    ]);
-+    expect(requests[0].headers.get("X-Api-Key")).toBe("env-key");
-+  });
-+
-+  it("reports a missing key without a request", async () => {
-+    const cfg = { tools: { web: { search: { provider: "serply" as const } } } };
-+    expect(
-+      (await createWebSearchTool({ config: cfg })!.execute("nokey", { query: "hello" })).details,
-+    ).toMatchObject({ error: "missing_serply_api_key" });
-+    expect(await runConfiguredWebSearch(cfg, "hello")).toBeNull();
-+    expect(requests).toHaveLength(0);
-+  });
-+
-+  it.each([
-+    [{ search_lang: "de" }, "unsupported_search_filter"],
-+    [{ ui_lang: "de" }, "unsupported_search_filter"],
-+    [{ freshness: "2026-01-01to2026-02-01" }, "unsupported_freshness"],
-+    [{ freshness: "yesterday" }, "invalid_freshness"],
-+  ])("rejects %o without a request", async (filter, error) => {
-+    const result = await createWebSearchTool({ config })!.execute("filter", {
-+      query: "hello",
-+      ...filter,
-+    });
-+    expect(result.details).toMatchObject({ error });
-+    expect(requests).toHaveLength(0);
-+  });
-+
-+  it("surfaces API errors with the response detail", async () => {
-+    response = () => Response.json({ detail: "Invalid API key" }, { status: 401 });
-+    await expect(
-+      createWebSearchTool({ config })!.execute("error", { q
-```
-
-**File**: `src/agents/tools/web-search-serply.ts` (added, +98/-0)
-```diff
-@@ -0,0 +1,98 @@
-+import { VERSION } from "../../version.js";
-+import { readResponseText } from "./web-shared.js";
-+
-+const SERPLY_SEARCH_ENDPOINT = "https://api.serply.io/v1/search";
-+
-+/** Serply forwards Google's `tbs` time filter; only the relative windows map. */
-+const SERPLY_FRESHNESS_TBS: Record<string, string> = {
-+  pd: "qdr:d",
-+  pw: "qdr:w",
-+  pm: "qdr:m",
-+  py: "qdr:y",
-+};
-+
-+export type SerplySearchResult = {
-+  title: string;
-+  url: string;
-+  description: string;
-+};
-+
-+export function serplySupportsFreshness(freshness: string): boolean {
-+  return freshness in SERPLY_FRESHNESS_TBS;
-+}
-+
-+/** Keyed Google web results from Serply's REST API (one results page per call). */
-+export async function runSerplySearch(params: {
-+  query: string;
-+  apiKey: string;
-+  count: number;
-+  timeoutSeconds: number;
-+  country?: string;
-+  freshness?: string;
-+  signal?: AbortSignal;
-+}): Promise<SerplySearchResult[]> {
-+  const deadline = AbortSignal.timeout(params.timeoutSeconds * 1000);
-+  const signal = params.signal ? AbortSignal.any([params.signal, deadline]) : deadline;
-+  signal.throwIfAborted();
-+
-+  const url = new URL(SERPLY_SEARCH_ENDPOINT);
-+  url.searchParams.set("q", params.query);
-+  url.searchParams.set("num", String(params.count));
-+  const country = params.country?.trim().toLowerCase();
-+  if (country && country !== "all") {
-+    url.searchParams.set("gl", country);
-+  }
-+  const tbs = params.freshness ? SERPLY_FRESHNESS_TBS[params.freshness] : undefined;
-+  if (tbs) {
-+    url.searchParams.set("tbs", tbs);
-+  }
-+
-+  const res = await fetch(url.toString(), {
-+    method: "GET",
-+    headers: {
-+      Accept: "application/json",
-+      "X-Api-Key": params.apiKey,
-+      "User-Agent": `Bitterbot/${VERSION}`,
-+    },
-+    signal,
-+  });
-+
-+  if (!res.ok) {
-+    const detailResult = await readResponseText(res, { maxBytes: 64_000 });
-+    const detail = detailResult.text;
-+    throw new Error(`Serply API error (${res.status}): ${detail || res.statusText}`);
-+  }
-+
-+  const data: unknown = await res.json();
-+  if (!data || typeof data !== "object" || !("results" in data) || !Array.isArray(data.results)) {
-+    throw new Error("Serply returned an invalid search response.");
-+  }
-+  return data.results
-+    .flatMap((entry: unknown) => {
-+      if (
-+        !entry ||
-+        typeof entry !== "object" ||
-+        !("link" in entry) ||
-+        typeof entry.link !== "string"
-+      ) {
-+        return [];
-+      }
-+      try {
-+        const link = new URL(entry.link);
-+        if (link.protocol !== "https:" && link.protocol !== "http:") return [];
-+      } catch {
-+        return [];
-+      }
-+      return [
-+        {
-+          url: entry.link,
-+          title: "title" in entry && typeof entry.title === "string" ? entry.title : "",
-+          description:
-+            "description" in entry && typeof entry.description === "string"
-+              ? entry.description
-+              : "",
-+        },
-+      ];
-+    })
-+    .slice(0, params.count);
-+}
-```
-
-**File**: `src/agents/tools/web-search.ts` (modified, +79/-11)
-```diff
-@@ -9,6 +9,7 @@ import { withOpenRouterAttribution } from "../openrouter-attribution.js";
- import type { AnyAgentTool } from "./common.js";
- import { jsonResult, readNumberParam, readStringParam } from "./common.js";
- import { runParallelSearch } from "./web-search-parallel.js";
-+import { runSerplySearch, serplySupportsFreshness } from "./web-search-serply.js";
- import {
-   CacheEntry,
-   DEFAULT_CACHE_TTL_MINUTES,
-@@ -22,7 +23,7 @@ import {
-   writeCache,
- } from "./web-shared.js";
+@@ -70,7 +70,7 @@ same installer inside WSL2 ([Windows](/start/install-script#windows-wsl2)).
+ ## Prereqs (source install)
  
--const SEARCH_PROVIDERS = ["brave", "perplexity", "grok", "tavily", "parallel"] as const;
-+const SEARCH_PROVIDERS = ["brave", "perplexity", "grok", "tavily", "parallel", "serply"] as const;
- const DEFAULT_SEARCH_COUNT = 5;
- const MAX_SEARCH_COUNT = 10;
+ - Node 22.12 or newer
+-- pnpm — ships with Node via corepack: `corepack enable pnpm || npm install -g pnpm`
++- pnpm: ships with Node via corepack: `corepack enable pnpm || npm install -g pnpm`
  
-@@ -71,7 +72,7 @@ const WebSearchSchema = Type.Object({
-   freshness: Type.Optional(
-     Type.String({
-       description:
--        "Filter results by discovery time. Brave supports 'pd', 'pw', 'pm', 'py', and date range 'YYYY-MM-DDtoYYYY-MM-DD'. Perplexity supports 'pd', 'pw', 'pm', and 'py'.",
-+        "Filter results by discovery time. Brave supports 'pd', 'pw', 'pm', 'py', and date range 'YYYY-MM-DDtoYYYY-MM-DD'. Perplexity and Serply support 'pd', 'pw', 'pm', and 'py'.",
-     }),
-   ),
- });
-@@ -150,6 +151,10 @@ type TavilySearchResponse = {
-   results?: TavilySearchResult[];
- };
- 
-+type SerplyConfig = {
-+  apiKey?: string;
-+};
-+
- type PerplexitySearchResponse = {
-   choices?: Array<{
-     message?: {
-@@ -238,6 +243,14 @@ function missingSearchKeyPayload(provider: (typeof SEARCH_PROVIDERS)[number]) {
-       docs: "https://docs.bitterbot.ai/tools/web",
-     };
-   }
-+  if (provider === "serply") {
-+    return {
-+      error: "missing_serply_api_key",
-+      message:
-+        "web_search (serply) needs a Serply API key. Set SERPLY_API_KEY in the Gateway environment, or configure tools.web.search.serply.apiKey.",
-+      docs: "https://docs.bitterbot.ai/tools/web",
-+    };
-+  }
-   return {
-     error: "missing_brave_api_key",
-     message: `web_search needs a Brave Search API key. Run \`${formatCliCommand("bitterbot configure --section web")}\` to store it, or set BRAVE_API_KEY in the Gateway environment.`,
-@@ -262,6 +275,9 @@ function resolveSearchProvider(search?: WebSearchConfig): (typeof SEARCH_PROVIDE
-   if (raw === "tavily") {
-     return "tavily";
-   }
-+  if (raw === "serply") {
-+    return "serply";
-+  }
-   if (raw === "brave") {
-     return "brave";
-   }
-@@ -416,6 +432,26 @@ function resolveTavilyApiKey(tavily?: TavilyConfig): string | undefined {
-   return fromEnv || undefined;
- }
- 
-+function resolveSerplyConfig(search?: WebSearchConfig): SerplyConfig {
-+  if (!search || typeof search !== "object") {
-+    return {};
-+  }
-+  const serply = "serply" in search ? search.serply : undefined;
-+  if (!serply || typeof serply !== "object") {
-+    return {};
-+  }
-+  return serply as SerplyConfig;
-+}
-+
-+function resolveSerplyApiKey(serply?: SerplyConfig): string | undefined {
-+  const fromConfig = normalizeApiKey(serply?.apiKey);
-+  if (fromConfig) {
-+    return fromConfig;
-+  }
-+  const fromEnv = normalizeApiKey(process.env.SERPLY_API_KEY);
-+  return fromEnv || undefined;
-+}
-+
- function resolveTavilySearchDepth(tavily?: TavilyConfig): string {
-   const fromConfig =
-     tavily && "searchDepth" in tavily && typeof tavily.searchDepth === "string"
-@@ -709,7 +745,7 @@ async function runWebSearch(params: {
- }): Promise<Record<string, unknown>> {
-   params.signal?.throwIfAborted();
-   const cacheKey = normalizeCacheKey(
--    params.provider === "brave" || params.provider === "parallel"
-+    params.provider === "brave" || params.provider === "parallel" || params.provider === "serply"
-       ? `${params.provider}:${params.query}:${params.count}:${params.country || "default"}:${params.search_lang || "default"}:${params.ui_lang || "default"}:${params.freshness || "default"}`
-       : params.provider === "perplexity"
-         ? `${params.provider}:${params.query}:${params.perplexityBaseUrl ?? DEFAULT_PERPLEXITY_BASE_URL}:${params.perplexityModel ?? DEFAULT_PERPLEXITY_MODEL}:${params.freshness || "default"}`
-@@ -724,8 +760,11 @@ async function runWebSearch(params: {
- 
-   const start = Date.now();
- 
--  if (params.provider === "parallel") {
--    const results = await runParallelSearch(params);
-+  if (params.provider === "parallel" || params.provider === "serply") {
-+    const results =
-+      params.provider === "serply"
-+        ? await runSerplySearch(params)
-+        : await runParallelSearch(params);
-     const mapped = results.map((entry) => ({
-       title: entry.title ? wrapWebContent(entry.title, "web_search") : "",
-       url: entry.url,
-@@ -929,6 +968,7 @@ export function createWebSearchTool(options?: {
-   const perplexityConfig = resolvePerplexityConfig(search);
-   const grokConfig = resolveGrokConfig(search);
-   const tavilyConfig = resolveTavilyConfig(search);
-+  const serplyConfig = resolveSerplyConfig(search);
- 
-   const description =
-     provider === "parallel"
-@@ -939,7 +9
-```
-
-**File**: `src/commands/configure.wizard.ts` (modified, +8/-2)
-```diff
-@@ -127,7 +127,7 @@ async function promptChannelMode(runtime: RuntimeEnv): Promise<ChannelsWizardMod
-   ) as ChannelsWizardMode;
- }
- 
--type SearchProviderChoice = "brave" | "perplexity" | "grok" | "tavily" | "parallel";
-+type SearchProviderChoice = "brave" | "perplexity" | "grok" | "tavily" | "parallel" | "serply";
- 
- const SEARCH_PROVIDER_META: Record<
-   SearchProviderChoice,
-@@ -163,6 +163,12 @@ const SEARCH_PROVIDER_META: Record<
-     envVar: "TAVILY_API_KEY",
-     keyPlaceholder: "tvly-...",
-   },
-+  serply: {
-+    label: "Serply",
-+    hint: "Uses SERPLY_API_KEY",
-+    envVar: "SERPLY_API_KEY",
-+    keyPlaceholder: "",
-+  },
- };
- 
- async function promptWebToolsConfig(
-@@ -176,7 +182,7 @@ async function promptWebToolsConfig(
-   note(
-     [
-       "Web search lets your agent look things up online using the `web_search` tool.",
--      "Supported providers: Brave Search, Perplexity, Grok (xAI), Tavily, and Parallel (keyless).",
-+      "Supported providers: Brave Search, Perplexity, Grok (xAI), Tavily, Serply, and Parallel (keyless).",
-       "Docs: https://docs.bitterbot.ai/tools/web",
-     ].join("\n"),
-     "Web search",
-```
-
-**File**: `src/commands/doctor-web-search.ts` (modified, +6/-4)
-```diff
-@@ -8,7 +8,7 @@
-  *
-  * What we check (config-only, no network):
-  *   1. `tools.web.search` block is present and not disabled
-- *   2. A provider is selected (brave / perplexity / grok / tavily)
-+ *   2. A provider is selected (brave / perplexity / grok / tavily / serply)
-  *   3. A key is reachable for that provider — either in config or via
-  *      the provider's well-known env var
-  *
-@@ -28,14 +28,15 @@ import {
-   info,
- } from "./doctor-check.js";
- 
--type SearchProvider = "brave" | "perplexity" | "grok" | "tavily" | "parallel";
-+type SearchProvider = "brave" | "perplexity" | "grok" | "tavily" | "parallel" | "serply";
- 
- const PROVIDER_ENV_VARS: Record<SearchProvider, readonly string[]> = {
-   parallel: [],
-   brave: ["BRAVE_API_KEY"],
-   perplexity: ["PERPLEXITY_API_KEY"],
-   grok: ["XAI_API_KEY", "GROK_API_KEY"],
-   tavily: ["TAVILY_API_KEY"],
-+  serply: ["SERPLY_API_KEY"],
- };
- 
- function envHasKey(provider: SearchProvider): string | null {
-@@ -90,9 +91,10 @@ export function runWebSearchChecks(params: { config: BitterbotConfig }): void {
-           "No web search provider configured.",
-           "  Fix: " +
-             formatCliCommand("bitterbot config set tools.web.search.provider brave") +
--            " (or perplexity / grok / tavily)",
-+            " (or perplexity / grok / tavily / serply)",
-           "  Then either paste a key via `bitterbot configure` or export the",
--          "  provider's env var (BRAVE_API_KEY / PERPLEXITY_API_KEY / XAI_API_KEY / TAVILY_API_KEY).",
-+          "  provider's env var (BRAVE_API_KEY / PERPLEXITY_API_KEY / XAI_API_KEY / TAVILY_API_KEY /",
-+          "  SERPLY_API_KEY).",
-         ].join("\n"),
-       ),
-     );
-```
-
----
-
-### Incident Patch 6: `b9f04b96` (2026-10-04)
-**Commit Message**: fix(review): send a malformed spend call back to the agent instead of queuing it
-
-Seen in the first live test: the model passed `to` where the wallet tool
-takes `address`, and the owner was asked to approve "Send 0.01 USDC to
-(no address)", a call that could never execute. The classifier now names
-the required parameters a spend call left out and the stage returns a
-corrective message without creating a review row.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `src/review/classify.test.ts` (modified, +14/-0)
-```diff
-@@ -72,4 +72,18 @@ describe("classifyToolCall", () => {
- 
-     expect(long?.preview.length).toBeLessThan(260);
-   });
-+
-+  it("names the required parameters a spend call left out", () => {
-+    // Seen live: the model passed `to` where the wallet tool takes `address`.
-+    expect(
-+      classifyToolCall("wallet", { action: "send_usdc", to: "0xabc", amount: 0.01 })?.missing,
-+    ).toEqual(["address"]);
-+    expect(classifyToolCall("wallet", { action: "send_to_peer" })?.missing).toEqual([
-+      "peer_id",
-+      "amount",
-+    ]);
-+    expect(
-+      classifyToolCall("wallet", { action: "send_usdc", address: "0xabc", amount: 1 })?.missing,
-+    ).toBeUndefined();
-+  });
- });
-```
-
-**File**: `src/review/classify.ts` (modified, +16/-0)
-```diff
-@@ -19,6 +19,11 @@ export type Classification = {
-   payee?: string;
-   /** For spend: the amount in USD-equivalent (USDC is 1:1). */
-   amountUsd?: number;
-+  /**
-+   * Required parameters the call left out. Such a call can never execute, so
-+   * it is sent back to the agent to correct instead of being put to the owner.
-+   */
-+  missing?: string[];
- };
- 
- const isRecord = (value: unknown): value is Record<string, unknown> =>
-@@ -47,13 +52,22 @@ export function classifyToolCall(toolName: string, params: unknown): Classificat
-       return null;
-     }
-     const amountUsd = amount(params.amount);
-+    // The wallet tool requires these; name the ones the call left out.
-+    const target =
-+      action === "send_usdc" ? "address" : action === "send_to_peer" ? "peer_id" : "resource_url";
-+    const missing = [
-+      ...(text(params[target]) ? [] : [target]),
-+      ...(amountUsd === undefined ? ["amount"] : []),
-+    ];
-+    const invalid = missing.length > 0 ? { missing } : {};
-     if (action === "send_usdc") {
-       const payee = text(params.address) || "(no address)";
-       return {
-         cls: "spend",
-         preview: `Send ${money(amountUsd)} to ${payee}`,
-         payee,
-         amountUsd,
-+        ...invalid,
-       };
-     }
-     if (action === "send_to_peer") {
-@@ -63,6 +77,7 @@ export function classifyToolCall(toolName: string, params: unknown): Classificat
-         preview: `Send ${money(amountUsd)} to peer ${payee}`,
-         payee,
-         amountUsd,
-+        ...invalid,
-       };
-     }
-     const url = text(params.resource_url) || "(no URL)";
-@@ -72,6 +87,7 @@ export function classifyToolCall(toolName: string, params: unknown): Classificat
-       preview: `Pay ${money(amountUsd)} for ${url}${reason ? ` (${reason})` : ""}`,
-       payee: url,
-       amountUsd,
-+      ...invalid,
-     };
-   }
- 
-```
-
-**File**: `src/review/stage.test.ts` (modified, +13/-0)
-```diff
-@@ -76,4 +76,17 @@ describe("runReviewStage", () => {
-     expect(out.blocked && out.reason).toContain("review service failed");
-     expect(out.blocked && out.reason).toContain("not performed");
-   });
-+
-+  it("sends a malformed spend back to the agent without queuing it", async () => {
-+    svc.consider.mockReset();
-+
-+    const outcome = await runReviewStage({
-+      toolName: "wallet",
-+      params: { action: "send_usdc", to: "0xabc", amount: 0.01 },
-+    });
-+
-+    expect(outcome.blocked).toBe(true);
-+    expect(outcome.blocked && outcome.reason).toContain("missing required parameter(s): address");
-+    expect(svc.consider).not.toHaveBeenCalled();
-+  });
- });
-```
-
-**File**: `src/review/stage.ts` (modified, +12/-1)
-```diff
-@@ -16,9 +16,20 @@ export async function runReviewStage(args: {
- }): Promise<StageOutcome> {
-   // The pure classifier decides whether this call is any of our business, so
-   // an unclassified tool never pays for the store or the config.
--  if (!classifyToolCall(args.toolName, args.params)) {
-+  const classification = classifyToolCall(args.toolName, args.params);
-+  if (!classification) {
-     return { blocked: false };
-   }
-+  // A call the tool would reject is the agent's to fix, not the owner's to
-+  // decide: asking a person to approve "send to (no address)" helps nobody.
-+  if (classification.missing?.length) {
-+    return {
-+      blocked: true,
-+      reason:
-+        `The ${args.toolName} call is missing required parameter(s): ${classification.missing.join(", ")}. ` +
-+        "Nothing was sent and nothing was queued for approval. Check the tool's parameter names and call it again.",
-+    };
-+  }
-   try {
-     const outcome = await getReviewService().consider(
-       args.toolName,
-```
-
----
-
-### Incident Patch 7: `8811010d` (2026-10-04)
-**Commit Message**: fix(web-search): onboarding stores the provider it detects from the environment
-
-Follow-up to #152. Onboarding reported "already configured" for any search
-key found in the environment but wrote nothing, so the runtime still defaulted
-to Brave and web_search failed with missing_brave_api_key. It now stores the
-detected provider, and an explicit provider only counts its own env var.
-
-Docs: the Auto-Detection section described runtime behaviour that does not
-exist; it now describes what onboarding does, in the real order. Serply trial
-terms point at the vendor site instead of quoting numbers.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `docs/tools/web-search.md` (modified, +17/-9)
-```diff
-@@ -21,7 +21,9 @@ Bitterbot supports 6 web search providers for the `web_search` tool. Pick one an
- 
- ## Quick Setup
- 
--The fastest path: pick a provider, set the env variable, done.
-+The fastest path: export one key before running `bitterbot onboard`, which stores
-+the matching provider. On an existing install, also set
-+`tools.web.search.provider` (Brave is the default and needs no provider setting).
- 
- ```bash
- # Option 1: Tavily (recommended for most users)
-@@ -36,7 +38,7 @@ export PERPLEXITY_API_KEY="pplx-..."
- # Option 4: Grok
- export XAI_API_KEY="xai-..."
- 
--# Option 5: Serply (also set provider: "serply", see below)
-+# Option 5: Serply
- export SERPLY_API_KEY="..."
+ <Tip>
+ Check your Node version with `node --version` if you are unsure.
+@@ -144,7 +144,7 @@ way your install starts it: `docker compose up -d` (Docker), `bitterbot gateway`
+ pnpm start gateway
  ```
  
-@@ -170,20 +172,26 @@ Returns Google web results (titles, URLs and snippets) from
- `https://api.serply.io/v1/search`, with the key sent in an `X-Api-Key` header.
- `country` maps to Google's region (`gl`) and `freshness` accepts `pd`, `pw`, `pm`
- and `py`. Date ranges, `search_lang` and `ui_lang` are rejected; put language
--preferences in the query instead. Serply is never selected automatically.
--Get a key at [serply.io](https://serply.io) ([API docs](https://serply.io/docs));
--new accounts get 2,500 free credits for 30 days.
-+preferences in the query instead. Serply is only used when `provider` is
-+`"serply"`. Get a key at [serply.io](https://serply.io)
-+([API docs](https://serply.io/docs)); see their site for current trial terms.
+-Open [http://127.0.0.1:19001](http://127.0.0.1:19001) in your browser to chat, view dreams, manage skills, and monitor the agent. (Developing the UI itself? `pnpm dev:all` runs the gateway plus a hot-reload Vite server on 5173 — dev only.)
++Open [http://127.0.0.1:19001](http://127.0.0.1:19001) in your browser to chat, view dreams, manage skills, and monitor the agent. (Developing the UI itself? `pnpm dev:all` runs the gateway plus a hot-reload Vite server on 5173, dev only.)
  
- ## Auto-Detection
+ ## Optional extras
  
--If no provider is explicitly set, Bitterbot checks for API keys in this order:
-+At runtime, `web_search` uses the configured `provider`. If none is set it uses
-+Brave, so a key for any other provider also needs `provider` set.
+@@ -164,7 +164,7 @@ Open [http://127.0.0.1:19001](http://127.0.0.1:19001) in your browser to chat, v
+ Bitterbot joins a decentralized P2P mesh for skill trading, reputation, and bounties. The orchestrator listens on **TCP port 9100** by default.
  
--1. `TAVILY_API_KEY` → Tavily
--2. `BRAVE_API_KEY` → Brave
-+Onboarding (`bitterbot onboard`) does this for you. When no provider is
-+configured, it checks the environment in this order and stores the first match
-+as `tools.web.search.provider`:
-+
-+1. `BRAVE_API_KEY` → Brave
-+2. `TAVILY_API_KEY` → Tavily
- 3. `PERPLEXITY_API_KEY` → Perplexity
- 4. `XAI_API_KEY` → Grok
-+5. `SERPLY_API_KEY` → Serply
+ <Tip>
+-Port 9100 open (inbound TCP) gives the best P2P performance, but is **not required**. Nodes behind NAT or firewalls automatically use circuit relay through the bootstrap node — no manual configuration needed.
++Port 9100 open (inbound TCP) gives the best P2P performance, but is **not required**. Nodes behind NAT or firewalls automatically use circuit relay through the bootstrap node, so no manual configuration is needed.
+ </Tip>
  
--Set the key and it just works.
-+Parallel is never selected automatically.
- 
- ## See Also
- 
+ See [P2P configuration](/gateway/configuration-reference#p2p-network) for relay mode, security, and advanced options.
 ```
 
-**File**: `src/memory/skill-seekers-url-finder.ts` (modified, +1/-1)
+**File**: `docs/start/wizard.md` (modified, +7/-7)
 ```diff
-@@ -63,7 +63,7 @@ export interface SkillSeekersUrlFinder {
-  * fallback entirely rather than failing loudly.
-  *
-  * PLAN-34 Phase 2c: generalized beyond Brave. Brave keeps its lean native
-- * path; every other configured provider (perplexity/grok/tavily) rides the
-+ * path; every other configured provider (perplexity/grok/tavily/parallel/serply) rides the
-  * web_search tool's own provider dispatch (same keys, caching, timeouts)
-  * via runConfiguredWebSearch, with the same authoritative-result picker.
-  */
+@@ -124,15 +124,15 @@ The terminal wizard starts with **QuickStart** (the setup steps above) vs
+ 
+ **Local mode (default)** walks you through these steps:
+ 
+-1. **Model/Auth** — Anthropic API key (recommended), OpenAI, or Custom Provider
++1. **Model/Auth**: Anthropic API key (recommended), OpenAI, or Custom Provider
+    (OpenAI-compatible, Anthropic-compatible, or Unknown auto-detect). Advanced flow also picks a default model.
+-2. **Workspace** — Location for agent files (default `~/.bitterbot/workspace`). Seeds bootstrap files.
+-3. **Gateway** — Port, bind address, auth mode, Tailscale exposure.
+-4. **Channels** _(Advanced)_ — WhatsApp, Telegram, Discord, Slack, or Signal.
++2. **Workspace**: Location for agent files (default `~/.bitterbot/workspace`). Seeds bootstrap files.
++3. **Gateway**: Port, bind address, auth mode, Tailscale exposure.
++4. **Channels** _(Advanced)_: WhatsApp, Telegram, Discord, Slack, or Signal.
+    QuickStart defers this to the Control UI or `bitterbot channels add`.
+-5. **Daemon** — Installs a LaunchAgent (macOS) or systemd user unit (Linux/WSL2).
+-6. **Health check** — Starts the Gateway and verifies it's running.
+-7. **Skills** _(Advanced)_ — Installs recommended skills and optional dependencies.
++5. **Daemon**: Installs a LaunchAgent (macOS) or systemd user unit (Linux/WSL2).
++6. **Health check**: Starts the Gateway and verifies it's running.
++7. **Skills** _(Advanced)_: Installs recommended skills and optional dependencies.
+    QuickStart keeps the bundled skills and defers extras.
+ 
+ <Note>
 ```
 
-**File**: `src/wizard/onboarding.web-search.test.ts` (modified, +40/-3)
+**File**: `docs/tools/browser.md` (modified, +28/-0)
 ```diff
-@@ -10,7 +10,13 @@ function prompter(selectValue = "tavily", textValue = "") {
-   } as never;
- }
+@@ -402,6 +402,34 @@ If you see `Playwright is not available in this gateway build`, install the full
+ Playwright package (not `playwright-core`) and restart the gateway, or reinstall
+ Bitterbot with browser support.
  
--const ENV_KEYS = ["BRAVE_API_KEY", "TAVILY_API_KEY", "PERPLEXITY_API_KEY", "XAI_API_KEY"];
-+const ENV_KEYS = [
-+  "BRAVE_API_KEY",
-+  "TAVILY_API_KEY",
-+  "PERPLEXITY_API_KEY",
-+  "XAI_API_KEY",
-+  "SERPLY_API_KEY",
-+];
- 
- describe("setupWebSearchForOnboarding (PLAN-41 D-M)", () => {
-   const saved = new Map<string, string | undefined>();
-@@ -43,15 +49,46 @@ describe("setupWebSearchForOnboarding (PLAN-41 D-M)", () => {
-     expect(mocks.text).not.toHaveBeenCalled();
-   });
- 
--  it("quickstart with an env key still detects it without prompting", async () => {
-+  it("quickstart with an env key stores the detected provider without prompting", async () => {
-     clearEnv();
-     process.env.TAVILY_API_KEY = "tvly-test";
-     const p = prompter();
-     const out = await setupWebSearchForOnboarding({ config: {}, flow: "quickstart", prompter: p });
--    expect(out).toEqual({});
-+    expect(out).toEqual({ tools: { web: { search: { provider: "tavily" } } } });
-     expect((p as { select: ReturnType<typeof vi.fn> }).select).not.toHaveBeenCalled();
-   });
- 
-+  it("an incumbent env key wins over SERPLY_API_KEY", async () => {
-+    clearEnv();
-+    process.env.BRAVE_API_KEY = "test-existing";
-+    process.env.SERPLY_API_KEY = "serply-test";
-+    const p = prompter();
-+    const out = await setupWebSearchForOnboarding({ config: {}, flow: "quickstart", prompter: p });
-+    expect(out.tools?.web?.search?.provider).toBe("brave");
-+  });
++#### Playwright's own Chromium build
 +
-+  it("selects Serply from the environment only when it is the sole search key", async () => {
-+    clearEnv();
-+    process.env.SERPLY_API_KEY = "serply-test";
-+    const p = prompter();
-+    const out = await setupWebSearchForOnboarding({ config: {}, flow: "advanced", prompter: p });
-+    expect(out.tools?.web?.search?.provider).toBe("serply");
-+    expect((p as { select: ReturnType<typeof vi.fn> }).select).not.toHaveBeenCalled();
-+  });
++The browser tool runs a system Chrome, Brave, Edge or Chromium (or a Chromium that
++Playwright downloaded, of any revision) and attaches to it, so it does not need a
++specific Playwright browser build. Code that calls `chromium.launch()` itself does:
++each Playwright version pins one Chromium revision (for example, Playwright 1.63.0
++pins revision 1243), and after a Playwright upgrade an older download fails with
++`Executable doesn't exist at .../chromium_headless_shell-<rev>/...`.
 +
-+  it("does not count another provider's env key for an explicit selection", async () => {
-+    clearEnv();
-+    process.env.BRAVE_API_KEY = "test-existing";
-+    const config = { tools: { web: { search: { provider: "tavily" as const } } } };
-+    const p = prompter("serply", "serply-abc");
-+    const out = await setupWebSearchForOnboarding({ config, flow: "advanced", prompter: p });
-+    expect((p as { select: ReturnType<typeof vi.fn> }).select).toHaveBeenCalled();
-+    expect(out.tools?.web?.search?.provider).toBe("serply");
-+    const serply = (out.tools?.web?.search as Record<string, { apiKey?: string }> | undefined)
-+      ?.serply;
-+    expect(serply?.apiKey).toBe("serply-abc");
-+  });
++`bitterbot doctor` (Install section) reports the revision the installed
++`playwright-core` expects, whether it is downloaded, and the exact command that
++downloads it for your install. The browser tool prints the same command when a
++launch fails this way. Typical forms:
 +
-   it("advanced still walks provider + key", async () => {
-     clearEnv();
-     const p = prompter("tavily", "tvly-abc");
++```bash
++# Source checkout
++pnpm exec playwright-core install chromium
++
++# Release tarball (install.sh); --with-browser does this at install time
++PLAYWRIGHT_BROWSERS_PATH=~/.bitterbot/browsers \
++  ~/.bitterbot/app/current/runtime/node/bin/node \
++  ~/.bitterbot/app/current/node_modules/playwright-core/cli.js install chromium
++```
++
++`install chromium` also downloads the matching headless shell. The installers do
++not download a browser by default (about 170 MB); use `install.sh --with-browser`
++on Linux, or install Chrome.
++
+ #### Docker Playwright install
+ 
+ If your Gateway runs in Docker, avoid `npx playwright` (npm override conflicts).
 ```
 
-**File**: `src/wizard/onboarding.web-search.ts` (modified, +26/-4)
+---
+
+### Incident Patch 2: `660953fc` (2026-10-16)
+**Commit Message**: fix(whatsapp): baileys 7.0.0-rc14 (GHSA-qvv5-jq5g-4cgg message spoofing) (#259)
+
+* fix(whatsapp): baileys 7.0.0-rc14 (GHSA-qvv5-jq5g-4cgg message spoofing)
+
+Bump @whiskeysockets/baileys from 7.0.0-rc.9 to 7.0.0-rc14 (npm latest).
+rc.9 is affected by GHSA-qvv5-jq5g-4cgg: a crafted placeholderResend
+protocolMessage could inject a fake messages.upsert (spoofed sender and
+payload), spoof history sync, and corrupt app state sync. Fixed upstream
+in rc12; npm now marks rc.9 deprecated.
+
+- package.json: exact pin 7.0.0-rc14 (same pin style as before).
+- pnpm-lock.yaml: libsignal now comes from the npm registry (6.0.0)
+  instead of a GitHub codeload tarball, new dep whatsapp-rust-bridge
+  0.5.4 (WASM, no install scripts), protobufjs 7.6.6, music-metadata
+  11.16.1; orphaned transitive entries pruned. No other packages moved.
+- No source changes needed: every API we use (makeWASocket options,
+  useMultiFileAuthState, makeCacheableSignalKeyStore,
+  fetchLatestBaileysVersion, DisconnectReason, isJidGroup,
+  downloadMediaMessage, normalize/extractMessageContent, getContentType,
+  signalRepository.lidMapping, messages.upsert/connection.update/
+  creds.update) is unchanged; the rc10-rc14 type dif
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -9,9 +9,11 @@
-  * This step:
-  *   1. Checks if a key is already present (config or env var)
-  *   2. If not, asks the user to pick a provider and paste a key
-- *   3. On quickstart, auto-detects from env vars and skips if found
-+ *   3. On quickstart, auto-detects from env vars, stores the detected
-+ *      provider, and skips if found
-  *
-- * Supported providers: Brave Search, Perplexity, Grok (xAI), Tavily, Serply.
-+ * Supported providers: Brave Search, Perplexity, Grok (xAI), Tavily, Serply,
-+ * and keyless Parallel.
-  */
+@@ -180,7 +180,7 @@
+     "@twurple/api": "^8.2.0",
+     "@twurple/auth": "^8.2.0",
+     "@twurple/chat": "^8.2.0",
+-    "@whiskeysockets/baileys": "7.0.0-rc.9",
++    "@whiskeysockets/baileys": "7.0.0-rc14",
+     "ajv": "^8.20.0",
+     "chalk": "^5.6.2",
+     "chokidar": "^5.0.0",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +42/-107)
+```diff
+@@ -101,8 +101,8 @@ importers:
+         specifier: ^8.2.0
+         version: 8.2.0(@twurple/auth@8.2.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+       '@whiskeysockets/baileys':
+-        specifier: 7.0.0-rc.9
+-        version: 7.0.0-rc.9(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@25.2.3))(utf-8-validate@5.0.10)
++        specifier: 7.0.0-rc14
++        version: 7.0.0-rc14(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@25.2.3))(utf-8-validate@5.0.10)
+       ajv:
+         specifier: ^8.20.0
+         version: 8.20.0
+@@ -776,9 +776,6 @@ packages:
+     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
+     engines: {node: '>=18'}
  
- import type { BitterbotConfig } from "../config/config.js";
-@@ -78,9 +80,15 @@ function detectExistingKey(config: BitterbotConfig): {
-     return { provider, source: "config" };
-   }
+-  '@borewit/text-codec@0.2.1':
+-    resolution: {integrity: sha512-k7vvKPbf7J2fZ5klGRD9AeKfUvojuZIQ3BT5u7Jfv+puwXkUBUT5PVyMDfJZpy30CBDXGMgw7fguK/lpOMBvgw==}
+-
+   '@borewit/text-codec@0.2.2':
+     resolution: {integrity: sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==}
  
--  // Check env vars
-+  // Check env vars. The runtime never infers a provider from the environment
-+  // (an unset provider means Brave), so an explicit selection only counts its
-+  // own env var.
-+  if (search?.provider) {
-+    const envVar = PROVIDERS[provider]?.envVar;
-+    return envVar && process.env[envVar]?.trim() ? { provider, source: "env" } : null;
-+  }
-   for (const [p, meta] of Object.entries(PROVIDERS)) {
--    if (process.env[meta.envVar]?.trim()) {
-+    if (meta.envVar && process.env[meta.envVar]?.trim()) {
-       return { provider: p as SearchProvider, source: "env" };
-     }
-   }
-@@ -112,6 +120,20 @@ export async function setupWebSearchForOnboarding(params: {
-       ].join("\n"),
-       "Web search",
-     );
-+    // Persist a provider detected from the environment; otherwise the runtime
-+    // would still default to Brave and the note above would be wrong.
-+    if (existing.source === "env" && config.tools?.web?.search?.provider !== existing.provider) {
-+      return {
-+        ...config,
-+        tools: {
-+          ...config.tools,
-+          web: {
-+            ...config.tools?.web,
-+            search: { ...config.tools?.web?.search, provider: existing.provider },
+@@ -2650,42 +2647,24 @@ packages:
+   '@protobufjs/base64@1.1.2':
+     resolution: {integrity: sha512-AZkcAA5vnN/v4PDqKyMR5lx7hZttPDgClv83E//FMNhR2TMcLUhfRUBHCmSl0oi9zMgDDqRUJkSxO3wm85+XLg==}
+ 
+-  '@protobufjs/codegen@2.0.4':
+-    resolution: {integrity: sha512-YyFaikqM5sH0ziFZCN3xDC7zeGaB/d0IUb9CATugHWbd1FRFwWwt4ld4OYMPWu5a3Xe01mGAULCdqhMlPl29Jg==}
+-
+   '@protobufjs/codegen@2.0.5':
+     resolution: {integrity: sha512-zgXFLzW3Ap33e6d0Wlj4MGIm6Ce8O89n/apUaGNB/jx+hw+ruWEp7EwGUshdLKVRCxZW12fp9r40E1mQrf/34g==}
+ 
+-  '@protobufjs/eventemitter@1.1.0':
+-    resolution: {integrity: sha512-j9ednRT81vYJ9OfVuXG6ERSTdEL1xVsNgqpkxMsbIabzSo3goCjDIveeGv5d03om39ML71RdmrGNjG5SReBP/Q==}
+-
+   '@protobufjs/eventemitter@1.1.1':
+     resolution: {integrity: sha512-vW1GmwMZNnL+gMRaovlh9yZX74kc+TTU3FObkkurpMaRtBfLP3ldjS9KQWlwZgraRE0+dheEEoAxdzcJQ8eXZg==}
+ 
+-  '@protobufjs/fetch@1.1.0':
+-    resolution: {integrity: sha512-lljVXpqXebpsijW71PZaCYeIcE5on1w5DlQy5WH6GLbFryLUrBD4932W/E2BSpfRJWseIL4v/KPgBFxDOIdKpQ==}
+-
+   '@protobufjs/fetch@1.1.1':
+     resolution: {integrity: sha512-GpptLrs57adMSuHi3VNj0mAF8dwh36LMaYF6XyJ6JMWlVsc+t42tm1HSEDmOs3A8fC9yyeisgLhsTVQokOZ0zw==}
+ 
+   '@protobufjs/float@1.0.2':
+     resolution: {integrity: sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==}
+ 
+-  '@protobufjs/inquire@1.1.0':
+-    resolution: {integrity: sha512-kdSefcPdruJiFMVSbn801t4vFK7KB/5gd2fYvrxhuJYg8ILrmn9SKSX2tZdV6V+ksulWqS7aXjBcRXl3wHoD9Q==}
+-
+-  '@protobufjs/inquire@1.1.2':
+-    resolution: {integrity: sha512-pa0vFRuws4wkvaXKK1uXZMAwAX4/t8ANaJo45iw/oQHNQ9q5xUzwgFmVJGXiga2BeN+zpX7Vf9vmsiIa2J+MUw==}
+-
+   '@protobufjs/path@1.1.2':
+     resolution: {integrity: sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==}
+ 
+   '@protobufjs/pool@1.1.0':
+     resolution: {integrity: sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==}
+ 
+-  '@protobufjs/utf8@1.1.0':
+-    resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
+-
+   '@protobufjs/utf8@1.1.2':
+     resolution: {integrity: sha512-b1UQwcEZ4yCnMCD8DAL1VlbvBJE9/IX4FTIp7BG1xYpf29SLazLSrqUkj4w7Y5y7cCVP6E5tcqqcI0xemPkHug==}
+ 
+@@ -5370,16 +5349,12 @@ packages:
+   '@wasm-audio-decoders/opus-ml@0.0.3':
+     resolution: {integrity: sha512-SEeTmk0eb3q5etJA/NHCRWW6BivTx9tqvNTmG0kg2ynuATEQRUZnwQE6Ibvl1BBvqIGHqI57+qyJMWmJBwb5XQ==}
+ 
+-  '@whiskeysockets/baileys@7.0.0-rc.9':
+-    resolution: {integrity: sha512-YFm5gKXfDP9byCXCW3OPHKXLzrAKzolzgVUlRosHHgwbnf2YOO3XknkMm6J7+F0ns8OA0uuSBhgkRHTDtqkacw==}
++  '@whiskeysockets/baileys@7.0.0-rc14':
++    resolution: {integrity: sha512-WK+X8ju8TPGxvWIsP8hrY6JB6FltYuFe+vsqKfjOYX25JObij9qLf2c3ZGdl1Q+vhFwbnT+AZmWAB5pTvzmSiQ==}
+     engines: {node: '>=20.0.0'}
+-    deprecated: |-
+-      This version is affected by a zero-day vulnerability that allows spoofing of messages, please update to
+-        the latest versions (6.7.22^ or 7.0.0-rc12^)! For more information, check out the public advisory at
+-        https://github.com/WhiskeySockets/Baileys/security/advisories/GHSA-qvv5-jq5g-4cgg
+     peerDependencies:
+       audio-decode: ^2.1.3
+-      jimp: ^1.6.0
++      jimp: ^1.6.1
+       link-preview-js: ^3.0.0
+       sharp: '*'
+     peerDependenciesMeta:
+@@ -6082,6 +6057,10 @@ packages:
+     resolution: {integrity: sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==}
+     engines: {node: '>= 0.6'}
+ 
++  content-type@2.1.0:
++    resolution: {integrity: sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag==}
++    engines: {node: '>=18'}
++
+   convert-source-map@2.0.0:
+     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+ 
+@@ -7434,9 +7413,8 @@ packages:
+   libqp@2.1.2:
+     resolution: {integrity: 
+```
+
+**File**: `src/web/close-socket.test.ts` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++import { describe, expect, it, vi } from "vitest";
++import { closeWaSocketTransport } from "./close-socket.js";
++
++describe("closeWaSocketTransport", () => {
++  it("calls ws.close synchronously", () => {
++    const close = vi.fn();
++    closeWaSocketTransport({ ws: { close } });
++    expect(close).toHaveBeenCalledTimes(1);
++  });
++
++  it("tolerates a missing socket or transport", () => {
++    expect(() => closeWaSocketTransport(undefined)).not.toThrow();
++    expect(() => closeWaSocketTransport({ ws: null })).not.toThrow();
++  });
++
++  it("routes a synchronous throw to onError", () => {
++    const onError = vi.fn();
++    closeWaSocketTransport(
++      {
++        ws: {
++          close: () => {
++            throw new Error("boom");
 +          },
 +        },
-+      };
-+    }
-     return config;
-   }
- 
-```
-
----
-
-### Incident Patch 8: `ae378f87` (2026-10-04)
-**Commit Message**: fix(review): drop redundant default type argument in the renderer review store
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `desktop/renderer/src/stores/review-store.ts` (modified, +1/-1)
-```diff
-@@ -85,7 +85,7 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
-     const gateway = useGatewayStore.getState();
-     set((s) => ({ busy: new Set([...s.busy, id]) }));
-     try {
--      const action = await gateway.request<unknown>("review.resolve", { id, decision });
-+      const action = await gateway.request("review.resolve", { id, decision });
-       if (isAction(action)) {
-         set((s) => ({
-           pending: s.pending.filter((a) => a.id !== id),
-```
-
----
-
-### Incident Patch 9: `5ee2bb9c` (2026-10-03)
-**Commit Message**: Merge pull request #149 from Bitterbot-AI/fix/session-skills-snapshot-dedup
-
-fix(sessions): store each skills snapshot body once, keep a ref per session
-
-**File**: `docs/concepts/session.md` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ All session state is **owned by the gateway** (the “master” Bitterbot). UI c
- - The store is a map `sessionKey -> { sessionId, updatedAt, ... }`. Deleting entries is safe; they are recreated on demand.
- - Group entries may include `displayName`, `channel`, `subject`, `room`, and `space` to label sessions in UIs.
- - Session entries include `origin` metadata (label + routing hints) so UIs can explain where a session came from.
-+- Each entry pins the skills it was started with as `skillsSnapshot`. The body of that snapshot (the skills prompt and the resolved skill records, about 22 KB and identical across an agent's sessions) is stored once per distinct content in `.../sessions/skills-snapshots/<ref>.json`; the entry keeps `{ ref, skills, version }`. Unreferenced bodies are removed when the store is saved. An index written by an older version (bodies inline) still loads and is converted on its next save.
- - Bitterbot does **not** read legacy Pi/Tau session folders.
- 
- ## Session pruning
-```
-
-**File**: `src/auto-reply/reply/commands-compact.ts` (modified, +5/-1)
-```diff
-@@ -6,6 +6,7 @@ import {
- } from "../../agents/embedded.js";
- import type { BitterbotConfig } from "../../config/config.js";
- import {
-+  materializeSessionSkillsSnapshot,
-   resolveFreshSessionTotalTokens,
-   resolveSessionFilePath,
-   resolveSessionFilePathOptions,
-@@ -93,7 +94,10 @@ export const handleCompactCommand: CommandHandler = async (params) => {
-     ),
-     workspaceDir: params.workspaceDir,
-     config: params.cfg,
--    skillsSnapshot: params.sessionEntry.skillsSnapshot,
-+    skillsSnapshot: materializeSessionSkillsSnapshot(
-+      params.storePath,
-+      params.sessionEntry.skillsSnapshot,
-+    ),
-     provider: params.provider,
-     model: params.model,
-     thinkLevel: params.resolvedThinkLevel ?? (await params.resolveDefaultThinkingLevel()),
-```
-
-**File**: `src/auto-reply/reply/session-updates.ts` (modified, +24/-10)
-```diff
-@@ -5,7 +5,12 @@ import type { CapabilityGateContext } from "../../agents/skills/capability-gate.
- import { createCapabilityRuntimeFromMemory } from "../../agents/skills/capability-runtime.js";
- import { ensureSkillsWatcher, getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
- import type { BitterbotConfig } from "../../config/config.js";
--import { type SessionEntry, updateSessionStore } from "../../config/sessions.js";
-+import {
-+  materializeSessionSkillsSnapshot,
-+  type SessionEntry,
-+  type SessionSkillSnapshot,
-+  updateSessionStore,
-+} from "../../config/sessions.js";
- import { buildChannelSummary } from "../../infra/channel-summary.js";
- import {
-   resolveTimezone,
-@@ -154,15 +159,19 @@ export async function ensureSkillSnapshot(params: {
-   agentId?: string;
- }): Promise<{
-   sessionEntry?: SessionEntry;
--  skillsSnapshot?: SessionEntry["skillsSnapshot"];
-+  /** The full snapshot for this run (a stored ref is joined with its body here). */
-+  skillsSnapshot?: SessionSkillSnapshot;
-   systemSent: boolean;
- }> {
-   if (process.env.BITTERBOT_TEST_FAST === "1") {
-     // In fast unit-test runs we skip filesystem scanning, watchers, and session-store writes.
-     // Dedicated skills tests cover snapshot generation behavior.
-     return {
-       sessionEntry: params.sessionEntry,
--      skillsSnapshot: params.sessionEntry?.skillsSnapshot,
-+      skillsSnapshot: materializeSessionSkillsSnapshot(
-+        params.storePath,
-+        params.sessionEntry?.skillsSnapshot,
-+      ),
-       systemSent: params.sessionEntry?.systemSent ?? false,
-     };
-   }
-@@ -184,16 +193,21 @@ export async function ensureSkillSnapshot(params: {
-   const remoteEligibility = getRemoteSkillEligibility();
-   const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
-   ensureSkillsWatcher({ workspaceDir, config: cfg });
-+  // The entry may hold a ref to a stored body. Resolve it once; a ref whose
-+  // body is gone counts as no snapshot, so the session builds a fresh one.
-+  const storedSnapshot = materializeSessionSkillsSnapshot(storePath, nextEntry?.skillsSnapshot);
-+  if (nextEntry && nextEntry.skillsSnapshot && !storedSnapshot) {
-+    nextEntry = { ...nextEntry, skillsSnapshot: undefined };
-+  }
-   const shouldRefreshSnapshot =
--    snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
-+    snapshotVersion > 0 && (storedSnapshot?.version ?? 0) < snapshotVersion;
- 
-   // PLAN-29 Phase 0.3: load-time capability gate for P2P-ingested skills,
-   // on by default. Resolved once per call, and only when a snapshot build
-   // can actually happen (gate resolution touches the memory manager). A
-   // null runtime (cold start, no memory) degrades to ungated — same
-   // behavior as before the gate existed.
--  const willBuildSnapshot =
--    isFirstTurnInSession || shouldRefreshSnapshot || !sessionEntry?.skillsSnapshot;
-+  const willBuildSnapshot = isFirstTurnInSession || shouldRefreshSnapshot || !storedSnapshot;
-   let capabilityGate: CapabilityGateContext | undefined;
-   if (willBuildSnapshot && cfg.skills?.p2p?.loadTimeCapabilityGate !== false) {
-     const runtime = await createCapabilityRuntimeFromMemory({
-@@ -210,15 +224,15 @@ export async function ensureSkillSnapshot(params: {
-         updatedAt: Date.now(),
-       };
-     const skillSnapshot =
--      isFirstTurnInSession || !current.skillsSnapshot || shouldRefreshSnapshot
-+      isFirstTurnInSession || !storedSnapshot || shouldRefreshSnapshot
-         ? buildWorkspaceSkillSnapshot(workspaceDir, {
-             config: cfg,
-             skillFilter,
-             eligibility: { remote: remoteEligibility },
-             snapshotVersion,
-             capabilityGate,
-           })
--        : current.skillsSnapshot;
-+        : storedSnapshot;
-     nextEntry = {
-       ...current,
-       sessionId: sessionId ?? current.sessionId ?? crypto.randomUUID(),
-@@ -235,15 +249,15 @@ export async function ensureSkillSnapshot(params: {
-     systemSent = true;
-   }
- 
--  const skillsSnapshot = shouldRefreshSnapshot
-+  const skillsSnapshot: SessionSkillSnapshot | undefined = shouldRefreshSnapshot
-     ? buildWorkspaceSkillSnapshot(workspaceDir, {
-         config: cfg,
-         skillFilter,
-         eligibility: { remote: remoteEligibility },
-         snapshotVersion,
-         capabilityGate,
-       })
--    : (nextEntry?.skillsSnapshot ??
-+    : (materializeSessionSkillsSnapshot(storePath, nextEntry?.skillsSnapshot) ??
-       (isFirstTurnInSession
-         ? undefined
-         : buildWorkspaceSkillSnapshot(workspaceDir, {
-```
-
-**File**: `src/commands/agent.ts` (modified, +11/-4)
-```diff
-@@ -42,6 +42,7 @@ import { formatCliCommand } from "../cli/command-format.js";
- import { type CliDeps, createDefaultDeps } from "../cli/deps.js";
- import { loadConfig } from "../config/config.js";
- import {
-+  materializeSessionSkillsSnapshot,
-   resolveAgentIdFromSessionKey,
-   resolveSessionFilePath,
-   type SessionEntry,
-@@ -356,11 +357,17 @@ export async function agentCommand(
-     }
- 
-     const skillsSnapshotVersion = getSkillsSnapshotVersion(workspaceDir);
--    const cachedSnapshotVersion = sessionEntry?.skillsSnapshot?.version ?? -1;
-+    // The stored entry holds a ref to the snapshot body; join it here. A ref
-+    // whose body is gone counts as no snapshot and is rebuilt.
-+    const storedSnapshot = materializeSessionSkillsSnapshot(
-+      storePath,
-+      sessionEntry?.skillsSnapshot,
-+    );
-+    const cachedSnapshotVersion = storedSnapshot?.version ?? -1;
-     const snapshotIsStale = cachedSnapshotVersion < skillsSnapshotVersion;
--    const needsSkillsSnapshot = isNewSession || !sessionEntry?.skillsSnapshot || snapshotIsStale;
-+    const needsSkillsSnapshot = isNewSession || !storedSnapshot || snapshotIsStale;
-     const skillFilter = resolveAgentSkillsFilter(cfg, sessionAgentId);
--    const previousSnapshot = sessionEntry?.skillsSnapshot;
-+    const previousSnapshot = storedSnapshot;
-     // PLAN-29 Phase 0.3: same load-time capability gate as the reply runner
-     // (session-updates.ts) so the CLI agent path can't load P2P skills the
-     // chat path would have blocked. Null runtime degrades to ungated.
-@@ -380,7 +387,7 @@ export async function agentCommand(
-           skillFilter,
-           capabilityGate: cliCapabilityGate,
-         })
--      : sessionEntry?.skillsSnapshot;
-+      : storedSnapshot;
- 
-     // Hot-toggle awareness: if we rebuilt mid-session because the user (or
-     // marketplace) changed skills, surface the diff to the agent so its next
-```
-
-**File**: `src/config/sessions.ts` (modified, +4/-0)
-```diff
-@@ -5,6 +5,10 @@ export * from "./sessions/paths.js";
- export * from "./sessions/reset.js";
- export * from "./sessions/session-key.js";
- export * from "./sessions/store.js";
-+export {
-+  materializeSessionSkillsSnapshot,
-+  SKILLS_SNAPSHOT_DIR,
-+} from "./sessions/skills-snapshot-store.js";
- export * from "./sessions/types.js";
- export * from "./sessions/transcript.js";
- export * from "./sessions/delivery-info.js";
-```
-
-**File**: `src/config/sessions/skills-snapshot-store.test.ts` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+import fs from "node:fs";
-+import os from "node:os";
-+import path from "node:path";
-+import { afterEach, beforeEach, describe, expect, it } from "vitest";
-+import {
-+  clearSkillsSnapshotBodyCacheForTest,
-+  externalizeSkillsSnapshots,
-+  materializeSessionSkillsSnapshot,
-+  pruneSkillsSnapshotFiles,
-+  SKILLS_SNAPSHOT_DIR,
-+  snapshotRefFor,
-+} from "./skills-snapshot-store.js";
-+import { clearSessionStoreCacheForTest, loadSessionStore, saveSessionStore } from "./store.js";
-+import {
-+  isSessionSkillSnapshotRef,
-+  type SessionEntry,
-+  type SessionSkillSnapshot,
-+} from "./types.js";
-+
-+const prompt = "## Skills\n\n".padEnd(9_000, "x");
-+const snapshot: SessionSkillSnapshot = {
-+  prompt,
-+  skills: [{ name: "a" }, { name: "b", primaryEnv: "node" }],
-+  skillFilter: ["a", "b"],
-+  resolvedSkills: [{ name: "a", description: "A" } as never],
-+  version: 3,
-+};
-+
-+let dir: string;
-+let storePath: string;
-+
-+beforeEach(() => {
-+  dir = fs.mkdtempSync(path.join(os.tmpdir(), "bb-skills-snap-"));
-+  storePath = path.join(dir, "sessions.json");
-+  clearSessionStoreCacheForTest();
-+  clearSkillsSnapshotBodyCacheForTest();
-+});
-+
-+afterEach(() => {
-+  fs.rmSync(dir, { recursive: true, force: true });
-+});
-+
-+describe("skills snapshot externalization", () => {
-+  it("writes one body per distinct content and leaves refs in the entries", () => {
-+    const store: Record<string, SessionEntry> = {};
-+    for (let i = 0; i < 40; i++) {
-+      store[`agent:a:s${i}`] = { sessionId: `id-${i}`, updatedAt: i, skillsSnapshot: snapshot };
-+    }
-+    store["agent:a:other"] = {
-+      sessionId: "id-o",
-+      updatedAt: 1,
-+      skillsSnapshot: { ...snapshot, prompt: "different" },
-+    };
-+    store["agent:a:none"] = { sessionId: "id-n", updatedAt: 1 };
-+
-+    const out = externalizeSkillsSnapshots(storePath, store);
-+    expect(out).not.toBe(store);
-+    // Input untouched.
-+    expect(isSessionSkillSnapshotRef(store["agent:a:s0"]!.skillsSnapshot)).toBe(false);
-+    const files = fs.readdirSync(path.join(dir, SKILLS_SNAPSHOT_DIR));
-+    expect(files).toHaveLength(2);
-+    const ref = out["agent:a:s0"]!.skillsSnapshot;
-+    expect(isSessionSkillSnapshotRef(ref)).toBe(true);
-+    if (!isSessionSkillSnapshotRef(ref)) {
-+      throw new Error("expected a ref");
-+    }
-+    expect(ref).toEqual({
-+      ref: snapshotRefFor(snapshot),
-+      skills: snapshot.skills,
-+      skillFilter: snapshot.skillFilter,
-+      version: 3,
-+    });
-+    expect(out["agent:a:none"]!.skillsSnapshot).toBeUndefined();
-+    // The index shrank by the body size times the entry count.
-+    const before = JSON.stringify(store).length;
-+    const after = JSON.stringify(out).length;
-+    expect(after).toBeLessThan(before / 20);
-+  });
-+
-+  it("materializes a ref back into the full snapshot, and inline snapshots pass through", () => {
-+    const out = externalizeSkillsSnapshots(storePath, {
-+      "agent:a:s": { sessionId: "id", updatedAt: 1, skillsSnapshot: snapshot },
-+    });
-+    clearSkillsSnapshotBodyCacheForTest(); // force the file read
-+    const full = materializeSessionSkillsSnapshot(storePath, out["agent:a:s"]!.skillsSnapshot);
-+    expect(full).toEqual(snapshot);
-+    expect(materializeSessionSkillsSnapshot(storePath, snapshot)).toBe(snapshot);
-+    expect(materializeSessionSkillsSnapshot(storePath, undefined)).toBeUndefined();
-+  });
-+
-+  it("returns undefined for a ref whose body is missing or unsafe", () => {
-+    expect(
-+      materializeSessionSkillsSnapshot(storePath, { ref: "0123456789abcdef", skills: [] }),
-+    ).toBeUndefined();
-+    expect(
-+      materializeSessionSkillsSnapshot(storePath, { ref: "../../etc/passwd", skills: [] }),
-+    ).toBeUndefined();
-+    expect(
-+      materializeSessionSkillsSnapshot(undefined, { ref: "0123456789abcdef", skills: [] }),
-+    ).toBeUndefined();
-+  });
-+
-+  it("prunes bodies no entry references", () => {
-+    const out = externalizeSkillsSnapshots(storePath, {
-+      "agent:a:s": { sessionId: "id", updatedAt: 1, skillsSnapshot: snapshot },
-+      "agent:a:t": {
-+        sessionId: "id2",
-+        updatedAt: 1,
-+        skillsSnapshot: { ...snapshot, prompt: "gone soon" },
 +      },
-+    });
-+    expect(fs.readdirSync(path.join(dir, SKILLS_SNAPSHOT_DIR))).toHaveLength(2);
-+    delete out["agent:a:t"];
-+    expect(pruneSkillsSnapshotFiles(storePath, out)).toBe(1);
-+    expect(fs.readdirSync(path.join(dir, SKILLS_SNAPSHOT_DIR))).toEqual([
-+      `${snapshotRefFor(snapshot)}.json`,
-+    ]);
-+  });
-+
-+  it("round-trips through saveSessionStore and loadSessionStore; a legacy inline index still loads", async () => {
-+    await saveSessionStore(storePath, {
-+      "agent:a:s": { sessionId: "id", updatedAt: 1, skillsSnapshot: snapshot },
-+    });
-+    const onDisk = JSON.parse(fs.readFileSync(storePath, "utf-8")) as Record<string, SessionEntry>;
-+    expect(isSessionSkillSnapshotRef(onDisk["agent:a:s"]!.skillsSnapshot)).toBe(true);
-+    expect(fs.readFileSync(storePath, "utf-8")).not.
-```
-
-**File**: `src/config/sessions/skills-snapshot-store.ts` (added, +202/-0)
-```diff
-@@ -0,0 +1,202 @@
-+import crypto from "node:crypto";
-+import fs from "node:fs";
-+import path from "node:path";
-+import { createSubsystemLogger } from "../../logging/subsystem.js";
-+import {
-+  isSessionSkillSnapshotRef,
-+  type SessionEntry,
-+  type SessionSkillSnapshot,
-+  type SessionSkillSnapshotRef,
-+} from "./types.js";
-+
-+/**
-+ * Per-session skills snapshots, stored once per distinct content.
-+ *
-+ * Every session entry used to carry its own copy of the skills prompt and the
-+ * resolved skill records (about 22 KB). The copies were identical across the
-+ * sessions of an agent, so a store with 300 sessions was a 9.7 MB file that
-+ * the gateway parsed, deep-copied and rewrote on every turn (2026-10-03
-+ * profile). The body now lives in `<store dir>/skills-snapshots/<ref>.json`,
-+ * keyed by a content hash, and the entry keeps a `SessionSkillSnapshotRef`.
-+ *
-+ * Reading an index written before this change still works: inline snapshots
-+ * stay inline until the next save externalizes them.
-+ */
-+
-+const log = createSubsystemLogger("sessions/skills-snapshots");
-+
-+export const SKILLS_SNAPSHOT_DIR = "skills-snapshots";
-+
-+/** Body kept in the side file: everything but the small fields the ref repeats. */
-+type SnapshotBody = Pick<SessionSkillSnapshot, "prompt" | "resolvedSkills">;
-+
-+const bodyCache = new Map<string, SnapshotBody>();
-+const BODY_CACHE_MAX = 32;
-+
-+function snapshotDir(storePath: string): string {
-+  return path.join(path.dirname(storePath), SKILLS_SNAPSHOT_DIR);
-+}
-+
-+function snapshotFile(storePath: string, ref: string): string {
-+  return path.join(snapshotDir(storePath), `${ref}.json`);
-+}
-+
-+export function snapshotRefFor(body: SnapshotBody): string {
-+  return crypto
-+    .createHash("sha256")
-+    .update(JSON.stringify({ prompt: body.prompt, resolvedSkills: body.resolvedSkills ?? null }))
-+    .digest("hex")
-+    .slice(0, 16);
-+}
-+
-+function isSafeRef(ref: string): boolean {
-+  return /^[0-9a-f]{16}$/.test(ref);
-+}
-+
-+/**
-+ * Replace inline snapshots with refs, writing each distinct body once.
-+ * Returns a new store object; the input is not mutated. Bodies that cannot be
-+ * written stay inline so nothing is lost.
-+ */
-+export function externalizeSkillsSnapshots(
-+  storePath: string,
-+  store: Record<string, SessionEntry>,
-+): Record<string, SessionEntry> {
-+  let out: Record<string, SessionEntry> | null = null;
-+  const written = new Set<string>();
-+  for (const [key, entry] of Object.entries(store)) {
-+    const snapshot = entry?.skillsSnapshot;
-+    if (!snapshot || isSessionSkillSnapshotRef(snapshot)) {
-+      continue;
-+    }
-+    const body: SnapshotBody = { prompt: snapshot.prompt, resolvedSkills: snapshot.resolvedSkills };
-+    const ref = snapshotRefFor(body);
-+    if (!written.has(ref)) {
-+      try {
-+        const file = snapshotFile(storePath, ref);
-+        if (!fs.existsSync(file)) {
-+          fs.mkdirSync(snapshotDir(storePath), { recursive: true });
-+          const tmp = `${file}.${process.pid}.tmp`;
-+          fs.writeFileSync(tmp, JSON.stringify(body), { mode: 0o600, encoding: "utf-8" });
-+          fs.renameSync(tmp, file);
-+        }
-+        bodyCache.set(`${storePath}\u0000${ref}`, body);
-+        written.add(ref);
-+      } catch (err) {
-+        log.warn(`could not externalize skills snapshot ${ref}: ${String(err)}`);
-+        continue;
-+      }
-+    }
-+    const asRef: SessionSkillSnapshotRef = {
-+      ref,
-+      skills: snapshot.skills,
-+      ...(snapshot.skillFilter ? { skillFilter: snapshot.skillFilter } : {}),
-+      ...(snapshot.version !== undefined ? { version: snapshot.version } : {}),
-+    };
-+    out ??= { ...store };
-+    out[key] = { ...entry, skillsSnapshot: asRef };
-+  }
-+  return out ?? store;
-+}
-+
-+/** Delete side files no entry references any more. Best effort. */
-+export function pruneSkillsSnapshotFiles(
-+  storePath: string,
-+  store: Record<string, SessionEntry>,
-+): number {
-+  const dir = snapshotDir(storePath);
-+  let names: string[];
-+  try {
-+    names = fs.readdirSync(dir);
-+  } catch {
-+    return 0;
-+  }
-+  const live = new Set<string>();
-+  for (const entry of Object.values(store)) {
-+    const snapshot = entry?.skillsSnapshot;
-+    if (isSessionSkillSnapshotRef(snapshot)) {
-+      live.add(snapshot.ref);
-+    }
-+  }
-+  let removed = 0;
-+  for (const name of names) {
-+    const ref = name.endsWith(".json") ? name.slice(0, -".json".length) : null;
-+    if (!ref || !isSafeRef(ref) || live.has(ref)) {
-+      continue;
-+    }
-+    try {
-+      fs.unlinkSync(path.join(dir, name));
-+      bodyCache.delete(`${storePath}\u0000${ref}`);
-+      removed += 1;
-+    } catch {
-+      // another writer may have removed it
-+    }
-+  }
-+  return removed;
-+}
-+
-+function readBody(storePath: string, ref: string): SnapshotBody | undefined {
-+  if (!isSafeRef(ref)) {
-+    return undefined;
-+  }
-+  const cacheKey = `${storePath}\u0000${ref}`;
-+  const cached = bodyCache.get(cacheKey);
-+  if (cached) {
-+    return cached;
-+  }
-+  try {
-+    
-```
-
-**File**: `src/config/sessions/store.ts` (modified, +8/-1)
-```diff
-@@ -17,6 +17,7 @@ import { getFileMtimeMs, isCacheEnabled, resolveCacheTtlMs } from "../cache-util
- import { loadConfig } from "../config.js";
- import type { SessionMaintenanceConfig, SessionMaintenanceMode } from "../types.base.js";
- import { deriveSessionMetaPatch } from "./metadata.js";
-+import { externalizeSkillsSnapshots, pruneSkillsSnapshotFiles } from "./skills-snapshot-store.js";
- import { mergeSessionEntry, type SessionEntry } from "./types.js";
- 
- const log = createSubsystemLogger("sessions/store");
-@@ -546,7 +547,13 @@ async function saveSessionStoreUnlocked(
-   }
- 
-   await fs.promises.mkdir(path.dirname(storePath), { recursive: true });
--  const json = JSON.stringify(store, null, 2);
-+  // Skills snapshot bodies go to side files, one per distinct content; the
-+  // index keeps refs. See skills-snapshot-store.ts.
-+  const toWrite = externalizeSkillsSnapshots(storePath, store);
-+  if (toWrite !== store) {
-+    pruneSkillsSnapshotFiles(storePath, toWrite);
-+  }
-+  const json = JSON.stringify(toWrite, null, 2);
- 
-   // Windows: avoid atomic rename swaps (can be flaky under concurrent access).
-   // We serialize writers via the session-store lock instead.
-```
-
----
-
-### Incident Patch 10: `a392954d` (2026-10-03)
-**Commit Message**: fix(sessions): materialize the stored skills snapshot for /compact too
-
-The root type check caught the third consumer: commands-compact.ts handed the entry's snapshot (now possibly a ref) straight to the compaction run.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `src/auto-reply/reply/commands-compact.ts` (modified, +5/-1)
-```diff
-@@ -6,6 +6,7 @@ import {
- } from "../../agents/embedded.js";
- import type { BitterbotConfig } from "../../config/config.js";
- import {
-+  materializeSessionSkillsSnapshot,
-   resolveFreshSessionTotalTokens,
-   resolveSessionFilePath,
-   resolveSessionFilePathOptions,
-@@ -93,7 +94,10 @@ export const handleCompactCommand: CommandHandler = async (params) => {
-     ),
-     workspaceDir: params.workspaceDir,
-     config: params.cfg,
--    skillsSnapshot: params.sessionEntry.skillsSnapshot,
-+    skillsSnapshot: materializeSessionSkillsSnapshot(
-+      params.storePath,
-+      params.sessionEntry.skillsSnapshot,
-+    ),
-     provider: params.provider,
-     model: params.model,
-     thinkLevel: params.resolvedThinkLevel ?? (await params.resolveDefaultThinkingLevel()),
-```
-
----
-
-### Incident Patch 11: `c18a56d5` (2026-10-03)
-**Commit Message**: fix(sessions): store each skills snapshot body once, keep a ref per session
-
-Every session entry carried its own copy of the skills prompt and the resolved skill records (about 22 KB), identical across an agent's sessions: 297 entries made a 9.7 MB sessions.json that the gateway parsed, copied and rewrote on every turn (the remaining 5 s event-loop stall per soak round after #148).
-
-- The body (prompt + resolvedSkills) lives in <store dir>/skills-snapshots/<sha256-16>.json, one file per distinct content; the entry keeps { ref, skills, skillFilter, version } so listings and version checks need no file read.
-- saveSessionStore externalizes inline snapshots (input not mutated) and prunes bodies no entry references; an index written before this change loads as before and is converted on its next save.
-- materializeSessionSkillsSnapshot joins a ref with its body for a run; a missing body counts as no snapshot, so the session rebuilds it. Called at the two places that hand a stored snapshot to a run (session-updates.ts, commands/agent.ts).
-- SessionEntry.skillsSnapshot is SessionSkillSnapshot | SessionSkillSnapshotRef; ensureSkillSnapshot returns the full snapshot.
-
-On this node's soak s
-
-**File**: `docs/concepts/session.md` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ All session state is **owned by the gateway** (the “master” Bitterbot). UI c
- - The store is a map `sessionKey -> { sessionId, updatedAt, ... }`. Deleting entries is safe; they are recreated on demand.
- - Group entries may include `displayName`, `channel`, `subject`, `room`, and `space` to label sessions in UIs.
- - Session entries include `origin` metadata (label + routing hints) so UIs can explain where a session came from.
-+- Each entry pins the skills it was started with as `skillsSnapshot`. The body of that snapshot (the skills prompt and the resolved skill records, about 22 KB and identical across an agent's sessions) is stored once per distinct content in `.../sessions/skills-snapshots/<ref>.json`; the entry keeps `{ ref, skills, version }`. Unreferenced bodies are removed when the store is saved. An index written by an older version (bodies inline) still loads and is converted on its next save.
- - Bitterbot does **not** read legacy Pi/Tau session folders.
- 
- ## Session pruning
-```
-
-**File**: `src/auto-reply/reply/session-updates.ts` (modified, +24/-10)
-```diff
-@@ -5,7 +5,12 @@ import type { CapabilityGateContext } from "../../agents/skills/capability-gate.
- import { createCapabilityRuntimeFromMemory } from "../../agents/skills/capability-runtime.js";
- import { ensureSkillsWatcher, getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
- import type { BitterbotConfig } from "../../config/config.js";
--import { type SessionEntry, updateSessionStore } from "../../config/sessions.js";
-+import {
-+  materializeSessionSkillsSnapshot,
-+  type SessionEntry,
-+  type SessionSkillSnapshot,
-+  updateSessionStore,
-+} from "../../config/sessions.js";
- import { buildChannelSummary } from "../../infra/channel-summary.js";
- import {
-   resolveTimezone,
-@@ -154,15 +159,19 @@ export async function ensureSkillSnapshot(params: {
-   agentId?: string;
- }): Promise<{
-   sessionEntry?: SessionEntry;
--  skillsSnapshot?: SessionEntry["skillsSnapshot"];
-+  /** The full snapshot for this run (a stored ref is joined with its body here). */
-+  skillsSnapshot?: SessionSkillSnapshot;
-   systemSent: boolean;
- }> {
-   if (process.env.BITTERBOT_TEST_FAST === "1") {
-     // In fast unit-test runs we skip filesystem scanning, watchers, and session-store writes.
-     // Dedicated skills tests cover snapshot generation behavior.
-     return {
-       sessionEntry: params.sessionEntry,
--      skillsSnapshot: params.sessionEntry?.skillsSnapshot,
-+      skillsSnapshot: materializeSessionSkillsSnapshot(
-+        params.storePath,
-+        params.sessionEntry?.skillsSnapshot,
-+      ),
-       systemSent: params.sessionEntry?.systemSent ?? false,
-     };
-   }
-@@ -184,16 +193,21 @@ export async function ensureSkillSnapshot(params: {
-   const remoteEligibility = getRemoteSkillEligibility();
-   const snapshotVersion = getSkillsSnapshotVersion(workspaceDir);
-   ensureSkillsWatcher({ workspaceDir, config: cfg });
-+  // The entry may hold a ref to a stored body. Resolve it once; a ref whose
-+  // body is gone counts as no snapshot, so the session builds a fresh one.
-+  const storedSnapshot = materializeSessionSkillsSnapshot(storePath, nextEntry?.skillsSnapshot);
-+  if (nextEntry && nextEntry.skillsSnapshot && !storedSnapshot) {
-+    nextEntry = { ...nextEntry, skillsSnapshot: undefined };
-+  }
-   const shouldRefreshSnapshot =
--    snapshotVersion > 0 && (nextEntry?.skillsSnapshot?.version ?? 0) < snapshotVersion;
-+    snapshotVersion > 0 && (storedSnapshot?.version ?? 0) < snapshotVersion;
- 
-   // PLAN-29 Phase 0.3: load-time capability gate for P2P-ingested skills,
-   // on by default. Resolved once per call, and only when a snapshot build
-   // can actually happen (gate resolution touches the memory manager). A
-   // null runtime (cold start, no memory) degrades to ungated — same
-   // behavior as before the gate existed.
--  const willBuildSnapshot =
--    isFirstTurnInSession || shouldRefreshSnapshot || !sessionEntry?.skillsSnapshot;
-+  const willBuildSnapshot = isFirstTurnInSession || shouldRefreshSnapshot || !storedSnapshot;
-   let capabilityGate: CapabilityGateContext | undefined;
-   if (willBuildSnapshot && cfg.skills?.p2p?.loadTimeCapabilityGate !== false) {
-     const runtime = await createCapabilityRuntimeFromMemory({
-@@ -210,15 +224,15 @@ export async function ensureSkillSnapshot(params: {
-         updatedAt: Date.now(),
-       };
-     const skillSnapshot =
--      isFirstTurnInSession || !current.skillsSnapshot || shouldRefreshSnapshot
-+      isFirstTurnInSession || !storedSnapshot || shouldRefreshSnapshot
-         ? buildWorkspaceSkillSnapshot(workspaceDir, {
-             config: cfg,
-             skillFilter,
-             eligibility: { remote: remoteEligibility },
-             snapshotVersion,
-             capabilityGate,
-           })
--        : current.skillsSnapshot;
-+        : storedSnapshot;
-     nextEntry = {
-       ...current,
-       sessionId: sessionId ?? current.sessionId ?? crypto.randomUUID(),
-@@ -235,15 +249,15 @@ export async function ensureSkillSnapshot(params: {
-     systemSent = true;
-   }
- 
--  const skillsSnapshot = shouldRefreshSnapshot
-+  const skillsSnapshot: SessionSkillSnapshot | undefined = shouldRefreshSnapshot
-     ? buildWorkspaceSkillSnapshot(workspaceDir, {
-         config: cfg,
-         skillFilter,
-         eligibility: { remote: remoteEligibility },
-         snapshotVersion,
-         capabilityGate,
-       })
--    : (nextEntry?.skillsSnapshot ??
-+    : (materializeSessionSkillsSnapshot(storePath, nextEntry?.skillsSnapshot) ??
-       (isFirstTurnInSession
-         ? undefined
-         : buildWorkspaceSkillSnapshot(workspaceDir, {
-```
-
-**File**: `src/commands/agent.ts` (modified, +11/-4)
-```diff
-@@ -42,6 +42,7 @@ import { formatCliCommand } from "../cli/command-format.js";
- import { type CliDeps, createDefaultDeps } from "../cli/deps.js";
- import { loadConfig } from "../config/config.js";
- import {
-+  materializeSessionSkillsSnapshot,
-   resolveAgentIdFromSessionKey,
-   resolveSessionFilePath,
-   type SessionEntry,
-@@ -356,11 +357,17 @@ export async function agentCommand(
-     }
- 
-     const skillsSnapshotVersion = getSkillsSnapshotVersion(workspaceDir);
--    const cachedSnapshotVersion = sessionEntry?.skillsSnapshot?.version ?? -1;
-+    // The stored entry holds a ref to the snapshot body; join it here. A ref
-+    // whose body is gone counts as no snapshot and is rebuilt.
-+    const storedSnapshot = materializeSessionSkillsSnapshot(
-+      storePath,
-+      sessionEntry?.skillsSnapshot,
++      onError,
 +    );
-+    const cachedSnapshotVersion = storedSnapshot?.version ?? -1;
-     const snapshotIsStale = cachedSnapshotVersion < skillsSnapshotVersion;
--    const needsSkillsSnapshot = isNewSession || !sessionEntry?.skillsSnapshot || snapshotIsStale;
-+    const needsSkillsSnapshot = isNewSession || !storedSnapshot || snapshotIsStale;
-     const skillFilter = resolveAgentSkillsFilter(cfg, sessionAgentId);
--    const previousSnapshot = sessionEntry?.skillsSnapshot;
-+    const previousSnapshot = storedSnapshot;
-     // PLAN-29 Phase 0.3: same load-time capability gate as the reply runner
-     // (session-updates.ts) so the CLI agent path can't load P2P skills the
-     // chat path would have blocked. Null runtime degrades to ungated.
-@@ -380,7 +387,7 @@ export async function agentCommand(
-           skillFilter,
-           capabilityGate: cliCapabilityGate,
-         })
--      : sessionEntry?.skillsSnapshot;
-+      : storedSnapshot;
- 
-     // Hot-toggle awareness: if we rebuilt mid-session because the user (or
-     // marketplace) changed skills, surface the diff to the agent so its next
-```
-
-**File**: `src/config/sessions.ts` (modified, +4/-0)
-```diff
-@@ -5,6 +5,10 @@ export * from "./sessions/paths.js";
- export * from "./sessions/reset.js";
- export * from "./sessions/session-key.js";
- export * from "./sessions/store.js";
-+export {
-+  materializeSessionSkillsSnapshot,
-+  SKILLS_SNAPSHOT_DIR,
-+} from "./sessions/skills-snapshot-store.js";
- export * from "./sessions/types.js";
- export * from "./sessions/transcript.js";
- export * from "./sessions/delivery-info.js";
-```
-
-**File**: `src/config/sessions/skills-snapshot-store.test.ts` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+import fs from "node:fs";
-+import os from "node:os";
-+import path from "node:path";
-+import { afterEach, beforeEach, describe, expect, it } from "vitest";
-+import {
-+  clearSkillsSnapshotBodyCacheForTest,
-+  externalizeSkillsSnapshots,
-+  materializeSessionSkillsSnapshot,
-+  pruneSkillsSnapshotFiles,
-+  SKILLS_SNAPSHOT_DIR,
-+  snapshotRefFor,
-+} from "./skills-snapshot-store.js";
-+import { clearSessionStoreCacheForTest, loadSessionStore, saveSessionStore } from "./store.js";
-+import {
-+  isSessionSkillSnapshotRef,
-+  type SessionEntry,
-+  type SessionSkillSnapshot,
-+} from "./types.js";
-+
-+const prompt = "## Skills\n\n".padEnd(9_000, "x");
-+const snapshot: SessionSkillSnapshot = {
-+  prompt,
-+  skills: [{ name: "a" }, { name: "b", primaryEnv: "node" }],
-+  skillFilter: ["a", "b"],
-+  resolvedSkills: [{ name: "a", description: "A" } as never],
-+  version: 3,
-+};
-+
-+let dir: string;
-+let storePath: string;
-+
-+beforeEach(() => {
-+  dir = fs.mkdtempSync(path.join(os.tmpdir(), "bb-skills-snap-"));
-+  storePath = path.join(dir, "sessions.json");
-+  clearSessionStoreCacheForTest();
-+  clearSkillsSnapshotBodyCacheForTest();
-+});
-+
-+afterEach(() => {
-+  fs.rmSync(dir, { recursive: true, force: true });
-+});
-+
-+describe("skills snapshot externalization", () => {
-+  it("writes one body per distinct content and leaves refs in the entries", () => {
-+    const store: Record<string, SessionEntry> = {};
-+    for (let i = 0; i < 40; i++) {
-+      store[`agent:a:s${i}`] = { sessionId: `id-${i}`, updatedAt: i, skillsSnapshot: snapshot };
-+    }
-+    store["agent:a:other"] = {
-+      sessionId: "id-o",
-+      updatedAt: 1,
-+      skillsSnapshot: { ...snapshot, prompt: "different" },
-+    };
-+    store["agent:a:none"] = { sessionId: "id-n", updatedAt: 1 };
-+
-+    const out = externalizeSkillsSnapshots(storePath, store);
-+    expect(out).not.toBe(store);
-+    // Input untouched.
-+    expect(isSessionSkillSnapshotRef(store["agent:a:s0"]!.skillsSnapshot)).toBe(false);
-+    const files = fs.readdirSync(path.join(dir, SKILLS_SNAPSHOT_DIR));
-+    expect(files).toHaveLength(2);
-+    const ref = out["agent:a:s0"]!.skillsSnapshot;
-+    expect(isSessionSkillSnapshotRef(ref)).toBe(true);
-+    if (!isSessionSkillSnapshotRef(ref)) {
-+      throw new Error("expected a ref");
-+    }
-+    expect(ref).toEqual({
-+      ref: snapshotRefFor(snapshot),
-+      skills: snapshot.skills,
-+      skillFilter: snapshot.skillFilter,
-+      version: 3,
-+    });
-+    expect(out["agent:a:none"]!.skillsSnapshot).toBeUndefined();
-+    // The index shrank by the body size times the entry count.
-+    const before = JSON.stringify(store).length;
-+    const after = JSON.stringify(out).length;
-+    expect(after).toBeLessThan(before / 20);
++    expect(onError).toHaveBeenCalledWith(expect.any(Error));
 +  });
 +
-+  it("materializes a ref back into the full snapshot, and inline snapshots pass through", () => {
-+    const out = externalizeSkillsSnapshots(storePath, {
-+      "agent:a:s": { sessionId: "id", updatedAt: 1, skillsSnapshot: snapshot },
-+    });
-+    clearSkillsSnapshotBodyCacheForTest(); // force the file read
-+    const full = materializeSessionSkillsSnapshot(storePath, out["agent:a:s"]!.skillsSnapshot);
-+    expect(full).toEqual(snapshot);
-+    expect(materializeSessionSkillsSnapshot(storePath, snapshot)).toBe(snapshot);
-+    expect(materializeSessionSkillsSnapshot(storePath, undefined)).toBeUndefined();
++  it("catches an async rejection (Baileys rc10+ async close) instead of leaking it", async () => {
++    const onError = vi.fn();
++    closeWaSocketTransport({ ws: { close: () => Promise.reject(new Error("late")) } }, onError);
++    await new Promise((resolve) => setTimeout(resolve, 0));
++    expect(onError).toHaveBeenCalledWith(expect.any(Error));
 +  });
 +
-+  it("returns undefined for a ref whose body is missing or unsafe", () => {
-+    expect(
-+      materializeSessionSkillsSnapshot(storePath, { ref: "0123456789abcdef", skills: [] }),
-+    ).toBeUndefined();
-+    expect(
-+      materializeSessionSkillsSnapshot(storePath, { ref: "../../etc/passwd", skills: [] }),
-+    ).toBeUndefined();
-+    expect(
-+      materializeSessionSkillsSnapshot(undefined, { ref: "0123456789abcdef", skills: [] }),
-+    ).toBeUndefined();
-+  });
-+
-+  it("prunes bodies no entry references", () => {
-+    const out = externalizeSkillsSnapshots(storePath, {
-+      "agent:a:s": { sessionId: "id", updatedAt: 1, skillsSnapshot: snapshot },
-+      "agent:a:t": {
-+        sessionId: "id2",
-+        updatedAt: 1,
-+        skillsSnapshot: { ...snapshot, prompt: "gone soon" },
-+      },
-+    });
-+    expect(fs.readdirSync(path.join(dir, SKILLS_SNAPSHOT_DIR))).toHaveLength(2);
-+    delete out["agent:a:t"];
-+    expect(pruneSkillsSnapshotFiles(storePath, out)).toBe(1);
-+    expect(fs.readdirSync(path.join(dir, SKILLS_SNAPSHOT_DIR))).toEqual([
-+      `${snapshotRefFor(snapshot)}.json`,
-+    ]);
-+  });
-+
-+  it("round-trips through saveSessionStore and loadSessionStore; a legacy inline index still loads", async () => {
-+    await saveSessionStore(storePath, {
-+      "agent:a:s": { sessionId: "id", updatedAt: 1, skillsSnapshot: snapshot },
-+    });
-+    const onDisk = JSON.parse(fs.readFileSync(storePath, "utf-8")) as Record<string, SessionEntry>;
-+    expect(isSessionSkillSnapshotRef(onDisk["agent:a:s"]!.skillsSnapshot)).toBe(true);
-+    expect(fs.readFileSync(storePath, "utf-8")).not.
-```
-
-**File**: `src/config/sessions/skills-snapshot-store.ts` (added, +202/-0)
-```diff
-@@ -0,0 +1,202 @@
-+import crypto from "node:crypto";
-+import fs from "node:fs";
-+import path from "node:path";
-+import { createSubsystemLogger } from "../../logging/subsystem.js";
-+import {
-+  isSessionSkillSnapshotRef,
-+  type SessionEntry,
-+  type SessionSkillSnapshot,
-+  type SessionSkillSnapshotRef,
-+} from "./types.js";
-+
-+/**
-+ * Per-session skills snapshots, stored once per distinct content.
-+ *
-+ * Every session entry used to carry its own copy of the skills prompt and the
-+ * resolved skill records (about 22 KB). The copies were identical across the
-+ * sessions of an agent, so a store with 300 sessions was a 9.7 MB file that
-+ * the gateway parsed, deep-copied and rewrote on every turn (2026-10-03
-+ * profile). The body now lives in `<store dir>/skills-snapshots/<ref>.json`,
-+ * keyed by a content hash, and the entry keeps a `SessionSkillSnapshotRef`.
-+ *
-+ * Reading an index written before this change still works: inline snapshots
-+ * stay inline until the next save externalizes them.
-+ */
-+
-+const log = createSubsystemLogger("sessions/skills-snapshots");
-+
-+export const SKILLS_SNAPSHOT_DIR = "skills-snapshots";
-+
-+/** Body kept in the side file: everything but the small fields the ref repeats. */
-+type SnapshotBody = Pick<SessionSkillSnapshot, "prompt" | "resolvedSkills">;
-+
-+const bodyCache = new Map<string, SnapshotBody>();
-+const BODY_CACHE_MAX = 32;
-+
-+function snapshotDir(storePath: string): string {
-+  return path.join(path.dirname(storePath), SKILLS_SNAPSHOT_DIR);
-+}
-+
-+function snapshotFile(storePath: string, ref: string): string {
-+  return path.join(snapshotDir(storePath), `${ref}.json`);
-+}
-+
-+export function snapshotRefFor(body: SnapshotBody): string {
-+  return crypto
-+    .createHash("sha256")
-+    .update(JSON.stringify({ prompt: body.prompt, resolvedSkills: body.resolvedSkills ?? null }))
-+    .digest("hex")
-+    .slice(0, 16);
-+}
-+
-+function isSafeRef(ref: string): boolean {
-+  return /^[0-9a-f]{16}$/.test(ref);
-+}
-+
-+/**
-+ * Replace inline snapshots with refs, writing each distinct body once.
-+ * Returns a new store object; the input is not mutated. Bodies that cannot be
-+ * written stay inline so nothing is lost.
-+ */
-+export function externalizeSkillsSnapshots(
-+  storePath: string,
-+  store: Record<string, SessionEntry>,
-+): Record<string, SessionEntry> {
-+  let out: Record<string, SessionEntry> | null = null;
-+  const written = new Set<string>();
-+  for (const [key, entry] of Object.entries(store)) {
-+    const snapshot = entry?.skillsSnapshot;
-+    if (!snapshot || isSessionSkillSnapshotRef(snapshot)) {
-+      continue;
-+    }
-+    const body: SnapshotBody = { prompt: snapshot.prompt, resolvedSkills: snapshot.resolvedSkills };
-+    const ref = snapshotRefFor(body);
-+    if (!written.has(ref)) {
-+      try {
-+        const file = snapshotFile(storePath, ref);
-+        if (!fs.existsSync(file)) {
-+          fs.mkdirSync(snapshotDir(storePath), { recursive: true });
-+          const tmp = `${file}.${process.pid}.tmp`;
-+          fs.writeFileSync(tmp, JSON.stringify(body), { mode: 0o600, encoding: "utf-8" });
-+          fs.renameSync(tmp, file);
-+        }
-+        bodyCache.set(`${storePath}\u0000${ref}`, body);
-+        written.add(ref);
-+      } catch (err) {
-+        log.warn(`could not externalize skills snapshot ${ref}: ${String(err)}`);
-+        continue;
-+      }
-+    }
-+    const asRef: SessionSkillSnapshotRef = {
-+      ref,
-+      skills: snapshot.skills,
-+      ...(snapshot.skillFilter ? { skillFilter: snapshot.skillFilter } : {}),
-+      ...(snapshot.version !== undefined ? { version: snapshot.version } : {}),
-+    };
-+    out ??= { ...store };
-+    out[key] = { ...entry, skillsSnapshot: asRef };
-+  }
-+  return out ?? store;
-+}
-+
-+/** Delete side files no entry references any more. Best effort. */
-+export function pruneSkillsSnapshotFiles(
-+  storePath: string,
-+  store: Record<string, SessionEntry>,
-+): number {
-+  const dir = snapshotDir(storePath);
-+  let names: string[];
-+  try {
-+    names = fs.readdirSync(dir);
-+  } catch {
-+    return 0;
-+  }
-+  const live = new Set<string>();
-+  for (const entry of Object.values(store)) {
-+    const snapshot = entry?.skillsSnapshot;
-+    if (isSessionSkillSnapshotRef(snapshot)) {
-+      live.add(snapshot.ref);
-+    }
-+  }
-+  let removed = 0;
-+  for (const name of names) {
-+    const ref = name.endsWith(".json") ? name.slice(0, -".json".length) : null;
-+    if (!ref || !isSafeRef(ref) || live.has(ref)) {
-+      continue;
-+    }
++  it("does not require onError for a rejecting close", async () => {
++    const unhandled = vi.fn();
++    process.on("unhandledRejection", unhandled);
 +    try {
-+      fs.unlinkSync(path.join(dir, name));
-+      bodyCache.delete(`${storePath}\u0000${ref}`);
-+      removed += 1;
-+    } catch {
-+      // another writer may have removed it
++      closeWaSocketTransport({ ws: { close: () => Promise.reject(new Error("late")) } });
++      await new Promise((resolve) => setTimeout(resolve, 0));
++      expect(unhandled).not.toHaveBeenCalled();
++    } finally {
++      process.off("unhandledRejection", unhandled);
 +    }
-+  }
-+  return removed;
-+}
-+
-+function readBody(storePath: string, ref: string): SnapshotBody | undefined {
-+  if (!isSafeRef(ref)) {
-+    return undefined;
-+  }
-+  const cacheKey = `${storePath}\u0000${ref}`;
-+  const cached = bodyCache.get(cacheKey);
-+  if (cached) {
-+    return cached;
-+  }
-+  try {
-+    
++  });
++});
 ```
 
-**File**: `src/config/sessions/store.ts` (modified, +8/-1)
+**File**: `src/web/close-socket.ts` (added, +23/-0)
 ```diff
-@@ -17,6 +17,7 @@ import { getFileMtimeMs, isCacheEnabled, resolveCacheTtlMs } from "../cache-util
- import { loadConfig } from "../config.js";
- import type { SessionMaintenanceConfig, SessionMaintenanceMode } from "../types.base.js";
- import { deriveSessionMetaPatch } from "./metadata.js";
-+import { externalizeSkillsSnapshots, pruneSkillsSnapshotFiles } from "./skills-snapshot-store.js";
- import { mergeSessionEntry, type SessionEntry } from "./types.js";
- 
- const log = createSubsystemLogger("sessions/store");
-@@ -546,7 +547,13 @@ async function saveSessionStoreUnlocked(
-   }
- 
-   await fs.promises.mkdir(path.dirname(storePath), { recursive: true });
--  const json = JSON.stringify(store, null, 2);
-+  // Skills snapshot bodies go to side files, one per distinct content; the
-+  // index keeps refs. See skills-snapshot-store.ts.
-+  const toWrite = externalizeSkillsSnapshots(storePath, store);
-+  if (toWrite !== store) {
-+    pruneSkillsSnapshotFiles(storePath, toWrite);
-+  }
-+  const json = JSON.stringify(toWrite, null, 2);
- 
-   // Windows: avoid atomic rename swaps (can be flaky under concurrent access).
-   // We serialize writers via the session-store lock instead.
-```
-
-**File**: `src/config/sessions/types.ts` (modified, +22/-1)
-```diff
-@@ -99,7 +99,7 @@ export type SessionEntry = {
-   lastTo?: string;
-   lastAccountId?: string;
-   lastThreadId?: string | number;
--  skillsSnapshot?: SessionSkillSnapshot;
-+  skillsSnapshot?: SessionSkillSnapshot | SessionSkillSnapshotRef;
-   systemPromptReport?: SessionSystemPromptReport;
- };
- 
-@@ -150,6 +150,27 @@ export type SessionSkillSnapshot = {
-   version?: number;
- };
- 
+@@ -0,0 +1,23 @@
 +/**
-+ * What the session index stores instead of the snapshot body. The prompt and
-+ * the resolved skills (about 22 KB, identical for every session of an agent)
-+ * live once in `<store dir>/skills-snapshots/<ref>.json`; the index keeps the
-+ * small fields so listings and version checks need no file read. The store
-+ * writes this form; `materializeSessionSkillsSnapshot` turns it back into a
-+ * `SessionSkillSnapshot` for a run.
++ * Close a Baileys socket's underlying WebSocket without awaiting it.
++ *
++ * Since Baileys 7.0.0-rc10, `WebSocketClient.close()` is async: it resolves
++ * only once the transport emits `close`, and any failure surfaces as a
++ * rejected promise rather than a synchronous throw. A bare
++ * `try { sock.ws.close() } catch {}` therefore no longer catches errors and
++ * can leak an unhandled rejection. This helper keeps call sites
++ * fire-and-forget while handling both the sync and async failure paths.
 + */
-+export type SessionSkillSnapshotRef = {
-+  ref: string;
-+  skills: Array<{ name: string; primaryEnv?: string }>;
-+  skillFilter?: string[];
-+  version?: number;
-+};
-+
-+export function isSessionSkillSnapshotRef(
-+  value: SessionSkillSnapshot | SessionSkillSnapshotRef | undefined,
-+): value is SessionSkillSnapshotRef {
-+  return !!value && typeof (value as SessionSkillSnapshotRef).ref === "string";
++export function closeWaSocketTransport(
++  sock: { ws?: { close: () => unknown } | null } | null | undefined,
++  onError?: (err: unknown) => void,
++): void {
++  try {
++    const result = sock?.ws?.close();
++    if (result && typeof (result as PromiseLike<unknown>).then === "function") {
++      void Promise.resolve(result).catch((err: unknown) => onError?.(err));
++    }
++  } catch (err) {
++    onError?.(err);
++  }
 +}
-+
- export type SessionSystemPromptReport = {
-   source: "run" | "estimate";
-   generatedAt: number;
+```
+
+**File**: `src/web/inbound/monitor.ts` (modified, +2/-1)
+```diff
+@@ -8,6 +8,7 @@ import { getChildLogger } from "../../logging/logger.js";
+ import { createSubsystemLogger } from "../../logging/subsystem.js";
+ import { saveMediaBuffer } from "../../media/store.js";
+ import { jidToE164, resolveJidToE164 } from "../../utils.js";
++import { closeWaSocketTransport } from "../close-socket.js";
+ import { createWaSocket, getStatusCode, waitForWaConnection } from "../session.js";
+ import { checkInboundAccessControl } from "./access-control.js";
+ import { isRecentInboundMessage } from "./dedupe.js";
+@@ -392,7 +393,7 @@ export async function monitorWebInbox(options: {
+           ev.removeListener("messages.upsert", messagesUpsertHandler);
+           ev.removeListener("connection.update", connectionUpdateHandler);
+         }
+-        sock.ws?.close();
++        closeWaSocketTransport(sock, (err) => logVerbose(`Socket close failed: ${String(err)}`));
+       } catch (err) {
+         logVerbose(`Socket close failed: ${String(err)}`);
+       }
+```
+
+**File**: `src/web/login-qr.ts` (modified, +2/-5)
+```diff
+@@ -5,6 +5,7 @@ import { danger, info, success } from "../globals.js";
+ import { logInfo } from "../logger.js";
+ import { defaultRuntime, type RuntimeEnv } from "../runtime.js";
+ import { resolveWhatsAppAccount } from "./accounts.js";
++import { closeWaSocketTransport } from "./close-socket.js";
+ import { renderQrPngBase64 } from "./qr-image.js";
+ import {
+   createWaSocket,
+@@ -39,11 +40,7 @@ const ACTIVE_LOGIN_TTL_MS = 3 * 60_000;
+ const activeLogins = new Map<string, ActiveLogin>();
+ 
+ function closeSocket(sock: WaSocket) {
+-  try {
+-    sock.ws?.close();
+-  } catch {
+-    // ignore
+-  }
++  closeWaSocketTransport(sock);
+ }
+ 
+ async function resetActiveLogin(accountId: string, reason?: string) {
+```
+
+**File**: `src/web/login.ts` (modified, +4/-13)
+```diff
+@@ -5,6 +5,7 @@ import { danger, info, success } from "../globals.js";
+ import { logInfo } from "../logger.js";
+ import { defaultRuntime, type RuntimeEnv } from "../runtime.js";
+ import { resolveWhatsAppAccount } from "./accounts.js";
++import { closeWaSocketTransport } from "./close-socket.js";
+ import { createWaSocket, formatError, logoutWeb, waitForWaConnection } from "./session.js";
+ 
+ export async function loginWeb(
+@@ -33,11 +34,7 @@ export async function loginWeb(
+           "WhatsApp asked for a restart after pairing (code 515); creds are saved. Restarting connection once…",
+         ),
+       );
+-      try {
+-        sock.ws?.close();
+-      } catch {
+-        // ignore
+-      }
++      closeWaSocketTransport(sock);
+       const retry = await createWaSocket(false, verbose, {
+         authDir: account.authDir,
+       });
+@@ -46,7 +43,7 @@ export async function loginWeb(
+         console.log(success("✅ Linked after restart; web session ready."));
+         return;
+       } finally {
+-        setTimeout(() => retry.ws?.close(), 500);
++        setTimeout(() => closeWaSocketTransport(retry), 500);
+       }
+     }
+     if (code === DisconnectReason.loggedOut) {
+@@ -67,12 +64,6 @@ export async function loginWeb(
+     throw new Error(formatted, { cause: err });
+   } finally {
+     // Let Baileys flush any final events before closing the socket.
+-    setTimeout(() => {
+-      try {
+-        sock.ws?.close();
+-      } catch {
+-        // ignore
+-      }
+-    }, 500);
++    setTimeout(() => closeWaSocketTransport(sock), 500);
+   }
+ }
 ```
 
 ---
 
-### Incident Patch 12: `2b5fcc2d` (2026-10-03)
-**Commit Message**: Merge pull request #148 from Bitterbot-AI/fix/session-store-hot-path
+### Incident Patch 3: `b495b71b` (2026-10-13)
+**Commit Message**: fix(release): make release-please actually bump the desktop Cargo.lock (#237)
 
-fix(sessions): stop deep-copying the whole session store on read-only lookups
+release-please's toml parser wraps every scalar as {start, end, value}, so
+the filter `@.name=='bitterbot-desktop'` matched nothing and the 1.5.0
+release left desktop/src-tauri/Cargo.lock at 1.4.0. The release PR runs no
+CI, so main went red the moment it merged (version-consistency test).
 
-**File**: `src/commands/health.ts` (modified, +5/-2)
+- Filter on `@.name.value`, verified against release-please 17.11.2's
+  GenericToml updater: it changes exactly the one version line.
+- Bring the lock to 1.5.0.
+- Test pins the working jsonpath shape so it cannot silently regress.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -5,7 +5,7 @@ import type { ChannelAccountSnapshot } from "../channels/plugins/types.js";
- import { withProgress } from "../cli/progress.js";
- import type { BitterbotConfig } from "../config/config.js";
- import { loadConfig } from "../config/config.js";
--import { loadSessionStore, resolveStorePath } from "../config/sessions.js";
-+import { peekSessionStore, resolveStorePath } from "../config/sessions.js";
- import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
- import { info } from "../globals.js";
- import { isTruthyEnvValue } from "../infra/env.js";
-@@ -144,7 +144,10 @@ const resolveAgentOrder = (cfg: ReturnType<typeof loadConfig>) => {
- };
+@@ -316,7 +316,7 @@ dependencies = [
  
- const buildSessionSummary = (storePath: string) => {
--  const store = loadSessionStore(storePath);
-+  // Read-only: counts and the five newest keys. The health snapshot refreshes
-+  // often enough that a deep copy of a large store here showed up as the top
-+  // synchronous cost in the gateway profile.
-+  const store = peekSessionStore(storePath);
-   const sessions = Object.entries(store)
-     .filter(([key]) => key !== "global" && key !== "unknown")
-     .map(([key, entry]) => ({ key, updatedAt: entry?.updatedAt ?? 0 }))
+ [[package]]
+ name = "bitterbot-desktop"
+-version = "1.4.0"
++version = "1.5.0"
+ dependencies = [
+  "env_logger",
+  "libc",
 ```
 
-**File**: `src/config/sessions.cache.test.ts` (modified, +43/-0)
+**File**: `release-please-config.json` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi }
- import {
-   clearSessionStoreCacheForTest,
-   loadSessionStore,
-+  peekSessionStore,
-   type SessionEntry,
-   saveSessionStore,
- } from "./sessions.js";
-@@ -217,4 +218,46 @@ describe("Session Store Cache", () => {
-     const loaded = loadSessionStore(storePath);
-     expect(loaded).toEqual({});
+@@ -24,7 +24,7 @@
+         {
+           "type": "toml",
+           "path": "desktop/src-tauri/Cargo.lock",
+-          "jsonpath": "$.package[?(@.name=='bitterbot-desktop')].version"
++          "jsonpath": "$.package[?(@.name.value=='bitterbot-desktop')].version"
+         },
+         {
+           "type": "json",
+```
+
+**File**: `src/version-consistency.test.ts` (modified, +13/-0)
+```diff
+@@ -93,4 +93,17 @@ describe("version consistency", () => {
+       expect(extraPaths.has(rel), `${rel} missing from release-please extra-files`).toBe(true);
+     }
    });
 +
-+  describe("peekSessionStore (read-only, no copy)", () => {
-+    it("returns the cached object itself on a hit and a fresh copy from loadSessionStore", async () => {
-+      await saveSessionStore(storePath, {
-+        "agent:a:one": { sessionId: "id-1", updatedAt: 1 },
-+        "agent:a:two": { sessionId: "id-2", updatedAt: 2 },
-+      });
-+      const first = peekSessionStore(storePath);
-+      const second = peekSessionStore(storePath);
-+      // Same object: the hot read path does not pay for a deep copy.
-+      expect(second).toBe(first);
-+      expect(Object.keys(first)).toEqual(["agent:a:one", "agent:a:two"]);
-+      // loadSessionStore still hands out a copy that is safe to mutate.
-+      const copy = loadSessionStore(storePath);
-+      expect(copy).not.toBe(first);
-+      expect(copy).toEqual(first);
-+      copy["agent:a:one"]!.updatedAt = 999;
-+      expect(peekSessionStore(storePath)["agent:a:one"]!.updatedAt).toBe(1);
-+    });
-+
-+    it("sees a store rewritten on disk (mtime change) without a stale hit", async () => {
-+      await saveSessionStore(storePath, { "agent:a:one": { sessionId: "id-1", updatedAt: 1 } });
-+      expect(Object.keys(peekSessionStore(storePath))).toEqual(["agent:a:one"]);
-+      // Rewrite with a different mtime.
-+      await new Promise((r) => setTimeout(r, 20));
-+      await saveSessionStore(storePath, {
-+        "agent:a:one": { sessionId: "id-1", updatedAt: 1 },
-+        "agent:a:three": { sessionId: "id-3", updatedAt: 3 },
-+      });
-+      fs.utimesSync(storePath, new Date(), new Date(Date.now() + 5_000));
-+      expect(Object.keys(peekSessionStore(storePath))).toContain("agent:a:three");
-+    });
-+
-+    it("falls back to a disk load when the cache is disabled", async () => {
-+      process.env.BITTERBOT_SESSION_CACHE_TTL_MS = "0";
-+      await saveSessionStore(storePath, { "agent:a:one": { sessionId: "id-1", updatedAt: 1 } });
-+      const a = peekSessionStore(storePath);
-+      const b = peekSessionStore(storePath);
-+      expect(a).toEqual(b);
-+      expect(a).not.toBe(b);
-+    });
++  it("the Cargo.lock jsonpath filters on the tagged .value release-please parses", () => {
++    // release-please's toml parser wraps every scalar as {start, end, value},
++    // so a filter on `@.name` never matches and the lock silently stays on the
++    // old version (that is how 1.5.0 shipped with a red main).
++    const config = readJson("release-please-config.json") as {
++      packages: Record<string, { "extra-files"?: Array<{ path: string; jsonpath?: string }> }>;
++    };
++    const lockEntry = (config.packages["."]["extra-files"] ?? []).find(
++      (f) => f.path === "desktop/src-tauri/Cargo.lock",
++    );
++    expect(lockEntry?.jsonpath).toBe("$.package[?(@.name.value=='bitterbot-desktop')].version");
 +  });
  });
-```
-
-**File**: `src/config/sessions/store.ts` (modified, +28/-1)
-```diff
-@@ -212,12 +212,39 @@ export function loadSessionStore(
-   return structuredClone(store);
- }
- 
-+/**
-+ * The cached store object itself, for read-only lookups.
-+ *
-+ * `loadSessionStore` returns a deep copy so callers may mutate freely; with
-+ * hundreds of sessions that copy is tens of milliseconds of synchronous work,
-+ * and the gateway asked for it on every agent event, every health snapshot and
-+ * most RPCs (2026-10-03 profile: 35 s of structuredClone in a 7-minute window,
-+ * 9.7 MB store). Callers that only read one entry or count keys use this and
-+ * copy what they keep. The returned object MUST NOT be mutated.
-+ */
-+export function peekSessionStore(storePath: string): Readonly<Record<string, SessionEntry>> {
-+  if (isSessionStoreCacheEnabled()) {
-+    const cached = SESSION_STORE_CACHE.get(storePath);
-+    if (
-+      cached &&
-+      isSessionStoreCacheValid(cached) &&
-+      getFileMtimeMs(storePath) === cached.mtimeMs
-+    ) {
-+      return cached.store;
-+    }
-+  }
-+  // Miss: load from disk (which fills the cache) and hand out the cached object
-+  // so the next peek is the same reference; without a cache the copy is ours.
-+  const loaded = loadSessionStore(storePath);
-+  return SESSION_STORE_CACHE.get(storePath)?.store ?? loaded;
-+}
-+
- export function readSessionUpdatedAt(params: {
-   storePath: string;
-   sessionKey: string;
- }): number | undefined {
-   try {
--    const store = loadSessionStore(params.storePath);
-+    const store = peekSessionStore(params.storePath);
-     return store[params.sessionKey]?.updatedAt;
-   } catch {
-     return undefined;
-```
-
-**File**: `src/gateway/session-utils.ts` (modified, +11/-2)
-```diff
-@@ -13,6 +13,7 @@ import {
-   buildGroupDisplayName,
-   canonicalizeMainSessionAlias,
-   loadSessionStore,
-+  peekSessionStore,
-   resolveAgentMainSessionKey,
-   resolveFreshSessionTotalTokens,
-   resolveMainSessionKey,
-@@ -182,16 +183,24 @@ export function deriveSessionTitle(
-   return undefined;
- }
- 
-+/**
-+ * Look up one session entry. The lookup runs on the shared cached store and
-+ * only the matched entry is copied, so the cost is one entry, not the whole
-+ * index (which held hundreds of 30 KB entries on the 2026-10-03 soak node and
-+ * was being deep-copied on every agent event). Writers go through
-+ * `updateSessionStore`, which takes the lock and its own copy.
-+ */
- export function loadSessionEntry(sessionKey: string) {
-   const cfg = loadConfig();
-   const sessionCfg = cfg.session;
-   const canonicalKey = resolveSessionStoreKey({ cfg, sessionKey });
-   const agentId = resolveSessionStoreAgentId(cfg, canonicalKey);
-   const storePath = resolveStorePath(sessionCfg?.store, { agentId });
--  const store = loadSessionStore(storePath);
-+  const store = peekSessionStore(storePath);
-   const match = findStoreMatch(store, canonicalKey, sessionKey.trim());
-   const legacyKey = match?.key !== canonicalKey ? match?.key : undefined;
--  return { cfg, storePath, store, entry: match?.entry, canonicalKey, legacyKey };
-+  const entry = match ? structuredClone(match.entry) : undefined;
-+  return { cfg, storePath, entry, canonicalKey, legacyKey };
- }
- 
- /**
-```
-
----
-
-### Incident Patch 13: `89a72a4a` (2026-10-03)
-**Commit Message**: fix(sessions): stop deep-copying the whole session store on read-only lookups
-
-CPU profile of the live gateway during a soak round (2026-10-03, inspector on loopback, 420 s): 35 s in structuredClone, 7.6 s in readFileSync, 6.8 s writing the store. All of it was loadSessionStore on a 9.7 MB sessions.json (297 entries, each carrying a 22 KB skillsSnapshot and a 7 KB systemPromptReport), called from every agent event (resolveToolVerboseLevel -> loadSessionEntry), every health snapshot (buildSessionSummary), and most RPCs (agent, chat.history, usage). Each call deep-copied the whole store. These were the 5 to 13 s event-loop stalls every soak round, the 15 s gateway timeouts and the 86 s late aborts.
-
-- peekSessionStore(storePath): the cached object itself for read-only use, filling the cache on a miss. Documented as must-not-mutate.
-- loadSessionEntry: looks up on the shared store and copies only the matched entry; it no longer returns the whole store (no caller used it).
-- health buildSessionSummary and readSessionUpdatedAt use the peek.
-
-Not changed here: the index still stores the skills prompt per session (the 9.7 MB), which is the follow-up.
-
-Co-Authored-By: Claude Fable 5.1 <[RE
-
-**File**: `src/commands/health.ts` (modified, +5/-2)
-```diff
-@@ -5,7 +5,7 @@ import type { ChannelAccountSnapshot } from "../channels/plugins/types.js";
- import { withProgress } from "../cli/progress.js";
- import type { BitterbotConfig } from "../config/config.js";
- import { loadConfig } from "../config/config.js";
--import { loadSessionStore, resolveStorePath } from "../config/sessions.js";
-+import { peekSessionStore, resolveStorePath } from "../config/sessions.js";
- import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
- import { info } from "../globals.js";
- import { isTruthyEnvValue } from "../infra/env.js";
-@@ -144,7 +144,10 @@ const resolveAgentOrder = (cfg: ReturnType<typeof loadConfig>) => {
- };
- 
- const buildSessionSummary = (storePath: string) => {
--  const store = loadSessionStore(storePath);
-+  // Read-only: counts and the five newest keys. The health snapshot refreshes
-+  // often enough that a deep copy of a large store here showed up as the top
-+  // synchronous cost in the gateway profile.
-+  const store = peekSessionStore(storePath);
-   const sessions = Object.entries(store)
-     .filter(([key]) => key !== "global" && key !== "unknown")
-     .map(([key, entry]) => ({ key, updatedAt: entry?.updatedAt ?? 0 }))
-```
-
-**File**: `src/config/sessions.cache.test.ts` (modified, +43/-0)
-```diff
-@@ -5,6 +5,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi }
- import {
-   clearSessionStoreCacheForTest,
-   loadSessionStore,
-+  peekSessionStore,
-   type SessionEntry,
-   saveSessionStore,
- } from "./sessions.js";
-@@ -217,4 +218,46 @@ describe("Session Store Cache", () => {
-     const loaded = loadSessionStore(storePath);
-     expect(loaded).toEqual({});
-   });
-+
-+  describe("peekSessionStore (read-only, no copy)", () => {
-+    it("returns the cached object itself on a hit and a fresh copy from loadSessionStore", async () => {
-+      await saveSessionStore(storePath, {
-+        "agent:a:one": { sessionId: "id-1", updatedAt: 1 },
-+        "agent:a:two": { sessionId: "id-2", updatedAt: 2 },
-+      });
-+      const first = peekSessionStore(storePath);
-+      const second = peekSessionStore(storePath);
-+      // Same object: the hot read path does not pay for a deep copy.
-+      expect(second).toBe(first);
-+      expect(Object.keys(first)).toEqual(["agent:a:one", "agent:a:two"]);
-+      // loadSessionStore still hands out a copy that is safe to mutate.
-+      const copy = loadSessionStore(storePath);
-+      expect(copy).not.toBe(first);
-+      expect(copy).toEqual(first);
-+      copy["agent:a:one"]!.updatedAt = 999;
-+      expect(peekSessionStore(storePath)["agent:a:one"]!.updatedAt).toBe(1);
-+    });
-+
-+    it("sees a store rewritten on disk (mtime change) without a stale hit", async () => {
-+      await saveSessionStore(storePath, { "agent:a:one": { sessionId: "id-1", updatedAt: 1 } });
-+      expect(Object.keys(peekSessionStore(storePath))).toEqual(["agent:a:one"]);
-+      // Rewrite with a different mtime.
-+      await new Promise((r) => setTimeout(r, 20));
-+      await saveSessionStore(storePath, {
-+        "agent:a:one": { sessionId: "id-1", updatedAt: 1 },
-+        "agent:a:three": { sessionId: "id-3", updatedAt: 3 },
-+      });
-+      fs.utimesSync(storePath, new Date(), new Date(Date.now() + 5_000));
-+      expect(Object.keys(peekSessionStore(storePath))).toContain("agent:a:three");
-+    });
-+
-+    it("falls back to a disk load when the cache is disabled", async () => {
-+      process.env.BITTERBOT_SESSION_CACHE_TTL_MS = "0";
-+      await saveSessionStore(storePath, { "agent:a:one": { sessionId: "id-1", updatedAt: 1 } });
-+      const a = peekSessionStore(storePath);
-+      const b = peekSessionStore(storePath);
-+      expect(a).toEqual(b);
-+      expect(a).not.toBe(b);
-+    });
-+  });
- });
-```
-
-**File**: `src/config/sessions/store.ts` (modified, +28/-1)
-```diff
-@@ -212,12 +212,39 @@ export function loadSessionStore(
-   return structuredClone(store);
- }
- 
-+/**
-+ * The cached store object itself, for read-only lookups.
-+ *
-+ * `loadSessionStore` returns a deep copy so callers may mutate freely; with
-+ * hundreds of sessions that copy is tens of milliseconds of synchronous work,
-+ * and the gateway asked for it on every agent event, every health snapshot and
-+ * most RPCs (2026-10-03 profile: 35 s of structuredClone in a 7-minute window,
-+ * 9.7 MB store). Callers that only read one entry or count keys use this and
-+ * copy what they keep. The returned object MUST NOT be mutated.
-+ */
-+export function peekSessionStore(storePath: string): Readonly<Record<string, SessionEntry>> {
-+  if (isSessionStoreCacheEnabled()) {
-+    const cached = SESSION_STORE_CACHE.get(storePath);
-+    if (
-+      cached &&
-+      isSessionStoreCacheValid(cached) &&
-+      getFileMtimeMs(storePath) === cached.mtimeMs
-+    ) {
-+      return cached.store;
-+    }
-+  }
-+  // Miss: load from disk (which fills the cache) and hand out the cached object
-+  // so the next peek is the same reference; without a cache the copy is ours.
-+  const loaded = loadSessionStore(storePath);
-+  return SESSION_STORE_CACHE.get(storePath)?.store ?? loaded;
-+}
-+
- export function readSessionUpdatedAt(params: {
-   storePath: string;
-   sessionKey: string;
- }): number | undefined {
-   try {
--    const store = loadSessionStore(params.storePath);
-+    const store = peekSessionStore(params.storePath);
-     return store[params.sessionKey]?.updatedAt;
-   } catch {
-     return undefined;
-```
-
-**File**: `src/gateway/session-utils.ts` (modified, +11/-2)
-```diff
-@@ -13,6 +13,7 @@ import {
-   buildGroupDisplayName,
-   canonicalizeMainSessionAlias,
-   loadSessionStore,
-+  peekSessionStore,
-   resolveAgentMainSessionKey,
-   resolveFreshSessionTotalTokens,
-   resolveMainSessionKey,
-@@ -182,16 +183,24 @@ export function deriveSessionTitle(
-   return undefined;
- }
- 
-+/**
-+ * Look up one session entry. The lookup runs on the shared cached store and
-+ * only the matched entry is copied, so the cost is one entry, not the whole
-+ * index (which held hundreds of 30 KB entries on the 2026-10-03 soak node and
-+ * was being deep-copied on every agent event). Writers go through
-+ * `updateSessionStore`, which takes the lock and its own copy.
-+ */
- export function loadSessionEntry(sessionKey: string) {
-   const cfg = loadConfig();
-   const sessionCfg = cfg.session;
-   const canonicalKey = resolveSessionStoreKey({ cfg, sessionKey });
-   const agentId = resolveSessionStoreAgentId(cfg, canonicalKey);
-   const storePath = resolveStorePath(sessionCfg?.store, { agentId });
--  const store = loadSessionStore(storePath);
-+  const store = peekSessionStore(storePath);
-   const match = findStoreMatch(store, canonicalKey, sessionKey.trim());
-   const legacyKey = match?.key !== canonicalKey ? match?.key : undefined;
--  return { cfg, storePath, store, entry: match?.entry, canonicalKey, legacyKey };
-+  const entry = match ? structuredClone(match.entry) : undefined;
-+  return { cfg, storePath, entry, canonicalKey, legacyKey };
- }
- 
- /**
-```
-
----
-
-### Incident Patch 14: `6bd8ff7d` (2026-10-03)
-**Commit Message**: Merge pull request #147 from Bitterbot-AI/fix/control-ui-root-from-bundle
-
-fix(gateway): find dist/control-ui next to the bundle regardless of cwd
-
-**File**: `src/gateway/control-ui-assets.ts` (modified, +6/-1)
-```diff
-@@ -58,7 +58,12 @@ export function controlUiRootCandidates(params?: {
-   if (envOverride) {
-     return [path.resolve(envOverride)];
-   }
--  // Running from dist/ (the normal case): dist/gateway/... -> dist/control-ui
-+  // Running from the single-file bundle (the normal case): dist/entry.js ->
-+  // dist/control-ui. The gateway's cwd is not reliable here: started from
-+  // another directory (2026-10-02, cwd under /mnt/c) the cwd candidate below
-+  // missed and the Control UI answered 404 while the WebSocket API kept working.
-+  out.push(path.resolve(here, "control-ui"));
-+  // Running unbundled from dist/gateway/...: dist/control-ui.
-   out.push(path.resolve(here, "..", "control-ui"));
-   // Running from a repo checkout or with a staged dist.
-   out.push(path.resolve(cwd, "dist", "control-ui"));
-```
-
-**File**: `src/gateway/control-ui-http.test.ts` (modified, +15/-0)
-```diff
-@@ -274,6 +274,21 @@ describe("control UI helpers", () => {
-     expect(candidates.some((c) => c.endsWith(path.join("dist", "control-ui")))).toBe(true);
-   });
- 
-+  it("finds dist/control-ui next to the bundle whatever the process cwd is", () => {
-+    // Live finding 2026-10-03: the gateway runs as the single-file bundle
-+    // dist/entry.js, so the module directory IS dist/. Started from an unrelated
-+    // cwd, the only candidates were <repo>/control-ui and <cwd>/dist/control-ui,
-+    // both missing, and the Control UI answered 404 for a day while the
-+    // WebSocket API kept working.
-+    const candidates = controlUiRootCandidates({
-+      env: {},
-+      moduleDir: "/repo/dist",
-+      cwd: "/somewhere/else",
-+      execPath: "/usr/bin/node",
-+    });
-+    expect(candidates[0]).toBe(path.resolve("/repo/dist", "control-ui"));
-+  });
-+
-   it("notices a UI staged after the first miss", async () => {
-     // Regression, found by live testing: a negative result was cached for the
-     // process lifetime, so a UI staged after boot (which is exactly what
-```
-
----
-
-### Incident Patch 15: `a8b97d4b` (2026-10-03)
-**Commit Message**: Merge pull request #146 from Bitterbot-AI/fix/maintenance-tick-cold-scans
-
-fix(memory): stop the maintenance tick's cold full scans of chunks
-
-**File**: `docs/memory/knowledge-crystals.md` (modified, +2/-0)
-```diff
-@@ -298,6 +298,8 @@ await orchestratorBridge.publishWeather(0.9, 300_000, "suspicious skill burst fr
- 
- The `ConsolidationEngine` (`consolidation.ts`) runs periodically (default: every 30 minutes) and performs 4 phases:
- 
-+It runs in the gateway process on the event loop with the synchronous SQLite driver, so it loads the live set in batches of 50 rows with a yield between batches, and the two per-tick lookups that usually match nothing (pending GCCRF scores, TTL-governed crystals) are served by partial indexes. Before that (2026-10-03 soak), each tick ran three cold full scans of `chunks`, about 5 seconds of blocked I/O each on a 6,000-crystal store with a small page cache.
-+
- ### Phase 1: Score All Chunks (Ebbinghaus Decay)
- 
- Every crystal's importance is recalculated from scratch using `calculateImportance()`:
-```
-
-**File**: `src/memory/consolidation.batched-load.test.ts` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+/**
-+ * Consolidation loads the live chunk set in rowid-ordered batches with a yield
-+ * between them (a cold scan of a few thousand rows is seconds of synchronous
-+ * I/O on the gateway loop). The set loaded must be the same as one SELECT:
-+ * every live chunk once, frozen and forgotten ones excluded.
-+ */
-+import { DatabaseSync } from "node:sqlite";
-+import { describe, expect, it } from "vitest";
-+import { ConsolidationEngine } from "./consolidation.js";
-+import { ensureColumn, ensureMemoryIndexSchema } from "./memory-schema.js";
-+
-+function createDb(): DatabaseSync {
-+  const db = new DatabaseSync(":memory:");
-+  ensureMemoryIndexSchema({
-+    db,
-+    embeddingCacheTable: "embedding_cache",
-+    ftsTable: "chunks_fts",
-+    ftsEnabled: false,
-+  });
-+  ensureColumn(db, "chunks", "lifecycle", "TEXT");
-+  ensureColumn(db, "chunks", "semantic_type", "TEXT");
-+  return db;
-+}
-+
-+function insertChunk(db: DatabaseSync, id: string, lifecycle: string | null): void {
-+  const now = Date.now();
-+  db.prepare(
-+    `INSERT INTO chunks (id, path, source, start_line, end_line, hash, model, text, embedding,
-+       updated_at, importance_score, access_count, last_accessed_at, semantic_type, lifecycle)
-+     VALUES (?, 'test.md', 'memory', 0, 1, ?, 'test', ?, '[1,0,0]', ?, 0.5, 1, ?, 'general', ?)`,
-+  ).run(id, `hash-${id}`, `text ${id}`, now, now, lifecycle);
-+}
-+
-+describe("consolidation live-chunk load", () => {
-+  it("loads every live chunk once across batch boundaries and skips frozen and expired ones", async () => {
-+    const db = createDb();
-+    // 1,203 live rows: many full batches of 50 plus a partial one.
-+    for (let i = 0; i < 1_203; i++) {
-+      insertChunk(db, `live-${i}`, i % 2 === 0 ? "generated" : "activated");
-+    }
-+    insertChunk(db, "frozen-skill", "frozen");
-+    insertChunk(db, "expired", "expired");
-+    insertChunk(db, "archived", "archived");
-+    const engine = new ConsolidationEngine(db) as unknown as {
-+      loadLiveChunks(): Promise<Array<{ id: string }>>;
-+    };
-+    const loaded = await engine.loadLiveChunks();
-+    const ids = loaded.map((c) => c.id);
-+    expect(ids).toHaveLength(1_203);
-+    expect(new Set(ids).size).toBe(1_203);
-+    expect(ids).not.toContain("frozen-skill");
-+    expect(ids).not.toContain("expired");
-+    expect(ids).not.toContain("archived");
-+    expect(loaded[0]).not.toHaveProperty("rid");
-+  });
-+
-+  it("run() still scores the whole live set", async () => {
-+    const db = createDb();
-+    for (let i = 0; i < 1_001; i++) {
-+      insertChunk(db, `c-${i}`, "generated");
-+    }
-+    const stats = await new ConsolidationEngine(db).run();
-+    expect(stats.totalChunks).toBe(1_001);
-+    expect(stats.scoredChunks).toBe(1_001);
-+  });
-+});
-```
-
-**File**: `src/memory/consolidation.ts` (modified, +46/-12)
-```diff
-@@ -29,6 +29,8 @@ const PAIRWISE_MERGE_CHUNK_CAP = 500;
- // Yield to the event loop every N outer iterations of the O(n^2) similarity
- // sweeps so a single consolidation pass cannot stall the gateway keepalive.
- const SIMILARITY_YIELD_EVERY = 32;
-+// Rows per batch when loading the live set; see loadLiveChunks.
-+const LIVE_CHUNK_LOAD_BATCH = 50;
- 
- export type ConsolidationConfig = {
-   decayRate: number;
-@@ -128,18 +130,7 @@ export class ConsolidationEngine {
-       durationMs: 0,
-     };
- 
--    const chunks = this.db
--      .prepare(
--        `SELECT id, path, source, start_line, end_line, hash, model, text, embedding,
--                updated_at, importance_score, access_count, last_accessed_at,
--                memory_type, emotional_valence, semantic_type, lifecycle_state, lifecycle,
--                spacing_score, open_loop
--         FROM chunks
--         WHERE (COALESCE(lifecycle, 'generated') IN ('generated', 'activated')
--                OR (lifecycle IS NULL AND COALESCE(lifecycle_state, 'active') = 'active'))
--           AND COALESCE(lifecycle, '') != 'frozen'`,
--      )
--      .all() as ChunkRow[];
-+    const chunks = await this.loadLiveChunks();
- 
-     stats.totalChunks = chunks.length;
-     if (chunks.length === 0) {
-@@ -301,6 +292,49 @@ export class ConsolidationEngine {
-     return stats;
-   }
- 
-+  /**
-+   * Load every live (non-frozen, not forgotten) chunk with its embedding.
-+   *
-+   * Read in rowid-ordered batches with a yield between them: on a cold page
-+   * cache one pass over the table costs seconds of synchronous I/O (about 5 s
-+   * for 6k rows on the 2026-10-03 reference node, 16 ms warm), and this runs
-+   * on the gateway loop every 30 minutes. A batch bounds each block to a
-+   * fraction of that (50 rows: about 0.3 s cold on that node, the whole pass
-+   * still about 5 s) while the set loaded is the same.
-+   */
-+  private async loadLiveChunks(): Promise<ChunkRow[]> {
-+    const stmt = this.db.prepare(
-+      `SELECT rowid AS rid, id, path, source, start_line, end_line, hash, model, text, embedding,
-+              updated_at, importance_score, access_count, last_accessed_at,
-+              memory_type, emotional_valence, semantic_type, lifecycle_state, lifecycle,
-+              spacing_score, open_loop
-+       FROM chunks
-+       WHERE rowid > ?
-+         AND (COALESCE(lifecycle, 'generated') IN ('generated', 'activated')
-+              OR (lifecycle IS NULL AND COALESCE(lifecycle_state, 'active') = 'active'))
-+         AND COALESCE(lifecycle, '') != 'frozen'
-+       ORDER BY rowid
-+       LIMIT ?`,
-+    );
-+    const chunks: ChunkRow[] = [];
-+    let after = 0;
-+    for (;;) {
-+      const batch = stmt.all(after, LIVE_CHUNK_LOAD_BATCH) as Array<ChunkRow & { rid: number }>;
-+      if (batch.length === 0) {
-+        break;
-+      }
-+      for (const { rid, ...row } of batch) {
-+        chunks.push(row as ChunkRow);
-+        after = rid;
-+      }
-+      if (batch.length < LIVE_CHUNK_LOAD_BATCH) {
-+        break;
-+      }
-+      await yieldToEventLoop();
-+    }
-+    return chunks;
-+  }
-+
-   /**
-    * Decay steering rewards on all chunks (Phase 3).
-    * Called during consolidation to prevent unbounded reward accumulation.
-```
-
-**File**: `src/memory/migrations.ts` (modified, +21/-0)
-```diff
-@@ -2418,6 +2418,27 @@ const MIGRATIONS: Migration[] = [
-       db.exec(`UPDATE peer_reputation SET anomaly_flag = 0 WHERE anomaly_flag = 1`);
-     },
-   },
-+  {
-+    version: 70,
-+    description:
-+      "Maintenance-tick cold scans (2026-10-03 soak): every 30-minute tick ran two full " +
-+      "scans of chunks that matched nothing. scorePendingChunks filters on " +
-+      "curiosity_reward IS NULL, which the v35 partial index (IS NOT NULL) cannot serve; " +
-+      "governance.enforceLifespan filters on governance_json LIKE '%ttl%' and this install " +
-+      "has no TTL crystal. On a cold page cache each scan of the 6k-row table cost about " +
-+      "5 s of synchronous I/O on the gateway loop (16 ms warm). Partial indexes on exactly " +
-+      "those predicates make both queries touch only the matching rows.",
-+    up: (db: DatabaseSync) => {
-+      db.exec(
-+        `CREATE INDEX IF NOT EXISTS idx_chunks_curiosity_pending ` +
-+          `ON chunks(id) WHERE curiosity_reward IS NULL`,
-+      );
-+      db.exec(
-+        `CREATE INDEX IF NOT EXISTS idx_chunks_governance_ttl ` +
-+          `ON chunks(id) WHERE governance_json LIKE '%ttl%'`,
-+      );
-+    },
-+  },
- ];
- 
- /**
-```
-
-**File**: `src/memory/migrations.v70.test.ts` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+/**
-+ * Migration v70: partial indexes for the two maintenance-tick queries that
-+ * full-scanned `chunks` for rows that do not exist (2026-10-03 soak: ~5 s of
-+ * cold synchronous I/O each, every 30 minutes, on the gateway loop).
-+ */
-+import { DatabaseSync } from "node:sqlite";
-+import { describe, expect, it } from "vitest";
-+import { ensureMemoryIndexSchema } from "./memory-schema.js";
-+import { LATEST_SCHEMA_VERSION, runMigrations } from "./migrations.js";
-+
-+function openMigratedDb(): DatabaseSync {
-+  const db = new DatabaseSync(":memory:");
-+  ensureMemoryIndexSchema({
-+    db,
-+    embeddingCacheTable: "embedding_cache",
-+    ftsTable: "chunks_fts",
-+    ftsEnabled: false,
-+  });
-+  runMigrations(db);
-+  return db;
-+}
-+
-+function plan(db: DatabaseSync, sql: string): string {
-+  return (db.prepare(`EXPLAIN QUERY PLAN ${sql}`).all() as Array<{ detail: string }>)
-+    .map((r) => r.detail)
-+    .join(" | ");
-+}
-+
-+describe("migration v70: maintenance-tick partial indexes", () => {
-+  it("is the latest version and creates both indexes idempotently", () => {
-+    const db = openMigratedDb();
-+    expect(LATEST_SCHEMA_VERSION).toBeGreaterThanOrEqual(70);
-+    const names = (
-+      db
-+        .prepare(`SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'chunks'`)
-+        .all() as Array<{ name: string }>
-+    ).map((r) => r.name);
-+    expect(names).toContain("idx_chunks_curiosity_pending");
-+    expect(names).toContain("idx_chunks_governance_ttl");
-+    db.prepare(`UPDATE meta SET value = ? WHERE key = 'schema_version'`).run("69");
-+    expect(() => runMigrations(db)).not.toThrow();
-+  });
-+
-+  it("serves the pending-curiosity query from the index instead of scanning the table", () => {
-+    const db = openMigratedDb();
-+    const detail = plan(
-+      db,
-+      `SELECT id, embedding FROM chunks
-+       WHERE curiosity_reward IS NULL
-+         AND COALESCE(lifecycle_state, 'active') = 'active'
-+         AND embedding IS NOT NULL AND embedding != '[]'
-+       LIMIT 50`,
-+    );
-+    expect(detail).toContain("idx_chunks_curiosity_pending");
-+  });
-+
-+  it("serves the governance TTL query from the index instead of scanning the table", () => {
-+    const db = openMigratedDb();
-+    const detail = plan(
-+      db,
-+      `SELECT id, governance_json, created_at FROM chunks
-+       WHERE COALESCE(lifecycle, 'generated') NOT IN ('expired', 'frozen')
-+         AND governance_json LIKE '%ttl%'`,
-+    );
-+    expect(detail).toContain("idx_chunks_governance_ttl");
-+  });
-+});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #156** (2026-10-05): fix: live-test bugs, artifact tool loaded in chat, resizable computer pane (@VGIL77)
-- **PR #155** (2026-10-04): feat(browser): the agent can ask the owner to take over the browser (PLAN-53 A3 handoff) (@VGIL77)
-- **PR #154** (2026-10-04): fix(review): send a malformed spend call back to the agent instead of queuing it (@VGIL77)
-- **PR #153** (2026-10-04): feat(web-search): Serply provider (#152) plus onboarding env-detection fix (@VGIL77)
-- **PR #152** (closed): feat(web-search): add opt-in keyed Serply provider (@googio)
-- **PR #150** (2026-10-04): feat(review): action review — hold spends and X posts for the owner's approval (PLAN-53 Track B v1) (@VGIL77)
-- **PR #149** (2026-10-03): fix(sessions): store each skills snapshot body once, keep a ref per session (@VGIL77)
-- **PR #148** (2026-10-03): fix(sessions): stop deep-copying the whole session store on read-only lookups (@VGIL77)
+- **PR #272** (2026-10-18): feat(compute): PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage (@VGIL77)
+- **PR #270** (2026-10-18): feat(compute): PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery (@VGIL77)
+- **PR #268** (2026-10-18): feat(compute): PLAN-57 Phase 0, the read-only compute tool and its prompt section (@VGIL77)
+- **PR #266** (2026-10-17): ci(installer): run the PATH and sudo steps in test mode against the local fake releases (@VGIL77)
+- **PR #265** (2026-10-17): feat(installer): put ~/.local/bin on PATH, show download progress, no fresh-install prompt, refuse sudo not root (@VGIL77)
+- **PR #264** (2026-10-17): docs(install): lead with the one-command installer; npm only for people who already manage Node (@VGIL77)
 
 ---
 
@@ -5457,3 +2653,58 @@ fix(memory): stop the maintenance tick's cold full scans of chunks
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwri
+
+**RULE**:
+When implementing operations in `desktop/renderer/src/components/overview/OverviewView.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `300056e8`: pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwright revision) (#236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktop/renderer/src/components/overview/OverviewView.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { resolveOverviewStats } from "./overview-stats";
+  const stats = resolveOverviewStats(statusData, hello);
+        <StatCard label="Version" value={stats.version} accent />
+        <StatCard
+          label="Uptime"
+          value={stats.uptimeSeconds === null ? "—" : formatUptime(stats.uptimeSeconds)}
+        />
+        <StatCard label="Platform" value={stats.platform} sub={stats.platformSub} />
+          {stats.configPath && (
+              <span className="text-foreground font-mono text-xs">{stats.configPath}</span>
+          {stats.stateDir && (
+              <span className="text-foreground font-mono text-xs">{stats.stateDir}</span>
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+  const version = statusData?.version ?? hello?.version ?? "—";
+  const uptime = statusData?.uptime ?? health?.uptime;
+  const platform = statusData?.platform ?? "—";
+        <StatCard label="Version" value={String(version)} accent />
+        <StatCard label="Uptime" value={typeof uptime === "number" ? formatUptime(uptime) : "—"} />
+        <StatCard label="Platform" value={String(platform)} />
+          {statusData?.configPath && (
+              <span className="text-foreground font-mono text-xs">
+                {String(statusData.configPath)}
+              </span>
+          {statusData?.stateDir && (
+              <span className="text-foreground font-mono text-xs">
+                {String(statusData.stateDir)}
+              </span>
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `300056e8` are properly handled with clean fallback behavior.

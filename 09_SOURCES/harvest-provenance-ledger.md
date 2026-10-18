@@ -2491,3 +2491,10 @@ Every entry in this ledger must capture:
 | `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `09ed814e` | Multi-dimensional audit evidence | 2026-10-18T21:07:47.533Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `c5226df3` | Multi-dimensional audit evidence | 2026-10-18T21:07:49.078Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `927ee1ac` | Multi-dimensional audit evidence | 2026-10-18T21:07:53.416Z |
+| `learn-github-tusen-ai-naive-ui` | `https://github.com/tusen-ai/naive-ui` | `8b249214` | Multi-dimensional audit evidence | 2026-10-18T21:13:50.228Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `04ba445a` | Multi-dimensional audit evidence | 2026-10-18T21:13:52.343Z |
+| `learn-github-sudheerj-reactjs-interview-questions` | `https://github.com/sudheerj/reactjs-interview-questions` | `55b7d491` | Multi-dimensional audit evidence | 2026-10-18T21:13:57.464Z |
+| `learn-github-fission-fission` | `https://github.com/fission/fission` | `a65daf70` | Multi-dimensional audit evidence | 2026-10-18T21:14:00.781Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `4d900dd5` | Multi-dimensional audit evidence | 2026-10-18T21:14:01.777Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `2ed18896` | Multi-dimensional audit evidence | 2026-10-18T21:14:05.434Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a5cbbdd2` | Multi-dimensional audit evidence | 2026-10-18T21:14:07.357Z |
