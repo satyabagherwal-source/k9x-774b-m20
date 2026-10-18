@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T00:38:37.116Z",
+  "last_updated": "2026-10-18T00:42:35.448Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11794,7 +11794,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "f47f68d89095ea7c6102619c317929b099b61cad9e1019e7b7a5bc82491ee800",
+      "content_hash": "81f630351dd6f162406ed19908ce33335230ae90ceeacfd05eaadbf5b4b63a43",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -11929,6 +11929,21 @@
           "number": 1498,
           "title": "**Device‑Aware Safetensor Loading Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1571,
+          "title": "**Rule # PAD‑TOKEN‑ID‑CONSISTENCY**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1572,
+          "title": "**Rule # DTYPE‑ALIGNMENT‑FOR‑INFERENCE**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1573,
+          "title": "**Rule # INFERENCE‑MODE‑ENFORCEMENT**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11949,7 +11964,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-17T16:42:27.504Z",
+      "verified_at": "2026-10-18T00:42:35.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

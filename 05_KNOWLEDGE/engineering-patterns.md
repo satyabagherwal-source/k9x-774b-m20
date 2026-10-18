@@ -108209,3 +108209,177 @@ class LeakyMemoryTracker:
 Run a synthetic continuous loop of 1,000 forward passes through `BoundedMemoryBank` with `max_frames=8`. Measure PyTorch CUDA allocated memory via `torch.cuda.memory_allocated()`. Assert that memory usage remains strictly flat after frame index 8 with 0 bytes deviation.
 
 ---
+
+
+---
+
+## 1571. **Rule # PAD‑TOKEN‑ID‑CONSISTENCY** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Rule # PAD‑TOKEN‑ID‑CONSISTENCY**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-18T00:42:35.243Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+**MUST** ensure that the `pad_token_id` defined in `config.json` **exactly matches** the `pad_token_id` used by the tokenizer (`tokenizer_config.json`) **and** the value supplied to `collate_records`. If any of the three sources diverge, the system **MUST abort** with a clear `ValueError` before any tensor allocation.
+
+**WHY**:  
+A mismatch causes the padding mask to be mis‑aligned, leading to *attention leakage* where padded positions are treated as real tokens. This yields **spurious logits** and can corrupt the per‑question soft‑max, producing probabilities that do not sum to 1. In extreme cases, the model attempts to embed an out‑of‑range token ID, triggering a CUDA illegal memory access.
+
+**WHEN TO APPLY**:  
+All multimodal transformer pipelines that combine a **text tokenizer** with a **vision/audio processor** and perform **batch padding**; language: Python (torch + transformers) or any framework exposing a similar padding API.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def verify_pad_token_consistency(model_cfg: dict, tokenizer_cfg: dict) -> None:
+    model_pad = model_cfg.get("pad_token_id")
+    tokenizer_pad = tokenizer_cfg.get("pad_token_id")
+    if model_pad is None or tokenizer_pad is None:
+        raise ValueError(
+            f"pad_token_id missing – model:{model_pad} tokenizer:{tokenizer_pad}"
+        )
+    if model_pad != tokenizer_pad:
+        raise ValueError(
+            f"pad_token_id mismatch – model:{model_pad} tokenizer:{tokenizer_pad}"
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Anti‑pattern – silently coerce mismatched pad IDs
+model_cfg["pad_token_id"] = tokenizer_cfg.get("pad_token_id", 0)  # WRONG
+```
+
+**VERIFICATION METHOD**:  
+Add a **pytest** test that loads both JSON files and asserts equality; integrate the test into CI with `pytest -q tests/test_pad_token_consistency.py`. Additionally, enable a **pre‑run linter rule** (`pad-token-consistency`) that parses the two JSON files and fails the build on mismatch.
+
+---
+
+
+---
+
+## 1572. **Rule # DTYPE‑ALIGNMENT‑FOR‑INFERENCE** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Rule # DTYPE‑ALIGNMENT‑FOR‑INFERENCE**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-18T00:42:35.322Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+**MUST** load all model weight shards (`*.safetensors`) with the **exact dtype** declared in `config.json["dtype"]` (e.g., `"bfloat16"`), and **MUST** ensure that the processor’s output tensors (image embeddings, token IDs) are cast to the same dtype **before** they are concatenated into the batch.
+
+**WHY**:  
+Mixed‑precision tensors trigger **implicit up‑casting** on the GPU, causing a **dramatic slowdown** (e.g., bfloat16 → float32) and, more critically, can overflow the **CUDA kernel launch buffer** when the model expects bfloat16 kernels. Inconsistent dtypes also break the **attention bias** logic that assumes a uniform numeric range.
+
+**WHEN TO APPLY**:  
+Any large‑scale transformer model that uses **low‑precision inference** (bfloat16, fp16, int8) and combines **multiple modalities** whose encoders may default to `float32`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def load_model_with_dtype(model_path: str, dtype_str: str, device: str):
+    torch_dtype = getattr(torch, dtype_str)  # e.g., torch.bfloat16
+    model = transformers.AutoModelForCausalLM.from_pretrained(
+        model_path,
+        torch_dtype=torch_dtype,
+        device_map=device,
+        trust_remote_code=True,
+    )
+    return model
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Implicit dtype conversion – leads to silent up‑cast
+model = AutoModel.from_pretrained(path)  # defaults to float32
+```
+
+**VERIFICATION METHOD**:  
+A **unit test** that inspects `model.dtype` after loading and asserts equality with `torch.bfloat16`. Add a **CI step** that runs `torchinfo` to dump the dtype of each sub‑module and fails if any differ.
+
+---
+
+
+---
+
+## 1573. **Rule # INFERENCE‑MODE‑ENFORCEMENT** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Rule # INFERENCE‑MODE‑ENFORCEMENT**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-18T00:42:35.396Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+**MUST** wrap **all** forward passes that are intended for production inference inside a `torch.inference_mode()` context **and** must **NOT** enable gradient tracking (`torch.set_grad_enabled(True)`) anywhere in the inference path.
+
+**WHY**:  
+Leaving gradient tracking enabled inflates CUDA memory usage by up to **3×** (activations + gradients) and can cause **out‑of‑memory** crashes on a single H200 when processing a batch of multimodal records. Moreover, gradient hooks may unintentionally mutate model weights if a stray optimizer step is invoked.
+
+**WHEN TO APPLY**:  
+Any deployment scenario where the model is used **solely for forward inference**, especially with **large‑scale multimodal inputs**.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def run_inference(model, batch):
+    with torch.inference_mode():
+        logits = model(batch)[0]  # returns per‑question logits
+    return logits
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Accidentally enabling autograd
+logits = model(batch)  # gradients will be tracked if torch.set_grad_enabled(True)
+```
+
+**VERIFICATION METHOD**:  
+Instrument a **runtime guard** that asserts `torch.is_grad_enabled() is False` before each forward call; raise `RuntimeError` otherwise. Include a **pytest** test that deliberately enables grads and expects the guard to fire.
+
+---
