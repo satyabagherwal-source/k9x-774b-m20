@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T07:33:55.681Z",
-  "total_cycles_completed": 2435,
-  "total_learnings_persisted": 2435,
-  "total_rules_promoted": 1432,
+  "last_updated": "2026-10-18T07:39:22.057Z",
+  "total_cycles_completed": 2437,
+  "total_learnings_persisted": 2437,
+  "total_rules_promoted": 1437,
   "history": [
-    {
-      "timestamp": "2026-10-17T18:37:17.539Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:40:29.974Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T18:43:37.762Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1389,20 @@
       "repository": "syntax-tree/mdast",
       "learningId": "learn-github-syntax-tree-mdast",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:39:13.278Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:39:22.057Z",
+      "repository": "pallets/flask",
+      "learningId": "learn-github-pallets-flask",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

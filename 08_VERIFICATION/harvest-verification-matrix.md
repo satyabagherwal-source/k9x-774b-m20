@@ -2458,3 +2458,5 @@
 | `CYCLE-20261018-86UT` | `2026-10-18T07:28:58.037Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1655, Rule 1656, Rule 1657` | Yes (`7e931bb5...`) |
 | `CYCLE-20261018-EK82` | `2026-10-18T07:33:55.298Z` | `RubenVerborgh/SPARQL.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1658, Rule 1659, Rule 1660` | Yes (`24c412fc...`) |
 | `CYCLE-20261018-EKIK` | `2026-10-18T07:33:55.676Z` | `syntax-tree/mdast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1661, Rule 1662, Rule 1663` | Yes (`b45a6efd...`) |
+| `CYCLE-20261018-LDKJ` | `2026-10-18T07:39:13.267Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1664, Rule 1665, Rule 1666` | Yes (`19d5105b...`) |
+| `CYCLE-20261018-LKCK` | `2026-10-18T07:39:22.052Z` | `pallets/flask` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1667, Rule 1668` | Yes (`1d83358b...`) |

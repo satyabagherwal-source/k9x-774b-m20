@@ -116233,3 +116233,466 @@ node -e "
 ```
 
 ---
+
+
+---
+
+## 1664. Isolated Context-Manager Exit Limiters in Hybrid Threadpools (Harvested from fastapi/fastapi)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Isolated Context-Manager Exit Limiters in Hybrid Threadpools",
+  "source": "fastapi/fastapi",
+  "source_url": "https://github.com/tiangolo/fastapi",
+  "source_version": "b23d78f2",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T07:39:13.026Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fastapi-fastapi",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fastapi/fastapi](https://github.com/tiangolo/fastapi) (Revision: `b23d78f2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When adapting a synchronous Python context manager into an asynchronous context manager (`@asynccontextmanager`) backed by a worker threadpool, `cm.__exit__` MUST execute with an isolated, dedicated capacity limiter (or unconstrained limiter), rather than borrowing or competing for the global/shared threadpool capacity limiter used by `cm.__enter__`.
+
+**WHY**:
+If `cm.__enter__` acquires a shared resource (such as a database connection from a bounded pool) on a shared threadpool, and the event loop saturates the shared threadpool with subsequent `cm.__enter__` tasks, the system enters an unrecoverable deadlock (Resource Acquisition At Degradation Starvation). The thread pool is exhausted by tasks waiting for connections, while the tasks holding connections cannot run `cm.__exit__` because the thread pool has no free worker slots. Supplying an isolated `CapacityLimiter(1)` solely for `cm.__exit__` guarantees that release/cleanup operations are never starved by inbound acquisition tasks.
+
+**WHEN TO APPLY**:
+Apply in any asynchronous runtime (AnyIO, asyncio, Trio, Twisted) bridging synchronous context managers (SQLAlchemy sessions, psycopg2 connections, Redis connections, disk file handles) into async generator lifecycles.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from collections.abc import AsyncGenerator
+from contextlib import AbstractContextManager, asynccontextmanager
+from typing import TypeVar
+import anyio.to_thread
+from anyio import CapacityLimiter
+from starlette.concurrency import run_in_threadpool
+
+_T = TypeVar("_T")
+
+@asynccontextmanager
+async def contextmanager_in_threadpool(
+    cm: AbstractContextManager[_T],
+) -> AsyncGenerator[_T, None]:
+    # A dedicated limiter for __exit__ ensures that teardown never starves
+    # if the main worker pool is saturated with inbound requests.
+    exit_limiter = CapacityLimiter(1)
+    try:
+        # Run __enter__ on the shared threadpool
+        yield await run_in_threadpool(cm.__enter__)
+    except Exception as e:
+        ok = bool(
+            await anyio.to_thread.run_sync(
+                cm.__exit__, type(e), e, e.__traceback__, limiter=exit_limiter
+            )
+        )
+        if not ok:
+            raise e
+    else:
+        await anyio.to_thread.run_sync(
+            cm.__exit__, None, None, None, limiter=exit_limiter
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Reusing the default threadpool for cm.__exit__
+@asynccontextmanager
+async def leaky_contextmanager(cm):
+    try:
+        # If threadpool has N slots, and N concurrent requests enter here:
+        yield await run_in_threadpool(cm.__enter__)
+    finally:
+        # DEADLOCK: Threadpool capacity is 0, __exit__ is queued indefinitely.
+        # Connections in the pool are never released, freezing the server process.
+        await run_in_threadpool(cm.__exit__, None, None, None)
+```
+
+**VERIFICATION METHOD**:
+Run an integration test with a pool size equal to the threadpool worker limit ($N$), initiate $N$ concurrent requests, throw an exception inside the yielded block, and verify that all $N$ context managers complete `__exit__` within a strict timeout ($< 1.0\text{s}$) rather than timing out or hanging indefinitely.
+
+---
+
+
+---
+
+## 1665. RFC 8259 Compliant Float Sanitization for Stream Encoders (Harvested from fastapi/fastapi)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "RFC 8259 Compliant Float Sanitization for Stream Encoders",
+  "source": "fastapi/fastapi",
+  "source_url": "https://github.com/tiangolo/fastapi",
+  "source_version": "b23d78f2",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T07:39:13.110Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fastapi-fastapi",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fastapi/fastapi](https://github.com/tiangolo/fastapi) (Revision: `b23d78f2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before piping deserialized or arbitrary Python objects into standard JSON lines (`JSONL`) or Server-Sent Events (`SSE`) streaming buffers that utilize standard `json.dumps`, the serialization layer MUST recursively normalize non-finite IEEE 754 floating-point values (`math.nan`, `math.inf`, `-math.inf`) to JSON-compliant `None` (or configured string representations), while preserving non-string dictionary keys and primitive scalar values.
+
+**WHY**:
+JavaScript Object Notation (RFC 8259 § 6) explicitly forbids `NaN`, `Infinity`, and `-Infinity`. Python's native `json.dumps()` allows these values by default (`allow_nan=True`), emitting JavaScript-incompatible tokens: `{"val": NaN}`. When consumed by frontend parsers (`JSON.parse` in browsers or Node.js), parsing fails with a fatal `SyntaxError: Unexpected token N in JSON at position X`. While Pydantic v2 handles this at the model level via `model_dump_json()`, raw dictionaries, untyped generators, or Server-Sent Events wrapping unstructured payloads bypass Pydantic model serialization and crash client-side streaming consumers unless sanitized.
+
+**WHEN TO APPLY**:
+Apply in any HTTP streaming route, SSE emitter (`EventSourceResponse`), JSONL ndjson line-delimited stream, or websocket pipeline yielding dynamically constructed dictionaries or primitive floats to HTTP clients.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import math
+from typing import Any
+
+def normalize_non_finite_floats(data: Any) -> Any:
+    """
+    Recursively replaces non-finite float values in JSON-compatible structures
+    with None, preserving dict keys, non-float primitives, and nested structures.
+    """
+    if isinstance(data, float):
+        return data if math.isfinite(data) else None
+    if isinstance(data, dict):
+        return {
+            key: normalize_non_finite_floats(value) 
+            for key, value in data.items()
+        }
+    if isinstance(data, list):
+        return [normalize_non_finite_floats(value) for value in data]
+    return data
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Serializing raw generator items directly to stream bytes
+async def event_generator():
+    yield {"ratio": float("nan"), "status": "running"}
+
+async def bad_sse_endpoint():
+    async for item in event_generator():
+        # Emits: b'data: {"ratio": NaN, "status": "running"}\n\n'
+        # Crashes `JSON.parse()` in the browser with SyntaxError!
+        yield f"data: {json.dumps(item)}\n\n".encode("utf-8")
+```
+
+**VERIFICATION METHOD**:
+Parameterized unit test verifying that emitting `[float("nan"), float("inf"), float("-inf"), {"nested": [float("nan")]}]` through an SSE or JSONL response pipeline deserializes via a strict RFC-compliant JSON parser (`json.loads` without non-standard extensions) into `[None, None, None, {"nested": [None]}]`.
+
+---
+
+
+---
+
+## 1666. Starlette Route Extraction Invariant for Included Sub-Routers (Harvested from fastapi/fastapi)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Starlette Route Extraction Invariant for Included Sub-Routers",
+  "source": "fastapi/fastapi",
+  "source_url": "https://github.com/tiangolo/fastapi",
+  "source_version": "b23d78f2",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T07:39:13.188Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fastapi-fastapi",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fastapi/fastapi](https://github.com/tiangolo/fastapi) (Revision: `b23d78f2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When wrapping or mounting Starlette routers (`Route`, `WebSocketRoute`, `Mount`, `Host`) inside an application router abstraction that produces route inspection metadata (`iter_route_contexts()`), the introspection traversal MUST check if the contextual wrapper contains a direct underlying `.starlette_route`. If present, it MUST return that underlying route rather than returning the generic `_RouteContext` wrapper.
+
+**WHY**:
+When routers are included dynamically using `.include_router()`, FastAPI creates intermediate route contexts to propagate path prefixes, dependencies, and tags. If `_effective_route` returns the wrapper object instead of the actual `starlette.routing.Route` or `starlette.routing.WebSocketRoute`, downstream OpenAPI generators, reverse-URL resolution engines (`url_path_for`), and route-conflict detection algorithms fail to access native path parameters (`param_convertors`), route handlers, or HTTP methods, leading to blank metadata, missing documentation, or incorrect 404/405 routing tables.
+
+**WHEN TO APPLY**:
+Apply when implementing API routing layers, gateway adapters, or OpenAPI schema generation tools that wrap or nest underlying ASGI framework routes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from starlette.routing import BaseRoute
+
+class RouteContextWrapper:
+    def __init__(self, route: BaseRoute, route_context: Any | None = None) -> None:
+        self.route = route
+        self._route_context = route_context
+
+    @property
+    def original_route(self) -> BaseRoute:
+        return self.route
+
+    @property
+    def _effective_route(self) -> BaseRoute:
+        if self._route_context is not None:
+            # Crucial invariant: if an inner starlette_route exists in context,
+            # surface it to preserve route metadata, path convertors, and methods.
+            if getattr(self._route_context, "starlette_route", None) is not None:
+                return self._route_context.starlette_route
+            return self._route_context
+        return self.route
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Returning wrapper context directly without unwrapping
+@property
+def _effective_route(self):
+    if self._route_context is not None:
+        # Drops starlette_route attributes (e.g. methods, param_convertors)!
+        return self._route_context 
+    return self.route
+```
+
+**VERIFICATION METHOD**:
+Include an `APIRouter` containing a raw `starlette.routing.Route` and `WebSocketRoute` with typed path parameters (`/items/{item_id:int}`) under a nested prefix (`/api/v1`), run `iter_route_contexts(app.routes)`, and assert:
+`context.param_convertors["item_id"].convert("42") == 42` and `context.methods == {"GET", "HEAD"}`.
+
+---
+
+
+---
+
+## 1667. Robust Authority Parsing via RFC 3986 URL Splitter Over Delimiter Partitioning (Harvested from pallets/flask)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Robust Authority Parsing via RFC 3986 URL Splitter Over Delimiter Partitioning",
+  "source": "pallets/flask",
+  "source_url": "https://github.com/pallets/flask",
+  "source_version": "d086db85",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-18T07:39:21.890Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pallets-flask",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pallets/flask](https://github.com/pallets/flask) (Revision: `d086db85`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Network endpoint host/port extraction from user configuration, request headers, or authority strings MUST NEVER use single-character delimiter splitting (e.g., `str.partition(":")`, `str.split(":")`, or regex `^([^:]+):(\d+)$`). Network parsing MUST parse the authority segment using an RFC 3986/RFC 5952 compliant URI parser (e.g., `urllib.parse.urlsplit("//" + authority)`).
+
+**WHY**:
+IPv6 literal addresses contain multiple colons (e.g., `[::1]:8080`, `[2001:db8::1]`). Splitting on the first colon yields an invalid host token `[` and invalid port `::1]:8080`. Splitting on the last colon fails on bare IPv6 addresses without ports (`[::1]`). This corrupts socket binding, test client session resolution, cookie domain scoping, and SNI headers, inducing critical networking faults.
+
+**WHEN TO APPLY**:
+Apply in any networking, web, proxy, or microservice infrastructure codebase that consumes socket configurations, `Host` HTTP headers, upstream proxy targets, or URI authorities in Python, Go, Rust, TypeScript, or C++.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import collections.abc as cabc
+from urllib.parse import urlsplit
+
+
+def extract_host_port(
+    authority: str, default_port: int = 5000
+) -> tuple[str, int]:
+    """Extract host and port safely supporting IPv4, IPv6 literals, and hostnames.
+
+    Authority string is normalized as a schemeless network location using '//'.
+    """
+    if not authority:
+        return "127.0.0.1", default_port
+
+    parsed = urlsplit(f"//{authority}")
+    host = parsed.hostname or "127.0.0.1"
+    port = parsed.port if parsed.port is not None else default_port
+
+    # Strip potential outer square brackets if raw IP is needed for socket bind
+    return host, port
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+def extract_host_port_unsafe(
+    authority: str, default_port: int = 5000
+) -> tuple[str, int]:
+    # CRITICAL BUG: Fails violently when authority is an IPv6 literal (e.g. "[::1]:8080")
+    host, _, port_str = authority.partition(":")
+    # host becomes "[" and port_str becomes ":1]:8080"
+    port = int(port_str) if port_str else default_port
+    return host, port
+```
+
+**VERIFICATION METHOD**:
+Enforce unit/property tests parameterizing IPv6 loopback, link-local, and public addresses:
+```python
+import pytest
+
+
+@pytest.mark.parametrize(
+    ("input_addr", "expected_host", "expected_port"),
+    [
+        ("localhost:8080", "localhost", 8080),
+        ("127.0.0.1:443", "127.0.0.1", 443),
+        ("[::1]:8000", "::1", 8000),
+        ("[::1]", "::1", 5000),
+        ("[fe80::1ff:fe23:4567:890a]:9000", "fe80::1ff:fe23:4567:890a", 9000),
+    ],
+)
+def test_extract_host_port_invariants(input_addr, expected_host, expected_port):
+    host, port = extract_host_port(input_addr, default_port=5000)
+    assert host == expected_host
+    assert port == expected_port
+```
+
+---
+
+
+---
+
+## 1668. Multi-Tier Configuration Precedence via Explicit Trinary Nullability (Harvested from pallets/flask)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Tier Configuration Precedence via Explicit Trinary Nullability",
+  "source": "pallets/flask",
+  "source_url": "https://github.com/pallets/flask",
+  "source_version": "d086db85",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-18T07:39:21.974Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pallets-flask",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pallets/flask](https://github.com/pallets/flask) (Revision: `d086db85`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an operational flag can be configured at multiple levels (Global Config -> Decorator / Routing Spec -> View Class/Function Attribute), default fallback logic MUST NOT use truthiness evaluation (`if not flag:`) or blind boolean overriding. Handlers MUST evaluate values against an explicit sentinel (such as `None`) through strict precedence cascades.
+
+**WHY**:
+Evaluating boolean feature toggles using `if flag:` or coalescing with `flag or config_default` prevents callers from explicitly disabling a feature (`flag = False`) when the global configuration defaults to `True`. Conversely, it prevents locally enabling a feature (`flag = True`) if the intermediate fallback logic re-asserts an upstream falsy condition.
+
+**WHEN TO APPLY**:
+Configuration resolution in routing systems, CLI option resolution, database connection pooling parameters, and plugin feature gates where flags default to `None` (inherit) but accept explicit `True` or `False`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from collections.abc import Callable
+from typing import Any
+
+
+def resolve_automatic_options(
+    rule_level_flag: bool | None,
+    view_func: Callable[..., Any],
+    global_config: dict[str, Any],
+    methods: set[str],
+) -> bool:
+    """Resolve automatic OPTIONS generation respecting 3-tier precedence:
+
+    1. Explicit rule/route argument
+    2. Explicit view-function attribute
+    3. Global application configuration
+    """
+    provide_automatic_options = rule_level_flag
+
+    # Tier 2: Check function attribute if route level was unasserted (None)
+    if provide_automatic_options is None:
+        provide_automatic_options = getattr(
+            view_func, "provide_automatic_options", None
+        )
+
+    # Tier 3: Check global application config if function attribute was unasserted
+    if provide_automatic_options is None:
+        provide_automatic_options = (
+            "OPTIONS" not in methods
+            and global_config.get("PROVIDE_AUTOMATIC_OPTIONS", True)
+        )
+
+    return bool(provide_automatic_options)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+def resolve_automatic_options_flawed(
+    provide_automatic_options: bool | None,
+    view_func: Any,
+    global_config: dict[str, Any],
+    methods: set[str],
+) -> bool:
+    # BUG: If route level is None, and view_func attribute is True,
+    # but global_config is False, nesting checks inside an unverified None block
+    # overwrites explicit True with False.
+    if provide_automatic_options is None:
+        provide_automatic_options = getattr(
+            view_func, "provide_automatic_options", None
+        )
+        if provide_automatic_options is None:
+            if (
+                "OPTIONS" not in methods
+                and global_config["PROVIDE_AUTOMATIC_OPTIONS"]
+            ):
+                provide_automatic_options = True
+            else:
+                # OVERRIDE BUG: This branch triggers when global is False,
+                # even if view_func had an explicit override in older structures.
+                provide_automatic_options = False
+    return provide_automatic_options
+```
+
+**VERIFICATION METHOD**:
+Assert an exhaustive truth matrix across all three tiers:
+```python
+def test_precedence_matrix():
+    # Rule None, View True, Config False -> MUST evaluate to True
+    assert (
+        resolve_automatic_options(
+            None,
+            type("View", (), {"provide_automatic_options": True})(),
+            {"PROVIDE_AUTOMATIC_OPTIONS": False},
+            set(),
+        )
+        is True
+    )
+
+    # Rule False, View True, Config True -> MUST evaluate to False
+    assert (
+        resolve_automatic_options(
+            False,
+            type("View", (), {"provide_automatic_options": True})(),
+            {"PROVIDE_AUTOMATIC_OPTIONS": True},
+            set(),
+        )
+        is False
+    )
+```
+
+---

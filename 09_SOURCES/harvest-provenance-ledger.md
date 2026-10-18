@@ -2465,3 +2465,5 @@ Every entry in this ledger must capture:
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `eebbd1b0` | Multi-dimensional audit evidence | 2026-10-18T07:28:58.040Z |
 | `learn-github-rubenverborgh-sparql-js` | `https://github.com/RubenVerborgh/SPARQL.js` | `91cbd01b` | Multi-dimensional audit evidence | 2026-10-18T07:33:55.301Z |
 | `learn-github-syntax-tree-mdast` | `https://github.com/syntax-tree/mdast` | `c034ec9d` | Multi-dimensional audit evidence | 2026-10-18T07:33:55.679Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `b23d78f2` | Multi-dimensional audit evidence | 2026-10-18T07:39:13.270Z |
+| `learn-github-pallets-flask` | `https://github.com/pallets/flask` | `d086db85` | Multi-dimensional audit evidence | 2026-10-18T07:39:22.055Z |

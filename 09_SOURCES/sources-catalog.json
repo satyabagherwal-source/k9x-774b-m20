@@ -1978,5 +1978,25 @@
     "contentHash": "b45a6efd92db80487185fd3cd3f7f1a28b7aa9c04eb6424c43587a4734f14390",
     "lastHarvestedAt": "2026-10-18T07:33:55.679Z",
     "learningId": "learn-github-syntax-tree-mdast"
+  },
+  "tiangolo-fastapi": {
+    "repository": "fastapi/fastapi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiangolo/fastapi",
+    "sourceVersion": "b23d78f2",
+    "license": "MIT",
+    "contentHash": "19d5105b2527652df2f72e80745ab15c2570ebd7d24a03e690e7b6d5df809104",
+    "lastHarvestedAt": "2026-10-18T07:39:13.270Z",
+    "learningId": "learn-github-fastapi-fastapi"
+  },
+  "pallets-flask": {
+    "repository": "pallets/flask",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pallets/flask",
+    "sourceVersion": "d086db85",
+    "license": "BSD-3-Clause",
+    "contentHash": "1d83358b78a1d8f1f3eac09bbe0005b5c0bd72c6e16b34e4e0d738f59f06cc67",
+    "lastHarvestedAt": "2026-10-18T07:39:22.055Z",
+    "learningId": "learn-github-pallets-flask"
   }
 }

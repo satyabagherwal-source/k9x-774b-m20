@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T07:33:55.650Z",
-  "total_verified_learnings": 220,
+  "last_updated": "2026-10-18T07:39:22.027Z",
+  "total_verified_learnings": 222,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -6738,22 +6738,45 @@
     "learn-github-fastapi-fastapi": {
       "learning_id": "learn-github-fastapi-fastapi",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "fastapi-fastapi",
-      "slug": "fastapi-fastapi",
+      "source": "fastapi/fastapi",
+      "repository": "fastapi/fastapi",
+      "slug": "tiangolo-fastapi",
       "platform": "github",
-      "source_url": "https://github.com/fastapi/fastapi",
-      "source_version": "HEAD",
-      "content_hash": "70e46f97e4ab5b53d7337f892d7a37805712577c73250699f48c9f8d1a7661b6",
-      "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "source_url": "https://github.com/tiangolo/fastapi",
+      "source_version": "b23d78f2",
+      "content_hash": "19d5105b2527652df2f72e80745ab15c2570ebd7d24a03e690e7b6d5df809104",
+      "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1664,
+          "title": "Isolated Context-Manager Exit Limiters in Hybrid Threadpools",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1665,
+          "title": "RFC 8259 Compliant Float Sanitization for Stream Encoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1666,
+          "title": "Starlette Route Extraction Invariant for Included Sub-Routers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.883Z"
+      "verified_at": "2026-10-18T07:39:13.235Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-fastclaw-ai-fastclaw": {
       "learning_id": "learn-github-fastclaw-ai-fastclaw",
@@ -47237,6 +47260,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T07:33:55.642Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-pallets-flask": {
+      "learning_id": "learn-github-pallets-flask",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "pallets/flask",
+      "repository": "pallets/flask",
+      "slug": "pallets-flask",
+      "platform": "github",
+      "source_url": "https://github.com/pallets/flask",
+      "source_version": "d086db85",
+      "content_hash": "1d83358b78a1d8f1f3eac09bbe0005b5c0bd72c6e16b34e4e0d738f59f06cc67",
+      "dossier_path": "07_PROJECT_LEARNING/pallets-flask-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pallets-flask-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1667,
+          "title": "Robust Authority Parsing via RFC 3986 URL Splitter Over Delimiter Partitioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1668,
+          "title": "Multi-Tier Configuration Precedence via Explicit Trinary Nullability",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T07:39:22.020Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -25345,5 +25345,39 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tiangolo-fastapi": {
+    "name": "fastapi/fastapi",
+    "officialUrl": "https://github.com/tiangolo/fastapi",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-18T07:38:12.894Z",
+    "lastVerified": "2026-10-18T07:38:12.894Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "19d5105b2527652df2f72e80745ab15c2570ebd7d24a03e690e7b6d5df809104",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pallets-flask": {
+    "name": "pallets/flask",
+    "officialUrl": "https://github.com/pallets/flask",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-18T07:38:17.097Z",
+    "lastVerified": "2026-10-18T07:38:17.097Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pallets-flask",
+    "contentHash": "1d83358b78a1d8f1f3eac09bbe0005b5c0bd72c6e16b34e4e0d738f59f06cc67",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
