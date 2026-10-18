@@ -2681,8 +2681,8 @@
     "sourceType": "github",
     "technology": "Java",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:33:17.138Z",
-    "lastVerified": "2026-10-17T23:33:17.138Z",
+    "lastChecked": "2026-10-18T06:14:38.308Z",
+    "lastVerified": "2026-10-18T06:14:38.308Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17498,8 +17498,8 @@
     "sourceType": "github",
     "technology": "TypeScript",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:57:50.702Z",
-    "lastVerified": "2026-10-18T05:57:50.702Z",
+    "lastChecked": "2026-10-18T06:14:40.803Z",
+    "lastVerified": "2026-10-18T06:14:40.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24195,5 +24195,12 @@
     "lastChecked": "2026-10-18T06:10:47.276Z",
     "revisionIdentifier": "8300079044",
     "lastVerified": "2026-10-18T06:10:47.276Z"
+  },
+  "magnetoid-seo-crawler": {
+    "name": "SEO-Crawler",
+    "officialUrl": "https://github.com/magnetoid/SEO-Crawler",
+    "lastChecked": "2026-10-18T06:14:28.307Z",
+    "revisionIdentifier": "ebce8aa942",
+    "lastVerified": "2026-10-18T06:14:28.307Z"
   }
 }
