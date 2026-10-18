@@ -18004,5 +18004,17 @@
     "qualityScore": 1625,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-18T01:27:30.403Z"
+  },
+  {
+    "name": "tencent/Hy-Memory-30B-A3B",
+    "fullName": "tencent/Hy-Memory-30B-A3B",
+    "url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: tencent/Hy-Memory-30B-A3B (163 likes, 736 downloads)",
+    "likes": 163,
+    "downloads": 736,
+    "qualityScore": 2366,
+    "discoveredAt": "2026-10-18T04:26:20.613Z"
   }
 ]

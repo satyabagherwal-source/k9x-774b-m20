@@ -1738,5 +1738,15 @@
     "contentHash": "83578de84921df6dc6015c21019c3137a9687521a2887d410f728499b4ec2ab7",
     "lastHarvestedAt": "2026-10-18T01:29:00.708Z",
     "learningId": "learn-github-vibheksoni-stealth-browser-mcp"
+  },
+  "hf-tencent-hy-memory-30b-a3b": {
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
+    "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
+    "license": "Open-Source",
+    "contentHash": "74a6aa9144636848215096353efa44188f1e0009936c1759820ff04a10099e81",
+    "lastHarvestedAt": "2026-10-18T04:26:31.391Z",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   }
 }

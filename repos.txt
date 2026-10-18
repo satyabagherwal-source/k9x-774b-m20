@@ -4108,3 +4108,7 @@ https://github.com/chrisryugj/kordoc
 # --- Automatically Discovered by AI Scout Engine [2026-10-18T01:28:17.967Z] ---
 # [AI-AGENTS] vibheksoni/stealth-browser-mcp (1625 score) - Stealth browser automation for AI agents over MCP and the Chrome DevTools Protoc
 https://github.com/vibheksoni/stealth-browser-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-18T04:26:20.614Z] ---
+# [HUGGINGFACE-AI-MODELS] tencent/Hy-Memory-30B-A3B (2366 score) - Verified Hugging Face Model: tencent/Hy-Memory-30B-A3B (163 likes, 736 downloads
+https://huggingface.co/tencent/Hy-Memory-30B-A3B

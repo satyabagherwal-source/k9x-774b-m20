@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T04:23:15.631Z",
-  "total_verified_learnings": 199,
+  "last_updated": "2026-10-18T04:26:31.354Z",
+  "total_verified_learnings": 200,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -44070,6 +44070,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T01:29:00.672Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-tencent-hy-memory-30b-a3b": {
+      "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tencent/Hy-Memory-30B-A3B",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "slug": "hf-tencent-hy-memory-30b-a3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
+      "source_version": "hf-tencent-hy-memory-30b-a3b",
+      "content_hash": "74a6aa9144636848215096353efa44188f1e0009936c1759820ff04a10099e81",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T04:26:31.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

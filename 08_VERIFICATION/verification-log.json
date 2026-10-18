@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-WNSN",
-    "timestamp": "2026-10-17T00:04:25.847Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "50651a0fc124b0efa84e9d962150f56086f6ab75e9bcb3950181cd39b26be10b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-1ZAW",
     "timestamp": "2026-10-17T00:08:34.040Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
     "contentHash": "2e5abfebe1232e1a5a36d4f92041373494725f7beb42d71767a62674e5f5a70b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-PKD8",
+    "timestamp": "2026-10-18T04:26:31.388Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "74a6aa9144636848215096353efa44188f1e0009936c1759820ff04a10099e81",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

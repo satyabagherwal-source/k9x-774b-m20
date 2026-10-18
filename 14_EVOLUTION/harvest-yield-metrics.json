@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:23:15.675Z",
-  "total_cycles_completed": 2403,
-  "total_learnings_persisted": 2403,
+  "last_updated": "2026-10-18T04:26:31.393Z",
+  "total_cycles_completed": 2404,
+  "total_learnings_persisted": 2404,
   "total_rules_promoted": 1392,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:55:02.346Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:58:28.212Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T04:23:15.675Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:26:31.393Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
