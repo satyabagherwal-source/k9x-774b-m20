@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T02:41:26.687Z",
-  "total_cycles_completed": 2373,
-  "total_learnings_persisted": 2373,
+  "last_updated": "2026-10-18T02:44:39.775Z",
+  "total_cycles_completed": 2374,
+  "total_learnings_persisted": 2374,
   "total_rules_promoted": 1382,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:20:12.991Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:23:40.380Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T02:41:26.687Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T02:44:39.775Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

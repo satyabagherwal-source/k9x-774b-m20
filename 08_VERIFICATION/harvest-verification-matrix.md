@@ -2396,3 +2396,4 @@
 | `CYCLE-20261018-QBE3` | `2026-10-18T02:35:07.947Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1591, Rule 1592, Rule 1593` | Yes (`1a0e892d...`) |
 | `CYCLE-20261018-UP72` | `2026-10-18T02:38:32.462Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1050, Rule 1594, Rule 552` | Yes (`99edbc2d...`) |
 | `CYCLE-20261018-YFMK` | `2026-10-18T02:41:26.684Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`f3ac8f53...`) |
+| `CYCLE-20261018-2KM3` | `2026-10-18T02:44:39.771Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`decf1453...`) |
