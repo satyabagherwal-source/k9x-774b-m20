@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-M3MO",
-    "timestamp": "2026-10-17T02:16:11.232Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "f9b86b880f28786f452ee0eb8da86cc629eb3a344f5d0920d730cbd67124cbcf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-R2SP",
-    "timestamp": "2026-10-17T02:20:03.433Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "98e6c0a1f54856aa693590f70c879a270d19039373a32ad3c044f73e4c58761d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-UWZ8",
-    "timestamp": "2026-10-17T02:23:02.516Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "737a8a548f599eb7199ad382ff4e2fcbc4ab607ff092e0ec661449c2f218812c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-05LF",
     "timestamp": "2026-10-17T02:27:06.963Z",
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7492,6 +7447,51 @@
     "contentHash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-DXLV",
+    "timestamp": "2026-10-18T11:45:22.531Z",
+    "repository": "deeplethe/solid-glass",
+    "learningId": "learn-github-deeplethe-solid-glass",
+    "contentHash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-9LTR",
+    "timestamp": "2026-10-18T14:29:58.335Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-5NVX",
+    "timestamp": "2026-10-18T16:46:52.461Z",
+    "repository": "bvaughn/react-virtualized",
+    "learningId": "learn-github-bvaughn-react-virtualized",
+    "contentHash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

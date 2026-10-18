@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T11:21:57.386Z",
+  "last_updated": "2026-10-18T16:46:52.442Z",
   "total_verified_learnings": 228,
-  "total_canonical_rules": 1685,
-  "total_dossiers": 1551,
+  "total_canonical_rules": 1689,
+  "total_dossiers": 1528,
   "items": {
     "learn-github-0x4m4-hexstrike-ai": {
       "learning_id": "learn-github-0x4m4-hexstrike-ai",
@@ -65337,6 +65337,166 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T11:19:25.820Z"
+    },
+    "learn-github-deeplethe-solid-glass": {
+      "learning_id": "learn-github-deeplethe-solid-glass",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "deeplethe/solid-glass",
+      "repository": "deeplethe/solid-glass",
+      "slug": "deeplethe-solid-glass",
+      "platform": "github",
+      "source_url": "https://github.com/deeplethe/solid-glass",
+      "source_version": "6e8903e4",
+      "content_hash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
+      "dossier_path": "07_PROJECT_LEARNING/deeplethe-solid-glass-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/deeplethe-solid-glass-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1687,
+          "title": "block registry metadata extraction (#33)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T11:45:22.507Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-comfy-org-moss-image": {
+      "learning_id": "learn-huggingface-comfy-org-moss-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/MOSS-Image",
+      "repository": "Comfy-Org/MOSS-Image",
+      "slug": "hf-comfy-org-moss-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "content_hash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1688,
+          "title": "Heterogeneous Subsystem Precision Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1689,
+          "title": "Header-Validated Immutable File System Layout Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T14:29:58.303Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-bvaughn-react-virtualized": {
+      "learning_id": "learn-github-bvaughn-react-virtualized",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "bvaughn/react-virtualized",
+      "repository": "bvaughn/react-virtualized",
+      "slug": "bvaughn-react-virtualized",
+      "platform": "github",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "409d50e1",
+      "content_hash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
+      "dossier_path": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1690,
+          "title": "Revert stale.yml",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T16:46:52.442Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-1687": {
+      "learning_id": "rule-1687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1687,
+      "title": "block registry metadata extraction (#33) (Harvested from deeplethe/solid-glass)",
+      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
+      "source_version": "HEAD",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T11:45:22.507Z"
+    },
+    "rule-1688": {
+      "learning_id": "rule-1688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1688,
+      "title": "Heterogeneous Subsystem Precision Decoupling (Harvested from Comfy-Org/MOSS-Image)",
+      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
+      "source_version": "HEAD",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T14:29:58.303Z"
+    },
+    "rule-1689": {
+      "learning_id": "rule-1689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1689,
+      "title": "Header-Validated Immutable File System Layout Contract (Harvested from Comfy-Org/MOSS-Image)",
+      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
+      "source_version": "HEAD",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T14:29:58.303Z"
+    },
+    "rule-1690": {
+      "learning_id": "rule-1690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1690,
+      "title": "Revert stale.yml (Harvested from bvaughn/react-virtualized)",
+      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
+      "source_version": "HEAD",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T16:46:52.442Z"
     }
   },
   "aliases": {

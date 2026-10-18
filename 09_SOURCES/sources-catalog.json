@@ -2068,5 +2068,35 @@
     "contentHash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
     "lastHarvestedAt": "2026-10-18T08:17:29.324Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
+  },
+  "deeplethe-solid-glass": {
+    "repository": "deeplethe/solid-glass",
+    "platform": "github",
+    "sourceUrl": "https://github.com/deeplethe/solid-glass",
+    "sourceVersion": "6e8903e4",
+    "license": "MIT",
+    "contentHash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
+    "lastHarvestedAt": "2026-10-18T11:45:22.533Z",
+    "learningId": "learn-github-deeplethe-solid-glass"
+  },
+  "hf-comfy-org-moss-image": {
+    "repository": "Comfy-Org/MOSS-Image",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
+    "sourceVersion": "hf-comfy-org-moss-image",
+    "license": "Open-Source",
+    "contentHash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
+    "lastHarvestedAt": "2026-10-18T14:29:58.338Z",
+    "learningId": "learn-huggingface-comfy-org-moss-image"
+  },
+  "bvaughn-react-virtualized": {
+    "repository": "bvaughn/react-virtualized",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bvaughn/react-virtualized",
+    "sourceVersion": "409d50e1",
+    "license": "MIT",
+    "contentHash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
+    "lastHarvestedAt": "2026-10-18T16:46:52.463Z",
+    "learningId": "learn-github-bvaughn-react-virtualized"
   }
 }
