@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T16:46:52.464Z",
-  "total_cycles_completed": 2447,
-  "total_learnings_persisted": 2447,
-  "total_rules_promoted": 1458,
+  "last_updated": "2026-10-18T21:01:39.500Z",
+  "total_cycles_completed": 2453,
+  "total_learnings_persisted": 2453,
+  "total_rules_promoted": 1468,
   "history": [
-    {
-      "timestamp": "2026-10-17T19:15:31.565Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:18:29.106Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:22:03.734Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:25:07.513Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:28:17.118Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:31:28.127Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T19:34:39.733Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1403,6 +1361,48 @@
       "repository": "bvaughn/react-virtualized",
       "learningId": "learn-github-bvaughn-react-virtualized",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:00:47.562Z",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:00:50.682Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:00:53.111Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:00:58.199Z",
+      "repository": "SynaLinks/synalinks-skills",
+      "learningId": "learn-github-synalinks-synalinks-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:01:34.962Z",
+      "repository": "facebook/docusaurus",
+      "learningId": "learn-github-facebook-docusaurus",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:01:39.500Z",
+      "repository": "TabbyML/tabby",
+      "learningId": "learn-github-tabbyml-tabby",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

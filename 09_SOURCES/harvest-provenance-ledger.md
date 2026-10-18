@@ -2477,3 +2477,9 @@ Every entry in this ledger must capture:
 | `learn-github-deeplethe-solid-glass` | `https://github.com/deeplethe/solid-glass` | `6e8903e4` | Multi-dimensional audit evidence | 2026-10-18T11:45:22.533Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-18T14:29:58.338Z |
 | `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `409d50e1` | Multi-dimensional audit evidence | 2026-10-18T16:46:52.463Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `aaf72a4f` | Multi-dimensional audit evidence | 2026-10-18T21:00:47.560Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `64aefaef` | Multi-dimensional audit evidence | 2026-10-18T21:00:50.680Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `78894c81` | Multi-dimensional audit evidence | 2026-10-18T21:00:53.110Z |
+| `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `092970a5` | Multi-dimensional audit evidence | 2026-10-18T21:00:58.197Z |
+| `learn-github-facebook-docusaurus` | `https://github.com/facebook/docusaurus` | `7b6826b8` | Multi-dimensional audit evidence | 2026-10-18T21:01:34.960Z |
+| `learn-github-tabbyml-tabby` | `https://github.com/TabbyML/tabby` | `21b29048` | Multi-dimensional audit evidence | 2026-10-18T21:01:39.498Z |

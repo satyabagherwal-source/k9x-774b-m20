@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T16:46:52.442Z",
-  "total_verified_learnings": 228,
+  "last_updated": "2026-10-18T21:01:39.462Z",
+  "total_verified_learnings": 237,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5159,22 +5159,35 @@
     "learn-github-dkhamsing-open-source-ios-apps": {
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dkhamsing-open-source-ios-apps",
+      "source": "dkhamsing/open-source-ios-apps",
+      "repository": "dkhamsing/open-source-ios-apps",
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "HEAD",
-      "content_hash": "2b37954a2ac84dcca24c12ccc20d8026009b70954596cf670e9861443214cc03",
+      "source_version": "aaf72a4f",
+      "content_hash": "a436164bfc7aaf37819de0f646e2bb36141b2a70c241fdb6be369903bbb05fe5",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1691,
+          "title": "Add 'Sbu Subscriptions' (#2443)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.631Z"
+      "verified_at": "2026-10-18T21:00:47.517Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -24509,22 +24522,35 @@
     "learn-github-microsoft-agent-governance-toolkit": {
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "microsoft-agent-governance-toolkit",
+      "source": "microsoft/agent-governance-toolkit",
+      "repository": "microsoft/agent-governance-toolkit",
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "HEAD",
-      "content_hash": "0cf6b89c46d6e059789e9acb5ab1333531eac3fe1772ed7be206ff335c606aac",
+      "source_version": "78894c81",
+      "content_hash": "797a339604d2ebafcc280d766b58f429efcae11052667094939236f27dadeda7",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1693,
+          "title": "agent-compliance): drop extras and parentheses from parsed requirement names (#4",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.302Z"
+      "verified_at": "2026-10-18T21:00:53.068Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-microsoft-ai-agents-for-beginners": {
       "learning_id": "learn-github-microsoft-ai-agents-for-beginners",
@@ -25049,22 +25075,35 @@
     "learn-github-moby-buildkit": {
       "learning_id": "learn-github-moby-buildkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "moby-buildkit",
+      "source": "moby/buildkit",
+      "repository": "moby/buildkit",
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "HEAD",
-      "content_hash": "4fbd880e28e0ccf1c8c26d6b1d42729495c2bdcae3d14e7be066952a24ba991a",
+      "source_version": "64aefaef",
+      "content_hash": "6a5321d7e7df3b83fd1783448446213c158d2cc14784788b826313f1caffbe6f",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1692,
+          "title": "build(deps): bump github/codeql-action/upload-sarif",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.401Z"
+      "verified_at": "2026-10-18T21:00:50.633Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mochidiffusion-mochidiffusion": {
       "learning_id": "learn-github-mochidiffusion-mochidiffusion",
@@ -32127,22 +32166,35 @@
     "learn-github-synalinks-synalinks-skills": {
       "learning_id": "learn-github-synalinks-synalinks-skills",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "synalinks-synalinks-skills",
+      "source": "SynaLinks/synalinks-skills",
+      "repository": "SynaLinks/synalinks-skills",
       "slug": "synalinks-synalinks-skills",
       "platform": "github",
       "source_url": "https://github.com/SynaLinks/synalinks-skills",
-      "source_version": "HEAD",
-      "content_hash": "2fc23e3cd65d4d30876a4fa6c95c9069920876493da283e0f179ea906195aa20",
+      "source_version": "092970a5",
+      "content_hash": "7c1d2f9e9f5f9b8f68e65f4e237ca5d17ee298d0f1061248c376eaebba531611",
       "dossier_path": "07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1694,
+          "title": "ci: validate and install skills for all agents; fix SKILL.md frontmatter (#51)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.801Z"
+      "verified_at": "2026-10-18T21:00:58.155Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-system-ui-theme-ui": {
       "learning_id": "learn-github-system-ui-theme-ui",
@@ -32187,22 +32239,45 @@
     "learn-github-tabbyml-tabby": {
       "learning_id": "learn-github-tabbyml-tabby",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tabbyml-tabby",
+      "source": "TabbyML/tabby",
+      "repository": "TabbyML/tabby",
       "slug": "tabbyml-tabby",
       "platform": "github",
       "source_url": "https://github.com/TabbyML/tabby",
-      "source_version": "HEAD",
-      "content_hash": "81340dfcaf3a14a9ee5ef1cc069759621834a7e07e056e089db6f6e57976f97b",
+      "source_version": "21b29048",
+      "content_hash": "805c36f02ec156370757441b5838350e0a5f7bd322d73596ed902787dfaf53f8",
       "dossier_path": "07_PROJECT_LEARNING/tabbyml-tabby-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tabbyml-tabby-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1698,
+          "title": "In-Memory SQLite Concurrency Sizing & Pool Lifecycles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1699,
+          "title": "Primary Key Disambiguation via Percent-Encoded URI Fragment Synthesis",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1700,
+          "title": "Asynchronous Safe-Publisher UI State Hydration Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.813Z"
+      "verified_at": "2026-10-18T21:01:39.456Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tableproapp-tablepro": {
       "learning_id": "learn-github-tableproapp-tablepro",
@@ -65497,6 +65572,189 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T16:46:52.442Z"
+    },
+    "rule-1691": {
+      "learning_id": "rule-1691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1691,
+      "title": "Add 'Sbu Subscriptions' (#2443)",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "aaf72a4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:00:47.517Z"
+    },
+    "rule-1692": {
+      "learning_id": "rule-1692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1692,
+      "title": "build(deps): bump github/codeql-action/upload-sarif",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "64aefaef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:00:50.633Z"
+    },
+    "rule-1693": {
+      "learning_id": "rule-1693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1693,
+      "title": "agent-compliance): drop extras and parentheses from parsed requirement names (#4",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "78894c81",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:00:53.068Z"
+    },
+    "rule-1694": {
+      "learning_id": "rule-1694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1694,
+      "title": "ci: validate and install skills for all agents; fix SKILL.md frontmatter (#51)",
+      "source_url": "https://github.com/SynaLinks/synalinks-skills",
+      "source_version": "092970a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:00:58.155Z"
+    },
+    "learn-github-facebook-docusaurus": {
+      "learning_id": "learn-github-facebook-docusaurus",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "facebook/docusaurus",
+      "repository": "facebook/docusaurus",
+      "slug": "facebook-docusaurus",
+      "platform": "github",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "7b6826b8",
+      "content_hash": "0d3e7c4a91d43dec09916a868bf32c5f42bb273c51cf325b3f0e6d32663c36d7",
+      "dossier_path": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1695,
+          "title": "Function-Enclosed Cache References Across Clone Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1696,
+          "title": "Multi-Tier Persistent Cache Invalidation Vectoring",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1697,
+          "title": "Non-Destructive Preservation of Global Singletons During Plugin Dynamic Augmentation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T21:01:34.917Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-1695": {
+      "learning_id": "rule-1695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1695,
+      "title": "Function-Enclosed Cache References Across Clone Boundaries",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "7b6826b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:01:34.917Z"
+    },
+    "rule-1696": {
+      "learning_id": "rule-1696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1696,
+      "title": "Multi-Tier Persistent Cache Invalidation Vectoring",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "7b6826b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:01:34.917Z"
+    },
+    "rule-1697": {
+      "learning_id": "rule-1697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1697,
+      "title": "Non-Destructive Preservation of Global Singletons During Plugin Dynamic Augmentation",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "7b6826b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:01:34.917Z"
+    },
+    "rule-1698": {
+      "learning_id": "rule-1698",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1698,
+      "title": "In-Memory SQLite Concurrency Sizing & Pool Lifecycles",
+      "source_url": "https://github.com/TabbyML/tabby",
+      "source_version": "21b29048",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:01:39.456Z"
+    },
+    "rule-1699": {
+      "learning_id": "rule-1699",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1699,
+      "title": "Primary Key Disambiguation via Percent-Encoded URI Fragment Synthesis",
+      "source_url": "https://github.com/TabbyML/tabby",
+      "source_version": "21b29048",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:01:39.456Z"
+    },
+    "rule-1700": {
+      "learning_id": "rule-1700",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1700,
+      "title": "Asynchronous Safe-Publisher UI State Hydration Pattern",
+      "source_url": "https://github.com/TabbyML/tabby",
+      "source_version": "21b29048",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:01:39.456Z"
     }
   },
   "aliases": {

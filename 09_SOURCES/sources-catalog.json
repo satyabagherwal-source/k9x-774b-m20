@@ -2098,5 +2098,65 @@
     "contentHash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
     "lastHarvestedAt": "2026-10-18T16:46:52.463Z",
     "learningId": "learn-github-bvaughn-react-virtualized"
+  },
+  "dkhamsing-open-source-ios-apps": {
+    "repository": "dkhamsing/open-source-ios-apps",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
+    "sourceVersion": "aaf72a4f",
+    "license": "CC0-1.0",
+    "contentHash": "a436164bfc7aaf37819de0f646e2bb36141b2a70c241fdb6be369903bbb05fe5",
+    "lastHarvestedAt": "2026-10-18T21:00:47.560Z",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps"
+  },
+  "moby-buildkit": {
+    "repository": "moby/buildkit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/moby/buildkit",
+    "sourceVersion": "64aefaef",
+    "license": "Apache-2.0",
+    "contentHash": "6a5321d7e7df3b83fd1783448446213c158d2cc14784788b826313f1caffbe6f",
+    "lastHarvestedAt": "2026-10-18T21:00:50.680Z",
+    "learningId": "learn-github-moby-buildkit"
+  },
+  "microsoft-agent-governance-toolkit": {
+    "repository": "microsoft/agent-governance-toolkit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
+    "sourceVersion": "78894c81",
+    "license": "MIT",
+    "contentHash": "797a339604d2ebafcc280d766b58f429efcae11052667094939236f27dadeda7",
+    "lastHarvestedAt": "2026-10-18T21:00:53.110Z",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit"
+  },
+  "synalinks-synalinks-skills": {
+    "repository": "SynaLinks/synalinks-skills",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SynaLinks/synalinks-skills",
+    "sourceVersion": "092970a5",
+    "license": "Apache-2.0",
+    "contentHash": "7c1d2f9e9f5f9b8f68e65f4e237ca5d17ee298d0f1061248c376eaebba531611",
+    "lastHarvestedAt": "2026-10-18T21:00:58.197Z",
+    "learningId": "learn-github-synalinks-synalinks-skills"
+  },
+  "facebook-docusaurus": {
+    "repository": "facebook/docusaurus",
+    "platform": "github",
+    "sourceUrl": "https://github.com/facebook/docusaurus",
+    "sourceVersion": "7b6826b8",
+    "license": "MIT",
+    "contentHash": "0d3e7c4a91d43dec09916a868bf32c5f42bb273c51cf325b3f0e6d32663c36d7",
+    "lastHarvestedAt": "2026-10-18T21:01:34.960Z",
+    "learningId": "learn-github-facebook-docusaurus"
+  },
+  "tabbyml-tabby": {
+    "repository": "TabbyML/tabby",
+    "platform": "github",
+    "sourceUrl": "https://github.com/TabbyML/tabby",
+    "sourceVersion": "21b29048",
+    "license": "NOASSERTION",
+    "contentHash": "805c36f02ec156370757441b5838350e0a5f7bd322d73596ed902787dfaf53f8",
+    "lastHarvestedAt": "2026-10-18T21:01:39.498Z",
+    "learningId": "learn-github-tabbyml-tabby"
   }
 }
