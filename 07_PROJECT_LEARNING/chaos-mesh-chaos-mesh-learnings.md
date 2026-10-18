@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
+> **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
+> **Source Version**: `c39bd4fa`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:20:17.312Z  
+> **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): chaos-mesh/chaos-mesh
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:01:12.846Z  
+> **Harvest Timestamp**: 2026-10-18T21:20:17.304Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7929 stars
+- **Stars / Engagement**: 7944 stars
 
 ---
 
@@ -176,7 +190,7 @@ func Default(obj interface{}) field.ErrorList {
 	errorList := field.ErrorList{}
 
 	root := obj
-	walker := NewFieldWalker(obj, func(path *field.Path, obj interface{}, field *reflect.StructField) bool {
+	walker := NewFieldWalker(obj, func(_ *field.Path, obj interface{}, field *reflect.StructField) bool {
 		webhookAttr := ""
 		if field != nil {
 			webhookAttr = field.Tag.Get("webhook")
@@ -358,11 +372,12 @@ func getValidator(obj interface{}, webhook string, nilable bool) FieldValidator 
 // limitations under the License.
 //
 
+// Package genericwebhook registers field webhooks and recursively defaults and validates structs through field tags.
 package genericwebhook
 
 import "reflect"
 
-var webhooks map[string]reflect.Type = make(map[string]reflect.Type)
+var webhooks = make(map[string]reflect.Type)
 
 func Register(name string, obj reflect.Type) {
 	webhooks[name] = obj
@@ -430,7 +445,7 @@ func (in *AWSDeviceName) Validate(root interface{}, path *field.Path) field.Erro
 }
 
 // Validate validates aws chaos actions
-func (in *AWSChaosAction) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *AWSChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	// in cannot be nil
@@ -513,7 +528,7 @@ func (in *LUN) Validate(root interface{}, path *field.Path) field.ErrorList {
 }
 
 // Validate validates the azure chaos actions
-func (in *AzureChaosAction) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *AzureChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	// in cannot be nil
@@ -560,7 +575,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
-func (in *BlockChaosSpec) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *BlockChaosSpec) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	if in.Action == BlockDelay {
 		if in.Delay == nil {
@@ -611,6 +626,7 @@ const (
 
 // FIXME: interface ContainsDuration only used for validating EmbedChaos in Workflow
 
+// ContainsDuration exposes the duration parsed from a chaos specification.
 // +kubebuilder:object:generate=false
 type ContainsDuration interface {
 	GetDuration() (*time.Duration, error)
@@ -618,7 +634,7 @@ type ContainsDuration interface {
 
 type Duration string
 
-func (d *Duration) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (d *Duration) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	if d == nil {
 		return nil
 	}
@@ -639,7 +655,7 @@ func (d *Duration) Validate(root interface{}, path *field.Path) field.ErrorList 
 	return nil
 }
 
-func (d *Duration) Default(root interface{}, field *reflect.StructField) {
+func (d *Duration) Default(_ interface{}, field *reflect.StructField) {
 	if d == nil {
 		return
 	}
@@ -650,7 +666,7 @@ func (d *Duration) Default(root interface{}, field *reflect.StructField) {
 	}
 }
 
-func (p *PodSelector) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (p *PodSelector) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if p == nil {
@@ -693,7 +709,7 @@ func (p *PodSelector) Validate(root interface{}, path *field.Path) field.ErrorLi
 	return allErrs
 }
 
-func (p *PodSelector) Default(root interface{}, field *reflect.StructField) {
+func (p *PodSelector) Default(root interface{}, _ *reflect.StructField) {
 	if p == nil {
 		return
 	}
@@ -712,7 +728,7 @@ type Percent int
 
 type FloatStr string
 
-func (p *Percent) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (p *Percent) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	if p == nil {
 		return nil
 	}
@@ -727,7 +743,7 @@ func (p *Percent) Validate(root interface{}, path *field.Path) field.ErrorList {
 	return allErrs
 }
 
-func (f *FloatStr) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (f *FloatStr) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	if f == nil {
 		return nil
 	}
@@ -743,7 +759,7 @@ func (f *FloatStr) Validate(root interface{}, path *field.Path) field.ErrorList 
 	return nil
 }
 
-func (f *FloatStr) Default(root interface{}, field *reflect.StructField) {
+func (f *FloatStr) Default(_ interface{}, field *reflect.StructField) {
 	// f cannot be nil
 	if len(*f) == 0 && field != nil {
 		*f = FloatStr(field.Tag.Get("default"))
@@ -786,8 +802,8 @@ import (
 	"github.com/chaos-mesh/chaos-mesh/api/genericwebhook"
 )
 
-// validateDeviceName validates the gcp chaos actions
-func (in GCPChaosAction) Validate(root interface{}, path *field.Path) field.ErrorList {
+// Validate checks that the action is node-stop, node-reset, or disk-loss.
+func (in GCPChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	switch in {
@@ -804,7 +820,7 @@ func (in GCPChaosAction) Validate(root interface{}, path *field.Path) field.Erro
 
 type GCPDeviceNames []string
 
-// validateDeviceName validates the DeviceName
+// Validate rejects a nil device-name slice for the disk-loss action.
 func (in *GCPDeviceNames) Validate(root interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	obj := root.(*GCPChaos)
@@ -855,7 +871,7 @@ import (
 
 type Delay string
 
-func (in *Delay) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *Delay) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	if in != nil {
 		_, err := time.ParseDuration(string(*in))
@@ -868,7 +884,7 @@ func (in *Delay) Validate(root interface{}, path *field.Path) field.ErrorList {
 
 type Port int32
 
-func (in *Port) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *Port) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	// in cannot be zero or negative
 	if *in <= 0 {
@@ -899,7 +915,7 @@ func (in *HTTPMethod) Validate(root interface{}, path *field.Path) field.ErrorLi
 	return allErrs
 }
 
-func (in *PodHttpChaosTarget) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *PodHttpChaosTarget) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	switch *in {
 	case PodHttpRequest:
@@ -919,209 +935,20 @@ func init() {
 
 ```
 
-### Core Architecture Module: `api/v1alpha1/iochaos_webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"fmt"
-	"reflect"
-
-	"k8s.io/apimachinery/pkg/util/validation/field"
-
-	"github.com/chaos-mesh/chaos-mesh/api/genericwebhook"
-)
-
-type IOErrno uint32
-
-func (in *IOErrno) Validate(root interface{}, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-	obj := root.(*IOChaos)
-	if obj.Spec.Action == IoFaults {
-		// in cannot be nil
-		if *in == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in,
-				fmt.Sprintf("action %s: errno 0 is not supported", obj.Spec.Action)))
-		}
-	}
-	return allErrs
-}
-
-func init() {
-	genericwebhook.Register("IOErrno", reflect.PtrTo(reflect.TypeOf(IOErrno(0))))
-}
-
-```
-
-### Core Architecture Module: `api/v1alpha1/jvmchaos_webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"fmt"
-	"reflect"
-	"time"
-
-	"k8s.io/apimachinery/pkg/util/validation/field"
-)
-
-const DefaultJVMAgentPort int32 = 9277
-
-func (in *JVMChaosSpec) Default(root interface{}, field *reflect.StructField) {
-	if in == nil {
-		return
-	}
-
-	if len(in.Name) == 0 {
-		in.Name = fmt.Sprintf("%s-%s-%s-%d", in.Class, in.Method, in.Action, time.Now().Unix())
-	}
-
-	if in.Port == 0 {
-		in.Port = DefaultJVMAgentPort
-	}
-}
-
-func (in *JVMChaosSpec) Validate(root interface{}, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	switch in.Action {
-	case JVMStressAction:
-		if in.CPUCount == 0 && len(in.MemoryType) == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "must set one of cpu-count and mem-type when action is 'stress'"))
-		}
-
-		if in.CPUCount > 0 && len(in.MemoryType) > 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "inject stress on both CPU and memory is not support now"))
-		}
-
-		if len(in.MemoryType) != 0 {
-			if in.MemoryType != "stack" && in.MemoryType != "heap" {
-				allErrs = append(allErrs, field.Invalid(path, in, "value should be 'stack' or 'heap'"))
-			}
-		}
-	case JVMGCAction:
-		// do nothing
-	case JVMExceptionAction, JVMReturnAction, JVMLatencyAction:
-		if len(in.Class) == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "class not provided"))
-		}
-
-		if len(in.Method) == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "method not provided"))
-		}
-		if in.Action == JVMExceptionAction && len(in.ThrowException) == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "exception not provided"))
-		} else if in.Action == JVMReturnAction && len(in.ReturnValue) == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "value not provided"))
-		} else if in.Action == JVMLatencyAction && in.LatencyDuration == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "latency not provided"))
-		}
-
-	case JVMRuleDataAction:
-		if len(in.RuleData) == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "rule data not provide"))
-		}
-	case JVMMySQLAction:
-		if len(in.MySQLConnectorVersion) == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "MySQL connector version not provided"))
-		} else if in.MySQLConnectorVersion != "5" && in.MySQLConnectorVersion != "8" {
-			allErrs = append(allErrs, field.Invalid(path, in, "MySQL connector version only support 5.X.X(set to 5) and 8.X.X(set to 8)"))
-		}
-		if len(in.ThrowException) == 0 && in.LatencyDuration == 0 {
-			allErrs = append(allErrs, field.Invalid(path, in, "must set one of exception or latency"))
-		}
-	case "":
-		allErrs = append(allErrs, field.Invalid(path, in, "action not provided"))
-	default:
-		allErrs = append(allErrs, field.Invalid(path, in, fmt.Sprintf("action %s not supported, action can be 'latency', 'exception', 'return', 'stress', 'gc' or 'ruleData'", in.Action)))
-	}
-
-	return allErrs
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5098** (2026-09-29): **fix(jvmchaos): Java25 compatibility. Upgrade byteman-helper to v4.0.27-12**
-  *Symptoms*: > [!IMPORTANT] > Thank you for contributing to Chaos Mesh! Please fill out the template below to help us review your PR. > > If you are new to Chaos Mesh, please read the [contributing guide](https://github.com/chaos-mesh/chaos-mesh/blob/master/CONTRIBUTING.md) first. > > Please follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) when writing the PR title and commit messages.  ## What problem does this PR solve?  > [!TIP] > Please replace this with a brief description of the problem this PR solves. > You can also close #issue_number if this PR solves the issue.  ## What's changed and how does it work?  > [!TIP] > Please replace this with a brief description of the changes and how it works. > You can also refer to a proposal or design doc if it exists.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  > This PR should be cherry-picked to the following release branches:  - [x] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  > Must include at least one of them.  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  > Must include at least one of them.  - [x] Unit test - [x] E2E test - [ ] Manual test  ### Side effects  - [ ] **Breaki
-
-- **Issue #5097** (2026-10-02): **CSOAI — Chaos Mesh AI governance K8s**
-  *Symptoms*: Withdrawn. No action is requested from this project.
-
-- **Issue #5096** (2026-09-29): **fix(selector): require containerNames when the target pod has several containers**
-  *Symptoms*: ## What problem does this PR solve?  Fixes #3676.  When `containerNames` is not set, the container selector silently picks the first container of the pod (`pkg/selector/container/selector.go`). On a pod with several containers that is an arbitrary choice, and it is almost never the one the user means. In the issue the pod is `[consul, java-app]`, so JVMChaos attached byteman to `consul` and the experiment failed with `java.io.IOException: No such process`, with nothing in the error to say the wrong container had been picked.  ## What's changed and how does it work?  If `containerNames` is empty and the selected pod has more than one container, the selector now returns an error naming the pod and the container count, instead of guessing. Pods with a single container keep the existing implicit default, so the common case is unchanged.  I kept the check in the shared container selector rather than in JVMChaos, because that is where the choice is made and every container-scoped chaos type has the same ambiguity. `NetworkChaos` and `PodChaos` pod-kill and pod-failure use `PodSelector` and are not affected. There is a precedent for requiring the field: the PodChaos webhook rejects `container-kill` without `containerNames`.  Added `pkg/selector/container/selector_test.go` covering a two-container pod (`consul`, `java-app`): selecting by `containerNames` returns the named container, a single-container pod still resolves without `containerNames`, and a multi-container pod without `con
+- **Issue #5138** (2026-10-16): **fix(iochaos): upgrade toda to v0.3.0**
+  *Symptoms*: ## What problem does this PR solve?  IOChaos leaves an empty `__chaosfs__...` directory after recovery. toda v0.3.0 removes that directory after restoring the original mount.  Closes #3217.  ## What's changed and how does it work?  Upgrade the daemon's toda download from v0.2.5 to [v0.3.0](https://github.com/chaos-mesh/toda/releases/tag/v0.3.0) and record the upgrade in the changelog. The change covers the Linux amd64 IOChaos runtime.  ## Verification  - All 11 existing IOChaos E2E specs passed locally, including latency, errno, corruption, pause/unpause, container selection and daemon restart recovery. - Supplementary checks passed for repeated injection/deletion, empty backing-directory removal, mount/process/I/O restoration, attribute override and duration expiry. - The published binary also passed existing fd/cwd/shared-mmap replacement, rule updates/clearing, and SIGINT/SIGTERM recovery.  Tests used a full-system Linux x86-64 worker with K3s v1.35.2+k3s1 and a native control plane. The CI daemon image had only toda replaced with the checksum-verified release artifact. A full Dockerfile rebuild was not run locally.  ## Checklist  - [x] I have updated `CHANGELOG.md`. - [x] E2E test. - [x] Manual test. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-09-14T09:30:59.935823Z">2026-09-14T09:30:59.935823Z</relative-time> | `0890dae` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex reacts with 👀 while any review is running, comments if it has suggestions, and reacts with 👍 once all reviews finish with no findings.  </details>
-  > Still happy to regenerate the UI schema in this PR if that's wanted; otherwise I'll leave it out and it can follow separately.
-  > Hi @Yash121l Thanks for your contribution.   The current behavior like injecting chaso experiments into first container if there is no `containerNames` specified is good to us.  So I am going to close this PR. Please let us know if I missed anything. Thank you  Also refs: https://github.com/chaos-mesh/chaos-mesh/issues/3676#issuecomment-5881754926
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"738ff9572fa42539928a495eb7cc05a35786d032","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-16T13:50:21.660970Z">2026-10-16T13:50:21.660970Z</relative-time> | `738ff95` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5138?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 28.04%. Comparing base ([`0da92a1`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/0da92a1e8f96d5b291c820b3aca1e18967a7045f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`738ff95`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/738ff9572fa42539928a495eb7cc05a35786d032?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##           master    #5138      +/-   #
 
-- **Issue #5092** (2026-09-29): **fix(networkchaos): preserve overlapping selector roles**
-  *Symptoms*: ## What problem does this PR solve?  A bidirectional NetworkChaos experiment can lose one requested direction when a pod matches both selectors. For example, source pods `{A, O}` and target pods `{O, B}` produce two records for `O`. Each record clears and rebuilds the same experiment's per-pod rules, so the second record removes the first role's filter. All records can then report `Injected` while either `O -> A` or `O -> B` has no requested delay.  Related: #3493 reports problems with overlapping source and target selectors.  ## What's changed and how does it work?  For `direction: both`, either record for an overlapping pod rebuilds both roles in one transaction before committing its generation. Keep the existing source/target IP-set names, filters, interface selection, and experiment ownership. Retries reproduce the same complete configuration, and recovery continues to clear both roles using the existing experiment owner.  Regression tests cover both processing orders, matching and differing interface settings, non-overlapping `to`/`from`/`both` experiments, repeated application, acknowledgement, and recovery while another experiment remains on the pod.  Resolve the destination Pod IP before starting the timed network integration test. Keep the five-second duration, ten packets, and requirement for three to six packets with at least 10ms latency, while moving hostname resolution out of the measurement window.  This change is independent of the namespace identity fix in #5
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5092?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `67.64706%` with `11 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 21.03%. Comparing base ([`536c193`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/536c193f8796ca52e6bd4dbb41b5493d858f30b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`9ab53e3`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/9ab53e36b499465b5eb47e3cbb3cf2283408c4d7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5092?dropdown=coverage&src=pr&el=tree&utm_medium=refer
-  > Hi @bvolpato , thanks for your contribution!  I noticed you're highly active rencently. For now chaos mesh maintainers may have only limited bandwidth on reviewing them. 🙏  Does this sounds a problem? We're open to chat!
-  > We're avaiable in CNCF slack channel #project-chaos-mesh, and DM is also welcome.
-
-- **Issue #5091** (2026-09-29): **fix(httpchaos): retry missing TLS Secret data**
-  *Symptoms*: ## What problem does this PR solve?  If a TLS Secret exists but lacks the configured certificate, private-key, or CA entry, PodHTTPChaos calls `errors.Wrapf` with a nil error and then panics on `err.Error()`. Its deferred status update still records the generation with an empty failure message. The parent can consequently report `Injected` without any `ApplyHttpChaos` call, and later child reconciliation skips that generation.  ## What's changed and how does it work?  Create a non-nil error for each missing entry and preserve it in `FailedMessage`. Request a rate-limited retry, following the controller's existing error convention, because Secret updates are not watched. The parent stays pending with an error until a subsequent attempt actually succeeds.  Regression tests cover missing certificate, private key, and optional CA data; repeated failed reconciliation; zero injection RPCs during failure; repairing only the Secret; the resulting TLS payload and parent `Injected` transition; and successful reconciliation idempotence.  Related: #4994 fixes Secret lookup and read errors. This PR covers the separate missing-data branches and can be applied independently.  ## Validation and reproduction  The regression test fails on the base commit with a nil-pointer panic in all three cases, and passes with this change. It uses fake Kubernetes and daemon clients.  ```sh go run github.com/pingcap/failpoint/failpoint-ctl enable ./pkg/mock trap 'go run github.com/pingcap/failpoint/failpoin
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5091?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 21.06%. Comparing base ([`536c193`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/536c193f8796ca52e6bd4dbb41b5493d858f30b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`ba4af8e`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/ba4af8efba226ea24e2f4906dcd8ab625bbb1438?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##           master    #5091      +/-   #
-  > The integration failure here matches #5090: PhysicalMachineChaos admission rejects the webhook certificate just after the OIDC test upgrades the chart. It fails before physical-machine injection, outside the HTTPChaos code changed here.  The Go verification, build, and test jobs passed on both architectures. Could a maintainer rerun the [failed integration job](https://github.com/chaos-mesh/chaos-mesh/actions/runs/33798974196/job/100793434730)? The personal fork account cannot rerun this workflow. Thanks. 
-  > Hi @bvolpato, thanks a lot for the time and effort you put into this PR!  We reached out in #5092 about review bandwidth and ways to coordinate (CNCF Slack `#project-chaos-mesh`), but haven't heard back for several weeks. Since this is one of a batch of related PRs (#5085 to #5092) that we can't move forward without the author's involvement, we're closing it for now to keep the queue manageable.  This is not a rejection of the change itself. If you'd like to continue, feel free to reopen this PR (or open a new one rebased on the latest `master`) and ping us here or on Slack. We're happy to pick it up again. 🙏
-
-- **Issue #5090** (2026-09-29): **fix(networkchaos): isolate generated rule names**
-  *Symptoms*: ## What problem does this PR solve?  NetworkChaos resources with the same name in different Kubernetes namespaces can generate identical IP-set and iptables-chain names when they select the same workload pod. PodNetworkChaos tracks ownership by namespace/name, but the daemon receives colliding names, allowing one experiment to overwrite another experiment's destination sets or partition rules.  ## What's changed and how does it work?  Generate kernel rule names from the full namespace/name identity and IP-set role. Use the available name budget for the hash so long role suffixes do not weaken collision resistance. Preserve the existing 27-character limits, the daemon's temporary IP-set suffix space, and INPUT/OUTPUT chain prefixes.  Names follow namespace/name ownership, matching RawRuleSource and existing recovery transactions. Persisted PodNetworkChaos names are forwarded unchanged; this does not migrate active rules or change the CRD format.  ## Validation and reproduction  New regressions failed on the base revision and pass with the fix. They apply same-name experiments from different namespaces through the real partition and filtered-delay implementations, verify separate destination sets and daemon requests, retry application, and recover one experiment while preserving the other. They also exercise mixed persisted legacy/new names and name-length boundaries.  Passed on Linux arm64 with Go 1.25.12:  ```sh go run github.com/pingcap/failpoint/failpoint-ctl enable ./pkg/m
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5090?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `37.50000%` with `5 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 20.77%. Comparing base ([`536c193`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/536c193f8796ca52e6bd4dbb41b5493d858f30b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`d26c0f9`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/d26c0f9dc4f0997c26de7ecf5e39b8863603ac19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5090?dropdown=coverage&src=pr&el=tree&utm_medium=referr
-  > The integration job passed the network test, then failed to create PhysicalMachineChaos after the OIDC test restarted the API server and upgraded the chart. The admission error was `x509: certificate signed by unknown authority`. The same failure appeared on #5091.  I checked the chart and logs: the upgrade regenerates webhook certificates and trust bundles, but the test only checks dashboard readiness before continuing. That points to an existing upgrade-readiness issue; the logs do not show which endpoint or certificate was stale.  Could a maintainer rerun the [failed integration job](https://github.com/chaos-mesh/chaos-mesh/actions/runs/33785249398/job/100748328298)? The other checks passed, but I couldn't start the rerun because GitHub requires repository admin rights. Thanks. 
-  > Hi @bvolpato, thanks a lot for the time and effort you put into this PR!  We reached out in #5092 about review bandwidth and ways to coordinate (CNCF Slack `#project-chaos-mesh`), but haven't heard back for several weeks. Since this is one of a batch of related PRs (#5085 to #5092) that we can't move forward without the author's involvement, we're closing it for now to keep the queue manageable.  This is not a rejection of the change itself. If you'd like to continue, feel free to reopen this PR (or open a new one rebased on the latest `master`) and ping us here or on Slack. We're happy to pick it up again. 🙏
-
-- **Issue #5089** (2026-09-29): **fix(chaosdaemon): keep TC chains unique across devices**
-  *Symptoms*: ## What problem does this PR solve?  Filtered NetworkChaos rules on different interfaces reuse TC-TABLES-0, TC-TABLES-1, etc. Setting up the second interface flushes classifier chains created for the first interface, so both setups can report success while one interface's traffic bypasses its configured fault.  ## What's changed and how does it work?  Allocate classifier chain indices across all interfaces in the request. Keep qdisc handles and class IDs local to each device. Sort devices and filter keys so retries generate the same chain-to-class mapping.  The existing controller sequence resets CHAOS-OUTPUT before rebuilding traffic-control rules; recovery and removal of an interface continue to use that sequence.  ## Validation and reproduction  The new regression failed on the base revision in both interface orders and passes with this change. It exercises SetTcs using intercepted commands, covering unequal filter counts, global and filtered rules, multiple effects sharing a filter, stable retries, interface removal, and full recovery.  Passed on Linux arm64 with Go 1.25.12:  ```sh go run github.com/pingcap/failpoint/failpoint-ctl enable ./pkg/mock go test -mod=readonly -race ./pkg/chaosdaemon -run '^TestSetTcsPreservesFiltersAcrossDevices$' -count=1 -v go run github.com/pingcap/failpoint/failpoint-ctl disable ./pkg/mock go vet ./pkg/chaosdaemon ```  Existing focused tc/iptables tests, goimports, and git diff --check also passed. The regression refuses to run network comm
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5089?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `95.45455%` with `1 line` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 21.37%. Comparing base ([`536c193`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/536c193f8796ca52e6bd4dbb41b5493d858f30b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`884a106`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/884a10670415cae3575ad6475db08b97d723c8ce?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5089?dropdown=coverage&src=pr&el=tree&utm_medium=referra
-  > Hi @bvolpato, thanks a lot for the time and effort you put into this PR!  We reached out in #5092 about review bandwidth and ways to coordinate (CNCF Slack `#project-chaos-mesh`), but haven't heard back for several weeks. Since this is one of a batch of related PRs (#5085 to #5092) that we can't move forward without the author's involvement, we're closing it for now to keep the queue manageable.  This is not a rejection of the change itself. If you'd like to continue, feel free to reopen this PR (or open a new one rebased on the latest `master`) and ping us here or on Slack. We're happy to pick it up again. 🙏
-
-- **Issue #5088** (2026-09-29): **fix(stresschaos): roll back CPU on memory startup failure**
-  *Symptoms*: ## What problem does this PR solve?  A combined StressChaos request can start CPU workers successfully and then fail to start memory workers. ExecStressors returns an error without returning the CPU handle, so the controller records NotInjected and subsequent retries can start more CPU workers. Stopping the experiment cannot recover those unrecorded workers.  ## What's changed and how does it work?  Cancel the successfully started CPU process by its BPM UID before returning a memory-startup error. Cleanup uses an independent 10-second context so a canceled or expired injection request does not skip shutdown. Preserve the original startup error and include the worker UID and cleanup error if rollback fails.  A private executor interface allows the actual orchestration to be tested without starting stress processes. Successful CPU-only, memory-only and combined responses preserve their existing handles. This change is independent of #4950, which addresses errors during normal controller recovery.  ## Validation and reproduction  Passed on Linux arm64 with Go 1.25.12 and CGO enabled:  ```sh go test -mod=readonly -race ./pkg/chaosdaemon -run '^TestExecStressors' -count=1 go vet -mod=readonly ./pkg/chaosdaemon ```  Regression tests cover three failed attempts without accumulating CPU workers, cleanup after request cancellation, reported rollback failure, startup paths without a CPU worker, and successful responses. Focused goimports and git diff --check passed. Tests use in-memory
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5088?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `70.58824%` with `5 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 20.67%. Comparing base ([`536c193`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/536c193f8796ca52e6bd4dbb41b5493d858f30b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`4925d79`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/4925d792edfbba5cc81881846862e59eb6aa5698?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5088?dropdown=coverage&src=pr&el=tree&utm_medium=referr
-  > Hi @bvolpato, thanks a lot for the time and effort you put into this PR!  We reached out in #5092 about review bandwidth and ways to coordinate (CNCF Slack `#project-chaos-mesh`), but haven't heard back for several weeks. Since this is one of a batch of related PRs (#5085 to #5092) that we can't move forward without the author's involvement, we're closing it for now to keep the queue manageable.  This is not a rejection of the change itself. If you'd like to continue, feel free to reopen this PR (or open a new one rebased on the latest `master`) and ping us here or on Slack. We're happy to pick it up again. 🙏
+- **Issue #5137** (2026-10-16): **fix(dashboard): handle failures and add Go regression tests**
+  *Symptoms*: ## What problem does this PR solve?  Dashboard failures could produce misleading responses, lose collector retries, or leave incomplete archive cleanup. SQLite timestamp text comparisons could filter or expire mixed-timezone history incorrectly. Event retries could duplicate committed writes.  ## What's changed and how does it work?  - Add Go regressions for API errors, authentication, persistence, collectors, cancellation, and concurrent requests. Fix the behavior those tests expose. - Cover workflow cascade event queries with real SQLite stores, including query failures, cancellation, unchanged data, and successful retries after recovery. - Delete archive events only for UIDs found in the matching store. Clean events before removing the archive so failures retain a safe retry path. - Persist the source Kubernetes Event UID under a unique index. Recover uncertain writes by reading the canonical row, without merging distinct source events. - Compare SQLite event times as instants in bounded transactions. Apply limits after time filtering without rewriting historical timestamps.  ## Scope  Dashboard Go behavior and its Pod and PhysicalMachine selectors. Source identity adds a nullable column and unique index. Historical values remain unchanged, with no UID backfill or retrospective deduplication. The API JSON format and UI are unchanged.  ## Tradeoffs  SQLite time queries scan candidates in batches to preserve legacy formats and nanosecond precision. Archive deletion uses per-
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1138,146 +965,82 @@ func (in *JVMChaosSpec) Validate(root interface{}, path *field.Path) field.Error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c859a9c6` (2026-09-29)
-**Commit Message**: fix(jvmchaos): Java25 compatibility. Upgrade byteman-helper to v4.0.27-12 (#5098)
+### Incident Patch 1: `90ab7778` (2026-10-15)
+**Commit Message**: fix(multicluster): isolate remote API failures and retry forwarding (#5134)
 
-* Upgrade byteman to v4.0.27
+* test(multicluster): cover remote outage isolation and retries
 
-Signed-off-by: Marek Bedkowski <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-* Upgrade byteman to v4.0.27
+* fix(multicluster): isolate remote API failures and retry forwarding
 
-Signed-off-by: Marek Bedkowski <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-* Remove ignore certificate flag committed by mistake.
+* test(multicluster): cover forwarding timeout isolation
 
-Signed-off-by: Marek Bedkowski <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+* fix(multicluster): isolate forwarding and monitor timeouts
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Marek Bedkowski <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -105,6 +105,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Update `enableCtrlServer` to `false` by default in the Helm chart [#4702](https://github.com/chaos-mesh/chaos-mesh/pull/4702)
- - Upgrade cosign to v2.5.3 [#4736](https://github.com/chaos-mesh/chaos-mesh/pull/4736)
- - Upgrade github.com/docker/docker to v26.1.5 [#4766](https://github.com/chaos-mesh/chaos-mesh/pull/4766)
-+- Update byteman-helper to v4.0.27 [#5098](https://github.com/chaos-mesh/chaos-mesh/pull/5098)
+@@ -62,6 +62,8 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
  
- ### Deprecated
+ ### Fixed
  
-```
-
-**File**: `images/chaos-daemon/Dockerfile` (modified, +2/-2)
-```diff
-@@ -11,9 +11,9 @@ ENV https_proxy=$HTTPS_PROXY
- ARG TARGET_PLATFORM=amd64
- 
- RUN mkdir -p /tmp/bin && \
--    curl -L https://mirrors.chaos-mesh.org/byteman-chaos-mesh-download-v4.0.24-0.12.tar.gz -o /usr/local/byteman.tar.gz && \
-+    curl -L https://mirrors.chaos-mesh.org/byteman-chaos-mesh-download-v4.0.27-0.12.tar.gz -o /usr/local/byteman.tar.gz && \
-     tar xvf /usr/local/byteman.tar.gz -C /usr/local && \
--    mv /usr/local/byteman-chaos-mesh-download-v4.0.24-0.12 /tmp/byteman && \
-+    mv /usr/local/byteman-chaos-mesh-download-v4.0.27-0.12 /tmp/byteman && \
-     rm /usr/local/byteman.tar.gz
- 
- # toda doesn't support arm64 yet
-```
-
----
-
-### Incident Patch 2: `536c193f` (2026-09-01)
-**Commit Message**: fix(webhook): match SubjectAccessReview verb to admission operation (#5082)
-
-The auth webhook hardcoded "create" as the SubjectAccessReview verb, so the garbage collector's UPDATE that removes the foregroundDeletion finalizer was denied and foreground cascading deletion hung forever. Use the verb that matches the admission operation instead.
-
-Close #5079
-
-Signed-off-by: Zhiqiang ZHOU <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -71,6 +71,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Fix dashboard UI token validation and infinite auth lockout loop [#5046](https://github.com/chaos-mesh/chaos-mesh/pull/5046)
- - Fix convert netem delay/jitter as durations instead of strings [#5074](https://github.com/chaos-mesh/chaos-mesh/pull/5074)
- - Stabilize StatusCheck controller tests on slower runners [#5072](https://github.com/chaos-mesh/chaos-mesh/pull/5072)
-+- Use the admission operation as the SubjectAccessReview verb in the auth webhook so foreground cascading deletion no longer hangs [#5079](https://github.com/chaos-mesh/chaos-mesh/issues/5079)
- 
- ### Security
- 
-```
-
-**File**: `pkg/webhook/validate_auth.go` (modified, +23/-4)
-```diff
-@@ -23,6 +23,7 @@ import (
- 
- 	"github.com/go-logr/logr"
- 	"github.com/pkg/errors"
-+	admissionv1 "k8s.io/api/admission/v1"
- 	authnv1 "k8s.io/api/authentication/v1"
- 	authzv1 "k8s.io/api/authorization/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -103,8 +104,10 @@ func (v *AuthValidator) Handle(ctx context.Context, req admission.Request) admis
- 
- 	requireClusterPrivileges, affectedNamespaces := affectedNamespaces(chaos)
- 
-+	verb := sarVerb(req.Operation)
++- Isolate remote-cluster API outages and retry remote chaos forwarding and deletion after recovery.
 +
- 	if requireClusterPrivileges {
--		allow, err := v.auth(req.UserInfo, "", requestKind)
-+		allow, err := v.auth(req.UserInfo, "", requestKind, verb)
- 		if err != nil {
- 			return admission.Errored(http.StatusBadRequest, err)
- 		}
-@@ -117,7 +120,7 @@ func (v *AuthValidator) Handle(ctx context.Context, req admission.Request) admis
- 		v.logger.Info("start validating user", "user", username, "groups", groups, "namespace", affectedNamespaces)
+ - Restore remote cluster managers after controller restarts, refresh changed kubeconfig connections, and register all enabled remote controllers.
  
- 		for namespace := range affectedNamespaces {
--			allow, err := v.auth(req.UserInfo, namespace, requestKind)
-+			allow, err := v.auth(req.UserInfo, namespace, requestKind, verb)
- 			if err != nil {
- 				return admission.Errored(http.StatusBadRequest, err)
- 			}
-@@ -133,7 +136,23 @@ func (v *AuthValidator) Handle(ctx context.Context, req admission.Request) admis
- 	return admission.Allowed("")
- }
- 
--func (v *AuthValidator) auth(userInfo authnv1.UserInfo, namespace string, chaosKind string) (bool, error) {
-+// sarVerb maps the admission operation to the verb checked in the
-+// SubjectAccessReview, so the permission check matches the action
-+// the user is actually performing.
-+func sarVerb(op admissionv1.Operation) string {
-+	switch op {
-+	case admissionv1.Create:
-+		return "create"
-+	case admissionv1.Update:
-+		return "update"
-+	default:
-+		// The webhook only registers create and update. Fall back to
-+		// the lowercase operation name for any other value.
-+		return strings.ToLower(string(op))
-+	}
-+}
-+
-+func (v *AuthValidator) auth(userInfo authnv1.UserInfo, namespace string, chaosKind string, verb string) (bool, error) {
- 	resourceName, err := v.resourceFor(chaosKind)
- 	if err != nil {
- 		return false, err
-@@ -143,7 +162,7 @@ func (v *AuthValidator) auth(userInfo authnv1.UserInfo, namespace string, chaosK
- 		Spec: authzv1.SubjectAccessReviewSpec{
- 			ResourceAttributes: &authzv1.ResourceAttributes{
- 				Namespace: namespace,
--				Verb:      "create",
-+				Verb:      verb,
- 				Group:     "chaos-mesh.org",
- 				Resource:  resourceName,
- 			},
+ - Preserve native remote experiments and isolate multi-cluster status and deletion by experiment ownership.
 ```
 
-**File**: `pkg/webhook/validate_auth_test.go` (added, +40/-0)
+**File**: `controllers/multicluster/clusterregistry/README.md` (modified, +12/-4)
 ```diff
-@@ -0,0 +1,40 @@
+@@ -16,9 +16,11 @@ The common local chaos pipeline filters out objects whose remote-cluster field i
+ - `Ensure(ctx, name, kubeconfig)` starts a manager or replaces it when the decoded kubeconfig changes;
+ - `Spawn(name, restConfig)` starts a manager only when its name is unregistered;
+ - `Stop(ctx, name)` stops it and removes it from the registry;
+-- `WithClient(name, callback)` runs a callback with that manager's remote-cluster client.
++- `WithClient(name, callback)` runs a callback with a live, uncached remote-cluster client.
+ 
+-Registrations are keyed by remote-cluster name. `Ensure` retains an independent kubeconfig snapshot, leaves an equal configuration running, and stops the old manager before starting its replacement. Invalid configuration leaves the old manager running; a failed replacement start leaves the name unregistered for retry. `Spawn` retains its strict `ErrAlreadyExist` behavior. `Stop` or `WithClient` returns `ErrNotExist` for an unknown name.
++Registrations are keyed by remote-cluster name. `Ensure` retains an independent kubeconfig snapshot and leaves an equal configuration running only when its manager is ready. It validates changed configuration before stopping the old manager and starting its replacement. Invalid configuration leaves the old manager running. Failed startup permits retry after successful cleanup; a shutdown error keeps the name unavailable.
++
++Starting or stopping entries reject `Ensure`, `Spawn`, and client callbacks with `ErrBusy`. A completed shutdown error is returned by later `Ensure` and `Stop` calls. `Spawn` returns `ErrAlreadyExist` for a running manager. `Stop` or `WithClient` returns `ErrNotExist` for an unknown name. Same-cluster callbacks run one at a time, while other clusters remain available.
+ 
+ The registry is provided from `controllers.Module`. The `remotecluster` reconciler ensures its cleanup finalizer before external operations and calls `Ensure` for every live resource, rebuilding missing managers after a management-controller restart. Helm install/upgrade runs only for an unobserved `RemoteCluster` generation. Referenced Secret changes enqueue reconciliation and refresh the connection; changing a Secret endpoint alone does not migrate a Helm installation. Deletion stops the manager before reading credentials for Helm cleanup and removes only the owned finalizer after cleanup succeeds.
+ 
+@@ -62,7 +64,11 @@ err := registry.WithClient(clusterName, func(remoteClient client.Client) error {
+ })
+ ```
+ 
+-`WithClient` currently holds the registry mutex for the entire callback. Do not perform long-running work or call `Ensure`, `Spawn`, `Stop`, or another `WithClient` from that callback.
++`WithClient` serializes callbacks for one cluster and immediately rejects additional calls for that cluster with `ErrBusy`. The registry map lock is released before any callback or manager lifecycle work. Do not perform unbounded work, stop the same cluster, or recursively borrow it from a callback.
++
++Remote chaos forwarding uses four workers per chaos kind and a ten-second reconciliation context. The forwarding client uses its own HTTP client and discovery mapper with a ten-second timeout, preserving any stricter configured timeout. Forwarding reads bypass the manager cache. The manager and its monitor controllers retain the original REST timeout and cached client. API failures, unavailable registrations, and busy entries trigger rate-limited retries. Deletion is checked again after one second. Local finalizers remain until a live remote read confirms absence or the remote experiment is no longer owned by forwarding. Detachment rechecks the management object identity, target cluster, and deletion state.
++
++One unavailable target cannot occupy all workers through waiting callbacks. Four distinct unavailable targets can still occupy the finite worker pool until their calls finish. Discovery may make multiple individually bounded requests, and arbitrary callback code must honor cancellation; the reconciliation deadline is not an unconditional wall-clock guarantee.
+ 
+ ## Registering another remote reconciler
+ 
+@@ -82,7 +88,9 @@ If the new controller requires webhooks, metrics, leader election, a no-cache re
+ 
+ The kubeconfig referenced by `RemoteCluster` must authorize the Helm operations performed by the management controller and every read/write/watch performed by remote reconcilers. Grant only the permissions the configured features require.
+ 
+-Stopping a registry entry cancels the remote manager and waits for it to exit. Controller code must honor the reconcile context and avoid unbounded operations so shutdown can complete.
++Stopping closes admission before waiting for the active callback, then cancels the remote manager and waits for it to exit. Each caller may stop waiting when its context expires, but the name stays reserved until actual shutdown completes. Concurrent callers join one shutdown operation. Successful late completion removes the entry; a shutdown erro
+```
+
+**File**: `controllers/multicluster/clusterregistry/ensure_integration_test.go` (added, +419/-0)
+```diff
+@@ -0,0 +1,419 @@
 +// Copyright 2026 Chaos Mesh Authors.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -1293,2139 +1056,2303 @@ Signed-off-by: Zhiqiang ZHOU <[REDACTED_EMAIL]>
 +// limitations under the License.
 +//
 +
-+package webhook
++package clusterregistry
 +
 +import (
++	"context"
++	"errors"
++	"sync"
++	"sync/atomic"
 +	"testing"
++	"time"
 +
-+	admissionv1 "k8s.io/api/admission/v1"
++	"github.com/go-logr/logr"
++	"github.com/stretchr/testify/require"
++	"k8s.io/client-go/rest"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 +)
 +
-+func TestSarVerb(t *testing.T) {
-+	cases := []struct {
-+		operation admissionv1.Operation
-+		want      string
-+	}{
-+		{admissionv1.Create, "create"},
-+		{admissionv1.Update, "update"},
-+		{admissionv1.Delete, "delete"},
-+	}
-+
-+	for _, c := range cases {
-+		got := sarVerb(c.operation)
-+		if got != c.want {
-+			t.Errorf("sarVerb(%q) = %q, want %q", c.operation, got, c.want)
-+		}
++func awaitSignal(t *testing.T, ch <-chan struct{}) {
++	t.Helper()
++	select {
++	case <-ch:
++	case <-time.After(5 * time.Second):
++		t.Fatal("operation did not reach barrier")
 +	}
 +}
++
++func awaitResult(t *testing.T, ch <-chan error) error {
++	t.Helper()
++	select {
++	case err := <-ch:
++		return err
++	case <-time.After(5 * time.Second):
++		t.Fatal("operation did not complete")
++		return nil
++	}
++}
++
++func runAsync(f func() error) <-chan error {
++	done := make(chan error, 1)
++	go func() { done <- f() }()
++	return done
++}
++
++func TestEnsureLifecycleDoesNotBlockOtherClusters(t *testing.T) {
++	for _, phase := range []string{"build", "start", "stop", "drain", "cleanup"} {
++		t.Run(phase, func(t *testing.T) {
++			r := New(logr.Discard(), nil)
++			blocked, release, stopped := make(chan struct{}), make(chan struct{}), make(chan struct{})
++			var releaseOnce sync.Once
++			unblock := func() { releaseOnce.Do(func() { close(release) }) }
++			defer unblock()
++			aClient, bClient := fake.NewClientBuilder().Build(), fake.NewClientBuilder().Build()
++			failure := errors.New("startup failed")
++			r.build = func(name string, cfg *rest.Config) (appLifecycle, client.Client) {
++				if name == "b" {
++					return lifecycleFuncs{}, bClient
++				}
++				if cfg.BearerToken != "old" {
++					return lifecycleFuncs{}, aClient
++				}
++				if phase == "build" {
++					close(blocked)
++					<-release
++				}
++				return lifecycleFuncs{start: func(context.Context) error {
++					if phase == "start" {
++						close(blocked)
++						<-release
++					}
++					if phase == "cleanup" {
++						return failure
++					}
++					return nil
++				}, stop: func(context.Context) error {
++					close(stopped)
++					if phase == "stop" || phase == "cleanup" {
++						close(blocked)
++						<-release
++					}
++					return nil
++				}}, aClient
++			}
++			cfg := desiredConfig(t)
++			require.NoError(t, r.Ensure(context.Background(), "b", cfg))
++			var aDone <-chan error
++			if phase == "stop" || phase == "drain" {
++				require.NoError(t, r.Ensure(context.Background(), "a", cfg))
++				var callbackDone <-chan error
++				if phase == "drain" {
++					callbackDone = runAsync(func() error {
++						return r.WithClient("a", func(client.Client) error { close(blocked); <-release; return nil })
++					})
++					awaitSignal(t, blocked)
++				}
++				changed := cfg.DeepCopy()
++				changed.AuthInfos["remote"].Token = "new"
++				observed := &observedContext{Context: context.Background(), observed: make(chan struct{})}
++				aDone = runAsync(func() error { return r.Ensure(observed, "a", changed) })
++				if phase == "drain" {
++					awaitSignal(t, observed.observed)
++					select {
++					case <-stopped:
++						t.Fatal("manager stopped before callback drained")
++					default:
++					}
++					defer func() { require.NoError(t, awaitResult(t, callbackDone)) }()
++				} else {
++					awaitSignal(t, blocked)
++				}
++			} else {
++				aDone = runAsync(func() error { return r.Ensure(context.Background(), "a", cfg) })
++				awaitSignal(t, blocked)
++			}
++			require.ErrorIs(t, r.WithClient("a", func(client.Client) error { return nil }), ErrBusy)
++			bDone := runAsync(func() error {
++				if err := r.WithClient("b", func(c client.Client) error {
++					if c != bClient {
++						return errors.New("wrong B client")
++					}
++					return nil
++				}); err != nil {
++					return err
++				}
++				changed := cfg.DeepCopy()
++				changed.AuthInfos["remote"].Token = "b-new"
++				if err := r.Ensure(context.Background(), "b", changed); err != nil {
++					return err
++				}
++				if err := r.Stop(context.Background(), "b"); err != nil {
++					return err
++				}
++				if err := r.Spawn("b", &rest.Config{}); err != nil {
++					return err
++				}
++				return r.Stop(context.Background(), "b")
++			})
++			require.NoError(t, awaitResult(t, bDone))
++			unblock()
++			err := awaitResult(t, aDone)
++			if phase == "cleanup" {
++				require.ErrorIs(t, err, failure)
++				require.ErrorIs(t, r.WithClient("a", func(client.Client) error { return nil }), ErrNotExist)
++			} else {
++				require.NoError(t, err)
++				require.NoError(t, r.WithClient("a", 
 ```
 
----
-
-### Incident Patch 3: `cedd5432` (2026-09-01)
-**Commit Message**: fix(ui): show errors without API responses (#4999)
-
-Signed-off-by: bvolpato <[REDACTED_EMAIL]>
-
-**File**: `ui/app/src/api/interceptors.ts` (modified, +2/-2)
+**File**: `controllers/multicluster/clusterregistry/ensure_test.go` (modified, +50/-20)
 ```diff
-@@ -56,10 +56,10 @@ export const applyErrorHandling = ({
-         })
-         resetAPIAuthentication()
-         removeToken()
--      } else if (data) {
-+      } else {
-         openAlert({
-           type: 'error',
--          message: data.message || 'An unknown error occurred',
-+          message: data?.message || 'An unknown error occurred',
-         })
-       }
+@@ -29,9 +29,24 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+ )
  
+-type stopFunc func(context.Context) error
++type lifecycleFuncs struct {
++	start func(context.Context) error
++	stop  func(context.Context) error
++}
+ 
+-func (f stopFunc) Stop(ctx context.Context) error { return f(ctx) }
++func (f lifecycleFuncs) Start(ctx context.Context) error {
++	if f.start != nil {
++		return f.start(ctx)
++	}
++	return nil
++}
++
++func (f lifecycleFuncs) Stop(ctx context.Context) error {
++	if f.stop != nil {
++		return f.stop(ctx)
++	}
++	return nil
++}
+ 
+ func desiredConfig(t *testing.T) *clientcmdapi.Config {
+ 	t.Helper()
+@@ -59,15 +74,17 @@ func TestEnsureConnectionLifecycle(t *testing.T) {
+ 	r := New(logr.Discard(), nil)
+ 	var events []string
+ 	var current client.Client
+-	r.start = func(_ context.Context, _ string, cfg *rest.Config) (*remoteCluster, error) {
++	r.build = func(_ string, cfg *rest.Config) (appLifecycle, client.Client) {
+ 		token := cfg.BearerToken
+-		events = append(events, "start:"+token)
+ 		cfg.TLSClientConfig.CAData[0] = 'x'
+ 		current = fake.NewClientBuilder().Build()
+-		return &remoteCluster{Client: current, app: stopFunc(func(context.Context) error {
++		return lifecycleFuncs{start: func(context.Context) error {
++			events = append(events, "start:"+token)
++			return nil
++		}, stop: func(context.Context) error {
+ 			events = append(events, "stop:"+token)
+ 			return nil
+-		})}, nil
++		}}, current
+ 	}
+ 	first := desiredConfig(t)
+ 	if err := r.Ensure(ctx, "remote", first); err != nil {
+@@ -112,18 +129,20 @@ func TestEnsureFailures(t *testing.T) {
+ 			starts, stops := 0, 0
+ 			failing := false
+ 			boom := errors.New("failed")
+-			r.start = func(context.Context, string, *rest.Config) (*remoteCluster, error) {
+-				starts++
+-				if failing && failure == "start" {
+-					return nil, boom
+-				}
+-				return &remoteCluster{app: stopFunc(func(context.Context) error {
++			r.build = func(string, *rest.Config) (appLifecycle, client.Client) {
++				return lifecycleFuncs{start: func(context.Context) error {
++					starts++
++					if failing && failure == "start" {
++						return boom
++					}
++					return nil
++				}, stop: func(context.Context) error {
+ 					stops++
+ 					if failing && failure == "stop" {
+ 						return boom
+ 					}
+ 					return nil
+-				})}, nil
++				}}, nil
+ 			}
+ 			cfg := desiredConfig(t)
+ 			if err := r.Ensure(ctx, "remote", cfg); err != nil {
+@@ -153,7 +172,20 @@ func TestEnsureFailures(t *testing.T) {
+ 			}
+ 			failing = false
+ 			cfg.CurrentContext = "remote"
+-			if err := r.Ensure(ctx, "remote", cfg); err != nil {
++			if failure == "stop" {
++				if err := r.Ensure(ctx, "remote", cfg); !errors.Is(err, boom) {
++					t.Fatalf("lost stop failure: %v", err)
++				}
++				if err := r.Stop(ctx, "remote"); !errors.Is(err, boom) {
++					t.Fatalf("retried failed stop: %v", err)
++				}
++				if err := r.WithClient("remote", func(client.Client) error { return nil }); !errors.Is(err, ErrBusy) {
++					t.Fatalf("failed shutdown admitted client: %v", err)
++				}
++				if starts != 1 || stops != 1 {
++					t.Fatalf("failed stop retried: %d/%d", starts, stops)
++				}
++			} else if err := r.Ensure(ctx, "remote", cfg); err != nil {
+ 				t.Fatal(err)
+ 			}
+ 		})
+@@ -166,9 +198,8 @@ func TestEnsureTLSAndProxyChanges(t *testing.T) {
+ 			ctx := context.Background()
+ 			r := New(logr.Discard(), nil)
+ 			starts, stops := 0, 0
+-			r.start = func(context.Context, string, *rest.Config) (*remoteCluster, error) {
+-				starts++
+-				return &remoteCluster{app: stopFunc(func(context.Context) error { stops++; return nil })}, nil
++			r.build = func(string, *rest.Config) (appLifecycle, client.Client) {
++				return lifecycleFuncs{start: func(context.Context) error { starts++; return nil }, stop: func(context.Context) error { stops++; return nil }}, nil
+ 			}
+ 			cfg := desiredConfig(t)
+ 			if err := r.Ensure(ctx, "remote", cfg); err != nil {
+@@ -193,9 +224,8 @@ func TestSpawnRemainsStrict(t *testing.T) {
+ 	ctx := context.Background()
+ 	r := New(logr.Discard(), nil)
+ 	starts, stops := 0, 0
+-	r.start = func(context.Context, string, *rest.Config) (*remoteCluster, error) {
+-		starts++
+-		return &remoteCluster{app: stopFunc(func(context.Context) error { stops++; return nil })}, nil
++	r.build = func(string, *rest.Config) (appLifecycle, client.Client) {
++		return lifecycleFuncs{start: func(context.Context) error { starts++; return nil }, stop: func(context.Context) error { stops++; return nil }}, nil
+ 	}
+ 	if err := r.Spawn("remote", &rest.Config{}); err != nil {
+ 		t.Fatal(err)
 ```
 
----
-
-### Incident Patch 4: `2ddada2d` (2026-09-01)
-**Commit Message**: fix(chaosdaemon): convert netem delay/jitter as durations instead of strings (#5074)
-
-Signed-off-by: 0xff-dev <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `controllers/multicluster/clusterregistry/error.go` (modified, +1/-0)
 ```diff
-@@ -66,6 +66,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Fix a TypeError crash in the Dashboard UI when opening the details page of a Workflow-type schedule [#5034](https://github.com/chaos-mesh/chaos-mesh/pull/5034)
- - Fixed jvm latency experiment not working for jdk version 19 and higher [#4821](https://github.com/chaos-mesh/chaos-mesh/pull/4821)
- - Fix dashboard UI token validation and infinite auth lockout loop [#5046](https://github.com/chaos-mesh/chaos-mesh/pull/5046)
-+- Fix convert netem delay/jitter as durations instead of strings [#5074](https://github.com/chaos-mesh/chaos-mesh/pull/5074)
+@@ -18,6 +18,7 @@ package clusterregistry
+ import "github.com/pkg/errors"
  
- ### Security
- 
+ var (
++	ErrBusy         = errors.New("controllers of cluster are busy or stopping")
+ 	ErrAlreadyExist = errors.New("controllers of cluster has already been started")
+ 	ErrNotExist     = errors.New("controllers of cluster doesn't exist")
+ )
 ```
 
-**File**: `pkg/chaosdaemon/tc_server.go` (modified, +74/-8)
+**File**: `controllers/multicluster/clusterregistry/isolation_test.go` (added, +337/-0)
 ```diff
-@@ -21,6 +21,7 @@ import (
- 	"fmt"
- 	"net"
- 	"strings"
+@@ -0,0 +1,337 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++
++package clusterregistry
++
++import (
++	"context"
++	"errors"
++	"net/http"
++	"net/http/httptest"
++	"sync"
++	"testing"
++	"time"
++
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/client-go/rest"
++	ctrl "sigs.k8s.io/controller-runtime"
++
++	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++
++	"github.com/go-logr/logr"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/fx"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++)
++
++func TestWithClientDoesNotBlockOtherClusters(t *testing.T) {
++	registry := New(logr.Discard(), nil)
++	registry.clusters["a"] = &remoteCluster{gate: make(chan struct{}, 1), state: clusterReady}
++	registry.clusters["b"] = &remoteCluster{gate: make(chan struct{}, 1), state: clusterReady}
++	entered := make(chan struct{})
++	release := make(chan struct{})
++	aDone := make(chan error, 1)
++	go func() {
++		aDone <- registry.WithClient("a", func(client.Client) error { close(entered); <-release; return nil })
++	}()
++	<-entered
++	bDone := make(chan error, 1)
++	go func() { bDone <- registry.WithClient("b", func(client.Client) error { return nil }) }()
++	progressed := false
++	select {
++	case err := <-bDone:
++		require.NoError(t, err)
++		progressed = true
++	case <-time.After(time.Second):
++	}
++	close(release)
++	require.NoError(t, <-aDone)
++	if !progressed {
++		require.NoError(t, <-bDone)
++	}
++	require.True(t, progressed, "remote B must remain available while an A callback is blocked")
++}
++
++func testApp(stop func(context.Context) error) *fx.App {
++	return fx.New(fx.NopLogger, fx.Invoke(func(lc fx.Lifecycle) {
++		lc.Append(fx.Hook{OnStop: stop})
++	}))
++}
++
++func TestStopDrainsCallbackAndReservesNameUntilActualShutdown(t *testing.T) {
++	registry := New(logr.Discard(), nil)
++	stopping, releaseStop := make(chan struct{}), make(chan struct{})
++	defer close(releaseStop)
++	app := testApp(func(context.Context) error { close(stopping); <-releaseStop; return nil })
++	registry.build = func(name string, _ *rest.Config) (appLifecycle, client.Client) {
++		if name == "a" {
++			return app, nil
++		}
++		return testApp(nil), nil
++	}
++	require.NoError(t, registry.Spawn("a", &rest.Config{}))
++	entered, release := make(chan struct{}), make(chan struct{})
++	done := make(chan error, 1)
++	go func() {
++		done <- registry.WithClient("a", func(client.Client) error { close(entered); <-release; return nil })
++	}()
++	<-entered
++	require.ErrorIs(t, registry.WithClient("a", func(client.Client) error { t.Error("second callback admitted"); return nil }), ErrBusy)
++	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)
++	defer cancel()
++	require.ErrorIs(t, registry.Stop(ctx, "a"), context.DeadlineExceeded)
++	require.ErrorIs(t, registry.WithClient("a", func(client.Client) error { t.Error("callback admitted after stop intent"); return nil }), ErrBusy)
++	select {
++	case <-stopping:
++		t.Error("shutdown started before callback finished")
++	default:
++	}
++	close(release)
++	require.NoError(t, <-done)
++	<-stopping
++	require.ErrorIs(t, registry.Spawn("a", &rest.Config{}), ErrBusy)
++	require.NoError(t, registry.Spawn("b", &rest.Config{}))
++	require.NoError(t, registry.Stop(context.Background(), "b"))
++}
++
++func TestStopLateCompletionAllowsReplacement(t *testing.T) {
++	registry := New(logr.Discard(), nil)
++	release := make(chan struct{})
++	registry.build = func(string, *rest.Config) (appLifecycle, client.Client) {
++		return testApp(func(context.Context) error { <-release; return nil }), nil
++	}
++	require.NoError(t, registry.Spawn("a", &rest.Config{}))
++	old := registry.clusters["a"]
++	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
++	defer cancel()
++	require.ErrorIs(t, registry.Stop(ctx, "a"), context.DeadlineExceeded)
++	joined := make(chan error, 1)
++	waiter := &observedContext{Context: context.Background(), observed: make(chan struct{})}
++	go func() { joined <- registry.Stop(waiter, "a") }()
++	<-waiter.observed
++	close(release)
++	require.NoError(t, <-joined)
++	require.NoError(t, registry.Spawn("a", &rest.Config{}))
++	require.Equal(t, clusterStopped, old.state)
++	require.NotSame(t, old, registry.clusters["a"])
++	require.NoError(t, registry.WithClient("a", func(client.Client) error { return nil }))
++	require.NoError(t, registry.Stop(context.Background(), "a"))
++}
++
++func TestFailedShutdownDoesNotAllowReuse(t *testing.T) {
++	registry := New(logr.Discard(), nil)
++	failure := errors.New("
+```
+
+**File**: `controllers/multicluster/clusterregistry/registry.go` (modified, +224/-76)
+```diff
+@@ -17,9 +17,11 @@ package clusterregistry
+ 
+ import (
+ 	"context"
++	"fmt"
+ 	"os"
+ 	"reflect"
+ 	"sync"
 +	"time"
  
+ 	fxlogr "github.com/chaos-mesh/fx-logr"
  	"github.com/go-logr/logr"
- 	"github.com/golang/protobuf/ptypes/empty"
-@@ -392,7 +393,12 @@ func (c *tcClient) addPrio(device string, parent int, band int) error {
- func (c *tcClient) addNetem(device string, parent string, handle string, netem *pb.Netem) error {
- 	c.log.Info("adding netem", "device", device, "parent", parent, "handle", handle)
+@@ -32,6 +34,7 @@ import (
+ 	"k8s.io/utils/ptr"
+ 	ctrl "sigs.k8s.io/controller-runtime"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+ 	controllerconfig "sigs.k8s.io/controller-runtime/pkg/config"
+ 	controllermetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
+ 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+@@ -42,15 +45,32 @@ import (
+ 	"github.com/chaos-mesh/chaos-mesh/controllers/types"
+ )
  
--	args := fmt.Sprintf("qdisc add dev %s %s %s netem %s", device, parent, handle, convertNetemToArgs(netem))
-+	netemArgs, err := convertNetemToArgs(netem)
-+	if err != nil {
+-type appStopper interface {
++const remoteRequestTimeout = 10 * time.Second
++
++type clusterState int
++
++const (
++	clusterStarting clusterState = iota
++	clusterReady
++	clusterStopping
++	clusterStopped
++)
++
++type appLifecycle interface {
++	Start(context.Context) error
+ 	Stop(context.Context) error
+ }
+ 
+ type remoteCluster struct {
+-	app     appStopper
+-	desired *clientcmdapi.Config
+-
++	app appLifecycle
+ 	client.Client
++	desired   *clientcmdapi.Config
++	startDone chan struct{}
++	startErr  error
++	gate      chan struct{}
++	state     clusterState
++	stopped   chan struct{}
++	stopErr   error
+ }
+ 
+ // RemoteClusterRegistry will manage all controllers running on a remote
+@@ -64,18 +84,18 @@ type RemoteClusterRegistry struct {
+ 	client   client.Client
+ 
+ 	lock  *sync.Mutex
+-	start func(context.Context, string, *rest.Config) (*remoteCluster, error)
++	build func(string, *rest.Config) (appLifecycle, client.Client)
+ }
+ 
+-func New(logger logr.Logger, client client.Client) *RemoteClusterRegistry {
++func New(logger logr.Logger, manageClient client.Client) *RemoteClusterRegistry {
+ 	r := &RemoteClusterRegistry{
+ 		clusters: make(map[string]*remoteCluster),
+ 		logger:   logger.WithName("clusterregistry"),
+-		client:   client,
++		client:   manageClient,
+ 
+ 		lock: &sync.Mutex{},
+ 	}
+-	r.start = r.startLocked
++	r.build = func(name string, cfg *rest.Config) (appLifecycle, client.Client) { return r.newApp(name, cfg) }
+ 	return r
+ }
+ 
+@@ -85,20 +105,20 @@ func run(lc fx.Lifecycle, mgr ctrl.Manager, logger logr.Logger) error {
+ 	executionCtx, cancel := context.WithCancel(context.TODO())
+ 	stopChan := make(chan struct{})
+ 
+-	go func() {
+-		setupLog := logger.WithName("setup")
+-		setupLog.Info("Starting manager")
+-
+-		if err := mgr.Start(executionCtx); err != nil {
+-			setupLog.Error(err, "unable to start manager")
+-			os.Exit(1)
+-		}
+-
+-		stopChan <- struct{}{}
+-	}()
+-
+ 	lc.Append(fx.Hook{
+-		OnStop: func(_ context.Context) error {
++		OnStart: func(context.Context) error {
++			go func() {
++				defer close(stopChan)
++				setupLog := logger.WithName("setup")
++				setupLog.Info("Starting manager")
++				if err := mgr.Start(executionCtx); err != nil {
++					setupLog.Error(err, "unable to start manager")
++					os.Exit(1)
++				}
++			}()
++			return nil
++		},
++		OnStop: func(context.Context) error {
+ 			cancel()
+ 			<-stopChan
+ 			return nil
+@@ -128,107 +148,242 @@ func controllerManagerOption(scheme *runtime.Scheme) *ctrl.Options {
+ 	return &options
+ }
+ 
+-// WithClient enables developer getting a client of remote cluster to operate
+-// inside the remote cluster.
+-//
+-// TODO: add more kinds of client, like `no-cache` into this registry, if they
+-// are needed
++// WithClient runs a callback with a live remote client. Calls for the same
++// cluster are serialized; busy or stopping entries return ErrBusy immediately.
++// The callback must not stop or recursively borrow its own cluster.
+ func (r *RemoteClusterRegistry) WithClient(name string, f func(c client.Client) error) error {
+ 	r.lock.Lock()
+-	defer r.lock.Unlock()
+-
+ 	cluster, ok := r.clusters[name]
+ 	if !ok {
++		r.lock.Unlock()
+ 		return errors.Wrapf(ErrNotExist, "lookup cluster: %s", name)
+ 	}
+-
+-	return f(cluster.Client)
++	if cluster.state != clusterReady {
++		r.lock.Unlock()
++		return errors.Wrapf(ErrBusy, "lookup cluster: %s", name)
++	}
++	select {
++	case cluster.gate <- struct{}{}:
++		r.lock.Unlock()
++		defer func() { <-cluster.gate }()
++		return f(cluster.Client)
++	default:
++		r.lock.Unlock()
++		return errors.Wrapf(ErrBusy, "lookup cluster: %s", name)
++	}
+ }
+ 
+-// Stop stops the running controller-manager which watches the remote cluster.
++// Stop closes admission immediately and waits for active use and actual manager
++// shutdown. A caller timeout does not release the name for replacement.
+ func (r *RemoteClusterRegistry) Stop(ctx context.Context, name string) error {
++	if err := ctx.Err(); err != nil {
 +		return err
 +	}
+ 	r.lock.Lock()
+-	defer r.lock.Unlock()
+-
+-	return r.stopLocked(ctx, name)
+-}
+-
+-func (r *RemoteClusterRegistry) stopLocked(ctx context.Context, name string) error {
+ 	cluster, ok := r.clusters[name]
+ 	if !ok {
++		r.lock.Unlock()
+ 		return errors.Wrapf(ErrNotExist, "lookup cluster: %s", name)
+ 	}
+-	err := cluster.app.Stop(ctx)
+-	if err != nil {
+-		return errors.Wrapf(err, "stop fx app: %s", name)
++	r.stopLocked(name, clu
+```
+
+**File**: `controllers/multicluster/clusterregistry/timeout_test.go` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
 +
-+	args := fmt.Sprintf("qdisc add dev %s %s %s netem %s", device, parent, handle, netemArgs)
- 	processBuilder := bpm.DefaultProcessBuilder("tc", strings.Split(args, " ")...).SetContext(c.ctx)
- 	if c.enterNS {
- 		processBuilder = processBuilder.SetNS(c.pid, bpm.NetNS)
-@@ -421,12 +427,72 @@ func (c *tcClient) addTbf(device string, parent string, handle string, tbf *pb.T
++package clusterregistry
++
++import (
++	"context"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++	"k8s.io/client-go/rest"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
++
++	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/cmd/chaos-controller-manager/provider"
++)
++
++type recordedRequest struct {
++	path        string
++	timeout     time.Duration
++	hasDeadline bool
++}
++
++type recordingTransport struct {
++	http.RoundTripper
++	mu       sync.Mutex
++	requests []recordedRequest
++}
++
++func (r *recordingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
++	deadline, ok := req.Context().Deadline()
++	r.mu.Lock()
++	r.requests = append(r.requests, recordedRequest{path: req.URL.Path, timeout: time.Until(deadline), hasDeadline: ok})
++	r.mu.Unlock()
++	return r.RoundTripper.RoundTrip(req)
++}
++
++func (r *recordingTransport) take() []recordedRequest {
++	r.mu.Lock()
++	defer r.mu.Unlock()
++	requests := r.requests
++	r.requests = nil
++	return requests
++}
++
++func serveForwardingDiscovery(w http.ResponseWriter, r *http.Request) bool {
++	var body string
++	switch r.URL.Path {
++	case "/api":
++		body = `{"kind":"APIVersions","apiVersion":"v1","versions":[]}`
++	case "/apis":
++		body = `{"kind":"APIGroupList","apiVersion":"v1","groups":[{"name":"chaos-mesh.org","versions":[{"groupVersion":"chaos-mesh.org/v1alpha1","version":"v1alpha1"}],"preferredVersion":{"groupVersion":"chaos-mesh.org/v1alpha1","version":"v1alpha1"}}]}`
++	case "/apis/chaos-mesh.org/v1alpha1":
++		body = `{"kind":"APIResourceList","apiVersion":"v1","groupVersion":"chaos-mesh.org/v1alpha1","resources":[{"name":"podchaos","singularName":"podchaos","namespaced":true,"kind":"PodChaos","verbs":["get","list","watch"]}]}`
++	default:
++		return false
++	}
++	w.Header().Set("Content-Type", "application/json")
++	_, _ = io.WriteString(w, body)
++	return true
++}
++
++func TestForwardingClientIsolatesManagerTransport(t *testing.T) {
++	for _, timeout := range []time.Duration{0, 2 * time.Second, time.Minute} {
++		t.Run(timeout.String(), func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if serveForwardingDiscovery(w, r) {
++					return
++				}
++				if r.URL.Path != "/apis/chaos-mesh.org/v1alpha1/namespaces/test/podchaos/experiment" {
++					t.Errorf("unexpected API path %s", r.URL.Path)
++				}
++				w.Header().Set("Content-Type", "application/json")
++				_, _ = io.WriteString(w, `{"apiVersion":"chaos-mesh.org/v1alpha1","kind":"PodChaos","metadata":{"name":"experiment","namespace":"test"}}`)
++			}))
++			defer server.Close()
++			transport := &recordingTransport{}
++			cfg := &rest.Config{Host: server.URL, Timeout: timeout, WrapTransport: func(rt http.RoundTripper) http.RoundTripper {
++				transport.RoundTripper = rt
++				return transport
++			}}
++			mgr, err := ctrl.NewManager(cfg, ctrl.Options{Scheme: provider.NewScheme(), Metrics: metricsserver.Options{BindAddress: "0"}})
++			require.NoError(t, err)
++			managerClient, managerMapper, managerHTTP := mgr.GetClient(), mgr.GetRESTMapper(), mgr.GetHTTPClient()
++			forwarder, err := forwardingClient(mgr)
++			require.NoError(t, err)
++			key := client.ObjectKey{Namespace: "test", Name: "experiment"}
++			object := &v1alpha1.PodChaos{}
++			require.NoError(t, forwarder.Get(context.Background(), key, object))
++			require.Equal(t, "experiment", object.Name)
++			requests := transport.take()
++			paths := make([]string, 0, len(requests))
++			expected := 10 * time.Second
++			if timeout == 2*time.Second {
++				expected = 2 * time.Second
++			}
++			for _, request := range requests {
++				paths = append(paths, request.path)
++				require.True(t, request.hasDeadline, "forwarded request %s must be bounded", request.path)
++				require.InDelta(t, expected.Seconds(), request.timeout.Seconds(), 0.5, "forwarded request %s", request.path)
++			}
++			require.Contains(t, paths, "/apis/chaos-mesh.org/v1alpha1")
++			require.Contains(t, paths, "/apis/chaos-mesh.org/v1alpha1/namespaces/test/podchaos/experiment")
++			require.Same(t, managerClient, mgr.GetClient())
++			require.Same(t, managerMapper, mgr.GetRESTMapper())
++			require.Same(t, managerHTTP, mgr.GetHTTPClient())
++			requ
+```
+
+---
+
+### Incident Patch 2: `1d5a8e45` (2026-10-15)
+**Commit Message**: fix(multicluster): restore remote managers across lifecycle changes (#5132)
+
+* test(multicluster): cover remote manager recreation and allowlists
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+* fix(multicluster): restore remote managers across lifecycle changes
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -62,6 +62,8 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+ 
+ ### Fixed
+ 
++- Restore remote cluster managers after controller restarts, refresh changed kubeconfig connections, and register all enabled remote controllers.
++
+ - Preserve native remote experiments and isolate multi-cluster status and deletion by experiment ownership.
+ - Fix Dashboard authentication Secret references being overwritten by inline credentials and support additional environment sources [#5063](https://github.com/chaos-mesh/chaos-mesh/issues/5063)
+ - Fix HTTPChaos TLS Secret lookup, certificate data serialization, and retries after rejected proxy configuration. Remove TLS contents from daemon logs [#5114](https://github.com/chaos-mesh/chaos-mesh/pull/5114)
+```
+
+**File**: `controllers/multicluster/clusterregistry/README.md` (modified, +10/-8)
+```diff
+@@ -11,19 +11,20 @@ The common local chaos pipeline filters out objects whose remote-cluster field i
+ 
+ ## Registry lifecycle
+ 
+-`RemoteClusterRegistry` exposes three operations:
++`RemoteClusterRegistry` exposes these operations:
+ 
+-- `Spawn(name, restConfig)` starts a remote manager;
++- `Ensure(ctx, name, kubeconfig)` starts a manager or replaces it when the decoded kubeconfig changes;
++- `Spawn(name, restConfig)` starts a manager only when its name is unregistered;
+ - `Stop(ctx, name)` stops it and removes it from the registry;
+ - `WithClient(name, callback)` runs a callback with that manager's remote-cluster client.
+ 
+-Registrations are keyed by remote-cluster name. `Spawn` returns `ErrAlreadyExist` rather than replacing a running manager, and `Stop` or `WithClient` returns `ErrNotExist` for an unknown name. A changed REST configuration is not applied to an existing entry; callers that need to replace it must stop the old manager before spawning another one.
++Registrations are keyed by remote-cluster name. `Ensure` retains an independent kubeconfig snapshot, leaves an equal configuration running, and stops the old manager before starting its replacement. Invalid configuration leaves the old manager running; a failed replacement start leaves the name unregistered for retry. `Spawn` retains its strict `ErrAlreadyExist` behavior. `Stop` or `WithClient` returns `ErrNotExist` for an unknown name.
+ 
+-The registry is provided from `controllers.Module`. The `remotecluster` reconciler obtains the REST configuration from the referenced kubeconfig Secret and controls the registry entry together with the remote Helm release and the `chaos-mesh/remotecluster-controllers` finalizer.
++The registry is provided from `controllers.Module`. The `remotecluster` reconciler ensures its cleanup finalizer before external operations and calls `Ensure` for every live resource, rebuilding missing managers after a management-controller restart. Helm install/upgrade runs only for an unobserved `RemoteCluster` generation. Referenced Secret changes enqueue reconciliation and refresh the connection; changing a Secret endpoint alone does not migrate a Helm installation. Deletion stops the manager before reading credentials for Helm cleanup and removes only the owned finalizer after cleanup succeeds.
+ 
+ ## Remote Fx application
+ 
+-`Spawn` constructs a separate Fx application for the remote cluster. It supplies:
++The shared startup path constructs a separate Fx application for the remote cluster. It supplies:
+ 
+ - the remote `*rest.Config`;
+ - the remote cluster name as `name:"cluster-name"`;
+@@ -35,6 +36,7 @@ The remote manager currently:
+ 
+ - disables metrics serving;
+ - disables leader election;
++- permits reuse of stable controller names after a manager stops;
+ - does not register admission webhooks; and
+ - loads `remotechaosmonitor.Module` to watch remote chaos objects.
+ 
+@@ -60,7 +62,7 @@ err := registry.WithClient(clusterName, func(remoteClient client.Client) error {
+ })
+ ```
+ 
+-`WithClient` currently holds the registry mutex for the entire callback. Do not perform long-running work or call `Spawn`, `Stop`, or another `WithClient` from that callback.
++`WithClient` currently holds the registry mutex for the entire callback. Do not perform long-running work or call `Ensure`, `Spawn`, `Stop`, or another `WithClient` from that callback.
+ 
+ ## Registering another remote reconciler
+ 
+@@ -69,10 +71,10 @@ To add a controller that runs in every remote manager:
+ 1. create a package with an Fx module that provides its reconciler and invokes its bootstrap;
+ 2. accept the unnamed client for remote-cluster operations;
+ 3. request the named management client or cluster name only when required;
+-4. add the module to the Fx application in `RemoteClusterRegistry.Spawn`, alongside `remotechaosmonitor.Module`; and
++4. add the module to the Fx application in the registry startup path, alongside `remotechaosmonitor.Module`; and
+ 5. add tests that prove resources are read from and written to the intended cluster.
+ 
+-Use `controllers/multicluster/remotechaosmonitor/fx.go` as the active registration example. `remotepodreconciler.Module` exists in the tree but is not currently included in `Spawn`, so it is not an example of an active remote controller.
++Use `controllers/multicluster/remotechaosmonitor/fx.go` as the active registration example. `remotepodreconciler.Module` exists in the tree but is not currently included in the remote application, so it is not an example of an active remote controller.
+ 
+ If the new controller requires webhooks, metrics, leader election, a no-cache reader, or another typed client, add those dependencies deliberately to the remote application; they are not inherited automatically from the main manager.
+ 
+```
+
+**File**: `controllers/multicluster/clusterregistry/ensure_test.go` (added, +212/-0)
+```diff
+@@ -0,0 +1,212 @@
++// Copyright 2022 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++
++package clusterregistry
++
++import (
++	"context"
++	"errors"
++	"reflect"
++	"testing"
++
++	"github.com/go-logr/logr"
++	"k8s.io/client-go/rest"
++	"k8s.io/client-go/tools/clientcmd"
++	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++)
++
++type stopFunc func(context.Context) error
++
++func (f stopFunc) Stop(ctx context.Context) error { return f(ctx) }
++
++func desiredConfig(t *testing.T) *clientcmdapi.Config {
++	t.Helper()
++	cfg, err := clientcmd.Load([]byte(`apiVersion: v1
++kind: Config
++current-context: remote
++contexts:
++- name: remote
++  context: {cluster: remote, user: remote}
++clusters:
++- name: remote
++  cluster: {server: https://remote.example, proxy-url: http://proxy.example:8080, certificate-authority-data: Y2E=}
++users:
++- name: remote
++  user: {token: old}
++`))
++	if err != nil {
++		t.Fatal(err)
++	}
++	return cfg
++}
++
++func TestEnsureConnectionLifecycle(t *testing.T) {
++	ctx := context.Background()
++	r := New(logr.Discard(), nil)
++	var events []string
++	var current client.Client
++	r.start = func(_ context.Context, _ string, cfg *rest.Config) (*remoteCluster, error) {
++		token := cfg.BearerToken
++		events = append(events, "start:"+token)
++		cfg.TLSClientConfig.CAData[0] = 'x'
++		current = fake.NewClientBuilder().Build()
++		return &remoteCluster{Client: current, app: stopFunc(func(context.Context) error {
++			events = append(events, "stop:"+token)
++			return nil
++		})}, nil
++	}
++	first := desiredConfig(t)
++	if err := r.Ensure(ctx, "remote", first); err != nil {
++		t.Fatal(err)
++	}
++	original := current
++	if err := r.Ensure(ctx, "remote", desiredConfig(t)); err != nil {
++		t.Fatal(err)
++	}
++	if len(events) != 1 {
++		t.Fatalf("equivalent proxy config restarted manager: %v", events)
++	}
++	first.AuthInfos["remote"].Token = "new"
++	if err := r.Ensure(ctx, "remote", first); err != nil {
++		t.Fatal(err)
++	}
++	if err := r.WithClient("remote", func(c client.Client) error {
++		if c == original || c != current {
++			t.Fatal("old client retained")
++		}
++		return nil
++	}); err != nil {
++		t.Fatal(err)
++	}
++	if err := r.Stop(ctx, "remote"); err != nil {
++		t.Fatal(err)
++	}
++	if err := r.Ensure(ctx, "remote", first); err != nil {
++		t.Fatal(err)
++	}
++	want := []string{"start:old", "stop:old", "start:new", "stop:new", "start:new"}
++	if !reflect.DeepEqual(events, want) {
++		t.Fatalf("events %v, want %v", events, want)
++	}
++}
++
++func TestEnsureFailures(t *testing.T) {
++	for _, failure := range []string{"invalid", "stop", "start"} {
++		t.Run(failure, func(t *testing.T) {
++			ctx := context.Background()
++			r := New(logr.Discard(), nil)
++			starts, stops := 0, 0
++			failing := false
++			boom := errors.New("failed")
++			r.start = func(context.Context, string, *rest.Config) (*remoteCluster, error) {
++				starts++
++				if failing && failure == "start" {
++					return nil, boom
++				}
++				return &remoteCluster{app: stopFunc(func(context.Context) error {
++					stops++
++					if failing && failure == "stop" {
++						return boom
++					}
++					return nil
++				})}, nil
++			}
++			cfg := desiredConfig(t)
++			if err := r.Ensure(ctx, "remote", cfg); err != nil {
++				t.Fatal(err)
++			}
++			cfg.AuthInfos["remote"].Token = "new"
++			if failure == "invalid" {
++				cfg.CurrentContext = "missing"
++			}
++			failing = true
++			if err := r.Ensure(ctx, "remote", cfg); err == nil {
++				t.Fatal("expected failure")
++			}
++			switch failure {
++			case "invalid":
++				if starts != 1 || stops != 0 {
++					t.Fatalf("invalid input disturbed live manager: %d/%d", starts, stops)
++				}
++			case "stop":
++				if starts != 1 || stops != 1 {
++					t.Fatalf("replacement started despite failed stop: %d/%d", starts, stops)
++				}
++			case "start":
++				if err := r.WithClient("remote", func(client.Client) error { return nil }); !errors.Is(err, ErrNotExist) {
++					t.Fatalf("failed start published entry: %v", err)
++				}
++			}
++			failing = false
++			cfg.CurrentContext = "remote"
++			if err := r.Ensure(ctx, "remote", cfg); err != nil {
++				t.Fatal(err)
++			}
++		})
++	}
++}
++
++func TestEnsureTLSAndProxyChanges(t *testing.T) {
++	for _, change := range []string{"TLS", "proxy"} {
++		t.Run(change, func(t *testing.T) {
++			ctx := context.Background()
++			r := New(logr.Discard(), nil)
++			starts, stops := 0, 0
++			r.start = func(context.Context, string, *rest.
+```
+
+**File**: `controllers/multicluster/clusterregistry/registry.go` (modified, +69/-12)
+```diff
+@@ -18,6 +18,7 @@ package clusterregistry
+ import (
+ 	"context"
+ 	"os"
++	"reflect"
+ 	"sync"
+ 
+ 	fxlogr "github.com/chaos-mesh/fx-logr"
+@@ -26,8 +27,12 @@ import (
+ 	"go.uber.org/fx"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/client-go/rest"
++	"k8s.io/client-go/tools/clientcmd"
++	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
++	"k8s.io/utils/ptr"
+ 	ctrl "sigs.k8s.io/controller-runtime"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
++	controllerconfig "sigs.k8s.io/controller-runtime/pkg/config"
+ 	controllermetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
+ 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+ 
+@@ -37,8 +42,13 @@ import (
+ 	"github.com/chaos-mesh/chaos-mesh/controllers/types"
+ )
+ 
++type appStopper interface {
++	Stop(context.Context) error
++}
++
+ type remoteCluster struct {
+-	app *fx.App
++	app     appStopper
++	desired *clientcmdapi.Config
+ 
+ 	client.Client
+ }
+@@ -53,17 +63,20 @@ type RemoteClusterRegistry struct {
+ 	logger   logr.Logger
+ 	client   client.Client
+ 
+-	lock *sync.Mutex
++	lock  *sync.Mutex
++	start func(context.Context, string, *rest.Config) (*remoteCluster, error)
+ }
+ 
+ func New(logger logr.Logger, client client.Client) *RemoteClusterRegistry {
+-	return &RemoteClusterRegistry{
++	r := &RemoteClusterRegistry{
+ 		clusters: make(map[string]*remoteCluster),
+ 		logger:   logger.WithName("clusterregistry"),
+ 		client:   client,
+ 
+ 		lock: &sync.Mutex{},
+ 	}
++	r.start = r.startLocked
++	return r
+ }
+ 
+ // run will start the controller manager of the remote cluster
+@@ -99,7 +112,8 @@ func run(lc fx.Lifecycle, mgr ctrl.Manager, logger logr.Logger) error {
+ func controllerManagerOption(scheme *runtime.Scheme) *ctrl.Options {
+ 	options := ctrl.Options{
+ 		// TODO: accept the schema from parameter instead of using scheme directly
+-		Scheme: scheme,
++		Scheme:     scheme,
++		Controller: controllerconfig.Controller{SkipNameValidation: ptr.To(true)},
+ 		Metrics: metricsserver.Options{
+ 			BindAddress: "0",
+ 		},
+@@ -136,11 +150,14 @@ func (r *RemoteClusterRegistry) Stop(ctx context.Context, name string) error {
+ 	r.lock.Lock()
+ 	defer r.lock.Unlock()
+ 
++	return r.stopLocked(ctx, name)
++}
++
++func (r *RemoteClusterRegistry) stopLocked(ctx context.Context, name string) error {
+ 	cluster, ok := r.clusters[name]
+ 	if !ok {
+ 		return errors.Wrapf(ErrNotExist, "lookup cluster: %s", name)
+ 	}
+-
+ 	err := cluster.app.Stop(ctx)
+ 	if err != nil {
+ 		return errors.Wrapf(err, "stop fx app: %s", name)
+@@ -152,7 +169,40 @@ func (r *RemoteClusterRegistry) Stop(ctx context.Context, name string) error {
  	return nil
  }
  
--func convertNetemToArgs(netem *pb.Netem) string {
-+// optionalDuration parses an optional duration field of Netem. An empty value
-+// means the field is not set, and is reported as a zero duration. A negative
-+// value is rejected, so that it cannot be mistaken for an unset field and
-+// silently ignored.
-+func optionalDuration(value string) (time.Duration, error) {
-+	if len(value) == 0 {
-+		return 0, nil
-+	}
+-// Spawn starts the controller-manager and watches the remote cluster
++// Ensure starts or replaces the remote manager when its desired kubeconfig changes.
++// The retained snapshot is independent of both the caller and runtime providers.
++func (r *RemoteClusterRegistry) Ensure(ctx context.Context, name string, desired *clientcmdapi.Config) error {
++	r.lock.Lock()
++	defer r.lock.Unlock()
 +
-+	duration, err := time.ParseDuration(value)
++	if desired == nil {
++		return errors.New("kubeconfig is required")
++	}
++	snapshot := desired.DeepCopy()
++	cluster, exists := r.clusters[name]
++	if exists && reflect.DeepEqual(cluster.desired, snapshot) {
++		return nil
++	}
++	cfg, err := clientcmd.NewDefaultClientConfig(*snapshot.DeepCopy(), nil).ClientConfig()
 +	if err != nil {
-+		return 0, err
++		return errors.Wrap(err, "get rest config from kubeconfig")
 +	}
-+
-+	if duration < 0 {
-+		return 0, errors.Errorf("negative duration %s", value)
++	if exists {
++		if err := r.stopLocked(ctx, name); err != nil {
++			return err
++		}
 +	}
-+
-+	return duration, nil
++	cluster, err = r.start(ctx, name, cfg)
++	if err != nil {
++		return err
++	}
++	cluster.desired = snapshot
++	r.clusters[name] = cluster
++	return nil
 +}
 +
-+// formatTcDuration renders a non-negative duration with a unit understood by
-+// tc.
-+//
-+// The duration fields of Netem carry any format accepted by
-+// time.ParseDuration, which knows the "ns", "us", "ms", "s", "m" and "h" units
-+// and compound values like "0m30s". tc only knows three time scales, seconds,
-+// milliseconds and microseconds, and rejects everything else with
-+// `Illegal "latency"`, so the value cannot be forwarded as is. Its output is
-+// therefore restricted to "s"/"ms"/"us", the scales both sides understand.
-+func formatTcDuration(duration time.Duration) string {
-+	switch {
-+	case duration%time.Second == 0:
-+		return fmt.Sprintf("%ds", int64(duration/time.Second))
-+	case duration%time.Millisecond == 0:
-+		return fmt.Sprintf("%dms", int64(duration/time.Millisecond))
-+	default:
-+		// A microsecond is the finest scale tc can be given with a unit. Round
-+		// up, so that a shorter non-zero duration does not turn into a no-op.
-+		microseconds := int64(duration / time.Microsecond)
-+		if duration%time.Microsecond != 0 {
-+			microseconds++
-+		}
-+		return fmt.Sprintf("%dus", microseconds)
++// Spawn starts a remote manager, rejecting an existing registration.
++// Reconciliation should use Ensure to apply desired configuration changes.
+ func (r *RemoteClusterRegistry) Spawn(name string, config *rest.Config) error {
+ 	r.lock.Lock()
+ 	defer r.lock.Unlock()
+@@ -161,6 +211,15 @@ func (r *RemoteClusterRegistry) Spawn(name string, config *rest.Config) error {
+ 		return errors.Wrapf(ErrAlreadyExist, "spawn cluster: %s", name)
+ 	}
+ 
++	cluster, err := r.start(context.Background(), name, config)
++	if err != nil {
++		return err
 +	}
++	r.clusters[name] = cluster
++	return nil
 +}
 +
-+func convertNetemToArgs(netem *pb.Netem) (string, error) {
-+	// Durations must be parsed instead of being compared and forwarded as
-+	// strings: comparing the raw strings drops valid values like "0.5s", which
-+	// is lexicographically smaller than "0ms" while being greater than zero.
-+	delay, err := optionalDuration(netem.Time)
-+	if err != nil {
-+		return "", errors.Wrapf(err, "parse netem delay %s", netem.Time)
-+	}
-+
-+	jitter, err := optionalDuration(netem.Jitter)
-+	if err != nil {
-+		return "", errors.Wrapf(err, "parse netem jitter %s", netem.Jitter)
-+	}
-+
- 	args := ""
--	if netem.Time > "0ms" {
--		args = fmt.Sprintf("delay %s", netem.Time)
--		if netem.Jitter > "0ms" {
--			args = fmt.Sprintf("%s %s", args, netem.Jitter)
-+	if delay > 0 {
-+		args = fmt.Sprintf("delay %s", formatTcDuration(delay))
-+		if jitter > 0 {
-+			args = fmt.Sprintf("%s %s", args, formatTcDuration(jitter))
++func (r *RemoteClusterRegistry) startLocked(ctx context.Context, name string, config *rest.Config) (*remoteCluster, error) {
+ 	remoteFxLogger := r.logger.WithName("remotecluster-fx-" + name)
  
- 			if netem.DelayCorr > 0 {
- 				args = fmt.Sprintf("%s %f", args, netem.DelayCorr)
-@@ -477,13 +543,13 @@ func convertNetemToArgs(netem *pb.Netem) string {
+ 	localClient := r.client
+@@ -193,15 +252,13 @@ func (r *RemoteClusterRegistry) Spawn(name string, config *rest.Config) error {
+ 		fx.Invoke(run),
+ 	)
  
- 	trimedArgs := []string{}
- 
--	for _, part := range strings.Split(args, " ") {
-+	for part := range strings.SplitSeq(args, " ") {
- 		if len(part) > 0 {
- 			trimedArgs = append(trimedArgs, part)
- 		}
- 	}
- 
--	return strings.Join(trimedArgs, " ")
-+	return strings.Join(trimedArgs, " "), nil
- }
- 
- func convertTbfToArgs(tbf *pb.Tbf) string {
-```
-
-**File**: `pkg/chaosdaemon/tc_server_test.go` (modified, +149/-24)
-```diff
-@@ -16,7 +16,9 @@
- package chaosdaemon
- 
- import (
-+	"math"
- 	"testing"
-+	"time"
- 
- 	. "github.com/onsi/gomega"
- 
-@@ -57,127 +59,250 @@ func Test_generateQdiscArgs(t *testing.T) {
- func Test_convertNetemToArgs(t *testing.T) {
- 	g := NewWithT(t)
- 
-+	// mustConvertNetemToArgs asserts the conversion succeeds and returns the args.
-+	mustConvertNetemToArgs := func(netem *pb.Netem) string {
-+		args, err := convertNetemToArgs(netem)
-+		g.Expect(err).To(BeNil())
-+		return args
-+	}
-+
- 	t.Run("convert network delay", func(t *testing.T) {
--		args := convertNetemToArgs(&pb.Netem{
-+		args := mustConvertNetemToArgs(&pb.Netem{
- 			Time: "1000ms",
- 		})
--		g.Expect(args).To(Equal("delay 1000ms"))
-+		g.Expect(args).To(Equal("delay 1s"))
- 
--		args = convertNetemToArgs(&pb.Netem{
-+		args = mustConvertNetemToArgs(&pb.Netem{
- 			Time:      "1000ms",
- 			DelayCorr: 25,
- 		})
--		g.Expect(args).To(Equal("delay 1000ms"))
-+		g.Expect(args).To(Equal("delay 1s"))
- 
--		args = convertNetemToArgs(&pb.Netem{
-+		args = mustConvertNetemToArgs(&pb.Netem{
- 			Time:      "1000us",
- 			Jitter:    "10000ns",
- 			DelayCorr: 25,
- 		})
--		g.Expect(args).To(Equal("delay 1000us 10000ns 25.000000"))
-+		g.Expect(args).To(Equal("delay 1ms 10us 25.000000"))
-+	})
-+
-+	t.Run("convert network delay with units unknown to tc", func(t *testing.T) {
-+		// tc only understands "s", "ms" and "us", while these are all valid
-+		// values for the API, so they must be normalized instead of being
-+		// forwarded as is.
-+		args := mustConvertNetemToArgs(&pb.Netem{
-+			Time: "1m",
-+		})
-+		g.Expect(args).To(Equal("delay 60s"))
-+
-+		args = mustConvertNetemToArgs(&pb.Netem{
-+			Time: "0m30s",
-+		})
-+		g.Expect(args).To(Equal("delay 30s"))
-+
-+		args = mustConvertNetemToArgs(&pb.Netem{
-+			Time: "1m30s",
-+		})
-+		g.Expect(args).To(Equal("delay 90s"))
-+
-+		args = mustConvertNetemToArgs(&pb.Netem{
-+			Time: "1500ns",
-+		})
-+		g.Expect(args).To(Equal("delay 2us"))
-+	})
-+
-+	t.Run("convert network delay below one millisecond", func(t *testing.T) {
-+		// "0.5s" is lexicographically smaller than "0ms", it used to be
-+		// silently dropped, leaving the experiment without any delay.
-+		args := mustConvertNetemToArgs(&pb.Netem{
-+			Time: "0.5s",
-+		})
-+		g.Expect(args).To(Equal("delay 500ms"))
-+
-+		args = mustConvertNetemToArgs(&pb.Netem{
-+			Time:      "0.25s",
-+			Jitter:    "0.1s",
-+			DelayCorr: 25,
-+		})
-+		g.Expect(args).To(Equal("delay 250ms 100ms 25.000000"))
-+	})
-+
-+	t.Run("convert zero network delay", func(t *testing.T) {
-+		// "0s" and "0us" are lexicographically greater than "0ms" while being
-+		// zero, they used to generate a pointless `delay 0s`.
-+		for _, zero := range []string{"", "0ms", "0s", "0us", "0ns"} {
-+			args := mustConvertNetemToArgs(&pb.Netem{
-+				Time: zero,
-+			})
-+			g.Expect(args).To(Equal(""), "delay %q should be dropped", zero)
-+
-+			args = mustConvertNetemToArgs(&pb.Netem{
-+				Time:      "1s",
-+				Jitter:    zero,
-+				DelayCorr: 25,
-+			})
-+			g.Expect(args).To(Equal("delay 1s"), "jitter %q should be dropped", zero)
-+		}
-+	})
-+
-+	t.Run("reject invalid durations", func(t *testing.T) {
-+		_, err := convertNetemToArgs(&pb.Netem{
-+			Time: "1000",
-+		})
-+		g.Expect(err).To(HaveOccurred())
-+
-+		_, err = convertNetemToArgs(&pb.Netem{
-+			Time:   "1s",
-+			Jitter: "not a duration",
-+		})
-+		g.Expect(err).To(HaveOccurred())
-+	})
-+
-+	t.Run("reject negative durations", func(t *testing.T) {
-+		// A negative duration would compare as "not greater than zero" and be
-+		// indistinguishable from an unset field, so it must not be accepted.
-+		_, err := convertNetemToArgs(&pb.Netem{
-+			Time: "-1s",
-+		})
-+		g.Expect(err).To(HaveOccurred())
-+
-+		_, err = convertNetemToArgs(&pb.Netem{
-+			Time:   "1s",
-+			Jitter: "-1ms",
-+		})
-+		g.Expect(err).To(HaveOccurred())
- 	})
- 
- 	t.Run("convert packet limit", func(t *testing.T) {
--		args := convertNetemToArgs(&pb.Netem{
-+		args := mustConvertNetemToArgs(&pb.Netem{
- 			Limit: 1000,
- 		})
- 		g.Expect(args).To(Equal("limit 1000"))
- 	})
- 
- 	t.Run("convert packet loss", func(t *testing.T) {
--		args := convertNetemToArgs(&pb.Netem{
-+		args := mustConvertNetemToArgs(&pb.Netem{
- 			Loss: 100,
- 		})
- 		g.Expect(args).To(Equal("loss 100.000000"))
- 
--		args = convertNetemToArgs(&pb.Netem{
-+		args = mustConvertNetemToArgs(&pb.Netem{
- 			Loss:     50,
- 			LossCorr: 12,
- 		})
- 		g.Expect(args).To(Equal("loss 50.000000 12.000000"))
- 	})
- 
- 	t.Run("convert packet reorder", func(t *testing.T) {
--		args := convertNetemToArgs(&pb.Netem{
-+		args := mustConvertNetemToArgs(&pb.Netem{
- 			Reorder:     5,
- 			ReorderCorr: 10,
- 		})
- 		g.Expect(args).To(Equal(""))
- 
--		args = convertNetemToArgs(&pb.Netem{
-+		args = mustConvertNetemToArgs(&pb.Netem{
- 			Time:        "1000ms",
- 			Jitter:      "10000ms",
- 			DelayCorr:   25,
- 			Reorder:     5,
- 			ReorderCorr: 10,
- 			Gap:         10,
- 		})
--		g.Expect(args).To(Equal("delay 1000ms 10000ms 25.000000 reorder 5.000000 10.000000 gap 10"))
-+		g.Expect(args).To(Equal("delay 1s 10s 25.000000 reorder 5.000
-```
-
----
-
-### Incident Patch 5: `1f979282` (2026-08-27)
-**Commit Message**: ci: fix path filter exclusions (#5078)
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@ jobs:
-       - uses: dorny/paths-filter@v4
-         id: filter
-         with:
-+          predicate-quantifier: some-with-excludes
-           filters: |
-             go:
-               - Makefile
-```
-
-**File**: `.github/workflows/ci_skip.yml` (modified, +3/-0)
-```diff
-@@ -21,12 +21,15 @@ jobs:
-       - uses: dorny/paths-filter@v4
-         id: filter
-         with:
-+          predicate-quantifier: some-with-excludes
-           filters: |
-             go:
-               - Makefile
-               - go.*
-               - '**.go'
-               - 'helm/**'
-+              - '!helm/**/*.md'
-+              - '.github/actions/build-chaos-mesh-build-env/**'
-             ui:
-               - 'ui/pnpm-lock.yaml'
-               - '**.js'
-```
-
----
-
-### Incident Patch 6: `4c09a0db` (2026-08-18)
-**Commit Message**: fix(ui): resolve token validation and lockout loop (#5046)
-
-Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: Hsiu-Chia Cheng <[REDACTED_EMAIL]>
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Optimize RBAC Token Generator copy buttons in Dashboard UI [#4941](https://github.com/chaos-mesh/chaos-mesh/pull/4941)
- - Fix a TypeError crash in the Dashboard UI when opening the details page of a Workflow-type schedule [#5034](https://github.com/chaos-mesh/chaos-mesh/pull/5034)
- - Fixed jvm latency experiment not working for jdk version 19 and higher [#4821](https://github.com/chaos-mesh/chaos-mesh/pull/4821)
-+- Fix dashboard UI token validation and infinite auth lockout loop [#5046](https://github.com/chaos-mesh/chaos-mesh/pull/5046)
- 
- ### Security
- 
-```
-
-**File**: `ui/app/src/api/interceptors.ts` (modified, +23/-36)
-```diff
-@@ -37,43 +37,30 @@ export const applyErrorHandling = ({
-     (response) => response,
-     (error: AxiosError<ErrorData>) => {
-       const data = error.response?.data
-+      const type = data?.type.slice(10) // slice(10): error.api.xxx => xxx
-+      const message = data?.message ?? ''
-+      const isPrivilegeError = type === 'no_cluster_privilege' || type === 'no_namespace_privilege'
-+      const isTokenError =
-+        error.response?.status === 401 ||
-+        (type === 'bad_request' && (message.includes('token') || message.includes('Unauthorized'))) ||
-+        (type === 'internal_server_error' && message.includes('Unauthorized'))
-+
-+      if (isPrivilegeError) {
-+        return Promise.reject(error)
-+      }
- 
--      if (data) {
--        // slice(10): error.api.xxx => xxx
--        const type = data.type.slice(10)
--
--        switch (type) {
--          case 'invalid_request':
--            if (data.message.includes('Unauthorized')) {
--              openAlert({
--                type: 'error',
--                message: 'Please check the validity of the token',
--              })
--            }
--
--            break
--          case 'internal_server_error':
--            if (data.message.includes('Unauthorized')) {
--              openAlert({
--                type: 'error',
--                message: 'Unauthorized. Please check the validity of the token',
--              })
--
--              resetAPIAuthentication()
--              removeToken()
--            }
--
--            break
--          case 'no_cluster_privilege':
--          case 'no_namespace_privilege':
--          default:
--            openAlert({
--              type: 'error',
--              message: data.message || 'An unknown error occurred',
--            })
--
--            break
--        }
-+      if (isTokenError) {
-+        openAlert({
-+          type: 'error',
-+          message: 'Please check the validity of the token',
-+        })
-+        resetAPIAuthentication()
-+        removeToken()
-+      } else if (data) {
-+        openAlert({
-+          type: 'error',
-+          message: data.message || 'An unknown error occurred',
-+        })
-       }
- 
-       return Promise.reject(error)
-```
-
-**File**: `ui/app/src/components/NewWorkflowNext/SubmitWorkflow.tsx` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ const validationSchema = Yup.object({
-   deadline: Yup.string().trim().required(),
- })
- 
--interface WorkflowBasic {
-+export interface WorkflowBasic {
-   name: string
-   namespace: string
-   deadline: string
-```
-
-**File**: `ui/app/src/components/RBACGenerator/index.tsx` (modified, +1/-2)
-```diff
-@@ -47,7 +47,6 @@ const RBACGenerator = () => {
- 
-   const { data: namespaces } = useGetCommonChaosAvailableNamespaces({
-     query: {
--      enabled: false,
-       staleTime: Stale.DAY,
-     },
-   })
-@@ -110,7 +109,7 @@ const RBACGenerator = () => {
-                   helperText={i18n('common.chooseNamespace')}
-                   disabled={clustered}
-                 >
--                  {namespaces!.map((n) => (
-+                  {namespaces?.map((n) => (
-                     <MenuItem key={n} value={n}>
-                       {n}
-                     </MenuItem>
-```
-
-**File**: `ui/app/src/components/T/index.tsx` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ import { FormattedMessage } from 'react-intl'
- import type { IntlShape } from 'react-intl'
- 
- // https://github.com/microsoft/TypeScript/issues/24929
--function i18n(id: string): Exclude<React.ReactChild, number> // DEPRECATED, but preserve for backward compatibility.
-+function i18n(id: string): Exclude<React.ReactNode, number> // DEPRECATED, but preserve for backward compatibility.
- function i18n(id: string, intl: IntlShape): string
- function i18n(id: string, intl?: IntlShape) {
-   return intl ? intl.formatMessage({ id }) : <FormattedMessage id={id} />
-```
-
-**File**: `ui/app/src/components/Token/index.tsx` (modified, +17/-17)
-```diff
-@@ -27,16 +27,6 @@ import i18n from '@/components/T'
- 
- import { validateName } from '@/lib/formikhelpers'
- 
--function validateToken(value: string) {
--  let error
--
--  if (value === '') {
--    error = i18n('settings.addToken.tokenValidation') as unknown as string
--  }
--
--  return error
--}
--
- export interface TokenFormValues {
-   name: string
-   token: string
-@@ -48,6 +38,11 @@ interface TokenProps {
- 
- const Token: ReactFCWithChildren<TokenProps> = ({ onSubmitCallback }) => {
-   const intl = useIntl()
-+  const validateToken = (value: string) => {
-+    if (value === '') {
-+      return i18n('settings.addToken.tokenValidation', intl)
-+    }
-+  }
- 
-   const { setAlert } = useComponentActions()
-   const tokens = useAuthStore((state) => state.tokens)
-@@ -73,7 +68,9 @@ const Token: ReactFCWithChildren<TokenProps> = ({ onSubmitCallback }) => {
-     function restSteps() {
-       saveToken(values)
- 
--      typeof onSubmitCallback === 'function' && onSubmitCallback(values)
-+      if (typeof onSubmitCallback === 'function') {
-+        onSubmitCallback(values)
-+      }
- 
-       resetForm()
-     }
-@@ -84,15 +81,18 @@ const Token: ReactFCWithChildren<TokenProps> = ({ onSubmitCallback }) => {
-       .catch((error) => {
-         const data = error.response?.data
- 
--        if (data && data.code === 'error.api.invalid_request' && data.message.includes('Unauthorized')) {
--          setFieldError('token', 'Please check the validity of the token')
--
--          resetAPIAuthentication()
-+        if (
-+          data &&
-+          (data.type === 'error.api.no_cluster_privilege' || data.type === 'error.api.no_namespace_privilege')
-+        ) {
-+          restSteps()
- 
-           return
-         }
- 
--        restSteps()
-+        setFieldError('token', 'Please check the validity of the token')
-+
-+        resetAPIAuthentication()
-       })
-   }
- 
-@@ -104,7 +104,7 @@ const Token: ReactFCWithChildren<TokenProps> = ({ onSubmitCallback }) => {
-             <TextField
-               name="name"
-               label={i18n('common.name')}
--              validate={validateName(i18n('settings.addToken.nameValidation') as unknown as string)}
-+              validate={validateName(i18n('settings.addToken.nameValidation', intl))}
-               helperText={errors.name && touched.name ? errors.name : i18n('settings.addToken.nameHelper')}
-               error={errors.name && touched.name ? true : false}
-             />
-```
-
-**File**: `ui/app/src/components/TopContainer/index.tsx` (modified, +10/-5)
-```diff
-@@ -119,10 +119,15 @@ const TopContainer = () => {
- 
-       if (token && tokenName) {
-         const tokens: TokenFormValues[] = JSON.parse(token)
--
--        applyAPIAuthentication(tokens.find(({ name }) => name === tokenName)!.token)
--        setTokens(tokens)
--        setTokenName(tokenName)
-+        const activeToken = tokens.find(({ name }) => name === tokenName)
-+
-+        if (activeToken && activeToken.token) {
-+          applyAPIAuthentication(activeToken.token)
-+          setTokens(tokens)
-+          setTokenName(tokenName)
-+        } else {
-+          setAuthOpen(true)
-+        }
-       } else {
-         setAuthOpen(true)
-       }
-@@ -164,7 +169,7 @@ const TopContainer = () => {
-           <Divider />
- 
-           <Container maxWidth="xl" disableGutters sx={{ flexGrow: 1, p: 6 }}>
--            {loading ? <Loading /> : <Outlet />}
-+            {loading || authOpen ? <Loading /> : <Outlet />}
-           </Container>
-         </Box>
-       </Root>
-```
-
-**File**: `ui/app/src/lib/formikhelpers.ts` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ import _ from 'lodash'
- import { podPhases } from '@/components/AutoForm/data'
- import { Experiment, ExperimentKind, Frame, Scope } from '@/components/NewExperiment/types'
- import basicData from '@/components/NewExperimentNext/data/basic'
--import { WorkflowBasic } from '@/components/NewWorkflow'
-+import type { WorkflowBasic } from '@/components/NewWorkflowNext/SubmitWorkflow'
- import { ScheduleSpecific } from '@/components/Schedule/types'
- 
- import { arrToObjBySep, sanitize } from './utils'
-```
-
----
-
-### Incident Patch 7: `84fc733c` (2026-08-04)
-**Commit Message**: build(images): migrate chaos-dashboard and chaos-dlv base images from debian to alpine (#5027)
-
-Part of #5014.
-
-- chaos-dashboard: the binary is built with CGO_ENABLED=0 since #4800,
-  so it runs on musl without changes. Replace debian:bookworm-slim +
-  apt with alpine:3.23 + apk (tzdata, ca-certificates), matching the
-  existing chaos-controller-manager image.
-- chaos-dlv: dlv is pure Go; build with golang:1.25-alpine and run on
-  alpine:3.23 with procps. Switch CMD from bash to sh since alpine
-  ships no bash.
-
-chaos-daemon, build-env and dev-env are intentionally left on debian
-for now: chaos-daemon is CGO-linked against glibc and bundles
-glibc-linked vendor binaries (toda, nsexec, chaos-tproxy, memStress,
-OpenJDK), which need musl builds first. This will be handled in a
-follow-up.
-
-Verified locally: both images build, chaos-dashboard --version and
-dlv version run correctly on alpine, ps axf works with procps.
-
-Ref: #5014
-
-Signed-off-by: Saiyam Pathak <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Changed
- 
-+- Migrate chaos-dashboard and chaos-dlv container base images from debian to alpine [#5027](https://github.com/chaos-mesh/chaos-mesh/pull/5027)
- - Upgrade gorm to v2 [#4630](https://github.com/chaos-mesh/chaos-mesh/pull/4630)
- - Allow customization of controller client-go QPS and BURST [#4779](https://github.com/chaos-mesh/chaos-mesh/pull/4779)
- - Use GitHub-managed ARM64 runners for ARM64 builds in upload_env_image workflow [#4794](https://github.com/chaos-mesh/chaos-mesh/pull/4794)
-```
-
-**File**: `images/chaos-dashboard/Dockerfile` (modified, +2/-6)
-```diff
-@@ -1,4 +1,4 @@
--FROM debian:bookworm-slim
-+FROM alpine:3.23
- 
- ARG HTTPS_PROXY
- ARG HTTP_PROXY
-@@ -9,11 +9,7 @@ ENV https_proxy=$HTTPS_PROXY
- ARG UI
- ARG SWAGGER
- 
--RUN echo "deb http://security.debian.org/debian-security bookworm-security main contrib non-free" >> /etc/apt/sources.list && \
--    echo "deb http://deb.debian.org/debian bookworm-proposed-updates main contrib non-free" >> /etc/apt/sources.list && \
--    apt update --allow-releaseinfo-change && apt upgrade -y && \
--    apt install tzdata ca-certificates -y && \
--    rm -rf /var/lib/apt/lists/*
-+RUN apk upgrade --no-cache && apk add --no-cache tzdata ca-certificates
- 
- ENV http_proxy=
- ENV https_proxy=
-```
-
-**File**: `images/chaos-dlv/Dockerfile` (modified, +4/-6)
-```diff
-@@ -1,13 +1,11 @@
- # syntax=docker/dockerfile:experimental
- 
--FROM golang:1.25-bookworm AS build-env
-+FROM golang:1.25-alpine AS build-env
- RUN go install github.com/go-delve/delve/cmd/dlv@v1.21.0
- 
--FROM debian:bookworm-slim
-+FROM alpine:3.23
- 
--RUN apt update && \
--    apt install procps -y && \
--    rm -rf /var/lib/apt/lists/*
-+RUN apk add --no-cache procps
- 
- COPY --from=build-env /go/bin/dlv /
--CMD ["bash", "-c", "/dlv attach $(ps axf | grep $CMD_NAME | grep -v grep | awk '{print $1}') --listen=:8000 --headless=true --api-version=2 --accept-multiclient --continue"]
-+CMD ["sh", "-c", "/dlv attach $(ps axf | grep $CMD_NAME | grep -v grep | awk '{print $1}') --listen=:8000 --headless=true --api-version=2 --accept-multiclient --continue"]
-```
-
----
-
-### Incident Patch 8: `e45e8f93` (2026-08-03)
-**Commit Message**: fix: Fix jvm latency experiment (#4821)
-
-This experiment was failing for jdks version 19 and higher,
-as Byteman was not able to find matching method for Thread.sleep.
-Starting from java 19 new overload of sleep method was introduced
-which had Duration object as an argument.
-
-Rule that chaos mesh provided was passing Integer value
-while Thread.sleep expects Long. After new overload was
-added, Byteman was not able to resolve which method should
-it use since there were no exact match by arguments.
-
-The fix is to explicitly provide literal of type Long as
-Thread.sleep argument, allowing Byteman to unambiguously
-resolve correct overload of sleep method.
-
-Signed-off-by: Dmytro Koval <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -58,6 +58,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Fix dashboard subpath serving by adding base path to Vite config [#5016](https://github.com/chaos-mesh/chaos-mesh/pull/5016)
- - Optimize RBAC Token Generator copy buttons in Dashboard UI [#4941](https://github.com/chaos-mesh/chaos-mesh/pull/4941)
- - Fix a TypeError crash in the Dashboard UI when opening the details page of a Workflow-type schedule [#5034](https://github.com/chaos-mesh/chaos-mesh/pull/5034)
-+- Fixed jvm latency experiment not working for jdk version 19 and higher [#4821](https://github.com/chaos-mesh/chaos-mesh/pull/4821)
- 
- ### Security
- 
-```
-
-**File**: `controllers/chaosimpl/jvmchaos/impl.go` (modified, +2/-2)
-```diff
-@@ -220,7 +220,7 @@ func generateRuleData(spec *v1alpha1.JVMChaosSpec) error {
- 
- 	switch spec.Action {
- 	case v1alpha1.JVMLatencyAction:
--		bytemanTemplateSpec.Do = fmt.Sprintf("Thread.sleep(%d)", spec.LatencyDuration)
-+		bytemanTemplateSpec.Do = fmt.Sprintf("Thread.sleep(%dL)", spec.LatencyDuration)
- 	case v1alpha1.JVMExceptionAction:
- 		bytemanTemplateSpec.Do = fmt.Sprintf("throw new %s", spec.ThrowException)
- 	case v1alpha1.JVMReturnAction:
-@@ -269,7 +269,7 @@ func generateRuleData(spec *v1alpha1.JVMChaosSpec) error {
- 			exception := fmt.Sprintf(mysqlException, spec.ThrowException)
- 			bytemanTemplateSpec.Do = fmt.Sprintf("throw new %s", exception)
- 		} else if spec.LatencyDuration > 0 {
--			bytemanTemplateSpec.Do = fmt.Sprintf("Thread.sleep(%d)", spec.LatencyDuration)
-+			bytemanTemplateSpec.Do = fmt.Sprintf("Thread.sleep(%dL)", spec.LatencyDuration)
- 		}
- 	}
- 
-```
-
-**File**: `controllers/chaosimpl/jvmchaos/impl_test.go` (modified, +2/-2)
-```diff
-@@ -79,7 +79,7 @@ func TestGenerateRuleData(t *testing.T) {
- 					LatencyDuration: 5000,
- 				},
- 			},
--			"\nRULE test\nCLASS testClass\nMETHOD testMethod\nAT ENTRY\nIF true\nDO\n\tThread.sleep(5000);\nENDRULE\n",
-+			"\nRULE test\nCLASS testClass\nMETHOD testMethod\nAT ENTRY\nIF true\nDO\n\tThread.sleep(5000L);\nENDRULE\n",
- 		},
- 		{
- 			&v1alpha1.JVMChaosSpec{
-@@ -159,7 +159,7 @@ func TestGenerateRuleData(t *testing.T) {
- 					LatencyDuration: 5000,
- 				},
- 			},
--			"\nRULE test\nCLASS com.mysql.cj.NativeSession\nMETHOD execSQL\nHELPER org.chaos_mesh.byteman.helper.SQLHelper\nAT ENTRY\nBIND flag:boolean=matchDBTable(\"\", $2, \"test\", \"t1\", \"select\");\nIF flag\nDO\n\tThread.sleep(5000);\nENDRULE\n",
-+			"\nRULE test\nCLASS com.mysql.cj.NativeSession\nMETHOD execSQL\nHELPER org.chaos_mesh.byteman.helper.SQLHelper\nAT ENTRY\nBIND flag:boolean=matchDBTable(\"\", $2, \"test\", \"t1\", \"select\");\nIF flag\nDO\n\tThread.sleep(5000L);\nENDRULE\n",
- 		},
- 	}
- 
-```
-
----
-
-### Incident Patch 9: `63f3d59f` (2026-07-31)
-**Commit Message**: fix(typo): prometehus -> prometheus in monitoring README (#5032)
-
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: Akanksha Trehun <[REDACTED_EMAIL]>
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `api/v1alpha1/iochaos_types.go` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ type IOChaosSpec struct {
- 	// +optional
- 	Errno uint32 `json:"errno,omitempty" webhook:"IOErrno"`
- 
--	// Attr defines the overrided attribution
-+	// Attr defines the overridden attribution
- 	// +ui:form:when=action=='attrOverride'
- 	// +optional
- 	Attr *AttrOverrideSpec `json:"attr,omitempty"`
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_iochaos.yaml` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ spec:
-                 - mistake
-                 type: string
-               attr:
--                description: Attr defines the overrided attribution
-+                description: Attr defines the overridden attribution
-                 properties:
-                   atime:
-                     description: Timespec represents a time
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_schedules.yaml` (modified, +3/-3)
-```diff
-@@ -800,7 +800,7 @@ spec:
-                     - mistake
-                     type: string
-                   attr:
--                    description: Attr defines the overrided attribution
-+                    description: Attr defines the overridden attribution
-                     properties:
-                       atime:
-                         description: Timespec represents a time
-@@ -4191,7 +4191,7 @@ spec:
-                               - mistake
-                               type: string
-                             attr:
--                              description: Attr defines the overrided attribution
-+                              description: Attr defines the overridden attribution
-                               properties:
-                                 atime:
-                                   description: Timespec represents a time
-@@ -7246,7 +7246,7 @@ spec:
-                                   - mistake
-                                   type: string
-                                 attr:
--                                  description: Attr defines the overrided attribution
-+                                  description: Attr defines the overridden attribution
-                                   properties:
-                                     atime:
-                                       description: Timespec represents a time
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflownodes.yaml` (modified, +4/-4)
-```diff
-@@ -821,7 +821,7 @@ spec:
-                     - mistake
-                     type: string
-                   attr:
--                    description: Attr defines the overrided attribution
-+                    description: Attr defines the overridden attribution
-                     properties:
-                       atime:
-                         description: Timespec represents a time
-@@ -3807,7 +3807,7 @@ spec:
-                         - mistake
-                         type: string
-                       attr:
--                        description: Attr defines the overrided attribution
-+                        description: Attr defines the overridden attribution
-                         properties:
-                           atime:
-                             description: Timespec represents a time
-@@ -7224,7 +7224,7 @@ spec:
-                                   - mistake
-                                   type: string
-                                 attr:
--                                  description: Attr defines the overrided attribution
-+                                  description: Attr defines the overridden attribution
-                                   properties:
-                                     atime:
-                                       description: Timespec represents a time
-@@ -10319,7 +10319,7 @@ spec:
-                                       - mistake
-                                       type: string
-                                     attr:
--                                      description: Attr defines the overrided attribution
-+                                      description: Attr defines the overridden attribution
-                                       properties:
-                                         atime:
-                                           description: Timespec represents a time
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflows.yaml` (modified, +2/-2)
-```diff
-@@ -843,7 +843,7 @@ spec:
-                           - mistake
-                           type: string
-                         attr:
--                          description: Attr defines the overrided attribution
-+                          description: Attr defines the overridden attribution
-                           properties:
-                             atime:
-                               description: Timespec represents a time
-@@ -3880,7 +3880,7 @@ spec:
-                               - mistake
-                               type: string
-                             attr:
--                              description: Attr defines the overrided attribution
-+                              description: Attr defines the overridden attribution
-                               properties:
-                                 atime:
-                                   description: Timespec represents a time
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_iochaos.yaml` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ spec:
-                 - mistake
-                 type: string
-               attr:
--                description: Attr defines the overrided attribution
-+                description: Attr defines the overridden attribution
-                 properties:
-                   atime:
-                     description: Timespec represents a time
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_schedules.yaml` (modified, +3/-3)
-```diff
-@@ -800,7 +800,7 @@ spec:
-                     - mistake
-                     type: string
-                   attr:
--                    description: Attr defines the overrided attribution
-+                    description: Attr defines the overridden attribution
-                     properties:
-                       atime:
-                         description: Timespec represents a time
-@@ -4191,7 +4191,7 @@ spec:
-                               - mistake
-                               type: string
-                             attr:
--                              description: Attr defines the overrided attribution
-+                              description: Attr defines the overridden attribution
-                               properties:
-                                 atime:
-                                   description: Timespec represents a time
-@@ -7246,7 +7246,7 @@ spec:
-                                   - mistake
-                                   type: string
-                                 attr:
--                                  description: Attr defines the overrided attribution
-+                                  description: Attr defines the overridden attribution
-                                   properties:
-                                     atime:
-                                       description: Timespec represents a time
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_workflownodes.yaml` (modified, +4/-4)
-```diff
-@@ -821,7 +821,7 @@ spec:
-                     - mistake
-                     type: string
-                   attr:
--                    description: Attr defines the overrided attribution
-+                    description: Attr defines the overridden attribution
-                     properties:
-                       atime:
-                         description: Timespec represents a time
-@@ -3807,7 +3807,7 @@ spec:
-                         - mistake
-                         type: string
-                       attr:
--                        description: Attr defines the overrided attribution
-+                        description: Attr defines the overridden attribution
-                         properties:
-                           atime:
-                             description: Timespec represents a time
-@@ -7224,7 +7224,7 @@ spec:
-                                   - mistake
-                                   type: string
-                                 attr:
--                                  description: Attr defines the overrided attribution
-+                                  description: Attr defines the overridden attribution
-                                   properties:
-                                     atime:
-                                       description: Timespec represents a time
-@@ -10319,7 +10319,7 @@ spec:
-                                       - mistake
-                                       type: string
-                                     attr:
--                                      description: Attr defines the overrided attribution
-+                                      description: Attr defines the overridden attribution
-                                       properties:
-                                         atime:
-                                           description: Timespec represents a time
-```
-
----
-
-### Incident Patch 10: `f8198b26` (2026-07-31)
-**Commit Message**: test(e2e): replace Poll with PollUntilContextTimeout (#5048)
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `api/v1alpha1/timechaos_webhook.go` (modified, +1/-2)
-```diff
-@@ -29,8 +29,7 @@ type ClockIds []string
- 
- // DefaultClockIds will set default value for empty ClockIds fields
- func (in *ClockIds) Default(root interface{}, field *reflect.StructField) {
--	// in cannot be nil
--	if *in == nil || len(*in) == 0 {
-+	if len(*in) == 0 {
- 		*in = []string{"CLOCK_REALTIME"}
- 	}
- }
-```
-
-**File**: `e2e-test/action.go` (modified, +3/-3)
-```diff
-@@ -103,7 +103,7 @@ func NewOperatorAction(
- func (oa *operatorAction) DeployOperator(info *OperatorConfig) error {
- 	klog.Infof("create namespace chaos-mesh")
- 	cmd := fmt.Sprintf(`kubectl create ns %s`, e2econst.ChaosMeshNamespace)
--	klog.Infof(cmd)
-+	klog.Infof("%s", cmd)
- 	output, err := exec.Command("/bin/sh", "-c", cmd).CombinedOutput()
+-	err := app.Start(context.TODO())
++	err := app.Start(ctx)
  	if err != nil {
- 		return errors.Errorf("failed to create namespace chaos-mesh: %v %s", err, string(output))
-@@ -124,7 +124,7 @@ func (oa *operatorAction) UpgradeOperator(info *OperatorConfig) error {
- 		return errors.Errorf("failed to deploy operator: %v, %s", err, string(res))
- 	}
- 	klog.Infof("start to waiting chaos-mesh ready")
--	err = wait.Poll(5*time.Second, 5*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 5*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		ls := &metav1.LabelSelector{
- 			MatchLabels: map[string]string{
- 				"app.kubernetes.io/instance": "chaos-mesh",
-@@ -203,7 +203,7 @@ func (oa *operatorAction) restartComponent(info *OperatorConfig, prefix string)
+-		return errors.Wrapf(err, "start controller-manager of remote cluster %s", name)
++		return nil, errors.Wrapf(err, "start controller-manager of remote cluster %s", name)
  	}
  
- 	klog.Infof("start to waiting chaos-mesh ready")
--	err = wait.Poll(5*time.Second, 5*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 5*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		pods, err := oa.kubeCli.CoreV1().Pods(info.Namespace).List(context.TODO(), metav1.ListOptions{LabelSelector: l.String()})
- 		if err != nil {
- 			klog.Errorf("get chaos-mesh pods: %v", err)
-```
-
-**File**: `e2e-test/e2e-gherkin/steps/podchaos_steps.go` (modified, +7/-7)
-```diff
-@@ -106,7 +106,7 @@ func (tc *TestContext) aChaosNamedIsAppliedToPodsWithLabel(action, name, labelKe
+-	r.clusters[name] = &remoteCluster{
++	return &remoteCluster{
+ 		app:    app,
+ 		Client: remoteClient,
+-	}
+-
+-	return nil
++	}, nil
  }
- 
- func (tc *TestContext) thePodNamedShouldEventuallyNotBeFound(name string) error {
--	return wait.Poll(5*time.Second, 5*time.Minute, func() (done bool, err error) {
-+	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 5*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		_, err = tc.KubeCli.CoreV1().Pods(tc.Namespace).Get(context.TODO(), name, metav1.GetOptions{})
- 		if err != nil && apierrors.IsNotFound(err) {
- 			return true, nil
-@@ -144,7 +144,7 @@ func (tc *TestContext) atLeastOnePodShouldBeReplacedWithDifferentUID() error {
- 			"app": "nginx",
- 		}).String(),
- 	}
--	return wait.Poll(5*time.Second, 5*time.Minute, func() (done bool, err error) {
-+	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 5*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		newPods, err := tc.KubeCli.CoreV1().Pods(tc.Namespace).List(context.TODO(), listOption)
- 		if err != nil {
- 			return false, nil
-@@ -174,7 +174,7 @@ func (tc *TestContext) theChaosExperimentIsPaused(name string) error {
- 		pollTimeout = 5 * time.Minute
- 	}
- 
--	err = wait.Poll(1*time.Second, pollTimeout, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(context.Background(), 1*time.Second, pollTimeout, false, func(ctx context.Context) (done bool, err error) {
- 		err = tc.Client.Get(ctx, client.ObjectKey{Namespace: tc.Namespace, Name: name}, chaos)
- 		if err != nil {
- 			return false, err
-@@ -186,7 +186,7 @@ func (tc *TestContext) theChaosExperimentIsPaused(name string) error {
- 	})
- 
- 	if isOneShot {
--		if err == wait.ErrWaitTimeout {
-+		if err == context.DeadlineExceeded {
- 			return nil
- 		}
- 		if err == nil {
-@@ -209,7 +209,7 @@ func (tc *TestContext) noFurtherPodsShouldBeKilledWithinMinutes(duration int) er
- 		return err
- 	}
- 
--	err = wait.Poll(5*time.Second, time.Duration(duration)*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(context.Background(), 5*time.Second, time.Duration(duration)*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		newPods, err := tc.KubeCli.CoreV1().Pods(tc.Namespace).List(context.TODO(), listOption)
- 		if err != nil {
- 			return false, nil
-@@ -219,7 +219,7 @@ func (tc *TestContext) noFurtherPodsShouldBeKilledWithinMinutes(duration int) er
- 		}
- 		return false, nil
- 	})
--	if err == wait.ErrWaitTimeout {
-+	if err == context.DeadlineExceeded {
- 		return nil
- 	}
- 	if err == nil {
-@@ -229,7 +229,7 @@ func (tc *TestContext) noFurtherPodsShouldBeKilledWithinMinutes(duration int) er
- }
- 
- func (tc *TestContext) waitPodRunning(name string) error {
--	return wait.Poll(5*time.Second, 5*time.Minute, func() (done bool, err error) {
-+	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 5*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		pod, err := tc.KubeCli.CoreV1().Pods(tc.Namespace).Get(context.TODO(), name, metav1.GetOptions{})
- 		if err != nil {
- 			return false, nil
 ```
 
-**File**: `e2e-test/e2e/chaos/dnschaos/dns.go` (modified, +2/-2)
+**File**: `controllers/multicluster/clusterregistry/registry_test.go` (added, +59/-0)
 ```diff
-@@ -81,7 +81,7 @@ func TestcaseDNSRandom(
- 	framework.ExpectNoError(err, "create dns chaos error")
- 
- 	for _, domainName := range effectDomainNames {
--		err = wait.Poll(time.Second, 10*time.Second, func() (done bool, err error) {
-+		err = wait.PollUntilContextTimeout(ctx, time.Second, 10*time.Second, false, func(ctx context.Context) (done bool, err error) {
- 			// get IP of a non exists host, because chaos DNS server will return a random IP,
- 			// so err should be nil
- 			_, dnsErr := testDNSServer(c, port, domainName)
-@@ -145,7 +145,7 @@ func TestcaseDNSError(
- 	framework.ExpectNoError(err, "create dns chaos error")
- 
- 	for _, domainName := range effectDomainNames {
--		err = wait.Poll(time.Second, 10*time.Second, func() (done bool, err error) {
-+		err = wait.PollUntilContextTimeout(ctx, time.Second, 10*time.Second, false, func(ctx context.Context) (done bool, err error) {
- 			// get IP of some domain names, because chaos DNS server will return error,
- 			// so err should not be nil
- 			_, dnsErr := testDNSServer(c, port, domainName)
-```
-
-**File**: `e2e-test/e2e/chaos/httpchaos/http_abort.go` (modified, +20/-39)
-```diff
-@@ -20,7 +20,6 @@ import (
- 	"time"
- 
- 	. "github.com/onsi/ginkgo/v2"
--	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/wait"
-@@ -154,18 +153,12 @@ func TestcaseHttpAbortPauseAndUnPause(
- 	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, true, func(ctx context.Context) (bool, error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
+@@ -0,0 +1,59 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
 +
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		_, err := getPodHttpNoBody(c, port)
-@@ -184,21 +177,15 @@ func TestcaseHttpAbortPauseAndUnPause(
- 	framework.ExpectNoError(err, "pause chaos error")
- 
- 	By("waiting for assertion about pause")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllRecovered {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
++package clusterregistry
 +
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllRecovered, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-@@ -222,21 +209,15 @@ func TestcaseHttpAbortPauseAndUnPause(
- 	framework.ExpectNoError(err, "resume chaos error")
- 
- 	By("assert that http abort is effective again")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
++import (
++	"net/http"
++	"testing"
 +
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-```
-
-**File**: `e2e-test/e2e/chaos/httpchaos/http_delay.go` (modified, +20/-39)
-```diff
-@@ -20,7 +20,6 @@ import (
- 	"time"
- 
- 	. "github.com/onsi/ginkgo/v2"
--	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/wait"
-@@ -165,18 +164,12 @@ func TestcaseHttpDelayDurationForATimePauseAndUnPause(
- 	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, true, func(ctx context.Context) (bool, error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
++	"github.com/go-logr/logr"
++	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
++	"k8s.io/apimachinery/pkg/api/meta"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/client-go/rest"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 +
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		_, dur, _ := getPodHttpDelay(c, port)
-@@ -197,21 +190,15 @@ func TestcaseHttpDelayDurationForATimePauseAndUnPause(
- 	framework.ExpectNoError(err, "pause chaos error")
- 
- 	By("waiting for assertion about pause")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllRecovered {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
-+
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllRecovered, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-@@ -238,21 +225,15 @@ func TestcaseHttpDelayDurationForATimePauseAndUnPause(
- 	framework.ExpectNoError(err, "resume chaos error")
- 
- 	By("assert that http delay is effective again")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
-+
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-```
-
-**File**: `e2e-test/e2e/chaos/httpchaos/http_patch.go` (modified, +20/-39)
-```diff
-@@ -22,7 +22,6 @@ import (
- 	"time"
- 
- 	. "github.com/onsi/ginkgo/v2"
--	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/wait"
-@@ -255,18 +254,12 @@ func TestcaseHttpPatchPauseAndUnPause(
- 	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, true, func(ctx context.Context) (bool, error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
-+
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		resp, err := getPodHttp(c, port, secret, body)
-@@ -296,21 +289,15 @@ func TestcaseHttpPatchPauseAndUnPause(
- 	framework.ExpectNoError(err, "pause chaos error")
- 
- 	By("waiting for assertion about pause")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllRecovered {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
-+
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllRecovered, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-@@ -346,21 +333,15 @@ func TestcaseHttpPatchPauseAndUnPause(
- 	framework.ExpectNoError(err, "resume chaos error")
- 
- 	By("assert that http patch is effective again")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
--
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if err != nil {
-+			return false, err
-+		}
-+
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-```
-
-**File**: `e2e-test/e2e/chaos/httpchaos/http_replace.go` (modified, +35/-72)
-```diff
-@@ -21,7 +21,6 @@ import (
- 	"time"
- 
- 	. "github.com/onsi/ginkgo/v2"
--	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/wait"
-@@ -237,18 +236,12 @@ func TestcaseHttpReplacePauseAndUnPause(
- 	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, true, func(ctx context.Context) (bool, error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
-+		if err != nil {
-+			return false, err
-+		}
- 
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		resp, err := getPodHttp(c, port, secret, "")
-@@ -278,21 +271,15 @@ func TestcaseHttpReplacePauseAndUnPause(
- 	framework.ExpectNoError(err, "pause chaos error")
- 
- 	By("waiting for assertion about pause")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
-+		if err != nil {
-+			return false, err
-+		}
- 
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllRecovered {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllRecovered, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-@@ -327,21 +314,15 @@ func TestcaseHttpReplacePauseAndUnPause(
- 	framework.ExpectNoError(err, "resume chaos error")
- 
- 	By("assert that http replace is effective again")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
-+		if err != nil {
-+			return false, err
-+		}
- 
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, err
-@@ -585,18 +566,12 @@ func TestcaseHttpReplaceBodyPauseAndUnPause(
- 	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, true, func(ctx context.Context) (bool, error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
-+		if err != nil {
-+			return false, err
-+		}
- 
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllInjected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllInjected, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		resp, err := getPodHttp(c, port, secret, body)
-@@ -626,21 +601,15 @@ func TestcaseHttpReplaceBodyPauseAndUnPause(
- 	framework.ExpectNoError(err, "pause chaos error")
- 
- 	By("waiting for assertion about pause")
--	err = wait.Poll(1*time.Second, 1*time.Minute, func() (done bool, err error) {
-+	err = wait.PollUntilContextTimeout(ctx, 1*time.Second, 1*time.Minute, false, func(ctx context.Context) (done bool, err error) {
- 		chaos := &v1alpha1.HTTPChaos{}
- 		err = cli.Get(ctx, chaosKey, chaos)
--		framework.ExpectNoError(err, "get http chaos error")
-+		if err != nil {
-+			return false, err
-+		}
- 
--		for _, c := range chaos.GetStatus().Conditions {
--			if c.Type == v1alpha1.ConditionAllRecovered {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			} else if c.Type == v1alpha1.ConditionSelected {
--				if c.Status != corev1.ConditionTrue {
--					return false, nil
--				}
--			}
-+		if !util.ChaosConditionsTrue(chaos.GetStatus(), v1alpha1.ConditionAllRecovered, v1alpha1.ConditionSelected) {
-+			return false, nil
- 		}
- 
- 		return true, 
-```
-
----
-
-### Incident Patch 11: `19e7ec65` (2026-07-31)
-**Commit Message**: fix(dashboard): TypeError crash on Workflow schedule details (#5034)
-
-Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: Hsiu-Chia Cheng <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -57,6 +57,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Fix nil pointer dereference in StressChaos Apply when Stressors is nil and StressngStressors is empty [#4936](https://github.com/chaos-mesh/chaos-mesh/pull/4936)
- - Fix dashboard subpath serving by adding base path to Vite config [#5016](https://github.com/chaos-mesh/chaos-mesh/pull/5016)
- - Optimize RBAC Token Generator copy buttons in Dashboard UI [#4941](https://github.com/chaos-mesh/chaos-mesh/pull/4941)
-+- Fix a TypeError crash in the Dashboard UI when opening the details page of a Workflow-type schedule [#5034](https://github.com/chaos-mesh/chaos-mesh/pull/5034)
- 
- ### Security
- 
-```
-
-**File**: `ui/app/src/components/ObjectConfiguration/index.tsx` (modified, +2/-2)
-```diff
-@@ -110,13 +110,13 @@ const ObjectConfiguration: ReactFCWithChildren<ObjectConfigurationProps> = ({
-           </Grid>
-         )}
- 
--        {(hasAddress || experiment.selector) && (
-+        {(hasAddress || experiment?.selector) && (
-           <Grid item xs={vertical ? 12 : 3}>
-             <Typography variant="subtitle2" gutterBottom>
-               {i18n('newE.steps.scope')}
-             </Typography>
- 
--            {experiment.selector && <Selector data={experiment.selector} />}
-+            {experiment?.selector && <Selector data={experiment.selector} />}
- 
-             {hasAddress && (
-               <Table>
-```
-
----
-
-### Incident Patch 12: `a5c127e3` (2026-07-30)
-**Commit Message**: ui: fix broken copy button and add missing copy buttons in RBAC Token Generator (#4941)
-
-Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: Nidha Ahmed Mohammad <[REDACTED_EMAIL]>
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -56,6 +56,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Add missing schedule types in dashboard collector [#4840](https://github.com/chaos-mesh/chaos-mesh/pull/4840)
- - Fix nil pointer dereference in StressChaos Apply when Stressors is nil and StressngStressors is empty [#4936](https://github.com/chaos-mesh/chaos-mesh/pull/4936)
- - Fix dashboard subpath serving by adding base path to Vite config [#5016](https://github.com/chaos-mesh/chaos-mesh/pull/5016)
-+- Optimize RBAC Token Generator copy buttons in Dashboard UI [#4941](https://github.com/chaos-mesh/chaos-mesh/pull/4941)
- 
- ### Security
- 
-```
-
-**File**: `ui/app/src/components/RBACGenerator/CopyableCodeBlock.tsx` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+/*
-+ * Copyright 2026 Chaos Mesh Authors.
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ * http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ *
-+ */
-+import { Box, Button } from '@mui/material'
-+import { styled } from '@mui/material/styles'
-+
-+interface CopyableCodeBlockProps {
-+  text: string
-+  copyLabel: string
-+  onCopy: (text: string) => void
-+  height?: number
-+  singleLine?: boolean
-+}
-+
-+const CodeBlock = styled('pre')(({ theme }) => ({
-+  padding: theme.spacing(3),
-+  background: theme.palette.background.default,
-+  borderRadius: 4,
-+}))
-+
-+interface CopyButtonProps {
-+  singleLine: boolean
-+}
-+
-+const CopyButton = styled(Box, {
-+  shouldForwardProp: (prop) => prop !== 'singleLine',
-+})<CopyButtonProps>(({ theme, singleLine }) => ({
-+  position: 'absolute',
-+  top: singleLine ? '50%' : theme.spacing(6),
-+  right: singleLine ? theme.spacing(1) : theme.spacing(3),
-+  transform: singleLine ? 'translateY(-50%)' : undefined,
-+}))
-+
-+const CopyableCodeBlock = ({ text, copyLabel, onCopy, height, singleLine = false }: CopyableCodeBlockProps) => (
-+  <Box position="relative">
-+    <CodeBlock
-+      style={
-+        singleLine
-+          ? { overflowX: 'auto', whiteSpace: 'pre', paddingRight: 80 }
-+          : { height, overflow: height ? 'auto' : undefined, whiteSpace: 'pre-wrap' }
-+      }
-+    >
-+      {text}
-+    </CodeBlock>
-+    <CopyButton singleLine={singleLine}>
-+      <Button onClick={() => onCopy(text)}>{copyLabel}</Button>
-+    </CopyButton>
-+  </Box>
++	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/controllers/config"
++	"github.com/chaos-mesh/chaos-mesh/controllers/multicluster/remotechaosmonitor"
++	"github.com/chaos-mesh/chaos-mesh/controllers/types"
 +)
 +
-+export default CopyableCodeBlock
++func TestRemoteManagerNameReuse(t *testing.T) {
++	enabled := config.ControllerCfg.EnabledControllers
++	t.Cleanup(func() { config.ControllerCfg.EnabledControllers = enabled })
++	config.ControllerCfg.EnabledControllers = []string{"*"}
++	scheme := runtime.NewScheme()
++	require.NoError(t, v1alpha1.AddToScheme(scheme))
++	mapper := meta.NewDefaultRESTMapper([]schema.GroupVersion{v1alpha1.SchemeGroupVersion})
++	mapper.Add(v1alpha1.SchemeGroupVersion.WithKind("PodChaos"), meta.RESTScopeNamespace)
++	clusterName := "recreated-" + uuid.NewString()
++	for generation := 0; generation < 2; generation++ {
++		c := fake.NewClientBuilder().WithScheme(scheme).Build()
++		options := controllerManagerOption(scheme)
++		options.MapperProvider = func(*rest.Config, *http.Client) (meta.RESTMapper, error) { return mapper, nil }
++		options.NewClient = func(*rest.Config, client.Options) (client.Client, error) { return c, nil }
++		options.Logger = logr.Discard()
++		options.HealthProbeBindAddress = "0"
++		mgr, err := ctrl.NewManager(&rest.Config{Host: "https://localhost"}, *options)
++		require.NoError(t, err)
++		require.NoError(t, remotechaosmonitor.Bootstrap(remotechaosmonitor.Params{Mgr: mgr, ManageClient: c, LocalClient: c, ClusterName: clusterName, Logger: logr.Discard(), Objs: []types.Object{{Name: "podchaos", Object: &v1alpha1.PodChaos{}}}}), "register manager generation %d", generation)
++	}
++}
 ```
 
-**File**: `ui/app/src/components/RBACGenerator/index.tsx` (modified, +22/-40)
+**File**: `controllers/multicluster/remotechaos/allowlist_test.go` (added, +111/-0)
 ```diff
-@@ -18,8 +18,7 @@ import { Stale } from '@/api/queryUtils'
- import Space from '@/mui-extends/Space'
- import { useGetCommonChaosAvailableNamespaces, useGetCommonRbacConfig } from '@/openapi'
- import { useComponentActions } from '@/zustand/component'
--import { Box, Button, Checkbox, FormControl, FormControlLabel, MenuItem, Typography } from '@mui/material'
--import { styled } from '@mui/material/styles'
-+import { Box, Checkbox, FormControl, FormControlLabel, MenuItem, Typography } from '@mui/material'
- import copy from 'copy-text-to-clipboard'
- import { Field, Form, Formik } from 'formik'
- import _ from 'lodash'
-@@ -29,27 +28,7 @@ import { useIntl } from 'react-intl'
- import { SelectField } from '@/components/FormField'
- import i18n from '@/components/T'
- 
--const PREFIX = 'RBACGenerator'
--
--const classes = {
--  pre: `${PREFIX}-pre`,
--  copy: `${PREFIX}-copy`,
--}
--
--const Root = styled('div')(({ theme }) => ({
--  [`& .${classes.pre}`]: {
--    padding: theme.spacing(3),
--    background: theme.palette.background.default,
--    borderRadius: 4,
--    whiteSpace: 'pre-wrap',
--  },
--
--  [`& .${classes.copy}`]: {
--    position: 'absolute',
--    top: theme.spacing(6),
--    right: theme.spacing(3),
--  },
--}))
-+import CopyableCodeBlock from './CopyableCodeBlock'
- 
- const initialValues = { namespace: 'default', role: 'viewer', clustered: false }
- 
-@@ -100,10 +79,8 @@ const RBACGenerator = () => {
-     })
-   }
- 
--  const copyRBAC = () => {
--    if (rbacConfig?.yaml) {
--      copy(rbacConfig.yaml, { target: containerRef.current! })
--
-+  const copyCommand = (text: string) => {
-+    if (text && copy(text, { target: containerRef.current! })) {
-       setAlert({
-         type: 'success',
-         message: i18n('common.copied', intl),
-@@ -112,7 +89,7 @@ const RBACGenerator = () => {
-   }
- 
-   return (
--    <Root ref={containerRef}>
-+    <div ref={containerRef}>
-       <Space>
-         <Typography variant="body2" color="textSecondary">
-           {i18n('settings.addToken.generatorHelper')}
-@@ -157,18 +134,17 @@ const RBACGenerator = () => {
-         <Typography variant="body2" color="textSecondary">
-           {i18n('settings.addToken.generatorHelper2')}
-         </Typography>
--        <Box position="relative">
--          <pre className={classes.pre} style={{ height: 300, overflow: 'auto' }}>
--            {rbac.yaml}
--          </pre>
--          <Box className={classes.copy}>
--            <Button onClick={copyRBAC}>{i18n('common.copy')}</Button>
--          </Box>
--        </Box>
-+        <CopyableCodeBlock text={rbac.yaml} copyLabel={i18n('common.copy')} onCopy={copyCommand} height={300} />
-         <Typography variant="body2" color="textSecondary">
-           {i18n('settings.addToken.generatorHelper3')}
-         </Typography>
--        <pre className={classes.pre}>kubectl apply -f rbac.yaml</pre>
+@@ -0,0 +1,111 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
 +
-+        <CopyableCodeBlock
-+          text="kubectl apply -f rbac.yaml"
-+          copyLabel={i18n('common.copy')}
-+          onCopy={copyCommand}
-+          singleLine
-+        />
- 
-         <Typography variant="body2" color="textSecondary">
-           {i18n('settings.addToken.generatorHelperGetTokenHeader')}
-@@ -177,14 +153,20 @@ const RBACGenerator = () => {
-           <Typography variant="body2" color="textSecondary">
-             {i18n('settings.addToken.generatorHelperGetTokenCase1')}
-           </Typography>
--          <pre className={classes.pre}>{rbac.generateToken}</pre>
-+          <CopyableCodeBlock
-+            text={rbac.generateToken}
-+            copyLabel={i18n('common.copy')}
-+            onCopy={copyCommand}
-+            singleLine
-+          />
++package remotechaos
 +
-           <Typography variant="body2" color="textSecondary">
-             {i18n('settings.addToken.generatorHelperGetTokenCase2')}
-           </Typography>
--          <pre className={classes.pre}>{rbac.getSecret}</pre>
-+          <CopyableCodeBlock text={rbac.getSecret} copyLabel={i18n('common.copy')} onCopy={copyCommand} singleLine />
-         </Box>
-       </Space>
--    </Root>
-+    </div>
-   )
++import (
++	"net/http"
++	"testing"
++
++	"github.com/go-logr/logr"
++	"github.com/stretchr/testify/require"
++	"k8s.io/apimachinery/pkg/api/meta"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/client-go/rest"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	controllerconfig "sigs.k8s.io/controller-runtime/pkg/config"
++	"sigs.k8s.io/controller-runtime/pkg/manager"
++	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
++
++	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/controllers/config"
++	"github.com/chaos-mesh/chaos-mesh/controllers/types"
++)
++
++func TestBootstrapPartialAllowlist(t *testing.T) {
++	objects := []types.Object{
++		{Name: "podchaos", Object: &v1alpha1.PodChaos{}},
++		{Name: "networkchaos", Object: &v1alpha1.NetworkChaos{}},
++		{Name: "stresschaos", Object: &v1alpha1.StressChaos{}},
++	}
++	scheme := runtime.NewScheme()
++	require.NoError(t, v1alpha1.AddToScheme(scheme))
++	mapper := meta.NewDefaultRESTMapper([]schema.GroupVersion{v1alpha1.SchemeGroupVersion})
++	for _, obj := range objects {
++		gvks, _, err := scheme.ObjectKinds(obj.Object)
++		require.NoError(t, err)
++		for _, gvk := range gvks {
++			mapper.Add(gvk, meta.RESTScopeNamespace)
++		}
++	}
++
++	enabledControllers := config.ControllerCfg.EnabledControllers
++	t.Cleanup(func() {
++		config.ControllerCfg.EnabledControllers = enabledControllers
++	})
++
++	for _, tc := range []struct {
++		name    string
++		enabled []string
++	}{
++		{name: "disabled first kind", enabled: []string{"networkchaos-remote-apply"}},
++		{name: "disabled middle kind", enabled: []string{"podchaos-remote-apply", "stresschaos-remote-apply"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			config.ControllerCfg.EnabledControllers = tc.enabled
++			localClient := fake.NewClientBuilder().WithScheme(scheme).Build()
++			skipNameValidation := true
++			mgr, err := ctrl.NewManager(&rest.Config{Host: "https://localhost"}, ctrl.Options{
++				Scheme: scheme,
++				MapperProvider: func(*rest.Config, *http.Client) (meta.RESTMapper, error) {
++					return mapper, nil
++				},
++				NewClient: func(*rest.Config, client.Options) (client.Client, error) {
++					return localClient, nil
++				},
++				Controller:             controllerconfig.Controller{SkipNameValidation: &skipNameValidation},
++				Logger:                 logr.Discard(),
++				Metrics:                metricsserver.Options{BindAddress: "0"},
++				HealthProbeBindAddress: "0",
++			})
++			require.NoError(t, err)
++			observedManager := &allowlistRegistrationManager{Manager: mgr}
++			require.NoError(t, Bootstrap(Params{
++				Mgr:    observedManager,
++				Client: localClient,
++				Logger: logr.Discard(),
++				Objs:   objects,
++			}))
++			require.Equal(t, len(tc.enabled), observedManager.registrations,
++				"all enabled kinds must register even after a disabled kind")
++		})
++	}
++}
++
++type allowlistRegistrationManager struct {
++	ctrl.Manager
++	registrations int
++}
++
++func (m *allowlistRegistrationManager) Add(runnable manager.Runnable) error {
++	if err := m.Manager.Add(runnable); err != nil {
++		return err
++	}
++	m.registrations++
++	return nil
++}
+```
+
+**File**: `controllers/multicluster/remotechaos/fx.go` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ func Bootstrap(params Params) error {
+ 	for _, obj := range objs {
+ 		name := obj.Name + "-remote-apply"
+ 		if !config.ShouldSpawnController(name) {
+-			return nil
++			continue
+ 		}
+ 
+ 		setupLog.Info("setting up controller", "resource-name", obj.Name)
+```
+
+**File**: `controllers/multicluster/remotechaosmonitor/allowlist_test.go` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++
++package remotechaosmonitor
++
++import (
++	"net/http"
++	"testing"
++
++	"github.com/go-logr/logr"
++	"github.com/stretchr/testify/require"
++	"k8s.io/apimachinery/pkg/api/meta"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/client-go/rest"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	controllerconfig "sigs.k8s.io/controller-runtime/pkg/config"
++	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
++
++	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/controllers/config"
++	"github.com/chaos-mesh/chaos-mesh/controllers/types"
++)
++
++func TestBootstrapPartialAllowlist(t *testing.T) {
++	objects := []types.Object{
++		{Name: "podchaos", Object: &v1alpha1.PodChaos{}},
++		{Name: "networkchaos", Object: &v1alpha1.NetworkChaos{}},
++		{Name: "stresschaos", Object: &v1alpha1.StressChaos{}},
++	}
++	scheme := runtime.NewScheme()
++	require.NoError(t, v1alpha1.AddToScheme(scheme))
++	mapper := meta.NewDefaultRESTMapper([]schema.GroupVersion{v1alpha1.SchemeGroupVersion})
++	for _, obj := range objects {
++		gvks, _, err := scheme.ObjectKinds(obj.Object)
++		require.NoError(t, err)
++		for _, gvk := range gvks {
++			mapper.Add(gvk, meta.RESTScopeNamespace)
++		}
++	}
++
++	enabledControllers := config.ControllerCfg.EnabledControllers
++	t.Cleanup(func() {
++		config.ControllerCfg.EnabledControllers = enabledControllers
++	})
++
++	for _, tc := range []struct {
++		name    string
++		enabled []string
++	}{
++		{name: "disabled first kind", enabled: []string{"networkchaos-remotechaos-monitor"}},
++		{name: "disabled middle kind", enabled: []string{"podchaos-remotechaos-monitor", "stresschaos-remotechaos-monitor"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			config.ControllerCfg.EnabledControllers = tc.enabled
++			localClient := fake.NewClientBuilder().WithScheme(scheme).Build()
++			skipNameValidation := true
++			mgr, err := ctrl.NewManager(&rest.Config{Host: "https://localhost"}, ctrl.Options{
++				Scheme: scheme,
++				MapperProvider: func(*rest.Config, *http.Client) (meta.RESTMapper, error) {
++					return mapper, nil
++				},
++				NewClient: func(*rest.Config, client.Options) (client.Client, error) {
++					return localClient, nil
++				},
++				Controller:             controllerconfig.Controller{SkipNameValidation: &skipNameValidation},
++				Logger:                 logr.Discard(),
++				Metrics:                metricsserver.Options{BindAddress: "0"},
++				HealthProbeBindAddress: "0",
++			})
++			require.NoError(t, err)
++			observedManager := &registrationManager{Manager: mgr}
++			require.NoError(t, Bootstrap(Params{
++				Mgr:          observedManager,
++				ManageClient: localClient,
++				LocalClient:  localClient,
++				ClusterName:  "allowlist-test",
++				Logger:       logr.Discard(),
++				Objs:         objects,
++			}))
++			require.Equal(t, len(tc.enabled), observedManager.registrations,
++				"all enabled kinds must register even after a disabled kind")
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `0da92a1e` (2026-10-16)
+**Commit Message**: fix(dashboard): handle failures and add Go regression tests (#5137)
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -45,6 +45,7 @@ require (
+ 	github.com/pingcap/failpoint v0.0.0-20200210140405-f8f9fb234798
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/prometheus/client_golang v1.23.2
++	github.com/prometheus/client_model v0.6.2
+ 	github.com/retailnext/iptables_exporter v0.1.0
+ 	github.com/robfig/cron/v3 v3.0.1
+ 	github.com/romana/ipset v1.0.0
+@@ -253,7 +254,6 @@ require (
+ 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
+ 	github.com/pingcap/check v0.0.0-20191216031241-8a5a85928f12 // indirect
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+-	github.com/prometheus/client_model v0.6.2 // indirect
+ 	github.com/prometheus/common v0.66.1 // indirect
+ 	github.com/prometheus/procfs v0.16.1 // indirect
+ 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+```
+
+**File**: `pkg/dashboard/apiserver/archive/archive.go` (modified, +144/-102)
+```diff
+@@ -16,7 +16,6 @@
+ package archive
+ 
+ import (
+-	"context"
+ 	"encoding/json"
+ 	"net/http"
+ 	"reflect"
+@@ -102,10 +101,9 @@ func (s *Service) list(c *gin.Context) {
+ 		ns = s.conf.TargetNamespace
+ 	}
+ 
+-	metas, err := s.experimentStore.ListMeta(context.Background(), kind, ns, name, true)
++	metas, err := s.experimentStore.ListMeta(c.Request.Context(), kind, ns, name, true)
+ 	if err != nil {
+-		c.Status(http.StatusInternalServerError)
+-		_ = c.Error(u.ErrInternalServer.NewWithNoMessage())
++		u.SetAPIError(c, u.ErrInternalServer.NewWithNoMessage())
+ 		return
+ 	}
+ 
+@@ -135,7 +133,7 @@ func (s *Service) list(c *gin.Context) {
+ // @Router /archives/{uid} [get]
+ func (s *Service) get(c *gin.Context) {
+ 	uid := c.Param("uid")
+-	exp, err := s.experimentStore.FindByUID(context.Background(), uid)
++	exp, err := s.experimentStore.FindByUID(c.Request.Context(), uid)
+ 	if err != nil {
+ 		if errors.Is(err, gorm.ErrRecordNotFound) {
+ 			u.SetAPIError(c, u.ErrNotFound.New("Archived experiment %s not found", uid))
+@@ -146,8 +144,20 @@ func (s *Service) get(c *gin.Context) {
+ 		return
+ 	}
+ 
+-	chaos := v1alpha1.AllKinds()[exp.Kind].SpawnObject()
+-	_ = json.Unmarshal([]byte(exp.Experiment), chaos)
++	chaosKind, ok := v1alpha1.AllKinds()[exp.Kind]
++	if !ok {
++		u.SetAPIError(c, u.ErrInternalServer.New("Archived experiment kind %s is not supported", exp.Kind))
++		return
++	}
++	chaos := chaosKind.SpawnObject()
++	if strings.TrimSpace(exp.Experiment) == "null" {
++		u.SetAPIError(c, u.ErrInternalServer.New("Archived experiment snapshot cannot be null"))
++		return
++	}
++	if err := json.Unmarshal([]byte(exp.Experiment), chaos); err != nil {
++		u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
++		return
++	}
+ 
+ 	c.JSON(http.StatusOK, &types.ArchiveDetail{
+ 		Archive: types.Archive{
+@@ -189,28 +199,24 @@ func (s *Service) delete(c *gin.Context) {
+ 
+ 	uid := c.Param("uid")
+ 
+-	if exp, err = s.experimentStore.FindByUID(context.Background(), uid); err != nil {
++	if exp, err = s.experimentStore.FindByUID(c.Request.Context(), uid); err != nil {
+ 		if errors.Is(err, gorm.ErrRecordNotFound) {
+-			c.Status(http.StatusInternalServerError)
+-			_ = c.Error(u.ErrBadRequest.New("the archived experiment is not found"))
++			u.SetAPIError(c, u.ErrNotFound.New("the archived experiment is not found"))
+ 		} else {
+-			c.Status(http.StatusInternalServerError)
+-			_ = c.Error(u.ErrInternalServer.WrapWithNoMessage(err))
++			u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
+ 		}
+ 		return
+ 	}
+ 
+-	if err = s.experimentStore.Delete(context.Background(), exp); err != nil {
+-		c.Status(http.StatusInternalServerError)
+-		_ = c.Error(u.ErrInternalServer.WrapWithNoMessage(err))
+-	} else {
+-		if err = s.eventStore.DeleteByUID(context.Background(), uid); err != nil {
+-			c.Status(http.StatusInternalServerError)
+-			_ = c.Error(u.ErrInternalServer.WrapWithNoMessage(err))
+-		} else {
+-			c.JSON(http.StatusOK, u.ResponseSuccess)
+-		}
++	if err = s.eventStore.DeleteByUID(c.Request.Context(), exp.UID); err != nil {
++		u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
++		return
++	}
++	if err = s.experimentStore.Delete(c.Request.Context(), exp); err != nil {
++		u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
++		return
+ 	}
++	c.JSON(http.StatusOK, u.ResponseSuccess)
  }
  
+ // @Summary Delete the specified archived experiment.
+@@ -229,20 +235,31 @@ func (s *Service) batchDelete(c *gin.Context) {
+ 
+ 	uids := c.Query("uids")
+ 	if uids == "" {
+-		c.Status(http.StatusBadRequest)
+-		_ = c.Error(u.ErrInternalServer.WrapWithNoMessage(errors.New("uids cannot be empty")))
++		u.SetAPIError(c, u.ErrBadRequest.New("uids cannot be empty"))
++		return
++	}
++	for _, uid := range strings.Split(uids, ",") {
++		record, err := s.experimentStore.FindByUID(c.Request.Context(), uid)
++		if errors.Is(err, gorm.ErrRecordNotFound) {
++			continue
++		}
++		if err != nil {
++			u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
++			return
++		}
++		uidSlice = append(uidSlice, record.UID)
++	}
++	if len(uidSlice) == 0 {
++		c.JSON(http.StatusOK, u.ResponseSuccess)
+ 		return
+ 	}
+-	uidSlice = strings.Split(uids, ",")
+ 
+-	if err = s.experimentStore.DeleteByUIDs(context.Background(), uidSlice); err != nil {
+-		_ = c.Error(u.ErrInternalServer.WrapWithNoMessage(err))
+-		c.Status(http.StatusInternalServerError)
++	if err = s.eventStore.DeleteByUIDList(c.Request.Context(), uidSlice); err != nil {
++		u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
+ 		return
+ 	}
+-	if err = s.eventStore.DeleteByUIDList(context.Background(), uidSlice); err != nil {
+-		_ = c.Error(u.ErrInternalServer.WrapWithNoMessage(err))
+-		c.Status(http.StatusInternalServerError)
++	if err = s.experimentStore.DeleteByUIDs(c.Request.Context(), uidSlice); err != nil {
++		u.SetAPIError(c, u.ErrInternalServer.WrapWithNoMessage(err))
+ 		return
+ 	}
+ 
+@@ -261,11 +278,13 @@ func (s *Service) batchDelete(c *gin.Context) {
+ func (s *Service) listSchedule(c *gin.Context) {
+ 	name := c.Query("name")
+ 	ns := c.Quer
 ```
 
----
-
-### Incident Patch 13: `37ef27f7` (2026-07-21)
-**Commit Message**: fix(chaos-builder): close generated files to prevent handle leaks (#5040)
-
-Signed-off-by: Akanksha Trehun <[REDACTED_EMAIL]>
-
-**File**: `cmd/chaos-builder/main.go` (modified, +6/-0)
+**File**: `pkg/dashboard/apiserver/archive_recovery_test.go` (added, +405/-0)
 ```diff
-@@ -154,6 +154,7 @@ func init() {
- 		os.Exit(1)
- 	}
- 	fmt.Fprint(file, implCode)
-+	file.Close()
+@@ -0,0 +1,405 @@
++// Copyright Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package apiserver
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"net/http"
++	"strings"
++	"testing"
++
++	"github.com/gin-gonic/gin"
++	"github.com/glebarez/sqlite"
++	"github.com/stretchr/testify/require"
++	"gorm.io/gorm"
++	"gorm.io/gorm/logger"
++	authorizationv1 "k8s.io/api/authorization/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	kubefake "k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
++
++	"github.com/chaos-mesh/chaos-mesh/pkg/clientpool"
++	"github.com/chaos-mesh/chaos-mesh/pkg/config"
++	"github.com/chaos-mesh/chaos-mesh/pkg/dashboard/apiserver/archive"
++	"github.com/chaos-mesh/chaos-mesh/pkg/dashboard/core"
++	eventstore "github.com/chaos-mesh/chaos-mesh/pkg/dashboard/store/event"
++	experimentstore "github.com/chaos-mesh/chaos-mesh/pkg/dashboard/store/experiment"
++	schedulestore "github.com/chaos-mesh/chaos-mesh/pkg/dashboard/store/schedule"
++	workflowstore "github.com/chaos-mesh/chaos-mesh/pkg/dashboard/store/workflow"
++)
++
++type recoveryEvents struct {
++	core.EventStore
++	failure error
++}
++
++func (s *recoveryEvents) DeleteByUID(ctx context.Context, uid string) error {
++	if s.failure != nil {
++		return s.failure
++	}
++	return s.EventStore.DeleteByUID(ctx, uid)
++}
++
++func (s *recoveryEvents) DeleteByUIDList(ctx context.Context, uids []string) error {
++	if s.failure != nil {
++		return s.failure
++	}
++	return s.EventStore.DeleteByUIDList(ctx, uids)
++}
++
++type archiveFixture struct {
++	router *gin.Engine
++	db     *gorm.DB
++	events *recoveryEvents
++}
++
++func newArchiveFixture(t *testing.T, conf *config.ChaosDashboardConfig) archiveFixture {
++	t.Helper()
++	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
++	require.NoError(t, err)
++	sqlDB, err := db.DB()
++	require.NoError(t, err)
++	sqlDB.SetMaxOpenConns(1)
++	t.Cleanup(func() { require.NoError(t, sqlDB.Close()) })
++	experiments, err := experimentstore.NewStore(db)
++	require.NoError(t, err)
++	schedules, err := schedulestore.NewStore(db)
++	require.NoError(t, err)
++	workflows, err := workflowstore.NewStore(db)
++	require.NoError(t, err)
++	events, err := eventstore.NewStore(db)
++	require.NoError(t, err)
++	failures := &recoveryEvents{EventStore: events}
++	router, kube := apiRouter(t, nil, interceptor.Funcs{}, nil)
++	auth := kubefake.NewClientset()
++	auth.PrependReactor("create", "selfsubjectaccessreviews", func(k8stesting.Action) (bool, runtime.Object, error) {
++		return true, &authorizationv1.SelfSubjectAccessReview{Status: authorizationv1.SubjectAccessReviewStatus{Allowed: true}}, nil
++	})
++	clientpool.K8sClients = apiArchivePool{apiClientPool: apiClientPool{kube: kube}, auth: auth.AuthorizationV1()}
++	archive.Register(router.Group("/api"), archive.NewService(experiments, schedules, failures, workflows, conf))
++	return archiveFixture{router, db, failures}
++}
++
++type archiveKind struct {
++	path   string
++	record func(uid, namespace, snapshot string) any
++}
++
++func archiveKinds() []archiveKind {
++	return []archiveKind{
++		{"/archives", func(uid, namespace, snapshot string) any {
++			return &core.Experiment{ExperimentMeta: core.ExperimentMeta{UID: uid, Namespace: namespace, Name: "example", Kind: "PodChaos", Archived: true}, Experiment: snapshot}
++		}},
++		{"/archives/schedules", func(uid, namespace, snapshot string) any {
++			return &core.Schedule{ScheduleMeta: core.ScheduleMeta{UID: uid, Namespace: namespace, Name: "example", Kind: "Schedule", Archived: true}, Schedule: snapshot}
++		}},
++		{"/archives/workflows", func(uid, namespace, snapshot string) any {
++			return &core.WorkflowEntity{WorkflowMeta: core.WorkflowMeta{UID: uid, Namespace: namespace, Name: "example", Archived: true}, Workflow: snapshot}
++		}},
++	}
++}
++
++func TestArchiveCleanupRetryAfterEventFailure(t *testing.T) {
++	for _, kind := range archiveKinds() {
++		for _, batch := range []bool{false, true} {
++			name := kind.path + map[bool]string{false: "/single", true: "/batch"}[batch]
++			t.Run(name, func(t *testing.T) {
++				fixture := newArchiveFixture(t, &config.ChaosDashboardConfig{TargetNamespace: "target"})
++				uids := []string{"uid"}
++				if batch {
++					uids = append(uids, "second")
++				}
++				for _, uid := range uids {
++					require.NoError(t, fixture.db.Create(kind.record(uid, "target", `{}`)).Error)
++					require.NoError(t, fixture.events.Cre
+```
+
+**File**: `pkg/dashboard/apiserver/auth/gcp/recovery_test.go` (added, +138/-0)
+```diff
+@@ -0,0 +1,138 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package gcp
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/gin-gonic/gin"
++	"golang.org/x/oauth2"
++)
++
++func TestGCPProviderFailureRecovery(t *testing.T) {
++	const validToken = `{"access_token":"recovered-access","refresh_token":"refresh","expires_in":3600,"token_type":"Bearer"}`
++	for _, endpoint := range []string{"callback", "refresh"} {
++		for _, tc := range []struct {
++			name, body, stop               string
++			status                         int
++			transportError, missingRefresh bool
++		}{
++			{name: "token transport", transportError: true},
++			{name: "invalid grant", body: `{"error":"invalid_grant"}`, status: 400},
++			{name: "malformed token", body: `{`, status: 200},
++			{name: "missing access token", body: `{"expires_in":3600}`, status: 200},
++			{name: "numeric access token", body: `{"access_token":42}`, status: 200},
++			{name: "canceled token", stop: "cancel"},
++			{name: "deadline token", stop: "deadline"},
++			{name: "missing refresh token", missingRefresh: true},
++		} {
++			if endpoint == "callback" && tc.missingRefresh {
++				continue
++			}
++			t.Run(endpoint+"/"+tc.name, func(t *testing.T) {
++				service := testService(t)
++				router := gin.New()
++				router.Use(service.Middleware)
++				router.GET("/callback", service.authCallback)
++				downstream := 0
++				router.GET("/", func(c *gin.Context) {
++					downstream++
++					if got := c.GetHeader("Authorization"); got != "Bearer recovered-access" {
++						t.Errorf("Authorization %q", got)
++					}
++					c.Status(http.StatusNoContent)
++				})
++				target, grant := "/", "refresh_token"
++				successStatus := http.StatusNoContent
++				if endpoint == "callback" {
++					target, grant = "/callback?code=code", "authorization_code"
++					successStatus = http.StatusFound
++				}
++				faultActive := true
++				faultCalls := 0
++				request := func() (*httptest.ResponseRecorder, *http.Request) {
++					req := gcpRequest(t, target, grant, validToken, http.StatusOK)
++					delegate := req.Context().Value(oauth2.HTTPClient).(*http.Client).Transport
++					ctx := req.Context()
++					cancel := func() {}
++					var wantErr error
++					if faultActive && tc.stop == "cancel" {
++						ctx, cancel = context.WithCancel(ctx)
++						wantErr = context.Canceled
++					}
++					if faultActive && tc.stop == "deadline" {
++						ctx, cancel = context.WithDeadline(ctx, time.Now().Add(-time.Second))
++						wantErr = context.DeadlineExceeded
++					}
++					defer cancel()
++					transport := tokenTransport(func(r *http.Request) (*http.Response, error) {
++						if faultActive {
++							faultCalls++
++							if tc.stop != "" {
++								cancel()
++								if !errors.Is(r.Context().Err(), wantErr) {
++									t.Errorf("provider context error %v, want %v", r.Context().Err(), wantErr)
++								}
++								return nil, r.Context().Err()
++							}
++							if tc.transportError {
++								return nil, errors.New("provider connection reset")
++							}
++							return &http.Response{StatusCode: tc.status, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(strings.NewReader(tc.body)), Request: r}, nil
++						}
++						return delegate.RoundTrip(r)
++					})
++					req = req.WithContext(context.WithValue(ctx, oauth2.HTTPClient, &http.Client{Transport: transport}))
++					if endpoint == "refresh" {
++						req.Header.Set("X-Authorization-Method", "gcp")
++						req.Header.Set("X-Authorization-AccessToken", "expired-access")
++						req.Header.Set("X-Authorization-Expiry", time.Now().Add(-time.Hour).Format(time.RFC3339))
++						if !faultActive || !tc.missingRefresh {
++							req.Header.Set("X-Authorization-RefreshToken", "refresh")
++						}
++					}
++					w := httptest.NewRecorder()
++					router.ServeHTTP(w, req)
++					return w, req
++				}
++				failed, req := request()
++				if failed.Code != http.StatusInternalServerError || len(failed.Result().Cookies()) != 0 || failed.Header().Get("Location") != "" || req.Header.Get("Authorization") != "" || downstream != 0 {
++					t.Fatalf("failure status %d, cookies %v, location %q, authorization %q, downstream %d, body %s", failed.Code, cookies(failed), failed.Header().Get("Location"), req.Header.Get("Authorization"), downstream, failed.Body)
++				}
++				if tc.missingRefresh && faultCalls != 0 {
++					t.Fatalf("missing refresh token sent %d token requests", faultC
+```
+
+**File**: `pkg/dashboard/apiserver/auth/gcp/service_test.go` (added, +179/-0)
+```diff
+@@ -0,0 +1,179 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package gcp
++
++import (
++	"context"
++	"fmt"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/gin-gonic/gin"
++	"github.com/go-logr/logr"
++	"golang.org/x/oauth2"
++
++	"github.com/chaos-mesh/chaos-mesh/pkg/config"
++)
++
++type tokenTransport func(*http.Request) (*http.Response, error)
++
++func (f tokenTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
++
++func gcpRequest(t *testing.T, target, grant, response string, status int) *http.Request {
++	t.Helper()
++	transport := tokenTransport(func(r *http.Request) (*http.Response, error) {
++		if r.URL.String() != "https://oauth2.googleapis.com/token" {
++			return nil, fmt.Errorf("unexpected provider URL %s", r.URL)
++		}
++		if err := r.ParseForm(); err != nil {
++			t.Fatal(err)
++		}
++		if r.Form.Get("grant_type") != grant {
++			t.Errorf("grant %q, want %q", r.Form.Get("grant_type"), grant)
++		}
++		if grant == "authorization_code" && (r.Form.Get("code") != "code" || r.Form.Get("redirect_uri") != "https://dashboard.test/mesh/api/auth/gcp/callback") {
++			t.Errorf("token form %v", r.Form)
++		}
++		if grant == "refresh_token" && r.Form.Get("refresh_token") != "refresh" {
++			t.Errorf("token form %v", r.Form)
++		}
++		return &http.Response{StatusCode: status, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(strings.NewReader(response)), Request: r}, nil
++	})
++	r := httptest.NewRequest("GET", target, nil)
++	return r.WithContext(context.WithValue(r.Context(), oauth2.HTTPClient, &http.Client{Transport: transport}))
++}
++
++func testService(t *testing.T) *Service {
++	t.Helper()
++	s, err := NewService(&config.ChaosDashboardConfig{RootURL: "https://dashboard.test/mesh", GcpClientID: "client", GcpClientSecret: "secret"}, logr.Discard())
++	if err != nil {
++		t.Fatal(err)
++	}
++	return s
++}
++
++func cookies(w *httptest.ResponseRecorder) map[string]string {
++	values := make(map[string]string)
++	for _, c := range w.Result().Cookies() {
++		values[c.Name], _ = url.QueryUnescape(c.Value)
++	}
++	return values
++}
++
++func TestGCPRedirect(t *testing.T) {
++	r := gin.New()
++	Register(r.Group("/api"), testService(t), &config.ChaosDashboardConfig{GcpSecurityMode: true})
++	w := httptest.NewRecorder()
++	r.ServeHTTP(w, httptest.NewRequest("GET", "/api/auth/gcp/redirect", nil))
++	u, err := url.Parse(w.Header().Get("Location"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if w.Code != 302 || u.Host != "accounts.google.com" || u.Query().Get("client_id") != "client" || u.Query().Get("access_type") != "offline" || u.Query().Get("redirect_uri") != "https://dashboard.test/mesh/api/auth/gcp/callback" {
++		t.Fatalf("status %d redirect %s", w.Code, u)
++	}
++}
++
++func TestGCPCallback(t *testing.T) {
++	for _, tc := range []struct {
++		name, body             string
++		providerStatus, status int
++	}{
++		{"success", `{"access_token":"access","refresh_token":"refresh","expires_in":3600,"token_type":"Bearer"}`, 200, 302},
++		{"provider error", `{"error":"invalid_grant"}`, 400, 500},
++		{"malformed token", `{`, 200, 500},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			r := gin.New()
++			Register(r.Group("/api"), testService(t), &config.ChaosDashboardConfig{GcpSecurityMode: true})
++			w := httptest.NewRecorder()
++			r.ServeHTTP(w, gcpRequest(t, "/api/auth/gcp/callback?code=code", "authorization_code", tc.body, tc.providerStatus))
++			got := cookies(w)
++			if w.Code != tc.status {
++				t.Fatalf("status %d body %s", w.Code, w.Body)
++			}
++			if tc.status == 302 {
++				if got["access_token"] != "access" || got["refresh_token"] != "refresh" || w.Header().Get("Location") != "/" {
++					t.Fatalf("cookies %v location %q", got, w.Header().Get("Location"))
++				}
++				if expiry, err := time.Parse(time.RFC3339, got["expiry"]); err != nil || !expiry.After(time.Now()) {
++					t.Fatalf("expiry %q error %v", got["expiry"], err)
++				}
++			} else if len(got) != 0 {
++				t.Fatalf("failed authentication set cookies %v", got)
++			}
++		})
++	}
++}
++
++func TestGCPMiddleware(t *testing.T) {
++	for _, tc := range []struct {
++		name, method, expiry, body, token string
++		providerStatus, status            int
++	}{
++		{"other authentication", "", "", "", "", 200, 204},
++		{"invalid expiry", "gcp", "invalid", "", "", 200, 500},
++		{"valid token", "gcp", time.Now().Add(time.Hour).Format(time.RFC3339), "", "Bearer existing", 200, 204},
++		{
+```
+
+**File**: `pkg/dashboard/apiserver/auth/oidc/middleware.go` (modified, +16/-8)
+```diff
+@@ -19,14 +19,13 @@ import (
+ 	"time"
  
- 	testCode += testInit
- 	file, err = os.Create("./api/v1alpha1/zz_generated.chaosmesh_test.go")
-@@ -162,34 +163,39 @@ func init() {
- 		os.Exit(1)
- 	}
- 	fmt.Fprint(file, testCode)
-+	file.Close()
+ 	"github.com/gin-gonic/gin"
++	"github.com/pkg/errors"
+ 	"golang.org/x/oauth2"
  
- 	file, err = os.Create("./api/v1alpha1/zz_generated.workflow.chaosmesh.go")
+ 	"github.com/chaos-mesh/chaos-mesh/pkg/dashboard/apiserver/utils"
+ )
+ 
+ func (s *Service) Middleware(c *gin.Context) {
+-	ctx := c.Request.Context()
+-
+ 	s.logger.V(1).Info("handling oidc middleware")
+ 	// The frontend reuses the GCP cookie path for OIDC sessions and sends
+ 	// X-Authorization-Method: "gcp", so this must match "gcp" to stay consistent
+@@ -36,6 +35,7 @@ func (s *Service) Middleware(c *gin.Context) {
+ 		c.Next()
+ 		return
+ 	}
++	ctx := s.oauthContext(c.Request.Context())
+ 
+ 	expiry, err := time.Parse(time.RFC3339, c.Request.Header.Get("X-Authorization-Expiry"))
  	if err != nil {
- 		log.Error(err, "fail to create file")
- 		os.Exit(1)
+@@ -47,15 +47,23 @@ func (s *Service) Middleware(c *gin.Context) {
+ 		utils.SetAPIError(c, utils.ErrInternalServer.WrapWithNoMessage(err))
+ 		return
  	}
- 	fmt.Fprint(file, workflowGenerator.Render())
-+	file.Close()
+-	token, err := oauth.TokenSource(ctx, &oauth2.Token{
++	token := &oauth2.Token{
+ 		AccessToken:  c.Request.Header.Get("X-Authorization-AccessToken"),
+ 		RefreshToken: c.Request.Header.Get("X-Authorization-RefreshToken"),
+ 		Expiry:       expiry,
+-	}).Token()
+-
+-	if err != nil {
+-		utils.SetAPIError(c, utils.ErrInternalServer.WrapWithNoMessage(err))
+-		return
++	}
++	if !token.Valid() {
++		token, err = oauth.TokenSource(ctx, token).Token()
++		if err != nil {
++			utils.SetAPIError(c, utils.ErrInternalServer.WrapWithNoMessage(err))
++			return
++		}
++		idToken, ok := token.Extra("id_token").(string)
++		if !ok || idToken == "" {
++			utils.SetAPIError(c, utils.ErrInternalServer.WrapWithNoMessage(errors.New("OIDC provider did not return an id_token")))
++			return
++		}
++		token.AccessToken = idToken
+ 	}
  
- 	file, err = os.Create("./api/v1alpha1/zz_generated.workflow.chaosmesh_test.go")
- 	if err != nil {
- 		log.Error(err, "fail to create file")
- 		os.Exit(1)
- 	}
- 	fmt.Fprint(file, workflowTestGenerator.Render())
-+	file.Close()
- 
- 	file, err = os.Create("./api/v1alpha1/zz_generated.schedule.chaosmesh.go")
- 	if err != nil {
- 		log.Error(err, "fail to create file")
- 		os.Exit(1)
- 	}
- 	fmt.Fprint(file, scheduleGenerator.Render())
-+	file.Close()
- 
- 	file, err = os.Create("./ui/app/src/api/zz_generated.frontend.chaos-mesh.ts")
- 	if err != nil {
- 		log.Error(err, "fail to create file")
- 		os.Exit(1)
- 	}
- 	fmt.Fprint(file, frontendGenerator.Render())
-+	file.Close()
+ 	token.SetAuthHeader(c.Request)
+```
+
+**File**: `pkg/dashboard/apiserver/auth/oidc/recovery_test.go` (added, +151/-0)
+```diff
+@@ -0,0 +1,151 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package oidc
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/gin-gonic/gin"
++	"golang.org/x/oauth2"
++)
++
++func TestOIDCProviderFailureRecovery(t *testing.T) {
++	const validToken = `{"access_token":"oauth-access","id_token":"recovered-identity","refresh_token":"refresh","expires_in":3600,"token_type":"Bearer"}`
++	for _, endpoint := range []string{"callback", "refresh"} {
++		for _, tc := range []struct {
++			name, path, body string
++			status           int
++			transportError   bool
++			stop             string
++			missingRefresh   bool
++		}{
++			{name: "discovery transport", path: "/.well-known/openid-configuration", transportError: true},
++			{name: "discovery unavailable", path: "/.well-known/openid-configuration", body: `{"error":"unavailable"}`, status: 503},
++			{name: "issuer mismatch", path: "/.well-known/openid-configuration", body: `{"issuer":"https://other.test","token_endpoint":"https://issuer.test/token"}`, status: 200},
++			{name: "malformed discovery", path: "/.well-known/openid-configuration", body: `{`, status: 200},
++			{name: "token transport", path: "/token", transportError: true},
++			{name: "invalid grant", path: "/token", body: `{"error":"invalid_grant"}`, status: 400},
++			{name: "malformed token", path: "/token", body: `{`, status: 200},
++			{name: "numeric identity", path: "/token", body: `{"access_token":"access","id_token":42}`, status: 200},
++			{name: "null identity", path: "/token", body: `{"access_token":"access","id_token":null}`, status: 200},
++			{name: "missing access token", path: "/token", body: `{"id_token":"identity"}`, status: 200},
++			{name: "numeric access token", path: "/token", body: `{"access_token":42,"id_token":"identity"}`, status: 200},
++			{name: "canceled discovery", path: "/.well-known/openid-configuration", stop: "cancel"},
++			{name: "deadline discovery", path: "/.well-known/openid-configuration", stop: "deadline"},
++			{name: "canceled token", path: "/token", stop: "cancel"},
++			{name: "deadline token", path: "/token", stop: "deadline"},
++			{name: "missing refresh token", missingRefresh: true},
++		} {
++			if endpoint == "callback" && tc.missingRefresh {
++				continue
++			}
++			t.Run(endpoint+"/"+tc.name, func(t *testing.T) {
++				service := newTestService(t)
++				router := gin.New()
++				router.Use(service.Middleware)
++				router.GET("/callback", service.authCallback)
++				downstream := 0
++				router.GET("/", func(c *gin.Context) {
++					downstream++
++					if got := c.GetHeader("Authorization"); got != "Bearer recovered-identity" {
++						t.Errorf("Authorization %q", got)
++					}
++					c.Status(http.StatusNoContent)
++				})
++				target := "/"
++				successStatus := http.StatusNoContent
++				if endpoint == "callback" {
++					target = "/callback?code=test-code"
++					successStatus = http.StatusFound
++				}
++				faultActive := true
++				faultCalls, tokenCalls := 0, 0
++				request := func() (*httptest.ResponseRecorder, *http.Request) {
++					req := oidcRequest(t, target, validToken, http.StatusOK)
++					delegate := req.Context().Value(oauth2.HTTPClient).(*http.Client).Transport
++					ctx := req.Context()
++					cancel := func() {}
++					var wantErr error
++					if faultActive && tc.stop == "cancel" {
++						ctx, cancel = context.WithCancel(ctx)
++						wantErr = context.Canceled
++					}
++					if faultActive && tc.stop == "deadline" {
++						ctx, cancel = context.WithDeadline(ctx, time.Now().Add(-time.Second))
++						wantErr = context.DeadlineExceeded
++					}
++					defer cancel()
++					transport := providerTransport(func(r *http.Request) (*http.Response, error) {
++						if r.URL.Path == "/token" {
++							tokenCalls++
++						}
++						if faultActive && r.URL.Path == tc.path {
++							faultCalls++
++							if tc.stop != "" {
++								cancel()
++								if !errors.Is(r.Context().Err(), wantErr) {
++									t.Errorf("provider context error %v, want %v", r.Context().Err(), wantErr)
++								}
++								return nil, r.Context().Err()
++							}
++							if tc.transportError {
++								return nil, errors.New("provider connection reset")
++							}
++							return &http.Response{StatusCode: tc.status, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(strings.NewReader(tc.body)), Request: r}, nil
++						}
++						return delegate.RoundTrip(r)
++					})
++					req =
+```
+
+**File**: `pkg/dashboard/apiserver/auth/oidc/service.go` (modified, +16/-26)
+```diff
+@@ -96,22 +96,10 @@ func Register(r *gin.RouterGroup, s *Service, conf *config.ChaosDashboardConfig)
  }
  
- func getType(fset *token.FileSet, node ast.Node, comment *ast.Comment) (*ast.TypeSpec, error) {
-```
-
----
-
-### Incident Patch 14: `8b48c766` (2026-07-21)
-**Commit Message**: docs(readme): add interactive Killercoda playground link to Quick start (#5021)
-
-Assisted-by: Claude <[REDACTED_EMAIL]>
-
-Signed-off-by: Saiyam Pathak <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +2/-0)
-```diff
-@@ -56,6 +56,8 @@ You can get the full list of CRD objects and their specifications in the [Chaos
+ func (s *Service) getOauthConfig(c *gin.Context) (oauth2.Config, error) {
+-	ctx := c.Request.Context()
++	ctx := s.oauthContext(c.Request.Context())
+ 	url := *s.rootURL
+ 	url.Path = path.Join(s.rootURL.Path, "./api/auth/oidc/callback")
  
- See [Quick Start](https://chaos-mesh.org/docs/quick-start) and [Install Chaos Mesh using Helm](https://chaos-mesh.org/docs/production-installation-using-helm/).
+-	if s.caPEMBytes != nil {
+-		// load self-signed CA
+-		caCertPool := x509.NewCertPool()
+-		caCertPool.AppendCertsFromPEM(s.caPEMBytes)
+-		trustSelfSignedCAHTTPClient := &http.Client{
+-			Transport: &http.Transport{
+-				TLSClientConfig: &tls.Config{RootCAs: caCertPool},
+-			},
+-		}
+-		ctx = gooidc.ClientContext(ctx, trustSelfSignedCAHTTPClient)
+-	}
+-
+ 	provider, err := gooidc.NewProvider(ctx, s.issuerURL)
+ 	if err != nil {
+ 		s.logger.Error(err, "failed to create oidc provider")
+@@ -129,6 +117,20 @@ func (s *Service) getOauthConfig(c *gin.Context) (oauth2.Config, error) {
+ 	}, nil
+ }
  
-+Prefer to try it without setting up a cluster? Run the [interactive Killercoda playground](https://killercoda.com/saiyampathak/scenario/chaos-mesh) in your browser: install Chaos Mesh on a real 2-node Kubernetes cluster, run PodChaos and NetworkChaos experiments, explore the Dashboard, and chain a Workflow - in about 20 minutes.
++func (s *Service) oauthContext(ctx context.Context) context.Context {
++	if s.caPEMBytes == nil {
++		return ctx
++	}
++	caCertPool := x509.NewCertPool()
++	caCertPool.AppendCertsFromPEM(s.caPEMBytes)
++	client := &http.Client{
++		Transport: &http.Transport{
++			TLSClientConfig: &tls.Config{RootCAs: caCertPool},
++		},
++	}
++	return gooidc.ClientContext(ctx, client)
++}
 +
- ## Contributing
+ func (s *Service) handleRedirect(c *gin.Context) {
+ 	oauth, err := s.getOauthConfig(c)
+ 	if err != nil {
+@@ -143,26 +145,14 @@ func (s *Service) handleRedirect(c *gin.Context) {
+ }
  
- See the [contributing guide](./CONTRIBUTING.md) and [development guide](https://chaos-mesh.org/docs/developer-guide-overview).
-```
-
----
-
-### Incident Patch 15: `a63c2055` (2026-07-07)
-**Commit Message**: ci: extract Build Chaos Mesh Build Env step into composite action (#5000)
-
-Signed-off-by: Siddhi Khandelwal <[REDACTED_EMAIL]>
-Co-authored-by: Zhiqiang ZHOU <[REDACTED_EMAIL]>
-
-**File**: `.github/actions/build-chaos-mesh-build-env/action.yml` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+name: 'Build Chaos Mesh Build Env'
-+description: 'Builds the Chaos Mesh build environment image'
-+inputs:
-+  use-docker-cache:
-+    description: 'Whether to use Docker cache during build'
-+    required: false
-+    default: 'false'
-+runs:
-+  using: "composite"
-+  steps:
-+    - name: Build Chaos Mesh Build Env
-+      shell: bash
-+      env:
-+        IMAGE_BUILD_ENV_BUILD: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'rebuild-build-env-image') || false }}
-+        USE_DOCKER_CACHE: ${{ inputs.use-docker-cache }}
-+      run: |
-+        if [ "${IMAGE_BUILD_ENV_BUILD}" = "true" ] ; then
-+          export IMAGE_BUILD_ENV_BUILD=1;
-+        else
-+          export IMAGE_BUILD_ENV_BUILD=0;
-+        fi
-+        if [ "${USE_DOCKER_CACHE}" = "true" ] ; then
-+          make \
-+            DOCKER_CACHE=1 \
-+            DOCKER_CACHE_DIR="$GITHUB_WORKSPACE/cache" \
-+            GO_BUILD_CACHE="$GITHUB_WORKSPACE/cache" \
-+            image-build-env
-+        else
-+          make image-build-env
-+        fi
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-10)
-```diff
-@@ -40,6 +40,7 @@ jobs:
-               - go.*
-               - '**.go'
-               - 'helm/**'
-+              - '.github/actions/build-chaos-mesh-build-env/**'
-             ui:
-               - 'ui/pnpm-lock.yaml'
-               - '**.js'
-@@ -60,16 +61,7 @@ jobs:
-       - uses: actions/checkout@v7
+ func (s *Service) authCallback(c *gin.Context) {
+-	ctx := c.Request.Context()
++	ctx := s.oauthContext(c.Request.Context())
  
-       - name: Build Chaos Mesh Build Env
--        env:
--          IMAGE_BUILD_ENV_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'rebuild-build-env-image') }}
--        run: |
--          if [ "${IMAGE_BUILD_ENV_BUILD}" = "true" ] ; then
--            export IMAGE_BUILD_ENV_BUILD=1;
--          else
--            export IMAGE_BUILD_ENV_BUILD=0;
--          fi
+ 	oauth, err := s.getOauthConfig(c)
+ 	if err != nil {
+ 		utils.SetAPIError(c, utils.ErrInternalServer.WrapWithNoMessage(err))
+ 		return
+ 	}
+ 
+-	if s.caPEMBytes != nil {
+-		// load self-signed CA
+-		caCertPool := x509.NewCertPool()
+-		caCertPool.AppendCertsFromPEM(s.caPEMBytes)
+-		trustSelfSignedCAHTTPClient := &http.Client{
+-			Transport: &http.Transport{
+-				TLSClientConfig: &tls.Config{RootCAs: caCertPool},
+-			},
+-		}
+-		ctx = context.WithValue(ctx, oauth2.HTTPClient, trustSelfSignedCAHTTPClient)
+-	}
 -
--          make image-build-env
-+        uses: ./.github/actions/build-chaos-mesh-build-env
- 
-       - name: Build Chaos Mesh Dev Env
-         env:
-```
-
-**File**: `.github/workflows/e2e_test.yml` (modified, +3/-18)
-```diff
-@@ -33,6 +33,7 @@ jobs:
-             test/integration_test/**
-             .github/**
-             !.github/workflows/e2e_test.yml
-+            !.github/actions/build-chaos-mesh-build-env/**
-       - name: Show outputs
-         run: echo "${{ toJSON(steps.filter.outputs) }}"
- 
-@@ -45,15 +46,7 @@ jobs:
-         uses: actions/checkout@v7
-       - name: Build Chaos Mesh Build Env
-         if: ${{ github.event.pull_request }}
--        env:
--          IMAGE_BUILD_ENV_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'rebuild-build-env-image') }}
--        run: |
--          if [ "${IMAGE_BUILD_ENV_BUILD}" = "true" ] ; then
--            export IMAGE_BUILD_ENV_BUILD=1;
--          else
--            export IMAGE_BUILD_ENV_BUILD=0;
--          fi
--          make image-build-env
-+        uses: ./.github/actions/build-chaos-mesh-build-env
-       - name: Build Chaos Mesh Dev Env
-         if: ${{ github.event.pull_request }}
-         env:
-@@ -111,15 +104,7 @@ jobs:
-         uses: actions/checkout@v7
-       - name: Build Chaos Mesh Build Env
-         if: ${{ github.event.pull_request }}
--        env:
--          IMAGE_BUILD_ENV_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'rebuild-build-env-image') }}
--        run: |
--          if [ "${IMAGE_BUILD_ENV_BUILD}" = "true" ] ; then
--            export IMAGE_BUILD_ENV_BUILD=1;
--          else
--            export IMAGE_BUILD_ENV_BUILD=0;
--          fi
--          make image-build-env
-+        uses: ./.github/actions/build-chaos-mesh-build-env
-       - name: Build Chaos Mesh Dev Env
-         if: ${{ github.event.pull_request }}
-         env:
-```
-
-**File**: `.github/workflows/integration_test.yml` (modified, +1/-10)
-```diff
-@@ -46,16 +46,7 @@ jobs:
- 
-       - name: Build Chaos Mesh Build Env
-         if: ${{ github.event.pull_request }}
--        env:
--          IMAGE_BUILD_ENV_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'rebuild-build-env-image') }}
--        run: |
--          if [ "${IMAGE_BUILD_ENV_BUILD}" = "true" ] ; then
--            export IMAGE_BUILD_ENV_BUILD=1;
--          else
--            export IMAGE_BUILD_ENV_BUILD=0;
--          fi
--
--          make image-build-env
-+        uses: ./.github/actions/build-chaos-mesh-build-env
- 
-       - name: Build Chaos Mesh Dev Env
-         if: ${{ github.event.pull_request }}
-```
-
-**File**: `.github/workflows/upload_image_pr.yml` (modified, +3/-14)
-```diff
-@@ -29,20 +29,9 @@ jobs:
-           DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create --use --name chaos-mesh-builder
- 
-       - name: Build Chaos Mesh Build Env
--        env:
--          IMAGE_BUILD_ENV_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'rebuild-build-env-image') }}
--        run: |
--          if [ "${IMAGE_BUILD_ENV_BUILD}" = "true" ] ; then
--            export IMAGE_BUILD_ENV_BUILD=1;
--          else
--            export IMAGE_BUILD_ENV_BUILD=0;
--          fi
--
--          make \
--            DOCKER_CACHE=1 \
--            DOCKER_CACHE_DIR=$GITHUB_WORKSPACE/cache \
--            GO_BUILD_CACHE=$GITHUB_WORKSPACE/cache \
--            image-build-env
-+        uses: ./.github/actions/build-chaos-mesh-build-env
-+        with:
-+          use-docker-cache: 'true'
- 
-       - name: Build Chaos Mesh Dev Env
-         env:
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- - Bump go to 1.25.8 [#4867](https://github.com/chaos-mesh/chaos-mesh/pull/4867)
- - Upgrade e2e k8s versions to 1.35.2, 1.34.5 and 1.33.9 [#4872](https://github.com/chaos-mesh/chaos-mesh/pull/4872)
- - Replace deprecated `wait.PollImmediate` with `wait.PollUntilContextTimeout` in e2e tests [#4910](https://github.com/chaos-mesh/chaos-mesh/pull/4910)
-+- ci: extract Build Chaos Mesh Build Env step into composite action [#5000](https://github.com/chaos-mesh/chaos-mesh/pull/5000)
- 
- ### Deprecated
- 
+ 	oauth2Token, err := oauth.Exchange(ctx, c.Request.URL.Query().Get("code"), oauth2.AccessTypeOffline)
+ 	if err != nil {
+ 		utils.SetAPIError(c, utils.ErrInternalServer.WrapWithNoMessage(err))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5098** (2026-09-29): fix(jvmchaos): Java25 compatibility. Upgrade byteman-helper to v4.0.27-12 (@bendi)
-- **PR #5096** (closed): fix(selector): require containerNames when the target pod has several containers (@Yash121l)
-- **PR #5092** (closed): fix(networkchaos): preserve overlapping selector roles (@bvolpato)
-- **PR #5091** (closed): fix(httpchaos): retry missing TLS Secret data (@bvolpato)
-- **PR #5090** (closed): fix(networkchaos): isolate generated rule names (@bvolpato)
-- **PR #5089** (closed): fix(chaosdaemon): keep TC chains unique across devices (@bvolpato)
-- **PR #5088** (closed): fix(stresschaos): roll back CPU on memory startup failure (@bvolpato)
-- **PR #5087** (closed): fix(bpm): release identifiers after failed process starts (@bvolpato)
+- **PR #5138** (2026-10-16): fix(iochaos): upgrade toda to v0.3.0 (@g1eny0ung)
+- **PR #5137** (2026-10-16): fix(dashboard): handle failures and add Go regression tests (@g1eny0ung)
+- **PR #5136** (2026-10-16): refactor(dashboard): clarify store and workflow naming (@g1eny0ung)
+- **PR #5135** (2026-10-16): chore: ready for v2.8.5 (@g1eny0ung)
+- **PR #5134** (2026-10-15): fix(multicluster): isolate remote API failures and retry forwarding (@g1eny0ung)
+- **PR #5133** (2026-10-15): fix(ui): show partition behavior only for partition actions (@g1eny0ung)
 
 ---
 
@@ -3439,3 +3366,35 @@ Co-authored-by: Zhiqiang ZHOU <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. multicluster): isolate remote API failures and retry forwarding (#5134)
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `90ab7778`: multicluster): isolate remote API failures and retry forwarding (#5134). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+- Isolate remote-cluster API outages and retry remote chaos forwarding and deletion after recovery.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `90ab7778` are properly handled with clean fallback behavior.

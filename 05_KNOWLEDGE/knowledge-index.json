@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:14:07.321Z",
-  "total_verified_learnings": 252,
+  "last_updated": "2026-10-18T21:20:23.538Z",
+  "total_verified_learnings": 258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -329,22 +329,35 @@
     "learn-github-adobe-react-spectrum": {
       "learning_id": "learn-github-adobe-react-spectrum",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "adobe-react-spectrum",
+      "source": "adobe/react-spectrum",
+      "repository": "adobe/react-spectrum",
       "slug": "adobe-react-spectrum",
       "platform": "github",
       "source_url": "https://github.com/adobe/react-spectrum",
-      "source_version": "HEAD",
-      "content_hash": "3fbcb2f893aab87ecbdc2ff89bb3f7b6ca1280c2c2608f770bdf5e37394af417",
+      "source_version": "26134433",
+      "content_hash": "614264b654caf0858a7564fc40ed2ae3bbc35a081b66c27741f65ec5f22ee33a",
       "dossier_path": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1713,
+          "title": "avoid an extra render on mount in useDescription (#10754)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.568Z"
+      "verified_at": "2026-10-18T21:20:07.642Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-adongwanai-agentguide": {
       "learning_id": "learn-github-adongwanai-agentguide",
@@ -3408,22 +3421,35 @@
     "learn-github-chaos-mesh-chaos-mesh": {
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "chaos-mesh-chaos-mesh",
+      "source": "chaos-mesh/chaos-mesh",
+      "repository": "chaos-mesh/chaos-mesh",
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "HEAD",
-      "content_hash": "bce7a557aa39a5595ba0526780198315bd2d0e6a283e19f6e7e73268d9cad434",
+      "source_version": "c39bd4fa",
+      "content_hash": "7c0d5c79cf68a6d27360f12e7ed3d9061ca42bed3316e1bf6d3f8b370accb608",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1716,
+          "title": "multicluster): isolate remote API failures and retry forwarding (#5134)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.245Z"
+      "verified_at": "2026-10-18T21:20:17.464Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-charlie85270-tail-kit": {
       "learning_id": "learn-github-charlie85270-tail-kit",
@@ -4738,22 +4764,35 @@
     "learn-github-dathere-qsv": {
       "learning_id": "learn-github-dathere-qsv",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dathere-qsv",
+      "source": "dathere/qsv",
+      "repository": "dathere/qsv",
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "HEAD",
-      "content_hash": "1fce917129a91e396a575cf4a297d113be4544bd8f9e6d9764ae3aa8eb31f1dc",
+      "source_version": "95656516",
+      "content_hash": "3c5e0c4d56980e86aa33266f17fe5bbea4fd8d2f1d512c78c0757972cf58e2a1",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1719,
+          "title": "deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.539Z"
+      "verified_at": "2026-10-18T21:20:23.532Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-davepoon-buildwithclaude": {
       "learning_id": "learn-github-davepoon-buildwithclaude",
@@ -24011,42 +24050,68 @@
     "learn-github-mattermost-mattermost": {
       "learning_id": "learn-github-mattermost-mattermost",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mattermost-mattermost",
+      "source": "mattermost/mattermost",
+      "repository": "mattermost/mattermost",
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "HEAD",
-      "content_hash": "20a21ff9468a488732a176f07b90df724d223b14d86c14bf4dbba20897189efb",
+      "source_version": "f38678d0",
+      "content_hash": "2d7425afae84fced008aa376d17b4bd6369125afa44628d07d94f4c930551f3c",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1715,
+          "title": "MM-70921: Fix rich text editor parity with posted messages (#38852)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.188Z"
+      "verified_at": "2026-10-18T21:20:15.569Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-max-sixty-worktrunk": {
       "learning_id": "learn-github-max-sixty-worktrunk",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "max-sixty-worktrunk",
+      "source": "max-sixty/worktrunk",
+      "repository": "max-sixty/worktrunk",
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "HEAD",
-      "content_hash": "6a97468ba993f9c410325431ae59a261b83668cce2548239e946152901212bab",
+      "source_version": "5e5c65b2",
+      "content_hash": "373487cf17cc1c2ad414def9453bfc7977c55e2e08db85b6b8402334b1d666bf",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1714,
+          "title": "deps): declare dirs as a Windows-only dependency (#4465)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.193Z"
+      "verified_at": "2026-10-18T21:20:09.177Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-maximhq-bifrost": {
       "learning_id": "learn-github-maximhq-bifrost",
@@ -26426,22 +26491,35 @@
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nolabs-ai-nono",
+      "source": "nolabs-ai/nono",
+      "repository": "nolabs-ai/nono",
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "HEAD",
-      "content_hash": "eba084455ecd28199280a7a1af37e34441d509597fc8db3c692107b6191a5d90",
+      "source_version": "cf73ec0b",
+      "content_hash": "38f5d915e382a1bd1b8fafcf7407d443cf1d7f2ad92171ada1a9e7219bca3b6f",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1717,
+          "title": "ci): update cargo audit failures (#2127)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.675Z"
+      "verified_at": "2026-10-18T21:20:19.294Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-notjoemartinez-yt-fts": {
       "learning_id": "learn-github-notjoemartinez-yt-fts",
@@ -42404,12 +42482,13 @@
     "learn-github-tickernelz-opencode-mem": {
       "learning_id": "learn-github-tickernelz-opencode-mem",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tickernelz/opencode-mem",
       "repository": "tickernelz/opencode-mem",
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "a2072d75",
-      "content_hash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
+      "source_version": "60ae1a25",
+      "content_hash": "031e0d9085ea5359781e3ea82520b2a0428ff385b4f381bf9b17683e1bbc77c3",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -42417,20 +42496,26 @@
           "number": 736,
           "title": "re-raise SIGINT/SIGTERM after plugin cleanup (#409)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1718,
+          "title": "test(stats): raise aggregation test timeout for Windows CI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T21:20:21.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
         "content_hash_verified": true,
         "rules_verified": true,
         "index_read_back_verified": true
-      },
-      "verified_at": "2026-10-13T18:17:57.131Z"
+      }
     },
     "learn-huggingface-hf-autotrust-jev-35b-nvfp4": {
       "learning_id": "learn-huggingface-hf-autotrust-jev-35b-nvfp4",
@@ -66122,6 +66207,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:14:07.314Z"
+    },
+    "rule-1713": {
+      "learning_id": "rule-1713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1713,
+      "title": "avoid an extra render on mount in useDescription (#10754)",
+      "source_url": "https://github.com/adobe/react-spectrum",
+      "source_version": "26134433",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:20:07.642Z"
+    },
+    "rule-1714": {
+      "learning_id": "rule-1714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1714,
+      "title": "deps): declare dirs as a Windows-only dependency (#4465)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "5e5c65b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:20:09.177Z"
+    },
+    "rule-1715": {
+      "learning_id": "rule-1715",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1715,
+      "title": "MM-70921: Fix rich text editor parity with posted messages (#38852)",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "f38678d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:20:15.569Z"
+    },
+    "rule-1716": {
+      "learning_id": "rule-1716",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1716,
+      "title": "multicluster): isolate remote API failures and retry forwarding (#5134)",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "c39bd4fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:20:17.464Z"
+    },
+    "rule-1717": {
+      "learning_id": "rule-1717",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1717,
+      "title": "ci): update cargo audit failures (#2127)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "cf73ec0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:20:19.294Z"
+    },
+    "rule-1718": {
+      "learning_id": "rule-1718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1718,
+      "title": "test(stats): raise aggregation test timeout for Windows CI",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "60ae1a25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:20:21.174Z"
+    },
+    "rule-1719": {
+      "learning_id": "rule-1719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1719,
+      "title": "deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "95656516",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:20:23.532Z"
     }
   },
   "aliases": {

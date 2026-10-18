@@ -1,10 +1,10 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `a2072d75`  
+> **Source Version**: `60ae1a25`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T18:17:57.031Z  
-> **Learning ID**: `learn-github-tickernelz-opencode-mem-mv707j1j`  
+> **Timestamp**: 2026-10-18T21:20:21.023Z  
+> **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T18:17:55.610Z  
+> **Harvest Timestamp**: 2026-10-18T21:20:21.016Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1736 stars
+- **Stars / Engagement**: 1765 stars
 
 ---
 
@@ -348,6 +348,7 @@ import { resetTursoReady } from "./ready.js";
 import { userPromptManager } from "../user-prompt/user-prompt-manager.js";
 import { userProfileManager } from "../user-profile/user-profile-manager.js";
 import { aiSessionManager } from "../ai/session/ai-session-manager.js";
+import { skillsManager } from "../skills/skills-manager.js";
 
 export async function closeTursoAndInvalidateCaches(): Promise<void> {
   await tursoConnectionManager.closeAll();
@@ -356,6 +357,7 @@ export async function closeTursoAndInvalidateCaches(): Promise<void> {
   userPromptManager.reset();
   userProfileManager.reset();
   aiSessionManager.reset();
+  skillsManager.reset();
 }
 
 ```
@@ -966,70 +968,6 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 
 ```
 
-### Core Architecture Module: `web/src/lib/utils.ts`
-```
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-```
-
-### Core Architecture Module: `eslint.config.js`
-```
-import js from "@eslint/js";
-import prettier from "eslint-config-prettier";
-import globals from "globals";
-import ts from "typescript-eslint";
-
-export default ts.config(
-  {
-    ignores: [
-      "coverage/**",
-      "dist/**",
-      "node_modules/**",
-      "out/**",
-      "web/dist/**",
-      "web/node_modules/**",
-    ],
-  },
-  js.configs.recommended,
-  ...ts.configs.recommended,
-  prettier,
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.bun,
-        ...globals.node,
-      },
-    },
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          argsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-        },
-      ],
-    },
-  },
-  {
-    files: ["web/src/**/*.svelte.ts", "web/src/**/*.svelte.js"],
-    languageOptions: {
-      parserOptions: {
-        extraFileExtensions: [".svelte"],
-      },
-    },
-  }
-);
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1041,25 +979,6 @@ export default ts.config(
 
 - **Issue #287** (2026-09-01): **Forward memoryExtraParams in external AI cleanup requests**
   *Symptoms*: Split from #284 so provider request behavior can be fixed independently.  The external API path in `src/services/user-profile/ai-cleanup.ts` builds its request body directly and does not include configured `memoryExtraParams`. Provider-specific parameters such as `enable_thinking: false` therefore work in other model calls but are omitted during cleanup.  Acceptance criteria: - forward configured extra parameters through the cleanup request path - preserve required cleanup fields and prevent unsafe overrides - add request-body coverage  See #284 for the SiliconFlow/Qwen reproduction.
-
-- **Issue #286** (2026-09-01): **Align HTTP and AI cleanup timeout hierarchy**
-  *Symptoms*: Split from #284 so the timeout policy can be handled independently.  The HTTP server timeout is 30 seconds while the external AI cleanup fetch allows 60 seconds. A valid slow cleanup can therefore be terminated by the outer server before the inner operation reaches its own deadline, producing an empty response.  Acceptance criteria: - make the outer HTTP timeout longer than the cleanup operation deadline, or derive both from one setting - document the timeout relationship - cover the ordering with a focused test  See #284 for the observed timeout layers and reproduction.
-
-- **Issue #285** (2026-09-01): **AI cleanup aborts on premature request close event under Node.js 26**
-  *Symptoms*: Split from #284 so this can be reproduced and fixed independently.  On Windows 11 with Node.js 26, AI cleanup can abort shortly after the request body is consumed. The request `close` event fires before the actual connection ends, and the current cleanup handler treats it as a client disconnect. The browser receives `ERR_EMPTY_RESPONSE` while server-side cleanup is still running.  Acceptance criteria: - do not abort cleanup merely because the request body has closed - still cancel work on a genuine client disconnect - add a regression test for the request lifecycle  See #284 for the original environment and reproduction details.
-
-- **Issue #277** (2026-10-01): **Vector index bloat: no compress_neighbors/max_neighbors tuning - 542 MB shard for ~656 memories (2048-dim embeddings)**
-  *Symptoms*: ### Environment  - opencode-mem: 2.22.2 (issue likely affects all versions up to 2.25.0) - OS: Windows 11 - Embedding: remote OpenAI-compatible API (`doubao-embedding-vision`), **2048 dims**  ### Symptom  With only ~656 memories in a project shard, the shard DB grew to **542 MB**. `dbstat` shows the two DiskANN shadow tables account for **98%** of the file:  | object | size | |---|---| | `memories_vec_idx_shadow` | 267.4 MB | | `memories_tags_vec_idx_shadow` | 266.5 MB | | `memories` (all actual text + metadata) | 11.0 MB |  That is ~850 KB of index overhead **per memory**, while the raw vectors are only 2048 × 4 B ≈ 8 KB each.  ### Root cause  `initShardDb()` creates both vector indexes with `'metric=cosine'` only:  ```sql CREATE INDEX ... ON memories (libsql_vector_idx(vector, 'metric=cosine')) ```  libSQL defaults are aggressive at high dimensionality:  - `max_neighbors = 3·√D` → **~137 neighbors per node** at D=2048 - `compress_neighbors` unset → neighbor vectors stored as **uncompressed F32**  This matches the documented space formula `N · (Storage(T1) + M · Storage(T2))` in the [Turso docs](https://docs.turso.tech/features/ai-and-embeddings).  ### Fix verified locally  Dropping and re-creating the same-named indexes with tuned parameters, then `VACUUM`, shrinks the whole shard from **542.5 MB → 73.3 MB (~7.4×)** with search quality intact:  ```sql DROP INDEX IF EXISTS memories_vec_idx; DROP INDEX IF EXISTS memories_tags_vec_idx; CREATE INDEX memories_vec_idx ON memories
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the unusually complete report. I verified the core claim against current `main` / `@libsql/client`:  - both indexes are still created with only `metric=cosine` in `src/services/turso/shard-manager.ts`; - the runtime accepts both `compress_neighbors=float8` and `max_neighbors=20` for the normal and partial vector indexes; - inserts and `vector_top_k` queries continue to work with those options; - Turso's documented storage formula confirms that high-dimensional uncompressed neighbor vectors can dominate the file.  So this is a real storage-amplification bug, especially for remote 1536/2048-dimensional embeddings.  One migration correction: plain `REINDEX memories_vec_idx` does **not** change index options. I verified that `sqlite_schema.sql` remains the original `libsql_vector_idx(vector, 'metric=cosine')` definition before and after `REINDEX`. Existing shards therefore need an explicit, failure-safe migration that drops and recreates both indexes with the new definition; `VA
-  > Closing as resolved by a later architecture change.  - [#279](https://github.com/tickernelz/opencode-mem/pull/279) added `compress_neighbors=float8` / `max_neighbors=20` for newly created DiskANN indexes (no rebuild migration for existing shards). - [#340](https://github.com/tickernelz/opencode-mem/pull/340) hard-cutover to `@tursodatabase/database` removed DiskANN entirely: shards no longer create `memories_vec_idx` / `memories_tags_vec_idx`, and search uses exact cosine via `vector_distance_cos`. - Existing DiskANN shards are rewritten on startup by `runTursoEngineMigration()` (engine migrator), which drops the shadow-table bloat.  The original storage amplification no longer applies on current main.
-
-- **Issue #253** (2026-10-03): **Thinking mode does not support this tool_choice**
-  *Symptoms*: 模型执行结束后报错 <img width="532" height="153" alt="Image" src="https://github.com/user-attachments/assets/0e58c4f8-2da3-449c-82b0-335a2b133ba8" />  <img width="561" height="136" alt="Image" src="https://github.com/user-attachments/assets/c07f4a6a-6865-499a-971c-00c3dff2b6e1" />  opencode 模型配置如下 "opencodeProvider": "opencode-go",  "opencodeModel": "deepseek-v4-flash"
-  **Post-Mortem & Fix Analysis**:
-  > 我复核了两张截图和当前调用链，这里实际有两层问题：  1. 底层真实错误是 `opencode-go / deepseek-v4-flash` 的 thinking 模式拒绝 forced `tool_choice`。`opencode-mem` 走的是 OpenCode `session.prompt` + `format: json_schema`，provider wire payload 由 OpenCode 生成；本仓库的 manual `OpenAIChatCompletionProvider.tool_choice` 不参与这条路径，因此不应在这里硬编码 DeepSeek 模型名单或伪造 provider 参数。 2. 当前插件捕获底层错误后，无条件尝试可选 External API fallback；当用户没有配置 manual fallback 时，又用 `External API not configured for auto-capture` 覆盖了真实根因，所以最终 toast 误导。  我已提交 #258 修复第 2 层：没有完整 manual fallback 时保留原始 OpenCode provider 错误；若确实配置了 `memoryModel` + `memoryApiUrl`，原 fallback 行为不变。入口级回归证明 toast 会显示 `Thinking mode does not support ...`，不会再显示误导性的 External API 错误。  本地验证：目标 2/2、完整 408/408、typecheck、format、production build 全绿；mutation check 移除实现后会精确恢复原截图错误并使回归失败。  第 1 层需要 OpenCode/provider compat 修复：同一 `opencode-go/deepseek-v4-flash` + OpenAI Responses 错误已被其他客户端独立复现，正确策略是在 thinking 模型上省略 forced named selector、保留工具广告，而不是由插件自行重写供应商 payload。当前绕行是升级到包含该兼容策略的 OpenCode/provider 版本，或为 `opencodeModel` 选
-  > Thanks for the report. To reproduce this, could you share:\n1. opencode-mem version (check the opencode plugin list)\n2. Your full opencode-mem config (redact API keys)\n3. Whether this happens on every request or only in thinking/reasoning mode\n4. The exact error text from the screenshot (it's hard to read at this resolution)\n\nThe `tool_choice` parameter may not be supported by all providers in thinking/reasoning mode. Knowing your provider and model version will help narrow this down.
-  > 1. I am using the latest version of opencode-mem. 2. Please see the attachment. 3. It happens every time when used in opencode. 4. “Auto Capture Failed Summary generation failed: External API not configured for auto-capture” “Error from provider (Console Go): Upstream request failed: Thinking mode does not support this tool_choice”  [opencode-mem.jsonc](https://github.com/user-attachments/files/31498034/opencode-mem.jsonc)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1076,4693 +995,1234 @@ export default ts.config(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dd12552` (2026-10-13)
-**Commit Message**: fix: re-raise SIGINT/SIGTERM after plugin cleanup (#409)
+### Incident Patch 1: `edd98083` (2026-10-18)
+**Commit Message**: test(stats): raise aggregation test timeout for Windows CI
 
-Signal listeners suppressed the runtime default exit, so opencode
-web/serve survived SIGTERM indefinitely (#408). After cleanup, drop
-our listeners and re-deliver the signal without process.exit (#114).
+The stats aggregation test creates two shards, inserts three vectors,
+and runs the full handleStats walk in one it(). On the windows-latest
+runner that exceeds bun's default 5s per-test timeout; the timeout runs
+afterEach cleanup while the walk is still in flight, so per-shard reads
+fail against the deleted temp dir and the orphaned assertions report
+total 0. Give the test the same 30s budget plugin-bundle-boundary uses.
 
-**File**: `src/index.ts` (modified, +7/-1)
+**File**: `tests/stats-service.test.ts` (modified, +4/-1)
 ```diff
-@@ -591,13 +591,19 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-     if (memoryClient) await memoryClient.close();
-   };
- 
--  const shutdownHandler = async () => {
-+  const shutdownHandler = async (signal: NodeJS.Signals) => {
-     try {
-       await cleanupPlugin();
-     } catch (error) {
-       log("Shutdown error", { error: String(error) });
-       process.exitCode = 1;
-     }
-+    // Registering listeners disables the runtime's default termination.
-+    // After cleanup, remove ours and re-raise so the host can exit (#408).
-+    // Avoid forced process exit here — that crashes onnxruntime-node finalizers (#114).
-+    process.off("SIGINT", shutdownHandler);
-+    process.off("SIGTERM", shutdownHandler);
-+    process.kill(process.pid, signal);
-   };
- 
-   const beforeExitHandler = () => {
-```
-
-**File**: `tests/plugin-shutdown.test.ts` (modified, +10/-0)
-```diff
-@@ -8,6 +8,16 @@ describe("plugin shutdown", () => {
-     expect(source).not.toContain("process.exit(");
-   });
- 
-+  it("re-raises SIGINT/SIGTERM after cleanup so the host can exit", () => {
-+    const source = readFileSync(new URL("../src/index.ts", import.meta.url), "utf-8");
-+
-+    // Listeners suppress default termination; after cleanup we must drop them
-+    // and re-deliver the signal (#408) without process.exit (#114).
-+    expect(source).toContain('process.off("SIGINT", shutdownHandler)');
-+    expect(source).toContain('process.off("SIGTERM", shutdownHandler)');
-+    expect(source).toContain("process.kill(process.pid, signal)");
-+  });
-+
-   it("clears pending idle auto-capture work during cleanup", () => {
-     const source = readFileSync(new URL("../src/index.ts", import.meta.url), "utf-8");
- 
-```
-
----
-
-### Incident Patch 2: `337236d9` (2026-10-12)
-**Commit Message**: fix(embedding): retry transient remote embedding failures (fixes import timeout #400) (#401)
-
-* fix(embedding): retry transient remote embedding failures per attempt
-
-Problem: a single hung remote embedding request aborted an entire
-import with zero memories written (issue #400, reproduced 2x) and
-could wedge search the same way. The warmup probe had no retry either,
-and its failure set the sticky initError until restart.
-
-Design: extract the remote call into fetchRemoteEmbeddingWithRetry —
-per-attempt 10s ceiling, up to 3 attempts, linear backoff, retry only
-network errors/timeouts/429/5xx, fail fast on other 4xx. Both the
-warmup probe and embed() now route through it, so add, search-query,
-and import all gain transient-failure resilience inside the existing
-outer embedWithTimeout budget.
-
-Verification: new tests/embedding-remote-retry.test.ts (6 cases:
-hang-recovery, 429, 500, fail-fast 401, exhaustion, request shape);
-tsc --noEmit, eslint, prettier clean; full bun test failure set
-identical to clean main (15 pre-existing environmental failures).
-End-to-end: instrumented import with one injected 40s fetch hang —
-before: Timeout after 30000ms, imported 0; after: success, imported 
-
-**File**: `src/services/embedding.ts` (modified, +109/-40)
-```diff
-@@ -13,6 +13,18 @@ const requireFromHere = createRuntimeRequire(import.meta);
- const TIMEOUT_MS = 30000;
- const GLOBAL_EMBEDDING_KEY = Symbol.for("opencode-mem.embedding.instance");
- const MAX_CACHE_SIZE = 100;
-+/**
-+ * Per-attempt ceiling for one remote embedding HTTP call. Kept at 8s so
-+ * 3 attempts + linear backoff stay under the outer embedWithTimeout budget
-+ * (TIMEOUT_MS = 30s). A single hung request costs one attempt instead of the
-+ * whole budget (#400: one transient hang previously aborted an entire import
-+ * with zero memories written).
-+ */
-+const REMOTE_ATTEMPT_TIMEOUT_MS = 8000;
-+/** Attempts per remote embedding call: 1 try + 2 retries on transient failures. */
-+const REMOTE_MAX_ATTEMPTS = 3;
-+/** Base backoff between remote embedding attempts; scales linearly (backoffMs * attempt). */
-+const REMOTE_RETRY_BACKOFF_MS = 500;
- 
- // ONNX weight variants in descending precision, mirroring transformers.js
- // DEFAULT_DTYPE_SUFFIX_MAPPING (utils/dtypes.js). fp32 has no filename suffix.
-@@ -243,6 +255,97 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-   ]);
- }
- 
-+/** Remote embedding call failed with an HTTP status. */
-+export class EmbeddingHttpError extends Error {
-+  constructor(
-+    public readonly status: number,
-+    statusText: string
-+  ) {
-+    super(`API embedding failed: ${status} ${statusText}`);
-+    this.name = "EmbeddingHttpError";
-+  }
-+}
-+
-+/**
-+ * Classify an embedding fetch failure as retryable. Only transient conditions
-+ * are retried: HTTP 429/5xx, per-attempt AbortSignal timeouts, and network
-+ * TypeErrors from fetch. JSON parse errors, other 4xx, and unexpected errors
-+ * fail fast so programming/shape bugs are not amplified across attempts.
-+ */
-+function isRetryableEmbeddingError(error: unknown): boolean {
-+  if (error instanceof EmbeddingHttpError) {
-+    return error.status === 429 || error.status >= 500;
-+  }
-+  if (error instanceof DOMException) {
-+    return error.name === "TimeoutError" || error.name === "AbortError";
-+  }
-+  // fetch network failures surface as TypeError; AbortSignal.timeout may too
-+  // depending on runtime (Bun/Node) — accept TimeoutError/AbortError names.
-+  if (error instanceof Error) {
-+    if (error.name === "TimeoutError" || error.name === "AbortError") return true;
-+    if (error instanceof TypeError) return true;
-+  }
-+  return false;
-+}
-+
-+/**
-+ * Perform a remote embedding request with bounded retries. Each attempt uses
-+ * AbortSignal.timeout so a hung connection is cancelled (not orphaned via
-+ * Promise.race); transient failures (network, abort/timeout, 429, 5xx) are
-+ * retried with linear backoff, everything else fails fast.
-+ *
-+ * `fetchImpl` is injectable for tests.
-+ */
-+export async function fetchRemoteEmbeddingWithRetry(
-+  fetchImpl: typeof fetch,
-+  input: string,
-+  options: {
-+    url?: string;
-+    apiKey?: string;
-+    model?: string;
-+    attemptTimeoutMs?: number;
-+    maxAttempts?: number;
-+    backoffMs?: number;
-+  } = {}
-+): Promise<any> {
-+  const url = options.url ?? CONFIG.embeddingApiUrl;
-+  const apiKey = options.apiKey ?? CONFIG.embeddingApiKey;
-+  const model = options.model ?? CONFIG.embeddingModel;
-+  const attemptTimeoutMs = options.attemptTimeoutMs ?? REMOTE_ATTEMPT_TIMEOUT_MS;
-+  const maxAttempts = options.maxAttempts ?? REMOTE_MAX_ATTEMPTS;
-+  const backoffMs = options.backoffMs ?? REMOTE_RETRY_BACKOFF_MS;
-+
-+  let lastError: unknown;
-+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-+    try {
-+      const response = await fetchImpl(`${url}/embeddings`, {
-+        method: "POST",
-+        headers: {
-+          "Content-Type": "application/json",
-+          Authorization: `Bearer ${apiKey}`,
-+        },
-+        body: JSON.stringify({ input, model }),
-+        signal: AbortSignal.timeout(attemptTimeoutMs),
-+      });
-+      if (!response.ok) {
-+        throw new EmbeddingHttpError(response.status, response.statusText);
-+      }
-+      try {
-+        return await response.json();
-+      } catch (parseError) {
-+        throw new Error("Invalid embedding API JSON", { cause: parseError });
-+      }
-+    } catch (error) {
-+      lastError = error;
-+      if (attempt === maxAttempts || !isRetryableEmbeddingError(error)) {
-+        throw error instanceof Error ? error : new Error(String(error));
-+      }
-+      await new Promise((resolve) => setTimeout(resolve, backoffMs * attempt));
-+    }
-+  }
-+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
-+}
-+
- export class EmbeddingService {
-   private pipe: any = null;
-   private initPromise: Promise<void> | null = null;
-@@ -270,29 +373,11 @@ export class EmbeddingService {
-   private async initializeModel(progressCallback?: (progress: any) => void): Promise<void> {
-     try {
-       if (CONFIG.embeddingApiUrl && CONFIG.embeddingApiKey) {
--        // Send a probe request to verify the API endpoint is actually reachable
--        // Uses a minimal embedding of "ping" to test the full request pipel
-```
-
-**File**: `tests/embedding-remote-retry.test.ts` (added, +173/-0)
-```diff
-@@ -0,0 +1,173 @@
-+import { describe, it, expect } from "bun:test";
-+import { fetchRemoteEmbeddingWithRetry, EmbeddingHttpError } from "../src/services/embedding.js";
-+
-+function jsonResponse(status: number): Response {
-+  return {
-+    ok: status >= 200 && status < 300,
-+    status,
-+    statusText: status === 200 ? "OK" : "Error",
-+    json: async () => ({ data: [{ embedding: [0.1, 0.2] }] }),
-+  } as unknown as Response;
-+}
-+
-+const RETRY_OPTS = {
-+  url: "https://fake.local/v1",
-+  apiKey: "test-key",
-+  model: "test-model",
-+  attemptTimeoutMs: 50,
-+  maxAttempts: 3,
-+  backoffMs: 5,
-+};
-+
-+describe("fetchRemoteEmbeddingWithRetry", () => {
-+  it("recovers when the first attempt hangs past the per-attempt AbortSignal timeout", async () => {
-+    let calls = 0;
-+    const fetchImpl = async (_url: unknown, init?: { signal?: AbortSignal }) => {
-+      calls++;
-+      if (calls === 1) {
-+        expect(init?.signal).toBeDefined();
-+        await new Promise<never>((_resolve, reject) => {
-+          const signal = init!.signal!;
-+          if (signal.aborted) {
-+            reject(signal.reason ?? new DOMException("The operation was aborted.", "TimeoutError"));
-+            return;
-+          }
-+          signal.addEventListener(
-+            "abort",
-+            () => {
-+              reject(
-+                signal.reason ?? new DOMException("The operation was aborted.", "TimeoutError")
-+              );
-+            },
-+            { once: true }
-+          );
-+        });
-+      }
-+      return jsonResponse(200);
-+    };
-+    const data = await fetchRemoteEmbeddingWithRetry(
-+      fetchImpl as unknown as typeof fetch,
-+      "hello",
-+      RETRY_OPTS
-+    );
-+    expect(data.data[0].embedding).toEqual([0.1, 0.2]);
-+    expect(calls).toBe(2);
-+  });
-+
-+  it("retries on network TypeError and succeeds on a later attempt", async () => {
-+    let calls = 0;
-+    const fetchImpl = async () => {
-+      calls++;
-+      if (calls === 1) throw new TypeError("fetch failed");
-+      return jsonResponse(200);
-+    };
-+    const data = await fetchRemoteEmbeddingWithRetry(
-+      fetchImpl as unknown as typeof fetch,
-+      "hello",
-+      RETRY_OPTS
-+    );
-+    expect(data.data[0].embedding).toEqual([0.1, 0.2]);
-+    expect(calls).toBe(2);
-+  });
-+
-+  it("fails fast on invalid JSON without consuming another attempt", async () => {
-+    let calls = 0;
-+    const fetchImpl = async () => {
-+      calls++;
-+      return {
-+        ok: true,
-+        status: 200,
-+        statusText: "OK",
-+        json: async () => {
-+          throw new SyntaxError("Unexpected token");
-+        },
-+      } as unknown as Response;
-+    };
-+    await expect(
-+      fetchRemoteEmbeddingWithRetry(fetchImpl as unknown as typeof fetch, "hello", RETRY_OPTS)
-+    ).rejects.toThrow("Invalid embedding API JSON");
-+    expect(calls).toBe(1);
-+  });
-+
-+  it("passes AbortSignal.timeout to each fetch attempt", async () => {
-+    let seenSignal: AbortSignal | undefined;
-+    const fetchImpl = async (_url: unknown, init?: { signal?: AbortSignal }) => {
-+      seenSignal = init?.signal;
-+      return jsonResponse(200);
-+    };
-+    await fetchRemoteEmbeddingWithRetry(fetchImpl as unknown as typeof fetch, "hello", RETRY_OPTS);
-+    expect(seenSignal).toBeDefined();
-+    expect(typeof seenSignal!.aborted).toBe("boolean");
-+  });
-+
-+  it("retries on 429 and succeeds on a later attempt", async () => {
-+    let calls = 0;
-+    const fetchImpl = async () => {
-+      calls++;
-+      return calls === 1 ? jsonResponse(429) : jsonResponse(200);
-+    };
-+    const data = await fetchRemoteEmbeddingWithRetry(
-+      fetchImpl as unknown as typeof fetch,
-+      "hello",
-+      RETRY_OPTS
-+    );
-+    expect(data.data[0].embedding).toEqual([0.1, 0.2]);
-+    expect(calls).toBe(2);
-+  });
-+
-+  it("retries on 500 and succeeds on a later attempt", async () => {
-+    let calls = 0;
-+    const fetchImpl = async () => {
-+      calls++;
-+      return calls === 1 ? jsonResponse(500) : jsonResponse(200);
-+    };
-+    await fetchRemoteEmbeddingWithRetry(fetchImpl as unknown as typeof fetch, "hello", RETRY_OPTS);
-+    expect(calls).toBe(2);
-+  });
-+
-+  it("fails fast on non-retryable 4xx without consuming another attempt", async () => {
-+    let calls = 0;
-+    const fetchImpl = async () => {
-+      calls++;
-+      return jsonResponse(401);
-+    };
-+    await expect(
-+      fetchRemoteEmbeddingWithRetry(fetchImpl as unknown as typeof fetch, "hello", RETRY_OPTS)
-+    ).rejects.toBeInstanceOf(EmbeddingHttpError);
-+    expect(calls).toBe(1);
-+  });
-+
-+  it("throws the last error after exhausting all attempts on persistent 5xx", async () => {
-+    let calls = 0;
-+    const fetchImpl = async () => {
-+      calls++;
-+      return jsonResponse(503);
-+    };
-+    await expect(
-+      fetchRemoteEmbeddingWithRetry(fetchImpl as unknown as typeof fetch, "hello", RETRY_OPTS)
-+    ).rejects.toBeInstanceOf(EmbeddingHttpError);
-+    expect(calls).toBe(3);
-+  });
-+
-+  it("preserves the reques
-```
-
----
-
-### Incident Patch 3: `a9256433` (2026-10-12)
-**Commit Message**: feat(skills): add shared editable skills with V2 bridge and GUI (#403)
-
-* feat(skills): add shared editable skills with V2 bridge and GUI
-
-Persist team skills in skills.db, expose CRUD + HTTP catalog, register
-them with OpenCode via ctx.skill.transform, and edit in the web UI with
-CodeMirror markdown preview. Refs: #402
-
-* fix(web): reuse FormField/Textarea for skill dialog labels
-
-Drop the custom CodeMirror markdown editor so floating labels match
-existing memory dialogs and stop fighting hint/placeholder layout.
-
-* fix(web): remove skills bridge hint from skills view
-
-* fix(web): align skills empty state with memory explorer
-
-* fix(web): rename skills section heading to Skills
-
-* fix(web): show lucide icon on skills empty state
-
-* fix(web): show skills Total chip in page header
-
-* fix(web): move skills UI to /skill-library to avoid catalog clash
-
-Direct /skills navigations were proxied to the OpenCode HTTP catalog
-instead of the SPA; keep catalog under /skills/ and the explorer at
-/skill-library.
-
-* docs: note skills UI path vs HTTP catalog prefix
-
-* fix(web): keep skills section label without Shared prefix
-
-* fix(web): use icon-only add button on skills page
-
-* feat(web): add cl
-
-**File**: `README.md` (modified, +15/-7)
-```diff
-@@ -161,15 +161,23 @@ You do **not** need to ask OpenCode to “remember” things for the plugin to w
- 
- Manual search/add/list still work even if auto-capture has no provider configured. Auto-capture and user profile learning need a provider that can return structured/tool-call output.
- 
--### Memory vs AGENTS.md / project docs
-+### Memory vs AGENTS.md vs Skills
- 
--| Store in **memory**                                                  | Store in **AGENTS.md** / static docs                        |
--| -------------------------------------------------------------------- | ----------------------------------------------------------- |
--| Project-specific decisions, bug patterns, “we tried X and it failed” | Stable rules and workflows that rarely change               |
--| User preferences discovered over sessions                            | Always-on coding conventions and process                    |
--| Facts that should follow you across chats                            | Instructions every agent should see regardless of retrieval |
-+| Store in **memory**                                                  | Store in **AGENTS.md** / static docs                        | Store as **Skills** (web UI / `skills.db`)            |
-+| -------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
-+| Project-specific decisions, bug patterns, “we tried X and it failed” | Stable rules and workflows that rarely change               | Reusable procedures the agent loads on demand         |
-+| User preferences discovered over sessions                            | Always-on coding conventions and process                    | Team-editable skill packs shared via the same storage |
-+| Facts that should follow you across chats                            | Instructions every agent should see regardless of retrieval | OpenCode-native `skill` tool (V2 plugin bridge)       |
- 
--Rule of thumb: if it is a lasting project instruction, put it in AGENTS.md; if it is context that grows from real work, let memory (or auto-capture) hold it.
-+Rule of thumb: lasting always-on project instructions → `AGENTS.md`; growing work context → memory; reusable on-demand procedures → **Skills**.
-+
-+#### Shared Skills (V2)
-+
-+- Create/edit skills in the web explorer (**Skills** tab at `/skill-library`).
-+- Persisted in `skills.db` under the plugin storage path (not as memory vectors).
-+- On OpenCode **V2**, the plugin registers enabled skills via `ctx.skill.transform` so the agent can load them with the native `skill` tool.
-+- Optional HTTP catalog for other OpenCode instances: `"skills": ["http://127.0.0.1:4747/skills/"]` (serves `/skills/index.json` and `/skills/<id>/<id>.md` — separate from the UI path).
-+- REST: `GET/POST /api/skills`, `GET/PUT/DELETE /api/skills/:id`.
- 
- ### Intelligent prompt-based memory extraction
- 
-```
-
-**File**: `src/services/api-handlers.ts` (modified, +145/-0)
-```diff
-@@ -1669,3 +1669,148 @@ export async function handleRunTagMigrationBatch(
-     return { success: false, error: String(error) };
-   }
- }
-+
-+function skillToApi(skill: {
-+  id: string;
-+  name: string;
-+  description: string;
-+  content: string;
-+  autoinvoke: boolean;
-+  enabled: boolean;
-+  containerTag: string | null;
-+  createdAt: number;
-+  updatedAt: number;
-+}) {
-+  return {
-+    id: skill.id,
-+    name: skill.name,
-+    description: skill.description,
-+    content: skill.content,
-+    autoinvoke: skill.autoinvoke,
-+    enabled: skill.enabled,
-+    containerTag: skill.containerTag,
-+    createdAt: safeToISOString(skill.createdAt),
-+    updatedAt: safeToISOString(skill.updatedAt),
-+  };
-+}
-+
-+export async function handleListSkills(options?: {
-+  containerTag?: string;
-+  enabledOnly?: boolean;
-+}): Promise<ApiResponse<{ items: ReturnType<typeof skillToApi>[] }>> {
-+  try {
-+    const { skillsManager } = await import("./skills/skills-manager.js");
-+    const items = await skillsManager.list({
-+      containerTag: options?.containerTag,
-+      enabledOnly: options?.enabledOnly,
-+    });
-+    return { success: true, data: { items: items.map(skillToApi) } };
-+  } catch (error) {
-+    log("handleListSkills: error", { error: String(error) });
-+    return { success: false, error: String(error) };
-+  }
-+}
-+
-+export async function handleGetSkill(
-+  id: string
-+): Promise<ApiResponse<ReturnType<typeof skillToApi>>> {
-+  try {
-+    const { skillsManager } = await import("./skills/skills-manager.js");
-+    const skill = await skillsManager.get(id);
-+    if (!skill) return { success: false, error: `Skill not found: ${id}` };
-+    return { success: true, data: skillToApi(skill) };
-+  } catch (error) {
-+    log("handleGetSkill: error", { error: String(error) });
-+    return { success: false, error: String(error) };
-+  }
-+}
-+
-+export async function handleCreateSkill(body: {
-+  id?: string;
-+  name?: string;
-+  description?: string;
-+  content?: string;
-+  autoinvoke?: boolean;
-+  enabled?: boolean;
-+  containerTag?: string | null;
-+}): Promise<ApiResponse<ReturnType<typeof skillToApi>>> {
-+  try {
-+    if (!body?.id || !body?.name || !body?.content) {
-+      return { success: false, error: "id, name, and content are required" };
-+    }
-+    const { skillsManager } = await import("./skills/skills-manager.js");
-+    const skill = await skillsManager.create({
-+      id: body.id,
-+      name: body.name,
-+      description: body.description,
-+      content: body.content,
-+      autoinvoke: body.autoinvoke,
-+      enabled: body.enabled,
-+      containerTag: body.containerTag,
-+    });
-+    return { success: true, data: skillToApi(skill) };
-+  } catch (error) {
-+    log("handleCreateSkill: error", { error: String(error) });
-+    return { success: false, error: String(error) };
-+  }
-+}
-+
-+export async function handleUpdateSkill(
-+  id: string,
-+  body: {
-+    name?: string;
-+    description?: string;
-+    content?: string;
-+    autoinvoke?: boolean;
-+    enabled?: boolean;
-+    containerTag?: string | null;
-+  }
-+): Promise<ApiResponse<ReturnType<typeof skillToApi>>> {
-+  try {
-+    const { skillsManager } = await import("./skills/skills-manager.js");
-+    const skill = await skillsManager.update(id, body);
-+    return { success: true, data: skillToApi(skill) };
-+  } catch (error) {
-+    log("handleUpdateSkill: error", { error: String(error) });
-+    return { success: false, error: String(error) };
-+  }
-+}
-+
-+export async function handleDeleteSkill(id: string): Promise<ApiResponse<{ deleted: boolean }>> {
-+  try {
-+    const { skillsManager } = await import("./skills/skills-manager.js");
-+    const deleted = await skillsManager.delete(id);
-+    if (!deleted) return { success: false, error: `Skill not found: ${id}` };
-+    return { success: true, data: { deleted: true } };
-+  } catch (error) {
-+    log("handleDeleteSkill: error", { error: String(error) });
-+    return { success: false, error: String(error) };
-+  }
-+}
-+
-+export async function handleSkillsCatalogIndex(): Promise<
-+  ApiResponse<{ skills: Array<{ name: string; version: string; files: string[] }> }>
-+> {
-+  try {
-+    const { skillsManager } = await import("./skills/skills-manager.js");
-+    const catalog = await skillsManager.toHttpCatalog();
-+    return { success: true, data: catalog };
-+  } catch (error) {
-+    log("handleSkillsCatalogIndex: error", { error: String(error) });
-+    return { success: false, error: String(error) };
-+  }
-+}
-+
-+export async function handleSkillsCatalogFile(
-+  id: string
-+): Promise<ApiResponse<{ markdown: string }>> {
-+  try {
-+    const { skillsManager } = await import("./skills/skills-manager.js");
-+    const markdown = await skillsManager.toCatalogMarkdown(id);
-+    if (!markdown) return { success: false, error: `Skill not found: ${id}` };
-+    return { success: true, data: { markdown } };
-+  } catch (error) {
-+    log("handleSkillsCatalogFile: error", { error: String(error) });
-+    return { success: false, error: String(error)
-```
-
-**File**: `src/services/skills/skills-manager.ts` (added, +261/-0)
-```diff
-@@ -0,0 +1,261 @@
-+import { mkdir, rm, writeFile } from "node:fs/promises";
-+import { dirname, join } from "node:path";
-+import { tursoConnectionManager } from "../turso/connection-manager.js";
-+import type { TursoDb } from "../turso/turso-db.js";
-+import { CONFIG } from "../../config.js";
-+import { log } from "../logger.js";
-+import { isValidSkillId, type SkillInput, type SkillRecord, type SkillUpdate } from "./types.js";
-+
-+const SKILLS_DB_NAME = "skills.db";
-+
-+type SkillChangeListener = () => void;
-+
-+const skillChangeListeners = new Set<SkillChangeListener>();
-+
-+export function onSkillsChanged(listener: SkillChangeListener): () => void {
-+  skillChangeListeners.add(listener);
-+  return () => skillChangeListeners.delete(listener);
-+}
-+
-+function notifySkillsChanged(): void {
-+  for (const listener of skillChangeListeners) {
-+    try {
-+      listener();
-+    } catch (error) {
-+      log("skills change listener failed", { error: String(error) });
-+    }
-+  }
-+}
-+
-+function rowToSkill(row: Record<string, unknown>): SkillRecord {
-+  return {
-+    id: String(row.id),
-+    name: String(row.name),
-+    description: String(row.description ?? ""),
-+    content: String(row.content ?? ""),
-+    autoinvoke: Number(row.autoinvoke ?? 1) === 1,
-+    enabled: Number(row.enabled ?? 1) === 1,
-+    containerTag: row.container_tag == null ? null : String(row.container_tag),
-+    createdAt: Number(row.created_at),
-+    updatedAt: Number(row.updated_at),
-+  };
-+}
-+
-+export class SkillsManager {
-+  private db: TursoDb | null = null;
-+  private dbPath: string;
-+  private initPromise: Promise<void> | null = null;
-+
-+  constructor() {
-+    this.dbPath = join(CONFIG.storagePath || "", SKILLS_DB_NAME);
-+  }
-+
-+  reset(): void {
-+    this.db = null;
-+    this.initPromise = null;
-+    this.dbPath = join(CONFIG.storagePath || "", SKILLS_DB_NAME);
-+  }
-+
-+  private async initialize(): Promise<void> {
-+    if (this.initPromise) return this.initPromise;
-+    this.initPromise = this.initDatabase();
-+    return this.initPromise;
-+  }
-+
-+  private async initDatabase(): Promise<void> {
-+    this.dbPath = join(CONFIG.storagePath || "", SKILLS_DB_NAME);
-+    const db = await tursoConnectionManager.getConnection(this.dbPath);
-+    const { applySchemaMigrations, SKILLS_MIGRATIONS } =
-+      await import("../turso/schema-migrations.js");
-+    await applySchemaMigrations(db, SKILLS_MIGRATIONS, {
-+      dbPath: this.dbPath,
-+      label: "skills",
-+    });
-+    this.db = db;
-+  }
-+
-+  private async getDb(): Promise<TursoDb> {
-+    await this.initialize();
-+    if (!this.db) throw new Error("Skills database not initialized");
-+    return this.db;
-+  }
-+
-+  /** Absolute SKILL.md path for OpenCode Skill.Info.path */
-+  skillPath(id: string): string {
-+    return join(this.dbPath.replace(/skills\.db$/, "skills-content"), id, "SKILL.md");
-+  }
-+
-+  /** OpenCode-compatible SKILL.md (frontmatter + body). */
-+  formatMarkdown(skill: SkillRecord): string {
-+    return [
-+      "---",
-+      `name: ${JSON.stringify(skill.name)}`,
-+      `description: ${JSON.stringify(skill.description)}`,
-+      "metadata:",
-+      `  opencode/autoinvoke: ${skill.autoinvoke ? '"true"' : '"false"'}`,
-+      "---",
-+      "",
-+      skill.content,
-+    ].join("\n");
-+  }
-+
-+  private async writeSkillFile(skill: SkillRecord): Promise<void> {
-+    const filePath = this.skillPath(skill.id);
-+    await mkdir(dirname(filePath), { recursive: true });
-+    await writeFile(filePath, this.formatMarkdown(skill), "utf8");
-+  }
-+
-+  private async removeSkillFile(id: string): Promise<void> {
-+    const dir = dirname(this.skillPath(id));
-+    await rm(dir, { recursive: true, force: true });
-+  }
-+
-+  async list(options?: {
-+    containerTag?: string | null;
-+    enabledOnly?: boolean;
-+  }): Promise<SkillRecord[]> {
-+    const db = await this.getDb();
-+    const clauses: string[] = [];
-+    const args: Array<string | number> = [];
-+
-+    if (options?.enabledOnly) {
-+      clauses.push(`enabled = 1`);
-+    }
-+    if (options?.containerTag !== undefined) {
-+      if (options.containerTag === null) {
-+        clauses.push(`container_tag IS NULL`);
-+      } else {
-+        clauses.push(`(container_tag IS NULL OR container_tag = ?)`);
-+        args.push(options.containerTag);
-+      }
-+    }
-+
-+    const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
-+    const rows = await db.all(
-+      `SELECT * FROM skills ${where} ORDER BY updated_at DESC, id ASC`,
-+      args
-+    );
-+    return (rows as Record<string, unknown>[]).map(rowToSkill);
-+  }
-+
-+  async get(id: string): Promise<SkillRecord | null> {
-+    const db = await this.getDb();
-+    const row = await db.get(`SELECT * FROM skills WHERE id = ?`, [id]);
-+    return row ? rowToSkill(row as Record<string, unknown>) : null;
-+  }
-+
-+  async create(input: SkillInput): Promise<SkillRecord> {
-+    const id = input.id.trim();
-+    if (!isValidSkillId(id)) {
-+      throw new Error(
-+        "Invalid skill id: use lowercase kebab-ca
-```
-
-**File**: `src/services/skills/types.ts` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+export interface SkillRecord {
-+  id: string;
-+  name: string;
-+  description: string;
-+  content: string;
-+  autoinvoke: boolean;
-+  enabled: boolean;
-+  containerTag: string | null;
-+  createdAt: number;
-+  updatedAt: number;
-+}
-+
-+export interface SkillInput {
-+  id: string;
-+  name: string;
-+  description?: string;
-+  content: string;
-+  autoinvoke?: boolean;
-+  enabled?: boolean;
-+  containerTag?: string | null;
-+}
-+
-+export interface SkillUpdate {
-+  name?: string;
-+  description?: string;
-+  content?: string;
-+  autoinvoke?: boolean;
-+  enabled?: boolean;
-+  containerTag?: string | null;
-+}
-+
-+/** OpenCode-compatible skill id: lowercase kebab-case, 1–64 chars. */
-+export const SKILL_ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-+
-+export function isValidSkillId(id: string): boolean {
-+  return id.length >= 1 && id.length <= 64 && SKILL_ID_PATTERN.test(id);
-+}
-```
-
-**File**: `src/services/turso/schema-migrations.ts` (modified, +27/-0)
-```diff
-@@ -261,6 +261,33 @@ export const USER_PROFILES_MIGRATIONS: SchemaMigration[] = [
-   },
- ];
- 
-+export const SKILLS_MIGRATIONS: SchemaMigration[] = [
-+  {
-+    version: 1,
-+    description: "Baseline shared skills table",
-+    statements: [
-+      {
-+        sql: `
-+          CREATE TABLE IF NOT EXISTS skills (
-+            id TEXT PRIMARY KEY,
-+            name TEXT NOT NULL,
-+            description TEXT NOT NULL DEFAULT '',
-+            content TEXT NOT NULL,
-+            autoinvoke INTEGER NOT NULL DEFAULT 1,
-+            enabled INTEGER NOT NULL DEFAULT 1,
-+            container_tag TEXT,
-+            created_at INTEGER NOT NULL,
-+            updated_at INTEGER NOT NULL
-+          )
-+        `,
-+      },
-+      { sql: `CREATE INDEX IF NOT EXISTS idx_skills_enabled ON skills(enabled)` },
-+      { sql: `CREATE INDEX IF NOT EXISTS idx_skills_container_tag ON skills(container_tag)` },
-+      { sql: `CREATE INDEX IF NOT EXISTS idx_skills_updated_at ON skills(updated_at DESC)` },
-+    ],
-+  },
-+];
-+
- export const AI_SESSIONS_MIGRATIONS: SchemaMigration[] = [
-   {
-     version: 1,
-```
-
-**File**: `src/services/web-server.ts` (modified, +82/-0)
-```diff
-@@ -36,6 +36,13 @@ import {
-   handleAICleanup,
-   handleApplyCleanup,
-   handleUpdateProfileItem,
-+  handleListSkills,
-+  handleGetSkill,
-+  handleCreateSkill,
-+  handleUpdateSkill,
-+  handleDeleteSkill,
-+  handleSkillsCatalogIndex,
-+  handleSkillsCatalogFile,
- } from "./api-handlers.js";
- 
- /**
-@@ -703,6 +710,81 @@ export class WebServer {
-         return this.jsonResponse(result);
-       }
- 
-+      if (path === "/api/skills" && method === "GET") {
-+        const containerTag = url.searchParams.get("tag") || undefined;
-+        const enabledOnly = url.searchParams.get("enabledOnly") === "true";
-+        const result = await handleListSkills({ containerTag, enabledOnly });
-+        return this.jsonResponse(result);
-+      }
-+
-+      if (path === "/api/skills" && method === "POST") {
-+        const body = (await req.json().catch(() => ({}))) as any;
-+        const result = await handleCreateSkill(body);
-+        return this.jsonResponse(result, result.success ? 200 : 400);
-+      }
-+
-+      if (path.startsWith("/api/skills/") && method === "GET") {
-+        const id = decodeURIComponent(path.slice("/api/skills/".length));
-+        if (!id || id.includes("/")) {
-+          return this.jsonResponse({ success: false, error: "Invalid skill id" }, 400);
-+        }
-+        const result = await handleGetSkill(id);
-+        return this.jsonResponse(result, result.success ? 200 : 404);
-+      }
-+
-+      if (path.startsWith("/api/skills/") && method === "PUT") {
-+        const id = decodeURIComponent(path.slice("/api/skills/".length));
-+        if (!id || id.includes("/")) {
-+          return this.jsonResponse({ success: false, error: "Invalid skill id" }, 400);
-+        }
-+        const body = (await req.json().catch(() => ({}))) as any;
-+        const result = await handleUpdateSkill(id, body);
-+        return this.jsonResponse(result, result.success ? 200 : 400);
-+      }
-+
-+      if (path.startsWith("/api/skills/") && method === "DELETE") {
-+        const id = decodeURIComponent(path.slice("/api/skills/".length));
-+        if (!id || id.includes("/")) {
-+          return this.jsonResponse({ success: false, error: "Invalid skill id" }, 400);
-+        }
-+        const result = await handleDeleteSkill(id);
-+        return this.jsonResponse(result, result.success ? 200 : 404);
-+      }
-+
-+      // OpenCode HTTP skill catalog (public path; prefer loopback / network auth).
-+      if (path === "/skills/index.json" && method === "GET") {
-+        const result = await handleSkillsCatalogIndex();
-+        if (!result.success || !result.data) {
-+          return this.jsonResponse(result, 500);
-+        }
-+        return new Response(JSON.stringify(result.data), {
-+          status: 200,
-+          headers: { "Content-Type": "application/json; charset=utf-8" },
-+        });
-+      }
-+
-+      // OpenCode catalog layout: /skills/{id}/{id}.md
-+      if (path.startsWith("/skills/") && path.endsWith(".md") && method === "GET") {
-+        const rest = path.slice("/skills/".length);
-+        const parts = rest.split("/").filter(Boolean);
-+        if (parts.length !== 2) {
-+          return new Response("Not Found", { status: 404 });
-+        }
-+        const id = decodeURIComponent(parts[0]!);
-+        const filename = decodeURIComponent(parts[1]!);
-+        if (!id || filename !== `${id}.md`) {
-+          return new Response("Not Found", { status: 404 });
-+        }
-+        const result = await handleSkillsCatalogFile(id);
-+        if (!result.success || !result.data?.markdown) {
-+          return new Response("Not Found", { status: 404 });
-+        }
-+        return new Response(result.data.markdown, {
-+          status: 200,
-+          headers: { "Content-Type": "text/markdown; charset=utf-8" },
-+        });
-+      }
-+
-       // SPA fallback for client routes (e.g. /profile) — serve the app shell.
-       if (method === "GET" && !path.startsWith("/api/") && !extname(path)) {
-         return this.serveStaticFile("index.html", "text/html");
-```
-
-**File**: `src/v2/adapter.ts` (modified, +72/-0)
-```diff
-@@ -1,5 +1,8 @@
-+import { isAbsolute, resolve } from "node:path";
- import type { Context } from "@opencode/plugin/promise/plugin";
- import { log } from "../services/logger.js";
-+import { onSkillsChanged, skillsManager } from "../services/skills/skills-manager.js";
-+import { getTags } from "../services/tags.js";
- import { eventBelongsToLocation, legacyToolResult, toLegacyEvent } from "./legacy-client.js";
- 
- interface MemoryContextHooks {
-@@ -52,6 +55,62 @@ export async function registerV2Adapter(ctx: Context, legacy: any) {
-   const messageIDs = new Map<string, string>();
-   const suppressed = new Set<string>();
-   const memoryContext = legacy.memoryContext as MemoryContextHooks | undefined;
-+  /** Skill IDs last registered from opencode-mem DB (so we can remove stale ones). */
-+  const registeredSkillIds = new Set<string>();
-+
-+  async function registerDbSkills(): Promise<void> {
-+    if (!ctx.skill?.transform) return;
-+
-+    const projectTag = getTags(ctx.location.directory).project.tag;
-+    let skills: Awaited<ReturnType<typeof skillsManager.list>> = [];
-+    try {
-+      skills = await skillsManager.list({
-+        enabledOnly: true,
-+        containerTag: projectTag,
-+      });
-+    } catch (error) {
-+      log("Failed to load skills for OpenCode registration", { error: String(error) });
-+      return;
-+    }
-+
-+    const nextIds = new Set(skills.map((skill) => skill.id));
-+
-+    await ctx.skill.transform((editor) => {
-+      for (const id of registeredSkillIds) {
-+        if (!nextIds.has(id) && editor.get(id)) {
-+          editor.remove(id);
-+        }
-+      }
-+
-+      for (const skill of skills) {
-+        const path = skillsManager.skillPath(skill.id);
-+        const absolutePath = isAbsolute(path) ? path : resolve(path);
-+        const payload = {
-+          id: skill.id,
-+          name: skill.name,
-+          description: skill.description || undefined,
-+          autoinvoke: skill.autoinvoke,
-+          path: absolutePath,
-+          content: skill.content,
-+        } as any;
-+
-+        if (editor.get(skill.id)) {
-+          editor.update(skill.id, (entry) => {
-+            entry.name = payload.name;
-+            entry.description = payload.description;
-+            entry.autoinvoke = payload.autoinvoke;
-+            entry.path = payload.path;
-+            entry.content = payload.content;
-+          });
-+        } else {
-+          editor.add(payload);
-+        }
-+      }
-+    });
-+
-+    registeredSkillIds.clear();
-+    for (const id of nextIds) registeredSkillIds.add(id);
-+  }
- 
-   await ctx.tool.transform((editor) =>
-     editor.add({
-@@ -74,6 +133,18 @@ export async function registerV2Adapter(ctx: Context, legacy: any) {
-     } as any)
-   );
- 
-+  await registerDbSkills();
-+  const unsubscribeSkills = onSkillsChanged(() => {
-+    void (async () => {
-+      try {
-+        await registerDbSkills();
-+        await ctx.skill?.reload?.();
-+      } catch (error) {
-+        log("Failed to reload OpenCode skills after DB change", { error: String(error) });
-+      }
-+    })();
-+  });
-+
-   await ctx.session.hook("prompt", async (event) => {
-     messageIDs.set(event.sessionID, event.messageID);
-     const original = { type: "text", text: event.prompt.text };
-@@ -156,6 +227,7 @@ export async function registerV2Adapter(ctx: Context, legacy: any) {
-   })();
- 
-   return async () => {
-+    unsubscribeSkills();
-     controller.abort();
-     await watcher;
-     contexts.clear();
-```
-
-**File**: `tests/skills-api-handlers.test.ts` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-+import { mkdtempSync, rmSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { join } from "node:path";
-+import { tursoConnectionManager } from "../src/services/turso/connection-manager.js";
-+
-+let tmpDir: string;
-+
-+describe("skills API handlers", () => {
-+  beforeEach(async () => {
-+    tmpDir = mkdtempSync(join(tmpdir(), "opencode-mem-skills-api-"));
-+    const { CONFIG } = await import("../src/config.js");
-+    CONFIG.storagePath = tmpDir;
-+    const { skillsManager } = await import("../src/services/skills/skills-manager.js");
-+    skillsManager.reset();
-+  });
-+
-+  afterEach(async () => {
-+    const { skillsManager } = await import("../src/services/skills/skills-manager.js");
-+    skillsManager.reset();
-+    await tursoConnectionManager.closeAll();
-+    await new Promise((r) => setTimeout(r, 50));
-+    try {
-+      rmSync(tmpDir, { recursive: true, force: true });
-+    } catch {
-+      // ignore
-+    }
-+  });
-+
-+  it("supports CRUD through handlers", async () => {
-+    const {
-+      handleCreateSkill,
-+      handleListSkills,
-+      handleGetSkill,
-+      handleUpdateSkill,
-+      handleDeleteSkill,
-+      handleSkillsCatalogIndex,
-+      handleSkillsCatalogFile,
-+    } = await import("../src/services/api-handlers.js");
-+
-+    const created = await handleCreateSkill({
-+      id: "ship-it",
-+      name: "Ship It",
-+      description: "Release flow",
-+      content: "## Ship\n\n1. Build\n2. Tag",
-+    });
-+    expect(created.success).toBe(true);
-+    expect(created.data?.id).toBe("ship-it");
-+
-+    const listed = await handleListSkills();
-+    expect(listed.success).toBe(true);
-+    expect(listed.data?.items).toHaveLength(1);
-+
-+    const got = await handleGetSkill("ship-it");
-+    expect(got.success).toBe(true);
-+    expect(got.data?.name).toBe("Ship It");
-+
-+    const updated = await handleUpdateSkill("ship-it", { name: "Ship It Now" });
-+    expect(updated.success).toBe(true);
-+    expect(updated.data?.name).toBe("Ship It Now");
-+
-+    const catalog = await handleSkillsCatalogIndex();
-+    expect(catalog.success).toBe(true);
-+    expect(catalog.data?.skills[0]?.name).toBe("ship-it");
-+
-+    const file = await handleSkillsCatalogFile("ship-it");
-+    expect(file.success).toBe(true);
-+    expect(file.data?.markdown).toContain("## Ship");
-+
-+    const deleted = await handleDeleteSkill("ship-it");
-+    expect(deleted.success).toBe(true);
-+    expect((await handleGetSkill("ship-it")).success).toBe(false);
-+  });
-+});
-```
-
----
-
-### Incident Patch 4: `8f9a2e44` (2026-10-10)
-**Commit Message**: chore(docs): update README for multilingual support and translation guidelinessoll
-
-**File**: `.gitattributes` (modified, +4/-0)
-```diff
-@@ -4,5 +4,9 @@
- *.jpg binary
- *.jpeg binary
- *.gif binary
-+*.svg binary
- *.woff binary
- *.woff2 binary
-+bun.lock linguist-generated
-+web/bun.lock linguist-generated
-+README.*.md linguist-documentation
-```
-
-**File**: `README.ar.md` (added, +553/-0)
-```diff
-@@ -0,0 +1,553 @@
-+# OpenCode Memory
-+
-+[![npm version](https://img.shields.io/npm/v/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![npm downloads](https://img.shields.io/npm/dm/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![license](https://img.shields.io/npm/l/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![GitHub stars](https://img.shields.io/github/stars/tickernelz/opencode-mem.svg)](https://github.com/tickernelz/opencode-mem)
-+
-+![OpenCode Memory Banner](.github/pics/banner.png)
-+
-+[English](./README.md) | [Deutsch](./README.de.md) | [中文](./README.zh.md) | **العربية** | [Türkçe](./README.tr.md) | [Nederlands](./README.nl.md)
-+
-+نظام ذاكرة دائم لوكلاء البرمجة بالذكاء الاصطناعي يتيح الاحتفاظ بالسياق طويل الأمد عبر الجلسات باستخدام تقنية قاعدة بيانات متجهات محلية.
-+
-+## الميزات الأساسية
-+
-+قاعدة بيانات Turso/libSQL محلية مع بحث متجهات أصلي، ذكريات مشروع دائمة، تعلّم تلقائي لملف المستخدم، خط زمني موحّد للذاكرة والمطالبات، واجهة ويب كاملة الميزات، استخراج ذكي للذاكرة مستند إلى المطالبات، دعم مزودي ذكاء اصطناعي متعددين (OpenAI، Anthropic)، أكثر من 12 نموذج تضمين محلي، إزالة تكرار ذكية، وحماية خصوصية مدمجة.
-+
-+## المتطلبات الأساسية
-+
-+يستخدم هذا المكون الإضافي Turso المضمّن (`@tursodatabase/database`) مع متجهات `F32_BLOB` وبحث جيب التمام الدقيق عبر `vector_distance_cos`. لا حاجة لقاعدة بيانات متجهات منفصلة أو بناء SQLite مخصص.
-+
-+**بيئة التشغيل الموصى بها:**
-+
-+- Bun
-+- بيئة مكون OpenCode الإضافي القياسية
-+- اتصال بالإنترنت عند أول استخدام إذا كنت تستخدم نموذج التضمين المحلي الافتراضي، لأن النموذج يُنزَّل بواسطة `@huggingface/transformers`.
-+- لتثبيتات المصدر/التطوير، شغّل `bun install` قبل البناء أو الاختبار. حزمة المكون الإضافي المنشورة تثبّت تبعيات وقت التشغيل تلقائيًا عبر OpenCode.
-+
-+**المنصات المختبرة في CI:** Linux وWindows وmacOS 15 / macOS 26 على Apple Silicon (`darwin/arm64`). **Intel Mac (`darwin/x64`) غير مدعوم** — `@tursodatabase/database` وإصدارات `onnxruntime-node` الثابتة لا توفّر ربطًا أصليًا لـ x64. إصدارات macOS الأقدم ليست مستبعدة من تلك المصفوفة؛ هي ببساطة خارج مجموعة مشغّلات GitHub الحالية المستضافة.
-+
-+**ملاحظات:**
-+
-+- تُخزَّن تضمينات المتجهات وتُبحث مباشرة في Turso؛ عمليات الإدراج تخزّن متجهات `F32_BLOB` لترتيب جيب التمام الدقيق.
-+- يستخدم بحث المتجهات مسافة جيب التمام الدقيقة عبر `vector_distance_cos` (بدون DiskANN / فهرس تقريبي)، مع ترتيب هجين اختياري بالكلمات المفتاحية عند توفير سلسلة استعلام (`@tursodatabase/database` لا يوفّر FTS5).
-+- تستخدم عمليات البحث عن الجلسات عمود `session_id` مفهرسًا (مُعبَّأ رجعيًا من `metadata.sessionID` في المخطط v2).
-+- الالتقاط التلقائي وتعلّم ملف المستخدم يتطلبان مزود ذكاء اصطناعي يمكنه إرجاع مخرجات منظمة/استدعاء أدوات. بحث/إضافة/قائمة الذاكرة ما زالت تعمل بدون إعداد مزود الالتقاط التلقائي.
-+
-+### توقعات الأجهزة / الموارد
-+
-+opencode-mem **لا** يتطلب وحدة معالجة رسومات (GPU). تعمل التضمينات المحلية على وحدة المعالجة المركزية عبر `@huggingface/transformers` وONNX (لا يوجد خلفية MLX). لا حاجة لذاكرة فيديو إضافية (VRAM).
-+
-+| عبء العمل                                                      | الموارد الإضافية النموذجية                                                                                                                                                                                                                                                  |
-+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| **التضمينات المحلية** (الافتراضي `Xenova/nomic-embed-text-v1`) | حوالي **0.5–2 GB RAM** أثناء تحميل النموذج، حسب معرّف Hugging Face الذي تختاره. أول استخدام ينزّل النموذج؛ توجد ذاكرة التخزين المؤقت على القرص تحت `{storagePath}/.cache` (الافتراضي `~/.opencode-mem/data/.cache`) وغالبًا تكون **مئات الميجابايت إلى ~1–2 GB** لكل نموذج. |
-+| **التضمينات البعيدة** (`embeddingApiUrl` + `embeddingApiKey`)  | ذاكرة ML محلية ضئيلة — فقط عبء المكون الإضافي + Turso.                                                                                                                                                                                                                      |
-+| **قاعدة البيانات / المكون الإضافي**                            | Turso/libSQL على القرص تحت `storagePath`. ينمو الحجم بعدد الذكريات المخزّنة، وليس بذاكرة GPU.                                                                                                                                                                               |
-+
-+تظل حدود المنصات أعلاه سارية (لا يوجد Intel Mac `darwin/x64`؛ استخدم Apple Silicon أو Linux أو Windows أو نقطة نهاية تضمين بعيدة). انظر [اختيار / إعداد التضمينات](#اختيار--إعداد-التضمينات).
-+
-+### الترقية من أجزاء SQLite القديمة
-+
-+عند البدء يُستأنف استرداد عمليات تبديل إعادة التضمين المتقطعة، ويحوّل فهارس libSQL Dis
-```
-
-**File**: `README.de.md` (added, +553/-0)
-```diff
-@@ -0,0 +1,553 @@
-+# OpenCode Memory
-+
-+[![npm version](https://img.shields.io/npm/v/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![npm downloads](https://img.shields.io/npm/dm/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![license](https://img.shields.io/npm/l/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![GitHub stars](https://img.shields.io/github/stars/tickernelz/opencode-mem.svg)](https://github.com/tickernelz/opencode-mem)
-+
-+![OpenCode Memory Banner](.github/pics/banner.png)
-+
-+[English](./README.md) | **Deutsch** | [中文](./README.zh.md) | [العربية](./README.ar.md) | [Türkçe](./README.tr.md) | [Nederlands](./README.nl.md)
-+
-+Ein persistentes Speichersystem für KI-Coding-Agenten, das langfristige Kontextbeibehaltung über Sitzungen hinweg mittels lokaler Vektordatenbank-Technologie ermöglicht.
-+
-+## Kernfunktionen
-+
-+Lokale Turso/libSQL-Datenbank mit nativer Vektorsuche, persistente Projektspeicher, automatisches Lernen des Benutzerprofils, einheitliche Speicher-Prompt-Timeline, vollständige Web-UI, intelligente promptbasierte Speicherextraktion, Multi-Provider-KI-Unterstützung (OpenAI, Anthropic), 12+ lokale Embedding-Modelle, smarte Deduplizierung und integrierter Datenschutz.
-+
-+## Voraussetzungen
-+
-+Dieses Plugin nutzt eingebettetes Turso (`@tursodatabase/database`) mit `F32_BLOB`-Vektoren und exakter Cosinus-Suche über `vector_distance_cos`. Es ist keine separate Vektordatenbank und kein eigener SQLite-Build erforderlich.
-+
-+**Empfohlene Laufzeitumgebung:**
-+
-+- Bun
-+- Standard-OpenCode-Plugin-Umgebung
-+- Internetzugang beim ersten Einsatz, wenn du das Standard-Embedding-Modell lokal nutzt, weil das Modell von `@huggingface/transformers` heruntergeladen wird.
-+- Bei Quell-/Entwicklungsinstallationen vor dem Bauen oder Testen `bun install` ausführen. Das veröffentlichte Plugin-Paket installiert seine Laufzeitabhängigkeiten automatisch über OpenCode.
-+
-+**In CI getestete Plattformen:** Linux, Windows sowie macOS 15 / macOS 26 auf Apple Silicon (`darwin/arm64`). **Intel Mac (`darwin/x64`) wird nicht unterstützt** — `@tursodatabase/database` und feste `onnxruntime-node`-Releases liefern kein natives x64-Binding. Ältere macOS-Versionen sind durch diese Matrix nicht ausgeschlossen; sie liegen lediglich außerhalb der aktuell von GitHub gehosteten Runner.
-+
-+**Hinweise:**
-+
-+- Vektor-Embeddings werden direkt in Turso gespeichert und durchsucht; Inserts speichern `F32_BLOB`-Vektoren für exaktes Cosinus-Ranking.
-+- Die Vektorsuche verwendet exakte Cosinus-Distanz über `vector_distance_cos` (kein DiskANN / approximativer Index), mit optionalem Keyword-Hybrid-Ranking, wenn ein Query-String angegeben ist (`@tursodatabase/database` liefert kein FTS5).
-+- Session-Lookups nutzen eine indexierte Spalte `session_id` (nachgezogen aus `metadata.sessionID` bei Schema v2).
-+- Auto-Capture und Lernen des Benutzerprofils erfordern einen KI-Provider, der strukturierte/Tool-Call-Ausgabe liefern kann. Speicher-Suche/Hinzufügen/Listen funktionieren auch ohne Auto-Capture-Provider-Konfiguration.
-+
-+### Hardware- / Ressourcenanforderungen
-+
-+opencode-mem benötigt **keine** GPU. Lokale Embeddings laufen auf der CPU über `@huggingface/transformers` und ONNX (es gibt kein MLX-Backend). Zusätzlicher VRAM ist nicht nötig.
-+
-+| Workload                                                      | Typische zusätzliche Ressourcen                                                                                                                                                                                                                                                                            |
-+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| **Lokale Embeddings** (Standard `Xenova/nomic-embed-text-v1`) | Etwa **0,5–2 GB RAM**, solange das Modell geladen ist, abhängig von der gewählten Hugging-Face-ID. Beim ersten Einsatz wird das Modell heruntergeladen; der Disk-Cache liegt unter `{storagePath}/.cache` (Standard `~/.opencode-mem/data/.cache`) und beträgt oft **hunderte MB bis ~1–2 GB** pro Modell. |
-+| **Remote-Embeddings** (`embeddingApiUrl` + `embeddingApiKey`) | Vernachlässigbarer lokaler ML-RAM — nur Plugin- + Turso-Overhead.                                                                                                                                                                                                                                          |
-+| **Datenbank / Plugin**                                        | Turso/libSQL auf dem Datenträger unter `storagePath`. Die Größe wächst mit der Anzahl gespeicherter Memories, nicht mit GPU-Speicher.          
-```
-
-**File**: `README.md` (modified, +4/-0)
-```diff
-@@ -7,6 +7,8 @@
- 
- ![OpenCode Memory Banner](.github/pics/banner.png)
- 
-+**English** | [Deutsch](./README.de.md) | [中文](./README.zh.md) | [العربية](./README.ar.md) | [Türkçe](./README.tr.md) | [Nederlands](./README.nl.md)
-+
- A persistent memory system for AI coding agents that enables long-term context retention across sessions using local vector database technology.
- 
- ## Core Features
-@@ -539,6 +541,8 @@ bun run format
- 
- This project is actively seeking contributions to become the definitive memory plugin for AI coding agents. Whether you are fixing bugs, adding features, improving documentation, or expanding embedding model support, your contributions are critical. The codebase is well-structured and ready for enhancement. Please open issues with the Issue or Feature request templates, and fill out the pull request template when you submit a PR — we review and merge contributions quickly.
- 
-+**README translations:** `README.md` (English) is the source of truth. When you change its content, update the sibling files `README.de.md`, `README.zh.md`, `README.ar.md`, `README.tr.md`, and `README.nl.md` to match.
-+
- ## License & Links
- 
- MIT License - see LICENSE file
-```
-
-**File**: `README.nl.md` (added, +554/-0)
-```diff
-@@ -0,0 +1,554 @@
-+# OpenCode Memory
-+
-+[![npm version](https://img.shields.io/npm/v/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![npm downloads](https://img.shields.io/npm/dm/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![license](https://img.shields.io/npm/l/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![GitHub stars](https://img.shields.io/github/stars/tickernelz/opencode-mem.svg)](https://github.com/tickernelz/opencode-mem)
-+
-+![OpenCode Memory Banner](.github/pics/banner.png)
-+
-+[English](./README.md) | [Deutsch](./README.de.md) | [中文](./README.zh.md) | [العربية](./README.ar.md) | [Türkçe](./README.tr.md) | **Nederlands**
-+
-+Een persistent geheugensysteem voor AI-codingagents dat langetermijncontextbehoud over sessies mogelijk maakt met lokale vectordatabasetechnologie.
-+
-+## Kernfuncties
-+
-+Lokale Turso/libSQL-database met native vectorzoekopdrachten, persistente projectherinneringen, automatisch leren van gebruikersprofielen, uniforme geheugen-prompttijdlijn, volledige web-UI, intelligente promptgebaseerde geheugenextractie, multi-provider AI-ondersteuning (OpenAI, Anthropic), 12+ lokale embeddingmodellen, slimme deduplicatie en ingebouwde privacybescherming.
-+
-+## Vereisten
-+
-+Deze plugin gebruikt embedded Turso (`@tursodatabase/database`) met `F32_BLOB`-vectoren en exacte cosinuszoekopdrachten via `vector_distance_cos`. Er is geen aparte vectordatabase of aangepaste SQLite-build vereist.
-+
-+**Aanbevolen runtime:**
-+
-+- Bun
-+- Standaard OpenCode-pluginomgeving
-+- Internettoegang bij eerste gebruik als je het standaard lokale embeddingmodel gebruikt, omdat het model wordt gedownload door `@huggingface/transformers`.
-+- Voor bron-/ontwikkelingsinstallaties: voer `bun install` uit vóór het bouwen of testen. Het gepubliceerde pluginpakket installeert zijn runtime-afhankelijkheden automatisch via OpenCode.
-+
-+**CI-geteste platforms:** Linux, Windows en macOS 15 / macOS 26 op Apple Silicon (`darwin/arm64`). **Intel Mac (`darwin/x64`) wordt niet ondersteund** — `@tursodatabase/database` en vaste `onnxruntime-node`-releases leveren geen x64 native binding. Oudere macOS-releases zijn niet uitgesloten door die matrix; ze vallen simpelweg buiten de huidige set GitHub-hosted runners.
-+
-+**Opmerkingen:**
-+
-+- Vector-embeddings worden direct in Turso opgeslagen en doorzocht; inserts slaan `F32_BLOB`-vectoren op voor exacte cosinusranking.
-+- Vectorzoekopdrachten gebruiken exacte cosinusafstand via `vector_distance_cos` (geen DiskANN / approximatieve index), met optionele keyword-hybrid ranking wanneer een querystring wordt meegegeven (`@tursodatabase/database` levert geen FTS5).
-+- Sessieopzoekingen gebruiken een geïndexeerde `session_id`-kolom (teruggevuld vanuit `metadata.sessionID` op schema v2).
-+- Auto-capture en gebruikersprofiel-leren vereisen een AI-provider die structured/tool-call-output kan teruggeven. Memory search/add/list werken nog steeds zonder auto-capture-providerconfiguratie.
-+
-+### Hardware- / resourceverwachtingen
-+
-+opencode-mem vereist **geen** GPU. Lokale embeddings draaien op de CPU via `@huggingface/transformers` en ONNX (er is geen MLX-backend). Extra VRAM is niet nodig.
-+
-+| Workload                                                       | Typische extra resources                                                                                                                                                                                                                                                                               |
-+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-+| **Lokale embeddings** (standaard `Xenova/nomic-embed-text-v1`) | Ongeveer **0,5–2 GB RAM** terwijl het model geladen is, afhankelijk van de Hugging Face-id die je kiest. Bij eerste gebruik wordt het model gedownload; de schijfcache staat onder `{storagePath}/.cache` (standaard `~/.opencode-mem/data/.cache`) en is vaak **honderden MB tot ~1–2 GB** per model. |
-+| **Remote embeddings** (`embeddingApiUrl` + `embeddingApiKey`)  | Verwaarloosbare lokale ML-RAM — alleen plugin- + Turso-overhead.                                                                                                                                                                                                                                       |
-+| **Database / plugin**                                          | Turso/libSQL op schijf onder `storagePath`. De grootte groeit met het aantal opgeslagen herinneringen, niet met GPU-geheugen.                                                                                                                                       
-```
-
-**File**: `README.tr.md` (added, +556/-0)
-```diff
-@@ -0,0 +1,556 @@
-+# OpenCode Memory
-+
-+[![npm version](https://img.shields.io/npm/v/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![npm downloads](https://img.shields.io/npm/dm/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![license](https://img.shields.io/npm/l/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![GitHub stars](https://img.shields.io/github/stars/tickernelz/opencode-mem.svg)](https://github.com/tickernelz/opencode-mem)
-+
-+![OpenCode Memory Banner](.github/pics/banner.png)
-+
-+[English](./README.md) | [Deutsch](./README.de.md) | [中文](./README.zh.md) | [العربية](./README.ar.md) | **Türkçe** | [Nederlands](./README.nl.md)
-+
-+Yerel vektör veritabanı teknolojisi kullanarak oturumlar arasında uzun vadeli bağlam saklamayı sağlayan, yapay zeka kodlama ajanları için kalıcı bir bellek sistemi.
-+
-+## Temel Özellikler
-+
-+Yerel Turso/libSQL veritabanı ve yerel vektör arama, kalıcı proje bellekleri, otomatik kullanıcı profili öğrenme, birleşik bellek-prompt zaman çizelgesi, tam özellikli web arayüzü, akıllı prompt tabanlı bellek çıkarımı, çoklu sağlayıcı AI desteği (OpenAI, Anthropic), 12+ yerel embedding modeli, akıllı tekilleştirme ve yerleşik gizlilik koruması.
-+
-+## Ön Koşullar
-+
-+Bu eklenti, gömülü Turso (`@tursodatabase/database`) ile `F32_BLOB` vektörleri ve `vector_distance_cos` üzerinden kesin kosinüs araması kullanır. Ayrı bir vektör veritabanı veya özel SQLite derlemesi gerekmez.
-+
-+**Önerilen çalışma zamanı:**
-+
-+- Bun
-+- Standart OpenCode eklenti ortamı
-+- Varsayılan yerel embedding modelini kullanıyorsanız ilk kullanımda internet erişimi gerekir; çünkü model `@huggingface/transformers` tarafından indirilir.
-+- Kaynak/geliştirme kurulumlarında derlemeden veya testten önce `bun install` çalıştırın. Yayınlanan eklenti paketi çalışma zamanı bağımlılıklarını OpenCode üzerinden otomatik kurar.
-+
-+**CI’da test edilen platformlar:** Linux, Windows ve Apple Silicon üzerinde macOS 15 / macOS 26 (`darwin/arm64`). **Intel Mac (`darwin/x64`) desteklenmez** — `@tursodatabase/database` ve sabit `onnxruntime-node` sürümleri x64 yerel bağlayıcı yayınlamaz. Daha eski macOS sürümleri bu matris tarafından dışlanmaz; yalnızca mevcut GitHub barındırmalı runner kümesinin dışındadırlar.
-+
-+**Notlar:**
-+
-+- Vektör embedding’leri doğrudan Turso’da saklanır ve aranır; eklemeler kesin kosinüs sıralaması için `F32_BLOB` vektörleri depolar.
-+- Vektör araması `vector_distance_cos` ile kesin kosinüs mesafesi kullanır (DiskANN / yaklaşık dizin yok); bir sorgu dizgesi verildiğinde isteğe bağlı anahtar kelime hibrit sıralaması vardır (`@tursodatabase/database` FTS5 içermez).
-+- Oturum aramaları indeksli bir `session_id` sütunu kullanır (şema v2’de `metadata.sessionID` üzerinden geri doldurulur).
-+- Otomatik yakalama ve kullanıcı profili öğrenme, yapılandırılmış/araç-çağrısı çıktısı döndürebilen bir AI sağlayıcısı gerektirir. Bellek arama/ekleme/listeleme, otomatik yakalama sağlayıcı yapılandırması olmadan da çalışır.
-+
-+### Donanım / kaynak beklentileri
-+
-+opencode-mem bir GPU **gerektirmez**. Yerel embedding’ler `@huggingface/transformers` ve ONNX üzerinden CPU’da çalışır (MLX backend yoktur). Ekstra VRAM gerekmez.
-+
-+| İş yükü                                                           | Tipik ek kaynaklar                                                                                                                                                                                                                                                                 |
-+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| **Yerel embedding’ler** (varsayılan `Xenova/nomic-embed-text-v1`) | Model yükleniyken yaklaşık **0,5–2 GB RAM**, seçtiğiniz Hugging Face kimliğine bağlı. İlk kullanım modeli indirir; disk önbelleği `{storagePath}/.cache` altında yaşar (varsayılan `~/.opencode-mem/data/.cache`) ve model başına genelde **yüzlerce MB ile ~1–2 GB** arasındadır. |
-+| **Uzak embedding’ler** (`embeddingApiUrl` + `embeddingApiKey`)    | İhmal edilebilir yerel ML RAM — yalnızca eklenti + Turso ek yükü.                                                                                                                                                                                                                  |
-+| **Veritabanı / eklenti**                                          | `storagePath` altında diskte Turso/libSQL. Boyut GPU belleğiyle değil, sakladığınız bellek sayısıyla büyür.                                                                                                                                                                        |
-+
-+Yukarıdaki platform sınırlamaları geçerlidir (I
-```
-
-**File**: `README.zh.md` (added, +548/-0)
-```diff
-@@ -0,0 +1,548 @@
-+# OpenCode Memory
-+
-+[![npm version](https://img.shields.io/npm/v/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![npm downloads](https://img.shields.io/npm/dm/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![license](https://img.shields.io/npm/l/opencode-mem.svg)](https://www.npmjs.com/package/opencode-mem)
-+[![GitHub stars](https://img.shields.io/github/stars/tickernelz/opencode-mem.svg)](https://github.com/tickernelz/opencode-mem)
-+
-+![OpenCode Memory Banner](.github/pics/banner.png)
-+
-+[English](./README.md) | [Deutsch](./README.de.md) | **中文** | [العربية](./README.ar.md) | [Türkçe](./README.tr.md) | [Nederlands](./README.nl.md)
-+
-+面向 AI 编程代理的持久记忆系统，基于本地向量数据库技术，实现跨会话的长期上下文保留。
-+
-+## 核心功能
-+
-+本地 Turso/libSQL 数据库与原生向量搜索、持久化项目记忆、自动用户画像学习、统一的记忆–提示时间线、功能完整的 Web UI、基于提示的智能记忆提取、多提供商 AI 支持（OpenAI、Anthropic）、12+ 本地嵌入模型、智能去重，以及内置隐私保护。
-+
-+## 前置要求
-+
-+本插件使用嵌入式 Turso（`@tursodatabase/database`），配合 `F32_BLOB` 向量与通过 `vector_distance_cos` 的精确余弦搜索。无需单独的向量数据库或自定义 SQLite 构建。
-+
-+**推荐运行时：**
-+
-+- Bun
-+- 标准 OpenCode 插件环境
-+- 若使用默认本地嵌入模型，首次使用时需要联网，因为模型由 `@huggingface/transformers` 下载。
-+- 对于源码/开发安装，请在构建或测试前运行 `bun install`。已发布的插件包会通过 OpenCode 自动安装其运行时依赖。
-+
-+**CI 已测试平台：** Linux、Windows，以及 Apple Silicon 上的 macOS 15 / macOS 26（`darwin/arm64`）。**不支持 Intel Mac（`darwin/x64`）** — `@tursodatabase/database` 与固定版本的 `onnxruntime-node` 发行版均不提供 x64 原生绑定。更旧的 macOS 版本并未被该矩阵排除；它们只是不在当前 GitHub 托管的 runner 集合内。
-+
-+**说明：**
-+
-+- 向量嵌入直接存储并在 Turso 中搜索；插入时以 `F32_BLOB` 向量存储，用于精确余弦排序。
-+- 向量搜索通过 `vector_distance_cos` 使用精确余弦距离（无 DiskANN / 近似索引）；在提供查询字符串时可选用关键词混合排序（`@tursodatabase/database` 不附带 FTS5）。
-+- 会话查找使用已索引的 `session_id` 列（在 schema v2 上从 `metadata.sessionID` 回填）。
-+- 自动捕获与用户画像学习需要能返回结构化/工具调用输出的 AI 提供商。即使未配置自动捕获提供商，记忆的搜索/添加/列表仍可正常工作。
-+
-+### 硬件 / 资源预期
-+
-+opencode-mem **不**需要 GPU。本地嵌入通过 `@huggingface/transformers` 与 ONNX 在 CPU 上运行（没有 MLX 后端）。不需要额外的 VRAM。
-+
-+| 工作负载                                              | 典型额外资源                                                                                                                                                                                       |
-+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| **本地嵌入**（默认 `Xenova/nomic-embed-text-v1`）     | 模型加载期间约 **0.5–2 GB RAM**，取决于所选 Hugging Face id。首次使用会下载模型；磁盘缓存在 `{storagePath}/.cache`（默认 `~/.opencode-mem/data/.cache`），每个模型通常为 **数百 MB 至约 1–2 GB**。 |
-+| **远程嵌入**（`embeddingApiUrl` + `embeddingApiKey`） | 本地 ML RAM 可忽略不计 — 仅有插件 + Turso 开销。                                                                                                                                                   |
-+| **数据库 / 插件**                                     | Turso/libSQL 存储在 `storagePath` 下的磁盘上。体积随存储的记忆数量增长，与 GPU 内存无关。                                                                                                          |
-+
-+上述平台限制仍适用（不支持 Intel Mac `darwin/x64`；请使用 Apple Silicon、Linux、Windows，或远程嵌入端点）。参见[选择 / 配置嵌入模型](#选择--配置嵌入模型)。
-+
-+### 从旧版 SQLite 分片升级
-+
-+启动时会恢复中断的重新嵌入交换、将 libSQL DiskANN 索引转换为当前 Turso 引擎，然后验证或升级旧版分片 schema。即使存储已有完成的旧版迁移标记，引擎转换仍会运行，并在不重新嵌入的情况下保留已存储向量。每个转换后的数据库会备份为 `<database>.pre-tursodb-<timestamp>.bak`。
-+
-+在 macOS 与 Linux 上，多个 OpenCode 会话可通过 Turso 的实验性 `multiprocess_wal` 共享同一 `storagePath`（每个进程必须使用相同模式 — 升级后请重启所有会话）。在 Windows 上引擎会拒绝该标志，因此同一时间只能有一个 OpenCode 会话拥有记忆数据库。
-+
-+升级后首次启动时，opencode-mem 会自动将现有记忆分片数据库迁移为原生 Turso/libSQL 向量格式：
-+
-+- 每个分片在重写前备份为 `<shard>.db.legacy.bak`
-+- 进度按分片记录在 `<shard>.db.turso-migrate.json`
-+- 仅在所有分片验证成功后才写入全局标记 `.turso-migrated`
-+- 迁移期间请勿对同一 `storagePath` 运行多个 OpenCode 实例；锁文件（`.turso-migrate.lock`）可防止并发迁移
-+- 手动维度迁移使用 `.turso-operation.lock`；在迁移完成前，其他插件进程会拒绝新的记忆写入
-+
-+若迁移被中断，下次启动会自动从备份恢复。
-+
-+若分片变得不兼容（例如更改 `embeddingDimensions` 之后），写入会被阻止，且原始数据库保持不变。请使用 Web UI 的重新嵌入迁移来构建并验证替换项，然后再交换到位。先前的分片仍可作为 `<shard>.db.pre-reembed-<pid>-<timestamp>.bak` 使用。
-+
-+## Schema 迁移
-+
-+本地 Turso 分片与辅助数据库（`metadata.db`、`user-prompts.db`、`user-profiles.db`、`ai-sessions.db`）通过 `src/services/turso/schema-migrations.ts` 中按序的 `PRAGMA user_version` 迁移进行升级。迁移是幂等的：启动插件时仅应用待处理的版本。
-+
-+## 快速开始
-+
-+对于 OpenCode v2，将包添加到原生 `plugins` 列表：
-+
-+```jsonc
-+{
-+  "plugins": ["opencode-mem@latest"],
-+}
-+```
-+
-+OpenCode 也会自动加载该包的 `./tui` 配套组件，以便
-+自动捕获 / 画像 / 错误 toast 能在 TUI 中渲染（服务器插件
-+无法直接调用 `ui.toast`）。你无需在
-+`plugins` 中添加第二条条目。若你对远程 OpenCode 服务器运行仅 CLI 的 TUI，
-+请在该 CLI 的插件列表中注册 `opencode-mem/tui`（例如
-+`cli.json`），以便配套组件可以订阅 toast RPC 事件。
-+
-+对于 OpenCode v1，将默认入口点添加到配置
-+`~/.config/opencode/opencode.json`：
-+
-+```jsonc
-+{
-+  "plugin": ["opencode-mem@latest"],
-+}
-+```
-+
-+使用 `@latest`（或 semver 范围）且 `opencode-mem.jsonc` 中 `autoUpdate: true`（默认）时，当有更新的 npm 发布可用时，插件会清除 OpenCode 的缓存安装并提示你重启。像 `opencode-mem@2.26.0` 这样的固定版本永远不会自动更新。
-+
-+### OpenCode v2 上的自动记忆上下文
-+
-+v2 插件通过模型的系统上下文提供自动记忆上下文。
-+这些块不会添加到已编写的用户提示中，也不会存储在聊天记录中。
-+使用 `chatMessage.injectOn: "first
-```
-
----
-
-### Incident Patch 5: `8c1ab5f9` (2026-10-10)
-**Commit Message**: feat(i18n): add German localization to the web UI (#398)
-
-**File**: `web/src/lib/components/explorer/MemoryActions.svelte` (modified, +9/-6)
-```diff
-@@ -4,6 +4,7 @@
-   import PinOff from "@lucide/svelte/icons/pin-off";
-   import Trash2 from "@lucide/svelte/icons/trash-2";
-   import Button from "$lib/components/ui/button.svelte";
-+  import { useI18n } from "$lib/i18n/context.svelte";
-   import { ICON_SM } from "$lib/ui/styles";
- 
-   type Props = {
-@@ -29,6 +30,8 @@
-     onEdit,
-     onDelete,
-   }: Props = $props();
-+
-+  const i18n = useI18n();
- </script>
- 
- <div class="flex shrink-0 items-center gap-1">
-@@ -38,8 +41,8 @@
-         variant="ghost"
-         size="icon-xs"
-         class="text-primary hover:text-primary"
--        title="Unpin"
--        aria-label="Unpin"
-+        title={i18n.t("btn-unpin")}
-+        aria-label={i18n.t("btn-unpin")}
-         onclick={() => onUnpin?.(id)}
-       >
-         <PinOff class={ICON_SM} aria-hidden="true" />
-@@ -48,8 +51,8 @@
-       <Button
-         variant="ghost"
-         size="icon-xs"
--        title="Pin"
--        aria-label="Pin"
-+        title={i18n.t("btn-pin")}
-+        aria-label={i18n.t("btn-pin")}
-         onclick={() => onPin?.(id)}
-       >
-         <Pin class={ICON_SM} aria-hidden="true" />
-@@ -58,8 +61,8 @@
-     <Button
-       variant="ghost"
-       size="icon-xs"
--      title="Edit"
--      aria-label="Edit"
-+      title={i18n.t("btn-edit")}
-+      aria-label={i18n.t("btn-edit")}
-       onclick={() => onEdit?.(id)}
-     >
-       <PenLine class={ICON_SM} aria-hidden="true" />
-```
-
-**File**: `web/src/lib/components/ui/pagination-bar.svelte` (modified, +4/-2)
-```diff
-@@ -2,6 +2,7 @@
-   import ChevronLeft from "@lucide/svelte/icons/chevron-left";
-   import ChevronRight from "@lucide/svelte/icons/chevron-right";
-   import Button from "$lib/components/ui/button.svelte";
-+  import { useI18n } from "$lib/i18n/context.svelte";
-   import type { PageSlice } from "$lib/pagination";
-   import { GAP, GAP_TIGHT, ICON_SM } from "$lib/ui/styles";
- 
-@@ -27,6 +28,7 @@
-     onDelta,
-   }: Props = $props();
- 
-+  const i18n = useI18n();
-   const hasPrev = $derived(currentPage > 1);
-   const hasNext = $derived(currentPage < totalPages);
- </script>
-@@ -37,7 +39,7 @@
-       variant="outline"
-       size="icon-xs"
-       disabled={!hasPrev}
--      aria-label="Previous page"
-+      aria-label={i18n.t("nav-prev-page")}
-       onclick={() => onDelta?.(-1)}
-     >
-       <ChevronLeft class={ICON_SM} />
-@@ -47,7 +49,7 @@
-       variant="outline"
-       size="icon-xs"
-       disabled={!hasNext}
--      aria-label="Next page"
-+      aria-label={i18n.t("nav-next-page")}
-       onclick={() => onDelta?.(1)}
-     >
-       <ChevronRight class={ICON_SM} />
-```
-
-**File**: `web/src/lib/components/ui/search-input.svelte` (modified, +6/-3)
-```diff
-@@ -2,6 +2,7 @@
-   import Search from "@lucide/svelte/icons/search";
-   import X from "@lucide/svelte/icons/x";
-   import type { HTMLInputAttributes } from "svelte/elements";
-+  import { useI18n } from "$lib/i18n/context.svelte";
-   import { FIELD_INPUT, HOVER_SURFACE, ICON, ICON_BTN_DENSE } from "$lib/ui/styles";
-   import { cn } from "$lib/utils";
- 
-@@ -27,6 +28,8 @@
-     onkeydown,
-   }: Props = $props();
- 
-+  const i18n = useI18n();
-+
-   function handleSearch(event: MouseEvent & { currentTarget: HTMLButtonElement }) {
-     onSearch?.();
-     const form = event.currentTarget.closest("form");
-@@ -55,7 +58,7 @@
-         ICON_BTN_DENSE,
-         HOVER_SURFACE
-       )}
--      aria-label="Clear"
-+      aria-label={i18n.t("btn-clear")}
-       onclick={() => onClear?.()}
-     >
-       <X class={ICON} aria-hidden="true" />
-@@ -68,8 +71,8 @@
-       ICON_BTN_DENSE,
-       HOVER_SURFACE
-     )}
--    aria-label="Search"
--    title="Search"
-+    aria-label={i18n.t("label-search")}
-+    title={i18n.t("label-search")}
-     onclick={handleSearch}
-   >
-     <Search class={ICON} aria-hidden="true" />
-```
-
-**File**: `web/src/lib/format.ts` (modified, +2/-1)
-```diff
-@@ -3,7 +3,8 @@ import { getLanguage } from "./i18n";
- export function formatDate(isoString: string): string {
-   const date = new Date(isoString);
-   const lang = getLanguage();
--  const locale = lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-SA" : "en-US";
-+  const locale =
-+    lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-SA" : lang === "de" ? "de-DE" : "en-US";
-   return date.toLocaleString(locale, {
-     year: "numeric",
-     month: "short",
-```
-
-**File**: `web/src/lib/i18n/translations.ts` (modified, +204/-0)
-```diff
-@@ -162,6 +162,186 @@ export const translations = {
-     "migration-mismatch-details":
-       "Model mismatch: Config uses {configDimensions}D ({configModel}), but {shardInfo}.",
-     "auth-warning-text": "Cross-origin editing disabled. Set webServerAuthPassword to enable.",
-+    "btn-pin": "Pin",
-+    "btn-unpin": "Unpin",
-+    "btn-clear": "Clear",
-+    "label-search": "Search",
-+    "nav-prev-page": "Previous page",
-+    "nav-next-page": "Next page",
-+  },
-+  de: {
-+    title: "OpenCode Memory Explorer",
-+    brand: "opencode-mem",
-+    "tab-project": "Projekt-Memories",
-+    "tab-profile": "Benutzerprofil",
-+    "nav-menu": "Menü",
-+    "nav-close": "Menü schließen",
-+    "nav-collapse": "Seitenleiste einklappen",
-+    "nav-expand": "Seitenleiste ausklappen",
-+    "nav-language": "Sprache",
-+    "nav-theme": "Design",
-+    "theme-dark": "Dunkel",
-+    "theme-light": "Hell",
-+    "label-tag": "Tag",
-+    "label-type": "Typ",
-+    "label-tags": "Tags",
-+    "label-content": "Inhalt",
-+    "btn-cleanup": "Aufräumen",
-+    "btn-deduplicate": "Duplikate entfernen",
-+    "btn-filter": "Filter",
-+    "btn-filter-clear": "Auswahl aufheben",
-+    "btn-delete-selected": "Auswahl löschen",
-+    "btn-select-all": "Seite auswählen",
-+    "btn-deselect-all": "Auswahl aufheben",
-+    "btn-add-memory": "Memory hinzufügen",
-+    "section-project": "Projekt-Memories ({count})",
-+    "section-profile": "Benutzerprofil",
-+    "section-add": "Neues Memory hinzufügen",
-+    "opt-all-tags": "Alle Tags",
-+    "opt-select-tag": "Tag auswählen",
-+    "opt-other": "sonstiges (other)",
-+    "opt-feature": "Feature (feature)",
-+    "opt-bug-fix": "Bugfix (bug-fix)",
-+    "opt-refactor": "Refactoring (refactor)",
-+    "opt-architecture": "Architektur (architecture)",
-+    "opt-rule": "Regel (rule)",
-+    "opt-documentation": "Dokumentation (documentation)",
-+    "opt-discussion": "Diskussion (discussion)",
-+    "opt-analysis": "Analyse (analysis)",
-+    "opt-configuration": "Konfiguration (configuration)",
-+    "modal-edit-title": "Memory bearbeiten",
-+    "modal-migration-title": "Memory-Tag-Migration",
-+    "modal-changelog-title": "Profil-Versionsverlauf",
-+    "btn-cancel": "Abbrechen",
-+    "btn-save": "Änderungen speichern",
-+    "btn-start-migration": "Migration starten",
-+    "loading-init": "Wird initialisiert…",
-+    "loading-profile": "Profil wird geladen…",
-+    "loading-changelog": "Changelog wird geladen…",
-+    "migration-mismatch": "Abweichende Modelldimensionen erkannt!",
-+    "migration-understand":
-+      "Ich verstehe, dass dieser Vorgang nicht rückgängig gemacht werden kann und alle gespeicherten Memories betrifft",
-+    "btn-fresh-start": "Neustart (Alles löschen)",
-+    "btn-reembed": "Neu einbetten (Daten behalten)",
-+    "migration-note":
-+      "Bitte den Browser nicht schließen. Deine Memories werden mit technischen Tags neu vektorisiert, um die Suchgenauigkeit zu verbessern.",
-+    "placeholder-filter": "Filtern…",
-+    "placeholder-search": "Memories suchen…",
-+    "placeholder-tags": "react, hooks, auth (kommagetrennt)",
-+    "placeholder-new-tag": "Neuer Tag…",
-+    "btn-add-tag": "Tag hinzufügen",
-+    "placeholder-content": "Memory-Inhalt eingeben…",
-+    "toast-add-success": "Memory erfolgreich hinzugefügt",
-+    "toast-add-error": "Inhalt und Tag sind erforderlich",
-+    "toast-add-failed": "Memory konnte nicht hinzugefügt werden",
-+    "toast-delete-success": "Memory erfolgreich gelöscht",
-+    "toast-delete-failed": "Memory konnte nicht gelöscht werden",
-+    "toast-update-success": "Memory erfolgreich aktualisiert",
-+    "toast-update-failed": "Memory konnte nicht aktualisiert werden",
-+    "toast-cleanup-success": "Aufräumen erfolgreich abgeschlossen",
-+    "toast-cleanup-failed": "Aufräumen fehlgeschlagen",
-+    "toast-dedup-success": "Duplikatentfernung erfolgreich abgeschlossen",
-+    "toast-dedup-failed": "Duplikatentfernung fehlgeschlagen",
-+    "toast-bulk-delete-success": "Ausgewählte Memories erfolgreich gelöscht",
-+    "toast-bulk-delete-failed": "Ausgewählte Memories konnten nicht gelöscht werden",
-+    "toast-migration-success": "Migration erfolgreich abgeschlossen",
-+    "toast-migration-failed": "Migration fehlgeschlagen",
-+    "toast-migration-tag-failures":
-+      "Migration fehlgeschlagen: {count} Fehler bei der Tag-Generierung",
-+    "toast-fresh-start-success": "Neustart erfolgreich abgeschlossen",
-+    "toast-fresh-start-failed": "Neustart fehlgeschlagen",
-+    "confirm-delete": "Dieses Memory löschen?",
-+    "confirm-delete-title": "Löschen bestätigen",
-+    "confirm-delete-pair": "Dieses Memory UND den verknüpften Prompt löschen?",
-+    "confirm-delete-prompt": "Diesen Prompt UND das verknüpfte Memory löschen?",
-+    "confirm-bulk-delete": "{count} ausgewählte Memories löschen?",
-+    "confirm-bulk-delete-title": "Auswahl löschen",
-+    "confirm-cleanup":
-+      "Damit werden alle Memories entfernt, die nicht mehr relevant sind. Fortfahren?",
-+    "confirm-cleanup-title": "
-```
-
----
-
-### Incident Patch 6: `2ba43dac` (2026-10-10)
-**Commit Message**: fix(auto-update): resolve OpenCode timestamp cache wrappers (#397)
-
-**File**: `src/services/auto-update.ts` (modified, +13/-4)
-```diff
-@@ -109,11 +109,20 @@ export async function updateRemoveDir(packageDir: string, name: string) {
-   // Only trust OpenCode wrapper basenames like `opencode-mem@latest`.
-   // Never fall back to package.json dependencies — that would delete a
-   // project root when the plugin lives under project/node_modules.
--  const wrapperDir = dirname(nodeModulesDir);
--  const spec = wrapperSpec(wrapperDir, name);
--  if (!spec || !isAutoUpdatableSpec(spec)) return undefined;
-+  // OpenCode may nest installs under a timestamp dir:
-+  //   ~/.cache/opencode/npm/opencode-mem@latest/<ts>/node_modules/opencode-mem
-+  // Walk a few ancestors to find the `@latest` / range wrapper.
-+  let dir = dirname(nodeModulesDir);
-+  for (let depth = 0; depth < 4; depth++) {
-+    const spec = wrapperSpec(dir, name);
-+    if (spec && isAutoUpdatableSpec(spec)) return dir;
- 
--  return wrapperDir;
-+    const parent = dirname(dir);
-+    if (parent === dir) return undefined;
-+    dir = parent;
-+  }
-+
-+  return undefined;
- }
- 
- function wrapperSpec(wrapperDir: string, name: string) {
-```
-
-**File**: `tests/auto-update.test.ts` (modified, +16/-0)
-```diff
-@@ -50,6 +50,22 @@ describe("auto-update helpers", () => {
-     expect(await updateRemoveDir(packageDir, "opencode-mem")).toBe(wrapperDir);
-   });
- 
-+  it("updateRemoveDir finds wrapper under OpenCode timestamp cache nests", async () => {
-+    const rootDir = await mkdtemp(join(tmpdir(), "mem-update-ts-"));
-+    const wrapperDir = join(rootDir, "opencode-mem@latest");
-+    const stampDir = join(wrapperDir, "1791629200642");
-+    const packageDir = join(stampDir, "node_modules", "opencode-mem");
-+    await writePackageJson(stampDir, {
-+      dependencies: { "opencode-mem": "2.29.2" },
-+    });
-+    await writePackageJson(packageDir, {
-+      name: "opencode-mem",
-+      version: "2.29.2",
-+    });
-+
-+    expect(await updateRemoveDir(packageDir, "opencode-mem")).toBe(wrapperDir);
-+  });
-+
-   it("updateRemoveDir accepts caret wrapper installs", async () => {
-     const rootDir = await mkdtemp(join(tmpdir(), "mem-update-caret-"));
-     const wrapperDir = join(rootDir, "opencode-mem@^2");
-```
-
----
-
-### Incident Patch 7: `e7e88951` (2026-10-10)
-**Commit Message**: fix(v2): surface toasts via RPC TUI companion (#395)
-
-Server plugins under OpenCode v2 have no ui.toast, so showToast fell
-through to a console-only stub. Emit toast intents over rpc.register and
-render them from a new ./tui companion that OpenCode auto-loads.
-
-Refs: #391
-
-**File**: `README.md` (modified, +8/-1)
-```diff
-@@ -77,6 +77,13 @@ For OpenCode v2, add the package to the native `plugins` list:
- }
- ```
- 
-+OpenCode also loads the package's `./tui` companion automatically so
-+auto-capture / profile / error toasts render in the TUI (server plugins
-+cannot call `ui.toast` directly). You do not need a second entry in
-+`plugins`. If you run a CLI-only TUI against a remote OpenCode server,
-+register `opencode-mem/tui` in that CLI's plugin list (for example
-+`cli.json`) so the companion can subscribe to toast RPC events.
-+
- For OpenCode v1, add the default entrypoint to your configuration at
- `~/.config/opencode/opencode.json`:
- 
-@@ -113,7 +120,7 @@ To run the plugin from a local source checkout instead of the npm release, `bun
- }
- ```
- 
--Point at the package root, not at `dist/` or a single file. OpenCode resolves a directory plugin by falling back to `<directory>/index` (OpenCode does not read `package.json` `exports`/`main` for a path spec on current releases), so this repository ships a thin root `index.js` that re-exports the built v2 entrypoint from `dist/plugin.js`. A path to a file is rejected (`configured plugin path must be a directory`), and a directory without a root `index.js` is skipped silently.
-+Point at the package root, not at `dist/` or a single file. OpenCode resolves a directory plugin by falling back to `<directory>/index` (OpenCode does not read `package.json` `exports`/`main` for a path spec on current releases), so this repository ships a thin root `index.js` that re-exports the built v2 entrypoint from `dist/plugin.js`, and a root `tui.js` that re-exports `dist/tui.js` for the TUI companion. A path to a file is rejected (`configured plugin path must be a directory`), and a directory without a root `index.js` is skipped silently.
- 
- ### Optional database encryption at rest
- 
-```
-
-**File**: `package.json` (modified, +4/-0)
-```diff
-@@ -18,6 +18,10 @@
-       "import": "./dist/v2/plugin.js",
-       "types": "./dist/v2/plugin.d.ts"
-     },
-+    "./tui": {
-+      "import": "./dist/tui.js",
-+      "types": "./dist/tui.d.ts"
-+    },
-     "./tags": {
-       "import": "./dist/services/tags.js",
-       "types": "./dist/services/tags.d.ts"
-```
-
-**File**: `src/tui.ts` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+import { define } from "@opencode/plugin/tui/plugin";
-+import { MemToast, type MemToastPayload } from "./v2/toast-rpc.js";
-+
-+/**
-+ * TUI companion for opencode-mem. Subscribes to server-emitted toast RPC
-+ * events and renders them with the host toast UI.
-+ *
-+ * Import from `@opencode/plugin/tui/plugin` (not `@opencode/plugin/tui`) so
-+ * the companion does not pull optional Solid peer deps into the package load.
-+ */
-+export default define({
-+  id: "opencode-mem-tui",
-+  setup(ctx) {
-+    return ctx.client.rpc(MemToast).events.on("toast", (event) => {
-+      ctx.ui.toast.show(event.data as MemToastPayload);
-+    });
-+  },
-+});
-```
-
-**File**: `src/v2/legacy-client.ts` (modified, +56/-2)
-```diff
-@@ -1,6 +1,7 @@
- import type { Context } from "@opencode/plugin/promise/plugin";
- import { randomUUID } from "node:crypto";
- import { resolve } from "node:path";
-+import type { MemToastPayload } from "./toast-rpc.js";
- 
- type LegacyPart = { type?: string; text?: string; metadata?: unknown };
- 
-@@ -158,6 +159,42 @@ function schemaPrompt(body: any): string {
-   return sections.filter(Boolean).join("\n\n");
- }
- 
-+export type ToastEmitter = {
-+  events: {
-+    emit: (name: "toast", data: MemToastPayload) => Promise<void>;
-+  };
-+};
-+
-+function toastPayloadFrom(input: any): MemToastPayload | null {
-+  const body = bodyFrom(input);
-+  const message = typeof body.message === "string" ? body.message : "";
-+  if (!message) return null;
-+
-+  const payload: {
-+    message: string;
-+    title?: string;
-+    variant?: MemToastPayload["variant"];
-+    duration?: number;
-+    sessionID?: string;
-+  } = { message };
-+  if (typeof body.title === "string" && body.title) payload.title = body.title;
-+  if (
-+    body.variant === "info" ||
-+    body.variant === "success" ||
-+    body.variant === "warning" ||
-+    body.variant === "error"
-+  ) {
-+    payload.variant = body.variant;
-+  }
-+  if (typeof body.duration === "number" && Number.isFinite(body.duration)) {
-+    payload.duration = body.duration;
-+  }
-+  if (typeof body.sessionID === "string" && body.sessionID) {
-+    payload.sessionID = body.sessionID;
-+  }
-+  return payload;
-+}
-+
- function toastFallback(input: any): { data: false } {
-   const body = bodyFrom(input);
-   const message = [body.title, body.message].filter(Boolean).join(": ");
-@@ -169,11 +206,28 @@ function toastFallback(input: any): { data: false } {
-   return { data: false };
- }
- 
-+async function showToastViaRpc(
-+  toastRpc: ToastEmitter | undefined,
-+  input: any
-+): Promise<{ data: boolean }> {
-+  if (!toastRpc) return toastFallback(input);
-+
-+  const payload = toastPayloadFrom(input);
-+  if (!payload) return toastFallback(input);
-+
-+  try {
-+    await toastRpc.events.emit("toast", payload);
-+    return { data: true };
-+  } catch {
-+    return toastFallback(input);
-+  }
-+}
-+
- /**
-  * Adapts the released OpenCode v2 plugin context to the V1 client shape used
-  * by the shared opencode-mem implementation.
-  */
--export function createLegacyClient(ctx: Context) {
-+export function createLegacyClient(ctx: Context, toastRpc?: ToastEmitter) {
-   const generatedSessions = new Set<string>();
- 
-   const client = {
-@@ -203,7 +257,7 @@ export function createLegacyClient(ctx: Context) {
-       },
-     },
-     tui: {
--      showToast: async (input: any) => toastFallback(input),
-+      showToast: async (input: any) => showToastViaRpc(toastRpc, input),
-       appendPrompt: async () => ({ data: false }),
-       submitPrompt: async () => ({ data: false }),
-     },
-```
-
-**File**: `src/v2/plugin.ts` (modified, +4/-1)
-```diff
-@@ -4,11 +4,14 @@ import { CONFIG } from "../config.js";
- import { loadOpencodeProvider } from "../services/ai/opencode-provider-loader.js";
- import { registerV2Adapter } from "./adapter.js";
- import { createLegacyClient } from "./legacy-client.js";
-+import { MemToast } from "./toast-rpc.js";
- 
- const OpenCodeMemPluginV2: Plugin = {
-   id: "opencode-mem",
-   async setup(ctx) {
--    const legacyClient = createLegacyClient(ctx);
-+    // Server Context has no ui.toast; bridge toast intents to the ./tui companion.
-+    const toastRpc = await ctx.rpc.register(MemToast, {});
-+    const legacyClient = createLegacyClient(ctx, toastRpc);
-     const legacy = (await OpenCodeMemPlugin({
-       client: legacyClient,
-       directory: ctx.location.directory,
-```
-
-**File**: `src/v2/toast-rpc.ts` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+import { Rpc } from "@opencode/plugin/rpc";
-+
-+/**
-+ * Shared server↔TUI contract for toast intents.
-+ * Server plugins have no ui.toast; they emit via rpc.register events,
-+ * and the ./tui companion renders with ctx.ui.toast.show.
-+ */
-+export const MemToast = Rpc.define({
-+  id: "opencode-mem",
-+  methods: {},
-+  events: {
-+    toast: {
-+      schema: {
-+        type: "object",
-+        properties: {
-+          title: { type: "string" },
-+          message: { type: "string" },
-+          variant: { type: "string" },
-+          duration: { type: "number" },
-+          sessionID: { type: "string" },
-+        },
-+        required: ["message"],
-+        additionalProperties: false,
-+      },
-+    },
-+  },
-+});
-+
-+export type MemToastPayload = {
-+  readonly message: string;
-+  readonly title?: string;
-+  readonly variant?: "info" | "success" | "warning" | "error";
-+  readonly duration?: number;
-+  readonly sessionID?: string;
-+};
-```
-
-**File**: `tests/plugin-v2-loader-contract.test.ts` (modified, +14/-0)
-```diff
-@@ -18,12 +18,26 @@ describe("OpenCode v2 plugin-loader contract", () => {
-     expect(pkg.files).toContain("dist");
-   });
- 
-+  it("publishes the TUI companion entrypoint", () => {
-+    const pkg = readPackageJson();
-+    expect(pkg.exports?.["./tui"]).toEqual({
-+      import: "./dist/tui.js",
-+      types: "./dist/tui.d.ts",
-+    });
-+  });
-+
-   it("exports a native v2 plugin definition", async () => {
-     const mod = await import(new URL("../dist/v2/plugin.js", import.meta.url).href);
-     expect(mod.default.id).toBe("opencode-mem");
-     expect(typeof mod.default.setup).toBe("function");
-   });
- 
-+  it("exports a TUI companion plugin definition", async () => {
-+    const mod = await import(new URL("../dist/tui.js", import.meta.url).href);
-+    expect(mod.default.id).toBe("opencode-mem-tui");
-+    expect(typeof mod.default.setup).toBe("function");
-+  });
-+
-   it("exposes V1 and V2 from the installable package entrypoint", async () => {
-     const mod = await import(new URL("../dist/plugin.js", import.meta.url).href);
-     expect(mod.default.id).toBe("opencode-mem");
-```
-
-**File**: `tests/tui-companion.test.ts` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+import { describe, expect, it } from "bun:test";
-+import tuiPlugin from "../src/tui.js";
-+import { MemToast } from "../src/v2/toast-rpc.js";
-+
-+describe("opencode-mem TUI companion", () => {
-+  it("subscribes to MemToast events and shows host toasts", () => {
-+    expect(tuiPlugin.id).toBe("opencode-mem-tui");
-+
-+    const shown: unknown[] = [];
-+    let subscribedDefinition: unknown;
-+    let subscribedName: string | undefined;
-+    let handler: ((event: { data: unknown }) => void) | undefined;
-+
-+    const cleanup = tuiPlugin.setup({
-+      client: {
-+        rpc: (definition: unknown) => {
-+          subscribedDefinition = definition;
-+          return {
-+            events: {
-+              on: (name: string, next: (event: { data: unknown }) => void) => {
-+                subscribedName = name;
-+                handler = next;
-+                return () => {
-+                  handler = undefined;
-+                };
-+              },
-+            },
-+          };
-+        },
-+      },
-+      ui: {
-+        toast: {
-+          show: (options: unknown) => {
-+            shown.push(options);
-+          },
-+        },
-+      },
-+    } as any);
-+
-+    expect(subscribedDefinition).toBe(MemToast);
-+    expect(subscribedName).toBe("toast");
-+    expect(typeof cleanup).toBe("function");
-+
-+    handler?.({
-+      data: {
-+        title: "Memory Captured",
-+        message: "Project memory saved from conversation",
-+        variant: "success",
-+        duration: 3000,
-+      },
-+    });
-+
-+    expect(shown).toEqual([
-+      {
-+        title: "Memory Captured",
-+        message: "Project memory saved from conversation",
-+        variant: "success",
-+        duration: 3000,
-+      },
-+    ]);
-+
-+    cleanup?.();
-+    expect(handler).toBeUndefined();
-+  });
-+});
-```
-
----
-
-### Incident Patch 8: `f8e3f337` (2026-10-10)
-**Commit Message**: feat(embedding): configurable pooling and task prefixes (#394)
-
-Allow mean/cls/last_token pooling, custom query/document prefixes, optional
-dtype override, and known-model presets so bge-m3/e5/Qwen3 work without
-patching dist. Closes #392.
-
-**File**: `README.md` (modified, +31/-14)
-```diff
-@@ -231,22 +231,29 @@ Embeddings power similarity search for memories and the user profile. Configure
- 
- **Remote (OpenAI-compatible):** set both `embeddingApiUrl` and `embeddingApiKey`. The plugin then calls `{embeddingApiUrl}/embeddings` with a Bearer token. `embeddingApiKey` accepts the same secret formats as `memoryApiKey` (`literal`, `env://…`, `file://…`).
- 
--| Key                   | Role                                                                                      |
--| --------------------- | ----------------------------------------------------------------------------------------- |
--| `embeddingModel`      | Hugging Face id (local) or API model name (remote). Default: `Xenova/nomic-embed-text-v1` |
--| `embeddingDimensions` | Optional override; usually omit — dimensions are looked up from a built-in map            |
--| `embeddingApiUrl`     | Base URL for an OpenAI-compatible embeddings API (no trailing path beyond `/v1`)          |
--| `embeddingApiKey`     | API key for that endpoint (required together with `embeddingApiUrl`)                      |
-+| Key                        | Role                                                                                                                            |
-+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-+| `embeddingModel`           | Hugging Face id (local) or API model name (remote). Default: `Xenova/nomic-embed-text-v1`                                       |
-+| `embeddingDimensions`      | Optional override; usually omit — dimensions are looked up from a built-in map                                                  |
-+| `embeddingPooling`         | Local pooling: `"mean"` (default), `"cls"`, or `"last_token"`. Unset → small known-model preset or `"mean"`                     |
-+| `embeddingQueryPrefix`     | Prefix for query-task embeddings. Unset → model preset or Nomic when `embeddingUseTaskPrefixes` is true. Explicit `""` disables |
-+| `embeddingDocumentPrefix`  | Prefix for document-task embeddings (same resolution rules as `embeddingQueryPrefix`)                                           |
-+| `embeddingUseTaskPrefixes` | Opt-in Nomic `search_query:` / `search_document:` prefixes when custom/preset prefixes are unset. Default `false`               |
-+| `embeddingDtype`           | Optional local ONNX dtype override (e.g. `"q8"`, `"fp32"`). When set, passed to transformers.js `pipeline({ dtype })`           |
-+| `embeddingApiUrl`          | Base URL for an OpenAI-compatible embeddings API (no trailing path beyond `/v1`)                                                |
-+| `embeddingApiKey`          | API key for that endpoint (required together with `embeddingApiUrl`)                                                            |
- 
- Recommended local models:
- 
--| Model                                | Dims | Notes                               |
--| ------------------------------------ | ---- | ----------------------------------- |
--| `Xenova/nomic-embed-text-v1`         | 768  | Default; multilingual, 8192 context |
--| `Xenova/jina-embeddings-v2-base-en`  | 768  | English-only, 8192 context          |
--| `Xenova/jina-embeddings-v2-small-en` | 512  | Faster, 8192 context                |
--| `Xenova/all-MiniLM-L6-v2`            | 384  | Very fast, 512 context              |
--| `Xenova/all-mpnet-base-v2`           | 768  | Good quality, 512 context           |
-+| Model                                | Dims | Notes                                             |
-+| ------------------------------------ | ---- | ------------------------------------------------- |
-+| `Xenova/nomic-embed-text-v1`         | 768  | Default; multilingual, 8192 context; mean pooling |
-+| `Xenova/jina-embeddings-v2-base-en`  | 768  | English-only, 8192 context                        |
-+| `Xenova/jina-embeddings-v2-small-en` | 512  | Faster, 8192 context                              |
-+| `Xenova/all-MiniLM-L6-v2`            | 384  | Very fast, 512 context                            |
-+| `Xenova/all-mpnet-base-v2`           | 768  | Good quality, 512 context                         |
-+| `Xenova/bge-m3`                      | 1024 | Multilingual; auto CLS pooling                    |
-+| `intfloat/multilingual-e5-large`     | 1024 | Auto `query:` / `passage:` prefixes               |
- 
- Example — remote OpenAI embeddings:
- 
-@@ -258,7 +265,17 @@ Example — remote OpenAI embeddings:
- }
- ```
- 
--Changing `embeddingModel` (or dimensions) can trigger re-embedding of stored memories on next startup. Prefer picking a model once and sticking with it for a given data directory.
-+Example — local bge-m3 (pooling defaults to CLS via preset; override if needed):
-+
-+```jsonc
-+{
-+  "embeddingModel": "Xenova/bge-m3",
-+  // "embeddingPooling": "cls",
-+  // "embeddingDtype": "q8",
-+}
-+```
-+
-+Changing `embeddingModel`, dimensions, pooling, or task prefixes can require re-embedding 
-```
-
-**File**: `opencode-mem.example.jsonc` (modified, +14/-0)
-```diff
-@@ -26,6 +26,18 @@
-   // re-index existing memories so store and query vectors stay aligned.
-   "embeddingUseTaskPrefixes": false,
- 
-+  // Local pooling: "mean" (default) | "cls" | "last_token".
-+  // Unset → model preset (bge-m3=cls, Qwen3-Embedding=last_token) or "mean".
-+  // "embeddingPooling": "mean",
-+
-+  // Custom task prefixes (override presets / Nomic). Explicit "" disables a side.
-+  // Changing pooling or prefixes requires re-embedding stored memories.
-+  // "embeddingQueryPrefix": "query: ",
-+  // "embeddingDocumentPrefix": "passage: ",
-+
-+  // Optional local ONNX dtype override (e.g. "q8", "fp32"). When unset, transformers.js defaults apply.
-+  // "embeddingDtype": "q8",
-+
-   // Auto-detected dimensions (no need to set manually)
-   // "embeddingDimensions": 768,
- 
-@@ -34,6 +46,8 @@
-   // "embeddingModel": "Xenova/jina-embeddings-v2-small-en", // 512 dims, faster, 8192 context
-   // "embeddingModel": "Xenova/all-MiniLM-L6-v2",            // 384 dims, very fast, 512 context
-   // "embeddingModel": "Xenova/all-mpnet-base-v2",           // 768 dims, good quality, 512 context
-+  // "embeddingModel": "Xenova/bge-m3",                      // 1024 dims, CLS pooling (auto)
-+  // "embeddingModel": "intfloat/multilingual-e5-large",     // 1024 dims, query:/passage: prefixes (auto)
- 
-   // Optional: OpenAI-compatible API for embeddings (both URL and key required)
-   // "embeddingApiUrl": "https://api.openai.com/v1",
-```
-
-**File**: `src/config.ts` (modified, +153/-3)
-```diff
-@@ -34,6 +34,26 @@ interface OpenCodeMemConfig {
-   embeddingApiKey?: string;
-   /** Opt-in Nomic task prefixes (`search_document:` / `search_query:`). Default false. */
-   embeddingUseTaskPrefixes?: boolean;
-+  /**
-+   * Local transformers.js pooling strategy. Default `"mean"`.
-+   * Model presets (bge-m3 → cls, Qwen3-Embedding → last_token) apply when unset.
-+   */
-+  embeddingPooling?: "mean" | "cls" | "last_token";
-+  /**
-+   * Prefix applied to query-task embeddings. When unset, model presets or
-+   * `embeddingUseTaskPrefixes` (Nomic) may supply one. Explicit `""` disables.
-+   */
-+  embeddingQueryPrefix?: string;
-+  /**
-+   * Prefix applied to document-task embeddings. Same resolution rules as
-+   * `embeddingQueryPrefix`.
-+   */
-+  embeddingDocumentPrefix?: string;
-+  /**
-+   * Optional dtype for the local ONNX pipeline (e.g. `"q8"`, `"fp32"`).
-+   * When set, passed to `pipeline({ dtype })` and outranks auto-detection.
-+   */
-+  embeddingDtype?: string;
-   similarityThreshold?: number;
-   maxMemories?: number;
-   maxProfileItems?: number;
-@@ -158,6 +178,9 @@ const DEFAULTS: Required<
-     OpenCodeMemConfig,
-     | "embeddingApiUrl"
-     | "embeddingApiKey"
-+    | "embeddingQueryPrefix"
-+    | "embeddingDocumentPrefix"
-+    | "embeddingDtype"
-     | "memoryModel"
-     | "memoryApiUrl"
-     | "memoryApiKey"
-@@ -180,6 +203,9 @@ const DEFAULTS: Required<
- > & {
-   embeddingApiUrl?: string;
-   embeddingApiKey?: string;
-+  embeddingQueryPrefix?: string;
-+  embeddingDocumentPrefix?: string;
-+  embeddingDtype?: string;
-   memoryModel?: string;
-   memoryApiUrl?: string;
-   memoryApiKey?: string;
-@@ -207,6 +233,7 @@ const DEFAULTS: Required<
-   embeddingModel: "Xenova/nomic-embed-text-v1",
-   embeddingDimensions: 768,
-   embeddingUseTaskPrefixes: false,
-+  embeddingPooling: "mean",
-   similarityThreshold: 0.6,
-   maxMemories: 10,
-   maxProfileItems: 5,
-@@ -341,6 +368,18 @@ const CONFIG_TEMPLATE = `{
-   // Opt-in Nomic task prefixes (search_document: / search_query:). After enabling,
-   // re-index existing memories so store and query vectors stay aligned.
-   // "embeddingUseTaskPrefixes": true,
-+
-+  // Local pooling: "mean" (default) | "cls" | "last_token".
-+  // Unset → model preset (bge-m3=cls, Qwen3-Embedding=last_token) or "mean".
-+  // "embeddingPooling": "mean",
-+
-+  // Custom task prefixes (override presets / Nomic). Explicit "" disables a side.
-+  // Changing pooling or prefixes requires re-embedding stored memories.
-+  // "embeddingQueryPrefix": "query: ",
-+  // "embeddingDocumentPrefix": "passage: ",
-+
-+  // Optional local ONNX dtype override (e.g. "q8", "fp32"). When unset, transformers.js defaults apply.
-+  // "embeddingDtype": "q8",
-   
-   // Auto-detected dimensions (no need to set manually)
-   // "embeddingDimensions": 768,
-@@ -350,6 +389,8 @@ const CONFIG_TEMPLATE = `{
-   // "embeddingModel": "Xenova/jina-embeddings-v2-small-en", // 512 dims, faster, 8192 context
-   // "embeddingModel": "Xenova/all-MiniLM-L6-v2",            // 384 dims, very fast, 512 context
-   // "embeddingModel": "Xenova/all-mpnet-base-v2",           // 768 dims, good quality, 512 context
-+  // "embeddingModel": "Xenova/bge-m3",                      // 1024 dims, CLS pooling (auto)
-+  // "embeddingModel": "intfloat/multilingual-e5-large",     // 1024 dims, query:/passage: prefixes (auto)
-   
-   // Optional: OpenAI-compatible API for embeddings (both URL and key required)
-   // "embeddingApiUrl": "https://api.openai.com/v1",
-@@ -696,6 +737,91 @@ function ensureConfigExists(): void {
- 
- ensureConfigExists();
- 
-+export type EmbeddingPooling = "mean" | "cls" | "last_token";
-+
-+export type EmbeddingModelPreset = {
-+  pooling: EmbeddingPooling;
-+  /**
-+   * When present (including `""`), used as the default query/document prefix
-+   * when the corresponding config key is unset. Omitting both keeps Nomic
-+   * opt-in via `embeddingUseTaskPrefixes` (nomic models).
-+   */
-+  queryPrefix?: string;
-+  documentPrefix?: string;
-+};
-+
-+const QWEN3_EMBEDDING_QUERY_PREFIX =
-+  "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: ";
-+
-+/**
-+ * Known local embedding model presets (substring match on `embeddingModel`).
-+ * Explicit config keys always win over these defaults.
-+ */
-+export function getEmbeddingModelPreset(model: string): EmbeddingModelPreset | undefined {
-+  const id = model.toLowerCase();
-+  if (id.includes("bge-m3")) {
-+    return { pooling: "cls", queryPrefix: "", documentPrefix: "" };
-+  }
-+  if (id.includes("multilingual-e5") || id.includes("e5-")) {
-+    return { pooling: "mean", queryPrefix: "query: ", documentPrefix: "passage: " };
-+  }
-+  if (id.includes("qwen3-embedding")) {
-+    return {
-+      pooling: "last_token",
-+      queryPrefix: QWEN3_EMBEDDING_QUERY_PREFIX,
-+      documentPrefix: "",
-+    };
-+  }
-+  if (id.includes("jina-embeddings")) {
-+    return { pooling: "mean", queryPrefix: "", documentPrefix: "" };
-+  }
-+  if (id.includes("nomic-embed")) {
-+    return { poolin
-```
-
-**File**: `src/services/embedding.ts` (modified, +74/-11)
-```diff
-@@ -102,26 +102,79 @@ export type EmbedOptions = {
-   task?: EmbeddingTask;
- };
- 
--const TASK_PREFIXES: Record<EmbeddingTask, string> = {
-+const NOMIC_TASK_PREFIXES: Record<EmbeddingTask, string> = {
-   document: "search_document: ",
-   query: "search_query: ",
- };
- 
-+export type EmbeddingTaskPrefixOptions = {
-+  useTaskPrefixes?: boolean;
-+  queryPrefix?: string;
-+  documentPrefix?: string;
-+};
-+
-+/**
-+ * Resolve the prefix for a task: explicit/custom → Nomic (when enabled) → none.
-+ * Empty string means "no prefix" (disables Nomic fallback for that task).
-+ */
-+export function resolveEmbeddingTaskPrefix(
-+  task: EmbeddingTask,
-+  options: EmbeddingTaskPrefixOptions = {}
-+): string {
-+  const custom = task === "query" ? options.queryPrefix : options.documentPrefix;
-+  if (custom !== undefined) return custom;
-+  if (options.useTaskPrefixes) return NOMIC_TASK_PREFIXES[task];
-+  return "";
-+}
-+
- /**
-- * Apply Nomic-style task prefixes when enabled.
-+ * Apply task prefixes when configured.
-  * Cache keys and API/local inputs should use the returned string.
-+ *
-+ * Third argument accepts the legacy boolean (`useTaskPrefixes`) or an options
-+ * object. Defaults read from CONFIG (custom/preset prefixes + Nomic flag).
-  */
- export function applyEmbeddingTaskPrefix(
-   text: string,
-   options?: EmbedOptions,
--  useTaskPrefixes: boolean = CONFIG.embeddingUseTaskPrefixes
-+  useTaskPrefixesOrOpts: boolean | EmbeddingTaskPrefixOptions = {
-+    useTaskPrefixes: CONFIG.embeddingUseTaskPrefixes,
-+    queryPrefix: CONFIG.embeddingQueryPrefix,
-+    documentPrefix: CONFIG.embeddingDocumentPrefix,
-+  }
- ): string {
--  if (!useTaskPrefixes || !options?.task) return text;
--  const prefix = TASK_PREFIXES[options.task];
-+  if (!options?.task) return text;
-+
-+  const prefixOpts: EmbeddingTaskPrefixOptions =
-+    typeof useTaskPrefixesOrOpts === "boolean"
-+      ? {
-+          useTaskPrefixes: useTaskPrefixesOrOpts,
-+          queryPrefix: CONFIG.embeddingQueryPrefix,
-+          documentPrefix: CONFIG.embeddingDocumentPrefix,
-+        }
-+      : {
-+          useTaskPrefixes: useTaskPrefixesOrOpts.useTaskPrefixes ?? CONFIG.embeddingUseTaskPrefixes,
-+          queryPrefix: useTaskPrefixesOrOpts.queryPrefix ?? CONFIG.embeddingQueryPrefix,
-+          documentPrefix: useTaskPrefixesOrOpts.documentPrefix ?? CONFIG.embeddingDocumentPrefix,
-+        };
-+
-+  const prefix = resolveEmbeddingTaskPrefix(options.task, prefixOpts);
-+  if (!prefix) return text;
-   if (text.startsWith(prefix)) return text;
-   return `${prefix}${text}`;
- }
- 
-+function embeddingCacheFingerprint(): string {
-+  return [
-+    CONFIG.embeddingModel,
-+    CONFIG.embeddingPooling,
-+    CONFIG.embeddingQueryPrefix ?? "",
-+    CONFIG.embeddingDocumentPrefix ?? "",
-+    CONFIG.embeddingUseTaskPrefixes ? "1" : "0",
-+    CONFIG.embeddingDtype ?? "",
-+  ].join("\0");
-+}
-+
- type HfTransformers = typeof import("@huggingface/transformers");
- 
- let _transformers: {
-@@ -197,7 +250,7 @@ export class EmbeddingService {
-   /** Set when warmup fails permanently; prevents "initializing forever" (#184). */
-   public initError: string | null = null;
-   private cache: Map<string, Float32Array> = new Map();
--  private cachedModelName: string | null = null;
-+  private cachedFingerprint: string | null = null;
- 
-   static getInstance(): EmbeddingService {
-     if (!(globalThis as any)[GLOBAL_EMBEDDING_KEY]) {
-@@ -247,11 +300,13 @@ export class EmbeddingService {
- 
-       // Local model path
-       const { pipeline } = await ensureTransformersLoaded();
--      const dtype = resolveLocalOnnxDtype(CONFIG.embeddingModel);
-+      // Explicit config wins; otherwise auto-resolve from model declaration / cache (#393).
-+      const dtype = CONFIG.embeddingDtype ?? resolveLocalOnnxDtype(CONFIG.embeddingModel);
-       if (dtype) {
-         log("Resolved local ONNX dtype for embedding warmup", {
-           model: CONFIG.embeddingModel,
-           dtype,
-+          source: CONFIG.embeddingDtype ? "config" : "auto",
-         });
-       }
-       this.pipe = await pipeline("feature-extraction", CONFIG.embeddingModel, {
-@@ -260,7 +315,11 @@ export class EmbeddingService {
-       });
-       this.isWarmedUp = true;
-       this.initError = null;
--      log("Embedding model warmed up", { model: CONFIG.embeddingModel, dtype: dtype ?? null });
-+      log("Embedding model warmed up", {
-+        model: CONFIG.embeddingModel,
-+        pooling: CONFIG.embeddingPooling,
-+        dtype: dtype ?? null,
-+      });
-     } catch (error) {
-       const rewritten = formatOnnxruntimeInitError(error);
-       this.initPromise = null;
-@@ -271,9 +330,10 @@ export class EmbeddingService {
-   }
- 
-   async embed(text: string, options?: EmbedOptions): Promise<Float32Array> {
--    if (this.cachedModelName !== CONFIG.embeddingModel) {
-+    const fingerprint = embeddingCacheFingerprint();
-+    if (this.cachedFingerprint !== fingerprint) {
-       this.clearCache();
--      this.cachedModelName = CONFIG.embeddingModel;
-+      this.cachedFinger
-```
-
-**File**: `tests/config.test.ts` (modified, +8/-0)
-```diff
-@@ -39,6 +39,14 @@ describe("config", () => {
-       expect(CONFIG.embeddingUseTaskPrefixes).toBe(false);
-     });
- 
-+    it("should default embeddingPooling to mean", () => {
-+      expect(CONFIG.embeddingPooling).toBe("mean");
-+    });
-+
-+    it("should leave embeddingDtype unset by default", () => {
-+      expect(CONFIG.embeddingDtype).toBeUndefined();
-+    });
-+
-     it("should have numeric embeddingDimensions", () => {
-       expect(typeof CONFIG.embeddingDimensions).toBe("number");
-       expect(CONFIG.embeddingDimensions).toBeGreaterThan(0);
-```
-
-**File**: `tests/embedding-model-presets.test.ts` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+import { describe, expect, it } from "bun:test";
-+import {
-+  getEmbeddingModelPreset,
-+  normalizeEmbeddingDtype,
-+  normalizeEmbeddingPooling,
-+} from "../src/config.js";
-+
-+describe("getEmbeddingModelPreset", () => {
-+  it("returns mean pooling for nomic without forcing task prefixes", () => {
-+    expect(getEmbeddingModelPreset("Xenova/nomic-embed-text-v1")).toEqual({ pooling: "mean" });
-+  });
-+
-+  it("returns cls pooling and empty prefixes for bge-m3", () => {
-+    expect(getEmbeddingModelPreset("Xenova/bge-m3")).toEqual({
-+      pooling: "cls",
-+      queryPrefix: "",
-+      documentPrefix: "",
-+    });
-+  });
-+
-+  it("returns e5 query/passage prefixes", () => {
-+    expect(getEmbeddingModelPreset("intfloat/multilingual-e5-large")).toEqual({
-+      pooling: "mean",
-+      queryPrefix: "query: ",
-+      documentPrefix: "passage: ",
-+    });
-+    expect(getEmbeddingModelPreset("intfloat/e5-large-v2")?.queryPrefix).toBe("query: ");
-+  });
-+
-+  it("returns last_token pooling and instruct query prefix for Qwen3-Embedding", () => {
-+    const preset = getEmbeddingModelPreset("onnx-community/Qwen3-Embedding-0.6B-ONNX");
-+    expect(preset?.pooling).toBe("last_token");
-+    expect(preset?.documentPrefix).toBe("");
-+    expect(preset?.queryPrefix).toContain("Instruct:");
-+    expect(preset?.queryPrefix).toContain("Query: ");
-+  });
-+
-+  it("returns mean pooling and empty prefixes for jina", () => {
-+    expect(getEmbeddingModelPreset("Xenova/jina-embeddings-v2-base-en")).toEqual({
-+      pooling: "mean",
-+      queryPrefix: "",
-+      documentPrefix: "",
-+    });
-+  });
-+
-+  it("returns undefined for unknown models", () => {
-+    expect(getEmbeddingModelPreset("Xenova/all-MiniLM-L6-v2")).toBeUndefined();
-+  });
-+});
-+
-+describe("normalizeEmbeddingPooling", () => {
-+  it("accepts mean, cls, and last_token", () => {
-+    expect(normalizeEmbeddingPooling("mean")).toBe("mean");
-+    expect(normalizeEmbeddingPooling("cls")).toBe("cls");
-+    expect(normalizeEmbeddingPooling("last_token")).toBe("last_token");
-+  });
-+
-+  it("rejects invalid values", () => {
-+    expect(() => normalizeEmbeddingPooling("max")).toThrow(/embeddingPooling/);
-+    expect(() => normalizeEmbeddingPooling(1)).toThrow(/embeddingPooling/);
-+  });
-+});
-+
-+describe("normalizeEmbeddingDtype", () => {
-+  it("accepts known transformers.js dtypes and trims whitespace", () => {
-+    expect(normalizeEmbeddingDtype("q8")).toBe("q8");
-+    expect(normalizeEmbeddingDtype(" fp32 ")).toBe("fp32");
-+    expect(normalizeEmbeddingDtype("")).toBeUndefined();
-+    expect(normalizeEmbeddingDtype(undefined)).toBeUndefined();
-+  });
-+
-+  it("rejects unknown dtypes", () => {
-+    expect(() => normalizeEmbeddingDtype("bfloat16")).toThrow(/embeddingDtype/);
-+  });
-+});
-```
-
-**File**: `tests/embedding-task-prefixes.test.ts` (modified, +77/-1)
-```diff
-@@ -1,5 +1,43 @@
- import { describe, it, expect } from "bun:test";
--import { applyEmbeddingTaskPrefix } from "../src/services/embedding.js";
-+import { applyEmbeddingTaskPrefix, resolveEmbeddingTaskPrefix } from "../src/services/embedding.js";
-+
-+describe("resolveEmbeddingTaskPrefix", () => {
-+  it("returns empty when prefixes are disabled and no custom prefix is set", () => {
-+    expect(resolveEmbeddingTaskPrefix("document", { useTaskPrefixes: false })).toBe("");
-+    expect(resolveEmbeddingTaskPrefix("query", { useTaskPrefixes: false })).toBe("");
-+  });
-+
-+  it("returns Nomic prefixes when useTaskPrefixes is true", () => {
-+    expect(resolveEmbeddingTaskPrefix("document", { useTaskPrefixes: true })).toBe(
-+      "search_document: "
-+    );
-+    expect(resolveEmbeddingTaskPrefix("query", { useTaskPrefixes: true })).toBe("search_query: ");
-+  });
-+
-+  it("prefers custom prefixes over Nomic", () => {
-+    expect(
-+      resolveEmbeddingTaskPrefix("query", {
-+        useTaskPrefixes: true,
-+        queryPrefix: "query: ",
-+      })
-+    ).toBe("query: ");
-+    expect(
-+      resolveEmbeddingTaskPrefix("document", {
-+        useTaskPrefixes: true,
-+        documentPrefix: "passage: ",
-+      })
-+    ).toBe("passage: ");
-+  });
-+
-+  it("treats an explicit empty custom prefix as no prefix", () => {
-+    expect(
-+      resolveEmbeddingTaskPrefix("query", {
-+        useTaskPrefixes: true,
-+        queryPrefix: "",
-+      })
-+    ).toBe("");
-+  });
-+});
- 
- describe("applyEmbeddingTaskPrefix", () => {
-   it("returns text unchanged when prefixes are disabled", () => {
-@@ -38,4 +76,42 @@ describe("applyEmbeddingTaskPrefix", () => {
-       "search_query: hello"
-     );
-   });
-+
-+  it("applies custom prefixes from options object", () => {
-+    expect(
-+      applyEmbeddingTaskPrefix(
-+        "hello",
-+        { task: "query" },
-+        {
-+          useTaskPrefixes: false,
-+          queryPrefix: "query: ",
-+          documentPrefix: "passage: ",
-+        }
-+      )
-+    ).toBe("query: hello");
-+    expect(
-+      applyEmbeddingTaskPrefix(
-+        "hello",
-+        { task: "document" },
-+        {
-+          useTaskPrefixes: false,
-+          queryPrefix: "query: ",
-+          documentPrefix: "passage: ",
-+        }
-+      )
-+    ).toBe("passage: hello");
-+  });
-+
-+  it("skips prefixing when custom prefix is empty even if Nomic is enabled", () => {
-+    expect(
-+      applyEmbeddingTaskPrefix(
-+        "hello",
-+        { task: "query" },
-+        {
-+          useTaskPrefixes: true,
-+          queryPrefix: "",
-+        }
-+      )
-+    ).toBe("hello");
-+  });
+@@ -142,5 +142,8 @@ describe("handleStats health data", () => {
+     expect(daily?.find((item) => item.date === day(3))?.compactionInjections).toBe(1);
+     expect(daily?.find((item) => item.date === day(4))?.profileInjections).toBe(1);
+     expect(result.data?.shardsError).toBeUndefined();
+-  });
++    // Windows CI needs >5s for two shard creations, three vector inserts, and
++    // the full stats walk; the default 5s per-test timeout races afterEach
++    // cleanup against the in-flight walk. Same budget as plugin-bundle-boundary.
++  }, 30_000);
  });
 ```
 
 ---
 
-### Incident Patch 9: `df22336e` (2026-10-10)
-**Commit Message**: fix(embedding): resolve ONNX dtype from model declaration or cache (#393)
+### Incident Patch 2: `01b8323b` (2026-10-18)
+**Commit Message**: feat(web): add health/stats view to the web UI
 
-* fix(embedding): resolve ONNX dtype from model declaration or cache
+Extend GET /api/stats with per-shard memory health (counts, newest/oldest
+ages, same-tag duplication proxy, file/registration mismatch), an active
+user-profile summary, and a 14-day activity series parsed from the
+plugin's structured logs (captures, skips, profile/compaction injections,
+errors bucketed by message). Add a Stats tab rendering it, with per-section
+degradation so the view keeps reporting during database incidents.
+Read-only: no new writes or capture/injection behavior changes.
 
-pipeline() without an explicit dtype resolves device=cpu on Node/Bun, and cpu
-is missing from transformers.js DEFAULT_DEVICE_DTYPE_MAPPING, so it falls back
-to fp32 and requests onnx/model.onnx. Quantized-only repos do not ship that
-file, so the local lookup 404s, the remote fallback runs, and offline hosts
-fail warmup with 'fetch failed'.
-
-Resolve the dtype in two tiers before calling pipeline(): first the repo's own
-transformers.js_config.dtype declaration, then a probe of the cached ONNX
-variants in descending precision. When neither applies, dtype is omitted and
-transformers.js keeps its existing defaults.
-
-* fix(embedding): harden ONNX dtype resolution for quantized caches
-
-Expand the cache probe to the full transformers.js suffix map, skip
-pipeline dtype overrides when config uses a per-file object map, and
-cover resolveLocalOnnxDtype with unit tests.
-
----------
-
-Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
-
-**File**: `src/services/embedding.ts` (modified, +92/-1)
+**File**: `README.md` (modified, +4/-0)
 ```diff
-@@ -1,5 +1,6 @@
- import { CONFIG } from "../config.js";
- import { log } from "./logger.js";
-+import { existsSync, readFileSync } from "node:fs";
- import { join } from "node:path";
- import {
-   formatOnnxruntimeInitError,
-@@ -13,6 +14,88 @@ const TIMEOUT_MS = 30000;
- const GLOBAL_EMBEDDING_KEY = Symbol.for("opencode-mem.embedding.instance");
- const MAX_CACHE_SIZE = 100;
+@@ -179,6 +179,10 @@ Rule of thumb: lasting always-on project instructions → `AGENTS.md`; growing w
+ - Optional HTTP catalog for other OpenCode instances: `"skills": ["http://127.0.0.1:4747/skills/"]` (serves `/skills/index.json` and `/skills/<id>/<id>.md` — separate from the UI path).
+ - REST: `GET/POST /api/skills`, `GET/PUT/DELETE /api/skills/:id`.
  
-+// ONNX weight variants in descending precision, mirroring transformers.js
-+// DEFAULT_DTYPE_SUFFIX_MAPPING (utils/dtypes.js). fp32 has no filename suffix.
-+const ONNX_DTYPE_VARIANTS = [
-+  ["fp32", ""],
-+  ["fp16", "_fp16"],
-+  ["q8", "_quantized"],
-+  ["int8", "_int8"],
-+  ["uint8", "_uint8"],
-+  ["q4", "_q4"],
-+  ["q4f16", "_q4f16"],
-+  ["bnb4", "_bnb4"],
-+  ["q2", "_q2"],
-+  ["q2f16", "_q2f16"],
-+  ["q1", "_q1"],
-+  ["q1f16", "_q1f16"],
-+] as const;
++### Health stats
 +
-+/** Concrete dtype strings accepted by transformers.js `pipeline({ dtype })`. */
-+export type LocalOnnxDtype = (typeof ONNX_DTYPE_VARIANTS)[number][0] | "auto";
++The web UI's **Stats** tab (at `/stats`) shows memory-system health at a glance: totals per scope, per-shard memory counts with stale/missing-shard warnings and a same-tag duplication proxy, the active user-profile version, and a 14-day activity series (captures, skipped captures, profile/compaction injections, and errors bucketed by message) parsed from the plugin's own structured logs in `~/.opencode-mem/`. It is read-only — `GET /api/stats` — and degrades per section if a database is unavailable, so it keeps reporting during incidents.
 +
-+type DeclaredDtype =
-+  { kind: "string"; value: LocalOnnxDtype } | { kind: "object" } | { kind: "absent" };
-+
-+function modelCacheRoot(model: string, cacheRoot?: string): string {
-+  return join(cacheRoot ?? join(CONFIG.storagePath, ".cache"), model);
-+}
-+
-+/**
-+ * Read `transformers.js_config.dtype` from the cached config.json.
-+ * String declarations outrank the cache probe. Object (per-file) maps must not
-+ * be overridden — transformers.js resolves them after loading config. Absent or
-+ * malformed configs fall through to the cache probe.
-+ */
-+function readDeclaredDtype(model: string, cacheRoot?: string): DeclaredDtype {
-+  try {
-+    const parsed = JSON.parse(
-+      readFileSync(join(modelCacheRoot(model, cacheRoot), "config.json"), "utf-8")
-+    );
-+    const declared = parsed?.["transformers.js_config"]?.dtype;
-+    if (typeof declared === "string" && declared.trim()) {
-+      return { kind: "string", value: declared.trim() as LocalOnnxDtype };
-+    }
-+    if (declared && typeof declared === "object" && !Array.isArray(declared)) {
-+      return { kind: "object" };
-+    }
-+    return { kind: "absent" };
-+  } catch {
-+    return { kind: "absent" };
-+  }
-+}
-+
-+/**
-+ * Resolve the dtype whose ONNX weights are already cached, so a quantized-only
-+ * repo is not asked for `model.onnx` (fp32). Returns undefined when nothing is
-+ * cached yet — transformers.js then falls back to its own defaults.
-+ */
-+function detectCachedDtype(model: string, cacheRoot?: string): LocalOnnxDtype | undefined {
-+  const onnxDir = join(modelCacheRoot(model, cacheRoot), "onnx");
-+  const hit = ONNX_DTYPE_VARIANTS.find(([, suffix]) =>
-+    existsSync(join(onnxDir, `model${suffix}.onnx`))
-+  );
-+  return hit?.[0];
-+}
-+
-+/**
-+ * Resolve a concrete dtype to pass into transformers.js `pipeline()`, or
-+ * undefined to leave dtype selection to transformers.js defaults / config.
-+ *
-+ * @param model Hugging Face model id (cache subdirectory under `.cache`)
-+ * @param cacheRoot Optional override for `{storagePath}/.cache` (tests)
-+ */
-+export function resolveLocalOnnxDtype(
-+  model: string,
-+  cacheRoot?: string
-+): LocalOnnxDtype | undefined {
-+  const declared = readDeclaredDtype(model, cacheRoot);
-+  if (declared.kind === "string") return declared.value;
-+  // Per-file object maps: do not pass options.dtype — it would override config.
-+  if (declared.kind === "object") return undefined;
-+  return detectCachedDtype(model, cacheRoot);
-+}
-+
- export type EmbeddingTask = "document" | "query";
+ ### Intelligent prompt-based memory extraction
  
- export type EmbedOptions = {
-@@ -164,12 +247,20 @@ export class EmbeddingService {
- 
-       // Local model path
-       const { pipeline } = await ensureTransformersLoaded();
-+      const dtype = resolveLocalOnnxDtype(CONFIG.embeddingModel);
-+      if (dtype) {
-+        log("Resolved local ONNX dtype for embedding warmup", {
-+          model: CONFIG.embeddingModel,
-+          dtype,
-+        });
-+      }
-       this.pipe = await pipeline("feature-extraction", CONFIG.embeddingModel, {
-+        ...(dtype ? { dtype } : {}),
-         progress_callback: progressCallback,
-       });
-       this.isWarmedUp = true;
-       this.initError = null;
--      log("Embedding model warmed up", { model: CONFIG.embeddingModel });
-+      log("Embedding model warmed up", { model: CONFIG.embeddingModel, dtype: dtype ?? null });
-     } catch (error) {
-       const rewritten = formatOnnxruntimeInitError(error);
-       this.initPromise = null;
+ That phrase in the feature list is **auto-capture**: after a conversation, a background AI request summarizes technical work and saves it as memory. No special prompt from you is required. It uses `opencodeProvider` / `opencodeModel` when set, otherwise the manual `memoryProvider` fallback.
 ```
 
-**File**: `tests/embedding-onnx-dtype.test.ts` (added, +99/-0)
+**File**: `src/services/api-handlers.ts` (modified, +32/-18)
 ```diff
-@@ -0,0 +1,99 @@
-+import { describe, expect, it } from "bun:test";
-+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { join } from "node:path";
-+import { resolveLocalOnnxDtype } from "../src/services/embedding.js";
-+
-+const MODEL = "org/quantized-embed";
-+
-+function withCache(setup: (cacheRoot: string, modelDir: string, onnxDir: string) => void): string {
-+  const cacheRoot = mkdtempSync(join(tmpdir(), "opencode-mem-onnx-dtype-"));
-+  const modelDir = join(cacheRoot, MODEL);
-+  const onnxDir = join(modelDir, "onnx");
-+  mkdirSync(onnxDir, { recursive: true });
-+  setup(cacheRoot, modelDir, onnxDir);
-+  return cacheRoot;
-+}
-+
-+function writeConfig(modelDir: string, transformersJsConfig: Record<string, unknown>): void {
-+  writeFileSync(
-+    join(modelDir, "config.json"),
-+    JSON.stringify({ model_type: "bert", "transformers.js_config": transformersJsConfig }),
-+    "utf-8"
-+  );
-+}
-+
-+function touchOnnx(onnxDir: string, fileName: string): void {
-+  writeFileSync(join(onnxDir, fileName), "stub");
-+}
-+
-+describe("resolveLocalOnnxDtype", () => {
-+  it("detects q8 from model_quantized.onnx when no config dtype is declared", () => {
-+    const cacheRoot = withCache((_cacheRoot, _modelDir, onnxDir) => {
-+      touchOnnx(onnxDir, "model_quantized.onnx");
-+    });
-+    try {
-+      expect(resolveLocalOnnxDtype(MODEL, cacheRoot)).toBe("q8");
-+    } finally {
-+      rmSync(cacheRoot, { recursive: true, force: true });
-+    }
-+  });
-+
-+  it("prefers declared string dtype over missing fp32 weights", () => {
-+    const cacheRoot = withCache((_cacheRoot, modelDir, onnxDir) => {
-+      writeConfig(modelDir, { dtype: "q8" });
-+      touchOnnx(onnxDir, "model_quantized.onnx");
-+    });
-+    try {
-+      expect(resolveLocalOnnxDtype(MODEL, cacheRoot)).toBe("q8");
-+    } finally {
-+      rmSync(cacheRoot, { recursive: true, force: true });
-+    }
-+  });
-+
-+  it("does not override per-file object dtype with a cache probe", () => {
-+    const cacheRoot = withCache((_cacheRoot, modelDir, onnxDir) => {
-+      writeConfig(modelDir, { dtype: { model: "q8" } });
-+      touchOnnx(onnxDir, "model_quantized.onnx");
-+    });
-+    try {
-+      expect(resolveLocalOnnxDtype(MODEL, cacheRoot)).toBeUndefined();
-+    } finally {
-+      rmSync(cacheRoot, { recursive: true, force: true });
-+    }
-+  });
-+
-+  it("prefers fp32 when both fp32 and q8 weights are cached", () => {
-+    const cacheRoot = withCache((_cacheRoot, _modelDir, onnxDir) => {
-+      touchOnnx(onnxDir, "model.onnx");
-+      touchOnnx(onnxDir, "model_quantized.onnx");
-+    });
-+    try {
-+      expect(resolveLocalOnnxDtype(MODEL, cacheRoot)).toBe("fp32");
-+    } finally {
-+      rmSync(cacheRoot, { recursive: true, force: true });
-+    }
-+  });
-+
-+  it("returns undefined for an empty cache", () => {
-+    const cacheRoot = withCache(() => {
-+      /* empty model dir with only onnx/ */
-+    });
-+    try {
-+      expect(resolveLocalOnnxDtype(MODEL, cacheRoot)).toBeUndefined();
-+    } finally {
-+      rmSync(cacheRoot, { recursive: true, force: true });
-+    }
-+  });
-+
-+  it("detects q4f16 from model_q4f16.onnx", () => {
-+    const cacheRoot = withCache((_cacheRoot, _modelDir, onnxDir) => {
-+      touchOnnx(onnxDir, "model_q4f16.onnx");
-+    });
-+    try {
-+      expect(resolveLocalOnnxDtype(MODEL, cacheRoot)).toBe("q4f16");
-+    } finally {
-+      rmSync(cacheRoot, { recursive: true, force: true });
-+    }
-+  });
-+});
-```
-
----
-
-### Incident Patch 10: `1832bff6` (2026-10-06)
-**Commit Message**: fix(ai): retry tool calls after argument validation failure (#389)
-
-Validation errors in executeToolCall returned immediately and skipped the
-built-in retry loop, aborting user-profile-learning for the idle cycle.
-Break out of the tool-call loop instead so the model can fix invalid JSON
-within maxIterations.
-
-Fixes #388
-
-**File**: `src/services/ai/providers/openai-chat-completion.ts` (modified, +1/-5)
-```diff
-@@ -466,11 +466,7 @@ export class OpenAIChatCompletionProvider extends BaseAIProvider {
-                   JSON.stringify({ success: false, error: errorMessage })
-                 );
+@@ -13,6 +13,12 @@ import type { UserProfileData } from "./user-profile/types.js";
+ import { sortProfileItems } from "../utils/profile.js";
+ import { toPublicProfileData } from "./user-profile/profile-utils.js";
+ import type { ShardInfo } from "./turso/types.js";
++import {
++  collectDailyStats,
++  collectProfileStats,
++  collectShardStats,
++  type CollectDailyStatsOptions,
++} from "./stats-service.js";
  
--                return {
--                  success: false,
--                  error: errorMessage,
--                  iterations,
--                };
-+                break;
-               }
-             }
- 
-```
-
-**File**: `tests/openai-chat-completion-provider.test.ts` (modified, +85/-0)
-```diff
-@@ -412,6 +412,91 @@ describe("OpenAIChatCompletionProvider", () => {
-     expect(result.iterations).toBe(1);
-   });
- 
-+  it("retries after tool-argument validation failure and succeeds on next attempt", async () => {
-+    const invalidArguments = JSON.stringify({
-+      preferences: [],
-+      patterns: [],
-+      workflows: "none",
-+    });
-+    const validArguments = JSON.stringify({
-+      preferences: [],
-+      patterns: [],
-+      workflows: [],
-+      codingStyle: {},
-+      domainKnowledge: [],
-+    });
-+
-+    const responses = [
-+      {
-+        choices: [
-+          {
-+            message: {
-+              content: null,
-+              tool_calls: [
-+                {
-+                  id: "call-1",
-+                  type: "function",
-+                  function: { name: "save_memories", arguments: invalidArguments },
-+                },
-+              ],
-+            },
-+          },
-+        ],
-+      },
-+      {
-+        choices: [
-+          {
-+            message: {
-+              content: null,
-+              tool_calls: [
-+                {
-+                  id: "call-2",
-+                  type: "function",
-+                  function: { name: "save_memories", arguments: validArguments },
-+                },
-+              ],
-+            },
-+          },
-+        ],
-+      },
-+    ];
-+
-+    let callCount = 0;
-+    const requestBodies: Array<{ messages?: Array<{ role?: string; content?: string }> }> = [];
-+
-+    globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
-+      const body = JSON.parse(String(init?.body ?? "{}"));
-+      requestBodies.push(body);
-+      const responseBody = responses[callCount] ?? responses[responses.length - 1];
-+      callCount++;
-+      return {
-+        ok: true,
-+        status: 200,
-+        statusText: "OK",
-+        text: async () => JSON.stringify(responseBody),
-+        json: async () => responseBody,
-+      } as Response;
-+    }) as typeof fetch;
-+
-+    const result = await makeProvider({
-+      maxIterations: 3,
-+      apiUrl: "https://api.openai.com/v1",
-+    }).executeToolCall("system", "user", toolSchema, "session-id");
-+
-+    expect(result.success).toBe(true);
-+    expect(result.iterations).toBe(2);
-+    expect(callCount).toBe(2);
-+
-+    const secondMessages = requestBodies[1]?.messages ?? [];
-+    const retryFeedback = secondMessages.some(
-+      (msg) =>
-+        typeof msg.content === "string" &&
-+        (msg.content.includes("Validation failed") ||
-+          msg.content.includes("workflows must be an array"))
-+    );
-+    expect(retryFeedback).toBe(true);
-+  });
-+
-   it("returns success: false after max iterations with no tool call", async () => {
-     globalThis.fetch = makeFetch({
-       ok: true,
-```
-
----
-
-### Incident Patch 11: `b8f514a9` (2026-10-06)
-**Commit Message**: fix(v2): map failed and interrupted execution events to session.idle (#386)
-
-Auto-capture and profile learning only run on session.idle; without
-aliasing session.execution.failed/interrupted those sessions were never
-captured. Closes #383.
-
-**File**: `src/v2/legacy-client.ts` (modified, +12/-6)
-```diff
-@@ -317,16 +317,22 @@ export function legacyToolResult(value: unknown): { content: string; metadata?:
-   return { content: JSON.stringify(value ?? null) };
+ async function getAllMemoryShards(): Promise<ShardInfo[]> {
+   await ensureTursoReady();
+@@ -793,37 +799,45 @@ export async function handleSearch(
+   }
  }
  
-+// opencode v2 no longer publishes `session.idle`, which is what
-+// opencode-mem builds auto-capture and profile learning on. The
-+// `/api/event` stream emits `session.execution.{succeeded,failed,interrupted}`
-+// with `data.sessionID`; forwarding them under the legacy name is enough.
-+const LEGACY_EVENT_ALIASES: Record<string, string> = {
-+  "session.compaction.ended": "session.compacted",
-+  "session.execution.succeeded": "session.idle",
-+  "session.execution.failed": "session.idle",
-+  "session.execution.interrupted": "session.idle",
-+};
-+
- export function toLegacyEvent(raw: any): { type: string; properties: any } {
-   const envelope = raw?.payload ?? raw;
-   const source = envelope?.type === "sync" && envelope.syncEvent ? envelope.syncEvent : envelope;
-   const rawType = typeof source?.type === "string" ? source.type.replace(/\.1$/, "") : source?.type;
--  const type =
--    rawType === "session.compaction.ended"
--      ? "session.compacted"
--      : rawType === "session.execution.succeeded"
--        ? "session.idle"
--        : rawType;
-+  const type = typeof rawType === "string" ? (LEGACY_EVENT_ALIASES[rawType] ?? rawType) : rawType;
-   const data = source?.data ?? {};
-   if (source && typeof source === "object" && "properties" in source) {
-     return { type, properties: source.properties };
-```
-
-**File**: `tests/v2-legacy-client.test.ts` (modified, +9/-10)
-```diff
-@@ -384,16 +384,15 @@ describe("OpenCode v2 legacy client bridge", () => {
-     });
-   });
- 
--  it("maps V2 execution.succeeded to session.idle for auto-capture", () => {
--    expect(
--      toLegacyEvent({
--        type: "session.execution.succeeded",
--        data: { sessionID: "ses-1" },
--      })
--    ).toEqual({
--      type: "session.idle",
--      properties: { sessionID: "ses-1" },
--    });
-+  it("aliases v2 execution events to session.idle", () => {
-+    const t = (raw: string) => toLegacyEvent({ type: raw, data: { sessionID: "s1" } }).type;
-+
-+    expect(t("session.execution.succeeded")).toBe("session.idle");
-+    expect(t("session.execution.failed")).toBe("session.idle");
-+    expect(t("session.execution.interrupted")).toBe("session.idle");
-+    expect(t("session.compaction.ended")).toBe("session.compacted");
-+    expect(t("message.updated")).toBe("message.updated");
-+    expect(t("session.execution.succeeded.1")).toBe("session.idle");
-   });
- 
-   it("filters the global event stream by direct or session location", async () => {
-```
-
----
-
-### Incident Patch 12: `dd134c73` (2026-10-06)
-**Commit Message**: fix(profile): return JSON instead of calling a tool on the OpenCode path (#381)
-
-* fix(profile): return JSON instead of calling a tool on the OpenCode path
-
-Profile analysis shares one system prompt between the external-API
-tool-call path and the OpenCode structured-output path. The prompt ends
-with "Use the update_user_profile tool to save the profile", but on
-OpenCode v2 structured output goes through the Generate API, which has no
-tools and no json_schema enforcement. Models follow the instruction, reply
-with a one-line preamble ("Let me load the profile update tool first.")
-and stop, so profile learning never gets JSON and fails or times out.
-
-- buildProfileSystemPrompt takes a mode: the OpenCode path asks for the
-  profile as the JSON object; the external tool-call path is unchanged.
-- The v2 bridge states that no tools are available for json_schema
-  requests and recovers JSON from a fenced block or the first balanced
-  object when the model adds prose.
-- New optional opencodeTimeoutMs (default 90000, clamped to
-  10000..600000) drives the structured-output timeout. The outer safety
-  races in profile code derive from it (+30s) instead of a fixed 120s, so
-  the informative in
-
-**File**: `README.md` (modified, +2/-0)
-```diff
-@@ -414,6 +414,8 @@ The plugin issues structured-output requests to opencode's session API instead o
- 
- Optionally pin a model reasoning variant with `"opencodeVariant": "xhigh"` (e.g. for grok-4.7). It is applied to the plugin's internal LLM calls (auto-capture summaries, profile learning, profile cleanup), including when `opencodeModel` is `"inherit"`, so background work can use a different reasoning level than the interactive session.
- 
-+Slow reasoning models (or very large profile prompts) can exceed the default 90 s structured-output budget. Set `"opencodeTimeoutMs"` (milliseconds) to extend it for internal structured-output calls (auto-capture summaries, profile learning) — e.g. `"opencodeTimeoutMs": 180000` for 3 minutes. Values are clamped to 10000..600000; the default stays 90000. Numeric strings are coerced. Profile cleanup uses a separate, longer timeout.
-+
- Supported providers: any provider listed by `opencode providers list` (e.g. `anthropic`, `openai`, `github-copilot`, ...).
- 
- If `opencodeProvider` and `opencodeModel` are set, they take precedence over the manual `memoryProvider` settings below.
-```
-
-**File**: `opencode-mem.example.jsonc` (modified, +4/-0)
-```diff
-@@ -152,6 +152,10 @@
-   // Optional model reasoning variant for internal LLM calls (e.g. "xhigh");
-   // also applies when opencodeModel is "inherit":
-   // "opencodeVariant": "xhigh",
-+  // Optional timeout (ms) for the plugin's internal structured-output LLM calls
-+  // (auto-capture summaries, profile learning; default 90000, clamped to 10000..600000;
-+  // invalid values fall back to the default; numeric strings are coerced):
-+  // "opencodeTimeoutMs": 180000,
- 
-   // ============================================
-   // Auto-Capture Settings
-```
-
-**File**: `src/config.ts` (modified, +52/-0)
-```diff
-@@ -67,6 +67,14 @@ interface OpenCodeMemConfig {
-    * cheaper/faster/higher variant than the interactive session default.
-    */
-   opencodeVariant?: string;
-+  /**
-+   * Timeout in milliseconds for the plugin's internal structured-output LLM
-+   * calls (auto-capture summaries, profile learning). Profile cleanup keeps
-+   * its own longer timeout. Clamped to 10000..600000; non-number/non-finite
-+   * values (and non-numeric strings) fall back to the 90000 default. Numeric
-+   * strings like "180000" are coerced.
-+   */
-+  opencodeTimeoutMs?: number;
-   aiSessionRetentionDays?: number;
-   webServerEnabled?: boolean;
-   webServerPort?: number;
-@@ -160,6 +168,7 @@ const DEFAULTS: Required<
-     | "opencodeProvider"
-     | "opencodeModel"
-     | "opencodeVariant"
-+    | "opencodeTimeoutMs"
-     | "autoCaptureLanguage"
-     | "userEmailOverride"
-     | "userNameOverride"
-@@ -182,6 +191,7 @@ const DEFAULTS: Required<
-   opencodeProvider?: string;
-   opencodeModel?: string;
-   opencodeVariant?: string;
-+  opencodeTimeoutMs?: number;
-   autoCaptureLanguage?: string;
-   userEmailOverride?: string;
-   userNameOverride?: string;
-@@ -420,6 +430,10 @@ const CONFIG_TEMPLATE = `{
-    // Optional model reasoning variant for internal LLM calls (e.g. "xhigh");
-    // also applies when opencodeModel is "inherit":
-    // "opencodeVariant": "xhigh",
-+   // Optional timeout in milliseconds for the plugin's internal structured-output LLM calls
-+   // (auto-capture summaries, profile learning; default 90000, clamped to 10000..600000;
-+   // invalid values fall back to the default; numeric strings are coerced):
-+   // "opencodeTimeoutMs": 180000,
- 
-    // ============================================
-    // Auto-Capture Settings
-@@ -747,6 +761,43 @@ function normalizeOpencodeVariant(value: string | undefined): string | undefined
-   return trimmed ? trimmed : undefined;
- }
- 
-+export const OPENCODE_TIMEOUT_MS_MIN = 10_000;
-+export const OPENCODE_TIMEOUT_MS_MAX = 600_000;
-+export const OPENCODE_TIMEOUT_MS_DEFAULT = 90_000;
-+
-+/**
-+ * Structured-output prompt timeout: non-number/non-finite values fall back to
-+ * the default (numeric strings are coerced first), otherwise the value is
-+ * clamped to [OPENCODE_TIMEOUT_MS_MIN, OPENCODE_TIMEOUT_MS_MAX].
-+ */
-+export function normalizeOpencodeTimeoutMs(value: unknown): number {
-+  let numeric = value;
-+  if (typeof value === "string") {
-+    const trimmed = value.trim();
-+    if (trimmed.length === 0) return OPENCODE_TIMEOUT_MS_DEFAULT;
-+    numeric = Number(trimmed);
-+  }
-+  if (typeof numeric !== "number" || !Number.isFinite(numeric)) {
-+    return OPENCODE_TIMEOUT_MS_DEFAULT;
-+  }
-+  return Math.min(OPENCODE_TIMEOUT_MS_MAX, Math.max(OPENCODE_TIMEOUT_MS_MIN, numeric));
-+}
-+
-+/**
-+ * Margin added to the configured structured-output timeout for the outer
-+ * safety-net races around generateStructuredOutput calls: the inner, more
-+ * informative provider timeout always fires first.
-+ */
-+export const OPENCODE_TIMEOUT_OUTER_MARGIN_MS = 30_000;
-+
-+/**
-+ * Outer safety-net timeout wrapping one structured-output call, derived from
-+ * the configured timeout plus a fixed margin.
-+ */
-+export function outerStructuredOutputTimeoutMs(configured: number | undefined): number {
-+  return (configured ?? OPENCODE_TIMEOUT_MS_DEFAULT) + OPENCODE_TIMEOUT_OUTER_MARGIN_MS;
-+}
-+
- /**
-  * User-supplied markers extend the built-in set rather than replacing it, so
-  * adding one marker cannot silently disable protection against all the others.
-@@ -837,6 +888,7 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
-     opencodeProvider: fileConfig.opencodeProvider,
-     opencodeModel: fileConfig.opencodeModel,
-     opencodeVariant: normalizeOpencodeVariant(fileConfig.opencodeVariant),
-+    opencodeTimeoutMs: normalizeOpencodeTimeoutMs(fileConfig.opencodeTimeoutMs),
-     autoCaptureProviderStatus: getAutoCaptureProviderStatus({
-       opencodeProvider: fileConfig.opencodeProvider,
-       opencodeModel: fileConfig.opencodeModel,
-```
-
-**File**: `src/index.ts` (modified, +11/-2)
-```diff
-@@ -318,9 +318,18 @@ export async function configureOpencodeHostTransport(ctx: {
-   readonly client: unknown;
-   readonly serverUrl?: string | URL;
- }): Promise<void> {
--  const { createV2Client, resetHostFetch, setHostFetch, setV2Client } =
--    await loadOpencodeProvider();
-+  const {
-+    createV2Client,
-+    resetHostFetch,
-+    setHostFetch,
-+    setV2Client,
-+    setStructuredOutputTimeoutConfig,
-+  } = await loadOpencodeProvider();
-   resetHostFetch();
-+  // Configured structured-output timeout (opencodeTimeoutMs): injected here so
-+  // the lazily-bundled provider module never imports config.js (whose import
-+  // side effects would leak into subprocess gates and loader bundles).
-+  setStructuredOutputTimeoutConfig(CONFIG.opencodeTimeoutMs);
-   const hostConfig = getHostClientConfig(ctx);
-   if (hostConfig.fetch) {
-     setHostFetch(hostConfig.fetch);
-```
-
-**File**: `src/services/ai/opencode-provider.ts` (modified, +32/-4)
-```diff
-@@ -55,11 +55,39 @@ export const STRUCTURED_OUTPUT_MAX_STEPS = 2;
- /** Cap OpenCode schema retries so a bad provider cannot spin forever. */
- export const STRUCTURED_OUTPUT_DEFAULT_RETRY_COUNT = 1;
- 
--let _structuredOutputTimeoutMs = STRUCTURED_OUTPUT_TIMEOUT_MS;
-+let _structuredOutputTimeoutOverrideMs: number | undefined;
-+// Configured timeout (CONFIG.opencodeTimeoutMs), injected by the plugin init
-+// instead of importing config.js here: the provider module is bundled into a
-+// single-file lazy loader whose import graph must stay free of config side
-+// effects (config creation banner, DATA_DIR mkdir) for subprocess gates.
-+let _structuredOutputConfiguredMs: number | undefined;
- 
--/** Test helper: override the structured-output prompt timeout. Pass undefined to reset. */
-+/**
-+ * Test helper: override the structured-output prompt timeout. Pass undefined
-+ * to reset to the configured value.
-+ */
- export function setStructuredOutputTimeoutMsForTests(ms: number | undefined): void {
--  _structuredOutputTimeoutMs = ms ?? STRUCTURED_OUTPUT_TIMEOUT_MS;
-+  _structuredOutputTimeoutOverrideMs = ms;
-+}
-+
-+/**
-+ * Inject the configured structured-output timeout (CONFIG.opencodeTimeoutMs,
-+ * already normalized/clamped in config.ts). Called once by the plugin init.
-+ */
-+export function setStructuredOutputTimeoutConfig(ms: number): void {
-+  _structuredOutputConfiguredMs = ms;
-+}
-+
-+/**
-+ * Effective structured-output prompt timeout: the test override wins, then
-+ * the configured value, then the hard-coded default.
-+ */
-+function effectiveStructuredOutputTimeoutMs(): number {
-+  return (
-+    _structuredOutputTimeoutOverrideMs ??
-+    _structuredOutputConfiguredMs ??
-+    STRUCTURED_OUTPUT_TIMEOUT_MS
-+  );
- }
- 
- export const STRUCTURED_OUTPUT_PERMISSIONS = [
-@@ -717,7 +745,7 @@ async function withStructuredOutputTimeout<T>(
-   onTimeout: () => unknown
- ): Promise<T> {
-   let timer: ReturnType<typeof setTimeout> | undefined;
--  const timeoutMs = _structuredOutputTimeoutMs;
-+  const timeoutMs = effectiveStructuredOutputTimeoutMs();
-   const timeoutPromise = new Promise<never>((_, reject) => {
-     timer = setTimeout(() => {
-       reject(structuredOutputTimeoutError(timeoutMs));
-```
-
-**File**: `src/services/user-memory-learning.ts` (modified, +45/-7)
-```diff
-@@ -686,7 +686,37 @@ export async function resolveProfileLanguageName(prompts: UserPrompt[]): Promise
-   return getLanguageName(targetLang);
- }
- 
--function buildProfileSystemPrompt(existingProfile: UserProfile | null, langName: string): string {
-+/**
-+ * Outer safety-net timeout wrapping one structured-output call: the configured
-+ * timeout plus a fixed margin, so the inner, more informative provider
-+ * timeout always fires first. Local (not imported from config.ts) because
-+ * subprocess test scenarios mock the config module with a minimal export
-+ * surface.
-+ */
-+function outerStructuredTimeoutMs(configured: number | undefined): number {
-+  return (configured ?? 90_000) + 30_000;
-+}
-+
-+/**
-+ * System prompt for the profile analysis.
-+ *
-+ * `mode` selects the transport the same analysis is served through:
-+ * - "tool": the external-API tool-call path (`update_user_profile` forced
-+ *   tool). The prompt must instruct the model to use that tool.
-+ * - "json": the OpenCode structured-output path (v2 Generate API exposes no
-+ *   tools). A tool instruction here makes obedient models stall on a
-+ *   preamble ("Let me load the profile update tool first.") and return no
-+ *   JSON, so the model is told to answer with the profile JSON object itself.
-+ */
-+function buildProfileSystemPrompt(
-+  existingProfile: UserProfile | null,
-+  langName: string,
-+  mode: "tool" | "json"
-+): string {
-+  const closing =
-+    mode === "tool"
-+      ? `Use the update_user_profile tool to save the ${existingProfile ? "updated" : "new"} profile.`
-+      : `Return the ${existingProfile ? "updated" : "new"} profile as the JSON object described in the request. Reply with JSON only.`;
-   return `You are a user behavior analyst for a coding assistant.
- 
- Your task is to analyze user prompts and ${existingProfile ? "update" : "create"} a comprehensive user profile.
-@@ -695,18 +725,23 @@ CRITICAL: You MUST write all descriptions, categories, and text in ${langName}.
- 
- CRITICAL: All JSON string values MUST escape double quotes with backslash. Do NOT use unescaped quotation marks inside string values.
- 
--Use the update_user_profile tool to save the ${existingProfile ? "updated" : "new"} profile.`;
-+${closing}`;
- }
- 
- async function analyzeUserProfile(
-   context: string,
-   existingProfile: UserProfile | null,
-   langName: string
- ): Promise<AnalysisResult | null> {
--  const systemPrompt = buildProfileSystemPrompt(existingProfile, langName);
--  log("user-profile-learning: analyze called", { hasProfile: !!existingProfile });
-+  // Outer safety net for the structured-output call. Derived from the same
-+  // configured timeout the inner (informative) structured-output timeout uses,
-+  // plus a margin, so the inner one always fires first and the error message
-+  // names the real cause instead of a generic race timeout.
-+  const outerTimeoutMs = outerStructuredTimeoutMs(CONFIG.opencodeTimeoutMs);
-   let opencodeProviderError: unknown;
-   if (CONFIG.opencodeProvider && CONFIG.opencodeModel) {
-+    const systemPrompt = buildProfileSystemPrompt(existingProfile, langName, "json");
-+    log("user-profile-learning: analyze called", { hasProfile: !!existingProfile });
-     log("user-profile-learning: trying opencode provider");
-     // The try/catch boundary is the provider only: LLM client construction,
-     // the structured-output call, and schema binding. Stored-profile parsing
-@@ -744,7 +779,7 @@ async function analyzeUserProfile(
-           schema,
-         }),
-         new Promise<never>((_, reject) =>
--          setTimeout(() => reject(new Error("user-profile-learning: timeout")), 120000)
-+          setTimeout(() => reject(new Error("user-profile-learning: timeout")), outerTimeoutMs)
-         ),
-       ]);
- 
-@@ -801,7 +836,7 @@ async function analyzeUserProfile(
-   const toolSchema = createUserProfileToolSchema(Boolean(existingProfile));
- 
-   const result = await provider.executeToolCall(
--    systemPrompt,
-+    buildProfileSystemPrompt(existingProfile, langName, "tool"),
-     context,
-     toolSchema,
-     `user-profile-${Date.now()}`
-@@ -875,7 +910,10 @@ If no clear chains, return { "paths": [] }.`;
-             }),
-           }),
-           new Promise<never>((_, reject) =>
--            setTimeout(() => reject(new Error("learning paths: opencode timeout")), 120000)
-+            setTimeout(
-+              () => reject(new Error("learning paths: opencode timeout")),
-+              outerStructuredTimeoutMs(CONFIG.opencodeTimeoutMs)
-+            )
-           ),
-         ])) as LearningPathsResult;
-       }
-```
-
-**File**: `src/services/user-profile/user-profile-manager.ts` (modified, +9/-1)
-```diff
-@@ -18,6 +18,11 @@ const THREE_WAY_CENTROID_W2 = 0.45;
- const THREE_WAY_CENTROID_W3 = 0.1;
- const DIRECTION_VALIDATION_TOLERANCE = 0.03;
- 
-+/** Mirrors config.outerStructuredOutputTimeoutMs; kept local so fixture mocks of config.js stay minimal. */
-+function outerStructuredTimeoutMs(configured: number | undefined): number {
-+  return (configured ?? 90_000) + 30_000;
-+}
-+
- /**
-  * Gamma sampler (Marsaglia-Tsang 2000).
-  * Used by sampleBeta for Thompson Sampling weak-hit upgrades.
-@@ -2043,7 +2048,10 @@ Generate a concise, abstract description of the user's general behavioral tenden
-         schema,
-       }),
-       new Promise((_, reject) =>
--        setTimeout(() => reject(new Error("evolve description timeout")), 120000)
-+        setTimeout(
-+          () => reject(new Error("evolve description timeout")),
-+          outerStructuredTimeoutMs(CONFIG.opencodeTimeoutMs)
-+        )
-       ),
-     ]);
- 
-```
-
-**File**: `src/v2/legacy-client.ts` (modified, +66/-8)
-```diff
-@@ -11,20 +11,74 @@ function textFromParts(parts: LegacyPart[] = []): string {
-     .join("\n");
- }
- 
-+/**
-+ * Best-effort structured-output recovery for the v2 Generate API, which has
-+ * no json_schema enforcement: try the raw text as JSON, then a fenced
-+ * ```json block, then balanced top-level {...} objects (ignoring braces
-+ * inside strings). When several objects parse, prefer the last one (models
-+ * often emit a stub/example before the final answer). Returns undefined when
-+ * nothing parses — callers treat that as "no structured output".
-+ */
- function parseJson(text: string): unknown {
-   const trimmed = text.trim();
--  const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i)?.[1];
--  const candidate = fenced ?? trimmed;
-+
-+  // Direct JSON.
+-export async function handleStats(): Promise<
++export async function handleStats(
++  options: Pick<CollectDailyStatsOptions, "logDir" | "now"> = {}
++): Promise<
+   ApiResponse<{
+     total: number;
+     byScope: { user: number; project: number };
+     byType: Record<string, number>;
++    generatedAt: string;
++    shards: Awaited<ReturnType<typeof collectShardStats>>["shards"];
++    shardsError?: string;
++    profile: Awaited<ReturnType<typeof collectProfileStats>>;
++    daily: ReturnType<typeof collectDailyStats>;
+   }>
+ > {
    try {
--    return JSON.parse(candidate);
-+    return JSON.parse(trimmed);
-   } catch {
--    const start = candidate.indexOf("{");
--    const end = candidate.lastIndexOf("}");
--    if (start >= 0 && end > start) {
--      return JSON.parse(candidate.slice(start, end + 1));
-+    // fall through to recovery
-+  }
-+
-+  // Fenced ```json block.
-+  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)?.[1];
-+  if (fenced) {
+     // Stats only counts Turso/libSQL rows; no embedding needed.
+     // See handleListTags comment - keep embedding init out of read paths.
+-    const shards = await getAllMemoryShards();
+-    let userCount = 0,
+-      projectCount = 0;
+-    const typeCount: Record<string, number> = {};
+-    for (const shard of shards) {
+-      const db = await tursoConnectionManager.getConnection(shard.dbPath);
+-      const memories = await tursoVectorSearch.getAllMemories(db);
+-      for (const r of memories) {
+-        const containerTag = String(r.container_tag ?? "");
+-        const type = r.type ? String(r.type) : "";
+-        if (containerTag.includes("_user_")) userCount++;
+-        else if (containerTag.includes("_project_")) projectCount++;
+-        if (type) typeCount[type] = (typeCount[type] || 0) + 1;
+-      }
++    let memoryShards: ShardInfo[] = [];
++    let shardsError: string | undefined;
 +    try {
-+      return JSON.parse(fenced);
-+    } catch {
-+      // fall through to the balanced-object scan
++      memoryShards = await getAllMemoryShards();
++    } catch (error) {
++      shardsError = error instanceof Error ? error.message : String(error);
      }
--    throw new Error("Model did not return a JSON object");
-   }
-+
-+  // Scan every balanced top-level object; keep the last one that parses.
-+  const candidate = fenced ?? trimmed;
-+  let lastParsed: unknown;
-+  let searchFrom = 0;
-+  while (searchFrom < candidate.length) {
-+    const start = candidate.indexOf("{", searchFrom);
-+    if (start < 0) break;
-+
-+    let depth = 0;
-+    let inString = false;
-+    let escaped = false;
-+    let found = false;
-+    for (let i = start; i < candidate.length; i++) {
-+      const ch = candidate[i];
-+      if (inString) {
-+        if (escaped) escaped = false;
-+        else if (ch === "\\") escaped = true;
-+        else if (ch === '"') inString = false;
-+        continue;
-+      }
-+      if (ch === '"') inString = true;
-+      else if (ch === "{") depth++;
-+      else if (ch === "}") {
-+        depth--;
-+        if (depth === 0) {
-+          found = true;
-+          try {
-+            lastParsed = JSON.parse(candidate.slice(start, i + 1));
-+          } catch {
-+            // Unparseable balanced span: keep scanning for a later object.
-+          }
-+          searchFrom = i + 1;
-+          break;
-+        }
-+      }
-+    }
-+    if (!found) break;
-+  }
-+
-+  return lastParsed;
- }
- 
- function legacyMessage(message: any, sessionID: string): any {
-@@ -93,6 +147,10 @@ function schemaPrompt(body: any): string {
-       [
-         "Return only one JSON object matching this JSON Schema.",
-         "Do not wrap the JSON in Markdown.",
-+        // The v2 Generate API exposes no tools; models that follow a tool
-+        // instruction from the system prompt would stall on a preamble and
-+        // never answer. State the constraint explicitly.
-+        "No tools are available in this request. Do not attempt to call any tool; your entire reply must be only the JSON object.",
-         JSON.stringify(body.format.schema),
-       ].join("\n")
-     );
++    const [shardStats, profile] = await Promise.all([
++      collectShardStats(memoryShards),
++      collectProfileStats(),
++    ]);
+     return {
+       success: true,
+       data: {
+-        total: userCount + projectCount,
+-        byScope: { user: userCount, project: projectCount },
+-        byType: typeCount,
++        total: shardStats.total,
++        byScope: shardStats.byScope,
++        byType: shardStats.byType,
++        generatedAt: new Date().toISOString(),
++        shards: shardStats.shards,
++        ...(shardsError ? { shardsError } : {}),
++        profile,
++        daily: collectDailyStats(options),
+       },
+     };
+   } catch (error) {
 ```
 
----
-
-### Incident Patch 13: `62ad0909` (2026-10-06)
-**Commit Message**: fix(capture): skip prompts from subagent child sessions (#382)
-
-* fix(capture): skip prompts from subagent child sessions
-
-Every "user" message of every session was recorded via capturePrompt.
-Sessions spawned by an orchestrator (OpenCode task/subagent children)
-have a parentID, and their "user" messages are prompts written by the
-parent agent, not by the human. They were saved as user prompts,
-auto-captured into memories, and consumed by profile learning, which
-learned the orchestrator's style as the user's preferences.
-
-capturePrompt now checks the session's parentID (same session.get
-access pattern as isInternalCaptureSession) and returns false before
-saving, so child-session prompts are neither stored nor auto-captured
-nor used for profile learning. The lookup is cached per sessionID in a
-bounded in-memory map (parentID never changes), and a lookup failure
-fails open with a log line, preserving today's behaviour.
-
-New chatMessage.captureChildSessions option (default false) opts back
-into capturing child-session prompts. Memory-context injection (load)
-behaviour is unchanged apart from the existing refused-capture path.
-
-* fix(capture): skip child sessions in memoryContext.load
-
-
-**File**: `README.md` (modified, +13/-0)
+**File**: `src/services/stats-service.ts` (added, +363/-0)
 ```diff
-@@ -210,6 +210,19 @@ Configure at `~/.config/opencode/opencode-mem.jsonc`:
- 
- The plugin creates a full commented template at this path on first startup. For every setting and comment, see [`opencode-mem.example.jsonc`](opencode-mem.example.jsonc).
- 
-+### Chat message capture and injection (`chatMessage`)
+@@ -0,0 +1,363 @@
++import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
++import { homedir } from "node:os";
++import { basename, join } from "node:path";
++import { CONFIG } from "../config.js";
++import { tursoConnectionManager } from "./turso/connection-manager.js";
++import type { ShardInfo } from "./turso/types.js";
++import type { UserProfile } from "./user-profile/types.js";
 +
-+These settings live under the `chatMessage` key in `~/.config/opencode/opencode-mem.jsonc`:
++export type DailyCounter =
++  "captures" | "captureSkipped" | "profileInjections" | "compactionInjections";
 +
-+| Option                                                 | Default          | What it does                                                                                                                                                                                                                                                                                           |
-+| ------------------------------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-+| `enabled`                                              | `true`           | Capture authored user prompts and inject memory context.                                                                                                                                                                                                                                               |
-+| `injectOn`                                             | `"first"`        | Inject memory context on the first user message of a session, or on `"always"` every authored turn.                                                                                                                                                                                                    |
-+| `maxMemories` / `excludeCurrentSession` / `maxAgeDays` | `3` / `true` / — | How many memories the injected context holds, whether memories captured in the current session are excluded, and an optional age cutoff in days.                                                                                                                                                       |
-+| `filterInjectedPrompts`                                | `true`           | Skip prompt text injected by the host or by other OpenCode plugins (system reminders, orchestration directives, background-task notifications) so it is never stored as if the user had typed it.                                                                                                      |
-+| `injectionMarkers`                                     | built-ins        | Extra markers identifying injected blocks; added to the built-in list, never replacing it.                                                                                                                                                                                                             |
-+| `captureChildSessions`                                 | `false`          | Capture prompts from orchestrator child sessions (sessions with a `parentID`, e.g. OpenCode task/subagent children). Their "user" messages are written by the parent agent, not by you, so by default they are not stored, auto-captured, used for profile learning, or given injected memory context. |
-+
- ### Choosing / configuring embeddings
- 
- Embeddings power similarity search for memories and the user profile. Configure them in the same file (`~/.config/opencode/opencode-mem.jsonc`). There is **no MLX backend** — local embeddings use `@huggingface/transformers` with ONNX, not Apple MLX.
-```
-
-**File**: `opencode-mem.example.jsonc` (modified, +6/-0)
-```diff
-@@ -116,6 +116,12 @@
-     // notifications) so it is never stored as if the user had typed it.
-     // Disable only if you deliberately want that content memorized.
-     "filterInjectedPrompts": true,
-+    // Capture prompts from orchestrator child sessions (sessions with a parentID,
-+    // e.g. OpenCode task/subagent children). Their "user" messages are written
-+    // by the parent agent, not by you, so the default false means they are not
-+    // stored, auto-captured, used for profile learning, or given memory
-+    // context. Enable only if you deliberately want those prompts memorized.
-+    "captureChildSessions": false,
-     // Extra markers identifying injected blocks. These are ADDED to the
-     // built-in list, never replace it.
-     // "injectionMarkers": ["<my-plugin-banner>"],
-```
-
-**File**: `src/config.ts` (modified, +18/-1)
-```diff
-@@ -135,6 +135,13 @@ interface OpenCodeMemConfig {
-     injectOn?: "first" | "always";
-     filterInjectedPrompts?: boolean;
-     injectionMarkers?: string[];
-+    /**
-+     * Capture "user" prompts from orchestrator child sessions (sessions with
-+     * a parentID, e.g. OpenCode task/subagent). Default false: those prompts
-+     * are written by the parent agent, not the human, and would train
-+     * auto-capture / profile learning on the orchestrator's style.
-+     */
-+    captureChildSessions?: boolean;
-   };
- }
- 
-@@ -251,6 +258,7 @@ const DEFAULTS: Required<
-     injectOn: "first",
-     filterInjectedPrompts: true,
-     injectionMarkers: [...getDefaultInjectionMarkers()],
-+    captureChildSessions: false,
-   },
- };
- 
-@@ -642,7 +650,14 @@ const CONFIG_TEMPLATE = `{
-     // (system reminders, orchestration directives, background-task
-     // notifications) so it is never stored as if the user had typed it.
-     // Disable only if you deliberately want that content memorized.
--    "filterInjectedPrompts": true
-+    "filterInjectedPrompts": true,
-+
-+    // Capture prompts from orchestrator child sessions (sessions with a parentID,
-+    // e.g. OpenCode task/subagent children). Their "user" messages are written
-+    // by the parent agent, not by you, so default false means they are not
-+    // stored, auto-captured, used for profile learning, or given memory
-+    // context. Enable only if you deliberately want those prompts memorized.
-+    "captureChildSessions": false
- 
-     // Extra markers identifying injected blocks. These are ADDED to the
-     // built-in list, never replace it.
-@@ -920,6 +935,8 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
-       filterInjectedPrompts:
-         fileConfig.chatMessage?.filterInjectedPrompts ?? DEFAULTS.chatMessage.filterInjectedPrompts,
-       injectionMarkers: normalizeInjectionMarkers(fileConfig.chatMessage?.injectionMarkers),
-+      captureChildSessions:
-+        fileConfig.chatMessage?.captureChildSessions ?? DEFAULTS.chatMessage.captureChildSessions,
-     },
-   };
- }
-```
-
-**File**: `src/index.ts` (modified, +72/-1)
-```diff
-@@ -218,6 +218,61 @@ async function isInternalCaptureSession(client: unknown, sessionID: string): Pro
-   return false;
- }
- 
-+/**
-+ * Bounded per-plugin cache of sessionID → has-parentID lookups. parentID never
-+ * changes for a session, so each session pays one session.get across all its
-+ * messages instead of one per message.
-+ */
-+const CHILD_SESSION_LOOKUPS: Map<string, boolean> = new Map();
-+const CHILD_SESSION_LOOKUP_CACHE_LIMIT = 1000;
-+
-+function extractSessionParentID(response: unknown): string | undefined {
-+  if (!response || typeof response !== "object") return undefined;
-+  const obj = response as {
-+    data?: { parentID?: string };
-+    parentID?: string;
-+  };
-+  const parentID = obj.data?.parentID ?? obj.parentID;
-+  // Empty string is not a real parent link (OpenCode uses a non-empty id).
-+  return typeof parentID === "string" && parentID.length > 0 ? parentID : undefined;
++export interface ParsedLogLine {
++  date: string;
++  message: string;
++  payload?: string;
 +}
 +
-+async function isChildSession(client: unknown, sessionID: string): Promise<boolean> {
-+  const cached = CHILD_SESSION_LOOKUPS.get(sessionID);
-+  if (cached !== undefined) return cached;
-+
-+  const sessionClient = (
-+    client as {
-+      session?: {
-+        get?: (args: unknown) => Promise<unknown>;
-+      };
-+    }
-+  )?.session;
-+
-+  if (typeof sessionClient?.get !== "function") {
-+    // Fail open (capture proceeds) — same behaviour as before this check existed.
-+    log("child session check: session.get unavailable", { sessionID });
-+    return false;
-+  }
-+
-+  try {
-+    const hasParent =
-+      extractSessionParentID(await sessionClient.get({ path: { id: sessionID } })) !== undefined;
-+    if (CHILD_SESSION_LOOKUPS.size >= CHILD_SESSION_LOOKUP_CACHE_LIMIT) {
-+      // Insertion-order eviction keeps the map bounded without timers.
-+      const oldest = CHILD_SESSION_LOOKUPS.keys().next().value;
-+      if (oldest !== undefined) CHILD_SESSION_LOOKUPS.delete(oldest);
-+    }
-+    CHILD_SESSION_LOOKUPS.set(sessionID, hasParent);
-+    return hasParent;
-+  } catch (error) {
-+    // Fail open on lookup failure and do not cache: a transient host error
-+    // must not permanently misclassify the session.
-+    log("child session check via session.get failed", { sessionID, error: String(error) });
-+    return false;
-+  }
++export interface LogClassification {
++  counter?: DailyCounter;
++  errorBucket?: string;
 +}
 +
- /** Least-privilege agent used only by internal structured-output sessions (issue #189). */
- export function applyStructuredOutputAgentConfig(cfg: { agent?: Record<string, unknown> }): void {
-   cfg.agent = {
-@@ -562,6 +617,7 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-     process.off("SIGTERM", shutdownHandler);
-     process.off("beforeExit", beforeExitHandler);
-     process.off("exit", exitHandler);
-+    CHILD_SESSION_LOOKUPS.clear();
-     await cleanupPlugin();
-   };
- 
-@@ -595,6 +651,16 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-       return false;
-     }
- 
-+    // Orchestrator child sessions (task/subagent) have a parentID; their
-+    // "user" messages are parent-agent prompts, not human input. Skipping the
-+    // save keeps them out of auto-capture and profile learning. Like other
-+    // non-authored turns, a false return also skips memory-context injection
-+    // for that turn (V1 chat.message returns early; the V2 adapter suppresses it).
-+    if (!CONFIG.chatMessage.captureChildSessions && (await isChildSession(ctx.client, sessionID))) {
-+      log("skipping child-session prompt capture", { sessionID });
-+      return false;
-+    }
++export interface DailyStats {
++  date: string;
++  captures: number;
++  captureSkipped: number;
++  profileInjections: number;
++  compactionInjections: number;
++  errors: Record<string, number>;
++}
 +
-     await userPromptManager.savePrompt(sessionID, messageID, directory, userMessage);
-     return true;
-   };
-@@ -647,7 +713,12 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-           !isConfigured() ||
-           !CONFIG.chatMessage.enabled ||
-           isInternalStructuredSession(sessionID) ||
--          (await isInternalCaptureSession(ctx.client, sessionID))
-+          (await isInternalCaptureSession(ctx.client, sessionID)) ||
-+          // Same child-session gate as capture: after plugin reload the V2
-+          // context hook can rehydrate via load() without going through
-+          // capturePrompt, so skip injection for orchestrator children too.
-+          (!CONFIG.chatMessage.captureChildSessions &&
-+            (await isChildSession(ctx.client, sessionID)))
-         ) {
-           return "";
-         }
-```
-
-**File**: `tests/child-session-capture.test.ts` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-+import { mkdtempSync, rmSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { fileURLToPath } from "node:url";
-+import { join } from "node:path";
++export interface ShardStats {
++  shardId: number | null;
++  scope: "user" | "project";
++  scopeHash: string;
++  shardIndex: number;
++  fileName: string;
++  fileExists: boolean;
++  isActive: boolean;
++  registeredVectorCount: number;
++  memoryCount: number;
++  oldestCreatedAt: string | null;
++  newestCreatedAt: string | null;
++  duplicateTagCount: number;
++  error?: string;
++}
 +
-+const directory = mkdtempSync(join(tmpdir(), "opencode-mem-child-capture-"));
-+let result: any;
++export interface ShardCollection {
++  shards: ShardStats[];
++  total: number;
++  byScope: { user: number; project: number };
++  byType: Record<string, number>;
++}
 +
-+afterAll(() => rmSync(directory, { recursive: true, force: true }));
++interface CachedLogEvent {
++  date: string;
++  classification: LogClassification;
++}
 +
-+beforeAll(() => {
-+  // Isolate module mocks from the suite. Drive the real shared plugin and
-+  // V2 adapter with no database, provider calls, or actual host sessions.
-+  const child = Bun.spawnSync([
-+    process.execPath,
-+    fileURLToPath(new URL("./fixtures/child-session-capture.mjs", import.meta.url)),
-+    directory,
-+  ]);
-+  expect(child.exitCode).toBe(0);
-+  expect(child.stderr.toString()).toBe("");
-+  result = JSON.parse(child.stdout.toString().trim());
-+});
++interface CachedLogFile {
++  signature: string;
++  events: CachedLogEvent[];
++}
 +
-+const savedSessionIDs = () => result.captures.map((capture: any) => capture.sessionID);
++const parsedLogFiles = new Map<string, CachedLogFile>();
 +
-+describe("subagent child-session prompt capture", () => {
-+  it("does not save child-session prompts by default (V1 chat.message)", () => {
-+    expect(savedSessionIDs()).not.toContain("v1-child");
-+  });
-+
-+  it("does not save child-session prompts by default (V2 memoryContext.capturePrompt)", () => {
-+    expect(savedSessionIDs()).not.toContain("v2-child");
-+  });
-+
-+  it("still saves top-level session prompts by default", () => {
-+    expect(savedSessionIDs()).toContain("v1-top");
-+    expect(savedSessionIDs()).toContain("v2-top");
-+  });
-+
-+  it("saves child-session prompts when captureChildSessions is true", () => {
-+    expect(savedSessionIDs()).toContain("v1-opt");
-+    expect(savedSessionIDs()).toContain("v2-opt");
-+  });
-+
-+  it("fails open and saves the prompt when session.get fails", () => {
-+    expect(savedSessionIDs()).toContain("v1-fail");
-+  });
-+
-+  it("looks the session up once per sessionID (repeated messages reuse the cache)", () => {
-+    expect(result.sessionGetCalls["v1-cache"]).toBe(1);
-+  });
-+
-+  it("checks the session on the first prompt only for top-level sessions too", () => {
-+    expect(result.sessionGetCalls["v1-top"]).toBe(1);
-+  });
-+
-+  it("memoryContext.load skips child sessions by default", () => {
-+    expect(result.loadChild).toBe("");
-+  });
-+
-+  it("memoryContext.load still injects for top-level sessions", () => {
-+    expect(result.loadTop).toBe("fixture-memory-context");
-+  });
-+
-+  it("treats an empty parentID as a top-level session for load", () => {
-+    expect(result.loadEmptyParent).toBe("fixture-memory-context");
-+  });
-+
-+  it("memoryContext.load injects for child sessions when captureChildSessions is true", () => {
-+    expect(result.loadChildOptIn).toBe("fixture-memory-context");
-+  });
-+});
-```
-
-**File**: `tests/config-resolution.test.ts` (modified, +19/-0)
-```diff
-@@ -218,6 +218,25 @@ describe("project-scoped config resolution", () => {
-     expect(CONFIG.opencodeVariant).toBeUndefined();
-   });
- 
-+  it("parses chatMessage.captureChildSessions from the global config", () => {
-+    existsSpy = spyOn(fs, "existsSync").mockImplementation((p) =>
-+      normalizePath(p).includes(".config/opencode/opencode-mem")
-+    );
-+    readSpy = spyOn(fs, "readFileSync");
-+
-+    readSpy.mockReturnValue(
-+      JSON.stringify({
-+        chatMessage: { captureChildSessions: true },
-+      }) as any
-+    );
-+    initConfig("/some/project");
-+    expect(CONFIG.chatMessage.captureChildSessions).toBe(true);
-+
-+    readSpy.mockReturnValue(JSON.stringify({ chatMessage: {} }) as any);
-+    initConfig("/some/project");
-+    expect(CONFIG.chatMessage.captureChildSessions).toBe(false);
-+  });
-+
-   it("falls back to defaults when neither global nor project config exists", () => {
-     existsSpy = spyOn(fs, "existsSync").mockReturnValue(false);
-     initConfig("/no/config/project");
-```
-
-**File**: `tests/config.test.ts` (modified, +4/-0)
-```diff
-@@ -217,6 +217,10 @@ describe("config", () => {
-     it("should expose the resolved auto-capture provider status on CONFIG", () => {
-       expect(CONFIG.autoCaptureProviderStatus).toEqual(getAutoCaptureProviderStatus(CONFIG));
-     });
-+
-+    it("should default chatMessage.captureChildSessions to false", () => {
-+      expect(CONFIG.chatMessage.captureChildSessions).toBe(false);
-+    });
-   });
- 
-   describe("isConfigured", () => {
-```
-
-**File**: `tests/fixtures/child-session-capture.mjs` (added, +176/-0)
-```diff
-@@ -0,0 +1,176 @@
-+import { mock } from "bun:test";
-+
-+const moduleUrl = (path) => new URL("../../src/" + path + ".js", import.meta.url).href;
-+const config = {
-+  chatMessage: {
-+    enabled: true,
-+    injectOn: "first",
-+    maxMemories: 3,
-+    excludeCurrentSession: true,
-+    filterInjectedPrompts: true,
-+    captureChildSessions: false,
-+  },
-+  compaction: { enabled: false },
-+  autoCaptureEnabled: false,
-+  webServerEnabled: false,
-+  autoUpdate: { enabled: false },
-+  storagePath: process.argv[2],
-+  opencodeModel: "inherit",
-+};
-+const captures = [];
-+const sessionGetCalls = [];
-+// sessionID -> { parentID?: string, failGet?: boolean }
-+const childSessions = new Map();
-+
-+mock.module(moduleUrl("config"), () => ({
-+  CONFIG: config,
-+  initConfig() {},
-+  isConfigured: () => true,
-+}));
-+mock.module(moduleUrl("services/client"), () => ({
-+  memoryClient: {
-+    warmup: async () => {},
-+    close: async () => {},
-+    listMemories: async () => ({
-+      success: true,
-+      memories: [
-+        {
-+          summary: "fixture memory",
-+          createdAt: new Date().toISOString(),
-+          metadata: {},
-+        },
-+      ],
-+    }),
-+  },
-+}));
-+mock.module(moduleUrl("services/tags"), () => ({
-+  getTags: () => ({
-+    project: { tag: "fixture-project" },
-+    user: { userEmail: "fixture-user" },
-+  }),
-+}));
-+mock.module(moduleUrl("services/context"), () => ({
-+  formatContextForPrompt: async () => "fixture-memory-context",
-+}));
-+mock.module(moduleUrl("services/user-prompt/user-prompt-manager"), () => ({
-+  userPromptManager: {
-+    savePrompt: async (...args) => captures.push(args),
-+    setPromptModel: async () => {},
-+  },
-+}));
-+mock.module(moduleUrl("services/logger"), () => ({ log() {} }));
-+mock.module(moduleUrl("services/web-server"), () => ({
-+  startWebServer: async () => null,
-+  WebServer: class {},
-+}));
-+mock.module(moduleUrl("services/auto-update"), () => ({ startAutoUpdate() {} }));
-+
-+const { OpenCodeMemPlugin } = await import(moduleUrl("index"));
-+const { registerV2Adapter } = await import(moduleUrl("v2/adapter"));
-+
-+const client = {
-+  provider: { list: async () => ({ data: { connected: [] } }) },
-+  session: {
-+    get: async ({ path }) => {
-+      sessionGetCalls.push(path.id);
-+      const session = childSessions.get(path.id);
-+      if (session?.failGet) throw new Error("session.get failed");
-+      return {
-+        data: {
-+          id: path.id,
-+          title: "subagent task",
-+          ...(session?.parentID ? { parentID: session.parentID } : {}),
-+        },
-+      };
-+    },
-+    messages: async () => ({ data: [] }),
-+  },
-+};
-+
-+const plugin = await OpenCodeMemPlugin({ directory: "/fixture-project", client });
-+
-+async function v2Adapter() {
-+  const hooks = new Map();
-+  const cleanup = await registerV2Adapter(
-+    {
-+      location: {
-+        directory: "/fixture-project",
-+        project: { directory: "/fixture-project" },
-+      },
-+      tool: { transform: async () => {} },
-+      session: { hook: async (name, callback) => hooks.set(name, callback) },
-+    },
-+    { ...plugin, event: undefined, dispose: undefined }
++/** Parse a structured logger line, splitting the message only at the first `: {`. */
++export function parseLogLine(line: string): ParsedLogLine | null {
++  const normalizedLine = line.endsWith("\r") ? line.slice(0, -1) : line;
++  const match = normalizedLine.match(
++    /^\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2})\]\s(.*)$/
 +  );
++  if (!match || !Number.isFinite(Date.parse(match[1]!))) return null;
++
++  const content = match[2]!;
++  const payloadSeparator = content.indexOf(": {");
++  if (payloadSeparator === -1) {
++    return { date: match[1]!.slice(0, 10), message: content };
++  }
++
 +  return {
-+    async prompt(sessionID, text, id) {
-+      await hooks.get("prompt")({ sessionID, messageID: id, prompt: { text } });
-+    },
-+    cleanup,
++    date: match[1]!.slice(0, 10),
++    message: content.slice(0, payloadSeparator),
++    payload: content.slice(payloadSeparator + 2),
 +  };
 +}
 +
-+async function v1Prompt(sessionID, messageID, text) {
-+  await plugin["chat.message"](
-+    { sessionID },
-+    { message: { id: messageID }, parts: [{ type: "text", text }] }
-+  );
++/** Classify a parsed logger message as one daily counter or a named error bucket. */
++export function classifyLogMessage(message: string): LogClassification {
++  if (message.startsWith("Auto-capture memory persisted")) return { counter: "captures" };
++  if (message.startsWith("Auto-capture skipped")) return { counter: "captureSkipped" };
++  if (message.startsWith("profile inject")) return { counter: "profileInjections" };
++  if (message.startsWith("Compaction memory injected")) {
++    return { counter: "compactionInjections" };
++  }
++
++  if (message.endsWith(": error")) {
++    return { errorBucket: message.slice(0, -": error".length) };
++  }
++  if (message.startsWith("Turso ready gate failed")) {
++    return { errorBucket: "Turso ready gate failed" };
++  }
++  if (message.startsWith("Failed to load skills for OpenCode registration")) {
++    return { errorBucket: "Failed to load skills for OpenCode registration" };
++  }
++  return {};
 +}
 +
-+const output = {};
-+
-+// Default: captureChildSessions false (V1 chat.message).
-+childSessions.set("v1-child", { parentID: "ses_parent" });
-+childSessions.set("v1-top", {});
-+await v1Prompt("v1-child", "m-child", "orchestrator prompt");
-+await v1Prompt("v1-top", "m-top", "human prompt");
-+
-+// Repeated messages in one session hit session.get once (lookup cache).
-+childSessions.set("v1-cache", { parentID: "ses_parent" });
-+for (let i = 0; i < 3; i++) {
-+  await v1Prompt("v1-cache", `m-cache-${i}`, `repeat ${i}`);
++function formatLocalDate(date: Date): string {
++  const pad = (value: number) => String(value).padStart(2, "0");
++  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 +}
 +
-+// Lookup failure fails open: the prompt is still saved.
-+childSessions.set("v1-fail", { parentID: "ses_parent", failGet: true });
-+await v1Prompt("v1-fail", "m-fail", "fail-open prompt");
-+
-+// Default: V2 memoryContext.capturePrompt bridge.
-+const host = await v2Adapter();
-+childSessions.set("v2-child", { parentID: "ses_parent" });
-+childSessions.set("v2-top", {});
-+await host.prompt("v2-child", "v2 orchestrator prompt", "mv2-child");
-+await host.prompt("v2-top", "v2 human prompt", "mv2-top");
-+await host.cleanup();
-+
-+// memoryContext.load must also skip child sessions (reload/rehydrate path).
-+childSessions.set("load-child", { parentID: "ses_parent" });
-+childSessions.set("load-top", {});
-+childSessions.set("load-empty-parent", { parentID: "" });
-+output.loadChild = await plugin.memoryContext.load("load-child");
-+output.loadTop = await plugin.memoryContext.load("load-top");
-+output.loadEmptyParent = await plugin.memoryContext.load("load-empty-parent");
-+
-+// Opt-in: 
-```
-
----
-
-### Incident Patch 14: `8c81e3d9` (2026-10-05)
-**Commit Message**: docs: add AGENTS.md with Conventional Commits guidance (#379)
-
-**File**: `AGENTS.md` (added, +96/-0)
-```diff
-@@ -0,0 +1,96 @@
-+# AGENTS.md
-+
-+Guidance for coding agents working on **opencode-mem** — a persistent memory plugin for OpenCode (Turso/libSQL vector search, auto-capture, web UI).
-+
-+## Stack & layout
-+
-+- Runtime / package manager: **Bun**
-+- Language: TypeScript (`src/`), Svelte web UI (`web/`)
-+- Tests: `tests/` via `bun test`
-+- Plugin entrypoints: `src/plugin.ts`, `src/v2/`, exports in `package.json`
-+
-+## Commands
-+
-+```bash
-+bun install
-+bun test
-+bun run typecheck
-+bun run check          # format + lint + typecheck
-+bun run build
-+bun run web:dev        # web UI only
-+```
-+
-+Prefer `bun` over `npm`/`npx`. Use `bunx` when a one-off binary is needed.
-+
-+## Commits — Conventional Commits only
-+
-+All commits **MUST** follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
-+
-+```
-+<type>[optional scope]: <description>
-+
-+[optional body]
-+
-+[optional footer(s)]
-+```
-+
-+### Allowed types
-+
-+| Type       | Use for                                   |
-+| ---------- | ----------------------------------------- |
-+| `feat`     | New user-facing capability (MINOR)        |
-+| `fix`      | Bug fix (PATCH)                           |
-+| `docs`     | Docs / README / comments only             |
-+| `style`    | Formatting; no logic change               |
-+| `refactor` | Internal change; no feat/fix              |
-+| `perf`     | Performance improvement                   |
-+| `test`     | Tests only                                |
-+| `build`    | Build system / bundling                   |
-+| `ci`       | CI workflows / hooks                      |
-+| `chore`    | Maintenance, deps, release plumbing       |
-+| `revert`   | Reverts; reference SHAs in `Refs:` footer |
-+
-+### Rules
-+
-+- Description: imperative, concise, no trailing period (`fix: harden provider discovery`)
-+- Scope (optional): area of the change, e.g. `feat(turso):`, `fix(ai):`, `chore(deps):`
-+- Breaking changes: `!` after type/scope **or** a `BREAKING CHANGE:` footer
-+- One logical change per commit when practical
-+- Do **not** invent types outside the table above
-+
-+Examples from this repo:
-+
-+```
-+feat(config): add opencodeVariant for internal LLM calls
-+fix(v2): refresh connected providers after late host registration
-+chore(deps): bump the minor-and-patch group across 2 directories
-+```
-+
-+## Pull requests
-+
-+**Cleanest workflow (preferred):** squash-merge. Then only the **PR title** lands on `main` as the commit — so the title **MUST** be a valid Conventional Commit subject (same rules as commits).
-+
-+| Part     | Format                                                                             |
-+| -------- | ---------------------------------------------------------------------------------- |
-+| PR title | Conventional Commit subject (`fix(ai): …`, `feat(turso): …`)                       |
-+| PR body  | Free-form — use `.github/PULL_REQUEST_TEMPLATE.md` (Summary, Test plan, Checklist) |
-+
-+- Do **not** put Conventional Commit syntax in the PR body
-+- Base branch: `main`
-+- Before opening: `bun test`, `bun run typecheck`, and `bun run check` when code changes
-+- Update README / docs when behavior or contribution process changes
-+- If the PR is not squashed and multiple commits merge: **every** commit on the branch must still be Conventional Commits
-+
-+## Code & review habits
-+
-+- Match existing patterns in the touched area; avoid drive-by refactors
-+- Keep diffs focused on the requested change
-+- Prefer existing libraries and utilities already in the tree
-+- Do not commit secrets, local data under `data/`, or `node_modules`
-+- Intel Mac (`darwin/x64`) is unsupported (Turso / onnxruntime bindings)
-+
-+## When unsure
-+
-+- Prefer a small, reviewable PR over a large mixed one
-+- Ask before destructive git operations (`push --force`, hard reset, history rewrite)
-+- Only commit when explicitly asked
-```
-
----
-
-### Incident Patch 15: `8168422b` (2026-10-05)
-**Commit Message**: fix(v2): refresh connected providers after late host registration (#373)
-
-* fix(v2): refresh connected providers after late host registration
-
-OpenCode v2 registers user-config providers a few seconds after plugin
-setup. At setup, ctx.provider.list() only returns the built-in `opencode`
-provider; configured providers appear later together with
-provider.updated/model.updated events. The plugin read the directory once
-during init, so a configured provider such as `newapi` stayed "not
-connected" for the lifetime of the process and every capture/profile
-request failed before generation.
-
-- Refresh the connected-provider snapshot on provider.updated and
-  model.updated, coalescing bursts into at most one trailing refresh and
-  stopping after dispose.
-- Before failing the connectivity gate, refresh once and re-check
-  (ensureProviderConnected). The error message is unchanged.
-- Refresh errors are logged and keep the previous snapshot. A disposed
-  instance only clears its own refresher.
-
-* fix(v2): harden provider refresh coalescing and event routing
-
-Share one awaitable coalesced refresh for init, events and gate misses; forward location-less provider/model inventory events; tighten bur
-
-**File**: `src/index.ts` (modified, +53/-4)
-```diff
-@@ -311,6 +311,7 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-   // Aborted on plugin dispose: queued-but-not-started auto-capture jobs are
-   // skipped; in-flight work keeps its original (uncancellable) semantics.
-   const pluginLifetime = new AbortController();
-+  let cleanedUp = false;
- 
-   const GLOBAL_PLUGIN_WARMUP_KEY = Symbol.for("opencode-mem.plugin.warmedup");
- 
-@@ -328,7 +329,11 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
- 
-   await configureOpencodeHostTransport(ctx);
- 
--  (async () => {
-+  // Re-reads the provider directory into the connectivity snapshot. Errors
-+  // are logged and the previous snapshot retained. The host registers
-+  // user-config providers after plugin setup (provider.updated/model.updated),
-+  // so this runs again on those events and on connectivity-gate misses.
-+  const refreshConnectedProviders = async (): Promise<void> => {
-     try {
-       const providerResult = await ctx.client.provider.list();
-       if (providerResult.data?.connected) {
-@@ -344,9 +349,46 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-         });
-       }
-     } catch (error) {
--      log("Failed to initialize opencode provider state", { error: String(error) });
-+      log("Failed to refresh opencode provider state", { error: String(error) });
-     }
--  })();
++function zeroDay(date: string): DailyStats {
++  return {
++    date,
++    captures: 0,
++    captureSkipped: 0,
++    profileInjections: 0,
++    compactionInjections: 0,
++    errors: {},
 +  };
-+
-+  // Coalesce refresh triggers into one in-flight pass plus trailing drain.
-+  // Event handlers and ensureProviderConnected (gate miss) share this path so
-+  // concurrent list() calls collapse; callers can await the same promise.
-+  let refreshInFlight: Promise<void> | undefined;
-+  let refreshQueued = false;
-+  const runCoalescedRefresh = (): Promise<void> => {
-+    refreshQueued = true;
-+    if (refreshInFlight) return refreshInFlight;
-+
-+    refreshInFlight = (async () => {
-+      while (refreshQueued && !cleanedUp) {
-+        refreshQueued = false;
-+        await refreshConnectedProviders();
-+      }
-+    })().finally(() => {
-+      refreshInFlight = undefined;
-+      if (refreshQueued && !cleanedUp) {
-+        void runCoalescedRefresh();
-+      }
-+    });
-+    return refreshInFlight;
-+  };
-+
-+  void runCoalescedRefresh();
-+
-+  // Gate miss awaits the same coalesced refresh; cleared on dispose so no
-+  // refresh fires afterwards. Only clear our own refresher identity.
-+  const { setConnectedProvidersRefresher, clearConnectedProvidersRefresher } =
-+    await loadOpencodeProvider();
-+  const providerRefresher = async () => {
-+    await runCoalescedRefresh();
-+  };
-+  setConnectedProvidersRefresher(providerRefresher);
-+  const clearProviderRefreshWiring = () => {
-+    clearConnectedProvidersRefresher(providerRefresher);
-+  };
- 
-   let tursoReadyForWeb = !isConfigured();
-   if (CONFIG.webServerEnabled && isConfigured()) {
-@@ -471,10 +513,10 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-       });
-   }
- 
--  let cleanedUp = false;
-   const cleanupPlugin = async () => {
-     if (cleanedUp) return;
-     cleanedUp = true;
-+    clearProviderRefreshWiring();
-     pluginLifetime.abort();
-     for (const timer of idleTimers.values()) clearTimeout(timer);
-     idleTimers.clear();
-@@ -1076,6 +1118,13 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-     event: async (input: { event: { type: string; properties?: any } }) => {
-       const event = input.event;
- 
-+      // Late host provider registration: user-config providers can appear
-+      // (or disappear) after plugin setup; refresh the connectivity snapshot.
-+      if (event.type === "provider.updated" || event.type === "model.updated") {
-+        if (!cleanedUp) runCoalescedRefresh();
-+        return;
-+      }
-+
-       // Client-side step watchdog for internal structured-output sessions (#278).
-       // OpenCode's agent.steps soft-cap does not hard-stop json_schema loops when
-       // forced StructuredOutput keeps failing (e.g. opencode-claude-auth).
-```
-
-**File**: `src/services/ai/opencode-provider.ts` (modified, +31/-0)
-```diff
-@@ -88,6 +88,9 @@ let _v2Client: OpencodeClient | undefined;
- let _v2BaseUrl: string | undefined;
- let _hostFetch: typeof fetch | undefined;
- let _useSdkTransport = false;
-+// Registered by the plugin init so a gate miss can force one provider-directory
-+// refresh before failing (late host provider registration).
-+let _connectedProvidersRefresher: (() => Promise<void>) | undefined;
- 
- export function setHostFetch(customFetch: typeof fetch): void {
-   _hostFetch = customFetch;
-@@ -105,6 +108,34 @@ export function isProviderConnected(providerName: string): boolean {
-   return _connectedProviders.has(providerName);
- }
- 
-+/** Register (or clear) the refresh callback used by ensureProviderConnected. */
-+export function setConnectedProvidersRefresher(refresher?: () => Promise<void>): void {
-+  _connectedProvidersRefresher = refresher;
 +}
 +
-+/** Clear the refresh callback only if it is still the one being disposed. */
-+export function clearConnectedProvidersRefresher(refresher: () => Promise<void>): void {
-+  if (_connectedProvidersRefresher === refresher) _connectedProvidersRefresher = undefined;
-+}
-+
-+/**
-+ * Refresh-on-miss for the connectivity gate: when a provider id is missing
-+ * from the snapshot and a refresher is registered, await one refresh and
-+ * re-check. Returns the re-checked connectivity; never refreshes twice for
-+ * the same call and never throws (refresh errors are logged by the refresher).
-+ */
-+export async function ensureProviderConnected(providerName: string): Promise<boolean> {
-+  if (_connectedProviders.has(providerName)) return true;
-+  const refresher = _connectedProvidersRefresher;
-+  if (!refresher) return false;
++function listLogFiles(logDir: string): string[] {
 +  try {
-+    await refresher();
-+  } catch {
-+    // The refresher logs; a failed refresh keeps the previous set.
-+  }
-+  return _connectedProviders.has(providerName);
-+}
-+
- export function setV2Client(client: OpencodeClient): void {
-   _v2Client = client;
-   // Native v2 adapters pass a session-capable client without a server URL.
-```
-
-**File**: `src/services/ai/profile-llm-client.ts` (modified, +4/-2)
-```diff
-@@ -18,9 +18,11 @@ export async function getOpenCodeClient(): Promise<OpencodeClient> {
-     return _cachedClient;
-   }
- 
--  const { isProviderConnected, getV2Client } = await loadOpencodeProvider();
-+  const { ensureProviderConnected, getV2Client } = await loadOpencodeProvider();
- 
--  if (!isProviderConnected(provider)) {
-+  // One refresh-on-miss before failing: user-config providers register
-+  // seconds after plugin setup, so the init snapshot may lag the host.
-+  if (!(await ensureProviderConnected(provider))) {
-     throw new Error(
-       `opencode provider '${provider}' is not connected. Check your opencode provider configuration.`
-     );
-```
-
-**File**: `src/services/auto-capture.ts` (modified, +4/-2)
-```diff
-@@ -529,7 +529,7 @@ async function generateSummary(
-         log("opencodeProvider takes precedence over memoryModel for auto-capture");
-       }
- 
--      const { isProviderConnected, getV2Client, generateStructuredOutput } =
-+      const { ensureProviderConnected, getV2Client, generateStructuredOutput } =
-         await loadOpencodeProvider();
- 
-       // "inherit" resolves to the model opencode used for the captured prompt
-@@ -547,7 +547,9 @@ async function generateSummary(
-         modelID = prompt.modelId;
-       }
- 
--      if (!isProviderConnected(providerID)) {
-+      // One refresh-on-miss before failing: user-config providers register
-+      // seconds after plugin setup, so the init snapshot may lag the host.
-+      if (!(await ensureProviderConnected(providerID))) {
-         throw new Error(
-           `opencode provider '${providerID}' is not connected. Check your opencode provider configuration.`
-         );
-```
-
-**File**: `src/v2/legacy-client.ts` (modified, +20/-11)
-```diff
-@@ -283,16 +283,25 @@ export async function eventBelongsToLocation(ctx: Context, raw: any): Promise<bo
- 
-   const data = raw?.data ?? raw?.payload?.data ?? raw?.properties;
-   const sessionID = data?.sessionID ?? data?.session?.id ?? data?.info?.id;
--  if (!sessionID) return false;
--  try {
--    const session: any = await ctx.session.get({ sessionID });
--    const sessionDirectory =
--      session?.location?.directory ?? session?.directory ?? session?.data?.directory;
--    return (
--      typeof sessionDirectory === "string" &&
--      resolve(sessionDirectory) === resolve(ctx.location.directory)
--    );
--  } catch {
--    return false;
-+  if (sessionID) {
-+    try {
-+      const session: any = await ctx.session.get({ sessionID });
-+      const sessionDirectory =
-+        session?.location?.directory ?? session?.directory ?? session?.data?.directory;
-+      return (
-+        typeof sessionDirectory === "string" &&
-+        resolve(sessionDirectory) === resolve(ctx.location.directory)
++    const files = readdirSync(logDir);
++    return files
++      .filter((file) => /^opencode-mem-\d{4}-\d{2}-\d{2}\.log$/.test(file))
++      .map((file) => join(logDir, file))
++      .concat(
++        ["opencode-mem.log", "opencode-mem.log.old"]
++          .filter((file) => files.includes(file))
++          .map((file) => join(logDir, file))
 +      );
-+    } catch {
-+      return false;
++  } catch {
++    return [];
++  }
++}
++
++function getCachedEvents(filePath: string): CachedLogEvent[] | null {
++  try {
++    const stats = statSync(filePath);
++    if (!stats.isFile()) return null;
++
++    const signature = `${stats.size}:${stats.mtimeMs}`;
++    const cached = parsedLogFiles.get(filePath);
++    if (cached?.signature === signature) return cached.events;
++
++    const events: CachedLogEvent[] = [];
++    for (const line of readFileSync(filePath, "utf8").split("\n")) {
++      const parsed = parseLogLine(line);
++      if (!parsed) continue;
++      const classification = classifyLogMessage(parsed.message);
++      if (classification.counter || classification.errorBucket) {
++        events.push({ date: parsed.date, classification });
++      }
 +    }
-   }
++    parse
+```
+
+**File**: `tests/stats-log-parsing.test.ts` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++import { describe, expect, it } from "bun:test";
++import { classifyLogMessage, parseLogLine } from "../src/services/stats-service.js";
 +
-+  // Provider/model inventory updates are process-scoped ephemeral events with
-+  // optional location. When the host omits location (and there is no session),
-+  // still forward them so connectivity snapshots can refresh on late registration.
-+  const envelope = raw?.payload ?? raw;
-+  const source = envelope?.type === "sync" && envelope.syncEvent ? envelope.syncEvent : envelope;
-+  const rawType = typeof source?.type === "string" ? source.type.replace(/\.1$/, "") : undefined;
-+  return rawType === "provider.updated" || rawType === "model.updated";
++describe("stats log parsing", () => {
++  it("parses counter signatures", () => {
++    const fixtures = [
++      ['Auto-capture memory persisted: {"id":"memory-1"}', "captures"],
++      ['Auto-capture skipped: {"reason":"short"}', "captureSkipped"],
++      ['profile inject: {"prefs":[]}', "profileInjections"],
++      ['Compaction memory injected: {"count":1}', "compactionInjections"],
++    ] as const;
++
++    for (const [content, counter] of fixtures) {
++      const parsed = parseLogLine(`[2026-10-16T19:18:33.096+11:00] ${content}`);
++      expect(parsed).not.toBeNull();
++      expect(classifyLogMessage(parsed!.message)).toEqual({ counter });
++    }
++  });
++
++  it("classifies the known structured error signatures", () => {
++    const fixtures = [
++      [
++        `[2026-10-16T19:18:33.096+11:00] Turso ready gate failed: {"error":"Error: failed to open database /home/x/.opencode-mem/data/user-profiles.db: I/O error: short read on WAL frame at offset 32: expected 4096 bytes, got 0"}`,
++        "Turso ready gate failed",
++      ],
++      [
++        `[2026-10-13T00:32:31.331+11:00] Failed to load skills for OpenCode registration: {"error":"TypeError: The database connection is not open"}`,
++        "Failed to load skills for OpenCode registration",
++      ],
++      [
++        `[2026-10-16T19:18:46.118+11:00] listMemories: error: {"error":"failed to open database ... short read on WAL frame"}`,
++        "listMemories",
++      ],
++    ] as const;
++
++    for (const [line, errorBucket] of fixtures) {
++      const parsed = parseLogLine(line);
++      expect(parsed).not.toBeNull();
++      expect(classifyLogMessage(parsed!.message)).toEqual({ errorBucket });
++    }
++  });
++
++  it("ignores separators and malformed lines and splits payload at the structured delimiter", () => {
++    expect(parseLogLine("\n--- Session started: 2026-10-18T12:00:00.000+00:00 ---")).toBeNull();
++    expect(parseLogLine("not a timestamp: Auto-capture memory persisted")).toBeNull();
++    expect(parseLogLine("[2026-99-99T19:18:33.096+11:00] Auto-capture skipped")).toBeNull();
++
++    const parsed = parseLogLine(
++      `[2026-10-16T19:18:33.096+11:00] request: error: {"detail":"url: https://example.test/a"}`
++    );
++    expect(parsed).toEqual({
++      date: "2026-10-16",
++      message: "request: error",
++      payload: `{"detail":"url: https://example.test/a"}`,
++    });
++    expect(classifyLogMessage(parsed!.message)).toEqual({ errorBucket: "request" });
++  });
++});
+```
+
+**File**: `tests/stats-service.test.ts` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++import { afterEach, describe, expect, it } from "bun:test";
++import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { cleanupTursoTestDirectory } from "./turso-test-utils.js";
++
++describe("handleStats health data", () => {
++  let baseDir: string | undefined;
++  let logDir: string | undefined;
++
++  afterEach(async () => {
++    await cleanupTursoTestDirectory(baseDir);
++    if (logDir) rmSync(logDir, { recursive: true, force: true });
++    baseDir = undefined;
++    logDir = undefined;
++  });
++
++  it("aggregates shards and returns zero-filled daily log counters", async () => {
++    baseDir = mkdtempSync(join(tmpdir(), "turso-stats-db-"));
++    logDir = mkdtempSync(join(tmpdir(), "turso-stats-logs-"));
++
++    const { CONFIG } = await import("../src/config.js");
++    CONFIG.storagePath = baseDir;
++    CONFIG.embeddingDimensions = 768;
++
++    const { closeTursoAndInvalidateCaches } = await import("../src/services/turso/lifecycle.js");
++    await closeTursoAndInvalidateCaches();
++
++    const { tursoShardManager } = await import("../src/services/turso/shard-manager.js");
++    const { tursoConnectionManager } = await import("../src/services/turso/connection-manager.js");
++    const { tursoVectorSearch } = await import("../src/services/turso/vector-search.js");
++
++    const vector = new Float32Array(768);
++    vector[0] = 1;
++    const userHash = "aaaaaaaaaaaaaaaa";
++    const projectHash = "bbbbbbbbbbbbbbbb";
++    const userShard = await tursoShardManager.createShard("user", userHash, 0);
++    const projectShard = await tursoShardManager.createShard("project", projectHash, 0);
++    const userDb = await tursoConnectionManager.getConnection(userShard.dbPath);
++    const projectDb = await tursoConnectionManager.getConnection(projectShard.dbPath);
++    const firstCreatedAt = Date.UTC(2026, 9, 12);
++    const newestCreatedAt = Date.UTC(2026, 9, 16);
++
++    const memory = (id: string, createdAt: number, containerTag: string, tags: string) => ({
++      id,
++      content: `memory ${id}`,
++      vector,
++      containerTag,
++      tags,
++      type: "context",
++      createdAt,
++      updatedAt: createdAt,
++    });
++    await tursoVectorSearch.insertVector(
++      userDb,
++      memory("user-1", firstCreatedAt, `opencode_user_${userHash}`, "shared-tag")
++    );
++    await tursoVectorSearch.insertVector(
++      userDb,
++      memory("user-2", newestCreatedAt, `opencode_user_${userHash}`, "shared-tag")
++    );
++    await tursoVectorSearch.insertVector(
++      projectDb,
++      memory("project-1", newestCreatedAt, `opencode_project_${projectHash}`, "project-tag")
++    );
++
++    const now = new Date(2026, 9, 18, 12, 0, 0);
++    const day = (offset: number) => {
++      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
++      date.setDate(date.getDate() - offset);
++      const pad = (value: number) => String(value).padStart(2, "0");
++      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
++    };
++    const timestamp = (date: string, hour: string) => `[${date}T${hour}+00:00]`;
++    writeFileSync(
++      join(logDir, "opencode-mem-2026-10-01.log"),
++      [
++        `${timestamp(day(1), "10:00:00.000")} Auto-capture memory persisted: {"id":"1"}`,
++        `${timestamp(day(1), "10:01:00.000")} Auto-capture skipped: {"reason":"short"}`,
++        `${timestamp(day(1), "10:02:00.000")} listMemories: error: {"error":"fixture"}`,
++      ].join("\n")
++    );
++    writeFileSync(
++      join(logDir, "opencode-mem.log.old"),
++      `${timestamp(day(3), "11:00:00.000")} Compaction memory injected: {"count":1}\n`
++    );
++    writeFileSync(
++      join(logDir, "opencode-mem.log"),
++      `${timestamp(day(4), "09:00:00.000")} profile inject: {"prefs":[]}\n`
++    );
++
++    const { handleStats } = await import("../src/services/api-handlers.js");
++    const result = await handleStats({ logDir, now });
++    expect(result.success).toBe(true);
++    expect(result.data).toBeDefined();
++    expect(result.data?.total).toBe(3);
++    expect(result.data?.byScope).toEqual({ user: 2, project: 1 });
++    expect(result.data?.byType).toEqual({ context: 3 });
++    expect(result.data?.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
++    expect(result.data?.profile).toEqual({ exists: false });
++
++    const userStats = result.data?.shards.find((shard) => shard.scope === "user");
++    const projectStats = result.data?.shards.find((shard) => shard.scope === "project");
++    expect(result.data?.shards).toHaveLength(2);
++    expect(userStats).toMatchObject({
++      scope: "user",
++      fileName: "user_aaaaaaaaaaaaaaaa_shard_0.db",
++      fileExists: true,
++      registeredVectorCount: 2,
++      memoryCount: 2,
++      oldestCreatedAt: new Date(firstCreatedAt).toISOString(),
++      newestCreatedAt: new Date(newestCreatedAt).toISOString(),
++      duplicateTagCount: 1,
++    });
++    expect(projectStats).toMatchObject({
+```
+
+**File**: `web/sim/stats.json` (modified, +191/-1)
+```diff
+@@ -1,6 +1,196 @@
+ {
+   "success": true,
+   "data": {
+-    "total": 12
++    "total": 1512,
++    "byScope": { "user": 384, "project": 1128 },
++    "byType": { "context": 931, "fact": 205, "preference": 376 },
++    "generatedAt": "2026-10-18T09:41:12.000Z",
++    "shards": [
++      {
++        "shardId": 41,
++        "scope": "project",
++        "scopeHash": "b1c2d3e4f5a6b7c8",
++        "shardIndex": 0,
++        "fileName": "project_b1c2d3e4f5a6b7c8_shard_0.db",
++        "fileExists": true,
++        "isActive": true,
++        "registeredVectorCount": 964,
++        "memoryCount": 961,
++        "oldestCreatedAt": "2026-05-02T08:15:00.000Z",
++        "newestCreatedAt": "2026-10-18T07:02:44.000Z",
++        "duplicateTagCount": 34
++      },
++      {
++        "shardId": 42,
++        "scope": "project",
++        "scopeHash": "b1c2d3e4f5a6b7c8",
++        "shardIndex": 1,
++        "fileName": "project_b1c2d3e4f5a6b7c8_shard_1.db",
++        "fileExists": true,
++        "isActive": false,
++        "registeredVectorCount": 167,
++        "memoryCount": 167,
++        "oldestCreatedAt": "2026-06-11T19:30:00.000Z",
++        "newestCreatedAt": "2026-08-29T14:11:09.000Z",
++        "duplicateTagCount": 6
++      },
++      {
++        "shardId": 7,
++        "scope": "user",
++        "scopeHash": "a9f8e7d6c5b4a3f2",
++        "shardIndex": 0,
++        "fileName": "user_a9f8e7d6c5b4a3f2_shard_0.db",
++        "fileExists": true,
++        "isActive": true,
++        "registeredVectorCount": 384,
++        "memoryCount": 384,
++        "oldestCreatedAt": "2026-04-18T11:00:00.000Z",
++        "newestCreatedAt": "2026-10-18T05:47:21.000Z",
++        "duplicateTagCount": 11
++      },
++      {
++        "shardId": 55,
++        "scope": "project",
++        "scopeHash": "0d1e2f3a4b5c6d7e",
++        "shardIndex": 0,
++        "fileName": "project_0d1e2f3a4b5c6d7e_shard_0.db",
++        "fileExists": false,
++        "isActive": true,
++        "registeredVectorCount": 23,
++        "memoryCount": 0,
++        "oldestCreatedAt": null,
++        "newestCreatedAt": null,
++        "duplicateTagCount": 0,
++        "error": "Shard DB file missing: ~/.opencode-mem/data/projects/project_0d1e2f3a4b5c6d7e_shard_0.db"
++      }
++    ],
++    "profile": {
++      "exists": true,
++      "version": 23,
++      "counts": { "preferences": 9, "patterns": 14, "workflows": 3 },
++      "lastAnalyzedAt": "2026-10-17T22:10:05.000Z",
++      "totalPromptsAnalyzed": 1290
++    },
++    "daily": [
++      {
++        "date": "2026-10-05",
++        "captures": 9,
++        "captureSkipped": 2,
++        "profileInjections": 12,
++        "compactionInjections": 1,
++        "errors": {}
++      },
++      {
++        "date": "2026-10-06",
++        "captures": 14,
++        "captureSkipped": 3,
++        "profileInjections": 18,
++        "compactionInjections": 0,
++        "errors": {}
++      },
++      {
++        "date": "2026-10-07",
++        "captures": 11,
++        "captureSkipped": 1,
++        "profileInjections": 15,
++        "compactionInjections": 2,
++        "errors": {}
++      },
++      {
++        "date": "2026-10-08",
++        "captures": 16,
++        "captureSkipped": 4,
++        "profileInjections": 21,
++        "compactionInjections": 0,
++        "errors": { "listMemories": 2 }
++      },
++      {
++        "date": "2026-10-09",
++        "captures": 8,
++        "captureSkipped": 2,
++        "profileInjections": 10,
++        "compactionInjections": 1,
++        "errors": {}
++      },
++      {
++        "date": "2026-10-10",
++        "captures": 12,
++        "captureSkipped": 0,
++        "profileInjections": 16,
++        "compactionInjections": 0,
++        "errors": {}
++      },
++      {
++        "date": "2026-10-11",
++        "captures": 10,
++        "captureSkipped": 5,
++        "profileInjections": 13,
++        "compactionInjections": 3,
++        "errors": {}
++      },
++      {
++        "date": "2026-10-12",
++        "captures": 15,
++        "captureSkipped": 2,
++        "profileInjections": 19,
++        "compactionInjections": 1,
++        "errors": {}
++      },
++      {
++        "date": "2026-10-13",
++        "captures": 6,
++        "captureSkipped": 9,
++        "profileInjections": 8,
++        "compactionInjections": 0,
++        "errors": {
++          "Failed to load skills for OpenCode registration": 61,
++          "Turso ready gate failed": 2
++        }
++      },
++      {
++        "date": "2026-10-14",
++        "captures": 4,
++        "captureSkipped": 11,
++        "profileInjections": 7,
++        "compactionInjections": 0,
++        "errors": { "Failed to load skills for OpenCode registration": 74 }
++      },
++      {
++        "date": "2026-10-15",
++        "captures": 7,
++        "captureSkipped": 8,
++        "profileInjections": 9,
++        "compactionInjections": 1,
++        "errors": { "Failed to load skills for OpenCode registration": 58 }
++      },
++      {
++        "date": "2026-10-16",
++        "captures": 5,
++        "captureSkipped": 10,
++        "profileInjections": 6,
++       
+```
+
+**File**: `web/src/App.svelte` (modified, +17/-1)
+```diff
+@@ -15,6 +15,7 @@
+   import ProfileView from "$lib/components/explorer/ProfileView.svelte";
+   import SkillDialog from "$lib/components/explorer/SkillDialog.svelte";
+   import SkillsView from "$lib/components/explorer/SkillsView.svelte";
++  import StatsView from "$lib/components/explorer/StatsView.svelte";
+   import TagMigrationDialog from "$lib/components/explorer/TagMigrationDialog.svelte";
+   import TagFilter from "$lib/components/explorer/TagFilter.svelte";
+   import Alert from "$lib/components/ui/alert.svelte";
+@@ -31,6 +32,7 @@
+   import { createRouter } from "$lib/router.svelte";
+   import { createMemoriesExplorer } from "$lib/stores/memories-explorer.svelte";
+   import { createSkillsStore } from "$lib/stores/skills.svelte";
++  import { createStatsStore } from "$lib/stores/stats.svelte";
+   import { createUserProfile } from "$lib/stores/user-profile.svelte";
+   import {
+     GAP,
+@@ -60,6 +62,7 @@
+   const explorer = createMemoriesExplorer();
+   const profile = createUserProfile();
+   const skills = createSkillsStore();
++  const stats = createStatsStore();
+ 
+   let sidebarOpen = $state(false);
+   let sidebarCollapsed = $state(readCollapsed());
+@@ -71,7 +74,9 @@
+       ? i18n.t("tab-project")
+       : router.view === "skills"
+         ? i18n.t("tab-skills")
+-        : i18n.t("tab-profile")
++        : router.view === "stats"
++          ? i18n.t("tab-stats")
++          : i18n.t("tab-profile")
+   );
+ 
+   $effect(() => {
+@@ -119,6 +124,9 @@
+     if (router.view === "skills") {
+       void skills.loadSkills();
+     }
++    if (router.view === "stats") {
++      void stats.loadStats();
++    }
+   });
+ 
+   function onLangToggle() {
+@@ -149,6 +157,7 @@
+     projectLabel={i18n.t("tab-project")}
+     profileLabel={i18n.t("tab-profile")}
+     skillsLabel={i18n.t("tab-skills")}
++    statsLabel={i18n.t("tab-stats")}
+     {langLabel}
+     languageLabel={i18n.t("nav-language")}
+     themeLabel={i18n.t("nav-theme")}
+@@ -386,6 +395,13 @@
+           onEdit={skills.openEdit}
+           onDelete={skills.deleteSkill}
+         />
++      {:else if router.view === "stats"}
++        <StatsView
++          data={stats.data}
++          loading={stats.loading}
++          error={stats.error}
++          onRefresh={stats.loadStats}
++        />
+       {:else}
+         <ProfileView
+           profile={profile.userProfile}
+```
+
+**File**: `web/src/lib/components/explorer/AppSidebar.svelte` (modified, +16/-0)
+```diff
+@@ -1,4 +1,5 @@
+ <script lang="ts">
++  import Activity from "@lucide/svelte/icons/activity";
+   import Brain from "@lucide/svelte/icons/brain";
+   import Folder from "@lucide/svelte/icons/folder";
+   import Languages from "@lucide/svelte/icons/languages";
+@@ -32,6 +33,7 @@
+     projectLabel: string;
+     profileLabel: string;
+     skillsLabel: string;
++    statsLabel: string;
+     langLabel: string;
+     languageLabel: string;
+     themeLabel: string;
+@@ -48,6 +50,7 @@
+     projectLabel,
+     profileLabel,
+     skillsLabel,
++    statsLabel,
+     langLabel,
+     languageLabel,
+     themeLabel,
+@@ -179,6 +182,19 @@
+         <span class="truncate text-start">{skillsLabel}</span>
+       {/if}
+     </a>
++    <a
++      href={ROUTES.stats}
++      class={navClass(currentView === "stats")}
++      aria-current={currentView === "stats" ? "page" : undefined}
++      title={statsLabel}
++      aria-label={statsLabel}
++      onclick={(e) => onNavClick(e, ROUTES.stats)}
++    >
++      <Activity class={cn(ICON, "shrink-0")} aria-hidden="true" />
++      {#if !iconOnly}
++        <span class="truncate text-start">{statsLabel}</span>
++      {/if}
++    </a>
+   </nav>
+ 
+   <div class={cn("mt-auto", iconOnly ? "p-2" : "p-3")}>
+```
+
+---
+
+### Incident Patch 3: `05b0effd` (2026-10-18)
+**Commit Message**: fix(web): harden stats endpoint for probe and partial failures
+
+Keep ownership probes cheap with ?probe=1, commit shard totals only after a
+full walk succeeds, hard-fail shard listing for explorer totals, and align
+the sim fixture total with memories.json.
+
+**File**: `src/services/api-handlers.ts` (modified, +22/-11)
+```diff
+@@ -800,33 +800,44 @@ export async function handleSearch(
  }
+ 
+ export async function handleStats(
+-  options: Pick<CollectDailyStatsOptions, "logDir" | "now"> = {}
++  options: Pick<CollectDailyStatsOptions, "logDir" | "now"> & { probe?: boolean } = {}
+ ): Promise<
+   ApiResponse<{
+     total: number;
+     byScope: { user: number; project: number };
+     byType: Record<string, number>;
+     generatedAt: string;
+     shards: Awaited<ReturnType<typeof collectShardStats>>["shards"];
+-    shardsError?: string;
+     profile: Awaited<ReturnType<typeof collectProfileStats>>;
+     daily: ReturnType<typeof collectDailyStats>;
++    dailyError?: string;
+   }>
+ > {
+   try {
++    // Ownership/liveness probes must stay cheap: auth already ran, do not open
++    // shards or scan logs under the 2s checkServerAvailable timeout.
++    if (options.probe) {
++      return { success: true };
++    }
++
+     // Stats only counts Turso/libSQL rows; no embedding needed.
+     // See handleListTags comment - keep embedding init out of read paths.
+-    let memoryShards: ShardInfo[] = [];
+-    let shardsError: string | undefined;
+-    try {
+-      memoryShards = await getAllMemoryShards();
+-    } catch (error) {
+-      shardsError = error instanceof Error ? error.message : String(error);
+-    }
++    // Shard listing failures stay hard errors so /api/stats consumers (explorer
++    // header total) never treat an empty total as a successful empty store.
++    const memoryShards = await getAllMemoryShards();
+     const [shardStats, profile] = await Promise.all([
+       collectShardStats(memoryShards),
+       collectProfileStats(),
+     ]);
++
++    let daily: ReturnType<typeof collectDailyStats> = [];
++    let dailyError: string | undefined;
++    try {
++      daily = collectDailyStats(options);
++    } catch (error) {
++      dailyError = error instanceof Error ? error.message : String(error);
++    }
++
+     return {
+       success: true,
+       data: {
+@@ -835,9 +846,9 @@ export async function handleStats(
+         byType: shardStats.byType,
+         generatedAt: new Date().toISOString(),
+         shards: shardStats.shards,
+-        ...(shardsError ? { shardsError } : {}),
+         profile,
+-        daily: collectDailyStats(options),
++        daily,
++        ...(dailyError ? { dailyError } : {}),
+       },
+     };
+   } catch (error) {
 ```
 
-**File**: `tests/auto-capture-concurrency.test.ts` (modified, +4/-4)
+**File**: `src/services/stats-service.ts` (modified, +35/-7)
 ```diff
-@@ -311,7 +311,7 @@ const llmEntered = new Promise((res) => { llmEnteredResolve = res; });
- const llmOrder = [];
- mock.module(${JSON.stringify(u("src/services/ai/opencode-provider-loader.js"))}, () => ({
-   loadOpencodeProvider: async () => ({
--    isProviderConnected: () => true,
-+    ensureProviderConnected: async () => true,
-     getV2Client: () => ({}),
-     generateStructuredOutput: async ({ userPrompt }) => {
-       const sid = userPrompt.includes("Fix login bug") ? "sess-A" : "sess-B";
-@@ -425,7 +425,7 @@ mock.module(${JSON.stringify(u("src/services/tags.js"))}, () => ({
- }));
- mock.module(${JSON.stringify(u("src/services/ai/opencode-provider-loader.js"))}, () => ({
-   loadOpencodeProvider: async () => ({
--    isProviderConnected: () => true,
-+    ensureProviderConnected: async () => true,
-     getV2Client: () => ({}),
-     generateStructuredOutput: async ({ userPrompt }) => {
-       const sid = userPrompt.includes("Do work") ? "sess-X" : "?";
-@@ -501,7 +501,7 @@ mock.module(${JSON.stringify(u("src/services/tags.js"))}, () => ({
- }));
- mock.module(${JSON.stringify(u("src/services/ai/opencode-provider-loader.js"))}, () => ({
-   loadOpencodeProvider: async () => ({
--    isProviderConnected: () => true,
-+    ensureProviderConnected: async () => true,
-     getV2Client: () => ({}),
-     generateStructuredOutput: async ({ userPrompt }) => {
-       if (userPrompt.includes("Will fail")) throw new Error("llm exploded");
-@@ -607,7 +607,7 @@ let releaseA;
- const gateA = new Promise((res) => { releaseA = res; });
- mock.module(${JSON.stringify(u("src/services/ai/opencode-provider-loader.js"))}, () => ({
-   loadOpencodeProvider: async () => ({
--    isProviderConnected: () => true,
-+    ensureProviderConnected: async () => true,
-     getV2Client: () => ({}),
-     generateStructuredOutput: async ({ userPrompt }) => {
-       const sid = userPrompt.includes("In flight") ? "sess-A" : "sess-B";
+@@ -94,15 +94,27 @@ export function classifyLogMessage(message: string): LogClassification {
+     return { counter: "compactionInjections" };
+   }
+ 
+-  if (message.endsWith(": error")) {
+-    return { errorBucket: message.slice(0, -": error".length) };
+-  }
+   if (message.startsWith("Turso ready gate failed")) {
+     return { errorBucket: "Turso ready gate failed" };
+   }
+   if (message.startsWith("Failed to load skills for OpenCode registration")) {
+     return { errorBucket: "Failed to load skills for OpenCode registration" };
+   }
++  if (message.startsWith("Auto-capture final error")) {
++    return { errorBucket: "Auto-capture final error" };
++  }
++  if (message.startsWith("Compaction handler error")) {
++    return { errorBucket: "Compaction handler error" };
++  }
++  if (message.startsWith("Idle processing error")) {
++    return { errorBucket: "Idle processing error" };
++  }
++
++  // Match `listMemories: error`, `chat.message: ERROR`, etc.
++  const errorSuffix = message.match(/^(.*):\s*error$/i);
++  if (errorSuffix) {
++    return { errorBucket: errorSuffix[1]!.trim() };
++  }
+   return {};
+ }
+ 
+@@ -258,7 +270,7 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
+     };
+ 
+     if (!stats.fileExists) {
+-      stats.error = `Shard DB file missing: ${shard.dbPath}`;
++      stats.error = `Shard DB file missing: ${stats.fileName}`;
+       shardStats.push(stats);
+       continue;
+     }
+@@ -268,6 +280,12 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
+ 
+       // Aggregate instead of `SELECT *` (getAllMemories): stats is polled every
+       // 30s by the web UI and must not drag vector blobs for every memory.
++      // Accumulators stay local until every query for this shard succeeds so a
++      // mid-walk failure cannot inflate global totals while memoryCount stays 0.
++      let shardUserCount = 0;
++      let shardProjectCount = 0;
++      const shardTypeCount: Record<string, number> = {};
++
+       const scopeTypeCounts = await db.all<{
+         container_tag: unknown;
+         type: unknown;
+@@ -277,9 +295,9 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
+         const containerTag = String(row.container_tag ?? "");
+         const type = row.type ? String(row.type) : "";
+         const count = Number(row.c ?? 0);
+-        if (containerTag.includes("_user_")) userCount += count;
+-        else if (containerTag.includes("_project_")) projectCount += count;
+-        if (type) typeCount[type] = (typeCount[type] || 0) + count;
++        if (containerTag.includes("_user_")) shardUserCount += count;
++        else if (containerTag.includes("_project_")) shardProjectCount += count;
++        if (type) shardTypeCount[type] = (shardTypeCount[type] || 0) + count;
+       }
+ 
+       const aggregate = await db.get<{ c: number | bigint; mn: unknown; mx: unknown }>(
+@@ -296,7 +314,17 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
+         (total, row) => total + Math.max(0, Number(row.c) - 1),
+         0
+       );
++
++      userCount += shardUserCount;
++      projectCount += shardProjectCount;
++      for (const [type, count] of Object.entries(shardTypeCount)) {
++        typeCount[type] = (typeCount[type] || 0) + count;
++      }
+     } catch (error) {
++      stats.memoryCount = 0;
++      stats.oldestCreatedAt = null;
++      stats.newestCreatedAt = null;
++      stats.duplicateTagCount = 0;
+       stats.error = error instanceof Error ? error.message : String(error);
+     }
+ 
 ```
 
-**File**: `tests/auto-capture.test.ts` (modified, +2/-2)
+**File**: `src/services/web-server.ts` (modified, +6/-2)
 ```diff
-@@ -157,7 +157,7 @@ mock.module(${JSON.stringify(languageUrl)}, () => ({
- }));
- mock.module(${JSON.stringify(opencodeProviderLoaderUrl)}, () => ({
-   loadOpencodeProvider: async () => ({
--    isProviderConnected: () => true,
-+    ensureProviderConnected: async () => true,
-     getV2Client: () => ({}),
-     generateStructuredOutput: async ({ userPrompt }) => {
-       summaryPrompts.push(userPrompt);
-@@ -286,7 +286,7 @@ mock.module(${JSON.stringify(languageUrl)}, () => ({
- }));
- mock.module(${JSON.stringify(opencodeProviderLoaderUrl)}, () => ({
-   loadOpencodeProvider: async () => ({
--    isProviderConnected: () => true,
-+    ensureProviderConnected: async () => true,
-     getV2Client: () => ({}),
-     generateStructuredOutput: async () => {
-       throw new Error(
+@@ -423,7 +423,10 @@ export class WebServer {
+       const headers = this.config.apiToken
+         ? { Authorization: `Bearer ${this.config.apiToken}` }
+         : undefined;
+-      const endpoint = this.config.apiToken ? "/api/stats" : "/api/health";
++      // With an API token, probe authenticated /api/stats?probe=1 (cheap) so we
++      // prove ownership without walking shards or scanning logs. Health stays
++      // unauthenticated and is only safe when no token is configured.
++      const endpoint = this.config.apiToken ? "/api/stats?probe=1" : "/api/health";
+       const response = await fetch(`${this.getUrl()}${endpoint}`, {
+         method: "GET",
+         headers,
+@@ -571,7 +574,8 @@ export class WebServer {
+       }
+ 
+       if (path === "/api/stats" && method === "GET") {
+-        const result = await handleStats();
++        const probe = url.searchParams.get("probe") === "1";
++        const result = await handleStats({ probe });
+         return this.jsonResponse(result);
+       }
+ 
 ```
 
-**File**: `tests/fixtures/v2-provider-refresh.mjs` (added, +340/-0)
+**File**: `tests/stats-log-parsing.test.ts` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,340 @@
-+/**
-+ * Provider-connectivity refresh scenarios (late provider registration).
-+ *
-+ * Root cause being regression-guarded: at plugin setup the provider
-+ * directory often lists only the built-in broker ('opencode'); user-config
-+ * providers (e.g. 'newapi') register a few seconds later and the host emits
-+ * provider.updated / model.updated. The plugin must refresh its
-+ * connectivity snapshot on those events (and on gate misses) instead of
-+ * trusting the init-time snapshot forever.
-+ *
-+ * Runs the real plugin (src/index.js), the real v2 adapter/legacy-client
-+ * event path, and the real opencode-provider module state. Only peripheral
-+ * services are mocked. Spawned by tests/v2-provider-refresh.test.ts with
-+ * HOME/XDG redirected to an isolated sandbox; scenario via argv[2].
-+ */
-+import { mock } from "bun:test";
+@@ -31,6 +31,19 @@ describe("stats log parsing", () => {
+         `[2026-10-16T19:18:46.118+11:00] listMemories: error: {"error":"failed to open database ... short read on WAL frame"}`,
+         "listMemories",
+       ],
++      [
++        `[2026-10-16T19:20:00.000+11:00] Auto-capture final error after 3 attempts: {"error":"timeout"}`,
++        "Auto-capture final error",
++      ],
++      [
++        `[2026-10-16T19:21:00.000+11:00] Compaction handler error: {"error":"boom"}`,
++        "Compaction handler error",
++      ],
++      [
++        `[2026-10-16T19:22:00.000+11:00] Idle processing error: {"error":"boom"}`,
++        "Idle processing error",
++      ],
++      [`[2026-10-16T19:23:00.000+11:00] chat.message: ERROR: {"error":"boom"}`, "chat.message"],
+     ] as const;
+ 
+     for (const [line, errorBucket] of fixtures) {
+```
+
+**File**: `tests/stats-service.test.ts` (modified, +55/-1)
+```diff
+@@ -141,9 +141,63 @@ describe("handleStats health data", () => {
+     });
+     expect(daily?.find((item) => item.date === day(3))?.compactionInjections).toBe(1);
+     expect(daily?.find((item) => item.date === day(4))?.profileInjections).toBe(1);
+-    expect(result.data?.shardsError).toBeUndefined();
++    expect(result.data?.dailyError).toBeUndefined();
+     // Windows CI needs >5s for two shard creations, three vector inserts, and
+     // the full stats walk; the default 5s per-test timeout races afterEach
+     // cleanup against the in-flight walk. Same budget as plugin-bundle-boundary.
+   }, 30_000);
 +
-+const scenario = process.argv[2] ?? "bootstrap";
-+const moduleUrl = (path) => new URL("../../src/" + path + ".js", import.meta.url).href;
++  it("probe mode returns success without opening shards or scanning logs", async () => {
++    const { handleStats } = await import("../src/services/api-handlers.js");
++    const result = await handleStats({ probe: true });
++    expect(result).toEqual({ success: true });
++    expect(result.data).toBeUndefined();
++  });
 +
-+// Directory fixture state, per scenario:
-+// - bootstrap/burst/dispose/miss: call #1 sees only the broker, later calls
-+//   also include newapi (registered ~2s after setup, like the real host).
-+// - capture-error: newapi never appears (miss refresh must still fail).
-+// - refresh-error: newapi is present from call #1, but every refresh
-+//   (call >= 2) throws — the previous set must be retained.
-+const newapiFromCall =
-+  scenario === "refresh-error" ? 1 : scenario === "capture-error" ? Infinity : 2;
-+const failFromCall = scenario === "refresh-error" ? 2 : 0;
-+const listDelayMs = scenario === "burst" ? 25 : 0;
++  it("excludes a shard from totals when a later query fails mid-walk", async () => {
++    const shardDir = mkdtempSync(join(tmpdir(), "turso-stats-partial-"));
++    const dbPath = join(shardDir, "user_aaaaaaaaaaaaaaaa_shard_0.db");
++    writeFileSync(dbPath, "");
 +
-+let listCalls = 0;
-+const logs = [];
-+const toasts = [];
-+let failedAttempts = 0;
-+let released = false;
-+let claimed = false;
++    const { collectShardStats } = await import("../src/services/stats-service.js");
++    const { tursoConnectionManager } = await import("../src/services/turso/connection-manager.js");
++    const original = tursoConnectionManager.getConnection.bind(tursoConnectionManager);
 +
-+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
++    tursoConnectionManager.getConnection = (async () => ({
++      all: async (sql: string) => {
++        if (sql.includes("GROUP BY container_tag")) {
++          return [{ container_tag: "opencode_user_aaaaaaaaaaaaaaaa", type: "context", c: 4 }];
++        }
++        throw new Error("duplicate query failed");
++      },
++      get: async () => ({ c: 4, mn: Date.UTC(2026, 9, 1), mx: Date.UTC(2026, 9, 10) }),
++    })) as typeof tursoConnectionManager.getConnection;
 +
-+async function listProviders() {
-+  listCalls += 1;
-+  if (failFromCall && listCalls >= failFromCall) {
-+    throw new Error("provider directory unavailable");
-+  }
-+  if (listDelayMs) await sleep(listDelayMs);
-+  const data = [
-+    { id: "opencode", activation: "enabled", name: "OpenCode", package: "opencode-pkg" },
-+  ];
-+  if (listCalls >= newapiFromCall) {
-+    data.push({ id: "newapi", activation: "enabled", name: "NewAPI", package: "newapi-pkg" });
-+  }
-+  return { location: { directory: "/workspace/project" }, data };
-+}
++    try {
++      const result = await collectShardStats([
++        {
++          id: 1,
++          scope: "user",
++          scopeHash: "aaaaaaaaaaaaaaaa",
++          shardIndex: 0,
++          dbPath,
++          vectorCount: 4,
++          isActive: true,
++        } as never,
++      ]);
 +
-+async function poll(predicate, ms = 4000) {
-+  const deadline = Date.now() + ms;
-+  while (Date.now() < deadline) {
-+    if (predicate()) return true;
-+    await sleep(10);
-+  }
-+  return predicate();
-+}
-+
-+mock.module(moduleUrl("config"), () => ({
-+  CONFIG: {
-+    autoCaptureEnabled: false,
-+    autoCaptureProviderStatus: { ready: true, mode: "opencode", issues: [] },
-+    autoCaptureMaxRetries: 1,
-+    autoCaptureLanguage: "en",
-+    opencodeProvider: "newapi",
-+    opencodeModel: "test-model",
-+    showAutoCaptureToasts: false,
-+    showErrorToasts: true,
-+    chatMessage: { enabled: false },
-+    compaction: { enabled: false },
-+    webServerEnabled: false,
-+    autoUpdate: { enabled: false },
-+    storagePath: process.env.HOME,
-+  },
-+  initConfig() {},
-+  isConfigured: () => true,
-+}));
-+
-+mock.module(moduleUrl("services/client"), () => ({
-+  memoryClient: {
-+    warmup: async () => {},
-+    close: async () => {},
-+    listMemories: async () => ({ success: true, memories: [] }),
-+    addMemory: async () => ({ success: true, id: "mem-unexpected" }),
-+  },
-+}));
-+
-+mock.module(moduleUrl("services/tags"), () => ({
-+  getTags: () => ({
-+    project: { tag: "fixture-project", projectPath: "/workspace/project" },
-+    user: { userEmail: "fixture-user" },
-+  }),
-+}));
-+
-+mock.module(moduleUrl("services/context"), () => ({
-+  formatContextForPrompt: async () => "",
-+}));
-+
-+const promptRows = [
-+  {
-+    id: "prompt-1",
-+    sessionId: "session-1",
-+    messageId: "msg-1",
-+    projectPath: "/workspace/project",
-+    content: "Implement the provider gate fix",
-+    createdAt: 1,
-+    captured: false,
-+    capture_attempts: 0,
-+  },
-+];
-+
-+mock.module(moduleUrl("services/user-prompt/user-prompt-manager"), () => ({
-+  userPromptManager: {
-+    savePrompt: async () => {},
-+    setPromptModel: async () => {},
-+    getUncapturedPromptsForSession: async () => (claimed ? [] : promptRows),
-+    claimPrompt: async () => {
-+      if (claimed) return false;
-+      claimed = true;
-+      return true;
-+    },
-+    recordFailedAttempt: async () => {
-+      failedAttempts += 1;
-+    },
-+    releaseClaim: async () => {
-+      released = true;
-+      claimed = false;
-+      return true;
-+    },
-+    linkMemoryToPrompt: async () => {},
-+    markAsCaptured: async () => {},
-+    deletePrompt: async () => {},
-+  },
-+}));
-+
-+mock.module(moduleUrl("services/logger"), () => ({
-+  log: (...args) =>
-+    logs.push(args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ")),
-+}));
-+
-+mock.module(moduleUrl("services/web-server"), () => ({
-+  startWebServer: async () => null,
-+  WebServer: class {},
-+})
++      expect(result.total).toBe(0);
++      expect(result.byScope).toEqual({ user: 0, project: 0 });
++      expect(result.byType).toEqual({});
++      expect(result.shards).toHaveLength(1);
++      expect(result.shards[0]).toMatchObject({
++        memoryCount: 0,
++        duplicateTagCount: 0,
++        error: "duplicate query failed",
++      });
++    } finally {
++      tursoConnectionManager.getConnection = original;
++      rmSync(shardDir, { recursive: true, force: true });
++    }
++  });
+ });
+```
+
+**File**: `tests/web-server-health.test.ts` (modified, +5/-2)
+```diff
+@@ -3,10 +3,12 @@ import { createServer } from "node:http";
+ import { WebServer, nextFallbackPort } from "../src/services/web-server.js";
+ 
+ describe("web server health check", () => {
+-  it("authenticates the stats request when an API token is configured", async () => {
++  it("authenticates the stats probe when an API token is configured", async () => {
+     const originalFetch = globalThis.fetch;
++    let requestUrl: string | undefined;
+     let requestHeaders: Headers | undefined;
+-    globalThis.fetch = async (_input, init) => {
++    globalThis.fetch = async (input, init) => {
++      requestUrl = String(input);
+       requestHeaders = new Headers(init?.headers);
+       return new Response(JSON.stringify({ success: true }), { status: 200 });
+     };
+@@ -20,6 +22,7 @@ describe("web server health check", () => {
+       });
+ 
+       expect(await server.checkServerAvailable()).toBe(true);
++      expect(requestUrl).toBe("http://0.0.0.0:4747/api/stats?probe=1");
+       expect(requestHeaders?.get("Authorization")).toBe("Bearer health-token");
+     } finally {
+       globalThis.fetch = originalFetch;
+```
+
+**File**: `web/sim/stats.json` (modified, +14/-14)
+```diff
+@@ -1,9 +1,9 @@
+ {
+   "success": true,
+   "data": {
+-    "total": 1512,
+-    "byScope": { "user": 384, "project": 1128 },
+-    "byType": { "context": 931, "fact": 205, "preference": 376 },
++    "total": 14,
++    "byScope": { "user": 5, "project": 9 },
++    "byType": { "context": 8, "fact": 3, "preference": 3 },
+     "generatedAt": "2026-10-18T09:41:12.000Z",
+     "shards": [
+       {
+@@ -14,11 +14,11 @@
+         "fileName": "project_b1c2d3e4f5a6b7c8_shard_0.db",
+         "fileExists": true,
+         "isActive": true,
+-        "registeredVectorCount": 964,
+-        "memoryCount": 961,
++        "registeredVectorCount": 8,
++        "memoryCount": 7,
+         "oldestCreatedAt": "2026-05-02T08:15:00.000Z",
+         "newestCreatedAt": "2026-10-18T07:02:44.000Z",
+-        "duplicateTagCount": 34
++        "duplicateTagCount": 2
+       },
+       {
+         "shardId": 42,
+@@ -28,11 +28,11 @@
+         "fileName": "project_b1c2d3e4f5a6b7c8_shard_1.db",
+         "fileExists": true,
+         "isActive": false,
+-        "registeredVectorCount": 167,
+-        "memoryCount": 167,
++        "registeredVectorCount": 2,
++        "memoryCount": 2,
+         "oldestCreatedAt": "2026-06-11T19:30:00.000Z",
+         "newestCreatedAt": "2026-08-29T14:11:09.000Z",
+-        "duplicateTagCount": 6
++        "duplicateTagCount": 0
+       },
+       {
+         "shardId": 7,
+@@ -42,11 +42,11 @@
+         "fileName": "user_a9f8e7d6c5b4a3f2_shard_0.db",
+         "fileExists": true,
+         "isActive": true,
+-        "registeredVectorCount": 384,
+-        "memoryCount": 384,
++        "registeredVectorCount": 5,
++        "memoryCount": 5,
+         "oldestCreatedAt": "2026-04-18T11:00:00.000Z",
+         "newestCreatedAt": "2026-10-18T05:47:21.000Z",
+-        "duplicateTagCount": 11
++        "duplicateTagCount": 1
+       },
+       {
+         "shardId": 55,
+@@ -56,12 +56,12 @@
+         "fileName": "project_0d1e2f3a4b5c6d7e_shard_0.db",
+         "fileExists": false,
+         "isActive": true,
+-        "registeredVectorCount": 23,
++        "registeredVectorCount": 3,
+         "memoryCount": 0,
+         "oldestCreatedAt": null,
+         "newestCreatedAt": null,
+         "duplicateTagCount": 0,
+-        "error": "Shard DB file missing: ~/.opencode-mem/data/projects/project_0d1e2f3a4b5c6d7e_shard_0.db"
++        "error": "Shard DB file missing: project_0d1e2f3a4b5c6d7e_shard_0.db"
+       }
+     ],
+     "profile": {
+```
+
+**File**: `web/src/lib/components/explorer/StatsView.svelte` (modified, +11/-12)
+```diff
+@@ -102,12 +102,12 @@
+       <div class={cn(SURFACE_CARD, CARD_PAD, STACK)}>
+         <h2 class="text-sm text-muted-foreground">{i18n.t("stats-active-shards")}</h2>
+         <p class="text-3xl font-semibold tabular-nums text-foreground-bright">
+-          {data.shards && !data.shardsError ? shards.filter((shard) => shard.isActive).length : "—"}
++          {data.shards ? shards.filter((shard) => shard.isActive).length : "—"}
+         </p>
+         <p class="text-xs text-muted-foreground">
+-          {data.shardsError || !data.shards
+-            ? i18n.t("stats-unavailable")
+-            : i18n.t("text-total", { count: shards.length })}
++          {data.shards
++            ? i18n.t("text-total", { count: shards.length })
++            : i18n.t("stats-unavailable")}
+         </p>
+       </div>
+       <div class={cn(SURFACE_CARD, CARD_PAD, STACK)}>
+@@ -157,7 +157,12 @@
+       <h2 id="stats-daily-heading" class="text-lg font-semibold text-foreground-bright">
+         {i18n.t("stats-daily")}
+       </h2>
+-      {#if !data.daily}
++      {#if data.dailyError}
++        <Alert variant="destructive">
++          <TriangleAlert aria-hidden="true" />
++          <AlertDescription class="break-words">{data.dailyError}</AlertDescription>
++        </Alert>
++      {:else if !data.daily}
+         <EmptyState>{i18n.t("stats-unavailable")}</EmptyState>
+       {:else if daily.length === 0}
+         <EmptyState>{i18n.t("stats-no-activity")}</EmptyState>
+@@ -228,12 +233,6 @@
+       <h2 id="stats-shards-heading" class="text-lg font-semibold text-foreground-bright">
+         {i18n.t("stats-shards")}
+       </h2>
+-      {#if data.shardsError}
+-        <Alert variant="destructive">
+-          <TriangleAlert aria-hidden="true" />
+-          <AlertDescription class="break-words">{data.shardsError}</AlertDescription>
+-        </Alert>
+-      {/if}
+       {#if shards.length}
+         <div class={cn(SURFACE_CARD, "overflow-x-auto focus-ring")}>
+           <table class="w-full text-sm tabular-nums">
+@@ -301,7 +300,7 @@
+             </tbody>
+           </table>
+         </div>
+-      {:else if !data.shardsError}
++      {:else}
+         <EmptyState>{i18n.t(data.shards ? "stats-no-shards" : "stats-unavailable")}</EmptyState>
+       {/if}
+     </section>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #410** (2026-10-13): chore(release): release v2.31.2 (@EyJunge1)
-- **PR #409** (2026-10-13): fix: re-raise SIGINT/SIGTERM after plugin cleanup (@EyJunge1)
-- **PR #407** (2026-10-13): chore(release): release v2.31.1 (@EyJunge1)
-- **PR #406** (2026-10-13): chore(deps): bump the minor-and-patch group across 2 directories with 7 updates (@dependabot[bot])
-- **PR #404** (2026-10-12): chore(release): release v2.31.0 (@EyJunge1)
-- **PR #403** (2026-10-12): feat(skills): add shared editable skills with V2 bridge and GUI (@EyJunge1)
-- **PR #401** (2026-10-12): fix(embedding): retry transient remote embedding failures (fixes import timeout #400) (@nnikolov3)
-- **PR #398** (2026-10-10): feat(i18n): add German localization to the web UI (@EyJunge1)
+- **PR #417** (2026-10-18): chore(release): release v2.32.0 (@EyJunge1)
+- **PR #416** (2026-10-18): feat(web): add health/stats view to the web UI (@Phototonic)
+- **PR #415** (2026-10-16): docs: move translated READMEs into i18n/ (@EyJunge1)
+- **PR #414** (2026-10-15): chore(release): release v2.31.3 (@EyJunge1)
+- **PR #413** (2026-10-15): fix(skills): reopen DB after boot-time Turso close (@EyJunge1)
+- **PR #411** (2026-10-15): fix(config): preserve quoted strings when stripping JSONC trailing commas (@March-7)
 
 ---
 
@@ -5782,34 +2242,31 @@ Share one awaitable coalesced refresh for init, events and gate misses; forward 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. re-raise SIGINT/SIGTERM after plugin cleanup (#409)
+## X. test(stats): raise aggregation test timeout for Windows CI
 
 **RULE**:
-When implementing operations in `src/index.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/stats-service.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dd12552`: re-raise SIGINT/SIGTERM after plugin cleanup (#409). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edd98083`: test(stats): raise aggregation test timeout for Windows CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/index.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/stats-service.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  const shutdownHandler = async (signal: NodeJS.Signals) => {
-    // Registering listeners disables the runtime's default termination.
-    // After cleanup, remove ours and re-raise so the host can exit (#408).
-    // Avoid forced process exit here — that crashes onnxruntime-node finalizers (#114).
-    process.off("SIGINT", shutdownHandler);
-    process.off("SIGTERM", shutdownHandler);
-    process.kill(process.pid, signal);
+    // Windows CI needs >5s for two shard creations, three vector inserts, and
+    // the full stats walk; the default 5s per-test timeout races afterEach
+    // cleanup against the in-flight walk. Same budget as plugin-bundle-boundary.
+  }, 30_000);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  const shutdownHandler = async () => {
+  });
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dd12552` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edd98083` are properly handled with clean fallback behavior.

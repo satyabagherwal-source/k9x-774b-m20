@@ -1413,11 +1413,11 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "a2072d75",
+    "sourceVersion": "60ae1a25",
     "license": "MIT",
-    "contentHash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
-    "lastHarvestedAt": "2026-10-13T18:17:57.254Z",
-    "learningId": "learn-github-tickernelz-opencode-mem-mv707j1j"
+    "contentHash": "031e0d9085ea5359781e3ea82520b2a0428ff385b4f381bf9b17683e1bbc77c3",
+    "lastHarvestedAt": "2026-10-18T21:20:21.221Z",
+    "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
     "repository": "autotrust/JEV-35B-NVFP4",
@@ -2308,5 +2308,65 @@
     "contentHash": "54e02af92fd819098b2642d67f2f6d3ee2209638e85a9a68e1dc2afe59f73fc2",
     "lastHarvestedAt": "2026-10-18T21:14:07.357Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
+  },
+  "adobe-react-spectrum": {
+    "repository": "adobe/react-spectrum",
+    "platform": "github",
+    "sourceUrl": "https://github.com/adobe/react-spectrum",
+    "sourceVersion": "26134433",
+    "license": "Apache-2.0",
+    "contentHash": "614264b654caf0858a7564fc40ed2ae3bbc35a081b66c27741f65ec5f22ee33a",
+    "lastHarvestedAt": "2026-10-18T21:20:07.686Z",
+    "learningId": "learn-github-adobe-react-spectrum"
+  },
+  "max-sixty-worktrunk": {
+    "repository": "max-sixty/worktrunk",
+    "platform": "github",
+    "sourceUrl": "https://github.com/max-sixty/worktrunk",
+    "sourceVersion": "5e5c65b2",
+    "license": "NOASSERTION",
+    "contentHash": "373487cf17cc1c2ad414def9453bfc7977c55e2e08db85b6b8402334b1d666bf",
+    "lastHarvestedAt": "2026-10-18T21:20:09.222Z",
+    "learningId": "learn-github-max-sixty-worktrunk"
+  },
+  "mattermost-mattermost": {
+    "repository": "mattermost/mattermost",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mattermost/mattermost",
+    "sourceVersion": "f38678d0",
+    "license": "NOASSERTION",
+    "contentHash": "2d7425afae84fced008aa376d17b4bd6369125afa44628d07d94f4c930551f3c",
+    "lastHarvestedAt": "2026-10-18T21:20:15.613Z",
+    "learningId": "learn-github-mattermost-mattermost"
+  },
+  "chaos-mesh-chaos-mesh": {
+    "repository": "chaos-mesh/chaos-mesh",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
+    "sourceVersion": "c39bd4fa",
+    "license": "Apache-2.0",
+    "contentHash": "7c0d5c79cf68a6d27360f12e7ed3d9061ca42bed3316e1bf6d3f8b370accb608",
+    "lastHarvestedAt": "2026-10-18T21:20:17.507Z",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh"
+  },
+  "nolabs-ai-nono": {
+    "repository": "nolabs-ai/nono",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nolabs-ai/nono",
+    "sourceVersion": "cf73ec0b",
+    "license": "Apache-2.0",
+    "contentHash": "38f5d915e382a1bd1b8fafcf7407d443cf1d7f2ad92171ada1a9e7219bca3b6f",
+    "lastHarvestedAt": "2026-10-18T21:20:19.339Z",
+    "learningId": "learn-github-nolabs-ai-nono"
+  },
+  "dathere-qsv": {
+    "repository": "dathere/qsv",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dathere/qsv",
+    "sourceVersion": "95656516",
+    "license": "NOASSERTION",
+    "contentHash": "3c5e0c4d56980e86aa33266f17fe5bbea4fd8d2f1d512c78c0757972cf58e2a1",
+    "lastHarvestedAt": "2026-10-18T21:20:23.576Z",
+    "learningId": "learn-github-dathere-qsv"
   }
 }

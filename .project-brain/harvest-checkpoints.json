@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T21:14:07.364Z",
+  "last_updated": "2026-10-18T21:20:23.584Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2189,17 +2189,18 @@
     },
     "tickernelz/opencode-mem": {
       "repository": "tickernelz/opencode-mem",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-tickernelz-opencode-mem-mv707j1j",
-      "content_hash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
-      "verified_at": "2026-10-13T18:17:57.262Z",
+      "learning_id": "learn-github-tickernelz-opencode-mem",
+      "content_hash": "031e0d9085ea5359781e3ea82520b2a0428ff385b4f381bf9b17683e1bbc77c3",
+      "verified_at": "2026-10-18T21:20:21.224Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T18:17:57.262Z"
+      "last_updated": "2026-10-18T21:20:21.224Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -3591,6 +3592,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T21:14:07.361Z"
+    },
+    "adobe/react-spectrum": {
+      "repository": "adobe/react-spectrum",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-adobe-react-spectrum",
+      "content_hash": "614264b654caf0858a7564fc40ed2ae3bbc35a081b66c27741f65ec5f22ee33a",
+      "verified_at": "2026-10-18T21:20:07.689Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T21:20:07.689Z"
+    },
+    "max-sixty/worktrunk": {
+      "repository": "max-sixty/worktrunk",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-max-sixty-worktrunk",
+      "content_hash": "373487cf17cc1c2ad414def9453bfc7977c55e2e08db85b6b8402334b1d666bf",
+      "verified_at": "2026-10-18T21:20:09.228Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T21:20:09.228Z"
+    },
+    "mattermost/mattermost": {
+      "repository": "mattermost/mattermost",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mattermost-mattermost",
+      "content_hash": "2d7425afae84fced008aa376d17b4bd6369125afa44628d07d94f4c930551f3c",
+      "verified_at": "2026-10-18T21:20:15.617Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T21:20:15.617Z"
+    },
+    "chaos-mesh/chaos-mesh": {
+      "repository": "chaos-mesh/chaos-mesh",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chaos-mesh-chaos-mesh",
+      "content_hash": "7c0d5c79cf68a6d27360f12e7ed3d9061ca42bed3316e1bf6d3f8b370accb608",
+      "verified_at": "2026-10-18T21:20:17.510Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T21:20:17.510Z"
+    },
+    "nolabs-ai/nono": {
+      "repository": "nolabs-ai/nono",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nolabs-ai-nono",
+      "content_hash": "38f5d915e382a1bd1b8fafcf7407d443cf1d7f2ad92171ada1a9e7219bca3b6f",
+      "verified_at": "2026-10-18T21:20:19.343Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T21:20:19.343Z"
+    },
+    "dathere/qsv": {
+      "repository": "dathere/qsv",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dathere-qsv",
+      "content_hash": "3c5e0c4d56980e86aa33266f17fe5bbea4fd8d2f1d512c78c0757972cf58e2a1",
+      "verified_at": "2026-10-18T21:20:23.580Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T21:20:23.580Z"
     }
   },
   "repos": {

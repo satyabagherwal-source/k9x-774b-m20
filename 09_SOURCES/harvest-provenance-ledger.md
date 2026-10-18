@@ -2498,3 +2498,10 @@ Every entry in this ledger must capture:
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `4d900dd5` | Multi-dimensional audit evidence | 2026-10-18T21:14:01.777Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `2ed18896` | Multi-dimensional audit evidence | 2026-10-18T21:14:05.434Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a5cbbdd2` | Multi-dimensional audit evidence | 2026-10-18T21:14:07.357Z |
+| `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `26134433` | Multi-dimensional audit evidence | 2026-10-18T21:20:07.686Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `5e5c65b2` | Multi-dimensional audit evidence | 2026-10-18T21:20:09.222Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `f38678d0` | Multi-dimensional audit evidence | 2026-10-18T21:20:15.613Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `c39bd4fa` | Multi-dimensional audit evidence | 2026-10-18T21:20:17.507Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `cf73ec0b` | Multi-dimensional audit evidence | 2026-10-18T21:20:19.339Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `60ae1a25` | Multi-dimensional audit evidence | 2026-10-18T21:20:21.221Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `95656516` | Multi-dimensional audit evidence | 2026-10-18T21:20:23.576Z |
