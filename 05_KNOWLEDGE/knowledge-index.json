@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:54:49.753Z",
+  "last_updated": "2026-10-18T02:58:24.094Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15346,7 +15346,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "49fa184238fbfe19d3499fc56419131517f24b06a240783969e3f8b17fc4cb94",
+      "content_hash": "d8786888b7e25a11b1649cf499afb96b2326e129d074003bfe65a4488c536e8c",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -15399,6 +15399,16 @@
           "number": 1511,
           "title": "Memory Footprint Pre-Calculation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1595,
+          "title": "Strict Dtype Alignment for Large Language Model Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1596,
+          "title": "Chat Template Immutability and Special Token Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15418,7 +15428,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-17T18:27:33.211Z",
+      "verified_at": "2026-10-18T02:58:24.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

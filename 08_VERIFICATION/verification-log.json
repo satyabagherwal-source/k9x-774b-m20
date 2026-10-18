@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-SO77",
-    "timestamp": "2026-10-16T22:37:20.899Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "f7a3b0a54f23cec6959f4ddf779a3df0e9305a1b9d23f43e8f68ce5cfd73a4a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-WP2N",
     "timestamp": "2026-10-16T22:40:28.655Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7492,6 +7477,21 @@
     "contentHash": "eb874362c0eb229db9586ec0a79a29dbcbea59e961eacd5bc3407c6c6dded21c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K8OM",
+    "timestamp": "2026-10-18T02:58:24.118Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "d8786888b7e25a11b1649cf499afb96b2326e129d074003bfe65a4488c536e8c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
