@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T04:39:47.396Z",
+  "last_updated": "2026-10-18T04:43:07.404Z",
   "total_verified_learnings": 200,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10066,7 +10066,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "8ad17e44a6e614ccf322425368bfba751588f6a35f8010c8583a97693e3f2291",
+      "content_hash": "bdbc13d6af9f2384ee0c40d4b030ca1cb2a499ab1c82d36321acd9a6658cf142",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -10089,6 +10089,16 @@
           "number": 1309,
           "title": "Model Variant Size Explicitness in Naming Conventions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1605,
+          "title": "Hardware-Identified Model Routing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1606,
+          "title": "Model Artifact Size Transparency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10108,7 +10118,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-17T20:06:25.975Z",
+      "verified_at": "2026-10-18T04:43:07.399Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

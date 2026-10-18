@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:39:47.415Z",
-  "total_cycles_completed": 2408,
-  "total_learnings_persisted": 2408,
-  "total_rules_promoted": 1392,
+  "last_updated": "2026-10-18T04:43:07.429Z",
+  "total_cycles_completed": 2409,
+  "total_learnings_persisted": 2409,
+  "total_rules_promoted": 1394,
   "history": [
-    {
-      "timestamp": "2026-10-17T17:11:08.141Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T17:14:16.985Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
@@ -1403,6 +1396,13 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:43:07.429Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
