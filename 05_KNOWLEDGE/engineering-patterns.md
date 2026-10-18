@@ -112009,3 +112009,248 @@ for i, page1 in enumerate(all_pages):
 Test with two strings differing by 1 word out of 50. Assert that `ComputeSimhash` yields fingerprints with `HammingDistance <= 3`.
 
 ---
+
+## 1618. Multilingual Hreflang Bidirectional Return-Tag & Self-Ref Invariant (Harvested from ilamaaa/hreflang-checker & pas7-studio/nextjs-sitemap-hreflang)
+
+**RULE**:
+In multilingual web applications, route generators, and XML sitemaps (especially across sites serving tens of international locales):
+1. **Bidirectional Confirmation Invariant**: If URL $A$ declares an alternate `hreflang="xx"` pointing to URL $B$, URL $B$ MUST return a reciprocal `hreflang="yy"` pointing back to URL $A$. Unidirectional or asymmetric hreflang links are completely discarded by Googlebot and search indexers.
+2. **Mandatory Self-Referencing Tag**: Every localized URL MUST include an `hreflang` annotation referencing itself with its own exact language/region code (e.g. `https://example.com/fr/page` must declare `hreflang="fr" href="https://example.com/fr/page"`).
+3. **Deterministic `x-default` Fallback**: Every alternate cluster MUST declare an `hreflang="x-default"` pointing to the canonical international landing page or language-selector route, handling unmapped languages or IP geolocation defaults.
+4. **Sitemap Cluster Deduplication**: When generating XML sitemaps with `<xhtml:link rel="alternate" .../>`, all valid language variants must be declared symmetrically on each localized `<url>` node, while excluding 4xx/5xx status codes, unindexed draft routes, or `undefined` locale keys.
+
+**WHY**:
+Google Search Central mandates bidirectional confirmation to prevent websites from arbitrarily claiming to be the alternate version of another site's content. Without bidirectional confirmation and self-referencing tags, search engines ignore the entire cluster and serve incorrect language versions to regional users.
+
+**WHEN TO APPLY**:
+Multilingual static site generation, Next.js / Astro internationalized routing, dynamic XML sitemap builders, and international SEO audits.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+export interface SitemapEntry {
+  url: string;
+  alternates: {
+    languages: Record<string, string | undefined>;
+  };
+}
+
+export function withValidatedHreflang(
+  entries: SitemapEntry[],
+  defaultLocale: string,
+  supportedLocales: string[]
+): SitemapEntry[] {
+  return entries.map(entry => {
+    const rawLanguages = { ...entry.alternates.languages };
+    const cleanLanguages: Record<string, string> = {};
+
+    // 1. Filter out undefined or blank targets
+    for (const [loc, href] of Object.entries(rawLanguages)) {
+      if (href && typeof href === 'string') {
+        cleanLanguages[loc] = href;
+      }
+    }
+
+    // 2. Ensure self-reference exists
+    const currentLocale = Object.keys(cleanLanguages).find(loc => cleanLanguages[loc] === entry.url) || defaultLocale;
+    if (!cleanLanguages[currentLocale]) {
+      cleanLanguages[currentLocale] = entry.url;
+    }
+
+    // 3. Ensure x-default exists
+    if (!cleanLanguages['x-default']) {
+      cleanLanguages['x-default'] = cleanLanguages[defaultLocale] || entry.url;
+    }
+
+    return {
+      url: entry.url,
+      alternates: { languages: cleanLanguages }
+    };
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```xml
+<!-- ANTI-PATTERN: Unidirectional hreflang without return link -->
+<!-- On https://example.com/en/page -->
+<link rel="alternate" hreflang="es" href="https://example.com/es/page" />
+<!-- But on https://example.com/es/page, no link points back to /en/page! -->
+<!-- RESULT: Googlebot drops the hreflang link entirely as unconfirmed. -->
+```
+
+**VERIFICATION METHOD**:
+Run automated validation tests verifying: (1) every declared alternate has an exact reciprocal return tag, (2) self-referencing tag is present, (3) `x-default` is declared, and (4) all targets return HTTP 200.
+
+---
+
+## 1619. Lazy-Loaded Machine Learning Model Scoping & OOM Guard (Harvested from searchsolved/search-solved-public-seo)
+
+**RULE**:
+In data science, SEO automation, keyword clustering, or background worker pipelines utilizing heavy transformer or machine learning models (e.g. `sentence-transformers`, `torch`, `spacy`, `sklearn`):
+1. **Zero Top-Level Model Imports**: Heavy ML libraries and model weights MUST NEVER be loaded or initialized at the top-level global module scope.
+2. **Encapsulated Lazy Initialization**: Models MUST be encapsulated inside lazy-loading factory functions or singleton providers that load weights into memory strictly upon invocation (`if _model is None: _model = SentenceTransformer(...)`).
+3. **Graceful Fallback & Feature Gating**: Background scripts and cloud deployment apps (e.g. Streamlit, AWS Lambda, Docker workers) MUST provide lightweight fallback estimators (e.g. TF-IDF + cosine similarity via pure math or standard libraries) or optional feature flags, preventing instant startup segfaults and container Out-Of-Memory (OOM) termination on resource-constrained worker nodes.
+
+**WHY**:
+Top-level importing of PyTorch or transformer models consumes 1GB+ of RAM immediately during application boot, causing serverless functions, container health checks, and CI runners to crash with exit code 137 (OOMKilled) before processing a single request.
+
+**WHEN TO APPLY**:
+Semantic clustering, AI embeddings, natural language processing, vector similarity scoring, and containerized microservices.
+
+**IMPLEMENTATION PATTERN**:
+```python
+_EMBEDDING_MODEL = None
+
+def get_embedding_model():
+    """Lazy-load the transformer model only when actively needed."""
+    global _EMBEDDING_MODEL
+    if _EMBEDDING_MODEL is None:
+        try:
+            from sentence_transformers import SentenceTransformer
+            _EMBEDDING_MODEL = SentenceTransformer("all-MiniLM-L6-v2")
+        except (ImportError, MemoryError) as err:
+            # Fallback to lightweight TF-IDF / sklearn implementation
+            return None
+    return _EMBEDDING_MODEL
+
+def cluster_keywords(keywords: list[str]) -> list[int]:
+    model = get_embedding_model()
+    if model is not None:
+        embeddings = model.encode(keywords)
+        # Cluster with semantic embeddings
+    else:
+        # Fallback to lexical ngram clustering
+        pass
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Top-level model loading
+from sentence_transformers import SentenceTransformer
+# DEADLY: Serverless container boots, tries to allocate 1.2GB of PyTorch weights,
+# hits the 512MB container RAM ceiling, and crashes immediately on startup!
+model = SentenceTransformer("all-MiniLM-L6-v2")
+```
+
+**VERIFICATION METHOD**:
+Test module import in an environment with restricted memory (e.g. 256MB). Assert that importing the module succeeds in < 50ms with < 30MB memory consumption, and memory only expands when `cluster_keywords()` is actively invoked.
+
+---
+
+## 1620. Page-Type-Aware Audit Applicability & External API Degradation Neutrality (Harvested from KaiMOdev/trivium)
+
+**RULE**:
+When building multi-page website audit engines or quality scanners:
+1. **Page-Type-Aware Applicability Matrix**: The engine MUST classify the page archetype (`homepage`, `editorial/blog`, `ecommerce/product`, `category/listing`, `auth/account`) before evaluating rules. Checks specific to an archetype (such as `Product` Schema, price availability, or editorial author bylines) MUST be skipped or marked `NOT_APPLICABLE` for other page types, rather than failing the page.
+2. **API Degradation Neutrality Invariant**: When an external third-party evaluation service (such as Google PageSpeed Insights, CruX API, or VirusTotal) times out, returns HTTP 429/503, or fails to respond, the auditor MUST record the metric status as `UNAVAILABLE` or `EXTERNAL_TIMEOUT`. The engine MUST NEVER record a score of `0` or trigger a failing regression exit for an unmeasured external metric.
+
+**WHY**:
+Treating external API rate-limits or timeouts as a score of 0 triggers false-positive CI/CD deployment rejections, and auditing editorial blog pages against e-commerce schema requirements floods audit reports with spurious defect noise.
+
+**WHEN TO APPLY**:
+Multi-page SEO audits, CI/CD deployment quality gates, synthetic monitoring, and third-party API metric collectors.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+export type PageArchetype = 'homepage' | 'article' | 'product' | 'category' | 'generic';
+
+export function isCheckApplicable(checkId: string, archetype: PageArchetype): boolean {
+  const APPLICABILITY: Record<string, PageArchetype[]> = {
+    'schema-product': ['product'],
+    'schema-article': ['article'],
+    'author-byline': ['article'],
+    'title-tag': ['homepage', 'article', 'product', 'category', 'generic'],
+    'canonical-tag': ['homepage', 'article', 'product', 'category', 'generic']
+  };
+
+  const allowed = APPLICABILITY[checkId];
+  return !allowed || allowed.includes(archetype);
+}
+
+export function handleExternalMetricResult(result: ExternalApiResult | Error): MetricScore {
+  if (result instanceof Error || result.status === 'timeout' || result.status === 'rate_limited') {
+    return {
+      status: 'UNAVAILABLE',
+      score: null, // Neutral: does NOT penalize overall page grade
+      reason: 'External performance service temporarily unavailable.'
+    };
+  }
+  return { status: 'MEASURED', score: result.score, reason: null };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Defaulting third-party API timeout to 0
+try {
+  score = await fetchPageSpeedScore(url);
+} catch (err) {
+  score = 0; // DEADLY: Google API rate-limit turns healthy 98/100 site into 0/100, failing build!
+}
+```
+
+**VERIFICATION METHOD**:
+Mock an external PageSpeed API 503 error during audit. Assert that the resulting report marks the metric as `UNAVAILABLE`, leaves composite health unaffected, and does not exit with code 1.
+
+---
+
+## 1621. Semantic Byline Landmark Boundary & Split-Node Text Normalization (Harvested from janreges/siteone-crawler)
+
+**RULE**:
+In web crawlers, AI scraping agents, and metadata extractors parsing structured entities (such as authors, publishers, or product specs) from arbitrary HTML:
+1. **Landmark Isolation**: Byline and contact extractors MUST be strictly constrained to article header, body, or designated author card semantic landmarks. Text inside process-wide `<header>` and `<footer>` elements must be quarantined so global navigation items ("Contact", "About Us", "Editorial Team") are never misidentified as the individual article author.
+2. **Split-Node Text Assembly**: When an author's name or entity title is split across inline HTML formatting tags (e.g. `<span>John</span> <em>Doe</em>`), the extractor MUST normalize and join the text nodes before entity classification, rather than truncating at the first inline tag.
+3. **Role & Title Exclusion Filter**: The extractor MUST filter out professional titles, roles, and honorifics ("Senior Editor", "Staff Writer", "Dr.", "Contributor") using a negative token dictionary before populating the `author.name` field.
+
+**WHY**:
+Naive regex or text extraction frequently extracts "Senior Editor" as the author name or concatenates global footer navigation links into the article's author metadata, corrupting knowledge graphs and structured schema generation.
+
+**WHEN TO APPLY**:
+AI content scrapers, E-E-A-T trust signal analyzers, news entity extractors, and RSS/Schema generators.
+
+**IMPLEMENTATION PATTERN**:
+```rust
+pub fn extract_author_name(article_element: &ElementRef) -> Option<String> {
+    // 1. Reject elements located inside global header or footer landmarks
+    if is_inside_landmark(article_element, &["header", "footer", "nav"]) {
+        return None;
+    }
+
+    // 2. Extract and join all inline text nodes across child tags
+    let raw_name = article_element
+        .text()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+
+    // 3. Filter out roles, positions, and honorific labels
+    let title_filter = ["Senior Editor", "Editor", "Staff Writer", "Author", "By", "Contributor"];
+    let mut clean_name = raw_name;
+    for title in title_filter {
+        clean_name = clean_name.replace(title, "").trim().to_string();
+    }
+
+    if clean_name.is_empty() || clean_name.len() > 60 {
+        None
+    } else {
+        Some(clean_name)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Grabbing text of any element matching class "author"
+def get_author(soup):
+    el = soup.find(class_=re.compile("author"))
+    # DEADLY: Matches <div class="author-role">Senior Editor</div> or
+    # <footer class="author-links">Privacy Policy</footer>!
+    return el.text.strip()
+```
+
+**VERIFICATION METHOD**:
+Test extraction against an HTML fixture containing `<span class="author"><span>Jane</span> <em>Austin</em> (Senior Editor)</span>`. Assert that extracted author name is exactly `"Jane Austin"` without role annotations.
+
+---

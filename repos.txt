@@ -4148,3 +4148,15 @@ https://github.com/kaiopiola/SEOCheck
 https://github.com/chris-c-thomas/OxideSEO
 https://github.com/codetot-web/schema-test
 https://github.com/logiover/website-seo-audit-crawler
+
+# --- Batch 15: SEO Deep Learning Repositories ---
+https://github.com/janreges/siteone-crawler
+https://github.com/StanGirard/seo-audits-toolkit
+https://github.com/searchsolved/search-solved-public-seo
+https://github.com/indexcraft/ai-seo-audit-agent
+https://github.com/KaiMOdev/trivium
+https://github.com/ilamaaa/hreflang-checker
+https://github.com/pas7-studio/nextjs-sitemap-hreflang
+https://github.com/melbahja/seo
+https://github.com/alfa546/Crawler
+https://github.com/LifeSciForge/seo-auditor
