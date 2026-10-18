@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T03:18:41.073Z",
+  "last_updated": "2026-10-18T03:22:15.218Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18563,7 +18563,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "376bc062d18a5d382cb091d75280cfe10a2d369c6e5f4af7c48db2935e88998f",
+      "content_hash": "49d9ff1eb8593947411f332f112ca13d8b1dc0d673c7c6611f67719f0f5b1acf",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -18621,7 +18621,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-17T18:50:14.285Z",
+      "verified_at": "2026-10-18T03:22:15.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

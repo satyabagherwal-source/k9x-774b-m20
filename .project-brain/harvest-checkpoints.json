@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T03:18:41.114Z",
+  "last_updated": "2026-10-18T03:22:15.258Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1964,14 +1964,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "376bc062d18a5d382cb091d75280cfe10a2d369c6e5f4af7c48db2935e88998f",
-      "verified_at": "2026-10-17T18:50:14.336Z",
+      "content_hash": "49d9ff1eb8593947411f332f112ca13d8b1dc0d673c7c6611f67719f0f5b1acf",
+      "verified_at": "2026-10-18T03:22:15.257Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T18:50:14.336Z"
+      "last_updated": "2026-10-18T03:22:15.257Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",

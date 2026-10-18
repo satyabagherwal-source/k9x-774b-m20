@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:18:41.112Z",
-  "total_cycles_completed": 2384,
-  "total_learnings_persisted": 2384,
+  "last_updated": "2026-10-18T03:22:15.256Z",
+  "total_cycles_completed": 2385,
+  "total_learnings_persisted": 2385,
   "total_rules_promoted": 1387,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:55:08.483Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:58:21.489Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T03:18:41.112Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:22:15.256Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

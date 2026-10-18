@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-NAM4",
-    "timestamp": "2026-10-16T23:01:09.628Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "f01a684e15f9dabe9772b7599a43e9cfc2d3f58ec70f5f6903251245c1231d53",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-SR4L",
     "timestamp": "2026-10-16T23:05:24.309Z",
     "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -7490,6 +7475,21 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
     "contentHash": "e02678ba7a24e737bdaad9927f5c7a8921542846fd00f2f7ec7a872fffc1415a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-EWYB",
+    "timestamp": "2026-10-18T03:22:15.251Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "49d9ff1eb8593947411f332f112ca13d8b1dc0d673c7c6611f67719f0f5b1acf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
