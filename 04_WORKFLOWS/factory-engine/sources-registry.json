@@ -1334,8 +1334,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T22:44:17.744Z",
-    "lastVerified": "2026-10-17T22:44:17.744Z",
+    "lastChecked": "2026-10-18T05:17:06.854Z",
+    "lastVerified": "2026-10-18T05:17:06.854Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17546,8 +17546,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T04:49:55.466Z",
-    "lastVerified": "2026-10-18T04:49:55.466Z",
+    "lastChecked": "2026-10-18T05:17:09.354Z",
+    "lastVerified": "2026-10-18T05:17:09.354Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -23830,5 +23830,12 @@
     "lastChecked": "2026-10-18T05:13:40.803Z",
     "revisionIdentifier": "HEAD",
     "lastVerified": "2026-10-18T05:13:40.803Z"
+  },
+  "code-forge-io-seo-tools": {
+    "name": "seo-tools",
+    "officialUrl": "https://github.com/code-forge-io/seo-tools",
+    "lastChecked": "2026-10-18T05:16:56.854Z",
+    "revisionIdentifier": "HEAD",
+    "lastVerified": "2026-10-18T05:16:56.854Z"
   }
 }
