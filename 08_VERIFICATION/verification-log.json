@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-5QCL",
-    "timestamp": "2026-10-17T00:11:29.061Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "805466ce416fef7bccc683820768b42f9528a2815325fec875a9073dfb2070dc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-ASQX",
     "timestamp": "2026-10-17T00:15:25.449Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7475,21 @@
     "repository": "nomic-ai/nomic-embed-text-v1.5",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
     "contentHash": "80b0091a47f0e1c9a033ecc5a94a8d90df0818bdac6b58b91b65c0ac76893c74",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-YAEB",
+    "timestamp": "2026-10-18T04:33:18.371Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "4691a500aef8ee82a4200e9268d5f9c62b5b0f14265c654256140588ff8c028e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
