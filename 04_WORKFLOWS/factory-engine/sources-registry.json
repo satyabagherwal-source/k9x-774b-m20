@@ -2054,8 +2054,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:16:57.382Z",
-    "lastVerified": "2026-10-17T23:16:57.382Z",
+    "lastChecked": "2026-10-18T05:57:48.204Z",
+    "lastVerified": "2026-10-18T05:57:48.204Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17498,8 +17498,8 @@
     "sourceType": "github",
     "technology": "TypeScript",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:41:08.387Z",
-    "lastVerified": "2026-10-18T05:41:08.387Z",
+    "lastChecked": "2026-10-18T05:57:50.702Z",
+    "lastVerified": "2026-10-18T05:57:50.702Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -20971,8 +20971,8 @@
     "sourceType": "github",
     "technology": "code-repository",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T02:54:54.225Z",
-    "lastVerified": "2026-10-18T02:54:54.225Z",
+    "lastChecked": "2026-10-18T05:57:45.707Z",
+    "lastVerified": "2026-10-18T05:57:45.707Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24160,5 +24160,12 @@
     "lastChecked": "2026-10-18T05:54:17.765Z",
     "revisionIdentifier": "68c95079df",
     "lastVerified": "2026-10-18T05:54:17.766Z"
+  },
+  "ildrm-northstar-seo": {
+    "name": "northstar-seo",
+    "officialUrl": "https://github.com/ildrm/northstar-seo",
+    "lastChecked": "2026-10-18T05:57:38.205Z",
+    "revisionIdentifier": "5ec9c7dc23",
+    "lastVerified": "2026-10-18T05:57:38.205Z"
   }
 }
