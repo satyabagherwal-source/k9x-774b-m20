@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T03:05:40.763Z",
+  "last_updated": "2026-10-18T03:08:59.886Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -43969,7 +43969,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "eb718cb7052af6932654e0e52b28e67096d7cd533dc5c0cbb918c9e66922b816",
+      "content_hash": "bb3baee6e16978513debf5d5ac74d9482453c639dbec0820bcbc616f1762fcd6",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [],
@@ -43978,7 +43978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T18:37:17.489Z",
+      "verified_at": "2026-10-18T03:08:59.877Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

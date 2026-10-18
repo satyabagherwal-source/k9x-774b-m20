@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:05:40.797Z",
-  "total_cycles_completed": 2380,
-  "total_learnings_persisted": 2380,
+  "last_updated": "2026-10-18T03:08:59.929Z",
+  "total_cycles_completed": 2381,
+  "total_learnings_persisted": 2381,
   "total_rules_promoted": 1387,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:42:54.061Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:45:42.135Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T03:05:40.797Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:08:59.929Z",
+      "repository": "datalab-to/indra-ocr",
+      "learningId": "learn-huggingface-datalab-to-indra-ocr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

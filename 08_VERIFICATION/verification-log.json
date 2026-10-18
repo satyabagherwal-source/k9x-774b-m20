@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-5XTE",
-    "timestamp": "2026-10-16T22:47:39.890Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "9cabde74c0b83df61a49405400220ff3e568b0b38681f1be34a0cb401f7e0008",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9IL2",
     "timestamp": "2026-10-16T22:50:26.774Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7490,6 +7475,21 @@
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
     "contentHash": "09313da6e9784029222312f10a0fe31bef5a351c53ca1766962233a97cec393c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-XV9W",
+    "timestamp": "2026-10-18T03:08:59.924Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "bb3baee6e16978513debf5d5ac74d9482453c639dbec0820bcbc616f1762fcd6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
