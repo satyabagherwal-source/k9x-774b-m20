@@ -2565,3 +2565,10 @@ Every entry in this ledger must capture:
 | `learn-github-litmuschaos-litmus` | `https://github.com/litmuschaos/litmus` | `c367fafb` | Multi-dimensional audit evidence | 2026-10-18T22:23:21.675Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b63526c5` | Multi-dimensional audit evidence | 2026-10-18T22:23:23.235Z |
 | `learn-github-vasu-devs-justhireme` | `https://github.com/vasu-devs/JustHireMe` | `accdcdb5` | Multi-dimensional audit evidence | 2026-10-18T22:23:26.065Z |
+| `learn-github-hunvreus-basecoat` | `https://github.com/hunvreus/basecoat` | `6953a4ad` | Multi-dimensional audit evidence | 2026-10-18T22:29:21.038Z |
+| `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `4895730a` | Multi-dimensional audit evidence | 2026-10-18T22:29:22.074Z |
+| `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `63245304` | Multi-dimensional audit evidence | 2026-10-18T22:29:24.721Z |
+| `learn-github-infinitered-reactotron` | `https://github.com/infinitered/reactotron` | `3e480ab0` | Multi-dimensional audit evidence | 2026-10-18T22:29:27.760Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `694ac05c` | Multi-dimensional audit evidence | 2026-10-18T22:29:31.568Z |
+| `learn-github-cryfs-cryfs` | `https://github.com/cryfs/cryfs` | `ad1f72d5` | Multi-dimensional audit evidence | 2026-10-18T22:29:32.741Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `d961b09c` | Multi-dimensional audit evidence | 2026-10-18T22:29:35.119Z |

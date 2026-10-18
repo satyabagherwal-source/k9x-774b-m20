@@ -2558,3 +2558,10 @@
 | `CYCLE-20261018-6DZD` | `2026-10-18T22:23:21.673Z` | `litmuschaos/litmus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1777` | Yes (`17b6d77c...`) |
 | `CYCLE-20261018-6F6O` | `2026-10-18T22:23:23.232Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1724` | Yes (`842eee5a...`) |
 | `CYCLE-20261018-6HDB` | `2026-10-18T22:23:26.063Z` | `vasu-devs/JustHireMe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1778` | Yes (`73f6aebd...`) |
+| `CYCLE-20261018-E39N` | `2026-10-18T22:29:21.035Z` | `hunvreus/basecoat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1779` | Yes (`442d4707...`) |
+| `CYCLE-20261018-E42G` | `2026-10-18T22:29:22.072Z` | `Michael-A-Kuykendall/shimmy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1780` | Yes (`e71b8233...`) |
+| `CYCLE-20261018-E63Z` | `2026-10-18T22:29:24.719Z` | `CrawlCove/robots-txt-tester` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1781` | Yes (`3ffdfcef...`) |
+| `CYCLE-20261018-E8GE` | `2026-10-18T22:29:27.758Z` | `infinitered/reactotron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1782` | Yes (`5594d195...`) |
+| `CYCLE-20261018-EBE5` | `2026-10-18T22:29:31.565Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1783` | Yes (`6da2aa32...`) |
+| `CYCLE-20261018-ECAR` | `2026-10-18T22:29:32.739Z` | `cryfs/cryfs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1784` | Yes (`0b8945b8...`) |
+| `CYCLE-20261018-EE4T` | `2026-10-18T22:29:35.117Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1785` | Yes (`84ec959e...`) |

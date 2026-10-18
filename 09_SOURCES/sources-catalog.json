@@ -1865,8 +1865,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
     "sourceVersion": "63245304",
     "license": "MIT",
-    "contentHash": "cbc78fdcd7fd7e177540e4f9588c227475798dc4384779e0092f1e0ca0d810a2",
-    "lastHarvestedAt": "2026-10-18T06:36:31.903Z",
+    "contentHash": "3ffdfceffefcdfed39899f14645756a2e839bc3717bee98deb678bf1c69a41ed",
+    "lastHarvestedAt": "2026-10-18T22:29:24.721Z",
     "learningId": "learn-github-crawlcove-robots-txt-tester"
   },
   "crawlcove-crawlcove-hreflang-checker": {
@@ -2938,5 +2938,65 @@
     "contentHash": "73f6aebdad37a2679cf3a54b5b1d1319432519a4867cc811cd6f716712bc6f17",
     "lastHarvestedAt": "2026-10-18T22:23:26.065Z",
     "learningId": "learn-github-vasu-devs-justhireme"
+  },
+  "hunvreus-basecoat": {
+    "repository": "hunvreus/basecoat",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hunvreus/basecoat",
+    "sourceVersion": "6953a4ad",
+    "license": "MIT",
+    "contentHash": "442d4707fea3a29a1097cd7edf97ca22433aac34089c6c047d6ff9710f99ba1b",
+    "lastHarvestedAt": "2026-10-18T22:29:21.038Z",
+    "learningId": "learn-github-hunvreus-basecoat"
+  },
+  "michael-a-kuykendall-shimmy": {
+    "repository": "Michael-A-Kuykendall/shimmy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
+    "sourceVersion": "4895730a",
+    "license": "Apache-2.0",
+    "contentHash": "e71b8233c157dcd25afb446297d018333f6024b65ecceb64c4bc4e74c17d3b47",
+    "lastHarvestedAt": "2026-10-18T22:29:22.074Z",
+    "learningId": "learn-github-michael-a-kuykendall-shimmy"
+  },
+  "infinitered-reactotron": {
+    "repository": "infinitered/reactotron",
+    "platform": "github",
+    "sourceUrl": "https://github.com/infinitered/reactotron",
+    "sourceVersion": "3e480ab0",
+    "license": "MIT",
+    "contentHash": "5594d195530fb4f9b5b16f7df0d7ac3bfa558f0a17f7e6ec22d34ba2e54f46ce",
+    "lastHarvestedAt": "2026-10-18T22:29:27.760Z",
+    "learningId": "learn-github-infinitered-reactotron"
+  },
+  "beclab-olares": {
+    "repository": "beclab/Olares",
+    "platform": "github",
+    "sourceUrl": "https://github.com/beclab/Olares",
+    "sourceVersion": "694ac05c",
+    "license": "AGPL-3.0",
+    "contentHash": "6da2aa32cb0d4cec4f4da89118e94ed25a12fc938ca8e37d259f3334aa254907",
+    "lastHarvestedAt": "2026-10-18T22:29:31.568Z",
+    "learningId": "learn-github-beclab-olares"
+  },
+  "cryfs-cryfs": {
+    "repository": "cryfs/cryfs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cryfs/cryfs",
+    "sourceVersion": "ad1f72d5",
+    "license": "LGPL-3.0",
+    "contentHash": "0b8945b80cac5c9f8b0b4b7f211d45b0b53418a3f8907ca4a3d5a9028888bf31",
+    "lastHarvestedAt": "2026-10-18T22:29:32.741Z",
+    "learningId": "learn-github-cryfs-cryfs"
+  },
+  "lioensky-vcptoolbox": {
+    "repository": "lioensky/VCPToolBox",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lioensky/VCPToolBox",
+    "sourceVersion": "d961b09c",
+    "license": "NOASSERTION",
+    "contentHash": "84ec959e5dfd624930d28f05b37678eaa21cda4466fa4bb070f93ecb4068a6f5",
+    "lastHarvestedAt": "2026-10-18T22:29:35.119Z",
+    "learningId": "learn-github-lioensky-vcptoolbox"
   }
 }

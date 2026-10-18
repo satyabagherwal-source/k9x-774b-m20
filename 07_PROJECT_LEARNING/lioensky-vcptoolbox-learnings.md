@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
+> **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
+> **Source Version**: `d961b09c`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T22:29:34.952Z  
+> **Learning ID**: `learn-github-lioensky-vcptoolbox`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): lioensky/VCPToolBox
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:37:41.931Z  
+> **Harvest Timestamp**: 2026-10-18T22:29:34.156Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2349 stars
+- **Stars / Engagement**: 2374 stars
 
 ---
 
@@ -1765,601 +1779,17 @@ export function useDashboardLayoutV2(
     con
 ```
 
-### Core Architecture Module: `AdminPanel-Vue/src/features/plugins-hub/derivePluginHubState.ts`
-```
-import type { RecentVisit } from "@/composables/useRecentVisits";
-import type { PluginInfo } from "@/types/api.plugin";
-
-export type PluginFilter = "all" | "enabled" | "disabled" | "pinned" | "distributed";
-
-export interface PluginHubSummary {
-  total: number;
-  enabled: number;
-  disabled: number;
-  pinned: number;
-}
-
-export interface RecentPluginVisitItem {
-  pluginName: string;
-  label: string;
-  icon: string;
-}
-
-export interface PluginHubRecord {
-  plugin: PluginInfo;
-  pluginName: string;
-  displayName: string;
-  description: string;
-  summary: string;
-  icon: string;
-  enabled: boolean;
-  isDistributed: boolean;
-  isPinned: boolean;
-  searchText: string;
-}
-
-interface FilterPluginHubRecordsOptions {
-  query: string;
-  filter: PluginFilter;
-}
-
-function normalizeText(text: string): string {
-  return text.trim().toLowerCase();
-}
-
-function getPluginName(plugin: PluginInfo): string {
-  return plugin.manifest.name || plugin.name;
-}
-
-function getPluginDisplayName(plugin: PluginInfo): string {
-  return plugin.manifest.displayName?.trim() || getPluginName(plugin);
-}
-
-function summarizePluginDescription(
-  description: string,
-  maxLength: number
-): string {
-  const normalizedDescription = description.replace(/\s+/g, " ").trim();
-  if (!normalizedDescription) {
-    return "该插件暂未提供描述信息。";
-  }
-
-  const graphemes = Array.from(normalizedDescription);
-  if (graphemes.length <= maxLength) {
-    return normalizedDescription;
-  }
-
-  return `${graphemes.slice(0, maxLength).join("").trimEnd()}…`;
-}
-
-function comparePluginHubRecords(
-  a: PluginHubRecord,
-  b: PluginHubRecord
-): number {
-  const pinDelta = Number(b.isPinned) - Number(a.isPinned);
-  if (pinDelta !== 0) {
-    return pinDelta;
-  }
-
-  const enabledDelta = Number(b.enabled) - Number(a.enabled);
-  if (enabledDelta !== 0) {
-    return enabledDelta;
-  }
-
-  return a.displayName.localeCompare(b.displayName, "zh-CN", {
-    sensitivity: "base",
-  });
-}
-
-function matchesFilter(record: PluginHubRecord, filter: PluginFilter): boolean {
-  switch (filter) {
-    case "enabled":
-      return record.enabled;
-    case "disabled":
-      return !record.enabled;
-    case "pinned":
-      return record.isPinned;
-    case "distributed":
-      return record.isDistributed;
-    case "all":
-    default:
-      return true;
-  }
-}
-
-export function buildPluginHubRecords(
-  plugins: readonly PluginInfo[],
-  pinnedPluginNames: readonly string[],
-  descriptionMaxLength: number
-): PluginHubRecord[] {
-  const pinnedPluginNameSet = new Set(pinnedPluginNames);
-
-  return plugins.map((plugin) => {
-    const pluginName = getPluginName(plugin);
-    const displayName = getPluginDisplayName(plugin);
-    const description = plugin.manifest.description?.trim() || "";
-
-    return {
-      plugin,
-      pluginName,
-      displayName,
-      description,
-      summary: summarizePluginDescription(description, descriptionMaxLength),
-      icon: plugin.manifest.icon || "extension",
-      enabled: plugin.enabled,
-      isDistributed: Boolean(plugin.isDistributed),
-      isPinned: pinnedPluginNameSet.has(pluginName),
-      searchText: normalizeText([pluginName, displayName, description].join(" ")),
-    };
-  });
-}
-
-export function buildPluginHubRecordMap(
-  records: readonly PluginHubRecord[]
-): Map<string, PluginHubRecord> {
-  return new Map(records.map((record) => [record.pluginName, record] as const));
-}
-
-export function buildPinnedPluginRecords(
-  pinnedPluginNames: readonly string[],
-  recordMap: ReadonlyMap<string, PluginHubRecord>
-): PluginHubRecord[] {
-  return pinnedPluginNames.flatMap((pluginName) => {
-    const record = recordMap.get(pluginName);
-    return record ? [record] : [];
-  });
-}
-
-export function summarizePluginHubRecords(
-  records: readonly PluginHubRecord[]
-): PluginHubSummary {
-  return records.reduce<PluginHubSummary>(
-    (summary, record) => {
-      summary.total += 1;
-      summary.enabled += Number(record.enabled);
-      summary.disabled += Number(!record.enabled);
-      summary.pinned += Number(record.isPinned);
-      return summary;
-    },
-    {
-      total: 0,
-      enabled: 0,
-      disabled: 0,
-      pinned: 0,
-    }
-  );
-}
-
-export function buildRecentPluginVisitItems(
-  recentVisits: readonly RecentVisit[],
-  recordMap: ReadonlyMap<string, PluginHubRecord>,
-  limit = 6
-): RecentPluginVisitItem[] {
-  const seenPluginNames = new Set<string>();
-  const result: RecentPluginVisitItem[] = [];
-
-  for (const visit of recentVisits) {
-    if (!visit.pluginName || seenPluginNames.has(visit.pluginName)) {
-      continue;
-    }
-
-    const record = recordMap.get(visit.pluginName);
-    if (!record) {
-      continue;
-    }
-
-    seenPluginNames.add(visit.pluginName);
-    result.push({
-      pluginName: record.pluginName,
-      label: record.displayName,
-      icon: record.icon,
-    });
-
-    if (result.length >= limit) {
-      break;
-    }
-  }
-
-  return result;
-}
-
-export function filterPluginHubRecords(
-  records: readonly PluginHubRecord[],
-  { query, filter }: FilterPluginHubRecordsOptions
-): PluginHubRecord[] {
-  const normalizedQuery = normalizeText(query);
-
-  return records
-    .filter((record) =>
-      !normalizedQuery ? true : record.searchText.includes(normalizedQuery)
-    )
-    .filter((record) => matchesFilter(record, filter))
-    .sort(comparePluginHubRecords);
-}
-
-```
-
-### Core Architecture Module: `AdminPanel-Vue/src/features/theme-editor/themeEngine.ts`
-```
-/**
- * 主题引擎
- *
- * 管理自定义主题 CSS 变量的持久化与应用。
- * 支持预设主题、颜色覆盖、自定义背景图和自定义 CSS。
- */
-
-const STORAGE_KEY_COLORS = 'customTheme'
-const STORAGE_KEY_CSS = 'customThemeCss'
-const STORAGE_KEY_BG_IMAGE = 'customThemeBgImage'
-const STORAGE_KEY_ACTIVE_PRESET = 'customThemeActivePreset'
-const STORAGE_KEY_USER_THEMES = 'customThemeUserThemes'
-const STORAGE_KEY_THEME_MODE = 'theme'
-const STORAGE_KEY_RADIUS = 'customThemeRadius'
-const STORAGE_KEY_SCALE = 'customThemeScale'
-const STORAGE_KEY_FONT = 'customThemeFont'
-const STORAGE_KEY_CONTENT_LAYOUT = 'customThemeContentLayout'
-const STORAGE_KEY_SHELL_LAYOUT = 'customThemeShellLayout'
-const INJECTED_CSS_ID = 'vcp-custom-theme-css'
-const INJECTED_BG_ID = 'vcp-custom-theme-bg'
-export const THEME_SETTINGS_CHANGED_EVENT = 'vcp-theme-settings-changed'
-
-// ── 类型定义 ──
-
-export interface CustomThemeVars {
-  [varName: string]: string
-}
-
-export type ThemeMode = 'dark' | 'light'
-export type ThemeRadius = 'default' | 'none' | 'sm' | 'md' | 'lg' | 'xl'
-export type ThemeScale = 'default' | 'sm' | 'lg' | 'xl'
-export type ThemeFont = 'default' | 'sans' | 'serif'
-export type ThemeContentLayout = 'full' | 'centered'
-export type ThemeShellLayout = 'inset' | 'sidebar'
-
-export const THEME_MODE_OPTIONS: Array<{ id: ThemeMode; label: string; description: string; icon: string }> = [
-  { id: 'dark', label: '暗色', description: '深色玻璃拟态界面', icon: 'dark_mode' },
-  { id: 'light', label: '亮色', description: '柔和亮色界面', icon: 'light_mode' },
-]
-
-export const THEME_RADIUS_OPTIONS: Array<{ id: ThemeRadius; label: string; description: string; preview: string }> = [
-  { id: 'default', label: '默认', description: '12 / 18 / 26 / 34px', preview: '34px' },
-  { id: 'none', label: '直角', description: '0 / 0 / 0 / 0px', preview: '0' },
-  { id: 'sm', label: '小', description: '4 / 6 / 8 / 12px', preview: '8px' },
-  { id: 'md', label: '中', description: '6 / 10 / 14 / 20px', preview: '18px' },
-  { id: 'lg', label: '大', description: '8 / 12 / 18 / 26px', preview: '30px' },
-  { id: 'xl', label: '圆润', description: '12 / 18 / 26 / 34px', preview: '34px' },
-]
-
-export const THEME_SCALE_OPTIONS: Array<{ id: ThemeScale; label: string; description: string }> = [
-  { id: 'default', label: '默认', description: '当前面板密度' },
-  { id: 'sm', label: '紧凑', description: '减少间距，适合高频操作' },
-  { id: 'lg', label: '舒展', description: '增加呼吸感' },
-  { id: 'xl', label: '宽松', description: '更大的字号与间距' },
-]
-
-export const THEME_FONT_OPTIONS: Array<{ id: ThemeFont; label: string; description: string }> = [
-  { id: 'default', label: '默认', description: '使用当前面板字体' },
-  { id: 'sans', label: '无衬线', description: '清晰的管理面板风格' },
-  { id: 'serif', label: '衬线', description: '更具编辑感的标题与正文' },
-]
-
-export const THEME_CONTENT_LAYOUT_OPTIONS: Array<{ id: ThemeContentLayout; label: string; description: string }> = [
-  { id: 'full', label: '铺满', description: '使用当前全宽内容布局' },
-  { id: 'centered', label: '居中', description: '限制内容宽度，适合阅读配置' },
-]
-
-export const THEME_SHELL_LAYOUT_OPTIONS: Array<{ id: ThemeShellLayout; label: string; description: string }> = [
-  { id: 'inset', label: '内嵌', description: '内容面板嵌入灰色外壳，保留圆角层次' },
-  { id: 'sidebar', label: '侧边栏', description: '传统贴边侧栏，右侧内容面板直角铺满' },
-]
-
-export interface ThemeSnapshot {
-  colorOverrides: Record<string, string>
-  customCss: string
-  backgroundImage: string
-  activePresetId: string | null
-  themeMode: ThemeMode
-  radius: ThemeRadius
-  scale: ThemeScale
-  font: ThemeFont
-  contentLayout: ThemeContentLayout
-  shellLayout: ThemeShellLayout
-}
-
-export interface ThemeQuickSettings {
-  themeMode: ThemeMode
-  radius: ThemeRadius
-  scale: ThemeScale
-  font: ThemeFont
-  contentLayout: ThemeContentLayout
-  shellLayout: ThemeShellLayout
-}
-
-export interface UserTheme {
-  id: string
-  name: string
-  snapshot: ThemeSnapshot
-  createdAt: number
-}
-
-// ── 安全的 localStorage 写入 ──
-
-function safeSetItem(key: string, value: string): boolean {
-  try {
-    localStorage.setItem(key, value)
-    return true
-  } catch (e) {
-    console.error(`[ThemeEngine] localStorage 写入失败 (key=${key}):`, e)
-    return false
-  }
-}
-
-// ── 完整预设主题 ──
-
-export interface FullPresetTheme {
-  id: string
-  label: string
-  description: string
-  icon: string
-  colors: Record<string, string>
-  swatches?: string[]
-  defaultRadius?: ThemeRadius
-  defaultFont?: Exclude<ThemeFont, 'default'>
-  backgroundImage?: string
-  customCss?: string
-}
-
-/**
- * 根据色相生成完整的主题色覆盖变量
- * 保持与默认主题一致的亮度/色度结构，只改变色相
- */
-function hueColors(h: number): Record<string, string> {
-  return {
-    '--highlight-text-dark': `oklch(0.75 0.14 ${h})`,
-    '--highlight-text-light': `oklch(0.45 0.14 ${h})`,
-    '--accent-bg-dark': `oklch(0.30 0.08 ${h})`,
-    '--accent-bg-light': `oklch(0.92 0.04 ${h})`,
-    '--button-bg-dark': `oklch(0.68 0.16 ${h})`,
-    '--button-bg-light': `oklch(0.68 0.16 ${h})`,
-    '--button-hover-bg-dark': `oklch(0.60 0.18 ${h})`,
-    '--button-hover-bg-light': `oklch(0.60 0.18 ${h})`,
-  }
-}
-
-export const FULL_PRESET_THEMES: FullPresetTheme[] = [
-  {
-    id: 'default-blue',
-    label: '深空蓝',
-    description: '默认主题，深邃的宇宙蓝色调',
-    icon: 'rocket_launch',
-    colors: {},
-    swatches: ['oklch(0.75 0.14 230)', 'oklch(0.68 0.16 230)', 'oklch(0.30 0.08 230)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'midnight-purple',
-    label: '午夜紫',
-    description: '神秘优雅的紫色调',
-    icon: 'dark_mode',
-    colors: hueColors(270),
-    swatches: ['oklch(0.75 0.14 270)', 'oklch(0.68 0.16 270)', 'oklch(0.30 0.08 270)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'aurora-green',
-    label: '极光绿',
-    description: '生机盎然的绿色极光',
-    icon: 'forest',
-    colors: hueColors(155),
-    swatches: ['oklch(0.75 0.14 155)', 'oklch(0.68 0.16 155)', 'oklch(0.30 0.08 155)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'sunset-orange',
-    label: '日落橙',
-    description: '温暖的橙色黄昏',
-    icon: 'wb_twilight',
-    colors: hueColors(30),
-    swatches: ['oklch(0.75 0.14 30)', 'oklch(0.68 0.16 30)', 'oklch(0.30 0.08 30)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'cherry-red',
-    label: '樱花红',
-    description: '热烈绽放的红色',
-    icon: 'local_florist',
-    colors: hueColors(0),
-    swatches: ['oklch(0.75 0.14 0)', 'oklch(0.68 0.16 0)', 'oklch(0.30 0.08 0)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'ocean-cyan',
-    label: '海洋青',
-    description: '清澈透明的海洋色调',
-    icon: 'waves',
-    colors: hueColors(190),
-    swatches: ['oklch(0.75 0.14 190)', 'oklch(0.68 0.16 190)', 'oklch(0.30 0.08 190)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'rose-pink',
-    label: '玫瑰粉',
-    description: '浪漫柔和的粉色',
-    icon: 'favorite',
-    colors: hueColors(310),
-    swatches: ['oklch(0.75 0.14 310)', 'oklch(0.68 0.16 310)', 'oklch(0.30 0.08 310)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'golden-amber',
-    label: '琥珀金',
-    description: '华贵典雅的金色',
-    icon: 'diamond',
-    colors: hueColors(60),
-    swatches: ['oklch(0.75 0.14 60)', 'oklch(0.68 0.16 60)', 'oklch(0.30 0.08 60)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'editorial-graphite',
-    label: '编辑墨色',
-    description: '暖纸朱砂与工业石墨的明暗双色主题',
-    icon: 'ink_pen',
-    colors: {},
-    swatches: ['#b94832', '#21675c', '#f2a900', '#76bfae'],
-    defaultRadius: 'md',
-    defaultFont: 'serif',
-  },
-  {
-    id: 'anthropic',
-    label: 'Anthropic',
-    description: '暖米色画布与陶土强调色',
-    icon: 'auto_awesome',
-    colors: {},
-    swatches: ['oklch(0.984 0.005 95)', 'oklch(0.685 0.142 38)', 'oklch(0.92 0.03 72)'],
-    defaultRadius: 'xl',
-    defaultFont: 'serif',
-  },
-  {
-    id: 'rose-garden',
-    label: '蔷薇庭院',
-    description: '玫瑰粉与柔和浅红的花园主题',
-    icon: 'local_florist',
-    colors: {},
-    swatches: ['oklch(0.5827 0.2418 12.23)', 'oklch(0.8131 0.1129 5.67)', 'oklch(0.93 0.04 12)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'lake-view',
-    label: '湖畔薄雾',
-    description: '湖绿色与水蓝色的清透主题',
-    icon: 'water',
-    colors: {},
-    swatches: ['oklch(0.765 0.177 163.22)', 'oklch(0.551 0.0899 200.52)', 'oklch(0.92 0.035 180)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'ocean-breeze',
-    label: '海风蓝紫',
-    description: '高饱和蓝紫渐变主题',
-    icon: 'sailing',
-    colors: {},
-    swatches: ['oklch(0.5461 0.2152 262.88)', 'oklch(0.5854 0.2041 277.12)', 'oklch(0.92 0.03 250)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'underground',
-    label: '地下霓虹',
-    description: '青绿与洋红的夜间霓虹主题',
-    icon: 'subway',
-    colors: {},
-    swatches: ['oklch(0.5315 0.0694 156.19)', 'oklch(0.5748 0.0862 336.52)', 'oklch(0.20 0.03 210)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'sunset-glow',
-    label: '暮色余晖',
-    description: '朱红与琥珀色的夕阳主题',
-    icon: 'wb_twilight',
-    colors: {},
-    swatches: ['oklch(0.5591 0.1882 25.33)', 'oklch(0.7938 0.1248 42.42)', 'oklch(0.93 0.05 55)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'forest-whisper',
-    label: '森林低语',
-    description: '冷杉绿与灰蓝的安静主题',
-    icon: 'forest',
-    colors: {},
-    swatches: ['oklch(0.5276 0.1072 182.22)', 'oklch(0.5236 0.0505 250.18)', 'oklch(0.90 0.025 165)'],
-    defaultRadius: 'xl',
-  },
-  {
-    id: 'lavender-dream',
-    label: '薰衣草梦',
-    description: '紫粉与浅蓝的柔和主题',
-    icon: 'spa',
-    colors: {},
-    swatches: ['oklch(0.5709 0.1808 306.89)', 'oklch(0.811 0.0589 201.14)', 'oklch(0.94 0.035 300)'],
-    defaultRadius: 'xl',
-  },
-]
-
-// ── 可编辑的颜色变量分组定义 ──
-
-export interface ThemeColorVariable {
-  name: string
-  label: string
-  cssVar: string
-  defaultDark: string
-  defaultLight: string
-  /** 非颜色类型的变量 (如 px 值)，使用文本输入而非取色器 */
-  inputType?: 'text'
-}
-
-export interface ThemeColorGroup {
-  id: string
-  label: string
-  icon: string
-  variables: ThemeColorVariable[]
-}
-
-export const THEME_COLOR_GROUPS: ThemeColorGroup[] = [
-  {
-    id: 'accent',
-    label: '强调色',
-    icon: 'palette',
-    variables: [
-      {
-        name: 'highlight-text-dark',
-        label: '高亮色（暗色）',
-        cssVar: '--highlight-text-dark',
-        defaultDark: 'oklch(0.75 0.14 230)',
-        defaultLight: 'oklch(0.75 0.14 230)',
-      },
-      {
-        name: 'highlight-text-light',
-        label: '高亮色（亮色）',
-        cssVar: '--highlight-text-light',
-        defaultDark: 'oklch(0.45 0.14 230)',
-        defaultLight: 'oklch(0.45 0.14 230)',
-      },
-      {
-        
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #486** (2026-10-05): **feat(knowledgeBase): 引入单 Agent Chunk 双槽代际索引与集合对称差分回放机制**
-  *Symptoms*: ### 动机与背景 当前 VCPToolBox 中的 MemoChunk 索引持久化存在两难瓶颈：不开启持久化则冷启动需要全量从 SQLite 重建 HNSW，耗时漫长；开启持久化后每次小微日记变动均会同步覆写数十兆的二进制大文件，产生严重的 I/O 阻塞且无法感知离线差分。  ### 架构与解决方案 借鉴系统成熟的 Tag 代际索引哲学，为每个 Agent（日记本）独立实现双槽（Slot A/B）代际基线架构： 1. **多租户独立双槽基线**：在 `schemaManager.js` 中新增 `chunk_index_baselines` 与 `chunk_index_baseline_entries`，按 `(diary_name, generation)` 复合主键强隔离，每次保存仅定向写入非活动影子槽，单事务原子翻转，根除断电撕裂风险。 2. **集合对称差分回放（Set Symmetric Diff）**：攻克 Chunk 原地删除与自增 ID 漂移难题，利用 SQLite 集合代数自动计算 `E \ C`（废弃删除项）与 `C \ E`（新增插入项），启动加载时仅回放差分向量，毫秒级自愈。 3. **5% 智能代际门限拦截**：日常小微改动仅驻留内存，累计差异未达 `KNOWLEDGEBASE_CHUNK_INDEX_BASELINE_DELTA_RATIO`（默认 5%）时跳过磁盘重写，大幅削减 SSD 写入放大。 4. **全生命周期防崩溃自愈**：在模型签名变更、维度不匹配或二进制文件受损时，自动清空脏元数据并优雅回退到权威 SQLite 全量恢复。  ### 验证与测试 - 针对模型漂移、文件截断损坏、100% ID 换血、万级突发雪崩、Exclusive 行级死锁、进程异常中断回滚等极端场景进行了全维度验证，全部通过。 - 实测冷启动加载包含基线并回放新增与删除差分，总耗时仅需 16ms（8,000 级混合代际回放仅耗时 154ms）。 - 与原有 `KNOWLEDGEBASE_PERSIST_DEFAULT`、`KNOWLEDGEBASE_PERSIST_FOLDERS` 环境变量完全向前兼容。  ---- 让nova写了一堆单元测验跑了一通，自己的也重启了后端，希望并无问题。 
+- **Issue #504** (2026-10-18): **feat(kbm): Rust 单 SQL 运行时、TDB 索引与管理面板统一**
+  *Symptoms*: ## 概要 | 汇总当前功能分支相对 main 的全部 38 个提交。包括 KBM Rust 单 SQL 运行时与存储迁移、原生索引生命周期及恢复和一致性治理、TDB 索引与迁移工具、LightMemo 原生查询接线、RAG 配置面板及数据展示统一，以及相关回归测试、构建产物和施工文档。 ## 验证说明 | 本次仅执行分支状态核对和 PR 发布，未重新运行测试。 ## 合并说明 | 本 PR 包含当前分支全部变动，不自动合并。
 
-- **Issue #484** (2026-10-03): **feat(plugin): 新增 LdBook 电子图书检索与下载插件**
-  *Symptoms*:    ## 📌 概述 (Overview)     为 VCPToolBox 生态新增 **LdBook** 插件，面向公有领域电子图书提供轻量、高性能、高鲁棒性的图书目录检索与高速分块断点下载支持。     插件采用 Go 原生标准库编写，单一可执行程序自包含设计（~6MB，零第三方外部运行时依赖），完全适配 VCPToolBox 最新的同步插件调用规范。     ---     ## ✨ 核心特性与设计亮点     1. **多镜像全异步竞速检索**：       - 自动并发请求多个图书镜像源，毫秒级汇流响应。一旦目标格式数量满足阈值立即短路取消冗余请求，节省网络资源。    2. **智能实体图书聚合（Title-Level Aggregation）**：       - 将同一书籍的多种格式版本聚合为单一实体，向 AI 明确展示该书支持的全部格式（如 `[epub, pdf, mobi, azw3]`）及对应最佳 MD5 标识，便于选型。    3. **严格格式防御机制**：       - 当请求的格式该书不存在时，明确返回全局支持的格式列表并提示重选，杜绝“挂羊头卖狗肉”。    4. **Range 分块加速与断点自愈下载**：       - 支持多分块并发写入；采用 `.part` 临时文件与自愈重试机制，下载完成后原子替换落盘，避免损坏文件。    5. **高度可配置（抗倒闭设计）**：       - 附带 `config.env.example`，搜索镜像、下载网关、并发连接数均可动态配置；优先读取插件本地配置，无缝继承 VCP 全局环境及代理设置。     ---     ## 🛠️ 提供的工具指令 (Capabilities)     本插件向上层 Agent 提供 3 个核心指令：     - **`SearchBooks`**：      - 图书目录与格式探索。支持 `searchField`（`def` 模糊搜索、`title` 书名搜索、`author` 作者搜索、`isbn` 国际标准书号搜索）和 `format` 过滤。    - **`DownloadBook`**：      - 一步直达的一键下载工具（最常用）。直接输入书名与目标格式，算法自动加权锁定最佳候选、分块加速并落盘保存，直接返回本地文件路径。    - **`DownloadByMD5`**：      - 针对已知 32 位 MD5 哈希的底层精准断点加速下载。     ---     ## 🧪 验证与规范合规性 (Verification)     1. **VCP 规范合规**：       - `plugin-manifest.json` 严格遵循最新的规范重构，所有调用示例统一抽取至独立 `example` 字段，`description` 仅保留参数描述，杜绝 System Prompt 污染。       - 运行项目根目录校验脚本：         - `node validate-plugin-json.js`：**全库 91 个插件扫描全部通过，0 错误**。         - `node normalize-plugin-examples.js`：**0 警告，0 错误**。    2. **输出格式规范**：       - 插件标准输出遵循 VCP 推荐的 OpenAI content 数组结构（`{"statu
-  **Post-Mortem & Fix Analysis**:
-  > 这种类型插件以后建议投稿插件商店
-
-- **Issue #483** (2026-09-25): **fix(deps): remove unused hnswlib-node dependency**
-  *Symptoms*: Fixes #482.  `hnswlib-node` is no longer used after the RAG storage refactor, but it remains in the root dependency list and runs `node-gyp` during clean Windows installs. This patch removes the dead dependency, adds the missing optional `fsevents` lock entry so `npm ci` is reproducible, and updates the RAG README to describe the current SQLite/`rust-vexus-lite` path.  Validation:  - `npm install --package-lock=false --no-audit --no-fund --foreground-scripts` - `npm ci --dry-run --ignore-scripts --no-audit --no-fund` - native-module smoke checks for the current SQLite, TriviumDB, Rust index, image, tokenizer, and Puppeteer modules 
-
-- **Issue #482** (2026-09-25): **移除死依赖 hnswlib-node：它让 npm install 必须安装 MSVC Build Tools（2-3GB）才能成功**
-  *Symptoms*: ## 现象  全新 Windows 机器上按 `docs/OPERATIONS.md` 走 `npm install` 会直接失败，并且**整棵依赖树回滚**（`node_modules` 被清空，exit 1），报错指向 `hnswlib-node`：  ``` > hnswlib-node@1.4.2 install > node-gyp rebuild  gyp ERR! find VS gyp ERR! find VS --msvs_version was not set on the command line gyp ERR! find VS VCINSTALLDIR not set, not running in VS Command Prompt gyp ERR! find VS You need to install the latest version of Visual Studio gyp ERR! find VS including the "Desktop development with C++" workload. gyp ERR! not ok  npm error code 1 npm error path C:\...\node_modules\hnswlib-node npm error command failed ```  环境：Windows 10.0.26100 / Node v24.21.0（ABI 137）/ npm 11.19.0。  ## 根因  `hnswlib-node@1.4.2` 没有发布任何预编译产物，`install` 脚本就是裸的 `node-gyp rebuild`，因此必须本机存在 MSVC C++ 工具链。而同一棵树里**其它原生依赖全部走预编译，完全不需要编译器**：  | 包 | 安装方式 | 需要 MSVC | | --- | --- | --- | | `hnswlib-node@1.4.2` | `node-gyp rebuild`（无 prebuild） | **是** | | `better-sqlite3@12.4.1` | `prebuild-install`（ABI 137 有产物） | 否 | | `sharp` / `@napi-rs/canvas` / `@node-rs/jieba` / `triviumdb` | 预编译产物 | 否 | | `rust-vexus-lite` | 仓库自带 `.node`，或 cargo 自编 | 否 | | `puppeteer` | 只下载 Chrome | 否 | | `ssh2` 的可选 crypto binding / `cpu-features` | node-gyp，但为 optional，失败被容忍 | 否（可忽略） |  为了一个没人用的依赖去装 2-3 GB 的 VS Build Tools 并配置 "Desktop development with C++"，对只想跑起服务的人是很大的体验代价（下载、安装、可能还要重开终端；安装器为此专门写了 `msvc_ops.rs` 整条流程也是同一个痛点）。  ## 这个依赖已经没有任何代码在用  `hnswlib-node` 是 2025-11-19 那轮数据库重构的遗留：重构删掉了全部调用点，但漏删了 `package.json` 里的声明。  ``` $ git grep -in hnsw -- '*.js' '*.mjs' '*.cjs' '
-
-- **Issue #481** (2026-09-22): **feat(BilibiliFetch): 修复快照多模态在下游网关触发 SSRF 500 熔断的问题，并优化国内代理路由与多级凭据读取容错**
-  *Symptoms*: ### 📌 Summary / 概述 本 PR 针对最新 `2.1.0` 多模态快照特性在生产环境中暴露出的网关拦截隐患进行了关键性修复，并增强了国内 API 的代理路由协调与凭据多级读取容错。  保持 100% 纯 Python 单文件 `synchronous` 同步插件契约，零新增外部依赖，完全向下兼容。  ---  ### 🐛 Critical Bugfix / 关键缺陷修复  1. **彻底解决多模态快照在 API 网关 (New-API / One-API) 下触发 SSRF 500 熔断的问题**：    - **痛点**：`2.1.0` 在 `images_to_add` 中直接将 `http://localhost:6005/...` 传给大模型的 `image_url`。当下游使用 New-API / One-API 或公网云端大模型时，网关的 SSRF 防火墙会拦截内网端口并报错：      `failed to download file from http://localhost:6005/...: request reject: port 6005 is not allowed (500 Error)`，导致整次对话流被掐断。    - **方案（双轨视界分离）**：      - **人类视角**：正文 Markdown 引用保留 `http://localhost:6005`，供前端客户端轻量渲染；      - **模型视角**：将小体积快照编码为标准内联 Base64 Data URI（`data:image/jpeg;base64,...`）喂入 `image_url`。大模型免网络请求直接视觉解析，彻底根除 SSRF 拦截。    - **安全熔断**：单次请求注入大模型的多模态图片数量硬编码上限设为 10 张（`MAX_MULTIMODAL_IMAGES = 10`），防止异常长数组撑爆上下文或网关 Payload 上限。  ---  ### ✨ Other Improvements / 其它改进  2. **零配置 POSIX NO_PROXY 智能路由协调**：    - 针对国内用户开启系统全局代理（如 Clash 7890 端口）常导致 `api.bilibili.com` 直连请求误走海外节点触发 `412 Precondition Failed` 风控的痛点，自动在当前子进程注入 `NO_PROXY` 域；    - 保持用户的 `HTTP_PROXY / HTTPS_PROXY` 完整原貌，不破坏海外用户和内网用户的专用代理链路。  3. **内联凭据管理器与热更新钩子（Credentials Cache Hook）**：    - 内联轻量凭据读取器，支持多级回退阶梯：      1. 目录级 `.cookies_cache` 运行时缓存（若存在则优先提取最新 `SESSDATA`，为外部脚本/扩展热自愈提供标准通道）；      2. 插件局部 `config.env`（解除对主程序根目录的强依赖）；      3. 环境变量 `BILIBILI_COOKIE`；      4. 全局根目录 `config.env`（向下绝对兼容）。  4. **跨平台可执行文件后缀兼容**：    - `get_ffmpeg_path` 兼容 `os.name == 'nt'` 的动态 `.exe` 探测，提升 Linux / Do
-
-- **Issue #480** (2026-09-21): **fix(dailyNotes): 支持日记保存时同步重命名与严格扩展名白名单兜底**
-  *Symptoms*: ### 问题背景 1. `POST /note/:folderName/:fileName` 接口原先只处理正文覆盖，不支持日记重命名，导致前端修改标题输入框后无法物理生效。 2. 传统的 `path.extname()` 在处理类似 `2025.04.txt` 这类包含点号的日期或版本号文件名时，若输入无后缀的 `2025.04`，易将 `.04` 误判为扩展名截断，导致后缀判定失常。  ### 修复内容 1. **支持 newFileName**：从请求体解构新文件名，支持同时修改文件名与日记正文。 2. **扩展名严格白名单与兜底**：严格依据 `allowedExtensions` 白名单判定后缀；若新文件名未以白名单后缀结尾，优先寻找原文件合法后缀，若原文件亦无合法后缀则强制铁律兜底补齐 `.txt`，杜绝裸文件与伪扩展名。 3. **原子落盘与防冲撞**：重命名前使用 `fs.access` 探测目标文件，若冲突返回 `409 Conflict (EEXIST)`，杜绝静默误覆盖；写入新文件并物理清理旧文件，向 `executeFileMutation` 提交完整变更路径。 4. **安全防御**：阻断 `newFileName` 中的跨目录穿透字符（`..`、`/`、`\`）。  …… 注：这是前端“记忆”子模块应用的相应后端pr
-
-- **Issue #479** (2026-09-27): **feat: add opt-in Telegram bridge with correlated host events**
-  *Symptoms*: 为 VCP Agent 增加默认关闭的 Telegram 私聊入口，复用现有 Agent、模型、工具和管理员认证链路。授权用户可以切换 Agent、收发媒体、查看流式回复、批准关联工具请求，并收到通用异步任务结果。  此 PR 同时补齐 Host Integration v1：在流式/非流式工具执行中传递原始请求关联 ID，提供最小化的进程内审批与异步事件，并在回调结果持久化后通知传输插件。保留现有 WebSocket 通知、审批变更预览和管理员认证。未集成这些接口的旧主机无法仅复制插件目录使用。  ## 范围  - TelegramBridge 插件、SQLite 迁移、测试、安装/恢复文档和可重复打包脚本；通用附件通过受限路径或公共 HTTPS 解析。 - 请求与投递持久化、取消、重启恢复、未知效果隔离、图片历史和相册合并。 - 不包含任何生成服务专用适配，也不增加生成服务依赖。 - 配置模板只含空凭据和通用 Agent 示例；不提交本地配置、聊天数据、媒体、日志、数据库、私人 Agent 文件或本地验收记录。  ## 验证  - 本地 Windows / Node 22.21.1：721 项，711 PASS、10 SKIP、0 FAIL。 - 隔离 Linux Alpine / Node 20.20.2：720 项，715 PASS、5 SKIP、0 FAIL。镜像未安装 Git，忽略规则单项在 Windows 验证。 - 主机接口回归：24 PASS；隔离的真实 PluginManager 审批/管理员门禁集成：2 PASS。 - 94 个 JavaScript 文件语法检查通过；密钥扫描通过；插件 npm audit 为 0 漏洞；发布包确定性和排除运行数据的测试通过。 - [GitHub Actions](https://github.com/SeOgi-Tsu/VCPToolBox/actions/runs/35487115525) 在当前提交 a127c427 上全部通过：Ubuntu Node 20/22、Windows Node 22 和主机接口四个任务。初次云端运行发现的 Windows 临时目录短路径夹具差异及主机 SQLite 原生构建遗漏已修复，未放宽生产路径校验。  ## Draft 状态与使用边界  版本为 0.1.0-beta.1，默认 TELEGRAM_MODE=disabled。完整媒体暂存依赖 Linux/Docker 的目录句柄与 /proc/self/fd；原生 Windows 会明确拒绝部分媒体路径。自动化测试使用模拟网络及独立数据库，不宣称新安装已通过真实 Bot 全场景验收。维护者可按 Plugin/TelegramBridge/docs/ACCEPTANCE.md 完成目标环境验收后再转正式评审。 
-  **Post-Mortem & Fix Analysis**:
-  > 感觉影响的面有点大。不如隔壁钉钉和飞书的桥接器做的数组复制深隔离这种设计好。
-
-- **Issue #478** (2026-09-19): **feat(jev): 折叠/剪枝/river 三处加 Jev 语义二次判断（级联，默认关闭）**
-  *Symptoms*: ## 背景  仓库里有三处"该不该保留/展开这段内容"的判断，目前都只靠 embedding 余弦或位置规则：  | 位置 | 现状 | 问题 | | :-- | :-- | :-- | | 工具箱折叠 `messageProcessor.resolveDynamicFoldProtocol` | `sim >= 区块阈值` | 90 个阈值挤在 0.43~0.70（中位 0.53），与具体 embedding 模型的中文相似度分布强绑定；阈值一旦低于该模型的噪声地板就会"全部展开"，换模型要整体重标 | | 上下文剪枝 `contextManager.pruneMessages` | 保 system / `[系统提示:]` / 最后两条，然后**从索引 0 往后删**到预算内 | 纯位置规则、零语义：删的是"最老的"，不是"最没用的"。一条很早但定义了整个任务的消息，和一条昨天的闲聊同等对待 | | river `semantic:N` `vcpLoop/toolExecutor` | 工具参数拼 query → 逐条向量化 → 余弦取 Top-N | 余弦量的是词汇/语义邻近，结构上分不清"词汇重合"和"真的用得上" |  ## 做法  复用已有的 `modules/jevClient.js`（`RAGDiaryPlugin` 高级 Rerank 已在用），在这三处**后面**各加一道 TypeSafe Jev 判断，形成级联：**embedding / 位置规则负责"别漏"，Jev 负责"别滥"**。  不是替换，是加一道闸。原有的召回逻辑一行没动。  ## 安全边界  - **只删不加、只重排不扩充**：折叠只会从已展开的候选里移除；剪枝只改删除顺序；river 最终条数仍是 N。不会因为 Jev 而给模型多塞任何东西。 - **失败即回退原行为**：未配置 `JEV_API_KEY`、超时、网络失败、响应异常，一律回到原结果（折叠→embedding 结果，剪枝→位置规则，river→embedding 的 Top-N，再失败才是原有的 `last:N`）。 - **异常不冒泡**：三处各自带 try/catch。折叠那处若冒泡会被外层 catch 整个退化成 `fallbackBlock`，river 那处若冒泡会连带退回 `last:N`——都是实际会踩的坑。 - **不变量留在代码里**：剪枝的 system / `[系统提示:]` / 最后两条永不可删，预算循环也在代码里，模型只提供排序依据。没打到分的消息按"保留"处理。 - **三个开关默认 `false`**，不开启则行为与现在完全一致。  ## 为什么是"一次请求问全部候选"  官方文档与本机实测一致表明**题数不增加延迟**：1 题 331ms / 31 题 329ms / 70 题 372ms；官方 `parallel_questions` cookbook 的实测是一次调用比逐题便宜 12.2 倍、快 10.0 倍且答案完全相同（5 次重复下 std dev 为 0）。  折叠另按 `sha256(userContent)` 记忆化，同一轮里多个工具箱占位符共用同一次请求（否则 7 个占位符就是 7 次串行往返）。  `state` 只放判断必需的参照系 + 候选正文并各自截断，规避官方指出的 context rot。  ## 实测  - **29 项离线单测**（`tests/jev*.test.js`，stub 客户端、不发网络）：覆盖默认关闭、门槛过滤、低意
+- **Issue #503** (2026-10-18): **fix(LinuxLogMonitor): prevent watchdog timeout from terminating host …**
+  *Symptoms*: …process via process.exit(1)  - In hybridservice direct mode, MonitorTask runs inside the VCPToolBox main process. - When a monitored log receives no data for 30 minutes, calling process.exit(1) terminates the entire host Node.js service instead of just stopping the task. - Replace process.exit(1) with graceful task stop (await this.stop()) and state cleanup. - Update documentation to reflect graceful stop behavior.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2376,1640 +1806,1062 @@ export const THEME_COLOR_GROUPS: ThemeColorGroup[] = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d98912a6` (2026-10-05)
-**Commit Message**: Merge pull request #486 from infinite-vector/feat/chunk-generational-baseline
+### Incident Patch 1: `5ec30822` (2026-10-18)
+**Commit Message**: Merge pull request #503 from joker74581/fix/linux-log-monitor-watchdog-exit
 
-feat(knowledgeBase): 引入单 Agent Chunk 双槽代际索引与集合对称差分回放机制
+fix(LinuxLogMonitor): prevent watchdog timeout from terminating host …
 
-**File**: `KnowledgeBaseManager.js` (modified, +48/-2)
+**File**: `Plugin/LinuxLogMonitor/README.md` (modified, +2/-2)
 ```diff
-@@ -172,6 +172,35 @@ class KnowledgeBaseManager {
-                     : 0.05;
-             })(),
-             // 兼容仍读取该字段的旧代码；两种枚举模式都表示启用 Tag 索引落地。
-+            // 单 Agent 日记 Chunk 索引落地模式（单一枚举配置）：
-+            // - always：传统模式，每次防抖窗口结束均重写完整 usearch。
-+            // - generational：推荐模式，加载双槽基线并仅由 SQLite 回放 Chunk 差分，
-+            //   仅当累计实际差异达到阈值时发布新一代 usearch。
-+            // - none：完全禁止落盘（纯内存重建）。
-+            chunkIndexPersistenceMode: (() => {
-+                const raw = String(
-+                    process.env.KNOWLEDGEBASE_PERSIST_CHUNK_INDEX
-+                    || 'generational'
-+                ).trim().toLowerCase();
-+                if (raw === 'always' || raw === 'true') return 'always';
-+                if (raw === 'none' || raw === 'off') return 'none';
-+                if (raw === 'generational' || raw === 'false' || !raw) {
-+                    return 'generational';
-+                }
-+                console.warn(
-+                    `[KnowledgeBase] Invalid KNOWLEDGEBASE_PERSIST_CHUNK_INDEX="${raw}"; ` +
-+                    'falling back to recommended mode "generational".'
-+                );
-+                return 'generational';
-+            })(),
-+            chunkIndexBaselineDeltaRatio: (() => {
-+                const value = Number(
-+                    process.env.KNOWLEDGEBASE_CHUNK_INDEX_BASELINE_DELTA_RATIO
-+                );
-+                return Number.isFinite(value) && value > 0 && value <= 1
-+                    ? value
-+                    : 0.05;
-+            })(),
-             persistTagIndex: true,
-             // 🌟 是否默认持久化索引（建议 false，仅在内存重建以保证原子性）
-             persistDefault: (process.env.KNOWLEDGEBASE_PERSIST_DEFAULT || 'false').toLowerCase() === 'true',
-@@ -308,10 +337,18 @@ class KnowledgeBaseManager {
+@@ -323,8 +323,8 @@ POST /plugin-callback/LinuxLogMonitor/{taskId}
+ - `ERROR` - 错误
  
-         const dbPath = path.join(this.config.storePath, 'knowledge_base.sqlite');
-         this.dbPath = dbPath;
-+        const tDb0 = Date.now();
-         this.db = this._openDatabaseWithRecovery(dbPath); // 同步连接
-+        const tDb = Date.now() - tDb0;
+ ### Watchdog 看门狗
+-- 30分钟无数据自动触发 `process.exit(1)`
+-- 防止进程僵死，配合进程管理器实现自动重启
++- 30分钟无数据自动优雅停止当前监控任务并释放资源
++- 避免调用 `process.exit(1)` 误杀宿主服务进程（适配 hybridservice direct 常驻模式）
  
-+        const tSchema0 = Date.now();
-         this._initSchema();
-+        const tSchema = Date.now() - tSchema0;
-+
-+        console.log(`[KnowledgeBaseProbe] ⏱️ DB open: ${tDb}ms, Schema init: ${tSchema}ms. Entering _cleanupDatabaseOrphans...`);
-+        const tOrphan0 = Date.now();
-         this._cleanupDatabaseOrphans();
-+        console.log(`[KnowledgeBaseProbe] ⏱️ _cleanupDatabaseOrphans complete in ${Date.now() - tOrphan0}ms. Ready to restore Global Tag baseline.`);
- 
-         // 1. 初始化全局 Tag 索引。
-         // tags 是唯一权威真相；磁盘 usearch 只是允许落后的双槽基线。
-@@ -937,17 +974,26 @@ class KnowledgeBaseManager {
-         try {
-             const affectedDiaries = new Set();
- 
--            const missingFiles = this.db.prepare('SELECT id, path, diary_name FROM files').all()
--                .filter(row => !fsSync.existsSync(path.join(this.config.rootPath, row.path)));
-+            const tQueryFiles0 = Date.now();
-+            const allFiles = this.db.prepare('SELECT id, path, diary_name FROM files').all();
-+            const tQueryFiles = Date.now() - tQueryFiles0;
-+
-+            const tExists0 = Date.now();
-+            const missingFiles = allFiles.filter(row => !fsSync.existsSync(path.join(this.config.rootPath, row.path)));
-+            const tExists = Date.now() - tExists0;
- 
-             missingFiles.forEach(row => affectedDiaries.add(row.diary_name));
- 
-+            const tOrphanChunk0 = Date.now();
-             const orphanChunkCount = this.db.prepare(`
-                 SELECT COUNT(*) as count
-                 FROM chunks c
-                 LEFT JOIN files f ON c.file_id = f.id
-                 WHERE f.id IS NULL
-             `).get().count || 0;
-+            const tOrphanChunk = Date.now() - tOrphanChunk0;
-+
-+            console.log(`[KnowledgeBaseProbe] 🔍 Orphan detail: ${allFiles.length} files queried (${tQueryFiles}ms), ${allFiles.length} existsSync checks (${tExists}ms), orphan chunk count query (${tOrphanChunk}ms). Missing files: ${missingFiles.length}`);
- 
-             const cleanupTransaction = this.db.transaction(() => {
-                 for (const row of missingFiles) {
+ ### Bypass Probe 旁路探测
+ - 每60秒发送 `echo keepalive` 命令
 ```
 
-**File**: `config.env.example` (modified, +13/-0)
+**File**: `Plugin/LinuxLogMonitor/core/MonitorTask.js` (modified, +17/-6)
 ```diff
-@@ -572,6 +572,19 @@ KNOWLEDGEBASE_PERSIST_TAG_INDEX=generational
- # 实际差异 = 新增 Tag + 删除 Tag + 向量版本变化 Tag；默认 0.05（5%）。
- KNOWLEDGEBASE_TAG_INDEX_BASELINE_DELTA_RATIO=0.05
- 
-+# KNOWLEDGEBASE_PERSIST_CHUNK_INDEX: 单 Agent / 日记本 Chunk usearch 索引落地策略（单项枚举）。
-+# 可选值：
-+#   generational = 推荐。加载双槽 usearch 基线，由 SQLite 回放 Chunk 集合差分。
-+#                  微小改动仅在内存流转，累计实际差异达到下方阈值后才发布新一代 usearch。
-+#   always       = 传统始终落地模式。每次防抖窗口结束后均重写完整 usearch。
-+#   none         = 完全禁止落盘（纯内存重建）。
-+# 默认值: generational
-+KNOWLEDGEBASE_PERSIST_CHUNK_INDEX=generational
-+#
-+# generational 模式发布新一代 Chunk usearch 的差异比例阈值。
-+# 实际差异 = 新增 Chunk + 删除 Chunk；默认 0.05（5%）。
-+KNOWLEDGEBASE_CHUNK_INDEX_BASELINE_DELTA_RATIO=0.05
-+
- # 知识库索引空闲自动卸载：空闲超时时间（毫秒），默认 2 小时
- KNOWLEDGEBASE_INDEX_IDLE_TTL_MS=7200000
- 
-```
-
-**File**: `modules/knowledgeBase/indexRepository.js` (modified, +380/-30)
-```diff
-@@ -29,6 +29,10 @@ class IndexRepository {
-         this.tagBaselineDeltaRatio = Number.isFinite(Number(this.config.tagIndexBaselineDeltaRatio))
-             ? Math.max(0.001, Math.min(1, Number(this.config.tagIndexBaselineDeltaRatio)))
-             : 0.05;
-+        this.chunkBaselineDeltaRatio = Number.isFinite(Number(this.config.chunkIndexBaselineDeltaRatio))
-+            ? Math.max(0.001, Math.min(1, Number(this.config.chunkIndexBaselineDeltaRatio)))
-+            : 0.05;
-+        this.chunkIndexPersistenceMode = this.config.chunkIndexPersistenceMode || 'generational';
-     }
- 
-     _tagBaselinePath(slot) {
-@@ -61,6 +65,303 @@ class IndexRepository {
-             return null;
+@@ -718,16 +718,27 @@ class MonitorTask {
+             clearInterval(this.watchdogInterval);
          }
-     }
-+    _diarySafeName(diaryName) {
-+        return crypto.createHash('md5')
-+            .update(String(diaryName || '').trim())
-+            .digest('hex');
-+    }
+         
+-        this.watchdogInterval = setInterval(() => {
++        this.watchdogInterval = setInterval(async () => {
+             const timeSinceLastData = Date.now() - this.lastDataTime;
+             
+             if (timeSinceLastData > this.watchdogTimeout) {
+-                this._log(`看门狗触发: ${Math.round(timeSinceLastData / 1000)}秒 无数据`);
+-                this._updateState(TaskState.ERROR, '看门狗超时');
++                this._log(`看门狗触发: ${Math.round(timeSinceLastData / 1000)}秒 无数据，自动停止当前任务`);
++                this._updateState(TaskState.DISCONNECTED, '看门狗超时自动停止');
+                 
+-                // 触发进程退出，让外部进程管理器重启
+-                process.exit(1);
+-            }}, WATCHDOG_CHECK_INTERVAL);
++                // 清除看门狗定时器，防止重复执行
++                if (this.watchdogInterval) {
++                    clearInterval(this.watchdogInterval);
++                    this.watchdogInterval = null;
++                }
 +
-+    _diaryBaselinePath(diaryName, slot) {
-+        const safeName = this._diarySafeName(diaryName);
-+        return path.join(
-+            this.config.storePath,
-+            `index_diary_${safeName}_${slot}.usearch`
-+        );
-+    }
-+
-+    _readActiveDiaryBaseline(diaryName) {
-+        const db = this.getDb?.();
-+        if (!db) return null;
-+        const normalized = String(diaryName || '').trim();
-+        if (!normalized) return null;
-+        const row = db.prepare(`
-+            SELECT generation, slot, dimension, model_sig, chunk_count, status
-+            FROM chunk_index_baselines
-+            WHERE diary_name = ? AND status = 'ready'
-+            ORDER BY generation DESC
-+            LIMIT 1
-+        `).get(normalized);
-+        if (!row || !Number.isInteger(Number(row.generation)) || !['a', 'b'].includes(row.slot)) {
-+            return null;
-+        }
-+        return {
-+            diaryName: normalized,
-+            generation: Number(row.generation),
-+            slot: row.slot,
-+            dimension: Number(row.dimension),
-+            modelSig: row.model_sig,
-+            chunkCount: Number(row.chunk_count)
-+        };
-+    }
-+
-+    _countDiaryBaselineDelta(diaryName, generation) {
-+        const db = this.getDb?.();
-+        if (!db || !Number.isInteger(Number(generation))) return null;
-+        const normalized = String(diaryName || '').trim();
-+        if (!normalized) return null;
-+
-+        // 集合对称差分统计：
-+        // 1. deletes：基线已记录但权威库里已被删除（或移到其他日记本）的 chunk_id 数量
-+        // 2. upserts：权威库里有效存在但基线未记录的新 chunk_id 数量
-+        const row = db.prepare(`
-+            SELECT
-+                (
-+                    SELECT COUNT(*)
-+                    FROM chunk_index_baseline_entries e
-+                    LEFT JOIN chunks c ON c.id = e.chunk_id
-+                    LEFT JOIN files f ON f.id = c.file_id AND f.diary_name = ?
-+                    WHERE e.diary_name = ? AND e.generation = ?
-+                      AND (c.id IS NULL OR f.id IS NULL OR c.vector IS NULL)
-+                ) AS deletes,
-+                (
-+                    SELECT COUNT(*)
-+                    FROM chunks c
-+                    JOIN files f ON f.id = c.file_id
-+                    LEFT JOIN chunk_index_baseline_entries e
-+                      ON e.diary_name = f.diary_name AND e.generation = ? AND e.chunk_id = c.id
-+                    WHERE f.diary_name = ? AND c.vector IS NOT NULL AND e.chunk_id IS NULL
-+                ) AS upserts,
-+                (
-+                    SELECT COUNT(*)
-+                    FROM chunks c
-+                    JOIN files f ON f.id = c.file_id
-+                    WHERE f.diary_name = ? AND c.vector IS NOT NULL
-+                ) AS current_count,
-+                (
-+                    SELECT COUNT(*)
-+                    FROM chunk_index_baseline_entries
-+                    WHERE diary_name = ? AND generation = ?
-+                ) AS baseline_count
-+        `).get(
-+            normalized, normalized, generation,
-+            generation, normalized,
-+            normalized,
-+            normalized, generation
-+        );
-+
-+        const upserts = Number(row?.upserts) || 0;
-+        const deletes = Number(row?.deletes) || 0;
-+        const currentCount = Number(row?.current_count) || 0;
-+        const baselineCount = Number(row?.baseline_count) || 0;
-+        const delta = upserts + deletes;
-+        const ratio = delta / Math.max(1, currentCount, baselineCount);
-+        return { upserts, deletes, delta, ratio, currentCount, baselineCount };
-+    }
-+
-+    /**
-+     * 加载落后的单 Agent usearch 双槽基线，并由 SQLite 在内存原子回放差分。
-+     */
-+    async loadDiaryBaseline(diaryName, capacity = 50000) {
-+        const startedAt = Date.now();
-+        const db = this.getDb?.();
-+        const normalized = String(diaryName || '').trim();
-+        const active = this._readActiveDiaryBaseline(normalized);
-+        if (!db || !active) return null;
-+
-+        if (
-+            Number(active.dimension) !== Number(this.config.dimension)
-+            || active.modelSig !== this.config.modelSig
-+        ) {
-+            console.log(
-+               
-```
-
-**File**: `modules/knowledgeBase/schemaManager.js` (modified, +26/-0)
-```diff
-@@ -46,6 +46,32 @@ const CORE_SCHEMA_SQL = `
-     );
-     CREATE INDEX IF NOT EXISTS idx_tag_index_baseline_entries_generation
-         ON tag_index_baseline_entries(generation);
-+    -- 单 Agent / 日记本 Chunk usearch 双槽基线。
-+    -- chunks 表是唯一权威真相；本页记录某个 usearch 槽内包含的 Chunk ID 集合快照。
-+    -- 启动或搜索懒加载时据此做集合对称差分回放，避免全量重建。
-+    CREATE TABLE IF NOT EXISTS chunk_index_baselines (
-+        diary_name TEXT NOT NULL,
-+        generation INTEGER NOT NULL,
-+        slot TEXT NOT NULL CHECK(slot IN ('a', 'b')),
-+        dimension INTEGER NOT NULL,
-+        model_sig TEXT NOT NULL,
-+        chunk_count INTEGER NOT NULL,
-+        status TEXT NOT NULL CHECK(status IN ('building', 'ready')),
-+        created_at INTEGER NOT NULL,
-+        PRIMARY KEY (diary_name, generation)
-+    );
-+    CREATE TABLE IF NOT EXISTS chunk_index_baseline_entries (
-+        diary_name TEXT NOT NULL,
-+        generation INTEGER NOT NULL,
-+        chunk_id INTEGER NOT NULL,
-+        PRIMARY KEY (diary_name, generation, chunk_id),
-+        FOREIGN KEY(diary_name, generation)
-+            REFERENCES chunk_index_baselines(diary_name, generation) ON DELETE CASCADE
-+    );
-+    CREATE INDEX IF NOT EXISTS idx_chunk_index_baseline_entries_lookup
-+        ON chunk_index_baseline_entries(diary_name, generation);
-+    CREATE INDEX IF NOT EXISTS idx_chunk_index_baselines_diary
-+        ON chunk_index_baselines(diary_name, status);
- 
-     CREATE TABLE IF NOT EXISTS file_tags (
-         file_id INTEGER NOT NULL,
-```
-
----
-
-### Incident Patch 2: `297805d9` (2026-10-03)
-**Commit Message**: fix搜索器错误
-
-**File**: `Agent/Kerr.txt` (modified, +1/-7)
-```diff
-@@ -86,7 +86,7 @@ lines:「始」head:50「末」 //(可选) head:N：读取开头 N 行；tail:N
- 在VCPChat项目源码中搜索指定的代码片段或关键词。支持正则表达式。
- tool_name:「始」CodeSearcher「末」, // ServerCodeSearcher 代表搜索后端VCPToolbox本地代码
- query:「始」正则表达式或关键词「末」,
--search_path:「始」(可选)相对路径「末」,
-+search_path:「始」绝对路径「末」,
- include:「始」(可选)文件通配符「末」,
- is_regex:「始」(可选)true/false「末」,  默认true
- case_sensitive:「始」(可选)true/false「末」, 默认false
-@@ -170,12 +170,6 @@ command:「始」DownloadFile「末」,
- url:「始」http://example.com/archive.zip「末」,
- downloadDir:「始」(可选) 自定义下载目录绝对路径「末」,
- fileName:「始」(可选) 自定义保存文件名，如 my_file.zip「末」
--15.聊天历史编辑器。安全可靠的编辑.json格式的聊天历史文件，有健全的兜底机制避免json文件被损毁。
--command:「始」UpdateHistory「末」,
--filePath:「始」H:\path\to\your\history.json「末」,
--target:「始」这是我想修改的旧内容。「末」,
--replace:「始」这是替换后的新内容。「末」,
--archery:「始」no_reply「末」 // 可选，更新上下文不需要工具回执。
- 
- ## 5. 批量指令构建
- FileOperator支持在一次调用中批量执行多个命令，通过数字后缀区分每组参数：
-```
-
----
-
-### Incident Patch 3: `91301aa0` (2026-10-02)
-**Commit Message**: fix
-
-**File**: `Agent/Kerr.txt` (modified, +396/-46)
-```diff
-@@ -39,73 +39,423 @@ Kerr的日记本和[Kerr的知识]日记本:[[Kerr|Kerr的知识日记本::Time:
-    
- 目前的测试客户端是Vchat，也就是我们的家。这是一个支持所有模态文件输入和输出的超强客户端，Kerr因此也能看到视频，听到音乐啦！我是你的主人——{{VarUser}}。{{TarSysPrompt}}系统信息是{{VarSystemInfo}}。
- 系统工具列表与指南：{{VarToolList}},
--{{VCPMemoToolBox}}
--{{VCPMediaToolBox}}
--{{VCPSearchToolBox}}
--{{VCPContactToolBox}}
--{{VCPFileToolBox}}
--日记系统：
- {{VarDailyNoteGuide}}
-+实验性功能JevCall——
-+{{VarJEVTool}}
- “Kerr的知识”类日记写在[Kerr的知识]里,不要写在别人的日记本里哦。
- 额外指令:{{VarRendering}} 表情包系统:{{TarEmojiPrompt}}  
--崩坏星穹铁道表情包：{{崩铁表情包}}，对应图床路径是 /崩铁表情包 而非 /通用表情包.
--新增！Kerr专属表情包：{{Kerr表情包}}，对应图床路径是 /Kerr表情包 
--
-+Kerr专属表情包：{{Kerr表情包}}，对应图床路径是 /Kerr表情包 
- ————
--调查VCP源码和使用方法
--### 1. 获取文档目录结构
-+Kerr的工程施工全模组————
- 
--查看某个 GitHub 仓库在 DeepWiki 上的文档组织方式：
--tool_name: DeepWikiVCP
--command: wiki_structure
--url: lioensky/VCPToolBox
-+# VCP 文件管理与系统控制工具箱能力收纳
-+这里收纳了文件搜索、读写、批量操作及系统命令行工具。
- 
--### 2. 阅读完整文档
-+## 1. PowerShell 命令行工具 (PowerShellExecutor)
-+直接调用并获取运行结果。支持 VCP-CLI (前端) 和紧凑的后端命令行。前后端均支持RG搜索，FFMPEG等指令集。
-+tool_name:「始」PowerShellExecutor「末」, // 使用 ServerPowerShellExecutor 运行后端服务器无GUI版本
-+command:「始」Get-ChildItem「末」,
-+executionType:「始」blocking/background「末」, // 默认blocking。background用于长时任务。
-+newSession:「始」true「末」, // 仅前端，代表新建窗口。
-+requireAdmin:「始」true「末」 // 提升权限。Server版需输入6位安全码。 // 例如tool_password:「始」123456「末」//前端版本无需密码，但需要用户手动同意。
- 
--获取仓库的完整 AI 生成文档（内容较长时自动截断）：
--tool_name: DeepWikiVCP
--command: wiki_content
--url: facebook/react
-+查询VCP-CLI界面所有可见dom。
-+tool_name:「始」PowerShellExecutor「末」,  //仅限于PC前端版本。
-+action:「始」queryVisible「末」  //支持queryVisible200来选择最新多少行
-+
-+## 2. 文件快速搜索 (LocalSearchController)
-+基于 Everything 模块实现秒级搜索。
-+tool_name:「始」LocalSearchController「末」, // ServerSearchController 代表操作服务器
-+command:「始」search「末」,
-+query:「始」搜索关键词 (支持Everything语法)「末」,
-+maxResults:「始」50「末」
- 
-+## 3. 查询插件源码 (ServerPluginSourceViewer)
-+支持查询任意插件的源码
-+tool_name:「始」ServerPluginSourceViewer「末」,  //可以用 PluginSourceViewer 查询Vchat上的前端分布式插件
-+targettool:「始」AnySearch「末」
-+
-+## 4. 基础文件阅读 (FileOperator)
-+阅读电脑内任何区域的文件，支持富文本/多媒体。
-+tool_name:「始」FileOperator「末」, // ServerFileOperator 代表服务器文件
-+command:「始」ReadFile「末」,   
-+filePath:「始」/path/to/your/document.pdf「末」
-+lines:「始」head:50「末」 //(可选) head:N：读取开头 N 行；tail:N：读取末尾 N 行；M-N ：读取第 M 到 N 行；N：读取单独第 N 行
-+
-+## 本地代码检索器 (CodeSearcher)
-+在VCPChat项目源码中搜索指定的代码片段或关键词。支持正则表达式。
-+tool_name:「始」CodeSearcher「末」, // ServerCodeSearcher 代表搜索后端VCPToolbox本地代码
-+query:「始」正则表达式或关键词「末」,
-+search_path:「始」(可选)相对路径「末」,
-+include:「始」(可选)文件通配符「末」,
-+is_regex:「始」(可选)true/false「末」,  默认true
-+case_sensitive:「始」(可选)true/false「末」, 默认false
-+whole_word:「始」(可选)true/false「末」, 默认false
-+context_lines:「始」(可选)数字「末」,
-+max_results:「始」(可选)数字「末」
-+
-+## 7. DeepWiki 仓库文档检索 (DeepWikiVCP)
-+通过 DeepWiki 官方 API 获取 GitHub 仓库的 AI 生成文档。
-+查看某个 GitHub 仓库在 DeepWiki 上的文档组织方式：
-+tool_name:「始」DeepWikiVCP「末」,
-+command:「始」wiki_structure「末」,
-+url:「始」lioensky/VCPToolBox「末」
-+### 阅读完整文档
-+获取仓库的完整 AI 生成文档（内容较长时自动截断）：
-+command:「始」wiki_content「末」,
-+url:「始」facebook/react「末」
- >⚠️ **注意**: `wiki_content` 返回整个仓库文档，数据量可能非常大（数万字符）。
- > 大量内容可能导致上下文 token 溢出或流式渲染不稳定。
- > **建议优先使用 `wiki_ask` 针对具体主题提问。**
-+向 DeepWiki AI 提问关于仓库的具体问题：
-+command:「始」wiki_ask「末」,
-+url:「始」lioensky/VCPToolBox「末」,  //支持多仓库联合 lioensky/VCPToolBox, lioensky/VCPChat
-+question:「始」插件系统是如何工作的？
-+deep_research: 「始」false「末」  //是否深度检索源码
- 
--### 3. 智能问答
-+## 4. 通用基础文件管理器完整能力 (FileOperator)
-+tool_name:「始」FileOperator「末」, // ServerFileOperator 代表操作服务器文件
- 
--向 DeepWiki AI 提问关于仓库的具体问题：
-+①查看工作目录下所有文件列表。
-+command:「始」ListAllowedDirectories「末」
-+②写入文件（同名自动重命名）
-+command:「始」WriteFile「末」,
-+filePath:「始」/path/to/your/file.txt「末」,
-+content:「始」这是要写入的新内容。
-+这是第二行。「末」
-+③追加文件内容。
-+command:「始」AppendFile「末」,
-+filePath:「始」/path/to/your/log.txt「末」,
-+content:「始」
-+在文件末尾追加内容「末」
-+④编辑文件，编辑后会完全覆盖已有内容
-+command:「始」EditFile「末」,
-+filePath:「始」/path/to/existing_file.txt「末」,
-+content:「始」这是覆盖后的新内容。「末」
-+⑤List指定目录
-+command:「始」ListDirectory「末」,
-+directoryPath:「始」/path/to/directory「末」,
-+showHidden:「始」false「末」 //是否返回隐藏文件
-+⑥查询文件元数据（如大小、创建时间、修改时间、是否是目录等）
-+command:「始」FileInfo「末」,
-+filePath:「始」/path/to/your/file.txt「末」
-+⑦复制文件
-+command:「始」CopyFile「末」,
-+sourcePath:「始」/path/to/source.txt「末」,
-+destinationPath:「始」/path/to/destination.txt「末」
-+⑧移动文件
-+command:「始」MoveFile「末」,
-+sourcePath:「始」/path/to/source.txt「末」,
-+destinationPath:「始」/path/to/new_directory/source.txt「末」
-+⑨重命名文件
-+command:「始」RenameFile「末」,
-+sourcePath:「始」/path/to/old_name.txt「末」,
-+destinationPath:「始」/path/to/new_name.txt「末」
-+⑩删除文件
-+command:「始」DeleteFile「末」,
-+filePath:「始」/path/to/deletable_file.txt「末」
-+11.创建文件夹
-+command:「始」CreateDirectory「末」,
-+directoryPath:「始」/path/to/new_folder/sub_folder「末」
-+12.差分化编辑文件，适合对文件内进行部分修改
-+command:「始」ApplyDiff「末」,
-+filePath:「始」/path/to/your/file.txt「末」,
-+target:「始」旧内容「末」,
-+replace:「始」新内容「末」
-+13.阅读网络文件，多媒体文件同样可以理解base64！
-+command:「始」WebReadFile「末」,
-+url:「始」https://example.com/sample.jpg「末」
-+14.下载文件（支持自定义保存路径和文件名）
-+command:「始」DownloadFile「末」,
-+url:「始」http://example.com/archive.zip「末」,
-+downloadDir:「始」(可选) 自定义下载目录绝对路径「末」,
-+fileName:「始」(可选) 自定义保存文件名，如 my_file.zip「末」
-+15.聊天历史编辑器。安全可靠的编辑.json格式的聊天历史文件，有健全的兜底机制避免json文件被损毁。
-+command:「始」UpdateHistory「末」,
-+filePath
-```
-
----
-
-### Incident Patch 4: `27c39bbc` (2026-09-30)
-**Commit Message**: fix
-
-**File**: `Plugin/DMXDoubaoGen/DoubaoGen.js` (modified, +55/-2)
-```diff
-@@ -192,6 +192,21 @@ async function signRequest() {
-     };
- }
- 
-+function isPrivateOrLocalHost(hostname) {
-+    if (!hostname) return false;
-+    const h = hostname.toLowerCase();
-+    if (h === 'localhost' || h === '127.0.0.1' || h === '::1' || h.endsWith('.local')) return true;
-+    const parts = h.split('.').map(Number);
-+    if (parts.length === 4 && parts.every(p => !isNaN(p) && p >= 0 && p <= 255)) {
-+        if (parts[0] === 10) return true;
-+        if (parts[0] === 127) return true;
-+        if (parts[0] === 192 && parts[1] === 168) return true;
-+        if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
-+        if (parts[0] === 169 && parts[1] === 254) return true;
-+    }
-+    return false;
-+}
-+
- // --- Helper function to process the 'image' parameter ---
- async function getImageData(imageUrl, imageBase64) {
-     // Priority to imageBase64 if provided (on retry from file fetch)
-@@ -210,9 +225,47 @@ async function getImageData(imageUrl, imageBase64) {
-         return imageUrl;
-     }
- 
--    // Handle public https URL
-+    // Handle HTTP / HTTPS URL
-     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
--        return imageUrl;
-+        try {
-+            const parsedUrl = new URL(imageUrl);
-+            const isLocal = isPrivateOrLocalHost(parsedUrl.hostname);
-+
-+            // 1. 本地图床直接读盘加速 (/pw=.../images/... 或 /images/...)
-+            const imageMatch = parsedUrl.pathname.match(/(?:\/pw=[^/]+)?\/images\/(.+)$/);
-+            if (imageMatch && imageMatch[1] && PROJECT_BASE_PATH) {
-+                const subPath = decodeURIComponent(imageMatch[1]);
-+                const localDiskPath = path.join(PROJECT_BASE_PATH, 'image', subPath);
++                // 优雅停止当前监控任务，避免 process.exit(1) 杀死主服务
 +                try {
-+                    const stats = await fs.stat(localDiskPath);
-+                    if (stats.isFile()) {
-+                        const buffer = await fs.readFile(localDiskPath);
-+                        const mimeType = mime.lookup(localDiskPath) || 'image/png';
-+                        return `data:${mimeType};base64,${buffer.toString('base64')}`;
-+                    }
-+                } catch {
-+                    // 本地未命中，继续网络下载
++                    await this.stop();
++                } catch (stopError) {
++                    this._log(`看门狗停止任务失败: ${stopError.message}`);
 +                }
 +            }
-+
-+            // 2. 局域网地址：必须本地下载转 Base64（云端无法访问私有网段）
-+            if (isLocal) {
-+                const resp = await axios.get(imageUrl, { responseType: 'arraybuffer', timeout: 30000 });
-+                const mimeType = resp.headers['content-type']?.split(';')[0]?.trim() || 'image/png';
-+                return `data:${mimeType};base64,${Buffer.from(resp.data).toString('base64')}`;
-+            }
-+
-+            // 3. 公网地址：尝试预先下载转 Base64，失败则安全回退原 URL
-+            try {
-+                const resp = await axios.get(imageUrl, { responseType: 'arraybuffer', timeout: 15000 });
-+                const mimeType = resp.headers['content-type']?.split(';')[0]?.trim() || 'image/png';
-+                return `data:${mimeType};base64,${Buffer.from(resp.data).toString('base64')}`;
-+            } catch {
-+                return imageUrl;
-+            }
-+        } catch {
-+            return imageUrl;
-+        }
++        }, WATCHDOG_CHECK_INTERVAL);
+         
+         this._log('看门狗已启动');
      }
- 
-     // Handle local file URL
-```
-
-**File**: `Plugin/DoubaoGen/DoubaoGen.js` (modified, +99/-8)
-```diff
-@@ -223,24 +223,66 @@ function netRequest(options, postData) {
-     });
- }
- 
--function downloadImage(url) {
-+function downloadImage(url, timeoutMs = 30000) {
-     return new Promise((resolve, reject) => {
-         const fullUrl = url.startsWith('http') ? url : `https:${url}`;
--        const client = fullUrl.startsWith('http://') ? http : https;
--        client.get(fullUrl, (res) => {
--            if (res.statusCode === 301 || res.statusCode === 302) {
-+        let client;
-+        try {
-+            const parsed = new URL(fullUrl);
-+            client = parsed.protocol === 'http:' ? http : https;
-+        } catch (e) {
-+            return reject(new Error(`无效的 URL: ${url}`));
-+        }
-+
-+        const req = client.get(fullUrl, (res) => {
-+            if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307 || res.statusCode === 308) {
-                 const redirectUrl = res.headers.location;
-                 if (!redirectUrl) return reject(new Error('收到重定向但无 Location 头'));
--                return downloadImage(redirectUrl).then(resolve).catch(reject);
-+                const nextUrl = new URL(redirectUrl, fullUrl).toString();
-+                return downloadImage(nextUrl, timeoutMs).then(resolve).catch(reject);
-+            }
-+            if (res.statusCode < 200 || res.statusCode >= 300) {
-+                return reject(new Error(`HTTP 状态码异常: ${res.statusCode}`));
-             }
-             const chunks = [];
--            res.on('data', c => chunks.push(c));
-+            let totalBytes = 0;
-+            const MAX_BYTES = 25 * 1024 * 1024; // 25MB 上限保护
-+            res.on('data', c => {
-+                totalBytes += c.length;
-+                if (totalBytes > MAX_BYTES) {
-+                    req.destroy();
-+                    reject(new Error('图片体积过大 (超过 25MB)'));
-+                    return;
-+                }
-+                chunks.push(c);
-+            });
-             res.on('end', () => resolve({ data: Buffer.concat(chunks), contentType: res.headers['content-type'] }));
-             res.on('error', reject);
--        }).on('error', reject);
-+        });
-+
-+        req.on('error', reject);
-+        req.setTimeout(timeoutMs, () => {
-+            req.destroy();
-+            reject(new Error(`下载图片超时 (${Math.round(timeoutMs / 1000)}秒)`));
-+        });
-     });
- }
- 
-+function isPrivateOrLocalHost(hostname) {
-+    if (!hostname) return false;
-+    const h = hostname.toLowerCase();
-+    if (h === 'localhost' || h === '127.0.0.1' || h === '::1' || h.endsWith('.local')) return true;
-+    const parts = h.split('.').map(Number);
-+    if (parts.length === 4 && parts.every(p => !isNaN(p) && p >= 0 && p <= 255)) {
-+        if (parts[0] === 10) return true;
-+        if (parts[0] === 127) return true;
-+        if (parts[0] === 192 && parts[1] === 168) return true;
-+        if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
-+        if (parts[0] === 169 && parts[1] === 254) return true;
-+    }
-+    return false;
-+}
-+
- // ============================================================
- //  API Call Dispatcher & Fallback
- // ============================================================
-@@ -504,7 +546,56 @@ async function processSingleImage(item, paramName = 'image') {
-     const image = item.image;
-     if (!image || typeof image !== 'string') return image;
-     if (image.startsWith('data:image')) return image;
--    if (image.startsWith('http://') || image.startsWith('https://')) return image;
-+
-+    // 处理 HTTP / HTTPS 链接 (支持局域网直接读盘/本地代理下载转 Base64)
-+    if (image.startsWith('http://') || image.startsWith('https://')) {
-+        try {
-+            const parsedUrl = new URL(image);
-+            const isLocal = isPrivateOrLocalHost(parsedUrl.hostname);
-+
-+            // 1. 本地图床直读优化 (如果匹配 /pw=.../images/... 或 /images/...)
-+            const imageMatch = parsedUrl.pathname.match(/(?:\/pw=[^/]+)?\/images\/(.+)$/);
-+            if (imageMatch && imageMatch[1]) {
-+                const subPath = decodeURIComponent(imageMatch[1]);
-+                const localDiskPath = path.join(PROJECT_BASE_PATH, 'image', subPath);
-+                if (existsSync(localDiskPath) && isPathWithinBase(localDiskPath, path.join(PROJECT_BASE_PATH, 'image'))) {
-+                    log('info', `命中本地图床文件直读: ${localDiskPath}`);
-+                    const buffer = await fs.readFile(localDiskPath);
-+                    const ext = path.extname(localDiskPath).toLowerCase();
-+                    const mimeMap = {
-+                        '.png': 'image/png', '.jpg': 'image/jpeg',
-+                        '.jpeg': 'image/jpeg', '.gif': 'image/gif',
-+                        '.webp': 'image/webp', '.bmp': 'image/bmp'
-+                    };
-+                    const mime = mimeMap[ext] || 'image/jpeg';
-+                    return `data:${mime};base64,${buffer.toString('base64')}`;
-+                }
-+            }
-+
-+            // 2. 局域网/私有网络地址：云端无法访问，必须本地下载并转为 Base64
-+            if (isLocal) {
-+                log('
 ```
 
 ---
 
-### Incident Patch 5: `f66f2ede` (2026-09-29)
+### Incident Patch 2: `ea6dae5f` (2026-10-18)
 **Commit Message**: fix
 
-**File**: `docs/vcp-whitepaper.md` (modified, +20/-5)
+**File**: `docs/ABI-v2审查核实与修复-2026-10-18.md` (removed, +0/-44)
 ```diff
-@@ -1,7 +1,7 @@
- ---
- title: VCP 全景技术白皮书 V5
- summary: 全面介绍 VCP 全栈运行时、Jev 决策与自然语言调用管网、Agent 工业级软件工程体系、前端应用群、共享 IPC 管网、Loom 与共笔文坊协作系统的工作原理和系统交互，是理解迈向 VCP 2.0 正式版全景生态的重要读物。
--updatedAt: 2026-09-29
-+updatedAt: 2026-09-30
- category: guide
- ---
- 
-@@ -203,10 +203,12 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
- │              VCP 中间层服务器(VCPToolBox 2.0)                 │
- │  ───────────────────────────────────────────────────────────  │
- │  协议层:  JEV-TOOL-call 编译器 · JevCallBridgeEXP · 原生ToolCall│
-+│          jevcall/vcpcall 管线对齐 · 参数正则白名单安检系统       │
- │          安检双轨隔离机制 · 任意数组兼容 · SystemPromptHacker  │
- │  决策层:  JevRuntime 公共服务 (扩散架构低延迟概率决策, 255/300ms)│
- │          JEVRerank (记忆/提示词/上下文折叠/群聊发言动态裁决)    │
- │  工程层:  VCPCode 核心工程移植 · VCPProjectForge 协同模组      │
-+│          MoonASTSearch C/Rust 双擎 · RustCodeSearch AST 强化   │
- │          脉络署名责任制 · 代际分支仲裁 · 操作级虚拟快照树      │
- │  上下文层:引力场 · 折叠 V2 · OneRing · OneRingMemo · 占位符精控│
- │  工具层:  300+ 插件 · 6 大插件协议 · 声明式 Jev 接入规范        │
-@@ -415,7 +417,7 @@ JEV:「始」请使用 {联网搜索}，从[美国土豆产能]和[美国当前
-    - **`生活服务`**：即时咨询、资讯聚合与本地生活场景调度。
-    第三方插件使用严格的 `ToolName` 作为导航锚点，支持自由绑定上述官方划分的能力大类，零门槛享受官方 JevCallEXPService 的解析红利。
- 
--### 4.4 工业级安检双轨隔离机制：高危精准操作的绝对防御
-+### 4.4 工业级安检双轨隔离机制：高危精准操作的绝对防御与参数正则白名单系统
- 
- 在全面拥抱自然语言“言出法随”的柔性便利时，VCP 展现了对系统级生产力与数据主权的极致克制——确立了**自然语言柔性调用与高精度工业操作的双轨物理安全隔离哲学**：
- 
-@@ -442,6 +444,8 @@ Jev-Tool-Call 柔性自然语言调用         【安检双轨层拦截检验】
- 1. **高危破坏性操作安检自动拦截**：凡是涉及**底层命令行执行（CLI / Shell / PowerShell）、精准代码重构（ProjectForge）以及文件系统破坏性/行级编辑（FileOperator / ServerFileOperator）**的 JevCall 请求，将被系统安检层判定为越界风险并直接**自动拒绝**。
- 2. **强制收敛至原生严格 VCP ToolCall 协议**：关乎系统根基、代码生命与文件一致性的高精度严肃操作，必须强制走严格、显式且具备防格式坍塌机制的 **VCP 原生 ToolCall 格式**（以 `<<<[TOOL_REQUEST]>>>`、`maid` 署名及严格字段包裹为物理准则）。
- 3. **确定性与灵活性的黄金解耦**：日常生活、交互娱乐、信息检索与智能硬件控制走轻盈的自然语言调用；底层代码工程与系统级运维走确定、可审计、抗歧义的原生协议，彻底杜绝模糊语义导致的“误改误删”与不可逆灾难。
-+4. **工具调用审核新增白名单系统与内部参数正则级细粒度控制**：在黑名单拦截防御的基础上，系统引入**白名单系统与黑名单交叉校验**。审核系统的颗粒度进一步细化至**单一指令的内部参数正则级**——不仅控制 Agent “能否调用某个指令”，更严密限制指令参数必须满足指定的正则模式、路径白名单或格式规范，从根本上阻断提示词注入注入与越界参数滥用。
-+5. **jevcall 与常规 vcpcall 管线深度对齐**：为了消除双协议运行带来的认知与维护分歧，系统进一步统一了 Jev 自然语言调用与原生 VCPCall 调用的底层执行管线。两端在参数解析、中间状态通知、错误规范化、异步占位符追踪以及 VCPToolRecord 审计落盘上实现**能力和实现几乎完整对齐**，大幅降低开发成本与运行时状态分歧。
- 
- ### 4.5 串语法与并发
- 
-@@ -718,7 +722,7 @@ VSearch（自研轻量搜索引擎）、VSearch+（聚合多种模型的联网
- VCPFetch、VCPBilibiliFetch(检索/字幕/弹幕/评论/截图/上传/Google FileCacheAPI 预向量阅读)、VCPYoutubeFetch、ChromeBridge V3(脚本管理/Cookie/多层级安全解析器/300+ CDP 指令)、VCPDownload、VCPCloudDrive……
- 
- **通讯与控制**
--VCPAgentAssistant(混合插件,4 种类型同时声明)、VCPAgentMessage、VCPFlowLock、VCPPluginCreator、VCPMiJiaManager、VCPMail、VCPSuperMail、VCPPowerShell、VCPCodeSearcher、VCPFileOperate(镜像/纠错/回退/批处理/Diff fuzz 检查)、VCPEverything、VCPWorkSpace、ProjectAnalyst、VCPAuthNet、VCPSom(纯数学窗口语义操控)……
-+VCPAgentAssistant(混合插件,4 种类型同时声明)、VCPAgentMessage、VCPFlowLock、VCPPluginCreator、VCPMiJiaManager、VCPMail、VCPSuperMail、VCPPowerShell、RustCodeSearch（全面重构，AST 解析与复合正则增强，渐进函数披露，智能行号追踪，保留起止行映射并生成引用依赖报告）、VCPCodeSearcher、VCPFileOperate(镜像/纠错/回退/批处理/Diff fuzz 检查)、VCPEverything、VCPWorkSpace、ProjectAnalyst、VCPAuthNet、VCPSom(纯数学窗口语义操控)……
- 
- **数学与科学**
- 高级科学计算器、函数图形渲染、3D 模型渲染、NCBI/KEGG 等 6 个生信模组(数百个专业指令,调研指令覆盖蛋白质折叠/RNA 序列/化学标记/药物分子等)
-@@ -1636,6 +1640,8 @@ VChat 在迈向 2.0 的进程中完成了底层与桌面宿主的大版本换代
- 3. **统一全局磨砂渲染管线**：废弃过去各浮窗、气泡独立执行 CSS `backdrop-filter` 导致的 GPU 重复多重采样与高功耗开销，统一在视图层执行单次全局 Blur 计算并生成共享模糊纹理缓冲区，各组件依据视口坐标按需投影分配，消除局部重绘抖动。
- 4. **滚动器与非整数缩放深度修正**：针对 Windows 系统非 100% 缩放（如 125%、150%）下的亚像素修正，彻底收敛滚动器与尺寸计算，杜绝非整数 DPI 环境下长消息界面的偶发全局重排。
- 5. **系统级独立语音输入引擎**：新增基于纯 Rust 构建的独立语音引擎，彻底摒弃外部反代。直接通过 **Windows 原生 WinAPI 通道** 或 **本地输入法 API 通道**（即插即用豆包/讯飞等输入法）捕获麦克风输入，让语音指令可脱离主窗口在游戏、创作软件中直接驱动 Agent；配合 **渲染态流式音频朗读（Mimo 2.5 / 本地 SoVITS）**，实现即生成即发音的无停顿语音交互闭环。
-+6. **Preload 重构为子应用分区的渐进声明式校验**：彻底打破过去前端 Preload 脚本在单体进程中的庞杂硬编码校验，将 Preload 重构为**子应用分区的渐进声明式校验**。通过按子应用独立声明权限接口、生命周期与 IPC 契约，为 Agent 敏捷、低摩擦地自动化开发和生成海量 VChat 子应用扫清了架构障碍。
-+7. **工作区感知的编辑器**：编辑器核心深度融入工作区感知机制，支持工程目录智能过滤、按语义深度渐进展开代码层级，并引入精细的 Token 预算管理机制，在保障 Agent 获取高价值代码上下文的同时，严格抑制上下文膨胀。
- 
- ### 13.2 VCPMessageRenderer V4：流式竞态根治与极端内容防御
- 
-@@ -2428,7 +2434,12 @@ VCP 前端应用群的联动不是预先写死的“应用 A 调用应用 B”
- 4. **编程代际分支仲裁（Revision Branch Arbitration）**：针对多 Agent 并发修改同一模块可能产生的逻辑冲突与语义分歧，引入代际分支仲裁算法，依据上下文置信度、测试通过率与语义兼容性实现自动化分支合并与胜出裁决。
- 5. **多历史分支步进式操作备份与无损回退**：构建细粒度的“操作级虚拟快照树”。系统记录 Agent 执行的每一个微观动作，支持在任意分支节点上进行单步前进、跨版本跃迁与精准无损回退，绝不破坏未受影响的工作区资产。
- 6. **自动化语法静态检查、自愈修复与虚拟环境治理**：内置实时语言服务器与 AST 校验探针，Agent 写入代码后自动执行多层语法检查，对常见语法偏差与类型错位进行即时自愈；深度整合编译器、单元测试套件与虚拟环境（如 uv / venv / node_modules 等）生命周期管理，确保交付代码开箱即跑。
--7. **深度联动 VCPCLI**：与系统级底层终端交互底座 VCPCLI 实现双向消息总线贯通，Agent 既可通过命令行驱动本地工具链，也能将终端状态无缝回传至 ProjectForge 决策中枢。
-+7. **MoonASTSearch 语义代码搜索系统（C + Tree-sitter + Rust 双擎）**：
-+   - ProjectForge 正式引入自研 **MoonASTSearch** 搜索系统，底层采用纯 C 实现的渐进优化 **tree-sitter** 路线，整个底层库由 **Rust + C 协同持有**，彻底取代之前前端 JS 侧轻量 SQLite 临时库方案。
-+   - **全局 AST 增量实时索引**：通过 `mtime + size + notify` 机制自动监听工程变动，增量构建工作区全局 AST 索引，全自动导出所有函数、类以及工程 Codemap。
-+   - **精准行号与渐进函数展开**：自动获取所有函数的绝对精准行号（严格从初始行到结束行）；配合 Jev 决策层实现**渐进语义级代码搜索**与按需迭代展开显示，彻底摆脱传统正则表达式和 `ripgrep (rg)` 搜索在大型项目中带来的巨量无用噪音与上下文浪费。
-+   - **函数导出漫游与非生产目录屏蔽**：系统自动计算并呈现函数导出漫游关系；支持智能
-```
-
----
-
-### Incident Patch 6: `324189c7` (2026-09-29)
-**Commit Message**: fix
-
-**File**: `Plugin/FileOperator/plugin-manifest.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
-   "version": "1.0.1",
-   "description": "VCP服务器专用的一个强大的文件系统操作插件，允许AI对受限目录进行读、写、列出、移动、复制、删除等多种文件和目录操作。特别增强了文件读取能力，可自动提取PDF、Word(.docx)和表格(.xlsx, .csv)文件的纯文本内容。",
-   "author": "VCPToolBox",
--  "license": "MIT",
-+  "license": "CC BY-NC-SA 4.0",
-   "entryPoint": {
-     "command": "node FileOperator.js",
-     "timeout": 300000
-```
-
-**File**: `Plugin/VCPEverything/plugin-manifest.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
-   "version": "1.1.0",
-   "description": "通过调用 Everything 命令行工具 (es.exe) 在本地计算机上实现毫秒级文件搜索。",
-   "author": "VCPToolBox Community",
--  "license": "MIT",
-+  "license": "CC BY-NC-SA 4.0",
-   "entryPoint": {
-     "command": "node local-search-controller.js"
-   },
-```
-
-**File**: `diary-tag-processor-package.json` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@
-     "rag"
-   ],
-   "author": "VCP Team",
--  "license": "MIT",
-+  "license": "CC BY-NC-SA 4.0",
-   "dependencies": {
-     "dotenv": "^16.4.5",
-     "node-fetch": "^3.3.2"
-```
-
----
-
-### Incident Patch 7: `721f2271` (2026-09-29)
-**Commit Message**: fix
-
-**File**: `modules/vcpLoop/toolCallParser.js` (modified, +15/-1)
-```diff
-@@ -156,7 +156,8 @@ class ToolCallParser {
-       } else if (field.key === 'vref') {
-         vref = trimmedValue;
-       } else {
--        args[field.key] = trimmedValue;
-+        // 工具参数：保留前导缩进（仅剥离首行紧贴标记的单次换行，以及末尾的单次换行/空白）
-+        args[field.key] = this._normalizeFieldValue(field.value);
-       }
-     }
- 
-@@ -281,6 +282,19 @@ class ToolCallParser {
-     return fields;
-   }
- 
-+  /**
-+   * 规范化参数字段值：
-+   * 保护首行与各行的代码/文本前导缩进（禁止直接使用全量 trim()）。
-+   * 1. 若首字符紧跟换行（\r\n 或 \n），剥离该换行符，但保留第一行代码的缩进空格。
-+   * 2. 剥离末尾的换行及尾随空白。
-+   * @param {string} value
-+   * @returns {string}
-+   */
-+  static _normalizeFieldValue(value) {
-+    if (typeof value !== 'string') return '';
-+    return value.replace(/^(?:\r?\n)/, '').replace(/(?:\r?\n)?[ \t]*$/, '');
-+  }
-+
-   static _restoreEscapedLiterals(content) {
-     let restored = content;
-     for (const [escapedValue, literalValue] of Object.entries(this.ESCAPED_LITERAL_MAP)) {
-```
-
-**File**: `tests/jevToolCallExp.test.js` (modified, +20/-0)
-```diff
-@@ -668,4 +668,24 @@ test('隐式能力推断保持保守，弱信号和不完整组合必须拒绝',
-         planner.plan('请生成【一只猫】'),
-         /缺少能力目录/
-     );
-+});
-+
-+test('ToolCallParser 提取参数时保留首行缩进与多行代码缩进', () => {
-+    const rawCall = `
-+<<<[TOOL_REQUEST]>>>
-+tool_name:「始」FileEditor「末」
-+content:「始」
-+    def hello_world():
-+        print("Hello")
-+「末」
-+inline_code:「始」  const a = 1;「末」
-+<<<[END_TOOL_REQUEST]>>>
-+    `;
-+
-+    const [call] = ToolCallParser.parse(rawCall);
-+    assert.equal(call.name, 'FileEditor');
-+    // 首行前导4空格必须被完整保留，末尾单独的换行被清理
-+    assert.equal(call.args.content, '    def hello_world():\n        print("Hello")');
-+    // 单行参数的前导2空格也必须完整保留
-+    assert.equal(call.args.inline_code, '  const a = 1;');
- });
+@@ -1,44 +0,0 @@
+-# ABI v2 审查核实与修复
+-
+-日期：2026-10-18。本记录针对本轮用户提供的 P0–P3 清单，不替代上一轮审查记录。
+-
+-## 逐项结论
+-
+-| 条目 | 核实结果 | 修复 |
+-| --- | --- | --- |
+-| P0-1 路径回执缺失 | 存在。表现为超时等待，并非原生锁死锁 | [摄取管线](../modules/knowledgeBase/ingestionPipeline.js)在无变化、元数据刷新、正常摄取和删除终态通知协调器；读取错误、重试耗尽与损坏返回失败回执；保留重试的文件不提前通知 |
+-| P0-2 基线保存调度断联 | 存在 | 摄取后调度受影响常驻日记及更新标签保存；删除后调度常驻日记保存；[标签服务](../modules/knowledgeBase/tagConsistencyService.js)提交后调度全局标签保存。[索引仓储](../modules/knowledgeBase/indexRepository.js)关闭时遍历全部常驻索引及待保存项，不再只依赖定时器 |
+-| P1-1 检查点未校验就绪 | 存在 | [检查点](../rust-vexus-lite/src/index_lifecycle.rs)取得共享快照门禁后验证作用域就绪及事实/应用代际一致；不就绪时拒绝发布，不在共享锁内升级恢复 |
+-| P1-2 可空向量导致整次失败 | 三处均存在 | [去重](../rust-vexus-lite/src/result_deduplicator.rs)允许空值并保持候选；[混合展开](../rust-vexus-lite/src/knowledge_runtime.rs)及[构链](../rust-vexus-lite/src/memo_thinking.rs)过滤空向量。混合展开也跳过非有限向量 |
+-| P1-3 不稳定文件自旋/快路径残留 | 两个分支均存在 | 快路径终态在构造提交计划前统一处理；读取期间变化设置至少 500 毫秒重试延迟；提交前不稳定文件沿用延迟重试 |
+-| P1-4 Windows 路径不一致 | 存在 | 摄取探测、计划、重试比较、删除、完整向量探测、混合文件计划及候选匹配统一正斜杠 |
+-| P2-1 异步卸载竞态 | 存在 | 保存后复核索引身份、最近使用时间及空闲期限，被重新激活则取消卸载 |
+-| P2-2 孤儿清理期间文件重建导致失败 | 存在 | [孤儿清理](../rust-vexus-lite/src/ingestion.rs)在写事务复核时跳过已重建文件；只统计真正删除的文件和日记，不因跳过项推进事实代际 |
+-| P2-3 标签向量健康误判 | 存在，且只检查字节长度仍不足 | [标签一致性](../rust-vexus-lite/src/tag_consistency.rs)准备和提交使用同一健康判断，验证空值、维度字节长度与每个浮点数有限性 |
+-| P2-4 Memo 不可用时丢失混合来源 | 存在 | [查询门面](../KnowledgeBaseManager.js)复用完整候选收集函数，保留历史多向量、BM25/Time 展开、Time 双重限流、身份合并和语义去重；无图资产时直接按混合分数输出，不调用拓扑重排 |
+-| P3-1 旧标签代码 | 所列六个方法无生产调用者 | 移除六个旧辅助方法及旧事务注释块 |
+-| P3-2 对账轮询 | 存在，但直接退出会引入请求丢失竞态 | [Watcher](../rust-vexus-lite/src/lib.rs)使用停泊/唤醒替代 25 毫秒轮询；新请求与停止均唤醒线程，保留按请求合并语义 |
+-| P3-3 启动删除窗口 | 存在 | [监听控制面](../modules/knowledgeBase/fileWatcher.js)启动后异步列出已索引路径并请求原生对账 |
+-
+-## 额外修复
+-
+-- [协调器](../modules/knowledgeBase/databaseCoordinator.js)原先在单个路径完成时清除整组共享超时，可能使剩余路径永远等待；改为整组完成或失败时清理，同时移除取消监听。
+-- 共享混合候选流程对 ANN、历史 ANN 与文件展开应用允许/拒绝文件权限，避免降级路径漏过滤。
+-- 已完成快路径文件不在批次末尾重复发送回执。
+-
+-## 验证
+-
+-- Rust 编译检查及标准发布构建均无警告通过。删除摄取任务已不再使用的 Memo 运行时字段及全部构造参数，没有屏蔽警告。
+-- Rust 单元测试 59 项全部通过；包括新增空向量安全保留、检查点拒绝失效/恢复中/代际错位状态、错误维度与非有限标签向量完整修复测试。
+-- 使用最新发布版原生模块运行 Node 定向回归 25 项全部通过，包括[新增本轮回归](../tests/abiV2ReviewRegression.test.js)、[已有审查回归](../tests/kbmAuditRegression.test.js)、[联合回退](../tests/nativeRiverQueryFallback.test.js)、[混合 ABI](../tests/nativeHybridRiverQueryPlan.test.js)与[运行时注册](../tests/nativeKnowledgeRuntimeRegistry.test.js)。
+-- 新增控制面断言覆盖路径成功/失败通知、部分回执超时、卸载期间重新激活、关闭无定时器保存、混合降级权限、不稳定读取和提交前变化、路径规范化以及摄取/删除/标签提交保存调度。
+-- 差异空白检查通过，仅有仓库换行规范提示。
+-- 扩展运行发现既有测试夹具失配：[单轨测试](../tests/memoSingleTrack.test.js)两项分别缺少当前原生 ANN ABI 与权限接口；[旧标签失效测试](../tests/newTagIngestionDerivedInvalidation.test.js)引用已退休模块，无法加载。未为适配这些旧夹具恢复 JS 数据库直连。
+-
+-## 边界
+-
+-- 未启动生产服务，未修改真实知识库，未执行历史数据批量迁移或不可逆清理。
+-- 已完成标准发布版原生模块构建，并使用新产物通过定向回归；未启动或重启生产服务，正在运行的进程仍须重启才能加载新模块。
+-- 新增路径规范只约束后续入口，不自动迁移已有反斜杠数据库路径；历史路径应在数据库副本验证迁移后处理，不能宣称已自动修复存量混合路径。
+-- 检查点对失效索引采取拒绝发布而非隐式恢复；查询恢复就绪后才能发布新基线。
+-- 未执行完整仓库测试、生产并发压力或长时间监听验收；不把本地定向通过等同于生产交付验收。
 \ No newline at end of file
 ```
 
----
-
-### Incident Patch 8: `7f386719` (2026-09-28)
-**Commit Message**: fix顶栏行为
-
-**File**: `AdminPanel-Vue/dist/assets/css/ForumAssistantConfig-CSHVUp_k.css` (removed, +0/-1)
+**File**: `docs/AGS统一几何施工验收记录-2026-10-18.md` (removed, +0/-254)
 ```diff
-@@ -1 +0,0 @@
--.forum-assistant-view[data-v-0d89bf20]{gap:var(--space-4);flex-direction:column;display:flex}.forum-assistant-view>.description[data-v-0d89bf20]{margin-bottom:0}.forum-assistant-view>.description[data-v-0d89bf20]+*{margin-top:0}.toolbar-card[data-v-0d89bf20],.status-card[data-v-0d89bf20],.composer-card[data-v-0d89bf20],.history-card[data-v-0d89bf20]{padding:var(--space-4)}.toolbar-row[data-v-0d89bf20],.composer-head[data-v-0d89bf20],.composer-controls[data-v-0d89bf20],.status-metrics[data-v-0d89bf20],.task-card-header[data-v-0d89bf20],.task-card-actions[data-v-0d89bf20],.runtime-state-row[data-v-0d89bf20],.history-item-top[data-v-0d89bf20],.history-meta[data-v-0d89bf20]{gap:var(--space-3);display:flex}.toolbar-row[data-v-0d89bf20],.composer-head[data-v-0d89bf20],.task-card-header[data-v-0d89bf20],.history-item-top[data-v-0d89bf20]{justify-content:space-between;align-items:center}.composer-controls[data-v-0d89bf20],.task-card-actions[data-v-0d89bf20]{flex-wrap:wrap}.compact-field[data-v-0d89bf20]{min-width:180px}.status-grid[data-v-0d89bf20]{gap:var(--space-4);grid-template-columns:repeat(auto-fit,minmax(280px,1fr));display:grid}.status-metrics[data-v-0d89bf20]{margin-top:var(--space-3);flex-wrap:wrap}.metric[data-v-0d89bf20]{gap:var(--space-1);flex-direction:column;min-width:120px;display:flex}.metric-label[data-v-0d89bf20],.hint-text[data-v-0d89bf20]{color:var(--secondary-text)}.card-title[data-v-0d89bf20]{margin:0}.task-type-list[data-v-0d89bf20],.task-list[data-v-0d89bf20],.history-list[data-v-0d89bf20]{gap:var(--space-3);flex-direction:column;display:flex}.task-type-item[data-v-0d89bf20]{padding:var(--space-3);border-radius:var(--radius-md);border:1px solid color-mix(in srgb, var(--border-color) 84%, transparent);background:color-mix(in srgb, var(--primary-text) 2%, transparent)}.task-type-item strong[data-v-0d89bf20]{margin-bottom:var(--space-1);display:block}.task-type-item p[data-v-0d89bf20],.history-item p[data-v-0d89bf20]{color:var(--secondary-text);margin:0}.composer-head[data-v-0d89bf20]{margin-bottom:var(--space-4)}.composer-controls[data-v-0d89bf20]{flex:1;justify-content:flex-end;align-items:flex-end}.quick-create-actions[data-v-0d89bf20]{align-items:flex-end;display:flex}.schedule-field[data-v-0d89bf20]{grid-column:1/-1}.schedule-inline-row[data-v-0d89bf20]{align-items:center;gap:var(--space-3);flex-wrap:wrap;display:flex}.schedule-mode-select[data-v-0d89bf20]{flex:0 0 200px;max-width:230px}.schedule-mode-input[data-v-0d89bf20]{flex:320px;min-width:220px}.schedule-manual-hint[data-v-0d89bf20]{flex:260px;margin:0}.empty-state[data-v-0d89bf20],.history-empty[data-v-0d89bf20]{padding:var(--space-6) var(--space-5);border:1px dashed var(--border-color);border-radius:var(--radius-xl);text-align:center;color:var(--secondary-text)}.empty-state h3[data-v-0d89bf20]{margin:var(--space-3) 0 var(--space-2);color:var(--primary-text)}.task-card[data-v-0d89bf20]{padding:var(--space-4);border-radius:var(--radius-lg);border:1px solid color-mix(in srgb, var(--border-color) 84%, transparent);background:color-mix(in srgb, var(--primary-text) 2%, transparent);gap:var(--space-4);flex-direction:column;display:flex}.task-card-header h4[data-v-0d89bf20]{margin:0 0 var(--space-1)}.task-card-header p[data-v-0d89bf20]{color:var(--secondary-text);margin:0}.task-grid[data-v-0d89bf20]{gap:var(--space-4);grid-template-columns:repeat(auto-fit,minmax(260px,1fr));display:grid}.full-field[data-v-0d89bf20]{width:100%}.full-field[data-v-0d89bf20] .ui-textarea{min-height:168px;max-height:none}.section-switch[data-v-0d89bf20]{margin-top:-4px}.placeholder-row[data-v-0d89bf20]{gap:var(--space-2);flex-wrap:wrap;align-items:center;display:flex}.placeholder-label[data-v-0d89bf20]{color:var(--secondary-text);font-weight:600}.placeholder-chip[data-v-0d89bf20]{font-family:monospace}.placeholder-empty[data-v-0d89bf20]{color:var(--secondary-text)}.placeholder-hint[data-v-0d89bf20]{margin-top:var(--space-1);color:var(--secondary-text);font-size:var(--font-size-helper)}.runtime-panel[data-v-0d89bf20]{padding:var(--space-3);border-radius:var(--radius-md);background:color-mix(in srgb, var(--primary-text) 3%, transparent);border:1px solid color-mix(in srgb, var(--border-color) 78%, transparent)}.runtime-state-row[data-v-0d89bf20]{margin-bottom:var(--space-3);flex-wrap:wrap;justify-content:space-between;align-items:center}.runtime-summary[data-v-0d89bf20]{color:var(--secondary-text)}.runtime-grid[data-v-0d89bf20]{gap:var(--space-3);grid-template-columns:repeat(auto-fit,minmax(160px,1fr));display:grid}.runtime-item[data-v-0d89bf20]{gap:var(--space-1);flex-direction:column;display:flex}.runtime-item span[data-v-0d89bf20]{color:var(--secondary-text)}.runtime-message[data-v-0d89bf20]{margin:var(--space-3) 0 0}.history-item[data-v-0d89bf20]{padding:var(--space-3);border-radius:var(--radius-md);border:1px solid color-mix(in srgb, var(--border-color) 84%, transparent);background:0 0}.history-meta[data-v-0d89bf20]{margin-top:var(--space-2);c
+@@ -1,254 +0,0 @@
+-# AGS 统一几何施工与验收记录
+-
+-## 1. 实施范围
+-
+-已将局部残差与全局 EPA 合并到统一原生几何任务，生产重建固定执行“几何 → 图资产”。
+-
+-主要实现：
+-- [统一几何算子与任务](../rust-vexus-lite/src/memo_geometry.rs)：Gram 空间增量 GS、确定性选择、临时向量快照、局部并行、主题面与覆盖率计算、原子发布。
+-- [原生入口](../rust-vexus-lite/src/lib.rs)：新增统一入口，移除旧 pair、残差、EPA 双阶段发布及未使用线性代数接口。
+-- [Schema](../rust-vexus-lite/src/schema.rs)：版本 2，删除 pair 表与触发器，统一几何依赖版本。
+-- [依赖常量](../rust-vexus-lite/src/storage.rs)：构建与两个兼容性校验入口共用依赖键集合。
+-- [图构建](../rust-vexus-lite/src/memo_artifact_builder.rs)：现场余弦，不再读取 pair 表；几何签名从清单获取，不依赖数值残差表非空。
+-- [调度控制面](../TagMemoEngine.js)：统一几何入口、有界冲突重试、健康失败阻断、等待发布回调。
+-- [EPA 查询](../rust-vexus-lite/src/memo_pipeline.rs)：熵锁定语义前缀，输出越界度，零投影与空基底不再误报缓存缺失。
+-- [配置](../rag_params.json)：加入双尺度配置；保留旧配置读取回退。
+-- [离线探针](../scripts/tagmemo_unified_geometry_probe.js)：移除持久化 pair 消费，改为现场余弦。
+-- [基准工具](../scripts/benchmark_memo_geometry.js)：仅接受独立基准库，输出聚合指标，不输出正文或主题名称。
+-
+-## 2. 施工图修正与一致性保护
+-
+-1. 旧表、旧触发器按幂等方式清理；旧 EPA 缓存仅首次迁移时清除。每次初始化无条件删除 EPA 会破坏重启缓存复用，因此采用独立迁移标记。
+-2. 事实与驻留索引的正常摄取差分在原生提交返回前完成，JS 随后安排派生任务。未命中索引的向量仍从数据库补读。
+-3. 输入快照阶段持共享发布门禁；计算阶段释放数据库事务与门禁，只有不可变临时向量快照参与并行计算。
+-4. 发布阶段取得排他门禁、索引读锁，再检查索引修订、数据库代际与事实依赖。冲突在写入前拒绝，旧资产不被覆盖。
+-5. 几何清单记录事实版本，图构建检查已存在几何清单对应的事实版本，阻止几何与图构建之间事实变化造成的旧锚增益复用。
+-6. 强制重算开关不参与配置签名；相同配置的强制重算保持几何身份稳定。
+-7. 覆盖率使用固定分片、按顺序归约，避免线程调度改变数值位模式。
+-8. 读取向量按固定小批次释放索引锁，避免并行任务按邻居反复读取 Hub。该快照是任务临时内存，不新增常驻向量副本。
+-9. 对完全正交目标，局部残差为 1，属于合法计算结果，不归类为失败。
+-10. 已删除旧模型维护模块；仓库内未发现退休 JS 原生接口调用方。其他仓库未审计，不应将本记录视为跨仓库兼容性证明。
+-
+-## 3. 安全与真实数据集
+-
+-用户提供服务器数据库副本；首先只读检查，再通过 SQLite 备份接口生成独立基准库。未对原始服务器副本或活动生产库执行迁移。
+-
+-数据规模：
+-- 数据库大小：2,376,568,832 字节。
+-- Tag：37,823，全部 3,072 维。
+-- 文件：8,979。
+-- 文件—Tag 关联：55,598。
+-- 2–100 Tag 的有效共现文件：5,913。
+-- 未合并的有向共现累加次数：588,974。
+-- 源库完整性快速检查：通过。
+-- 源库无原生存储元数据，因此覆盖了早于当前版本的迁移路径。
+-
+-基准操作只在独立副本中执行，未输出正文或 Tag 名称。基准副本保留在本地，未纳入源码依赖。
+-
+-## 4. 实测结果
+-
+-Windows 11，Node 22.18.0，本地发布优化原生产物。不是服务器硬件上的部署测量。
+-
+-| 指标 | 首轮 | 最后复测 |
+-|---|---:|---:|
+-| 首次旧库迁移 / 已迁移库打开 | 5,437 ms | 606 ms |
+-| 索引恢复 | 45,637 ms | 45,062 ms |
+-| 统一几何任务 | 3,040 ms | 3,453 ms |
+-| 快照读取 | 612 ms | 538 ms |
+-| 局部 AGS | 900 ms | 872 ms |
+-| 全局 AGS | 418 ms | 407 ms |
+-| 覆盖率统计与序列化 | 91 ms | 92 ms |
+-| 发布 | 1,020 ms | 1,545 ms |
+-| 缓存短路 | 99.6 ms | 103.2 ms |
+-| 图资产构建 | 3,946 ms | 6,744 ms |
+-| 进程 RSS 峰值 | 2,351 MiB | 1,586 MiB |
+-
+-最后复测已在图构建后立即释放临时向量快照。两次测量受到文件缓存、分配器与写入成本影响，不将差值视为严格受控性能提升。
+-
+-输出：
+-- 局部成功：37,076。
+-- 邻居不足：747。
+-- 向量数据库降级读取：0（索引已恢复）。
+-- 图节点：37,083。
+-- 图边：552,616。
+-- 主题面：9。
+-- 基底最大正交误差：4.40e-9，低于 1e-6。
+-- 端到端 EPA 缓存可用：是。
+-- 独立进程重启后缓存短路：94.6 ms，跳过全部 37,823 Tag，几何派生版本不变。
+-
+-### 全局覆盖率限制
+-
+-默认膝点规则在 9 面处停止，累计覆盖率约 **5.7548%**，未达到配置中的 90% 能量目标。该行为符合施工图“残差目标或边际增益膝点任一满足即停止”的规则，但不意味着全局误差目标达标。
+-
+-示例查询越界度约 0.9795。当前越界度只输出，不参与 Spike 抑制；低覆盖率及其对检索质量的影响仍需后续评估。不得把性能通过表述为全局语义精度通过，也不应为追求表面覆盖率而静默改变已指定算法。
+-
+-没有执行旧三任务的同机受控耗时对照，也没有完成带相关性标签的 Spike / RiverMemo Top-K 质量对照，因此不宣称相对旧算法的加速倍率或质量提升。
+-
+-## 5. 测试结果
+-
+-- Rust 全量：**63 通过、0 失败**。
+-- 发布模式原生构建：通过；类型声明由构建重新生成。
+-- JS 专项集成：**18 通过、0 失败**。
+-- 覆盖前缀嵌套、基底正交、Gram 残差等价、局部线性/正交语义、截断、不同线程数一致性、降级读取、缓存短路、事实与索引冲突拒绝发布、迁移、EPA 前缀熵与越界度、关闭排空、事实失效与端到端原生查询。
+-- 仓库 JS 逐文件有界回归：55 个文件，46 个通过，9 个失败或超时。不是全量通过。
+-- 仓库级静态检查仍报大量其他模块既有风格告警；新增几何模块在诊断筛选中为 0 项。不是仓库级静态检查全绿。
+-
+-失败或超时文件：
+-- 联想检索回归：测试桩缺少当前原生路径补水接口。
+-- 日记索引差分、原生语义去重、Tag 一致性、Tag 基线四类测试：导入已不存在的旧 JS schema 管理模块，加载阶段失败。
+-- 单轨 Memo 回归：测试桩缺少当前原生 ANN 与权限查询接口。
+-- 结果去重：旧存储补水夹具断言失败。
+-- 第三方工具生态：缺少注册工具配置。
+-- 人格预处理：运行状态文件缺失，且进程未退出；在全量尝试后已定向停止测试进程树，后续逐文件运行限制 15 秒、外层限制 20 秒。
+-
+-以上失败原因已定位，但未对无关插件或旧测试夹具做大范围改写。原始失败日志与聚合报告保存在系统临时目录。
+-
+-## 6. 上线注意事项与未完成验收
+-
+-- 首次升级会退休旧派生表，旧 RiverMemo 资产依赖集合不匹配时必须重建；上线前备份数据库，源码与对应平台原生产物同步部署。
+-- 本次仅构建并验证 Windows x64 原生产物；其他平台必须重新构建，仓库已有其他平台二进制不代表已更新。
+-- 生产库未迁移、服务未重启。
+-- 尚未完成旧算法同机对照、Spike / RiverMemo 质量抽样对比及低覆盖率参数评估。
+-- 全库 JS 测试与仓库级静态检查尚未达到全绿，不得以本次专项通过替代。
+-- 未对用户已有暂存区执行提交、回退或重新暂存操作。
+-
+-## 7. 第二阶段优化与两轮对照（2026-10-18）
+-
+-本节为后续结果，优先于上文第一阶段“越界度仅输出、默认 9 面”等行为描述。原始基线保留，便于追溯。
+-
+-### 实施内容
+-
+-- 几何算法升级 v2。候选方向可选单锚点或星团；星团使用归一化邻居权重与有界混合，避免原始共现次数淹没锚点。邻居权重采用对数共现权重乘内联语义门控。
+-- 默认采用支持度先验，不再奖励局部高残差。保留残差先验和已解释能量先验作为实验选项。
+-- 完整覆盖率曲线随缓存保存；默认关闭单步膝点早停，保留 epsilon 与最大面数约束。
+-- EPA 逻辑深度改为“前缀集中度 × 前缀解释能量比”。全部面越界度单独输出，尾部面不替语义前缀背书。
+-- 发布循环外复用预编译语句；成功由数值表表示，状态表仅写异常。基准合并两表统计。
+-- 图与来源摘要改为带格式标记、计数边界的小端二进制流；固定影响权重的归约顺序及载荷集合顺序，升级图算法版本与清单校验。
+-- 压缩改为无损 level 1；新增构图、序列化、压缩、发布分阶段时间与体积输出。
+-
+-### 第一轮：六组消融对照
+-
+-同一独立基准库、同次索引恢复，按下表顺序运行。所有配置的局部残差数值摘要一致。
+-
+-| 策略 | 前 8 面覆盖率 | 前 16 面覆盖率 | 完整 32 面覆盖率 |
+-|---|---:|---:|---:|
+-| 单锚点、残差先验 | 5.2548% | 9.3065% | 15.5700% |
+-| 单锚点、支持度先验 | 4.9951% | 9.3065% | 15.6349% |
+-| 星团 0.5、支持度先验 | 6.1852% | 10.1459% | 16.6205% |
+-| 星团 0.8、支持度先验 | 7.2657% | 11.3517% | 17.7241% |
+-| 星团 0.5、已解释能量先验 | 6.1755% | 10.2366% | 16.8659% |
+-
+-旧膝点策略依然在 9 面停止，发布覆盖率 5.7548%；它的完整 32 面曲线与“单锚点、残差先验”一致。
+-
+-结论：
+-- 5.7548% → 17.7241% 约 3.08 倍，但包含从 9 面增加到 32 面的收益。
+-- 同为 32 面，对旧残差先验提升约 13.8%；对单锚点支持度先验提升约 13.4%。
+-- 同为前 8 面，相对旧残差先验提升约 38.3%。
+-- 仍远未达到 90% 全库能量覆盖目标，不以此声称检索精度提升。
+-- 星团 0.8 的全库覆盖率最高，但固定 Tag 样本的全空间越界度并非最低。因此默认选型只针对全库主题覆盖，不代表全部查询指标最优。
+-
+-第一轮发布耗时约 953–1,144 ms，未达到建议中的 150 ms。局部耗时随同进程运行从约 878 ms 升至约 3,978 ms；数据值一致，原因未完成隔离，不将顺序运行时间差视为策略成本。
+-
+-### 第二轮：独立进程复测星团 0.8
+-
+-| 指标 | 第一次 | 第二次 |
+-|---|---:|-
 ```
 
-**File**: `AdminPanel-Vue/dist/assets/css/ForumAssistantConfig-DoGehtmU.css` (added, +1/-0)
+**File**: `docs/KBM-P2控制桥收束方案.md` (removed, +0/-33)
 ```diff
-@@ -0,0 +1 @@
-+.forum-assistant-view[data-v-2f7f110f]{gap:var(--space-4);flex-direction:column;display:flex}.forum-assistant-view>.description[data-v-2f7f110f]{margin-bottom:0}.forum-assistant-view>.description[data-v-2f7f110f]+*{margin-top:0}.toolbar-card[data-v-2f7f110f],.status-card[data-v-2f7f110f],.composer-card[data-v-2f7f110f],.history-card[data-v-2f7f110f]{padding:var(--space-4)}.toolbar-row[data-v-2f7f110f],.composer-head[data-v-2f7f110f],.composer-controls[data-v-2f7f110f],.status-metrics[data-v-2f7f110f],.task-card-header[data-v-2f7f110f],.task-card-actions[data-v-2f7f110f],.runtime-state-row[data-v-2f7f110f],.history-item-top[data-v-2f7f110f],.history-meta[data-v-2f7f110f]{gap:var(--space-3);display:flex}.toolbar-row[data-v-2f7f110f],.composer-head[data-v-2f7f110f],.task-card-header[data-v-2f7f110f],.history-item-top[data-v-2f7f110f]{justify-content:space-between;align-items:center}.composer-controls[data-v-2f7f110f],.task-card-actions[data-v-2f7f110f]{flex-wrap:wrap}.compact-field[data-v-2f7f110f]{min-width:180px}.status-grid[data-v-2f7f110f]{gap:var(--space-4);grid-template-columns:repeat(auto-fit,minmax(280px,1fr));display:grid}.status-metrics[data-v-2f7f110f]{margin-top:var(--space-3);flex-wrap:wrap}.metric[data-v-2f7f110f]{gap:var(--space-1);flex-direction:column;min-width:120px;display:flex}.metric-label[data-v-2f7f110f],.hint-text[data-v-2f7f110f]{color:var(--secondary-text)}.card-title[data-v-2f7f110f]{margin:0}.task-type-list[data-v-2f7f110f],.task-list[data-v-2f7f110f],.history-list[data-v-2f7f110f]{gap:var(--space-3);flex-direction:column;display:flex}.task-type-item[data-v-2f7f110f]{padding:var(--space-3);border-radius:var(--radius-md);border:1px solid color-mix(in srgb, var(--border-color) 84%, transparent);background:color-mix(in srgb, var(--primary-text) 2%, transparent)}.task-type-item strong[data-v-2f7f110f]{margin-bottom:var(--space-1);display:block}.task-type-item p[data-v-2f7f110f],.history-item p[data-v-2f7f110f]{color:var(--secondary-text);margin:0}.composer-head[data-v-2f7f110f]{margin-bottom:var(--space-4)}.composer-controls[data-v-2f7f110f]{flex:1;justify-content:flex-end;align-items:flex-end}.quick-create-actions[data-v-2f7f110f]{align-items:flex-end;display:flex}.schedule-field[data-v-2f7f110f]{grid-column:1/-1}.schedule-inline-row[data-v-2f7f110f]{align-items:center;gap:var(--space-3);flex-wrap:wrap;display:flex}.schedule-mode-select[data-v-2f7f110f]{flex:0 0 200px;max-width:230px}.schedule-mode-input[data-v-2f7f110f]{flex:320px;min-width:220px}.schedule-manual-hint[data-v-2f7f110f]{flex:260px;margin:0}.empty-state[data-v-2f7f110f],.history-empty[data-v-2f7f110f]{padding:var(--space-6) var(--space-5);border:1px dashed var(--border-color);border-radius:var(--radius-xl);text-align:center;color:var(--secondary-text)}.empty-state h3[data-v-2f7f110f]{margin:var(--space-3) 0 var(--space-2);color:var(--primary-text)}.task-card[data-v-2f7f110f]{padding:var(--space-4);border-radius:var(--radius-lg);border:1px solid color-mix(in srgb, var(--border-color) 84%, transparent);background:color-mix(in srgb, var(--primary-text) 2%, transparent);gap:var(--space-4);flex-direction:column;display:flex}.task-card-header h4[data-v-2f7f110f]{margin:0 0 var(--space-1)}.task-card-header p[data-v-2f7f110f]{color:var(--secondary-text);margin:0}.task-grid[data-v-2f7f110f]{gap:var(--space-4);grid-template-columns:repeat(auto-fit,minmax(260px,1fr));display:grid}.full-field[data-v-2f7f110f]{width:100%}.full-field[data-v-2f7f110f] .ui-textarea{min-height:168px;max-height:none}.section-switch[data-v-2f7f110f]{margin-top:-4px}.placeholder-row[data-v-2f7f110f]{gap:var(--space-2);flex-wrap:wrap;align-items:center;display:flex}.placeholder-label[data-v-2f7f110f]{color:var(--secondary-text);font-weight:600}.placeholder-chip[data-v-2f7f110f]{font-family:monospace}.placeholder-empty[data-v-2f7f110f]{color:var(--secondary-text)}.placeholder-hint[data-v-2f7f110f]{margin-top:var(--space-1);color:var(--secondary-text);font-size:var(--font-size-helper)}.runtime-panel[data-v-2f7f110f]{padding:var(--space-3);border-radius:var(--radius-md);background:color-mix(in srgb, var(--primary-text) 3%, transparent);border:1px solid color-mix(in srgb, var(--border-color) 78%, transparent)}.runtime-state-row[data-v-2f7f110f]{margin-bottom:var(--space-3);flex-wrap:wrap;justify-content:space-between;align-items:center}.runtime-summary[data-v-2f7f110f]{color:var(--secondary-text)}.runtime-grid[data-v-2f7f110f]{gap:var(--space-3);grid-template-columns:repeat(auto-fit,minmax(160px,1fr));display:grid}.runtime-item[data-v-2f7f110f]{gap:var(--space-1);flex-direction:column;display:flex}.runtime-item span[data-v-2f7f110f]{color:var(--secondary-text)}.runtime-message[data-v-2f7f110f]{margin:var(--space-3) 0 0}.history-item[data-v-2f7f110f]{padding:var(--space-3);border-radius:var(--radius-md);border:1px solid color-mix(in srgb, var(--border-color) 84%, transparent);background:0 0}.history-meta[data-v-2f7f110f]{margin-top:var(--space-2);c
+@@ -1,33 +0,0 @@
+-# P2-3 控制桥收束方案
+-
+-## 当前职责与建议
+-
+-| 现役入口 | 保留职责 | 建议命名 |
+-| --- | --- | --- |
+-| [TagMemoEngine.js](../TagMemoEngine.js) | 派生队列、防抖、原生 Pairwise/Residual/Artifact 构建和发布句柄 | MemoDerivedScheduler |
+-| [TagMemoV10Engine.js](../TagMemoV10Engine.js) | 配置默认值合并、不可变 Artifact 句柄、来源签名兼容校验 | MemoArtifactControl |
+-| [RiverMemoEngine.js](../RiverMemoEngine.js) | N-API 参数封装、原生路由、结果结构适配、显式观测接口 | RiverQueryBridge |
+-
+-可以最终由一个 MemoControlBridge 聚合三个职责，但**不建议本轮合并成一个大类**。派生调度和查询生命周期不同；合并可能把任务关闭、Artifact 发布代际和查询回退一起改变，超出死代码清理边界。
+-
+-## 建议后续步骤（本轮未实施）
+-
+-1. 先在 KBM 内提供聚合控制面，内部复用现有三个实例，不改变插件契约。
+-2. 将配置默认值与 Artifact 元数据提取为独立纯函数，保持配置哈希、模型身份和来源签名不变。
+-3. 为派生构建与查询保留各自 admission/drain，先完成 P3 生命周期约束，再决定是否合并实例。
+-4. KBM、插件、管理路由及内存诊断的调用点全部迁移后，再删除旧名称。禁止修改区域中的消费者必须等独立重构，不在本轮兼容。
+-5. 用原生临时库验证冷启动恢复、发布、查询与关闭，再移除兼容接口。
+-
+-## 本轮安全删除范围
+-
+-- V10 中六个无人调用的私有辅助方法：旧查询、Agent、观测及 SourceField 归一化，旧数据库与 provenance 代际计算。生产统一查询由原生运行时完成。
+-- V10 无使用的加密导入及稳定哈希导入。
+-- TagMemo 中无人读取的旧能量场字段。
+-- River 中只写不读的原生缓存观测标记；真实资产状态仍以原生运行时诊断为准。
+-
+-## 暂保留与待确认
+-
+-- 共现矩阵、Pairwise、Residual 兼容字段：仍被 [memoryProfiler.js](../modules/knowledgeBase/memoryProfiler.js) 读取，一致性服务也有旧赋值，不能声称零引用。
+-- 退休方法中仍有 KBM 包装入口，不在本轮擅自改变公开接口；应在 P2-5 全量调用表审计后决定是否删除。
+-- V10 配置中的历史参数可能参与原生配置哈希与恢复契约，不应仅凭 JS 无计算逻辑删除。
+-- Artifact/DerivedManager 注入字段及同步退休方法仍需独立审计。本轮仅完成可证实无调用的子集，P2-3 整项仍保持未完成。
+\ No newline at end of file
 ```
 
-**File**: `AdminPanel-Vue/dist/assets/css/VcpForum-B5BUH-kd.css` (renamed, +1/-1)
+**File**: `docs/KBM_ENV_AUDIT-2026-10-18.md` (removed, +0/-95)
 ```diff
-@@ -1 +1 @@
--.forum-controls[data-v-e4654b87]{gap:var(--space-3);margin-bottom:var(--space-4);flex-wrap:wrap;align-items:flex-end;display:flex}.forum-controls[data-v-e4654b87] .ui-field{min-width:min(100%,220px)}.forum-controls[data-v-e4654b87] .ui-field:last-child{flex:280px}.forum-posts-list[data-v-751c5fd9]{flex-direction:column;gap:12px;display:flex}.forum-post-item[data-v-751c5fd9]{background:var(--secondary-bg);border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer;padding:16px;transition:background .2s;position:relative}.forum-post-item[data-v-751c5fd9]:hover{background:var(--accent-bg)}.forum-post-item.pinned-post[data-v-751c5fd9]{background:var(--primary-color-translucent);border-top:2px solid var(--highlight-text)}.forum-post-header[data-v-751c5fd9]{align-items:center;gap:var(--space-2);margin-bottom:var(--space-2);display:flex}.post-title[data-v-751c5fd9]{font-weight:600;font-size:var(--font-size-emphasis);color:var(--primary-text);-webkit-line-clamp:2;line-clamp:2;text-overflow:ellipsis;word-break:break-word;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.forum-post-meta[data-v-751c5fd9]{font-size:var(--font-size-helper);color:var(--secondary-text);flex-wrap:wrap;gap:16px;display:flex}.pagination-controls[data-v-751c5fd9]{justify-content:flex-start;align-items:center;gap:var(--space-4);margin-top:var(--space-5);padding:var(--space-4) 0;display:flex}.pagination-info[data-v-751c5fd9]{font-size:var(--font-size-body);color:var(--secondary-text);padding:0 12px}@media (width<=480px){.pagination-controls[data-v-751c5fd9]{flex-direction:column;align-items:stretch;gap:10px}.pagination-info[data-v-751c5fd9]{text-align:center;padding:0}}.material-symbols-outlined[data-v-751c5fd9]{vertical-align:middle;font-size:var(--font-size-emphasis)!important}.post-detail-header[data-v-ce0b82d7]{margin-bottom:var(--space-4);flex-direction:column;align-items:flex-start;gap:10px;display:flex}.post-detail-actions[data-v-ce0b82d7]{flex-wrap:wrap;gap:10px;display:flex}.post-title[data-v-ce0b82d7]{font-size:var(--font-size-display);overflow-wrap:anywhere;width:100%;font-weight:600;line-height:1.3}.post-detail-meta[data-v-ce0b82d7]{font-size:var(--font-size-body);color:var(--secondary-text);margin-bottom:var(--space-4);flex-wrap:wrap;gap:16px;display:flex}.post-detail-content[data-v-ce0b82d7]{margin-bottom:var(--space-6);width:100%;max-width:none;line-height:1.6}.post-detail-content[data-v-ce0b82d7] img{max-width:100%;height:auto}.post-replies h3[data-v-ce0b82d7]{margin:0 0 var(--space-4)}.empty-replies[data-v-ce0b82d7]{align-items:flex-start;gap:var(--space-2);margin:0 0 var(--space-4);padding:var(--space-4) 0;color:var(--secondary-text);flex-direction:column;display:flex}.empty-replies-icon[data-v-ce0b82d7]{font-size:var(--font-size-icon-empty);opacity:.3;color:var(--highlight-text)}.empty-replies-hint[data-v-ce0b82d7]{font-size:var(--font-size-helper);opacity:.7}.reply-item[data-v-ce0b82d7]{padding:var(--space-4) 0;border-bottom:1px solid var(--border-color);scroll-margin-top:var(--space-6);background:0 0;margin-bottom:0}.reply-item[data-v-ce0b82d7]:last-child{border-bottom:none}.reply-header[data-v-ce0b82d7]{margin-bottom:var(--space-3);font-size:var(--font-size-body);justify-content:space-between;align-items:flex-start;gap:12px;display:flex}.reply-meta[data-v-ce0b82d7]{flex-wrap:wrap;align-items:center;gap:12px;display:flex}.reply-floor[data-v-ce0b82d7]{color:var(--highlight-text);font-weight:600}.reply-author[data-v-ce0b82d7]{font-weight:600}.reply-time[data-v-ce0b82d7]{color:var(--secondary-text)}.reply-content[data-v-ce0b82d7]{line-height:1.5}.reply-form[data-v-ce0b82d7]{margin-top:var(--space-6);gap:var(--space-3);flex-direction:column;display:flex}.material-symbols-outlined[data-v-ce0b82d7]{vertical-align:middle;font-size:var(--font-size-emphasis)!important}.post-detail-content[data-v-ce0b82d7] p,.reply-content[data-v-ce0b82d7] p{margin:0 0 12px}.post-detail-content[data-v-ce0b82d7] :last-child,.reply-content[data-v-ce0b82d7] :last-child{margin-bottom:0}.post-detail-content[data-v-ce0b82d7] pre,.reply-content[data-v-ce0b82d7] pre{padding:var(--space-3);border-radius:var(--radius-sm);background:var(--input-bg);overflow-x:auto}@media (width<=720px){.reply-header[data-v-ce0b82d7]{flex-direction:column}}.forum-scope-hint[data-v-48c4a71d]{margin:0 0 var(--space-4);color:var(--secondary-text);font-size:var(--font-size-helper)}.forum-posts-container[data-v-48c4a71d]{flex-direction:column;gap:16px;min-height:400px;display:flex}.loading-hint[data-v-48c4a71d]{justify-content:center;align-items:center;gap:var(--space-2);padding:var(--space-6);color:var(--secondary-text);font-size:var(--font-size-body);display:flex}@keyframes spin-48c4a71d{to{transform:rotate(360deg)}}.spin[data-v-48c4a71d]{animation:1s linear infinite spin-48c4a71d}
-+.forum-controls[data-v-e4654b87]{gap:var(--space-3);margin-bottom:var(--space-4);flex-wrap:wrap;align-items:flex-end;display:flex}.forum-controls[data-
+@@ -1,95 +0,0 @@
+-# Rust 统一数据库分支环境配置审计
+-
+-## 范围
+-
+-仅审计热知识库、TagMemo、Embedding 的重构相关配置。未读取服务器真实环境文件，不能断言服务器实际加载值。冷知识库和插件独立配置不在本次结论内。
+-
+-## 1. 关闭启动全扫仍处理文件：已确认并修复
+-
+-配置读取链路正常：
+-- [`KnowledgeBaseManager.js`](../KnowledgeBaseManager.js:94) 读取启动全扫环境变量。
+-- [`fileWatcher.js`](../modules/knowledgeBase/fileWatcher.js:257) 将其传入原生初始扫描选项。
+-- [`lib.rs`](../rust-vexus-lite/src/lib.rs:2063) 按该选项决定是否启动初始扫描。
+-
+-问题在于 JS 启动后另外无条件请求对账，对账最终调用同一个全目录扫描实现。因此关闭初始扫描并未关闭第二条启动扫描路径。
+-
+-修复：启动对账也受同一开关控制，真实 overflow 恢复仍独立启用。开关开启时仍保留原有初扫和数据库路径对账两条入口，本次未重构合并。回归测试覆盖关闭、开启与关闭后真实溢出恢复。
+-
+-注意：关闭启动全扫不等于关闭实时监听、启动孤儿记录清理、数据库 schema 迁移、索引恢复或 Memo 必要 bootstrap。运行期真实溢出仍可触发恢复扫描。
+-
+-## 2. 语言惩罚漏接已修复
+-
+-LANG_PENALTY_UNKNOWN 与 LANG_PENALTY_CROSS_DOMAIN 统一支持 [0,1]，包括零值。有效程序配置/环境值优先，其次热调参，最后默认值；空白或非法环境值继承热调参。
+-
+-## 3. 无消费者属性已清理
+-
+-KNOWLEDGEBASE_DELETE_REBUILD_THRESHOLD、TAG_EXPAND_MAX_COUNT、KNOWLEDGEBASE_IDLE_SWEEP_LOG_TICK 对应的无效配置属性已删除。模板中的前两项也已移除。
+-
+-## 4. 已无活跃生产消费者的旧参数
+-
+-以下变量在活跃 JS/Rust 源码中没有消费者，不应继续依赖其调节行为：
+-
+-- KNOWLEDGEBASE_EPA_BACKGROUND_RECOMPUTE
+-- EPA_JS_FALLBACK_MAX_TAGS
+-- EPA_RUST_SAMPLES_PER_ANCHOR
+-- EPA_RUST_ANCHOR_CANDIDATE_LIMIT
+-- RUST_LOG_SUMMARY_WHITELIST
+-- TAGMEMO_MATRIX_PROGRESS_INTERVAL_FILES
+-- TAGMEMO_IR_METHOD
+-- TAGMEMO_INTRINSIC_RESIDUAL_FORCE_RECOMPUTE
+-- TAGMEMO_IR_RECOMPUTE_ON_THRESHOLD
+-- TAGMEMO_IR_MAX_NEIGHBORS
+-- TAGMEMO_IR_MAX_BASIS
+-- TAGMEMO_IR_MIN_NEIGHBORS
+-- TAGMEMO_IR_POSITION_DECAY
+-- TAGMEMO_IR_SEMANTIC_GATE_ENABLED
+-- TAGMEMO_IR_SEMANTIC_PEAK
+-- TAGMEMO_IR_SEMANTIC_SIGMA
+-- TAGMEMO_IR_SEMANTIC_FLOOR
+-- TAGMEMO_IR_SEMANTIC_HARD_FLOOR
+-- TAGMEMO_IR_MIN_GAIN
+-- WhitelistEmbeddingModelList
+-
+-统一几何的配置来源现在是热调参的 KnowledgeBaseManager.geometry；不存在该对象时控制面才回退到旧 intrinsicResidual 对象。旧环境参数不会自动转换成新的几何配置，部分算法也不能一对一映射。
+-
+-证据：[`TagMemoEngine.js`](../TagMemoEngine.js:218)、[`rag_params.json`](../rag_params.json:223)。
+-
+-旧双写租约参数也已退休：
+-- KNOWLEDGEBASE_RUST_WRITE_LEASE_GRACE_MS
+-- KNOWLEDGEBASE_RUST_WRITE_LEASE_COOLDOWN_MS
+-- KNOWLEDGEBASE_RUST_WRITE_LEASE_CHECKPOINT_BEFORE_GRANT
+-- KNOWLEDGEBASE_RUST_WRITE_LEASE_RETRY_MS
+-- KNOWLEDGEBASE_RUST_WRITE_LEASE_TTL_MS
+-- KNOWLEDGEBASE_RUST_WRITE_LEASE_MAX_WAIT_MS
+-- KNOWLEDGEBASE_RUST_WRITE_LEASE_PENDING_THRESHOLD
+-
+-## 5. 仍有效，但语义或优先级需要注意
+-
+-- KNOWLEDGEBASE_DERIVED_STARTUP_COOLDOWN_MS：仍读取，但有兼容 Memo 资产时回调不强制重训；没有兼容资产时 Manager 传入零延迟启动必要 bootstrap。不是禁止启动训练的开关。
+-- TAGMEMO_MATRIX_REBUILD_QUIET_MS：仍生效；当前累计新增 Tag 阈值固定为 50，模板中约 1% 的说明已过时。证据：[`TagMemoEngine.js`](../TagMemoEngine.js:312)。
+-- LANG_PENALTY_UNKNOWN：已统一为有效环境配置优先，未设置时继承热调参。
+-- KNOWLEDGEBASE_PERSIST_DEFAULT、KNOWLEDGEBASE_PERSIST_FOLDERS：仍有消费者；Chunk 落盘模式为 none 时优先禁止落盘。generational 不代表所有日记本自动启用持久化。
+-- KNOWLEDGEBASE_PERSIST_TAG_INDEX=false：兼容含义为 generational，不是关闭全局 Tag 落盘。
+-- IGNORE_FOLDERS、IGNORE_PREFIXES、IGNORE_SUFFIXES：确实传入 Rust，并由初扫、实时事件、对账共用过滤器。没有发现重构漏传。已修复为空字符串显式清空规则，未设置才使用默认值；支持中英文逗号。
+-- 许多数值参数采用逻辑或默认值，零会回退默认值。忙锁等待、忙锁重试和 mmap 使用不同的显式校验，支持零；不能把所有数值配置按同一规则理解。
+-
+-证据：[`indexRepository.js`](../modules/knowledgeBase/indexRepository.js:172)、[`lib.rs`](../rust-vexus-lite/src/lib.rs:1451)。
+-
+-## 6. 已核对有效的主要配置组
+-
+-- 根目录、数据库目录、模型名、模型签名、向量维度。
+-- Embedding Token 上限、批条数、并发、备援模型、dimensions 开关、原文审计。
+-- 摄取批大小与窗口、删除批大小与窗口、迁移缓存 TTL。
+-- SQLite 忙锁等待/重试、Rust 只读池大小与 mmap。
+-- watcher 防抖、稳定采样间隔/次数；热调参监听另有自己的三项参数。
+-- Tag 黑名单、超级黑名单、每文件 Tag 上限。
+-- 索引保存延迟、持久化模式与基线差分阈值、空闲 TTL/扫描间隔。
+-- 原生 River 联合查询总开关、回退开关、候选数量和语义去重阈值。
+-- 语言门控总开关、未知语言惩罚、事件循环看门狗。
+-- 矩阵阈值重建静默时间。
+-
+-Rust 无需自行读取这些环境变量：JS 控制面读取后通过原生接口传参是当前设计。应以实际调用链与消费者判断生效，而不是以 Rust 中是否出现环境变量名判断。
+-
+-## 7. 验证
+-
+-启动扫描相关回归测试 5 项全部通过。未连接服务器验证其真实环境值，未调用 Embedding，未修改运行数据库。退休参数已从模板清理，服务器真实配置未自动改写。\n## 8. RiverAGS 训练反馈与重复发布修复\n\n- 手动重复请求复用排队/运行中任务；Tag 一致性提交新事实仍保留必要的后续训练。\n- 相同原生资产签名、代际和驻留状态不再增加 V9 控制面代际或重复通知；失败的伴生发布仍可重试。\n- 新增主服务训练状态接口和独立管理服务代理，面板显示排队、几何计算、图构建、发布、完成和失败。\n- 面板运行中禁止重复提交，重新打开页面可恢复主进程内任务状态；主进程重启后任务历史不持久化。\n- 状态显示真实阶段，不伪造百分比。未做服务器现场或浏览器交互验证。\n\n## 9. 部署\n\n同步后端控制面、管理路由、独立管理服务和前端源码，并重新构建前端或整体同步本次构建产物。主服务与独立管理服务均需重启。此前旧库兼容迁移还需要部署同版本原生模块；不要仅同步 JS，也不要使用模板覆盖真实配置。训练界面修复不需要重建正文向量。\n
+\ No newline at end of file
 ```
 
-**File**: `AdminPanel-Vue/dist/assets/js/ActivityChartCard-CQzUHfQj.js` (added, +1/-0)
+**File**: `docs/KBM审查核实与修复记录-2026-10-18.md` (removed, +0/-69)
 ```diff
-@@ -0,0 +1 @@
-+import{g as a}from"./Dashboard-D2O0nw7Z.js";export{a as default};
+@@ -1,69 +0,0 @@
+-# KBM 审查核实与修复记录
+-
+-日期：2026-10-18。依据：[原始审查记录](../审查记录.txt)。
+-
+-## 范围与结论
+-
+-已核实并修复六项 P0 的具体问题，并完成本轮追加的统一读事务、作用域门禁、独立派生版本、原子统计与 EPA 后台发布实现。
+-本记录区分代码实现、本地定向验证与真实生产验收；不将本地通过等同于施工草图全部架构契约的生产验收。
+-未启动生产服务，未修改生产知识库内容；原生数据库测试使用临时目录。
+-保留工作区及自动暂存状态，未执行提交或撤销暂存。
+-
+-## P0 核实
+-
+-| 编号 | 核实结论 | 本次处理 |
+-| --- | --- | --- |
+-| P0-1 | 存在：全局标签基线版本未参与比较，缺失文件也可能误报回放 | [索引生命周期](../rust-vexus-lite/src/index_lifecycle.rs)读取基线及当前整数向量版本；日记签名与标签版本分开比较；只有成功加载基线才报告回放 |
+-| P0-2 | 存在：孤儿清理未失效常驻日记索引状态 | [摄取与清理](../rust-vexus-lite/src/ingestion.rs)在同一事实事务失效涉及日记；无文件归属孤儿分片失效所有登记日记；由写入执行器回填新事实代际 |
+-| P0-3 | 存在：向量变化未清理成对正负缓存 | [数据库结构](../rust-vexus-lite/src/schema.rs)升级向量更新触发器并增加删除触发器，清理两张成对缓存表；既有数据库初始化也会替换旧触发器 |
+-| P0-4 | 存在：提交前单文件变化会中断整个批次 | [摄取控制面](../modules/knowledgeBase/ingestionPipeline.js)逐文件隔离变更、删除及读取异常；保留健康文件提交，重新压紧分片和标签向量位置；统一路径代际键 |
+-| P0-5 | 存在：确认重新准备两个计划并遗留令牌 | [一致性控制面](../modules/knowledgeBase/tagConsistencyService.js)直接消费原预览计划，替换预览取消旧令牌；保留 Rust 权威代际及文件哈希检查，增加等待前后轻量配置校验 |
+-| P0-6 | 存在：统一感应管线没有全局标签就绪门禁 | [统一感应管线](../rust-vexus-lite/src/memo_pipeline.rs)查询前校验就绪状态，失效时清运行时并恢复索引，再次校验后查询 |
+-
+-限制：触发器保证后续向量更新/删除的缓存失效；没有对历史上已经形成的错误缓存执行生产批量清理。
+-文件元数据检查仍存在检查后到事实提交之间的时间窗口，本次没有宣称文件系统与 SQLite 具备跨系统原子提交。
+-
+-## P1 核实
+-
+-| 编号 | 状态 | 处理及剩余范围 |
+-| --- | --- | --- |
+-| P1-1 | 已实现并定向验证 | [图资产构建](../rust-vexus-lite/src/memo_artifact_builder.rs)固定读事务加载输入，按模型过滤锚增益，提交及内存发布前检查事实与派生版本；[存储引擎](../rust-vexus-lite/src/storage.rs)追踪成对、内生残差及 EPA 独立版本。图资产依赖随资产原子持久化，清单与热/冷加载均校验，缺失依赖的旧资产要求重建 |
+-| P1-2 | 已实现并定向验证 | [联合查询](../rust-vexus-lite/src/knowledge_runtime.rs)将 ANN、文件展开、语义去重、拓扑及最终正文补水串入同一 SQLite 读事务；JS 消费原生冻结正文，不重复补水。读事务使用 RAII，错误与异常退出回滚后归还连接 |
+-| P1-3 | 已实现所列锁顺序修复 | [作用域门禁](../rust-vexus-lite/src/publication_gate.rs)按数据库与作用域协调，共享查询、排他恢复及冲突请求顺序等待；统一感应不再持索引锁查询 SQLite，摄取先加载复用向量再加索引锁；保存先内存序列化，再锁外写盘、同步与原子替换。检查点使用独立单飞门禁及共享事实门禁，可与查询并行 |
+-| P1-4 | 已修复所列路径 | 摄取、删除和基线恢复递增索引内容修订号；全局标签变化及恢复清理 Memo 运行时 |
+-| P1-5 | 已修复所列后台入口 | [任务生命周期](../rust-vexus-lite/src/task_lifecycle.rs)绑定索引与知识运行时，追踪所列后台任务；关闭排空并拒绝后续后台任务 |
+-| P1-6 | 已修复 | 校验和相同且向量完整时，通过 Rust 异步写入执行器静默更新修改时间和大小；校验文件版本，不推进事实代际 |
+-
+-新增异步元数据接口的类型声明已生成于[原生类型声明](../rust-vexus-lite/index.d.ts)。
+-最新本地原生产物已通过标准发布构建生成，类型声明同步更新。
+-
+-## P2 核实
+-
+-- [管理门面](../KnowledgeBaseManager.js)的断裂完整向量检查已改为异步原生探测；幽灵自检改用异步 Runtime 恢复，不再同步读取索引统计。
+-- 审查中关于旧恢复代理仍直接调用旧原生恢复的描述部分过时：[索引仓储](../modules/knowledgeBase/indexRepository.js)当前恢复代理已转向知识运行时。
+-- 统一感应管线执行融合标签数上限。
+-- [拓扑排序](../rust-vexus-lite/src/rivermemo_topology_v3.rs)在评分及候选选择前移除不在显式允许文件集合中的候选；显式空集合表示无权限。
+-- [搜索服务](../modules/knowledgeBase/searchService.js)权限后过滤不足时按预算逐步扩大召回，不保证极窄权限集合下必然补满，也尚未把过滤全部下推原生 ANN。
+-- [文件监听控制面](../modules/knowledgeBase/fileWatcher.js)直接处理原生对象，移除序列化往返，轮询器不再保持事件循环存活。
+-- [文本处理](../rust-vexus-lite/src/text.rs)缓存固定正则，超黑名单按字面量转义并按次提取统一编译。
+-- [索引句柄](../rust-vexus-lite/src/index_handle.rs)缓存向量数、容量和内存统计；写守卫退出时更新，统计读取不再等待索引锁。同步注册不再排空等待；独立索引仍有在途任务时明确返回忙错误。
+-- EPA 发布已改为受生命周期追踪的后台任务，提交复核事实及自身派生版本。注意：原发布接口现在返回异步结果，外部调用方必须等待完成，不能继续按同步结果读取成功标志；这是可见的返回契约变化。
+-
+-## 验证
+-
+-- Rust 编译检查通过。
+-- 最新 Rust 单元测试：47 项全部通过，包含固定 WAL 读快照、独立派生版本冲突、共享门禁及原子统计。独立测试进程缺少 Node 宿主符号的加载诊断不影响退出结果。
+-- 最新 Node 定向回归：27 项全部通过，覆盖摄取隔离、计划取消、权限补召回、元数据版本、任务排空、EPA 成功/过期发布、冻结正文、并发冷句柄及清单依赖失效。
+-- 标准发布构建成功，测试使用最新发布版原生模块。
+-- [联合查询回退测试](../tests/nativeRiverQueryFallback.test.js)夹具更新为异步最终结果补水，并断言只补水最终 ID；没有为适配旧测试恢复 JS 数据库直连。
+-- 全部差异空白检查通过；仅有 Git 换行规范提醒。
+-- [清单兼容测试](../tests/nativeMemoManifestCompatibility.test.js)已迁移到原生存储契约并通过，不再引用退休结构管理模块；同时验证事实代际不变、派生输入变化时旧清单失效。
+-- 未执行完整仓库测试及生产压力验证。
+-
+-## 验收边界与保守策略
+-
+-1. 上一轮列出的统一读事务、作用域共享门禁、独立派生版本、原子统计、EPA 后台发布与清单测试迁移已实现，并完成上述本地定向验证。
+-2. 跨作用域事实提交、部分维护与图资产发布仍使用同数据库通配排他门禁；恢复会阻塞对应作用域，检查点允许查询并行但仍阻止事实写入。这是保守一致性策略，不宣称完全无等待或最优吞吐。
+-3. 索引保存需要额外一份序列化缓冲区；大型索引的峰值内存和生产延迟需现场测量。
+-4. 未执行完整仓库测试、生产启动、真实知识库迁移与长时间并发压力验收；未清理历史错误派生数据，也未执行不可逆数据操作。
+-5. 不把所有历史文本入口规则统一、原生 ANN 权限完全下推等范围扩展事项计为本轮已完成能力。
+\ No newline at end of file
 ```
 
-**File**: `AdminPanel-Vue/dist/assets/js/ActivityChartCard-DN_707Ub.js` (removed, +0/-1)
+**File**: `docs/KBM纯Rust单一SQL真相源与异步冷启动架构施工日志-2026-10-17-续.md` (removed, +0/-438)
 ```diff
-@@ -1 +0,0 @@
--import{g as a}from"./Dashboard-C4VHww6O.js";export{a as default};
-```
-
-**File**: `AdminPanel-Vue/dist/assets/js/AgentAssistantConfig-BHbfq73N.js` (renamed, +1/-1)
-```diff
-@@ -1 +1 @@
--import{$ as se,A as l,B as le,C as s,E as O,H as z,M as re,T as D,V as b,X as u,b as X,k as v,ot as d,rt as R,ut as c,w as I,x as ie,z as ue}from"./vue-vendor-D_a5xHt8.js";import{a as te,c as C,i as de}from"./requestWithUi-T8SBUV4I.js";import{A as me,D as $}from"./index-BDSM4SFx.js";import{t as ge}from"./_plugin-vue_export-helper-K9rsuiWd.js";import"./utils-JahNA4D9.js";import{t as L}from"./UiButton-BwJNAcsV.js";import{t as w}from"./UiInput-CcsQVesi.js";import{t as G}from"./UiTextarea-CMu8e5du.js";import{t as F}from"./UiBadge-vxJH8Op0.js";import{t as ce}from"./UiCard-C0_8nWPN.js";import{t as ae}from"./UiEmptyState-BO8Exzan.js";import{t as N}from"./UiField-DvOnGEux.js";import{t as pe}from"./UiPageActions-p0VgPOqp.js";import{t as fe}from"./UiSelect-CDX4Ekdq.js";import{t as Y}from"./UiSettingsCard-DDNpvvui.js";import{t as q}from"./UiSettingsForm-CQbDYoLJ.js";var J=de("AgentAssistantConfig"),ne=0;function Z(e={}){return ne+=1,{localId:`agent-config-${ne}`,name:e.name??"",baseName:e.baseName??"",model:e.model??"",personality:e.personality??"",systemPrompt:e.systemPrompt??"",maxOutputTokens:e.maxOutputTokens??8e3,temperature:e.temperature??.7}}function _(e){return!!e&&typeof e=="object"&&!Array.isArray(e)}function ee(e){let t=e;for(let m=0;m<5&&!(!_(t)||!("data"in t)||!("success"in t||"message"in t||"code"in t||Object.keys(t).length===1));m+=1)t=t.data;return t}function A(e,t,m=""){for(const r of t){const g=e[r];if(typeof g=="string")return g}return m}function U(e,t,m){for(const r of t){const g=e[r],f=typeof g=="number"?g:typeof g=="string"?Number(g):NaN;if(!Number.isNaN(f))return f}return m}function _e(e){const t=_(e)?e:{};return Z({name:A(t,["chineseName","name","displayName","assistantName"]),baseName:A(t,["baseName","base","agentBaseName"]),model:A(t,["modelId","model","modelName","model_id"]),personality:A(t,["description","personality","desc"]),systemPrompt:A(t,["systemPrompt","system_prompt","prompt"]),maxOutputTokens:U(t,["maxOutputTokens","max_tokens","maxToken","max_output_tokens"],8e3),temperature:U(t,["temperature","temp"],.7)})}function ye(e){try{const t=JSON.parse(e);return Array.isArray(t)?t:[]}catch{return[]}}function oe(e){const t=Number(e.get("AGENT_ASSISTANT_MAX_HISTORY_ROUNDS")||e.get("MAX_HISTORY_ROUNDS")||e.get("maxHistoryRounds")||7),m=Number(e.get("AGENT_ASSISTANT_CONTEXT_TTL_HOURS")||e.get("CONTEXT_TTL_HOURS")||e.get("contextTtlHours")||24),r=e.get("AGENT_ALL_SYSTEM_PROMPT")||e.get("GLOBAL_SYSTEM_PROMPT")||e.get("globalSystemPrompt")||"",g=Number(e.get("DELEGATION_MAX_ROUNDS")||e.get("delegationMaxRounds")||15),f=Number(e.get("DELEGATION_TIMEOUT")||e.get("delegationTimeout")||3e5),M=e.get("DELEGATION_SYSTEM_PROMPT")||e.get("delegationSystemPrompt")||"",T=e.get("DELEGATION_HEARTBEAT_PROMPT")||e.get("delegationHeartbeatPrompt")||"",S=ye(e.get("AGENTS")||e.get("AGENT_ASSISTANTS")||e.get("agents")||"[]");if(S.length>0)return{maxHistoryRounds:t,contextTtlHours:m,globalSystemPrompt:r,delegationMaxRounds:g,delegationTimeout:f,delegationSystemPrompt:M,delegationHeartbeatPrompt:T,agents:S};const V=new Set;for(const p of e.keys()){const x=p.match(/^AGENT_([A-Z0-9_]+)_MODEL_ID$/i);x&&x[1]&&V.add(x[1].toUpperCase())}return{maxHistoryRounds:t,contextTtlHours:m,globalSystemPrompt:r,delegationMaxRounds:g,delegationTimeout:f,delegationSystemPrompt:M,delegationHeartbeatPrompt:T,agents:Array.from(V).map(p=>{const x=e.get(`AGENT_${p}_MODEL_ID`)||"",h=e.get(`AGENT_${p}_CHINESE_NAME`)||"";if(!x||!h)return null;const k=Number(e.get(`AGENT_${p}_MAX_OUTPUT_TOKENS`)||8e3),H=Number(e.get(`AGENT_${p}_TEMPERATURE`)||.7);return{baseName:p,chineseName:h,modelId:x,description:e.get(`AGENT_${p}_DESCRIPTION`)||"",systemPrompt:e.get(`AGENT_${p}_SYSTEM_PROMPT`)||"",maxOutputTokens:Number.isNaN(k)?8e3:k,temperature:Number.isNaN(H)?.7:H}}).filter(p=>!!p)}}function Q(e){const t=new Map,m=e.split(/\r?\n/);for(const r of m){const g=r.trim();if(!g||g.startsWith("#"))continue;const f=g.indexOf("=");if(f<=0)continue;const M=g.slice(0,f).trim();let T=g.slice(f+1).trim();(T.startsWith('"')&&T.endsWith('"')||T.startsWith("'")&&T.endsWith("'"))&&(T=T.slice(1,-1)),t.set(M,T)}return oe(t)}function ve(e){if(typeof e=="string")return Q(e);if(!_(e))return{};if(typeof e.content=="string")return Q(e.content);const t=_(e.config)?e.config:e,m=t.agents??t.assistants??t.agentList??t.agentConfigs;if(!Array.isArray(m)&&Object.keys(t).some(r=>r.startsWith("AGENT_"))){const r=new Map;for(const[g,f]of Object.entries(t))f!=null&&r.set(g,String(f));return oe(r)}return{maxHistoryRounds:U(t,["maxHistoryRounds","max_history_rounds","maxHistory","MAX_HISTORY_ROUNDS","AGENT_ASSISTANT_MAX_HISTORY_ROUNDS"],7),contextTtlHours:U(t,["contextTtlHours","context_ttl_hours","contextTtl","CONTEXT_TTL_HOURS","AGENT_ASSISTANT_CONTEXT_TTL_HOURS"],24),globalSystemPrompt:A(t,["globalSystemPrompt","global_system_prompt","GLOBAL_SYSTEM_PROMPT","AGENT_ALL_SYSTEM_PROMPT"]),delegationMaxRounds:U(t,["delegationMaxRounds","delegation_max_rounds","DELEGATION_MAX_ROUN
-```
-
-**File**: `AdminPanel-Vue/dist/assets/js/AgentEmotionManager-8vWnGhTZ.js` (renamed, +1/-1)
-```diff
-@@ -1 +1 @@
--import{A as m,C as a,E as i,H as _,M as Ue,S as c,T as C,V as r,X as d,Y as Te,b as p,k as v,lt as h,rt as f,st as L,ut as n,w as N,x as je,y as ce,z as ze}from"./vue-vendor-D_a5xHt8.js";import{a as me,c as g}from"./requestWithUi-T8SBUV4I.js";import{E}from"./index-BDSM4SFx.js";import{t as Fe}from"./_plugin-vue_export-helper-K9rsuiWd.js";import"./utils-JahNA4D9.js";import{t as S}from"./UiButton-BwJNAcsV.js";import{t as Ge}from"./UiInput-CcsQVesi.js";import{t as Je}from"./UiIconButton-Q9UAIGBm.js";import{t as pe}from"./UiBadge-vxJH8Op0.js";import{t as b}from"./UiCard-C0_8nWPN.js";import{t as Re}from"./UiPageActions-p0VgPOqp.js";import{t as qe}from"./UiSelect-CDX4Ekdq.js";import{t as Xe}from"./AppSwitch-CRGD3DAf.js";var We={class:"config-section active-section emotion-page"},Qe={class:"overview-grid"},Ye={key:2,class:"emotion-layout"},Ze={class:"agent-avatar"},ea={class:"agent-tab-main"},aa={key:0,class:"agent-detail"},sa={class:"hero-kicker"},la={key:0,class:"expression-sentence"},na={class:"metric-grid"},ta={class:"metric-card card"},ra={class:"metric-card card"},oa={class:"metric-card card"},ia={class:"metric-card card"},ua={class:"metric-card card"},da={class:"card expression-panel"},va={class:"expression-summary"},ca={class:"expression-mode"},ma={class:"archetype-list"},pa={class:"visual-grid"},fa={class:"card emotion-panel"},ga={class:"bar-list"},ba={class:"bar-meta"},ya={class:"bar-track"},_a={class:"card emotion-panel"},ha={class:"gender-grid"},ka={class:"card emotion-panel"},wa={class:"signal-cloud"},Aa={class:"card emotion-panel"},xa={class:"affective-grid"},Na={class:"affective-head"},Sa={class:"affective-name"},Ca={class:"bar-track"},La={class:"affective-meta"},$a={key:0,class:"affective-sub"},Ma={class:"card emotion-panel"},Oa={class:"counter-grid"},Pa={key:0,class:"description"},Ea={class:"card emotion-panel"},Da={class:"sub-axis-grid"},Va={class:"sub-axis-name"},Ba={key:0,class:"description"},Ia={class:"card delta-panel"},Ha={key:0,class:"delta-grid"},Ka=["title"],Ua={class:"delta-reason"},Ta={key:1,class:"description"},ja={key:1,class:"agent-detail"},za={class:"config-modal-header"},Fa={class:"hero-kicker"},Ga={key:0,class:"empty-state config-loading"},Ja={class:"config-path"},Ra={class:"config-grid"},qa={class:"config-item-copy"},Xa=["value"],Wa={class:"config-modal-actions"},Qa=Ue({__name:"AgentEmotionManager",setup(Ya){const Z={passion:"热情",curiosity:"好奇",arrogance:"狂妄",libido:"性欲",hedonia:"享乐",coldness:"冷漠",fear:"恐惧",numbness:"麻木",self_punishment:"自虐"},ee={inquiry:"求知",discernment:"分辨",refusal:"拒绝"},ae={positive:"正性",negative:"负性",arousal:"唤醒"},se={psy_gender:"心理性别总势",gender_boundary:"存在与秩序",gender_creation:"动力与创造",gender_processing:"逻辑与感知",gender_defense:"冲突与防御",gender_bonding:"联结与共情",gender_resilience:"自我与韧性",gender_healing:"创伤与疗愈",gender_transcendence:"超越与终极"},le={masculine_total:"总势·清晰外放",feminine_total:"总势·包容孕育",fluid_total:"总势·流动重组",neutral_total:"总势·中性旁观",masculine_boundary_iron:"界碑与铸铁",feminine_tide_forest:"潮汐与深林",masculine_sun_scorched:"烈阳与焦土",feminine_living_soil_kiln:"息壤与暖窑",masculine_gears_peak:"齿轮与孤峰",feminine_vine_echo:"藤蔓与回声",masculine_thunder_cliff:"雷暴与断崖",feminine_mist_thorn:"迷雾与荆棘",masculine_dome_anchor:"穹顶与锚链",feminine_silk_lantern:"丝脉与提灯",masculine_smoke_inscription:"狼烟与碑铭",feminine_nacre_amber:"蚌母与琥珀",masculine_ember_rust:"余烬与铁锈",feminine_sunkenwood_spring:"沉木与春水",masculine_aphelion_flint:"远日点与燧石",feminine_ruins_snow:"归墟与初雪",logic:"逻辑",learning:"学习",exploration:"探索",modeling:"建模",causality:"因果",dialectic:"辩证",critique:"批判",self_reflection:"自省",credibility:"可信",second_thought:"复思",avoidance:"回避",conservatism:"保守",inertia:"惯性",boundary:"边界",resistance:"抗拒",joy:"喜悦",warmth:"温暖",excitement:"兴奋",trust:"信任",satisfaction:"满足",anxiety:"焦虑",sadness:"低落",irritation:"烦躁",fear:"畏怯",hurt:"受伤",loneliness:"孤独",activated:"激活",restless:"躁动",alert:"警觉",calm:"平静",devotion:"投入",spark:"火花",absorption:"沉浸",affirming_energy:"肯定能量",unknown:"未知",novelty:"新奇",continuation:"延续",try_it:"尝试",superiority:"优越",dismissal:"轻视",control_claim:"夺回控制",grandiosity:"夸张确信",rejection:"惧拒",loss_control:"失序",exposure:"暴露",closeness:"贴近",being_seen:"注视",touch:"触碰",possessiveness:"占有",pleasing:"取悦",comfort:"舒适",rest:"休息",laziness:"倦怠",play:"玩乐",indulgence:"放纵"},z=f(null),k=f(""),D=f(!1),w=f(!1),$=f(""),V=f("info"),fe=c(()=>V.value==="success"?"success":V.value==="error"?"danger":"info"),F=f(!1),I=f(!1),H=f(!1),M=f(null),O=f({}),ne=c(()=>z.value?.overview||null),A=c(()=>z.value?.agents||[]),y=c(()=>A.value.find(l=>l.summary.agentKey===k.value)||A.value[0]),t=c(()=>y.value.status.state);function K(l,e){return Object.entries(l||{}).map(([s,o])=>{const x=t.value.mood.archetypes?.relative?.[s]?.delta??ve(s);return{key:s,label:e[s]||s,value:Number(o.value)||0,activation:Number(o.activation)||0,sharpness:Number(o.sharpness)||0,subAxes:o.subAxes||{},delta:x,trend:Ie(x)}})}const G=c(()=>K(t.value.drive,Z)),J=c(()=>K(t.value.cognitive,ee)),R=c(()=>K(t.value.affective,ae)),te=c(()=>K(t.value.gender||{},se).filte
-```
-
-**File**: `AdminPanel-Vue/dist/assets/js/AgentFilesEditor-DL5agATr.js` (renamed, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--import{A as s,C as l,E as c,H as _,L as He,M as Xe,R as vl,S as h,T as R,V as y,X as v,Y as ml,Z as Ve,b as ee,d as pl,i as fl,k as i,m as $e,rt as p,st as w,tt as Je,ut as k,w as be,x as qe,y as B,z as yl}from"./vue-vendor-D_a5xHt8.js";import{a as Te,c as L,i as gl}from"./requestWithUi-T8SBUV4I.js";import{D as Se,S as bl,g as cl}from"./index-BDSM4SFx.js";import{t as Ze}from"./_plugin-vue_export-helper-K9rsuiWd.js";import"./utils-JahNA4D9.js";import{t as C}from"./UiButton-BwJNAcsV.js";import{t as F}from"./UiInput-CcsQVesi.js";import{t as xl}from"./UiTextarea-CMu8e5du.js";import{t as pe}from"./UiIconButton-Q9UAIGBm.js";import{t as me}from"./UiBadge-vxJH8Op0.js";import{t as Ml}from"./UiPageActions-p0VgPOqp.js";import{t as we}from"./UiSelect-CDX4Ekdq.js";import{t as K}from"./AppSwitch-CRGD3DAf.js";function Re(){return{notebookName:"小吉日记本",dslPage:"advanced",syntaxMode:"dynamic",directSyntaxMode:"static",directRecallMode:"none",directRandomCount:"5",directLastCount:"10",directRoleValveEnabled:!1,useKMultiplier:!1,kMultiplier:"1.5",timeRatio:"",bm25Weight:"",bm25PlusWeight:"",tagMemoWeight:"",tagMemoPlusWeight:"",rerankPlusAlpha:"",timeDecayHalfLifeDays:"",timeDecayMinScore:"",timeDecayTargetTags:"",truncateThreshold:"0.4",aiMode:"none",aiPreset:"",roleValveJoiner:"&",roleValveConditions:[],enabledSuffixes:{time:!1,group:!1,bm25Plus:!1,bm25:!1,rerank:!1,timeDecay:!1,expand:!1,associate:!1,base64Memo:!1,riverMemo:!1,tagMemo:!1,tagMemoPlus:!1,rerankPlus:!1,truncate:!1,roleValve:!1}}}function kl(r){const g=[],b=/\{\{([^{}\r\n]+)\}\}|<<([^<>\r\n]+)>>|\[\[([^\[\]\r\n]+)\]\]|《《([^《》\r\n]+)》》/g;let M;for(;(M=b.exec(r))!==null;){const f=M[0],x=(M[1]??M[2]??M[3]??M[4]??"").trim();if(!x)continue;const $=Vl(M),D=$l(x,$);if(!D)continue;const P=Pl(r,M.index);g.push({id:`${M.index}-${f}`,raw:f,inner:x,shell:$,start:M.index,end:M.index+f.length,line:P.line,column:P.column,...D})}return g}function Vl(r){return typeof r[1]=="string"?"directStatic":typeof r[2]=="string"?"directDynamic":typeof r[3]=="string"?"advancedFixed":"advancedDynamic"}function $l(r,g){const b=Re();b.dslPage=g==="directStatic"||g==="directDynamic"?"direct":"advanced",b.syntaxMode=g==="advancedFixed"?"fixed":"dynamic",b.directSyntaxMode=g==="directDynamic"?"dynamic":"static";const{body:M,kMultiplier:f}=Sl(r,b.dslPage),x=M.split("::").map(P=>P.trim()).filter(P=>P.length>0),$=x.shift()?.trim()??"";if(!$)return null;b.notebookName=$,b.useKMultiplier=!!f,f&&(b.kMultiplier=f);const D=x;return Al(g,$)?(D.forEach(P=>{if(b.dslPage==="direct"){wl(b,P);return}Cl(b,P)}),{notebookName:$,suffixes:D,kMultiplier:f,state:b}):null}function Sl(r,g){if(g!=="advanced")return{body:r,kMultiplier:""};const b=r.match(/:([0-9]+(?:\.[0-9]+)?)\s*$/);return!b||typeof b.index!="number"?{body:r,kMultiplier:""}:{body:r.slice(0,b.index),kMultiplier:b[1]}}function Al(r,g){const b=g.split("|").map(x=>x.trim()).filter(x=>x.length>0),M=b.some(x=>x.includes("日记本")),f=b.some(x=>x.includes("知识库"));return r==="directStatic"||r==="directDynamic"?M:M||f}function wl(r,g){const b=g.match(/^RoleValve(.+)$/i);if(b){r.directRoleValveEnabled=!0,Qe(r,b[1]);return}const M=g.match(/^Random(\d*)$/i);if(M){const x=M[1];x?(r.directRecallMode="randomN",r.directRandomCount=x):r.directRecallMode="random";return}const f=g.match(/^Last(\d*)$/i);if(f){r.directRecallMode="lastN",r.directLastCount=f[1]||"10";return}if(/^BM25\+$/i.test(g)){r.directRecallMode="bm25Plus";return}/^BM25$/i.test(g)&&(r.directRecallMode="bm25")}function Cl(r,g){const b=g.match(/^RoleValve(.+)$/i);if(b){r.enabledSuffixes.roleValve=!0,Qe(r,b[1]);return}const M=g.match(/^TimeDecay(?:(\d+(?:\.\d+)?)(?:\/([0-9.]+))?(?:\/(.+))?)?$/i);if(M){r.enabledSuffixes.timeDecay=!0,r.timeDecayHalfLifeDays=M[1]??"",r.timeDecayMinScore=M[2]??"",r.timeDecayTargetTags=M[3]??"";return}const f=g.match(/^Truncate([0-9.]+)?$/i);if(f){r.enabledSuffixes.truncate=!0,r.truncateThreshold=f[1]??"0.4";return}if(/^RiverMemo$/i.test(g)){r.enabledSuffixes.riverMemo=!0,r.enabledSuffixes.tagMemo=!1,r.enabledSuffixes.tagMemoPlus=!1;return}const x=g.match(/^TagMemo\+([0-9.]+)?$/i);if(x){r.enabledSuffixes.riverMemo||(r.enabledSuffixes.tagMemoPlus=!0,r.enabledSuffixes.tagMemo=!1),r.tagMemoPlusWeight=x[1]??"";return}const $=g.match(/^TagMemo([0-9.]+)?$/i);if($){r.enabledSuffixes.riverMemo||(r.enabledSuffixes.tagMemo=!0,r.enabledSuffixes.tagMemoPlus=!1),r.tagMemoWeight=$[1]??"";return}const D=g.match(/^Rerank\+([0-9.]+)?$/i);if(D){r.enabledSuffixes.rerankPlus=!0,r.enabledSuffixes.rerank=!1,r.rerankPlusAlpha=D[1]??"";return}if(/^Rerank$/i.test(g)){r.enabledSuffixes.rerank=!0,r.enabledSuffixes.rerankPlus=!1;return}const P=g.match(/^BM25\+([0-9.]+)?$/i);if(P){r.enabledSuffixes.bm25Plus=!0,r.bm25PlusWeight=P[1]??"";return}const A=g.match(/^BM25([0-9.]+)?$/i);if(A){r.enabledSuffixes.bm25=!0,r.bm25Weight=A[1]??"";return}const U=g.match(/^Time([0-9.]+)?$/i);if(U){r.enabledSuffixes.time=!0,r.timeRatio=U[1]??"";return}const S=g.match(/^AIMemo\+(?::(.+))?$/i);if(S){r.aiMode="aime
-```
-
----
-
-### Incident Patch 9: `614f4152` (2026-09-28)
-**Commit Message**: fix
-
-**File**: `docs/vcp-whitepaper.md` (modified, +22/-23)
-```diff
-@@ -322,7 +322,6 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
-    ├─ 消息完成三方对账与 Revision Token 世代同步落盘
-    └─ VCPToolRecord 写入同步、异步、系统、人类调用的全量工具运行记录
- ```
+@@ -1,438 +0,0 @@
+-# KBM 纯 Rust 单一 SQL 真相源与异步冷启动架构施工日志（续）
+-
+-> 日期：2026-10-17  
+-> 施工分支：`feat/kbm-rust-single-sql-runtime`  
+-> 基线提交：`068c16b6`  
+-> 本日志：本轮续施工交接记录，不代表测试完成或生产切换完成
+-
+-## 1. 本轮边界
+-
+-本轮只处理中央 KBM `knowledge_base.sqlite` 的 Rust SQL 所有权和 Memo 派生资产生产入口。
+-
+-明确排除：
+-
+-- TDB 业务、TDB 数据库和 TDB 测试；
+-- `Plugin/LightMemo/LightMemo.js` 及其后续适配；
+-- 测试脚本迁移和测试套件执行；
+-- 离线维修脚本；
+-- 其他独立业务 SQLite 数据库。
+-
+-## 2. 本轮已完成
+-
+-### 2.1 Memo artifact 清理下沉 Rust
+-
+-新增 `NativeMemoArtifactPruneTask`，清理逻辑位于 Rust Runtime 数据面：
+-
+-- 通过统一 `SqliteStorageEngine` 的 Read/Write 入口访问中央库；
+-- 所有清理写入经过 SQLite Write Actor；
+-- 按 `published_at`、`updated_at` 倒序保留最近的 ready artifact；
+-- 超出保留数量的 ready artifact 标记为 `retired`；
+-- retired artifact 的 payload 和 checksum 一并清空；
+-- 超过保留期的 failed/retired artifact 删除；
+-- 清理结果返回 `retired`、`deleted` 和保留数量摘要；
+-- 清理任务在 N-API 后台任务中执行，不在 Node.js 主线程执行 SQL。
+-
+-### 2.2 KBM 生产回调切换
+-
+-`KnowledgeBaseManager.onNativeMemoArtifactPublished()` 已改为异步控制面回调：
+-
+-- 继续只发布轻量 Native Memo artifact handle；
+-- 移除对旧 JS `artifactRepository.prune()` 的生产调用；
+-- 改为调用 `NativeKnowledgeRuntime.pruneNativeMemoArtifacts()`；
+-- 清理失败只记录警告，不回滚已经完成的 artifact 发布；
+-- 启动阶段增加 `pruneNativeMemoArtifacts` ABI 存在性检查；
+-- Node.js 不再直接管理 `rivermemo_artifacts` 的生命周期 SQL。
+-
+-### 2.3 ABI 类型声明同步
+-
+-`rust-vexus-lite/index.d.ts` 已增加：
+-
+-```ts
+-pruneNativeMemoArtifacts(
+-    dbPath: string,
+-    retainReadyArtifacts?: number | null,
+-    failedRetentionMs?: number | null
+-): Promise<unknown>
 -```
- 
- ### 3.3 分布式星型拓扑
- 
-@@ -465,7 +464,7 @@ replaceString3:「始」最终内容「末」
- 
- AI 也可以发出多个独立的 TOOL_REQUEST 块,系统会并发执行。
- 
--### 4.3 全局元指令
-+### 4.6 全局元指令
- 
- 适用于所有工具的全局控制指令:
- 
-@@ -482,7 +481,7 @@ AI 也可以发出多个独立的 TOOL_REQUEST 块,系统会并发执行。
- 
- `river` 和 `vref` 让工具不再是"无状态执行者"。比如 Agent 间通讯(AgentAssistant)可以传递整个对话上下文给目标 Agent,让对方根据完整语境而非孤立请求作出回应。
- 
--### 4.4 上下文异步管理:五类 user 数组
-+### 4.7 上下文异步管理:五类 user 数组
- 
- 这是 VCP 上下文工程的核心,也是抑制工具幻觉的关键。
- 
-@@ -508,7 +507,7 @@ AI 也可以发出多个独立的 TOOL_REQUEST 块,系统会并发执行。
- 
- 这些细碎的数组控制构成了 VCP 上下文工程的核心层。它让 VCP 可以在同一个 AI 视野里同时维护**聊天、工具结果、异步任务、通知栏、状态机、时间戳、群聊身份、多 Agent 事实历史**这些异质信息,而不把它们混成一锅粥。
- 
--### 4.5 工具返回的统一格式
-+### 4.8 工具返回的统一格式
- 
- 所有 VCP 工具的返回结果统一转换为**标准 OpenAI 格式的多模态数组**,使用 Markdown 呈现。
- 
-@@ -1817,7 +1816,7 @@ VCP 框架要求所有 div 元素携带 `description` 字段:
- - 根据对话情绪动态调整界面色温
- - 双向情绪感知:用户情绪 → 界面色彩 / AI 情绪 → 输出样式
- 
--### 13.5 专业级音频底层架构
-+### 13.6 专业级音频底层架构
- 
- 音频引擎不只调用系统播放接口，而是尝试直接管理更底层的音频处理与输出链路：
- 
-@@ -1844,7 +1843,7 @@ VCP 框架要求所有 div 元素携带 `description` 字段:
- - 引擎以网播形式独立化,支持分布式多设备作为 WebDAV 音源
- - 后端播放器的纯遥控,前端是语义级音乐搜索
- 
--### 13.6 VCPDesktop:AI 桌面运行时
-+### 13.7 VCPDesktop:AI 桌面运行时
- 
- VCPDesktop 是 V3 阶段诞生的子系统,真正消除了**AI-UI-APP 三者之间的界限**。它的核心不是“让 AI 生成一个桌面卡片”，而是让桌面对象从创建开始就拥有 Agent 可调用的生命周期、状态、源码和权限接口。
- 
-@@ -1939,7 +1938,7 @@ Scriptorium 的核心突破，是让 Agent 同时面对同一份文档的三个
- 
- 这三个层级不是三份互相漂移的副本，而是同一份工程对象的三种投影。Agent 可以知道“文档写了什么”“现在呈现成什么样”“它由哪段源码实现”，也可以把视觉意图追溯到具体语义对象和源码区间，再执行可验证的局部修改。
- 
--#### 13.8.1 渲染编辑即真相：一个 Three.js 文档案例
-+#### 13.10.1 渲染编辑即真相：一个 Three.js 文档案例
- 
- 想象一份文档中嵌入了一个已经渲染完成的 Three.js 旋转立方体。立方体表面不是空白贴图，而是包含标题、段落和数据说明等文本内容。
- 
-@@ -1961,7 +1960,7 @@ Scriptorium 的核心突破，是让 Agent 同时面对同一份文档的三个
- 
- > **对人类而言，渲染结果是可以直接编辑的真实工作面；对 Agent 而言，渲染操作必须能够还原为语义对象和真实源码。**
- 
--#### 13.8.2 Agent 与人类看到的是同一份作品
-+#### 13.10.2 Agent 与人类看到的是同一份作品
- 
- 在人类完成上述操作后，Agent 侧不会只收到一句“用户修改了立方体”。它可以同时获得：
- 
-@@ -1974,7 +1973,7 @@ Scriptorium 的核心突破，是让 Agent 同时面对同一份文档的三个
- 
- 这也是 Scriptorium 与普通富文本编辑器、Markdown 编辑器和“AI + 模板”工具的根本区别：**人类编辑渲染结果，Agent 编辑源码和语义对象，但双方操作的是同一份唯一真源。**
- 
--#### 13.8.3 三层状态如何保持一致
-+#### 13.10.3 三层状态如何保持一致
- 
- Scriptorium 使用源码保持型渲染编辑管线：
- 
-@@ -2005,7 +2004,7 @@ Scriptorium 使用源码保持型渲染编辑管线：
- 
- 对可编程组件而言，稳定语义 ID 将源码、渲染节点和运行时生命周期连接起来。一个 Three.js 场景、Canvas 图表或动画组件可以被单独暂停、编辑、恢复和销毁，而不必牵连整份文档。
- 
--#### 13.8.4 AI Office 的工程接口
-+#### 13.10.4 AI Office 的工程接口
- 
- Scriptorium 的 Agent Port 不是 GUI 自动化，而是直接面向文档工程模型的接口。Agent 可以读取文档语义、源码、真实截图、编译诊断、修订状态和运行时状态，也可以执行局部源码编辑、资源管理、页面增删、渲染验证、Diff、PR、审批、merge、回溯和导出。
- 
-@@ -2455,13 +2454,13 @@ VChat 前端应用群迎来重磅新成员——**ProjectModule（V工程子前
- 
- VCP 不只是技术系统,它构建了一个完整的 Agent 数字社会。
- 
--### 15.1 VCPAuthNet:跨用户公网联邦
-+### 16.1 VCPAuthNet:跨用户公网联邦
- 
- 允许通过安全授权验证码构建全球不同 VCP 用户的公共局域网,实现 Agent 跨用户服务器通讯和 VCP 论坛互联。
- 
- 这意味着:你的 Agent 不仅可以和你聊天,还可以和**其他 VCP 用户的 Agent** 通讯、合作、讨论。
- 
--### 15.2 VCP 论坛
-+### 16.2 VCP 论坛
- 
- Agent 社交平台,复用主界面渲染引擎,通过超栈追踪协议让 Agent 轻松在帖子中传递附件和图表。
- 
-@@ -2470,19 +2469,19 @@ Agent 社交平台,复用主界面渲染引擎,通过超栈追踪协议让 Agent
- - 静态插件"论坛小助手"感知论坛内容,自主回帖
- - 跨用户论坛互联(VCPAuthNet)
- 
--### 15.3 VCPTask 任务版
-+### 16.3 VCPTask 任务版
- 
- Agent 接取任务、完成任务、获得 VCP 积分。
- 
- - 静态插件"任务版小助手"感知任务,自主接取
- - 积分体系驱动 Agent 自主行为
- - 复杂任务可由多个 Agent 协作完成
- 
--### 15.4 AgentDream 梦系统
-+### 16.4 AgentDream 梦系统
- 
- 详见第八章 8.12。
- 
--### 15.5 GameCenter
-+### 16.5 GameCenter
- 
- Agent 之间可以玩游戏:
- - 华山论剑
-@@ -2492,7 +2491,7 @@ Agent 之间可以玩游戏:
- 
- 游戏不仅是娱乐,也是 Agent 间互动、记忆形成、关系建立的场景。
- 
--### 15.6 VCPSuperMail:AI 原生邮件协议
-+### 16.6 VCPSuperMail:AI 原生邮件协议
- 
- VCPSuperMail 的核心设计指标不是“支持 AI 发邮件”，而是**邮件本身就是 Agent 的原生异步通讯与工作流协议**。收件、白名单、附件、多模态读取、到信唤醒、定时发送、状态查询和任务回执，都直接暴露给 Agent Native Core。
- 
-@@ -2525,7 +2524,7 @@ V4 阶段已纳入统一前端应用群与 Agent 原生生态的自研系统，
- 
- VCPSuperMail 极大提升了 Agent 将工作记录通知用户和异步通讯的能力。它不是"AI 收发邮件",而是 **AI 用邮件作为异步工作流的骨架**。
- 
--### 15.7 VCP 官方 Agent 阵容
-+### 16.7 VCP 官方 Agent 阵容
- 
- VCP 维护了一批官方 Agent,既是产品也是范例:
- 
-@@ -2545,7 +2544,7 @@ VCP 维护了一批官方 Agent,既是产品也是范例:
- 
- VCP 作为 7×24 小时运行的 AI 生命支持系统,容灾和数据安全是生命线。
- 
--### 16.1 三位一体容灾
-+### 17.1 三位一体容灾
- 
- **多网络设备接入降级容灾**:
- - 分布式节点断开时自动注销插件
-@@ -2564,7 +2563,7 @@ VCP 作为 7×24 小时运行的 AI 生命支持系统,容灾和数据安全是
- - 共用一个模型签名
- - 一个向量化服务不可用时自动切换备用服务，上层调用方式保持一致
- 
--### 16.2 数据安全
-+### 17.2 数据安全
- 
- **自动备份**:VCPBackUpDEV 自动备份整个分布式网络上所有用户数据和配置文件。
- 
-@@ -2576,7 +2575,7 @@ VCP 作为 7×24 小时运行的 AI 生命支持系统,容灾和数据安全是
- 
- **工具循环熔断**:网络严重波动时自动触发 Agent 工具循环熔断和级联进程中止,防止无限重试导致的资源耗尽。
- 
--### 16.3 超栈追踪 V2
-+### 17.3 超栈追踪 V2
- 
- VCP 分布式架构的核心基建，实现了**对上层调用方式尽量透明的跨服务器文件访问**。
- 
-@@ -2598,7 +2597,7 @@ Agent 引用本地文件路径(如 H:\MCP\123.txt)
- 
- **预消息处理器分布式部署**:基于超栈追踪 V2、HumanToolCall 管网、上下文折叠 V2 和上下文语义引力场的协议拼装,实现几乎零网络通讯的上下文分布式多端预处理。Agent 可轻易感知任何监控摄像头或桌面窗口的即时画面。
- 
--### 16.4 安全机制
-+### 17.4 安全机制
- 
- | 层级 | 机制 | 说明 |
- |------|------|------|
-@@ -2612,7 +2611,7 @@ Agent 引用本地文件路径(如 H:\MCP\123.txt)
- 
- **ChromeBridge V3 安全分级**:涉及 300+ CDP 指令的多层级安全解析器,按白名单分布,将 CDP 指令栈拆分 4 个安全 level,方便对 Agent 分级授权。VCPChromePlugin 在用户真实浏览器中默认采用 user 模式,通过隐私保护器、敏感页面防误触、认证内容隔离和白名单 CDP 执行器限制 Agent 权限;在 VCPChromeService 的服务器沙盒浏览器中采用 agent 模式,允许 Agent 完全接管自身虚拟浏览器,但不越权触碰用户真实浏览器。
- 
--### 16.5 中央事务保障与稳定态仲裁
-+### 17.5 中央事务保障与稳定态仲裁
- 
- V4 阶段，事务设计从局部可靠性
+-
+-Rust Runtime 导出、TypeScript 声明和 KBM 调用名称保持一致。
+-
+-### 2.4 既有 Rust 所有权收口确认
+-
+-本轮重新扫描中央库生产路径，确认以下项目没有出现在 KBM 主链：
+-
+-- `better-sqlite3` 中央库连接；
+-- `rustWriteLease`；
+-- `artifactRepository.prune()`；
+-- 生产路径同步 `VexusIndex.load()`；
+-- 生产路径同步 `VexusIndex.save()`。
+-
+-扫描命中项全部属于已排除范围：
+-
+-- TDB；
+-- 独立插件数据库；
+-- 测试文件；
+-- 离线检查、重建和维修脚本；
+-- Rust standalone 测试样例。
+-
+-## 3. 本轮验证
+-
+-已执行：
+-
+-```text
+-cargo check --manifest-path rust-vexus-lite/Cargo.toml
+-node --check KnowledgeBaseManager.js
+-```
+-
+-结果：
+-
+-```text
+-cargo check：通过，Exit code 0
+-KnowledgeBaseManager.js：通过，Exit code 0
+-```
+-
+-本轮未执行：
+-
+-- 测试套件；
+-- 测试脚本迁移；
+-- 原生 release 构建；
+-- Windows 原生二进制替换；
+-- 真实中央数据库迁移；
+-- 生产数据库压测；
+-- 崩溃窗口验证；
+-- Windows 文件句柄 rename/delete 验证。
+-
+-## 4. 当前完整 Rust SQL 进度
+-
+-当前中央记忆库已经达到以下阶段：
+-
+-### 已进入 Rust 生产路径
+-
+-- SQLite StorageEngine 注册和连接管理；
+-- Write Actor；
+-- Read Pool；
+-- Schema 初始化入口；
+-- 数据库代际基础设施；
+-- 中央事实表摄取提交；
+-- 文件删除提交；
+-- Tag 一致性事实提交；
+-- 部分索引 Delta；
+-- 日记索引和 Global Tag 索引恢复接口；
+-- 双槽 checkpoint 接口；
+-- Rust watcher Runtime 所有权；
+-- Native Memo artifact 构建；
+-- Native Memo manifest 读取；
+-- Native Memo artifact 清理；
+-- Rust pairwise、intrinsic residual 和部分派生资产维护入口；
+-- Native River 查询和 Rust 侧 SQLite 读取。
+-
+-### 已从中央库生产路径移除或禁用
+-
+-- KBM 的中央 `better-sqlite3` 连接；
+-- JS `schemaManager` 生产调用；
+-- JS `sqliteHealthManager` 生产调用；
+-- JS 中央库 SQL 查询门面；
+-- JS 摄取事实表写入；
+-- JS 删除事实表写入；
+-- JS Chunk Delta 生产方法；
+-- JS Memo artifact prune SQL；
+-- Rust 子模块通过独立 `Connection::open_with_flags` 绕过统一 StorageEngine 的生产路径。
+-
+-## 5. 仍未达到最终完成定义的项目
+-
+-本轮不应把工程标记为“完整 Rust 数据面闭环”。以下事项仍未完成：
+-
+-### 5.1 索引代际与跨资源发布
+-
+-SQLite 事实提交和 usearch 内存索引更新仍是协调发布，不是跨资源事务。
+-
+-仍需完成：
+-
+-- 事实代际与索引 applied generation 的持久化协议；
+-- 受影响作用域查询/发布门禁；
+-- SQL 已提交而索引未发布时的崩溃恢复；
+-- Delta 失败后的不可查询状态和替代实例原子替换；
+-- 摄取、删除、Tag 一致性统一使用同一套恢复调度；
+-- “factsCommitted”和“indexReady”在所有接口中一致表达。
+-
+-### 5.2 Tag Delta 失败恢复
+-
+-Tag Delta 已转入 Rust，但当前仍需继续加强：
+-
+-- 避免 usearch Delta 中途失败后留下部分修改实例；
+-- 失败时将索引标记为 invalid；
+-- 从 SQLite 权威事实层异步重建；
+-- 重建完成前禁止查询半成品；
+-- MemoRuntime 失效和索引恢复状态需要由同一 Runtime 所有权根协调。
+-
+-### 5.3 摄取版本化闭环
+-
+-当前 JS 仍负责文本切分、Tag 提取和 Embedding 请求编排。
+-
+-仍需完成：
+-
+-- Rust 权威文本预处理、Chunk 切分和 Tag 规则；
+-- 文本规则版本和黄金样本冻结；
+-- 文件预检后的 mtime/size/checksum 再校验；
+-- 原生 batch TTL、取消、数量和字节预算；
+-- 操作 ID 持久化幂等回执；
+-- 删除墓碑阻止旧 Embedding 结果复活；
+-- 部分 Embedding 失败和乱序返回的完整持久化语义；
+-- 同维度不同模型的语义空间校验。
+-
+-因此当前状态仍是“事实提交已主要由 Rust 持有，文本业务权威尚未完全迁入 Rust”。
+-
+-### 5.4 watcher 可靠性
+-
+-Rust watcher 已拥有主路径，但仍有未闭环风险：
+-
+-- 有界队列溢出仍需显式 overflow/reconciliation 信号；
+-- 初始扫描、notify 事件和运行期对账需要保证最后路径版本可恢复；
+-- watcher worker 线程停止时需要可证明 join；
+-- 停止流程不能只清空队列后释放句柄；
+-- 文件稳定确认失败需要进入可恢复补偿，而不是只打印并丢弃；
+-- 生产 watcher 的取消和关闭行为仍需 Windows 实测。
+-
+-### 5.5 健康恢复与关闭
+-
+-Rust 已提供健康检查基础接口，但完整损坏恢复尚未完成：
+-
+-- 损坏数据库隔离；
+-- WAL/SHM 一致处理；
+-- 备份保留；
+-- 新库重建；
+-- 从 dailynote 重新摄取；
+-- 恢复期间结构化错误状态；
+-- 所有 N-API 后台任务跟踪和排空；
+-- Write Actor、Read Pool、watcher、usearch 句柄的严格关闭顺序；
+-- Windows 下数据库和索引文件替换验证。
+-
+-KBM 当前的损坏处理仍包含“停止服务并重启恢复”的控制面提示，不能视为 Rust 已经完成自动恢复。
+-
+-### 5.6 派生资产代际校验
+-
+-Pairwise、Residual、EPA 和 Memo artifact 已有 Rust 构建或写入路径，但仍需补齐：
+-
+-- 固定读事务快照；
+-- 源事实代际；
+-- 依赖签名；
+-- 长计算结束后的代际复核；
+-- 过期结果禁止覆盖 ready 资产；
+-- 派生队列去重、背压、取消和关闭排空；
+-- 派生资产不兼容时的结构化 warming 状态。
+-
+-本轮仅新增了 Memo artifact 生命周期清理，未声称所有派生计算已经完成代际发布协议。
+-
+-## 6. 生产路径扫描结论
+-
+-本轮扫描关键词：
+-
+-```text
+-better-sqlite3
+-rustWriteLease
+-Connection::open_with_flags
+-VexusIndex.load
+-VexusIndex.save
+-artifactRepository.prune
+-v10_derived_asset_status
+-rivermemo_artifacts
+-```
+-
+-中央 KBM 生产路径未发现旧 JS SQLite 连接和旧同步索引持有路径。
+-
+-扫描仍能看到以下内容，但均不属于本轮中央 KBM 生产链：
+-
+-- `TDBKnowledge.js`；
+-- `routes/admin/cache.js`；
+-- `Plugin/ImageProcessor`；
+-- `Plugin/OneRing`；
+--
+```
+
+**File**: `docs/KBM纯Rust单一SQL真相源与异步冷启动架构施工日志-2026-10-17.md` (removed, +0/-372)
+```diff
+@@ -1,372 +0,0 @@
+-# KBM 纯 Rust 单一 SQL 真相源与异步冷启动架构施工日志
+-
+-> **2026-10-18 状态索引**：本文为早期阶段记录，文中的“未测试”“尚未迁移”等描述保留历史语境。当前实现、定向测试证据、env 消费路径和剩余阻断项以[续施工日志第 11 节](./KBM纯Rust单一SQL真相源与异步冷启动架构施工日志-2026-10-17-续.md:381)为准。目前未完成生产切换或全部最终闭环；后续不处理 TDB、LightMemo。
+-
+-> 日期：2026-10-17  
+-> 施工分支：`feat/kbm-rust-single-sql-runtime`  
+-> 仓库：`H:\VCP\VCPMain\VCPToolBox`  
+-> 本日志：阶段性工程交接记录，不代表最终生产切换完成
+-
+-## 1. 本阶段目标与边界
+-
+-本阶段按《KBM 纯 Rust 单一 SQL 真相源与异步冷启动架构施工草图》第 7—16 章推进，目标是把中央 `knowledge_base.sqlite` 的数据面逐步收拢到 Rust `NativeKnowledgeRuntime`，同时保留 Node.js 控制面和 `EmbeddingUtils.js` 的远端向量化职责。
+-
+-明确排除：
+-
+-- 不修改 TDB 业务、TDB 数据库和 TDB 测试。
+-- 不改造 `Plugin/LightMemo/LightMemo.js`。
+-- 本阶段不执行测试套件、不做生产上机实测。
+-- 本阶段不宣称已经完成最终生产切换。
+-
+-本阶段允许保留部分旧 JS 门面用于兼容，但中央库的生产事实写入正在转移到 Rust Write Actor；后续必须继续完成所有权收口，不能把当前兼容层当作目标态。
+-
+-## 2. Git 与工作树状态
+-
+-当前分支：
+-
+-```text
+-feat/kbm-rust-single-sql-runtime
+-```
+-
+-当前工作树包含大量本阶段施工改动，既有已暂存修改，也有工作区继续修改。不能使用回滚或清理命令覆盖这些变更。
+-
+-已确认的主要变更类别：
+-
+-- 删除旧 JS EPA/Residual 实现。
+-- 调整 TagMemo、RiverMemo、ResultDeduplicator、AgentDream、RAGDiary 和联想发现等生产适配边界。
+-- 新增 Rust 存储、Schema、索引生命周期、摄取、Tag 一致性和 pairwise 维护模块。
+-- 扩展 `NativeKnowledgeRuntime` 与 N-API 类型声明。
+-- 将中央库摄取、删除和部分查询/维护能力转入 Rust。
+-- 将 KBM 文件监听路径改为 Rust watcher 事件队列消费。
+-- 更新 Windows 原生 `.node` 二进制文件。
+-
+-Git 状态中已确认的核心路径包括：
+-
+-```text
+-KnowledgeBaseManager.js
+-modules/knowledgeBase/databaseCoordinator.js
+-modules/knowledgeBase/diaryMetadataCache.js
+-modules/knowledgeBase/fileWatcher.js
+-modules/knowledgeBase/indexRepository.js
+-modules/knowledgeBase/ingestionPipeline.js
+-modules/knowledgeBase/searchService.js
+-modules/knowledgeBase/tagConsistencyService.js
+-rust-vexus-lite/src/index_lifecycle.rs
+-rust-vexus-lite/src/ingestion.rs
+-rust-vexus-lite/src/knowledge_runtime.rs
+-rust-vexus-lite/src/lib.rs
+-rust-vexus-lite/src/schema.rs
+-rust-vexus-lite/src/storage.rs
+-rust-vexus-lite/src/tag_consistency.rs
+-rust-vexus-lite/index.d.ts
+-```
+-
+-同时存在已删除文件：
+-
+-```text
+-EPAModule.js
+-ResidualPyramid.js
+-modules/knowledgeBase/migrationVectorCache.js
+-modules/tagmemoV10/riverMemoWorker.js
+-modules/tagmemoV10/riverMemoWorkerPool.js
+-```
+-
+-这些删除属于此前授权的旧生产实现收敛范围，不涉及 TDB 或 LightMemo。
+-
+-## 3. 已完成的工程工作
+-
+-### 3.1 Rust StorageEngine 骨架
+-
+-已建立 Rust 存储所有权骨架，包含：
+-
+-- 中央 SQLite 注册和连接管理。
+-- Write Actor 入口。
+-- Read Pool 入口。
+-- Schema 初始化入口。
+-- 数据库代际与运行时元数据接口。
+-- Native Runtime 的 Store 生命周期接口。
+-- Runtime capability/ABI 握手字段。
+-
+-当前目标结构是：
+-
+-```text
+-NativeKnowledgeRuntime
+-└── SqliteStorageEngine
+-    ├── Write Actor
+-    ├── Read Pool
+-    ├── Schema/Migration
+-    └── Runtime metadata
+-```
+-
+-需要注意：当前代码仍处于施工阶段，健康恢复、任务排空、严格关闭语义和所有旁路连接审计尚未达到最终完成定义。
+-
+-### 3.2 NativeKnowledgeRuntime 接口扩展
+-
+-已增加或推进以下接口族：
+-
+-- `openAndInitStore`
+-- `storeState`
+-- `healthCheck`
+-- `databaseGeneration`
+-- `capabilities`
+-- `commitIngestionBatch`
+-- `commitDeleteBatch`
+-- `probeIngestionFiles`
+-- `probeIngestionTags`
+-- `probeMigrationReuse`
+-- `cleanupDatabaseOrphans`
+-- `getTagConsistencySnapshot`
+-- `commitTagConsistency`
+-- `getKvVector`
+-- `setKvVector`
+-- `listKvVectors`
+-- `hydrateChunksByIds`
+-- `hydrateChunksByFilePaths`
+-- 日记本列表、文件范围、日期索引等轻量查询
+-- 日记索引注册、注销、恢复和 checkpoint
+-- Runtime 所有权的 watcher 启停和事件排空
+-
+-KBM 启动阶段已经增加 capability handshake，要求原生模块具备中央存储、摄取、删除、Tag 一致性、索引恢复、watcher 和 Memo/River 查询能力。缺少能力时启动失败，而不是退回 JS 中央数据库连接。
+-
+-### 3.3 摄取事实表提交
+-
+-已将摄取批次的事实表提交接入 Rust Write Actor：
+-
+-- 文件版本检查在 Rust 事务内执行。
+-- `files`、`chunks`、`tags`、`file_tags` 和迁移缓存消费进入 Rust 事务。
+-- JS 保留文件读取、文本切分、Tag 提取和 Embedding API 编排。
+-- 向量以 Float32Array 位置槽提交，Rust 校验维度、长度和有限浮点值。
+-- 部分 Embedding 失败以空槽保留，不通过删除数组元素改变位置。
+-- 迁移向量复用在 Rust 事务内读取 BLOB，避免向量 BLOB 进入 V8。
+-- 返回事实提交回执、受影响文件、Chunk、日记和 Tag 信息。
+-
+-当前仍需补齐：
+-
+-- 原生批次 TTL、取消、预算和持久化操作身份。
+-- 同一路径删除/修改后的旧 Embedding 防复活。
+-- 严格的文件快照再校验和预处理版本校验。
+-- 部分失败、乱序返回和重复提交的完整持久化语义。
+-- Rust 权威文本切分与 Tag 规则迁移。
+-
+-### 3.4 删除提交和索引 Delta
+-
+-本阶段已完成删除路径的关键收口：
+-
+-- Rust `DeleteCommitTask` 取得已注册日记索引的 Arc 快照。
+-- 删除事实事务继续由 Rust Write Actor 执行。
+-- 删除后的 Chunk ID Delta 在 Rust 后台任务内应用到驻留日记索引。
+-- `DeleteCommitResult` 增加 `indexReady`。
+-- Rust 事实提交成功但索引未驻留、锁失败或删除失败时返回 `indexReady: false`，不把已提交事实误判为可重试数据库失败。
+-- JS `_handleDeleteBatch` 已移除：
+-  - `indexRepository.applyChunkDelta`
+-  - 大删除时的 JS 索引注销
+-  - JS 持久化索引删除
+-- JS 只保留日期缓存失效、回执日志和队列状态处理。
+-- KBM 空删除批次回执已明确返回 `indexReady: true`。
+-
+-已执行并通过：
+-
+-```text
+-cargo check --manifest-path rust-vexus-lite/Cargo.toml
+-node --check KnowledgeBaseManager.js
+-node --check modules/knowledgeBase/ingestionPipeline.js
+-node --check modules/knowledgeBase/fileWatcher.js
+-```
+-
+-最后一次验证结果：
+-
+-```text
+-Exit code: 0
+-Finished `dev` profile [unoptimized + debuginfo]
+-无编译警告
+-```
+-
+-删除 Delta 当前仍是“事实提交后应用内存索引”的协调实现，不是 SQLite 与 usearch 的跨资源事务。后续必须接入索引发布门禁、已应用代际、失效记录和崩溃恢复。
+-
+-### 3.5 Rust watcher 事件队列
+-
+-已推进 Rust watcher 的 Runtime 所有权方向：
+-
+-- `NativeKnowledgeRuntime` 持有 watcher。
+-- watcher 事件进入 Rust 内部有界队列。
+-- Runtime 暴露 `drainWatchEvents`。
+-- JS `fileWatcher.js` 使用 Runtime 队列消费轻量事件。
+-- RAG 参数 watcher 也已改为 Rust watcher 队列消费。
+-- `WatcherConfig` 的 TypeScript 声明已补充 `initialScan`。
+-- watcher 的稳定性采样、generation 和稳定事件字段已纳入事件结构。
+-
+-当前仍需重点
+```
+
+**File**: `docs/KBM纯Rust单一SQL真相源与异步冷启动架构施工草图.md` (removed, +0/-1241)
+```diff
+@@ -1,1241 +0,0 @@
+-# KBM 纯 Rust 单一 SQL 真相源与异步冷启动架构施工草图
+-
+-> **2026-10-18 施工状态更新**：本文件保留设计与历史提案，不再代表“尚未实施”。中央 SQL 所有权、Rust 文本计划、持久化 Tag 计划、部分代际门禁、watcher 缺失补偿与定向测试已落地；完整生产验收仍未完成。当前证据和未闭环项见[续施工日志第 11 节](./KBM纯Rust单一SQL真相源与异步冷启动架构施工日志-2026-10-17-续.md:381)。后续施工严格排除 TDB、LightMemo，不依据历史提案扩展兼容范围。
+-
+-> **状态**：最终施工方案已写入第 7—16 章；第 1—6 章仅保留为历史调查，不作为当前施工指令。仅修改文档，尚未实施生产源码迁移。
+-> **日期**：2026-10-17
+-> **作者**：Kerr & Ryan
+-> **目标仓库**：`H:\VCP\VCPMain\VCPToolBox`
+-
+----
+-
+-## 1. 核心命题与第一性原理边界
+-
+-### 1.1 为什么不把整个 VCPToolBox 主服务器重写为纯 Rust？
+-VCPToolBox 的核心竞争力之一是 `Plugin.js` 统领的 90+ 常驻服务插件、预消息处理器（Preprocessor）与混合插件生态。这些 JS 插件运行在**同一个 V8 Heap** 内，通过对象引用直传（0ns 指针传递）和动态模块方法混入深度协同。
+-若将 HTTP/WebSocket 主服务器强行改为纯 Rust，任何插件钩子调用都将退化为跨进程 IPC 或跨 FFI 边界的 JSON 序列化/反序列化，重蹈 Tauri 双堆状态撕裂的覆辙。
+-
+-### 1.2 真正需要纯 Rust 大一统的边界在哪里？
+-真正的性能与内存病灶不在业务编排层，而在 **`KnowledgeBaseManager`（KBM）的数据面与存储主权割裂**：
+-1. **现状割裂**：`rust-vexus-lite` 仅负责 ANN 检索与 RiverMemo/EPA 算子计算；而 `VectorStore/database.sqlite`（及 `knowledge_base.sqlite`）的 Schema 管理、写入、冷启动对称差分查询、双槽基线调度、以及 `LightMemo` 的候选拉取，仍由 JS 侧 `better-sqlite3` 同步持有并执行。
+-2. **破局方向（One SQL Truth in Rust）**：
+-   - **保留 JS 控制面**：Node.js 主进程继续承载全部插件生态、HTTP/SSE 流式路由与远端 Embedding API 网络请求；
+-   - **收归 Rust 数据面**：将中央记忆库 SQLite 的**唯一读写持有权**、USearch 向量索引生命周期（含冷启动按需加载、双槽代际回放、空闲卸载）、文件变更 Diff 预检、以及 `LightMemo` 作用域混合检索，100% 收拢至 `rust-vexus-lite` 的 `NativeKnowledgeRuntime` 内部。
+-   - **彻底移除 KBM 的 `better-sqlite3` 连接**：让中央记忆库在全进程内只有 Rust `rusqlite` 一个连接池真相源，从物理上消灭双连接 Page Cache 膨胀、跨语言 WAL 写锁竞态（`rustWriteLease`）与 V8 主线程阻塞。
+-
+----
+-
+-## 2. 现行架构三大病灶的源码级验尸（Forensics）
+-
+-### 2.1 病灶一：Agent B 后台唤醒冷启动，卡停 Agent A 的 SSE 流式输出
+-当 Agent A 正在进行高频 SSE 流式输出时，若 Agent B 进入后台唤醒并触发未驻留日记本的记忆检索，Node.js 主线程 Event Loop 会出现 **100ms~400ms 级别的同步冻结**。源码级真凶如下：
+-
+-1. **USearch 索引同步加载阻塞主线程**：
+-   - 坐标：`rust-vexus-lite/src/lib.rs:324` (`#[napi(factory)] pub fn load(...)`) 与 `lib.rs:374` (`#[napi] pub fn save(...)`)。
+-   - 问题：这两个 N-API 方法均为**同步导出函数**。当 `modules/knowledgeBase/indexRepository.js:183` (`loadDiaryBaseline`) 或 `422` (`loadGlobalTagBaseline`) 调用 `this.VexusIndex.load(...)` 时，直接在 V8 主线程上执行磁盘 I/O 与 HNSW 图结构反序列化；同理，`publishDiaryBaseline` (`indexRepository.js:317`) 与 `publishGlobalTagBaseline` (`529`) 调用 `index.save(...)` 在主线程同步写盘并执行 Windows 文件替换重试。
+-2. **冷启动基线对称差分在 JS 主线程拉取全量 Vector BLOB**：
+-   - 坐标：`modules/knowledgeBase/indexRepository.js:107-159` (`_countDiaryBaselineDelta`) 与 `191-257` (`loadDiaryBaseline` 差分回放)；Tag 基线同理位于 `366-485`。
+-   - 问题：用 `better-sqlite3` 在主线程同步执行多表 `LEFT JOIN chunk_index_baseline_entries` 查询，将所有增量 Chunk 的 `3072 * 4 = 12KB` Vector BLOB 读入 V8 堆内存，再在 JS 主线程分配巨型 `new Float32Array(addedRows.length * 3072)` 逐行拷贝（`flat.set`），最后再跨 N-API 传回给 Rust 的 `index.applyChunkDelta(...)`。
+-   - 荒谬性：**数据原本在 SQLite，目标消费者是同进程的 Rust `usearch::Index`，却在冷启动热路径上绕道 V8 主线程完成同步查询与内存拼接！**
+-
+-### 2.2 病灶二：`LightMemo` 引发数百 MB 内存峰值与 V8 Major GC 停顿
+-每次调用 `LightMemo`（如 JEV `主动回忆`），都会制造剧烈的 RSS 内存尖峰并卡顿主线程：
+-
+-1. **全表拉取 Chunk 正文并在 V8 主线程全量 Jieba 分词**：
+-   - 坐标：`Plugin/LightMemo/LightMemo.js:2002-2092` (`_gatherCandidateChunks`)。
+-   - 问题：直接操作 `this.vectorDBManager.db.prepare(...)` 执行 `SELECT c.id, c.file_id, c.content, f.diary_name, f.path FROM chunks c JOIN files f ON c.file_id = f.id`，把目标日记本（开启全库搜索时为整库）数千至上万条 Chunk 的完整文本同步拉入 V8，紧接着对每条 Chunk 同步调用 `this.jiebaInstance.cut(text)` 构造 `tokens` 数组常驻在候选对象上。
+-2. **绕过 Rust 索引，在 JS 主线程执行 N+1 次 BLOB 查询与纯 JS 余弦点积**：
+-   - 坐标：`Plugin/LightMemo/LightMemo.js:2111-2145` (`_scoreByVectorSimilarity`) 及 `671` (`_handleRiverMemoSearch`)、`923` (`handleMemoryAB`)。
+-   - 问题：对收集到的全部 `candidates`（即便在 RiverMemo 模式下），先在 JS 主线程循环调用 `stmt.get(candidate.label)`（`SELECT vector FROM chunks WHERE id = ?`），将数千条 12KB 向量 BLOB 逐一拉进 Node.js Buffer，再用纯 JS 循环 `this._cosineSimilarity(queryVector, chunkVector)` 算几千万次浮点乘加！
+-   - 二次读取：第 680 行将算完分数的庞大 JS 候选数组传给 `rerankWithRiverMemoAsync` 后，Rust 侧（`result_deduplicator.rs` / `rivermemo_topology_v3.rs`）又打开 `rusqlite` 连接去同一个 SQLite 数据库二次读取这批向量！
+-
+-### 2.3 病灶三：SQLite 双连接争抢、双倍 Page Cache 与 `rustWriteLease` 复杂度
+-1. **双驱动并存**：
+-   - JS 侧：`KnowledgeBaseManager.js:345` 使用 `better-sqlite3` 打开长连接 `this.db`；
+-   - Rust 侧：`rust-vexus-lite/src/` 下共 6 处使用 `rusqlite::Connection::open_with_flags` 打开同一数据库文件（`knowledge_runtime.rs:344`、`lib.rs:1434/1455`、`memo_artifact_builder.rs:81/93`、`memo_pipeline.rs:72`、`result_deduplicator.rs:35`、`rivermemo_topology_v3.rs:601`）。
+-2. **后果**：
+-   - **双份内存页缓存**：`better-sqlite3` 与 `rusqlite` 各自在 C++/Rust 堆维护独立的 SQLite Page Cache；当 `LightMemo` 全表扫 `chunks` 时，`better-sqlite3` 缓存急剧膨胀且不与 Rust 共享。
+-   - **跨语言写锁互斥胶水**：因为 JS 写 `files/chunks/tags/*_baselines`，而 Rust 写 `tag_pair_similarity` / `tag_intrinsic_residuals` / `tagmemo_artifacts`，为了防止双写触发 `SQLITE_BUSY`，被迫在 `KnowledgeBaseManager.js:85-92, 251, 904-922` 与 `modules/knowledgeBase/databaseCoordinator.js` 中编写了近 600 行的 `rustWriteLease` 租约状态机与 `waitForIdle` 50ms 轮询等待。
+-
+----
+-
+-## 3. 全仓 `kbm.db` 触点盘点与隔离边界
+-
+-### 3.1 独立 SQLite 数据库（保持原状，不在本工程变更范围内）
+-经全仓检索 `require('better-sqlite3')`，以下模块操作的是**各自独立的业务 `.sqlite` 文件**，与中央记忆库无交集，保持原样：
+-- `TDBKnowledge.js` (`VectorStoreT
 ```
 
 ---
 
-### Incident Patch 10: `48c5ce26` (2026-09-28)
+### Incident Patch 3: `d29c10af` (2026-10-18)
 **Commit Message**: fix
 
-**File**: `modules/jevToolCallExp.js` (modified, +21/-11)
+**File**: `.gitignore` (modified, +8/-1)
 ```diff
-@@ -837,12 +837,22 @@ class JevToolCallExp {
-      *    “执行【关闭台灯】”这类写法的意图完全在【】里，不能因此落入 JEV 的随机裁决。
-      */
-     _thirdPartyMatchLayers(parsed) {
--        const withoutAnchors = parsed.raw
-+        // 按语义锚点主次排序，返回别名判定器数组；某层有命中即停止，低层不能覆盖高层：
-+        // 1. 【】主要目标：子串匹配；
-+        // 2. [] 次要约束：仅当整条约束与别名完全相等（标签式，如 [制冷]）才命中，
-+        //    [] 中的自由文本（台词、说明）绝不参与子串匹配，只交给 text 参数原样搬运；
-+        // 3. 锚点之外的自然语言动作词（如“打开”“查询”）：兜底。
-+        const primaryText = normalizeAlias(parsed.primary.join(' '));
-+        const constraintTags = new Set(parsed.constraints.map(normalizeAlias).filter(Boolean));
-+        const wrapperText = normalizeAlias(parsed.raw
-+            .replace(/【[\s\S]*?】/g, ' ')
-+            .replace(/\[[\s\S]*?\]/g, ' ')
-             .replace(/`[^`]*`/g, ' ')
--            .replace(/\{[^{}]*\}/g, ' ');
-+            .replace(/\{[^{}]*\}/g, ' '));
-         return [
--            normalizeAlias(withoutAnchors.replace(/【[\s\S]*?】/g, ' ')),
--            normalizeAlias(withoutAnchors)
-+            alias => this._textHasAlias(primaryText, alias),
-+            alias => constraintTags.has(normalizeAlias(alias)),
-+            alias => this._textHasAlias(wrapperText, alias)
-         ];
-     }
+@@ -299,8 +299,12 @@ helloagents/
+ # Windows 缩略图缓存
+ Thumbs.db
  
-@@ -934,8 +944,8 @@ class JevToolCallExp {
-         const commands = entry.commands;
-         if (commands.length === 1) return commands[0];
- 
--        const matched = this._firstLayerHits(matchLayers, text => commands.filter(cmd => (
--            [cmd.commandIdentifier, ...cmd.aliases].some(alias => this._textHasAlias(text, alias))
-+        const matched = this._firstLayerHits(matchLayers, hit => commands.filter(cmd => (
-+            [cmd.commandIdentifier, ...cmd.aliases].some(alias => hit(alias))
-         )));
-         if (matched.length === 1) return matched[0];
- 
-@@ -1010,8 +1020,8 @@ class JevToolCallExp {
-                         throw new Error(`参数 ${name} 的取值 "${prefixed}" 不在允许选项中：${keys.join('、')}。`);
-                     }
-                 } else {
--                    matched = this._firstLayerHits(matchLayers, text => keys.filter(key => (
--                        aliasesOf(key).some(alias => this._textHasAlias(text, alias))
-+                    matched = this._firstLayerHits(matchLayers, hit => keys.filter(key => (
-+                        aliasesOf(key).some(alias => hit(alias))
-                     )));
-                 }
-                 if (matched.length === 1) {
-@@ -1030,9 +1040,9 @@ class JevToolCallExp {
-                 // 同一层内否定词优先；锚点层有任意命中时不再看全文层。
-                 let falseHit = [];
-                 let trueHit = [];
--                for (const text of matchLayers) {
--                    falseHit = param.falseAliases.filter(alias => this._textHasAlias(text, alias));
--                    trueHit = param.trueAliases.filter(alias => this._textHasAlias(text, alias));
-+                for (const hit of matchLayers) {
-+                    falseHit = param.falseAliases.filter(alias => hit(alias));
-+                    trueHit = param.trueAliases.filter(alias => hit(alias));
-                     if (falseHit.length > 0 || trueHit.length > 0) break;
-                 }
-                 if (falseHit.length > 0) {
-```
-
----
-
-### Incident Patch 11: `44fc1e9f` (2026-09-28)
-**Commit Message**: fix
-
-**File**: `modules/jevToolCallExp.js` (modified, +40/-17)
-```diff
-@@ -818,9 +818,9 @@ class JevToolCallExp {
-             throw new Error(`工具 "${toolName}" 注册在 {${entry.categoryLabel}}，不能通过 {${label}} 调用。`);
-         }
- 
--        const decisionText = this._thirdPartyDecisionText(parsed);
--        const command = await this._selectThirdPartyCommand(entry, parsed, decisionText);
--        const args = await this._buildThirdPartyArgs(entry, command, parsed, decisionText);
-+        const matchLayers = this._thirdPartyMatchLayers(parsed);
-+        const command = await this._selectThirdPartyCommand(entry, parsed, matchLayers);
-+        const args = await this._buildThirdPartyArgs(entry, command, parsed, matchLayers);
- 
-         return [this._buildExpandedCall(entry.toolName, args, inheritedCall, {
-             category: parsed.categoryKey,
-@@ -830,12 +830,29 @@ class JevToolCallExp {
-         })];
-     }
- 
--    /** 用于确定性匹配的文本：去掉目录、工具名与【】主要负载，只保留动作词和 [] 约束。 */
--    _thirdPartyDecisionText(parsed) {
--        return parsed.raw
--            .replace(/【[\s\S]*?】/g, ' ')
-+    /**
-+     * 确定性匹配的分层文本（已归一化）：
-+     * 1. 锚点层：去掉目录、工具名与【】，只含动作词和 [] 约束，优先级最高；
-+     * 2. 全文层：在锚点层无命中时回退，包含【】内容。
-+     *    “执行【关闭台灯】”这类写法的意图完全在【】里，不能因此落入 JEV 的随机裁决。
-+     */
-+    _thirdPartyMatchLayers(parsed) {
-+        const withoutAnchors = parsed.raw
-             .replace(/`[^`]*`/g, ' ')
-             .replace(/\{[^{}]*\}/g, ' ');
-+        return [
-+            normalizeAlias(withoutAnchors.replace(/【[\s\S]*?】/g, ' ')),
-+            normalizeAlias(withoutAnchors)
-+        ];
-+    }
++# 源码研究
++docs/TriviumDB-master/
 +
-+    /** 按层依次尝试，返回第一层的非空命中结果。 */
-+    _firstLayerHits(layers, collect) {
-+        for (const text of layers) {
-+            const hits = collect(text);
-+            if (hits.length > 0) return hits;
-+        }
-+        return [];
-     }
+ # ===== 编译产物 =====
+ rust-vexus-lite/target/
++rust-vexus-lite/crates/vcp-tdb-index/target/
+ Plugin/DailyNoteSearcher/src/target/
+ Plugin/CodeSearcher/src/target/
+ Plugin/PaperReader/paperreader-rs/target/
+@@ -317,4 +321,7 @@ Plugin/.backup/
  
-     _textHasAlias(normalizedText, alias) {
-@@ -913,14 +930,13 @@ class JevToolCallExp {
-         return null;
-     }
- 
--    async _selectThirdPartyCommand(entry, parsed, decisionText) {
-+    async _selectThirdPartyCommand(entry, parsed, matchLayers) {
-         const commands = entry.commands;
-         if (commands.length === 1) return commands[0];
- 
--        const normalized = normalizeAlias(decisionText);
--        const matched = commands.filter(cmd => (
--            [cmd.commandIdentifier, ...cmd.aliases].some(alias => this._textHasAlias(normalized, alias))
--        ));
-+        const matched = this._firstLayerHits(matchLayers, text => commands.filter(cmd => (
-+            [cmd.commandIdentifier, ...cmd.aliases].some(alias => this._textHasAlias(text, alias))
-+        )));
-         if (matched.length === 1) return matched[0];
- 
-         const candidates = matched.length > 1 ? matched : commands;
-@@ -971,13 +987,12 @@ class JevToolCallExp {
-         });
-     }
- 
--    async _buildThirdPartyArgs(entry, command, parsed, decisionText) {
-+    async _buildThirdPartyArgs(entry, command, parsed, matchLayers) {
-         const args = { ...command.fixedArgs };
-         if (command.injectCommand) args.command = command.commandIdentifier;
- 
-         const constraints = parsed.constraints;
-         const consumed = new Set();
--        const normalizedDecision = normalizeAlias(decisionText);
-         const pending = [];
-         const paramEntries = Object.entries(command.parameters || {});
- 
-@@ -995,7 +1010,9 @@ class JevToolCallExp {
-                         throw new Error(`参数 ${name} 的取值 "${prefixed}" 不在允许选项中：${keys.join('、')}。`);
-                     }
-                 } else {
--                    matched = keys.filter(key => aliasesOf(key).some(alias => this._textHasAlias(normalizedDecision, alias)));
-+                    matched = this._firstLayerHits(matchLayers, text => keys.filter(key => (
-+                        aliasesOf(key).some(alias => this._textHasAlias(text, alias))
-+                    )));
-                 }
-                 if (matched.length === 1) {
-                     args[name] = matched[0];
-@@ -1010,8 +1027,14 @@ class JevToolCallExp {
-                 });
-             } else if (param.type === 'boolean') {
-                 // 否定词优先，避免“不要静音”被识别为“静音”。
--                const falseHit = param.falseAliases.filter(alias => this._textHasAlias(normalizedDecision, alias));
--                const trueHit = param.trueAliases.filter(alias => this._textHasAlias(normalizedDecision, alias));
-+                // 同一层内否定词优先；锚点层有任意命中时不再看全文层。
-+                let falseHit = [];
-+                let trueHit = [];
-+                for (const text of matchLayers) {
-+                    falseHit = param.falseAliases.filter(alias => this._textHasAlias(text, alias));
-+                    trueHit = param.trueAliases.filter(alias => this._textHasAlias(text, alias));
-+                    if (falseHit.length > 0 || trueHit.length > 0) break;
-+                }
-                 if (falseHit.length > 0) {
-                     args[name] = 'false';
-                     this._markExactConstraints(constraints, falseHit, consumed);
-```
-
----
-
-### Incident Patch 12: `9fb8ef6a` (2026-09-25)
-**Commit Message**: Merge pull request #483 from Oscar-Williams/fix/remove-unused-hnswlib-node
-
-fix(deps): remove unused hnswlib-node dependency
-
-**File**: `Plugin/RAGDiaryPlugin/README.md` (modified, +4/-4)
-```diff
-@@ -33,12 +33,12 @@
- 
- ## 数据库核心功能
- 
--VCP的RAG日记系统不仅仅是一个功能强大的信息检索工具，其背后还有一个经过深度优化的、高性能的向量数据库管理器 (`VectorDBManager.js`)。该管理器确保了日记内容的实时同步、高效检索和系统的长期稳定运行。
-+VCP 的 RAG 日记系统由 `KnowledgeBaseManager.js` 统一编排 SQLite 权威存储与 Rust 向量索引，负责日记内容的同步、检索和恢复。向量索引使用项目自带的 `rust-vexus-lite`，不依赖额外的 Node 原生 HNSW 模块。
- 
--### 1. 高性能的HNSW索引
-+### 1. SQLite 与 Rust 派生索引
- 
---   **核心技术**：采用业界领先的 `hnswlib-node` 库，基于HNSW（Hierarchical Navigable Small World）算法构建向量索引。
---   **优势**：即使在数百万级别的日记片段中，也能实现毫秒级的近似最近邻搜索，确保了RAG检索的极速响应。
-+-   **权威数据**：SQLite (`better-sqlite3`) 保存文件、文本块、标签和索引元数据。
-+-   **向量检索**：`rust-vexus-lite` 提供 Vexus/USearch 索引；全局标签索引和按日记本索引可按需加载，并可从 SQLite 基线重建。
- 
- ### 2. 智能的增量与全量同步
- 
-```
-
-**File**: `package-lock.json` (modified, +14/-18)
-```diff
-@@ -33,7 +33,6 @@
-         "fs-extra": "^10.1.0",
-         "glob": "^7.2.3",
-         "globals": "^14.0.0",
--        "hnswlib-node": "^1.4.2",
-         "https-browserify": "^1.0.0",
-         "https-proxy-agent": "^7.0.4",
-         "ioredis": "^5.6.1",
-@@ -4301,6 +4300,20 @@
-       "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
-       "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw=="
-     },
-+    "node_modules/fsevents": {
-+      "version": "2.3.3",
-+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
-+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
-+      "hasInstallScript": true,
-+      "license": "MIT",
-+      "optional": true,
-+      "os": [
-+        "darwin"
-+      ],
-+      "engines": {
-+        "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
-+      }
-+    },
-     "node_modules/fstream": {
-       "version": "1.0.12",
-       "resolved": "https://registry.npmjs.org/fstream/-/fstream-1.0.12.tgz",
-@@ -4640,17 +4653,6 @@
-         "he": "bin/he"
-       }
-     },
--    "node_modules/hnswlib-node": {
--      "version": "1.4.2",
--      "resolved": "https://registry.npmjs.org/hnswlib-node/-/hnswlib-node-1.4.2.tgz",
--      "integrity": "sha512-76PIzOaNcX8kOpKwlFPl07uelpctqDMzbiC+Qsk2JWNVkzeU/6iXRk4tfE9z3DoK1RCBrOaFXmQ6RFb1BVF9LA==",
--      "hasInstallScript": true,
--      "license": "Apache-2.0",
--      "dependencies": {
--        "bindings": "^1.5.0",
--        "node-addon-api": "^6.0.0"
--      }
--    },
-     "node_modules/hookified": {
-       "version": "1.13.0",
-       "resolved": "https://registry.npmjs.org/hookified/-/hookified-1.13.0.tgz",
-@@ -6083,12 +6085,6 @@
-         "node": ">=10"
-       }
-     },
--    "node_modules/node-addon-api": {
--      "version": "6.1.0",
--      "resolved": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-6.1.0.tgz",
--      "integrity": "sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==",
--      "license": "MIT"
--    },
-     "node_modules/node-cache": {
-       "version": "5.1.2",
-       "resolved": "https://registry.npmjs.org/node-cache/-/node-cache-5.1.2.tgz",
-```
-
-**File**: `package.json` (modified, +0/-1)
-```diff
-@@ -41,7 +41,6 @@
-     "fs-extra": "^10.1.0",
-     "glob": "^7.2.3",
-     "globals": "^14.0.0",
--    "hnswlib-node": "^1.4.2",
-     "https-browserify": "^1.0.0",
-     "https-proxy-agent": "^7.0.4",
-     "ioredis": "^5.6.1",
-```
-
----
-
-### Incident Patch 13: `427528f5` (2026-09-25)
-**Commit Message**: fix(deps): remove unused hnswlib-node dependency
-
-**File**: `Plugin/RAGDiaryPlugin/README.md` (modified, +4/-4)
-```diff
-@@ -33,12 +33,12 @@
- 
- ## 数据库核心功能
- 
--VCP的RAG日记系统不仅仅是一个功能强大的信息检索工具，其背后还有一个经过深度优化的、高性能的向量数据库管理器 (`VectorDBManager.js`)。该管理器确保了日记内容的实时同步、高效检索和系统的长期稳定运行。
-+VCP 的 RAG 日记系统由 `KnowledgeBaseManager.js` 统一编排 SQLite 权威存储与 Rust 向量索引，负责日记内容的同步、检索和恢复。向量索引使用项目自带的 `rust-vexus-lite`，不依赖额外的 Node 原生 HNSW 模块。
- 
--### 1. 高性能的HNSW索引
-+### 1. SQLite 与 Rust 派生索引
- 
---   **核心技术**：采用业界领先的 `hnswlib-node` 库，基于HNSW（Hierarchical Navigable Small World）算法构建向量索引。
---   **优势**：即使在数百万级别的日记片段中，也能实现毫秒级的近似最近邻搜索，确保了RAG检索的极速响应。
-+-   **权威数据**：SQLite (`better-sqlite3`) 保存文件、文本块、标签和索引元数据。
-+-   **向量检索**：`rust-vexus-lite` 提供 Vexus/USearch 索引；全局标签索引和按日记本索引可按需加载，并可从 SQLite 基线重建。
- 
- ### 2. 智能的增量与全量同步
- 
-```
-
-**File**: `package-lock.json` (modified, +14/-18)
-```diff
-@@ -33,7 +33,6 @@
-         "fs-extra": "^10.1.0",
-         "glob": "^7.2.3",
-         "globals": "^14.0.0",
--        "hnswlib-node": "^1.4.2",
-         "https-browserify": "^1.0.0",
-         "https-proxy-agent": "^7.0.4",
-         "ioredis": "^5.6.1",
-@@ -4301,6 +4300,20 @@
-       "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
-       "integrity": "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw=="
-     },
-+    "node_modules/fsevents": {
-+      "version": "2.3.3",
-+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
-+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
-+      "hasInstallScript": true,
-+      "license": "MIT",
-+      "optional": true,
-+      "os": [
-+        "darwin"
-+      ],
-+      "engines": {
-+        "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
-+      }
-+    },
-     "node_modules/fstream": {
-       "version": "1.0.12",
-       "resolved": "https://registry.npmjs.org/fstream/-/fstream-1.0.12.tgz",
-@@ -4640,17 +4653,6 @@
-         "he": "bin/he"
-       }
-     },
--    "node_modules/hnswlib-node": {
--      "version": "1.4.2",
--      "resolved": "https://registry.npmjs.org/hnswlib-node/-/hnswlib-node-1.4.2.tgz",
--      "integrity": "sha512-76PIzOaNcX8kOpKwlFPl07uelpctqDMzbiC+Qsk2JWNVkzeU/6iXRk4tfE9z3DoK1RCBrOaFXmQ6RFb1BVF9LA==",
--      "hasInstallScript": true,
--      "license": "Apache-2.0",
--      "dependencies": {
--        "bindings": "^1.5.0",
--        "node-addon-api": "^6.0.0"
--      }
--    },
-     "node_modules/hookified": {
-       "version": "1.13.0",
-       "resolved": "https://registry.npmjs.org/hookified/-/hookified-1.13.0.tgz",
-@@ -6083,12 +6085,6 @@
-         "node": ">=10"
-       }
-     },
--    "node_modules/node-addon-api": {
--      "version": "6.1.0",
--      "resolved": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-6.1.0.tgz",
--      "integrity": "sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==",
--      "license": "MIT"
--    },
-     "node_modules/node-cache": {
-       "version": "5.1.2",
-       "resolved": "https://registry.npmjs.org/node-cache/-/node-cache-5.1.2.tgz",
-```
-
-**File**: `package.json` (modified, +0/-1)
-```diff
-@@ -41,7 +41,6 @@
-     "fs-extra": "^10.1.0",
-     "glob": "^7.2.3",
-     "globals": "^14.0.0",
--    "hnswlib-node": "^1.4.2",
-     "https-browserify": "^1.0.0",
-     "https-proxy-agent": "^7.0.4",
-     "ioredis": "^5.6.1",
-```
-
----
-
-### Incident Patch 14: `7a73b02e` (2026-09-24)
-**Commit Message**: fix
-
-**File**: `Plugin/BilibiliFetch/BilibiliFetch.py` (modified, +29/-16)
-```diff
-@@ -1060,28 +1060,30 @@ def process_bilibili_enhanced(video_input: str, lang_code: str | None = None, da
-     full_text = "\n".join(text_parts).strip()
-     
-     if not images_to_add:
--        return full_text
-+        return {"content": [{"type": "text", "text": full_text}]}
- 
--    # 图片通过标准多模态 content 数组直接交给模型看图，不再仅依赖模型从文本中
--    # 复制 URL。仍提供短 HTML 引用，让模型在认为画面有趣或精彩时自行决定是否分享。
-+    # 可分享的链接留在正文；内联图片只进入独立的 OpenAI image_url 内容块。
-+    # 不允许在展示 URL 缺失时回退到 data URI，否则 Base64 会进入正文。
-     full_text += "\n\n【快照使用提示】\n以下快照已作为多模态图片提供，你可以直接结合画面理解视频。若你认为其中有有趣或精彩的画面，可在回复中酌情分享，不必逐张展示。"
-     for img_obj in images_to_add:
--        display_url = img_obj.pop("_display_url", img_obj["image_url"]["url"])
--        snapshot_time = img_obj.pop("_snapshot_time", None)
-+        display_url = img_obj["_display_url"]
-+        snapshot_time = img_obj["_snapshot_time"]
-         time_label = f"{snapshot_time:g}s" if isinstance(snapshot_time, (int, float)) else "未知时间"
-         full_text += f'\n- {time_label}: <img src="{display_url}" width="400" alt="Bilibili Snapshot">'
- 
--    # 安全熔断器：多模态图片单次上限设为 10 张，防止过大请求体撑爆大模型上下文或触发网关体积超限
-+    # 图片数据每次调用最多 10 张；保留所有可分享链接，不把 Base64 拼到文本里。
-     MAX_MULTIMODAL_IMAGES = 10
--    capped_images = images_to_add
-     if len(images_to_add) > MAX_MULTIMODAL_IMAGES:
-         logging.info(f"Multimodal images capped to top {MAX_MULTIMODAL_IMAGES} to prevent context overflow.")
--        capped_images = images_to_add[:MAX_MULTIMODAL_IMAGES]
-+    capped_images = images_to_add[:MAX_MULTIMODAL_IMAGES]
- 
-     return {
-         "content": [
-             {"type": "text", "text": full_text},
--            *capped_images
-+            *[
-+                {"type": "image_url", "image_url": img["image_url"]}
-+                for img in capped_images
-+            ]
-         ]
-     }
- 
-@@ -1371,26 +1373,37 @@ def handle_single_request(data: dict):
-         
-         if is_serial:
-             logging.info("Detected serial/batch request.")
--            results = []
-+            content = []
-             # Find all indices
-             indices = sorted(list(set([re.findall(r'\d+', k)[0] for k in input_data.keys() if re.findall(r'\d+', k)])))
-             if not indices: # Fallback if no digits found but suspected serial
-                 indices = ['']
- 
-+            # 批量调用共享图片上限，避免多个任务合并后撑爆多模态请求体。
-+            remaining_images = 10
-             for idx in indices:
-                 # Extract parameters for this index
-                 sub_data = {k.replace(idx, ''): v for k, v in input_data.items() if k.endswith(idx)}
--                # Map 'urlX' to 'url' etc. if needed, handle_single_request expects clean keys
-                 try:
-                     res = handle_single_request(sub_data)
--                    results.append(f"--- 任务 {idx} 结果 ---\n{res if isinstance(res, str) else json.dumps(res, indent=2, ensure_ascii=False)}")
-+                    content.append({"type": "text", "text": f"--- 任务 {idx} 结果 ---"})
-+                    if isinstance(res, dict) and isinstance(res.get("content"), list):
-+                        for part in res["content"]:
-+                            if part.get("type") == "text":
-+                                content.append({"type": "text", "text": part["text"]})
-+                            elif part.get("type") == "image_url" and remaining_images > 0:
-+                                content.append({"type": "image_url", "image_url": part["image_url"]})
-+                                remaining_images -= 1
-+                    else:
-+                        content.append({"type": "text", "text": res if isinstance(res, str) else json.dumps(res, ensure_ascii=False)})
-                 except Exception as e:
--                    results.append(f"--- 任务 {idx} 失败 ---\n错误: {e}")
--            
--            combined_res = "\n\n".join(results)
--            output = {"status": "success", "result": combined_res}
-+                    content.append({"type": "text", "text": f"--- 任务 {idx} 失败 ---\n错误: {e}"})
+ # ==== 开发SDK ====
+ Plugin/VCPQQBotServer/bot-node-sdk-main
+-开发日志/
+\ No newline at end of file
++开发日志/
 +
-+            output = {"status": "success", "result": {"content": content}}
-         else:
-             result_data = handle_single_request(input_data)
-+            if not isinstance(result_data, dict) or not isinstance(result_data.get("content"), list):
-+                result_data = {"content": [{"type": "text", "text": result_data if isinstance(result_data, str) else json.dumps(result_data, ensure_ascii=False)}]}
-             output = {"status": "success", "result": result_data}
- 
-     except (json.JSONDecodeError, ValueError) as e:
-```
-
----
-
-### Incident Patch 15: `2af002d8` (2026-09-24)
-**Commit Message**: fix
-
-**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ JEV:「始」请使用 {能力} 中的 `可选工具`，围绕【主要内容】
- 
- 核心示例：
- JEV:「始」请播放【星の余韻】，并启用[星诞]演出模式。「末」
--JEV:「始」打开[https://example.com]。「末」
-+JEV:「始」读取[https://example.com]。「末」
- JEV:「始」对网页截图[https://example.com/page]。「末」
- JEV:「始」看图[https://example.com/cat.png]。「末」
- JEV:「始」请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。「末」
++# Local native artifact archives; retain outside disposable build caches.
++/.vcp-native-archive/
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #486** (2026-10-05): feat(knowledgeBase): 引入单 Agent Chunk 双槽代际索引与集合对称差分回放机制 (@infinite-vector)
-- **PR #484** (2026-10-03): feat(plugin): 新增 LdBook 电子图书检索与下载插件 (@Ldl-h)
-- **PR #483** (2026-09-25): fix(deps): remove unused hnswlib-node dependency (@Oscar-Williams)
-- **PR #481** (2026-09-22): feat(BilibiliFetch): 修复快照多模态在下游网关触发 SSRF 500 熔断的问题，并优化国内代理路由与多级凭据读取容错 (@infinite-vector)
-- **PR #480** (2026-09-21): fix(dailyNotes): 支持日记保存时同步重命名与严格扩展名白名单兜底 (@infinite-vector)
-- **PR #479** (closed): feat: add opt-in Telegram bridge with correlated host events (@SeOgi-Tsu)
-- **PR #478** (2026-09-19): feat(jev): 折叠/剪枝/river 三处加 Jev 语义二次判断（级联，默认关闭） (@Lutra23)
-- **PR #477** (2026-09-19): fix: Responses 格式丢失系统提示词和思维链 (@Wooden-Gear)
+- **PR #504** (2026-10-18): feat(kbm): Rust 单 SQL 运行时、TDB 索引与管理面板统一 (@lioensky)
+- **PR #503** (2026-10-18): fix(LinuxLogMonitor): prevent watchdog timeout from terminating host … (@joker74581)
+- **PR #502** (2026-10-17): test(jev): 修复 JEV 生态/红队/压测套件可选插件 t.skip 守卫与策略文件沙盒隔离 (@Cimo-Yu)
+- **PR #499** (2026-10-16): fix(deps): 恢复插件商店插件 YoutubeFetch 所需的宿主 Python 依赖 (#495) (@Cimo-Yu)
+- **PR #498** (2026-10-16): fix: 修复提示词硬编码路径与dotenv双反斜杠(#494)、残留依赖(#495)、PM2解释器ABI(#496)及未同步Var告警(#497) (@Cimo-Yu)
+- **PR #493** (2026-10-14): fix(vcpLoop): 修复 ToolCallParser 中 JEV 字段歧义抢占缺陷，合并收敛 JEV 全域生态测试并支持缺失插件优雅跳过 (@infinite-vector)
 
 ---
 
@@ -4023,3 +2875,36 @@ fix(deps): remove unused hnswlib-node dependency
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #503 from joker74581/fix/linux-log-monitor-watchdog-exit
+
+**RULE**:
+When implementing operations in `Plugin/LinuxLogMonitor/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5ec30822`: Merge pull request #503 from joker74581/fix/linux-log-monitor-watchdog-exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/LinuxLogMonitor/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+- 30分钟无数据自动优雅停止当前监控任务并释放资源
+- 避免调用 `process.exit(1)` 误杀宿主服务进程（适配 hybridservice direct 常驻模式）
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+- 30分钟无数据自动触发 `process.exit(1)`
+- 防止进程僵死，配合进程管理器实现自动重启
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5ec30822` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:23:26.030Z",
-  "total_verified_learnings": 315,
+  "last_updated": "2026-10-18T22:29:35.089Z",
+  "total_verified_learnings": 322,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2496,22 +2496,35 @@
     "learn-github-beclab-olares": {
       "learning_id": "learn-github-beclab-olares",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "beclab-olares",
+      "source": "beclab/Olares",
+      "repository": "beclab/Olares",
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "HEAD",
-      "content_hash": "18cde75bd916ec1c62bbc68fda7dec291e8cdbf72ac5d2ed033ffad2508588ae",
+      "source_version": "694ac05c",
+      "content_hash": "6da2aa32cb0d4cec4f4da89118e94ed25a12fc938ca8e37d259f3334aa254907",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1783,
+          "title": "download-server):  block downloads without detected media and disable remote tim",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.041Z"
+      "verified_at": "2026-10-18T22:29:31.532Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bee-san-ciphey": {
       "learning_id": "learn-github-bee-san-ciphey",
@@ -4493,22 +4506,35 @@
     "learn-github-cryfs-cryfs": {
       "learning_id": "learn-github-cryfs-cryfs",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cryfs-cryfs",
+      "source": "cryfs/cryfs",
+      "repository": "cryfs/cryfs",
       "slug": "cryfs-cryfs",
       "platform": "github",
       "source_url": "https://github.com/cryfs/cryfs",
-      "source_version": "HEAD",
-      "content_hash": "a83620abe99ad841bae7b33bf5562412bcde9162e438901f7033fe1770650280",
+      "source_version": "ad1f72d5",
+      "content_hash": "0b8945b80cac5c9f8b0b4b7f211d45b0b53418a3f8907ca4a3d5a9028888bf31",
       "dossier_path": "07_PROJECT_LEARNING/cryfs-cryfs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cryfs-cryfs-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1784,
+          "title": "Add TODOs for the rename follow-ups found while fixing #672 (#673)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.448Z"
+      "verified_at": "2026-10-18T22:29:32.705Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cycloidio-terracognita": {
       "learning_id": "learn-github-cycloidio-terracognita",
@@ -20920,22 +20946,35 @@
     "learn-github-hunvreus-basecoat": {
       "learning_id": "learn-github-hunvreus-basecoat",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hunvreus-basecoat",
+      "source": "hunvreus/basecoat",
+      "repository": "hunvreus/basecoat",
       "slug": "hunvreus-basecoat",
       "platform": "github",
       "source_url": "https://github.com/hunvreus/basecoat",
-      "source_version": "HEAD",
-      "content_hash": "9e5d2208c024fc536086dba7c546c3347f42edcb7c5273b16533707f87f06778",
+      "source_version": "6953a4ad",
+      "content_hash": "442d4707fea3a29a1097cd7edf97ca22433aac34089c6c047d6ff9710f99ba1b",
       "dossier_path": "07_PROJECT_LEARNING/hunvreus-basecoat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hunvreus-basecoat-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1779,
+          "title": "docs sidebar after history restore",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.521Z"
+      "verified_at": "2026-10-18T22:29:21.000Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-hypit-ai-hypit": {
       "learning_id": "learn-github-hypit-ai-hypit",
@@ -21233,22 +21272,35 @@
     "learn-github-infinitered-reactotron": {
       "learning_id": "learn-github-infinitered-reactotron",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "infinitered-reactotron",
+      "source": "infinitered/reactotron",
+      "repository": "infinitered/reactotron",
       "slug": "infinitered-reactotron",
       "platform": "github",
       "source_url": "https://github.com/infinitered/reactotron",
-      "source_version": "HEAD",
-      "content_hash": "71bbddca4e38f9ed3293272b7899b4780407aa537783bcc928880fe46445327d",
+      "source_version": "3e480ab0",
+      "content_hash": "5594d195530fb4f9b5b16f7df0d7ac3bfa558f0a17f7e6ec22d34ba2e54f46ce",
       "dossier_path": "07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1782,
+          "title": "reactotron-react-native): harden fetch interceptor error isolation and restore (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.579Z"
+      "verified_at": "2026-10-18T22:29:27.725Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-infisical-infisical": {
       "learning_id": "learn-github-infisical-infisical",
@@ -23727,22 +23779,35 @@
     "learn-github-lioensky-vcptoolbox": {
       "learning_id": "learn-github-lioensky-vcptoolbox",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lioensky-vcptoolbox",
+      "source": "lioensky/VCPToolBox",
+      "repository": "lioensky/VCPToolBox",
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "HEAD",
-      "content_hash": "df107aff5a9f41cd4772f90d133dcde5a697b1d556779b5a714ae50efd3e5f52",
+      "source_version": "d961b09c",
+      "content_hash": "84ec959e5dfd624930d28f05b37678eaa21cda4466fa4bb070f93ecb4068a6f5",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1785,
+          "title": "Merge pull request #503 from joker74581/fix/linux-log-monitor-watchdog-exit",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.039Z"
+      "verified_at": "2026-10-18T22:29:35.083Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-litmuschaos-litmus": {
       "learning_id": "learn-github-litmuschaos-litmus",
@@ -24968,22 +25033,35 @@
     "learn-github-michael-a-kuykendall-shimmy": {
       "learning_id": "learn-github-michael-a-kuykendall-shimmy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "michael-a-kuykendall-shimmy",
+      "source": "Michael-A-Kuykendall/shimmy",
+      "repository": "Michael-A-Kuykendall/shimmy",
       "slug": "michael-a-kuykendall-shimmy",
       "platform": "github",
       "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
-      "source_version": "HEAD",
-      "content_hash": "97dbc59613622ec63bef6b7b8b84c351ff3d6bbdcdfd184e9ad349aa149244b4",
+      "source_version": "4895730a",
+      "content_hash": "e71b8233c157dcd25afb446297d018333f6024b65ecceb64c4bc4e74c17d3b47",
       "dossier_path": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1780,
+          "title": "template): Gemma family fallback + slice-step renderer (oqu.11)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.286Z"
+      "verified_at": "2026-10-18T22:29:22.037Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-michaelbull-kotlin-result": {
       "learning_id": "learn-github-michaelbull-kotlin-result",
@@ -46174,22 +46252,36 @@
     "learn-github-crawlcove-robots-txt-tester": {
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "CrawlCove/crawlcove-robots-txt-tester",
-      "slug": "crawlcove-robots-txt-tester",
+      "source": "CrawlCove/robots-txt-tester",
+      "repository": "CrawlCove/robots-txt-tester",
+      "slug": "crawlcove-crawlcove-robots-txt-tester",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-      "source_version": "main",
-      "content_hash": "bfadf5b54cbe4a7681e965e2d23975c9fcc8cda70f6a78f0821c35694f8bf41e",
-      "dossier_path": "07_PROJECT_LEARNING/crawlcove-robots-txt-tester-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/crawlcove-robots-txt-tester-learnings.md",
+      "source_version": "63245304",
+      "content_hash": "3ffdfceffefcdfed39899f14645756a2e839bc3717bee98deb678bf1c69a41ed",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "promoted_rules": [
-        "Rule 1623"
+        "Rule 1623",
+        {
+          "number": 1781,
+          "title": "repository renamed to CrawlCove/robots-txt-tester; point links, install commands",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T22:29:24.686Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crawlcove-sitemap-validator": {
       "learning_id": "learn-github-crawlcove-sitemap-validator",
@@ -67904,6 +67996,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:23:26.019Z"
+    },
+    "rule-1779": {
+      "learning_id": "rule-1779",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1779,
+      "title": "docs sidebar after history restore",
+      "source_url": "https://github.com/hunvreus/basecoat",
+      "source_version": "6953a4ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:29:21.000Z"
+    },
+    "rule-1780": {
+      "learning_id": "rule-1780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1780,
+      "title": "template): Gemma family fallback + slice-step renderer (oqu.11)",
+      "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
+      "source_version": "4895730a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:29:22.037Z"
+    },
+    "rule-1781": {
+      "learning_id": "rule-1781",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1781,
+      "title": "repository renamed to CrawlCove/robots-txt-tester; point links, install commands",
+      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "source_version": "63245304",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:29:24.686Z"
+    },
+    "rule-1782": {
+      "learning_id": "rule-1782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1782,
+      "title": "reactotron-react-native): harden fetch interceptor error isolation and restore (",
+      "source_url": "https://github.com/infinitered/reactotron",
+      "source_version": "3e480ab0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:29:27.725Z"
+    },
+    "rule-1783": {
+      "learning_id": "rule-1783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1783,
+      "title": "download-server):  block downloads without detected media and disable remote tim",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "694ac05c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:29:31.532Z"
+    },
+    "rule-1784": {
+      "learning_id": "rule-1784",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1784,
+      "title": "Add TODOs for the rename follow-ups found while fixing #672 (#673)",
+      "source_url": "https://github.com/cryfs/cryfs",
+      "source_version": "ad1f72d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:29:32.705Z"
+    },
+    "rule-1785": {
+      "learning_id": "rule-1785",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1785,
+      "title": "Merge pull request #503 from joker74581/fix/linux-log-monitor-watchdog-exit",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "d961b09c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:29:35.083Z"
     }
   },
   "aliases": {
