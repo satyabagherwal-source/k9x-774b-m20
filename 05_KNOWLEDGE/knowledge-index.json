@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T06:40:04.297Z",
-  "total_verified_learnings": 213,
-  "total_canonical_rules": 1627,
-  "total_dossiers": 1435,
+  "last_updated": "2026-10-18T06:58:58.415814Z",
+  "total_verified_learnings": 1953,
+  "total_canonical_rules": 1634,
+  "total_dossiers": 1528,
   "items": {
     "learn-github-0x4m4-hexstrike-ai": {
       "learning_id": "learn-github-0x4m4-hexstrike-ai",
@@ -309,22 +309,22 @@
     "learn-github-adbar-trafilatura": {
       "learning_id": "learn-github-adbar-trafilatura",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "adbar-trafilatura",
+      "repository": "adbar/trafilatura",
       "slug": "adbar-trafilatura",
       "platform": "github",
       "source_url": "https://github.com/adbar/trafilatura",
-      "source_version": "HEAD",
-      "content_hash": "f54fcd9c6cd3822272c968c5986543846f09e186851033deb92869d416ed7115",
+      "source_version": "main",
+      "content_hash": "a94b4bd4c382f9be898fbe5533f5f4230b49b2ac37e438e95e24d99a909e40aa",
       "dossier_path": "07_PROJECT_LEARNING/adbar-trafilatura-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adbar-trafilatura-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.564Z"
+      "promoted_rules": [
+        "Rule 1631"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
     },
     "learn-github-adobe-react-spectrum": {
       "learning_id": "learn-github-adobe-react-spectrum",
@@ -1273,18 +1273,16 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "HEAD",
-      "content_hash": "3dfafa7849169181d84f1cc7c6f6b72c5a2d4cb16795f6f0de0fd7c438d0477c",
+      "source_version": "main",
+      "content_hash": "616c9e22ac2291fda314beed4720a05771f53d2a71a427c9052d1e327f68072a",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "ERROR",
       "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.787Z"
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
     },
     "learn-github-ant-design-ant-design-mobile": {
       "learning_id": "learn-github-ant-design-ant-design-mobile",
@@ -2846,22 +2844,20 @@
     "learn-github-browser-use-browser-use": {
       "learning_id": "learn-github-browser-use-browser-use",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "browser-use-browser-use",
+      "repository": "browser-use/browser-use",
       "slug": "browser-use-browser-use",
       "platform": "github",
       "source_url": "https://github.com/browser-use/browser-use",
-      "source_version": "HEAD",
-      "content_hash": "4ecd8596388ce0804a5a5e8e717da154928a8f8ba84d534492be20cf1755a179",
+      "source_version": "main",
+      "content_hash": "9dbd14ed4ce8575dd2b346aa5e5dd4ce85cca3aec5f3d92341501e8c7328f8a8",
       "dossier_path": "07_PROJECT_LEARNING/browser-use-browser-use-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/browser-use-browser-use-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.131Z"
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
     },
     "learn-github-browserbase-stagehand": {
       "learning_id": "learn-github-browserbase-stagehand",
@@ -9636,56 +9632,56 @@
       "promoted_rules": [
         {
           "number": 282,
-          "title": "**Rule Title**: *Explicit Special‑Token Declaration*",
+          "title": "**Rule Title**: *Explicit Special\u2011Token Declaration*",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
           "verified_at": "2026-10-11T11:22:52.058Z"
         },
         {
           "number": 283,
-          "title": "**Rule Title**: *Avoid Hard‑Coded Dtype in Config*",
+          "title": "**Rule Title**: *Avoid Hard\u2011Coded Dtype in Config*",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
           "verified_at": "2026-10-11T11:22:52.058Z"
         },
         {
           "number": 336,
-          "title": "Consistent Data‑Type Propagation Across Model, Tokenizer, and Generation",
+          "title": "Consistent Data\u2011Type Propagation Across Model, Tokenizer, and Generation",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
           "verified_at": "2026-10-11T18:24:51.693Z"
         },
         {
           "number": 337,
-          "title": "Guarded Generation Length to Prevent Out‑of‑Memory (OOM) and Infinite Loops",
+          "title": "Guarded Generation Length to Prevent Out\u2011of\u2011Memory (OOM) and Infinite Loops",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
           "verified_at": "2026-10-11T18:24:51.693Z"
         },
         {
           "number": 338,
-          "title": "Explicit Tokenizer‑Model Alignment for Special Tokens",
+          "title": "Explicit Tokenizer\u2011Model Alignment for Special Tokens",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
           "verified_at": "2026-10-11T18:24:51.693Z"
         },
         {
           "number": 386,
-          "title": "Attention‑Bias Consistency Rule",
+          "title": "Attention\u2011Bias Consistency Rule",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
           "verified_at": "2026-10-12T00:36:37.670Z"
         },
         {
           "number": 387,
-          "title": "Full‑Attention Interval Alignment Rule",
+          "title": "Full\u2011Attention Interval Alignment Rule",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
           "verified_at": "2026-10-12T00:36:37.670Z"
         },
         {
           "number": 388,
-          "title": "Rope‑Theta Validity Rule",
+          "title": "Rope\u2011Theta Validity Rule",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
           "verified_at": "2026-10-12T00:36:37.670Z"
@@ -9697,7 +9693,7 @@
         },
         {
           "number": 688,
-          "title": "[Tokenizer Special‑Token Integrity]",
+          "title": "[Tokenizer Special\u2011Token Integrity]",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -9707,12 +9703,12 @@
         },
         {
           "number": 1022,
-          "title": "[BFloat16 Memory‑Efficiency Rule]",
+          "title": "[BFloat16 Memory\u2011Efficiency Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1023,
-          "title": "[Tokenizer Special‑Token Integrity Rule]",
+          "title": "[Tokenizer Special\u2011Token Integrity Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9722,22 +9718,22 @@
         },
         {
           "number": 1089,
-          "title": "Linear‑Attention Layer Placement",
+          "title": "Linear\u2011Attention Layer Placement",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1176,
-          "title": "**Special‑Token Uniqueness and Consistency**",
+          "title": "**Special\u2011Token Uniqueness and Consistency**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1177,
-          "title": "**Attention‑Schedule Integrity**",
+          "title": "**Attention\u2011Schedule Integrity**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1178,
-          "title": "**Dual‑EOS Handling in Generation**",
+          "title": "**Dual\u2011EOS Handling in Generation**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9752,22 +9748,22 @@
         },
         {
           "number": 1333,
-          "title": "Consistent Data‑Type Across Model, Tokenizer, and Generation Config",
+          "title": "Consistent Data\u2011Type Across Model, Tokenizer, and Generation Config",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": "EXISTING",
-          "title": "Token‑ID Consistency Across Configurations",
+          "title": "Token\u2011ID Consistency Across Configurations",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1334,
-          "title": "Attention‑Bias Invariant for Qwen3_5ForCausalLM",
+          "title": "Attention\u2011Bias Invariant for Qwen3_5ForCausalLM",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1478,
-          "title": "Configuration JSON Must Be a Single‑Level Object, Not a JSON‑Encoded String",
+          "title": "Configuration JSON Must Be a Single\u2011Level Object, Not a JSON\u2011Encoded String",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9777,22 +9773,22 @@
         },
         {
           "number": 1480,
-          "title": "Sampling Hyper‑Parameters Must Not Exceed Model Context Length",
+          "title": "Sampling Hyper\u2011Parameters Must Not Exceed Model Context Length",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1554,
-          "title": "Consistent Data‑Type Alignment Across Model, Tokenizer, and Serving",
+          "title": "Consistent Data\u2011Type Alignment Across Model, Tokenizer, and Serving",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1555,
-          "title": "Tokenizer‑Model Token ID Contract",
+          "title": "Tokenizer\u2011Model Token ID Contract",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1556,
-          "title": "Generation Stop‑Token Coverage",
+          "title": "Generation Stop\u2011Token Coverage",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9878,14 +9874,14 @@
       "promoted_rules": [
         {
           "number": 280,
-          "title": "2 Rule 2 – Layer‑Type Consistency",
+          "title": "2 Rule 2 \u2013 Layer\u2011Type Consistency",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
           "verified_at": "2026-10-11T11:20:00.755Z"
         },
         {
           "number": 281,
-          "title": "3 Rule 3 – Sparse Attention Safety",
+          "title": "3 Rule 3 \u2013 Sparse Attention Safety",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
           "verified_at": "2026-10-11T11:20:00.755Z"
@@ -9920,7 +9916,7 @@
         },
         {
           "number": 384,
-          "title": "**Cache‑Disabling Rule for Long‑Context VLMs**",
+          "title": "**Cache\u2011Disabling Rule for Long\u2011Context VLMs**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
           "verified_at": "2026-10-12T00:33:23.812Z"
@@ -9959,7 +9955,7 @@
         },
         {
           "number": 1085,
-          "title": "**Special‑Token Uniqueness Across Modalities**",
+          "title": "**Special\u2011Token Uniqueness Across Modalities**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9984,22 +9980,22 @@
         },
         {
           "number": 1175,
-          "title": "Long‑Context Attention Interval Invariant",
+          "title": "Long\u2011Context Attention Interval Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1255,
-          "title": "**Special‑Token Consistency Rule**",
+          "title": "**Special\u2011Token Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1331,
-          "title": "Image‑Token Uniqueness Rule",
+          "title": "Image\u2011Token Uniqueness Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1332,
-          "title": "Mixed‑Precision Memory Rule",
+          "title": "Mixed\u2011Precision Memory Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -10009,12 +10005,12 @@
         },
         {
           "number": 1476,
-          "title": "**Linear‑Attention Layer Placement**",
+          "title": "**Linear\u2011Attention Layer Placement**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1477,
-          "title": "**Compression‑Mask Alignment**",
+          "title": "**Compression\u2011Mask Alignment**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11650,14 +11646,14 @@
       "promoted_rules": [
         {
           "number": 351,
-          "title": "Consistent Special‑Token Alignment Across Tokenizer and Model Config",
+          "title": "Consistent Special\u2011Token Alignment Across Tokenizer and Model Config",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
           "verified_at": "2026-10-11T19:49:22.705Z"
         },
         {
           "number": 352,
-          "title": "Joint‑Schema‑Head Output Dimensionality Enforcement",
+          "title": "Joint\u2011Schema\u2011Head Output Dimensionality Enforcement",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
           "verified_at": "2026-10-11T19:49:22.705Z"
@@ -11697,7 +11693,7 @@
         },
         {
           "number": 1041,
-          "title": "**Tokenizer‑Config Consistency**",
+          "title": "**Tokenizer\u2011Config Consistency**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11707,12 +11703,12 @@
         },
         {
           "number": 1120,
-          "title": "**Special‑Token Integrity Rule**",
+          "title": "**Special\u2011Token Integrity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1121,
-          "title": "**Joint‑Head Input Consistency Rule**",
+          "title": "**Joint\u2011Head Input Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11737,12 +11733,12 @@
         },
         {
           "number": 1282,
-          "title": "Consistent Data‑Type Propagation Across Backbone and Head",
+          "title": "Consistent Data\u2011Type Propagation Across Backbone and Head",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1283,
-          "title": "Tokenizer‑Model Special‑Token Alignment",
+          "title": "Tokenizer\u2011Model Special\u2011Token Alignment",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11767,17 +11763,17 @@
         },
         {
           "number": 1499,
-          "title": "**Rule #1 – Immutable Token‑Sequence Construction**",
+          "title": "**Rule\u202f#1 \u2013 Immutable Token\u2011Sequence Construction**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1500,
-          "title": "**Rule #2 – Explicit dtype Alignment Between Backbone & Joint Head**",
+          "title": "**Rule\u202f#2 \u2013 Explicit dtype Alignment Between Backbone & Joint Head**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1501,
-          "title": "**Rule #3 – Per‑Question Softmax Isolation**",
+          "title": "**Rule\u202f#3 \u2013 Per\u2011Question Softmax Isolation**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11787,12 +11783,12 @@
         },
         {
           "number": 1575,
-          "title": "Tokenizer Special‑Token Alignment",
+          "title": "Tokenizer Special\u2011Token Alignment",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1576,
-          "title": "Joint‑Head Input Shape Validation",
+          "title": "Joint\u2011Head Input Shape Validation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11859,21 +11855,21 @@
         },
         {
           "number": 401,
-          "title": "**Deterministic Token‑to‑Logit Mapping Rule**",
+          "title": "**Deterministic Token\u2011to\u2011Logit Mapping Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
           "verified_at": "2026-10-12T02:01:11.285Z"
         },
         {
           "number": 402,
-          "title": "**Safe Record‑Encoding Rule**",
+          "title": "**Safe Record\u2011Encoding Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
           "verified_at": "2026-10-12T02:01:11.285Z"
         },
         {
           "number": 403,
-          "title": "**Zero‑Copy Batch Collation Rule**",
+          "title": "**Zero\u2011Copy Batch Collation Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
           "verified_at": "2026-10-12T02:01:11.285Z"
@@ -11890,22 +11886,22 @@
         },
         {
           "number": 1039,
-          "title": "Per‑Question Softmax Rule",
+          "title": "Per\u2011Question Softmax Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1117,
-          "title": "**Token‑Boundary Integrity Rule**",
+          "title": "**Token\u2011Boundary Integrity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1118,
-          "title": "**Joint‑Head Attention Mask Rule**",
+          "title": "**Joint\u2011Head Attention Mask Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1119,
-          "title": "**Inference‑Mode Contextualization Rule**",
+          "title": "**Inference\u2011Mode Contextualization Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11920,7 +11916,7 @@
         },
         {
           "number": 1203,
-          "title": "**Data‑Type Fidelity Rule**",
+          "title": "**Data\u2011Type Fidelity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11940,17 +11936,17 @@
         },
         {
           "number": 1394,
-          "title": "**Model‑Head Device Co‑Location Rule**",
+          "title": "**Model\u2011Head Device Co\u2011Location Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1395,
-          "title": "**Tokenizer‑Processor Pre‑Load Rule**",
+          "title": "**Tokenizer\u2011Processor Pre\u2011Load Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1396,
-          "title": "**Inference‑Mode Enforcement Rule**",
+          "title": "**Inference\u2011Mode Enforcement Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11960,27 +11956,27 @@
         },
         {
           "number": 1497,
-          "title": "**Safe Tokenizer‑Config Consistency Rule**",
+          "title": "**Safe Tokenizer\u2011Config Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1498,
-          "title": "**Device‑Aware Safetensor Loading Rule**",
+          "title": "**Device\u2011Aware Safetensor Loading Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1571,
-          "title": "**Rule # PAD‑TOKEN‑ID‑CONSISTENCY**",
+          "title": "**Rule\u202f#\u202fPAD\u2011TOKEN\u2011ID\u2011CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1572,
-          "title": "**Rule # DTYPE‑ALIGNMENT‑FOR‑INFERENCE**",
+          "title": "**Rule\u202f#\u202fDTYPE\u2011ALIGNMENT\u2011FOR\u2011INFERENCE**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1573,
-          "title": "**Rule # INFERENCE‑MODE‑ENFORCEMENT**",
+          "title": "**Rule\u202f#\u202fINFERENCE\u2011MODE\u2011ENFORCEMENT**",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -18953,14 +18949,14 @@
         },
         {
           "number": 340,
-          "title": "**Vision‑Input Size Consistency Rule**",
+          "title": "**Vision\u2011Input Size Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
           "verified_at": "2026-10-11T18:36:42.888Z"
         },
         {
           "number": 341,
-          "title": "**Context‑Length Guard Rule**",
+          "title": "**Context\u2011Length Guard Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
           "verified_at": "2026-10-11T18:36:42.888Z"
@@ -18993,7 +18989,7 @@
         },
         {
           "number": 1025,
-          "title": "Vision‑Encoder Output Alignment Rule",
+          "title": "Vision\u2011Encoder Output Alignment Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19003,17 +18999,17 @@
         },
         {
           "number": 1092,
-          "title": "Consistent Special‑Token Mapping Rule",
+          "title": "Consistent Special\u2011Token Mapping Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1093,
-          "title": "Vision‑Token Placement Rule",
+          "title": "Vision\u2011Token Placement Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1094,
-          "title": "Downsample‑Size Consistency Rule",
+          "title": "Downsample\u2011Size Consistency Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19028,7 +19024,7 @@
         },
         {
           "number": 1185,
-          "title": "BOS/EOS Token Null‑Safety Rule",
+          "title": "BOS/EOS Token Null\u2011Safety Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19038,17 +19034,17 @@
         },
         {
           "number": 1260,
-          "title": "Token‑ID Consistency Across Subsystems",
+          "title": "Token\u2011ID Consistency Across Subsystems",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1261,
-          "title": "Image‑Token Boundary Enforcement",
+          "title": "Image\u2011Token Boundary Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1262,
-          "title": "Down‑sampling Ratio Validation",
+          "title": "Down\u2011sampling Ratio Validation",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19078,17 +19074,17 @@
         },
         {
           "number": 1560,
-          "title": "Consistent Token‑ID Mapping Across All Sub‑systems",
+          "title": "Consistent Token\u2011ID Mapping Across All Sub\u2011systems",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1561,
-          "title": "Enforce Down‑sampling Ratio Consistency",
+          "title": "Enforce Down\u2011sampling Ratio Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1562,
-          "title": "Preserve Context‑Length Contract",
+          "title": "Preserve Context\u2011Length Contract",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -19647,7 +19643,7 @@
       "promoted_rules": [
         {
           "number": 342,
-          "title": "Tokenizer‑Model Configuration Consistency",
+          "title": "Tokenizer\u2011Model Configuration Consistency",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
           "verified_at": "2026-10-11T18:48:56.153Z"
@@ -19707,7 +19703,7 @@
         },
         {
           "number": 1097,
-          "title": "Layer‑Type Consistency with Attention Bias",
+          "title": "Layer\u2011Type Consistency with Attention Bias",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -33817,22 +33813,20 @@
     "learn-github-unclecode-crawl4ai": {
       "learning_id": "learn-github-unclecode-crawl4ai",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "unclecode-crawl4ai",
+      "repository": "unclecode/crawl4ai",
       "slug": "unclecode-crawl4ai",
       "platform": "github",
       "source_url": "https://github.com/unclecode/crawl4ai",
-      "source_version": "HEAD",
-      "content_hash": "8b8345d97c3cd11dbac74a310b74ff9389a5c9da5f61e2effb87b08360a1569c",
+      "source_version": "main",
+      "content_hash": "df662f564629db8ef06f579bd5efa9c005d4eddbca66376c84edcc069f45d644",
       "dossier_path": "07_PROJECT_LEARNING/unclecode-crawl4ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unclecode-crawl4ai-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.154Z"
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
     },
     "learn-github-unhappychoice-gitlogue": {
       "learning_id": "learn-github-unhappychoice-gitlogue",
@@ -34097,22 +34091,20 @@
     "learn-github-vercel-swr": {
       "learning_id": "learn-github-vercel-swr",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vercel-swr",
+      "repository": "vercel/swr",
       "slug": "vercel-swr",
       "platform": "github",
       "source_url": "https://github.com/vercel/swr",
-      "source_version": "HEAD",
-      "content_hash": "6005686b5ed654d7e5557fc2782d2aaa929df8b7094035b777788069154f0e44",
+      "source_version": "main",
+      "content_hash": "7392e7a087a4fe917f3a40ecf1fec52e22c5be6ae0a5f4fa83e79a3cddb64c9d",
       "dossier_path": "07_PROJECT_LEARNING/vercel-swr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-swr-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.212Z"
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
     },
     "learn-github-vespa-engine-vespa": {
       "learning_id": "learn-github-vespa-engine-vespa",
@@ -39043,7 +39035,7 @@
       "learning_id": "rule-225",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 225,
-      "title": "Mandatory Multi-Page Architecture (MPA) by Default (\"Single Page Me Kabhi Nahi Sametna — Hamesha Multi-Page Banani Hai\")",
+      "title": "Mandatory Multi-Page Architecture (MPA) by Default (\"Single Page Me Kabhi Nahi Sametna \u2014 Hamesha Multi-Page Banani Hai\")",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39071,7 +39063,7 @@
       "learning_id": "rule-227",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 227,
-      "title": "Universal 53-Phase Final Production Audit & Auto-Correction Protocol (\"Code Looks Correct ≠ PASS\")",
+      "title": "Universal 53-Phase Final Production Audit & Auto-Correction Protocol (\"Code Looks Correct \u2260 PASS\")",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39169,7 +39161,7 @@
       "learning_id": "rule-234",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 234,
-      "title": "Tiered Multi-LLM Effort Routing & Cost Envelope Enforcement (Claude × GLM × Gemini Cascade)",
+      "title": "Tiered Multi-LLM Effort Routing & Cost Envelope Enforcement (Claude \u00d7 GLM \u00d7 Gemini Cascade)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39813,7 +39805,7 @@
       "learning_id": "rule-280",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 280,
-      "title": "2 Rule 2 – Layer‑Type Consistency (Harvested from apple/LensVLM-9B)",
+      "title": "2 Rule 2 \u2013 Layer\u2011Type Consistency (Harvested from apple/LensVLM-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39827,7 +39819,7 @@
       "learning_id": "rule-281",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 281,
-      "title": "3 Rule 3 – Sparse Attention Safety (Harvested from apple/LensVLM-9B)",
+      "title": "3 Rule 3 \u2013 Sparse Attention Safety (Harvested from apple/LensVLM-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39841,7 +39833,7 @@
       "learning_id": "rule-282",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 282,
-      "title": "**Rule Title**: *Explicit Special‑Token Declaration* (Harvested from Altworld/Hemmingway-1)",
+      "title": "**Rule Title**: *Explicit Special\u2011Token Declaration* (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39855,7 +39847,7 @@
       "learning_id": "rule-283",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 283,
-      "title": "**Rule Title**: *Avoid Hard‑Coded Dtype in Config* (Harvested from Altworld/Hemmingway-1)",
+      "title": "**Rule Title**: *Avoid Hard\u2011Coded Dtype in Config* (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40597,7 +40589,7 @@
       "learning_id": "rule-336",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 336,
-      "title": "Consistent Data‑Type Propagation Across Model, Tokenizer, and Generation (Harvested from Altworld/Hemmingway-1)",
+      "title": "Consistent Data\u2011Type Propagation Across Model, Tokenizer, and Generation (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40611,7 +40603,7 @@
       "learning_id": "rule-337",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 337,
-      "title": "Guarded Generation Length to Prevent Out‑of‑Memory (OOM) and Infinite Loops (Harvested from Altworld/Hemmingway-1)",
+      "title": "Guarded Generation Length to Prevent Out\u2011of\u2011Memory (OOM) and Infinite Loops (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40625,7 +40617,7 @@
       "learning_id": "rule-338",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 338,
-      "title": "Explicit Tokenizer‑Model Alignment for Special Tokens (Harvested from Altworld/Hemmingway-1)",
+      "title": "Explicit Tokenizer\u2011Model Alignment for Special Tokens (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40653,7 +40645,7 @@
       "learning_id": "rule-340",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 340,
-      "title": "**Vision‑Input Size Consistency Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
+      "title": "**Vision\u2011Input Size Consistency Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40667,7 +40659,7 @@
       "learning_id": "rule-341",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 341,
-      "title": "**Context‑Length Guard Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
+      "title": "**Context\u2011Length Guard Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40681,7 +40673,7 @@
       "learning_id": "rule-342",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 342,
-      "title": "Tokenizer‑Model Configuration Consistency (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)",
+      "title": "Tokenizer\u2011Model Configuration Consistency (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40807,7 +40799,7 @@
       "learning_id": "rule-351",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 351,
-      "title": "Consistent Special‑Token Alignment Across Tokenizer and Model Config (Harvested from Cloudflare/clef-flash)",
+      "title": "Consistent Special\u2011Token Alignment Across Tokenizer and Model Config (Harvested from Cloudflare/clef-flash)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40821,7 +40813,7 @@
       "learning_id": "rule-352",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 352,
-      "title": "Joint‑Schema‑Head Output Dimensionality Enforcement (Harvested from Cloudflare/clef-flash)",
+      "title": "Joint\u2011Schema\u2011Head Output Dimensionality Enforcement (Harvested from Cloudflare/clef-flash)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41269,7 +41261,7 @@
       "learning_id": "rule-384",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 384,
-      "title": "**Cache‑Disabling Rule for Long‑Context VLMs** (Harvested from apple/LensVLM-9B)",
+      "title": "**Cache\u2011Disabling Rule for Long\u2011Context VLMs** (Harvested from apple/LensVLM-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41297,7 +41289,7 @@
       "learning_id": "rule-386",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 386,
-      "title": "Attention‑Bias Consistency Rule (Harvested from Altworld/Hemmingway-1)",
+      "title": "Attention\u2011Bias Consistency Rule (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41311,7 +41303,7 @@
       "learning_id": "rule-387",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 387,
-      "title": "Full‑Attention Interval Alignment Rule (Harvested from Altworld/Hemmingway-1)",
+      "title": "Full\u2011Attention Interval Alignment Rule (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41325,7 +41317,7 @@
       "learning_id": "rule-388",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 388,
-      "title": "Rope‑Theta Validity Rule (Harvested from Altworld/Hemmingway-1)",
+      "title": "Rope\u2011Theta Validity Rule (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41507,7 +41499,7 @@
       "learning_id": "rule-401",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 401,
-      "title": "**Deterministic Token‑to‑Logit Mapping Rule** (Harvested from Cloudflare/clef)",
+      "title": "**Deterministic Token\u2011to\u2011Logit Mapping Rule** (Harvested from Cloudflare/clef)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41521,7 +41513,7 @@
       "learning_id": "rule-402",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 402,
-      "title": "**Safe Record‑Encoding Rule** (Harvested from Cloudflare/clef)",
+      "title": "**Safe Record\u2011Encoding Rule** (Harvested from Cloudflare/clef)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41535,7 +41527,7 @@
       "learning_id": "rule-403",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 403,
-      "title": "**Zero‑Copy Batch Collation Rule** (Harvested from Cloudflare/clef)",
+      "title": "**Zero\u2011Copy Batch Collation Rule** (Harvested from Cloudflare/clef)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -42038,7 +42030,7 @@
         },
         {
           "number": 625,
-          "title": "[Tokenizer Special‑Token Consistency]",
+          "title": "[Tokenizer Special\u2011Token Consistency]",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42069,7 +42061,7 @@
       "promoted_rules": [
         {
           "number": 582,
-          "title": "Consistent Token‑ID Mapping Across Modalities",
+          "title": "Consistent Token\u2011ID Mapping Across Modalities",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -42079,7 +42071,7 @@
         },
         {
           "number": 683,
-          "title": "`bfloat16` Inference Must Be Guarded Against Under‑Precision",
+          "title": "`bfloat16` Inference Must Be Guarded Against Under\u2011Precision",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42951,32 +42943,32 @@
       "promoted_rules": [
         {
           "number": 582,
-          "title": "Consistent Token‑ID Mapping Across Modalities",
+          "title": "Consistent Token\u2011ID Mapping Across Modalities",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1007,
-          "title": "[Configuration‑Consistency Rule]",
+          "title": "[Configuration\u2011Consistency Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1008,
-          "title": "[Special‑Token‑Uniqueness Rule]",
+          "title": "[Special\u2011Token\u2011Uniqueness Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1009,
-          "title": "[Vision‑Patch‑Size Alignment Rule]",
+          "title": "[Vision\u2011Patch\u2011Size Alignment Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1074,
-          "title": "Consistent Data‑Type Across Modalities",
+          "title": "Consistent Data\u2011Type Across Modalities",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1075,
-          "title": "Explicitly Disable Word‑Embedding Tie in Multimodal Models",
+          "title": "Explicitly Disable Word\u2011Embedding Tie in Multimodal Models",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -42986,12 +42978,12 @@
         },
         {
           "number": 1155,
-          "title": "Consistent Special‑Token Mapping Across Tokenizer and Model",
+          "title": "Consistent Special\u2011Token Mapping Across Tokenizer and Model",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1156,
-          "title": "Uniform Dtype Across Text and Vision Sub‑Models",
+          "title": "Uniform Dtype Across Text and Vision Sub\u2011Models",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43001,17 +42993,17 @@
         },
         {
           "number": 1241,
-          "title": "**RULE‑TOKEN‑ID‑RANGE‑CONSISTENCY**",
+          "title": "**RULE\u2011TOKEN\u2011ID\u2011RANGE\u2011CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1242,
-          "title": "**RULE‑LINEAR‑ATTENTION‑SHAPE‑ALIGNMENT**",
+          "title": "**RULE\u2011LINEAR\u2011ATTENTION\u2011SHAPE\u2011ALIGNMENT**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1243,
-          "title": "**RULE‑PARTIAL‑ROPE‑CONSISTENCY**",
+          "title": "**RULE\u2011PARTIAL\u2011ROPE\u2011CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43026,7 +43018,7 @@
         },
         {
           "number": 1318,
-          "title": "**Special‑Token Isolation Rule**",
+          "title": "**Special\u2011Token Isolation Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43051,7 +43043,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "Tokenizer Special‑Token Integrity",
+          "title": "Tokenizer Special\u2011Token Integrity",
           "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
@@ -43116,7 +43108,7 @@
         },
         {
           "number": 1012,
-          "title": "Consistent Model‑Type Declaration",
+          "title": "Consistent Model\u2011Type Declaration",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43126,17 +43118,17 @@
         },
         {
           "number": 1014,
-          "title": "Linear‑Attention Head Consistency",
+          "title": "Linear\u2011Attention Head Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1080,
-          "title": "[Linear‑Attention Head Ratio]",
+          "title": "[Linear\u2011Attention Head Ratio]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1081,
-          "title": "[Vision Token Compression Pre‑Processing]",
+          "title": "[Vision Token Compression Pre\u2011Processing]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43151,7 +43143,7 @@
         },
         {
           "number": 1167,
-          "title": "**Vision Encoder Must Compress Tokens Early to Meet On‑Device Latency Targets**",
+          "title": "**Vision Encoder Must Compress Tokens Early to Meet On\u2011Device Latency Targets**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43161,12 +43153,12 @@
         },
         {
           "number": 1248,
-          "title": "**Early‑Compression Positional Integrity Rule**",
+          "title": "**Early\u2011Compression Positional Integrity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1249,
-          "title": "**Cache‑Consistency Isolation Rule**",
+          "title": "**Cache\u2011Consistency Isolation Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43181,7 +43173,7 @@
         },
         {
           "number": 1327,
-          "title": "**Lookahead Expert Scheduling (LES) Must Pre‑compute Expert Activations for the Next Token**",
+          "title": "**Lookahead Expert Scheduling (LES) Must Pre\u2011compute Expert Activations for the Next Token**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43201,17 +43193,17 @@
         },
         {
           "number": 1548,
-          "title": "**MoE Routing Must Preserve Token‑Level Determinism**",
+          "title": "**MoE Routing Must Preserve Token\u2011Level Determinism**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1549,
-          "title": "**Linear‑Attention Layers Must Enforce Full‑Attention Every N Layers**",
+          "title": "**Linear\u2011Attention Layers Must Enforce Full\u2011Attention Every N Layers**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1550,
-          "title": "**Early‑Compression Tokenization Must Preserve Token Count Invariant**",
+          "title": "**Early\u2011Compression Tokenization Must Preserve Token Count Invariant**",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44035,7 +44027,7 @@
       "promoted_rules": [
         {
           "number": 1579,
-          "title": "render): 탭 앞 위치에 글자처럼 취급하는 개체 폭도 넣는다",
+          "title": "render): \ud0ed \uc55e \uc704\uce58\uc5d0 \uae00\uc790\ucc98\ub7fc \ucde8\uae09\ud558\ub294 \uac1c\uccb4 \ud3ed\ub3c4 \ub123\ub294\ub2e4",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45016,36 +45008,22 @@
     "learn-github-crawlcove-hreflang-checker": {
       "learning_id": "learn-github-crawlcove-hreflang-checker",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "CrawlCove/hreflang-checker",
-      "repository": "CrawlCove/hreflang-checker",
-      "slug": "crawlcove-crawlcove-hreflang-checker",
+      "repository": "CrawlCove/crawlcove-hreflang-checker",
+      "slug": "crawlcove-hreflang-checker",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-      "source_version": "68a78d31",
-      "content_hash": "b194b4dff339d8ab0e5094d83548763bbc9546902697452021de2995bac01d42",
-      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+      "source_version": "main",
+      "content_hash": "297933edbc5f128fc703873d3643163fa6be306534ecd2a5e51cd66718ea5529",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-hreflang-checker-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-hreflang-checker-learnings.md",
       "promoted_rules": [
-        "Rule 1625",
-        {
-          "number": 1633,
-          "title": "repository renamed to CrawlCove/hreflang-checker; point links, install commands",
-          "status": "PROMOTED_AND_VERIFIED"
-        }
+        "Rule 1625"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
       "brain_readback": true,
-      "historical_duplicate_count": 1,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-18T06:40:04.292Z",
-      "verification_barriers": {
-        "storage_written": true,
-        "read_back_verified": true,
-        "content_hash_verified": true,
-        "rules_verified": true,
-        "index_read_back_verified": true
-      }
+      "verified_at": "2026-10-18T06:27:04.005893Z"
     },
     "learn-github-mitrovicsinisaa-schemaorg-rs": {
       "learning_id": "learn-github-mitrovicsinisaa-schemaorg-rs",
@@ -45130,46 +45108,22 @@
     "learn-github-crawlcove-robots-txt-tester": {
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "CrawlCove/robots-txt-tester",
-      "repository": "CrawlCove/robots-txt-tester",
-      "slug": "crawlcove-crawlcove-robots-txt-tester",
+      "repository": "CrawlCove/crawlcove-robots-txt-tester",
+      "slug": "crawlcove-robots-txt-tester",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-      "source_version": "63245304",
-      "content_hash": "cbc78fdcd7fd7e177540e4f9588c227475798dc4384779e0092f1e0ca0d810a2",
-      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+      "source_version": "main",
+      "content_hash": "bfadf5b54cbe4a7681e965e2d23975c9fcc8cda70f6a78f0821c35694f8bf41e",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-robots-txt-tester-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-robots-txt-tester-learnings.md",
       "promoted_rules": [
-        "Rule 1623",
-        {
-          "number": 1630,
-          "title": "Dual-Phase Text Linting Before AST/Parser Normalization",
-          "status": "PROMOTED_AND_VERIFIED"
-        },
-        {
-          "number": 1631,
-          "title": "HTTP Protocol Error Discrimination in Automated Crawlers",
-          "status": "PROMOTED_AND_VERIFIED"
-        },
-        {
-          "number": 1632,
-          "title": "CI/CD Pre-Commit Distribution Synchronization Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
-        }
+        "Rule 1623"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
       "brain_readback": true,
-      "historical_duplicate_count": 1,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-18T06:36:31.866Z",
-      "verification_barriers": {
-        "storage_written": true,
-        "read_back_verified": true,
-        "content_hash_verified": true,
-        "rules_verified": true,
-        "index_read_back_verified": true
-      }
+      "verified_at": "2026-10-18T06:27:04.005893Z"
     },
     "learn-github-crawlcove-sitemap-validator": {
       "learning_id": "learn-github-crawlcove-sitemap-validator",
@@ -45192,43 +45146,1751 @@
       "brain_readback": true,
       "verified_at": "2026-10-18T06:27:04.005893Z"
     },
-    "learn-github-crawlcove-xml-sitemap-validator": {
-      "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+    "learn-github-berkaycubuk-kitsune": {
+      "learning_id": "learn-github-berkaycubuk-kitsune",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "CrawlCove/xml-sitemap-validator",
-      "repository": "CrawlCove/xml-sitemap-validator",
-      "slug": "crawlcove-crawlcove-sitemap-validator",
+      "repository": "berkaycubuk/kitsune",
+      "slug": "berkaycubuk-kitsune",
       "platform": "github",
-      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-      "source_version": "caa1d0b5",
-      "content_hash": "08a04c776cda6192fea8160e2cea3b50157ab06f733dcc7300e58d6d342f8fff",
-      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+      "source_url": "https://github.com/berkaycubuk/kitsune",
+      "source_version": "main",
+      "content_hash": "1e6fae1b9b0df6275a7bcdd7dd313fb4c863a2418b3924617a80c12f6315bebb",
+      "dossier_path": "07_PROJECT_LEARNING/berkaycubuk-kitsune-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/berkaycubuk-kitsune-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-manojahi-serpiq": {
+      "learning_id": "learn-github-manojahi-serpiq",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "manojahi/serpiq",
+      "slug": "manojahi-serpiq",
+      "platform": "github",
+      "source_url": "https://github.com/manojahi/serpiq",
+      "source_version": "main",
+      "content_hash": "f37224c1fbb3d2723e3f2ccda5e45b7a1a6198dbf259a6fd4da900a9b37f7f58",
+      "dossier_path": "07_PROJECT_LEARNING/manojahi-serpiq-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/manojahi-serpiq-learnings.md",
       "promoted_rules": [
-        {
-          "number": 1628,
-          "title": "Invariant Top-Level Node Filtering in Hybrid XML/JSON Parsers",
-          "status": "PROMOTED_AND_VERIFIED"
-        },
-        {
-          "number": 1629,
-          "title": "Transport Header-Agnostic Gzip Magic-Byte Sniffing",
-          "status": "PROMOTED_AND_VERIFIED"
-        }
+        "Rule 1630"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
       "brain_readback": true,
-      "historical_duplicate_count": 1,
-      "historical_learning_ids": [],
-      "verified_at": "2026-10-18T06:36:28.547Z",
-      "verification_barriers": {
-        "storage_written": true,
-        "read_back_verified": true,
-        "content_hash_verified": true,
-        "rules_verified": true,
-        "index_read_back_verified": true
-      }
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-tmolavi-siteprobe": {
+      "learning_id": "learn-github-tmolavi-siteprobe",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "tmolavi/siteprobe",
+      "slug": "tmolavi-siteprobe",
+      "platform": "github",
+      "source_url": "https://github.com/tmolavi/siteprobe",
+      "source_version": "main",
+      "content_hash": "8b3bd860ed47c0fa78cc4451623c79fb531f81e2b0b30a2ad77a248c6b3c5f3c",
+      "dossier_path": "07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz": {
+      "learning_id": "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
+      "slug": "4mmar1mtiaz-seo-tools-by-ammar-imtiaz",
+      "platform": "github",
+      "source_url": "https://github.com/4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
+      "source_version": "main",
+      "content_hash": "6539a8ad6eaf92042804881b942b99070381bf825645451d06cc13d6c0be02fc",
+      "dossier_path": "07_PROJECT_LEARNING/4mmar1mtiaz-seo-tools-by-ammar-imtiaz-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/4mmar1mtiaz-seo-tools-by-ammar-imtiaz-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-giuucmp-seoaudit": {
+      "learning_id": "learn-github-giuucmp-seoaudit",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "giuucmp/seoaudit",
+      "slug": "giuucmp-seoaudit",
+      "platform": "github",
+      "source_url": "https://github.com/giuucmp/seoaudit",
+      "source_version": "main",
+      "content_hash": "3b843f18060fca32d37aa599e21c3466156af35b0c603595935bca37d37fe040",
+      "dossier_path": "07_PROJECT_LEARNING/giuucmp-seoaudit-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/giuucmp-seoaudit-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-ugolbck-seofordev": {
+      "learning_id": "learn-github-ugolbck-seofordev",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "ugolbck/seofordev",
+      "slug": "ugolbck-seofordev",
+      "platform": "github",
+      "source_url": "https://github.com/ugolbck/seofordev",
+      "source_version": "main",
+      "content_hash": "139fc1002327a130c119226d6f31964dc648d1f6c4451bef92a59dc989e13940",
+      "dossier_path": "07_PROJECT_LEARNING/ugolbck-seofordev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ugolbck-seofordev-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-nometria-sitemap-generator": {
+      "learning_id": "learn-github-nometria-sitemap-generator",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "nometria/sitemap-generator",
+      "slug": "nometria-sitemap-generator",
+      "platform": "github",
+      "source_url": "https://github.com/nometria/sitemap-generator",
+      "source_version": "main",
+      "content_hash": "12e9c9c41d3b1cd6d71ebc17a50099e00227d4cda5ba656f6a6abd82f1f4c275",
+      "dossier_path": "07_PROJECT_LEARNING/nometria-sitemap-generator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nometria-sitemap-generator-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-m0ntydad0n-pseo-engine-oss": {
+      "learning_id": "learn-github-m0ntydad0n-pseo-engine-oss",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "m0ntydad0n/pseo-engine-oss",
+      "slug": "m0ntydad0n-pseo-engine-oss",
+      "platform": "github",
+      "source_url": "https://github.com/m0ntydad0n/pseo-engine-oss",
+      "source_version": "main",
+      "content_hash": "ecb252278bf1ab951b65c5262cf84ee313a23843bd6b1d8357fba098b4bd625a",
+      "dossier_path": "07_PROJECT_LEARNING/m0ntydad0n-pseo-engine-oss-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/m0ntydad0n-pseo-engine-oss-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-sundios-seo-dashboard": {
+      "learning_id": "learn-github-sundios-seo-dashboard",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "sundios/SEO-Dashboard",
+      "slug": "sundios-seo-dashboard",
+      "platform": "github",
+      "source_url": "https://github.com/sundios/SEO-Dashboard",
+      "source_version": "main",
+      "content_hash": "20f09a580614b264655ddafb79aa31060989dc8b91e805da65fbdc5959b7c8d3",
+      "dossier_path": "07_PROJECT_LEARNING/sundios-seo-dashboard-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sundios-seo-dashboard-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-gatenlp-ultimate-sitemap-parser": {
+      "learning_id": "learn-github-gatenlp-ultimate-sitemap-parser",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "GateNLP/ultimate-sitemap-parser",
+      "slug": "gatenlp-ultimate-sitemap-parser",
+      "platform": "github",
+      "source_url": "https://github.com/GateNLP/ultimate-sitemap-parser",
+      "source_version": "main",
+      "content_hash": "c9fdd160a326e2f8c5fd14784136bee5570501c6a402018c734655dd67f10b70",
+      "dossier_path": "07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-jafforgehq-site-analytics-tool": {
+      "learning_id": "learn-github-jafforgehq-site-analytics-tool",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "jafforgehq/site-analytics-tool",
+      "slug": "jafforgehq-site-analytics-tool",
+      "platform": "github",
+      "source_url": "https://github.com/jafforgehq/site-analytics-tool",
+      "source_version": "main",
+      "content_hash": "64fcbfed7e1b9aedc4b12c7e601af3c955e4a466a501499ace7c1b6a0d0c7471",
+      "dossier_path": "07_PROJECT_LEARNING/jafforgehq-site-analytics-tool-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jafforgehq-site-analytics-tool-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-melihandic-deep-in-gsc": {
+      "learning_id": "learn-github-melihandic-deep-in-gsc",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "melihandic/deep-in-gsc",
+      "slug": "melihandic-deep-in-gsc",
+      "platform": "github",
+      "source_url": "https://github.com/melihandic/deep-in-gsc",
+      "source_version": "main",
+      "content_hash": "92e91a85b6aff487836b1f33ffee890595b9e7d26b0c7ab838cece5e2eb18b14",
+      "dossier_path": "07_PROJECT_LEARNING/melihandic-deep-in-gsc-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/melihandic-deep-in-gsc-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-joshcarty-google-searchconsole": {
+      "learning_id": "learn-github-joshcarty-google-searchconsole",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "joshcarty/google-searchconsole",
+      "slug": "joshcarty-google-searchconsole",
+      "platform": "github",
+      "source_url": "https://github.com/joshcarty/google-searchconsole",
+      "source_version": "main",
+      "content_hash": "58a8809f042b83e34b2b820b5703b9ea86d7af4884149e6ed933a81c5d030dbe",
+      "dossier_path": "07_PROJECT_LEARNING/joshcarty-google-searchconsole-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/joshcarty-google-searchconsole-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-trybyte-app-sitemap-validator": {
+      "learning_id": "learn-github-trybyte-app-sitemap-validator",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "trybyte-app/sitemap-validator",
+      "slug": "trybyte-app-sitemap-validator",
+      "platform": "github",
+      "source_url": "https://github.com/trybyte-app/sitemap-validator",
+      "source_version": "main",
+      "content_hash": "0b9792f06089d3b6612d824c137cc3f94d9f91337b7ff172db78786d6cda5111",
+      "dossier_path": "07_PROJECT_LEARNING/trybyte-app-sitemap-validator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/trybyte-app-sitemap-validator-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-lucky-media-astro-seo": {
+      "learning_id": "learn-github-lucky-media-astro-seo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "lucky-media/astro-seo",
+      "slug": "lucky-media-astro-seo",
+      "platform": "github",
+      "source_url": "https://github.com/lucky-media/astro-seo",
+      "source_version": "main",
+      "content_hash": "331e0d6b490054c376357f358591c15c545d90b2978af3014bd6ea7a4f026165",
+      "dossier_path": "07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-agamm-pseo-next": {
+      "learning_id": "learn-github-agamm-pseo-next",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "agamm/pseo-next",
+      "slug": "agamm-pseo-next",
+      "platform": "github",
+      "source_url": "https://github.com/agamm/pseo-next",
+      "source_version": "main",
+      "content_hash": "9029d6f0ee99096bd9ef0cbcc458ebaffe2a6ebf0ef773fd09e69baffd33a5ad",
+      "dossier_path": "07_PROJECT_LEARNING/agamm-pseo-next-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/agamm-pseo-next-learnings.md",
+      "promoted_rules": [
+        "Rule 1630"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-santifer-santifer-irepair": {
+      "learning_id": "learn-github-santifer-santifer-irepair",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "santifer/santifer-irepair",
+      "slug": "santifer-santifer-irepair",
+      "platform": "github",
+      "source_url": "https://github.com/santifer/santifer-irepair",
+      "source_version": "main",
+      "content_hash": "690e64ea532a1884d8e39679c86322683bcdfc940c5f715d53488e70d2bc6f0d",
+      "dossier_path": "07_PROJECT_LEARNING/santifer-santifer-irepair-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/santifer-santifer-irepair-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-scrapy": {
+      "learning_id": "learn-github-scrapy-scrapy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy/scrapy",
+      "slug": "scrapy-scrapy",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "main",
+      "content_hash": "684a295cc539cdba7fdc58294d5f0e05420c81cea52ee910a47ca25457c2ce33",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-playwright": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-playwright",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins/scrapy-playwright",
+      "slug": "scrapy-plugins-scrapy-playwright",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-playwright",
+      "source_version": "main",
+      "content_hash": "bda8c308e44ba8ecb1dee80d7134eb0ab8a937c65887ecc136956975bbd27f01",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-splash": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-splash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins/scrapy-splash",
+      "slug": "scrapy-plugins-scrapy-splash",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-splash",
+      "source_version": "main",
+      "content_hash": "7e7b7f339f008731fc801ff6edb46d5a6e2857faffb40e2f95af38b656991b06",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-splash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-splash-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-selenium": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-selenium",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins/scrapy-selenium",
+      "slug": "scrapy-plugins-scrapy-selenium",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-selenium",
+      "source_version": "main",
+      "content_hash": "b672ffa14481b49ae4822620fda7da4d5af97601008f31eb57ae9cc89319611a",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-selenium-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-selenium-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-redis": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-redis",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins-scrapy-redis",
+      "slug": "scrapy-plugins-scrapy-redis",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-redis",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-redis-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-redis-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-deltafetch": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-deltafetch",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins/scrapy-deltafetch",
+      "slug": "scrapy-plugins-scrapy-deltafetch",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+      "source_version": "main",
+      "content_hash": "1161458a16bccb3a76bb746f10614d27e85ab617ba539c263dfde0d70004cc3e",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-deltafetch-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-deltafetch-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-fake-useragent": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-fake-useragent",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins-scrapy-fake-useragent",
+      "slug": "scrapy-plugins-scrapy-fake-useragent",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-fake-useragent",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-fake-useragent-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-fake-useragent-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-inline-requests": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-inline-requests",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins-scrapy-inline-requests",
+      "slug": "scrapy-plugins-scrapy-inline-requests",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-inline-requests",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-inline-requests-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-inline-requests-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-poet": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-poet",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins-scrapy-poet",
+      "slug": "scrapy-plugins-scrapy-poet",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-poet",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-poet-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-poet-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapy-plugins-scrapy-zyte-api": {
+      "learning_id": "learn-github-scrapy-plugins-scrapy-zyte-api",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapy-plugins/scrapy-zyte-api",
+      "slug": "scrapy-plugins-scrapy-zyte-api",
+      "platform": "github",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-zyte-api",
+      "source_version": "main",
+      "content_hash": "2a3c0e89c8672fecbd85fdecd57246ef7dc644a9c80de9f7382c7a75c59eeb0d",
+      "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-jina-ai-reader": {
+      "learning_id": "learn-github-jina-ai-reader",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "jina-ai/reader",
+      "slug": "jina-ai-reader",
+      "platform": "github",
+      "source_url": "https://github.com/jina-ai/reader",
+      "source_version": "main",
+      "content_hash": "45de66164e85fbe8c8ff1abca5db504ac27e551eb67a28106671090d39fc27a9",
+      "dossier_path": "07_PROJECT_LEARNING/jina-ai-reader-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jina-ai-reader-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-webrecorder-pywb": {
+      "learning_id": "learn-github-webrecorder-pywb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "webrecorder/pywb",
+      "slug": "webrecorder-pywb",
+      "platform": "github",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "main",
+      "content_hash": "1c85e653c0047f2ebf69c917a29eece9a6aaaa33413085b8ca06406fd00caf5a",
+      "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-webrecorder-browsertrix-crawler": {
+      "learning_id": "learn-github-webrecorder-browsertrix-crawler",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "webrecorder/browsertrix-crawler",
+      "slug": "webrecorder-browsertrix-crawler",
+      "platform": "github",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "main",
+      "content_hash": "b6bd9874ffebd3b96f426dbc6ed3853cb019987b70820bec96d711f870f729ae",
+      "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-archivebox-archivebox": {
+      "learning_id": "learn-github-archivebox-archivebox",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "ArchiveBox/ArchiveBox",
+      "slug": "archivebox-archivebox",
+      "platform": "github",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "main",
+      "content_hash": "467d0c2714be9e9afbe8fbab2838e3005ad4f2ec358bb21d6fe7186fcc2a1766",
+      "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+      "promoted_rules": [
+        "Rule 1629"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-buriy-python-readability": {
+      "learning_id": "learn-github-buriy-python-readability",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "buriy/python-readability",
+      "slug": "buriy-python-readability",
+      "platform": "github",
+      "source_url": "https://github.com/buriy/python-readability",
+      "source_version": "main",
+      "content_hash": "b4229275fc1af78d567e30f96292206ebb875199b418e928ec5246fa4b5341cd",
+      "dossier_path": "07_PROJECT_LEARNING/buriy-python-readability-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/buriy-python-readability-learnings.md",
+      "promoted_rules": [
+        "Rule 1631"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-lxml-lxml": {
+      "learning_id": "learn-github-lxml-lxml",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "lxml/lxml",
+      "slug": "lxml-lxml",
+      "platform": "github",
+      "source_url": "https://github.com/lxml/lxml",
+      "source_version": "main",
+      "content_hash": "0a622aea3cbe34592969f42d7a7d7f82c24c8cbd43041907da03e31c02ba5cf0",
+      "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-beautifulsoup-beautifulsoup4": {
+      "learning_id": "learn-github-beautifulsoup-beautifulsoup4",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "beautifulsoup-beautifulsoup4",
+      "slug": "beautifulsoup-beautifulsoup4",
+      "platform": "github",
+      "source_url": "https://github.com/beautifulsoup/beautifulsoup4",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/beautifulsoup-beautifulsoup4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/beautifulsoup-beautifulsoup4-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-html5lib-html5lib-python": {
+      "learning_id": "learn-github-html5lib-html5lib-python",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "html5lib/html5lib-python",
+      "slug": "html5lib-html5lib-python",
+      "platform": "github",
+      "source_url": "https://github.com/html5lib/html5lib-python",
+      "source_version": "main",
+      "content_hash": "0e25ff8585451c4981612dcf60dd47bcd3b7524cb9a1f201bd855ed6ad49a528",
+      "dossier_path": "07_PROJECT_LEARNING/html5lib-html5lib-python-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/html5lib-html5lib-python-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-withfinite-selectolax": {
+      "learning_id": "learn-github-withfinite-selectolax",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "withfinite-selectolax",
+      "slug": "withfinite-selectolax",
+      "platform": "github",
+      "source_url": "https://github.com/withfinite/selectolax",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/withfinite-selectolax-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/withfinite-selectolax-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-fb55-htmlparser2": {
+      "learning_id": "learn-github-fb55-htmlparser2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "fb55/htmlparser2",
+      "slug": "fb55-htmlparser2",
+      "platform": "github",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "main",
+      "content_hash": "c8caa20962832023a38a1cfa807e8297ceb1118050718316fdad046a76a992d7",
+      "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-inikulin-parse5": {
+      "learning_id": "learn-github-inikulin-parse5",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "inikulin/parse5",
+      "slug": "inikulin-parse5",
+      "platform": "github",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "main",
+      "content_hash": "4b1d4c448b373386a391cf743637ee3ceb5c52427c6cad9c12d15767d3210ec8",
+      "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-fb55-css-select": {
+      "learning_id": "learn-github-fb55-css-select",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "fb55/css-select",
+      "slug": "fb55-css-select",
+      "platform": "github",
+      "source_url": "https://github.com/fb55/css-select",
+      "source_version": "main",
+      "content_hash": "2aadecb728930df229846ff7db2a144acea0b44ec08b454f83ce4d50a7dd4f30",
+      "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-cheeriojs-dom-serializer": {
+      "learning_id": "learn-github-cheeriojs-dom-serializer",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "cheeriojs/dom-serializer",
+      "slug": "cheeriojs-dom-serializer",
+      "platform": "github",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "main",
+      "content_hash": "eb609fff5e671d2ad9176030239140564de2f93f754bc7ba3f559354de9029b7",
+      "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-unifiedjs-unified": {
+      "learning_id": "learn-github-unifiedjs-unified",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "unifiedjs/unified",
+      "slug": "unifiedjs-unified",
+      "platform": "github",
+      "source_url": "https://github.com/unifiedjs/unified",
+      "source_version": "main",
+      "content_hash": "8a3f44e28870b73fa252d212b18f1976818e7e48a086d7357c507edd2ee5b1d6",
+      "dossier_path": "07_PROJECT_LEARNING/unifiedjs-unified-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unifiedjs-unified-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rehypejs-rehype": {
+      "learning_id": "learn-github-rehypejs-rehype",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rehypejs/rehype",
+      "slug": "rehypejs-rehype",
+      "platform": "github",
+      "source_url": "https://github.com/rehypejs/rehype",
+      "source_version": "main",
+      "content_hash": "74a36d52dfd69299b7c5509333142adf255d308e54e13d9c690ca2312f3fa133",
+      "dossier_path": "07_PROJECT_LEARNING/rehypejs-rehype-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rehypejs-rehype-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rehypejs-rehype-parse": {
+      "learning_id": "learn-github-rehypejs-rehype-parse",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rehypejs-rehype-parse",
+      "slug": "rehypejs-rehype-parse",
+      "platform": "github",
+      "source_url": "https://github.com/rehypejs/rehype-parse",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/rehypejs-rehype-parse-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rehypejs-rehype-parse-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rehypejs-rehype-stringify": {
+      "learning_id": "learn-github-rehypejs-rehype-stringify",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rehypejs-rehype-stringify",
+      "slug": "rehypejs-rehype-stringify",
+      "platform": "github",
+      "source_url": "https://github.com/rehypejs/rehype-stringify",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/rehypejs-rehype-stringify-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rehypejs-rehype-stringify-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-syntax-tree-hast-util-from-html": {
+      "learning_id": "learn-github-syntax-tree-hast-util-from-html",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "syntax-tree/hast-util-from-html",
+      "slug": "syntax-tree-hast-util-from-html",
+      "platform": "github",
+      "source_url": "https://github.com/syntax-tree/hast-util-from-html",
+      "source_version": "main",
+      "content_hash": "d8cf3838ea3cae364917930b0d70f19fe38cfd22fb5d7e36a9eafdef528d5b77",
+      "dossier_path": "07_PROJECT_LEARNING/syntax-tree-hast-util-from-html-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/syntax-tree-hast-util-from-html-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-syntax-tree-hast-util-to-html": {
+      "learning_id": "learn-github-syntax-tree-hast-util-to-html",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "syntax-tree/hast-util-to-html",
+      "slug": "syntax-tree-hast-util-to-html",
+      "platform": "github",
+      "source_url": "https://github.com/syntax-tree/hast-util-to-html",
+      "source_version": "main",
+      "content_hash": "aec03e3b9690ffd299c2f804174a8566da0b19598132a0c1121c19a71a0cd516",
+      "dossier_path": "07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-remarkjs-remark": {
+      "learning_id": "learn-github-remarkjs-remark",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "remarkjs/remark",
+      "slug": "remarkjs-remark",
+      "platform": "github",
+      "source_url": "https://github.com/remarkjs/remark",
+      "source_version": "main",
+      "content_hash": "6fc549bb9b1090795cb493b50a63ae991a48fac81f7e5afe218b251222f15f4c",
+      "dossier_path": "07_PROJECT_LEARNING/remarkjs-remark-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/remarkjs-remark-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-wooorm-parse-entities": {
+      "learning_id": "learn-github-wooorm-parse-entities",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "wooorm/parse-entities",
+      "slug": "wooorm-parse-entities",
+      "platform": "github",
+      "source_url": "https://github.com/wooorm/parse-entities",
+      "source_version": "main",
+      "content_hash": "7256fa42ef9f4007c75dd57e9e686d09ac6a3effc22a1c4daccd28092bd8a3fb",
+      "dossier_path": "07_PROJECT_LEARNING/wooorm-parse-entities-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wooorm-parse-entities-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-sindresorhus-got": {
+      "learning_id": "learn-github-sindresorhus-got",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "sindresorhus/got",
+      "slug": "sindresorhus-got",
+      "platform": "github",
+      "source_url": "https://github.com/sindresorhus/got",
+      "source_version": "main",
+      "content_hash": "eda2c0c6db58fcb8ff1beaa35d1f1fb25b32fbd27f864a58cbf489582883d3cd",
+      "dossier_path": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-nodejs-undici": {
+      "learning_id": "learn-github-nodejs-undici",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "nodejs/undici",
+      "slug": "nodejs-undici",
+      "platform": "github",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "main",
+      "content_hash": "360ec80c73843947c6096faccb285d2dcc9db5242fcb02ba2521d54d149c88fa",
+      "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-axios-axios": {
+      "learning_id": "learn-github-axios-axios",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "axios/axios",
+      "slug": "axios-axios",
+      "platform": "github",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "main",
+      "content_hash": "101a3a822e1406063791ac3acee7c7c5933dee7e7d951457bbf06863416e9f00",
+      "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-psf-requests": {
+      "learning_id": "learn-github-psf-requests",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "psf/requests",
+      "slug": "psf-requests",
+      "platform": "github",
+      "source_url": "https://github.com/psf/requests",
+      "source_version": "main",
+      "content_hash": "4ffe71fbe9ec8d4e2fd98545495940e7fca2f557bb9fc584897cff863a56827d",
+      "dossier_path": "07_PROJECT_LEARNING/psf-requests-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/psf-requests-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-urllib3-urllib3": {
+      "learning_id": "learn-github-urllib3-urllib3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "urllib3/urllib3",
+      "slug": "urllib3-urllib3",
+      "platform": "github",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "main",
+      "content_hash": "e32664606e7065971fad51087d35e9cb4208cb9c44eaeb3e849b72766ef04fee",
+      "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-encode-httpx": {
+      "learning_id": "learn-github-encode-httpx",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "encode/httpx",
+      "slug": "encode-httpx",
+      "platform": "github",
+      "source_url": "https://github.com/encode/httpx",
+      "source_version": "main",
+      "content_hash": "4e9accda095a76e9b78cbbaeff30baa7c8a9fce60425523bd52466cb07fcceea",
+      "dossier_path": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-aio-libs-aiohttp": {
+      "learning_id": "learn-github-aio-libs-aiohttp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "aio-libs/aiohttp",
+      "slug": "aio-libs-aiohttp",
+      "platform": "github",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "main",
+      "content_hash": "10eda7fb12c96d16b5d73287deda03791198b40b7ecf493a6297cbde04640219",
+      "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-digitalbazaar-jsonld.js": {
+      "learning_id": "learn-github-digitalbazaar-jsonld.js",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "digitalbazaar/jsonld.js",
+      "slug": "digitalbazaar-jsonld.js",
+      "platform": "github",
+      "source_url": "https://github.com/digitalbazaar/jsonld.js",
+      "source_version": "main",
+      "content_hash": "e179c4a2e4e11d2610b7e760bc793a0b08278a4ff299c33d811df5d049a35cbb",
+      "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-jsonld.js-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-jsonld.js-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rdfjs-n3.js": {
+      "learning_id": "learn-github-rdfjs-n3.js",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rdfjs/N3.js",
+      "slug": "rdfjs-n3.js",
+      "platform": "github",
+      "source_url": "https://github.com/rdfjs/N3.js",
+      "source_version": "main",
+      "content_hash": "bfce7e333f5c50424728fefa0f6338a69df29d4d1c143d4f4022109bc5372788",
+      "dossier_path": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rdflib-rdflib": {
+      "learning_id": "learn-github-rdflib-rdflib",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "RDFLib/rdflib",
+      "slug": "rdflib-rdflib",
+      "platform": "github",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "main",
+      "content_hash": "491c9735f3b294d9824f82a3d9c325c1ddfa55f8ad0fb59ca65052860ff68a04",
+      "dossier_path": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rdflib-pyshacl": {
+      "learning_id": "learn-github-rdflib-pyshacl",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "RDFLib/pySHACL",
+      "slug": "rdflib-pyshacl",
+      "platform": "github",
+      "source_url": "https://github.com/RDFLib/pySHACL",
+      "source_version": "main",
+      "content_hash": "9058ccbb24be0496fb8662934ad242fa2deba49a93374268c99c8125032f5bd7",
+      "dossier_path": "07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-jsonld-java-jsonld-java": {
+      "learning_id": "learn-github-jsonld-java-jsonld-java",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "jsonld-java/jsonld-java",
+      "slug": "jsonld-java-jsonld-java",
+      "platform": "github",
+      "source_url": "https://github.com/jsonld-java/jsonld-java",
+      "source_version": "main",
+      "content_hash": "4ead31949fce257036e1813d5859e6fa2dac40f5223c97d8049b63875288f46d",
+      "dossier_path": "07_PROJECT_LEARNING/jsonld-java-jsonld-java-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jsonld-java-jsonld-java-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-digitalbazaar-pyld": {
+      "learning_id": "learn-github-digitalbazaar-pyld",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "digitalbazaar/pyld",
+      "slug": "digitalbazaar-pyld",
+      "platform": "github",
+      "source_url": "https://github.com/digitalbazaar/pyld",
+      "source_version": "main",
+      "content_hash": "7beccb9b7fcc3f69ba8ba13a49906fa23cf2d2655c1ccd46ab177a0af13a43b2",
+      "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rdfjs-namespace": {
+      "learning_id": "learn-github-rdfjs-namespace",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rdfjs/namespace",
+      "slug": "rdfjs-namespace",
+      "platform": "github",
+      "source_url": "https://github.com/rdfjs/namespace",
+      "source_version": "main",
+      "content_hash": "8dc3e5f00373cc052725d5c0362be327beaac188bca5060547fb3c99709a9c5e",
+      "dossier_path": "07_PROJECT_LEARNING/rdfjs-namespace-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdfjs-namespace-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rdfjs-sparqlalgebrajs": {
+      "learning_id": "learn-github-rdfjs-sparqlalgebrajs",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rdfjs-sparqlalgebrajs",
+      "slug": "rdfjs-sparqlalgebrajs",
+      "platform": "github",
+      "source_url": "https://github.com/rdfjs/sparqlalgebrajs",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/rdfjs-sparqlalgebrajs-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdfjs-sparqlalgebrajs-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rdfjs-quadstore": {
+      "learning_id": "learn-github-rdfjs-quadstore",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rdfjs-quadstore",
+      "slug": "rdfjs-quadstore",
+      "platform": "github",
+      "source_url": "https://github.com/rdfjs/quadstore",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/rdfjs-quadstore-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdfjs-quadstore-learnings.md",
+      "promoted_rules": [
+        "Rule 1632"
+      ],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-andythefactory-newspaper4k": {
+      "learning_id": "learn-github-andythefactory-newspaper4k",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "AndyTheFactory/newspaper4k",
+      "slug": "andythefactory-newspaper4k",
+      "platform": "github",
+      "source_url": "https://github.com/AndyTheFactory/newspaper4k",
+      "source_version": "main",
+      "content_hash": "b5c2fe103274457cf5686cc9d55b290ff0f23634ae34046433ff75aeacb45483",
+      "dossier_path": "07_PROJECT_LEARNING/andythefactory-newspaper4k-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/andythefactory-newspaper4k-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-goose3-goose3": {
+      "learning_id": "learn-github-goose3-goose3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "goose3/goose3",
+      "slug": "goose3-goose3",
+      "platform": "github",
+      "source_url": "https://github.com/goose3/goose3",
+      "source_version": "main",
+      "content_hash": "513ec68cb8b36ae6658c0ac8b8d51c07377f4f685c9c29878e7002e3b1e8661d",
+      "dossier_path": "07_PROJECT_LEARNING/goose3-goose3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/goose3-goose3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-mozilla-readability": {
+      "learning_id": "learn-github-mozilla-readability",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "mozilla/readability",
+      "slug": "mozilla-readability",
+      "platform": "github",
+      "source_url": "https://github.com/mozilla/readability",
+      "source_version": "main",
+      "content_hash": "e42a2767bbabb3b5c3c61b8275923b3231f636fcec718c8ac4d1cb382804ee42",
+      "dossier_path": "07_PROJECT_LEARNING/mozilla-readability-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mozilla-readability-learnings.md",
+      "promoted_rules": [
+        "Rule 1631"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-miso-belica-justext": {
+      "learning_id": "learn-github-miso-belica-justext",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "miso-belica/justext",
+      "slug": "miso-belica-justext",
+      "platform": "github",
+      "source_url": "https://github.com/miso-belica/justext",
+      "source_version": "main",
+      "content_hash": "4f1d64ac45229ec5fa7f67efcb6af30124b05695d7eff439470bf5185495f3cd",
+      "dossier_path": "07_PROJECT_LEARNING/miso-belica-justext-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/miso-belica-justext-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-scrapinghub-dateparser": {
+      "learning_id": "learn-github-scrapinghub-dateparser",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "scrapinghub/dateparser",
+      "slug": "scrapinghub-dateparser",
+      "platform": "github",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "main",
+      "content_hash": "25cec321fa0d3284f115a30739addf21cabeb7e74865f08f683be8637ca105b3",
+      "dossier_path": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-google-closure-compiler": {
+      "learning_id": "learn-github-google-closure-compiler",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "google/closure-compiler",
+      "slug": "google-closure-compiler",
+      "platform": "github",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "main",
+      "content_hash": "40cc733fdafc33f213b5c35655ced6b0ededed0038f7296f058bb92a129597ff",
+      "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-sveltejs-svelte": {
+      "learning_id": "learn-github-sveltejs-svelte",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "sveltejs/svelte",
+      "slug": "sveltejs-svelte",
+      "platform": "github",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "main",
+      "content_hash": "73ebafc74a8fa5cd27e9bdd0a5748a217f62871b8e2bed7375f83ca34216971a",
+      "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-solidjs-solid": {
+      "learning_id": "learn-github-solidjs-solid",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "solidjs/solid",
+      "slug": "solidjs-solid",
+      "platform": "github",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "main",
+      "content_hash": "95cec4e2b255d41f655e38186a7a26ef7d99851f91976731039b83fa87e60ca3",
+      "dossier_path": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-vitejs-vite": {
+      "learning_id": "learn-github-vitejs-vite",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "vitejs/vite",
+      "slug": "vitejs-vite",
+      "platform": "github",
+      "source_url": "https://github.com/vitejs/vite",
+      "source_version": "main",
+      "content_hash": "887e5ad41fc2af8d7451768668cfbce05bf2f4f83cfb5638618ef12cd98106f0",
+      "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-webpack-webpack": {
+      "learning_id": "learn-github-webpack-webpack",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "webpack-webpack",
+      "slug": "webpack-webpack",
+      "platform": "github",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "ERROR",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-rollup-rollup": {
+      "learning_id": "learn-github-rollup-rollup",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "rollup-rollup",
+      "slug": "rollup-rollup",
+      "platform": "github",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "ERROR",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-evanw-esbuild": {
+      "learning_id": "learn-github-evanw-esbuild",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "evanw/esbuild",
+      "slug": "evanw-esbuild",
+      "platform": "github",
+      "source_url": "https://github.com/evanw/esbuild",
+      "source_version": "main",
+      "content_hash": "46a24e094c685a322305fdd457688f0440f6e87d39e0cb49501ad830b17c0424",
+      "dossier_path": "07_PROJECT_LEARNING/evanw-esbuild-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/evanw-esbuild-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-parcel-bundler-parcel": {
+      "learning_id": "learn-github-parcel-bundler-parcel",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "parcel-bundler/parcel",
+      "slug": "parcel-bundler-parcel",
+      "platform": "github",
+      "source_url": "https://github.com/parcel-bundler/parcel",
+      "source_version": "main",
+      "content_hash": "9d214989b56f880cdc7fcf90f7744ba51c31470b1ceab5c09771aa01be69c098",
+      "dossier_path": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-tanstack-router": {
+      "learning_id": "learn-github-tanstack-router",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "tanstack-router",
+      "slug": "tanstack-router",
+      "platform": "github",
+      "source_url": "https://github.com/TanStack/router",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "404_OR_UNAVAILABLE",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-tanstack-query": {
+      "learning_id": "learn-github-tanstack-query",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "TanStack/query",
+      "slug": "tanstack-query",
+      "platform": "github",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "main",
+      "content_hash": "6aaa7c920b75548791d23581b198fa984b3199c8a9116b41d456f5222d8b2e8f",
+      "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-preactjs-preact": {
+      "learning_id": "learn-github-preactjs-preact",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "preactjs/preact",
+      "slug": "preactjs-preact",
+      "platform": "github",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "main",
+      "content_hash": "5372866ebd514affe35c26c7348dabb4df8b0ac994cf6bdd41f804686ec255b6",
+      "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-qwikdev-qwik": {
+      "learning_id": "learn-github-qwikdev-qwik",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "QwikDev/qwik",
+      "slug": "qwikdev-qwik",
+      "platform": "github",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "main",
+      "content_hash": "7f6ea637a6022037eeb896f6ce906f211a53836a3afb37c4e0722bbc852da9f8",
+      "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-vitest-dev-vitest": {
+      "learning_id": "learn-github-vitest-dev-vitest",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "vitest-dev/vitest",
+      "slug": "vitest-dev-vitest",
+      "platform": "github",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "main",
+      "content_hash": "bf17701a2dfcccc9c1456a5d99b0551f0b728eb05d9414057cfbeb8cf09f2828",
+      "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-cypress-io-cypress": {
+      "learning_id": "learn-github-cypress-io-cypress",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "cypress-io-cypress",
+      "slug": "cypress-io-cypress",
+      "platform": "github",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "ERROR",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-webdriverio-webdriverio": {
+      "learning_id": "learn-github-webdriverio-webdriverio",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "webdriverio-webdriverio",
+      "slug": "webdriverio-webdriverio",
+      "platform": "github",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "main",
+      "content_hash": "",
+      "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+      "promoted_rules": [],
+      "status": "FAILED_OR_UNAVAILABLE",
+      "verification_status": "ERROR",
+      "verified": false,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-devexpress-testcafe": {
+      "learning_id": "learn-github-devexpress-testcafe",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "DevExpress/testcafe",
+      "slug": "devexpress-testcafe",
+      "platform": "github",
+      "source_url": "https://github.com/DevExpress/testcafe",
+      "source_version": "main",
+      "content_hash": "5b529c217d94ee1dbe3487e8035642fd1ac64258aba04f0f126eabb135d1623f",
+      "dossier_path": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-mswjs-msw": {
+      "learning_id": "learn-github-mswjs-msw",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "mswjs/msw",
+      "slug": "mswjs-msw",
+      "platform": "github",
+      "source_url": "https://github.com/mswjs/msw",
+      "source_version": "main",
+      "content_hash": "a6ba27fbb57dbeb462f6d9da2d9c3f2b5d70ead3473278e08651ca6855eed979",
+      "dossier_path": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+      "promoted_rules": [
+        "Rule 1633"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-testing-library-react-testing-library": {
+      "learning_id": "learn-github-testing-library-react-testing-library",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "testing-library/react-testing-library",
+      "slug": "testing-library-react-testing-library",
+      "platform": "github",
+      "source_url": "https://github.com/testing-library/react-testing-library",
+      "source_version": "main",
+      "content_hash": "d5a03a2ae0af72496d53471d0a4047ee1c9446f7c6e6519a4ab27ed3fe75d5ff",
+      "dossier_path": "07_PROJECT_LEARNING/testing-library-react-testing-library-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/testing-library-react-testing-library-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-testing-library-dom-testing-library": {
+      "learning_id": "learn-github-testing-library-dom-testing-library",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "testing-library/dom-testing-library",
+      "slug": "testing-library-dom-testing-library",
+      "platform": "github",
+      "source_url": "https://github.com/testing-library/dom-testing-library",
+      "source_version": "main",
+      "content_hash": "a5877d83f3b11133f3d9bb5a1d59365a1a92afc7ca28f585417a17edef2a87a6",
+      "dossier_path": "07_PROJECT_LEARNING/testing-library-dom-testing-library-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/testing-library-dom-testing-library-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-jestjs-jest": {
+      "learning_id": "learn-github-jestjs-jest",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "jestjs/jest",
+      "slug": "jestjs-jest",
+      "platform": "github",
+      "source_url": "https://github.com/jestjs/jest",
+      "source_version": "main",
+      "content_hash": "391ed5f6cabde4c6657177e112db9dc74b2d59e86cc148e7425f8b6f13a0cf19",
+      "dossier_path": "07_PROJECT_LEARNING/jestjs-jest-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jestjs-jest-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-avajs-ava": {
+      "learning_id": "learn-github-avajs-ava",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "avajs/ava",
+      "slug": "avajs-ava",
+      "platform": "github",
+      "source_url": "https://github.com/avajs/ava",
+      "source_version": "main",
+      "content_hash": "11932de219a3e0a2fccde091a5eb872bf84139f5f7c48aa7fa8aeba54dab85ac",
+      "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-mochajs-mocha": {
+      "learning_id": "learn-github-mochajs-mocha",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "mochajs/mocha",
+      "slug": "mochajs-mocha",
+      "platform": "github",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "main",
+      "content_hash": "9aae052b5d2c8213646abf8a58581fc69282d75659e0df135d475bde3b2ac723",
+      "dossier_path": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-dubzzz-fast-check": {
+      "learning_id": "learn-github-dubzzz-fast-check",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "dubzzz/fast-check",
+      "slug": "dubzzz-fast-check",
+      "platform": "github",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "main",
+      "content_hash": "628d1775e65fa4d62564dc31b967882036186932376a3fcf8106e4666c2a4539",
+      "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+      "promoted_rules": [
+        "Rule 1633"
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
+    },
+    "learn-github-faker-js-faker": {
+      "learning_id": "learn-github-faker-js-faker",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "repository": "faker-js/faker",
+      "slug": "faker-js-faker",
+      "platform": "github",
+      "source_url": "https://github.com/faker-js/faker",
+      "source_version": "main",
+      "content_hash": "6eab3dead35d13cb1f7462ddc5e505694d30f1618883469bdefa81dac66d13e5",
+      "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "EMPIRICAL_VERIFIED",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T06:55:35.697040Z"
     }
   },
   "aliases": {

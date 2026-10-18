@@ -865,20 +865,13 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "browser-use-browser-use": {
-    "name": "browser-use/browser-use",
+    "name": "browser-use",
     "officialUrl": "https://github.com/browser-use/browser-use",
-    "sourceType": "github",
-    "technology": "Python",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-28T19:14:06.174Z",
-    "lastVerified": "2026-09-28T19:14:06.174Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
   "assistant-ui-assistant-ui": {
     "name": "assistant-ui/assistant-ui",
@@ -966,8 +959,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:43:22.602Z",
-    "lastVerified": "2026-10-18T06:43:22.602Z",
+    "lastChecked": "2026-10-18T03:25:22.220Z",
+    "lastVerified": "2026-10-18T03:25:22.220Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -998,8 +991,8 @@
     "sourceType": "github",
     "technology": "Go",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:49:45.977Z",
-    "lastVerified": "2026-10-18T06:49:45.977Z",
+    "lastChecked": "2026-10-18T03:38:29.563Z",
+    "lastVerified": "2026-10-18T03:38:29.563Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -1094,8 +1087,8 @@
     "sourceType": "github",
     "technology": "Go",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:53:03.762Z",
-    "lastVerified": "2026-10-18T06:53:03.762Z",
+    "lastChecked": "2026-10-18T03:41:46.261Z",
+    "lastVerified": "2026-10-18T03:41:46.261Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -1142,8 +1135,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:56:39.170Z",
-    "lastVerified": "2026-10-18T06:56:39.170Z",
+    "lastChecked": "2026-10-18T03:51:28.282Z",
+    "lastVerified": "2026-10-18T03:51:28.282Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2481,20 +2474,13 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "unclecode-crawl4ai": {
-    "name": "unclecode/crawl4ai",
+    "name": "crawl4ai",
     "officialUrl": "https://github.com/unclecode/crawl4ai",
-    "sourceType": "github",
-    "technology": "Python",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-30T13:55:04.763Z",
-    "lastVerified": "2026-09-30T13:55:04.763Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 82,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
   "microsoft-ai-agents-for-beginners": {
     "name": "microsoft/ai-agents-for-beginners",
@@ -2921,8 +2907,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:39:49.643Z",
-    "lastVerified": "2026-10-18T06:39:49.643Z",
+    "lastChecked": "2026-10-17T23:39:37.698Z",
+    "lastVerified": "2026-10-17T23:39:37.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2937,8 +2923,8 @@
     "sourceType": "github",
     "technology": "TypeScript",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:43:25.105Z",
-    "lastVerified": "2026-10-18T06:43:25.105Z",
+    "lastChecked": "2026-10-17T23:42:55.866Z",
+    "lastVerified": "2026-10-17T23:42:55.866Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3391,8 +3377,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:46:28.526Z",
-    "lastVerified": "2026-10-18T06:46:28.526Z",
+    "lastChecked": "2026-10-17T23:46:19.917Z",
+    "lastVerified": "2026-10-17T23:46:19.917Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3407,8 +3393,8 @@
     "sourceType": "github",
     "technology": "C++",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:49:48.466Z",
-    "lastVerified": "2026-10-18T06:49:48.466Z",
+    "lastChecked": "2026-10-17T23:49:23.096Z",
+    "lastVerified": "2026-10-17T23:49:23.096Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3423,8 +3409,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:53:06.271Z",
-    "lastVerified": "2026-10-18T06:53:06.271Z",
+    "lastChecked": "2026-10-17T23:52:47.052Z",
+    "lastVerified": "2026-10-17T23:52:47.052Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3631,8 +3617,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:56:41.673Z",
-    "lastVerified": "2026-10-18T06:56:41.673Z",
+    "lastChecked": "2026-10-17T23:56:04.446Z",
+    "lastVerified": "2026-10-17T23:56:04.446Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3690,20 +3676,13 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "angular-angular": {
-    "name": "angular/angular",
+    "name": "angular-angular",
     "officialUrl": "https://github.com/angular/angular",
-    "sourceType": "github",
-    "technology": "TypeScript",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-30T17:16:33.285Z",
-    "lastVerified": "2026-09-30T17:16:33.285Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 41,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "ERROR",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
   "honojs-hono": {
     "name": "honojs/hono",
@@ -12690,20 +12669,13 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "adbar-trafilatura": {
-    "name": "adbar/trafilatura",
+    "name": "trafilatura",
     "officialUrl": "https://github.com/adbar/trafilatura",
-    "sourceType": "github",
-    "technology": "Python",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-30T20:10:08.564Z",
-    "lastVerified": "2026-09-30T20:10:08.564Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 67,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
   "lavague-ai-lavague": {
     "name": "lavague-ai/LaVague",
@@ -15186,20 +15158,13 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vercel-swr": {
-    "name": "vercel/swr",
+    "name": "swr",
     "officialUrl": "https://github.com/vercel/swr",
-    "sourceType": "github",
-    "technology": "TypeScript",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-30T21:28:04.259Z",
-    "lastVerified": "2026-09-30T21:28:04.259Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 29,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
   },
   "necolas-react-native-web": {
     "name": "necolas/react-native-web",
@@ -17498,8 +17463,8 @@
     "sourceType": "github",
     "technology": "TypeScript",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:46:31.025Z",
-    "lastVerified": "2026-10-18T06:46:31.025Z",
+    "lastChecked": "2026-10-18T06:14:40.803Z",
+    "lastVerified": "2026-10-18T06:14:40.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17514,8 +17479,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:49:50.958Z",
-    "lastVerified": "2026-10-18T06:49:50.958Z",
+    "lastChecked": "2026-10-18T06:18:11.323Z",
+    "lastVerified": "2026-10-18T06:18:11.323Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17495,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:56:44.168Z",
-    "lastVerified": "2026-10-18T06:56:44.168Z",
+    "lastChecked": "2026-10-18T06:04:14.222Z",
+    "lastVerified": "2026-10-18T06:04:14.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17546,8 +17511,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:43:27.601Z",
-    "lastVerified": "2026-10-18T06:43:27.601Z",
+    "lastChecked": "2026-10-18T06:10:59.778Z",
+    "lastVerified": "2026-10-18T06:10:59.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24410,69 +24375,841 @@
     "revisionIdentifier": "main",
     "lastVerified": "2026-10-18T06:29:09.763283Z"
   },
-  "crawlcove-crawlcove-hreflang-checker": {
-    "name": "CrawlCove/hreflang-checker",
-    "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-    "sourceType": "github",
-    "technology": "TypeScript",
-    "lastChecked": "2026-10-18T06:40:02.775Z",
-    "lastVerified": "2026-10-18T06:40:02.775Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": "learn-github-crawlcove-hreflang-checker",
-    "contentHash": "b194b4dff339d8ab0e5094d83548763bbc9546902697452021de2995bac01d42",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
-    "closedIssuesCount": 0,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+  "berkaycubuk-kitsune": {
+    "name": "kitsune",
+    "officialUrl": "https://github.com/berkaycubuk/kitsune",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
-  "crawlcove-crawlcove-robots-txt-tester": {
-    "name": "CrawlCove/robots-txt-tester",
-    "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-    "sourceType": "github",
-    "technology": "TypeScript",
-    "lastChecked": "2026-10-18T06:35:30.175Z",
-    "lastVerified": "2026-10-18T06:35:30.175Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": "learn-github-crawlcove-robots-txt-tester",
-    "contentHash": "cbc78fdcd7fd7e177540e4f9588c227475798dc4384779e0092f1e0ca0d810a2",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 0,
-    "closedIssuesCount": 0,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+  "manojahi-serpiq": {
+    "name": "serpiq",
+    "officialUrl": "https://github.com/manojahi/serpiq",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
   },
-  "crawlcove-crawlcove-sitemap-validator": {
-    "name": "CrawlCove/xml-sitemap-validator",
-    "officialUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-    "sourceType": "github",
-    "technology": "TypeScript",
-    "lastChecked": "2026-10-18T06:35:33.247Z",
-    "lastVerified": "2026-10-18T06:35:33.247Z",
-    "harvestMode": "ZERO_CLONE_API",
-    "learningStatus": "VERIFIED_LEARNING",
-    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
-    "contentHash": "08a04c776cda6192fea8160e2cea3b50157ab06f733dcc7300e58d6d342f8fff",
-    "promotedRulesCount": 2,
-    "recentFixesCount": 0,
-    "closedIssuesCount": 0,
-    "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+  "tmolavi-siteprobe": {
+    "name": "siteprobe",
+    "officialUrl": "https://github.com/tmolavi/siteprobe",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
-  "lokoe-mehdi-scouter": {
-    "name": "scouter",
-    "officialUrl": "https://github.com/lokoe-mehdi/scouter",
-    "lastChecked": "2026-10-18T06:52:56.262Z",
-    "revisionIdentifier": "4de023b517",
-    "lastVerified": "2026-10-18T06:52:56.262Z"
+  "4mmar1mtiaz-seo-tools-by-ammar-imtiaz": {
+    "name": "SEO-tools-by-Ammar-Imtiaz",
+    "officialUrl": "https://github.com/4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
   },
-  "crawlseo-crawlseo": {
-    "name": "crawlseo",
-    "officialUrl": "https://github.com/crawlseo/crawlseo",
-    "lastChecked": "2026-10-18T06:56:31.674Z",
-    "revisionIdentifier": "1e7207b6eb",
-    "lastVerified": "2026-10-18T06:56:31.674Z"
+  "giuucmp-seoaudit": {
+    "name": "seoaudit",
+    "officialUrl": "https://github.com/giuucmp/seoaudit",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "ugolbck-seofordev": {
+    "name": "seofordev",
+    "officialUrl": "https://github.com/ugolbck/seofordev",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "nometria-sitemap-generator": {
+    "name": "sitemap-generator",
+    "officialUrl": "https://github.com/nometria/sitemap-generator",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "m0ntydad0n-pseo-engine-oss": {
+    "name": "pseo-engine-oss",
+    "officialUrl": "https://github.com/m0ntydad0n/pseo-engine-oss",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "sundios-seo-dashboard": {
+    "name": "SEO-Dashboard",
+    "officialUrl": "https://github.com/sundios/SEO-Dashboard",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "gatenlp-ultimate-sitemap-parser": {
+    "name": "ultimate-sitemap-parser",
+    "officialUrl": "https://github.com/GateNLP/ultimate-sitemap-parser",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "jafforgehq-site-analytics-tool": {
+    "name": "site-analytics-tool",
+    "officialUrl": "https://github.com/jafforgehq/site-analytics-tool",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "melihandic-deep-in-gsc": {
+    "name": "deep-in-gsc",
+    "officialUrl": "https://github.com/melihandic/deep-in-gsc",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "joshcarty-google-searchconsole": {
+    "name": "google-searchconsole",
+    "officialUrl": "https://github.com/joshcarty/google-searchconsole",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "trybyte-app-sitemap-validator": {
+    "name": "sitemap-validator",
+    "officialUrl": "https://github.com/trybyte-app/sitemap-validator",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "lucky-media-astro-seo": {
+    "name": "astro-seo",
+    "officialUrl": "https://github.com/lucky-media/astro-seo",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "agamm-pseo-next": {
+    "name": "pseo-next",
+    "officialUrl": "https://github.com/agamm/pseo-next",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_1_DIRECT_SEO"
+  },
+  "santifer-santifer-irepair": {
+    "name": "santifer-irepair",
+    "officialUrl": "https://github.com/santifer/santifer-irepair",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-scrapy": {
+    "name": "scrapy",
+    "officialUrl": "https://github.com/scrapy/scrapy",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-playwright": {
+    "name": "scrapy-playwright",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-playwright",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-splash": {
+    "name": "scrapy-splash",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-splash",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-selenium": {
+    "name": "scrapy-selenium",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-selenium",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-redis": {
+    "name": "scrapy-plugins-scrapy-redis",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-redis",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-deltafetch": {
+    "name": "scrapy-deltafetch",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-fake-useragent": {
+    "name": "scrapy-plugins-scrapy-fake-useragent",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-fake-useragent",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-inline-requests": {
+    "name": "scrapy-plugins-scrapy-inline-requests",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-inline-requests",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-poet": {
+    "name": "scrapy-plugins-scrapy-poet",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-poet",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapy-plugins-scrapy-zyte-api": {
+    "name": "scrapy-zyte-api",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "jina-ai-reader": {
+    "name": "reader",
+    "officialUrl": "https://github.com/jina-ai/reader",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "webrecorder-pywb": {
+    "name": "pywb",
+    "officialUrl": "https://github.com/webrecorder/pywb",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "webrecorder-browsertrix-crawler": {
+    "name": "browsertrix-crawler",
+    "officialUrl": "https://github.com/webrecorder/browsertrix-crawler",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "archivebox-archivebox": {
+    "name": "ArchiveBox",
+    "officialUrl": "https://github.com/ArchiveBox/ArchiveBox",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "buriy-python-readability": {
+    "name": "python-readability",
+    "officialUrl": "https://github.com/buriy/python-readability",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "lxml-lxml": {
+    "name": "lxml",
+    "officialUrl": "https://github.com/lxml/lxml",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "beautifulsoup-beautifulsoup4": {
+    "name": "beautifulsoup-beautifulsoup4",
+    "officialUrl": "https://github.com/beautifulsoup/beautifulsoup4",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "html5lib-html5lib-python": {
+    "name": "html5lib-python",
+    "officialUrl": "https://github.com/html5lib/html5lib-python",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "withfinite-selectolax": {
+    "name": "withfinite-selectolax",
+    "officialUrl": "https://github.com/withfinite/selectolax",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "fb55-htmlparser2": {
+    "name": "htmlparser2",
+    "officialUrl": "https://github.com/fb55/htmlparser2",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "inikulin-parse5": {
+    "name": "parse5",
+    "officialUrl": "https://github.com/inikulin/parse5",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "fb55-css-select": {
+    "name": "css-select",
+    "officialUrl": "https://github.com/fb55/css-select",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "cheeriojs-dom-serializer": {
+    "name": "dom-serializer",
+    "officialUrl": "https://github.com/cheeriojs/dom-serializer",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "unifiedjs-unified": {
+    "name": "unified",
+    "officialUrl": "https://github.com/unifiedjs/unified",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rehypejs-rehype": {
+    "name": "rehype",
+    "officialUrl": "https://github.com/rehypejs/rehype",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rehypejs-rehype-parse": {
+    "name": "rehypejs-rehype-parse",
+    "officialUrl": "https://github.com/rehypejs/rehype-parse",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rehypejs-rehype-stringify": {
+    "name": "rehypejs-rehype-stringify",
+    "officialUrl": "https://github.com/rehypejs/rehype-stringify",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "syntax-tree-hast-util-from-html": {
+    "name": "hast-util-from-html",
+    "officialUrl": "https://github.com/syntax-tree/hast-util-from-html",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "syntax-tree-hast-util-to-html": {
+    "name": "hast-util-to-html",
+    "officialUrl": "https://github.com/syntax-tree/hast-util-to-html",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "remarkjs-remark": {
+    "name": "remark",
+    "officialUrl": "https://github.com/remarkjs/remark",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "wooorm-parse-entities": {
+    "name": "parse-entities",
+    "officialUrl": "https://github.com/wooorm/parse-entities",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "sindresorhus-got": {
+    "name": "got",
+    "officialUrl": "https://github.com/sindresorhus/got",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "nodejs-undici": {
+    "name": "undici",
+    "officialUrl": "https://github.com/nodejs/undici",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "axios-axios": {
+    "name": "axios",
+    "officialUrl": "https://github.com/axios/axios",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "psf-requests": {
+    "name": "requests",
+    "officialUrl": "https://github.com/psf/requests",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "urllib3-urllib3": {
+    "name": "urllib3",
+    "officialUrl": "https://github.com/urllib3/urllib3",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "encode-httpx": {
+    "name": "httpx",
+    "officialUrl": "https://github.com/encode/httpx",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "aio-libs-aiohttp": {
+    "name": "aiohttp",
+    "officialUrl": "https://github.com/aio-libs/aiohttp",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "digitalbazaar-jsonld.js": {
+    "name": "jsonld.js",
+    "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rdfjs-n3.js": {
+    "name": "N3.js",
+    "officialUrl": "https://github.com/rdfjs/N3.js",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rdflib-rdflib": {
+    "name": "rdflib",
+    "officialUrl": "https://github.com/RDFLib/rdflib",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rdflib-pyshacl": {
+    "name": "pySHACL",
+    "officialUrl": "https://github.com/RDFLib/pySHACL",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "jsonld-java-jsonld-java": {
+    "name": "jsonld-java",
+    "officialUrl": "https://github.com/jsonld-java/jsonld-java",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "digitalbazaar-pyld": {
+    "name": "pyld",
+    "officialUrl": "https://github.com/digitalbazaar/pyld",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rdfjs-namespace": {
+    "name": "namespace",
+    "officialUrl": "https://github.com/rdfjs/namespace",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rdfjs-sparqlalgebrajs": {
+    "name": "rdfjs-sparqlalgebrajs",
+    "officialUrl": "https://github.com/rdfjs/sparqlalgebrajs",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rdfjs-quadstore": {
+    "name": "rdfjs-quadstore",
+    "officialUrl": "https://github.com/rdfjs/quadstore",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "andythefactory-newspaper4k": {
+    "name": "newspaper4k",
+    "officialUrl": "https://github.com/AndyTheFactory/newspaper4k",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "goose3-goose3": {
+    "name": "goose3",
+    "officialUrl": "https://github.com/goose3/goose3",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "mozilla-readability": {
+    "name": "readability",
+    "officialUrl": "https://github.com/mozilla/readability",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "miso-belica-justext": {
+    "name": "justext",
+    "officialUrl": "https://github.com/miso-belica/justext",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "scrapinghub-dateparser": {
+    "name": "dateparser",
+    "officialUrl": "https://github.com/scrapinghub/dateparser",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "google-closure-compiler": {
+    "name": "closure-compiler",
+    "officialUrl": "https://github.com/google/closure-compiler",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "sveltejs-svelte": {
+    "name": "svelte",
+    "officialUrl": "https://github.com/sveltejs/svelte",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "solidjs-solid": {
+    "name": "solid",
+    "officialUrl": "https://github.com/solidjs/solid",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "vitejs-vite": {
+    "name": "vite",
+    "officialUrl": "https://github.com/vitejs/vite",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "webpack-webpack": {
+    "name": "webpack-webpack",
+    "officialUrl": "https://github.com/webpack/webpack",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "ERROR",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "rollup-rollup": {
+    "name": "rollup-rollup",
+    "officialUrl": "https://github.com/rollup/rollup",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "ERROR",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "evanw-esbuild": {
+    "name": "esbuild",
+    "officialUrl": "https://github.com/evanw/esbuild",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "parcel-bundler-parcel": {
+    "name": "parcel",
+    "officialUrl": "https://github.com/parcel-bundler/parcel",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "tanstack-router": {
+    "name": "tanstack-router",
+    "officialUrl": "https://github.com/TanStack/router",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "404_OR_UNAVAILABLE",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "tanstack-query": {
+    "name": "query",
+    "officialUrl": "https://github.com/TanStack/query",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "preactjs-preact": {
+    "name": "preact",
+    "officialUrl": "https://github.com/preactjs/preact",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "qwikdev-qwik": {
+    "name": "qwik",
+    "officialUrl": "https://github.com/QwikDev/qwik",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "vitest-dev-vitest": {
+    "name": "vitest",
+    "officialUrl": "https://github.com/vitest-dev/vitest",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "cypress-io-cypress": {
+    "name": "cypress-io-cypress",
+    "officialUrl": "https://github.com/cypress-io/cypress",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "ERROR",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "webdriverio-webdriverio": {
+    "name": "webdriverio-webdriverio",
+    "officialUrl": "https://github.com/webdriverio/webdriverio",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "ERROR",
+    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+  },
+  "devexpress-testcafe": {
+    "name": "testcafe",
+    "officialUrl": "https://github.com/DevExpress/testcafe",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "mswjs-msw": {
+    "name": "msw",
+    "officialUrl": "https://github.com/mswjs/msw",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "testing-library-react-testing-library": {
+    "name": "react-testing-library",
+    "officialUrl": "https://github.com/testing-library/react-testing-library",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "testing-library-dom-testing-library": {
+    "name": "dom-testing-library",
+    "officialUrl": "https://github.com/testing-library/dom-testing-library",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "jestjs-jest": {
+    "name": "jest",
+    "officialUrl": "https://github.com/jestjs/jest",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "avajs-ava": {
+    "name": "ava",
+    "officialUrl": "https://github.com/avajs/ava",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "mochajs-mocha": {
+    "name": "mocha",
+    "officialUrl": "https://github.com/mochajs/mocha",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "dubzzz-fast-check": {
+    "name": "fast-check",
+    "officialUrl": "https://github.com/dubzzz/fast-check",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
+  },
+  "faker-js-faker": {
+    "name": "faker",
+    "officialUrl": "https://github.com/faker-js/faker",
+    "lastChecked": "2026-10-18T06:55:35.697040Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:55:35.697040Z",
+    "harvestStatus": "VERIFIED",
+    "tier": "TIER_3_SUPPORTING_ENGINEERING"
   }
 }

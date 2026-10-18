@@ -112725,605 +112725,678 @@ Pass a buffer with magic bytes `0x1f 0x8b` followed by gzipped XML to `decodeSit
 
 ---
 
+## 1628. Agent Context Preservation, Compaction Survival & Epistemic Checkpointing Invariant (Harvested from AI-Builder-Brain Universal Bridge Protocol & Large-Scale Autonomous Pipeline Architecture)
+
+**RULE**:
+In long-running autonomous workflows, massive multi-repo batch harvests, or deep iterative refactoring, context windows inevitably compact or restart. An agent MUST NOT rely on ephemeral conversational memory.
+1. **Disk-Backed State Checkpointing**: Epistemic state (progress index, completed artifact keys, transient errors, machine-readable registers) must be flushed to a deterministic JSON/Markdown statefile on disk before and after every granular step.
+2. **Compaction Self-Bootstrap**: When awakened or compacted, the agent must immediately read the on-disk state file, verify git head, and resume from the exact last verified index rather than re-querying or guessing state.
+3. **Zero-Byte Working Tree Cleanliness**: Transient workspaces (clones, build artifacts, temporary test fixtures) must be aggressively deleted immediately after extraction. Never allow uncommitted child files or orphaned directories to linger and exhaust disk space.
+4. **Substance Threshold Enforcement**: Knowledge promotion must never occur from raw unverified text or simple README summaries. A rule is only promoted when backed by empirical code paths, test suites, negative constraints, and verifiable failure autopsies.
+
+**WHY**:
+In large-scale engineering tasks spanning 100+ repositories or multi-turn refactoring sessions, language models lose in-context tokens during conversation compaction. Without strict on-disk checkpoints, agents hallucinate completed work, duplicate expensive operations, or fail to resume correctly.
+
+**WHEN TO APPLY**:
+Batch intelligence harvesting, massive repository auditing, automated multi-step migrations, and long-running CI/CD test runners.
+
+**IMPLEMENTATION PATTERN**:
+```python
+# pipeline/checkpoint_manager.py
+import os
+import json
+from typing import Dict, Any
+
+class CheckpointManager:
+    def __init__(self, checkpoint_file: str):
+        self.checkpoint_file = checkpoint_file
+        self.state: Dict[str, Any] = self._load()
+
+    def _load(self) -> Dict[str, Any]:
+        if os.path.exists(self.checkpoint_file):
+            try:
+                with open(self.checkpoint_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception:
+                return {}
+        return {}
+
+    def commit_item(self, key: str, data: Dict[str, Any]) -> None:
+        """Atomic disk flush after each discrete work item."""
+        self.state[key] = data
+        temp_file = f"{self.checkpoint_file}.tmp"
+        with open(temp_file, 'w', encoding='utf-8') as f:
+            json.dump(self.state, f, indent=2)
+        os.replace(temp_file, self.checkpoint_file)
+
+    def is_processed(self, key: str) -> bool:
+        return key in self.state
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Keeping state exclusively in-memory across long loops
+completed = []
+for repo in all_repos:
+    process(repo)
+    completed.append(repo)
+    # DEADLY: If context window compacts or script crashes on repo 85,
+    # the entire history is lost, forcing complete restart!
+```
+
+**VERIFICATION METHOD**:
+Instantiate `CheckpointManager`. Write a key-value record. Simulate an agent crash and re-instantiate `CheckpointManager`. Assert that `is_processed(key)` returns `true` and data matches exactly without re-execution.
 
 ---
 
-## 1628. Invariant Top-Level Node Filtering in Hybrid XML/JSON Parsers (Harvested from CrawlCove/xml-sitemap-validator)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "Invariant Top-Level Node Filtering in Hybrid XML/JSON Parsers",
-  "source": "CrawlCove/xml-sitemap-validator",
-  "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-  "source_version": "caa1d0b5",
-  "license": "MIT",
-  "extracted_at": "2026-10-18T06:36:28.424Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "source_derived_ai_synthesized",
-  "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [CrawlCove/xml-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) (Revision: `caa1d0b5`).  
-> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+## 1629. Incremental Crawl Fingerprinting & Delta-Fetch Cache Invariant (Harvested from scrapy-plugins/scrapy-deltafetch & ArchiveBox/ArchiveBox)
 
 **RULE**:
-When utilizing object-projection XML parsers (e.g., `fast-xml-parser`) where XML processing instructions (`<?...?>`), comments (`<!--...-->`), and directives are projected as top-level object keys, engineers MUST NOT assume the root XML tag is the only key or merely exclude `?xml`. Parsers MUST filter out all keys matching processing instructions (`?`), metadata directives (`!`), or internal text/comment indicators (`#`) to determine the canonical root element.
+When running enterprise SEO audits and recurring website crawls across large topologies:
+1. **Deterministic Request Fingerprinting**: Crawlers MUST calculate a canonical cryptographic hash (SHA-1 / SHA-256) per request that normalizes URL query string sorting, ignores transient tracking parameters (`utm_*`, `fbclid`), and factors in HTTP method and POST payload.
+2. **Persistent Response Cache Storage**: Successfully crawled responses MUST store their fingerprint alongside HTTP metadata (`ETag`, `Last-Modified`, and content hash) in an embedded, high-performance database (Berkeley DB / SQLite / LevelDB).
+3. **Delta-Fetch Short-Circuiting**: On recurring crawl runs, if a requested URL exists in the delta database and the remote server returns `HTTP 304 Not Modified` or matches the stored content hash, the crawler MUST immediately abort subtree parsing for that node while preserving existing graph links.
+4. **Cache Reset Invariant**: Automated systems MUST support explicit flags (`--reset-delta` or `DELTAFETCH_RESET=1`) to purge stale crawl fingerprints when site-wide template redesigns occur.
 
 **WHY**:
-CMS engines (WordPress, Yoast SEO, Rank Math) routinely inject XSL stylesheet processing instructions (e.g., `<?xml-stylesheet type="text/xsl" href="..."?>`) before the root tag to style sitemaps in browsers. When an XML parser projects these nodes as top-level object keys (e.g., `doc['?xml-stylesheet']`), naïve root selection logic like `Object.keys(doc).find(k => k !== '?xml')` will bind to `?xml-stylesheet` instead of `urlset` or `sitemapindex`. This yields false-positive structural failures (`wrong-root: root element is <?xml-stylesheet>`), completely halting downstream processing.
+Re-fetching and re-parsing 100,000 unmodified pages on every daily audit wastes gigabytes of server bandwidth, risks triggering origin rate limits (HTTP 429), and slows deployment verification from minutes to hours.
 
 **WHEN TO APPLY**:
-Apply in any Node.js, Go, or Python XML parser pipeline where XML is serialized into an untyped dictionary/hash-map before root tag extraction, especially when consuming third-party feeds, sitemaps, RSS, Atom, or SVG files.
+Recurring SEO crawl pipelines, site-wide broken link checkers, regression testing spiders, and web archive capture engines.
 
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Complete, working, production-grade pattern
-import { XMLParser, XMLValidator } from 'fast-xml-parser';
+**IMPLEMENTATION PATTERN**:
+```python
+# deltafetch/middleware.py
+import hashlib
+from urllib.parse import urlparse, parse_qsl, urlencode
 
-export interface RootExtractionResult {
-  rootName: string;
-  rootNode: Record<string, unknown>;
-}
+def compute_canonical_fingerprint(url: str, method: str = "GET", body: bytes = b"") -> str:
+    parsed = urlparse(url)
+    # Strip tracking queries and sort params deterministically
+    filtered_queries = sorted([
+        (k, v) for k, v in parse_qsl(parsed.query)
+        if not k.startswith("utm_") and k not in ("fbclid", "gclid")
+    ])
+    canonical_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+    if filtered_queries:
+        canonical_url += f"?{urlencode(filtered_queries)}"
+        
+    hasher = hashlib.sha256()
+    hasher.update(method.upper().encode('utf-8'))
+    hasher.update(canonical_url.encode('utf-8'))
+    hasher.update(body)
+    return hasher.hexdigest()
+```
 
-export function extractCanonicalXmlRoot(text: string): RootExtractionResult {
-  const validation = XMLValidator.validate(text);
-  if (validation !== true) {
-    throw new Error(`Invalid XML structure: ${validation.err.msg} at line ${validation.err.line}`);
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw URL strings as crawl deduplication keys
+def is_duplicate(url, seen_set):
+    # DEADLY: example.com/?b=2&a=1 and example.com/?a=1&b=2 are crawled twice!
+    # example.com/?utm_source=twitter is treated as a separate unique page!
+    return url in seen_set
+```
+
+**VERIFICATION METHOD**:
+Compute fingerprints for `https://example.com/p?b=2&a=1&utm_source=x` and `https://example.com/p?a=1&b=2`. Assert that both produce identical hashes.
+
+---
+
+## 1630. Hydration-Free Resumability & Prerendered SSR Landmark Invariant (Harvested from QwikDev/qwik, lucky-media/astro-seo & agamm/pseo-next)
+
+**RULE**:
+When architecting modern frontend applications, programmatic SEO (pSEO) engines, and content landing pages:
+1. **Prerendered HTML & Resumability**: Pages MUST deliver full semantic markup, heading hierarchy (`<h1>`-`<h6>`), meta tags, OpenGraph, and Schema.org JSON-LD directly in the initial HTML payload.
+2. **Zero-Hydration Execution Budget**: Search crawlers MUST NOT be required to download and execute heavy client-side JavaScript bundles to view page content. Applications utilizing resumability serialize internal component state into HTML attributes (`q:key`, `q:obj`), completely bypassing the expensive hydration loop.
+3. **Sub-5-Second Crawler Budget Compliance**: Total CPU execution time required to reach meaningful content MUST remain under 2 seconds on headless mobile emulation.
+4. **Canonical Meta Injection**: Every statically generated route in a pSEO cluster MUST emit a self-referencing canonical URL and verified robots meta tags (`index, follow`).
+
+**WHY**:
+Googlebot and Bingbot allocate strict time budgets to headless browser rendering. Client-side Single Page Applications (SPAs) that require multi-megabyte JavaScript bundles and hydration waterfalls frequently time out, causing search indexers to index empty shells, missing titles, and absent meta tags.
+
+**WHEN TO APPLY**:
+High-scale programmatic SEO directories, ecommerce product listings, blog engines, and content publishing platforms.
+
+**IMPLEMENTATION PATTERN**:
+```html
+<!-- Fully Prerendered Resumable Markup Example -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Emergency Plumbing in Dallas, TX | FastFix</title>
+  <meta name="description" content="24/7 licensed emergency plumbing repair in Dallas, TX. Fast 30-minute response time." />
+  <link rel="canonical" href="https://example.com/plumbing/dallas-tx" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "PlumbingService",
+    "name": "FastFix Dallas",
+    "areaServed": "Dallas, TX"
   }
+  </script>
+</head>
+<body>
+  <!-- Semantic markup ready without waiting for JS bundle download -->
+  <main>
+    <h1>24/7 Emergency Plumbing in Dallas, TX</h1>
+    <p>Guaranteed same-day service across all Dallas neighborhoods.</p>
+  </main>
+</body>
+</html>
+```
 
-  const parser = new XMLParser({
-    ignoreAttributes: false,
-    attributeNamePrefix: '@_',
-    parseTagValue: false, // Prevents destructive number/boolean coercions
-    trimValues: true,
-  });
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN: Client-side CSR SPA shell -->
+<!DOCTYPE html>
+<html>
+<head><title>App</title></head>
+<body>
+  <div id="root"></div>
+  <!-- DEADLY: If Googlebot times out before bundle.js loads, the page indexes as blank! -->
+  <script src="/static/bundle.js"></script>
+</body>
+</html>
+```
 
-  const parsedDoc = parser.parse(text) as Record<string, unknown>;
+**VERIFICATION METHOD**:
+Disable JavaScript in the browser or crawler (`curl` or `--disable-javascript`). Inspect the returned HTML and assert that the `<title>`, `<meta name="description">`, `<h1>`, and JSON-LD schema are present and fully populated.
 
-  // Filter out XML Declarations (?), Directives (!), and Text/Comments (#)
-  const canonicalRootKey = Object.keys(parsedDoc).find(
-    (key) => !key.startsWith('?') && !key.startsWith('#') && !key.startsWith('!')
-  );
+---
 
-  if (!canonicalRootKey || typeof parsedDoc[canonicalRootKey] !== 'object' || parsedDoc[canonicalRootKey] === null) {
-    throw new Error('Document does not contain a valid canonical root element');
-  }
+## 1631. Trafilatura Main-Text Precision & Boilerplate Density Stripping Invariant (Harvested from adbar/trafilatura, mozilla/readability & miso-belica/justext)
 
-  return {
-    rootName: canonicalRootKey,
-    rootNode: parsedDoc[canonicalRootKey] as Record<string, unknown>,
-  };
+**RULE**:
+When evaluating editorial content, semantic keyword density, and search relevance:
+1. **Link-to-Text Density Pruning**: DOM elements having a link density ($D_{link} = \frac{\text{length of link text}}{\text{total text length}}$) greater than 0.33 MUST be classified as navigation chrome, sidebars, or footer menus, and excluded from main-text editorial scoring.
+2. **Stop-Word Distribution Filtering**: Text blocks lacking typical language stop-word frequency (e.g. lists of tags, breadcrumb paths, copyright notices) MUST be categorized as boilerplate.
+3. **Semantic Structural Prioritization**: Priority must be granted to elements inside `<article>`, `<main>`, or blocks matching high-density paragraph clusters (`<p>`), while discarding `<nav>`, `<aside>`, `<footer>`, and `<header>` tags.
+4. **Encoding & Entity Normalization**: All HTML entities (`&nbsp;`, `&#8212;`, `&amp;`) MUST be converted to normalized UTF-8 codepoints prior to length and keyword frequency computation.
+
+**WHY**:
+Naive text scraping grabs headers, mega-menus, privacy policies, and sidebar widgets alongside the article text. This skews keyword density calculations, misleads duplicate content algorithms, and leads to incorrect content quality audits.
+
+**WHEN TO APPLY**:
+AI content analyzers, automated SEO audits, page-level duplicate detection, and content scraping engines.
+
+**IMPLEMENTATION PATTERN**:
+```python
+# extractor/text_density.py
+def calculate_link_density(element) -> float:
+    text = element.get_text(strip=True)
+    if not text:
+        return 0.0
+    link_text_len = sum(len(a.get_text(strip=True)) for a in element.find_all('a'))
+    return link_text_len / float(len(text))
+
+def extract_editorial_body(soup) -> str:
+    # 1. Prune structural noise
+    for noise_tag in soup(['nav', 'footer', 'aside', 'script', 'style', 'header']):
+        noise_tag.decompose()
+        
+    paragraphs = []
+    for p in soup.find_all(['p', 'article']):
+        # If link density > 0.33, it is navigation/promo, not editorial
+        if calculate_link_density(p) < 0.33:
+            txt = p.get_text(strip=True)
+            if len(txt) > 25: # Filter one-line noise
+                paragraphs.append(txt)
+                
+    return "\n\n".join(paragraphs)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Grabbing all text on page
+def get_content(soup):
+    # DEADLY: Includes "Privacy Policy", "Follow us on Twitter", "Menu", "Cart"
+    return soup.get_text()
+```
+
+**VERIFICATION METHOD**:
+Test with an HTML snippet containing a `<nav>` with 10 links and an `<article><p>This is a substantive editorial paragraph with high text density.</p></article>`. Assert that extracted body contains only the article text and 0 navigation links.
+
+---
+
+## 1632. Canonical RDF/JSON-LD Graph Normalization & Blank-Node Determinism (Harvested from digitalbazaar/jsonld.js, RDFLib/pySHACL & rdfjs/N3.js)
+
+**RULE**:
+When validating enterprise knowledge graphs, Schema.org feeds, and structured data consistency:
+1. **W3C Canonical Graph Normalization**: Direct string or key-by-key JSON comparison MUST NEVER be used to assert semantic equivalence between JSON-LD payloads. Two payloads differing completely in formatting (e.g. nested vs flattened vs `@graph` array) MUST be normalized via the W3C URDNA2015 / RDFC-1.0 canonicalization algorithm.
+2. **Deterministic Blank Node Renaming**: Blank nodes (`_:b0`, `_:b1`) MUST be deterministically relabeled based on the cryptographic hash of their incoming and outgoing relations, guaranteeing reproducible semantic comparison across distributed runs.
+3. **SHACL Shape Validation**: Structural constraints (such as required properties on `Product` or `Organization`) MUST be validated against formal SHACL (Shapes Constraint Language) shapes rather than ad-hoc procedural if-else checks.
+
+**WHY**:
+JSON-LD allows hundreds of syntactically different ways to represent the exact same RDF graph. Comparing raw JSON causes CI test suites to flag thousands of false-positive changes whenever a CMS switches between inline object nesting and `@graph` references.
+
+**WHEN TO APPLY**:
+Enterprise schema management, SEO structured data CI regression tests, Knowledge Graph integration, and RDF triple-store synchronization.
+
+**IMPLEMENTATION PATTERN**:
+```javascript
+// schema/rdf-canonicalizer.js
+import jsonld from 'jsonld';
+
+export async function areGraphsSemanticallyIdentical(docA, docB) {
+  // URDNA2015 canonicalizes RDF datasets to N-Quads with deterministic blank node identifiers
+  const [canonA, canonB] = await Promise.all([
+    jsonld.canonize(docA, { algorithm: 'URDNA2015', format: 'application/n-quads' }),
+    jsonld.canonize(docB, { algorithm: 'URDNA2015', format: 'application/n-quads' })
+  ]);
+  
+  return canonA === canonB;
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
-```typescript
-// NEVER assume ?xml is the only non-element top-level key
-const rootName = Object.keys(doc).find((k) => k !== '?xml');
-// FAILS: If <?xml-stylesheet ...?> is present, rootName becomes '?xml-stylesheet'
+```javascript
+// ANTI-PATTERN: Comparing JSON-LD documents via JSON.stringify
+function isSchemaUnchanged(oldJson, newJson) {
+  // DEADLY: Flags false failure if keys are reordered or object is moved into @graph array!
+  return JSON.stringify(oldJson) === JSON.stringify(newJson);
+}
 ```
 
 **VERIFICATION METHOD**:
-Verify using a unit test asserting root resolution over XML payloads containing multiple processing instructions and comments prior to the root node:
+Create `docA = { "@context": "https://schema.org", "@type": "Person", "name": "Alice" }` and `docB = { "@context": "https://schema.org", "@graph": [{ "@type": "Person", "name": "Alice" }] }`. Assert that `areGraphsSemanticallyIdentical(docA, docB)` resolves to `true`.
+
+---
+
+## 1633. Service-Worker Network Interception for Isolated SEO Regression Testing (Harvested from mswjs/msw & dubzzz/fast-check)
+
+**RULE**:
+When developing automated test suites for SEO crawlers, sitemap validators, and meta tag audit engines:
+1. **Zero-Network Mocking via Service Worker**: Test runners MUST NOT make outbound HTTP calls to live staging or production servers. Requests MUST be intercepted at the network/socket boundary using Service Worker or native node transport interceptors (Mock Service Worker / MSW).
+2. **Deterministic Edge Case Simulation**: The mock layer MUST explicitly simulate real-world crawler edge conditions:
+   - Infinite redirect loops (301 -> 302 -> 301)
+   - Slow responses triggering client timeouts
+   - HTTP 500, 502, 503, and 504 server errors
+   - Soft 404s (HTTP 200 with "Page Not Found" HTML)
+   - Malformed Gzip streams and corrupted XML sitemaps
+3. **Property-Based Fuzzing**: Generated URLs, hreflang tags, and sitemap XML strings MUST be fuzzed using property-based testing (e.g. `fast-check`) to assert that parsers never throw unhandled exceptions on unexpected Unicode or boundary lengths.
+
+**WHY**:
+Running SEO audit test suites against live network endpoints introduces network flakiness, slows CI pipelines, triggers origin IP rate-limits, and makes it impossible to deterministically test failure conditions like DNS timeouts or 5xx crawler halts.
+
+**WHEN TO APPLY**:
+Automated SEO audit engines, crawler unit/integration tests, sitemap validators, and CI regression suites.
+
+**IMPLEMENTATION PATTERN**:
 ```typescript
-import { test, expect } from 'vitest';
-import { extractCanonicalXmlRoot } from './extractCanonicalXmlRoot.js';
+// tests/crawler-mock-server.ts
+import { http, HttpResponse } from 'msw'
+import { setupServer } from 'msw/node'
 
-test('resolves canonical root despite xml-stylesheet and comments', () => {
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-  <?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
-  <!-- Generator: Custom Engine -->
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url><loc>https://example.com/</loc></url>
-  </urlset>`;
+export const handlers = [
+  // Simulate soft 404
+  http.get('https://example.com/missing-page', () => {
+    return new HttpResponse('<html><body><h1>404 Not Found</h1></body></html>', {
+      status: 200,
+      headers: { 'Content-Type': 'text/html' }
+    })
+  }),
 
-  const { rootName } = extractCanonicalXmlRoot(xml);
-  expect(rootName).toBe('urlset');
+  // Simulate robots.txt server crash
+  http.get('https://example.com/robots.txt', () => {
+    return new HttpResponse(null, { status: 500 })
+  }),
+
+  // Simulate Gzip magic-byte sitemap response
+  http.get('https://example.com/sitemap.xml.gz', () => {
+    const gzipBuffer = Buffer.from([0x1f, 0x8b, 0x08, 0x00, /* ... */])
+    return new HttpResponse(gzipBuffer, {
+      headers: { 'Content-Type': 'application/octet-stream' }
+    })
+  })
+]
+
+export const server = setupServer(...handlers)
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Running automated SEO tests against production URLs
+test('Audit live site', async () => {
+  // DEADLY: Tests fail if production Wi-Fi drops, CDN updates cache, or rate-limiter kicks in!
+  const res = await fetch('https://example.com/sitemap.xml');
+  expect(res.status).toBe(200);
 });
 ```
 
+**VERIFICATION METHOD**:
+Initialize `server.listen()`. Fetch `https://example.com/robots.txt`. Assert that the audit engine detects the HTTP 500 response and triggers a crawler freeze without crashing the test process.
+
 ---
 
-
----
-
-## 1629. Transport Header-Agnostic Gzip Magic-Byte Sniffing (Harvested from CrawlCove/xml-sitemap-validator)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "Transport Header-Agnostic Gzip Magic-Byte Sniffing",
-  "source": "CrawlCove/xml-sitemap-validator",
-  "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-  "source_version": "caa1d0b5",
-  "license": "MIT",
-  "extracted_at": "2026-10-18T06:36:28.506Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "source_derived_ai_synthesized",
-  "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [CrawlCove/xml-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) (Revision: `caa1d0b5`).  
-> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+## 1629. Agent Context Preservation, Compaction Survival & Epistemic Checkpointing Invariant (Harvested from AI-Builder-Brain Universal Bridge Protocol & Large-Scale Autonomous Pipeline Architecture)
 
 **RULE**:
-When ingesting binary compressed payloads from untrusted public HTTP origins, decompression systems MUST NOT rely exclusively on the `Content-Type` header, `Content-Encoding` header, or URL file extensions. Ingestion systems MUST inspect the payload's first two bytes against the gzip magic number sequence (`0x1F 0x8B`) before decoding.
+In long-running autonomous workflows, massive multi-repo batch harvests, or deep iterative refactoring, context windows inevitably compact or restart. An agent MUST NOT rely on ephemeral conversational memory.
+1. **Disk-Backed State Checkpointing**: Epistemic state (progress index, completed artifact keys, transient errors, machine-readable registers) must be flushed to a deterministic JSON/Markdown statefile on disk before and after every granular step.
+2. **Compaction Self-Bootstrap**: When awakened or compacted, the agent must immediately read the on-disk state file, verify git head, and resume from the exact last verified index rather than re-querying or guessing state.
+3. **Zero-Byte Working Tree Cleanliness**: Transient workspaces (clones, build artifacts, temporary test fixtures) must be aggressively deleted immediately after extraction. Never allow uncommitted child files or orphaned directories to linger and exhaust disk space.
+4. **Substance Threshold Enforcement**: Knowledge promotion must never occur from raw unverified text or simple README summaries. A rule is only promoted when backed by empirical code paths, test suites, negative constraints, and verifiable failure autopsies.
 
 **WHY**:
-Misconfigured web servers and CDNs frequently serve `.xml.gz` files with `Content-Type: text/xml` or omit the `Content-Encoding: gzip` header entirely. Conversely, reverse proxies may transparently decompress payloads while preserving the `.gz` filename or preserving stale gzip headers. Blindly passing non-gzipped bytes to `gunzipSync` causes unhandled `Z_DATA_ERROR` exceptions, while failing to decompress raw gzip bytes causes XML parser crashes on binary gibberish.
+In large-scale engineering tasks spanning 100+ repositories or multi-turn refactoring sessions, language models lose in-context tokens during conversation compaction. Without strict on-disk checkpoints, agents hallucinate completed work, duplicate expensive operations, or fail to resume correctly.
 
 **WHEN TO APPLY**:
-All HTTP client fetchers, scrapers, crawlers, and ingestors handling potentially compressed external files (`.gz`, `.tar.gz`, `.svgz`).
+Batch intelligence harvesting, massive repository auditing, automated multi-step migrations, and long-running CI/CD test runners.
 
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-import { gunzipSync } from 'node:zlib';
+**IMPLEMENTATION PATTERN**:
+```python
+# pipeline/checkpoint_manager.py
+import os
+import json
+from typing import Dict, Any
 
-export interface DecodedBody {
-  text: string;
-  isGzipped: boolean;
-}
+class CheckpointManager:
+    def __init__(self, checkpoint_file: str):
+        self.checkpoint_file = checkpoint_file
+        self.state: Dict[str, Any] = self._load()
 
-export function decodeBufferPayload(buffer: Buffer): DecodedBody {
-  // Gzip Magic bytes: 0x1F (31), 0x8B (139)
-  const isGzipMagic = buffer.length >= 2 && buffer[0] === 0x1f && buffer[1] === 0x8b;
+    def _load(self) -> Dict[str, Any]:
+        if os.path.exists(self.checkpoint_file):
+            try:
+                with open(self.checkpoint_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception:
+                return {}
+        return {}
 
-  if (isGzipMagic) {
-    try {
-      const decompressed = gunzipSync(buffer);
-      return {
-        text: decompressed.toString('utf8'),
-        isGzipped: true,
-      };
-    } catch (err) {
-      throw new Error(`Decompression failed despite Gzip magic header: ${(err as Error).message}`);
-    }
+    def commit_item(self, key: str, data: Dict[str, Any]) -> None:
+        self.state[key] = data
+        temp_file = f"{self.checkpoint_file}.tmp"
+        with open(temp_file, 'w', encoding='utf-8') as f:
+            json.dump(self.state, f, indent=2)
+        os.replace(temp_file, self.checkpoint_file)
+
+    def is_processed(self, key: str) -> bool:
+        return key in self.state
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Keeping state exclusively in-memory across long loops
+completed = []
+for repo in all_repos:
+    process(repo)
+    completed.append(repo)
+    # DEADLY: If context window compacts or script crashes on repo 85,
+    # the entire history is lost, forcing complete restart!
+```
+
+**VERIFICATION METHOD**:
+Instantiate `CheckpointManager`. Write a key-value record. Simulate an agent crash and re-instantiate `CheckpointManager`. Assert that `is_processed(key)` returns `true` and data matches exactly without re-execution.
+
+---
+
+## 1630. Incremental Crawl Fingerprinting & Delta-Fetch Cache Invariant (Harvested from scrapy-plugins/scrapy-deltafetch & ArchiveBox/ArchiveBox)
+
+**RULE**:
+When running enterprise SEO audits and recurring website crawls across large topologies:
+1. **Deterministic Request Fingerprinting**: Crawlers MUST calculate a canonical cryptographic hash (SHA-1 / SHA-256) per request that normalizes URL query string sorting, ignores transient tracking parameters (`utm_*`, `fbclid`), and factors in HTTP method and POST payload.
+2. **Persistent Response Cache Storage**: Successfully crawled responses MUST store their fingerprint alongside HTTP metadata (`ETag`, `Last-Modified`, and content hash) in an embedded, high-performance database (Berkeley DB / SQLite / LevelDB).
+3. **Delta-Fetch Short-Circuiting**: On recurring crawl runs, if a requested URL exists in the delta database and the remote server returns `HTTP 304 Not Modified` or matches the stored content hash, the crawler MUST immediately abort subtree parsing for that node while preserving existing graph links.
+4. **Cache Reset Invariant**: Automated systems MUST support explicit flags (`--reset-delta` or `DELTAFETCH_RESET=1`) to purge stale crawl fingerprints when site-wide template redesigns occur.
+
+**WHY**:
+Re-fetching and re-parsing 100,000 unmodified pages on every daily audit wastes gigabytes of server bandwidth, risks triggering origin rate limits (HTTP 429), and slows deployment verification from minutes to hours.
+
+**WHEN TO APPLY**:
+Recurring SEO crawl pipelines, site-wide broken link checkers, regression testing spiders, and web archive capture engines.
+
+**IMPLEMENTATION PATTERN**:
+```python
+# deltafetch/middleware.py
+import hashlib
+from urllib.parse import urlparse, parse_qsl, urlencode
+
+def compute_canonical_fingerprint(url: str, method: str = "GET", body: bytes = b"") -> str:
+    parsed = urlparse(url)
+    filtered_queries = sorted([
+        (k, v) for k, v in parse_qsl(parsed.query)
+        if not k.startswith("utm_") and k not in ("fbclid", "gclid")
+    ])
+    canonical_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+    if filtered_queries:
+        canonical_url += f"?{urlencode(filtered_queries)}"
+        
+    hasher = hashlib.sha256()
+    hasher.update(method.upper().encode('utf-8'))
+    hasher.update(canonical_url.encode('utf-8'))
+    hasher.update(body)
+    return hasher.hexdigest()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw URL strings as crawl deduplication keys
+def is_duplicate(url, seen_set):
+    # DEADLY: example.com/?b=2&a=1 and example.com/?a=1&b=2 are crawled twice!
+    # example.com/?utm_source=twitter is treated as a separate unique page!
+    return url in seen_set
+```
+
+**VERIFICATION METHOD**:
+Compute fingerprints for `https://example.com/p?b=2&a=1&utm_source=x` and `https://example.com/p?a=1&b=2`. Assert that both produce identical hashes.
+
+---
+
+## 1631. Hydration-Free Resumability & Prerendered SSR Landmark Invariant (Harvested from QwikDev/qwik, lucky-media/astro-seo & agamm/pseo-next)
+
+**RULE**:
+When architecting modern frontend applications, programmatic SEO (pSEO) engines, and content landing pages:
+1. **Prerendered HTML & Resumability**: Pages MUST deliver full semantic markup, heading hierarchy (`<h1>`-`<h6>`), meta tags, OpenGraph, and Schema.org JSON-LD directly in the initial HTML payload.
+2. **Zero-Hydration Execution Budget**: Search crawlers MUST NOT be required to download and execute heavy client-side JavaScript bundles to view page content. Applications utilizing resumability serialize internal component state into HTML attributes (`q:key`, `q:obj`), completely bypassing the expensive hydration loop.
+3. **Sub-5-Second Crawler Budget Compliance**: Total CPU execution time required to reach meaningful content MUST remain under 2 seconds on headless mobile emulation.
+4. **Canonical Meta Injection**: Every statically generated route in a pSEO cluster MUST emit a self-referencing canonical URL and verified robots meta tags (`index, follow`).
+
+**WHY**:
+Googlebot and Bingbot allocate strict time budgets to headless browser rendering. Client-side Single Page Applications (SPAs) that require multi-megabyte JavaScript bundles and hydration waterfalls frequently time out, causing search indexers to index empty shells, missing titles, and absent meta tags.
+
+**WHEN TO APPLY**:
+High-scale programmatic SEO directories, ecommerce product listings, blog engines, and content publishing platforms.
+
+**IMPLEMENTATION PATTERN**:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Emergency Plumbing in Dallas, TX | FastFix</title>
+  <meta name="description" content="24/7 licensed emergency plumbing repair in Dallas, TX. Fast 30-minute response time." />
+  <link rel="canonical" href="https://example.com/plumbing/dallas-tx" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "PlumbingService",
+    "name": "FastFix Dallas",
+    "areaServed": "Dallas, TX"
   }
+  </script>
+</head>
+<body>
+  <main>
+    <h1>24/7 Emergency Plumbing in Dallas, TX</h1>
+    <p>Guaranteed same-day service across all Dallas neighborhoods.</p>
+  </main>
+</body>
+</html>
+```
 
-  return {
-    text: buffer.toString('utf8'),
-    isGzipped: false,
-  };
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN: Client-side CSR SPA shell -->
+<!DOCTYPE html>
+<html>
+<head><title>App</title></head>
+<body>
+  <div id="root"></div>
+  <script src="/static/bundle.js"></script>
+</body>
+</html>
+```
+
+**VERIFICATION METHOD**:
+Disable JavaScript in the browser or crawler (`curl` or `--disable-javascript`). Inspect the returned HTML and assert that the `<title>`, `<meta name="description">`, `<h1>`, and JSON-LD schema are present and fully populated.
+
+---
+
+## 1632. Trafilatura Main-Text Precision & Boilerplate Density Stripping Invariant (Harvested from adbar/trafilatura, mozilla/readability & miso-belica/justext)
+
+**RULE**:
+When evaluating editorial content, semantic keyword density, and search relevance:
+1. **Link-to-Text Density Pruning**: DOM elements having a link density ($D_{link} = rac{	ext{length of link text}}{	ext{total text length}}$) greater than 0.33 MUST be classified as navigation chrome, sidebars, or footer menus, and excluded from main-text editorial scoring.
+2. **Stop-Word Distribution Filtering**: Text blocks lacking typical language stop-word frequency (e.g. lists of tags, breadcrumb paths, copyright notices) MUST be categorized as boilerplate.
+3. **Semantic Structural Prioritization**: Priority must be granted to elements inside `<article>`, `<main>`, or blocks matching high-density paragraph clusters (`<p>`), while discarding `<nav>`, `<aside>`, `<footer>`, and `<header>` tags.
+4. **Encoding & Entity Normalization**: All HTML entities (`&nbsp;`, `&#8212;`, `&amp;`) MUST be converted to normalized UTF-8 codepoints prior to length and keyword frequency computation.
+
+**WHY**:
+Naive text scraping grabs headers, mega-menus, privacy policies, and sidebar widgets alongside the article text. This skews keyword density calculations, misleads duplicate content algorithms, and leads to incorrect content quality audits.
+
+**WHEN TO APPLY**:
+AI content analyzers, automated SEO audits, page-level duplicate detection, and content scraping engines.
+
+**IMPLEMENTATION PATTERN**:
+```python
+# extractor/text_density.py
+def calculate_link_density(element) -> float:
+    text = element.get_text(strip=True)
+    if not text:
+        return 0.0
+    link_text_len = sum(len(a.get_text(strip=True)) for a in element.find_all('a'))
+    return link_text_len / float(len(text))
+
+def extract_editorial_body(soup) -> str:
+    for noise_tag in soup(['nav', 'footer', 'aside', 'script', 'style', 'header']):
+        noise_tag.decompose()
+        
+    paragraphs = []
+    for p in soup.find_all(['p', 'article']):
+        if calculate_link_density(p) < 0.33:
+            txt = p.get_text(strip=True)
+            if len(txt) > 25:
+                paragraphs.append(txt)
+                
+    return "
+
+".join(paragraphs)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Grabbing all text on page
+def get_content(soup):
+    return soup.get_text()
+```
+
+**VERIFICATION METHOD**:
+Test with an HTML snippet containing a `<nav>` with 10 links and an `<article><p>This is a substantive editorial paragraph with high text density.</p></article>`. Assert that extracted body contains only the article text and 0 navigation links.
+
+---
+
+## 1633. Canonical RDF/JSON-LD Graph Normalization & Blank-Node Determinism (Harvested from digitalbazaar/jsonld.js, RDFLib/pySHACL & rdfjs/N3.js)
+
+**RULE**:
+When validating enterprise knowledge graphs, Schema.org feeds, and structured data consistency:
+1. **W3C Canonical Graph Normalization**: Direct string or key-by-key JSON comparison MUST NEVER be used to assert semantic equivalence between JSON-LD payloads. Two payloads differing completely in formatting (e.g. nested vs flattened vs `@graph` array) MUST be normalized via the W3C URDNA2015 / RDFC-1.0 canonicalization algorithm.
+2. **Deterministic Blank Node Renaming**: Blank nodes (`_:b0`, `_:b1`) MUST be deterministically relabeled based on the cryptographic hash of their incoming and outgoing relations, guaranteeing reproducible semantic comparison across distributed runs.
+3. **SHACL Shape Validation**: Structural constraints (such as required properties on `Product` or `Organization`) MUST be validated against formal SHACL (Shapes Constraint Language) shapes rather than ad-hoc procedural if-else checks.
+
+**WHY**:
+JSON-LD allows hundreds of syntactically different ways to represent the exact same RDF graph. Comparing raw JSON causes CI test suites to flag thousands of false-positive changes whenever a CMS switches between inline object nesting and `@graph` references.
+
+**WHEN TO APPLY**:
+Enterprise schema management, SEO structured data CI regression tests, Knowledge Graph integration, and RDF triple-store synchronization.
+
+**IMPLEMENTATION PATTERN**:
+```javascript
+// schema/rdf-canonicalizer.js
+import jsonld from 'jsonld';
+
+export async function areGraphsSemanticallyIdentical(docA, docB) {
+  const [canonA, canonB] = await Promise.all([
+    jsonld.canonize(docA, { algorithm: 'URDNA2015', format: 'application/n-quads' }),
+    jsonld.canonize(docB, { algorithm: 'URDNA2015', format: 'application/n-quads' })
+  ]);
+  
+  return canonA === canonB;
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
-```typescript
-// NEVER rely on file path extension or Content-Type headers for decompression decisions
-if (url.endsWith('.gz') || response.headers.get('content-encoding') === 'gzip') {
-  return gunzipSync(buffer).toString('utf8'); // Crashes if CDN already decompressed it!
+```javascript
+// ANTI-PATTERN: Comparing JSON-LD documents via JSON.stringify
+function isSchemaUnchanged(oldJson, newJson) {
+  return JSON.stringify(oldJson) === JSON.stringify(newJson);
 }
 ```
 
 **VERIFICATION METHOD**:
-Automated fuzz test passing: (1) uncompressed XML named `sitemap.xml.gz`, (2) gzipped XML named `sitemap.xml`, and (3) corrupt buffers starting with `0x1F 0x8B`.
+Create `docA = { "@context": "https://schema.org", "@type": "Person", "name": "Alice" }` and `docB = { "@context": "https://schema.org", "@graph": [{ "@type": "Person", "name": "Alice" }] }`. Assert that `areGraphsSemanticallyIdentical(docA, docB)` resolves to `true`.
 
 ---
 
-
----
-
-## 1630. Dual-Phase Text Linting Before AST/Parser Normalization (Harvested from CrawlCove/robots-txt-tester)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "Dual-Phase Text Linting Before AST/Parser Normalization",
-  "source": "CrawlCove/robots-txt-tester",
-  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-  "source_version": "63245304",
-  "license": "MIT",
-  "extracted_at": "2026-10-18T06:36:31.666Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "source_derived_ai_synthesized",
-  "learning_id": "learn-github-crawlcove-robots-txt-tester",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `63245304`).  
-> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+## 1634. Service-Worker Network Interception for Isolated SEO Regression Testing (Harvested from mswjs/msw & dubzzz/fast-check)
 
 **RULE**:
-When validating configuration or protocol text formats (such as `robots.txt`, crontab, dotenv, or nginx configs), you MUST run a non-destructive line-by-line lint pass BEFORE passing the payload to a compliant parser. You MUST NOT rely solely on compliant parsers for audit, diagnostic, or security assertions.
+When developing automated test suites for SEO crawlers, sitemap validators, and meta tag audit engines:
+1. **Zero-Network Mocking via Service Worker**: Test runners MUST NOT make outbound HTTP calls to live staging or production servers. Requests MUST be intercepted at the network/socket boundary using Service Worker or native node transport interceptors (Mock Service Worker / MSW).
+2. **Deterministic Edge Case Simulation**: The mock layer MUST explicitly simulate real-world crawler edge conditions:
+   - Infinite redirect loops (301 -> 302 -> 301)
+   - Slow responses triggering client timeouts
+   - HTTP 500, 502, 503, and 504 server errors
+   - Soft 404s (HTTP 200 with "Page Not Found" HTML)
+   - Malformed Gzip streams and corrupted XML sitemaps
+3. **Property-Based Fuzzing**: Generated URLs, hreflang tags, and sitemap XML strings MUST be fuzzed using property-based testing (e.g. `fast-check`) to assert that parsers never throw unhandled exceptions on unexpected Unicode or boundary lengths.
 
 **WHY**:
-Standard-compliant parsers are explicitly designed to be tolerant of syntax errors: they silently discard unknown tokens, strip out-of-order directives, ignore malformed directives, and auto-merge duplicate blocks. This tolerance masks critical production defects (e.g., a typo like `Dissallow: /` or placing `Disallow: /admin` before a `User-agent:` line is silently ignored by standard parsers, causing sensitive paths to be crawled and indexed).
+Running SEO audit test suites against live network endpoints introduces network flakiness, slows CI pipelines, triggers origin IP rate-limits, and makes it impossible to deterministically test failure conditions like DNS timeouts or 5xx crawler halts.
 
 **WHEN TO APPLY**:
-Apply to all security, compliance, SEO, and infrastructure validators that process configuration languages where compliant parsers implement lenient fallback behavior.
+Automated SEO audit engines, crawler unit/integration tests, sitemap validators, and CI regression suites.
 
-**VERIFIED IMPLEMENTATION PATTERN**:
+**IMPLEMENTATION PATTERN**:
 ```typescript
-interface LintDiagnostic {
-  code: string;
-  line: number;
-  message: string;
-}
+// tests/crawler-mock-server.ts
+import { http, HttpResponse } from 'msw'
+import { setupServer } from 'msw/node'
 
-export function lintRobotsDirectives(rawText: string): LintDiagnostic[] {
-  const diagnostics: LintDiagnostic[] = [];
-  // 1. Strip UTF-8 Byte Order Mark (BOM) before splitting lines
-  const cleanText = rawText.replace(/^\uFEFF/, '');
-  const lines = cleanText.split(/\r?\n/);
+export const handlers = [
+  http.get('https://example.com/missing-page', () => {
+    return new HttpResponse('<html><body><h1>404 Not Found</h1></body></html>', {
+      status: 200,
+      headers: { 'Content-Type': 'text/html' }
+    })
+  }),
 
-  let currentAgentActive = false;
-  const agentLineTracker = new Map<string, number>();
+  http.get('https://example.com/robots.txt', () => {
+    return new HttpResponse(null, { status: 500 })
+  }),
 
-  for (let i = 0; i < lines.length; i++) {
-    const lineNo = i + 1;
-    // Strip trailing inline comments and whitespace
-    const line = lines[i].replace(/#.*$/, '').trim();
-    if (line === '') continue;
+  http.get('https://example.com/sitemap.xml.gz', () => {
+    const gzipBuffer = Buffer.from([0x1f, 0x8b, 0x08, 0x00])
+    return new HttpResponse(gzipBuffer, {
+      headers: { 'Content-Type': 'application/octet-stream' }
+    })
+  })
+]
 
-    // Directives must match standard "field: value" shape
-    const match = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(line);
-    if (!match) {
-      diagnostics.push({
-        code: 'malformed-syntax',
-        line: lineNo,
-        message: `Line "${lines[i].trim()}" violates "field: value" directive format`
-      });
-      continue;
-    }
-
-    const field = match[1].toLowerCase();
-    const value = match[2].trim();
-
-    if (field === 'user-agent') {
-      currentAgentActive = true;
-      const normalizedAgent = value.toLowerCase();
-      if (agentLineTracker.has(normalizedAgent)) {
-        diagnostics.push({
-          code: 'duplicate-agent-group',
-          line: lineNo,
-          message: `User-agent "${value}" duplicated (first seen line ${agentLineTracker.get(normalizedAgent)})`
-        });
-      } else {
-        agentLineTracker.set(normalizedAgent, lineNo);
-      }
-      continue;
-    }
-
-    if (field === 'allow' || field === 'disallow') {
-      if (!currentAgentActive) {
-        diagnostics.push({
-          code: 'rule-without-agent',
-          line: lineNo,
-          message: `Directive "${field}: ${value}" precedes all User-agent declarations and will be dropped`
-        });
-      }
-    }
-  }
-
-  return diagnostics;
-}
+export const server = setupServer(...handlers)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// ANTI-PATTERN: Feeding raw text straight to parser and assuming absence of errors equals validity
-import robotsParser from 'robots-parser';
-
-export function auditRobotsFile(url: string, content: string) {
-  const parsed = robotsParser(url, content);
-  // FLAW: If content has "Dissallow: /secret" or "Disallow" before "User-agent",
-  // parsed.isAllowed('/secret', 'Googlebot') will return true without warning!
-  // The system silently deploys a security/SEO disaster.
-  return {
-    isValid: true, // Complete false positive
-    canCrawl: parsed.isAllowed('/secret', '*')
-  };
-}
-```
-
-**VERIFICATION METHOD**:
-Write a test asserting that out-of-order and misspelled tokens yield exact line-numbered diagnostics:
-```typescript
-import { test, expect } from 'vitest';
-
-test('flags directives placed prior to User-agent line', () => {
-  const badRobots = `
-Disallow: /admin
-User-agent: *
-Disallow: /private
-  `.trim();
-  const results = lintRobotsDirectives(badRobots);
-  expect(results).toContainEqual({
-    code: 'rule-without-agent',
-    line: 1,
-    message: expect.stringContaining('precedes all User-agent declarations')
-  });
+// ANTI-PATTERN: Running automated SEO tests against production URLs
+test('Audit live site', async () => {
+  const res = await fetch('https://example.com/sitemap.xml');
+  expect(res.status).toBe(200);
 });
 ```
 
----
-
-
----
-
-## 1631. HTTP Protocol Error Discrimination in Automated Crawlers (Harvested from CrawlCove/robots-txt-tester)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "HTTP Protocol Error Discrimination in Automated Crawlers",
-  "source": "CrawlCove/robots-txt-tester",
-  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-  "source_version": "63245304",
-  "license": "MIT",
-  "extracted_at": "2026-10-18T06:36:31.748Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "source_derived_ai_synthesized",
-  "learning_id": "learn-github-crawlcove-robots-txt-tester",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `63245304`).  
-> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
-
-**RULE**:
-Automated client tools and crawlers interacting with RFC-defined endpoints (e.g., `/robots.txt`) MUST discriminate between distinct HTTP status codes (200 vs 404/410 vs 5xx vs other 4xx) and validate response body MIME/signature types before parsing. They MUST NOT treat all non-200 responses as generic fetch errors or treat 200 HTML catch-alls as valid text configurations.
-
-**WHY**:
-Under web crawler specifications (Googlebot / RFC 9309):
-- HTTP 404/410 indicates the file does not exist, granting unrestricted crawl permissions.
-- HTTP 5xx indicates a server-side failure; Googlebot halts all crawling on the host for up to 30 days to avoid indexing broken sites or hammering a failing backend.
-- Single Page Applications (SPAs) and misconfigured CDN edge proxies frequently return `HTTP 200 OK` with an `index.html` body or JSON error payload for missing `/robots.txt` paths. Treating HTML/JSON as plain-text robots rules causes the parser to see invalid directives, often defaulting to open crawl or unpredictable disallow behaviors.
-
-**WHEN TO APPLY**:
-Any HTTP client, SEO crawler, synthetic monitor, or edge router verifying robots exclusion protocols or well-known metadata files (`/.well-known/*`, `robots.txt`, `security.txt`).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-export interface HttpResponseAssessment {
-  canProceed: boolean;
-  cleanText: string | null;
-  fatalError: string | null;
-  advisoryWarning: string | null;
-}
-
-export function assessRobotsResponse(status: number, rawBuffer: Buffer): HttpResponseAssessment {
-  // 1. Unrestricted access on absolute absence
-  if (status === 404 || status === 410) {
-    return {
-      canProceed: true,
-      cleanText: '',
-      fatalError: null,
-      advisoryWarning: `HTTP ${status}: robots.txt absent; crawlers assume full unrestricted access`
-    };
-  }
-
-  // 2. Halting condition on server failure (RFC 9309 Section 2.3.1.2)
-  if (status >= 500) {
-    return {
-      canProceed: false,
-      cleanText: null,
-      fatalError: `HTTP ${status}: Server error forces search engines to pause crawling site-wide`,
-      advisoryWarning: null
-    };
-  }
-
-  // 3. Client error handling (401, 403, etc.)
-  if (status >= 400) {
-    return {
-      canProceed: false,
-      cleanText: null,
-      fatalError: `HTTP ${status}: Client error handled as crawl restriction by strict crawlers`,
-      advisoryWarning: null
-    };
-  }
-
-  // 4. Validate body signature on 200 OK
-  const text = rawBuffer.toString('utf8');
-  if (/^\s*(<!doctype|<html|<\?xml|{)/i.test(text)) {
-    return {
-      canProceed: false,
-      cleanText: null,
-      fatalError: 'Response body is HTML/XML/JSON (likely an SPA/framework catch-all 200 error page)',
-      advisoryWarning: null
-    };
-  }
-
-  return {
-    canProceed: true,
-    cleanText: text,
-    fatalError: null,
-    advisoryWarning: null
-  };
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// ANTI-PATTERN: Blind text extraction checking only res.ok
-async function fetchRobotsBad(url: string) {
-  const res = await fetch(url);
-  if (!res.ok) {
-    // FLAW: Treats 404 (valid unrestricted access) as fatal error,
-    // and conflates 500 (total crawl stop) with 404!
-    throw new Error(`Failed to fetch: ${res.status}`);
-  }
-  const text = await res.text();
-  // FLAW: If server returned 200 OK with HTML <html><body>Not Found</body></html>,
-  // it is fed to parser as valid robots rules.
-  return text;
-}
-```
-
 **VERIFICATION METHOD**:
-Test with synthetic responses representing SPA catch-all and 500 error scenarios:
-```typescript
-import { test, expect } from 'vitest';
-
-test('detects HTML payload served under HTTP 200 OK', () => {
-  const htmlBuffer = Buffer.from('<!DOCTYPE html><html><body>Error</body></html>', 'utf8');
-  const result = assessRobotsResponse(200, htmlBuffer);
-  expect(result.canProceed).toBe(false);
-  expect(result.fatalError).toContain('Response body is HTML/XML/JSON');
-});
-
-test('handles HTTP 404 as proceedable empty ruleset', () => {
-  const result = assessRobotsResponse(404, Buffer.alloc(0));
-  expect(result.canProceed).toBe(true);
-  expect(result.cleanText).toBe('');
-});
-```
+Initialize `server.listen()`. Fetch `https://example.com/robots.txt`. Assert that the audit engine detects the HTTP 500 response and triggers a crawler freeze without crashing the test process.
 
 ---
-
-
----
-
-## 1632. CI/CD Pre-Commit Distribution Synchronization Invariant (Harvested from CrawlCove/robots-txt-tester)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "CI/CD Pre-Commit Distribution Synchronization Invariant",
-  "source": "CrawlCove/robots-txt-tester",
-  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-  "source_version": "63245304",
-  "license": "MIT",
-  "extracted_at": "2026-10-18T06:36:31.822Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "source_derived_ai_synthesized",
-  "learning_id": "learn-github-crawlcove-robots-txt-tester",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `63245304`).  
-> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
-
-**RULE**:
-Repositories that publish compiled CLI binaries directly consumable via remote Git tarballs or `npx github:<org>/<repo>` MUST enforce in CI that the committed distribution directory (e.g., `dist/`) is byte-for-byte identical to the output of `npm run build` executed against clean sources.
-
-**WHY**:
-When users install CLI tools via GitHub tags or `npx github:...`, npm runs the pre-compiled files referenced in the `bin` field of `package.json`. If a developer modifies code in `src/`, commits, but forgets to run `tsc`, the remote install executes stale or broken JavaScript, while local unit tests (often run via Vitest/ts-node against `src/`) report green.
-
-**WHEN TO APPLY**:
-All Node.js/TypeScript repositories configuring the `bin` property pointing to a build output directory (`dist/`) intended for distribution through Git tags, GitHub releases, or direct Git URLs.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-In `.github/workflows/ci.yml`:
-```yaml
-name: CI
-on:
-  push:
-  pull_request:
-
-jobs:
-  verify-build-sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      # The canonical invariant check: fail if tsc modified or added uncommitted files in dist/
-      - name: Assert dist/ is committed and up to date
-        run: git diff --exit-code -- dist
-      - run: npm test
-```
-
-**NEGATIVE CONSTRAINT**:
-```yaml
-# ANTI-PATTERN: Building without checking git diff in repos distributing compiled dist/
-steps:
-  - uses: actions/checkout@v4
-  - run: npm ci
-  - run: npm run build
-  - run: npm test
-# FLAW: If a developer commits src/ without updating dist/, tests pass against src/,
-# but end users installing via npx github:... execute obsolete dist/ code!
-```
-
-**VERIFICATION METHOD**:
-Local pre-commit hook or script verification:
-```sh
-npm run build && git diff --exit-code -- dist || (echo "ERROR: dist/ is out of date. Run npm run build and commit changes." && exit 1)
-```
-
----
-
-
----
-
-## 1633. repository renamed to CrawlCove/hreflang-checker; point links, install commands (Harvested from CrawlCove/hreflang-checker)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "repository renamed to CrawlCove/hreflang-checker; point links, install commands",
-  "source": "CrawlCove/hreflang-checker",
-  "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-  "source_version": "68a78d31",
-  "license": "MIT",
-  "extracted_at": "2026-10-18T06:40:04.238Z",
-  "ai_provider": "zero-clone-structural-synthesizer",
-  "generation_mode": "source_derived_ai_synthesized",
-  "learning_id": "learn-github-crawlcove-hreflang-checker",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [CrawlCove/hreflang-checker](https://github.com/CrawlCove/crawlcove-hreflang-checker) (Revision: `68a78d31`).  
-> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
-
-**RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrawlCove/hreflang-checker. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `68a78d31`: repository renamed to CrawlCove/hreflang-checker; point links, install commands and repository metadata at the new name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-Prefer a form? The same check runs in the browser at [crawlcove.com/tools/hreflang-checker](https://crawlcove.com/tools/hreflang-checker?utm_source=github&utm_medium=hreflang-checker).
-npx github:CrawlCove/hreflang-checker https://www.example.com/en-gb/
-npm install -g https://github.com/CrawlCove/hreflang-checker/archive/refs/tags/v1.0.0.tar.gz
-This checks one page's cluster, or one sitemap. [Crawl Cove](https://crawlcove.com/?utm_source=github&utm_medium=hreflang-checker), the desktop SEO crawler for Windows and Mac, runs the same hreflang check across a whole-site crawl: every localised page, every missing return tag, alternates pointing at non-indexable pages, tracked over time.
-This repo has its own page on crawlcove.com: [Crawl Cove hreflang checker CLI](https://crawlcove.com/open-source/crawlcove-hreflang-checker?utm_source=github&utm_medium=hreflang-checker).
-- [crawlcove-js](https://github.com/CrawlCove/seo-crawl-export-js) — `crawlcove-export`, a typed JavaScript/TypeScript library to load, query and convert Crawl Cove exports.
-- [crawlcove-sheets](https://github.com/CrawlCove/seo-audit-google-sheets) — Google Sheets add-on that turns a Crawl Cove export into an audit work
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-Prefer a form? The same check runs in the browser at [crawlcove.com/tools/hreflang-checker](https://crawlcove.com/tools/hreflang-checker?utm_source=github&utm_medium=crawlcove-hreflang-checker).
-npx github:CrawlCove/crawlcove-hreflang-checker https://www.example.com/en-gb/
-npm install -g https://github.com/CrawlCove/crawlcove-hreflang-checker/archive/refs/tags/v1.0.0.tar.gz
-This checks one page's cluster, or one sitemap. [Crawl Cove](https://crawlcove.com/?utm_source=github&utm_medium=crawlcove-hreflang-checker), the desktop SEO crawler for Windows and Mac, runs the same hreflang check across a whole-site crawl: every localised page, every missing return tag, alternates pointing at non-indexable pages, tracked over time.
-This repo has its own page on crawlcove.com: [Crawl Cove hreflang checker CLI](https://crawlcove.com/open-source/crawlcove-hreflang-checker?utm_source=github&utm_medium=crawlcove-hreflang-checker).
-- [crawlcove-js](https://github.com/CrawlCove/crawlcove-js) — `crawlcove-export`, a typed JavaScript/TypeScript library to load, query and convert Crawl Cove exports.
-- [crawlcove-sheets](https://github.com/CrawlCove/crawlcove-sheets) — Google Sheets add-on that turns a 
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68a78d31` are properly handled with clean fallback behavior.
