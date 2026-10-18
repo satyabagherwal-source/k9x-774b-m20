@@ -18070,5 +18070,20 @@
     "qualityScore": 14689,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-18T16:46:01.368Z"
+  },
+  {
+    "name": "ARTEX",
+    "fullName": "trhhubsd/ARTEX",
+    "url": "https://github.com/trhhubsd/ARTEX",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "ARTEX · AI autonomous penetration testing system (multi-agent LLM, Go + Next.js) · AI 自主渗透测试系统 · 百度 agent+ 攻防挑战赛冠军",
+    "stars": 1246,
+    "forks": 230,
+    "openIssues": 0,
+    "language": "Go",
+    "qualityScore": 942,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-18T21:03:42.750Z"
   }
 ]

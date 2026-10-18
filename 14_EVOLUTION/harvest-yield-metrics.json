@@ -1,66 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:01:39.500Z",
-  "total_cycles_completed": 2453,
-  "total_learnings_persisted": 2453,
-  "total_rules_promoted": 1468,
+  "last_updated": "2026-10-18T21:07:53.422Z",
+  "total_cycles_completed": 2461,
+  "total_learnings_persisted": 2461,
+  "total_rules_promoted": 1474,
   "history": [
-    {
-      "timestamp": "2026-10-17T19:34:39.733Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:38:14.306Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:41:16.559Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:44:25.932Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:47:33.630Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:50:35.448Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:53:55.692Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T19:57:04.473Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T19:59:59.608Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1403,6 +1347,62 @@
       "repository": "TabbyML/tabby",
       "learningId": "learn-github-tabbyml-tabby",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:32.440Z",
+      "repository": "trhhubsd/ARTEX",
+      "learningId": "learn-github-trhhubsd-artex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:36.774Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:38.733Z",
+      "repository": "crawlseo/crawlseo",
+      "learningId": "learn-github-crawlseo-crawlseo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:41.599Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:45.145Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:47.543Z",
+      "repository": "openziti/zrok",
+      "learningId": "learn-github-openziti-zrok",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:49.080Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:07:53.422Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

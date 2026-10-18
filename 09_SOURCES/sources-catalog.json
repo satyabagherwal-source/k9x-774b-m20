@@ -2158,5 +2158,85 @@
     "contentHash": "805c36f02ec156370757441b5838350e0a5f7bd322d73596ed902787dfaf53f8",
     "lastHarvestedAt": "2026-10-18T21:01:39.498Z",
     "learningId": "learn-github-tabbyml-tabby"
+  },
+  "trhhubsd-artex": {
+    "repository": "trhhubsd/ARTEX",
+    "platform": "github",
+    "sourceUrl": "https://github.com/trhhubsd/ARTEX",
+    "sourceVersion": "bb105bf3",
+    "license": "AGPL-3.0",
+    "contentHash": "2fcdd2619f61c2fcce211e1daf871a7c173c8828612a043650b68f6d6d62633d",
+    "lastHarvestedAt": "2026-10-18T21:07:32.438Z",
+    "learningId": "learn-github-trhhubsd-artex"
+  },
+  "iii-hq-iii": {
+    "repository": "iii-hq/iii",
+    "platform": "github",
+    "sourceUrl": "https://github.com/iii-hq/iii",
+    "sourceVersion": "05440e1f",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "bca81c00e5d56878c8c17f8bc3be13e7306121661ba435c991b2ed8d810ca32a",
+    "lastHarvestedAt": "2026-10-18T21:07:36.772Z",
+    "learningId": "learn-github-iii-hq-iii"
+  },
+  "crawlseo-crawlseo": {
+    "repository": "crawlseo/crawlseo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/crawlseo/crawlseo",
+    "sourceVersion": "e3b8991c",
+    "license": "MIT",
+    "contentHash": "5713bba2148f2091c6d7dfc774bf97943d22d5d69cb1600b4ece09ef8bbf8f04",
+    "lastHarvestedAt": "2026-10-18T21:07:38.731Z",
+    "learningId": "learn-github-crawlseo-crawlseo"
+  },
+  "react-hook-form-react-hook-form": {
+    "repository": "react-hook-form/react-hook-form",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
+    "sourceVersion": "de6e7ffa",
+    "license": "MIT",
+    "contentHash": "2f9dd888b8ea8b11174875adbac9dd18484524cfa56fa291b344383ab0fc9864",
+    "lastHarvestedAt": "2026-10-18T21:07:41.597Z",
+    "learningId": "learn-github-react-hook-form-react-hook-form"
+  },
+  "higress-group-higress": {
+    "repository": "higress-group/higress",
+    "platform": "github",
+    "sourceUrl": "https://github.com/higress-group/higress",
+    "sourceVersion": "43ad04ee",
+    "license": "Apache-2.0",
+    "contentHash": "c4197a90401efcf13be97f07e14de60d0d716abc5072c06569902de2af16bd20",
+    "lastHarvestedAt": "2026-10-18T21:07:45.143Z",
+    "learningId": "learn-github-higress-group-higress"
+  },
+  "openziti-zrok": {
+    "repository": "openziti/zrok",
+    "platform": "github",
+    "sourceUrl": "https://github.com/openziti/zrok",
+    "sourceVersion": "09ed814e",
+    "license": "Apache-2.0",
+    "contentHash": "d9841fa6a1e9ceb549cf23e107fb5add82128689bf0af29c74902558f68a7605",
+    "lastHarvestedAt": "2026-10-18T21:07:47.533Z",
+    "learningId": "learn-github-openziti-zrok"
+  },
+  "crate-crate": {
+    "repository": "crate/crate",
+    "platform": "github",
+    "sourceUrl": "https://github.com/crate/crate",
+    "sourceVersion": "c5226df3",
+    "license": "Apache-2.0",
+    "contentHash": "ad6dad0b2055d6621ac4b0c03ebece11115ecb4bba620faa0139385f13ca4e4d",
+    "lastHarvestedAt": "2026-10-18T21:07:49.078Z",
+    "learningId": "learn-github-crate-crate"
+  },
+  "nucleoidai-nucleoid": {
+    "repository": "NucleoidAI/Nucleoid",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
+    "sourceVersion": "927ee1ac",
+    "license": "Apache-2.0",
+    "contentHash": "f1a5d23739047155656c3c2f28bfb83ae08b5f4e8e3ed08d840e8ddb09ec06ac",
+    "lastHarvestedAt": "2026-10-18T21:07:53.416Z",
+    "learningId": "learn-github-nucleoidai-nucleoid"
   }
 }

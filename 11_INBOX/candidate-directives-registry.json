@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T17:11:08.139Z",
+  "last_updated": "2026-10-18T21:07:53.418Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1553,6 +1553,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3"
+    },
+    {
+      "id": "CD-H7F3",
+      "directive_title": "Merge pull request #1284 from openziti/fall-fixes-208",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openziti/zrok",
+      "source_commit": "09ed814e",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-openziti-zrok"
+    },
+    {
+      "id": "CD-HBYI",
+      "directive_title": "Add colon-free indented exception suites",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "927ee1ac",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

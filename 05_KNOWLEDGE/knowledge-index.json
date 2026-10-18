@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:01:39.462Z",
-  "total_verified_learnings": 237,
+  "last_updated": "2026-10-18T21:07:53.373Z",
+  "total_verified_learnings": 245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4179,22 +4179,35 @@
     "learn-github-crate-crate": {
       "learning_id": "learn-github-crate-crate",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "crate-crate",
+      "source": "crate/crate",
+      "repository": "crate/crate",
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "HEAD",
-      "content_hash": "7f92177aa0907d54d3f2cfd837f8f5224fc4df8fdb7c382d3927a822b599b679",
+      "source_version": "c5226df3",
+      "content_hash": "ad6dad0b2055d6621ac4b0c03ebece11115ecb4bba620faa0139385f13ca4e4d",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1706,
+          "title": "Disable optimizer_reorder_nested_loop_join rule by default",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.424Z"
+      "verified_at": "2026-10-18T21:07:49.037Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crazycodeboy-react-native-splash-screen": {
       "learning_id": "learn-github-crazycodeboy-react-native-splash-screen",
@@ -20164,22 +20177,35 @@
     "learn-github-higress-group-higress": {
       "learning_id": "learn-github-higress-group-higress",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "higress-group-higress",
+      "source": "higress-group/higress",
+      "repository": "higress-group/higress",
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "HEAD",
-      "content_hash": "04e36261bb4d2566373c531d64d9d34bf215db87d7159ecf9e1394080a8a7ad3",
+      "source_version": "43ad04ee",
+      "content_hash": "c4197a90401efcf13be97f07e14de60d0d716abc5072c06569902de2af16bd20",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1705,
+          "title": "geo-ip): do not panic on a malformed real-IP header value (#4948)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.440Z"
+      "verified_at": "2026-10-18T21:07:45.099Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-hkuds-deepcode": {
       "learning_id": "learn-github-hkuds-deepcode",
@@ -20704,22 +20730,35 @@
     "learn-github-iii-hq-iii": {
       "learning_id": "learn-github-iii-hq-iii",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "iii-hq-iii",
+      "source": "iii-hq/iii",
+      "repository": "iii-hq/iii",
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "HEAD",
-      "content_hash": "204bb6db856255bdd2c98441ac2151a33cabe92b2925e2cb88e94ac65799f954",
+      "source_version": "05440e1f",
+      "content_hash": "bca81c00e5d56878c8c17f8bc3be13e7306121661ba435c991b2ed8d810ca32a",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1702,
+          "title": "engine): prevent deadlocks in stream trigger cleanup (#2297)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.552Z"
+      "verified_at": "2026-10-18T21:07:36.730Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-img2threejs-img2threejs": {
       "learning_id": "learn-github-img2threejs-img2threejs",
@@ -26488,22 +26527,29 @@
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nucleoidai-nucleoid",
+      "source": "NucleoidAI/Nucleoid",
+      "repository": "NucleoidAI/Nucleoid",
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "HEAD",
-      "content_hash": "6a01ceb9ef14ee92e3ce07fc388ad40bd35ac3f638a3023de210f770bb184c32",
+      "source_version": "927ee1ac",
+      "content_hash": "f1a5d23739047155656c3c2f28bfb83ae08b5f4e8e3ed08d840e8ddb09ec06ac",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.703Z"
+      "verified_at": "2026-10-18T21:07:53.364Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nukeop-nuclear": {
       "learning_id": "learn-github-nukeop-nuclear",
@@ -27437,22 +27483,29 @@
     "learn-github-openziti-zrok": {
       "learning_id": "learn-github-openziti-zrok",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "openziti-zrok",
+      "source": "openziti/zrok",
+      "repository": "openziti/zrok",
       "slug": "openziti-zrok",
       "platform": "github",
       "source_url": "https://github.com/openziti/zrok",
-      "source_version": "HEAD",
-      "content_hash": "529de74a5433491b718bdd765019168bfe481fffbe7328199b1507c6040a0440",
+      "source_version": "09ed814e",
+      "content_hash": "d9841fa6a1e9ceb549cf23e107fb5add82128689bf0af29c74902558f68a7605",
       "dossier_path": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.898Z"
+      "verified_at": "2026-10-18T21:07:47.489Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oraios-serena": {
       "learning_id": "learn-github-oraios-serena",
@@ -28977,22 +29030,35 @@
     "learn-github-react-hook-form-react-hook-form": {
       "learning_id": "learn-github-react-hook-form-react-hook-form",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-hook-form-react-hook-form",
+      "source": "react-hook-form/react-hook-form",
+      "repository": "react-hook-form/react-hook-form",
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "HEAD",
-      "content_hash": "83ae3c1b7f6a924bbad49d4ab65f7ab491318508f6a623a2b2c3341b639f3f25",
+      "source_version": "de6e7ffa",
+      "content_hash": "2f9dd888b8ea8b11174875adbac9dd18484524cfa56fa291b344383ab0fc9864",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1704,
+          "title": "🐞 fix(unregister): drop the field's rules when keepValue keeps only its value (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.199Z"
+      "verified_at": "2026-10-18T21:07:41.554Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -44735,20 +44801,35 @@
     "learn-github-crawlseo-crawlseo": {
       "learning_id": "learn-github-crawlseo-crawlseo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "crawlseo/crawlseo",
       "repository": "crawlseo/crawlseo",
       "slug": "crawlseo-crawlseo",
       "platform": "github",
       "source_url": "https://github.com/crawlseo/crawlseo",
-      "source_version": "1e7207b6eb",
-      "content_hash": "350bd7db3bed193c600f1943c1d7cb601b70c83b1514b0d74199685b95ec5ebe",
+      "source_version": "e3b8991c",
+      "content_hash": "5713bba2148f2091c6d7dfc774bf97943d22d5d69cb1600b4ece09ef8bbf8f04",
       "dossier_path": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1703,
+          "title": "Worker crash ordering and crawler user-agent /bot URL (#96)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T05:48:49.042Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T21:07:38.688Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kaiopiola-seocheck": {
       "learning_id": "learn-github-kaiopiola-seocheck",
@@ -65755,6 +65836,123 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:01:39.456Z"
+    },
+    "learn-github-trhhubsd-artex": {
+      "learning_id": "learn-github-trhhubsd-artex",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "trhhubsd/ARTEX",
+      "repository": "trhhubsd/ARTEX",
+      "slug": "trhhubsd-artex",
+      "platform": "github",
+      "source_url": "https://github.com/trhhubsd/ARTEX",
+      "source_version": "bb105bf3",
+      "content_hash": "2fcdd2619f61c2fcce211e1daf871a7c173c8828612a043650b68f6d6d62633d",
+      "dossier_path": "07_PROJECT_LEARNING/trhhubsd-artex-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/trhhubsd-artex-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1701,
+          "title": "findings): 「按资产」视图资产列表溢出时补回滚动条",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T21:07:32.393Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-1701": {
+      "learning_id": "rule-1701",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1701,
+      "title": "findings): 「按资产」视图资产列表溢出时补回滚动条",
+      "source_url": "https://github.com/trhhubsd/ARTEX",
+      "source_version": "bb105bf3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:07:32.393Z"
+    },
+    "rule-1702": {
+      "learning_id": "rule-1702",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1702,
+      "title": "engine): prevent deadlocks in stream trigger cleanup (#2297)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "05440e1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:07:36.730Z"
+    },
+    "rule-1703": {
+      "learning_id": "rule-1703",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1703,
+      "title": "Worker crash ordering and crawler user-agent /bot URL (#96)",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "e3b8991c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:07:38.688Z"
+    },
+    "rule-1704": {
+      "learning_id": "rule-1704",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1704,
+      "title": "🐞 fix(unregister): drop the field's rules when keepValue keeps only its value (",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "de6e7ffa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:07:41.554Z"
+    },
+    "rule-1705": {
+      "learning_id": "rule-1705",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1705,
+      "title": "geo-ip): do not panic on a malformed real-IP header value (#4948)",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "43ad04ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:07:45.099Z"
+    },
+    "rule-1706": {
+      "learning_id": "rule-1706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1706,
+      "title": "Disable optimizer_reorder_nested_loop_join rule by default",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "c5226df3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:07:49.037Z"
     }
   },
   "aliases": {

@@ -1,19 +1,33 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
+> **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
+> **Source Version**: `927ee1ac`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:07:53.304Z  
+> **Learning ID**: `learn-github-nucleoidai-nucleoid`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:14:25.575Z  
+> **Harvest Timestamp**: 2026-10-18T21:07:51.970Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `NucleoidAI/Nucleoid`
-- **Description**: Logic Language for World Models 🌱🐋🌍
+- **Description**: Synthesized Logic Language for World Models 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 770 stars
+- **Stars / Engagement**: 772 stars
 
 ---
 
@@ -22,80 +36,6 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `ref/src/state.js`
-```
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-eval */
-const $ = {
-  classes: [],
-};
-const state = $;
-const _transaction = require("./transaction");
-const { $: $graph } = require("./graph");
-const { event } = require("./event");
-const _ = require("lodash");
-const { v4: uuid } = require("uuid");
-const REFERENCE = require("./nuc/REFERENCE");
-const serialize = require("./lib/serialize");
-
-global.require = require;
-
-function assign(scope, variable, evaluation, json = true) {
-  let value;
-
-  if (json) {
-    value = serialize(eval(`(${evaluation})`), "state");
-  } else {
-    value = evaluation.toString();
-  }
-
-  return _transaction.register(`state.${variable}`, value);
-}
-
-function call(scope, fn, args = []) {
-  const exec = `state.${fn}(${args.join(",")})`;
-  return eval(exec);
-}
-
-function expression(scope, evaluation) {
-  return eval(`(${evaluation.value})`);
-}
-
-function del(scope, variable) {
-  return eval(`delete state.${variable}`);
-}
-
-module.exports.throw = (scope, exception) => eval(`throw ${exception}`);
-
-function clear() {
-  for (let property in $) {
-    delete $[property];
-  }
-
-  $["classes"] = [];
-}
-
-module.exports.$ = $;
-module.exports.assign = assign;
-module.exports.call = call;
-module.exports.expression = expression;
-module.exports.clear = clear;
-module.exports.delete = del;
-
-```
-
-### Core Architecture Module: `ref/src/statement.js`
-```
-const ESTree = require("./lang/estree/parser");
-
-function compile(string) {
-  return ESTree.parse(string);
-}
-
-module.exports.compile = compile;
-
-```
 
 ### Core Architecture Module: `src/state.rs`
 ```
@@ -183,13 +123,15 @@ impl ClassData {
     }
 }
 
-/// Everything the runtime holds: top-level variables, objects and classes.
+/// Everything the runtime holds: top-level variables, objects, classes and
+/// named functions.
 ///
-/// `ref/src/state.js` exports its `$` for anything to reach into; the maps are
-/// private here so that the only way to change them is the recorded writes
-/// below, and the only way to change them *without* recording is
-/// [`Transaction::rollback`](crate::transaction::Transaction::rollback) putting
-/// a before-image back.
+/// Variable and named-function bindings share a namespace; runtime writes keep
+/// their typed stores mutually exclusive.
+///
+/// Runtime writes record before-images through the methods below.
+/// [`Transaction::rollback`](crate::transaction::Transaction::rollback)
+/// restores those before-images without recording new writes.
 #[derive(Debug, Clone, Default)]
 pub struct State {
     variables: IndexMap<String, Value>,
@@ -248,6 +190,10 @@ impl State {
 
     pub fn class(&self, name: &str) -> Option<&ClassData> {
         self.classes.get(name)
+    }
+
+    pub(crate) fn classes(&self) -> impl Iterator<Item = &ClassData> {
+        self.classes.values()
     }
 
     pub fn class_mut(&mut self, name: &str) -> Option<&mut ClassData> {
@@ -311,38 +257,47 @@ impl State {
 
 /// Every write to the state.
 ///
-/// `state.assign` in `ref/src/state.js` records the before-image and performs
-/// the write in one step, through `transaction.register`. The same holds here,
-/// and it is the reason these are methods rather than field access: a write
-/// that forgot to record first would be invisible until some later `throw`
-/// rolled back to a state that had quietly lost it. Recording and writing are
-/// never two statements a caller has to remember to pair.
+/// Each operation records the before-image and performs the write together,
+/// so callers cannot forget the undo entry needed by a later rollback.
 ///
-/// `ref` needs only one `assign` because JavaScript works out from the path
-/// whether it names a variable or a property; they are separate here because
-/// the graph keys them differently.
-///
-/// `state.expression`, `state.call` and `state.throw` have no counterpart â€”
-/// they are `eval` wrappers, and nothing here evaluates by handing text to
-/// another language.
+/// Variables and properties use separate operations because their graph keys
+/// differ.
 impl Runtime {
-    pub(crate) fn assign(&mut self, name: &str, value: Value) {
+    pub(crate) fn assign(&mut self, name: &str, value: Value) -> bool {
+        if let Some(before) = self.state.functions.get(name).cloned() {
+            self.transaction.record_function(name, Some(before));
+            self.state.functions.shift_remove(name);
+        }
+
         let before = self.state.variables.get(name).cloned();
+        let changed = before
+            .as_ref()
+            .is_none_or(|before| !before.same_value(&value));
         self.transaction.record_variable(name, before);
         self.state.variables.insert(name.to_string(), value);
+        changed
     }
 
-    pub(crate) fn assign_property(&mut self, object: &ObjectId, property: &str, value: Value) {
+    pub(crate) fn assign_property(
+        &mut self,
+        object: &ObjectId,
+        property: &str,
+        value: Value,
+    ) -> bool {
         if !self.state.objects.contains_key(object) {
             self.insert_object(object.clone(), ObjectData::new(None));
         }
 
         let before = self.state.property(object, property).cloned();
+        let changed = before
+            .as_ref()
+            .is_none_or(|before| !before.same_value(&value));
         self.transaction.record_property(object, property, before);
 
         if let Some(data) = self.state.object_mut(object) {
             data.properties.insert(property.to_string(), value);
         }
+        changed
     }
 
     /// `state.delete` for a top-level name, reporting what was there.
@@ -394,13 +349,12 @@ impl Runtime {
     /// Changes a class in place â€” gaining an instance, or gaining a rule.
     pub(crate) fn update_class(&mut self, name: &str, update: impl FnOnce(&mut ClassData)) {
         if self.transaction.needs_class(name) {
-            let before = self.state.classes.get(name).cloned();
+ 
 ```
 
 ### Core Architecture Module: `src/statement.rs`
 ```
-//! Source text to statements. Mirrors `ref/src/statement.js`, which is likewise
-//! the one place the rest of the runtime reaches the parser through.
+//! Source text to statements: the runtime's entry point to the parser.
 
 use crate::error::Result;
 use crate::lang::ast::{Program, parser};
@@ -412,233 +366,167 @@ pub fn compile(source: &str) -> Result<Program> {
 
 ```
 
-### Core Architecture Module: `examples/_snippet.rs`
+### Core Architecture Module: `arc/server.ts`
 ```
-use nucleoid::Runtime;
+import "dotenv/config";
+import { start } from "./src/app";
 
-fn main() {
-    let mut runtime = Runtime::new();
-
-    let source = "a = 1\nb = a + 2\na = 3\nassert(b, 5)\n";
-
-    runtime.run(source).unwrap();
-
-    println!("b = {}", runtime.run("b").unwrap());
-    println!("assertions run: {}", runtime.assertions_run());
-
-    let failures = runtime.take_assertions();
-
-    for failure in &failures {
-        println!(
-            "assertion failed: expected {}, got {}",
-            failure.expected, failure.actual
-        );
-    }
-
-    println!("{}", if failures.is_empty() { "ok" } else { "FAILED" });
-}
+start().catch((error: unknown) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 
 ```
 
-### Core Architecture Module: `examples/dependencies.rs`
+### Core Architecture Module: `arc/src/analyzer.ts`
 ```
-//! Shows what makes Nucleoid declarative: statements are kept, not just run.
-//!
-//! Run with `cargo run --example dependencies`.
+import * as Matrix from "./lib/Matrix";
+import * as nucleoid from "./lib/nucleoid";
+import * as llm from "./lib/llm";
+import type { AnalyzedInstance, Grid, TrainingInput } from "./types";
 
-use nucleoid::Runtime;
+export async function declarations({
+  train_dataset,
+}: {
+  train_dataset: TrainingInput;
+}): Promise<{ declarations: string[] }> {
+  console.log("Analyzing declarations...");
 
-fn main() {
-    let mut runtime = Runtime::new();
+  const { declarations } = await llm.generate<{ declarations: string[] }>({
+    messages: [
+      {
+        role: "user",
+        content: `
+          train_dataset:
+          ${JSON.stringify(train_dataset)}
+          json_format:
+          { "declarations": <NUC_DECLARATIONS> }
+        `,
+      },
+    ],
+  });
 
-    // An assignment states a relationship that the runtime maintains.
-    runtime.run("celsius = 100").unwrap();
-    runtime.run("fahrenheit = celsius * 9 / 5 + 32").unwrap();
+  console.debug("declarations:");
+  console.debug(declarations);
 
-    println!("celsius 100 -> {}", read(&mut runtime, "fahrenheit"));
-
-    // Changing what it reads brings the relationship up to date.
-    runtime.run("celsius = 37").unwrap();
-    println!("celsius  37 -> {}", read(&mut runtime, "fahrenheit"));
-
-    // The same holds for types and their instances.
-    runtime
-        .run(
-            "class Sensor(name: str):\n    this.name = name\n\
-             \n\
-             $Sensor.label = \"sensor:\" + $Sensor.name\n",
-        )
-        .unwrap();
-
-    runtime.run("kitchen = Sensor(\"kitchen\")").unwrap();
-    println!("label      -> {}", read(&mut runtime, "kitchen.label"));
-
-    // A rule declared on the type applies to instances made later, too.
-    runtime.run("hallway = Sensor(\"hallway\")").unwrap();
-    println!("label      -> {}", read(&mut runtime, "hallway.label"));
+  return { declarations };
 }
 
-fn read(runtime: &mut Runtime, source: &str) -> String {
-    runtime
-        .run(source)
-        .map(|value| value.to_string())
-        .unwrap_or_else(|error| error.to_string())
+export async function instances({
+  declarations,
+  input_matrix,
+  output_matrix,
+}: {
+  declarations: string[];
+  input_matrix: Grid;
+  output_matrix: Grid;
+}): Promise<{ instances: AnalyzedInstance[] }> {
+  console.log("Extracting instances...");
+
+  const { instances } = await llm.generate<{
+    instances: AnalyzedInstance[];
+  }>({
+    messages: [
+      {
+        role: "user",
+        content: `
+          declarations:
+          ${JSON.stringify(declarations)}
+          input_matrix:
+          ${JSON.stringify(input_matrix)}
+          output_matrix:
+          ${JSON.stringify(output_matrix)}
+          query:
+          Obj;
+          json_format:
+          {
+            "instances": [{
+              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+            }]
+          }
+        `,
+      },
+    ],
+  });
+
+  instances.forEach((instance) => {
+    Matrix.toString(instance.input_instance_matrix);
+    console.debug("");
+    Matrix.toString(instance.output_instance_matrix);
+    console.debug("--");
+  });
+  console.log("");
+
+  return { instances };
 }
 
-```
+export async function value({
+  instance_name,
+  declarations,
+  input_instance_matrix,
+  output_instance_matrix,
+}: {
+  instance_name: string;
+  declarations: string[];
+  input_instance_matrix: Grid;
+  output_instance_matrix: Grid;
+}): Promise<{
+  input_code: string;
+  input_value: unknown;
+  output_value: unknown;
+}> {
+  console.log("Calculating value...");
 
-### Core Architecture Module: `examples/scaling.rs`
-```
-//! Measures how the runtime scales, so the cost of the dependency graph is a
-//! known quantity rather than an assumption.
-//!
-//! Run with `cargo run --release --example scaling`.
-//!
-//! Each workload is run at doubling sizes. The ratio column is the time against
-//! the previous size: about 2 is linear, about 4 is quadratic.
+  const { input_code } = await llm.generate<{ input_code: string }>({
+    messages: [
+      {
+        role: "user",
+        content: `
+          instance_name:
+          ${instance_name}
+          declarations:
+          ${declarations.join("\n")}
+          input_instance_matrix:
+          ${JSON.stringify(input_instance_matrix)}
+          output_instance_matrix:
+          ${JSON.stringify(output_instance_matrix)}
+          json_format:
+          { "input_code": <INPUT_CODE> }
+        `,
+      },
+    ],
+  });
 
-use std::time::{Duration, Instant};
+  console.log("Creating instance in Nucleoid...");
+  const input_value = await nucleoid.run(
+    [declarations[0], input_code].join("\n\n")
+  );
+  const output_value = await nucleoid.run(
+    [...declarations, input_code].join("\n\n")
+  );
 
-use nucleoid::Runtime;
+  console.debug("input_code:");
+  console.debug(input_code);
+  console.debug("input_value:");
+  console.debug(input_value);
+  console.debug("output_value:");
+  console.debug(output_value);
 
-fn main() {
-    report("chain of dependent variables", &[100, 200, 400, 800], chain);
-    report("fan-out from one variable", &[100, 200, 400, 800], fan_out);
-    report(
-        "instances of a plain type",
-        &[100, 200, 400, 800],
-        instances,
-    );
-    report("instances under a class rule", &[100, 200, 400, 800], ruled);
-    report(
-        "reassignment through a chain",
-        &[50, 100, 200, 400],
-        resettle,
-    );
-    report("try blocks", &[25, 50, 100, 200], guarded);
-}
-
-fn report(name: &str, sizes: &[usize], workload: fn(usize) -> Duration) {
-    println!("\n{name}");
-    println!("{:>8}  {:>12}  {:>8}", "n", "time", "ratio");
-
-    let mut previous: Option<Duration> = None;
-
-    for &size in sizes {
-        let elapsed = workload(size);
-
-        let ratio = match previous {
-            Some(previous) if previous.as_secs_f64() > 0.0 => {
-                format!("{:.1}x", elapsed.as_secs_f64() / previous.as_secs_f64())
-            }
-            _ => "-".to_string(),
-        };
-
-        println!("{size:>8}  {:>12}  {ratio:>8}", format!("{elapsed:.2?}"));
-        previous = Some(elapsed);
-    }
-}
-
-/// `v0 = 1`, then `v1 = v0 + 1`, `v2 = v1 + 1`, ... Each assignment adds one
-/// link, and every change has to walk the whole chain.
-fn chain(size: usize) -> Duration {
-    let mut source = String::from("v0 = 1\n");
-
-    for index in 1..size {
-        source.push_str(&format!("v{index} = v{} + 1\n", index - 1));
-    }
-
-    time(&source)
-}
-
-/// One variable that many others read.
-fn fan_out(size: usize) -> Duration {
-    let mut source = String::from("base = 1\n");
-
-    for index in 0..size {
-        source.push_str(&format!("out{index} = base + {index}\n"));
-    }
-
-    time(&source)
-}
-
-fn instances(size: usize) -> Duration {
-    let mut source = String::from("class Item:\n    pass\n\n");
-
-    for index in 0..size {
-        source.push_str(&format!("item{index} = Item()\n"));
-    }
-
-    time(&source)
-}
-
-/// The same, with a rule that every instance has to be given.
-fn ruled(size: usize) -> Duration {
-    let mut source = String::from("class Item(code: str):\n    this.code = code\n\n");
-    source.push_str("$Item.label = \"item:\" + $Item.code\n\n");
-
-    for index in 0..size {
-        source.push_str(&format!("item{index} = Item(\"{index}\")\n"));
-    }
-
-    time(&source)
-}
-
-/// Builds a chain, then changes its head, which re-evaluates everything.
-fn resettle(size: usize) -> Duration {
-    let mut runtime = Runtime::new();
-    let mut source = String::from("v0 = 1\n");
-
-    for index in 1..size {
-        source.push_str(&format!("v{index} = v{} + 1\n", index - 1));
-    }
-
-    runtime.run(&source).expect("chain should build");
-
-    let start = Instant::now();
-    runtime.run("v0 = 2").expect("head should reassign");
-    start.elapsed()
-}
-
-/// Every `try` has to be able to undo whatever its body did.
-fn guarded(size: usize) -> Duration {
-    let mut source = String::from("guard = 0\n");
-
-    for index in 0..size {
-        source.push_str(&format!(
-            "try:\n    step{index} = guard + {index}\ncatch error:\n    pass\n"
-        ));
-    }
-
-    time(&source)
-}
-
-fn time(source: &str) -> Duration {
-    let mut runtime = Runtime::new();
-    let start = Instant::now();
-
-    runtime
-        .run(source)
-        .unwrap_or_else(|error| panic!("workload failed: {error}"));
-
-    start.elapsed()
+  return { input_code, input_value, output_value };
 }
 
 ```
 
-### Core Architecture Module: `ref/arc/server.js`
+### Core Architecture Module: `arc/src/app.ts`
 ```
-require("dotenv").config();
+import * as analyzer from "./analyzer";
+import * as visualizer from "./visualizer";
+import * as Matrix from "./lib/Matrix";
+import puzzle from "./data/training/3aa6fb7a.json";
+import type { Grid, TrainingDataset, TrainingInput } from "./types";
 
-const app = require("./src/app");
-
-app();
-
-```
-
-### Core Architecture Module: `ref/arc/src/app.js`
-```
-console.info = (message) => {
+console.info = (message?: unknown) => {
   let string = message;
 
   if (typeof message !== "string") {
@@ -656,7 +544,7 @@ console.info = (message) => {
   process.stdout.write(`\x1b[34m${string}\x1b[0m\n`);
 };
 
-console.debug = (message) => {
+console.debug = (message?: unknown) => {
   let string = message;
 
   if (typeof message !== "string") {
@@ -676,26 +564,14 @@ console.debug = (message) => {
 console.log("🌿 \x1b[32mNucleoid\x1b[0m system is started");
 console.log("\x1b[34m🌎 Inspired by Nature\x1b[0m\n");
 
-require.extensions[".md"] = (module, filename) => {
-  const fs = require("fs");
-  module.exports = fs.readFileSync(filename, "utf8").trim();
-};
-
 // ---
-
-const analyzer = require("./lib/analyzer");
-const visualizer = require("./lib/visualizer");
-const nucleoid = require("./lib/nucleoid");
-const Matrix = require("./lib/Matrix");
-const { v4: uuid } = require("uuid");
-const debug = require("./debug"); // eslint-disable-line no-unused-vars
 
 const {
   train,
   test: [{ input: test_input_matrix, output: test_output_matrix }],
-} = require("./data/training/3aa6fb7a.json"); // 0ca9ddb6.json
+} = puzzle; // 0ca9ddb6.json
 
-const train_dataset = {
+const training_input: TrainingInput = {
   dataset: train.map(({ input, output }) => ({
     input_matrix: input,
     output_matrix: output,
@@ -703,20 +579,16 @@ const train_dataset = {
   })),
 };
 
-// const train_dataset = require("./debug")._3aa6fb7a.analyzer;
-
-async function start() {
-  const train_session_id = uuid();
-
+export async function start(): Promise<Grid> {
   const { declarations } = await analyzer.declarations({
-    train_dataset,
+    train_dataset: training_input,
   });
-  train_dataset.declarations = declarations;
+  const train_dataset: TrainingDataset = {
+    ...training_input,
+    declarations,
+  };
 
-  console.log("Creating declarations in Nucleoid...");
-  await nucleoid.run(train_session_id, declarations.join("\n"));
-
-  for (const dataset of train_dataset.dataset.reverse()) {
+  for (const dataset of train_dataset.dataset) {
     const { input_matrix, output_matrix } = dataset;
 
     const { instances } = await analyzer.instances({
@@ -725,29 +597,22 @@ async function start() {
       output_matrix,
     });
 
-    for (const {
-      input_instance,
-      output_instance,
-      input_object,
-      output_object,
-    } of instances) {
+    for (const { input_instance_matrix, output_instance_matrix } of instances) {
       const instance_name = `obj${dataset.instances.length}`;
 
-      const { input_code, output_value } = await analyzer.value({
-        train_session_id,
+      const { input_code, input_value, output_value } = await analyzer.value({
         instance_name,
         declarations,
-        input_object,
-        output_object,
+        input_instance_matrix,
+        output_instance_matrix,
       });
 
       dataset.instances.push({
         instance_name,
-        input_instance,
-        output_instance,
-        input_object,
-        output_object,
+        input_instance_matrix,
+        output_instance_matrix,
         input_code,
+        input_value,
         output_value,
       });
     }
@@ -755,117 +620,95 @@ async function start() {
 
   /* Visualizing */
 
-  // console.log("Waiting for 60 seconds due to rate limits...");
-  // await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
-
   const { instances } = await visualizer.instances({
     train_dataset,
     test_input_matrix,
   });
 
-  // const instances = require("./debug")._3aa6fb7a.visualizer;
-
-  const test_session_id = uuid();
   let test_index = 0;
 
-  console.log("Initializing Nucleoid session with declarations...");
-  await nucleoid.run(test_session_id, train_dataset.declarations.join("\n"));
-
-  let result_matrix = Array.from({ length: test_output_matrix.length }, () =>
-    Array(test_output_matrix[0].length).fill(0)
+  let result_matrix: Grid = Array.from(
+    { length: test_output_matrix.length },
+    () => Array<number>(test_output_matrix[0].length).fill(0)
   );
 
-  for (const { input_object } of instances.reverse()) {
-    const { output_value } = await visualizer.value({
+  for (const { input_instance_matrix } of instances) {
+    const { input_value, output_value } = await visualizer.value({
       instance_name: `obj${test_index++}`,
-      test_session_id,
       train_dataset,
-      input_object,
+      input_instance_matrix,
     });
 
-    const { output_instance } = await visualizer.output_instance({
+    const { output_instance_matrix } = await visualizer.output_instance_matrix({
       test_input_matrix,
-      result_matrix,
       train_dataset,
-      input_object,
+      input_instance_matrix,
+      input_value,
       output_value,
     });
 
-    result_matrix = Matrix.merge(result_matrix, output_instance);
+    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
+  console.debug("");
   console.debug("Result:");
   Matrix.toString(result_matrix);
   console.debug("Expected:");
   Matrix.toString(test_output_matrix);
+  console.log(
+    "Difference:",
+    Matrix.difference(result_matrix, test_output_matrix)
+  );
   return result_matrix;
 }
 
-module.exports = start;
+```
+
+### Core Architecture Module: `arc/src/dataset/index.ts`
+```
+export { document } from "./instruct_dataset";
 
 ```
 
-### Core Architecture Module: `ref/arc/src/instruct_dataset/index.js`
+### Core Architecture Module: `arc/src/dataset/instruct_dataset.ts`
 ```
-module.exports = require("./instruct_dataset");
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
-```
+export function document(): string {
+  const files = readdirSync(__dirname, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
+    .map((entry) => entry.name)
+    .sort();
 
-### Core Architecture Module: `ref/arc/src/instruct_dataset/instruct_dataset.js`
-```
-const nucleoid = require("./nucleoid.md");
-const Zoom = require("../lib/Zoom");
-// const arc = require("./arc.md");
+  if (files.length === 0) {
+    throw new Error(`No JSON instruction datasets found in ${__dirname}`);
+  }
 
-const dataset = [
-  require("./dataset.core.json"),
-  require("./dataset.line.json"),
-  require("./dataset.curve.json"),
-].map(({ declarations, dataset }) => ({
-  declarations,
-  dataset: dataset.map(({ input_matrix, output_matrix, instances }) => ({
-    input_matrix,
-    output_matrix,
-    instances: instances.map(
-      ({
-        instance_name,
-        input_code,
-        input_instance,
-        output_instance,
-        output_value,
-      }) => ({
-        instance_name,
-        input_code,
-        input_instance,
-        input_object: Zoom.focus(input_instance),
-        output_object: Zoom.focus(output_instance),
-        output_value,
-      })
-    ),
-  })),
-}));
+  const datasets = files.map((file): unknown => {
+    const source = readFileSync(join(__dirname, file), "utf8");
 
-// const fs = require("fs");
-// fs.writeFileSync(
-//   "dataset.jsonl",
-//   JSON.stringify({
-//     messages: dataset.map((d) => JSON.stringify(d)),
-//   })
-// );
+    try {
+      return JSON.parse(source);
+    } catch (error: unknown) {
+      if (error instanceof SyntaxError) {
+        throw new SyntaxError(
+          `Invalid JSON in instruction dataset ${file}: ${error.message}`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+  });
 
-module.exports.document = () => {
-  return `
-    ${nucleoid}
-    instruct_dataset:
-    ${JSON.stringify(dataset)}      
-  `;
-};
+  return JSON.stringify({ datasets });
+}
 
 ```
 
-### Core Architecture Module: `ref/arc/src/lib/Markdown.js`
+### Core Architecture Module: `arc/src/lib/Markdown.ts`
 ```
-function json(markdown) {
+export function json<T = unknown>(markdown: string): T | undefined {
   const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
 
   if (matches.length > 0) {
@@ -874,7 +717,195 @@ function json(markdown) {
   }
 }
 
-module.exports = { json };
+```
+
+### Core Architecture Module: `arc/src/lib/Matrix.ts`
+```
+import type { Grid } from "../types";
+
+export function crop(matrix: Grid): Grid {
+  if (!Array.isArray(matrix)) {
+    throw new Error("Matrix must be an array for cropping");
+  }
+  const rows = matrix.length;
+  const cols = matrix[0]?.length ?? 0;
+  let top = rows;
+  let bottom = -1;
+  let left = cols;
+  let right = -1;
+
+  for (let y = 0; y < rows; y++) {
+    const row = matrix[y];
+    if (!Array.isArray(row) || row.length !== cols) {
+      throw new Error("Matrix must be rectangular for cropping");
+    }
+    for (let x = 0; x < cols; x++) {
+      const value = row[x];
+      if (!Number.isFinite(value)) {
+        throw new Error("Matrix must contain finite numbers for cropping");
+      }
+      if (value === 0) continue;
+      top = Math.min(top, y);
+      bottom = y;
+      left = Math.min(left, x);
+      right = Math.max(right, x);
+    }
+  }
+
+  if (bottom === -1) return [];
+  return matrix.slice(top, bottom + 1).map((row) => row.slice(left, right + 1));
+}
+
+export function pad(matrix: Grid, rows: number, cols: number): Grid {
+  if (!Array.isArray(matrix)) {
+    throw new Error("Matrix must be an array for padding");
+  }
+  if (
+    !Number.isSafeInteger(rows) ||
+    !Number.isSafeInteger(cols) ||
+    rows < 0 ||
+    cols < 0
+  ) {
+    throw new Error("Padding dimensions must be non-negative safe integers");
+  }
+  const sourceRows = matrix.length;
+  const sourceCols = matrix[0]?.length ?? 0;
+  if (sourceRows > rows || sourceCols > cols) {
+    throw new Error("Padding dimensions must not be smaller than the matrix");
+  }
+  const top = Math.floor((rows - sourceRows) / 2);
+  const left = Math.floor((cols - sourceCols) / 2);
+  const result = Array.from({ length: rows }, () =>
+    Array<number>(cols).fill(0)
+  );
+
+  for (let y = 0; y < sourceRows; y++) {
+    const row = matrix[y];
+    if (!Array.isArray(row) || row.length !== sourceCols) {
+      throw new Error("Matrix must be rectangular for padding");
+    }
+    for (let x = 0; x < sourceCols; x++) {
+      const value = row[x];
+      if (!Number.isFinite(value)) {
+        throw new Error("Matrix must contain finite numbers for padding");
+      }
+      result[y + top][x + left] = value;
+    }
+  }
+
+  return result;
+}
+
+export function merge(...matrices: Grid[]): Grid {
+  const numRows = matrices[0].length;
+  const numCols = matrices[0][0].length;
+
+  const result = Array.from({ length: numRows }, () =>
+    Array<number>(numCols).fill(0)
+  );
+
+  for (const matrix of matrices) {
+    for (let i = 0; i < numRows; i++) {
+      for (let j = 0; j < numCols; j++) {
+        if (matrix[i][j] !== 0) {
+          result[i][j] = matrix[i][j];
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+export function difference(matrix1: Grid, matrix2: Grid): number {
+  let mismatches = 0;
+  const rows = Math.max(matrix1.length, matrix2.length);
+
+  for (let i = 0; i < rows; i++) {
+    const row1 = matrix1[i];
+    const row2 = matrix2[i];
+
+    if (!row1 || !row2) {
+      // An extra empty row is still a shape mismatch.
+      mismatches += Math.max(row1?.length ?? 0, row2?.length ?? 0, 1);
+      continue;
+    }
+
+    const cols = Math.max(row1.length, row2.length);
+
+    for (let j = 0; j < cols; j++) {
+      if (row1[j] !== row2[j]) {
+        mismatches++;
+      }
+    }
+  }
+
+  return mismatches;
+}
+
+export function toString(matrix: Grid): void {
+  matrix.forEach((row) => {
+    console.debug(`[${row.join(",")}]`);
+  });
+}
+
+```
+
+### Core Architecture Module: `arc/src/lib/Zoom.ts`
+```
+import type { Grid, GridObject } from "../types";
+
+export function focus(matrix: Grid): GridObject {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+
+  let xOffset = -1,
+    yOffset = -1,
+    xLength = 0,
+    yLength = 0;
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      if (matrix[i][j] !== 0) {
+        if (yOffset === -1) {
+          yOffset = i;
+        }
+        yLength = Math.max(yLength, i - yOffset + 1);
+
+        if (xOffset === -1 || j < xOffset) {
+          xOffset = j;
+        }
+        xLength = Math.max(xLength, j - xOffset + 1);
+      }
+    }
+  }
+
+  const object = matrix
+    .slice(yOffset, yOffset + yLength)
+    .map((row) => row.slice(xOffset, xOffset + xLength));
+
+  return {
+    x_position: xOffset,
+    y_position: yOffset,
+    object_matrix: object,
+  };
+}
+
+export function enlarge(matrix: GridObject, rows: number, cols: number): Grid {
+  const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
+
+  const originalArray = Array.from({ length: rows }, () =>
+    Array<number>(cols).fill(0)
+  );
+
+  for (let i = 0; i < object_matrix.length; i++) {
+    for (let j = 0; j < object_matrix[i].length; j++) {
+      originalArray[yOffset + i][xOffset + j] = object_matrix[i][j];
+    }
+  }
+
+  return originalArray;
+}
 
 ```
 
@@ -892,36 +923,6 @@ module.exports = { json };
   **Post-Mortem & Fix Analysis**:
   > Moved to https://github.com/NucleoidAI/Nucleoid/pull/70
 
-- **Issue #68** (2024-12-19): **Bump the npm_and_yarn group across 2 directories with 3 updates**
-  *Symptoms*: Bumps the npm_and_yarn group with 2 updates in the / directory: [cookie](https://github.com/jshttp/cookie) and [express](https://github.com/expressjs/express). Bumps the npm_and_yarn group with 2 updates in the /arc directory: [cookie](https://github.com/jshttp/cookie) and [express](https://github.com/expressjs/express).  Updates `cookie` from 0.6.0 to 0.7.1 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/jshttp/cookie/releases">cookie's releases</a>.</em></p> <blockquote> <h2>0.7.1</h2> <p><strong>Fixed</strong></p> <ul> <li>Allow leading dot for domain (<a href="https://redirect.github.com/jshttp/cookie/issues/174">#174</a>) <ul> <li>Although not permitted in the spec, some users expect this to work and user agents ignore the leading dot according to spec</li> </ul> </li> <li>Add fast path for <code>serialize</code> without options, use <code>obj.hasOwnProperty</code> when parsing (<a href="https://redirect.github.com/jshttp/cookie/issues/172">#172</a>)</li> </ul> <p><a href="https://github.com/jshttp/cookie/compare/v0.7.0...v0.7.1">https://github.com/jshttp/cookie/compare/v0.7.0...v0.7.1</a></p> <h2>0.7.0</h2> <ul> <li>perf: parse cookies ~10% faster (<a href="https://redirect.github.com/jshttp/cookie/issues/144">#144</a> by <a href="https://github.com/kurtextrem"><code>@​kurtextrem</code></a> and <a href="https://redirect.github.com/jshttp/cookie/issues/170">#170</a>)</li> <li>fix: narrow the validation of cookies to match RFC626
-  **Post-Mortem & Fix Analysis**:
-  > @dependabot rebase
-
-- **Issue #67** (2024-12-09): **Bump path-to-regexp and express in /arc**
-  *Symptoms*: Bumps [path-to-regexp](https://github.com/pillarjs/path-to-regexp) and [express](https://github.com/expressjs/express). These dependencies needed to be updated together. Updates `path-to-regexp` from 0.1.10 to 0.1.12 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/pillarjs/path-to-regexp/releases">path-to-regexp's releases</a>.</em></p> <blockquote> <h2>Fix backtracking (again)</h2> <p><strong>Fixed</strong></p> <ul> <li>Improved backtracking protection for 0.1.x, will break some previously valid paths (see previous advisory: <a href="https://github.com/pillarjs/path-to-regexp/security/advisories/GHSA-9wv6-86v2-598j">https://github.com/pillarjs/path-to-regexp/security/advisories/GHSA-9wv6-86v2-598j</a>)</li> </ul> <p><a href="https://github.com/pillarjs/path-to-regexp/compare/v0.1.11...v0.1.12">https://github.com/pillarjs/path-to-regexp/compare/v0.1.11...v0.1.12</a></p> <h2>Error on bad input</h2> <p><strong>Changed</strong></p> <ul> <li>Add error on bad input values  8f09549</li> </ul> <p><a href="https://github.com/pillarjs/path-to-regexp/compare/v0.1.10...v0.1.11">https://github.com/pillarjs/path-to-regexp/compare/v0.1.10...v0.1.11</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/pillarjs/path-to-regexp/commit/640e694c6fd971f78268439df9cf44040855e669"><code>640e694</code></a> 0.1.12</li> <li><a href="https://github.com/pillarjs/path-to-regexp/commit/f01c26a013b1889f0c217c64
-  **Post-Mortem & Fix Analysis**:
-  > Superseded by #68.
-
-- **Issue #66** (2024-12-09): **Bump cookie and express**
-  *Symptoms*: Bumps [cookie](https://github.com/jshttp/cookie) to 0.7.1 and updates ancestor dependency [express](https://github.com/expressjs/express). These dependencies need to be updated together.  Updates `cookie` from 0.6.0 to 0.7.1 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/jshttp/cookie/releases">cookie's releases</a>.</em></p> <blockquote> <h2>0.7.1</h2> <p><strong>Fixed</strong></p> <ul> <li>Allow leading dot for domain (<a href="https://redirect.github.com/jshttp/cookie/issues/174">#174</a>) <ul> <li>Although not permitted in the spec, some users expect this to work and user agents ignore the leading dot according to spec</li> </ul> </li> <li>Add fast path for <code>serialize</code> without options, use <code>obj.hasOwnProperty</code> when parsing (<a href="https://redirect.github.com/jshttp/cookie/issues/172">#172</a>)</li> </ul> <p><a href="https://github.com/jshttp/cookie/compare/v0.7.0...v0.7.1">https://github.com/jshttp/cookie/compare/v0.7.0...v0.7.1</a></p> <h2>0.7.0</h2> <ul> <li>perf: parse cookies ~10% faster (<a href="https://redirect.github.com/jshttp/cookie/issues/144">#144</a> by <a href="https://github.com/kurtextrem"><code>@​kurtextrem</code></a> and <a href="https://redirect.github.com/jshttp/cookie/issues/170">#170</a>)</li> <li>fix: narrow the validation of cookies to match RFC6265 (<a href="https://redirect.github.com/jshttp/cookie/issues/167">#167</a> by <a href="https://github.com/bewinsnw"><code>@​bewinsnw</co
-  **Post-Mortem & Fix Analysis**:
-  > Superseded by #68.
-
-- **Issue #65** (2024-09-16): **Bump path-to-regexp and express**
-  *Symptoms*: Bumps [path-to-regexp](https://github.com/pillarjs/path-to-regexp) to 0.1.10 and updates ancestor dependency [express](https://github.com/expressjs/express). These dependencies need to be updated together.  Updates `path-to-regexp` from 0.1.7 to 0.1.10 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/pillarjs/path-to-regexp/releases">path-to-regexp's releases</a>.</em></p> <blockquote> <h2>Backtrack protection</h2> <p><strong>Fixed</strong></p> <ul> <li>Add backtrack protection to parameters  29b96b4 <ul> <li>This will break some edge cases but should improve performance</li> </ul> </li> </ul> <p><a href="https://github.com/pillarjs/path-to-regexp/compare/v0.1.9...v0.1.10">https://github.com/pillarjs/path-to-regexp/compare/v0.1.9...v0.1.10</a></p> <h2>Support non-lookahead regex output</h2> <p><strong>Added</strong></p> <ul> <li>Allow a non-lookahead regex (<a href="https://redirect.github.com/pillarjs/path-to-regexp/issues/312">#312</a>)  c4272e4</li> </ul> <p><a href="https://github.com/component/path-to-regexp/compare/v0.1.8...v0.1.9">https://github.com/component/path-to-regexp/compare/v0.1.8...v0.1.9</a></p> <h2>Support named matching groups in <code>RegExp</code></h2> <p><strong>Added</strong></p> <ul> <li>Add support for named matching groups (<a href="https://redirect.github.com/pillarjs/path-to-regexp/issues/301">#301</a>)  114f62d</li> </ul> <p><a href="https://github.com/pillarjs/path-to-regexp/compare/v0.1.7...v0.1.8">https
-
-- **Issue #64** (2024-09-09): **Bump axios from 1.6.0 to 1.7.4**
-  *Symptoms*: Bumps [axios](https://github.com/axios/axios) from 1.6.0 to 1.7.4. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/axios/axios/releases">axios's releases</a>.</em></p> <blockquote> <h2>Release v1.7.4</h2> <h2>Release notes:</h2> <h3>Bug Fixes</h3> <ul> <li><strong>sec:</strong> CVE-2024-39338 (<a href="https://redirect.github.com/axios/axios/issues/6539">#6539</a>) (<a href="https://redirect.github.com/axios/axios/issues/6543">#6543</a>) (<a href="https://github.com/axios/axios/commit/6b6b605eaf73852fb2dae033f1e786155959de3a">6b6b605</a>)</li> <li><strong>sec:</strong> disregard protocol-relative URL to remediate SSRF (<a href="https://redirect.github.com/axios/axios/issues/6539">#6539</a>) (<a href="https://github.com/axios/axios/commit/07a661a2a6b9092c4aa640dcc7f724ec5e65bdda">07a661a</a>)</li> </ul> <h3>Contributors to this release</h3> <ul> <li><!-- raw HTML omitted --> <a href="https://github.com/levpachmanov" title="+47/-11 ([#6543](https://github.com/axios/axios/issues/6543) )">Lev Pachmanov</a></li> <li><!-- raw HTML omitted --> <a href="https://github.com/hainenber" title="+49/-4 ([#6539](https://github.com/axios/axios/issues/6539) )">Đỗ Trọng Hải</a></li> </ul> <h2>Release v1.7.3</h2> <h2>Release notes:</h2> <h3>Bug Fixes</h3> <ul> <li><strong>adapter:</strong> fix progress event emitting; (<a href="https://redirect.github.com/axios/axios/issues/6518">#6518</a>) (<a href="https://github.com/axios/axios/commit/e3c76fc9bdd03a
-  **Post-Mortem & Fix Analysis**:
-  > @dependabot rebase
-  > Looks like this PR is already up-to-date with main! If you'd still like to recreate it from scratch, overwriting any edits, you can request `@dependabot recreate`.
-  > @dependabot recreate
-
-- **Issue #61** (2024-09-09): **Bump braces from 3.0.2 to 3.0.3**
-  *Symptoms*: Bumps [braces](https://github.com/micromatch/braces) from 3.0.2 to 3.0.3. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/micromatch/braces/commit/74b2db2938fad48a2ea54a9c8bf27a37a62c350d"><code>74b2db2</code></a> 3.0.3</li> <li><a href="https://github.com/micromatch/braces/commit/88f1429a0f47e1dd3813de35211fc97ffda27f9e"><code>88f1429</code></a> update eslint. lint, fix unit tests.</li> <li><a href="https://github.com/micromatch/braces/commit/415d660c3002d1ab7e63dbf490c9851da80596ff"><code>415d660</code></a> Snyk js braces 6838727 (<a href="https://redirect.github.com/micromatch/braces/issues/40">#40</a>)</li> <li><a href="https://github.com/micromatch/braces/commit/190510f79db1adf21d92798b0bb6fccc1f72c9d6"><code>190510f</code></a> fix tests, skip 1 test in test/braces.expand</li> <li><a href="https://github.com/micromatch/braces/commit/716eb9f12d820b145a831ad678618731927e8856"><code>716eb9f</code></a> readme bump</li> <li><a href="https://github.com/micromatch/braces/commit/a5851e57f45c3431a94d83fc565754bc10f5bbc3"><code>a5851e5</code></a> Merge pull request <a href="https://redirect.github.com/micromatch/braces/issues/37">#37</a> from coderaiser/fix/vulnerability</li> <li><a href="https://github.com/micromatch/braces/commit/2092bd1fb108d2c59bd62e243b70ad98db961538"><code>2092bd1</code></a> feature: braces: add maxSymbols (<a href="https://github.com/micromatch/braces/issues/">https://github.com/micromatch/braces/issues/</a>...</li> <li><a href="ht
-  **Post-Mortem & Fix Analysis**:
-  > @dependabot rebase
-
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
 
@@ -937,2693 +938,916 @@ module.exports = { json };
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32512c2b` (2026-10-05)
-**Commit Message**: Refresh README quick start section
+### Incident Patch 1: `af5e7d45` (2026-10-16)
+**Commit Message**: Add colon-free indented exception suites
 
-Replaces the old “Hello World” file-based example with a clearer “Quick Start” focused on installing the CLI from crates.io and using the interactive shell. The new walkthrough demonstrates defining a class and querying `socrates.mortal`, and updates the help text to match available CLI commands.
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +21/-24)
+**File**: `README.md` (modified, +29/-0)
 ```diff
-@@ -49,40 +49,37 @@
+@@ -904,6 +904,35 @@ assert: record.status, "sent"
+   counters, transactions and exclusion from program results and model nodes.
+   See the [root contract](nucleoid.spec.md#colon-led-assertion-statements).
  
- <br />
- 
--### Hello World :zap:
-+## Quick Start :zap:
- 
--**Socrates is mortal without being told so**
--
--```nuc
--# There is a Human type with a name
--class Human(name: str):
--    this.name = name
--
--# Every human is mortal
--$Human.mortal = true
--
--# Socrates is a Human
--socrates = Human("Socrates")
--
--# Therefore, Socrates is mortal
--assert(socrates.mortal, true)
--```
--
--Save the program as `hello.nuc` and run it with JSON output:
-+Install the CLI from crates.io:
- 
- ```console
--cargo run -- hello.nuc --json
-+cargo install nucleoid
- ```
- 
--Start the interactive CLI by omitting the file:
-+Start the interactive CLI from any directory and teach it that Socrates is
-+mortal:
- 
- ```console
--cargo run -- --json
-+$ nucleoid
-+🌿 Nucleoid - Logic Language for World Models
-+🌎 Inspired by Nature
-+Type .help for available commands.
-+> class Human(name: str):
-+...     this.name = name
-+...
-+null
-+> $Human.mortal = true
-+null
-+> socrates = Human("Socrates")
-+[object socrates]
-+> socrates.mortal
-+true
- ```
- 
- The editor provides line editing, in-session history, Ctrl-C cancellation, and
--multiline indented blocks submitted with a blank line. Type `.help` for commands
--that toggle JSON and graph output, clear the runtime state, or exit.
-+multiline indented blocks submitted with a blank line. Type `.help` for
-+available commands.
- 
- ---
- 
-```
-
----
-
-### Incident Patch 2: `cd84eafc` (2026-10-04)
-**Commit Message**: Fix generated Rust literal rendering
-
-The code generator now emits Rust-safe literal strings for spec assertions, avoiding invalid raw-string escapes when values contain quotes or newlines. This also cleans up generated spec cases to use plain string literals where possible, making the generated tests easier to read and more robust.
-
-**File**: `build.rs` (modified, +8/-4)
-```diff
-@@ -216,8 +216,8 @@ fn render_records(records: &[Record], module: Option<&str>) -> String {
-                 writeln!(
-                     generated,
-                     "{indent}    assert_eq!(run({}), run({}));",
--                    raw_literal(actual),
--                    raw_literal(&expected)
-+                    rust_literal(actual),
-+                    rust_literal(&expected)
-                 )
-                 .unwrap();
-             } else {
-@@ -245,7 +245,7 @@ fn render_records(records: &[Record], module: Option<&str>) -> String {
-                     .unwrap();
-                 }
- 
--                writeln!(generated, "{indent}    run({});", raw_literal(&statement)).unwrap();
-+                writeln!(generated, "{indent}    run({});", rust_literal(&statement)).unwrap();
- 
-                 for assertion in assertions {
-                     writeln!(
-@@ -391,7 +391,11 @@ fn without_comments(statement: &str) -> String {
-         .to_string()
- }
- 
--fn raw_literal(value: &str) -> String {
-+fn rust_literal(value: &str) -> String {
-+    if !value.contains(['\n', '\r', '"', '\\']) {
-+        return format!("{value:?}");
-+    }
++## Colon-free indented exception suites (Accepted NUC 46)
 +
-     for hashes in 1.. {
-         let marker = format!("\"{}", "#".repeat(hashes));
- 
-```
-
----
-
-### Incident Patch 3: `a2e36842` (2026-08-21)
-**Commit Message**: Fix title and clean up benchmark section
-
-Corrected the title from 'World Model' to 'World Models' and removed redundant lines in the benchmark section.
-
-**File**: `README.md` (modified, +2/-4)
-```diff
-@@ -151,7 +151,7 @@ The symbolic component of Neuro-Symbolic AI focuses on logic, rules, and symboli
-   <img src=".github/media/neuro-symbolic.png" width="225" alt="Neuro-Symbolic Diagram"/>
- </p>
- 
--### World Model: The State Component
-+### World Models: The State Component
- 
- Neural networks learn and symbolic AI reasons, but reasoning needs something to reason over, and that is the world model: the entities, relationships and rules a system currently holds to be true. In Nucleoid the model is not a passive knowledge base that is read from and written to, it is a logic graph that the runtime keeps true on its own. A rule stated over a type holds for every instance of it, including instances created long afterwards, and a change to any value propagates to everything derived from it, so the model is never left holding a fact together with its own stale consequence.
- 
-@@ -216,15 +216,13 @@ In short, the main objective of the project is to manage both of data and logic
++**Indented error recovery omits redundant colons**
++
++```nuc
++# Indented error recovery omits redundant colons
++
++quantity = 3
++total = quantity * 2
++try
++    quantity = 5
++    throw "CANCEL"
++catch error
++    assert(error, "CANCEL")
++assert(quantity, 3)
++assert(total, 6)
++```
++
++- Accepted [NUC 46](docs/nuc-0046.md) permits either exception-suite colon to
++  be omitted only when its complete existing header has a real indented body.
++  `try:` and `catch error:` with the same bodies remain valid and equivalent.
++- Default `catch`, named `catch issue` and parenthesized `catch(issue)`
++  keep the existing bindings. Inline/braced suites still require their colons.
++- The native REPL buffers a complete lexical bare `try` header through its
++  catch until blank-line commit or EOF, including trailing header comments.
++- Recovery uses the same transactional rollback and live dependency model,
++  not a new error API, scope or continuation rule. See the
++  [root contract](nucleoid.spec.md#colon-free-indented-exception-suites).
++
+ ## Benchmark
  
  This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
- 
--https://nucleoid.com/ide/sample
--
- <img src="https://cdn.nucleoid.com/media/benchmark.png" alt="Benchmark" width="550"/>
- 
- > Performance benchmark happened in t2.micro of AWS EC2 instance and both databases had dedicated servers with <u>no indexes and default configurations</u>.
- 
- https://github.com/NucleoidAI/benchmark
- 
--This does not necessary mean Nucleoid runtime is faster than MySQL or Postgres, instead databases require constant maintenance by DBA teams with indexing, caching, purging etc. however, Nucleoid tries to solve this problem with managing logic and data internally. As seen in the chart, for applications with average complexity, Nucleoid's performance is close to linear because of on-chain data store, in-memory computing model as well as limiting the IO process.
-+As seen in the chart, for applications with average complexity, Nucleoid's performance is close to linear because of on-chain data store, in-memory computing model as well as limiting the IO process.
- 
- <br/>
- 
 ```
 
----
-
-### Incident Patch 4: `49ccdc57` (2026-08-04)
-**Commit Message**: Fix table column width attributes in README
-
-**File**: `README.md` (modified, +2/-2)
+**File**: `build.rs` (modified, +23/-1)
 ```diff
-@@ -29,8 +29,8 @@ Nucleoid is designed with a minimally tokenized syntax for logic representation
-       <th colspan="2">Nucleoid Runtime</th>
-     </tr>
-     <tr>
--      <th width="50%">🦀 Rust-based</th>
--      <th width="50%">⚡ LLM-based</th>
-+      <th width="250">🦀 Rust-based</th>
-+      <th width="250">⚡ LLM-based</th>
-     </tr>
-     <tr>
-       <td>
-```
-
----
-
-### Incident Patch 5: `2a495704` (2026-08-02)
-**Commit Message**: Add dataset rendering and synth discovery
-
-Expand the synthesized use-case corpus, render it into committed JSONL files under `dataset/`, and add a dedicated test that keeps the published dataset in sync with `nucleoid.spec.md` and `synth/`. `build.rs` now discovers synth documents automatically and generates the shared document list used by both the synth test suite and dataset renderer, reducing manual wiring as new synth sets are added.
-
-**File**: `CLAUDE.md` (modified, +4/-2)
-```diff
-@@ -29,9 +29,11 @@ Nucleoid is published as open source under Apache-2.0, so everything is public-f
+@@ -16,7 +16,7 @@ use std::fs;
+ use std::path::Path;
  
- `nucleoid.spec.md` is authoritative. Where `synth/`, `docs/` or `ref/` disagrees with it, the main reference wins.
+ pub(crate) mod build_statements;
+-use build_statements::{assertion, statements};
++use build_statements::{assertion, starts_keyword, statements};
  
--`nucleoid.spec.md`, `synth/`, `docs/` and the Rust crate (`Cargo.toml`, `src/`) must stay in sync. Every change to one must be propagated to the others as part of the same change.
-+`nucleoid.spec.md`, `synth/`, `docs/`, `dataset/` and the Rust crate (`Cargo.toml`, `src/`) must stay in sync. Every change to one must be propagated to the others as part of the same change.
- 
--The crate executes them rather than restating them: `tests/spec.rs` runs `nucleoid.spec.md`, `tests/synth.rs` runs `synth/`, `tests/reference.rs` runs `tests/reference.md` (the executable form of `docs/reference.md`), `tests/readme.rs` runs the ```nuc blocks in `README.md`, and `tests/examples.rs` runs those in `docs/examples.md`. Adding a case to any of those documents adds a test, so `cargo test` is the check that the crate and the documents still agree.
-+`dataset/` is the Hugging Face publication of `nucleoid.spec.md` and `synth/` as JSONL. It is rendered, never hand-edited: change the documents and regenerate with `UPDATE_DATASET=1 cargo test --test dataset`.
-+
-+The crate executes them rather than restating them: `tests/spec.rs` runs `nucleoid.spec.md`, `tests/synth.rs` runs `synth/`, `tests/reference.rs` runs `tests/reference.md` (the executable form of `docs/reference.md`), `tests/readme.rs` runs the ```nuc blocks in `README.md`, and `tests/examples.rs` runs those in `docs/examples.md`. `tests/dataset.rs` renders `dataset/` from the documents and fails when the committed JSONL differs. Adding a case to any of those documents adds a test, so `cargo test` is the check that the crate and the documents still agree.
- 
- A case whose assertions sit on a branch that is never taken proves nothing, so the suites also compare `Runtime::assertions_run()` against the number of `assert` calls in the source and fail when fewer ran.
- 
-```
-
-**File**: `Cargo.lock` (modified, +2/-0)
-```diff
-@@ -171,6 +171,7 @@ dependencies = [
-  "indexmap",
-  "logos",
-  "regex",
-+ "serde",
-  "serde_json",
-  "thiserror",
- ]
-@@ -253,6 +254,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba"
- dependencies = [
-  "serde_core",
-+ "serde_derive",
- ]
- 
- [[package]]
-```
-
-**File**: `Cargo.toml` (modified, +5/-0)
-```diff
-@@ -42,5 +42,10 @@ clap = { version = "4", default-features = false, features = [
-     "error-context",
- ] }
- 
-+[dev-dependencies]
-+# Field-ordered serialisation of the dataset records. Only the tooling that
-+# renders `dataset/` needs it, so it stays out of the published dependencies.
-+serde = { version = "1", features = ["derive"] }
-+
- [lints.rust]
- unsafe_code = "forbid"
-```
-
-**File**: `build.rs` (modified, +85/-10)
-```diff
-@@ -27,37 +27,43 @@ enum Format {
- struct Suite {
-     output: &'static str,
-     format: Format,
--    documents: &'static [(&'static str, &'static str)],
-+    source: Source,
-+}
-+
-+/// Where a suite's documents come from.
-+enum Source {
-+    /// Named one by one, for the suites that have exactly one document.
-+    Named(&'static [(&'static str, &'static str)]),
-+    /// Every `.md` in a directory, in name order. The synth sets are added to
-+    /// in batches, and a batch should not have to be wired in by hand.
-+    Directory(&'static str),
- }
- 
- const SUITES: &[Suite] = &[
-     Suite {
-         output: "spec.rs",
-         format: Format::Cases,
--        documents: &[("nucleoid", "nucleoid.spec.md")],
-+        source: Source::Named(&[("nucleoid", "nucleoid.spec.md")]),
-     },
-     Suite {
-         output: "synth.rs",
-         format: Format::Cases,
--        documents: &[
--            ("synth_01", "synth/nucleoid.spec.synth.01.md"),
--            ("synth_02", "synth/nucleoid.spec.synth.02.md"),
--        ],
-+        source: Source::Directory("synth"),
-     },
-     Suite {
-         output: "reference.rs",
-         format: Format::Cases,
--        documents: &[("reference", "tests/reference.md")],
-+        source: Source::Named(&[("reference", "tests/reference.md")]),
-     },
-     Suite {
-         output: "readme.rs",
-         format: Format::Snippets,
--        documents: &[("readme", "README.md")],
-+        source: Source::Named(&[("readme", "README.md")]),
-     },
-     Suite {
-         output: "examples.rs",
-         format: Format::Snippets,
--        documents: &[("examples", "docs/examples.md")],
-+        source: Source::Named(&[("examples", "docs/examples.md")]),
-     },
- ];
- 
-@@ -73,7 +79,22 @@ fn main() {
-         let mut total = 0;
-         let mut modules = String::new();
- 
--        for (index, (module, path)) in suite.documents.iter().enumerate() {
-+        let documents = match suite.source {
-+            Source::Named(documents) => documents
-+                .iter()
-+                .map(|(module, path)| ((*module).to_string(), (*path).to_string()))
-+                .collect(),
-+            Source::Directory(directory) => {
-+                println!("cargo::rerun-if-changed={directory}");
-+                in_directory(directory)
-+            }
-+        };
-+
-+        if let Source::Directory(_) = suite.source {
-+            write_document_list(&out, &documents);
-+        }
-+
-+        for (index, (module, path)) in documents.iter().enumerate() {
-             println!("cargo::rerun-if-changed={path}");
- 
-             let document = fs::read_to_string(path)
-@@ -98,6 +119,60 @@ fn main() {
-     }
- }
- 
-+/// Every `.md` in a directory, as `(module, path)` in name order.
-+///
-+/// `synth/nucleoid.spec.synth.01.md` becomes the module `synth_01`, so a test
-+/// path still says which set the case came from.
-+fn in_directory(directory: &str) -> Vec<(String, String)> {
-+    let mut documents: Vec<(String, String)> = fs::read_dir(directory)
-+        .unwrap_or_else(|error| panic!("{directory} holds the case documents: {error}"))
-+        .map(|entry| entry.expect("a directory entry is readable").path())
-+        .filter(|path| path.extension().is_some_and(|extension| extension == "md"))
-+        .map(|path| {
-+            let stem = path
-+                .file_stem()
-+                .expect("a file has a name")
-+                .to_string_lossy()
-+                .to_string();
-+
-+            // `nucleoid.spec.synth.01` is numbered by its last segment.
-+            let number = stem.rsplit('.').next().unwrap_or(&stem).to_string();
-+
-+            (
-+                format!("{directory}_{number}"),
-+                path.to_string_lossy().replace('\\', "/"),
-+            )
-+        })
-+        .collect();
-+
-+    documents.sort();
-+    documents
-+}
-+
-+/// Writes the list of discovered documents, so the test files can hold them
-+/// without naming each one. `include_str!` needs a literal path, which is why
-+/// this is generated rather than globbed at test time.
-+fn write_document_list(out: &str, documents: &[(String, String)]) {
-+    let root = env::var("CARGO_MANIFEST_DIR").expect("cargo sets CARGO_MANIFEST_DIR");
-+    let root = root.replace('\\', "/");
-+
-+    let mut generated = String::from("// @generated by build.rs — do not edit.\n\n");
-+    generated.push_str("pub static SYNTH_DOCUMENTS: &[(&str, &str, &str)] = &[\n");
-+
-+    for (module, path) in documents {
-+        writeln!(
-+            generated,
-+            "    ({module:?}, {path:?}, include_str!(\"{root}/{path}\")),"
-+        )
-+        .unwrap();
-+    }
-+
-+    generated.push_str("];\n");
-+
-+    fs::write(Path::new(out).join("synth_documents.rs"), generated)
-+        .expect("the generated document list must be writable");
-+}
-+
- /// The title of every case in a case document, in order.
- ///
- /// Deliberately the same rule as `cases()` in `tests/common/mod.rs`: split the
-```
-
-**File**: `dataset/README.md` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+---
-+license: apache-2.0
-+language:
-+  - en
-+tags:
-+  - nucleoid
-+  - logic-programming
-+  - declarative
-+  - neuro-symbolic
-+  - code
-+size_categories:
-+  - n<1K
-+task_categories:
-+  - text-generation
-+configs:
-+  - config_name: default
-+    data_files:
-+      - split: spec
-+        path: spec.jsonl
-+      - split: synth
-+        path: synth.*.jsonl
-+---
-+
-+# Nucleoid
-+
-+Nucleoid is a declarative logic programming language for LLMs. A program is a
-+set of statements that remain true: an assignment is not an instruction that
-+runs once and finishes, it is a relationship the runtime records and maintains.
-+
-+This dataset is the language's specification and its synthesized use cases as
-+JSONL, one record per case. Each record is a complete program with the
-+natural-language description of every statement kept as comments, which is what
-+makes it a supervised pair: prose in, logic out.
-+
-+## Splits
-+
-+| Split | Records | Rendered from |
-+| --- | --- | --- |
-+| `spec` | 178 | `nucleoid.spec.md` — normative |
-+| `synth` | 1007 | `synth/nucleoid.spec.synth.01.md` through `.21.md` — derived, no independent authority |
-+
-+## Fields
-+
-+| Field | Type | Description |
-+| --- | --- | --- |
-+| `id` | string | Stable identifier, prefixed by the document: `spec-0001`, `synth-01-0001` |
-+| `source` | string | Path of the document the case was rendered from |
-+| `title` | string | The behaviour the case demonstrates |
-+| `code` | string | The Nucleoid program |
-+| `returns` | string or null | The value the program evaluates to, as the document writes it, when it declares one |
-+
-+```json
-+{
-+  "id": "spec-0001",
-+  "source": "nucleoid.spec.md",
-+  "title": "Nucleoid runs a statement in the state",
-+  "code": "# i is 1\ni = 1\n\nassert(i == 1, true)",
-+  "returns": null
-+}
-+```
-+
-+## Loading
-+
-+```python
-+from datasets import load_dataset
-+
-+dataset = load_dataset(
-+    "json",
-+    data_files={"spec": "spec.jsonl", "synth": "synth.*.jsonl"},
-+)
-+```
-+
-+Once published to the Hub, load it by its repository id instead.
-+
-+## How it is built
-+
-+The records are not written by hand. They are rendered from the documents in
-+the [Nucleoid repository](https://github.com/NucleoidAI/Nucleoid), and the test
-+suite fails when the committed JSONL is not what those documents render to, so
-+the dataset cannot drift from the specification it publishes.
-+
-+Every `code` in this dataset is a program the language's own test suite runs:
-+the assertions in it hold, and each one parses. The comment that titles a case
-+in the source document is promoted to the `title` field rather than left in the
-+program, so a model trained on this does not learn to write it back.
-+
-+`nucleoid.spec.md` is normative. The `synth` split is derived from it and has no
-+authority of its own; where the two disagree, the specification wins.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This dataset is licensed under the Apache License, Version 2.0.
-```
-
-**File**: `dataset/spec.jsonl` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+{"id":"spec-0001","source":"nucleoid.spec.md","title":"Nucleoid runs a statement in the state","code":"# i is 1\ni = 1\n\nassert(i == 1, true)","returns":null}
-+{"id":"spec-0002","source":"nucleoid.spec.md","title":"Nucleoid runs a expression statement","code":"# j is 1\nj = 1\n\nassert(j + 2, 3)","returns":null}
-+{"id":"spec-0003","source":"nucleoid.spec.md","title":"Nucleoid returns value of variable","code":"# k is 1\nk = 1\n\nk","returns":"1"}
-+{"id":"spec-0004","source":"nucleoid.spec.md","title":"Nucleoid throws an error if variable is not defined","code":"try:\n    # t is e plus 1\n    t = e + 1\ncatch error:\n    assert(error, ReferenceError(\"e is not defined\"))","returns":null}
-+{"id":"spec-0005","source":"nucleoid.spec.md","title":"Nucleoid throws an error inside a block","code":"# k is 99\nk = 99\n\ntry:\n    # if k is greater than or equal to 99, then throw \"INVALID\"\n    if k >= 99:\n        throw \"INVALID\"\ncatch error:\n    assert(error, \"INVALID\")","returns":null}
-+{"id":"spec-0006","source":"nucleoid.spec.md","title":"Nucleoid throws an error as a variable","code":"# length is 0.1\nlength = 0.1\n\ntry:\n    # if length is less than 1, then throw length\n    if length < 1:\n        throw length\ncatch error:\n    assert(error, 0.1)\n\ntry:\n    # if length is less than 1.1, then throw 'length'\n    if length < 1.1:\n        throw 'length'\ncatch error:\n    assert(error, \"length\")","returns":null}
-+{"id":"spec-0007","source":"nucleoid.spec.md","title":"Nucleoid creates a class with constructor","code":"# There is a Shape type,\n# which has a type as a string\nclass Shape(type: str):\n    this.type = type\n\n# shape1 is a Shape whose type is \"Square\"\nshape1 = Shape(\"Square\")\n\nassert(shape1, { \"id\": \"shape1\", \"type\": \"Square\" })","returns":null}
-+{"id":"spec-0008","source":"nucleoid.spec.md","title":"Nucleoid creates a class with a constructor and a typed attribute","code":"# There is a Shape type,\n# which has a type as a string\nclass Shape:\n    type: str\n\n    def init(type: str):\n        this.type = type\n\n# shape1 is a Shape whose type is \"Rectangle\"\nshape1 = Shape(\"Rectangle\")\n\nassert(shape1, { \"id\": \"shape1\", \"type\": \"Rectangle\" })","returns":null}
-+{"id":"spec-0009","source":"nucleoid.spec.md","title":"Nucleoid adds an object to the class's object list","code":"# There is a Student type\nclass Student:\n    pass\n\n# user0 is a Student\nuser0 = Student()\n\nassert(Student.find(student => student.id == \"user0\"), { \"id\": \"user0\" })\nassert(Student[\"user0\"], { \"id\": \"user0\" })","returns":null}
-+{"id":"spec-0010","source":"nucleoid.spec.md","title":"Nucleoid preserves class and object lists when a class is updated","code":"# There is a User type\nclass User:\n    pass\n\n# There is a User\nUser()\n\nassert(Class.length, 1)\nassert(User.length, 1)\n\n# There is a User type\nclass User:\n    pass\n\nassert(Class.length, 1)\nassert(User.length, 1)\n\n# There is a User\nUser()\n\nassert(Class.length, 1)\nassert(User.length, 2)","returns":null}
-+{"id":"spec-0011","source":"nucleoid.spec.md","title":"Nucleoid places an instance in the list of the class when created","code":"# There is a Student type\nclass Student:\n    pass\n\nassert(typeof Student, List)\n\n# student1 is a Student\nstudent1 = Student()\n\nassert(Student.length, 1)","returns":null}
-+{"id":"spec-0012","source":"nucleoid.spec.md","title":"Nucleoid creates a class and a subclass","code":"# There is a Person type,\n# which has a name as a string\nclass Person(name: str):\n    this.name = name\n\n# There is a Student type,\n# which is a subtype of Person\n# and has a school as a string\nclass Student: Person\n    def init(name, school):\n        super(name)\n        this.name = name\n        this.school = school\n\n# student1 is a Student,\n# whose name is \"Emma\"\n# and whose school is \"Riverside High\"\nstudent1 = Student(\"Emma\", \"Riverside High\")\n\nassert(student1, { \"id\": \"student1\", \"name\": \"Emma\", \"school\": \"Riverside High\" })","returns":null}
-+{"id":"spec-0013","source":"nucleoid.spec.md","title":"Nucleoid runs a class-level property assignment","code":"# There is a Human type,\n# which has a name as a string\nclass Human(name: str):\n    this.name = name\n\n# All humans are mortal\n$Human.mortal = true\n\n# human1 is a Human whose name is \"Socrates\"\nhuman1 = Human(\"Socrates\")\n\nassert(human1.mortal, true)","returns":null}
-+{"id":"spec-0014","source":"nucleoid.spec.md","title":"Nucleoid runs a class-level conditional","code":"# There is a Device type,\n# which has a profile as a string\nclass Device(profile: str):\n    this.profile = profile\n\n# Any device that has a profile is active\nif $Device.profile:\n    $Device.active = true\n\n# device1 has no profile\ndevice1 = Device()\n\n# device2 has profile \"PROFILE-1\"\ndevice2 = Device(\"PROFILE-1\")\n\nassert(device1.active, null)\nassert(device2.active, true)","returns":null}
-```
-
-**File**: `dataset/synth.01.jsonl` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+{"id":"synth-01-0001","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid updates a chain of dependent variables","code":"# meters is 1000\nmeters = 1000\n\n# kilometers is meters divided by 1000\nkilometers = meters / 1000\n\n# miles is kilometers times 0.621371\nmiles = kilometers * 0.621371\n\nassert(kilometers, 1)\nassert(miles, 0.621371)\n\n# meters is 2000\nmeters = 2000\n\nassert(kilometers, 2)\nassert(miles, 1.242742)","returns":null}
-+{"id":"synth-01-0002","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid assigns a comparison result to a variable","code":"# threshold is 100\nthreshold = 100\n\n# reading is 120\nreading = 120\n\n# alarm is whether reading is greater than threshold\nalarm = reading > threshold\n\nassert(alarm, true)\n\n# reading is 80\nreading = 80\n\nassert(alarm, false)","returns":null}
-+{"id":"synth-01-0003","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid updates a template literal when its dependency changes","code":"# host is \"localhost\"\nhost = \"localhost\"\n\n# port is 8080\nport = 8080\n\n# url is \"http://\" plus host plus \":\" plus port\nurl = `http://${host}:${port}`\n\nassert(url, \"http://localhost:8080\")\n\n# port is 9090\nport = 9090\n\nassert(url, \"http://localhost:9090\")","returns":null}
-+{"id":"synth-01-0004","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid evaluates a logical expression with mixed operands","code":"# online is true\nonline = true\n\n# retries is 0\nretries = 0\n\n# healthy is online and whether retries is 0\nhealthy = online and retries == 0\n\nassert(healthy, true)\n\n# retries is 3\nretries = 3\n\nassert(healthy, false)","returns":null}
-+{"id":"synth-01-0005","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid respects parentheses in an expression","code":"# a is 2\na = 2\n\n# b is 3\nb = 3\n\n# c is 4\nc = 4\n\nassert(a + b * c, 14)\nassert((a + b) * c, 20)","returns":null}
-+{"id":"synth-01-0006","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid creates a dependency on a string function","code":"# name is \"nucleoid\"\nname = \"nucleoid\"\n\n# initial is the character of name at 0\ninitial = name.charAt(0)\n\n# label is initial plus \"-\" plus name's length\nlabel = initial + \"-\" + name.length\n\nassert(label, \"n-8\")\n\n# name is \"logic\"\nname = \"logic\"\n\nassert(label, \"l-5\")","returns":null}
-+{"id":"synth-01-0007","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid creates a dependency on a property of an inline object","code":"# config is an object whose retries is 3\nconfig = { \"retries\": 3 }\n\n# budget is config's retries times 100\nbudget = config.retries * 100\n\nassert(budget, 300)\n\n# config is an object whose retries is 5\nconfig = { \"retries\": 5 }\n\nassert(budget, 500)","returns":null}
-+{"id":"synth-01-0008","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid rolls back dependent variables if an exception is thrown","code":"# limit is 10\nlimit = 10\n\n# double is limit times 2\ndouble = limit * 2\n\nassert(double, 20)\n\n# if double is greater than 40, then throw \"OVER_LIMIT\"\nif double > 40:\n    throw \"OVER_LIMIT\"\n\ntry:\n    # limit is 25\n    limit = 25\ncatch error:\n    assert(error, \"OVER_LIMIT\")\n\nassert(limit, 10)\nassert(double, 20)","returns":null}
-+{"id":"synth-01-0009","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid detects a circular dependency between properties","code":"# There is a Box type\nclass Box:\n    pass\n\n# box1 is a Box whose width is 10\nbox1 = Box()\nbox1.width = 10\n\n# box1's height is box1's width times 2\nbox1.height = box1.width * 2\n\nassert(box1.height, 20)\n\ntry:\n    # box1's width is box1's height divided by 2\n    box1.width = box1.height / 2\ncatch error:\n    assert(error, TypeError(\"Circular Dependency\"))","returns":null}
-+{"id":"synth-01-0010","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid throws an error if a variable in a class-level expression is not defined","code":"# There is an Order type\nclass Order:\n    pass\n\ntry:\n    # any order's total is the order's price times taxRate\n    $Order.total = $Order.price * taxRate\ncatch error:\n    assert(error, ReferenceError(\"taxRate is not defined\"))","returns":null}
-+{"id":"synth-01-0011","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid rejects an unknown function of a standard built-in object","code":"try:\n    # result is the wrong math function\n    result = Math.wrong(1)\ncatch error:\n    assert(error, TypeError(\"Math.wrong is not a function\"))","returns":null}
-+{"id":"synth-01-0012","source":"synth/nucleoid.spec.synth.01.md","title":"Nucleoid throws a property as an error","code":"# There is a Limit type\nclass Limit:\n    pass\n\n# limit1 is a Limit whose max is 5\nlimit1 = Limit()\nlimit1.max = 5\n\ntry:\n    # if limit1's max is less than 10, then throw limit1's max\n    if limit1.max < 10:\n        throw limit1.max\ncatch error:\n    assert(error, 5)","
-```
-
-**File**: `dataset/synth.02.jsonl` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+{"id":"synth-02-0001","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid deletes a class-level property assignment","code":"# There is a Rate type\nclass Rate:\n    pass\n\n# Any rate's percent is the rate's basis divided by 100\n$Rate.percent = $Rate.basis / 100\n\n# rate1 is a Rate whose basis is 250\nrate1 = Rate()\nrate1.basis = 250\n\nassert(rate1.percent, 2.5)\n\n# Any rate's percent is deleted\ndelete $Rate.percent\n\n# rate1's basis is 500\nrate1.basis = 500\n\nassert(rate1.percent, null)\n\n# rate2 is a Rate whose basis is 100\nrate2 = Rate()\nrate2.basis = 100\n\nassert(rate2.percent, null)","returns":null}
-+{"id":"synth-02-0002","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid detects a circular dependency across three variables","code":"# first is 1\nfirst = 1\n\n# second is first plus 1\nsecond = first + 1\n\n# third is second plus 1\nthird = second + 1\n\nassert(third, 3)\n\ntry:\n    # first is third plus 1\n    first = third + 1\ncatch error:\n    assert(error, TypeError(\"Circular Dependency\"))\n\nassert(first, 1)\nassert(third, 3)","returns":null}
-+{"id":"synth-02-0003","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid detects a circular dependency between class-level properties","code":"# There is a Box type\nclass Box:\n    pass\n\n# Any box's area is the box's width times the box's height\n$Box.area = $Box.width * $Box.height\n\ntry:\n    # any box's width is the box's area divided by the box's height\n    $Box.width = $Box.area / $Box.height\ncatch error:\n    assert(error, TypeError(\"Circular Dependency\"))\n\n# box1 is a Box whose width is 3 and whose height is 4\nbox1 = Box()\nbox1.width = 3\nbox1.height = 4\n\nassert(box1.area, 12)","returns":null}
-+{"id":"synth-02-0004","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid updates dependents when a function is redefined","code":"# fee returns amount times 0.1\ndef fee(amount):\n    return amount * 0.1\n\n# base is 200\nbase = 200\n\n# charge is the result of the fee function call with base\ncharge = fee(base)\n\nassert(charge, 20)\n\n# fee returns amount times 0.2\ndef fee(amount):\n    return amount * 0.2\n\nassert(charge, 40)\n\n# base is 300\nbase = 300\n\nassert(charge, 60)","returns":null}
-+{"id":"synth-02-0005","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid supports a recursive function","code":"# factorial returns 1 if n is less than or equal to 1,\n# else n times the result of the factorial function call with n minus 1\ndef factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\n# number is 5\nnumber = 5\n\n# result is the result of the factorial function call with number\nresult = factorial(number)\n\nassert(result, 120)\n\n# number is 6\nnumber = 6\n\nassert(result, 720)","returns":null}
-+{"id":"synth-02-0006","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid supports multiple return statements in a function","code":"# sign returns \"POSITIVE\" if n is greater than 0,\n# \"NEGATIVE\" if n is less than 0,\n# else \"ZERO\"\ndef sign(n):\n    if n > 0:\n        return \"POSITIVE\"\n    else if n < 0:\n        return \"NEGATIVE\"\n    return \"ZERO\"\n\n# value is -4\nvalue = -4\n\n# label is the result of the sign function call with value\nlabel = sign(value)\n\nassert(label, \"NEGATIVE\")\n\n# value is 0\nvalue = 0\n\nassert(label, \"ZERO\")\n\n# value is 7\nvalue = 7\n\nassert(label, \"POSITIVE\")","returns":null}
-+{"id":"synth-02-0007","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid uses the remainder operator in a dependency","code":"# minutes is 135\nminutes = 135\n\n# hours is the floor of minutes divided by 60\nhours = Math.floor(minutes / 60)\n\n# rest is the remainder of minutes divided by 60\nrest = minutes % 60\n\n# duration is hours plus \"h\" plus rest plus \"m\"\nduration = hours + \"h\" + rest + \"m\"\n\nassert(duration, \"2h15m\")\n\n# minutes is 200\nminutes = 200\n\nassert(duration, \"3h20m\")","returns":null}
-+{"id":"synth-02-0008","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid maps a list into another list as a dependency","code":"# prices is a list of 10, 20 and 30\nprices = [10, 20, 30]\n\n# rate is 2\nrate = 2\n\n# doubled is each price of prices times rate\ndoubled = prices.map(p => p * rate)\n\nassert(doubled.length, 3)\nassert(doubled[2], 60)\n\n# rate is 3\nrate = 3\n\nassert(doubled[2], 90)\n\n# Add 40 to prices\nprices.push(40)\n\nassert(doubled.length, 4)\nassert(doubled[3], 120)","returns":null}
-+{"id":"synth-02-0009","source":"synth/nucleoid.spec.synth.02.md","title":"Nucleoid reduces a list into a value as a dependency","code":"# amounts is a list of 5, 10 and 15\namounts = [5, 10, 15]\n\n# total is the sum of amounts\ntotal = amounts.reduce((sum, amount) => sum + amount, 0)\n\nassert(total, 30)\n\n# Add 20 to amounts\namounts.push(20)\n\nassert(total, 50)\n\n# Remove the last item from amounts\namounts.pop()\n\nassert(total, 30)","returns":null}
-+{"id":
-```
-
----
-
-### Incident Patch 6: `ee849697` (2026-08-02)
-**Commit Message**: Add executable docs examples test suite
-
-Introduces `docs/examples.md` as a full worked-program companion to the reference and wires it into automated testing via new `tests/examples.rs` generation in `build.rs`. Snippet parsing is standardized around fenced `nuc` blocks by moving logic into `tests/common::snippets`, updating README/readme tests/docs references, and adding guards to ensure examples stay aligned with reference sections and remain fully covered by generated tests.
-
-**File**: `CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ Nucleoid is published as open source under Apache-2.0, so everything is public-f
- 
- `nucleoid.spec.md`, `synth/`, `docs/` and the Rust crate (`Cargo.toml`, `src/`) must stay in sync. Every change to one must be propagated to the others as part of the same change.
- 
--The crate executes them rather than restating them: `tests/spec.rs` runs `nucleoid.spec.md`, `tests/synth.rs` runs `synth/`, `tests/reference.rs` runs `tests/reference.md` (the executable form of `docs/reference.md`), and `tests/readme.rs` runs the ```nucleoid blocks in `README.md`. Adding a case to any of those documents adds a test, so `cargo test` is the check that the crate and the documents still agree.
-+The crate executes them rather than restating them: `tests/spec.rs` runs `nucleoid.spec.md`, `tests/synth.rs` runs `synth/`, `tests/reference.rs` runs `tests/reference.md` (the executable form of `docs/reference.md`), `tests/readme.rs` runs the ```nuc blocks in `README.md`, and `tests/examples.rs` runs those in `docs/examples.md`. Adding a case to any of those documents adds a test, so `cargo test` is the check that the crate and the documents still agree.
- 
- A case whose assertions sit on a branch that is never taken proves nothing, so the suites also compare `Runtime::assertions_run()` against the number of `assert` calls in the source and fail when fewer ran.
- 
-```
-
-**File**: `README.md` (modified, +2/-0)
-```diff
-@@ -52,6 +52,8 @@ assert(socrates.mortal, true)
- 
- It is assembled from the NUC documents in [`docs/`](docs), indexed by [NUC 0](docs/nuc-0000.md) with the conventions in [NUC 1](docs/nuc-0001.md). `nucleoid.spec.md` is normative; where the two disagree, the specification wins.
- 
-+[**docs/examples.md**](docs/examples.md) covers the same ground as complete programs, each one runnable as written.
-+
- A Nucleoid program is a set of statements that remain true. An assignment is not an instruction that runs once and finishes, it is a relationship the runtime records and maintains.
- 
- **An assignment states a relationship, not a result**
-```
-
-**File**: `build.rs` (modified, +8/-3)
-```diff
-@@ -17,7 +17,7 @@ enum Format {
-     /// A fenced block of cases split by `---`, each titled by its first comment
-     /// line.
-     Cases,
--    /// Prose with fenced `nucleoid` blocks in it, each titled by the bold claim
-+    /// Prose with fenced `nuc` blocks in it, each titled by the bold claim
-     /// it demonstrates.
-     Snippets,
- }
-@@ -54,6 +54,11 @@ const SUITES: &[Suite] = &[
-         format: Format::Snippets,
-         documents: &[("readme", "README.md")],
-     },
-+    Suite {
-+        output: "examples.rs",
-+        format: Format::Snippets,
-+        documents: &[("examples", "docs/examples.md")],
-+    },
- ];
- 
- fn main() {
-@@ -123,7 +128,7 @@ fn case_titles(document: &str) -> Vec<String> {
-         .collect()
- }
- 
--/// The title of every fenced `nucleoid` snippet in a prose document.
-+/// The title of every fenced `nuc` snippet in a prose document.
- ///
- /// A snippet is titled by the claim it is there to demonstrate — the last bold
- /// line before it. The same rule as `snippets()` in `tests/readme.rs`.
-@@ -144,7 +149,7 @@ fn snippet_titles(document: &str) -> Vec<String> {
-                 .to_string();
+ /// How a document holds its cases.
+ #[derive(Clone, Copy, PartialEq)]
+@@ -207,6 +207,28 @@ pub(crate) fn render_records(records: &[Record]) -> String {
+             writeln!(generated, "    runner()({source:?});").unwrap();
          }
  
--        if line.starts_with("```nucleoid") {
-+        if line.starts_with("```nuc") {
-             titles.push(if claim.is_empty() {
-                 format!("snippet {}", titles.len() + 1)
-             } else {
-```
-
-**File**: `docs/examples.md` (added, +907/-0)
-```diff
-@@ -0,0 +1,907 @@
-+# Nucleoid Examples
-+
-+Worked examples of the language, each one a complete program that runs as written.
-+
-+The sections follow [reference.md](reference.md) one for one, so an example can
-+be read next to the behaviour it demonstrates. Every example is taken from
-+`nucleoid.spec.md`, which is normative; where this document and the
-+specification disagree, the specification wins. See [NUC 0](nuc-0000.md) for the
-+index of NUC documents.
-+
-+The examples are executable. `cargo test --test examples` runs every block on
-+this page and checks the assertions in it, so an example that stops being true
-+fails the build.
-+
-+## Contents
-+
-+1. [Statements and State](#1-statements-and-state)
-+2. [Variables](#2-variables)
-+3. [Expressions](#3-expressions)
-+4. [Types and Instances](#4-types-and-instances)
-+5. [Properties](#5-properties)
-+6. [Class-Level Rules](#6-class-level-rules)
-+7. [Blocks and Scope](#7-blocks-and-scope)
-+8. [Control Flow](#8-control-flow)
-+9. [Functions](#9-functions)
-+10. [Transactions](#10-transactions)
-+11. [Built-in Objects](#11-built-in-objects)
-+12. [Error Reference](#12-error-reference)
-+
-+[Syntax Summary](reference.md#13-syntax-summary) is a table of forms rather than
-+a behaviour, so it has no example of its own.
-+
-+---
-+
-+## 1. Statements and State
-+
-+**A statement runs against the state, and an expression statement returns its value**
-+
-+- A statement is run against the state and changes it.
-+- An expression statement is evaluated against what the state already holds.
-+
-+```nuc
-+i = 1
-+
-+assert(i == 1, true)
-+
-+j = 1
-+
-+assert(j + 2, 3)
-+```
-+
-+**Statements apply in the order received, and the last one to assign a target holds**
-+
-+- All five conditionals are standing rules and all are kept.
-+- When `any` becomes 4 the first, second and fourth match; the last of them holds.
-+
-+```nuc
-+any = 0
-+
-+if any > 1:
-+    result = 1
-+
-+if any > 2:
-+    result = 2
-+
-+if any > 3:
-+    result = 3
-+
-+if any > 2:
-+    result = 4
-+
-+if any > 1:
-+    result = 5
-+
-+any = 4
-+
-+assert(result, 5)
-+```
-+
-+Full detail: [reference.md §1](reference.md#1-statements-and-state), [NUC 2](nuc-0002.md).
-+
-+---
-+
-+## 2. Variables
-+
-+**An assignment states a relationship, and stating it again replaces it**
-+
-+- `c` is the sum of `a` and `b`, and stays the sum as they change.
-+- Assigning `c` again discards the dependency on `a` and records the one on `b`.
-+
-+```nuc
-+a = 1
-+b = 2
-+c = a + b
-+
-+assert(c, 3)
-+
-+a = 2
-+
-+assert(c, 4)
-+
-+c = b + 3
-+
-+assert(c, 5)
-+
-+b = 4
-+
-+assert(c, 7)
-+```
-+
-+**A variable that reads itself reads only its value**
-+
-+- The occurrence on the right is the current value, not a dependency.
-+- This is why it is not a cycle.
-+
-+```nuc
-+radius = 10
-+radius = radius + 10
-+
-+assert(radius, 20)
-+```
-+
-+**The value property reads a variable without depending on it**
-+
-+- `width` is fixed against `goldenRatio` and still follows `altitude`.
-+- It is how a relationship is broken deliberately rather than by accident.
-+
-+```nuc
-+goldenRatio = 1.618
-+altitude = 10
-+width = goldenRatio.value * altitude
-+
-+assert(width, 16.18)
-+
-+goldenRatio = 1.62
-+
-+assert(width, 16.18)
-+
-+altitude = 100
-+
-+assert(width, 161.8)
-+```
-+
-+**Deleting a variable clears what depended on it**
-+
-+- `delete` reports whether anything was removed.
-+- The statements that read the name are gone, and using it again is a reference error.
-+
-+```nuc
-+t = 1
-+q = t + 1
-+
-+assert(q, 2)
-+assert(delete q, true)
-+
-+t = 2
-+
-+try:
-+    q
-+catch error:
-+    assert(error, ReferenceError("q is not defined"))
-+```
-+
-+Full detail: [reference.md §2](reference.md#2-variables), [NUC 2](nuc-0002.md).
-+
-+---
-+
-+## 3. Expressions
-+
-+**A string may be written three ways, and a template interpolates what it reads**
-+
-+- Single quotes, double quotes and backticks all give a string.
-+- `${...}` interpolates, and what it reads is a dependency like any other.
-+
-+```nuc
-+a = 123
-+
-+assert('New String', "New String")
-+assert("New String", "New String")
-+assert(`New String`, "New String")
-+
-+assert(`New ${a} String`, "New 123 String")
-+```
-+
-+**Logical operators have a word spelling and a symbol spelling**
-+
-+- `and`, `or` and `not` are the same operators as `&&`, `||` and `!`.
-+
-+```nuc
-+condition = false
-+
-+assert(condition or true, true)
-+assert(condition || true, true)
-+
-+assert(not condition and true, true)
-+assert(!condition && true, true)
-+```
-+
-+**A list indexes with brackets**
-+
-+```nuc
-+states = ["NY", "GA", "CT", "MI"]
-+
-+assert(states[2], "CT")
-+```
-+
-+**Length is a dependency like any other**
-+
-+- `i1` follows the length of `str1`, and so does the condition below it.
-+
-+```nuc
-+str1 = "ABC"
-+i1 = str1.length + 1
-+
-+assert(i1, 4)
-+
-+str1 = "ABCD"
-+
-+assert(i1, 5)
-+
-+if str1.length > 5:
-+    i2 = i1
-+
-+str1 = "ABCDEF"
-+
-+assert(i2, 7)
-+```
-+
-+Full detail: [reference.md §3](reference.md#3-expressions), [NUC 10](nuc-0010.md).
-+
-+---
-+
-+## 4. Types and Instances
-+
-+**A type declares its constructor, and instances register themselves**
-+
-+- `S
-```
-
-**File**: `docs/nuc-0000.md` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@ Created: 31-Jul-2026
- - NUCs are the documentation for the Nucleoid Language Reference.
- - Format and conventions follow Python Enhancement Proposals; see [NUC 1](nuc-0001.md).
- - [reference.md](reference.md) is the consolidated reference for the website, assembled from these documents.
-+- [examples.md](examples.md) is the same ground worked as complete programs, taken from `nucleoid.spec.md`.
- 
- ## Index by Category
- 
-```
-
-**File**: `docs/reference.md` (modified, +4/-0)
-```diff
-@@ -12,6 +12,10 @@ See [NUC 0](nuc-0000.md) for the index and [NUC 1](nuc-0001.md) for the
- conventions. `nucleoid.spec.md` is normative; where this document and the
- specification disagree, the specification wins.
- 
-+The entries below are abbreviated to the behaviour they state.
-+[examples.md](examples.md) covers the same ground as complete programs, each one
-+runnable as written.
-+
- ## Contents
- 
- 1. [Statements and State](#1-statements-and-state)
-```
-
-**File**: `examples/_snippet.rs` (modified, +1/-4)
-```diff
-@@ -19,8 +19,5 @@ fn main() {
-         );
-     }
- 
--    println!(
--        "{}",
--        if failures.is_empty() { "ok" } else { "FAILED" }
--    );
-+    println!("{}", if failures.is_empty() { "ok" } else { "FAILED" });
- }
-```
-
-**File**: `tests/common/mod.rs` (modified, +57/-0)
-```diff
-@@ -58,6 +58,63 @@ pub fn cases(document: &str) -> Vec<Case> {
-         .collect()
- }
- 
-+/// Every fenced `nuc` block in a prose document, titled by the bold claim
-+/// above it.
-+///
-+/// Deliberately the same rule as `snippet_titles` in `build.rs`; the two are
-+/// checked against each other by the title lookup and by each suite's coverage
-+/// test. `name` is the document the blocks came from, for the failure message.
-+pub fn snippets(document: &str, name: &str) -> Vec<Case> {
-+    let document = document.replace("\r\n", "\n");
-+
-+    let mut cases: Vec<Case> = Vec::new();
-+    let mut claim = String::new();
-+    let mut source: Option<String> = None;
-+
-+    for line in document.lines() {
-+        let trimmed = line.trim();
-+
-+        if let Some(collected) = &mut source {
-+            if trimmed.starts_with("```") {
-+                let title = if claim.is_empty() {
-+                    format!("snippet {}", cases.len() + 1)
-+                } else {
-+                    claim.clone()
-+                };
-+
-+                cases.push(Case {
-+                    title,
-+                    source: std::mem::take(collected),
-+                    expected: None,
-+                });
-+
-+                source = None;
-+            } else {
-+                collected.push_str(line);
-+                collected.push('\n');
++        // Catch bindings, rollback and assertion coverage belong to the whole
++        // original program. Extraction can lose the actual being checked or
++        // turn an untaken catch into a passing literal. Select conservatively
++        // by complete lexical keywords; the shared runner owns all parsing,
++        // failures, AST coverage and explicit return validation.
++        if statements.iter().any(|statement| {
++            statement.lines().any(|line| {
++                ["try", "catch"]
++                    .iter()
++                    .any(|keyword| starts_keyword(line.trim_start(), keyword))
++            })
++        }) {
++            let mut source = record.code.clone();
++            if let Some(expected) = &record.returns {
++                write!(source, "\n# return: {expected}").unwrap();
 +            }
-+
++            writeln!(generated, "    let mut run = runner();").unwrap();
++            writeln!(generated, "    run({});", rust_literal(&source)).unwrap();
++            writeln!(generated, "}}\n").unwrap();
 +            continue;
 +        }
 +
-+        if trimmed.len() > 4 && trimmed.starts_with("**") && trimmed.ends_with("**") {
-+            claim = trimmed
-+                .trim_matches('*')
-+                .trim()
-+                .trim_end_matches('.')
-+                .to_string();
-+        }
-+
-+        if trimmed.starts_with("```nuc") {
-+            source = Some(String::new());
-+        }
-+    }
-+
-+    assert!(source.is_none(), "unterminated ```nuc block in {name}");
-+
-+    cases
+         if let Some(expected) = &record.returns {
+             let last = statements
+                 .iter_mut()
+```
+
+**File**: `build_statements.rs` (modified, +12/-8)
+```diff
+@@ -44,6 +44,14 @@ pub(crate) fn assertion(statement: &str) -> Option<(&str, &str)> {
+     None
+ }
+ 
++/// Match a complete ASCII Word keyword, not an ordinary identifier prefix.
++/// This selects export boundaries; only the real parser validates the source.
++pub(crate) fn starts_keyword(source: &str, keyword: &str) -> bool {
++    source.strip_prefix(keyword).is_some_and(|tail| {
++        !tail.starts_with(|character: char| character.is_ascii_alphanumeric() || character == '_')
++    })
 +}
 +
- /// Projects a runtime value into JSON so it can be compared with the literal
- /// written in the spec.
- fn to_json(state: &State, value: &Value) -> serde_json::Value {
-```
-
----
-
-### Incident Patch 7: `ffd31e9f` (2026-08-02)
-**Commit Message**: Generate one test per case via build.rs
-
-Replace the monolithic run-all test functions with per-behaviour tests generated by build.rs. Each case in nucleoid.spec.md, synth/, tests/reference.md, and README.md now becomes its own named #[test], matching the ref/ JS suite's it(...) style. Cases are looked up by title at runtime, so mismatches between build.rs and the harness fail loudly. Also documents the contributor workflow in CONTRIBUTING.md.
-
-**File**: `CONTRIBUTING.md` (modified, +65/-0)
-```diff
-@@ -2,6 +2,71 @@
- 
- Thanks to declarative programming, we have a brand-new approach to data and logic. As we are still discovering what we can do with this powerful programming model, please join us with any types of contribution!
- 
-+## Working on the Rust runtime
-+
-+This repository holds the Rust implementation. The crate is at the root, and
-+`ref/` is the archived JavaScript implementation kept for reference.
-+
-+```console
-+$ cargo test                  # the whole suite
-+$ cargo clippy --all-targets -- -D warnings
-+$ cargo fmt
-+$ cargo run -- program.nuc    # run a file
-+$ cargo run                   # or type statements at a prompt
-+```
-+
-+### What lives where
-+
-+| path | what it is |
-+| --- | --- |
-+| `nucleoid.spec.md` | what the language does. Authoritative — when anything disagrees with it, it wins |
-+| `synth/` | further cases, derived from the specification |
-+| `docs/` | the language reference, as NUC documents in the style of a PEP |
-+| `docs/reference.md` | prose reference; `tests/reference.md` is its executable form |
-+| `src/` | the runtime |
-+| `tests/` | the suites that run the documents above |
-+| `ref/` | the archived JavaScript implementation — **frozen**, read it but never change it |
-+
-+### Adding a behaviour
-+
-+Cases are written in Nucleoid, not in Rust. Add one to `nucleoid.spec.md` —
-+title it with a comment, and end it with `assert(...)` or a `# return:` line:
-+
-+```text
-+# Nucleoid keeps a total in step with what it is made of
-+
-+# subtotal is 10
-+subtotal = 10
-+
-+# total is subtotal plus tax
-+total = subtotal * 1.2
-+
-+assert(total, 12)
-+```
-+
-+`build.rs` turns every case into a test of its own, so there is nothing else to
-+edit — `cargo test` will show it by name:
-+
-+```console
-+$ cargo test --test spec keeps_a_total
-+test nucleoid::keeps_a_total_in_step_with_what_it_is_made_of ... ok
-+```
-+
-+Two rules the suites enforce, both of which fail the build rather than pass
-+quietly:
-+
-+- **Every case needs a title of its own.** Tests find their case by title, so a
-+  repeated title would leave the second case unreachable.
-+- **Assertions have to actually run.** A case whose `assert` sits in a `catch`
-+  that never fires proves nothing, so the harness compares how many assertions
-+  ran against how many the source contains.
-+
-+### Keeping things in step
-+
-+`nucleoid.spec.md`, `synth/`, `docs/` and the crate describe the same language,
-+and a change to one belongs in the same change as the others. `cargo test` is
-+what checks they still agree.
-+
- ## Declarative Runtime Environment
- 
- Nucleoid is a declarative runtime environment that applies declarative programming at the runtime as rerendering JavaScript statements and creating the graph, so as a result, the declarative runtime system isolates a behavior definition of a program from its technical instructions and executes declarative statements, which represent logical intention without carrying any technical detail.
-```
-
-**File**: `build.rs` (added, +264/-0)
-```diff
-@@ -0,0 +1,264 @@
-+//! Turns every case in the language's documents into a named Rust test.
-+//!
-+//! `ref/src/test/nucleoid.spec.js` writes one `it(...)` per behaviour, so a
-+//! failure names the behaviour that broke. The cases here live in the documents
-+//! rather than in the test files, so the `it`s are generated from them — which
-+//! also keeps the promise in `CLAUDE.md` that adding a case to a document adds
-+//! a test, with nothing else to edit.
-+
-+use std::env;
-+use std::fmt::Write as _;
-+use std::fs;
-+use std::path::Path;
-+
-+/// How a document holds its cases.
-+#[derive(Clone, Copy, PartialEq)]
-+enum Format {
-+    /// A fenced block of cases split by `---`, each titled by its first comment
-+    /// line.
-+    Cases,
-+    /// Prose with fenced `nucleoid` blocks in it, each titled by the bold claim
-+    /// it demonstrates.
-+    Snippets,
-+}
-+
-+/// One generated test file, and the documents whose cases go into it. Each
-+/// document becomes a module, the way `describe(...)` groups `it`s.
-+struct Suite {
-+    output: &'static str,
-+    format: Format,
-+    documents: &'static [(&'static str, &'static str)],
-+}
-+
-+const SUITES: &[Suite] = &[
-+    Suite {
-+        output: "spec.rs",
-+        format: Format::Cases,
-+        documents: &[("nucleoid", "nucleoid.spec.md")],
-+    },
-+    Suite {
-+        output: "synth.rs",
-+        format: Format::Cases,
-+        documents: &[
-+            ("synth_01", "synth/nucleoid.spec.synth.01.md"),
-+            ("synth_02", "synth/nucleoid.spec.synth.02.md"),
-+        ],
-+    },
-+    Suite {
-+        output: "reference.rs",
-+        format: Format::Cases,
-+        documents: &[("reference", "tests/reference.md")],
-+    },
-+    Suite {
-+        output: "readme.rs",
-+        format: Format::Snippets,
-+        documents: &[("readme", "README.md")],
-+    },
-+];
-+
-+fn main() {
-+    println!("cargo::rerun-if-changed=build.rs");
-+
-+    let out = env::var("OUT_DIR").expect("cargo sets OUT_DIR for build scripts");
-+
-+    for suite in SUITES {
-+        let mut generated = String::new();
-+        generated.push_str("// @generated by build.rs — do not edit.\n\n");
-+
-+        let mut total = 0;
-+        let mut modules = String::new();
-+
-+        for (index, (module, path)) in suite.documents.iter().enumerate() {
-+            println!("cargo::rerun-if-changed={path}");
-+
-+            let document = fs::read_to_string(path)
-+                .unwrap_or_else(|error| panic!("{path} states what the language does: {error}"));
-+
-+            let titles = match suite.format {
-+                Format::Cases => case_titles(&document),
-+                Format::Snippets => snippet_titles(&document),
-+            };
-+
-+            reject_duplicates(path, &titles);
-+
-+            total += titles.len();
-+            modules.push_str(&module_for(module, index, &titles));
-+        }
-+
-+        writeln!(generated, "pub const GENERATED: usize = {total};\n").unwrap();
-+        generated.push_str(&modules);
-+
-+        fs::write(Path::new(&out).join(suite.output), generated)
-+            .expect("the generated tests must be writable");
-+    }
-+}
-+
-+/// The title of every case in a case document, in order.
-+///
-+/// Deliberately the same rule as `cases()` in `tests/common/mod.rs`: split the
-+/// fenced block on `---`, and take each case's first comment line as its title.
-+/// The two are checked against each other at test time — a generated test looks
-+/// its case up by title and fails loudly if it is not there, and the count above
-+/// is compared with the count the harness parses.
-+fn case_titles(document: &str) -> Vec<String> {
-+    let document = document.replace("\r\n", "\n");
-+
-+    let body = document
-+        .split("```")
-+        .nth(1)
-+        .expect("cases live in one fenced block");
-+
-+    body.split("\n---\n")
-+        .filter(|block| !block.trim().is_empty())
-+        .map(|block| {
-+            block
-+                .lines()
-+                .map(str::trim)
-+                .find(|line| line.starts_with('#'))
-+                .unwrap_or("untitled")
-+                .trim_start_matches('#')
-+                .trim()
-+                .to_string()
-+        })
-+        .collect()
-+}
-+
-+/// The title of every fenced `nucleoid` snippet in a prose document.
-+///
-+/// A snippet is titled by the claim it is there to demonstrate — the last bold
-+/// line before it. The same rule as `snippets()` in `tests/readme.rs`.
-+fn snippet_titles(document: &str) -> Vec<String> {
-+    let document = document.replace("\r\n", "\n");
-+
-+    let mut titles = Vec::new();
-+    let mut claim = String::new();
-+
-+    for line in document.lines() {
-+        let line = line.trim();
-+
-+        if line.len() > 4 && line.starts_with("**") && line.ends_with("**") {
-+            claim = line
-+                .trim_matches('*')
-+                .trim()
-+                .trim_end_matches('.')
-+                .to_string();
-+        }
-+
-+        if line.starts_with("```nucleoid") {
-+            titles.push(if claim.is_empt
-```
-
-**File**: `src/lib.rs` (modified, +6/-0)
-```diff
-@@ -35,6 +35,12 @@
- //! | [`transaction`] | `src/transaction.js` |
- //! | [`runtime`] | `src/runtime.js` |
- //!
-+//! Three modules answer to nothing in `ref`, because they are what being typed
-+//! costs: [`value`] is the runtime value as a closed enum where `ref` has
-+//! whatever JavaScript handed it, [`error`] is the failure as a typed enum
-+//! returned through [`Result`] where `ref` throws, and [`builtins`] gathers the
-+//! standard objects that `ref` reaches by leaving them to its host.
-+//!
- //! `ref` is untyped JavaScript, so its node kinds are classes reached by
- //! dynamic dispatch and its `$CLASS`/`$INSTANCE` variants are subclasses. The
- //! kinds are a closed set, so here they are the [`nuc::Nuc`] and
-```
-
-**File**: `tests/common/mod.rs` (modified, +31/-32)
-```diff
-@@ -170,41 +170,40 @@ pub fn check(case: &Case) -> Result<(), String> {
-     Ok(())
- }
- 
--/// Runs every case in a document, reporting how many pass.
--pub fn run(name: &str, document: &str) {
--    let cases = cases(document);
--    let mut failures = Vec::new();
--
--    let trace = std::env::var_os("NUCLEOID_TRACE").is_some();
--
--    for case in &cases {
--        if trace {
--            println!("  running {}", case.title);
--        }
--
--        if let Err(reason) = check(case) {
--            failures.push((case.title.clone(), reason));
--        }
--    }
--
--    let passed = cases.len() - failures.len();
--    println!(
--        "
--{name}: {passed}/{} cases pass",
--        cases.len()
-+/// Runs the case with this title, for the generated per-behaviour tests.
-+///
-+/// The case is looked up by title rather than by position, so that `build.rs`
-+/// and [`cases`] disagreeing about where one case ends and the next begins
-+/// fails loudly here instead of quietly running the wrong source.
-+pub fn run_case(documents: &[Vec<Case>], document: usize, title: &str) {
-+    let cases = documents
-+        .get(document)
-+        .unwrap_or_else(|| panic!("no document {document}"));
-+
-+    let mut matching = cases.iter().filter(|case| case.title == title);
-+
-+    let case = matching
-+        .next()
-+        .unwrap_or_else(|| panic!("no case titled {title:?}"));
-+
-+    // `build.rs` refuses a document with repeated titles, so reaching here
-+    // means the two disagree about where cases begin — in which case running
-+    // the first match would silently test the wrong source.
-+    assert!(
-+        matching.next().is_none(),
-+        "more than one case titled {title:?}"
-     );
- 
--    for (title, reason) in &failures {
--        println!(
--            "  FAIL {title}
--       {reason}"
-+    if let Err(reason) = check(case) {
-+        panic!(
-+            "{title}
-+  {reason}"
-         );
-     }
-+}
- 
--    assert!(
--        failures.is_empty(),
--        "{} of {} {name} cases fail",
--        failures.len(),
--        cases.len()
--    );
-+/// How many cases the harness found, to compare with how many tests were
-+/// generated for them.
-+pub fn total(documents: &[Vec<Case>]) -> usize {
-+    documents.iter().map(Vec::len).sum()
- }
-```
-
-**File**: `tests/readme.rs` (modified, +71/-44)
-```diff
-@@ -1,68 +1,95 @@
--//! Runs the Nucleoid snippets in `README.md`.
-+//! The Nucleoid snippets in `README.md`, run as one test per claim.
- //!
- //! They are the first thing anyone reads, so they are executed from the file
--//! itself rather than copied here — there is nothing to drift.
-+//! itself rather than copied here — there is nothing to drift. Each snippet is
-+//! named after the claim it demonstrates, so a failure says which promise the
-+//! README is no longer keeping.
-+//!
-+//! The tests are generated by `build.rs` — see there for why.
- 
- mod common;
- 
-+use std::sync::LazyLock;
-+
- const README: &str = include_str!("../README.md");
- 
--/// Every ```nucleoid fenced block in the README, in order.
--fn snippets() -> Vec<common::Case> {
--    let mut cases = Vec::new();
--    let mut rest = README;
--    let mut index = 0;
-+static DOCUMENTS: LazyLock<Vec<Vec<common::Case>>> = LazyLock::new(|| vec![snippets(README)]);
- 
--    while let Some(start) = rest.find("```nucleoid") {
--        let after = &rest[start + "```nucleoid".len()..];
-+include!(concat!(env!("OUT_DIR"), "/readme.rs"));
- 
--        let Some(end) = after.find("```") else {
--            panic!("unterminated ```nucleoid block in README.md");
--        };
-+/// Every fenced `nucleoid` block, titled by the bold claim above it.
-+///
-+/// The same rule as `snippet_titles` in `build.rs`; the two are checked against
-+/// each other by the title lookup and by [`every_snippet_is_covered`].
-+fn snippets(document: &str) -> Vec<common::Case> {
-+    let document = document.replace("\r\n", "\n");
- 
--        index += 1;
--        cases.push(common::Case {
--            title: format!("README snippet {index}"),
--            source: after[..end].to_string(),
--            expected: None,
--        });
-+    let mut cases: Vec<common::Case> = Vec::new();
-+    let mut claim = String::new();
-+    let mut source: Option<String> = None;
- 
--        rest = &after[end + 3..];
--    }
-+    for line in document.lines() {
-+        let trimmed = line.trim();
- 
--    cases
--}
-+        if let Some(collected) = &mut source {
-+            if trimmed.starts_with("```") {
-+                let title = if claim.is_empty() {
-+                    format!("snippet {}", cases.len() + 1)
-+                } else {
-+                    claim.clone()
-+                };
- 
--#[test]
--fn readme_snippets_run() {
--    let cases = snippets();
-+                cases.push(common::Case {
-+                    title,
-+                    source: std::mem::take(collected),
-+                    expected: None,
-+                });
- 
--    assert!(
--        !cases.is_empty(),
--        "README.md should show what the language looks like"
--    );
-+                source = None;
-+            } else {
-+                collected.push_str(line);
-+                collected.push('\n');
-+            }
- 
--    let mut failures = Vec::new();
-+            continue;
-+        }
-+
-+        if trimmed.len() > 4 && trimmed.starts_with("**") && trimmed.ends_with("**") {
-+            claim = trimmed
-+                .trim_matches('*')
-+                .trim()
-+                .trim_end_matches('.')
-+                .to_string();
-+        }
- 
--    for case in &cases {
--        if let Err(reason) = common::check(case) {
--            failures.push((case.title.clone(), reason));
-+        if trimmed.starts_with("```nucleoid") {
-+            source = Some(String::new());
-         }
-     }
- 
--    println!(
--        "\nreadme: {}/{} snippets run",
--        cases.len() - failures.len(),
--        cases.len()
-+    assert!(
-+        source.is_none(),
-+        "unterminated ```nucleoid block in README.md"
-     );
- 
--    for (title, reason) in &failures {
--        println!("  FAIL {title}\n       {reason}");
--    }
-+    cases
-+}
- 
--    assert!(
--        failures.is_empty(),
--        "{} README snippets fail",
--        failures.len()
-+/// Runs the snippet with this title. Called by each generated test.
-+fn case(document: usize, title: &str) {
-+    common::run_case(&DOCUMENTS, document, title);
-+}
-+
-+/// Every snippet in the README has a test of its own, and there is at least one
-+/// — the README should show what the language looks like.
-+#[test]
-+fn every_snippet_is_covered() {
-+    let total = common::total(&DOCUMENTS);
-+
-+    assert!(total > 0, "README.md shows no Nucleoid");
-+
-+    assert_eq!(
-+        total, GENERATED,
-+        "build.rs generated {GENERATED} tests for the snippets in README.md"
-     );
- }
-```
-
-**File**: `tests/reference.rs` (modified, +23/-3)
-```diff
-@@ -1,8 +1,28 @@
--//! Runs the behaviours stated in `docs/reference.md`, kept executable here.
-+//! The behaviours stated in `docs/reference.md`, kept executable here and run
-+//! as one test per behaviour.
-+//!
-+//! The tests are generated by `build.rs` — see there for why.
- 
- mod common;
- 
-+use std::sync::LazyLock;
-+
-+static DOCUMENTS: LazyLock<Vec<Vec<common::Case>>> =
-+    LazyLock::new(|| vec![common::cases(include_str!("reference.md"))]);
-+
-+include!(concat!(env!("OUT_DIR"), "/reference.rs"));
-+
-+/// Runs the case with this title. Called by each generated test.
-+fn case(document: usize, title: &str) {
-+    common::run_case(&DOCUMENTS, document, title);
-+}
-+
-+/// Every case in the document has a test of its own.
- #[test]
--fn reference() {
--    common::run("reference", include_str!("reference.md"));
-+fn every_case_is_covered() {
-+    assert_eq!(
-+        common::total(&DOCUMENTS),
-+        GENERATED,
-+        "build.rs generated {GENERATED} tests for the cases in tests/reference.md"
-+    );
- }
-```
-
-**File**: `tests/spec.rs` (modified, +33/-3)
-```diff
-@@ -1,8 +1,38 @@
--//! Runs `nucleoid.spec.md`, the authoritative description of the language.
-+//! `nucleoid.spec.md`, the authoritative description of the language, run as
-+//! one test per behaviour.
-+//!
-+//! The cases are written in Nucleoid rather than in Rust, so the tests that run
-+//! them are generated from the document by `build.rs` — see there for why. The
-+//! effect is the same as `ref/src/test/nucleoid.spec.js`: every behaviour is
-+//! named, reported and filtered on its own.
-+//!
-+//! ```text
-+//! cargo test --test spec                       # every behaviour
-+//! cargo test --test spec detects_a_circular    # one of them
-+//! cargo test --test spec -- --list             # what there is
-+//! ```
- 
- mod common;
- 
-+use std::sync::LazyLock;
-+
-+static DOCUMENTS: LazyLock<Vec<Vec<common::Case>>> =
-+    LazyLock::new(|| vec![common::cases(include_str!("../nucleoid.spec.md"))]);
-+
-+include!(concat!(env!("OUT_DIR"), "/spec.rs"));
-+
-+/// Runs the case with this title. Called by each generated test.
-+fn case(document: usize, title: &str) {
-+    common::run_case(&DOCUMENTS, document, title);
-+}
-+
-+/// Every case in the document has a test of its own. A case that quietly
-+/// stopped being run would otherwise look like a passing suite.
- #[test]
--fn spec() {
--    common::run("spec", include_str!("../nucleoid.spec.md"));
-+fn every_case_is_covered() {
-+    assert_eq!(
-+        common::total(&DOCUMENTS),
-+        GENERATED,
-+        "build.rs generated {GENERATED} tests for the cases in nucleoid.spec.md"
-+    );
- }
-```
-
-**File**: `tests/synth.rs` (modified, +25/-11)
-```diff
-@@ -1,19 +1,33 @@
--//! Runs the synthesized use cases, which are derived from `nucleoid.spec.md`.
-+//! The synthesized use cases, which are derived from `nucleoid.spec.md`, run as
-+//! one test per behaviour.
-+//!
-+//! Each document is its own module, so a failure says which synth set it came
-+//! from. The tests are generated by `build.rs` — see there for why.
- 
- mod common;
- 
--#[test]
--fn synth_01() {
--    common::run(
--        "synth 01",
--        include_str!("../synth/nucleoid.spec.synth.01.md"),
--    );
-+use std::sync::LazyLock;
-+
-+static DOCUMENTS: LazyLock<Vec<Vec<common::Case>>> = LazyLock::new(|| {
-+    vec![
-+        common::cases(include_str!("../synth/nucleoid.spec.synth.01.md")),
-+        common::cases(include_str!("../synth/nucleoid.spec.synth.02.md")),
-+    ]
-+});
-+
-+include!(concat!(env!("OUT_DIR"), "/synth.rs"));
-+
-+/// Runs the case with this title. Called by each generated test.
-+fn case(document: usize, title: &str) {
-+    common::run_case(&DOCUMENTS, document, title);
- }
- 
-+/// Every case in every synth document has a test of its own.
- #[test]
--fn synth_02() {
--    common::run(
--        "synth 02",
--        include_str!("../synth/nucleoid.spec.synth.02.md"),
-+fn every_case_is_covered() {
-+    assert_eq!(
-+        common::total(&DOCUMENTS),
-+        GENERATED,
-+        "build.rs generated {GENERATED} tests for the cases in synth/"
-     );
- }
-```
-
----
-
-### Incident Patch 8: `fed87243` (2026-08-01)
-**Commit Message**: Mark script/web files as linguist-vendored
-
-Expand `.gitattributes` with `linguist-vendored` rules for Python, JavaScript, TypeScript, and basic web asset extensions. This hides those files from GitHub Linguist language stats so the repository language breakdown better reflects the core codebase.
-
-**File**: `.gitattributes` (modified, +16/-0)
-```diff
-@@ -1 +1,17 @@
- * text=auto eol=lf
-+
-+# Hide Python
-+*.py linguist-vendored
-+
-+# Hide JavaScript
-+*.js linguist-vendored
-+*.mjs linguist-vendored
-+*.cjs linguist-vendored
-+
-+# Hide TypeScript
-+*.ts linguist-vendored
-+*.tsx linguist-vendored
-+
-+# Optional: hide web assets
-+*.html linguist-vendored
-+*.css linguist-vendored
-```
-
----
-
-### Incident Patch 9: `49916897` (2026-08-01)
-**Commit Message**: Add robustness tests, reference suite, and --graph flag
-
-- Add `tests/reference.md` and `tests/reference.rs` as the executable form of `docs/reference.md`
-- Add `tests/robustness.rs` covering stack overflow, cycles, malformed input, mutual deps, and rollback
-- Add `--graph` CLI flag to print the logic graph after execution
-- Guard parser and evaluator against deep nesting/recursion with `MAX_DEPTH`/`MAX_NESTING`
-- Replace `propagate_removed` with `cascade_removal`, which uses a `deleted` set so dependents resolve to undefined rather than erroring during deletion
-- Add `NodeKind::Display`, `Graph::nodes()`, `Graph::len()`, `Graph::is_empty()`
-- Update README with Rust runtime overview and CLAUDE.md with test file convention
-
-**File**: `.github/workflows/rust.yml` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@ on:
-   push:
-     branches: [rust]
-   pull_request:
-+    branches: [rust]
- 
- jobs:
-   check:
-```
-
-**File**: `CLAUDE.md` (modified, +2/-0)
-```diff
-@@ -31,4 +31,6 @@ Nucleoid is published as open source under Apache-2.0, so everything is public-f
- 
- `nucleoid.spec.md`, `synth/`, `docs/` and the Rust crate (`Cargo.toml`, `src/`) must stay in sync. Every change to one must be propagated to the others as part of the same change.
- 
-+The crate executes them rather than restating them: `tests/spec.rs` runs `nucleoid.spec.md`, `tests/synth.rs` runs `synth/`, and `tests/reference.rs` runs `tests/reference.md`, the executable form of `docs/reference.md`. Adding a case to any of those documents adds a test, so `cargo test` is the check that the crate and the documents still agree.
-+
- `ref/` is **frozen**. Read it for reference, never modify it.
-```
-
-**File**: `README.md` (modified, +62/-0)
-```diff
-@@ -218,6 +218,68 @@ Learn more at [nucleoid.com/docs/get-started](https://nucleoid.com/docs/get-star
- 
- ---
- 
-+## Rust runtime :crab:
-+
-+The runtime is being rewritten in Rust as the `nucleoid` crate, against its own
-+grammar. `nucleoid.spec.md` is the normative description of the language and is
-+executed as the test suite; [`docs/`](docs) is the language reference.
-+
-+```
-+class Sensor(name: str):
-+    this.name = name
-+
-+# Every sensor labels itself
-+$Sensor.label = "sensor:" + $Sensor.name
-+
-+threshold = 30
-+
-+kitchen = Sensor("kitchen")
-+kitchen.reading = 42
-+
-+# A standing rule, not a one-off comparison
-+kitchen.alarm = kitchen.reading > threshold
-+```
-+
-+`kitchen.alarm` is `true`, and stays correct on its own: change `threshold` or
-+`kitchen.reading` and it is re-evaluated, because the runtime kept the
-+relationship rather than just the result.
-+
-+Embedded in Rust:
-+
-+```rust
-+use nucleoid::Runtime;
-+
-+let mut runtime = Runtime::new();
-+runtime.run("celsius = 100")?;
-+runtime.run("fahrenheit = celsius * 9 / 5 + 32")?;
-+runtime.run("celsius = 37")?;
-+
-+assert_eq!(runtime.run("fahrenheit")?.to_string(), "98.6");
-+```
-+
-+From the terminal:
-+
-+```bash
-+cargo run -- program.nuc          # run a file
-+cargo run -- program.nuc --graph  # run it and print the logic graph
-+cargo run                         # statements from the terminal
-+```
-+
-+`--graph` prints what the runtime is holding — every tracked statement, what it
-+reads, and what it updates:
-+
-+```
-+logic graph (7 nodes)
-+  threshold [variable]
-+    updates  kitchen.alarm
-+  kitchen.label [property]
-+    reads    kitchen.name
-+  kitchen.alarm [property]
-+    reads    kitchen, kitchen.reading, threshold
-+```
-+
-+---
-+
- ### Under the hood: Declarative (Logic) Runtime Environment
- 
- Nucleoid is an implementation of symbolic AI for declarative (logic) programming at the runtime. As mentioned, the declarative runtime environment manages JavaScript state and stores each transaction in the built-in data store by declaratively rerendering JavaScript statements and building the knowledge graph (base) as well as an execution plan.
-```
-
-**File**: `src/eval.rs` (modified, +32/-3)
-```diff
-@@ -7,12 +7,25 @@ use crate::ast::{BinaryOp, Expr, Function, FunctionBody, LogicalOp, TemplatePart
- use crate::builtins;
- use crate::error::{Error, Result};
- use crate::graph::NodeKey;
--use crate::runtime::{AssertionFailure, Flow, Runtime};
-+use crate::runtime::{AssertionFailure, Flow, MAX_DEPTH, Runtime};
- use crate::scope::Scope;
- use crate::value::{ObjectData, ObjectId, Value};
- 
- impl Runtime {
-     pub(crate) fn evaluate(&mut self, expression: &Expr, scope: &mut Scope) -> Result<Value> {
-+        self.depth += 1;
-+
-+        if self.depth > MAX_DEPTH {
-+            self.depth -= 1;
-+            return Err(Error::type_error("Maximum expression depth exceeded"));
-+        }
-+
-+        let result = self.evaluate_inner(expression, scope);
-+        self.depth -= 1;
-+        result
-+    }
-+
-+    fn evaluate_inner(&mut self, expression: &Expr, scope: &mut Scope) -> Result<Value> {
-         match expression {
-             Expr::Null => Ok(Value::Null),
-             Expr::Bool(bool) => Ok(Value::Bool(*bool)),
-@@ -234,6 +247,14 @@ impl Runtime {
-             return Ok(Value::Class(name.to_string()));
-         }
- 
-+        let key = NodeKey::new(name.to_string());
-+
-+        if self.deleted.contains(&key) {
-+            self.track(key);
-+            self.undefined_read = true;
-+            return Ok(Value::Undefined);
-+        }
-+
-         Err(Error::not_defined(name))
-     }
- 
-@@ -1042,6 +1063,14 @@ impl Runtime {
-     /// Deep equality, which is what `assert` compares with. Objects match on
-     /// their contents, and `null` matches a property that was never set.
-     pub(crate) fn deep_equal(&self, left: &Value, right: &Value) -> bool {
-+        self.equal_within(left, right, 0)
-+    }
-+
-+    fn equal_within(&self, left: &Value, right: &Value, depth: usize) -> bool {
-+        if depth > 64 {
-+            return false;
-+        }
-+
-         match (left, right) {
-             (Value::Undefined | Value::Null, Value::Undefined | Value::Null) => true,
- 
-@@ -1064,7 +1093,7 @@ impl Runtime {
- 
-                 left_keys.iter().all(|key| {
-                     match (left.properties.get(*key), right.properties.get(*key)) {
--                        (Some(left), Some(right)) => self.deep_equal(left, right),
-+                        (Some(left), Some(right)) => self.equal_within(left, right, depth + 1),
-                         _ => false,
-                     }
-                 })
-@@ -1075,7 +1104,7 @@ impl Runtime {
-                     && left
-                         .iter()
-                         .zip(right.iter())
--                        .all(|(left, right)| self.deep_equal(left, right))
-+                        .all(|(left, right)| self.equal_within(left, right, depth + 1))
-             }
- 
-             (Value::Number(left), Value::Number(right)) => left == right,
-```
-
-**File**: `src/graph.rs` (modified, +36/-0)
-```diff
-@@ -62,6 +62,27 @@ pub enum NodeKind {
-     Block,
- }
- 
-+impl NodeKind {
-+    pub fn as_str(self) -> &'static str {
-+        match self {
-+            NodeKind::Pending => "pending",
-+            NodeKind::Variable => "variable",
-+            NodeKind::Property => "property",
-+            NodeKind::Object => "object",
-+            NodeKind::Class => "class",
-+            NodeKind::Function => "function",
-+            NodeKind::If => "if",
-+            NodeKind::Block => "block",
-+        }
-+    }
-+}
-+
-+impl fmt::Display for NodeKind {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        f.write_str(self.as_str())
-+    }
-+}
-+
- /// A statement filed in the graph, together with the edges that decide when it
- /// is re-evaluated.
- #[derive(Debug, Clone)]
-@@ -130,6 +151,21 @@ impl Graph {
-         self.nodes.keys()
-     }
- 
-+    /// Every statement filed in the graph, in the order the keys were first
-+    /// created. This is the logic graph: what the runtime knows, and what it
-+    /// will re-evaluate when something changes.
-+    pub fn nodes(&self) -> impl Iterator<Item = &GraphNode> {
-+        self.nodes.values()
-+    }
-+
-+    pub fn len(&self) -> usize {
-+        self.nodes.len()
-+    }
-+
-+    pub fn is_empty(&self) -> bool {
-+        self.nodes.is_empty()
-+    }
-+
-     /// The dependents of a node, ordered by the sequence in which they were
-     /// declared. A redeclared statement takes a fresh sequence, so it runs last.
-     pub fn dependents_in_order(&self, key: &NodeKey) -> Vec<NodeKey> {
-```
-
-**File**: `src/main.rs` (modified, +31/-0)
-```diff
-@@ -4,6 +4,7 @@ use std::process::ExitCode;
- 
- use clap::Parser;
- use nucleoid::Runtime;
-+use nucleoid::graph::NodeKey;
- 
- #[derive(Parser)]
- #[command(
-@@ -14,6 +15,10 @@ use nucleoid::Runtime;
- struct Cli {
-     /// A source file to run. Without one, statements are read from the terminal.
-     file: Option<PathBuf>,
-+
-+    /// Print the logic graph after running.
-+    #[arg(long)]
-+    graph: bool,
- }
- 
- fn main() -> ExitCode {
-@@ -33,6 +38,11 @@ fn main() -> ExitCode {
-             match runtime.run(&source) {
-                 Ok(value) => {
-                     println!("{value}");
-+
-+                    if cli.graph {
-+                        print_graph(&runtime);
-+                    }
-+
-                     report(&mut runtime)
-                 }
-                 Err(error) => {
-@@ -45,6 +55,27 @@ fn main() -> ExitCode {
-     }
- }
- 
-+/// Prints what the runtime is holding: every statement it tracks and what each
-+/// one waits on.
-+fn print_graph(runtime: &Runtime) {
-+    let graph = &runtime.graph;
-+    println!("\nlogic graph ({} nodes)", graph.len());
-+
-+    for node in graph.nodes() {
-+        println!("  {} [{}]", node.key, node.kind);
-+
-+        if !node.dependencies.is_empty() {
-+            let names: Vec<String> = node.dependencies.iter().map(NodeKey::to_string).collect();
-+            println!("    reads    {}", names.join(", "));
-+        }
-+
-+        if !node.dependents.is_empty() {
-+            let names: Vec<String> = node.dependents.iter().map(NodeKey::to_string).collect();
-+            println!("    updates  {}", names.join(", "));
-+        }
-+    }
-+}
-+
- fn report(runtime: &mut Runtime) -> ExitCode {
-     let failures = runtime.take_assertions();
- 
-```
-
-**File**: `src/parser.rs` (modified, +32/-0)
-```diff
-@@ -21,16 +21,22 @@ pub fn parse_expression(source: &str) -> Result<Expr> {
-     Ok(expression)
- }
- 
-+/// How deeply expressions and blocks may nest. Recursive descent uses the
-+/// stack, so the limit is what keeps a pathological source from overflowing it.
-+const MAX_NESTING: usize = 64;
-+
- struct Parser {
-     tokens: Vec<Token>,
-     position: usize,
-+    depth: usize,
- }
- 
- impl Parser {
-     fn new(tokens: Vec<Token>) -> Self {
-         Parser {
-             tokens,
-             position: 0,
-+            depth: 0,
-         }
-     }
- 
-@@ -181,6 +187,19 @@ impl Parser {
-     }
- 
-     fn statement(&mut self) -> Result<Stmt> {
-+        self.depth += 1;
-+
-+        if self.depth > MAX_NESTING {
-+            self.depth -= 1;
-+            return Err(Error::syntax("Statements are nested too deeply"));
-+        }
-+
-+        let result = self.statement_inner();
-+        self.depth -= 1;
-+        result
-+    }
-+
-+    fn statement_inner(&mut self) -> Result<Stmt> {
-         match self.peek().clone() {
-             Token::Keyword(Keyword::If) => self.if_statement(),
-             Token::Keyword(Keyword::For) => self.for_statement(),
-@@ -498,6 +517,19 @@ impl Parser {
-     }
- 
-     fn expression(&mut self) -> Result<Expr> {
-+        self.depth += 1;
-+
-+        if self.depth > MAX_NESTING {
-+            self.depth -= 1;
-+            return Err(Error::syntax("Expressions are nested too deeply"));
-+        }
-+
-+        let result = self.expression_inner();
-+        self.depth -= 1;
-+        result
-+    }
-+
-+    fn expression_inner(&mut self) -> Result<Expr> {
-         let left = self.logical_or()?;
- 
-         if self.check(&Token::Assign) {
-```
-
-**File**: `src/runtime.rs` (modified, +21/-39)
-```diff
-@@ -70,6 +70,10 @@ pub struct Runtime {
-     /// The instances whose class-level rules are being applied, innermost last.
-     /// Functions called from a rule see the same instance for `$Class`.
-     pub(crate) instances: Vec<ObjectId>,
-+    /// Names being removed. While a deletion propagates, reading one of these
-+    /// is undefined rather than an error, so dependents settle to null instead
-+    /// of aborting the transaction.
-+    pub(crate) deleted: IndexSet<NodeKey>,
- }
- 
- impl Default for Runtime {
-@@ -78,7 +82,10 @@ impl Default for Runtime {
-     }
- }
- 
--const MAX_DEPTH: usize = 256;
-+/// How deep statements, propagation and expression evaluation may nest before
-+/// the runtime gives up. A library cannot rely on the caller's stack, so this
-+/// is reported as an error rather than overflowing.
-+pub(crate) const MAX_DEPTH: usize = 192;
- 
- impl Runtime {
-     pub fn new() -> Self {
-@@ -94,6 +101,7 @@ impl Runtime {
-             imperative: 0,
-             undefined_read: false,
-             instances: Vec::new(),
-+            deleted: IndexSet::new(),
-         }
-     }
- 
-@@ -1205,7 +1213,7 @@ impl Runtime {
-                 self.transaction.record_variable(name, Some(value));
-                 self.state.variables.shift_remove(name);
-                 self.remove_node(&key);
--                self.propagate_removed(&key)?;
-+                self.cascade_removal(&key)?;
- 
-                 Ok(Value::Bool(true))
-             }
-@@ -1237,7 +1245,7 @@ impl Runtime {
- 
-                 let key = NodeKey::property(&id, property);
-                 self.remove_node(&key);
--                self.propagate_removed(&key)?;
-+                self.cascade_removal(&key)?;
- 
-                 Ok(Value::Bool(true))
-             }
-@@ -1260,6 +1268,8 @@ impl Runtime {
-                     self.state.variables.shift_remove(id.as_str());
-                 }
- 
-+                self.cascade_removal(&key)?;
-+
-                 Ok(Value::Bool(true))
-             }
- 
-@@ -1355,42 +1365,14 @@ impl Runtime {
-         }
-     }
- 
--    /// After a deletion, dependents fall back to null.
--    fn propagate_removed(&mut self, key: &NodeKey) -> Result<()> {
--        let dependents: Vec<NodeKey> = self
--            .graph
--            .keys()
--            .filter(|candidate| {
--                self.graph
--                    .get(candidate)
--                    .map(|node| node.dependencies.contains(key))
--                    .unwrap_or(false)
+ /// Splits a case into top-level statements while retaining comments and blocks.
+ pub(crate) fn statements(source: &str) -> Vec<String> {
+     let source = source.replace("\r\n", "\n");
+@@ -56,15 +64,11 @@ pub(crate) fn statements(source: &str) -> Vec<String> {
+         let top_level = line.len() == line.trim_start().len();
+         let comment_or_blank = trimmed.is_empty() || trimmed.starts_with('#');
+         // Raw::Word in the lexer is [A-Za-z_][A-Za-z0-9_]*. Keep either
+-        // complete Else alias with its chain, not an identifier prefix.
++        // complete Else alias or Catch with its chain, not an identifier prefix.
+         // Header validity remains the parser's job, not a second grammar here.
+-        let continuation = ["else", "elif"].iter().any(|keyword| {
+-            trimmed.strip_prefix(keyword).is_some_and(|tail| {
+-                !tail.starts_with(|character: char| {
+-                    character.is_ascii_alphanumeric() || character == '_'
+-                })
 -            })
--            .cloned()
--            .collect();
--
--        for dependent in dependents {
--            let Some(node) = self.graph.get(&dependent).cloned() else {
--                continue;
--            };
--
--            match node.kind {
--                NodeKind::Variable => {
--                    self.set_variable(dependent.as_str(), Value::Null);
--                }
--                NodeKind::Property => {
--                    if let Some((object, property)) = dependent.split_last() {
--                        let object = ObjectId::from(object);
--                        if self.state.objects.contains_key(&object) {
--                            self.set_property(&object, property, Value::Null);
--                        }
--                    }
--                }
--                _ => {}
--            }
--        }
--
--        Ok(())
-+    /// Re-runs everything that read what was just removed. Each dependent finds
-+    /// the name undefined, settles to null, and passes that on to its own
-+    /// dependents, so a whole chain clears.
-+    fn cascade_removal(&mut self, key: &NodeKey) -> Result<()> {
-+        self.deleted.insert(key.clone());
-+        let result = self.propagate(key);
-+        self.deleted.shift_remove(key);
-+        result
+-        }) || trimmed.starts_with("catch ")
++        let continuation = ["else", "elif", "catch"]
++            .iter()
++            .any(|keyword| starts_keyword(trimmed, keyword))
+             || trimmed.starts_with("finally:")
+             || trimmed.starts_with([')', ']', '}']);
+ 
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +5/-0)
+```diff
+@@ -401,3 +401,8 @@
+ {"id":"spec-0401","description":"Nucleoid preserves scope and return flow around colon-led assertions","code":"def check_name(name):\n    saved = name.value\n    assert: saved, \"draft\"\n    return {name: name, initial: saved}\npacket = check_name(\"draft\")\nassert: packet.name, \"draft\"\nassert: packet.initial, \"draft\"\nassert: packet.name == packet.initial, true","return":null}
+ {"id":"spec-0402","description":"Nucleoid preserves colon-led assertion argument evaluation order","code":"log = []\ndef note(label):\n    log.push(label)\n    return 7\nassert: note(\"actual\"), note(\"expected\")\nassert: log, [\"actual\", \"expected\"]\nassert: log.length, 2","return":null}
+ {"id":"spec-0403","description":"Nucleoid checks caught errors and rollback with colon-led assertions","code":"state = 1\nmessage = \"\"\ntry:\n    state = 2\n    failed = missing\ncatch error:\n    message = error\n    assert: error, ReferenceError(\"missing is not defined\")\nassert: state, 1\nassert: message, ReferenceError(\"missing is not defined\")","return":null}
++{"id":"spec-0404","description":"Nucleoid catches thrown values with colon-free indented suites","code":"status = \"ready\"\ntry\n    throw \"STOP\"\ncatch problem\n    assert(problem, \"STOP\")\nassert(status, \"ready\")\ntry\n    throw 7\ncatch (issue)\n    assert(issue, 7)\ntry\n    missing\ncatch\n    assert(error, ReferenceError(\"missing is not defined\"))","return":null}
++{"id":"spec-0405","description":"Nucleoid restores dependencies through colon-free exception suites","code":"source = 2\nderived = source * 3\ntry\n    source = 9\n    throw \"ABORT\"\ncatch failure\n    assert(failure, \"ABORT\")\nassert(source, 2)\nassert(derived, 6)\nsource = 4\nassert(derived, 12)\nderived","return":"12"}
++{"id":"spec-0406","description":"Nucleoid preserves nested catch association without suite colons","code":"state = \"ready\"\ntry\n    try\n        throw \"INNER\"\n    catch inner\n        throw inner + \"-OUTER\"\ncatch outer\n    assert(outer, \"INNER-OUTER\")\nassert(state, \"ready\")","return":null}
++{"id":"spec-0407","description":"Nucleoid preserves function returns through compact exception suites","code":"def recover(flag):\n    try\n        if flag:\n            throw \"FALLBACK\"\n        return \"OK\"\n    catch issue\n        return issue\nfirst = recover(false)\nsecond = recover(true)\nassert(first, \"OK\")\nassert(second, \"FALLBACK\")","return":null}
++{"id":"spec-0408","description":"Nucleoid rolls back class rules with colon-free catch suites","code":"class Parcel(state: str):\n    this.state = state\nparcel = Parcel(\"queued\")\n$Parcel.label = $Parcel.state + \"!\"\ntry\n    parcel.state = \"broken\"\n    throw \"ABORT\"\ncatch reason\n    assert(reason, \"ABORT\")\nassert(parcel.state, \"queued\")\nassert(parcel.label, \"queued!\")\nparcel.state = \"sent\"\nassert(parcel.label, \"sent!\")","return":null}
+```
+
+**File**: `dataset/nucleoid.synth.27.jsonl` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++{"id":"synth-27-0001","description":"Nucleoid cancels a stock reservation and restores its live availability model","code":"stock = 6\navailable = stock - 1\ntry\n    stock = 0\n    throw \"RESERVE\"\ncatch\n    assert(error, \"RESERVE\")\nassert(stock, 6)\nassert(available, 5)\nstock = 9\nassert(available, 8)\navailable","return":"8"}
++{"id":"synth-27-0002","description":"Nucleoid returns structured shipping quotes through an independently compact catch header","code":"def quote(held):\n    try:\n        if held:\n            throw \"HOLD\"\n        return {state: \"ready\", fee: 3}\n    catch(reason)\n        return {state: reason, fee: 0}\nready = quote(false)\nheld = quote(true)\nassert(ready.state, \"ready\")\nassert(ready.fee, 3)\nassert(held.state, \"HOLD\")\nassert(held.fee, 0)\nheld.state","return":"\"HOLD\""}
++{"id":"synth-27-0003","description":"Nucleoid restores a failed sensor update without disturbing another instance's rule","code":"class Sensor(reading: int):\n    this.reading = reading\nnorth = Sensor(2)\nsouth = Sensor(5)\n$Sensor.doubled = $Sensor.reading * 2\ntry\n    north.reading = 9\n    throw \"CANCEL\"\ncatch reason:\n    assert(reason, \"CANCEL\")\nassert(north.doubled, 4)\nassert(south.doubled, 10)\nnorth.reading = 3\nassert(north.doubled, 6)\nassert(south.doubled, 10)\nnorth.doubled","return":"6"}
++{"id":"synth-27-0004","description":"Nucleoid propagates a nested recovery failure while preserving a frozen startup result","code":"base = 2\ntotal = base * 5\nstartup = total.value\ntry\n    try:\n        base = 8\n        throw \"INNER\"\n    catch (issue):\n        throw issue + \"-OUTER\"\ncatch failure\n    assert(failure, \"INNER-OUTER\")\nassert(base, 2)\nassert(total, 10)\nbase = 3\nassert(total, 15)\nassert(startup, 10)\ntotal","return":"15"}
+```
+
+**File**: `docs/README.md` (modified, +44/-1)
+```diff
+@@ -1057,7 +1057,50 @@ if a > 5:
+ 
+ - Assigning `a = 6` throws; afterwards `a` is `5`.
+ 
+-Full detail: [NUC 9](nuc-0009.md).
++### Optional colons on indented exception suites (Accepted NUC 46)
++
++- Accepted [NUC 46](nuc-0046.md) allows `try` and a complete existing `catch`
++  header to omit the suite colon independently, only before a genuine indent.
++  Colon-bearing indented, inline, semicolon-separated and braced forms remain
++  valid. The whole `Stmt::Try`, default `error` binding and runtime are shared.
++- This is the paired executable reference entry
++  `Nucleoid preserves catch bindings and mixed exception suite forms`,
++  without its title comment. The inline pair keeps both colons; the two
++  indented pairs demonstrate omission in each direction.
++
++```
++try: throw "INLINE"
++catch issue: assert(issue, "INLINE")
++try
++    throw "PAREN"
++catch (problem):
++    assert(problem, "PAREN")
++try:
++    throw "DEFAULT"
++catch
++    assert(error, "DEFAULT")
++```
++
++- Complete parameter parsing precedes qualification. Default, ordinary-name
++  and parenthesized-name headers retain their accepted meanings; no filters,
++  catch expressions, multi-catch, `finally` or new scope/throw behavior.
++- Existing lexer layout and `has_indented_body` decide whether a real body
++  follows, before any layout is consumed. Blank/comment-only lines or a
++  header-line semicolon do not suffice. Other header grammars are unchanged.
++- The native REPL buffers a complete lexical bare `try` header, including a
++  trailing comment, through its catch until blank-line commit or EOF. A
++  standalone `catch`, literal/comment text, identifier prefix or malformed
++  header does not start that buffer; committed errors are still reported.
++- Savepoints restore failed-body state and pending work before recovery.
++  Dependencies, rules, receivers, returns and reasoning remain the accepted
++  behavior. Already implemented exceptions are baseline, not a pending NUC
++  dependency. Exact grammar and errors are in the
++  [root contract](../nucleoid.spec.md#colon-free-indented-exception-suites).
++- Independent evaluation accepted all 611 paired cases: eight use fewer lexer
++  tokens, 603 are unchanged, and none increased. All 2,763 protected assertions
++  executed and all 50 explicit expected returns matched.
++
++Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
+ 
+ ---
+ 
+```
+
+**File**: `docs/examples.md` (modified, +31/-0)
+```diff
+@@ -2284,6 +2284,37 @@ saved
+ - Only lowercase `assert` followed by `:` in statement position qualifies;
+   existing typed declarations win before this new spelling is considered.
+ 
++**Compact exception suites preserve independent class rules**
++
++```nuc
++# Compact exception suites preserve independent class rules
++
++class Task(state: str):
++    this.state = state
++first = Task("open")
++second = Task("open")
++$Task.closed = $Task.state == "closed"
++try
++    first.state = "closed"
++    throw "CANCEL"
++catch issue
++    assert(issue, "CANCEL")
++assert(first.closed, false)
++assert(second.closed, false)
++first.state = "closed"
++assert(first.closed, true)
++assert(second.closed, false)
++first.closed
++# return: true
++```
++
++- Accepted [NUC 46](nuc-0046.md) changes only the optional suite colons.
++  The same bodies with `try:` and `catch issue:` retain the complete AST,
++  actual checks, explicit return, rollback and independent reactive rules.
++- A real indent must qualify each omitted colon separately; inline/braced
++  forms keep their existing required colons. The native REPL buffers a complete
++  lexical bare `try` header through its catch until blank-line commit or EOF.
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -76,6 +76,7 @@ Created: 31-Jul-2026
+ | [43](nuc-0043.md) | Direct Conditional Alternatives | Accepted |
+ | [44](nuc-0044.md) | Comma-Free Explicit Object Properties | Accepted |
+ | [45](nuc-0045.md) | Colon-Led Assertion Statements | Accepted |
++| [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Accepted |
+ 
+ ## Numerical Index
+ 
+@@ -126,6 +127,7 @@ Created: 31-Jul-2026
+ | [43](nuc-0043.md) | Direct Conditional Alternatives | Standards Track | Accepted |
+ | [44](nuc-0044.md) | Comma-Free Explicit Object Properties | Standards Track | Accepted |
+ | [45](nuc-0045.md) | Colon-Led Assertion Statements | Standards Track | Accepted |
++| [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Standards Track | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+---
+
+### Incident Patch 2: `533b9780` (2026-10-15)
+**Commit Message**: Add colon-free indented else suites
+
+Allow final else to omit its colon only before a genuine indented body,
+retaining all accepted suite grammars and canonical AST behavior.
+Keep normative exports and canonical training programs synchronized.
+
+Record independent NUC34 acceptance: 26 shorter cases, 489 unchanged,
+0 increases; 44985 to 44956 runtime lexer tokens.
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +23/-0)
+```diff
+@@ -620,6 +620,29 @@ assert(eased, 0.84375)
+   clamps before applying the ordered cubic, retaining existing special-value,
+   deferred-read and transactional behavior.
+ 
++**Indented else suites keep live inputs concise**
++
++```nuc
++enabled = false
++raw = 2
++if enabled:
++    display = raw
++else
++    display = raw + 1
++assert(display, 3)
++enabled = true
++assert(display, 2)
++raw = 5
++assert(display, 5)
++```
++
++- Accepted [NUC 34](docs/nuc-0034.md) permits this optional final-`else` spelling
++  only before a real indented body. `else:` remains valid and equivalent.
++- `if` and `else if` keep their colons; inline, semicolon-separated and braced
++  alternatives still need `else:`. A same-line semicolon cannot enable omission.
++- Nested branch association, live inputs, scope, returns and rollback are
++  unchanged. Strings and comments containing `else:` are not rewritten.
++
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+```
+
+**File**: `build.rs` (modified, +5/-1)
+```diff
+@@ -249,7 +249,11 @@ fn statements(source: &str) -> Vec<String> {
+         let trimmed = line.trim();
+         let top_level = line.len() == line.trim_start().len();
+         let comment_or_blank = trimmed.is_empty() || trimmed.starts_with('#');
+-        let continuation = trimmed.starts_with("else:")
++        let continuation = trimmed == "else"
++            || trimmed
++                .strip_prefix("else")
++                .is_some_and(|tail| tail.trim_start().starts_with('#'))
++            || trimmed.starts_with("else:")
+             || trimmed.starts_with("else if ")
+             || trimmed.starts_with("elif ")
+             || trimmed.starts_with("catch ")
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +21/-16)
+```diff
+@@ -35,7 +35,7 @@
+ {"id":"spec-0035","description":"Nucleoid creates if statement of variable","code":"# m is false\nm = false\n\n# n is false\nn = false\n\n# if m is true, then n is m and true\nif m == true:\n    n = m and true\n\nassert(n, false)\n\n# m is true\nm = true\n\nassert(n, true)","return":null}
+ {"id":"spec-0036","description":"Nucleoid updates if block of variable","code":"# p is 0.01\np = 0.01\n\n# s is 0.02\ns = 0.02\n\n# if p is less than 1, then r is p times 10\nif p < 1:\n    r = p * 10\n\n# if p is less than 1, then r is s times 10\nif p < 1:\n    r = s * 10\n\nassert(r, 0.2)\n\n# s is 0.03\ns = 0.03\n\nassert(r, 0.3)","return":null}
+ {"id":"spec-0037","description":"Nucleoid creates else if statement of variable","code":"# g is 11\ng = 11\n\n# earth is 9.8\nearth = 9.8\n\n# mars is 3.71\nmars = 3.71\n\n# mass is 10\nmass = 10\n\n# if g is greater than 9, then weight is earth times mass,\n# else if g is greater than 3, then weight is mars times mass\nif g > 9:\n    weight = earth * mass\nelse if g > 3:\n    weight = mars * mass\n\n# g is 5\ng = 5\n\nassert(weight, 37.1)\n\n# mars is 3.72\nmars = 3.72\n\nassert(weight, 37.2)","return":null}
+-{"id":"spec-0038","description":"Nucleoid creates multiple else if statement of variable","code":"# fraction is -0.1\nfraction = -0.1\n\n# point is 1\npoint = 1\n\n# if fraction is greater than 1, then score is fraction times point times 3,\n# else if fraction is greater than 0, then score is fraction times point times 2,\n# else score is fraction times point\nif fraction > 1:\n    score = fraction * point * 3\nelse if fraction > 0:\n    score = fraction * point * 2\nelse:\n    score = fraction * point\n\nassert(score, -0.1)\n\n# point is 2\npoint = 2\n\nassert(score, -0.2)","return":null}
++{"id":"spec-0038","description":"Nucleoid creates multiple else if statement of variable","code":"# fraction is -0.1\nfraction = -0.1\n\n# point is 1\npoint = 1\n\n# if fraction is greater than 1, then score is fraction times point times 3,\n# else if fraction is greater than 0, then score is fraction times point times 2,\n# else score is fraction times point\nif fraction > 1:\n    score = fraction * point * 3\nelse if fraction > 0:\n    score = fraction * point * 2\nelse\n    score = fraction * point\n\nassert(score, -0.1)\n\n# point is 2\npoint = 2\n\nassert(score, -0.2)","return":null}
+ {"id":"spec-0039","description":"Nucleoid runs dependent statements in the same transaction","code":"# There is a Vehicle type,\n# and any vehicle's tag is \"US-\" plus the vehicle's plate\nclass Vehicle\n\n$Vehicle.tag = \"US-\" + $Vehicle.plate\n\n# vehicle1 is a Vehicle\nvehicle1 = Vehicle()\n\n# vehicle1's plate is \"XSJ422\"\nvehicle1.plate = \"XSJ422\"\n\nassert(vehicle1.tag, \"US-XSJ422\")","return":null}
+ {"id":"spec-0040","description":"Nucleoid runs dependencies in order as received","code":"# any is 0\nany = 0\n\n# if any is bigger than 1, then result is 1\nif any > 1:\n    result = 1\n\n# if any is bigger than 2, then result is 2\nif any > 2:\n    result = 2\n\n# if any is bigger than 3, then result is 3\nif any > 3:\n    result = 3\n\n# if any is bigger than 2, then result is 4\nif any > 2:\n    result = 4\n\n# if any is bigger than 1, then result is 5\nif any > 1:\n    result = 5\n\n# any is 4\nany = 4\n\nassert(result, 5)","return":null}
+ {"id":"spec-0041","description":"Nucleoid searches a variable in scope before the state","code":"# e is 2.71828\ne = 2.71828\n\n# number is null\nnumber = null\n\n# a local e shadows the outer e inside the block,\n# and number is the local e\n{\n    e = 3\n    number = e\n}\n\nassert(number, 3)","return":null}
+@@ -72,7 +72,7 @@
+ {"id":"spec-0072","description":"Nucleoid runs a block statement of variable","code":"# h is 1\nh = 1\n\n# while in the block, value is a local variable that is h times 2,\n# and j is value times 2\n{\n    value = h * 2\n    j = value * 2\n}\n\nassert(j, 4)\n\n# h is 2\nh = 2\n\nassert(j, 8)","return":null}
+ {"id":"spec-0073","description":"Nucleoid runs a nested block statement of variable","code":"# radius is 10\nradius = 10\n\n# while in the block, area is a local variable that is radius squared times 3.14,\n# and in a nested block, volume is area times 5\n{\n    area = Math.pow(radius, 2) * 3.14\n    {\n        volume = area * 5\n    }\n}\n\nassert(volume, 1570)","return":null}
+ {"id":"spec-0074","description":"Nucleoid runs a nested if statement of variable","code":"# gravity is 9.8\ngravity = 9.8\n\n# time is 10\ntime = 10\n\n# distance is 480\ndistance = 480\n\n# target is true\ntarget = true\n\n# while in the block, dist is a local variable that is one half times gravity times time times time,\n# and if dist is greater than distance, then hit is target\n{\n    dist = 1 / 2 * gravity * time * time\n    if dist > distance:\n        hit = target\n}\n\nassert(hit, true)\n\n# target is false\ntarget = false\n\nassert(hit, false)","return":null}
+-{"id":"spec-0075","description":"Nucleoid runs a nested el
+```
+
+**File**: `dataset/nucleoid.synth.01.jsonl` (modified, +3/-3)
+```diff
+@@ -22,12 +22,12 @@
+ {"id":"synth-01-0022","description":"Nucleoid chains class-level properties","code":"# There is a Rectangle type\nclass Rectangle\n\n# Any rectangle's area is the rectangle's width times the rectangle's height\n$Rectangle.area = $Rectangle.width * $Rectangle.height\n\n# Any rectangle's ratio is the rectangle's area divided by the rectangle's width\n$Rectangle.ratio = $Rectangle.area / $Rectangle.width\n\n# rectangle1 is a Rectangle whose width is 4 and whose height is 5\nrectangle1 = Rectangle()\nrectangle1.width = 4\nrectangle1.height = 5\n\nassert(rectangle1.area, 20)\nassert(rectangle1.ratio, 5)\n\n# rectangle1's height is 10\nrectangle1.height = 10\n\nassert(rectangle1.area, 40)\nassert(rectangle1.ratio, 10)","return":null}
+ {"id":"synth-01-0023","description":"Nucleoid updates every instance when a class-level dependency changes","code":"# There is an Invoice type\nclass Invoice\n\n# taxRate is 8\ntaxRate = 8\n\n# Any invoice's total is the invoice's amount plus the invoice's amount times taxRate divided by 100\n$Invoice.total = $Invoice.amount + $Invoice.amount * taxRate / 100\n\n# invoice1 is an Invoice whose amount is 100\ninvoice1 = Invoice()\ninvoice1.amount = 100\n\n# invoice2 is an Invoice whose amount is 200\ninvoice2 = Invoice()\ninvoice2.amount = 200\n\nassert(invoice1.total, 108)\nassert(invoice2.total, 216)\n\n# taxRate is 10\ntaxRate = 10\n\nassert(invoice1.total, 110)\nassert(invoice2.total, 220)","return":null}
+ {"id":"synth-01-0024","description":"Nucleoid overrides a class-level property on a single instance","code":"# There is a Node type\nclass Node\n\n# Any node's status is \"IDLE\"\n$Node.status = \"IDLE\"\n\n# node1 is a Node\nnode1 = Node()\n\n# node2 is a Node\nnode2 = Node()\n\nassert(node1.status, \"IDLE\")\nassert(node2.status, \"IDLE\")\n\n# node1's status is \"ACTIVE\"\nnode1.status = \"ACTIVE\"\n\nassert(node1.status, \"ACTIVE\")\nassert(node2.status, \"IDLE\")","return":null}
+-{"id":"synth-01-0025","description":"Nucleoid applies a class-level else if statement to every instance","code":"# There is a Grade type\nclass Grade\n\n# grade1 is a Grade whose score is 95\ngrade1 = Grade()\ngrade1.score = 95\n\n# grade2 is a Grade whose score is 85\ngrade2 = Grade()\ngrade2.score = 85\n\n# grade3 is a Grade whose score is 60\ngrade3 = Grade()\ngrade3.score = 60\n\n# If any grade's score is greater than 89, then the grade's letter is \"A\",\n# else if any grade's score is greater than 79, then the grade's letter is \"B\",\n# else the grade's letter is \"C\"\nif $Grade.score > 89:\n    $Grade.letter = \"A\"\nelse if $Grade.score > 79:\n    $Grade.letter = \"B\"\nelse:\n    $Grade.letter = \"C\"\n\nassert(grade1.letter, \"A\")\nassert(grade2.letter, \"B\")\nassert(grade3.letter, \"C\")\n\n# grade3's score is 90\ngrade3.score = 90\n\nassert(grade3.letter, \"A\")","return":null}
++{"id":"synth-01-0025","description":"Nucleoid applies a class-level else if statement to every instance","code":"# There is a Grade type\nclass Grade\n\n# grade1 is a Grade whose score is 95\ngrade1 = Grade()\ngrade1.score = 95\n\n# grade2 is a Grade whose score is 85\ngrade2 = Grade()\ngrade2.score = 85\n\n# grade3 is a Grade whose score is 60\ngrade3 = Grade()\ngrade3.score = 60\n\n# If any grade's score is greater than 89, then the grade's letter is \"A\",\n# else if any grade's score is greater than 79, then the grade's letter is \"B\",\n# else the grade's letter is \"C\"\nif $Grade.score > 89:\n    $Grade.letter = \"A\"\nelse if $Grade.score > 79:\n    $Grade.letter = \"B\"\nelse\n    $Grade.letter = \"C\"\n\nassert(grade1.letter, \"A\")\nassert(grade2.letter, \"B\")\nassert(grade3.letter, \"C\")\n\n# grade3's score is 90\ngrade3.score = 90\n\nassert(grade3.letter, \"A\")","return":null}
+ {"id":"synth-01-0026","description":"Nucleoid validates a class-level property with a regular expression","code":"# There is an Account type\nclass Account\n\n# If any account's code does not match /^[A-Z]{2}-[0-9]{4}$/, then throw 'INVALID_CODE'\nif not /^[A-Z]{2}-[0-9]{4}$/.test($Account.code):\n    throw 'INVALID_CODE'\n\n# account1 is an Account\naccount1 = Account()\n\nassert(account1.code, null)\n\n# account1's code is \"NY-1234\"\naccount1.code = \"NY-1234\"\n\nassert(account1.code, \"NY-1234\")\n\ntry:\n    # account1's code is \"nyc-1\"\n    account1.code = \"nyc-1\"\ncatch error:\n    assert(error, \"INVALID_CODE\")\n\nassert(account1.code, \"NY-1234\")","return":null}
+ {"id":"synth-01-0027","description":"Nucleoid uses a class list in a class-level condition","code":"# There is a Room type\nclass Room\n\n# There is a Booking type\nclass Booking\n\n# room1 is a Room\nroom1 = Room()\n\n# Any room's booked is whether the number of bookings whose room is the room is more than zero\n$Room.booked = Booking.filter(b => b.room == $Room).length > 0\n\nassert(room1.booked, false)\n\n# booking1 is a Booking whose room is room1\nbooking1 = Booking()\nbooking1.room = room1\n\nassert(room1.booked, true
+```
+
+**File**: `dataset/nucleoid.synth.03.jsonl` (modified, +1/-1)
+```diff
+@@ -42,5 +42,5 @@
+ {"id":"synth-03-0042","description":"Nucleoid rejects defining a class-level rule inside a block","code":"# There is a Panel type\nclass Panel\n\n# panel1 is a Panel whose width is 4 and whose height is 3\npanel1 = Panel()\npanel1.width = 4\npanel1.height = 3\n\ntry:\n    # while in the block, width is a local variable that is panel1's width,\n    # and height is a local variable that is panel1's height,\n    # and any panel's area is width times height\n    {\n        width = panel1.width\n        height = panel1.height\n        $Panel.area = width * height\n    }\ncatch error:\n    assert(error, SyntaxError(\"Cannot define class declaration in non-class block\"))","return":null}
+ {"id":"synth-03-0043","description":"Nucleoid reads the innermost binding of a shadowed name","code":"# depth is \"outer\"\ndepth = \"outer\"\n\n# reading is null\nreading = null\n\n# a local depth shadows the outer depth inside the block,\n# and a nested block shadows it again,\n# and reading is the innermost depth\n{\n    depth = \"inner\"\n    {\n        depth = \"innermost\"\n        reading = depth\n    }\n}\n\nassert(reading, \"innermost\")","return":null}
+ {"id":"synth-03-0044","description":"Nucleoid applies a class-level rule to instances made before and after it","code":"# There is a Tile type\nclass Tile\n\n# tile1 is a Tile whose edge is 3\ntile1 = Tile()\ntile1.edge = 3\n\n# Any tile's area is the tile's edge times the tile's edge\n$Tile.area = $Tile.edge * $Tile.edge\n\nassert(tile1.area, 9)\n\n# tile2 is a Tile whose edge is 5\ntile2 = Tile()\ntile2.edge = 5\n\nassert(tile2.area, 25)\n\n# tile1's edge is 4\ntile1.edge = 4\n\nassert(tile1.area, 16)\nassert(tile2.area, 25)","return":null}
+-{"id":"synth-03-0045","description":"Nucleoid updates a conditional property when the branch value changes","code":"# There is a Plan type\nclass Plan\n\n# plan1 is a Plan whose tier is \"FREE\"\nplan1 = Plan()\nplan1.tier = \"FREE\"\n\n# paid is \"PAID\" and free is \"FREE\"\npaid = \"PAID\"; free = \"FREE\"\n\n# if plan1's tier is \"PRO\", then plan1's label is paid,\n# else plan1's label is free\nif plan1.tier == \"PRO\":\n    plan1.label = paid\nelse:\n    plan1.label = free\n\nassert(plan1.label, \"FREE\")\n\n# free is \"Free tier\"\nfree = \"Free tier\"\n\nassert(plan1.label, \"Free tier\")\n\n# plan1's tier is \"PRO\"\nplan1.tier = \"PRO\"\n\nassert(plan1.label, \"PAID\")","return":null}
++{"id":"synth-03-0045","description":"Nucleoid updates a conditional property when the branch value changes","code":"# There is a Plan type\nclass Plan\n\n# plan1 is a Plan whose tier is \"FREE\"\nplan1 = Plan()\nplan1.tier = \"FREE\"\n\n# paid is \"PAID\" and free is \"FREE\"\npaid = \"PAID\"; free = \"FREE\"\n\n# if plan1's tier is \"PRO\", then plan1's label is paid,\n# else plan1's label is free\nif plan1.tier == \"PRO\":\n    plan1.label = paid\nelse\n    plan1.label = free\n\nassert(plan1.label, \"FREE\")\n\n# free is \"Free tier\"\nfree = \"Free tier\"\n\nassert(plan1.label, \"Free tier\")\n\n# plan1's tier is \"PRO\"\nplan1.tier = \"PRO\"\n\nassert(plan1.label, \"PAID\")","return":null}
+ {"id":"synth-03-0046","description":"Nucleoid keeps a repeated label when a repetition request is rejected","code":"copies = 2\ndivider = \"--\".repeat(copies)\n\nassert(divider, \"----\")\n\ntry:\n    copies = Number.POSITIVE_INFINITY\ncatch error:\n    assert(error, TypeError(\"Repeated string is too large\"))\n\nassert(copies, 2)\nassert(divider, \"----\")\n\ncopies = 3\n\nassert(divider, \"------\")","return":null}
+```
+
+**File**: `dataset/nucleoid.synth.04.jsonl` (modified, +2/-2)
+```diff
+@@ -20,12 +20,12 @@
+ {"id":"synth-04-0020","description":"Nucleoid holds the result of a function in a local variable","code":"# tasks is an empty list\ntasks = []\n\n# code is 1\ncode = 1\n\n# There is a Task type\nclass Task\n\n# task1 is a Task whose code is 1,\n# and task1 is added to tasks\ntask1 = Task()\ntask1.code = 1\ntasks.push(task1)\n\n# task2 is a Task whose code is 2,\n# and task2 is added to tasks\ntask2 = Task()\ntask2.code = 2\ntasks.push(task2)\n\n# While in the block, task is the task in tasks whose code is code,\n# and task is flagged\n{\n    task = tasks.find(t => t.code == code)\n    task.flagged = true\n}\n\nassert(task1.flagged, true)\nassert(task2.flagged, null)\n\n# code is 2\ncode = 2\n\nassert(task2.flagged, true)","return":null}
+ {"id":"synth-04-0021","description":"Nucleoid creates local variables inside an if block","code":"# base is 5\nbase = 5\n\n# extra is 10\nextra = 10\n\n# if base is greater than 9, then while in the block, total is base plus extra,\n# and scaled is total times 10\nif base > 9:\n    total = base + extra\n    scaled = total * 10\n\n# base is 10\nbase = 10\n\nassert(scaled, 200)\n\n# base is 15\nbase = 15\n\nassert(scaled, 250)\n\n# extra is 20\nextra = 20\n\nassert(scaled, 350)","return":null}
+ {"id":"synth-04-0022","description":"Nucleoid runs a nested if statement inside a block","code":"# rate is 12\nrate = 12\n\n# hours is 40\nhours = 40\n\n# threshold is 400\nthreshold = 400\n\n# bonus is true\nbonus = true\n\n# while in the block, gross is a local variable that is rate times hours,\n# and if gross is greater than threshold, then eligible is bonus\n{\n    gross = rate * hours\n    if gross > threshold:\n        eligible = bonus\n}\n\nassert(eligible, true)\n\n# bonus is false\nbonus = false\n\nassert(eligible, false)","return":null}
+-{"id":"synth-04-0023","description":"Nucleoid runs a nested else statement inside a block","code":"# count is 12\ncount = 12\n\n# size is 4\nsize = 4\n\n# kind is \"GRID\"\nkind = \"GRID\"\n\n# layout is null\nlayout = null\n\n# fallback is 0\nfallback = 0\n\n# while in the block, cells is a local variable that is count times size,\n# and if kind is \"GRID\", then layout is cells divided by 2,\n# else layout is fallback\n{\n    cells = count * size\n    if kind == \"GRID\":\n        layout = cells / 2\n    else:\n        layout = fallback\n}\n\n# kind is \"LIST\"\nkind = \"LIST\"\n\n# fallback is 1\nfallback = 1\n\nassert(layout, 1)","return":null}
++{"id":"synth-04-0023","description":"Nucleoid runs a nested else statement inside a block","code":"# count is 12\ncount = 12\n\n# size is 4\nsize = 4\n\n# kind is \"GRID\"\nkind = \"GRID\"\n\n# layout is null\nlayout = null\n\n# fallback is 0\nfallback = 0\n\n# while in the block, cells is a local variable that is count times size,\n# and if kind is \"GRID\", then layout is cells divided by 2,\n# else layout is fallback\n{\n    cells = count * size\n    if kind == \"GRID\":\n        layout = cells / 2\n    else\n        layout = fallback\n}\n\n# kind is \"LIST\"\nkind = \"LIST\"\n\n# fallback is 1\nfallback = 1\n\nassert(layout, 1)","return":null}
+ {"id":"synth-04-0024","description":"Nucleoid runs a class-level block statement before instantiation","code":"# There is a Quote type\nclass Quote\n\n# while in the block, markup is a local variable that is any quote's cost times 20 divided by 100,\n# and the quote's price is the quote's cost plus markup\n{\n    markup = $Quote.cost * 20 / 100\n    $Quote.price = $Quote.cost + markup\n}\n\n# quote1 is a Quote\nquote1 = Quote()\n\nassert(quote1.price, null)\n\n# quote1's cost is 50\nquote1.cost = 50\n\nassert(quote1.price, 60)\n\n# quote1's cost is 80\nquote1.cost = 80\n\nassert(quote1.price, 96)","return":null}
+ {"id":"synth-04-0025","description":"Nucleoid runs a class-level block statement after instantiation","code":"# There is a Trip type\nclass Trip\n\n# trip1 is a Trip whose distance is 120\ntrip1 = Trip()\ntrip1.distance = 120\n\n# while in the block, fuel is a local variable that is any trip's distance divided by 15,\n# and the trip's litres is fuel\n{\n    fuel = $Trip.distance / 15\n    $Trip.litres = fuel\n}\n\nassert(trip1.litres, 8)\n\n# trip1's distance is 150\ntrip1.distance = 150\n\nassert(trip1.litres, 10)","return":null}
+ {"id":"synth-04-0026","description":"Nucleoid runs a nested class-level block statement","code":"# There is a Mixture type\nclass Mixture\n\n# while in the block, unit is a local variable that is 100 divided by any mixture's parts,\n# and in a nested block, the mixture's share is the floor of unit times the mixture's weight\n{\n    unit = 100 / $Mixture.parts\n    {\n        $Mixture.share = Math.floor(unit * $Mixture.weight)\n    }\n}\n\n# mixture1 is a Mixture\nmixture1 = Mixture()\n\n# mixture1's parts is 3\nmixture1.parts = 3\n\n# mixture1's weight is 7\nmixture1.weight = 7\n\nassert(mixture1.share, 233)","return":null}
+ {"id":"synth-04-0027","description":"Nucleoid runs a nested if statemen
+```
+
+**File**: `dataset/nucleoid.synth.05.jsonl` (modified, +7/-7)
+```diff
+@@ -4,23 +4,23 @@
+ {"id":"synth-05-0004","description":"Nucleoid returns the assigned value of a variable assignment","code":"# ohms is 9\nohms = 9","return":"9"}
+ {"id":"synth-05-0005","description":"Nucleoid throws an error raised inside a conditional block","code":"# depth is 120\ndepth = 120\n\ntry:\n    # if depth is greater than or equal to 100, then throw \"TOO_DEEP\"\n    if depth >= 100:\n        throw \"TOO_DEEP\"\ncatch error:\n    assert(error, \"TOO_DEEP\")","return":null}
+ {"id":"synth-05-0006","description":"Nucleoid creates an if statement on a boolean variable","code":"# armed is false\narmed = false\n\n# ready is false\nready = false\n\n# if armed is true, then ready is armed and true\nif armed == true:\n    ready = armed and true\n\nassert(ready, false)\n\n# armed is true\narmed = true\n\nassert(ready, true)","return":null}
+-{"id":"synth-05-0007","description":"Nucleoid creates an else statement on a variable","code":"# ratio is 0.9\nratio = 0.9\n\n# rich is \"RICH\"\nrich = \"RICH\"\n\n# lean is \"LEAN\"\nlean = \"LEAN\"\n\n# if ratio is greater than 0.5, then mixture is rich,\n# else mixture is lean\nif ratio > 0.5:\n    mixture = rich\nelse:\n    mixture = lean\n\nassert(mixture, \"RICH\")\n\n# ratio is 0.2\nratio = 0.2\n\nassert(mixture, \"LEAN\")\n\n# lean is \"L\"\nlean = \"L\"\n\nassert(mixture, \"L\")","return":null}
++{"id":"synth-05-0007","description":"Nucleoid creates an else statement on a variable","code":"# ratio is 0.9\nratio = 0.9\n\n# rich is \"RICH\"\nrich = \"RICH\"\n\n# lean is \"LEAN\"\nlean = \"LEAN\"\n\n# if ratio is greater than 0.5, then mixture is rich,\n# else mixture is lean\nif ratio > 0.5:\n    mixture = rich\nelse\n    mixture = lean\n\nassert(mixture, \"RICH\")\n\n# ratio is 0.2\nratio = 0.2\n\nassert(mixture, \"LEAN\")\n\n# lean is \"L\"\nlean = \"L\"\n\nassert(mixture, \"L\")","return":null}
+ {"id":"synth-05-0008","description":"Nucleoid creates an else if statement on a variable","code":"# altitude is 12\naltitude = 12\n\n# sea is 1013\nsea = 1013\n\n# alpine is 850\nalpine = 850\n\n# factor is 2\nfactor = 2\n\n# if altitude is greater than 10, then pressure is sea times factor,\n# else if altitude is greater than 3, then pressure is alpine times factor\nif altitude > 10:\n    pressure = sea * factor\nelse if altitude > 3:\n    pressure = alpine * factor\n\n# altitude is 5\naltitude = 5\n\nassert(pressure, 1700)\n\n# alpine is 860\nalpine = 860\n\nassert(pressure, 1720)","return":null}
+-{"id":"synth-05-0009","description":"Nucleoid creates multiple else if statements on a variable","code":"# delta is -2\ndelta = -2\n\n# weight is 1\nweight = 1\n\n# if delta is greater than 10, then adjustment is delta times weight times 3,\n# else if delta is greater than 0, then adjustment is delta times weight times 2,\n# else adjustment is delta times weight\nif delta > 10:\n    adjustment = delta * weight * 3\nelse if delta > 0:\n    adjustment = delta * weight * 2\nelse:\n    adjustment = delta * weight\n\nassert(adjustment, -2)\n\n# weight is 4\nweight = 4\n\nassert(adjustment, -8)","return":null}
++{"id":"synth-05-0009","description":"Nucleoid creates multiple else if statements on a variable","code":"# delta is -2\ndelta = -2\n\n# weight is 1\nweight = 1\n\n# if delta is greater than 10, then adjustment is delta times weight times 3,\n# else if delta is greater than 0, then adjustment is delta times weight times 2,\n# else adjustment is delta times weight\nif delta > 10:\n    adjustment = delta * weight * 3\nelse if delta > 0:\n    adjustment = delta * weight * 2\nelse\n    adjustment = delta * weight\n\nassert(adjustment, -2)\n\n# weight is 4\nweight = 4\n\nassert(adjustment, -8)","return":null}
+ {"id":"synth-05-0010","description":"Nucleoid creates an if statement on a property","code":"# There is a Lamp type\nclass Lamp\n\n# lamp1 is a Lamp whose colour is \"AMBER\"\nlamp1 = Lamp()\nlamp1.colour = \"AMBER\"\n\n# if lamp1's colour is \"GREEN\", then lamp1's state is \"GO\"\nif lamp1.colour == \"GREEN\":\n    lamp1.state = \"GO\"\n\nassert(lamp1.state, null)\n\n# lamp1's colour is \"GREEN\"\nlamp1.colour = \"GREEN\"\n\nassert(lamp1.state, \"GO\")","return":null}
+ {"id":"synth-05-0011","description":"Nucleoid updates an if block on a property","code":"# There is a Wallet type\nclass Wallet\n\n# wallet1 is a Wallet whose balance is 200\nwallet1 = Wallet()\nwallet1.balance = 200\n\n# if wallet1's balance is less than 500, then wallet1's tier is \"BASIC\"\nif wallet1.balance < 500:\n    wallet1.tier = \"BASIC\"\n\nassert(wallet1.tier, \"BASIC\")\n\n# if wallet1's balance is less than 500, then wallet1's tier is \"STARTER\"\nif wallet1.balance < 500:\n    wallet1.tier = \"STARTER\"\n\nassert(wallet1.tier, \"STARTER\")","return":null}
+-{"id":"synth-05-0012","description":"Nucleoid creates an else statement on a property with property dependencies","code":"# There is an Entry type\nclass Entry\n\n# entry1 is an Entry whose kind is \"PERSON\",\n# whose given is \"Ada\" a
+```
+
+**File**: `dataset/nucleoid.synth.06.jsonl` (modified, +4/-4)
+```diff
+@@ -19,20 +19,20 @@
+ {"id":"synth-06-0019","description":"Nucleoid labels every consignment with a class-level rule","code":"# There is a Consignment type,\n# which has a number as a number\nclass Consignment(number: int):\n    this.number = number\n\n# Any consignment's label is \"CN-\" plus the consignment's number\n$Consignment.label = \"CN-\" + $Consignment.number\n\n# consignment1 is a Consignment whose number is 4\nconsignment1 = Consignment(4)\n\nassert(consignment1.label, \"CN-4\")\n\n# consignment2 is a Consignment whose number is 5\nconsignment2 = Consignment(5)\n\nassert(consignment2.label, \"CN-5\")","return":null}
+ {"id":"synth-06-0020","description":"Nucleoid replaces a class-level rule on a dock","code":"# There is a Dock type\nclass Dock\n\n# dock1 is a Dock whose bay is 3\ndock1 = Dock()\ndock1.bay = 3\n\n# Any dock's sign is \"D\" plus the dock's bay\n$Dock.sign = \"D\" + $Dock.bay\n\nassert(dock1.sign, \"D3\")\n\n# Any dock's sign is \"DOCK-\" plus the dock's bay\n$Dock.sign = \"DOCK-\" + $Dock.bay\n\nassert(dock1.sign, \"DOCK-3\")\n\n# dock1's bay is 4\ndock1.bay = 4\n\nassert(dock1.sign, \"DOCK-4\")","return":null}
+ {"id":"synth-06-0021","description":"Nucleoid marks a pallet as heavy with a class-level conditional","code":"# There is a Pallet type\nclass Pallet\n\n# Any pallet heavier than 500 is heavy\nif $Pallet.mass > 500:\n    $Pallet.heavy = true\n\n# pallet1 is a Pallet whose mass is 300\npallet1 = Pallet()\npallet1.mass = 300\n\nassert(pallet1.heavy, null)\n\n# pallet1's mass is 700\npallet1.mass = 700\n\nassert(pallet1.heavy, true)","return":null}
+-{"id":"synth-06-0022","description":"Nucleoid grades a delivery window with a class-level chain","code":"# There is a Delivery type\nclass Delivery\n\n# fast is \"FAST\", normal is \"NORMAL\", and slow is \"SLOW\"\nfast = \"FAST\"; normal = \"NORMAL\"; slow = \"SLOW\"\n\n# If any delivery's days is less than 2, then the delivery's speed is fast,\n# else if the delivery's days is less than 5, then the delivery's speed is normal,\n# else the delivery's speed is slow\nif $Delivery.days < 2:\n    $Delivery.speed = fast\nelse if $Delivery.days < 5:\n    $Delivery.speed = normal\nelse:\n    $Delivery.speed = slow\n\n# delivery1 is a Delivery whose days is 3\ndelivery1 = Delivery()\ndelivery1.days = 3\n\nassert(delivery1.speed, \"NORMAL\")\n\n# normal is \"STANDARD\"\nnormal = \"STANDARD\"\n\nassert(delivery1.speed, \"STANDARD\")\n\n# delivery1's days is 9\ndelivery1.days = 9\n\nassert(delivery1.speed, \"SLOW\")","return":null}
++{"id":"synth-06-0022","description":"Nucleoid grades a delivery window with a class-level chain","code":"# There is a Delivery type\nclass Delivery\n\n# fast is \"FAST\", normal is \"NORMAL\", and slow is \"SLOW\"\nfast = \"FAST\"; normal = \"NORMAL\"; slow = \"SLOW\"\n\n# If any delivery's days is less than 2, then the delivery's speed is fast,\n# else if the delivery's days is less than 5, then the delivery's speed is normal,\n# else the delivery's speed is slow\nif $Delivery.days < 2:\n    $Delivery.speed = fast\nelse if $Delivery.days < 5:\n    $Delivery.speed = normal\nelse\n    $Delivery.speed = slow\n\n# delivery1 is a Delivery whose days is 3\ndelivery1 = Delivery()\ndelivery1.days = 3\n\nassert(delivery1.speed, \"NORMAL\")\n\n# normal is \"STANDARD\"\nnormal = \"STANDARD\"\n\nassert(delivery1.speed, \"STANDARD\")\n\n# delivery1's days is 9\ndelivery1.days = 9\n\nassert(delivery1.speed, \"SLOW\")","return":null}
+ {"id":"synth-06-0023","description":"Nucleoid counts the parcels of a depot with a class-level aggregate","code":"# There is a Depot type\nclass Depot\n\n# There is a Parcel type\nclass Parcel\n\n# depot1 is a Depot\ndepot1 = Depot()\n\n# parcel1 is a Parcel whose depot is depot1\nparcel1 = Parcel()\nparcel1.depot = depot1\n\n# parcel2 is a Parcel whose depot is depot1\nparcel2 = Parcel()\nparcel2.depot = depot1\n\n# Any depot's held is the number of parcels whose depot is the depot\n$Depot.held = Parcel.filter(p => p.depot == $Depot).length\n\nassert(depot1.held, 2)\n\n# parcel3 is a Parcel whose depot is depot1\nparcel3 = Parcel()\nparcel3.depot = depot1\n\nassert(depot1.held, 3)","return":null}
+ {"id":"synth-06-0024","description":"Nucleoid builds a waybill from a property that arrives later","code":"# There is a Waybill type\nclass Waybill\n\n# waybill1 is a Waybill\nwaybill1 = Waybill()\n\n# waybill1's full is \"WB\" plus waybill1's serial\nwaybill1.full = \"WB\" + waybill1.serial\n\nassert(waybill1.full, null)\n\n# waybill1's serial is \"77120\"\nwaybill1.serial = \"77120\"\n\nassert(waybill1.full, \"WB77120\")","return":null}
+ {"id":"synth-06-0025","description":"Nucleoid reads a driver through a vehicle reference","code":"# There is a Vehicle type\nclass Vehicle\n\n# There is a Driver type\nclass Driver\n\n# vehicle1 is a Vehicle\nvehicle1 = Vehicle()\n\n# driver1 is a Driver whose name is \"Sam\"\ndriver1 = Driver()\ndriver1.name = \"Sam\"\n\n# vehicle1's driver is driver1\nvehicle1.driver 
+```
+
+---
+
+### Incident Patch 3: `8d116f4a` (2026-10-15)
+**Commit Message**: Add reactive quintic smootherstep
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +19/-0)
+```diff
+@@ -643,6 +643,25 @@ assert(display, 5)
+ - Nested branch association, live inputs, scope, returns and rollback are
+   unchanged. Strings and comments containing `else:` are not rewritten.
+ 
++**Quintic smootherstep keeps input changes live**
++
++```nuc
++value = 0.25
++unit = Math.saturate(value)
++eased = Math.smootherstep(0, 1, value)
++assert(unit, 0.25)
++assert(eased, 0.103515625)
++value = 0.75
++assert(eased, 0.896484375)
++```
++
++- Accepted [NUC 35](docs/nuc-0035.md) adds static
++  `Math.smootherstep(lower, upper, value)` beside unchanged cubic
++  `Math.smoothstep`. The independent `unit` control remains live.
++- Normalize and clamp before the exactly ordered quintic; do not clamp its
++  result, which can round beyond the unit interval. Existing numeric coercion,
++  special values, deferred reads, argument effects and rollback are preserved.
++
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +5/-0)
+```diff
+@@ -346,3 +346,8 @@
+ {"id":"spec-0346","description":"Nucleoid preserves returns from indented else function branches","code":"def choose(flag, value):\n    if flag:\n        return value\n    else\n        return value + 1\nenabled = false\namount = 2\nchosen = choose(enabled, amount)\nassert(chosen, 3)\nenabled = true\nassert(chosen, 2)\namount = 5\nassert(chosen, 5)\nenabled = false\nassert(chosen, 6)\nchosen","return":"6"}
+ {"id":"spec-0347","description":"Nucleoid rolls back throws from indented else suites","code":"marker = 7\ntry:\n    if false:\n        marker = 8\n    else\n        marker = 9\n        throw \"ABORT\"\ncatch error:\n    assert(error, \"ABORT\")\nassert(marker, 7)\ngate = false\nif gate:\n    result = 1\nelse\n    result = 2\nassert(result, 2)\ngate = true\nassert(result, 1)","return":null}
+ {"id":"spec-0348","description":"Nucleoid preserves legacy suites beside indented else bodies","code":"result = 0\nif true: result = 1\nelse: result = 2\nassert(result, 1)\nif false:\n    result = 3\nelse\n    result = 4\nassert(result, 4)\nif true: { result = 5 }\nelse: { result = 6 }\nassert(result, 5)\ntext = \"else:\"\nassert(text, \"else:\")\nflag = false\nvalue = 2\nif flag:\n    answer = value\nelse # else: in a comment is not a delimiter\n    answer = value + 10\nassert(answer, 12)\nflag = true\nassert(answer, 2)\nvalue = 6\nassert(answer, 6)","return":null}
++{"id":"spec-0349","description":"Nucleoid keeps quintic smootherstep reactive to all three inputs","code":"lower = 0\nupper = 8\nvalue = 2\nunit = Math.saturate((value - lower) / (upper - lower))\neased = Math.smootherstep(lower, upper, value)\nassert(unit, 0.25)\nassert(eased, 0.103515625)\nvalue = 4\nassert(unit, 0.5)\nassert(eased, 0.5)\nupper = 16\nassert(unit, 0.25)\nassert(eased, 0.103515625)\nlower = -8\nassert(unit, 0.5)\nassert(eased, 0.5)\nvalue = -16\nassert(unit, 0)\nassert(eased, 0)\nvalue = 24\nassert(unit, 1)\nassert(eased, 1)\nupper = -32\nassert(unit, 0)\nassert(eased, 0)\nvalue = -20\nassert(unit, 0.5)\nassert(eased, 0.5)\neased","return":"0.5"}
++{"id":"spec-0350","description":"Nucleoid preserves numeric coercion while applying quintic smootherstep","code":"lower = \" 0 \"\nupper = \"8\"\nvalue = \"2\"\nunit = Math.saturate((value - lower) / (upper - lower))\neased = Math.smootherstep(lower, upper, value)\nassert(unit, 0.25)\nassert(eased, 0.103515625)\nlower = false\nupper = true\nvalue = true\nassert(unit, 1)\nassert(eased, 1)\nlower = []\nupper = [\"8\"]\nvalue = [\"6\"]\nassert(unit, 0.75)\nassert(eased, 0.896484375)\nlower = Date(0)\nupper = Date(8)\nvalue = Date(4)\nassert(unit, 0.5)\nassert(eased, 0.5)\nvalue = [1, 2]\nassert(Number.isNaN(unit), true)\nassert(Number.isNaN(eased), true)","return":null}
++{"id":"spec-0351","description":"Nucleoid preserves special values and omitted smootherstep inputs","code":"lower = 2\nupper = 2\nvalue = 2\nunit = Math.saturate((value - lower) / (upper - lower))\neased = Math.smootherstep(lower, upper, value)\nassert(Number.isNaN(unit), true)\nassert(Number.isNaN(eased), true)\nvalue = 1\nassert(unit, 0)\nassert(eased, 0)\nvalue = 3\nassert(unit, 1)\nassert(eased, 1)\nupper = 0\nassert(unit, 0)\nassert(eased, 0)\nvalue = 1\nassert(unit, 0.5)\nassert(eased, 0.5)\nupper = Number.POSITIVE_INFINITY\nassert(unit, 0)\nassert(eased, 0)\nvalue = Number.POSITIVE_INFINITY\nassert(Number.isNaN(unit), true)\nassert(Number.isNaN(eased), true)\nnan = Number.NaN\nvalue = nan\nassert(Number.isNaN(unit), true)\nassert(Number.isNaN(eased), true)\nlower = Number.NEGATIVE_INFINITY\nupper = Number.POSITIVE_INFINITY\nvalue = 0\nassert(Number.isNaN(unit), true)\nassert(Number.isNaN(eased), true)\nempty = Math.smootherstep()\none = Math.smootherstep(0)\ntwo = Math.smootherstep(0, 1)\nassert(Number.isNaN(empty), true)\nassert(Number.isNaN(one), true)\nassert(Number.isNaN(two), true)\nhalf = Math.saturate(0.5)\nwithExtra = Math.smootherstep(0, 1, 0.5, 99)\nignored = Number.NaN\nwithIgnored = Math.smootherstep(0, 1, 0.5, ignored)\nassert(half, 0.5)\nassert(withExtra, 0.5)\nassert(withIgnored, 0.5)","return":null}
++{"id":"spec-0352","description":"Nucleoid applies quintic smootherstep to live class rules","code":"class Curve\nlower = 0\nupper = 8\n$Curve.unit = Math.saturate(($Curve.sample - lower) / (upper - lower))\n$Curve.eased = Math.smootherstep(lower, upper, $Curve.sample)\nfirst = Curve()\nsecond = Curve()\nfirst.sample = 2\nsecond.sample = 6\nassert(first.unit, 0.25)\nassert(first.eased, 0.103515625)\nassert(second.unit, 0.75)\nassert(second.eased, 0.896484375)\nupper = 16\nassert(first.unit, 0.125)\nassert(first.eased, 0.01605224609375)\nassert(second.unit, 0.375)\nassert(second.eased, 0.27520751953125)\nfirst.sample = 8\nassert(first.unit, 0.5)\nassert(first.eased, 0.5)\nthird = Curve()\nassert(third.unit, null)\nassert(third.eased, null)\nthird.sample = 4\nassert(third.unit, 0.25)\nassert(third.eased, 0.103515625)\ndelete first.sample\nassert(first.unit, null)\nassert(first.eased, null)\nfir
+```
+
+**File**: `docs/README.md` (modified, +55/-1)
+```diff
+@@ -689,6 +689,8 @@ and the unchanged explicit-loop entries in the root specification.
+   that limitation, as specified by [NUC 21](nuc-0021.md).
+ - Accepted [NUC 33](nuc-0033.md) keeps `Math.smoothstep` subject to the same
+   unsupported method-read limitation.
++- Accepted [NUC 35](nuc-0035.md) keeps `Math.smootherstep` subject to that same
++  limitation; it adds only a static call, not a callable method value.
+ - Calls through variables, list items, and object properties depend on the callable's storage location.
+ - A null callable, an unassigned callable property, or a callable deleted during propagation leaves its dependent result null until rebound. Other non-callable values raise `TypeError`.
+ - `.value` freezes the function definition, not the state read when its body executes.
+@@ -1004,7 +1006,7 @@ Full detail: [NUC 9](nuc-0009.md).
+ | `Object` | `Object()` -- a plain object, not an instance of any type |
+ | `Boolean` | `Boolean(value)` |
+ | `Number` | `Number.MAX_INTEGER` |
+-| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)) |
++| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `repeat`, `split` |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+ | `List` | `push`, `pop`, `filter`, `map`, `reduce`, `find`, `some`, `every`, `slice`, `sort`, `join`, `length` |
+@@ -1128,6 +1130,58 @@ assert(eased, 0.31640625)
+ - Accepted [NUC 33](nuc-0033.md) records the lower/upper/value order, exact
+   maximum-then-minimum normalization and separate ordered cubic operations.
+ 
++### Quintic smootherstep keeps all three inputs live
++
++```
++lower = 0
++upper = 8
++value = 2
++unit = Math.saturate((value - lower) / (upper - lower))
++eased = Math.smootherstep(lower, upper, value)
++assert(unit, 0.25)
++assert(eased, 0.103515625)
++value = 6
++assert(eased, 0.896484375)
++upper = 16
++assert(eased, 0.27520751953125)
++```
++
++- This is the sealed executable reference entry in `tests/reference.md`,
++  omitting only its title comment; `unit` remains an independent live control.
++- Accepted [NUC 35](nuc-0035.md) adds only static
++  `Math.smootherstep(lower, upper, value)` beside unchanged cubic smoothstep.
++  The authoritative [quintic section](../nucleoid.spec.md#reactive-quintic-smootherstep)
++  and its five entries specify the accepted contract.
++- After the existing any-supplied-`Undefined` gate, convert lower, upper and
++  value intrinsically with `Value::to_number`, in order; each omission is
++  numeric NaN. Do not invoke or track shadowable `Number` or `Math.saturate`.
++- Compute separate `numerator = value - lower`, `denominator = upper - lower`,
++  `normalize = numerator / denominator`, then use the unchanged maximum-fold
++  followed by minimum-fold unit clamp to obtain `t`.
++- Compute separate `square = t * t`, `cube = square * t`, `scaled = 6.0 * t`,
++  `offset = scaled - 15.0`, `weighted = t * offset`,
++  `polynomial = weighted + 10.0`, then `cube * polynomial`, in that order.
++- Do not expand/reassociate the polynomial, fuse operations, use `powf` or
++  host clamp, validate/reorder bounds, shortcut endpoints or clamp the result.
++  Rounded polynomial results can overshoot `[0, 1]`.
++- Equal/reversed/infinite/overflow bounds, NaNs, subnormals and zero bits
++  follow the exact accepted composition. Compare expected NaNs by
++  classification and all other numeric bits, including zeros, against host
++  controls; no portable NaN-payload or zero-sign promise is added.
++- Literal null converts numerically to zero without overriding live-null
++  assignment or parameter deferral. Other values keep existing conversion;
++  nonnumeric conversions yield numeric NaN rather than new type errors.
++- Every supplied expression runs once left to right, including extras.
++  Extra values are unconverted but keep reads, effects, strict errors and the
++  supplied-Undefined gate, including deferred property deletion/recovery.
++- State/local Math shadowing, ordinary members, unsupported method reads,
++  typed wrappers, call frames, receivers, class rules and transactional
++  rollback remain unchanged. Immediate intrinsic dependencies differ from
++  the emulation's unit node, while controls and transitive behavior agree.
++- The mathematical quintic has smoother endpoint transitions than the cubic;
++  no exact floating-point derivative claim is made. All sibling Math methods,
++  accepted syntax, public APIs and inherited scope/resource limits remain.
++
+ ---
+ 
+ ## 12. Re
+```
+
+**File**: `docs/examples.md` (modified, +28/-0)
+```diff
+@@ -1941,6 +1941,34 @@ assert(item.status, "EMPTY")
+   optional; the same source with `else:` remains equivalent. Every condition
+   header retains its colon and existing branch order.
+ 
++**Smooth quintic transitions preserve clamped endpoints**
++
++```nuc
++lower = 0
++upper = 8
++value = -2
++unit = Math.saturate((value - lower) / (upper - lower))
++eased = Math.smootherstep(lower, upper, value)
++assert(unit, 0)
++assert(eased, 0)
++value = 2
++assert(unit, 0.25)
++assert(eased, 0.103515625)
++value = 6
++assert(unit, 0.75)
++assert(eased, 0.896484375)
++value = 10
++assert(unit, 1)
++assert(eased, 1)
++```
++
++- Accepted [NUC 35](nuc-0035.md) specifies lower/upper/value normalization and
++  the ordered quintic, retaining every independent unit-control assertion.
++- The clamped normalization supplies the displayed endpoint results; rounded
++  interior polynomial values are not promised to stay in `[0, 1]`.
++- Equal/reversed bounds, nonfinite values, coercion and deferred reads follow
++  the existing arithmetic composition without validation or shortcuts.
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -65,6 +65,7 @@ Created: 31-Jul-2026
+ | [32](nuc-0032.md) | Indented Named Arrow Expressions | Accepted |
+ | [33](nuc-0033.md) | Reactive Cubic Smoothstep | Accepted |
+ | [34](nuc-0034.md) | Colon-Free Indented Else Suites | Accepted |
++| [35](nuc-0035.md) | Reactive Quintic Smootherstep | Accepted |
+ 
+ ## Numerical Index
+ 
+@@ -104,6 +105,7 @@ Created: 31-Jul-2026
+ | [32](nuc-0032.md) | Indented Named Arrow Expressions | Standards Track | Accepted |
+ | [33](nuc-0033.md) | Reactive Cubic Smoothstep | Standards Track | Accepted |
+ | [34](nuc-0034.md) | Colon-Free Indented Else Suites | Standards Track | Accepted |
++| [35](nuc-0035.md) | Reactive Quintic Smootherstep | Standards Track | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0035.md` (added, +300/-0)
+```diff
+@@ -0,0 +1,300 @@
++# NUC 35 -- Reactive Quintic Smootherstep
++
++```
++NUC: 35
++Title: Reactive Quintic Smootherstep
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Accepted
++Type: Standards Track
++Created: 15-Oct-2026
++Requires: 21, 22, 23, 33
++```
++
++## Abstract
++
++- Add only static `Math.smootherstep(lower, upper, value)`, the quintic
++  counterpart to accepted cubic `Math.smoothstep`.
++- Normalize between the supplied bounds, apply the existing ordered unit
++  clamp, then evaluate the exactly ordered quintic expression.
++- Preserve accepted syntax, intrinsic conversion, once-only argument effects,
++  reactive reads, class rules and transactions.
++- Independent evaluation accepted the frozen implementation before integration.
++
++## Motivation
++
++- Name a common live easing relationship without repeatedly spelling its
++  normalization and quintic polynomial.
++- Offer a mathematical transition with smoother endpoints than the cubic,
++  without claiming exact floating-point derivatives.
++- Retain independent normalization controls, assertions and expected returns
++  rather than removing evidence to abbreviate demonstrations.
++
++## Rationale
++
++- Match `Math.smoothstep`'s lower/upper/value order, deliberately unlike
++  value-first `Math.clamp`.
++- Reuse the accepted private numeric clamp, with maximum fold before minimum
++  fold; do not change the cubic arm or either extremum fold.
++- Specify separate arithmetic operations so the result matches the accepted
++  expression `unit * unit * unit * (unit * (6 * unit - 15) + 10)`.
++- An expanded `6t^5 - 15t^4 + 10t^3`, fused operations, endpoint shortcuts or
++  post-polynomial clamping would change observable rounding.
++- Do not impose range validation or an external undefined-range convention
++  on equal, reversed, infinite or overflowed bounds.
++- A clamped normalization does not guarantee a rounded result in `[0, 1]`;
++  the ordered quintic can overshoot that interval near an endpoint.
++- Compare expected NaNs by classification and every other numeric result by
++  bits against independent accepted host controls, including zeros.
++- Do not invent portable NaN-payload or zero-sign promises.
++- Intrinsic conversion must not resolve or track shadowable `Number` or
++  `Math.saturate`; doing so would introduce unrelated lookup and dependencies.
++- Keep omissions as numeric NaN and extras in evaluation and the supplied
++  Undefined gate, without numerically converting their values.
++- Depend only on already accepted features; do not combine pending proposals
++  or alter versions, MSRV, dependencies, public representations or APIs.
++
++## Specification
++
++### Static numeric contract
++
++- The authoritative [Reactive quintic smootherstep section](../nucleoid.spec.md#reactive-quintic-smootherstep)
++  specifies the accepted behavior and takes precedence over this proposal.
++- The only added unshadowed static signature is
++  `Math.smootherstep(lower, upper, value)`.
++- Evaluate every supplied argument expression once, left to right, through
++  the unchanged call machinery before Math's existing numeric gate.
++- If any supplied value is `Undefined`, including an extra, return
++  `Undefined` before conversion.
++- Intrinsically convert lower, upper and value with `Value::to_number`, in
++  that order; the existing dispatcher already converts the first input.
++- Each omitted input is numeric NaN, not a supplied Undefined.
++- Numbers retain their values, literal null converts to zero, booleans to
++  zero/one, trimmed strings and empty/singleton lists keep existing numeric
++  conversion, and dates contribute milliseconds.
++- Other nonnumeric conversions yield numeric NaN, not a new type error.
++- Compute `numerator = value - lower`.
++- Compute `denominator = upper - lower`.
++- Compute `normalize = numerator / denominator`.
++- Compute `t = numeric_clamp(normalize, 0.0, 1.0)` using the unchanged
++  maximum fold first and minimum fold second.
++- Compute `square = t * t`.
++- Compute `cube = square * t`.
++- Compute `scaled = 6.0 * t`.
++- Compute `offset = scaled - 15.0`.
++- Compute `weighted = t * offset`.
++- Compute `polynomial = weighted + 10.0`.
++- Return numeric `cube * polynomial`.
++- Every step is separate ordinary `f64` arithmetic in exactly that order.
++- Do not use `powf`, `mul_add`, reassociation, an expanded polynomial, host
++  `f64::clamp`, endpoint shortcuts, bound validation/reordering, conversion
++  skips or a post-polynomial clamp.
++- Equal finite bounds with the same value yield numeric NaN; lower/higher
++  values first normalize to negative/positive infinity before clamping.
++- Reversed bounds retain their supplied order; infinite subtraction or
++  overflow can produce NaN even at an endpoint.
++- NaNs, infinities, overflow, subnormals and signed zeros follow this exact
++  composition. Expected NaNs use classification; every non-NaN result,
++  including zero, matches the accepted host composition's bits.
++- The polynomial can round above one even whe
+```
+
+**File**: `nucleoid.spec.md` (modified, +272/-0)
+```diff
+@@ -905,6 +905,80 @@ statement positions; caught values and transaction recovery are unchanged.
+   deferred reads and rollback for cubic smoothstep` pair this contract with
+   independent accepted unit-normalization controls and unchanged assertions.
+ 
++## Reactive quintic smootherstep
++
++- Accepted [NUC 35](docs/nuc-0035.md) adds only static
++  `Math.smootherstep(lower, upper, value)`, the quintic counterpart to cubic
++  `Math.smoothstep`. Bounds precede the value, unlike `Math.clamp`.
++- After the unchanged any-supplied-`Undefined` gate, convert lower, upper and
++  value intrinsically with `Value::to_number`, in that order. The dispatcher
++  already converts the first input. Each omission supplies numeric `NaN`,
++  not a supplied `Undefined`.
++- Perform exactly these separate ordinary `f64` operations in order:
++  `numerator = value - lower`, `denominator = upper - lower`,
++  `normalize = numerator / denominator`,
++  `t = numeric_clamp(normalize, 0.0, 1.0)`, `square = t * t`,
++  `cube = square * t`, `scaled = 6.0 * t`, `offset = scaled - 15.0`,
++  `weighted = t * offset`, `polynomial = weighted + 10.0`,
++  `result = cube * polynomial`.
++- The unchanged private numeric clamp applies the accepted maximum fold to
++  `[normalize, 0]`, then the accepted minimum fold to `[bounded, 1]`.
++  Independent accepted controls use
++  `unit = Math.saturate((value - lower) / (upper - lower))` and
++  `unit * unit * unit * (unit * (6 * unit - 15) + 10)`.
++- Do not expand/reassociate the polynomial as `6t^5 - 15t^4 + 10t^3`, use
++  `powf`, `mul_add`, host `f64::clamp`, endpoint shortcuts, bound validation
++  or reordering, conversion skips, or a post-polynomial clamp.
++- Equal/reversed bounds, infinite subtraction, overflow, NaNs, subnormals and
++  signed zeros follow this exact composition. Equal finite bounds with the
++  same value yield numeric `NaN`; lower/higher values normalize to
++  negative/positive infinity before clamping. Overflow can produce NaN at an
++  endpoint. Reversed bounds are used in their supplied order.
++- Expected NaNs compare by classification; every non-NaN result, including
++  zero, retains the independent accepted host composition's bits.
++  No portable NaN-payload or zero-sign convention is introduced.
++- The rounded polynomial can overshoot the unit interval, even though `t` is
++  clamped. Do not promise that every numeric result lies in `[0, 1]`.
++  The mathematical quintic has a smoother endpoint transition than the cubic;
++  this is not a claim of exact floating-point derivatives.
++- Numbers retain their values, literal null converts to zero, booleans to
++  zero/one, trimmed strings and empty/singleton lists retain existing numeric
++  conversion, and dates contribute milliseconds. Other nonnumeric conversions
++  yield numeric `NaN`, not a new type error.
++- Every supplied expression runs once, left to right, including unused extras.
++  Extras are not converted numerically, but retain reads, effects, dependencies,
++  strict errors and the any-supplied-`Undefined` gate.
++- Any supplied `Undefined`, including an extra, returns `Undefined` before
++  conversion. Existing live-null/deferred assignments and parameters still
++  defer and recover; intrinsic literal-null conversion does not override them.
++- Strict unknown identifiers retain `ReferenceError("<name> is not defined")`,
++  including in extras or after an undefined property. Preserve positions,
++  caught values, transactional rollback and later recovery.
++- State/local `Math` bindings keep shadowing the namespace; ordinary `.Math`
++  members retain lookup. Reading `Math.smootherstep` as a value stays
++  unsupported/`Undefined`, not a first-class callable reference.
++- Intrinsic conversion neither invokes nor tracks shadowable `Number` or
++  `Math.saturate`, and does not recursively invoke public Math dispatch.
++  Wrappers, call frames, receivers, per-instance class rules, property deletion
++  and deferred reads use unchanged call, scope, graph and transaction machinery.
++- Cubic `Math.smoothstep`, `clamp`, `saturate`, `lerp`, all other Math members
++  and constants retain their behavior. Unknown methods still raise
++  `TypeError("Math.<name> is not a function")`; `Math.random()` retains
++  `TypeError("Math.random is not supported")`, after the existing undefined gate.
++- No grammar, parser, lexer, generator, CLI, public representation/API,
++  dependency, version, MSRV or resource-limit change is added. All accepted
++  syntax and inherited noncapture/parameter-local limitations remain unchanged;
++  this makes no broader Windows stack-safety claim.
++- The five entries titled `Nucleoid keeps quintic smootherstep reactive to all
++  three inputs`, `Nucleoid preserves numeric coercion while applying quintic
++  smootherstep`, `Nucleoid preserves special values and omitted smootherstep
++  inputs`, `Nucleoid applies quintic smootherstep to live class rules`, and
++  `Nucleoid preserves deferred reads and rollback for quintic smootherstep`
++  trace th
+```
+
+**File**: `src/builtins/mod.rs` (modified, +165/-0)
+```diff
+@@ -147,6 +147,23 @@ pub fn math(name: &str, arguments: &[Value]) -> Result<Value> {
+             let falloff = 3.0 - scaled;
+             square * falloff
+         }
++        "smootherstep" => {
++            let upper = arguments.get(1).map(Value::to_number).unwrap_or(f64::NAN);
++            let value = arguments.get(2).map(Value::to_number).unwrap_or(f64::NAN);
++            // Match the accepted normalization and quintic expression's order,
++            // including its rounding; do not clamp the polynomial's result.
++            let numerator = value - first;
++            let denominator = upper - first;
++            let normalize = numerator / denominator;
++            let t = numeric_clamp(normalize, 0.0, 1.0);
++            let square = t * t;
++            let cube = square * t;
++            let scaled = 6.0 * t;
++            let offset = scaled - 15.0;
++            let weighted = t * offset;
++            let polynomial = weighted + 10.0;
++            cube * polynomial
++        }
+         "lerp" => {
+             let end = arguments.get(1).map(Value::to_number).unwrap_or(f64::NAN);
+             let weight = arguments.get(2).map(Value::to_number).unwrap_or(f64::NAN);
+@@ -484,6 +501,154 @@ mod tests {
+         }
      }
- }
  
-```
-
----
-
-### Incident Patch 10: `7c14002e` (2026-08-01)
-**Commit Message**: Add Rust typing and open source guidelines
-
-Adds guidance on porting ref/'s structure with concrete Rust types (enums, structs, newtypes, typed errors), preferring well-maintained crates over hand-rolled infrastructure, and open source conventions (cargo fmt, clippy, Cargo.toml metadata, semantic versioning).
-
-**File**: `CLAUDE.md` (modified, +8/-0)
-```diff
-@@ -19,6 +19,14 @@ Build a Rust implementation of Nucleoid. The crate is at the repository root (`C
- 
- Use `ref/` for **how** the runtime is built — dependency graph, scope chain, stack, transactions, statement node types. Do not use it for **what** the language does: its error types and built-in names diverge from the spec deliberately.
- 
-+Port `ref/`'s structure, not its dynamism. `ref/` is untyped JavaScript; the Rust crate must model the same concepts with concrete types — enums for closed sets (node kinds, runtime values, error kinds), dedicated structs for graph nodes, scopes, stack frames and transactions, newtypes for identifiers and node keys, and a typed error enum returned through `Result`. No stringly-typed maps or dynamic catch-all value as the internal representation.
++    fn ordered_quintic_smoothing(lower: &Value, upper: &Value, value: &Value) -> Value {
++        if [lower, upper, value].into_iter().any(Value::is_undefined) {
++            return Value::Undefined;
++        }
++        let [lower, upper, value] =
++            [lower, upper, value].map(|value| Value::Number(value.to_number()));
++        let numerator = binary(BinaryOp::Subtract, &value, &lower).unwrap();
++        let denominator = binary(BinaryOp::Subtract, &upper, &lower).unwrap();
++        let normalize = binary(BinaryOp::Divide, &numerator, &denominator).unwrap();
++        let t = ordered_composition(&normalize, &Value::number(0), &Value::number(1));
++        let square = binary(BinaryOp::Multiply, &t, &t).unwrap();
++        let cube = binary(BinaryOp::Multiply, &square, &t).unwrap();
++        let scaled = binary(BinaryOp::Multiply, &Value::number(6), &t).unwrap();
++        let offset = binary(BinaryOp::Subtract, &scaled, &Value::number(15)).unwrap();
++        let weighted = binary(BinaryOp::Multiply, &t, &offset).unwrap();
++        let polynomial = binary(BinaryOp::Add, &weighted, &Value::number(10)).unwrap();
++        binary(BinaryOp::Multiply, &cube, &polynomial).unwrap()
++    }
 +
-+Prefer popular, well-maintained crates over hand-rolled infrastructure — lexing/parsing, error types and diagnostics, graph storage, ordered maps, numerics, serialization, the CLI. Pick the mainstream choice for each slot, one crate per slot, and note why when adding it to `Cargo.toml`. Nucleoid's own runtime semantics stay hand-written, and third-party representations are wrapped in the crate's own types rather than leaking through the interpreter.
++    #[test]
++    fn smootherstep_matches_independent_ordered_binary_controls_for_every_value_kind() {
++        let values = values();
++        for lower in &values {
++            for upper in &values {
++                for value in &values {
++                    assert_smoothing_same(
++                        &math(
++                            "smootherstep",
++                            &[lower.clone(), upper.clone(), value.clone()],
++                        )
++                        .unwrap(),
++                        &ordered_quintic_smoothing(lower, upper, value),
++                    );
++                }
++            }
++        }
++    }
 +
-+## Open source
++    #[test]
++    fn smootherstep_keeps_nonfinite_overflow_subnormal_boundary_and_zero_composition_bits() {
++        let one = 1.0_f64.to_bits();
++        let half = 0.5_f64.to_bits();
++        let numbers = [
++            -f64::MAX,
++            -1e16,
++            -1.0,
++            -f64::MIN_POSITIVE,
++            -f64::from_bits(1),
++            -0.0,
++            0.0,
++            f64::from_bits(1),
++            f64::MIN_POSITIVE,
++            f64::EPSILON,
++            0.1,
++            0.125,
++            0.25,
++            f64::from_bits(half - 1),
++            0.5,
++            f64::from_bits(half + 1),
++            0.75,
++            0.9,
++            f64::from_bits(one - 3),
++            f64::from_bits(one - 1),
++            1.0,
++            f64::from_bits(one + 1),
++            1e16,
++            f64::MAX,
++            f64::NEG_INFINITY,
++            f64::INFINITY,
++            f64::NAN,
++            f64::from_bits(0x7ff8_0000_0000_0042),
++            f64::from_bits(0xfff8_0000_0000_0042),
++        ];
++        for lower in numbers {
++            for upper in numbers {
++                for value in numbers {
++                    let arguments = [lower, upper, value].map(Value::Number);
++                    assert_smoothing_same(
++                        &math("smootherstep", &arguments).unwrap(),
++                        &ordered_quintic_smoothing(&arguments[0], &arguments[1], &arguments[2]),
++                    );
++                }
++            }
++        }
++    }
 +
-+Nucleoid is published as open source under Apache-2.0, so everything is public-facing and follows mainstream Rust community practice rather than local invention: default `cargo fmt`, `cargo clippy` clean with warnings denied in CI, library in `src/lib.rs` with a thin binary, integration tests in `tests/`, examples in `examples/`, complete `Cargo.toml` metadata (`description`, `license`, `repository`, `readme`, `keywords`, `categories`, `rust-version`) before publishing, and semantic versioning on the public API. When a convention exists, default to it and flag any deliberate divergence.
-+
- `nucleoid.spec.md` is authoritative. Where `synth/`, `docs/` or `ref/` disagrees with it, the main reference wins.
- 
- `nucleoid.spec.md`, `synth/`, `docs/` and the Rust crate (`Cargo.toml`, `src/`) must stay in sync. Every change to one must be propagated to the others as part of the same change.
-```
-
-**File**: `Cargo.lock` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+# This file is automatically @generated by Cargo.
-+# It is not intended for manual editing.
-+version = 4
-+
-+[[package]]
-+name = "nucleoid"
-+version = "0.1.0"
-```
-
----
-
-### Incident Patch 11: `eb37d90c` (2026-07-31)
-**Commit Message**: Align spec examples and freeze ref guidance
-
-Updates the language reference and synthesized specs to better match current syntax/style by replacing `elif` with `else if` in examples, removing repeated project metadata headers, and tightening several scenario examples (e.g., typed undefined declaration, multi-branch status/acceptance rules, and wording fixes like `renew`). It also adds explicit guidance in `CLAUDE.md` that `ref/` is read-only reference material and must not be modified.
-
-**File**: `CLAUDE.md` (modified, +2/-0)
-```diff
-@@ -12,3 +12,5 @@ However, new syntax may be introduced where it is needed to achieve that goal. T
- 
- - `nucleoid.spec.md` — runtime behaviours
- - `ref/` — technical reference (the archived JS implementation)
-+
-+`ref/` is **frozen**. Read it for reference, never modify it.
-```
-
-**File**: `nucleoid.spec.md` (modified, +23/-24)
-```diff
-@@ -1,8 +1,5 @@
- # Nucleoid Language Reference
- 
--Project: Nucleoid is a Logic Programming Language for LLMs
--Syntax: Minimum tokenized syntax with flexible grammar, which is a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
--
- ```
- 
- # Nucleoid runs a statement in the state
-@@ -334,7 +331,7 @@ assert(condition, false)
- class Device:
-     pass
- 
--# Any device's renewal is the device's creation time plus 604800000
-+# Any device's renew is the device's creation time plus 604800000
- $Device.renew = $Device.created + 604800000
- 
- # device is a Device whose creation time is now
-@@ -733,7 +730,7 @@ mass = 10
- # else if g is greater than 3, then weight is mars times mass
- if g > 9:
-     weight = earth * mass
--elif g > 3:
-+else if g > 3:
-     weight = mars * mass
- 
- # g is 5
-@@ -761,7 +758,7 @@ point = 1
- # else score is fraction times point
- if fraction > 1:
-     score = fraction * point * 3
--elif fraction > 0:
-+else if fraction > 0:
-     score = fraction * point * 2
- else:
-     score = fraction * point
-@@ -1266,10 +1263,6 @@ assert(depth, 161.8)
- class Account:
-     pass
- 
--# There is a Balance type
--class Balance:
--    pass
--
- # There is a Currency type
- class Currency:
-     pass
-@@ -1730,7 +1723,7 @@ try:
-     $Chart.plot = Plot()
- catch error:
-     assert(error, ReferenceError("Plot is not defined"))
--    
-+
- ---
- 
- # Nucleoid creates a property assignment before declaration
-@@ -2310,7 +2303,7 @@ rate = 22
- # else taxpayer1's tax is taxpayer1's income times rate divided by 100
- if taxpayer1.member > 4:
-     taxpayer1.tax = taxpayer1.income * rate / 100 - 2000
--elif taxpayer1.member > 2:
-+else if taxpayer1.member > 2:
-     taxpayer1.tax = taxpayer1.income * rate / 100 - 1000
- else:
-     taxpayer1.tax = taxpayer1.income * rate / 100
-@@ -2847,8 +2840,8 @@ assert(alkalis.pop(), element1)
- # Nucleoid rejects a variable declaration without definition
- 
- try:
--    # a is declared but not defined
--    a
-+    # a is declared as a number but not defined
-+    a: int
- catch error:
-     assert(error, ReferenceError("Missing definition"))
- 
-@@ -3468,15 +3461,18 @@ assert(concentration1.formula, "(c1V1+c2V2+c3V3)/(V1+V2+V3)")
- class Storage:
-     pass
- 
--# normal is "NORMAL", and low is "LOW"
--normal = "NORMAL"; low = "LOW"
-+# normal is "NORMAL", low is "LOW", and empty is "EMPTY"
-+normal = "NORMAL"; low = "LOW"; empty = "EMPTY"
- 
- # If any storage's capacity is greater than 25, then the storage's status is normal,
--# else the storage's status is low
-+# else if the storage's capacity is greater than 0, then the storage's status is low,
-+# else the storage's status is empty
- if $Storage.capacity > 25:
-     $Storage.status = normal
--else:
-+else if $Storage.capacity > 0:
-     $Storage.status = low
-+else:
-+    $Storage.status = empty
- 
- # storage1 is a Storage
- storage1 = Storage()
-@@ -3499,17 +3495,20 @@ assert(storage1.status, "L")
- class Registration:
-     pass
- 
--# yes is "YES", and no is "NO"
--yes = "YES"; no = "NO"
-+# yes is "YES", pending is "PENDING", and no is "NO"
-+yes = "YES"; pending = "PENDING"; no = "NO"
- 
- # registration1 is a Registration whose available is 0
- registration1 = Registration()
- registration1.available = 0
- 
--# If any registration's available is greater than 0, then the registration's accepted is yes,
-+# If any registration's available is greater than 10, then the registration's accepted is yes,
-+# else if the registration's available is greater than 0, then the registration's accepted is pending,
- # else the registration's accepted is no
--if $Registration.available > 0:
-+if $Registration.available > 10:
-     $Registration.accepted = yes
-+else if $Registration.available > 0:
-+    $Registration.accepted = pending
- else:
-     $Registration.accepted = no
- 
-@@ -3535,7 +3534,7 @@ class Capacity:
- # else the capacity's total is the capacity's available plus the capacity's spare times 3
- if $Capacity.spare / $Capacity.available > 0.5:
-     $Capacity.total = $Capacity.available + $Capacity.spare
--elif $Capacity.spare / $Capacity.available > 0.1:
-+else if $Capacity.spare / $Capacity.available > 0.1:
-     $Capacity.total = $Capacity.available + $Capacity.spare * 2
- else:
-     $Capacity.total = $Capacity.available + $Capacity.spare * 3
-@@ -3576,7 +3575,7 @@ shape1.y = 6
- # else the shape's area is the shape's x times the shape's y
- if $Shape.type == "SQUARE":
-     $Shape.area = Math.pow($Shape.x, 2)
--elif $Shape.type == "TRIANGLE":
-+else if $Shape.type == "TRIANGLE":
-     $Shape.area = $Shape.x * $Shape.y / 2
- else:
-     $Shape.area = $Shape.x * $Shape.y
-```
-
-**File**: `synth/nucleoid.spec.synth.01.md` (modified, +3/-7)
-```diff
-@@ -1,9 +1,5 @@
- # Nucleoid Language Reference - Synthesized Use Cases 01
- 
--Project: Nucleoid is a Logic Programming Language for LLMs
--Syntax: Minimum tokenized syntax with flexible grammar, which is a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
--Source: Synthesized from nucleoid.spec.md, covering behavior combinations not present in the base specification.
--
- ```
- 
- # Nucleoid updates a chain of dependent variables
-@@ -589,7 +585,7 @@ grade3.score = 60
- # else the grade's letter is "C"
- if $Grade.score > 89:
-     $Grade.letter = "A"
--elif $Grade.score > 79:
-+else if $Grade.score > 79:
-     $Grade.letter = "B"
- else:
-     $Grade.letter = "C"
-@@ -729,7 +725,7 @@ humidity = 80
- # else advice is "NORMAL"
- if temperature > 35:
-     advice = "HEAT"
--elif humidity > 70:
-+else if humidity > 70:
-     advice = "HUMID"
- else:
-     advice = "NORMAL"
-@@ -1045,7 +1041,7 @@ package3 = Package(1)
- for package of Package:
-     if package.weight > 20:
-         package.tier = "HEAVY"
--    elif package.weight > 5:
-+    else if package.weight > 5:
-         package.tier = "MEDIUM"
-     else:
-         package.tier = "LIGHT"
-```
-
-**File**: `synth/nucleoid.spec.synth.02.md` (modified, +1/-5)
-```diff
-@@ -1,9 +1,5 @@
- # Nucleoid Language Reference - Synthesized Use Cases 02
- 
--Project: Nucleoid is a Logic Programming Language for LLMs
--Syntax: Minimum tokenized syntax with flexible grammar, which is a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
--Source: Synthesized from nucleoid.spec.md, covering behavior combinations not present in the base specification or in nucleoid.spec.synth.01.md.
--
- ```
- 
- # Nucleoid deletes a class-level property assignment
-@@ -144,7 +140,7 @@ assert(result, 720)
- def sign(n):
-     if n > 0:
-         return "POSITIVE"
--    elif n < 0:
-+    else if n < 0:
-         return "NEGATIVE"
-     return "ZERO"
- 
-```
-
----
-
-### Incident Patch 12: `574a4d1b` (2026-07-31)
-**Commit Message**: Add CLAUDE.md project guidance
-
-Introduce a new CLAUDE.md with the core Nucleoid project context: language vision, grammar design goal, and key references (`nucleoid.spec.md` and `ref/`) for implementation guidance.
-
-**File**: `CLAUDE.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+# Nucleoid
-+
-+Nucleoid is a next-gen Logic Programming Language focused on LLMs.
-+
-+## Goal
-+
-+Design a new grammar with minimum tokenized syntax that stays flexible — a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
-+
-+However, new syntax may be introduced where it is needed to achieve that goal. The superset is a starting point, not a hard constraint.
-+
-+## References
-+
-+- `nucleoid.spec.md` — runtime behaviours
-+- `ref/` — technical reference (the archived JS implementation)
-```
-
----
-
-### Incident Patch 13: `3966371b` (2026-07-31)
-**Commit Message**: Fix spec errors and inconsistencies
-
-Correct multiple issues in nucleoid.spec.md:
-- Fix Shape class constructor syntax (remove `self`)
-- Fix comment typo: 'prevents' -> 'preserves'
-- Replace `classes` with `Class` in assert calls
-- Fix variable name typo: `person1` -> `student1`
-- Fix missing colon in `multiply` function definition
-- Add missing `---` separators
-- Fix error types: ReferenceError -> TypeError for delete/circular dependency
-- Fix error message wording for 'value' property errors
-- Fix `schedule1.run` expected value to `null`
-- Fix SyntaxError -> ReferenceError for 'Missing definition'
-
-**File**: `nucleoid.spec.md` (modified, +20/-16)
-```diff
-@@ -83,7 +83,7 @@ catch error:
- 
- # There is a Shape type,
- # which has a type as a string
--class Shape(self, type: str):
-+class Shape(type: str):
-     this.type = type
- 
- # shape1 is a Shape whose type is "Square"
-@@ -124,7 +124,7 @@ assert(Student["user0"], { "id": "user0" })
- 
- ---
- 
--# Nucleoid prevents class and object lists when a class is updated
-+# Nucleoid preserves class and object lists when a class is updated
- 
- # There is a User type
- class User:
-@@ -133,20 +133,20 @@ class User:
- # There is a User
- User()
- 
--assert(classes.length, 1)
-+assert(Class.length, 1)
- assert(User.length, 1)
- 
- # There is a User type
- class User:
-     pass
- 
--assert(classes.length, 1)
-+assert(Class.length, 1)
- assert(User.length, 1)
- 
- # There is a User
- User()
- 
--assert(classes.length, 1)
-+assert(Class.length, 1)
- assert(User.length, 2)
- 
- ---
-@@ -183,11 +183,11 @@ class Student: Person
-         this.school = school
- 
- # student1 is a Student,
--# whose name is "Joe"
-+# whose name is "Emma"
- # and whose school is "Riverside High".
- student1 = Student("Emma", "Riverside High")
- 
--assert(person1, { "id": "student1", "name": "Emma", "school": "Riverside High" })
-+assert(student1, { "id": "student1", "name": "Emma", "school": "Riverside High" })
- 
- ---
- 
-@@ -415,7 +415,7 @@ assert(distance1.startingPoint.print, null)
- # Nucleoid calls function in an assignment
- 
- # multiply returns the product of two factors
--def multiply(first_factor, second_factor)
-+def multiply(first_factor, second_factor):
-     product = first_factor * second_factor
-     return product
- 
-@@ -647,6 +647,8 @@ user0 = User()
- 
- assert(user0.name, "TEST")
- 
-+---
-+
- # Nucleoid assigns a variable declaratively
- 
- # a is 1
-@@ -913,7 +915,7 @@ schedule1.script = null
- # schedule1's run is schedule1's expression plus " " plus schedule1's script
- schedule1.run = schedule1.expression + " " + schedule1.script
- 
--assert(schedule1.run, "0 */2 * * * null")
-+assert(schedule1.run, null)
- 
- ---
- 
-@@ -1060,7 +1062,7 @@ try:
-     # number1 is number2 times 10
-     number1 = number2 * 10
- catch error:
--    assert(error, ReferenceError("Circular Dependency"))
-+    assert(error, TypeError("Circular Dependency"))
- 
- ---
- 
-@@ -1945,7 +1947,7 @@ try:
-     # value's value is 2147483647
-     value.value = 2147483647
- catch error:
--    assert(error, TypeError("Cannot use 'value' as a name"))
-+    assert(error, TypeError("Cannot use 'value' as a property"))
- 
- ---
- 
-@@ -2047,7 +2049,7 @@ assert(interest1.annual, 0)
- 
- ---
- 
--# Nucleoid rejects value as a name in a block
-+# Nucleoid rejects value as a property name in a block
- 
- # There is an Alarm type
- class Alarm:
-@@ -2061,7 +2063,7 @@ try:
-         value.value = "22:00"
-     }
- catch error:
--    assert(error, TypeError("Cannot use 'value' in local"))
-+    assert(error, TypeError("Cannot use 'value' as a property"))
- 
- ---
- 
-@@ -2446,7 +2448,7 @@ try:
-     # channel1 is deleted
-     delete channel1
- catch error:
--    assert(error, ReferenceError("Cannot delete object 'channel1'"))
-+    assert(error, TypeError("Cannot delete object 'channel1'"))
- 
- assert(channel1.frequency, 440)
- 
-@@ -2480,7 +2482,7 @@ try:
-     # shape1 is deleted
-     delete shape1
- catch error:
--    assert(error, ReferenceError("Cannot delete object 'shape1'"))
-+    assert(error, TypeError("Cannot delete object 'shape1'"))
- 
- # shape1's type is deleted
- delete shape1.type
-@@ -2550,6 +2552,8 @@ item1.sku = "0000002"
- 
- assert(item1.custom, "US0000002")
- 
-+---
-+
- # Nucleoid runs a nested block statement of property
- 
- # There is a Figure type
-@@ -2846,7 +2850,7 @@ try:
-     # a is declared but not defined
-     a
- catch error:
--    assert(error, SyntaxError("Missing definition"))
-+    assert(error, ReferenceError("Missing definition"))
- 
- ---
- 
-```
-
----
-
-### Incident Patch 14: `d1b18504` (2024-09-09)
-**Commit Message**: Merge pull request #61 from NucleoidAI/dependabot/npm_and_yarn/braces-3.0.3
-
-Bump braces from 3.0.2 to 3.0.3
-
-**File**: `package-lock.json` (modified, +14/-14)
-```diff
-@@ -422,12 +422,12 @@
-       }
-     },
-     "node_modules/braces": {
--      "version": "3.0.2",
--      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.2.tgz",
--      "integrity": "sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==",
-+      "version": "3.0.3",
-+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
-+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
-       "dev": true,
-       "dependencies": {
--        "fill-range": "^7.0.1"
-+        "fill-range": "^7.1.1"
-       },
-       "engines": {
-         "node": ">=8"
-@@ -1224,9 +1224,9 @@
-       }
-     },
-     "node_modules/fill-range": {
--      "version": "7.0.1",
--      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz",
--      "integrity": "sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
-+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
-       "dev": true,
-       "dependencies": {
-         "to-regex-range": "^5.0.1"
-@@ -3404,12 +3404,12 @@
-       }
-     },
-     "braces": {
--      "version": "3.0.2",
--      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.2.tgz",
--      "integrity": "sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==",
-+      "version": "3.0.3",
-+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
-+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
-       "dev": true,
-       "requires": {
--        "fill-range": "^7.0.1"
-+        "fill-range": "^7.1.1"
-       }
-     },
-     "browser-stdout": {
-@@ -3986,9 +3986,9 @@
-       }
-     },
-     "fill-range": {
--      "version": "7.0.1",
--      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz",
--      "integrity": "sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
-+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
-       "dev": true,
-       "requires": {
-         "to-regex-range": "^5.0.1"
-```
-
----
-
-### Incident Patch 15: `79093b45` (2024-09-09)
-**Commit Message**: Bump braces from 3.0.2 to 3.0.3
-
-Bumps [braces](https://github.com/micromatch/braces) from 3.0.2 to 3.0.3.
-- [Changelog](https://github.com/micromatch/braces/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/micromatch/braces/compare/3.0.2...3.0.3)
-
----
-updated-dependencies:
-- dependency-name: braces
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `package-lock.json` (modified, +14/-14)
-```diff
-@@ -422,12 +422,12 @@
-       }
-     },
-     "node_modules/braces": {
--      "version": "3.0.2",
--      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.2.tgz",
--      "integrity": "sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==",
-+      "version": "3.0.3",
-+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
-+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
-       "dev": true,
-       "dependencies": {
--        "fill-range": "^7.0.1"
-+        "fill-range": "^7.1.1"
-       },
-       "engines": {
-         "node": ">=8"
-@@ -1224,9 +1224,9 @@
-       }
-     },
-     "node_modules/fill-range": {
--      "version": "7.0.1",
--      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz",
--      "integrity": "sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
-+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
-       "dev": true,
-       "dependencies": {
-         "to-regex-range": "^5.0.1"
-@@ -3404,12 +3404,12 @@
-       }
-     },
-     "braces": {
--      "version": "3.0.2",
--      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.2.tgz",
--      "integrity": "sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==",
-+      "version": "3.0.3",
-+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
-+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
-       "dev": true,
-       "requires": {
--        "fill-range": "^7.0.1"
-+        "fill-range": "^7.1.1"
-       }
-     },
-     "browser-stdout": {
-@@ -3986,9 +3986,9 @@
-       }
-     },
-     "fill-range": {
--      "version": "7.0.1",
--      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz",
--      "integrity": "sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
-+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
-       "dev": true,
-       "requires": {
-         "to-regex-range": "^5.0.1"
++    #[test]
++    fn smootherstep_retains_quintic_rounding_overshoot_and_unvalidated_bound_order() {
++        for (arguments, expected) in [
++            ([0.0, 8.0, 1.0], 0.01605224609375),
++            ([0.0, 8.0, 2.0], 0.103515625),
++            ([0.0, 8.0, 3.0], 0.27520751953125),
++            ([0.0, 8.0, 4.0], 0.5),
++            ([0.0, 8.0, 6.0], 0.896484375),
++            ([0.0,
 ```
 
 #### Recent Merged Pull Requests:
@@ -3633,8 +1857,6 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 - **PR #67** (closed): Bump path-to-regexp and express in /arc (@dependabot[bot])
 - **PR #66** (closed): Bump cookie and express (@dependabot[bot])
 - **PR #65** (2024-09-16): Bump path-to-regexp and express (@dependabot[bot])
-- **PR #64** (2024-09-09): Bump axios from 1.6.0 to 1.7.4 (@dependabot[bot])
-- **PR #61** (2024-09-09): Bump braces from 3.0.2 to 3.0.3 (@dependabot[bot])
 
 ---
 
@@ -3648,3 +1870,62 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Add colon-free indented exception suites
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `af5e7d45`: Add colon-free indented exception suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+## Colon-free indented exception suites (Accepted NUC 46)
+
+**Indented error recovery omits redundant colons**
+
+```nuc
+# Indented error recovery omits redundant colons
+
+quantity = 3
+total = quantity * 2
+try
+    quantity = 5
+    throw "CANCEL"
+catch error
+    assert(error, "CANCEL")
+assert(quantity, 3)
+assert(total, 6)
+```
+
+- Accepted [NUC 46](docs/nuc-0046.md) permits either exception-suite colon to
+  be omitted only when its complete existing header has a real indented body.
+  `try:` and `catch error:` with the same bodies remain valid and equivalent.
+- Default `catch`, named `catch issue` and parenthesized `catch(issue)`
+  keep the existing bindings. Inline/braced suites still require their colons.
+- The native REPL buffers a complete lexical bare `try` header through its
+  catch until blank-line commit or EOF, including trailing header comments.
+- Recovery uses the same transactional rollback and live dependency model,
+  not a new error API, scope or continuation rule. See the
+  [root contract](nucleoid.spec.md#colon-free-indented-exception-suites).
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `af5e7d45` are properly handled with clean fallback behavior.

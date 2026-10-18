@@ -2483,3 +2483,11 @@ Every entry in this ledger must capture:
 | `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `092970a5` | Multi-dimensional audit evidence | 2026-10-18T21:00:58.197Z |
 | `learn-github-facebook-docusaurus` | `https://github.com/facebook/docusaurus` | `7b6826b8` | Multi-dimensional audit evidence | 2026-10-18T21:01:34.960Z |
 | `learn-github-tabbyml-tabby` | `https://github.com/TabbyML/tabby` | `21b29048` | Multi-dimensional audit evidence | 2026-10-18T21:01:39.498Z |
+| `learn-github-trhhubsd-artex` | `https://github.com/trhhubsd/ARTEX` | `bb105bf3` | Multi-dimensional audit evidence | 2026-10-18T21:07:32.438Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `05440e1f` | Multi-dimensional audit evidence | 2026-10-18T21:07:36.772Z |
+| `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `e3b8991c` | Multi-dimensional audit evidence | 2026-10-18T21:07:38.731Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `de6e7ffa` | Multi-dimensional audit evidence | 2026-10-18T21:07:41.597Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `43ad04ee` | Multi-dimensional audit evidence | 2026-10-18T21:07:45.143Z |
+| `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `09ed814e` | Multi-dimensional audit evidence | 2026-10-18T21:07:47.533Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `c5226df3` | Multi-dimensional audit evidence | 2026-10-18T21:07:49.078Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `927ee1ac` | Multi-dimensional audit evidence | 2026-10-18T21:07:53.416Z |
