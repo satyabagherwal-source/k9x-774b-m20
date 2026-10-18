@@ -2552,3 +2552,9 @@ Every entry in this ledger must capture:
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `30824176` | Multi-dimensional audit evidence | 2026-10-18T22:10:14.516Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `aad2a753` | Multi-dimensional audit evidence | 2026-10-18T22:10:18.151Z |
 | `learn-github-milvus-io-bootcamp` | `https://github.com/milvus-io/bootcamp` | `14cefc46` | Multi-dimensional audit evidence | 2026-10-18T22:10:22.403Z |
+| `learn-github-watchexec-watchexec` | `https://github.com/watchexec/watchexec` | `8a2c443f` | Multi-dimensional audit evidence | 2026-10-18T22:16:20.965Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `87a058e3` | Multi-dimensional audit evidence | 2026-10-18T22:16:25.885Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `8a498c64` | Multi-dimensional audit evidence | 2026-10-18T22:16:29.152Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `98118f47` | Multi-dimensional audit evidence | 2026-10-18T22:16:32.265Z |
+| `learn-github-vearch-vearch` | `https://github.com/vearch/vearch` | `bae78b18` | Multi-dimensional audit evidence | 2026-10-18T22:16:33.970Z |
+| `learn-github-themesberg-flowbite` | `https://github.com/themesberg/flowbite` | `232ebdb3` | Multi-dimensional audit evidence | 2026-10-18T22:17:14.170Z |

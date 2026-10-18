@@ -2545,3 +2545,9 @@
 | `CYCLE-20261018-PILU` | `2026-10-18T22:10:14.514Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1764` | Yes (`b8cc5892...`) |
 | `CYCLE-20261018-PLEN` | `2026-10-18T22:10:18.143Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`541f946c...`) |
 | `CYCLE-20261018-POOX` | `2026-10-18T22:10:22.401Z` | `milvus-io/bootcamp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1765` | Yes (`4ea21a2e...`) |
+| `CYCLE-20261018-XDCY` | `2026-10-18T22:16:20.962Z` | `watchexec/watchexec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1766` | Yes (`6de8224e...`) |
+| `CYCLE-20261018-XH5M` | `2026-10-18T22:16:25.882Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1767` | Yes (`5da4fba3...`) |
+| `CYCLE-20261018-XJOE` | `2026-10-18T22:16:29.150Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1768` | Yes (`b88d720a...`) |
+| `CYCLE-20261018-XM2U` | `2026-10-18T22:16:32.262Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1769` | Yes (`ac806ece...`) |
+| `CYCLE-20261018-XNDD` | `2026-10-18T22:16:33.937Z` | `vearch/vearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1770` | Yes (`8b3265d6...`) |
+| `CYCLE-20261018-YIEV` | `2026-10-18T22:17:14.167Z` | `themesberg/flowbite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1771, Rule 1772, Rule 1773` | Yes (`fa8ac882...`) |

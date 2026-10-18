@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T22:10:22.405Z",
-  "total_cycles_completed": 2522,
-  "total_learnings_persisted": 2522,
-  "total_rules_promoted": 1534,
+  "last_updated": "2026-10-18T22:17:14.175Z",
+  "total_cycles_completed": 2528,
+  "total_learnings_persisted": 2528,
+  "total_rules_promoted": 1542,
   "history": [
-    {
-      "timestamp": "2026-10-17T23:33:11.292Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:36:18.110Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:39:30.965Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:42:49.271Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:46:23.017Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T23:49:17.333Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T23:52:40.298Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1403,6 +1361,48 @@
       "repository": "milvus-io/bootcamp",
       "learningId": "learn-github-milvus-io-bootcamp",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:16:20.970Z",
+      "repository": "watchexec/watchexec",
+      "learningId": "learn-github-watchexec-watchexec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:16:25.891Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:16:29.157Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:16:32.270Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:16:33.976Z",
+      "repository": "vearch/vearch",
+      "learningId": "learn-github-vearch-vearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:17:14.175Z",
+      "repository": "themesberg/flowbite",
+      "learningId": "learn-github-themesberg-flowbite",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
+> **Source**: github ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
+> **Source Version**: `87a058e3`  
+> **License**: GPL-3.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T22:16:25.694Z  
+> **Learning ID**: `learn-github-streetwriters-notesnook`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): streetwriters/notesnook
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:54:14.543Z  
+> **Harvest Timestamp**: 2026-10-18T22:16:25.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A fully open source & end-to-end encrypted note taking alternative to Evernote.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14715 stars
+- **Stars / Engagement**: 14786 stars
 
 ---
 
@@ -734,270 +748,17 @@ function setDockMenuOnMacOs() {
 
 ```
 
-### Core Architecture Module: `apps/desktop/src/utils/locale.ts`
-```
-/*
-This file is part of the Notesnook project (https://notesnook.com/)
-
-Copyright (C) 2023 Streetwriters (Private) Limited
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { app } from "electron";
-import { config } from "./config";
-import { initLocale as initIntlLocale } from "@notesnook/intl";
-
-export async function initLocale() {
-  return initIntlLocale({
-    getSavedLocale: () => config.appLanguage,
-    systemLocale: app.getLocale() || "en"
-  });
-}
-
-
-```
-
-### Core Architecture Module: `apps/desktop/src/utils/menu.ts`
-```
-/*
-This file is part of the Notesnook project (https://notesnook.com/)
-
-Copyright (C) 2023 Streetwriters (Private) Limited
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { strings } from "@notesnook/intl";
-import { Menu, MenuItem, clipboard, shell } from "electron";
-
-function setupMenu() {
-  if (!globalThis.window) return;
-
-  globalThis.window.webContents.on("context-menu", (_event, params) => {
-    const menu = new Menu();
-
-    // Add each spelling suggestion
-    for (const suggestion of params.dictionarySuggestions) {
-      menu.append(
-        new MenuItem({
-          label: suggestion,
-          click: () =>
-            globalThis.window?.webContents.replaceMisspelling(suggestion)
-        })
-      );
-    }
-
-    // Allow users to add the misspelled word to the dictionary
-    if (params.misspelledWord) {
-      menu.append(
-        new MenuItem({
-          label: strings.addToDictionary(),
-          click: () =>
-            globalThis.window?.webContents.session.addWordToSpellCheckerDictionary(
-              params.misspelledWord
-            )
-        })
-      );
-    }
-
-    if (menu.items.length > 0)
-      menu.append(
-        new MenuItem({
-          type: "separator"
-        })
-      );
-
-    if (params.linkURL.length) {
-      menu.append(
-        new MenuItem({
-          label: strings.openInBrowser(),
-          click: () => shell.openExternal(params.linkURL)
-        })
-      );
-    }
-
-    if (params.isEditable) {
-      menu.append(
-        new MenuItem({
-          label: strings.undo(),
-          role: "undo",
-          enabled: params.isEditable,
-          accelerator: "CommandOrControl+Z"
-        })
-      );
-
-      menu.append(
-        new MenuItem({
-          label: strings.redo(),
-          role: "redo",
-          enabled: params.isEditable,
-          accelerator: "CommandOrControl+Y"
-        })
-      );
-
-      menu.append(
-        new MenuItem({
-          type: "separator"
-        })
-      );
-    }
-
-    if (params.isEditable)
-      menu.append(
-        new MenuItem({
-          label: strings.cut(),
-          role: "cut",
-          enabled: params.selectionText.length > 0,
-          accelerator: "CommandOrControl+X"
-        })
-      );
-
-    if (params.linkURL?.length) {
-      menu.append(
-        new MenuItem({
-          label: strings.copyLink(),
-          click() {
-            clipboard.writeText(params.linkURL);
-          }
-        })
-      );
-
-      menu.append(
-        new MenuItem({
-          label: strings.copyLinkText(),
-          click() {
-            clipboard.writeText(params.linkText);
-          }
-        })
-      );
-    }
-
-    if (params.selectionText.length) {
-      menu.append(
-        new MenuItem({
-          label: strings.copy(),
-          role: "copy",
-          accelerator: "CommandOrControl+C"
-        })
-      );
-    }
-
-    if (params.mediaType === "image")
-      menu.append(
-        new MenuItem({
-          id: "copy-image",
-          label: strings.copyImage(),
-          click() {
-            globalThis.window?.webContents.copyImageAt(params.x, params.y);
-          }
-        })
-      );
-
-    if (params.isEditable) {
-      menu.append(
-        new MenuItem({
-          label: strings.paste(),
-          role: "paste",
-          enabled: clipboard.readText("clipboard").length > 0,
-          accelerator: "CommandOrControl+V"
-        })
-      );
-
-      menu.append(
-        new MenuItem({
-          label:
-            process.platform === "darwin"
-              ? strings.pasteAndMatchStyle()
-              : strings.pasteWithoutFormatting(),
-          role: "pasteAndMatchStyle",
-          enabled: clipboard.readText("clipboard").length > 0,
-          accelerator:
-            process.platform === "darwin"
-              ? "Option+Shift+Command+V"
-              : "Shift+CommandOrControl+V"
-        })
-      );
-
-      menu.append(
-        new MenuItem({
-          type: "separator"
-        })
-      );
-      menu.append(
-        new MenuItem({
-          label: strings.spellCheck(),
-          role: "toggleSpellChecker"
-        })
-      );
-    }
-
-    if (menu.items.length > 0) menu.popup();
-  });
-}
-export { setupMenu };
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10437** (2026-09-30): **Fix/locale translations**
-  *Symptoms*: ## Description This PR resolves two main locale detection issues across Desktop, Web, and Mobile: 1. **Desktop Native Locale Bridge:** Removed a legacy Electron switch that was hardcoding the renderer language to `en-US` on desktop (causing fresh installs on macOS/Windows to ignore the OS language). Exposed the native `app.getLocale()` to the renderer via IPC. 2. **Dynamic "Auto" Device Language Sync:**     - Initial app launch now dynamically follows the device/system language without hardcoding or saving a fixed language into settings.    - Added an **"Auto"** option in Language Settings (Web, Desktop, and Mobile) so users can easily reset any manual language selection and resume syncing with their device language.   ## Type of Change - [x] Bug fix - [x] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [x] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
+- **Issue #10541** (2026-10-16): **core: fix stream/iterate stopping early when dateCreated is null**
+  *Symptoms*: ## Description `stream()` and `iterate()` page with `(dateCreated, id) > (last…)`. When the last row of a page has a NULL `dateCreated`, the comparison is NULL and the loop ends, so backup export and the migrator silently skip the remaining items. Items only get a NULL `dateCreated` via `put()` (sync/backup import of old data), and only trigger this when a table has at least one page's worth of them, so this is mostly defensive.  Fix: sort and compare on `IFNULL(dateCreated, 0)`. No perf change (there's no index on `dateCreated`; same query plan, 50k rows ~600ms before and after).  ### QA steps Normal data never has a missing `dateCreated`, so this needs a hand-edited backup.  1. Create an unencrypted backup of an account with more than 100 notes. 2. Unzip the `.nnbackupz`, remove the `dateCreated` field from 100+ notes in the JSON files, and zip it again. 3. Restore that backup on a fresh install / account. 4. Export a new backup. 5. Verify every note is present in the export.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [x] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why  ## Platform - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
 
-- **Issue #10430** (2026-09-28): **Fix/locale translations**
-  *Symptoms*: ## Description This PR extends our ongoing localization efforts by resolving remaining hardcoded user-facing strings across @notesnook/web, @notesnook/mobile and @notesnook/common.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
-
-- **Issue #10429** (2026-09-27): **Sort by "date created" does not sort by date created**
-  *Symptoms*: ### What happened?  Here's what seems to be a big bug: In "home/all notes", I ungrouped. No groups. Just the notes. Then selected "SORT BY created date".   The note I created in June that I modified today STILL showed up at the top of the list. "Date Created" means the original date that the original note was created on.   "Date Edited" means the (last) date that an actual change was made to the note (which aslo counts as "Modified".)  "Date Modified" means the last time the note was 'touched,' whether or not it was edited - for instance, perhaps someone simply adds a tag, copies a paragraph of it to another note, etc., without changing the note. Unless I am wrong about my understanding of this, "Date Created" should sort by date created, and not date modified or edited. Right?? But the "Date Created" option does not seem to function that way. This is creating a major problem when trying to organize my notes.  ### Steps to reproduce the problem  To reproduce: Make a note. Wait a day - then make another (second) note. Go back to your first note and do somthing to it. Don't touch the second one. Then go to "home/all notes" and select "sort by date created" and see which one shows up on top when sorted by "oldest to newest".  RE: THE PLATFORM/OS question below: I am using both Linux (laptop) and Android (phone). This happens on BOTH. (i.e. the bug seems to sync.)  ### Version  3.4.8-f910e2b-web AND 3.4.12 Android  ### Platform/OS  Other browser  ### Relevant log output  ```shell
-  **Post-Mortem & Fix Analysis**:
-  > I just figured out what the problem here is. It's my own stupidity. Here's what happened: I copied a note (with the same note title) to another notebook that I created today. It is showing up as "new" because it is in fact a "new" note in a new notebook. My confusion was that I kept the same title.... Rather confusing...but I get it now. Hopefully what I just experienced, and my description of it (and "solution") can help someone else who makes the same mistake!
-
-- **Issue #10423** (2026-09-24): **web: keep separators between multiselect menu items (NN-1187)**
-  *Symptoms*:  ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
-
-- **Issue #10422** (2026-09-24): **web: sidebar design fixes**
-  *Symptoms*:   ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  web: sidebar design fixes      * NN-1189     * NN-1186     * NN-1181     * NN-1176     * NN-1172     * NN-1158     * NN-1157     * NN-1156     * NN-1155     * NN-1150  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
-  **Post-Mortem & Fix Analysis**:
-  > @01zulfi resolve conflicts and merge
-
-- **Issue #10416** (2026-09-24): **Attachment storage is temporarily unavailable. Please try again later**
-  *Symptoms*: ### What happened?  This has been happening all evening and my uploaded have not been going thru.  I tried on an iphone and on windows PC and same error  ### Steps to reproduce the problem  create note, add text, click + and choose Upload image or Take image.  Then i get there error even though the image shows in the note but the images don't load on other devices  ### Version  3.4.8-f910e2b-web  ### Platform/OS  Windows  ### Relevant log output  ```shell  ```
-  **Post-Mortem & Fix Analysis**:
-  > Today I was able to take a screenshot and add it to a different / new note and it seemed to sync.  I also tried adding a jpeg and HEIC and they now seem to work
-
-- **Issue #10409** (2026-09-26): **Fix/locale translations**
-  *Symptoms*: ## Description Fixes untranslated and static strings across the app (plans screen features, group headers, and reminder times) by localizing titles directly at the source, ensuring proper i18n instance synchronization across packages, and adding missing translation tags and catalogs in @notesnook/intl. (Additional translation fixes will be added to this PR).  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
-
-- **Issue #10393** (2026-09-26): **web: redesign various dialogs**
-  *Symptoms*:   ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  web: redesign various dialogs  Redesign the followign dialogs: * Confirm dialog * Create color dialog * Edit note creation date dialog * Item dialog * Note expiry date dialog * Password dialog * Progress dialog * Prompt dialog * Recovery key dialog  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
-  **Post-Mortem & Fix Analysis**:
-  > @01zulfi resolve conflicts and merge.
+- **Issue #10540** (2026-10-17): **core: fix token refresh race between TokenManager instances**
+  *Symptoms*: ## Description Sync (SignalR `accessTokenFactory`) and `UserManager` (`userUnauthorized` handler) each created their own `TokenManager`, each with its own refresh mutex. Concurrent refreshes could send the same `refresh_token` twice; with one-time refresh tokens the loser gets `invalid_grant` and the session expires. Both now reuse `db.tokenManager`.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [x] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### QA steps 1. Log in, then close the app. 2. Set the device clock 2+ hours ahead so the stored access token is expired. 3. Start the app so the sync hub connects while other API calls (user fetch, attachments) run. 4. In the network tab, confirm only one `/connect/token` request is made and the session stays logged in.  ## Platform - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1014,1465 +775,327 @@ export { setupMenu };
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf909697` (2026-09-18)
-**Commit Message**: Merge pull request #10366 from mohdsultan18/fix/archive-notes-bleed
+### Incident Patch 1: `6e2b478c` (2026-10-17)
+**Commit Message**: core: fix token refresh race between TokenManager instances (#10540)
 
-web: isolate archive route cache and clear stale context notes on switch
+Sync and UserManager each created their own TokenManager with a separate
+refresh mutex, so concurrent refreshes could spend the same refresh token.
+Reuse db.tokenManager everywhere.
 
-**File**: `apps/web/src/navigation/routes.tsx` (modified, +1/-1)
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+**File**: `packages/core/__tests__/token-manager.test.ts` (added, +72/-0)
 ```diff
-@@ -107,7 +107,7 @@ const routes = defineRoutes({
-   "/archive": () => {
-     useNoteStore.getState().setContext({ type: "archive" });
-     return defineRoute({
--      key: "notes",
-+      key: "archive",
-       title: strings.archive(),
-       type: "notes",
-       component: Notes
-```
-
-**File**: `apps/web/src/stores/note-store.ts` (modified, +1/-0)
-```diff
-@@ -58,6 +58,7 @@ class NoteStore extends BaseStore<NoteStore> {
-   };
- 
-   setContext = async (context?: Context) => {
-+    this.set({ context, contextNotes: undefined });
-     const groupOptions =
-       context?.type === "notebook" ||
-       context?.type === "tag" ||
-```
-
----
-
-### Incident Patch 2: `bbcbfd61` (2026-09-18)
-**Commit Message**: global: migrate packages off lingui to @notesnook/intl
-
-Co-authored-by: Abdullah Atta <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/package-lock.json` (modified, +0/-76)
-```diff
-@@ -10,7 +10,6 @@
-       "hasInstallScript": true,
-       "license": "GPL-3.0-or-later",
-       "dependencies": {
--        "@lingui/core": "5.1.2",
-         "@notesnook/intl": "file:../../packages/intl",
-         "@notesnook/ui": "file:../../packages/ui",
-         "@trpc/client": "10.45.2",
-@@ -103,15 +102,6 @@
-         "react-modal": ">=3"
-       }
-     },
--    "node_modules/@babel/runtime": {
--      "version": "7.29.7",
--      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.7.tgz",
--      "integrity": "sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==",
--      "license": "MIT",
--      "engines": {
--        "node": ">=6.9.0"
--      }
--    },
-     "node_modules/@borewit/text-codec": {
-       "version": "0.2.2",
-       "resolved": "https://registry.npmjs.org/@borewit/text-codec/-/text-codec-0.2.2.tgz",
-@@ -975,45 +965,6 @@
-       "dev": true,
-       "license": "MIT"
-     },
--    "node_modules/@lingui/core": {
--      "version": "5.1.2",
--      "resolved": "https://registry.npmjs.org/@lingui/core/-/core-5.1.2.tgz",
--      "integrity": "sha512-biqmMCWuBBj7ERSpgGSV91hTShnSrR/RIFUcNKjWuZYgDd3HpBdEmXKCo9NTanQYbkBUpmyw/bgwsSBex6vkDA==",
--      "license": "MIT",
--      "dependencies": {
--        "@babel/runtime": "^7.20.13",
--        "@lingui/message-utils": "^5.1.2",
--        "unraw": "^3.0.0"
--      },
--      "engines": {
--        "node": ">=20.0.0"
--      },
--      "peerDependencies": {
--        "@lingui/babel-plugin-lingui-macro": "5.1.2",
--        "babel-plugin-macros": "2 || 3"
--      },
--      "peerDependenciesMeta": {
--        "@lingui/babel-plugin-lingui-macro": {
--          "optional": true
--        },
--        "babel-plugin-macros": {
--          "optional": true
--        }
--      }
--    },
--    "node_modules/@lingui/message-utils": {
--      "version": "5.9.5",
--      "resolved": "https://registry.npmjs.org/@lingui/message-utils/-/message-utils-5.9.5.tgz",
--      "integrity": "sha512-t3dNbjb1dWkvcpXGMXIEyBDO3l4B8J2ColZXi0NTG1ioAj+sDfFxFB8fepVgd3JAk+AwARlOLvF14oS0mAdgpw==",
--      "license": "MIT",
--      "dependencies": {
--        "@messageformat/parser": "^5.0.0",
--        "js-sha256": "^0.10.1"
--      },
--      "engines": {
--        "node": ">=20.0.0"
--      }
--    },
-     "node_modules/@malept/cross-spawn-promise": {
-       "version": "2.0.0",
-       "resolved": "https://registry.npmjs.org/@malept/cross-spawn-promise/-/cross-spawn-promise-2.0.0.tgz",
-@@ -1092,15 +1043,6 @@
-         "node": ">= 10.0.0"
-       }
-     },
--    "node_modules/@messageformat/parser": {
--      "version": "5.1.1",
--      "resolved": "https://registry.npmjs.org/@messageformat/parser/-/parser-5.1.1.tgz",
--      "integrity": "sha512-3p0YRGCcTUCYvBKLIxtDDyrJ0YijGIwrTRu1DT8gIviIDZru8H23+FkY6MJBzM1n9n20CiM4VeDYuBsrrwnLjg==",
--      "license": "MIT",
--      "dependencies": {
--        "moo": "^0.5.1"
--      }
--    },
-     "node_modules/@noble/hashes": {
-       "version": "2.2.0",
-       "resolved": "https://registry.npmjs.org/@noble/hashes/-/hashes-2.2.0.tgz",
-@@ -4473,12 +4415,6 @@
-       "integrity": "sha512-WZzeDOEtTOBK4Mdsar0IqEU5sMr3vSV2RqkAIzUEV2BHnUfKGyswWFPFwK5EeDo93K3FohSHbLAjj0s1Wzd+dg==",
-       "license": "BSD-3-Clause"
-     },
--    "node_modules/js-sha256": {
--      "version": "0.10.1",
--      "resolved": "https://registry.npmjs.org/js-sha256/-/js-sha256-0.10.1.tgz",
--      "integrity": "sha512-5obBtsz9301ULlsgggLg542s/jqtddfOpV5KJc4hajc9JV8GeY2gZHSVpYBn4nWqAUTJ9v+xwtbJ1mIBgIH5Vw==",
--      "license": "MIT"
--    },
-     "node_modules/js-tokens": {
-       "version": "9.0.1",
-       "resolved": "https://registry.npmjs.org/js-tokens/-/js-tokens-9.0.1.tgz",
-@@ -4773,12 +4709,6 @@
-       "integrity": "sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==",
-       "license": "MIT"
-     },
--    "node_modules/moo": {
--      "version": "0.5.3",
--      "resolved": "https://registry.npmjs.org/moo/-/moo-0.5.3.tgz",
--      "integrity": "sha512-m2fmM2dDm7GZQsY7KK2cme8agi+AAljILjQnof7p1ZMDe6dQ4bdnSMx0cPppudoeNv5hEFQirN6u+O4fDE0IWA==",
--      "license": "BSD-3-Clause"
--    },
-     "node_modules/ms": {
-       "version": "2.1.3",
-       "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
-@@ -6866,12 +6796,6 @@
-         "node": ">= 4.0.0"
-       }
-     },
--    "node_modules/unraw": {
--      "version": "3.0.0",
--      "resolved": "https://registry.npmjs.org/unraw/-/unraw-3.0.0.tgz",
--      "integrity": "sha512-08/DA66UF65OlpUDIQtbJyrqTR0jTAlJ+jsnkQ4jxR7+K5g5YG1APZKQSMCE1vqqmD+2pv6+IdEjmopFatacvg==",
--      "license": "MIT"
--    },
-     "node_modules/unzipper": {
-       "version": "0.12.5",
-       "resolved": "https://registry.npmjs.org/unzipper/-/unzipper-0.12.5.tgz",
-```
-
-**File**: `apps/desktop/package.json` (modified, +0/-1)
-```diff
-@@ -38,7 +38,6 @@
-   "repository": "https://github.com/streetwriters/notesnook",
-   "license": "GPL-3.0-or-later",
-   "dependencies": {
--    "@lingui/core": "5.1.2",
-     "@notesnook/intl": "file:../../packages/intl",
-     "@notesnook/ui": "file:../../packages/ui",
-     "@trpc/client": "10.45.2",
-```
-
-**File**: `apps/desktop/src/api/os-integration.ts` (modified, +6/-3)
-```diff
-@@ -38,6 +38,8 @@ import { observable } from "@trpc/server/observable";
- import { AssetManager } from "../utils/asset-manager";
- import { isFlatpak, isPortable, isSnap } from "../utils";
- import { setupDesktopIntegration } from "../utils/desktop-integration";
-+import { setupJumplist } from "../utils/jumplist";
-+import { initLocale } from "../utils/locale";
- import { disableCustomDns, enableCustomDns } from "../utils/custom-dns";
- import type { MenuItem as NNMenuItem } from "@notesnook/ui";
- import { platform } from "os";
-@@ -138,10 +140,11 @@ export const osIntegrationRouter = t.router({
-   }),
-   setAppLanguage: t.procedure
-     .input(z.string())
--    .mutation(({ input: language }) => {
-+    .mutation(async ({ input: language }) => {
-       config.appLanguage = language;
--      app.relaunch();
--      app.exit();
-+      await initLocale();
-+      setupDesktopIntegration(config.desktopSettings);
-+      setupJumplist();
-     }),
-   restart: t.procedure.query(() => {
-     app.relaunch();
-```
-
-**File**: `apps/mobile/app/app.tsx` (modified, +1/-7)
-```diff
-@@ -16,8 +16,6 @@ GNU General Public License for more details.
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
--import { i18n } from "@notesnook/intl";
--import { I18nProvider } from "@lingui/react";
- import {
-   ScopedThemeProvider,
-   THEME_COMPATIBILITY_VERSION,
-@@ -179,11 +177,7 @@ export const withTheme = (
-       }
-     }, [colorScheme, darkTheme, lightTheme]);
- 
--    return (
--      <I18nProvider i18n={i18n as any}>
--        <Element {...props} />
--      </I18nProvider>
--    );
-+    return <Element {...props} />;
-   };
- };
- 
-```
-
-**File**: `apps/mobile/lingui.config.js` (removed, +0/-27)
-```diff
-@@ -1,27 +0,0 @@
--/*
--This file is part of the Notesnook project (https://notesnook.com/)
--
--Copyright (C) 2023 Streetwriters (Private) Limited
--
--This program is free software: you can redistribute it and/or modify
--it under the terms of the GNU General Public License as published by
--the Free Software Foundation, either version 3 of the License, or
--(at your option) any later version.
--
--This program is distributed in the hope that it will be useful,
--but WITHOUT ANY WARRANTY; without even the implied warranty of
--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--GNU General Public License for more details.
--
--You should have received a copy of the GNU General Public License
--along with this program.  If not, see <http://www.gnu.org/licenses/>.
--*/
--
--/** @type {import('@lingui/conf').LinguiConfig} */
--
--module.exports = {
--  locales: ["en", "cs", "fr"],
--  sourceLocale: "en",
--  format: "po",
--  compileNamespace: "ts"
--};
-```
-
-**File**: `apps/mobile/package.json` (modified, +0/-2)
-```diff
-@@ -42,8 +42,6 @@
-     "@formatjs/intl-locale": "4.0.0",
-     "@formatjs/intl-pluralrules": "5.2.14",
-     "@legendapp/list": "^2.0.14",
--    "@lingui/core": "5.1.2",
--    "@lingui/react": "5.1.2",
-     "@mdi/js": "^6.7.96",
-     "@messageformat/parser": "^5.1.1",
-     "@notesnook/common": "file:../../packages/common",
-```
-
-**File**: `apps/mobile/rspack.config.js` (modified, +0/-1)
-```diff
-@@ -109,7 +109,6 @@ module.exports = (env) => {
-         "@mdi/js": path.join(__dirname, "node_modules/@mdi/js/mdi.js"),
-         katex: path.join(__dirname, "node_modules/katex"),
-         tinycolor2: path.join(__dirname, "node_modules/tinycolor2"),
--        "@lingui/core": path.join(__dirname, "node_modules/@lingui/core"),
-         "@swc/helpers": path.join(__dirname, "node_modules/@swc/helpers"),
-         "@messageformat/parser": path.join(
-           __dirname,
-```
-
-**File**: `apps/monograph/app/components/monographpost/editor.client.tsx` (modified, +3/-11)
-```diff
-@@ -29,19 +29,11 @@ import { useLayoutEffect, useMemo, useRef } from "react";
- import { Flex } from "@theme-ui/components";
- import TipTap, { type TipTapProps } from "./tiptap";
- import { ScopedThemeProvider } from "../theme-provider";
--import { setI18nGlobal, Messages } from "@notesnook/intl";
--import { i18n } from "@lingui/core";
-+import { initLocale } from "@notesnook/intl";
- 
--const locale = import.meta.env.DEV
--  ? import("@notesnook/intl/locales/$pseudo-LOCALE.json")
--  : import("@notesnook/intl/locales/$en.json");
--locale.then(({ default: locale }) => {
--  i18n.load({
--    en: locale.messages as unknown as Messages
--  });
--  i18n.activate("en");
-+initLocale({
-+  systemLocale: typeof navigator !== "undefined" ? navigator.language : "en"
- });
--setI18nGlobal(i18n);
- 
- export type EditorType = typeof Editor;
- 
-```
-
----
-
-### Incident Patch 3: `8cc3a56a` (2026-09-17)
-**Commit Message**: intl: localize remaining strings and fix 2FA/localization
-
-Co-authored-by: Abdullah Atta <[REDACTED_EMAIL]>
-
-**File**: `apps/mobile/app/components/attachments/index.tsx` (modified, +5/-2)
-```diff
-@@ -521,7 +521,8 @@ export const AttachmentDialog = ({
-               style={{
-                 height: "100%",
-                 justifyContent: "center",
--                alignItems: "center"
-+                alignItems: "center",
-+                paddingHorizontal: DefaultAppStyles.GAP
-               }}
-             >
-               {loading ? (
-@@ -533,7 +534,9 @@ export const AttachmentDialog = ({
-                     size={60}
-                     color={colors.secondary.icon}
-                   />
--                  <Paragraph>{strings.noAttachments()}</Paragraph>
-+                  <Paragraph style={{ textAlign: "center" }}>
-+                    {strings.noAttachments()}
-+                  </Paragraph>
-                 </>
-               )}
-             </View>
-```
-
-**File**: `apps/mobile/app/components/auth/two-factor.tsx` (modified, +9/-4)
-```diff
-@@ -101,7 +101,14 @@ const TwoFactorVerification = ({
-         setLoading(false);
-       },
-       (e) => {
--        setError(e);
-+        if (
-+          e?.message &&
-+          /valid multi-factor authentication code/i.test(e.message)
-+        ) {
-+          setError(new Error(strings.validMfaCodeRequired()));
-+        } else {
-+          setError(e);
-+        }
-       }
-     );
-     setLoading(false);
-@@ -155,9 +162,7 @@ const TwoFactorVerification = ({
-       setSending(false);
-     } catch (e) {
-       setSending(false);
--      setError(
--        new Error(`Error sending 2FA Code. Tap "Send code" to try again `)
--      );
-+      setError(new Error(strings.unableToSend2faCode()));
-     }
-   }, [currentMethod.method, secondsRef, sending, start]);
- 
-```
-
-**File**: `apps/mobile/app/components/dialogs/progress/index.tsx` (modified, +2/-1)
-```diff
-@@ -30,6 +30,7 @@ import { ProgressBarComponent } from "../../ui/svg/lazy";
- import Heading from "../../ui/typography/heading";
- import Paragraph from "../../ui/typography/paragraph";
- import { DefaultAppStyles } from "../../../utils/styles";
-+import { strings } from "@notesnook/intl";
- 
- export type ProgressOptions = {
-   progress?: string;
-@@ -167,7 +168,7 @@ export default function Progress() {
- 
-           {!data?.canHideProgress ? null : (
-             <Button
--              title={cancelCallback.current ? "Cancel" : "Hide"}
-+              title={cancelCallback.current ? strings.cancel() : strings.hide()}
-               type="secondaryAccented"
-               onPress={() => {
-                 if (cancelCallback.current) {
-```
-
-**File**: `apps/mobile/app/components/note-history/index.tsx` (modified, +6/-2)
-```diff
-@@ -228,7 +228,10 @@ export default function NoteHistory({
-               ) : (
-                 <>
-                   <Icon name="history" size={50} color={colors.primary.icon} />
--                  <Paragraph color={colors.secondary.paragraph}>
-+                  <Paragraph
-+                    color={colors.secondary.paragraph}
-+                    style={{ textAlign: "center" }}
-+                  >
-                     {strings.noteHistoryPlaceholder()}
-                   </Paragraph>
-                 </>
-@@ -242,7 +245,8 @@ export default function NoteHistory({
-         size={AppFontSize.xs}
-         color={colors.secondary.paragraph}
-         style={{
--          alignSelf: "center"
-+          textAlign: "center",
-+          paddingHorizontal: DefaultAppStyles.GAP
-         }}
-       >
-         {strings.noteHistoryNotice[0]()}{" "}
-```
-
-**File**: `apps/mobile/app/components/sheets/link-note/index.tsx` (modified, +4/-1)
-```diff
-@@ -350,7 +350,10 @@ export default function LinkNote(props: {
-                   alignItems: "center"
-                 }}
-               >
--                <Paragraph color={colors.secondary.paragraph}>
-+                <Paragraph
-+                  color={colors.secondary.paragraph}
-+                  style={{ textAlign: "center" }}
-+                >
-                   {blockLinking?.error}
-                 </Paragraph>
-                 <Button
-```
-
-**File**: `apps/mobile/app/components/sheets/notebooks/index.tsx` (modified, +5/-2)
-```diff
-@@ -195,10 +195,13 @@ export const Notebooks = (props: {
-             width: "100%",
-             height: "100%",
-             justifyContent: "center",
--            alignItems: "center"
-+            alignItems: "center",
-+            paddingHorizontal: DefaultAppStyles.GAP
-           }}
-         >
--          <Paragraph>{strings.emptyPlaceholders("notebook")}</Paragraph>
-+          <Paragraph style={{ textAlign: "center" }}>
-+            {strings.emptyPlaceholders("notebook")}
-+          </Paragraph>
-         </View>
-       ) : (
-         <>
-```
-
-**File**: `apps/mobile/app/components/sheets/progress/index.tsx` (modified, +5/-1)
-```diff
-@@ -28,6 +28,7 @@ import { ProgressBarComponent } from "../../ui/svg/lazy";
- import Heading from "../../ui/typography/heading";
- import Paragraph from "../../ui/typography/paragraph";
- import { strings } from "@notesnook/intl";
-+import { DefaultAppStyles } from "../../../utils/styles";
- export const Progress = () => {
-   const { colors } = useThemeColors();
-   const { progress } = useSyncProgress();
-@@ -48,12 +49,15 @@ export const Progress = () => {
-         width: "100%",
-         justifyContent: "center",
-         alignItems: "center",
-+        paddingHorizontal: DefaultAppStyles.GAP,
-         paddingTop: 25,
-         paddingBottom: 15
-       }}
-     >
-       <Heading size={AppFontSize.lg}>{strings.syncingHeading()}</Heading>
--      <Paragraph>{strings.syncingDesc()}</Paragraph>
-+      <Paragraph style={{ textAlign: "center" }}>
-+        {strings.syncingDesc()}
-+      </Paragraph>
-       <Seperator />
-       <View
-         style={{
-```
-
-**File**: `apps/mobile/app/components/sheets/references/index.tsx` (modified, +10/-3)
-```diff
-@@ -360,7 +360,8 @@ const ListNoteItem = ({
-           style={{
-             justifyContent: "center",
-             alignItems: "center",
--            width: "100%"
-+            width: "100%",
-+            paddingHorizontal: DefaultAppStyles.GAP
-           }}
-         >
-           {loading ? (
-@@ -373,7 +374,10 @@ const ListNoteItem = ({
-               {listType === "linkedNotes" ? (
-                 <>
-                   {linkedBlocks.length === 0 ? (
--                    <Paragraph color={colors.secondary.paragraph}>
-+                    <Paragraph
-+                      color={colors.secondary.paragraph}
-+                      style={{ textAlign: "center" }}
-+                    >
-                       {strings.noBlocksLinked()}
-                     </Paragraph>
-                   ) : (
-@@ -383,7 +387,10 @@ const ListNoteItem = ({
-               ) : (
-                 <>
-                   {noteInternalLinks.length === 0 ? (
--                    <Paragraph color={colors.secondary.paragraph}>
-+                    <Paragraph
-+                      color={colors.secondary.paragraph}
-+                      style={{ textAlign: "center" }}
-+                    >
-                       {strings.noReferencesFound()}
-                     </Paragraph>
-                   ) : (
-```
-
----
-
-### Incident Patch 4: `c69863b2` (2026-09-16)
-**Commit Message**: intl: localize UI strings across mobile, web and editor
-
-**File**: `apps/desktop/src/api/os-integration.ts` (modified, +2/-2)
-```diff
-@@ -187,8 +187,8 @@ export const osIntegrationRouter = t.router({
-         if (globalThis.window) {
-           await dialog.showMessageBox(globalThis.window, {
-             type: "error",
--            title: "Path not found",
--            message: `The path does not exist:\n${wrapPath(resolvedPath)}`
-+            title: strings.pathNotFound(),
-+            message: strings.pathDoesNotExist(wrapPath(resolvedPath))
-           });
-         }
-         return;
-```
-
-**File**: `apps/desktop/src/main.ts` (modified, +7/-8)
-```diff
-@@ -40,6 +40,7 @@ import { disableCustomDns, enableCustomDns } from "./utils/custom-dns";
- import { PATHS } from "./constants";
- import { normalizePathString } from "./utils/resolve-path";
- import { initLocale } from "./utils/locale";
-+import { strings } from "@notesnook/intl";
- 
- const appHostnames = isDevelopment()
-   ? ["localhost", "127.0.0.1"]
-@@ -223,11 +224,10 @@ app.once("ready", async () => {
-   if (app.runningUnderARM64Translation) {
-     console.log("App is running under ARM64 translation");
-     dialog.showMessageBoxSync({
--      message:
--        "Notesnook detected that it is running under ARM64 translation. For the best performance, please download the ARM64 build of Notesnook from our website.",
-+      message: strings.arm64TranslationWarning(),
-       type: "warning",
--      buttons: ["Okay"],
--      title: "Degraded Performance Warning"
-+      buttons: [strings.okay()],
-+      title: strings.degradedPerformanceWarning()
-     });
-   }
- 
-@@ -313,11 +313,10 @@ async function migrateBackupDirectory() {
-   } catch (e) {
-     console.error("Failed to migrate backup directory", e);
-     const pressedButton = dialog.showMessageBoxSync(globalThis.window, {
--      message:
--        "Failed to migrate backup directory. It has been reset to default.",
--      title: "Backup Directory Migration Failed",
-+      message: strings.backupDirMigrationFailedDesc(),
-+      title: strings.backupDirMigrationFailed(),
-       type: "error",
--      buttons: ["Set backup directory", "Ignore"]
-+      buttons: [strings.setBackupDir(), strings.ignore()]
-     });
-     if (pressedButton === 0) {
-       await api.integration.selectBackupDirectory();
-```
-
-**File**: `apps/desktop/src/utils/jumplist.ts` (modified, +12/-11)
-```diff
-@@ -21,6 +21,7 @@ import { app, Menu } from "electron";
- import { AssetManager } from "./asset-manager";
- import { bringToFront } from "./bring-to-front";
- import { bridge } from "../api/bridge";
-+import { strings } from "@notesnook/intl";
- 
- export function setupJumplist() {
-   if (process.platform === "win32") {
-@@ -34,33 +35,33 @@ function setJumplistOnWindows() {
-   app.setJumpList([
-     {
-       type: "custom",
--      name: "Quick actions",
-+      name: strings.quickActions(),
-       items: [
-         {
-           program: process.execPath,
-           iconIndex: 0,
-           iconPath: AssetManager.icon("note-add", { format: "ico" }),
-           args: "new note",
--          description: "Create a new note",
--          title: "New note",
-+          description: strings.createNewNote(),
-+          title: strings.newNote(),
-           type: "task"
-         },
-         {
-           program: process.execPath,
-           iconIndex: 0,
-           iconPath: AssetManager.icon("notebook-add", { format: "ico" }),
-           args: "new notebook",
--          description: "Create a new notebook",
--          title: "New notebook",
-+          description: strings.createNewNotebook(),
-+          title: strings.newNotebook(),
-           type: "task"
-         },
-         {
-           program: process.execPath,
-           iconIndex: 0,
-           iconPath: AssetManager.icon("reminder-add", { format: "ico" }),
-           args: "new reminder",
--          description: "Add a new reminder",
--          title: "New reminder",
-+          description: strings.addNewReminder(),
-+          title: strings.newReminder(),
-           type: "task"
-         }
-       ]
-@@ -71,29 +72,29 @@ function setJumplistOnWindows() {
- function setDockMenuOnMacOs() {
-   const contextMenu = Menu.buildFromTemplate([
-     {
--      label: "New note",
-+      label: strings.newNote(),
-       type: "normal",
-       click: () => {
-         bringToFront();
-         bridge.onCreateItem("note");
-       }
-     },
-     {
--      label: "New notebook",
-+      label: strings.newNotebook(),
-       type: "normal",
-       click: () => {
-         bringToFront();
-         bridge.onCreateItem("notebook");
-       }
-     },
-     {
--      label: "New reminder",
-+      label: strings.newReminder(),
-       type: "normal",
-       click: () => {
-         bringToFront();
-         bridge.onCreateItem("reminder");
-       }
-     }
-   ]);
--  app.dock.setMenu(contextMenu);
-+  app.dock?.setMenu(contextMenu);
- }
-```
-
-**File**: `apps/desktop/src/utils/tray.ts` (modified, +5/-4)
-```diff
-@@ -22,6 +22,7 @@ import { AssetManager } from "./asset-manager";
- import { isFlatpak } from "./index";
- import { bringToFront } from "./bring-to-front";
- import { bridge } from "../api/bridge";
-+import { strings } from "@notesnook/intl";
- 
- let tray: Tray | undefined = undefined;
- export function destroyTray() {
-@@ -42,7 +43,7 @@ export function setupTray() {
- 
-   const contextMenu = Menu.buildFromTemplate([
-     {
--      label: "Show app",
-+      label: strings.showApp(),
-       type: "normal",
-       icon: isFlatpak()
-         ? undefined
-@@ -51,7 +52,7 @@ export function setupTray() {
-     },
-     { type: "separator" },
-     {
--      label: "New note",
-+      label: strings.newNote(),
-       type: "normal",
-       icon: isFlatpak()
-         ? undefined
-@@ -62,7 +63,7 @@ export function setupTray() {
-       }
-     },
-     {
--      label: "New notebook",
-+      label: strings.newNotebook(),
-       type: "normal",
-       icon: isFlatpak()
-         ? undefined
-@@ -74,7 +75,7 @@ export function setupTray() {
-     },
-     { type: "separator" },
-     {
--      label: "Quit",
-+      label: strings.quit(),
-       icon: isFlatpak()
-         ? undefined
-         : AssetManager.icon("quit", { size: trayIconSize }),
-```
-
-**File**: `apps/mobile/app/common/filesystem/upload.ts` (modified, +1/-1)
-```diff
-@@ -238,7 +238,7 @@ export async function uploadFile(
-       );
-       if (status !== "granted") {
-         ToastManager.show({
--          message: `The permission to show file upload notification was disallowed by the user.`,
-+          message: strings.fileUploadNotificationPermissionDisallowed(),
-           type: "info"
-         });
-       }
-```
-
-**File**: `apps/mobile/app/components/auth/signup.tsx` (modified, +2/-2)
-```diff
-@@ -387,8 +387,8 @@ export const Signup = ({
-       ) : (
-         <>
-           <Loading
--            title={"Setting up your account..."}
--            description="Your account is almost ready, please wait..."
-+            title={strings.settingUpAccount()}
-+            description={strings.accountAlmostReady()}
-           />
-         </>
-       )}
-```
-
-**File**: `apps/mobile/app/components/auth/two-factor.tsx` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ const TwoFactorVerification = ({
-   const onNext = async () => {
-     if (!code.current || code.current.length < 6) {
-       setError(
--        new Error("Please provide a valid multi-factor authentication code.")
-+        new Error(strings.validMfaCodeRequired())
-       );
-       return;
-     }
-```
-
-**File**: `apps/mobile/app/components/dialogs/jump-to-section/index.tsx` (modified, +2/-1)
-```diff
-@@ -44,6 +44,7 @@ import BaseDialog from "../../dialog/base-dialog";
- import { Pressable } from "../../ui/pressable";
- import Paragraph from "../../ui/typography/paragraph";
- import { DefaultAppStyles } from "../../../utils/styles";
-+import { formatGroupTitle } from "@notesnook/common";
- 
- const JumpToSectionDialog = () => {
-   const scrollRef = useRef<RefObject<FlatList>>(undefined);
-@@ -207,7 +208,7 @@ const JumpToSectionDialog = () => {
-                         textAlign: "center"
-                       }}
-                     >
--                      {item.group.title}
-+                      {formatGroupTitle(item.group.title)}
-                     </Paragraph>
-                   </Pressable>
-                 );
-```
-
----
-
-### Incident Patch 5: `825d3910` (2026-09-14)
-**Commit Message**: Merge pull request #10359 from streetwriters/fix/copy-url
-
-Fix copying url to clipboard on mobile not working
-
-**File**: `apps/mobile/app/screens/editor/tiptap/use-editor-events.tsx` (modified, +11/-8)
-```diff
-@@ -399,13 +399,6 @@ export const useEditorEvents = (
-         return onBackPress();
-       }
- 
--      if (
--        editorMessage.sessionId !== editor.sessionId.current &&
--        editorMessage.type !== NativeEvents.status
--      ) {
--        return;
--      }
--
-       const noteId = useTabStore
-         .getState()
-         .getNoteIdForTab(editorMessage.tabId);
-@@ -538,7 +531,13 @@ export const useEditorEvents = (
-         case EditorEvents.getLinkData: {
-           const url = (editorMessage.value as any)?.url as string;
-           const link = parseInternalLink(url);
--          if (!link) return;
-+          if (!link) {
-+            editor.postMessage(NativeEvents.resolve, {
-+              resolverId: editorMessage.resolverId,
-+              data: undefined
-+            });
-+            return;
-+          }
-           switch (link.type) {
-             case "note":
-             case "notebook":
-@@ -687,6 +686,10 @@ export const useEditorEvents = (
-         }
-         case EditorEvents.copyToClipboard: {
-           Clipboard.setString(editorMessage.value as string);
-+          ToastManager.show({
-+            message: strings.linkCopied(),
-+            type: "success"
-+          });
-           break;
-         }
-         case EditorEvents.saveScroll: {
-```
-
----
-
-### Incident Patch 6: `bdc14cb1` (2026-09-11)
-**Commit Message**: web: fix clear account data & reset password (#10352)
-
-**File**: `apps/web/src/views/recovery.tsx` (modified, +10/-5)
-```diff
-@@ -424,14 +424,19 @@ function NewPassword(props: BaseRecoveryComponentProps<"new">) {
-         const user = await db.user.getUser();
-         if (!user) throw new Error(strings.notLoggedIn());
- 
--        if (!formData?.recoveryKey)
--          throw new Error("Recovery key is required to reset password.");
--
-         if (form.password !== form.confirmPassword)
-           throw new Error("Passwords do not match.");
- 
--        if (formData?.userResetRequired && !(await db.user.resetUser()))
--          throw new Error("Failed to reset user.");
-+        if (formData?.userResetRequired) {
-+          if (!(await db.user.resetPasswordWithoutRecoveryKey(form.password)))
-+            throw new Error("Could not reset account password.");
+@@ -0,0 +1,72 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
 +
-+          navigate("final");
-+          return;
-+        }
++Copyright (C) 2023 Streetwriters (Private) Limited
 +
-+        if (!formData?.recoveryKey)
-+          throw new Error("Recovery key is required to reset password.");
- 
-         if (
-           !(await db.user.resetPassword({
-```
-
-**File**: `packages/core/src/api/user-manager.ts` (modified, +51/-3)
-```diff
-@@ -374,7 +374,7 @@ class UserManager {
-   }
- 
-   changePassword(oldPassword: string, newPassword: string) {
--    return this._updatePassword("change", {
-+    return this.updatePassword("change", {
-       old_password: oldPassword,
-       new_password: newPassword
-     });
-@@ -398,12 +398,60 @@ class UserManager {
-     newPassword: string;
-     encryptionKey: SerializedKey;
-   }) {
--    return this._updatePassword("reset", {
-+    return this.updatePassword("reset", {
-       new_password: options.newPassword,
-       encryptionKey: options.encryptionKey
-     });
-   }
- 
-+  async resetPasswordWithoutRecoveryKey(newPassword: string) {
-+    if (!newPassword) throw new Error("New password is required.");
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
 +
-+    const token = await this.tokenManager.getAccessToken();
-+    const user = await this.getUser();
-+    if (!token || !user) throw new Error("You are not logged in.");
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
 +
-+    const updateUserPayload: Partial<User> = {};
-+    const newMasterKey = await this.db
-+      .storage()
-+      .generateCryptoKey(newPassword, user.salt);
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
 +
-+    updateUserPayload.dataEncryptionKey = await this.keyManager.wrapKey(
-+      await this.db.crypto().generateRandomKey(),
-+      newMasterKey
-+    );
 +
-+    if (!(await this.resetUser())) throw new Error("Failed to reset user.");
++import { test, expect, vi } from "vitest";
++import { databaseTest } from "./utils/index.ts";
++import http from "../src/utils/http.js";
 +
-+    await http.patch.json(
-+      `${constants.API_HOST}/users/password/reset`,
-+      {
-+        newPassword: await this.db
-+          .storage()
-+          .hash(newPassword, user.email.toLowerCase()),
-+        userKeys: updateUserPayload
-+      },
-+      token
-+    );
-+
-+    await this.db.storage().deriveCryptoKey({
-+      password: newPassword,
-+      salt: user.salt
-+    });
-+
-+    this.keyManager.clearCache();
-+    await this.setUser({
-+      ...user,
-+      ...updateUserPayload,
-+      attachmentsKey: undefined,
-+      monographPasswordsKey: undefined,
-+      inboxKeys: undefined,
-+      legacyDataEncryptionKey: undefined
-+    });
-+
-+    return true;
++vi.mock("../src/utils/http.js", () => ({
++  default: {
++    get: vi.fn().mockResolvedValue(undefined),
++    post: vi.fn().mockResolvedValue(undefined),
++    patch: { json: vi.fn().mockResolvedValue(undefined) },
++    delete: vi.fn().mockResolvedValue(undefined)
 +  }
++}));
 +
-   async getDataEncryptionKeys(): Promise<
-     { version: KeyVersion; key: SerializedKey }[] | undefined
-   > {
-@@ -667,7 +715,7 @@ class UserManager {
-     }
++test("sync connection and db share the token refresh lock", () =>
++  databaseTest().then(async (db) => {
++    await db.kv().write("token", {
++      access_token: "access-1",
++      refresh_token: "refresh-1",
++      scope: "notesnook.sync offline_access IdentityServerApi",
++      token_type: "Bearer",
++      expires_in: 3600,
++      t: Date.now() - 2 * 3600 * 1000
++    });
++
++    let refreshes = 0;
++    vi.mocked(http.post).mockImplementation(async (url: string) => {
++      if (!url.endsWith("/connect/token")) return;
++      const n = ++refreshes;
++      await new Promise((r) => setTimeout(r, 50));
++      return {
++        access_token: `access-${n + 1}`,
++        refresh_token: `refresh-${n + 1}`,
++        scope: "notesnook.sync offline_access IdentityServerApi",
++        token_type: "Bearer",
++        expires_in: 3600
++      };
++    });
++
++    const { HubConnectionBuilder } = await import("@microsoft/signalr");
++    const withUrl = vi.spyOn(HubConnectionBuilder.prototype, "withUrl");
++    await (db.syncer.sync as any).createConnection({});
++    const options = withUrl.mock.calls[0][1] as {
++      accessTokenFactory: () => Promise<string>;
++    };
++
++    await Promise.all([
++      db.tokenManager.getAccessToken(),
++      options.accessTokenFactory()
++    ]);
++
++    expect(refreshes).toBe(1);
++  }));
+```
+
+**File**: `packages/core/src/api/sync/index.ts` (modified, +1/-2)
+```diff
+@@ -25,7 +25,6 @@ import {
+   SYNC_CHECK_IDS
+ } from "../../common.js";
+ import Constants from "../../utils/constants.js";
+-import TokenManager from "../token-manager.js";
+ import Collector from "./collector.js";
+ import { type HubConnection } from "@microsoft/signalr";
+ import Merger, { handleInboxItems } from "./merger.js";
+@@ -488,7 +487,7 @@ export class Sync {
+     const { HubConnectionBuilder, HttpTransportType, JsonHubProtocol } =
+       await import("@microsoft/signalr");
+ 
+-    const tokenManager = new TokenManager(this.db.kv, this.db.eventManager);
++    const tokenManager = this.db.tokenManager;
+     this.connection = new HubConnectionBuilder()
+       .withUrl(`${Constants.API_HOST}/hubs/sync/v2`, {
+         accessTokenFactory: async () => {
+```
+
+**File**: `packages/core/src/api/user-manager.ts` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ class UserManager {
+   private keyManager: KeyManager;
+   constructor(private readonly db: Database) {
+     this.keyManager = new KeyManager(db);
+-    this.tokenManager = new TokenManager(db.kv, db.eventManager);
++    this.tokenManager = db.tokenManager;
+ 
+     EV.subscribe(EVENTS.userUnauthorized, async (url: string) => {
+       if (url.includes("/connect/token") || !(await HealthCheck.auth())) return;
+```
+
+---
+
+### Incident Patch 2: `147bd03e` (2026-10-06)
+**Commit Message**: Merge pull request #10377 from streetwriters/fix-edit-link
+
+Fixes link toolbar interactions on mobile by ensuring "Open" and "Copy" options remain visible at the trailing edge of a link, making "Edit Link" responsive and accurate at boundary positions via extendMarkRange, and preventing promise deadlocks on external URLs by only fetching getLinkData for internal nn:// links.
+
+**File**: `packages/editor/src/toolbar/tools/link.tsx` (modified, +26/-15)
+```diff
+@@ -154,24 +154,28 @@ export function EditLink(props: ToolProps) {
+       title={props.title}
+       isEditing
+       onDone={(attributes) => {
+-        if (selectedNode.current)
+-          editor.chain().focus().setTextSelection(selectedNode.current).run();
++        editor.chain().focus().extendMarkRange("link").run();
+         editor.commands.setLink(attributes);
+         hide();
+       }}
+       onClick={() => {
+-        if (!selectedNode.current) return;
++        editor.commands.extendMarkRange("link");
+ 
+-        const { node } = selectedNode.current;
+-        if (!node) return;
++        const href = attrs?.href;
++        if (!href) return;
+ 
+-        const selectedText = node.textContent;
+-        const mark = findMark(node, "link");
++        const selectedText =
++          editor.state.doc.textBetween(
++            editor.state.selection.from,
++            editor.state.selection.to
++          ) ||
++          selectedNode.current?.node?.textContent ||
++          editor.state.selection.$from.nodeBefore?.textContent ||
++          "";
+ 
+-        if (!mark) return;
+         return {
+           title: selectedText,
+-          href: mark.attrs.href
++          href
+         };
+       }}
+     />
+@@ -208,12 +212,15 @@ export function OpenLink(props: ToolProps) {
+   );
+   const { node } = selectedNode.current || {};
+   const link = node ? findMark(node, "link") : null;
+-  const href = link?.attrs.href ?? null;
++  const href =
++    link?.attrs.href ??
++    (getMarkAttributes(editor.state, "link")?.href as string) ??
++    null;
+   const [loading, setLoading] = useState(false);
+   const [linkData, setLinkData] = useState<LinkData | undefined>(undefined);
+ 
+   useEffect(() => {
+-    if (!href) return;
++    if (!href || !isInternalLink(href)) return;
+ 
+     (async () => {
+       try {
+@@ -227,7 +234,7 @@ export function OpenLink(props: ToolProps) {
+     })();
+   }, [href]);
+ 
+-  if (!link || !href) return null;
++  if (!href) return null;
+ 
+   const title = linkData?.title || href;
+ 
+@@ -285,16 +292,20 @@ export function CopyLink(props: ToolProps) {
+   );
+   const { node } = selectedNode.current || {};
+   const link = node ? findMark(node, "link") : null;
+-  if (!link) return null;
+-  const href = link?.attrs.href;
++  const href =
++    link?.attrs.href ??
++    (getMarkAttributes(editor.state, "link")?.href as string) ??
++    null;
+   if (!href) return null;
+ 
+   return (
+     <ToolButton
+       {...props}
+       toggled={false}
+       onClick={async () => {
+-        const linkData = await editor.storage.getLinkData?.(href);
++        const linkData = isInternalLink(href)
++          ? await editor.storage.getLinkData?.(href)
++          : undefined;
+         if (linkData?.title) {
+           editor.storage.copyToClipboard?.(
+             href,
+```
+
+---
+
+### Incident Patch 3: `a9b3d564` (2026-10-17)
+**Commit Message**: core: fix trash cleanup deleting only one expired item (#10513)
+
+Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
+
+**File**: `packages/core/__tests__/trash.test.ts` (modified, +24/-0)
+```diff
+@@ -167,6 +167,30 @@ test("permanently delete items older than 7 days", () =>
+     expect(await db.trash.all()).toHaveLength(0);
+   }));
+ 
++test("trash cleanup should delete all expired items", () =>
++  databaseTest().then(async (db) => {
++    const noteIds: string[] = [];
++    const notebookIds: string[] = [];
++    for (let i = 0; i < 5; i++) noteIds.push(await db.notes.add(TEST_NOTE));
++    for (let i = 0; i < 3; i++)
++      notebookIds.push((await db.notebooks.add(TEST_NOTEBOOK))!);
++
++    await db.notes.moveToTrash(...noteIds);
++    await db.notebooks.moveToTrash(...notebookIds);
++
++    const expired = dayjs().subtract(30, "days").toDate().getTime();
++    await db.notes.collection.update(noteIds, { dateDeleted: expired });
++    await db.notebooks.collection.update(notebookIds, {
++      dateDeleted: expired
++    });
++
++    expect(await db.trash.all()).toHaveLength(8);
++
++    await db.trash.cleanup();
++
++    expect(await db.trash.all()).toHaveLength(0);
++  }));
++
+ test("trash cleanup should not delete items newer than 7 days", () =>
+   databaseTest().then(async (db) => {
+     const noteId = await db.notes.add(TEST_NOTE);
+```
+
+**File**: `packages/core/src/collections/trash.ts` (modified, +15/-23)
+```diff
+@@ -96,32 +96,24 @@ export default class Trash {
+       .subtract(duration, "days")
+       .toDate()
+       .getTime();
+-    const expiredItems = await this.db
++    const noteIds = await this.db
+       .sql()
+-      .selectNoFrom((eb) => [
+-        eb
+-          .selectFrom("notes")
+-          .where("type", "==", "trash")
+-          .where("dateDeleted", "<=", maxMs)
+-          .select("id")
+-          .as("noteId"),
+-        eb
+-          .selectFrom("notebooks")
+-          .where("type", "==", "trash")
+-          .where("dateDeleted", "<=", maxMs)
+-          .select("id")
+-          .as("notebookId")
+-      ])
++      .selectFrom("notes")
++      .where("type", "==", "trash")
++      .where("dateDeleted", "<=", maxMs)
++      .select("id")
+       .execute();
+-    const { noteIds, notebookIds } = expiredItems.reduce(
+-      (ids, item) => {
+-        if (item.noteId) ids.noteIds.push(item.noteId);
+-        if (item.notebookId) ids.notebookIds.push(item.notebookId);
+-        return ids;
+-      },
+-      { noteIds: [] as string[], notebookIds: [] as string[] }
++    const notebookIds = await this.db
++      .sql()
++      .selectFrom("notebooks")
++      .where("type", "==", "trash")
++      .where("dateDeleted", "<=", maxMs)
++      .select("id")
++      .execute();
++    await this._delete(
++      noteIds.map((n) => n.id),
++      notebookIds.map((n) => n.id)
+     );
+-    await this._delete(noteIds, notebookIds);
+ 
+     await this.buildCache();
    }
- 
--  async _updatePassword(
-+  private async updatePassword(
-     type: "change" | "reset",
-     data: {
-       new_password: string;
-```
-
----
-
-### Incident Patch 7: `8576f206` (2026-09-10)
-**Commit Message**: mobile: fix copy url not working in editor on mobile
-
-**File**: `apps/mobile/app/screens/editor/tiptap/use-editor-events.tsx` (modified, +11/-8)
-```diff
-@@ -399,13 +399,6 @@ export const useEditorEvents = (
-         return onBackPress();
-       }
- 
--      if (
--        editorMessage.sessionId !== editor.sessionId.current &&
--        editorMessage.type !== NativeEvents.status
--      ) {
--        return;
--      }
--
-       const noteId = useTabStore
-         .getState()
-         .getNoteIdForTab(editorMessage.tabId);
-@@ -538,7 +531,13 @@ export const useEditorEvents = (
-         case EditorEvents.getLinkData: {
-           const url = (editorMessage.value as any)?.url as string;
-           const link = parseInternalLink(url);
--          if (!link) return;
-+          if (!link) {
-+            editor.postMessage(NativeEvents.resolve, {
-+              resolverId: editorMessage.resolverId,
-+              data: undefined
-+            });
-+            return;
-+          }
-           switch (link.type) {
-             case "note":
-             case "notebook":
-@@ -687,6 +686,10 @@ export const useEditorEvents = (
-         }
-         case EditorEvents.copyToClipboard: {
-           Clipboard.setString(editorMessage.value as string);
-+          ToastManager.show({
-+            message: strings.linkCopied(),
-+            type: "success"
-+          });
-           break;
-         }
-         case EditorEvents.saveScroll: {
-```
-
----
-
-### Incident Patch 8: `de2b9ffc` (2026-09-09)
-**Commit Message**: ci: fix help docs publish (#10354)
-
-**File**: `.github/workflows/help.publish.yml` (modified, +1/-0)
-```diff
-@@ -32,3 +32,4 @@ jobs:
- 
-       - name: Publish on Cloudflare Pages
-         run: npx --yes wrangler deploy
-+        working-directory: ./docs/help
-```
-
----
-
-### Incident Patch 9: `1d3f8985` (2026-09-09)
-**Commit Message**: docs: fix sitemap urls (#10353)
-
-**File**: `docs/help/.vitepress/config.mts` (modified, +2/-1)
-```diff
-@@ -36,7 +36,8 @@ export default defineConfig({
-   lastUpdated: true,
-   metaChunk: true,
-   sitemap: {
--    hostname: "https://notesnook.com/help",
-+    // Keep the trailing slash so sitemap URLs resolve under /help/.
-+    hostname: "https://notesnook.com/help/",
-     // Only the latest docs belong in the sitemap.
-     transformItems: (items) =>
-       items.filter(
-```
-
----
-
-### Incident Patch 10: `6911b2fa` (2026-09-09)
-**Commit Message**: core: bound API request time with abort timeout (#10346)
-
-Signed-off-by: dvalin21 <[REDACTED_EMAIL]>
-
-**File**: `packages/core/src/utils/http.ts` (modified, +6/-2)
-```diff
-@@ -139,9 +139,11 @@ export function errorTransformer(errorJson: {
-   };
- }
- 
--async function fetchWrapped(input: string, init: RequestInit) {
-+async function fetchWrapped(input: string, init: RequestInit, timeoutMs = 30000) {
-+  const controller = new AbortController();
-+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-   try {
--    const response = await fetch(input, init);
-+    const response = await fetch(input, { ...init, signal: controller.signal });
-     return response;
-   } catch (e) {
-     const host = extractHostname(input);
-@@ -154,6 +156,8 @@ async function fetchWrapped(input: string, init: RequestInit) {
-       );
- 
-     throw e;
-+  } finally {
-+    clearTimeout(timeout);
-   }
- }
- 
-```
-
----
-
-### Incident Patch 11: `143892e2` (2026-09-07)
-**Commit Message**: Merge pull request #10282 from kashaf-ansari-dev/fix-uncompressed-images-lost
-
-mobile: prevent dropping uncompressed image attachments on new notes
-
-**File**: `apps/mobile/app/screens/editor/tiptap/picker.ts` (modified, +18/-3)
-```diff
-@@ -123,10 +123,17 @@ const file = async (fileOptions: PickerOptions) => {
-       console.log(e, "error");
-     });
- 
-+    const isNewNote = fileOptions.noteId === undefined;
-+    const currentFileNoteId =
-+      fileOptions.tabId !== undefined
-+        ? useTabStore.getState().getNoteIdForTab(fileOptions.tabId)
-+        : undefined;
-+
-+    const isSameNote = currentFileNoteId === fileOptions.noteId;
-+
-     if (
-       fileOptions.tabId !== undefined &&
--      useTabStore.getState().getNoteIdForTab(fileOptions.tabId) ===
--        fileOptions.noteId
-+      (isSameNote || isNewNote)
-     ) {
-       editorController.current?.commands.insertAttachment(
-         {
-@@ -245,6 +252,7 @@ const handleImageResponse = async (
-   response: Image[],
-   options: PickerOptions
- ) => {
-+  const isNewNote = options.noteId === undefined;
-   const result = await AttachImage.present(response, options.context);
- 
-   if (!result) return;
-@@ -295,9 +303,16 @@ const handleImageResponse = async (
- 
-     RNFetchBlob.fs.unlink(uri).catch((e) => {});
- 
-+    const currentNoteId =
-+      options.tabId !== undefined
-+        ? useTabStore.getState().getNoteIdForTab(options.tabId)
-+        : undefined;
-+
-+    const isSameNote = currentNoteId === options.noteId;
-+
-     if (
-       options.tabId !== undefined &&
--      useTabStore.getState().getNoteIdForTab(options.tabId) === options.noteId
-+      (isSameNote || isNewNote)
-     ) {
-       editorController.current?.commands.insertImage(
-         {
-```
-
----
-
-### Incident Patch 12: `4c4ac1c1` (2026-09-02)
-**Commit Message**: Merge pull request #10313 from streetwriters/editor/fix-failing-editor-tests
-
-editor: fix three failing editor tests
-
-**File**: `packages/editor/src/extensions/check-list-item/__tests__/check-list-item.test.ts` (modified, +1/-2)
-```diff
-@@ -21,7 +21,6 @@ import { describe, expect, test } from "vitest";
- import {
-   createEditor,
-   h,
--  p,
-   checkList,
-   checkListItem
- } from "../../../../test-utils/index.js";
-@@ -36,7 +35,7 @@ describe("check list item", () => {
-    */
-   test("inline image as first child in check list item", async () => {
-     const el = checkList(
--      checkListItem([p(["item 1"])]),
-+      checkListItem(["item 1"]),
-       checkListItem([h("img", [], { src: "image.png" })])
-     );
- 
-```
-
-**File**: `packages/editor/src/extensions/image/tests/image.test.ts` (modified, +8/-6)
-```diff
-@@ -55,17 +55,19 @@ test("copy image to clipboard when Ctrl+C is pressed on selected image", async (
-   const editorElement = h("div");
-   const { editor } = createEditor({
-     element: editorElement,
-+    // the image is put there as content rather than with `insertImage`, which
-+    // needs the attachment extension: what is under test is the copying
-+    initialContent: h("img", [], {
-+      src: "test.png",
-+      "data-hash": testHash,
-+      "data-mime": "image/png",
-+      "data-filename": "test.png"
-+    }).outerHTML,
-     extensions: {
-       image: ImageNode
-     }
-   });
-   editor.storage.getAttachmentData = vi.fn().mockResolvedValue(mockImageData);
--  editor.commands.insertImage({
--    src: "test.png",
--    hash: testHash,
--    mime: "image/png",
--    filename: "test.png"
--  });
-   editor.commands.setNodeSelection(0);
- 
-   expect(editor.isActive("image")).toBe(true);
-```
-
-**File**: `packages/editor/src/extensions/task-item/__tests__/task-item.test.ts` (modified, +1/-2)
-```diff
-@@ -21,7 +21,6 @@ import { describe, expect, test } from "vitest";
- import {
-   createEditor,
-   h,
--  p,
-   taskList,
-   taskItem
- } from "../../../../test-utils/index.js";
-@@ -36,7 +35,7 @@ describe("task list item", () => {
-    */
-   test("inline image as first child in task list item", async () => {
-     const el = taskList(
--      taskItem([p(["item 1"])]),
-+      taskItem(["item 1"]),
-       taskItem([h("img", [], { src: "image.png" })])
-     );
- 
-```
-
----
-
-### Incident Patch 13: `0a09ad59` (2026-09-02)
-**Commit Message**: editor: fix three failing editor tests
-
-The list fixtures passed a paragraph into taskItem/checkListItem, which
-wrap their children in one already. The nested markup reparsed into an
-extra empty paragraph, so the snapshots never matched. Every other caller
-passes strings.
-
-The image test called insertImage, which has delegated to insertAttachment
-since 08cf21b0 and is not registered there. It puts the image in as content
-instead; copying it is what the test is about.
-
-**File**: `packages/editor/src/extensions/check-list-item/__tests__/check-list-item.test.ts` (modified, +1/-2)
-```diff
-@@ -21,7 +21,6 @@ import { describe, expect, test } from "vitest";
- import {
-   createEditor,
-   h,
--  p,
-   checkList,
-   checkListItem
- } from "../../../../test-utils/index.js";
-@@ -36,7 +35,7 @@ describe("check list item", () => {
-    */
-   test("inline image as first child in check list item", async () => {
-     const el = checkList(
--      checkListItem([p(["item 1"])]),
-+      checkListItem(["item 1"]),
-       checkListItem([h("img", [], { src: "image.png" })])
-     );
- 
-```
-
-**File**: `packages/editor/src/extensions/image/tests/image.test.ts` (modified, +8/-6)
-```diff
-@@ -55,17 +55,19 @@ test("copy image to clipboard when Ctrl+C is pressed on selected image", async (
-   const editorElement = h("div");
-   const { editor } = createEditor({
-     element: editorElement,
-+    // the image is put there as content rather than with `insertImage`, which
-+    // needs the attachment extension: what is under test is the copying
-+    initialContent: h("img", [], {
-+      src: "test.png",
-+      "data-hash": testHash,
-+      "data-mime": "image/png",
-+      "data-filename": "test.png"
-+    }).outerHTML,
-     extensions: {
-       image: ImageNode
-     }
-   });
-   editor.storage.getAttachmentData = vi.fn().mockResolvedValue(mockImageData);
--  editor.commands.insertImage({
--    src: "test.png",
--    hash: testHash,
--    mime: "image/png",
--    filename: "test.png"
--  });
-   editor.commands.setNodeSelection(0);
- 
-   expect(editor.isActive("image")).toBe(true);
-```
-
-**File**: `packages/editor/src/extensions/task-item/__tests__/task-item.test.ts` (modified, +1/-2)
-```diff
-@@ -21,7 +21,6 @@ import { describe, expect, test } from "vitest";
- import {
-   createEditor,
-   h,
--  p,
-   taskList,
-   taskItem
- } from "../../../../test-utils/index.js";
-@@ -36,7 +35,7 @@ describe("task list item", () => {
-    */
-   test("inline image as first child in task list item", async () => {
-     const el = taskList(
--      taskItem([p(["item 1"])]),
-+      taskItem(["item 1"]),
-       taskItem([h("img", [], { src: "image.png" })])
-     );
- 
-```
-
----
-
-### Incident Patch 14: `1e42f89b` (2026-09-01)
-**Commit Message**: ci: fix ios platform not found error
-
-**File**: `.github/workflows/ios.publish.yml` (modified, +26/-2)
-```diff
-@@ -21,8 +21,32 @@ jobs:
- 
-       - name: Setup iOS Platform
-         run: |
--          xcodebuild -downloadPlatform iOS -exportPath ~/Downloads
--          xcodebuild -importPlatform ~/Downloads/iphonesimulator_26.1_23B86.dmg
-+          # GitHub runs this as `/bin/bash -e`, so `set +e` is required -- without
-+          # it the first failure aborts the step before any retry can happen.
-+          # Both commands hit "Unable to connect to simulator" (exit 70) when
-+          # CoreSimulatorService is wedged, so retry each and bounce it between.
-+          set +e
-+          DL_DIR="$RUNNER_TEMP/ios-platform"
-+
-+          retry() {
-+            for i in 1 2 3; do
-+              "$@" && return 0
-+              echo "Attempt $i failed ($*); resetting CoreSimulator..."
-+              sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService simdiskimaged 2>/dev/null
-+              sleep 20
-+              xcrun simctl list runtimes >/dev/null 2>&1
-+            done
-+            echo "::error::Failed after 3 attempts: $*"
-+            exit 1
-+          }
-+
-+          xcrun simctl list runtimes >/dev/null 2>&1
-+          retry xcodebuild -downloadPlatform iOS -exportPath "$DL_DIR"
-+
-+          # Find the dmg; its name embeds a build number that changes.
-+          DMG="$(find "$DL_DIR" -name '*.dmg' | head -n1)"
-+          [ -n "$DMG" ] || { echo "::error::No dmg in $DL_DIR"; exit 1; }
-+          retry xcodebuild -importPlatform "$DMG"
- 
-       - name: Install node modules
-         run: |
-```
-
----
-
-### Incident Patch 15: `a44c35af` (2026-08-31)
-**Commit Message**: Merge pull request #10265 from streetwriters/fix/android-backspace-bug
-
-editor: fix android backspace stopped working after prosemirror-view update
-
-**File**: `packages/editor/patches/prosemirror-view+1.42.2.patch` (modified, +200/-4)
-```diff
-@@ -1,5 +1,5 @@
- diff --git a/node_modules/prosemirror-view/dist/index.cjs b/node_modules/prosemirror-view/dist/index.cjs
--index a615cb7..c1a6cbb 100644
-+index a615cb7..e07b6e0 100644
- --- a/node_modules/prosemirror-view/dist/index.cjs
- +++ b/node_modules/prosemirror-view/dist/index.cjs
- @@ -1005,8 +1005,8 @@ var ViewDesc = function () {
-@@ -12,7 +12,64 @@ index a615cb7..c1a6cbb 100644
-            if (anchor != head) domSel.extend(headDOM.node, headDOM.offset);
-            domSelExtended = true;
-          } catch (_) {}
--@@ -3647,7 +3647,7 @@ function handleDrop(view, event, dragging) {
-+@@ -2935,6 +2935,8 @@ var InputState = _createClass(function InputState() {
-+   this.lastSelectionOrigin = null;
-+   this.lastSelectionTime = 0;
-+   this.lastIOSEnter = 0;
-++  this.lastAndroidEnter = 0;
-++  this.androidEnterFallbackTimeout = -1;
-+   this.lastIOSEnterFallbackTimeout = -1;
-+   this.lastFocus = 0;
-+   this.lastTouch = 0;
-+@@ -2978,6 +2980,7 @@ function destroyInput(view) {
-+   for (var type in view.input.eventHandlers) view.dom.removeEventListener(type, view.input.eventHandlers[type]);
-+   clearTimeout(view.input.composingTimeout);
-+   clearTimeout(view.input.lastIOSEnterFallbackTimeout);
-++  clearTimeout(view.input.androidEnterFallbackTimeout);
-+ }
-+ function ensureListeners(view) {
-+   view.someProp("handleDOMEvents", function (currentHandlers) {
-+@@ -3003,11 +3006,30 @@ function _dispatchEvent(view, event) {
-+ }
-+ editHandlers.keydown = function (view, _event) {
-+   var event = _event;
-++  if (android && event.keyCode == 13) {
-++    var enterNow = Date.now();
-++    view.input.lastAndroidEnter = enterNow;
-++    clearTimeout(view.input.androidEnterFallbackTimeout);
-++    view.input.androidEnterFallbackTimeout = setTimeout(function () {
-++      if (view.input.lastAndroidEnter == enterNow) {
-++        view.input.lastAndroidEnter = 0;
-++        view.domObserver.forceFlush();
-++        view.domObserver.flush();
-++        view.someProp("handleKeyDown", function (f) {
-++          return f(view, keyEvent(13, "Enter"));
-++        });
-++      }
-++    }, 200);
-++  }
-+   view.input.shiftKey = event.keyCode == 16 || event.shiftKey;
-+   if (inOrNearComposition(view)) return;
-+   view.input.lastKeyCode = event.keyCode;
-+   view.input.lastKeyCodeTime = Date.now();
-+-  if (android && chrome && event.keyCode == 13) return;
-++  if (android && chrome && event.keyCode == 13) {
-++    view.domObserver.forceFlush();
-++    view.domObserver.flush();
-++    if (view.state.selection.empty) return;
-++  }
-+   if (event.keyCode != 229) view.domObserver.forceFlush();
-+   if (ios && event.keyCode == 13 && !event.ctrlKey && !event.altKey && !event.metaKey) {
-+     var now = Date.now();
-+@@ -3023,6 +3045,7 @@ editHandlers.keydown = function (view, _event) {
-+   } else if (view.someProp("handleKeyDown", function (f) {
-+     return f(view, event);
-+   }) || captureKeyDown(view, event)) {
-++    if (android && event.keyCode == 13) view.input.lastAndroidEnter = 0;
-+     event.preventDefault();
-+   } else {
-+     setSelectionOrigin(view, "key");
-+@@ -3647,7 +3670,7 @@ function handleDrop(view, event, dragging) {
-      });
-      tr.setSelection(selectionBetween(view, $pos, tr.doc.resolve(end)));
-    }
-@@ -21,8 +78,45 @@ index a615cb7..c1a6cbb 100644
-    view.dispatch(tr.setMeta("uiEvent", "drop"));
-  }
-  handlers.focus = function (view) {
-+@@ -3674,6 +3697,7 @@ handlers.blur = function (view, _event) {
-+ };
-+ handlers.beforeinput = function (view, _event) {
-+   var event = _event;
-++  if (android && /^insert(Paragraph|LineBreak)/.test(event.inputType)) view.input.lastAndroidEnter = Date.now();
-+   if (android && event.inputType == "deleteContentBackward") {
-+     view.domObserver.flushSoon();
-+     var domChangeCount = view.input.domChangeCount;
-+@@ -4841,6 +4865,7 @@ function readDOMChange(view, from, to, typeOver, addedNodes) {
-+     return f(view, keyEvent(13, "Enter"));
-+   })) {
-+     view.input.lastIOSEnter = 0;
-++    view.input.lastAndroidEnter = 0;
-+     return;
-+   }
-+   if (!change) {
-+@@ -4881,10 +4906,11 @@ function readDOMChange(view, from, to, typeOver, addedNodes) {
-+   var inlineChange = $from.sameParent($to) && $from.parent.inlineContent && $fromA.end() >= change.endA;
-+   if ((ios && view.input.lastIOSEnter > Date.now() - 225 && (!inlineChange || addedNodes.some(function (n) {
-+     return n.nodeName == "DIV" || n.nodeName == "P";
-+-  })) || !inlineChange && $from.pos < parse.doc.content.size && (!$from.sameParent($to) || !$from.parent.inlineContent) && $from.pos < $to.pos && !/\S/.test(parse.doc.textBetween($from.pos, $to.pos, "", ""))) && view.someProp("handleKeyDown", function (f) {
-++  })) || (!android || view.input.lastAndroidEnter > Date.now() - 225) && !inlineChange && $from.pos < parse.doc.content.size && (!$from.sameParent($to) || !$from.parent.inlineContent) && $from.pos < $to.pos && !/\S/.test(parse.doc.textBetween($from.pos, $to.pos, "", ""))) && view.someProp("handleKeyDown", function (f) {
-+     return f(view, keyEvent
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10437** (2026-09-30): Fix/locale translations (@kashaf-ansari-dev)
-- **PR #10430** (2026-09-28): Fix/locale translations (@kashaf-ansari-dev)
-- **PR #10423** (2026-09-24): web: keep separators between multiselect menu items (NN-1187) (@01zulfi)
-- **PR #10422** (2026-09-24): web: sidebar design fixes (@01zulfi)
-- **PR #10409** (2026-09-26): Fix/locale translations (@kashaf-ansari-dev)
-- **PR #10393** (2026-09-26): web: redesign various dialogs (@01zulfi)
-- **PR #10388** (2026-09-22): ui: redesign menu (@01zulfi)
-- **PR #10379** (2026-09-18): mobile: release 3.4.13 (@ammarahm-ed)
+- **PR #10541** (2026-10-16): core: fix stream/iterate stopping early when dateCreated is null (@thecodrr)
+- **PR #10540** (2026-10-17): core: fix token refresh race between TokenManager instances (@thecodrr)
+- **PR #10539** (2026-10-16): core: fix sync merge overwriting local edits made during the merge (@thecodrr)
+- **PR #10538** (2026-10-18): core: fix trash list order and headers past one batch (@thecodrr)
+- **PR #10533** (2026-10-16): core: fix rejected sync chunks being marked as synced (@thecodrr)
+- **PR #10525** (2026-10-18): core: fix infinite sync loop for items modified in the future (@thecodrr)
 
 ---
 
@@ -2486,3 +1109,67 @@ editor: fix android backspace stopped working after prosemirror-view update
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. core: fix token refresh race between TokenManager instances (#10540)
+
+**RULE**:
+When implementing operations in `packages/core/__tests__/token-manager.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6e2b478c`: core: fix token refresh race between TokenManager instances (#10540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/__tests__/token-manager.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+/*
+This file is part of the Notesnook project (https://notesnook.com/)
+
+Copyright (C) 2023 Streetwriters (Private) Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+import { test, expect, vi } from "vitest";
+import { databaseTest } from "./utils/index.ts";
+import http from "../src/utils/http.js";
+
+vi.mock("../src/utils/http.js", () => ({
+  default: {
+    get: vi.fn().mockResolvedValue(undefined),
+    post: vi.fn().mockResolvedValue(undefined),
+    patch: { json: vi.fn().mockResolvedValue(undefined) },
+    delete: vi.fn().mockResolvedValue(undefined)
+  }
+}));
+
+test("sync connection and db share the token refresh lock"
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6e2b478c` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:10:22.378Z",
-  "total_verified_learnings": 303,
+  "last_updated": "2026-10-18T22:17:14.132Z",
+  "total_verified_learnings": 309,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7517,22 +7517,35 @@
     "learn-github-freenet-freenet-core": {
       "learning_id": "learn-github-freenet-freenet-core",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "freenet-freenet-core",
+      "source": "freenet/freenet-core",
+      "repository": "freenet/freenet-core",
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "HEAD",
-      "content_hash": "166edddefbfd80f90db4b6f07d4d4cb6e3de1426eefbe3b3f0711011d851c978",
+      "source_version": "98118f47",
+      "content_hash": "ac806ecea4bd0cce97f28ed52b8f34759ff4447fa88dc00bb6f89bddac205a64",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1769,
+          "title": "test: fix refresh-lock table test self-deadlock under cargo test (#5905)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.996Z"
+      "verified_at": "2026-10-18T22:16:32.222Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-fujiapple852-trippy": {
       "learning_id": "learn-github-fujiapple852-trippy",
@@ -22422,22 +22435,35 @@
     "learn-github-kgateway-dev-kgateway": {
       "learning_id": "learn-github-kgateway-dev-kgateway",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kgateway-dev-kgateway",
+      "source": "kgateway-dev/kgateway",
+      "repository": "kgateway-dev/kgateway",
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "HEAD",
-      "content_hash": "8909392dddec8f5b940af2b5f7f6211950f7ae66f25e231c8c789b795a5c28b7",
+      "source_version": "8a498c64",
+      "content_hash": "b88d720afe1ad308662bd4f3327da6889a674a8afef3ec9d142891c4f53899ad",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1768,
+          "title": "CVE fixes (#14832)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.797Z"
+      "verified_at": "2026-10-18T22:16:29.107Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-khoj-ai-khoj": {
       "learning_id": "learn-github-khoj-ai-khoj",
@@ -32522,22 +32548,35 @@
     "learn-github-streetwriters-notesnook": {
       "learning_id": "learn-github-streetwriters-notesnook",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "streetwriters-notesnook",
+      "source": "streetwriters/notesnook",
+      "repository": "streetwriters/notesnook",
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "HEAD",
-      "content_hash": "37c76c2055b2b41b8b96bea3c3edd4e5abac30176ab9366fcd3d51cb70d06429",
+      "source_version": "87a058e3",
+      "content_hash": "5da4fba3fc8f52c7866299fc957e5cb2585a9955e07d8fe7dd820936708f680f",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1767,
+          "title": "core: fix token refresh race between TokenManager instances (#10540)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.734Z"
+      "verified_at": "2026-10-18T22:16:25.843Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-study8677-repobrain": {
       "learning_id": "learn-github-study8677-repobrain",
@@ -33707,22 +33746,45 @@
     "learn-github-themesberg-flowbite": {
       "learning_id": "learn-github-themesberg-flowbite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "themesberg-flowbite",
+      "source": "themesberg/flowbite",
+      "repository": "themesberg/flowbite",
       "slug": "themesberg-flowbite",
       "platform": "github",
       "source_url": "https://github.com/themesberg/flowbite",
-      "source_version": "HEAD",
-      "content_hash": "8d1b402efaf22f7019eb55cc66451beec7142835b218c081090d0d0d6119e407",
+      "source_version": "232ebdb3",
+      "content_hash": "fa8ac8822e6662bbac1d92790323afbad88c7307992ed7adbeb7406d0788d08b",
       "dossier_path": "07_PROJECT_LEARNING/themesberg-flowbite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/themesberg-flowbite-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1771,
+          "title": "Unitless Line-Height Rule for CSS Design Tokens",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1772,
+          "title": "Idempotent Constructor Instance Registration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1773,
+          "title": "Strict Ancestor Boundary Scoping Invariant for Nested Declarative Components",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.964Z"
+      "verified_at": "2026-10-18T22:17:14.126Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-themeselection-flyonui": {
       "learning_id": "learn-github-themeselection-flyonui",
@@ -34832,22 +34894,35 @@
     "learn-github-vearch-vearch": {
       "learning_id": "learn-github-vearch-vearch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vearch-vearch",
+      "source": "vearch/vearch",
+      "repository": "vearch/vearch",
       "slug": "vearch-vearch",
       "platform": "github",
       "source_url": "https://github.com/vearch/vearch",
-      "source_version": "HEAD",
-      "content_hash": "4f12567c141580401bd0ff4d71aae5b32148836b9c31ee43ef7f5c9fe2c82e85",
+      "source_version": "bae78b18",
+      "content_hash": "8b3265d67e31e6f3f1f76c572a179726729873ee744ff5820947046fb541ef1d",
       "dossier_path": "07_PROJECT_LEARNING/vearch-vearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vearch-vearch-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1770,
+          "title": "replace busy-wait with blocking select in router search (#884)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.194Z"
+      "verified_at": "2026-10-18T22:16:33.895Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vectifyai-openkb": {
       "learning_id": "learn-github-vectifyai-openkb",
@@ -35390,22 +35465,35 @@
     "learn-github-watchexec-watchexec": {
       "learning_id": "learn-github-watchexec-watchexec",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "watchexec-watchexec",
+      "source": "watchexec/watchexec",
+      "repository": "watchexec/watchexec",
       "slug": "watchexec-watchexec",
       "platform": "github",
       "source_url": "https://github.com/watchexec/watchexec",
-      "source_version": "HEAD",
-      "content_hash": "bb271c9a73fa5923f427f421e1da76df6003c784393a756f7a8e34547988484e",
+      "source_version": "8a2c443f",
+      "content_hash": "6de8224ed964d88ff0a18195b68d3b610e97b6217202e5da5a63991f1594ce5b",
       "dossier_path": "07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1766,
+          "title": "supervisor): take the command state mutably when resuming a pause",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.304Z"
+      "verified_at": "2026-10-18T22:16:20.920Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-wcandillon-react-native-skia": {
       "learning_id": "learn-github-wcandillon-react-native-skia",
@@ -67541,6 +67629,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:10:22.374Z"
+    },
+    "rule-1766": {
+      "learning_id": "rule-1766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1766,
+      "title": "supervisor): take the command state mutably when resuming a pause",
+      "source_url": "https://github.com/watchexec/watchexec",
+      "source_version": "8a2c443f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:16:20.920Z"
+    },
+    "rule-1767": {
+      "learning_id": "rule-1767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1767,
+      "title": "core: fix token refresh race between TokenManager instances (#10540)",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "87a058e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:16:25.843Z"
+    },
+    "rule-1768": {
+      "learning_id": "rule-1768",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1768,
+      "title": "CVE fixes (#14832)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "8a498c64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:16:29.107Z"
+    },
+    "rule-1769": {
+      "learning_id": "rule-1769",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1769,
+      "title": "test: fix refresh-lock table test self-deadlock under cargo test (#5905)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "98118f47",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:16:32.222Z"
+    },
+    "rule-1770": {
+      "learning_id": "rule-1770",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1770,
+      "title": "replace busy-wait with blocking select in router search (#884)",
+      "source_url": "https://github.com/vearch/vearch",
+      "source_version": "bae78b18",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:16:33.895Z"
+    },
+    "rule-1771": {
+      "learning_id": "rule-1771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1771,
+      "title": "Unitless Line-Height Rule for CSS Design Tokens",
+      "source_url": "https://github.com/themesberg/flowbite",
+      "source_version": "232ebdb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:17:14.126Z"
+    },
+    "rule-1772": {
+      "learning_id": "rule-1772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1772,
+      "title": "Idempotent Constructor Instance Registration Invariant",
+      "source_url": "https://github.com/themesberg/flowbite",
+      "source_version": "232ebdb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:17:14.126Z"
+    },
+    "rule-1773": {
+      "learning_id": "rule-1773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1773,
+      "title": "Strict Ancestor Boundary Scoping Invariant for Nested Declarative Components",
+      "source_url": "https://github.com/themesberg/flowbite",
+      "source_version": "232ebdb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:17:14.126Z"
     }
   },
   "aliases": {
