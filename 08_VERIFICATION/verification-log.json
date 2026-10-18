@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-3FF0",
-    "timestamp": "2026-10-16T23:41:41.964Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "2914bb18e65d2e60f3be8077cc81fe518a524ecd3b08688d9c1c121f9086a860",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-789A",
     "timestamp": "2026-10-16T23:44:39.310Z",
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -7490,6 +7475,21 @@
     "repository": "pyannote/speaker-diarization-community-1",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
     "contentHash": "0670755a92e1e45d7ca6f12a6f5201ed26609fb2b117adfdab62e557e8cc0d90",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-TKTW",
+    "timestamp": "2026-10-18T04:01:38.996Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "89d23009617006d907f3d8c72f7302a4ab162234cb904d53f80dc1cf02098100",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
