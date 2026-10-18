@@ -1974,8 +1974,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:10:15.499Z",
-    "lastVerified": "2026-10-17T23:10:15.499Z",
+    "lastChecked": "2026-10-18T05:47:30.670Z",
+    "lastVerified": "2026-10-18T05:47:30.670Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:30:33.058Z",
-    "lastVerified": "2026-10-18T05:30:33.058Z",
+    "lastChecked": "2026-10-18T05:47:33.170Z",
+    "lastVerified": "2026-10-18T05:47:33.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -20731,8 +20731,8 @@
     "sourceType": "github",
     "technology": "code-repository",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T02:48:24.237Z",
-    "lastVerified": "2026-10-18T02:48:24.237Z",
+    "lastChecked": "2026-10-18T05:47:28.174Z",
+    "lastVerified": "2026-10-18T05:47:28.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24016,5 +24016,12 @@
     "lastChecked": "2026-10-18T05:44:17.379Z",
     "revisionIdentifier": "fac4b75f20",
     "lastVerified": "2026-10-18T05:44:17.379Z"
+  },
+  "luzikov-codex-seo-skill": {
+    "name": "codex-seo-skill",
+    "officialUrl": "https://github.com/Luzikov/codex-seo-skill",
+    "lastChecked": "2026-10-18T05:47:20.668Z",
+    "revisionIdentifier": "cdbf66bf55",
+    "lastVerified": "2026-10-18T05:47:20.668Z"
   }
 }
