@@ -43486,7 +43486,7 @@
         1060,
         1061
       ],
-      "dossier_path": "07_PROJECT_LEARNING/vercel-nextjs-learnings.md"
+      "dossier_path": "07_PROJECT_LEARNING/vercel-next.js-learnings.md"
     },
     "learn-github-iamvishnusankar-next-sitemap": {
       "id": "learn-github-iamvishnusankar-next-sitemap",
@@ -62569,7 +62569,7 @@
       "learning_id": "rule-1492",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1492,
-      "title": "Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)",
+      "title": "Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -62597,7 +62597,7 @@
       "learning_id": "rule-1491",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1491,
-      "title": "Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern (Harvested from satyabagherwal-source/onlinefreeprotractor)",
+      "title": "Separation of Base Model and Speculative Decoding Heads (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -62905,7 +62905,7 @@
       "learning_id": "rule-1515",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1515,
-      "title": "Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)",
+      "title": "Deterministic Inference Seed & Latent Initialization Invariant (Harvested from black-forest-labs/flux-3-image-klein)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -64567,20 +64567,6 @@
       "brain_readback": true,
       "verified_at": "2026-10-18T11:19:25.821Z"
     },
-    "rule-1634": {
-      "learning_id": "rule-1634",
-      "category": "ENGINEERING_PATTERN",
-      "rule_number": 1634,
-      "title": "Service-Worker Network Interception for Isolated SEO Regression Testing (Harvested from mswjs/msw & dubzzz/fast-check)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
-      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
-      "status": "VERIFIED_CANONICAL_RULE",
-      "verification_status": "VERIFIED_CANONICAL_RULE",
-      "verified": true,
-      "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.821Z"
-    },
     "rule-1635": {
       "learning_id": "rule-1635",
       "category": "ENGINEERING_PATTERN",
@@ -65337,6 +65323,20 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-1493": {
+      "learning_id": "rule-1493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1493,
+      "title": "Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern (Harvested from satyabagherwal-source/onlinefreeprotractor)",
+      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
+      "source_version": "HEAD",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T11:19:25.820Z"
     }
   },
   "aliases": {
@@ -71321,7 +71321,7 @@
       "name": "microsoft/accessibility-insights-web",
       "category": "advanced-seo-frameworks-and-telemetry",
       "canonicalUrl": "https://github.com/microsoft/accessibility-insights-web",
-      "learningFile": "07_PROJECT_LEARNING/microsoft-accessibility-insights-web-learnings.md",
+      "learningFile": "07_PROJECT_LEARNING/microsoft-AccessibilityInsights-Web-learnings.md",
       "harvestDate": "2026-10-16T15:59:07.384Z",
       "commitHash": "728ced26"
     }

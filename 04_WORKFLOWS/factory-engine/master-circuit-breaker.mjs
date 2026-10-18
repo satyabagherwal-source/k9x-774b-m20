@@ -7,10 +7,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 
-const LOCKS_DIR = path.join(BRAIN_ROOT, '.harvest-locks');
-const CIRCUIT_FILE = path.join(LOCKS_DIR, 'master-circuit-breaker.json');
-const RATE_LIMIT_LOCK = path.join(LOCKS_DIR, 'shared-rate-limiter.json');
-const CONTROL_PATH = path.join(BRAIN_ROOT, 'harvest-control.json');
+export function getLocksDir() {
+  return process.env.CIRCUIT_LOCKS_DIR || process.env.HARVEST_LOCKS_DIR || path.join(BRAIN_ROOT, '.harvest-locks');
+}
+
+export function getCircuitFile() {
+  return process.env.CIRCUIT_FILE || path.join(getLocksDir(), 'master-circuit-breaker.json');
+}
+
+export function getRateLimitLock() {
+  return process.env.CIRCUIT_RATE_LIMIT_LOCK || path.join(getLocksDir(), 'shared-rate-limiter.json');
+}
+
+export function getControlPath() {
+  return process.env.CIRCUIT_CONTROL_PATH || process.env.HARVEST_CONTROL_PATH || path.join(BRAIN_ROOT, 'harvest-control.json');
+}
 
 // Supported Master Infrastructure Services (Core REST and Search decoupled!)
 export const MASTER_SERVICES = {
@@ -34,8 +45,9 @@ export function normalizeServiceName(serviceName) {
  * Ensures lock directory exists
  */
 function ensureLocksDir() {
-  if (!fs.existsSync(LOCKS_DIR)) {
-    fs.mkdirSync(LOCKS_DIR, { recursive: true });
+  const locksDir = getLocksDir();
+  if (!fs.existsSync(locksDir)) {
+    fs.mkdirSync(locksDir, { recursive: true });
   }
 }
 
@@ -45,9 +57,10 @@ function ensureLocksDir() {
 export function loadMasterCircuits() {
   ensureLocksDir();
   let registry = {};
-  if (fs.existsSync(CIRCUIT_FILE)) {
+  const circuitFile = getCircuitFile();
+  if (fs.existsSync(circuitFile)) {
     try {
-      registry = JSON.parse(fs.readFileSync(CIRCUIT_FILE, 'utf-8'));
+      registry = JSON.parse(fs.readFileSync(circuitFile, 'utf-8'));
     } catch (e) {}
   }
 
@@ -109,19 +122,21 @@ export function loadMasterCircuits() {
  */
 export function saveMasterCircuits(registry) {
   ensureLocksDir();
+  const circuitFile = getCircuitFile();
   try {
-    fs.writeFileSync(CIRCUIT_FILE, JSON.stringify(registry, null, 2), 'utf-8');
+    fs.writeFileSync(circuitFile, JSON.stringify(registry, null, 2), 'utf-8');
   } catch (e) {
     console.error(`[CIRCUIT ERROR] Failed to save circuit file:`, e.message);
   }
 
   // Sync to harvest-control.json
-  if (fs.existsSync(CONTROL_PATH)) {
+  const controlPath = getControlPath();
+  if (fs.existsSync(controlPath)) {
     try {
-      const control = JSON.parse(fs.readFileSync(CONTROL_PATH, 'utf-8'));
+      const control = JSON.parse(fs.readFileSync(controlPath, 'utf-8'));
       control.masterCircuitBreakers = registry;
       control.lastUpdated = new Date().toISOString();
-      fs.writeFileSync(CONTROL_PATH, JSON.stringify(control, null, 2), 'utf-8');
+      fs.writeFileSync(controlPath, JSON.stringify(control, null, 2), 'utf-8');
     } catch (e) {}
   }
 }
@@ -265,13 +280,14 @@ export async function acquireSharedRateLimitToken(rawServiceName, options = {}) 
   const maxRpm = options.maxRpm ?? (isSearch ? 25 : 80);
 
   ensureLocksDir();
+  const rateLimitLock = getRateLimitLock();
   const now = Date.now();
   // Resilient multi-process read with spin-retry
   let limiterState = { services: {} };
   for (let rAttempt = 0; rAttempt < 5; rAttempt++) {
-    if (fs.existsSync(RATE_LIMIT_LOCK)) {
+    if (fs.existsSync(rateLimitLock)) {
       try {
-        limiterState = JSON.parse(fs.readFileSync(RATE_LIMIT_LOCK, 'utf-8'));
+        limiterState = JSON.parse(fs.readFileSync(rateLimitLock, 'utf-8'));
         break;
       } catch (e) {
         await new Promise(r => setTimeout(r, 10 + Math.floor(Math.random() * 15)));
@@ -314,11 +330,11 @@ export async function acquireSharedRateLimitToken(rawServiceName, options = {}) 
   sState.recentRequests.push(actualNow);
 
   // Resilient multi-process atomic write
-  const tempPath = `${RATE_LIMIT_LOCK}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 6)}.tmp`;
+  const tempPath = `${rateLimitLock}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 6)}.tmp`;
   for (let wAttempt = 0; wAttempt < 5; wAttempt++) {
     try {
       fs.writeFileSync(tempPath, JSON.stringify(limiterState, null, 2), 'utf-8');
-      fs.renameSync(tempPath, RATE_LIMIT_LOCK);
+      fs.renameSync(tempPath, rateLimitLock);
       break;
     } catch (e) {
       try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (_) {}

@@ -101371,8 +101371,6 @@ def test_mrope_pass_through_invariance():
 
 ## 1489. Mixed-Precision Quantization Integrity & KLD Validation (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
 
-## 1492. Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
-
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
@@ -101385,16 +101383,6 @@ def test_mrope_pass_through_invariance():
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-
-"topic": "Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant",
-  "source": "satyabagherwal-source/onlinefreeprotractor",
-  "source_url": "https://onlinefreeprotractor.com",
-  "source_version": "production-verified-phase3",
-  "license": "Proprietary",
-  "extracted_at": "2026-10-17T15:58:00.000Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "empirical_incident_extraction",
-  "learning_id": "learn-onlinefreeprotractor-rule1489",
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
@@ -101452,114 +101440,10 @@ Any project involving the quantization, compression, or distillation of neural n
 4.  Assert that the KLD value is below a predefined threshold (e.g., < 0.2 for IQ2_XS) and matches the value in the manifest within a tolerance of 0.01.
 
 
+
 ---
 
 ## 1490. Cryptographic Integrity for Large Binary Artifacts (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
-
-> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
-> **Evidence**: Reconciled against 1,031 URLs, GSC Coverage reports, and live HTTP probes across 54 locales.
-
-**RULE**:
-In search engine optimization and automated crawling pipelines, systems and audits MUST decouple technical edge readiness (HTTP 200 OK, valid canonical tag, valid hreflang, index/follow tags) from search engine indexation confirmation. Furthermore, audit systems MUST NOT classify an accepted submission request (`Indexing requested` in Search Console UI) as an indexation success (`INDEXED_CONFIRMED`).
-
-Audit pipelines and state models MUST enforce the following disjoint status taxonomy:
-1. `INDEXED_CONFIRMED`: Verified empirically through live SERP presence (`site:URL`) or authenticated GSC Indexing / Performance API export.
-2. `INDEXING_REQUEST_ACCEPTED`: Submission request successfully accepted by search engine ingestion queue, awaiting asynchronous Googlebot recrawl.
-3. `NOT_INDEXED`: Eligible canonical page verified technically healthy (HTTP 200), awaiting discovery or crawl.
-4. `INTENTIONALLY_NOINDEX`: Intentionally excluded pages (e.g. translated legal policies, error handlers) marked with `noindex` and explicitly purged from sitemaps.
-5. `VALID_REDIRECT`: Historical or normalized route resolving to canonical target via 301/308 with zero redirect chains.
-
-**WHY**:
-Search engine crawl scheduling and indexation are decoupled, asynchronous, quality-weighted algorithms. An edge server returning HTTP 200 with clean meta tags only demonstrates that the web server is healthy; it does not compel search engines to index the URL. Conflating technical 200 OK or queued indexing requests with confirmed indexation produces false-positive reports, masks underlying indexation drop-offs, and distorts organic growth analytics.
-
-**WHEN TO APPLY**:
-Apply to all SEO verification suites, automated crawler audits, multi-locale website generators, and Search Console management tooling.
-
-**NEGATIVE CONSTRAINT**:
-- NEVER write automated tests or audit tables that mark a page as "Indexed" or "Resolved" purely on the basis of `res.status === 200` or a successful GSC inspection form submission.
-- NEVER conflate crawl scheduling with SERP indexation.
-
----
-
-## 1492. Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant",
-  "source": "satyabagherwal-source/onlinefreeprotractor",
-  "source_url": "https://onlinefreeprotractor.com",
-  "source_version": "production-verified-phase3",
-  "license": "Proprietary",
-  "extracted_at": "2026-10-17T15:58:00.000Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "empirical_incident_extraction",
-  "learning_id": "learn-onlinefreeprotractor-rule1492",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
-> **Evidence**: Verified against Astro 5 sitemap generation, eliminating GSC "Submitted URL marked noindex" across 54 locales.
-
-**RULE**:
-XML Sitemaps (`sitemap.xml`, `sitemap-index.xml`) MUST contain ONLY self-canonical, indexable URLs that return `HTTP 200 OK`. 
-Specifically, sitemaps MUST NEVER contain:
-1. URLs marked with `noindex` (e.g. translated auxiliary legal policies, terms, privacy pages).
-2. Non-canonical URLs or URLs that respond with redirects (`HTTP 301`, `302`, `307`, `308`).
-3. Static error pages (`404.html`, `500.html`).
-4. Staging or preview environment domains (`pages.dev`, `vercel.app`).
-5. Trailing slash mismatched URLs.
-
-Every URL listed in an XML sitemap MUST serialize explicit freshness and priority metadata: `<lastmod>`, `<changefreq>`, and a tiered `<priority>` score (e.g. 1.0 for root homepage, 0.9 for primary tools, 0.8 for localized high-traffic tools, 0.7 for secondary tools).
-
-**WHY**:
-Submitting URLs with `noindex` directives or redirect responses inside an XML sitemap directly triggers critical Google Search Console coverage errors (*"Submitted URL marked noindex"* and *"Submitted URL has crawl issue"*). This damages the site's domain-level crawl budget, slows down discovery of valid pages, and causes search engines to penalize sitemap authority.
-
-**WHEN TO APPLY**:
-Apply to all static site generators (Astro, Next.js, Nuxt, Gatsby, Hugo, 11ty) and dynamic CMS sitemap endpoints.
-
-**VERIFIED IMPLEMENTATION PATTERN (Astro / JavaScript)**:
-```javascript
-// astro.config.mjs
-import sitemap from '@astrojs/sitemap';
-
-export default defineConfig({
-  site: 'https://example.com',
-  trailingSlash: 'always',
-  integrations: [
-    sitemap({
-      filter: (page) => {
-        // Enforce Zero-Exclusion: Filter out errors and noindex routes
-        if (page.includes('/404') || page.includes('/500')) return false;
-        const noindexSlugs = ['about', 'contact', 'privacy', 'terms'];
-        return !noindexSlugs.some(slug => page.includes(`/${slug}/`));
-      },
-      serialize: (item) => {
-        item.lastmod = new Date().toISOString().split('T')[0];
-        const pathSegments = new URL(item.url).pathname.split('/').filter(Boolean);
-        if (pathSegments.length === 0) {
-          item.changefreq = 'daily';
-          item.priority = 1.0;
-        } else if (pathSegments.length === 1) {
-          item.changefreq = 'weekly';
-          item.priority = 0.9;
-        } else {
-          item.changefreq = 'weekly';
-          item.priority = 0.8;
-        }
-        return item;
-      }
-    })
-  ]
-});
-```
-
----
-
-## 1487. Cryptographic Integrity for Large Binary Artifacts (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
 
 <!-- PROVENANCE_START
 {
@@ -101627,7 +101511,7 @@ d41d8cd98f00b204e9800998ecf8427e  model.gguf # MD5 is cryptographically broken
 
 ---
 
-## 1488. Separation of Base Model and Speculative Decoding Heads (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
+## 1491. Separation of Base Model and Speculative Decoding Heads (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
 
 <!-- PROVENANCE_START
 {
@@ -101687,7 +101571,7 @@ Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf # Contains MTP head, breaks older runt
 
 ---
 
-## 1489. Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+## 1491/1492 (COLLISION / UNRESOLVED BLOCKER). Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
 
 <!-- PROVENANCE_START
 {
@@ -101732,7 +101616,7 @@ Apply to all SEO verification suites, automated crawler audits, multi-locale web
 
 ---
 
-## 1490. Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+## 1492. Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
 
 <!-- PROVENANCE_START
 {
@@ -101810,7 +101694,7 @@ export default defineConfig({
 
 ---
 
-## 1491. Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern (Harvested from satyabagherwal-source/onlinefreeprotractor)
+## 1493. Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern (Harvested from satyabagherwal-source/onlinefreeprotractor)
 
 <!-- PROVENANCE_START
 {
@@ -103271,17 +103155,9 @@ Optical flow analysis on the generated video. Calculate the flow vector for the 
 
 ## 1514. Model Artifact Integrity & Schema Validation Invariant (Harvested from black-forest-labs/flux-3-image-klein)
 
----
-
----
-
-## 1515. Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
- (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)
-
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
-<<<<<<< HEAD
   "topic": "Model Artifact Integrity & Schema Validation Invariant",
   "source": "black-forest-labs/flux-3-image-klein",
   "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
@@ -103291,24 +103167,12 @@ Optical flow analysis on the generated video. Calculate the flow vector for the 
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-=======
-  "topic": "Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant",
-  "source": "satyabagherwal-source/onlinefreeprotractor",
-  "source_url": "https://onlinefreeprotractor.com",
-  "source_version": "production-verified-phase3",
-  "license": "Proprietary",
-  "extracted_at": "2026-10-18T01:25:00.000Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "empirical_incident_extraction",
-  "learning_id": "learn-onlinefreeprotractor-rule1514",
->>>>>>> 3e105d65a (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
-<<<<<<< HEAD
 > **Provenance**: Harvested from [black-forest-labs/flux-3-image-klein](https://huggingface.co/black-forest-labs/flux-3-image-klein) (Revision: `hf-black-f`).  
 > **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
@@ -103624,7 +103488,29 @@ def publish_model(repo_path: str):
 *   **CI Check**: Add a pre-commit hook that runs `validate_model_repo` on the local directory before pushing to Hugging Face.
 
 ---
-=======
+
+---
+
+## 1515 (COLLISION / UNRESOLVED BLOCKER). Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-18T01:25:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1514",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
 > **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
 > **Evidence**: Verified against Google Search Console URL Inspection API behavior, edge 301/200 probes, and 542-page static audit.
 
@@ -103667,8 +103553,6 @@ function validateCanonicalPurity(url, canonicalBase) {
 **VERIFICATION METHOD**:
 1. Execute live HTTP probe against the inspected URL. Assert that `statusCode === 200` for canonical apex and `statusCode === 301` for HTTP/www variants.
 2. Run automated URL integrity scanner across all generated HTML files, asserting `badCanonicals === 0`, `badHreflangs === 0`, and `badInternalHrefs === 0`.
->>>>>>> 3e105d65a (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)
-
 
 ---
 
@@ -113066,341 +112950,6 @@ test('Audit live site', async () => {
 
 **VERIFICATION METHOD**:
 Initialize `server.listen()`. Fetch `https://example.com/robots.txt`. Assert that the audit engine detects the HTTP 500 response and triggers a crawler freeze without crashing the test process.
-
----
-
-## 1629. Agent Context Preservation, Compaction Survival & Epistemic Checkpointing Invariant (Harvested from AI-Builder-Brain Universal Bridge Protocol & Large-Scale Autonomous Pipeline Architecture)
-
-**RULE**:
-In long-running autonomous workflows, massive multi-repo batch harvests, or deep iterative refactoring, context windows inevitably compact or restart. An agent MUST NOT rely on ephemeral conversational memory.
-1. **Disk-Backed State Checkpointing**: Epistemic state (progress index, completed artifact keys, transient errors, machine-readable registers) must be flushed to a deterministic JSON/Markdown statefile on disk before and after every granular step.
-2. **Compaction Self-Bootstrap**: When awakened or compacted, the agent must immediately read the on-disk state file, verify git head, and resume from the exact last verified index rather than re-querying or guessing state.
-3. **Zero-Byte Working Tree Cleanliness**: Transient workspaces (clones, build artifacts, temporary test fixtures) must be aggressively deleted immediately after extraction. Never allow uncommitted child files or orphaned directories to linger and exhaust disk space.
-4. **Substance Threshold Enforcement**: Knowledge promotion must never occur from raw unverified text or simple README summaries. A rule is only promoted when backed by empirical code paths, test suites, negative constraints, and verifiable failure autopsies.
-
-**WHY**:
-In large-scale engineering tasks spanning 100+ repositories or multi-turn refactoring sessions, language models lose in-context tokens during conversation compaction. Without strict on-disk checkpoints, agents hallucinate completed work, duplicate expensive operations, or fail to resume correctly.
-
-**WHEN TO APPLY**:
-Batch intelligence harvesting, massive repository auditing, automated multi-step migrations, and long-running CI/CD test runners.
-
-**IMPLEMENTATION PATTERN**:
-```python
-# pipeline/checkpoint_manager.py
-import os
-import json
-from typing import Dict, Any
-
-class CheckpointManager:
-    def __init__(self, checkpoint_file: str):
-        self.checkpoint_file = checkpoint_file
-        self.state: Dict[str, Any] = self._load()
-
-    def _load(self) -> Dict[str, Any]:
-        if os.path.exists(self.checkpoint_file):
-            try:
-                with open(self.checkpoint_file, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            except Exception:
-                return {}
-        return {}
-
-    def commit_item(self, key: str, data: Dict[str, Any]) -> None:
-        self.state[key] = data
-        temp_file = f"{self.checkpoint_file}.tmp"
-        with open(temp_file, 'w', encoding='utf-8') as f:
-            json.dump(self.state, f, indent=2)
-        os.replace(temp_file, self.checkpoint_file)
-
-    def is_processed(self, key: str) -> bool:
-        return key in self.state
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Keeping state exclusively in-memory across long loops
-completed = []
-for repo in all_repos:
-    process(repo)
-    completed.append(repo)
-    # DEADLY: If context window compacts or script crashes on repo 85,
-    # the entire history is lost, forcing complete restart!
-```
-
-**VERIFICATION METHOD**:
-Instantiate `CheckpointManager`. Write a key-value record. Simulate an agent crash and re-instantiate `CheckpointManager`. Assert that `is_processed(key)` returns `true` and data matches exactly without re-execution.
-
----
-
-## 1630. Incremental Crawl Fingerprinting & Delta-Fetch Cache Invariant (Harvested from scrapy-plugins/scrapy-deltafetch & ArchiveBox/ArchiveBox)
-
-**RULE**:
-When running enterprise SEO audits and recurring website crawls across large topologies:
-1. **Deterministic Request Fingerprinting**: Crawlers MUST calculate a canonical cryptographic hash (SHA-1 / SHA-256) per request that normalizes URL query string sorting, ignores transient tracking parameters (`utm_*`, `fbclid`), and factors in HTTP method and POST payload.
-2. **Persistent Response Cache Storage**: Successfully crawled responses MUST store their fingerprint alongside HTTP metadata (`ETag`, `Last-Modified`, and content hash) in an embedded, high-performance database (Berkeley DB / SQLite / LevelDB).
-3. **Delta-Fetch Short-Circuiting**: On recurring crawl runs, if a requested URL exists in the delta database and the remote server returns `HTTP 304 Not Modified` or matches the stored content hash, the crawler MUST immediately abort subtree parsing for that node while preserving existing graph links.
-4. **Cache Reset Invariant**: Automated systems MUST support explicit flags (`--reset-delta` or `DELTAFETCH_RESET=1`) to purge stale crawl fingerprints when site-wide template redesigns occur.
-
-**WHY**:
-Re-fetching and re-parsing 100,000 unmodified pages on every daily audit wastes gigabytes of server bandwidth, risks triggering origin rate limits (HTTP 429), and slows deployment verification from minutes to hours.
-
-**WHEN TO APPLY**:
-Recurring SEO crawl pipelines, site-wide broken link checkers, regression testing spiders, and web archive capture engines.
-
-**IMPLEMENTATION PATTERN**:
-```python
-# deltafetch/middleware.py
-import hashlib
-from urllib.parse import urlparse, parse_qsl, urlencode
-
-def compute_canonical_fingerprint(url: str, method: str = "GET", body: bytes = b"") -> str:
-    parsed = urlparse(url)
-    filtered_queries = sorted([
-        (k, v) for k, v in parse_qsl(parsed.query)
-        if not k.startswith("utm_") and k not in ("fbclid", "gclid")
-    ])
-    canonical_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
-    if filtered_queries:
-        canonical_url += f"?{urlencode(filtered_queries)}"
-        
-    hasher = hashlib.sha256()
-    hasher.update(method.upper().encode('utf-8'))
-    hasher.update(canonical_url.encode('utf-8'))
-    hasher.update(body)
-    return hasher.hexdigest()
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Using raw URL strings as crawl deduplication keys
-def is_duplicate(url, seen_set):
-    # DEADLY: example.com/?b=2&a=1 and example.com/?a=1&b=2 are crawled twice!
-    # example.com/?utm_source=twitter is treated as a separate unique page!
-    return url in seen_set
-```
-
-**VERIFICATION METHOD**:
-Compute fingerprints for `https://example.com/p?b=2&a=1&utm_source=x` and `https://example.com/p?a=1&b=2`. Assert that both produce identical hashes.
-
----
-
-## 1631. Hydration-Free Resumability & Prerendered SSR Landmark Invariant (Harvested from QwikDev/qwik, lucky-media/astro-seo & agamm/pseo-next)
-
-**RULE**:
-When architecting modern frontend applications, programmatic SEO (pSEO) engines, and content landing pages:
-1. **Prerendered HTML & Resumability**: Pages MUST deliver full semantic markup, heading hierarchy (`<h1>`-`<h6>`), meta tags, OpenGraph, and Schema.org JSON-LD directly in the initial HTML payload.
-2. **Zero-Hydration Execution Budget**: Search crawlers MUST NOT be required to download and execute heavy client-side JavaScript bundles to view page content. Applications utilizing resumability serialize internal component state into HTML attributes (`q:key`, `q:obj`), completely bypassing the expensive hydration loop.
-3. **Sub-5-Second Crawler Budget Compliance**: Total CPU execution time required to reach meaningful content MUST remain under 2 seconds on headless mobile emulation.
-4. **Canonical Meta Injection**: Every statically generated route in a pSEO cluster MUST emit a self-referencing canonical URL and verified robots meta tags (`index, follow`).
-
-**WHY**:
-Googlebot and Bingbot allocate strict time budgets to headless browser rendering. Client-side Single Page Applications (SPAs) that require multi-megabyte JavaScript bundles and hydration waterfalls frequently time out, causing search indexers to index empty shells, missing titles, and absent meta tags.
-
-**WHEN TO APPLY**:
-High-scale programmatic SEO directories, ecommerce product listings, blog engines, and content publishing platforms.
-
-**IMPLEMENTATION PATTERN**:
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Emergency Plumbing in Dallas, TX | FastFix</title>
-  <meta name="description" content="24/7 licensed emergency plumbing repair in Dallas, TX. Fast 30-minute response time." />
-  <link rel="canonical" href="https://example.com/plumbing/dallas-tx" />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "PlumbingService",
-    "name": "FastFix Dallas",
-    "areaServed": "Dallas, TX"
-  }
-  </script>
-</head>
-<body>
-  <main>
-    <h1>24/7 Emergency Plumbing in Dallas, TX</h1>
-    <p>Guaranteed same-day service across all Dallas neighborhoods.</p>
-  </main>
-</body>
-</html>
-```
-
-**NEGATIVE CONSTRAINT**:
-```html
-<!-- ANTI-PATTERN: Client-side CSR SPA shell -->
-<!DOCTYPE html>
-<html>
-<head><title>App</title></head>
-<body>
-  <div id="root"></div>
-  <script src="/static/bundle.js"></script>
-</body>
-</html>
-```
-
-**VERIFICATION METHOD**:
-Disable JavaScript in the browser or crawler (`curl` or `--disable-javascript`). Inspect the returned HTML and assert that the `<title>`, `<meta name="description">`, `<h1>`, and JSON-LD schema are present and fully populated.
-
----
-
-## 1632. Trafilatura Main-Text Precision & Boilerplate Density Stripping Invariant (Harvested from adbar/trafilatura, mozilla/readability & miso-belica/justext)
-
-**RULE**:
-When evaluating editorial content, semantic keyword density, and search relevance:
-1. **Link-to-Text Density Pruning**: DOM elements having a link density ($D_{link} = rac{	ext{length of link text}}{	ext{total text length}}$) greater than 0.33 MUST be classified as navigation chrome, sidebars, or footer menus, and excluded from main-text editorial scoring.
-2. **Stop-Word Distribution Filtering**: Text blocks lacking typical language stop-word frequency (e.g. lists of tags, breadcrumb paths, copyright notices) MUST be categorized as boilerplate.
-3. **Semantic Structural Prioritization**: Priority must be granted to elements inside `<article>`, `<main>`, or blocks matching high-density paragraph clusters (`<p>`), while discarding `<nav>`, `<aside>`, `<footer>`, and `<header>` tags.
-4. **Encoding & Entity Normalization**: All HTML entities (`&nbsp;`, `&#8212;`, `&amp;`) MUST be converted to normalized UTF-8 codepoints prior to length and keyword frequency computation.
-
-**WHY**:
-Naive text scraping grabs headers, mega-menus, privacy policies, and sidebar widgets alongside the article text. This skews keyword density calculations, misleads duplicate content algorithms, and leads to incorrect content quality audits.
-
-**WHEN TO APPLY**:
-AI content analyzers, automated SEO audits, page-level duplicate detection, and content scraping engines.
-
-**IMPLEMENTATION PATTERN**:
-```python
-# extractor/text_density.py
-def calculate_link_density(element) -> float:
-    text = element.get_text(strip=True)
-    if not text:
-        return 0.0
-    link_text_len = sum(len(a.get_text(strip=True)) for a in element.find_all('a'))
-    return link_text_len / float(len(text))
-
-def extract_editorial_body(soup) -> str:
-    for noise_tag in soup(['nav', 'footer', 'aside', 'script', 'style', 'header']):
-        noise_tag.decompose()
-        
-    paragraphs = []
-    for p in soup.find_all(['p', 'article']):
-        if calculate_link_density(p) < 0.33:
-            txt = p.get_text(strip=True)
-            if len(txt) > 25:
-                paragraphs.append(txt)
-                
-    return "
-
-".join(paragraphs)
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Grabbing all text on page
-def get_content(soup):
-    return soup.get_text()
-```
-
-**VERIFICATION METHOD**:
-Test with an HTML snippet containing a `<nav>` with 10 links and an `<article><p>This is a substantive editorial paragraph with high text density.</p></article>`. Assert that extracted body contains only the article text and 0 navigation links.
-
----
-
-## 1633. Canonical RDF/JSON-LD Graph Normalization & Blank-Node Determinism (Harvested from digitalbazaar/jsonld.js, RDFLib/pySHACL & rdfjs/N3.js)
-
-**RULE**:
-When validating enterprise knowledge graphs, Schema.org feeds, and structured data consistency:
-1. **W3C Canonical Graph Normalization**: Direct string or key-by-key JSON comparison MUST NEVER be used to assert semantic equivalence between JSON-LD payloads. Two payloads differing completely in formatting (e.g. nested vs flattened vs `@graph` array) MUST be normalized via the W3C URDNA2015 / RDFC-1.0 canonicalization algorithm.
-2. **Deterministic Blank Node Renaming**: Blank nodes (`_:b0`, `_:b1`) MUST be deterministically relabeled based on the cryptographic hash of their incoming and outgoing relations, guaranteeing reproducible semantic comparison across distributed runs.
-3. **SHACL Shape Validation**: Structural constraints (such as required properties on `Product` or `Organization`) MUST be validated against formal SHACL (Shapes Constraint Language) shapes rather than ad-hoc procedural if-else checks.
-
-**WHY**:
-JSON-LD allows hundreds of syntactically different ways to represent the exact same RDF graph. Comparing raw JSON causes CI test suites to flag thousands of false-positive changes whenever a CMS switches between inline object nesting and `@graph` references.
-
-**WHEN TO APPLY**:
-Enterprise schema management, SEO structured data CI regression tests, Knowledge Graph integration, and RDF triple-store synchronization.
-
-**IMPLEMENTATION PATTERN**:
-```javascript
-// schema/rdf-canonicalizer.js
-import jsonld from 'jsonld';
-
-export async function areGraphsSemanticallyIdentical(docA, docB) {
-  const [canonA, canonB] = await Promise.all([
-    jsonld.canonize(docA, { algorithm: 'URDNA2015', format: 'application/n-quads' }),
-    jsonld.canonize(docB, { algorithm: 'URDNA2015', format: 'application/n-quads' })
-  ]);
-  
-  return canonA === canonB;
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// ANTI-PATTERN: Comparing JSON-LD documents via JSON.stringify
-function isSchemaUnchanged(oldJson, newJson) {
-  return JSON.stringify(oldJson) === JSON.stringify(newJson);
-}
-```
-
-**VERIFICATION METHOD**:
-Create `docA = { "@context": "https://schema.org", "@type": "Person", "name": "Alice" }` and `docB = { "@context": "https://schema.org", "@graph": [{ "@type": "Person", "name": "Alice" }] }`. Assert that `areGraphsSemanticallyIdentical(docA, docB)` resolves to `true`.
-
----
-
-## 1634. Service-Worker Network Interception for Isolated SEO Regression Testing (Harvested from mswjs/msw & dubzzz/fast-check)
-
-**RULE**:
-When developing automated test suites for SEO crawlers, sitemap validators, and meta tag audit engines:
-1. **Zero-Network Mocking via Service Worker**: Test runners MUST NOT make outbound HTTP calls to live staging or production servers. Requests MUST be intercepted at the network/socket boundary using Service Worker or native node transport interceptors (Mock Service Worker / MSW).
-2. **Deterministic Edge Case Simulation**: The mock layer MUST explicitly simulate real-world crawler edge conditions:
-   - Infinite redirect loops (301 -> 302 -> 301)
-   - Slow responses triggering client timeouts
-   - HTTP 500, 502, 503, and 504 server errors
-   - Soft 404s (HTTP 200 with "Page Not Found" HTML)
-   - Malformed Gzip streams and corrupted XML sitemaps
-3. **Property-Based Fuzzing**: Generated URLs, hreflang tags, and sitemap XML strings MUST be fuzzed using property-based testing (e.g. `fast-check`) to assert that parsers never throw unhandled exceptions on unexpected Unicode or boundary lengths.
-
-**WHY**:
-Running SEO audit test suites against live network endpoints introduces network flakiness, slows CI pipelines, triggers origin IP rate-limits, and makes it impossible to deterministically test failure conditions like DNS timeouts or 5xx crawler halts.
-
-**WHEN TO APPLY**:
-Automated SEO audit engines, crawler unit/integration tests, sitemap validators, and CI regression suites.
-
-**IMPLEMENTATION PATTERN**:
-```typescript
-// tests/crawler-mock-server.ts
-import { http, HttpResponse } from 'msw'
-import { setupServer } from 'msw/node'
-
-export const handlers = [
-  http.get('https://example.com/missing-page', () => {
-    return new HttpResponse('<html><body><h1>404 Not Found</h1></body></html>', {
-      status: 200,
-      headers: { 'Content-Type': 'text/html' }
-    })
-  }),
-
-  http.get('https://example.com/robots.txt', () => {
-    return new HttpResponse(null, { status: 500 })
-  }),
-
-  http.get('https://example.com/sitemap.xml.gz', () => {
-    const gzipBuffer = Buffer.from([0x1f, 0x8b, 0x08, 0x00])
-    return new HttpResponse(gzipBuffer, {
-      headers: { 'Content-Type': 'application/octet-stream' }
-    })
-  })
-]
-
-export const server = setupServer(...handlers)
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// ANTI-PATTERN: Running automated SEO tests against production URLs
-test('Audit live site', async () => {
-  const res = await fetch('https://example.com/sitemap.xml');
-  expect(res.status).toBe(200);
-});
-```
-
-**VERIFICATION METHOD**:
-Initialize `server.listen()`. Fetch `https://example.com/robots.txt`. Assert that the audit engine detects the HTTP 500 response and triggers a crawler freeze without crashing the test process.
-
----
-
 
 ---
 

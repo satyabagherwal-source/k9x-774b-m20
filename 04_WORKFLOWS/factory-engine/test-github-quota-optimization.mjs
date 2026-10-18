@@ -16,6 +16,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import assert from 'assert';
 import { fileURLToPath } from 'url';
 
@@ -57,9 +58,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 
+const PROD_CONTROL_PATH = path.join(BRAIN_ROOT, 'harvest-control.json');
 const SANDBOX_DIR = path.join(BRAIN_ROOT, `.temp-quota-test-${Date.now()}`);
+const SANDBOX_LOCKS_DIR = path.join(SANDBOX_DIR, '.harvest-locks');
+const SANDBOX_CONTROL_PATH = path.join(SANDBOX_DIR, 'harvest-control.json');
+const SANDBOX_CIRCUIT_FILE = path.join(SANDBOX_LOCKS_DIR, 'master-circuit-breaker.json');
+const SANDBOX_RATE_LIMIT_LOCK = path.join(SANDBOX_LOCKS_DIR, 'shared-rate-limiter.json');
+
+function getSha256(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  const buffer = fs.readFileSync(filePath);
+  return crypto.createHash('sha256').update(buffer).digest('hex');
+}
 
 function cleanupSandbox() {
+  delete process.env.CIRCUIT_LOCKS_DIR;
+  delete process.env.CIRCUIT_CONTROL_PATH;
+  delete process.env.CIRCUIT_FILE;
+  delete process.env.CIRCUIT_RATE_LIMIT_LOCK;
   try {
     if (fs.existsSync(SANDBOX_DIR)) {
       fs.rmSync(SANDBOX_DIR, { recursive: true, force: true });
@@ -97,13 +113,25 @@ async function runAsyncTest(name, fn) {
 }
 
 async function runAllTests() {
+  const preControlHash = getSha256(PROD_CONTROL_PATH);
   console.log('======================================================================');
   console.log('🧪 ISOLATED TEST SUITE: GITHUB API QUOTA OPTIMIZATION');
   console.log(`   Sandbox: ${SANDBOX_DIR}`);
+  console.log(`   Production Control Baseline SHA-256: ${preControlHash}`);
   console.log(`   Timestamp: ${new Date().toISOString()}`);
   console.log('======================================================================\n');
 
   fs.mkdirSync(SANDBOX_DIR, { recursive: true });
+  fs.mkdirSync(SANDBOX_LOCKS_DIR, { recursive: true });
+
+  if (fs.existsSync(PROD_CONTROL_PATH)) {
+    fs.copyFileSync(PROD_CONTROL_PATH, SANDBOX_CONTROL_PATH);
+  }
+
+  process.env.CIRCUIT_LOCKS_DIR = SANDBOX_LOCKS_DIR;
+  process.env.CIRCUIT_CONTROL_PATH = SANDBOX_CONTROL_PATH;
+  process.env.CIRCUIT_FILE = SANDBOX_CIRCUIT_FILE;
+  process.env.CIRCUIT_RATE_LIMIT_LOCK = SANDBOX_RATE_LIMIT_LOCK;
 
   try {
     // =========================================================================
@@ -467,12 +495,29 @@ Automated integration test asserting that worker memory returns to baseline with
       console.log('     Learning Package validated with 0 schema errors across all 6 invariant tags.');
     });
 
+    // Assert production control file was NOT mutated during test
+    const postControlHash = getSha256(PROD_CONTROL_PATH);
+    assert.strictEqual(
+      postControlHash,
+      preControlHash,
+      `CRITICAL INVARIANT VIOLATION: Production harvest-control.json was mutated during test! Pre: ${preControlHash}, Post: ${postControlHash}`
+    );
+
     console.log('\n======================================================================');
+    console.log(`🔒 PRODUCTION PURITY VERIFIED: harvest-control.json SHA-256 IDENTICAL`);
+    console.log(`   Pre-test  : ${preControlHash}`);
+    console.log(`   Post-test : ${postControlHash}`);
     console.log(`🎉 ALL ${passedTests}/${totalTests} ISOLATED VERIFICATION TESTS PASSED!`);
     console.log('======================================================================');
 
   } finally {
+    const finalHash = getSha256(PROD_CONTROL_PATH);
     cleanupSandbox();
+    assert.strictEqual(
+      finalHash,
+      preControlHash,
+      `CRITICAL INVARIANT VIOLATION: Production harvest-control.json mutated in cleanup! Pre: ${preControlHash}, Post: ${finalHash}`
+    );
   }
 }
 
