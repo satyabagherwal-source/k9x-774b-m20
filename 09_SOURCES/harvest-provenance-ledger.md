@@ -2505,3 +2505,9 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `cf73ec0b` | Multi-dimensional audit evidence | 2026-10-18T21:20:19.339Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `60ae1a25` | Multi-dimensional audit evidence | 2026-10-18T21:20:21.221Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `95656516` | Multi-dimensional audit evidence | 2026-10-18T21:20:23.576Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `a587b283` | Multi-dimensional audit evidence | 2026-10-18T21:26:08.672Z |
+| `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `2404acee` | Multi-dimensional audit evidence | 2026-10-18T21:26:10.048Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `53b9d3fc` | Multi-dimensional audit evidence | 2026-10-18T21:26:14.929Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `68df9c23` | Multi-dimensional audit evidence | 2026-10-18T21:26:19.845Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b63526c5` | Multi-dimensional audit evidence | 2026-10-18T21:26:20.075Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `eb94e073` | Multi-dimensional audit evidence | 2026-10-18T21:26:22.699Z |

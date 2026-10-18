@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "64e602e2",
+    "sourceVersion": "b63526c5",
     "license": "Apache-2.0",
-    "contentHash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
-    "lastHarvestedAt": "2026-10-16T07:50:49.648Z",
+    "contentHash": "de4ff29bca18a1bc990508bbccaed93da1ff30273d160ca45d7f1d2ff2fbd6fe",
+    "lastHarvestedAt": "2026-10-18T21:26:20.075Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2368,5 +2368,55 @@
     "contentHash": "3c5e0c4d56980e86aa33266f17fe5bbea4fd8d2f1d512c78c0757972cf58e2a1",
     "lastHarvestedAt": "2026-10-18T21:20:23.576Z",
     "learningId": "learn-github-dathere-qsv"
+  },
+  "assistant-ui-assistant-ui": {
+    "repository": "assistant-ui/assistant-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
+    "sourceVersion": "a587b283",
+    "license": "MIT",
+    "contentHash": "69e96742de33f96fbb95866310f72f00b11d2a892de18ac0df5edbe4eb2938a5",
+    "lastHarvestedAt": "2026-10-18T21:26:08.672Z",
+    "learningId": "learn-github-assistant-ui-assistant-ui"
+  },
+  "ducaale-xh": {
+    "repository": "ducaale/xh",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ducaale/xh",
+    "sourceVersion": "2404acee",
+    "license": "MIT",
+    "contentHash": "4eaa9881de4f76cb3d3cf45f7d5d24fa9483771994b82d30715c6530c5ee5659",
+    "lastHarvestedAt": "2026-10-18T21:26:10.048Z",
+    "learningId": "learn-github-ducaale-xh"
+  },
+  "nervjs-taro": {
+    "repository": "NervJS/taro",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NervJS/taro",
+    "sourceVersion": "53b9d3fc",
+    "license": "NOASSERTION",
+    "contentHash": "61f8e5bfc88b174dc9f410de801236135d6cbf33502a2c766fb42f3101d4a553",
+    "lastHarvestedAt": "2026-10-18T21:26:14.929Z",
+    "learningId": "learn-github-nervjs-taro"
+  },
+  "kubeedge-kubeedge": {
+    "repository": "kubeedge/kubeedge",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kubeedge/kubeedge",
+    "sourceVersion": "68df9c23",
+    "license": "Apache-2.0",
+    "contentHash": "8e1d5b5c10717259e0d8c9773be7be56aabbf27407f1ac4b82a561652b90d03e",
+    "lastHarvestedAt": "2026-10-18T21:26:19.845Z",
+    "learningId": "learn-github-kubeedge-kubeedge"
+  },
+  "giancarloerra-socraticode": {
+    "repository": "giancarloerra/SocratiCode",
+    "platform": "github",
+    "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
+    "sourceVersion": "eb94e073",
+    "license": "AGPL-3.0",
+    "contentHash": "61680081e3749c51f2a04cbf976cc13112a85a1af8176d06851e9ac11d3d265e",
+    "lastHarvestedAt": "2026-10-18T21:26:22.699Z",
+    "learningId": "learn-github-giancarloerra-socraticode"
   }
 }

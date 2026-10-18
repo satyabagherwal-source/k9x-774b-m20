@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:20:23.578Z",
-  "total_cycles_completed": 2475,
-  "total_learnings_persisted": 2475,
-  "total_rules_promoted": 1487,
+  "last_updated": "2026-10-18T21:26:22.700Z",
+  "total_cycles_completed": 2481,
+  "total_learnings_persisted": 2481,
+  "total_rules_promoted": 1493,
   "history": [
-    {
-      "timestamp": "2026-10-17T20:47:48.797Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:50:51.046Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:54:20.696Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T20:57:34.539Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:00:44.582Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:03:59.281Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T21:06:54.536Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-18T21:20:23.578Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:26:08.673Z",
+      "repository": "assistant-ui/assistant-ui",
+      "learningId": "learn-github-assistant-ui-assistant-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:26:10.050Z",
+      "repository": "ducaale/xh",
+      "learningId": "learn-github-ducaale-xh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:26:14.930Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:26:19.846Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:26:20.076Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:26:22.700Z",
+      "repository": "giancarloerra/SocratiCode",
+      "learningId": "learn-github-giancarloerra-socraticode",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

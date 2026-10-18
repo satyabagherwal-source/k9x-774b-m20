@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:20:23.538Z",
-  "total_verified_learnings": 258,
+  "last_updated": "2026-10-18T21:26:22.677Z",
+  "total_verified_learnings": 263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2060,22 +2060,35 @@
     "learn-github-assistant-ui-assistant-ui": {
       "learning_id": "learn-github-assistant-ui-assistant-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "assistant-ui-assistant-ui",
+      "source": "assistant-ui/assistant-ui",
+      "repository": "assistant-ui/assistant-ui",
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "HEAD",
-      "content_hash": "2fe644581351ad35123aba115125c10fc2c66be1d8632d6fb763b66b79ad234b",
+      "source_version": "a587b283",
+      "content_hash": "69e96742de33f96fbb95866310f72f00b11d2a892de18ac0df5edbe4eb2938a5",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1720,
+          "title": "core): resolve a thread switch once the replacement runtime attaches (#9765)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.949Z"
+      "verified_at": "2026-10-18T21:26:08.648Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-astral-sh-ruff": {
       "learning_id": "learn-github-astral-sh-ruff",
@@ -5550,22 +5563,35 @@
     "learn-github-ducaale-xh": {
       "learning_id": "learn-github-ducaale-xh",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ducaale-xh",
+      "source": "ducaale/xh",
+      "repository": "ducaale/xh",
       "slug": "ducaale-xh",
       "platform": "github",
       "source_url": "https://github.com/ducaale/xh",
-      "source_version": "HEAD",
-      "content_hash": "963bd3e64434e838e00eae2ef6890b6abe318703514666bbc80c30a02461c188",
+      "source_version": "2404acee",
+      "content_hash": "4eaa9881de4f76cb3d3cf45f7d5d24fa9483771994b82d30715c6530c5ee5659",
       "dossier_path": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1721,
+          "title": "clippy + failing test",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.704Z"
+      "verified_at": "2026-10-18T21:26:10.020Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-duckdb-duckdb": {
       "learning_id": "learn-github-duckdb-duckdb",
@@ -7636,22 +7662,35 @@
     "learn-github-giancarloerra-socraticode": {
       "learning_id": "learn-github-giancarloerra-socraticode",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "giancarloerra-socraticode",
+      "source": "giancarloerra/SocratiCode",
+      "repository": "giancarloerra/SocratiCode",
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "HEAD",
-      "content_hash": "ad61a9a2231b586acdb46ba8f9554d7c73c15826487721e08af5e00c6c0b88e2",
+      "source_version": "eb94e073",
+      "content_hash": "61680081e3749c51f2a04cbf976cc13112a85a1af8176d06851e9ac11d3d265e",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1725,
+          "title": "symbol-graph): retry Qdrant requests once on a closed connection",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.055Z"
+      "verified_at": "2026-10-18T21:26:22.673Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-github-copilotforxcode": {
       "learning_id": "learn-github-github-copilotforxcode",
@@ -22610,22 +22649,35 @@
     "learn-github-kubeedge-kubeedge": {
       "learning_id": "learn-github-kubeedge-kubeedge",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kubeedge-kubeedge",
+      "source": "kubeedge/kubeedge",
+      "repository": "kubeedge/kubeedge",
       "slug": "kubeedge-kubeedge",
       "platform": "github",
       "source_url": "https://github.com/kubeedge/kubeedge",
-      "source_version": "HEAD",
-      "content_hash": "7ed3fe43a9fe4b5d11bc4914a5723b40fd6b548c0b36d49892ab0ab2402841f3",
+      "source_version": "68df9c23",
+      "content_hash": "8e1d5b5c10717259e0d8c9773be7be56aabbf27407f1ac4b82a561652b90d03e",
       "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1723,
+          "title": "viaduct): make fifo teardown safe and release parked QUIC readers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.887Z"
+      "verified_at": "2026-10-18T21:26:19.821Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kubernetes-sigs-aws-load-balancer-controller": {
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -26091,22 +26143,35 @@
     "learn-github-nervjs-taro": {
       "learning_id": "learn-github-nervjs-taro",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nervjs-taro",
+      "source": "NervJS/taro",
+      "repository": "NervJS/taro",
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "HEAD",
-      "content_hash": "29fac218e1da340e4fdbb7cd21a409e825c9bcbd2b4dedb79cb1e6ef456b2106",
+      "source_version": "53b9d3fc",
+      "content_hash": "61f8e5bfc88b174dc9f410de801236135d6cbf33502a2c766fb42f3101d4a553",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1722,
+          "title": "h5): clear download timeout after completion (#19532)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.594Z"
+      "verified_at": "2026-10-18T21:26:14.904Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nesquena-hermes-webui": {
       "learning_id": "learn-github-nesquena-hermes-webui",
@@ -43868,14 +43933,19 @@
       "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "64e602e2",
-      "content_hash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
+      "source_version": "b63526c5",
+      "content_hash": "de4ff29bca18a1bc990508bbccaed93da1ff30273d160ca45d7f1d2ff2fbd6fe",
       "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
           "title": "Merge pull request #4531 from ProvableHQ/fix/staging-cargo-workflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1724,
+          "title": "Merge pull request #4553 from aleo-labs-protocol/ci/fix-bump-snarkvm-repo",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43884,7 +43954,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T07:50:49.613Z",
+      "verified_at": "2026-10-18T21:26:20.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66305,6 +66375,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:20:23.532Z"
+    },
+    "rule-1720": {
+      "learning_id": "rule-1720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1720,
+      "title": "core): resolve a thread switch once the replacement runtime attaches (#9765)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "a587b283",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:26:08.648Z"
+    },
+    "rule-1721": {
+      "learning_id": "rule-1721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1721,
+      "title": "clippy + failing test",
+      "source_url": "https://github.com/ducaale/xh",
+      "source_version": "2404acee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:26:10.020Z"
+    },
+    "rule-1722": {
+      "learning_id": "rule-1722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1722,
+      "title": "h5): clear download timeout after completion (#19532)",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "53b9d3fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:26:14.904Z"
+    },
+    "rule-1723": {
+      "learning_id": "rule-1723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1723,
+      "title": "viaduct): make fifo teardown safe and release parked QUIC readers",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "68df9c23",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:26:19.821Z"
+    },
+    "rule-1724": {
+      "learning_id": "rule-1724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1724,
+      "title": "Merge pull request #4553 from aleo-labs-protocol/ci/fix-bump-snarkvm-repo",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "b63526c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:26:20.047Z"
+    },
+    "rule-1725": {
+      "learning_id": "rule-1725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1725,
+      "title": "symbol-graph): retry Qdrant requests once on a closed connection",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "eb94e073",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:26:22.673Z"
     }
   },
   "aliases": {

@@ -2498,3 +2498,9 @@
 | `CYCLE-20261018-XBIG` | `2026-10-18T21:20:19.336Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1717` | Yes (`38f5d915...`) |
 | `CYCLE-20261018-XCYQ` | `2026-10-18T21:20:21.218Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1718` | Yes (`031e0d90...`) |
 | `CYCLE-20261018-XES5` | `2026-10-18T21:20:23.573Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1719` | Yes (`3c5e0c4d...`) |
+| `CYCLE-20261018-4T26` | `2026-10-18T21:26:08.670Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1720` | Yes (`69e96742...`) |
+| `CYCLE-20261018-4U4E` | `2026-10-18T21:26:10.046Z` | `ducaale/xh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1721` | Yes (`4eaa9881...`) |
+| `CYCLE-20261018-4XVZ` | `2026-10-18T21:26:14.927Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1722` | Yes (`61f8e5bf...`) |
+| `CYCLE-20261018-51OJ` | `2026-10-18T21:26:19.843Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1723` | Yes (`8e1d5b5c...`) |
+| `CYCLE-20261018-51UX` | `2026-10-18T21:26:20.073Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1724` | Yes (`de4ff29b...`) |
+| `CYCLE-20261018-53VT` | `2026-10-18T21:26:22.697Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1725` | Yes (`61680081...`) |
