@@ -2406,3 +2406,4 @@
 | `CYCLE-20261018-XV9W` | `2026-10-18T03:08:59.924Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`bb3baee6...`) |
 | `CYCLE-20261018-1YST` | `2026-10-18T03:12:11.117Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`776b78ea...`) |
 | `CYCLE-20261018-6325` | `2026-10-18T03:15:23.261Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`cfc60bd9...`) |
+| `CYCLE-20261018-ABPW` | `2026-10-18T03:18:41.108Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`e02678ba...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-JE2F",
-    "timestamp": "2026-10-16T22:58:07.479Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "08c40ccb871cf5ea2dfe2629ec15d38639bf3ad8cc36825caea0042bb34482f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-NAM4",
     "timestamp": "2026-10-16T23:01:09.628Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7490,6 +7475,21 @@
     "repository": "baidu/Unlimited-OCR",
     "learningId": "learn-huggingface-baidu-unlimited-ocr",
     "contentHash": "cfc60bd9ac56e16ce20f982c7c63d2edc9b5024f967d16a3efc5e6d742e4e8d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-ABPW",
+    "timestamp": "2026-10-18T03:18:41.108Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "e02678ba7a24e737bdaad9927f5c7a8921542846fd00f2f7ec7a872fffc1415a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:15:23.265Z",
-  "total_cycles_completed": 2383,
-  "total_learnings_persisted": 2383,
+  "last_updated": "2026-10-18T03:18:41.112Z",
+  "total_cycles_completed": 2384,
+  "total_learnings_persisted": 2384,
   "total_rules_promoted": 1387,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:51:44.101Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:55:08.483Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T03:15:23.265Z",
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:18:41.112Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
