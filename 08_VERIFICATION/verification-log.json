@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0X55",
-    "timestamp": "2026-10-16T22:43:45.737Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "40dee8cbaeb61cefdae991216fd8fa7c4179cfa4388b8d5a7c2debaea1bf5fcc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-5XTE",
     "timestamp": "2026-10-16T22:47:39.890Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7492,6 +7477,21 @@
     "contentHash": "1b13745c562f1f85cca1e24657f3edfd52829e292510dd612e7de44d67d1ce84",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-TLMH",
+    "timestamp": "2026-10-18T03:05:40.793Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "09313da6e9784029222312f10a0fe31bef5a351c53ca1766962233a97cec393c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -2402,3 +2402,4 @@
 | `CYCLE-20261018-FNAS` | `2026-10-18T02:54:49.780Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`eb874362...`) |
 | `CYCLE-20261018-K8OM` | `2026-10-18T02:58:24.118Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1595, Rule 1596` | Yes (`d8786888...`) |
 | `CYCLE-20261018-PK0M` | `2026-10-18T03:02:32.086Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1597, Rule 1598, Rule 1599` | Yes (`1b13745c...`) |
+| `CYCLE-20261018-TLMH` | `2026-10-18T03:05:40.793Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`09313da6...`) |

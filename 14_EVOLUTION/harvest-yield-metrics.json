@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:02:32.095Z",
-  "total_cycles_completed": 2379,
-  "total_learnings_persisted": 2379,
+  "last_updated": "2026-10-18T03:05:40.797Z",
+  "total_cycles_completed": 2380,
+  "total_learnings_persisted": 2380,
   "total_rules_promoted": 1387,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:39:01.710Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:42:54.061Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:05:40.797Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
