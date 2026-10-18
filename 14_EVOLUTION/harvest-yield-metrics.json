@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T01:58:59.188Z",
-  "total_cycles_completed": 2362,
-  "total_learnings_persisted": 2362,
+  "last_updated": "2026-10-18T02:02:15.763Z",
+  "total_cycles_completed": 2363,
+  "total_learnings_persisted": 2363,
   "total_rules_promoted": 1368,
   "history": [
-    {
-      "timestamp": "2026-10-17T14:45:07.008Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T14:48:25.228Z",
       "repository": "Lightricks/LTX-2.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T01:58:59.188Z",
       "repository": "microsoft/FrogNano-4B-2609",
       "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T02:02:15.763Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
