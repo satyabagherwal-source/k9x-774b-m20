@@ -526,16 +526,28 @@ export async function runMultiAgentFleet(options = {}) {
     console.warn(`[WARN] Self-brain harvest error: ${err.message}`);
   }
 
-  // Synchronize Master Brain with atomic rebase retry
-  try {
-    const pushRes = await pushWithRebaseRetry('feat(fleet): multi-agent parallel fleet harvested intelligence [skip ci]', 5, BRAIN_ROOT);
-    if (!pushRes.success) {
-      console.error(`❌ [FAILED_PERSISTENCE] Remote git push failed after maximum retries! Ephemeral runner state would be lost.`);
+  // Synchronize Master Brain with atomic rebase retry ONLY if new intelligence was genuinely verified
+  const totalVerifiedThisRun = results.filter(
+    (r) => r.status === 'fulfilled' && (r.value?.harvested > 0 || r.value?.status === 'VERIFIED_LEARNING')
+  ).length;
+
+  if (totalVerifiedThisRun > 0) {
+    try {
+      const pushRes = await pushWithRebaseRetry(
+        `feat(fleet): parallel fleet harvested ${totalVerifiedThisRun} verified intelligence dossier(s) [skip ci]`,
+        5,
+        BRAIN_ROOT
+      );
+      if (!pushRes.success) {
+        console.error(`❌ [FAILED_PERSISTENCE] Remote git push failed after maximum retries! Ephemeral runner state would be lost.`);
+        process.exit(1);
+      }
+    } catch (err) {
+      console.error(`❌ [FAILED_PERSISTENCE] Remote git push error: ${err.message}`);
       process.exit(1);
     }
-  } catch (err) {
-    console.error(`❌ [FAILED_PERSISTENCE] Remote git push error: ${err.message}`);
-    process.exit(1);
+  } else {
+    console.log(`ℹ️ [FLEET CYCLE IDLE] 0 new learnings verified in this cycle. Skipping empty intelligence commit to prevent ghost commits.`);
   }
 }
 

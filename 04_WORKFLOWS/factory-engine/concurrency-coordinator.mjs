@@ -220,10 +220,15 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
       return { success: true, pushed: false };
     }
 
-    const hasKnowledge = /^([0-1][0-9]_[A-Z_]+\/|repos\.txt|knowledge-index\.json|\.github\/|04_WORKFLOWS\/)/m.test(staged);
-    if (!hasKnowledge && !commitMsg.includes('feat(') && !commitMsg.includes('fix(') && !commitMsg.includes('docs(')) {
-      console.log(`[CONCURRENCY SYNC] Only timestamps/cursors staged. Skipping empty knowledge commit.`);
-      try { run('git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json', cwd); } catch (e) {}
+    // Strictly inspect if actual knowledge artifacts, engineering rules, verification matrices, or queue targets were staged:
+    const stagedLines = staged.split(/\r?\n/).filter(Boolean);
+    const hasKnowledge = stagedLines.some((file) =>
+      /^(07_PROJECT_LEARNING\/|05_KNOWLEDGE\/|08_VERIFICATION\/|09_SOURCES\/|03_SKILLS\/|14_EVOLUTION\/|repos\.txt|LEARNINGS\.md)/.test(file)
+    );
+
+    if (!hasKnowledge) {
+      console.log(`[CONCURRENCY SYNC] Only metadata/timestamps staged (no new learnings or rules). Skipping empty commit.`);
+      try { run('git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json 04_WORKFLOWS/factory-engine/sources-registry.json', cwd); } catch (e) {}
       return { success: true, pushed: false };
     }
 
