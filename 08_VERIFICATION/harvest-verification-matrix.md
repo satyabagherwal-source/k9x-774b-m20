@@ -2387,3 +2387,4 @@
 | `CYCLE-20261018-FTYN` | `2026-10-18T01:58:59.183Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`3ddffd65...`) |
 | `CYCLE-20261018-K1N2` | `2026-10-18T02:02:15.758Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`207e6f55...`) |
 | `CYCLE-20261018-OAU6` | `2026-10-18T02:05:34.302Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`874e3b7a...`) |
+| `CYCLE-20261018-S8ZJ` | `2026-10-18T02:08:38.527Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`e70aa461...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-54QJ",
-    "timestamp": "2026-10-16T21:51:02.971Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "3febf4c0382c0bc18b1a4e9ed0e2330a3a0494e300260ae82a5f2c9e1e6ccd0a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-BL2N",
     "timestamp": "2026-10-16T21:56:04.079Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "vllm-sr/d3",
     "learningId": "learn-huggingface-vllm-sr-d3",
     "contentHash": "874e3b7af901ed37d2874cc8b297056d42782dbb83d3420a2be0cad004ee7cc3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-S8ZJ",
+    "timestamp": "2026-10-18T02:08:38.527Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "e70aa4610db3a5e5b413f8e2d01dd17cf3ae4ef5ee6d5e7d3a87893c4e9a0bce",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
