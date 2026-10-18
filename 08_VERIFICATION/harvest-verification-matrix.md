@@ -2658,3 +2658,9 @@
 | `CYCLE-20261018-C5OD` | `2026-10-18T23:51:49.693Z` | `microsoft/Security-101` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1880` | Yes (`08fc1c2d...`) |
 | `CYCLE-20261018-C7WO` | `2026-10-18T23:51:52.584Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1881` | Yes (`9f7dfef8...`) |
 | `CYCLE-20261018-C8NC` | `2026-10-18T23:51:53.544Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1882` | Yes (`9fea7c3a...`) |
+| `CYCLE-20261018-JWLL` | `2026-10-18T23:57:51.177Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`5b4f5a28...`) |
+| `CYCLE-20261018-JWSX` | `2026-10-18T23:57:51.441Z` | `mertJF/tailblocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1883` | Yes (`8f61a7d3...`) |
+| `CYCLE-20261018-JY9S` | `2026-10-18T23:57:53.344Z` | `asciinema/asciinema` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1884` | Yes (`85ad744a...`) |
+| `CYCLE-20261018-K2D3` | `2026-10-18T23:57:58.647Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1885` | Yes (`1a6eb56a...`) |
+| `CYCLE-20261018-K48H` | `2026-10-18T23:58:01.073Z` | `liftbridge-io/liftbridge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1886` | Yes (`921cff55...`) |
+| `CYCLE-20261018-K7I9` | `2026-10-18T23:58:05.313Z` | `erikgrinaker/toydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1887` | Yes (`8191e09b...`) |

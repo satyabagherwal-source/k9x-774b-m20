@@ -2665,3 +2665,9 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-security-101` | `https://github.com/microsoft/Security-101` | `b0a31ff7` | Multi-dimensional audit evidence | 2026-10-18T23:51:49.696Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `10f34562` | Multi-dimensional audit evidence | 2026-10-18T23:51:52.586Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d263bda4` | Multi-dimensional audit evidence | 2026-10-18T23:51:53.547Z |
+| `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-18T23:57:51.180Z |
+| `learn-github-mertjf-tailblocks` | `https://github.com/mertJF/tailblocks` | `34943e63` | Multi-dimensional audit evidence | 2026-10-18T23:57:51.444Z |
+| `learn-github-asciinema-asciinema` | `https://github.com/asciinema/asciinema` | `77498061` | Multi-dimensional audit evidence | 2026-10-18T23:57:53.349Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `f21f7262` | Multi-dimensional audit evidence | 2026-10-18T23:57:58.650Z |
+| `learn-github-liftbridge-io-liftbridge` | `https://github.com/liftbridge-io/liftbridge` | `af2a6626` | Multi-dimensional audit evidence | 2026-10-18T23:58:01.076Z |
+| `learn-github-erikgrinaker-toydb` | `https://github.com/erikgrinaker/toydb` | `2d7cd32e` | Multi-dimensional audit evidence | 2026-10-18T23:58:05.315Z |

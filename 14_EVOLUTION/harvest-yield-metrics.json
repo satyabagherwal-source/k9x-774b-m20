@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T23:51:53.553Z",
-  "total_cycles_completed": 2635,
-  "total_learnings_persisted": 2635,
-  "total_rules_promoted": 1660,
+  "last_updated": "2026-10-18T23:58:05.321Z",
+  "total_cycles_completed": 2641,
+  "total_learnings_persisted": 2641,
+  "total_rules_promoted": 1665,
   "history": [
-    {
-      "timestamp": "2026-10-18T07:39:13.278Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:39:22.057Z",
-      "repository": "pallets/flask",
-      "learningId": "learn-github-pallets-flask",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:44:29.160Z",
-      "repository": "fastify/fastify",
-      "learningId": "learn-github-fastify-fastify",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:55:05.953Z",
-      "repository": "expressjs/express",
-      "learningId": "learn-github-expressjs-express",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T07:55:31.688Z",
-      "repository": "nitrojs/nitro",
-      "learningId": "learn-github-nitrojs-nitro",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T08:01:01.460Z",
-      "repository": "h3js/h3",
-      "learningId": "learn-github-h3js-h3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T08:05:29.028Z",
       "repository": "unjs/ufo",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-18T23:51:53.553Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:57:51.182Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:57:51.450Z",
+      "repository": "mertJF/tailblocks",
+      "learningId": "learn-github-mertjf-tailblocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:57:53.355Z",
+      "repository": "asciinema/asciinema",
+      "learningId": "learn-github-asciinema-asciinema",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:57:58.655Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:58:01.078Z",
+      "repository": "liftbridge-io/liftbridge",
+      "learningId": "learn-github-liftbridge-io-liftbridge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T23:58:05.321Z",
+      "repository": "erikgrinaker/toydb",
+      "learningId": "learn-github-erikgrinaker-toydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

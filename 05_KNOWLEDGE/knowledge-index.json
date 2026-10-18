@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:51:53.508Z",
-  "total_verified_learnings": 400,
+  "last_updated": "2026-10-18T23:58:05.277Z",
+  "total_verified_learnings": 405,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2078,22 +2078,35 @@
     "learn-github-asciinema-asciinema": {
       "learning_id": "learn-github-asciinema-asciinema",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "asciinema-asciinema",
+      "source": "asciinema/asciinema",
+      "repository": "asciinema/asciinema",
       "slug": "asciinema-asciinema",
       "platform": "github",
       "source_url": "https://github.com/asciinema/asciinema",
-      "source_version": "HEAD",
-      "content_hash": "ba39b3d4450ee886104c674980c5dfd830cec1dfe12cb46a935baeb00eec64c5",
+      "source_version": "77498061",
+      "content_hash": "85ad744a1e4361e13affb6b050e167dbb93bb3b13657476959ad6337e06f30d6",
       "dossier_path": "07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1884,
+          "title": "Update contribution guidelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.929Z"
+      "verified_at": "2026-10-18T23:57:53.298Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ashishpatel26-500-ai-agents-projects": {
       "learning_id": "learn-github-ashishpatel26-500-ai-agents-projects",
@@ -6898,22 +6911,35 @@
     "learn-github-erikgrinaker-toydb": {
       "learning_id": "learn-github-erikgrinaker-toydb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "erikgrinaker-toydb",
+      "source": "erikgrinaker/toydb",
+      "repository": "erikgrinaker/toydb",
       "slug": "erikgrinaker-toydb",
       "platform": "github",
       "source_url": "https://github.com/erikgrinaker/toydb",
-      "source_version": "HEAD",
-      "content_hash": "b2258632cb2a34f037f098d998d6d4c4c877ff6179813a05b3454d36af621d04",
+      "source_version": "2d7cd32e",
+      "content_hash": "8191e09b517614fb79d541d8411326274c5f9be23976c8ed289a4a7fa9c9473d",
       "dossier_path": "07_PROJECT_LEARNING/erikgrinaker-toydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/erikgrinaker-toydb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1887,
+          "title": "docs: more architecture guide cleanups",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.810Z"
+      "verified_at": "2026-10-18T23:58:05.271Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-etcd-io-etcd": {
       "learning_id": "learn-github-etcd-io-etcd",
@@ -10919,7 +10945,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "f53b921c153c4fa8406cec32eff7294fc7a0a1983520b15077b05e8c610a8e5d",
+      "content_hash": "5b4f5a28da5c39d185c6af1fecf02930e831c162c229582f74313f3c75022fd4",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [
@@ -10956,7 +10982,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-10-17T20:50:51.010Z",
+      "verified_at": "2026-10-18T23:57:51.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24146,22 +24172,35 @@
     "learn-github-liftbridge-io-liftbridge": {
       "learning_id": "learn-github-liftbridge-io-liftbridge",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "liftbridge-io-liftbridge",
+      "source": "liftbridge-io/liftbridge",
+      "repository": "liftbridge-io/liftbridge",
       "slug": "liftbridge-io-liftbridge",
       "platform": "github",
       "source_url": "https://github.com/liftbridge-io/liftbridge",
-      "source_version": "HEAD",
-      "content_hash": "7b5d134a8b99d5d20b07d6ad402a9ee96986c6caa49663420d68dc8e5c2cf809",
+      "source_version": "af2a6626",
+      "content_hash": "921cff55d8f0c7b6a4aeed12dc7087daff4d3b6e71a020047ed68d1d7324b1b4",
       "dossier_path": "07_PROJECT_LEARNING/liftbridge-io-liftbridge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/liftbridge-io-liftbridge-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1886,
+          "title": "race condition in timeoutFuture.Error()",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.012Z"
+      "verified_at": "2026-10-18T23:58:01.019Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-limecloud-lime": {
       "learning_id": "learn-github-limecloud-lime",
@@ -25413,22 +25452,35 @@
     "learn-github-mertjf-tailblocks": {
       "learning_id": "learn-github-mertjf-tailblocks",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mertjf-tailblocks",
+      "source": "mertJF/tailblocks",
+      "repository": "mertJF/tailblocks",
       "slug": "mertjf-tailblocks",
       "platform": "github",
       "source_url": "https://github.com/mertJF/tailblocks",
-      "source_version": "HEAD",
-      "content_hash": "e2c1794da009f1d3d800f36cf68b86160da899aaf76f5f4afeb0f743b2cb6fae",
+      "source_version": "34943e63",
+      "content_hash": "8f61a7d3c110a3e1440a870f45ea14b8e4d71e69ce22fb1800d18f351adb484f",
       "dossier_path": "07_PROJECT_LEARNING/mertjf-tailblocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mertjf-tailblocks-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1883,
+          "title": "app:: ui updates for mobile view",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.256Z"
+      "verified_at": "2026-10-18T23:57:51.399Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mervinpraison-praisonai": {
       "learning_id": "learn-github-mervinpraison-praisonai",
@@ -33010,22 +33062,35 @@
     "learn-github-software-mansion-react-native-reanimated": {
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "software-mansion-react-native-reanimated",
+      "source": "software-mansion/react-native-reanimated",
+      "repository": "software-mansion/react-native-reanimated",
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "HEAD",
-      "content_hash": "4db7dd0f2a126ec4db73cd4d77ee5b16696280a58ebac415084fb55bdcf577f5",
+      "source_version": "f21f7262",
+      "content_hash": "1a6eb56a3f0b394a9876ef83fb6168b04f04746f9ac498fba3ed5c4733d60d4d",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1885,
+          "title": "runtime-tests): return fresh arrays from ReJest recorded updates (#10857)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.617Z"
+      "verified_at": "2026-10-18T23:57:58.603Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-software-mansion-react-native-screens": {
       "learning_id": "learn-github-software-mansion-react-native-screens",
@@ -70599,6 +70664,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:51:53.501Z"
+    },
+    "rule-1883": {
+      "learning_id": "rule-1883",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1883,
+      "title": "app:: ui updates for mobile view",
+      "source_url": "https://github.com/mertJF/tailblocks",
+      "source_version": "34943e63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:57:51.399Z"
+    },
+    "rule-1884": {
+      "learning_id": "rule-1884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1884,
+      "title": "Update contribution guidelines",
+      "source_url": "https://github.com/asciinema/asciinema",
+      "source_version": "77498061",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:57:53.298Z"
+    },
+    "rule-1885": {
+      "learning_id": "rule-1885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1885,
+      "title": "runtime-tests): return fresh arrays from ReJest recorded updates (#10857)",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "f21f7262",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:57:58.603Z"
+    },
+    "rule-1886": {
+      "learning_id": "rule-1886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1886,
+      "title": "race condition in timeoutFuture.Error()",
+      "source_url": "https://github.com/liftbridge-io/liftbridge",
+      "source_version": "af2a6626",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:58:01.019Z"
+    },
+    "rule-1887": {
+      "learning_id": "rule-1887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1887,
+      "title": "docs: more architecture guide cleanups",
+      "source_url": "https://github.com/erikgrinaker/toydb",
+      "source_version": "2d7cd32e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:58:05.271Z"
     }
   },
   "aliases": {

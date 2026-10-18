@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-6N21",
-    "timestamp": "2026-10-17T13:16:00.697Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "c20ec459496264cf915025c2578db63ff5d8bc7753c039e91e46f3271ae17242",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-B1ZY",
-    "timestamp": "2026-10-17T13:19:26.686Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "08cf46a785633b32c3a3c22571fa0f8386e18464985fdacb2577cebe666284a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-EZ6H",
-    "timestamp": "2026-10-17T13:22:29.657Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "a4ec98f688a4fc732b1df01a486b8dbe8a540ce6cba9221de63b1e46c1176b6d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-IOWW",
-    "timestamp": "2026-10-17T13:25:22.976Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "723a6a843447a1df4e38797ba9390de27b3498e57628ca40a6ee75e2f982675a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-N2WY",
-    "timestamp": "2026-10-17T13:28:47.746Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "005484aa13061eb13f08021bb2c0e20a83f8ce391f63ee6b6c5ab2116bf111d0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-RE12",
-    "timestamp": "2026-10-17T13:32:08.774Z",
-    "repository": "autotrust/JEV-35B-NVFP4",
-    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "533164c398eb033e9a2313f140c5ce5ac98cf400f0797b5e05c0007af76606d3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-VKGI",
     "timestamp": "2026-10-17T13:35:23.730Z",
     "repository": "BAAI/bge-small-en-v1.5",
@@ -7490,6 +7400,96 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "9fea7c3af986b5e62c1cb16db389dc374b9369b07f26d219fbee90913407b34e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-JWLL",
+    "timestamp": "2026-10-18T23:57:51.177Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "5b4f5a28da5c39d185c6af1fecf02930e831c162c229582f74313f3c75022fd4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-JWSX",
+    "timestamp": "2026-10-18T23:57:51.441Z",
+    "repository": "mertJF/tailblocks",
+    "learningId": "learn-github-mertjf-tailblocks",
+    "contentHash": "8f61a7d3c110a3e1440a870f45ea14b8e4d71e69ce22fb1800d18f351adb484f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-JY9S",
+    "timestamp": "2026-10-18T23:57:53.344Z",
+    "repository": "asciinema/asciinema",
+    "learningId": "learn-github-asciinema-asciinema",
+    "contentHash": "85ad744a1e4361e13affb6b050e167dbb93bb3b13657476959ad6337e06f30d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K2D3",
+    "timestamp": "2026-10-18T23:57:58.647Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "1a6eb56a3f0b394a9876ef83fb6168b04f04746f9ac498fba3ed5c4733d60d4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K48H",
+    "timestamp": "2026-10-18T23:58:01.073Z",
+    "repository": "liftbridge-io/liftbridge",
+    "learningId": "learn-github-liftbridge-io-liftbridge",
+    "contentHash": "921cff55d8f0c7b6a4aeed12dc7087daff4d3b6e71a020047ed68d1d7324b1b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-K7I9",
+    "timestamp": "2026-10-18T23:58:05.313Z",
+    "repository": "erikgrinaker/toydb",
+    "learningId": "learn-github-erikgrinaker-toydb",
+    "contentHash": "8191e09b517614fb79d541d8411326274c5f9be23976c8ed289a4a7fa9c9473d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

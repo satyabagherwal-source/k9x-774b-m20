@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "f53b921c153c4fa8406cec32eff7294fc7a0a1983520b15077b05e8c610a8e5d",
-    "lastHarvestedAt": "2026-10-17T20:50:51.045Z",
+    "contentHash": "5b4f5a28da5c39d185c6af1fecf02930e831c162c229582f74313f3c75022fd4",
+    "lastHarvestedAt": "2026-10-18T23:57:51.180Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -3778,5 +3778,55 @@
     "contentHash": "9f7dfef835d0244382dfd1ddff02f78c7d4883c1d42d7c73a1447f2b3cd111e0",
     "lastHarvestedAt": "2026-10-18T23:51:52.586Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
+  },
+  "mertjf-tailblocks": {
+    "repository": "mertJF/tailblocks",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mertJF/tailblocks",
+    "sourceVersion": "34943e63",
+    "license": "MIT",
+    "contentHash": "8f61a7d3c110a3e1440a870f45ea14b8e4d71e69ce22fb1800d18f351adb484f",
+    "lastHarvestedAt": "2026-10-18T23:57:51.444Z",
+    "learningId": "learn-github-mertjf-tailblocks"
+  },
+  "asciinema-asciinema": {
+    "repository": "asciinema/asciinema",
+    "platform": "github",
+    "sourceUrl": "https://github.com/asciinema/asciinema",
+    "sourceVersion": "77498061",
+    "license": "GPL-3.0",
+    "contentHash": "85ad744a1e4361e13affb6b050e167dbb93bb3b13657476959ad6337e06f30d6",
+    "lastHarvestedAt": "2026-10-18T23:57:53.349Z",
+    "learningId": "learn-github-asciinema-asciinema"
+  },
+  "software-mansion-react-native-reanimated": {
+    "repository": "software-mansion/react-native-reanimated",
+    "platform": "github",
+    "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
+    "sourceVersion": "f21f7262",
+    "license": "MIT",
+    "contentHash": "1a6eb56a3f0b394a9876ef83fb6168b04f04746f9ac498fba3ed5c4733d60d4d",
+    "lastHarvestedAt": "2026-10-18T23:57:58.650Z",
+    "learningId": "learn-github-software-mansion-react-native-reanimated"
+  },
+  "liftbridge-io-liftbridge": {
+    "repository": "liftbridge-io/liftbridge",
+    "platform": "github",
+    "sourceUrl": "https://github.com/liftbridge-io/liftbridge",
+    "sourceVersion": "af2a6626",
+    "license": "Apache-2.0",
+    "contentHash": "921cff55d8f0c7b6a4aeed12dc7087daff4d3b6e71a020047ed68d1d7324b1b4",
+    "lastHarvestedAt": "2026-10-18T23:58:01.076Z",
+    "learningId": "learn-github-liftbridge-io-liftbridge"
+  },
+  "erikgrinaker-toydb": {
+    "repository": "erikgrinaker/toydb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/erikgrinaker/toydb",
+    "sourceVersion": "2d7cd32e",
+    "license": "Apache-2.0",
+    "contentHash": "8191e09b517614fb79d541d8411326274c5f9be23976c8ed289a4a7fa9c9473d",
+    "lastHarvestedAt": "2026-10-18T23:58:05.315Z",
+    "learningId": "learn-github-erikgrinaker-toydb"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:51:53.555Z",
+  "last_updated": "2026-10-18T23:58:05.323Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1787,14 +1787,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
-      "content_hash": "f53b921c153c4fa8406cec32eff7294fc7a0a1983520b15077b05e8c610a8e5d",
-      "verified_at": "2026-10-17T20:50:51.047Z",
+      "content_hash": "5b4f5a28da5c39d185c6af1fecf02930e831c162c229582f74313f3c75022fd4",
+      "verified_at": "2026-10-18T23:57:51.184Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:50:51.047Z"
+      "last_updated": "2026-10-18T23:57:51.184Z"
     },
     "ConwayResearch/Underdog-Saluki-27B-1.0": {
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -5782,6 +5782,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:51:52.594Z"
+    },
+    "mertJF/tailblocks": {
+      "repository": "mertJF/tailblocks",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mertjf-tailblocks",
+      "content_hash": "8f61a7d3c110a3e1440a870f45ea14b8e4d71e69ce22fb1800d18f351adb484f",
+      "verified_at": "2026-10-18T23:57:51.452Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:57:51.452Z"
+    },
+    "asciinema/asciinema": {
+      "repository": "asciinema/asciinema",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-asciinema-asciinema",
+      "content_hash": "85ad744a1e4361e13affb6b050e167dbb93bb3b13657476959ad6337e06f30d6",
+      "verified_at": "2026-10-18T23:57:53.357Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:57:53.357Z"
+    },
+    "software-mansion/react-native-reanimated": {
+      "repository": "software-mansion/react-native-reanimated",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-software-mansion-react-native-reanimated",
+      "content_hash": "1a6eb56a3f0b394a9876ef83fb6168b04f04746f9ac498fba3ed5c4733d60d4d",
+      "verified_at": "2026-10-18T23:57:58.657Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:57:58.657Z"
+    },
+    "liftbridge-io/liftbridge": {
+      "repository": "liftbridge-io/liftbridge",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-liftbridge-io-liftbridge",
+      "content_hash": "921cff55d8f0c7b6a4aeed12dc7087daff4d3b6e71a020047ed68d1d7324b1b4",
+      "verified_at": "2026-10-18T23:58:01.080Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:58:01.080Z"
+    },
+    "erikgrinaker/toydb": {
+      "repository": "erikgrinaker/toydb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-erikgrinaker-toydb",
+      "content_hash": "8191e09b517614fb79d541d8411326274c5f9be23976c8ed289a4a7fa9c9473d",
+      "verified_at": "2026-10-18T23:58:05.323Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:58:05.323Z"
     }
   },
   "repos": {
