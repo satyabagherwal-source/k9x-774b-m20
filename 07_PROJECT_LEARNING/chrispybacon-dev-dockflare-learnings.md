@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrispybacon-dev-dockflare-learnings.md`  
+> **Source**: github ([https://github.com/ChrispyBacon-dev/DockFlare](https://github.com/ChrispyBacon-dev/DockFlare))  
+> **Source Version**: `9c7bed82`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:45:56.416Z  
+> **Learning ID**: `learn-github-chrispybacon-dev-dockflare`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): ChrispyBacon-dev/DockFlare
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrispybacon-dev-dockflare-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ChrispyBacon-dev/DockFlare](https://github.com/ChrispyBacon-dev/DockFlare))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:25:19.944Z  
+> **Harvest Timestamp**: 2026-10-18T21:45:56.410Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: DockFlare: Automate Cloudflare Tunnels with Docker Labels
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 2474 stars
+- **Stars / Engagement**: 2489 stars
 
 ---
 
@@ -1841,445 +1855,6 @@ def process_container_start(container_obj):
                         "access_custo
 ```
 
-### Core Architecture Module: `dockflare/app/core/email_manager.py`
-```
-import logging
-import requests
-import json
-import boto3
-from botocore.config import Config as BotoConfig
-from app import config
-from app.core.cloudflare_api import cf_api_request, dns_semaphore
-
-def check_token_permissions():
-    try:
-        perms = {
-            "email_routing": False,
-            "workers": False,
-            "r2": False,
-            "workers_kv": False
-        }
-        token = getattr(config, 'CF_API_TOKEN', '') or ''
-        if token.startswith('cfat_'):
-            verify_res = cf_api_request('GET', f'/accounts/{config.CF_ACCOUNT_ID}/tokens/verify')
-        else:
-            verify_res = cf_api_request('GET', '/user/tokens/verify')
-        if not verify_res or not verify_res.get('success'):
-            return perms
-        try:
-            cf_api_request('GET', f'/accounts/{config.CF_ACCOUNT_ID}/email/routing/addresses')
-            perms["email_routing"] = True
-        except Exception:
-            perms["email_routing"] = False
-        try:
-            cf_api_request('GET', f'/accounts/{config.CF_ACCOUNT_ID}/workers/scripts')
-            perms["workers"] = True
-        except Exception:
-            perms["workers"] = False
-        try:
-            cf_api_request('GET', f'/accounts/{config.CF_ACCOUNT_ID}/r2/buckets')
-            perms["r2"] = True
-        except Exception as e:
-            perms["r2"] = False
-            if '10042' in str(e):
-                perms["r2_note"] = "R2 must be enabled in the Cloudflare Dashboard before use"
-        try:
-            cf_api_request('GET', f'/accounts/{config.CF_ACCOUNT_ID}/storage/kv/namespaces?per_page=1')
-            perms["workers_kv"] = True
-        except Exception:
-            perms["workers_kv"] = False
-        return perms
-    except Exception as e:
-        logging.error(f"Error checking token permissions: {e}")
-        return {"email_routing": False, "workers": False, "r2": False, "workers_kv": False}
-
-def enable_email_routing(zone_id):
-    try:
-        return cf_api_request('POST', f'/zones/{zone_id}/email/routing/enable', log_errors=False)
-    except Exception as e:
-        err_str = str(e)
-        if '2004' in err_str or 'already enabled' in err_str.lower() or 'Unprocessable' in err_str:
-            logging.info(f"Email routing already enabled on zone {zone_id}, continuing")
-            return {}
-        if '403' in err_str or 'Forbidden' in err_str or '10000' in err_str or 'Authentication' in err_str:
-            logging.info(f"Email routing enable not permitted (zone {zone_id}); CF auto-activates via MX records")
-            return {}
-        logging.warning(f"Could not enable email routing on zone {zone_id}: {e}")
-        raise
-
-def enable_email_sending(zone_id, zone_name):
-    try:
-        subdomain = f"mail.{zone_name}"
-        res = cf_api_request('POST', f'/zones/{zone_id}/email/sending/subdomains', json_data={"name": subdomain})
-        logging.info(f"Email sending enabled for {zone_name} (subdomain: {subdomain})")
-        return res
-    except Exception as e:
-        err_str = str(e)
-        if 'already exists' in err_str.lower() or '2004' in err_str or 'duplicate' in err_str.lower():
-            logging.info(f"Email sending subdomain already exists for {zone_name}, continuing")
-            return {}
-        logging.warning(f"Could not enable email sending for {zone_name} (may require manual activation in CF Dashboard): {e}")
-        return None
-
-def get_email_routing_status(zone_id):
-    try:
-        res = cf_api_request('GET', f'/zones/{zone_id}/email/routing')
-        return res.get('result', {})
-    except Exception as e:
-        logging.error(f"Error getting email routing status: {e}")
-        return {}
-
-def create_dns_record_generic(zone_id, type, name, content, priority=None):
-    with dns_semaphore:
-        data = {
-            "type": type,
-            "name": name,
-            "content": content,
-            "proxied": False,
-            "ttl": 1
-        }
-        if priority is not None:
-            data["priority"] = priority
-        return cf_api_request('POST', f'/zones/{zone_id}/dns_records', json_data=data)
-
-def find_dns_record_generic(zone_id, type, name):
-    with dns_semaphore:
-        res = cf_api_request('GET', f'/zones/{zone_id}/dns_records?type={type}&name={name}')
-        if res.get('success') and res.get('result'):
-            return res['result'][0]
-        return None
-
-def delete_dns_record_generic(zone_id, record_id):
-    with dns_semaphore:
-        return cf_api_request('DELETE', f'/zones/{zone_id}/dns_records/{record_id}')
-
-def _safe_create_dns(zone_id, type, name, content, priority=None):
-    try:
-        create_dns_record_generic(zone_id, type, name, content, priority)
-    except Exception as e:
-        cf_codes = []
-        err_text = str(e)
-        try:
-            resp = getattr(e, 'response', None)
-            if resp is not None:
-                raw = resp.text
-                err_text = err_text + ' ' + raw
-                cf_codes = [err.get('code') for err in json.loads(raw).get('errors', [])]
-        except Exception:
-            pass
-        cf_code = getattr(e, 'cf_error_code', None)
-        if cf_code:
-            cf_codes.append(cf_code)
-        skip_codes = {81057, 81053, 81058, 890190}
-        if cf_codes and any(c in skip_codes for c in cf_codes):
-            logging.info(f"DNS record {type} {name} skipped (already exists or managed by CF Email Routing, codes={cf_codes})")
-        elif '890190' in err_text or 'already exists' in err_text.lower() or 'managed by Email Routing' in err_text:
-            logging.info(f"DNS record {type} {name} skipped: {err_text[:200]}")
-        else:
-            logging.error(f"DNS record {type} {name} failed, cf_codes={cf_codes}, err={err_text[:500]}")
-            raise
-
-def setup_email_dns_records(zone_id, zone_name):
-    try:
-        res = cf_api_request('GET', f'/zones/{zone_id}/email/routing/dns', log_errors=False)
-        required = res.get('result', [])
-        for record in required:
-            rtype = record.get('type')
-            rname = record.get('name')
-            rcontent = record.get('content')
-            rpriority = record.get('priority')
-            if rtype and rname and rcontent:
-                _safe_create_dns(zone_id, rtype, rname, rcontent, priority=rpriority)
-    except Exception as e:
-        logging.info(f"Could not fetch email routing DNS from CF API (falling back to defaults): {e}")
-        _safe_create_dns(zone_id, 'MX', zone_name, 'route1.mx.cloudflare.net', priority=14)
-        _safe_create_dns(zone_id, 'MX', zone_name, 'route2.mx.cloudflare.net', priority=36)
-        _safe_create_dns(zone_id, 'MX', zone_name, 'route3.mx.cloudflare.net', priority=88)
-        _safe_create_dns(zone_id, 'TXT', zone_name, 'v=spf1 include:_spf.mx.cloudflare.net ~all')
-        _safe_create_dns(zone_id, 'TXT', f'_dmarc.{zone_name}', f'v=DMARC1; p=quarantine; rua=mailto:dmarc@{zone_name}')
-
-def get_email_sending_status(zone_id, zone_name):
-    try:
-        res = cf_api_request('GET', f'/zones/{zone_id}/dns_records?type=TXT&search=_domainkey', log_errors=False)
-        records = res.get('result', [])
-        suffix = f'._domainkey.{zone_name}'
-        for r in records:
-            if r.get('name', '').endswith(suffix):
-                return 'configured'
-        return 'not_configured'
-    except Exception:
-        return 'unknown'
-
-def verify_email_dns_records(zone_id, zone_name):
-    res = cf_api_request('GET', f'/zones/{zone_id}/dns_records')
-    records = res.get('result', [])
-    status = {'mx': False, 'spf': False, 'dmarc': False}
-    mx_count = 0
-    for r in records:
-        if r['type'] == 'MX' and r['name'] == zone_name and 'mx.cloudflare.net' in r['content']:
-            mx_count += 1
-        if r['type'] == 'TXT' and r['name'] == zone_name and 'v=spf1' in r['content']:
-            status['spf'] = True
-        if r['type'] == 'TXT' and r['name'] == f'_dmarc.{zone_name}' and 'v=DMARC1' in r['content']:
-            status['dmarc'] = True
-    if mx_count >= 3:
-        status['mx'] = True
-    return status
-
-def create_r2_bucket(bucket_name):
-    try:
-        return cf_api_request('PUT', f'/accounts/{config.CF_ACCOUNT_ID}/r2/buckets/{bucket_name}')
-    except Exception as e:
-        cf_codes = []
-        err_text = str(e)
-        try:
-            resp = getattr(e, 'response', None)
-            if resp is not None:
-                raw = resp.text
-                err_text = err_text + ' ' + raw
-                cf_codes = [err.get('code') for err in json.loads(raw).get('errors', [])]
-                if resp.status_code == 409:
-                    logging.info(f"R2 bucket {bucket_name} already exists (409), continuing")
-                    return {"success": True, "result": {"name": bucket_name}}
-        except Exception:
-            pass
-        if 10006 in cf_codes or 'already exists' in err_text.lower() or '409' in err_text:
-            logging.info(f"R2 bucket {bucket_name} already exists, continuing")
-            return {"success": True, "result": {"name": bucket_name}}
-        raise
-
-def get_r2_s3_credentials():
-    import hashlib
-    token = getattr(config, 'CF_API_TOKEN', '') or ''
-    if token.startswith('cfat_'):
-        token_verify = cf_api_request('GET', f'/accounts/{config.CF_ACCOUNT_ID}/tokens/verify')
-    else:
-        token_verify = cf_api_request('GET', '/user/tokens/verify')
-    token_id = token_verify.get('result', {}).get('id', '')
-    secret = hashlib.sha256(config.CF_API_TOKEN.encode()).hexdigest()
-    return {
-        'access_key_id': token_id,
-        'secret_access_key': secret,
-        'endpoint_url': f"https://{config.CF_ACCOUNT_ID}.r2.cloudflarestorage.com"
-    }
-
-def get_workers_subdomain():
-    res = cf_api_request('GET', f'/accounts/{config.CF_ACCOUNT_ID}/workers/subdomain')
-    return res.get('result', {}).get('subdomain', '')
-
-def deploy_worker(script_name, script_content, bindings):
-    url = f"{config.CF_API_BASE_URL}/accounts/{config.CF_ACCOUNT_ID}/workers/scripts/{script_name}"
-    metadata = {
- 
-```
-
-### Core Architecture Module: `dockflare/app/core/idp_manager.py`
-```
-# DockFlare: Automates Cloudflare Tunnel ingress from Docker labels.
-# Copyright (C) 2025 ChrispyBacon-Dev <https://github.com/ChrispyBacon-dev/DockFlare>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <https://www.gnu.org/licenses/>.
-#
-# app/core/idp_manager.py
-import logging
-import requests
-from flask import current_app
-from app.core import cloudflare_api
-
-def get_supported_idp_types():
-    return {
-        "google": {
-            "name": "Google",
-            "category": "oauth",
-            "fields": {
-                "client_id": {"label": "Client ID", "type": "text", "required": True},
-                "client_secret": {"label": "Client Secret", "type": "password", "required": True}
-            }
-        },
-        "google-apps": {
-            "name": "Google Workspace",
-            "category": "oauth",
-            "fields": {
-                "client_id": {"label": "Client ID", "type": "text", "required": True},
-                "client_secret": {"label": "Client Secret", "type": "password", "required": True},
-                "apps_domain": {"label": "Apps Domain", "type": "text", "required": False, "placeholder": "example.com"}
-            }
-        },
-        "azureAD": {
-            "name": "Microsoft Azure AD",
-            "category": "oauth",
-            "fields": {
-                "client_id": {"label": "Application (client) ID", "type": "text", "required": True},
-                "client_secret": {"label": "Client Secret", "type": "password", "required": True},
-                "directory_id": {"label": "Directory (tenant) ID", "type": "text", "required": True}
-            }
-        },
-        "okta": {
-            "name": "Okta",
-            "category": "oauth",
-            "fields": {
-                "okta_account": {"label": "Okta Account URL", "type": "text", "required": True, "placeholder": "https://your-domain.okta.com"},
-                "client_id": {"label": "Client ID", "type": "text", "required": True},
-                "client_secret": {"label": "Client Secret", "type": "password", "required": True}
-            }
-        },
-        "github": {
-            "name": "GitHub",
-            "category": "oauth",
-            "fields": {
-                "client_id": {"label": "Client ID", "type": "text", "required": True},
-                "client_secret": {"label": "Client Secret", "type": "password", "required": True}
-            }
-        },
-        "oidc": {
-            "name": "Generic OpenID Connect",
-            "category": "oauth",
-            "fields": {
-                "client_id": {"label": "Client ID", "type": "text", "required": True},
-                "client_secret": {"label": "Client Secret", "type": "password", "required": True},
-                "auth_url": {"label": "Authorization URL", "type": "text", "required": True, "placeholder": "https://provider.com/oauth2/authorize"},
-                "token_url": {"label": "Token URL", "type": "text", "required": True, "placeholder": "https://provider.com/oauth2/token"},
-                "certs_url": {"label": "JWKS URL", "type": "text", "required": True, "placeholder": "https://provider.com/.well-known/jwks.json"}
-            }
-        }
-    }
-
-def list_identity_providers():
-    account_id = current_app.config.get('CF_ACCOUNT_ID')
-    logging.info(f"Listing Identity Providers for account {account_id}")
-    endpoint = f"/accounts/{account_id}/access/identity_providers"
-
-    try:
-        response_data = cloudflare_api.cf_api_request("GET", endpoint)
-        idps = response_data.get("result", [])
-        logging.info(f"Retrieved {len(idps)} Identity Providers from Cloudflare")
-        return idps
-    except requests.exceptions.RequestException as e:
-        logging.error(f"API error listing Identity Providers: {e}")
-        return []
-    except Exception as e:
-        logging.error(f"Unexpected error listing Identity Providers: {e}", exc_info=True)
-        return []
-
-def get_identity_provider(idp_id):
-    account_id = current_app.config.get('CF_ACCOUNT_ID')
-    logging.info(f"Getting Identity Provider {idp_id} for account {account_id}")
-    endpoint = f"/accounts/{account_id}/access/identity_providers/{idp_id}"
-
-    try:
-        response_data = cloudflare_api.cf_api_request("GET", endpoint)
-        idp = response_data.get("result")
-        if idp:
-            logging.info(f"Retrieved Identity Provider: {idp.get('name', idp.get('type'))}")
-        return idp
-    except requests.exceptions.RequestException as e:
-        logging.error(f"API error getting Identity Provider {idp_id}: {e}")
-        return None
-    except Exception as e:
-        logging.error(f"Unexpected error getting Identity Provider {idp_id}: {e}", exc_info=True)
-        return None
-
-def create_identity_provider(name, idp_type, config):
-    account_id = current_app.config.get('CF_ACCOUNT_ID')
-    logging.info(f"Creating Identity Provider '{name}' of type '{idp_type}' for account {account_id}")
-    endpoint = f"/accounts/{account_id}/access/identity_providers"
-
-    payload = {
-        "name": name,
-        "type": idp_type,
-        "config": config
-    }
-
-    try:
-        response_data = cloudflare_api.cf_api_request("POST", endpoint, json_data=payload)
-        idp = response_data.get("result")
-        if idp:
-            logging.info(f"Successfully created Identity Provider with ID: {idp.get('id')}")
-        return idp
-    except requests.exceptions.RequestException as e:
-        logging.error(f"API error creating Identity Provider '{name}': {e}")
-        raise
-    except Exception as e:
-        logging.error(f"Unexpected error creating Identity Provider '{name}': {e}", exc_info=True)
-        raise
-
-def update_identity_provider(idp_id, name=None, config=None):
-    account_id = current_app.config.get('CF_ACCOUNT_ID')
-    logging.info(f"Updating Identity Provider {idp_id} for account {account_id}")
-    endpoint = f"/accounts/{account_id}/access/identity_providers/{idp_id}"
-
-    payload = {}
-    if name is not None:
-        payload["name"] = name
-    if config is not None:
-        payload["config"] = config
-
-    if not payload:
-        logging.warning(f"No updates provided for Identity Provider {idp_id}")
-        return None
-
-    try:
-        response_data = cloudflare_api.cf_api_request("PUT", endpoint, json_data=payload)
-        idp = response_data.get("result")
-        if idp:
-            logging.info(f"Successfully updated Identity Provider {idp_id}")
-        return idp
-    except requests.exceptions.RequestException as e:
-        logging.error(f"API error updating Identity Provider {idp_id}: {e}")
-        raise
-    except Exception as e:
-        logging.error(f"Unexpected error updating Identity Provider {idp_id}: {e}", exc_info=True)
-        raise
-
-def delete_identity_provider(idp_id):
-    account_id = current_app.config.get('CF_ACCOUNT_ID')
-    logging.info(f"Deleting Identity Provider {idp_id} for account {account_id}")
-    endpoint = f"/accounts/{account_id}/access/identity_providers/{idp_id}"
-
-    try:
-        response_data = cloudflare_api.cf_api_request("DELETE", endpoint)
-        logging.info(f"Successfully deleted Identity Provider {idp_id}")
-        return True
-    except requests.exceptions.RequestException as e:
-        logging.error(f"API error deleting Identity Provider {idp_id}: {e}")
-        raise
-    except Exception as e:
-        logging.error(f"Unexpected error deleting Identity Provider {idp_id}: {e}", exc_info=True)
-        raise
-
-def is_system_managed_idp(idp_type):
-    system_types = ["onetimepin"]
-    return idp_type in system_types
-
-def build_test_idp_url(idp_id):
-    team_domain = current_app.config.get('CF_TEAM_DOMAIN')
-    if not team_domain:
-        try:
-            idps = list_identity_providers()
-            if idps and len(idps) > 0:
-                redirect_url = idps[0].get('config', {}).get('redirect_url', '')
-                if redirect_url:
-                    team_domain = redirect_url.split('//')[1].split('/')[0] if '//' in redirect_url else None
-        except:
-            pass
-
-    if team_domain:
-        return f"https://{team_domain}/cdn-cgi/access/test-idp/{idp_id}"
-    return None
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2291,54 +1866,9 @@ def build_test_idp_url(idp_id):
   **Post-Mortem & Fix Analysis**:
   > thank you for reporting this. I look into that, this could be really a bug in the pattern logic, I never used a SLD. thank you good catch. 
   > bug confirmed... the problem is I don't have an SLD in my cloudflare account would you be able to test a fix? work on a fix on unstable branch. 
-  > a fix is in unstable branch. if you replace the docker image in your compose to unstable you can test it. would that be possible?
 
 - **Issue #388** (2026-09-01): **UI-overridden Docker rules stay pending_deletion after container recreate/update**
   *Symptoms*: ### Summary  When a Docker-sourced rule has `rule_ui_override: true` (set after editing the rule in the UI), container **stop** correctly schedules grace-period deletion, but container **start/recreate** does **not** restore the rule to `active`. The hostname stays `pending_deletion` until `delete_at`, even though the replacement container is healthy and still has valid `dockflare.*` labels.  ### Expected behavior  On container update/recreate:  1. Stop → rule enters `pending_deletion` (grace period) — OK 2. New container starts with the same hostname labels → rule returns to `active`, `delete_at` cleared, tunnel ingress retained  UI override should protect Access/service edits from being overwritten by labels, **not** block tunnel lifecycle recovery.  ### Actual behavior  Step 2 is skipped. Logs show:  ```text DOCKER_HANDLER: Rule <hostname>| is UI-overridden, skipping Docker updates for <container>. ```  The rule remains `pending_deletion` for the full grace period (default 8h) and is then removed from the tunnel despite the app still running.  ### Reproduction  1. Deploy a labeled container (`dockflare.enable=true`, hostname + service). 2. In the DockFlare UI, edit that rule (e.g. Access groups) so it shows **UI Override** / `rule_ui_override: true`. 3. Recreate/update the container (`docker compose up -d --force-recreate` or equivalent). 4. Observe the rule flip to **pending deletion** with an expiration countdown and never return to **active**
-  **Post-Mortem & Fix Analysis**:
-  > I look into that thank you for the report.
-  > I did a first review and this is a rabbit hole.. I plan a bigger patch and rework around this problem. more soon
-  > currently in dev branch fixed but further testing is needed. 
-
-- **Issue #330** (2026-03-18): **Disable Password Login not working **
-  *Symptoms*: Steps:  - Go to Dockflare settings, set option "Disable Password Login" and save security settings.  - Settings page reloads with all the text entries empty, except for the "Disable Password Login" option which is set.  - Logout and close browser.  - Load Dockflare and presented with login screen.  - Enter credentials and login successfully.  - Go to Dockflare settings, option "Disable Password Login" is unset.  - Repeating the process doesn't resolve the issue. 
-  **Post-Mortem & Fix Analysis**:
-  > I look into it. just to be sure are you on latest version / image build? 
-  > Yes, 3.0.8
-  > I can confirm it is a bug, thank you for finding. I believe it has something to do with the recent translation. 
-
-- **Issue #309** (2026-03-03): **Invalid container name**
-  *Symptoms*: When configuring the tunnel name, it is possible to use characters in that name that prevent the container, which is needed to activate the tunnel, from being created.  For example, when I put in an additional descriptor in the name - dockflare-tunnel (pve)  This created the tunnel on Cloudflare and added routes to it, but it remained inactive due to this error  dockflare            | 09:55:26 [ERROR] Failed to create new agent container: 400 Client Error for http://docker-socket-proxy:2375/v1.52/containers/create?name=cloudflared-agent-dockflare-tunnel+%28pve%29: Bad Request ("Invalid container name (cloudflared-agent-dockflare-tunnel (pve)), only [a-zA-Z0-9][a-zA-Z0-9_.-] are allowed")  Would it be possible to either have that restriction in the web GUI or map invalid characters to valid ones when it comes to creating the container, so it can start (as it only seems to be an issue with the container name)
-  **Post-Mortem & Fix Analysis**:
-  > Thank you, it looks like you found a bug! I look into it however, over the holiday season I don't have any time so sometime in January. Wish you a nice Christmas 🎅🏻 holidays.
-  > issue resolved see last release notes v3.0.7
-
-- **Issue #296** (2026-02-15): **error in logs constantly....` details or key 'enable' label after multiple attempts.``**
-  *Symptoms*: Version 3.0.5  ``` WARNING:root:Pattern-based cache invalidation is only supported with RedisCache 20:00:15 [WARNING] Pattern-based cache invalidation is only supported with RedisCache 20:00:16 [WARNING] Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. WARNING:root:Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. WARNING:root:Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. 20:01:17 [WARNING] Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. WARNING:root:Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. 20:02:19 [WARNING] Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. 20:03:19 [WARNING] Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. WARNING:root:Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. 20:04:26 [WARNING] Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. WARNING:root:Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. 20:04:30 [WARNING] Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. WARNING:root:Failed to get container d5eb03b87fb3 details or key 'enable' label after multiple attempts. WARNING:root:Failed
-  **Post-Mortem & Fix Analysis**:
-  > I look into that, thanks for reporting. 
-  > small update on the weekend I already created a fix for this but I leave it in unstable branch for now as I'm looking in some refinements and updating DockFlare Agent as well. 
-
-- **Issue #285** (2025-10-19): **OIDC auth error — “The server encountered an internal error…” before request reaches Authentik**
-  *Symptoms*:  This could very well be my fault, but I’m running into an issue after setting up OIDC authentication in Dockflare.  As soon as I click **“Login with Authentik”**, I get the following error:  > *The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.*  It seems to happen **before** the request even reaches my Authentik instance.  Here’s how I’ve configured things:  * In **Authentik**, I created a provider/application with the callback URL set to:    ```   https://dockflare.{mydomain}.co.uk/auth/authentik/callback   ```    (taken from the “Callback URL” shown in Dockflare’s settings)  * In **Dockflare**, under OIDC setup, I entered:    ```   https://identity.{mydomain}.co.uk/application/o/dockflare/   ```    as the **Issuer URL** (taken from the “OpenID Configuration Issuer” in Authentik)  * Client ID and Secret are from the Authentik UI as usual.  It feels like I’ve missed something obvious, but I can’t figure out what. Any ideas what might be causing this error?   The logs seem to suggest it's the callback URL but that is set!  `  File "/app/web/routes.py", line 2232, in login_provider     return oauth.create_client(provider_id).authorize_redirect(callback_url, state=state_token)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`
-  **Post-Mortem & Fix Analysis**:
-  > I fixed this issue - for anyone else...I don't know if this was a me thing or if it was a dockflare thing, but I had to restart the container after entering the OIDC settings and saving it.
-  > Hi @kybernetic-afk  Thank you for reporting this. I think you found a bug. I'm looking into it already and created a fix in the unstable branch to dynamically load OAuth IDP config.   Cheers, Chris
-  > fix for #285 is now on stable branch. I added both Google and GitHub OAuth and it’s now dynamically loading. I don't have an Authentik instance running so I cannot directly test this. Furthermore, I changed a little bit the spacing and padding of the login form. I think that is better styled than before. If you have a minute and can you test maybe? thank you  <img width="1292" height="788" alt="Image" src="https://github.com/user-attachments/assets/30ca73fb-849a-43b8-9eee-09248474632e" />
-
-- **Issue #279** (2025-10-14): **Unable to set no_tls_verify for specific container**
-  *Symptoms*: Hi.   I am unable to setup a container with Dockflare labels to skip TLS verification, no matter what I do the tunnel is always created without no TLS  verification flag disabled. Dockflare shows at dashboard the option set, even clicking at manage rule the checkbox is set but then the tunnel fails to work and I can see at Cloudflare that the skip TLS is not set.  The labels I have set at container (redacted):  `     dockflare.enable: true       dockflare.hostname: subdomain.example.com        dockflare.service: https://10.0.0.120:6643       dockflare.access.group: "dockflare-example"       dockflare.no_tls_verify: true `  I have other Dockflare tunnels that use no TLS verification and with those is working great. 
-  **Post-Mortem & Fix Analysis**:
-  > Hi,  Thank you for reporting. I can confirm this is a bug and I already testing in unstable branch.  I update you when I push on stable. Cheers, Chris
-  > Hi. Thanks a lot for your work, will wait for the stable push.
-  > OK, I pushed to stable and the Docker image is uploaded as well. Just pull the new Docker image on the stable branch and redeploy. My test compose was working and a rule was created with no TLS verify. thanks cheers, Chris   ``` version: '3.8'  services:    nginx-test:     image: nginx:latest     container_name: nginx-test     restart: unless-stopped     networks:       - cloudflare-net     labels:       # Standard DockFlare labels       - "dockflare.enable=true"       - "dockflare.hostname=test-notls.dockflare.app"        - "dockflare.service=https://nginx-test:80"       - "dockflare.no_tls_verify=true"       # --- New Feature ---       - "dockflare.access.policy=bypass"             # Provide a comma-separated list of your Access Group IDs.       #- "dockflare.access.groups=email,ip"  networks:   cloudflare-net:     name: cloudflare-net     external: true ```
-
-- **Issue #276** (2025-10-11): **edge case: multi access policy / *.domain.tld**
-  *Symptoms*: ```     labels:       - dockflare.enable=true       - dockflare.0.hostname=www.domain.org       - dockflare.0.service=http://nginx:80       - dockflare.0.access.groups=auth       - dockflare.1.hostname=domain.org       - dockflare.1.service=http://nginx:80       - dockflare.1.access.groups=auth  ``` Hello, I think i stumbled upon an edge case.  the first https://www.domain.org application works fine, and asks for authentication. the second, https://domain.org just bypasses  This is how dockflare shows it:  <img width="1433" height="75" alt="Image" src="https://github.com/user-attachments/assets/7dbf9546-a0f1-4de7-aa57-0c929fe627ca" />  when i look at cloudflare:  <img width="626" height="529" alt="Image" src="https://github.com/user-attachments/assets/21c932d8-0bce-4e64-a406-314647311ec8" />   
-  **Post-Mortem & Fix Analysis**:
-  > OK, this might be a similar issue to the path rule creation that I had and fixed. As a workaround, you could create a *.tld zone protection rule to have all subdomains protected with a default rule and create a public bypass for the www.domain.tld .   I look into that. 
-  > Please update to latest stable DockFlare container. issue is fixed. Details: https://github.com/ChrispyBacon-dev/DockFlare/releases  Thank you again for your feedback. Cheers, Chris
-  > works perfectly now, thanks :)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2355,930 +1885,7 @@ def build_test_idp_url(idp_id):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `732bf1fc` (2026-09-19)
-**Commit Message**: security hotfixes . mail worker and more fixes
-
-**File**: `CHANGELOG.md` (modified, +3/-1)
-```diff
-@@ -16,7 +16,9 @@ All notable changes to this project will be documented in this file.
- - **Real-time log stream fixed:** The activity log panel no longer reconnects every ~10s or opens duplicate connections. Proper SSE heartbeats, a single reconnect watchdog, per-viewer log fan-out, and it pauses when the tab is hidden.
- 
- ### Security
--- **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
-+- **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, keeps the sender display name in `From`, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
-+- **Inbound mail can't be mis-filed by headers:** Mailbox resolution now trusts the SMTP envelope (and the worker's alias result) instead of the spoofable `To:`/`Delivered-To` headers, so with catch-all enabled a sender can no longer drop mail into an arbitrary mailbox.
-+- **Push endpoints can't target internal hosts:** Web Push subscriptions must be HTTPS and resolve to public addresses; invalid or legacy endpoints are rejected on subscribe and cleaned up on send.
- - **Agent API Access app:** The `/api/v2/agents/` Cloudflare Access app keeps an admin bypass policy so the same-origin admin UI can reach those endpoints (an identity `allow` policy breaks the browser request flow), while the endpoints themselves remain protected by the master API key and per-agent keys. Startup now ensures the policy exists instead of creating duplicates.
- - **Agent secrets removed from `state.json`:** Agent API keys and tunnel tokens now live only in the encrypted key store, legacy plaintext values are migrated on first load, backups no longer contain them, and rolling a key revokes all previous active keys.
- - **Mail-manager secrets encrypted at rest:** R2 secret keys, webhook secrets and outbound auth secrets are AES-GCM encrypted in the SQLite DB (`MAIL_SECRET_KEY`, falling back to the bootstrap secret), existing rows are migrated on startup, and DB/directory permissions are tightened.
-```
-
-**File**: `dockflare/app/core/agent_key_store.py` (modified, +3/-2)
-```diff
-@@ -65,8 +65,8 @@ def _fernet() -> Optional[Fernet]:
- def _persist_locked() -> None:
-     fernet = _fernet()
-     if fernet is None:
--        logging.warning("AGENT_KEY_STORE: Persist skipped because Fernet key is unavailable.")
--        return
-+        logging.error("AGENT_KEY_STORE: Persist failed because the encryption key is unavailable.")
-+        raise RuntimeError("Agent key store encryption key is unavailable")
- 
-     payload = {"keys": _cached_keys}
-     try:
-@@ -81,6 +81,7 @@ def _persist_locked() -> None:
-         logging.debug("AGENT_KEY_STORE: Persisted %d keys to encrypted store.", len(_cached_keys))
-     except Exception as err:  # pylint: disable=broad-except
-         logging.error("AGENT_KEY_STORE: Failed to persist key store: %s", err, exc_info=True)
-+        raise
- 
- 
- def _load_locked() -> None:
-```
-
-**File**: `dockflare/app/core/service_token_manager.py` (modified, +5/-3)
-```diff
-@@ -34,14 +34,14 @@ def _parse_hostname(public_url):
-     return parsed.hostname
- 
- 
--def _create_admin_bypass_policy(account_id, app_uuid):
-+def _create_admin_bypass_policy(account_id, app_uuid, precedence=2):
-     resp = cf_api_request(
-         "POST",
-         f"/accounts/{account_id}/access/apps/{app_uuid}/policies",
-         json_data={
-             "name": "DockFlare Admin Bypass",
-             "decision": "bypass",
--            "precedence": 2,
-+            "precedence": precedence,
-             "include": [{"everyone": {}}]
-         }
-     )
-@@ -84,7 +84,9 @@ def ensure_agent_access_hardening():
-                 logging.warning(f"Could not remove the redundant admin access policy {policy_id}: {e}")
- 
-     try:
--        new_id = _create_admin_bypass_policy(account_id, app_uuid)
-+        precedences = [p.get("precedence") for p in policies if isinstance(p.get("precedence"), int)]
-+        next_precedence = (max(precedences) if precedences else 1) + 1
-+        new_id = _create_admin_bypass_policy(account_id, app_uuid, next_precedence)
-         if new_id:
-             logging.info(
-                 "Ensured the Agent API Access app allows the admin UI; the endpoints still require the master or agent API key"
-```
-
-**File**: `dockflare/app/core/state_manager.py` (modified, +11/-3)
-```diff
-@@ -405,8 +405,6 @@ def load_state():
-                 )
-             identity_providers.update(idps_to_load)
-             agent_cf_token.update(cf_token_to_load)
--            if _migrate_agent_secrets():
--                save_state()
-             key_count = len(agent_key_store.list_keys())
-             logging.info(
-                 "LOAD_STATE: Loaded %s access groups, %s agents and %s agent keys (encrypted backing store).",
-@@ -471,7 +469,13 @@ def load_state():
- 
-                 managed_rules[final_key] = rule_copy
- 
--            migration_needed = schema_version < STATE_SCHEMA_VERSION or migrated_count > 0 or tunnel_name_migration_count > 0 or group_migration_count > 0
-+            agent_secrets_migrated = False
-+            try:
-+                agent_secrets_migrated = _migrate_agent_secrets()
-+            except Exception as e_agent_migrate:
-+                logging.error(f"LOAD_STATE: Agent secret migration failed: {e_agent_migrate}", exc_info=True)
-+
-+            migration_needed = schema_version < STATE_SCHEMA_VERSION or migrated_count > 0 or tunnel_name_migration_count > 0 or group_migration_count > 0 or agent_secrets_migrated
-             if migrated_count > 0:
-                 logging.info(f"LOAD_STATE: Migrated {migrated_count} rules to the new key format.")
-             if tunnel_name_migration_count > 0:
-@@ -898,6 +902,10 @@ def remove_agent(agent_id):
-     with state_lock:
-         if agent_id in agents:
-             del agents[agent_id]
-+            try:
-+                agent_key_store.clear_agent_tunnel_token(agent_id)
-+            except Exception as e:
-+                logging.warning(f"Could not clear stored tunnel token for removed agent {agent_id}: {e}")
-             save_state()
-             return True
-         return False
-```
-
-**File**: `dockflare/app/core/worker_templates/outbound_worker.js` (modified, +2/-1)
-```diff
-@@ -105,6 +105,7 @@ export default {
-     }
- 
-     const domain = String(env.DOMAIN_NAME || "").toLowerCase();
-+    const fromHeaderValue = stripHeader(body.from);
-     const fromAddress = parseAddress(body.from);
-     if (!fromAddress) {
-       return json({ error: "invalid sender" }, 400);
-@@ -183,7 +184,7 @@ export default {
-     const innerBoundary = "b" + crypto.randomUUID().replace(/-/g, "");
-     const outerBoundary = hasAttachments ? "b" + crypto.randomUUID().replace(/-/g, "") : null;
- 
--    let mimeMessage = `From: ${fromAddress}\r\nTo: ${toList.join(", ")}\r\n`;
-+    let mimeMessage = `From: ${fromHeaderValue || fromAddress}\r\nTo: ${toList.join(", ")}\r\n`;
-     if (ccList.length > 0) mimeMessage += `Cc: ${ccList.join(", ")}\r\n`;
-     mimeMessage += `Subject: ${subject}\r\n`;
-     mimeMessage += `Date: ${new Date().toUTCString()}\r\n`;
-```
-
-**File**: `dockflare/app/web/routes.py` (modified, +1/-2)
-```diff
-@@ -1299,9 +1299,8 @@ def force_delete_rule_route(hostname):
- def stream_logs_route():
-     client_id = f"client-{random.randint(1000, 9999)}"
-     logging.debug(f"Log stream client {client_id} connected.")
--    subscriber_id, client_queue = log_broadcaster.subscribe()
--
-     def event_stream():
-+        subscriber_id, client_queue = log_broadcaster.subscribe()
-         try:
-             yield "retry: 5000\n\n"
-             yield f"event: hello\ndata: --- Log stream connected (client {client_id}) ---\n\n"
-```
-
-**File**: `install.sh` (modified, +1/-0)
-```diff
-@@ -533,6 +533,7 @@ ${LABELS_BLOCK}
-       - DOCKFLARE_MASTER_URL=http://dockflare:5000
-       - MAIL_DATA_PATH=/data
-       - INTERNAL_BOOTSTRAP_SECRET=\${INTERNAL_BOOTSTRAP_SECRET:?set INTERNAL_BOOTSTRAP_SECRET}
-+      - MAIL_SECRET_KEY=\${MAIL_SECRET_KEY:?set MAIL_SECRET_KEY}
-     volumes:
-       - mail_data:/data
-     depends_on:
-```
-
-**File**: `mail-manager/app/api/routes.py` (modified, +6/-0)
-```diff
-@@ -129,6 +129,12 @@ def push_subscribe():
-     if not endpoint or not p256dh or not auth_key or not mailbox_address:
-         return jsonify({"error": "endpoint, keys, and mailbox_address are required"}), 400
- 
-+    from app.core.push import validate_push_endpoint
-+    try:
-+        validate_push_endpoint(endpoint)
-+    except ValueError as endpoint_error:
-+        return jsonify({"error": str(endpoint_error)}), 400
-+
-     if not _check_mailbox_access(mailbox_address):
-         return jsonify({"error": "forbidden"}), 403
- 
-```
-
----
-
-### Incident Patch 2: `1be1656e` (2026-09-19)
-**Commit Message**: realtime log bugfix stream
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
- - **Email domain lifecycle:** Tearing down a domain now removes its webhook bypass Access app, creating a mailbox that already has a routing rule updates it instead of failing with a 409, and quota KV namespace creation no longer logs "already exists" on every start.
- - **Access Group country picker:** With a lot of countries selected the chip list wouldn't scroll and the dropdown was clipped by the modal. It now scrolls, and the dropdown renders outside the modal.
- - **Agent name carries from the API key into new deploys:** When you give an "Owner" name while generating an agent API key, that name is now injected as `AGENT_DISPLAY_NAME` into the generated Compose snippet and one-liner, so the agent shows up in DockFlare with the name you assigned on first enrollment instead of the generic `dockflare-agent` fallback. This only applies to **newly generated deploy commands** - already-deployed agents keep their current name until they're redeployed with the new command or renamed manually.
-+- **Open modal no longer closes itself:** Removed the Dashboard's duplicate live-update reload that refreshed the page every few seconds and closed any open dialog (e.g. Add Rule). The remaining fallback reload now waits until dialogs are closed.
-+- **Real-time log stream fixed:** The activity log panel no longer reconnects every ~10s or opens duplicate connections. Proper SSE heartbeats, a single reconnect watchdog, per-viewer log fan-out, and it pauses when the tab is hidden.
- 
- ### Security
- - **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
-```
-
-**File**: `dockflare/app/__init__.py` (modified, +44/-15)
-```diff
-@@ -22,6 +22,7 @@
- import json
- import hashlib
- import ipaddress
-+import threading
- 
- from flask import Flask
- from flask_wtf.csrf import CSRFProtect
-@@ -41,7 +42,42 @@
- tunnel_state = { "name": config.TUNNEL_NAME, "id": None, "token": None, "status_message": "Initializing...", "error": None }
- cloudflared_agent_state = { "container_status": "unknown", "last_action_status": None }
- 
--log_queue = queue.Queue(maxsize=config.MAX_LOG_QUEUE_SIZE)
-+class LogBroadcaster:
-+    def __init__(self, per_client_maxsize):
-+        self._per_client_maxsize = max(50, int(per_client_maxsize or 200))
-+        self._subscribers = {}
-+        self._lock = threading.Lock()
-+
-+    def subscribe(self):
-+        client_queue = queue.Queue(maxsize=self._per_client_maxsize)
-+        subscriber_id = id(client_queue)
-+        with self._lock:
-+            self._subscribers[subscriber_id] = client_queue
-+        return subscriber_id, client_queue
-+
-+    def unsubscribe(self, subscriber_id):
-+        with self._lock:
-+            self._subscribers.pop(subscriber_id, None)
-+
-+    def publish(self, line):
-+        with self._lock:
-+            queues = list(self._subscribers.values())
-+        for client_queue in queues:
-+            try:
-+                client_queue.put_nowait(line)
-+            except queue.Full:
-+                try:
-+                    client_queue.get_nowait()
-+                    client_queue.put_nowait(line)
-+                except (queue.Empty, queue.Full):
-+                    pass
-+
-+    def subscriber_count(self):
-+        with self._lock:
-+            return len(self._subscribers)
-+
-+
-+log_broadcaster = LogBroadcaster(config.MAX_LOG_QUEUE_SIZE)
- state_update_queue = queue.Queue(maxsize=50) 
- log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s', datefmt='%H:%M:%S')
- 
-@@ -108,23 +144,16 @@ def _get_real_ip():
-     storage_uri=os.environ.get('REDIS_URL', 'memory://')
- )
- 
--class QueueLogHandler(logging.Handler):
--    def __init__(self, log_queue_instance):
-+class LogBroadcastHandler(logging.Handler):
-+    def __init__(self, broadcaster):
-         super().__init__()
--        self.log_queue_instance = log_queue_instance
-+        self.broadcaster = broadcaster
- 
-     def emit(self, record):
--        log_entry = self.format(record)
-         try:
--            self.log_queue_instance.put_nowait(log_entry)
--        except queue.Full:
--            try:
--                self.log_queue_instance.get_nowait() 
--                self.log_queue_instance.put_nowait(log_entry)
--            except queue.Empty:
--                pass 
--            except queue.Full:
--                 print("Log queue still full after attempting to make space, dropping message.", file=sys.stderr)
-+            self.broadcaster.publish(self.format(record))
-+        except Exception:
-+            pass
- 
- root_logger = logging.getLogger()
- 
-@@ -144,7 +173,7 @@ def emit(self, record):
- console_handler.setFormatter(log_formatter)
- root_logger.addHandler(console_handler)
- 
--queue_handler = QueueLogHandler(log_queue)
-+queue_handler = LogBroadcastHandler(log_broadcaster)
- queue_handler.setFormatter(log_formatter)
- queue_handler.setLevel(log_level)
- root_logger.addHandler(queue_handler)
-```
-
-**File**: `dockflare/app/static/js/main.js` (modified, +70/-57)
-```diff
-@@ -2,7 +2,8 @@
- const maxLogLines = 250;
- let initialConnectMessageCleared = false;
- let activeLogSource = null;
--let eventSourceHealthCheck = null;
-+let logWatchdogTimer = null;
-+let logReconnectTimer = null;
- let logsEnabled = false;
- let pingInterval = null;
- let manualTunnelTomSelect = null;
-@@ -743,9 +744,26 @@ function setupLogControls() {
-             logOutput.textContent = activeLogSource ? t('js.text.log_cleared') + '\n' : t('js.text.enable_logs_prompt');
-         }
-     });
-+
-+    document.addEventListener('visibilitychange', () => {
-+        if (!logsEnabled) return;
-+        if (document.hidden) {
-+            disconnectEventSource();
-+        } else {
-+            connectEventSource();
-+        }
-+    });
- }
- 
- function disconnectEventSource() {
-+    if (logWatchdogTimer) {
-+        clearTimeout(logWatchdogTimer);
-+        logWatchdogTimer = null;
-+    }
-+    if (logReconnectTimer) {
-+        clearTimeout(logReconnectTimer);
-+        logReconnectTimer = null;
-+    }
-     if (activeLogSource) {
-         try {
-             activeLogSource.close();
-@@ -754,10 +772,24 @@ function disconnectEventSource() {
-         }
-         activeLogSource = null;
-     }
--    if (eventSourceHealthCheck) {
--        clearInterval(eventSourceHealthCheck);
--        eventSourceHealthCheck = null;
--    }
-+}
-+
-+function armLogWatchdog() {
-+    if (logWatchdogTimer) clearTimeout(logWatchdogTimer);
-+    logWatchdogTimer = setTimeout(() => {
-+        if (!logsEnabled) return;
-+        if (activeLogSource) {
-+            try {
-+                activeLogSource.close();
-+            } catch (e) {
-+                console.error("Error closing stale log stream:", e);
-+            }
-+            activeLogSource = null;
-+        }
-+        addLogLine(t('js.text.log_connection_timeout'), 'error');
-+        if (logReconnectTimer) clearTimeout(logReconnectTimer);
-+        logReconnectTimer = setTimeout(connectEventSource, 2000);
-+    }, 45000);
- }
- 
- function connectEventSource() {
-@@ -769,6 +801,10 @@ function connectEventSource() {
-         addLogLine(t('js.text.browser_sse_not_supported'), 'error');
-         return;
-     }
-+    if (logReconnectTimer) {
-+        clearTimeout(logReconnectTimer);
-+        logReconnectTimer = null;
-+    }
-     if (activeLogSource) {
-         try {
-             activeLogSource.close();
-@@ -779,65 +815,41 @@ function connectEventSource() {
-     }
- 
-     const streamUrl = `${document.baseURI}stream-logs?t=${Date.now()}`;
-+    let source;
-     try {
--        activeLogSource = new EventSource(streamUrl);
--        let connectionTimeout;
--        const resetConnectionTimeout = () => {
--            if (connectionTimeout) clearTimeout(connectionTimeout);
--            connectionTimeout = setTimeout(() => {
--                if (activeLogSource) {
--                    activeLogSource.close();
--                    activeLogSource = null;
--                    addLogLine(t('js.text.log_connection_timeout'), 'error');
--                    setTimeout(connectEventSource, 2000);
--                }
--            }, 10000);
--        };
--        resetConnectionTimeout();
--
--        activeLogSource.onopen = function() {
--            if (connectionTimeout) clearTimeout(connectionTimeout);
--            addLogLine(t('js.text.log_connected'), 'connected');
--        };
--        activeLogSource.onmessage = function(event) {
--            resetConnectionTimeout();
--            if (event.data === "heartbeat" || event.data === ": keepalive") {
--                return;
--            }
--            addLogLine(event.data, 'log');
--        };
--
--        let retryAttempt = 0;
--        activeLogSource.onerror = function(err) {
--            if (connectionTimeout) clearTimeout(connectionTimeout);
--            if (activeLogSource && activeLogSource.readyState !== EventSource.CLOSED) {
--                addLogLine(t('js.text.log_connection_error'), 'error');
--            }
--            if (activeLogSource) {
--                activeLogSource.close();
--                activeLogSource = null;
--            }
--
--            if (logsEnabled) {
--                retryAttempt++;
--                const delay = Math.min(5000 * Math.pow(1.5, Math.min(retryAttempt - 1, 5)), 30000);
--                setTimeout(connectEventSource, delay);
--            }
--        };
-+        source = new EventSource(streamUrl);
-     } catch (e) {
-         addLogLine(t('js.text.log_connection_failed', {error: e.message}), 'error');
-         if (logsEnabled) {
--            setTimeout(connectEventSource, 5000);
-+            logReconnectTimer = setTimeout(connectEventSource, 5000);
-         }
-+        return;
-     }
-+    activeLogSource = source;
- 
--    if (eventSourceHealthCheck) clearInterval(eventSourceHealthCheck);
--    eventSourceHealthCheck = setInterval(() => {
--        if (logsEnabled && (!activeLogSource || activeLogSource.readyState === EventSource.CLOSED)) {
--            addLogLine(t('js.text.log_health_check_error'), 'status');
--            connectEventSource();
-+    s
-```
-
-**File**: `dockflare/app/web/routes.py` (modified, +13/-14)
-```diff
-@@ -34,7 +34,7 @@
- from flask_login import current_user, login_required, login_user, logout_user
- from app.core.user import User
- 
--from app import config, docker_client, tunnel_state, cloudflared_agent_state, log_queue, state_update_queue, publish_state_event, limiter
-+from app import config, docker_client, tunnel_state, cloudflared_agent_state, log_broadcaster, state_update_queue, publish_state_event, limiter
- from app.core.cache import CACHE_ENABLED
- from app.core.state_manager import (
-     access_groups,
-@@ -1298,35 +1298,34 @@ def force_delete_rule_route(hostname):
- @login_required
- def stream_logs_route():
-     client_id = f"client-{random.randint(1000, 9999)}"
--    logging.info(f"Log stream client {client_id} connected.")
-+    logging.debug(f"Log stream client {client_id} connected.")
-+    subscriber_id, client_queue = log_broadcaster.subscribe()
-+
-     def event_stream():
-         try:
--            yield f"data: --- Log stream connected (client {client_id}) ---\n\n"
-+            yield "retry: 5000\n\n"
-+            yield f"event: hello\ndata: --- Log stream connected (client {client_id}) ---\n\n"
-             last_heartbeat = time.time()
-             while True:
-                 try:
--                    log_entry = log_queue.get(timeout=0.25) 
--                    yield f"data: {log_entry}\n\n"
--                    last_heartbeat = time.time() 
-+                    log_entry = client_queue.get(timeout=1.0)
-+                    yield f"event: log\ndata: {log_entry}\n\n"
-                 except queue.Empty:
--                    if time.time() - last_heartbeat > 2: 
--                        yield ": keepalive\n\n" 
-+                    if time.time() - last_heartbeat >= 15:
-+                        yield "event: heartbeat\ndata: {}\n\n"
-                         last_heartbeat = time.time()
--                    time.sleep(0.1) 
-         except GeneratorExit:
--            logging.info(f"Log stream client {client_id} disconnected.")
-+            logging.debug(f"Log stream client {client_id} disconnected.")
-         except Exception as e_stream:
-             logging.error(f"Error in log stream for {client_id}: {e_stream}", exc_info=True)
-         finally:
--            logging.info(f"Log stream for client {client_id} ended.")
--            
-+            log_broadcaster.unsubscribe(subscriber_id)
-+
-     response = Response(event_stream(), mimetype='text/event-stream')
-     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-     response.headers['Pragma'] = 'no-cache'
-     response.headers['Expires'] = '0'
-     response.headers['X-Accel-Buffering'] = 'no'
--    response.headers['Access-Control-Allow-Origin'] = '*'
--    response.headers['Access-Control-Allow-Methods'] = 'GET'
-     return response
- 
- @bp.route('/stream-state-updates')
-```
-
----
-
-### Incident Patch 3: `078ea7e5` (2026-09-19)
-**Commit Message**: SSE reload bug on dashboard
-
-**File**: `dockflare/app/static/js/main.js` (modified, +15/-0)
-```diff
-@@ -13,6 +13,7 @@ let cachedZonesStale = false;
- let manualZoneDetectionTimeout = null;
- let servicesSnapshotPromise = null;
- let servicesSnapshotQueued = false;
-+let pendingServicesReload = false;
- let activeStateEventSource = null;
- function getMasterApiKey() {
-     const meta = document.querySelector('meta[name="dockflare-api-key"]');
-@@ -388,13 +389,27 @@ function applyServicesSnapshot(services) {
-     });
- 
-     if (servicesById.size > 0) {
-+        if (document.querySelector('dialog[open]')) {
-+            pendingServicesReload = true;
-+            return;
-+        }
-         window.location.reload();
-         return;
-     }
- 
-     updateCountdowns();
- }
- 
-+document.addEventListener('close', function(event) {
-+    if (typeof HTMLDialogElement === 'undefined' || !(event.target instanceof HTMLDialogElement)) {
-+        return;
-+    }
-+    if (pendingServicesReload && !document.querySelector('dialog[open]')) {
-+        pendingServicesReload = false;
-+        window.location.reload();
-+    }
-+}, true);
-+
- function scheduleServicesSnapshotRefresh() {
-     if (!document.querySelector('tr[data-rule-key]')) {
-         return;
-```
-
-**File**: `dockflare/app/templates/status_page.html` (modified, +0/-46)
-```diff
-@@ -740,52 +740,6 @@ <h4 class="text-md font-semibold mb-2">{{ t('status.access_policy_optional') }}<
-     let allRows = [];
-     let filteredRows = [];
- 
--    let stateEventSource = null;
--    let reconnectAttempts = 0;
--    const maxReconnectDelay = 30000;
--    let reloadDebounceTimer = null;
--
--    function connectStateUpdates() {
--        if (stateEventSource) {
--            stateEventSource.close();
--        }
--
--        stateEventSource = new EventSource('/stream-state-updates');
--
--        stateEventSource.onmessage = function(event) {
--            try {
--                const data = JSON.parse(event.data);
--                if (data.type === 'snapshot_refresh') {
--                    clearTimeout(reloadDebounceTimer);
--                    reloadDebounceTimer = setTimeout(() => {
--                        window.location.reload();
--                    }, 500);
--                }
--            } catch (e) {
--                console.error('State update parse error:', e);
--            }
--        };
--
--        stateEventSource.onerror = function() {
--            stateEventSource.close();
--            const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), maxReconnectDelay);
--            reconnectAttempts++;
--            setTimeout(connectStateUpdates, delay);
--        };
--
--        stateEventSource.onopen = function() {
--            reconnectAttempts = 0;
--        };
--    }
--
--    connectStateUpdates();
--
--    window.addEventListener('beforeunload', function() {
--        if (stateEventSource) {
--            stateEventSource.close();
--        }
--    });
--
-     function initializeFilters() {
-         if (!tableBody) return;
- 
-```
-
----
-
-### Incident Patch 4: `cf499861` (2026-09-19)
-**Commit Message**: agent display name in compose generated. fix
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
- - **Webmail dependency refresh:** Vite 5 → 8, Tiptap 2 → 3, plus the plugin/PWA/workbox bumps - all 35 `npm audit` findings are gone and both webmail and DockFlare audit clean. Composer updated for Tiptap 3, build image moved to Node 22, and the stray `vue-tsc` `.js`/`.js.map` output (102 committed files) is cleaned up with `noEmit` and gitignore.
- - **Email domain lifecycle:** Tearing down a domain now removes its webhook bypass Access app, creating a mailbox that already has a routing rule updates it instead of failing with a 409, and quota KV namespace creation no longer logs "already exists" on every start.
- - **Access Group country picker:** With a lot of countries selected the chip list wouldn't scroll and the dropdown was clipped by the modal. It now scrolls, and the dropdown renders outside the modal.
-+- **Agent name carries from the API key into new deploys:** When you give an "Owner" name while generating an agent API key, that name is now injected as `AGENT_DISPLAY_NAME` into the generated Compose snippet and one-liner, so the agent shows up in DockFlare with the name you assigned on first enrollment instead of the generic `dockflare-agent` fallback. This only applies to **newly generated deploy commands** - already-deployed agents keep their current name until they're redeployed with the new command or renamed manually.
- 
- ### Security
- - **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
-```
-
-**File**: `dockflare/app/core/service_token_manager.py` (modified, +14/-4)
-```diff
-@@ -201,14 +201,24 @@ def delete_agent_service_token():
-     clear_agent_cf_token()
- 
- 
--def generate_compose_content(key_id, public_url, cloudflared_image="cloudflare/cloudflared:latest"):
-+def _safe_display_name(value):
-+    if not isinstance(value, str):
-+        return None
-+    cleaned = ''.join(ch for ch in value if ch.isprintable() and ch not in '\\"').strip()
-+    return cleaned[:128] or None
-+
-+
-+def generate_compose_content(key_id, public_url, cloudflared_image="cloudflare/cloudflared:latest", agent_display_name=None):
-     token_data = get_agent_service_token()
-     if not token_data:
-         raise ValueError("CF Service Token not configured")
- 
-     client_id = token_data["client_id"]
-     client_secret = token_data["client_secret"]
- 
-+    safe_name = _safe_display_name(agent_display_name)
-+    display_name_env = f'\n      - "AGENT_DISPLAY_NAME={safe_name}"' if safe_name else ''
-+
-     return f"""services:
-   docker-socket-proxy:
-     image: tecnativa/docker-socket-proxy:v0.4.1
-@@ -245,7 +255,7 @@ def generate_compose_content(key_id, public_url, cloudflared_image="cloudflare/c
-     restart: unless-stopped
-     environment:
-       - DOCKFLARE_MASTER_URL={public_url}
--      - DOCKFLARE_API_KEY={key_id}
-+      - DOCKFLARE_API_KEY={key_id}{display_name_env}
-       - CF_ACCESS_CLIENT_ID={client_id}
-       - CF_ACCESS_CLIENT_SECRET={client_secret}
-       - CLOUDFLARED_IMAGE={cloudflared_image}
-@@ -273,8 +283,8 @@ def generate_compose_content(key_id, public_url, cloudflared_image="cloudflare/c
- """
- 
- 
--def generate_deploy_script(key_id, public_url, cloudflared_image="cloudflare/cloudflared:latest"):
--    compose_content = generate_compose_content(key_id, public_url, cloudflared_image)
-+def generate_deploy_script(key_id, public_url, cloudflared_image="cloudflare/cloudflared:latest", agent_display_name=None):
-+    compose_content = generate_compose_content(key_id, public_url, cloudflared_image, agent_display_name)
- 
-     return f"""#!/usr/bin/env bash
- set -e
-```
-
-**File**: `dockflare/app/web/api_v2_routes.py` (modified, +4/-3)
-```diff
-@@ -1589,8 +1589,9 @@ def agents_deploy_info(key_id):
-         return jsonify({"status": "error", "message": "DOCKFLARE_PUBLIC_URL is not configured"}), 400
- 
-     try:
--        script_content = generate_deploy_script(key_token, public_url)
--        compose_content = generate_compose_content(key_token, public_url)
-+        owner = key_info.get("owner")
-+        script_content = generate_deploy_script(key_token, public_url, agent_display_name=owner)
-+        compose_content = generate_compose_content(key_token, public_url, agent_display_name=owner)
-         return jsonify({
-             "status": "success",
-             "script_content": script_content,
-@@ -1618,7 +1619,7 @@ def agents_deploy_script(key_id):
-         return jsonify({"status": "error", "message": "DOCKFLARE_PUBLIC_URL is not configured"}), 400
- 
-     try:
--        script = generate_deploy_script(key_token, public_url)
-+        script = generate_deploy_script(key_token, public_url, agent_display_name=key_info.get("owner"))
-         from flask import Response
-         return Response(script, mimetype="text/x-shellscript")
-     except ValueError as e:
-```
-
----
-
-### Incident Patch 5: `ac89609b` (2026-09-19)
-**Commit Message**: bypass policy fix
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
- 
- ### Security
- - **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
--- **Agent API Access app no longer bypasses everyone:** The `/api/v2/agents/` Cloudflare Access app no longer gets a `bypass` policy for `everyone`, and existing installs are cleaned up on startup. Admin browser access, when wanted, is granted through a scoped `allow` policy for the configured authorized emails.
-+- **Agent API Access app:** The `/api/v2/agents/` Cloudflare Access app keeps an admin bypass policy so the same-origin admin UI can reach those endpoints (an identity `allow` policy breaks the browser request flow), while the endpoints themselves remain protected by the master API key and per-agent keys. Startup now ensures the policy exists instead of creating duplicates.
- - **Agent secrets removed from `state.json`:** Agent API keys and tunnel tokens now live only in the encrypted key store, legacy plaintext values are migrated on first load, backups no longer contain them, and rolling a key revokes all previous active keys.
- - **Mail-manager secrets encrypted at rest:** R2 secret keys, webhook secrets and outbound auth secrets are AES-GCM encrypted in the SQLite DB (`MAIL_SECRET_KEY`, falling back to the bootstrap secret), existing rows are migrated on startup, and DB/directory permissions are tightened.
- - **Rate limits can't be spoofed:** The client IP used for login/mailbox rate limiting now only trusts forwarded headers from known proxies (Cloudflare ranges, loopback and private ranges by default, overridable via `TRUSTED_PROXY_IPS`).
-```
-
-**File**: `dockflare/app/core/service_token_manager.py` (modified, +25/-45)
-```diff
-@@ -34,27 +34,15 @@ def _parse_hostname(public_url):
-     return parsed.hostname
- 
- 
--def _admin_bypass_emails():
--    emails = []
--    try:
--        from flask import current_app
--        emails = list(current_app.config.get('OAUTH_AUTHORIZED_USERS') or [])
--    except Exception:
--        emails = []
--    if not emails:
--        emails = list(getattr(config, 'OAUTH_AUTHORIZED_USERS', []) or [])
--    return sorted({email.strip() for email in emails if isinstance(email, str) and '@' in email})
--
--
--def _create_admin_allow_policy(account_id, app_uuid, emails):
-+def _create_admin_bypass_policy(account_id, app_uuid):
-     resp = cf_api_request(
-         "POST",
-         f"/accounts/{account_id}/access/apps/{app_uuid}/policies",
-         json_data={
--            "name": "DockFlare Admin Access",
--            "decision": "allow",
-+            "name": "DockFlare Admin Bypass",
-+            "decision": "bypass",
-             "precedence": 2,
--            "include": [{"email": {"email": email}} for email in emails]
-+            "include": [{"everyone": {}}]
-         }
-     )
-     return resp.get("result", {}).get("id")
-@@ -83,31 +71,26 @@ def ensure_agent_access_hardening():
-         logging.warning(f"Could not list Cloudflare Access policies for the Agent API app: {e}")
-         return
- 
--    admin_emails = _admin_bypass_emails()
--    has_admin_allow = False
--    broad_bypass_ids = []
-+    if any(policy.get("decision") == "bypass" and _policy_includes_everyone(policy) for policy in policies):
-+        return
-+
-     for policy in policies:
--        decision = policy.get("decision")
--        policy_id = policy.get("id") or policy.get("uid")
--        if decision == "bypass" and _policy_includes_everyone(policy):
--            broad_bypass_ids.append(policy_id)
--        elif decision == "allow" and not _policy_includes_everyone(policy):
--            has_admin_allow = True
--
--    for policy_id in broad_bypass_ids:
--        try:
--            cf_api_request("DELETE", f"/accounts/{account_id}/access/apps/{app_uuid}/policies/{policy_id}")
--            logging.warning("Removed an everyone-bypass policy from the Cloudflare Access Agent API application")
--        except Exception as e:
--            logging.warning(f"Could not remove broad Access bypass policy {policy_id}: {e}")
--
--    if not has_admin_allow and admin_emails:
--        try:
--            new_id = _create_admin_allow_policy(account_id, app_uuid, admin_emails)
--            if new_id:
--                logging.info("Created a scoped admin access policy for the Cloudflare Access Agent API application")
--        except Exception as e:
--            logging.warning(f"Could not create scoped admin access policy: {e}")
-+        if policy.get("name") == "DockFlare Admin Access" and policy.get("decision") == "allow":
-+            policy_id = policy.get("id") or policy.get("uid")
-+            try:
-+                cf_api_request("DELETE", f"/accounts/{account_id}/access/apps/{app_uuid}/policies/{policy_id}")
-+                logging.warning("Removed the redundant DockFlare Admin Access policy from the Agent API app")
-+            except Exception as e:
-+                logging.warning(f"Could not remove the redundant admin access policy {policy_id}: {e}")
-+
-+    try:
-+        new_id = _create_admin_bypass_policy(account_id, app_uuid)
-+        if new_id:
-+            logging.info(
-+                "Ensured the Agent API Access app allows the admin UI; the endpoints still require the master or agent API key"
-+            )
-+    except Exception as e:
-+        logging.warning(f"Could not ensure the admin bypass policy for the Agent API app: {e}")
- 
- 
- def ensure_agent_service_token(public_url):
-@@ -167,10 +150,7 @@ def ensure_agent_service_token(public_url):
-     policy_result = policy_resp.get("result", {})
-     policy_id = policy_result.get("id")
- 
--    admin_emails = _admin_bypass_emails()
--    admin_policy_id = None
--    if admin_emails:
--        admin_policy_id = _create_admin_allow_policy(account_id, app_uuid, admin_emails)
-+    admin_policy_id = _create_admin_bypass_policy(account_id, app_uuid)
- 
-     agent_key_store.store_service_token_secret(client_secret)
- 
-@@ -181,7 +161,7 @@ def ensure_agent_service_token(public_url):
-         "policy_id": policy_id,
-     }
-     if admin_policy_id:
--        token_data["admin_policy_id"] = admin_policy_id
-+        token_data["bypass_policy_id"] = admin_policy_id
-     set_agent_cf_token(token_data)
- 
-     return {**token_data, "client_secret": client_secret}
-```
-
----
-
-### Incident Patch 6: `bb97b70a` (2026-09-19)
-**Commit Message**: bugfix service token admin allow policy for agent api
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
- 
- ### Security
- - **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
--- **Agent API Access app no longer bypasses everyone:** The `/api/v2/agents/` Cloudflare Access app no longer gets a `bypass` policy for `everyone`, and existing installs are cleaned up on startup. Admin browser bypass, when wanted, is scoped to the configured authorized emails.
-+- **Agent API Access app no longer bypasses everyone:** The `/api/v2/agents/` Cloudflare Access app no longer gets a `bypass` policy for `everyone`, and existing installs are cleaned up on startup. Admin browser access, when wanted, is granted through a scoped `allow` policy for the configured authorized emails.
- - **Agent secrets removed from `state.json`:** Agent API keys and tunnel tokens now live only in the encrypted key store, legacy plaintext values are migrated on first load, backups no longer contain them, and rolling a key revokes all previous active keys.
- - **Mail-manager secrets encrypted at rest:** R2 secret keys, webhook secrets and outbound auth secrets are AES-GCM encrypted in the SQLite DB (`MAIL_SECRET_KEY`, falling back to the bootstrap secret), existing rows are migrated on startup, and DB/directory permissions are tightened.
- - **Rate limits can't be spoofed:** The client IP used for login/mailbox rate limiting now only trusts forwarded headers from known proxies (Cloudflare ranges, loopback and private ranges by default, overridable via `TRUSTED_PROXY_IPS`).
-```
-
-**File**: `dockflare/app/core/service_token_manager.py` (modified, +16/-17)
-```diff
-@@ -46,13 +46,13 @@ def _admin_bypass_emails():
-     return sorted({email.strip() for email in emails if isinstance(email, str) and '@' in email})
- 
- 
--def _create_scoped_bypass(account_id, app_uuid, emails):
-+def _create_admin_allow_policy(account_id, app_uuid, emails):
-     resp = cf_api_request(
-         "POST",
-         f"/accounts/{account_id}/access/apps/{app_uuid}/policies",
-         json_data={
--            "name": "DockFlare Admin Bypass",
--            "decision": "bypass",
-+            "name": "DockFlare Admin Access",
-+            "decision": "allow",
-             "precedence": 2,
-             "include": [{"email": {"email": email}} for email in emails]
-         }
-@@ -84,16 +84,15 @@ def ensure_agent_access_hardening():
-         return
- 
-     admin_emails = _admin_bypass_emails()
--    scoped_bypass = None
-+    has_admin_allow = False
-     broad_bypass_ids = []
-     for policy in policies:
--        if policy.get("decision") != "bypass":
--            continue
-+        decision = policy.get("decision")
-         policy_id = policy.get("id") or policy.get("uid")
--        if _policy_includes_everyone(policy):
-+        if decision == "bypass" and _policy_includes_everyone(policy):
-             broad_bypass_ids.append(policy_id)
--        else:
--            scoped_bypass = policy_id
-+        elif decision == "allow" and not _policy_includes_everyone(policy):
-+            has_admin_allow = True
- 
-     for policy_id in broad_bypass_ids:
-         try:
-@@ -102,13 +101,13 @@ def ensure_agent_access_hardening():
-         except Exception as e:
-             logging.warning(f"Could not remove broad Access bypass policy {policy_id}: {e}")
- 
--    if not scoped_bypass and admin_emails:
-+    if not has_admin_allow and admin_emails:
-         try:
--            new_id = _create_scoped_bypass(account_id, app_uuid, admin_emails)
-+            new_id = _create_admin_allow_policy(account_id, app_uuid, admin_emails)
-             if new_id:
--                logging.info("Created a scoped admin bypass policy for the Cloudflare Access Agent API application")
-+                logging.info("Created a scoped admin access policy for the Cloudflare Access Agent API application")
-         except Exception as e:
--            logging.warning(f"Could not create scoped admin bypass policy: {e}")
-+            logging.warning(f"Could not create scoped admin access policy: {e}")
- 
- 
- def ensure_agent_service_token(public_url):
-@@ -169,9 +168,9 @@ def ensure_agent_service_token(public_url):
-     policy_id = policy_result.get("id")
- 
-     admin_emails = _admin_bypass_emails()
--    bypass_policy_id = None
-+    admin_policy_id = None
-     if admin_emails:
--        bypass_policy_id = _create_scoped_bypass(account_id, app_uuid, admin_emails)
-+        admin_policy_id = _create_admin_allow_policy(account_id, app_uuid, admin_emails)
- 
-     agent_key_store.store_service_token_secret(client_secret)
- 
-@@ -181,8 +180,8 @@ def ensure_agent_service_token(public_url):
-         "app_uuid": app_uuid,
-         "policy_id": policy_id,
-     }
--    if bypass_policy_id:
--        token_data["bypass_policy_id"] = bypass_policy_id
-+    if admin_policy_id:
-+        token_data["admin_policy_id"] = admin_policy_id
-     set_agent_cf_token(token_data)
- 
-     return {**token_data, "client_secret": client_secret}
-```
-
----
-
-### Incident Patch 7: `0f29d58f` (2026-09-19)
+### Incident Patch 1: `0f29d58f` (2026-09-19)
 **Commit Message**: security fixes - details in changelog
 
 **File**: `CHANGELOG.md` (modified, +10/-0)
@@ -3832,670 +2439,186 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 8: `f8231887` (2026-09-19)
-**Commit Message**: webui - countries fix selection clipped
+### Incident Patch 2: `732bf1fc` (2026-09-19)
+**Commit Message**: security hotfixes . mail worker and more fixes
 
-**File**: `CHANGELOG.md` (modified, +6/-5)
+**File**: `CHANGELOG.md` (modified, +3/-1)
 ```diff
-@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
- ## [v3.1.6] - 2026-09-19
+@@ -16,7 +16,9 @@ All notable changes to this project will be documented in this file.
+ - **Real-time log stream fixed:** The activity log panel no longer reconnects every ~10s or opens duplicate connections. Proper SSE heartbeats, a single reconnect watchdog, per-viewer log fan-out, and it pauses when the tab is hidden.
  
- ### Fixed
--- **Internal email configuration authentication:** Internal mail bootstrap endpoints now fail closed when `INTERNAL_BOOTSTRAP_SECRET` is missing and require a matching `X-Bootstrap-Token` for every request. Docker Compose passes the same required secret to DockFlare and mail-manager, preventing unauthenticated private-network access to mail storage credentials, webhook and outbound-worker secrets, and VAPID key material. The website installation script now generates and preserves this shared secret automatically.
--- **Missing Access policies on fresh setups:** Fixed a regression from the system-policy work back in v3.0.x. On a fresh install the two built-in policies (`public-default-bypass` and `authenticated-default`) could fail to be created on Cloudflare because setup runs before the config is written, and the stale local-only reference then made DockFlare skip them on every later start - so label-created Access Apps came up with zero policies and every login was denied, with nothing useful in the logs. DockFlare now verifies both policies against Cloudflare on startup and creates or re-links them when they're missing. Also fixed a duplicate `public-default-bypass` being created each time the Access Policies page loaded, and a bad `dockflare.access.policy` value no longer silently strips an existing policy - it logs an error and leaves the app untouched. While in there, `cf_policy_id` and `cloudflare_policy_id` are now kept in sync. Thanks [@PauloJf](https://github.com/PauloJf) for the report and repro ([#399](https://github.com/ChrispyBacon-dev/DockFlare/issues/399)).
--- **Inbound email blocked when Webmail sits behind Cloudflare Access:** If your webmail hostname (e.g. `mail.example.com`) is protected by a Cloudflare Access application, the inbound email worker's webhook to `/api/v1/webhook/inbound` was being caught by the Access login redirect and never reached mail-manager. Outbound worked fine, but received mail just piled up in the R2 `temp_cache` with nothing in the logs, and the retry cron hit the same wall. DockFlare now creates a path-scoped `DockFlare Mail Webhook Bypass` Access application (bypass policy, exact path only) when you set up a domain, and on startup it detects existing installs where the webhook is behind Access and fixes them automatically. Only that one path is opened - the webhook is still authenticated by the per-domain HMAC signature, and your webmail UI stays protected. The auto-fix needs `Account > Access: Apps and Policies: Edit` on the API token (documented in the Email prerequisites).
--- **Webmail dependency refresh and build hygiene:** Upgraded the webmail frontend from Vite 5 to 8, Tiptap 2 to 3, `@vitejs/plugin-vue` 5 to 6, `vite-plugin-pwa` 0.21 to 1.3, and workbox 7.3 to 7.4. This clears all 35 `npm audit` findings (including one high-severity Vite advisory) — both webmail and DockFlare now audit clean. The rich-text composer was adjusted for Tiptap 3 (named `TextStyle` import; Link and Underline now ship inside StarterKit), the Vite config now uses `import.meta.dirname`, and the webmail build image moved to Node 22. Also fixed a long-standing build-hygiene issue: `vue-tsc` was emitting compiled `.js`/`.js.map` files next to the sources and they had been committed, so `noEmit` is now set, the 102 committed artifacts were removed, and the output is git-ignored.
--- **Email domain lifecycle fixes:** Three email issues surfaced while wiring up the webhook bypass. Tearing down a domain (or "teardown all") now removes the `DockFlare Mail Webhook Bypass` Access application it created instead of leaving it orphaned - and it skips the deletion if another configured domain still shares that webmail hostname. Creating a mailbox for an address that already has a routing rule (a leftover from a failed attempt, or one added manually) no longer fails with `409 Duplicated Zone rule`; DockFlare now finds the existing rule and updates it instead of blindly creating a new one. And quota KV namespace creation is idempotent again - it checks for an existing namespace before creating, so the `code 10014 "namespace already exists"` error no longer appears on every startup.
-+- **Internal email config auth:** Mail bootstrap endpoints now require the shared `INTERNAL_BOOTSTRAP_SECRET` and a matching `X-Bootstrap-Token`, and the installer generates that secret automatically. Closes off unauthenticated access to mail secrets on the private network.
-+- **Built-in Access policies missing on new installs (regression):** On a fresh setup the two default policies (`public-default-bypass`, `authenticated-default`) could fail to reach Cloudflare, and a stale local reference then made DockFlare skip them forever - so label-created apps had no policies attached and every login was denied. DockFlare now verifies both on startup and recreates or re-links them when missing. Also 
+ ### Security
+-- **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
++- **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, keeps the sender display name in `From`, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
++- **Inbound mail can't be mis-filed by headers:** Mailbox resolution now trusts the SMTP envelope (and the worker's alias result) instead of the spoofable `To:`/`Delivered-To` headers, so with catch-all enabled a sender can no longer drop mail into an arbitrary mailbox.
++- **Push endpoints can't target internal hosts:** Web Push subscriptions must be HTTPS and resolve to public addresses; invalid or legacy endpoints are rejected on subscribe and cleaned up on send.
+ - **Agent API Access app:** The `/api/v2/agents/` Cloudflare Access app keeps an admin bypass policy so the same-origin admin UI can reach those endpoints (an identity `allow` policy breaks the browser request flow), while the endpoints themselves remain protected by the master API key and per-agent keys. Startup now ensures the policy exists instead of creating duplicates.
+ - **Agent secrets removed from `state.json`:** Agent API keys and tunnel tokens now live only in the encrypted key store, legacy plaintext values are migrated on first load, backups no longer contain them, and rolling a key revokes all previous active keys.
+ - **Mail-manager secrets encrypted at rest:** R2 secret keys, webhook secrets and outbound auth secrets are AES-GCM encrypted in the SQLite DB (`MAIL_SECRET_KEY`, falling back to the bootstrap secret), existing rows are migrated on startup, and DB/directory permissions are tightened.
 ```
 
-**File**: `dockflare/app/templates/access_policies.html` (modified, +2/-0)
+**File**: `dockflare/app/core/agent_key_store.py` (modified, +3/-2)
 ```diff
-@@ -516,6 +516,7 @@ <h3 class="font-bold text-lg mb-4">{{ t('policies.sync_access_policies') }}</h3>
-                  },
-                  placeholder: "{{ t('policies.search_select_countries') }}",
-                  maxOptions: null,
-+                 dropdownParent: 'body',
-                  render: {
-                      item: function(data, escape) {
-                          return '<div class="item">' + escape(data.text) + '</div>';
-@@ -530,6 +531,7 @@ <h3 class="font-bold text-lg mb-4">{{ t('policies.sync_access_policies') }}</h3>
-                 controlWrapper.style.maxHeight = 'none';
-                 controlWrapper.style.border = 'none';
-                 controlWrapper.style.background = 'transparent';
-+                controlWrapper.style.overflowY = 'auto';
+@@ -65,8 +65,8 @@ def _fernet() -> Optional[Fernet]:
+ def _persist_locked() -> None:
+     fernet = _fernet()
+     if fernet is None:
+-        logging.warning("AGENT_KEY_STORE: Persist skipped because Fernet key is unavailable.")
+-        return
++        logging.error("AGENT_KEY_STORE: Persist failed because the encryption key is unavailable.")
++        raise RuntimeError("Agent key store encryption key is unavailable")
  
-                 const observer = new ResizeObserver(() => {
-                     const containerHeight = parentContainer.offsetHeight;
+     payload = {"keys": _cached_keys}
+     try:
+@@ -81,6 +81,7 @@ def _persist_locked() -> None:
+         logging.debug("AGENT_KEY_STORE: Persisted %d keys to encrypted store.", len(_cached_keys))
+     except Exception as err:  # pylint: disable=broad-except
+         logging.error("AGENT_KEY_STORE: Failed to persist key store: %s", err, exc_info=True)
++        raise
+ 
+ 
+ def _load_locked() -> None:
 ```
 
-**File**: `dockflare/app/templates/base.html` (modified, +3/-0)
+**File**: `dockflare/app/core/service_token_manager.py` (modified, +5/-3)
 ```diff
-@@ -341,6 +341,9 @@
-             background: rgba(59,130,246,0.30) !important;
-             color: hsl(var(--bc)) !important;
+@@ -34,14 +34,14 @@ def _parse_hostname(public_url):
+     return parsed.hostname
+ 
+ 
+-def _create_admin_bypass_policy(account_id, app_uuid):
++def _create_admin_bypass_policy(account_id, app_uuid, precedence=2):
+     resp = cf_api_request(
+         "POST",
+         f"/accounts/{account_id}/access/apps/{app_uuid}/policies",
+         json_data={
+             "name": "DockFlare Admin Bypass",
+             "decision": "bypass",
+-            "precedence": 2,
++            "precedence": precedence,
+             "include": [{"everyone": {}}]
          }
-+        .ts-dropdown {
-+            z-index: 9999;
-+        }
-         [data-theme="dark"] .ts-control .item {
-             background: rgba(59,130,246,0.20) !important;
-             border-color: rgba(59,130,246,0.35) !important;
+     )
+@@ -84,7 +84,9 @@ def ensure_agent_access_hardening():
+                 logging.warning(f"Could not remove the redundant admin access policy {policy_id}: {e}")
+ 
+     try:
+-        new_id = _create_admin_bypass_policy(account_id, app_uuid)
++        precedences = [p.get("precedence") for p in policies if isinstance(p.get("precedence"), int)]
++        next_precedence = (max(precedences) if precedences else 1) + 1
++        new_id = _create_admin_bypass_policy(account_id, app_uuid, next_precedence)
+         if new_id:
+             logging.info(
+                 "Ensured the Agent API Access app allows the admin UI; the endpoints still require the master or agent API key"
 ```
 
----
-
-### Incident Patch 9: `0338c77e` (2026-09-19)
-**Commit Message**: auto bypass for worker inbound fix
-
-**File**: `dockflare/app/core/email_manager.py` (modified, +155/-0)
+**File**: `dockflare/app/core/state_manager.py` (modified, +11/-3)
 ```diff
-@@ -413,3 +413,158 @@ def setup_catchall_routing_rule(zone_id, worker_name):
-         logging.warning(f"Could not GET catch_all rule: {e}")
-     logging.info(f"Setting catch-all routing rule to worker {worker_name} via dedicated endpoint")
-     return cf_api_request('PUT', f'/zones/{zone_id}/email/routing/rules/catch_all', json_data=data)
-+
-+
-+WEBHOOK_ACCESS_PATH = "/api/v1/webhook/inbound"
-+WEBHOOK_ACCESS_APP_NAME = "DockFlare Mail Webhook Bypass"
-+
-+
-+def _normalize_access_destination(value):
-+    text = str(value or "").strip().lower()
-+    if text.startswith("https://"):
-+        text = text[len("https://"):]
-+    elif text.startswith("http://"):
-+        text = text[len("http://"):]
-+    return text.rstrip("/")
-+
-+
-+def _access_app_destinations(app):
-+    destinations = []
-+    domain = app.get("domain")
-+    path = app.get("path")
-+    if domain:
-+        domain_text = _normalize_access_destination(domain)
-+        if path and not domain_text.endswith("/" + str(path).strip("/").lower()):
-+            destinations.append(f"{domain_text}/{str(path).strip('/')}")
-+        else:
-+            destinations.append(domain_text)
-+    for extra in app.get("self_hosted_domains") or []:
-+        destinations.append(_normalize_access_destination(extra))
-+    return [d for d in destinations if d]
-+
-+
-+def _access_destination_covers(destination, host, path):
-+    destination = _normalize_access_destination(destination)
-+    if not destination:
-+        return False
-+    if "/" in destination:
-+        dest_host, _, dest_path = destination.partition("/")
-+        dest_path = "/" + dest_path.lstrip("/")
-+    else:
-+        dest_host, dest_path = destination, "/"
-+    host = _normalize_access_destination(host)
-+    if dest_host.startswith("*."):
-+        host_matches = host.endswith(dest_host[1:])
-+    else:
-+        host_matches = dest_host == host
-+    if not host_matches:
-+        return False
-+    if dest_path in ("", "/"):
-+        return True
-+    return path == dest_path or path.startswith(dest_path.rstrip("/") + "/")
-+
-+
-+def _find_webhook_bypass_app(apps, host, path):
-+    target = f"{_normalize_access_destination(host)}{path}"
-+    for app in apps:
-+        for destination in _access_app_destinations(app):
-+            if destination == target:
-+                return app
-+    return None
-+
-+
-+def _app_has_bypass_policy(account_id, app_uuid):
-+    try:
-+        response = cf_api_request(
-+            'GET', f'/accounts/{account_id}/access/apps/{app_uuid}/policies'
-+        )
-+        for policy in response.get('result') or []:
-+            if policy.get('decision') == 'bypass':
-+                return True
-+    except Exception as e:
-+        logging.warning(f"Could not read Access policies for app {app_uuid}: {e}")
-+    return False
-+
-+
-+def _create_webhook_bypass_policy(account_id, app_uuid):
-+    cf_api_request(
-+        'POST',
-+        f'/accounts/{account_id}/access/apps/{app_uuid}/policies',
-+        json_data={
-+            "name": "DockFlare Webhook Bypass",
-+            "decision": "bypass",
-+            "precedence": 1,
-+            "include": [{"everyone": {}}],
-+        },
-+    )
-+
-+
-+def ensure_webhook_access_bypass(webmail_hostname):
-+    account_id = getattr(config, 'CF_ACCOUNT_ID', None)
-+    if not account_id or not webmail_hostname:
-+        return None
-+
-+    host = _normalize_access_destination(webmail_hostname)
-+    path = WEBHOOK_ACCESS_PATH
-+
-+    try:
-+        response = cf_api_request(
-+            'GET', f'/accounts/{account_id}/access/apps', params={"per_page": 100}
-+        )
-+        apps = response.get('result') or []
-+    except Exception as e:
-+        logging.warning(
-+            f"Could not check Cloudflare Access for webhook bypass on {host}: {e}. "
-+            f"The email webhook may be blocked if {host} sits behind Access."
-+        )
-+        return None
-+
-+    existing = _find_webhook_bypass_app(apps, host, path)
-+    if existing:
-+        app_uuid = existing.get('id') or existing.get('uid')
-+        if app_uuid and not _app_has_bypass_policy(account_id, app_uuid):
+@@ -405,8 +405,6 @@ def load_state():
+                 )
+             identity_providers.update(idps_to_load)
+             agent_cf_token.update(cf_token_to_load)
+-            if _migrate_agent_secrets():
+-                save_state()
+             key_count = len(agent_key_store.list_keys())
+             logging.info(
+                 "LOAD_STATE: Loaded %s access groups, %s agents and %s agent keys (encrypted backing store).",
+@@ -471,7 +469,13 @@ def load_state():
+ 
+                 managed_rules[final_key] = rule_copy
+ 
+-            migration_needed = schema_version < STATE_SCHEMA_VERSION or migrated_count > 0 or tunnel_name_migration_count > 0 or group_migration_count > 0
++            agent_secrets_migrated = False
 +            try:
-+                _create_webhook_bypass_policy(account_id, app_uuid)
-+                logging.info(f"Added missing webhook bypass policy to Access app {app_uuid}")
++                agent_secrets_migrated = _migrate_agent_secrets()
++            except Exception as e_agent_migrate:
++                logging.error(f"LOAD_STATE: Agent secret migration failed: {e_agent_migrate}", exc_info=True)
++
++            migration_needed = schema_version < STATE_SCHEMA_VERSION or migrated_count > 0 or tunnel_name_migration_count > 0 or group_migration_count > 0 or agent_secrets_migrated
+             if migrated_count > 0:
+                 logging.info(f"LOAD_STATE: Migrated {migrated_count} rules to the new key format.")
+             if tunnel_name_migration_count > 0:
+@@ -898,6 +902,10 @@ def remove_agent(agent_id):
+     with state_lock:
+         if agent_id in agents:
+             del agents[agent_id]
++            try:
++                agent_key_store.clear_agent_tunnel_token(agent_id)
 +            except Exception as e:
-+                logging.warning(f"Could not add webhook bypass policy to {app_uuid}: {e}")
-+        return app_uuid
-+
-+    covered = any(
-+        _access_destination_covers(destination, host, path)
-+        for app in apps
-+        for destination in _access_app_destinations(app)
-+    )
-+    if not covered:
-+        return None
-+
-+    try:
-+        app_response = cf_api_request(
-+            'POST',
-+            f'/accounts/{account_id}/access/apps',
-+            json_data={
-+                "name": WEBHOOK_ACCESS_APP_NAME,
-+                "domain": f"{host}{path}",
-+                "type": "self_hosted",
-+                "session_duration": "24h",
-+                "app_launcher_visible": F
++                logging.warning(f"Could not clear stored tunnel token for removed agent {agent_id}: {e}")
+             save_state()
+             return True
+         return False
 ```
 
-**File**: `dockflare/app/main.py` (modified, +11/-2)
+**File**: `dockflare/app/core/worker_templates/outbound_worker.js` (modified, +2/-1)
 ```diff
-@@ -290,8 +290,8 @@ def start_core_services():
-             logging.debug(f"dockflare-mail-manager not found or could not restart: {e}")
+@@ -105,6 +105,7 @@ export default {
+     }
  
-         try:
--            from app.core.email_manager import get_email_sending_status
--            from app.web.email_routes import save_email_config
-+            from app.core.email_manager import get_email_sending_status, ensure_webhook_access_bypass
-+            from app.web.email_routes import save_email_config, _get_webmail_hostname
-             email_cfg = config.EMAIL_CONFIG
-             updated = False
-             for domain, domain_cfg in email_cfg.get('domains', {}).items():
-@@ -304,6 +304,15 @@ def start_core_services():
-                         logging.info(f"Email sending status for {domain}: {status}")
-             if updated:
-                 save_email_config(email_cfg)
-+
-+            webmail_hostname = _get_webmail_hostname()
-+            checked_hosts = set()
-+            for domain in email_cfg.get('domains', {}).keys():
-+                host = webmail_hostname or f"mail.{domain}"
-+                if host in checked_hosts:
-+                    continue
-+                checked_hosts.add(host)
-+                ensure_webhook_access_bypass(host)
-         except Exception as e:
-             logging.debug(f"Could not refresh email sending status on startup: {e}")
+     const domain = String(env.DOMAIN_NAME || "").toLowerCase();
++    const fromHeaderValue = stripHeader(body.from);
+     const fromAddress = parseAddress(body.from);
+     if (!fromAddress) {
+       return json({ error: "invalid sender" }, 400);
+@@ -183,7 +184,7 @@ export default {
+     const innerBoundary = "b" + crypto.randomUUID().replace(/-/g, "");
+     const outerBoundary = hasAttachments ? "b" + crypto.randomUUID().replace(/-/g, "") : null;
  
+-    let mimeMessage = `From: ${fromAddress}\r\nTo: ${toList.join(", ")}\r\n`;
++    let mimeMessage = `From: ${fromHeaderValue || fromAddress}\r\nTo: ${toList.join(", ")}\r\n`;
+     if (ccList.length > 0) mimeMessage += `Cc: ${ccList.join(", ")}\r\n`;
+     mimeMessage += `Subject: ${subject}\r\n`;
+     mimeMessage += `Date: ${new Date().toUTCString()}\r\n`;
 ```
 
-**File**: `dockflare/app/templates/docs/ch-barnduetsch/Email-Prerequisites.md` (modified, +1/-0)
+**File**: `dockflare/app/web/routes.py` (modified, +1/-2)
 ```diff
-@@ -17,6 +17,7 @@ D E-Mail-Suite bruucht zusätzlichi Berechtigunge uf dim bestehende DockFlare-AP
- | **Account** | **Workers Scripts** | **Bearbeite** | Inbound-/Outbound-Worker deploye |
- | **Account** | **Workers KV Storage** | **Bearbeite** | Echtzeit-Quota-Durchsetzung am Edge |
- | **Account** | **R2 Storage** | **Bearbeite** | Transit-Buckets erstelle u verwalte |
-+| **Account** | **Access: Apps and Policies** | **Bearbeite** | Es Umgehig für de Iigang-Mail-Webhook-Pfad erstelle, wenn Webmail dür Cloudflare Access gschützt isch |
- | **Zone** | **Email Routing** | **Bearbeite** | Routing aktiviere u Regle verwalte |
- | **Zone** | **DNS** | **Bearbeite** | MX-, SPF-, DMARC- u DKIM-Iiträg erstelle |
- 
-```
-
-**File**: `dockflare/app/templates/docs/de/Email-Prerequisites.md` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ Die E-Mail-Suite benötigt zusätzliche Berechtigungen für Ihr vorhandenes Dock
- | **Account** | **Workers Scripts** | **Bearbeiten** | Bereitstellung von Inbound-/Outbound-Workern |
- | **Account** | **Workers KV Storage** | **Bearbeiten** | Echtzeit-Quota-Durchsetzung am Edge |
- | **Account** | **R2 Storage** | **Bearbeiten** | Erstellen und Verwalten von Transit-Buckets |
-+| **Account** | **Access: Apps and Policies** | **Bearbeiten** | Bypass-Richtlinie für den eingehenden E-Mail-Webhook-Pfad erstellen, wenn Webmail durch Cloudflare Access geschützt ist |
- | **Zone** | **E-Mail-Routing** | **Bearbeiten** | Routing aktivieren und Regeln verwalten |
- | **Zone** | **DNS** | **Bearbeiten** | Erstellen von MX-, SPF-, DMARC- und DKIM-Einträgen |
- 
-```
-
-**File**: `dockflare/app/templates/docs/en/Email-Prerequisites.md` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ The Email Suite requires additional permissions on your existing DockFlare API T
- | **Account** | **Workers Scripts** | **Edit** | Deploying inbound/outbound workers |
- | **Account** | **Workers KV Storage** | **Edit** | Real-time quota enforcement at the edge |
- | **Account** | **R2 Storage** | **Edit** | Creating and managing transit buckets |
-+| **Account** | **Access: Apps and Policies** | **Edit** | Create a bypass for the inbound email webhook path when Webmail is protected by Cloudflare Access |
- | **Zone** | **Email Routing** | **Edit** | Activating routing and managing rules |
- | **Zone** | **DNS** | **Edit** | Creating MX, SPF, DMARC, and DKIM records |
- 
-```
-
-**File**: `dockflare/app/templates/docs/es/Email-Prerequisites.md` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ La Suite de correo requiere permisos adicionales en su token API de DockFlare ex
- | **Cuenta** | **Workers Scripts** | **Edición** | Despliegue de workers entrantes/salientes |
- | **Cuenta** | **Workers KV Storage** | **Edición** | Aplicación de cuotas en tiempo real en el edge |
- | **Cuenta** | **R2 Storage** | **Edición** | Creación y gestión de buckets de tránsito |
-+| **Cuenta** | **Access: Apps and Policies** | **Edición** | Crear una excepción para la ruta del webhook de correo entrante cuando Webmail está protegido por Cloudflare Access |
- | **Zona** | **Email Routing** | **Edición** | Activación del enrutamiento y gestión de reglas |
- | **Zona** | **DNS** | **Edición** | Creación de registros MX, SPF, DMARC y DKIM |
- 
-```
-
-**File**: `dockflare/app/templates/docs/fr/Email-Prerequisites.md` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ La Suite e-mail nécessite des permissions supplémentaires sur votre token API
- | **Compte** | **Workers Scripts** | **Édition** | Déploiement des workers entrants/sortants |
- | **Compte** | **Workers KV Storage** | **Édition** | Application des quotas en temps réel à l'edge |
- | **Compte** | **R2 Storage** | **Édition** | Création et gestion des buckets de transit |
-+| **Compte** | **Access: Apps and Policies** | **Édition** | Créer une exception pour le chemin du webhook e-mail entrant lorsque Webmail est protégé par Cloudflare Access |
- | **Zone** | **Email Routing** | **Édition** | Activation du routage et gestion des règles |
- | **Zone** | **DNS** | **Édition** | Création des enregistrements MX, SPF, DMARC et DKIM |
- 
-```
-
-**File**: `dockflare/app/templates/docs/id/Email-Prerequisites.md` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ Email Suite memerlukan izin tambahan pada Token API DockFlare Anda yang ada. Per
- | **Account** | **Workers Scripts** | **Edit** | Men-deploy worker inbound/outbound |
- | **Account** | **Workers KV Storage** | **Edit** | Penegakan kuota real-time di edge |
- | **Account** | **R2 Storage** | **Edit** | Membuat dan mengelola bucket transit |
-+| **Account** | **Access: Apps and Policies** | **Edit** | Membuat bypass untuk jalur webhook email masuk saat Webmail dilindungi Cloudflare Access |
- | **Zone** | **Email Routing** | **Edit** | Mengaktifkan routing dan mengelola aturan |
- | **Zone** | **DNS** | **Edit** | Membuat record MX, SPF, DMARC, dan DKIM |
- 
-```
-
----
-
-### Incident Patch 10: `719d56e2` (2026-09-19)
-**Commit Message**: hotfix system policies
-
-**File**: `dockflare/app/core/reusable_policies.py` (modified, +2/-1)
-```diff
-@@ -190,7 +190,8 @@ def sync_access_group_to_reusable_policy(group_id):
- 
-     is_system_policy = local_definition.get("system_policy", False)
-     if is_system_policy and local_definition.get("policies"):
--        policy_name = local_definition["policies"][0].get("name", f"DockFlare-AccessGroup-{group_id}")
-+        original_policies = group_definition.get("policies") or [{}]
-+        policy_name = original_policies[0].get("name") or local_definition["policies"][0].get("name", f"DockFlare-AccessGroup-{group_id}")
-     else:
-         policy_name = f"DockFlare-AccessGroup-{group_id}"
- 
-```
-
-**File**: `dockflare/app/core/state_manager.py` (modified, +19/-2)
-```diff
-@@ -65,9 +65,15 @@ def set_remote_policy_id(group, policy_id):
- def _resolve_remote_policy(reusable_policies, policy_name, decision, include_rules, require_rules=None, existing_policy_id=None):
-     if existing_policy_id:
-         existing = reusable_policies.get_reusable_policy(existing_policy_id)
--        if existing:
-+        if existing and existing.get("name") == policy_name:
-             return existing_policy_id
--        logging.warning(f"Cloudflare policy '{existing_policy_id}' ({policy_name}) not found, searching by name")
-+        if existing:
-+            logging.warning(
-+                f"Cloudflare policy '{existing_policy_id}' is named '{existing.get('name')}' but "
-+                f"'{policy_name}' was expected; searching by name instead"
-+            )
-+        else:
-+            logging.warning(f"Cloudflare policy '{existing_policy_id}' ({policy_name}) not found, searching by name")
-     existing_by_name = reusable_policies.find_policy_by_name(policy_name)
-     if existing_by_name and existing_by_name.get("id"):
-         logging.info(f"Found existing policy '{policy_name}' in Cloudflare with ID: {existing_by_name.get('id')}")
-@@ -476,6 +482,11 @@ def ensure_default_bypass_policy(flask_app=None):
-                 del existing_policy["hide_from_ui"]
-                 save_state()
- 
-+            if existing_policy.get("policies") and existing_policy["policies"][0].get("name") != cf_policy_name:
-+                logging.info(f"Restoring bypass policy name to '{cf_policy_name}'")
-+                existing_policy["policies"][0]["name"] = cf_policy_name
-+                save_state()
-+
-             remote_policy_id = get_remote_policy_id(existing_policy, default_bypass_id)
- 
-             if flask_app and getattr(config, "CF_ACCOUNT_ID", None):
-@@ -599,6 +610,12 @@ def ensure_authenticated_default_policy(flask_app=None):
-                 needs_state_update = True
-                 needs_cf_update = True
- 
-+            if existing_policy.get("policies") and existing_policy["policies"][0].get("name") != cf_policy_name:
-+                logging.info(f"Restoring authenticated-default policy name to '{cf_policy_name}'")
-+                existing_policy["policies"][0]["name"] = cf_policy_name
-+                needs_state_update = True
-+                needs_cf_update = True
-+
-             if existing_policy.get("display_name") != "Authenticated Access":
-                 logging.info(f"Updating authenticated-default display name to shorter version")
-                 existing_policy["display_name"] = "Authenticated Access"
-```
-
----
-
-### Incident Patch 11: `55fc5471` (2026-09-19)
-**Commit Message**: 3.1.6v - bugfixes default policies
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
- 
- ### Fixed
- - **Internal email configuration authentication:** Internal mail bootstrap endpoints now fail closed when `INTERNAL_BOOTSTRAP_SECRET` is missing and require a matching `X-Bootstrap-Token` for every request. Docker Compose passes the same required secret to DockFlare and mail-manager, preventing unauthenticated private-network access to mail storage credentials, webhook and outbound-worker secrets, and VAPID key material. The website installation script now generates and preserves this shared secret automatically.
-+- **Missing Access policies on fresh setups:** Fixed a regression from the system-policy work back in v3.0.x. On a fresh install the two built-in policies (`public-default-bypass` and `authenticated-default`) could fail to be created on Cloudflare because setup runs before the config is written, and the stale local-only reference then made DockFlare skip them on every later start - so label-created Access Apps came up with zero policies and every login was denied, with nothing useful in the logs. DockFlare now verifies both policies against Cloudflare on startup and creates or re-links them when they're missing. Also fixed a duplicate `public-default-bypass` being created each time the Access Policies page loaded, and a bad `dockflare.access.policy` value no longer silently strips an existing policy - it logs an error and leaves the app untouched. While in there, `cf_policy_id` and `cloudflare_policy_id` are now kept in sync. Thanks [@PauloJf](https://github.com/PauloJf) for the report and repro ([#399](https://github.com/ChrispyBacon-dev/DockFlare/issues/399)).
- 
- 
- ## [v3.1.5] - 2026-09-01
-```
-
-**File**: `dockflare/app/cli.py` (modified, +1/-0)
-```diff
-@@ -257,6 +257,7 @@ def cleanup_duplicate_policies(dry_run=True):
-                         else:
-                             logging.info(f"  Updating group '{group_id}': {policy_id} → {correct_id}")
-                             access_groups[group_id]["cloudflare_policy_id"] = correct_id
-+                            access_groups[group_id]["cf_policy_id"] = correct_id
-                             state_updated = True
- 
-         if state_updated and not dry_run:
-```
-
-**File**: `dockflare/app/core/access_manager.py` (modified, +9/-0)
-```diff
-@@ -493,6 +493,15 @@ def handle_access_policy_from_labels(rule_key, hostname_config_item):
-                         if current_rule:
-                             current_rule.update({"access_app_id": rule_working.get("access_app_id"), "access_policy_type": rule_working.get("access_policy_type"), "access_app_config_hash": rule_working.get("access_app_config_hash"), "access_group_id": rule_working.get("access_group_id")})
-                 return local_state_changed_by_access_policy
-+            else:
-+                logging.error(
-+                    f"ACCESS_MANAGER: Refusing to create or update Access App for {application_domain}. "
-+                    f"'dockflare.access.policy={policy_source_type}' is not a supported value and no "
-+                    f"'dockflare.access.custom_rules' were provided. Valid values are 'bypass', "
-+                    f"'authenticate', or 'default_tld'. Use 'dockflare.access.group=<group_id>' to attach "
-+                    f"an Access Group such as 'authenticated-default'. Existing Access App left untouched."
-+                )
-+                return False
- 
-         new_config_hash = generate_access_app_config_hash(
-             policy_source_type, desired_session_duration, desired_app_launcher_visible,
-```
-
-**File**: `dockflare/app/core/reusable_policies.py` (modified, +24/-12)
-```diff
-@@ -280,9 +280,13 @@ def normalize_rules(val):
-         needs_save = False
-         with state_lock:
-             group_definition = access_groups.get(group_id)
--            if group_definition and group_definition.get("cloudflare_policy_id") != policy_id:
-+            if group_definition and (
-+                group_definition.get("cloudflare_policy_id") != policy_id
-+                or group_definition.get("cf_policy_id") != policy_id
-+            ):
-                 group_definition = copy.deepcopy(group_definition)
-                 group_definition["cloudflare_policy_id"] = policy_id
-+                group_definition["cf_policy_id"] = policy_id
-                 access_groups[group_id] = group_definition
-                 needs_save = True
-         if needs_save:
-@@ -377,21 +381,28 @@ def import_cloudflare_reusable_policies(sync_all=None):
- 
-         if group_id in access_groups:
-             existing_group = access_groups[group_id]
--            if existing_group.get("cloudflare_policy_id") == policy_id:
-+            if (
-+                existing_group.get("cloudflare_policy_id") == policy_id
-+                and existing_group.get("cf_policy_id") == policy_id
-+            ):
-                 logging.debug(f"Access group '{group_id}' already linked to policy '{policy_id}'")
-                 skipped_count += 1
-                 continue
-+            already_linked = existing_group.get("cloudflare_policy_id") == policy_id
-+            existing_group["cloudflare_policy_id"] = policy_id
-+            existing_group["cf_policy_id"] = policy_id
-+            existing_group["allowed_idps"] = login_method_ids([policy_definition])
-+            if not is_dockflare_managed:
-+                existing_group["external_policy"] = True
-+            # Update system_policy flag if this is a system policy
-+            if is_system_policy:
-+                existing_group["system_policy"] = True
-+                existing_group["display_name"] = display_name
-+            if already_linked:
-+                logging.info(f"Backfilled cf_policy_id for access group '{group_id}' (policy ID '{policy_id}')")
-             else:
--                existing_group["cloudflare_policy_id"] = policy_id
--                existing_group["allowed_idps"] = login_method_ids([policy_definition])
--                if not is_dockflare_managed:
--                    existing_group["external_policy"] = True
--                # Update system_policy flag if this is a system policy
--                if is_system_policy:
--                    existing_group["system_policy"] = True
--                    existing_group["display_name"] = display_name
-                 logging.info(f"Updated existing access group '{group_id}' with policy ID '{policy_id}'")
--                updated_count += 1
-+            updated_count += 1
-         else:
-             new_group = {
-                 "id": group_id,
-@@ -401,7 +412,8 @@ def import_cloudflare_reusable_policies(sync_all=None):
-                 "auto_redirect_to_identity": False,
-                 "allowed_idps": login_method_ids([policy_definition]),
-                 "policies": [policy_definition],
--                "cloudflare_policy_id": policy_id
-+                "cloudflare_policy_id": policy_id,
-+                "cf_policy_id": policy_id
-             }
-             if not is_dockflare_managed:
-                 new_group["external_policy"] = True
-```
-
-**File**: `dockflare/app/core/state_manager.py` (modified, +99/-74)
-```diff
-@@ -18,6 +18,7 @@
- import json
- import logging
- import os
-+import re
- import threading
- from datetime import datetime, timezone
- from typing import Dict, Any, List
-@@ -26,6 +27,64 @@
- from app.core.access_policy_rules import normalize_managed_access_group
- from app.core.utils import get_label, get_rule_key, get_source_rule_key
- 
-+_REMOTE_POLICY_ID_PATTERN = re.compile(
-+    r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-+)
-+
-+
-+def is_remote_policy_id(value, group_id=None):
-+    if not value:
-+        return False
-+    text = str(value)
-+    if group_id is not None and text == str(group_id):
-+        return False
-+    return bool(_REMOTE_POLICY_ID_PATTERN.match(text))
-+
-+
-+def get_remote_policy_id(group, group_id=None):
-+    if not group:
-+        return None
-+    for key in ("cloudflare_policy_id", "cf_policy_id", "id"):
-+        value = group.get(key)
-+        if is_remote_policy_id(value, group_id):
-+            return value
-+    return None
-+
-+
-+def set_remote_policy_id(group, policy_id):
-+    if not group or not policy_id:
-+        return False
-+    changed = False
-+    for key in ("cloudflare_policy_id", "cf_policy_id", "id"):
-+        if group.get(key) != policy_id:
-+            group[key] = policy_id
-+            changed = True
-+    return changed
-+
-+
-+def _resolve_remote_policy(reusable_policies, policy_name, decision, include_rules, require_rules=None, existing_policy_id=None):
-+    if existing_policy_id:
-+        existing = reusable_policies.get_reusable_policy(existing_policy_id)
-+        if existing:
-+            return existing_policy_id
-+        logging.warning(f"Cloudflare policy '{existing_policy_id}' ({policy_name}) not found, searching by name")
-+    existing_by_name = reusable_policies.find_policy_by_name(policy_name)
-+    if existing_by_name and existing_by_name.get("id"):
-+        logging.info(f"Found existing policy '{policy_name}' in Cloudflare with ID: {existing_by_name.get('id')}")
-+        return existing_by_name.get("id")
-+    created = reusable_policies.create_reusable_policy(
-+        name=policy_name,
-+        decision=decision,
-+        include_rules=include_rules,
-+        require_rules=require_rules,
-+    )
-+    if created and created.get("id"):
-+        logging.info(f"Created policy '{policy_name}' in Cloudflare with ID: {created.get('id')}")
-+        return created.get("id")
-+    logging.error(f"Failed to create policy '{policy_name}' in Cloudflare")
-+    return None
-+
-+
- STATE_SCHEMA_VERSION = 3
- RULE_LIFECYCLE_DEFAULTS = {
-     "source_rule_key": None,
-@@ -417,40 +476,22 @@ def ensure_default_bypass_policy(flask_app=None):
-                 del existing_policy["hide_from_ui"]
-                 save_state()
- 
--            cf_policy_id = existing_policy.get("cf_policy_id") or existing_policy.get("id")
-+            remote_policy_id = get_remote_policy_id(existing_policy, default_bypass_id)
- 
--            if flask_app and cf_policy_id != default_bypass_id:  # Has a real CF ID
-+            if flask_app and getattr(config, "CF_ACCOUNT_ID", None):
-                 with flask_app.app_context():
-                     try:
--                        cf_policy = reusable_policies.get_reusable_policy(cf_policy_id)
--                        if cf_policy:
--                            logging.debug(f"Verified default bypass policy exists in Cloudflare: {cf_policy_id}")
--                        else:
--                            logging.warning(f"Default bypass policy {cf_policy_id} not found in Cloudflare, searching by name")
--                            existing_by_name = reusable_policies.find_policy_by_name(cf_policy_name)
--                            if existing_by_name:
--                                found_policy_id = existing_by_name.get("id")
--                                logging.info(f"Found existing bypass policy by name with ID: {found_policy_id}")
--                                existing_policy["cloudflare_policy_id"] = found_policy_id
--                                existing_policy["cf_policy_id"] = found_policy_id
--                                save_state()
--                            else:
--                                logging.info(f"No existing bypass policy found, creating new one")
--                                new_policy = reusable_policies.create_reusable_policy(
--                                    name=cf_policy_name,
--                                    decision="bypass",
--                                    include_rules=[{"everyone": {}}]
--                                )
--                                if new_policy and new_policy.get("id"):
--                                    new_cf_policy_id = new_policy["id"]
--                                    logging.info(f"Created bypass policy in Cloudflare with ID: {new_cf_policy_id}")
--                                    existing_policy["cloudflare_policy_id"] = new_cf_policy_id
--                                    existing_policy["cf_policy_id"] = new_cf_policy_id
--    
-```
-
-**File**: `dockflare/app/web/routes.py` (modified, +7/-17)
-```diff
-@@ -39,7 +39,9 @@
- from app.core.state_manager import (
-     access_groups,
-     agent_inventory_contains_rule,
-+    ensure_default_bypass_policy,
-     get_agent,
-+    get_remote_policy_id,
-     load_state,
-     managed_rules,
-     save_state,
-@@ -480,26 +482,14 @@ def fetch_zone_records(zone_id):
- @login_required
- def access_policies_page():
-     """Renders the Access Policies page."""
--    from app.core import reusable_policies
+@@ -1299,9 +1299,8 @@ def force_delete_rule_route(hostname):
+ def stream_logs_route():
+     client_id = f"client-{random.randint(1000, 9999)}"
+     logging.debug(f"Log stream client {client_id} connected.")
+-    subscriber_id, client_queue = log_broadcaster.subscribe()
 -
-     default_bypass_id = "public-default-bypass"
-     if default_bypass_id in access_groups:
-         policy = access_groups[default_bypass_id]
--        cf_policy_id = policy.get("cf_policy_id")
-+        cf_policy_id = get_remote_policy_id(policy, default_bypass_id)
+     def event_stream():
++        subscriber_id, client_queue = log_broadcaster.subscribe()
+         try:
+             yield "retry: 5000\n\n"
+             yield f"event: hello\ndata: --- Log stream connected (client {client_id}) ---\n\n"
+```
+
+**File**: `install.sh` (modified, +1/-0)
+```diff
+@@ -533,6 +533,7 @@ ${LABELS_BLOCK}
+       - DOCKFLARE_MASTER_URL=http://dockflare:5000
+       - MAIL_DATA_PATH=/data
+       - INTERNAL_BOOTSTRAP_SECRET=\${INTERNAL_BOOTSTRAP_SECRET:?set INTERNAL_BOOTSTRAP_SECRET}
++      - MAIL_SECRET_KEY=\${MAIL_SECRET_KEY:?set MAIL_SECRET_KEY}
+     volumes:
+       - mail_data:/data
+     depends_on:
+```
+
+**File**: `mail-manager/app/api/routes.py` (modified, +6/-0)
+```diff
+@@ -129,6 +129,12 @@ def push_subscribe():
+     if not endpoint or not p256dh or not auth_key or not mailbox_address:
+         return jsonify({"error": "endpoint, keys, and mailbox_address are required"}), 400
  
--        if not cf_policy_id or cf_policy_id == default_bypass_id:
-+        if not cf_policy_id:
-             try:
--                cf_policy = reusable_policies.create_reusable_policy(
--                    name="DockFlare-Default-Public-Access-Bypass",
--                    decision="bypass",
--                    include_rules=[{"everyone": {}}]
--                )
--                if cf_policy and cf_policy.get("id"):
--                    with state_lock:
--                        access_groups[default_bypass_id]["cf_policy_id"] = cf_policy["id"]
--                        access_groups[default_bypass_id]["id"] = cf_policy["id"]
--                        save_state()
--                    logging.info(f"Synced default bypass policy to Cloudflare with ID: {cf_policy['id']}")
-+                ensure_default_bypass_policy(flask_app=current_app)
-             except Exception as e:
-                 logging.error(f"Failed to sync default bypass policy to Cloudflare: {e}", exc_info=True)
++    from app.core.push import validate_push_endpoint
++    try:
++        validate_push_endpoint(endpoint)
++    except ValueError as endpoint_error:
++        return jsonify({"error": str(endpoint_error)}), 400
++
+     if not _check_mailbox_access(mailbox_address):
+         return jsonify({"error": "forbidden"}), 403
  
-@@ -1575,7 +1565,7 @@ def ui_add_manual_rule_route():
-                 default_bypass_id = "public-default-bypass"
-                 if default_bypass_id in access_groups:
-                     default_bypass_group = access_groups[default_bypass_id]
--                    cf_policy_id = default_bypass_group.get("cf_policy_id") or default_bypass_group.get("id")
-+                    cf_policy_id = get_remote_policy_id(default_bypass_group, default_bypass_id)
- 
-                     access_group_id = [default_bypass_id]
-                     access_policy_type = "group"
-@@ -1909,7 +1899,7 @@ def ui_edit_manual_rule_route():
-                 default_bypass_id = "public-default-bypass"
-                 if default_bypass_id in access_groups:
-                     default_bypass_group = access_groups[default_bypass_id]
--                    cf_policy_id = default_bypass_group.get("cf_policy_id") or default_bypass_group.get("id")
-+                    cf_policy_id = get_remote_policy_id(default_bypass_group, default_bypass_id)
- 
-                     access_group_id = [default_bypass_id]
-                     access_policy_type = "group"
 ```
 
 ---
 
-### Incident Patch 12: `cbad36b2` (2026-09-06)
+### Incident Patch 3: `cbad36b2` (2026-09-06)
 **Commit Message**: fix for CVE email routes
 
 **File**: `.gitignore` (modified, +1/-1)
@@ -4576,440 +2699,13 @@ Observed empirical fixes and code patches:
  
 ```
 
----
-
-### Incident Patch 13: `66c105c0` (2026-09-01)
-**Commit Message**: increased timeout to 30min
-
-**File**: `.github/workflows/docker-agent.yml` (modified, +2/-1)
-```diff
-@@ -34,7 +34,7 @@ concurrency:
- jobs:
-   build_self_hosted:
-     runs-on: self-hosted
--    timeout-minutes: 3
-+    timeout-minutes: 30
- 
-     steps:
-       - name: Checkout repository
-@@ -87,6 +87,7 @@ jobs:
-     needs: build_self_hosted
-     if: failure() || cancelled()
-     runs-on: ubuntu-latest
-+    timeout-minutes: 30
- 
-     steps:
-       - name: Checkout repository
-```
-
-**File**: `.github/workflows/docker-image.yml` (modified, +6/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-   build_self_hosted:
-     runs-on: self-hosted
- 
--    timeout-minutes: 3
-+    timeout-minutes: 30
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v7
-@@ -75,11 +75,14 @@ jobs:
-           push: ${{ github.event_name == 'push' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           labels: ${{ steps.meta.outputs.labels }}
-+          cache-from: type=gha,scope=dockflare
-+          cache-to: type=gha,mode=max,scope=dockflare
- 
-   build_github_hosted_fallback:
-     needs: build_self_hosted
-     if: failure() || cancelled()
-     runs-on: ubuntu-latest
-+    timeout-minutes: 30
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v7
-@@ -125,3 +128,5 @@ jobs:
-           push: ${{ github.event_name == 'push' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           labels: ${{ steps.meta.outputs.labels }}
-+          cache-from: type=gha,scope=dockflare
-+          cache-to: type=gha,mode=max,scope=dockflare
-```
-
-**File**: `.github/workflows/docker-mail-manager.yml` (modified, +6/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-   build_self_hosted:
-     runs-on: self-hosted
- 
--    timeout-minutes: 3
-+    timeout-minutes: 30
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v7
-@@ -75,11 +75,14 @@ jobs:
-           push: ${{ github.event_name == 'push' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           labels: ${{ steps.meta.outputs.labels }}
-+          cache-from: type=gha,scope=dockflare-mail-manager
-+          cache-to: type=gha,mode=max,scope=dockflare-mail-manager
- 
-   build_github_hosted_fallback:
-     needs: build_self_hosted
-     if: failure() || cancelled()
-     runs-on: ubuntu-latest
-+    timeout-minutes: 30
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v7
-@@ -125,3 +128,5 @@ jobs:
-           push: ${{ github.event_name == 'push' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           labels: ${{ steps.meta.outputs.labels }}
-+          cache-from: type=gha,scope=dockflare-mail-manager
-+          cache-to: type=gha,mode=max,scope=dockflare-mail-manager
-```
-
-**File**: `.github/workflows/docker-webmail.yml` (modified, +6/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-   build_self_hosted:
-     runs-on: self-hosted
- 
--    timeout-minutes: 3
-+    timeout-minutes: 30
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v7
-@@ -75,11 +75,14 @@ jobs:
-           push: ${{ github.event_name == 'push' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           labels: ${{ steps.meta.outputs.labels }}
-+          cache-from: type=gha,scope=dockflare-webmail
-+          cache-to: type=gha,mode=max,scope=dockflare-webmail
- 
-   build_github_hosted_fallback:
-     needs: build_self_hosted
-     if: failure() || cancelled()
-     runs-on: ubuntu-latest
-+    timeout-minutes: 30
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v7
-@@ -125,3 +128,5 @@ jobs:
-           push: ${{ github.event_name == 'push' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           labels: ${{ steps.meta.outputs.labels }}
-+          cache-from: type=gha,scope=dockflare-webmail
-+          cache-to: type=gha,mode=max,scope=dockflare-webmail
-```
-
----
-
-### Incident Patch 14: `0ffb7c52` (2026-08-31)
-**Commit Message**: decom agent ui animations
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
- 
- ### Added
- - **Safe Agent decommissioning:** Replaced immediate Agent deletion with a durable prepare, ownership-safe Cloudflare cleanup, and final Agent shutdown workflow. Decommissioned Agents persist a local tombstone, stop their managed tunnel without Docker delete permission, revoke their API key only after final acknowledgement, and cannot silently recreate the tunnel after restart. The Agents UI now shows retryable progress and provides separately acknowledged host cleanup commands that remove the Agent Docker deployment while preserving the shared external `cloudflare-net` network.
-+  - Improved long-running operation feedback with a wider responsive dialog, animated preparation and active-step indicators, accessible live status text, completed/error step markers, sticky controls, reduced-motion support, and duplicate-action protection while requests are pending.
- 
- ### Fixed
- - **UI-overridden container lifecycle:** Recreated Docker and Agent-managed containers now reactivate their existing rules, refresh only their runtime container association, and retain UI-controlled routing, origin, tunnel, and Access settings. Fixes [#388](https://github.com/ChrispyBacon-dev/DockFlare/issues/388).
-```
-
-**File**: `dockflare/app/i18n/en.json` (modified, +2/-0)
-```diff
-@@ -455,6 +455,8 @@
-     "agents.decommission_manual_message": "Master cleanup completed and Agent access was revoked, but the Agent could not schedule its own stop. The remote Agent container may still be running and requires the host cleanup steps below.",
-     "agents.decommission_forced_message": "Master cleanup completed without confirmed remote shutdown. Remote containers may still be running and require the host cleanup steps below.",
-     "agents.decommission_waiting_prepare": "Waiting for the Agent to persist its safety marker and stop the tunnel container.",
-+    "agents.decommission_contacting_and_stopping": "Contacting the Agent and waiting for the tunnel to stop…",
-+    "agents.decommission_working_hint": "Operation in progress — this may take up to 3 minutes.",
-     "agents.decommission_remote_prepared": "The Agent is prepared and the tunnel container is stopped or absent.",
-     "agents.decommission_cleaning_master": "Cleaning safely owned Cloudflare and DockFlare resources.",
-     "agents.decommission_waiting_finalize": "Waiting for the Agent to acknowledge final shutdown scheduling.",
-```
-
-**File**: `dockflare/app/templates/agents.html` (modified, +129/-17)
-```diff
-@@ -249,11 +249,13 @@ <h3 class="font-bold text-lg">{{ t('agents.rename_agent') }}</h3>
- </dialog>
- 
- <dialog id="modal-decommission-agent" class="modal">
--  <div class="modal-box w-11/12 max-w-3xl">
--    <h3 class="font-bold text-lg">{{ t('agents.decommission_title') }}</h3>
--    <div class="flex items-center justify-between gap-3 py-3">
--      <p id="decommission-summary" class="min-w-0 text-sm font-medium"></p>
--      <span id="decommission-agent-status" class="badge badge-sm hidden shrink-0"></span>
-+  <div class="modal-box decommission-modal-box w-11/12 max-w-5xl">
-+    <div class="decommission-modal-header">
-+      <h3 class="font-bold text-lg">{{ t('agents.decommission_title') }}</h3>
-+      <div class="flex items-center justify-between gap-3 py-3">
-+        <p id="decommission-summary" class="min-w-0 text-sm font-medium"></p>
-+        <span id="decommission-agent-status" class="badge badge-sm hidden shrink-0"></span>
-+      </div>
-     </div>
-     <div id="decommission-preflight" class="hidden mb-4 rounded-md border border-base-300 bg-base-200/50 p-4">
-       <dl class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
-@@ -299,7 +301,16 @@ <h3 class="font-bold text-lg">{{ t('agents.decommission_title') }}</h3>
-       <li class="step" data-phase="shutdown_scheduled">{{ t('agents.decommission_revoke_access') }}</li>
-       <li class="step" data-phase="completed">{{ t('agents.decommission_complete') }}</li>
-     </ol>
--    <div id="decommission-message" class="text-sm mb-4" aria-live="polite"></div>
-+    <div id="decommission-status" class="mb-4" role="status" aria-live="polite" aria-atomic="true">
-+      <div id="decommission-working" class="decommission-working-panel hidden items-center gap-3 rounded-md border p-3">
-+        <span class="loading loading-spinner decommission-working-spinner text-primary shrink-0" aria-hidden="true"></span>
-+        <div>
-+          <p id="decommission-working-message" class="text-sm font-medium"></p>
-+          <p class="mt-1 text-xs text-base-content/60">{{ t('agents.decommission_working_hint') }}</p>
-+        </div>
-+      </div>
-+      <div id="decommission-message" class="text-sm"></div>
-+    </div>
-     <div id="decommission-cleanup" class="hidden space-y-4">
-       <div class="alert alert-info"><span>{{ t('agents.decommission_host_responsibility') }}</span></div>
-       <label class="label cursor-pointer justify-start gap-3">
-@@ -321,7 +332,7 @@ <h3 class="font-bold text-lg">{{ t('agents.decommission_title') }}</h3>
-       </div>
-       <p class="text-xs text-base-content/60">{{ t('agents.decommission_network_preserved') }}</p>
-     </div>
--    <div class="modal-action">
-+    <div class="modal-action decommission-modal-actions">
-       <button id="btn-start-decommission" class="btn btn-error">{{ t('agents.decommission_action') }}</button>
-       <button id="btn-retry-decommission" class="btn btn-warning hidden">{{ t('agents.decommission_retry') }}</button>
-       <button id="btn-force-decommission" class="btn btn-error btn-outline hidden">{{ t('agents.decommission_force') }}</button>
-@@ -519,6 +530,51 @@ <h3 class="font-bold text-lg">{{ t('agents.key_rolled_success') }}</h3>
-   vertical-align: top !important;
- }
- 
-+.decommission-modal-box {
-+  max-height: calc(100vh - 2rem);
-+  overflow-y: auto;
-+}
-+
-+.decommission-modal-header {
-+  position: sticky;
-+  top: -1.5rem;
-+  z-index: 10;
-+  margin: -1.5rem -1.5rem 0;
-+  padding: 1.5rem 1.5rem 0;
-+  background: var(--fallback-b1, oklch(var(--b1) / 1));
-+}
-+
-+.decommission-modal-actions {
-+  position: sticky;
-+  bottom: -1.5rem;
-+  z-index: 10;
-+  margin-right: -1.5rem;
-+  margin-bottom: -1.5rem;
-+  margin-left: -1.5rem;
-+  padding: 1rem 1.5rem 1.5rem;
-+  border-top: 1px solid var(--fallback-b3, oklch(var(--b3) / 1));
-+  background: var(--fallback-b1, oklch(var(--b1) / 1));
-+}
-+
-+.decommission-working-panel {
-+  border-color: oklch(var(--p) / 0.3);
-+  background: oklch(var(--p) / 0.1);
-+}
-+
-+.decommission-working-spinner {
-+  width: 1.25rem;
-+  height: 1.25rem;
-+}
-+
-+#decommission-progress .decommission-active-step::after,
-+#decommission-progress.decommission-preparing .step:nth-child(2)::after {
-+  animation: decommission-step-pulse 1.4s ease-in-out infinite;
-+}
-+
-+#decommission-progress.decommission-preparing .step:nth-child(2)::before {
-+  animation: decommission-connector-pulse 1.4s ease-in-out infinite;
-+}
-+
- /* Animations */
- @keyframes led-pulse-critical {
-   0% {
-@@ -557,6 +613,25 @@ <h3 class="font-bold text-lg">{{ t('agents.key_rolled_success') }}</h3>
-   50% { background-color: #065f46; }
-   100% { background-color: #1f2937; }
- }
-+
-+@keyframes decommission-step-pulse {
-+  0%, 100% { box-shadow: 0 0 0 0 oklch(var(--p) / 0.4); }
-+  50% { box-shadow: 0 0 0 0.45rem oklch(var(--p) / 0); }
-+}
-+
-+@keyframes decommission-connector-pulse {
-+  0%, 100% { opacity: 0.35; }
-+  50% { opacity: 1; }
-+}
-+
-+@media (prefers-reduced-motion: reduce) {
-+  #decommission-progress .decommission-active-step::after,
-+  #decommission-pr
-```
-
-**File**: `dockflare/tests/test_agent_decommission.py` (modified, +5/-0)
-```diff
-@@ -374,6 +374,11 @@ def test_agents_page_renders_decommission_workflow_without_internal_spec(self):
-         self.assertIn("<dl class=", rendered)
-         self.assertIn('id="decommission-last-contact"', rendered)
-         self.assertIn('id="decommission-agent-status"', rendered)
-+        self.assertIn('max-w-5xl', rendered)
-+        self.assertIn('id="decommission-working"', rendered)
-+        self.assertIn('aria-live="polite"', rendered)
-+        self.assertIn('decommission-preparing', rendered)
-+        self.assertIn('prefers-reduced-motion: reduce', rendered)
-         self.assertIn("confirm-agent-data-delete", rendered)
-         self.assertIn("confirm-agent-files-delete", rendered)
-         self.assertNotIn("whitespace-pre-line", rendered)
-```
-
----
-
-### Incident Patch 15: `ae2afdb6` (2026-08-31)
-**Commit Message**: agent decom ui fix
-
-**File**: `dockflare/app/i18n/en.json` (modified, +4/-2)
-```diff
-@@ -415,7 +415,7 @@
-     "agents.decommission_action": "Decommission Agent",
-     "agents.decommission_view": "View decommission progress",
-     "agents.decommissioning": "Decommissioning",
--    "agents.decommission_warning": "Services published by this Agent will become unavailable. DockFlare will stop remote containers but will not delete them.",
-+    "agents.decommission_warning": "Published services will become unavailable. Containers are stopped remotely but must be removed manually.",
-     "agents.decommission_contact": "Contact Agent",
-     "agents.decommission_stop_tunnel": "Stop tunnel",
-     "agents.decommission_cloudflare": "Clean resources",
-@@ -426,7 +426,9 @@
-     "agents.decommission_ready": "Review the impact, then start the decommission operation.",
-     "agents.decommission_resume": "Resuming the saved Agent decommission operation.",
-     "agents.decommission_online": "Agent is online",
-+    "agents.decommission_online_short": "Online",
-     "agents.decommission_offline": "Agent is offline; cleanup will wait unless you explicitly force Master cleanup",
-+    "agents.decommission_offline_short": "Offline",
-     "agents.decommission_unknown_agent": "Agent",
-     "agents.decommission_confirm": "Decommission this Agent? DockFlare will first stop its tunnel, clean only safely owned Cloudflare resources, revoke its key, and schedule the Agent container to stop.",
-     "agents.decommission_retry": "Retry current step",
-@@ -448,7 +450,7 @@
-     "agents.decommission_stop_scheduled": "stop will be scheduled after final acknowledgement",
-     "agents.decommission_manual_required": "manual host stop is required",
-     "agents.decommission_unknown": "unknown; preserve by default",
--    "agents.decommission_reverse_deploy_notice": "After completion, the user-run reverse deploy removes the tunnel, Agent, socket proxy, Agent data volume, private Compose network, and removable images. A separate optional command removes $HOME/dockflare-agent, including docker-compose.yml and any .env file.",
-+    "agents.decommission_reverse_deploy_notice": "After completion, run the provided reverse-deploy commands on the Agent host. The external cloudflare-net network is preserved.",
-     "agents.decommission_completed_message": "Agent decommissioned. The tunnel container was stopped, Cloudflare resources were cleaned according to ownership, Agent access was revoked, and the Agent container stop was scheduled. Complete host cleanup with the reverse-deploy steps below.",
-     "agents.decommission_manual_message": "Master cleanup completed and Agent access was revoked, but the Agent could not schedule its own stop. The remote Agent container may still be running and requires the host cleanup steps below.",
-     "agents.decommission_forced_message": "Master cleanup completed without confirmed remote shutdown. Remote containers may still be running and require the host cleanup steps below.",
-```
-
-**File**: `dockflare/app/templates/agents.html` (modified, +82/-23)
-```diff
-@@ -251,12 +251,47 @@ <h3 class="font-bold text-lg">{{ t('agents.rename_agent') }}</h3>
- <dialog id="modal-decommission-agent" class="modal">
-   <div class="modal-box w-11/12 max-w-3xl">
-     <h3 class="font-bold text-lg">{{ t('agents.decommission_title') }}</h3>
--    <p id="decommission-summary" class="py-3 text-sm text-base-content/70"></p>
--    <p id="decommission-preflight" class="hidden mb-4 rounded-md bg-base-200 p-3 text-sm whitespace-pre-line"></p>
-+    <div class="flex items-center justify-between gap-3 py-3">
-+      <p id="decommission-summary" class="min-w-0 text-sm font-medium"></p>
-+      <span id="decommission-agent-status" class="badge badge-sm hidden shrink-0"></span>
-+    </div>
-+    <div id="decommission-preflight" class="hidden mb-4 rounded-md border border-base-300 bg-base-200/50 p-4">
-+      <dl class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
-+        <div>
-+          <dt class="text-xs uppercase tracking-wide text-base-content/60">{{ t('agents.decommission_last_contact') }}</dt>
-+          <dd id="decommission-last-contact" class="mt-1 text-sm font-medium"></dd>
-+        </div>
-+        <div>
-+          <dt class="text-xs uppercase tracking-wide text-base-content/60">{{ t('agents.decommission_assigned_tunnel') }}</dt>
-+          <dd id="decommission-assigned-tunnel" class="mt-1 text-sm font-medium break-all"></dd>
-+        </div>
-+        <div>
-+          <dt class="text-xs uppercase tracking-wide text-base-content/60">{{ t('agents.decommission_tunnel_disposition') }}</dt>
-+          <dd id="decommission-tunnel-disposition" class="mt-1 text-sm font-medium"></dd>
-+        </div>
-+        <div>
-+          <dt class="text-xs uppercase tracking-wide text-base-content/60">{{ t('agents.decommission_remote_tunnel_action') }}</dt>
-+          <dd id="decommission-tunnel-action" class="mt-1 text-sm font-medium"></dd>
-+        </div>
-+        <div>
-+          <dt class="text-xs uppercase tracking-wide text-base-content/60">{{ t('agents.decommission_remote_agent_action') }}</dt>
-+          <dd id="decommission-agent-action" class="mt-1 text-sm font-medium"></dd>
-+        </div>
-+        <div>
-+          <dt class="text-xs uppercase tracking-wide text-base-content/60">{{ t('agents.decommission_container_names') }}</dt>
-+          <dd id="decommission-container-names" class="mt-1 text-sm font-mono break-all"></dd>
-+        </div>
-+        <div>
-+          <dt class="text-xs uppercase tracking-wide text-base-content/60">{{ t('agents.decommission_preserved_network') }}</dt>
-+          <dd id="decommission-preserved-network" class="mt-1 text-sm font-mono"></dd>
-+        </div>
-+      </dl>
-+      <p class="mt-4 border-t border-base-300 pt-2 text-xs text-base-content/70">{{ t('agents.decommission_reverse_deploy_notice') }}</p>
-+    </div>
-     <div class="alert alert-warning mb-4">
-       <span>{{ t('agents.decommission_warning') }}</span>
-     </div>
--    <ol id="decommission-progress" class="steps steps-vertical sm:steps-horizontal w-full text-xs mb-4">
-+    <ol id="decommission-progress" class="steps steps-vertical sm:steps-horizontal hidden w-full text-xs mb-4">
-       <li class="step" data-phase="waiting_for_prepare">{{ t('agents.decommission_contact') }}</li>
-       <li class="step" data-phase="remote_prepared">{{ t('agents.decommission_stop_tunnel') }}</li>
-       <li class="step" data-phase="master_cleanup">{{ t('agents.decommission_cloudflare') }}</li>
-@@ -290,7 +325,7 @@ <h3 class="font-bold text-lg">{{ t('agents.decommission_title') }}</h3>
-       <button id="btn-start-decommission" class="btn btn-error">{{ t('agents.decommission_action') }}</button>
-       <button id="btn-retry-decommission" class="btn btn-warning hidden">{{ t('agents.decommission_retry') }}</button>
-       <button id="btn-force-decommission" class="btn btn-error btn-outline hidden">{{ t('agents.decommission_force') }}</button>
--      <button type="button" class="btn btn-ghost" onclick="document.getElementById('modal-decommission-agent').close()">{{ t('common.close') }}</button>
-+      <button type="button" class="btn btn-ghost" onclick="document.getElementById('modal-decommission-agent').close()">{{ t('common.cancel') }}</button>
-     </div>
-   </div>
-   <form method="dialog" class="modal-backdrop"><button>{{ t('common.close') }}</button></form>
-@@ -1025,6 +1060,7 @@ <h3 class="font-bold text-lg">{{ t('agents.key_rolled_success') }}</h3>
-   let currentDecommissionOperationId = null;
-   let currentDecommissionState = null;
-   let currentDecommissionAgentOnline = null;
-+  let currentDecommissionPreview = null;
-   let decommissionPollTimer = null;
- 
-   const decommissionPhaseOrder = {
-@@ -1086,35 +1122,52 @@ <h3 class="font-bold text-lg">{{ t('agents.key_rolled_success') }}</h3>
-     document.getElementById('decommission-docker-command').textContent = '';
-     document.getElementById('decommission-files-command').textContent = '';
-     document.getElementById('decommission-preflight').classList.add('hidden');
--    docu
-```
-
-**File**: `dockflare/tests/test_agent_decommission.py` (modified, +4/-0)
-```diff
-@@ -371,8 +371,12 @@ def test_agents_page_renders_decommission_workflow_without_internal_spec(self):
-         with app.test_request_context("/agents"):
-             rendered = render_template("agents.html")
-         self.assertIn("modal-decommission-agent", rendered)
-+        self.assertIn("<dl class=", rendered)
-+        self.assertIn('id="decommission-last-contact"', rendered)
-+        self.assertIn('id="decommission-agent-status"', rendered)
-         self.assertIn("confirm-agent-data-delete", rendered)
-         self.assertIn("confirm-agent-files-delete", rendered)
-+        self.assertNotIn("whitespace-pre-line", rendered)
-         self.assertNotIn("AGENT_DECOMMISSION_SPEC", rendered)
- 
- 
-```
-
 #### Recent Merged Pull Requests:
+- **PR #404** (2026-10-06): fix: restore missing tunnel metadata when editing manual rules (@Vaso73)
 - **PR #400** (2026-09-20): v3.1.6  (@ChrispyBacon-dev)
 - **PR #398** (2026-09-06): merge from stable latest (@ChrispyBacon-dev)
 - **PR #397** (2026-09-04): Update Italian translations (@albanobattistella)
 - **PR #395** (2026-09-01): Unstable merge v3.1.4 (@ChrispyBacon-dev)
 - **PR #394** (2026-09-01): v3.1.5 - RC (@ChrispyBacon-dev)
-- **PR #393** (2026-08-20): stable build to dev branch (@ChrispyBacon-dev)
-- **PR #392** (2026-08-17): v3.1.4 (@ChrispyBacon-dev)
-- **PR #387** (2026-08-05): merge v3.1.3 (@ChrispyBacon-dev)
 
 ---
 
@@ -5023,3 +2719,38 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. security fixes - details in changelog
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ChrispyBacon-dev/DockFlare. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0f29d58f`: security fixes - details in changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+### Security
+- **Outbound email worker hardening:** The worker no longer relays for arbitrary senders - it pins the sender to the configured domain (plus an optional allowlist), validates recipients, strips CR/LF from all headers to block header/MIME injection, stops leaking the `Bcc:` header, encodes attachment filenames, compares the auth secret in constant time, and enforces per-sender hourly/daily rate limits. Mail-manager sanitizes header fields before dispatch too.
+- **Agent API Access app no longer bypasses everyone:** The `/api/v2/agents/` Cloudflare Access app no longer gets a `bypass` policy for `everyone`, and existing installs are cleaned up on startup. Admin browser bypass, when wanted, is scoped to the configured authorized emails.
+- **Agent secrets removed from `state.json`:** Agent API keys and tunnel tokens now live only in the encrypted key store, legacy plaintext values are migrated on first load, backups no longer contain them, and rolling a key revokes all previous active keys.
+- **Mail-manager secrets encrypted at rest:** R2 secret keys, webhook secrets and outbound auth secrets are AES-GCM encrypted in the SQLite DB (`MAIL_SECRET_KEY`, falling back to the boo
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0f29d58f` are properly handled with clean fallback behavior.

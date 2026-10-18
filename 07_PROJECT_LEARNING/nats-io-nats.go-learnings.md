@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
+> **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
+> **Source Version**: `e1312b80`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:45:54.504Z  
+> **Learning ID**: `learn-github-nats-io-nats-go`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): nats-io/nats.go
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:10:46.935Z  
+> **Harvest Timestamp**: 2026-10-18T21:45:54.498Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6770 stars
+- **Stars / Engagement**: 6781 stars
 
 ---
 
@@ -22,6 +36,117 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: go.mod, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `micro/conn_hooks.go`
+```
+// Copyright 2026 The NATS Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package micro
+
+import (
+	"slices"
+	"sync"
+
+	"github.com/nats-io/nats.go"
+)
+
+// connHooks holds the services added on a connection and the connection's
+// handlers that were set before the first of them was added.
+type connHooks struct {
+	services   []*service
+	prevClosed nats.ConnHandler
+	prevErr    nats.ErrHandler
+}
+
+var hooks = struct {
+	sync.Mutex
+	conns map[*nats.Conn]*connHooks
+}{conns: make(map[*nats.Conn]*connHooks)}
+
+// registerService adds s to its connection's hooks. The first service on a
+// connection installs the connection's closed and error handlers.
+func registerService(s *service) {
+	hooks.Lock()
+	defer hooks.Unlock()
+	h, ok := hooks.conns[s.nc]
+	if !ok {
+		h = &connHooks{
+			prevClosed: s.nc.ClosedHandler(),
+			prevErr:    s.nc.ErrorHandler(),
+		}
+		hooks.conns[s.nc] = h
+		s.nc.SetClosedHandler(func(c *nats.Conn) {
+			h.connClosed(c)
+		})
+		s.nc.SetErrorHandler(func(c *nats.Conn, sub *nats.Subscription, err error) {
+			h.asyncErr(c, sub, err)
+		})
+	}
+	h.services = append(h.services, s)
+}
+
+// unregisterService removes s from its connection's hooks. The last service
+// on a connection restores the connection's previous handlers.
+func unregisterService(s *service) {
+	hooks.Lock()
+	defer hooks.Unlock()
+	h, ok := hooks.conns[s.nc]
+	if !ok {
+		return
+	}
+	h.services = slices.DeleteFunc(h.services, func(other *service) bool {
+		return other == s
+	})
+	if len(h.services) > 0 {
+		return
+	}
+	delete(hooks.conns, s.nc)
+	if !s.nc.IsClosed() {
+		s.nc.SetClosedHandler(h.prevClosed)
+		s.nc.SetErrorHandler(h.prevErr)
+	}
+}
+
+func (h *connHooks) connClosed(c *nats.Conn) {
+	hooks.Lock()
+	services := h.services
+	h.services = nil
+	if hooks.conns[c] == h {
+		delete(hooks.conns, c)
+	}
+	hooks.Unlock()
+	for _, s := range services {
+		s.Stop()
+	}
+	if h.prevClosed != nil {
+		h.prevClosed(c)
+	}
+}
+
+func (h *connHooks) asyncErr(c *nats.Conn, sub *nats.Subscription, err error) {
+	hooks.Lock()
+	services := slices.Clone(h.services)
+	hooks.Unlock()
+	for _, s := range services {
+		s.handleAsyncErr(sub, err)
+	}
+	if h.prevErr != nil {
+		h.prevErr(c, sub, err)
+	}
+}
+
+```
 
 ### Core Architecture Module: `util/tls.go`
 ```
@@ -486,7 +611,10 @@ func (nc *Conn) requestWithContext(ctx context.Context, subj string, hdr, data [
 		select {
 		case m, ok = <-mch:
 			if !ok {
-				return nil, ErrConnectionClosed
+				if nc.IsClosed() {
+					return nil, ErrConnectionClosed
+				}
+				return nil, ErrDisconnected
 			}
 		case <-ctx.Done():
 			nc.mu.Lock()
@@ -1404,265 +1532,6 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 
 ```
 
-### Core Architecture Module: `examples/jetstream/js-fetch/main.go`
-```
-// Copyright 2020-2022 The NATS Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-	"time"
-
-	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
-)
-
-func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Minute)
-	defer cancel()
-
-	nc, err := nats.Connect("nats://127.0.0.1:4222")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	js, err := jetstream.New(nc)
-	if err != nil {
-		log.Fatal(err)
-	}
-	s, err := js.CreateStream(ctx, jetstream.StreamConfig{
-		Name:     "TEST_STREAM",
-		Subjects: []string{"FOO.*"},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cons, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{
-		Durable:   "TestConsumerListener",
-		AckPolicy: jetstream.AckExplicitPolicy,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	go endlessPublish(ctx, nc, js)
-
-	for {
-		msgs, err := cons.Fetch(100, jetstream.FetchMaxWait(1*time.Second))
-		if err != nil {
-			fmt.Println(err)
-		}
-		for msg := range msgs.Messages() {
-			fmt.Println(string(msg.Data()))
-			msg.Ack()
-		}
-		if msgs.Error() != nil {
-			fmt.Println("Error fetching messages: ", err)
-		}
-	}
-}
-
-func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) {
-	var i int
-	for {
-		time.Sleep(500 * time.Millisecond)
-		if nc.Status() != nats.CONNECTED {
-			continue
-		}
-		if _, err := js.Publish(ctx, "FOO.TEST1", []byte(fmt.Sprintf("msg %d", i))); err != nil {
-			fmt.Println("pub error: ", err)
-		}
-		i++
-	}
-}
-
-```
-
-### Core Architecture Module: `examples/jetstream/js-messages/main.go`
-```
-// Copyright 2022-2023 The NATS Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-	"time"
-
-	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
-)
-
-func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Minute)
-	defer cancel()
-
-	nc, err := nats.Connect("127.0.0.1:4222")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	js, err := jetstream.New(nc)
-	if err != nil {
-		log.Fatal(err)
-	}
-	s, err := js.CreateStream(ctx, jetstream.StreamConfig{
-		Name:     "TEST_STREAM",
-		Subjects: []string{"FOO.*"},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cons, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{
-		Durable:   "TestConsumerMessages",
-		AckPolicy: jetstream.AckExplicitPolicy,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	go endlessPublish(ctx, nc, js)
-
-	it, err := cons.Messages(jetstream.PullMaxMessages(1))
-	if err != nil {
-		log.Fatal(err)
-	}
-	for {
-		msg, err := it.Next()
-		if err != nil {
-			fmt.Println("next err: ", err)
-		}
-		fmt.Println(string(msg.Data()))
-		msg.Ack()
-	}
-}
-
-func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) {
-	var i int
-	for {
-		time.Sleep(500 * time.Millisecond)
-		if nc.Status() != nats.CONNECTED {
-			continue
-		}
-		if _, err := js.Publish(ctx, "FOO.TEST1", []byte(fmt.Sprintf("msg %d", i))); err != nil {
-			fmt.Println("pub error: ", err)
-		}
-		i++
-	}
-}
-
-```
-
-### Core Architecture Module: `examples/jetstream/js-next/main.go`
-```
-// Copyright 2020-2022 The NATS Authors
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-	"time"
-
-	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
-)
-
-func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Minute)
-	defer cancel()
-
-	nc, err := nats.Connect("nats://127.0.0.1:4222")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	js, err := jetstream.New(nc)
-	if err != nil {
-		log.Fatal(err)
-	}
-	s, err := js.CreateStream(ctx, jetstream.StreamConfig{
-		Name:     "TEST_STREAM",
-		Subjects: []string{"FOO.*"},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cons, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{
-		Durable:   "TestConsumerListener",
-		AckPolicy: jetstream.AckExplicitPolicy,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	go endlessPublish(ctx, nc, js)
-
-	for {
-		msg, err := cons.Next()
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		fmt.Println(string(msg.Data()))
-		msg.Ack()
-	}
-}
-
-func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) {
-	var i int
-	for {
-		time.Sleep(500 * time.Millisecond)
-		if nc.Status() != nats.CONNECTED {
-			continue
-		}
-		if _, err := js.Publish(ctx, "FOO.TEST1", []byte(fmt.Sprintf("msg %d", i))); err != nil {
-			fmt.Println("pub error: ", err)
-		}
-		i++
-	}
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1671,51 +1540,11 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #1370** (2024-01-12): **JetStream OrderedConsumer fails to Consume messages upon reconnecting**
   *Symptoms*: ## Defect JetStream OrderedConsumer fails to reconnect upon hard reset on NATs server. Looking at the GoLang package [here](https://github.com/nats-io/nats.go/blob/e2ac73b92f5baae9aff730a65a8d8cee9d069e4c/jetstream/ordered.go#L138), it feels like we should add a conditional check if the err received from the server is "Consumer not found" err so we can perform a "reset" on the client which then recreates the Consumer for processing.   Have a Slack channel going [here](https://natsio.slack.com/archives/CM3T6T7JQ/p1692318754831879).  Make sure that these boxes are checked before submitting your issue -- thank you!   - [x] Included nats.go version  - [x] Included a [Minimal, Complete, and Verifiable example] (https://stackoverflow.com/help/mcve)  #### Versions of `nats.go` and the `nats-server` if one was involved: nats.go: 1.28.0 nats-server:  2.9.21  #### OS/Container environment: Kubernetes Minikube Cluster. GoLang Linux  #### Steps or code to reproduce the issue: 1. Create Jetstream 2. Send messages to Stream 3. Create Ordered Consumer 4. Hard restart NATs server (Kill/restart pod) 5. Observe the client reconnect handler successfully reconnects 6. Consumer attempts to process messages but fails with "Consumer not found" error  #### Expected result: Expect OrderedConsumer to recreate the Consumer and continue processing messages where it had left off  before the NATs server restarted.  #### Actual result: Consumer fails to "reset" and fails to co
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for filling the issue!  Ordered Pull Consumer should send new fetch requests to the server when it sees reconnect event, and Consumer is not deleted because server restarted. It probably is deleted because until server is up and running again, the `InactiveThreshold` is reached.  Increasing `InactiveThreshold` to ~30 seconds would be a good test to check if that's the culprit.  I'm not sure about recreating ordered consumer if it's not there - forcing recreation would make `InactiveThreshold` config obsolete and would also not allow operators of the cluster to permanently remove specific consuer, as Client would immediately recreate it.  We will take a look at the code.  
-  > @Jarema  I attempted to increase the `InactiveThreshold` to 1 Hour and still no luck. It seems as Consumers are being deleted immediately and not honoring the `InactiveThreshold` on a hard restart. Below is a screenshot of my Consumers from the NATs box:  ![image](https://github.com/nats-io/nats.go/assets/35089121/32d8451a-0cfa-4130-9725-562eeb4390c2)  The `reset` method in [./jetstream/ordered.go](https://github.com/nats-io/nats.go/blob/e2ac73b92f5baae9aff730a65a8d8cee9d069e4c/jetstream/ordered.go#L327) already does recreation of Consumers for certain errors. So it seems like the config is already obsolete to some extent?  Thank you for looking into this. 
-  > Forgot to mention, `OrderedConsumers` allow the caller to set the `MaxResetAttempts` -which recreates the Consumer. It seems like recreating the Consumer is by design. To your point, it feels like `InactiveThreshold` kind of contridicts this setting. 
 
 - **Issue #1369** (2023-08-26): **stream.CreateOrUpdateConsumer with FilterSubjects error**
   *Symptoms*:    nats.go version v1.28.0   nats-server version  2.9.21-beta  code : 	cons, err := stream.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{ 		Durable:           durable, 		AckPolicy:         jetstream.AckExplicitPolicy, 		FilterSubjects: []string{"foo.p1.p2"}, // has erro. get foo.u1 subject messags 		// FilterSubject:    "foo.p1.p2", // this works ok  	})   cmd: nats pub foo.u1 msg1   use FilterSubjects: []string{"foo.p1.p2"} for subject, I get foo.u1 messags. but use FilterSubject:    "foo.p1.p2", It works ok, not get foo.u1 messags.   
   **Post-Mortem & Fix Analysis**:
   > Hey @elkmi , thanks for submitting the issue. Unfortunately `FilterSubjects` will only be available as an option in nats-server v2.10.0. This field was already added in `nats.go`, but for now you will have to use `FilterSubject`.
-
-- **Issue #1354** (2026-05-15): **incorrect error message when creating KV watches**
-  *Symptoms*: ## Defect  #### Versions of `nats.go` and the `nats-server` if one was involved:  `nats-server: v2.9.19` `github.com/nats-io/nats.go v1.27.1`  #### OS/Container environment:  MacOS 13.4.1 `go version go1.20.5 darwin/arm64`  #### Steps or code to reproduce the issue:  Start a JetStream enabled NATS server:  ``` nats-server -js ```  Spawn a watch on an invalid key:  ```go package main  import ( 	"github.com/nats-io/nats.go" )  func main() { 	nc, _ := nats.Connect(nats.DefaultURL)  	js, err := nc.JetStream() 	if err != nil { 		panic(err) 	}  	kv, err := js.KeyValue("bucket") 	if err != nil { 		panic(err) 	}  	_, err = kv.Watch("test..") 	if err != nil { 		panic(err) 	} } ```  #### Expected result:  An error message similar to the one the CLI provides:  ``` $ nats kv watch bucket test.. nats: error: nats: consumer filter subject is not a valid subset of the interest subjects ```  #### Actual result:  ``` panic: nats: jetstream not enabled ```  
-  **Post-Mortem & Fix Analysis**:
-  > It's also worth noting that the [`nats`](https://github.com/nats-io/natscli) CLI current `main` branch also shows the error: ``` nats: error: nats: jetstream not enabled ```  I can only get the error: ``` nats: error: nats: consumer filter subject is not a valid subset of the interest subjects ```  With `nats` CLI `v0.0.35` uses `nats.go` version `1.19.0`: ``` go install github.com/nats-io/natscli/nats@v0.0.35 ``` 
-  > It is because the trailing “..” is an invalid subject and it causes the API subjects being used to also be invalid.   We should probably fail for such invalid sibjects earlier - but that’s why you get jetstream not enabled, the jetstream API can’t be reached. 
-  > > It is because the trailing “..” is an invalid subject and it causes the API subjects being used to also be invalid. >  > We should probably fail for such invalid sibjects earlier - but that’s why you get jetstream not enabled, the jetstream API can’t be reached.  Yes the [`Watch()`](https://github.com/nats-io/nats.go/blob/3e4bc5a4f8598ddc50af2d394c2878ae6557fbf0/kv.go#L874) method does not validate the keys pattern, the other KV methods use the `keyValid()` function to validate the key which is going to fail if in `Watch()` if the pattern contains wildcards.
-
-- **Issue #1343** (2023-07-15): **New JetStream API: calling `Stop()` makes `Next()` block indefinitely or until a missing heartbeat error**
-  *Symptoms*: ## Defect  Make sure that these boxes are checked before submitting your issue -- thank you!   - [x] Included nats.go version  - [x] Included a [Minimal, Complete, and Verifiable example] (https://stackoverflow.com/help/mcve)  #### Versions of `nats.go` and the `nats-server` if one was involved: - nats.go: `v1.27.1` - nats-server: `v2.9.19`  #### OS/Container environment: - OS: `linux` -  Arch: `amd64` - Go: `v1.20.5`  #### Steps or code to reproduce the issue: 1. Use the new JetStream API consumer with `Messages()` ```go iter, err := cons.Messages(jetstream.PullMaxMessages(1)) if err != nil { 	log.Fatal(err) } ``` 2. Call the `Next()` method in a **separate** goroutine ```go var wg sync.WaitGroup  wg.Add(1) go func() { 	defer wg.Done()  	for { 		// Next() blocks until a message is available. 		// After calling Stop() keeps blocking until we get an ErrNoHeartbeat, 		// then next call will return ErrMsgIteratorClosed because of the 		// atomic.LoadUint32(&s.closed) == 1 check in Next().                 // If ReportMissingHeartbeats is false, then it will block indefinitely. 		msg, err := iter.Next()  		if err != nil { 			if errors.Is(err, jetstream.ErrMsgIteratorClosed) { 				fmt.Println("Iterator closed") 				break 			}  			fmt.Println("Next err: ", err) 			// If Stop() was called then the next Next() call will return ErrMsgIteratorClosed. 			continue 		}  		fmt.Println(string(msg.Data())) 		msg.Ack() 	} }() ``` 3. Call 
-
-- **Issue #1321** (2023-06-22): **Jetstream K/V bucket fails due to consumer name not being durable**
-  *Symptoms*: ## Defect Provided these code snippets: ```go 	kv, err := jetstream.KeyValue("foo") 	switch { 	case errors.Is(err, nats.ErrBucketNotFound): 		return jetstream.CreateKeyValue(&nats.KeyValueConfig{ 			Bucket:      "foo", 			Description: "foobar", 		})  	stuff, err := s.kv.Keys() 	switch { 	// If we find that theres no keys then init is a no-op 	case errors.Is(err, nats.ErrNoKeysFound): 		return nil 	case err != nil: 		return err 	} ``` I receive the following error: ``` nats: consumer expected to be durable but a durable name was not set ```  #### Versions of `nats.go` and the `nats-server` if one was involved:  Client library version: `v1.26.0+`. This bug does NOT exist in `v1.25.0`.  #### Expected result:  No errors when creating accessing k/v buckets.  #### Actual result:  The below error: ``` nats: consumer expected to be durable but a durable name was not set ```
-  **Post-Mortem & Fix Analysis**:
-  > I assume the version of nats-server you're using is lower than 2.9.0? If so, there was indeed a bug which caused us to use invalid subject to create the consumer on older server versions when durable was not set. I created a PR to solve this issue - #1325   In the meantime, I would encourage you to switch to newer server release (current is 2.9.18) - there were really a lot of new features and improvements throughout 2.9.x releases!
-  > same problem @ github.com/nats-io/nats.go v1.27.0 on v1.25.0 - bucket watching works fine  **UPD**: server version - 2.8.4
-  > @piotrpio I was actually using server version `v2.7.4` so yes you are correct! I bumped to the latest `v2.9.18` and the problem was resolved.
-
-- **Issue #1318** (2023-06-16): **net jetstream interface; A consumer will get stuck when the call to Consume occurs after AckWait timed out**
-  *Symptoms*: ## Defect  Make sure that these boxes are checked before submitting your issue -- thank you!   - [ ] Included nats.go version  - [ ] Included a [Minimal, Complete, and Verifiable example] (https://stackoverflow.com/help/mcve)  #### Versions of `nats.go` and the `nats-server` if one was involved: v1.27.0 and v2.9.17  #### OS/Container environment: Linux  #### Steps or code to reproduce the issue: Create a (named) consumer with AckWait(5*time.Second on a stream that will return atleast one msg Sleep for 6 seconds call con.Consume(...)  It will not error and it will not consume anything   #### Expected result: msgs  #### Actual result: no error, no msgs  
-  **Post-Mortem & Fix Analysis**:
-  > @tpihl from what I see, this is not tied to `AckWait`. When we're using pull consumers, messages are not sent from a stream to consumer when you create the consumer, only when you actually send the pull request (e.g. call `Consume()`). `AckWait` is the window between when the server sends the message (you send the pull request) and the server receives ACK for the message. If server does not receive `Ack()` (or `InProgress()`), it will redeliver the message.  What you encountered (I think) is the default `InactiveThreshold` kicking in - the default is 5 seconds and that means that if your consumer is inactive for more than that (meaning it does not actively query or receive messages), it will get removed. Unfortunately there is not easy way to tell that it happened (server will simply time out on pull requests, which may as well indicate there are no messages), other than the fact that you should receive `ErrNoHeartbeat`. You can verify if that's the case by adding `jetstream.ConsumeE
-  > When explained, it makes sense. But I will argue that this is not intuitive and the solution to cover for this would require the same solution that was deemed a not enough obvious solution for the iterator.   IMHO it will be easier to use if it always uses ConsumeErrHandler than if that's only for some specific corner-cases that otherwise fail silent (and have no good way of recover without catching the missing heartbeat).  I will close this since it's not a  bug, but @piotrpio, i hope it will be considered when evaluating if the new interface fulfill the non-magic part or if there need to be some more compensatory actions in the interface.
-
-- **Issue #1313** (2023-06-13): **Object Store Get with a nats.Context causes a race condition**
-  *Symptoms*: ## Defect  Make sure that these boxes are checked before submitting your issue -- thank you!   - [x] Included nats.go version  - [x] Included a [Minimal, Complete, and Verifiable example] (https://stackoverflow.com/help/mcve)  #### Versions of `nats.go` and the `nats-server` if one was involved: * `nats.go` version = `v1.27.0` #### OS/Container environment: mac #### Steps or code to reproduce the issue: Perform a `Get` on an `ObjectStore` while providing the `nats.Context` as a `GetObjectOpt` causes a race condition.  If we modify the `TestObjectBasics` test to add a `nats.Context(context.Background()` as an option to the seciont that gets the object back (line 95), the test will have a race condition.  ``` func TestObjectBasics(t *testing.T) { . . . 	// Now get the object back. 	result, err := obs.Get("BLOB", nats.Context(context.Background())) 	expectOk(t, err) 	expectOk(t, result.Error()) 	defer result.Close() . . . ```  #### Expected result: The test to pass without any race conditions.  #### Actual result: The test will pass when running without the `-race` flag, but as soon as we add the `-race` flag, then the test fails due to the race condition. 
-  **Post-Mortem & Fix Analysis**:
-  > I believe I have a fix for this, I'm working on creating an MR now.
-  > Race condition error: ``` ================== WARNING: DATA RACE Read at 0x00c0001e56d0 by goroutine 41:   github.com/nats-io/nats%2ego.(*obs).Get.func2()       /Users/ajacques/git/nats.go/object.go:635 +0x209   github.com/nats-io/nats%2ego.(*Conn).waitForMsgs()       /Users/ajacques/git/nats.go/nats.go:3001 +0x782   github.com/nats-io/nats%2ego.(*Conn).subscribeLocked.func1()       /Users/ajacques/git/nats.go/nats.go:4232 +0x47  Previous write at 0x00c0001e56d0 by goroutine 6:   github.com/nats-io/nats%2ego.(*obs).Get()       /Users/ajacques/git/nats.go/object.go:667 +0xe31   github.com/nats-io/nats.go/test.TestObjectBasics()       /Users/ajacques/git/nats.go/test/object_test.go:101 +0xd78   testing.tRunner()       /usr/local/opt/go/libexec/src/testing/testing.go:1576 +0x216   testing.(*T).Run.func1()       /usr/local/opt/go/libexec/src/testing/testing.go:1629 +0x47  Goroutine 41 (running) created at:   github.com/nats-io/nats%2ego.(*Conn).subscribeLocked()     
-
-- **Issue #1311** (2023-10-16): **Projects depending on nats.go are also pulling in nats-server as a dependency**
-  *Symptoms*: ## Defect  Projects depending on `nats.go` are pulling `nats-server` into their go.mod file. From what I can tell this is a bug, as the go_test.mod and go_test.sum files are intended as a way to prevent library consumers from pulling in test dependencies.   This is stemming from a few test files like [js_test.go](https://github.com/nats-io/nats.go/blob/b2d067b4ce6ddf4b1a8c5b4b7b16cb8bd09bbda0/js_test.go) which are part of the `nats` package instead of `nats_test`. The tests use nats-server and seem to need access to private variables in the `nats` package. Because of these references `go mod tidy` seems to notice the missing `nats-server` dependency and helpfully finds one that will work.  #### Versions of `nats.go` * `nats.go` v1.27.0 * `go` version go1.20.4 linux/amd64   #### Steps or code to reproduce the issue:  We discovered this in [various](https://github.com/cloudfoundry/routing-release/blob/508f625b799f509a81414407a8ff88cf163ddaff/src/code.cloudfoundry.org/go.mod#LL42C21-L42C32) [Cloud Foundry](https://github.com/cloudfoundry/routing-release/blob/508f625b799f509a81414407a8ff88cf163ddaff/src/code.cloudfoundry.org/go.mod#LL42C21-L42C32) [projects](https://github.com/cloudfoundry/diego-release/blob/cbd7cf6167335ffe1b1c4b5a7b77ac51d797f992/src/code.cloudfoundry.org/go.mod#L68), but it's easily reproducible by creating a main.go that looks like this: ``` package main  import (         "github.com/nats-io/nats.go" )  func main() {         // Connect to
-  **Post-Mortem & Fix Analysis**:
-  > Hey @mkocher, thank you for submitting the issue.  You're right, that is not the correct behavior. This is caused by nats.go having dependencies on nats-server in `nats` package, not just in `test` (as it should). We'll be working on this issue, as there are some tests depending on unexported properties in `nats` package which also depend on `nats-server`. I will keep you updated here.
-  > Is there work in flight to address this @piotrpio?  I work on a project that takes great pains to minimize final binary sizes and I am not loving the idea of this going out with our next release this fall (luckily NATS is an optional dependency at this point).  I am happy to open a PR if it has a chance to be merged but don't want to step on the toes of any wider reaching refactoring in the jetstream tests.
-  > @piotrpio lets get this fixed asap. Client should not pull in server sans for tests.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1732,2837 +1561,805 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e38cccbc` (2026-10-05)
-**Commit Message**: [FIXED] Report pending publish errors during reconnect (#2150)
+### Incident Patch 1: `dafa2540` (2026-10-13)
+**Commit Message**: [FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165)
 
-* fix(jetstream): report pending publish errors during reconnect
+Symptom: draining (or stopping) a pull Consume or Messages iterator can
+deadlock. With buffered messages still being delivered during Drain,
+the Consume message handler blocks forever, Closed() never returns (it
+blocks on the subscription lock) and the drain never completes; a
+Messages iterator's Next blocks forever the same way.
 
-Collect pending messages under the publisher lock and invoke error callbacks
-after unlocking, before the reconnect worker waits for its next event.
+Root cause: checkPending and the Consume status goroutine (the
+ErrNoHeartbeat and CONNECTED branches) send the next pull request on
+fetchNext, which buffers a single request, while holding the
+subscription lock. fetchNext is only read by pullMessages, which
+returns as soon as done is closed by Stop or Drain. Messages delivered
+after that (all of the client-side buffer while draining) still call
+checkPending, so once one request sits unread in fetchNext the next
+send blocks forever with the lock held.
 
-Cover both JetStream implementations with deterministic regressions that
-assert callbacks run before shutdown and allow publisher reentry.
+Fix: route every send on fetchNext through requestNext, which selects
+on done and drops the request once the subscription is done. Nothing
+would send it anyway: pullMessages only exits after done is closed.
 
-Signed-off-by: Todd Hendricks <[REDACTED_EMAIL]>
+Test: TestPullConsumer_checkPendingAfterDone calls checkPending with a
+fu
 
-* fix(jetstream): complete reconnect callbacks before notifying waiters
-
-Capture and clear the completion channel under the publisher lock, then close
-it after the reconnect error callbacks return in both JetStream APIs.
-
-Extend the reconnect regressions to verify the completion channel stays open
-during callback execution and closes afterward.
-
-Signed-off-by: Todd Hendricks <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Todd Hendricks <[REDACTED_EMAIL]>
-
-**File**: `jetstream/jetstream_test.go` (modified, +43/-0)
+**File**: `jetstream/jetstream_test.go` (modified, +34/-0)
 ```diff
-@@ -17,11 +17,54 @@ import (
- 	"errors"
- 	"fmt"
- 	"testing"
-+	"testing/synctest"
- 	"time"
+@@ -389,6 +389,40 @@ func TestRetryWithBackoff(t *testing.T) {
+ 	}
+ }
  
- 	"github.com/nats-io/nats.go"
- )
- 
-+func TestJetStreamReconnectErrorCallback(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		msg := &nats.Msg{Subject: "events", Data: []byte("pending")}
-+		called := make(chan struct{}, 1)
-+		js := &jetStream{publisher: &jetStreamClient{}}
-+		js.publisher.connStatusCh = make(chan nats.Status)
-+		js.publisher.acks = map[string]*pubAckFuture{"pending": {msg: msg}}
-+		done := js.PublishAsyncComplete()
-+		js.publisher.aecb = func(ctx JetStream, got *nats.Msg, err error) {
-+			if got != msg || !errors.Is(err, nats.ErrDisconnected) {
-+				t.Errorf("Unexpected callback: message=%p, error=%v", got, err)
-+			}
-+			if pending := ctx.PublishAsyncPending(); pending != 0 {
-+				t.Errorf("Expected pending publishes to be cleared, got %d", pending)
-+			}
-+			select {
-+			case <-done:
-+				t.Error("PublishAsyncComplete closed before the error callback returned")
-+			default:
-+			}
-+			called <- struct{}{}
-+		}
-+		go js.resetPendingAcksOnReconnect()
-+		defer func() {
-+			close(js.publisher.connStatusCh)
-+			synctest.Wait()
-+		}()
-+		js.publisher.connStatusCh <- nats.RECONNECTING
-+		synctest.Wait()
-+		select {
-+		case <-called:
-+		default:
-+			t.Fatal("Reconnect error callback was deferred until shutdown")
-+		}
-+		select {
-+		case <-done:
-+		default:
-+			t.Fatal("PublishAsyncComplete was not closed after the error callback returned")
-+		}
-+	})
++func TestPullConsumer_checkPendingAfterDone(t *testing.T) {
++	// Once the subscription is stopped or drained, pullMessages no longer
++	// reads fetchNext. Messages delivered while draining still call
++	// checkPending (with the lock held), and fetchNext only buffers one
++	// request, so checkPending must not block on a full fetchNext.
++	sub := &pullSubscription{
++		pending: pendingMsgs{
++			msgCount: 4,
++		},
++		consumeOpts: &consumeOpts{
++			ThresholdMessages: 5,
++			MaxMessages:       10,
++		},
++		done:      make(chan struct{}, 1),
++		fetchNext: make(chan *pullRequest, 1),
++	}
++	// A request queued before pullMessages returned, which nobody reads.
++	sub.fetchNext <- &pullRequest{}
++	close(sub.done)
++
++	returned := make(chan struct{})
++	go func() {
++		sub.Lock()
++		sub.checkPending()
++		sub.Unlock()
++		close(returned)
++	}()
++	select {
++	case <-returned:
++	case <-time.After(5 * time.Second):
++		t.Fatal("checkPending blocked on fetchNext after the subscription was done")
++	}
 +}
 +
- func TestMessageMetadata(t *testing.T) {
+ func TestPullConsumer_checkPending(t *testing.T) {
+ 
  	tests := []struct {
- 		name             string
 ```
 
-**File**: `jetstream/publish.go` (modified, +10/-5)
+**File**: `jetstream/pull.go` (modified, +15/-6)
 ```diff
-@@ -581,22 +581,27 @@ func (js *jetStream) resetPendingAcksOnReconnect() {
- 		}
- 		js.publisher.Lock()
- 		errCb := js.publisher.asyncPublisherOpts.aecb
-+		var msgs []*nats.Msg
- 		for id, paf := range js.publisher.acks {
- 			paf.err = nats.ErrDisconnected
- 			if paf.errCh != nil {
- 				paf.errCh <- paf.err
+@@ -370,7 +370,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 							sub.errs <- errConnected
+ 						}
+ 
+-						sub.fetchNext <- &pullRequest{
++						sub.requestNext(&pullRequest{
+ 							Expires:       sub.consumeOpts.Expires,
+ 							Batch:         sub.consumeOpts.MaxMessages,
+ 							MaxBytes:      sub.consumeOpts.MaxBytes,
+@@ -380,7 +380,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 							Priority:      sub.consumeOpts.Priority,
+ 							Group:         sub.consumeOpts.Group,
+ 							PinID:         p.getPinID(),
+-						}
++						})
+ 						if sub.hbMonitor != nil {
+ 							sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
+ 						}
+@@ -398,7 +398,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 					if sub.consumeOpts.StopAfter > 0 {
+ 						batchSize = min(batchSize, sub.consumeOpts.StopAfter-sub.delivered)
+ 					}
+-					sub.fetchNext <- &pullRequest{
++					sub.requestNext(&pullRequest{
+ 						Expires:       sub.consumeOpts.Expires,
+ 						Batch:         batchSize,
+ 						MaxBytes:      sub.consumeOpts.MaxBytes,
+@@ -408,7 +408,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 						Priority:      sub.consumeOpts.Priority,
+ 						Group:         sub.consumeOpts.Group,
+ 						PinID:         p.getPinID(),
+-					}
++					})
+ 					if sub.hbMonitor != nil {
+ 						sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
+ 					}
+@@ -485,7 +485,7 @@ func (s *pullSubscription) checkPending() {
+ 			if s.consumer != nil {
+ 				pinID = s.consumer.getPinID()
  			}
- 			if errCb != nil {
--				defer errCb(js, paf.msg, nats.ErrDisconnected)
-+				msgs = append(msgs, paf.msg)
- 			}
- 			delete(js.publisher.acks, id)
- 		}
- 		js.maybeUnstall()
--		if js.publisher.doneCh != nil {
--			close(js.publisher.doneCh)
--			js.publisher.doneCh = nil
--		}
-+		dch := js.publisher.doneCh
-+		js.publisher.doneCh = nil
- 		js.publisher.Unlock()
-+		for _, msg := range msgs {
-+			errCb(js, msg, nats.ErrDisconnected)
-+		}
-+		if dch != nil {
-+			close(dch)
-+		}
- 	}
- }
- 
-```
-
-**File**: `js.go` (modified, +10/-5)
-```diff
-@@ -756,21 +756,26 @@ func (js *js) resetPendingAcksOnReconnect() {
- 		}
- 		js.mu.Lock()
- 		errCb := js.opts.aecb
-+		var msgs []*Msg
- 		for id, paf := range js.pafs {
- 			paf.err = ErrDisconnected
- 			if paf.errCh != nil {
- 				paf.errCh <- paf.err
- 			}
- 			if errCb != nil {
--				defer errCb(js, paf.msg, ErrDisconnected)
-+				msgs = append(msgs, paf.msg)
- 			}
- 			delete(js.pafs, id)
- 		}
--		if js.dch != nil {
--			close(js.dch)
--			js.dch = nil
--		}
-+		dch := js.dch
-+		js.dch = nil
- 		js.mu.Unlock()
-+		for _, msg := range msgs {
-+			errCb(js, msg, ErrDisconnected)
-+		}
-+		if dch != nil {
-+			close(dch)
-+		}
- 	}
- }
- 
-```
-
-**File**: `js_test.go` (modified, +45/-0)
-```diff
-@@ -22,8 +22,53 @@ import (
- 	"fmt"
- 	"strings"
- 	"testing"
-+	"testing/synctest"
- )
- 
-+func TestJetStreamReconnectErrorCallback(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		msg := &Msg{Subject: "events", Data: []byte("pending")}
-+		called := make(chan struct{}, 1)
-+		js := &js{
-+			opts:         &jsOpts{},
-+			connStatusCh: make(chan Status),
-+			pafs:         map[string]*pubAckFuture{"pending": {msg: msg}},
-+		}
-+		done := js.PublishAsyncComplete()
-+		js.opts.aecb = func(ctx JetStream, got *Msg, err error) {
-+			if got != msg || !errors.Is(err, ErrDisconnected) {
-+				t.Errorf("Unexpected callback: message=%p, error=%v", got, err)
-+			}
-+			if pending := ctx.PublishAsyncPending(); pending != 0 {
-+				t.Errorf("Expected pending publishes to be cleared, got %d", pending)
-+			}
-+			select {
-+			case <-done:
-+				t.Error("PublishAsyncComplete closed before the error callback returned")
-+			default:
-+			}
-+			called <- struct{}{}
-+		}
-+		go js.resetPendingAcksOnReconnect()
-+		defer func() {
-+			close(js.connStatusCh)
-+			synctest.Wait()
-+		}()
-+		js.connStatusCh <- RECONNECTING
-+		synctest.Wait()
-+		select {
-+		case <-called:
-+		default:
-+			t.Fatal("Reconnect error callback was deferred until shutdown")
-+		}
-+		select {
-+		case <-done:
-+		default:
-+			t.Fatal("PublishAsyncComplete was not closed after the error callback returned")
-+		}
-+	})
-+}
-+
- func TestIsWrongLastSeqErr(t *testing.T) {
- 	// 10164 is the replicated-stream variant of the 10071 "wrong last
- 	// sequence" CAS conflict; both must be recognized (issue #2097).
-```
-
----
-
-### Incident Patch 2: `84d351d2` (2026-10-02)
-**Commit Message**: [FIXED] JetStream async publish can exceed WithPublishAsyncMaxPending (#2126)
-
-* [FIXED] JetStream async publish can exceed WithPublishAsyncMaxPending
-
-registerPAF inserted the pending ack then stalled if over the cap, so
-concurrent PublishAsync callers could all insert before any of them
-waited. Check the cap and insert under the same lock so pending cannot
-exceed maxPending.
-
-Resolves #1612
-
-Signed-off-by: Shravanth Reddy <[REDACTED_EMAIL]>
-
-* [FIXED] Unstall JetStream async publishers on ack delete and allocate reply ids under insert lock
-
-* [IMPROVED] Cover async publish pending recovery and document stalled callers
-
-Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Shravanth Reddy <[REDACTED_EMAIL]>
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-Co-authored-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `jetstream/jetstream.go` (modified, +4/-0)
-```diff
-@@ -108,6 +108,10 @@ type (
- 		// PublishAsyncComplete returns a channel that will be closed when all
- 		// outstanding asynchronously published messages are acknowledged by the
- 		// server.
-+		//
-+		// Callers blocked in PublishMsgAsync waiting for a free slot under
-+		// PublishAsyncMaxPending are not outstanding yet, so the channel may
-+		// be closed while such a caller is still about to publish.
- 		PublishAsyncComplete() <-chan struct{}
- 
- 		// CleanupPublisher will clean up the publishing side of JetStreamContext.
-```
-
-**File**: `jetstream/publish.go` (modified, +86/-71)
-```diff
-@@ -1,4 +1,4 @@
--// Copyright 2022-2025 The NATS Authors
-+// Copyright 2022-2026 The NATS Authors
- // Licensed under the Apache License, Version 2.0 (the "License");
- // you may not use this file except in compliance with the License.
- // You may obtain a copy of the License at
-@@ -21,7 +21,6 @@ import (
- 	"fmt"
- 	"math/rand"
- 	"strconv"
--	"strings"
- 	"sync"
- 	"time"
- 
-@@ -360,23 +359,16 @@ func (js *jetStream) PublishMsgAsync(m *nats.Msg, opts ...PublishOpt) (PubAckFut
- 
- 	// register new paf if not retrying
- 	if paf == nil {
-+		if err := js.newAsyncReply(); err != nil {
-+			return nil, fmt.Errorf("nats: error creating async reply handler: %s", err)
-+		}
-+		paf = &pubAckFuture{msg: m, jsClient: js.publisher, maxRetries: o.retryAttempts, retryWait: o.retryWait}
- 		var err error
--		reply, err = js.newAsyncReply()
-+		reply, err = js.registerPAF(paf, stallWait)
- 		if err != nil {
--			return nil, fmt.Errorf("nats: error creating async reply handler: %s", err)
-+			return nil, err
- 		}
- 		id = reply[js.opts.replyPrefixLen:]
--		paf = &pubAckFuture{msg: m, jsClient: js.publisher, maxRetries: o.retryAttempts, retryWait: o.retryWait, reply: reply}
--		numPending, maxPending := js.registerPAF(id, paf)
--
--		if maxPending > 0 && numPending > maxPending {
--			select {
--			case <-js.asyncStall():
--			case <-time.After(stallWait):
--				js.clearPAF(id)
--				return nil, ErrTooManyStalledMsgs
+-			s.fetchNext <- &pullRequest{
++			s.requestNext(&pullRequest{
+ 				Expires:       s.consumeOpts.Expires,
+ 				Batch:         batchSize,
+ 				MaxBytes:      maxBytes,
+@@ -495,14 +495,23 @@ func (s *pullSubscription) checkPending() {
+ 				MinPending:    s.consumeOpts.MinPending,
+ 				MinAckPending: s.consumeOpts.MinAckPending,
+ 				Priority:      s.consumeOpts.Priority,
 -			}
--		}
- 		if js.publisher.ackTimeout > 0 {
- 			paf.timeout = time.AfterFunc(js.publisher.ackTimeout, func() {
- 				js.publisher.Lock()
-@@ -392,10 +384,7 @@ func (js *jetStream) PublishMsgAsync(m *nats.Msg, opts ...PublishOpt) (PubAckFut
- 				delete(js.publisher.acks, id)
- 
- 				// check on anyone stalled and waiting.
--				if js.publisher.stallCh != nil && len(js.publisher.acks) < js.publisher.maxpa {
--					close(js.publisher.stallCh)
--					js.publisher.stallCh = nil
--				}
-+				js.maybeUnstall()
- 
- 				// send error to user
- 				paf.err = ErrAsyncPublishTimeout
-@@ -443,8 +432,12 @@ const (
- 	aReplyTokensize = 6
- )
- 
--func (js *jetStream) newAsyncReply() (string, error) {
-+// newAsyncReply ensures the async reply subscription, prefix, RNG, and
-+// reconnect listener are set up. Reply tokens are allocated in registerPAF
-+// under the same lock that inserts into acks.
-+func (js *jetStream) newAsyncReply() error {
- 	js.publisher.Lock()
-+	defer js.publisher.Unlock()
- 	if js.publisher.replySub == nil {
- 		// Create our wildcard reply subject.
- 		sha := sha256.New()
-@@ -456,8 +449,7 @@ func (js *jetStream) newAsyncReply() (string, error) {
- 		js.publisher.replyPrefix = fmt.Sprintf("%s%s.", js.opts.replyPrefix, b[:aReplyTokensize])
- 		sub, err := js.conn.Subscribe(fmt.Sprintf("%s*", js.publisher.replyPrefix), js.handleAsyncReply)
- 		if err != nil {
--			js.publisher.Unlock()
--			return "", err
-+			return err
- 		}
- 		js.publisher.replySub = sub
- 		js.publisher.rr = rand.New(rand.NewSource(time.Now().UnixNano()))
-@@ -466,25 +458,7 @@ func (js *jetStream) newAsyncReply() (string, error) {
- 		js.publisher.connStatusCh = js.conn.StatusChanged(nats.RECONNECTING, nats.CLOSED)
- 		go js.resetPendingAcksOnReconnect()
- 	}
--	var sb strings.Builder
--	sb.Grow(len(js.publisher.replyPrefix) + aReplyTokensize)
--	sb.WriteString(js.publisher.replyPrefix)
--	for {
--		rn := js.publisher.rr.Int63()
--		var b [aReplyTokensize]byte
--		for i, l := 0, rn; i < len(b); i++ {
--			b[i] = rdigits[l%base]
--			l /= base
--		}
--		if _, ok := js.publisher.acks[string(b[:])]; ok {
--			continue
--		}
--		sb.Write(b[:])
--		break
--	}
--
--	js.publisher.Unlock()
--	return sb.String(), nil
-+	return nil
- }
- 
- // Handle an async reply from PublishAsync.
-@@ -502,14 +476,6 @@ func (js *jetStream) handleAsyncReply(m *nats.Msg) {
- 		return
- 	}
- 
--	closeStc := func() {
--		// Check on anyone stalled and waiting.
--		if js.publisher.stallCh != nil && len(js.publisher.acks) < js.publisher.maxpa {
--			close(js.publisher.stallCh)
--			js.publisher.stallCh = nil
--		}
--	}
--
- 	closeDchFn := func() func() {
- 		var dch chan struct{}
- 		// Check on anyone one waiting on done status.
-@@ -555,15 +521,15 @@ func (js *jetStream) handleAsyncReply(m *nats.Msg) {
- 			return
- 		}
- 		delete(js.publisher.acks, id)
--		closeStc()
-+		js.maybeUnstall()
- 		defer closeDchFn()()
- 		js.handleAsyncErrAndUnlock(paf, ErrNoStreamResponse)
- 		return
- 	}
- 
- 	// Remove
- 	delete(js.publisher.acks, id)
--	closeStc()
-+	js.maybeUnstall()
- 	defer closeDchFn()()
- 
- 	var pa pubAckResponse
-@@ -625,6 +591,7 @@ func (js *jetStream) resetPendingAcksOnReconnect() {
- 			}
- 			delete(js.publisher.acks, id)
- 		}
-+		js.maybeUnstall()
- 		if js.publisher.doneCh != nil {
- 			close(js.publisher.doneCh)
- 			js.publisher.doneCh = nil
-@@ -633,17 +600,61 @@ func (js *jetStream) resetPendingAcksOnReconnect() {
- 	}
- }
- 
--// registerPAF will register for a PubAckFuture.
--func (js *jetStream) registerPAF(id string, paf *pubAckFuture) (int, int) {
--	js.publisher.Lock()
--	if js.publisher.acks == nil {
--		js.publisher.acks = make(map[string]*pubAckFuture)
-+// registe
-```
-
-**File**: `jetstream/publish_test.go` (added, +62/-0)
-```diff
-@@ -0,0 +1,62 @@
-+// Copyright 2026 The NATS Authors
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package jetstream
-+
-+import (
-+	"math/rand"
-+	"testing"
-+	"time"
-+)
-+
-+// clearPAF frees a pending slot; stalled registerPAF callers must be woken
-+// instead of sitting out the full stallWait.
-+func TestRegisterPAFUnstallOnClear(t *testing.T) {
-+	const maxPending = 1
-+	js := &jetStream{
-+		publisher: &jetStreamClient{
-+			asyncPublisherOpts: asyncPublisherOpts{maxpa: maxPending},
-+			asyncPublishContext: asyncPublishContext{
-+				replyPrefix: "test.",
-+				rr:          rand.New(rand.NewSource(1)),
-+			},
-+		},
-+	}
-+
-+	paf0 := &pubAckFuture{jsClient: js.publisher}
-+	reply0, err := js.registerPAF(paf0, time.Second)
-+	if err != nil {
-+		t.Fatalf("registerPAF: %v", err)
-+	}
-+	id0 := reply0[len(js.publisher.replyPrefix):]
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		paf := &pubAckFuture{jsClient: js.publisher}
-+		_, err := js.registerPAF(paf, time.Second)
-+		done <- err
-+	}()
-+
-+	// Let the goroutine reach the stall wait.
-+	time.Sleep(20 * time.Millisecond)
-+	js.clearPAF(id0)
-+
-+	select {
-+	case err := <-done:
-+		if err != nil {
-+			t.Fatalf("expected registerPAF to succeed after clearPAF, got %v", err)
-+		}
-+	case <-time.After(200 * time.Millisecond):
-+		t.Fatal("registerPAF did not wake after clearPAF")
-+	}
-+}
-```
-
-**File**: `jetstream/test/publish_test.go` (modified, +90/-0)
-```diff
-@@ -1954,6 +1954,96 @@ func TestPublishAsyncClearStall(t *testing.T) {
- 	})
- }
- 
-+func TestPublishAsyncConcurrentPendingRecovery(t *testing.T) {
-+	for _, maxPending := range []int{1, 5} {
-+		t.Run(fmt.Sprintf("max pending %d", maxPending), func(t *testing.T) {
-+			withJSServer(t, func(t *testing.T, nc *nats.Conn, _ jetstream.JetStream) {
-+				js, err := jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(maxPending))
-+				if err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
-+				}
-+				defer js.CleanupPublisher()
-+
-+				// A core subscriber responds in place of a stream, so the test
-+				// decides when each publish is acked. A NoAck stream would hold
-+				// the pending slots but could never release them.
-+				sub, err := nc.SubscribeSync("FOO.A")
-+				if err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
-+				}
-+				defer sub.Unsubscribe()
-+				if err := nc.FlushTimeout(time.Second); err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
-+				}
-+
-+				held := make([]*nats.Msg, 0, maxPending)
-+				for range maxPending {
-+					if _, err := js.PublishAsync("FOO.A", []byte("hello")); err != nil {
-+						t.Fatalf("Unexpected error: %v", err)
-+					}
-+					msg, err := sub.NextMsg(time.Second)
-+					if err != nil {
-+						t.Fatalf("Unexpected error: %v", err)
-+					}
-+					held = append(held, msg)
-+				}
-+
-+				const publishers = 16
-+				var wg sync.WaitGroup
-+				defer wg.Wait()
-+				started := make(chan struct{}, publishers)
-+				results := make(chan error, publishers)
-+				for range publishers {
-+					wg.Add(1)
-+					go func() {
-+						defer wg.Done()
-+						started <- struct{}{}
-+						_, err := js.PublishAsync("FOO.A", []byte("hello"), jetstream.WithStallWait(5*time.Second))
-+						results <- err
-+					}()
-+				}
-+				for range publishers {
-+					<-started
-+				}
-+
-+				// Nothing may be sent until a held publish frees capacity.
-+				if _, err := sub.NextMsg(100 * time.Millisecond); !errors.Is(err, nats.ErrTimeout) {
-+					t.Fatalf("Expected publishers to stall; got: %v", err)
-+				}
-+				if numPending := js.PublishAsyncPending(); numPending > maxPending {
-+					t.Fatalf("Expected at most %d pending messages; got: %d", maxPending, numPending)
-+				}
-+
-+				for _, msg := range held {
-+					if err := msg.Respond([]byte(`{"stream":"foo","seq":1}`)); err != nil {
-+						t.Fatalf("Unexpected error: %v", err)
-+					}
-+				}
-+
-+				// Freed capacity must release every stalled publisher before
-+				// its stall wait expires.
-+				for i := range publishers {
-+					msg, err := sub.NextMsg(2 * time.Second)
-+					if err != nil {
-+						t.Fatalf("Publisher %d did not recover after acks: %v", i, err)
-+					}
-+					if numPending := js.PublishAsyncPending(); numPending > maxPending {
-+						t.Fatalf("Expected at most %d pending messages; got: %d", maxPending, numPending)
-+					}
-+					if err := msg.Respond([]byte(`{"stream":"foo","seq":1}`)); err != nil {
-+						t.Fatalf("Unexpected error: %v", err)
-+					}
-+				}
-+				for range publishers {
-+					if err := <-results; err != nil {
-+						t.Fatalf("Unexpected error: %v", err)
-+					}
-+				}
 +			})
-+		})
-+	}
-+}
-+
- func TestPublishWithScheduleAt(t *testing.T) {
- 	withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
- 		ctx := newTesterCtx(t, 5*time.Second)
-```
-
----
-
-### Incident Patch 3: `5adc9d5d` (2026-09-25)
-**Commit Message**: [IMPROVED] Fix ordered consumer test exceeding 1000 consumers created (#2155)
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `test/js_internal_test.go` (modified, +4/-3)
-```diff
-@@ -454,9 +454,10 @@ func TestJetStreamOrderedConsumerSIDRace(t *testing.T) {
- 			t.Fatalf("Unexpected error: %v", err)
- 		}
- 		if _, err := js.AddStream(&nats.StreamConfig{
--			Name:     "SIDRACE",
--			Subjects: []string{"a"},
--			Storage:  nats.MemoryStorage,
-+			Name:         "SIDRACE",
-+			Subjects:     []string{"a"},
-+			Storage:      nats.MemoryStorage,
-+			MaxConsumers: 5000,
- 		}); err != nil {
- 			t.Fatalf("Unexpected error: %v", err)
- 		}
-```
-
----
-
-### Incident Patch 4: `16b1ac36` (2026-09-24)
-**Commit Message**: [FIXED] Panic in `micro` package from closed connection (#2154)
-
-* add failing test that panics
-
-* fix: don't add closed subscriptions to subs
-
-**File**: `micro/service.go` (modified, +2/-1)
-```diff
-@@ -678,7 +678,7 @@ func (s *service) addInternalHandler(nc *nats.Conn, verb Verb, kind, id, name st
- 		return err
- 	}
  
--	s.verbSubs[name], err = nc.Subscribe(subj, func(msg *nats.Msg) {
-+	sub, err := nc.Subscribe(subj, func(msg *nats.Msg) {
- 		handler(&request{msg: msg})
- 	})
- 	if err != nil {
-@@ -687,6 +687,7 @@ func (s *service) addInternalHandler(nc *nats.Conn, verb Verb, kind, id, name st
+ 			s.pending.msgCount = s.consumeOpts.MaxMessages
+ 			s.pending.byteCount = s.consumeOpts.MaxBytes
  		}
- 		return err
- 	}
-+	s.verbSubs[name] = sub
- 	return nil
- }
- 
-```
-
-**File**: `micro/test/service_test.go` (modified, +14/-0)
-```diff
-@@ -537,6 +537,20 @@ func TestAddService(t *testing.T) {
  	}
  }
  
-+func TestAddServiceClosedConnection(t *testing.T) {
-+	withServer(t, func(t *testing.T, nc *nats.Conn) {
-+		nc.Close()
-+
-+		_, err := micro.AddService(nc, micro.Config{
-+			Name:    "test_service",
-+			Version: "0.1.0",
-+		})
-+		if !errors.Is(err, nats.ErrConnectionClosed) {
-+			t.Fatalf("Expected %v; got: %v", nats.ErrConnectionClosed, err)
-+		}
-+	})
-+}
-+
- func TestErrHandlerSubjectMatch(t *testing.T) {
- 	tests := []struct {
- 		name             string
-```
-
----
-
-### Incident Patch 5: `203d8289` (2026-09-18)
-**Commit Message**: [FIXED] Panic in DecodeHeadersMsg on status tokens shorter than 3 characters (#2101)
-
-* [FIXED] Panic in DecodeHeadersMsg on status tokens shorter than 3 characters
-
-Signed-off-by: Nikitha Mohithe <[REDACTED_EMAIL]>
-Signed-off-by: Nikitha Mohithe <[REDACTED_EMAIL]>
-Signed-off-by: Nikitha Mohithe <[REDACTED_EMAIL]>
-
-* Fix test
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Nikitha Mohithe <[REDACTED_EMAIL]>
-Signed-off-by: Nikitha Mohithe <[REDACTED_EMAIL]>
-Signed-off-by: Nikitha Mohithe <[REDACTED_EMAIL]>
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-Co-authored-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +4/-1)
-```diff
-@@ -4518,7 +4518,10 @@ func DecodeHeadersMsg(data []byte) (Header, error) {
- 	if len(l) > hdrPreEnd {
- 		var description string
- 		status := strings.TrimSpace(l[hdrPreEnd:])
--		if len(status) != statusLen {
-+		if len(status) < statusLen {
-+			return nil, ErrBadHeaderMsg
-+		}
-+		if len(status) > statusLen {
- 			description = strings.TrimSpace(status[statusLen:])
- 			status = status[:statusLen]
- 		}
-```
-
-**File**: `nats_test.go` (modified, +3/-0)
-```diff
-@@ -1607,6 +1607,9 @@ func TestHeaderParser(t *testing.T) {
- 	shouldErr("NATS/1.0\r\n")
- 	shouldErr("NATS/1.0\r\nk1:v1")
- 	shouldErr("NATS/1.0\r\nk1:v1\r\n")
-+	shouldErr("NATS/1.0 5\r\n\r\n")
-+	shouldErr("NATS/1.0 41\r\n\r\n")
-+	shouldErr("NATS/1.0 \r\n\r\n")
- 
- 	// Check that we can do inline status and descriptions
- 	checkStatus := func(hdr string, status int, description string) {
-```
-
----
-
-### Incident Patch 6: `dc92fca7` (2026-09-18)
-**Commit Message**: [FIXED] Ordered consumer silently losing messages on slow consumer (#2137)
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `js.go` (modified, +122/-27)
-```diff
-@@ -1438,6 +1438,8 @@ type jsSub struct {
- 	dseq    uint64
- 	sseq    uint64
- 	ccreq   *createConsumerRequest
-+	// A reset waits for the buffer to drain, see tryResetOrderedConsumer.
-+	resetPending bool
- 
- 	// Heartbeats and Flow Control handling from push consumers.
- 	hbc    *time.Timer
-@@ -2158,31 +2160,113 @@ func (sub *Subscription) trackSequences(reply string) {
- 	sub.jsi.cmeta = reply
- }
- 
-+// orderedSeqs carries the sequences of a message that passed the ordering check
-+// but has not yet been handed off for delivery.
-+type orderedSeqs struct {
-+	dseq, sseq uint64
-+}
-+
- // Check to make sure messages are arriving in order.
--// Returns true if the sub had to be replaced. Will cause upper layers to return.
--// The caller has verified that sub.jsi != nil and that this is not a control message.
-+// Returns true when m is not the message the ordered consumer was expecting
-+// next. The tracker is not advanced here; the returned sequences are applied
-+// with commitOrderedMsg once m is queued for delivery.
- // Lock should be held.
--func (sub *Subscription) checkOrderedMsgs(m *Msg) bool {
-+func (sub *Subscription) checkOrderedMsgs(m *Msg) (bool, orderedSeqs) {
- 	// Ignore msgs with no reply like HBs and flow control, they are handled elsewhere.
- 	if m.Reply == _EMPTY_ {
--		return false
-+		return false, orderedSeqs{}
- 	}
- 
- 	// Normal message here.
- 	tokens, err := parser.GetMetadataFields(m.Reply)
- 	if err != nil {
--		return false
-+		return false, orderedSeqs{}
- 	}
- 	sseq, dseq := parser.ParseNum(tokens[parser.AckStreamSeqTokenPos]), parser.ParseNum(tokens[parser.AckConsumerSeqTokenPos])
- 
- 	jsi := sub.jsi
- 	if dseq != jsi.dseq {
--		sub.resetOrderedConsumer(jsi.sseq + 1)
--		return true
-+		return true, orderedSeqs{}
-+	}
-+	return false, orderedSeqs{dseq: dseq, sseq: sseq}
-+}
-+
-+// commitOrderedMsg advances the ordered consumer tracker for a message that has
-+// been queued for delivery. Pairs with checkOrderedMsgs.
-+// Lock should be held.
-+func (sub *Subscription) commitOrderedMsg(seqs orderedSeqs) {
-+	if seqs.dseq == 0 {
-+		return
-+	}
-+	sub.jsi.dseq, sub.jsi.sseq = seqs.dseq+1, seqs.sseq
-+}
-+
-+// jsMsgAction tells processMsg what to do with a message once the ordered
-+// consumer checks have run against it.
-+type jsMsgAction int
-+
-+const (
-+	jsMsgDeliver jsMsgAction = iota
-+	// Cannot be delivered. The caller's slow consumer path counts it and
-+	// releases the pending accounting reserved for it.
-+	jsMsgDrop
-+	// Out of order and fully handled. The caller only unlocks and returns.
-+	jsMsgDropGap
-+)
-+
-+// checkOrderedDelivery validates an ordered consumer message's place in the
-+// sequence and reports what processMsg should do with it.
-+//
-+// The caller has verified that sub.jsi != nil and that the consumer is ordered.
-+// Lock is held on entry and on return, but a reset releases and reacquires it
-+// to recreate the consumer.
-+func (sub *Subscription) checkOrderedDelivery(m *Msg) (jsMsgAction, orderedSeqs) {
-+	jsi := sub.jsi
-+	// Everything still arriving belongs to the consumer about to be replaced
-+	// and is refetched by the reset, which may have room by now.
-+	if jsi.resetPending {
-+		sub.tryResetOrderedConsumer()
-+		return jsMsgDrop, orderedSeqs{}
-+	}
-+	// A full channel would drop the message below anyway; checking first keeps
-+	// the drop from reading as a gap.
-+	if sub.mch != nil && cap(sub.mch) > 0 && len(sub.mch) == cap(sub.mch) {
-+		return jsMsgDrop, orderedSeqs{}
-+	}
-+
-+	gap, seqs := sub.checkOrderedMsgs(m)
-+	if !gap {
-+		return jsMsgDeliver, seqs
-+	}
-+
-+	// An unbuffered channel has no capacity signal. With nothing delivered
-+	// since the last reset, resetting again would just refetch into the same
-+	// wall, so leave it to the heartbeat. Once something has been delivered
-+	// the reader is there and a drop means it was merely busy, so reset at
-+	// once; deferring to the heartbeat here would drain a backlog one message
-+	// per interval.
-+	if sub.mch != nil && cap(sub.mch) == 0 && jsi.dseq == 1 {
-+		return jsMsgDrop, orderedSeqs{}
- 	}
--	// Update our tracking here.
--	jsi.dseq, jsi.sseq = dseq+1, sseq
--	return false
-+	sub.releaseReserved(m)
-+	sub.tryResetOrderedConsumer()
-+	return jsMsgDropGap, orderedSeqs{}
-+}
-+
-+// tryResetOrderedConsumer recreates the consumer after a gap, or defers that
-+// while more than half of the subscription's buffer is in use, so the refetch
-+// is not dropped into a buffer that is still nearly full. A deferred reset is
-+// retried as messages are delivered and as messages and heartbeats arrive.
-+// Lock should be held.
-+func (sub *Subscription) tryResetOrderedConsumer() {
-+	jsi := sub.jsi
-+	if (sub.pMsgsLimit > 0 && sub.pMsgs > sub.pMsgsLimit/2) ||
-+		(sub.pBytesLimit > 0 && sub.pBytes > sub.pBytesLimit/2) ||
-+		(sub.mch != nil && len(sub.mch) > cap(sub.mch)/2) {
-+		jsi.resetPending = true
-+		return
-+	}
-+	sub.resetOrderedConsumer(jsi.sseq + 1)
- }
- 
- // Update and replace sid. Returns the old and the new sid. Returns ok == false,
-@@ -2222,6 +2306,7 @@ func (sub *S
-```
-
-**File**: `nats.go` (modified, +41/-9)
-```diff
-@@ -3756,6 +3756,9 @@ func (nc *Conn) waitForMsgs(s *Subscription) {
- 			s.pMsgs--
- 			s.pBytes -= msgLen
- 			msgLen = -1
-+			if s.jsi != nil && s.jsi.resetPending {
-+				s.tryResetOrderedConsumer()
-+			}
- 		}
- 
- 		if s.pHead == nil && !s.closed {
-@@ -3880,6 +3883,7 @@ func (nc *Conn) processMsg(data []byte) {
- 	var ctrlMsg bool
- 	var ctrlType int
- 	var fcReply string
-+	var ordSeqs orderedSeqs
- 
- 	if nc.ps.ma.hdr > 0 {
- 		hbuf := msgPayload[:nc.ps.ma.hdr]
-@@ -3935,11 +3939,6 @@ func (nc *Conn) processMsg(data []byte) {
- 				fcReply = m.Header.Get(consumerStalledHdr)
- 			}
- 		}
--		// Check for ordered consumer here. If checkOrderedMsgs returns true that means it detected a gap.
--		if !ctrlMsg && jsi.ordered && sub.checkOrderedMsgs(m) {
--			sub.mu.Unlock()
--			return
--		}
- 	}
- 
- 	// Skip processing if this is a control message and
-@@ -3967,6 +3966,20 @@ func (nc *Conn) processMsg(data []byte) {
- 			chanSubCheckFC = true
- 		}
- 
-+		// Must run here, between the reservation above and the delivery below.
-+		// See checkOrderedDelivery.
-+		if jsi != nil && jsi.ordered {
-+			var action jsMsgAction
-+			action, ordSeqs = sub.checkOrderedDelivery(m)
-+			switch action {
-+			case jsMsgDrop:
-+				goto slowConsumer
-+			case jsMsgDropGap:
-+				sub.mu.Unlock()
-+				return
-+			}
-+		}
-+
- 		// We have two modes of delivery. One is the channel, used by channel
- 		// subscribers and syncSubscribers, the other is a linked list for async.
- 		if sub.mch != nil {
-@@ -3993,6 +4006,7 @@ func (nc *Conn) processMsg(data []byte) {
- 			}
- 		}
- 		if jsi != nil {
-+			sub.commitOrderedMsg(ordSeqs)
- 			// Store the ACK metadata from the message to
- 			// compare later on with the received heartbeat.
- 			sub.trackSequences(m.Reply)
-@@ -4051,14 +4065,19 @@ func (nc *Conn) processMsg(data []byte) {
- 	return
- 
- slowConsumer:
-+	// ordSeqs is deliberately not committed here: leaving the tracker behind is
-+	// what makes the next message register as a gap and get refetched.
-+	// Except for the consumer's first message: with nothing delivered yet the
-+	// tracker has no position, and a reset would resume from the start of the
-+	// stream rather than from where the consumer was told to start.
-+	if jsi != nil && jsi.ordered && jsi.sseq == 0 && ordSeqs.dseq == 1 {
-+		jsi.sseq = ordSeqs.sseq - 1
-+	}
- 	sub.dropped++
- 	sc := !sub.sc
- 	sub.sc = true
- 	// Undo stats from above
--	if sub.typ != ChanSubscription {
--		sub.pMsgs--
--		sub.pBytes -= len(m.Data)
--	}
-+	sub.releaseReserved(m)
- 	if sc {
- 		sub.changeSubStatus(SubscriptionSlowConsumer)
- 		sub.mu.Unlock()
-@@ -4076,6 +4095,16 @@ slowConsumer:
- 	}
- }
- 
-+// releaseReserved undoes the pending accounting reserved for m earlier in
-+// processMsg. pMsgsMax/pBytesMax are deliberately left alone: they are
-+// high-water marks of what was reserved. Lock must be held.
-+func (sub *Subscription) releaseReserved(m *Msg) {
-+	if sub.typ != ChanSubscription {
-+		sub.pMsgs--
-+		sub.pBytes -= len(m.Data)
-+	}
-+}
-+
- var (
- 	permissionsRe      = regexp.MustCompile(`Subscription to "(\S+)"`)
- 	permissionsQueueRe = regexp.MustCompile(`using queue "(\S+)"`)
-@@ -5737,6 +5766,9 @@ func (s *Subscription) processNextMsgDelivered(msg *Msg) error {
- 		s.pMsgs--
- 		s.pBytes -= len(msg.Data)
- 	}
-+	if s.jsi != nil && s.jsi.resetPending {
-+		s.tryResetOrderedConsumer()
-+	}
- 	s.mu.Unlock()
- 
- 	if fcReply != _EMPTY_ {
-```
-
-**File**: `test/js_internal_test.go` (modified, +1/-1)
-```diff
-@@ -446,7 +446,7 @@ func TestJetStreamFlowControlStalled(t *testing.T) {
- 
- // Ordered consumer resets run from the connection read loop and swap the
- // subscription's sid. This exercises that against concurrent unsubscribes,
--// which is where the sid was previously read under a different lock.
-+// which read the same field.
- func TestJetStreamOrderedConsumerSIDRace(t *testing.T) {
- 	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
- 		js, err := nc.JetStream(nats.MaxWait(10 * time.Second))
-```
-
-**File**: `test/js_test.go` (modified, +426/-0)
-```diff
-@@ -10167,3 +10167,429 @@ func TestJetStreamSubscribeContextCancel(t *testing.T) {
- 		})
- 	})
- }
-+
-+// oscStream dials inst and creates the stream the ordered consumer tests use.
-+func oscStream(t *testing.T, inst *testservice.Instance, opts ...nats.Option) (*nats.Conn, nats.JetStreamContext) {
-+	t.Helper()
-+	nc := dialInstance(t, inst, opts...)
-+	t.Cleanup(nc.Close)
-+	js, err := nc.JetStream(nats.MaxWait(10 * time.Second))
-+	if err != nil {
-+		t.Fatalf("Unexpected error: %v", err)
-+	}
-+	if _, err := js.AddStream(&nats.StreamConfig{Name: "OSC", Subjects: []string{"osc.>"}}); err != nil {
-+		t.Fatalf("Error adding stream: %v", err)
-+	}
-+	return nc, js
-+}
-+
-+// countConsumerCreates watches consumer-create traffic from a separate connection.
-+func countConsumerCreates(t *testing.T, inst *testservice.Instance) *atomic.Int64 {
-+	t.Helper()
-+	mon := dialInstance(t, inst)
-+	t.Cleanup(mon.Close)
-+	creates := &atomic.Int64{}
-+	if _, err := mon.Subscribe("$JS.API.CONSUMER.CREATE.>", func(*nats.Msg) {
-+		creates.Add(1)
-+	}); err != nil {
-+		t.Fatalf("Error subscribing monitor: %v", err)
-+	}
-+	if err := mon.Flush(); err != nil {
-+		t.Fatalf("Error flushing monitor: %v", err)
-+	}
-+	return creates
-+}
-+
-+// publishOSC publishes n messages to the stream and waits for the acks.
-+func publishOSC(t *testing.T, js nats.JetStreamContext, n int) {
-+	t.Helper()
-+	publishOSCSized(t, js, n, 1)
-+}
-+
-+func publishOSCSized(t *testing.T, js nats.JetStreamContext, n, size int) {
-+	t.Helper()
-+	payload := make([]byte, size)
-+	for range n {
-+		if _, err := js.PublishAsync("osc.a", payload); err != nil {
-+			t.Fatalf("Error publishing: %v", err)
-+		}
-+	}
++// requestNext queues req for pullMessages, giving up once the
++// subscription is done.
++func (s *pullSubscription) requestNext(req *pullRequest) {
 +	select {
-+	case <-js.PublishAsyncComplete():
-+	case <-time.After(30 * time.Second):
-+		t.Fatalf("Timed out waiting for publishes to complete")
++	case s.fetchNext <- req:
++	case <-s.done:
 +	}
 +}
 +
-+// seqRecorder records delivered stream sequences in arrival order.
-+type seqRecorder struct {
-+	mu       sync.Mutex
-+	order    []uint64
-+	metaErrs []error
-+}
-+
-+func (r *seqRecorder) add(m *nats.Msg) {
-+	meta, err := m.Metadata()
-+	r.mu.Lock()
-+	defer r.mu.Unlock()
-+	if err != nil {
-+		r.metaErrs = append(r.metaErrs, err)
-+		return
-+	}
-+	r.order = append(r.order, meta.Sequence.Stream)
-+}
-+
-+func (r *seqRecorder) count() int {
-+	r.mu.Lock()
-+	defer r.mu.Unlock()
-+	return len(r.order)
-+}
-+
-+// waitFor fails unless at least want messages arrive within timeout.
-+func (r *seqRecorder) waitFor(t *testing.T, want int, timeout time.Duration) {
-+	t.Helper()
-+	checkFor(t, timeout, 10*time.Millisecond, func() error {
-+		if n := r.count(); n < want {
-+			return fmt.Errorf("only %d of %d messages delivered", n, want)
+ // Messages returns MessagesContext, allowing continuously iterating
+ // over messages on a stream. Messages cannot be used concurrently
+ // when using ordered consumer.
+```
+
+**File**: `jetstream/test/pull_test.go` (modified, +105/-0)
+```diff
+@@ -3430,6 +3430,111 @@ func TestConsumeErrHandlerNoDeadlock(t *testing.T) {
+ 	})
+ }
+ 
++func TestPullConsumerDrainWithBufferedMessages(t *testing.T) {
++	// While draining, messages already buffered on the client are still
++	// delivered, and with a threshold just below max messages every second
++	// one queues the next pull request. Nothing reads those requests any
++	// more, which must not block the handler or Next.
++	const numMsgs = 10
++	setup := func(t *testing.T, js jetstream.JetStream) jetstream.Consumer {
++		t.Helper()
++		ctx := newTesterCtx(t, 5*time.Second)
++		s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++		if err != nil {
++			t.Fatalf("Unexpected error: %v", err)
 +		}
-+		return nil
++		c, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{AckPolicy: jetstream.AckExplicitPolicy})
++		if err != nil {
++			t.Fatalf("Unexpected error: %v", err)
++		}
++		for i := 0; i < numMsgs; i++ {
++			if _, err := js.Publish(ctx, "FOO.A", []byte("msg")); err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++		}
++		return c
++	}
++
++	t.Run("consume", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
++			c := setup(t, js)
++
++			firstMsg := make(chan struct{})
++			drained := make(chan struct{})
++			var received atomic.Int32
++			cc, err := c.Consume(func(msg jetstream.Msg) {
++				if received.Add(1) == 1 {
++					close(firstMsg)
++					<-drained
++				}
++			}, jetstream.PullMaxMessages(numMsgs), jetstream.PullThresholdMessages(numMsgs-1))
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++
++			<-firstMsg
++			// let the rest of the batch reach the client
++			time.Sleep(100 * time.Millisecond)
++			cc.Drain()
++			close(drained)
++
++			closed := make(chan struct{})
++			go func() {
++				<-cc.Closed()
++				close(closed)
++			}()
++			select {
++			case <-closed:
++			case <-time.After(5 * time.Second):
++				t.Fatalf("Consume did not finish draining; received %d messages", received.Load())
++			}
++			if got := received.Load(); got != numMsgs {
++				t.Fatalf("Expected %d messages delivered while draining; got: %d", numMsgs, got)
++			}
++		})
++	})
++
++	t.Run("messages", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
++			c := setup(t, js)
++
++			it, err := c.Messages(jetstream.PullMaxMessages(numMsgs), jetstream.PullThresholdMessages(numMsgs-1))
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			if _, err := it.Next(); err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			// let the rest of the batch reach the client
++			time.Sleep(100 * time.Millisecond)
++			it.Drain()
++
++			received := 1
++			done := make(chan error, 1)
++			go func() {
++				for {
++					if _, err := it.Next(); err != nil {
++						done <- err
++						return
++					}
++					received++
++				}
++			}()
++			select {
++			case err := <-done:
++				if !errors.Is(err, jetstream.ErrMsgIteratorClosed) {
++					t.Fatalf("Expected error: %v; got: %v", jetstream.ErrMsgIteratorClosed, err)
++				}
++				if received != numMsgs {
++					t.Fatalf("Expected %d messages delivered while draining; got: %d", numMsgs, received)
++				}
++			case <-time.After(5 * time.Second):
++				t.Fatal("Next blocked while draining")
++			}
++		})
 +	})
 +}
 +
-+// readChan drains ch into the recorder until the test ends.
-+func (r *seqRecorder) readChan(t *testing.T, ch <-chan *nats.Msg) {
-+	stop := make(chan struct{})
-+	t.Cleanup(func() { close(stop) })
-+	go func() {
-+		for {
-+			select {
-+			case <-stop:
-+				return
-+			case m := <-ch:
-+				r.add(m)
-+			}
-+		}
-+	}()
-+}
-+
-+// verifyComplete asserts the whole stream arrived, in order and exactly once.
-+func (r *seqRecorder) verifyComplete(t *testing.T, want int) {
-+	t.Helper()
-+	r.mu.Lock()
-+	defer r.mu.Unlock()
-+	if len(r.metaErrs) != 0 {
-+		t.Fatalf("Got %d metadata errors, first: %v", len(r.metaErrs), r.metaErrs[0])
-+	}
-+	if len(r.order) != want {
-+		t.Fatalf("Expected %d messages, got %d", want, len(r.order))
-+	}
-+	for i, sseq := range r.order {
-+		if sseq != uint64(i+1) {
-+			t.Fatalf("Message %d out of order: expected stream seq %d, got %d", i, i+1, sseq)
-+		}
-+	}
-+}
-+
-+// waitForDrops fails unless the subscription actually enters slow consumer.
-+func waitForDrops(t *testing.T, sub *nats.Subscription) {
-+	t.Helper()
-+	checkFor(t, 10*time.Second, 10*time.Millisecond, func() error {
-+		if dropped, _ := sub.Dropped(); dropped == 0 {
-+			return fmt.Errorf("no messages dropped yet")
-+		}
-+		return nil
-+	})
-+}
-+
-+// Messages dropped as slow consumer must be refetched before anything newer,
-+// and a reset must wait until the reader has made room for the refetch.
-+func TestJetStreamOrderedConsumerSlowConsumer(t *testing.T) {
-+	const (
-+		total    = 200
-+		buffered = 32
-+		msgSize  = 8 * 1024
-+		// Short, so that recovery through a heartbeat does not take long.
-+		hb = 500 * time.Millisecond
-+	)
-+
-+	type nextFunc func(time.Duration) (*nats.Msg, error)
-+	readChan := func(ch chan *nats.Msg) nextFunc {
-+		return func(d time.Duration) (*nats.Msg, error) {
-+			select {
-+			case m := <-ch:
-+				return m, nil
-+			case <-time.After(d):
-+				return nil, nats.ErrTimeout
-+			}
-+		}
-+	}
-+
-+	// Each holds exactly `buffered` messages before dropping.
-+	subs := []struct {
-+		name      string
-+		subscribe func(t *testing.T, js nats.JetStreamContext) (*nats.Subscription, nextFunc)
-+	}{
-+		{"Subscribe", func(t *testing.T, js nats.JetStreamContext) (*nats.Subscription, nextFunc) {
-+			// The callback hands each message to the reader, so the pending
-+			// queue holds whatever the reader has not taken yet.
-+			ch := make(chan *nats.Msg)
+ func TestPullConsumerMaxReconnectsExceeded(t *testing.T) {
+ 	t.Run("messages", func(t *testing.T) {
+ 		c := newTester(t)
 ```
 
 ---
 
-### Incident Patch 7: `e95c424b` (2026-09-16)
-**Commit Message**: [FIXED] Flaky cluster restart tests: waitForStream must see a stream leader (#2141)
+### Incident Patch 2: `db667e2f` (2026-10-08)
+**Commit Message**: [FIXED] Ordered consumer StopAfter deadlock and miscount on reset (#2167)
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+An ordered consumer with StopAfter misbehaved whenever it reset its
+inner pull subscription:
 
-**File**: `jetstream/test/testservice_helper_test.go` (modified, +12/-5)
+- Messages: after a reset on a sequence mismatch, Stop or Drain on the
+  iterator, or the next reset, blocked forever while holding the
+  ordered consumer's lock.
+- Messages: after a reset on a missed heartbeat or a reconnect, the
+  iterator delivered more than StopAfter messages.
+- Consume: a reset on a sequence mismatch delivered fewer than
+  StopAfter messages.
+- Consume: calling Stop or Drain after the consume had stopped itself on
+  reaching StopAfter panicked with "close of closed channel".
+
+The ordered consumer learned how many messages were left from a single
+channel (buffer 1) that it shared between all of its inner pull
+subscriptions: each inner Stop or Drain sent StopAfter minus its own
+delivered count to it, or closed it once the limit was reached. The
+Messages error path read that channel without blocking before the inner
+subscription was stopped, so it always found it empty, kept the
+original limit for the next subscription, and left the value that the
+reset's Stop then sent in the channel. The sequenc
+
+**File**: `jetstream/ordered.go` (modified, +73/-95)
 ```diff
-@@ -15,6 +15,7 @@ package test
- 
- import (
+@@ -17,6 +17,7 @@ import (
  	"context"
-+	"errors"
+ 	"errors"
  	"fmt"
- 	"net/url"
- 	"os"
-@@ -135,9 +136,11 @@ func withJSCluster(t *testing.T, size int, fn func(*testing.T, *nats.Conn, jetst
- 	fn(t, nc, js, inst)
- }
- 
--// waitForStream blocks until the stream is queryable again. StartServer
--// returns on ack, not on readiness, so a publish issued right after a restart
--// can race JetStream recovery.
-+// waitForStream blocks until the stream is queryable and has a leader.
-+// StartServer returns on ack, not on readiness, so a publish issued right
-+// after a restart can race JetStream recovery. A bare lookup is not enough:
-+// a replica of a group that has been leaderless for a while answers
-+// STREAM.INFO itself, and only the leader subscribes to the stream subjects.
- func waitForStream(t *testing.T, js jetstream.JetStream, name string) {
- 	t.Helper()
- 	// Per-attempt timeout so one slow lookup cannot eat the whole budget:
-@@ -146,10 +149,14 @@ func waitForStream(t *testing.T, js jetstream.JetStream, name string) {
- 	var err error
- 	for time.Now().Before(deadline) {
- 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
--		_, err = js.Stream(ctx, name)
-+		var s jetstream.Stream
-+		s, err = js.Stream(ctx, name)
- 		cancel()
- 		if err == nil {
--			return
-+			if ci := s.CachedInfo().Cluster; ci == nil || ci.Leader != "" {
++	"slices"
+ 	"strconv"
+ 	"strings"
+ 	"sync"
+@@ -40,9 +41,8 @@ type (
+ 		doReset           chan struct{}
+ 		resetInProgress   atomic.Uint32
+ 		userErrHandler    ConsumeErrHandler
+-		stopAfter         int
+-		stopAfterMsgsLeft chan int
+-		withStopAfter     bool
++		stopAfter         int // StopAfter of Consume or Messages, 0 if not set
++		deliveredMessages int // messages handed to the caller, across resets
+ 		runningFetch      *fetchResult
+ 		subscription      *orderedSubscription
+ 		sync.Mutex
+@@ -99,15 +99,17 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
+ 		return nil, fmt.Errorf("%w: %s", ErrInvalidOption, err)
+ 	}
+ 	c.userErrHandler = consumeOpts.ErrHandler
+-	opts = append(opts, consumeReconnectNotify(),
+-		ConsumeErrHandler(c.errHandler(c.serial)))
+-	if consumeOpts.StopAfter > 0 {
+-		c.withStopAfter = true
+-		c.stopAfter = consumeOpts.StopAfter
+-	}
+-	c.stopAfterMsgsLeft = make(chan int, 1)
+-	if c.stopAfter > 0 {
+-		opts = append(opts, consumeStopAfterNotify(c.stopAfter, c.stopAfterMsgsLeft))
++	c.stopAfter = max(consumeOpts.StopAfter, 0)
++	c.deliveredMessages = 0
++	opts = append(opts, consumeReconnectNotify())
++	// innerOpts returns the options for the inner pull subscription of the
++	// current serial. Lock should be held when calling it.
++	innerOpts := func() []PullConsumeOpt {
++		o := append(slices.Clip(opts), ConsumeErrHandler(c.errHandler(c.serial)))
++		if c.stopAfter > 0 {
++			o = append(o, StopAfter(c.stopAfter-c.deliveredMessages))
++		}
++		return o
+ 	}
+ 	sub := &orderedSubscription{
+ 		consumer: c,
+@@ -135,14 +137,23 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
+ 				c.errHandler(serial)(sub, errOrderedSequenceMismatch)
+ 				return
+ 			}
++			if c.stopAfter > 0 && c.deliveredMessages >= c.stopAfter {
++				c.Unlock()
 +				return
 +			}
-+			err = errors.New("stream has no leader")
- 		}
- 		time.Sleep(100 * time.Millisecond)
- 	}
-```
-
----
-
-### Incident Patch 8: `daf8f1c2` (2026-09-15)
-**Commit Message**: [IMPROVED] Fix list consumers test to work agains latest server (#2138)
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `jetstream/test/stream_test.go` (modified, +6/-1)
-```diff
-@@ -1177,6 +1177,11 @@ func TestListConsumers(t *testing.T) {
- 			consumersNum: 500,
- 			timeout:      5 * time.Second,
- 		},
-+		{
-+			name:         "list consumers multiple pages",
-+			consumersNum: 1025,
-+			timeout:      5 * time.Second,
-+		},
- 		{
- 			name:         "with empty context",
- 			consumersNum: 500,
-@@ -1196,7 +1201,7 @@ func TestListConsumers(t *testing.T) {
- 	for _, test := range tests {
- 		t.Run(test.name, func(t *testing.T) {
- 			withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
--				s, err := js.CreateStream(context.Background(), jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+				s, err := js.CreateStream(context.Background(), jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}, MaxConsumers: 2000})
- 				if err != nil {
- 					t.Fatalf("Unexpected error: %v", err)
- 				}
-```
-
-**File**: `test/js_test.go` (modified, +1/-1)
-```diff
-@@ -4509,7 +4509,7 @@ func TestConsumersLister(t *testing.T) {
- 				if err != nil {
- 					t.Fatalf("Unexpected error: %v", err)
- 				}
--				js.AddStream(&nats.StreamConfig{Name: "foo"})
-+				js.AddStream(&nats.StreamConfig{Name: "foo", MaxConsumers: 2000})
- 				for i := range test.consumersNum {
- 					if _, err := js.AddConsumer("foo", &nats.ConsumerConfig{Durable: fmt.Sprintf("cons_%d", i), AckPolicy: nats.AckExplicitPolicy}); err != nil {
- 						t.Fatalf("Unexpected error: %v", err)
-```
-
----
-
-### Incident Patch 9: `4b406b6e` (2026-09-09)
-**Commit Message**: [FIXED] Ordered consumer reset resurrecting a removed subscription (#2133)
-
-Signed-off-by: Tomasz Pietrek <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `js.go` (modified, +56/-12)
-```diff
-@@ -2184,14 +2184,23 @@ func (sub *Subscription) checkOrderedMsgs(m *Msg) bool {
- 	return false
- }
- 
--// Update and replace sid. Returns the old and the new sid.
-+// Update and replace sid. Returns the old and the new sid. Returns ok == false,
-+// leaving everything untouched, if the subscription is no longer registered on
-+// the connection.
- // Lock should be held on entry but will be unlocked to prevent lock inversion.
--func (sub *Subscription) applyNewSID() (osid, nsid int64) {
-+func (sub *Subscription) applyNewSID() (osid, nsid int64, ok bool) {
- 	nc := sub.conn
- 	sub.mu.Unlock()
- 
- 	nc.subsMu.Lock()
- 	osid = sub.sid
-+	// removeSub or close() may have run while sub.mu was released;
-+	// re-registering would resurrect the sub or write to a nil nc.subs.
-+	if nc.subs[osid] != sub {
-+		nc.subsMu.Unlock()
-+		sub.mu.Lock()
-+		return osid, 0, false
-+	}
- 	delete(nc.subs, osid)
- 	// Place new one.
- 	nc.ssid++
-@@ -2201,15 +2210,15 @@ func (sub *Subscription) applyNewSID() (osid, nsid int64) {
- 	nc.subsMu.Unlock()
- 
- 	sub.mu.Lock()
--	return osid, nsid
-+	return osid, nsid, true
- }
- 
- // We are here if we have detected a gap with an ordered consumer.
- // We will create a new consumer and rewire the low level subscription.
- // Lock should be held.
- func (sub *Subscription) resetOrderedConsumer(sseq uint64) {
- 	nc := sub.conn
--	if sub.jsi == nil || nc == nil || sub.closed {
-+	if sub.jsi == nil || nc == nil || sub.closed || sub.draining {
- 		return
- 	}
- 
-@@ -2239,7 +2248,10 @@ func (sub *Subscription) resetOrderedConsumer(sseq uint64) {
- 	}
- 
- 	// Quick unsubscribe. Since we know this is a simple push subscriber we do in place.
--	osid, nsid := sub.applyNewSID()
-+	osid, nsid, ok := sub.applyNewSID()
-+	if !ok {
-+		return
-+	}
- 
- 	// Grab new inbox.
- 	newDeliver := nc.NewInbox()
-@@ -2251,14 +2263,9 @@ func (sub *Subscription) resetOrderedConsumer(sseq uint64) {
- 		// Unsubscribe and subscribe with new inbox and sid.
- 		// Remap a new low level sub into this sub since its client accessible.
- 		// This is done here in this go routine to prevent lock inversion.
--		nc.mu.Lock()
--		nc.bw.appendString(fmt.Sprintf(unsubProto, osid, _EMPTY_))
--		nc.bw.appendString(fmt.Sprintf(subProto, newDeliver, _EMPTY_, nsid))
--		if maxStr != _EMPTY_ {
--			nc.bw.appendString(fmt.Sprintf(unsubProto, nsid, maxStr))
-+		if !nc.rewireOrderedSub(sub, osid, nsid, newDeliver, maxStr) {
-+			return
- 		}
--		nc.kickFlusher()
--		nc.mu.Unlock()
- 
- 		pushErr := func(err error) {
- 			nc.handleConsumerSequenceMismatch(sub, fmt.Errorf("%w: recreating ordered consumer", err))
-@@ -2324,11 +2331,48 @@ func (sub *Subscription) resetOrderedConsumer(sseq uint64) {
- 		}
- 
- 		sub.mu.Lock()
-+		if sub.closed || sub.draining {
-+			// Unsubscribed or drained while the consumer was being created.
-+			// The consumer is not attached to anything anymore, so delete it
-+			// rather than waiting for the inactivity threshold.
-+			sub.mu.Unlock()
-+			go js.DeleteConsumer(jsi.stream, cinfo.Name)
-+			return
-+		}
- 		jsi.consumer = cinfo.Name
- 		sub.mu.Unlock()
- 	}()
- }
- 
-+// rewireOrderedSub moves the subscription from osid to nsid on the server.
-+// The old sid is always unsubscribed; the new one is only subscribed if the
-+// subscription is still registered and not draining, so that no interest is
-+// created for a subscription that will not accept messages anymore. Returns
-+// whether that happened. unsubscribe runs under nc.mu too, so the check is
-+// exact.
-+func (nc *Conn) rewireOrderedSub(sub *Subscription, osid, nsid int64, deliver, maxStr string) bool {
-+	nc.mu.Lock()
-+	defer nc.mu.Unlock()
-+
-+	nc.bw.appendString(fmt.Sprintf(unsubProto, osid, _EMPTY_))
-+	nc.subsMu.RLock()
-+	sub.mu.Lock()
-+	// A draining subscription is only removed from nc.subs once the drain
-+	// completes, and that removal sends no UNSUB, so subscribing the new sid
-+	// here would leave interest on the server for the life of the connection.
-+	registered := nc.subs[nsid] == sub && !sub.draining
-+	sub.mu.Unlock()
-+	nc.subsMu.RUnlock()
-+	if registered {
-+		nc.bw.appendString(fmt.Sprintf(subProto, deliver, _EMPTY_, nsid))
-+		if maxStr != _EMPTY_ {
-+			nc.bw.appendString(fmt.Sprintf(unsubProto, nsid, maxStr))
-+		}
-+	}
-+	nc.kickFlusher()
-+	return registered
-+}
-+
- // For jetstream subscriptions, returns the number of delivered messages.
- // For ChanSubscription, this value is computed based on the known number
- // of messages added to the channel minus the current size of that channel.
-```
-
-**File**: `js_test.go` (modified, +125/-1)
-```diff
-@@ -1,4 +1,4 @@
--// Copyright 2012-2023 The NATS Authors
-+// Copyright 2012-2026 The NATS Authors
- // Licensed under the Apache License, Version 2.0 (the "License");
- // you may not use this file except in compliance with the License.
- // You may obtain a copy of the License at
-@@ -19,6 +19,7 @@ package nats
- 
- import (
- 	"errors"
-+	"fmt"
- 	"strings"
- 	"testing"
- )
-@@ -131,3 +132,126 @@ func TestJetStreamConvertDirectMsgResponseToMsg(t *testing.T) {
- 		t.Fatalf("Wrong header: %v", r.Header)
- 	}
- }
-+
-+func TestApplyNewSIDUnregisteredSub(t *testing.T) {
-+	newConn := func() (*Conn, *Subscription) {
-+		nc := &Conn{subs: make(map[int64]*Subscription)}
-+		sub := &Subscription{conn: nc}
-+		nc.ssid++
-+		sub.sid = nc.ssid
-+		nc.subs[sub.sid] = sub
-+		return nc, sub
-+	}
-+
-+	t.Run("registered sub is re-keyed", func(t *testing.T) {
-+		nc, sub := newConn()
-+		sub.mu.Lock()
-+		osid, nsid, ok := sub.applyNewSID()
-+		sub.mu.Unlock()
-+		if !ok {
-+			t.Fatal("expected the sid swap to succeed for a registered sub")
-+		}
-+		if osid != 1 || nsid != 2 {
-+			t.Fatalf("expected sids 1 -> 2, got %d -> %d", osid, nsid)
-+		}
-+		if sub.sid != nsid || nc.subs[nsid] != sub || len(nc.subs) != 1 {
-+			t.Fatalf("sub not registered under the new sid only: sid=%d subs=%v", sub.sid, nc.subs)
-+		}
-+	})
-+
-+	t.Run("removed sub is not re-registered", func(t *testing.T) {
-+		// Simulates removeSub winning the race: the sub was unsubscribed
-+		// while applyNewSID had released sub.mu.
-+		nc, sub := newConn()
-+		delete(nc.subs, sub.sid)
-+		sub.mu.Lock()
-+		_, _, ok := sub.applyNewSID()
-+		sub.mu.Unlock()
-+		if ok {
-+			t.Fatal("expected the sid swap to be refused for an unregistered sub")
-+		}
-+		if len(nc.subs) != 0 {
-+			t.Fatalf("unsubscribed sub was resurrected in the subs map: %v", nc.subs)
-+		}
-+		if sub.sid != 1 {
-+			t.Fatalf("sid of an unregistered sub should be untouched, got %d", sub.sid)
-+		}
-+	})
-+
-+	t.Run("closed connection does not panic", func(t *testing.T) {
-+		// close() sets nc.subs to nil, and writing to a nil map panics.
-+		nc, sub := newConn()
-+		nc.subs = nil
-+		sub.mu.Lock()
-+		_, _, ok := sub.applyNewSID()
-+		sub.mu.Unlock()
-+		if ok {
-+			t.Fatal("expected the sid swap to be refused on a closed connection")
-+		}
-+	})
-+}
-+
-+func TestRewireOrderedSub(t *testing.T) {
-+	const osid, nsid, deliver, maxStr = 1, 2, "_INBOX.new", "5"
-+	newConn := func() (*Conn, *Subscription) {
-+		// A writer with a large limit never flushes, so the protocol lines
-+		// stay in bufs for inspection.
-+		nc := &Conn{subs: make(map[int64]*Subscription), bw: &natsWriter{limit: 1 << 20}}
-+		sub := &Subscription{conn: nc, sid: nsid}
-+		nc.ssid = nsid
-+		nc.subs[nsid] = sub
-+		return nc, sub
-+	}
-+	unsubOld := fmt.Sprintf(unsubProto, osid, _EMPTY_)
-+	subNew := fmt.Sprintf(subProto, deliver, _EMPTY_, nsid)
-+	unsubMax := fmt.Sprintf(unsubProto, nsid, maxStr)
-+
-+	t.Run("registered sub is moved to the new sid", func(t *testing.T) {
-+		nc, sub := newConn()
-+		if !nc.rewireOrderedSub(sub, osid, nsid, deliver, maxStr) {
-+			t.Fatal("expected the rewire to proceed for a registered sub")
-+		}
-+		if got, want := string(nc.bw.bufs), unsubOld+subNew+unsubMax; got != want {
-+			t.Fatalf("unexpected protocol:\n got %q\nwant %q", got, want)
-+		}
-+	})
-+
-+	t.Run("removed sub only gets the old sid unsubscribed", func(t *testing.T) {
-+		// Simulates Unsubscribe landing between applyNewSID and the
-+		// goroutine that sends the protocol: it removed the sub under the
-+		// new sid, so no interest (nor consumer) must be created for it.
-+		nc, sub := newConn()
-+		delete(nc.subs, nsid)
-+		if nc.rewireOrderedSub(sub, osid, nsid, deliver, maxStr) {
-+			t.Fatal("expected the rewire to be refused for an unregistered sub")
-+		}
-+		if got, want := string(nc.bw.bufs), unsubOld; got != want {
-+			t.Fatalf("unexpected protocol:\n got %q\nwant %q", got, want)
-+		}
-+	})
-+
-+	t.Run("draining sub only gets the old sid unsubscribed", func(t *testing.T) {
-+		// A draining sub stays in nc.subs until the drain completes, and it
-+		// is then removed without an UNSUB, so subscribing the new sid would
-+		// leave interest on the server for the life of the connection.
-+		nc, sub := newConn()
-+		sub.draining = true
-+		if nc.rewireOrderedSub(sub, osid, nsid, deliver, maxStr) {
-+			t.Fatal("expected the rewire to be refused for a draining sub")
-+		}
-+		if got, want := string(nc.bw.bufs), unsubOld; got != want {
-+			t.Fatalf("unexpected protocol:\n got %q\nwant %q", got, want)
-+		}
-+	})
-+
-+	t.Run("closed connection only gets the old sid unsubscribed", func(t *testing.T) {
-+		nc, sub := newConn()
-+		nc.subs = nil
-+		if nc.rewireOrderedSub(sub, osid, nsid, deliver, maxStr) {
-+			t.Fatal("expected the rewire to be refused on a closed connection")
-+		}
-+		if got, want := string(nc.bw.bufs), unsubOld; got != want {
-+			t.Fatalf("unexpected protocol:\n got %q\nwant %q", got, want)
-+		}
-+	})
-+}
-```
-
-**File**: `test/js_internal_test.go` (modified, +9/-0)
-```diff
-@@ -483,6 +483,12 @@ func TestJetStreamOrderedConsumerSIDRace(t *testing.T) {
- 		})
- 		defer nc.RemoveMsgFilter("a")
- 
-+		// Everything created below is torn down again, so the number of
-+		// low level subscriptions must come back to this after every round:
-+		// a reset racing with Unsubscribe used to re-register the removed
-+		// subscription under a new sid.
-+		baseSubs := nc.NumSubscriptions()
-+
- 		const rounds, subsPerRound = 15, 12
- 		for range rounds {
- 			subs := make([]*nats.Subscription, 0, subsPerRound)
-@@ -506,6 +512,9 @@ func TestJetStreamOrderedConsumerSIDRace(t *testing.T) {
- 				}()
- 			}
- 			wg.Wait()
-+			if n := nc.NumSubscriptions(); n != baseSubs {
-+				t.Fatalf("Expected %d subscriptions after unsubscribing, got %d", baseSubs, n)
+ 			c.cursor.deliverSeq = dseq
+ 			c.cursor.streamSeq = meta.Sequence.Stream
++			c.deliveredMessages++
++			last := c.stopAfter > 0 && c.deliveredMessages == c.stopAfter
+ 			c.Unlock()
+ 			handler(msg)
++			if last {
++				sub.Stop()
 +			}
  		}
- 		// Not proof that a reset happened, but without injected gaps the
- 		// test would not be exercising the reset path at all.
-```
-
----
-
-### Incident Patch 10: `afa49df2` (2026-09-09)
-**Commit Message**: [FIXED] Messages(): handle a reconnect that completes between Next calls (#2135)
-
-* [FIXED] Messages(): handle a reconnect that completes between Next calls
-
-The pull request accounting of a Messages() iterator was only reset on
-reconnect if the same Next call had observed both the RECONNECTING and
-the CONNECTED status change: isConnected was a local of Next. With Next
-driven by a short NextMaxWait, the reconnect regularly completed between
-two calls, the CONNECTED event was discarded, pending stayed at the batch
-size and no new pull request was ever sent. The iterator then went silent
-on a healthy connection, permanently, with Next returning ErrTimeout and
-the server reporting no waiting pull requests.
-
-Track the connection state in the status goroutine that lives as long as
-the iterator, and only forward a CONNECTED that follows a RECONNECTING.
-Next now treats every errConnected as a real reconnect. The status
-forwards also select on done so the goroutine cannot block forever on a
-full errs channel after Stop.
-
-Add a regression test that restarts the server while Next is polled with
-a 100ms NextMaxWait; it fails on main with 5 of 10 messages delivered.
-
-Signed-off-by: Parham Alva
-
-**File**: `jetstream/pull.go` (modified, +36/-18)
-```diff
-@@ -560,17 +560,37 @@ func (p *pullConsumer) Messages(opts ...PullMessagesOpt) (MessagesContext, error
- 	go sub.pullMessages(subject)
+ 	}
  
- 	go func() {
-+		// Connection state is tracked here, for the lifetime of the
-+		// iterator, rather than inside Next: a reconnect that completes
-+		// between two Next calls (for example when Next is driven with a
-+		// short NextMaxWait) must still reset the pull request accounting,
-+		// otherwise no new pull request is ever sent and the iterator goes
-+		// silent on a healthy connection.
-+		isConnected := true
+-	cc, err := c.currentConsumer.Consume(internalHandler(c.serial), opts...)
++	cc, err := c.currentConsumer.Consume(internalHandler(c.serial), innerOpts()...)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -152,35 +163,25 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
  		for {
  			select {
- 			case status, ok := <-sub.connStatusChanged:
- 				if !ok {
- 					return
+ 			case <-c.doReset:
++				c.Lock()
++				done := c.stopAfter > 0 && c.deliveredMessages >= c.stopAfter
++				c.Unlock()
++				if done {
++					sub.Stop()
++					return
++				}
+ 				if err := c.reset(); err != nil {
+ 					if errors.Is(err, errOrderedConsumerClosed) {
+ 						continue
+ 					}
+ 					c.errHandler(c.serial)(c.currentSub, err)
  				}
--				if status == nats.CONNECTED {
--					sub.errs <- errConnected
+-				if c.withStopAfter {
+-					select {
+-					case c.stopAfter = <-c.stopAfterMsgsLeft:
+-					default:
+-					}
+-					if c.stopAfter <= 0 {
+-						sub.Stop()
+-						return
+-					}
 -				}
--				if status == nats.RECONNECTING {
--					sub.errs <- errDisconnected
-+				switch status {
-+				case nats.RECONNECTING:
-+					isConnected = false
-+					select {
-+					case sub.errs <- errDisconnected:
-+					case <-sub.done:
-+						return
-+					}
-+				case nats.CONNECTED:
-+					if isConnected {
-+						continue
-+					}
-+					isConnected = true
-+					select {
-+					case sub.errs <- errConnected:
-+					case <-sub.done:
-+						return
-+					}
+-				if c.stopAfter > 0 {
+-					opts = opts[:len(opts)-2]
+-				} else {
+-					opts = opts[:len(opts)-1]
+-				}
+-
+-				// overwrite the previous err handler to use the new serial
+-				opts = append(opts, ConsumeErrHandler(c.errHandler(c.serial)))
+-				if c.withStopAfter {
+-					opts = append(opts, consumeStopAfterNotify(c.stopAfter, c.stopAfterMsgsLeft))
+-				}
+-				if cc, err := c.currentConsumer.Consume(internalHandler(c.serial), opts...); err != nil {
+-					c.errHandler(c.serial)(cc, err)
++				c.Lock()
++				serial := c.serial
++				consumeOpts := innerOpts()
++				c.Unlock()
++				if cc, err := c.currentConsumer.Consume(internalHandler(serial), consumeOpts...); err != nil {
++					c.errHandler(serial)(cc, err)
+ 				} else {
+ 					c.Lock()
+ 					c.currentSub = cc.(*pullSubscription)
+@@ -194,12 +195,6 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
+ 					sub.consumer.Unlock()
  				}
- 			case <-sub.done:
  				return
-@@ -633,7 +653,6 @@ func (s *pullSubscription) Next(opts ...NextOpt) (Msg, error) {
+-			case msgsLeft, ok := <-c.stopAfterMsgsLeft:
+-				if !ok {
+-					close(sub.done)
+-				}
+-				c.stopAfter = msgsLeft
+-				return
+ 			}
  		}
  	}()
- 
--	isConnected := true
- 	if s.consumeOpts.StopAfter > 0 && s.delivered >= s.consumeOpts.StopAfter {
- 		s.Stop()
- 		return nil, ErrMsgIteratorClosed
-@@ -686,24 +705,23 @@ func (s *pullSubscription) Next(opts ...NextOpt) (Msg, error) {
- 				}
+@@ -263,15 +258,9 @@ func (c *orderedConsumer) Messages(opts ...PullMessagesOpt) (MessagesContext, er
+ 	opts = append(opts,
+ 		WithMessagesErrOnMissingHeartbeat(true),
+ 		messagesReconnectNotify())
+-	c.stopAfterMsgsLeft = make(chan int, 1)
+-	if consumeOpts.StopAfter > 0 {
+-		c.withStopAfter = true
+-		c.stopAfter = consumeOpts.StopAfter
+-	}
++	c.stopAfter = max(consumeOpts.StopAfter, 0)
++	c.deliveredMessages = 0
+ 	c.userErrHandler = consumeOpts.ErrHandler
+-	if c.stopAfter > 0 {
+-		opts = append(opts, messagesStopAfterNotify(c.stopAfter, c.stopAfterMsgsLeft))
+-	}
+ 	cc, err := c.currentConsumer.Messages(opts...)
+ 	if err != nil {
+ 		return nil, err
+@@ -307,28 +296,9 @@ func (s *orderedSubscription) Next(opts ...NextOpt) (Msg, error) {
+ 				s.Stop()
+ 				return nil, err
  			}
- 			if errors.Is(err, errConnected) {
--				if !isConnected {
--					isConnected = true
--
--					if s.consumeOpts.notifyOnReconnect {
--						return nil, errConnected
--					}
--					s.pending.msgCount = 0
--					s.pending.byteCount = 0
--					if hbMonitor != nil {
--						hbMonitor.Reset(2 * s.consumeOpts.Heartbeat)
--					}
-+				// errConnected is only sent for a CONNECTED that follows a
-+				// RECONNECTING, so this is always a real reconnect: the pull
-+				// request parked on the previous server is gone and a new one
-+				// has to be issued.
-+				if s.consumeOpts.notifyOnReconnect {
-+					return nil, errConnected
-+				}
-+				s.pending.msgCount = 0
-+				s.pending.byteCount = 0
-+				if hbMonitor != nil {
-+					hbMonitor.Reset(2 * s.consumeOpts.Heartbeat)
- 				}
- 			}
- 			if errors.Is(err, errDisconnected) {
- 				if hbMonitor != nil {
- 					hbMonitor.Stop()
- 				}
--				isConnected = false
- 			}
- 		case <-timeoutCh:
- 			return nil, nats.ErrTimeout
+-			if s.consumer.withStopAfter {
+-				select {
+-				case s.consumer.stopAfter = <-s.consumer.stopAfterMsgsLeft:
+-				default
 ```
 
-**File**: `jetstream/test/pull_test.go` (modified, +67/-0)
+**File**: `jetstream/pull.go` (modified, +0/-15)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	"errors"
- 	"fmt"
+@@ -124,7 +124,6 @@ type (
+ 		ThresholdMessages       int
+ 		ThresholdBytes          int
+ 		StopAfter               int
+-		stopAfterMsgsLeft       chan int
+ 		notifyOnReconnect       bool
+ 	}
+ 
+@@ -792,13 +791,6 @@ func (s *pullSubscription) Stop() {
+ 		return
+ 	}
+ 	close(s.done)
+-	if s.consumeOpts.stopAfterMsgsLeft != nil {
+-		if s.delivered >= s.consumeOpts.StopAfter {
+-			close(s.consumeOpts.stopAfterMsgsLeft)
+-		} else {
+-			s.consumeOpts.stopAfterMsgsLeft <- s.consumeOpts.StopAfter - s.delivered
+-		}
+-	}
+ }
+ 
+ // Drain unsubscribes from the stream and cancels subscription. All
+@@ -811,13 +803,6 @@ func (s *pullSubscription) Drain() {
+ 	}
+ 	s.draining.Store(1)
+ 	close(s.done)
+-	if s.consumeOpts.stopAfterMsgsLeft != nil {
+-		if s.delivered >= s.consumeOpts.StopAfter {
+-			close(s.consumeOpts.stopAfterMsgsLeft)
+-		} else {
+-			s.consumeOpts.stopAfterMsgsLeft <- s.consumeOpts.StopAfter - s.delivered
+-		}
+-	}
+ }
+ 
+ // Closed returns a channel that is closed when consuming is
+```
+
+**File**: `jetstream/test/ordered_test.go` (modified, +180/-0)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	"reflect"
+ 	"strings"
  	"sync"
 +	"sync/atomic"
  	"testing"
  	"time"
  
-@@ -1507,6 +1508,72 @@ func TestPullConsumerMessages(t *testing.T) {
+@@ -546,6 +547,77 @@ func TestOrderedConsumerConsume(t *testing.T) {
+ 			}
  		})
  	})
- 
-+	t.Run("with server restart and short Next timeout", func(t *testing.T) {
-+		// Reconnect handling used to be tracked per Next call, so a reconnect
-+		// that completed between two short Next calls was never acted on: the
-+		// pull request parked on the old server was still counted as pending,
-+		// no new pull request was sent and the iterator went silent on a
-+		// healthy connection.
-+		withJSServerInstance(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream, inst *testservice.Instance) {
-+			ctx := newTesterCtx(t, 5*time.Second)
++
++	t.Run("with auto unsubscribe, stop after limit is reached", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 10*time.Second)
 +			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
 +			if err != nil {
 +				t.Fatalf("Unexpected error: %v", err)
 +			}
-+			c, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{Durable: "cons", AckPolicy: jetstream.AckExplicitPolicy})
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
 +			if err != nil {
 +				t.Fatalf("Unexpected error: %v", err)
 +			}
-+			it, err := c.Messages()
++			publishTestMsgs(t, js)
++			var received atomic.Int32
++			cc, err := c.Consume(func(msg jetstream.Msg) {
++				received.Add(1)
++			}, jetstream.StopAfter(3))
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			select {
++			case <-cc.Closed():
++			case <-time.After(5 * time.Second):
++				t.Fatalf("Timeout waiting for consume to be closed")
++			}
++			// Stopping a consume which already stopped itself after
++			// reaching the limit is a no-op.
++			cc.Stop()
++			cc.Drain()
++			if received.Load() != 3 {
++				t.Fatalf("Unexpected received message count; want %d; got %d", 3, received.Load())
++			}
++		})
++	})
++
++	t.Run("with auto unsubscribe and sequence mismatch", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 10*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			for range 20 {
++				if _, err := js.Publish(ctx, "FOO.A", []byte("msg")); err != nil {
++					t.Fatalf("Unexpected error during publish: %s", err)
++				}
++			}
++			// messages the ordered consumer discards to reset on the
++			// sequence mismatch must not count towards StopAfter
++			fetchOneFromOrderedConsumer(t, js, "foo", c.CachedInfo().Name)
++			var received atomic.Int32
++			cc, err := c.Consume(func(msg jetstream.Msg) {
++				received.Add(1)
++			}, jetstream.StopAfter(10))
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			select {
++			case <-cc.Closed():
++			case <-time.After(5 * time.Second):
++				t.Fatalf("Timeout waiting for consume to be closed; received %d", received.Load())
++			}
++			if received.Load() != 10 {
++				t.Fatalf("Unexpected received message count; want %d; got %d", 10, received.Load())
++			}
++		})
++	})
+ }
+ 
+ func TestOrderedConsumerMessages(t *testing.T) {
+@@ -920,6 +992,91 @@ func TestOrderedConsumerMessages(t *testing.T) {
+ 			}
+ 		})
+ 	})
++
++	t.Run("with auto unsubscribe and sequence mismatch, stop", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 10*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			publishTestMsgs(t, js)
++			name := c.CachedInfo().Name
++			fetchOneFromOrderedConsumer(t, js, "foo", name)
++			it, err := c.Messages(jetstream.StopAfter(100))
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			for range len(testMsgs) {
++				if _, err := it.Next(); err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
++			}
++			if c.CachedInfo().Name == name {
++				t.Fatalf("Expected consumer to be reset")
++			}
++			stopped := make(chan struct{})
++			go func() {
++				it.Stop()
++				close(stopped)
++			}()
++			select {
++			case <-stopped:
++			case <-time.After(5 * time.Second):
++				t.Fatalf("Timeout waiting for Stop to return")
++			}
++		})
++	})
++
++	t.Run("with auto unsubscribe and server restart", func(t *testing.T) {
++		withJSServerInstance(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream, inst *testservice.Instance) {
++			ctx := newTesterCtx(t, 30*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			publishTestMsgs(t, js)
++			it, err := c.Messages(jetstream.StopAfter(10))
 +			if err != nil {
 +				t.Fatalf("Unexpected error: %v", err)
 +			}
 +			defer it.Stop()
-+
-+			var received atomic.Int32
-+			done := make(chan struct{})
-+			errs := make(chan error, 1)
-+			go func() {
-+				for received.Load() < int32(2*len(testMsgs)) {
-+					msg, err := it.Next(jetstream.NextMaxWait(100 * time.Millisecond))
-+					if errors.Is(err, nats.ErrTimeout) {
-+						continue
-+					}
-+					if err != nil {
-+						errs <- err
-+						return
-+					}
-+					msg.Ack()
-+					received.Add(1)
++			received := 0
++			for range 3 {
++				if _, err := it.Next(); err != nil {
++					t.Fatalf("Unexpected error: %v", err)
 +				}
-+				close(done)
-+			}()
-+
-+			publishTestMsgs(t, js)
-+			checkFor(t, 5*time.Second, 50*time.Millisecond, func() error {
-+				if n := received.Load(); n != int32(len(testMsgs)) {
-+					return fmt.Errorf("expected %d messages before restart; got %d", len(testMsgs), n)
-+				}
-+				return nil
-+			})
-+
-+			// restart the server; the reconnect completes while no Next call
-+			// is in flight for long enough to observe it
++				received++
++			}
 +			inst.StopServer(t, inst.Servers[0])
 +			inst.StartServer(t, inst.Servers[0])
-+			waitForStream(t, js, "foo")
-+			publishTestMsgs(t, js)
-+
-+			select {
-+			case <-done:
-+			case err := <-errs:
-+				t.Fatalf("Unexpected error: %s", err)
-+			case <-time.After(10 * time.Second):
-+				t.Fatalf("Timeout waiting for messages after restart; got %d of %d", received.Load(), 2*len(testMsgs))
-+			}
-+		})
-+	})
-+
- 	t.Run("with graceful shutdown", func(t *testing.T) {
- 		cases := map[string]func(jetstream.MessagesContext){
- 			"stop":  func(mc jetstream.MessagesContext) { mc.Stop() },
++			wai
 ```
 
 ---
 
-### Incident Patch 11: `d455dd93` (2026-09-08)
-**Commit Message**: [FIXED] Data race on Subscription.sid between applyNewSID and removeSub (#2122)
+### Incident Patch 3: `bd189988` (2026-10-08)
+**Commit Message**: [FIXED] Abort publish drain when connection is closed during Drain (#2163)
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+drainConnection waited for subscriptions to drain and then
+unconditionally flipped the connection to DRAINING_PUBS and called
+FlushTimeout, without rechecking whether the connection had been
+closed in the meantime. A Close concurrent with Drain was therefore
+undone: the closed connection was resurrected to DRAINING_PUBS and
+the drain goroutine started a new 5s flush on it, surviving long
+after Close returned.
 
-**File**: `js.go` (modified, +15/-13)
+Recheck isClosed under the connection lock before flipping the
+state, and return early if the connection is already closed.
+
+Adds TestDrainConnectionCloseDuringDrain, which holds a subscription
+callback, starts Drain, waits for the drain goroutine to enter its
+pending-subscription wait, closes the connection, and asserts the
+connection stays CLOSED and the drain goroutine exits.
+
+Fixes #2162
+
+Signed-off-by: Kyle Cox <[REDACTED_EMAIL]>
+
+**File**: `nats.go` (modified, +9/-1)
 ```diff
-@@ -1,4 +1,4 @@
--// Copyright 2020-2025 The NATS Authors
-+// Copyright 2020-2026 The NATS Authors
- // Licensed under the Apache License, Version 2.0 (the "License");
- // you may not use this file except in compliance with the License.
- // You may obtain a copy of the License at
-@@ -2184,9 +2184,9 @@ func (sub *Subscription) checkOrderedMsgs(m *Msg) bool {
- 	return false
- }
- 
--// Update and replace sid.
-+// Update and replace sid. Returns the old and the new sid.
- // Lock should be held on entry but will be unlocked to prevent lock inversion.
--func (sub *Subscription) applyNewSID() (osid int64) {
-+func (sub *Subscription) applyNewSID() (osid, nsid int64) {
- 	nc := sub.conn
- 	sub.mu.Unlock()
- 
-@@ -2195,13 +2195,13 @@ func (sub *Subscription) applyNewSID() (osid int64) {
- 	delete(nc.subs, osid)
- 	// Place new one.
- 	nc.ssid++
--	nsid := nc.ssid
-+	nsid = nc.ssid
- 	nc.subs[nsid] = sub
-+	sub.sid = nsid
- 	nc.subsMu.Unlock()
- 
- 	sub.mu.Lock()
--	sub.sid = nsid
--	return osid
-+	return osid, nsid
- }
- 
- // We are here if we have detected a gap with an ordered consumer.
-@@ -2222,27 +2222,29 @@ func (sub *Subscription) resetOrderedConsumer(sseq uint64) {
- 			maxStr = strconv.Itoa(int(adjustedMax))
- 		} else {
- 			// We are already at the max, so we should just unsub the
--			// existing sub and be done
--			go func(sid int64) {
-+			// existing sub and be done. The sid is read in the go routine
-+			// because it is protected by subsMu, which cannot be acquired
-+			// here since sub.mu is held.
-+			go func() {
- 				nc.mu.Lock()
-+				nc.subsMu.RLock()
-+				sid := sub.sid
-+				nc.subsMu.RUnlock()
- 				nc.bw.appendString(fmt.Sprintf(unsubProto, sid, _EMPTY_))
- 				nc.kickFlusher()
- 				nc.mu.Unlock()
--			}(sub.sid)
-+			}()
- 			return
- 		}
+@@ -6404,8 +6404,16 @@ func (nc *Conn) drainConnection() {
+ 		pushErr(ErrDrainTimeout)
  	}
  
- 	// Quick unsubscribe. Since we know this is a simple push subscriber we do in place.
--	osid := sub.applyNewSID()
-+	osid, nsid := sub.applyNewSID()
+-	// Flip State
++	// Flip State, unless the connection was closed while we were
++	// draining subscriptions (for example by a concurrent Close call).
++	// In that case abort the publish drain: the connection is already
++	// terminal, and flipping the state here would resurrect it and
++	// start a new flush on a closed connection.
+ 	nc.mu.Lock()
++	if nc.isClosed() {
++		nc.mu.Unlock()
++		return
++	}
+ 	nc.changeConnStatus(DRAINING_PUBS)
+ 	nc.mu.Unlock()
  
- 	// Grab new inbox.
- 	newDeliver := nc.NewInbox()
- 	sub.Subject = newDeliver
- 
--	// Snapshot the new sid under sub lock.
--	nsid := sub.sid
--
- 	// We are still in the low level readLoop for the connection so we need
- 	// to spin a go routine to try to create the new consumer.
- 	go func() {
 ```
 
-**File**: `nats.go` (modified, +45/-25)
+**File**: `test/drain_test.go` (modified, +78/-0)
 ```diff
-@@ -24,6 +24,7 @@ import (
+@@ -16,6 +16,8 @@ package test
+ import (
  	"errors"
  	"fmt"
- 	"io"
-+	"maps"
- 	"math/rand"
- 	"net"
- 	"net/http"
-@@ -647,16 +648,24 @@ type Conn struct {
- 	mu sync.RWMutex
- 	// Opts holds the configuration of the Conn.
- 	// Modifying the configuration of a running Conn is a race.
--	Opts          Options
--	wg            sync.WaitGroup
--	srvPool       []*Server
--	current       *Server
--	urls          map[string]struct{} // Keep track of all known URLs (used by processInfo)
--	conn          net.Conn
--	bw            *natsWriter
--	br            *natsReader
--	fch           chan struct{}
--	info          ServerInfo
-+	Opts    Options
-+	wg      sync.WaitGroup
-+	srvPool []*Server
-+	current *Server
-+	urls    map[string]struct{} // Keep track of all known URLs (used by processInfo)
-+	conn    net.Conn
-+	bw      *natsWriter
-+	br      *natsReader
-+	fch     chan struct{}
-+	info    ServerInfo
-+	// subsMu protects subs, ssid and the sid of every Subscription in subs,
-+	// so that a subscription and the id it is registered under always stay
-+	// in sync.
-+	//
-+	// The lock ordering for a connection is nc.mu -> nc.subsMu -> sub.mu:
-+	// each of these may be acquired while holding any of the ones to its
-+	// left, and none of them may be acquired while holding one to its
-+	// right.
- 	ssid          int64
- 	subsMu        sync.RWMutex
- 	subs          map[int64]*Subscription
-@@ -704,7 +713,10 @@ type natsWriter struct {
- 
- // Subscription represents interest in a given subject.
- type Subscription struct {
--	mu  sync.Mutex
-+	mu sync.Mutex
-+
-+	// Key under which this subscription is registered in conn.subs.
-+	// Protected by conn.subsMu, not by the mutex above.
- 	sid int64
- 
- 	// Subject that represents this subscription. This can be different
-@@ -4051,6 +4063,7 @@ func (nc *Conn) processTransientError(err error) {
- 				q = queueMatches[1]
- 			}
- 			subject := matches[1]
-+			nc.subsMu.RLock()
- 			for _, sub := range nc.subs {
- 				if sub.Subject == subject && sub.Queue == q && sub.permissionsErr == nil {
- 					sub.mu.Lock()
-@@ -4061,6 +4074,7 @@ func (nc *Conn) processTransientError(err error) {
- 					sub.mu.Unlock()
- 				}
- 			}
-+			nc.subsMu.RUnlock()
- 		}
- 	}
- 	if asyncErrorCB := nc.Opts.AsyncErrorCB; asyncErrorCB != nil {
-@@ -5071,8 +5085,9 @@ func (nc *Conn) subscribeLocked(subj, queue string, cb MsgHandler, ch chan *Msg,
- 
- 	nc.subsMu.Lock()
- 	nc.ssid++
--	sub.sid = nc.ssid
--	nc.subs[sub.sid] = sub
-+	sid := nc.ssid
-+	sub.sid = sid
-+	nc.subs[sid] = sub
- 	nc.subsMu.Unlock()
- 
- 	// Let's start the go routine now that it is fully setup and registered.
-@@ -5083,7 +5098,7 @@ func (nc *Conn) subscribeLocked(subj, queue string, cb MsgHandler, ch chan *Msg,
- 	// We will send these for all subs when we reconnect
- 	// so that we can suppress here if reconnecting.
- 	if !nc.isReconnecting() {
--		nc.bw.appendString(fmt.Sprintf(subProto, subj, queue, sub.sid))
-+		nc.bw.appendString(fmt.Sprintf(subProto, subj, queue, sid))
- 		nc.kickFlusher()
- 	}
- 
-@@ -5093,8 +5108,8 @@ func (nc *Conn) subscribeLocked(subj, queue string, cb MsgHandler, ch chan *Msg,
- 
- // NumSubscriptions returns active number of subscriptions.
- func (nc *Conn) NumSubscriptions() int {
--	nc.mu.RLock()
--	defer nc.mu.RUnlock()
-+	nc.subsMu.RLock()
-+	defer nc.subsMu.RUnlock()
- 	return len(nc.subs)
- }
- 
-@@ -5455,7 +5470,13 @@ func (nc *Conn) unsubscribe(sub *Subscription, max int, drainMode bool) error {
- 	// We will send these for all subs when we reconnect
- 	// so that we can suppress here.
- 	if !nc.isReconnecting() {
--		nc.bw.appendString(fmt.Sprintf(unsubProto, s.sid, maxStr))
-+		// Deliberately re-read the sid: in the AutoUnsubscribe case removeSub
-+		// is skipped, so an ordered consumer reset may have swapped it since
-+		// the lookup above and the max has to apply to what the server knows.
-+		nc.subsMu.RLock()
-+		sid := s.sid
-+		nc.subsMu.RUnlock()
-+		nc.bw.appendString(fmt.Sprintf(unsubProto, sid, maxStr))
- 		nc.kickFlusher()
- 	}
- 
-@@ -5997,14 +6018,11 @@ func (nc *Conn) Buffered() (int, error) {
- func (nc *Conn) resendSubscriptions() {
- 	// Since we are going to send protocols to the server, we don't want to
- 	// be holding the subsMu lock (which is used in processMsg). So copy
--	// the subscriptions in a temporary array.
-+	// the subscriptions in a temporary map, keyed by sid as nc.subs is.
- 	nc.subsMu.RLock()
--	subs := make([]*Subscription, 0, len(nc.subs))
--	for _, s := range nc.subs {
--		subs = append(subs, s)
--	}
-+	subs := maps.Clone(nc.subs)
- 	nc.subsMu.RUnlock()
--	for _, s := range subs {
-+	for sid, s := range subs {
- 		adjustedMax := uint64(0)
- 		s.mu.Lock()
- 		// when resending subscriptions, the permissions error should be cleared
-@@ -6018,11 +6036,11 @@ func (nc *Conn) resendSubscriptions() {
- 			// reached the max, if so unsubscribe.
- 			if adjustedMax == 0 {
- 				s.mu.Unlock()
--				nc.bw.writeDirect(fmt.Sprintf(unsubProto, s.sid, _EMPTY_))
-+				nc.bw.writeDirect(fmt.Sprintf(unsubProto, sid, _EMPTY_))
- 				continue
- 			}
- 		}
--		subj, queue, sid := s.Subject, s.Queue, s.sid
-+		
-```
-
-**File**: `test/js_internal_test.go` (modified, +72/-0)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	"fmt"
- 	"math/rand"
- 	"strings"
-+	"sync"
++	"runtime"
++	"strings"
+ 	"sync"
  	"sync/atomic"
  	"testing"
- 	"time"
-@@ -442,3 +443,74 @@ func TestJetStreamFlowControlStalled(t *testing.T) {
- 		}
+@@ -444,3 +446,79 @@ func TestDrainClosedHandlerRace(t *testing.T) {
+ 		time.Sleep(500 * time.Millisecond)
  	})
  }
 +
-+// Ordered consumer resets run from the connection read loop and swap the
-+// subscription's sid. This exercises that against concurrent unsubscribes,
-+// which is where the sid was previously read under a different lock.
-+func TestJetStreamOrderedConsumerSIDRace(t *testing.T) {
-+	withJSServer(t, func(t *testing.T, nc *nats.Conn) {
-+		js, err := nc.JetStream(nats.MaxWait(10 * time.Second))
-+		if err != nil {
-+			t.Fatalf("Unexpected error: %v", err)
-+		}
-+		if _, err := js.AddStream(&nats.StreamConfig{
-+			Name:     "SIDRACE",
-+			Subjects: []string{"a"},
-+			Storage:  nats.MemoryStorage,
++// Closing the connection while drainConnection is still waiting for
++// subscriptions to drain must abort the rest of the drain: the drain
++// goroutine must not flip the (already closed) connection back to
++// DRAINING_PUBS and start a new FlushTimeout on it.
++func TestDrainConnectionCloseDuringDrain(t *testing.T) {
++	withServer(t, func(t *testing.T, nc *nats.Conn) {
++		entered := make(chan struct{})
++		release := make(chan struct{})
++		if _, err := nc.Subscribe("pending", func(*nats.Msg) {
++			close(entered)
++			<-release
 +		}); err != nil {
-+			t.Fatalf("Unexpected error: %v", err)
++			t.Fatalf("Error creating subscription: %v", err)
 +		}
-+		for range 200 {
-+			if _, err := js.PublishAsync("a", []byte("hello")); err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
++		defer close(release)
++
++		if err := nc.Publish("pending", nil); err != nil {
++			t.Fatalf("Error on publish: %v", err)
++		}
++		if err := nc.Flush(); err != nil {
++			t.Fatalf("Error on flush: %v", err)
 +		}
 +		select {
-+		case <-js.PublishAsyncComplete():
-+		case <-time.After(5 * time.Second):
-+			t.Fatalf("Did not receive completion signal")
++		case <-entered:
++		case <-time.After(time.Second):
++			t.Fatal("callback not entered")
 +		}
 +
-+		// Drop roughly half of the delivered messages so that every ordered
-+		// consumer keeps detecting gaps and resetting itself.
-+		var dropped atomic.Uint64
-+		nc.AddMsgFilter("a", func(m *nats.Msg) *nats.Msg {
-+			if rand.Intn(2) == 0 {
-+				dropped.Add(1)
-+				return nil
-+			}
-+			return m
-+		})
-+		defer nc.RemoveMsgFilter("a")
++		if err := nc.Drain(); err != nil {
++			t.Fatalf("Unexpected error on drain: %v", err)
++		}
 +
-+		const rounds, subsPerRound = 15, 12
-+		for range rounds {
-+			subs := make([]*nats.Subscription, 0, subsPerRound)
-+			for range subsPerRound {
-+				sub, err := js.Subscribe("a", func(m *nats.Msg) {},
-+					nats.OrderedConsumer(), nats.IdleHeartbeat(100*time.Millisecond))
-+				if err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
++		// Wait until the drain goroutine is in its pending-subscription
++		// wait loop, so that Close lands mid-drain.
++		waiting := false
++		for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline) && !waiting; {
++			b := make([]byte, 1<<20)
++			n := runtime.Stack(b, true)
++			for _, stack := range strings.Split(string(b[:n]), "\n\n") {
++				if strings.Contains(stack, "(*Conn).drainConnection") && strings.Contains(stack, "time.Sleep(") {
++					waiting = true
++					break
 +				}
-+				subs = append(subs, sub)
 +			}
-+			// Let the resets start churning, then tear everything down from
-+			// a set of independent go routines.
-+			time.Sleep(time.Duration(20+rand.Intn(60)) * time.Millisecond)
-+			var wg sync.WaitGroup
-+			for _, sub := range subs {
-+				wg.Add(1)
-+				go func() {
-+					defer wg.Done()
-+					sub.Unsubscribe()
-+				}()
++			if !waiting {
++				runtime.Gosched()
 +			}
-+			wg.Wait()
 +		}
-+		// Not proof that a reset happened, but without injected gaps the
-+		// test would not be exercising the reset path at all.
-+		if n := dropped.Load(); n == 0 {
-+			t.Fatalf("Expected the filter to drop messages, got %d", n)
++		if !waiting {
++			t.Fatal("drain did not enter pending-subscription wait")
 +		}
++
++		nc.Close()
++		if !nc.IsClosed() {
++			t.Fatalf("connection not closed after Close: %v", nc.Status())
++		}
++
++		// The connection must stay closed: before the fix, the drain
++		// goroutine resurrects it to DRAINING_PUBS and then sits in
++		// FlushTimeout for 5 seconds.
++		time.Sleep(250 * time.Millisecond)
++		if !nc.IsClosed() {
++			t.Fatalf("connection resurrected after Close: %v", nc.Status())
++		}
++		for deadline := time.Now().Add(2 * time.Second); time.Now().Before(deadline); {
++			b := make([]byte, 1<<20)
++			n := runtime.Stack(b, true)
++			if !strings.Contains(string(b[:n]), "(*Conn).drainConnection") {
++				return
++			}
++			time.Sleep(10 * time.Millisecond)
++		}
++		t.Fatal("drain goroutine still running after Close")
 +	})
 +}
 ```
 
----
-
-### Incident Patch 12: `02b0e3e8` (2026-09-07)
-**Commit Message**: [FIXED] Migrate golangci-lint config to v2 (#2134)
-
-The v1 binary cannot decode export data from current Go toolchains, so
-typechecking collapsed and the lint job failed on every branch.
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yaml` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ jobs:
-                 go mod download -modfile=go_test.mod
-                 go install honnef.co/go/tools/cmd/staticcheck@latest
-                 go install github.com/client9/misspell/cmd/misspell@latest
--                go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-+                go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
- 
-             - name: Run linters
-               shell: bash --noprofile --norc -x -eo pipefail {0}
-```
-
-**File**: `.golangci.yaml` (modified, +40/-13)
-```diff
-@@ -1,16 +1,43 @@
-+version: "2"
-+linters:
-+  settings:
-+    staticcheck:
-+      # The merged staticcheck linter pulls in more check families than this
-+      # repo has ever run; keep it to the set that was in force before.
-+      checks:
-+        - SA*
-+        - S1*
-+  exclusions:
-+    generated: lax
-+    presets:
-+      - comments
-+      - common-false-positives
-+      - legacy
-+      - std-error-handling
-+    rules:
-+      - linters:
-+          - errcheck
-+        text: Unsubscribe
-+      - linters:
-+          - errcheck
-+        text: Drain
-+      - linters:
-+          - errcheck
-+        text: msg.Ack
-+      - linters:
-+          - errcheck
-+        text: watcher.Stop
-+    paths:
-+      - third_party$
-+      - builtin$
-+      - examples$
- issues:
-   max-issues-per-linter: 0
-   max-same-issues: 0
--  exclude-rules:
--    - linters:
--      - errcheck
--      text: "Unsubscribe"
--    - linters:
--      - errcheck
--      text: "Drain"
--    - linters:
--      - errcheck
--      text: "msg.Ack"
--    - linters:
--      - errcheck
--      text: "watcher.Stop"
-+formatters:
-+  exclusions:
-+    generated: lax
-+    paths:
-+      - third_party$
-+      - builtin$
-+      - examples$
-```
-
----
-
-### Incident Patch 13: `850f889c` (2026-08-14)
-**Commit Message**: [IMPROVED] Fix typo in Publisher interface methods comment (#2120)
-
-Signed-off-by: Sreeram Narayanan <[REDACTED_EMAIL]>
-
-**File**: `jetstream/jetstream.go` (modified, +4/-4)
-```diff
-@@ -74,8 +74,8 @@ type (
- 		Publish(ctx context.Context, subject string, payload []byte, opts ...PublishOpt) (*PubAck, error)
- 
- 		// PublishMsg performs a synchronous publish to a stream and waits for
--		// ack from server. It accepts subject name (which must be bound to a
--		// stream) and nats.Message.
-+		// ack from server. It accepts [nats.Msg] (whose Subject must be bound
-+		// to a stream) as payload.
- 		PublishMsg(ctx context.Context, msg *nats.Msg, opts ...PublishOpt) (*PubAck, error)
- 
- 		// PublishAsync performs a publish to a stream and returns
-@@ -91,8 +91,8 @@ type (
- 
- 		// PublishMsgAsync performs a publish to a stream and returns
- 		// [PubAckFuture] interface, not blocking while waiting for an
--		// acknowledgement. It accepts subject name (which must
--		// be bound to a stream) and nats.Message.
-+		// acknowledgement. It accepts [nats.Msg] (whose Subject must be bound
-+		// to a stream) as payload.
- 		//
- 		// PublishMsgAsync does not guarantee that the message has been
- 		// received by the server. It only guarantees that the message has been
-```
-
----
-
-### Incident Patch 14: `15d96caf` (2026-07-28)
-**Commit Message**: [FIXED] Data race in resetOrderedConsumer when resets overlap (#2111)
-
-resetOrderedConsumer mutated the ConsumerConfig through the shared pointer in
-jsi.ccreq. When activityCheck spawned overlapping resets, one goroutine's
-writes could overlap another's json.Marshal in upsertConsumer, which runs
-outside sub.mu. Mutate a value copy instead.
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `js.go` (modified, +7/-2)
-```diff
-@@ -2270,8 +2270,13 @@ func (sub *Subscription) resetOrderedConsumer(sseq uint64) {
- 		jsi.cmeta = _EMPTY_
- 		jsi.fcr, jsi.fcd = _EMPTY_, 0
- 		jsi.deliver = newDeliver
--		// Reset consumer request for starting policy.
--		cfg := jsi.ccreq.Config
-+		// Reset consumer request for starting policy. Take a value copy of the
-+		// ConsumerConfig so concurrent activityCheck-spawned resets don't race
-+		// on a shared *ConsumerConfig — a later goroutine's writes here would
-+		// otherwise overlap an earlier goroutine's json.Marshal in
-+		// upsertConsumer below (called outside sub.mu).
-+		cfgCopy := *jsi.ccreq.Config
-+		cfg := &cfgCopy
- 		cfg.DeliverSubject = newDeliver
- 		cfg.DeliverPolicy = DeliverByStartSequencePolicy
- 		cfg.OptStartSeq = sseq
-```
-
----
-
-### Incident Patch 15: `f66c8e73` (2026-07-24)
-**Commit Message**: [FIXED] Recognize error code 10164 for replicated KV CAS conflicts (#2097) (#2098)
-
-* Recognize error code 10164 for replicated KV CAS conflicts (#2097)
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-* [ADDED] ErrKeyRevisionMismatch for KV update CAS conflicts
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-* [ADDED] ErrKeyRevisionMismatch for KV delete/purge CAS conflicts
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `jetstream/errors.go` (modified, +18/-0)
-```diff
-@@ -58,6 +58,11 @@ const (
- 	JSErrCodeStreamWrongLastSequence ErrorCode = 10071
- 	JSErrCodeJetStreamNotEnabled     ErrorCode = 10076
- 
-+	// JSErrCodeStreamWrongLastSequenceConstant is returned instead of
-+	// JSErrCodeStreamWrongLastSequence for CAS conflicts on replicated (R>1)
-+	// streams. The two are equivalent "wrong last sequence" responses.
-+	JSErrCodeStreamWrongLastSequenceConstant ErrorCode = 10164
-+
- 	JSErrCodeConsumerAlreadyExists ErrorCode = 10105
- 
- 	JSErrCodeDuplicateFilterSubjects   ErrorCode = 10136
-@@ -379,8 +384,21 @@ var (
- 
- 	// ErrKeyExists is returned when attempting to create a key that already
- 	// exists.
-+	//
-+	// Note: ErrKeyExists matches errors by code 10071, which CAS conflicts
-+	// from Update/Delete/Purge also carry on non-replicated streams;
-+	// replicated (R>1) streams report code 10164 instead and will not match.
-+	// Do not use ErrKeyExists to detect revision conflicts - use
-+	// ErrKeyRevisionMismatch.
- 	ErrKeyExists JetStreamError = &jsError{apiErr: &APIError{ErrorCode: JSErrCodeStreamWrongLastSequence, Code: 400}, message: "key exists"}
- 
-+	// ErrKeyRevisionMismatch is returned by Update, and by Delete/Purge when
-+	// the LastRevision option is used, if the provided revision does not
-+	// match the key's current revision (an optimistic-concurrency conflict).
-+	// Replicated (R>1) streams report this as error code 10164 instead of
-+	// 10071; both map to this error.
-+	ErrKeyRevisionMismatch JetStreamError = &jsError{message: "key revision mismatch"}
-+
- 	// ErrKeyValueConfigRequired is returned when attempting to create a bucket
- 	// without a config.
- 	ErrKeyValueConfigRequired JetStreamError = &jsError{message: "config required"}
-```
-
-**File**: `jetstream/jetstream_test.go` (modified, +39/-0)
-```diff
-@@ -527,6 +527,45 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 	}
- }
- 
-+func TestIsWrongLastSeqErr(t *testing.T) {
-+	// 10164 is the replicated-stream variant of the 10071 "wrong last
-+	// sequence" CAS conflict; both must be recognized (issue #2097).
-+	for _, code := range []ErrorCode{JSErrCodeStreamWrongLastSequence, JSErrCodeStreamWrongLastSequenceConstant} {
-+		if !isWrongLastSeqErr(&APIError{Code: 400, ErrorCode: code}) {
-+			t.Fatalf("err code %d should be recognized as wrong-last-sequence", code)
-+		}
-+	}
-+	if isWrongLastSeqErr(&APIError{Code: 404, ErrorCode: JSErrCodeStreamNotFound}) {
-+		t.Fatal("unrelated error code should not be recognized")
-+	}
-+}
-+
-+func TestMapRevisionMismatch(t *testing.T) {
-+	// Both 10071 and its replicated-stream variant 10164 must map to
-+	// ErrKeyRevisionMismatch, while preserving the underlying
-+	// APIError for callers that inspect the code.
-+	for _, code := range []ErrorCode{JSErrCodeStreamWrongLastSequence, JSErrCodeStreamWrongLastSequenceConstant} {
-+		err := mapRevisionMismatch(&APIError{Code: 400, ErrorCode: code})
-+		if !errors.Is(err, ErrKeyRevisionMismatch) {
-+			t.Fatalf("err code %d should map to ErrKeyRevisionMismatch, got: %v", code, err)
-+		}
-+		var apiErr *APIError
-+		if !errors.As(err, &apiErr) || apiErr.ErrorCode != code {
-+			t.Fatalf("underlying APIError (code %d) should be preserved, got: %v", code, err)
-+		}
-+	}
-+
-+	// Unrelated errors pass through untouched.
-+	other := &APIError{Code: 404, ErrorCode: JSErrCodeStreamNotFound}
-+	if err := mapRevisionMismatch(other); err != other || errors.Is(err, ErrKeyRevisionMismatch) {
-+		t.Fatalf("unrelated error should pass through unchanged, got: %v", err)
-+	}
-+
-+	if mapRevisionMismatch(nil) != nil {
-+		t.Fatal("nil should map to nil")
-+	}
-+}
-+
- func TestKV_keyValid(t *testing.T) {
- 	tests := []struct {
- 		key string
-```
-
-**File**: `jetstream/kv.go` (modified, +39/-10)
-```diff
-@@ -123,7 +123,8 @@ type (
- 		Create(ctx context.Context, key string, value []byte, opts ...KVCreateOpt) (uint64, error)
- 
- 		// Update will update the value if the latest revision matches.
--		// If the provided revision is not the latest, Update will return an error.
-+		// If the provided revision does not match the key's current revision,
-+		// ErrKeyRevisionMismatch is returned.
- 		// Update also resets the TTL associated with the key (if any).
- 		Update(ctx context.Context, key string, value []byte, revision uint64) (uint64, error)
- 
-@@ -133,7 +134,8 @@ type (
- 		// will not remove any previous revisions from the underlying stream.
- 		//
- 		// [LastRevision] option can be specified to only perform delete if the
--		// latest revision the provided one.
-+		// latest revision matches the provided one; if it does not,
-+		// ErrKeyRevisionMismatch is returned.
- 		Delete(ctx context.Context, key string, opts ...KVDeleteOpt) error
- 
- 		// Purge will place a delete marker and remove all previous revisions.
-@@ -142,7 +144,8 @@ type (
- 		// previous revisions from the underlying streams.
- 		//
- 		// [LastRevision] option can be specified to only perform purge if the
--		// latest revision the provided one.
-+		// latest revision matches the provided one; if it does not,
-+		// ErrKeyRevisionMismatch is returned.
- 		Purge(ctx context.Context, key string, opts ...KVDeleteOpt) error
- 
- 		// Watch for any updates to keys that match the keys argument which
-@@ -1075,19 +1078,45 @@ func (kv *kvs) Create(ctx context.Context, key string, value []byte, opts ...KVC
- 		return kv.updateRevision(ctx, key, value, e.Revision(), o.ttl)
- 	}
- 
--	// Check if the expected last subject sequence is not zero which implies
--	// the key already exists.
--	if errors.Is(err, ErrKeyExists) {
--		jserr := ErrKeyExists.(*jsError)
--		return 0, fmt.Errorf("%w: %s", err, jserr.message)
-+	// A wrong-last-sequence response means the key already exists.
-+	if isWrongLastSeqErr(err) {
-+		// 10071 matches ErrKeyExists via its code and keeps its original
-+		// message; 10164 (replicated streams) must wrap ErrKeyExists explicitly.
-+		if errors.Is(err, ErrKeyExists) {
-+			jserr := ErrKeyExists.(*jsError)
-+			return 0, fmt.Errorf("%w: %s", err, jserr.message)
-+		}
-+		return 0, fmt.Errorf("%w: %w", err, ErrKeyExists)
- 	}
- 
- 	return 0, err
- }
- 
-+// isWrongLastSeqErr reports whether err is a "wrong last sequence" API error.
-+// Replicated (R>1) streams report CAS conflicts as 10164 instead of 10071.
-+func isWrongLastSeqErr(err error) bool {
-+	var apiErr *APIError
-+	if !errors.As(err, &apiErr) {
-+		return false
-+	}
-+	return apiErr.ErrorCode == JSErrCodeStreamWrongLastSequence ||
-+		apiErr.ErrorCode == JSErrCodeStreamWrongLastSequenceConstant
-+}
-+
-+// mapRevisionMismatch wraps a wrong-last-sequence error with
-+// ErrKeyRevisionMismatch so callers can detect CAS conflicts regardless of
-+// whether the stream reported code 10071 or 10164.
-+func mapRevisionMismatch(err error) error {
-+	if err != nil && isWrongLastSeqErr(err) {
-+		return fmt.Errorf("%w: %w", err, ErrKeyRevisionMismatch)
-+	}
-+	return err
-+}
-+
- // Update will update the value if the latest revision matches.
- func (kv *kvs) Update(ctx context.Context, key string, value []byte, revision uint64) (uint64, error) {
--	return kv.updateRevision(ctx, key, value, revision, 0)
-+	rev, err := kv.updateRevision(ctx, key, value, revision, 0)
-+	return rev, mapRevisionMismatch(err)
- }
- 
- func (kv *kvs) updateRevision(ctx context.Context, key string, value []byte, revision uint64, ttl time.Duration) (uint64, error) {
-@@ -1168,7 +1197,7 @@ func (kv *kvs) Delete(ctx context.Context, key string, opts ...KVDeleteOpt) erro
- 	}
- 
- 	_, err := kv.js.PublishMsg(ctx, m, pubOpts...)
--	return err
-+	return mapRevisionMismatch(err)
- }
- 
- // Purge will place a delete marker and remove all previous revisions.
-```
-
-**File**: `jetstream/test/kv_test.go` (modified, +76/-0)
-```diff
-@@ -1806,6 +1806,9 @@ func TestKeyValueCreate(t *testing.T) {
- 	if !errors.Is(err, jetstream.ErrKeyExists) {
- 		t.Fatalf("Expected ErrKeyExists, got: %v", err)
- 	}
-+	if errors.Is(err, jetstream.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Create conflict should not match ErrKeyRevisionMismatch, got: %v", err)
-+	}
- 	aerr := &jetstream.APIError{}
- 	if !errors.As(err, &aerr) {
- 		t.Fatalf("Expected APIError, got: %v", err)
-@@ -1828,6 +1831,79 @@ func TestKeyValueCreate(t *testing.T) {
- 	}
- }
- 
-+func TestKeyValueUpdateRevisionMismatch(t *testing.T) {
-+	s := RunBasicJetStreamServer()
-+	defer shutdownJSServerAndRemoveStorage(t, s)
-+
-+	nc, js := jsClient(t, s)
-+	defer nc.Close()
-+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-+	defer cancel()
-+
-+	kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "TEST"})
-+	if err != nil {
-+		t.Fatalf("Error creating kv: %v", err)
-+	}
-+
-+	rev, err := kv.Create(ctx, "key", []byte("1"))
-+	if err != nil {
-+		t.Fatalf("Error creating key: %v", err)
-+	}
-+
-+	_, err = kv.Update(ctx, "key", []byte("2"), rev+1)
-+	if !errors.Is(err, jetstream.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Expected ErrKeyRevisionMismatch, got: %v", err)
-+	}
-+	var aerr *jetstream.APIError
-+	if !errors.As(err, &aerr) {
-+		t.Fatalf("Expected APIError, got: %v", err)
-+	}
-+	if aerr.ErrorCode != jetstream.JSErrCodeStreamWrongLastSequence {
-+		t.Fatalf("Unexpected error code, got: %v", aerr.ErrorCode)
-+	}
-+}
-+
-+func TestKeyValueDeleteRevisionMismatch(t *testing.T) {
-+	s := RunBasicJetStreamServer()
-+	defer shutdownJSServerAndRemoveStorage(t, s)
-+
-+	nc, js := jsClient(t, s)
-+	defer nc.Close()
-+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-+	defer cancel()
-+
-+	kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "TEST"})
-+	if err != nil {
-+		t.Fatalf("Error creating kv: %v", err)
-+	}
-+
-+	rev, err := kv.Create(ctx, "key", []byte("1"))
-+	if err != nil {
-+		t.Fatalf("Error creating key: %v", err)
-+	}
-+
-+	err = kv.Delete(ctx, "key", jetstream.LastRevision(rev+1))
-+	if !errors.Is(err, jetstream.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Expected ErrKeyRevisionMismatch, got: %v", err)
-+	}
-+	var aerr *jetstream.APIError
-+	if !errors.As(err, &aerr) {
-+		t.Fatalf("Expected APIError, got: %v", err)
-+	}
-+	if aerr.ErrorCode != jetstream.JSErrCodeStreamWrongLastSequence {
-+		t.Fatalf("Unexpected error code, got: %v", aerr.ErrorCode)
-+	}
-+
-+	err = kv.Purge(ctx, "key", jetstream.LastRevision(rev+1))
-+	if !errors.Is(err, jetstream.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Expected ErrKeyRevisionMismatch, got: %v", err)
-+	}
-+
-+	if err := kv.Delete(ctx, "key", jetstream.LastRevision(rev)); err != nil {
-+		t.Fatalf("Delete with correct revision should succeed, got: %v", err)
-+	}
-+}
-+
- // Helpers
- 
- func client(t *testing.T, s *server.Server, opts ...nats.Option) *nats.Conn {
-```
-
-**File**: `js_test.go` (modified, +40/-0)
-```diff
-@@ -18,10 +18,50 @@ package nats
- ////////////////////////////////////////////////////////////////////////////////
- 
- import (
-+	"errors"
- 	"strings"
- 	"testing"
- )
- 
-+func TestIsWrongLastSeqErr(t *testing.T) {
-+	// 10164 is the replicated-stream variant of the 10071 "wrong last
-+	// sequence" CAS conflict; both must be recognized (issue #2097).
-+	for _, code := range []ErrorCode{JSErrCodeStreamWrongLastSequence, JSErrCodeStreamWrongLastSequenceConstant} {
-+		if !isWrongLastSeqErr(&APIError{Code: 400, ErrorCode: code}) {
-+			t.Fatalf("err code %d should be recognized as wrong-last-sequence", code)
-+		}
-+	}
-+	if isWrongLastSeqErr(&APIError{Code: 404, ErrorCode: JSErrCodeStreamNotFound}) {
-+		t.Fatal("unrelated error code should not be recognized")
-+	}
-+}
-+
-+func TestMapRevisionMismatch(t *testing.T) {
-+	// Both 10071 and its replicated-stream variant 10164 must map to
-+	// ErrKeyRevisionMismatch, while preserving the underlying
-+	// APIError for callers that inspect the code.
-+	for _, code := range []ErrorCode{JSErrCodeStreamWrongLastSequence, JSErrCodeStreamWrongLastSequenceConstant} {
-+		err := mapRevisionMismatch(&APIError{Code: 400, ErrorCode: code})
-+		if !errors.Is(err, ErrKeyRevisionMismatch) {
-+			t.Fatalf("err code %d should map to ErrKeyRevisionMismatch, got: %v", code, err)
-+		}
-+		var apiErr *APIError
-+		if !errors.As(err, &apiErr) || apiErr.ErrorCode != code {
-+			t.Fatalf("underlying APIError (code %d) should be preserved, got: %v", code, err)
-+		}
-+	}
-+
-+	// Unrelated errors pass through untouched.
-+	other := &APIError{Code: 404, ErrorCode: JSErrCodeStreamNotFound}
-+	if err := mapRevisionMismatch(other); err != other || errors.Is(err, ErrKeyRevisionMismatch) {
-+		t.Fatalf("unrelated error should pass through unchanged, got: %v", err)
-+	}
-+
-+	if mapRevisionMismatch(nil) != nil {
-+		t.Fatal("nil should map to nil")
-+	}
-+}
-+
- func TestJetStreamConvertDirectMsgResponseToMsg(t *testing.T) {
- 	// This test checks the conversion of a "direct get message" response
- 	// to a JS message based on the content of specific NATS headers.
-```
-
-**File**: `jserrors.go` (modified, +5/-0)
-```diff
-@@ -203,6 +203,11 @@ const (
- 	JSStreamInvalidConfig ErrorCode = 10052
- 
- 	JSErrCodeStreamWrongLastSequence ErrorCode = 10071
-+
-+	// JSErrCodeStreamWrongLastSequenceConstant is returned instead of
-+	// JSErrCodeStreamWrongLastSequence for CAS conflicts on replicated (R>1)
-+	// streams. The two are equivalent "wrong last sequence" responses.
-+	JSErrCodeStreamWrongLastSequenceConstant ErrorCode = 10164
- )
- 
- // APIError is included in all API responses if there was an error.
-```
-
-**File**: `kv.go` (modified, +71/-10)
-```diff
-@@ -55,11 +55,19 @@ type KeyValue interface {
- 	// Create will add the key/value pair iff it does not exist.
- 	Create(key string, value []byte) (revision uint64, err error)
- 	// Update will update the value iff the latest revision matches.
-+	// If the provided revision does not match the key's current revision,
-+	// ErrKeyRevisionMismatch is returned.
- 	// Update also resets the TTL associated with the key (if any).
- 	Update(key string, value []byte, last uint64) (revision uint64, err error)
--	// Delete will place a delete marker and leave all revisions.
-+	// Delete will place a delete marker and leave all revisions. The
-+	// LastRevision option can be specified to only perform the delete if the
-+	// latest revision matches the provided one; if it does not,
-+	// ErrKeyRevisionMismatch is returned.
- 	Delete(key string, opts ...DeleteOpt) error
--	// Purge will place a delete marker and remove all previous revisions.
-+	// Purge will place a delete marker and remove all previous revisions. The
-+	// LastRevision option can be specified to only perform the purge if the
-+	// latest revision matches the provided one; if it does not,
-+	// ErrKeyRevisionMismatch is returned.
- 	Purge(key string, opts ...DeleteOpt) error
- 	// Watch for any updates to keys that match the keys argument which could include wildcards.
- 	// Watch will send a nil entry when it has received all initial values.
-@@ -352,7 +360,22 @@ var (
- )
- 
- var (
-+	// ErrKeyExists is returned when attempting to create a key that already
-+	// exists.
-+	//
-+	// Note: ErrKeyExists matches errors by code 10071, which CAS conflicts
-+	// from Update/Delete/Purge also carry on non-replicated streams;
-+	// replicated (R>1) streams report code 10164 instead and will not match.
-+	// Do not use ErrKeyExists to detect revision conflicts - use
-+	// ErrKeyRevisionMismatch.
- 	ErrKeyExists JetStreamError = &jsError{apiErr: &APIError{ErrorCode: JSErrCodeStreamWrongLastSequence, Code: 400}, message: "key exists"}
-+
-+	// ErrKeyRevisionMismatch is returned by Update, and by Delete/Purge when
-+	// the LastRevision option is used, if the provided revision does not
-+	// match the key's current revision (an optimistic-concurrency conflict).
-+	// Replicated (R>1) streams report this as error code 10164 instead of
-+	// 10071; both map to this error.
-+	ErrKeyRevisionMismatch JetStreamError = &jsError{message: "key revision mismatch"}
- )
- 
- const (
-@@ -704,29 +727,61 @@ func (kv *kvs) PutString(key string, value string) (revision uint64, err error)
- 
- // Create will add the key/value pair if it does not exist.
- func (kv *kvs) Create(key string, value []byte) (revision uint64, err error) {
--	v, err := kv.Update(key, value, 0)
-+	v, err := kv.update(key, value, 0)
- 	if err == nil {
- 		return v, nil
- 	}
- 
- 	// TODO(dlc) - Since we have tombstones for DEL ops for watchers, this could be from that
- 	// so we need to double check.
- 	if e, err := kv.get(key, kvLatestRevision); errors.Is(err, ErrKeyDeleted) {
--		return kv.Update(key, value, e.Revision())
-+		return kv.update(key, value, e.Revision())
- 	}
- 
--	// Check if the expected last subject sequence is not zero which implies
--	// the key already exists.
--	if errors.Is(err, ErrKeyExists) {
--		jserr := ErrKeyExists.(*jsError)
--		return 0, fmt.Errorf("%w: %s", err, jserr.message)
-+	// A wrong-last-sequence response means the key already exists.
-+	if isWrongLastSeqErr(err) {
-+		// 10071 matches ErrKeyExists via its code and keeps its original
-+		// message; 10164 (replicated streams) must wrap ErrKeyExists explicitly.
-+		if errors.Is(err, ErrKeyExists) {
-+			jserr := ErrKeyExists.(*jsError)
-+			return 0, fmt.Errorf("%w: %s", err, jserr.message)
-+		}
-+		return 0, fmt.Errorf("%w: %w", err, ErrKeyExists)
- 	}
- 
- 	return 0, err
- }
- 
-+// isWrongLastSeqErr reports whether err is a "wrong last sequence" API error.
-+// Replicated (R>1) streams report CAS conflicts as 10164 instead of 10071.
-+func isWrongLastSeqErr(err error) bool {
-+	var apiErr *APIError
-+	if !errors.As(err, &apiErr) {
-+		return false
-+	}
-+	return apiErr.ErrorCode == JSErrCodeStreamWrongLastSequence ||
-+		apiErr.ErrorCode == JSErrCodeStreamWrongLastSequenceConstant
-+}
-+
-+// mapRevisionMismatch wraps a wrong-last-sequence error with
-+// ErrKeyRevisionMismatch so callers can detect CAS conflicts regardless of
-+// whether the stream reported code 10071 or 10164.
-+func mapRevisionMismatch(err error) error {
-+	if err != nil && isWrongLastSeqErr(err) {
-+		return fmt.Errorf("%w: %w", err, ErrKeyRevisionMismatch)
-+	}
-+	return err
-+}
-+
- // Update will update the value if the latest revision matches.
-+// If the provided revision does not match the key's current revision,
-+// ErrKeyRevisionMismatch is returned.
- func (kv *kvs) Update(key string, value []byte, revision uint64) (uint64, error) {
-+	rev, err := kv.update(key, value, revision)
-+	return rev, mapRevisionMismatch(err)
-+}
-+
-+func (kv *kvs) update(key string, value []byte, revision uint64) (uint64, error) {
- 	if !keyValid(key) {
- 		return 
-```
-
-**File**: `test/kv_test.go` (modified, +72/-0)
-```diff
-@@ -1653,6 +1653,9 @@ func TestKeyValueCreate(t *testing.T) {
- 	if !errors.Is(err, nats.ErrKeyExists) {
- 		t.Fatalf("Expected ErrKeyExists, got: %v", err)
- 	}
-+	if errors.Is(err, nats.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Create conflict should not match ErrKeyRevisionMismatch, got: %v", err)
-+	}
- 	aerr := &nats.APIError{}
- 	if !errors.As(err, &aerr) {
- 		t.Fatalf("Expected APIError, got: %v", err)
-@@ -1675,6 +1678,75 @@ func TestKeyValueCreate(t *testing.T) {
- 	}
- }
- 
-+func TestKeyValueUpdateRevisionMismatch(t *testing.T) {
-+	s := RunBasicJetStreamServer()
-+	defer shutdownJSServerAndRemoveStorage(t, s)
-+
-+	nc, js := jsClient(t, s)
-+	defer nc.Close()
-+
-+	kv, err := js.CreateKeyValue(&nats.KeyValueConfig{Bucket: "TEST"})
-+	if err != nil {
-+		t.Fatalf("Error creating kv: %v", err)
-+	}
-+
-+	rev, err := kv.Create("key", []byte("1"))
-+	if err != nil {
-+		t.Fatalf("Error creating key: %v", err)
-+	}
-+
-+	_, err = kv.Update("key", []byte("2"), rev+1)
-+	if !errors.Is(err, nats.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Expected ErrKeyRevisionMismatch, got: %v", err)
-+	}
-+	aerr := &nats.APIError{}
-+	if !errors.As(err, &aerr) {
-+		t.Fatalf("Expected APIError, got: %v", err)
-+	}
-+	if aerr.ErrorCode != nats.JSErrCodeStreamWrongLastSequence {
-+		t.Fatalf("Unexpected error code, got: %v", aerr.ErrorCode)
-+	}
-+}
-+
-+func TestKeyValueDeleteRevisionMismatch(t *testing.T) {
-+	s := RunBasicJetStreamServer()
-+	defer shutdownJSServerAndRemoveStorage(t, s)
-+
-+	nc, js := jsClient(t, s)
-+	defer nc.Close()
-+
-+	kv, err := js.CreateKeyValue(&nats.KeyValueConfig{Bucket: "TEST"})
-+	if err != nil {
-+		t.Fatalf("Error creating kv: %v", err)
-+	}
-+
-+	rev, err := kv.Create("key", []byte("1"))
-+	if err != nil {
-+		t.Fatalf("Error creating key: %v", err)
-+	}
-+
-+	err = kv.Delete("key", nats.LastRevision(rev+1))
-+	if !errors.Is(err, nats.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Expected ErrKeyRevisionMismatch, got: %v", err)
-+	}
-+	aerr := &nats.APIError{}
-+	if !errors.As(err, &aerr) {
-+		t.Fatalf("Expected APIError, got: %v", err)
-+	}
-+	if aerr.ErrorCode != nats.JSErrCodeStreamWrongLastSequence {
-+		t.Fatalf("Unexpected error code, got: %v", aerr.ErrorCode)
-+	}
-+
-+	err = kv.Purge("key", nats.LastRevision(rev+1))
-+	if !errors.Is(err, nats.ErrKeyRevisionMismatch) {
-+		t.Fatalf("Expected ErrKeyRevisionMismatch, got: %v", err)
-+	}
-+
-+	if err := kv.Delete("key", nats.LastRevision(rev)); err != nil {
-+		t.Fatalf("Delete with correct revision should succeed, got: %v", err)
-+	}
-+}
-+
- func TestKeyValueSourcing(t *testing.T) {
- 	s := RunBasicJetStreamServer()
- 	defer shutdownJSServerAndRemoveStorage(t, s)
-```
-
 #### Recent Merged Pull Requests:
-- **PR #2156** (2026-10-02): [ADDED] Conn.RemoteAccount exposing the client's bound account (@bruth)
-- **PR #2155** (2026-09-25): [IMPROVED] Fix ordered consumer test exceeding 1000 consumers created (@piotrpio)
-- **PR #2154** (2026-09-24): Fix panic in `micro` package from closed connection (@joeriddles)
-- **PR #2153** (closed): Fix JetStream async publish pending recovery under concurrency (@tsukiyoz)
-- **PR #2150** (2026-10-05): fix(jetstream): report pending publish errors during reconnect (@H-XX-D)
-- **PR #2148** (2026-09-18): Release v1.54.0 (@piotrpio)
-- **PR #2146** (2026-09-18): [IMPROVED] Bump dependencies and update server version in CI (@piotrpio)
-- **PR #2145** (2026-09-16): Add `nats.MultipathTCP()` for enabling or disabling MPTCP (@neilalexander)
+- **PR #2198** (2026-10-16): [ADDED] JetStream FetchMaxBytes option (@manenim)
+- **PR #2192** (2026-10-14): [FIXED] Match v2 ack subjects in JetStream ack tests (@piotrpio)
+- **PR #2191** (2026-10-14): [FIXED] Dependencies report workflow (@piotrpio)
+- **PR #2188** (2026-10-14): [FIXED] Pull iterator Drain racing with Next returns ErrMsgIteratorClosed early (@piotrpio)
+- **PR #2187** (2026-10-14): [FIXED] Unpin Go in the lint job (@piotrpio)
+- **PR #2186** (2026-10-14): [FIXED] Measure delivered message size in pull consumer max bytes tests (@piotrpio)
 
 ---
 
@@ -4576,3 +2373,67 @@ Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. [FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165)
+
+**RULE**:
+When implementing operations in `jetstream/jetstream_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dafa2540`: [FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/jetstream_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+func TestPullConsumer_checkPendingAfterDone(t *testing.T) {
+	// Once the subscription is stopped or drained, pullMessages no longer
+	// reads fetchNext. Messages delivered while draining still call
+	// checkPending (with the lock held), and fetchNext only buffers one
+	// request, so checkPending must not block on a full fetchNext.
+	sub := &pullSubscription{
+		pending: pendingMsgs{
+			msgCount: 4,
+		},
+		consumeOpts: &consumeOpts{
+			ThresholdMessages: 5,
+			MaxMessages:       10,
+		},
+		done:      make(chan struct{}, 1),
+		fetchNext: make(chan *pullRequest, 1),
+	}
+	// A request queued before pullMessages returned, which nobody reads.
+	sub.fetchNext <- &pullRequest{}
+	close(sub.done)
+
+	returned := make(chan struct{})
+	go func() {
+		sub.Lock()
+		sub.checkPending()
+		sub.Unlock()
+		close(returned)
+	}()
+	select {
+	case <-returned:
+	case <-time.After(5 * time.Second):
+		t.Fatal("checkPending blocked on fetchNext after the subscription was done")
+	}
+}
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dafa2540` are properly handled with clean fallback behavior.

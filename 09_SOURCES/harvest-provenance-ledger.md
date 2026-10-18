@@ -2523,3 +2523,9 @@ Every entry in this ledger must capture:
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `a1dad93e` | Multi-dimensional audit evidence | 2026-10-18T21:39:40.897Z |
 | `learn-github-hashicorp-boundary` | `https://github.com/hashicorp/boundary` | `eeb38a1a` | Multi-dimensional audit evidence | 2026-10-18T21:39:42.536Z |
 | `learn-github-zilliztech-attu` | `https://github.com/zilliztech/attu` | `d51e1c78` | Multi-dimensional audit evidence | 2026-10-18T21:39:43.555Z |
+| `learn-github-skeletonlabs-skeleton` | `https://github.com/skeletonlabs/skeleton` | `e65535eb` | Multi-dimensional audit evidence | 2026-10-18T21:45:42.549Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `dbfe46bd` | Multi-dimensional audit evidence | 2026-10-18T21:45:46.022Z |
+| `learn-github-maotoumao-musicfree` | `https://github.com/maotoumao/MusicFree` | `d118b18b` | Multi-dimensional audit evidence | 2026-10-18T21:45:52.005Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `e1312b80` | Multi-dimensional audit evidence | 2026-10-18T21:45:54.691Z |
+| `learn-github-chrispybacon-dev-dockflare` | `https://github.com/ChrispyBacon-dev/DockFlare` | `9c7bed82` | Multi-dimensional audit evidence | 2026-10-18T21:45:56.585Z |
+| `learn-github-pinecone-io-examples` | `https://github.com/pinecone-io/examples` | `db002421` | Multi-dimensional audit evidence | 2026-10-18T21:45:56.799Z |

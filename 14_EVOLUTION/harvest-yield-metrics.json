@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:39:43.557Z",
-  "total_cycles_completed": 2493,
-  "total_learnings_persisted": 2493,
-  "total_rules_promoted": 1507,
+  "last_updated": "2026-10-18T21:45:56.801Z",
+  "total_cycles_completed": 2499,
+  "total_learnings_persisted": 2499,
+  "total_rules_promoted": 1513,
   "history": [
-    {
-      "timestamp": "2026-10-17T21:54:17.152Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:57:35.832Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T22:00:55.748Z",
-      "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T22:04:59.032Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T22:09:22.278Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T22:12:37.608Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T22:16:10.085Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-18T21:39:43.557Z",
       "repository": "zilliztech/attu",
       "learningId": "learn-github-zilliztech-attu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:45:42.551Z",
+      "repository": "skeletonlabs/skeleton",
+      "learningId": "learn-github-skeletonlabs-skeleton",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:45:46.024Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:45:52.007Z",
+      "repository": "maotoumao/MusicFree",
+      "learningId": "learn-github-maotoumao-musicfree",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:45:54.693Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:45:56.586Z",
+      "repository": "ChrispyBacon-dev/DockFlare",
+      "learningId": "learn-github-chrispybacon-dev-dockflare",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:45:56.801Z",
+      "repository": "pinecone-io/examples",
+      "learningId": "learn-github-pinecone-io-examples",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2528,5 +2528,65 @@
     "contentHash": "c9a1ab36fac00fee14d2d2eba8f329f1fb5fb1e7e91028fd477b94c54a584ae5",
     "lastHarvestedAt": "2026-10-18T21:39:43.555Z",
     "learningId": "learn-github-zilliztech-attu"
+  },
+  "skeletonlabs-skeleton": {
+    "repository": "skeletonlabs/skeleton",
+    "platform": "github",
+    "sourceUrl": "https://github.com/skeletonlabs/skeleton",
+    "sourceVersion": "e65535eb",
+    "license": "MIT",
+    "contentHash": "680389c5802ec13a92b2dc0d27d579f3a2a43529ba781af1faae9be55bb16afb",
+    "lastHarvestedAt": "2026-10-18T21:45:42.549Z",
+    "learningId": "learn-github-skeletonlabs-skeleton"
+  },
+  "sharkdp-fd": {
+    "repository": "sharkdp/fd",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sharkdp/fd",
+    "sourceVersion": "dbfe46bd",
+    "license": "Apache-2.0",
+    "contentHash": "877284f1c978c49dae5f06eb0af19d44ffad92d4c9e4065639ae3b725eaeebbc",
+    "lastHarvestedAt": "2026-10-18T21:45:46.022Z",
+    "learningId": "learn-github-sharkdp-fd"
+  },
+  "maotoumao-musicfree": {
+    "repository": "maotoumao/MusicFree",
+    "platform": "github",
+    "sourceUrl": "https://github.com/maotoumao/MusicFree",
+    "sourceVersion": "d118b18b",
+    "license": "AGPL-3.0",
+    "contentHash": "0ba4e4cb27e5502982a2df288877be0a750bb0e1c0da9eb68be9871ed99f0bd3",
+    "lastHarvestedAt": "2026-10-18T21:45:52.005Z",
+    "learningId": "learn-github-maotoumao-musicfree"
+  },
+  "nats-io-nats.go": {
+    "repository": "nats-io/nats.go",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nats-io/nats.go",
+    "sourceVersion": "e1312b80",
+    "license": "Apache-2.0",
+    "contentHash": "93fd6b54b31346be57c4ab50d9bca02693f5239c8c9faf559af5fc4d8884f482",
+    "lastHarvestedAt": "2026-10-18T21:45:54.691Z",
+    "learningId": "learn-github-nats-io-nats-go"
+  },
+  "chrispybacon-dev-dockflare": {
+    "repository": "ChrispyBacon-dev/DockFlare",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
+    "sourceVersion": "9c7bed82",
+    "license": "NOASSERTION",
+    "contentHash": "b797618d9e50f963605d391e03fb02db43daafffb67dca67e6441f89d687ce59",
+    "lastHarvestedAt": "2026-10-18T21:45:56.585Z",
+    "learningId": "learn-github-chrispybacon-dev-dockflare"
+  },
+  "pinecone-io-examples": {
+    "repository": "pinecone-io/examples",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pinecone-io/examples",
+    "sourceVersion": "db002421",
+    "license": "MIT",
+    "contentHash": "b343628b520189526e8e0fd34827af945379732376745136d6946cfbe56e015d",
+    "lastHarvestedAt": "2026-10-18T21:45:56.799Z",
+    "learningId": "learn-github-pinecone-io-examples"
   }
 }
