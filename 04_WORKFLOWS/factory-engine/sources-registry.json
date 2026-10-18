@@ -2038,8 +2038,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:13:42.010Z",
-    "lastVerified": "2026-10-17T23:13:42.010Z",
+    "lastChecked": "2026-10-18T05:54:27.761Z",
+    "lastVerified": "2026-10-18T05:54:27.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17546,8 +17546,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:33:54.667Z",
-    "lastVerified": "2026-10-18T05:33:54.667Z",
+    "lastChecked": "2026-10-18T05:54:30.258Z",
+    "lastVerified": "2026-10-18T05:54:30.258Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -20891,8 +20891,8 @@
     "sourceType": "github",
     "technology": "code-repository",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T02:51:43.974Z",
-    "lastVerified": "2026-10-18T02:51:43.974Z",
+    "lastChecked": "2026-10-18T05:54:25.269Z",
+    "lastVerified": "2026-10-18T05:54:25.269Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24153,5 +24153,12 @@
     "promotedRulesCount": 0,
     "verificationMethod": "full-clone-forensic-audit",
     "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
+  },
+  "sarfrz-novacrawl": {
+    "name": "NovaCrawl",
+    "officialUrl": "https://github.com/SArfrz/NovaCrawl",
+    "lastChecked": "2026-10-18T05:54:17.765Z",
+    "revisionIdentifier": "68c95079df",
+    "lastVerified": "2026-10-18T05:54:17.766Z"
   }
 }
