@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:52:11.467Z",
-  "total_verified_learnings": 286,
+  "last_updated": "2026-10-18T21:58:18.646Z",
+  "total_verified_learnings": 292,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -822,22 +822,35 @@
     "learn-github-ajeetdsouza-zoxide": {
       "learning_id": "learn-github-ajeetdsouza-zoxide",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ajeetdsouza-zoxide",
+      "source": "ajeetdsouza/zoxide",
+      "repository": "ajeetdsouza/zoxide",
       "slug": "ajeetdsouza-zoxide",
       "platform": "github",
       "source_url": "https://github.com/ajeetdsouza/zoxide",
-      "source_version": "HEAD",
-      "content_hash": "257f17151c4593aa2a74bda903a9d09b9a7168c9f432b3f1763f9d6366eb77c9",
+      "source_version": "d48a7ab5",
+      "content_hash": "99b3f5be27f488309e4b8f5eb7f8174dc47e1cbb255d77a3b9fbf4bf00b476b1",
       "dossier_path": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1752,
+          "title": "handle broken pipe in query --interactive (#1314)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.693Z"
+      "verified_at": "2026-10-18T21:58:07.666Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-akveo-kittentricks": {
       "learning_id": "learn-github-akveo-kittentricks",
@@ -23650,22 +23663,35 @@
     "learn-github-liyupi-yu-ai-agent": {
       "learning_id": "learn-github-liyupi-yu-ai-agent",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "liyupi-yu-ai-agent",
+      "source": "liyupi/yu-ai-agent",
+      "repository": "liyupi/yu-ai-agent",
       "slug": "liyupi-yu-ai-agent",
       "platform": "github",
       "source_url": "https://github.com/liyupi/yu-ai-agent",
-      "source_version": "HEAD",
-      "content_hash": "7ed090acd5728cc7808078287db826ebd2c96e1d9bf015424c826da01bb64eb8",
+      "source_version": "6d4608c5",
+      "content_hash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
       "dossier_path": "07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/liyupi-yu-ai-agent-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1756,
+          "title": "升级 Spring AI 依赖版本为 1.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.047Z"
+      "verified_at": "2026-10-18T21:58:18.640Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-llmsresearch-paperbanana": {
       "learning_id": "learn-github-llmsresearch-paperbanana",
@@ -28459,22 +28485,35 @@
     "learn-github-permify-permify": {
       "learning_id": "learn-github-permify-permify",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "permify-permify",
+      "source": "Permify/permify",
+      "repository": "Permify/permify",
       "slug": "permify-permify",
       "platform": "github",
       "source_url": "https://github.com/Permify/permify",
-      "source_version": "HEAD",
-      "content_hash": "8f8ed39f0e734dd8232df4a2224e7a5acf2b594e936e4fceb7d8661341e97cfe",
+      "source_version": "43ce9031",
+      "content_hash": "add33db40e79e3a60a504f8bd621d93557bf2844431479a056f64c6907d5e70e",
       "dossier_path": "07_PROJECT_LEARNING/permify-permify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/permify-permify-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1754,
+          "title": "Merge pull request #3234 from Permify/fix/go-1.27.2-cves",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.015Z"
+      "verified_at": "2026-10-18T21:58:17.840Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-peterh0323-streamer-sales": {
       "learning_id": "learn-github-peterh0323-streamer-sales",
@@ -29512,22 +29551,35 @@
     "learn-github-react-native-elements-react-native-elements": {
       "learning_id": "learn-github-react-native-elements-react-native-elements",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-native-elements-react-native-elements",
+      "source": "react-native-elements/react-native-elements",
+      "repository": "react-native-elements/react-native-elements",
       "slug": "react-native-elements-react-native-elements",
       "platform": "github",
       "source_url": "https://github.com/react-native-elements/react-native-elements",
-      "source_version": "HEAD",
-      "content_hash": "f89dcdb37c3b2a34865ff05f1fbd58b455a17a0b145e719b1d45d55f65696941",
+      "source_version": "32ae0eda",
+      "content_hash": "7bdca67a3aae98c34f151d852d2c095c2712e4b3cf445eb4ace199453e5aca21",
       "dossier_path": "07_PROJECT_LEARNING/react-native-elements-react-native-elements-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-elements-react-native-elements-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1753,
+          "title": "Merge pull request #4024 from theianmay/fix/ci-lockfile",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.210Z"
+      "verified_at": "2026-10-18T21:58:13.227Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-native-image-picker-react-native-image-picker": {
       "learning_id": "learn-github-react-native-image-picker-react-native-image-picker",
@@ -30292,22 +30344,35 @@
     "learn-github-rustls-rustls": {
       "learning_id": "learn-github-rustls-rustls",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rustls-rustls",
+      "source": "rustls/rustls",
+      "repository": "rustls/rustls",
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "HEAD",
-      "content_hash": "412e69d5879bfee0fb4004b62febeb0e4e161d6816952bd7d46034f0ca901a84",
+      "source_version": "bb2165fa",
+      "content_hash": "85c739eaeaac9af5e5ecf95b504de2c73e4c49b167795d862d6869d26ad5aa2c",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1755,
+          "title": "ci: pass --locked to the i686 crossbuild",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.346Z"
+      "verified_at": "2026-10-18T21:58:18.349Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ruvnet-ruflo": {
       "learning_id": "learn-github-ruvnet-ruflo",
@@ -30352,22 +30417,35 @@
     "learn-github-saadeghi-daisyui": {
       "learning_id": "learn-github-saadeghi-daisyui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "saadeghi-daisyui",
+      "source": "saadeghi/daisyui",
+      "repository": "saadeghi/daisyui",
       "slug": "saadeghi-daisyui",
       "platform": "github",
       "source_url": "https://github.com/saadeghi/daisyui",
-      "source_version": "HEAD",
-      "content_hash": "3cfceb810413b0acc88487739a1318887c7cb020c169dfe9cfbacda8f3122733",
+      "source_version": "bf3bac3a",
+      "content_hash": "66e52a5b98474891fae2bb064ba3216dae735740d039ac8c26788f366c0cda68",
       "dossier_path": "07_PROJECT_LEARNING/saadeghi-daisyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saadeghi-daisyui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1751,
+          "title": "range shadow size and performance (#4771)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.356Z"
+      "verified_at": "2026-10-18T21:58:05.116Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sachaos-viddy": {
       "learning_id": "learn-github-sachaos-viddy",
@@ -67116,6 +67194,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:52:09.199Z"
+    },
+    "rule-1751": {
+      "learning_id": "rule-1751",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1751,
+      "title": "range shadow size and performance (#4771)",
+      "source_url": "https://github.com/saadeghi/daisyui",
+      "source_version": "bf3bac3a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:58:05.116Z"
+    },
+    "rule-1752": {
+      "learning_id": "rule-1752",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1752,
+      "title": "handle broken pipe in query --interactive (#1314)",
+      "source_url": "https://github.com/ajeetdsouza/zoxide",
+      "source_version": "d48a7ab5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:58:07.666Z"
+    },
+    "rule-1753": {
+      "learning_id": "rule-1753",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1753,
+      "title": "Merge pull request #4024 from theianmay/fix/ci-lockfile",
+      "source_url": "https://github.com/react-native-elements/react-native-elements",
+      "source_version": "32ae0eda",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:58:13.227Z"
+    },
+    "rule-1754": {
+      "learning_id": "rule-1754",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1754,
+      "title": "Merge pull request #3234 from Permify/fix/go-1.27.2-cves",
+      "source_url": "https://github.com/Permify/permify",
+      "source_version": "43ce9031",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:58:17.840Z"
+    },
+    "rule-1755": {
+      "learning_id": "rule-1755",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1755,
+      "title": "ci: pass --locked to the i686 crossbuild",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "bb2165fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:58:18.349Z"
+    },
+    "rule-1756": {
+      "learning_id": "rule-1756",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1756,
+      "title": "升级 Spring AI 依赖版本为 1.0",
+      "source_url": "https://github.com/liyupi/yu-ai-agent",
+      "source_version": "6d4608c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:58:18.640Z"
     }
   },
   "aliases": {

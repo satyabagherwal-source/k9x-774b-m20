@@ -2535,3 +2535,9 @@ Every entry in this ledger must capture:
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `9bd5ec92` | Multi-dimensional audit evidence | 2026-10-18T21:52:07.075Z |
 | `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `c806543f` | Multi-dimensional audit evidence | 2026-10-18T21:52:09.244Z |
 | `learn-github-pingcap-autoflow` | `https://github.com/pingcap/autoflow` | `c4cb19d8` | Multi-dimensional audit evidence | 2026-10-18T21:52:11.506Z |
+| `learn-github-saadeghi-daisyui` | `https://github.com/saadeghi/daisyui` | `bf3bac3a` | Multi-dimensional audit evidence | 2026-10-18T21:58:05.152Z |
+| `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `d48a7ab5` | Multi-dimensional audit evidence | 2026-10-18T21:58:07.711Z |
+| `learn-github-react-native-elements-react-native-elements` | `https://github.com/react-native-elements/react-native-elements` | `32ae0eda` | Multi-dimensional audit evidence | 2026-10-18T21:58:13.264Z |
+| `learn-github-permify-permify` | `https://github.com/Permify/permify` | `43ce9031` | Multi-dimensional audit evidence | 2026-10-18T21:58:17.878Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `bb2165fa` | Multi-dimensional audit evidence | 2026-10-18T21:58:18.387Z |
+| `learn-github-liyupi-yu-ai-agent` | `https://github.com/liyupi/yu-ai-agent` | `6d4608c5` | Multi-dimensional audit evidence | 2026-10-18T21:58:18.677Z |

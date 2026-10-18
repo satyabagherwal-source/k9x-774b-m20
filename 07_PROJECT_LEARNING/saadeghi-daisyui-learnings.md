@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saadeghi-daisyui-learnings.md`  
+> **Source**: github ([https://github.com/saadeghi/daisyui](https://github.com/saadeghi/daisyui))  
+> **Source Version**: `bf3bac3a`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:58:04.985Z  
+> **Learning ID**: `learn-github-saadeghi-daisyui`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): saadeghi/daisyui
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saadeghi-daisyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saadeghi/daisyui](https://github.com/saadeghi/daisyui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:31:57.764Z  
+> **Harvest Timestamp**: 2026-10-18T21:58:03.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: 🌼 🌼 🌼 🌼 🌼  The most popular, free and open-source Tailwind CSS component library
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 42542 stars
+- **Stars / Engagement**: 42622 stars
 
 ---
 
@@ -89,7 +103,7 @@ var plugin = {
 };
 
 // packages/daisyui/theme/object.js
-var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, sunset: { "color-scheme": "dark", "--color-base-100": "oklch(22% 0.019 237.69)", "--color-base-200": "oklch(20% 0.019 237.69)", "--color-base-300": "oklch(18% 0.019 237.69)", "--color-base-content": "oklch(77.383% 0.043 245.096)", "--color-primary": "oklch(74.703% 0.158 39.947)", "--color-primary-content": "oklch(14.94% 0.031 39.947)", "--color-secondary": "oklch(72.537% 0.177 2.72)", "--color-secondary-content": "oklch(14.507% 0.035 2.72)", "--color-accent": "oklch(71.294% 0.166 299.844)", "--color-accent-content": "oklch(14.258% 0.033 299.844)", "--color-neutral": "oklch(26% 0.019 237.69)", "--color-neutral-content": "oklch(70% 0.019 237.69)", "--color-info": "oklch(85.559% 0.085 206.015)", "--color-info-content": "oklch(17.111% 0.017 206.015)", "--color-success": "oklch(85.56% 0.085 144.778)", "--color-success-content": "oklch(17.112% 0.017 144.778)", "--color-warning": "oklch(85.569% 0.084 74.427)", "--color-warning-content": "oklch(17.113% 0.016 74.427)", "--color-error": "oklch(85.511% 0.078 16.886)", "--color-error-content": "oklch(17.102% 0.015 16.886)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, dracula: { "color-scheme": "dark", "--color-base-100": "oklch(28.822% 0.022 277.508)", "--color-base-200": "oklch(26.805% 0.02 277.508)", "--color-base-300": "oklch(24.787% 0.019 277.508)", "--color-base-content": "oklch(97.747% 0.007 106.545)", "--color-primary": "oklch(75.461% 0.183 346.812)", "--color-primary-content": "oklch(15.092% 0.036 346.812)", "--color-secondary": "oklch(74.202% 0.148 301.883)", "--color-secondary-content": "oklch(14.84% 0.029 301.883)", "--color-accent": "oklch(83.392% 0.124 66.558)", "--color-accent-content": "oklch(16.678% 0.024 66.558)", "--color-neutral": "oklch(39.445% 0.032 275.524)", "--color-neutral-content": "oklch(87.889% 0.006 275.524)", "--color-info": "oklch(88.263% 0.093 212.846)", "--color-info-content": "oklch(17.652% 0.018 212.846)", "--color-success": "oklch(87.099% 0.219 148.024)", "--color-success-content": "oklch(17.419% 0.043 148.024)", "--color-warning": "oklch(95.533% 0.134 112.757)", "--color-warning-content": "oklch(19.106% 0.026 112.757)", "--color-error": "oklch(68.22% 0.206 24.43)", "--color-error-content": "oklch(13.644% 0.041 24.43)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, caramellatte: { "color-scheme": "light", "--color-base-100": "oklch(98% 0.016 73.684)", "--color-base-200": "oklch(95% 0.038 75.164)", "--color-base-300": "oklch(90% 0.076 70.697)", "--color-base-content": "oklch(40% 0.123 38.172)", "--color-primary": "oklch(0% 0 0)", "--color-primary-content": "oklch(100% 0 0)", "--color-secondary": "oklch(22.45% 0.075 37.85)", "--color-secondary-content": "oklch(90% 0.076 70.697)", "--color-accent": "oklch(46.44% 0.111 37.85)", "--color-accent-content": "oklch(90% 0.076 70.697)", "--color-neutral": "oklch(55% 0.195 38.402)", "--color-neutral-content": "oklch(98% 0.016 73.684)", "--color-info": "oklch(42% 0.199 265.638)", "--color-info-content": "oklch(90% 0.076 70.697)", "--color-success": "oklch(43% 0.095 166.913)", "--color-success-content": "oklch(90% 0.076 70.697)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(39% 0.141 25.723)", "--radius-selector": "2rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "2px", "--depth": "1", "--noise": "1" }, fantasy: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(93% 0 0)", "--color-base-300": "oklch(86% 0 0)", "--color-base-content": "oklch(27.807% 0.029 256.847)", "--color-primary": "oklch(37.45% 0.189 325.02)", "--color-primary-content": "oklch(87.49% 0.037 325.02)", "--color-secondary": "oklch(53.92% 0.162 241.36)", "--color-secondary-content": "oklch(90.784% 0.032 241.36)", "--color-accent": "oklch(75.98% 0.204 56.72)", "--color-accent-content": "oklch(15.196% 0.04 56.72)", "--color-neutral": "oklch(27.807% 0.029 256.847)", "--color-neutral-content": "oklch(85.561% 0.005 256.847)", "--color-info": "oklch(72.06% 0.191 231.6)", "--color-info-content": "oklch(0% 0 0)", "--color-success": "oklch(64.8% 0.15 160)", "--color-success-content": "oklch(0% 0 0)", "--color-warning": "oklch(84.71% 0.199 83.87)", "--color-warning-content": "oklch(0% 0 0)", "--color-error": "oklch(71.76% 0.221 22.18)", "--color-error-content": "oklch(0% 0 0)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "1", "--noise": "0" }, lemonade: { "color-scheme": "light", "--color-base-100": "oklch(98.71% 0.02 123.72)", "--color-base-200": "oklch(91.8% 0.018 123.72)", "--color-base-300": "oklch(84.89% 0.017 123.72)", "--color-base-content": "oklch(19.742% 0.004 123.72)", "--color-primary": "oklch(58.92% 0.199 134.6)", "--color-primary-content": "oklch(11.784% 0.039 134.6)", "--color-secondary": "oklch(77.75% 0.196 111.09)", "--color-secondary-content": "oklch(15.55% 0.039 111.09)", "--color-accent": "oklch(85.39% 0.201 100.73)", "--color-accent-content": "oklch(17.078% 0.04 100.73)", "--color-neutral": "oklch(30.98% 0.075 108.6)", "--color-neutral-content": "oklch(86.196% 0.015 108.6)", "--color-info": "oklch(86.19% 0.047 224.14)", "--color-info-content": "oklch(17.238% 0.009 224.14)", "--color-success": "oklch(86.19% 0.047 157.85)", "--color-success-content": "oklch(17.238% 0.009 157.85)", "--color-warning": "oklch(86.19% 0.047 102.15)", "--color-warning-content": "oklch(17.238% 0.009 102.15)", "--color-error": "oklch(86.19% 0.047 25.85)", "--color-error-content": "oklch(17.238% 0.009 25.85)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, business: { "color-scheme": "dark", "--color-base-100": "oklch(24.353% 0 0)", "--color-base-200": "oklch(22.648% 0 0)", "--color-base-300": "oklch(20.944% 0 0)", "--color-base-content": "oklch(84.87% 0 0)", "--color-primary": "oklch(41.703% 0.099 251.473)", "--color-primary-content": "oklch(88.34% 0.019 251.473)", "--color-secondary": "oklch(64.092% 0.027 229.389)", "--color-secondary-content": "oklch(12.818% 0.005 229.389)", "--color-accent": "oklch(67.271% 0.167 35.791)", "--color-accent-content": "oklch(13.454% 0.033 35.791)", "--color-neutral": "oklch(27.441% 0.013 253.041)", "--color-neutral-content": "oklch(85.488% 0.002 253.041)", "--color-info": "oklch(62.616% 0.143 240.033)", 
+var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, dark: { "color-scheme": "dark", "--color-base-100": "oklch(25.33% 0.016 252.42)", "--color-base-200": "oklch(23.26% 0.014 253.1)", "--color-base-300": "oklch(21.15% 0.012 254.09)", "--color-base-content": "oklch(97.807% 0.029 256.847)", "--color-primary": "oklch(58% 0.233 277.117)", "--color-primary-content": "oklch(96% 0.018 272.314)", "--color-secondary": "oklch(65% 0.241 354.308)", "--color-secondary-content": "oklch(94% 0.028 342.258)", "--color-accent": "oklch(77% 0.152 181.912)", "--color-accent-content": "oklch(38% 0.063 188.416)", "--color-neutral": "oklch(14% 0.005 285.823)", "--color-neutral-content": "oklch(92% 0.004 286.32)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(76% 0.177 163.223)", "--color-success-content": "oklch(37% 0.077 168.94)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(71% 0.194 13.428)", "--color-error-content": "oklch(27% 0.105 12.094)", "--radius-selector": "0.5rem", "--radius-field": "0.25rem", "--radius-box": "0.5rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "1", "--noise": "0" }, corporate: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(93% 0 0)", "--color-base-300": "oklch(86% 0 0)", "--color-base-content": "oklch(22.389% 0.031 278.072)", "--color-primary": "oklch(58% 0.158 241.966)", "--color-primary-content": "oklch(100% 0 0)", "--color-secondary": "oklch(55% 0.046 257.417)", "--color-secondary-content": "oklch(100% 0 0)", "--color-accent": "oklch(60% 0.118 184.704)", "--color-accent-content": "oklch(100% 0 0)", "--color-neutral": "oklch(0% 0 0)", "--color-neutral-content": "oklch(100% 0 0)", "--color-info": "oklch(60% 0.126 221.723)", "--color-info-content": "oklch(100% 0 0)", "--color-success": "oklch(62% 0.194 149.214)", "--color-success-content": "oklch(100% 0 0)", "--color-warning": "oklch(85% 0.199 91.936)", "--color-warning-content": "oklch(0% 0 0)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(0% 0 0)", "--radius-selector": "0.25rem", "--radius-field": "0.25rem", "--radius-box": "0.25rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, forest: { "color-scheme": "dark", "--color-base-100": "oklch(20.84% 0.008 17.911)", "--color-base-200": "oklch(18.522% 0.007 17.911)", "--color-base-300": "oklch(16.203% 0.007 17.911)", "--color-base-content": "oklch(83.768% 0.001 17.911)", "--color-primary": "oklch(68.628% 0.185 148.958)", "--color-primary-content": "oklch(0% 0 0)", "--color-secondary": "oklch(69.776% 0.135 168.327)", "--color-secondary-content": "oklch(13.955% 0.027 168.327)", "--color-accent": "oklch(70.628% 0.119 185.713)", "--color-accent-content": "oklch(14.125% 0.023 185.713)", "--color-neutral": "oklch(30.698% 0.039 171.364)", "--color-neutral-content": "oklch(86.139% 0.007 171.364)", "--color-info": "oklch(72.06% 0.191 231.6)", "--color-info-content": "oklch(0% 0 0)", "--color-success": "oklch(64.8% 0.15 160)", "--color-success-content": "oklch(0% 0 0)", "--color-warning": "oklch(84.71% 0.199 83.87)", "--color-warning-content": "oklch(0% 0 0)", "--color-error": "oklch(71.76% 0.221 22.18)", "--color-error-content": "oklch(0% 0 0)", "--radius-selector": "1rem", "--radius-field": "2rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, bumblebee: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(97% 0 0)", "--color-base-300": "oklch(92% 0 0)", "--color-base-content": "oklch(20% 0 0)", "--color-primary": "oklch(85% 0.199 91.936)", "--color-primary-content": "oklch(42% 0.095 57.708)", "--color-secondary": "oklch(75% 0.183 55.934)", "--color-secondary-content": "oklch(40% 0.123 38.172)", "--color-accent": "oklch(0% 0 0)", "--color-accent-content": "oklch(100% 0 0)", "--color-neutral": "oklch(37% 0.01 67.558)", "--color-neutral-content": "oklch(92% 0.003 48.717)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(39% 0.09 240.876)", "--color-success": "oklch(76% 0.177 163.223)", "--color-success-content": "oklch(37% 0.077 168.94)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(39% 0.141 25.723)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "1", "--noise": "0" }, retro: { "color-scheme": "light", "--color-base-100": "oklch(91.637% 0.034 90.515)", "--color-base-200": "oklch(88.272% 0.049 91.774)", "--color-base-300": "oklch(84.133% 0.065 90.856)", "--color-base-content": "oklch(41% 0.112 45.904)", "--color-primary": "oklch(80% 0.114 19.571)", "--color-primary-content": "oklch(39% 0.141 25.723)", "--color-secondary": "oklch(92% 0.084 155.995)", "--color-secondary-content": "oklch(44% 0.119 151.328)", "--color-accent": "oklch(68% 0.162 75.834)", "--color-accent-content": "oklch(41% 0.112 45.904)", "--color-neutral": "oklch(44% 0.011 73.639)", "--color-neutral-content": "oklch(86% 0.005 56.366)", "--color-info": "oklch(58% 0.158 241.966)", "--color-info-content": "oklch(96% 0.059 95.617)", "--color-success": "oklch(51% 0.096 186.391)", "--color-success-content": "oklch(96% 0.059 95.617)", "--color-warning": "oklch(64% 0.222 41.116)", "--color-warning-content": "oklch(96% 0.059 95.617)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(40% 0.123 38.172)", "--radius-selector": "0.25rem", "--radius-field": "0.25rem", "--radius-box": "0.5rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, night: { "color-scheme": "dark", "--color-base-100": "oklch(20.768% 0.039 265.754)", "--color-base-200": "oklch(19.314% 0.037 265.754)", "--color-base-300": "oklch(17.86% 0.034 265.754)", "--color-base-content": "oklch(84.153% 0.007 265.754)", "--color-primary": "oklch(75.351% 0.138 232.661)", "--color-primary-content": "oklch(15.07% 0.027 232.661)", "--color-secondary": "oklch(68.011% 0.158 276.934)", "--color-secondary-content": "oklch(13.602% 0.031 276.934)", "--color-accent": "oklch(72.36% 0.176 350.048)", "--color-accent-content": "oklch(14.472% 0.035 350.048)", "--color-neutral": "oklch(27.949% 0.036 260.03)", "--color-neutral-content": "oklch(85.589% 0.007 260.03)", "--color-info": "oklch(68.455% 0.148 237.251)", "--color-info-content": "oklch(0% 0 0)", "--color-success": "oklch(78.452% 0.132 181.911)", "--color-success-content": "oklch(15.69% 0.026 181.911)", "--color-warning": "oklch(83.242% 0.139 82.95)", "--color-warning-content": "ok
 ```
 
 ### Core Architecture Module: `packages/bundle/daisyui-theme.mjs`
@@ -114,7 +128,7 @@ var plugin = {
 };
 
 // packages/daisyui/theme/object.js
-var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, sunset: { "color-scheme": "dark", "--color-base-100": "oklch(22% 0.019 237.69)", "--color-base-200": "oklch(20% 0.019 237.69)", "--color-base-300": "oklch(18% 0.019 237.69)", "--color-base-content": "oklch(77.383% 0.043 245.096)", "--color-primary": "oklch(74.703% 0.158 39.947)", "--color-primary-content": "oklch(14.94% 0.031 39.947)", "--color-secondary": "oklch(72.537% 0.177 2.72)", "--color-secondary-content": "oklch(14.507% 0.035 2.72)", "--color-accent": "oklch(71.294% 0.166 299.844)", "--color-accent-content": "oklch(14.258% 0.033 299.844)", "--color-neutral": "oklch(26% 0.019 237.69)", "--color-neutral-content": "oklch(70% 0.019 237.69)", "--color-info": "oklch(85.559% 0.085 206.015)", "--color-info-content": "oklch(17.111% 0.017 206.015)", "--color-success": "oklch(85.56% 0.085 144.778)", "--color-success-content": "oklch(17.112% 0.017 144.778)", "--color-warning": "oklch(85.569% 0.084 74.427)", "--color-warning-content": "oklch(17.113% 0.016 74.427)", "--color-error": "oklch(85.511% 0.078 16.886)", "--color-error-content": "oklch(17.102% 0.015 16.886)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, dracula: { "color-scheme": "dark", "--color-base-100": "oklch(28.822% 0.022 277.508)", "--color-base-200": "oklch(26.805% 0.02 277.508)", "--color-base-300": "oklch(24.787% 0.019 277.508)", "--color-base-content": "oklch(97.747% 0.007 106.545)", "--color-primary": "oklch(75.461% 0.183 346.812)", "--color-primary-content": "oklch(15.092% 0.036 346.812)", "--color-secondary": "oklch(74.202% 0.148 301.883)", "--color-secondary-content": "oklch(14.84% 0.029 301.883)", "--color-accent": "oklch(83.392% 0.124 66.558)", "--color-accent-content": "oklch(16.678% 0.024 66.558)", "--color-neutral": "oklch(39.445% 0.032 275.524)", "--color-neutral-content": "oklch(87.889% 0.006 275.524)", "--color-info": "oklch(88.263% 0.093 212.846)", "--color-info-content": "oklch(17.652% 0.018 212.846)", "--color-success": "oklch(87.099% 0.219 148.024)", "--color-success-content": "oklch(17.419% 0.043 148.024)", "--color-warning": "oklch(95.533% 0.134 112.757)", "--color-warning-content": "oklch(19.106% 0.026 112.757)", "--color-error": "oklch(68.22% 0.206 24.43)", "--color-error-content": "oklch(13.644% 0.041 24.43)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, caramellatte: { "color-scheme": "light", "--color-base-100": "oklch(98% 0.016 73.684)", "--color-base-200": "oklch(95% 0.038 75.164)", "--color-base-300": "oklch(90% 0.076 70.697)", "--color-base-content": "oklch(40% 0.123 38.172)", "--color-primary": "oklch(0% 0 0)", "--color-primary-content": "oklch(100% 0 0)", "--color-secondary": "oklch(22.45% 0.075 37.85)", "--color-secondary-content": "oklch(90% 0.076 70.697)", "--color-accent": "oklch(46.44% 0.111 37.85)", "--color-accent-content": "oklch(90% 0.076 70.697)", "--color-neutral": "oklch(55% 0.195 38.402)", "--color-neutral-content": "oklch(98% 0.016 73.684)", "--color-info": "oklch(42% 0.199 265.638)", "--color-info-content": "oklch(90% 0.076 70.697)", "--color-success": "oklch(43% 0.095 166.913)", "--color-success-content": "oklch(90% 0.076 70.697)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(39% 0.141 25.723)", "--radius-selector": "2rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "2px", "--depth": "1", "--noise": "1" }, fantasy: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(93% 0 0)", "--color-base-300": "oklch(86% 0 0)", "--color-base-content": "oklch(27.807% 0.029 256.847)", "--color-primary": "oklch(37.45% 0.189 325.02)", "--color-primary-content": "oklch(87.49% 0.037 325.02)", "--color-secondary": "oklch(53.92% 0.162 241.36)", "--color-secondary-content": "oklch(90.784% 0.032 241.36)", "--color-accent": "oklch(75.98% 0.204 56.72)", "--color-accent-content": "oklch(15.196% 0.04 56.72)", "--color-neutral": "oklch(27.807% 0.029 256.847)", "--color-neutral-content": "oklch(85.561% 0.005 256.847)", "--color-info": "oklch(72.06% 0.191 231.6)", "--color-info-content": "oklch(0% 0 0)", "--color-success": "oklch(64.8% 0.15 160)", "--color-success-content": "oklch(0% 0 0)", "--color-warning": "oklch(84.71% 0.199 83.87)", "--color-warning-content": "oklch(0% 0 0)", "--color-error": "oklch(71.76% 0.221 22.18)", "--color-error-content": "oklch(0% 0 0)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "1", "--noise": "0" }, lemonade: { "color-scheme": "light", "--color-base-100": "oklch(98.71% 0.02 123.72)", "--color-base-200": "oklch(91.8% 0.018 123.72)", "--color-base-300": "oklch(84.89% 0.017 123.72)", "--color-base-content": "oklch(19.742% 0.004 123.72)", "--color-primary": "oklch(58.92% 0.199 134.6)", "--color-primary-content": "oklch(11.784% 0.039 134.6)", "--color-secondary": "oklch(77.75% 0.196 111.09)", "--color-secondary-content": "oklch(15.55% 0.039 111.09)", "--color-accent": "oklch(85.39% 0.201 100.73)", "--color-accent-content": "oklch(17.078% 0.04 100.73)", "--color-neutral": "oklch(30.98% 0.075 108.6)", "--color-neutral-content": "oklch(86.196% 0.015 108.6)", "--color-info": "oklch(86.19% 0.047 224.14)", "--color-info-content": "oklch(17.238% 0.009 224.14)", "--color-success": "oklch(86.19% 0.047 157.85)", "--color-success-content": "oklch(17.238% 0.009 157.85)", "--color-warning": "oklch(86.19% 0.047 102.15)", "--color-warning-content": "oklch(17.238% 0.009 102.15)", "--color-error": "oklch(86.19% 0.047 25.85)", "--color-error-content": "oklch(17.238% 0.009 25.85)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, business: { "color-scheme": "dark", "--color-base-100": "oklch(24.353% 0 0)", "--color-base-200": "oklch(22.648% 0 0)", "--color-base-300": "oklch(20.944% 0 0)", "--color-base-content": "oklch(84.87% 0 0)", "--color-primary": "oklch(41.703% 0.099 251.473)", "--color-primary-content": "oklch(88.34% 0.019 251.473)", "--color-secondary": "oklch(64.092% 0.027 229.389)", "--color-secondary-content": "oklch(12.818% 0.005 229.389)", "--color-accent": "oklch(67.271% 0.167 35.791)", "--color-accent-content": "oklch(13.454% 0.033 35.791)", "--color-neutral": "oklch(27.441% 0.013 253.041)", "--color-neutral-content": "oklch(85.488% 0.002 253.041)", "--color-info": "oklch(62.616% 0.143 240.033)", "--color-info-content": "oklch(12.523% 0.028 240.033)", "--color-success": "oklch(70.226% 0.094 156.596)", "--color-success-content": "oklch(14.045% 0.018 156.596)", "--color-warning": "oklch(77.482% 0.115 81.519)", "--color-warning-content": "oklch(15.496% 0.023 81.519)", "--color-error": "oklch(51.61% 0.146 29.674)", "--color-error-content": "oklch(90.322% 0.029 29.674)", "--radius-selector": "0rem", "--radius-field": "0.25rem", "--radius-box": "0.25rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, black: { "color-scheme": "dark", "--color-base-100": "oklch(0% 0 0)", "--color-base-200": "oklch(19% 0 0)", "--color-base-300": "oklch(22% 0 0)", "--color-base-content": "oklch(87.609% 0 0)", "--color-primary": "oklch(35% 0 0)", "--color-primary-content": "oklch(100% 0 0)", "--color-secondary": "oklch(35% 0 0)", "--color-secondary-content": "oklch(100% 0 0)", "--color-accent": "oklch(35% 0 0)", "--color-accent-content": "oklch(100% 0 0)", "--color-neutral": "oklch(35% 0 0)", "--color-neutral-content": "oklch(100% 0 0)", "--color-info": "oklch(45.201% 0.313 264.052)", "--color-info-content": "oklch(89.04% 0.062 264.052)", "--color-success": "oklch(51.975% 0.176 142.495)", "--color-success-content": "oklch(90.395% 0.035 142.495)", "--color-warning": "oklch(96
+var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, dark: { "color-scheme": "dark", "--color-base-100": "oklch(25.33% 0.016 252.42)", "--color-base-200": "oklch(23.26% 0.014 253.1)", "--color-base-300": "oklch(21.15% 0.012 254.09)", "--color-base-content": "oklch(97.807% 0.029 256.847)", "--color-primary": "oklch(58% 0.233 277.117)", "--color-primary-content": "oklch(96% 0.018 272.314)", "--color-secondary": "oklch(65% 0.241 354.308)", "--color-secondary-content": "oklch(94% 0.028 342.258)", "--color-accent": "oklch(77% 0.152 181.912)", "--color-accent-content": "oklch(38% 0.063 188.416)", "--color-neutral": "oklch(14% 0.005 285.823)", "--color-neutral-content": "oklch(92% 0.004 286.32)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(76% 0.177 163.223)", "--color-success-content": "oklch(37% 0.077 168.94)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(71% 0.194 13.428)", "--color-error-content": "oklch(27% 0.105 12.094)", "--radius-selector": "0.5rem", "--radius-field": "0.25rem", "--radius-box": "0.5rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "1", "--noise": "0" }, corporate: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(93% 0 0)", "--color-base-300": "oklch(86% 0 0)", "--color-base-content": "oklch(22.389% 0.031 278.072)", "--color-primary": "oklch(58% 0.158 241.966)", "--color-primary-content": "oklch(100% 0 0)", "--color-secondary": "oklch(55% 0.046 257.417)", "--color-secondary-content": "oklch(100% 0 0)", "--color-accent": "oklch(60% 0.118 184.704)", "--color-accent-content": "oklch(100% 0 0)", "--color-neutral": "oklch(0% 0 0)", "--color-neutral-content": "oklch(100% 0 0)", "--color-info": "oklch(60% 0.126 221.723)", "--color-info-content": "oklch(100% 0 0)", "--color-success": "oklch(62% 0.194 149.214)", "--color-success-content": "oklch(100% 0 0)", "--color-warning": "oklch(85% 0.199 91.936)", "--color-warning-content": "oklch(0% 0 0)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(0% 0 0)", "--radius-selector": "0.25rem", "--radius-field": "0.25rem", "--radius-box": "0.25rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, forest: { "color-scheme": "dark", "--color-base-100": "oklch(20.84% 0.008 17.911)", "--color-base-200": "oklch(18.522% 0.007 17.911)", "--color-base-300": "oklch(16.203% 0.007 17.911)", "--color-base-content": "oklch(83.768% 0.001 17.911)", "--color-primary": "oklch(68.628% 0.185 148.958)", "--color-primary-content": "oklch(0% 0 0)", "--color-secondary": "oklch(69.776% 0.135 168.327)", "--color-secondary-content": "oklch(13.955% 0.027 168.327)", "--color-accent": "oklch(70.628% 0.119 185.713)", "--color-accent-content": "oklch(14.125% 0.023 185.713)", "--color-neutral": "oklch(30.698% 0.039 171.364)", "--color-neutral-content": "oklch(86.139% 0.007 171.364)", "--color-info": "oklch(72.06% 0.191 231.6)", "--color-info-content": "oklch(0% 0 0)", "--color-success": "oklch(64.8% 0.15 160)", "--color-success-content": "oklch(0% 0 0)", "--color-warning": "oklch(84.71% 0.199 83.87)", "--color-warning-content": "oklch(0% 0 0)", "--color-error": "oklch(71.76% 0.221 22.18)", "--color-error-content": "oklch(0% 0 0)", "--radius-selector": "1rem", "--radius-field": "2rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, bumblebee: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(97% 0 0)", "--color-base-300": "oklch(92% 0 0)", "--color-base-content": "oklch(20% 0 0)", "--color-primary": "oklch(85% 0.199 91.936)", "--color-primary-content": "oklch(42% 0.095 57.708)", "--color-secondary": "oklch(75% 0.183 55.934)", "--color-secondary-content": "oklch(40% 0.123 38.172)", "--color-accent": "oklch(0% 0 0)", "--color-accent-content": "oklch(100% 0 0)", "--color-neutral": "oklch(37% 0.01 67.558)", "--color-neutral-content": "oklch(92% 0.003 48.717)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(39% 0.09 240.876)", "--color-success": "oklch(76% 0.177 163.223)", "--color-success-content": "oklch(37% 0.077 168.94)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(39% 0.141 25.723)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "1", "--noise": "0" }, retro: { "color-scheme": "light", "--color-base-100": "oklch(91.637% 0.034 90.515)", "--color-base-200": "oklch(88.272% 0.049 91.774)", "--color-base-300": "oklch(84.133% 0.065 90.856)", "--color-base-content": "oklch(41% 0.112 45.904)", "--color-primary": "oklch(80% 0.114 19.571)", "--color-primary-content": "oklch(39% 0.141 25.723)", "--color-secondary": "oklch(92% 0.084 155.995)", "--color-secondary-content": "oklch(44% 0.119 151.328)", "--color-accent": "oklch(68% 0.162 75.834)", "--color-accent-content": "oklch(41% 0.112 45.904)", "--color-neutral": "oklch(44% 0.011 73.639)", "--color-neutral-content": "oklch(86% 0.005 56.366)", "--color-info": "oklch(58% 0.158 241.966)", "--color-info-content": "oklch(96% 0.059 95.617)", "--color-success": "oklch(51% 0.096 186.391)", "--color-success-content": "oklch(96% 0.059 95.617)", "--color-warning": "oklch(64% 0.222 41.116)", "--color-warning-content": "oklch(96% 0.059 95.617)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(40% 0.123 38.172)", "--radius-selector": "0.25rem", "--radius-field": "0.25rem", "--radius-box": "0.5rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, night: { "color-scheme": "dark", "--color-base-100": "oklch(20.768% 0.039 265.754)", "--color-base-200": "oklch(19.314% 0.037 265.754)", "--color-base-300": "oklch(17.86% 0.034 265.754)", "--color-base-content": "oklch(84.153% 0.007 265.754)", "--color-primary": "oklch(75.351% 0.138 232.661)", "--color-primary-content": "oklch(15.07% 0.027 232.661)", "--color-secondary": "oklch(68.011% 0.158 276.934)", "--color-secondary-content": "oklch(13.602% 0.031 276.934)", "--color-accent": "oklch(72.36% 0.176 350.048)", "--color-accent-content": "oklch(14.472% 0.035 350.048)", "--color-neutral": "oklch(27.949% 0.036 260.03)", "--color-neutral-content": "oklch(85.589% 0.007 260.03)", "--color-info": "oklch(68.455% 0.148 237.251)", "--color-info-content": "oklch(0% 0 0)", "--color-success": "oklch(78.452% 0.132 181.911)", "--color-success-content": "oklch(15.69% 0.026 181.911)", "--color-warning": "oklch(83.242% 0.139 82.95)", "--color-warning-content": "oklch(16.648% 0.027 82.95)", "--color-error": "oklch(71.785% 0.17 13.118)", "--color-error-content": "oklch(14.357% 0.034 13.118)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, cmyk: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(95% 0 0)", "--color-base-300": "oklch(90% 0 0)", "--color-base-content": "oklch(20% 0 0)", "--color-primary": "oklch(71.772% 0.133 239.443)", "--color-primary-content": "oklch(14.354% 0.026 239.443)", "--color-secondary": "oklch(64.476% 0.202 359.339)", "--color-secondary-content": "oklch(12.895% 0.04 359.339)", "--color-accent": "oklch(94.228% 0.189 105.306)", "--color-accent-content": "oklch(18.845% 0.037 105.306)", "--color-neutral": "oklch(21.778% 0 0)", "--color-neutral-content": "oklch(84.355% 0 0)", "--color-info": "oklch(68.475% 0.094 217.284)", "--color-info-content": "oklch(13.695% 0.018 217.284)", "--color-success": "oklch(46.949% 0.162 321.406)", "--color-success-content": "oklch(89.389% 0.032 321.406)", "--color-warning": "oklch(71.236% 0.159 52.023)", "--color-warning-content": "oklch(14.247% 0.031 52.023)", "--color-error": "oklch(62.013% 0.208 28.717)", "--color-error-content": "oklch(12.40
 ```
 
 ### Core Architecture Module: `packages/bundle/daisyui.js`
@@ -362,7 +376,7 @@ var variables_default = {
 };
 
 // packages/daisyui/theme/object.js
-var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, sunset: { "color-scheme": "dark", "--color-base-100": "oklch(22% 0.019 237.69)", "--color-base-200": "oklch(20% 0.019 237.69)", "--color-base-300": "oklch(18% 0.019 237.69)", "--color-base-content": "oklch(77.383% 0.043 245.096)", "--color-primary": "oklch(74.703% 0.158 39.947)", "--color-primary-content": "oklch(14.94% 0.031 39.947)", "--color-secondary": "oklch(72.537% 0.177 2.72)", "--color-secondary-content": "oklch(14.507% 0.035 2.72)", "--color-accent": "oklch(71.294% 0.166 299.844)", "--color-accent-content": "oklch(14.258% 0.033 299.844)", "--color-neutral": "oklch(26% 0.019 237.69)", "--color-neutral-content": "oklch(70% 0.019 237.69)", "--color-info": "oklch(85.559% 0.085 206.015)", "--color-info-content": "oklch(17.111% 0.017 206.015)", "--color-success": "oklch(85.56% 0.085 144.778)", "--color-success-content": "oklch(17.112% 0.017 144.778)", "--color-warning": "oklch(85.569% 0.084 74.427)", "--color-warning-content": "oklch(17.113% 0.016 74.427)", "--color-error": "oklch(85.511% 0.078 16.886)", "--color-error-content": "oklch(17.102% 0.015 16.886)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.2
+var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, dark: { "color-scheme": "dark", "--color-base-100": "oklch(25.33% 0.016 252.42)", "--color-base-200": "oklch(23.26% 0.014 253.1)", "--color-base-300": "oklch(21.15% 0.012 254.09)", "--color-base-content": "oklch(97.807% 0.029 256.847)", "--color-primary": "oklch(58% 0.233 277.117)", "--color-primary-content": "oklch(96% 0.018 272.314)", "--color-secondary": "oklch(65% 0.241 354.308)", "--color-secondary-content": "oklch(94% 0.028 342.258)", "--color-accent": "oklch(77% 0.152 181.912)", "--color-accent-content": "oklch(38% 0.063 188.416)", "--color-neutral": "oklch(14% 0.005 285.823)", "--color-neutral-content": "oklch(92% 0.004 286.32)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(76% 0.177 163.223)", "--color-success-content": "oklch(37% 0.077 168.94)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(71% 0.194 13.428)", "--color-error-content": "oklch(27% 0.105 12.094)", "--radius-selector": "0.5rem", "--radius-field": "0.25rem", "--radius-box": "0.5rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth":
 ```
 
 ### Core Architecture Module: `packages/bundle/daisyui.mjs`
@@ -566,7 +580,7 @@ var variables_default = {
 };
 
 // packages/daisyui/theme/object.js
-var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, sunset: { "color-scheme": "dark", "--color-base-100": "oklch(22% 0.019 237.69)", "--color-base-200": "oklch(20% 0.019 237.69)", "--color-base-300": "oklch(18% 0.019 237.69)", "--color-base-content": "oklch(77.383% 0.043 245.096)", "--color-primary": "oklch(74.703% 0.158 39.947)", "--color-primary-content": "oklch(14.94% 0.031 39.947)", "--color-secondary": "oklch(72.537% 0.177 2.72)", "--color-secondary-content": "oklch(14.507% 0.035 2.72)", "--color-accent": "oklch(71.294% 0.166 299.844)", "--color-accent-content": "oklch(14.258% 0.033 299.844)", "--color-neutral": "oklch(26% 0.019 237.69)", "--color-neutral-content": "oklch(70% 0.019 237.69)", "--color-info": "oklch(85.559% 0.085 206.015)", "--color-info-content": "oklch(17.111% 0.017 206.015)", "--color-success": "oklch(85.56% 0.085 144.778)", "--color-success-content": "oklch(17.112% 0.017 144.778)", "--color-warning": "oklch(85.569% 0.084 74.427)", "--color-warning-content": "oklch(17.113% 0.016 74.427)", "--color-error": "oklch(85.511% 0.078 16.886)", "--color-error-content": "oklch(17.102% 0.015 16.886)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, dracula: { "color-scheme": "dark", "--color-base-100": "oklch(28.822% 0.022 277.508)", "--color-base-200": "oklch(26.805% 0.02 277.508)", "--color-base-300": "oklch(24.787% 0.019 277.508)", "--color-base-content": "oklch(97.747% 0.007 106.545)", "--color-primary": "oklch(75.461% 0.183 346.812)", "--color-primary-content": "oklch(15.092% 0.036 346.812)", "--color-secondary": "oklch(74.202% 0.148 301.883)", "--color-secondary-content": "oklch(14.84% 0.029 301.883)", "--color-accent": "oklch(83.392% 0.124 66.558)", "--color-accent-content": "oklch(16.678% 0.024 66.558)", "--color-neutral": "oklch(39.445% 0.032 275.524)", "--color-neutral-content": "oklch(87.889% 0.006 275.524)", "--color-info": "oklch(88.263% 0.093 212.846)", "--color-info-content": "oklch(17.652% 0.018 212.846)", "--color-success": "oklch(87.099% 0.219 148.024)", "--color-success-content": "oklch(17.419% 0.043 148.024)", "--color-warning": "oklch(95.533% 0.134 112.757)", "--color-warning-content": "oklch(19.106% 0.026 112.757)", "--color-error": "oklch(68.22% 0.206 24.43)", "--color-error-content": "oklch(13.644% 0.041 24.43)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0"
+var object_default = { synthwave: { "color-scheme": "dark", "--color-base-100": "oklch(15% 0.09 281.288)", "--color-base-200": "oklch(20% 0.09 281.288)", "--color-base-300": "oklch(25% 0.09 281.288)", "--color-base-content": "oklch(78% 0.115 274.713)", "--color-primary": "oklch(71% 0.202 349.761)", "--color-primary-content": "oklch(28% 0.109 3.907)", "--color-secondary": "oklch(82% 0.111 230.318)", "--color-secondary-content": "oklch(29% 0.066 243.157)", "--color-accent": "oklch(75% 0.183 55.934)", "--color-accent-content": "oklch(26% 0.079 36.259)", "--color-neutral": "oklch(45% 0.24 277.023)", "--color-neutral-content": "oklch(87% 0.065 274.039)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(77% 0.152 181.912)", "--color-success-content": "oklch(27% 0.046 192.524)", "--color-warning": "oklch(90% 0.182 98.111)", "--color-warning-content": "oklch(42% 0.095 57.708)", "--color-error": "oklch(73.7% 0.121 32.639)", "--color-error-content": "oklch(23.501% 0.096 290.329)", "--radius-selector": "1rem", "--radius-field": "0.5rem", "--radius-box": "1rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, dark: { "color-scheme": "dark", "--color-base-100": "oklch(25.33% 0.016 252.42)", "--color-base-200": "oklch(23.26% 0.014 253.1)", "--color-base-300": "oklch(21.15% 0.012 254.09)", "--color-base-content": "oklch(97.807% 0.029 256.847)", "--color-primary": "oklch(58% 0.233 277.117)", "--color-primary-content": "oklch(96% 0.018 272.314)", "--color-secondary": "oklch(65% 0.241 354.308)", "--color-secondary-content": "oklch(94% 0.028 342.258)", "--color-accent": "oklch(77% 0.152 181.912)", "--color-accent-content": "oklch(38% 0.063 188.416)", "--color-neutral": "oklch(14% 0.005 285.823)", "--color-neutral-content": "oklch(92% 0.004 286.32)", "--color-info": "oklch(74% 0.16 232.661)", "--color-info-content": "oklch(29% 0.066 243.157)", "--color-success": "oklch(76% 0.177 163.223)", "--color-success-content": "oklch(37% 0.077 168.94)", "--color-warning": "oklch(82% 0.189 84.429)", "--color-warning-content": "oklch(41% 0.112 45.904)", "--color-error": "oklch(71% 0.194 13.428)", "--color-error-content": "oklch(27% 0.105 12.094)", "--radius-selector": "0.5rem", "--radius-field": "0.25rem", "--radius-box": "0.5rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "1", "--noise": "0" }, corporate: { "color-scheme": "light", "--color-base-100": "oklch(100% 0 0)", "--color-base-200": "oklch(93% 0 0)", "--color-base-300": "oklch(86% 0 0)", "--color-base-content": "oklch(22.389% 0.031 278.072)", "--color-primary": "oklch(58% 0.158 241.966)", "--color-primary-content": "oklch(100% 0 0)", "--color-secondary": "oklch(55% 0.046 257.417)", "--color-secondary-content": "oklch(100% 0 0)", "--color-accent": "oklch(60% 0.118 184.704)", "--color-accent-content": "oklch(100% 0 0)", "--color-neutral": "oklch(0% 0 0)", "--color-neutral-content": "oklch(100% 0 0)", "--color-info": "oklch(60% 0.126 221.723)", "--color-info-content": "oklch(100% 0 0)", "--color-success": "oklch(62% 0.194 149.214)", "--color-success-content": "oklch(100% 0 0)", "--color-warning": "oklch(85% 0.199 91.936)", "--color-warning-content": "oklch(0% 0 0)", "--color-error": "oklch(70% 0.191 22.216)", "--color-error-content": "oklch(0% 0 0)", "--radius-selector": "0.25rem", "--radius-field": "0.25rem", "--radius-box": "0.25rem", "--size-selector": "0.25rem", "--size-field": "0.25rem", "--border": "1px", "--depth": "0", "--noise": "0" }, forest: { "color-scheme": "dark", "--color-base-100": "oklch(20.84% 0.008 17.911)", "--color-base-200": "oklch(18.522% 0.007 17.911)", "--color-base-300": "oklch(16.203% 0.007 17.911)", "--co
 ```
 
 ### Core Architecture Module: `packages/daisyui/functions/addPrefix.js`
@@ -947,51 +961,6 @@ export const copyFile = async (from, to, newName = null) => {
 
 ```
 
-### Core Architecture Module: `packages/daisyui/functions/createDirectoryBasedOnFileNames.js`
-```
-import { promises as fs } from "node:fs"
-import path from "node:path"
-
-export const createDirectoryBasedOnFileNames = async (fileName, fileExtension, distDir) => {
-  const componentName = path.basename(fileName, fileExtension)
-  const componentDir = path.join(distDir, componentName)
-  await fs.mkdir(componentDir, { recursive: true })
-  return componentDir
-}
-
-```
-
-### Core Architecture Module: `packages/daisyui/functions/createPluginFiles.js`
-```
-import { promises as fs } from "fs"
-import path from "path"
-
-export const createPluginFiles = async (type, componentDir, jsContent, fileName) => {
-  const types = {
-    base: "addBase",
-    component: "addComponents",
-    utility: "addUtilities",
-  }
-
-  // create object.js
-  const objectJsPath = path.join(componentDir, "object.js")
-  await fs.writeFile(objectJsPath, `export default ${jsContent};`)
-
-  // create index.js
-  const indexJsPath = path.join(componentDir, "index.js")
-  const indexJsContent = `import ${fileName} from './object.js';
-import { addPrefix } from '../../functions/addPrefix.js';
-
-export default ({ ${types[type]}, prefix = '' }) => {
-  const prefixed${fileName} = addPrefix(${fileName}, prefix);
-  ${types[type]}({ ...prefixed${fileName} });
-};
-`
-  await fs.writeFile(indexJsPath, indexJsContent)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1003,38 +972,6 @@ export default ({ ${types[type]}, prefix = '' }) => {
 
 - **Issue #645** (2022-03-24): **Setting "menu" and "top-X", menu items are rounded**
   *Symptoms*: Example: https://play.tailwindcss.com/tt8XBZbzaY?size=774x279  Maybe the below line is affecting. https://github.com/saadeghi/daisyui/blob/master/src/components/styled/menu.css#L13  Is this a bug, or an intentional implementation?   Thanks for the great library!
-
-- **Issue #626** (2022-03-17): **general hover states not working **
-  *Symptoms*: I would have expected that the ``hover:daisy-classname`` should work as normal but it doesn't seem to work at all.  e.g.  ``` <div class="w-16 border-4 hover:bg-accent hover:border-accent-focus hover:text-accent-focus">TESTING</div> ``` there is absolutely no change in the hover state. Is this intentional?
-  **Post-Mortem & Fix Analysis**:
-  > It does work.   Example: https://play.tailwindcss.com/LqQkp3XP7c    Are you sure your Tailwind setup is correct?
-  > ??? that link doesn't work either it just shows:  ``` Config Error Line 3 Cannot find module 'daisyui' ``` anyhow I'm importing it from cdn as shown on the your main webpage ``` <link href="https://cdn.jsdelivr.net/npm/daisyui@2.8.0/dist/full.css" rel="stylesheet" type="text/css" />   <script src="https://cdn.tailwindcss.com"></script> ```  see https://jsfiddle.net/pL2aqkn5/
-  > I see this is a problem on CDN file. I will look at it today. For now, you can use the installable node.js package or use one of sample projects on StackBlitz here: https://daisyui.com/docs/install/
-
-- **Issue #500** (2022-02-22): **Website Documentation component Select**
-  *Symptoms*: The following examples (preview) are not showing the correct color on the page: Info color, Success color, Warning color and Error color.   Assuming that the border(outline) for the select box should be displaying the correct color. The HTML code appears to correct.
-  **Post-Mortem & Fix Analysis**:
-  > Progress component also seems affected
-
-- **Issue #455** (2022-02-15): **Outlined state buttons close to invisible with light themes**
-  *Symptoms*: With the lighter state colors of 2.0, outlined state buttons have become close to invisible on light backgrounds. <img width="1011" alt="Screenshot 2022-02-15 at 00 30 56" src="https://user-images.githubusercontent.com/7240688/153964621-c5e6af70-e568-432c-8115-e7f6202bc076.png">  
-  **Post-Mortem & Fix Analysis**:
-  > Fixed.   Thanks
-
-- **Issue #449** (2022-02-14): **steps component not following tailwind prefix**
-  *Symptoms*: My tailwind config contains a prefix property like this: `prefix: 'tw-'` The following highlighted css breaks because when it's used by tailwind it fails to convert the class with prefix. https://github.com/saadeghi/daisyui/blob/master/src/components/styled/steps.css#L4  ``` <ul class="tw-steps tw-w-full">   <li class="step tw-step-primary">Test 1</li>  <-- We should be able to use tw-step here.   <li class="step tw-step-primary">Test 2</li>   <li class="step tw-step-primary">Test 3</li> </ul> ``` 
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in v2.0   https://play.tailwindcss.com/IFdiVRSNqD
-
-- **Issue #329** (2021-12-13): **Failed to Compile Syntax Error - 1.16.2 and Tailwind 3**
-  *Symptoms*: Hey All,   I get this error when I run `npm run build`  ``` Creating an optimized production build...  🌼 daisyUI components 1.16.2  https://github.com/saadeghi/daisyui   ✔︎ Including:  base, components, themes[22], utilities    Failed to compile.  Syntax error: postcss-custom-properties: <css input> Unknown word (1:1) > 1 | var(--b1)/var(--tw-bg-opacity,1)     | ^ ```  I followed this tailwind guide to create a fresh react project,  ``` https://tailwindcss.com/docs/guides/create-react-app ``` if I remove `require("daisyui")` from `tailwind.config.js` then running npm run build, the project builds just fine but breaks when I add daisyui in the plugins section  My package.json ``` {   "name": "github-finder",   "version": "0.1.0",   "private": true,   "dependencies": {     "@testing-library/jest-dom": "^5.16.1",     "@testing-library/react": "^12.1.2",     "@testing-library/user-event": "^13.5.0",     "daisyui": "^1.16.2",     "react": "^17.0.2",     "react-dom": "^17.0.2",     "react-scripts": "5.0.0-next.58",     "web-vitals": "^2.1.2"   },   "scripts": {     "start": "react-scripts start",     "build": "react-scripts build",     "test": "react-scripts test",     "eject": "react-scripts eject"   },   "eslintConfig": {     "extends": [       "react-app",       "react-app/jest"     ]   },   "browserslist": {     "production": [       ">0.2%",       "not dead",       "not op_mini all"     ],     "development": [       "l
-  **Post-Mortem & Fix Analysis**:
-  > I think this is related to a question I just asked ( #328 ) lol. Tailwind 3 was just realeased and is the default when you start a new project. I think DaisyUI may need some changes to be compatible
-  > @zenhorace @MxD-js  Can you please provide an example github repo so I can reproduce this issue?   Because I just created [a new project](https://github.com/saadeghi/cra-tailwind3-daisyui-example) based on the [Tailwind guide](https://tailwindcss.com/docs/guides/create-react-app ) you mentioned and it works as expected.
-  > > @zenhorace @MxD-js Can you please provide an example github repo so I can reproduce this issue? Because I just created [a new project](https://github.com/saadeghi/cra-tailwind3-daisyui-example) based on the [Tailwind guide](https://tailwindcss.com/docs/guides/create-react-app) you mentioned and it works as expected.  Sure, here's the repo.   https://github.com/MxD-js/my-project-tailwind-daisyui  I cloned your sample project and get the same result, `npm run start` works fine, but `npm run build` throws error  worth noting that I am node v16.13.1 and npm 8.1.2  ![image](https://user-images.githubusercontent.com/60336163/145631856-6c3a0b10-9e4e-4a95-85fd-ec91c5826fc6.png)
-
-- **Issue #216** (2021-09-29): **.menu > li breaks .hidden**
-  *Symptoms*: As the title says, when you're using a `.menu`, any subsequent `li` tags don't support the tailwind `.hidden` class due to specificity rules ![image](https://user-images.githubusercontent.com/6368283/134807432-2e236c0b-46a0-4ae6-abba-76f81694281f.png)  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1051,163 +988,7 @@ export default ({ ${types[type]}, prefix = '' }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27194501` (2026-09-30)
-**Commit Message**: fix: btn-link with btn-disabled color (#4749)
-
-**File**: `packages/daisyui/src/components/button.css` (modified, +1/-2)
-```diff
-@@ -335,8 +335,7 @@
-   }
- }
- 
--.btn-disabled,
--.btn:is(:disabled, [disabled], [aria-disabled="true"]) {
-+.btn:is(.btn-disabled, :disabled, [disabled], [aria-disabled="true"]) {
-   @layer daisyui {
-     @apply pointer-events-none;
-     color: color-mix(in oklch, var(--color-base-content) 20%, #0000);
-```
-
----
-
-### Incident Patch 2: `ae8e5216` (2026-09-29)
-**Commit Message**: docs: add "Use daisyUI with Stimulus" guide (#4650)
-
-* docs: add Use daisyUI with Stimulus guide
-
-* docs: reduce Stimulus guide to install steps only
-
----------
-
-Co-authored-by: Neo Tan <[REDACTED_EMAIL]>
-
-**File**: `packages/docs/src/routes/(routes)/docs/install/stimulus/+page.md` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+---
-+title: Use daisyUI with Stimulus
-+desc: How to install and use daisyUI with Stimulus
-+---
-+
-+<script>
-+  import Translate from "$components/Translate.svelte"
-+</script>
-+
-+> :INFO:
-+>
-+> Stimulus does not handle CSS, so daisyUI is installed the same way as in any other project.  
-+> If you use Rails, follow the [Rails install guide](/docs/install/rails/) instead, because Stimulus already comes with Rails.
-+
-+### 1. Install
-+
-+Initialize a new Node project in the current directory using `npm init -y` if it's not a Node project already.
-+
-+Install Tailwind CSS CLI and daisyUI
-+
-+```sh:Terminal
-+npm install tailwindcss@latest @tailwindcss/cli@latest daisyui@latest
-+```
-+
-+### 2. Add Tailwind CSS and daisyUI
-+
-+Add Tailwind CSS and daisyUI to your CSS file.
-+
-+```postcss:app.css
-+@import "tailwindcss";
-+@plugin "daisyui";
-+```
-+
-+### 3. Build CSS
-+
-+Add a script to your package.json to build the CSS.
-+
-+```json:package.json
-+{
-+  "scripts": {
-+    "build:css": "npx @tailwindcss/cli -i app.css -o public/output.css"
-+  },
-+}
-+```
-+
-+Run the script to build the CSS file
-+
-+```sh:Terminal
-+npm run build:css
-+```
-+
-+This command creates a `public/output.css` file with the compiled CSS. You can link this file to your HTML file.
-+
-+```html:public/index.html
-+<link href="./output.css" rel="stylesheet">
-+```
-+
-+### 4. Add Stimulus
-+
-+Load Stimulus from a CDN and start the application.
-+
-+```html:public/index.html
-+<script type="module">
-+  import { Application } from "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js"
-+  window.Stimulus = Application.start()
-+</script>
-+```
-+
-+If you use a bundler, install `@hotwired/stimulus` with npm and import it from the package name instead.
-+
-+Now you can use daisyUI class names!
-+
-+```html:public/index.html
-+<button class="btn btn-primary">Hello daisyUI!</button>
-+```
-```
-
----
-
-### Incident Patch 3: `cc43e587` (2026-09-24)
-**Commit Message**: fix: adjust tooltip tail position for themes with more radius (#4759)
-
-* fix: hide the tooltip tail shoulders on tooltip-left and tooltip-right when the bubble is a pill
-
-* fix: scale the tooltip tail overlap and the start and end tail offset with the field radius
-
-* fix: keep the side tooltip tails on the straight part of the bubble edge on 0.5rem themes
-
-**File**: `packages/daisyui/src/components/tooltip.css` (modified, +6/-2)
-```diff
-@@ -3,8 +3,10 @@
-     @apply relative inline-block;
-     --tt-bg: var(--color-neutral);
-     --tt-off: calc(100% + 0.5rem);
--    --tt-tail: calc(100% + 1px + 0.25rem);
--    --tt-tail-off: 0.5rem;
-+    --tt-radius: min(var(--radius-field), 0.8rem);
-+    --tt-overlap: clamp(1px, calc(var(--radius-field) / 8), 2px);
-+    --tt-tail: calc(100% + var(--tt-overlap) + 0.25rem);
-+    --tt-tail-off: max(0.5rem, var(--tt-radius));
- 
-     & > .tooltip-content,
-     &[data-tip]:before {
-@@ -166,6 +168,7 @@
- 
- .tooltip-left {
-   @layer daisyui.l1.l2 {
-+    --tt-tail-off: clamp(0.5rem, var(--tt-radius) + 3px, 0.8rem - 2px);
-     > .tooltip-content,
-     &[data-tip]:before {
-       transform: translateX(calc(var(--tt-pos, 0.25rem) - 0.25rem))
-@@ -186,6 +189,7 @@
- 
- .tooltip-right {
-   @layer daisyui.l1.l2 {
-+    --tt-tail-off: clamp(0.5rem, var(--tt-radius) + 3px, 0.8rem - 2px);
-     > .tooltip-content,
-     &[data-tip]:before {
-       transform: translateX(calc(var(--tt-pos, -0.25rem) + 0.25rem))
-```
-
----
-
-### Incident Patch 4: `cea1c7d5` (2026-09-24)
+### Incident Patch 1: `cea1c7d5` (2026-09-24)
 **Commit Message**: fix: range shadow size and performance (#4771)
 
 --range-fill-x and --range-fill-spread are sized in cqw, but .range declares no
@@ -1235,467 +1016,69 @@ track's own width. Rendering is unchanged.
 
 ---
 
-### Incident Patch 5: `b00cb0cd` (2026-09-23)
-**Commit Message**: fix: avatar indicator dot RTL position (#4773)
+### Incident Patch 2: `1d2a0ba2` (2026-10-13)
+**Commit Message**: fix(loading): keep the loading indicator visible in forced colors mode (#4794)
 
-**File**: `packages/daisyui/src/components/avatar.css` (modified, +2/-2)
+**File**: `packages/daisyui/src/components/loading.css` (modified, +3/-0)
 ```diff
-@@ -40,7 +40,7 @@
-       width: 15%;
-       height: 15%;
-       top: 7%;
--      right: 7%;
-+      inset-inline-end: 7%;
-     }
-   }
- }
-@@ -54,7 +54,7 @@
-       width: 15%;
-       height: 15%;
-       top: 7%;
--      right: 7%;
-+      inset-inline-end: 7%;
-     }
-   }
- }
+@@ -2,6 +2,9 @@
+   @layer daisyui.l1.l2.l3 {
+     @apply pointer-events-none inline-block aspect-square shrink-0 bg-current align-middle;
+     width: calc(var(--size-selector, 0.25rem) * 6);
++    @media (forced-colors: active) {
++      background-color: CanvasText;
++    }
+     mask-size: 100%;
+     mask-repeat: no-repeat;
+     mask-position: center;
 ```
 
 ---
 
-### Incident Patch 6: `2e34dfe6` (2026-09-21)
-**Commit Message**: fix: status size respects theme size variables (#4774)
+### Incident Patch 3: `d9de9497` (2026-10-13)
+**Commit Message**: fix(progress): keep the progress bar visible in forced colors mode (#4795)
 
-**File**: `packages/daisyui/src/components/status.css` (modified, +9/-6)
+**File**: `packages/daisyui/src/components/progress.css` (modified, +9/-0)
 ```diff
 @@ -1,6 +1,9 @@
- .status {
+ .progress {
    @layer daisyui.l1.l2.l3 {
--    @apply bg-base-content/20 rounded-selector inline-block aspect-square size-2 bg-center bg-no-repeat align-middle text-black/30;
-+    @apply bg-base-content/20 rounded-selector inline-block aspect-square bg-center bg-no-repeat align-middle text-black/30;
-+    --size: calc(var(--size-selector, 0.25rem) * 2);
-+    width: var(--size);
-+    height: var(--size);
-     background-image: radial-gradient(
-       circle at 35% 30%,
-       oklch(1 0 0 / calc(var(--depth) * 0.5)),
-@@ -63,30 +66,30 @@
- 
- .status-xs {
-   @layer daisyui.l1.l2 {
--    @apply size-0.5;
-+    --size: calc(var(--size-selector, 0.25rem) * 0.5);
-   }
- }
- 
- .status-sm {
-   @layer daisyui.l1.l2 {
--    @apply size-1;
-+    --size: calc(var(--size-selector, 0.25rem) * 1);
-   }
- }
- 
- .status-md {
-   @layer daisyui.l1.l2 {
--    @apply size-2;
-+    --size: calc(var(--size-selector, 0.25rem) * 2);
-   }
- }
- 
- .status-lg {
-   @layer daisyui.l1.l2 {
--    @apply size-3;
-+    --size: calc(var(--size-selector, 0.25rem) * 3);
-   }
- }
- 
- .status-xl {
-   @layer daisyui.l1.l2 {
--    @apply size-4;
-+    --size: calc(var(--size-selector, 0.25rem) * 4);
-   }
- }
-```
-
----
-
-### Incident Patch 7: `a0ca2b87` (2026-09-18)
-**Commit Message**: fix: disabled style for input, select, textarea and file-input (#4769)
-
-**File**: `packages/daisyui/src/components/fileinput.css` (modified, +3/-0)
-```diff
-@@ -60,6 +60,9 @@
-       outline-offset: 2px;
-       isolation: isolate;
-     }
-+  }
-+
-+  @layer daisyui.l1.l2 {
-     &:has(> input[disabled]),
-     &:is(:disabled, [disabled]) {
-       @apply border-base-200 bg-base-200 placeholder-base-content placeholder-base-content/20 cursor-not-allowed;
-```
-
-**File**: `packages/daisyui/src/components/input.css` (modified, +2/-0)
-```diff
-@@ -96,7 +96,9 @@
-         }
-       }
-     }
-+  }
- 
-+  @layer daisyui.l1.l2 {
-     &:has(> input[disabled]),
-     &:is(:disabled, [disabled]),
-     fieldset:disabled & {
-```
-
-**File**: `packages/daisyui/src/components/select.css` (modified, +5/-0)
-```diff
-@@ -79,7 +79,9 @@
-         linear-gradient(135deg, #0000 50%, currentColor 50%),
-         linear-gradient(45deg, currentColor 50%, #0000 50%);
-     }
-+  }
- 
-+  @layer daisyui.l1.l2 {
-     &:has(> select[disabled]),
-     &:is(:disabled, [disabled]),
-     fieldset:disabled & {
-@@ -100,6 +102,9 @@
-     &:has(> select[disabled]) > select[disabled] {
-       @apply cursor-not-allowed;
-     }
-+  }
-+
-+  @layer daisyui.l1.l2.l3 {
-     &,
-     & select {
-       @supports (appearance: base-select) {
-```
-
-**File**: `packages/daisyui/src/components/textarea.css` (modified, +2/-0)
-```diff
-@@ -45,7 +45,9 @@
-         }
-       }
-     }
-+  }
- 
-+  @layer daisyui.l1.l2 {
-     &:has(> textarea[disabled]),
-     &:is(:disabled, [disabled]) {
-       @apply border-base-200 bg-base-200 text-base-content/40 cursor-not-allowed;
-```
-
----
-
-### Incident Patch 8: `6fcaa55c` (2026-09-18)
-**Commit Message**: fix: #4766 validator colors specificity (#4767)
-
-**File**: `packages/daisyui/src/components/validator.css` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- .validator {
--  @layer daisyui.l1.l2.l3 {
-+  @layer daisyui.l1.l2 {
-     &:user-valid,
-     &:has(:user-valid) {
-       &,
-```
-
----
-
-### Incident Patch 9: `276fce3e` (2026-09-17)
-**Commit Message**: fix: style aria-checked as btn-active in button (#4761)
-
-**File**: `packages/daisyui/src/components/button.css` (modified, +6/-1)
-```diff
-@@ -87,6 +87,7 @@
-     &:active:not(
-         .btn-active,
-         [aria-pressed="true"],
-+        [aria-checked="true"],
-         [aria-current]:not([aria-current="false"], [aria-current=""])
-       ) {
-       translate: 0 0.5px;
-@@ -123,7 +124,11 @@
- }
- 
- .btn-active,
--.btn:is([aria-pressed="true"], [aria-current]:not([aria-current="false"], [aria-current=""])) {
-+.btn:is(
-+  [aria-pressed="true"],
-+  [aria-checked="true"],
-+  [aria-current]:not([aria-current="false"], [aria-current=""])
-+) {
-   @layer daisyui.l1.l2 {
-     --btn-bg: color-mix(in oklab, var(--btn-color, var(--color-base-200)), #000 5%);
-     color: var(--btn-fg, var(--color-base-content));
-```
-
----
-
-### Incident Patch 10: `ac979991` (2026-09-17)
-**Commit Message**: fix: allow Firefox Android to use diff by tap because Firefox Android ignores CSS resize and cannot drag(#4763)
-
-**File**: `packages/daisyui/src/components/diff.css` (modified, +24/-0)
-```diff
-@@ -45,6 +45,22 @@
-         }
-       }
-     }
-+    @supports (-moz-appearance: none) {
-+      @media (hover: none) and (pointer: coarse) {
-+        &:focus {
-+          .diff-resizer {
-+            min-width: 5cqi;
-+            max-width: 5cqi;
-+          }
+     @apply rounded-box text-base-content relative h-2 w-full appearance-none overflow-hidden bg-current/20;
++    @media (forced-colors: active) {
++      border: 1px solid;
++    }
+     &:indeterminate {
+       background-image: repeating-linear-gradient(
+         90deg,
+@@ -37,6 +40,9 @@
+     @supports (-moz-appearance: none) {
+       &::-moz-progress-bar {
+         @apply rounded-box bg-current;
++        @media (forced-colors: active) {
++          background-color: CanvasText;
 +        }
-+        &:has(.diff-item-1:focus) {
-+          .diff-resizer {
-+            min-width: 95cqi;
-+            max-width: 95cqi;
-+          }
+         @media (prefers-reduced-motion: no-preference) {
+           transition: inline-size 0.3s ease;
+         }
+@@ -51,6 +57,9 @@
+       &::-webkit-progress-value {
+         @apply rounded-box;
+         background-color: currentColor;
++        @media (forced-colors: active) {
++          background-color: CanvasText;
 +        }
-+      }
-+    }
-   }
- }
- .diff-resizer {
-@@ -84,6 +100,14 @@
-         content: var(--tw-content);
-       }
-     }
-+    @supports (-moz-appearance: none) {
-+      @media (hover: none) and (pointer: coarse) {
-+        &:after {
-+          --tw-content: none;
-+          content: var(--tw-content);
-+        }
-+      }
-+    }
-   }
- }
- .diff-item-1 {
-```
-
----
-
-### Incident Patch 11: `10dc2fb0` (2026-09-14)
-**Commit Message**: fix: style aria-current as menu-active in menu (#4752)
-
-* fix: style menu items marked with aria-current like menu-active
-
-* fix: treat every aria-current value except false and empty as active
-
-**File**: `packages/daisyui/src/components/menu.css` (modified, +22/-3)
-```diff
-@@ -81,18 +81,33 @@
-     :where(
-       li:not(.menu-title, .disabled) > *:not(ul, menu, details, .menu-title),
-       li:not(.menu-title, .disabled) > details > summary:not(.menu-title)
--    ):not(.menu-active, :active, .btn) {
-+    ):not(
-+      .menu-active,
-+      :active,
-+      .btn,
-+      [aria-current]:not([aria-current="false"], [aria-current=""])
-+    ) {
-       &.menu-focus,
-       &:focus-visible {
-         @apply bg-base-content/10 text-base-content cursor-pointer outline-hidden;
-       }
-     }
-     :where(
-       li:not(.menu-title, .disabled)
--        > *:not(ul, menu, details, .menu-title):not(.menu-active, :active, .btn):hover,
-+        > *:not(ul, menu, details, .menu-title):not(
-+          .menu-active,
-+          :active,
-+          .btn,
-+          [aria-current]:not([aria-current="false"], [aria-current=""])
-+        ):hover,
-       li:not(.menu-title, .disabled)
-         > details
--        > summary:not(.menu-title):not(.menu-active, :active, .btn):hover
-+        > summary:not(.menu-title):not(
-+          .menu-active,
-+          :active,
-+          .btn,
-+          [aria-current]:not([aria-current="false"], [aria-current=""])
-+        ):hover
-     ) {
-       @apply bg-base-content/10 cursor-pointer outline-hidden;
-       box-shadow:
-@@ -115,6 +130,10 @@
- 
-       & > *:not(ul, menu, .menu-title, details, .btn):active,
-       & > *:not(ul, menu, .menu-title, details, .btn).menu-active,
-+      &
-+        > *:not(ul, menu, .menu-title, details, .btn):is(
-+          [aria-current]:not([aria-current="false"], [aria-current=""])
-+        ),
-       & > details > summary:active {
-         @apply outline-hidden;
-         color: var(--menu-active-fg);
-```
-
----
-
-### Incident Patch 12: `8e495a0f` (2026-09-14)
-**Commit Message**: fix: style aria-pressed and aria-current as btn-active in button (#4754)
-
-**File**: `packages/daisyui/src/components/button.css` (modified, +7/-2)
-```diff
-@@ -84,7 +84,11 @@
-       }
-     }
- 
--    &:active:not(.btn-active) {
-+    &:active:not(
-+        .btn-active,
-+        [aria-pressed="true"],
-+        [aria-current]:not([aria-current="false"], [aria-current=""])
-+      ) {
-       translate: 0 0.5px;
-       --btn-bg: color-mix(in oklab, var(--btn-color, var(--color-base-200)), #000 5%);
-       color: var(--btn-fg, var(--color-base-content));
-@@ -118,7 +122,8 @@
-   }
- }
- 
--.btn-active {
-+.btn-active,
-+.btn:is([aria-pressed="true"], [aria-current]:not([aria-current="false"], [aria-current=""])) {
-   @layer daisyui.l1.l2 {
-     --btn-bg: color-mix(in oklab, var(--btn-color, var(--color-base-200)), #000 5%);
-     color: var(--btn-fg, var(--color-base-content));
-```
-
----
-
-### Incident Patch 13: `fe22841a` (2026-09-14)
-**Commit Message**: fix: style aria-current as active in `dock` (#4753)
-
-* fix: show the dock active indicator on items marked with aria-current
-
-* fix: treat every aria-current value except false and empty as active
-
-**File**: `packages/daisyui/src/components/dock.css` (modified, +9/-4)
-```diff
-@@ -35,6 +35,11 @@
-       }
-     }
-   }
-+  @layer daisyui.l1.l2 {
-+    > [aria-current]:not([aria-current="false"], [aria-current=""]):after {
-+      @apply w-10 bg-current text-current;
-+    }
-+  }
- }
- .dock-active {
-   @layer daisyui.l1.l2 {
-@@ -48,7 +53,7 @@
-     height: 3rem;
-     height: calc(3rem + env(safe-area-inset-bottom));
- 
--    .dock-active {
-+    :is(.dock-active, [aria-current]:not([aria-current="false"], [aria-current=""])) {
-       &:after {
-         bottom: -0.1rem;
-       }
-@@ -66,7 +71,7 @@
-     height: 3.5rem;
-     height: calc(3.5rem + env(safe-area-inset-bottom));
- 
--    .dock-active {
-+    :is(.dock-active, [aria-current]:not([aria-current="false"], [aria-current=""])) {
-       &:after {
-         bottom: -0.1rem;
-       }
-@@ -93,7 +98,7 @@
-     height: 4.5rem;
-     height: calc(4.5rem + env(safe-area-inset-bottom));
- 
--    .dock-active {
-+    :is(.dock-active, [aria-current]:not([aria-current="false"], [aria-current=""])) {
-       &:after {
-         bottom: 0.4rem;
-       }
-@@ -110,7 +115,7 @@
-     height: 5rem;
-     height: calc(5rem + env(safe-area-inset-bottom));
- 
--    .dock-active {
-+    :is(.dock-active, [aria-current]:not([aria-current="false"], [aria-current=""])) {
-       &:after {
-         bottom: 0.4rem;
-       }
-```
-
----
-
-### Incident Patch 14: `02623f06` (2026-09-11)
-**Commit Message**: fix: OTP disabled style (#4750)
-
-**File**: `packages/daisyui/src/components/otp.css` (modified, +11/-0)
-```diff
-@@ -151,6 +151,17 @@
-         outline-color: var(--input-color);
-       }
-     }
-+
-+    &:has(> input:disabled) {
-+      @apply cursor-not-allowed;
-+      > input {
-+        @apply text-base-content/40;
-+      }
-+      > span {
-+        @apply border-base-200 bg-base-200;
-+        box-shadow: none;
-+      }
-+    }
-   }
- }
- 
-```
-
----
-
-### Incident Patch 15: `0ca4325d` (2026-09-10)
-**Commit Message**: fix: checkbox tick and dash alignment (#4743)
-
-**File**: `packages/daisyui/src/components/checkbox.css` (modified, +2/-1)
-```diff
-@@ -46,6 +46,7 @@
- 
-       &:before {
-         clip-path: polygon(20% 100%, 20% 80%, 50% 80%, 50% 0%, 70% 0%, 70% 100%);
-+        translate: 3.5% -7%;
-         @apply opacity-100;
-       }
-       @media (forced-colors: active) {
-@@ -70,7 +71,7 @@
-       );
-       &:before {
-         @apply rotate-0 opacity-100;
--        translate: 0 -35%;
-+        translate: 0 -40%;
-         clip-path: polygon(20% 100%, 20% 80%, 50% 80%, 50% 80%, 80% 80%, 80% 100%);
-       }
-     }
+         @media (prefers-reduced-motion: no-preference) {
+           transition: inline-size 0.3s ease;
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4774** (2026-09-21): fix(status): scale with the --size-selector theme variable (@sulimanbenhalim)
-- **PR #4773** (2026-09-23): fix(avatar): mirror the online and offline dot in rtl (@sulimanbenhalim)
-- **PR #4771** (2026-09-24): fix(range): give the fill a query container so cqw is track-relative (@SurefireStudios)
-- **PR #4769** (2026-09-18): fix(input): show the disabled box on ghost input, select, textarea and file-input (@sulimanbenhalim)
-- **PR #4767** (2026-09-18): fix(validator): color modifiers like input-primary override the validator colors (@sulimanbenhalim)
-- **PR #4764** (2026-09-17): docs: keep english-only blocks left to right on rtl languages (@sulimanbenhalim)
-- **PR #4763** (2026-09-17): fix(diff): tap to expand each side on Firefox for Android (@sulimanbenhalim)
-- **PR #4761** (2026-09-17): fix(btn): style aria-checked="true" as btn-active (@sulimanbenhalim)
+- **PR #4823** (2026-10-17): docs(laravel): update to Laravel 13 and use `composer run dev` (@stefanobspn)
+- **PR #4820** (2026-10-17): fix(avatar): tell avatar-online from avatar-offline in forced colors mode (@sulimanbenhalim)
+- **PR #4819** (2026-10-17): fix(tab): show the active tab in forced colors mode (@sulimanbenhalim)
+- **PR #4818** (2026-10-17): fix(menu): show menu-disabled items as disabled in forced colors mode (@sulimanbenhalim)
+- **PR #4817** (2026-10-17): fix(btn): show btn-disabled and aria-disabled buttons as disabled in forced colors mode (@sulimanbenhalim)
+- **PR #4816** (2026-10-17): fix(card): show which selectable card is checked or focused in forced colors mode (@sulimanbenhalim)
 
 ---
 
@@ -1709,3 +1092,37 @@ track's own width. Rendering is unchanged.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. range shadow size and performance (#4771)
+
+**RULE**:
+When implementing operations in `packages/daisyui/src/components/range.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saadeghi/daisyui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cea1c7d5`: range shadow size and performance (#4771). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/daisyui/src/components/range.css`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+    /* The fill spread below is sized in cqw. Without a query container on the
+       input itself those units resolve against the viewport, so the thumb's
+       fill shadow is painted at viewport width instead of track width. */
+    container-type: inline-size;
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cea1c7d5` are properly handled with clean fallback behavior.

@@ -2648,5 +2648,65 @@
     "contentHash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
     "lastHarvestedAt": "2026-10-18T21:52:11.506Z",
     "learningId": "learn-github-pingcap-autoflow"
+  },
+  "saadeghi-daisyui": {
+    "repository": "saadeghi/daisyui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/saadeghi/daisyui",
+    "sourceVersion": "bf3bac3a",
+    "license": "MIT",
+    "contentHash": "66e52a5b98474891fae2bb064ba3216dae735740d039ac8c26788f366c0cda68",
+    "lastHarvestedAt": "2026-10-18T21:58:05.152Z",
+    "learningId": "learn-github-saadeghi-daisyui"
+  },
+  "ajeetdsouza-zoxide": {
+    "repository": "ajeetdsouza/zoxide",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
+    "sourceVersion": "d48a7ab5",
+    "license": "MIT",
+    "contentHash": "99b3f5be27f488309e4b8f5eb7f8174dc47e1cbb255d77a3b9fbf4bf00b476b1",
+    "lastHarvestedAt": "2026-10-18T21:58:07.711Z",
+    "learningId": "learn-github-ajeetdsouza-zoxide"
+  },
+  "react-native-elements-react-native-elements": {
+    "repository": "react-native-elements/react-native-elements",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-native-elements/react-native-elements",
+    "sourceVersion": "32ae0eda",
+    "license": "MIT",
+    "contentHash": "7bdca67a3aae98c34f151d852d2c095c2712e4b3cf445eb4ace199453e5aca21",
+    "lastHarvestedAt": "2026-10-18T21:58:13.264Z",
+    "learningId": "learn-github-react-native-elements-react-native-elements"
+  },
+  "permify-permify": {
+    "repository": "Permify/permify",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Permify/permify",
+    "sourceVersion": "43ce9031",
+    "license": "AGPL-3.0",
+    "contentHash": "add33db40e79e3a60a504f8bd621d93557bf2844431479a056f64c6907d5e70e",
+    "lastHarvestedAt": "2026-10-18T21:58:17.878Z",
+    "learningId": "learn-github-permify-permify"
+  },
+  "rustls-rustls": {
+    "repository": "rustls/rustls",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rustls/rustls",
+    "sourceVersion": "bb2165fa",
+    "license": "NOASSERTION",
+    "contentHash": "85c739eaeaac9af5e5ecf95b504de2c73e4c49b167795d862d6869d26ad5aa2c",
+    "lastHarvestedAt": "2026-10-18T21:58:18.387Z",
+    "learningId": "learn-github-rustls-rustls"
+  },
+  "liyupi-yu-ai-agent": {
+    "repository": "liyupi/yu-ai-agent",
+    "platform": "github",
+    "sourceUrl": "https://github.com/liyupi/yu-ai-agent",
+    "sourceVersion": "6d4608c5",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
+    "lastHarvestedAt": "2026-10-18T21:58:18.677Z",
+    "learningId": "learn-github-liyupi-yu-ai-agent"
   }
 }

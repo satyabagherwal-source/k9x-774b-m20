@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-ME2E",
-    "timestamp": "2026-10-17T05:32:22.070Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "667e744684593a87c7a7063aa587467431d38e3ea57aea341533779a131add68",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-QVP8",
-    "timestamp": "2026-10-17T05:35:51.548Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-    "contentHash": "50af359ac936e101a1689fc4fc63cb4ea645fd99ba1dbfc0bd7ef3860ae36b04",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-UZRV",
-    "timestamp": "2026-10-17T05:39:03.451Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "7f6540fe98189b41d0292d544d40a8f53cf165eb1645083188f6c285a80c5820",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-YWGE",
-    "timestamp": "2026-10-17T05:42:05.774Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "076951e9d8e46f82cd69c34dc7637e0a88adfaff1fb9f64741c4dbcabaf6df79",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-2MTW",
-    "timestamp": "2026-10-17T05:44:59.924Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "a96f314e1612845f04f3832fcfa4bf5ce40ed7450309561173f0d632dc70131b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-6HHT",
-    "timestamp": "2026-10-17T05:47:59.633Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-    "contentHash": "f8e7c9cc2a9db74a8e91cae85db181219c6864381666c5d18a60f0536d35455a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-AF23",
     "timestamp": "2026-10-17T05:51:03.099Z",
     "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -7492,6 +7402,96 @@
     "contentHash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-9VTQ",
+    "timestamp": "2026-10-18T21:58:05.150Z",
+    "repository": "saadeghi/daisyui",
+    "learningId": "learn-github-saadeghi-daisyui",
+    "contentHash": "66e52a5b98474891fae2bb064ba3216dae735740d039ac8c26788f366c0cda68",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-9XST",
+    "timestamp": "2026-10-18T21:58:07.709Z",
+    "repository": "ajeetdsouza/zoxide",
+    "learningId": "learn-github-ajeetdsouza-zoxide",
+    "contentHash": "99b3f5be27f488309e4b8f5eb7f8174dc47e1cbb255d77a3b9fbf4bf00b476b1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-A232",
+    "timestamp": "2026-10-18T21:58:13.262Z",
+    "repository": "react-native-elements/react-native-elements",
+    "learningId": "learn-github-react-native-elements-react-native-elements",
+    "contentHash": "7bdca67a3aae98c34f151d852d2c095c2712e4b3cf445eb4ace199453e5aca21",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-A5N7",
+    "timestamp": "2026-10-18T21:58:17.875Z",
+    "repository": "Permify/permify",
+    "learningId": "learn-github-permify-permify",
+    "contentHash": "add33db40e79e3a60a504f8bd621d93557bf2844431479a056f64c6907d5e70e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-A61C",
+    "timestamp": "2026-10-18T21:58:18.384Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "85c739eaeaac9af5e5ecf95b504de2c73e4c49b167795d862d6869d26ad5aa2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-A69F",
+    "timestamp": "2026-10-18T21:58:18.675Z",
+    "repository": "liyupi/yu-ai-agent",
+    "learningId": "learn-github-liyupi-yu-ai-agent",
+    "contentHash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

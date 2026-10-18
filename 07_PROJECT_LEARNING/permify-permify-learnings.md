@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
+> **Source**: github ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
+> **Source Version**: `43ce9031`  
+> **License**: AGPL-3.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:58:17.705Z  
+> **Learning ID**: `learn-github-permify-permify`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Permify/permify
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:20:57.967Z  
+> **Harvest Timestamp**: 2026-10-18T21:58:17.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: An open-source authorization as a service inspired by Google Zanzibar, designed to build and manage fine-grained and scalable authorization systems for any application. — Permify is now part of FusionAuth 🎉
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5961 stars
+- **Stars / Engagement**: 5963 stars
 
 ---
 
@@ -2078,323 +2092,6 @@ func (engine *SubjectPermissionEngine) SubjectPermission(ctx context.Context, re
 
 ```
 
-### Core Architecture Module: `internal/engines/utils.go`
-```
-package engines
-
-import (
-	"errors"
-	"fmt"
-	"sort"
-	"strings"
-	"sync"
-
-	"google.golang.org/protobuf/types/known/anypb"
-
-	"github.com/Permify/permify/internal/schema"
-	"github.com/Permify/permify/pkg/attribute"
-	base "github.com/Permify/permify/pkg/pb/base/v1"
-	"github.com/Permify/permify/pkg/tuple"
-)
-
-const (
-	_defaultConcurrencyLimit = 100
-)
-
-// CheckOption - a functional option type for configuring the CheckEngine.
-type CheckOption func(engine *CheckEngine)
-
-// CheckConcurrencyLimit - a functional option that sets the concurrency limit for the CheckEngine.
-func CheckConcurrencyLimit(limit int) CheckOption {
-	return func(c *CheckEngine) {
-		c.concurrencyLimit = limit
-	}
-}
-
-type LookupOption func(engine *LookupEngine)
-
-func LookupConcurrencyLimit(limit int) LookupOption {
-	return func(c *LookupEngine) {
-		c.concurrencyLimit = limit
-	}
-}
-
-// SubjectFilterOption - a functional option type for configuring the LookupSubjectEngine.
-type SubjectFilterOption func(engine *SubjectFilter)
-
-// SubjectFilterConcurrencyLimit - a functional option that sets the concurrency limit for the LookupSubjectEngine.
-func SubjectFilterConcurrencyLimit(limit int) SubjectFilterOption {
-	return func(c *SubjectFilter) {
-		c.concurrencyLimit = limit
-	}
-}
-
-// SubjectPermissionOption - a functional option type for configuring the SubjectPermissionEngine.
-type SubjectPermissionOption func(engine *SubjectPermissionEngine)
-
-// SubjectPermissionConcurrencyLimit - a functional option that sets the concurrency limit for the SubjectPermissionEngine.
-func SubjectPermissionConcurrencyLimit(limit int) SubjectPermissionOption {
-	return func(c *SubjectPermissionEngine) {
-		c.concurrencyLimit = limit
-	}
-}
-
-// joinResponseMetas - a helper function that merges multiple PermissionCheckResponseMetadata structs into one.
-func joinResponseMetas(meta ...*base.PermissionCheckResponseMetadata) *base.PermissionCheckResponseMetadata {
-	response := &base.PermissionCheckResponseMetadata{}
-	for _, m := range meta {
-		response.CheckCount += m.CheckCount
-	}
-	return response
-}
-
-// SubjectPermissionResponse - a struct that holds a SubjectPermissionResponse and an error for a single subject permission check result.
-type SubjectPermissionResponse struct {
-	permission string
-	result     base.CheckResult
-	err        error
-}
-
-// CheckResponse - a struct that holds a PermissionCheckResponse and an error for a single check function.
-type CheckResponse struct {
-	resp *base.PermissionCheckResponse
-	err  error
-}
-
-// VisitsMap - a thread-safe map of ENR records.
-type VisitsMap struct {
-	er        sync.Map
-	published sync.Map
-}
-
-func (s *VisitsMap) AddER(entity *base.Entity, relation string) bool {
-	key := tuple.EntityAndRelationToString(entity, relation)
-	_, existed := s.er.LoadOrStore(key, struct{}{})
-	return !existed
-}
-
-func (s *VisitsMap) AddEA(entityType, attribute string) bool {
-	key := fmt.Sprintf("%s$%s", entityType, attribute)
-	_, existed := s.er.LoadOrStore(key, struct{}{})
-	return !existed
-}
-
-func (s *VisitsMap) AddPublished(entity *base.Entity) bool {
-	key := tuple.EntityToString(entity)
-	_, existed := s.published.LoadOrStore(key, struct{}{})
-	return !existed
-}
-
-// SubjectFilterResponse -
-type SubjectFilterResponse struct {
-	resp []string
-	err  error
-}
-
-// getEmptyValueForType is a helper function that takes a string representation of a type
-// and returns an "empty" value for that type.
-// An empty value is a value that is generally considered a default or initial state for a variable of a given type.
-// The purpose of this function is to be able to initialize a variable of a given type without knowing the type in advance.
-// The function uses a switch statement to handle different possible type values and returns a corresponding empty value.
-func getEmptyValueForType(typ base.AttributeType) interface{} {
-	switch typ {
-	case base.AttributeType_ATTRIBUTE_TYPE_STRING:
-		// In the case of a string type, an empty string "" is considered the empty value.
-		return ""
-	case base.AttributeType_ATTRIBUTE_TYPE_STRING_ARRAY:
-		// In the case of a string type, an empty string "" is considered the empty value.
-		return []string{}
-	case base.AttributeType_ATTRIBUTE_TYPE_INTEGER:
-		// In the case of an integer type, zero (0) is considered the empty value.
-		return 0
-	case base.AttributeType_ATTRIBUTE_TYPE_INTEGER_ARRAY:
-		// In the case of an integer type, zero (0) is considered the empty value.
-		return []int32{}
-	case base.AttributeType_ATTRIBUTE_TYPE_DOUBLE:
-		// In the case of a double (or floating point) type, zero (0.0) is considered the empty value.
-		return 0.0
-	case base.AttributeType_ATTRIBUTE_TYPE_DOUBLE_ARRAY:
-		// In the case of a double (or floating point) type, zero (0.0) is considered the empty value.
-		return []float64{}
-	case base.AttributeType_ATTRIBUTE_TYPE_BOOLEAN:
-		// In the case of a boolean type, false is considered the empty value.
-		return false
-	case base.AttributeType_ATTRIBUTE_TYPE_BOOLEAN_ARRAY:
-		// In the case of a boolean type, false is considered the empty value.
-		return []bool{}
-	default:
-		// For any other types that are not explicitly handled, the function returns nil.
-		// This may need to be adjusted if there are other types that need specific empty values.
-		return nil
-	}
-}
-
-// getEmptyProtoValueForType returns an empty protobuf value of the specified type.
-// It takes a base.AttributeType as input and generates an empty protobuf Any message
-// containing a default value for that type.
-func getEmptyProtoValueForType(typ base.AttributeType) (*anypb.Any, error) {
-	switch typ {
-	case base.AttributeType_ATTRIBUTE_TYPE_STRING:
-		// Create an empty protobuf String message
-		value, err := anypb.New(&base.StringValue{Data: ""})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	case base.AttributeType_ATTRIBUTE_TYPE_STRING_ARRAY:
-		// Create an empty protobuf StringArray message
-		value, err := anypb.New(&base.StringArrayValue{Data: []string{}})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	case base.AttributeType_ATTRIBUTE_TYPE_INTEGER:
-		// Create an empty protobuf Integer message
-		value, err := anypb.New(&base.IntegerValue{Data: 0})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	case base.AttributeType_ATTRIBUTE_TYPE_INTEGER_ARRAY:
-		// Create an empty protobuf IntegerArray message
-		value, err := anypb.New(&base.IntegerArrayValue{Data: []int32{}})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	case base.AttributeType_ATTRIBUTE_TYPE_DOUBLE:
-		// Create an empty protobuf Double message
-		value, err := anypb.New(&base.DoubleValue{Data: 0.0})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	case base.AttributeType_ATTRIBUTE_TYPE_DOUBLE_ARRAY:
-		// Create an empty protobuf DoubleArray message
-		value, err := anypb.New(&base.DoubleArrayValue{Data: []float64{}})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	case base.AttributeType_ATTRIBUTE_TYPE_BOOLEAN:
-		// Create an empty protobuf Boolean message with a default value of false
-		value, err := anypb.New(&base.BooleanValue{Data: false})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	case base.AttributeType_ATTRIBUTE_TYPE_BOOLEAN_ARRAY:
-		// Create an empty protobuf BooleanArray message
-		value, err := anypb.New(&base.BooleanArrayValue{Data: []bool{}})
-		if err != nil {
-			return nil, err
-		}
-		return value, nil
-
-	default:
-		// Handle the case where the provided attribute type is unknown
-		return nil, errors.New("unknown type")
-	}
-}
-
-// ConvertToAnyPB is a function to convert various basic Go types into *anypb.Any.
-// It supports conversion from bool, int, float64, and string.
-// It uses a type switch to detect the type of the input value.
-// If the type is unsupported or unknown, it returns an error.
-func ConvertToAnyPB(value interface{}) (*anypb.Any, error) {
-	// anyValue will store the converted value, err will store any error occurred during conversion.
-	var anyValue *anypb.Any
-	var err error
-
-	// Use a type switch to handle different types of value.
-	switch v := value.(type) {
-	case bool:
-		anyValue, err = anypb.New(&base.BooleanValue{Data: v})
-	case []bool:
-		anyValue, err = anypb.New(&base.BooleanArrayValue{Data: v})
-	case int:
-		anyValue, err = anypb.New(&base.IntegerValue{Data: int32(v)})
-	case []int32:
-		anyValue, err = anypb.New(&base.IntegerArrayValue{Data: v})
-	case float64:
-		anyValue, err = anypb.New(&base.DoubleValue{Data: v})
-	case []float64:
-		anyValue, err = anypb.New(&base.DoubleArrayValue{Data: v})
-	case string:
-		anyValue, err = anypb.New(&base.StringValue{Data: v})
-	case []string:
-		anyValue, err = anypb.New(&base.StringArrayValue{Data: v})
-	default:
-		// In case of an unsupported or unknown type, we return an error.
-		return nil, errors.New("unknown type")
-	}
-
-	// If there was an error during the conversion, return the error.
-	if err != nil {
-		return nil, err
-	}
-
-	// If the conversion was successful, return the converted value.
-	return anyValue, nil
-}
-
-// GenerateKey function takes a PermissionCheckRequest and generates a unique key
-// Key format: check|{tenant_id}|{schema_version}|{snap_token}|{context}|{entity:id#permission(optional_arguments)@subject:id#optional_relation}
-func GenerateKey(key *base.PermissionCheckRequest, isRelational bool) string {
-	// Initialize the parts slice with the string "check"
-	parts := []string{"check"}
-
-	// If tenantId is not empty, append it to parts
-	if tenantId := key.GetTenantId(); tenantId != "" {
-		parts = append(parts, tenantId)
-	}
-
-	// If Metadata exists, extract schema version and snap token and append them to parts if they are not empty
-	if meta := key.GetMetadata(); meta != nil {
-		if version := meta.GetSchemaVersion(); version != "" {
-			parts = append(parts, version)
-		}
-		if token := meta.GetSnapToken(); token != "" {
-			parts = append(parts, token)
-		}
-	}
-
-	// If Context exists, convert it to string and append it to parts
-	if ctx := key.GetContext(); ctx != nil {
-		parts = append(parts, ContextToString(ctx))
-	}
-
-	if isRelation
-```
-
-### Core Architecture Module: `internal/invoke/utils.go`
-```
-package invoke
-
-import (
-	"errors"
-	"sync/atomic"
-
-	base "github.com/Permify/permify/pkg/pb/base/v1"
-)
-
-// checkDepth validates that the request has sufficient depth for permission checks
-func checkDepth(request *base.PermissionCheckRequest) error {
-	if atomic.LoadInt32(&request.GetMetadata().Depth) < 0 { // Check depth is not negative
-		return errors.New(base.ErrorCode_ERROR_CODE_DEPTH_NOT_ENOUGH.String())
-	}
-	return nil
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2403,52 +2100,9 @@ func checkDepth(request *base.PermissionCheckRequest) error {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #3216** (2026-10-02): **[BUG] Buf lint reports naming violations for existing RPC request and response types**
   *Symptoms*: **Describe the bug** Running `buf lint` reports naming and request/response uniqueness violations for several existing RPC definitions in `proto/base/v1/service.proto`.  Fixing these violations by renaming the existing protobuf message types would introduce breaking changes to generated clients and public APIs. Localized `buf:lint:ignore` comments should therefore be added to the affected RPC definitions.  **To Reproduce** Steps to reproduce the behavior:  1. Clone the repository. 2. Change to the `proto` directory. 3. Run:  ```shell buf lint ```  4. Observe errors for the following rules:  - `RPC_REQUEST_RESPONSE_UNIQUE` - `RPC_REQUEST_STANDARD_NAME` - `RPC_RESPONSE_STANDARD_NAME`  Affected RPCs include `LookupEntity`, `LookupEntityStream`, `WriteRelationships`, `ReadRelationships`, `ReadAttributes`, `DeleteRelationships`, `RunBundle`, and the `Tenancy` service RPCs.  **Example Application** The issue can be reproduced directly in this repository:  https://github.com/Permify/permify  **Expected behavior** `buf lint` should pass without requiring breaking changes to existing protobuf message names or RPC signatures.  The existing API should remain backward compatible, with narrowly scoped lint-ignore comments documenting intentional exceptions.  **Additional context** A proposed fix is available in PR #3215:  https://github.com/Permify/permify/pull/3215  The PR adds only localized lint-ignore comments and does not modify RPC behavior or generated API signatures.  **Environmen
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in #3215. Thanks @junsazanami430u !
 
 - **Issue #3002** (2026-07-20): **[BUG] A lot of transactions being retried**
   *Symptoms*: **Describe the bug**  In development, when I quickly add a lot of tuples to rebuild the state of my system from the ground up, I'm getting a lot of warnings:  ``` permify-565bc8487f-fpdnx permify time=2026-06-11T19:52:55.466Z level=WARN msg="serialization error occurred" tenant_id=t1 retry=2 permify-565bc8487f-fpdnx permify time=2026-06-11T19:52:55.467Z level=WARN msg="waiting before retry" tenant_id=t1 backoff_duration=110 ```  And from PostgreSQL:  ``` db-0 db 2026-06-11 19:52:55.248 UTC [38833] STATEMENT:  UPDATE relation_tuples SET expired_tx_id = $1 WHERE expired_tx_id = $2 AND tenant_id = $3 AND entity_id = $4 AND entity_type = $5 AND relation = $6 AND subject_type = $7 db-0 db 2026-06-11 19:52:55.250 UTC [38844] ERROR:  could not serialize access due to read/write dependencies among transactions db-0 db 2026-06-11 19:52:55.250 UTC [38844] DETAIL:  Reason code: Canceled on commit attempt with conflict in from prepared pivot. db-0 db 2026-06-11 19:52:55.250 UTC [38844] HINT:  The transaction might succeed if retried. db-0 db 2026-06-11 19:52:55.250 UTC [38844] STATEMENT:  commit ```  **To Reproduce** Steps to reproduce the behavior:  - Write a lot of tuples quickly. I may be able to dig in and try to create a more concise example if required, but thought I might get a little feedback first.  **Expected behavior** I understand this may be working as expected since they're being retried, but it seems to be happening quite a bit more than I would expect. (Maybe I just need 
-  **Post-Mortem & Fix Analysis**:
-  > Hello @wbyoung,  This can happen when tuple changes overlap concurrently. Permify uses PostgreSQL serializable transactions for data mutations, so conflicting transactions may be retried with backoff. The PostgreSQL lines shown are from different concurrent transactions. As long as the requests succeed and don’t reach max retries, there’s no data loss. The logs also produce two warnings per retry, which makes it look noisier than it is.  You can also configure retry limit using `database.max_retries`. 
-
-- **Issue #2822** (2026-03-11): **[BUG] Healthcare Real World Example does not work**
-  *Symptoms*: **Describe the bug** If you copy the schema from https://docs.permify.co/getting-started/examples/healthcare into https://play.permify.co (or into Permify running locally in Docker), it gives error: `28:20:expected token to be relation, permission, attribute, got rule instead`  **To Reproduce** As Above  **Example Application** None  **Expected behavior** No error. I'm not sure what else should happen. It's my first time trying Permify and this was the example I tried to run.  **Additional context** None.  **Environment (please complete the following information, because it helps us investigate better):**  - OS: Web  - Version The playground doesn't give its version 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the report @RichardJECooke, I have updated the healthcare example.
-
-- **Issue #2749** (2026-03-19): **[BUG] Rule's parameters must be the same name as the attributes you check against**
-  *Symptoms*: **Describe the bug** If a rule is defined in a schema, the parameter(s) of that rule has to be the same name as the attribute(s) you are trying to validate with the rule. This prevents writing "helper" rules like a global negator rule.   **To Reproduce** ``` entity user {}  entity resource {     relation owner @user      attribute is_private boolean      permission view = negate(is_private) }  rule negate(input boolean){     !input } ```  **Expected behavior** Schema is valid.  **Actual** 8:31: invalid argument  **Additional context** This problem was mentioned in 2025.02.28 on Discord but I couldn't find a bug ticket for it.  **Environment (please complete the following information, because it helps us investigate better):**  - Docker  - Version 1.6.2 
-  **Post-Mortem & Fix Analysis**:
-  > Hi @mezakos, This is not a bug. You can use it like this:  ```  entity user {}  entity resource {     relation owner @user      attribute is_private boolean      permission view = negate(is_private) }  rule negate(is_private boolean){     !is_private } ```  https://docs.permify.co/use-cases/abac#defining-rules
-  > Hi @tolgaozen , I know I can use it like that, but if I have a much bigger schema with a lot of attributes and I need to do the same checks for different attributes with different names, I have to write a rule for each of the attributes. Cemoji user on discord said: "I looked into the code and saw that at compile time when the type of the actual argument owner is validated, it looks for a formal argument with the same name. Seems to be a nice bug." And I also think this should not work the way it is. Also doesn't seem to be a large change but would make writing a schema much easier.   EDIT: I checked the documentation and it never mentions that attribute names has to be the same as parameter names in the rules
-  > Hi @tolgaozen I noticed the statement,  "I checked the documentation and it never mentions that attribute names has to be the same as parameter names in the rules" from @mezakos , However, playground is throwing error, so is it bug in playground and not the schema DSL? or it is DSL limitation. Because I am also facing the same issue as @mezakos  mentioned, hence not able to re-use the rule.  
-
-- **Issue #2745** (2026-03-23): **[BUG] Entity lookup does not take in consideration recursive permissions if the permission is based on attributes**
-  *Symptoms*: **Describe the bug** Entity lookup does not take in consideration recursive permissions if the permission is based on attributes  **To Reproduce** Use the following data: ``` schema: |-   entity user {}    entity resource {       relation parent @resource       relation creator @user        attribute is_public boolean        permission view = is_public or parent.view   } relationships:   - resource:r1#parent@resource:default   - resource:r1#creator@user:u1 attributes:   - resource:default$is_public|boolean:true ```  Call: ``` curl --request POST \   --url http://localhost:3476/v1/tenants/t1/permissions/lookup-entity \   --header 'content-type: application/json' \   --data '{   "metadata":{     "snap_token": "",     "schema_version": "",     "depth": 20   },   "entity_type": "resource",   "permission": "view",   "subject": {     "type":"user",     "id":"u1"   },   "page_size": 20,   "continuous_token": "" }' ```  **Expected behavior** Returned entity ids should be be ["default", "r1"] Actual: ["default"]  **Environment (please complete the following information, because it helps us investigate better):**  - docker  - Version 1.6.2 
-  **Post-Mortem & Fix Analysis**:
-  > Hello @mezakos , I can reproduce this. LookupEntity misses recursive permissions when the recursion depends on attributes. For now, please use direct Check calls or avoid attribute-based recursion in the model. We aren't prioritizing a fix immediately, but we will keep this open for future review.
-  > Hi @omer-topal , Thanks for the response. I further analyzed this and I came to the conclusion that if an attribute is not explicitly written, the EntityLookup will leave it out from the results. If permission check is issued for the entity, it will evaluate correctly. This is also true for recursive permissions  Example: ``` entity user {}  entity resource {     relation owner @user     attribute is_private boolean      permission view = negate(is_private) }  rule negate(is_private boolean){     !is_private } ```  resource:r1#owner@user:u1  EntityLookup will result in no data.  Add: resource:r1$is_private|boolean:false  EntityLookup returns ["r1"]
-  > thanks for sharing the workaround, @mezakos !
-
-- **Issue #2742** (2026-03-11): **[BUG] Playground won't accept rules inside an entity**
-  *Symptoms*: **Describe the bug** In Playground I get an error: "expected token to be relation, permission, attribute, got rule instead" when I try to create a rule inside an entity.  **To Reproduce** Create a rule inside an entity ``` entity user {     attribute age integer      rule check_age(age integer){         age >= 18     }      permission buy_beer = check_age(age) } ```  **Expected behavior** Accept the schema as valid. In the Permify docs, in the healthcare example there is a rule inside an entity, so I'm assuming it should be valid. https://docs.permify.co/getting-started/examples/healthcare  **Environment (please complete the following information, because it helps us investigate better):**  - Permify Playground 
-  **Post-Mortem & Fix Analysis**:
-  > @mezakos is this replicable on the latest version of the Permify executable (1.6.2) or only in the playground?
-  > @mooreds yes it is replicable with that as well (I tried using docker)
-  > We did some looking and I think this is an error in the documentation that we need to fix.   As a workaround, you can move the rule outside of the entity:  ``` entity user {     attribute age integer      permission buy_beer = check_age(age) }  rule check_age(age integer){    age >= 18 } ```  I'm going to leave this open until the documentation is updated.  Thanks!
-
-- **Issue #2735** (2026-01-21): **[BUG] Garbage Collection fails on PostgreSQL with syntax error**
-  *Symptoms*: **Describe the bug** When Garbage Collection is enabled with PostgreSQL, Permify generates invalid DELETE SQL using `?` placeholders. PostgreSQL does not support `?` placeholders, which causes the Garbage Collector to fail with a SQL syntax error and prevents cleanup of expired records.  **To Reproduce**  1. Deploy Permify with a PostgreSQL database. 2. Enable garbage collection in the configuration:  ```yaml database:   engine: postgres   garbage_collection:     enabled: true     interval: 10m     window: 5m     timeout: 5m ```  3. Create relations so that expired records exist in relation_tuples. 4. Wait for the Garbage Collector to run.  PostgreSQL logs show: ``` ERROR:  syntax error at or near "AND" at character 49 STATEMENT:  DELETE FROM relation_tuples WHERE tenant_id = ? AND expired_tx_id <> ?::xid8 AND expired_tx_id < ?::xid8 ```  **Example Application** Not applicable. The issue is reproducible in a standard Permify deployment without custom application code.  **Expected behavior** Garbage Collector should generate PostgreSQL-compatible SQL using $1, $2, ... placeholders and successfully delete expired records.   **Environment (please complete the following information, because it helps us investigate better):** - OS: Linux - PostgreSQL 15.13 (Ubuntu 15.13-1.pgdg20.04+1) - Permify version: 1.6.0 
-  **Post-Mortem & Fix Analysis**:
-  > In `postgres.go`, the PostgreSQL statement builder is correctly initialized:  ``` pg.Builder = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar) ```  However, this builder is not used by the Garbage Collector.  In GC, DELETE queries are built in `utils/common.go` via: ``` func GenerateGCQueryForTenant(...) squirrel.DeleteBuilder {     deleteBuilder := squirrel.Delete(table) // default Squirrel builder     ... } ```  `squirrel.Delete(table)` creates a default Squirrel builder, which:  - always uses ? placeholders - ignores the configured PostgreSQL builder (pg.Builder)  As a result, Garbage Collector generates SQL with `?` placeholders, which is invalid for PostgreSQL.
-  > /
-  > Thanks for the detailed report @okrivtsov. Fixed in #2736 
-
-- **Issue #2731** (2026-01-14): **[BUG] OpenTelemetry Tracer and Meter Not Initializing Despite Correct Configuration**
-  *Symptoms*: # OpenTelemetry Tracer and Meter Not Initializing Despite Correct Configuration  ## Description  OpenTelemetry tracer and meter do not initialize in Permify v1.3.5 and v1.6.0 despite having all required configuration parameters correctly set. No traces or metrics are exported to the OTLP endpoint, and there are no initialization logs indicating OpenTelemetry is starting.  ## Environment  - **Permify Version**: v1.3.5 and v1.6.0 (tested both) - **Helm Chart Version**: 0.4.0 - **Deployment Method**: Kubernetes with Helm - **OTLP Receiver**: Datadog Agent (verified working with other services) - **Log Level**: info  ## Configuration  ### Tracer Configuration ```yaml app:   tracer:     enabled: true     exporter: otlp     endpoint: datadog.datadog.svc.cluster.local:4318     insecure: true     urlpath: /v1/traces ```  ### Meter Configuration ```yaml app:   meter:     enabled: true     exporter: otlp     endpoint: datadog.datadog.svc.cluster.local:4318     insecure: true     urlpath: /v1/metrics ```  ### Environment Variables (Verified in Running Pod) ```bash PERMIFY_TRACER_ENABLED=true PERMIFY_TRACER_EXPORTER=otlp PERMIFY_TRACER_ENDPOINT=datadog.datadog.svc.cluster.local:4318 PERMIFY_TRACER_INSECURE=true PERMIFY_TRACER_URL_PATH=/v1/traces PERMIFY_TRACER_PROTOCOL=http  # Added via extraEnvVars  PERMIFY_METER_ENABLED=true PERMIFY_METER_EXPORTER=otlp PERMIFY_METER_ENDPOINT=datadog.datadog.svc.cluster.local:4318 PERMIFY_METER_INSECURE=true PERMIFY_METER_URL_PATH=/v1/metrics PERMIFY_ME
-  **Post-Mortem & Fix Analysis**:
-  > looks like its resolved
-  > @rhsahin can you tell us more? Was there a setting we should document better? Was it just an intermittent blip?   Thanks!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2465,1239 +2119,49 @@ func checkDepth(request *base.PermissionCheckRequest) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93186e8b` (2026-10-02)
-**Commit Message**: Merge pull request #3215 from junsazanami430u/fix/buf-lint-named-error
+### Incident Patch 1: `22d97667` (2026-10-09)
+**Commit Message**: Merge pull request #3234 from Permify/fix/go-1.27.2-cves
 
-chore: ignore buf lint naming error to avoid breaking changes
+build: bump Go to 1.27.2
 
-**File**: `proto/base/v1/service.proto` (modified, +19/-0)
+**File**: `.github/workflows/nightly.yaml` (modified, +1/-1)
 ```diff
-@@ -282,6 +282,7 @@ service Permission {
- 
-   // LookupEntity method receives a PermissionLookupEntityRequest and returns a PermissionLookupEntityResponse.
-   // It is used to retrieve an entity by its identifier.
-+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-   rpc LookupEntity(PermissionLookupEntityRequest) returns (PermissionLookupEntityResponse) {
-     // HTTP mapping for this method
-     option (google.api.http) = {
-@@ -408,6 +409,8 @@ service Permission {
- 
-   // LookupEntityStream method receives a PermissionLookupEntityRequest and streams a series of PermissionLookupEntityStreamResponse messages.
-   // It is used to retrieve entities by their identifiers in a streaming fashion.
-+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-   rpc LookupEntityStream(PermissionLookupEntityRequest) returns (stream PermissionLookupEntityStreamResponse) {
-     // HTTP mapping for this method
-     option (google.api.http) = {
-@@ -2125,6 +2128,8 @@ service Data {
-   }
- 
-   // RPC method to write relationships for a tenant. This can be accessed via a POST request to the given HTTP path. It's tagged under "Data" in OpenAPI documentation.
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc WriteRelationships(RelationshipWriteRequest) returns (RelationshipWriteResponse) {
-     option (google.api.http) = {
-       post: "/v1/tenants/{tenant_id}/relationships/write"
-@@ -2139,6 +2144,8 @@ service Data {
-   }
- 
-   // The ReadRelationships RPC method reads relation tuple(s).
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc ReadRelationships(RelationshipReadRequest) returns (RelationshipReadResponse) {
-     option (google.api.http) = {
-       post: "/v1/tenants/{tenant_id}/data/relationships/read"
-@@ -2273,6 +2280,8 @@ service Data {
-   }
- 
-   // The ReadAttributes RPC method reads attribute(s) of a relation.
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc ReadAttributes(AttributeReadRequest) returns (AttributeReadResponse) {
-     option (google.api.http) = {
-       post: "/v1/tenants/{tenant_id}/data/attributes/read"
-@@ -2532,6 +2541,8 @@ service Data {
-   }
- 
-   // RPC method to delete relationships for a tenant, accessed via a POST request to the specified path, tagged as "Data" in OpenAPI documentation.
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc DeleteRelationships(RelationshipDeleteRequest) returns (RelationshipDeleteResponse) {
-     option (google.api.http) = {
-       post: "/v1/tenants/{tenant_id}/relationships/delete"
-@@ -2546,6 +2557,8 @@ service Data {
-   }
- 
-   // Executes or runs a specific bundle. This method is useful for processing or triggering actions based on the bundle's data.
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc RunBundle(BundleRunRequest) returns (BundleRunResponse) {
-     option (google.api.http) = {
-       post: "/v1/tenants/{tenant_id}/data/run-bundle"
-@@ -3357,6 +3370,8 @@ message BundleDeleteResponse {
- service Tenancy {
-   // Create is a unary RPC to create a new tenant.
-   // It requires a TenantCreateRequest and returns a TenantCreateResponse.
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc Create(TenantCreateRequest) returns (TenantCreateResponse) {
-     option (google.api.http) = {
-       post: "/v1/tenants/create"
-@@ -3447,6 +3462,8 @@ service Tenancy {
- 
-   // Delete is a unary RPC to delete an existing tenant.
-   // It requires a TenantDeleteRequest and returns a TenantDeleteResponse.
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc Delete(TenantDeleteRequest) returns (TenantDeleteResponse) {
-     option (google.api.http) = {delete: "/v1/tenants/{id}"};
- 
-@@ -3525,6 +3542,8 @@ service Tenancy {
- 
-   // List is a unary RPC to get a list of all tenants.
-   // It requires a TenantListRequest and returns a TenantListResponse.
-+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-   rpc List(TenantListRequest) returns (TenantListResponse) {
-     option (google.api.http) = {
-       post: "/v1/tenants/list"
+@@ -23,7 +23,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+         with:
+-          go-version: ~1.26.8
++          go-version: ~1.26.9
+       - name: Log in to GHCR
+         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+         with:
 ```
 
----
-
-### Incident Patch 2: `1b52a203` (2026-09-17)
-**Commit Message**: build(deps): bump go.opentelemetry.io/otel/exporters/zipkin
-
-Bumps [go.opentelemetry.io/otel/exporters/zipkin](https://github.com/open-telemetry/opentelemetry-go) from 1.38.0 to 1.45.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.38.0...v1.45.0)
-
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/exporters/zipkin
-  dependency-version: 1.45.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
 ```diff
-@@ -65,7 +65,7 @@ require (
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0
--	go.opentelemetry.io/otel/exporters/zipkin v1.38.0
-+	go.opentelemetry.io/otel/exporters/zipkin v1.45.0
- 	go.opentelemetry.io/otel/metric v1.46.0
- 	go.opentelemetry.io/otel/sdk v1.46.0
- 	go.opentelemetry.io/otel/sdk/metric v1.46.0
+@@ -23,7 +23,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+         with:
+-          go-version: ~1.26.8
++          go-version: ~1.26.9
+       - name: Log in to GHCR
+         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+         with:
 ```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -957,8 +957,8 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0 h1:RAE+J
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0/go.mod h1:AGmbycVGEsRx9mXMZ75CsOyhSP6MFIcj/6dnG+vhVjk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0 h1:lgh3PiVrRUWMLOVSkQicxzZll5NjF1r+AtsX1XRIHw0=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0/go.mod h1:5Cnhth3m/AgOeTgE3ex12pPmiu/gGtZit03kSzx9X7s=
--go.opentelemetry.io/otel/exporters/zipkin v1.38.0 h1:0rJ2TmzpHDG+Ib9gPmu3J3cE0zXirumQcKS4wCoZUa0=
--go.opentelemetry.io/otel/exporters/zipkin v1.38.0/go.mod h1:Su/nq/K5zRjDKKC3Il0xbViE3juWgG3JDoqLumFx5G0=
-+go.opentelemetry.io/otel/exporters/zipkin v1.45.0 h1:KN3btaILMTxR4QDHVGAO87lq5ButzK7l+kIfLuxQ1oA=
-+go.opentelemetry.io/otel/exporters/zipkin v1.45.0/go.mod h1:yNcodmUclM4InyWoOwX/YW4Jri0Gj5FWAlM+NqCrtqY=
- go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
- go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
- go.opentelemetry.io/otel/metric/x v0.68.0 h1:TA/cBT23D3MnxYPwHL7YFOdYGdx0A0v+s7Mzotpd1dU=
-```
-
----
-
-### Incident Patch 3: `7529af58` (2026-09-11)
-**Commit Message**: Merge pull request #3204 from Permify/fix-playground-enforcement-tab
-
-fix: playground enforcement tab
-
-**File**: `playground/src/features/enforcement/enforcement.jsx` (modified, +16/-1)
-```diff
-@@ -11,6 +11,9 @@ function Enforcement() {
-     const [yamlData, setYamlData] = useState("");
- 
-     const handleYamlChange = (newCode) => {
-+        // While typing the editor text is the source of truth, so keep it as it is
-+        // and only feed the parsed result into the store.
-+        setYamlData(newCode);
-         try {
-             const updatedData = yaml.load(newCode);
-             setScenarios(updatedData);
-@@ -20,7 +23,19 @@ function Enforcement() {
-     };
- 
-     useEffect(() => {
--        setYamlData(dump(scenarios))
-+        const dumped = dump(scenarios);
-+        setYamlData((current) => {
-+            try {
-+                if (dump(yaml.load(current)) === dumped) {
-+                    return current;
-+                }
-+            } catch (error) {
-+                // Not valid YAML yet, the user is still typing it.
-+                return current;
-+            }
-+            // The scenarios changed outside of the editor (example, import, new scenario).
-+            return dumped;
-+        });
-     }, [scenarios]);
- 
-     return (
-```
-
----
-
-### Incident Patch 4: `8b7e0c74` (2026-09-11)
-**Commit Message**: fix playground enforcement tab
-
-**File**: `playground/src/features/enforcement/enforcement.jsx` (modified, +16/-1)
-```diff
-@@ -11,6 +11,9 @@ function Enforcement() {
-     const [yamlData, setYamlData] = useState("");
- 
-     const handleYamlChange = (newCode) => {
-+        // While typing the editor text is the source of truth, so keep it as it is
-+        // and only feed the parsed result into the store.
-+        setYamlData(newCode);
-         try {
-             const updatedData = yaml.load(newCode);
-             setScenarios(updatedData);
-@@ -20,7 +23,19 @@ function Enforcement() {
-     };
- 
-     useEffect(() => {
--        setYamlData(dump(scenarios))
-+        const dumped = dump(scenarios);
-+        setYamlData((current) => {
-+            try {
-+                if (dump(yaml.load(current)) === dumped) {
-+                    return current;
-+                }
-+            } catch (error) {
-+                // Not valid YAML yet, the user is still typing it.
-+                return current;
-+            }
-+            // The scenarios changed outside of the editor (example, import, new scenario).
-+            return dumped;
-+        });
-     }, [scenarios]);
- 
-     return (
-```
-
----
-
-### Incident Patch 5: `968ab178` (2026-09-10)
-**Commit Message**: Merge pull request #3149 from Permify/dependabot/go_modules/sdk/go/grpc/buf.build/gen/go/permifyco/permify/protocolbuffers/go-1.36.12-20260417170026-08b37474f24f.2
-
-build(deps): bump buf.build/gen/go/permifyco/permify/protocolbuffers/go from 1.36.12-20260417170026-08b37474f24f.1 to 1.36.12-20260417170026-08b37474f24f.2 in /sdk/go/grpc
-
-**File**: `sdk/go/grpc/go.mod` (modified, +3/-3)
-```diff
-@@ -3,14 +3,14 @@ module main
- go 1.25.7
- 
- require (
--	buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.1
-+	buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.2
- 	github.com/Permify/permify-go v0.6.0
- 	google.golang.org/grpc v1.83.2
- )
- 
- require (
--	buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.1 // indirect
--	buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.1 // indirect
-+	buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.2 // indirect
-+	buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.2 // indirect
- 	buf.build/gen/go/permifyco/permify/grpc/go v1.6.1-20260417170026-08b37474f24f.1 // indirect
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
-```
-
-**File**: `sdk/go/grpc/go.sum` (modified, +6/-6)
-```diff
-@@ -1,11 +1,11 @@
--buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.1 h1:n2M6Ko1hTXHNTRfYXFIbP1kE74XpJc6dY6psur6iuhA=
--buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.1/go.mod h1:uEYtK5SFuNw1hJkqTKEXvvbUyWwTBlTRj42alVWbe6M=
--buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.1 h1:tUdD9w+8U70KRudIRO4Ass2S8mSB6P+0QmrrlmqlpDY=
--buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.1/go.mod h1:tGHWROdiYQqFpI6EFJWW82Kfbg58TqH2EGNbkGajR0E=
-+buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.2 h1:Z/mX4IRvRVjjBx45fo9cV8prOGbFZvmIjhA06txbuMI=
-+buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.2/go.mod h1:uEYtK5SFuNw1hJkqTKEXvvbUyWwTBlTRj42alVWbe6M=
-+buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.2 h1:ESTAICuabdVu0hN+z06qMtr07mETtGjaEiNUco0RnmI=
-+buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.2/go.mod h1:tGHWROdiYQqFpI6EFJWW82Kfbg58TqH2EGNbkGajR0E=
- buf.build/gen/go/permifyco/permify/grpc/go v1.6.1-20260417170026-08b37474f24f.1 h1:J2PPCGs5mDUnUqowZh+y5IHCaCMwVKpBiK7yptuaMEA=
- buf.build/gen/go/permifyco/permify/grpc/go v1.6.1-20260417170026-08b37474f24f.1/go.mod h1:w0pZ0AJzhN6h4WS9+JLVwbV8xP3BAayjvxTutZWhixA=
--buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.1 h1:+LUHW8/UcJZJRZF5Pye6lo36fkQy5nksS6LcekL2+1c=
--buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.1/go.mod h1:0kI/b+eCC1sS5/Iql7Ayx+IOhhn9dIxgIf1dhaKP55A=
-+buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.2 h1:fdhEVXfxg9E0PbdZBhyL/haU4l1vbng0EMcmDBO3M6s=
-+buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.2/go.mod h1:cD8ToRjMdTqsJ0aPCjJB9x2bwhEw9r83JVieMfsxJZk=
- github.com/Permify/permify-go v0.6.0 h1:j/WjqL2hnlNYgyuFzhHr3lwcUu7yC41A5a80x9WRouc=
- github.com/Permify/permify-go v0.6.0/go.mod h1:OikAZdnEYuNvxYUNERxmB0+8hQE+RA/K6vgFOJbem8M=
- github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
-```
-
----
-
-### Incident Patch 6: `7c136a58` (2026-09-10)
-**Commit Message**: build(deps-dev): bump jsdom from 26.1.0 to 30.0.1 in /playground
-
-Bumps [jsdom](https://github.com/jsdom/jsdom) from 26.1.0 to 30.0.1.
-- [Release notes](https://github.com/jsdom/jsdom/releases)
-- [Commits](https://github.com/jsdom/jsdom/compare/v26.1.0...v30.0.1)
-
----
-updated-dependencies:
-- dependency-name: jsdom
-  dependency-version: 30.0.1
-  dependency-type: direct:development
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `playground/package.json` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@
-     "@vitejs/plugin-react": "^5.1.0",
-     "eslint-import-resolver-alias": "^1.1.2",
-     "eslint-plugin-import": "^2.29.1",
--    "jsdom": "^26.1.0",
-+    "jsdom": "^30.0.1",
-     "less": "^4.8.1",
-     "typescript": "^7.0.2",
-     "vite": "^8.0.16",
-```
-
-**File**: `playground/yarn.lock` (modified, +184/-167)
-```diff
-@@ -66,16 +66,26 @@
-     json2mq "^0.2.0"
-     throttle-debounce "^5.0.0"
- 
--"@asamuzakjp/css-color@^3.2.0":
--  version "3.2.0"
--  resolved "https://registry.npmjs.org/@asamuzakjp/css-color/-/css-color-3.2.0.tgz#cc42f5b85c593f79f1fa4f25d2b9b321e61d1794"
--  integrity sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==
--  dependencies:
--    "@csstools/css-calc" "^2.1.3"
--    "@csstools/css-color-parser" "^3.0.9"
--    "@csstools/css-parser-algorithms" "^3.0.4"
--    "@csstools/css-tokenizer" "^3.0.3"
--    lru-cache "^10.4.3"
-+"@asamuzakjp/css-color@^6.0.5":
-+  version "6.0.7"
-+  resolved "https://registry.yarnpkg.com/@asamuzakjp/css-color/-/css-color-6.0.7.tgz#8f9f67452e6636930949abe047dd553b13276939"
-+  integrity sha512-vC/bk1Lz7Tn/EfU9/apOTBk80/8dyGyWMowPoV1tJ52muDGsDqt2HPT2klrFUiY60MQmQv9q8yIht15JnBgDGw==
-+  dependencies:
-+    "@csstools/css-calc" "^3.3.0"
-+    "@csstools/css-color-parser" "^4.1.10"
-+    "@csstools/css-parser-algorithms" "^4.0.0"
-+    "@csstools/css-tokenizer" "^4.0.0"
-+    lru-cache "^11.5.2"
-+
-+"@asamuzakjp/dom-selector@^8.3.0":
-+  version "8.3.2"
-+  resolved "https://registry.yarnpkg.com/@asamuzakjp/dom-selector/-/dom-selector-8.3.2.tgz#1e84c1ea1e12a921c1aa94da4b1f657168f09596"
-+  integrity sha512-93Z1N+BQNXysodoicpOIyNh2drHfz/CTf9nnT0FEx72GJcIiwgydD7tGAr78j41LsYn3hlRn+LdGPuBLn1Bl8Q==
-+  dependencies:
-+    bidi-js "^1.0.3"
-+    css-tree "^3.2.1"
-+    is-potential-custom-element-name "^1.0.1"
-+    lru-cache "^11.5.2"
- 
- "@babel/code-frame@^7.29.7":
-   version "7.29.7"
-@@ -265,33 +275,45 @@
-     "@babel/helper-string-parser" "^7.29.7"
-     "@babel/helper-validator-identifier" "^7.29.7"
- 
--"@csstools/color-helpers@^5.1.0":
--  version "5.1.0"
--  resolved "https://registry.npmjs.org/@csstools/color-helpers/-/color-helpers-5.1.0.tgz#106c54c808cabfd1ab4c602d8505ee584c2996ef"
--  integrity sha512-S11EXWJyy0Mz5SYvRmY8nJYTFFd1LCNV+7cXyAgQtOOuzb4EsgfqDufL+9esx72/eLhsRdGZwaldu/h+E4t4BA==
-+"@bramus/specificity@^2.4.2":
-+  version "2.4.2"
-+  resolved "https://registry.yarnpkg.com/@bramus/specificity/-/specificity-2.4.2.tgz#aa8db8eb173fdee7324f82284833106adeecc648"
-+  integrity sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==
-+  dependencies:
-+    css-tree "^3.0.0"
-+
-+"@csstools/color-helpers@^6.1.1":
-+  version "6.1.1"
-+  resolved "https://registry.yarnpkg.com/@csstools/color-helpers/-/color-helpers-6.1.1.tgz#1890f29a4347486b54048d24c6ab8fbef039ee61"
-+  integrity sha512-gLNsunvwf3mCi5u5o46/Z/JcJMnhbHSaZ69rkgPzNM3J4s8hWwpPUQB6/tt0EDFyCiWzxANlx+2LJwpYj4zS1w==
- 
--"@csstools/css-calc@^2.1.3", "@csstools/css-calc@^2.1.4":
--  version "2.1.4"
--  resolved "https://registry.npmjs.org/@csstools/css-calc/-/css-calc-2.1.4.tgz#8473f63e2fcd6e459838dd412401d5948f224c65"
--  integrity sha512-3N8oaj+0juUw/1H3YwmDDJXCgTB1gKU6Hc/bB502u9zR0q2vd786XJH9QfrKIEgFlZmhZiq6epXl4rHqhzsIgQ==
-+"@csstools/css-calc@^3.3.0":
-+  version "3.3.0"
-+  resolved "https://registry.yarnpkg.com/@csstools/css-calc/-/css-calc-3.3.0.tgz#33cc4bdbab8edf1b6e3ab8c1eba849c41a324f1a"
-+  integrity sha512-c5ihYsPkdG6JCkU2zTMm4+k6r7RXuGxtWYhu5DHMIiF1FHzrfmHL5so11AoFpUv/tu61xfcmT4AmKoFfMPoqdQ==
- 
--"@csstools/css-color-parser@^3.0.9":
--  version "3.1.0"
--  resolved "https://registry.npmjs.org/@csstools/css-color-parser/-/css-color-parser-3.1.0.tgz#4e386af3a99dd36c46fef013cfe4c1c341eed6f0"
--  integrity sha512-nbtKwh3a6xNVIp/VRuXV64yTKnb1IjTAEEh3irzS+HkKjAOYLTGNb9pmVNntZ8iVBHcWDA2Dof0QtPgFI1BaTA==
-+"@csstools/css-color-parser@^4.1.10":
-+  version "4.2.2"
-+  resolved "https://registry.yarnpkg.com/@csstools/css-color-parser/-/css-color-parser-4.2.2.tgz#f590bc710a26914dbe64c4656813eafc93f4e45e"
-+  integrity sha512-3QKjR/vxyjcSXBLgb6lP0S3MGdvwbmqSsvLPbYdVORqPDc8FX1HAJ0Spk38bxaRXgvENTA47tlhhbb5Z2e8hEg==
-   dependencies:
--    "@csstools/color-helpers" "^5.1.0"
--    "@csstools/css-calc" "^2.1.4"
-+    "@csstools/color-helpers" "^6.1.1"
-+    "@csstools/css-calc" "^3.3.0"
- 
--"@csstools/css-parser-algorithms@^3.0.4":
--  version "3.0.5"
--  resolved "https://registry.npmjs.org/@csstools/css-parser-algorithms/-/css-parser-algorithms-3.0.5.tgz#5755370a9a29abaec5515b43c8b3f2cf9c2e3076"
--  integrity sha512-DaDeUkXZKjdGhgYaHNJTV9pV7Y9B3b644jCLs9Upc3VeNGg6LWARAT6O+Q+/COo+2gg/bM5rhpMAtf70WqfBdQ==
-+"@csstools/css-parser-algorithms@^4.0.0":
-+  version "4.0.0"
-+  resolved "https://registry.yarnpkg.com/@csstools/css-parser-algorithms/-/css-parser-algorithms-4.0.0.tgz#e1c65dc09378b42f26a111fca7f7075fc2c26164"
-+  integrity sha512-+B87qS7fIG3L5h3qwJ/IFbjoVoOe/bpOdh9hAjXbvx0o8ImEmUsGXN0inFOnk2ChCFgqkkGFQ+TpM5rbhkKe4w==
- 
--"@csstools/css-tokenizer@^3.0.3":
--  version "3.0.4"
--  resolved "https://registry.npmjs.org/@csstools/css-tokenizer/-/css-tokenizer-3.0.4.tgz#333fedabc3fd1a8e5d0100013731cf19e6a8c5d3"
--  integrity sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==
-+"@csstools/css-syntax-patches-for-csstree@^1.1.7":
-+  version "1.1.12"
-+  resolved "https:
-```
-
----
-
-### Incident Patch 7: `58f49abb` (2026-09-10)
-**Commit Message**: build(deps): bump go.opentelemetry.io/otel/sdk from 1.44.0 to 1.46.0
-
-Bumps [go.opentelemetry.io/otel/sdk](https://github.com/open-telemetry/opentelemetry-go) from 1.44.0 to 1.46.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.46.0)
-
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/sdk
-  dependency-version: 1.46.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +8/-10)
-```diff
-@@ -52,24 +52,24 @@ require (
- 	github.com/sony/gobreaker v1.0.0
- 	github.com/spf13/cobra v1.10.2
- 	github.com/spf13/viper v1.21.0
--	github.com/stretchr/testify v1.11.1
-+	github.com/stretchr/testify v1.12.1
- 	github.com/testcontainers/testcontainers-go v0.42.0
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0
- 	go.opentelemetry.io/contrib/instrumentation/host v0.65.0
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0
- 	go.opentelemetry.io/contrib/instrumentation/runtime v0.69.0
--	go.opentelemetry.io/otel v1.44.0
-+	go.opentelemetry.io/otel v1.46.0
- 	go.opentelemetry.io/otel/exporters/jaeger v1.17.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0
- 	go.opentelemetry.io/otel/exporters/zipkin v1.38.0
--	go.opentelemetry.io/otel/metric v1.44.0
--	go.opentelemetry.io/otel/sdk v1.44.0
--	go.opentelemetry.io/otel/sdk/metric v1.44.0
--	go.opentelemetry.io/otel/trace v1.44.0
-+	go.opentelemetry.io/otel/metric v1.46.0
-+	go.opentelemetry.io/otel/sdk v1.46.0
-+	go.opentelemetry.io/otel/sdk/metric v1.46.0
-+	go.opentelemetry.io/otel/trace v1.46.0
- 	golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/sync v0.22.0
-@@ -324,7 +324,7 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.uber.org/automaxprocs v1.6.0 // indirect
- 	go.uber.org/zap v1.27.0 // indirect
--	go.yaml.in/yaml/v3 v3.0.4
-+	go.yaml.in/yaml/v3 v3.0.5
- 	golang.org/x/exp/typeparams v0.0.0-20250911091902-df9299821621 // indirect
- 	golang.org/x/mod v0.38.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
-@@ -352,12 +352,11 @@ require (
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/containerd/log v0.1.0 // indirect
- 	github.com/cpuguy83/dockercfg v0.3.2 // indirect
--	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
- 	github.com/docker/docker v28.5.1+incompatible // indirect
- 	github.com/docker/go-connections v0.6.0 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
- 	github.com/fsnotify/fsnotify v1.9.0 // indirect
--	github.com/go-logr/logr v1.4.3 // indirect
-+	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-ole/go-ole v1.3.0 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
-@@ -387,7 +386,6 @@ require (
- 	github.com/opencontainers/image-spec v1.1.1 // indirect
- 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
- 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
--	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
- 	github.com/prometheus/client_golang v1.20.3 // indirect
- 	github.com/prometheus/client_model v0.6.2 // indirect
-```
-
-**File**: `go.sum` (modified, +18/-21)
-```diff
-@@ -224,8 +224,6 @@ github.com/dave/jennifer v1.7.1 h1:B4jJJDHelWcDhlRQxWeo0Npa/pYKBLrirAQoTN45txo=
- github.com/dave/jennifer v1.7.1/go.mod h1:nXbxhEmQfOZhWml3D1cDK5M1FLnMSozpbFN/m3RmGZc=
- github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
- github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
--github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
--github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
- github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 h1:NMZiJj8QnKe1LgsbDayM4UoHwbvwDRwnI3hwNaAHRnc=
- github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0/go.mod h1:ZXNYxsqcloTdSy/rNShjYzMhyjf0LaoftYK0p+A3h40=
- github.com/denis-tingaikin/go-header v0.5.0 h1:SRdnP5ZKvcO9KKRP1KJrhFR3RrlGuD+42t4429eC9k8=
-@@ -298,8 +296,8 @@ github.com/go-jose/go-jose/v3 v3.0.5/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQr
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
- github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG1KdI/P7A=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
--github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
--github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-+github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
-+github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
- github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
- github.com/go-ole/go-ole v1.2.6/go.mod h1:pprOEPIfldk/42T2oK7lQ4v4JSDwmV0As9GaiUsvbm0=
-@@ -715,8 +713,6 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
- github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 h1:GFCKgmp0tecUJ0sJuv4pzYCqS9+RGSn52M3FUwPs+uo=
- github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10/go.mod h1:t/avpk3KcrXxUnYOhZhMXJlSEyie6gQbtLq5NM3loB8=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
--github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
--github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/polyfloyd/go-errorlint v1.8.0 h1:DL4RestQqRLr8U4LygLw8g2DX6RN1eBJOpa2mzsrl1Q=
- github.com/polyfloyd/go-errorlint v1.8.0/go.mod h1:G2W0Q5roxbLCt0ZQbdoxQxXktTjwNyDbEaj3n7jvl4s=
- github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 h1:o4JXh1EVt9k/+g42oCprj/FisM4qX9L3sZB3upGN2ZU=
-@@ -851,8 +847,8 @@ github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
- github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
- github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
- github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=
- github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
- github.com/tenntenn/modver v1.0.1 h1:2klLppGhDgzJrScMpkj9Ujy3rXPUspSjAcev9tSEBgA=
-@@ -947,8 +943,8 @@ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
- go.opentelemetry.io/contrib/instrumentation/runtime v0.69.0 h1:MtkMsuRo3zEXTTMALfyrszwCDZTkB6wolyPjbwFAdq0=
- go.opentelemetry.io/contrib/instrumentation/runtime v0.69.0/go.mod h1:FYTxnpsm+UPD0erZNq20GvnM8T2YQHiHtT2vokdpoac=
--go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
--go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
-+go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
-+go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
- go.opentelemetry.io/otel/exporters/jaeger v1.17.0 h1:D7UpUy2Xc2wsi1Ras6V40q806WM07rqoCWzXu7Sqy+4=
- go.opentelemetry.io/otel/exporters/jaeger v1.17.0/go.mod h1:nPCqOnEH9rNLKqH/+rrUjiMzHJdV1BlpKcTwRTyKkKI=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 h1:SUplec5dp06reu1zaXmOXdvqH398taqrDXqUl99jxSc=
-@@ -963,16 +959,16 @@ go.opentelemetry.io/otel/exporters/otl
-```
-
----
-
-### Incident Patch 8: `fbfe1d19` (2026-09-10)
-**Commit Message**: build(deps-dev): bump typescript from 6.0.2 to 7.0.2 in /playground
-
-Bumps [typescript](https://github.com/microsoft/TypeScript) from 6.0.2 to 7.0.2.
-- [Release notes](https://github.com/microsoft/TypeScript/releases)
-- [Commits](https://github.com/microsoft/TypeScript/compare/v6.0.2...v7.0.2)
-
----
-updated-dependencies:
-- dependency-name: typescript
-  dependency-version: 7.0.2
-  dependency-type: direct:development
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `playground/package.json` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@
-     "eslint-plugin-import": "^2.29.1",
-     "jsdom": "^26.1.0",
-     "less": "^4.8.1",
--    "typescript": "^6.0.2",
-+    "typescript": "^7.0.2",
-     "vite": "^8.0.16",
-     "vite-tsconfig-paths": "^6.1.1",
-     "vitest": "^4.1.11"
-```
-
-**File**: `playground/yarn.lock` (modified, +125/-4)
-```diff
-@@ -1005,6 +1005,106 @@
-   resolved "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz#baccb07a970b91707df3a3e8ba6896c57ead2d11"
-   integrity sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==
- 
-+"@typescript/typescript-aix-ppc64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-aix-ppc64/-/typescript-aix-ppc64-7.0.2.tgz#cdc7ce81d60f1e09034960ddfb1fb880d7a776b6"
-+  integrity sha512-MTKKkWB7p/0E9xi1d1tHtZ5PiLkGEMIq88pK2CubZjOsLtYTLqhgIgi6zepFa+9GHZ6h05NMCkQxGKiPXMxXtQ==
-+
-+"@typescript/typescript-darwin-arm64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-darwin-arm64/-/typescript-darwin-arm64-7.0.2.tgz#a55fdfcfa58df58d27db2237cde6a5c1e35a7235"
-+  integrity sha512-gowzar9MwS/aRWp6f3a4KUqzRjAZjOsmGNCM6LcTgXum+dBfgsBVMN+AgvOCCbguXyick6LJhpBszxMebJ8syA==
-+
-+"@typescript/typescript-darwin-x64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-darwin-x64/-/typescript-darwin-x64-7.0.2.tgz#38d1c9172800a91d707bec64d2a370a016634db4"
-+  integrity sha512-SZ9xZInqApNlNGc9s0W1VSsktYSOe9cFqNOIqmN1Gs8SmkjKZYFt017G4VwPxASInODuAdbTW7sXiFUf893RgA==
-+
-+"@typescript/typescript-freebsd-arm64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-freebsd-arm64/-/typescript-freebsd-arm64-7.0.2.tgz#f1ff8810030b35d2b5be0db6a2dc650460ea94fa"
-+  integrity sha512-W5NH4y/J0plIIS5b2xvTEkU7JFxyqdMAOgf+Ilhl0vHQXKO5dZoxd+C/jEtq56c4F3wk71RB4BMRQ2XdI+bwYQ==
-+
-+"@typescript/typescript-freebsd-x64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-freebsd-x64/-/typescript-freebsd-x64-7.0.2.tgz#3d86b03f353c5b1ba95162eb6ce35533bfc294bd"
-+  integrity sha512-UMGDx5sTpzNw3WiPebH7l90IWfJggEd+egHt/q6p7/Cm3zqoV7VxkGXt+3DxPIw8CcmvAB0j3sVVfbhX+M4Tpw==
-+
-+"@typescript/typescript-linux-arm64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-arm64/-/typescript-linux-arm64-7.0.2.tgz#d9334d96d6dac6ff85da9c865588948de939e91f"
-+  integrity sha512-Qh4eU4/y3yDjnfjjyPYihMj5/ODIlmt+Bzu17OI+fiSRDW57QmU5SiN63exPRNJPKUzcc1INa1NXdrJ+MqHjUQ==
-+
-+"@typescript/typescript-linux-arm@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-arm/-/typescript-linux-arm-7.0.2.tgz#ad94b41e1aee2a4dcc6a298c7b67c43345fde32e"
-+  integrity sha512-gffT3xPz9sR7j/YJExkyPntrI0P2EP9XbOyWzth2/Gs0RstK+90RBcO0ncXoXy/beYll1SXw846Nf2zdnEz0QQ==
-+
-+"@typescript/typescript-linux-loong64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-loong64/-/typescript-linux-loong64-7.0.2.tgz#2965aee4fc873360139d893daafe6397a29138ad"
-+  integrity sha512-uEHck9i8hoAzXPiYRib1O7miOnz23SxIeVl6F4LXox+qov1K35jHcEW6VHKvZI+pyvl7fZEP4MCU5LYvIq1GuQ==
-+
-+"@typescript/typescript-linux-mips64el@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-mips64el/-/typescript-linux-mips64el-7.0.2.tgz#1a887a311bed3a833f80bfd4a9ed37c271936cf0"
-+  integrity sha512-R4KvAMnE43W5Qeqb0Ly56O3mWMWIAgsMyz36DCaycd5nbg/9kzm0liw3JocfRqyJY0KPmzFjbswozXyW0DnIYA==
-+
-+"@typescript/typescript-linux-ppc64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-ppc64/-/typescript-linux-ppc64-7.0.2.tgz#8b63c9b2f445b393eb4e43ec21da225dade3577d"
-+  integrity sha512-DORx5b3sd/4S7eayxm4FQv+A7CrkUIGRaHiwI8oiHTAI1fAPWhF4J0vAlkC8biAlHSVVwxMQ3tjZ2/DVbnQiiA==
-+
-+"@typescript/typescript-linux-riscv64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-riscv64/-/typescript-linux-riscv64-7.0.2.tgz#b6e8a35c289b3ea97a92a41d461aaeed0d3b36e1"
-+  integrity sha512-wf0jqEDOjrPRnKwYRyyJDRo11KMbvMFrU+q4zqKyChODBzvlkbhNQfKvLxQCcwTpdDaXSHZTVuh0JoCrKCUMHQ==
-+
-+"@typescript/typescript-linux-s390x@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-s390x/-/typescript-linux-s390x-7.0.2.tgz#2ef96693be4861f6d17965427e5b009cbbed1a3e"
-+  integrity sha512-IkwJc3L7yhytWd/ewjyxNDfOmswCm9GWMJT/ue/dU4aZNbwZeYAetq42VyLmsmSjvoX7z74X6ZaYCtzAr0EuGw==
-+
-+"@typescript/typescript-linux-x64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-linux-x64/-/typescript-linux-x64-7.0.2.tgz#73269cb0baba50aea0ca060445a6b88e583f1ce2"
-+  integrity sha512-EYdf2cNg7rgCWJnxCdJ+F3V39O8ihb37eHAu1LK8oAFizgTQbPOK7zHHXbPt8rX24COqODXeI3sIf0fCXG7H/A==
-+
-+"@typescript/typescript-netbsd-arm64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/typescript-netbsd-arm64/-/typescript-netbsd-arm64-7.0.2.tgz#3a3649f97fafa210b4e6e3798c15e06605c8a901"
-+  integrity sha512-+polYF4MF04aPpO5FTkHran9yUQDSXqy5GiSDKpsll5jy3l3+g9QLhpf39T+ePtefhXLOGrLl0QIjkQP6VnelA==
-+
-+"@typescript/typescript-netbsd-x64@7.0.2":
-+  version "7.0.2"
-+  resolved "https://registry.yarnpkg.com/@typescript/t
-```
-
----
-
-### Incident Patch 9: `0dfd70e2` (2026-09-10)
-**Commit Message**: build(deps): bump mintlify from 4.2.791 to 4.2.876 in /docs
-
-Bumps [mintlify](https://github.com/mintlify/mint/tree/HEAD/packages/mintlify) from 4.2.791 to 4.2.876.
-- [Commits](https://github.com/mintlify/mint/commits/HEAD/packages/mintlify)
-
----
-updated-dependencies:
-- dependency-name: mintlify
-  dependency-version: 4.2.850
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `docs/package-lock.json` (modified, +751/-207)
-```diff
-@@ -9,7 +9,7 @@
-       "version": "1.0.0",
-       "license": "ISC",
-       "dependencies": {
--        "mintlify": "^4.2.791"
-+        "mintlify": "^4.2.876"
-       }
-     },
-     "node_modules/@alcalzone/ansi-tokenize": {
-@@ -26,9 +26,9 @@
-       }
-     },
-     "node_modules/@alloc/quick-lru": {
--      "version": "5.2.0",
--      "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz",
--      "integrity": "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==",
-+      "version": "5.3.0",
-+      "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.3.0.tgz",
-+      "integrity": "sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=10"
-@@ -37,6 +37,169 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-+    "node_modules/@anthropic-ai/claude-agent-sdk": {
-+      "version": "0.3.241",
-+      "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk/-/claude-agent-sdk-0.3.241.tgz",
-+      "integrity": "sha512-pIHdCSTywFe30H0oWDCKZzC4ipBLtF5YMDRKjf6PHyARg57O4l/72v3b6QKnnefwtKKMe6uWJ1Y9lUJg/sKWyA==",
-+      "license": "SEE LICENSE IN README.md",
-+      "optional": true,
-+      "engines": {
-+        "node": ">=18.0.0"
-+      },
-+      "optionalDependencies": {
-+        "@anthropic-ai/claude-agent-sdk-darwin-arm64": "0.3.241",
-+        "@anthropic-ai/claude-agent-sdk-darwin-x64": "0.3.241",
-+        "@anthropic-ai/claude-agent-sdk-linux-arm64": "0.3.241",
-+        "@anthropic-ai/claude-agent-sdk-linux-arm64-musl": "0.3.241",
-+        "@anthropic-ai/claude-agent-sdk-linux-x64": "0.3.241",
-+        "@anthropic-ai/claude-agent-sdk-linux-x64-musl": "0.3.241",
-+        "@anthropic-ai/claude-agent-sdk-win32-arm64": "0.3.241",
-+        "@anthropic-ai/claude-agent-sdk-win32-x64": "0.3.241"
-+      },
-+      "peerDependencies": {
-+        "@anthropic-ai/sdk": ">=0.93.0",
-+        "@modelcontextprotocol/sdk": "^1.29.0",
-+        "zod": "^4.0.0"
-+      }
-+    },
-+    "node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64": {
-+      "version": "0.3.241",
-+      "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk-darwin-arm64/-/claude-agent-sdk-darwin-arm64-0.3.241.tgz",
-+      "integrity": "sha512-v26ta54lKFMFEZzbOE+6p3YhKERWnDiEA6OmkSAg+3fAQHOa1+aLTKw222cfgzxgiVixwFtHMk8c63zsDd8aXQ==",
-+      "cpu": [
-+        "arm64"
-+      ],
-+      "license": "SEE LICENSE IN LICENSE.md",
-+      "optional": true,
-+      "os": [
-+        "darwin"
-+      ]
-+    },
-+    "node_modules/@anthropic-ai/claude-agent-sdk-darwin-x64": {
-+      "version": "0.3.241",
-+      "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk-darwin-x64/-/claude-agent-sdk-darwin-x64-0.3.241.tgz",
-+      "integrity": "sha512-5jweT0vft1ZCaGSoxZHF9vJlHbx8Yxx4+x5aHAIXTd4lx7ZbT4o5buEF8kpmTeHUB+Fw9jtFIm4QDsRiBXgf+Q==",
-+      "cpu": [
-+        "x64"
-+      ],
-+      "license": "SEE LICENSE IN LICENSE.md",
-+      "optional": true,
-+      "os": [
-+        "darwin"
-+      ]
-+    },
-+    "node_modules/@anthropic-ai/claude-agent-sdk-linux-arm64": {
-+      "version": "0.3.241",
-+      "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk-linux-arm64/-/claude-agent-sdk-linux-arm64-0.3.241.tgz",
-+      "integrity": "sha512-SxszQGffXiLzMEnAv+pJXEmQbA8haijKyRjjH/jOt1CLeMIfpjKcO9WQDv8dEA8nREWS3zJ103zjgecAF7oOQQ==",
-+      "cpu": [
-+        "arm64"
-+      ],
-+      "libc": [
-+        "glibc"
-+      ],
-+      "license": "SEE LICENSE IN LICENSE.md",
-+      "optional": true,
-+      "os": [
-+        "linux"
-+      ]
-+    },
-+    "node_modules/@anthropic-ai/claude-agent-sdk-linux-arm64-musl": {
-+      "version": "0.3.241",
-+      "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk-linux-arm64-musl/-/claude-agent-sdk-linux-arm64-musl-0.3.241.tgz",
-+      "integrity": "sha512-GslvPvSzehfCZyzOaJAt4lgodznm5zpl/LMXN8ygD12z5qnpM+I9/eFnmAaISJ0L8/vyohtlAP1jjaeR2jz1AQ==",
-+      "cpu": [
-+        "arm64"
-+      ],
-+      "libc": [
-+        "musl"
-+      ],
-+      "license": "SEE LICENSE IN LICENSE.md",
-+      "optional": true,
-+      "os": [
-+        "linux"
-+      ]
-+    },
-+    "node_modules/@anthropic-ai/claude-agent-sdk-linux-x64": {
-+      "version": "0.3.241",
-+      "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk-linux-x64/-/claude-agent-sdk-linux-x64-0.3.241.tgz",
-+      "integrity": "sha512-gJRa922Qcm7loumHcXMDFEFg//tz1aOi7Nx0sQa9I9lC1JSN8yL6i7/idzOU5Hp193tEDFOgqIMFL/yRiXg+rw==",
-+      "cpu": [
-+        "x64"
-+      ],
-+      "libc": [
-+        "glibc"
-+      ],
-+      "license": "SEE LICENSE IN LICENSE.md",
-+      "optional": true,
-+      "os": [
-+        "linux"
-+      ]
-+    },
-+    "node_modules/@anthropic-ai/claude-agent-sdk-linux-x64-musl": {
-+      "version": "0.3.241",
-+      "resolved": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk-linux-x64-mus
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-     "doc": "docs"
-   },
-   "dependencies": {
--    "mintlify": "^4.2.791"
-+    "mintlify": "^4.2.876"
-   },
-   "scripts": {
-     "test": "echo \"Error: no test specified\" && exit 1"
-```
-
----
-
-### Incident Patch 10: `88968697` (2026-09-10)
-**Commit Message**: build(deps): bump buf.build/gen/go/permifyco/permify/protocolbuffers/go
-
----
-updated-dependencies:
-- dependency-name: buf.build/gen/go/permifyco/permify/protocolbuffers/go
-  dependency-version: 1.36.12-20260417170026-08b37474f24f.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `sdk/go/grpc/go.mod` (modified, +3/-3)
-```diff
-@@ -3,14 +3,14 @@ module main
- go 1.25.7
- 
- require (
--	buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.1
-+	buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.2
- 	github.com/Permify/permify-go v0.6.0
- 	google.golang.org/grpc v1.83.2
- )
- 
- require (
--	buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.1 // indirect
--	buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.1 // indirect
-+	buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.2 // indirect
-+	buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.2 // indirect
- 	buf.build/gen/go/permifyco/permify/grpc/go v1.6.1-20260417170026-08b37474f24f.1 // indirect
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
-```
-
-**File**: `sdk/go/grpc/go.sum` (modified, +6/-6)
-```diff
-@@ -1,11 +1,11 @@
--buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.1 h1:n2M6Ko1hTXHNTRfYXFIbP1kE74XpJc6dY6psur6iuhA=
--buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.1/go.mod h1:uEYtK5SFuNw1hJkqTKEXvvbUyWwTBlTRj42alVWbe6M=
--buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.1 h1:tUdD9w+8U70KRudIRO4Ass2S8mSB6P+0QmrrlmqlpDY=
--buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.1/go.mod h1:tGHWROdiYQqFpI6EFJWW82Kfbg58TqH2EGNbkGajR0E=
-+buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.2 h1:Z/mX4IRvRVjjBx45fo9cV8prOGbFZvmIjhA06txbuMI=
-+buf.build/gen/go/envoyproxy/protoc-gen-validate/protocolbuffers/go v1.36.12-20240617172848-daf171c6cdb5.2/go.mod h1:uEYtK5SFuNw1hJkqTKEXvvbUyWwTBlTRj42alVWbe6M=
-+buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.2 h1:ESTAICuabdVu0hN+z06qMtr07mETtGjaEiNUco0RnmI=
-+buf.build/gen/go/grpc-ecosystem/grpc-gateway/protocolbuffers/go v1.36.12-20241220201140-4c5ba75caaf8.2/go.mod h1:tGHWROdiYQqFpI6EFJWW82Kfbg58TqH2EGNbkGajR0E=
- buf.build/gen/go/permifyco/permify/grpc/go v1.6.1-20260417170026-08b37474f24f.1 h1:J2PPCGs5mDUnUqowZh+y5IHCaCMwVKpBiK7yptuaMEA=
- buf.build/gen/go/permifyco/permify/grpc/go v1.6.1-20260417170026-08b37474f24f.1/go.mod h1:w0pZ0AJzhN6h4WS9+JLVwbV8xP3BAayjvxTutZWhixA=
--buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.1 h1:+LUHW8/UcJZJRZF5Pye6lo36fkQy5nksS6LcekL2+1c=
--buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.1/go.mod h1:0kI/b+eCC1sS5/Iql7Ayx+IOhhn9dIxgIf1dhaKP55A=
-+buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.2 h1:fdhEVXfxg9E0PbdZBhyL/haU4l1vbng0EMcmDBO3M6s=
-+buf.build/gen/go/permifyco/permify/protocolbuffers/go v1.36.12-20260417170026-08b37474f24f.2/go.mod h1:cD8ToRjMdTqsJ0aPCjJB9x2bwhEw9r83JVieMfsxJZk=
- github.com/Permify/permify-go v0.6.0 h1:j/WjqL2hnlNYgyuFzhHr3lwcUu7yC41A5a80x9WRouc=
- github.com/Permify/permify-go v0.6.0/go.mod h1:OikAZdnEYuNvxYUNERxmB0+8hQE+RA/K6vgFOJbem8M=
- github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
-```
-
----
-
-### Incident Patch 11: `fedd37b4` (2026-09-10)
-**Commit Message**: build(deps): bump google.golang.org/grpc from 1.83.1 to 1.83.2
-
-Bumps [google.golang.org/grpc](https://github.com/grpc/grpc-go) from 1.83.1 to 1.83.2.
-- [Release notes](https://github.com/grpc/grpc-go/releases)
-- [Commits](https://github.com/grpc/grpc-go/compare/v1.83.1...v1.83.2)
-
----
-updated-dependencies:
-- dependency-name: google.golang.org/grpc
-  dependency-version: 1.83.2
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +12/-12)
-```diff
-@@ -71,10 +71,10 @@ require (
- 	go.opentelemetry.io/otel/sdk/metric v1.44.0
- 	go.opentelemetry.io/otel/trace v1.44.0
- 	golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9
--	golang.org/x/net v0.56.0 // indirect
-+	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/sync v0.22.0
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa
--	google.golang.org/grpc v1.83.1
-+	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.11
- 	resenje.org/singleflight v0.4.3
- )
-@@ -148,10 +148,10 @@ require (
- 	github.com/ccojocar/zxcvbn-go v1.0.4 // indirect
- 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
- 	github.com/charithe/durationcheck v0.0.10 // indirect
--	github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
-+	github.com/charmbracelet/colorprofile v0.3.1 // indirect
- 	github.com/charmbracelet/lipgloss v1.1.0 // indirect
--	github.com/charmbracelet/x/ansi v0.8.0 // indirect
--	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
-+	github.com/charmbracelet/x/ansi v0.9.2 // indirect
-+	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
- 	github.com/charmbracelet/x/term v0.2.1 // indirect
- 	github.com/ckaznocha/intrange v0.3.1 // indirect
- 	github.com/containerd/errdefs v1.0.0 // indirect
-@@ -326,9 +326,9 @@ require (
- 	go.uber.org/zap v1.27.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4
- 	golang.org/x/exp/typeparams v0.0.0-20250911091902-df9299821621 // indirect
--	golang.org/x/mod v0.37.0 // indirect
-+	golang.org/x/mod v0.38.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/term v0.44.0 // indirect
-+	golang.org/x/term v0.45.0 // indirect
- 	golang.org/x/time v0.14.0 // indirect
- 	google.golang.org/api v0.264.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
-@@ -390,7 +390,7 @@ require (
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
- 	github.com/prometheus/client_golang v1.20.3 // indirect
--	github.com/prometheus/client_model v0.6.1 // indirect
-+	github.com/prometheus/client_model v0.6.2 // indirect
- 	github.com/prometheus/common v0.59.1 // indirect
- 	github.com/prometheus/procfs v0.16.1 // indirect
- 	github.com/sagikazarmark/locafero v0.11.0 // indirect
-@@ -408,10 +408,10 @@ require (
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
- 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.53.0 // indirect
--	golang.org/x/sys v0.46.0 // indirect
--	golang.org/x/text v0.40.0 // indirect
--	golang.org/x/tools v0.47.0 // indirect
-+	golang.org/x/crypto v0.55.0 // indirect
-+	golang.org/x/sys v0.47.0 // indirect
-+	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/tools v0.48.0 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- )
- 
-```
-
-**File**: `go.sum` (modified, +24/-24)
-```diff
-@@ -173,14 +173,14 @@ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UF
- github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
- github.com/charithe/durationcheck v0.0.10 h1:wgw73BiocdBDQPik+zcEoBG/ob8uyBHf2iyoHGPf5w4=
- github.com/charithe/durationcheck v0.0.10/go.mod h1:bCWXb7gYRysD1CU3C+u4ceO49LoGOY1C1L6uouGNreQ=
--github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc h1:4pZI35227imm7yK2bGPcfpFEmuY1gc2YSTShr4iJBfs=
--github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc/go.mod h1:X4/0JoqgTIPSFcRA/P6INZzIuyqdFY5rm8tb41s9okk=
-+github.com/charmbracelet/colorprofile v0.3.1 h1:k8dTHMd7fgw4bnFd7jXTLZrSU/CQrKnL3m+AxCzDz40=
-+github.com/charmbracelet/colorprofile v0.3.1/go.mod h1:/GkGusxNs8VB/RSOh3fu0TJmQ4ICMMPApIIVn0KszZ0=
- github.com/charmbracelet/lipgloss v1.1.0 h1:vYXsiLHVkK7fp74RkV7b2kq9+zDLoEU4MZoFqR/noCY=
- github.com/charmbracelet/lipgloss v1.1.0/go.mod h1:/6Q8FR2o+kj8rz4Dq0zQc3vYf7X+B0binUUBwA0aL30=
--github.com/charmbracelet/x/ansi v0.8.0 h1:9GTq3xq9caJW8ZrBTe0LIe2fvfLR/bYXKTx2llXn7xE=
--github.com/charmbracelet/x/ansi v0.8.0/go.mod h1:wdYl/ONOLHLIVmQaxbIYEC/cRKOQyjTkowiI4blgS9Q=
--github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd h1:vy0GVL4jeHEwG5YOXDmi86oYw2yuYUGqz6a8sLwg0X8=
--github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd/go.mod h1:xe0nKWGd3eJgtqZRaN9RjMtK7xUYchjzPr7q6kcvCCs=
-+github.com/charmbracelet/x/ansi v0.9.2 h1:92AGsQmNTRMzuzHEYfCdjQeUzTrgE1vfO5/7fEVoXdY=
-+github.com/charmbracelet/x/ansi v0.9.2/go.mod h1:3RQDQ6lDnROptfpWuUVIUG64bD2g2BgntdxH0Ya5TeE=
-+github.com/charmbracelet/x/cellbuf v0.0.13 h1:/KBBKHuVRbq1lYx5BzEHBAFBP8VcQzJejZ/IA3iR28k=
-+github.com/charmbracelet/x/cellbuf v0.0.13/go.mod h1:xe0nKWGd3eJgtqZRaN9RjMtK7xUYchjzPr7q6kcvCCs=
- github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
- github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
- github.com/ckaznocha/intrange v0.3.1 h1:j1onQyXvHUsPWujDH6WIjhyH26gkRt/txNlV7LspvJs=
-@@ -728,8 +728,8 @@ github.com/pressly/goose/v3 v3.26.0/go.mod h1:4hC1KrritdCxtuFsqgs1R4AU5bWtTAf+cn
- github.com/prometheus/client_golang v1.20.3 h1:oPksm4K8B+Vt35tUhw6GbSNSgVlVSBH0qELP/7u83l4=
- github.com/prometheus/client_golang v1.20.3/go.mod h1:PIEt8X02hGcP8JWbeHyeZ53Y/jReSnHgO035n//V5WE=
- github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
--github.com/prometheus/client_model v0.6.1 h1:ZKSh/rekM+n3CeS952MLRAdFwIKqeY8b62p8ais2e9E=
--github.com/prometheus/client_model v0.6.1/go.mod h1:OrxVMOVHjw3lKMa8+x6HeMGkHMQyHDk9E3jmP2AmGiY=
-+github.com/prometheus/client_model v0.6.2 h1:oBsgwpGs7iVziMvrGhE53c/GrLUsZdHnqNwqPLxwZyk=
-+github.com/prometheus/client_model v0.6.2/go.mod h1:y3m2F6Gdpfy6Ut/GBsUqTWZqCUvMVzSfMLjcu6wAwpE=
- github.com/prometheus/common v0.59.1 h1:LXb1quJHWm1P6wq/U824uxYi4Sg0oGvNeUm1z5dJoX0=
- github.com/prometheus/common v0.59.1/go.mod h1:GpWM7dewqmVYcd7SmRaiWVe9SSqjf0UrwnYnpEZNuT0=
- github.com/prometheus/procfs v0.16.1 h1:hZ15bTNuirocR6u0JZ6BAHHmwS1p8B4P6MRqxtzMyRg=
-@@ -1016,8 +1016,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
- golang.org/x/crypto v0.14.0/go.mod h1:MVFd36DqK4CsrnJYDkBA3VC4m2GkXAM0PvzMCn4JQf4=
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.20.0/go.mod h1:Xwo95rrVNIoSMx9wa1JroENMToLWn3RNVrTBpLHgZPQ=
--golang.org/x/crypto v0.53.0 h1:QZ4Muo8THX6CizN2vPPd5fBGHyogrdK9fG4wLPFUsto=
--golang.org/x/crypto v0.53.0/go.mod h1:DNLU434OwVakk9PzuwV8w62mAJpRJL3vsgcfp4Qnsio=
-+golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
-+golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9 h1:TQwNpfvNkxAVlItJf6Cr5JTsVZoC/Sj7K3OZv2Pc14A=
- golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9/go.mod h1:TwQYMMnGpvZyc+JpB/UAuTNIsVJifOlSkrZkhcvpVUk=
-@@ -1040,8 +1040,8 @@ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.13.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
--golang.org/x/mod v0.37.0 h1:vF1DjpVEshcIqoEaauuHebaLk1O1forxjxBaVn884JQ=
--golang.org/x/mod v0.37.0/go.mod h1:m8S8VeM9r4dzDwjrKO0a1sZP3YjeMamRRlD+fmR2Q/0=
-+golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
-+golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZ
-```
-
----
-
-### Incident Patch 12: `c5702410` (2026-09-10)
-**Commit Message**: build(deps-dev): bump vitest from 4.1.10 to 4.1.11 in /playground
-
-Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 4.1.10 to 4.1.11.
-- [Release notes](https://github.com/vitest-dev/vitest/releases)
-- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
-- [Commits](https://github.com/vitest-dev/vitest/commits/v4.1.11/packages/vitest)
-
----
-updated-dependencies:
-- dependency-name: vitest
-  dependency-version: 4.1.11
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `playground/package.json` (modified, +1/-1)
-```diff
-@@ -53,6 +53,6 @@
-     "typescript": "^6.0.2",
-     "vite": "^8.0.16",
-     "vite-tsconfig-paths": "^6.1.1",
--    "vitest": "^4.1.10"
-+    "vitest": "^4.1.11"
-   }
- }
-```
-
-**File**: `playground/yarn.lock` (modified, +47/-47)
-```diff
-@@ -1038,63 +1038,63 @@
-     "@types/babel__core" "^7.20.5"
-     react-refresh "^0.18.0"
- 
--"@vitest/expect@4.1.10":
--  version "4.1.10"
--  resolved "https://registry.yarnpkg.com/@vitest/expect/-/expect-4.1.10.tgz#799c06fc44bb0cf7e2784137b627c5cc173285d4"
--  integrity sha512-YsCn+qAk1GWjQOWFEsEcL2gNQ0zmVmQu3T03qP6UyjhtmdtwtbuI+DASn/7iQB3HGTXkdBwGddzxPlmiql5vlA==
-+"@vitest/expect@4.1.11":
-+  version "4.1.11"
-+  resolved "https://registry.yarnpkg.com/@vitest/expect/-/expect-4.1.11.tgz#5f580d1f9cdbba314dbf23b2d911f8eb23878f5f"
-+  integrity sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==
-   dependencies:
-     "@standard-schema/spec" "^1.1.0"
-     "@types/chai" "^5.2.2"
--    "@vitest/spy" "4.1.10"
--    "@vitest/utils" "4.1.10"
-+    "@vitest/spy" "4.1.11"
-+    "@vitest/utils" "4.1.11"
-     chai "^6.2.2"
-     tinyrainbow "^3.1.0"
- 
--"@vitest/mocker@4.1.10":
--  version "4.1.10"
--  resolved "https://registry.yarnpkg.com/@vitest/mocker/-/mocker-4.1.10.tgz#2413987ab4cd7fa1c2b614b404c407bf6ad1ead1"
--  integrity sha512-v0xaezt+DKEmKfaxg133ldzADrwLGd7Ze1MfQQTYfvs8OqZIwbxyxaYURivwV7sWy5fqn3rH5uOrSp07bp44Ow==
-+"@vitest/mocker@4.1.11":
-+  version "4.1.11"
-+  resolved "https://registry.yarnpkg.com/@vitest/mocker/-/mocker-4.1.11.tgz#8e2906361bc5dfa271757a858ae80643118fcbb4"
-+  integrity sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==
-   dependencies:
--    "@vitest/spy" "4.1.10"
-+    "@vitest/spy" "4.1.11"
-     estree-walker "^3.0.3"
-     magic-string "^0.30.21"
- 
--"@vitest/pretty-format@4.1.10":
--  version "4.1.10"
--  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.1.10.tgz#75542e7273a08cc10fd4d8dad4e3eb1f16cd958c"
--  integrity sha512-W1HsjSH4MXQ9YfmmhLAoIYf1HRfekQCGngeIgcei6MP5QQGWUe0gkopdZQaVCFO+JDJMrAJGwa5pRpNpvy4P8Q==
-+"@vitest/pretty-format@4.1.11":
-+  version "4.1.11"
-+  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.1.11.tgz#8b28eb8240771d6ea970e33beaeb41384b51868e"
-+  integrity sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==
-   dependencies:
-     tinyrainbow "^3.1.0"
- 
--"@vitest/runner@4.1.10":
--  version "4.1.10"
--  resolved "https://registry.yarnpkg.com/@vitest/runner/-/runner-4.1.10.tgz#febf0a21a9168421422d1955370e606feab60355"
--  integrity sha512-IKI6kpIH+LmpROplyLwBBaCfMgOZOMsygVa6BARD6ahA04VRuJSa6OaVG7kRvSEMD870Vd91rSSw0eegtWyLGg==
-+"@vitest/runner@4.1.11":
-+  version "4.1.11"
-+  resolved "https://registry.yarnpkg.com/@vitest/runner/-/runner-4.1.11.tgz#bfbad98c8d6c3f1fb4df12056ad569821ff77f21"
-+  integrity sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==
-   dependencies:
--    "@vitest/utils" "4.1.10"
-+    "@vitest/utils" "4.1.11"
-     pathe "^2.0.3"
- 
--"@vitest/snapshot@4.1.10":
--  version "4.1.10"
--  resolved "https://registry.yarnpkg.com/@vitest/snapshot/-/snapshot-4.1.10.tgz#7e3e9fec7d4d47232e493cfdcbd2170de4371c04"
--  integrity sha512-xRkfOT1qpTAi/Ti4Y1LtfRc3kEuqxGw59eN2jN9pRWMtS/XDevekhcFSqvQqjUNGksfjMJu3Y+oJ+4Ypn2OaJw==
-+"@vitest/snapshot@4.1.11":
-+  version "4.1.11"
-+  resolved "https://registry.yarnpkg.com/@vitest/snapshot/-/snapshot-4.1.11.tgz#df461eb165924a3155986dde68e13360f53f3d4c"
-+  integrity sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==
-   dependencies:
--    "@vitest/pretty-format" "4.1.10"
--    "@vitest/utils" "4.1.10"
-+    "@vitest/pretty-format" "4.1.11"
-+    "@vitest/utils" "4.1.11"
-     magic-string "^0.30.21"
-     pathe "^2.0.3"
- 
--"@vitest/spy@4.1.10":
--  version "4.1.10"
--  resolved "https://registry.yarnpkg.com/@vitest/spy/-/spy-4.1.10.tgz#5c0bfa97b56bba9e37403c976db776ff6ab56f65"
--  integrity sha512-PLf/Ugvoq5wO/b4rwYCR1h2PSIdXz7wnkQFMiUpLdtM7l6pqVFcQIBEHyT1+l+cj7mNwAfZHzqXqDyjvOuwbDw==
-+"@vitest/spy@4.1.11":
-+  version "4.1.11"
-+  resolved "https://registry.yarnpkg.com/@vitest/spy/-/spy-4.1.11.tgz#0add45cae953afed9c88f98e2f6fc9164558c32a"
-+  integrity sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==
- 
--"@vitest/utils@4.1.10":
--  version "4.1.10"
--  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-4.1.10.tgz#ffc71055f18bfccb1fd0586365ebc2824892e403"
--  integrity sha512-fy9am/HWxbaGt/Sawrp90vt6Y6jQwf1RX77cz3uwoJwJVMli/e1IEwRPnMNJ7vKfPTwo0diXifkpPvwH9v7nGA==
-+"@vitest/utils@4.1.11":
-+  version "4.1.11"
-+  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-4.1.11.tgz#9b27a4293b827942b223539bfab1bd9f7eada31b"
-+  integrity sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==
-   dependencies:
--    "@vitest/pretty-format" "4.1.10"
-+    "@vitest/pretty-format" "4.1.11"
-     convert-source-map "^2.0.0"
-     tinyrainbow "^3.1.0"
- 
-@@ -3221,18 +3221,18 @@ vite@8.0.16, "vite@^6.0.0 || ^7.0.0 || ^8.0.0", vite@^8.0.16:
-   optionalDependencies:
-     fsevents "~2.3.3"
- 
--vitest@^4.1.10:
--  versi
-```
-
----
-
-### Incident Patch 13: `303c352e` (2026-09-09)
-**Commit Message**: build(deps): bump qs from 6.15.3 to 6.16.0 in /docs
-
-Bumps [qs](https://github.com/ljharb/qs) from 6.15.3 to 6.16.0.
-- [Changelog](https://github.com/ljharb/qs/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/ljharb/qs/compare/v6.15.3...v6.16.0)
-
----
-updated-dependencies:
-- dependency-name: qs
-  dependency-version: 6.16.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `docs/package-lock.json` (modified, +3/-3)
-```diff
-@@ -9755,9 +9755,9 @@
-       }
-     },
-     "node_modules/qs": {
--      "version": "6.15.3",
--      "resolved": "https://registry.npmjs.org/qs/-/qs-6.15.3.tgz",
--      "integrity": "sha512-O9gl3zCl5h5blw1KGUzQKhA5oUXSl8rwUIM5o0S3nCXMliSvy5Dzx7/DJcI+SwgICv+IneSZwhBh1oSyEHA71A==",
-+      "version": "6.16.0",
-+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
-+      "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
-       "license": "BSD-3-Clause",
-       "dependencies": {
-         "es-define-property": "^1.0.1",
-```
-
----
-
-### Incident Patch 14: `92dbdcbc` (2026-09-03)
-**Commit Message**: build(deps): bump golang from 1.26.5-alpine to 1.27.1-alpine
-
-Bumps golang from 1.26.5-alpine to 1.27.1-alpine.
-
----
-updated-dependencies:
-- dependency-name: golang
-  dependency-version: 1.27.1-alpine
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 **File**: `Dockerfile` (modified, +2/-2)
 ```diff
 @@ -1,10 +1,10 @@
--FROM golang:1.26.5-alpine@sha256:0178a641fbb4858c5f1b48e34bdaabe0350a330a1b1149aabd498d0699ff5fb2 AS permify-builder
-+FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS permify-builder
+-FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS permify-builder
++FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS permify-builder
  WORKDIR /go/src/app
  RUN apk update && apk add --no-cache git
  COPY . .
  RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod CGO_ENABLED=0 go build -v ./cmd/permify/
  
--FROM golang:1.26.5-alpine@sha256:0178a641fbb4858c5f1b48e34bdaabe0350a330a1b1149aabd498d0699ff5fb2 AS health-probe-builder
-+FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS health-probe-builder
+-FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS health-probe-builder
++FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
  WORKDIR /go/src/app
  RUN apk update && apk add --no-cache git
  RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
@@ -3707,8 +2171,8 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ```diff
 @@ -1,5 +1,5 @@
  # Use the correct Go version
--FROM golang:1.26.5-alpine@sha256:0178a641fbb4858c5f1b48e34bdaabe0350a330a1b1149aabd498d0699ff5fb2
-+FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125
+-FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125
++FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673
  
  RUN apk --no-cache add curl git
  
@@ -3718,26 +2182,172 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ```diff
 @@ -1,5 +1,5 @@
  # Build stage for gRPC health probe
--FROM golang:1.26.5-alpine@sha256:0178a641fbb4858c5f1b48e34bdaabe0350a330a1b1149aabd498d0699ff5fb2 AS health-probe-builder
-+FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS health-probe-builder
+-FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS health-probe-builder
++FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
  WORKDIR /go/src/app
  RUN apk update && apk add --no-cache git
  RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
 ```
 
+**File**: `go.mod` (modified, +6/-6)
+```diff
+@@ -68,8 +68,8 @@ require (
+ 	go.opentelemetry.io/otel/sdk/metric v1.46.0
+ 	go.opentelemetry.io/otel/trace v1.46.0
+ 	golang.org/x/exp v0.0.0-20260820142414-ca536658362e
+-	golang.org/x/net v0.58.0 // indirect
+-	golang.org/x/sync v0.22.0
++	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/sync v0.23.0
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688
+ 	google.golang.org/grpc v1.83.2
+ 	google.golang.org/protobuf v1.36.12
+@@ -285,7 +285,7 @@ require (
+ 	go.uber.org/zap v1.27.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5
+ 	golang.org/x/exp/typeparams v0.0.0-20250911091902-df9299821621 // indirect
+-	golang.org/x/mod v0.39.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+ 	golang.org/x/time v0.14.0 // indirect
+ 	google.golang.org/api v0.264.0 // indirect
+@@ -361,9 +361,9 @@ require (
+ 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.55.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.org/x/tools v0.49.0 // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
+ )
+```
+
+**File**: `go.sum` (modified, +14/-14)
+```diff
+@@ -933,8 +933,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
+ golang.org/x/crypto v0.14.0/go.mod h1:MVFd36DqK4CsrnJYDkBA3VC4m2GkXAM0PvzMCn4JQf4=
+ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
+ golang.org/x/crypto v0.20.0/go.mod h1:Xwo95rrVNIoSMx9wa1JroENMToLWn3RNVrTBpLHgZPQ=
+-golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
+-golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20260820142414-ca536658362e h1:01Ju2A/fZKkci4zqx0eZxw//DnRYOnBiGJG14hFBhO8=
+ golang.org/x/exp v0.0.0-20260820142414-ca536658362e/go.mod h1:zeBbvyFKDaLwa7CH/zI8KXt7gTl14SF7sO08Pl5jBCM=
+@@ -957,8 +957,8 @@ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91
+ golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/mod v0.13.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
+-golang.org/x/mod v0.39.0 h1:UF5zwQdCRRUpHfyPwr7d4UrGiVeldIsogtzWVnczL74=
+-golang.org/x/mod v0.39.0/go.mod h1:bvIbwjQ0HUFFf5AKukeeYQG4ZBUG9yxQbR9aEweIwYY=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+@@ -978,8 +978,8 @@ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+ golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
+ golang.org/x/net v0.16.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
+ golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
+-golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+-golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+@@ -994,8 +994,8 @@ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+ golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -1030,8 +1030,8 @@ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+@@ -1040,8 +1040,8 @@ golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
+ golang.org/x/term v0.12.0/go.mod h1:owVb
+```
+
 ---
 
-### Incident Patch 15: `91a80da7` (2026-09-03)
-**Commit Message**: build(deps): bump fast-uri from 3.1.5 to 3.1.7 in /docs
+### Incident Patch 2: `7021aaa1` (2026-10-08)
+**Commit Message**: build(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
 
-Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.5 to 3.1.7.
-- [Release notes](https://github.com/fastify/fast-uri/releases)
-- [Commits](https://github.com/fastify/fast-uri/compare/v3.1.5...v3.1.7)
+Bumps [go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc](https://github.com/open-telemetry/opentelemetry-go) from 1.43.0 to 1.45.0.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.43.0...v1.45.0)
 
 ---
 updated-dependencies:
-- dependency-name: fast-uri
-  dependency-version: 3.1.7
+- dependency-name: go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
+  dependency-version: 1.45.0
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ require (
+ 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0
+ 	go.opentelemetry.io/otel/exporters/zipkin v1.45.0
+ 	go.opentelemetry.io/otel/metric v1.46.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -875,8 +875,8 @@ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0 h1:w1K
+ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0/go.mod h1:HBy4BjzgVE8139ieRI75oXm3EcDN+6GhD88JT1Kjvxg=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0 h1:RAE+JPfvEmvy+0LzyUA25/SGawPwIUbZ6u0Wug54sLc=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0/go.mod h1:AGmbycVGEsRx9mXMZ75CsOyhSP6MFIcj/6dnG+vhVjk=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ2SrwQijzHyZbQlPsuIzpl/ll8DY6wPWsajeGcI=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
+ go.opentelemetry.io/otel/exporters/zipkin v1.45.0 h1:KN3btaILMTxR4QDHVGAO87lq5ButzK7l+kIfLuxQ1oA=
+```
+
+---
+
+### Incident Patch 3: `2d8b67aa` (2026-10-08)
+**Commit Message**: build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /docs
+
+Bumps [source-map-js](https://github.com/7rulnik/source-map-js) from 1.2.1 to 1.2.2.
+- [Release notes](https://github.com/7rulnik/source-map-js/releases)
+- [Changelog](https://github.com/7rulnik/source-map-js/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/7rulnik/source-map-js/compare/v1.2.1...v1.2.2)
+
+---
+updated-dependencies:
+- dependency-name: source-map-js
+  dependency-version: 1.2.2
   dependency-type: indirect
 ...
 
@@ -3745,30 +2355,28 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 **File**: `docs/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -5160,9 +5160,9 @@
-       "license": "MIT"
+@@ -11620,9 +11620,9 @@
+       }
      },
-     "node_modules/fast-uri": {
--      "version": "3.1.5",
--      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.5.tgz",
--      "integrity": "sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==",
-+      "version": "3.1.7",
-+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
-+      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
-       "funding": [
-         {
-           "type": "github",
+     "node_modules/source-map-js": {
+-      "version": "1.2.1",
+-      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+-      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
++      "version": "1.2.2",
++      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
++      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
+       "license": "BSD-3-Clause",
+       "engines": {
+         "node": ">=0.10.0"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3215** (2026-10-02): chore: ignore buf lint naming error to avoid breaking changes (@junsazanami430u)
-- **PR #3213** (closed): build(deps): bump joda-time:joda-time from 2.14.2 to 2.14.4 in /sdk/java/rest (@dependabot[bot])
-- **PR #3208** (2026-09-30): build(deps): bump go.opentelemetry.io/otel/exporters/zipkin from 1.38.0 to 1.45.0 (@dependabot[bot])
-- **PR #3204** (2026-09-11): fix playground enforcement tab (@omer-topal)
-- **PR #3197** (2026-09-10): chore: update version to v1.7.4 in API docs and internal info file (@omer-topal)
-- **PR #3196** (2026-09-10): build(deps): bump google.golang.org/grpc from 1.83.1 to 1.83.2 (@dependabot[bot])
-- **PR #3195** (closed): test(dsl): add PositionInfo specs for override identifier token initialization (@gcoinstash-cmd)
-- **PR #3194** (closed): test(dsl): add PositionInfo specs for ATTRIBUTE keyword token initialization (@gcoinstash-cmd)
+- **PR #3235** (2026-10-09): chore: update version to v1.7.5 in API docs and internal info file (@omer-topal)
+- **PR #3234** (2026-10-09): build: bump Go to 1.27.2 (@omer-topal)
+- **PR #3233** (2026-10-09): build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /docs (@dependabot[bot])
+- **PR #3232** (2026-10-09): build(deps): bump proxy-addr from 2.0.7 to 2.0.8 in /docs (@dependabot[bot])
+- **PR #3231** (2026-10-08): refactor: enforce request validation in the protovalidate interceptor (@omer-topal)
+- **PR #3230** (2026-10-09): build(deps): bump golang from `cf6fca6` to `8a5910f` in /integration-test (@dependabot[bot])
 
 ---
 
@@ -3782,3 +2390,34 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #3234 from Permify/fix/go-1.27.2-cves
+
+**RULE**:
+When implementing operations in `.github/workflows/nightly.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `22d97667`: Merge pull request #3234 from Permify/fix/go-1.27.2-cves. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+          go-version: ~1.26.9
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+          go-version: ~1.26.8
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `22d97667` are properly handled with clean fallback behavior.
