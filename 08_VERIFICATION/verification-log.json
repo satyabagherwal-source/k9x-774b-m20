@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-5BZU",
-    "timestamp": "2026-10-16T20:55:13.146Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "8f6d7b9e68918cbe5cf35e9319c310f7ea7423ad4de836aa9e3c96bd43f410ca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9EBS",
     "timestamp": "2026-10-16T20:58:22.792Z",
     "repository": "jialinyyzz/humanizer",
@@ -7490,6 +7475,21 @@
     "repository": "google/electra-base-discriminator",
     "learningId": "learn-huggingface-google-electra-base-discriminator",
     "contentHash": "23ebb001257d55a86b848a58463dd0c2631eb027a9f36ddd8dbbeff892447082",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-DSLF",
+    "timestamp": "2026-10-18T01:01:24.867Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "c9b6d0ba31bcef39a552cde7455ff7307bc6662a25d4dbd4ba4bc75c29bb9eb6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
