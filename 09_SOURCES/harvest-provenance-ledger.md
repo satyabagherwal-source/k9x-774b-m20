@@ -2439,3 +2439,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-18T04:36:41.120Z |
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-18T04:39:47.414Z |
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-18T04:43:07.428Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-18T04:46:34.750Z |
