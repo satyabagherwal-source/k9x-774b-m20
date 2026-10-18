@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T07:28:58.041Z",
-  "total_cycles_completed": 2433,
-  "total_learnings_persisted": 2433,
-  "total_rules_promoted": 1426,
+  "last_updated": "2026-10-18T07:33:55.681Z",
+  "total_cycles_completed": 2435,
+  "total_learnings_persisted": 2435,
+  "total_rules_promoted": 1432,
   "history": [
-    {
-      "timestamp": "2026-10-17T18:30:36.323Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T18:34:05.065Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T18:37:17.539Z",
       "repository": "datalab-to/indra-ocr",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-18T07:28:58.041Z",
       "repository": "webdriverio/webdriverio",
       "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:33:55.303Z",
+      "repository": "RubenVerborgh/SPARQL.js",
+      "learningId": "learn-github-rubenverborgh-sparql-js",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T07:33:55.681Z",
+      "repository": "syntax-tree/mdast",
+      "learningId": "learn-github-syntax-tree-mdast",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

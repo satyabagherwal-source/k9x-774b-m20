@@ -2463,3 +2463,5 @@ Every entry in this ledger must capture:
 | `learn-github-syntax-tree-unist` | `https://github.com/syntax-tree/unist` | `8b10b611` | Multi-dimensional audit evidence | 2026-10-18T07:28:53.114Z |
 | `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `e87c2d01` | Multi-dimensional audit evidence | 2026-10-18T07:28:57.300Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `eebbd1b0` | Multi-dimensional audit evidence | 2026-10-18T07:28:58.040Z |
+| `learn-github-rubenverborgh-sparql-js` | `https://github.com/RubenVerborgh/SPARQL.js` | `91cbd01b` | Multi-dimensional audit evidence | 2026-10-18T07:33:55.301Z |
+| `learn-github-syntax-tree-mdast` | `https://github.com/syntax-tree/mdast` | `c034ec9d` | Multi-dimensional audit evidence | 2026-10-18T07:33:55.679Z |

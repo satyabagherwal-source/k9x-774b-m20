@@ -25311,5 +25311,39 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rubenverborgh-sparql.js": {
+    "name": "RubenVerborgh/SPARQL.js",
+    "officialUrl": "https://github.com/RubenVerborgh/SPARQL.js",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-18T07:32:56.125Z",
+    "lastVerified": "2026-10-18T07:32:56.125Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rubenverborgh-sparql-js",
+    "contentHash": "24c412fc89c11595a4b2e0ade0dc91d4aed7bab10849ddcd33362994f8640955",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "syntax-tree-mdast": {
+    "name": "syntax-tree/mdast",
+    "officialUrl": "https://github.com/syntax-tree/mdast",
+    "sourceType": "github",
+    "technology": "Multi-language",
+    "lastChecked": "2026-10-18T07:32:49.858Z",
+    "lastVerified": "2026-10-18T07:32:49.858Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-syntax-tree-mdast",
+    "contentHash": "b45a6efd92db80487185fd3cd3f7f1a28b7aa9c04eb6424c43587a4734f14390",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-CU4I",
-    "timestamp": "2026-10-17T01:40:59.394Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "be32a8a5bfd277361fbc71d13223ddd9b2ce30abf6753a0fb1c716e63839e370",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-GSO9",
-    "timestamp": "2026-10-17T01:44:04.137Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "a8b253206676ffc7adee5b0906c591be34aedc7c3fd3c1964c654070f84290f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-L3MJ",
     "timestamp": "2026-10-17T01:47:24.955Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7490,6 +7460,36 @@
     "repository": "webdriverio/webdriverio",
     "learningId": "learn-github-webdriverio-webdriverio",
     "contentHash": "7e931bb5772fc4c38ce5a73941db9269ec7d6ec4496bb1a0b8e5986fc508c774",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-EK82",
+    "timestamp": "2026-10-18T07:33:55.298Z",
+    "repository": "RubenVerborgh/SPARQL.js",
+    "learningId": "learn-github-rubenverborgh-sparql-js",
+    "contentHash": "24c412fc89c11595a4b2e0ade0dc91d4aed7bab10849ddcd33362994f8640955",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-EKIK",
+    "timestamp": "2026-10-18T07:33:55.676Z",
+    "repository": "syntax-tree/mdast",
+    "learningId": "learn-github-syntax-tree-mdast",
+    "contentHash": "b45a6efd92db80487185fd3cd3f7f1a28b7aa9c04eb6424c43587a4734f14390",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

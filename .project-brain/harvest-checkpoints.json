@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T07:28:58.043Z",
+  "last_updated": "2026-10-18T07:33:55.682Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3066,6 +3066,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T07:28:58.043Z"
+    },
+    "RubenVerborgh/SPARQL.js": {
+      "repository": "RubenVerborgh/SPARQL.js",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rubenverborgh-sparql-js",
+      "content_hash": "24c412fc89c11595a4b2e0ade0dc91d4aed7bab10849ddcd33362994f8640955",
+      "verified_at": "2026-10-18T07:33:55.304Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T07:33:55.304Z"
+    },
+    "syntax-tree/mdast": {
+      "repository": "syntax-tree/mdast",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-syntax-tree-mdast",
+      "content_hash": "b45a6efd92db80487185fd3cd3f7f1a28b7aa9c04eb6424c43587a4734f14390",
+      "verified_at": "2026-10-18T07:33:55.682Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T07:33:55.682Z"
     }
   },
   "repos": {

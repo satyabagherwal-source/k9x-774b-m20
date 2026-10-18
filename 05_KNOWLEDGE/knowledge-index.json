@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T07:28:58.011Z",
-  "total_verified_learnings": 218,
+  "last_updated": "2026-10-18T07:33:55.650Z",
+  "total_verified_learnings": 220,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47151,6 +47151,92 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T07:28:57.263Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-rubenverborgh-sparql-js": {
+      "learning_id": "learn-github-rubenverborgh-sparql-js",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RubenVerborgh/SPARQL.js",
+      "repository": "RubenVerborgh/SPARQL.js",
+      "slug": "rubenverborgh-sparql.js",
+      "platform": "github",
+      "source_url": "https://github.com/RubenVerborgh/SPARQL.js",
+      "source_version": "91cbd01b",
+      "content_hash": "24c412fc89c11595a4b2e0ade0dc91d4aed7bab10849ddcd33362994f8640955",
+      "dossier_path": "07_PROJECT_LEARNING/rubenverborgh-sparql.js-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rubenverborgh-sparql.js-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1658,
+          "title": "Re-entrant State Isolation for Module-Scoped Parser Generators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1659,
+          "title": "RDF/JS Data Model Compliance for Higher-Order Graph Structures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1660,
+          "title": "Comment-Tolerant Lexical Compound Tokenization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T07:33:55.265Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-syntax-tree-mdast": {
+      "learning_id": "learn-github-syntax-tree-mdast",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "syntax-tree/mdast",
+      "repository": "syntax-tree/mdast",
+      "slug": "syntax-tree-mdast",
+      "platform": "github",
+      "source_url": "https://github.com/syntax-tree/mdast",
+      "source_version": "c034ec9d",
+      "content_hash": "b45a6efd92db80487185fd3cd3f7f1a28b7aa9c04eb6424c43587a4734f14390",
+      "dossier_path": "07_PROJECT_LEARNING/syntax-tree-mdast-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/syntax-tree-mdast-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1661,
+          "title": "Specification-Level Content Model Containment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1662,
+          "title": "Concrete Syntax Exclusion from Abstract Trees",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1663,
+          "title": "Specification Package Decoupling & Distribution Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T07:33:55.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
