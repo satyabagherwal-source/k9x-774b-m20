@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T00:09:18.514Z",
+  "last_updated": "2026-10-18T00:12:29.708Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14823,7 +14823,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "b8ade56338e64a1f801c40dbafde0be9983f2e0947833179a5b2fcef72a41fde",
+      "content_hash": "735dde92b3b26c26411fd828d746b607e5780f61e4f4324aa124443c6d93c4cf",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -14856,7 +14856,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-17T16:16:56.269Z",
+      "verified_at": "2026-10-18T00:12:29.698Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T00:09:18.545Z",
-  "total_cycles_completed": 2334,
-  "total_learnings_persisted": 2334,
+  "last_updated": "2026-10-18T00:12:29.753Z",
+  "total_cycles_completed": 2335,
+  "total_learnings_persisted": 2335,
   "total_rules_promoted": 1353,
   "history": [
-    {
-      "timestamp": "2026-10-17T13:03:38.395Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T13:16:00.700Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -1403,6 +1396,13 @@
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-psrben-visionhope",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T00:12:29.753Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
