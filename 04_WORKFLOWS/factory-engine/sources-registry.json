@@ -2070,8 +2070,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:20:02.404Z",
-    "lastVerified": "2026-10-17T23:20:02.404Z",
+    "lastChecked": "2026-10-18T06:01:05.076Z",
+    "lastVerified": "2026-10-18T06:01:05.076Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17514,8 +17514,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:44:29.871Z",
-    "lastVerified": "2026-10-18T05:44:29.871Z",
+    "lastChecked": "2026-10-18T06:01:07.578Z",
+    "lastVerified": "2026-10-18T06:01:07.578Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -21019,8 +21019,8 @@
     "sourceType": "github",
     "technology": "code-repository",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T02:58:10.259Z",
-    "lastVerified": "2026-10-18T02:58:10.259Z",
+    "lastChecked": "2026-10-18T06:01:02.576Z",
+    "lastVerified": "2026-10-18T06:01:02.576Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24167,5 +24167,12 @@
     "lastChecked": "2026-10-18T05:57:38.205Z",
     "revisionIdentifier": "5ec9c7dc23",
     "lastVerified": "2026-10-18T05:57:38.205Z"
+  },
+  "booltools-booltools-seo-crawler": {
+    "name": "booltools-seo-crawler",
+    "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
+    "lastChecked": "2026-10-18T06:00:55.075Z",
+    "revisionIdentifier": "e5394ed024",
+    "lastVerified": "2026-10-18T06:00:55.075Z"
   }
 }
