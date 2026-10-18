@@ -838,8 +838,8 @@
     "sourceType": "github",
     "technology": "Go",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T03:15:27.360Z",
-    "lastVerified": "2026-10-18T03:15:27.360Z",
+    "lastChecked": "2026-10-18T06:07:19.499Z",
+    "lastVerified": "2026-10-18T06:07:19.499Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2582,8 +2582,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:26:34.954Z",
-    "lastVerified": "2026-10-17T23:26:34.954Z",
+    "lastChecked": "2026-10-18T06:07:22.003Z",
+    "lastVerified": "2026-10-18T06:07:22.003Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24181,5 +24181,12 @@
     "lastChecked": "2026-10-18T06:04:01.722Z",
     "revisionIdentifier": "68d4a606db",
     "lastVerified": "2026-10-18T06:04:01.722Z"
+  },
+  "yuripinto-xseo": {
+    "name": "xseo",
+    "officialUrl": "https://github.com/yuripinto/xseo",
+    "lastChecked": "2026-10-18T06:07:12.000Z",
+    "revisionIdentifier": "d335452f68",
+    "lastVerified": "2026-10-18T06:07:12.000Z"
   }
 }
