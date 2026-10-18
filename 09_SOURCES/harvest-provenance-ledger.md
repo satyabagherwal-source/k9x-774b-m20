@@ -2382,3 +2382,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-18T01:08:22.609Z |
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-18T01:11:39.069Z |
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-18T01:14:56.197Z |
+| `learn-github-chrisryugj-kordoc` | `https://github.com/chrisryugj/kordoc` | `eedbd2ff` | Multi-dimensional audit evidence | 2026-10-18T01:22:00.601Z |

@@ -2375,3 +2375,4 @@
 | `CYCLE-20261018-MQX9` | `2026-10-18T01:08:22.605Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`b2e4c34d...`) |
 | `CYCLE-20261018-QYII` | `2026-10-18T01:11:39.066Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`9eedf2e4...`) |
 | `CYCLE-20261018-V6MA` | `2026-10-18T01:14:56.194Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`38d5d6bd...`) |
+| `CYCLE-20261018-4A38` | `2026-10-18T01:22:00.596Z` | `chrisryugj/kordoc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1579` | Yes (`be28439a...`) |

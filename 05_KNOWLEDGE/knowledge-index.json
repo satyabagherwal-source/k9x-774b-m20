@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T01:14:56.160Z",
-  "total_verified_learnings": 197,
+  "last_updated": "2026-10-18T01:22:00.576Z",
+  "total_verified_learnings": 198,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -43872,6 +43872,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-17T18:37:17.489Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-chrisryugj-kordoc": {
+      "learning_id": "learn-github-chrisryugj-kordoc",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "chrisryugj/kordoc",
+      "repository": "chrisryugj/kordoc",
+      "slug": "chrisryugj-kordoc",
+      "platform": "github",
+      "source_url": "https://github.com/chrisryugj/kordoc",
+      "source_version": "eedbd2ff",
+      "content_hash": "be28439a1f6a3f53dd54a467667b22d4c4df23f55601bfa84972368352cd9e67",
+      "dossier_path": "07_PROJECT_LEARNING/chrisryugj-kordoc-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/chrisryugj-kordoc-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1579,
+          "title": "render): 탭 앞 위치에 글자처럼 취급하는 개체 폭도 넣는다",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T01:22:00.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

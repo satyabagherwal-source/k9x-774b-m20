@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T01:14:56.200Z",
+  "last_updated": "2026-10-18T01:22:00.604Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2706,6 +2706,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-17T18:37:17.541Z"
+    },
+    "chrisryugj/kordoc": {
+      "repository": "chrisryugj/kordoc",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chrisryugj-kordoc",
+      "content_hash": "be28439a1f6a3f53dd54a467667b22d4c4df23f55601bfa84972368352cd9e67",
+      "verified_at": "2026-10-18T01:22:00.604Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T01:22:00.604Z"
     }
   },
   "repos": {

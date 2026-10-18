@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-P632",
-    "timestamp": "2026-10-16T21:10:38.606Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "173f38e5e49931c6eb5e81d2b02d0b05d392820112d57aeba232d49cfb3fb53a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-TATN",
     "timestamp": "2026-10-16T21:13:51.371Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7492,6 +7477,21 @@
     "contentHash": "38d5d6bd480fc2208b3fc594c276f48ab54b7c05fe61baeeee328dfe6a81ae65",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-4A38",
+    "timestamp": "2026-10-18T01:22:00.596Z",
+    "repository": "chrisryugj/kordoc",
+    "learningId": "learn-github-chrisryugj-kordoc",
+    "contentHash": "be28439a1f6a3f53dd54a467667b22d4c4df23f55601bfa84972368352cd9e67",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
