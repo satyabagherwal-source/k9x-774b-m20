@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T02:08:38.530Z",
-  "total_cycles_completed": 2365,
-  "total_learnings_persisted": 2365,
-  "total_rules_promoted": 1368,
+  "last_updated": "2026-10-18T02:12:26.438Z",
+  "total_cycles_completed": 2366,
+  "total_learnings_persisted": 2366,
+  "total_rules_promoted": 1371,
   "history": [
-    {
-      "timestamp": "2026-10-17T14:54:54.670Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T14:58:06.217Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1403,6 +1396,13 @@
       "repository": "openai/whisper-large-v3",
       "learningId": "learn-huggingface-openai-whisper-large-v3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T02:12:26.438Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

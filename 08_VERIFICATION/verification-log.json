@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-BL2N",
-    "timestamp": "2026-10-16T21:56:04.079Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "c3341ff41595efc04f85f2183695ff2babc071b09b55aec80f48379d1ba25f82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-F9KM",
     "timestamp": "2026-10-16T21:58:55.798Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7492,6 +7477,21 @@
     "contentHash": "e70aa4610db3a5e5b413f8e2d01dd17cf3ae4ef5ee6d5e7d3a87893c4e9a0bce",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-X4U9",
+    "timestamp": "2026-10-18T02:12:26.433Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "0c91ec0a2ce57de91b6ebc74bf58fd0171b70977db116d4eebf45303c42df9e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:08:38.506Z",
+  "last_updated": "2026-10-18T02:12:26.407Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11336,7 +11336,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "ac46ae6a1dc58cbf196ca2e375a726f6dc27926b26cf48586882855c8fafebb7",
+      "content_hash": "0c91ec0a2ce57de91b6ebc74bf58fd0171b70977db116d4eebf45303c42df9e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -11426,6 +11426,21 @@
           "number": 1507,
           "title": "Distilled Model Step-Count Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1583,
+          "title": "Rectified Flow Velocity Integration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1584,
+          "title": "Distilled Model Step-Count Rigidity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1585,
+          "title": "Latent Space Normalization & VAE Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11446,7 +11461,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-17T17:49:38.046Z",
+      "verified_at": "2026-10-18T02:12:26.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

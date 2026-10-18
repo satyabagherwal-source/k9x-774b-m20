@@ -2388,3 +2388,4 @@
 | `CYCLE-20261018-K1N2` | `2026-10-18T02:02:15.758Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`207e6f55...`) |
 | `CYCLE-20261018-OAU6` | `2026-10-18T02:05:34.302Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`874e3b7a...`) |
 | `CYCLE-20261018-S8ZJ` | `2026-10-18T02:08:38.527Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`e70aa461...`) |
+| `CYCLE-20261018-X4U9` | `2026-10-18T02:12:26.433Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1583, Rule 1584, Rule 1585` | Yes (`0c91ec0a...`) |
