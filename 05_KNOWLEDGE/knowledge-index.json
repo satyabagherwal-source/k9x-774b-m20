@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T00:15:47.963Z",
+  "last_updated": "2026-10-18T00:22:37.829Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13815,7 +13815,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "54c5ea4731b7879b3ee19746b354f52697c0bcf8b418aedbee7f3fa3f3805363",
+      "content_hash": "b78e33a292eff68092867297f318128ab189fc7e43e1d72ead0110f8d675c90b",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -13843,6 +13843,21 @@
           "number": 1379,
           "title": "The Evidence-Chain Integrity Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1568,
+          "title": "Invariant Hub Asset Verification and Deserialization Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1569,
+          "title": "Dimension-Preserving Non-Square Coordinate Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1570,
+          "title": "Temporal Memory Eviction and Buffer Non-Leakage Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13857,7 +13872,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-17T16:23:05.157Z",
+      "verified_at": "2026-10-18T00:22:37.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

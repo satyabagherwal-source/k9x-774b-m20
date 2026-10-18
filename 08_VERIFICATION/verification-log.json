@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-IKZZ",
-    "timestamp": "2026-10-16T20:09:32.111Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "e6c8a98a2feec2d58974a6e593e9562900e174e45738e4c30e3d8473f0a7d395",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-MLFK",
     "timestamp": "2026-10-16T20:12:39.296Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7492,6 +7477,21 @@
     "contentHash": "e277f54fd9b25f4c02cb2e862b7c5232f3abc6f8eaeae3a5be88604ad380dcb6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-ZX26",
+    "timestamp": "2026-10-18T00:22:37.854Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "b78e33a292eff68092867297f318128ab189fc7e43e1d72ead0110f8d675c90b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
