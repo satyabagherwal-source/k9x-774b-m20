@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-GP3A",
-    "timestamp": "2026-10-16T22:28:02.182Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "e6da15e1420ac8cd043494e2c42f5e0eb525053d5966ae13b716bd5eda3f506f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-L2WS",
     "timestamp": "2026-10-16T22:31:26.716Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "stabilityai/stable-diffusion-3-medium",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
     "contentHash": "4f77f3c1929976d8f720c4f889de5f54aed99d87a959ef1c85dad6d950d55621",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-BKRH",
+    "timestamp": "2026-10-18T02:51:39.869Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "ec505c79ee4761b967e295bd432e5a4fa7ea8cf65c889cd69a0e43741a5d8ad2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
