@@ -24567,9 +24567,9 @@
   "scrapy-plugins-scrapy-redis": {
     "name": "scrapy-redis",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-redis",
-    "lastChecked": "2026-10-18T07:10:25.234Z",
+    "lastChecked": "2026-10-18T07:13:26.387Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:25.234Z",
+    "lastVerified": "2026-10-18T07:13:26.387Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
@@ -24585,27 +24585,27 @@
   "scrapy-plugins-scrapy-fake-useragent": {
     "name": "scrapy-fake-useragent",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-fake-useragent",
-    "lastChecked": "2026-10-18T07:10:27.769Z",
+    "lastChecked": "2026-10-18T07:13:28.916Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:27.769Z",
+    "lastVerified": "2026-10-18T07:13:28.916Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
   "scrapy-plugins-scrapy-inline-requests": {
     "name": "scrapy-inline-requests",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-inline-requests",
-    "lastChecked": "2026-10-18T07:10:30.267Z",
+    "lastChecked": "2026-10-18T07:13:31.417Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:30.267Z",
+    "lastVerified": "2026-10-18T07:13:31.417Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
   "scrapy-plugins-scrapy-poet": {
     "name": "scrapy-poet",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-poet",
-    "lastChecked": "2026-10-18T07:10:32.763Z",
+    "lastChecked": "2026-10-18T07:13:33.911Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:32.763Z",
+    "lastVerified": "2026-10-18T07:13:33.911Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
@@ -24675,9 +24675,9 @@
   "beautifulsoup-beautifulsoup4": {
     "name": "beautifulsoup4",
     "officialUrl": "https://github.com/beautifulsoup/beautifulsoup4",
-    "lastChecked": "2026-10-18T07:10:35.272Z",
+    "lastChecked": "2026-10-18T07:13:36.424Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:35.272Z",
+    "lastVerified": "2026-10-18T07:13:36.424Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
@@ -24693,9 +24693,9 @@
   "withfinite-selectolax": {
     "name": "selectolax",
     "officialUrl": "https://github.com/withfinite/selectolax",
-    "lastChecked": "2026-10-18T07:10:37.770Z",
+    "lastChecked": "2026-10-18T07:13:38.920Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:37.770Z",
+    "lastVerified": "2026-10-18T07:13:38.920Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
@@ -24756,18 +24756,18 @@
   "rehypejs-rehype-parse": {
     "name": "rehype-parse",
     "officialUrl": "https://github.com/rehypejs/rehype-parse",
-    "lastChecked": "2026-10-18T07:10:40.266Z",
+    "lastChecked": "2026-10-18T07:13:41.418Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:40.266Z",
+    "lastVerified": "2026-10-18T07:13:41.418Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
   "rehypejs-rehype-stringify": {
     "name": "rehype-stringify",
     "officialUrl": "https://github.com/rehypejs/rehype-stringify",
-    "lastChecked": "2026-10-18T07:10:42.762Z",
+    "lastChecked": "2026-10-18T07:13:43.912Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:42.762Z",
+    "lastVerified": "2026-10-18T07:13:43.912Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
@@ -24936,9 +24936,9 @@
   "rdfjs-sparqlalgebrajs": {
     "name": "sparqlalgebrajs",
     "officialUrl": "https://github.com/rdfjs/sparqlalgebrajs",
-    "lastChecked": "2026-10-18T07:10:45.264Z",
+    "lastChecked": "2026-10-18T07:13:46.417Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T07:10:45.264Z",
+    "lastVerified": "2026-10-18T07:13:46.417Z",
     "harvestStatus": "404_OR_UNAVAILABLE",
     "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
   },
