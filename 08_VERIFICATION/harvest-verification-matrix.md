@@ -2367,3 +2367,4 @@
 | `CYCLE-20261018-KH9B` | `2026-10-18T00:38:37.151Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`fb270749...`) |
 | `CYCLE-20261018-PL5E` | `2026-10-18T00:42:35.474Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1571, Rule 1572, Rule 1573` | Yes (`81f63035...`) |
 | `CYCLE-20261018-WUIM` | `2026-10-18T00:48:14.206Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1574, Rule 1575, Rule 1576` | Yes (`835ab192...`) |
+| `CYCLE-20261018-17SV` | `2026-10-18T00:51:38.047Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`98365802...`) |

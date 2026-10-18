@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T00:48:14.213Z",
+  "last_updated": "2026-10-18T00:51:38.053Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -888,14 +888,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "511de427f0af8160e2830bd60f8a553305f0abc8f52457ebf68242162674349c",
-      "verified_at": "2026-10-17T16:48:43.336Z",
+      "content_hash": "983658020163401ddacc8b7f84c47bd8c11661cfc6d64e8cadb32be959834c67",
+      "verified_at": "2026-10-18T00:51:38.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T16:48:43.336Z"
+      "last_updated": "2026-10-18T00:51:38.053Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
