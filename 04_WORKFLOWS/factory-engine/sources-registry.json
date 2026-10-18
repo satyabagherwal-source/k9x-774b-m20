@@ -1142,8 +1142,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T03:51:28.282Z",
-    "lastVerified": "2026-10-18T03:51:28.282Z",
+    "lastChecked": "2026-10-18T06:56:39.170Z",
+    "lastVerified": "2026-10-18T06:56:39.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3631,8 +3631,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:56:04.446Z",
-    "lastVerified": "2026-10-17T23:56:04.446Z",
+    "lastChecked": "2026-10-18T06:56:41.673Z",
+    "lastVerified": "2026-10-18T06:56:41.673Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:39:52.141Z",
-    "lastVerified": "2026-10-18T06:39:52.141Z",
+    "lastChecked": "2026-10-18T06:56:44.168Z",
+    "lastVerified": "2026-10-18T06:56:44.168Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24467,5 +24467,12 @@
     "lastChecked": "2026-10-18T06:52:56.262Z",
     "revisionIdentifier": "4de023b517",
     "lastVerified": "2026-10-18T06:52:56.262Z"
+  },
+  "crawlseo-crawlseo": {
+    "name": "crawlseo",
+    "officialUrl": "https://github.com/crawlseo/crawlseo",
+    "lastChecked": "2026-10-18T06:56:31.674Z",
+    "revisionIdentifier": "1e7207b6eb",
+    "lastVerified": "2026-10-18T06:56:31.674Z"
   }
 }
