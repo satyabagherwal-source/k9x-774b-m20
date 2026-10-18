@@ -2473,3 +2473,4 @@ Every entry in this ledger must capture:
 | `learn-github-h3js-h3` | `https://github.com/unjs/h3` | `b64166ae` | Multi-dimensional audit evidence | 2026-10-18T08:01:01.459Z |
 | `learn-github-unjs-ufo` | `https://github.com/unjs/ufo` | `f06c800d` | Multi-dimensional audit evidence | 2026-10-18T08:05:29.026Z |
 | `learn-github-unjs-ofetch` | `https://github.com/unjs/ofetch` | `1dbc37fd` | Multi-dimensional audit evidence | 2026-10-18T08:05:29.313Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-18T08:17:29.324Z |

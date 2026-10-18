@@ -4278,3 +4278,7 @@ https://github.com/unjs/h3
 https://github.com/unjs/ofetch
 https://github.com/unjs/ufo
 https://github.com/facebook/docusaurus
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-18T08:15:46.104Z] ---
+# [HUGGINGFACE-AI-MODELS] autogluon/chronos-2 (2840 score) - Verified Hugging Face Model: autogluon/chronos-2 (84 likes, 9452669 downloads)
+https://huggingface.co/autogluon/chronos-2

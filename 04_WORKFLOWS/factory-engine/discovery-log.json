@@ -18016,5 +18016,17 @@
     "downloads": 736,
     "qualityScore": 2366,
     "discoveredAt": "2026-10-18T04:26:20.613Z"
+  },
+  {
+    "name": "autogluon/chronos-2",
+    "fullName": "autogluon/chronos-2",
+    "url": "https://huggingface.co/autogluon/chronos-2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autogluon/chronos-2 (84 likes, 9452669 downloads)",
+    "likes": 84,
+    "downloads": 9452669,
+    "qualityScore": 2840,
+    "discoveredAt": "2026-10-18T08:15:46.102Z"
   }
 ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T08:05:29.317Z",
+  "last_updated": "2026-10-18T08:17:29.328Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3216,6 +3216,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T08:05:29.317Z"
+    },
+    "autogluon/chronos-2": {
+      "repository": "autogluon/chronos-2",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-autogluon-chronos-2",
+      "content_hash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
+      "verified_at": "2026-10-18T08:17:29.328Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T08:17:29.328Z"
     }
   },
   "repos": {

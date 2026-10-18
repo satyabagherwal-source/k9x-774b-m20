@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T08:05:29.279Z",
-  "total_verified_learnings": 227,
+  "last_updated": "2026-10-18T08:17:29.217Z",
+  "total_verified_learnings": 228,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47493,6 +47493,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T08:05:29.269Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-autogluon-chronos-2": {
+      "learning_id": "learn-huggingface-autogluon-chronos-2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autogluon/chronos-2",
+      "repository": "autogluon/chronos-2",
+      "slug": "hf-autogluon-chronos-2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "content_hash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1684,
+          "title": "Continuous Range Non-Linear Scaling via Invertible Arcsinh",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1685,
+          "title": "Strided Temporal Patching with Complete Boundary Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1686,
+          "title": "Pinball Quantile Crossing Penalty Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T08:17:29.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
