@@ -111755,3 +111755,257 @@ export async function auditAgentReadiness(domainUrl: string): Promise<AgentReadi
 Probe target site with `Accept: text/markdown` and query `/.well-known/mcp.json` and `/llms.txt`. Assert that response statuses and headers accurately populate the readiness audit matrix.
 
 ---
+
+## 1614. SARIF-Compliant Crawl Regression & Poisoned Canonical Detection (Harvested from yuripinto/xseo)
+
+**RULE**:
+Web crawl engines integrated into CI/CD deployment pipelines MUST:
+1. **SARIF Output Invariant**: Emit automated crawl defect reports in OASIS SARIF (Static Analysis Results Interchange Format) JSON format, enabling direct automated annotations on GitHub/GitLab Pull Request diff lines and automated security gate exits.
+2. **Two-Crawl Relational Differential Analyzer (`crawl-diff`)**: Compare a baseline production crawl against a pull-request preview crawl to isolate regressions before deployment: newly introduced 4xx/5xx status codes, pages flipping from indexable to `noindex`, dropped titles, broken redirect hops, or canonical drifts.
+3. **Poisoned Canonical Target Detection**: Explicitly resolve and audit non-self canonical targets against the crawl index, flagging:
+   - `canonical_to_noindex`: Canonical tag consolidates ranking signals onto a URL that has a `noindex` directive (ensuring the page is dropped from search engine indexes).
+   - `canonical_to_redirect`: Canonical tag targets an intermediate 3xx redirect rather than the final 200 destination.
+   - `canonical_cross_domain`: Canonical tag points to an external unverified domain (frequently a staging-to-production or templating defect).
+
+**WHY**:
+Canonicalizing a page to a `noindex` or redirecting URL causes search engines to drop ranking equity and de-index the page. Emitting standard SARIF reports allows CI/CD systems to block PRs before bad canonicals hit production.
+
+**WHEN TO APPLY**:
+CI/CD automated regression tests, deployment preview checks, and technical SEO monitoring.
+
+**IMPLEMENTATION PATTERN**:
+```python
+from urllib.parse import urlsplit
+
+def detect_canonical_target_issues(pages: list[Page]) -> list[Issue]:
+    pages_by_url = {canonicalize(p.final_url): p for p in pages}
+    issues = []
+    
+    for page in pages:
+        canonical = page.canonical_url
+        if not canonical or canonicalize(canonical) == canonicalize(page.final_url):
+            continue # Self-referencing is healthy
+            
+        # 1. Cross-domain check
+        if urlsplit(canonical).netloc.lower() != urlsplit(page.final_url).netloc.lower():
+            issues.append(Issue(page.url, "canonical_cross_domain", "Canonical points to a different host."))
+            continue
+            
+        target = pages_by_url.get(canonicalize(canonical))
+        if not target:
+            continue
+            
+        # 2. Canonical pointing to noindex
+        if "noindex" in (target.robots_meta or "").lower():
+            issues.append(Issue(page.url, "canonical_to_noindex", "Canonical points to a page with a noindex directive."))
+            
+        # 3. Canonical pointing to redirect
+        elif 300 <= target.status_code <= 399:
+            issues.append(Issue(page.url, "canonical_to_redirect", "Canonical points to a redirect hop instead of destination."))
+            
+    return issues
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Only checking if canonical tag is present, ignoring what it points to
+def audit_canonicals_shallow(soup, current_url):
+    tag = soup.find("link", rel="canonical")
+    if tag and tag.get("href"):
+        return "PASS" # DEADLY: Tag points to a 404, redirect, or noindex page!
+```
+
+**VERIFICATION METHOD**:
+Execute `xseo crawl` on a test fixture with pages containing canonicals pointing to a `noindex` page and a 301 redirect. Assert that SARIF export contains rule IDs `canonical_to_noindex` and `canonical_to_redirect`.
+
+---
+
+## 1615. Multi-Pass @id In-Memory Graph Assembly for Decoupled Schema.org Validation (Harvested from codetot-web/schema-test & iaincollins/structured-data-testing-tool)
+
+**RULE**:
+When validating JSON-LD, Microdata, or RDFa structured data, the validator MUST NOT evaluate individual `<script type="application/ld+json">` blocks or Microdata elements in isolation. The engine MUST implement a two-pass graph assembly pipeline:
+1. **Pass 1 (Entity & @id Registry Indexing)**: Traverse all extracted blocks and construct an in-memory dictionary mapping absolute and relative `@id` IRIs to their raw parsed entity records.
+2. **Pass 2 (Cross-Reference Resolution & Recursive Validation)**: Whenever an entity property contains an `@id` reference (e.g. `publisher: { "@id": "https://example.com/#org" }`), resolve the reference from the index before asserting required property types and schemas.
+
+**WHY**:
+Modern CMS platforms and web applications decouple schemas across multiple components and `<script>` blocks. Validating blocks in isolation produces false-negative errors ("Missing Organization name" or "Invalid Author") for valid, compliant Schema.org implementations.
+
+**WHEN TO APPLY**:
+Structured data linters, rich-result validators, Schema.org parsers, and SEO crawling engines.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+export interface ParsedEntity {
+  id?: string;
+  types: string[];
+  properties: Map<string, unknown[]>;
+}
+
+export function buildAndResolveEntityGraph(blocks: ExtractedBlock[]): ParsedEntity[] {
+  const idIndex = new Map<string, ParsedEntity>();
+  const allEntities: ParsedEntity[] = [];
+
+  // Pass 1: Parse and index by @id
+  for (const block of blocks) {
+    const entity = parseEntity(block.data);
+    if (entity) {
+      if (entity.id) idIndex.set(entity.id, entity);
+      allEntities.push(entity);
+    }
+  }
+
+  // Pass 2: Resolve @id cross-references
+  for (const entity of allEntities) {
+    for (const [propName, values] of entity.properties.entries()) {
+      const resolved = values.map(val => {
+        if (typeof val === 'object' && val !== null && '@id' in val && Object.keys(val).length === 1) {
+          const refId = (val as { '@id': string })['@id'];
+          return idIndex.get(refId) || val; // Resolve from graph!
+        }
+        return val;
+      });
+      entity.properties.set(propName, resolved);
+    }
+  }
+
+  return allEntities;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Iterating over each JSON-LD script tag independently and validating in isolation
+for (const scriptTag of document.querySelectorAll('script[type="application/ld+json"]')) {
+  const json = JSON.parse(scriptTag.textContent);
+  // DEADLY: Fails if 'author' is an @id reference defined in a subsequent script tag!
+  validateSchemaDirect(json);
+}
+```
+
+**VERIFICATION METHOD**:
+Load an HTML page with two `<script type="application/ld+json">` blocks: Block 1 is an `Article` referencing `author: { "@id": "#author-john" }`, and Block 2 is a `Person` with `@id: "#author-john"`. Assert that the validator resolves the author and reports 0 validation errors.
+
+---
+
+## 1616. Host-Affinity Request Header Quarantine & Headless Hijack Routing (Harvested from SEObserver/crawlobserver)
+
+**RULE**:
+In web crawlers and headless browser rendering engines that accept custom HTTP headers (such as authorization bearer tokens, cookies, or staging bypass signatures):
+1. **Per-Request Hijack Routing**: The engine MUST NOT set custom headers globally using browser-wide APIs (such as Chromium CDTP `Network.setExtraHTTPHeaders`), which indiscriminately leak credentials to every third-party script, analytics tag, tracker, and cross-origin iframe loaded on the page. Custom headers MUST be injected exclusively via per-request network interception (hijack router) that strictly validates that `request.url().hostname === targetHost`.
+2. **Redirect Strip Boundary**: If an HTTP response returns a 3xx redirect to a different hostname, the fetcher MUST automatically strip sensitive authorization and custom crawl headers before following the redirect hop.
+3. **Internal vs External Scope Split**: Internal asset checks (images, CSS, JS hosted on the crawl domain) carry custom crawl headers, whereas external third-party links MUST NOT.
+
+**WHY**:
+Leaking staging authentication tokens or HMAC request signatures to external third-party CDNs, ad networks, or redirect targets creates severe security breaches and credential replay vulnerabilities.
+
+**WHEN TO APPLY**:
+Authenticated web crawlers, headless browser render pools, staging-site auditors, and security scanners.
+
+**IMPLEMENTATION PATTERN**:
+```go
+// Go implementation using Chromium DevTools Protocol (CDTP) Request Interception
+func (r *Renderer) SetupHostQuarantineRouter(targetHost string, customHeaders map[string]string) {
+    r.browser.SetRequestHandler(func(req *proto.FetchRequestPaused) {
+        reqUrl, err := url.Parse(req.Request.URL)
+        if err != nil {
+            r.ContinueRequest(req.RequestID, nil)
+            return
+        }
+
+        // STRICT INVARIANT: Only inject credentials to target host
+        if strings.EqualFold(reqUrl.Hostname(), targetHost) {
+            headers := req.Request.Headers
+            for k, v := range customHeaders {
+                headers[k] = v
+            }
+            r.ContinueRequestWithHeaders(req.RequestID, headers)
+        } else {
+            // Third-party scripts/tags/CDNs receive clean, unauthenticated request
+            r.ContinueRequest(req.RequestID, nil)
+        }
+    })
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Using global setExtraHTTPHeaders in headless browser
+await page.setExtraHTTPHeaders({
+  'Authorization': 'Bearer staging-secret-token-xyz'
+});
+// DEADLY: Every Google Analytics, Facebook Pixel, and third-party ad script
+// receives the Bearer token in its request headers and logs it to external servers!
+```
+
+**VERIFICATION METHOD**:
+Configure a crawl with custom `Authorization: Bearer test-secret`. Mock a page loading `https://external-cdn.com/script.js`. Inspect network logs and assert that `script.js` request contains NO `Authorization` header.
+
+---
+
+## 1617. 64-Bit SimHash Bit-Vector Voting for Near-Duplicate Content Detection (Harvested from lokoe-mehdi/scouter)
+
+**RULE**:
+Crawlers and search audit pipelines auditing large-scale websites MUST NOT compute $O(N^2)$ pairwise Levenshtein or token-similarity comparisons across pages to identify duplicate content. The system MUST compute a 64-bit SimHash fingerprint for each page's normalized main content:
+1. HTML tags, non-word punctuation, and extra whitespace are stripped, and text is lowercased.
+2. Text is tokenized into 3-word overlapping shingles ($N$-grams).
+3. Each shingle is hashed into a 64-bit integer using a uniform hashing algorithm (e.g. CRC64 or MurmurHash3).
+4. A 64-element accumulation vector $V$ is updated: for each shingle hash, bit position $i$ increments $V[i]$ if the bit is 1, and decrements $V[i]$ if the bit is 0.
+5. The final 64-bit SimHash fingerprint has bit $i = 1$ if $V[i] > 0$, else $0$.
+6. Duplicate similarity is determined in $O(1)$ time via bitwise XOR Hamming distance (`bits.OnesCount64(a ^ b)`): pairs with Hamming distance $\le 3$ are categorized as near-duplicates.
+
+**WHY**:
+Pairwise string comparisons scale quadratically and exhaust CPU and memory on crawls with more than a few thousand pages. SimHash compresses arbitrary-length text into a single 64-bit integer where Hamming distance directly corresponds to semantic text similarity.
+
+**WHEN TO APPLY**:
+Crawl deduplication, search indexers, content plagiarism audits, and archive clustering engines.
+
+**IMPLEMENTATION PATTERN**:
+```go
+func ComputeSimhash(text string) *int64 {
+    text = normalizeText(text)
+    tokens := tokenizeShingles(text, 3)
+    if len(tokens) == 0 {
+        return nil
+    }
+
+    var v [64]int
+    for _, tok := range tokens {
+        h := hash64(tok)
+        for i := 0; i < 64; i++ {
+            if (h>>uint(i))&1 == 1 {
+                v[i]++
+            } else {
+                v[i]--
+            }
+        }
+    }
+
+    var sh uint64
+    for i := 0; i < 64; i++ {
+        if v[i] > 0 {
+            sh |= uint64(1) << uint(i)
+        }
+    }
+    out := int64(sh)
+    return &out
+}
+
+func HammingDistance(a, b int64) int {
+    return bits.OnesCount64(uint64(a) ^ uint64(b))
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: O(N^2) pairwise full-text comparison in crawler
+for i, page1 in enumerate(all_pages):
+    for j, page2 in enumerate(all_pages[i+1:]):
+        # DEADLY: On 100,000 pages, this executes 5 billion difflib comparisons,
+        # hanging the CPU for days and OOMing memory.
+        ratio = difflib.SequenceMatcher(None, page1.text, page2.text).ratio()
+```
+
+**VERIFICATION METHOD**:
+Test with two strings differing by 1 word out of 50. Assert that `ComputeSimhash` yields fingerprints with `HammingDistance <= 3`.
+
+---

@@ -4136,3 +4136,15 @@ https://github.com/SArfrz/NovaCrawl
 https://github.com/ildrm/northstar-seo
 https://github.com/booltools/booltools-seo-crawler
 https://github.com/TurboPress-X/seo-auditing-software
+
+# --- Batch 14: SEO Crawlers, Structured Data & Crawl Regression ---
+https://github.com/yuripinto/xseo
+https://github.com/iaincollins/structured-data-testing-tool
+https://github.com/magnetoid/SEO-Crawler
+https://github.com/SEObserver/crawlobserver
+https://github.com/lokoe-mehdi/scouter
+https://github.com/crawlseo/crawlseo
+https://github.com/kaiopiola/SEOCheck
+https://github.com/chris-c-thomas/OxideSEO
+https://github.com/codetot-web/schema-test
+https://github.com/logiover/website-seo-audit-crawler
