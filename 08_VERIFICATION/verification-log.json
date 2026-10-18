@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CT3C",
-    "timestamp": "2026-10-16T22:25:00.744Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "0c355e621b09200ae318804b82acfedef8da72f75179547a13ecd5d4b7d1b5eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-GP3A",
     "timestamp": "2026-10-16T22:28:02.182Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-zai-org-glm-5-2",
     "contentHash": "decf145398b33111f7b4bcaaf3f4025eb45068f276aeb7ac00e7e1eaa2c3f1d6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-7ARG",
+    "timestamp": "2026-10-18T02:48:20.284Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "4f77f3c1929976d8f720c4f889de5f54aed99d87a959ef1c85dad6d950d55621",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T02:44:39.775Z",
-  "total_cycles_completed": 2374,
-  "total_learnings_persisted": 2374,
+  "last_updated": "2026-10-18T02:48:20.289Z",
+  "total_cycles_completed": 2375,
+  "total_learnings_persisted": 2375,
   "total_rules_promoted": 1382,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:23:40.380Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:26:35.815Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T02:44:39.775Z",
       "repository": "zai-org/GLM-5.2",
       "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T02:48:20.289Z",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:44:39.741Z",
+  "last_updated": "2026-10-18T02:48:20.248Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18614,7 +18614,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "f5a0ef139594e5c562a6e2b25bd0acf4caefeb14758598d3f61cd765d0179d5c",
+      "content_hash": "4f77f3c1929976d8f720c4f889de5f54aed99d87a959ef1c85dad6d950d55621",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [
@@ -18689,7 +18689,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0"
       ],
-      "verified_at": "2026-10-17T18:17:57.339Z",
+      "verified_at": "2026-10-18T02:48:20.240Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

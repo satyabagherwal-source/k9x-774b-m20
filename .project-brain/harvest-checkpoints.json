@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T02:44:39.777Z",
+  "last_updated": "2026-10-18T02:48:20.291Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1217,14 +1217,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "f5a0ef139594e5c562a6e2b25bd0acf4caefeb14758598d3f61cd765d0179d5c",
-      "verified_at": "2026-10-17T18:17:57.388Z",
+      "content_hash": "4f77f3c1929976d8f720c4f889de5f54aed99d87a959ef1c85dad6d950d55621",
+      "verified_at": "2026-10-18T02:48:20.290Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T18:17:57.388Z"
+      "last_updated": "2026-10-18T02:48:20.290Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
