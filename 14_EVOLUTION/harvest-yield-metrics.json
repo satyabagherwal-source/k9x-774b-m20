@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T02:51:39.873Z",
-  "total_cycles_completed": 2376,
-  "total_learnings_persisted": 2376,
+  "last_updated": "2026-10-18T02:54:49.784Z",
+  "total_cycles_completed": 2377,
+  "total_learnings_persisted": 2377,
   "total_rules_promoted": 1382,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:29:52.385Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:32:50.405Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T02:51:39.873Z",
       "repository": "bigscience/bloom",
       "learningId": "learn-huggingface-bigscience-bloom",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T02:54:49.784Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

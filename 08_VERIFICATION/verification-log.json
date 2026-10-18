@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-L2WS",
-    "timestamp": "2026-10-16T22:31:26.716Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "464bb8338f2b7398481c2759abacca0768b0f2353805a990e1eb837116bedc44",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-SO77",
     "timestamp": "2026-10-16T22:37:20.899Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7490,6 +7475,21 @@
     "repository": "bigscience/bloom",
     "learningId": "learn-huggingface-bigscience-bloom",
     "contentHash": "ec505c79ee4761b967e295bd432e5a4fa7ea8cf65c889cd69a0e43741a5d8ad2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-FNAS",
+    "timestamp": "2026-10-18T02:54:49.780Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "eb874362c0eb229db9586ec0a79a29dbcbea59e961eacd5bc3407c6c6dded21c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
