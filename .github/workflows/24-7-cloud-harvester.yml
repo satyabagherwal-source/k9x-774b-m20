@@ -77,7 +77,7 @@ jobs:
           fi
           git add .
           # Only commit if actual knowledge artifacts, rules, skills, ledgers, or queue targets were modified:
-          if git diff --staged --name-only | grep -E '^(07_PROJECT_LEARNING/|05_KNOWLEDGE/|08_VERIFICATION/|09_SOURCES/|11_INBOX/|14_EVOLUTION/|15_METADATA/|03_SKILLS/|repos\.txt)'; then
+          if git diff --staged --name-only | grep -E '^(07_PROJECT_LEARNING/|05_KNOWLEDGE/|08_VERIFICATION/|09_SOURCES/|11_INBOX/|14_EVOLUTION/|15_METADATA/|03_SKILLS/|repos\.txt|LEARNINGS\.md|\.project-brain/incidents/)'; then
             git commit -m "feat(harvest): micro-forensic learning harvested from sources [skip ci]"
             PUSH_SUCCESS=false
             for i in {1..5}; do

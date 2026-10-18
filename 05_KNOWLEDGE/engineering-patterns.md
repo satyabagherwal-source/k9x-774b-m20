@@ -117007,3 +117007,81 @@ test('async validation with payload containing "value" or "error" keys must not 
 ```
 
 ---
+
+## 1672. Autonomous Fleet Poison-Pill Quarantine & Self-Referential Meta-Learning Invariant (Harvested from AI-Builder-Brain Production Architecture & Incident INC-002)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Autonomous Fleet Poison-Pill Quarantine & Self-Referential Meta-Learning Invariant",
+  "source": "AI-Builder-Brain",
+  "source_url": "local/AI-Builder-Brain",
+  "source_version": "INC-002",
+  "license": "Internal-Core",
+  "extracted_at": "2026-10-18T07:45:00.000Z",
+  "ai_provider": "local-repository-learning-engine",
+  "generation_mode": "source_derived_self_referential_meta_learning",
+  "learning_id": "learn-local-ai-builder-brain",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [AI-Builder-Brain](file:///c:/AI-Builder-Brain) (Incident: `INC-002`).  
+> **Evidence**: Verified against production commit remediation and queue loop autopsies. (Distillation Prohibited).
+
+**RULE**:
+When designing long-running autonomous worker pools, batch harvesting pipelines, or self-evolving AI architectures:
+1. **Dead-Letter Poison-Pill Quarantine**: Any job target that returns an unrecoverable terminal error (e.g. `HTTP 404 Not Found`, permanently deleted account, revoked token, corrupt data schema) MUST immediately be written to a persistent registry with a terminal status (e.g., `DEAD_OR_UNAVAILABLE` or `404_OR_UNAVAILABLE`). Target selectors MUST explicitly exclude quarantined entries so that workers NEVER attempt endless re-executions on non-existent resources.
+2. **Self-Referential Meta-Learning Loop**: The intelligence engine MUST treat its own repository, configuration, and factory workflows as a tier-1 learning source. All bug fixes, incident autopsies, and architectural refactorings committed to the engine itself MUST be distilled into a dedicated learning dossier (`07_PROJECT_LEARNING/ai-builder-brain-learnings.md`) and promoted into universal knowledge rules.
+3. **Atomic Rebase-Retry Concurrency**: Autonomous background workers pushing state to a shared remote Git ledger MUST execute inside an exponential-backoff retry loop with automatic rebase (`git pull --rebase origin main`) and index lock purging (`rm -f .git/index.lock`), ensuring zero runner discoveries are discarded due to concurrent pushes.
+
+**WHY**:
+Prevents catastrophic worker starvation observed in Incident `INC-002`: when unrecoverable targets fail without persistent status flags, queues re-feed the exact same failing targets to every worker on every cycle. This causes the fleet to report continuous green execution while generating 0 bytes of meaningful work. Furthermore, without self-referential meta-learning, an AI system remains blind to its own past bugs and repeats solved architectural blunders.
+
+**WHEN TO APPLY**:
+Distributed crawler swarms, message queue consumers (BullMQ, Celery, SQS), background scraping daemons, and autonomous agent systems that modify their own codebases.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// queue/target-selector.js
+export function selectNextHarvestTarget(queue, sourcesRegistry, assignedSet = new Set()) {
+  for (const item of queue) {
+    if (assignedSet.has(item.slug)) continue;
+
+    const entry = sourcesRegistry[item.slug];
+    
+    // 1. Poison-Pill Quarantine Guard: Never pick dead or terminal 404 targets
+    if (entry && (entry.harvestStatus === '404_OR_UNAVAILABLE' || entry.harvestStatus === 'DEAD_OR_UNAVAILABLE')) {
+      continue;
+    }
+
+    // 2. Select only genuinely unharvested or healthy rotation items
+    if (!entry || entry.harvestStatus === 'PENDING') {
+      assignedSet.add(item.slug);
+      return item;
+    }
+  }
+  return null;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Selecting targets based solely on missing output files
+function getNextTargetBad(queue) {
+  for (const item of queue) {
+    // DEADLY: If item 404s, its output file is never created!
+    // Every single worker will pick this same 404 item forever!
+    if (!fs.existsSync(`output/${item.slug}.md`)) {
+      return item;
+    }
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Simulate a queue containing 3 items: `[itemA_404, itemB_valid, itemC_valid]`. Mark `itemA_404` as `404_OR_UNAVAILABLE` in `sourcesRegistry`. Call `selectNextHarvestTarget`. Assert that `itemB_valid` is returned on turn 1 and `itemC_valid` on turn 2, with 0 selections of `itemA_404`.
+
+---

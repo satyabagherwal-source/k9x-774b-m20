@@ -12,6 +12,7 @@ import {
 import { runInternalKnowledgeSynthesis } from './internal-synthesizer.mjs';
 import { parseSourceUrl } from './zero-clone-harvester.mjs';
 import { getSourcesRegistry } from './upgrade-checker.mjs';
+import { runSelfBrainHarvest } from './self-brain-harvester.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -517,6 +518,13 @@ export async function runMultiAgentFleet(options = {}) {
     console.log(`   - ${agent.id} [${agent.domain}]: ${statusText}`);
   });
   console.log(`======================================================================\n`);
+
+  // Self-Referential Meta-Learning: AI-Builder-Brain harvests its own fixes
+  try {
+    await runSelfBrainHarvest();
+  } catch (err) {
+    console.warn(`[WARN] Self-brain harvest error: ${err.message}`);
+  }
 
   // Synchronize Master Brain with atomic rebase retry
   try {
