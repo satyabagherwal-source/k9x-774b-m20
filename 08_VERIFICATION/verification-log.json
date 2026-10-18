@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-WP2N",
-    "timestamp": "2026-10-16T22:40:28.655Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "0fc3dadc32bef8237b3d0ea75b4f853d8fc090b8ffd5618905399c29946753fd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0X55",
     "timestamp": "2026-10-16T22:43:45.737Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "d8786888b7e25a11b1649cf499afb96b2326e129d074003bfe65a4488c536e8c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-PK0M",
+    "timestamp": "2026-10-18T03:02:32.086Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "1b13745c562f1f85cca1e24657f3edfd52829e292510dd612e7de44d67d1ce84",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

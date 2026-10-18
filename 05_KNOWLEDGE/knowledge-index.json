@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:58:24.094Z",
+  "last_updated": "2026-10-18T03:02:32.060Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15446,7 +15446,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "fdcc5e10ad8cc3db8f37e2eb314d3d96732919a81763359ab9e1a52147b94861",
+      "content_hash": "1b13745c562f1f85cca1e24657f3edfd52829e292510dd612e7de44d67d1ce84",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "promoted_rules": [
@@ -15479,6 +15479,21 @@
           "number": 1220,
           "title": "Tokenizer Detokenization Round-Trip Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1597,
+          "title": "In-Flight Upcasting of Norm Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1598,
+          "title": "Complex Frequency Pre-Computation Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1599,
+          "title": "Autoregressive Causal Attention Mask Lower-Triangular Guarantee",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15497,7 +15512,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
       ],
-      "verified_at": "2026-10-17T18:30:36.276Z",
+      "verified_at": "2026-10-18T03:02:32.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
