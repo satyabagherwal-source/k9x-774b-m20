@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T00:32:03.328Z",
+  "last_updated": "2026-10-18T00:35:22.069Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -828,14 +828,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
-      "content_hash": "beae47f9734ea9b55d0fdcb12546cd278efe4f0321bd63adfdb7f5fade4823b8",
-      "verified_at": "2026-10-17T16:35:50.767Z",
+      "content_hash": "7c72724cae876ee738c491a9b00daca129adcfb4c9675bb994c6e1969091ae33",
+      "verified_at": "2026-10-18T00:35:22.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T16:35:50.767Z"
+      "last_updated": "2026-10-18T00:35:22.069Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",

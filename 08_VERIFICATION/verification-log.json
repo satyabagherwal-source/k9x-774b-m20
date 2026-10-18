@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-YKZ1",
-    "timestamp": "2026-10-16T20:21:58.573Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "5f3eb34e64d40a938aeb2bc38bcaf49b6fcedc8a5b30db4849e297616d18ede9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4GUQ",
     "timestamp": "2026-10-16T20:26:33.170Z",
     "repository": "BAAI/bge-base-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "canberkkkkkk/ema-lightning",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
     "contentHash": "090fe1e27d31fa1913f22754bc5ad9185df404de4da2902beb6abaf58df83ce5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-GAQ7",
+    "timestamp": "2026-10-18T00:35:22.063Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "7c72724cae876ee738c491a9b00daca129adcfb4c9675bb994c6e1969091ae33",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

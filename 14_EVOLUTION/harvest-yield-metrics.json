@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T00:32:03.327Z",
-  "total_cycles_completed": 2340,
-  "total_learnings_persisted": 2340,
+  "last_updated": "2026-10-18T00:35:22.068Z",
+  "total_cycles_completed": 2341,
+  "total_learnings_persisted": 2341,
   "total_rules_promoted": 1356,
   "history": [
-    {
-      "timestamp": "2026-10-17T13:32:08.779Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T13:35:23.734Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T00:32:03.327Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T00:35:22.068Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
