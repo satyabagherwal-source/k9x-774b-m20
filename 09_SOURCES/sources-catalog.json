@@ -2468,5 +2468,65 @@
     "contentHash": "2e076f8dd69975ae192d205cc1e09be93fa9e6317ba538da7e64ed6ad11e2536",
     "lastHarvestedAt": "2026-10-18T21:33:30.056Z",
     "learningId": "learn-github-burntsushi-ripgrep"
+  },
+  "cosscom-coss": {
+    "repository": "cosscom/coss",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cosscom/coss",
+    "sourceVersion": "5b5d4962",
+    "license": "AGPL-3.0",
+    "contentHash": "a9f64282826ba0477cae0eb3f25f939cd923adac443b34e043634b46d4a45fc3",
+    "lastHarvestedAt": "2026-10-18T21:39:32.243Z",
+    "learningId": "learn-github-cosscom-coss"
+  },
+  "sharkdp-bat": {
+    "repository": "sharkdp/bat",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sharkdp/bat",
+    "sourceVersion": "f748c1a4",
+    "license": "Apache-2.0",
+    "contentHash": "e00a9f4cc287d6407e4dbc43f6936f772bd517fcd2d0b24c21cdbe55c1086675",
+    "lastHarvestedAt": "2026-10-18T21:39:32.845Z",
+    "learningId": "learn-github-sharkdp-bat"
+  },
+  "karakeep-app-karakeep": {
+    "repository": "karakeep-app/karakeep",
+    "platform": "github",
+    "sourceUrl": "https://github.com/karakeep-app/karakeep",
+    "sourceVersion": "c184eec6",
+    "license": "AGPL-3.0",
+    "contentHash": "5b69971ac23d47508d27fa8989e3992513b3e1cda4f606b4e1673c12fcd2a90c",
+    "lastHarvestedAt": "2026-10-18T21:39:37.330Z",
+    "learningId": "learn-github-karakeep-app-karakeep"
+  },
+  "authzed-spicedb": {
+    "repository": "authzed/spicedb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/authzed/spicedb",
+    "sourceVersion": "a1dad93e",
+    "license": "Apache-2.0",
+    "contentHash": "4d9a2900c288d0896b23be4815d2cc1937c89b2dd599d66b5caeb62d53a0a8d8",
+    "lastHarvestedAt": "2026-10-18T21:39:40.897Z",
+    "learningId": "learn-github-authzed-spicedb"
+  },
+  "hashicorp-boundary": {
+    "repository": "hashicorp/boundary",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hashicorp/boundary",
+    "sourceVersion": "eeb38a1a",
+    "license": "NOASSERTION",
+    "contentHash": "bffa81ae52a44f61c2fff306716c0d5e1d9541ee79e680fba2b133b49d8aa646",
+    "lastHarvestedAt": "2026-10-18T21:39:42.536Z",
+    "learningId": "learn-github-hashicorp-boundary"
+  },
+  "zilliztech-attu": {
+    "repository": "zilliztech/attu",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zilliztech/attu",
+    "sourceVersion": "d51e1c78",
+    "license": "NOASSERTION",
+    "contentHash": "c9a1ab36fac00fee14d2d2eba8f329f1fb5fb1e7e91028fd477b94c54a584ae5",
+    "lastHarvestedAt": "2026-10-18T21:39:43.555Z",
+    "learningId": "learn-github-zilliztech-attu"
   }
 }

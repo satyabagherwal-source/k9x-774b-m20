@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-JVPN",
-    "timestamp": "2026-10-17T04:34:25.739Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-Base",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "0df2b3511814ae79d0fa9b512860fabac151f3b6db04b58de9b927251289c69c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-NXVS",
-    "timestamp": "2026-10-17T04:37:35.176Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "40714af897cba0d670262bce5b9395bda8e12462cd3c963730e92b30d75b4ede",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-RUIG",
-    "timestamp": "2026-10-17T04:40:37.432Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "3a2fa7125d762f169e850f8e5748d57dc8dc16728e3843b6d8ca50115a2539e0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-VWJ6",
-    "timestamp": "2026-10-17T04:43:46.674Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "d0c15c2451af6d685ef38ddb1761481140f467b6b0cf45eab0ad0b586b21a5af",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-063Z",
-    "timestamp": "2026-10-17T04:47:05.711Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "1a5987a922a03d33cacb37071a73dcb4caa4a2f66eb6c367448587136f090e2e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-5LFF",
-    "timestamp": "2026-10-17T04:51:18.843Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "1436c577a0514ecb2d09aaef68defa413d7d90b4e9c01dbd8bd44e9d91cffd05",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-9HLC",
     "timestamp": "2026-10-17T04:54:20.496Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7492,6 +7402,96 @@
     "contentHash": "2e076f8dd69975ae192d205cc1e09be93fa9e6317ba538da7e64ed6ad11e2536",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-M13K",
+    "timestamp": "2026-10-18T21:39:32.240Z",
+    "repository": "cosscom/coss",
+    "learningId": "learn-github-cosscom-coss",
+    "contentHash": "a9f64282826ba0477cae0eb3f25f939cd923adac443b34e043634b46d4a45fc3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-M1KB",
+    "timestamp": "2026-10-18T21:39:32.843Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "e00a9f4cc287d6407e4dbc43f6936f772bd517fcd2d0b24c21cdbe55c1086675",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-M50V",
+    "timestamp": "2026-10-18T21:39:37.327Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "5b69971ac23d47508d27fa8989e3992513b3e1cda4f606b4e1673c12fcd2a90c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-M7RZ",
+    "timestamp": "2026-10-18T21:39:40.895Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "4d9a2900c288d0896b23be4815d2cc1937c89b2dd599d66b5caeb62d53a0a8d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-M91I",
+    "timestamp": "2026-10-18T21:39:42.534Z",
+    "repository": "hashicorp/boundary",
+    "learningId": "learn-github-hashicorp-boundary",
+    "contentHash": "bffa81ae52a44f61c2fff306716c0d5e1d9541ee79e680fba2b133b49d8aa646",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-M9TT",
+    "timestamp": "2026-10-18T21:39:43.553Z",
+    "repository": "zilliztech/attu",
+    "learningId": "learn-github-zilliztech-attu",
+    "contentHash": "c9a1ab36fac00fee14d2d2eba8f329f1fb5fb1e7e91028fd477b94c54a584ae5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

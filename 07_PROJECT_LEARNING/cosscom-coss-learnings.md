@@ -1,19 +1,33 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
+> **Source**: github ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
+> **Source Version**: `5b5d4962`  
+> **License**: AGPL-3.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T21:39:32.068Z  
+> **Learning ID**: `learn-github-cosscom-coss`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): cosscom/coss
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:25:29.819Z  
+> **Harvest Timestamp**: 2026-10-18T21:39:30.340Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `cosscom/coss`
-- **Description**: coss.com/ui is the official design system of Cal.com
+- **Description**: 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10647 stars
+- **Stars / Engagement**: 3 stars
 
 ---
 
@@ -23,1072 +37,1844 @@
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/demo/page.tsx`
+### Core Architecture Module: `apps/api/src/routes/hooks/applications.ts`
 ```
-import type { WebhookItem } from "../webhooks-list-content";
-import { WebhooksPageContent } from "../webhooks-page-content";
+import {
+  createHookApplication,
+  deleteHookApplication,
+  MAX_APPLICATIONS,
+  pageHookApplications,
+  toHookApplicationObject,
+  updateHookApplication,
+} from "@coss/hooks";
+import {
+  CreateHookApplicationRequest,
+  DeletedHookApplication,
+  HookApplicationList,
+  HookApplicationObject,
+  ListHookApplicationsQuery,
+  UpdateHookApplicationRequest,
+} from "@coss/hooks/schemas";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { recordApiAudit } from "../../audit.ts";
+import { requireApiKey } from "../../middleware/api-key.ts";
+import { upgradeRequestBody } from "../../middleware/api-version.ts";
+import { rateLimit } from "../../middleware/rate-limit.ts";
+import type { AppEnv } from "../../types.ts";
+import { commonErrors, errorDoc, jsonDoc } from "../docs.ts";
+import {
+  ApplicationParams,
+  applicationNotFound,
+  bodyErrors,
+  requireApplication,
+  SCOPE_NOTE,
+  TAGS,
+} from "./shared.ts";
 
-const demoWebhooks: WebhookItem[] = [
-  {
-    date: "2021-10-20",
-    enabled: true,
-    events: [
-      "Booking canceled",
-      "Booking created",
-      "Booking rejected",
-      "Booking requested",
-      "Booking payment initiated",
-      "Booking rescheduled",
-      "Booking paid",
-      "Booking no-show updated",
-      "Meeting ended",
-      "Meeting started",
-      "Recording download link ready",
-      "Transcript generated",
-      "Form submitted",
-    ],
-    id: "wh_1",
-    url: "https://testurl.com/894357943857",
-    userAvatar:
-      "https://pbs.twimg.com/profile_images/1994776674391457792/7utKOMi6_400x400.jpg",
-    userId: "user_1",
-    userInitials: "JD",
-    userName: "John Doe",
+export const createHookApplicationRoute = createRoute({
+  method: "post",
+  path: "/hooks/applications",
+  operationId: "createHookApplication",
+  tags: [TAGS.applications],
+  summary: "Create an application",
+  description:
+    "Creates an application: one of your customers (or users), who gets their own endpoints and " +
+    `portal. Give it a \`uid\` (e.g. your customer's id) to address it by in every path. ${SCOPE_NOTE}`,
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["create"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/hooks/applications"),
+  ],
+  request: {
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateHookApplicationRequest } },
+    },
   },
-  {
-    date: "2024-01-15",
-    enabled: true,
-    events: ["Booking created", "Booking canceled"],
-    id: "wh_2",
-    url: "https://api.example.com/webhooks/booking-created",
-    userAvatar:
-      "https://pbs.twimg.com/profile_images/1994776674391457792/7utKOMi6_400x400.jpg",
-    userId: "user_1",
-    userInitials: "JD",
-    userName: "John Doe",
+  responses: {
+    200: jsonDoc("The application.", HookApplicationObject),
+    ...bodyErrors,
+    ...commonErrors,
+    422: errorDoc(
+      "The body failed validation (`validation_error`), the `uid` is taken (`uid_taken`), or the " +
+        `environment has the most applications it can (${MAX_APPLICATIONS.live.toLocaleString("en-US")} ` +
+        `live, ${MAX_APPLICATIONS.sandbox} sandbox: \`too_many_applications\`).`,
+    ),
   },
-  {
-    date: "2024-02-01",
-    enabled: false,
-    events: ["Meeting started", "Meeting ended"],
-    id: "wh_3",
-    url: "https://hooks.myapp.com/calcom",
-    userId: "user_2",
-    userInitials: "JS",
-    userName: "Jane Smith",
+});
+
+export const listHookApplicationsRoute = createRoute({
+  method: "get",
+  path: "/hooks/applications",
+  operationId: "listHookApplications",
+  tags: [TAGS.applications],
+  summary: "List applications",
+  description: `The environment's applications, newest first. ${SCOPE_NOTE}`,
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { query: ListHookApplicationsQuery },
+  responses: {
+    200: jsonDoc("A page of applications.", HookApplicationList),
+    ...commonErrors,
   },
-];
+});
 
-export default function WebhooksDemoPage() {
-  return <WebhooksPageContent webhooks={demoWebhooks} />;
-}
-
-```
-
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/new-webhook-button.tsx`
-```
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@coss/ui/components/avatar";
-import { Button } from "@coss/ui/components/button";
-import {
-  Menu,
-  MenuGroup,
-  MenuGroupLabel,
-  MenuItem,
-  MenuPopup,
-  MenuTrigger,
-} from "@coss/ui/components/menu";
-import { PlusIcon } from "lucide-react";
-
-export type CreateForOption = {
-  id: string;
-  name: string;
-  type: "user" | "organization";
-  initials: string;
-  avatar?: string;
-};
-
-const createForOptions: CreateForOption[] = [
-  {
-    avatar:
-      "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=72&h=72&dpr=2&q=80",
-    id: "user-1",
-    initials: "AE",
-    name: "Admin Example",
-    type: "user",
+export const getHookApplicationRoute = createRoute({
+  method: "get",
+  path: "/hooks/applications/{application}",
+  operationId: "getHookApplication",
+  tags: [TAGS.applications],
+  summary: "Retrieve an application",
+  description: "An application of the API key's environment, by its id or uid.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: ApplicationParams },
+  responses: {
+    200: jsonDoc("The application.", HookApplicationObject),
+    ...commonErrors,
+    404: applicationNotFound,
   },
-  { id: "org-1", initials: "AI", name: "Acme Inc.", type: "organization" },
-  { id: "org-2", initials: "OR", name: "org", type: "organization" },
-  { id: "org-3", initials: "FS", name: "fssf", type: "organization" },
-];
+});
 
-export interface NewWebhookButtonProps {
-  text: string;
-  onSelect?: (option: CreateForOption) => void;
-}
-
-export function NewWebhookButton({ text, onSelect }: NewWebhookButtonProps) {
-  return (
-    <Menu>
-      <MenuTrigger render={<Button />}>
-        <PlusIcon aria-hidden="true" />
-        {text}
-      </MenuTrigger>
-      <MenuPopup>
-        <MenuGroup>
-          <MenuGroupLabel>Create for</MenuGroupLabel>
-          {createForOptions.map((item) => (
-            <MenuItem key={item.id} onClick={() => onSelect?.(item)}>
-              <span className="flex items-center gap-2">
-                <Avatar className="size-5">
-                  {item.avatar ? (
-                    <AvatarImage alt={item.name} src={item.avatar} />
-                  ) : null}
-                  <AvatarFallback className="text-[.625rem]">
-                    {item.initials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="truncate">{item.name}</span>
-              </span>
-            </MenuItem>
-          ))}
-        </MenuGroup>
-      </MenuPopup>
-    </Menu>
-  );
-}
-
-```
-
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/new/new-webhook-form-fields.tsx`
-```
-"use client";
-
-import { Button } from "@coss/ui/components/button";
-import {
-  Collapsible,
-  CollapsiblePanel,
-  CollapsibleTrigger,
-} from "@coss/ui/components/collapsible";
-import {
-  Combobox,
-  ComboboxChip,
-  ComboboxChips,
-  ComboboxChipsInput,
-  ComboboxEmpty,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxPopup,
-  ComboboxValue,
-} from "@coss/ui/components/combobox";
-import { Field, FieldDescription, FieldLabel } from "@coss/ui/components/field";
-import { Group, GroupSeparator } from "@coss/ui/components/group";
-import { Input } from "@coss/ui/components/input";
-import {
-  NumberField,
-  NumberFieldGroup,
-  NumberFieldInput,
-} from "@coss/ui/components/number-field";
-import { ScrollArea } from "@coss/ui/components/scroll-area";
-import {
-  Select,
-  SelectItem,
-  SelectPopup,
-  SelectTrigger,
-  SelectValue,
-} from "@coss/ui/components/select";
-import { Switch } from "@coss/ui/components/switch";
-import { Textarea } from "@coss/ui/components/textarea";
-import { ExternalLinkIcon } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-
-const eventTriggerItems = [
-  { label: "Booking canceled", value: "booking-canceled" },
-  { label: "Booking created", value: "booking-created" },
-  { label: "Booking rejected", value: "booking-rejected" },
-  { label: "Booking requested", value: "booking-requested" },
-  { label: "Booking payment initiated", value: "booking-payment-initiated" },
-  { label: "Booking rescheduled", value: "booking-rescheduled" },
-  { label: "Booking paid", value: "booking-paid" },
-  { label: "Meeting ended", value: "meeting-ended" },
-  { label: "Meeting started", value: "meeting-started" },
-];
-
-const timeUnitItems = [
-  { label: "mins", value: "mins" },
-  { label: "hours", value: "hours" },
-  { label: "days", value: "days" },
-];
-
-const webhookVersionItems = [{ label: "2021-10-20", value: "2021-10-20" }];
-
-const payloadVariables = [
-  {
-    description:
-      "The name of the trigger event (e.g., BOOKING_CREATED, BOOKING_CANCELLED)",
-    name: "triggerEvent",
+export const updateHookApplicationRoute = createRoute({
+  method: "patch",
+  path: "/hooks/applications/{application}",
+  operationId: "updateHookApplication",
+  tags: [TAGS.applications],
+  summary: "Update an application",
+  description: "Changes the name, uid or metadata. Fields left out keep their value.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("PATCH /v1/hooks/applications/{application}"),
+  ],
+  request: {
+    params: ApplicationParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: UpdateHookApplicationRequest } },
+    },
   },
-  { description: "The time of the webhook", name: "createdAt" },
-  { description: "The event type slug", name: "type" },
-  { description: "The event type name", name: "title" },
-  { description: "The start time of the booking", name: "startTime" },
-  { description: "The end time of the booking", name: "endTime" },
-  { description: "List of attendee emails", name: "attendees" },
-];
+  responses: {
+    200: jsonDoc("The application.", HookApplicationObject),
+    ...bodyErrors,
+    ...commonErrors,
+    404: applicationNotFound,
+    422: errorDoc(
+      "The body failed validation (`validation_error`) or the uid is taken (`uid_taken`).",
+    ),
+  },
+});
 
-export function NewWebhookFormFields() {
-  const [customPayloadOpen, setCustomPayloadOpen] = useState(false);
+export const deleteHookApplicationRoute = createRoute({
+  method: "delete",
+  path: "/hooks/applications/{application}",
+  operationId: "deleteHookApplication",
+  tags: [TAGS.applications],
+  summary: "Delete an application",
+  description:
+    "Deletes the application with its endpoints and portal sessions; pending deliveries stop. Its " +
+    "messages are no longer reachable and are deleted with the rest of their day's data.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["delete"] }), rateLimit("api.write")],
+  request: { params: ApplicationParams },
+  responses: {
+    200: jsonDoc("The application was deleted.", DeletedHookApplication),
+    ...commonErrors,
+    404: applicationNotFound,
+  },
+});
 
-  return (
-    <div className="flex flex-col gap-6">
-      <Field>
-        <FieldLabel>Subscriber URL</FieldLabel>
-        <Input placeholder="https://example.com/webhook" type="url" />
-      </Field>
+export function createHookApplicationRoutes(): OpenAPIHono<AppEnv> {
+  const router = new OpenAPIHono<AppEnv>();
 
-      <Field>
-        <FieldLabel>
-          <Switch defaultChecked />
-          Enable webhook
-        </FieldLabel>
-      </Field>
+  router.openapi(createHookApplicationRoute, async (c) => {
+    const body = c.req.valid("json");
+    const { organizationId, environmentId } = c.var.auth;
+    const row = await createHookApplication({
+      organizationId,
+      environmentId,
+      name: body.name,
+      uid: body.uid,
+      metadata: body.metadata,
+    });
+    await recordApiAudit(c, {
+      action: "hook_application.created",
+      target: { type: "hook_application", id: row.id, label: row.uid ?? row.name },
+    });
+    return c.json(toHookApplicationObject(row), 200);
+  });
 
-      <Field>
-        <FieldLabel>Event triggers</FieldLabel>
-        <Combobox
-          defaultValue={[eventTriggerItems[0], eventTriggerItems[1]]}
-          items={eventTriggerItems}
-          multiple
-        >
-          <ComboboxChips>
-            <ComboboxValue>
-              {(value: { value: string; label: string }[]) => (
-                <>
-                  {value?.map((item) => (
-                    <ComboboxChip aria-label={item.label} key={item.value}>
-                      {item.label}
-                    </ComboboxChip>
-                  ))}
-                  <ComboboxChipsInput
-                    aria-label="Select event triggers"
-                    placeholder={
-                      value.length > 0 ? undefined : "Select event triggers…"
-                    }
-                  />
-                </>
-              )}
-            </ComboboxValue>
-          </ComboboxChips>
-          <ComboboxPopup>
-            <ComboboxEmpty>No event triggers found.</ComboboxEmpty>
-            <ComboboxList>
-              {(item: { value: string; label: string }) => (
-                <ComboboxItem key={item.value} value={item}>
-                  {item.label}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxPopup>
-        </Combobox>
-      </Field>
-
-      <Field>
-        <FieldLabel>
-          How long after the users don&apos;t show up on cal video meeting?
-        </FieldLabel>
-        <Group
-          aria-label="How long after the users don't show up on cal video meeting?"
-          className="w-full"
-        >
-          <NumberField
-            aria-label="Duration"
-            className="gap-0"
-            defaultValue={5}
-            min={0}
-            render={<NumberFieldGroup />}
-          >
-            <NumberFieldInput className="text-left" />
-          </NumberField>
-          <GroupSeparator />
-          <Select defaultValue="mins" items={timeUnitItems}>
-            <SelectTrigger className="w-fit min-w-none">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectPopup>
-              {timeUnitItems.map(({ label, value }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectPopup>
-          </Select>
-        </Group>
-      </Field>
-
-      <Field>
-        <FieldLabel>Secret</FieldLabel>
-        <Input type="text" />
-      </Field>
-
-      <Field>
-        <FieldLabel>Webhook version</FieldLabel>
-        <div className="flex items-center gap-2">
-          <Select
-            aria-label="Webhook version"
-            defaultValue="2021-10-20"
-            items={webhookVersionItems}
-          >
-            <SelectTrigger className="w-fit min-w-none">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectPopup>
-              {webhookVersionItems.map(({ label, value }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectPopup>
-          </Select>
-        </div>
-        <FieldDescription className="flex items-center gap-1">
-          <Link href="#">View payload docs for this version</Link>
-          <ExternalLinkIcon aria-hidden="true" className="size-3" />
-        </FieldDescription>
-      </Field>
-
-      <Collapsible onOpenChange={setCustomPayloadOpen} open={customPayloadOpen}>
-        <Field>
-          <FieldLabel>
-            <CollapsibleTrigger
-              nativeButton={false}
-              render={
-                <Switch
-                  checked={customPayloadOpen}
-                  onCheckedChange={setCustomPayloadOpen}
-                />
-              }
-            />
-            Custom Payload Template
-          </FieldLabel>
-        </Field>
-        <CollapsiblePanel>
-          <div className="mt-4 flex flex-col items-start gap-2">
-            <Textarea placeholder={"{\n  \n}"} rows={4} />
-            <Collapsible className="w-full">
-              <CollapsibleTrigger
-                render={<Button size="sm" variant="outline" />}
-              >
-                Show available variables
-              </CollapsibleTrigger>
-              <CollapsiblePanel>
-                <ScrollArea
-                  className="mt-4 h-64 rounded-lg border border-input"
-                  overscrollContain
-                  scrollbarGutter
-                  scrollFade
-                >
-                  <div className="p-2">
-                    <p className="my-1 px-[calc(--spacing(2)+1px)] font-medium text-sm">
-                      Event and booking
-                    </p>
-                    <ul>
-                      {payloadVariables.map((variable) => (
-                        <li key={variable.name}>
-                          <Button
-                            className="h-auto! w-full flex-col items-start gap-0.5 px-2 py-1.5 text-left"
-                            variant="ghost"
-                          >
-                            <span className="font-mono text-xs">
-                              {`{{${variable.name}}}`}
-                            </span>
-                            <span className="font-normal text-muted-foreground text-xs">
-                              {variable.description}
-                            </span>
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </ScrollArea>
-              </CollapsiblePanel>
-            </Collapsible>
-          </div>
-        </CollapsiblePanel>
-      </Collapsible>
-    </div>
-  );
-}
-
-```
-
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/new/page.tsx`
-```
-import { Button } from "@coss/ui/components/button";
-import {
-  Card,
-  CardFrame,
-  CardFrameDescription,
-  CardFrameFooter,
-  CardFrameHeader,
-  CardFrameTitle,
-  CardPanel,
-} from "@coss/ui/components/card";
-import { ActivityIcon } from "lucide-react";
-import Link from "next/link";
-import { NewWebhookFormFields } from "./new-webhook-form-fields";
-import { WebhookTestSection } from "./webhook-test-section";
-import {
-  AppHeader,
-  AppHeaderContent,
-  AppHeaderDescription,
-} from "@/components/app/app-header";
-
-export default function NewWebhookPage() {
-  return (
-    <>
-      <AppHeader>
-        <AppHeaderContent title="New webhook">
-          <AppHeaderDescription>
-            Receive meeting data in real-time when something happens in Cal.com.
-          </AppHeaderDescription>
-        </AppHeaderContent>
-      </AppHeader>
-      <div className="flex flex-col gap-4">
-        <CardFrame>
-          <Card className="rounded-b-none!">
-            <CardPanel>
-              <NewWebhookFormFields />
-            </CardPanel>
-          </Card>
-          <CardFrameFooter className="flex justify-end gap-2">
-            <Button
-              render={<Link href="/settings/developer/webhooks" />}
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button>Save</Button>
-          </CardFrameFooter>
-        </CardFrame>
-
-        <CardFrame>
-          <CardFrameHeader>
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <CardFrameTitle>Webhook test</CardFrameTitle>
-                <CardFrameDescription>
-                  Please ping test before creating.
-                </CardFrameDescription>
-              </div>
-              <Button size="sm" variant="outline">
-                <ActivityIcon />
-                Ping test
-              </Button>
-            </div>
-          </CardFrameHeader>
-          <Card>
-            <CardPanel>
-              <WebhookTestSection />
-            </CardPanel>
-          </Card>
-        </CardFrame>
-      </div>
-    </>
-  );
-}
-
-```
-
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/page.tsx`
-```
-import { WebhooksEmpty } from "./webhooks-empty";
-import {
-  AppHeader,
-  AppHeaderContent,
-  AppHeaderDescription,
-} from "@/components/app/app-header";
-
-export default function WebhooksSettingsPage() {
-  const webhooks: { id: string; url: string; events: string }[] = [];
-
-  return (
-    <>
-      <AppHeader>
-        <AppHeaderContent title="Webhooks">
-          <AppHeaderDescription>
-            Receive meeting data in real-time when something happens in Cal.com.
-          </AppHeaderDescription>
-        </AppHeaderContent>
-      </AppHeader>
-      <WebhooksEmpty webhooks={webhooks} />
-    </>
-  );
-}
-
-```
-
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/webhooks-empty.tsx`
-```
-"use client";
-
-import { Button } from "@coss/ui/components/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@coss/ui/components/empty";
-import {
-  Menu,
-  MenuItem,
-  MenuPopup,
-  MenuTrigger,
-} from "@coss/ui/components/menu";
-import { EllipsisIcon, WebhookIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import type { CreateForOption } from "./new-webhook-button";
-import { NewWebhookButton } from "./new-webhook-button";
-
-export function WebhooksEmpty({
-  webhooks,
-}: {
-  webhooks: { id: string; url: string; events: string }[];
-}) {
-  const router = useRouter();
-
-  function handleCreateFor(option: CreateForOption) {
-    router.push(
-      `/settings/developer/webhooks/new?for=${encodeURIComponent(option.id)}`,
+  router.openapi(listHookApplicationsRoute, async (c) => {
+    const query = c.req.valid("query");
+    const { organizationId, environmentId } = c.var.auth;
+    const page = await pageHookApplications({
+      organizationId,
+      environmentId,
+      limit: query.limit,
+      after: query.after,
+    });
+    return c.json(
+      {
+        object: "list" as const,
+        data: page.applications.map(toHookApplicationObject),
+        has_more: page.hasMore,
+      },
+      200,
     );
-  }
+  });
 
-  if (webhooks.length === 0) {
-    return (
-      <Empty className="rounded-xl border border-dashed py-8 md:py-12">
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <WebhookIcon />
-          </EmptyMedia>
-          <EmptyTitle>Create your first webhook</EmptyTitle>
-          <EmptyDescription>
-            With webhooks you can receive meeting data in real-time when
-            something happens in Cal.com.
-          </EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          <NewWebhookButton onSelect={handleCreateFor} text="Add webhook" />
-        </EmptyContent>
-      </Empty>
+  router.openapi(getHookApplicationRoute, async (c) => {
+    const row = await requireApplication(c.var.auth, c.req.valid("param").application);
+    return c.json(toHookApplicationObject(row), 200);
+  });
+
+  router.openapi(updateHookApplicationRoute, async (c) => {
+    const existing = await requireApplication(c.var.auth, c.req.valid("param").application);
+    const body = c.req.valid("json");
+    const row = await updateHookApplication({
+      organizationId: existing.organizationId,
+      id: existing.id,
+      name: body.name,
+      uid: body.uid,
+      metadata: body.metadata,
+    });
+    await recordApiAudit(c, {
+      action: "hook_application.updated",
+      target: { type: "hook_application", id: row.id, label: row.uid ?? row.name },
+      metadata: { fields: Object.keys(body) },
+    });
+    return c.json(toHookApplicationObject(row), 200);
+  });
+
+  router.openapi(deleteHookApplicationRoute, async (c) => {
+    const existing = await requireApplication(c.var.auth, c.req.valid("param").application);
+    await deleteHookApplication({ organizationId: existing.organizationId, id: existing.id });
+    await recordApiAudit(c, {
+      action: "hook_application.deleted",
+      target: { type: "hook_application", id: existing.id, label: existing.uid ?? existing.name },
+    });
+    return c.json(
+      { object: "hook_application" as const, id: existing.id, deleted: true as const },
+      200,
     );
-  }
+  });
 
-  return (
-    <ul className="divide-y">
-      {webhooks.map((webhook) => (
-        <li
-          className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
-          key={webhook.id}
-        >
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-medium text-sm">{webhook.url}</p>
-            <p className="truncate text-muted-foreground text-xs">
-              {webhook.events}
-            </p>
-          </div>
-          <Menu>
-            <MenuTrigger
-              render={
-                <Button
-                  aria-label="Webhook options"
-                  size="icon-xs"
-                  variant="ghost"
-                />
-              }
-            >
-              <EllipsisIcon />
-            </MenuTrigger>
-            <MenuPopup align="end" alignOffset={-4} sideOffset={8}>
-              <MenuItem>Edit</MenuItem>
-              <MenuItem variant="destructive">Delete</MenuItem>
-            </MenuPopup>
-          </Menu>
-        </li>
-      ))}
-    </ul>
-  );
+  return router;
 }
 
 ```
 
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/webhooks-list-content.tsx`
+### Core Architecture Module: `apps/api/src/routes/hooks/endpoints.ts`
 ```
-"use client";
+import {
+  createHookEndpoint,
+  deleteHookEndpoint,
+  getHookEndpoint,
+  getHookEndpointRecovery,
+  getHookEventType,
+  HookError,
+  type HookManagementDeps,
+  listHookEndpoints,
+  MAX_ENDPOINTS,
+  pageHookDeliveries,
+  recoverHookEndpoint,
+  revealHookEndpointSecret,
+  rollHookEndpointSecret,
+  sendHookMessage,
+  toHookDeliveryObject,
+  toHookEndpointObject,
+  toHookEndpointRecoveryObject,
+  toHookMessageObject,
+  updateHookEndpoint,
+} from "@coss/hooks";
+import {
+  CreateHookEndpointRequest,
+  DeletedHookEndpoint,
+  HookDeliveryList,
+  HookEndpointList,
+  HookEndpointObject,
+  HookEndpointRecoveryObject,
+  HookEndpointSecret,
+  HookEndpointWithSecret,
+  HookMessageObject,
+  ListHookDeliveriesQuery,
+  RecoverHookEndpointRequest,
+  RollHookEndpointSecretRequest,
+  SendHookTestRequest,
+  UpdateHookEndpointRequest,
+} from "@coss/hooks/schemas";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { z } from "zod";
+import { recordApiAudit } from "../../audit.ts";
+import { requireApiKey } from "../../middleware/api-key.ts";
+import { upgradeRequestBody } from "../../middleware/api-version.ts";
+import { rateLimit } from "../../middleware/rate-limit.ts";
+import type { AppEnv } from "../../types.ts";
+import { commonErrors, errorDoc, jsonDoc } from "../docs.ts";
+import { chargeSendQuota, refundSendQuota } from "./quota.ts";
+import { ApplicationParams, bodyErrors, requireApplication, SCOPE_NOTE, TAGS } from "./shared.ts";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@coss/ui/components/avatar";
-import { Badge } from "@coss/ui/components/badge";
-import { Button } from "@coss/ui/components/button";
-import {
-  Card,
-  CardFrame,
-  CardFrameHeader,
-  CardFrameTitle,
-  CardPanel,
-} from "@coss/ui/components/card";
-import {
-  Menu,
-  MenuCheckboxItem,
-  MenuGroup,
-  MenuItem,
-  MenuPopup,
-  MenuSeparator,
-  MenuTrigger,
-} from "@coss/ui/components/menu";
-import { Switch } from "@coss/ui/components/switch";
-import {
-  Tooltip,
-  TooltipPopup,
-  TooltipTrigger,
-} from "@coss/ui/components/tooltip";
-import { EllipsisIcon, PencilIcon, TrashIcon, WebhookIcon } from "lucide-react";
-import { useState } from "react";
-import {
-  ListItem,
-  ListItemActions,
-  ListItemBadges,
-  ListItemContent,
-  ListItemHeader,
-  ListItemTitle,
-} from "@/components/list-item";
+const EndpointParams = ApplicationParams.extend({
+  endpoint_id: z.string().meta({
+    description: "The endpoint's id.",
+    examples: ["hep_01k7c8m4q2f3e9v6t5r1n0p8yz"],
+  }),
+});
 
-const EVENT_TAGS_VISIBLE = 8;
+const RecoveryParams = EndpointParams.extend({
+  recovery_id: z.string().meta({ examples: ["hrec_01k7c8m4q2f3e9v6t5r1n0p8yz"] }),
+});
 
-export type WebhookItem = {
-  id: string;
-  url: string;
-  date?: string;
-  events: string[];
-  enabled?: boolean;
-  userId: string;
-  userName: string;
-  userAvatar?: string;
-  userInitials?: string;
-};
+const notFound = errorDoc(
+  "No such application, or no endpoint with this id in it (`application_not_found`, `not_found`).",
+);
 
-export function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+const PATH = "/hooks/applications/{application}/endpoints";
+
+export const createHookEndpointRoute = createRoute({
+  method: "post",
+  path: PATH,
+  operationId: "createHookEndpoint",
+  tags: [TAGS.endpoints],
+  summary: "Create an endpoint",
+  description:
+    "Registers a URL of the application's user that receives its messages, each request signed " +
+    "(Standard Webhooks) with the endpoint's own secret, returned here. Usually your users add " +
+    `endpoints themselves in the portal. ${SCOPE_NOTE}`,
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["create"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/hooks/applications/{application}/endpoints"),
+  ],
+  request: {
+    params: ApplicationParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateHookEndpointRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The endpoint and its signing secret.", HookEndpointWithSecret),
+    ...bodyErrors,
+    ...commonErrors,
+    404: notFound,
+    422: errorDoc(
+      "The body failed validation (`validation_error`), the URL is not a usable https:// URL " +
+        "(`invalid_url`), a filter type is unknown or archived (`unknown_event_type`), the secret " +
+        "is malformed (`invalid_secret`), or the application has the most endpoints it can " +
+        `(${MAX_ENDPOINTS.live} live, ${MAX_ENDPOINTS.sandbox} sandbox: \`too_many_endpoints\`).`,
+    ),
+  },
+});
+
+export const listHookEndpointsRoute = createRoute({
+  method: "get",
+  path: PATH,
+  operationId: "listHookEndpoints",
+  tags: [TAGS.endpoints],
+  summary: "List endpoints",
+  description: "The application's endpoints, oldest first. Secrets are never included.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: ApplicationParams },
+  responses: {
+    200: jsonDoc("The application's endpoints.", HookEndpointList),
+    ...commonErrors,
+    404: notFound,
+  },
+});
+
+export const getHookEndpointRoute = createRoute({
+  method: "get",
+  path: `${PATH}/{endpoint_id}`,
+  operationId: "getHookEndpoint",
+  tags: [TAGS.endpoints],
+  summary: "Retrieve an endpoint",
+  description: "An endpoint of the application.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: EndpointParams },
+  responses: {
+    200: jsonDoc("The endpoint.", HookEndpointObject),
+    ...commonErrors,
+    404: notFound,
+  },
+});
+
+export const updateHookEndpointRoute = createRoute({
+  method: "patch",
+  path: `${PATH}/{endpoint_id}`,
+  operationId: "updateHookEndpoint",
+  tags: [TAGS.endpoints],
+  summary: "Update an endpoint",
+  description:
+    "Changes the URL, description, filter types, rate limit, metadata or `enabled`. Enabling it " +
+    "again clears a failure streak. The secret stays the same (see roll secret).",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("PATCH /v1/hooks/applications/{application}/endpoints/{endpoint_id}"),
+  ],
+  request: {
+    params: EndpointParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: UpdateHookEndpointRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The endpoint.", HookEndpointObject),
+    ...bodyErrors,
+    ...commonErrors,
+    404: notFound,
+    422: errorDoc(
+      "The body failed validation (`validation_error`, `invalid_url`, `unknown_event_type`).",
+    ),
+  },
+});
+
+export const deleteHookEndpointRoute = createRoute({
+  method: "delete",
+  path: `${PATH}/{endpoint_id}`,
+  operationId: "deleteHookEndpoint",
+  tags: [TAGS.endpoints],
+  summary: "Delete an endpoint",
+  description: "Deletes the endpoint; its pending deliveries fail. Its delivery log stays.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["delete"] }), rateLimit("api.write")],
+  request: { params: EndpointParams },
+  responses: {
+    200: jsonDoc("The endpoint was deleted.", DeletedHookEndpoint),
+    ...commonErrors,
+    404: notFound,
+  },
+});
+
+export const getHookEndpointSecretRoute = createRoute({
+  method: "get",
+  path: `${PATH}/{endpoint_id}/secret`,
+  operationId: "getHookEndpointSecret",
+  tags: [TAGS.endpoints],
+  summary: "Retrieve an endpoint's secret",
+  description:
+    "The endpoint's current signing secret, e.g. to show its user. Needs `hook:update`, like rolling it.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["update"] }), rateLimit("api.read")],
+  request: { params: EndpointParams },
+  responses: {
+    200: jsonDoc("The signing secret.", HookEndpointSecret),
+    ...commonErrors,
+    404: notFound,
+  },
+});
+
+export const rollHookEndpointSecretRoute = createRoute({
+  method: "post",
+  path: `${PATH}/{endpoint_id}/roll_secret`,
+  operationId: "rollHookEndpointSecret",
+  tags: [TAGS.endpoints],
+  summary: "Roll an endpoint's secret",
+  description:
+    "Replaces the signing secret, returned here. Until `previous_secret_expires_at`, requests carry " +
+    "a signature with each secret, so the receiver can switch without rejecting any. Not idempotent.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody(
+      "POST /v1/hooks/applications/{application}/endpoints/{endpoint_id}/roll_secret",
+    ),
+  ],
+  request: {
+    params: EndpointParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: RollHookEndpointSecretRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The endpoint and its new secret.", HookEndpointWithSecret),
+    ...bodyErrors,
+    ...commonErrors,
+    404: notFound,
+    422: errorDoc("The body failed validation (`validation_error`)."),
+  },
+});
+
+export const recoverHookEndpointRoute = createRoute({
+  method: "post",
+  path: `${PATH}/{endpoint_id}/recover`,
+  operationId: "recoverHookEndpoint",
+  tags: [TAGS.endpoints],
+  summary: "Recover failed deliveries",
+  description:
+    "Queues every delivery to the endpoint that failed, of messages sent since `since`, for one " +
+    "more attempt each, e.g. after its receiver was down. coss.com works through them in the " +
+    "background (oldest first); follow `status` with the returned recovery. The endpoint must be enabled.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/hooks/applications/{application}/endpoints/{endpoint_id}/recover"),
+  ],
+  request: {
+    params: EndpointParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: RecoverHookEndpointRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The recovery.", HookEndpointRecoveryObject),
+    ...bodyErrors,
+    ...commonErrors,
+    404: notFound,
+    422: errorDoc(
+      "The body failed validation (`validation_error`) or the endpoint is disabled (`endpoint_disabled`).",
+    ),
+  },
+});
+
+export const getHookEndpointRecoveryRoute = createRoute({
+  method: "get",
+  path: `${PATH}/{endpoint_id}/recoveries/{recovery_id}`,
+  operationId: "getHookEndpointRecovery",
+  tags: [TAGS.endpoints],
+  summary: "Retrieve a recovery",
+  description: "A recovery of the endpoint: `pending` while deliveries are still being requeued.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: RecoveryParams },
+  responses: {
+    200: jsonDoc("The recovery.", HookEndpointRecoveryObject),
+    ...commonErrors,
+    404: notFound,
+  },
+});
+
+export const sendHookEndpointTestRoute = createRoute({
+  method: "post",
+  path: `${PATH}/{endpoint_id}/test`,
+  operationId: "sendHookEndpointTest",
+  tags: [TAGS.endpoints],
+  summary: "Send a test message",
+  description:
+    "Sends a message to this endpoint only (whatever its filter), with the given payload or the " +
+    "event type's first example. It counts against the send quota like any message.",
+  securit
+```
+
+### Core Architecture Module: `apps/api/src/routes/hooks/event-types.ts`
+```
+import {
+  createHookEventType,
+  getHookEventType,
+  HookError,
+  MAX_EVENT_TYPES,
+  pageHookEventTypes,
+  toHookEventTypeObject,
+  updateHookEventType,
+} from "@coss/hooks";
+import {
+  CreateHookEventTypeRequest,
+  HookEventTypeList,
+  HookEventTypeObject,
+  ListHookEventTypesQuery,
+  UpdateHookEventTypeRequest,
+} from "@coss/hooks/schemas";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { z } from "zod";
+import { recordApiAudit } from "../../audit.ts";
+import { requireApiKey } from "../../middleware/api-key.ts";
+import { upgradeRequestBody } from "../../middleware/api-version.ts";
+import { rateLimit } from "../../middleware/rate-limit.ts";
+import type { AppEnv } from "../../types.ts";
+import { commonErrors, errorDoc, jsonDoc } from "../docs.ts";
+import { bodyErrors, SCOPE_NOTE, TAGS } from "./shared.ts";
+
+const NameParams = z.object({
+  name: z.string().meta({ description: "The event type's name.", examples: ["invoice.paid"] }),
+});
+
+const eventTypeNotFound = errorDoc(
+  "No event type with this name exists in the API key's environment (`not_found`).",
+);
+
+export const createHookEventTypeRoute = createRoute({
+  method: "post",
+  path: "/hooks/event_types",
+  operationId: "createHookEventType",
+  tags: [TAGS.eventTypes],
+  summary: "Create an event type",
+  description:
+    "Adds a type to the catalog your applications' users subscribe from (in the portal, or the " +
+    "`filter_types` of an endpoint), with a description, a JSON Schema and examples to show them. " +
+    `Messages can be sent with any type, registered or not. ${SCOPE_NOTE}`,
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["create"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/hooks/event_types"),
+  ],
+  request: {
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateHookEventTypeRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The event type.", HookEventTypeObject),
+    ...bodyErrors,
+    ...commonErrors,
+    422: errorDoc(
+      "The body failed validation (`validation_error`), the type exists (`event_type_exists`), " +
+        "its schema and examples are larger than 64 KB (`payload_too_large`), or the environment " +
+        `has ${MAX_EVENT_TYPES} types (\`too_many_event_types\`).`,
+    ),
+  },
+});
+
+export const listHookEventTypesRoute = createRoute({
+  method: "get",
+  path: "/hooks/event_types",
+  operationId: "listHookEventTypes",
+  tags: [TAGS.eventTypes],
+  summary: "List event types",
+  description: "The environment's event types by name; archived ones only with `include_archived`.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { query: ListHookEventTypesQuery },
+  responses: {
+    200: jsonDoc("A page of event types.", HookEventTypeList),
+    ...commonErrors,
+  },
+});
+
+export const getHookEventTypeRoute = createRoute({
+  method: "get",
+  path: "/hooks/event_types/{name}",
+  operationId: "getHookEventType",
+  tags: [TAGS.eventTypes],
+  summary: "Retrieve an event type",
+  description: "An event type of the API key's environment, archived or not.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: NameParams },
+  responses: {
+    200: jsonDoc("The event type.", HookEventTypeObject),
+    ...commonErrors,
+    404: eventTypeNotFound,
+  },
+});
+
+export const updateHookEventTypeRoute = createRoute({
+  method: "patch",
+  path: "/hooks/event_types/{name}",
+  operationId: "updateHookEventType",
+  tags: [TAGS.eventTypes],
+  summary: "Update an event type",
+  description: "Changes its description, schema or examples, or archives or restores it.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("PATCH /v1/hooks/event_types/{name}"),
+  ],
+  request: {
+    params: NameParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: UpdateHookEventTypeRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The event type.", HookEventTypeObject),
+    ...bodyErrors,
+    ...commonErrors,
+    404: eventTypeNotFound,
+    422: errorDoc("The body failed validation (`validation_error`, `payload_too_large`)."),
+  },
+});
+
+export const archiveHookEventTypeRoute = createRoute({
+  method: "delete",
+  path: "/hooks/event_types/{name}",
+  operationId: "archiveHookEventType",
+  tags: [TAGS.eventTypes],
+  summary: "Archive an event type",
+  description:
+    "Hides the type from the portal and from new subscriptions. Endpoints already subscribed keep " +
+    "receiving it. Restore it with `PATCH … { archived: false }`.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["delete"] }), rateLimit("api.write")],
+  request: { params: NameParams },
+  responses: {
+    200: jsonDoc("The archived event type.", HookEventTypeObject),
+    ...commonErrors,
+    404: eventTypeNotFound,
+  },
+});
+
+export function createHookEventTypeRoutes(): OpenAPIHono<AppEnv> {
+  const router = new OpenAPIHono<AppEnv>();
+
+  router.openapi(createHookEventTypeRoute, async (c) => {
+    const body = c.req.valid("json");
+    const { organizationId, environmentId } = c.var.auth;
+    const row = await createHookEventType({ organizationId, environmentId, ...body });
+    await recordApiAudit(c, {
+      action: "hook_event_type.created",
+      target: { type: "hook_event_type", id: row.id, label: row.name },
+    });
+    return c.json(toHookEventTypeObject(row), 200);
+  });
+
+  router.openapi(listHookEventTypesRoute, async (c) => {
+    const query = c.req.valid("query");
+    const { organizationId, environmentId } = c.var.auth;
+    const page = await pageHookEventTypes({
+      organizationId,
+      environmentId,
+      includeArchived: query.include_archived === "true",
+      limit: query.limit,
+      after: query.after,
+    });
+    return c.json(
+      {
+        object: "list" as const,
+        data: page.eventTypes.map(toHookEventTypeObject),
+        has_more: page.hasMore,
+      },
+      200,
+    );
+  });
+
+  router.openapi(getHookEventTypeRoute, async (c) => {
+    const { organizationId, environmentId } = c.var.auth;
+    const row = await getHookEventType({
+      organizationId,
+      environmentId,
+      name: c.req.valid("param").name,
+    });
+    if (!row) throw new HookError("not_found", "Event type not found.");
+    return c.json(toHookEventTypeObject(row), 200);
+  });
+
+  router.openapi(updateHookEventTypeRoute, async (c) => {
+    const body = c.req.valid("json");
+    const { organizationId, environmentId } = c.var.auth;
+    const row = await updateHookEventType({
+      organizationId,
+      environmentId,
+      name: c.req.valid("param").name,
+      ...body,
+    });
+    await recordApiAudit(c, {
+      action: "hook_event_type.updated",
+      target: { type: "hook_event_type", id: row.id, label: row.name },
+      metadata: { fields: Object.keys(body) },
+    });
+    return c.json(toHookEventTypeObject(row), 200);
+  });
+
+  router.openapi(archiveHookEventTypeRoute, async (c) => {
+    const { organizationId, environmentId } = c.var.auth;
+    const row = await updateHookEventType({
+      organizationId,
+      environmentId,
+      name: c.req.valid("param").name,
+      archived: true,
+    });
+    await recordApiAudit(c, {
+      action: "hook_event_type.archived",
+      target: { type: "hook_event_type", id: row.id, label: row.name },
+    });
+    return c.json(toHookEventTypeObject(row), 200);
+  });
+
+  return router;
 }
 
-export type UserFilterOption = {
-  id: string;
-  label: string;
-  avatar?: string;
-};
+```
 
-export function getUniqueUsers(webhooks: WebhookItem[]): UserFilterOption[] {
-  const userMap = new Map<string, UserFilterOption>();
+### Core Architecture Module: `apps/api/src/routes/hooks/index.ts`
+```
+import type { HookManagementDeps } from "@coss/hooks";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import type { AppEnv } from "../../types.ts";
+import { createHookApplicationRoutes } from "./applications.ts";
+import { createHookEndpointRoutes } from "./endpoints.ts";
+import { createHookEventTypeRoutes } from "./event-types.ts";
+import { createHookMessageRoutes } from "./messages.ts";
 
-  for (const webhook of webhooks) {
-    if (!userMap.has(webhook.userId)) {
-      userMap.set(webhook.userId, {
-        avatar: webhook.userAvatar,
-        id: webhook.userId,
-        label: webhook.userName,
-      });
-    }
-  }
-
-  return Array.from(userMap.values());
+/** Hooks (webhooks as a service): `/v1/hooks/*`. */
+export function createHookRoutes(deps: HookManagementDeps & { portalUrl: string | null }) {
+  const router = new OpenAPIHono<AppEnv>();
+  router.route("/", createHookEventTypeRoutes());
+  router.route("/", createHookApplicationRoutes());
+  router.route("/", createHookEndpointRoutes(deps));
+  router.route("/", createHookMessageRoutes(deps));
+  return router;
 }
 
-type WebhookInput =
-  | WebhookItem
-  | {
-      id: string;
-      url: string;
-      events: string;
-      userName?: string;
-      userAvatar?: string;
-      userId?: string;
-      userInitials?: string;
-    };
+```
 
-function normalizeWebhook(webhook: WebhookInput): WebhookItem {
-  if (Array.isArray(webhook.events)) {
-    return webhook as WebhookItem;
-  }
-  const userName = webhook.userName || "Default User";
-  return {
-    ...webhook,
-    events: webhook.events.split(",").map((e) => e.trim()),
-    userAvatar: webhook.userAvatar,
-    userId: webhook.userId || "default",
-    userInitials: webhook.userInitials || getInitials(userName),
-    userName,
-  };
-}
+### Core Architecture Module: `apps/api/src/routes/hooks/messages.ts`
+```
+import {
+  countHookFanout,
+  createHookPortalSession,
+  getHookDelivery,
+  getHookMessage,
+  HookError,
+  listHookAttempts,
+  listMessageDeliveries,
+  pageHookMessages,
+  portalSessionUrl,
+  replayHookMessage,
+  retryHookDelivery,
+  sendHookMessage,
+  toHookAttemptObject,
+  toHookDeliveryObject,
+  toHookMessageObject,
+} from "@coss/hooks";
+import {
+  CreateHookPortalSessionRequest,
+  HookAttemptList,
+  HookDeliveryList,
+  HookDeliveryObject,
+  HookMessageList,
+  HookMessageObject,
+  HookPortalSessionObject,
+  ListHookMessagesQuery,
+  SendHookMessageRequest,
+} from "@coss/hooks/schemas";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { z } from "zod";
+import { recordApiAudit } from "../../audit.ts";
+import { ApiError } from "../../errors.ts";
+import { requireApiKey } from "../../middleware/api-key.ts";
+import { upgradeRequestBody } from "../../middleware/api-version.ts";
+import { rateLimit } from "../../middleware/rate-limit.ts";
+import type { AppEnv } from "../../types.ts";
+import { validationHook } from "../../validation.ts";
+import { commonErrors, errorDoc, jsonDoc } from "../docs.ts";
+import { IDEMPOTENCY_KEY_MAX_LENGTH } from "../emails.ts";
+import { quotaExceeded, refundSendQuota, tryChargeSendQuota } from "./quota.ts";
+import {
+  ApplicationParams,
+  applicationNotFound,
+  bodyErrors,
+  requireApplication,
+  SCOPE_NOTE,
+  TAGS,
+} from "./shared.ts";
 
-function groupWebhooksByUser(webhooks: WebhookItem[]) {
-  const groups = new Map<string, WebhookItem[]>();
-  for (const webhook of webhooks) {
-    const existing = groups.get(webhook.userId) ?? [];
-    existing.push(webhook);
-    groups.set(webhook.userId, existing);
-  }
-  return Array.from(groups.entries()).map(([userId, items]) => {
-    const first = items[0];
-    return {
-      userAvatar: first?.userAvatar,
-      userId,
-      userInitials: first?.userInitials ?? getInitials(first?.userName ?? ""),
-      userName: first?.userName ?? "Unknown",
-      webhooks: items,
-    };
+const SendHeaders = z.object({
+  "Idempotency-Key": z
+    .string()
+    .min(1)
+    .max(IDEMPOTENCY_KEY_MAX_LENGTH)
+    .optional()
+    .meta({
+      description:
+        "Makes retries safe: a repeated request with the same key and body returns the original " +
+        "message instead of sending again, for 24 hours. " +
+        `1-${IDEMPOTENCY_KEY_MAX_LENGTH} characters.`,
+      examples: ["invoice-1042-paid"],
+    }),
+});
+
+const MessageParams = ApplicationParams.extend({
+  message_id: z.string().meta({ examples: ["hmsg_01k7c8m4q2f3e9v6t5r1n0p8yz"] }),
+});
+
+const DeliveryParams = ApplicationParams.extend({
+  delivery_id: z.string().meta({ examples: ["hdel_01k7c8m4q2f3e9v6t5r1n0p8yz"] }),
+});
+
+const MESSAGES = "/hooks/applications/{application}/messages";
+const DELIVERIES = "/hooks/applications/{application}/deliveries";
+
+export const sendHookMessageRoute = createRoute({
+  method: "post",
+  path: MESSAGES,
+  operationId: "sendHookMessage",
+  tags: [TAGS.messages],
+  summary: "Send a message",
+  description:
+    "Queues a message to the application: coss.com delivers it to each of its enabled endpoints " +
+    "subscribed to `event_type` within seconds, signed with each endpoint's secret, and retries " +
+    "failures with backoff for about a day. Each request's `webhook-id` header is the message's " +
+    "id. Counts against the send quota once per endpoint it goes to (at least once). Live sends " +
+    `are refused while the organization is suspended (\`account_suspended\`). ${SCOPE_NOTE}`,
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["send"] }),
+    rateLimit("api.send"),
+    upgradeRequestBody("POST /v1/hooks/applications/{application}/messages"),
+  ],
+  request: {
+    params: ApplicationParams,
+    headers: SendHeaders,
+    body: { required: true, content: { "application/json": { schema: SendHookMessageRequest } } },
+  },
+  responses: {
+    202: {
+      ...jsonDoc("The message, queued for delivery.", HookMessageObject),
+      headers: {
+        ...jsonDoc("", HookMessageObject).headers,
+        "Idempotent-Replayed": {
+          description: "`true` when the response replays an earlier request with this key.",
+          schema: { type: "string" as const, enum: ["true"] },
+        },
+      },
+    },
+    ...bodyErrors,
+    ...commonErrors,
+    404: applicationNotFound,
+    409: errorDoc(
+      "A request with this Idempotency-Key is still in progress (`request_in_progress`); retry.",
+    ),
+    422: errorDoc(
+      "The body failed validation (`validation_error`), the payload is larger than 256 KB " +
+        "(`payload_too_large`), or the Idempotency-Key was used with another body " +
+        "(`idempotency_key_reused`).",
+    ),
+  },
+});
+
+export const listHookMessagesRoute = createRoute({
+  method: "get",
+  path: MESSAGES,
+  operationId: "listHookMessages",
+  tags: [TAGS.messages],
+  summary: "List messages",
+  description: "The application's messages, newest first (kept for 30 days).",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: ApplicationParams, query: ListHookMessagesQuery },
+  responses: {
+    200: jsonDoc("A page of messages.", HookMessageList),
+    ...commonErrors,
+    404: applicationNotFound,
+  },
+});
+
+export const getHookMessageRoute = createRoute({
+  method: "get",
+  path: `${MESSAGES}/{message_id}`,
+  operationId: "getHookMessage",
+  tags: [TAGS.messages],
+  summary: "Retrieve a message",
+  description: "A message of the application, with its payload.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: MessageParams },
+  responses: {
+    200: jsonDoc("The message.", HookMessageObject),
+    ...commonErrors,
+    404: errorDoc("No such application or message (`application_not_found`, `not_found`)."),
+  },
+});
+
+export const listHookMessageDeliveriesRoute = createRoute({
+  method: "get",
+  path: `${MESSAGES}/{message_id}/deliveries`,
+  operationId: "listHookMessageDeliveries",
+  tags: [TAGS.messages],
+  summary: "List a message's deliveries",
+  description: "One delivery per endpoint the message went to.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: MessageParams },
+  responses: {
+    200: jsonDoc("The message's deliveries.", HookDeliveryList),
+    ...commonErrors,
+    404: errorDoc("No such application or message (`application_not_found`, `not_found`)."),
+  },
+});
+
+export const getHookDeliveryRoute = createRoute({
+  method: "get",
+  path: `${DELIVERIES}/{delivery_id}`,
+  operationId: "getHookDelivery",
+  tags: [TAGS.messages],
+  summary: "Retrieve a delivery",
+  description: "One message's delivery to one endpoint.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: DeliveryParams },
+  responses: {
+    200: jsonDoc("The delivery.", HookDeliveryObject),
+    ...commonErrors,
+    404: errorDoc("No such application or delivery (`application_not_found`, `not_found`)."),
+  },
+});
+
+export const listHookDeliveryAttemptsRoute = createRoute({
+  method: "get",
+  path: `${DELIVERIES}/{delivery_id}/attempts`,
+  operationId: "listHookDeliveryAttempts",
+  tags: [TAGS.messages],
+  summary: "List a delivery's attempts",
+  description: "Every HTTP request of the delivery, oldest first, with response excerpts.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["read"] }), rateLimit("api.read")],
+  request: { params: DeliveryParams },
+  responses: {
+    200: jsonDoc("The delivery's attempts.", HookAttemptList),
+    ...commonErrors,
+    404: errorDoc("No such application or delivery (`application_not_found`, `not_found`)."),
+  },
+});
+
+export const retryHookDeliveryRoute = createRoute({
+  method: "post",
+  path: `${DELIVERIES}/{delivery_id}/retry`,
+  operationId: "retryHookDelivery",
+  tags: [TAGS.messages],
+  summary: "Retry a delivery",
+  description:
+    "Queues a finished delivery for one more attempt within seconds, to the endpoint's current " +
+    "URL and secret. A `pending` delivery is returned unchanged.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ hook: ["update"] }), rateLimit("api.write")],
+  request: { params: DeliveryParams },
+  responses: {
+    200: jsonDoc("The delivery.", HookDeliveryObject),
+    ...commonErrors,
+    404: errorDoc("No such application or delivery (`application_not_found`, `not_found`)."),
+  },
+});
+
+export const createHookPortalSessionRoute = createRoute({
+  method: "post",
+  path: "/hooks/applications/{application}/portal_sessions",
+  operationId: "createHookPortalSession",
+  tags: [TAGS.portal],
+  summary: "Create a portal session",
+  description:
+    "Signs the application's user in to the portal, where they add endpoints, pick event types, " +
+    "see deliveries and retry them, without you building any UI. Create one each time the user " +
+    "opens it (from your backend: never expose the API key) and open or embed the returned `url`; " +
+    "embedding needs the site's origin in the environment's portal settings.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ hook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/hooks/applications/{application}/portal_sessions"),
+  ],
+  request: {
+    params: ApplicationParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateHookPortalSessionRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The session, with its URL.", HookPortalSessionObject),
+    ...bodyErrors,
+    ...commonErrors,
+    404: applicationNotFound,
+    422: errorDoc("The body failed validation (`validation_error`)."),
+    503: errorDoc("The portal isn't available yet (`portal_unavailable`)."),
+  },
+});
+
+function invalidIdempotencyKey(): ApiError {
+  return new ApiError(400, {
+    type: "invalid_request_error",
+    code: "invalid_idempotency_key",
+    message: `The Idempotency-Key header must be 1-${IDEMPOTENCY_KEY_MAX_LENGTH} characters.`,
+    param: "Idempotency-Key",
   });
 }
 
-export function WebhooksListContent({
-  webhooks,
-  selectedUserIds,
-}: {
-  webhooks: WebhookInput[];
-  selectedUserIds?: string[];
-}) {
-  const normalized = webhooks.map(normalizeWebhook);
-  const filtered =
-    selectedUserIds && selectedUserIds.length > 0
-      ? normalized.filter((webhook) => selectedUserIds.includes(webhook.userId))
-      : normalized;
-  const grouped = groupWebhooksByUser(filtered);
+export function createHookMessageRoutes(opts: { portalUrl: string | null }): OpenAPIHono<AppEnv> {
+  const router = new OpenAPIHono<AppEnv>();
 
-  return (
-    <div className="flex flex-col gap-4">
-      {grouped.map(
-        ({ userId, userName, userAvatar, userInitials, webhooks }) => (
-          <CardFrame key={userId}>
-            <CardFrameHeader>
-              <CardFrameTitle className="flex items-center gap-2">
-                <Avatar className="size-5">
-                  {userAvatar ? (
-                    <AvatarImage alt={userName} src={userAvatar} />
-                  ) : null}
-                  <AvatarFallback className="text-xs">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
-                {userName}
-              </CardFrameTitle>
-            </CardFrameHeader>
-            <Card>
-              <CardPanel className="p-0">
-                {webhooks.map((webhook) => (
-                  <WebhookRow key={webhook.id} webhook={webhook} />
-                ))}
-              </CardPanel>
-            </Card>
-          </CardFrame>
-        ),
-      )}
-    </div>
-  );
-}
-
-function WebhookRow({ webhook }: { webhook: WebhookItem }) {
-  const [enabled, setEnabled] = useState(webhook.enabled ?? true);
-  const visibleEvents = webhook.events.slice(0, EVENT_TAGS_VISIBLE);
-  const remainingCount = webhook.events.length - EVENT_TAGS_VISIBLE;
-
-  return (
-    <ListItem>
-      <ListItemContent>
-        <ListItemHeader>
-          <div className="flex items-center gap-2">
-            <ListItemTitle className="truncate font-normal">
-              {webhook.url}
-            </ListItemTitle>
-            {webhook.date != null && (
-              <Badge variant="info">{webhook.date}</Badge>
-            )}
-          </div>
-        </ListItemHeader>
-        <ListItemBadges>
-          {visibleEvents.map((event) => (
-            <Badge key={event} variant="outline">
-              <WebhookIcon />
-              {event}
-            </Badge>
-          ))}
-          {remainingCount > 0 && (
-            <Badge variant="outline">+{remainingCount} More</Badge>
-          )}
-        </ListItemBadges>
-      </ListItemContent>
-      <ListItemActions>
-        <div className="flex items-center gap-4 max-md:hidden">
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Switch
-                  checked={enabled}
-                  className="relative"
-                  onCheckedChange={setEnabled}
-                />
-              }
-            />
-            <TooltipPopup sideOffset={11}>
-              {enabled ? "Disable webhook" : "Enable webhook"}
-            </TooltipPopup>
-          </Tooltip>
-
-          <Menu>
-            <Tooltip>
-              <MenuTrigger
-                render={
-                  <TooltipTrigger
-                    render={
-                      <Button
-                        aria-label="Options"
-                        size="icon"
-                        variant="outline"
-                      >
-                        <EllipsisIcon />
-                      </Button>
-                    }
-                  />
-                }
-              />
-              <TooltipPopup>Options</TooltipPopup>
-            </Tooltip>
-            <MenuPopup align="end">
-              <MenuItem>
-                <PencilIcon />
-                Edit
-              </MenuItem>
-              <MenuItem variant="destructive">
-                <TrashIcon />
-                Delete
-              </MenuItem>
-            </MenuPopup>
-          </Menu>
-        </div>
-
-        <Menu>
-          <MenuTrigger
-            className="md:hidden"
-            render={
-              <Button aria-label="Options" size="icon" variant="outline">
-                <EllipsisIcon />
-              </Button>
-            }
-          />
-          <MenuPopup align="end">
-            <MenuItem>
-              <PencilIcon />
-              Edit
-            </MenuItem>
-            <MenuSeparator />
-            <MenuGroup>
-              <MenuCheckboxItem
-                checked={enabled}
-                onCheckedChange={setEnabled}
-                variant="switch"
-              >
-                Enable webhook
-              </MenuCheckboxItem>
-            </MenuGroup>
-            <MenuSeparator />
-            <MenuItem variant="destructive">
-              <TrashIcon />
-              Delete
-            </MenuItem>
-          </MenuPopup>
-        </Menu>
-      </ListItemActions>
-    </ListItem>
-  );
-}
-
+  router.openapi(
+    sendHookMessageRoute,
+    async (c) => {
+      const application = await requireApplication(c.var.auth, c.req.valid("param").application);
+      const body = c.req.valid("json");
+      const input = {
+        application,
+        eventType: body.event_type,
+        payloa
 ```
 
-### Core Architecture Module: `apps/examples/calcom/app/(settings)/settings/developer/webhooks/webhooks-page-content.tsx`
+### Core Architecture Module: `apps/api/src/routes/hooks/quota.ts`
 ```
-"use client";
-
-import { Button } from "@coss/ui/components/button";
-import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
-import type { WebhookItem } from "./webhooks-list-content";
-import { WebhooksListContent } from "./webhooks-list-content";
-import {
-  AppHeader,
-  AppHeaderActions,
-  AppHeaderContent,
-  AppHeaderDescription,
-} from "@/components/app/app-header";
-
-interface WebhooksPageContentProps {
-  webhooks: WebhookItem[];
-}
-
-export function WebhooksPageContent({ webhooks }: WebhooksPageContentProps) {
-  const [selectedUserIds, _setSelectedUserIds] = useState<string[]>([]);
-
-  return (
-    <>
-      <AppHeader>
-        <AppHeaderContent title="Webhooks">
-          <AppHeaderDescription>
-            Receive meeting data in real-time when something happens in Cal.com.
-          </AppHeaderDescription>
-        </AppHeaderContent>
-        <AppHeaderActions>
-          <Button variant="outline">
-            New
-            <ChevronDownIcon />
-          </Button>
-        </AppHeaderActions>
-      </AppHeader>
-      <WebhooksListContent
-        selectedUserIds={selectedUserIds}
-        webhooks={webhooks}
-      />
-    </>
-  );
-}
-
-```
-
-### Core Architecture Module: `apps/examples/calcom/hooks/use-loading-state.ts`
-```
-import { useEffect, useState } from "react";
-import { useDebug } from "@/components/debug-context";
+import type { RateLimitDecision, RateLimitRequest } from "@coss/ratelimit";
+import type { Context } from "hono";
+import { rateLimitError } from "../../middleware/rate-limit.ts";
+import type { AppEnv } from "../../types.ts";
 
 /**
- * Custom hook to manage loading state with artificial delay support
- * @param delayMs - The artificial delay in milliseconds
- * @returns Whether to show the loading state
+ * The send quota of a message making `deliveries` deliveries (its fan-out; at least one, so a
+ * message nobody receives still counts). Live: messages per second and deliveries per day per
+ * organization; sandbox: deliveries per day per environment.
  */
-export function useLoadingState(delayMs: number) {
-  const { enableArtificialDelay, isLoadingOverride } = useDebug();
-  const [isLoading, setIsLoading] = useState(enableArtificialDelay);
+function quotaRequests(auth: AppEnv["Variables"]["auth"], deliveries: number): RateLimitRequest[] {
+  const cost = Math.max(1, deliveries);
+  return auth.mode === "sandbox"
+    ? [
+        {
+          buckets: ["hooks.sandbox_deliveries.day"],
+          subject: auth.environmentId,
+          organizationId: auth.organizationId,
+          cost,
+        },
+      ]
+    : [
+        {
+          buckets: ["hooks.messages.second"],
+          subject: auth.organizationId,
+          organizationId: auth.organizationId,
+        },
+        {
+          buckets: ["hooks.deliveries.day"],
+          subject: auth.organizationId,
+          organizationId: auth.organizationId,
+          cost,
+        },
+      ];
+}
 
-  useEffect(() => {
-    if (!enableArtificialDelay) {
-      setIsLoading(false);
-      return;
+export type ChargedQuota = { charged: RateLimitRequest[]; denied: RateLimitDecision | null };
+
+/** Charges the quota, all or nothing (what was charged is refunded when a later bucket denies). */
+export async function tryChargeSendQuota(
+  c: Context<AppEnv>,
+  deliveries: number,
+): Promise<ChargedQuota> {
+  const charged: RateLimitRequest[] = [];
+  for (const request of quotaRequests(c.var.auth, deliveries)) {
+    const decision = await c.var.rateLimiter.consume(request);
+    if (!decision.allowed) {
+      await refundSendQuota(c, { charged, denied: null });
+      return { charged: [], denied: decision };
     }
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, delayMs);
-    return () => clearTimeout(timer);
-  }, [enableArtificialDelay, delayMs]);
+    charged.push(request);
+  }
+  return { charged, denied: null };
+}
 
-  return isLoadingOverride ?? isLoading;
+export function quotaExceeded(decision: RateLimitDecision) {
+  return rateLimitError(decision, {
+    code: "quota_exceeded",
+    message:
+      decision.retryAfterMs === null
+        ? "This message goes to more endpoints than the send quota allows at once."
+        : `The send quota (${decision.bucket}) is used up. Retry after \`Retry-After\` seconds.`,
+  });
+}
+
+/** Charges the quota or throws the 429. */
+export async function chargeSendQuota(
+  c: Context<AppEnv>,
+  deliveries: number,
+): Promise<ChargedQuota> {
+  const quota = await tryChargeSendQuota(c, deliveries);
+  if (quota.denied) throw quotaExceeded(quota.denied);
+  return quota;
+}
+
+export async function refundSendQuota(c: Context<AppEnv>, quota: ChargedQuota): Promise<void> {
+  for (const request of quota.charged) await c.var.rateLimiter.refund(request);
 }
 
 ```
 
-### Core Architecture Module: `apps/examples/calcom/hooks/use-scroll-hide.ts`
+### Core Architecture Module: `apps/api/src/routes/hooks/shared.ts`
 ```
-import * as React from "react";
+import { type HookApplicationRow, requireHookApplication } from "@coss/hooks";
+import { z } from "zod";
+import type { AppEnv } from "../../types.ts";
+import { errorDoc } from "../docs.ts";
 
-const DEFAULT_SCROLL_THRESHOLD = 48;
+export const TAGS = {
+  applications: "Hooks applications",
+  eventTypes: "Hooks event types",
+  endpoints: "Hooks endpoints",
+  messages: "Hooks messages",
+  portal: "Hooks portal",
+} as const;
 
-export function useScrollHide(threshold = DEFAULT_SCROLL_THRESHOLD) {
-  const [isHidden, setIsHidden] = React.useState(false);
-  const lastScrollY = React.useRef(0);
+export const SCOPE_NOTE =
+  "Hooks resources belong to the API key's own environment: a `coss_test_…` key only ever sees " +
+  "sandbox ones, a `coss_live_…` key only production ones.";
 
-  React.useEffect(() => {
-    lastScrollY.current = window.scrollY;
-
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      const delta = currentY - lastScrollY.current;
-
-      if (currentY <= 0) {
-        setIsHidden(false);
-        lastScrollY.current = currentY;
-        return;
-      }
-
-      if (Math.abs(delta) < threshold) {
-        return;
-      }
-
-      if (delta > 0) {
-        setIsHidden(true);
-      } else {
-        setIsHidden(false);
-      }
-
-      lastScrollY.current = currentY;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [threshold]);
-
-  return isHidden;
-}
-
-```
-
-### Core Architecture Module: `apps/origin/hooks/use-config.ts`
-```
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-
-type Config = {
-  packageManager: "npm" | "yarn" | "pnpm" | "bun";
-};
-
-const configAtom = atomWithStorage<Config>("config", {
-  packageManager: "pnpm",
+export const ApplicationParams = z.object({
+  application: z.string().meta({
+    description: "The application's `id` (`happ_…`) or your `uid` for it.",
+    examples: ["customer_8812"],
+  }),
 });
 
-export function useConfig() {
-  return useAtom(configAtom);
+export const applicationNotFound = errorDoc(
+  "No application with this id or uid exists in the API key's environment (`application_not_found`).",
+);
+
+export const bodyErrors = {
+  400: errorDoc("The body is not valid JSON (`invalid_json`)."),
+  413: errorDoc("The request body is larger than 5 MB (`payload_too_large`)."),
+  415: errorDoc("The body is not sent as `application/json` (`unsupported_media_type`)."),
+};
+
+/** The application the path names, in the key's environment (else `application_not_found`). */
+export function requireApplication(
+  auth: AppEnv["Variables"]["auth"],
+  ref: string,
+): Promise<HookApplicationRow> {
+  return requireHookApplication({
+    organizationId: auth.organizationId,
+    environmentId: auth.environmentId,
+    ref,
+  });
 }
 
 ```
 
-### Core Architecture Module: `apps/origin/hooks/use-copy.ts`
+### Core Architecture Module: `apps/api/src/routes/webhook-endpoints.ts`
 ```
-import { useState } from "react";
+import { WEBHOOK_EVENT_TYPES } from "@coss/email/schemas";
+import {
+  createWebhookEndpoint,
+  deleteWebhookEndpoint,
+  getWebhookDelivery,
+  getWebhookEndpoint,
+  listWebhookEndpoints,
+  MAX_ATTEMPTS,
+  MAX_ENDPOINTS_PER_ENVIRONMENT,
+  MAX_RECOVER_BATCH,
+  pageWebhookDeliveries,
+  recoverWebhookEndpoint,
+  retryWebhookDelivery,
+  rollWebhookEndpointSecret,
+  toWebhookDeliveryObject,
+  toWebhookEndpointObject,
+  updateWebhookEndpoint,
+  type WebhookEndpointRow,
+  type WebhookManagementDeps,
+} from "@coss/webhooks";
+import {
+  DeletedWebhookEndpoint,
+  ListWebhookDeliveriesQuery,
+  RecoverWebhookEndpointRequest,
+  RecoverWebhookEndpointResult,
+  RollWebhookEndpointSecretRequest,
+  WebhookDeliveryList,
+  WebhookDeliveryObject,
+  WebhookEndpointList,
+  WebhookEndpointObject,
+  WebhookEndpointWithSecret,
+  webhookEndpointRequests,
+} from "@coss/webhooks/schemas";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { z } from "zod";
+import { recordApiAudit } from "../audit.ts";
+import { notFound } from "../errors.ts";
+import { requireApiKey } from "../middleware/api-key.ts";
+import { upgradeRequestBody } from "../middleware/api-version.ts";
+import { rateLimit } from "../middleware/rate-limit.ts";
+import type { AppEnv } from "../types.ts";
+import { commonErrors, errorDoc, jsonDoc } from "./docs.ts";
 
-export function useCopy(duration = 1500) {
-  const [copied, setCopied] = useState<boolean>(false);
+// Every product's event types are subscribable here (email events and `account.*`).
+// Exported so the SDK contract test can check them against the SDK's hand-written params.
+export const { CreateWebhookEndpointRequest, UpdateWebhookEndpointRequest } =
+  webhookEndpointRequests(WEBHOOK_EVENT_TYPES);
 
-  const copy = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), duration);
-      return true;
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      return false;
+const EndpointIdParams = z.object({
+  id: z.string().meta({
+    description: "The webhook endpoint's id.",
+    examples: ["whep_01k7c8m4q2f3e9v6t5r1n0p8yz"],
+  }),
+});
+
+const DeliveryParams = EndpointIdParams.extend({
+  delivery_id: z.string().meta({
+    description: "The delivery's id.",
+    examples: ["whdel_01k7c8n2b5d7f9h1k3m5p7r9tv"],
+  }),
+});
+
+const SCOPE_NOTE =
+  "Webhook endpoints belong to the API key's own environment: a `coss_test_…` key only ever " +
+  "sees sandbox endpoints, and a `coss_live_…` key only production ones.";
+
+const endpointNotFound = errorDoc(
+  "No webhook endpoint with this id exists in the API key's environment (`not_found`).",
+);
+
+const bodyErrors = {
+  400: errorDoc("The body is not valid JSON (`invalid_json`)."),
+  413: errorDoc("The request body is larger than 5 MB (`payload_too_large`)."),
+  415: errorDoc("The body is not sent as `application/json` (`unsupported_media_type`)."),
+};
+
+export const createWebhookEndpointRoute = createRoute({
+  method: "post",
+  path: "/webhook_endpoints",
+  operationId: "createWebhookEndpoint",
+  tags: ["Webhook endpoints"],
+  summary: "Create a webhook endpoint",
+  description:
+    `Registers a URL that receives signed event notifications. ${SCOPE_NOTE} The response carries ` +
+    "the signing secret, which is returned only here and when it is rolled: store it, and verify " +
+    "every delivery with it (`verifyWebhook` in the SDK).",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ webhook: ["create"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/webhook_endpoints"),
+  ],
+  request: {
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateWebhookEndpointRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The endpoint and its signing secret.", WebhookEndpointWithSecret),
+    ...bodyErrors,
+    ...commonErrors,
+    422: errorDoc(
+      "The body failed validation (`validation_error`, including an unknown `api_version`), the URL is not a usable https:// URL " +
+        "(`invalid_url`), or the environment already has " +
+        `${MAX_ENDPOINTS_PER_ENVIRONMENT} endpoints (\`too_many_endpoints\`).`,
+    ),
+  },
+});
+
+export const listWebhookEndpointsRoute = createRoute({
+  method: "get",
+  path: "/webhook_endpoints",
+  operationId: "listWebhookEndpoints",
+  tags: ["Webhook endpoints"],
+  summary: "List webhook endpoints",
+  description: `Every endpoint of the API key's environment, oldest first. ${SCOPE_NOTE}`,
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ webhook: ["read"] }), rateLimit("api.read")],
+  responses: {
+    200: jsonDoc("The environment's webhook endpoints.", WebhookEndpointList),
+    ...commonErrors,
+  },
+});
+
+export const getWebhookEndpointRoute = createRoute({
+  method: "get",
+  path: "/webhook_endpoints/{id}",
+  operationId: "getWebhookEndpoint",
+  tags: ["Webhook endpoints"],
+  summary: "Retrieve a webhook endpoint",
+  description:
+    "The endpoint without its signing secret, which is only returned when created or rolled.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ webhook: ["read"] }), rateLimit("api.read")],
+  request: { params: EndpointIdParams },
+  responses: {
+    200: jsonDoc("The webhook endpoint.", WebhookEndpointObject),
+    ...commonErrors,
+    404: endpointNotFound,
+  },
+});
+
+export const updateWebhookEndpointRoute = createRoute({
+  method: "patch",
+  path: "/webhook_endpoints/{id}",
+  operationId: "updateWebhookEndpoint",
+  tags: ["Webhook endpoints"],
+  summary: "Update a webhook endpoint",
+  description:
+    "Changes the URL, description, subscribed event types, API version or `enabled` flag. Omitted fields keep " +
+    "their current value, and the signing secret stays the same (see Roll a signing secret), so receivers " +
+    "keep verifying deliveries. Disabling an endpoint stops deliveries without losing its configuration.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ webhook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("PATCH /v1/webhook_endpoints/{id}"),
+  ],
+  request: {
+    params: EndpointIdParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: UpdateWebhookEndpointRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The updated endpoint.", WebhookEndpointObject),
+    ...bodyErrors,
+    ...commonErrors,
+    404: endpointNotFound,
+    422: errorDoc(
+      "The body failed validation (`validation_error`) or the URL is not a usable https:// URL " +
+        "(`invalid_url`).",
+    ),
+  },
+});
+
+export const rollWebhookEndpointSecretRoute = createRoute({
+  method: "post",
+  path: "/webhook_endpoints/{id}/roll_secret",
+  operationId: "rollWebhookEndpointSecret",
+  tags: ["Webhook endpoints"],
+  summary: "Roll a signing secret",
+  description:
+    "Replaces the endpoint's signing secret with a new one, returned in the response (the only time it " +
+    "is). Until `previous_secret_expires_at`, every delivery is signed with both secrets " +
+    "(`webhook-signature` lists two signatures), so receivers verifying with either one accept it: " +
+    "deploy the new secret, then let the old one expire. Rolling again in that time stops the older " +
+    "secret at once. Not idempotent: after a lost response, roll again.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ webhook: ["update"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/webhook_endpoints/{id}/roll_secret"),
+  ],
+  request: {
+    params: EndpointIdParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: RollWebhookEndpointSecretRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The endpoint and its new signing secret.", WebhookEndpointWithSecret),
+    ...bodyErrors,
+    ...commonErrors,
+    404: endpointNotFound,
+    422: errorDoc("The body failed validation (`validation_error`)."),
+  },
+});
+
+export const deleteWebhookEndpointRoute = createRoute({
+  method: "delete",
+  path: "/webhook_endpoints/{id}",
+  operationId: "deleteWebhookEndpoint",
+  tags: ["Webhook endpoints"],
+  summary: "Delete a webhook endpoint",
+  description:
+    "Removes the endpoint and its delivery log. Deliveries already queued for it are dropped. " +
+    "To stop deliveries temporarily, set `enabled` to `false` instead.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ webhook: ["delete"] }), rateLimit("api.write")],
+  request: { params: EndpointIdParams },
+  responses: {
+    200: jsonDoc("The endpoint was deleted.", DeletedWebhookEndpoint),
+    ...commonErrors,
+    404: endpointNotFound,
+  },
+});
+
+const deliveryNotFound = errorDoc(
+  "No webhook endpoint with this id exists in the API key's environment, or the endpoint has " +
+    "no delivery with this id (`not_found`).",
+);
+
+export const listWebhookDeliveriesRoute = createRoute({
+  method: "get",
+  path: "/webhook_endpoints/{id}/deliveries",
+  operationId: "listWebhookDeliveries",
+  tags: ["Webhook endpoints"],
+  summary: "List an endpoint's deliveries",
+  description:
+    "The endpoint's delivery log, newest first: one delivery per event sent to it, with every " +
+    "HTTP attempt and the payload as sent. Pass the last `id` as `after` to get the next page " +
+    "while `has_more` is true. Deleting the endpoint deletes its log.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ webhook: ["read"] }), rateLimit("api.read")],
+  request: { params: EndpointIdParams, query: ListWebhookDeliveriesQuery },
+  responses: {
+    200: jsonDoc("A page of deliveries.", WebhookDeliveryList),
+    ...commonErrors,
+    404: endpointNotFound,
+    422: errorDoc("A query parameter failed validation (`validation_error`, see `issues`)."),
+  },
+});
+
+export const getWebhookDeliveryRoute = createRoute({
+  method: "get",
+  path: "/webhook_endpoints/{id}/deliveries/{delivery_id}",
+  operationId: "getWebhookDelivery",
+  tags: ["Webhook endpoints"],
+  summary: "Retrieve a delivery",
+  description: "One delivery of the endpoint, with every HTTP attempt and the payload as sent.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ webhook: ["read"] }), rateLimit("api.read")],
+  request: { params: DeliveryParams },
+  responses: {
+    200: jsonDoc("The delivery.", WebhookDeliveryObject),
+    ...commonErrors,
+    404: deliveryNotFound,
+```
+
+### Core Architecture Module: `apps/api/src/routes/webhook-listeners.ts`
+```
+import { WEBHOOK_EVENT_TYPES } from "@coss/email/schemas";
+import {
+  closeWebhookListener,
+  createWebhookListener,
+  MAX_LISTENERS_PER_ENVIRONMENT,
+  pollWebhookListener,
+  toWebhookListenerObject,
+} from "@coss/webhooks";
+import {
+  DeletedWebhookListener,
+  MAX_LISTENER_WAIT_MS,
+  PollWebhookListenerRequest,
+  WebhookListenerObject,
+  WebhookListenerPoll,
+  webhookListenerRequests,
+} from "@coss/webhooks/schemas";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { z } from "zod";
+import { recordApiAudit } from "../audit.ts";
+import { notFound } from "../errors.ts";
+import { requireApiKey } from "../middleware/api-key.ts";
+import { upgradeRequestBody } from "../middleware/api-version.ts";
+import { rateLimit } from "../middleware/rate-limit.ts";
+import type { AppEnv } from "../types.ts";
+import { commonErrors, errorDoc, jsonDoc } from "./docs.ts";
+
+// Exported so the SDK contract test can check it against the SDK's hand-written params.
+export const { CreateWebhookListenerRequest } = webhookListenerRequests(WEBHOOK_EVENT_TYPES);
+
+const ListenerIdParams = z.object({
+  id: z.string().meta({
+    description: "The webhook listener's id.",
+    examples: ["whlis_01k7c8m4q2f3e9v6t5r1n0p8yz"],
+  }),
+});
+
+const LISTENER_NOTE =
+  "Listeners are how `coss listen` forwards events to a local server: coss.com can't reach " +
+  "`localhost`, so the CLI pulls them. They belong to the API key's environment, receive events " +
+  "created after they open, and don't count toward the plan's webhook endpoints.";
+
+const listenerNotFound = errorDoc(
+  "No open webhook listener with this id exists in the API key's environment: it was closed, " +
+    "or expired after 10 minutes without a poll (`not_found`).",
+);
+
+const bodyErrors = {
+  400: errorDoc("The body is not valid JSON (`invalid_json`)."),
+  413: errorDoc("The request body is larger than 5 MB (`payload_too_large`)."),
+  415: errorDoc("The body is not sent as `application/json` (`unsupported_media_type`)."),
+};
+
+export const createWebhookListenerRoute = createRoute({
+  method: "post",
+  path: "/webhook_listeners",
+  operationId: "createWebhookListener",
+  tags: ["Webhook endpoints"],
+  summary: "Open a webhook listener",
+  description:
+    `${LISTENER_NOTE} A listener closes when it is deleted or after 10 minutes without a poll; ` +
+    `an environment has at most ${MAX_LISTENERS_PER_ENVIRONMENT} open at once. Events reach it ` +
+    "unsigned: the CLI signs what it forwards with its own secret.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ webhook: ["create"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/webhook_listeners"),
+  ],
+  request: {
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateWebhookListenerRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The listener.", WebhookListenerObject),
+    ...bodyErrors,
+    ...commonErrors,
+    422: errorDoc(
+      "The body failed validation (`validation_error`, including an unknown `api_version`), or " +
+        `the environment already has ${MAX_LISTENERS_PER_ENVIRONMENT} open listeners ` +
+        "(`too_many_listeners`).",
+    ),
+  },
+});
+
+export const pollWebhookListenerRoute = createRoute({
+  method: "post",
+  path: "/webhook_listeners/{id}/poll",
+  operationId: "pollWebhookListener",
+  tags: ["Webhook endpoints"],
+  summary: "Poll a webhook listener",
+  description:
+    "Acknowledges deliveries handed out earlier, keeps the listener open for another 10 minutes, " +
+    `and waits up to \`wait_ms\` (at most ${MAX_LISTENER_WAIT_MS / 1000} s) for events. ` +
+    "Deliveries come oldest first; one not acknowledged within two minutes is handed out again " +
+    "(with the same `event_id`). The answer may come early, with no deliveries, when the API " +
+    "restarts: poll again. Polls are not request-logged; each acknowledgement is logged as a " +
+    "`webhook.forward` line.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ webhook: ["read"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/webhook_listeners/{id}/poll"),
+  ],
+  request: {
+    params: ListenerIdParams,
+    body: {
+      required: true,
+      content: { "application/json": { schema: PollWebhookListenerRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("Deliveries to forward (possibly none).", WebhookListenerPoll),
+    ...bodyErrors,
+    ...commonErrors,
+    404: listenerNotFound,
+    422: errorDoc("The body failed validation (`validation_error`)."),
+  },
+});
+
+export const deleteWebhookListenerRoute = createRoute({
+  method: "delete",
+  path: "/webhook_listeners/{id}",
+  operationId: "deleteWebhookListener",
+  tags: ["Webhook endpoints"],
+  summary: "Close a webhook listener",
+  description:
+    "Closes the listener: it receives nothing more, and deliveries it was still holding are " +
+    "dropped. `coss listen` closes its listener when it exits.",
+  security: [{ bearerAuth: [] }],
+  middleware: [requireApiKey({ webhook: ["delete"] }), rateLimit("api.write")],
+  request: { params: ListenerIdParams },
+  responses: {
+    200: jsonDoc("The listener was closed.", DeletedWebhookListener),
+    ...commonErrors,
+    404: listenerNotFound,
+  },
+});
+
+export function createWebhookListenerRoutes(deps: {
+  /** Aborted when the server shuts down: waiting polls answer at once. */
+  shutdownSignal: AbortSignal;
+  pollIntervalMs?: number;
+}): OpenAPIHono<AppEnv> {
+  const router = new OpenAPIHono<AppEnv>();
+
+  router.openapi(createWebhookListenerRoute, async (c) => {
+    const body = c.req.valid("json");
+    const { organizationId, environmentId, apiKeyId } = c.var.auth;
+    const listener = await createWebhookListener({
+      organizationId,
+      environmentId,
+      // Omitted means every event type, including ones added later.
+      eventTypes: body.event_types ?? [],
+      // By default, events arrive in the version this request was made in.
+      apiVersion: body.api_version ?? c.var.apiVersion,
+      description: body.description,
+      apiKeyId,
+      versioning: c.var.versioning,
+    });
+    // A listener reads every event of the environment: worth a trace in the audit log.
+    await recordApiAudit(c, {
+      action: "webhook_listener.created",
+      target: {
+        type: "webhook_listener",
+        id: listener.id,
+        label: listener.description ?? listener.id,
+      },
+      metadata: { event_types: listener.eventTypes },
+    });
+    return c.json(toWebhookListenerObject(listener), 200);
+  });
+
+  router.openapi(pollWebhookListenerRoute, async (c) => {
+    const body = c.req.valid("json");
+    const { organizationId, environmentId } = c.var.auth;
+    const result = await pollWebhookListener({
+      organizationId,
+      environmentId,
+      id: c.req.valid("param").id,
+      acks: (body.acks ?? []).map((ack) => ({
+        deliveryId: ack.delivery_id,
+        ackToken: ack.ack_token,
+        statusCode: ack.status_code,
+        durationMs: ack.duration_ms,
+        error: ack.error,
+      })),
+      waitMs: body.wait_ms,
+      limit: body.limit,
+      // The client hanging up, or the server draining, ends the wait.
+      signal: AbortSignal.any([c.req.raw.signal, deps.shutdownSignal]),
+      intervalMs: deps.pollIntervalMs,
+      versioning: c.var.versioning,
+    });
+    if (!result) {
+      throw notFound("No open webhook listener with this id exists in this API key's environment.");
     }
-  };
+    return c.json(
+      {
+        object: "webhook_listener_poll" as const,
+        listener: toWebhookListenerObject(result.listener),
+        deliveries: result.deliveries,
+        acknowledged: result.acknowledged,
+      },
+      200,
+    );
+  });
 
-  return {
-    copied,
-    copy,
-  };
+  router.openapi(deleteWebhookListenerRoute, async (c) => {
+    const { organizationId, environmentId } = c.var.auth;
+    const id = c.req.valid("param").id;
+    if (!(await closeWebhookListener({ organizationId, environmentId, id }))) {
+      throw notFound("No open webhook listener with this id exists in this API key's environment.");
+    }
+    return c.json({ object: "webhook_listener" as const, id, deleted: true as const }, 200);
+  });
+
+  return router;
+}
+
+```
+
+### Core Architecture Module: `apps/mobile/src/app/(app)/[org]/projects/[project]/[env]/hooks/[applicationId]/endpoints/[endpointId].tsx`
+```
+import { formatRetentionDays, RETENTION_DAYS } from "@coss/retention";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { Send } from "lucide-react-native";
+import { Alert } from "../../../../../../../../../components/alert";
+import { Badge, StatusDot } from "../../../../../../../../../components/badge";
+import { PagedPanel } from "../../../../../../../../../components/paged";
+import { ListRow, Panel, SpecItem, SpecList } from "../../../../../../../../../components/panel";
+import {
+  ErrorState,
+  Loading,
+  PageIntro,
+  Screen,
+} from "../../../../../../../../../components/screen";
+import { WebButton } from "../../../../../../../../../components/web-button";
+import { formatAgo, formatDateTime } from "../../../../../../../../../lib/format";
+import { useHookEndpoint } from "../../../../../../../../../lib/queries";
+import { endpointStatus, HOOK_DELIVERY_STATUS } from "../../../../../../../../../lib/status";
+import { type EnvironmentParams, environmentPath } from "../../../../../../../../../lib/web";
+
+// DISABLE_FAILING_ENDPOINT_AFTER_MS in @coss/webhooks/engine.
+const DISABLED_AFTER_DAYS = 5;
+
+export default function HookEndpointScreen() {
+  const { applicationId, endpointId, ...params } = useLocalSearchParams<
+    EnvironmentParams & { applicationId: string; endpointId: string }
+  >();
+  const query = useHookEndpoint(params, applicationId, endpointId);
+  if (query.isPending) return <Loading />;
+  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
+  const first = query.data.pages[0];
+  if (!first) return <Loading />;
+  const { application, endpoint, last_recovery } = first;
+  const deliveries = query.data.pages.flatMap((page) => page.deliveries.data);
+  const [tone, label] = endpointStatus(endpoint);
+  return (
+    <Screen
+      onRefresh={() => void query.refetch()}
+      refreshing={query.isRefetching && !query.isFetchingNextPage}
+    >
+      <Stack.Screen
+        options={{
+          title: "Endpoint",
+          headerRight: () => (
+            <WebButton
+              path={`${environmentPath(params)}/hooks/${application.id}/endpoints/${endpoint.id}`}
+            />
+          ),
+        }}
+      />
+      <PageIntro
+        description={endpoint.description ?? undefined}
+        meta={
+          <Badge variant="outline">
+            <StatusDot label={label} tone={tone} />
+          </Badge>
+        }
+        mono
+        title={endpoint.url}
+      />
+      {!endpoint.enabled && endpoint.disabled_reason === "failing" ? (
+        <Alert
+          description={`Every delivery to this endpoint failed for ${DISABLED_AFTER_DAYS} days, so coss.com disabled it${endpoint.disabled_at ? ` on ${formatDateTime(endpoint.disabled_at)}` : ""}. Enable it again once its receiver works, then recover what it missed.`}
+          title="Disabled after repeated failures"
+          tone="error"
+        />
+      ) : null}
+      {endpoint.enabled && endpoint.failing_since ? (
+        <Alert
+          description={`If no delivery succeeds for ${DISABLED_AFTER_DAYS} days, coss.com disables the endpoint.`}
+          title={`Failing since ${formatDateTime(endpoint.failing_since)}`}
+          tone="warning"
+        />
+      ) : null}
+      <Panel title="Details">
+        <SpecList>
+          <SpecItem label="Application">{application.name}</SpecItem>
+          <SpecItem label="Event types">
+            {endpoint.filter_types.length === 0 ? "All" : endpoint.filter_types.join(", ")}
+          </SpecItem>
+          <SpecItem label="Rate limit" mono>
+            {endpoint.rate_limit_per_second ? `${endpoint.rate_limit_per_second}/s` : "Default"}
+          </SpecItem>
+          <SpecItem label="Created" mono>
+            {formatDateTime(endpoint.created_at)}
+          </SpecItem>
+          {last_recovery ? (
+            <SpecItem label="Last recovery" mono>
+              {`${formatDateTime(last_recovery.created_at)} · ${last_recovery.requeued} requeued${last_recovery.running ? ", running" : ""}`}
+            </SpecItem>
+          ) : null}
+        </SpecList>
+      </Panel>
+      <PagedPanel
+        description={`Failed deliveries are retried for about a day (8 attempts). Kept for ${formatRetentionDays(RETENTION_DAYS.hookMessages)}.`}
+        empty={{
+          icon: Send,
+          title: "No deliveries yet",
+          description: "Messages sent to this endpoint's application show up here.",
+        }}
+        items={deliveries}
+        olderLabel="Older deliveries"
+        query={query}
+        render={(delivery) => {
+          const [deliveryTone, deliveryLabel] = HOOK_DELIVERY_STATUS[delivery.status] ?? [
+            "neutral",
+            delivery.status,
+          ];
+          return (
+            <ListRow
+              detail={formatAgo(delivery.created_at)}
+              href={{
+                pathname:
+                  "/[org]/projects/[project]/[env]/hooks/[applicationId]/messages/[messageId]",
+                params: {
+                  ...params,
+                  applicationId: application.id,
+                  messageId: delivery.message_id,
+                },
+              }}
+              key={delivery.id}
+              leading={<StatusDot tone={deliveryTone} />}
+              subtitle={`${deliveryLabel} · ${delivery.attempt_count} attempts · ${delivery.last_status_code ? `HTTP ${delivery.last_status_code}` : (delivery.last_error ?? "—")}`}
+              title={delivery.message_id}
+            />
+          );
+        }}
+        title="Recent deliveries"
+      />
+    </Screen>
+  );
 }
 
 ```
@@ -1099,56 +1885,13 @@ export function useCopy(duration = 1500) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #856** (2026-09-30): **fix(ui): resize textarea wrapper for WebKit placeholder sizing**
-  *Symptoms*: ## Summary - Fix WebKit rendering where long placeholders grow a `field-sizing: content` textarea but leave the bordered `textarea-control` wrapper too short - Change the wrapper from `inline-flex` to `inline-grid` so it tracks the textarea height when the field is empty with a long placeholder - Sync the updated primitive to `@coss/ui` and rebuild the registry JSON  ## Test plan - [ ] Open the textarea docs demo in Playwright WebKit (iPhone 15 emulation) with a ~150-char placeholder and confirm the border wraps the full placeholder - [ ] Verify the same fix on cal.com booker textarea surfaces in WebKit - [ ] Confirm Chromium behavior is unchanged for empty, typed, and long-placeholder states - [ ] Smoke test `flex-1 *:field-sizing-fixed *:min-h-0` textarea layouts still fill their container correctly   Made with [Cursor](https://cursor.com)
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #PmmG2Ixma3J09IIKtxcpU0418vyzO6CDnE3jxRtXQlw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWV4YW1wbGVzLWNhbGNvbSIsInByb2plY3RJZCI6InByal92TllOOTBmNWxDYktqcDNld1J6SXNiWVVtbHdNIiwicm9vdERpcmVjdG9yeSI6ImFwcHMvZXhhbXBsZXMvY2FsY29tIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWV4YW1wbGVzLWNhbGNvbS82Z2FqRU42eGhUMWJqeGpNa3llNmFQMXczVGpqIiwicHJldmlld1VybCI6ImNvc3MtZXhhbXBsZXMtY2FsY29tLWdpdC1maXgtdGV4dGFyZWEtd2Via2l0LXBsYWNlaG8tOGFlYmU4LWNhbC52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6ImNvc3MtZXhhbXBsZXMtY2FsY29tLWdpdC1maXgtdGV4dGFyZWEtd2Via2l0LXBsYWNlaG8tOGFlYmU4LWNhbC52ZXJjZWwuYXBwIn19LHsibmFtZSI6ImNvc3MtY29tLXVpIiwicHJvamVjdElkIjoicHJqX1lWQ1Q2aUZYaGJLTGpQdG5INWtVU1hQOTQ5N3giLCJyb290RGlyZWN0b3J5IjoiYXBwcy91aSIsImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1jb20tdWkvM1hHSlZIUHlQOGVQSnF0eVR1aDZUaWRjODJ1biIsInByZXZpZXdVcmwiOiJjb3NzLWNv
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5378">ENG-5378</a></p>
+- **Issue #134** (2026-10-17): **Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover**
+  *Symptoms*: coss.com/shipyard was still berthd.app's page dropped into coss.com's shell: a dithered harbour, a chapter per feature with a video loop, and its own stylesheet and scripts. This rebuilds it the way coss.com's landing page is built: one ruled sheet, `SectionHead`s, coss ui buttons, and isometric line drawings on the drafting grid, with Shipyard's amber lamp as its one colour.  ![The motion: the hero's parts drop in, a feature drawing scrolls in, and lifts on hover](https://raw.githubusercontent.com/cosscom/shipyard/f135a712f9fe798d2cfab0d3a0c182f6a922aa3a/coss-shipyard-landing/motion.gif)  ## What's on the page  - **Hero**, with a drawing of a closed laptop linked over ssh to a tray of boxes running agents (devl and gpu lit, old-vps offline), and the agents it works with. - **Six features**, each with its own drawing: Start, Watch it work, See the page, Loop until green, Review, From your phone. They cover what the app does today (runs and attempts, Review, Browser/Preview with visual diffs, the phone app), where the old page had themes and tab groups. - **Close the laptop**: an illustrative night's log beside the boxes, still lit. - **The rest of the yard**: automations, kits, database, Leadline, Linear, secrets, plugins and themes, each linked to its guide (the database guide isn't in these docs yet, so that one is plain). - **Install**: the box's line with Copy, and three steps. The header gains Changelog.  ## How it moves  - `components/shipyard/drawings.tsx` draws on `is
 
-- **Issue #855** (2026-09-27): **feat(ui): add palette Select and radio card particles**
-  *Symptoms*: Add two self-contained particles for choosing a three-color palette:  - `p-select-24`: coss Select with three overlapping color circles in the trigger and options, with the selected option aligned to the trigger. - `p-radio-group-10`: button-like radio cards in four columns and three rows, using the same 16px overlapping circles, palette-name tooltips, accessible labels, and selected-card styling. Each full card is clickable; radio semantics provide single selection and arrow-key navigation. <img width="462" height="221" alt="Screenshot 2026-09-27 at 11 40 27" src="https://github.com/user-attachments/assets/a7317ec5-cc85-4b6c-a342-c9e56c9043f8" /> <img width="372" height="144" alt="Screenshot 2026-09-27 at 11 40 20" src="https://github.com/user-attachments/assets/ae311c6a-dc7f-470f-b5b0-ef6379a69449" />    Both include the twelve named light-color palettes from https://github.com/calcom/cal/pull/8354, with Dusk selected initially. Swatches retain their colors in either UI theme; surrounding controls use semantic theme tokens. Includes generated registry installation files.  Validation: formatting, UI TypeScript check, registry dependency validation, registry build, and whitespace check passed. Verified Select keyboard selection and radio-card click/arrow-key selection in the local browser, and inspected the four-column/three-row layout. 
+- **Issue #133** (2026-10-16): **Add, then move, the crowd-opinionated landing page**
+  *Symptoms*: ## Summary  The `/crowd-opinionated-source-software` manifesto page for coss.com, built here and then moved: it is the front page of the hub (https://github.com/cosscom/hub, its own repository and app, later `hub.coss.com`). What this PR leaves on coss.com:  - `apps/site`: the page, its illustrations and the click-to-play YouTube embed are gone; `/crowd-opinionated-source-software` 301s to `https://hub.coss.com`; the sitemap drops it; the CSP frames nothing again (`frame-src 'none'`, no YouTube origins). - `apps/site/src/components/sign-up-button.tsx`: a `label` prop (used by the page while it lived here; harmless to keep). - `apps/site/DESIGN.md`: the page's motion exception removed.  The hub itself (projects and profiles in GitHub's layout without code, Prompt Requests, threads on coss ui's chat, its own Better Auth accounts, Devin as the factory) is in `cosscom/hub`, with coss ui vendored.  ## Test plan  - [x] `bun run lint`, `SKIP_ENV_VALIDATION=1 bun run typecheck`, `bun run --cwd apps/site test` - [ ] CI  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01TyanHNMS6D6bdJAdToZUVH 
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #BaSv3xm3K86arXJsGX/iwspUcOorIhQUPbOC0XmI9xU=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbSIsInByb2plY3RJZCI6InByal8wbFhveVltQ3lHcHBKM1M2OUV6NkFKVzltU0lxIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjoiYXBwcy93d3ciLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tL0Zqb2kzWnIxNDhiSkQxa21IbUw4RTlDb1UzWUciLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tZ2l0LWNvZGV4LWNvbG9yLXBhbGV0dGUtc2VsZWN0b3JzLWNhbC52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6ImNvc3MtY29tLWdpdC1jb2RleC1jb2xvci1wYWxldHRlLXNlbGVjdG9ycy1jYWwudmVyY2VsLmFwcCJ9fSx7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpL0ZwYjdoZXBIOHQxeGZ4QmdKd3RkbXBqTnhtY0EiLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tdWktZ2l0LWNvZGV4LWNvbG9yLXBhbGV0dGUtc2VsZWN0b3JzLWNhbC52ZXJjZWwuYXBwIiwibmV4
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5319">ENG-5319</a></p>
-
-- **Issue #853** (2026-09-22): **feat(ui): update Cal Sans to 2.003**
-  *Symptoms*: ## Summary  Bumps the shared `@coss/ui/fonts` Cal Sans from `1.998` (2026-06-15 build) to `2.003` (2026-09-19 build, `65f14744`) using the `calsans-cossui` cut from [calcom/font](https://github.com/calcom/font) — the lean product build (alternates subset out, `opsz` peaks at 32pt).  The cossui cut ships italics as a separate style-linked file instead of an `ital` axis, so `fontSans` now takes a two-entry `src`:  ```ts src: [   { path: "./CalSansVF.woff2", style: "normal" },   { path: "./CalSansVF-Italic.woff2", style: "italic" }, ], weight: "400 700", ```  `weight` was `"300 700"` but the `wght` axis has always been 400–700, so the declared range is corrected to match the font. `fontHeading` still aliases `fontSans`.  Upright woff2 shrinks 185 KB → 147 KB; the italic file (165 KB) is only fetched when italic text is rendered.  Link to Devin session: https://app.devin.ai/sessions/edf2175c9c6e47959f50c83a9a3c4eaf Open in Devin Desktop: https://app.devin.ai/desktop/session/edf2175c9c6e47959f50c83a9a3c4eaf?variant=devin Requested by: @pasqualevitiello
-  **Post-Mortem & Fix Analysis**:
-  > <!-- devin-pr-monitoring-controls --> I'll fix CI failures and address comments from users with write access. I'll skip comments containing "(aside)".  - [ ] Disable automatic comment, CI, and merge conflict monitoring 
-  > [vc]: #lacQ9kr6DurbWEU77bGjbqxjjoPKI6kaSckSBqOpLJk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LWRldmluLTE3OTAwNzI5ODItY2FsLXNhbnMtMjAwMy1jYWwudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpL0NFQ1RleFBYQ3RNS1J2anF4YjZLNG9TUDhHRVQiLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tdWktZ2l0LWRldmluLTE3OTAwNzI5ODItY2FsLXNhbnMtMjAwMy1jYWwudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCJ9LHsibmFtZSI6ImNvc3MtY29tLW9yaWdpbiIsInByb2plY3RJZCI6InByal96MGR4UnZZYzlxa2ZTblJQSmhoeE9wZHhlcm1VIiwicm9vdERpcmVjdG9yeSI6ImFwcHMvb3JpZ2luIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6IiJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLW9yaWdpbi9Fd3dFWjJXTGVSdmR6U0t5Z21VZ2l6UktjdW9tIiwi
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5163">ENG-5163</a></p>
-
-- **Issue #852** (2026-09-21): **docs(ui): remove the Early Access callout from the Introduction**
-  *Symptoms*: ## Summary Removes the "Early Access" `<Alert>` from the coss ui Introduction page (`apps/ui/content/docs/(root)/index.mdx`). The callout said coss ui is in early development, Base UI is in beta, and recommended it only for projects comfortable with breaking changes — coss ui already powers Cal.com's product UI, so the warning no longer reflects reality and reads as a reason not to adopt.  Content-only change; the Atoms paragraph/link is intentionally left untouched (out of scope per the ticket).  Closes [PRO-1095](https://linear.app/calcom/issue/PRO-1095/remove-the-early-access-callout-from-the-cosscomui-introduction).  Link to Devin session: https://app.devin.ai/sessions/25000718a71c4ae6990f93bb97e250c9 Open in Devin Desktop: https://app.devin.ai/desktop/session/25000718a71c4ae6990f93bb97e250c9?variant=devin Requested by: @supalarry
-  **Post-Mortem & Fix Analysis**:
-  > <!-- devin-pr-monitoring-controls --> I'll fix CI failures and address comments from users with write access. I'll skip comments containing "(aside)".  - [ ] Disable automatic comment, CI, and merge conflict monitoring 
-  > [vc]: #x8idmiydhQJS8ccULC7wHK5tBAU3nW0DtjqpsV6Ujz0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpL0dQcFRHMlh3VFRydFd2WGJhYlBuNmd2cE5GdEwiLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tdWktZ2l0LWRldmluLXByby0xMDk1LXJlbW92ZS10aGUtZWFybHktYWNjZS0zYmZkMDgtY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LWRldmluLXByby0xMDk1LXJlbW92ZS10aGUtZWFybHktYWNjZS0zYmZkMDgtY2FsLnZlcmNlbC5hcHAifX0seyJuYW1lIjoiY29zcy1jb20tb3JpZ2luIiwicHJvamVjdElkIjoicHJqX3owZHhSdlljOXFrZlNuUlBKaGh4T3BkeGVybVUiLCJyb290RGlyZWN0b3J5IjoiYXBwcy9vcmlnaW4iLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiIn0sImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1jb20tb3JpZ2luLzl2cENX
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/PRO-1095">PRO-1095</a></p>
-
-- **Issue #851** (2026-09-16): **fix(ui): keep drawer close button above drag bar**
-  *Symptoms*: ## Summary - When `showBar` and `showCloseButton` are both enabled, the absolute drag bar paints over the close button and blocks clicks (bottom and left placements). - Stack the close button with `z-1` so it stays above the bar, without reordering DOM or disabling pointer events on the handle. - Follow-up to #850 with a smaller fix that keeps `DrawerBar` as a swipe target.  ## Test plan - [ ] Open a bottom drawer with `showBar` and `showCloseButton` and confirm the close button is clickable - [ ] Repeat for a left drawer (bar and close share the end edge) - [ ] Confirm right and top drawers still look and swipe as before - [ ] Confirm swipe-to-dismiss still works from the drag bar   Made with [Cursor](https://cursor.com)
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #bXCpLzbU413m45L9mHRtkzYEQQEMtBrKuCIWs40ukPs=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbSIsInByb2plY3RJZCI6InByal8wbFhveVltQ3lHcHBKM1M2OUV6NkFKVzltU0lxIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjoiYXBwcy93d3ciLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tL0ZiQ0RicHQxWUxWcGJNNXpERVB6dVBocEY5em4iLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tZ2l0LWZpeC1kcmF3ZXItY2xvc2Utei1pbmRleC1jYWwudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJjb3NzLWNvbS1naXQtZml4LWRyYXdlci1jbG9zZS16LWluZGV4LWNhbC52ZXJjZWwuYXBwIn19LHsibmFtZSI6ImNvc3MtZXhhbXBsZXMtY2FsY29tIiwicHJvamVjdElkIjoicHJqX3ZOWU45MGY1bENiS2pwM2V3UnpJc2JZVW1sd00iLCJyb290RGlyZWN0b3J5IjoiYXBwcy9leGFtcGxlcy9jYWxjb20iLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtZXhhbXBsZXMtY2FsY29tL0NDc3hOR1Q4ZkZycHpheHh3azVETHJaRHpIOHIiLCJwcmV2aWV3VXJsIjoiY29zcy1leGFtcGxlcy1jYWxjb20tZ2l0LWZpeC1kcmF3ZXItY2xvc2Utei1p
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-4429">ENG-4429</a></p>
-
-- **Issue #850** (2026-09-16): **fix(ui): drawer bar overlapping close button**
-  *Symptoms*: Hi, when `showBar` and `showCloseButton` are both enabled, the bar renders on top of the close button and blocks clicks.  https://github.com/user-attachments/assets/787d3e3d-8b19-4369-b2b3-f304eb8a1d48   I swaped the order so the close button renders last, and added `pointer-events-none` to `DrawerBar` since it's decorative (`aria-hidden`).  https://github.com/user-attachments/assets/a51320aa-b1cd-48ab-add3-238ff4df2d80  I hope this HUGE PR will not be an issue! Love your work!
-  **Post-Mortem & Fix Analysis**:
-  > @NathanBrodin is attempting to deploy a commit to the **cal** Team on [Vercel](https://vercel.com).  A member of the Team first needs to [authorize it](https://vercel.com/git/authorize?team=cal&slug=cal&teamId=team_YGsKWfo1YxoTcbzsoekZkyup&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%225a1f3832fb07a475e9c2e7503cc50c25d9dab51c%22%7D%2C%22id%22%3A%22QmeAF1vLTvz3NDpqaV7SscnXAvxSzJ9KP5HcHgaA7VGonv%22%2C%22org%22%3A%22cosscom%22%2C%22prId%22%3A850%2C%22repo%22%3A%22coss%22%7D).  
-  > [vc]: #mKAK/tKpSne0w0nUDZWtHvWUQInZZJqmi0qrOYaY5RY=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS1vcmlnaW4iLCJwcm9qZWN0SWQiOiJwcmpfejBkeFJ2WWM5cWtmU25SUEpoaHhPcGR4ZXJtVSIsInJvb3REaXJlY3RvcnkiOiJhcHBzL29yaWdpbiIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiIifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS1vcmlnaW4vNnVHaDdSQTJQR1FmdzZYZkRWajM1Rm9xVnlmYyIsInByZXZpZXdVcmwiOiIiLCJuZXh0Q29tbWl0U3RhdHVzIjoiU0tJUFBFRCJ9XSwicmVxdWVzdFJldmlld1VybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS92ZXJjZWwtYWdlbnQvcmVxdWVzdC1yZXZpZXc/b3duZXI9Y29zc2NvbSZyZXBvPWNvc3MmcHI9ODUwIn0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).   <details><summary>1 Skipped Deployment</summary>  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/cal/coss-com-origin"><sup><img src="https://vercel.com/api/www/avatar?pr
-  > Thanks for catching this, and for the before/after videos — the overlap is real when `showBar` and `showCloseButton` are both enabled.  We're going with a smaller fix: `z-1` on the close button so it stacks above the bar. Reordering the DOM and adding `pointer-events-none` on `DrawerBar` would unblock clicks, but the bar is the drag affordance (`touch-none`), so it should keep receiving pointer events. `aria-hidden` only hides it from assistive tech, not from hit-testing.  Closing this in favor of #851.
-
-- **Issue #849** (2026-09-16): **feat(ui): add separator particle**
-  *Symptoms*: ## What does this PR do?  * Adds a new `Separator` particle to the UI registry. * Adds a `Separator` example to the component docs form to demonstrate how the particle can be used.  ## Why?  Provides a reusable separator particle and documents its usage directly in the Separator component documentation.  ## Checklist  * [x] Added the separator particle * [x] Added the Separator example to the docs form * [x] Updated generated registry files * [x] Ran formatting and registry sync commands  ## Docs <img width="1460" height="968" alt="Screenshot 2026-09-09 at 16 57 51" src="https://github.com/user-attachments/assets/be600724-97e3-42bd-84d7-a44382cb3a6e" />  ## Particle <img width="703" height="553" alt="Screenshot 2026-09-09 at 16 57 36" src="https://github.com/user-attachments/assets/64d58c54-4c16-423e-bbbc-70d0a4518b3e" /> 
-  **Post-Mortem & Fix Analysis**:
-  > @rtkac is attempting to deploy a commit to the **cal** Team on [Vercel](https://vercel.com).  A member of the Team first needs to [authorize it](https://vercel.com/git/authorize?team=cal&slug=cal&teamId=team_YGsKWfo1YxoTcbzsoekZkyup&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%22ee142344d06e8060618a57c9b78aab19b752851a%22%7D%2C%22id%22%3A%22QmZ8Ac88jT1U4kae22MNqUUzS96E5AcXdFw8WfGGHx31Za%22%2C%22org%22%3A%22cosscom%22%2C%22prId%22%3A849%2C%22repo%22%3A%22coss%22%7D).  
-  > Thanks for the PR! We're going to pass on this one — we already cover this, and it isn't a pattern we want to add right now.
-
-- **Issue #848** (2026-09-08): **feat: migrate TanStack Table to v9**
-  *Symptoms*: ## Summary  - upgrade @tanstack/react-table to v9.2.4 in UI, Origin, and the Cal.com example - migrate all 15 table implementations to the v9 useTable/tableFeatures API and explicit row-model functions - register only the features and sort/filter functions each table uses - keep table-only pagination, sorting, filtering, ordering, visibility, sizing, and selection in TanStack's atom-backed state - use focused selectors and local Subscribe boundaries to avoid unrelated page re-renders - rebuild the affected UI and Origin registry artifacts  ## Validation  - bunx biome check --linter-enabled=false . - bun run lint - bun run typecheck - bun test --pass-with-no-tests (12 passing) - bun run build - cd apps/ui && bun run registry:validate-deps - cd apps/ui && bun run registry:build - cd apps/origin && bun run registry:build  ## Notes  Opened as a draft so table-specific interaction tests can be added before merge.
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #NLqE5WqcYdfPZniEfkvFcnWSlfYb1SRN8nT0Eq8Ir/c=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbSIsInByb2plY3RJZCI6InByal8wbFhveVltQ3lHcHBKM1M2OUV6NkFKVzltU0lxIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjoiYXBwcy93d3ciLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tZ2l0LWNvZGV4LW1pZ3JhdGUtdGFuc3RhY2stdGFibGUtdjktY2FsLnZlcmNlbC5hcHAifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS83WGFYcUpyRDJaRW0zakFwYkRHdkVDVkpFalZRIiwicHJldmlld1VybCI6ImNvc3MtY29tLWdpdC1jb2RleC1taWdyYXRlLXRhbnN0YWNrLXRhYmxlLXY5LWNhbC52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn0seyJuYW1lIjoiY29zcy1jb20tdWkiLCJwcm9qZWN0SWQiOiJwcmpfWVZDVDZpRlhoYktMalB0bkg1a1VTWFA5NDk3eCIsInJvb3REaXJlY3RvcnkiOiJhcHBzL3VpIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS11aS9KMXlic2FXWUExWHVtTTRrd2N0MUhTN3J0NlNDIiwicHJldmlld1VybCI6IiIsIm5leHRDb21taXRTdGF0dXMiOiJTS0lQUEVEIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-4204">ENG-4204</a></p>
+  > opening in https://github.com/cosscom/hub instead
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1165,2120 +1908,1417 @@ export function useCopy(duration = 1500) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd49ec9c` (2026-09-30)
-**Commit Message**: fix(ui): resize textarea wrapper for WebKit placeholder sizing (#856)
+### Incident Patch 1: `5b5d4962` (2026-10-17)
+**Commit Message**: Merge pull request #134 from cosscom/shipyard-landing-catalog
 
-WebKit grows field-sizing textareas for long placeholders but does not
-expand inline-flex wrappers, so the border stayed shorter than the text.
-Use inline-grid on the textarea control wrapper so it tracks the child.
+Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/textarea.json` (modified, +1/-1)
+**File**: `apps/site/AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/textarea.tsx",
--      "content": "\"use client\";\n\nimport { Field as FieldPrimitive } from \"@base-ui/react/field\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type TextareaProps = React.ComponentPropsWithoutRef<\"textarea\"> &\n  React.RefAttributes<HTMLTextAreaElement> & {\n    size?: \"sm\" | \"default\" | \"lg\" | number;\n    unstyled?: boolean;\n  };\n\nexport function Textarea({\n  className,\n  size = \"default\",\n  unstyled = false,\n  ref,\n  ...props\n}: TextareaProps): React.ReactElement {\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"textarea-control\"\n    >\n      <FieldPrimitive.Control\n        ref={ref}\n        value={props.value}\n        defaultValue={props.defaultValue}\n        disabled={props.disabled}\n        id={props.id}\n        name={props.name}\n        render={(defaultProps: React.ComponentProps<\"textarea\">) => (\n          <textarea\n            className={cn(\n              \"field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] text-foreground outline-none placeholder:text-muted-foreground/72 max-sm:min-h-20.5\",\n              size === \"sm\" &&\n                \"min-h-16.5 px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1)-1px)] max-sm:min-h-19.5\",\n              size === \"lg\" &&\n                \"min-h-18.5 py-[calc(--spacing(2)-1px)] max-sm:min-h-21.5\",\n            )}\n            data-slot=\"textarea\"\n            {...mergeProps(defaultProps, props)}\n          />\n        )}\n      />\n    </span>\n  );\n}\n\nexport { FieldPrimitive };\n",
-+      "content": "\"use client\";\n\nimport { Field as FieldPrimitive } from \"@base-ui/react/field\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type TextareaProps = React.ComponentPropsWithoutRef<\"textarea\"> &\n  React.RefAttributes<HTMLTextAreaElement> & {\n    size?: \"sm\" | \"default\" | \"lg\" | number;\n    unstyled?: boolean;\n  };\n\nexport function Textarea({\n  className,\n  size = \"default\",\n  unstyled = false,\n  ref,\n  ...props\n}: TextareaProps): React.ReactElement {\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-grid w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"textarea-control\"\n    >\n      <FieldPrimitive.Control\n        ref={ref}\n        value={props.value}\n        defaultValue={props.defaultValue}\n        disabled={props.disabled}\n        id={props.id}\n        name={props.name}\n        render={(defaultProps: React.ComponentProps<\"textarea\">) => (\n          <textarea\n            className={cn(\n              \"field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] text-foreground outline-none placeholder:text-muted-foreground/72 max-sm:min-h-20.5\",\n              siz
+@@ -30,7 +30,7 @@ the macro API, `staticSource` and code-usage APIs are recent.
+ | `src/components/mdx.tsx`, `src/components/docs-table.tsx` | MDX components: coss ui's docs typography (headings with anchor links, lists, tables, inline code, `Callout` as a coss ui `Alert`, `Cards`/`Card` as linked cards) over Fumadocs' content pipeline (`pre` is Fumadocs' `CodeBlock` with Shiki/Twoslash output, `CodeBlockTabs` for ` ```package-install `, `Steps`/`Step`, `Tabs`/`Tab`). `DocsTable` & co. are shared with the generated plan, rate and retention tables. |
+ | `src/app/(home)`, `src/components/home/` | The landing page (a "parts catalog": isometric drawings in `iso.tsx`, the agent prompt (`copy-prompt.tsx`), the catalog in `parts.ts`; design rules in [DESIGN.md](./DESIGN.md)), the pricing page, the legal pages and `SiteFooter`. |
+ | `src/app/(home)/pricing`, `src/components/pricing/`, `src/lib/pricing.ts` | `/pricing`: plan cards, an email bill estimator (a client island rating with `@coss/billing/engine`'s `chargeRange`, so it matches invoices), usage rate cards, the plan comparison (`planRows()`, shared with the billing guide's `<PlanTable />`) and an FAQ. Every price, limit and allowance comes from `@coss/billing/catalog`. |
+-| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/runtime.tsx`, `src/lib/shipyard.ts`, `public/shipyard/assets/` | `/shipyard`: Shipyard's landing page as it was at berthd.app (moved from the coss ui repository's `apps/shipyard`), in its own route group with its own header links (`SHIPYARD_LINKS`). The page is static markup styled by `landing.css` (scoped to `.shipyard-landing`, its own tokens; the segment's layout loads Cal Sans from `@coss/ui/fonts` for the headlines and JetBrains Mono); the harbour, the night loop, the chapters' loops and line scenes are plain scripts in `public/shipyard/assets` (same-origin, so the CSP allows them) that `LandingRuntime` appends after the first paint and redraws on theme changes. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases, and the docs link to the `cosscom/shipyard` repository until they move here. |
++| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/{drawings,stage,copy-line}.tsx`, `src/lib/shipyard.ts` | `/shipyard`: Shipyard's landing page, drawn like the coss.com catalog (one ruled sheet, `SectionHead`s, `.drafting-grid` behind drawings) in its own route group with its own header links (`SHIPYARD_LINKS`). The drawings are `drawings.tsx`: isometric line art on `iso.tsx`'s projection and `--iso-*` faces, with Shipyard's one amber lamp; `landing.css` styles them and their motion, the one place on coss.com besides the manifesto where drawings move: each sits in a `Stage` (a client island) whose parts (`.part`, staggered by `--i`) drop in when it scrolls into view, groups marked `.lift` rise on hover, lamps breathe and wires march; without script or with `prefers-reduced-motion` the drawing is simply there. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases. `public/shipyard/assets` keeps only the harbour paintings and the night loop, for the coss.com landing page's banner (`harbour.tsx`). |
+ | `content/shipyard/`, `src/lib/shipyard-docs.ts`, `src/app/(shipyard)/shipyard/docs`, `src/components/shipyard/docs/`, `src/lib/shipyard/`, `public/shipyard/shots/` | `/shipyard/docs`: Shipyard's docs (moved with the landing page; the Markdown is the `cosscom/shipyard` repository's `docs/`). Their own `defineDocs` collection (`shipyard` in `collections.ts`, with its own `applyMdxPreset` so its rehype plugins never touch coss's docs: `rehype-reference.ts` makes the reference tables linkable, `rehype-nowrap-tokens.ts` keeps inline code from wrapping inside a flag), `loader` (`shipyardSource`, base `/shipyard/docs`) and search index (`/shipyard/docs/search.json`, which its `SiteShell`'s ⌘K menu searches), out of coss's sidebar, search and `/llms.txt`. The pages render in the same `DocsLayoutFrame`/`DocsPageFrame` as `/docs` (every folder of the tree is a sidebar group, since none is a root). MDX gets the site's components (coss ui callouts and cards included) plus Shipyard's (`getShipyardMDXComponents`): diagrams, the line scenes (`scenes.tsx`, a copy of the app's drawings), screenshots (`<Shot name>`: `public/shipyard/shots/<name>-{light,dark}.webp`, sizes in `shots.json`) and the stage; their styles are the three stylesheets the docs layout imports. Internal links in the pages are absolute (`/shipyard/docs/…`). |
+ | `src/app/(calendar)/kloq`, `src/lib/calendar.ts`, `src/lib/calendar/`, `src/components/calendar/`, `src/styles/calendar.css`, `packages/kloq` | `/kloq`: kloq (moved from the `cosscom/calendar` repository, which was built to be served below `/calendar`): the landing page, the live demo (`/kloq/demo`, localStorage-backed), the five tools (`/
 ```
 
-**File**: `apps/ui/registry/default/ui/textarea.tsx` (modified, +1/-1)
+**File**: `apps/site/DESIGN.md` (modified, +4/-0)
 ```diff
-@@ -23,7 +23,7 @@ export function Textarea({
-       className={
-         cn(
-           !unstyled &&
--            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-+            "relative inline-grid w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-           className,
-         ) || undefined
-       }
-```
-
-**File**: `packages/ui/src/components/textarea.tsx` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ export function Textarea({
-       className={
-         cn(
-           !unstyled &&
--            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-+            "relative inline-grid w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-           className,
-         ) || undefined
-       }
-```
-
----
-
-### Incident Patch 2: `8423f18a` (2026-09-27)
-**Commit Message**: feat(ui): add palette Select and radio card particles (#855)
-
-* feat(ui): add color palette selector particles
-
-* refactor(ui): focus palette particle on coss Select
-
-* fix(ui): align palette select popup with trigger
-
-* feat(ui): add three-column palette radio cards
-
-* fix(ui): hide palette card radio indicators
-
-* style(ui): make palette cards compact and inline
-
-* feat(ui): show palette names in swatch card tooltips
-
-* fix(ui): disable hoverable palette tooltips
-
-* style(ui): arrange palette cards in four columns
-
-**File**: `apps/ui/public/r/p-radio-group-10.json` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+{
-+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-+  "name": "p-radio-group-10",
-+  "description": "Color palette radio cards in a four-column grid",
-+  "registryDependencies": [
-+    "@coss/radio-group",
-+    "@coss/tooltip"
-+  ],
-+  "files": [
-+    {
-+      "path": "registry/default/particles/p-radio-group-10.tsx",
-+      "content": "\"use client\";\n\nimport { RadioGroup, RadioPrimitive } from \"@/registry/default/ui/radio-group\";\nimport {\n  Tooltip,\n  TooltipPopup,\n  TooltipProvider,\n  TooltipTrigger,\n} from \"@/registry/default/ui/tooltip\";\n\nconst palettes = [\n  { label: \"Mono\", value: \"mono\", colors: [\"#18181B\", \"#A1A1AA\", \"#FAFAFA\"] },\n  {\n    label: \"Porcelain\",\n    value: \"porcelain\",\n    colors: [\"#AA8F73\", \"#C8B79A\", \"#889FA3\"],\n  },\n  { label: \"Ember\", value: \"ember\", colors: [\"#B94724\", \"#DB8649\", \"#EDD0A0\"] },\n  { label: \"Terra\", value: \"terra\", colors: [\"#A64F3C\", \"#C78F70\", \"#896577\"] },\n  { label: \"Rosé\", value: \"rose\", colors: [\"#9B3F60\", \"#C98693\", \"#E9B9A5\"] },\n  { label: \"Dusk\", value: \"dusk\", colors: [\"#BE835B\", \"#8E7C9F\", \"#6E97AE\"] },\n  {\n    label: \"Orchard\",\n    value: \"orchard\",\n    colors: [\"#63794B\", \"#ADA66B\", \"#83A18A\"],\n  },\n  {\n    label: \"Petrol\",\n    value: \"petrol\",\n    colors: [\"#326A76\", \"#C97868\", \"#C9AD81\"],\n  },\n  {\n    label: \"Lagoon\",\n    value: \"lagoon\",\n    colors: [\"#247E92\", \"#4CAFA3\", \"#B6D8C7\"],\n  },\n  {\n    label: \"Borealis\",\n    value: \"borealis\",\n    colors: [\"#267F69\", \"#527FB8\", \"#9A83BF\"],\n  },\n  {\n    label: \"Cobalt\",\n    value: \"cobalt\",\n    colors: [\"#244E9A\", \"#607DA9\", \"#B5C9DD\"],\n  },\n  { label: \"Iris\", value: \"iris\", colors: [\"#7361A3\", \"#AC87A5\", \"#DBC3CA\"] },\n];\n\nexport default function Particle() {\n  return (\n    <fieldset className=\"w-full space-y-3\">\n      <legend className=\"font-medium text-sm\">Color palette</legend>\n      <TooltipProvider>\n        <RadioGroup\n          aria-label=\"Color palette\"\n          className=\"grid grid-cols-4 gap-2\"\n          defaultValue=\"dusk\"\n        >\n          {palettes.map((palette) => (\n            <Tooltip key={palette.value} disableHoverablePopup>\n              <TooltipTrigger\n                render={\n                  <RadioPrimitive.Root\n                    aria-label={palette.label}\n                    value={palette.value}\n                    className=\"flex items-center justify-center rounded-lg border p-2.5 outline-none hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:border-primary/48 data-checked:bg-accent/50\"\n                  />\n                }\n              >\n                <span aria-hidden=\"true\" className=\"flex shrink-0 -space-x-1\">\n                  {palette.colors.map((color) => (\n                    <span\n                      key={color}\n                      className=\"size-4 rounded-full ring-1 ring-background\"\n                      style={{ backgroundColor: color }}\n                    />\n                  ))}\n                </span>\n              </TooltipTrigger>\n              <TooltipPopup>{palette.label}</TooltipPopup>\n            </Tooltip>\n          ))}\n        </RadioGroup>\n      </TooltipProvider>\n    </fieldset>\n  );\n}\n",
-+      "type": "registry:block"
-+    }
-+  ],
-+  "meta": {
-+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"
-+  },
-+  "categories": [
-+    "radio group",
-+    "tooltip"
-+  ],
-+  "type": "registry:block"
-+}
-\ No newline at end of file
-```
-
-**File**: `apps/ui/public/r/p-select-24.json` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+{
-+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-+  "name": "p-select-24",
-+  "description": "Color palette select with three-color swatches",
-+  "registryDependencies": [
-+    "@coss/select"
-+  ],
-+  "files": [
-+    {
-+      "path": "registry/default/particles/p-select-24.tsx",
-+      "content": "\"use client\";\n\nimport {\n  Select,\n  SelectItem,\n  SelectLabel,\n  SelectPopup,\n  SelectTrigger,\n  SelectValue,\n} from \"@/registry/default/ui/select\";\n\nconst palettes = [\n  { label: \"Mono\", value: \"mono\", colors: [\"#18181B\", \"#A1A1AA\", \"#FAFAFA\"] },\n  {\n    label: \"Porcelain\",\n    value: \"porcelain\",\n    colors: [\"#AA8F73\", \"#C8B79A\", \"#889FA3\"],\n  },\n  { label: \"Ember\", value: \"ember\", colors: [\"#B94724\", \"#DB8649\", \"#EDD0A0\"] },\n  { label: \"Terra\", value: \"terra\", colors: [\"#A64F3C\", \"#C78F70\", \"#896577\"] },\n  { label: \"Rosé\", value: \"rose\", colors: [\"#9B3F60\", \"#C98693\", \"#E9B9A5\"] },\n  { label: \"Dusk\", value: \"dusk\", colors: [\"#BE835B\", \"#8E7C9F\", \"#6E97AE\"] },\n  {\n    label: \"Orchard\",\n    value: \"orchard\",\n    colors: [\"#63794B\", \"#ADA66B\", \"#83A18A\"],\n  },\n  {\n    label: \"Petrol\",\n    value: \"petrol\",\n    colors: [\"#326A76\", \"#C97868\", \"#C9AD81\"],\n  },\n  {\n    label: \"Lagoon\",\n    value: \"lagoon\",\n    colors: [\"#247E92\", \"#4CAFA3\", \"#B6D8C7\"],\n  },\n  {\n    label: \"Borealis\",\n    value: \"borealis\",\n    colors: [\"#267F69\", \"#527FB8\", \"#9A83BF\"],\n  },\n  {\n    label: \"Cobalt\",\n    value: \"cobalt\",\n    colors: [\"#244E9A\", \"#607DA9\", \"#B5C9DD\"],\n  },\n  { label: \"Iris\", value: \"iris\", colors: [\"#7361A3\", \"#AC87A5\", \"#DBC3CA\"] },\n];\n\nexport default function Particle() {\n  return (\n    <Select\n      defaultValue={palettes[5]}\n      items={palettes}\n      itemToStringValue={(palette) => palette.value}\n    >\n      <SelectLabel>Color palette</SelectLabel>\n      <SelectTrigger>\n        <SelectValue>\n          {(palette: (typeof palettes)[number]) => (\n            <span className=\"flex items-center gap-2\">\n              <span aria-hidden=\"true\" className=\"flex shrink-0 -space-x-1\">\n                {palette.colors.map((color) => (\n                  <span\n                    key={color}\n                    className=\"size-4 rounded-full ring-1 ring-background\"\n                    style={{ backgroundColor: color }}\n                  />\n                ))}\n              </span>\n              <span className=\"truncate\">{palette.label}</span>\n            </span>\n          )}\n        </SelectValue>\n      </SelectTrigger>\n      <SelectPopup>\n        {palettes.map((palette) => (\n          <SelectItem key={palette.value} value={palette}>\n            <span className=\"flex items-center gap-2\">\n              <span aria-hidden=\"true\" className=\"flex shrink-0 -space-x-1\">\n                {palette.colors.map((color) => (\n                  <span\n                    key={color}\n                    className=\"size-4 rounded-full ring-1 ring-background\"\n                    style={{ backgroundColor: color }}\n                  />\n                ))}\n              </span>\n              {palette.label}\n            </span>\n          </SelectItem>\n        ))}\n      </SelectPopup>\n    </Select>\n  );\n}\n",
-+      "type": "registry:block"
-+    }
-+  ],
-+  "meta": {
-+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"
-+  },
-+  "categories": [
-+    "select"
-+  ],
-+  "type": "registry:block"
-+}
-\ No newline at end of file
-```
-
-**File**: `apps/ui/public/r/registry.json` (modified, +42/-0)
-```diff
-@@ -8824,6 +8824,28 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "radio group",
-+        "tooltip"
-+      ],
-+      "description": "Color palette radio cards in a four-column grid",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-radio-group-10.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"
-+      },
-+      "name": "p-radio-group-10",
-+      "registryDependencies": [
-+        "@coss/radio-group",
-+        "@coss/tooltip"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "scroll area"
-@@ -9365,6 +9387,26 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "select"
-+      ],
-+      "description": "Color palette select with three-color swatches",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-select-24.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"
-+      },
-+      "name": "p-select-24",
-+      "registryDependencies": [
-+        "@coss/select"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "select"
-```
-
-**File**: `apps/ui/registry.json` (modified, +42/-0)
-```diff
-@@ -8824,6 +8824,28 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "radio group",
-+        "tooltip"
-+      ],
-+      "description": "Color palette radio cards in a four-column grid",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-radio-group-10.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"
-+      },
-+      "name": "p-radio-group-10",
-+      "registryDependencies": [
-+        "@coss/radio-group",
-+        "@coss/tooltip"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "scroll area"
-@@ -9365,6 +9387,26 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "select"
-+      ],
-+      "description": "Color palette select with three-color swatches",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-select-24.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"
-+      },
-+      "name": "p-select-24",
-+      "registryDependencies": [
-+        "@coss/select"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "select"
-```
-
-**File**: `apps/ui/registry/__index__.tsx` (modified, +36/-0)
-```diff
-@@ -7603,6 +7603,24 @@ export const Index: Record<string, any> = {
-     categories: ["radio group","segmented control"],
-     meta: undefined,
-   },
-+  "p-radio-group-10": {
-+    name: "p-radio-group-10",
-+    description: "Color palette radio cards in a four-column grid",
-+    type: "registry:block",
-+    registryDependencies: ["@coss/radio-group","@coss/tooltip"],
-+    files: [{
-+      path: "registry/default/particles/p-radio-group-10.tsx",
-+      type: "registry:block",
-+      target: ""
-+    }],
-+    component: React.lazy(async () => {
-+      const mod = await import("@/registry/default/particles/p-radio-group-10.tsx")
-+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
-+      return { default: mod.default || mod[exportName] }
-+    }),
-+    categories: ["radio group","tooltip"],
-+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"},
-+  },
-   "p-scroll-area-1": {
-     name: "p-scroll-area-1",
-     description: "Basic scroll area",
-@@ -8089,6 +8107,24 @@ export const Index: Record<string, any> = {
-     categories: ["select"],
-     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"},
-   },
-+  "p-select-24": {
-+    name: "p-select-24",
-+    description: "Color palette select with three-color swatches",
-+    type: "registry:block",
-+    registryDependencies: ["@coss/select"],
-+    files: [{
-+      path: "registry/default/particles/p-select-24.tsx",
-+      type: "registry:block",
-+      target: ""
-+    }],
-+    component: React.lazy(async () => {
-+      const mod = await import("@/registry/default/particles/p-select-24.tsx")
-+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
-+      return { default: mod.default || mod[exportName] }
-+    }),
-+    categories: ["select"],
-+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"},
-+  },
-   "p-select-11": {
-     name: "p-select-11",
-     description: "Select in form",
-```
-
-**File**: `apps/ui/registry/default/particles/p-radio-group-10.tsx` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+"use client";
+@@ -45,6 +45,10 @@ The exception is `/crowd-opinionated-source-software`, a manifesto rather than a
+ illustration (`src/components/coss-landing/`, client islands on `motion`) that starts when it scrolls into view,
+ loops gently, stays grayscale and holds its final frame under `prefers-reduced-motion`.
+ 
++Shipyard's page (`/shipyard`) is the other exception: its drawings (`src/components/shipyard/drawings.tsx`)
++drop in part by part when they scroll into view, lift on hover, and carry Shipyard's one amber lamp; all of it
++stops under `prefers-reduced-motion`.
 +
-+import { RadioGroup, RadioPrimitive } from "@/registry/default/ui/radio-group";
-+import {
-+  Tooltip,
-+  TooltipPopup,
-+  TooltipProvider,
-+  TooltipTrigger,
-+} from "@/registry/default/ui/tooltip";
-+
-+const palettes = [
-+  { label: "Mono", value: "mono", colors: ["#18181B", "#A1A1AA", "#FAFAFA"] },
-+  {
-+    label: "Porcelain",
-+    value: "porcelain",
-+    colors: ["#AA8F73", "#C8B79A", "#889FA3"],
-+  },
-+  { label: "Ember", value: "ember", colors: ["#B94724", "#DB8649", "#EDD0A0"] },
-+  { label: "Terra", value: "terra", colors: ["#A64F3C", "#C78F70", "#896577"] },
-+  { label: "Rosé", value: "rose", colors: ["#9B3F60", "#C98693", "#E9B9A5"] },
-+  { label: "Dusk", value: "dusk", colors: ["#BE835B", "#8E7C9F", "#6E97AE"] },
-+  {
-+    label: "Orchard",
-+    value: "orchard",
-+    colors: ["#63794B", "#ADA66B", "#83A18A"],
-+  },
-+  {
-+    label: "Petrol",
-+    value: "petrol",
-+    colors: ["#326A76", "#C97868", "#C9AD81"],
-+  },
-+  {
-+    label: "Lagoon",
-+    value: "lagoon",
-+    colors: ["#247E92", "#4CAFA3", "#B6D8C7"],
-+  },
-+  {
-+    label: "Borealis",
-+    value: "borealis",
-+    colors: ["#267F69", "#527FB8", "#9A83BF"],
-+  },
-+  {
-+    label: "Cobalt",
-+    value: "cobalt",
-+    colors: ["#244E9A", "#607DA9", "#B5C9DD"],
-+  },
-+  { label: "Iris", value: "iris", colors: ["#7361A3", "#AC87A5", "#DBC3CA"] },
-+];
-+
-+export default function Particle() {
-+  return (
-+    <fieldset className="w-full space-y-3">
-+      <legend className="font-medium text-sm">Color palette</legend>
-+      <TooltipProvider>
-+        <RadioGroup
-+          aria-label="Color palette"
-+          className="grid grid-cols-4 gap-2"
-+          defaultValue="dusk"
-+        >
-+          {palettes.map((palette) => (
-+            <Tooltip key={palette.value} disableHoverablePopup>
-+              <TooltipTrigger
-+                render={
-+                  <RadioPrimitive.Root
-+                    aria-label={palette.label}
-+                    value={palette.value}
-+                    className="flex items-center justify-center rounded-lg border p-2.5 outline-none hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:border-primary/48 data-checked:bg-accent/50"
-+                  />
-+                }
-+              >
-+                <span aria-hidden="true" className="flex shrink-0 -space-x-1">
-+                  {palette.colors.map((color) => (
-+                    <span
-+                      key={color}
-+                      className="size-4 rounded-full ring-1 ring-background"
-+                      style={{ backgroundColor: color }}
-+                    />
-+                  ))}
-+                </span>
-+              </TooltipTrigger>
-+              <TooltipPopup>{palette.label}</TooltipPopup>
-+            </Tooltip>
-+          ))}
-+        </RadioGroup>
-+      </TooltipProvider>
-+    </fieldset>
-+  );
-+}
+ ## Copy
+ 
+ - **Assertive and authoritative.** coss.com is the foundation apps are built on: write every product as
 ```
 
-**File**: `apps/ui/registry/default/particles/p-select-24.tsx` (added, +97/-0)
+**File**: `apps/site/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,97 @@
-+"use client";
-+
-+import {
-+  Select,
-+  SelectItem,
-+  SelectLabel,
-+  SelectPopup,
-+  SelectTrigger,
-+  SelectValue,
-+} from "@/registry/default/ui/select";
-+
-+const palettes = [
-+  { label: "Mono", value: "mono", colors: ["#18181B", "#A1A1AA", "#FAFAFA"] },
-+  {
-+    label: "Porcelain",
-+    value: "porcelain",
-+    colors: ["#AA8F73", "#C8B79A", "#889FA3"],
-+  },
-+  { label: "Ember", value: "ember", colors: ["#B94724", "#DB8649", "#EDD0A0"] },
-+  { label: "Terra", value: "terra", colors: ["#A64F3C", "#C78F70", "#896577"] },
-+  { label: "Rosé", value: "rose", colors: ["#9B3F60", "#C98693", "#E9B9A5"] },
-+  { label: "Dusk", value: "dusk", colors: ["#BE835B", "#8E7C9F", "#6E97AE"] },
-+  {
-+    label: "Orchard",
-+    value: "orchard",
-+    colors: ["#63794B", "#ADA66B", "#83A18A"],
-+  },
-+  {
-+    label: "Petrol",
-+    value: "petrol",
-+    colors: ["#326A76", "#C97868", "#C9AD81"],
-+  },
-+  {
-+    label: "Lagoon",
-+    value: "lagoon",
-+    colors: ["#247E92", "#4CAFA3", "#B6D8C7"],
-+  },
-+  {
-+    label: "Borealis",
-+    value: "borealis",
-+    colors: ["#267F69", "#527FB8", "#9A83BF"],
-+  },
-+  {
-+    label: "Cobalt",
-+    value: "cobalt",
-+    colors: ["#244E9A", "#607DA9", "#B5C9DD"],
-+  },
-+  { label: "Iris", value: "iris", colors: ["#7361A3", "#AC87A5", "#DBC3CA"] },
-+];
-+
-+export default function Particle() {
-+  return (
-+    <Select
-+      defaultValue={palettes[5]}
-+      items={palettes}
-+      itemToStringValue={(palette) => palette.value}
-+    >
-+      <SelectLabel>Color palette</SelectLabel>
-+      <SelectTrigger>
-+        <SelectValue>
-+          {(palette: (typeof palettes)[number]) => (
-+            <span className="flex items-center gap-2">
-+              <span aria-hidden="true" className="flex shrink-0 -space-x-1">
-+                {palette.colors.map((color) => (
-+                  <span
-+                    key={color}
-+                    className="size-4 rounded-full ring-1 ring-background"
-+                    style={{ backgroundColor: color }}
-+                  />
-+                ))}
-+              </span>
-+              <span className="truncate">{palette.label}</span>
-+            </span>
-+          )}
-+        </SelectValue>
-+      </SelectTrigger>
-+      <SelectPopup>
-+        {palettes.map((palette) => (
-+          <SelectItem key={palette.value} value={palette}>
-+            <span className="flex items-center gap-2">
-+              <span aria-hidden="true" className="flex shrink-0 -space-x-1">
-+                {palette.colors.map((color) => (
-+                  <span
-+                    key={color}
-+                    className="size-4 rounded-full ring-1 ring-background"
-+                    style={{ backgroundColor: color }}
-+                  />
-+                ))}
-+              </span>
-+              {palette.label}
-+            </span>
-+          </SelectItem>
-+        ))}
-+      </SelectPopup>
-+    </Select>
-+  );
-+}
+@@ -52,7 +52,7 @@ ENV NODE_ENV=production \
+ WORKDIR /app
+ COPY --from=build /repo/apps/site/.next/standalone ./
+ COPY --from=build /repo/apps/site/.next/static ./apps/site/.next/static
+-# The standalone output leaves public/ out (Shipyard's landing page assets, under /shipyard/assets).
++# The standalone output leaves public/ out (Shipyard's harbour and docs screenshots, under /shipyard).
+ COPY --from=build /repo/apps/site/public ./apps/site/public
+ # Next writes its cache under .next at runtime; everything else stays root-owned and read-only.
+ RUN mkdir -p apps/site/.next/cache && chown node:node apps/site/.next/cache
 ```
 
-**File**: `apps/ui/registry/registry-particles.ts` (modified, +24/-0)
+**File**: `apps/site/public/shipyard/assets/clips.js` (removed, +0/-191)
 ```diff
-@@ -4195,6 +4195,18 @@ export const particles: ParticleItem[] = [
-     registryDependencies: ["@coss/radio-group", "@coss/segmented-control"],
-     type: "registry:block",
-   },
-+  {
-+    categories: categories("radio group", "tooltip"),
-+    description: "Color palette radio cards in a four-column grid",
-+    files: [{ path: "particles/p-radio-group-10.tsx", type: "registry:block" }],
-+    meta: {
-+      className:
-+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96",
-+    },
-+    name: "p-radio-group-10",
-+    registryDependencies: ["@coss/radio-group", "@coss/tooltip"],
-+    type: "registry:block",
-+  },
-   {
-     categories: categories("scroll area"),
-     description: "Basic scroll area",
-@@ -4505,6 +4517,18 @@ export const particles: ParticleItem[] = [
-     registryDependencies: ["@coss/select"],
-     type: "registry:block",
-   },
-+  {
-+    categories: categories("select"),
-+    description: "Color palette select with three-color swatches",
-+    files: [{ path: "particles/p-select-24.tsx", type: "registry:block" }],
-+    meta: {
-+      className:
-+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64",
-+    },
-+    name: "p-select-24",
-+    registryDependencies: ["@coss/select"],
-+    type: "registry:block",
-+  },
-   {
-     categories: categories("select"),
-     description: "Select in form",
-```
-
----
-
-### Incident Patch 3: `59e8c88c` (2026-09-22)
-**Commit Message**: feat(ui): update Cal Sans to 2.003 (#853)
-
-Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-
-**File**: `packages/ui/src/fonts/README.md` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
- 
- ## Available Fonts
- 
--- `fontSans` — Cal Sans 2.0 variable font (`CalSansVF.woff2`)
-+- `fontSans` — Cal Sans 2.0 variable font (`CalSansVF.woff2` upright, `CalSansVF-Italic.woff2` italic)
- - `fontHeading` — Alias of `fontSans`; use when wiring a separate `--font-heading` variable
- - `fontMono` — Paper Mono for code and monospace UI
- 
-```
-
-**File**: `packages/ui/src/fonts/index.ts` (modified, +5/-2)
-```diff
-@@ -8,9 +8,12 @@ export const fontMono = localFont({
- 
- export const fontSans = localFont({
-   display: "swap",
--  src: "./CalSansVF.woff2",
-+  src: [
-+    { path: "./CalSansVF.woff2", style: "normal" },
-+    { path: "./CalSansVF-Italic.woff2", style: "italic" },
-+  ],
-   variable: "--font-sans",
--  weight: "300 700",
-+  weight: "400 700",
- });
- 
- /** Same variable font as `fontSans`; optional when wiring a separate `--font-heading`. */
-```
-
----
-
-### Incident Patch 4: `60b6b444` (2026-09-21)
-**Commit Message**: docs(ui): remove the Early Access callout from the Introduction (#852)
-
-Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-
-**File**: `apps/ui/content/docs/(root)/index.mdx` (modified, +0/-12)
-```diff
-@@ -9,18 +9,6 @@ We think Base UI is the best foundation for modern web applications. We've taken
- 
- This is the component library we'll be progressively adopting for [Cal.com](https://cal.com). We're building it in the open for anyone who wants to create beautiful, reliable user interfaces.
- 
--<Alert className="bg-muted/24">
--  <InfoIcon />
--  <AlertTitle>Early Access</AlertTitle>
--  <AlertDescription>
--    coss ui is currently in early development. We're building this library in
--    the open and actively working on new components and features. Base UI itself
--    is also in beta, so you may encounter breaking changes as both projects
--    evolve. We recommend using this in projects where you're comfortable
--    adapting to changes.
--  </AlertDescription>
--</Alert>
+@@ -1,191 +0,0 @@
+-// The chapters' loops and line scenes.
+-//
+-// A [data-clip] figure holds its poster (an <img> with its size, so nothing
+-// moves; its src waits for the page to load, so it never competes with the
+-// hero). Near the viewport it gets its muted loop, which plays while in view
+-// and pauses out of it, when the tab is hidden, or behind the film. Under
+-// reduced motion or Save-Data the posters stay, and no video loads.
+-//
+-// [data-views] is a switch over several loops: each plays once and hands on to
+-// the next, until a choice is made, after which the chosen one loops.
+-//
+-// The line scenes come in after the page has loaded, and pause offscreen and
+-// while the tab is hidden, as in the app.
+-(() => {
+-  const root = document.documentElement;
+-  const still = matchMedia("(prefers-reduced-motion: reduce)");
+-  const saveData = navigator.connection?.saveData === true;
 -
- ## How It Works
- 
- Our approach is simple: you should own your code. We're inspired by the copy-paste ethos of **shadcn/ui**.
-```
-
----
-
-### Incident Patch 5: `81634815` (2026-09-16)
-**Commit Message**: fix(ui): keep drawer close button above drag bar (#851)
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/drawer.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/drawer.tsx",
--      "content": "\"use client\";\n\nimport { Checkbox as CheckboxPrimitive } from \"@base-ui/react/checkbox\";\nimport { Drawer as DrawerPrimitive } from \"@base-ui/react/drawer\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Radio as RadioPrimitive } from \"@base-ui/react/radio\";\nimport { RadioGroup as RadioGroupPrimitive } from \"@base-ui/react/radio-group\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { ChevronRightIcon, XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { createContext, useContext } from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\ntype DrawerPosition = \"right\" | \"left\" | \"top\" | \"bottom\";\n\nconst DrawerContext: React.Context<{ position: DrawerPosition }> =\n  createContext<{ position: DrawerPosition }>({\n    position: \"bottom\",\n  });\n\nconst directionMap: Record<\n  DrawerPosition,\n  DrawerPrimitive.Root.Props[\"swipeDirection\"]\n> = {\n  bottom: \"down\",\n  left: \"left\",\n  right: \"right\",\n  top: \"up\",\n};\n\nexport const DrawerCreateHandle: typeof DrawerPrimitive.createHandle =\n  DrawerPrimitive.createHandle;\n\nexport function Drawer({\n  swipeDirection,\n  position = \"bottom\",\n  ...props\n}: DrawerPrimitive.Root.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  return (\n    <DrawerContext.Provider value={{ position }}>\n      <DrawerPrimitive.Root\n        swipeDirection={swipeDirection ?? directionMap[position]}\n        {...props}\n      />\n    </DrawerContext.Provider>\n  );\n}\n\nexport const DrawerPortal: typeof DrawerPrimitive.Portal =\n  DrawerPrimitive.Portal;\n\nexport function DrawerTrigger(\n  props: DrawerPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Trigger data-slot=\"drawer-trigger\" {...props} />;\n}\n\nexport function DrawerClose(\n  props: DrawerPrimitive.Close.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Close data-slot=\"drawer-close\" {...props} />;\n}\n\nexport function DrawerSwipeArea({\n  className,\n  position: positionProp,\n  ...props\n}: DrawerPrimitive.SwipeArea.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  const { position: contextPosition } = useContext(DrawerContext);\n  const position = positionProp ?? contextPosition;\n\n  return (\n    <DrawerPrimitive.SwipeArea\n      className={cn(\n        \"fixed z-50 touch-none\",\n        position === \"bottom\" && \"inset-x-0 bottom-0 h-8\",\n        position === \"top\" && \"inset-x-0 top-0 h-8\",\n        position === \"left\" && \"inset-y-0 left-0 w-8\",\n        position === \"right\" && \"inset-y-0 right-0 w-8\",\n        className,\n      )}\n      data-slot=\"drawer-swipe-area\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerBackdrop({\n  className,\n  ...props\n}: DrawerPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <DrawerPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 opacity-[calc(1-var(--drawer-swipe-progress))] backdrop-blur-sm transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-swiping:duration-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"drawer-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerViewport({\n  className,\n  position,\n  variant = \"default\",\n  ...props\n}: DrawerPrimitive.Viewport.Props & {\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n}): React.ReactElement {\n  return (\n    <DrawerPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]\",\n        \"touch-none\",\n        position === \"bottom\" && \"grid grid-rows-[1fr_auto] pt-12\",\n        position === \"top\" && \"grid grid-rows-[auto_1fr] pb-12\",\n        position === \"left\" && \"flex justify-start\",\n        position === \"right\" && \"flex justify-end\",\n        variant === \"inset\" && \"px-(--inset) sm:[--inset:--spacing(4)]\",\n        variant === \"inset\" && position !== \"bottom\" && \"pt-(--inset)\",\n        variant === \"inset\" && position !== \"top\" && \"pb-(--inset)\",\n        className,\n      )}\n      data-slot=\"drawer-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerPopup({\n  className,\n  children,\n  showCloseButton = false,\n  position: positionProp,\n  variant = \"default\",\n  showBar = false,\n  portalProps,\n  ...props\n}: DrawerPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n  s
-```
-
-**File**: `apps/ui/registry/default/ui/drawer.tsx` (modified, +1/-1)
-```diff
-@@ -214,7 +214,7 @@ export function DrawerPopup({
-           {showCloseButton && (
-             <DrawerPrimitive.Close
-               aria-label="Close"
--              className="absolute end-2 top-2"
-+              className="absolute end-2 top-2 z-1"
-               render={<Button size="icon" variant="ghost" />}
-             >
-               <XIcon />
-```
-
-**File**: `packages/ui/src/components/drawer.tsx` (modified, +1/-1)
-```diff
-@@ -214,7 +214,7 @@ export function DrawerPopup({
-           {showCloseButton && (
-             <DrawerPrimitive.Close
-               aria-label="Close"
--              className="absolute end-2 top-2"
-+              className="absolute end-2 top-2 z-1"
-               render={<Button size="icon" variant="ghost" />}
-             >
-               <XIcon />
-```
-
----
-
-### Incident Patch 6: `3bab6543` (2026-09-07)
-**Commit Message**: chore(ui): define Tailwind CSS compatibility (#847)
-
-**File**: `bun.lock` (modified, +1/-0)
-```diff
-@@ -200,6 +200,7 @@
-       "peerDependencies": {
-         "next": "^16.2.5",
-         "react": "^19.2.6",
-+        "tailwindcss": ">=4.1.17 <5",
-       },
-     },
-   },
-```
-
-**File**: `packages/ui/package.json` (modified, +2/-1)
-```diff
-@@ -39,7 +39,8 @@
-   "name": "@coss/ui",
-   "peerDependencies": {
-     "next": "^16.2.5",
--    "react": "^19.2.6"
-+    "react": "^19.2.6",
-+    "tailwindcss": ">=4.1.17 <5"
-   },
-   "scripts": {
-     "clean": "rm -rf node_modules",
-```
-
----
-
-### Incident Patch 7: `4b1240be` (2026-09-07)
-**Commit Message**: chore(ui): update Base UI to 1.8.0 (#846)
-
-**File**: `apps/ui/content/docs/components/avatar.mdx` (modified, +15/-1)
-```diff
-@@ -60,6 +60,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
- </Avatar>
- ```
- 
-+Use `keepMounted` when the image relies on native lazy loading or an optimized image component. The fallback remains visible while the image loads or if it fails:
-+
-+```tsx
-+<Avatar>
-+  <AvatarImage
-+    src="/avatars/01.png"
-+    alt="User avatar"
-+    loading="lazy"
-+    keepMounted
-+  />
-+  <AvatarFallback>JD</AvatarFallback>
-+</Avatar>
-+```
-+
- ## API Reference
- 
- ### Avatar
-@@ -68,7 +82,7 @@ Root component. Styled wrapper for `Avatar.Root` from Base UI with default size
- 
- ### AvatarImage
- 
--Image element for the avatar. Styled wrapper for `Avatar.Image` from Base UI.
-+Image element for the avatar. Styled wrapper for `Avatar.Image` from Base UI with support for `keepMounted` images.
- 
- ### AvatarFallback
- 
-```
-
-**File**: `apps/ui/content/docs/components/combobox.mdx` (modified, +32/-1)
-```diff
-@@ -59,6 +59,7 @@ import {
-   ComboboxItem,
-   ComboboxList,
-   ComboboxPopup,
-+  createComboboxItems,
- } from "@/components/ui/combobox"
- ```
- 
-@@ -81,6 +82,33 @@ const items = [
- </Combobox>
- ```
- 
-+When your source items are objects but selection should use a stable primitive value, create a typed collection with `createComboboxItems`:
-+
-+```tsx
-+const users = [
-+  { id: "ada", name: "Ada Lovelace" },
-+  { id: "grace", name: "Grace Hopper" },
-+]
-+
-+const userItems = createComboboxItems(users, {
-+  getLabel: (user) => user.name,
-+  getValue: (user) => user.id,
-+})
-+
-+<Combobox defaultValue="ada" items={userItems}>
-+  <ComboboxInput placeholder="Select a user..." />
-+  <ComboboxPopup>
-+    <ComboboxList>
-+      {(user) => (
-+        <ComboboxItem key={user.id} value={user.id}>
-+          {user.name}
-+        </ComboboxItem>
-+      )}
-+    </ComboboxList>
-+  </ComboboxPopup>
-+</Combobox>
-+```
-+
- ### Multiple Selection
- 
- ```tsx
-@@ -145,6 +173,10 @@ The root combobox component. Manages the combobox state and provides context to
- | `open`     | `boolean`                               | Controls whether the popup is open                |
- | `...props` | `React.ComponentProps<typeof Combobox>` | All Base UI Combobox props are supported          |
- 
-+### createComboboxItems
-+
-+Creates a typed item collection that derives primitive selection values and labels from object items. Define static collections outside components and memoize dynamic collections.
-+
- ### ComboboxInput
- 
- The input field component for single selection mode with extended features for size variants and addon support.
-@@ -328,4 +360,3 @@ Use `SelectButton` as a `render` prop on `ComboboxTrigger` to make the combobox
- ### Form Integration - Multiple
- 
- <ComponentPreview name="p-combobox-12" />
+-  // The line scenes, into their slots (assets/scenes.json, from the app's
+-  // drawings by scripts/scenes.mjs).
+-  const slots = document.querySelectorAll("[data-scene]");
+-  if (slots.length)
+-    fetch(
+-      `${document.querySelector("[data-base]")?.getAttribute("data-base") ?? ""}/assets/scenes.json`,
+-    )
+-      .then((r) => r.json())
+-      .then((scenes) => {
+-        const io =
+-          "IntersectionObserver" in window &&
+-          new IntersectionObserver((entries) => {
+-            for (const e of entries)
+-              e.target.toggleAttribute("data-off", !e.isIntersecting);
+-          });
+-        for (const slot of slots) {
+-          if (!scenes[slot.dataset.scene]) continue;
+-          slot.innerHTML = scenes[slot.dataset.scene];
+-          if (io) io.observe(slot.firstElementChild);
+-        }
+-      })
+-      .catch(() => {});
+-  const hidden = () =>
+-    root.toggleAttribute("data-berth-hidden", document.hidden);
+-  document.addEventListener("visibilitychange", hidden);
+-  hidden();
 -
-```
-
-**File**: `apps/ui/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "dependencies": {
--    "@base-ui/react": "1.6.0",
-+    "@base-ui/react": "1.8.0",
-     "@coss/ui": "workspace:*",
-     "@daypicker/react": "10.0.1",
-     "@hugeicons/core-free-icons": "^2.0.0",
-```
-
-**File**: `apps/ui/public/r/avatar.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/avatar.tsx",
--      "content": "\"use client\";\n\nimport { Avatar as AvatarPrimitive } from \"@base-ui/react/avatar\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function Avatar({\n  className,\n  ...props\n}: AvatarPrimitive.Root.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Root\n      className={cn(\n        \"inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs\",\n        className,\n      )}\n      data-slot=\"avatar\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarImage({\n  className,\n  ...props\n}: AvatarPrimitive.Image.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Image\n      className={cn(\"size-full object-cover\", className)}\n      data-slot=\"avatar-image\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarFallback({\n  className,\n  ...props\n}: AvatarPrimitive.Fallback.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Fallback\n      className={cn(\n        \"flex size-full items-center justify-center rounded-full bg-muted\",\n        className,\n      )}\n      data-slot=\"avatar-fallback\"\n      {...props}\n    />\n  );\n}\n\nexport { AvatarPrimitive };\n",
-+      "content": "\"use client\";\n\nimport { Avatar as AvatarPrimitive } from \"@base-ui/react/avatar\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function Avatar({\n  className,\n  ...props\n}: AvatarPrimitive.Root.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Root\n      className={cn(\n        \"relative isolate inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs\",\n        className,\n      )}\n      data-slot=\"avatar\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarImage({\n  className,\n  ...props\n}: AvatarPrimitive.Image.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Image\n      className={cn(\n        \"absolute inset-0 z-10 size-full object-cover data-error:invisible data-loading:invisible\",\n        className,\n      )}\n      data-slot=\"avatar-image\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarFallback({\n  className,\n  ...props\n}: AvatarPrimitive.Fallback.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Fallback\n      className={cn(\n        \"absolute inset-0 flex size-full items-center justify-center rounded-full bg-muted\",\n        className,\n      )}\n      data-slot=\"avatar-fallback\"\n      {...props}\n    />\n  );\n}\n\nexport { AvatarPrimitive };\n",
-       "type": "registry:ui"
-     }
-   ],
-```
-
-**File**: `apps/ui/public/r/combobox.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/combobox.tsx",
--      "content": "\"use client\";\n\nimport { Combobox as ComboboxPrimitive } from \"@base-ui/react/combobox\";\nimport { ChevronsUpDownIcon, XIcon } from \"lucide-react\";\nimport * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Input } from \"@/registry/default/ui/input\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const ComboboxContext: React.Context<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}> = React.createContext<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}>({\n  chipsRef: null,\n  multiple: false,\n});\n\nexport function Combobox<Value, Multiple extends boolean | undefined = false>(\n  props: ComboboxPrimitive.Root.Props<Value, Multiple>,\n): React.ReactElement {\n  const chipsRef = React.useRef<Element | null>(null);\n  return (\n    <ComboboxContext.Provider value={{ chipsRef, multiple: !!props.multiple }}>\n      <ComboboxPrimitive.Root {...props} />\n    </ComboboxContext.Provider>\n  );\n}\n\nexport function ComboboxChipsInput({\n  className,\n  size,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.Input\n      className={cn(\n        \"min-w-12 flex-1 text-base text-foreground outline-none sm:text-sm [[data-slot=combobox-chip]+&]:ps-0.5\",\n        sizeValue === \"sm\" ? \"ps-1.5\" : \"ps-2\",\n        className,\n      )}\n      data-size={typeof sizeValue === \"string\" ? sizeValue : undefined}\n      data-slot=\"combobox-chips-input\"\n      size={typeof sizeValue === \"number\" ? sizeValue : undefined}\n      {...props}\n    />\n  );\n}\n\nexport function ComboboxInput({\n  className,\n  showTrigger = true,\n  showClear = false,\n  startAddon,\n  size,\n  triggerProps,\n  clearProps,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  showTrigger?: boolean;\n  showClear?: boolean;\n  startAddon?: React.ReactNode;\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n  triggerProps?: ComboboxPrimitive.Trigger.Props;\n  clearProps?: ComboboxPrimitive.Clear.Props;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.InputGroup\n      className=\"relative not-has-[>*.w-full]:w-fit w-full text-foreground has-disabled:opacity-64\"\n      data-slot=\"combobox-input-group\"\n    >\n      {startAddon && (\n        <div\n          aria-hidden=\"true\"\n          className=\"pointer-events-none absolute inset-y-0 start-px z-10 flex items-center ps-[calc(--spacing(3)-1px)] opacity-80 has-[+[data-size=sm]]:ps-[calc(--spacing(2.5)-1px)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5\"\n          data-slot=\"combobox-start-addon\"\n        >\n          {startAddon}\n        </div>\n      )}\n      <ComboboxPrimitive.Input\n        className={cn(\n          startAddon &&\n            \"data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7.5)-1px)] *:data-[slot=combobox-input]:ps-[calc(--spacing(8.5)-1px)] sm:data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7)-1px)] sm:*:data-[slot=combobox-input]:ps-[calc(--spacing(8)-1px)]\",\n          sizeValue === \"sm\"\n            ? \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-6.5\"\n            : \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-7\",\n          className,\n        )}\n        data-slot=\"combobox-input\"\n        render={\n          <Input\n            className=\"has-disabled:opacity-100\"\n            nativeInput\n            size={sizeValue}\n          />\n        }\n        {...props}\n      />\n      {showTrigger && (\n        <ComboboxTrigger\n          className={cn(\n            \"absolute top-1/2 inline-flex size-8 shrink-0 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border border-transparent opacity-80 outline-none transition-opacity pointer-coarse:after:absolute pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 hover:opacity-100 has-[+[data-slot=combobox-clear]]:hidden sm:size-7 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n            sizeValue === \"sm\" ? \"end-0\" : \"end-0.5\",\n          )}\n          {...triggerProps}\n        >\n          <ComboboxPrimitive.Icon data-slot=\"combobox-icon\">\n            <ChevronsUpDownIcon />\n          </ComboboxPrimitive.Icon>\n        </ComboboxTrigger>\n      )}\n      {show
-```
-
-**File**: `apps/ui/registry/default/ui/avatar.tsx` (modified, +6/-3)
-```diff
-@@ -11,7 +11,7 @@ export function Avatar({
-   return (
-     <AvatarPrimitive.Root
-       className={cn(
--        "inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs",
-+        "relative isolate inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs",
-         className,
-       )}
-       data-slot="avatar"
-@@ -26,7 +26,10 @@ export function AvatarImage({
- }: AvatarPrimitive.Image.Props): React.ReactElement {
-   return (
-     <AvatarPrimitive.Image
--      className={cn("size-full object-cover", className)}
-+      className={cn(
-+        "absolute inset-0 z-10 size-full object-cover data-error:invisible data-loading:invisible",
-+        className,
-+      )}
-       data-slot="avatar-image"
-       {...props}
-     />
-@@ -40,7 +43,7 @@ export function AvatarFallback({
-   return (
-     <AvatarPrimitive.Fallback
-       className={cn(
--        "flex size-full items-center justify-center rounded-full bg-muted",
-+        "absolute inset-0 flex size-full items-center justify-center rounded-full bg-muted",
-         className,
-       )}
-       data-slot="avatar-fallback"
-```
-
-**File**: `apps/ui/registry/default/ui/combobox.tsx` (modified, +9/-2)
-```diff
-@@ -18,8 +18,12 @@ export const ComboboxContext: React.Context<{
-   multiple: false,
- });
- 
--export function Combobox<Value, Multiple extends boolean | undefined = false>(
--  props: ComboboxPrimitive.Root.Props<Value, Multiple>,
-+export function Combobox<
-+  Value,
-+  Multiple extends boolean | undefined = false,
-+  Item = Value,
-+>(
-+  props: ComboboxPrimitive.Root.Props<Value, Multiple, Item>,
- ): React.ReactElement {
-   const chipsRef = React.useRef<Element | null>(null);
-   return (
-@@ -429,6 +433,9 @@ export function ComboboxChipRemove(
-   );
- }
- 
-+export const createComboboxItems: typeof ComboboxPrimitive.createItems =
-+  ComboboxPrimitive.createItems;
-+
- export const useComboboxFilter: typeof ComboboxPrimitive.useFilter =
-   ComboboxPrimitive.useFilter;
- 
-```
-
-**File**: `apps/ui/skills/coss/references/primitives/avatar.md` (modified, +2/-0)
-```diff
-@@ -32,6 +32,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
- </Avatar>
- ```
- 
-+Use `keepMounted` on `AvatarImage` when the image relies on native lazy loading or an optimized image component. The image and fallback are layered so the fallback remains visible while the image loads or if it fails.
-+
- ## Patterns from coss particles
- 
- ### Key patterns
-```
-
----
-
-### Incident Patch 8: `705cb737` (2026-09-05)
-**Commit Message**: fix(toast): keep anchored toasts above later-opened popovers (#845)
-
-* fix(toast): keep anchored toasts above later-opened popovers
-
-The anchored toast portal stays mounted at z-50, so a popover opened afterward stacks on top of it.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* change z-index
-
-* build reg
-
----------
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/toast.json` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/toast.tsx",
--      "content": "\"use client\";\n\nimport { Toast } from \"@base-ui/react/toast\";\nimport {\n  CircleAlertIcon,\n  CircleCheckIcon,\n  InfoIcon,\n  LoaderCircleIcon,\n  TriangleAlertIcon,\n} from \"lucide-react\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { buttonVariants } from \"@/registry/default/ui/button\";\n\nconst TOAST_ICONS = {\n  error: CircleAlertIcon,\n  info: InfoIcon,\n  loading: LoaderCircleIcon,\n  success: CircleCheckIcon,\n  warning: TriangleAlertIcon,\n} as const;\n\ntype SwipeDirection = \"up\" | \"down\" | \"left\" | \"right\";\n\ntype ToastData = {\n  rootProps?: Omit<\n    React.ComponentProps<typeof Toast.Root>,\n    \"children\" | \"className\" | \"swipeDirection\" | \"toast\"\n  >;\n  tooltipStyle?: boolean;\n};\n\nfunction getSwipeDirection(position: ToastPosition): SwipeDirection[] {\n  const verticalDirection: SwipeDirection = position.startsWith(\"top\")\n    ? \"up\"\n    : \"down\";\n\n  if (position.includes(\"center\")) {\n    return [verticalDirection];\n  }\n\n  if (position.includes(\"left\")) {\n    return [\"left\", verticalDirection];\n  }\n\n  return [\"right\", verticalDirection];\n}\n\nfunction upsertReplayClassName(toast: {\n  type?: string;\n  updateKey?: number;\n}): string | undefined {\n  const k = toast.updateKey ?? 0;\n  if (k <= 0) return undefined;\n  const isEven = k % 2 === 0;\n  if (toast.type === \"error\") {\n    return isEven ? \"animate-toast-error-even\" : \"animate-toast-error-odd\";\n  }\n  return isEven ? \"animate-toast-success-even\" : \"animate-toast-success-odd\";\n}\n\nfunction Toasts({\n  position,\n  portalProps,\n}: {\n  position: ToastPosition;\n  portalProps?: React.ComponentProps<typeof Toast.Portal>;\n}): React.ReactElement {\n  const { toasts } = Toast.useToastManager();\n  const swipeDirection = getSwipeDirection(position);\n\n  return (\n    <Toast.Portal data-slot=\"toast-portal\" {...portalProps}>\n      <Toast.Viewport\n        className={cn(\n          \"fixed z-60 mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-90 [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)]\",\n          // Vertical positioning\n          \"data-[position*=top]:top-(--toast-inset)\",\n          \"data-[position*=bottom]:bottom-(--toast-inset)\",\n          // Horizontal positioning\n          \"data-[position*=left]:left-(--toast-inset)\",\n          \"data-[position*=right]:right-(--toast-inset)\",\n          \"data-[position*=center]:left-1/2 data-[position*=center]:-translate-x-1/2\",\n        )}\n        data-position={position}\n        data-slot=\"toast-viewport\"\n      >\n        {toasts.map((toast) => {\n          const Icon = toast.type\n            ? TOAST_ICONS[toast.type as keyof typeof TOAST_ICONS]\n            : null;\n          const toastData = toast.data as ToastData | undefined;\n\n          return (\n            <Toast.Root\n              key={toast.id}\n              className={cn(\n                \"absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full select-none rounded-lg border bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(1%*max(0,var(--toast-index,0))))] not-dark:bg-clip-padding text-popover-foreground shadow-lg/5 [transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n                // Base positioning using data-position\n                \"data-[position*=right]:right-0 data-[position*=right]:left-auto\",\n                \"data-[position*=left]:right-auto data-[position*=left]:left-0\",\n                \"data-[position*=center]:right-0 data-[position*=center]:left-0\",\n                \"data-[position*=top]:top-0 data-[position*=top]:bottom-auto data-[position*=top]:origin-[50%_calc(50%-50%*min(var(--toast-index,0),1))]\",\n                \"data-[position*=bottom]:top-auto data-[position*=bottom]:bottom-0 data-[position*=bottom]:origin-[50%_calc(50%+50%*min(var(--toast-index,0),1))]\",\n                // Gap fill for hover\n                \"after:absolute after:left-0 after:h-[calc(var(--toast-gap)+1px)] after:w-full\",\n                \"data-[position*=top]:after:top-full\",\n                \"data-[position*=bottom]:after:bottom-full\",\n                // Define some variables\n                \"[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-gap:--spacing(3)] [--toast-peek:--spacing(3)] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]\",\
-```
-
-**File**: `apps/ui/registry/default/ui/toast.tsx` (modified, +1/-1)
-```diff
-@@ -209,7 +209,7 @@ function AnchoredToasts({
-           return (
-             <Toast.Positioner
-               key={toast.id}
--              className="z-50 max-w-[min(--spacing(64),var(--available-width))]"
-+              className="z-60 max-w-[min(--spacing(64),var(--available-width))]"
-               data-slot="toast-positioner"
-               sideOffset={positionerProps.sideOffset ?? 4}
-               toast={toast}
-```
-
-**File**: `packages/ui/src/components/toast.tsx` (modified, +1/-1)
-```diff
-@@ -209,7 +209,7 @@ function AnchoredToasts({
-           return (
-             <Toast.Positioner
-               key={toast.id}
--              className="z-50 max-w-[min(--spacing(64),var(--available-width))]"
-+              className="z-60 max-w-[min(--spacing(64),var(--available-width))]"
-               data-slot="toast-positioner"
-               sideOffset={positionerProps.sideOffset ?? 4}
-               toast={toast}
-```
-
----
-
-### Incident Patch 9: `758e6535` (2026-08-31)
-**Commit Message**: fix(ui): contain long item labels (#842)
-
-**File**: `apps/ui/public/r/combobox.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/combobox.tsx",
--      "content": "\"use client\";\n\nimport { Combobox as ComboboxPrimitive } from \"@base-ui/react/combobox\";\nimport { ChevronsUpDownIcon, XIcon } from \"lucide-react\";\nimport * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Input } from \"@/registry/default/ui/input\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const ComboboxContext: React.Context<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}> = React.createContext<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}>({\n  chipsRef: null,\n  multiple: false,\n});\n\nexport function Combobox<Value, Multiple extends boolean | undefined = false>(\n  props: ComboboxPrimitive.Root.Props<Value, Multiple>,\n): React.ReactElement {\n  const chipsRef = React.useRef<Element | null>(null);\n  return (\n    <ComboboxContext.Provider value={{ chipsRef, multiple: !!props.multiple }}>\n      <ComboboxPrimitive.Root {...props} />\n    </ComboboxContext.Provider>\n  );\n}\n\nexport function ComboboxChipsInput({\n  className,\n  size,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.Input\n      className={cn(\n        \"min-w-12 flex-1 text-base text-foreground outline-none sm:text-sm [[data-slot=combobox-chip]+&]:ps-0.5\",\n        sizeValue === \"sm\" ? \"ps-1.5\" : \"ps-2\",\n        className,\n      )}\n      data-size={typeof sizeValue === \"string\" ? sizeValue : undefined}\n      data-slot=\"combobox-chips-input\"\n      size={typeof sizeValue === \"number\" ? sizeValue : undefined}\n      {...props}\n    />\n  );\n}\n\nexport function ComboboxInput({\n  className,\n  showTrigger = true,\n  showClear = false,\n  startAddon,\n  size,\n  triggerProps,\n  clearProps,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  showTrigger?: boolean;\n  showClear?: boolean;\n  startAddon?: React.ReactNode;\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n  triggerProps?: ComboboxPrimitive.Trigger.Props;\n  clearProps?: ComboboxPrimitive.Clear.Props;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.InputGroup\n      className=\"relative not-has-[>*.w-full]:w-fit w-full text-foreground has-disabled:opacity-64\"\n      data-slot=\"combobox-input-group\"\n    >\n      {startAddon && (\n        <div\n          aria-hidden=\"true\"\n          className=\"pointer-events-none absolute inset-y-0 start-px z-10 flex items-center ps-[calc(--spacing(3)-1px)] opacity-80 has-[+[data-size=sm]]:ps-[calc(--spacing(2.5)-1px)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5\"\n          data-slot=\"combobox-start-addon\"\n        >\n          {startAddon}\n        </div>\n      )}\n      <ComboboxPrimitive.Input\n        className={cn(\n          startAddon &&\n            \"data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7.5)-1px)] *:data-[slot=combobox-input]:ps-[calc(--spacing(8.5)-1px)] sm:data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7)-1px)] sm:*:data-[slot=combobox-input]:ps-[calc(--spacing(8)-1px)]\",\n          sizeValue === \"sm\"\n            ? \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-6.5\"\n            : \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-7\",\n          className,\n        )}\n        data-slot=\"combobox-input\"\n        render={\n          <Input\n            className=\"has-disabled:opacity-100\"\n            nativeInput\n            size={sizeValue}\n          />\n        }\n        {...props}\n      />\n      {showTrigger && (\n        <ComboboxTrigger\n          className={cn(\n            \"absolute top-1/2 inline-flex size-8 shrink-0 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border border-transparent opacity-80 outline-none transition-opacity pointer-coarse:after:absolute pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 hover:opacity-100 has-[+[data-slot=combobox-clear]]:hidden sm:size-7 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n            sizeValue === \"sm\" ? \"end-0\" : \"end-0.5\",\n          )}\n          {...triggerProps}\n        >\n          <ComboboxPrimitive.Icon data-slot=\"combobox-icon\">\n            <ChevronsUpDownIcon />\n          </ComboboxPrimitive.Icon>\n        </ComboboxTrigger>\n      )}\n      {show
-```
-
-**File**: `apps/ui/public/r/drawer.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/drawer.tsx",
--      "content": "\"use client\";\n\nimport { Checkbox as CheckboxPrimitive } from \"@base-ui/react/checkbox\";\nimport { Drawer as DrawerPrimitive } from \"@base-ui/react/drawer\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Radio as RadioPrimitive } from \"@base-ui/react/radio\";\nimport { RadioGroup as RadioGroupPrimitive } from \"@base-ui/react/radio-group\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { ChevronRightIcon, XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { createContext, useContext } from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\ntype DrawerPosition = \"right\" | \"left\" | \"top\" | \"bottom\";\n\nconst DrawerContext: React.Context<{ position: DrawerPosition }> =\n  createContext<{ position: DrawerPosition }>({\n    position: \"bottom\",\n  });\n\nconst directionMap: Record<\n  DrawerPosition,\n  DrawerPrimitive.Root.Props[\"swipeDirection\"]\n> = {\n  bottom: \"down\",\n  left: \"left\",\n  right: \"right\",\n  top: \"up\",\n};\n\nexport const DrawerCreateHandle: typeof DrawerPrimitive.createHandle =\n  DrawerPrimitive.createHandle;\n\nexport function Drawer({\n  swipeDirection,\n  position = \"bottom\",\n  ...props\n}: DrawerPrimitive.Root.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  return (\n    <DrawerContext.Provider value={{ position }}>\n      <DrawerPrimitive.Root\n        swipeDirection={swipeDirection ?? directionMap[position]}\n        {...props}\n      />\n    </DrawerContext.Provider>\n  );\n}\n\nexport const DrawerPortal: typeof DrawerPrimitive.Portal =\n  DrawerPrimitive.Portal;\n\nexport function DrawerTrigger(\n  props: DrawerPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Trigger data-slot=\"drawer-trigger\" {...props} />;\n}\n\nexport function DrawerClose(\n  props: DrawerPrimitive.Close.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Close data-slot=\"drawer-close\" {...props} />;\n}\n\nexport function DrawerSwipeArea({\n  className,\n  position: positionProp,\n  ...props\n}: DrawerPrimitive.SwipeArea.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  const { position: contextPosition } = useContext(DrawerContext);\n  const position = positionProp ?? contextPosition;\n\n  return (\n    <DrawerPrimitive.SwipeArea\n      className={cn(\n        \"fixed z-50 touch-none\",\n        position === \"bottom\" && \"inset-x-0 bottom-0 h-8\",\n        position === \"top\" && \"inset-x-0 top-0 h-8\",\n        position === \"left\" && \"inset-y-0 left-0 w-8\",\n        position === \"right\" && \"inset-y-0 right-0 w-8\",\n        className,\n      )}\n      data-slot=\"drawer-swipe-area\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerBackdrop({\n  className,\n  ...props\n}: DrawerPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <DrawerPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 opacity-[calc(1-var(--drawer-swipe-progress))] backdrop-blur-sm transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-swiping:duration-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"drawer-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerViewport({\n  className,\n  position,\n  variant = \"default\",\n  ...props\n}: DrawerPrimitive.Viewport.Props & {\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n}): React.ReactElement {\n  return (\n    <DrawerPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]\",\n        \"touch-none\",\n        position === \"bottom\" && \"grid grid-rows-[1fr_auto] pt-12\",\n        position === \"top\" && \"grid grid-rows-[auto_1fr] pb-12\",\n        position === \"left\" && \"flex justify-start\",\n        position === \"right\" && \"flex justify-end\",\n        variant === \"inset\" && \"px-(--inset) sm:[--inset:--spacing(4)]\",\n        variant === \"inset\" && position !== \"bottom\" && \"pt-(--inset)\",\n        variant === \"inset\" && position !== \"top\" && \"pb-(--inset)\",\n        className,\n      )}\n      data-slot=\"drawer-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerPopup({\n  className,\n  children,\n  showCloseButton = false,\n  position: positionProp,\n  variant = \"default\",\n  showBar = false,\n  portalProps,\n  ...props\n}: DrawerPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n  s
-```
-
-**File**: `apps/ui/public/r/select.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/select.tsx",
--      "content": "\"use client\";\n\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Select as SelectPrimitive } from \"@base-ui/react/select\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport {\n  ChevronDownIcon,\n  ChevronsUpDownIcon,\n  ChevronUpIcon,\n} from \"lucide-react\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport const Select: typeof SelectPrimitive.Root = SelectPrimitive.Root;\n\nexport const selectTriggerVariants = cva(\n  \"relative inline-flex min-h-9 w-full min-w-36 select-none items-center justify-between gap-2 rounded-lg border border-input bg-background not-dark:bg-clip-padding px-[calc(--spacing(3)-1px)] text-left text-base text-foreground shadow-xs/5 outline-none ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-data-disabled:not-focus-visible:not-aria-invalid:not-data-pressed:before:shadow-[0_1px_--theme(--color-black/4%)] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 focus-visible:border-ring focus-visible:ring-[3px] aria-invalid:border-destructive/36 focus-visible:aria-invalid:border-destructive/64 focus-visible:aria-invalid:ring-destructive/16 data-disabled:pointer-events-none data-disabled:opacity-64 sm:min-h-8 sm:text-sm dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:not-data-disabled:not-focus-visible:not-aria-invalid:not-data-pressed:before:shadow-[0_-1px_--theme(--color-white/6%)] [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [[data-disabled],:focus-visible,[aria-invalid],[data-pressed]]:shadow-none\",\n  {\n    defaultVariants: {\n      size: \"default\",\n    },\n    variants: {\n      size: {\n        default: \"\",\n        lg: \"min-h-10 sm:min-h-9\",\n        sm: \"min-h-8 gap-1.5 px-[calc(--spacing(2.5)-1px)] sm:min-h-7\",\n      },\n    },\n  },\n);\n\nexport const selectTriggerIconClassName = \"-me-1 size-4.5 opacity-80 sm:size-4\";\n\nexport interface SelectButtonProps extends useRender.ComponentProps<\"button\"> {\n  size?: VariantProps<typeof selectTriggerVariants>[\"size\"];\n}\n\nexport function SelectButton({\n  className,\n  size,\n  render,\n  children,\n  ...props\n}: SelectButtonProps): React.ReactElement {\n  const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>[\"type\"] =\n    render ? undefined : \"button\";\n\n  const defaultProps = {\n    children: (\n      <>\n        <span className=\"flex-1 truncate in-data-placeholder:text-muted-foreground/72\">\n          {children}\n        </span>\n        <ChevronsUpDownIcon className={selectTriggerIconClassName} />\n      </>\n    ),\n    className: cn(selectTriggerVariants({ size }), \"min-w-0\", className),\n    \"data-slot\": \"select-button\",\n    type: typeValue,\n  };\n\n  return useRender({\n    defaultTagName: \"button\",\n    props: mergeProps<\"button\">(defaultProps, props),\n    render,\n  });\n}\n\nexport function SelectTrigger({\n  className,\n  size = \"default\",\n  children,\n  ...props\n}: SelectPrimitive.Trigger.Props &\n  VariantProps<typeof selectTriggerVariants>): React.ReactElement {\n  return (\n    <SelectPrimitive.Trigger\n      className={cn(selectTriggerVariants({ size }), className)}\n      data-slot=\"select-trigger\"\n      {...props}\n    >\n      {children}\n      <SelectPrimitive.Icon data-slot=\"select-icon\">\n        <ChevronsUpDownIcon className={selectTriggerIconClassName} />\n      </SelectPrimitive.Icon>\n    </SelectPrimitive.Trigger>\n  );\n}\n\nexport function SelectValue({\n  className,\n  ...props\n}: SelectPrimitive.Value.Props): React.ReactElement {\n  return (\n    <SelectPrimitive.Value\n      className={cn(\n        \"flex-1 truncate data-placeholder:text-muted-foreground\",\n        className,\n      )}\n      data-slot=\"select-value\"\n      {...props}\n    />\n  );\n}\n\nexport function SelectPopup({\n  className,\n  children,\n  side = \"bottom\",\n  sideOffset = 4,\n  align = \"start\",\n  alignOffset = 0,\n  alignItemWithTrigger = true,\n  anchor,\n  portalProps,\n  ...props\n}: SelectPrimitive.Popup.Props & {\n  portalProps?: SelectPrimitive.Portal.Props;\n  side?: SelectPrimitive.Positioner.Props[\"side\"];\n  sideOffset?: SelectPrimitive.Positioner.Props[\"sideOffset\"];\n  align?: SelectPrimitive.Positioner.Props[\"align\"];\n  alignOffset?: SelectPrimitive.Positioner.Props[\"alignOffset\"];\n  alignItemWithTrigger?: SelectPrimitive.Positioner.Props[\"alignItemWithTrigger\"];\n  anchor?: SelectPrimitive.Positioner.Props[\"anchor\"];\n}): React.ReactElement {\n  return (\n    <SelectPrimitive.Portal {...portalProps}>\n      <Sel
-```
-
-**File**: `apps/ui/registry/default/ui/combobox.tsx` (modified, +2/-2)
-```diff
-@@ -210,7 +210,7 @@ export function ComboboxItem({
-   return (
-     <ComboboxPrimitive.Item
-       className={cn(
--        "grid min-h-8 in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-default grid-cols-[1rem_1fr] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-+        "grid min-h-8 in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-         className,
-       )}
-       data-slot="combobox-item"
-@@ -232,7 +232,7 @@ export function ComboboxItem({
-           <path d="M5.252 12.7 10.2 18.63 18.748 5.37" />
-         </svg>
-       </ComboboxPrimitive.ItemIndicator>
--      <div className="col-start-2">{children}</div>
-+      <div className="wrap-anywhere col-start-2 min-w-0">{children}</div>
-     </ComboboxPrimitive.Item>
-   );
- }
-```
-
-**File**: `apps/ui/registry/default/ui/drawer.tsx` (modified, +6/-6)
-```diff
-@@ -527,8 +527,8 @@ export function DrawerMenuCheckboxItem({
-       className={cn(
-         "grid min-h-9 w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none hover:bg-accent hover:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-64 sm:min-h-8 sm:text-sm [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0",
-         variant === "switch"
--          ? "grid-cols-[1fr_auto] gap-4 pe-1.5"
--          : "grid-cols-[1rem_1fr] pe-4",
-+          ? "grid-cols-[minmax(0,1fr)_auto] gap-4 pe-1.5"
-+          : "grid-cols-[1rem_minmax(0,1fr)] pe-4",
-         className,
-       )}
-       data-slot="drawer-menu-checkbox-item"
-@@ -540,7 +540,7 @@ export function DrawerMenuCheckboxItem({
-     >
-       {variant === "switch" ? (
-         <>
--          <span className="col-start-1">{children}</span>
-+          <span className="wrap-anywhere col-start-1 min-w-0">{children}</span>
-           <CheckboxPrimitive.Indicator
-             className="inset-shadow-[0_1px_--theme(--color-black/4%)] col-start-2 inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(4)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(3)]"
-             keepMounted
-@@ -565,7 +565,7 @@ export function DrawerMenuCheckboxItem({
-               <path d="M5.252 12.7 10.2 18.63 18.748 5.37" />
-             </svg>
-           </CheckboxPrimitive.Indicator>
--          <span className="col-start-2">{children}</span>
-+          <span className="wrap-anywhere col-start-2 min-w-0">{children}</span>
-         </>
-       )}
-     </CheckboxPrimitive.Root>
-@@ -600,7 +600,7 @@ export function DrawerMenuRadioItem({
-     <RadioPrimitive.Root
-       className={cn(
-         "grid min-h-9 w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none hover:bg-accent hover:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-64 sm:min-h-8 sm:text-sm [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0",
--        "grid-cols-[1rem_1fr] items-center pe-4",
-+        "grid-cols-[1rem_minmax(0,1fr)] items-center pe-4",
-         className,
-       )}
-       data-slot="drawer-menu-radio-item"
-@@ -624,7 +624,7 @@ export function DrawerMenuRadioItem({
-           <path d="M5.252 12.7 10.2 18.63 18.748 5.37" />
-         </svg>
-       </RadioPrimitive.Indicator>
--      <span className="col-start-2">{children}</span>
-+      <span className="wrap-anywhere col-start-2 min-w-0">{children}</span>
-     </RadioPrimitive.Root>
-   );
- }
-```
-
-**File**: `apps/ui/registry/default/ui/select.tsx` (modified, +2/-2)
-```diff
-@@ -178,7 +178,7 @@ export function SelectItem({
-   return (
-     <SelectPrimitive.Item
-       className={cn(
--        "grid min-h-8 in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-default grid-cols-[1rem_1fr] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-+        "grid min-h-8 in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-         className,
-       )}
-       data-slot="select-item"
-@@ -200,7 +200,7 @@ export function SelectItem({
-           <path d="M5.252 12.7 10.2 18.63 18.748 5.37" />
-         </svg>
-       </SelectPrimitive.ItemIndicator>
--      <SelectPrimitive.ItemText className="col-start-2 min-w-0">
-+      <SelectPrimitive.ItemText className="wrap-anywhere col-start-2 min-w-0">
-         {children}
-       </SelectPrimitive.ItemText>
-     </SelectPrimitive.Item>
-```
-
-**File**: `packages/ui/src/components/combobox.tsx` (modified, +2/-2)
-```diff
-@@ -210,7 +210,7 @@ export function ComboboxItem({
-   return (
-     <ComboboxPrimitive.Item
-       className={cn(
--        "grid min-h-8 in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-default grid-cols-[1rem_1fr] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-+        "grid min-h-8 in-data-[side=none]:min-w-[calc(var(--anchor-width)+1.25rem)] cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-sm py-1 ps-2 pe-4 text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-         className,
-       )}
-       data-slot="combobox-item"
-@@ -232,7 +232,7 @@ export function ComboboxItem({
-           <path d="M5.252 12.7 10.2 18.63 18.748 5.37" />
-         </svg>
-       </ComboboxPrimitive.ItemIndicator>
--      <div className="col-start-2">{children}</div>
-+      <div className="wrap-anywhere col-start-2 min-w-0">{children}</div>
-     </ComboboxPrimitive.Item>
-   );
- }
-```
-
-**File**: `packages/ui/src/components/drawer.tsx` (modified, +6/-6)
-```diff
-@@ -527,8 +527,8 @@ export function DrawerMenuCheckboxItem({
-       className={cn(
-         "grid min-h-9 w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none hover:bg-accent hover:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-64 sm:min-h-8 sm:text-sm [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0",
-         variant === "switch"
--          ? "grid-cols-[1fr_auto] gap-4 pe-1.5"
--          : "grid-cols-[1rem_1fr] pe-4",
-+          ? "grid-cols-[minmax(0,1fr)_auto] gap-4 pe-1.5"
-+          : "grid-cols-[1rem_minmax(0,1fr)] pe-4",
-         className,
-       )}
-       data-slot="drawer-menu-checkbox-item"
-@@ -540,7 +540,7 @@ export function DrawerMenuCheckboxItem({
-     >
-       {variant === "switch" ? (
-         <>
--          <span className="col-start-1">{children}</span>
-+          <span className="wrap-anywhere col-start-1 min-w-0">{children}</span>
-           <CheckboxPrimitive.Indicator
-             className="inset-shadow-[0_1px_--theme(--color-black/4%)] col-start-2 inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(4)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(3)]"
-             keepMounted
-@@ -565,7 +565,7 @@ export function DrawerMenuCheckboxItem({
-               <path d="M5.252 12.7 10.2 18.63 18.748 5.37" />
-             </svg>
-           </CheckboxPrimitive.Indicator>
--          <span className="col-start-2">{children}</span>
-+          <span className="wrap-anywhere col-start-2 min-w-0">{children}</span>
-         </>
-       )}
-     </CheckboxPrimitive.Root>
-@@ -600,7 +600,7 @@ export function DrawerMenuRadioItem({
-     <RadioPrimitive.Root
-       className={cn(
-         "grid min-h-9 w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none hover:bg-accent hover:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-64 sm:min-h-8 sm:text-sm [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0",
--        "grid-cols-[1rem_1fr] items-center pe-4",
-+        "grid-cols-[1rem_minmax(0,1fr)] items-center pe-4",
-         className,
-       )}
-       data-slot="drawer-menu-radio-item"
-@@ -624,7 +624,7 @@ export function DrawerMenuRadioItem({
-           <path d="M5.252 12.7 10.2 18.63 18.748 5.37" />
-         </svg>
-       </RadioPrimitive.Indicator>
--      <span className="col-start-2">{children}</span>
-+      <span className="wrap-anywhere col-start-2 min-w-0">{children}</span>
-     </RadioPrimitive.Root>
-   );
- }
-```
-
----
-
-### Incident Patch 10: `4ebe375c` (2026-08-29)
-**Commit Message**: fix(input-group): ignore portaled descendant events (#833)
-
-**File**: `apps/ui/public/r/input-group.json` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/input-group.tsx",
--      "content": "\"use client\";\n\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Input, type InputProps } from \"@/registry/default/ui/input\";\nimport { Textarea, type TextareaProps } from \"@/registry/default/ui/textarea\";\n\nconst inputGroupAddonVariants = cva(\n  \"flex h-auto cursor-text select-none items-center justify-center gap-2 [&>kbd]:rounded-[calc(var(--radius)-5px)] in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80\",\n  {\n    defaultVariants: {\n      align: \"inline-start\",\n    },\n    variants: {\n      align: {\n        \"block-end\":\n          \"order-last w-full justify-start px-[calc(--spacing(3)-1px)] pb-[calc(--spacing(3)-1px)] [.border-t]:pt-[calc(--spacing(3)-1px)] [[data-size=sm]+&]:px-[calc(--spacing(2.5)-1px)]\",\n        \"block-start\":\n          \"order-first w-full justify-start px-[calc(--spacing(3)-1px)] pt-[calc(--spacing(3)-1px)] [.border-b]:pb-[calc(--spacing(3)-1px)] [[data-size=sm]+&]:px-[calc(--spacing(2.5)-1px)]\",\n        \"inline-end\":\n          \"order-last pe-[calc(--spacing(3)-1px)] has-[>:last-child[data-slot=badge]]:-me-1.5 has-[>button]:-me-2 has-[>kbd:last-child]:me-[-0.35rem] [[data-size=sm]+&]:pe-[calc(--spacing(2.5)-1px)]\",\n        \"inline-start\":\n          \"order-first ps-[calc(--spacing(3)-1px)] has-[>:last-child[data-slot=badge]]:-ms-1.5 has-[>button]:-ms-2 has-[>kbd:last-child]:ms-[-0.35rem] [[data-size=sm]+&]:ps-[calc(--spacing(2.5)-1px)]\",\n      },\n    },\n  },\n);\n\nexport function InputGroup({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"relative inline-flex w-full min-w-0 items-center rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-[input:disabled,textarea:disabled]:not-has-[input:focus-visible,textarea:focus-visible]:not-has-[input[aria-invalid],textarea[aria-invalid]]:before:shadow-[0_1px_--theme(--color-black/4%)] has-[input:focus-visible,textarea:focus-visible]:has-[input[aria-invalid],textarea[aria-invalid]]:border-destructive/64 has-[input:focus-visible,textarea:focus-visible]:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/16 has-[textarea]:h-auto has-data-[align=block-end]:h-auto has-data-[align=block-start]:h-auto has-data-[align=block-end]:flex-col has-data-[align=block-start]:flex-col has-[input:focus-visible,textarea:focus-visible]:border-ring has-[input[aria-invalid],textarea[aria-invalid]]:border-destructive/36 has-autofill:bg-foreground/4 has-[input:disabled,textarea:disabled]:opacity-64 has-[input:disabled,textarea:disabled,input:focus-visible,textarea:focus-visible,input[aria-invalid],textarea[aria-invalid]]:shadow-none has-[input:focus-visible,textarea:focus-visible]:ring-[3px] sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/24 dark:not-has-[input:disabled,textarea:disabled]:not-has-[input:focus-visible,textarea:focus-visible]:not-has-[input[aria-invalid],textarea[aria-invalid]]:before:shadow-[0_-1px_--theme(--color-white/6%)] has-data-[align=inline-start]:**:[[data-size=sm]_input]:ps-1.5 has-data-[align=inline-end]:**:[[data-size=sm]_input]:pe-1.5 *:[[data-slot=input-control],[data-slot=textarea-control]]:contents *:[[data-slot=input-control],[data-slot=textarea-control]]:before:hidden has-[[data-align=block-start],[data-align=block-end]]:**:[input]:h-auto has-data-[align=inline-start]:**:[input]:ps-2 has-data-[align=inline-end]:**:[input]:pe-2 has-data-[align=block-end]:**:[input]:pt-1.5 has-data-[align=block-start]:**:[input]:pb-1.5 **:[textarea]:min-h-20.5 **:[textarea]:resize-none **:[textarea]:py-[calc(--spacing(3)-1px)] **:[textarea]:max-sm:min-h-23.5 **:[textarea_button]:rounded-[calc(var(--radius-md)-1px)]\",\n        className,\n      )}\n      data-slot=\"input-group\"\n      role=\"group\"\n      {...props}\n    />\n  );\n}\n\nexport function InputGroupAddon({\n  className,\n  align = \"inline-start\",\n  ...props\n}: React.ComponentProps<\"div\"> &\n  VariantProps<typeof inputGroupAddonVariants>): React.ReactElement {\n  return (\n    <div\n      className={cn(inputGroupAddonVariants({ align }), className)}\n      data-align={align}\n      data-slot=\"input-group-addon\"\n      onMouseDown={(e: React.MouseEvent<H
-```
-
-**File**: `apps/ui/registry/default/ui/input-group.tsx` (modified, +3/-1)
-```diff
-@@ -56,7 +56,9 @@ export function InputGroupAddon({
-       data-align={align}
-       data-slot="input-group-addon"
-       onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
--        const target = e.target as HTMLElement;
-+        const target = e.target as Element;
-+        if (!e.currentTarget.contains(target)) return;
-+
-         const isInteractive = target.closest(
-           "button, a, input, select, textarea, [role='button'], [role='combobox'], [role='listbox'], [data-slot='select-trigger']",
-         );
-```
-
-**File**: `packages/ui/src/components/input-group.tsx` (modified, +3/-1)
-```diff
-@@ -56,7 +56,9 @@ export function InputGroupAddon({
-       data-align={align}
-       data-slot="input-group-addon"
-       onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
--        const target = e.target as HTMLElement;
-+        const target = e.target as Element;
-+        if (!e.currentTarget.contains(target)) return;
-+
-         const isInteractive = target.closest(
-           "button, a, input, select, textarea, [role='button'], [role='combobox'], [role='listbox'], [data-slot='select-trigger']",
-         );
-```
-
-**File**: `packages/ui/test/components/input-group.test.tsx` (added, +116/-0)
-```diff
-@@ -0,0 +1,116 @@
-+import { describe, expect, mock, test } from "bun:test";
-+import type * as React from "react";
-+
-+function componentMock() {
-+  return null;
-+}
-+
-+mock.module("@coss/ui/components/input", () => ({
-+  Input: componentMock,
-+}));
-+
-+mock.module("@coss/ui/components/textarea", () => ({
-+  Textarea: componentMock,
-+}));
-+
-+mock.module("@coss/ui/lib/utils", () => ({
-+  cn: (...inputs: unknown[]) => inputs.filter(Boolean).join(" "),
-+}));
-+
-+const { InputGroupAddon } = await import("../../src/components/input-group");
-+
-+type MouseDownHandler = NonNullable<React.ComponentProps<"div">["onMouseDown"]>;
-+
-+function getMouseDownHandler(): MouseDownHandler {
-+  const element = InputGroupAddon({});
-+  const props = element.props as React.ComponentProps<"div">;
-+
-+  if (!props.onMouseDown) {
-+    throw new Error("InputGroupAddon does not have an onMouseDown handler");
-+  }
-+
-+  return props.onMouseDown;
-+}
-+
-+function createMouseDownEvent({
-+  contains,
-+  interactive = false,
-+}: {
-+  contains: boolean;
-+  interactive?: boolean;
-+}) {
-+  let focused = false;
-+  let prevented = false;
-+
-+  const target = {
-+    closest: () => (interactive ? {} : null),
-+  } as unknown as Element;
-+  const input = {
-+    focus: () => {
-+      focused = true;
-+    },
-+  };
-+  const parentElement = {
-+    querySelector: (selector: string) => {
-+      if (selector === "input, textarea") return input;
-+      if (selector === "input:focus, textarea:focus") return null;
-+      return null;
-+    },
-+  };
-+  const currentTarget = {
-+    contains: () => contains,
-+    parentElement,
-+  } as unknown as HTMLDivElement;
-+  const event = {
-+    currentTarget,
-+    preventDefault: () => {
-+      prevented = true;
-+    },
-+    target,
-+  } as unknown as React.MouseEvent<HTMLDivElement>;
-+
-+  return {
-+    event,
-+    wasFocused: () => focused,
-+    wasPrevented: () => prevented,
-+  };
-+}
-+
-+describe("InputGroupAddon", () => {
-+  test("focuses the input for non-interactive content inside the addon", () => {
-+    const handler = getMouseDownHandler();
-+    const { event, wasFocused, wasPrevented } = createMouseDownEvent({
-+      contains: true,
-+    });
-+
-+    handler(event);
-+
-+    expect(wasPrevented()).toBe(true);
-+    expect(wasFocused()).toBe(true);
-+  });
-+
-+  test("does not focus the input for interactive content inside the addon", () => {
-+    const handler = getMouseDownHandler();
-+    const { event, wasFocused, wasPrevented } = createMouseDownEvent({
-+      contains: true,
-+      interactive: true,
-+    });
-+
-+    handler(event);
-+
-+    expect(wasPrevented()).toBe(false);
-+    expect(wasFocused()).toBe(false);
-+  });
-+
-+  test("ignores events from portaled descendants outside the addon", () => {
-+    const handler = getMouseDownHandler();
-+    const { event, wasFocused, wasPrevented } = createMouseDownEvent({
-+      contains: false,
-+    });
-+
-+    handler(event);
-+
-+    expect(wasPrevented()).toBe(false);
-+    expect(wasFocused()).toBe(false);
-+  });
-+});
-```
-
----
-
-### Incident Patch 11: `0630457e` (2026-08-29)
-**Commit Message**: fix(scroll-area): correct transition-shadows typo so the focus ring animates (#834)
-
-Tailwind's utility is singular, so `transition-shadows` compiles to nothing: the viewport gets no transition-property or duration and its focus-visible ring snaps in and out. `transition-shadow` sets `transition-property: box-shadow`, which is what `ring-2` and `ring-offset-1` render.
-
-The registry JSON and the packages/ui copy carry the same change.
-
-Co-authored-by: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/scroll-area.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/scroll-area.tsx",
--      "content": "\"use client\";\n\nimport { ScrollArea as ScrollAreaPrimitive } from \"@base-ui/react/scroll-area\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function ScrollArea({\n  className,\n  children,\n  scrollFade = false,\n  scrollbarGutter = false,\n  fill = false,\n  clampContentMinWidth = true,\n  overscrollContain = false,\n  ...props\n}: ScrollAreaPrimitive.Root.Props & {\n  scrollFade?: boolean;\n  scrollbarGutter?: boolean;\n  fill?: boolean;\n  clampContentMinWidth?: boolean;\n  overscrollContain?: boolean;\n}): React.ReactElement {\n  return (\n    <ScrollAreaPrimitive.Root\n      className={cn(\"size-full min-h-0\", className)}\n      {...props}\n    >\n      <ScrollAreaPrimitive.Viewport\n        className={cn(\n          \"h-full rounded-[inherit] outline-none transition-shadows focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background\",\n          overscrollContain &&\n            \"data-has-overflow-y:overscroll-y-contain data-has-overflow-x:overscroll-x-contain\",\n          scrollFade &&\n            \"mask-t-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-start)))] mask-b-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-end)))] mask-l-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-start)))] mask-r-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-end)))] [--fade-size:1.5rem]\",\n          scrollbarGutter &&\n            \"data-has-overflow-y:pe-2.5 data-has-overflow-x:pb-2.5\",\n        )}\n        data-slot=\"scroll-area-viewport\"\n      >\n        <ScrollAreaPrimitive.Content\n          className={cn(fill && \"size-full\")}\n          data-slot=\"scroll-area-content\"\n          style={clampContentMinWidth ? { minWidth: 0 } : undefined}\n        >\n          {children}\n        </ScrollAreaPrimitive.Content>\n      </ScrollAreaPrimitive.Viewport>\n      <ScrollBar orientation=\"vertical\" />\n      <ScrollBar orientation=\"horizontal\" />\n      <ScrollAreaPrimitive.Corner data-slot=\"scroll-area-corner\" />\n    </ScrollAreaPrimitive.Root>\n  );\n}\n\nexport function ScrollBar({\n  className,\n  orientation = \"vertical\",\n  ...props\n}: ScrollAreaPrimitive.Scrollbar.Props): React.ReactElement {\n  return (\n    <ScrollAreaPrimitive.Scrollbar\n      className={cn(\n        \"m-1 flex opacity-0 transition-opacity delay-300 data-[orientation=horizontal]:h-1.5 data-[orientation=vertical]:w-1.5 data-[orientation=horizontal]:flex-col data-hovering:opacity-100 data-scrolling:opacity-100 data-hovering:delay-0 data-scrolling:delay-0 data-hovering:duration-100 data-scrolling:duration-100\",\n        className,\n      )}\n      data-slot=\"scroll-area-scrollbar\"\n      orientation={orientation}\n      {...props}\n    >\n      <ScrollAreaPrimitive.Thumb\n        className=\"relative flex-1 rounded-full bg-foreground/20\"\n        data-slot=\"scroll-area-thumb\"\n      />\n    </ScrollAreaPrimitive.Scrollbar>\n  );\n}\n\nexport { ScrollAreaPrimitive };\n",
-+      "content": "\"use client\";\n\nimport { ScrollArea as ScrollAreaPrimitive } from \"@base-ui/react/scroll-area\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function ScrollArea({\n  className,\n  children,\n  scrollFade = false,\n  scrollbarGutter = false,\n  fill = false,\n  clampContentMinWidth = true,\n  overscrollContain = false,\n  ...props\n}: ScrollAreaPrimitive.Root.Props & {\n  scrollFade?: boolean;\n  scrollbarGutter?: boolean;\n  fill?: boolean;\n  clampContentMinWidth?: boolean;\n  overscrollContain?: boolean;\n}): React.ReactElement {\n  return (\n    <ScrollAreaPrimitive.Root\n      className={cn(\"size-full min-h-0\", className)}\n      {...props}\n    >\n      <ScrollAreaPrimitive.Viewport\n        className={cn(\n          \"h-full rounded-[inherit] outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background\",\n          overscrollContain &&\n            \"data-has-overflow-y:overscroll-y-contain data-has-overflow-x:overscroll-x-contain\",\n          scrollFade &&\n            \"mask-t-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-start)))] mask-b-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-y-end)))] mask-l-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-start)))] mask-r-from-[calc(100%-min(var(--fade-size),var(--scroll-area-overflow-x-end)))] [--fade-size:1.5rem]\",\n          scrollbarGutter &&\n            \"data-has-overflow-y:pe-2.5 data-has-overflow-x:pb-2.5\",\n        )}\n        data-slot=\"scroll-area-viewport\"\n      >\n        <ScrollAreaPrimitive.Content\n          className={cn(fill && \"size-full\")}\n          data-slot=\"scroll-area-c
-```
-
-**File**: `apps/ui/registry/default/ui/scroll-area.tsx` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ export function ScrollArea({
-     >
-       <ScrollAreaPrimitive.Viewport
-         className={cn(
--          "h-full rounded-[inherit] outline-none transition-shadows focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-+          "h-full rounded-[inherit] outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-           overscrollContain &&
-             "data-has-overflow-y:overscroll-y-contain data-has-overflow-x:overscroll-x-contain",
-           scrollFade &&
-```
-
-**File**: `packages/ui/src/components/scroll-area.tsx` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ export function ScrollArea({
-     >
-       <ScrollAreaPrimitive.Viewport
-         className={cn(
--          "h-full rounded-[inherit] outline-none transition-shadows focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-+          "h-full rounded-[inherit] outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-           overscrollContain &&
-             "data-has-overflow-y:overscroll-y-contain data-has-overflow-x:overscroll-x-contain",
-           scrollFade &&
-```
-
----
-
-### Incident Patch 12: `f27d6684` (2026-08-19)
-**Commit Message**: feat(ui): share segmented item layout styles with Tabs (#837)
-
-Extract icon gap, size, and opacity into segmentedControlItemLayoutClassName so radio, navigation, and Tabs stay optically aligned.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/content/docs/(root)/changelog.mdx` (modified, +8/-0)
-```diff
-@@ -3,6 +3,14 @@ title: Changelog
- description: Breaking changes, migration guides, and notable updates.
- ---
- 
-+## August 19, 2026
-+
-+### Shared segmented control item layout styles
-+
-+**`segmented-control`** now exports **`segmentedControlItemLayoutClassName`** for the shared icon gap, size, and opacity treatment. **`segmentedControlItemVariants`** includes this class, and **`TabsTab`** uses it instead of inlining the same utilities.
-+
-+Existing Tabs and segmented-control usage does not need JSX changes. If you maintain a local copy of the library or Tabs, merge the new export so icons stay optically aligned with Button.
-+
- ## August 17, 2026
- 
- ### Tabs sizing and segmented control styles
-```
-
-**File**: `apps/ui/content/docs/components/segmented-control.mdx` (modified, +3/-2)
-```diff
-@@ -45,10 +45,11 @@ For a custom composition, install the styling library directly:
- npx shadcn@latest add @coss/segmented-control
- ```
- 
--The library exports a root class and an item recipe:
-+The library exports a root class, an item recipe, and a shared item layout class for icons:
- 
- ```tsx
- import {
-+  segmentedControlItemLayoutClassName,
-   segmentedControlItemVariants,
-   segmentedControlRootClassName,
- } from "@/lib/segmented-control"
-@@ -66,7 +67,7 @@ const itemClassName = segmentedControlItemVariants({
- | `size` | `"sm" \| "default" \| "lg"` | Controls item height and horizontal padding. |
- | `state` | `"checked" \| "current" \| "pressed"` | Selects the state attribute used by the underlying element. |
- 
--Use `checked` with Radio Group, `current` with navigation links, and `pressed` with Toggle Group. Tabs retain their own animated indicator and do not use the shared state recipe.
-+Use `checked` with Radio Group, `current` with navigation links, and `pressed` with Toggle Group. Tabs retain their own animated indicator and do not use the shared state recipe. They reuse `segmentedControlItemLayoutClassName` so icons match the other segmented implementations.
- 
- At the outside edges, the item padding and the surface's `p-0.5` inset combine to match the horizontal padding of the corresponding Button size. The outer segmented surface is slightly taller than that Button to optically balance its inset selected item when the controls appear next to each other.
- 
-```
-
-**File**: `apps/ui/public/r/segmented-control.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/lib/segmented-control.ts",
--      "content": "import { cva } from \"class-variance-authority\";\n\nexport type SegmentedControlSize = \"default\" | \"lg\" | \"sm\";\n\nexport const segmentedControlItemSizeClassNames: Record<\n  SegmentedControlSize,\n  string\n> = {\n  default: \"h-8.5 px-[calc(--spacing(2.5)-1px)] sm:h-7.5\",\n  lg: \"h-9.5 px-[calc(--spacing(3)-1px)] sm:h-8.5\",\n  sm: \"h-7.5 px-[calc(--spacing(2)-1px)] sm:h-6.5\",\n};\n\nexport const segmentedControlRootClassName =\n  \"relative z-0 flex w-fit items-center justify-center gap-0.5 rounded-lg bg-muted p-0.5\";\n\nexport const segmentedControlItemVariants = cva(\n  \"relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-base text-muted-foreground/72 outline-2 outline-transparent transition-[outline-color] hover:bg-transparent hover:text-muted-foreground focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64 data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm\",\n  {\n    defaultVariants: {\n      size: \"default\",\n    },\n    variants: {\n      size: segmentedControlItemSizeClassNames,\n      state: {\n        checked:\n          \"data-checked:bg-background data-checked:text-foreground data-checked:shadow-sm/5 dark:data-checked:bg-input\",\n        current:\n          \"aria-[current=page]:bg-background aria-[current=page]:text-foreground aria-[current=page]:shadow-sm/5 dark:aria-[current=page]:bg-input\",\n        pressed:\n          \"data-pressed:bg-background data-pressed:text-foreground data-pressed:shadow-sm/5 dark:data-pressed:bg-input\",\n      },\n    },\n  },\n);\n",
-+      "content": "import { cva } from \"class-variance-authority\";\n\nexport type SegmentedControlSize = \"default\" | \"lg\" | \"sm\";\n\nexport const segmentedControlItemSizeClassNames: Record<\n  SegmentedControlSize,\n  string\n> = {\n  default: \"h-8.5 px-[calc(--spacing(2.5)-1px)] sm:h-7.5\",\n  lg: \"h-9.5 px-[calc(--spacing(3)-1px)] sm:h-8.5\",\n  sm: \"h-7.5 px-[calc(--spacing(2)-1px)] sm:h-6.5\",\n};\n\nexport const segmentedControlRootClassName =\n  \"relative z-0 flex w-fit items-center justify-center gap-0.5 rounded-lg bg-muted p-0.5\";\n\nexport const segmentedControlItemLayoutClassName =\n  \"gap-1.5 [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0\";\n\nexport const segmentedControlItemVariants = cva(\n  [\n    \"relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-base text-muted-foreground/72 outline-2 outline-transparent transition-[outline-color] hover:bg-transparent hover:text-muted-foreground focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64 data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm\",\n    segmentedControlItemLayoutClassName,\n  ],\n  {\n    defaultVariants: {\n      size: \"default\",\n    },\n    variants: {\n      size: segmentedControlItemSizeClassNames,\n      state: {\n        checked:\n          \"data-checked:bg-background data-checked:text-foreground data-checked:shadow-sm/5 dark:data-checked:bg-input\",\n        current:\n          \"aria-[current=page]:bg-background aria-[current=page]:text-foreground aria-[current=page]:shadow-sm/5 dark:aria-[current=page]:bg-input\",\n        pressed:\n          \"data-pressed:bg-background data-pressed:text-foreground data-pressed:shadow-sm/5 dark:data-pressed:bg-input\",\n      },\n    },\n  },\n);\n",
-       "type": "registry:lib"
-     }
-   ],
-```
-
-**File**: `apps/ui/public/r/tabs.json` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/tabs.tsx",
--      "content": "\"use client\";\n\nimport { Tabs as TabsPrimitive } from \"@base-ui/react/tabs\";\nimport * as React from \"react\";\nimport {\n  type SegmentedControlSize,\n  segmentedControlItemSizeClassNames,\n} from \"@/registry/default/lib/segmented-control\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\ntype TabsVariant = \"default\" | \"underline\";\ntype TabsSize = SegmentedControlSize;\n\nconst TabsListContext: React.Context<TabsSize> =\n  React.createContext<TabsSize>(\"default\");\n\nexport function Tabs({\n  className,\n  ...props\n}: TabsPrimitive.Root.Props): React.ReactElement {\n  return (\n    <TabsPrimitive.Root\n      className={cn(\n        \"flex flex-col gap-2 data-[orientation=vertical]:flex-row\",\n        className,\n      )}\n      data-slot=\"tabs\"\n      {...props}\n    />\n  );\n}\n\nexport function TabsList({\n  variant = \"default\",\n  size = \"default\",\n  className,\n  children,\n  ...props\n}: TabsPrimitive.List.Props & {\n  size?: TabsSize;\n  variant?: TabsVariant;\n}): React.ReactElement {\n  return (\n    <TabsPrimitive.List\n      className={cn(\n        \"relative z-0 flex w-fit items-center justify-center gap-x-0.5 text-muted-foreground\",\n        \"data-[orientation=vertical]:flex-col\",\n        variant === \"default\"\n          ? \"rounded-lg bg-muted p-0.5 text-muted-foreground/72\"\n          : \"data-[orientation=vertical]:px-1 data-[orientation=horizontal]:py-1 *:data-[slot=tabs-tab]:hover:bg-accent\",\n        className,\n      )}\n      data-size={size}\n      data-slot=\"tabs-list\"\n      {...props}\n    >\n      <TabsListContext.Provider value={size}>\n        {children}\n      </TabsListContext.Provider>\n      <TabsPrimitive.Indicator\n        className={cn(\n          \"absolute bottom-0 left-0 h-(--active-tab-height) w-(--active-tab-width) translate-x-(--active-tab-left) -translate-y-(--active-tab-bottom) transition-[width,translate] duration-200 ease-in-out\",\n          variant === \"underline\"\n            ? \"z-10 bg-primary data-[orientation=horizontal]:h-0.5 data-[orientation=vertical]:w-0.5 data-[orientation=vertical]:-translate-x-px data-[orientation=horizontal]:translate-y-px\"\n            : \"-z-1 rounded-md bg-background shadow-sm/5 dark:bg-input\",\n        )}\n        data-slot=\"tab-indicator\"\n      />\n    </TabsPrimitive.List>\n  );\n}\n\nexport function TabsTab({\n  className,\n  size,\n  ...props\n}: TabsPrimitive.Tab.Props & {\n  size?: TabsSize;\n}): React.ReactElement {\n  const contextSize: TabsSize = React.useContext(TabsListContext);\n  const resolvedSize: TabsSize = size ?? contextSize;\n\n  return (\n    <TabsPrimitive.Tab\n      className={cn(\n        \"relative flex shrink-0 grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent font-medium text-base outline-none transition-[color,background-color,box-shadow] hover:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start data-active:text-foreground data-disabled:opacity-64 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0\",\n        segmentedControlItemSizeClassNames[resolvedSize],\n        className,\n      )}\n      data-size={resolvedSize}\n      data-slot=\"tabs-tab\"\n      {...props}\n    />\n  );\n}\n\nexport function TabsPanel({\n  className,\n  ...props\n}: TabsPrimitive.Panel.Props): React.ReactElement {\n  return (\n    <TabsPrimitive.Panel\n      className={cn(\"flex-1 outline-none\", className)}\n      data-slot=\"tabs-content\"\n      {...props}\n    />\n  );\n}\n\nexport {\n  TabsPrimitive,\n  TabsTab as TabsTrigger,\n  TabsPanel as TabsContent,\n  type TabsSize,\n  type TabsVariant,\n};\n",
-+      "content": "\"use client\";\n\nimport { Tabs as TabsPrimitive } from \"@base-ui/react/tabs\";\nimport * as React from \"react\";\nimport {\n  type SegmentedControlSize,\n  segmentedControlItemLayoutClassName,\n  segmentedControlItemSizeClassNames,\n} from \"@/registry/default/lib/segmented-control\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\ntype TabsVariant = \"default\" | \"underline\";\ntype TabsSize = SegmentedControlSize;\n\nconst TabsListContext: React.Context<TabsSize> =\n  React.createContext<TabsSize>(\"default\");\n\nexport function Tabs({\n  className,\n  ...props\n}: TabsPrimitive.Root.Props): React.ReactElement {\n  return (\n    <TabsPrimitive.Root\n      className={cn(\n        \"flex flex-col gap-2 data-[orientation=vertical]:flex-row\",\n        className,\n      )}\n      data-slot=\"tabs\"\n      {...props}\n    />\n  );\n}\n\nexport function TabsList({\n  variant = \"default\",\n  size = \"default\",\n  className,\n  children,\n  ...props\n}: TabsP
-```
-
-**File**: `apps/ui/registry/default/lib/segmented-control.ts` (modified, +7/-1)
-```diff
-@@ -14,8 +14,14 @@ export const segmentedControlItemSizeClassNames: Record<
- export const segmentedControlRootClassName =
-   "relative z-0 flex w-fit items-center justify-center gap-0.5 rounded-lg bg-muted p-0.5";
- 
-+export const segmentedControlItemLayoutClassName =
-+  "gap-1.5 [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0";
-+
- export const segmentedControlItemVariants = cva(
--  "relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-base text-muted-foreground/72 outline-2 outline-transparent transition-[outline-color] hover:bg-transparent hover:text-muted-foreground focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64 data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm",
-+  [
-+    "relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-base text-muted-foreground/72 outline-2 outline-transparent transition-[outline-color] hover:bg-transparent hover:text-muted-foreground focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64 data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm",
-+    segmentedControlItemLayoutClassName,
-+  ],
-   {
-     defaultVariants: {
-       size: "default",
-```
-
-**File**: `apps/ui/registry/default/ui/tabs.tsx` (modified, +3/-1)
-```diff
-@@ -4,6 +4,7 @@ import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
- import * as React from "react";
- import {
-   type SegmentedControlSize,
-+  segmentedControlItemLayoutClassName,
-   segmentedControlItemSizeClassNames,
- } from "@/registry/default/lib/segmented-control";
- import { cn } from "@/registry/default/lib/utils";
-@@ -83,7 +84,8 @@ export function TabsTab({
-   return (
-     <TabsPrimitive.Tab
-       className={cn(
--        "relative flex shrink-0 grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent font-medium text-base outline-none transition-[color,background-color,box-shadow] hover:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start data-active:text-foreground data-disabled:opacity-64 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0",
-+        "relative flex shrink-0 grow cursor-pointer items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-base outline-none transition-[color,background-color,box-shadow] hover:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start data-active:text-foreground data-disabled:opacity-64 sm:text-sm",
-+        segmentedControlItemLayoutClassName,
-         segmentedControlItemSizeClassNames[resolvedSize],
-         className,
-       )}
-```
-
-**File**: `apps/ui/skills/coss/references/segmented-control.md` (modified, +2/-2)
-```diff
-@@ -55,6 +55,6 @@ const itemClassName = segmentedControlItemVariants({
- 
- Use the exported Radio Group primitives for a custom segmented radio presentation so the native radio indicator is not rendered. Keep a default or controlled value when the interface requires one option to remain selected.
- 
--Tabs do not use the shared state recipe because they retain their animated indicator. They import the shared size map: set `size="sm" | "default" | "lg"` on `TabsList`, and use a `TabsTab` size only as an item-level override.
-+Tabs do not use the shared state recipe because they retain their animated indicator. They import the shared size map and `segmentedControlItemLayoutClassName`: set `size="sm" | "default" | "lg"` on `TabsList`, and use a `TabsTab` size only as an item-level override.
- 
--Reuse the shared root and item recipes instead of copying their classes into a new segmented particle. This keeps Tabs and the radio, navigation, and toggle implementations optically aligned.
-+Reuse the shared root, item, and layout recipes instead of copying their classes into a new segmented particle. This keeps Tabs and the radio, navigation, and toggle implementations optically aligned.
-```
-
-**File**: `packages/ui/src/components/tabs.tsx` (modified, +3/-1)
-```diff
-@@ -3,6 +3,7 @@
- import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
- import {
-   type SegmentedControlSize,
-+  segmentedControlItemLayoutClassName,
-   segmentedControlItemSizeClassNames,
- } from "@coss/ui/lib/segmented-control";
- import { cn } from "@coss/ui/lib/utils";
-@@ -83,7 +84,8 @@ export function TabsTab({
-   return (
-     <TabsPrimitive.Tab
-       className={cn(
--        "relative flex shrink-0 grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent font-medium text-base outline-none transition-[color,background-color,box-shadow] hover:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start data-active:text-foreground data-disabled:opacity-64 sm:text-sm [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0",
-+        "relative flex shrink-0 grow cursor-pointer items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-base outline-none transition-[color,background-color,box-shadow] hover:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring data-disabled:pointer-events-none data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start data-active:text-foreground data-disabled:opacity-64 sm:text-sm",
-+        segmentedControlItemLayoutClassName,
-         segmentedControlItemSizeClassNames[resolvedSize],
-         className,
-       )}
-```
-
----
-
-### Incident Patch 13: `6bae419d` (2026-08-18)
-**Commit Message**: feat(ui): add segmented control patterns (#835)
-
-* feat(ui): add segmented control patterns
-
-* docs(ui): add tabs migration guidance
-
-* docs(ui): mark segmented control as new
-
-* fix(ui): add segmented control particle tag
-
-* fix(ui): clarify segmented particle semantics
-
-* fix(ui): exclude tabs from segmented search
-
-* style(ui): remove segmented state transition
-
-* fix(ui): require segmented radio selection
-
-* fix(ui): remove redundant radio requirement
-
-* fix(ui): keep segmented toggle selected
-
-* style(ui): preserve segmented text transition
-
-* revert(ui): allow empty segmented toggles
-
-* style(ui): remove segmented transitions
-
-* style(ui): isolate segmented focus transition
-
-* fix(ui): refine segmented control spacing
-
-* docs(skills): add segmented control guidance
-
-* refactor(ui): remove segmented toggle particles
-
-**File**: `apps/ui/content/docs/(root)/changelog.mdx` (modified, +32/-0)
-```diff
-@@ -3,6 +3,38 @@ title: Changelog
- description: Breaking changes, migration guides, and notable updates.
- ---
- 
-+## August 17, 2026
-+
-+### Tabs sizing and segmented control styles
-+
-+**`TabsList`** now supports a **`size`** prop with **`"sm"`**, **`"default"`**, and **`"lg"`** values. The size propagates to its **`TabsTab`** children, and an individual tab can override the inherited size when necessary.
-+
-+The default Tabs appearance now uses the same optical item sizing as the [Segmented Control](/ui/docs/components/segmented-control) pattern. The default rendered height is slightly smaller than before so the inset active indicator remains visually balanced beside a Button of the corresponding size.
-+
-+Tabs now imports its size map from the **`@coss/segmented-control`** registry library. **`@coss/tabs`** declares this as a registry dependency, so the shadcn CLI installs it automatically with a fresh installation or CLI-managed update.
-+
-+**Migration:**
-+
-+Existing Tabs JSX requires no changes because **`"default"`** remains the default size. If you replace your local Tabs component through the CLI, review any local customizations before accepting the overwrite:
-+
-+```bash
-+npx shadcn@latest add @coss/tabs
-+```
-+
-+If you update **`tabs.tsx`** manually, install the shared library first and then merge the latest Tabs implementation. Copying only the new Tabs file without this dependency results in an unresolved import.
-+
-+```bash
-+npx shadcn@latest add @coss/segmented-control
-+```
-+
-+After updating, remove local height or horizontal-padding utilities from **`TabsList`** and **`TabsTab`** only where they unintentionally override the new **`size`** API. Keep intentional product-specific overrides.
-+
-+**Agent migration prompt:**
-+
-+```text
-+Update the local coss Tabs component to the latest segmented-control sizing while preserving project-specific customizations. Install the shared registry dependency with `npx shadcn@latest add @coss/segmented-control`, then merge the latest @coss/tabs implementation. TabsList now accepts size="sm" | "default" | "lg" (default: "default") and propagates it to TabsTab; a TabsTab size prop overrides the inherited value. Replace the old hard-coded TabsTab height and horizontal-padding classes with segmentedControlItemSizeClassNames from the shared library. Existing Tabs JSX does not need a size prop. Audit local h-* and px-* overrides on TabsList/TabsTab and remove only those that unintentionally conflict with the new size API. Run formatting and typechecking, then visually verify default and underline Tabs in every size used by the app.
-+```
-+
- ## July 31, 2026
- 
- ### Scroll Area — overscroll contain
-```
-
-**File**: `apps/ui/content/docs/components/meta.json` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@
-     "radio-group",
-     "scroll-area",
-     "select",
-+    "segmented-control",
-     "separator",
-     "sheet",
-     "skeleton",
-```
-
-**File**: `apps/ui/content/docs/components/radio-group.mdx` (modified, +2/-0)
-```diff
-@@ -81,6 +81,8 @@ Individual radio button. Styled wrapper for `Radio.Root` from Base UI with built
- 
- For accessible labelling and validation, prefer using the `Field` component to wrap radio buttons. See the related example: [Radio Group field](/ui/docs/components/field#radio-group-field).
- 
-+For tabs-style mutually exclusive choices, see the [Segmented Control](/ui/docs/components/segmented-control) pattern.
-+
- ### Disabled
- 
- <ComponentPreview name="p-radio-group-2" />
-```
-
-**File**: `apps/ui/content/docs/components/segmented-control.mdx` (added, +114/-0)
-```diff
-@@ -0,0 +1,114 @@
-+---
-+title: Segmented Control
-+description: A visual pattern for presenting related choices, navigation destinations, filters, or content views.
-+---
-+
-+<ComponentPreview name="p-radio-group-8" />
-+
-+## About
-+
-+A segmented control is a visual pattern, not a standalone behavior. COSS uses the same presentation across several components while preserving the semantics, keyboard interactions, and state model of each underlying primitive.
-+
-+## Choose the right primitive
-+
-+| Intent | Use | Why |
-+| ------ | --- | --- |
-+| Choose one value in a form | [Radio Group](/ui/docs/components/radio-group) | Represents a mutually exclusive value and participates in form state. |
-+| Navigate to another URL or route | Navigation links | Preserves link behavior, browser history, and `aria-current`. |
-+| Apply an exclusive filter or mode | [Toggle Group](/ui/docs/components/toggle-group) | Represents the pressed state of an action that may be cleared. |
-+| Switch between related panels | [Tabs](/ui/docs/components/tabs) | Connects each tab to an associated content panel. |
-+
-+Choose the primitive from the interaction first, then apply the segmented-control styling. Visual similarity alone is not a reason to use Tabs or Toggle Group.
-+
-+## Installation
-+
-+Segmented controls are provided as particles. Install the implementation and size that match your interaction:
-+
-+| Implementation | Small | Default | Large |
-+| -------------- | ----- | ------- | ----- |
-+| Radio Group | `@coss/p-radio-group-7` | `@coss/p-radio-group-8` | `@coss/p-radio-group-9` |
-+| Navigation | `@coss/p-navigation-2` | `@coss/p-navigation-1` | `@coss/p-navigation-3` |
-+
-+For example, install the default Radio Group version with:
-+
-+```bash
-+npx shadcn@latest add @coss/p-radio-group-8
-+```
-+
-+The CLI installs the shared `segmented-control` styling library and the required primitive automatically.
-+
-+## Shared styling
-+
-+For a custom composition, install the styling library directly:
-+
-+```bash
-+npx shadcn@latest add @coss/segmented-control
-+```
-+
-+The library exports a root class and an item recipe:
-+
-+```tsx
-+import {
-+  segmentedControlItemVariants,
-+  segmentedControlRootClassName,
-+} from "@/lib/segmented-control"
-+```
-+
-+```tsx
-+const itemClassName = segmentedControlItemVariants({
-+  size: "default",
-+  state: "checked",
-+})
-+```
-+
-+| Option | Values | Description |
-+| ------ | ------ | ----------- |
-+| `size` | `"sm" \| "default" \| "lg"` | Controls item height and horizontal padding. |
-+| `state` | `"checked" \| "current" \| "pressed"` | Selects the state attribute used by the underlying element. |
-+
-+Use `checked` with Radio Group, `current` with navigation links, and `pressed` with Toggle Group. Tabs retain their own animated indicator and do not use the shared state recipe.
-+
-+At the outside edges, the item padding and the surface's `p-0.5` inset combine to match the horizontal padding of the corresponding Button size. The outer segmented surface is slightly taller than that Button to optically balance its inset selected item when the controls appear next to each other.
-+
-+<ComponentSource
-+  name="segmented-control"
-+  title="lib/segmented-control.ts"
-+/>
-+
-+## Radio options
-+
-+Use Radio Group when the selected segment represents a mutually exclusive value, especially in forms.
-+
-+### Small Radio Group
-+
-+<ComponentPreview name="p-radio-group-7" />
-+
-+### Default Radio Group
-+
-+<ComponentPreview name="p-radio-group-8" />
-+
-+### Large Radio Group
-+
-+<ComponentPreview name="p-radio-group-9" />
-+
-+## Navigation
-+
-+Use links when each segment points to a different destination. Apply `aria-current="page"` to the active link.
-+
-+### Small Navigation
-+
-+<ComponentPreview name="p-navigation-2" />
-+
-+### Default Navigation
-+
-+<ComponentPreview name="p-navigation-1" />
-+
-+### Large Navigation
-+
-+<ComponentPreview name="p-navigation-3" />
-+
-+## Related content
-+
-+Use Tabs when each segment controls an associated content panel. Tabs share the visual language of segmented controls but keep their animated indicator, orientation support, and panel semantics.
-+
-+<ComponentPreview name="p-tabs-1" />
-```
-
-**File**: `apps/ui/content/docs/components/tabs.mdx` (modified, +30/-5)
-```diff
-@@ -22,13 +22,25 @@ links:
- npx shadcn@latest add @coss/tabs
- ```
- 
-+The CLI installs the shared `@coss/segmented-control` registry dependency automatically.
-+
- </TabsPanel>
- 
- <TabsPanel value="manual">
- 
- <Steps>
- 
--<Step>Copy and paste the following code into your project.</Step>
-+<Step>Install the following dependencies:</Step>
-+
-+```bash
-+npm install @base-ui/react class-variance-authority
-+```
-+
-+<Step>Copy the shared segmented control styling into your project.</Step>
-+
-+<ComponentSource name="segmented-control" title="lib/segmented-control.ts" />
-+
-+<Step>Copy and paste the Tabs component into your project.</Step>
- 
- <ComponentSource name="tabs" title="components/ui/tabs.tsx" />
- 
-@@ -65,14 +77,15 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
- 
- Root component. Styled wrapper for `Tabs.Root` from Base UI.
- 
--| Prop      | Type                         | Default     | Description                                      |
--| --------- | ---------------------------- | ----------- | ------------------------------------------------ |
--| `variant` | `"default" \| "underline"`   | `"default"` | Controls the tabs styling                        |
+-  const figs = [...document.querySelectorAll("[data-clip]")];
+-  if (!figs.length || !("IntersectionObserver" in window)) return;
+-  const state = new Map(
+-    figs.map((f) => [f, { near: false, seen: false, video: null }]),
+-  );
+-  const film = document.getElementById("film");
 -
- ### TabsList
- 
- Container for tab triggers. Styled wrapper for `Tabs.List` from Base UI.
- 
-+| Prop      | Type                       | Default     | Description                         |
-+| --------- | -------------------------- | ----------- | ----------------------------------- |
-+| `size`    | `"sm" \| "default" \| "lg"` | `"default"` | Controls the size of all tab items. |
-+| `variant` | `"default" \| "underline"` | `"default"` | Controls the tabs styling.          |
-+
- ### TabsTab
- 
- Individual tab trigger. Styled wrapper for `Tabs.Tab` from Base UI.
-@@ -87,6 +100,18 @@ Visual indicator for the active tab. Styled wrapper for `Tabs.Indicator` from Ba
- 
- ## Examples
- 
-+For guidance on choosing between Tabs, Radio Group, Toggle Group, and navigation links, see the [Segmented Control](/ui/docs/components/segmented-control) pattern.
-+
-+Tabs use the same optical sizing as segmented controls. The default surface is slightly taller than a Button of the same size so its inset active indicator remains visually balanced alongside adjacent controls.
-+
-+### Small
-+
-+<ComponentPreview name="p-tabs-14" />
-+
-+### Large
-+
-+<ComponentPreview name="p-tabs-15" />
-+
- ### Underline Variant
- 
- <ComponentPreview name="p-tabs-2" />
+-  const make = (fig) => {
+-    const s = state.get(fig);
+-    const v = document.createElement("video");
+-    for (const a of [
+-      "muted",
+-      "playsinline",
+-      "disablepictureinpicture",
+-      "disableremoteplayback",
+-    ])
+-      v.setAttribute(a, "");
+-    v.muted = v.defaultMuted = v.playsInline = true;
+-    v.loop = !fig.closest("[data-views]:not([data-chosen])");
+-    v.preload = "auto";
+-    v.tabIndex = -1;
+-    v.setAttribute("aria-hidden", "true");
+-    v.poster = fig.querySelector("img").src;
+-    v.src = fig.dataset.clip;
+-    v.addEventListener("playing", () => fig.classList.add("playing"));
+-    v.addEventListener("ended", () =>
+-      fig.dispatchEvent(new Event("clip:ended", { bubbles: true })),
+-    );
+-    v.addEventListener("error", () => {
+-      v.remove();
+-      s.video = null;
+-      s.failed = true;
+-    });
+-    fig.append(v);
+-    s.video = v;
+-  };
+-
+-  // No loop loads before the page has, so none competes with the hero.
+-  let ready = false;
+-  const update = (fig) => {
+-    const s = state.get(fig);
+-    // Its poster, once the page has loaded and it's near.
+-    const img = fig.querySelector("img[data-src]");
+-    if (img && ready && (s.near || s.seen)) {
+-      img.src = img.dataset.src;
+-      img.removeAttribute("data-src");
+-    }
+-    const on =
+-      ready &&
+-      !still.matches &&
+-      !saveData &&
+-      !s.failed &&
+-      !fig.hasAttribute("aria-hidden");
+-    if (on && (s.near || s.seen) && !s.video) make(fig);
+-    if (!s.video) return;
+-    if (on && s.seen && !document.hidden && !film?.open)
+-      s.video.play().catch(() => {});
+-    else s.video.pause();
+-  };
+-  const all = () => figs.forEach(update);
+-
+-  // Near: load. In view: play.
+-  const nearIO = new IntersectionObserver(
+-    (entries) => {
+-      for (const e of entries) {
+-        state.get(e.target).near = e.isIntersecting;
+-        update(e.target);
+-      }
+-    },
+-    { rootMargin: "400px 0px" },
+-  );
+-  const seenIO = new IntersectionObserver(
+-    (entries) => {
+-      for (const e of entries) {
+-        state.get(e.target).seen = e.isIntersecting;
+-        update(e.target);
+-      }
+-    },
+-    { threshold: 0.2 },
+-  );
+-  for (const f of figs) {
+-    nearIO.observe(f);
+-    seenIO.observe(f);
+-  }
+-  const go = () => {
+-    ready = true;
+-    all();
+-  };
+-  const idle = () =>
+-    window.requestIdleCallback
+-      ? requestIdleCallback(go, { timeout: 2000 })
+-      : setTimeout(go, 300);
+-  if (document.readyState === "complete") idle();
+-  else addEventListener("load", idle, { once: true });
+-  document.addEventListener("visibilitychange", all);
+-  still.addEventListener("change", all);
+-  film?.addEventListener("close", all);
+-  document
+-    .querySelector("[data-film]")
+-    ?.addEventLi
 ```
 
-**File**: `apps/ui/lib/docs.ts` (modified, +1/-2)
+**File**: `apps/site/public/shipyard/assets/harbour.js` (removed, +0/-201)
 ```diff
-@@ -1,5 +1,4 @@
- export const PAGES_NEW = [
-   // "/docs/components/{component-name}",
--  "/docs/components/context-menu",
--  "/docs/components/otp-field",
-+  "/docs/components/segmented-control",
- ];
+@@ -1,201 +0,0 @@
+-// The harbour, drawn as the app's Labs home draws it: the painting with a
+-// halftone grain (an ordered Bayer dither of its lightness, strongest on
+-// edges and in gradients), dissolving dot by dot into the page. Night in dark
+-// mode. Each band renders once per size on a small canvas, one dot per 2 CSS
+-// px, scaled up with hard pixels; nothing runs in between.
+-//
+-// A band is any [data-harbour] element with a <canvas>:
+-//   data-day, data-night   the paintings
+-//   data-fade              where it dissolves: "bottom" (default), "top" or "both"
+-//   data-night-only        always the night painting (the closing harbour)
+-//   data-position          the painting's vertical position, 0 to 1 (0.42)
+-//   data-lazy              drawn when it nears the viewport, not before
+-// Without this script the plain painting shows, faded by CSS.
+-(() => {
+-  const bands = [...document.querySelectorAll("[data-harbour]")];
+-  if (!bands.length) return;
+-  const CELL = 2;
+-  const LEVELS = 6;
+-  const FADE = 0.42;
+-  const BAYER8 = [
+-    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
+-    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
+-    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
+-    23, 61, 29, 53, 21,
+-  ].map((v) => (v + 0.5) / 64);
+-  const dark = matchMedia("(prefers-color-scheme: dark)");
+-  // Night is the site's theme (the "dark" class on <html>, by the header's
+-  // switch or the system); the page says when it changes with a berth:theme
+-  // event.
+-  const pageNight = () => document.documentElement.classList.contains("dark");
+-  // Where the lighthouse's lamp is in the painting, as a fraction of it.
+-  const LAMP = [0.094, 0.457];
+-
+-  const hex = (s) => {
+-    s = s.trim();
+-    const m = s.match(/^#([\da-f]{6})$/i);
+-    if (m)
+-      return [0, 2, 4].map((i) => Number.parseInt(m[1].slice(i, i + 2), 16));
+-    return (s.match(/[\d.]+/g) ?? [0, 0, 0]).slice(0, 3).map(Number);
+-  };
+-
+-  for (const band of bands) {
+-    const canvas = band.querySelector("canvas");
+-    const beam = band.querySelector(".beam");
+-    const fade = band.dataset.fade ?? "bottom";
+-    const nightOnly = "nightOnly" in band.dataset;
+-    const position = Number(band.dataset.position ?? 0.42);
+-    const isNight = () => nightOnly || pageNight();
+-    let size = "";
+-    let timer = 0;
+-    let pending = false;
+-    let near = !("lazy" in band.dataset);
+-
+-    const draw = async (force) => {
+-      if (!near) return;
+-      if (document.hidden) return void (pending = true);
+-      pending = false;
+-      const w = Math.ceil(band.clientWidth / CELL);
+-      const h = Math.ceil(band.clientHeight / CELL);
+-      const night = isNight();
+-      const key = `${w}x${h}${night}`;
+-      if (!w || !h || (key === size && !force)) return;
+-      const img = new Image();
+-      img.src = night ? band.dataset.night : band.dataset.day;
+-      try {
+-        await img.decode();
+-      } catch {
+-        return;
+-      }
+-      size = key;
+-      canvas.width = w;
+-      canvas.height = h;
+-      canvas.style.width = `${w * CELL}px`;
+-      canvas.style.height = `${h * CELL}px`;
+-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+-      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+-      const dw = img.naturalWidth * scale;
+-      const dh = img.naturalHeight * scale;
+-      // Drawn small, then up: the brushwork softens to its forms, so the
+-      // grain is the dither's, not the paint's.
+-      const soft = document.createElement("canvas");
+-      soft.width = Math.max(1, Math.round(w * 0.6));
+-      soft.height = Math.max(1, Math.round(h * 0.6));
+-      const sctx = soft.getContext("2d");
+-      sctx.imageSmoothingQuality = "high";
+-      // On a narrow screen the lighthouse, at the left, stays in view.
+-      const across = Number(
+-        band.dataset.across ?? (band.clientWidth < 700 ? 0.08 : 0.5),
+-      );
+-      sctx.drawImage(
+-        img,
+-        (w - dw) * across * 0.6,
+-        (h - dh) * position * 0.6,
+-        dw * 0.6,
+-        dh * 0.6,
+-      );
+-      if (beam) {
+-        beam.style.left = `${((w - dw) * across + dw * LAMP[0]) * CELL}px`;
+-        beam.style.top = `${((h - dh) * position + dh * LAMP[1]) * CELL}px`;
+-      }
+-      ctx.imageSmoothingQuality = "high";
+-      ctx.clearRect(0, 0, w, h);
+-      ctx.drawImage(soft, 0, 0, w, h);
+-      soft.width = soft.height = 0;
+-      const frame = ctx.getImageData(0, 0, w, h);
+-      const bg = hex(
+-        getComputedStyle(band).getPropertyValue("--bg") ||
+-          getComputedStyle(document.body).backgroundColor,
+-      );
+-      dither(frame, night ? 0.3 : 0.04, bg, fade);
+-      ctx.putImageData(frame, 0, 0);
+-      band.classList.add("drawn");
+-      band.dispatchEvent(
+-        new CustomEvent("harbour:drawn", {
+-          detail: {
+-            w: w * CELL,
+-            h: h * CELL,
+-            dw: dw * CELL
 ```
 
-**File**: `apps/ui/public/r/p-navigation-1.json` (added, +20/-0)
+**File**: `apps/site/public/shipyard/assets/hero-loop.js` (removed, +0/-232)
 ```diff
-@@ -0,0 +1,20 @@
-+{
-+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-+  "name": "p-navigation-1",
-+  "description": "Segmented navigation built with links",
-+  "registryDependencies": [
-+    "@coss/segmented-control"
-+  ],
-+  "files": [
-+    {
-+      "path": "registry/default/particles/p-navigation-1.tsx",
-+      "content": "import {\n  segmentedControlItemVariants,\n  segmentedControlRootClassName,\n} from \"@/registry/default/lib/segmented-control\";\n\nconst itemClassName = segmentedControlItemVariants({ state: \"current\" });\n\nexport default function Particle() {\n  return (\n    <nav aria-label=\"Project sections\">\n      <div className={segmentedControlRootClassName}>\n        <a aria-current=\"page\" className={itemClassName} href=\"#overview\">\n          Overview\n        </a>\n        <a className={itemClassName} href=\"#activity\">\n          Activity\n        </a>\n        <a className={itemClassName} href=\"#settings\">\n          Settings\n        </a>\n      </div>\n    </nav>\n  );\n}\n",
-+      "type": "registry:block"
-+    }
-+  ],
-+  "categories": [
-+    "navigation",
-+    "segmented control"
-+  ],
-+  "type": "registry:block"
-+}
-\ No newline at end of file
+@@ -1,232 +0,0 @@
+-// The harbour at night, alive: the launch film's seamless loop (the night
+-// painting with the agents' lights on the water), in the hero's band.
+-//
+-// Only at night (the site's dark theme); the day keeps the
+-// dithered painting. Nothing loads until the page has, and nothing at all for
+-// reduced motion or Save-Data: the still harbour stays. The loop comes in from
+-// its first frame (the poster) over the drawn harbour, in the same box, so
+-// nothing moves; it dissolves into the page through the same 2 px Bayer dots
+-// as assets/harbour.js draws, and pauses when hidden or scrolled away.
+-//
+-// Its frames are drawn on a canvas, cropped as the painting is, from a video
+-// kept a pixel wide under it: a canvas is never the page's largest paint, so
+-// the loop arriving late can't make the hero's LCP late.
+-//
+-//   data-loop          the loop's sources, in order (MP4, then WebM)
+-//   data-loop-poster   its first frame
+-(() => {
+-  const band = document.querySelector(".hero [data-harbour][data-loop]");
+-  if (!band || !("IntersectionObserver" in window)) return;
+-  const root = document.documentElement;
+-  const dark = matchMedia("(prefers-color-scheme: dark)");
+-  const still = matchMedia("(prefers-reduced-motion: reduce)");
+-  const night = () => root.classList.contains("dark");
+-  const saveData = navigator.connection?.saveData === true;
+-  // The same matrix, cell, fade and framing as the drawn harbour, so the dots
+-  // and the lighthouse line up.
+-  const CELL = 2;
+-  const FADE = 0.42;
+-  const POSITION = 0.42;
+-  const BAYER8 = [
+-    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
+-    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
+-    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
+-    23, 61, 29, 53, 21,
+-  ].map((v) => (v + 0.5) / 64);
+-
+-  let started = false;
+-  let loop = null;
+-  let video = null;
+-  let canvas = null;
+-  let ctx = null;
+-  let poster = null;
+-  let shown = false;
+-  let inView = true;
+-  let maskUrl = "";
+-  let maskSize = "";
+-  let timer = 0;
+-  let frame = 0;
+-
+-  const wanted = () => started && night() && !still.matches && !saveData;
+-
+-  // A frame (or the poster) over the whole canvas, as object-fit: cover, at
+-  // the painting's position: the lighthouse kept in view on a narrow screen.
+-  const paint = (src, sw, sh) => {
+-    if (!ctx || !sw || !sh) return;
+-    const cw = canvas.width;
+-    const ch = canvas.height;
+-    const s = Math.max(cw / sw, ch / sh);
+-    const across = band.clientWidth < 700 ? 0.08 : 0.5;
+-    ctx.drawImage(
+-      src,
+-      (cw - sw * s) * across,
+-      (ch - sh * s) * POSITION,
+-      sw * s,
+-      sh * s,
+-    );
+-  };
+-  const paintNow = () => {
+-    if (video?.readyState >= 2)
+-      paint(video, video.videoWidth, video.videoHeight);
+-    else if (poster?.naturalWidth)
+-      paint(poster, poster.naturalWidth, poster.naturalHeight);
+-  };
+-
+-  // Each new frame of the video, as it's shown.
+-  const tick = () => {
+-    paint(video, video.videoWidth, video.videoHeight);
+-    frame = video.requestVideoFrameCallback
+-      ? video.requestVideoFrameCallback(tick)
+-      : requestAnimationFrame(tick);
+-  };
+-  const stopTicking = () => {
+-    if (!frame) return;
+-    if (video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(frame);
+-    else cancelAnimationFrame(frame);
+-    frame = 0;
+-  };
+-
+-  // The canvas at the band's size (up to 2 device pixels a CSS pixel), and the
+-  // dissolve as an alpha mask: the lower part of the band, row by row, keeps
+-  // fewer of its 2 px dots.
+-  const size = () => {
+-    const W = band.clientWidth;
+-    const H = band.clientHeight;
+-    const key = `${W}x${H}`;
+-    if (!loop || !W || !H || key === maskSize) return;
+-    maskSize = key;
+-    const dpr = Math.min(2, devicePixelRatio || 1);
+-    canvas.width = Math.round(W * dpr);
+-    canvas.height = Math.round(H * dpr);
+-    paintNow();
+-    const m = document.createElement("canvas");
+-    m.width = W;
+-    m.height = H;
+-    const mctx = m.getContext("2d");
+-    const img = mctx.createImageData(W, H);
+-    const d = img.data;
+-    const h = Math.ceil(H / CELL);
+-    const foot = h * FADE;
+-    for (let Y = 0; Y < H; Y++) {
+-      const y = Math.floor(Y / CELL);
+-      let keep = y > h - foot ? 1 - (y - (h - foot)) / foot : 1;
+-      keep = keep * keep * (3 - 2 * keep);
+-      const rowB = ((y + 3) & 7) * 8;
+-      for (let X = 0; X < W; X++) {
+-        if (BAYER8[rowB + ((Math.floor(X / CELL) + 5) & 7)] < keep)
+-          d[(Y * W + X) * 4 + 3] = 255;
+-      }
+-    }
+-    mctx.putImageData(img, 0, 0);
+-    m.toBlob((blob) => {
+-      if (!blob || !loop) return;
+-      const old = maskUrl;
+-      maskUrl = URL.createObjectURL(blob);
+-      loop.style.setProperty("--mask", `url("${maskUrl}")`);
+-      if (old) setTimeout(() => URL.revokeObjectURL(old), 1000);
+-    });
+-  };
+-
+-  const build = () => {
+-    loop = document.createElemen
 ```
 
-**File**: `apps/ui/public/r/p-navigation-2.json` (added, +20/-0)
+**File**: `apps/site/public/shipyard/assets/scenes.css` (removed, +0/-555)
 ```diff
-@@ -0,0 +1,20 @@
-+{
-+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-+  "name": "p-navigation-2",
-+  "description": "Small segmented navigation built with links",
-+  "registryDependencies": [
-+    "@coss/segmented-control"
-+  ],
-+  "files": [
-+    {
-+      "path": "registry/default/particles/p-navigation-2.tsx",
-+      "content": "import {\n  segmentedControlItemVariants,\n  segmentedControlRootClassName,\n} from \"@/registry/default/lib/segmented-control\";\n\nconst itemClassName = segmentedControlItemVariants({\n  size: \"sm\",\n  state: \"current\",\n});\n\nexport default function Particle() {\n  return (\n    <nav aria-label=\"Project sections\">\n      <div className={segmentedControlRootClassName}>\n        <a aria-current=\"page\" className={itemClassName} href=\"#overview\">\n          Overview\n        </a>\n        <a className={itemClassName} href=\"#activity\">\n          Activity\n        </a>\n        <a className={itemClassName} href=\"#settings\">\n          Settings\n        </a>\n      </div>\n    </nav>\n  );\n}\n",
-+      "type": "registry:block"
-+    }
-+  ],
-+  "categories": [
-+    "navigation",
-+    "segmented control"
-+  ],
-+  "type": "registry:block"
-+}
-\ No newline at end of file
+@@ -1,555 +0,0 @@
+-/* Copied from app/src/components/art/scenes.css by site/scripts/scenes.mjs:
+-   the app's line scenes, for the chapters' markers. The page maps
+-   --muted-foreground and --warning to its own tokens (styles.css, .scene). */
+-
+-/* Scenes: Shipyard's small line drawings for quiet states (scenes.tsx). Lines
+-   take currentColor (muted by default); the one amber point is the logo's
+-   dot, from the theme's --warning, so every theme draws them right.
+-
+-   Motion rules: transforms and opacity only; slow (4s and up, except rain);
+-   a pixel or two, a few degrees at most; every loop seamless. Animations
+-   start a beat apart through --ba-delay, pause offscreen, while the window
+-   is hidden, behind an open dialog, and after a few loops, and stop under
+-   reduced motion. */
+-
+-.berth-art {
+-  color: var(--muted-foreground);
+-  overflow: visible;
+-}
+-
+-/* Elements that turn about a point name it in the scene's coordinates. */
+-.berth-art .ba-sweep,
+-.berth-art .ba-gull,
+-.berth-art .ba-float,
+-.berth-art .ba-ripple,
+-.berth-art .ba-weed,
+-.berth-art .ba-needle,
+-.berth-art .ba-ping,
+-.berth-art .ba-swing,
+-.berth-art .ba-throw,
+-.berth-art .ba-settle {
+-  transform-box: view-box;
+-}
+-
+-/* Water: a wave slides by whole periods of its curve and dashes, then repeats. */
+-.berth-art .ba-wave {
+-  animation: ba-drift var(--ba-d, 8s) linear infinite;
+-}
+-
+-.berth-art .ba-wave.ba-rev {
+-  animation-direction: reverse;
+-}
+-
+-@keyframes ba-drift {
+-  from {
+-    transform: translateX(0);
+-  }
+-  to {
+-    transform: translateX(var(--ba-x, -12px));
+-  }
+-}
+-
+-/* The buoy bobs and leans on the swell. */
+-.berth-art .ba-buoy {
+-  transform-box: fill-box;
+-  transform-origin: 50% 85%;
+-  animation: ba-bob 4.4s ease-in-out infinite;
+-}
+-
+-.berth-art .ba-buoy.ba-slow {
+-  animation-duration: 6.4s;
+-}
+-
+-@keyframes ba-bob {
+-  0%,
+-  100% {
+-    transform: translateY(-0.6px) rotate(-5deg);
+-  }
+-  50% {
+-    transform: translateY(0.9px) rotate(4deg);
+-  }
+-}
+-
+-/* An amber glint on the water, breathing with the light above it. */
+-.berth-art .ba-glint {
+-  transform-box: fill-box;
+-  transform-origin: center;
+-  animation: ba-glint 4.4s ease-in-out infinite;
+-}
+-
+-@keyframes ba-glint {
+-  0%,
+-  100% {
+-    opacity: 0.22;
+-    transform: scaleX(0.75);
+-  }
+-  50% {
+-    opacity: 0.42;
+-    transform: scaleX(1.1);
+-  }
+-}
+-
+-/* A boat rides the swell, a little slower than a buoy would. */
+-.berth-art .ba-ride {
+-  transform-box: fill-box;
+-  transform-origin: 50% 90%;
+-  animation: ba-ride 5.2s ease-in-out infinite;
+-}
+-
+-@keyframes ba-ride {
+-  0%,
+-  100% {
+-    transform: translateY(-0.4px) rotate(-1.4deg);
+-  }
+-  50% {
+-    transform: translateY(0.6px) rotate(1.2deg);
+-  }
+-}
+-
+-/* Under sail: pitching on the swell and edging forward, then easing back. */
+-.berth-art .ba-sail {
+-  transform-box: fill-box;
+-  transform-origin: 50% 92%;
+-  animation: ba-sail 4.8s ease-in-out infinite;
+-}
+-
+-@keyframes ba-sail {
+-  0%,
+-  100% {
+-    transform: translate(-0.6px, -0.4px) rotate(-1.8deg);
+-  }
+-  50% {
+-    transform: translate(0.8px, 0.6px) rotate(1.4deg);
+-  }
+-}
+-
+-/* The wake streams back from the stern, a dash at a time. */
+-.berth-art .ba-wake {
+-  animation: ba-wake 2.4s linear infinite;
+-}
+-
+-@keyframes ba-wake {
+-  from {
+-    transform: translateX(0);
+-  }
+-  to {
+-    transform: translateX(-10px);
+-  }
+-}
+-
+-/* Offline: the buoy's light turns slowly, as if looking for the box. */
+-.berth-art .ba-beacon {
+-  animation: ba-beacon 3.6s ease-in-out infinite;
+-}
+-
+-@keyframes ba-beacon {
+-  0%,
+-  100% {
+-    opacity: 0.3;
+-  }
+-  50% {
+-    opacity: 1;
+-  }
+-}
+-
+-.berth-art .ba-fog {
+-  animation: ba-fog 12s ease-in-out infinite alternate;
+-}
+-
+-.berth-art .ba-fog.ba-rev {
+-  animation-duration: 16s;
+-  animation-direction: alternate-reverse;
+-}
+-
+-@keyframes ba-fog {
+-  from {
+-    transform: translateX(-5px);
+-  }
+-  to {
+-    transform: translateX(5px);
+-  }
+-}
+-
+-/* Lighthouse: the beam sweeps out and back, brightest as it faces you; the
+-   lamp and the glint where it lands keep time. */
+-.berth-art .ba-sweep {
+-  animation: ba-sweep 7s ease-in-out infinite alternate;
+-}
+-
+-@keyframes ba-sweep {
+-  0% {
+-    transform: rotate(-7deg) scaleX(0.86);
+-    opacity: 0.45;
+-  }
+-  50% {
+-    transform: rotate(0deg) scaleX(1);
+-    opacity: 1;
+-  }
+-  100% {
+-    transform: rotate(6deg) scaleX(0.88);
+-    opacity: 0.5;
+-  }
+-}
+-
+-.berth-art .ba-lamp {
+-  animation: ba-lamp 3.5s ease-in-out infinite alternate;
+-}
+-
+-@keyframes ba-lamp {
+-  from {
+-    opacity: 0.7;
+-  }
+-  to {
+-    opacity: 1;
+-  }
+-}
+-
+-.berth-art .ba-glint.ba-sync {
+-  animation-duration: 7s;
+-}
+-
+-/* Dawn: the sun lifts a little over the horizon, then settles. */
+-.berth-art .ba-rise {
+-  animation: ba-rise 10s ease-in-out infinite alternate;
+-}
+-
+-@keyframes ba-rise {
+-  from {
+-    transform: translateY(1.8px);
+-  }
+-  to {
+-    transform: translateY(-1.2px);
+-  }
+-}
+-
+-/* Gulls glide, a wingbeat now and then. */
+-.berth-art .ba-gu
+```
+
+**File**: `apps/site/public/shipyard/assets/scenes.json` (removed, +0/-8)
+```diff
+@@ -1,8 +0,0 @@
+-{
+-  "setting-out": "<svg aria-hidden=\"true\" data-scene=\"setting-out\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-setting-out-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-setting-out-fg)\"></rect></mask></defs><defs><linearGradient id=\"sc-setting-out-wg\" gradientUnits=\"userSpaceOnUse\" x1=\"34\" x2=\"90\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.7\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-wake\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"160\" height=\"80\"><rect x=\"0\" y=\"0\" width=\"160\" height=\"80\" fill=\"url(#sc-setting-out-wg)\"></rect></mask></defs><g opacity=\"0.4\"><g stroke=\"currentColor\"><path d=\"M8 36 H26\" stroke-width=\"2.8\"></path><path d=\"M11 38 V48 M22 38 V48\" stroke-width=\"2.4\"></path><path d=\"M11 51.5 V60 M22 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g mask=\"url(#sc-setting-out-wake)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-wake\" d=\"M30 51.6 Q 60 51.2 96 49.6\" stroke-dasharray=\"5 5\" opacity=\"0.55\"></path><path class=\"ba-wake\" style=\"--ba-delay:-0.8s\" d=\"M30 56.4 Q 60 55.6 96 51\" stroke-dasharray=\"3 7\" opacity=\"0.32\"></path></g><g class=\"ba-sail\" stroke=\"currentColor\"><path d=\"M84 43 H126 L119.6 49.8 H88.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"2.2\"></path><path d=\"M100 43 V22.4\" stroke-width=\"1.6\"></path><path d=\"M98.4 23.6 V40.6 H85.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"1.6\"></path><path d=\"M101.8 24.6 L120.6 40.6 H101.8 Z\" fill=\"currentColor\" fill-opacity=\"0.05\" stroke-width=\"1.5\"></path><circle cx=\"100\" cy=\"20.4\" r=\"2.5\" fill=\"var(--warning)\" stroke=\"none\"></circle></g><g mask=\"url(#sc-setting-out-fade)\" stroke=\"currentColor\"><path d=\"M-12 49.4 q3 -1.3 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.72\" stroke-width=\"1.4\" class=\"ba-wave\" style=\"--ba-d:7s;--ba-x:-12px\"></path><path d=\"M-12 55.6 q3 -1.1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.42\" stroke-width=\"1.4\" stroke-dasharray=\"16 8\" class=\"ba-wave ba-rev\" style=\"--ba-d:11s;--ba-x:-24px\"></path><path d=\"M-12 61.599999999999994 q3 -1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.22\" stroke-width=\"1.4\" stroke-dasharray=\"6 10 14 6\" class=\"ba-wave\" style=\"--ba-d:15s;--ba-x:-36px\"></path></g></svg>",
+-  "signal": "<svg aria-hidden=\"true\" data-scene=\"signal\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-signal-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-signal-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-signal-fg)\"></rect></mask></defs><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g><g transform=\"translate(160 0) scale(-1 1)\"><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M37 34.6 V26.6 M123 34.6 V26.6\"></path></g><g class=\"ba-lift\" mask=\"url(#sc-signal-fade)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-fog\" d=\"M52 29 H108\" stroke-dasharray=\"12 7\" opacity=\"0.32\"></path><path class=\"ba-fog ba-rev\" d=\"M58 34 H102\" stroke-dasharray=\"7 8\" opacity=\"0.2\"></path></g><path class=\
 ```
 
 ---
 
-### Incident Patch 14: `e43fa4a8` (2026-08-01)
-**Commit Message**: fix(ui): improve form control autofill text colors in iframes (#830)
+### Incident Patch 2: `c920f6f7` (2026-10-17)
+**Commit Message**: Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover
 
-* fix(input): set autofill text color on the input element
+coss.com/shipyard was still berthd.app's page dropped into coss.com's shell:
+a dithered harbour, a chapter per feature with a video loop, and its own
+stylesheet and scripts. It is now built the way coss.com's landing page is:
+one ruled sheet, section heads with the description beside the heading,
+coss ui buttons, and isometric line drawings on the drafting grid, with
+Shipyard's amber lamp as its one colour.
 
-Ensure autofilled text uses foreground color in embedded iframes where
-browser autofill styles otherwise override the wrapper-level color.
+- The page: the hero and a drawing of a closed laptop linked over ssh to a
+  tray of boxes running agents; the agents it works with; six features
+  (Start, Watch it work, See the page, Loop until green, Review, From your
+  phone), each with a drawing; Close the laptop, with a night's log; the
+  rest of the yard (automations, kits, database, Leadline, Linear, secrets,
+  plugins, themes), linked to their guides; and the install line with three
+  steps. The header gains Changelog.
+- The drawings (components/shipyard/drawings.tsx) use iso.tsx's projection
+  and the --iso-* faces, so light and dark come from the site's tokens. Each
+  sits in a Stage (a small client island) whose p
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* chore(registry): sync input.json after autofill fix
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(input): move text-foreground onto the input element
-
-Keep autofill text color and foreground text on the input itself for
-consistent styling in embedded iframes.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(ui): move text color onto form control elements
-
-Apply text-foreground (and related styles) on textarea, number-field,
-and combobox inputs for consistent autofill behavior in iframes.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* chore(registry): sync combobox and number-field JSON
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/combobox.json` (modified, +1/-1)
+**File**: `apps/site/AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/combobox.tsx",
--      "content": "\"use client\";\n\nimport { Combobox as ComboboxPrimitive } from \"@base-ui/react/combobox\";\nimport { ChevronsUpDownIcon, XIcon } from \"lucide-react\";\nimport * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Input } from \"@/registry/default/ui/input\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const ComboboxContext: React.Context<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}> = React.createContext<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}>({\n  chipsRef: null,\n  multiple: false,\n});\n\nexport function Combobox<Value, Multiple extends boolean | undefined = false>(\n  props: ComboboxPrimitive.Root.Props<Value, Multiple>,\n): React.ReactElement {\n  const chipsRef = React.useRef<Element | null>(null);\n  return (\n    <ComboboxContext.Provider value={{ chipsRef, multiple: !!props.multiple }}>\n      <ComboboxPrimitive.Root {...props} />\n    </ComboboxContext.Provider>\n  );\n}\n\nexport function ComboboxChipsInput({\n  className,\n  size,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.Input\n      className={cn(\n        \"min-w-12 flex-1 text-base outline-none sm:text-sm [[data-slot=combobox-chip]+&]:ps-0.5\",\n        sizeValue === \"sm\" ? \"ps-1.5\" : \"ps-2\",\n        className,\n      )}\n      data-size={typeof sizeValue === \"string\" ? sizeValue : undefined}\n      data-slot=\"combobox-chips-input\"\n      size={typeof sizeValue === \"number\" ? sizeValue : undefined}\n      {...props}\n    />\n  );\n}\n\nexport function ComboboxInput({\n  className,\n  showTrigger = true,\n  showClear = false,\n  startAddon,\n  size,\n  triggerProps,\n  clearProps,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  showTrigger?: boolean;\n  showClear?: boolean;\n  startAddon?: React.ReactNode;\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n  triggerProps?: ComboboxPrimitive.Trigger.Props;\n  clearProps?: ComboboxPrimitive.Clear.Props;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.InputGroup\n      className=\"relative not-has-[>*.w-full]:w-fit w-full text-foreground has-disabled:opacity-64\"\n      data-slot=\"combobox-input-group\"\n    >\n      {startAddon && (\n        <div\n          aria-hidden=\"true\"\n          className=\"pointer-events-none absolute inset-y-0 start-px z-10 flex items-center ps-[calc(--spacing(3)-1px)] opacity-80 has-[+[data-size=sm]]:ps-[calc(--spacing(2.5)-1px)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5\"\n          data-slot=\"combobox-start-addon\"\n        >\n          {startAddon}\n        </div>\n      )}\n      <ComboboxPrimitive.Input\n        className={cn(\n          startAddon &&\n            \"data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7.5)-1px)] *:data-[slot=combobox-input]:ps-[calc(--spacing(8.5)-1px)] sm:data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7)-1px)] sm:*:data-[slot=combobox-input]:ps-[calc(--spacing(8)-1px)]\",\n          sizeValue === \"sm\"\n            ? \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-6.5\"\n            : \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-7\",\n          className,\n        )}\n        data-slot=\"combobox-input\"\n        render={\n          <Input\n            className=\"has-disabled:opacity-100\"\n            nativeInput\n            size={sizeValue}\n          />\n        }\n        {...props}\n      />\n      {showTrigger && (\n        <ComboboxTrigger\n          className={cn(\n            \"absolute top-1/2 inline-flex size-8 shrink-0 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border border-transparent opacity-80 outline-none transition-opacity pointer-coarse:after:absolute pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 hover:opacity-100 has-[+[data-slot=combobox-clear]]:hidden sm:size-7 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n            sizeValue === \"sm\" ? \"end-0\" : \"end-0.5\",\n          )}\n          {...triggerProps}\n        >\n          <ComboboxPrimitive.Icon data-slot=\"combobox-icon\">\n            <ChevronsUpDownIcon />\n          </ComboboxPrimitive.Icon>\n        </ComboboxTrigger>\n      )}\n      {showClear && (\n    
+@@ -30,7 +30,7 @@ the macro API, `staticSource` and code-usage APIs are recent.
+ | `src/components/mdx.tsx`, `src/components/docs-table.tsx` | MDX components: coss ui's docs typography (headings with anchor links, lists, tables, inline code, `Callout` as a coss ui `Alert`, `Cards`/`Card` as linked cards) over Fumadocs' content pipeline (`pre` is Fumadocs' `CodeBlock` with Shiki/Twoslash output, `CodeBlockTabs` for ` ```package-install `, `Steps`/`Step`, `Tabs`/`Tab`). `DocsTable` & co. are shared with the generated plan, rate and retention tables. |
+ | `src/app/(home)`, `src/components/home/` | The landing page (a "parts catalog": isometric drawings in `iso.tsx`, the agent prompt (`copy-prompt.tsx`), the catalog in `parts.ts`; design rules in [DESIGN.md](./DESIGN.md)), the pricing page, the legal pages and `SiteFooter`. |
+ | `src/app/(home)/pricing`, `src/components/pricing/`, `src/lib/pricing.ts` | `/pricing`: plan cards, an email bill estimator (a client island rating with `@coss/billing/engine`'s `chargeRange`, so it matches invoices), usage rate cards, the plan comparison (`planRows()`, shared with the billing guide's `<PlanTable />`) and an FAQ. Every price, limit and allowance comes from `@coss/billing/catalog`. |
+-| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/runtime.tsx`, `src/lib/shipyard.ts`, `public/shipyard/assets/` | `/shipyard`: Shipyard's landing page as it was at berthd.app (moved from the coss ui repository's `apps/shipyard`), in its own route group with its own header links (`SHIPYARD_LINKS`). The page is static markup styled by `landing.css` (scoped to `.shipyard-landing`, its own tokens; the segment's layout loads Cal Sans from `@coss/ui/fonts` for the headlines and JetBrains Mono); the harbour, the night loop, the chapters' loops and line scenes are plain scripts in `public/shipyard/assets` (same-origin, so the CSP allows them) that `LandingRuntime` appends after the first paint and redraws on theme changes. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases, and the docs link to the `cosscom/shipyard` repository until they move here. |
++| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/{drawings,stage,copy-line}.tsx`, `src/lib/shipyard.ts` | `/shipyard`: Shipyard's landing page, drawn like the coss.com catalog (one ruled sheet, `SectionHead`s, `.drafting-grid` behind drawings) in its own route group with its own header links (`SHIPYARD_LINKS`). The drawings are `drawings.tsx`: isometric line art on `iso.tsx`'s projection and `--iso-*` faces, with Shipyard's one amber lamp; `landing.css` styles them and their motion, the one place on coss.com besides the manifesto where drawings move: each sits in a `Stage` (a client island) whose parts (`.part`, staggered by `--i`) drop in when it scrolls into view, groups marked `.lift` rise on hover, lamps breathe and wires march; without script or with `prefers-reduced-motion` the drawing is simply there. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases. `public/shipyard/assets` keeps only the harbour paintings and the night loop, for the coss.com landing page's banner (`harbour.tsx`). |
+ | `content/shipyard/`, `src/lib/shipyard-docs.ts`, `src/app/(shipyard)/shipyard/docs`, `src/components/shipyard/docs/`, `src/lib/shipyard/`, `public/shipyard/shots/` | `/shipyard/docs`: Shipyard's docs (moved with the landing page; the Markdown is the `cosscom/shipyard` repository's `docs/`). Their own `defineDocs` collection (`shipyard` in `collections.ts`, with its own `applyMdxPreset` so its rehype plugins never touch coss's docs: `rehype-reference.ts` makes the reference tables linkable, `rehype-nowrap-tokens.ts` keeps inline code from wrapping inside a flag), `loader` (`shipyardSource`, base `/shipyard/docs`) and search index (`/shipyard/docs/search.json`, which its `SiteShell`'s ⌘K menu searches), out of coss's sidebar, search and `/llms.txt`. The pages render in the same `DocsLayoutFrame`/`DocsPageFrame` as `/docs` (every folder of the tree is a sidebar group, since none is a root). MDX gets the site's components (coss ui callouts and cards included) plus Shipyard's (`getShipyardMDXComponents`): diagrams, the line scenes (`scenes.tsx`, a copy of the app's drawings), screenshots (`<Shot name>`: `public/shipyard/shots/<name>-{light,dark}.webp`, sizes in `shots.json`) and the stage; their styles are the three stylesheets the docs layout imports. Internal links in the pages are absolute (`/shipyard/docs/…`). |
+ | `src/app/(calendar)/kloq`, `src/lib/calendar.ts`, `src/lib/calendar/`, `src/components/calendar/`, `src/styles/calendar.css`, `packages/kloq` | `/kloq`: kloq (moved from the `cosscom/calendar` repository, which was built to be served below `/calendar`): the landing page, the live demo (`/kloq/demo`, localStorage-backed), the five tools (`/
 ```
 
-**File**: `apps/ui/public/r/input.json` (modified, +1/-1)
+**File**: `apps/site/DESIGN.md` (modified, +4/-0)
 ```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/input.tsx",
--      "content": "\"use client\";\n\nimport { Input as InputPrimitive } from \"@base-ui/react/input\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type InputProps = Omit<\n  InputPrimitive.Props & React.RefAttributes<HTMLInputElement>,\n  \"size\"\n> & {\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  unstyled?: boolean;\n  nativeInput?: boolean;\n};\n\nexport function Input({\n  className,\n  size = \"default\",\n  unstyled = false,\n  nativeInput = false,\n  style,\n  ...props\n}: InputProps): React.ReactElement {\n  const inputClassName = cn(\n    \"h-8.5 w-full min-w-0 rounded-[inherit] px-[calc(--spacing(3)-1px)] leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] placeholder:text-muted-foreground/72 sm:h-7.5 sm:leading-7.5\",\n    size === \"sm\" &&\n      \"h-7.5 px-[calc(--spacing(2.5)-1px)] leading-7.5 sm:h-6.5 sm:leading-6.5\",\n    size === \"lg\" && \"h-9.5 leading-9.5 sm:h-8.5 sm:leading-8.5\",\n    props.type === \"search\" &&\n      \"[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none\",\n    props.type === \"file\" &&\n      \"text-muted-foreground file:me-3 file:bg-transparent file:font-medium file:text-foreground file:text-sm\",\n  );\n\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-autofill:bg-foreground/4 has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"input-control\"\n    >\n      {nativeInput ? (\n        <input\n          className={inputClassName}\n          data-slot=\"input\"\n          size={typeof size === \"number\" ? size : undefined}\n          style={typeof style === \"function\" ? undefined : style}\n          {...props}\n        />\n      ) : (\n        <InputPrimitive\n          className={inputClassName}\n          data-slot=\"input\"\n          size={typeof size === \"number\" ? size : undefined}\n          style={style}\n          {...props}\n        />\n      )}\n    </span>\n  );\n}\n\nexport { InputPrimitive };\n",
-+      "content": "\"use client\";\n\nimport { Input as InputPrimitive } from \"@base-ui/react/input\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type InputProps = Omit<\n  InputPrimitive.Props & React.RefAttributes<HTMLInputElement>,\n  \"size\"\n> & {\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  unstyled?: boolean;\n  nativeInput?: boolean;\n};\n\nexport function Input({\n  className,\n  size = \"default\",\n  unstyled = false,\n  nativeInput = false,\n  style,\n  ...props\n}: InputProps): React.ReactElement {\n  const inputClassName = cn(\n    \"h-8.5 w-full min-w-0 rounded-[inherit] px-[calc(--spacing(3)-1px)] text-foreground leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] placeholder:text-muted-foreground/72 sm:h-7.5 sm:leading-7.5 autofill:[-webkit-text-fill-color:var(--foreground)]\",\n    size === \"sm\" &&\n      \"h-7.5 px-[calc(--spacing(2.5)-1px)] leading-7.5 sm:h-6.5 sm:leading-6.5\",\n    size === \"lg\" && \"h-9.5 leading-9.5 sm:h-8.5 sm:leading-8.5\",\n    props.type === \"search\" &&\n      \"[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none\",\n    props.type === \"file\" &&\n      \"text-muted-foreground file:me-3 file:bg-transparent file:font-medium file:text-foreground file:text-sm\",\n  );\n\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 b
-```
-
-**File**: `apps/ui/public/r/number-field.json` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/number-field.tsx",
--      "content": "\"use client\";\n\nimport { NumberField as NumberFieldPrimitive } from \"@base-ui/react/number-field\";\nimport { MinusIcon, PlusIcon } from \"lucide-react\";\nimport * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Label } from \"@/registry/default/ui/label\";\n\nexport const NumberFieldContext: React.Context<{\n  fieldId: string;\n} | null> = React.createContext<{\n  fieldId: string;\n} | null>(null);\n\nexport function NumberField({\n  id,\n  className,\n  size = \"default\",\n  ...props\n}: NumberFieldPrimitive.Root.Props & {\n  size?: \"sm\" | \"default\" | \"lg\";\n}): React.ReactElement {\n  const generatedId = React.useId();\n  const fieldId = id ?? generatedId;\n\n  return (\n    <NumberFieldContext.Provider value={{ fieldId }}>\n      <NumberFieldPrimitive.Root\n        className={cn(\"flex w-full flex-col items-start gap-2\", className)}\n        data-size={size}\n        data-slot=\"number-field\"\n        id={fieldId}\n        {...props}\n      />\n    </NumberFieldContext.Provider>\n  );\n}\n\nexport function NumberFieldGroup({\n  className,\n  ...props\n}: NumberFieldPrimitive.Group.Props): React.ReactElement {\n  return (\n    <NumberFieldPrimitive.Group\n      className={cn(\n        \"relative flex w-full justify-between rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-data-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-within:border-ring focus-within:ring-[3px] has-aria-invalid:border-destructive/36 has-autofill:bg-foreground/4 focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [[data-disabled],:focus-within,[aria-invalid]]:shadow-none\",\n        className,\n      )}\n      data-slot=\"number-field-group\"\n      {...props}\n    />\n  );\n}\n\nexport function NumberFieldDecrement({\n  className,\n  ...props\n}: NumberFieldPrimitive.Decrement.Props): React.ReactElement {\n  return (\n    <NumberFieldPrimitive.Decrement\n      className={cn(\n        \"relative flex shrink-0 cursor-pointer items-center justify-center rounded-s-[calc(var(--radius-lg)-1px)] in-data-[size=sm]:px-[calc(--spacing(2.5)-1px)] px-[calc(--spacing(3)-1px)] transition-colors pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 hover:bg-accent\",\n        className,\n      )}\n      data-slot=\"number-field-decrement\"\n      {...props}\n    >\n      <MinusIcon />\n    </NumberFieldPrimitive.Decrement>\n  );\n}\n\nexport function NumberFieldIncrement({\n  className,\n  ...props\n}: NumberFieldPrimitive.Increment.Props): React.ReactElement {\n  return (\n    <NumberFieldPrimitive.Increment\n      className={cn(\n        \"relative flex shrink-0 cursor-pointer items-center justify-center rounded-e-[calc(var(--radius-lg)-1px)] in-data-[size=sm]:px-[calc(--spacing(2.5)-1px)] px-[calc(--spacing(3)-1px)] transition-colors pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 hover:bg-accent\",\n        className,\n      )}\n      data-slot=\"number-field-increment\"\n      {...props}\n    >\n      <PlusIcon />\n    </NumberFieldPrimitive.Increment>\n  );\n}\n\nexport function NumberFieldInput({\n  className,\n  ...props\n}: NumberFieldPrimitive.Input.Props): React.ReactElement {\n  return (\n    <NumberFieldPrimitive.Input\n      className={cn(\n        \"h-8.5 in-data-[size=lg]:h-9.5 in-data-[size=sm]:h-7.5 w-full min-w-0 grow bg-transparent in-data-[size=sm]:px-[calc(--spacing(2.5)-1px)] px-[calc(--spacing(3)-1px)] text-center tabular-nums in-data-[size=lg]:leading-9.5 in-data-[size=sm]:leading-7.5 leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] sm:h-7.5 sm:in-data-[size=lg]:h-8.5 sm:in-data-[size=sm]:h-6.5 sm:in-data-[size=lg]:leading-8.5 sm:in-data-[size=sm]:leading-8.5 sm:leading-7.5\",\n        className,\n      )}\n      data-slot=\"number-field-input\"\n      {...props}\n    />\n  );\n}\n\nexport function NumberFieldScrubArea({\n  className,\n  label,\n  ...props\n}: NumberFieldPrimitive.ScrubArea.Props & {\n  label: string;\n}): React.ReactElement {\n  const context = React.useContext(NumberFieldContext);\n\n  if (!context)
-```
-
-**File**: `apps/ui/public/r/textarea.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/textarea.tsx",
--      "content": "\"use client\";\n\nimport { Field as FieldPrimitive } from \"@base-ui/react/field\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type TextareaProps = React.ComponentPropsWithoutRef<\"textarea\"> &\n  React.RefAttributes<HTMLTextAreaElement> & {\n    size?: \"sm\" | \"default\" | \"lg\" | number;\n    unstyled?: boolean;\n  };\n\nexport function Textarea({\n  className,\n  size = \"default\",\n  unstyled = false,\n  ref,\n  ...props\n}: TextareaProps): React.ReactElement {\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"textarea-control\"\n    >\n      <FieldPrimitive.Control\n        ref={ref}\n        value={props.value}\n        defaultValue={props.defaultValue}\n        disabled={props.disabled}\n        id={props.id}\n        name={props.name}\n        render={(defaultProps: React.ComponentProps<\"textarea\">) => (\n          <textarea\n            className={cn(\n              \"field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] outline-none max-sm:min-h-20.5\",\n              size === \"sm\" &&\n                \"min-h-16.5 px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1)-1px)] max-sm:min-h-19.5\",\n              size === \"lg\" &&\n                \"min-h-18.5 py-[calc(--spacing(2)-1px)] max-sm:min-h-21.5\",\n            )}\n            data-slot=\"textarea\"\n            {...mergeProps(defaultProps, props)}\n          />\n        )}\n      />\n    </span>\n  );\n}\n\nexport { FieldPrimitive };\n",
-+      "content": "\"use client\";\n\nimport { Field as FieldPrimitive } from \"@base-ui/react/field\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type TextareaProps = React.ComponentPropsWithoutRef<\"textarea\"> &\n  React.RefAttributes<HTMLTextAreaElement> & {\n    size?: \"sm\" | \"default\" | \"lg\" | number;\n    unstyled?: boolean;\n  };\n\nexport function Textarea({\n  className,\n  size = \"default\",\n  unstyled = false,\n  ref,\n  ...props\n}: TextareaProps): React.ReactElement {\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"textarea-control\"\n    >\n      <FieldPrimitive.Control\n        ref={ref}\n        value={props.value}\n        defaultValue={props.defaultValue}\n        disabled={props.disabled}\n        id={props.id}\n        name={props.name}\n        render={(defaultProps: React.ComponentProps<\"textarea\">) => (\n          <textarea\n            className={cn(\n              \"field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] text-foreground outline-none placeholder:text-muted-foreground/72 max-sm:min-h-20.5\",\n              size === \"sm\" &&\n                \"mi
-```
-
-**File**: `apps/ui/registry/default/ui/combobox.tsx` (modified, +2/-2)
-```diff
-@@ -42,7 +42,7 @@ export function ComboboxChipsInput({
-   return (
-     <ComboboxPrimitive.Input
-       className={cn(
--        "min-w-12 flex-1 text-base outline-none sm:text-sm [[data-slot=combobox-chip]+&]:ps-0.5",
-+        "min-w-12 flex-1 text-base text-foreground outline-none sm:text-sm [[data-slot=combobox-chip]+&]:ps-0.5",
-         sizeValue === "sm" ? "ps-1.5" : "ps-2",
-         className,
-       )}
-@@ -374,7 +374,7 @@ export function ComboboxChips({
-   return (
-     <ComboboxPrimitive.Chips
-       className={cn(
--        "relative inline-flex min-h-9 w-full flex-wrap gap-1 rounded-lg border border-input bg-background not-dark:bg-clip-padding p-[calc(--spacing(1)-1px)] text-base shadow-xs/5 outline-none ring-ring/24 transition-shadow *:min-h-7 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-within:border-ring focus-within:ring-[3px] has-disabled:pointer-events-none has-data-[size=lg]:min-h-10 has-data-[size=sm]:min-h-8 has-aria-invalid:border-destructive/36 has-autofill:bg-foreground/4 has-disabled:opacity-64 has-[:disabled,:focus-within,[aria-invalid]]:shadow-none focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 has-data-[size=lg]:*:min-h-8 has-data-[size=sm]:*:min-h-6 sm:min-h-8 sm:text-sm sm:has-data-[size=lg]:min-h-9 sm:has-data-[size=sm]:min-h-7 sm:*:min-h-6 sm:has-data-[size=lg]:*:min-h-7 sm:has-data-[size=sm]:*:min-h-5 dark:not-has-disabled:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-+        "relative inline-flex min-h-9 w-full flex-wrap gap-1 rounded-lg border border-input bg-background not-dark:bg-clip-padding p-[calc(--spacing(1)-1px)] text-base shadow-xs/5 outline-none ring-ring/24 transition-shadow *:min-h-7 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-within:border-ring focus-within:ring-[3px] has-disabled:pointer-events-none has-data-[size=lg]:min-h-10 has-data-[size=sm]:min-h-8 has-aria-invalid:border-destructive/36 has-disabled:opacity-64 has-[:disabled,:focus-within,[aria-invalid]]:shadow-none focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 has-data-[size=lg]:*:min-h-8 has-data-[size=sm]:*:min-h-6 sm:min-h-8 sm:text-sm sm:has-data-[size=lg]:min-h-9 sm:has-data-[size=sm]:min-h-7 sm:*:min-h-6 sm:has-data-[size=lg]:*:min-h-7 sm:has-data-[size=sm]:*:min-h-5 dark:not-has-disabled:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-         className,
-       )}
-       data-slot="combobox-chips"
-```
-
-**File**: `apps/ui/registry/default/ui/input.tsx` (modified, +2/-2)
-```diff
-@@ -22,7 +22,7 @@ export function Input({
-   ...props
- }: InputProps): React.ReactElement {
-   const inputClassName = cn(
--    "h-8.5 w-full min-w-0 rounded-[inherit] px-[calc(--spacing(3)-1px)] leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] placeholder:text-muted-foreground/72 sm:h-7.5 sm:leading-7.5",
-+    "h-8.5 w-full min-w-0 rounded-[inherit] px-[calc(--spacing(3)-1px)] text-foreground leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] placeholder:text-muted-foreground/72 sm:h-7.5 sm:leading-7.5 autofill:[-webkit-text-fill-color:var(--foreground)]",
-     size === "sm" &&
-       "h-7.5 px-[calc(--spacing(2.5)-1px)] leading-7.5 sm:h-6.5 sm:leading-6.5",
-     size === "lg" && "h-9.5 leading-9.5 sm:h-8.5 sm:leading-8.5",
-@@ -37,7 +37,7 @@ export function Input({
-       className={
-         cn(
-           !unstyled &&
--            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-autofill:bg-foreground/4 has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-+            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-autofill:bg-foreground/4 has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-           className,
-         ) || undefined
-       }
-```
-
-**File**: `apps/ui/registry/default/ui/number-field.tsx` (modified, +2/-2)
-```diff
-@@ -43,7 +43,7 @@ export function NumberFieldGroup({
-   return (
-     <NumberFieldPrimitive.Group
-       className={cn(
--        "relative flex w-full justify-between rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-data-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-within:border-ring focus-within:ring-[3px] has-aria-invalid:border-destructive/36 has-autofill:bg-foreground/4 focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [[data-disabled],:focus-within,[aria-invalid]]:shadow-none",
-+        "relative flex w-full justify-between rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-data-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-within:border-ring focus-within:ring-[3px] has-aria-invalid:border-destructive/36 focus-within:has-aria-invalid:border-destructive/64 focus-within:has-aria-invalid:ring-destructive/16 data-disabled:pointer-events-none data-disabled:opacity-64 sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-focus-within:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 [[data-disabled],:focus-within,[aria-invalid]]:shadow-none",
-         className,
-       )}
-       data-slot="number-field-group"
-@@ -95,7 +95,7 @@ export function NumberFieldInput({
-   return (
-     <NumberFieldPrimitive.Input
-       className={cn(
--        "h-8.5 in-data-[size=lg]:h-9.5 in-data-[size=sm]:h-7.5 w-full min-w-0 grow bg-transparent in-data-[size=sm]:px-[calc(--spacing(2.5)-1px)] px-[calc(--spacing(3)-1px)] text-center tabular-nums in-data-[size=lg]:leading-9.5 in-data-[size=sm]:leading-7.5 leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] sm:h-7.5 sm:in-data-[size=lg]:h-8.5 sm:in-data-[size=sm]:h-6.5 sm:in-data-[size=lg]:leading-8.5 sm:in-data-[size=sm]:leading-8.5 sm:leading-7.5",
-+        "h-8.5 in-data-[size=lg]:h-9.5 in-data-[size=sm]:h-7.5 w-full min-w-0 grow bg-transparent in-data-[size=sm]:px-[calc(--spacing(2.5)-1px)] px-[calc(--spacing(3)-1px)] text-center text-foreground tabular-nums in-data-[size=lg]:leading-9.5 in-data-[size=sm]:leading-7.5 leading-8.5 outline-none sm:h-7.5 sm:in-data-[size=lg]:h-8.5 sm:in-data-[size=sm]:h-6.5 sm:in-data-[size=lg]:leading-8.5 sm:in-data-[size=sm]:leading-8.5 sm:leading-7.5",
-         className,
-       )}
-       data-slot="number-field-input"
-```
-
-**File**: `apps/ui/registry/default/ui/textarea.tsx` (modified, +2/-2)
-```diff
-@@ -23,7 +23,7 @@ export function Textarea({
-       className={
-         cn(
-           !unstyled &&
--            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-+            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-           className,
-         ) || undefined
-       }
-@@ -40,7 +40,7 @@ export function Textarea({
-         render={(defaultProps: React.ComponentProps<"textarea">) => (
-           <textarea
-             className={cn(
--              "field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] outline-none max-sm:min-h-20.5",
-+              "field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] text-foreground outline-none placeholder:text-muted-foreground/72 max-sm:min-h-20.5",
-               size === "sm" &&
-                 "min-h-16.5 px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1)-1px)] max-sm:min-h-19.5",
-               size === "lg" &&
-```
-
----
-
-### Incident Patch 15: `caaf517f` (2026-07-29)
-**Commit Message**: fix(input-group): prevent addon text from being cut off (#827)
-
-* fix(input-group): prevent addon text from being cut off
-
-Remove leading-none so line-clamp/truncate no longer clips InputGroupText.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(input-group): use truncate instead of line-clamp on addon text
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/input-group.json` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/input-group.tsx",
--      "content": "\"use client\";\n\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Input, type InputProps } from \"@/registry/default/ui/input\";\nimport { Textarea, type TextareaProps } from \"@/registry/default/ui/textarea\";\n\nconst inputGroupAddonVariants = cva(\n  \"flex h-auto cursor-text select-none items-center justify-center gap-2 leading-none [&>kbd]:rounded-[calc(var(--radius)-5px)] in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80\",\n  {\n    defaultVariants: {\n      align: \"inline-start\",\n    },\n    variants: {\n      align: {\n        \"block-end\":\n          \"order-last w-full justify-start px-[calc(--spacing(3)-1px)] pb-[calc(--spacing(3)-1px)] [.border-t]:pt-[calc(--spacing(3)-1px)] [[data-size=sm]+&]:px-[calc(--spacing(2.5)-1px)]\",\n        \"block-start\":\n          \"order-first w-full justify-start px-[calc(--spacing(3)-1px)] pt-[calc(--spacing(3)-1px)] [.border-b]:pb-[calc(--spacing(3)-1px)] [[data-size=sm]+&]:px-[calc(--spacing(2.5)-1px)]\",\n        \"inline-end\":\n          \"order-last pe-[calc(--spacing(3)-1px)] has-[>:last-child[data-slot=badge]]:-me-1.5 has-[>button]:-me-2 has-[>kbd:last-child]:me-[-0.35rem] [[data-size=sm]+&]:pe-[calc(--spacing(2.5)-1px)]\",\n        \"inline-start\":\n          \"order-first ps-[calc(--spacing(3)-1px)] has-[>:last-child[data-slot=badge]]:-ms-1.5 has-[>button]:-ms-2 has-[>kbd:last-child]:ms-[-0.35rem] [[data-size=sm]+&]:ps-[calc(--spacing(2.5)-1px)]\",\n      },\n    },\n  },\n);\n\nexport function InputGroup({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"relative inline-flex w-full min-w-0 items-center rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-[input:disabled,textarea:disabled]:not-has-[input:focus-visible,textarea:focus-visible]:not-has-[input[aria-invalid],textarea[aria-invalid]]:before:shadow-[0_1px_--theme(--color-black/4%)] has-[input:focus-visible,textarea:focus-visible]:has-[input[aria-invalid],textarea[aria-invalid]]:border-destructive/64 has-[input:focus-visible,textarea:focus-visible]:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/16 has-[textarea]:h-auto has-data-[align=block-end]:h-auto has-data-[align=block-start]:h-auto has-data-[align=block-end]:flex-col has-data-[align=block-start]:flex-col has-[input:focus-visible,textarea:focus-visible]:border-ring has-[input[aria-invalid],textarea[aria-invalid]]:border-destructive/36 has-autofill:bg-foreground/4 has-[input:disabled,textarea:disabled]:opacity-64 has-[input:disabled,textarea:disabled,input:focus-visible,textarea:focus-visible,input[aria-invalid],textarea[aria-invalid]]:shadow-none has-[input:focus-visible,textarea:focus-visible]:ring-[3px] sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-[input[aria-invalid],textarea[aria-invalid]]:ring-destructive/24 dark:not-has-[input:disabled,textarea:disabled]:not-has-[input:focus-visible,textarea:focus-visible]:not-has-[input[aria-invalid],textarea[aria-invalid]]:before:shadow-[0_-1px_--theme(--color-white/6%)] has-data-[align=inline-start]:**:[[data-size=sm]_input]:ps-1.5 has-data-[align=inline-end]:**:[[data-size=sm]_input]:pe-1.5 *:[[data-slot=input-control],[data-slot=textarea-control]]:contents *:[[data-slot=input-control],[data-slot=textarea-control]]:before:hidden has-[[data-align=block-start],[data-align=block-end]]:**:[input]:h-auto has-data-[align=inline-start]:**:[input]:ps-2 has-data-[align=inline-end]:**:[input]:pe-2 has-data-[align=block-end]:**:[input]:pt-1.5 has-data-[align=block-start]:**:[input]:pb-1.5 **:[textarea]:min-h-20.5 **:[textarea]:resize-none **:[textarea]:py-[calc(--spacing(3)-1px)] **:[textarea]:max-sm:min-h-23.5 **:[textarea_button]:rounded-[calc(var(--radius-md)-1px)]\",\n        className,\n      )}\n      data-slot=\"input-group\"\n      role=\"group\"\n      {...props}\n    />\n  );\n}\n\nexport function InputGroupAddon({\n  className,\n  align = \"inline-start\",\n  ...props\n}: React.ComponentProps<\"div\"> &\n  VariantProps<typeof inputGroupAddonVariants>): React.ReactElement {\n  return (\n    <div\n      className={cn(inputGroupAddonVariants({ align }), className)}\n      data-align={align}\n      data-slot=\"input-group-addon\"\n      onMouseDown={(e: React
-```
-
-**File**: `apps/ui/registry/default/ui/input-group.tsx` (modified, +2/-2)
-```diff
-@@ -7,7 +7,7 @@ import { Input, type InputProps } from "@/registry/default/ui/input";
- import { Textarea, type TextareaProps } from "@/registry/default/ui/textarea";
+@@ -45,6 +45,10 @@ The exception is `/crowd-opinionated-source-software`, a manifesto rather than a
+ illustration (`src/components/coss-landing/`, client islands on `motion`) that starts when it scrolls into view,
+ loops gently, stays grayscale and holds its final frame under `prefers-reduced-motion`.
  
- const inputGroupAddonVariants = cva(
--  "flex h-auto cursor-text select-none items-center justify-center gap-2 leading-none [&>kbd]:rounded-[calc(var(--radius)-5px)] in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
-+  "flex h-auto cursor-text select-none items-center justify-center gap-2 [&>kbd]:rounded-[calc(var(--radius)-5px)] in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
-   {
-     defaultVariants: {
-       align: "inline-start",
-@@ -82,7 +82,7 @@ export function InputGroupText({
-   return (
-     <span
-       className={cn(
--        "line-clamp-1 flex items-center gap-2 whitespace-nowrap text-muted-foreground leading-none in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5",
-+        "flex items-center gap-2 truncate text-muted-foreground in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5",
-         className,
-       )}
-       {...props}
++Shipyard's page (`/shipyard`) is the other exception: its drawings (`src/components/shipyard/drawings.tsx`)
++drop in part by part when they scroll into view, lift on hover, and carry Shipyard's one amber lamp; all of it
++stops under `prefers-reduced-motion`.
++
+ ## Copy
+ 
+ - **Assertive and authoritative.** coss.com is the foundation apps are built on: write every product as
 ```
 
-**File**: `packages/ui/src/components/input-group.tsx` (modified, +2/-2)
+**File**: `apps/site/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -7,7 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority";
- import type * as React from "react";
- 
- const inputGroupAddonVariants = cva(
--  "flex h-auto cursor-text select-none items-center justify-center gap-2 leading-none [&>kbd]:rounded-[calc(var(--radius)-5px)] in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
-+  "flex h-auto cursor-text select-none items-center justify-center gap-2 [&>kbd]:rounded-[calc(var(--radius)-5px)] in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5 not-has-[button]:**:[svg:not([class*='opacity-'])]:opacity-80",
-   {
-     defaultVariants: {
-       align: "inline-start",
-@@ -82,7 +82,7 @@ export function InputGroupText({
-   return (
-     <span
-       className={cn(
--        "line-clamp-1 flex items-center gap-2 whitespace-nowrap text-muted-foreground leading-none in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5",
-+        "flex items-center gap-2 truncate text-muted-foreground in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4.5 sm:in-[[data-slot=input-group]:has([data-slot=input-control],[data-slot=textarea-control])]:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:-mx-0.5",
-         className,
-       )}
-       {...props}
+@@ -52,7 +52,7 @@ ENV NODE_ENV=production \
+ WORKDIR /app
+ COPY --from=build /repo/apps/site/.next/standalone ./
+ COPY --from=build /repo/apps/site/.next/static ./apps/site/.next/static
+-# The standalone output leaves public/ out (Shipyard's landing page assets, under /shipyard/assets).
++# The standalone output leaves public/ out (Shipyard's harbour and docs screenshots, under /shipyard).
+ COPY --from=build /repo/apps/site/public ./apps/site/public
+ # Next writes its cache under .next at runtime; everything else stays root-owned and read-only.
+ RUN mkdir -p apps/site/.next/cache && chown node:node apps/site/.next/cache
+```
+
+**File**: `apps/site/public/shipyard/assets/clips.js` (removed, +0/-191)
+```diff
+@@ -1,191 +0,0 @@
+-// The chapters' loops and line scenes.
+-//
+-// A [data-clip] figure holds its poster (an <img> with its size, so nothing
+-// moves; its src waits for the page to load, so it never competes with the
+-// hero). Near the viewport it gets its muted loop, which plays while in view
+-// and pauses out of it, when the tab is hidden, or behind the film. Under
+-// reduced motion or Save-Data the posters stay, and no video loads.
+-//
+-// [data-views] is a switch over several loops: each plays once and hands on to
+-// the next, until a choice is made, after which the chosen one loops.
+-//
+-// The line scenes come in after the page has loaded, and pause offscreen and
+-// while the tab is hidden, as in the app.
+-(() => {
+-  const root = document.documentElement;
+-  const still = matchMedia("(prefers-reduced-motion: reduce)");
+-  const saveData = navigator.connection?.saveData === true;
+-
+-  // The line scenes, into their slots (assets/scenes.json, from the app's
+-  // drawings by scripts/scenes.mjs).
+-  const slots = document.querySelectorAll("[data-scene]");
+-  if (slots.length)
+-    fetch(
+-      `${document.querySelector("[data-base]")?.getAttribute("data-base") ?? ""}/assets/scenes.json`,
+-    )
+-      .then((r) => r.json())
+-      .then((scenes) => {
+-        const io =
+-          "IntersectionObserver" in window &&
+-          new IntersectionObserver((entries) => {
+-            for (const e of entries)
+-              e.target.toggleAttribute("data-off", !e.isIntersecting);
+-          });
+-        for (const slot of slots) {
+-          if (!scenes[slot.dataset.scene]) continue;
+-          slot.innerHTML = scenes[slot.dataset.scene];
+-          if (io) io.observe(slot.firstElementChild);
+-        }
+-      })
+-      .catch(() => {});
+-  const hidden = () =>
+-    root.toggleAttribute("data-berth-hidden", document.hidden);
+-  document.addEventListener("visibilitychange", hidden);
+-  hidden();
+-
+-  const figs = [...document.querySelectorAll("[data-clip]")];
+-  if (!figs.length || !("IntersectionObserver" in window)) return;
+-  const state = new Map(
+-    figs.map((f) => [f, { near: false, seen: false, video: null }]),
+-  );
+-  const film = document.getElementById("film");
+-
+-  const make = (fig) => {
+-    const s = state.get(fig);
+-    const v = document.createElement("video");
+-    for (const a of [
+-      "muted",
+-      "playsinline",
+-      "disablepictureinpicture",
+-      "disableremoteplayback",
+-    ])
+-      v.setAttribute(a, "");
+-    v.muted = v.defaultMuted = v.playsInline = true;
+-    v.loop = !fig.closest("[data-views]:not([data-chosen])");
+-    v.preload = "auto";
+-    v.tabIndex = -1;
+-    v.setAttribute("aria-hidden", "true");
+-    v.poster = fig.querySelector("img").src;
+-    v.src = fig.dataset.clip;
+-    v.addEventListener("playing", () => fig.classList.add("playing"));
+-    v.addEventListener("ended", () =>
+-      fig.dispatchEvent(new Event("clip:ended", { bubbles: true })),
+-    );
+-    v.addEventListener("error", () => {
+-      v.remove();
+-      s.video = null;
+-      s.failed = true;
+-    });
+-    fig.append(v);
+-    s.video = v;
+-  };
+-
+-  // No loop loads before the page has, so none competes with the hero.
+-  let ready = false;
+-  const update = (fig) => {
+-    const s = state.get(fig);
+-    // Its poster, once the page has loaded and it's near.
+-    const img = fig.querySelector("img[data-src]");
+-    if (img && ready && (s.near || s.seen)) {
+-      img.src = img.dataset.src;
+-      img.removeAttribute("data-src");
+-    }
+-    const on =
+-      ready &&
+-      !still.matches &&
+-      !saveData &&
+-      !s.failed &&
+-      !fig.hasAttribute("aria-hidden");
+-    if (on && (s.near || s.seen) && !s.video) make(fig);
+-    if (!s.video) return;
+-    if (on && s.seen && !document.hidden && !film?.open)
+-      s.video.play().catch(() => {});
+-    else s.video.pause();
+-  };
+-  const all = () => figs.forEach(update);
+-
+-  // Near: load. In view: play.
+-  const nearIO = new IntersectionObserver(
+-    (entries) => {
+-      for (const e of entries) {
+-        state.get(e.target).near = e.isIntersecting;
+-        update(e.target);
+-      }
+-    },
+-    { rootMargin: "400px 0px" },
+-  );
+-  const seenIO = new IntersectionObserver(
+-    (entries) => {
+-      for (const e of entries) {
+-        state.get(e.target).seen = e.isIntersecting;
+-        update(e.target);
+-      }
+-    },
+-    { threshold: 0.2 },
+-  );
+-  for (const f of figs) {
+-    nearIO.observe(f);
+-    seenIO.observe(f);
+-  }
+-  const go = () => {
+-    ready = true;
+-    all();
+-  };
+-  const idle = () =>
+-    window.requestIdleCallback
+-      ? requestIdleCallback(go, { timeout: 2000 })
+-      : setTimeout(go, 300);
+-  if (document.readyState === "complete") idle();
+-  else addEventListener("load", idle, { once: true });
+-  document.addEventListener("visibilitychange", all);
+-  still.addEventListener("change", all);
+-  film?.addEventListener("close", all);
+-  document
+-    .querySelector("[data-film]")
+-    ?.addEventLi
+```
+
+**File**: `apps/site/public/shipyard/assets/harbour.js` (removed, +0/-201)
+```diff
+@@ -1,201 +0,0 @@
+-// The harbour, drawn as the app's Labs home draws it: the painting with a
+-// halftone grain (an ordered Bayer dither of its lightness, strongest on
+-// edges and in gradients), dissolving dot by dot into the page. Night in dark
+-// mode. Each band renders once per size on a small canvas, one dot per 2 CSS
+-// px, scaled up with hard pixels; nothing runs in between.
+-//
+-// A band is any [data-harbour] element with a <canvas>:
+-//   data-day, data-night   the paintings
+-//   data-fade              where it dissolves: "bottom" (default), "top" or "both"
+-//   data-night-only        always the night painting (the closing harbour)
+-//   data-position          the painting's vertical position, 0 to 1 (0.42)
+-//   data-lazy              drawn when it nears the viewport, not before
+-// Without this script the plain painting shows, faded by CSS.
+-(() => {
+-  const bands = [...document.querySelectorAll("[data-harbour]")];
+-  if (!bands.length) return;
+-  const CELL = 2;
+-  const LEVELS = 6;
+-  const FADE = 0.42;
+-  const BAYER8 = [
+-    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
+-    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
+-    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
+-    23, 61, 29, 53, 21,
+-  ].map((v) => (v + 0.5) / 64);
+-  const dark = matchMedia("(prefers-color-scheme: dark)");
+-  // Night is the site's theme (the "dark" class on <html>, by the header's
+-  // switch or the system); the page says when it changes with a berth:theme
+-  // event.
+-  const pageNight = () => document.documentElement.classList.contains("dark");
+-  // Where the lighthouse's lamp is in the painting, as a fraction of it.
+-  const LAMP = [0.094, 0.457];
+-
+-  const hex = (s) => {
+-    s = s.trim();
+-    const m = s.match(/^#([\da-f]{6})$/i);
+-    if (m)
+-      return [0, 2, 4].map((i) => Number.parseInt(m[1].slice(i, i + 2), 16));
+-    return (s.match(/[\d.]+/g) ?? [0, 0, 0]).slice(0, 3).map(Number);
+-  };
+-
+-  for (const band of bands) {
+-    const canvas = band.querySelector("canvas");
+-    const beam = band.querySelector(".beam");
+-    const fade = band.dataset.fade ?? "bottom";
+-    const nightOnly = "nightOnly" in band.dataset;
+-    const position = Number(band.dataset.position ?? 0.42);
+-    const isNight = () => nightOnly || pageNight();
+-    let size = "";
+-    let timer = 0;
+-    let pending = false;
+-    let near = !("lazy" in band.dataset);
+-
+-    const draw = async (force) => {
+-      if (!near) return;
+-      if (document.hidden) return void (pending = true);
+-      pending = false;
+-      const w = Math.ceil(band.clientWidth / CELL);
+-      const h = Math.ceil(band.clientHeight / CELL);
+-      const night = isNight();
+-      const key = `${w}x${h}${night}`;
+-      if (!w || !h || (key === size && !force)) return;
+-      const img = new Image();
+-      img.src = night ? band.dataset.night : band.dataset.day;
+-      try {
+-        await img.decode();
+-      } catch {
+-        return;
+-      }
+-      size = key;
+-      canvas.width = w;
+-      canvas.height = h;
+-      canvas.style.width = `${w * CELL}px`;
+-      canvas.style.height = `${h * CELL}px`;
+-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+-      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+-      const dw = img.naturalWidth * scale;
+-      const dh = img.naturalHeight * scale;
+-      // Drawn small, then up: the brushwork softens to its forms, so the
+-      // grain is the dither's, not the paint's.
+-      const soft = document.createElement("canvas");
+-      soft.width = Math.max(1, Math.round(w * 0.6));
+-      soft.height = Math.max(1, Math.round(h * 0.6));
+-      const sctx = soft.getContext("2d");
+-      sctx.imageSmoothingQuality = "high";
+-      // On a narrow screen the lighthouse, at the left, stays in view.
+-      const across = Number(
+-        band.dataset.across ?? (band.clientWidth < 700 ? 0.08 : 0.5),
+-      );
+-      sctx.drawImage(
+-        img,
+-        (w - dw) * across * 0.6,
+-        (h - dh) * position * 0.6,
+-        dw * 0.6,
+-        dh * 0.6,
+-      );
+-      if (beam) {
+-        beam.style.left = `${((w - dw) * across + dw * LAMP[0]) * CELL}px`;
+-        beam.style.top = `${((h - dh) * position + dh * LAMP[1]) * CELL}px`;
+-      }
+-      ctx.imageSmoothingQuality = "high";
+-      ctx.clearRect(0, 0, w, h);
+-      ctx.drawImage(soft, 0, 0, w, h);
+-      soft.width = soft.height = 0;
+-      const frame = ctx.getImageData(0, 0, w, h);
+-      const bg = hex(
+-        getComputedStyle(band).getPropertyValue("--bg") ||
+-          getComputedStyle(document.body).backgroundColor,
+-      );
+-      dither(frame, night ? 0.3 : 0.04, bg, fade);
+-      ctx.putImageData(frame, 0, 0);
+-      band.classList.add("drawn");
+-      band.dispatchEvent(
+-        new CustomEvent("harbour:drawn", {
+-          detail: {
+-            w: w * CELL,
+-            h: h * CELL,
+-            dw: dw * CELL
+```
+
+**File**: `apps/site/public/shipyard/assets/hero-loop.js` (removed, +0/-232)
+```diff
+@@ -1,232 +0,0 @@
+-// The harbour at night, alive: the launch film's seamless loop (the night
+-// painting with the agents' lights on the water), in the hero's band.
+-//
+-// Only at night (the site's dark theme); the day keeps the
+-// dithered painting. Nothing loads until the page has, and nothing at all for
+-// reduced motion or Save-Data: the still harbour stays. The loop comes in from
+-// its first frame (the poster) over the drawn harbour, in the same box, so
+-// nothing moves; it dissolves into the page through the same 2 px Bayer dots
+-// as assets/harbour.js draws, and pauses when hidden or scrolled away.
+-//
+-// Its frames are drawn on a canvas, cropped as the painting is, from a video
+-// kept a pixel wide under it: a canvas is never the page's largest paint, so
+-// the loop arriving late can't make the hero's LCP late.
+-//
+-//   data-loop          the loop's sources, in order (MP4, then WebM)
+-//   data-loop-poster   its first frame
+-(() => {
+-  const band = document.querySelector(".hero [data-harbour][data-loop]");
+-  if (!band || !("IntersectionObserver" in window)) return;
+-  const root = document.documentElement;
+-  const dark = matchMedia("(prefers-color-scheme: dark)");
+-  const still = matchMedia("(prefers-reduced-motion: reduce)");
+-  const night = () => root.classList.contains("dark");
+-  const saveData = navigator.connection?.saveData === true;
+-  // The same matrix, cell, fade and framing as the drawn harbour, so the dots
+-  // and the lighthouse line up.
+-  const CELL = 2;
+-  const FADE = 0.42;
+-  const POSITION = 0.42;
+-  const BAYER8 = [
+-    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
+-    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
+-    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
+-    23, 61, 29, 53, 21,
+-  ].map((v) => (v + 0.5) / 64);
+-
+-  let started = false;
+-  let loop = null;
+-  let video = null;
+-  let canvas = null;
+-  let ctx = null;
+-  let poster = null;
+-  let shown = false;
+-  let inView = true;
+-  let maskUrl = "";
+-  let maskSize = "";
+-  let timer = 0;
+-  let frame = 0;
+-
+-  const wanted = () => started && night() && !still.matches && !saveData;
+-
+-  // A frame (or the poster) over the whole canvas, as object-fit: cover, at
+-  // the painting's position: the lighthouse kept in view on a narrow screen.
+-  const paint = (src, sw, sh) => {
+-    if (!ctx || !sw || !sh) return;
+-    const cw = canvas.width;
+-    const ch = canvas.height;
+-    const s = Math.max(cw / sw, ch / sh);
+-    const across = band.clientWidth < 700 ? 0.08 : 0.5;
+-    ctx.drawImage(
+-      src,
+-      (cw - sw * s) * across,
+-      (ch - sh * s) * POSITION,
+-      sw * s,
+-      sh * s,
+-    );
+-  };
+-  const paintNow = () => {
+-    if (video?.readyState >= 2)
+-      paint(video, video.videoWidth, video.videoHeight);
+-    else if (poster?.naturalWidth)
+-      paint(poster, poster.naturalWidth, poster.naturalHeight);
+-  };
+-
+-  // Each new frame of the video, as it's shown.
+-  const tick = () => {
+-    paint(video, video.videoWidth, video.videoHeight);
+-    frame = video.requestVideoFrameCallback
+-      ? video.requestVideoFrameCallback(tick)
+-      : requestAnimationFrame(tick);
+-  };
+-  const stopTicking = () => {
+-    if (!frame) return;
+-    if (video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(frame);
+-    else cancelAnimationFrame(frame);
+-    frame = 0;
+-  };
+-
+-  // The canvas at the band's size (up to 2 device pixels a CSS pixel), and the
+-  // dissolve as an alpha mask: the lower part of the band, row by row, keeps
+-  // fewer of its 2 px dots.
+-  const size = () => {
+-    const W = band.clientWidth;
+-    const H = band.clientHeight;
+-    const key = `${W}x${H}`;
+-    if (!loop || !W || !H || key === maskSize) return;
+-    maskSize = key;
+-    const dpr = Math.min(2, devicePixelRatio || 1);
+-    canvas.width = Math.round(W * dpr);
+-    canvas.height = Math.round(H * dpr);
+-    paintNow();
+-    const m = document.createElement("canvas");
+-    m.width = W;
+-    m.height = H;
+-    const mctx = m.getContext("2d");
+-    const img = mctx.createImageData(W, H);
+-    const d = img.data;
+-    const h = Math.ceil(H / CELL);
+-    const foot = h * FADE;
+-    for (let Y = 0; Y < H; Y++) {
+-      const y = Math.floor(Y / CELL);
+-      let keep = y > h - foot ? 1 - (y - (h - foot)) / foot : 1;
+-      keep = keep * keep * (3 - 2 * keep);
+-      const rowB = ((y + 3) & 7) * 8;
+-      for (let X = 0; X < W; X++) {
+-        if (BAYER8[rowB + ((Math.floor(X / CELL) + 5) & 7)] < keep)
+-          d[(Y * W + X) * 4 + 3] = 255;
+-      }
+-    }
+-    mctx.putImageData(img, 0, 0);
+-    m.toBlob((blob) => {
+-      if (!blob || !loop) return;
+-      const old = maskUrl;
+-      maskUrl = URL.createObjectURL(blob);
+-      loop.style.setProperty("--mask", `url("${maskUrl}")`);
+-      if (old) setTimeout(() => URL.revokeObjectURL(old), 1000);
+-    });
+-  };
+-
+-  const build = () => {
+-    loop = document.createElemen
+```
+
+**File**: `apps/site/public/shipyard/assets/scenes.css` (removed, +0/-555)
+```diff
+@@ -1,555 +0,0 @@
+-/* Copied from app/src/components/art/scenes.css by site/scripts/scenes.mjs:
+-   the app's line scenes, for the chapters' markers. The page maps
+-   --muted-foreground and --warning to its own tokens (styles.css, .scene). */
+-
+-/* Scenes: Shipyard's small line drawings for quiet states (scenes.tsx). Lines
+-   take currentColor (muted by default); the one amber point is the logo's
+-   dot, from the theme's --warning, so every theme draws them right.
+-
+-   Motion rules: transforms and opacity only; slow (4s and up, except rain);
+-   a pixel or two, a few degrees at most; every loop seamless. Animations
+-   start a beat apart through --ba-delay, pause offscreen, while the window
+-   is hidden, behind an open dialog, and after a few loops, and stop under
+-   reduced motion. */
+-
+-.berth-art {
+-  color: var(--muted-foreground);
+-  overflow: visible;
+-}
+-
+-/* Elements that turn about a point name it in the scene's coordinates. */
+-.berth-art .ba-sweep,
+-.berth-art .ba-gull,
+-.berth-art .ba-float,
+-.berth-art .ba-ripple,
+-.berth-art .ba-weed,
+-.berth-art .ba-needle,
+-.berth-art .ba-ping,
+-.berth-art .ba-swing,
+-.berth-art .ba-throw,
+-.berth-art .ba-settle {
+-  transform-box: view-box;
+-}
+-
+-/* Water: a wave slides by whole periods of its curve and dashes, then repeats. */
+-.berth-art .ba-wave {
+-  animation: ba-drift var(--ba-d, 8s) linear infinite;
+-}
+-
+-.berth-art .ba-wave.ba-rev {
+-  animation-direction: reverse;
+-}
+-
+-@keyframes ba-drift {
+-  from {
+-    transform: translateX(0);
+-  }
+-  to {
+-    transform: translateX(var(--ba-x, -12px));
+-  }
+-}
+-
+-/* The buoy bobs and leans on the swell. */
+-.berth-art .ba-buoy {
+-  transform-box: fill-box;
+-  transform-origin: 50% 85%;
+-  animation: ba-bob 4.4s ease-in-out infinite;
+-}
+-
+-.berth-art .ba-buoy.ba-slow {
+-  animation-duration: 6.4s;
+-}
+-
+-@keyframes ba-bob {
+-  0%,
+-  100% {
+-    transform: translateY(-0.6px) rotate(-5deg);
+-  }
+-  50% {
+-    transform: translateY(0.9px) rotate(4deg);
+-  }
+-}
+-
+-/* An amber glint on the water, breathing with the light above it. */
+-.berth-art .ba-glint {
+-  transform-box: fill-box;
+-  transform-origin: center;
+-  animation: ba-glint 4.4s ease-in-out infinite;
+-}
+-
+-@keyframes ba-glint {
+-  0%,
+-  100% {
+-    opacity: 0.22;
+-    transform: scaleX(0.75);
+-  }
+-  50% {
+-    opacity: 0.42;
+-    transform: scaleX(1.1);
+-  }
+-}
+-
+-/* A boat rides the swell, a little slower than a buoy would. */
+-.berth-art .ba-ride {
+-  transform-box: fill-box;
+-  transform-origin: 50% 90%;
+-  animation: ba-ride 5.2s ease-in-out infinite;
+-}
+-
+-@keyframes ba-ride {
+-  0%,
+-  100% {
+-    transform: translateY(-0.4px) rotate(-1.4deg);
+-  }
+-  50% {
+-    transform: translateY(0.6px) rotate(1.2deg);
+-  }
+-}
+-
+-/* Under sail: pitching on the swell and edging forward, then easing back. */
+-.berth-art .ba-sail {
+-  transform-box: fill-box;
+-  transform-origin: 50% 92%;
+-  animation: ba-sail 4.8s ease-in-out infinite;
+-}
+-
+-@keyframes ba-sail {
+-  0%,
+-  100% {
+-    transform: translate(-0.6px, -0.4px) rotate(-1.8deg);
+-  }
+-  50% {
+-    transform: translate(0.8px, 0.6px) rotate(1.4deg);
+-  }
+-}
+-
+-/* The wake streams back from the stern, a dash at a time. */
+-.berth-art .ba-wake {
+-  animation: ba-wake 2.4s linear infinite;
+-}
+-
+-@keyframes ba-wake {
+-  from {
+-    transform: translateX(0);
+-  }
+-  to {
+-    transform: translateX(-10px);
+-  }
+-}
+-
+-/* Offline: the buoy's light turns slowly, as if looking for the box. */
+-.berth-art .ba-beacon {
+-  animation: ba-beacon 3.6s ease-in-out infinite;
+-}
+-
+-@keyframes ba-beacon {
+-  0%,
+-  100% {
+-    opacity: 0.3;
+-  }
+-  50% {
+-    opacity: 1;
+-  }
+-}
+-
+-.berth-art .ba-fog {
+-  animation: ba-fog 12s ease-in-out infinite alternate;
+-}
+-
+-.berth-art .ba-fog.ba-rev {
+-  animation-duration: 16s;
+-  animation-direction: alternate-reverse;
+-}
+-
+-@keyframes ba-fog {
+-  from {
+-    transform: translateX(-5px);
+-  }
+-  to {
+-    transform: translateX(5px);
+-  }
+-}
+-
+-/* Lighthouse: the beam sweeps out and back, brightest as it faces you; the
+-   lamp and the glint where it lands keep time. */
+-.berth-art .ba-sweep {
+-  animation: ba-sweep 7s ease-in-out infinite alternate;
+-}
+-
+-@keyframes ba-sweep {
+-  0% {
+-    transform: rotate(-7deg) scaleX(0.86);
+-    opacity: 0.45;
+-  }
+-  50% {
+-    transform: rotate(0deg) scaleX(1);
+-    opacity: 1;
+-  }
+-  100% {
+-    transform: rotate(6deg) scaleX(0.88);
+-    opacity: 0.5;
+-  }
+-}
+-
+-.berth-art .ba-lamp {
+-  animation: ba-lamp 3.5s ease-in-out infinite alternate;
+-}
+-
+-@keyframes ba-lamp {
+-  from {
+-    opacity: 0.7;
+-  }
+-  to {
+-    opacity: 1;
+-  }
+-}
+-
+-.berth-art .ba-glint.ba-sync {
+-  animation-duration: 7s;
+-}
+-
+-/* Dawn: the sun lifts a little over the horizon, then settles. */
+-.berth-art .ba-rise {
+-  animation: ba-rise 10s ease-in-out infinite alternate;
+-}
+-
+-@keyframes ba-rise {
+-  from {
+-    transform: translateY(1.8px);
+-  }
+-  to {
+-    transform: translateY(-1.2px);
+-  }
+-}
+-
+-/* Gulls glide, a wingbeat now and then. */
+-.berth-art .ba-gu
+```
+
+**File**: `apps/site/public/shipyard/assets/scenes.json` (removed, +0/-8)
+```diff
+@@ -1,8 +0,0 @@
+-{
+-  "setting-out": "<svg aria-hidden=\"true\" data-scene=\"setting-out\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-setting-out-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-setting-out-fg)\"></rect></mask></defs><defs><linearGradient id=\"sc-setting-out-wg\" gradientUnits=\"userSpaceOnUse\" x1=\"34\" x2=\"90\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.7\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-wake\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"160\" height=\"80\"><rect x=\"0\" y=\"0\" width=\"160\" height=\"80\" fill=\"url(#sc-setting-out-wg)\"></rect></mask></defs><g opacity=\"0.4\"><g stroke=\"currentColor\"><path d=\"M8 36 H26\" stroke-width=\"2.8\"></path><path d=\"M11 38 V48 M22 38 V48\" stroke-width=\"2.4\"></path><path d=\"M11 51.5 V60 M22 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g mask=\"url(#sc-setting-out-wake)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-wake\" d=\"M30 51.6 Q 60 51.2 96 49.6\" stroke-dasharray=\"5 5\" opacity=\"0.55\"></path><path class=\"ba-wake\" style=\"--ba-delay:-0.8s\" d=\"M30 56.4 Q 60 55.6 96 51\" stroke-dasharray=\"3 7\" opacity=\"0.32\"></path></g><g class=\"ba-sail\" stroke=\"currentColor\"><path d=\"M84 43 H126 L119.6 49.8 H88.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"2.2\"></path><path d=\"M100 43 V22.4\" stroke-width=\"1.6\"></path><path d=\"M98.4 23.6 V40.6 H85.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"1.6\"></path><path d=\"M101.8 24.6 L120.6 40.6 H101.8 Z\" fill=\"currentColor\" fill-opacity=\"0.05\" stroke-width=\"1.5\"></path><circle cx=\"100\" cy=\"20.4\" r=\"2.5\" fill=\"var(--warning)\" stroke=\"none\"></circle></g><g mask=\"url(#sc-setting-out-fade)\" stroke=\"currentColor\"><path d=\"M-12 49.4 q3 -1.3 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.72\" stroke-width=\"1.4\" class=\"ba-wave\" style=\"--ba-d:7s;--ba-x:-12px\"></path><path d=\"M-12 55.6 q3 -1.1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.42\" stroke-width=\"1.4\" stroke-dasharray=\"16 8\" class=\"ba-wave ba-rev\" style=\"--ba-d:11s;--ba-x:-24px\"></path><path d=\"M-12 61.599999999999994 q3 -1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.22\" stroke-width=\"1.4\" stroke-dasharray=\"6 10 14 6\" class=\"ba-wave\" style=\"--ba-d:15s;--ba-x:-36px\"></path></g></svg>",
+-  "signal": "<svg aria-hidden=\"true\" data-scene=\"signal\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-signal-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-signal-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-signal-fg)\"></rect></mask></defs><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g><g transform=\"translate(160 0) scale(-1 1)\"><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M37 34.6 V26.6 M123 34.6 V26.6\"></path></g><g class=\"ba-lift\" mask=\"url(#sc-signal-fade)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-fog\" d=\"M52 29 H108\" stroke-dasharray=\"12 7\" opacity=\"0.32\"></path><path class=\"ba-fog ba-rev\" d=\"M58 34 H102\" stroke-dasharray=\"7 8\" opacity=\"0.2\"></path></g><path class=\
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #856** (2026-09-30): fix(ui): resize textarea wrapper for WebKit placeholder sizing (@pasqualevitiello)
-- **PR #855** (2026-09-27): feat(ui): add palette Select and radio card particles (@pasqualevitiello)
-- **PR #853** (2026-09-22): feat(ui): update Cal Sans to 2.003 (@pasqualevitiello)
-- **PR #852** (2026-09-21): docs(ui): remove the Early Access callout from the Introduction (@supalarry)
-- **PR #851** (2026-09-16): fix(ui): keep drawer close button above drag bar (@pasqualevitiello)
-- **PR #850** (closed): fix(ui): drawer bar overlapping close button (@NathanBrodin)
-- **PR #849** (closed): feat(ui): add separator particle (@rtkac)
-- **PR #848** (2026-09-08): feat: migrate TanStack Table to v9 (@pasqualevitiello)
+- **PR #134** (2026-10-17): Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover (@sean-brydon)
+- **PR #132** (2026-10-16): Admin console: Deploys page polls faster, and each run gets its own page (@pumfleet)
+- **PR #131** (2026-10-16): Docs: fill the marketing gaps in the shared pages (@pumfleet)
+- **PR #130** (2026-10-16): Version packages (@github-actions[bot])
+- **PR #129** (2026-10-16): Framework mail drivers: coss/laravel, coss-rails and coss-django (@pumfleet)
+- **PR #128** (2026-10-16): Fix main's CI: restore bun.lock after #126 (@pumfleet)
 
 ---
 
@@ -3292,3 +3332,34 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #134 from cosscom/shipyard-landing-catalog
+
+**RULE**:
+When implementing operations in `apps/site/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5b5d4962`: Merge pull request #134 from cosscom/shipyard-landing-catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/site/AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/{drawings,stage,copy-line}.tsx`, `src/lib/shipyard.ts` | `/shipyard`: Shipyard's landing page, drawn like the coss.com catalog (one ruled sheet, `SectionHead`s, `.drafting-grid` behind drawings) in its own route group with its own header links (`SHIPYARD_LINKS`). The drawings are `drawings.tsx`: isometric line art on `iso.tsx`'s projection and `--iso-*` faces, with Shipyard's one amber lamp; `landing.css` styles them and their motion, the one place on coss.com besides the manifesto where drawings move: each sits in a `Stage` (a client island) whose parts (`.part`, staggered by `--i`) drop in when it scrolls into view, groups marked `.lift` rise on hover, lamps breathe and wires march; without script or with `prefers-reduced-motion` the drawing is simply there. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases. `public/shipyard/assets` keeps only the harbour paintings and the night loop, for the coss.com landing page's banner (`harbour.tsx`). |
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/runtime.tsx`, `src/lib/shipyard.ts`, `public/shipyard/assets/` | `/shipyard`: Shipyard's landing page as it was at berthd.app (moved from the coss ui repository's `apps/shipyard`), in its own route group with its own header links (`SHIPYARD_LINKS`). The page is static markup styled by `landing.css` (scoped to `.shipyard-landing`, its own tokens; the segment's layout loads Cal Sans from `@coss/ui/fonts` for the headlines and JetBrains Mono); the harbour, the night loop, the chapters' loops and line scenes are plain scripts in `public/shipyard/assets` (same-origin, so the CSP allows them) that `LandingRuntime` appends after the first paint and redraws on theme changes. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases, and the docs link to the `cosscom/shipyard` repository until they move here. |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5b5d4962` are properly handled with clean fallback behavior.

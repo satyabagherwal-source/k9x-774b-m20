@@ -2517,3 +2517,9 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `9cd77861` | Multi-dimensional audit evidence | 2026-10-18T21:32:43.724Z |
 | `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `b35c47e3` | Multi-dimensional audit evidence | 2026-10-18T21:33:23.673Z |
 | `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `3fce3b5b` | Multi-dimensional audit evidence | 2026-10-18T21:33:30.056Z |
+| `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `5b5d4962` | Multi-dimensional audit evidence | 2026-10-18T21:39:32.243Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `f748c1a4` | Multi-dimensional audit evidence | 2026-10-18T21:39:32.845Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `c184eec6` | Multi-dimensional audit evidence | 2026-10-18T21:39:37.330Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `a1dad93e` | Multi-dimensional audit evidence | 2026-10-18T21:39:40.897Z |
+| `learn-github-hashicorp-boundary` | `https://github.com/hashicorp/boundary` | `eeb38a1a` | Multi-dimensional audit evidence | 2026-10-18T21:39:42.536Z |
+| `learn-github-zilliztech-attu` | `https://github.com/zilliztech/attu` | `d51e1c78` | Multi-dimensional audit evidence | 2026-10-18T21:39:43.555Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T21:33:30.018Z",
-  "total_verified_learnings": 268,
+  "last_updated": "2026-10-18T21:39:43.513Z",
+  "total_verified_learnings": 274,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2240,22 +2240,35 @@
     "learn-github-authzed-spicedb": {
       "learning_id": "learn-github-authzed-spicedb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "authzed-spicedb",
+      "source": "authzed/spicedb",
+      "repository": "authzed/spicedb",
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "HEAD",
-      "content_hash": "9d324a795e0814b28ba0e246af864dcf34e21eb0ea8c1f2242de26f7ecb97202",
+      "source_version": "a1dad93e",
+      "content_hash": "4d9a2900c288d0896b23be4815d2cc1937c89b2dd599d66b5caeb62d53a0a8d8",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1737,
+          "title": "skip the transaction-overlap touch during bulk delete",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.986Z"
+      "verified_at": "2026-10-18T21:39:40.860Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-automattic-harper": {
       "learning_id": "learn-github-automattic-harper",
@@ -4209,22 +4222,35 @@
     "learn-github-cosscom-coss": {
       "learning_id": "learn-github-cosscom-coss",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cosscom-coss",
+      "source": "cosscom/coss",
+      "repository": "cosscom/coss",
       "slug": "cosscom-coss",
       "platform": "github",
       "source_url": "https://github.com/cosscom/coss",
-      "source_version": "HEAD",
-      "content_hash": "7b11aa9235755ae780e08614f119f3ddc3d92cdb2d45210ecbbfe89ef219402c",
+      "source_version": "5b5d4962",
+      "content_hash": "a9f64282826ba0477cae0eb3f25f939cd923adac443b34e043634b46d4a45fc3",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1734,
+          "title": "Merge pull request #134 from cosscom/shipyard-landing-catalog",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.416Z"
+      "verified_at": "2026-10-18T21:39:32.205Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cozodb-cozo": {
       "learning_id": "learn-github-cozodb-cozo",
@@ -8983,22 +9009,35 @@
     "learn-github-hashicorp-boundary": {
       "learning_id": "learn-github-hashicorp-boundary",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hashicorp-boundary",
+      "source": "hashicorp/boundary",
+      "repository": "hashicorp/boundary",
       "slug": "hashicorp-boundary",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/boundary",
-      "source_version": "HEAD",
-      "content_hash": "90f19adacbd79489a511280c973e92372b771908d01d8329ccbd8e4981c61ba1",
+      "source_version": "eeb38a1a",
+      "content_hash": "bffa81ae52a44f61c2fff306716c0d5e1d9541ee79e680fba2b133b49d8aa646",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-boundary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-boundary-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1738,
+          "title": "API): add set/remove alias suffix API definitions (#6757)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.244Z"
+      "verified_at": "2026-10-18T21:39:42.500Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-hashicorp-terraform": {
       "learning_id": "learn-github-hashicorp-terraform",
@@ -22040,22 +22079,35 @@
     "learn-github-karakeep-app-karakeep": {
       "learning_id": "learn-github-karakeep-app-karakeep",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "karakeep-app-karakeep",
+      "source": "karakeep-app/karakeep",
+      "repository": "karakeep-app/karakeep",
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "HEAD",
-      "content_hash": "313b1a3ef0679443ad6898cc666093f9ab0a5131e95872d6f92a629fe0d938d3",
+      "source_version": "c184eec6",
+      "content_hash": "5b69971ac23d47508d27fa8989e3992513b3e1cda4f606b4e1673c12fcd2a90c",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1736,
+          "title": "web): upgrade next to 16.4.1 for the October security release (#3196)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.754Z"
+      "verified_at": "2026-10-18T21:39:37.276Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-karmada-io-karmada": {
       "learning_id": "learn-github-karmada-io-karmada",
@@ -30769,22 +30821,35 @@
     "learn-github-sharkdp-bat": {
       "learning_id": "learn-github-sharkdp-bat",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sharkdp-bat",
+      "source": "sharkdp/bat",
+      "repository": "sharkdp/bat",
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "HEAD",
-      "content_hash": "e6ee0ae2618a5df3a9fc4ae8ae0ac726e926e5fb8ffcf068ba33ed5f8bda9ca2",
+      "source_version": "f748c1a4",
+      "content_hash": "e00a9f4cc287d6407e4dbc43f6936f772bd517fcd2d0b24c21cdbe55c1086675",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1735,
+          "title": "Exit quietly on broken pipe in auxiliary output paths",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.465Z"
+      "verified_at": "2026-10-18T21:39:32.798Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sharkdp-fd": {
       "learning_id": "learn-github-sharkdp-fd",
@@ -36095,22 +36160,35 @@
     "learn-github-zilliztech-attu": {
       "learning_id": "learn-github-zilliztech-attu",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zilliztech-attu",
+      "source": "zilliztech/attu",
+      "repository": "zilliztech/attu",
       "slug": "zilliztech-attu",
       "platform": "github",
       "source_url": "https://github.com/zilliztech/attu",
-      "source_version": "HEAD",
-      "content_hash": "fdc619c2c504df1f233f106837e47fcee834305f89b92d14a36ea824d2cf2c5c",
+      "source_version": "d51e1c78",
+      "content_hash": "c9a1ab36fac00fee14d2d2eba8f329f1fb5fb1e7e91028fd477b94c54a584ae5",
       "dossier_path": "07_PROJECT_LEARNING/zilliztech-attu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zilliztech-attu-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1739,
+          "title": "docs: add local milvus mtls docker guide",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.545Z"
+      "verified_at": "2026-10-18T21:39:43.507Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zilliztech-claude-context": {
       "learning_id": "learn-github-zilliztech-claude-context",
@@ -66650,6 +66728,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T21:33:30.011Z"
+    },
+    "rule-1734": {
+      "learning_id": "rule-1734",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1734,
+      "title": "Merge pull request #134 from cosscom/shipyard-landing-catalog",
+      "source_url": "https://github.com/cosscom/coss",
+      "source_version": "5b5d4962",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:39:32.205Z"
+    },
+    "rule-1735": {
+      "learning_id": "rule-1735",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1735,
+      "title": "Exit quietly on broken pipe in auxiliary output paths",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "f748c1a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:39:32.798Z"
+    },
+    "rule-1736": {
+      "learning_id": "rule-1736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1736,
+      "title": "web): upgrade next to 16.4.1 for the October security release (#3196)",
+      "source_url": "https://github.com/karakeep-app/karakeep",
+      "source_version": "c184eec6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:39:37.276Z"
+    },
+    "rule-1737": {
+      "learning_id": "rule-1737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1737,
+      "title": "skip the transaction-overlap touch during bulk delete",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "a1dad93e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:39:40.860Z"
+    },
+    "rule-1738": {
+      "learning_id": "rule-1738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1738,
+      "title": "API): add set/remove alias suffix API definitions (#6757)",
+      "source_url": "https://github.com/hashicorp/boundary",
+      "source_version": "eeb38a1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:39:42.500Z"
+    },
+    "rule-1739": {
+      "learning_id": "rule-1739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1739,
+      "title": "docs: add local milvus mtls docker guide",
+      "source_url": "https://github.com/zilliztech/attu",
+      "source_version": "d51e1c78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T21:39:43.507Z"
     }
   },
   "aliases": {

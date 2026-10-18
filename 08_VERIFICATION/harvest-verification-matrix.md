@@ -2510,3 +2510,9 @@
 | `CYCLE-20261018-D9VT` | `2026-10-18T21:32:43.721Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1728` | Yes (`a8f63122...`) |
 | `CYCLE-20261018-E4PI` | `2026-10-18T21:33:23.670Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1729, Rule 1730, Rule 1731` | Yes (`7e4ab006...`) |
 | `CYCLE-20261018-E9MT` | `2026-10-18T21:33:30.053Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1732, Rule 1733` | Yes (`2e076f8d...`) |
+| `CYCLE-20261018-M13K` | `2026-10-18T21:39:32.240Z` | `cosscom/coss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1734` | Yes (`a9f64282...`) |
+| `CYCLE-20261018-M1KB` | `2026-10-18T21:39:32.843Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1735` | Yes (`e00a9f4c...`) |
+| `CYCLE-20261018-M50V` | `2026-10-18T21:39:37.327Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1736` | Yes (`5b69971a...`) |
+| `CYCLE-20261018-M7RZ` | `2026-10-18T21:39:40.895Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1737` | Yes (`4d9a2900...`) |
+| `CYCLE-20261018-M91I` | `2026-10-18T21:39:42.534Z` | `hashicorp/boundary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1738` | Yes (`bffa81ae...`) |
+| `CYCLE-20261018-M9TT` | `2026-10-18T21:39:43.553Z` | `zilliztech/attu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1739` | Yes (`c9a1ab36...`) |

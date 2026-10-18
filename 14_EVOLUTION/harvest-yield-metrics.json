@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T21:33:30.058Z",
-  "total_cycles_completed": 2487,
-  "total_learnings_persisted": 2487,
-  "total_rules_promoted": 1501,
+  "last_updated": "2026-10-18T21:39:43.557Z",
+  "total_cycles_completed": 2493,
+  "total_learnings_persisted": 2493,
+  "total_rules_promoted": 1507,
   "history": [
-    {
-      "timestamp": "2026-10-17T21:29:52.971Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:33:14.056Z",
-      "repository": "Qwen/Qwen3.8-27B",
-      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:38:04.825Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:43:45.180Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-francisring-prism",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:47:07.108Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-17T21:51:12.580Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T21:54:17.152Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1403,6 +1361,48 @@
       "repository": "BurntSushi/ripgrep",
       "learningId": "learn-github-burntsushi-ripgrep",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:39:32.245Z",
+      "repository": "cosscom/coss",
+      "learningId": "learn-github-cosscom-coss",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:39:32.847Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:39:37.332Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:39:40.899Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:39:42.538Z",
+      "repository": "hashicorp/boundary",
+      "learningId": "learn-github-hashicorp-boundary",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T21:39:43.557Z",
+      "repository": "zilliztech/attu",
+      "learningId": "learn-github-zilliztech-attu",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
