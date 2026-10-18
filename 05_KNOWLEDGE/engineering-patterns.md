@@ -112254,3 +112254,473 @@ def get_author(soup):
 Test extraction against an HTML fixture containing `<span class="author"><span>Jane</span> <em>Austin</em> (Senior Editor)</span>`. Assert that extracted author name is exactly `"Jane Austin"` without role annotations.
 
 ---
+
+## 1622. Schema.org Type Inheritance, Subclass Expansion & Primitive Coercion Invariant (Harvested from adobe/structured-data-validator & a4csi/schema-org-validate)
+
+**RULE**:
+When validating structured data nodes and asserting required/recommended properties across Schema.org entities:
+1. **Polymorphic Type Hierarchy Expansion**: Validation MUST NOT perform direct string equality on `@type`. A property expecting a parent class (e.g., `creator` expecting `Person` or `Organization`, both subtypes of `Thing`, or an array of `CreativeWork` containing `Article` or `HowTo`) MUST be resolved by recursively walking the subclass hierarchy up to `Thing`.
+2. **Offline Precompiled Hierarchy**: Type and subclass maps must be precompiled into static in-memory lookups at build time; engines must never fetch schema definitions over HTTP during runtime validation.
+3. **Dual Primitive & Entity Coercion**: Any property validator evaluating values must determine whether a value is a primitive (`Text`, `URL`, `Integer`, `Number`, `Boolean`, or ISO 8601 `Duration` matching `^P(T(\d+H)?(\d+M)?(\d+S)?)?$`) or a nested entity node with its own `@type`.
+4. **Range Invariant & Inverted Scale Enforcement**: Numeric ratings (such as `AggregateRating.ratingValue`) MUST be bounded within `worstRating` and `bestRating` (defaulting to 1.0 and 5.0). Any value outside this range or an inverted scale where `worstRating >= bestRating` MUST be flagged as a fatal error.
+
+**WHY**:
+Google Rich Results testing tools and Schema.org semantic parsers leverage object-oriented subclassing. If an automated validator checks for `CreativeWork` and rejects an `Article` simply because `@type` does not literally equal `"CreativeWork"`, it produces catastrophic false-positive test failures, breaking continuous deployment pipelines.
+
+**WHEN TO APPLY**:
+Automated SEO quality gates, JSON-LD generation pipelines, CMS content publishing workflows, and structured data validation tools.
+
+**IMPLEMENTATION PATTERN**:
+```javascript
+// lib/schema-inheritance-validator.js
+export class SchemaInheritanceValidator {
+  constructor(subclassMap, typeMap) {
+    this.subclassMap = subclassMap; // { "Article": "CreativeWork", "CreativeWork": "Thing" }
+    this.typeMap = typeMap;
+  }
+
+  getAllSuperClasses(type) {
+    const supers = [];
+    let current = type;
+    while (this.subclassMap[current]) {
+      current = this.subclassMap[current];
+      supers.push(current);
+    }
+    return supers;
+  }
+
+  isTypeOrSubtype(actualType, expectedTypes) {
+    const expected = Array.isArray(expectedTypes) ? expectedTypes : [expectedTypes];
+    if (expected.includes(actualType)) return true;
+    const supers = this.getAllSuperClasses(actualType);
+    return expected.some(t => supers.includes(t));
+  }
+
+  validateRatingBounds(node) {
+    if (node['@type'] !== 'AggregateRating' && !this.isTypeOrSubtype(node['@type'], 'AggregateRating')) {
+      return [];
+    }
+    const errors = [];
+    const worst = Number(node.worstRating ?? 1);
+    const best = Number(node.bestRating ?? 5);
+    const val = Number(node.ratingValue);
+
+    if (isNaN(val)) {
+      errors.push("ratingValue is required and must be numeric");
+    } else if (worst >= best) {
+      errors.push(`Invalid scale: worstRating (${worst}) must be strictly less than bestRating (${best})`);
+    } else if (val < worst || val > best) {
+      errors.push(`ratingValue ${val} is out of bounds [${worst}, ${best}]`);
+    }
+    return errors;
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Strict equality check on Schema @type
+function isValidReviewSubject(item) {
+  // DEADLY: Fails for valid subtypes like Book, Movie, SoftwareApplication, Recipe!
+  return item['@type'] === 'CreativeWork';
+}
+```
+
+**VERIFICATION METHOD**:
+Instantiate `SchemaInheritanceValidator` with a mapping where `NewsArticle` subclasses `Article` which subclasses `CreativeWork`. Assert that `isTypeOrSubtype('NewsArticle', ['CreativeWork'])` evaluates to `true`. Provide an `AggregateRating` with `ratingValue: 6.2`, `worstRating: 1`, `bestRating: 5` and assert that an out-of-bounds error is flagged.
+
+---
+
+## 1623. Robots.txt Precedence, User-Agent Specificity & 200-Catch-All Quarantine (Harvested from CrawlCove/crawlcove-robots-txt-tester)
+
+**RULE**:
+When parsing, linting, or generating `robots.txt` conforming to RFC 9309:
+1. **User-Agent Specificity Priority**: Rules grouped under a specific crawler user-agent (e.g. `User-agent: Googlebot`) completely override any directives under the wildcard `User-agent: *`. Crawlers NEVER combine or merge rules from multiple groups.
+2. **Longest-Pattern Matching & Allow Precedence**: When multiple path patterns match a URL, the pattern with the greatest character length takes precedence. If an `Allow` and a `Disallow` rule have identical path pattern lengths, `Allow` MUST win.
+3. **HTTP 200 Catch-All Quarantine**: If a request to `/robots.txt` returns HTTP 200 but the response body begins with `<!doctype`, `<html`, `<?xml`, or `{`, the file MUST be rejected as an invalid text document. Modern Single Page Applications (Next.js, Remix, SPA routers) frequently return 200 with HTML catch-all fallback on missing static files, which fools automated tools into interpreting random markup as crawl directives.
+4. **HTTP Status Triage**:
+   - `5xx Server Error`: Search engines halt crawling entirely (Google stops for up to 30 days).
+   - `404 / 410`: Absent file; all pages permitted for crawl.
+   - `4xx (other than 404)`: Treated as no restrictions by Google, but third-party bots halt.
+5. **Asset Blocking Prohibition**: Rules MUST NEVER disallow rendering assets (`/wp-includes/`, `/_next/`, `*.css`, `*.js`, `/static/`), as this triggers mobile rendering and soft 404 SEO penalties.
+
+**WHY**:
+Googlebot and other modern search crawlers render web pages as a headless browser. Blocking CSS and JavaScript assets prevents crawlers from executing client-side scripts, calculating layout geometry, or validating mobile responsiveness, resulting in severe search ranking penalties. Furthermore, serving HTML error pages with HTTP 200 for `/robots.txt` creates phantom directive parsing errors.
+
+**WHEN TO APPLY**:
+Static site deployment checks, CDN routing configuration, SEO linting in CI/CD, and web server configuration.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+// src/robots-validator.ts
+export interface RobotsLintResult {
+  valid: boolean
+  fatalErrors: string[]
+  warnings: string[]
+}
+
+const CRITICAL_ASSET_REGEX = /(\/_next\/|\/wp-includes\/|\/static\/|\.css(\?.*)?$|\.js(\?.*)?$)/i
+
+export function validateRobotsTxtResponse(status: number, body: string): RobotsLintResult {
+  const result: RobotsLintResult = { valid: true, fatalErrors: [], warnings: [] }
+
+  if (status >= 500) {
+    result.fatalErrors.push(`robots.txt returned HTTP ${status}: Search crawlers halt crawling entirely.`)
+    result.valid = false
+    return result
+  }
+
+  if (status === 200) {
+    const trimmed = body.trim()
+    if (/^\s*(<!doctype|<html|<\?xml|{)/i.test(trimmed)) {
+      result.fatalErrors.push("robots.txt returned HTML/JSON with HTTP 200 (SPA catch-all route detected). Must be text/plain.")
+      result.valid = false
+      return result
+    }
+  }
+
+  const lines = body.split(/\r?\n/)
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].replace(/#.*$/, '').trim()
+    const match = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(line)
+    if (!match) continue
+
+    const [_, field, value] = match
+    if (field.toLowerCase() === 'disallow' && CRITICAL_ASSET_REGEX.test(value)) {
+      result.warnings.push(`Line ${i + 1}: Disallow rule "${value}" blocks CSS/JS assets, hindering crawler page rendering.`)
+    }
+  }
+
+  return result
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```robots
+# ANTI-PATTERN: Blocking modern frontend assets
+User-agent: *
+Disallow: /_next/
+Disallow: /*.js$
+Disallow: /*.css$
+# DEADLY: Googlebot cannot render React/Next.js pages; indexation will fail!
+```
+
+**VERIFICATION METHOD**:
+Test `validateRobotsTxtResponse(200, "<!DOCTYPE html><html><body>404 Not Found</body></html>")`. Assert that `valid` is `false` and that an SPA catch-all error is reported.
+
+---
+
+## 1624. XML Sitemap Protocol Boundaries, Cross-Host Isolation & Future Lastmod Rejection (Harvested from CrawlCove/crawlcove-sitemap-validator)
+
+**RULE**:
+When generating, validating, or consuming XML sitemaps and sitemap indexes conforming to the Sitemaps.org protocol:
+1. **Protocol Hard Limits**: A single XML sitemap file MUST NOT exceed 50,000 `<url>` entries and MUST NOT exceed 50 Megabytes (52,428,800 bytes) uncompressed. Exceeding either limit requires partitioning into multiple sitemaps referenced by a `<sitemapindex>`.
+2. **Strict Root Separation**: The XML root element MUST be either `<urlset>` containing `<url>` elements OR `<sitemapindex>` containing `<sitemap>` elements. A sitemap MUST NOT mix `<url>` and `<sitemap>` entries, nor can a sitemap index point to another sitemap index.
+3. **Cross-Host Boundary Isolation**: Every `<loc>` entry within a sitemap MUST share the exact host (and protocol) of the sitemap file itself, ignoring `www.` differences only when canonicalized. Search crawlers discard cross-host URLs unless the target host explicitly references the remote sitemap inside its own `robots.txt`.
+4. **W3C Datetime & Future `lastmod` Rejection**: All `<lastmod>` values MUST strictly match W3C Datetime (`YYYY-MM-DD` or ISO 8601 `YYYY-MM-DDTHH:mm:ss+00:00`). Any `lastmod` timestamp situated more than 24 hours into the future MUST be flagged as an error and ignored, as crawlers penalize artificial freshness manipulation.
+
+**WHY**:
+Submitting cross-host URLs in sitemaps without cross-domain verification leads search indexers to discard the entire file for security reasons. Furthermore, supplying future timestamps causes crawlers to distrust all `lastmod` headers across the entire domain, downgrading crawler efficiency.
+
+**WHEN TO APPLY**:
+Automated sitemap generators, international domain routing, CI/CD deployment smoke tests, and SEO crawlers.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+// src/sitemap-protocol-guard.ts
+export interface SitemapProtocolCheck {
+  valid: boolean
+  violations: string[]
+}
+
+const W3C_DATETIME_REGEX = /^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2}))?)?)?$/
+
+export function validateSitemapEntry(
+  loc: string,
+  lastmod: string | undefined,
+  sitemapHost: string,
+  now: Date = new Date()
+): SitemapProtocolCheck {
+  const result: SitemapProtocolCheck = { valid: true, violations: [] }
+
+  try {
+    const locUrl = new URL(loc)
+    const normLocHost = locUrl.hostname.replace(/^www\./, '')
+    const normSitemapHost = sitemapHost.replace(/^www\./, '')
+
+    if (normLocHost !== normSitemapHost) {
+      result.violations.push(`Cross-host loc rejected: "${locUrl.hostname}" does not match sitemap host "${sitemapHost}"`)
+      result.valid = false
+    }
+  } catch {
+    result.violations.push(`Malformed loc URL: "${loc}"`)
+    result.valid = false
+  }
+
+  if (lastmod) {
+    if (!W3C_DATETIME_REGEX.test(lastmod)) {
+      result.violations.push(`Invalid lastmod format: "${lastmod}". Must follow W3C Datetime format.`)
+      result.valid = false
+    } else {
+      const parsedTime = new Date(lastmod).getTime()
+      const futureLimit = now.getTime() + 24 * 60 * 60 * 1000 // +24 hours
+      if (parsedTime > futureLimit) {
+        result.violations.push(`Future lastmod detected: "${lastmod}" is >24 hours ahead of current time.`)
+        result.valid = false
+      }
+    }
+  }
+
+  return result
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```xml
+<!-- ANTI-PATTERN: Cross-host entries & future lastmod in single sitemap -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://partner-store.com/item-123</loc>
+    <!-- DEADLY: Ignored by Googlebot because sitemap is hosted on https://example.com/ -->
+    <lastmod>2099-12-31</lastmod>
+    <!-- DEADLY: Future timestamp destroys lastmod crawl credibility -->
+  </url>
+</urlset>
+```
+
+**VERIFICATION METHOD**:
+Run `validateSitemapEntry('https://otherdomain.com/page', '2026-10-18', 'example.com')`. Assert that `valid` is `false` with a cross-host rejection violation. Then run with a future date (`2030-01-01`) on `example.com` and assert future lastmod rejection.
+
+---
+
+## 1625. HTTP `Link` Header Hreflang Injection & BCP 47 Hyphenated Subtag Validation for Non-HTML Media (Harvested from raghav453/multilipi-hreflang-generator & CrawlCove/crawlcove-hreflang-checker)
+
+**RULE**:
+When implementing multilingual alternate URLs across non-HTML media (PDF brochures, downloadable datasets, CSVs, and API responses) and international HTML pages:
+1. **HTTP `Link` Header Alternate Injection**: Because non-HTML assets cannot embed HTML `<link rel="alternate">` tags, server middleware and CDN edge rules MUST inject RFC 8288 compliant `Link` headers:
+   `Link: <https://example.com/en/spec.pdf>; rel="alternate"; hreflang="en", <https://example.com/de/spec.pdf>; rel="alternate"; hreflang="de", <https://example.com/spec.pdf>; rel="alternate"; hreflang="x-default"`
+2. **BCP 47 Subtag Validation Invariant**: All `hreflang` values MUST follow the BCP 47 pattern `language[-Script][-REGION]`:
+   - 2-letter language codes MUST exist in the ISO 639-1 alpha-2 registry.
+   - Subtags MUST strictly use hyphens (`-`), NEVER underscores (`_`). `en_US` is invalid; it MUST be `en-US`.
+   - Country/region codes MUST NOT be used in isolation as language codes (e.g. `gb` or `uk` is a country; English for Britain MUST be `en-GB`).
+3. **Mandatory `x-default` Fallback**: Every cluster MUST declare an `x-default` target representing the international language selector or fallback landing page.
+4. **HTML & XML Attribute Escaping**: All generated URLs and language codes MUST be escaped (`&` -> `&amp;`, `"` -> `&quot;`) before insertion into sitemaps or markup to prevent attribute injection vulnerabilities.
+
+**WHY**:
+Search indexers index non-HTML assets (such as downloadable PDF reports and whitepapers). Without HTTP `Link` headers, search engines cannot correlate multilingual versions of non-HTML documents, causing regional cannibalization and search result degradation. Furthermore, search engines strictly ignore hreflang codes using underscores (`en_US`).
+
+**WHEN TO APPLY**:
+Edge CDN routing (Cloudflare Workers, Fastly VCL), static asset delivery pipelines, international PDF distribution, and automated hreflang generators.
+
+**IMPLEMENTATION PATTERN**:
+```javascript
+// src/hreflang-header-builder.js
+const ISO_639_1 = new Set([
+  'aa','ab','ae','af','ak','am','an','ar','as','av','ay','az','ba','be','bg','bh','bi','bm','bn',
+  'bo','br','bs','ca','ce','ch','co','cr','cs','cu','cv','cy','da','de','dv','dz','ee','el','en',
+  'es','et','eu','fa','ff','fi','fj','fo','fr','fy','ga','gd','gl','gn','gu','gv','ha','he','hi',
+  'hr','ht','hu','hy','hz','ia','id','ie','ig','ii','ik','io','is','it','iu','ja','jv','ka','kg',
+  'ki','kj','kk','kl','km','kn','ko','kr','ks','ku','kv','kw','ky','la','lb','lg','li','ln','lo',
+  'lt','lu','lv','mg','mh','mi','mk','ml','mn','mr','ms','mt','my','na','nb','nd','ne','ng','nl',
+  'nn','no','nr','nv','ny','oc','oj','om','or','os','pa','pi','pl','ps','pt','qu','rm','rn','ro',
+  'ru','rw','sa','sc','sd','se','sg','si','sk','sl','sm','sn','so','sq','sr','ss','st','su','sv',
+  'sw','ta','te','tg','th','ti','tk','tl','tn','to','tr','ts','tt','tw','ty','ug','uk','ur','uz',
+  've','vi','vo','wa','wo','xh','yi','yo','za','zh','zu'
+]);
+
+export function validateAndFormatHreflang(rawCode) {
+  const code = (rawCode || '').trim();
+  if (code.toLowerCase() === 'x-default') return { valid: true, formatted: 'x-default' };
+
+  if (code.includes('_')) {
+    return { valid: false, error: `Invalid underscore in "${code}". Use hyphens (e.g. "${code.replace(/_/g, '-')}")` };
+  }
+
+  const match = /^([a-z]{2,3})(?:-([a-z]{4}))?(?:-([a-z]{2}|\d{3}))?$/i.exec(code);
+  if (!match) {
+    return { valid: false, error: `Malformed hreflang tag "${code}". Expected language[-script][-region]` };
+  }
+
+  const lang = match[1].toLowerCase();
+  if (lang.length === 2 && !ISO_639_1.has(lang)) {
+    if (lang === 'gb' || lang === 'uk') {
+      return { valid: false, error: `"${code}": "${lang}" is a country/region code, not a language. Use "en-${lang.toUpperCase()}".` };
+    }
+    return { valid: false, error: `"${lang}" is not a valid ISO 639-1 language code.` };
+  }
+
+  return { valid: true, formatted: code.toLowerCase() };
+}
+
+export function buildHttpLinkHreflangHeaders(cluster) {
+  // cluster: [{ url: "https://example.com/en/doc.pdf", hreflang: "en" }, ...]
+  return cluster
+    .map(item => `<${item.url}>; rel="alternate"; hreflang="${item.hreflang}"`)
+    .join(', ');
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```http
+# ANTI-PATTERN: Underscore locale in HTTP Link header
+Link: <https://example.com/fr_CA/catalog.pdf>; rel="alternate"; hreflang="fr_CA"
+# DEADLY: Googlebot and Bingbot completely discard hreflang tags with underscores!
+```
+
+**VERIFICATION METHOD**:
+Test `validateAndFormatHreflang('en_US')` and assert failure recommending `en-US`. Test `validateAndFormatHreflang('gb')` and assert rejection indicating `gb` is a region.
+
+---
+
+## 1626. Dual-Format Structured Data Extraction & Context Decoupling Invariant (Harvested from matthews-wong/structured-data-validator & mitrovicsinisaa/schemaorg-rs)
+
+**RULE**:
+When parsing web pages for technical SEO and structured data audits:
+1. **Tripartite Extraction**: Engines MUST independently extract structured metadata from all three W3C formats present in the HTML document:
+   - JSON-LD (`<script type="application/ld+json">`)
+   - Microdata (`itemscope`, `itemtype`, `itemprop`)
+   - RDFa Lite (`typeof`, `property`, `vocab`)
+2. **Context Decoupling Invariant**: Validation rules checking `@context` (e.g., verifying presence of `"https://schema.org"`) MUST be isolated strictly to JSON-LD sources. Microdata and RDFa nodes establish vocabularies via HTML tag attributes (`itemtype="https://schema.org/Product"` or `vocab="https://schema.org/"`) and do not carry an `@context` key; asserting `@context` on non-JSON-LD nodes produces 100% false-positive errors.
+3. **Truthiness & Non-Empty Value Verification**: When asserting presence of required properties (e.g. `headline`, `image`, `offers`), empty strings (`""`), empty arrays (`[]`), and empty dictionaries (`{}`) MUST evaluate as missing/invalid.
+4. **Compile-Time Static Ontology**: High-throughput extraction and validation in automated test suites and search crawlers must compile schema definitions into native Rust/WASM or frozen memory structures to execute with zero network round-trips.
+
+**WHY**:
+Modern websites commonly use a hybrid approach: JSON-LD for primary rich results (Articles, Breadcrumbs) and Microdata for inline ecommerce elements (Ratings, Offers). Testing engines that conflate JSON-LD syntax rules (such as `@context`) with Microdata structure falsely reject valid HTML markup.
+
+**WHEN TO APPLY**:
+Crawl engines, CI SEO regression suites, content validation pipelines, and ecommerce product feed checkers.
+
+**IMPLEMENTATION PATTERN**:
+```python
+# sdvalidator/dual_extractor.py
+from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
+
+@dataclass
+class StructuredNode:
+    data: Dict[str, Any]
+    source_format: str  # "json-ld", "microdata", or "rdfa"
+    primary_type: Optional[str] = None
+
+def has_meaningful_value(data: Dict[str, Any], prop: str) -> bool:
+    if prop not in data:
+        return False
+    val = data[prop]
+    if val is None:
+        return False
+    if isinstance(val, (str, list, dict)) and len(val) == 0:
+        return False
+    return True
+
+def validate_node(node: StructuredNode) -> List[str]:
+    errors = []
+    
+    # 1. Context check is strictly decoupled to JSON-LD
+    if node.source_format == "json-ld":
+        context = node.data.get("@context")
+        if not context:
+            errors.append("JSON-LD node missing required @context declaration")
+        elif "schema.org" not in str(context).lower():
+            errors.append(f"Invalid @context: {context}. Must reference schema.org")
+    
+    # 2. Universal required property check with meaningful value constraint
+    if node.primary_type in ("Product", "https://schema.org/Product"):
+        for req in ["name", "offers"]:
+            if not has_meaningful_value(node.data, req):
+                errors.append(f"Product missing required non-empty property: '{req}'")
+                
+    return errors
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Checking @context universally across all extracted nodes
+def validate_all(node):
+    # DEADLY: Rejects every valid Microdata and RDFa element on the web!
+    if "@context" not in node.data:
+        raise ValidationError("Missing @context")
+```
+
+**VERIFICATION METHOD**:
+Create a `StructuredNode(data={"@type": "Product", "name": "Shoe", "offers": []}, source_format="microdata", primary_type="Product")`. Assert that no `@context` error is raised, but an error is flagged for empty `offers`.
+
+---
+
+## 1627. Magic-Byte Gunzip Sniffing & Nested Sitemap Index-to-Child Lastmod Parity (Harvested from aliarifsoydas/sitemap-checker & CrawlCove/crawlcove-sitemap-validator)
+
+**RULE**:
+When parsing, fetching, or validating compressed XML sitemaps and recursive sitemap indexes:
+1. **Magic-Byte Gzip Sniffing**: Processing engines MUST NOT rely solely on the `.gz` URL file extension or HTTP `Content-Encoding: gzip` headers. Engines MUST inspect the first two bytes of the response payload buffer:
+   - If `buffer[0] === 0x1f` and `buffer[1] === 0x8b`, the body MUST be decompressed using standard gunzip decompression regardless of URL extension or HTTP headers.
+   - If not compressed with gzip, parse directly as UTF-8 text.
+2. **Index-to-Child Lastmod Parity**: In a `<sitemapindex>`, the `<lastmod>` date on each `<sitemap>` entry represents the timestamp when that child sitemap (or its URLs) was modified:
+   - The `<lastmod>` on the index entry MUST be equal to or greater than the maximum `<lastmod>` timestamp of any `<url>` contained within that child sitemap.
+   - If a child sitemap contains updated URLs with timestamps newer than the index's `<lastmod>`, search crawlers skipping unmodified child sitemaps based on the index `<lastmod>` will fail to detect the newly updated content.
+3. **Maximum Recursion Depth Constraint**: Sitemap index recursion MUST terminate at depth 1. A sitemap index MUST NEVER contain links to other sitemap indexes; any nested `<sitemapindex>` child MUST be rejected immediately.
+
+**WHY**:
+Web servers frequently misconfigure MIME types or fail to emit `Content-Encoding: gzip` when serving pre-compressed sitemaps (e.g. `sitemap.xml.gz`). Furthermore, Googlebot uses the `<lastmod>` in the sitemap index to avoid re-fetching unchanged child sitemaps; if the index `<lastmod>` is stale while child URLs have changed, fresh content remains undiscovered.
+
+**WHEN TO APPLY**:
+Automated sitemap audit engines, enterprise crawl pipelines, CDN sitemap caches, and incremental indexing workers.
+
+**IMPLEMENTATION PATTERN**:
+```typescript
+// src/sitemap-decompressor.ts
+import { zlibSync, gunzipSync } from 'node:zlib'
+
+export function decodeSitemapPayload(rawBuffer: Buffer): { xmlText: string; isGzipped: boolean } {
+  // Sniff magic bytes 0x1f 0x8b (Gzip header)
+  if (rawBuffer.length >= 2 && rawBuffer[0] === 0x1f && rawBuffer[1] === 0x8b) {
+    const decompressed = gunzipSync(rawBuffer)
+    return { xmlText: decompressed.toString('utf8'), isGzipped: true }
+  }
+  return { xmlText: rawBuffer.toString('utf8'), isGzipped: false }
+}
+
+export interface LastmodParityReport {
+  isConsistent: boolean
+  indexLastmod: Date
+  newestChildLastmod: Date
+  driftMs: number
+}
+
+export function checkLastmodParity(indexDateStr: string, childDateStrs: string[]): LastmodParityReport {
+  const indexTime = new Date(indexDateStr).getTime()
+  let maxChildTime = 0
+
+  for (const dateStr of childDateStrs) {
+    const t = new Date(dateStr).getTime()
+    if (!isNaN(t) && t > maxChildTime) {
+      maxChildTime = t
+    }
+  }
+
+  const isConsistent = indexTime >= maxChildTime
+  return {
+    isConsistent,
+    indexLastmod: new Date(indexTime),
+    newestChildLastmod: new Date(maxChildTime),
+    driftMs: maxChildTime - indexTime
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Deciding decompression based solely on URL ending in .gz
+function fetchSitemap(url) {
+  const res = await fetch(url);
+  // DEADLY: Throws unhandled zlib exception if URL is /sitemap?id=1 but content is gzipped,
+  // OR throws syntax error if URL ends in .gz but server already gunzipped the stream!
+  if (url.endsWith('.gz')) {
+    return gunzip(res.body);
+  }
+  return res.text();
+}
+```
+
+**VERIFICATION METHOD**:
+Pass a buffer with magic bytes `0x1f 0x8b` followed by gzipped XML to `decodeSitemapPayload`. Assert that `isGzipped` is `true` and the output is valid XML string. Pass child timestamps with one timestamp newer than index date to `checkLastmodParity` and assert `isConsistent` is `false`.
+
+---

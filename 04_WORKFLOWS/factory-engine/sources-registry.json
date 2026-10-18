@@ -966,8 +966,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:24:16.434Z",
-    "lastVerified": "2026-10-18T06:24:16.434Z",
+    "lastChecked": "2026-10-18T03:25:22.220Z",
+    "lastVerified": "2026-10-18T03:25:22.220Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2921,8 +2921,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:21:10.253Z",
-    "lastVerified": "2026-10-18T06:21:10.253Z",
+    "lastChecked": "2026-10-17T23:39:37.698Z",
+    "lastVerified": "2026-10-17T23:39:37.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2937,8 +2937,8 @@
     "sourceType": "github",
     "technology": "TypeScript",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:24:18.939Z",
-    "lastVerified": "2026-10-18T06:24:18.939Z",
+    "lastChecked": "2026-10-17T23:42:55.866Z",
+    "lastVerified": "2026-10-17T23:42:55.866Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -3391,8 +3391,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:27:57.429Z",
-    "lastVerified": "2026-10-18T06:27:57.429Z",
+    "lastChecked": "2026-10-17T23:46:19.917Z",
+    "lastVerified": "2026-10-17T23:46:19.917Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:21:12.750Z",
-    "lastVerified": "2026-10-18T06:21:12.750Z",
+    "lastChecked": "2026-10-18T06:04:14.222Z",
+    "lastVerified": "2026-10-18T06:04:14.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17546,8 +17546,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:27:59.923Z",
-    "lastVerified": "2026-10-18T06:27:59.923Z",
+    "lastChecked": "2026-10-18T06:10:59.778Z",
+    "lastVerified": "2026-10-18T06:10:59.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24340,25 +24340,74 @@
     "revisionIdentifier": "64b6a78344",
     "lastVerified": "2026-10-18T06:17:58.818Z"
   },
-  "lokoe-mehdi-scouter": {
-    "name": "scouter",
-    "officialUrl": "https://github.com/lokoe-mehdi/scouter",
-    "lastChecked": "2026-10-18T06:21:00.252Z",
-    "revisionIdentifier": "4de023b517",
-    "lastVerified": "2026-10-18T06:21:00.252Z"
+  "adobe-structured-data-validator": {
+    "name": "structured-data-validator",
+    "officialUrl": "https://github.com/adobe/structured-data-validator",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
   },
-  "crawlseo-crawlseo": {
-    "name": "crawlseo",
-    "officialUrl": "https://github.com/crawlseo/crawlseo",
-    "lastChecked": "2026-10-18T06:24:08.934Z",
-    "revisionIdentifier": "1e7207b6eb",
-    "lastVerified": "2026-10-18T06:24:08.934Z"
+  "matthews-wong-structured-data-validator": {
+    "name": "structured-data-validator",
+    "officialUrl": "https://github.com/matthews-wong/structured-data-validator",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
   },
-  "kaiopiola-seocheck": {
-    "name": "SEOCheck",
-    "officialUrl": "https://github.com/kaiopiola/SEOCheck",
-    "lastChecked": "2026-10-18T06:27:47.426Z",
-    "revisionIdentifier": "a1e13f715f",
-    "lastVerified": "2026-10-18T06:27:47.426Z"
+  "a4csi-schema-org-validate": {
+    "name": "schema-org-validate",
+    "officialUrl": "https://github.com/a4csi/schema-org-validate",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
+  },
+  "crawlcove-hreflang-checker": {
+    "name": "crawlcove-hreflang-checker",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
+  },
+  "mitrovicsinisaa-schemaorg-rs": {
+    "name": "schemaorg-rs",
+    "officialUrl": "https://github.com/mitrovicsinisaa/schemaorg-rs",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
+  },
+  "raghav453-multilipi-hreflang-generator": {
+    "name": "multilipi-hreflang-generator",
+    "officialUrl": "https://github.com/raghav453/multilipi-hreflang-generator",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
+  },
+  "aliarifsoydas-sitemap-checker": {
+    "name": "sitemap-checker",
+    "officialUrl": "https://github.com/aliarifsoydas/sitemap-checker",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
+  },
+  "samvelik-sitemap-checker": {
+    "name": "sitemap-checker",
+    "officialUrl": "https://github.com/samvelik/sitemap-checker",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
+  },
+  "crawlcove-robots-txt-tester": {
+    "name": "crawlcove-robots-txt-tester",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
+  },
+  "crawlcove-sitemap-validator": {
+    "name": "crawlcove-sitemap-validator",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+    "lastChecked": "2026-10-18T06:29:09.763283Z",
+    "revisionIdentifier": "main",
+    "lastVerified": "2026-10-18T06:29:09.763283Z"
   }
 }
