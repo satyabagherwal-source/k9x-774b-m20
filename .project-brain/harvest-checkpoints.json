@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:39:22.130Z",
+  "last_updated": "2026-10-18T23:45:35.740Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1757,14 +1757,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
-      "content_hash": "cf5882f57c0768aeee803d0aeb11727fa05c23f2e4b63eaaf8ac0e99da78cb9a",
-      "verified_at": "2026-10-17T20:44:39.571Z",
+      "content_hash": "75540024ba6560cc6582e65a713767d45812c36f314b1f592d694e315d91fef4",
+      "verified_at": "2026-10-18T23:45:32.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:44:39.571Z"
+      "last_updated": "2026-10-18T23:45:32.102Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",
@@ -5602,6 +5602,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:39:18.359Z"
+    },
+    "internet-development/www-sacred": {
+      "repository": "internet-development/www-sacred",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-internet-development-www-sacred",
+      "content_hash": "9e74309fc3cf6ce083170890feb23731979a57d91c4fd6edeae06c27d6e66ae0",
+      "verified_at": "2026-10-18T23:45:22.592Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:45:22.592Z"
+    },
+    "Rigellute/spotify-tui": {
+      "repository": "Rigellute/spotify-tui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rigellute-spotify-tui",
+      "content_hash": "205e6ba9c71a7a88d0b2cb20be9c417263d53e4d9d28f75567afc9bdeda8c52d",
+      "verified_at": "2026-10-18T23:45:23.826Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:45:23.826Z"
+    },
+    "Nozbe/WatermelonDB": {
+      "repository": "Nozbe/WatermelonDB",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nozbe-watermelondb",
+      "content_hash": "caf3ad997963f50cb6bb085c968bad9a3a4887051379e611ffbee73ad7edb82f",
+      "verified_at": "2026-10-18T23:45:29.406Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:45:29.406Z"
+    },
+    "dosco/graphjin": {
+      "repository": "dosco/graphjin",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dosco-graphjin",
+      "content_hash": "f218ce341989878ccc9c6d8e8b9bfe4b79e54e0b2016979fa02a1be007f6e8d8",
+      "verified_at": "2026-10-18T23:45:31.243Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:45:31.243Z"
+    },
+    "gravitl/netmaker": {
+      "repository": "gravitl/netmaker",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gravitl-netmaker",
+      "content_hash": "c9aa94c4e2d5be4999f1e9ff39764c00d6daded9a392983f2789beb4602273b2",
+      "verified_at": "2026-10-18T23:45:33.654Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:45:33.654Z"
+    },
+    "pixeltable/pixeltable": {
+      "repository": "pixeltable/pixeltable",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pixeltable-pixeltable",
+      "content_hash": "77257fe69f683314f26cb6d391e91cc413344e242d04453242c15a3689b61cd0",
+      "verified_at": "2026-10-18T23:45:35.739Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:45:35.739Z"
     }
   },
   "repos": {

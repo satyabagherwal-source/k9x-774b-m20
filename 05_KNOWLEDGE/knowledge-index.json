@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:39:22.081Z",
-  "total_verified_learnings": 388,
+  "last_updated": "2026-10-18T23:45:35.693Z",
+  "total_verified_learnings": 394,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5818,22 +5818,35 @@
     "learn-github-dosco-graphjin": {
       "learning_id": "learn-github-dosco-graphjin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dosco-graphjin",
+      "source": "dosco/graphjin",
+      "repository": "dosco/graphjin",
       "slug": "dosco-graphjin",
       "platform": "github",
       "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "HEAD",
-      "content_hash": "4092b7f8fdf195b911a4c2a5255b719855df10cce39375af6a87de01de1c87b0",
+      "source_version": "b60d3fc5",
+      "content_hash": "f218ce341989878ccc9c6d8e8b9bfe4b79e54e0b2016979fa02a1be007f6e8d8",
       "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1869,
+          "title": "serialize background discovery with config applies",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.682Z"
+      "verified_at": "2026-10-18T23:45:31.187Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-douyinfe-semi-design": {
       "learning_id": "learn-github-douyinfe-semi-design",
@@ -8912,22 +8925,35 @@
     "learn-github-gravitl-netmaker": {
       "learning_id": "learn-github-gravitl-netmaker",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gravitl-netmaker",
+      "source": "gravitl/netmaker",
+      "repository": "gravitl/netmaker",
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "HEAD",
-      "content_hash": "51704ab75b83a2063b47113897b347d5841a7893702cd1b560447e1ddf112fa3",
+      "source_version": "c5b3ecc3",
+      "content_hash": "c9aa94c4e2d5be4999f1e9ff39764c00d6daded9a392983f2789beb4602273b2",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1873,
+          "title": "NM-378: Security Bug Fixes (#4114)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.194Z"
+      "verified_at": "2026-10-18T23:45:33.595Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-graykode-abtop": {
       "learning_id": "learn-github-graykode-abtop",
@@ -15741,7 +15767,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "cf5882f57c0768aeee803d0aeb11727fa05c23f2e4b63eaaf8ac0e99da78cb9a",
+      "content_hash": "75540024ba6560cc6582e65a713767d45812c36f314b1f592d694e315d91fef4",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -15758,6 +15784,21 @@
         {
           "number": 986,
           "title": "Left-Padding Invariant for Batched Causal LM Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1870,
+          "title": "Hybrid Attention Layer Spacing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1871,
+          "title": "Logit Softcapping for Numerical Stability in Fine-Tuned Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1872,
+          "title": "Factual Integrity Preservation in Text Rewriting",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15778,7 +15819,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-17T20:44:39.520Z",
+      "verified_at": "2026-10-18T23:45:32.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21780,22 +21821,35 @@
     "learn-github-internet-development-www-sacred": {
       "learning_id": "learn-github-internet-development-www-sacred",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "internet-development-www-sacred",
+      "source": "internet-development/www-sacred",
+      "repository": "internet-development/www-sacred",
       "slug": "internet-development-www-sacred",
       "platform": "github",
       "source_url": "https://github.com/internet-development/www-sacred",
-      "source_version": "HEAD",
-      "content_hash": "e227ec4a0c6f8d41ce7d999e73885594113a738b1706a5ae465cd45571f0cce9",
+      "source_version": "a288a847",
+      "content_hash": "9e74309fc3cf6ce083170890feb23731979a57d91c4fd6edeae06c27d6e66ae0",
       "dossier_path": "07_PROJECT_LEARNING/internet-development-www-sacred-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/internet-development-www-sacred-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1867,
+          "title": "NextJS 16.0.7 - P0 severity patch for CVE-2025-55182, prettierrc fix, misc clean",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.607Z"
+      "verified_at": "2026-10-18T23:45:22.539Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-internlm-huixiangdou": {
       "learning_id": "learn-github-internlm-huixiangdou",
@@ -27574,22 +27628,35 @@
     "learn-github-nozbe-watermelondb": {
       "learning_id": "learn-github-nozbe-watermelondb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nozbe-watermelondb",
+      "source": "Nozbe/WatermelonDB",
+      "repository": "Nozbe/WatermelonDB",
       "slug": "nozbe-watermelondb",
       "platform": "github",
       "source_url": "https://github.com/Nozbe/WatermelonDB",
-      "source_version": "HEAD",
-      "content_hash": "2ad19920d4663dc132c39324880ace662f7b67eee28fa14b3d8562941686d883",
+      "source_version": "5c463222",
+      "content_hash": "caf3ad997963f50cb6bb085c968bad9a3a4887051379e611ffbee73ad7edb82f",
       "dossier_path": "07_PROJECT_LEARNING/nozbe-watermelondb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nozbe-watermelondb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1868,
+          "title": "Merge pull request #1921 from Nozbe/kokusGr/fix-multitab-sync",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.687Z"
+      "verified_at": "2026-10-18T23:45:29.355Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nrslib-takt": {
       "learning_id": "learn-github-nrslib-takt",
@@ -29521,22 +29588,35 @@
     "learn-github-pixeltable-pixeltable": {
       "learning_id": "learn-github-pixeltable-pixeltable",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pixeltable-pixeltable",
+      "source": "pixeltable/pixeltable",
+      "repository": "pixeltable/pixeltable",
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "HEAD",
-      "content_hash": "0f4656da5bed109fa590fc489bc25b8f7cb25b69d1787e15167e02a510f8c255",
+      "source_version": "10f23bdb",
+      "content_hash": "77257fe69f683314f26cb6d391e91cc413344e242d04453242c15a3689b61cd0",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1874,
+          "title": "two random-ops stress test failures: shared tmp dir and drop_column race (#1764)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.057Z"
+      "verified_at": "2026-10-18T23:45:35.686Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-plandex-ai-plandex": {
       "learning_id": "learn-github-plandex-ai-plandex",
@@ -30839,22 +30919,29 @@
     "learn-github-rigellute-spotify-tui": {
       "learning_id": "learn-github-rigellute-spotify-tui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rigellute-spotify-tui",
+      "source": "Rigellute/spotify-tui",
+      "repository": "Rigellute/spotify-tui",
       "slug": "rigellute-spotify-tui",
       "platform": "github",
       "source_url": "https://github.com/Rigellute/spotify-tui",
-      "source_version": "HEAD",
-      "content_hash": "14741095747850ece9286b461c8ec2dd812fba914da706f4c1c4ffec6bfcbcbb",
+      "source_version": "c4dcf6b9",
+      "content_hash": "205e6ba9c71a7a88d0b2cb20be9c417263d53e4d9d28f75567afc9bdeda8c52d",
       "dossier_path": "07_PROJECT_LEARNING/rigellute-spotify-tui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rigellute-spotify-tui-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.274Z"
+      "verified_at": "2026-10-18T23:45:23.761Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rightnow-ai-openfang": {
       "learning_id": "learn-github-rightnow-ai-openfang",
@@ -70195,6 +70282,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:39:22.075Z"
+    },
+    "rule-1867": {
+      "learning_id": "rule-1867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1867,
+      "title": "NextJS 16.0.7 - P0 severity patch for CVE-2025-55182, prettierrc fix, misc clean",
+      "source_url": "https://github.com/internet-development/www-sacred",
+      "source_version": "a288a847",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:22.539Z"
+    },
+    "rule-1868": {
+      "learning_id": "rule-1868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1868,
+      "title": "Merge pull request #1921 from Nozbe/kokusGr/fix-multitab-sync",
+      "source_url": "https://github.com/Nozbe/WatermelonDB",
+      "source_version": "5c463222",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:29.355Z"
+    },
+    "rule-1869": {
+      "learning_id": "rule-1869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1869,
+      "title": "serialize background discovery with config applies",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "b60d3fc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:31.187Z"
+    },
+    "rule-1870": {
+      "learning_id": "rule-1870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1870,
+      "title": "Hybrid Attention Layer Spacing Invariant",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:32.052Z"
+    },
+    "rule-1871": {
+      "learning_id": "rule-1871",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1871,
+      "title": "Logit Softcapping for Numerical Stability in Fine-Tuned Models",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:32.052Z"
+    },
+    "rule-1872": {
+      "learning_id": "rule-1872",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1872,
+      "title": "Factual Integrity Preservation in Text Rewriting",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:32.052Z"
+    },
+    "rule-1873": {
+      "learning_id": "rule-1873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1873,
+      "title": "NM-378: Security Bug Fixes (#4114)",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "c5b3ecc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:33.595Z"
+    },
+    "rule-1874": {
+      "learning_id": "rule-1874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1874,
+      "title": "two random-ops stress test failures: shared tmp dir and drop_column race (#1764)",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "10f23bdb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:45:35.686Z"
     }
   },
   "aliases": {

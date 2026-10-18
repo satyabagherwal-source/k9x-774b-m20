@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "cf5882f57c0768aeee803d0aeb11727fa05c23f2e4b63eaaf8ac0e99da78cb9a",
-    "lastHarvestedAt": "2026-10-17T20:44:39.568Z",
+    "contentHash": "75540024ba6560cc6582e65a713767d45812c36f314b1f592d694e315d91fef4",
+    "lastHarvestedAt": "2026-10-18T23:45:32.097Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -3658,5 +3658,65 @@
     "contentHash": "f9fb3078ba5567e8c9a9c396710a0804b10f52d10904368f3389e586668d934d",
     "lastHarvestedAt": "2026-10-18T23:39:18.355Z",
     "learningId": "learn-github-neural-maze-ava-whatsapp-agent-course"
+  },
+  "internet-development-www-sacred": {
+    "repository": "internet-development/www-sacred",
+    "platform": "github",
+    "sourceUrl": "https://github.com/internet-development/www-sacred",
+    "sourceVersion": "a288a847",
+    "license": "MIT",
+    "contentHash": "9e74309fc3cf6ce083170890feb23731979a57d91c4fd6edeae06c27d6e66ae0",
+    "lastHarvestedAt": "2026-10-18T23:45:22.584Z",
+    "learningId": "learn-github-internet-development-www-sacred"
+  },
+  "rigellute-spotify-tui": {
+    "repository": "Rigellute/spotify-tui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Rigellute/spotify-tui",
+    "sourceVersion": "c4dcf6b9",
+    "license": "MIT",
+    "contentHash": "205e6ba9c71a7a88d0b2cb20be9c417263d53e4d9d28f75567afc9bdeda8c52d",
+    "lastHarvestedAt": "2026-10-18T23:45:23.820Z",
+    "learningId": "learn-github-rigellute-spotify-tui"
+  },
+  "nozbe-watermelondb": {
+    "repository": "Nozbe/WatermelonDB",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Nozbe/WatermelonDB",
+    "sourceVersion": "5c463222",
+    "license": "MIT",
+    "contentHash": "caf3ad997963f50cb6bb085c968bad9a3a4887051379e611ffbee73ad7edb82f",
+    "lastHarvestedAt": "2026-10-18T23:45:29.399Z",
+    "learningId": "learn-github-nozbe-watermelondb"
+  },
+  "dosco-graphjin": {
+    "repository": "dosco/graphjin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dosco/graphjin",
+    "sourceVersion": "b60d3fc5",
+    "license": "Apache-2.0",
+    "contentHash": "f218ce341989878ccc9c6d8e8b9bfe4b79e54e0b2016979fa02a1be007f6e8d8",
+    "lastHarvestedAt": "2026-10-18T23:45:31.235Z",
+    "learningId": "learn-github-dosco-graphjin"
+  },
+  "gravitl-netmaker": {
+    "repository": "gravitl/netmaker",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gravitl/netmaker",
+    "sourceVersion": "c5b3ecc3",
+    "license": "NOASSERTION",
+    "contentHash": "c9aa94c4e2d5be4999f1e9ff39764c00d6daded9a392983f2789beb4602273b2",
+    "lastHarvestedAt": "2026-10-18T23:45:33.646Z",
+    "learningId": "learn-github-gravitl-netmaker"
+  },
+  "pixeltable-pixeltable": {
+    "repository": "pixeltable/pixeltable",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pixeltable/pixeltable",
+    "sourceVersion": "10f23bdb",
+    "license": "Apache-2.0",
+    "contentHash": "77257fe69f683314f26cb6d391e91cc413344e242d04453242c15a3689b61cd0",
+    "lastHarvestedAt": "2026-10-18T23:45:35.732Z",
+    "learningId": "learn-github-pixeltable-pixeltable"
   }
 }

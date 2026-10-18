@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
+> **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
+> **Source Version**: `c5b3ecc3`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:45:33.432Z  
+> **Learning ID**: `learn-github-gravitl-netmaker`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): gravitl/netmaker
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:07:45.053Z  
+> **Harvest Timestamp**: 2026-10-18T23:45:32.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11818 stars
+- **Stars / Engagement**: 11831 stars
 
 ---
 
@@ -380,69 +394,6 @@ func IsFQDN(domain string) bool {
 	re := regexp.MustCompile(fqdnRegex)
 
 	return re.MatchString(domain)
-}
-
-```
-
-### Core Architecture Module: `migrate/utils.go`
-```
-package migrate
-
-import (
-	"context"
-	"encoding/json"
-	"errors"
-
-	"github.com/gravitl/netmaker/db"
-	"gorm.io/gorm"
-)
-
-type KVRecord struct {
-	Key   string `gorm:"column:key;primaryKey"`
-	Value string `gorm:"column:value"`
-}
-
-func kvInsert(ctx context.Context, tableName, key string, value any) error {
-	data, err := json.Marshal(value)
-	if err != nil {
-		return err
-	}
-
-	var existing KVRecord
-	err = db.FromContext(ctx).Table(tableName).Where("key = ?", key).First(&existing).Error
-	if err == nil {
-		return db.FromContext(ctx).Table(tableName).Where("key = ?", key).Update("value", string(data)).Error
-	}
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-
-	return db.FromContext(ctx).Table(tableName).Create(&KVRecord{Key: key, Value: string(data)}).Error
-}
-
-func kvDelete(ctx context.Context, tableName, key string) error {
-	return db.FromContext(ctx).Table(tableName).Where("key = ?", key).Delete(&KVRecord{}).Error
-}
-
-func kvList(ctx context.Context, tableName string) (map[string]string, error) {
-	var records []KVRecord
-	err := db.FromContext(ctx).Table(tableName).Order("key").Find(&records).Error
-	if err != nil {
-		return nil, err
-	}
-
-	var list = make(map[string]string)
-	for _, record := range records {
-		list[record.Key] = record.Value
-	}
-
-	return list, nil
-}
-
-func kvCount(ctx context.Context, tableName string) (int, error) {
-	var count int64
-	err := db.FromContext(ctx).Table(tableName).Count(&count).Error
-	return int(count), err
 }
 
 ```
@@ -970,186 +921,6 @@ const CheckInInterval = 1
 
 ```
 
-### Core Architecture Module: `pro/email/utils.go`
-```
-package email
-
-import "strings"
-
-// mail related images hosted on cdn
-var (
-	netmakerLogoTeal = "https://media.netmaker.io/logos/png/netmaker-logo-full-light-1.png"
-)
-
-type EmailBodyBuilder interface {
-	WithHeadline(text string) EmailBodyBuilder
-	WithParagraph(text string) EmailBodyBuilder
-	WithHtml(text string) EmailBodyBuilder
-	WithSignature() EmailBodyBuilder
-	Build() string
-}
-
-type EmailBodyBuilderWithH1HeadlineAndImage struct {
-	headline     string
-	bodyContent  []string
-	hasSignature bool
-}
-
-func (b *EmailBodyBuilderWithH1HeadlineAndImage) WithHeadline(text string) EmailBodyBuilder {
-	b.headline = text
-	return b
-}
-
-func (b *EmailBodyBuilderWithH1HeadlineAndImage) WithParagraph(text string) EmailBodyBuilder {
-	b.bodyContent = append(b.bodyContent, styledParagraph(text))
-	return b
-}
-
-func (b *EmailBodyBuilderWithH1HeadlineAndImage) WithHtml(text string) EmailBodyBuilder {
-	b.bodyContent = append(b.bodyContent, text)
-	return b
-}
-
-func (b *EmailBodyBuilderWithH1HeadlineAndImage) WithSignature() EmailBodyBuilder {
-	b.hasSignature = true
-	return b
-}
-
-func (b *EmailBodyBuilderWithH1HeadlineAndImage) Build() string {
-	bodyContent := strings.Join(b.bodyContent, "")
-
-	// TODO: Edit design to add signature.
-	//signature := ""
-	//if b.hasSignature {
-	//	signature = styledSignature()
-	//}
-
-	return `
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Simple Transactional Email</title>
-    <style media="all" type="text/css">
-@media all {
-  .btn-primary table td:hover {
-    background-color: #ec0867 !important;
-  }
-
-  .btn-primary a:hover {
-    background-color: #ec0867 !important;
-    border-color: #ec0867 !important;
-  }
-}
-@media only screen and (max-width: 640px) {
-  .main p,
-.main td,
-.main span {
-    font-size: 16px !important;
-  }
-
-  .wrapper {
-    padding: 8px !important;
-  }
-
-  .content {
-    padding: 0 !important;
-  }
-
-  .container {
-    padding: 0 !important;
-    padding-top: 8px !important;
-    width: 100% !important;
-  }
-
-  .main {
-    border-left-width: 0 !important;
-    border-radius: 0 !important;
-    border-right-width: 0 !important;
-  }
-
-  .btn table {
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-
-  .btn a {
-    font-size: 16px !important;
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-}
-@media all {
-  .ExternalClass {
-    width: 100%;
-  }
-
-  .ExternalClass,
-.ExternalClass p,
-.ExternalClass span,
-.ExternalClass font,
-.ExternalClass td,
-.ExternalClass div {
-    line-height: 100%;
-  }
-
-  .apple-link a {
-    color: inherit !important;
-    font-family: inherit !important;
-    font-size: inherit !important;
-    font-weight: inherit !important;
-    line-height: inherit !important;
-    text-decoration: none !important;
-  }
-
-  #MessageViewBody a {
-    color: inherit;
-    text-decoration: none;
-    font-size: inherit;
-    font-family: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-  }
-}
-</style>
-  </head>
-  <body style="font-family: Helvetica, sans-serif; -webkit-font-smoothing: antialiased; font-size: 16px; line-height: 1.3; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #f4f5f6; margin: 0; padding: 0;">
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f4f5f6; width: 100%;" width="100%" bgcolor="#f4f5f6">
-      <tr>
-        <td style="font-family: Helvetica, sans-serif; font-size: 16px; vertical-align: top;" valign="top">&nbsp;</td>
-        <td class="container" style="font-family: Helvetica, sans-serif; font-size: 16px; vertical-align: top; max-width: 600px; padding: 24px 0px 24px 0px; width: 600px; margin: 0 auto;" width="600" valign="top">
-          <div class="content" style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 600px; padding: 0;">
-
-            <!-- START CENTERED WHITE CONTAINER -->
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background: #ffffff; border: 1px solid #eaebed; border-radius: 16px; width: 100%;" width="100%">
-
-              <!-- START MAIN CONTENT AREA -->
-              <tr>
-                <td class="wrapper" style="font-family: Helvetica, sans-serif; font-size: 16px; vertical-align: top; box-sizing: border-box; padding: 24px;" valign="top">
-                  <img src="` + netmakerLogoTeal + `" alt="Netmaker Logo" width="200" border="0" style="border:0; outline:none; text-decoration:none; display:block; margin-right: auto; margin-bottom: 24px; height: auto;">
-                  ` + bodyContent + `
-                </td>
-              </tr>
-
-              <!-- END MAIN CONTENT AREA -->
-              </table>
-
-<!-- END CENTERED WHITE CONTAINER --></div>
-        </td>
-        <td style="font-family: Helvetica, sans-serif; font-size: 16px; vertical-align: top;" valign="top">&nbsp;</td>
-      </tr>
-    </table>
-  </body>
-</html>`
-}
-
-func styledParagraph(text string) string {
-	return `<p style="font-family: Helvetica, sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 16px;">` + text + `</p>`
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1161,42 +932,11 @@ func styledParagraph(text string) string {
   **Post-Mortem & Fix Analysis**:
   > Hi @maieredv-manuel,  Thanks for reporting this.  Could you provide a few more details about your setup?  1. Can you describe your Site-to-Site topology (how many egress gateways/sites are connected)? 2. When you say "no routes are set", do you mean there are no Site-to-Site routes configured at all? 3. Is NAT enabled on the egress gateways? 4. What traffic are you expecting to pass through the egress gateway (source subnet → destination subnet)? 5. Was this same configuration working on v1.5.x without any additional routes configured?  If you could also share your Site-to-Site configuration (screenshots or relevant settings), that would help us understand the scenario and try to reproduce it.  Best, Majdi
   > Hi @Mejdii   sorry ... i was in hurry ...   1. we have a "Cloud-Hub" as Node and Gateway, all Site Nodes (in that case 3) are connection to the "Cloud-Hub" (so we need no Portforwarding on the Sites). We have one Egress rule for every Side via the Site-Node.  2. Sure, Site-to-Site Routes in netmaker are set. But we are using Direct-NAT via Netmaker > so we dont needed to create any Static Routes per Site. 3. Yes, is enabled, and worked like it should until Update to 1.6.0 4. Yes, "simple" Site-to-Site and access from "Config-Nodes" to the Sites. 5. Yes, worked, ive changed nothing, only Updated to 1.6  Ive found an workaround for that:    When i enable masquarade via: "nft add rule inet nat POSTROUTING iifname "eth0" masquerade" then it works again. But netclient flushes all nft rules every XX Hours, then it again stopes working :-(  I also get this Log Output:  Jul 10 14:14:30 WBG-NM-NODE01 netclient[302]: [netclient] 2026-07-10 14:14:30 InsertEgressRoutingRules called for egress f0dd
-  > @maieredv-manuel   The fact that manually adding a masquerade rule restores connectivity, suggests the required NAT rule is no longer being installed.  Could you also share the output of:  nft list ruleset  both:  immediately after netclient starts (before adding your manual rule), and after adding: nft add rule inet nat POSTROUTING iifname "eth0" masquerade  This will help us compare the generated NAT rules and identify what's missing in v1.6  And Just to confirm, is your firewall configured with native nftables only, or are you using iptables (including the nftables backend)?
 
 - **Issue #4084** (2026-07-20): **[Bug]: Can't create admin user in self-hosted setup**
   *Symptoms*: ### Contact Details  _No response_  ### What happened?  After successful setup I'm unable to create first user. I'm following https://docs.netmaker.io/docs/server-installation/quick-install and log in part says:  `On the login screen, use the initial admin credentials created during installation.`  but the installation process does not display or ask for any credentials. I tried:  nmctl user create --admin --name admin --password password  2026/07/11 15:28:08 Error Status: 400 Response: {"Code":400,"Message":"record not found","Response":null}  nmctl server has_admin 2026/07/11 15:28:33 Error Status: 404 Response: 404 page not found  Why can't I use nmctl? I specifically downloaded 1.6.0 version of nmctl. How can I crate the admin user?   ### Version  v1.6.0  ### What OS are you using?  Linux  ### Relevant log output  ```shell  ```  ### Contributing guidelines  - [x] Yes, I did.
   **Post-Mortem & Fix Analysis**:
   > Removing the user from db in  /var/lib/docker/volumes/netmaker_sqldata/_data/netmaker.db gave me the registration page again. 
-
-- **Issue #4062** (2026-08-26): **[Bug]: Hardcoded InsecureSkipVerify in SMTP Client**
-  *Symptoms*: ### Contact Details  _No response_  ### What happened?  (emailed on 24 May and then 6 June but no responses received)  Netmaker's Pro email sender unconditionally disables TLS certificate verification when connecting to the configured SMTP server. A comment in the source even acknowledges "In production this should be set to false" but the flag is hardcoded `true`. Any attacker with a network path between the Netmaker host and the SMTP server can intercept outgoing emails — which may carry password-reset tokens or user-invitation links — enabling account takeover without any prior authentication.  Vulnerable Code  **File:** `pro/email/smtp.go:35`  ```go // This is only needed when SSL/TLS certificate is not valid on server. // In production this should be set to false. d.TLSConfig = &tls.Config{InsecureSkipVerify: true} ```  The `InsecureSkipVerify: true` flag instructs the Go TLS stack to accept any certificate presented by the SMTP server, including self-signed or attacker-controlled ones. There is no runtime check, no configuration toggle, and no way for operators to re-enable verification.  ---  Impact  - **Credential interception:** Password-reset emails contain single-use tokens. Intercepting them allows an attacker to reset any user's password and take over the account. - **Invitation link theft:** New-user invitations sent via email can be intercepted before the legitimate recipient acts on them. - **Email tampering:** An active MitM can modify email body/headers, e.g
-
-- **Issue #4010** (2026-05-30): **[Bug]: Netclient Does Not Install Valid Overlapping Route, When More Specific Route Already Exists**
-  *Symptoms*: ### Contact Details  cesarmacias  ### What happened?  Summary  Netclient receives the remote route correctly from peers, but it does not add the route to the Linux routing table when a more specific route already exists on another interface.  The route is valid and Linux accepts it manually without any issue. After adding it manually, connectivity works correctly.  This appears to be an incorrect overlap validation in Netclient/Netmaker.  Environment OS: Ubuntu 24.04 Netclient interface: netmaker Routing backend: standard Linux kernel routing Netclient version: 1.5.1 Problem Description  The peer advertises the following route:  10.128.0.0/9  The route is visible in:  netclient peers  However, Netclient does not install the route into the Linux routing table.  The system already has a more specific route on another interface:  10.244.0.0/16 via eth0  Netclient seems to reject the /9 route because of the overlap, even though Linux routing fully supports this scenario using longest-prefix-match logic.  Expected Behavior  Both routes should coexist:  10.128.0.0/9     dev netmaker 10.244.0.0/16    via eth0  Linux should prefer the more specific /16 route for 10.244.x.x traffic and use the /9 route for the remaining address space.  This is normal and valid routing behavior.  Actual Behavior  The /9 route is received from the peer but is not installed into the routing table.  As a result, traffic to networks inside 10.128.0.0/9 fails until the route is manually added.  Evidence Pee
-
-- **Issue #3958** (2026-04-07): **[Bug]: Netmaker server crash after upgrading from 1.5.0 to 1.5.1**
-  *Symptoms*: ### Contact Details  _No response_  ### What happened?  In `netmaker.env` I have set:  ``` SERVER_IMAGE_TAG=v1.5.1 UI_IMAGE_TAG=v1.5.1 ```  and then I restarted everything using:  ``` docker compose up -d ```  But now the netmaker server crashed right after startup:  ``` netmaker  | 2026/04/04 11:12:02 maxprocs: Leaving GOMAXPROCS=2: CPU quota undefined netmaker  | netmaker  |  __   __     ______     ______   __    __     ______     __  __     ______     ______ netmaker  | /\ "-.\ \   /\  ___\   /\__  _\ /\ "-./  \   /\  __ \   /\ \/ /    /\  ___\   /\  == \ netmaker  | \ \ \-.  \  \ \  __\   \/_/\ \/ \ \ \-./\ \  \ \  __ \  \ \  _"-.  \ \  __\   \ \  __< netmaker  |  \ \_\\"\_\  \ \_____\    \ \_\  \ \_\ \ \_\  \ \_\ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\ netmaker  |   \/_/ \/_/   \/_____/     \/_/   \/_/  \/_/   \/_/\/_/   \/_/\/_/   \/_____/   \/_/ /_/ netmaker  | netmaker  | netmaker  | [netmaker] 2026-04-04 11:12:02 database successfully connected netmaker  | [netmaker] 2026-04-04 11:12:02 connecting to sqlite netmaker  | panic: error parsing network (development) cidr (): invalid CIDR address: netmaker  | netmaker  | goroutine 1 [running]: netmaker  | main.initialize() netmaker  | 	/app/main.go:135 +0x484 netmaker  | main.main() netmaker  | 	/app/main.go:60 +0x144 ```  ### Version  v1.5.0  ### What OS are you using?  Linux  ### Relevant log output  ```shell  ```  ### Contributing guidelines  - [x] Yes, I did.
-  **Post-Mortem & Fix Analysis**:
-  > I have downloaded and ran the nm-quick.sh script to reconfigure everything, but the error persists.
-  > Can you pull latest image and try again? `docker compose pull && docker compose up -d`
-  > it works now, thanks.
-
-- **Issue #3715** (2025-11-21): **[Bug]: error in getting getNSAndDomains**
-  *Symptoms*:  ### What happened?  Hello, after updating to version 1.1.0, the servers started showing many Netmaker errors like this:  netclient[2938349]: {"time":"2025-11-03T13:30:34.819772505Z","level":"ERROR","source":"config_linux.go 249}","msg":"error in getting getNSAndDomains","error":"no listener is running"} netclient[2938349]: {"time":"2025-11-03T13:30:34.81981516Z","level":"ERROR","source":"config_linux.go 313}","msg":"could not build config content","error":"no listener is running"} netclient[2938349]: {"time":"2025-11-03T13:31:49.337290926Z","level":"ERROR","source":"config_linux.go 249}","msg":"error in getting getNSAndDomains","error":"no listener is running"} netclient[2938349]: {"time":"2025-11-03T13:31:49.337326262Z","level":"ERROR","source":"config_linux.go 313}","msg":"could not build config content","error":"no listener is running"}  In the netmaker.env file, I have the following settings configured for DNS:  **DNS_MODE=off** **MANAGE_DNS=false**   ### Version  v1.1.0  ### What OS are you using?  Linux  ### Relevant log output  ```shell  ```  ### Contributing guidelines  - [x] Yes, I did.
-  **Post-Mortem & Fix Analysis**:
-  > @josifpeev, please upgrade your server to v1.2.0
-
-- **Issue #3696** (2025-11-21): **[Bug]: Managed DNS service randomly repeats its search doman**
-  *Symptoms*: ### Contact Details  _No response_  ### What happened?  When Managed DNS is enabled, the file `/etc/resolv.conf` randomly repeats the `nm.internal` search domain on some hosts, but not all. So for example, while most nodes have this:  ``` # NETMAKER DNS CONFIG START search nm.internal nm.internal . ... ```  Some even have this:  ``` # NETMAKER DNS CONFIG START search nm.internal nm.internal nm.internal nm.internal nm.internal nm.internal nm.internal nm.internal . ```  Also I noticed that the DNS server which is bundled into netclient may return unparsable responses to downstream DNS servers like CoreDNS in our Kubernetes cluster. Unfortunately, I haven't been able to reliably reproduce this yet. Last time I just switched off Managed DNS and switched it on again and the issue has not reappeared since then.  ### Version  v1.1.0  ### What OS are you using?  Linux  ### Relevant log output  ```shell  ```  ### Contributing guidelines  - [x] Yes, I did.
-  **Post-Mortem & Fix Analysis**:
-  > @christian-schlichtherle fixed in v1.2.0
-
-- **Issue #3653** (2025-09-18): **[Bug]: Failed upgarde from 0.30.0 to 1.1.0 (ee)**
-  *Symptoms*: ### Contact Details  _No response_  ### What happened?  Upgrading to 1.1.0-ee from 0.30.0-ee is causing high CPU usage - Caddy and Netmaker containers mainly; docker logs show constant new connections from peers dropping instantly; remote access is not happening (gateway not even pingable), form the gateway device very slow connections can be made (sometimes). Tried to downgrade back to 0.30.0 - no go: nodes not connecting back to the network, remote access - no handshake; from downgraded version upgrade to 1.0.0 same result as 1.1.0. Rejoining the network also does not solve the issue  ### Version  v1.1.0  ### What OS are you using?  Linux  ### Relevant log output  ```shell  ```  ### Contributing guidelines  - [x] Yes, I did.
-  **Post-Mortem & Fix Analysis**:
-  > How many nodes do you have in your network?
-  > We don't recommend downgrading once you upgrade the version
-  > > How many nodes do you have in your network?  12, currently 7 are online
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1213,2947 +953,482 @@ func styledParagraph(text string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03e0bd2b` (2026-09-21)
-**Commit Message**: fix(go): handle create-org-owner allowed post create-super-admin call;
+### Incident Patch 1: `235db77b` (2026-10-13)
+**Commit Message**: NM-378: Security Bug Fixes (#4114)
 
-**File**: `controllers/org.go` (modified, +46/-6)
+* fix(go): return user without secrets in addUserToNetwork and removeUserFromNetwork response;
+
+* fix(go): authenticate host on register if host already exists;
+
+* fix(go): handle disabled user on netclient join with user;
+
+* fix(go): check egress tags and nodes belong to egress' network;
+
+* fix(go): validate egress range for pro;
+
+* fix(go): check jit request belongs to network in param and that user is the network admin of the same network;
+
+* fix(go): validate public key length on register;
+
+* fix(go): prevent user from accessing global resources by passing network id query param;
+
+* fix(go): move valid org and tenant roles from orchestrator pkg to schema pkg;
+
+* fix(go): ensure new role on update is valid for the scope;
+
+* fix(go): prevent any user from changing their org/tenant role;
+
+* fix(go): check relayed nodes and igw clients belong to the node's network;
+
+* fix(go): check if username query is declared before setting target resource id;
+
+* fix(go): ensure host name is valid;
+
+* fix(go): mask settings only for all users;
+
+* fix(go): add checks on refs passed during host update and signal peer;
+
+**File**: `auth/host_session.go` (modified, +14/-0)
 ```diff
-@@ -40,6 +40,33 @@ func orgHandlers(r *mux.Router) {
+@@ -73,6 +73,20 @@ func SessionHandler(ctx context.Context, conn *websocket.Conn) {
+ 	if len(registerMessage.User) > 0 { // handle basic auth
+ 		logger.Log(0, "user registration attempted with host:", registerMessage.RegisterHost.Name, "user:", registerMessage.User)
  
- var errOrgNotFound = errors.New("organization not found")
++		user := &schema.User{
++			Username: registerMessage.User,
++		}
++		err = user.GetWithMembership(ctx)
++		if err != nil {
++			handleHostRegErr(conn, fmt.Errorf("error fetching user %s: %w", registerMessage.User, err))
++			return
++		}
++
++		if user.AccountDisabled {
++			handleHostRegErr(conn, errors.New("user is disabled"))
++			return
++		}
++
+ 		if !logic.IsBasicAuthEnabled(ctx) {
+ 			handleHostRegErr(conn, errors.New("basic auth is disabled"))
+ 			return
+```
+
+**File**: `controllers/acls.go` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@ import (
  
-+func createOrgOwnerMembership(ctx context.Context, user *schema.User) error {
-+	tenant := &schema.Tenant{ID: scope.ID(ctx)}
-+	if err := tenant.Get(ctx); err != nil {
-+		return err
-+	}
-+
-+	owner := &schema.OrgMembership{OrganizationID: tenant.OrganizationID}
-+	err := owner.GetOwner(ctx)
-+	if err == nil {
-+		return nil
-+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-+		return err
-+	}
-+
-+	return (&schema.OrgMembership{
-+		OrganizationID:             tenant.OrganizationID,
-+		UserID:                     user.ID,
-+		RoleID:                     schema.OrgOwner,
-+		AuthType:                   user.AuthType,
-+		ExternalIdentityProviderID: user.ExternalIdentityProviderID,
-+		Password:                   user.Password,
-+		AccountDisabled:            user.AccountDisabled,
-+		IsMFAEnabled:               user.IsMFAEnabled,
-+		TOTPSecret:                 user.TOTPSecret,
-+	}).Create(ctx)
-+}
-+
- func resolveSoleOrg(ctx context.Context, orgID string) (*schema.Organization, error) {
- 	o, err := logic.SoleOrganization(ctx)
- 	if err != nil {
-@@ -373,6 +400,25 @@ func createOrgOwner(w http.ResponseWriter, r *http.Request) {
+ func aclHandlers(r *mux.Router) {
+ 	r.HandleFunc("/api/v1/acls", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getAcls)))).
+-		Methods(http.MethodGet)
++		Methods(http.MethodGet).Queries("network", "{network}")
+ 	r.HandleFunc("/api/v1/acls/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getEgressAcls)))).
+ 		Methods(http.MethodGet)
+ 	r.HandleFunc("/api/v1/acls/policy_types", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(aclPolicyTypes)))).
+```
+
+**File**: `controllers/dns.go` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ func dnsHandlers(r *mux.Router) {
+ 	r.HandleFunc("/api/dns/{network}/{domain}", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteDNS)))).
+ 		Methods(http.MethodDelete)
+ 	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(createNs)))).Methods(http.MethodPost)
+-	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listNs)))).Methods(http.MethodGet)
++	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listNs)))).Methods(http.MethodGet).Queries("network", "{network}")
+ 	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(updateNs)))).Methods(http.MethodPut)
+ 	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteNs)))).Methods(http.MethodDelete)
+ 	r.HandleFunc("/api/v1/nameserver/global", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getGlobalNs)))).Methods(http.MethodGet)
+```
+
+**File**: `controllers/egress.go` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ import (
+ func egressHandlers(r *mux.Router) {
+ 	r.HandleFunc("/api/v1/egress/presets", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getEgressPresets)))).Methods(http.MethodGet)
+ 	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(createEgress)))).Methods(http.MethodPost)
+-	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listEgress)))).Methods(http.MethodGet)
++	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listEgress)))).Methods(http.MethodGet).Queries("network", "{network}")
+ 	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(updateEgress)))).Methods(http.MethodPut)
+ 	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteEgress)))).Methods(http.MethodDelete)
+ }
+```
+
+**File**: `controllers/enrollmentkeys.go` (modified, +13/-0)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/gorilla/mux"
+ 	"github.com/gravitl/netmaker/db"
+ 	"github.com/gravitl/netmaker/schema"
++	"golang.org/x/crypto/bcrypt"
+ 	"golang.org/x/exp/slog"
+ 
+ 	dbtypes "github.com/gravitl/netmaker/db/types"
+@@ -514,6 +515,10 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("missing traffic key"), "badrequest"))
  		return
  	}
- 
-+	tenants, err := (&schema.Tenant{}).List(dbctx, dbtypes.WithFilter("organization_id", o.ID))
-+	if err != nil {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++	if len(newHost.TrafficKeyPublic) != 32 {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("invalid public key"), "badrequest"))
 +		return
 +	}
+ 
+ 	trafficKey, keyErr := logic.RetrievePublicTrafficKey()
+ 	if keyErr != nil {
+@@ -582,6 +587,14 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
+ 			logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
+ 			return
+ 		}
 +
-+	for _, tenant := range tenants {
-+		tenantCtx := scope.WithContext(dbctx, scope.TenantScope, tenant.ID)
-+		exists, err := (&schema.User{}).SuperAdminExists(tenantCtx)
++		err = bcrypt.CompareHashAndPassword([]byte(currHost.HostPass), []byte(newHost.HostPass))
 +		if err != nil {
-+			logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++			err = fmt.Errorf("error verifying host's identity: %w", err)
++			logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.UnAuthorized))
 +			return
 +		}
-+		if exists {
-+			logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("organization is already set up"), logic.BadReq))
++
+ 		endpointChanged, _ := logic.UpdateHostFromClient(r.Context(), &newHost, currHost)
+ 		if endpointChanged {
+ 			logic.CheckHostPorts(r.Context(), currHost)
+```
+
+**File**: `controllers/hosts.go` (modified, +68/-5)
+```diff
+@@ -552,6 +552,36 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 	slog.Info("recieved host update", "name", hostUpdate.Host.Name, "id", hostUpdate.Host.ID, "action", hostUpdate.Action)
++	// node, egress and signal identifiers come from the request body, so they
++	// must be bound to the authenticated host before acting on them.
++	switch hostUpdate.Action {
++	case models.UpdateNode, models.UpdateMetrics:
++		if _, errResp := ensureHostOwnsNode(r, currentHost, hostUpdate.Node.ID.String()); errResp != nil {
++			logic.ReturnErrorResponse(w, r, *errResp)
++			return
++		}
++	case models.EgressUpdate:
++		if _, errResp := ensureHostOwnsNode(r, currentHost, hostUpdate.Node.ID.String()); errResp != nil {
++			logic.ReturnErrorResponse(w, r, *errResp)
++			return
++		}
++		e := schema.Egress{ID: hostUpdate.EgressDomain.ID}
++		if err := e.Get(r.Context()); err != nil {
++			logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
++			return
++		}
++		if r.Header.Get(hostIDHeader) != logic.MasterUser {
++			if _, ok := e.Nodes[hostUpdate.Node.ID.String()]; !ok {
++				logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("node is not a routing node of the egress"), logic.Forbidden))
++				return
++			}
++		}
++	case models.SignalHost:
++		if _, errResp := bindSignalToHost(r, currentHost, &hostUpdate.Signal); errResp != nil {
++			logic.ReturnErrorResponse(w, r, *errResp)
 +			return
 +		}
 +	}
-+
- 	var user schema.User
- 	err = json.NewDecoder(r.Body).Decode(&user)
- 	if err != nil {
-@@ -401,12 +447,6 @@ func createOrgOwner(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
+ 	switch hostUpdate.Action {
+ 	case models.CheckIn:
+ 		var endpointChanged, versionChanged bool
+@@ -721,6 +751,29 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
+ 	logic.ReturnSuccessResponse(w, r, "updated host data")
+ }
  
--	tenants, err := (&schema.Tenant{}).List(dbctx, dbtypes.WithFilter("organization_id", o.ID))
--	if err != nil {
--		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
--		return
--	}
--
- 	for _, tenant := range tenants {
- 		err = orchestrator.GetRepository().TenantOrchestrator().GrantTenantSuperAdmin(dbctx, &tenant, &user)
- 		if err != nil {
-```
-
-**File**: `controllers/user.go` (modified, +24/-1)
-```diff
-@@ -1319,13 +1319,36 @@ func createSuperAdmin(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 
--	err = orchestrator.GetRepository().UserOrchestrator().CreateUser(r.Context(), &user)
-+	dbctx := db.BeginTx(r.Context())
-+	commit := false
-+	defer func() {
-+		if commit {
-+			db.FromContext(dbctx).Commit()
-+		} else {
-+			db.FromContext(dbctx).Rollback()
-+		}
-+	}()
-+
-+	err = orchestrator.GetRepository().UserOrchestrator().CreateUser(dbctx, &user)
- 	if err != nil {
- 		slog.Error("failed to create superadmin", "error", err.Error())
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
- 		return
- 	}
- 
-+	// on MSP the org owner is created via createOrgOwner instead, which also
-+	// grants super admin on every tenant of the org.
-+	if !logic.IsMSP(dbctx) {
-+		err = createOrgOwnerMembership(dbctx, &user)
-+		if err != nil {
-+			slog.Error("failed to create org owner for superadmin", "error", err.Error())
-+			logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-+			return
-+		}
++func ensureHostOwnsNode(r *http.Request, host *schema.Host, nodeID string) (models.Node, *models.ErrorResponse) {
++	node, err := logic.GetNodeByID(nodeID)
++	if err != nil {
++		errResp := logic.FormatError(fmt.Errorf("failed to get node: %w", err), logic.BadReq)
++		return models.Node{}, &errResp
 +	}
++	if r.Header.Get(hostIDHeader) != logic.MasterUser && node.HostID != host.ID {
++		errResp := logic.FormatError(errors.New(logic.Forbidden_Msg), logic.Forbidden)
++		return models.Node{}, &errResp
++	}
++	return node, nil
++}
 +
-+	commit = true
++func bindSignalToHost(r *http.Request, host *schema.Host, signal *models.Signal) (models.Node, *models.ErrorResponse) {
++	fromNode, errResp := ensureHostOwnsNode(r, host, signal.FromNodeID)
++	if errResp != nil {
++		return models.Node{}, errResp
++	}
++	signal.FromHostID = host.ID.String()
++	signal.FromHostPubKey = host.PublicKey.String()
++	return fromNode, nil
++}
 +
- 	logger.Log(1, user.Username, "was made a super admin")
- 	_ = json.NewEncoder(w).Encode(logic.ToReturnUser(&user))
- }
-```
-
----
-
-### Incident Patch 2: `cf1acff1` (2026-09-21)
-**Commit Message**: fix(go): resync tenant id on license change; show license error on any error while license validation;
-
-**File**: `migrate/migrate_multitenancy.go` (modified, +2/-2)
-```diff
-@@ -10,9 +10,9 @@ import (
- 	"github.com/gravitl/netmaker/scope"
- )
- 
--var SyncOrgAndTenants = CreateLocalDefaults
-+var MigrateOrgAndTenants = migrateOrgAndTenants
- 
--func CreateLocalDefaults(ctx context.Context) error {
-+func migrateOrgAndTenants(ctx context.Context) error {
- 	org, err := EnsureLocalOrganization(ctx)
+ func shouldApplyEgressDomainAnsUpdate(e schema.Egress, reportedRanges []string) bool {
+ 	if len(reportedRanges) == 0 {
+ 		return false
+@@ -1336,10 +1389,10 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 	// confirm host exists
+-	senderHost := &schema.Host{
++	currentHost := &schema.Host{
+ 		ID: hostID,
+ 	}
+-	err = senderHost.Get(r.Context())
++	err = currentHost.Get(r.Context())
  	if err != nil {
- 		return err
-```
-
-**File**: `migrate/migrate_schema_test.go` (modified, +10/-10)
-```diff
-@@ -122,7 +122,7 @@ func TestToSQLSchema_StuckServerCompletesV160AndV170(t *testing.T) {
- 	ctx := setupMigrationTest(t)
- 	networkName, nodeID := seedLegacyKVData(t, ctx)
- 
--	require.NoError(t, CreateLocalDefaults(ctx))
-+	require.NoError(t, migrateOrgAndTenants(ctx))
- 	markMigrationJobComplete(t, ctx, "migration-multitenancy")
- 	markMigrationJobComplete(t, ctx, "migration-v1.5.1")
- 
-@@ -179,7 +179,7 @@ func TestToSQLSchema_StuckServerCompletesV160AndV170(t *testing.T) {
- func TestToSQLSchema_SkipsCompletedPreMTJobs(t *testing.T) {
- 	ctx := setupMigrationTest(t)
- 
--	require.NoError(t, CreateLocalDefaults(ctx))
-+	require.NoError(t, migrateOrgAndTenants(ctx))
- 	markMigrationJobComplete(t, ctx, "migration-multitenancy")
- 	markMigrationJobComplete(t, ctx, "migration-v1.5.1")
- 	markMigrationJobComplete(t, ctx, "migration-v1.6.0")
-@@ -200,19 +200,19 @@ func TestToSQLSchema_SkipsCompletedPreMTJobs(t *testing.T) {
- 	require.Len(t, tenants, 1)
- }
- 
--// TestMigrateV1_7_0_UsesSyncOrgAndTenantsHook ensures v1.7.0 step 0 goes through
--// SyncOrgAndTenants (EE overrides this with license sync) rather than always
--// calling CreateLocalDefaults, which breaks MSP installs that need multiple
-+// TestMigrateV1_7_0_UsesMigrateOrgAndTenantsHook ensures v1.7.0 step 0 goes through
-+// MigrateOrgAndTenants (EE overrides this with license sync) rather than always
-+// calling migrateOrgAndTenants, which breaks MSP installs that need multiple
- // tenants from the account server.
--func TestMigrateV1_7_0_UsesSyncOrgAndTenantsHook(t *testing.T) {
-+func TestMigrateV1_7_0_UsesMigrateOrgAndTenantsHook(t *testing.T) {
- 	ctx := setupMigrationTest(t)
- 	markMigrationJobComplete(t, ctx, migrationJobV160)
- 
--	orig := SyncOrgAndTenants
--	t.Cleanup(func() { SyncOrgAndTenants = orig })
-+	orig := MigrateOrgAndTenants
-+	t.Cleanup(func() { MigrateOrgAndTenants = orig })
- 
- 	called := false
--	SyncOrgAndTenants = func(ctx context.Context) error {
-+	MigrateOrgAndTenants = func(ctx context.Context) error {
- 		called = true
- 		org := &schema.Organization{
- 			ID:   "license-org-id",
-@@ -231,7 +231,7 @@ func TestMigrateV1_7_0_UsesSyncOrgAndTenantsHook(t *testing.T) {
+ 		logger.Log(0, r.Header.Get("user"), "failed to get host:", err.Error())
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
+@@ -1359,10 +1412,20 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New(msg), "badrequest"))
+ 		return
  	}
++	fromNode, errResp := bindSignalToHost(r, currentHost, &signal)
++	if errResp != nil {
++		logic.ReturnErrorResponse(w, r, *errResp)
++		return
++	}
++	toNode, err := logic.GetNodeByID(signal.ToNodeID)
++	if err != nil || toNode.Network != fromNode.Network || toNode.HostID.String() != signal.ToHostID {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("peer node is not reachable from the signalling node"), logic.Forbidden))
++		return
++	}
+ 	signal.IsPro = servercfg.IsPro
+ 	// bind the sender identity to the authenticated host rather than trusting the request body
+-	signal.FromHostID = senderHost.ID.String()
+-	signal.FromHostPubKey = senderHost.PublicKey.String()
++	signal.FromHostID = currentHost.ID.String()
++	signal.FromHostPubKey = currentHost.PublicKey.String()
  
- 	require.NoError(t, migrateV1_7_0(ctx))
--	assert.True(t, called, "expected SyncOrgAndTenants hook to run")
-+	assert.True(t, called, "expected MigrateOrgAndTenants hook to run")
- 
- 	tenants, err := (&schema.Tenant{}).List(ctx)
- 	require.NoError(t, err)
-```
-
-**File**: `migrate/migrate_v1_7_0.go` (modified, +3/-3)
-```diff
-@@ -35,10 +35,10 @@ const (
- 
- func migrateV1_7_0(ctx context.Context) error {
- 	// Step 0: bootstrap org/tenants (was migration-multitenancy).
--	// Goes through SyncOrgAndTenants so EE/MSP can sync from license validation
-+	// Goes through MigrateOrgAndTenants so EE/MSP can sync from license validation
- 	// instead of always creating a local UUID default tenant. CE keeps the
--	// CreateLocalDefaults default; idempotent when org/tenant already exist.
--	if err := SyncOrgAndTenants(ctx); err != nil {
-+	// migrateOrgAndTenants default; idempotent when org/tenant already exist.
-+	if err := MigrateOrgAndTenants(ctx); err != nil {
- 		return err
+ 	toHostID, err := uuid.Parse(signal.ToHostID)
+ 	if err != nil {
+@@ -1383,7 +1446,7 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
+ 		return
  	}
- 
+ 	// the target host must share a network with the authenticated sender
+-	if !logic.HostsShareNetwork(r.Context(), senderHost.ID.String(), peerHost.ID.String()) {
++	if !logic.HostsShareNetwork(r.Context(), currentHost.ID.String(), peerHost.ID.String()) {
+ 		logic.ReturnErrorResponse(
+ 			w,
+ 			r,
 ```
 
-**File**: `pro/initialize.go` (modified, +1/-1)
+**File**: `controllers/middleware.go` (modified, +34/-9)
 ```diff
-@@ -70,7 +70,7 @@ func InitPro() {
- 		proControllers.IntegrationHandlers,
- 	)
- 	controller.ListRoles = proControllers.ListRoles
--	migrate.SyncOrgAndTenants = license.SyncOrgAndTenants
-+	migrate.MigrateOrgAndTenants = license.MigrateOrgAndTenants
- 	servercfg.ErrLicenseValidation = license.ErrLicenseValidation
- 	logic.EnterpriseCheckFuncs = append(logic.EnterpriseCheckFuncs, func(ctx context.Context, wg *sync.WaitGroup) {
- 		logger.Log(0, "starting license checker")
-```
-
-**File**: `pro/license/cache.go` (modified, +0/-5)
-```diff
-@@ -9,11 +9,6 @@ import (
+@@ -9,10 +9,35 @@ import (
  	"github.com/gravitl/netmaker/schema"
  )
  
--func hasCachedResponse(ctx context.Context) bool {
--	cached := &schema.Internal{Key: schema.InternalKey_LicenseValidationCachedResponse}
--	return cached.Get(ctx) == nil
--}
--
- var cachedResponse atomic.Pointer[ValidatedLicense]
- 
- func cacheResponse(ctx context.Context, response []byte) error {
-```
-
-**File**: `pro/license/license.go` (modified, +50/-69)
-```diff
-@@ -42,21 +42,22 @@ func AddLicenseHooks() {
- 	}
- }
- 
--func SyncOrgAndTenants(ctx context.Context) error {
--	licenseResponse, isCachedResp, err := fetchValidatedLicense(ctx)
--	if err != nil {
-+func MigrateOrgAndTenants(ctx context.Context) error {
-+	if err := clearCachedResponse(ctx); err != nil {
- 		return err
- 	}
- 
--	if isCachedResp {
--		return nil
-+	// the cache was just cleared, so the response is never a cached one.
-+	licenseResponse, _, err := fetchValidatedLicense(ctx)
++func routeDeclaresQuery(currentRoute *mux.Route, keys ...string) bool {
++	templates, err := currentRoute.GetQueriesTemplates()
 +	if err != nil {
-+		return err
- 	}
- 
--	return syncOrgAndTenantsFromResponse(ctx, licenseResponse, false)
-+	return syncOrgAndTenantsFromResponse(ctx, licenseResponse)
- }
- 
--func syncOrgAndTenantsFromResponse(ctx context.Context, licenseResponse ValidatedLicense, hadCache bool) error {
--	if hadCache {
-+func syncOrgAndTenantsFromResponse(ctx context.Context, licenseResponse ValidatedLicense) error {
-+	if licenseResponse.Organization.ID != "" {
- 		return upsertOrgAndTenants(ctx, licenseResponse)
- 	}
- 	return reconcileOrgAndTenants(ctx, licenseResponse)
-@@ -84,15 +85,6 @@ func upsertOrgAndTenants(ctx context.Context, licenseResponse ValidatedLicense)
- }
- 
- func upsertOrganization(ctx context.Context, licenseOrg LicenseOrg) (string, error) {
--	if licenseOrg.ID == "" {
--		// single-tenant PRO: the license carries no organization.
--		org, err := migrate.EnsureLocalOrganization(ctx)
--		if err != nil {
--			return "", err
--		}
--		return org.ID, nil
--	}
--
- 	org := &schema.Organization{ID: licenseOrg.ID}
- 	err := org.Get(ctx)
- 	if err != nil {
-@@ -160,62 +152,20 @@ func teardownDeletedTenant(ctx context.Context, tenantID string) error {
- }
- 
- func reconcileOrgAndTenants(ctx context.Context, licenseResponse ValidatedLicense) error {
--	orgID, err := reconcileOrganization(ctx, licenseResponse.Organization)
-+	// non-MSP: the license carries no organization, so the local one is used.
-+	org, err := migrate.EnsureLocalOrganization(ctx)
- 	if err != nil {
- 		return fmt.Errorf("failed to reconcile organization: %w", err)
- 	}
- 
--	if err := reconcileTenants(ctx, licenseResponse.Tenants, orgID); err != nil {
-+	if err := reconcileTenants(ctx, licenseResponse.Tenants, org.ID); err != nil {
- 		return fmt.Errorf("failed to reconcile tenants: %w", err)
- 	}
- 
- 	return nil
- }
- 
--func reconcileOrganization(ctx context.Context, licenseOrg LicenseOrg) (string, error) {
--	if licenseOrg.ID == "" {
--		org, err := migrate.EnsureLocalOrganization(ctx)
--		if err != nil {
--			return "", err
--		}
--		return org.ID, nil
--	}
--
--	orgs, err := (&schema.Organization{}).ListAll(ctx)
--	if err != nil {
--		return "", err
--	}
--
--	switch len(orgs) {
--	case 0:
--		org := &schema.Organization{ID: licenseOrg.ID, Name: licenseOrg.Name, Metadata: licenseOrg.Metadata}
--		if err := org.Create(ctx); err != nil {
--			return "", err
--		}
--		return org.ID, nil
--	case 1:
--		existing := orgs[0]
--		if existing.ID != licenseOrg.ID {
--			if err := migrate.RekeyOrganization(ctx, existing.ID, licenseOrg.ID); err != nil {
--				return "", err
--			}
--		}
--		org := &schema.Organization{ID: licenseOrg.ID, Name: licenseOrg.Name, Metadata: licenseOrg.Metadata}
--		if err := org.Update(ctx); err != nil {
--			return "", err
--		}
--		return licenseOrg.ID, nil
--	default:
--		return "", fmt.Errorf("cannot reconcile license organization: %d local organizations already exist", len(orgs))
--	}
--}
--
- func reconcileTenants(ctx context.Context, licenseTenants []LicenseTenant, orgID string) error {
--	existing, err := (&schema.Tenant{}).List(ctx)
--	if err != nil {
--		return err
--	}
--
- 	activeTenants := make([]LicenseTenant, 0, len(licenseTenants))
- 	for _, licenseTenant := range licenseTenants {
- 		if licenseTenant.Status == TenantStatusDeleted {
-@@ -227,6 +177,12 @@ func reconcileTenants(ctx context.Context, licenseTenants []LicenseTenant, orgID
- 		activeTenants = append(activeTenants, licenseTenant)
- 	}
- 
-+	// list after teardown so a tenant that was just removed isn't counted.
-+	existing, err := (&schema.Tenant{}).List(ctx)
-+	if err != nil {
-+		return err
-+	}
-+
- 	switch len(existing) {
- 	case 0:
- 		// nothing pre-existing locally -- nothing to rekey.
-@@ -333,14 +289,16 @@ func getLicensePublicKey(licensePubKeyEncoded string) (*[32]byte, error) {
- // if license is free_tier and limits exceeds, then function should error
- // if license is not valid, function should error
- func ValidateLicense(ctx context.Context, clearCache bool) (err error) {
-+	var isCachedResp bool
- 	defer func() {
- 		if err != nil {
- 			err = fmt.Errorf("%w: %s", errValidation, err.Error())
-+			setLicenseInvalidErr(err)
-+		} else if !isCachedResp {
-+			licenseInvalidErr.Store(nil)
- 		}
- 	}()
- 
--	hadCache := hasCachedResponse(ctx)
--
- 	if clearCache {
- 		err = clearCachedResponse(ctx)
- 		if err != nil {
-@@ -356,7 +314,7 @@ func ValidateLicense(ctx context.Context, clearCache bool) (err error) {
- 		return
- 	}
- 
--	if err = syncOrgAndTenantsFromResponse(ctx, licenseResponse, hadCache); err != nil {
-+	if err = syncOrgAndTenantsFromResponse(ctx, licenseResponse); err 
-```
-
----
-
-### Incident Patch 3: `358d6737` (2026-09-15)
-**Commit Message**: Merge pull request #4147 from gravitl/security-fixes
-
-Security Fixes
-
-**File**: `controllers/hosts.go` (modified, +18/-4)
-```diff
-@@ -1335,9 +1335,10 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	// confirm host exists
--	err = (&schema.Host{
-+	senderHost := &schema.Host{
- 		ID: hostID,
--	}).Get(r.Context())
-+	}
-+	err = senderHost.Get(r.Context())
- 	if err != nil {
- 		logger.Log(0, r.Header.Get("user"), "failed to get host:", err.Error())
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
-@@ -1358,14 +1359,18 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	signal.IsPro = servercfg.IsPro
--	hostID, err = uuid.Parse(signal.ToHostID)
-+	// bind the sender identity to the authenticated host rather than trusting the request body
-+	signal.FromHostID = senderHost.ID.String()
-+	signal.FromHostPubKey = senderHost.PublicKey.String()
-+
-+	toHostID, err := uuid.Parse(signal.ToHostID)
- 	if err != nil {
- 		err = fmt.Errorf("failed to parse host id: %w", err)
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
- 		return
- 	}
- 	peerHost := &schema.Host{
--		ID: hostID,
-+		ID: toHostID,
- 	}
- 	err = peerHost.Get(r.Context())
- 	if err != nil {
-@@ -1376,6 +1381,15 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		)
- 		return
- 	}
-+	// the target host must share a network with the authenticated sender
-+	if !logic.HostsShareNetwork(r.Context(), senderHost.ID.String(), peerHost.ID.String()) {
-+		logic.ReturnErrorResponse(
-+			w,
-+			r,
-+			logic.FormatError(errors.New("failed to signal, peer not found"), "badrequest"),
-+		)
-+		return
-+	}
- 	err = mq.HostUpdate(&models.HostUpdate{
- 		Action: models.SignalHost,
- 		Host:   *peerHost,
-```
-
-**File**: `controllers/node.go` (modified, +4/-2)
-```diff
-@@ -255,10 +255,12 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
- 
- 	var filters, options []dbtypes.Option
- 	filters = append(filters, dbtypes.WithFilter("network_id", network.ID))
--	if len(osFilters) > 0 {
-+	if len(osFilters) > 0 || q != "" {
- 		filters = append(filters, func(db *gorm.DB) *gorm.DB {
- 			return db.Joins("JOIN hosts_v1 ON hosts_v1.id = nodes_v1.host_id")
- 		})
-+	}
-+	if len(osFilters) > 0 {
- 		filters = append(filters, dbtypes.WithFilter("hosts_v1.os", osFilters...))
- 	}
- 	filters = append(filters, dbtypes.WithFilter("status", statusFilters...))
-@@ -288,7 +290,7 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
- 	filters = append(filters, dbtypes.WithSearchQuery(
- 		q,
- 		fmt.Sprintf("%s.id", (&schema.Node{}).TableName()),
--		"name",
-+		"hosts_v1.name",
- 		"address",
- 		"address6",
- 		expr.ByteaField("endpoint_ip"),
-```
-
-**File**: `logic/hosts.go` (modified, +22/-0)
-```diff
-@@ -595,6 +595,28 @@ func GetHostNetworks(ctx context.Context, hostID string) []string {
- 	return nets
- }
- 
-+// HostsShareNetwork - returns true if the two hosts have at least one network in common
-+func HostsShareNetwork(ctx context.Context, hostID1, hostID2 string) bool {
-+	if hostID1 == hostID2 {
-+		return true
-+	}
-+	networks1 := GetHostNetworks(ctx, hostID1)
-+	if len(networks1) == 0 {
 +		return false
 +	}
-+	networks2 := GetHostNetworks(ctx, hostID2)
-+	shared := make(map[string]struct{}, len(networks1))
-+	for _, n := range networks1 {
-+		shared[n] = struct{}{}
-+	}
-+	for _, n := range networks2 {
-+		if _, ok := shared[n]; ok {
-+			return true
++	for _, t := range templates {
++		declaredKey := strings.SplitN(t, "=", 2)[0]
++		for _, key := range keys {
++			if declaredKey == key {
++				return true
++			}
 +		}
 +	}
 +	return false
 +}
 +
- // CheckHostPorts checks host endpoints to ensures that hosts on the same server
- // with the same endpoint have different listen ports
- // in the case of 64535 hosts or more with same endpoint, ports will not be changed
-```
-
-**File**: `logic/jwts.go` (modified, +77/-19)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"strings"
-+	"sync"
- 	"time"
- 
- 	"github.com/golang-jwt/jwt/v4"
-@@ -21,24 +22,66 @@ import (
- 	"github.com/gravitl/netmaker/servercfg"
- )
- 
--var jwtSecretKey []byte
-+var (
-+	jwtSecretKey   []byte
-+	jwtSecretKeyMu sync.RWMutex
-+)
-+
-+var ErrJWTSecretNotSet = errors.New("jwt secret not initialized")
-+
-+func getJWTSecretKey() []byte {
-+	jwtSecretKeyMu.RLock()
-+	defer jwtSecretKeyMu.RUnlock()
-+	return jwtSecretKey
++func routeDeclaresNetworkQuery(currentRoute *mux.Route) bool {
++	return routeDeclaresQuery(currentRoute, "network", "network_id")
 +}
 +
-+func setJWTSecretKey(key []byte) {
-+	jwtSecretKeyMu.Lock()
-+	defer jwtSecretKeyMu.Unlock()
-+	jwtSecretKey = key
++func routeDeclaresUsernameQuery(currentRoute *mux.Route) bool {
++	return routeDeclaresQuery(currentRoute, "username")
 +}
 +
-+func jwtKeyFunc(_ *jwt.Token) (interface{}, error) {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
-+		return nil, ErrJWTSecretNotSet
-+	}
-+	return key, nil
-+}
- 
- // SetJWTSecret - sets the jwt secret on server startup
- func SetJWTSecret() {
- 	currentSecret, jwtErr := GetJwtSecretValue()
- 	if jwtErr != nil {
- 		newValue := RandomString(64)
--		jwtSecretKey = []byte(newValue) // 512 bit random password
--		if err := StoreJWTSecret(string(jwtSecretKey)); err != nil {
-+		key := []byte(newValue) // 512 bit random password
-+		setJWTSecretKey(key)
-+		if err := StoreJWTSecret(string(key)); err != nil {
- 			logger.FatalLog("something went wrong when configuring JWT authentication")
- 		}
- 	} else {
--		jwtSecretKey = []byte(currentSecret)
-+		setJWTSecretKey([]byte(currentSecret))
- 	}
- }
- 
-+func LoadJWTSecret() error {
-+	currentSecret, err := GetJwtSecretValue()
-+	if err != nil {
-+		return err
-+	}
-+	if currentSecret == "" {
-+		return errors.New("jwt secret is empty")
-+	}
-+	setJWTSecretKey([]byte(currentSecret))
-+	return nil
-+}
-+
- // CreateJWT func will used to create the JWT while signing in and signing out
- func CreateJWT(uuid string, macAddress string, network string) (response string, err error) {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	expirationTime := time.Now().Add(15 * time.Minute)
- 	claims := &models.Claims{
- 		ID:         uuid,
-@@ -53,7 +96,7 @@ func CreateJWT(uuid string, macAddress string, network string) (response string,
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	tokenString, err := token.SignedString(jwtSecretKey)
-+	tokenString, err := token.SignedString(key)
- 	if err == nil {
- 		return tokenString, nil
- 	}
-@@ -62,6 +105,10 @@ func CreateJWT(uuid string, macAddress string, network string) (response string,
- 
- // CreateUserJWT - creates a user jwt token
- func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time, tokenID string) (response string, err error) {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	claims := &models.UserClaims{
- 		Scope:     scope.Level(ctx),
- 		ScopeID:   scope.ID(ctx),
-@@ -78,7 +125,7 @@ func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time,
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	tokenString, err := token.SignedString(jwtSecretKey)
-+	tokenString, err := token.SignedString(key)
- 	if err == nil {
- 		return tokenString, nil
- 	}
-@@ -87,6 +134,10 @@ func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time,
- 
- // CreateUserJWT - creates a user jwt token
- func CreateUserJWT(ctx context.Context, username string, appName string) (response string, err error) {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	duration := time.Duration(12) * time.Hour
- 	if scope.Level(ctx) == scope.TenantScope {
- 		duration = GetJwtValidityDuration(ctx)
-@@ -110,7 +161,7 @@ func CreateUserJWT(ctx context.Context, username string, appName string) (respon
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	tokenString, err := token.SignedString(jwtSecretKey)
-+	tokenString, err := token.SignedString(key)
- 	if err == nil {
- 		return tokenString, nil
- 	}
-@@ -123,6 +174,10 @@ func CreateUserJWT(ctx context.Context, username string, appName string) (respon
- // that PreAuthCheck can confirm the token was issued for the scope it's
- // being redeemed in.
- func CreatePreAuthToken(ctx context.Context, username string) (string, error) {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	claims := &models.UserClaims{
- 		Scope:     scope.Level(ctx),
- 		ScopeID:   scope.ID(ctx),
-@@ -138,22 +193,31 @@ func CreatePreAuthToken(ctx context.Context, username string) (string, error) {
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	return token.SignedString(jwtSecretKey)
-+	return token.SignedString(key)
- }
- 
- func GenerateOTPAuthURLSignature(url string) string {
--	signer := hmac.New(sha256.New, jwtSecretKey)
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
-+		logger.Log(0, "jwt secret not initialized, refusing to sign otp auth url")
-+		return ""
-+	}
-+	signer := hmac.New(sha256.New, key)
- 	signer.Write([]byte(url))
- 	return hex.EncodeToString(signer.Sum(nil))
- }
- 
- func VerifyOTPAuthURL(url, signature string) bool {
-+	key := getJWTSecretKey()
-+
-```
-
-**File**: `logic/security.go` (modified, +1/-3)
-```diff
-@@ -97,9 +97,7 @@ func PreAuthCheck(next http.Handler) http.HandlerFunc {
+ func userMiddleWare(handler http.Handler) http.Handler {
+ 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+ 		var params = mux.Vars(r)
+-		route, err := mux.CurrentRoute(r).GetPathTemplate()
++		currentRoute := mux.CurrentRoute(r)
++		route, err := currentRoute.GetPathTemplate()
  		if err != nil {
- 			// if no, then check the user has a pre-auth token.
- 			claims := &models.UserClaims{}
--			token, err := jwt.ParseWithClaims(authToken, claims, func(token *jwt.Token) (interface{}, error) {
--				return jwtSecretKey, nil
--			})
-+			token, err := jwt.ParseWithClaims(authToken, claims, jwtKeyFunc)
- 			if err != nil {
- 				ReturnErrorResponse(w, r, FormatError(Unauthorized_Err, "unauthorized"))
- 				return
-```
-
-**File**: `main.go` (modified, +17/-0)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"runtime/debug"
- 	"sync"
- 	"syscall"
-+	"time"
- 
- 	ch "github.com/gravitl/netmaker/clickhouse"
- 	"github.com/gravitl/netmaker/db"
-@@ -156,12 +157,28 @@ func initialize() { // Client Mode Prereq Check
- 			logger.Log(0, "error setting mq keys: ", err.Error())
- 		}
- 
-+	} else {
-+		if err := logic.LoadJWTSecret(); err != nil {
-+			logger.Log(0, "JWT secret not yet available from master pod, retrying in background: ", err.Error())
-+			go retryLoadJWTSecret()
-+		}
- 	}
- 
- 	//initialize cache
- 	initCache()
- 	_ = logic.CleanExpiredSSOStates()
-+}
- 
-+func retryLoadJWTSecret() {
-+	const retryInterval = 5 * time.Second
-+	for {
-+		time.Sleep(retryInterval)
-+		err := logic.LoadJWTSecret()
-+		if err == nil {
-+			logger.Log(0, "JWT secret loaded from master pod")
-+			return
-+		}
-+	}
- }
- 
- func initCache() {
-```
-
-**File**: `pro/controllers/tags.go` (modified, +1/-0)
-```diff
-@@ -306,6 +306,7 @@ func deleteTag(w http.ResponseWriter, r *http.Request) {
- 
- 	ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
- 	go func(ctx context.Context) {
-+		proLogic.RemoveTagFromNetwork(ctx, tag.ID, tag.Network)
- 		proLogic.RemoveDeviceTagFromAclPolicies(ctx, tag.ID, tag.Network)
- 		proLogic.RemoveTagFromPostureChecks(tag.ID, tag.Network)
- 		proLogic.RemoveTagFromNameservers(tag.ID, tag.Network)
-```
-
-**File**: `pro/logic/networks.go` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+package logic
-+
-+import (
-+	"context"
-+
-+	"github.com/gravitl/netmaker/models"
-+	"github.com/gravitl/netmaker/schema"
-+	"gorm.io/datatypes"
-+)
-+
-+func RemoveTagFromNetwork(ctx context.Context, tagID models.TagID, netID schema.NetworkID) error {
-+	network := &schema.Network{
-+		Name: string(netID),
-+	}
-+	err := network.Get(ctx)
-+	if err != nil {
-+		return err
-+	}
-+
-+	tags := make(datatypes.JSONSlice[string], 0, len(network.AutoRemoveTags))
-+
-+	for _, tag := range tags {
-+		if tag != tagID.String() {
-+			tags = append(tags, tag)
-+		}
-+	}
-+
-+	network.AutoRemoveTags = tags
-+	return network.UpdateAutoRemoveTags(ctx)
-+}
-```
-
----
-
-### Incident Patch 4: `c6e3ea19` (2026-09-13)
-**Commit Message**: fix(go): remove tag from network auto remove tags on delete;
-
-**File**: `pro/controllers/tags.go` (modified, +1/-0)
-```diff
-@@ -306,6 +306,7 @@ func deleteTag(w http.ResponseWriter, r *http.Request) {
- 
- 	ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
- 	go func(ctx context.Context) {
-+		proLogic.RemoveTagFromNetwork(ctx, tag.ID, tag.Network)
- 		proLogic.RemoveDeviceTagFromAclPolicies(ctx, tag.ID, tag.Network)
- 		proLogic.RemoveTagFromPostureChecks(tag.ID, tag.Network)
- 		proLogic.RemoveTagFromNameservers(tag.ID, tag.Network)
-```
-
-**File**: `pro/logic/networks.go` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+package logic
-+
-+import (
-+	"context"
-+
-+	"github.com/gravitl/netmaker/models"
-+	"github.com/gravitl/netmaker/schema"
-+	"gorm.io/datatypes"
-+)
-+
-+func RemoveTagFromNetwork(ctx context.Context, tagID models.TagID, netID schema.NetworkID) error {
-+	network := &schema.Network{
-+		Name: string(netID),
-+	}
-+	err := network.Get(ctx)
-+	if err != nil {
-+		return err
-+	}
-+
-+	tags := make(datatypes.JSONSlice[string], 0, len(network.AutoRemoveTags))
-+
-+	for _, tag := range tags {
-+		if tag != tagID.String() {
-+			tags = append(tags, tag)
-+		}
-+	}
-+
-+	network.AutoRemoveTags = tags
-+	return network.UpdateAutoRemoveTags(ctx)
-+}
-```
-
-**File**: `schema/networks.go` (modified, +13/-1)
-```diff
-@@ -167,8 +167,20 @@ func (n *Network) UpdateNodesUpdatedAt(ctx context.Context) error {
- 	}
- 
- 	return query.
--		Updates(map[string]interface{}{
-+		Updates(map[string]any{
- 			"nodes_updated_at": n.NodesUpdatedAt,
- 		}).
- 		Error
- }
-+
-+func (n *Network) UpdateAutoRemoveTags(ctx context.Context) error {
-+	query, err := n.baseIdentifierQuery(ctx)
-+	if err != nil {
-+		return err
-+	}
-+
-+	return query.
-+		Updates(map[string]any{
-+			"auto_remove_tags": n.AutoRemoveTags,
-+		}).Error
-+}
-```
-
----
-
-### Incident Patch 5: `aa458197` (2026-09-11)
-**Commit Message**: fix(go): guard jwt secret key with mutex;
-
-**File**: `logic/jwts.go` (modified, +43/-19)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"strings"
-+	"sync"
- 	"time"
- 
- 	"github.com/golang-jwt/jwt/v4"
-@@ -21,28 +22,45 @@ import (
- 	"github.com/gravitl/netmaker/servercfg"
- )
- 
--var jwtSecretKey []byte
-+var (
-+	jwtSecretKey   []byte
-+	jwtSecretKeyMu sync.RWMutex
-+)
- 
- var ErrJWTSecretNotSet = errors.New("jwt secret not initialized")
- 
-+func getJWTSecretKey() []byte {
-+	jwtSecretKeyMu.RLock()
-+	defer jwtSecretKeyMu.RUnlock()
-+	return jwtSecretKey
-+}
-+
-+func setJWTSecretKey(key []byte) {
-+	jwtSecretKeyMu.Lock()
-+	defer jwtSecretKeyMu.Unlock()
-+	jwtSecretKey = key
-+}
-+
- func jwtKeyFunc(_ *jwt.Token) (interface{}, error) {
--	if len(jwtSecretKey) == 0 {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
- 		return nil, ErrJWTSecretNotSet
- 	}
--	return jwtSecretKey, nil
-+	return key, nil
- }
- 
- // SetJWTSecret - sets the jwt secret on server startup
- func SetJWTSecret() {
- 	currentSecret, jwtErr := GetJwtSecretValue()
- 	if jwtErr != nil {
- 		newValue := RandomString(64)
--		jwtSecretKey = []byte(newValue) // 512 bit random password
--		if err := StoreJWTSecret(string(jwtSecretKey)); err != nil {
-+		key := []byte(newValue) // 512 bit random password
-+		setJWTSecretKey(key)
-+		if err := StoreJWTSecret(string(key)); err != nil {
- 			logger.FatalLog("something went wrong when configuring JWT authentication")
- 		}
- 	} else {
--		jwtSecretKey = []byte(currentSecret)
-+		setJWTSecretKey([]byte(currentSecret))
- 	}
- }
- 
-@@ -54,13 +72,14 @@ func LoadJWTSecret() error {
- 	if currentSecret == "" {
- 		return errors.New("jwt secret is empty")
- 	}
--	jwtSecretKey = []byte(currentSecret)
-+	setJWTSecretKey([]byte(currentSecret))
- 	return nil
- }
- 
- // CreateJWT func will used to create the JWT while signing in and signing out
- func CreateJWT(uuid string, macAddress string, network string) (response string, err error) {
--	if len(jwtSecretKey) == 0 {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
- 		return "", ErrJWTSecretNotSet
- 	}
- 	expirationTime := time.Now().Add(15 * time.Minute)
-@@ -77,7 +96,7 @@ func CreateJWT(uuid string, macAddress string, network string) (response string,
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	tokenString, err := token.SignedString(jwtSecretKey)
-+	tokenString, err := token.SignedString(key)
- 	if err == nil {
- 		return tokenString, nil
- 	}
-@@ -86,7 +105,8 @@ func CreateJWT(uuid string, macAddress string, network string) (response string,
- 
- // CreateUserJWT - creates a user jwt token
- func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time, tokenID string) (response string, err error) {
--	if len(jwtSecretKey) == 0 {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
- 		return "", ErrJWTSecretNotSet
- 	}
- 	claims := &models.UserClaims{
-@@ -105,7 +125,7 @@ func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time,
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	tokenString, err := token.SignedString(jwtSecretKey)
-+	tokenString, err := token.SignedString(key)
- 	if err == nil {
- 		return tokenString, nil
- 	}
-@@ -114,7 +134,8 @@ func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time,
- 
- // CreateUserJWT - creates a user jwt token
- func CreateUserJWT(ctx context.Context, username string, appName string) (response string, err error) {
--	if len(jwtSecretKey) == 0 {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
- 		return "", ErrJWTSecretNotSet
- 	}
- 	duration := time.Duration(12) * time.Hour
-@@ -140,7 +161,7 @@ func CreateUserJWT(ctx context.Context, username string, appName string) (respon
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	tokenString, err := token.SignedString(jwtSecretKey)
-+	tokenString, err := token.SignedString(key)
- 	if err == nil {
- 		return tokenString, nil
- 	}
-@@ -153,7 +174,8 @@ func CreateUserJWT(ctx context.Context, username string, appName string) (respon
- // that PreAuthCheck can confirm the token was issued for the scope it's
- // being redeemed in.
- func CreatePreAuthToken(ctx context.Context, username string) (string, error) {
--	if len(jwtSecretKey) == 0 {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
- 		return "", ErrJWTSecretNotSet
- 	}
- 	claims := &models.UserClaims{
-@@ -171,29 +193,31 @@ func CreatePreAuthToken(ctx context.Context, username string) (string, error) {
- 	}
- 
- 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
--	return token.SignedString(jwtSecretKey)
-+	return token.SignedString(key)
- }
- 
- func GenerateOTPAuthURLSignature(url string) string {
--	if len(jwtSecretKey) == 0 {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
- 		logger.Log(0, "jwt secret not initialized, refusing to sign otp auth url")
- 		return ""
- 	}
--	signer := hmac.New(sha256.New, jwtSecretKey)
-+	signer := hmac.New(sha256.New, key)
- 	signer.Write([]byte(url))
- 	return hex.EncodeToString(signer.Sum(nil))
- }
- 
- func VerifyOTPAuthURL(url, signature string) bool {
--	if len(jwtSecretKey) == 0 {
-+	key := getJWTSecretKey()
-+	if len(key) == 0 {
- 		return false
- 	}
- 	si
-```
-
----
-
-### Incident Patch 6: `bb37877f` (2026-09-11)
-**Commit Message**: fix(go): join when search query provided;
-
-**File**: `controllers/node.go` (modified, +4/-2)
-```diff
-@@ -255,10 +255,12 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
- 
- 	var filters, options []dbtypes.Option
- 	filters = append(filters, dbtypes.WithFilter("network_id", network.ID))
--	if len(osFilters) > 0 {
-+	if len(osFilters) > 0 || q != "" {
- 		filters = append(filters, func(db *gorm.DB) *gorm.DB {
- 			return db.Joins("JOIN hosts_v1 ON hosts_v1.id = nodes_v1.host_id")
- 		})
-+	}
-+	if len(osFilters) > 0 {
- 		filters = append(filters, dbtypes.WithFilter("hosts_v1.os", osFilters...))
- 	}
- 	filters = append(filters, dbtypes.WithFilter("status", statusFilters...))
-@@ -288,7 +290,7 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
- 	filters = append(filters, dbtypes.WithSearchQuery(
- 		q,
- 		fmt.Sprintf("%s.id", (&schema.Node{}).TableName()),
--		"name",
-+		"hosts_v1.name",
- 		"address",
- 		"address6",
- 		expr.ByteaField("endpoint_ip"),
-```
-
----
-
-### Incident Patch 7: `ba2d7b46` (2026-09-10)
-**Commit Message**: fix(go): attempt reload jwt secret in worker pods if not set; prevent jwt signing if jwt secret not set;
-
-**File**: `logic/jwts.go` (modified, +43/-9)
-```diff
-@@ -23,6 +23,15 @@ import (
- 
- var jwtSecretKey []byte
- 
-+var ErrJWTSecretNotSet = errors.New("jwt secret not initialized")
-+
-+func jwtKeyFunc(_ *jwt.Token) (interface{}, error) {
-+	if len(jwtSecretKey) == 0 {
-+		return nil, ErrJWTSecretNotSet
-+	}
-+	return jwtSecretKey, nil
-+}
-+
- // SetJWTSecret - sets the jwt secret on server startup
- func SetJWTSecret() {
- 	currentSecret, jwtErr := GetJwtSecretValue()
-@@ -37,8 +46,23 @@ func SetJWTSecret() {
- 	}
- }
- 
-+func LoadJWTSecret() error {
-+	currentSecret, err := GetJwtSecretValue()
-+	if err != nil {
-+		return err
-+	}
-+	if currentSecret == "" {
-+		return errors.New("jwt secret is empty")
-+	}
-+	jwtSecretKey = []byte(currentSecret)
-+	return nil
-+}
-+
- // CreateJWT func will used to create the JWT while signing in and signing out
- func CreateJWT(uuid string, macAddress string, network string) (response string, err error) {
-+	if len(jwtSecretKey) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	expirationTime := time.Now().Add(15 * time.Minute)
- 	claims := &models.Claims{
- 		ID:         uuid,
-@@ -62,6 +86,9 @@ func CreateJWT(uuid string, macAddress string, network string) (response string,
- 
- // CreateUserJWT - creates a user jwt token
- func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time, tokenID string) (response string, err error) {
-+	if len(jwtSecretKey) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	claims := &models.UserClaims{
- 		Scope:     scope.Level(ctx),
- 		ScopeID:   scope.ID(ctx),
-@@ -87,6 +114,9 @@ func CreateUserAccessJwtToken(ctx context.Context, username string, d time.Time,
- 
- // CreateUserJWT - creates a user jwt token
- func CreateUserJWT(ctx context.Context, username string, appName string) (response string, err error) {
-+	if len(jwtSecretKey) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	duration := time.Duration(12) * time.Hour
- 	if scope.Level(ctx) == scope.TenantScope {
- 		duration = GetJwtValidityDuration(ctx)
-@@ -123,6 +153,9 @@ func CreateUserJWT(ctx context.Context, username string, appName string) (respon
- // that PreAuthCheck can confirm the token was issued for the scope it's
- // being redeemed in.
- func CreatePreAuthToken(ctx context.Context, username string) (string, error) {
-+	if len(jwtSecretKey) == 0 {
-+		return "", ErrJWTSecretNotSet
-+	}
- 	claims := &models.UserClaims{
- 		Scope:     scope.Level(ctx),
- 		ScopeID:   scope.ID(ctx),
-@@ -142,12 +175,19 @@ func CreatePreAuthToken(ctx context.Context, username string) (string, error) {
- }
- 
- func GenerateOTPAuthURLSignature(url string) string {
-+	if len(jwtSecretKey) == 0 {
-+		logger.Log(0, "jwt secret not initialized, refusing to sign otp auth url")
-+		return ""
-+	}
- 	signer := hmac.New(sha256.New, jwtSecretKey)
- 	signer.Write([]byte(url))
- 	return hex.EncodeToString(signer.Sum(nil))
- }
- 
- func VerifyOTPAuthURL(url, signature string) bool {
-+	if len(jwtSecretKey) == 0 {
-+		return false
-+	}
- 	signatureBytes, err := hex.DecodeString(signature)
- 	if err != nil {
- 		return false
-@@ -173,9 +213,7 @@ func GetUserNameFromToken(ctx context.Context, authtoken string) (username strin
- 		return MasterUser, nil
- 	}
- 
--	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
--		return jwtSecretKey, nil
--	})
-+	token, err := jwt.ParseWithClaims(tokenString, claims, jwtKeyFunc)
- 	if err != nil {
- 		logger.Log(4, "unauthorized: jwt parse/signature failed:", err.Error())
- 		return "", Unauthorized_Err
-@@ -238,9 +276,7 @@ func VerifyUserToken(ctx context.Context, tokenString string) (username string,
- 		return MasterUser, true, true, nil
- 	}
- 
--	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
--		return jwtSecretKey, nil
--	})
-+	token, err := jwt.ParseWithClaims(tokenString, claims, jwtKeyFunc)
- 	if err != nil {
- 		return "", false, false, err
- 	}
-@@ -375,9 +411,7 @@ func VerifyHostToken(ctx context.Context, tokenString string) (hostID string, ma
- 		return MasterUser, "", "", nil
- 	}
- 
--	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
--		return jwtSecretKey, nil
--	})
-+	token, err := jwt.ParseWithClaims(tokenString, claims, jwtKeyFunc)
- 
- 	if token != nil && token.Valid {
- 		if !strings.HasPrefix(claims.Subject, "node|") {
-```
-
-**File**: `logic/security.go` (modified, +1/-3)
-```diff
-@@ -97,9 +97,7 @@ func PreAuthCheck(next http.Handler) http.HandlerFunc {
- 		if err != nil {
- 			// if no, then check the user has a pre-auth token.
- 			claims := &models.UserClaims{}
--			token, err := jwt.ParseWithClaims(authToken, claims, func(token *jwt.Token) (interface{}, error) {
--				return jwtSecretKey, nil
--			})
-+			token, err := jwt.ParseWithClaims(authToken, claims, jwtKeyFunc)
- 			if err != nil {
- 				ReturnErrorResponse(w, r, FormatError(Unauthorized_Err, "unauthorized"))
- 				return
-```
-
-**File**: `main.go` (modified, +17/-0)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"runtime/debug"
- 	"sync"
- 	"syscall"
-+	"time"
- 
- 	ch "github.com/gravitl/netmaker/clickhouse"
- 	"github.com/gravitl/netmaker/db"
-@@ -156,12 +157,28 @@ func initialize() { // Client Mode Prereq Check
- 			logger.Log(0, "error setting mq keys: ", err.Error())
- 		}
- 
-+	} else {
-+		if err := logic.LoadJWTSecret(); err != nil {
-+			logger.Log(0, "JWT secret not yet available from master pod, retrying in background: ", err.Error())
-+			go retryLoadJWTSecret()
-+		}
- 	}
- 
- 	//initialize cache
- 	initCache()
- 	_ = logic.CleanExpiredSSOStates()
-+}
- 
-+func retryLoadJWTSecret() {
-+	const retryInterval = 5 * time.Second
-+	for {
-+		time.Sleep(retryInterval)
-+		err := logic.LoadJWTSecret()
-+		if err == nil {
-+			logger.Log(0, "JWT secret loaded from master pod")
-+			return
-+		}
-+	}
- }
- 
- func initCache() {
-```
-
----
-
-### Incident Patch 8: `e58d8d6c` (2026-09-10)
-**Commit Message**: fix(go): populate sender identity from auth token; check if hosts share network;
-
-**File**: `controllers/hosts.go` (modified, +18/-4)
-```diff
-@@ -1335,9 +1335,10 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	// confirm host exists
--	err = (&schema.Host{
-+	senderHost := &schema.Host{
- 		ID: hostID,
--	}).Get(r.Context())
-+	}
-+	err = senderHost.Get(r.Context())
- 	if err != nil {
- 		logger.Log(0, r.Header.Get("user"), "failed to get host:", err.Error())
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
-@@ -1358,14 +1359,18 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	signal.IsPro = servercfg.IsPro
--	hostID, err = uuid.Parse(signal.ToHostID)
-+	// bind the sender identity to the authenticated host rather than trusting the request body
-+	signal.FromHostID = senderHost.ID.String()
-+	signal.FromHostPubKey = senderHost.PublicKey.String()
-+
-+	toHostID, err := uuid.Parse(signal.ToHostID)
- 	if err != nil {
- 		err = fmt.Errorf("failed to parse host id: %w", err)
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
- 		return
- 	}
- 	peerHost := &schema.Host{
--		ID: hostID,
-+		ID: toHostID,
- 	}
- 	err = peerHost.Get(r.Context())
- 	if err != nil {
-@@ -1376,6 +1381,15 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		)
- 		return
- 	}
-+	// the target host must share a network with the authenticated sender
-+	if !logic.HostsShareNetwork(r.Context(), senderHost.ID.String(), peerHost.ID.String()) {
-+		logic.ReturnErrorResponse(
-+			w,
-+			r,
-+			logic.FormatError(errors.New("failed to signal, peer not found"), "badrequest"),
-+		)
-+		return
-+	}
- 	err = mq.HostUpdate(&models.HostUpdate{
- 		Action: models.SignalHost,
- 		Host:   *peerHost,
-```
-
-**File**: `logic/hosts.go` (modified, +22/-0)
-```diff
-@@ -595,6 +595,28 @@ func GetHostNetworks(ctx context.Context, hostID string) []string {
- 	return nets
- }
- 
-+// HostsShareNetwork - returns true if the two hosts have at least one network in common
-+func HostsShareNetwork(ctx context.Context, hostID1, hostID2 string) bool {
-+	if hostID1 == hostID2 {
-+		return true
-+	}
-+	networks1 := GetHostNetworks(ctx, hostID1)
-+	if len(networks1) == 0 {
-+		return false
-+	}
-+	networks2 := GetHostNetworks(ctx, hostID2)
-+	shared := make(map[string]struct{}, len(networks1))
-+	for _, n := range networks1 {
-+		shared[n] = struct{}{}
-+	}
-+	for _, n := range networks2 {
-+		if _, ok := shared[n]; ok {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
- // CheckHostPorts checks host endpoints to ensures that hosts on the same server
- // with the same endpoint have different listen ports
- // in the case of 64535 hosts or more with same endpoint, ports will not be changed
-```
-
----
-
-### Incident Patch 9: `8d5a10cb` (2026-09-09)
-**Commit Message**: Merge pull request #4146 from gravitl/v1.7.0-exitnode-acl-fix
-
-v1.7.0: fix: do not auto-assign exit node from ACL access
-
-**File**: `logic/acls_selected_ips_test.go` (modified, +111/-4)
-```diff
-@@ -126,7 +126,7 @@ func TestAppendEgressPolicyRangeExpandsInternet(t *testing.T) {
- 	}
- }
- 
--func TestApplyInternetExitFromDeviceACL(t *testing.T) {
-+func TestAddEgressInfoToPeerByAccess_DoesNotAutoFullTunnelFromInternetACL(t *testing.T) {
- 	originalGetEgressByID := getEgressByID
- 	t.Cleanup(func() { getEgressByID = originalGetEgressByID })
- 
-@@ -138,6 +138,13 @@ func TestApplyInternetExitFromDeviceACL(t *testing.T) {
- 			Network: "netmaker",
- 		},
- 	}
-+	exitNode := models.Node{
-+		CommonNode: models.CommonNode{
-+			ID:      exitID,
-+			Network: "netmaker",
-+			IsGw:    true,
-+		},
-+	}
- 	eli := []schema.Egress{{
- 		ID:      "inet-eg",
- 		Network: "netmaker",
-@@ -146,21 +153,121 @@ func TestApplyInternetExitFromDeviceACL(t *testing.T) {
- 		Range:   "*",
- 		Nodes:   datatypes.JSONMap{exitID.String(): json.Number("100")},
- 	}}
-+	getEgressByID = func(id string) (schema.Egress, error) {
-+		if id == "inet-eg" {
-+			return eli[0], nil
-+		}
-+		return schema.Egress{}, errors.New("not found")
-+	}
- 	acls := []models.Acl{{
- 		Enabled: true,
- 		Src:     []models.AclPolicyTag{{ID: models.NodeID, Value: clientID.String()}},
- 		Dst:     []models.AclPolicyTag{{ID: models.EgressID, Value: "inet-eg"}},
- 	}}
-+
-+	// ACL grants access to the internet egress, but the client did not select it.
-+	AddEgressInfoToPeerByAccess(&client, &exitNode, eli, acls, false)
-+	for _, r := range exitNode.EgressDetails.EgressGatewayRanges {
-+		if r == IPv4Network || r == IPv6Network {
-+			t.Fatalf("ACL access alone must not attach default route %s; got %v", r, exitNode.EgressDetails.EgressGatewayRanges)
-+		}
-+	}
-+	if InternetExitRoutingNodeID(&client) != "" {
-+		t.Fatalf("client must not be treated as exit client without selection, got %q", InternetExitRoutingNodeID(&client))
-+	}
-+
-+	// Explicit assignment (legacy InternetGwID) still attaches full-tunnel ranges.
-+	client.InternetGwID = exitID.String()
-+	exitNode.EgressDetails = models.EgressDetails{}
-+	AddEgressInfoToPeerByAccess(&client, &exitNode, eli, acls, false)
-+	hasV4 := false
-+	for _, r := range exitNode.EgressDetails.EgressGatewayRanges {
-+		if r == IPv4Network {
-+			hasV4 = true
-+		}
-+	}
-+	if !hasV4 {
-+		t.Fatalf("explicit exit assignment should attach 0.0.0.0/0, got %v", exitNode.EgressDetails.EgressGatewayRanges)
-+	}
-+}
-+
-+func TestSuppressInternetExitIfNoACLAccess(t *testing.T) {
-+	originalGetEgressByID := getEgressByID
-+	t.Cleanup(func() { getEgressByID = originalGetEgressByID })
-+
-+	clientID := uuid.New()
-+	exitID := uuid.New()
-+	eli := []schema.Egress{{
-+		ID:      "inet-eg",
-+		Network: "netmaker",
-+		Status:  true,
-+		Type:    schema.EgressTypeInternet,
-+		Range:   "*",
-+		Nodes:   datatypes.JSONMap{exitID.String(): json.Number("100")},
-+	}}
- 	getEgressByID = func(id string) (schema.Egress, error) {
- 		if id == "inet-eg" {
- 			return eli[0], nil
- 		}
- 		return schema.Egress{}, errors.New("not found")
- 	}
- 
--	applyInternetExitFromDeviceACL(&client, eli, acls)
--	if client.InternetGwID != exitID.String() {
--		t.Fatalf("expected InternetGwID %s from internet ACL, got %q", exitID, client.InternetGwID)
-+	allowACL := []models.Acl{{
-+		Enabled: true,
-+		Src:     []models.AclPolicyTag{{ID: models.NodeID, Value: clientID.String()}},
-+		Dst:     []models.AclPolicyTag{{ID: models.EgressID, Value: "inet-eg"}},
-+	}}
-+	denyACLs := []models.Acl{{
-+		Enabled: true,
-+		Src:     []models.AclPolicyTag{{ID: models.NodeID, Value: clientID.String()}},
-+		Dst:     []models.AclPolicyTag{{ID: models.NodeTagID, Value: exitID.String()}}, // gateway node only, not egress
-+	}}
-+
-+	// Assigned exit + ACL grants egress access → keep exit.
-+	client := models.Node{
-+		CommonNode: models.CommonNode{
-+			ID:      clientID,
-+			Network: "netmaker",
-+		},
-+		SelectedInternetEgressID: "inet-eg",
-+		InternetGwID:             exitID.String(),
-+	}
-+	SuppressInternetExitIfNoACLAccess(&client, eli, allowACL, false)
-+	if client.SelectedInternetEgressID != "inet-eg" || client.InternetGwID != exitID.String() {
-+		t.Fatalf("expected exit kept when ACL allows egress, got selection=%q gw=%q",
-+			client.SelectedInternetEgressID, client.InternetGwID)
-+	}
-+
-+	// Assigned exit but policy does not include exit egress → suppress for this update.
-+	client.SelectedInternetEgressID = "inet-eg"
-+	client.InternetGwID = exitID.String()
-+	SuppressInternetExitIfNoACLAccess(&client, eli, denyACLs, false)
-+	if client.SelectedInternetEgressID != "" || client.InternetGwID != "" {
-+		t.Fatalf("expected exit suppressed without egress ACL, got selection=%q gw=%q",
-+			client.SelectedInternetEgressID, client.InternetGwID)
-+	}
-+
-+	// Default device policy on → do not suppress even without egress ACL.
-+	client.SelectedInternetEgressID = "inet-eg"
-+	client.InternetGwID = exitID.String()
-+	SuppressInternetExitIfNoACLAccess(&client, eli, denyACLs, true)
-+	if client.SelectedInternetEgressID != "inet-eg" || client.InternetGwID != exitID.String() {
-+		t.Fatalf("expected exit kept when default policy enabled, got selection=%q gw=%q",
-+			client.SelectedInte
-```
-
-**File**: `logic/egress.go` (modified, +51/-26)
-```diff
-@@ -399,35 +399,60 @@ func ResolveInternetExitRoutingNode(node *models.Node) {
- 	}
- }
- 
--// applyInternetExitFromDeviceACL sets InternetGwID in-memory when a device ACL
--// grants this node access to a single internet egress and no exit is selected.
--// That attaches the exit node peer (0.0.0.0/0, default gw) the same way explicit
--// exit selection does. Multiple internet exits still require an explicit choice.
--func applyInternetExitFromDeviceACL(node *models.Node, eli []schema.Egress, acls []models.Acl) {
--	if node == nil || node.SelectedInternetEgressID != "" || node.InternetGwID != "" {
--		return
-+// assignedInternetEgress returns the active internet egress this node is configured to use
-+// (SelectedInternetEgressID, or legacy InternetGwID matched against eli routing nodes).
-+func assignedInternetEgress(node *models.Node, eli []schema.Egress) *schema.Egress {
-+	if node == nil {
-+		return nil
- 	}
--	routingID := ""
--	for i := range eli {
--		e := eli[i]
--		if !e.Status || e.Network != node.Network || !IsEgressInternetGateway(e) {
--			continue
+ 			logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
+ 			return
+@@ -29,11 +54,12 @@ func userMiddleWare(handler http.Handler) http.Handler {
+ 		r.Header.Set("TARGET_RSRC_ID", "")
+ 		r.Header.Set("RAC", "")
+ 		r.Header.Set("NET_ID", params["network"])
+-		if r.URL.Query().Get("network") != "" {
+-			r.Header.Set("NET_ID", r.URL.Query().Get("network"))
 -		}
--		if !DoesNodeHaveAccessToEgress(node, &e, acls) {
--			continue
-+	if node.SelectedInternetEgressID != "" {
-+		for i := range eli {
-+			e := &eli[i]
-+			if e.ID == node.SelectedInternetEgressID && e.Status && e.Network == node.Network && IsEgressInternetGateway(*e) {
-+				return e
+-		if r.URL.Query().Get("network_id") != "" {
+-			r.Header.Set("NET_ID", r.URL.Query().Get("network_id"))
++		if params["network"] == "" && routeDeclaresNetworkQuery(currentRoute) {
++			if v := r.URL.Query().Get("network"); v != "" {
++				r.Header.Set("NET_ID", v)
++			} else if v := r.URL.Query().Get("network_id"); v != "" {
++				r.Header.Set("NET_ID", v)
 +			}
  		}
--		id := FirstInternetEgressRoutingNodeID(e)
--		if id == "" || id == node.ID.String() {
-+		return nil
-+	}
-+	if node.InternetGwID == "" {
-+		return nil
-+	}
-+	for i := range eli {
-+		e := &eli[i]
-+		if !e.Status || e.Network != node.Network || !IsEgressInternetGateway(*e) {
- 			continue
- 		}
--		if routingID != "" && routingID != id {
--			return
-+		if _, ok := e.Nodes[node.InternetGwID]; ok {
-+			return e
- 		}
--		routingID = id
- 	}
--	if routingID != "" {
--		node.InternetGwID = routingID
-+	return nil
-+}
-+
-+// SuppressInternetExitIfNoACLAccess clears the in-memory exit assignment for this peer
-+// update when the node is not allowed to use its assigned internet egress. Sticky DB
-+// selection is preserved; full-tunnel and default-gw changes are not applied.
-+//
-+// Exit is applied when the node is assigned an exit and any of:
-+//   - the default device (all-resources) policy is enabled
-+//   - an enabled policy that includes this node has dst all-resources ("*")
-+//   - an enabled policy that includes this node has the exit egress in dst
-+func SuppressInternetExitIfNoACLAccess(node *models.Node, eli []schema.Egress, acls []models.Acl, defaultDevicePolicyEnabled bool) {
-+	if node == nil || defaultDevicePolicyEnabled {
-+		return
-+	}
-+	if node.SelectedInternetEgressID == "" && node.InternetGwID == "" {
-+		return
-+	}
-+	e := assignedInternetEgress(node, eli)
-+	if e == nil {
-+		return
-+	}
-+	if DoesNodeHaveAccessToEgress(node, e, acls) {
-+		return
- 	}
-+	node.SelectedInternetEgressID = ""
-+	node.InternetGwID = ""
- }
+ 		if strings.Contains(route, "host") || strings.Contains(route, "nodes") || strings.Contains(route, "pending_hosts") {
+ 			r.Header.Set("TARGET_RSRC", schema.HostRsrc.String())
+@@ -138,9 +164,8 @@ func userMiddleWare(handler http.Handler) http.Handler {
  
- // FirstInternetEgressRoutingNodeID returns a routing node ID from an internet egress.
-@@ -1116,10 +1141,10 @@ func AddEgressInfoToPeerByAccess(node, targetNode *models.Node, eli []schema.Egr
- 		if !e.Status || e.Network != targetNode.Network {
- 			continue
+ 		if userID, ok := params["username"]; ok {
+ 			r.Header.Set("TARGET_RSRC_ID", userID)
+-		} else {
+-			username := r.URL.Query().Get("username")
+-			if username != "" {
++		} else if routeDeclaresUsernameQuery(currentRoute) {
++			if username := r.URL.Query().Get("username"); username != "" {
+ 				r.Header.Set("TARGET_RSRC_ID", username)
+ 			}
  		}
--		if IsEgressInternetGateway(e) && !usesPeerAsInternetExit(node, targetNode) && isDefaultPolicyActive {
--			// Default-allow must not auto-full-tunnel every peer. Explicit exit
--			// selection or a specific ACL (handled below when default is off)
--			// is required to attach 0.0.0.0/0.
-+		if IsEgressInternetGateway(e) && !usesPeerAsInternetExit(node, targetNode) {
-+			// Never auto-full-tunnel from ACL/gateway access alone. Full-tunnel
-+			// (0.0.0.0/0, ::/0) requires explicit exit selection
-+			// (SelectedInternetEgressID) or a legacy InternetGwID assignment.
- 			continue
- 		}
- 		if !isDefaultPolicyActive {
 ```
 
-**File**: `logic/peers.go` (modified, +1/-3)
+**File**: `controllers/server.go` (modified, +5/-0)
 ```diff
-@@ -326,9 +326,7 @@ func GetPeerUpdateForHost(ctx context.Context, network string, host *schema.Host
- 		defaultDevicePolicy, _ := GetDefaultPolicy(ctx, schema.NetworkID(node.Network), models.DevicePolicy)
- 		GetNodeEgressInfo(&node, eli, acls)
- 		ResolveInternetExitRoutingNode(&node)
--		if !defaultDevicePolicy.Enabled {
--			applyInternetExitFromDeviceACL(&node, eli, acls)
--		}
-+		SuppressInternetExitIfNoACLAccess(&node, eli, acls, defaultDevicePolicy.Enabled)
- 		egsWithDomain := ListAllByRoutingNodeWithDomain(eli, node.ID.String())
- 		if len(egsWithDomain) > 0 {
- 			hostPeerUpdate.EgressWithDomains = append(hostPeerUpdate.EgressWithDomains, egsWithDomain...)
+@@ -228,15 +228,20 @@ func getConfig(w http.ResponseWriter, r *http.Request) {
+ // @Success     200 {object} models.ServerSettings
+ func getSettings(w http.ResponseWriter, r *http.Request) {
+ 	scfg := logic.GetServerSettings(r.Context())
++
+ 	if scfg.ClientSecret != "" {
+ 		scfg.ClientSecret = logic.Mask()
+ 	}
++	if scfg.GoogleSACredsJson != "" {
++		scfg.GoogleSACredsJson = logic.Mask()
++	}
+ 	if scfg.OktaAPIToken != "" {
+ 		scfg.OktaAPIToken = logic.Mask()
+ 	}
+ 	if scfg.EmailSenderPassword != "" {
+ 		scfg.EmailSenderPassword = logic.Mask()
+ 	}
++
+ 	logic.ReturnSuccessResponseWithJson(w, r, scfg, "fetched server settings successfully")
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 10: `a42e7632` (2026-09-09)
-**Commit Message**: v1.7.0: fix: require ACL access for assigned exit nodes
+### Incident Patch 2: `04c2bf6a` (2026-10-15)
+**Commit Message**: Merge pull request #4173 from kushalShukla-web/feature/graceful-shutdown
 
-Only apply full-tunnel when a node is assigned an exit and policy allows
-it (default all-resources, dst '*', or the exit egress in dst).
+fix: add graceful shutdown handling and panic recovery for database
 
-**File**: `logic/acls_selected_ips_test.go` (modified, +80/-0)
+**File**: `main.go` (modified, +19/-4)
 ```diff
-@@ -191,6 +191,86 @@ func TestAddEgressInfoToPeerByAccess_DoesNotAutoFullTunnelFromInternetACL(t *tes
- 	}
- }
- 
-+func TestSuppressInternetExitIfNoACLAccess(t *testing.T) {
-+	originalGetEgressByID := getEgressByID
-+	t.Cleanup(func() { getEgressByID = originalGetEgressByID })
-+
-+	clientID := uuid.New()
-+	exitID := uuid.New()
-+	eli := []schema.Egress{{
-+		ID:      "inet-eg",
-+		Network: "netmaker",
-+		Status:  true,
-+		Type:    schema.EgressTypeInternet,
-+		Range:   "*",
-+		Nodes:   datatypes.JSONMap{exitID.String(): json.Number("100")},
-+	}}
-+	getEgressByID = func(id string) (schema.Egress, error) {
-+		if id == "inet-eg" {
-+			return eli[0], nil
-+		}
-+		return schema.Egress{}, errors.New("not found")
-+	}
-+
-+	allowACL := []models.Acl{{
-+		Enabled: true,
-+		Src:     []models.AclPolicyTag{{ID: models.NodeID, Value: clientID.String()}},
-+		Dst:     []models.AclPolicyTag{{ID: models.EgressID, Value: "inet-eg"}},
-+	}}
-+	denyACLs := []models.Acl{{
-+		Enabled: true,
-+		Src:     []models.AclPolicyTag{{ID: models.NodeID, Value: clientID.String()}},
-+		Dst:     []models.AclPolicyTag{{ID: models.NodeTagID, Value: exitID.String()}}, // gateway node only, not egress
-+	}}
-+
-+	// Assigned exit + ACL grants egress access → keep exit.
-+	client := models.Node{
-+		CommonNode: models.CommonNode{
-+			ID:      clientID,
-+			Network: "netmaker",
-+		},
-+		SelectedInternetEgressID: "inet-eg",
-+		InternetGwID:             exitID.String(),
-+	}
-+	SuppressInternetExitIfNoACLAccess(&client, eli, allowACL, false)
-+	if client.SelectedInternetEgressID != "inet-eg" || client.InternetGwID != exitID.String() {
-+		t.Fatalf("expected exit kept when ACL allows egress, got selection=%q gw=%q",
-+			client.SelectedInternetEgressID, client.InternetGwID)
-+	}
-+
-+	// Assigned exit but policy does not include exit egress → suppress for this update.
-+	client.SelectedInternetEgressID = "inet-eg"
-+	client.InternetGwID = exitID.String()
-+	SuppressInternetExitIfNoACLAccess(&client, eli, denyACLs, false)
-+	if client.SelectedInternetEgressID != "" || client.InternetGwID != "" {
-+		t.Fatalf("expected exit suppressed without egress ACL, got selection=%q gw=%q",
-+			client.SelectedInternetEgressID, client.InternetGwID)
-+	}
-+
-+	// Default device policy on → do not suppress even without egress ACL.
-+	client.SelectedInternetEgressID = "inet-eg"
-+	client.InternetGwID = exitID.String()
-+	SuppressInternetExitIfNoACLAccess(&client, eli, denyACLs, true)
-+	if client.SelectedInternetEgressID != "inet-eg" || client.InternetGwID != exitID.String() {
-+		t.Fatalf("expected exit kept when default policy enabled, got selection=%q gw=%q",
-+			client.SelectedInternetEgressID, client.InternetGwID)
-+	}
-+
-+	// Policy includes node with dst all-resources ("*") → keep assigned exit.
-+	allResourcesACL := []models.Acl{{
-+		Enabled: true,
-+		Src:     []models.AclPolicyTag{{ID: models.NodeID, Value: clientID.String()}},
-+		Dst:     []models.AclPolicyTag{{ID: models.NodeTagID, Value: "*"}},
-+	}}
-+	client.SelectedInternetEgressID = "inet-eg"
-+	client.InternetGwID = exitID.String()
-+	SuppressInternetExitIfNoACLAccess(&client, eli, allResourcesACL, false)
-+	if client.SelectedInternetEgressID != "inet-eg" || client.InternetGwID != exitID.String() {
-+		t.Fatalf("expected exit kept when policy dst is all-resources, got selection=%q gw=%q",
-+			client.SelectedInternetEgressID, client.InternetGwID)
-+	}
-+}
-+
- func TestGetEgressToEgressPoliciesForNode(t *testing.T) {
- 	originalGetEgressByID := getEgressByID
- 	originalGetEgressByNetwork := getEgressByNetwork
-```
-
-**File**: `logic/egress.go` (modified, +56/-0)
-```diff
-@@ -399,6 +399,62 @@ func ResolveInternetExitRoutingNode(node *models.Node) {
- 	}
- }
- 
-+// assignedInternetEgress returns the active internet egress this node is configured to use
-+// (SelectedInternetEgressID, or legacy InternetGwID matched against eli routing nodes).
-+func assignedInternetEgress(node *models.Node, eli []schema.Egress) *schema.Egress {
-+	if node == nil {
-+		return nil
-+	}
-+	if node.SelectedInternetEgressID != "" {
-+		for i := range eli {
-+			e := &eli[i]
-+			if e.ID == node.SelectedInternetEgressID && e.Status && e.Network == node.Network && IsEgressInternetGateway(*e) {
-+				return e
-+			}
-+		}
-+		return nil
-+	}
-+	if node.InternetGwID == "" {
-+		return nil
-+	}
-+	for i := range eli {
-+		e := &eli[i]
-+		if !e.Status || e.Network != node.Network || !IsEgressInternetGateway(*e) {
-+			continue
-+		}
-+		if _, ok := e.Nodes[node.InternetGwID]; ok {
-+			return e
-+		}
-+	}
-+	return nil
-+}
-+
-+// SuppressInternetExitIfNoACLAccess clears the in-memory exit assignment for this peer
-+// update when the node is not allowed to use its assigned internet egress. Sticky DB
-+// selection is preserved; full-tunnel and default-gw changes are not applied.
-+//
-+// Exit is applied when the node is assigned an exit and any of:
-+//   - the default device (all-resources) policy is enabled
-+//   - an enabled policy that includes this node has dst all-resources ("*")
-+//   - an enabled policy that includes this node has the exit egress in dst
-+func SuppressInternetExitIfNoACLAccess(node *models.Node, eli []schema.Egress, acls []models.Acl, defaultDevicePolicyEnabled bool) {
-+	if node == nil || defaultDevicePolicyEnabled {
-+		return
-+	}
-+	if node.SelectedInternetEgressID == "" && node.InternetGwID == "" {
-+		return
-+	}
-+	e := assignedInternetEgress(node, eli)
-+	if e == nil {
-+		return
-+	}
-+	if DoesNodeHaveAccessToEgress(node, e, acls) {
-+		return
-+	}
-+	node.SelectedInternetEgressID = ""
-+	node.InternetGwID = ""
-+}
-+
- // FirstInternetEgressRoutingNodeID returns a routing node ID from an internet egress.
- func FirstInternetEgressRoutingNodeID(e schema.Egress) string {
- 	for nodeID := range e.Nodes {
-```
-
-**File**: `logic/peers.go` (modified, +1/-0)
-```diff
-@@ -326,6 +326,7 @@ func GetPeerUpdateForHost(ctx context.Context, network string, host *schema.Host
- 		defaultDevicePolicy, _ := GetDefaultPolicy(ctx, schema.NetworkID(node.Network), models.DevicePolicy)
- 		GetNodeEgressInfo(&node, eli, acls)
- 		ResolveInternetExitRoutingNode(&node)
-+		SuppressInternetExitIfNoACLAccess(&node, eli, acls, defaultDevicePolicy.Enabled)
- 		egsWithDomain := ListAllByRoutingNodeWithDomain(eli, node.ID.String())
- 		if len(egsWithDomain) > 0 {
- 			hostPeerUpdate.EgressWithDomains = append(hostPeerUpdate.EgressWithDomains, egsWithDomain...)
-```
-
----
-
-### Incident Patch 11: `9a25b06d` (2026-09-09)
-**Commit Message**: v1.7.0: fix: do not auto-assign exit node from ACL access
-
-ACL/gateway policies may allow reachability to an internet egress, but
-full-tunnel (0.0.0.0/0) must only apply when the user explicitly selects
-an exit node.
-
-**File**: `logic/acls_selected_ips_test.go` (modified, +35/-8)
-```diff
-@@ -126,7 +126,7 @@ func TestAppendEgressPolicyRangeExpandsInternet(t *testing.T) {
- 	}
- }
- 
--func TestApplyInternetExitFromDeviceACL(t *testing.T) {
-+func TestAddEgressInfoToPeerByAccess_DoesNotAutoFullTunnelFromInternetACL(t *testing.T) {
- 	originalGetEgressByID := getEgressByID
- 	t.Cleanup(func() { getEgressByID = originalGetEgressByID })
- 
-@@ -138,6 +138,13 @@ func TestApplyInternetExitFromDeviceACL(t *testing.T) {
- 			Network: "netmaker",
- 		},
- 	}
-+	exitNode := models.Node{
-+		CommonNode: models.CommonNode{
-+			ID:      exitID,
-+			Network: "netmaker",
-+			IsGw:    true,
-+		},
-+	}
- 	eli := []schema.Egress{{
- 		ID:      "inet-eg",
- 		Network: "netmaker",
-@@ -146,21 +153,41 @@ func TestApplyInternetExitFromDeviceACL(t *testing.T) {
- 		Range:   "*",
- 		Nodes:   datatypes.JSONMap{exitID.String(): json.Number("100")},
- 	}}
-+	getEgressByID = func(id string) (schema.Egress, error) {
-+		if id == "inet-eg" {
-+			return eli[0], nil
-+		}
-+		return schema.Egress{}, errors.New("not found")
-+	}
- 	acls := []models.Acl{{
- 		Enabled: true,
- 		Src:     []models.AclPolicyTag{{ID: models.NodeID, Value: clientID.String()}},
- 		Dst:     []models.AclPolicyTag{{ID: models.EgressID, Value: "inet-eg"}},
- 	}}
--	getEgressByID = func(id string) (schema.Egress, error) {
--		if id == "inet-eg" {
--			return eli[0], nil
-+
-+	// ACL grants access to the internet egress, but the client did not select it.
-+	AddEgressInfoToPeerByAccess(&client, &exitNode, eli, acls, false)
-+	for _, r := range exitNode.EgressDetails.EgressGatewayRanges {
-+		if r == IPv4Network || r == IPv6Network {
-+			t.Fatalf("ACL access alone must not attach default route %s; got %v", r, exitNode.EgressDetails.EgressGatewayRanges)
- 		}
--		return schema.Egress{}, errors.New("not found")
-+	}
-+	if InternetExitRoutingNodeID(&client) != "" {
-+		t.Fatalf("client must not be treated as exit client without selection, got %q", InternetExitRoutingNodeID(&client))
- 	}
- 
--	applyInternetExitFromDeviceACL(&client, eli, acls)
--	if client.InternetGwID != exitID.String() {
--		t.Fatalf("expected InternetGwID %s from internet ACL, got %q", exitID, client.InternetGwID)
-+	// Explicit assignment (legacy InternetGwID) still attaches full-tunnel ranges.
-+	client.InternetGwID = exitID.String()
-+	exitNode.EgressDetails = models.EgressDetails{}
-+	AddEgressInfoToPeerByAccess(&client, &exitNode, eli, acls, false)
-+	hasV4 := false
-+	for _, r := range exitNode.EgressDetails.EgressGatewayRanges {
-+		if r == IPv4Network {
-+			hasV4 = true
-+		}
-+	}
-+	if !hasV4 {
-+		t.Fatalf("explicit exit assignment should attach 0.0.0.0/0, got %v", exitNode.EgressDetails.EgressGatewayRanges)
- 	}
- }
- 
-```
-
-**File**: `logic/egress.go` (modified, +4/-35)
-```diff
-@@ -399,37 +399,6 @@ func ResolveInternetExitRoutingNode(node *models.Node) {
- 	}
- }
- 
--// applyInternetExitFromDeviceACL sets InternetGwID in-memory when a device ACL
--// grants this node access to a single internet egress and no exit is selected.
--// That attaches the exit node peer (0.0.0.0/0, default gw) the same way explicit
--// exit selection does. Multiple internet exits still require an explicit choice.
--func applyInternetExitFromDeviceACL(node *models.Node, eli []schema.Egress, acls []models.Acl) {
--	if node == nil || node.SelectedInternetEgressID != "" || node.InternetGwID != "" {
--		return
--	}
--	routingID := ""
--	for i := range eli {
--		e := eli[i]
--		if !e.Status || e.Network != node.Network || !IsEgressInternetGateway(e) {
--			continue
--		}
--		if !DoesNodeHaveAccessToEgress(node, &e, acls) {
--			continue
--		}
--		id := FirstInternetEgressRoutingNodeID(e)
--		if id == "" || id == node.ID.String() {
--			continue
--		}
--		if routingID != "" && routingID != id {
--			return
--		}
--		routingID = id
--	}
--	if routingID != "" {
--		node.InternetGwID = routingID
--	}
--}
+@@ -66,18 +66,33 @@ func main() {
+ 	fmt.Println(models.RetrieveLogo()) // print the logo
+ 	initialize()                       // initial db and acls
+ 	setGarbageCollection()
+-	defer db.CloseDB()
 -
- // FirstInternetEgressRoutingNodeID returns a routing node ID from an internet egress.
- func FirstInternetEgressRoutingNodeID(e schema.Egress) string {
- 	for nodeID := range e.Nodes {
-@@ -1116,10 +1085,10 @@ func AddEgressInfoToPeerByAccess(node, targetNode *models.Node, eli []schema.Egr
- 		if !e.Status || e.Network != targetNode.Network {
- 			continue
- 		}
--		if IsEgressInternetGateway(e) && !usesPeerAsInternetExit(node, targetNode) && isDefaultPolicyActive {
--			// Default-allow must not auto-full-tunnel every peer. Explicit exit
--			// selection or a specific ACL (handled below when default is off)
--			// is required to attach 0.0.0.0/0.
-+		if IsEgressInternetGateway(e) && !usesPeerAsInternetExit(node, targetNode) {
-+			// Never auto-full-tunnel from ACL/gateway access alone. Full-tunnel
-+			// (0.0.0.0/0, ::/0) requires explicit exit selection
-+			// (SelectedInternetEgressID) or a legacy InternetGwID assignment.
- 			continue
- 		}
- 		if !isDefaultPolicyActive {
-```
-
-**File**: `logic/peers.go` (modified, +0/-3)
-```diff
-@@ -326,9 +326,6 @@ func GetPeerUpdateForHost(ctx context.Context, network string, host *schema.Host
- 		defaultDevicePolicy, _ := GetDefaultPolicy(ctx, schema.NetworkID(node.Network), models.DevicePolicy)
- 		GetNodeEgressInfo(&node, eli, acls)
- 		ResolveInternetExitRoutingNode(&node)
--		if !defaultDevicePolicy.Enabled {
--			applyInternetExitFromDeviceACL(&node, eli, acls)
--		}
- 		egsWithDomain := ListAllByRoutingNodeWithDomain(eli, node.ID.String())
- 		if len(egsWithDomain) > 0 {
- 			hostPeerUpdate.EgressWithDomains = append(hostPeerUpdate.EgressWithDomains, egsWithDomain...)
+-	// TODO: although this doesn't cause any problem, it's not the best way to do this.
+-	defer ch.Close()
+ 
+ 	ctx, stop := signal.NotifyContext(db.WithContext(context.Background()), syscall.SIGTERM, os.Interrupt)
+ 	defer stop()
+ 	var waitGroup sync.WaitGroup
++
+ 	startControllers(&waitGroup, ctx) // start the api endpoint and mq and stun
+ 	startHooks(ctx, &waitGroup)
++
+ 	<-ctx.Done()
++	logger.Log(0, "Shutdown signal received, waiting for background processes to finish...")
++
+ 	waitGroup.Wait()
++
++	// Explicitly close database connections in order
++	logger.Log(0, "Closing database connections...")
++
++	func() {
++		defer func() {
++			if r := recover(); r != nil {
++				logger.Log(0, fmt.Sprintf("Recovered from panic during clickhouse shutdown: %v", r))
++			}
++		}()
++		ch.Close()
++	}()
++
++	db.CloseDB()
++	logger.Log(0, "Shutdown complete.")
+ }
+ 
+ func setupConfig(absoluteConfigPath string) {
 ```
 
 ---
 
-### Incident Patch 12: `ccf6a411` (2026-09-08)
-**Commit Message**: Merge pull request #4139 from gravitl/v1.7.0-scale-fixes
+### Incident Patch 3: `c12b7650` (2026-10-13)
+**Commit Message**: build(deps): bump github.com/posthog/posthog-go from 1.14.0 to 1.23.1 (#4120)
 
-v1.7.0:  speed up /api/nodes on SQLite and harden DB under load
+Bumps [github.com/posthog/posthog-go](https://github.com/posthog/posthog-go) from 1.14.0 to 1.23.1.
+- [Release notes](https://github.com/posthog/posthog-go/releases)
+- [Changelog](https://github.com/PostHog/posthog-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/posthog/posthog-go/compare/v1.14.0...v1.23.1)
 
-**File**: `auth/host_session.go` (modified, +1/-0)
+---
+updated-dependencies:
+- dependency-name: github.com/posthog/posthog-go
+  dependency-version: 1.23.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Abhishek Kondur <[REDACTED_EMAIL]>
+Co-authored-by: Abhishek Kondur <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -271,6 +271,7 @@ func joinHostToNetworks(ctx context.Context, key models.EnrollmentKey, host *sch
- 			true,
- 		)
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(ctx, nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(network.Name))
- 			logger.Log(0, fmt.Sprintf("skipping joining network %s due to violations", network.Name))
- 			continue
- 		}
-```
-
-**File**: `controllers/enrollmentkeys.go` (modified, +2/-0)
-```diff
-@@ -538,6 +538,8 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
- 		violations, _ := logic.CheckPostureViolationsForHost(r.Context(), &newHost, keyTags, schema.NetworkID(netI), true)
- 		if len(violations) == 0 {
- 			joinNetworks = append(joinNetworks, netI)
-+		} else {
-+			logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, models.PostureCheckDeviceInfo{HostID: newHost.ID.String()}, schema.NetworkID(netI))
- 		}
- 	}
- 	if len(joinNetworks) != len(enrollmentKey.Networks) && len(joinNetworks) == 0 {
-```
-
-**File**: `controllers/ext_client.go` (modified, +6/-2)
-```diff
-@@ -646,8 +646,10 @@ func createExtClient(w http.ResponseWriter, r *http.Request) {
- 	if extclient.DeviceID != "" {
- 		// check for violations connecting from desktop app
- 		staticNode := models.ConvertToStaticNode(extclient)
--		violations, _ := logic.CheckPostureViolations(r.Context(), logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode), schema.NetworkID(extclient.Network))
-+		deviceInfo := logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode)
-+		violations, _ := logic.CheckPostureViolations(r.Context(), deviceInfo, schema.NetworkID(extclient.Network))
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, deviceInfo, schema.NetworkID(extclient.Network))
- 			logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("posture check violations"), logic.Forbidden))
- 			return
- 		}
-@@ -927,8 +929,10 @@ func updateExtClient(w http.ResponseWriter, r *http.Request) {
- 	if newclient.DeviceID != "" && newclient.Enabled {
- 		// check for violations connecting from desktop app
- 		staticNode := models.ConvertToStaticNode(newclient)
--		violations, _ := logic.CheckPostureViolations(r.Context(), logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode), schema.NetworkID(newclient.Network))
-+		deviceInfo := logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode)
-+		violations, _ := logic.CheckPostureViolations(r.Context(), deviceInfo, schema.NetworkID(newclient.Network))
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, deviceInfo, schema.NetworkID(newclient.Network))
- 			logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("posture check violations"), logic.Forbidden))
- 			return
- 		}
-```
-
-**File**: `controllers/hosts.go` (modified, +7/-1)
-```diff
-@@ -679,7 +679,10 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 			)
- 			for _, _node := range _nodes {
- 				node := logic.ConvertSchemaNodeToModelsNode(&_node)
--				node.PostureChecksViolations, node.PostureCheckViolationSeverityLevel = logic.CheckPostureViolations(ctx, logic.GetPostureCheckDeviceInfoByNode(ctx, node), schema.NetworkID(node.Network))
-+				deviceInfo := logic.GetPostureCheckDeviceInfoByNode(ctx, node)
-+				oldViolations := node.PostureChecksViolations
-+				node.PostureChecksViolations, node.PostureCheckViolationSeverityLevel = logic.CheckPostureViolations(ctx, deviceInfo, schema.NetworkID(node.Network))
-+				logic.EmitNewPostureViolationEvents(ctx, oldViolations, node.PostureChecksViolations, deviceInfo, schema.NetworkID(node.Network))
- 				_node.PostureCheckSeverity = node.PostureCheckViolationSeverityLevel
- 				_node.PostureCheckLastEvaluationCycleID = uuid.NewString()
- 				_node.PostureCheckLastEvaluatedAt = time.Now().UTC()
-@@ -1011,6 +1014,7 @@ func addHostToNetwork(w http.ResponseWriter, r *http.Request) {
- 
- 	violations, _ := logic.CheckPostureViolationsForHost(r.Context(), host, nil, schema.NetworkID(networkID), true)
- 	if len(violations) > 0 {
-+		logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(networkID))
- 		logic.ReturnErrorResponseWithJson(w, r, violations, logic.FormatError(errors.New("posture check violations"), logic.BadReq))
- 		return
- 	}
-@@ -1913,6 +1917,7 @@ func approvePendingHost(w http.ResponseWriter, r *http.Request) {
- 
- 	violations, _ := logic.CheckPostureViolationsForHost(r.Context(), host, keyTags, schema.NetworkID(network.Name), true)
- 	if len(violations) > 0 {
-+		logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(network.Name))
- 		err = fmt.Errorf("failed to approve pending host (%s): posture check violations", id)
- 		logger.Log(0, err.Error())
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
-@@ -1981,6 +1986,7 @@ func addDefaultHostToNetworks(ctx context.Context, host *schema.Host) {
- 
- 		violations, _ := logic.CheckPostureViolationsForHost(ctx, host, make(map[models.TagID]struct{}), schema.NetworkID(network.Name), true)
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(ctx, nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(network.Name))
- 			logger.Log(2, "skipping network", network.Name, "for default host", host.Name, ": posture check violations")
- 			continue
- 		}
-```
-
-**File**: `controllers/server.go` (modified, +13/-4)
-```diff
-@@ -117,12 +117,21 @@ func getStatus(w http.ResponseWriter, r *http.Request) {
- 	// 		isOnTrial = true
- 	// 	}
- 	// }
--	var isDBConnected bool
-+	// With SQLite MaxOpenConns(1), a timed Ping can fail while the DB is healthy
-+	// but the single connection is held by check-in flush / peer updates.
-+	// Treat the pool as connected unless we get a hard connection error.
-+	isDBConnected := false
- 	sqldb, err := db.FromContext(r.Context()).DB()
- 	if err == nil {
--		ctx, cancel := context.WithTimeout(context.TODO(), 2*time.Second)
--		defer cancel()
--		if sqldb.PingContext(ctx) == nil {
-+		stats := sqldb.Stats()
-+		if stats.OpenConnections == 0 || stats.InUse == 0 {
-+			ctx, cancel := context.WithTimeout(context.TODO(), 2*time.Second)
-+			defer cancel()
-+			if pingErr := sqldb.PingContext(ctx); pingErr == nil {
-+				isDBConnected = true
-+			}
-+		} else {
-+			// Connection is in use — DB is up; avoid false negatives under load.
- 			isDBConnected = true
- 		}
- 	}
-```
-
-**File**: `db/logger.go` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+package db
-+
-+import (
-+	"log"
-+	"os"
-+	"strconv"
-+	"strings"
-+	"time"
-+
-+	"gorm.io/gorm/logger"
-+)
-+
-+// newGormLogger returns a GORM logger.
-+//
-+// Set SQL_DEBUG=true (or "1" / "info") to log every SQL statement with duration.
-+// Set SQL_DEBUG=slow to only log statements slower than SQL_SLOW_MS (default 200ms)
-+// plus errors. Default remains Silent.
-+func newGormLogger() logger.Interface {
-+	mode := strings.ToLower(strings.TrimSpace(os.Getenv("SQL_DEBUG")))
-+	if mode == "" || mode == "false" || mode == "0" {
-+		return logger.Default.LogMode(logger.Silent)
-+	}
-+
-+	slowThreshold := 200 * time.Millisecond
-+	if v := os.Getenv("SQL_SLOW_MS"); v != "" {
-+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
-+			slowThreshold = time.Duration(n) * time.Millisecond
-+		}
-+	}
-+
-+	level := logger.Info
-+	if mode == "slow" || mode == "warn" {
-+		level = logger.Warn
-+	}
-+
-+	return logger.New(
-+		log.New(os.Stdout, "[gorm] ", log.LstdFlags|log.Lmicroseconds),
-+		logger.Config{
-+			SlowThreshold:             slowThreshold,
-+			LogLevel:                  level,
-+			IgnoreRecordNotFoundError: true,
-+			Colorful:                  false,
-+		},
-+	)
-+}
-```
-
-**File**: `db/postgres.go` (modified, +1/-2)
-```diff
-@@ -10,7 +10,6 @@ import (
- 	"github.com/gravitl/netmaker/servercfg"
- 	"gorm.io/driver/postgres"
- 	"gorm.io/gorm"
--	"gorm.io/gorm/logger"
+@@ -26,7 +26,7 @@ require (
+ require (
+ 	filippo.io/edwards25519 v1.2.0
+ 	github.com/c-robinson/iplib v1.0.8
+-	github.com/posthog/posthog-go v1.14.0
++	github.com/posthog/posthog-go v1.23.1
  )
  
- // postgresConnector for initializing and
-@@ -32,7 +31,7 @@ func (pg *postgresConnector) connect() (*gorm.DB, error) {
- 	)
- 
- 	gormDB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
--		Logger: logger.Default.LogMode(logger.Silent),
-+		Logger: newGormLogger(),
- 	})
- 	if err != nil {
- 		return nil, err
+ require (
+@@ -75,7 +75,7 @@ require (
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-sql-driver/mysql v1.8.1 // indirect
+-	github.com/goccy/go-json v0.10.5 // indirect
++	github.com/goccy/go-json v0.10.6 // indirect
+ 	github.com/google/s2a-go v0.1.9 // indirect
+ 	github.com/googleapis/enterprise-certificate-proxy v0.3.14 // indirect
+ 	github.com/googleapis/gax-go/v2 v2.18.0 // indirect
 ```
 
-**File**: `db/sqlite.go` (modified, +4/-3)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -6,7 +6,6 @@ import (
- 
- 	"gorm.io/driver/sqlite"
- 	"gorm.io/gorm"
--	"gorm.io/gorm/logger"
- )
- 
- // sqliteConnector for initializing and
-@@ -49,9 +48,11 @@ func (s *sqliteConnector) connect() (*gorm.DB, error) {
- 		}
- 	}
- 
--	dsn := dbFilePath + "?_journal_mode=WAL&_busy_timeout=5000"
-+	// WAL + immediate lock + longer busy wait reduce lock storms under scale.
-+	// Keep MaxOpenConns(1): concurrent writers with go-sqlite3 still deadlock easily.
-+	dsn := dbFilePath + "?_journal_mode=WAL&_busy_timeout=30000&_txlock=immediate&_synchronous=NORMAL"
- 	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
--		Logger: logger.Default.LogMode(logger.Silent),
-+		Logger: newGormLogger(),
- 	})
- 	if err != nil {
- 		return nil, err
-```
-
----
-
-### Incident Patch 13: `66cb8226` (2026-09-08)
-**Commit Message**: fix(posture): audit user violations and drop run sync noise
-
-Emit POSTURE_CHECK_FAILED for Active Users with USER source, backfill
-user failures separately from devices, and stop logging SYNC on manual run.
-
-**File**: `models/structs.go` (modified, +3/-0)
-```diff
-@@ -472,6 +472,9 @@ type PostureCheckDeviceInfo struct {
- 	UserGroups     map[schema.UserGroupID]struct{}
- 	// HostID is the Netmaker host's UUID; used to look up MDM state.
- 	HostID string
-+	// Username / ClientID identify Active User (extclient) posture subjects.
-+	Username string
-+	ClientID string
- 	// MDMState is the most recent sync snapshot for the configured MDM
- 	// provider; nil if MDM is not configured or the host hasn't synced yet.
- 	MDMState *schema.DeviceMDMState
-```
-
-**File**: `pro/controllers/posture_check.go` (modified, +0/-18)
-```diff
-@@ -345,24 +345,6 @@ func triggerPostureChecks(w http.ResponseWriter, r *http.Request) {
- 		mq.PublishPeerUpdate(ctx, false)
- 	}(scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context())))
- 
--	logic.LogEvent(r.Context(), &models.Event{
--		Action:      schema.Sync,
--		TriggeredBy: r.Header.Get("user"),
--		Source: models.Subject{
--			ID:   r.Header.Get("user"),
--			Name: r.Header.Get("user"),
--			Type: schema.UserSub,
--		},
--		Target: models.Subject{
--			ID:   string(schema.AllPostureCheckRsrcID),
--			Name: "all",
--			Type: schema.PostureCheckSub,
--		},
--		Origin: schema.Dashboard,
--		Diff: models.Diff{
--			New: map[string]interface{}{"status": "queued"},
--		},
--	})
- 	logic.ReturnSuccessResponseWithJson(w, r, map[string]any{"queued": true}, "posture checks queued")
- }
- 
-```
-
-**File**: `pro/logic/posture_check.go` (modified, +38/-12)
-```diff
-@@ -97,14 +97,19 @@ func RunPostureChecksForTenant(ctx context.Context) error {
- 		return err
- 	}
- 
--	// One-time backfill: if this tenant has never logged a posture failure,
--	// treat previous violations as empty so current failures appear in activity.
--	// After the first POSTURE_CHECK_FAILED is written, resume new-only dedupe.
--	backfillPostureFailures := false
--	if has, err := (&schema.Event{}).HasAction(ctx, schema.PostureCheckFailed); err != nil {
--		slog.Warn("failed to check for existing posture failure events", "error", err)
-+	// One-time backfill per subject type: devices and users are tracked
-+	// separately so device events do not suppress user violation backfill.
-+	backfillDeviceFailures := false
-+	backfillUserFailures := false
-+	if has, err := (&schema.Event{}).HasPostureFailureForSubjectType(ctx, schema.DeviceSub); err != nil {
-+		slog.Warn("failed to check for existing device posture failure events", "error", err)
- 	} else {
--		backfillPostureFailures = !has
-+		backfillDeviceFailures = !has
-+	}
-+	if has, err := (&schema.Event{}).HasPostureFailureForSubjectType(ctx, schema.UserSub); err != nil {
-+		slog.Warn("failed to check for existing user posture failure events", "error", err)
-+	} else {
-+		backfillUserFailures = !has
- 	}
- 
- 	for _, netI := range nets {
-@@ -138,7 +143,7 @@ func RunPostureChecksForTenant(ctx context.Context) error {
- 						continue
- 					}
- 					oldVi := extclient.PostureChecksViolations
--					if backfillPostureFailures {
-+					if backfillUserFailures {
- 						oldVi = nil
- 					}
- 					EmitNewPostureViolationEvents(ctx, oldVi, postureChecksViolations, deviceInfo, schema.NetworkID(netI.Name))
-@@ -158,7 +163,7 @@ func RunPostureChecksForTenant(ctx context.Context) error {
- 					continue
- 				}
- 				oldVi := nodeI.PostureChecksViolations
--				if backfillPostureFailures {
-+				if backfillDeviceFailures {
- 					oldVi = nil
- 				}
- 				EmitNewPostureViolationEvents(ctx, oldVi, postureChecksViolations, deviceInfo, schema.NetworkID(netI.Name))
-@@ -496,6 +501,8 @@ func GetPostureCheckDeviceInfoByNode(ctx context.Context, node *models.Node) mod
- 			KernelVersion:  node.StaticNode.KernelVersion,
- 			Tags:           make(map[models.TagID]struct{}),
- 			IsUser:         true,
-+			Username:       node.StaticNode.OwnerID,
-+			ClientID:       node.StaticNode.ClientID,
- 			UserGroups:     make(map[schema.UserGroupID]struct{}),
- 		}
- 		// get user groups
-@@ -973,6 +980,7 @@ func asInt(v interface{}) int {
- // every violation newly present in newVi (any attribute). Dedupes by CheckID
- // against oldVi so ongoing failures do not re-fire; cleared violations are
- // ignored. MDM/EDR events keep their provider-specific enrichment fields.
-+// Active User subjects are logged as USER; hosts as DEVICE.
- func EmitNewPostureViolationEvents(ctx context.Context, oldVi, newVi []models.Violation, d models.PostureCheckDeviceInfo, network schema.NetworkID) {
- 	if len(newVi) == 0 {
- 		return
-@@ -985,6 +993,19 @@ func EmitNewPostureViolationEvents(ctx context.Context, oldVi, newVi []models.Vi
- 		prev[v.CheckID] = struct{}{}
- 	}
- 
-+	sourceID := d.HostID
-+	sourceName := d.HostID
-+	sourceType := schema.DeviceSub
-+	if d.IsUser {
-+		sourceType = schema.UserSub
-+		sourceID = d.Username
-+		sourceName = d.Username
-+		if sourceID == "" {
-+			sourceID = d.ClientID
-+			sourceName = d.ClientID
-+		}
-+	}
-+
- 	var mdmProviderID, edrProviderID string
- 	for _, v := range newVi {
- 		if v.CheckID != "" {
-@@ -1000,6 +1021,11 @@ func EmitNewPostureViolationEvents(ctx context.Context, oldVi, newVi []models.Vi
- 			"check":    v.Name,
- 			"reason":   v.Message,
- 			"severity": v.Severity,
-+			"is_user":  d.IsUser,
-+		}
-+		if d.IsUser {
-+			payload["username"] = d.Username
-+			payload["client_id"] = d.ClientID
- 		}
- 		switch v.Attribute {
- 		case string(schema.MDMCompliance):
-@@ -1021,9 +1047,9 @@ func EmitNewPostureViolationEvents(ctx context.Context, oldVi, newVi []models.Vi
- 		logic.LogEvent(ctx, &models.Event{
- 			Action: schema.PostureCheckFailed,
- 			Source: models.Subject{
--				ID:   d.HostID,
--				Name: d.HostID,
--				Type: schema.DeviceSub,
-+				ID:   sourceID,
-+				Name: sourceName,
-+				Type: sourceType,
- 			},
- 			TriggeredBy: "system",
- 			Target: models.Subject{
-```
-
-**File**: `schema/event.go` (modified, +14/-0)
-```diff
-@@ -203,6 +203,20 @@ func (a *Event) HasAction(ctx context.Context, action Action) (bool, error) {
- 	return count > 0, err
- }
- 
-+// HasPostureFailureForSubjectType reports whether a POSTURE_CHECK_FAILED event
-+// exists whose source JSON has the given subject_type (DEVICE or USER).
-+func (a *Event) HasPostureFailureForSubjectType(ctx context.Context, subType SubjectType) (bool, error) {
-+	query := db.FromContext(ctx).Model(&Event{}).
-+		Where("action = ?", PostureCheckFailed).
-+		Where("source LIKE ?", fmt.Sprintf(`%%"subject_type":"%s"%%`, subType))
-+	if tenantID := scope.ID(ctx); tenantID != "" {
-+		query = dbtypes.WithFilter(fmt.Sprintf("%s.tenant_id", eventsTable), tenantID)(query)
-+	}
-+	var count int64
-+	err := query.Limit(1).Count(&count).Error
-+	return count > 0, err
-+}
-+
- func (a *Event) DeleteAllForTenant(ctx context.Context) error {
- 	if tenantID := scope.ID(ctx); tenantID != "" {
- 		return db.FromContext(ctx).Where(fmt.Sprintf("%s.tenant_id = ?", eventsTable), tenantID).Delete(&Event{}).Error
-```
-
----
-
-### Incident Patch 14: `57b8a823` (2026-09-08)
-**Commit Message**: Merge branch 'release-v1.7.0' into v1.7.0-scale-fixes
-
-**File**: `clickhouse/clickhouse.go` (modified, +5/-0)
-```diff
-@@ -28,7 +28,12 @@ func Initialize() error {
- 		return nil
- 	}
- 
-+	if !servercfg.IsClickHouseConfigured() {
-+		return errors.New("missing clickhouse config")
-+	}
-+
- 	config := servercfg.GetClickHouseConfig()
-+
- 	chConn, err := clickhouse.Open(&clickhouse.Options{
- 		Addr: []string{fmt.Sprintf("%s:%d", config.Host, config.Port)},
- 		Auth: clickhouse.Auth{
-```
-
-**File**: `controllers/node.go` (modified, +7/-1)
-```diff
-@@ -255,7 +255,12 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
- 
- 	var filters, options []dbtypes.Option
- 	filters = append(filters, dbtypes.WithFilter("network_id", network.ID))
--	filters = append(filters, dbtypes.WithJoin("Host", dbtypes.WithFilter("os", osFilters...)))
-+	if len(osFilters) > 0 {
-+		filters = append(filters, func(db *gorm.DB) *gorm.DB {
-+			return db.Joins("JOIN hosts_v1 ON hosts_v1.id = nodes_v1.host_id")
-+		})
-+		filters = append(filters, dbtypes.WithFilter("hosts_v1.os", osFilters...))
-+	}
- 	filters = append(filters, dbtypes.WithFilter("status", statusFilters...))
- 
- 	if deviceType != "" {
-@@ -290,6 +295,7 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
- 		expr.ByteaField("endpoint_ipv6"),
- 	))
- 	options = append(options, filters...)
-+	options = append(options, dbtypes.WithPreloads("Host"))
- 	options = append(options, dbtypes.InAscOrder(fmt.Sprintf("%s.created_at", (&schema.Node{}).TableName())))
- 	options = append(options, dbtypes.WithPagination(page, pageSize))
- 
-```
-
-**File**: `controllers/server.go` (modified, +3/-0)
-```diff
-@@ -170,6 +170,9 @@ func allowUsers(next http.Handler) http.HandlerFunc {
- 		}
- 		user, _, _, err := logic.VerifyUserToken(r.Context(), authToken)
- 		if err != nil || user == "" {
-+			if err != nil {
-+				logger.Log(4, "unauthorized:", err.Error())
-+			}
- 			logic.ReturnErrorResponse(w, r, errorResponse)
- 			return
- 		}
-```
-
-**File**: `controllers/user.go` (modified, +8/-7)
-```diff
-@@ -1206,18 +1206,19 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
- 		pageSize = 10
- 	}
- 
--	// role_id and auth_type live on the membership tables, not users_v1. Qualify them
--	// with the join alias used by ListAllWithMembership/CountWithMembership so they
--	// don't collide with the identically named legacy columns still present on users_v1.
-+	// account_disabled, is_mfa_enabled, role_id and auth_type all live on the membership
-+	// tables now, not users_v1. Qualify them with the join alias used by
-+	// ListAllWithMembership/CountWithMembership so they don't collide with the identically
-+	// named legacy columns still present on users_v1.
- 	membershipAlias := "tm"
- 	if scope.Level(r.Context()) == scope.OrgScope {
- 		membershipAlias = "om"
- 	}
- 
- 	_users, err := (&schema.User{}).ListAllWithMembership(
- 		r.Context(),
--		dbtypes.WithFilter("account_disabled", accountStatusFilter...),
--		dbtypes.WithFilter("is_mfa_enabled", mfaStatusFilter...),
-+		dbtypes.WithFilter(membershipAlias+".account_disabled", accountStatusFilter...),
-+		dbtypes.WithFilter(membershipAlias+".is_mfa_enabled", mfaStatusFilter...),
- 		dbtypes.WithFilter(membershipAlias+".role_id", roleFilter...),
- 		dbtypes.WithFilter(membershipAlias+".auth_type", authTypeFilter...),
- 		dbtypes.WithSearchQuery(q, "username"),
-@@ -1240,8 +1241,8 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
- 
- 	total, err := (&schema.User{}).CountWithMembership(
- 		r.Context(),
--		dbtypes.WithFilter("account_disabled", accountStatusFilter...),
--		dbtypes.WithFilter("is_mfa_enabled", mfaStatusFilter...),
-+		dbtypes.WithFilter(membershipAlias+".account_disabled", accountStatusFilter...),
-+		dbtypes.WithFilter(membershipAlias+".is_mfa_enabled", mfaStatusFilter...),
- 		dbtypes.WithFilter(membershipAlias+".role_id", roleFilter...),
- 		dbtypes.WithFilter(membershipAlias+".auth_type", authTypeFilter...),
- 		dbtypes.WithSearchQuery(q, "username"),
-```
-
-**File**: `logic/jwts.go` (modified, +17/-1)
-```diff
-@@ -164,6 +164,7 @@ func GetUserNameFromToken(ctx context.Context, authtoken string) (username strin
- 	var tokenString = ""
- 
- 	if len(tokenSplit) < 2 {
-+		logger.Log(4, "unauthorized: malformed authorization header")
- 		return "", Unauthorized_Err
- 	} else {
- 		tokenString = tokenSplit[1]
-@@ -176,13 +177,15 @@ func GetUserNameFromToken(ctx context.Context, authtoken string) (username strin
- 		return jwtSecretKey, nil
- 	})
- 	if err != nil {
-+		logger.Log(4, "unauthorized: jwt parse/signature failed:", err.Error())
- 		return "", Unauthorized_Err
- 	}
- 
- 	for _, aud := range claims.Audience {
- 		// token created for mfa cannot be used for
- 		// anything else.
- 		if aud == "auth:mfa" {
-+			logger.Log(4, "unauthorized: mfa-only token used outside mfa flow")
- 			return "", Unauthorized_Err
- 		}
- 	}
-@@ -211,7 +214,8 @@ func GetUserNameFromToken(ctx context.Context, authtoken string) (username strin
- 			err = user.GetWithMembership(ctx)
- 		}
- 		if err != nil {
--			return "", err
-+			logger.Log(4, fmt.Sprintf("unauthorized: user lookup failed (scope=%d id=%s): %s", scope.Level(ctx), scope.ID(ctx), err.Error()))
-+			return "", Unauthorized_Err
- 		}
- 
- 		err = checkUserAccess(ctx, user.ID, claims)
-@@ -222,6 +226,7 @@ func GetUserNameFromToken(ctx context.Context, authtoken string) (username strin
- 		return user.Username, nil
- 	}
- 
-+	logger.Log(4, "unauthorized: token not valid")
- 	return "", Unauthorized_Err
- }
- 
-@@ -287,6 +292,7 @@ func checkUserAccess(ctx context.Context, userID string, claims *models.UserClai
- 		err := membership.Get(ctx)
- 		if err != nil {
- 			if errors.Is(err, gorm.ErrRecordNotFound) {
-+				logger.Log(4, fmt.Sprintf("unauthorized: no org membership for org=%s user=%s", scope.ID(ctx), userID))
- 				return Unauthorized_Err
- 			}
- 
-@@ -297,6 +303,7 @@ func checkUserAccess(ctx context.Context, userID string, claims *models.UserClai
- 			return nil
- 		}
- 
-+		logger.Log(4, fmt.Sprintf("unauthorized: org claim mismatch claims.scope=%d claims.scopeid=%s ctx.orgid=%s", claims.Scope, claims.ScopeID, scope.ID(ctx)))
- 		return Unauthorized_Err
- 	} else if scope.Level(ctx) == scope.TenantScope {
- 		membership := &schema.TenantMembership{
-@@ -306,6 +313,7 @@ func checkUserAccess(ctx context.Context, userID string, claims *models.UserClai
- 		err := membership.Get(ctx)
- 		if err != nil {
- 			if errors.Is(err, gorm.ErrRecordNotFound) {
-+				logger.Log(4, fmt.Sprintf("unauthorized: no tenant membership for tenant=%s user=%s", scope.ID(ctx), userID))
- 				return Unauthorized_Err
- 			}
- 
-@@ -319,6 +327,7 @@ func checkUserAccess(ctx context.Context, userID string, claims *models.UserClai
- 			err = tenant.Get(ctx)
- 			if err != nil {
- 				if errors.Is(err, gorm.ErrRecordNotFound) {
-+					logger.Log(4, fmt.Sprintf("unauthorized: tenant not found for org-scoped claim, tenant=%s", scope.ID(ctx)))
- 					return Unauthorized_Err
- 				}
- 
-@@ -329,6 +338,7 @@ func checkUserAccess(ctx context.Context, userID string, claims *models.UserClai
- 				return nil
- 			}
- 
-+			logger.Log(4, fmt.Sprintf("unauthorized: org-scoped claim org id %s != tenant's org id %s", claims.ScopeID, tenant.OrganizationID))
- 			return Unauthorized_Err
- 		} else if claims.Scope == scope.TenantScope && claims.ScopeID == scope.ID(ctx) {
- 			return nil
-@@ -337,15 +347,21 @@ func checkUserAccess(ctx context.Context, userID string, claims *models.UserClai
- 			// the sole tenant that existed before multi-tenancy.
- 			soleTenant, err := SoleTenant(ctx)
- 			if err != nil {
-+				logger.Log(4, "unauthorized: legacy token, SoleTenant lookup failed:", err.Error())
- 				return Unauthorized_Err
- 			}
- 
- 			if soleTenant.ID == scope.ID(ctx) {
- 				return nil
- 			}
-+			logger.Log(4, fmt.Sprintf("unauthorized: legacy token, sole tenant %s != ctx tenant %s", soleTenant.ID, scope.ID(ctx)))
-+			return Unauthorized_Err
- 		}
-+		logger.Log(4, fmt.Sprintf("unauthorized: tenant-scope claim mismatch claims.scope=%d claims.scopeid=%s ctx.tenantid=%s", claims.Scope, claims.ScopeID, scope.ID(ctx)))
-+		return Unauthorized_Err
- 	}
- 
-+	logger.Log(4, fmt.Sprintf("unauthorized: unhandled scope level %d", scope.Level(ctx)))
- 	return Unauthorized_Err
- }
- 
-```
-
-**File**: `migrate/migrate_multitenancy.go` (modified, +6/-0)
-```diff
-@@ -157,6 +157,12 @@ func rekeyTenantScopedKeys(ctx context.Context, oldID, newID string) error {
- 		}
- 	}
- 
-+	if err := db.FromContext(ctx).Model(&schema.TenantSettingsRecord{}).
-+		Where("key = ?", oldID).
-+		Update("key", newID).Error; err != nil {
-+		return err
-+	}
-+
- 	roleQuery := db.FromContext(ctx).Model(&schema.UserRole{}).Where("network_id <> ''")
- 	if oldID == "" {
- 		roleQuery = roleQuery.Where("id NOT LIKE '%::%'")
-```
-
-**File**: `models/structs.go` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@ type FeatureFlags struct {
- 	EnableJIT                     bool `json:"enable_jit"`
- 	EnableOverlappingEgressRanges bool `json:"enable_overlapping_egress_ranges"`
- 	EnableSIEMIntegration         bool `json:"enable_siem_integration"`
-+	EnableMDMIntegration          bool `json:"enable_mdm_integration"`
-+	EnableEDRIntegration          bool `json:"enable_edr_integration"`
- }
- 
- // AuthParams - struct for auth params
-```
-
-**File**: `pro/controllers/integrations.go` (modified, +39/-0)
-```diff
-@@ -55,6 +55,20 @@ func extractAndValidateIntegration(w http.ResponseWriter, r *http.Request) (inte
- 	return intType, id, true
- }
- 
-+func integrationFeatureEnabled(ctx context.Context, intType integration.Type) bool {
-+	flags := logic.GetFeatureFlags(ctx)
-+	switch intType {
-+	case integration.TypeSIEM:
-+		return flags.EnableSIEMIntegration
-+	case integration.TypeMDM:
-+		return flags.EnableMDMIntegration
-+	case integration.TypeEDR:
-+		return flags.EnableEDRIntegration
-+	default:
-+		return true
-+	}
-+}
-+
- // @Summary     Get an integration
- // @Router      /api/v1/integrations/{type} [get]
- // @Tags        Integrations
-@@ -117,6 +131,11 @@ func upsertIntegration(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 
-+	if !integrationFeatureEnabled(r.Context(), intType) {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("%s integration is not enabled on your plan", intType), logic.BadReq))
-+		return
-+	}
-+
- 	intg := &schema.Integration{Type: string(intType)}
- 	integrations, err := intg.ListByType(r.Context())
- 	if err != nil {
-@@ -361,6 +380,11 @@ func listMDMProviders(w http.ResponseWriter, r *http.Request) {
- // @Success     202 {object} models.SuccessResponse
- // @Failure     400 {object} models.ErrorResponse
- func triggerMDMSync(w http.ResponseWriter, r *http.Request) {
-+	if !logic.GetFeatureFlags(r.Context()).EnableMDMIntegration {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("mdm integration is not enabled on your plan"), logic.BadReq))
-+		return
-+	}
-+
- 	active, err := mdmpkg.GetActive(r.Context())
- 	if err != nil {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-@@ -408,6 +432,11 @@ func triggerMDMSync(w http.ResponseWriter, r *http.Request) {
- // @Param       provider  query string false "Filter by provider name"
- // @Success     200 {array} schema.DeviceMDMState
- func listMDMDeviceState(w http.ResponseWriter, r *http.Request) {
-+	if !logic.GetFeatureFlags(r.Context()).EnableMDMIntegration {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("mdm integration is not enabled on your plan"), logic.BadReq))
-+		return
-+	}
-+
- 	ctx := r.Context()
- 	hostID := r.URL.Query().Get("host_id")
- 	provider := r.URL.Query().Get("provider")
-@@ -445,6 +474,11 @@ func listEDRProviders(w http.ResponseWriter, r *http.Request) {
- }
- 
- func triggerEDRSync(w http.ResponseWriter, r *http.Request) {
-+	if !logic.GetFeatureFlags(r.Context()).EnableEDRIntegration {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("edr integration is not enabled on your plan"), logic.BadReq))
-+		return
-+	}
-+
- 	active, err := edrpkg.GetActive(r.Context())
- 	if err != nil {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-@@ -465,6 +499,11 @@ func triggerEDRSync(w http.ResponseWriter, r *http.Request) {
- }
- 
- func listEDRDeviceState(w http.ResponseWriter, r *http.Request) {
-+	if !logic.GetFeatureFlags(r.Context()).EnableEDRIntegration {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("edr integration is not enabled on your plan"), logic.BadReq))
-+		return
-+	}
-+
- 	ctx := r.Context()
- 	hostID := r.URL.Query().Get("host_id")
- 	provider := r.URL.Query().Get("provider")
-```
-
----
-
-### Incident Patch 15: `641f991f` (2026-09-08)
-**Commit Message**: fix(posture): keep violation cycles consistent and audit new failures
-
-Skip violation details on GetAllNodes, replace cycles transactionally, and
-emit POSTURE_CHECK_FAILED for new CheckIDs (with one-time backfill).
-
-**File**: `auth/host_session.go` (modified, +1/-0)
-```diff
-@@ -271,6 +271,7 @@ func joinHostToNetworks(ctx context.Context, key models.EnrollmentKey, host *sch
- 			true,
- 		)
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(ctx, nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(network.Name))
- 			logger.Log(0, fmt.Sprintf("skipping joining network %s due to violations", network.Name))
- 			continue
- 		}
-```
-
-**File**: `controllers/enrollmentkeys.go` (modified, +2/-0)
-```diff
-@@ -538,6 +538,8 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
- 		violations, _ := logic.CheckPostureViolationsForHost(r.Context(), &newHost, keyTags, schema.NetworkID(netI), true)
- 		if len(violations) == 0 {
- 			joinNetworks = append(joinNetworks, netI)
-+		} else {
-+			logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, models.PostureCheckDeviceInfo{HostID: newHost.ID.String()}, schema.NetworkID(netI))
- 		}
- 	}
- 	if len(joinNetworks) != len(enrollmentKey.Networks) && len(joinNetworks) == 0 {
-```
-
-**File**: `controllers/ext_client.go` (modified, +6/-2)
-```diff
-@@ -646,8 +646,10 @@ func createExtClient(w http.ResponseWriter, r *http.Request) {
- 	if extclient.DeviceID != "" {
- 		// check for violations connecting from desktop app
- 		staticNode := models.ConvertToStaticNode(extclient)
--		violations, _ := logic.CheckPostureViolations(r.Context(), logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode), schema.NetworkID(extclient.Network))
-+		deviceInfo := logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode)
-+		violations, _ := logic.CheckPostureViolations(r.Context(), deviceInfo, schema.NetworkID(extclient.Network))
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, deviceInfo, schema.NetworkID(extclient.Network))
- 			logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("posture check violations"), logic.Forbidden))
- 			return
- 		}
-@@ -927,8 +929,10 @@ func updateExtClient(w http.ResponseWriter, r *http.Request) {
- 	if newclient.DeviceID != "" && newclient.Enabled {
- 		// check for violations connecting from desktop app
- 		staticNode := models.ConvertToStaticNode(newclient)
--		violations, _ := logic.CheckPostureViolations(r.Context(), logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode), schema.NetworkID(newclient.Network))
-+		deviceInfo := logic.GetPostureCheckDeviceInfoByNode(r.Context(), &staticNode)
-+		violations, _ := logic.CheckPostureViolations(r.Context(), deviceInfo, schema.NetworkID(newclient.Network))
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, deviceInfo, schema.NetworkID(newclient.Network))
- 			logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("posture check violations"), logic.Forbidden))
- 			return
- 		}
-```
-
-**File**: `controllers/hosts.go` (modified, +7/-1)
-```diff
-@@ -679,7 +679,10 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 			)
- 			for _, _node := range _nodes {
- 				node := logic.ConvertSchemaNodeToModelsNode(&_node)
--				node.PostureChecksViolations, node.PostureCheckViolationSeverityLevel = logic.CheckPostureViolations(ctx, logic.GetPostureCheckDeviceInfoByNode(ctx, node), schema.NetworkID(node.Network))
-+				deviceInfo := logic.GetPostureCheckDeviceInfoByNode(ctx, node)
-+				oldViolations := node.PostureChecksViolations
-+				node.PostureChecksViolations, node.PostureCheckViolationSeverityLevel = logic.CheckPostureViolations(ctx, deviceInfo, schema.NetworkID(node.Network))
-+				logic.EmitNewPostureViolationEvents(ctx, oldViolations, node.PostureChecksViolations, deviceInfo, schema.NetworkID(node.Network))
- 				_node.PostureCheckSeverity = node.PostureCheckViolationSeverityLevel
- 				_node.PostureCheckLastEvaluationCycleID = uuid.NewString()
- 				_node.PostureCheckLastEvaluatedAt = time.Now().UTC()
-@@ -1011,6 +1014,7 @@ func addHostToNetwork(w http.ResponseWriter, r *http.Request) {
- 
- 	violations, _ := logic.CheckPostureViolationsForHost(r.Context(), host, nil, schema.NetworkID(networkID), true)
- 	if len(violations) > 0 {
-+		logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(networkID))
- 		logic.ReturnErrorResponseWithJson(w, r, violations, logic.FormatError(errors.New("posture check violations"), logic.BadReq))
- 		return
- 	}
-@@ -1913,6 +1917,7 @@ func approvePendingHost(w http.ResponseWriter, r *http.Request) {
- 
- 	violations, _ := logic.CheckPostureViolationsForHost(r.Context(), host, keyTags, schema.NetworkID(network.Name), true)
- 	if len(violations) > 0 {
-+		logic.EmitNewPostureViolationEvents(r.Context(), nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(network.Name))
- 		err = fmt.Errorf("failed to approve pending host (%s): posture check violations", id)
- 		logger.Log(0, err.Error())
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
-@@ -1981,6 +1986,7 @@ func addDefaultHostToNetworks(ctx context.Context, host *schema.Host) {
- 
- 		violations, _ := logic.CheckPostureViolationsForHost(ctx, host, make(map[models.TagID]struct{}), schema.NetworkID(network.Name), true)
- 		if len(violations) > 0 {
-+			logic.EmitNewPostureViolationEvents(ctx, nil, violations, models.PostureCheckDeviceInfo{HostID: host.ID.String()}, schema.NetworkID(network.Name))
- 			logger.Log(2, "skipping network", network.Name, "for default host", host.Name, ": posture check violations")
- 			continue
- 		}
-```
-
-**File**: `logic/hosts.go` (modified, +5/-0)
-```diff
-@@ -44,6 +44,11 @@ var CheckPostureViolations = func(ctx context.Context, d models.PostureCheckDevi
- 	return []models.Violation{}, schema.SeverityUnknown
- }
- 
-+// EmitNewPostureViolationEvents records audit events for newly observed posture
-+// failures. No-op in community; wired by pro.
-+var EmitNewPostureViolationEvents = func(ctx context.Context, oldVi, newVi []models.Violation, d models.PostureCheckDeviceInfo, network schema.NetworkID) {
-+}
-+
- var CheckPostureViolationsForHost = func(ctx context.Context, host *schema.Host, tags map[models.TagID]struct{}, network schema.NetworkID, skipAutoUpdate bool) ([]models.Violation, schema.Severity) {
- 	if host == nil {
- 		return []models.Violation{}, schema.SeverityUnknown
-```
-
-**File**: `logic/nodes.go` (modified, +36/-8)
-```diff
-@@ -328,8 +328,23 @@ func DeleteNodeByID(ctx context.Context, node *models.Node) error {
- 	return nil
- }
- 
--// GetAllNodes - returns all nodes in the DB
-+// GetAllNodes - returns all nodes in the DB.
-+// List/API responses use posture severity/cycle fields already on the node row
-+// (written by the background posture hook). Full violation details are omitted
-+// here — use GetAllNodesWithViolations or single-node convert / the dedicated
-+// violations API when the detail array is required.
- func GetAllNodes(ctx context.Context) ([]models.Node, error) {
-+	return getAllNodes(ctx, false)
-+}
-+
-+// GetAllNodesWithViolations is like GetAllNodes but attaches current-cycle
-+// posture_check_violations in one batch query. Intended for the posture hook
-+// (event diffs), not for high-frequency list APIs.
-+func GetAllNodesWithViolations(ctx context.Context) ([]models.Node, error) {
-+	return getAllNodes(ctx, true)
-+}
-+
-+func getAllNodes(ctx context.Context, withViolations bool) ([]models.Node, error) {
- 	var nodes []models.Node
- 	_nodes, err := (&schema.Node{}).ListAll(ctx, dbtypes.WithAllPreloads())
- 	if err != nil {
-@@ -341,14 +356,17 @@ func GetAllNodes(ctx context.Context) ([]models.Node, error) {
- 		ensureNodeMutex(node)
- 		nodes = append(nodes, *node)
- 	}
--	attachPostureViolations(ctx, _nodes, nodes)
-+	if withViolations {
-+		attachPostureViolations(ctx, _nodes, nodes)
-+	}
- 
- 	return nodes, nil
- }
- 
- // attachPostureViolations loads violations for all nodes in one query and
- // assigns each node's current-cycle violations onto the models.Node slice.
- // schemaNodes and modelsNodes must be the same length and aligned by index.
-+// Used by GetAllNodesWithViolations (posture hook), not the high-frequency list API.
- func attachPostureViolations(ctx context.Context, schemaNodes []schema.Node, modelsNodes []models.Node) {
- 	if len(schemaNodes) == 0 || len(schemaNodes) != len(modelsNodes) {
- 		return
-@@ -367,7 +385,6 @@ func attachPostureViolations(ctx context.Context, schemaNodes []schema.Node, mod
- 		slog.Warn("failed to batch-load posture violations", "error", err, "nodes", len(ids))
- 		return
- 	}
--	// nodeID -> cycleID -> violations
- 	byNodeCycle := make(map[string]map[string][]models.Violation, len(ids))
- 	for _, v := range all {
- 		cycles := byNodeCycle[v.NodeID]
-@@ -385,11 +402,22 @@ func attachPostureViolations(ctx context.Context, schemaNodes []schema.Node, mod
- 	}
- 	for i := range modelsNodes {
- 		cycleID := schemaNodes[i].PostureCheckLastEvaluationCycleID
--		if cycleID == "" {
-+		cycles := byNodeCycle[schemaNodes[i].ID]
-+		if cycles == nil {
- 			continue
- 		}
--		if cycles, ok := byNodeCycle[schemaNodes[i].ID]; ok {
--			modelsNodes[i].PostureChecksViolations = cycles[cycleID]
-+		if cycleID != "" {
-+			if v, ok := cycles[cycleID]; ok {
-+				modelsNodes[i].PostureChecksViolations = v
-+				continue
-+			}
-+		}
-+		// Fallback when cycle metadata and rows disagree after a partial upsert.
-+		if schemaNodes[i].PostureCheckSeverity != schema.SeverityUnknown {
-+			for _, v := range cycles {
-+				modelsNodes[i].PostureChecksViolations = v
-+				break
-+			}
- 		}
- 	}
- }
-@@ -490,7 +518,6 @@ func GetNodesByIDs(ids []string) (map[string]models.Node, error) {
- 		ensureNodeMutex(n)
- 		modelsNodes[i] = *n
- 	}
--	attachPostureViolations(ctx, _nodes, modelsNodes)
- 
- 	result := make(map[string]models.Node, len(modelsNodes))
- 	for i := range modelsNodes {
-@@ -659,7 +686,8 @@ type nodeConvertOpts struct {
- type NodeConvertOption func(*nodeConvertOpts)
- 
- // SkipViolations skips the per-node posture_check_violations query.
--// Use with attachPostureViolations for batched list loads.
-+// Use on list paths: severity/cycle fields on the node row are enough;
-+// violation details come from the dedicated violations API or single-node get.
- func SkipViolations() NodeConvertOption {
- 	return func(o *nodeConvertOpts) { o.skipViolations = true }
- }
-```
-
-**File**: `orchestrator/node.go` (modified, +4/-1)
-```diff
-@@ -155,8 +155,11 @@ func (n *NodeOrchestrator) CreateNode(ctx context.Context, host *schema.Host, ne
- 
- 	go func(ctx context.Context) {
- 		modelsNode := logic.ConvertSchemaNodeToModelsNode(node)
-+		deviceInfo := logic.GetPostureCheckDeviceInfoByNode(ctx, modelsNode)
-+		oldViolations := modelsNode.PostureChecksViolations
- 
--		modelsNode.PostureChecksViolations, modelsNode.PostureCheckViolationSeverityLevel = logic.CheckPostureViolations(ctx, logic.GetPostureCheckDeviceInfoByNode(ctx, modelsNode), schema.NetworkID(node.Network.Name))
-+		modelsNode.PostureChecksViolations, modelsNode.PostureCheckViolationSeverityLevel = logic.CheckPostureViolations(ctx, deviceInfo, schema.NetworkID(node.Network.Name))
-+		logic.EmitNewPostureViolationEvents(ctx, oldViolations, modelsNode.PostureChecksViolations, deviceInfo, schema.NetworkID(node.Network.Name))
- 		node.PostureCheckSeverity = modelsNode.PostureCheckViolationSeverityLevel
- 		node.PostureCheckLastEvaluationCycleID = uuid.NewString()
- 		node.PostureCheckLastEvaluatedAt = time.Now().UTC()
-```
-
-**File**: `pro/initialize.go` (modified, +1/-0)
-```diff
-@@ -224,6 +224,7 @@ func InitPro() {
- 	logic.ValidateEgressReq = proLogic.ValidateEgressReq
- 	logic.CheckPostureViolations = proLogic.CheckPostureViolations
- 	logic.CheckPostureViolationsForHost = proLogic.CheckPostureViolationsForHost
-+	logic.EmitNewPostureViolationEvents = proLogic.EmitNewPostureViolationEvents
- 	logic.GetPostureCheckDeviceInfoByNode = proLogic.GetPostureCheckDeviceInfoByNode
- 	logic.SyncHostMDMState = mdmpkg.SyncHostMDMState
- 	logic.SyncHostEDRState = edrpkg.SyncHostEDRState
+@@ -59,8 +59,8 @@ github.com/go-playground/validator/v10 v10.30.3/go.mod h1:4Axh7oCNGcoGkqLoE4YWt6
+ github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
+ github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
+ github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
+-github.com/goccy/go-json v0.10.5 h1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=
+-github.com/goccy/go-json v0.10.5/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
++github.com/goccy/go-json v0.10.6 h1:p8HrPJzOakx/mn/bQtjgNjdTcN+/S6FcG2CTtQOrHVU=
++github.com/goccy/go-json v0.10.6/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
+ github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
+ github.com/golang-jwt/jwt/v4 v4.5.2/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=
+ github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 h1:au07oEsX2xN0ktxqI+Sida1w446QrXBRJ0nee3SNZlA=
+@@ -139,8 +139,8 @@ github.com/paulmach/orb v0.13.0/go.mod h1:6scRWINywA2Jf05dcjOfLfxrUIMECvTSG2MVbR
+ github.com/pierrec/lz4/v4 v4.1.27 h1:+PhzhWDrjRj89TH2sw43nE3+4+W8lSxIuQadEHZyjUk=
+ github.com/pierrec/lz4/v4 v4.1.27/go.mod h1:EoQMVJgeeEOMsCqCzqFm2O0cJvljX2nGZjcRIPL34O4=
+ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+-github.com/posthog/posthog-go v1.14.0 h1:pN0+v7kvKkykRQDf6E0KNYJvKqhJ+VzQGlfxYHfZMhs=
+-github.com/posthog/posthog-go v1.14.0/go.mod h1:xsVOW9YImilUcazwPNEq4PJDqEZf2KeCS758zXjwkPg=
++github.com/posthog/posthog-go v1.23.1 h1:Xw8QnH1WdCjHoqEbej7FI3CfM1g0jBJb8aBqIpBvQeM=
++github.com/posthog/posthog-go v1.23.1/go.mod h1:seY9mmw3mYGT9i2Wr5Dn3JXWPiAkZ6aolwH/5l8eVQE=
+ github.com/pquerna/otp v1.5.0 h1:NMMR+WrmaqXU4EzdGJEE1aUUI0AMRzsp96fFFWNPwxs=
+ github.com/pquerna/otp v1.5.0/go.mod h1:dkJfzwRKNiegxyNb54X/3fLwhCynbMspSyWKnvi1AEg=
+ github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4170** (2026-10-04): NM-356: Network Status API (@VishalDalwadi)
-- **PR #4168** (2026-10-02): Fix: Add GRPC_TLS flag for Server GRPC Client (@VishalDalwadi)
-- **PR #4167** (2026-10-03): NM-356: User Node/Device Cleanup (@VishalDalwadi)
-- **PR #4166** (2026-10-01): NM-356: Flow Logs and Nameserver Changes (@VishalDalwadi)
-- **PR #4164** (closed): Feature/validate settings (@kushalShukla-web)
-- **PR #4156** (2026-09-23): Master (@abhishek9686)
-- **PR #4155** (2026-09-23): Release v1.7.0 (@abhishek9686)
-- **PR #4152** (2026-09-23): Patch: License Validation and Management (@VishalDalwadi)
+- **PR #4185** (2026-10-16): Fixes: v1.8.0 (@VishalDalwadi)
+- **PR #4184** (2026-10-16): Add bulk api for extclient, optimise creation of extclients (@abhishek9686)
+- **PR #4183** (2026-10-15): V1.7.0 develop merge (@abhishek9686)
+- **PR #4182** (2026-10-15): Release v1.7.0 (@abhishek9686)
+- **PR #4181** (2026-10-15): V1.7.0 ext acl (@abhishek9686)
+- **PR #4180** (2026-10-14): fix ext client egress acls (@abhishek9686)
 
 ---
 
@@ -4167,3 +1442,47 @@ emit POSTURE_CHECK_FAILED for new CheckIDs (with one-time backfill).
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. NM-378: Security Bug Fixes (#4114)
+
+**RULE**:
+When implementing operations in `auth/host_session.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `235db77b`: NM-378: Security Bug Fixes (#4114). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `auth/host_session.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		user := &schema.User{
+			Username: registerMessage.User,
+		}
+		err = user.GetWithMembership(ctx)
+		if err != nil {
+			handleHostRegErr(conn, fmt.Errorf("error fetching user %s: %w", registerMessage.User, err))
+			return
+		}
+
+		if user.AccountDisabled {
+			handleHostRegErr(conn, errors.New("user is disabled"))
+			return
+		}
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `235db77b` are properly handled with clean fallback behavior.

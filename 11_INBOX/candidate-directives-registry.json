@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T23:39:22.126Z",
+  "last_updated": "2026-10-18T23:45:23.823Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1630,6 +1630,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base"
+    },
+    {
+      "id": "CD-3VXR",
+      "directive_title": "Empirical Invariant Guard in mod.rs",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Rigellute/spotify-tui",
+      "source_commit": "c4dcf6b9",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-rigellute-spotify-tui"
     }
   ]
 }
