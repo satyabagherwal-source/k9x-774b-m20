@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T00:05:52.842Z",
+  "last_updated": "2026-10-18T00:09:18.514Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17303,7 +17303,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "79c1a1801cfa28962cff8b3b4c57029e2d18deb1ac4703211b97cd7381ac6250",
+      "content_hash": "24427e629877512fccaea7d7d36ada2b63a1d62c79178dc6e36a61af33e2a0d9",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -17334,7 +17334,7 @@
         {
           "number": 1274,
           "title": "Hierarchical Depth Asymmetry Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1275,
@@ -17349,6 +17349,11 @@
         {
           "number": 1373,
           "title": "Hierarchical Multi-Stage Feature Pyramid Contract Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1567,
+          "title": "Task-Specific Checkpoint Isolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17370,7 +17375,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-17T16:14:02.714Z",
+      "verified_at": "2026-10-18T00:09:18.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

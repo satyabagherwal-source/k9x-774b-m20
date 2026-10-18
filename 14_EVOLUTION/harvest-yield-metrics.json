@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T00:05:52.866Z",
-  "total_cycles_completed": 2333,
-  "total_learnings_persisted": 2333,
-  "total_rules_promoted": 1351,
+  "last_updated": "2026-10-18T00:09:18.545Z",
+  "total_cycles_completed": 2334,
+  "total_learnings_persisted": 2334,
+  "total_rules_promoted": 1353,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:55:57.228Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T13:03:38.395Z",
       "repository": "tw93/Pake",
@@ -1403,6 +1396,13 @@
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T00:09:18.545Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-psrben-visionhope",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

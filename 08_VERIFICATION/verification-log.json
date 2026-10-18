@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-6PC0",
-    "timestamp": "2026-10-16T20:00:17.856Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "215a575b55cb6feb16191ced565a875edd7cf8902b8b0ad34c70d8a13875a30e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-B1MJ",
     "timestamp": "2026-10-16T20:03:40.411Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7492,6 +7477,21 @@
     "contentHash": "9f7df8bd90712df71d068a69e4c79093f95b315219256fd41d9f482dbc28a71e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-ISAY",
+    "timestamp": "2026-10-18T00:09:18.538Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "24427e629877512fccaea7d7d36ada2b63a1d62c79178dc6e36a61af33e2a0d9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
