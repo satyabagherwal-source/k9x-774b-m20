@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-1QYL",
-    "timestamp": "2026-10-16T21:20:25.533Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "d557d3792afd2d59641c5a363022167145a329f0f35b2e44e89c7e46e7b33042",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-5TK3",
     "timestamp": "2026-10-16T21:23:35.523Z",
     "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -7492,6 +7477,21 @@
     "contentHash": "4a1d756a953954d085a25e8f31c383f9f594d18ca554dd3d2630b96fdc7b29c0",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-Q5MT",
+    "timestamp": "2026-10-18T01:39:01.253Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "0f5f9a49fd9348831b013f213fba7f8a452336b47830f6a63ae88abdda47613a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

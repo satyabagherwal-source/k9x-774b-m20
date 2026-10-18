@@ -2385,3 +2385,4 @@ Every entry in this ledger must capture:
 | `learn-github-chrisryugj-kordoc` | `https://github.com/chrisryugj/kordoc` | `eedbd2ff` | Multi-dimensional audit evidence | 2026-10-18T01:22:00.601Z |
 | `learn-github-vibheksoni-stealth-browser-mcp` | `https://github.com/vibheksoni/stealth-browser-mcp` | `ba95cca9` | Multi-dimensional audit evidence | 2026-10-18T01:29:00.708Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-18T01:35:33.290Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-18T01:39:01.256Z |

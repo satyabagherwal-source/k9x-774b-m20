@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T01:35:33.292Z",
-  "total_cycles_completed": 2355,
-  "total_learnings_persisted": 2355,
+  "last_updated": "2026-10-18T01:39:01.258Z",
+  "total_cycles_completed": 2356,
+  "total_learnings_persisted": 2356,
   "total_rules_promoted": 1368,
   "history": [
-    {
-      "timestamp": "2026-10-17T14:21:49.675Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T14:24:54.931Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T01:39:01.258Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
