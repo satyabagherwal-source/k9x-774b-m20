@@ -2905,8 +2905,8 @@
     "sourceType": "github",
     "technology": "TypeScript",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:36:18.533Z",
-    "lastVerified": "2026-10-17T23:36:18.533Z",
+    "lastChecked": "2026-10-18T06:18:08.816Z",
+    "lastVerified": "2026-10-18T06:18:08.816Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17514,8 +17514,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:01:07.578Z",
-    "lastVerified": "2026-10-18T06:01:07.578Z",
+    "lastChecked": "2026-10-18T06:18:11.323Z",
+    "lastVerified": "2026-10-18T06:18:11.323Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24332,5 +24332,12 @@
     "promotedRulesCount": 0,
     "verificationMethod": "full-clone-forensic-audit",
     "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
+  },
+  "seobserver-crawlobserver": {
+    "name": "crawlobserver",
+    "officialUrl": "https://github.com/SEObserver/crawlobserver",
+    "lastChecked": "2026-10-18T06:17:58.818Z",
+    "revisionIdentifier": "64b6a78344",
+    "lastVerified": "2026-10-18T06:17:58.818Z"
   }
 }
