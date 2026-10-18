@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-PX5H",
-    "timestamp": "2026-10-16T23:31:11.765Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "8fdd675e4c70913a6a92019c3b64a6b7dfab81576a50a6821bfcd59452080e2f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-TMZG",
     "timestamp": "2026-10-16T23:34:05.212Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/all-mpnet-base-v2",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
     "contentHash": "af79f935c1f789cc1bb7f0dbfbef08c64db41b7a738a08dfd948b94c14b59047",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-GE66",
+    "timestamp": "2026-10-18T03:51:23.838Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "8a94401a7249f47bedfd116031ef6607580eb01c047f9e9205a7592a54c9ff9b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

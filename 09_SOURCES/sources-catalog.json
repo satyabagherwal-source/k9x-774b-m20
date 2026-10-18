@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "4c7dbbe3edbd0ae41b57c249c7e0be3c4c4dc59e1a5ea6abee2408c90d98a739",
-    "lastHarvestedAt": "2026-10-17T19:18:29.105Z",
+    "contentHash": "8a94401a7249f47bedfd116031ef6607580eb01c047f9e9205a7592a54c9ff9b",
+    "lastHarvestedAt": "2026-10-18T03:51:23.841Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {

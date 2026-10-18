@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:48:04.265Z",
-  "total_cycles_completed": 2393,
-  "total_learnings_persisted": 2393,
+  "last_updated": "2026-10-18T03:51:23.842Z",
+  "total_cycles_completed": 2394,
+  "total_learnings_persisted": 2394,
   "total_rules_promoted": 1389,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:23:05.195Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-facebook-sam3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:26:32.323Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T03:48:04.265Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:51:23.842Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
