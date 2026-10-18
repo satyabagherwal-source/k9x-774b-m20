@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T03:51:23.844Z",
+  "last_updated": "2026-10-18T03:55:00.417Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2383,14 +2383,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "content_hash": "83c1e91d194e930d14082ad92e43a5b4f3d3c228b37dcd31ffb7346d46ccf090",
-      "verified_at": "2026-10-17T19:22:03.736Z",
+      "content_hash": "892e2a517aac3f01ff52e8d6125807acf2494af316b105c5c02aabddcc0d379b",
+      "verified_at": "2026-10-18T03:55:00.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T19:22:03.736Z"
+      "last_updated": "2026-10-18T03:55:00.417Z"
     },
     "pyannote/speaker-diarization-community-1": {
       "repository": "pyannote/speaker-diarization-community-1",

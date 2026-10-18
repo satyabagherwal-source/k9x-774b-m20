@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-TMZG",
-    "timestamp": "2026-10-16T23:34:05.212Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "3cd99550dfab67f5c71582464b380cbdb0de80c6d8ac29c6380522c28b5a32ff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-XNAO",
     "timestamp": "2026-10-16T23:37:12.240Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
     "contentHash": "8a94401a7249f47bedfd116031ef6607580eb01c047f9e9205a7592a54c9ff9b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-L1A3",
+    "timestamp": "2026-10-18T03:55:00.411Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "892e2a517aac3f01ff52e8d6125807acf2494af316b105c5c02aabddcc0d379b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

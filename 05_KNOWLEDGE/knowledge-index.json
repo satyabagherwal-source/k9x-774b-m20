@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T03:51:23.804Z",
+  "last_updated": "2026-10-18T03:55:00.376Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42579,7 +42579,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "83c1e91d194e930d14082ad92e43a5b4f3d3c228b37dcd31ffb7346d46ccf090",
+      "content_hash": "892e2a517aac3f01ff52e8d6125807acf2494af316b105c5c02aabddcc0d379b",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -42649,7 +42649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T19:22:03.700Z",
+      "verified_at": "2026-10-18T03:55:00.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
