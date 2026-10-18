@@ -854,8 +854,8 @@
     "sourceType": "github",
     "technology": "HTML",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T03:22:19.417Z",
-    "lastVerified": "2026-10-18T03:22:19.417Z",
+    "lastChecked": "2026-10-18T06:10:54.780Z",
+    "lastVerified": "2026-10-18T06:10:54.780Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2632,8 +2632,8 @@
     "sourceType": "github",
     "technology": "C++",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:30:02.424Z",
-    "lastVerified": "2026-10-17T23:30:02.424Z",
+    "lastChecked": "2026-10-18T06:10:57.277Z",
+    "lastVerified": "2026-10-18T06:10:57.277Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17546,8 +17546,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:54:30.258Z",
-    "lastVerified": "2026-10-18T05:54:30.258Z",
+    "lastChecked": "2026-10-18T06:10:59.778Z",
+    "lastVerified": "2026-10-18T06:10:59.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24188,5 +24188,12 @@
     "lastChecked": "2026-10-18T06:07:12.000Z",
     "revisionIdentifier": "d335452f68",
     "lastVerified": "2026-10-18T06:07:12.000Z"
+  },
+  "iaincollins-structured-data-testing-tool": {
+    "name": "structured-data-testing-tool",
+    "officialUrl": "https://github.com/iaincollins/structured-data-testing-tool",
+    "lastChecked": "2026-10-18T06:10:47.276Z",
+    "revisionIdentifier": "8300079044",
+    "lastVerified": "2026-10-18T06:10:47.276Z"
   }
 }
