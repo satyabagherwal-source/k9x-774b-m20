@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-I2M5",
-    "timestamp": "2026-10-16T21:33:07.133Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-    "contentHash": "879d77c903ffcac98ab6797a0c4007a65434a6801c6cd76a8b3ffa2ef12fe1b0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-MLOQ",
     "timestamp": "2026-10-16T21:36:38.474Z",
     "repository": "LiquidAI/d1-3B",
@@ -7490,6 +7475,21 @@
     "repository": "CompVis/stable-diffusion-v1-4",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
     "contentHash": "bed7a24241cf7c93da65109727e7498011dbdaf25c9636b3a47dbf0344e231a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-740S",
+    "timestamp": "2026-10-18T01:52:12.316Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "3c560fbd2e2193ddf7d2d55fb45e6f7eb909e613c4ab697ee9d1ea4219e5476d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
