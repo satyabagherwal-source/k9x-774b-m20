@@ -3391,8 +3391,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:46:19.917Z",
-    "lastVerified": "2026-10-17T23:46:19.917Z",
+    "lastChecked": "2026-10-18T06:27:57.429Z",
+    "lastVerified": "2026-10-18T06:27:57.429Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17546,8 +17546,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T06:10:59.778Z",
-    "lastVerified": "2026-10-18T06:10:59.778Z",
+    "lastChecked": "2026-10-18T06:27:59.923Z",
+    "lastVerified": "2026-10-18T06:27:59.923Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24353,5 +24353,12 @@
     "lastChecked": "2026-10-18T06:24:08.934Z",
     "revisionIdentifier": "1e7207b6eb",
     "lastVerified": "2026-10-18T06:24:08.934Z"
+  },
+  "kaiopiola-seocheck": {
+    "name": "SEOCheck",
+    "officialUrl": "https://github.com/kaiopiola/SEOCheck",
+    "lastChecked": "2026-10-18T06:27:47.426Z",
+    "revisionIdentifier": "a1e13f715f",
+    "lastVerified": "2026-10-18T06:27:47.426Z"
   }
 }
