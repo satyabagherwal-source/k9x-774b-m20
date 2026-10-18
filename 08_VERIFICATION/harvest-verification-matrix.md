@@ -2636,3 +2636,10 @@
 | `CYCLE-20261018-NTAR` | `2026-10-18T23:32:53.907Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1856` | Yes (`bf12ff01...`) |
 | `CYCLE-20261018-NUJP` | `2026-10-18T23:32:55.525Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1857` | Yes (`afdb92da...`) |
 | `CYCLE-20261018-NVXH` | `2026-10-18T23:32:57.317Z` | `dingodb/dingo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1858` | Yes (`5946ad13...`) |
+| `CYCLE-20261018-VSEC` | `2026-10-18T23:39:05.988Z` | `searchkit/searchkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1859` | Yes (`d230e3d5...`) |
+| `CYCLE-20261018-VT4U` | `2026-10-18T23:39:06.942Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1860` | Yes (`43960789...`) |
+| `CYCLE-20261018-VWAS` | `2026-10-18T23:39:11.044Z` | `wix/Detox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1861` | Yes (`805fc37e...`) |
+| `CYCLE-20261018-VZ1Y` | `2026-10-18T23:39:14.614Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1862` | Yes (`215c4a9b...`) |
+| `CYCLE-20261018-W03N` | `2026-10-18T23:39:15.971Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1863` | Yes (`69316908...`) |
+| `CYCLE-20261018-W1XS` | `2026-10-18T23:39:18.352Z` | `neural-maze/ava-whatsapp-agent-course` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1864` | Yes (`f9fb3078...`) |
+| `CYCLE-20261018-W4UD` | `2026-10-18T23:39:22.117Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1865, Rule 1866` | Yes (`14f8aa03...`) |

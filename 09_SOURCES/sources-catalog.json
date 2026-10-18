@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "5d181fa2e435923997934691fe624535adf93a7ca70c08ed2cc167b4f3082b24",
-    "lastHarvestedAt": "2026-10-17T20:41:27.931Z",
+    "contentHash": "14f8aa03473bccd5a9d0dc5479d3b3c12e8cba5f9774e3e3c6914332ba7afcf4",
+    "lastHarvestedAt": "2026-10-18T23:39:22.120Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -3598,5 +3598,65 @@
     "contentHash": "5946ad139816081eb2624eb4e1517fb0b5d4ff94809b1d3a7ddef2dcbe6e2120",
     "lastHarvestedAt": "2026-10-18T23:32:57.319Z",
     "learningId": "learn-github-dingodb-dingo"
+  },
+  "searchkit-searchkit": {
+    "repository": "searchkit/searchkit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/searchkit/searchkit",
+    "sourceVersion": "32da7000",
+    "license": "Apache-2.0",
+    "contentHash": "d230e3d5b5c1ec886d3073a9e4282cb6b6fb916e87d7ba70a00f1949c09ecc9a",
+    "lastHarvestedAt": "2026-10-18T23:39:05.990Z",
+    "learningId": "learn-github-searchkit-searchkit"
+  },
+  "1jehuang-jcode": {
+    "repository": "1jehuang/jcode",
+    "platform": "github",
+    "sourceUrl": "https://github.com/1jehuang/jcode",
+    "sourceVersion": "b1037848",
+    "license": "MIT",
+    "contentHash": "439607893e1d5511b1dcf25831efec02e5ab5bc7fd47422e5613ca0524d60041",
+    "lastHarvestedAt": "2026-10-18T23:39:06.945Z",
+    "learningId": "learn-github-1jehuang-jcode"
+  },
+  "wix-detox": {
+    "repository": "wix/Detox",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wix/Detox",
+    "sourceVersion": "d80a5740",
+    "license": "MIT",
+    "contentHash": "805fc37ed3e560f2a6cfd0f6fbec29df7cb6192cb9d8f32fe119777a25d15c92",
+    "lastHarvestedAt": "2026-10-18T23:39:11.047Z",
+    "learningId": "learn-github-wix-detox"
+  },
+  "koderover-zadig": {
+    "repository": "koderover/zadig",
+    "platform": "github",
+    "sourceUrl": "https://github.com/koderover/zadig",
+    "sourceVersion": "713cf6cb",
+    "license": "NOASSERTION",
+    "contentHash": "215c4a9be72fe77073c7be80c3353dcf8e55dbfd1f38ee158e46f34f09cb9bd9",
+    "lastHarvestedAt": "2026-10-18T23:39:14.616Z",
+    "learningId": "learn-github-koderover-zadig"
+  },
+  "trufflesecurity-trufflehog": {
+    "repository": "trufflesecurity/trufflehog",
+    "platform": "github",
+    "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
+    "sourceVersion": "048de9ff",
+    "license": "AGPL-3.0",
+    "contentHash": "69316908d04e4e99b914943c54dfddae93b70d95b2107616419d722788226bfc",
+    "lastHarvestedAt": "2026-10-18T23:39:15.974Z",
+    "learningId": "learn-github-trufflesecurity-trufflehog"
+  },
+  "neural-maze-ava-whatsapp-agent-course": {
+    "repository": "neural-maze/ava-whatsapp-agent-course",
+    "platform": "github",
+    "sourceUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
+    "sourceVersion": "338fd687",
+    "license": "MIT",
+    "contentHash": "f9fb3078ba5567e8c9a9c396710a0804b10f52d10904368f3389e586668d934d",
+    "lastHarvestedAt": "2026-10-18T23:39:18.355Z",
+    "learningId": "learn-github-neural-maze-ava-whatsapp-agent-course"
   }
 }

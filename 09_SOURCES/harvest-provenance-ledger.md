@@ -2643,3 +2643,10 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `3a20aa84` | Multi-dimensional audit evidence | 2026-10-18T23:32:53.909Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e3c3ef18` | Multi-dimensional audit evidence | 2026-10-18T23:32:55.527Z |
 | `learn-github-dingodb-dingo` | `https://github.com/dingodb/dingo` | `bb96a741` | Multi-dimensional audit evidence | 2026-10-18T23:32:57.319Z |
+| `learn-github-searchkit-searchkit` | `https://github.com/searchkit/searchkit` | `32da7000` | Multi-dimensional audit evidence | 2026-10-18T23:39:05.990Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `b1037848` | Multi-dimensional audit evidence | 2026-10-18T23:39:06.945Z |
+| `learn-github-wix-detox` | `https://github.com/wix/Detox` | `d80a5740` | Multi-dimensional audit evidence | 2026-10-18T23:39:11.047Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `713cf6cb` | Multi-dimensional audit evidence | 2026-10-18T23:39:14.616Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `048de9ff` | Multi-dimensional audit evidence | 2026-10-18T23:39:15.974Z |
+| `learn-github-neural-maze-ava-whatsapp-agent-course` | `https://github.com/neural-maze/ava-whatsapp-agent-course` | `338fd687` | Multi-dimensional audit evidence | 2026-10-18T23:39:18.355Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-18T23:39:22.120Z |

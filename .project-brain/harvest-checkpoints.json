@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:32:57.325Z",
+  "last_updated": "2026-10-18T23:39:22.130Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2639,14 +2639,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "5d181fa2e435923997934691fe624535adf93a7ca70c08ed2cc167b4f3082b24",
-      "verified_at": "2026-10-17T20:41:27.933Z",
+      "content_hash": "14f8aa03473bccd5a9d0dc5479d3b3c12e8cba5f9774e3e3c6914332ba7afcf4",
+      "verified_at": "2026-10-18T23:39:22.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:41:27.933Z"
+      "last_updated": "2026-10-18T23:39:22.130Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -5512,6 +5512,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:32:57.324Z"
+    },
+    "searchkit/searchkit": {
+      "repository": "searchkit/searchkit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-searchkit-searchkit",
+      "content_hash": "d230e3d5b5c1ec886d3073a9e4282cb6b6fb916e87d7ba70a00f1949c09ecc9a",
+      "verified_at": "2026-10-18T23:39:05.998Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:39:05.998Z"
+    },
+    "1jehuang/jcode": {
+      "repository": "1jehuang/jcode",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-1jehuang-jcode",
+      "content_hash": "439607893e1d5511b1dcf25831efec02e5ab5bc7fd47422e5613ca0524d60041",
+      "verified_at": "2026-10-18T23:39:06.952Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:39:06.952Z"
+    },
+    "wix/Detox": {
+      "repository": "wix/Detox",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wix-detox",
+      "content_hash": "805fc37ed3e560f2a6cfd0f6fbec29df7cb6192cb9d8f32fe119777a25d15c92",
+      "verified_at": "2026-10-18T23:39:11.055Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:39:11.055Z"
+    },
+    "koderover/zadig": {
+      "repository": "koderover/zadig",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-koderover-zadig",
+      "content_hash": "215c4a9be72fe77073c7be80c3353dcf8e55dbfd1f38ee158e46f34f09cb9bd9",
+      "verified_at": "2026-10-18T23:39:14.623Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:39:14.623Z"
+    },
+    "trufflesecurity/trufflehog": {
+      "repository": "trufflesecurity/trufflehog",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-trufflesecurity-trufflehog",
+      "content_hash": "69316908d04e4e99b914943c54dfddae93b70d95b2107616419d722788226bfc",
+      "verified_at": "2026-10-18T23:39:15.981Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:39:15.981Z"
+    },
+    "neural-maze/ava-whatsapp-agent-course": {
+      "repository": "neural-maze/ava-whatsapp-agent-course",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-neural-maze-ava-whatsapp-agent-course",
+      "content_hash": "f9fb3078ba5567e8c9a9c396710a0804b10f52d10904368f3389e586668d934d",
+      "verified_at": "2026-10-18T23:39:18.359Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:39:18.359Z"
     }
   },
   "repos": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T22:48:14.498Z",
+  "last_updated": "2026-10-18T23:39:22.126Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1619,6 +1619,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-matrixorigin-matrixone"
+    },
+    {
+      "id": "CD-W4UM",
+      "directive_title": "Cross-Repository Dependency Version Locking",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "OpenMOSS-Team/MOSS-Image-Base",
+      "source_commit": "hf-openmoss-",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-openmoss-team-moss-image-base"
     }
   ]
 }

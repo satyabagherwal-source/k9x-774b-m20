@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:32:57.297Z",
-  "total_verified_learnings": 382,
+  "last_updated": "2026-10-18T23:39:22.081Z",
+  "total_verified_learnings": 388,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -69,22 +69,35 @@
     "learn-github-1jehuang-jcode": {
       "learning_id": "learn-github-1jehuang-jcode",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "1jehuang-jcode",
+      "source": "1jehuang/jcode",
+      "repository": "1jehuang/jcode",
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "HEAD",
-      "content_hash": "fa066764229171742c6a1a09ce8658ff33088ee83d5b112982961fc9ed00f9d2",
+      "source_version": "b1037848",
+      "content_hash": "439607893e1d5511b1dcf25831efec02e5ab5bc7fd47422e5613ca0524d60041",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1860,
+          "title": "Tick every 10ms while the fast-start transcript is still rendering",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.497Z"
+      "verified_at": "2026-10-18T23:39:06.899Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-1panel-dev-maxkb": {
       "learning_id": "learn-github-1panel-dev-maxkb",
@@ -23059,22 +23072,35 @@
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "koderover-zadig",
+      "source": "koderover/zadig",
+      "repository": "koderover/zadig",
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "HEAD",
-      "content_hash": "d030a105e0fabed56a0ed8943c36e9b5ce7041d45b64287023d905ab376e8e68",
+      "source_version": "713cf6cb",
+      "content_hash": "215c4a9be72fe77073c7be80c3353dcf8e55dbfd1f38ee158e46f34f09cb9bd9",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1862,
+          "title": "Merge pull request #5027 from PetrusZ/fix/security",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.831Z"
+      "verified_at": "2026-10-18T23:39:14.573Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-komi-store-komi-store": {
       "learning_id": "learn-github-komi-store-komi-store",
@@ -27116,22 +27142,35 @@
     "learn-github-neural-maze-ava-whatsapp-agent-course": {
       "learning_id": "learn-github-neural-maze-ava-whatsapp-agent-course",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "neural-maze-ava-whatsapp-agent-course",
+      "source": "neural-maze/ava-whatsapp-agent-course",
+      "repository": "neural-maze/ava-whatsapp-agent-course",
       "slug": "neural-maze-ava-whatsapp-agent-course",
       "platform": "github",
       "source_url": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-      "source_version": "HEAD",
-      "content_hash": "0b5661c7c152ddae8af14648d74e59a235bec4239647ea667ef5630d260c5f63",
+      "source_version": "338fd687",
+      "content_hash": "f9fb3078ba5567e8c9a9c396710a0804b10f52d10904368f3389e586668d934d",
       "dossier_path": "07_PROJECT_LEARNING/neural-maze-ava-whatsapp-agent-course-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neural-maze-ava-whatsapp-agent-course-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1864,
+          "title": "fix broken links",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.608Z"
+      "verified_at": "2026-10-18T23:39:18.299Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-neural-maze-philoagents-course": {
       "learning_id": "learn-github-neural-maze-philoagents-course",
@@ -31632,22 +31671,35 @@
     "learn-github-searchkit-searchkit": {
       "learning_id": "learn-github-searchkit-searchkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "searchkit-searchkit",
+      "source": "searchkit/searchkit",
+      "repository": "searchkit/searchkit",
       "slug": "searchkit-searchkit",
       "platform": "github",
       "source_url": "https://github.com/searchkit/searchkit",
-      "source_version": "HEAD",
-      "content_hash": "aed2ebeee08137c157cf025067fb1d497eaf707965441c5c3d3193880ceaab54",
+      "source_version": "32da7000",
+      "content_hash": "d230e3d5b5c1ec886d3073a9e4282cb6b6fb916e87d7ba70a00f1949c09ecc9a",
       "dossier_path": "07_PROJECT_LEARNING/searchkit-searchkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/searchkit-searchkit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1859,
+          "title": "add timeout and error handling to prevent infinite loading (#1412)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.425Z"
+      "verified_at": "2026-10-18T23:39:05.947Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-seekstorm-seekstorm": {
       "learning_id": "learn-github-seekstorm-seekstorm",
@@ -35260,22 +35312,35 @@
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "trufflesecurity-trufflehog",
+      "source": "trufflesecurity/trufflehog",
+      "repository": "trufflesecurity/trufflehog",
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "HEAD",
-      "content_hash": "4d5765b02aa6060d648e8c9519386ad91bd81f7e5b417d66b484f80a8ef7e7e5",
+      "source_version": "048de9ff",
+      "content_hash": "69316908d04e4e99b914943c54dfddae93b70d95b2107616419d722788226bfc",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1863,
+          "title": "Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#5431)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.081Z"
+      "verified_at": "2026-10-18T23:39:15.931Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-trustgraph-ai-trustgraph": {
       "learning_id": "learn-github-trustgraph-ai-trustgraph",
@@ -36528,22 +36593,35 @@
     "learn-github-wix-detox": {
       "learning_id": "learn-github-wix-detox",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "wix-detox",
+      "source": "wix/Detox",
+      "repository": "wix/Detox",
       "slug": "wix-detox",
       "platform": "github",
       "source_url": "https://github.com/wix/Detox",
-      "source_version": "HEAD",
-      "content_hash": "d7ecbaa5cee7e7cf26ab1bb319324b4a4a874319259a5853cf241ee294805562",
+      "source_version": "d80a5740",
+      "content_hash": "805fc37ed3e560f2a6cfd0f6fbec29df7cb6192cb9d8f32fe119777a25d15c92",
       "dossier_path": "07_PROJECT_LEARNING/wix-detox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-detox-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1861,
+          "title": "android): Catch errors in WebView injection (#4943)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.331Z"
+      "verified_at": "2026-10-18T23:39:11.004Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-wix-react-native-calendars": {
       "learning_id": "learn-github-wix-react-native-calendars",
@@ -45800,16 +45878,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "5d181fa2e435923997934691fe624535adf93a7ca70c08ed2cc167b4f3082b24",
+      "content_hash": "14f8aa03473bccd5a9d0dc5479d3b3c12e8cba5f9774e3e3c6914332ba7afcf4",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1865,
+          "title": "Model Artifact Configuration Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1866,
+          "title": "Prompt Schema Disambiguation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T20:41:27.902Z",
+      "verified_at": "2026-10-18T23:39:22.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69994,6 +70083,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:32:57.293Z"
+    },
+    "rule-1859": {
+      "learning_id": "rule-1859",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1859,
+      "title": "add timeout and error handling to prevent infinite loading (#1412)",
+      "source_url": "https://github.com/searchkit/searchkit",
+      "source_version": "32da7000",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:05.947Z"
+    },
+    "rule-1860": {
+      "learning_id": "rule-1860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1860,
+      "title": "Tick every 10ms while the fast-start transcript is still rendering",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "b1037848",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:06.899Z"
+    },
+    "rule-1861": {
+      "learning_id": "rule-1861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1861,
+      "title": "android): Catch errors in WebView injection (#4943)",
+      "source_url": "https://github.com/wix/Detox",
+      "source_version": "d80a5740",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:11.004Z"
+    },
+    "rule-1862": {
+      "learning_id": "rule-1862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1862,
+      "title": "Merge pull request #5027 from PetrusZ/fix/security",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "713cf6cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:14.573Z"
+    },
+    "rule-1863": {
+      "learning_id": "rule-1863",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1863,
+      "title": "Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#5431)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "048de9ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:15.931Z"
+    },
+    "rule-1864": {
+      "learning_id": "rule-1864",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1864,
+      "title": "fix broken links",
+      "source_url": "https://github.com/neural-maze/ava-whatsapp-agent-course",
+      "source_version": "338fd687",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:18.299Z"
+    },
+    "rule-1865": {
+      "learning_id": "rule-1865",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1865,
+      "title": "Model Artifact Configuration Integrity Invariant",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:22.075Z"
+    },
+    "rule-1866": {
+      "learning_id": "rule-1866",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1866,
+      "title": "Prompt Schema Disambiguation Invariant",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:39:22.075Z"
     }
   },
   "aliases": {
