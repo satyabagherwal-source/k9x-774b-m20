@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-DFXP",
-    "timestamp": "2026-10-16T21:01:31.501Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "3577a3ec99fe114514e4cb2c894199fd6b29883f91ec1eeec37a946ce00ba99f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-HKWW",
     "timestamp": "2026-10-16T21:04:44.576Z",
     "repository": "autotrust/GEV-26B-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
     "contentHash": "4a44016216ab5e0125fef85aff7885d5d2b648d98571f83cc9ed6009a59b7f3a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-MQX9",
+    "timestamp": "2026-10-18T01:08:22.605Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "b2e4c34d3c8c9ad7f001c6cc7a1b1d744827c6394789bdc3c04e79be87b1e0bf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
