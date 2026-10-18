@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-J2H2",
-    "timestamp": "2026-10-16T23:53:51.686Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "d02ba248e6e9eac52be181442ee1a4a9fb94b554c7421c7a33c6ac6c317cb9fc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-NNV2",
     "timestamp": "2026-10-16T23:57:26.030Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7490,6 +7475,21 @@
     "repository": "meta-models/Muse-Spark-Open-816B-A42B",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
     "contentHash": "4789066e54cab96d06d171c324ef8a17cf340e062771c06bfbbed97f1fbf3795",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-AZMA",
+    "timestamp": "2026-10-18T04:15:11.314Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "3f0de83fd0e1bfb7abe9d527fb9f1121f5a3e8920af33c7c84e78624834c801f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
