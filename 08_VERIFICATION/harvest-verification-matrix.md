@@ -2384,3 +2384,4 @@
 | `CYCLE-20261018-2D7P` | `2026-10-18T01:48:30.949Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`bed7a242...`) |
 | `CYCLE-20261018-740S` | `2026-10-18T01:52:12.316Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`3c560fbd...`) |
 | `CYCLE-20261018-BM6Y` | `2026-10-18T01:55:42.490Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`cedde462...`) |
+| `CYCLE-20261018-FTYN` | `2026-10-18T01:58:59.183Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`3ddffd65...`) |
