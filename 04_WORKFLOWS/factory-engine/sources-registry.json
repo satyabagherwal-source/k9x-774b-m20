@@ -1814,8 +1814,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:00:46.599Z",
-    "lastVerified": "2026-10-17T23:00:46.599Z",
+    "lastChecked": "2026-10-18T05:33:52.163Z",
+    "lastVerified": "2026-10-18T05:33:52.163Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2566,8 +2566,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T02:20:27.380Z",
-    "lastVerified": "2026-10-18T02:20:27.380Z",
+    "lastChecked": "2026-10-18T05:33:49.669Z",
+    "lastVerified": "2026-10-18T05:33:49.669Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17546,8 +17546,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:17:09.354Z",
-    "lastVerified": "2026-10-18T05:17:09.354Z",
+    "lastChecked": "2026-10-18T05:33:54.667Z",
+    "lastVerified": "2026-10-18T05:33:54.667Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -23865,5 +23865,12 @@
     "lastChecked": "2026-10-18T05:30:20.554Z",
     "revisionIdentifier": "HEAD",
     "lastVerified": "2026-10-18T05:30:20.554Z"
+  },
+  "serpapi-google-search-results-python": {
+    "name": "google-search-results-python",
+    "officialUrl": "https://github.com/serpapi/google-search-results-python",
+    "lastChecked": "2026-10-18T05:33:42.166Z",
+    "revisionIdentifier": "HEAD",
+    "lastVerified": "2026-10-18T05:33:42.166Z"
   }
 }
