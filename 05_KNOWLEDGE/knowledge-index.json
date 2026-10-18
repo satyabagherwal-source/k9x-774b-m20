@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T07:39:22.027Z",
-  "total_verified_learnings": 222,
+  "last_updated": "2026-10-18T07:55:31.657Z",
+  "total_verified_learnings": 224,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47298,6 +47298,92 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T07:39:22.020Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-expressjs-express": {
+      "learning_id": "learn-github-expressjs-express",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "expressjs/express",
+      "repository": "expressjs/express",
+      "slug": "expressjs-express",
+      "platform": "github",
+      "source_url": "https://github.com/expressjs/express",
+      "source_version": "0dee2c52",
+      "content_hash": "91c1cb88c8bf06cd3d63879719e65c1cdf6239afdc1b2ed04daf6cfa527d3105",
+      "dossier_path": "07_PROJECT_LEARNING/expressjs-express-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/expressjs-express-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1673,
+          "title": "Decoupled Transport Header Mutual Exclusion Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1674,
+          "title": "Method Invariant Idempotent Revalidation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1675,
+          "title": "Sub-App Scope Prototype Isolation and Restoration Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T07:55:05.914Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-nitrojs-nitro": {
+      "learning_id": "learn-github-nitrojs-nitro",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nitrojs/nitro",
+      "repository": "nitrojs/nitro",
+      "slug": "unjs-nitro",
+      "platform": "github",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "e3378f94",
+      "content_hash": "ceab1b673aca60ffc5ce1f5a179c1872fb62a16064281e56f7973cdf27bdc8eb",
+      "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1676,
+          "title": "Unified Hook Merging In Deep Configuration Trees",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1677,
+          "title": "Idempotent Asynchronous Resource Shutdown Protection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1678,
+          "title": "Edge Routing Lookahead Exclusion for Broad Wildcards",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T07:55:31.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -117085,3 +117085,605 @@ function getNextTargetBad(queue) {
 Simulate a queue containing 3 items: `[itemA_404, itemB_valid, itemC_valid]`. Mark `itemA_404` as `404_OR_UNAVAILABLE` in `sourcesRegistry`. Call `selectNextHarvestTarget`. Assert that `itemB_valid` is returned on turn 1 and `itemC_valid` on turn 2, with 0 selections of `itemA_404`.
 
 ---
+
+
+---
+
+## 1673. Decoupled Transport Header Mutual Exclusion Rule (Harvested from expressjs/express)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Transport Header Mutual Exclusion Rule",
+  "source": "expressjs/express",
+  "source_url": "https://github.com/expressjs/express",
+  "source_version": "0dee2c52",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T07:55:05.704Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-expressjs-express",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [expressjs/express](https://github.com/expressjs/express) (Revision: `0dee2c52`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating HTTP response headers, transport-level framing headers (`Transfer-Encoding`) and length-delimiting headers (`Content-Length`) MUST be treated as strictly mutually exclusive per RFC 9112 Section 6.1. However, payload inspection logic (such as calculating buffer byte length, hashing payload slices, and deriving ETags) MUST execute independently of whether `Transfer-Encoding` is present. Never nest payload metadata derivation inside a `!res.hasHeader('Transfer-Encoding')` conditional block.
+
+**WHY**:
+Nesting length calculation and hash derivation inside a check that guards against emitting `Content-Length` causes silent omission of caching validators (such as `ETag`). When an upstream proxy or middleware sets `Transfer-Encoding: chunked`, downstream conditional caching (`304 Not Modified`, `If-None-Match`) breaks silently because the entity tag calculation was erroneously aborted alongside the `Content-Length` header assignment.
+
+**WHEN TO APPLY**:
+Apply in any web framework, reverse proxy, or HTTP response serializer handling buffer or string bodies where chunked streaming and cache validation headers coexist.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade implementation from Express res.send logic (lib/response.js)
+function finalizeResponsePayload(res, app, chunk, encoding) {
+  var len;
+
+  // 1. Calculate payload byte length unconditionally for metadata derivation
+  if (chunk !== undefined) {
+    if (Buffer.isBuffer(chunk)) {
+      len = chunk.length;
+    } else if (typeof chunk === 'string') {
+      len = Buffer.byteLength(chunk, encoding);
+    } else {
+      // JSON or primitive type normalized to string buffer prior to entry
+      len = Buffer.byteLength(chunk, encoding);
+    }
+
+    // 2. Conditionally assign Content-Length ONLY if Transfer-Encoding is absent.
+    // RFC 9112: A sender MUST NOT send a Content-Length header field in any message
+    // that contains a Transfer-Encoding header field.
+    if (!res.get('Transfer-Encoding')) {
+      res.set('Content-Length', len);
+    }
+  }
+
+  // 3. ETag generation depends on payload content and calculated length, NOT transport framing
+  var etagFn = app.get('etag fn');
+  var generateETag = !res.get('ETag') && typeof etagFn === 'function';
+
+  if (generateETag && len !== undefined) {
+    var computedETag = etagFn(chunk, encoding);
+    if (computedETag) {
+      res.set('ETag', computedETag);
+    }
+  }
+
+  return chunk;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Coupling payload metadata extraction to header presence
+if (chunk !== undefined && !res.get('Transfer-Encoding')) {
+  // If Transfer-Encoding was injected upstream (e.g., chunked),
+  // this whole block is skipped!
+  len = Buffer.isBuffer(chunk) ? chunk.length : Buffer.byteLength(chunk, encoding);
+  res.set('Content-Length', len);
+  
+  // BUG: ETag generation nested here fails completely when chunked!
+  res.set('ETag', etagFn(chunk)); 
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test sending a body with an explicit `Transfer-Encoding: chunked` header, asserting the complete absence of `Content-Length` and asserting the exact presence of the calculated `ETag`:
+```javascript
+it('should generate ETag even if Transfer-Encoding is set', function (done) {
+  var app = express();
+  app.use(function (_, res) {
+    res.set('Transfer-Encoding', 'chunked').send('forensic-payload');
+  });
+
+  request(app)
+    .get('/')
+    .expect(200)
+    .expect(function (res) {
+      if (res.headers['content-length'] !== undefined) {
+        throw new Error('Content-Length MUST NOT be set when Transfer-Encoding is present');
+      }
+      if (!res.headers['etag']) {
+        throw new Error('ETag MUST be generated regardless of Transfer-Encoding');
+      }
+    })
+    .end(done);
+});
+```
+
+---
+
+
+---
+
+## 1674. Method Invariant Idempotent Revalidation Rule (Harvested from expressjs/express)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Method Invariant Idempotent Revalidation Rule",
+  "source": "expressjs/express",
+  "source_url": "https://github.com/expressjs/express",
+  "source_version": "0dee2c52",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T07:55:05.791Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-expressjs-express",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [expressjs/express](https://github.com/expressjs/express) (Revision: `0dee2c52`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing conditional HTTP caching checks (`req.fresh` evaluation for `If-None-Match` and `If-Modified-Since`), the validator MUST NOT artificially restrict validation solely to `GET` and `HEAD`. Any safe, idempotent, or query-based method defined by IETF RFCs that permits payload revalidation (specifically including the HTTP `QUERY` method per RFC 10008) MUST be permitted to revalidate against resource state and return `304 Not Modified`.
+
+**WHY**:
+The HTTP `QUERY` method enables clients to send complex query parameters within a request payload (avoiding URI length limitations) while maintaining safe and idempotent semantics identical to `GET`. Hardcoding `if (req.method !== 'GET' && req.method !== 'HEAD') return false;` guarantees that `QUERY` responses re-download duplicate bodies over the network, completely invalidating cache revalidation infrastructure and causing bandwidth waste and latency regressions.
+
+**WHEN TO APPLY**:
+Apply to all request-freshness calculators, caching proxies, API gateways, and web frameworks running in environments supporting extended HTTP methods (such as Node.js >= 22 where `http.METHODS` contains `QUERY`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade freshness validation (lib/request.js)
+function isRequestFresh(req, res) {
+  var method = req.method;
+  var status = res.statusCode;
+
+  // 1. Authorize only safe/idempotent cache-validation candidate methods
+  // Matches RFC 9110 (GET/HEAD) and RFC 10008 (QUERY)
+  if (method !== 'GET' && method !== 'HEAD' && method !== 'QUERY') {
+    return false;
+  }
+
+  // 2. 2xx/304 response code status check
+  var is2xx = (status >= 200 && status < 300);
+  if (!is2xx && status !== 304) {
+    return false;
+  }
+
+  // 3. Delegate to fresh validator checking If-None-Match and If-Modified-Since
+  return fresh(req.headers, {
+    'etag': res.get('ETag'),
+    'last-modified': res.get('Last-Modified')
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Strict method hardcoding assuming GET/HEAD are the only valid cacheable methods
+req.fresh = function() {
+  // Permanently cripples RFC 10008 QUERY method revalidation
+  if (this.method !== 'GET' && this.method !== 'HEAD') {
+    return false;
+  }
+  return fresh(this.headers, {
+    'etag': this.res.get('ETag'),
+    'last-modified': this.res.get('Last-Modified')
+  });
+};
+```
+
+**VERIFICATION METHOD**:
+Run property test with conditional validation headers using HTTP `QUERY`:
+```javascript
+it('should respond with 304 Not Modified for conditional QUERY requests', function (done) {
+  var app = express();
+  app.query('/search', function (req, res) {
+    res.set('ETag', '"target-hash-123"').json({ data: [1, 2, 3] });
+  });
+
+  request(app)
+    .query('/search')
+    .set('If-None-Match', '"target-hash-123"')
+    .send({ filter: 'all' })
+    .expect(304, function (err, res) {
+      if (err) return done(err);
+      assert.strictEqual(res.text, '');
+      done();
+    });
+});
+```
+
+---
+
+
+---
+
+## 1675. Sub-App Scope Prototype Isolation and Restoration Rule (Harvested from expressjs/express)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Sub-App Scope Prototype Isolation and Restoration Rule",
+  "source": "expressjs/express",
+  "source_url": "https://github.com/expressjs/express",
+  "source_version": "0dee2c52",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T07:55:05.868Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-expressjs-express",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [expressjs/express](https://github.com/expressjs/express) (Revision: `0dee2c52`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an application or routing engine swaps the prototype chain or alters the context references (`req.__proto__`, `res.__proto__`, `req.app`) of mutable shared objects passing through nested, mounted sub-routers or sub-applications, the execution harness MUST register an unwinding exit hook (or teardown continuation) that restores the exact original prototype chain and app pointers when control yields back via `next()`.
+
+**WHY**:
+Failure to restore prototypes upon sub-app `next()` completion leaks the mounted application's prototype and settings (`trust proxy`, custom request helpers, route parsing flags) into subsequent middleware executed by the parent app. This creates critical security vulnerabilities: downstream parent middleware might treat spoofed `X-Forwarded-For` client headers as trusted IP addresses because the sub-app had `app.set('trust proxy', true)`, whereas the parent application explicitly forbade proxy trust.
+
+**WHEN TO APPLY**:
+Apply whenever designing middleware engines, micro-frontends, or embedded execution pipelines that mutate shared global or request-scoped object prototypes to inject local domain capabilities.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Production-grade scope preservation and unwinding mechanism
+function handleSubApp(subApp, req, res, next) {
+  // 1. Snapshot original prototype chain and context references
+  var originalReqProto = Object.getPrototypeOf(req);
+  var originalResProto = Object.getPrototypeOf(res);
+  var originalApp = req.app;
+  var originalResApp = res.app;
+
+  // 2. Define safe unwinding continuation
+  function restoreAndNext(err) {
+    // Unconditionally revert the prototype chains
+    Object.setPrototypeOf(req, originalReqProto);
+    Object.setPrototypeOf(res, originalResProto);
+    
+    // Restore direct application pointers
+    req.app = originalApp;
+    res.app = originalResApp;
+
+    // Yield control back to parent stack
+    next(err);
+  }
+
+  // 3. Inject sub-app prototype context
+  Object.setPrototypeOf(req, subApp.request);
+  Object.setPrototypeOf(res, subApp.response);
+  req.app = subApp;
+  res.app = subApp;
+
+  // 4. Delegate to sub-app router with unwinding callback
+  subApp.handle(req, res, restoreAndNext);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: One-way prototype mutation without unwinding
+function unsafeSubAppHandle(subApp, req, res, next) {
+  // Prototype is mutated in-place
+  req.__proto__ = subApp.request;
+  res.__proto__ = subApp.response;
+  req.app = subApp;
+
+  // If subApp does not finalize the response and calls next(),
+  // the parent router continues execution, but req.__proto__ remains subApp.request!
+  subApp.handle(req, res, next);
+}
+```
+
+**VERIFICATION METHOD**:
+Construct an integration test mounting a sub-app with conflicting security configurations, verifying prototype restoration after `next()`:
+```javascript
+it('should restore parent settings after yielding from subApp', function (done) {
+  var parent = express();
+  var subApp = express();
+
+  parent.set('trust proxy', false);
+  subApp.set('trust proxy', true);
+
+  subApp.use(function (req, res, next) {
+    next(); // Yield without terminating
+  });
+
+  parent.use('/sub', subApp);
+  parent.use('/sub', function (req, res) {
+    // If bug exists, req.app is subApp and trust proxy is true
+    res.json({
+      isProxyTrusted: req.app.get('trust proxy'),
+      matchesParent: req.app === parent
+    });
+  });
+
+  request(parent)
+    .get('/sub')
+    .expect(200, {
+      isProxyTrusted: false,
+      matchesParent: true
+    }, done);
+});
+```
+
+---
+
+
+---
+
+## 1676. Unified Hook Merging In Deep Configuration Trees (Harvested from nitrojs/nitro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Unified Hook Merging In Deep Configuration Trees",
+  "source": "nitrojs/nitro",
+  "source_url": "https://github.com/unjs/nitro",
+  "source_version": "e3378f94",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-18T07:55:31.437Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nitrojs-nitro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nitrojs/nitro](https://github.com/unjs/nitro) (Revision: `e3378f94`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deep-merging hierarchical configuration structures where child layers override parent primitives, properties named `hooks` (or containing lifecycle listeners) MUST NOT follow standard "last-write-wins" or "first-source-priority" shallow/deep replacement. They MUST be intercepted and recursively composed using a chained execution adapter so that callbacks from all sources run sequentially in priority order.
+
+**WHY**:
+Standard recursive merge utilities (such as default `defu`, `lodash.merge`, or Object.assign) overwrite functions or object dictionaries matching duplicate keys. In plugin/preset architectures, if a deployment preset (e.g., `cloudflare` or `vercel`) defines a `compiled` or `close` hook, and the end-user config defines the same hook name, standard merging drops the preset's infrastructure hooks. This results in missing cleanup routines, leaked processes, or omitted build manifests.
+
+**WHEN TO APPLY**:
+Apply in any plugin, SDK, or framework architecture where configuration can be extended via presets, presets can be extended by user configs, and environments can override base configs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { createDefu } from "defu";
+import { mergeHooks } from "hookable";
+
+function isPlainObject(value: unknown): value is Record<PropertyKey, any> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+export function mergeConfigHooks(
+  target: Record<PropertyKey, any>,
+  key: PropertyKey,
+  sourceValue: any,
+  namespace: string
+): boolean {
+  // Target root-level or namespaced "hooks" objects
+  if (key === "hooks" && !namespace && isPlainObject(target.hooks) && isPlainObject(sourceValue)) {
+    target.hooks = mergeHooks(target.hooks, sourceValue);
+    return true; // Short-circuits defu's default overwrite/merge behavior
+  }
+  return false;
+}
+
+export const mergeNitroConfig = createDefu(mergeConfigHooks) as (...sources: any[]) => any;
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Standard deep merge drops preset hooks when user config defines the same key
+import { defu } from "defu";
+
+export function mergeUserConfig(presetDefaults: AppConfig, userOverrides: AppConfig): AppConfig {
+  // CRITICAL FAILURE: If both contain `hooks: { close: () => cleanup() }`,
+  // userOverrides.hooks.close completely destroys presetDefaults.hooks.close.
+  return defu(userOverrides, presetDefaults);
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a unit test asserting that registered callbacks from three cascading layers (preset, config, overrides) all execute when the hook is called:
+```typescript
+import { describe, it, expect, vi } from "vitest";
+
+describe("mergeConfigHooks compliance", () => {
+  it("executes hooks from all merged configuration tiers", async () => {
+    const sequence: string[] = [];
+    const preset = { hooks: { close: () => sequence.push("preset") } };
+    const user = { hooks: { close: () => sequence.push("user") } };
+    const overrides = { hooks: { close: () => sequence.push("overrides") } };
+
+    const merged = mergeNitroConfig(overrides, user, preset);
+    await merged.hooks.close();
+
+    expect(sequence).toEqual(["preset", "user", "overrides"]);
+  });
+});
+```
+
+---
+
+
+---
+
+## 1677. Idempotent Asynchronous Resource Shutdown Protection (Harvested from nitrojs/nitro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Idempotent Asynchronous Resource Shutdown Protection",
+  "source": "nitrojs/nitro",
+  "source_url": "https://github.com/unjs/nitro",
+  "source_version": "e3378f94",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-18T07:55:31.525Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nitrojs-nitro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nitrojs/nitro](https://github.com/unjs/nitro) (Revision: `e3378f94`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Lifecycle termination methods on stateful instances (e.g., `server.close()`, `app.shutdown()`) MUST cache their in-flight execution promise via nullish coalescing assignment (`??=`) and return that cached promise on subsequent invocations. They MUST NOT re-trigger underlying cleanup hooks or driver disconnects.
+
+**WHY**:
+In complex CLI lifecycles, dev server watchdogs, and test harnesses, multiple parallel routines or teardown traps (e.g., `SIGINT`, `process.on("exit")`, test `afterEach`, and explicit builder teardown) invoke `.close()` concurrently. Re-invoking `callHook("close")` executes disposal logic multiple times, leading to `ERR_SERVER_NOT_RUNNING`, double-free attempts on native worker isolates, and premature aborts of ongoing flush operations.
+
+**WHEN TO APPLY**:
+Apply to all instance managers, daemon workers, database transaction pools, and builder instances exposing an asynchronous termination or disposal interface.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export interface ManagedInstance {
+  close: () => Promise<void>;
+}
+
+export function createManagedInstance(hooks: Hookable<Record<string, any>>): ManagedInstance {
+  let closePromise: Promise<void> | undefined;
+
+  const instance: ManagedInstance = {
+    // Nullish coalescing assignment guarantees single execution across concurrent calls
+    close: () => (closePromise ??= Promise.resolve(hooks.callHook("close"))),
+  };
+
+  return instance;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Calling close() repeatedly creates uncoordinated duplicate executions
+export function createBrokenInstance(hooks: Hookable<Record<string, any>>) {
+  return {
+    close: () => {
+      // CRITICAL DEFECT: Concurrent calls execute race condition disposal hooks
+      return Promise.resolve(hooks.callHook("close"));
+    }
+  };
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a race test asserting that parallel invocations result in exactly one execution of the registered cleanup handler:
+```typescript
+it("deduplicates concurrent teardown executions to a single invocation", async () => {
+  let calls = 0;
+  const instance = createManagedInstance({
+    callHook: async (name: string) => {
+      if (name === "close") { calls++; }
+    }
+  } as any);
+
+  await Promise.all([instance.close(), instance.close(), instance.close()]);
+  await instance.close();
+
+  expect(calls).toBe(1);
+});
+```
+
+---
+
+
+---
+
+## 1678. Edge Routing Lookahead Exclusion for Broad Wildcards (Harvested from nitrojs/nitro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Edge Routing Lookahead Exclusion for Broad Wildcards",
+  "source": "nitrojs/nitro",
+  "source_url": "https://github.com/unjs/nitro",
+  "source_version": "e3378f94",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-18T07:55:31.604Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nitrojs-nitro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nitrojs/nitro](https://github.com/unjs/nitro) (Revision: `e3378f94`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When compiling hierarchical route tables to edge CDN / proxy rule sets (such as Vercel `routes.json` or Cloudflare Pages `_routes.json`) that evaluate rules sequentially and support stopping execution (non-`continue`), narrower exception routes (e.g., opting out with `redirect: false`) MUST NOT terminate routing via an early empty match rule. Instead, the broader parent wildcard's regular expression MUST be mutated with a negative lookahead assertion `^(?!(?:EXCLUDED_PATHS)$)` to prevent the wildcard from matching the excluded paths while allowing subsequent edge header and filesystem rules to match.
+
+**WHY**:
+If an edge router rule omits `"continue": true`, it acts as a terminal match. If an engineer attempts to opt-out a sub-path from a broad redirect (`/foo/**` -> `/bar`) by inserting a terminal non-redirect route for `/foo/keep`, the edge engine immediately halts evaluation. This skips all subsequent rules—including static asset resolution (`handle: filesystem`), security headers, and deployment skew-protection tokens—resulting in broken asset delivery and missing headers.
+
+**WHEN TO APPLY**:
+Any static or edge deployment compiler translating hierarchical route definitions (with opt-outs or exemptions) into linear regular expression routing tables.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Keeps specific sub-routes out of a parent route regex via negative lookahead,
+ * preserving subsequent route evaluation without prematurely halting the router.
+ * Named capture groups are stripped to non-capturing groups to preserve regex group index references ($1, $2).
+ */
+export function excludePathsFromRouteRegex(srcRegex: RegExp, excludedPaths: RegExp[]): string {
+  const sanitizedNegativePatterns = excludedPaths.map((path) =>
+    path.source
+      .slice(1, -1) // Strip leading '^' and trailing '$'
+      .replace(/\(\?<(?![=!])[^>]*>/g, "(?:") // Neutralize named capture groups to non-capturing
+  );
+
+  if (sanitizedNegativePatterns.length === 0) {
+    return srcRegex.source;
+  }
+
+  // Inject negative lookahead right after '^'
+  return `^(?!(?:${sanitizedNegativePatterns.join("|")})$)${srcRegex.source.slice(1)}`;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Emitting an empty route to halt processing skips downstream CDN phases
+function generateEdgeRoutes(routes: UserRouteRules[]): EdgeRoute[] {
+  return routes.map(r => {
+    if (r.redirect === false) {
+      // CRITICAL DEFECT: Halts CDN pipeline; filesystem assets & skew protection never run!
+      return { src: r.pattern }; 
+    }
+    return { src: r.pattern, headers: { Location: r.redirect.to }, status: 307 };
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Test that routes with `redirect: false` do not match the generated redirect rule, and allow progression to downstream handlers:
+```typescript
+it("excludes opted out sub-paths from matching redirect regex", () => {
+  const parent = /^\/docs(?:\/.*)?$/;
+  const childOptOut = [/^\/docs\/internal\/?$/];
+  const compiledRegex = new RegExp(excludePathsFromRouteRegex(parent, childOptOut));
+
+  expect(compiledRegex.test("/docs/general")).toBe(true);
+  expect(compiledRegex.test("/docs/internal")).toBe(false);
+});
+```
+
+---

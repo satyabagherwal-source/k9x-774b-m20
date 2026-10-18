@@ -2461,3 +2461,5 @@
 | `CYCLE-20261018-LDKJ` | `2026-10-18T07:39:13.267Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1664, Rule 1665, Rule 1666` | Yes (`19d5105b...`) |
 | `CYCLE-20261018-LKCK` | `2026-10-18T07:39:22.052Z` | `pallets/flask` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1667, Rule 1668` | Yes (`1d83358b...`) |
 | `CYCLE-20261018-S5B8` | `2026-10-18T07:44:29.156Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1669, Rule 1670, Rule 1671` | Yes (`dcd8204b...`) |
+| `CYCLE-20261018-5SNV` | `2026-10-18T07:55:05.947Z` | `expressjs/express` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1673, Rule 1674, Rule 1675` | Yes (`91c1cb88...`) |
+| `CYCLE-20261018-6CIR` | `2026-10-18T07:55:31.683Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1676, Rule 1677, Rule 1678` | Yes (`ceab1b67...`) |

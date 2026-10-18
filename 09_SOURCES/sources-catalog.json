@@ -2008,5 +2008,25 @@
     "contentHash": "dcd8204b46f153c2989fad92c330f7bd046663e005bd1ff8c02c8fdd0a467f93",
     "lastHarvestedAt": "2026-10-18T07:44:29.159Z",
     "learningId": "learn-github-fastify-fastify"
+  },
+  "expressjs-express": {
+    "repository": "expressjs/express",
+    "platform": "github",
+    "sourceUrl": "https://github.com/expressjs/express",
+    "sourceVersion": "0dee2c52",
+    "license": "MIT",
+    "contentHash": "91c1cb88c8bf06cd3d63879719e65c1cdf6239afdc1b2ed04daf6cfa527d3105",
+    "lastHarvestedAt": "2026-10-18T07:55:05.951Z",
+    "learningId": "learn-github-expressjs-express"
+  },
+  "unjs-nitro": {
+    "repository": "nitrojs/nitro",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unjs/nitro",
+    "sourceVersion": "e3378f94",
+    "license": "NOASSERTION",
+    "contentHash": "ceab1b673aca60ffc5ce1f5a179c1872fb62a16064281e56f7973cdf27bdc8eb",
+    "lastHarvestedAt": "2026-10-18T07:55:31.686Z",
+    "learningId": "learn-github-nitrojs-nitro"
   }
 }
