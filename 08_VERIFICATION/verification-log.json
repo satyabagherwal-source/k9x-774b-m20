@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-HNF3",
-    "timestamp": "2026-10-16T23:24:45.903Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "1b62c7f0ac6eb9a48043e9fff1f025e2725c814e36dfba107a9798df9a225c83",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-LSPC",
     "timestamp": "2026-10-16T23:27:59.376Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7475,21 @@
     "repository": "NaiveAI/Naive-N0.5-Flash",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
     "contentHash": "d5296d54d732e1523d16443a625d8f082c98b84128dcf0c9aacba1701aa211f8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-864Y",
+    "timestamp": "2026-10-18T03:45:00.178Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "51a2211d8d2fe25bb9cc706c40d49c15d0364cf42c57144f9112bb9d02e4311c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
