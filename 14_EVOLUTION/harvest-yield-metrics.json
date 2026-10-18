@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:45:00.182Z",
-  "total_cycles_completed": 2392,
-  "total_learnings_persisted": 2392,
+  "last_updated": "2026-10-18T03:48:04.265Z",
+  "total_cycles_completed": 2393,
+  "total_learnings_persisted": 2393,
   "total_rules_promoted": 1389,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:19:58.989Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:23:05.195Z",
       "repository": "facebook/sam3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T03:45:00.182Z",
       "repository": "openai/clip-vit-base-patch32",
       "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:48:04.265Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

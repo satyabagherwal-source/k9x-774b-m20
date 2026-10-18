@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T03:45:00.184Z",
+  "last_updated": "2026-10-18T03:48:04.266Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1457,14 +1457,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "b89e45f17b8deb8245e4c9ba59af539da4e079bf81f6e6ac120e2be7cde7a48d",
-      "verified_at": "2026-10-17T19:15:31.566Z",
+      "content_hash": "af79f935c1f789cc1bb7f0dbfbef08c64db41b7a738a08dfd948b94c14b59047",
+      "verified_at": "2026-10-18T03:48:04.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T19:15:31.566Z"
+      "last_updated": "2026-10-18T03:48:04.266Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
