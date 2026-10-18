@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T22:35:46.495Z",
-  "total_cycles_completed": 2549,
-  "total_learnings_persisted": 2549,
-  "total_rules_promoted": 1562,
+  "last_updated": "2026-10-18T22:41:59.951Z",
+  "total_cycles_completed": 2556,
+  "total_learnings_persisted": 2556,
+  "total_rules_promoted": 1569,
   "history": [
-    {
-      "timestamp": "2026-10-18T01:08:22.631Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T01:11:39.070Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T01:14:56.199Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T01:22:00.603Z",
-      "repository": "chrisryugj/kordoc",
-      "learningId": "learn-github-chrisryugj-kordoc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T01:29:00.710Z",
-      "repository": "vibheksoni/stealth-browser-mcp",
-      "learningId": "learn-github-vibheksoni-stealth-browser-mcp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T01:35:33.292Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T01:39:01.258Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T01:42:04.666Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1353,55 @@
       "timestamp": "2026-10-18T22:35:46.495Z",
       "repository": "RustCrypto/hashes",
       "learningId": "learn-github-rustcrypto-hashes",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:41:48.038Z",
+      "repository": "onlook-dev/onlook",
+      "learningId": "learn-github-onlook-dev-onlook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:41:48.519Z",
+      "repository": "unhappychoice/gitlogue",
+      "learningId": "learn-github-unhappychoice-gitlogue",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:41:49.108Z",
+      "repository": "fastify/fastify",
+      "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:41:51.687Z",
+      "repository": "FaridSafi/react-native-gifted-chat",
+      "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:41:54.697Z",
+      "repository": "taubyte/tau",
+      "learningId": "learn-github-taubyte-tau",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:41:58.565Z",
+      "repository": "build-trust/ockam",
+      "learningId": "learn-github-build-trust-ockam",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T22:41:59.951Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

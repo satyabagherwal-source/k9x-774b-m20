@@ -2579,3 +2579,10 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `ce72155b` | Multi-dimensional audit evidence | 2026-10-18T22:35:41.776Z |
 | `learn-github-tensorchord-pgvecto-rs` | `https://github.com/tensorchord/pgvecto.rs` | `2b290b34` | Multi-dimensional audit evidence | 2026-10-18T22:35:46.348Z |
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `55b73b01` | Multi-dimensional audit evidence | 2026-10-18T22:35:46.486Z |
+| `learn-github-onlook-dev-onlook` | `https://github.com/onlook-dev/onlook` | `423e2e92` | Multi-dimensional audit evidence | 2026-10-18T22:41:48.033Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `94123e97` | Multi-dimensional audit evidence | 2026-10-18T22:41:48.514Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `2cbb98e2` | Multi-dimensional audit evidence | 2026-10-18T22:41:49.103Z |
+| `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `4ff184b1` | Multi-dimensional audit evidence | 2026-10-18T22:41:51.685Z |
+| `learn-github-taubyte-tau` | `https://github.com/taubyte/tau` | `d9841668` | Multi-dimensional audit evidence | 2026-10-18T22:41:54.692Z |
+| `learn-github-build-trust-ockam` | `https://github.com/build-trust/ockam` | `0435d8d7` | Multi-dimensional audit evidence | 2026-10-18T22:41:58.560Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `8138e4ba` | Multi-dimensional audit evidence | 2026-10-18T22:41:59.946Z |

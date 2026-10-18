@@ -2572,3 +2572,10 @@
 | `CYCLE-20261018-M91O` | `2026-10-18T22:35:41.772Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1790` | Yes (`875861b1...`) |
 | `CYCLE-20261018-MCKP` | `2026-10-18T22:35:46.345Z` | `tensorchord/pgvecto.rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1791` | Yes (`0fcbccb0...`) |
 | `CYCLE-20261018-MCOK` | `2026-10-18T22:35:46.484Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1792` | Yes (`161cd9fa...`) |
+| `CYCLE-20261018-U3NJ` | `2026-10-18T22:41:48.031Z` | `onlook-dev/onlook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1793` | Yes (`f0a6df71...`) |
+| `CYCLE-20261018-U40W` | `2026-10-18T22:41:48.512Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1794` | Yes (`ecb7cd45...`) |
+| `CYCLE-20261018-U4H9` | `2026-10-18T22:41:49.101Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1795` | Yes (`5f193645...`) |
+| `CYCLE-20261018-U6GY` | `2026-10-18T22:41:51.682Z` | `FaridSafi/react-native-gifted-chat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1796` | Yes (`6ca396c2...`) |
+| `CYCLE-20261018-U8SH` | `2026-10-18T22:41:54.689Z` | `taubyte/tau` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1797` | Yes (`932bf574...`) |
+| `CYCLE-20261018-UBRX` | `2026-10-18T22:41:58.557Z` | `build-trust/ockam` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1798` | Yes (`0eee770b...`) |
+| `CYCLE-20261018-UCUG` | `2026-10-18T22:41:59.944Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1799` | Yes (`a880b38e...`) |

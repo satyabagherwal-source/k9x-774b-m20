@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "e03b48ba",
+    "sourceVersion": "2cbb98e2",
     "license": "MIT",
-    "contentHash": "dcd8204b46f153c2989fad92c330f7bd046663e005bd1ff8c02c8fdd0a467f93",
-    "lastHarvestedAt": "2026-10-18T07:44:29.159Z",
+    "contentHash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
+    "lastHarvestedAt": "2026-10-18T22:41:49.103Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {
@@ -3058,5 +3058,65 @@
     "contentHash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
     "lastHarvestedAt": "2026-10-18T22:35:46.486Z",
     "learningId": "learn-github-rustcrypto-hashes"
+  },
+  "onlook-dev-onlook": {
+    "repository": "onlook-dev/onlook",
+    "platform": "github",
+    "sourceUrl": "https://github.com/onlook-dev/onlook",
+    "sourceVersion": "423e2e92",
+    "license": "Apache-2.0",
+    "contentHash": "f0a6df71c9e09576c69056acb3cf701e967690c004366ee59a9d84cdec0f5125",
+    "lastHarvestedAt": "2026-10-18T22:41:48.033Z",
+    "learningId": "learn-github-onlook-dev-onlook"
+  },
+  "unhappychoice-gitlogue": {
+    "repository": "unhappychoice/gitlogue",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unhappychoice/gitlogue",
+    "sourceVersion": "94123e97",
+    "license": "ISC",
+    "contentHash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
+    "lastHarvestedAt": "2026-10-18T22:41:48.514Z",
+    "learningId": "learn-github-unhappychoice-gitlogue"
+  },
+  "faridsafi-react-native-gifted-chat": {
+    "repository": "FaridSafi/react-native-gifted-chat",
+    "platform": "github",
+    "sourceUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
+    "sourceVersion": "4ff184b1",
+    "license": "MIT",
+    "contentHash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
+    "lastHarvestedAt": "2026-10-18T22:41:51.685Z",
+    "learningId": "learn-github-faridsafi-react-native-gifted-chat"
+  },
+  "taubyte-tau": {
+    "repository": "taubyte/tau",
+    "platform": "github",
+    "sourceUrl": "https://github.com/taubyte/tau",
+    "sourceVersion": "d9841668",
+    "license": "BSD-3-Clause",
+    "contentHash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
+    "lastHarvestedAt": "2026-10-18T22:41:54.692Z",
+    "learningId": "learn-github-taubyte-tau"
+  },
+  "build-trust-ockam": {
+    "repository": "build-trust/ockam",
+    "platform": "github",
+    "sourceUrl": "https://github.com/build-trust/ockam",
+    "sourceVersion": "0435d8d7",
+    "license": "Apache-2.0",
+    "contentHash": "0eee770b8056016df971167498ccbffe1d58d5caa9c407578be6b7a422ad80a0",
+    "lastHarvestedAt": "2026-10-18T22:41:58.560Z",
+    "learningId": "learn-github-build-trust-ockam"
+  },
+  "neuron-core-neuron-ai": {
+    "repository": "neuron-core/neuron-ai",
+    "platform": "github",
+    "sourceUrl": "https://github.com/neuron-core/neuron-ai",
+    "sourceVersion": "8138e4ba",
+    "license": "MIT",
+    "contentHash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
+    "lastHarvestedAt": "2026-10-18T22:41:59.946Z",
+    "learningId": "learn-github-neuron-core-neuron-ai"
   }
 }

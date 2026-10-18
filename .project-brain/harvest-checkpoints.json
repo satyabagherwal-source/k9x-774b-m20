@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T22:35:46.497Z",
+  "last_updated": "2026-10-18T22:41:59.953Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3134,14 +3134,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "dcd8204b46f153c2989fad92c330f7bd046663e005bd1ff8c02c8fdd0a467f93",
-      "verified_at": "2026-10-18T07:44:29.162Z",
+      "content_hash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
+      "verified_at": "2026-10-18T22:41:49.109Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T07:44:29.162Z"
+      "last_updated": "2026-10-18T22:41:49.109Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",
@@ -4702,6 +4702,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T22:35:46.497Z"
+    },
+    "onlook-dev/onlook": {
+      "repository": "onlook-dev/onlook",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-onlook-dev-onlook",
+      "content_hash": "f0a6df71c9e09576c69056acb3cf701e967690c004366ee59a9d84cdec0f5125",
+      "verified_at": "2026-10-18T22:41:48.040Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:41:48.040Z"
+    },
+    "unhappychoice/gitlogue": {
+      "repository": "unhappychoice/gitlogue",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-unhappychoice-gitlogue",
+      "content_hash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
+      "verified_at": "2026-10-18T22:41:48.520Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:41:48.520Z"
+    },
+    "FaridSafi/react-native-gifted-chat": {
+      "repository": "FaridSafi/react-native-gifted-chat",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
+      "content_hash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
+      "verified_at": "2026-10-18T22:41:51.688Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:41:51.688Z"
+    },
+    "taubyte/tau": {
+      "repository": "taubyte/tau",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-taubyte-tau",
+      "content_hash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
+      "verified_at": "2026-10-18T22:41:54.698Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:41:54.698Z"
+    },
+    "build-trust/ockam": {
+      "repository": "build-trust/ockam",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-build-trust-ockam",
+      "content_hash": "0eee770b8056016df971167498ccbffe1d58d5caa9c407578be6b7a422ad80a0",
+      "verified_at": "2026-10-18T22:41:58.566Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:41:58.566Z"
+    },
+    "neuron-core/neuron-ai": {
+      "repository": "neuron-core/neuron-ai",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-neuron-core-neuron-ai",
+      "content_hash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
+      "verified_at": "2026-10-18T22:41:59.953Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:41:59.953Z"
     }
   },
   "repos": {

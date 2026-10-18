@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:35:46.444Z",
-  "total_verified_learnings": 328,
+  "last_updated": "2026-10-18T22:41:59.915Z",
+  "total_verified_learnings": 335,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3053,22 +3053,35 @@
     "learn-github-build-trust-ockam": {
       "learning_id": "learn-github-build-trust-ockam",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "build-trust-ockam",
+      "source": "build-trust/ockam",
+      "repository": "build-trust/ockam",
       "slug": "build-trust-ockam",
       "platform": "github",
       "source_url": "https://github.com/build-trust/ockam",
-      "source_version": "HEAD",
-      "content_hash": "8eef973647645bf904f2fb00135f0cc620414533cfc3b9819112ced52fdbe2da",
+      "source_version": "0435d8d7",
+      "content_hash": "0eee770b8056016df971167498ccbffe1d58d5caa9c407578be6b7a422ad80a0",
       "dossier_path": "07_PROJECT_LEARNING/build-trust-ockam-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/build-trust-ockam-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1798,
+          "title": "update tracing-subscriber to 0.3.20 to fix ANSI escape sequence injection vulner",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.152Z"
+      "verified_at": "2026-10-18T22:41:58.522Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-builderio-builder": {
       "learning_id": "learn-github-builderio-builder",
@@ -7013,22 +7026,35 @@
     "learn-github-faridsafi-react-native-gifted-chat": {
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "faridsafi-react-native-gifted-chat",
+      "source": "FaridSafi/react-native-gifted-chat",
+      "repository": "FaridSafi/react-native-gifted-chat",
       "slug": "faridsafi-react-native-gifted-chat",
       "platform": "github",
       "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
-      "source_version": "HEAD",
-      "content_hash": "68adab5876c85449d8000f8b5cc1e5440a4603eda5e9d43dc154fcfb3ccb4455",
+      "source_version": "4ff184b1",
+      "content_hash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
       "dossier_path": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1796,
+          "title": "tidy the animated day header (DRY + reusable debug)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.878Z"
+      "verified_at": "2026-10-18T22:41:51.638Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-fastapi-fastapi": {
       "learning_id": "learn-github-fastapi-fastapi",
@@ -26750,22 +26776,35 @@
     "learn-github-neuron-core-neuron-ai": {
       "learning_id": "learn-github-neuron-core-neuron-ai",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "neuron-core-neuron-ai",
+      "source": "neuron-core/neuron-ai",
+      "repository": "neuron-core/neuron-ai",
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "HEAD",
-      "content_hash": "6b0fba08eb45a169157533c634258cf2bde190d105dc7825a7260a4a5a1a72ee",
+      "source_version": "8138e4ba",
+      "content_hash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1799,
+          "title": "improve bash tool security",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.614Z"
+      "verified_at": "2026-10-18T22:41:59.909Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nextlevelbuilder-goclaw": {
       "learning_id": "learn-github-nextlevelbuilder-goclaw",
@@ -27670,22 +27709,35 @@
     "learn-github-onlook-dev-onlook": {
       "learning_id": "learn-github-onlook-dev-onlook",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "onlook-dev-onlook",
+      "source": "onlook-dev/onlook",
+      "repository": "onlook-dev/onlook",
       "slug": "onlook-dev-onlook",
       "platform": "github",
       "source_url": "https://github.com/onlook-dev/onlook",
-      "source_version": "HEAD",
-      "content_hash": "45bd89ecbeb7a359ddf1080e576ec25b2b3339893bc5b7d5e5a54e0150a1e0ef",
+      "source_version": "423e2e92",
+      "content_hash": "f0a6df71c9e09576c69056acb3cf701e967690c004366ee59a9d84cdec0f5125",
       "dossier_path": "07_PROJECT_LEARNING/onlook-dev-onlook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onlook-dev-onlook-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1793,
+          "title": "CVE-2025-63783: Add authorization checks to project mutation APIs (#3062)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.788Z"
+      "verified_at": "2026-10-18T22:41:47.994Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ontos-ai-knowhere": {
       "learning_id": "learn-github-ontos-ai-knowhere",
@@ -33502,22 +33554,35 @@
     "learn-github-taubyte-tau": {
       "learning_id": "learn-github-taubyte-tau",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "taubyte-tau",
+      "source": "taubyte/tau",
+      "repository": "taubyte/tau",
       "slug": "taubyte-tau",
       "platform": "github",
       "source_url": "https://github.com/taubyte/tau",
-      "source_version": "HEAD",
-      "content_hash": "d1acd43986104fd6c785eb1d026c47fb77ea77bb5b4b75f8da3c350b7270d341",
+      "source_version": "d9841668",
+      "content_hash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
       "dossier_path": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1797,
+          "title": "vm): clamp attacker-controlled HTTP status codes to avoid a gateway crash (#519)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.869Z"
+      "verified_at": "2026-10-18T22:41:54.656Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tauri-apps-tauri": {
       "learning_id": "learn-github-tauri-apps-tauri",
@@ -34916,22 +34981,35 @@
     "learn-github-unhappychoice-gitlogue": {
       "learning_id": "learn-github-unhappychoice-gitlogue",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "unhappychoice-gitlogue",
+      "source": "unhappychoice/gitlogue",
+      "repository": "unhappychoice/gitlogue",
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "HEAD",
-      "content_hash": "87732391b60569d11f748a0739312ba55dc46dcfb7e533a5a88747a269dd54f0",
+      "source_version": "94123e97",
+      "content_hash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1794,
+          "title": "test(ui): replace no-op step regression test with history navigation check",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.158Z"
+      "verified_at": "2026-10-18T22:41:48.476Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-untrivial-ai-agent-orchestrator": {
       "learning_id": "learn-github-untrivial-ai-agent-orchestrator",
@@ -68276,6 +68354,137 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:35:46.439Z"
+    },
+    "rule-1793": {
+      "learning_id": "rule-1793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1793,
+      "title": "CVE-2025-63783: Add authorization checks to project mutation APIs (#3062)",
+      "source_url": "https://github.com/onlook-dev/onlook",
+      "source_version": "423e2e92",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:41:47.994Z"
+    },
+    "rule-1794": {
+      "learning_id": "rule-1794",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1794,
+      "title": "test(ui): replace no-op step regression test with history navigation check",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "94123e97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:41:48.477Z"
+    },
+    "learn-github-fastify-fastify": {
+      "learning_id": "learn-github-fastify-fastify",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fastify/fastify",
+      "repository": "fastify/fastify",
+      "slug": "fastify-fastify",
+      "platform": "github",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "2cbb98e2",
+      "content_hash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
+      "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1795,
+          "title": "perf!: create default validation errors without a stack trace (#7057)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T22:41:49.067Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-1795": {
+      "learning_id": "rule-1795",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1795,
+      "title": "perf!: create default validation errors without a stack trace (#7057)",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "2cbb98e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:41:49.067Z"
+    },
+    "rule-1796": {
+      "learning_id": "rule-1796",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1796,
+      "title": "tidy the animated day header (DRY + reusable debug)",
+      "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
+      "source_version": "4ff184b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:41:51.638Z"
+    },
+    "rule-1797": {
+      "learning_id": "rule-1797",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1797,
+      "title": "vm): clamp attacker-controlled HTTP status codes to avoid a gateway crash (#519)",
+      "source_url": "https://github.com/taubyte/tau",
+      "source_version": "d9841668",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:41:54.656Z"
+    },
+    "rule-1798": {
+      "learning_id": "rule-1798",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1798,
+      "title": "update tracing-subscriber to 0.3.20 to fix ANSI escape sequence injection vulner",
+      "source_url": "https://github.com/build-trust/ockam",
+      "source_version": "0435d8d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:41:58.522Z"
+    },
+    "rule-1799": {
+      "learning_id": "rule-1799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1799,
+      "title": "improve bash tool security",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "8138e4ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:41:59.909Z"
     }
   },
   "aliases": {

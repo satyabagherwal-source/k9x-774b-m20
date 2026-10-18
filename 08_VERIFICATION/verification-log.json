@@ -1,110 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-9435",
-    "timestamp": "2026-10-17T08:10:00.305Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "7d879bb5ea3624d6127766af72953d79addc1c892d450799202d840b551c7c05",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-D8J0",
-    "timestamp": "2026-10-17T08:13:12.684Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "e1140900a044493dda781851a8d78b0ac03c6e99d9518d109f7cd8c37950ac70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-ISAY",
-    "timestamp": "2026-10-17T08:17:31.594Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "c1c8edf26aa8eca16aebc09fe8a8623923c792b20f6453c79a8773bba58cf154",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-OPTP",
-    "timestamp": "2026-10-17T08:22:08.317Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "662c76477aa59d48e31c0296347d86452814d52b03a24173f04e0eb0581b9c14",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-UMBC",
-    "timestamp": "2026-10-17T08:26:43.704Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "6e3d48aedefa86fe8014cf9c6c947814f5ca881cd90c62d1fbfef3218db353df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-YKZ7",
-    "timestamp": "2026-10-17T08:29:48.595Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "b62cacdcdc7b01a6a7b7240a2285a71be1be5e6c4dd78913eb23f1e58ea31b58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-4IKR",
-    "timestamp": "2026-10-17T08:34:25.419Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "172eaf05d3b3b03fdab4ab9d8f23d0fd580bf505cde1f1cee9a4ac577a37b2fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-895W",
     "timestamp": "2026-10-17T08:37:19.844Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7385,111 @@
     "repository": "RustCrypto/hashes",
     "learningId": "learn-github-rustcrypto-hashes",
     "contentHash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-U3NJ",
+    "timestamp": "2026-10-18T22:41:48.031Z",
+    "repository": "onlook-dev/onlook",
+    "learningId": "learn-github-onlook-dev-onlook",
+    "contentHash": "f0a6df71c9e09576c69056acb3cf701e967690c004366ee59a9d84cdec0f5125",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-U40W",
+    "timestamp": "2026-10-18T22:41:48.512Z",
+    "repository": "unhappychoice/gitlogue",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-U4H9",
+    "timestamp": "2026-10-18T22:41:49.101Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "5f1936456d5ba86f1b5a064de5baca2452be9128d9bdbde71af087a7ff1d9297",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-U6GY",
+    "timestamp": "2026-10-18T22:41:51.682Z",
+    "repository": "FaridSafi/react-native-gifted-chat",
+    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+    "contentHash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-U8SH",
+    "timestamp": "2026-10-18T22:41:54.689Z",
+    "repository": "taubyte/tau",
+    "learningId": "learn-github-taubyte-tau",
+    "contentHash": "932bf5741ad44273e980a4336a6e4992af3a87f51920cd059423365ee3aa9422",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-UBRX",
+    "timestamp": "2026-10-18T22:41:58.557Z",
+    "repository": "build-trust/ockam",
+    "learningId": "learn-github-build-trust-ockam",
+    "contentHash": "0eee770b8056016df971167498ccbffe1d58d5caa9c407578be6b7a422ad80a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-UCUG",
+    "timestamp": "2026-10-18T22:41:59.944Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
