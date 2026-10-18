@@ -2118,8 +2118,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T23:23:22.111Z",
-    "lastVerified": "2026-10-17T23:23:22.111Z",
+    "lastChecked": "2026-10-18T06:04:11.727Z",
+    "lastVerified": "2026-10-18T06:04:11.727Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:47:33.170Z",
-    "lastVerified": "2026-10-18T05:47:33.170Z",
+    "lastChecked": "2026-10-18T06:04:14.222Z",
+    "lastVerified": "2026-10-18T06:04:14.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -21131,8 +21131,8 @@
     "sourceType": "github",
     "technology": "code-repository",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T03:05:44.972Z",
-    "lastVerified": "2026-10-18T03:05:44.972Z",
+    "lastChecked": "2026-10-18T06:04:09.224Z",
+    "lastVerified": "2026-10-18T06:04:09.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -24174,5 +24174,12 @@
     "lastChecked": "2026-10-18T06:00:55.075Z",
     "revisionIdentifier": "e5394ed024",
     "lastVerified": "2026-10-18T06:00:55.075Z"
+  },
+  "turbopress-x-seo-auditing-software": {
+    "name": "seo-auditing-software",
+    "officialUrl": "https://github.com/TurboPress-X/seo-auditing-software",
+    "lastChecked": "2026-10-18T06:04:01.722Z",
+    "revisionIdentifier": "68d4a606db",
+    "lastVerified": "2026-10-18T06:04:01.722Z"
   }
 }
