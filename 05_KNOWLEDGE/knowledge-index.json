@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:48:14.462Z",
-  "total_verified_learnings": 341,
+  "last_updated": "2026-10-18T22:55:23.644Z",
+  "total_verified_learnings": 347,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3430,22 +3430,35 @@
     "learn-github-cdk-team-cdk": {
       "learning_id": "learn-github-cdk-team-cdk",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cdk-team-cdk",
+      "source": "cdk-team/CDK",
+      "repository": "cdk-team/CDK",
       "slug": "cdk-team-cdk",
       "platform": "github",
       "source_url": "https://github.com/cdk-team/CDK",
-      "source_version": "HEAD",
-      "content_hash": "b4fc11c2f0d72498fc87cb7597dbb6c5793d6f717066a8f29b209c632eee060f",
+      "source_version": "69da22ad",
+      "content_hash": "002063b124dafddc73fa2526a465ec81d52cd2f75d02e91e4fc58e06381ae7cf",
       "dossier_path": "07_PROJECT_LEARNING/cdk-team-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cdk-team-cdk-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1809,
+          "title": "Merge pull request #134 from cdk-team/fix-copy-fail-cve-2026-31431",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.221Z"
+      "verified_at": "2026-10-18T22:54:22.942Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cft0808-edict": {
       "learning_id": "learn-github-cft0808-edict",
@@ -6846,22 +6859,35 @@
     "learn-github-expo-create-react-native-app": {
       "learning_id": "learn-github-expo-create-react-native-app",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "expo-create-react-native-app",
+      "source": "expo/create-react-native-app",
+      "repository": "expo/create-react-native-app",
       "slug": "expo-create-react-native-app",
       "platform": "github",
       "source_url": "https://github.com/expo/create-react-native-app",
-      "source_version": "HEAD",
-      "content_hash": "14cb4f7dabdb34cb4ca5c4d2c8e7e09bd924f6764c364f0f98489d2a39113d57",
+      "source_version": "3a7b11ee",
+      "content_hash": "55e650eecbf9fa31e5212764613b0dcb438d58f423fa823b5251ac2a452ce781",
       "dossier_path": "07_PROJECT_LEARNING/expo-create-react-native-app-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-create-react-native-app-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1808,
+          "title": "convert underscore files to dotfiles (a la RN CLI) (#924)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.840Z"
+      "verified_at": "2026-10-18T22:54:19.734Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-expo-expo": {
       "learning_id": "learn-github-expo-expo",
@@ -6979,22 +7005,35 @@
     "learn-github-fallow-rs-fallow": {
       "learning_id": "learn-github-fallow-rs-fallow",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "fallow-rs-fallow",
+      "source": "fallow-rs/fallow",
+      "repository": "fallow-rs/fallow",
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "HEAD",
-      "content_hash": "82d2c8cf2671f78663411797b100eb60d5fddc45d07f110860062db2708b15b7",
+      "source_version": "d406a14e",
+      "content_hash": "960d8d8bf4b4e447b399a714c3f2ab9e5f1bfe56cf27d95c12e4a9674dc83da1",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1807,
+          "title": "oxlint): read .oxlintrc.jsonc and oxlint.config.mts (#3567)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.869Z"
+      "verified_at": "2026-10-18T22:54:16.705Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-fangwei716-30-days-of-react-native": {
       "learning_id": "learn-github-fangwei716-30-days-of-react-native",
@@ -7168,22 +7207,35 @@
     "learn-github-featureform-featureform": {
       "learning_id": "learn-github-featureform-featureform",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "featureform-featureform",
+      "source": "featureform/featureform",
+      "repository": "featureform/featureform",
       "slug": "featureform-featureform",
       "platform": "github",
       "source_url": "https://github.com/featureform/featureform",
-      "source_version": "HEAD",
-      "content_hash": "2e4fffdd044b43f940c08d70a32a1e245a8bc911d86b1c03058b404d9819ce5f",
+      "source_version": "dc8b9fca",
+      "content_hash": "cefbcac80f7c1231f40aacdb5d5d2ac5aabf7d0323248cc8c739ee6d94cf372f",
       "dossier_path": "07_PROJECT_LEARNING/featureform-featureform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/featureform-featureform-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1813,
+          "title": "Remove debug panics (#1629)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.895Z"
+      "verified_at": "2026-10-18T22:54:28.666Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-feder-cr-dots": {
       "learning_id": "learn-github-feder-cr-dots",
@@ -10887,7 +10939,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "610ef2712ce613c1bac6891095c666e1f247b1d73bda83570b1fe0fb62cbd6d0",
+      "content_hash": "d3603c1743e5e85cefcf2580357903dd8683634607cca81066f6a3995e8ce6a0",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -10910,6 +10962,16 @@
           "number": 1148,
           "title": "Instruction-Asymmetric Embedding Protocol",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1810,
+          "title": "The Semantic Consistency Invariant for Embedding Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1811,
+          "title": "The Dimensional Integrity & Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10928,7 +10990,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-17T20:19:07.939Z",
+      "verified_at": "2026-10-18T22:54:24.260Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26885,22 +26947,35 @@
     "learn-github-nexus-xyz-nexus-zkvm": {
       "learning_id": "learn-github-nexus-xyz-nexus-zkvm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nexus-xyz-nexus-zkvm",
+      "source": "nexus-xyz/nexus-zkvm",
+      "repository": "nexus-xyz/nexus-zkvm",
       "slug": "nexus-xyz-nexus-zkvm",
       "platform": "github",
       "source_url": "https://github.com/nexus-xyz/nexus-zkvm",
-      "source_version": "HEAD",
-      "content_hash": "3030fe735122c9e6732301ef02aa22da2b343a92f39f8045db532695f19313a6",
+      "source_version": "f2ad1265",
+      "content_hash": "6aa8a1191998aeb48721872822f173b3d0cb648278357851eb5b8616d3218bdd",
       "dossier_path": "07_PROJECT_LEARNING/nexus-xyz-nexus-zkvm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nexus-xyz-nexus-zkvm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1812,
+          "title": "reuse pending_logup capacity in LogupTraceBuilder (#556)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.623Z"
+      "verified_at": "2026-10-18T22:54:26.870Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nezhahq-nezha": {
       "learning_id": "learn-github-nezhahq-nezha",
@@ -33556,22 +33631,45 @@
     "learn-github-tambo-ai-tambo": {
       "learning_id": "learn-github-tambo-ai-tambo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tambo-ai-tambo",
+      "source": "tambo-ai/tambo",
+      "repository": "tambo-ai/tambo",
       "slug": "tambo-ai-tambo",
       "platform": "github",
       "source_url": "https://github.com/tambo-ai/tambo",
-      "source_version": "HEAD",
-      "content_hash": "327a70947a4cf03ac84e99ca5580b54e86e170a5657ff3ea3fe23ddc382dba0a",
+      "source_version": "6e2c1bff",
+      "content_hash": "9495da80305b4e6f0ead7eef8b44b9e4a1785198c7b19467eba67ae751c7646e",
       "dossier_path": "07_PROJECT_LEARNING/tambo-ai-tambo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tambo-ai-tambo-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1814,
+          "title": "Invariant Defense Against SSRF in Multi-Tenant OAuth Userinfo & JWKS Fetching",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1815,
+          "title": "Monotonic Message Ordering and Head Consistency Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1816,
+          "title": "Yield Throttling with Forced Chunk Emission Invariant in Async Streams",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.850Z"
+      "verified_at": "2026-10-18T22:55:23.637Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tangshimin-mujing": {
       "learning_id": "learn-github-tangshimin-mujing",
@@ -68665,6 +68763,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:48:13.226Z"
+    },
+    "rule-1807": {
+      "learning_id": "rule-1807",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1807,
+      "title": "oxlint): read .oxlintrc.jsonc and oxlint.config.mts (#3567)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "d406a14e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:54:16.705Z"
+    },
+    "rule-1808": {
+      "learning_id": "rule-1808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1808,
+      "title": "convert underscore files to dotfiles (a la RN CLI) (#924)",
+      "source_url": "https://github.com/expo/create-react-native-app",
+      "source_version": "3a7b11ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:54:19.734Z"
+    },
+    "rule-1809": {
+      "learning_id": "rule-1809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1809,
+      "title": "Merge pull request #134 from cdk-team/fix-copy-fail-cve-2026-31431",
+      "source_url": "https://github.com/cdk-team/CDK",
+      "source_version": "69da22ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:54:22.942Z"
+    },
+    "rule-1810": {
+      "learning_id": "rule-1810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1810,
+      "title": "The Semantic Consistency Invariant for Embedding Models",
+      "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+      "source_version": "hf-baai-bge-base-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:54:24.260Z"
+    },
+    "rule-1811": {
+      "learning_id": "rule-1811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1811,
+      "title": "The Dimensional Integrity & Normalization Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+      "source_version": "hf-baai-bge-base-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:54:24.260Z"
+    },
+    "rule-1812": {
+      "learning_id": "rule-1812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1812,
+      "title": "reuse pending_logup capacity in LogupTraceBuilder (#556)",
+      "source_url": "https://github.com/nexus-xyz/nexus-zkvm",
+      "source_version": "f2ad1265",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:54:26.870Z"
+    },
+    "rule-1813": {
+      "learning_id": "rule-1813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1813,
+      "title": "Remove debug panics (#1629)",
+      "source_url": "https://github.com/featureform/featureform",
+      "source_version": "dc8b9fca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:54:28.666Z"
+    },
+    "rule-1814": {
+      "learning_id": "rule-1814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1814,
+      "title": "Invariant Defense Against SSRF in Multi-Tenant OAuth Userinfo & JWKS Fetching",
+      "source_url": "https://github.com/tambo-ai/tambo",
+      "source_version": "6e2c1bff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:55:23.637Z"
+    },
+    "rule-1815": {
+      "learning_id": "rule-1815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1815,
+      "title": "Monotonic Message Ordering and Head Consistency Verification",
+      "source_url": "https://github.com/tambo-ai/tambo",
+      "source_version": "6e2c1bff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:55:23.637Z"
+    },
+    "rule-1816": {
+      "learning_id": "rule-1816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1816,
+      "title": "Yield Throttling with Forced Chunk Emission Invariant in Async Streams",
+      "source_url": "https://github.com/tambo-ai/tambo",
+      "source_version": "6e2c1bff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:55:23.637Z"
     }
   },
   "aliases": {

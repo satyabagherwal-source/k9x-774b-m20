@@ -2593,3 +2593,10 @@ Every entry in this ledger must capture:
 | `learn-github-sorintlab-stolon` | `https://github.com/sorintlab/stolon` | `bcea7a75` | Multi-dimensional audit evidence | 2026-10-18T22:48:12.136Z |
 | `learn-github-lunasec-io-lunasec` | `https://github.com/lunasec-io/lunasec` | `c6bb0762` | Multi-dimensional audit evidence | 2026-10-18T22:48:13.263Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `2508ce70` | Multi-dimensional audit evidence | 2026-10-18T22:48:14.494Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `d406a14e` | Multi-dimensional audit evidence | 2026-10-18T22:54:16.764Z |
+| `learn-github-expo-create-react-native-app` | `https://github.com/expo/create-react-native-app` | `3a7b11ee` | Multi-dimensional audit evidence | 2026-10-18T22:54:19.781Z |
+| `learn-github-cdk-team-cdk` | `https://github.com/cdk-team/CDK` | `69da22ad` | Multi-dimensional audit evidence | 2026-10-18T22:54:22.988Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-18T22:54:24.305Z |
+| `learn-github-nexus-xyz-nexus-zkvm` | `https://github.com/nexus-xyz/nexus-zkvm` | `f2ad1265` | Multi-dimensional audit evidence | 2026-10-18T22:54:26.915Z |
+| `learn-github-featureform-featureform` | `https://github.com/featureform/featureform` | `dc8b9fca` | Multi-dimensional audit evidence | 2026-10-18T22:54:28.723Z |
+| `learn-github-tambo-ai-tambo` | `https://github.com/tambo-ai/tambo` | `6e2c1bff` | Multi-dimensional audit evidence | 2026-10-18T22:55:23.682Z |

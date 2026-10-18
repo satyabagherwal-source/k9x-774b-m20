@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T22:48:14.501Z",
+  "last_updated": "2026-10-18T22:55:23.690Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1652,14 +1652,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "610ef2712ce613c1bac6891095c666e1f247b1d73bda83570b1fe0fb62cbd6d0",
-      "verified_at": "2026-10-17T20:19:07.982Z",
+      "content_hash": "d3603c1743e5e85cefcf2580357903dd8683634607cca81066f6a3995e8ce6a0",
+      "verified_at": "2026-10-18T22:54:24.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:19:07.982Z"
+      "last_updated": "2026-10-18T22:54:24.313Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -4882,6 +4882,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T22:48:14.501Z"
+    },
+    "fallow-rs/fallow": {
+      "repository": "fallow-rs/fallow",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-fallow-rs-fallow",
+      "content_hash": "960d8d8bf4b4e447b399a714c3f2ab9e5f1bfe56cf27d95c12e4a9674dc83da1",
+      "verified_at": "2026-10-18T22:54:16.773Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:54:16.773Z"
+    },
+    "expo/create-react-native-app": {
+      "repository": "expo/create-react-native-app",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-expo-create-react-native-app",
+      "content_hash": "55e650eecbf9fa31e5212764613b0dcb438d58f423fa823b5251ac2a452ce781",
+      "verified_at": "2026-10-18T22:54:19.789Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:54:19.789Z"
+    },
+    "cdk-team/CDK": {
+      "repository": "cdk-team/CDK",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cdk-team-cdk",
+      "content_hash": "002063b124dafddc73fa2526a465ec81d52cd2f75d02e91e4fc58e06381ae7cf",
+      "verified_at": "2026-10-18T22:54:22.996Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:54:22.996Z"
+    },
+    "nexus-xyz/nexus-zkvm": {
+      "repository": "nexus-xyz/nexus-zkvm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nexus-xyz-nexus-zkvm",
+      "content_hash": "6aa8a1191998aeb48721872822f173b3d0cb648278357851eb5b8616d3218bdd",
+      "verified_at": "2026-10-18T22:54:26.925Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:54:26.925Z"
+    },
+    "featureform/featureform": {
+      "repository": "featureform/featureform",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-featureform-featureform",
+      "content_hash": "cefbcac80f7c1231f40aacdb5d5d2ac5aabf7d0323248cc8c739ee6d94cf372f",
+      "verified_at": "2026-10-18T22:54:28.727Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:54:28.727Z"
+    },
+    "tambo-ai/tambo": {
+      "repository": "tambo-ai/tambo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tambo-ai-tambo",
+      "content_hash": "9495da80305b4e6f0ead7eef8b44b9e4a1785198c7b19467eba67ae751c7646e",
+      "verified_at": "2026-10-18T22:55:23.690Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:55:23.690Z"
     }
   },
   "repos": {

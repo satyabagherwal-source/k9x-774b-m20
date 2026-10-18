@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nexus-xyz-nexus-zkvm-learnings.md`  
+> **Source**: github ([https://github.com/nexus-xyz/nexus-zkvm](https://github.com/nexus-xyz/nexus-zkvm))  
+> **Source Version**: `f2ad1265`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T22:54:26.702Z  
+> **Learning ID**: `learn-github-nexus-xyz-nexus-zkvm`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): nexus-xyz/nexus-zkvm
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nexus-xyz-nexus-zkvm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nexus-xyz/nexus-zkvm](https://github.com/nexus-xyz/nexus-zkvm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:47:41.624Z  
+> **Harvest Timestamp**: 2026-10-18T22:54:26.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: The Nexus zkVM: The zero-knowledge virtual machine
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2622 stars
+- **Stars / Engagement**: 2624 stars
 
 ---
 
@@ -974,76 +988,6 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `prover2/trace/src/utils_external.rs`
-```
-// Copyright 2024 StarkWare Industries Ltd.
-// Copyright 2024-2025 Nexus Laboratories, Ltd.
-//
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
-//
-//        http://www.apache.org/licenses/LICENSE-2.0
-//
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-
-// The code below was copied from
-// https://github.com/starkware-libs/stwo/blob/f7871979e6ea8e606dc4674301b7d8b28b5838ed/crates/prover/src/core/utils.rs#L108
-// and since then modified.
-
-use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
-use stwo::core::fields::Field;
-
-// TODO: patch upstream to make it public and remove / or use pub methods from tests.
-pub fn coset_order_to_circle_domain_order<F: Field>(values: &[F]) -> Vec<F> {
-    let mut ret = Vec::with_capacity(values.len());
-    let n = values.len();
-    let half_len = n / 2;
-
-    (0..half_len)
-        .into_par_iter()
-        .map(|i| values[i << 1])
-        .chain(
-            (0..half_len)
-                .into_par_iter()
-                .map(|i| values[n - 1 - (i << 1)]),
-        )
-        .collect_into_vec(&mut ret);
-    ret
-}
-
-```
-
-### Core Architecture Module: `sdk/src/legacy/ark_serialize_utils.rs`
-```
-// see: https://github.com/arkworks-rs/algebra/issues/178#issuecomment-1413219278
-use ark_serialize::{CanonicalDeserialize, CanonicalSerialize, Compress, Validate};
-
-pub(crate) fn ark_se<S, A: CanonicalSerialize>(a: &A, s: S) -> Result<S::Ok, S::Error>
-where
-    S: serde::Serializer,
-{
-    let mut bytes = vec![];
-    a.serialize_with_mode(&mut bytes, Compress::Yes)
-        .map_err(serde::ser::Error::custom)?;
-    s.serialize_bytes(&bytes)
-}
-
-pub(crate) fn ark_de<'de, D, A: CanonicalDeserialize>(data: D) -> Result<A, D::Error>
-where
-    D: serde::de::Deserializer<'de>,
-{
-    let s: Vec<u8> = serde::de::Deserialize::deserialize(data)?;
-    let a = A::deserialize_with_mode(s.as_slice(), Compress::Yes, Validate::Yes);
-    a.map_err(serde::de::Error::custom)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1060,42 +1004,6 @@ where
   **Post-Mortem & Fix Analysis**:
   > This is likely due to conflicting Rust installations. Please see the discussion here: https://github.com/nexus-xyz/nexus-zkvm/issues/293
   > Thanks, OK I found[ this comment meaningful ](https://github.com/nexus-xyz/nexus-zkvm/issues/293#issuecomment-2524109526)and have done the following on my ubuntu baremetal: `uga@65i:~$ rustup target remove riscv32i-unknown-none-elf warning: after removing the last target, no build targets will be available error: toolchain 'stable-x86_64-unknown-linux-gnu' does not have target 'riscv32i-unknown-none-elf' installed  guga@65i:~$ rustup target add riscv32i-unknown-none-elf info: downloading component 'rust-std' for 'riscv32i-unknown-none-elf' info: installing component 'rust-std' for 'riscv32i-unknown-none-elf'`  After that it looks started working: `================================================  Starting proof #2 ...  1. Compiling guest program... 2. Creating ZK proof... 3. ZK proof successfully created with size: 163325 bytes`
-  > Starting proof #1 ...  1. Compiling guest program... 2. Creating ZK proof... memory allocation of 8606711792 bytes failed Aborted (core dumped)  how about this? 
-
-- **Issue #357** (2025-02-19): **[BUG]: need to connect after every 2 mins**
-  *Symptoms*: ### Program Information  https://github.com/user-attachments/assets/bdf438fd-7144-472d-adf8-f8d64584d3d9  ### Project Information  _No response_  ### Reproduction Steps  when i connect to nexus , it stars but after 2 mins it disconnect and i have to connect again and again  ### What is expected?  i was thinking that i need to connect it once and it will keep on running  ### What is actually happening?  need to connect again and again  ### System Information  _No response_  ### Any additional comments?  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Redirect to https://github.com/nexus-xyz/network-api or our social channels.
-
-- **Issue #293** (2024-12-06): **[BUG]: Does this work on Apple Silicon**
-  *Symptoms*: ### Program Information  ``` #![cfg_attr(target_arch = "riscv32", no_std, no_main)]  fn fib(n: u32) -> u32 {     match n {         0 => 0,         1 => 1,         _ => fib(n - 1) + fib(n - 2),     } }  #[nexus_rt::main] fn main() {     let n = 7;     let result = fib(n);     assert_eq!(result, 13); } ```  ### Project Information  I was just trying the recommended test program.  ### Reproduction Steps  ``` rustup target add riscv32i-unknown-none-elf cargo install --git https://github.com/nexus-xyz/nexus-zkvm cargo-nexus --tag 'v0.2.4' cargo nexus new nexus-project ``` changed `main.rs` to the program given above and then ran `cargo nexus run`  ### What is expected?  "The command should run successfully"  ### What is actually happening?  ``` info: component 'rust-std' for target 'riscv32i-unknown-none-elf' is up to date Victors-iMac:nexus-project victorsmiller$ cargo nexus run    Compiling proc-macro2 v1.0.92    Compiling indexmap v2.7.0    Compiling serde v1.0.215    Compiling syn v1.0.109    Compiling cobs v0.2.3    Compiling nexus-rt v0.2.4 (https://github.com/nexus-xyz/nexus-zkvm.git#0b787f2e) error[E0463]: can't find crate for `core`   |   = note: the `riscv32i-unknown-none-elf` target may not be installed   = help: consider downloading the target with `rustup target add riscv32i-unknown-none-elf`  For more information about this error, try `rustc --explain E0463`. error: could not compile `cobs` (lib) due to 1 previous error warning:
-  **Post-Mortem & Fix Analysis**:
-  > A lot of our development team uses apple sillicon, so that shouldn't be the issue. But I will attempt to replicate for the demonstrated issue.
-  > @algebravic I'm having trouble reproducing on an M3 Pro running 15.1.1. May I ask what the output is if you sequentially run:  ```bash $ rustup target remove riscv32i-unknown-none-elf $ rustup target add riscv32i-unknown-none-elf ```
-  > I already tried that. Same result  On Fri, Dec 6, 2024 at 12:31 Samuel Judson ***@***.***> wrote:  > @algebravic <https://github.com/algebravic> I'm having trouble > reproducing on an M3 Pro running 15.1.1. May I ask what the output is if > you sequentially run: > > $ rustup target remove riscv32i-unknown-none-elf > $ rustup target add riscv32i-unknown-none-elf > > — > Reply to this email directly, view it on GitHub > <https://github.com/nexus-xyz/nexus-zkvm/issues/293#issuecomment-2524109526>, > or unsubscribe > <https://github.com/notifications/unsubscribe-auth/AAHBBJT2RSMONYD7MTOMQFD2EICTLAVCNFSM6AAAAABTFBRM4OVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZDKMRUGEYDSNJSGY> > . > You are receiving this because you were mentioned.Message ID: > ***@***.***> > 
-
-- **Issue #288** (2025-01-08): **[BUG]: RelaxedR1CS test isn't complete**
-  *Symptoms*: ### Program Information  The R1CS test in   https://github.com/nexus-xyz/nexus-zkvm/blob/f37401c477b680ce5334b2ca523ded8a7273d8c8/nova/src/r1cs/mod.rs#L874  only checks folding multiple instances of the same r1cs instance/witness in the for loop, such folding doesn't result in any cross-term, despite your construction is correct, your test doesn't check all cases.  ### Project Information  _No response_  ### Reproduction Steps  I'm trying to implement Ova[Bunz] by modifying your code and that's how I realised this...  ### What is expected?  ....  ### What is actually happening?  again the test doesn't check all cases.  ### System Information  _No response_  ### Any additional comments?  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Thanks @h-hafezi - relieved that this is an inadequate test rather than a bug in the code, but it's very worth noting and getting full coverage.
-
-- **Issue #287** (2025-03-06): **[BUG]: Witness size to be a power of 2^n isn't checked in Spartan/crr1csproof.rs**
-  *Symptoms*: ### Program Information  In Spartan/crr1csproof.rs it's not checked the witness to be a power of two, in fact, it can be checked in   https://github.com/nexus-xyz/nexus-zkvm/blob/7f7789a271a4d7950ad6b4347cb6190b589c15c2/spartan/src/crr1csproof.rs#L363  by adding the following lines:          assert!(z.len().is_power_of_two(), "z must be a power of two");         assert!(evals_ABC.len().is_power_of_two(), "eval_ABC must be a power of two");         assert_eq!(z.len(), evals_ABC.len(), "vector z and eval_ABC should have equal length");  similarly, it can be checked in the conversion function in   https://github.com/nexus-xyz/nexus-zkvm/blob/main/nova/src/circuits/nova/pcd/compression/conversion.rs  when converting an r1cs instance to check witness size to be a power of two in   https://github.com/nexus-xyz/nexus-zkvm/blob/f37401c477b680ce5334b2ca523ded8a7273d8c8/nova/src/circuits/nova/pcd/compression/conversion.rs#L105  ### Project Information  _No response_  ### Reproduction Steps  ...  ### What is expected?  ...  ### What is actually happening?  if this is not done you get a reading index of zero from an empty vector in the function   https://github.com/nexus-xyz/nexus-zkvm/blob/7f7789a271a4d7950ad6b4347cb6190b589c15c2/spartan/src/crr1csproof.rs#L40  ### System Information  _No response_  ### Any additional comments?  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Thanks @h-hafezi for this thorough check and proposed fix! Definitely worth taking. We'll look.
-  > Made stale by rewrite of codebase for the new Nexus 3.0 machine (https://github.com/nexus-xyz/nexus-zkvm/pull/365).
-
-- **Issue #286** (2024-12-03): **[BUG]: cant find TAG V0.2.3**
-  *Symptoms*: ### Program Information  Updating git repository `https://github.com/nexus-xyz/nexus-zkvm` error: failed to find tag `'v0.2.3'`  Caused by:   reference 'refs/remotes/origin/tags/'v0.2.3'' not found; class=Reference (4); code=NotFound (-3)  ### Project Information  Updating git repository `https://github.com/nexus-xyz/nexus-zkvm` error: failed to find tag `'v0.2.3'`  Caused by:   reference 'refs/remotes/origin/tags/'v0.2.3'' not found; class=Reference (4); code=NotFound (-3)  ### Reproduction Steps  Updating git repository `https://github.com/nexus-xyz/nexus-zkvm` error: failed to find tag `'v0.2.3'`  Caused by:   reference 'refs/remotes/origin/tags/'v0.2.3'' not found; class=Reference (4); code=NotFound (-3)  ### What is expected?  Updating git repository `https://github.com/nexus-xyz/nexus-zkvm` error: failed to find tag `'v0.2.3'`  Caused by:   reference 'refs/remotes/origin/tags/'v0.2.3'' not found; class=Reference (4); code=NotFound (-3)  ### What is actually happening?  Updating git repository `https://github.com/nexus-xyz/nexus-zkvm` error: failed to find tag `'v0.2.3'`  Caused by:   reference 'refs/remotes/origin/tags/'v0.2.3'' not found; class=Reference (4); code=NotFound (-3)  ### System Information  Updating git repository `https://github.com/nexus-xyz/nexus-zkvm` error: failed to find tag `'v0.2.3'`  Caused by:   reference 'refs/remotes/origin/tags/'v0.2.3'' not found; class=Reference (4); code=NotFound (-3)  ### Any additional comments?  Up
-  **Post-Mortem & Fix Analysis**:
-  > A new release, `v0.2.4` was just cut. I'll close this for now, but feel free to reopen a new issue if the problem persists.
-
-- **Issue #274** (2024-08-21): **[BUG]: quick start example fails to compile**
-  *Symptoms*:  Following https://docs.nexus.xyz/zkvm/sdk-quick-start  with the given host and guest example programs:  ```rust #![cfg_attr(target_arch = "riscv32", no_std, no_main)]   use nexus_rt::{println, read_private_input, write_output};   #[nexus_rt::main] fn main() {     let input = read_private_input::<(u32, u32)>();       let mut z: i32 = -1;     if let Ok((x, y)) = input {         println!("Read private input: ({}, {})", x, y);           z = (x * y) as i32;     } else {         println!("No private input provided...");     }       write_output::<i32>(&z) } ```  ```rust use nexus_sdk::{     compile::CompileOpts,     nova::seq::{Generate, Nova, PP},     Local, Prover, Verifiable, };   type Input = (u32, u32); type Output = i32;   const PACKAGE: &str = "guest";   fn main() {     println!("Setting up Nova public parameters...");     let pp: PP = PP::generate().expect("failed to generate parameters");       let mut opts = CompileOpts::new(PACKAGE);     opts.set_memlimit(8); // use an 8mb memory       println!("Compiling guest program...");     let prover: Nova<Local> = Nova::compile(&opts).expect("failed to compile guest program");       let input: Input = (3, 5);       print!("Proving execution of vm...");     let proof = prover         .prove_with_input::<Input>(&pp, &input)         .expect("failed to prove program");       println!(         " output is {}!",         proof             .output::<Output>()             .expect
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the report. This coincides with a new release to `postcard`, and we're investigating the root cause and working on a fix.
-  > Thanks, but how do I know fix my existing nexus-host example program from the quickstart docs?
-  > Opened upstream issue: https://github.com/jamesmunns/postcard/issues/167
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1536,511 +1444,13 @@ Observed empirical fixes and code patches:
  
 ```
 
----
-
-### Incident Patch 4: `e6b1bca9` (2025-12-10)
-**Commit Message**: fix(emulator): correct heap_size calculation in LinearMemoryLayout::tracked_ram_size (#551)
-
-**File**: `vm/src/emulator/layout.rs` (modified, +90/-2)
-```diff
-@@ -337,9 +337,9 @@ impl LinearMemoryLayout {
-                 .checked_sub(self.stack_bottom)
-                 .expect("stack top should be above stack bottom") as usize;
-         let heap_size = self
--            .heap
-+            .heap_end()
-             .checked_sub(self.heap_start())
--            .expect("heap should be above heap start") as usize;
-+            .expect("heap end should be above heap start") as usize;
-         let public_input_size =
-             self.public_input_end()
-                 .checked_sub(self.public_input_start())
-@@ -405,3 +405,91 @@ impl Display for LinearMemoryLayout {
-         Ok(())
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::LinearMemoryLayout;
-+
-+    #[test]
-+    fn tracked_ram_size_includes_heap_nonzero() {
-+        // Construct a layout with a non-zero heap and stack sizes
-+        let max_heap_size: u32 = 0x200; // 512 bytes
-+        let max_stack_size: u32 = 0x300; // 768 bytes
-+        let public_input_size: u32 = 0x20; // 32 bytes (raw)
-+        let public_output_size: u32 = 0x40; // 64 bytes (raw)
-+        let program_size: u32 = 0x1000; // 4096 bytes
-+        let ad_size: u32 = 0x10; // 16 bytes
-+
-+        let layout = LinearMemoryLayout::try_new(
-+            None,
-+            max_heap_size,
-+            max_stack_size,
-+            public_input_size,
-+            public_output_size,
-+            program_size,
-+            ad_size,
-+        )
-+        .unwrap();
-+
-+        // Compute expected sizes from the layout getters to include any alignment padding
-+        let stack_size = layout.stack_top() - layout.stack_bottom();
-+        let heap_size = layout.heap_end() - layout.heap_start();
-+        let public_input_span = layout.public_input_end() - layout.public_input_start();
-+        let public_output_span = layout.public_output_end() - layout.public_output_start();
-+        let exit_code_size = nexus_common::constants::WORD_SIZE as u32;
-+
-+        let static_memory_size: usize = 0x60; // arbitrary static memory contribution in bytes
-+
-+        let expected_total = static_memory_size
-+            + stack_size as usize
-+            + heap_size as usize
-+            + public_input_span as usize
-+            + public_output_span as usize
-+            + exit_code_size as usize;
-+
-+        let actual = layout.tracked_ram_size(static_memory_size);
-+        assert_eq!(actual, expected_total);
-+        assert!(heap_size > 0, "heap should be non-zero in this test");
-+    }
-+
-+    #[test]
-+    fn tracked_ram_size_handles_zero_heap() {
-+        // Zero heap, non-zero stack
-+        let max_heap_size: u32 = 0x0;
-+        let max_stack_size: u32 = 0x300; // 768 bytes
-+        let public_input_size: u32 = 0x20; // 32 bytes (raw)
-+        let public_output_size: u32 = 0x40; // 64 bytes (raw)
-+        let program_size: u32 = 0x800; // 2048 bytes
-+        let ad_size: u32 = 0x0; // 0 bytes
-+
-+        let layout = LinearMemoryLayout::try_new(
-+            None,
-+            max_heap_size,
-+            max_stack_size,
-+            public_input_size,
-+            public_output_size,
-+            program_size,
-+            ad_size,
-+        )
-+        .unwrap();
-+
-+        let stack_size = layout.stack_top() - layout.stack_bottom();
-+        let heap_size = layout.heap_end() - layout.heap_start(); // should be 0
-+        let public_input_span = layout.public_input_end() - layout.public_input_start();
-+        let public_output_span = layout.public_output_end() - layout.public_output_start();
-+        let exit_code_size = nexus_common::constants::WORD_SIZE as u32;
-+
-+        let static_memory_size: usize = 0x0;
-+
-+        let expected_total = static_memory_size
-+            + stack_size as usize
-+            + heap_size as usize
-+            + public_input_span as usize
-+            + public_output_span as usize
-+            + exit_code_size as usize;
-+
-+        let actual = layout.tracked_ram_size(static_memory_size);
-+        assert_eq!(actual, expected_total);
-+        assert_eq!(heap_size, 0);
-+    }
-+}
-```
-
----
-
-### Incident Patch 5: `bdb2a29b` (2025-11-24)
-**Commit Message**: Fix I/O error handling in ElfFile::from_path (#540)
-
-* Update loader.rs
-
-* Update loader.rs
-
-* Update loader.rs
-
-**File**: `vm/src/elf/loader.rs` (modified, +3/-6)
-```diff
-@@ -46,7 +46,7 @@
- use crate::{elf::parser, error::VMError, memory::MemorySegmentImage};
- 
- use elf::{endian::LittleEndian, ElfBytes};
--use std::fs::File;
-+use std::fs;
- use std::path::Path;
- 
- use super::{error::ParserError, parser::ParsedElfData};
-@@ -122,11 +122,7 @@ impl ElfFile {
-     }
- 
-     pub fn from_path<P: AsRef<Path> + ?Sized>(path: &P) -> Result<Self, VMError> {
--        let file = File::open(path).map_err(Into::<ParserError>::into)?;
--
--        let data: Vec<u8> = std::io::Read::bytes(file)
--            .map(|b| b.expect("Failed to read byte"))
--            .collect();
-+        let data = fs::read(path.as_ref()).map_err(Into::<ParserError>::into)?;
-         Self::from_bytes(data.as_slice())
-     }
- }
-@@ -138,6 +134,7 @@ mod tests {
-     use crate::{memory::MemorySegmentImage, read_testing_elf_from_path};
- 
-     use super::*;
-+    use std::fs::File;
-     use std::io::Write;
- 
-     #[allow(dead_code)]
-```
-
----
-
-### Incident Patch 6: `4c7ff3c2` (2025-11-21)
-**Commit Message**: Fix documentation link (#535)
-
-Updated the link to the zkVM documentation.
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -35,4 +35,4 @@ That said, the Nexus zkVM is also designed to be extensible. Source-available co
- 
- ### Learn More
- 
--See our zkVM documentation, including guides and walkthroughs, at [docs.nexus.xyz](https://docs.nexus.xyz/zkvm/index).
-+See our zkVM documentation, including guides and walkthroughs, at [docs.nexus.xyz](https://docs.nexus.xyz/zkvm).
-```
-
----
-
-### Incident Patch 7: `1fb6ebdd` (2025-11-17)
-**Commit Message**: fix: incorrect custom_input example in compile_error! (#532)
-
-**File**: `runtime/macros/src/io.rs` (modified, +1/-1)
-```diff
-@@ -265,7 +265,7 @@ pub(crate) fn handle_input(
-     let target_check = if !matches!(input_type, InputType::Custom) {
-         quote! {
-             #[cfg(not(target_arch = "riscv32"))]
--            compile_error!("NexusVM public and private input interfaces are not available for native builds, use a custom handler instead. Ex: #[nexus_rt::custom_input(bar)]");
-+            compile_error!("NexusVM public and private input interfaces are not available for native builds, use a custom handler instead. Ex: #[nexus_rt::custom_input((x,y,z), fizz)]");
-         }
-     } else {
-         quote! {}
-```
-
----
-
-### Incident Patch 8: `f9b5a8f3` (2025-11-14)
-**Commit Message**: fix: remove duplicate clone in HashSet insert (#529)
-
-Replace HashSet::insert() with contains() check followed by insert()
-to avoid cloning the Ident twice. The previous code cloned name when
-creating the variable and again when calling insert(), which was
-unnecessary since we can check for duplicates first.
-
-**File**: `runtime/macros/src/io.rs` (modified, +2/-1)
-```diff
-@@ -198,9 +198,10 @@ pub(crate) fn handle_input(
-                 return stream_error(id, "Expected an identifier.");
-             }
-             let name = id.path.segments.get(0).unwrap().ident.clone();
--            if !public_inputs.insert(name.clone()) {
-+            if public_inputs.contains(&name) {
-                 return stream_error(&attr_args, format!("Duplicate public input: {:?}.", name));
-             }
-+            public_inputs.insert(name);
-         } else {
-             return stream_error(x, "Expected an identifier.");
-         }
-```
-
----
-
-### Incident Patch 9: `d8f16333` (2025-10-20)
-**Commit Message**: fix(vm): correct add_opcode duplicate detection using Entry API (#497)
-
-* fix(vm): correct add_opcode duplicate detection using Entry API
-
-* Update traits.rs
-
-* Update mod.rs
-
-* Update Cargo.toml
-
-* Update traits.rs
-
-* Update Cargo.toml
-
-**File**: `vm/src/emulator/registry.rs` (modified, +8/-5)
-```diff
-@@ -63,7 +63,7 @@ use crate::{
-     memory::{LoadOps, StoreOps, UnifiedMemory},
-     riscv::{BuiltinOpcode, Instruction, Opcode},
- };
--use std::collections::HashMap;
-+use std::collections::{hash_map::Entry, HashMap};
- 
- pub type InstructionExecutorFn<M> =
-     fn(&mut Cpu, &mut M, &Instruction) -> Result<(Option<u32>, (LoadOps, StoreOps)), MemoryError>;
-@@ -238,10 +238,13 @@ impl Default for InstructionExecutorRegistry {
- 
- impl InstructionExecutorRegistry {
-     pub fn add_opcode<IE: InstructionExecutor>(&mut self, op: &Opcode) -> Result<(), VMError> {
--        self.precompiles
--            .insert(op.clone(), register_instruction_executor!(IE::evaluator))
--            .ok_or(VMErrorKind::DuplicateInstruction(op.clone()).into())
--            .map(|_| ())
-+        match self.precompiles.entry(op.clone()) {
-+            Entry::Occupied(_) => Err(VMErrorKind::DuplicateInstruction(op.clone()).into()),
-+            Entry::Vacant(v) => {
-+                v.insert(register_instruction_executor!(IE::evaluator));
-+                Ok(())
-+            }
-+        }
-     }
- 
-     pub fn get(&self, op: &Opcode) -> Result<InstructionExecutorFn<UnifiedMemory>> {
-```
-
----
-
-### Incident Patch 10: `6bba621f` (2025-10-03)
-**Commit Message**:  chore: fix error input messages (#487)
-
-**File**: `runtime/macros/macro_expansion_tests/tests/private-input-expanded-riscv.rs` (modified, +2/-2)
-```diff
-@@ -13,11 +13,11 @@ fn main() {
-     let out = (|| {
-         {
-             let (y): (u32) = nexus_rt::read_private_input::<(u32)>()
--                .expect("Failed to read public input");
-+                .expect("Failed to read private input");
-             {
-                 {
-                     let (x): (u32) = nexus_rt::read_private_input::<(u32)>()
--                        .expect("Failed to read public input");
-+                        .expect("Failed to read private input");
-                     { { x * y } }
-                 }
-             }
-```
-
-**File**: `runtime/macros/macro_expansion_tests/tests/public-input-expanded-riscv.rs` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ fn main() {
-     let out = (|| {
-         {
-             let (y): (u32) = nexus_rt::read_private_input::<(u32)>()
--                .expect("Failed to read public input");
-+                .expect("Failed to read private input");
-             {
-                 {
-                     let (x): (u32) = nexus_rt::read_public_input::<(u32)>()
-```
-
-**File**: `runtime/macros/macro_expansion_tests/tests/public-output-expanded-riscv.rs` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ const _: fn() = main;
- #[allow(unused)]
- fn main() {
-     let (x, y): (u32, u32) = nexus_rt::read_private_input::<(u32, u32)>()
--        .expect("Failed to read public input");
-+        .expect("Failed to read private input");
-     {
-         {
-             foo(x, y);
-```
-
----
-
-### Incident Patch 11: `29847b75` (2025-09-30)
-**Commit Message**: fix(macros): silence unused imm param in InstructionEmitter impl (#484)
-
-**File**: `precompiles/macros/src/generation.rs` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ pub(crate) fn generate_instruction_impls(paths: &[PrecompilePath]) -> TokenStrea
-             quote! {
-                 impl InstructionEmitter for #path {
-                     #[inline(always)]
--                    fn emit_instruction(rs1: u32, rs2: u32, imm: u32) -> u32 {
-+                    fn emit_instruction(rs1: u32, rs2: u32, _imm: u32) -> u32 {
-                         #[cfg(target_arch = "riscv32")] {
-                             let mut rd: u32;
-                             unsafe {
-```
-
----
-
-### Incident Patch 12: `f33bbbca` (2025-09-24)
-**Commit Message**: fix(testing): record Linear emulator cycles after execution (#479)
-
-**File**: `common-testing/src/emulator.rs` (modified, +1/-1)
-```diff
-@@ -304,8 +304,8 @@ pub fn emulate(
-                     &public_input_bytes,
-                     &private_input_bytes,
-                 );
--                cycles.push(emulator.executor.global_clock);
-                 let _ = emulator.execute(false);
-+                cycles.push(emulator.executor.global_clock);
- 
-                 let view = emulator.finalize();
-                 exit_code_bytes = view
-```
-
----
-
-### Incident Patch 13: `b0ae78e9` (2025-09-24)
-**Commit Message**: Fix mixed-base range in Alignable tests (use 0x1001..0x1005) (#478)
-
-**File**: `common/src/memory/alignment.rs` (modified, +1/-1)
-```diff
-@@ -119,7 +119,7 @@ mod tests {
-     fn test_alignable() {
-         // Test `word_align`
-         #[allow(clippy::reversed_empty_ranges)] // absurd false positive
--        for i in 0x1001..1005 {
-+        for i in 0x1001..0x1005 {
-             assert_eq!((i as u32).word_align(), 0x1004);
-             assert_eq!((i as usize).word_align(), 0x1004);
-         }
-```
-
----
-
-### Incident Patch 14: `41e1801c` (2025-09-10)
-**Commit Message**: fix: docs fill N columns with value convertible into base fields (#468)
-
-**File**: `prover2/trace/src/builder.rs` (modified, +3/-3)
-```diff
-@@ -47,7 +47,7 @@ impl<C: AirColumn> TraceBuilder<C> {
-     }
- 
-     /// Returns a copy of `N` raw columns in range `[offset..offset + N]` at `row`, where
--    /// `N` is assumed to be equal `Column::size` of a `col`.
-+    /// `N` must equal `col.size()`.
-     pub fn column<const N: usize>(&self, row: usize, col: C) -> [BaseField; N] {
-         assert_eq!(col.size(), N, "column size mismatch");
- 
-@@ -57,7 +57,7 @@ impl<C: AirColumn> TraceBuilder<C> {
-     }
- 
-     /// Returns mutable reference to `N` raw columns in range `[offset..offset + N]` at `row`,
--    /// where `N` is assumed to be equal `Column::size` of a `col`.
-+    /// where `N` must equal `col.size()`.
-     pub fn column_mut<const N: usize>(&mut self, row: usize, col: C) -> [&mut BaseField; N] {
-         assert_eq!(col.size(), N, "column size mismatch");
- 
-@@ -68,7 +68,7 @@ impl<C: AirColumn> TraceBuilder<C> {
-         })
-     }
- 
--    /// Fills four columns with u32 value.
-+    /// Fills N columns with a value convertible into base fields.
-     pub fn fill_columns<const N: usize, T: IntoBaseFields<N>>(
-         &mut self,
-         row: usize,
-```
-
----
-
-### Incident Patch 15: `a27683f8` (2025-09-08)
-**Commit Message**: fix(benchmarks): make native timing consistent and avoid rebuilds per iteration (#466)
-
-**File**: `benchmarks/src/runner.rs` (modified, +18/-27)
-```diff
-@@ -9,7 +9,7 @@ use nexus_vm_prover::{prove, verify};
- use num_cpus;
- use postcard;
- use serde::{de::DeserializeOwned, Serialize};
--use std::{path::PathBuf, process::Command, time::Duration};
-+use std::{path::PathBuf, process::Command};
- use sys_info;
- use sysinfo::System;
- 
-@@ -21,29 +21,10 @@ use crate::{
- const K: usize = 1;
- 
- /// Executes and measures the native execution speed of a Rust program.
--fn measure_native_execution<T>(
--    path: &PathBuf,
--    public_input_bytes: &[u8],
--) -> (Duration, Duration, Duration)
-+fn measure_native_execution<T>(path: &PathBuf, public_input_bytes: &[u8])
- where
-     T: DeserializeOwned + Serialize + std::fmt::Display,
- {
--    // Build with release optimizations.
--    let output = Command::new("cargo")
--        .current_dir(path)
--        .arg("build")
--        .arg("--release")
--        .output()
--        .expect("Failed to build project");
--
--    assert!(
--        output.status.success(),
--        "Native build failed: {}",
--        String::from_utf8_lossy(&output.stderr)
--    );
--
--    let timing_state = phase_start();
--
-     // Simpler run process when no inputs are provided.
-     let output = if public_input_bytes.is_empty() {
-         Command::new("cargo")
-@@ -77,10 +58,6 @@ where
-     };
- 
-     assert!(output.status.success(), "Native execution failed");
--
--    let (total_time, user_time, sys_time, _) = phase_end(timing_state);
--
--    (total_time, user_time, sys_time)
- }
- 
- /// Benchmarks a test program using specified emulator configuration.
-@@ -118,12 +95,26 @@ pub fn run_benchmark<T>(
-         compile_flags,
-     );
- 
-+    // Build the native binary once (release) before measuring runs.
-+    let build_output = Command::new("cargo")
-+        .current_dir(&tmp_project_path)
-+        .arg("build")
-+        .arg("--release")
-+        .output()
-+        .expect("Failed to build project");
-+    assert!(
-+        build_output.status.success(),
-+        "Native build failed: {}",
-+        String::from_utf8_lossy(&build_output.stderr)
-+    );
-+
-     // Measure native execution.
-     let mut native_tracker = PhasesTracker::default();
-     for _ in 0..iters {
-         let timing_state = phase_start();
--        let native_duration = measure_native_execution::<T>(&tmp_project_path, &public_input).0;
--        let (_, native_user_time, native_sys_time, native_metrics) = phase_end(timing_state);
-+        measure_native_execution::<T>(&tmp_project_path, &public_input);
-+        let (native_duration, native_user_time, native_sys_time, native_metrics) =
-+            phase_end(timing_state);
- 
-         native_tracker.update(
-             &native_duration,
-```
-
 #### Recent Merged Pull Requests:
+- **PR #617** (closed): docs(sdk): fix install nightly pin for enum-ordinalize 4.4.2 (@kutluhaneth46)
 - **PR #602** (closed): refactor(benchmarks): remove redundant intermediate variables in benchmark loop (@marukai67)
 - **PR #600** (closed): refactor(vm): Remove dead code and replace test suppression with cfg(test) (@marukai67)
 - **PR #599** (closed): Fix: invalid macro syntax (@meelon-dev)
 - **PR #598** (closed): refactor(runtime/macros): remove redundant clones in macro expansion tests (@0xxFloki)
 - **PR #592** (closed): refactor(vm): remove unused InternalView import (@Aleksandr1732)
-- **PR #591** (closed): feat: add `nexus_sdk` extensions support (@brech1)
-- **PR #587** (closed): refactor(vm): remove dead code from ELF loader tests (@0xlupin)
-- **PR #585** (closed): Refine precompile metadata error formatting (@conomist)
 
 ---
 
@@ -2054,3 +1464,34 @@ unnecessary since we can check for duplicates first.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. reuse pending_logup capacity in LogupTraceBuilder (#556)
+
+**RULE**:
+When implementing operations in `prover2/machine/src/lookups/logup_trace_builder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nexus-xyz/nexus-zkvm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `24685a24`: reuse pending_logup capacity in LogupTraceBuilder (#556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `prover2/machine/src/lookups/logup_trace_builder.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            self.pending_logup.extend(frac_iter);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+            self.pending_logup = frac_iter.collect();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `24685a24` are properly handled with clean fallback behavior.

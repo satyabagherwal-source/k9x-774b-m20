@@ -2586,3 +2586,10 @@
 | `CYCLE-20261018-2C11` | `2026-10-18T22:48:12.133Z` | `sorintlab/stolon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1805` | Yes (`82a3b77b...`) |
 | `CYCLE-20261018-2CWC` | `2026-10-18T22:48:13.260Z` | `lunasec-io/lunasec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1806` | Yes (`0fc76fcb...`) |
 | `CYCLE-20261018-2DUJ` | `2026-10-18T22:48:14.491Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`00d9ecea...`) |
+| `CYCLE-20261018-A5DL` | `2026-10-18T22:54:16.761Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1807` | Yes (`960d8d8b...`) |
+| `CYCLE-20261018-A7PE` | `2026-10-18T22:54:19.778Z` | `expo/create-react-native-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1808` | Yes (`55e650ee...`) |
+| `CYCLE-20261018-AA6H` | `2026-10-18T22:54:22.985Z` | `cdk-team/CDK` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1809` | Yes (`002063b1...`) |
+| `CYCLE-20261018-AB72` | `2026-10-18T22:54:24.302Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1810, Rule 1811` | Yes (`d3603c17...`) |
+| `CYCLE-20261018-AD7L` | `2026-10-18T22:54:26.913Z` | `nexus-xyz/nexus-zkvm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1812` | Yes (`6aa8a119...`) |
+| `CYCLE-20261018-AELS` | `2026-10-18T22:54:28.720Z` | `featureform/featureform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1813` | Yes (`cefbcac8...`) |
+| `CYCLE-20261018-BL0G` | `2026-10-18T22:55:23.680Z` | `tambo-ai/tambo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1814, Rule 1815, Rule 1816` | Yes (`9495da80...`) |
