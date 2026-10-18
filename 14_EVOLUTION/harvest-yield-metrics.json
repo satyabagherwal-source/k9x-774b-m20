@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:15:11.318Z",
-  "total_cycles_completed": 2401,
-  "total_learnings_persisted": 2401,
+  "last_updated": "2026-10-18T04:18:31.760Z",
+  "total_cycles_completed": 2402,
+  "total_learnings_persisted": 2402,
   "total_rules_promoted": 1392,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:48:43.335Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:51:51.571Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T04:15:11.318Z",
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:18:31.760Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
