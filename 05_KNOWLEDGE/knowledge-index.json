@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:30:05.613Z",
+  "last_updated": "2026-10-18T02:35:07.927Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -19121,7 +19121,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "4acb92df4bc01e51e1e60b74586bd01d5bfe18e916ca7c171940451446a70103",
+      "content_hash": "1a0e892df7841a690198f9db99ea0844417f6be61239e381c91a141c91eb9374",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -19138,6 +19138,21 @@
         {
           "number": 1049,
           "title": "Bilingual Tokenizer Boundary Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1591,
+          "title": "Fixed-Step Distilled Flow Matching Timestep Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1592,
+          "title": "Single-Stream Multi-Modal 2D-RoPE Coordinate Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1593,
+          "title": "VRAM-Bounded Chunked Tiling for Spatial Autoencoders",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -19159,7 +19174,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-17T18:05:24.408Z",
+      "verified_at": "2026-10-18T02:35:07.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

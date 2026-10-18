@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-X37E",
-    "timestamp": "2026-10-16T22:12:47.354Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-    "contentHash": "7b024fd6fb140a763bf296373b5d6d2db6490bfb253db9a02cd9328cc97de038",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0NJ6",
     "timestamp": "2026-10-16T22:15:33.666Z",
     "repository": "autotrust/JEV-35B",
@@ -7492,6 +7477,21 @@
     "contentHash": "ef8c851881b016d9e130a7868b61c33182c6a03a17b5cb6f5c0faeaffeef94c3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-QBE3",
+    "timestamp": "2026-10-18T02:35:07.947Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "1a0e892df7841a690198f9db99ea0844417f6be61239e381c91a141c91eb9374",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

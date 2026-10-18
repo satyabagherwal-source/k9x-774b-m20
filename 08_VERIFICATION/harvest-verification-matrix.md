@@ -2393,3 +2393,4 @@
 | `CYCLE-20261018-7COZ` | `2026-10-18T02:20:23.171Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`bc3f729b...`) |
 | `CYCLE-20261018-FQY4` | `2026-10-18T02:26:54.892Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1588, Rule 1589, Rule 1590` | Yes (`f4616de6...`) |
 | `CYCLE-20261018-JU4X` | `2026-10-18T02:30:05.649Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`ef8c8518...`) |
+| `CYCLE-20261018-QBE3` | `2026-10-18T02:35:07.947Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1591, Rule 1592, Rule 1593` | Yes (`1a0e892d...`) |
