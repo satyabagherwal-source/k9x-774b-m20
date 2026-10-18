@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `a5cbbdd2`  
+> **Source Version**: `a0ad5379`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:14:07.162Z  
+> **Timestamp**: 2026-10-18T23:20:41.641Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:14:07.153Z  
+> **Harvest Timestamp**: 2026-10-18T23:20:41.635Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,847 +1799,562 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `300056e8` (2026-10-13)
-**Commit Message**: chore: pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwright revision) (#236)
+### Incident Patch 1: `a0ad5379` (2026-10-18)
+**Commit Message**: feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (#273)
 
-* feat(gateway): report version, uptime and platform for the Overview cards
+* feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command
 
-The Overview stat cards read version/uptime/platform fields that no RPC
-returned, so they always showed a dash, and the hello frame reported
-npm_package_version, which is "dev" outside `pnpm start`.
+Every memory index is now written under an embedding profile (provider,
+model, model digest, dimensions, normalisation, truncation, chunking,
+chunker version), recorded in the index meta and compared on every sync.
+A provider or model change keeps its existing automatic safe reindex. A
+change under the same model name (digest, dimensions, processing, chunker)
+puts the index on hold: no vector is written, vector search pauses, and
+`bitterbot memory migrate-embeddings` (or `memory index --force`) rebuilds
+under the new profile. Local GGUF providers hash the file for the digest;
+a loopback OpenAI-compatible endpoint asks Ollama for its manifest digest.
 
-- New GatewayRuntime protocol schema (version, uptimeMs, platform, arch,
-  nodeVersion, installKind), carried in the hello snapshot as `runtime`
-  and in the `status` RPC result.
-- hello-ok.server.version now uses the real package version (src/version.ts).
-- Control UI reads status.runtime, then the hello snapshot, then
-  hello.server.version; config path and state dir rows read the snapshot too.
+The `pool` embedding provider wraps the node's provider (same id and
+model, so no index key changes) and may run a batch on a pool worker when
+the worker's pinned digest equals the local profile, the content's
+governance class permits that pool's trust (confidential: local only;
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(ui-build): hash every Control UI build input, not only the renderer
-
-The ui:build skip gate hashed desktop/renderer only, so a vite or plugin
-upgrade (lockfile), a vite.config.ts/package.json/tsconfig change, a vite
-.env file, the VITE_* environment, or a release version bump (baked in as
-VITE_APP_VERSION) left update.run and `pnpm build` shipping a sta
-
-**File**: `desktop/renderer/src/components/overview/OverviewView.tsx` (modified, +12/-14)
+**File**: `docs/cli/memory.md` (modified, +3/-0)
 ```diff
-@@ -6,6 +6,7 @@ import { useOverviewStore } from "../../stores/overview-store";
- import { useUIStore } from "../../stores/ui-store";
- import { GatewayControls } from "./GatewayControls";
- import { GetStartedCard } from "./GetStartedCard";
-+import { resolveOverviewStats } from "./overview-stats";
- import { RepairsCard } from "./RepairsCard";
- import { SpendCard } from "./SpendCard";
- import { UpdateCard } from "./UpdateCard";
-@@ -107,9 +108,7 @@ export function OverviewView() {
-     refresh();
-   }, [refresh]);
+@@ -31,6 +31,8 @@ bitterbot memory search "release checklist"
+ bitterbot memory status --agent main
+ bitterbot memory index --agent main --verbose
+ bitterbot memory backfill-embeddings --agent main
++bitterbot memory migrate-embeddings
++bitterbot memory migrate-embeddings --yes
+ bitterbot memory forget fact_0f3c... --preview
+ bitterbot memory forget fact_0f3c... --yes
+ bitterbot memory edit fact_0f3c... "The deploy endpoint is api2.acme.com." --yes
+@@ -54,6 +56,7 @@ Notes:
+ - `memory status --deep --index` runs a reindex if the store is dirty.
+ - `memory index --verbose` prints per-phase details (provider, model, sources, batch activity).
+ - `memory status` includes any extra paths configured via `memorySearch.extraPaths`.
++- `memory migrate-embeddings` rebuilds the index under the current embedding profile after a change the index cannot absorb silently: the model's weights changed under the same name (an Ollama tag pulled again, a GGUF replaced), its dimensions changed, or the chunker changed. Until then the index is on hold (no new vectors, vector search paused, keyword search working). Without `--yes` it prints the conflict and changes nothing; `--json` prints the plan. See [compute](/tools/compute#when-the-model-changes).
+ - `memory backfill-embeddings` embeds and indexes crystals stored with placeholder embeddings (extracted facts, scratch notes, handover briefs) so they become searchable through both vector and keyword channels. The gateway also runs this automatically (bounded) at the end of each sync cycle; the command exists to clear a large backlog on demand. Use `--limit <n>` to cap chunks embedded per batch.
  
--  const version = statusData?.version ?? hello?.version ?? "—";
--  const uptime = statusData?.uptime ?? health?.uptime;
--  const platform = statusData?.platform ?? "—";
-+  const stats = resolveOverviewStats(statusData, hello);
-   const channels = health?.channels ?? {};
-   const configuredChannels = summarizeChannels(channels).filter((c) => c.configured);
- 
-@@ -137,9 +136,12 @@ export function OverviewView() {
- 
-       {/* Stats */}
-       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
--        <StatCard label="Version" value={String(version)} accent />
--        <StatCard label="Uptime" value={typeof uptime === "number" ? formatUptime(uptime) : "—"} />
--        <StatCard label="Platform" value={String(platform)} />
-+        <StatCard label="Version" value={stats.version} accent />
-+        <StatCard
-+          label="Uptime"
-+          value={stats.uptimeSeconds === null ? "—" : formatUptime(stats.uptimeSeconds)}
-+        />
-+        <StatCard label="Platform" value={stats.platform} sub={stats.platformSub} />
-         <StatCard label="Channels" value={String(configuredChannels.length)} sub="configured" />
-       </div>
- 
-@@ -171,20 +173,16 @@ export function OverviewView() {
-               <span className="text-foreground">{formatRelativeTime(hello.ts)}</span>
-             </div>
-           )}
--          {statusData?.configPath && (
-+          {stats.configPath && (
-             <div className="col-span-2">
-               <span className="text-muted-foreground">Config: </span>
--              <span className="text-foreground font-mono text-xs">
--                {String(statusData.configPath)}
--              </span>
-+              <span className="text-foreground font-mono text-xs">{stats.configPath}</span>
-             </div>
-           )}
--          {statusData?.stateDir && (
-+          {stats.stateDir && (
-             <div className="col-span-2">
-               <span className="text-muted-foreground">State Dir: </span>
--              <span className="text-foreground font-mono text-xs">
--                {String(statusData.stateDir)}
--              </span>
-+              <span className="text-foreground font-mono text-xs">{stats.stateDir}</span>
-             </div>
-           )}
-         </div>
+ ## Owner controls
 ```
 
-**File**: `desktop/renderer/src/components/overview/overview-stats.test.tsx` (added, +110/-0)
+**File**: `docs/tools/compute.md` (modified, +88/-5)
 ```diff
-@@ -0,0 +1,110 @@
-+import { render, screen, waitFor } from "@testing-library/react";
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+import type { GatewayHelloOk } from "../../lib/gateway-client";
-+import { useGatewayStore } from "../../stores/gateway-store";
-+import { useOverviewStore } from "../../stores/overview-store";
-+import { formatPlatform, resolveOverviewStats } from "./overview-stats";
-+
-+vi.mock("./GatewayControls", () => ({ GatewayControls: () => null }));
-+vi.mock("./GetStartedCard", () => ({ GetStartedCard: () => null }));
-+vi.mock("./RepairsCard", () => ({ RepairsCard: () => null }));
-+vi.mock("./SpendCard", () => ({ SpendCard: () => null }));
-+vi.mock("./UpdateCard", () => ({ UpdateCard: () => null }));
-+
-+const { OverviewView } = await import("./OverviewView");
-+
-+function hello(partial: Partial<GatewayHelloOk>): GatewayHelloOk {
-+  return { type: "hello-ok", protocol: 3, ...partial };
-+}
-+
-+describe("resolveOverviewStats", () => {
-+  it("is all dashes when nothing was reported", () => {
-+    expect(resolveOverviewStats(null, null)).toEqual({
-+      version: "—",
-+      uptimeSeconds: null,
-+      platform: "—",
-+      platformSub: undefined,
-+      configPath: undefined,
-+      stateDir: undefined,
-+    });
-+  });
-+
-+  it("prefers the status RPC runtime block", () => {
-+    const stats = resolveOverviewStats(
-+      {
-+        runtime: {
-+          version: "1.5.0",
-+          uptimeMs: 3_725_000,
-+          platform: "linux",
-+          arch: "x64",
-+          installKind: "tarball",
-+        },
-+      },
-+      hello({
-+        server: { version: "1.4.0" },
-+        snapshot: { uptimeMs: 1000, runtime: { version: "1.4.0", platform: "darwin" } },
-+      }),
-+    );
-+    expect(stats.version).toBe("1.5.0");
-+    expect(stats.uptimeSeconds).toBe(3725);
-+    expect(stats.platform).toBe("Linux x64");
-+    expect(stats.platformSub).toBe("installer (release tarball)");
-+  });
-+
-+  it("falls back to the hello snapshot and server version", () => {
-+    const stats = resolveOverviewStats(
-+      { channelSummary: [] },
-+      hello({
-+        server: { version: "1.4.0", connId: "c1" },
-+        snapshot: { uptimeMs: 61_000, configPath: "/cfg.json", stateDir: "/state" },
-+      }),
-+    );
-+    expect(stats.version).toBe("1.4.0");
-+    expect(stats.uptimeSeconds).toBe(61);
-+    expect(stats.platform).toBe("—");
-+    expect(stats.configPath).toBe("/cfg.json");
-+    expect(stats.stateDir).toBe("/state");
-+  });
-+
-+  it("names platforms", () => {
-+    expect(formatPlatform("darwin", "arm64")).toBe("macOS arm64");
-+    expect(formatPlatform("win32")).toBe("Windows");
-+    expect(formatPlatform("sunos", "x64")).toBe("sunos x64");
-+    expect(formatPlatform(undefined, "x64")).toBe("—");
-+  });
-+});
-+
-+describe("OverviewView stat cards", () => {
-+  beforeEach(() => {
-+    useOverviewStore.setState({ health: null, status: null, loading: false, error: null });
-+  });
-+
-+  it("shows version, uptime and platform from the gateway's status RPC", async () => {
-+    const request = vi.fn(async (method: string) =>
-+      method === "status"
-+        ? {
-+            channelSummary: [],
-+            runtime: {
-+              version: "1.5.0",
-+              uptimeMs: 7_200_000,
-+              platform: "linux",
-+              arch: "arm64",
-+              installKind: "container",
-+            },
-+          }
-+        : { ts: Date.now(), channels: {} },
-+    );
-+    useGatewayStore.setState({
-+      status: "connected",
-+      request,
-+      hello: hello({ server: { version: "1.5.0", connId: "c1" } }),
-+    } as never);
-+    render(<OverviewView />);
-+    await waitFor(() => expect(screen.getByText("Linux arm64")).toBeTruthy());
-+    expect(screen.getByText("1.5.0")).toBeTruthy();
-+    expect(screen.getByText("container image")).toBeTruthy();
-+    expect(request).toHaveBeenCalledWith("status", {});
-+    const uptimeCard = screen.getByText("Uptime").parentElement;
-+    expect(uptimeCard?.textContent).not.toContain("—");
-+  });
-+});
-```
-
-**File**: `desktop/renderer/src/components/overview/overview-stats.ts` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+import type { GatewayHelloOk } from "../../lib/gateway-client";
-+import type { GatewayRuntimeInfo, StatusSummary } from "../../stores/overview-store";
-+
-+/**
-+ * The Overview stat cards, from what the gateway actually reports: the
-+ * `runtime` block of the `status` RPC (fresh on every refresh), else the
-+ * `runtime` block of the hello snapshot (as of connect), else the hello
-+ * `server.version`. Any field nobody reported stays a dash.
-+ */
-+export type OverviewStats = {
-+  version: string;
-+  /** Uptime in seconds, or null when unknown. */
-+  uptimeSeconds: number | null;
-+  platform: string;
-+  /** Install kind label under the platform card, when known. */
-+  platformSub?: string;
-+  configPath?: string;
-+  stateDir?: string;
-+};
-+
-+const PLATFORM_NAMES: Record<string, string> = {
-+  linux: "Linux",
-+  darwin: "macOS",
-+  win32: "Windows",
-+  freebsd: "FreeBSD",
-+};
-+
-+const INSTALL_KIND_LABELS: Record<string, string> = {
-+  git: "source checkout",
-+  package: "package install",
-+  container: "container image",
-+  tarball: "installer (release tarball)",
-+};
-+
-+function asRecord(value: unknown): Record<string, unknown> | undefined {
-+  return value && typeof value === "object" ? (value as Record<string, unknown>) : undefined;
-+}
-+
-+function nonEmpty(value: unknown): string | undefined {
-+  return typeof value === "string" && value.trim() ? value : undefined;
-+}
-+
-+export function formatPlatform(platform?: string, arch?: string): string {
-+  if (!platform) {
-+    return "—";
-+  }
-+  const name = PLATFORM_NAMES[platform] ?? platform;
-+  return arch ? `${name} ${arch}` : name;
-+}
-+
-+export function resolveOverviewStats(
-+  status: StatusSummary | null | undefined,
-+  hello: GatewayHelloOk | null | undefined,
-+): OverviewStats {
-+  const snapshot = asRecord(hello?.snapshot);
-+  const helloRuntime = asRecord(snapshot?.runtime) as GatewayRuntimeInfo | undefined;
-+  const runtime: GatewayRuntimeInfo | undefined = status?.runtime ?? helloRuntime;
-+  const server = asRecord(hello?.server);
-+
-+  const version =
-+    nonEmpty(runtime?.version) ?? nonEmpty(server?.version) ?? nonEmpty(hello?.version) ?? "—";
-+  const runtimeUptime = runtime?.uptimeMs;
-+  const snapshotUptime = snapshot?.uptimeMs;
-+  const uptimeMs =
-+    typeof runtimeUptime === "number"
-+      ? runtimeUptime
-+      : typeof snapshotUptime === "number"
-+        ? snapshotUptime
-+        : null;
-+  const kind = runtime?.installKind;
-+  return {
-+    version,
-+    uptimeSeconds: uptimeMs === null ? null : Math.floor(uptimeMs / 1000),
-+    platform: formatPlatform(nonEmpty(runtime?.platform), nonEmpty(runtime?.arch)),
-+    platformSub: kind ? INSTALL_KIND_LABELS[kind] : undefined,
-+    configPath: nonEmpty(status?.configPath) ?? nonEmpty(snapshot?.configPath),
-+    stateDir: nonEmpty(status?.stateDir) ?? nonEmpty(snapshot?.stateDir),
-+  };
-+}
-```
-
-**File**: `desktop/renderer/src/stores/overview-store.ts` (modified, +10/-8)
-```diff
-@@ -1,23 +1,25 @@
- import { create } from "zustand";
+@@ -11,10 +11,10 @@ title: "compute"
  
-+/** The `health` RPC result (HealthSummary in src/commands/health.ts). */
- export type HealthSnapshot = {
-   ts: number;
--  uptime?: number;
--  version?: string;
--  platform?: string;
--  nodeVersion?: string;
--  configPath?: string;
-   channels?: Record<string, unknown>;
-   [key: string]: unknown;
- };
+ The `compute` tool is how the agent knows that this node can run batches of
+ work on compute pools, and what those pools are doing right now. It is the
+-first piece of PLAN-57 (compute awareness). This release ships the
+-read-only half: the agent can look, estimate and report. Submitting work
+-from the agent and the live state block in the prompt tail follow in later
+-releases.
++agent-facing half of PLAN-57 (compute awareness): the agent can look,
++estimate, report, start work and be told when it finishes. The node-facing
++half, memory embeddings routed to a pool under an egress policy, is described
++at the end of this page.
  
--export type StatusSummary = {
-+/** The gateway process's facts (GatewayRuntimeSchema in src/gateway/protocol/schema/snapshot.ts). */
-+export type GatewayRuntimeInfo = {
-   version?: string;
--  uptime?: number;
--  pid?: number;
-+  uptimeMs?: number;
-   platform?: string;
-   arch?: string;
-   nodeVersion?: string;
-+  installKind?: "git" | "package" | "container" | "tarball" | "unknown";
-+};
+ ## When the tool exists
+ 
+@@ -163,6 +163,82 @@ succeeds and says the link failed rather than pretending.
+ Oversized results (`result` above 20,000 characters) are written to
+ `<workspace>/compute/<job id>.json` (mode 0600) and the path is returned.
+ 
++## Embeddings on the pool
 +
-+/** The `status` RPC result: the CLI status summary plus `runtime`. */
-+export type StatusSummary = {
-+  runtime?: GatewayRuntimeInfo;
-   configPath?: string;
-   stateDir?: string;
-   agents?: unknown[];
-```
-
-**File**: `docs/gateway/protocol.md` (modified, +19/-0)
-```diff
-@@ -77,6 +77,25 @@ Gateway → Client:
- }
- ```
- 
-+`hello-ok.server.version` is the gateway's package version, and
-+`hello-ok.snapshot.runtime` (also returned by the `status` method as `runtime`)
-+describes the gateway process:
++The node's own memory system is the daily consumer of compute: every chunk it
++indexes is embedded. With `compute.embeddings.provider: pool` (the default)
++an embedding batch may run on a pool worker instead of this machine, under
++three rules the code enforces. None of them is a prompt instruction, and the
++agent cannot change any of them.
 +
-+```json
-+{
-+  "runtime": {
-+    "version": "1.5.0",
-+    "uptimeMs": 3725000,
-+    "platform": "linux",
-+    "arch": "x64",
-+    "nodeVersion": "22.12.0",
-+    "installKind": "tarball"
-+  }
-+}
-+```
++**Same computation, or nothing.** Every memory index is written under an
++embedding profile: provider, model, the model's content digest, dimensions,
++normalisation, truncation and chunking rules. The profile is stored on the
++index and compared on every sync. A pool worker is eligible only when its
++pinned model digest equals the local one, and the result it returns is
++checked again on receipt: vector count, digest, dimensions and the worker's
++reported processing rules. Any mismatch puts that worker in cooldown
++(`compute.embeddings.cooldownMs`, default five minutes), runs the batch
++locally, and writes a ledger row saying why. There is never a per-batch mix.
 +
-+`installKind` is one of `git`, `package`, `container`, `tarball`, or `unknown`.
++In practice this means pool embeddings work when the node embeds through a
++local Ollama (an OpenAI-compatible `remote.baseUrl` on localhost) and the pool
++workers pin the same Ollama model; the digest is read from Ollama's manifest.
++A node on the bundled GGUF model hashes that file as its digest, which no
++Ollama worker matches, so its batches stay local by construction. Remote APIs
++report no digest and never route.
 +
- When a device token is issued, `hello-ok` also includes:
- 
- ```json
-```
-
-**File**: `docs/start/getting-started.md` (modified, +3/-3)
-```diff
-@@ -70,7 +70,7 @@ same installer inside WSL2 ([Windows](/start/install-script#windows-wsl2)).
- ## Prereqs (source install)
- 
- - Node 22.12 or newer
--- pnpm — ships with Node via corepack: `corepack enable pnpm || npm install -g pnpm`
-+- pnpm: ships with Node via corepack: `corepack enable pnpm || npm install -g pnpm`
- 
- <Tip>
- Check your Node version with `node --version` if you are unsure.
-@@ -144,7 +144,7 @@ way your install starts it: `docker compose up -d` (Docker), `bitterbot gateway`
- pnpm start gateway
- ```
- 
--Open [http://127.0.0.1:19001](http://127.0.0.1:19001) in your browser to chat, view dreams, manage skills, and monitor the agent. (Developing the UI itself? `pnpm dev:all` runs the gateway plus a hot-reload Vite server on 5173 — dev only.)
-+Open [http://127.0.0.1:19001](http://127.0.0.1:19001) in your browser to chat, view dreams, manage skills, and monitor the agent. (Developing the UI itself? `pnpm dev:all` runs the gateway plus a hot-reload Vite server on 5173, dev only.)
- 
- ## Optional extras
- 
-@@ -164,7 +164,7 @@ Open [http://127.0.0.1:19001](http://127.0.0.1:19001) in your browser to chat, v
- Bitterbot joins a decentralized P2P mesh for skill trading, reputation, and bounties. The orchestrator listens on **TCP port 9100** by default.
- 
- <Tip>
--Port 9100 open (inbound TCP) gives the best P2P performance, but is **not required**. Nodes behind NAT or firewalls automatically use circuit relay through the bootstrap node — no manual configuration needed.
-+Port 9100 open (inbound TCP) gives the best P2P performance, but is **not required**. Nodes behind NAT or firewalls automatically use circuit relay through the bootstrap node, so no manual configuration is needed.
- </Tip>
- 
- See [P2P configuration](/gateway/configuration-reference#p2p-network) for relay mode, security, and advanced options.
-```
-
-**File**: `docs/start/wizard.md` (modified, +7/-7)
-```diff
-@@ -124,15 +124,15 @@ The terminal wizard starts with **QuickStart** (the setup steps above) vs
- 
- **Local mode (default)** walks you through these steps:
- 
--1. **Model/Auth** — Anthropic API key (recommended), OpenAI, or Custom Provider
-+1. **Model/Auth**: Anthropic API key (recommended), OpenAI, or Custom Provider
-    (OpenAI-compatible, Anthropic-compatible, or Unknown auto-detect). Advanced flow also picks a default model.
--2. **Workspace** — Location for agent files (default `~/.bitterbot/workspace`). Seeds bootstrap files.
--3. **Gateway** — Port, bind address, auth mode, Tailscale exposure.
--4. **Channels** _(Advanced)_ — WhatsApp, Telegram, Discord, Slack, or Signal.
-+2. **Workspace**: Location for agent files (default `~/.bitterbot/workspace`). Seeds bootstrap files.
-+3. **Gateway**: Port, bind address, auth mode, Tailscale exposure.
-+4. **Channels** _(Advanced)_: WhatsApp, Telegram, Discord, Slack, or Signal.
-    QuickStart defers this to the Control UI or `bitterbot channels add`.
--5. **Daemon** — Installs a LaunchAgent (macOS) or systemd user unit (Linux/WSL2).
--6. **Health check** — Starts the Gateway and verifies it's running.
--7. **Skills** _(Advanced)_ — Installs recommended skills and optional dependencies.
-+5. **Daemon**: Installs a LaunchAgent (macOS) or systemd user unit (Linux/WSL2).
-+6. **Health check**: Starts the Gateway and verifies it's running.
-+7. **Skills** _(Advanced)_: Installs recommended skills and optional dependencies.
-    QuickStart keeps the bundled skills and defers extras.
- 
- <Note>
-```
-
-**File**: `docs/tools/browser.md` (modified, +28/-0)
-```diff
-@@ -402,6 +402,34 @@ If you see `Playwright is not available in this gateway build`, install the full
- Playwright package (not `playwright-core`) and restart the gateway, or reinstall
- Bitterbot with browser support.
- 
-+#### Playwright's own Chromium build
++**Egress by governance class.** Each pool carries the owner's trust level:
++`local` (this machine), `trusted` (set with `compute.pools.<id>.trust:
++trusted`), or `untrusted` (the default for every other pool, including
++collectives). Each input carries the same governance class the memory row
++gets, raised by what the text says:
 +
-+The browser tool runs a system Chrome, Brave, Edge or Chromium (or a Chromium that
-+Playwright downloaded, of any revision) and attaches to it, so it does not need a
-+specific Playwright browser build. Code that calls `chromium.launch()` itself does:
-+each Playwright version pins one Chromium revision (for example, Playwright 1.63.0
-+pins revision 1243), and after a Playwright upgrade an older download fails with
-+`Executable doesn't exist at .../chromium_headless_shell-<rev>/...`.
++| class          | may run on                    |
++| -------------- | ----------------------------- |
++| `confidential` | this machine only             |
++| `personal`     | this machine or trusted pools |
++| `normal`       | any pool                      |
 +
-+`bitterbot doctor` (Install section) reports the revision the installed
-+`playwright-core` expects, whether it is downloaded, and the exact command that
-+downloads it for your install. The browser tool prints the same command when a
-+launch fails this way. Typical forms:
++Session transcripts are `personal` unless `compute.egress.transcriptsDefaultClass`
++says otherwise, so they stay on this machine or on machines you trust. A batch
++is split by class and each part is routed under its own ceiling. Inputs with
++no known class count as `personal`. Queries always run locally.
++
++**Nothing waits on the pool.** Routing is deterministic: among eligible,
++permitted workers not in cooldown, the pool is chosen when a GPU worker's
++measured estimate beats the local estimate by `compute.embeddings.marginMs`
++(default 500). Until local has one measured batch, nothing routes. A pool
++batch that exceeds `compute.embeddings.timeoutMs` (default 60 s) is cancelled
++and run locally. Pool jobs are recorded with origin `internal`: they never
++appear in the state block and never wake the agent, except once after ten
++consecutive fallbacks, when the block says local embedding is in effect.
++
++Every routed sub-batch lands in the compute ledger
++(`~/.bitterbot/compute/deliveries.sqlite`, table `compute_embedding_batches`):
++route, pool, worker, trust, class, items, profile, job id, duration, and the
++fallback reason. `bitterbot doctor` summarises the last week under "Compute
++embeddings": a policy violation row is an error (the guard ran the batch
++locally, but the router disagreed with the policy); mismatch cooldowns and a
++high fallback share are warnings.
++
++### When the model changes
++
++A provider or model change is handled as before: the index is rebuilt
++automatically under the new model. A change under the same model name (an
++Ollama tag pulled again with new weights, a GGUF replaced in place, a chunker
++change) is different: the index goes on hold. No new vector is written,
++vector search is paused (keyword search keeps working), `bitterbot memory
++status` shows the conflict, and the log says so once. Rebuild with:
 +
 +```bash
-+# Source checkout
-+pnpm exec playwright-core install chromium
-+
-+# Release tarball (install.sh); --with-browser does this at install time
-+PLAYWRIGHT_BROWSERS_PATH=~/.bitterbot/browsers \
-+  ~/.bitterbot/app/current/runtime/node/bin/node \
-+  ~/.bitterbot/app/current/node_modules/playwright-core/cli.js install chromium
-+```
-+
-+`install chromium` also downloads the matching headless shell. The installers do
-+not download a browser by default (about 170 MB); use `install.sh --with-browser`
-+on Linux, or install Chrome.
-+
- #### Docker Playwright install
- 
- If your Gateway runs in Docker, avoid `npx playwright` (npm override conflicts).
++bitterbot memory migrate-embeddings          # shows what changed, changes nothing
++bitterbot memory migrate-embeddings --yes 
 ```
 
----
-
-### Incident Patch 2: `660953fc` (2026-10-16)
-**Commit Message**: fix(whatsapp): baileys 7.0.0-rc14 (GHSA-qvv5-jq5g-4cgg message spoofing) (#259)
-
-* fix(whatsapp): baileys 7.0.0-rc14 (GHSA-qvv5-jq5g-4cgg message spoofing)
-
-Bump @whiskeysockets/baileys from 7.0.0-rc.9 to 7.0.0-rc14 (npm latest).
-rc.9 is affected by GHSA-qvv5-jq5g-4cgg: a crafted placeholderResend
-protocolMessage could inject a fake messages.upsert (spoofed sender and
-payload), spoof history sync, and corrupt app state sync. Fixed upstream
-in rc12; npm now marks rc.9 deprecated.
-
-- package.json: exact pin 7.0.0-rc14 (same pin style as before).
-- pnpm-lock.yaml: libsignal now comes from the npm registry (6.0.0)
-  instead of a GitHub codeload tarball, new dep whatsapp-rust-bridge
-  0.5.4 (WASM, no install scripts), protobufjs 7.6.6, music-metadata
-  11.16.1; orphaned transitive entries pruned. No other packages moved.
-- No source changes needed: every API we use (makeWASocket options,
-  useMultiFileAuthState, makeCacheableSignalKeyStore,
-  fetchLatestBaileysVersion, DisconnectReason, isJidGroup,
-  downloadMediaMessage, normalize/extractMessageContent, getContentType,
-  signalRepository.lidMapping, messages.upsert/connection.update/
-  creds.update) is unchanged; the rc10-rc14 type dif
-
-**File**: `package.json` (modified, +1/-1)
+**File**: `src/agents/tools/compute-tool.ts` (modified, +2/-1)
 ```diff
-@@ -180,7 +180,7 @@
-     "@twurple/api": "^8.2.0",
-     "@twurple/auth": "^8.2.0",
-     "@twurple/chat": "^8.2.0",
--    "@whiskeysockets/baileys": "7.0.0-rc.9",
-+    "@whiskeysockets/baileys": "7.0.0-rc14",
-     "ajv": "^8.20.0",
-     "chalk": "^5.6.2",
-     "chokidar": "^5.0.0",
+@@ -28,6 +28,7 @@ import {
+   getComputeBackend,
+   getComputeRuntime,
+   linkComputeJobToTask,
++  COMPUTE_MAX_INPUTS,
+ } from "../../compute/awareness/index.js";
+ import type { BitterbotConfig } from "../../config/config.js";
+ import { stringEnum } from "../schema/typebox.js";
+@@ -47,7 +48,7 @@ const WORKLOADS: readonly ComputeWorkloadKind[] = ["sha256", "embeddings"];
+ /** Results larger than this are written to the workspace instead of inlined. */
+ export const COMPUTE_RESULT_MAX_CHARS = 20_000;
+ /** Same bounds as the coordinator: 1..128 inputs, 256 KiB total. */
+-export const COMPUTE_MAX_INPUTS = 128;
++export { COMPUTE_MAX_INPUTS };
+ export const COMPUTE_MAX_INPUT_BYTES = 256 * 1024;
+ 
+ // Flattened schema (not a union): Claude on Vertex rejects nested anyOf.
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +42/-107)
+**File**: `src/cli/memory-cli.test.ts` (modified, +36/-0)
 ```diff
-@@ -101,8 +101,8 @@ importers:
-         specifier: ^8.2.0
-         version: 8.2.0(@twurple/auth@8.2.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-       '@whiskeysockets/baileys':
--        specifier: 7.0.0-rc.9
--        version: 7.0.0-rc.9(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@25.2.3))(utf-8-validate@5.0.10)
-+        specifier: 7.0.0-rc14
-+        version: 7.0.0-rc14(audio-decode@2.2.3)(bufferutil@4.1.0)(sharp@0.35.5(@types/node@25.2.3))(utf-8-validate@5.0.10)
-       ajv:
-         specifier: ^8.20.0
-         version: 8.20.0
-@@ -776,9 +776,6 @@ packages:
-     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
-     engines: {node: '>=18'}
- 
--  '@borewit/text-codec@0.2.1':
--    resolution: {integrity: sha512-k7vvKPbf7J2fZ5klGRD9AeKfUvojuZIQ3BT5u7Jfv+puwXkUBUT5PVyMDfJZpy30CBDXGMgw7fguK/lpOMBvgw==}
--
-   '@borewit/text-codec@0.2.2':
-     resolution: {integrity: sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==}
- 
-@@ -2650,42 +2647,24 @@ packages:
-   '@protobufjs/base64@1.1.2':
-     resolution: {integrity: sha512-AZkcAA5vnN/v4PDqKyMR5lx7hZttPDgClv83E//FMNhR2TMcLUhfRUBHCmSl0oi9zMgDDqRUJkSxO3wm85+XLg==}
- 
--  '@protobufjs/codegen@2.0.4':
--    resolution: {integrity: sha512-YyFaikqM5sH0ziFZCN3xDC7zeGaB/d0IUb9CATugHWbd1FRFwWwt4ld4OYMPWu5a3Xe01mGAULCdqhMlPl29Jg==}
--
-   '@protobufjs/codegen@2.0.5':
-     resolution: {integrity: sha512-zgXFLzW3Ap33e6d0Wlj4MGIm6Ce8O89n/apUaGNB/jx+hw+ruWEp7EwGUshdLKVRCxZW12fp9r40E1mQrf/34g==}
- 
--  '@protobufjs/eventemitter@1.1.0':
--    resolution: {integrity: sha512-j9ednRT81vYJ9OfVuXG6ERSTdEL1xVsNgqpkxMsbIabzSo3goCjDIveeGv5d03om39ML71RdmrGNjG5SReBP/Q==}
--
-   '@protobufjs/eventemitter@1.1.1':
-     resolution: {integrity: sha512-vW1GmwMZNnL+gMRaovlh9yZX74kc+TTU3FObkkurpMaRtBfLP3ldjS9KQWlwZgraRE0+dheEEoAxdzcJQ8eXZg==}
- 
--  '@protobufjs/fetch@1.1.0':
--    resolution: {integrity: sha512-lljVXpqXebpsijW71PZaCYeIcE5on1w5DlQy5WH6GLbFryLUrBD4932W/E2BSpfRJWseIL4v/KPgBFxDOIdKpQ==}
--
-   '@protobufjs/fetch@1.1.1':
-     resolution: {integrity: sha512-GpptLrs57adMSuHi3VNj0mAF8dwh36LMaYF6XyJ6JMWlVsc+t42tm1HSEDmOs3A8fC9yyeisgLhsTVQokOZ0zw==}
- 
-   '@protobufjs/float@1.0.2':
-     resolution: {integrity: sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==}
- 
--  '@protobufjs/inquire@1.1.0':
--    resolution: {integrity: sha512-kdSefcPdruJiFMVSbn801t4vFK7KB/5gd2fYvrxhuJYg8ILrmn9SKSX2tZdV6V+ksulWqS7aXjBcRXl3wHoD9Q==}
--
--  '@protobufjs/inquire@1.1.2':
--    resolution: {integrity: sha512-pa0vFRuws4wkvaXKK1uXZMAwAX4/t8ANaJo45iw/oQHNQ9q5xUzwgFmVJGXiga2BeN+zpX7Vf9vmsiIa2J+MUw==}
--
-   '@protobufjs/path@1.1.2':
-     resolution: {integrity: sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==}
- 
-   '@protobufjs/pool@1.1.0':
-     resolution: {integrity: sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==}
- 
--  '@protobufjs/utf8@1.1.0':
--    resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
--
-   '@protobufjs/utf8@1.1.2':
-     resolution: {integrity: sha512-b1UQwcEZ4yCnMCD8DAL1VlbvBJE9/IX4FTIp7BG1xYpf29SLazLSrqUkj4w7Y5y7cCVP6E5tcqqcI0xemPkHug==}
- 
-@@ -5370,16 +5349,12 @@ packages:
-   '@wasm-audio-decoders/opus-ml@0.0.3':
-     resolution: {integrity: sha512-SEeTmk0eb3q5etJA/NHCRWW6BivTx9tqvNTmG0kg2ynuATEQRUZnwQE6Ibvl1BBvqIGHqI57+qyJMWmJBwb5XQ==}
- 
--  '@whiskeysockets/baileys@7.0.0-rc.9':
--    resolution: {integrity: sha512-YFm5gKXfDP9byCXCW3OPHKXLzrAKzolzgVUlRosHHgwbnf2YOO3XknkMm6J7+F0ns8OA0uuSBhgkRHTDtqkacw==}
-+  '@whiskeysockets/baileys@7.0.0-rc14':
-+    resolution: {integrity: sha512-WK+X8ju8TPGxvWIsP8hrY6JB6FltYuFe+vsqKfjOYX25JObij9qLf2c3ZGdl1Q+vhFwbnT+AZmWAB5pTvzmSiQ==}
-     engines: {node: '>=20.0.0'}
--    deprecated: |-
--      This version is affected by a zero-day vulnerability that allows spoofing of messages, please update to
--        the latest versions (6.7.22^ or 7.0.0-rc12^)! For more information, check out the public advisory at
--        https://github.com/WhiskeySockets/Baileys/security/advisories/GHSA-qvv5-jq5g-4cgg
-     peerDependencies:
-       audio-decode: ^2.1.3
--      jimp: ^1.6.0
-+      jimp: ^1.6.1
-       link-preview-js: ^3.0.0
-       sharp: '*'
-     peerDependenciesMeta:
-@@ -6082,6 +6057,10 @@ packages:
-     resolution: {integrity: sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==}
-     engines: {node: '>= 0.6'}
- 
-+  content-type@2.1.0:
-+    resolution: {integrity: sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag==}
-+    engines: {node: '>=18'}
+@@ -567,3 +567,39 @@ describe("memory cli owner controls (PLAN-55 Phase 3)", () => {
+     expect(process.exitCode).toBe(1);
+   });
+ });
 +
-   convert-source-map@2.0.0:
-     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
- 
-@@ -7434,9 +7413,8 @@ packages:
-   libqp@2.1.2:
-     resolution: {integrity: 
-```
-
-**File**: `src/web/close-socket.test.ts` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+import { describe, expect, it, vi } from "vitest";
-+import { closeWaSocketTransport } from "./close-socket.js";
-+
-+describe("closeWaSocketTransport", () => {
-+  it("calls ws.close synchronously", () => {
-+    const close = vi.fn();
-+    closeWaSocketTransport({ ws: { close } });
-+    expect(close).toHaveBeenCalledTimes(1);
-+  });
-+
-+  it("tolerates a missing socket or transport", () => {
-+    expect(() => closeWaSocketTransport(undefined)).not.toThrow();
-+    expect(() => closeWaSocketTransport({ ws: null })).not.toThrow();
-+  });
-+
-+  it("routes a synchronous throw to onError", () => {
-+    const onError = vi.fn();
-+    closeWaSocketTransport(
-+      {
-+        ws: {
-+          close: () => {
-+            throw new Error("boom");
-+          },
-+        },
-+      },
-+      onError,
-+    );
-+    expect(onError).toHaveBeenCalledWith(expect.any(Error));
-+  });
-+
-+  it("catches an async rejection (Baileys rc10+ async close) instead of leaking it", async () => {
-+    const onError = vi.fn();
-+    closeWaSocketTransport({ ws: { close: () => Promise.reject(new Error("late")) } }, onError);
-+    await new Promise((resolve) => setTimeout(resolve, 0));
-+    expect(onError).toHaveBeenCalledWith(expect.any(Error));
-+  });
-+
-+  it("does not require onError for a rejecting close", async () => {
-+    const unhandled = vi.fn();
-+    process.on("unhandledRejection", unhandled);
-+    try {
-+      closeWaSocketTransport({ ws: { close: () => Promise.reject(new Error("late")) } });
-+      await new Promise((resolve) => setTimeout(resolve, 0));
-+      expect(unhandled).not.toHaveBeenCalled();
-+    } finally {
-+      process.off("unhandledRejection", unhandled);
-+    }
++describe("memory migrate-embeddings", () => {
++  it("shows the hold and changes nothing without --yes, then migrates with --yes", async () => {
++    const { registerMemoryCli } = await import("./memory-cli.js");
++    const { defaultRuntime } = await import("../runtime.js");
++    const migrate = vi.fn(async () => {});
++    let held = true;
++    const manager = {
++      sync: vi.fn(async () => {}),
++      status: () => ({ provider: "local", chunks: 12 }),
++      embeddingMigrationPlan: () => ({
++        hold: held ? { conflicts: ["model digest aaaa -> bbbb"], stored: {} } : null,
++        current: { provider: "local", model: "m", modelDigest: "sha256:bbbb", dimensions: 3 },
++      }),
++      migrateEmbeddingProfile: migrate.mockImplementation(async () => {
++        held = false;
++      }),
++      close: vi.fn(async () => {}),
++    };
++    getMemorySearchManager.mockResolvedValue({ manager });
++    const log = vi.spyOn(defaultRuntime, "log").mockImplementation(() => {});
++    const program = new Command();
++    program.name("test");
++    registerMemoryCli(program);
++    await program.parseAsync(["memory", "migrate-embeddings"], { from: "user" });
++    expect(log).toHaveBeenCalledWith(expect.stringContaining("model digest aaaa -> bbbb"));
++    expect(log).toHaveBeenCalledWith(expect.stringContaining("Re-run with --yes"));
++    expect(migrate).not.toHaveBeenCalled();
++    await program.parseAsync(["memory", "migrate-embeddings", "--yes"], { from: "user" });
++    expect(migrate).toHaveBeenCalledTimes(1);
++    expect(log).toHaveBeenCalledWith(expect.stringContaining("Embedding migration complete"));
++    log.mockClear();
++    await program.parseAsync(["memory", "migrate-embeddings"], { from: "user" });
++    expect(log).toHaveBeenCalledWith(expect.stringContaining("Nothing to migrate"));
 +  });
 +});
 ```
 
-**File**: `src/web/close-socket.ts` (added, +23/-0)
+**File**: `src/cli/memory-cli.ts` (modified, +128/-0)
 ```diff
-@@ -0,0 +1,23 @@
-+/**
-+ * Close a Baileys socket's underlying WebSocket without awaiting it.
-+ *
-+ * Since Baileys 7.0.0-rc10, `WebSocketClient.close()` is async: it resolves
-+ * only once the transport emits `close`, and any failure surfaces as a
-+ * rejected promise rather than a synchronous throw. A bare
-+ * `try { sock.ws.close() } catch {}` therefore no longer catches errors and
-+ * can leak an unhandled rejection. This helper keeps call sites
-+ * fire-and-forget while handling both the sync and async failure paths.
-+ */
-+export function closeWaSocketTransport(
-+  sock: { ws?: { close: () => unknown } | null } | null | undefined,
-+  onError?: (err: unknown) => void,
-+): void {
+@@ -432,6 +432,26 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
+       if (status.vector.dims) {
+         lines.push(`${label("Vector dims")} ${info(String(status.vector.dims))}`);
+       }
++      if (status.embeddingProfile) {
++        const p = status.embeddingProfile;
++        lines.push(
++          `${label("Embedding profile")} ${info(
++            [
++              p.modelDigest ? p.modelDigest.slice(0, 19) : "no digest",
++              p.dimensions ? `${p.dimensions} dims` : "dims unknown",
++              p.normalise,
++              `routing ${status.computeRouting ?? "local"}`,
++            ].join(", "),
++          )}`,
++        );
++      }
++      if (status.embeddingHold) {
++        lines.push(
++          `${label("Embedding hold")} ${warn(
++            `${status.embeddingHold.conflicts.join("; ")}. Run: bitterbot memory migrate-embeddings`,
++          )}`,
++        );
++      }
+       if (status.vector.extensionPath) {
+         lines.push(`${label("Vector path")} ${info(shortenHomePath(status.vector.extensionPath))}`);
+       }
+@@ -1004,6 +1024,114 @@ export function registerMemoryCli(program: Command) {
+       }
+     });
+ 
++  memory
++    .command("migrate-embeddings")
++    .description(
++      "Rebuild the index under the current embedding profile (after a model digest, dimension or chunker change)",
++    )
++    .option("--agent <id>", "Agent id (default: default agent)")
++    .option("--yes", "Rebuild without asking", false)
++    .option("--json", "Print JSON")
++    .action(async (opts: { agent?: string; yes?: boolean; json?: boolean }) => {
++      const cfg = loadConfig();
++      const agentIds = resolveAgentIds(cfg, opts.agent);
++      for (const agentId of agentIds) {
++        await withManager<MemoryManager>({
++          getManager: () => getMemorySearchManager({ cfg, agentId }),
++          onMissing: (error) => defaultRuntime.log(error ?? "Memory search disabled."),
++          onCloseError: (err) =>
++            defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
++          close: async (manager) => {
++            await manager.close?.();
++          },
++          run: async (manager) => {
++            if (!manager.embeddingMigrationPlan || !manager.migrateEmbeddingProfile) {
++              defaultRuntime.log("Memory backend does not support embedding migration.");
++              return;
++            }
++            // A sync resolves the live profile and detects the hold without writing anything while held.
++            try {
++              await manager.sync?.({ reason: "migrate-embeddings-plan" });
++            } catch (err) {
++              defaultRuntime.error(`Could not read the index: ${formatErrorMessage(err)}`);
++              process.exitCode = 1;
++              return;
++            }
++            const plan = manager.embeddingMigrationPlan();
++            const status = manager.status();
++            if (opts.json && !opts.yes) {
++              defaultRuntime.log(JSON.stringify({ agentId, plan, chunks: status.chunks }, null, 2));
++              return;
++            }
++            if (!plan.hold) {
++              const current = plan.current;
++              const describe = current
++                ? [
++                    `${current.provider}/${current.model}`,
++                    current.modelDigest ? current.modelDigest.slice(0, 19) : null,
++                    current.dimensions ? `${current.dimensions} dims` : null,
++                  ]
++                    .filter(Boolean)
++                    .join(", ")
++                : null;
++              defaultRuntime.log(
++                `Nothing to migrate (${agentId}): the index already carries the live embedding profile${describe ? ` (${describe})` : ""}.`,
++              );
++              if (!opts.yes) {
++                return;
++              }
++              defaultRuntime.log("--yes given: rebuilding anyway.");
++            } else {
++              defaultRuntime.log(
++                [
++                  `Embedding profile changed under the same model (${agentId}):`,
++                  ...plan.hold.conflicts.map((c) => `  - ${c}`),
++                  `The index is on hold: no new vectors are written and vector search is paused.`,
++                  `Migration rebuilds the index (${status.chunks ?? 0} chunks re-embedded) under the new profile; the old index serves until the swap.`,
++                ].join("\n"),
++              );
++              if (!opts.yes) {
++                defaultRuntime.log("Nothing changed. Re-run with --yes to migrate.");
++                return;
++              }
++            }
++            const startedAt = Date.now();
++            try {
++              await withProgressTotals(
++                { label: "Migrating embeddings…", total: 0 },
++                async (update) => {
++                  await manager.migrateEmbeddingProfile!({
++                    progress: (u) =>
++                      update({
++                        completed: u.complete
+```
+
+**File**: `src/commands/doctor-compute.test.ts` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++import { describe, expect, it } from "vitest";
++import { ComputeDeliveryStore } from "../compute/awareness/deliveries.js";
++import type { BitterbotConfig } from "../config/config.js";
++import { collectComputeEmbeddingResults, summarise } from "./doctor-compute.js";
++
++function summaryOf(
++  rows: Array<Partial<Parameters<ReturnType<ComputeDeliveryStore["ledger"]>["record"]>[0]>>,
++) {
++  const store = ComputeDeliveryStore.inMemory();
 +  try {
-+    const result = sock?.ws?.close();
-+    if (result && typeof (result as PromiseLike<unknown>).then === "function") {
-+      void Promise.resolve(result).catch((err: unknown) => onError?.(err));
++    for (const r of rows) {
++      store.ledger().record({
++        ts: 1000,
++        route: "local",
++        poolId: null,
++        workerId: null,
++        trust: null,
++        cls: "normal",
++        items: 1,
++        profileKey: "p",
++        jobId: null,
++        durationMs: 100,
++        reason: null,
++        receiptHash: null,
++        ...r,
++      });
++    }
++    return store.ledger().summary(0);
++  } finally {
++    store.close();
++  }
++}
++
++describe("doctor: compute embeddings", () => {
++  it("is quiet when compute is off, local-only, or has no ledger", () => {
++    expect(
++      collectComputeEmbeddingResults({ compute: { enabled: false } } as BitterbotConfig)[0],
++    ).toMatchObject({ level: "info" });
++    expect(
++      collectComputeEmbeddingResults({
++        compute: { embeddings: { provider: "local" } },
++      } as BitterbotConfig)[0],
++    ).toMatchObject({ level: "info" });
++    expect(
++      collectComputeEmbeddingResults({} as BitterbotConfig, { dbPath: "/nonexistent/x.sqlite" })[0]
++        ?.message,
++    ).toContain("No compute ledger yet");
++    expect(summarise(summaryOf([]))[0]?.message).toContain("No embedding batches");
++  });
++
++  it("reports totals, flags policy violations as errors and mismatches as warnings", () => {
++    const results = summarise(
++      summaryOf([
++        { route: "pool", poolId: "lab", workerId: "gpu-1", trust: "trusted", items: 40 },
++        {
++          route: "fallback",
++          poolId: "lab",
++          workerId: "gpu-1",
++          trust: "trusted",
++          reason: "digest_mismatch",
++        },
++        {
++          route: "fallback",
++          poolId: "lab",
++          workerId: "gpu-1",
++          trust: "trusted",
++          reason: "policy_violation",
++          cls: "personal",
++        },
++        { route: "local", items: 3 },
++      ]),
++    );
++    expect(results[0]).toMatchObject({ level: "ok" });
++    expect(results[0]!.message).toContain("4 batches, 45 items");
++    expect(results.find((r) => r.level === "error")?.message).toContain("policy violation");
++    expect(results.find((r) => r.message.includes("digest mismatch"))?.level).toBe("warn");
++    expect(results.find((r) => r.message.includes("fell back to local"))?.level).toBe("warn");
++  });
++});
+```
+
+**File**: `src/commands/doctor-compute.ts` (added, +124/-0)
+```diff
+@@ -0,0 +1,124 @@
++/**
++ * PLAN-57 §4.6: what the compute embedding ledger says about the last week.
++ * Reads `<state>/compute/deliveries.sqlite` only; no coordinator call.
++ *
++ * Findings: a policy violation row (content offered to a pool its class
++ * forbids) is an error even though the content never shipped, because it
++ * means the router and the guard disagreed. A high fallback share is a
++ * warning: the pool is costing time, not saving it. Mismatch cooldowns name
++ * the worker whose model drifted.
++ */
++
++import fsSync from "node:fs";
++import { ComputeDeliveryStore, resolveComputeDbPath } from "../compute/awareness/index.js";
++import type { ComputeLedgerSummary } from "../compute/awareness/ledger.js";
++import type { BitterbotConfig } from "../config/config.js";
++import {
++  type CheckResult,
++  error,
++  info,
++  ok,
++  renderSectionQuietIfAllInfo,
++  warn,
++} from "./doctor-check.js";
++
++const SECTION = "Compute embeddings";
++const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
++
++export async function runComputeEmbeddingChecks(cfg: BitterbotConfig): Promise<void> {
++  renderSectionQuietIfAllInfo(SECTION, collectComputeEmbeddingResults(cfg));
++}
++
++export function collectComputeEmbeddingResults(
++  cfg: BitterbotConfig,
++  opts?: { dbPath?: string; now?: number },
++): CheckResult[] {
++  if (cfg.compute?.enabled === false) {
++    return [info("Compute is disabled (compute.enabled: false).")];
++  }
++  if (cfg.compute?.embeddings?.provider === "local") {
++    return [info("Embedding routing is local only (compute.embeddings.provider: local).")];
++  }
++  const dbPath = opts?.dbPath ?? resolveComputeDbPath();
++  if (dbPath !== ":memory:" && !fsSync.existsSync(dbPath)) {
++    return [info("No compute ledger yet: no pool has been registered on this node.")];
++  }
++  let summary: ComputeLedgerSummary;
++  try {
++    const store = ComputeDeliveryStore.open(dbPath);
++    try {
++      summary = store.ledger().summary((opts?.now ?? Date.now()) - WEEK_MS);
++    } finally {
++      store.close();
 +    }
 +  } catch (err) {
-+    onError?.(err);
++    return [
++      warn(`Compute ledger could not be read: ${err instanceof Error ? err.message : String(err)}`),
++    ];
 +  }
++  return summarise(summary);
++}
++
++export function summarise(s: ComputeLedgerSummary): CheckResult[] {
++  if (s.batches === 0) {
++    return [info("No embedding batches routed in the last 7 days.")];
++  }
++  const results: CheckResult[] = [];
++  const pool = s.byRoute.pool;
++  const fb = s.byRoute.fallback;
++  const attempts = pool.batches + fb.batches;
++  results.push(
++    ok(
++      `Last 7 days: ${s.batches} batches, ${s.items} items. Pool ${pool.batches} (${pool.items} items), local ${s.byRoute.local.batches}, fallback ${fb.batches}.` +
++        (s.poolItemsPerSecond && s.localItemsPerSecond
++          ? ` Throughput pool ${s.poolItemsPerSecond}/s vs local ${s.localItemsPerSecond}/s.`
++          : ""),
++    ),
++  );
++  if (s.policyViolations > 0) {
++    results.push(
++      error(
++        `${s.policyViolations} policy violation(s) recorded: content was routed to a pool its governance class forbids. The guard ran the batch locally and nothing shipped, but the router disagreed with the policy. Report this.`,
++      ),
++    );
++  }
++  const mismatches = [
++    "digest_mismatch",
++    "dimension_mismatch",
++    "processing_mismatch",
++    "count_mismatch",
++  ]
++    .map((k) => [k, s.fallbacksByReason[k] ?? 0] as const)
++    .filter(([, n]) => n > 0);
++  for (const [reason, n] of mismatches) {
++    results.push(
++      warn(
++        `${n} batch(es) came back with a ${reason.replace("_", " ")} and were re-run locally; the worker is in cooldown. A pool worker's pinned model must equal the local embedding profile (same digest, dimensions, no truncation).`,
++      ),
++    );
++  }
++  const timeouts = s.fallbacksByReason.timeout ?? 0;
++  const errors = s.fallbacksByReason.error ?? 0;
++  if (attempts > 0 && fb.batches / attempts > 0.25) {
++    results.push(
++      warn(
++        `${fb.batches} of ${attempts} pool attempts fell back to local (${timeouts} timeouts, ${errors} errors). The pool is slower than it looks; raise compute.embeddings.marginMs or check the workers.`,
++      ),
++    );
++  } else if (fb.batches > 0) {
++    results.push(
++      info(
++        `${fb.batches} fallback(s): ${Object.entries(s.fallbacksByReason)
++          .map(([k, v]) => `${k} ${v}`)
++          .join(", ")}.`,
++      ),
++    );
++  }
++  const egress = Object.entries(s.poolByClassTrust);
++  if (egress.length > 0) {
++    results.push(
++      info(`Pool batches by class and trust: ${egress.map(([k, v]) => `${k} ${v}`).join(", ")}.`),
++    );
++  }
++  return results;
 +}
 ```
 
-**File**: `src/web/inbound/monitor.ts` (modified, +2/-1)
+**File**: `src/commands/doctor.ts` (modified, +2/-0)
 ```diff
-@@ -8,6 +8,7 @@ import { getChildLogger } from "../../logging/logger.js";
- import { createSubsystemLogger } from "../../logging/subsystem.js";
- import { saveMediaBuffer } from "../../media/store.js";
- import { jidToE164, resolveJidToE164 } from "../../utils.js";
-+import { closeWaSocketTransport } from "../close-socket.js";
- import { createWaSocket, getStatusCode, waitForWaConnection } from "../session.js";
- import { checkInboundAccessControl } from "./access-control.js";
- import { isRecentInboundMessage } from "./dedupe.js";
-@@ -392,7 +393,7 @@ export async function monitorWebInbox(options: {
-           ev.removeListener("messages.upsert", messagesUpsertHandler);
-           ev.removeListener("connection.update", connectionUpdateHandler);
-         }
--        sock.ws?.close();
-+        closeWaSocketTransport(sock, (err) => logVerbose(`Socket close failed: ${String(err)}`));
-       } catch (err) {
-         logVerbose(`Socket close failed: ${String(err)}`);
-       }
-```
-
-**File**: `src/web/login-qr.ts` (modified, +2/-5)
-```diff
-@@ -5,6 +5,7 @@ import { danger, info, success } from "../globals.js";
- import { logInfo } from "../logger.js";
- import { defaultRuntime, type RuntimeEnv } from "../runtime.js";
- import { resolveWhatsAppAccount } from "./accounts.js";
-+import { closeWaSocketTransport } from "./close-socket.js";
- import { renderQrPngBase64 } from "./qr-image.js";
- import {
-   createWaSocket,
-@@ -39,11 +40,7 @@ const ACTIVE_LOGIN_TTL_MS = 3 * 60_000;
- const activeLogins = new Map<string, ActiveLogin>();
+@@ -41,6 +41,7 @@ import { runCanvasChecks } from "./doctor-canvas.js";
+ import { runChannelsChecks } from "./doctor-channels.js";
+ import { error, info, renderSection, setDoctorJsonMode, warn } from "./doctor-check.js";
+ import { doctorShellCompletion } from "./doctor-completion.js";
++import { runComputeEmbeddingChecks } from "./doctor-compute.js";
+ import { loadAndMaybeMigrateDoctorConfig } from "./doctor-config-flow.js";
+ import { runControlUiChecks } from "./doctor-control-ui.js";
+ import { runEconomyChecks } from "./doctor-economy.js";
+@@ -328,6 +329,7 @@ async function runDoctor(
  
- function closeSocket(sock: WaSocket) {
--  try {
--    sock.ws?.close();
--  } catch {
--    // ignore
--  }
-+  closeWaSocketTransport(sock);
- }
+   noteWorkspaceStatus(cfg);
+   await runMemorySearchChecks(cfg);
++  await runComputeEmbeddingChecks(cfg);
  
- async function resetActiveLogin(accountId: string, reason?: string) {
-```
-
-**File**: `src/web/login.ts` (modified, +4/-13)
-```diff
-@@ -5,6 +5,7 @@ import { danger, info, success } from "../globals.js";
- import { logInfo } from "../logger.js";
- import { defaultRuntime, type RuntimeEnv } from "../runtime.js";
- import { resolveWhatsAppAccount } from "./accounts.js";
-+import { closeWaSocketTransport } from "./close-socket.js";
- import { createWaSocket, formatError, logoutWeb, waitForWaConnection } from "./session.js";
- 
- export async function loginWeb(
-@@ -33,11 +34,7 @@ export async function loginWeb(
-           "WhatsApp asked for a restart after pairing (code 515); creds are saved. Restarting connection once…",
-         ),
-       );
--      try {
--        sock.ws?.close();
--      } catch {
--        // ignore
--      }
-+      closeWaSocketTransport(sock);
-       const retry = await createWaSocket(false, verbose, {
-         authDir: account.authDir,
-       });
-@@ -46,7 +43,7 @@ export async function loginWeb(
-         console.log(success("✅ Linked after restart; web session ready."));
-         return;
-       } finally {
--        setTimeout(() => retry.ws?.close(), 500);
-+        setTimeout(() => closeWaSocketTransport(retry), 500);
-       }
-     }
-     if (code === DisconnectReason.loggedOut) {
-@@ -67,12 +64,6 @@ export async function loginWeb(
-     throw new Error(formatted, { cause: err });
-   } finally {
-     // Let Baileys flush any final events before closing the socket.
--    setTimeout(() => {
--      try {
--        sock.ws?.close();
--      } catch {
--        // ignore
--      }
--    }, 500);
-+    setTimeout(() => closeWaSocketTransport(sock), 500);
-   }
- }
-```
-
----
-
-### Incident Patch 3: `b495b71b` (2026-10-13)
-**Commit Message**: fix(release): make release-please actually bump the desktop Cargo.lock (#237)
-
-release-please's toml parser wraps every scalar as {start, end, value}, so
-the filter `@.name=='bitterbot-desktop'` matched nothing and the 1.5.0
-release left desktop/src-tauri/Cargo.lock at 1.4.0. The release PR runs no
-CI, so main went red the moment it merged (version-consistency test).
-
-- Filter on `@.name.value`, verified against release-please 17.11.2's
-  GenericToml updater: it changes exactly the one version line.
-- Bring the lock to 1.5.0.
-- Test pins the working jsonpath shape so it cannot silently regress.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -316,7 +316,7 @@ dependencies = [
- 
- [[package]]
- name = "bitterbot-desktop"
--version = "1.4.0"
-+version = "1.5.0"
- dependencies = [
-  "env_logger",
-  "libc",
-```
-
-**File**: `release-please-config.json` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
-         {
-           "type": "toml",
-           "path": "desktop/src-tauri/Cargo.lock",
--          "jsonpath": "$.package[?(@.name=='bitterbot-desktop')].version"
-+          "jsonpath": "$.package[?(@.name.value=='bitterbot-desktop')].version"
-         },
-         {
-           "type": "json",
-```
-
-**File**: `src/version-consistency.test.ts` (modified, +13/-0)
-```diff
-@@ -93,4 +93,17 @@ describe("version consistency", () => {
-       expect(extraPaths.has(rel), `${rel} missing from release-please extra-files`).toBe(true);
-     }
-   });
-+
-+  it("the Cargo.lock jsonpath filters on the tagged .value release-please parses", () => {
-+    // release-please's toml parser wraps every scalar as {start, end, value},
-+    // so a filter on `@.name` never matches and the lock silently stays on the
-+    // old version (that is how 1.5.0 shipped with a red main).
-+    const config = readJson("release-please-config.json") as {
-+      packages: Record<string, { "extra-files"?: Array<{ path: string; jsonpath?: string }> }>;
-+    };
-+    const lockEntry = (config.packages["."]["extra-files"] ?? []).find(
-+      (f) => f.path === "desktop/src-tauri/Cargo.lock",
-+    );
-+    expect(lockEntry?.jsonpath).toBe("$.package[?(@.name.value=='bitterbot-desktop')].version");
-+  });
- });
+   // Check and fix shell completion
+   await doctorShellCompletion(runtime, prompter, {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #273** (2026-10-18): feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (@VGIL77)
 - **PR #272** (2026-10-18): feat(compute): PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage (@VGIL77)
 - **PR #270** (2026-10-18): feat(compute): PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery (@VGIL77)
 - **PR #268** (2026-10-18): feat(compute): PLAN-57 Phase 0, the read-only compute tool and its prompt section (@VGIL77)
 - **PR #266** (2026-10-17): ci(installer): run the PATH and sudo steps in test mode against the local fake releases (@VGIL77)
 - **PR #265** (2026-10-17): feat(installer): put ~/.local/bin on PATH, show download progress, no fresh-install prompt, refuse sudo not root (@VGIL77)
-- **PR #264** (2026-10-17): docs(install): lead with the one-command installer; npm only for people who already manage Node (@VGIL77)
 
 ---
 
@@ -2659,52 +2374,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwri
+## X. compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an e
 
 **RULE**:
-When implementing operations in `desktop/renderer/src/components/overview/OverviewView.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/cli/memory.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `300056e8`: pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwright revision) (#236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0ad5379`: compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (#273). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktop/renderer/src/components/overview/OverviewView.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/memory.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { resolveOverviewStats } from "./overview-stats";
-  const stats = resolveOverviewStats(statusData, hello);
-        <StatCard label="Version" value={stats.version} accent />
-        <StatCard
-          label="Uptime"
-          value={stats.uptimeSeconds === null ? "—" : formatUptime(stats.uptimeSeconds)}
-        />
-        <StatCard label="Platform" value={stats.platform} sub={stats.platformSub} />
-          {stats.configPath && (
-              <span className="text-foreground font-mono text-xs">{stats.configPath}</span>
-          {stats.stateDir && (
-              <span className="text-foreground font-mono text-xs">{stats.stateDir}</span>
+bitterbot memory migrate-embeddings
+bitterbot memory migrate-embeddings --yes
+- `memory migrate-embeddings` rebuilds the index under the current embedding profile after a change the index cannot absorb silently: the model's weights changed under the same name (an Ollama tag pulled again, a GGUF replaced), its dimensions changed, or the chunker changed. Until then the index is on hold (no new vectors, vector search paused, keyword search working). Without `--yes` it prints the conflict and changes nothing; `--json` prints the plan. See [compute](/tools/compute#when-the-model-changes).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  const version = statusData?.version ?? hello?.version ?? "—";
-  const uptime = statusData?.uptime ?? health?.uptime;
-  const platform = statusData?.platform ?? "—";
-        <StatCard label="Version" value={String(version)} accent />
-        <StatCard label="Uptime" value={typeof uptime === "number" ? formatUptime(uptime) : "—"} />
-        <StatCard label="Platform" value={String(platform)} />
-          {statusData?.configPath && (
-              <span className="text-foreground font-mono text-xs">
-                {String(statusData.configPath)}
-              </span>
-          {statusData?.stateDir && (
-              <span className="text-foreground font-mono text-xs">
-                {String(statusData.stateDir)}
-              </span>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `300056e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0ad5379` are properly handled with clean fallback behavior.

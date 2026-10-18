@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "a5614cf23de6c3061d0fbab4caf31a304cd823e1be20218d6bc5de0639d154fb",
-    "lastHarvestedAt": "2026-10-17T20:31:59.652Z",
+    "contentHash": "d23b10048bec3a8a3851a41ba0db79b871a240b24d463e3454c9591aaa50d0e9",
+    "lastHarvestedAt": "2026-10-18T23:20:33.219Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "a5cbbdd2",
+    "sourceVersion": "a0ad5379",
     "license": "MIT",
-    "contentHash": "54e02af92fd819098b2642d67f2f6d3ee2209638e85a9a68e1dc2afe59f73fc2",
-    "lastHarvestedAt": "2026-10-18T21:14:07.357Z",
+    "contentHash": "0acbcd6567e87bbffa91ef6c10cd06ec6dc19270a7371e277ef3e0a30232e9fb",
+    "lastHarvestedAt": "2026-10-18T23:20:41.818Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3418,5 +3418,65 @@
     "contentHash": "297b58a8fd1000e7af4f020692dde05d4c416425693964af7d919f74e8d48d78",
     "lastHarvestedAt": "2026-10-18T23:14:30.926Z",
     "learningId": "learn-github-parthsarthi03-raptor"
+  },
+  "gluestack-gluestack-ui": {
+    "repository": "gluestack/gluestack-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gluestack/gluestack-ui",
+    "sourceVersion": "b712c854",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "f93142f932e5e4b1a21d02c574e6b4e294d726e57b5a6113a25c7b3db5d51b50",
+    "lastHarvestedAt": "2026-10-18T23:20:25.047Z",
+    "learningId": "learn-github-gluestack-gluestack-ui"
+  },
+  "zeronsh-zeron": {
+    "repository": "zeronsh/zeron",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zeronsh/zeron",
+    "sourceVersion": "c526d6f7",
+    "license": "MIT",
+    "contentHash": "86a029e9ffc481351652a3a74394a74980ac846ca6905cf50e2683832ce2de78",
+    "lastHarvestedAt": "2026-10-18T23:20:28.029Z",
+    "learningId": "learn-github-zeronsh-zeron"
+  },
+  "welldone-software-why-did-you-render": {
+    "repository": "welldone-software/why-did-you-render",
+    "platform": "github",
+    "sourceUrl": "https://github.com/welldone-software/why-did-you-render",
+    "sourceVersion": "3ec3512d",
+    "license": "MIT",
+    "contentHash": "44088a1a70705dd74b92ca7ebb85740680a296924bd4d4bac7a2a4762a5f7cb6",
+    "lastHarvestedAt": "2026-10-18T23:20:32.633Z",
+    "learningId": "learn-github-welldone-software-why-did-you-render"
+  },
+  "projectdiscovery-nuclei": {
+    "repository": "projectdiscovery/nuclei",
+    "platform": "github",
+    "sourceUrl": "https://github.com/projectdiscovery/nuclei",
+    "sourceVersion": "10f1967c",
+    "license": "MIT",
+    "contentHash": "221bfb9d43a68e799c590e08f80e0dac7f3f370756d2be4b1431f389ecc8c890",
+    "lastHarvestedAt": "2026-10-18T23:20:37.382Z",
+    "learningId": "learn-github-projectdiscovery-nuclei"
+  },
+  "okteto-okteto": {
+    "repository": "okteto/okteto",
+    "platform": "github",
+    "sourceUrl": "https://github.com/okteto/okteto",
+    "sourceVersion": "f599c1e6",
+    "license": "Apache-2.0",
+    "contentHash": "bb80839393d0024831f809923806b438bdea1aa77595c648b380db7bc1e8c113",
+    "lastHarvestedAt": "2026-10-18T23:20:38.322Z",
+    "learningId": "learn-github-okteto-okteto"
+  },
+  "supervc-stack-vectorchord": {
+    "repository": "supervc-stack/VectorChord",
+    "platform": "github",
+    "sourceUrl": "https://github.com/supervc-stack/VectorChord",
+    "sourceVersion": "0768657e",
+    "license": "NOASSERTION",
+    "contentHash": "3b11ad50eb3ec613d9a8247ffec73f523a35c97245dfe76923fc7feb8662c7a0",
+    "lastHarvestedAt": "2026-10-18T23:20:40.317Z",
+    "learningId": "learn-github-supervc-stack-vectorchord"
   }
 }

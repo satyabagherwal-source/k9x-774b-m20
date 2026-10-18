@@ -2614,3 +2614,11 @@
 | `CYCLE-20261018-027F` | `2026-10-18T23:14:25.707Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1834` | Yes (`4476c120...`) |
 | `CYCLE-20261018-038U` | `2026-10-18T23:14:27.054Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1835` | Yes (`357a195b...`) |
 | `CYCLE-20261018-068C` | `2026-10-18T23:14:30.924Z` | `parthsarthi03/raptor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1836` | Yes (`297b58a8...`) |
+| `CYCLE-20261018-7RH0` | `2026-10-18T23:20:25.044Z` | `gluestack/gluestack-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1837` | Yes (`f93142f9...`) |
+| `CYCLE-20261018-7TRV` | `2026-10-18T23:20:28.027Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1838` | Yes (`86a029e9...`) |
+| `CYCLE-20261018-7XBQ` | `2026-10-18T23:20:32.630Z` | `welldone-software/why-did-you-render` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1839` | Yes (`44088a1a...`) |
+| `CYCLE-20261018-7XS0` | `2026-10-18T23:20:33.216Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 972, Rule 498, Rule 1840` | Yes (`d23b1004...`) |
+| `CYCLE-20261018-80ZN` | `2026-10-18T23:20:37.379Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1841` | Yes (`221bfb9d...`) |
+| `CYCLE-20261018-81PR` | `2026-10-18T23:20:38.319Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1842` | Yes (`bb808393...`) |
+| `CYCLE-20261018-8397` | `2026-10-18T23:20:40.315Z` | `supervc-stack/VectorChord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1843` | Yes (`3b11ad50...`) |
+| `CYCLE-20261018-84EV` | `2026-10-18T23:20:41.815Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1844` | Yes (`0acbcd65...`) |

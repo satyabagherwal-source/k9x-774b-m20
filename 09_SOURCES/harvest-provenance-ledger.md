@@ -2621,3 +2621,11 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `b8e6f814` | Multi-dimensional audit evidence | 2026-10-18T23:14:25.711Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `77355977` | Multi-dimensional audit evidence | 2026-10-18T23:14:27.056Z |
 | `learn-github-parthsarthi03-raptor` | `https://github.com/parthsarthi03/raptor` | `7da1d48a` | Multi-dimensional audit evidence | 2026-10-18T23:14:30.926Z |
+| `learn-github-gluestack-gluestack-ui` | `https://github.com/gluestack/gluestack-ui` | `b712c854` | Multi-dimensional audit evidence | 2026-10-18T23:20:25.047Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `c526d6f7` | Multi-dimensional audit evidence | 2026-10-18T23:20:28.029Z |
+| `learn-github-welldone-software-why-did-you-render` | `https://github.com/welldone-software/why-did-you-render` | `3ec3512d` | Multi-dimensional audit evidence | 2026-10-18T23:20:32.633Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-18T23:20:33.219Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `10f1967c` | Multi-dimensional audit evidence | 2026-10-18T23:20:37.382Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `f599c1e6` | Multi-dimensional audit evidence | 2026-10-18T23:20:38.322Z |
+| `learn-github-supervc-stack-vectorchord` | `https://github.com/supervc-stack/VectorChord` | `0768657e` | Multi-dimensional audit evidence | 2026-10-18T23:20:40.317Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a0ad5379` | Multi-dimensional audit evidence | 2026-10-18T23:20:41.818Z |

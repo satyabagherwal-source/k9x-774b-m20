@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
+> **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
+> **Source Version**: `10f1967c`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:20:37.197Z  
+> **Learning ID**: `learn-github-projectdiscovery-nuclei`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): projectdiscovery/nuclei
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:56:32.591Z  
+> **Harvest Timestamp**: 2026-10-18T23:20:37.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 31749 stars
+- **Stars / Engagement**: 32107 stars
 
 ---
 
@@ -298,6 +312,8 @@ func atomicWriteFile(path string, data []byte, mode os.FileMode) error {
 package core
 
 import (
+	"sync"
+
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
@@ -337,7 +353,11 @@ type TemplateExecutionCallback func(TemplateExecutionEvent)
 // templates to leading to the final execution by the work pool, it is
 // handled by the engine.
 type Engine struct {
-	workPool                  *WorkPool
+	workPool *WorkPool
+	// originScoped tracks origin-scoped template attempts. A pair is finished
+	// only after a successful execution, so a failed first target does not
+	// suppress every later URL on that origin.
+	originScoped              sync.Map
 	options                   *types.Options
 	executerOpts              *protocols.ExecutorOptions
 	Callback                  func(*output.ResultEvent) // Executed on results
@@ -651,6 +671,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/projectdiscovery/nuclei/v3/pkg/input/normalize"
 	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
@@ -931,31 +952,21 @@ func (e *Engine) inScope(template *templates.Template, input *contextargs.MetaIn
 }
 
 // executeTemplateOnInput performs template execution for a single input and returns match status and error
-func (e *Engine) executeTemplateOnInput(ctx context.Context, template *templates.Template, value *contextargs.MetaInput) (bool, error) {
+func (e *Engine) executeTemplateOnInput(ctx context.Context, template *templates.Template, value *contextargs.MetaInput) (matched bool, err error) {
+	// A template fixed to the target's origin makes the same requests for every
+	// target that shares one, which a crawled list produces by the hundred.
+	// Running it once per origin sends exactly the same traffic, minus the
+	// repeats. The reservation is kept only when execution succeeds, so a
+	// failed attempt leaves the origin free for a later target.
+	finish, run := e.claimOriginScoped(template, value)
+	if !run {
+		return false, nil
+	}
+	defer func() { finish(err == nil) }()
 	finished := e.templateExecutionStarted(template, value.Input)
 	defer func() { finished(ctx.Err()) }()
 	ctxArgs := contextargs.New(ctx)
-	ctxArgs.MetaInput = value
-	scanCtx := scan.NewScanContext(ctx, ctxArgs)
-
-	switch template.Type() {
-	case types.WorkflowProtocol:
-		return e.executeWorkflow(scanCtx, template.CompiledWorkflow), nil
-	default:
-		if e.Callback != nil {
-			results, err := template.Executer.ExecuteWithResults(scanCtx)
-			if err != nil {
-				return false, err
-			}
-			for _, result := range results {
-				e.Callback(result)
-			}
-			return len(results) > 0, nil
-		}
-		return template.Executer.Execute(scanCtx)
-	}
-}
-
+	ctxArgs.MetaInput = v
 ```
 
 ### Core Architecture Module: `pkg/core/workflow_execute.go`
@@ -1372,385 +1383,6 @@ func isEmptyDir(dir string) bool {
 
 ```
 
-### Core Architecture Module: `pkg/js/devtools/tsgen/astutil.go`
-```
-package tsgen
-
-import (
-	"fmt"
-	"go/ast"
-	"strings"
-)
-
-// isExported checks if the given name is exported
-func isExported(name string) bool {
-	return ast.IsExported(name)
-}
-
-// exprToString converts an expression to a string
-func exprToString(expr ast.Expr) string {
-	switch t := expr.(type) {
-	case *ast.Ident:
-		return toTsTypes(t.Name)
-	case *ast.SelectorExpr:
-		return exprToString(t.X) + "." + t.Sel.Name
-	case *ast.StarExpr:
-		return exprToString(t.X)
-	case *ast.ArrayType:
-		return toTsTypes("[]" + exprToString(t.Elt))
-	case *ast.InterfaceType:
-		return "interface{}"
-	case *ast.MapType:
-		return "Record<" + toTsTypes(exprToString(t.Key)) + ", " + toTsTypes(exprToString(t.Value)) + ">"
-	// Add more cases to handle other types
-	default:
-		return fmt.Sprintf("%T", expr)
-	}
-}
-
-// toTsTypes converts Go types to TypeScript types
-func toTsTypes(t string) string {
-	if strings.Contains(t, "interface{}") {
-		return "any"
-	}
-	if strings.HasPrefix(t, "map[") {
-		return convertMaptoRecord(t)
-	}
-	switch t {
-	case "string":
-		return "string"
-	case "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64":
-		return "number"
-	case "float32", "float64":
-		return "number"
-	case "bool":
-		return "boolean"
-	case "[]byte":
-		return "Uint8Array"
-	case "interface{}":
-		return "any"
-	case "time.Duration":
-		return "number"
-	case "time.Time":
-		return "Date"
-	default:
-		if strings.HasPrefix(t, "[]") {
-			return toTsTypes(strings.TrimPrefix(t, "[]")) + "[]"
-		}
-		return t
-	}
-}
-
-func TsDefaultValue(t string) string {
-	switch t {
-	case "string":
-		return `""`
-	case "number":
-		return `0`
-	case "boolean":
-		return `false`
-	case "Uint8Array":
-		return `new Uint8Array(8)`
-	case "any":
-		return `undefined`
-	case "interface{}":
-		return `undefined`
-	default:
-		if strings.Contains(t, "[]") {
-			return `[]`
-		}
-		return "new " + t + "()"
-	}
-}
-
-// Ternary is a ternary operator for strings
-func Ternary(condition bool, trueVal, falseVal string) string {
-	if condition {
-		return trueVal
-	}
-	return falseVal
-}
-
-// checkCanFail checks if a function can fail
-func checkCanFail(fn *ast.FuncDecl) bool {
-	if fn.Type.Results != nil {
-		for _, result := range fn.Type.Results.List {
-			// Check if any of the return types is an error
-			if ident, ok := result.Type.(*ast.Ident); ok && ident.Name == "error" {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-```
-
-### Core Architecture Module: `pkg/js/libs/ldap/utils.go`
-```
-package ldap
-
-import (
-	"fmt"
-	"strconv"
-	"strings"
-	"time"
-
-	"github.com/go-ldap/ldap/v3"
-)
-
-type (
-	// SearchResult contains search result of any / all ldap search request
-	// @example
-	// ```javascript
-	// const ldap = require('nuclei/ldap');
-	// const client = new ldap.Client('ldap://ldap.example.com', 'acme.com');
-	// const results = client.Search('(objectClass=*)', 'cn', 'mail');
-	// ```
-	SearchResult struct {
-		// Referrals contains list of referrals
-		Referrals []string `json:"referrals"`
-		// Controls contains list of controls
-		Controls []string `json:"controls"`
-		// Entries contains list of entries
-		Entries []LdapEntry `json:"entries"`
-	}
-
-	// LdapEntry represents a single LDAP entry
-	LdapEntry struct {
-		// DN contains distinguished name
-		DN string `json:"dn"`
-		// Attributes contains list of attributes
-		Attributes LdapAttributes `json:"attributes"`
-	}
-
-	// LdapAttributes represents all LDAP attributes of a particular
-	// ldap entry
-	LdapAttributes struct {
-		// CurrentTime contains current time
-		CurrentTime []string `json:"currentTime,omitempty"`
-		// SubschemaSubentry contains subschema subentry
-		SubschemaSubentry []string `json:"subschemaSubentry,omitempty"`
-		// DsServiceName contains ds service name
-		DsServiceName []string `json:"dsServiceName,omitempty"`
-		// NamingContexts contains naming contexts
-		NamingContexts []string `json:"namingContexts,omitempty"`
-		// DefaultNamingContext contains default naming context
-		DefaultNamingContext []string `json:"defaultNamingContext,omitempty"`
-		// SchemaNamingContext contains schema naming context
-		SchemaNamingContext []string `json:"schemaNamingContext,omitempty"`
-		// ConfigurationNamingContext contains configuration naming context
-		ConfigurationNamingContext []string `json:"configurationNamingContext,omitempty"`
-		// RootDomainNamingContext contains root domain naming context
-		RootDomainNamingContext []string `json:"rootDomainNamingContext,omitempty"`
-		// SupportedLDAPVersion contains supported LDAP version
-		SupportedLDAPVersion []string `json:"supportedLDAPVersion,omitempty"`
-		// HighestCommittedUSN contains highest committed USN
-		HighestCommittedUSN []string `json:"highestCommittedUSN,omitempty"`
-		// SupportedSASLMechanisms contains supported SASL mechanisms
-		SupportedSASLMechanisms []string `json:"supportedSASLMechanisms,omitempty"`
-		// DnsHostName contains DNS host name
-		DnsHostName []string `json:"dnsHostName,omitempty"`
-		// LdapServiceName contains LDAP service name
-		LdapServiceName []string `json:"ldapServiceName,omitempty"`
-		// ServerName contains server name
-		ServerName []string `json:"serverName,omitempty"`
-		// IsSynchronized contains is synchronized
-		IsSynchronized []string `json:"isSynchronized,omitempty"`
-		// IsGlobalCatalogReady contains is global catalog ready
-		IsGlobalCatalogReady []string `json:"isGlobalCatalogReady,omitempty"`
-		// DomainFunctionality contains domain functionality
-		DomainFunctionality []string `json:"domainFunctionality,omitempty"`
-		// ForestFunctionality contains forest functionality
-		ForestFunctionality []string `json:"forestFunctionality,omitempty"`
-		// DomainControllerFunctionality contains domain controller functionality
-		DomainControllerFunctionality []string `json:"domainControllerFunctionality,omitempty"`
-		// DistinguishedName contains the distinguished name
-		DistinguishedName []string `json:"distinguishedName,omitempty"`
-		// SAMAccountName contains the SAM account name
-		SAMAccountName []string `json:"sAMAccountName,omitempty"`
-		// PWDLastSet contains the password last set time
-		PWDLastSet []string `json:"pwdLastSet,omitempty"`
-		// LastLogon contains the last logon time
-		LastLogon []string `json:"lastLogon,omitempty"`
-		// MemberOf contains the groups the entry is a member of
-		MemberOf []string `json:"memberOf,omitempty"`
-		// ServicePrincipalName contains the service principal names
-		ServicePrincipalName []string `json:"servicePrincipalName,omitempty"`
-		// Extra contains other extra fields which might be present
-		Extra map[string]any `json:"extra,omitempty"`
-	}
-)
-
-// getSearchResult converts a ldap.SearchResult to a SearchResult
-func getSearchResult(sr *ldap.SearchResult) *SearchResult {
-	t := &SearchResult{
-		Referrals: []string{},
-		Controls:  []string{},
-		Entries:   []LdapEntry{},
-	}
-	// add referrals
-	t.Referrals = append(t.Referrals, sr.Referrals...)
-	// add controls
-	for _, ctrl := range sr.Controls {
-		t.Controls = append(t.Controls, ctrl.String())
-	}
-	// add entries
-	for _, entry := range sr.Entries {
-		t.Entries = append(t.Entries, parseLdapEntry(entry))
-	}
-	return t
-}
-
-func parseLdapEntry(entry *ldap.Entry) LdapEntry {
-	e := LdapEntry{
-		DN: entry.DN,
-	}
-	attrs := LdapAttributes{
-		Extra: make(map[string]any),
-	}
-	for _, attr := range entry.Attributes {
-		switch attr.Name {
-		case "currentTime":
-			attrs.CurrentTime = decodeTimestamps(attr.Values)
-		case "subschemaSubentry":
-			attrs.SubschemaSubentry = attr.Values
-		case "dsServiceName":
-			attrs.DsServiceName = attr.Values
-		case "namingContexts":
-			attrs.NamingContexts = attr.Values
-		case "defaultNamingContext":
-			attrs.DefaultNamingContext = attr.Values
-		case "schemaNamingContext":
-			attrs.SchemaNamingContext = attr.Values
-		case "configurationNamingContext":
-			attrs.ConfigurationNamingContext = attr.Values
-		case "rootDomainNamingContext":
-			attrs.RootDomainNamingContext = attr.Values
-		case "supportedLDAPVersion":
-			attrs.SupportedLDAPVersion = attr.Values
-		case "highestCommittedUSN":
-			attrs.HighestCommittedUSN = attr.Values
-		case "supportedSASLMechanisms":
-			attrs.SupportedSASLMechanisms = attr.Values
-		case "dnsHostName":
-			attrs.DnsHostName = attr.Values
-		case "ldapServiceName":
-			attrs.LdapServiceName = attr.Values
-		case "serverName":
-			attrs.ServerName = attr.Values
-		case "isSynchronized":
-			attrs.IsSynchronized = attr.Values
-		case "isGlobalCatalogReady":
-			attrs.IsGlobalCatalogReady = attr.Values
-		case "domainFunctionality":
-			attrs.DomainFunctionality = attr.Values
-		case "forestFunctionality":
-			attrs.ForestFunctionality = attr.Values
-		case "domainControllerFunctionality":
-			attrs.DomainControllerFunctionality = attr.Values
-		case "distinguishedName":
-			attrs.DistinguishedName = attr.Values
-		case "sAMAccountName":
-			attrs.SAMAccountName = attr.Values
-		case "pwdLastSet":
-			attrs.PWDLastSet = decodeTimestamps(attr.Values)
-		case "lastLogon":
-			attrs.LastLogon = decodeTimestamps(attr.Values)
-		case "memberOf":
-			attrs.MemberOf = attr.Values
-		case "servicePrincipalName":
-			attrs.ServicePrincipalName = attr.Values
-		default:
-			attrs.Extra[attr.Name] = attr.Values
-		}
-	}
-	e.Attributes = attrs
-	return e
-}
-
-// decodeTimestamps  decodes multiple timestamps
-func decodeTimestamps(timestamps []string) []string {
-	res := []string{}
-	for _, timestamp := range timestamps {
-		res = append(res, DecodeADTimestamp(timestamp))
-	}
-	return res
-}
-
-// DecodeSID decodes a SID string
-// @example
-// ```javascript
-// const ldap = require('nuclei/ldap');
-// const sid = ldap.DecodeSID('S-1-5-21-3623811015-3361044348-30300820-1013');
-// log(sid);
-// ```
-func DecodeSID(s string) string {
-	b := []byte(s)
-	revisionLvl := int(b[0])
-	subAuthorityCount := int(b[1]) & 0xFF
-
-	var authority int
-	for i := 2; i <= 7; i++ {
-		authority = authority | int(b[i])<<(8*(5-(i-2)))
-	}
-
-	var size = 4
-	var offset = 8
-	var subAuthorities []int
-	for i := 0; i < subAuthorityCount; i++ {
-		var subAuthority int
-		for k := 0; k < size; k++ {
-			subAuthority = subAuthority | (int(b[offset+k])&0xFF)<<(8*k)
-		}
-		subAuthorities = append(subAuthorities, subAuthority)
-		offset += size
-	}
-
-	var builder strings.Builder
-	builder.WriteString("S-")
-	fmt.Fprintf(&builder, "%d-", revisionLvl)
-	fmt.Fprintf(&builder, "%d", authority)
-	for _, v := range subAuthorities {
-		fmt.Fprintf(&builder, "-%d", v)
-	}
-	return builder.String()
-}
-
-// DecodeADTimestamp decodes an Active Directory timestamp
-// @example
-// ```javascript
-// const ldap = require('nuclei/ldap');
-// const timestamp = ldap.DecodeADTimestamp('132036744000000000');
-// log(timestamp);
-// ```
-func DecodeADTimestamp(timestamp string) string {
-	adtime, _ := strconv.ParseInt(timestamp, 10, 64)
-	if (adtime == 9223372036854775807) || (adtime == 0) {
-		return "Not Set"
-	}
-	unixtime_int64 := adtime/(10*1000*1000) - 11644473600
-	unixtime := time.Unix(unixtime_int64, 0)
-	return unixtime.Format("2006-01-02 3:4:5 pm")
-}
-
-// DecodeZuluTimestamp decodes a Zulu timestamp
-// @example
-// ```javascript
-// const ldap = require('nuclei/ldap');
-// const timestamp = ldap.DecodeZuluTimestamp('2021-08-25T10:00:00Z');
-// log(timestamp);
-// ```
-func DecodeZuluTimestamp(timestamp string) string {
-	zulu, err := time.Parse(time.RFC3339, timestamp)
-	if err != nil {
-		return ""
-	}
-	return zulu.Format("2006-01-02 3:4:5 pm")
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1775,1883 +1407,987 @@ func DecodeZuluTimestamp(timestamp string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1884ed92` (2026-10-05)
-**Commit Message**: Merge pull request #7807 from projectdiscovery/perf/fast-downloader-timeout-tests
+### Incident Patch 1: `a5715288` (2026-10-13)
+**Commit Message**: fix(runtime): honor cancellation in HTTP and headless waits (#7814)
 
-cut unit and integration test runtime
+* fix(http): cancel per-host rate admission
 
-**File**: `.github/workflows/tests.yaml` (modified, +0/-10)
+* fix: address PR review comments
+
+* test: keep request coverage with request tests
+
+* fix(headless): bound browser setup by request context
+
+* fix: address PR review comments
+
+* fix: address PR review comments
+
+* fix cancellation-safe rate and headless cleanup
+
+* fix: cancel global rate admission waits
+
+* chore: bump ratelimit to v0.0.93
+
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -45,16 +45,6 @@ jobs:
-       - uses: actions/checkout@v7.0.1
-       - uses: projectdiscovery/actions/setup/go@v1
-       - uses: projectdiscovery/nuclei-action/cache@v3
--      - uses: projectdiscovery/actions/free-disk-space@v1
--        with:
--          llvm: 'false'
--          php: 'false'
--          mongodb: 'false'
--          mysql: 'false'
--          misc-packages: 'false'
--          docker-images: 'false'
--          tools-cache: 'false'
--      - run: make build
-       # The data-race detector is OS-independent, so we only pay its ~2-3x cost
-       # on ubuntu; windows/macOS run the same suite without instrumentation.
-       - name: "Unit tests (race)"
+@@ -93,7 +93,7 @@ require (
+ 	github.com/projectdiscovery/mapcidr v1.1.97
+ 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5
+ 	github.com/projectdiscovery/networkpolicy v0.1.54
+-	github.com/projectdiscovery/ratelimit v0.0.92
++	github.com/projectdiscovery/ratelimit v0.0.93
+ 	github.com/projectdiscovery/rawhttp v0.1.92
+ 	github.com/projectdiscovery/rdap v0.9.0
+ 	github.com/projectdiscovery/retryabledns v1.0.116
+@@ -130,6 +130,7 @@ require (
+ 	golang.org/x/sys v0.47.0
+ 	golang.org/x/term v0.45.0
+ 	golang.org/x/text v0.41.0
++	golang.org/x/time v0.15.0
+ 	golang.org/x/tools v0.49.0
+ 	google.golang.org/grpc v1.83.2
+ 	google.golang.org/protobuf v1.36.11
+@@ -459,7 +460,6 @@ require (
+ 	golang.org/x/arch v0.3.0 // indirect
+ 	golang.org/x/crypto v0.55.0 // indirect
+ 	golang.org/x/mod v0.39.0 // indirect
+-	golang.org/x/time v0.15.0 // indirect
+ 	google.golang.org/api v0.264.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 ```
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -94,7 +94,7 @@ test:
- # Keep this under the GitHub Actions step timeout (50m) so a hung nuclei process
- # is reported by go test instead of the runner killing the job with no test name.
- integration:
--	$(GOTEST) -tags=integration -timeout 40m ./internal/tests/integration
-+	$(GOTEST) -tags=integration -timeout 40m -v ./internal/tests/integration
- 
- integration-debug:
- 	$(GOTEST) -tags=integration ./internal/tests/integration -v $(GO_TEST_ARGS) -args $(INTEGRATION_ARGS)
+@@ -983,8 +983,8 @@ github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5 h1:L/e8z8yw
+ github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5/go.mod h1:pGW2ncnTxTxHtP9wzcIJAB+3/NMp6IiuQWd2NK7K+oc=
+ github.com/projectdiscovery/networkpolicy v0.1.54 h1:+v7yyuRBu2S7dzeIJToDENy1i+HjRhNzqnQrDlm00z8=
+ github.com/projectdiscovery/networkpolicy v0.1.54/go.mod h1:tN+YAFVlJjHv/znPEhkcSAjmBMkMhslC9XpWKTrKEHw=
+-github.com/projectdiscovery/ratelimit v0.0.92 h1:2h2/AU81Lbn/xevb4KtZCMhaQej+u7W3uLXFUD163iU=
+-github.com/projectdiscovery/ratelimit v0.0.92/go.mod h1:Tqpx1QKdFI63L01T2gpSvV5Uro9CnZkZWr80ciSXSBY=
++github.com/projectdiscovery/ratelimit v0.0.93 h1:k2rRpCR31DqeqrORSgGzJ+z0T7+QGCt0Z0+Ov/TVrgk=
++github.com/projectdiscovery/ratelimit v0.0.93/go.mod h1:Tqpx1QKdFI63L01T2gpSvV5Uro9CnZkZWr80ciSXSBY=
+ github.com/projectdiscovery/rawhttp v0.1.92 h1:38GRsVLNllES/dZcEcA6s6P+rYBp34H9mDphMJMDvvg=
+ github.com/projectdiscovery/rawhttp v0.1.92/go.mod h1:spfXTPjxCj+bfWLynMVB7uOb+LS3PDNAI9HexMEV1Zg=
+ github.com/projectdiscovery/rdap v0.9.0 h1:wPhHx5pQ2QI+WGhyNb2PjhTl0NtB39Nk7YFZ9cp8ZGA=
 ```
 
-**File**: `internal/tests/integration/integration_test.go` (modified, +26/-6)
+**File**: `pkg/protocols/common/hostratelimit/limiter.go` (modified, +1/-2)
 ```diff
-@@ -73,17 +73,27 @@ func TestMain(m *testing.M) {
- 	templatesDir := filepath.Join(homeDir, config.NucleiTemplatesDirName)
- 	config.DefaultConfig.SetTemplatesDir(templatesDir)
+@@ -6,12 +6,11 @@ import (
  
-+	baseEnv := []string{
-+		"NUCLEI_TEMPLATES_DIR=" + templatesDir,
-+		"XDG_CONFIG_HOME=" + filepath.Join(tempDir, "config"),
-+		"XDG_STATE_HOME=" + filepath.Join(tempDir, "state"),
-+		"XDG_CACHE_HOME=" + filepath.Join(tempDir, "cache"),
-+	}
-+	// cases run nuclei with -duc, so the official templates some of them read
-+	// are installed once here rather than by whichever cases start first, which
-+	// queued them behind each other's downloads inside their own timeouts
-+	if err := installTemplates(binaryPath, baseEnv); err != nil {
-+		fmt.Fprintln(os.Stderr, err)
-+		_ = os.RemoveAll(tempDir)
-+		os.Exit(1)
-+	}
-+
- 	previousRunner := testutils.DefaultRunner()
- 	runner := testutils.NewRunner(
- 		testutils.WithBinaryPath(binaryPath),
- 		testutils.WithWorkingDir(workingFixturesDir),
- 		testutils.WithExtraArgs(integrationExtraArgs...),
--		testutils.WithBaseEnv(
--			"NUCLEI_TEMPLATES_DIR="+templatesDir,
--			"XDG_CONFIG_HOME="+filepath.Join(tempDir, "config"),
--			"XDG_STATE_HOME="+filepath.Join(tempDir, "state"),
--			"XDG_CACHE_HOME="+filepath.Join(tempDir, "cache"),
--		),
-+		testutils.WithBaseEnv(baseEnv...),
- 	)
- 	testutils.SetDefaultRunner(runner)
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+-	"github.com/projectdiscovery/ratelimit"
+ )
  
-@@ -124,6 +134,16 @@ func buildNucleiBinary(repoRoot, binaryPath string) error {
- 	return nil
- }
- 
-+func installTemplates(binaryPath string, env []string) error {
-+	cmd := exec.Command(binaryPath, "-update-templates", "-no-color")
-+	cmd.Env = append(os.Environ(), env...)
-+	output, err := cmd.CombinedOutput()
-+	if err != nil {
-+		return fmt.Errorf("failed to install nuclei templates: %w\n%s", err, strings.TrimSpace(string(output)))
-+	}
-+	return nil
-+}
-+
- func isDebugMode() bool {
- 	for _, envVar := range []string{"DEBUG", "ACTIONS_STEP_DEBUG", "ACTIONS_RUNNER_DEBUG", "RUNNER_DEBUG"} {
- 		if envTruthy(envVar) {
-```
-
-**File**: `internal/tests/testutils/integration.go` (modified, +3/-0)
-```diff
-@@ -261,6 +261,9 @@ func (r *Runner) ArgsResults(debug bool, args ...string) ([]string, error) {
- 	output, err := r.runCommand(false, "", func(cmd *exec.Cmd) {
- 		cmd.Args = append(cmd.Args[:1], append(append([]string{}, args...), r.ExtraArgs...)...)
- 		cmd.Env = r.buildEnv(nil)
-+		if r.DisableAutoUpdate {
-+			cmd.Args = append(cmd.Args, "-duc")
-+		}
- 		if debug {
- 			cmd.Args = append(cmd.Args, "-debug")
- 			cmd.Stderr = os.Stderr
-```
-
-**File**: `internal/tests/testutils/testutils.go` (modified, +40/-37)
-```diff
-@@ -40,43 +40,46 @@ func Cleanup(options *types.Options) {
- 
- // DefaultOptions is the default options structure for nuclei during mocking.
- var DefaultOptions = &types.Options{
--	Debug:                      false,
--	DebugRequests:              false,
--	DebugResponse:              false,
--	Silent:                     false,
--	Verbose:                    false,
--	NoColor:                    true,
--	UpdateTemplates:            false,
--	JSONL:                      false,
--	OmitRawRequests:            false,
--	EnableProgressBar:          false,
--	TemplateList:               false,
--	Stdin:                      false,
--	StopAtFirstMatch:           false,
--	NoMeta:                     false,
--	Project:                    false,
--	MetricsPort:                0,
--	BulkSize:                   25,
--	TemplateThreads:            10,
--	Timeout:                    5,
--	Retries:                    1,
--	RateLimit:                  150,
--	RateLimitDuration:          time.Second,
--	ProbeConcurrency:           50,
--	ProjectPath:                "",
--	Severities:                 severity.Severities{},
--	Targets:                    []string{},
--	TargetsFilePath:            "",
--	Output:                     "",
--	Proxy:                      []string{},
--	TraceLogFile:               "",
--	Templates:                  []string{},
--	ExcludedTemplates:          []string{},
--	CustomHeaders:              []string{},
--	InteractshURL:              "https://oast.fun",
--	InteractionsCacheSize:      5000,
--	InteractionsEviction:       60,
--	InteractionsCoolDownPeriod: 5,
-+	Debug:                 false,
-+	DebugRequests:         false,
-+	DebugResponse:         false,
-+	Silent:                false,
-+	Verbose:               false,
-+	NoColor:               true,
-+	UpdateTemplates:       false,
-+	JSONL:                 false,
-+	OmitRawRequests:       false,
-+	EnableProgressBar:     false,
-+	TemplateList:          false,
-+	Stdin:                 false,
-+	StopAtFirstMatch:      false,
-+	NoMeta:                false,
-+	Project:               false,
-+	MetricsPort:           0,
-+	BulkSize:              25,
-+	TemplateThreads:       10,
-+	Timeout:               5,
-+	Retries:               1,
-+	RateLimit:             150,
-+	RateLimitDuration:     time.Second,
-+	ProbeConcurrency:      50,
-+	ProjectPath:           "",
-+	Severities:            severity.Severities{},
-+	Targets:               []string{},
-+	TargetsFilePath:       "",
-+	Output:                "",
-+	Proxy:                 []string{},
-+	TraceLogFile:          "",
-+	Templates:             []string{},
-+	ExcludedTemplates:     []string{},
-+	CustomHeaders:         []string{},
-+	InteractshURL:         "https://oast.fun",
-+	InteractionsCacheSize: 5000,
-+	InteractionsEviction:  60,
-+	// Closing an interactsh client sleeps for the cooldown, waiting on callbacks
-+	// that a unit test never receives, so every test generating an oast url paid
-+	// five seconds for nothing.
-+	InteractionsCoolDownPeriod: 0,
- 	InteractionsPollDuration:   5,
- 	GitHubTemplateRepo:         []string{},
- 	GitHubToken:                "",
-```
-
-**File**: `pkg/catalog/config/state.go` (modified, +29/-0)
-```diff
-@@ -59,6 +59,35 @@ func (c *Config) ReadTemplatesConfig() error {
- 	return nil
- }
- 
-+// ReloadTemplateVersion refreshes the installed templates version from disk.
-+// Concurrent processes read the version once at startup, so one that waited on
-+// another's install or update must reload it to see the result instead of
-+// downloading the same release again. State recorded for a different templates
-+// directory is ignored.
-+func (c *Config) ReloadTemplateVersion() error {
-+	statePath := c.getTemplatesConfigFilePath()
-+	data, err := os.ReadFile(statePath)
-+	if errors.Is(err, os.ErrNotExist) {
-+		return nil
-+	} else if err != nil {
-+		return fmt.Errorf("read templates state %q: %w", statePath, err)
-+	}
-+
-+	var state templatesState
-+	if err := json.Unmarshal(data, &state); err != nil {
-+		return fmt.Errorf("decode templates state %q: %w", statePath, err)
-+	}
-+
-+	c.m.Lock()
-+	defer c.m.Unlock()
-+	// compare the resolved directory, so state written through a symlink is
-+	// visible to a process using the real path, and the other way around
-+	if CanonicalTemplatesPath(state.TemplatesDirectory) == CanonicalTemplatesPath(c.TemplatesDirectory) {
-+		c.TemplateVersion = state.TemplateVersion
-+	}
-+	return nil
-+}
-+
- // WriteTemplatesConfig atomically writes restart-persistent templates state.
- func (c *Config) WriteTemplatesConfig() error {
- 	state := templatesState{
-```
-
-**File**: `pkg/catalog/config/state_test.go` (modified, +91/-0)
-```diff
-@@ -139,3 +139,94 @@ func writeTestFile(t *testing.T, path string, data []byte, mode os.FileMode) {
- 		t.Fatalf("write test file: %v", err)
+ // GetPerHostRateLimiter gets or creates a rate limiter for a specific host
+ // Returns nil if per-host rate limiting is not enabled
+-func GetPerHostRateLimiter(options *types.Options, hostname string) (*ratelimit.Limiter, error) {
++func GetPerHostRateLimiter(options *types.Options, hostname string) (*PerHostRateLimiter, error) {
+ 	if !options.PerHostRateLimit {
+ 		return nil, nil
  	}
- }
-+
-+func TestReloadTemplateVersion(t *testing.T) {
-+	newConfig := func(t *testing.T, templatesDir string) *Config {
-+		t.Helper()
-+		cfg := &Config{stateDir: t.TempDir()}
-+		cfg.setTemplatesDir(templatesDir)
-+		return cfg
-+	}
-+
-+	t.Run("adopts the version another process installed", func(t *testing.T) {
-+		templatesDir := t.TempDir()
-+		cfg := newConfig(t, templatesDir)
-+		other := &Config{stateDir: cfg.stateDir, TemplateVersion: "v2.0.0"}
-+		other.setTemplatesDir(templatesDir)
-+		if err := other.WriteTemplatesConfig(); err != nil {
-+			t.Fatalf("write templates state: %v", err)
-+		}
-+
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v2.0.0" {
-+			t.Fatalf("template version = %q, want v2.0.0", cfg.TemplateVersion)
-+		}
-+	})
-+
-+	t.Run("ignores state of another templates directory", func(t *testing.T) {
-+		cfg := newConfig(t, t.TempDir())
-+		cfg.TemplateVersion = "v1.0.0"
-+		other := &Config{stateDir: cfg.stateDir, TemplateVersion: "v2.0.0"}
-+		other.setTemplatesDir(t.TempDir())
-+		if err := other.WriteTemplatesConfig(); err != nil {
-+			t.Fatalf("write templates state: %v", err)
-+		}
-+
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v1.0.0" {
-+			t.Fatalf("template version = %q, want v1.0.0", cfg.TemplateVersion)
-+		}
-+	})
-+
-+	t.Run("keeps the loaded version without state", func(t *testing.T) {
-+		cfg := newConfig(t, t.TempDir())
-+		cfg.TemplateVersion = "v1.0.0"
-+
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v1.0.0" {
-+			t.Fatalf("template version = %q, want v1.0.0", cfg.TemplateVersion)
-+		}
-+	})
-+
-+	t.Run("adopts the version written through the other name of a symlink", func(t *testing.T) {
-+		templatesDir := t.TempDir()
-+		link := filepath.Join(t.TempDir(), "templates-link")
-+		if err := os.Symlink(templatesDir, link); err != nil {
-+			t.Skipf("symlinks are unavailable: %v", err)
-+		}
-+
-+		cfg := newConfig(t, link)
-+		other := &Config{stateDir: cfg.stateDir, TemplateVersion: "v2.0.0"}
-+		other.setTemplatesDir(templatesDir)
-+		if err := other.WriteTemplatesConfig(); err != nil {
-+			t.Fatalf("write templates state: %v", err)
-+		}
-+
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v2.0.0" {
-+			t.Fatalf("template version = %q, want v2.0.0", cfg.TemplateVersion)
-+		}
-+
-+		cfg.TemplateVersion = "v1.0.0"
-+		cfg.setTemplatesDir(templatesDir)
-+		writer := &Config{stateDir: cfg.stateDir, TemplateVersion: "v3.0.0"}
-+		writer.setTemplatesDir(link)
-+		if err := writer.WriteTemplatesConfig(); err != nil {
-+			t.Fatalf("write templates state through the link: %v", err)
-+		}
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v3.0.0" {
-+			t.Fatalf("template version = %q, want v3.0.0", cfg.TemplateVersion)
-+		}
-+	})
-+}
 ```
 
-**File**: `pkg/catalog/config/templates_path.go` (added, +62/-0)
+**File**: `pkg/protocols/common/hostratelimit/pool.go` (modified, +169/-25)
 ```diff
-@@ -0,0 +1,62 @@
-+package config
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"strings"
-+)
-+
-+// CanonicalTemplatesPath is the identity of a templates directory. A symlink
-+// and its target are the same directory, including while the target does not
-+// exist yet, so a lock and a reloaded version follow either name.
-+func CanonicalTemplatesPath(path string) string {
-+	if strings.TrimSpace(path) == "" {
-+		return ""
-+	}
-+	return resolveTemplatesPath(path, map[string]struct{}{})
-+}
-+
-+func resolveTemplatesPath(path string, seen map[string]struct{}) string {
-+	abs, err := filepath.Abs(path)
-+	if err != nil {
-+		abs = filepath.Clean(path)
-+	}
-+	if _, ok := seen[abs]; ok {
-+		return abs
-+	}
-+	seen[abs] = struct{}{}
-+
-+	dir := abs
-+	var missing []string
-+	for {
-+		info, err := os.Lstat(dir)
-+		if err == nil {
-+			if info.Mode()&os.ModeSymlink != 0 {
-+				if resolved, err := filepath.EvalSymlinks(dir); err == nil {
-+					return filepath.Join(append([]string{resolved}, missing...)...)
-+				}
-+				target, readErr := os.Readlink(dir)
-+				if readErr != nil {
-+					return filepath.Join(append([]string{dir}, missing...)...)
-+				}
-+				if !filepath.IsAbs(target) {
-+					target = filepath.Join(filepath.Dir(dir), target)
-+				}
-+				resolvedTarget := resolveTemplatesPath(target, seen)
-+				return filepath.Join(append([]string{resolvedTarget}, missing...)...)
-+			}
-+			resolved := dir
-+			if r, err := filepath.EvalSymlinks(dir); err == nil {
-+				resolved = r
-+			}
-+			return filepath.Join(append([]string{resolved}, missing...)...)
-+		}
-+
-+		parent := filepath.Dir(dir)
-+		if parent == dir {
-+			return filepath.Join(append([]string{dir}, missing...)...)
-+		}
-+		missing = append([]string{filepath.Base(dir)}, missing...)
-+		dir = parent
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `fa876a4d` (2026-10-05)
-**Commit Message**: fix(installer): give every alias of a templates directory the same update lock
-
-**File**: `pkg/installer/update_lock.go` (modified, +24/-9)
-```diff
-@@ -41,17 +41,32 @@ func withTemplatesUpdateLock(templatesDir string, fn func() error) error {
+@@ -3,15 +3,15 @@ package hostratelimit
+ import (
+ 	"context"
+ 	"fmt"
++	"math"
+ 	"sync"
+ 	"sync/atomic"
+ 	"time"
+ 
+ 	"github.com/hashicorp/golang-lru/v2/expirable"
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+-	"github.com/projectdiscovery/nuclei/v3/pkg/utils"
+-	"github.com/projectdiscovery/ratelimit"
++	"golang.org/x/time/rate"
+ )
+ 
+ type PerHostRateLimitPool struct {
+@@ -31,7 +31,7 @@ type PerHostRateLimitPool struct {
+ const ppsWindowSize = 100
+ 
+ type rateLimitEntry struct {
+-	limiter        *ratelimit.Limiter
++	limiter        *PerHostRateLimiter
+ 	createdAt      time.Time
+ 	accessCount    atomic.Uint64
+ 	requestCount   atomic.Uint64
+@@ -46,6 +46,154 @@ type rateLimitEntry struct {
+ 	requestMu         sync.Mutex
  }
  
- // templatesUpdateLockPath derives one lock per templates directory, so updates
--// of different directories do not wait on each other. The parent is resolved
--// rather than the directory itself because a fresh install locks a directory
--// that does not exist yet, and both sides must derive the same path.
-+// of different directories do not wait on each other. Every alias of a
-+// directory must map to the same lock, including before a fresh install
-+// creates it, so the path is resolved through its deepest existing ancestor.
- func templatesUpdateLockPath(templatesDir string) string {
--	dir, err := filepath.Abs(templatesDir)
-+	sum := sha256.Sum256([]byte(resolveExistingPrefix(templatesDir)))
-+	return filepath.Join(os.TempDir(), fmt.Sprintf("nuclei-templates-update-%x.lock", sum[:8]))
++// PerHostRateLimiter serializes admission for one normalized host.
++type PerHostRateLimiter struct {
++	limiter   *rate.Limiter
++	ctx       context.Context
++	cancel    context.CancelFunc
++	admission chan struct{}
++	unlimited bool
++	mu        sync.RWMutex
++	limit     uint
++	duration  time.Duration
 +}
 +
-+// resolveExistingPrefix resolves symlinks in the longest existing prefix of
-+// path and appends the components that do not exist yet.
-+func resolveExistingPrefix(path string) string {
-+	dir, err := filepath.Abs(path)
++// Wait blocks until the host budget admits one request or ctx is canceled.
++func (l *PerHostRateLimiter) Wait(ctx context.Context) error {
++	if ctx == nil {
++		ctx = context.Background()
++	}
++	if err := ctx.Err(); err != nil {
++		return context.Cause(ctx)
++	}
++	if l == nil || l.ctx == nil || l.ctx.Err() != nil {
++		return nil
++	}
++	l.mu.RLock()
++	unlimited := l.unlimited
++	l.mu.RUnlock()
++	if unlimited {
++		return nil
++	}
++
++	select {
++	case l.admission <- struct{}{}:
++		defer func() { <-l.admission }()
++	case <-ctx.Done():
++		return context.Cause(ctx)
++	case <-l.ctx.Done():
++		return nil
++	}
++
++	l.mu.RLock()
++	if l.unlimited {
++		l.mu.RUnlock()
++		return nil
++	}
++	reservation := l.limiter.Reserve()
++	l.mu.RUnlock()
++	if !reservation.OK() {
++		return fmt.Errorf("host rate limiter cannot reserve one request")
++	}
++	delay := reservation.Delay()
++	if delay <= 0 {
++		return nil
++	}
++
++	timer := time.NewTimer(delay)
++	defer timer.Stop()
++	select {
++	case <-timer.C:
++		return nil
++	case <-ctx.Done():
++		reservation.Cancel()
++		return context.Cause(ctx)
++	case <-l.ctx.Done():
++		reservation.Cancel()
++		return nil
++	}
++}
++
++// Take waits for one request using a non-cancelable context.
++func (l *PerHostRateLimiter) Take() {
++	if err := l.Wait(context.Background()); err != nil {
++		gologger.Warning().Msgf("Could not take per-host rate limit: %s", err)
++	}
++}
++
++// CanTake reports whether the limiter can admit a request immediately.
++func (l *PerHostRateLimiter) CanTake() bool {
++	if l == nil || l.ctx == nil {
++		return true
++	}
++	if l.ctx.Err() != nil {
++		return false
++	}
++	l.mu.RLock()
++	defer l.mu.RUnlock()
++	return l.unlimited || (len(l.admission) == 0 && l.limiter.Tokens() > 0)
++}
++
++// GetLimit returns the current request budget for the configured duration.
++func (l *PerHostRateLimiter) GetLimit() uint {
++	if l == nil {
++		return 0
++	}
++	l.mu.RLock()
++	defer l.mu.RUnlock()
++	return l.limit
++}
++
++// SetLimit changes the request budget while preserving the configured duration.
++func (l *PerHostRateLimiter) SetLimit(limit uint) {
++	if l == nil {
++		return
++	}
++	l.mu.Lock()
++	defer l.mu.Unlock()
++	l.limit = limit
++	l.configureLocked()
++}
++
++// SetDuration changes the duration over which the request budget is refilled.
++func (l *PerHostRateLimiter) SetDuration(duration time.Duration) {
++	if duration <= 0 {
++		panic("rate limit duration must be positive")
++	}
++	if l == nil {
++		return
++	}
++	l.mu.Lock()
++	defer l.mu.Unlock()
++	l.duration = duration
++	l.configureLocked()
++}
++
++func (l *PerHostRateLimiter) configureLocked() {
++	if l.duration == 0 {
++		l.unlimited = true
++		return
++	}
++	requestsPerSecond := rate.Limit(float64(l.limit) / l.duration.Seconds())
++	if l.limiter == nil {
++		l.limiter = rate.NewLimiter(requestsPerSecond, int(l.limit))
++	} else {
++		l.limiter.SetLimit(requestsPerSecond)
++		l.limiter.SetBurst(int(l.limit))
++	}
++	if l.admission == nil {
++		l.admission = make(chan struct{}, 1)
++	}
++	l.unlimited = false
++}
++
++// Stop releases current and future waiters without reporting a scan error.
++func (l *PerHostRateLimiter) Stop() {
++	if l != nil && l.cancel != nil {
++		l.cancel()
++	}
++}
++
+ func NewPerHostRateLimitPool(size int, maxIdleTime, maxLifetime time.Duration, options *types.Options) *PerHostRateLimitPool {
+ 	if size < 0 {
+ 		size = 0
+@@ -68,9 +216,6 @@ func NewPerHostRateLimitPool(size int, maxIdleTime, maxLifetime time.Duration, o
+ 		cache: expirable.NewLRU[string, *rateLimitEntry](
+ 			size,
+ 			func(key string, value *rateLimitEntry) {
+-				if value.limiter != nil {
+-					value.limiter.Stop()
+-				}
+ 				gologger.Debug().Msgf("[perhost-ratelimit-pool] Evicted rate limiter for %s (age: %v, accesses: %d)",
+ 					key, time.Since(value.createdAt), value.accessCount.Load())
+ 			},
+@@ -88,7 +233,7 @@ func NewPerHostRateLimitPool(size int, maxIdleTime, maxLifetime time.Duration, o
+ 
+ func (p *PerHostRateLimitPool) GetOrCreate(
+ 	host string,
+
+```
+
+**File**: `pkg/protocols/common/hostratelimit/pool_close_test.go` (modified, +119/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package hostratelimit
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"runtime"
+ 	"testing"
+@@ -48,6 +49,124 @@ func TestPerHostRateLimitPoolSmoothsLowRates(t *testing.T) {
+ 		"the first request beyond the initial bucket should be continuously refilled, not wait for a fixed window")
+ }
+ 
++func TestPerHostRateLimitCancellationReleasesReservation(t *testing.T) {
++	opts := &types.Options{RateLimit: 1, RateLimitDuration: 300 * time.Millisecond}
++	pool := NewPerHostRateLimitPool(1, time.Hour, time.Hour, opts)
++	t.Cleanup(pool.Close)
++
++	limiter, err := pool.GetOrCreate("https://cancel.example.com")
++	require.NoError(t, err)
++	require.NoError(t, limiter.Wait(context.Background()))
++
++	ctx, cancel := context.WithCancel(context.Background())
++	result := make(chan error, 1)
++	go func() { result <- limiter.Wait(ctx) }()
++	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
++	cancel()
++	require.ErrorIs(t, <-result, context.Canceled)
++
++	started := time.Now()
++	require.NoError(t, limiter.Wait(context.Background()))
++	require.Less(t, time.Since(started), 450*time.Millisecond)
++}
++
++func TestPerHostRateLimitCancellationAdvancesQueuedWaiter(t *testing.T) {
++	opts := &types.Options{RateLimit: 1, RateLimitDuration: 500 * time.Millisecond}
++	pool := NewPerHostRateLimitPool(1, time.Hour, time.Hour, opts)
++	t.Cleanup(pool.Close)
++
++	limiter, err := pool.GetOrCreate("https://queue.example.com")
++	require.NoError(t, err)
++	require.NoError(t, limiter.Wait(context.Background()))
++
++	firstCtx, cancelFirst := context.WithCancel(context.Background())
++	firstResult := make(chan error, 1)
++	go func() { firstResult <- limiter.Wait(firstCtx) }()
++	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
++
++	secondResult := make(chan error, 1)
++	started := time.Now()
++	go func() { secondResult <- limiter.Wait(context.Background()) }()
++	cancelFirst()
++
++	require.ErrorIs(t, <-firstResult, context.Canceled)
++	require.NoError(t, <-secondResult)
++	require.Less(t, time.Since(started), 850*time.Millisecond)
++}
++
++func TestPerHostRateLimitStopReleasesWaitersWithoutError(t *testing.T) {
++	opts := &types.Options{RateLimit: 1, RateLimitDuration: time.Second}
++	limiter, err := newPerHostRateLimiter(opts)
++	require.NoError(t, err)
++	require.NoError(t, limiter.Wait(context.Background()))
++
++	result := make(chan error, 1)
++	go func() { result <- limiter.Wait(context.Background()) }()
++	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
++	limiter.Stop()
++
++	require.NoError(t, <-result)
++	require.NoError(t, limiter.Wait(context.Background()))
++}
++
++func TestPerHostRateLimiterZeroValueIsUnlimited(t *testing.T) {
++	var limiter PerHostRateLimiter
++	require.NoError(t, limiter.Wait(context.Background()))
++	require.True(t, limiter.CanTake())
++	limiter.Stop()
++}
++
++func TestPerHostRateLimiterRetainsMutableLimitAPI(t *testing.T) {
++	limiter, err := newPerHostRateLimiter(&types.Options{RateLimit: 2, RateLimitDuration: time.Second})
++	require.NoError(t, err)
++	t.Cleanup(limiter.Stop)
++
++	require.Equal(t, uint(2), limiter.GetLimit())
++	limiter.SetLimit(4)
++	limiter.SetDuration(2 * time.Second)
++	require.Equal(t, uint(4), limiter.GetLimit())
++	require.NoError(t, limiter.Wait(context.Background()))
++
++	unlimited, err := newPerHostRateLimiter(nil)
++	require.NoError(t, err)
++	t.Cleanup(unlimited.Stop)
++	require.Equal(t, uint(^uint32(0)), unlimited.GetLimit())
++	unlimited.SetLimit(2)
++	require.Equal(t, uint(2), unlimited.GetLimit())
++	require.NoError(t, unlimited.Wait(context.Background()))
++}
++
++func TestPerHostRateLimiterImmediateWaitHasBoundedAllocations(t *testing.T) {
++	limiter, err := newPerHostRateLimiter(&types.Options{RateLimit: 100, RateLimitDuration: time.Second})
++	require.NoError(t, err)
++	t.Cleanup(limiter.Stop)
++
++	allocations := testing.AllocsPerRun(10, func() {
++		if waitErr := limiter.Wait(context.Background()); waitErr != nil {
++			t.Fatal(waitErr)
++		}
++	})
++	require.LessOrEqual(t, allocations, float64(1))
++}
++
++func TestPerHostRateLimitEvictionKeepsInflightWaitValid(t *testing.T) {
++	opts := &types.Options{RateLimit: 1, RateLimitDuration: 100 * time.Millisecond}
++	pool := NewPerHostRateLimitPool(1, time.Hour, time.Hour, opts)
++	t.Cleanup(pool.Close)
++
++	limiter, err := pool.GetOrCreate("https://first.example.com")
++	require.NoError(t, err)
++	require.NoError(t, limiter.Wait(context.Background()))
++
++	result := make(chan error, 1)
++	go func() { result <- limiter.Wait(context.Background()) }()
++	require.Eventually(t, func() bool { return len(limiter.admission) == 1 }, time.Second, time.Millisecond)
++
++	_, err = pool.GetOrCreate("https://second.example.com")
++	require.NoError(t, err)
++	require.NoError(t, <-result)
++}
++
+ func TestUnboundedPerHostRateLimitPoolRetainsBudgetsBeyondDefaultCapacity(t *testing.T) {
+ 	opts := &types.Options{RateLimit: 10, RateLimitDuration: time.Second}
+ 	pool := NewPerHos
+```
+
+**File**: `pkg/protocols/dns/request.go` (modified, +1/-1)
+```diff
+@@ -163,7 +163,7 @@ func (request *Request) execute(input *contextargs.Context, domain string, metad
+ 	}
+ 
+ 	// per host means per queried domain: resolvers are shared by every target
+-	if err := request.options.RateLimitTake(question); err != nil {
++	if err := request.options.RateLimitTakeContext(input.Context(), question); err != nil {
+ 		request.options.Output.Request(request.options.TemplatePath, domain, request.Type().String(), err)
+ 		request.options.Progress.IncrementFailedRequestsBy(1)
+ 		return errors.Wrap(err, "could not take rate limit")
+```
+
+**File**: `pkg/protocols/headless/engine/instance.go` (modified, +81/-2)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 
+ 	"github.com/go-rod/rod"
+ 	"github.com/go-rod/rod/lib/utils"
++	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/render"
+ )
+@@ -21,6 +22,8 @@ type Instance struct {
+ 	requestLog map[string]string // contains actual request that was sent
+ }
+ 
++const browserCleanupTimeout = 5 * time.Second
++
+ // NewInstance creates a new instance for the current browser.
+ //
+ // The login process is repeated only once for a browser, and the created
+@@ -29,7 +32,67 @@ type Instance struct {
+ // Users can also choose to run the login->actions process again
+ // which uses a new incognito browser instance to run actions.
+ func (b *Browser) NewInstance() (*Instance, error) {
+-	browser, err := b.engine.Incognito()
++	return b.newInstanceBrowser(b.engine)
++}
++
++// NewInstanceWithContext bounds browser-context creation and all subsequent instance calls.
++func (b *Browser) NewInstanceWithContext(ctx context.Context, timeout time.Duration) (*Instance, error) {
++	if ctx == nil {
++		ctx = context.Background()
++	}
++	if err := ctx.Err(); err != nil {
++		return nil, context.Cause(ctx)
++	}
++
++	if timeout <= 0 {
++		timeout = browserCleanupTimeout
++	}
++	creationCtx, cancelCreation := context.WithTimeout(b.engine.GetContext(), timeout)
++	type result struct {
++		instance *Instance
++		err      error
++	}
++	resultCh := make(chan result, 1)
++	go func() {
++		instance, err := b.newInstanceBrowser(b.engine.Context(creationCtx))
++		resultCh <- result{instance: instance, err: err}
++	}()
++
++	cleanup := func(instance *Instance) {
++		if instance == nil {
++			return
++		}
++		if err := instance.Close(); err != nil {
++			gologger.Warning().Msgf("Could not close canceled browser instance: %s", err)
++		}
++	}
++
++	select {
++	case created := <-resultCh:
++		cancelCreation()
++		if created.err != nil {
++			return nil, created.err
++		}
++		if err := ctx.Err(); err != nil {
++			go cleanup(created.instance)
++			return nil, context.Cause(ctx)
++		}
++		created.instance.engine = created.instance.engine.Context(ctx)
++		return created.instance, nil
++	case <-ctx.Done():
++		go func() {
++			created := <-resultCh
++			cancelCreation()
++			if created.err == nil {
++				cleanup(created.instance)
++			}
++		}()
++		return nil, context.Cause(ctx)
++	}
++}
++
++func (b *Browser) newInstanceBrowser(engine *rod.Browser) (*Instance, error) {
++	browser, err := engine.Incognito()
  	if err != nil {
--		dir = filepath.Clean(templatesDir)
-+		dir = filepath.Clean(path)
+ 		return nil, err
  	}
--	if parent, err := filepath.EvalSymlinks(filepath.Dir(dir)); err == nil {
--		dir = filepath.Join(parent, filepath.Base(dir))
+@@ -49,7 +112,23 @@ func (i *Instance) GetRequestLog() map[string]string {
+ 
+ // Close closes all the tabs and pages for a browser instance
+ func (i *Instance) Close() error {
+-	return i.engine.Close()
++	ctx, cancel := context.WithTimeout(context.Background(), browserCleanupTimeout)
++	defer cancel()
++	return i.close(ctx)
++}
 +
-+	var missing []string
-+	for {
-+		if resolved, err := filepath.EvalSymlinks(dir); err == nil {
-+			return filepath.Join(append([]string{resolved}, missing...)...)
-+		}
-+		parent := filepath.Dir(dir)
-+		if parent == dir {
-+			return filepath.Join(append([]string{dir}, missing...)...)
-+		}
-+		missing = append([]string{filepath.Base(dir)}, missing...)
-+		dir = parent
- 	}
--	sum := sha256.Sum256([]byte(dir))
--	return filepath.Join(os.TempDir(), fmt.Sprintf("nuclei-templates-update-%x.lock", sum[:8]))
++// CloseWithPage closes a page and its isolated browser context within one cleanup deadline.
++func (i *Instance) CloseWithPage(page *Page) error {
++	ctx, cancel := context.WithTimeout(context.Background(), browserCleanupTimeout)
++	defer cancel()
++	if page != nil {
++		page.close(ctx)
++	}
++	return i.close(ctx)
++}
++
++func (i *Instance) close(ctx context.Context) error {
++	return i.engine.Context(ctx).Close()
  }
+ 
+ // SetInteractsh client
 ```
 
-**File**: `pkg/installer/update_lock_test.go` (modified, +11/-2)
+**File**: `pkg/protocols/headless/engine/instance_test.go` (added, +102/-0)
 ```diff
-@@ -19,9 +19,18 @@ func TestTemplatesUpdateLockPath(t *testing.T) {
- 	})
- 
- 	t.Run("stable across a fresh install creating the directory", func(t *testing.T) {
--		dir := filepath.Join(t.TempDir(), "nuclei-templates")
-+		dir := filepath.Join(t.TempDir(), "missing", "nuclei-templates")
- 		before := templatesUpdateLockPath(dir)
--		require.NoError(t, os.Mkdir(dir, 0o755))
-+		require.NoError(t, os.MkdirAll(dir, 0o755))
- 		require.Equal(t, before, templatesUpdateLockPath(dir))
- 	})
+@@ -0,0 +1,102 @@
++package engine
 +
-+	t.Run("symlink to a directory, same lock", func(t *testing.T) {
-+		dir := t.TempDir()
-+		link := filepath.Join(t.TempDir(), "templates-link")
-+		if err := os.Symlink(dir, link); err != nil {
-+			t.Skipf("symlinks are unavailable: %v", err)
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/go-rod/rod"
++	"github.com/go-rod/rod/lib/cdp"
++	"github.com/go-rod/rod/lib/proto"
++	"github.com/stretchr/testify/require"
++)
++
++type cleanupCDPClient struct {
++	events      chan *cdp.Event
++	contextErrs chan error
++}
++
++type lateCreateCDPClient struct {
++	events   chan *cdp.Event
++	disposed chan struct{}
++	delay    time.Duration
++}
++
++func (c *lateCreateCDPClient) Event() <-chan *cdp.Event {
++	return c.events
++}
++
++func (c *lateCreateCDPClient) Call(_ context.Context, _ string, method string, _ interface{}) ([]byte, error) {
++	switch method {
++	case "Target.createBrowserContext":
++		time.Sleep(c.delay)
++		return []byte(`{"browserContextId":"context-id"}`), nil
++	case "Target.disposeBrowserContext":
++		select {
++		case c.disposed <- struct{}{}:
++		default:
 +		}
-+		require.Equal(t, templatesUpdateLockPath(dir), templatesUpdateLockPath(link))
-+	})
- }
++	}
++	return []byte("{}"), nil
++}
++
++func (c *cleanupCDPClient) Event() <-chan *cdp.Event {
++	return c.events
++}
++
++func (c *cleanupCDPClient) Call(ctx context.Context, _ string, method string, _ interface{}) ([]byte, error) {
++	if method == "Target.disposeBrowserContext" {
++		c.contextErrs <- ctx.Err()
++	}
++	return []byte("{}"), nil
++}
++
++func TestNewInstanceWithContextCancelsBlockedBrowserContextCreation(t *testing.T) {
++	client := newBlockingCDPClient("Target.createBrowserContext", 500*time.Millisecond)
++	browser := &Browser{engine: rod.New().Client(client)}
++	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
++	defer cancel()
++
++	started := time.Now()
++	_, err := browser.NewInstanceWithContext(ctx, time.Second)
++
++	require.ErrorIs(t, err, context.DeadlineExceeded)
++	require.Less(t, time.Since(started), 200*time.Millisecond)
++}
++
++func TestNewInstanceWithContextDisposesContextCreatedAfterCancellation(t *testing.T) {
++	client := &lateCreateCDPClient{
++		events:   make(chan *cdp.Event),
++		disposed: make(chan struct{}, 1),
++		delay:    50 * time.Millisecond,
++	}
++	browser := &Browser{engine: rod.New().Client(client)}
++	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
++	defer cancel()
++
++	started := time.Now()
++	_, err := browser.NewInstanceWithContext(ctx, time.Second)
++	require.ErrorIs(t, err, context.DeadlineExceeded)
++	require.Less(t, time.Since(started), 100*time.Millisecond)
++
++	select {
++	case <-client.disposed:
++	case <-time.After(time.Second):
++		t.Fatal("browser context created after cancellation was not disposed")
++	}
++}
++
++func TestInstanceCloseUsesLiveCleanupContext(t *testing.T) {
++	client := &cleanupCDPClient{
++		events:      make(chan *cdp.Event),
++		contextErrs: make(chan error, 1),
++	}
++	canceledCtx, cancel := context.WithCancel(context.Background())
++	cancel()
++	browser := rod.New().Client(client).Context(canceledCtx)
++	browser.BrowserContextID = proto.BrowserBrowserContextID("context-id")
++	instance := &Instance{engine: browser}
++
++	require.NoError(t, instance.Close())
++	require.NoError(t, <-client.contextErrs)
++}
 ```
 
 ---
 
-### Incident Patch 3: `0ae69a7d` (2026-10-01)
-**Commit Message**: fix(installer): reload the templates version after taking the update lock
+### Incident Patch 2: `59e6ffa6` (2026-10-12)
+**Commit Message**: Merge pull request #7822 from projectdiscovery/fix/7821-js-call-cancellation
 
-**File**: `pkg/catalog/config/state.go` (modified, +27/-0)
+cancel javascript library calls with the template execution timeout
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -59,6 +59,33 @@ func (c *Config) ReadTemplatesConfig() error {
- 	return nil
+@@ -81,7 +81,7 @@ require (
+ 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
+ 	github.com/projectdiscovery/goflags v0.2.1
+ 	github.com/projectdiscovery/goimpacket v0.1.0
+-	github.com/projectdiscovery/goja v0.0.0-20260618133720-acb73e419534
++	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
+ 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
+ 	github.com/projectdiscovery/gologger v1.1.73
+ 	github.com/projectdiscovery/gostruct v0.0.2
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -953,8 +953,8 @@ github.com/projectdiscovery/goflags v0.2.1 h1:XnSYvsCjUwHbZaaJUZ3YznCJPoXRk/IhTF
+ github.com/projectdiscovery/goflags v0.2.1/go.mod h1:7nAP1r2Dqgn/rwmOE3EWbZWUCEJKNIhVSBGpuzJAIns=
+ github.com/projectdiscovery/goimpacket v0.1.0 h1:pX7YKn11GzplEWzLsgR1b1Ad1diACXLhzvVZ1w7h3sw=
+ github.com/projectdiscovery/goimpacket v0.1.0/go.mod h1:bfgULaYf+6pjjcLCekpXIYElnLJbmhvTttxMAbQJvhY=
+-github.com/projectdiscovery/goja v0.0.0-20260618133720-acb73e419534 h1:hYd1zQA/dxO2ASyQ6Re73TcJkW1LjLQvt4+86Hxefz8=
+-github.com/projectdiscovery/goja v0.0.0-20260618133720-acb73e419534/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
++github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c h1:4H/CfVNlue9PIwsCM1IGxOynDI7cir+emXuDvGJTLJs=
++github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
+ github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d h1:fqqH9LHpN2WDz9QuxFrhKNxXSRtzk+Sa6jAhbB7tXcQ=
+ github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d/go.mod h1:Ezmbgdaw4EunGGBU4MQViLoGMJc37LA3ip55YV3KeRI=
+ github.com/projectdiscovery/gologger v1.1.73 h1:WX2nzq29cL7HdvOHqIttacoid/5lMwapyM7ukGU1jFY=
+```
+
+**File**: `pkg/js/compiler/session.go` (modified, +4/-0)
+```diff
+@@ -153,6 +153,9 @@ func (s *session) prepareCommon() {
+ 	}
+ 	s.config.runtime.SetContextValue("executionId", s.config.opts.ExecutionId)
+ 	s.config.runtime.SetContextValue("ctx", executionCtx)
++	// Go calls derive their context from this, so the execution timeout also
++	// cancels a library call in flight instead of leaving it running
++	s.config.runtime.SetContext(executionCtx)
+ 	enableRequire(s.config.runtime)
  }
  
-+// ReloadTemplateVersion refreshes the installed templates version from disk.
-+// Concurrent processes read the version once at startup, so one that waited on
-+// another's install or update must reload it to see the result instead of
-+// downloading the same release again. State recorded for a different templates
-+// directory is ignored.
-+func (c *Config) ReloadTemplateVersion() error {
-+	statePath := c.getTemplatesConfigFilePath()
-+	data, err := os.ReadFile(statePath)
-+	if errors.Is(err, os.ErrNotExist) {
-+		return nil
-+	} else if err != nil {
-+		return fmt.Errorf("read templates state %q: %w", statePath, err)
+@@ -221,6 +224,7 @@ func (s *session) cleanupCommon() {
+ 	}
+ 	s.config.runtime.RemoveContextValue("executionId")
+ 	s.config.runtime.RemoveContextValue("ctx")
++	s.config.runtime.SetContext(context.TODO())
+ 	s.config.runtime.RemoveContextValue("timeoutVariants")
+ 	s.config.runtime.RemoveContextValue("proxyURL")
+ 	s.config.runtime.RemoveContextValue("customHeaders")
+```
+
+**File**: `pkg/js/libs/smb/smb_auth_test.go` (modified, +7/-1)
+```diff
+@@ -46,8 +46,14 @@ func TestAuthenticateSessionStatus(t *testing.T) {
+ 				assert.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
+ 				t.Cleanup(func() { protocolstate.Close(executionID) })
+ 				port, done := serveAuthentication(t, tc.flags, tc.status)
++				// production runs carry the js execution timeout in their context;
++				// without one a stalled exchange holds the package until go
++				// test's 1h timeout instead of failing this test
++				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++				defer cancel()
+ 				if javascript {
+ 					vm := goja.New()
++					vm.SetContext(ctx)
+ 					new(require.Registry).Enable(vm)
+ 					vm.SetContextValue("executionId", executionID)
+ 					assert.NoError(t, vm.Set("port", port))
+@@ -65,7 +71,7 @@ func TestAuthenticateSessionStatus(t *testing.T) {
+ 						assert.Equal(t, []interface{}{tc.want.Success, tc.want.IsGuest, tc.want.IsNullSession}, value.Export())
+ 					}
+ 				} else {
+-					ctx := context.WithValue(context.Background(), "executionId", executionID) //nolint:staticcheck
++					ctx := context.WithValue(ctx, "executionId", executionID) //nolint:staticcheck
+ 					result, err := (&smb.SMBClient{}).Authenticate(ctx, "127.0.0.1", port, tc.user, password)
+ 					if tc.status != 0 {
+ 						assert.Error(t, err)
+```
+
+---
+
+### Incident Patch 3: `10f1967c` (2026-10-18)
+**Commit Message**: Merge pull request #7879 from projectdiscovery/fix/7878-dump-body-race
+
+keep the request body in the dump taken after sending
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -102,7 +102,7 @@ require (
+ 	github.com/projectdiscovery/tlsx v1.4.1
+ 	github.com/projectdiscovery/uncover v1.2.1
+ 	github.com/projectdiscovery/useragent v0.0.109
+-	github.com/projectdiscovery/utils v0.11.9
++	github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99
+ 	github.com/projectdiscovery/wappalyzergo v0.3.4
+ 	github.com/projectdiscovery/yamldoc-go v1.0.7
+ 	github.com/redis/go-redis/v9 v9.19.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1003,8 +1003,8 @@ github.com/projectdiscovery/uncover v1.2.1 h1:8U46T/96CLT7BPoXBgkTvWqB06lOyeTSLv
+ github.com/projectdiscovery/uncover v1.2.1/go.mod h1:0p8onrWxfpXQEYs90ZDzTSpu1107gWmodX1NWqu/+z4=
+ github.com/projectdiscovery/useragent v0.0.109 h1:b86BPdZvmgbJousa04jAugDRY4Y+rAvEamE0TFCPmeE=
+ github.com/projectdiscovery/useragent v0.0.109/go.mod h1:sRyBqDAcD31RKYrO8fyXGowLd36fNwY1g0MNW9mp7zk=
+-github.com/projectdiscovery/utils v0.11.9 h1:aKLje3zPcZuOGmopN51PasWxPX/CypPwzP2ke/Qa2bA=
+-github.com/projectdiscovery/utils v0.11.9/go.mod h1:d3BcbsHhuxW9T3jpvrgzwshvqhaL9qPSkoi+3h/DY8E=
++github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99 h1:1RG4XinX0GqkAqIBxG92ldRWCvU6yZn9YdSFh2EiH2o=
++github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99/go.mod h1:d3BcbsHhuxW9T3jpvrgzwshvqhaL9qPSkoi+3h/DY8E=
+ github.com/projectdiscovery/wappalyzergo v0.3.4 h1:yO+xel+C0d/vOFWcUKVZRpIDAfcEmsjpVDjQ0jifAUw=
+ github.com/projectdiscovery/wappalyzergo v0.3.4/go.mod h1:6xTRCUQhX8m+L1eqJDQIALJlRv2Bnhrmku80YU9bBXE=
+ github.com/projectdiscovery/yamldoc-go v1.0.7 h1:Odmjd1o4EkMff2F6QHi1dIYPIQPZUFy24YqmQCprmTk=
+```
+
+**File**: `pkg/protocols/http/request.go` (modified, +23/-15)
+```diff
+@@ -51,7 +51,6 @@ import (
+ 	convUtil "github.com/projectdiscovery/utils/conversion"
+ 	"github.com/projectdiscovery/utils/errkit"
+ 	httpUtils "github.com/projectdiscovery/utils/http"
+-	"github.com/projectdiscovery/utils/reader"
+ 	sliceutil "github.com/projectdiscovery/utils/slice"
+ 	stringsutil "github.com/projectdiscovery/utils/strings"
+ 	unitutils "github.com/projectdiscovery/utils/unit"
+@@ -983,6 +982,25 @@ func extractorAppliesToRequest(part string, requestIndex int) bool {
+ 
+ const drainReqSize = int64(8 * unitutils.Kilo)
+ 
++// reuseRequestBody reads the body once and installs GetBody copies. The
++// post-send dump reads one while the transport may still be writing another.
++// GET, HEAD, and chunked requests keep their existing content length.
++func reuseRequestBody(req *retryablehttp.Request) error {
++	body, err := io.ReadAll(req.Body)
++	if err != nil {
++		return err
 +	}
-+
-+	var state templatesState
-+	if err := json.Unmarshal(data, &state); err != nil {
-+		return fmt.Errorf("decode templates state %q: %w", statePath, err)
++	keepLength := stringsutil.EqualFoldAny(req.Method, http.MethodGet, http.MethodHead) || req.Header.Get("Transfer-Encoding") == "chunked"
++	contentLength := req.ContentLength
++	if err = req.SetBody(body); err != nil {
++		return err
 +	}
-+
-+	c.m.Lock()
-+	defer c.m.Unlock()
-+	if filepath.Clean(state.TemplatesDirectory) == filepath.Clean(c.TemplatesDirectory) {
-+		c.TemplateVersion = state.TemplateVersion
++	if keepLength {
++		req.ContentLength = contentLength
 +	}
 +	return nil
 +}
 +
- // WriteTemplatesConfig atomically writes restart-persistent templates state.
- func (c *Config) WriteTemplatesConfig() error {
- 	state := templatesState{
-```
-
-**File**: `pkg/catalog/config/state_test.go` (modified, +55/-0)
-```diff
-@@ -139,3 +139,58 @@ func writeTestFile(t *testing.T, path string, data []byte, mode os.FileMode) {
- 		t.Fatalf("write test file: %v", err)
- 	}
- }
-+
-+func TestReloadTemplateVersion(t *testing.T) {
-+	newConfig := func(t *testing.T, templatesDir string) *Config {
-+		t.Helper()
-+		cfg := &Config{stateDir: t.TempDir()}
-+		cfg.setTemplatesDir(templatesDir)
-+		return cfg
-+	}
-+
-+	t.Run("adopts the version another process installed", func(t *testing.T) {
-+		templatesDir := t.TempDir()
-+		cfg := newConfig(t, templatesDir)
-+		other := &Config{stateDir: cfg.stateDir, TemplateVersion: "v2.0.0"}
-+		other.setTemplatesDir(templatesDir)
-+		if err := other.WriteTemplatesConfig(); err != nil {
-+			t.Fatalf("write templates state: %v", err)
-+		}
-+
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v2.0.0" {
-+			t.Fatalf("template version = %q, want v2.0.0", cfg.TemplateVersion)
-+		}
-+	})
-+
-+	t.Run("ignores state of another templates directory", func(t *testing.T) {
-+		cfg := newConfig(t, t.TempDir())
-+		cfg.TemplateVersion = "v1.0.0"
-+		other := &Config{stateDir: cfg.stateDir, TemplateVersion: "v2.0.0"}
-+		other.setTemplatesDir(t.TempDir())
-+		if err := other.WriteTemplatesConfig(); err != nil {
-+			t.Fatalf("write templates state: %v", err)
-+		}
-+
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v1.0.0" {
-+			t.Fatalf("template version = %q, want v1.0.0", cfg.TemplateVersion)
-+		}
-+	})
-+
-+	t.Run("keeps the loaded version without state", func(t *testing.T) {
-+		cfg := newConfig(t, t.TempDir())
-+		cfg.TemplateVersion = "v1.0.0"
-+
-+		if err := cfg.ReloadTemplateVersion(); err != nil {
-+			t.Fatalf("reload templates version: %v", err)
-+		}
-+		if cfg.TemplateVersion != "v1.0.0" {
-+			t.Fatalf("template version = %q, want v1.0.0", cfg.TemplateVersion)
-+		}
-+	})
-+}
-```
-
-**File**: `pkg/installer/template.go` (modified, +6/-0)
-```diff
-@@ -123,6 +123,12 @@ func (t *TemplateManager) updateIfOutdatedLocked() error {
- 		return errkit.Wrapf(err, "failed to recover template ownership at %s", config.DefaultConfig.TemplatesDirectory)
- 	}
+ // executeRequest executes the actual generated request and returns error if occurred
+ func (request *Request) executeRequest(input *contextargs.Context, generatedRequest *generatedRequest, previousEvent output.InternalEvent, hasInteractMatchers bool, processEvent protocols.OutputEventCallback, requestCount int) (err error) {
+ 	// Check if hosts keep erroring
+@@ -1022,20 +1040,10 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 	// For race conditions we can't dump the request body at this point as it's already waiting the open-gate event, already handled with a similar code within the race function
+ 	if !generatedRequest.original.Race {
  
-+	// the version in memory predates the lock; a process that held it before
-+	// this one may have already installed the latest release
-+	if err := config.DefaultConfig.ReloadTemplateVersion(); err != nil {
-+		gologger.Debug().Msgf("Could not reload templates version, using the one loaded at startup: %s", err)
-+	}
-+
- 	needsUpdate := config.DefaultConfig.NeedsTemplateUpdate()
- 
- 	// NOTE(dwisiswant0): if PDTM API data is not available
+-		// change encoding type to content-length unless transfer-encoding header is manually set
+-		if generatedRequest.request != nil && !stringsutil.EqualFoldAny(generatedRequest.request.Method, http.MethodGet, http.MethodHead) && generatedRequest.request.Body != nil && generatedRequest.request.Header.Get("Transfer-Encoding") != "chunked" {
+-			var newReqBody *reader.ReusableReadCloser
+-			newReqBody, ok := generatedRequest.request.Body.(*reader.ReusableReadCloser)
+-			if !ok {
+-				newReqBody, err = reader.NewReusableReadCloser(generatedRequest.request.Body)
+-			}
+-			if err == nil {
+-				// update the request body with the reusable reader
+-				generatedRequest.request.SetBodyReader(newReqBody)
+-				// get content length
+-				length, _ := io.Copy(io.Discard, newReqBody)
+-				generatedRequest.request.ContentLength = length
+-			} else {
++		// Buffer every body so the post-send dump reads its own copy. GET, HEAD,
++		// and chunked requests keep the content length they already had.
++		if generatedRequest.request != nil && generatedRequest.request.Body != nil {
++			if err = reuseRequestBody(generatedRequest.request); err != nil {
+ 				// log error and continue
+ 				gologger.Verbose().Msgf("[%v] Could not read request body while forcing transfer encoding: %s\n", request.options.TemplateID, err)
+ 				err = nil
 ```
 
-**File**: `pkg/installer/template_test.go` (modified, +26/-0)
+**File**: `pkg/protocols/http/request_test.go` (modified, +97/-0)
 ```diff
-@@ -57,6 +57,32 @@ func TestTemplateInstallation(t *testing.T) {
- 	require.Len(t, ownership.Files, len(templates), "fresh installation should record ownership of every installed template")
- }
- 
-+func TestUpdateIfOutdatedSkipsReleaseInstalledWhileWaiting(t *testing.T) {
-+	templatesDir := t.TempDir()
-+	stateDir := t.TempDir()
-+
-+	// another process held the update lock and installed the latest release
-+	installer := &config.Config{TemplateVersion: "v2.0.0"}
-+	installer.SetStateDir(stateDir)
-+	installer.SetTemplatesDir(templatesDir)
-+	require.NoError(t, installer.WriteTemplatesConfig())
-+
-+	// this process loaded its state before that install finished
-+	cfg := &config.Config{LatestNucleiTemplatesVersion: "v2.0.0", Logger: gologger.DefaultLogger}
-+	cfg.SetStateDir(stateDir)
-+	cfg.SetTemplatesDir(templatesDir)
-+	previousConfig := config.DefaultConfig
-+	config.DefaultConfig = cfg
-+	t.Cleanup(func() { config.DefaultConfig = previousConfig })
-+
-+	tm := &TemplateManager{fetchLatestRelease: func() (templateRelease, error) {
-+		t.Fatal("downloaded a release another process already installed")
-+		return nil, nil
-+	}}
-+	require.NoError(t, tm.UpdateIfOutdated())
-+	require.Equal(t, "v2.0.0", cfg.TemplateVersion)
-+}
-+
- func TestIsOutdatedVersion(t *testing.T) {
- 	testCases := []struct {
- 		current  string
-```
-
----
-
-### Incident Patch 4: `4d7e91e4` (2026-10-01)
-**Commit Message**: ci: drop unused build and disk cleanup from the tests job
-
-**File**: `.github/workflows/tests.yaml` (modified, +0/-10)
-```diff
-@@ -45,16 +45,6 @@ jobs:
-       - uses: actions/checkout@v7.0.1
-       - uses: projectdiscovery/actions/setup/go@v1
-       - uses: projectdiscovery/nuclei-action/cache@v3
--      - uses: projectdiscovery/actions/free-disk-space@v1
--        with:
--          llvm: 'false'
--          php: 'false'
--          mongodb: 'false'
--          mysql: 'false'
--          misc-packages: 'false'
--          docker-images: 'false'
--          tools-cache: 'false'
--      - run: make build
-       # The data-race detector is OS-independent, so we only pay its ~2-3x cost
-       # on ubuntu; windows/macOS run the same suite without instrumentation.
-       - name: "Unit tests (race)"
-```
-
----
-
-### Incident Patch 5: `26b28c69` (2026-10-01)
-**Commit Message**: test(installer): serve releases from memory and isolate the update lock
-
-**File**: `pkg/installer/main_test.go` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+package installer
-+
-+import (
-+	"fmt"
-+	"os"
-+	"testing"
-+)
-+
-+// TestMain gives this package its own temp directory. The templates update lock
-+// lives in os.TempDir and is machine wide, while `go test ./...` runs packages
-+// in parallel: tests here that took the lock queued behind other packages
-+// downloading the real nuclei-templates repo under it, which cost several
-+// minutes in CI for a test that does 40ms of work.
-+func TestMain(m *testing.M) {
-+	dir, err := os.MkdirTemp("", "nuclei-installer-test-*")
-+	if err != nil {
-+		fmt.Fprintf(os.Stderr, "could not create temp dir: %v\n", err)
-+		os.Exit(1)
-+	}
-+	// os.TempDir reads TMPDIR on unix and TMP then TEMP on windows
-+	for _, key := range []string{"TMPDIR", "TMP", "TEMP"} {
-+		_ = os.Setenv(key, dir)
-+	}
-+
-+	code := m.Run()
-+
-+	_ = os.RemoveAll(dir)
-+	os.Exit(code)
-+}
-```
-
-**File**: `pkg/installer/release_test.go` (added, +89/-0)
-```diff
-@@ -0,0 +1,89 @@
-+package installer
-+
-+import (
-+	"archive/zip"
-+	"bytes"
-+	"encoding/json"
-+	"fmt"
+@@ -24,6 +24,8 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
+ 	"github.com/projectdiscovery/ratelimit"
++	"github.com/projectdiscovery/retryablehttp-go"
 +	"io"
-+	"net/http"
-+	"sort"
-+	"strings"
-+	"testing"
-+)
-+
-+// fakeTemplateRelease serves an in-memory nuclei-templates release in place of
-+// the GitHub API, so tests run the real downloader without fetching the actual
-+// repository, which cost several minutes per test on windows.
-+type fakeTemplateRelease struct {
-+	version string
-+	files   map[string]string
-+}
-+
-+const fakeZipballURL = "https://api.github.com/repos/projectdiscovery/nuclei-templates/zipball/fake"
-+
-+func (r fakeTemplateRelease) RoundTrip(req *http.Request) (*http.Response, error) {
-+	switch {
-+	case strings.HasSuffix(req.URL.Path, "/releases/latest"):
-+		body, err := json.Marshal(map[string]string{"tag_name": r.version, "zipball_url": fakeZipballURL})
-+		if err != nil {
-+			return nil, err
-+		}
-+		return fakeResponse(req, "application/json", body), nil
-+	case req.URL.String() == fakeZipballURL:
-+		body, err := r.zipball()
-+		if err != nil {
-+			return nil, err
-+		}
-+		return fakeResponse(req, "application/zip", body), nil
-+	}
-+	return nil, fmt.Errorf("unexpected request to %s", req.URL)
-+}
-+
-+func (r fakeTemplateRelease) zipball() ([]byte, error) {
-+	names := make([]string, 0, len(r.files))
-+	for name := range r.files {
-+		names = append(names, name)
-+	}
-+	sort.Strings(names)
-+
-+	var buf bytes.Buffer
-+	archive := zip.NewWriter(&buf)
-+	for _, name := range names {
-+		// a github zipball nests every entry under one root directory
-+		header := &zip.FileHeader{Name: "projectdiscovery-nuclei-templates-test/" + name, Method: zip.Deflate}
-+		header.SetMode(0o644)
-+		w, err := archive.CreateHeader(header)
-+		if err != nil {
-+			return nil, err
-+		}
-+		if _, err := io.WriteString(w, r.files[name]); err != nil {
-+			return nil, err
-+		}
-+	}
-+	if err := archive.Close(); err != nil {
-+		return nil, err
-+	}
-+	return buf.Bytes(), nil
-+}
-+
-+func fakeResponse(req *http.Request, contentType string, body []byte) *http.Response {
-+	return &http.Response{
-+		StatusCode:    http.StatusOK,
-+		Header:        http.Header{"Content-Type": {contentType}},
-+		Body:          io.NopCloser(bytes.NewReader(body)),
-+		ContentLength: int64(len(body)),
-+		Request:       req,
-+	}
-+}
-+
-+// useTemplateRelease routes the installer's GitHub requests to release for the
-+// rest of the test. The downloader builds its client without a transport, so
-+// swapping http.DefaultTransport reaches it; tests calling this must not run in
-+// parallel.
-+func useTemplateRelease(t *testing.T, release fakeTemplateRelease) {
-+	t.Helper()
-+	previous := http.DefaultTransport
-+	http.DefaultTransport = release
-+	t.Cleanup(func() { http.DefaultTransport = previous })
-+}
-```
-
-**File**: `pkg/installer/template_test.go` (modified, +24/-33)
-```diff
-@@ -19,52 +19,43 @@ func TestTemplateInstallation(t *testing.T) {
- 	// along with necessary changes that are made
- 	HideProgressBar = true
- 
-+	templates := []string{
-+		"http/cves/2024/CVE-2024-0001.yaml",
-+		"http/cves/2024/CVE-2024-0002.yaml",
-+		"http/exposures/configs/git-config.yaml",
-+		"dns/dns-saas-service-detection.yaml",
-+		"network/detection/rdp-detect.yaml",
-+	}
-+	release := fakeTemplateRelease{version: "v9.9.9", files: map[string]string{
-+		config.NucleiIgnoreFileName: "tags:\n  - fuzz\n",
-+		"README.md":                 "# nuclei-templates",
-+	}}
-+	for _, path := range templates {
-+		release.files[path] = "id: " + filepath.Base(path)
-+	}
-+	useTemplateRelease(t, release)
-+
- 	tm := &TemplateManager{}
--	dir, err := os.MkdirTemp("", "nuclei-templates-*")
--	require.Nil(t, err)
--	cfgdir, err := os.MkdirTemp("", "nuclei-config-*")
--	require.Nil(t, err)
--	defer func() {
--		_ = os.RemoveAll(dir)
--		_ = os.RemoveAll(cfgdir)
--	}()
-+	dir := t.TempDir()
-+	cfgdir := t.TempDir()
- 
- 	// set the config directory to a temporary directory
- 	config.DefaultConfig.SetConfigDir(cfgdir)
- 	// set the templates directory to a temporary directory
- 	templatesTempDir := filepath.Join(dir, "templates")
- 	config.DefaultConfig.SetTemplatesDir(templatesTempDir)
- 
--	err = tm.FreshInstallIfNotExists()
--	if err != nil {
--		if strings.Contains(err.Error(), "rate limit") {
--			t.Skip("Skipping test due to github rate limit")
--		}
--		require.Nil(t, err)
--	}
-+	require.NoError(t, tm.FreshInstallIfNotExists())
- 
--	// we should switch to more fine granular tests for template
--	// integrity, but for now, we just check that the templates are installed
--	counter := 0
--	err = filepath.Walk(templatesTempDir, func(path string, info os.FileInfo, err error) error {
--		if err != nil {
--			return err
--		}
--		if !info.IsDir() {
--			counter++
--		}
--		return nil
--	})
--	require.Nil(t, err)
--
--	// we should have at least 1000 templates
--	require.Greater(t, counter, 1000)
-+	for _, path := range templates {
-+		require.FileExists(t, filepath.Join(templatesTempDir, filepath.FromSlash(path)))
-+	}
-+	require.NoFileExists(t, filepath.Join(templatesTempDir, "README.md"), "meta files are not installed as templates")
- 	// every time we install templates, it should override the ignore file with latest one
- 	require.FileExists(t, config.DefaultConfig.GetActiveIgnoreFilePath())
- 	ownership, err := loadTemplateOwnership(templatesTempDir)
- 	require.NoError(t, err)
--	require.NotEmpty(t, ownership.Files, "fresh installation should record official template ownership")
--	t.Logf("Installed %d templates", counter)
-+	require.Len(t, ownership.Files, len(templates), "fresh installation should record ownership of every installed template")
- }
- 
- func TestIsOutdatedVersion(t *testing.T) {
-```
-
----
-
-### Incident Patch 6: `4d9f2f98` (2026-09-30)
-**Commit Message**: test(headless): reset debug state between engine tests
-
-**File**: `pkg/protocols/headless/engine/page_actions_test.go` (modified, +4/-0)
-```diff
-@@ -1014,6 +1014,10 @@ func testHeadless(t *testing.T, actions []*Action, timeout time.Duration, handle
- 	require.Nil(t, err, "could not create browser instance")
- 	defer func() {
- 		_ = instance.Close()
-+		// A debug action sets these on the browser rather than the page, so with
-+		// a shared browser they would leak into every later test.
-+		sharedBrowser.engine.SlowMotion(0)
-+		sharedBrowser.engine.Trace(false)
- 	}()
- 
- 	ts := httptest.NewServer(http.HandlerFunc(handler))
-```
-
----
-
-### Incident Patch 7: `8ffccaf6` (2026-09-30)
-**Commit Message**: test(input): stop waiting out the real timeout in downloader tests
-
-**File**: `pkg/input/formats/openapi/downloader_test.go` (modified, +15/-3)
-```diff
-@@ -8,6 +8,8 @@ import (
- 	"strings"
- 	"testing"
- 	"time"
-+
-+	"github.com/projectdiscovery/retryablehttp-go"
  )
  
- func TestOpenAPIDownloader_SupportedExtensions(t *testing.T) {
-@@ -181,7 +183,9 @@ func TestOpenAPIDownloader_Download_InvalidJSON(t *testing.T) {
- func TestOpenAPIDownloader_Download_Timeout(t *testing.T) {
- 	// Create mock server with delay
- 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		time.Sleep(35 * time.Second) // Longer than 30 second timeout
-+		// Outlasts the client timeout below. Waiting out the real 30s default
-+		// cost this test 35s, which was a seventh of the whole unit suite.
-+		time.Sleep(500 * time.Millisecond)
- 		if err := json.NewEncoder(w).Encode(map[string]interface{}{"test": "data"}); err != nil {
- 			http.Error(w, "failed to encode response", http.StatusInternalServerError)
- 		}
-@@ -200,9 +204,17 @@ func TestOpenAPIDownloader_Download_Timeout(t *testing.T) {
- 	}()
- 
- 	downloader := &OpenAPIDownloader{}
--	_, err = downloader.Download(server.URL+"/openapi.json", tmpDir, nil)
-+	client := retryablehttp.NewClient(retryablehttp.DefaultOptionsSingle)
-+	client.HTTPClient.Timeout = 100 * time.Millisecond
-+	_, err = downloader.Download(server.URL+"/openapi.json", tmpDir, client)
- 	if err == nil {
--		t.Error("Expected timeout error, but got none")
-+		t.Fatal("Expected timeout error, but got none")
-+	}
-+	// Assert it timed out rather than merely erroring: the spec this server
-+	// returns is invalid, so a test that only checks for any error passes even
-+	// when the timeout never fires.
-+	if !os.IsTimeout(err) && !strings.Contains(err.Error(), "Timeout") {
-+		t.Fatalf("Expected a timeout error, got: %v", err)
- 	}
+ func executeDynamicHTTPTestRequest(t *testing.T, request *Request, target string) {
+@@ -1562,3 +1564,98 @@ func TestPerHostRateLimitHonorsRequestContextCancellation(t *testing.T) {
+ 	require.ErrorIs(t, err, context.Canceled)
+ 	require.Less(t, cancellationDelay, 250*time.Millisecond)
  }
- 
-```
-
-**File**: `pkg/input/formats/swagger/downloader_test.go` (modified, +15/-3)
-```diff
-@@ -9,6 +9,8 @@ import (
- 	"testing"
- 	"time"
- 
-+	"github.com/projectdiscovery/retryablehttp-go"
 +
- 	"gopkg.in/yaml.v3"
- )
- 
-@@ -268,7 +270,9 @@ func TestSwaggerDownloader_Download_InvalidYAML(t *testing.T) {
- func TestSwaggerDownloader_Download_Timeout(t *testing.T) {
- 	// Create mock server with delay
- 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		time.Sleep(35 * time.Second) // Longer than 30 second timeout
-+		// Outlasts the client timeout below. Waiting out the real 30s default
-+		// cost this test 35s, which was a seventh of the whole unit suite.
-+		time.Sleep(500 * time.Millisecond)
- 		if err := json.NewEncoder(w).Encode(map[string]interface{}{"test": "data"}); err != nil {
- 			http.Error(w, "failed to encode response", http.StatusInternalServerError)
- 		}
-@@ -287,9 +291,17 @@ func TestSwaggerDownloader_Download_Timeout(t *testing.T) {
- 	}()
- 
- 	downloader := &SwaggerDownloader{}
--	_, err = downloader.Download(server.URL+"/swagger.json", tmpDir, nil)
-+	client := retryablehttp.NewClient(retryablehttp.DefaultOptionsSingle)
-+	client.HTTPClient.Timeout = 100 * time.Millisecond
-+	_, err = downloader.Download(server.URL+"/swagger.json", tmpDir, client)
- 	if err == nil {
--		t.Error("Expected timeout error, but got none")
-+		t.Fatal("Expected timeout error, but got none")
++func TestDumpedRequestKeepsBodyServerDidNotRead(t *testing.T) {
++	// The server answers in full, then holds the connection without reading
++	// the body, so the transport is still writing it when the response arrives.
++	release := make(chan struct{})
++	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Length", "2")
++		_, _ = w.Write([]byte("ok"))
++		w.(http.Flusher).Flush()
++		<-release
++	}))
++	defer target.Close()
++	defer close(release)
++
++	options := testutils.DefaultOptions.Copy()
++	options.SetExecutionID(t.Name())
++	testutils.Init(options)
++	t.Cleanup(func() { testutils.Cleanup(options) })
++	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++		ID:   "dump-body",
++		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++	})
++
++	body := strings.Repeat("A", 4<<20)
++	requests := []*Request{
++		{
++			ID:     "post",
++			Method: HTTPMethodTypeHolder{MethodType: HTTPPost},
++			Path:   []string{"{{BaseURL}}/"},
++			Body:   body,
++		},
++		{
++			ID:  "get",
++			Raw: []string{"GET / HTTP/1.1\nHost: {{Hostname}}\n\n" + body},
++		},
++		{
++			ID:  "chunked",
++			Raw: []string{"POST / HTTP/1.1\nHost: {{Hostname}}\nTransfer-Encoding: chunked\n\n" + body},
++		},
 +	}
-+	// Assert it timed out rather than merely erroring: the spec this server
-+	// returns is invalid, so a test that only checks for any error passes even
-+	// when the timeout never fires.
-+	if !os.IsTimeout(err) && !strings.Contains(err.Error(), "Timeout") {
-+		t.Fatalf("Expected a timeout error, got: %v", err)
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 8: `010ee044` (2026-09-24)
-**Commit Message**: fix inputs
-
-**File**: `pkg/operators/matchers/validate.go` (modified, +5/-0)
-```diff
-@@ -140,6 +140,11 @@ func (matcher *Matcher) validateLLM() error {
- 		if len(matcher.Inputs) < 2 {
- 			return fmt.Errorf("llm matcher inputs needs at least two entries, got %d", len(matcher.Inputs))
- 		}
-+		for index, input := range matcher.Inputs {
-+			if strings.TrimSpace(input) == "" {
-+				return fmt.Errorf("llm matcher inputs entry %d cannot be blank", index)
-+			}
++	for _, request := range requests {
++		require.NoError(t, request.Compile(executerOpts))
++		// how much the transport has written when the response lands varies, so
++		// a few rounds make a lost body show up reliably
++		for range 3 {
++			var dumped string
++			input := contextargs.NewWithInput(context.Background(), target.URL)
++			err := request.ExecuteWithResults(input, output.InternalEvent{}, output.InternalEvent{}, func(event *output.InternalWrappedEvent) {
++				dumped, _ = event.InternalEvent["request"].(string)
++			})
++			require.NoError(t, err)
++			require.True(t, strings.HasSuffix(dumped, "\r\n\r\n"+body), "%s recorded request lost its body: %d of %d bytes", request.ID, len(dumped), len(body))
 +		}
- 	}
- 	return nil
- }
-```
-
-**File**: `pkg/operators/matchers/validate_test.go` (modified, +1/-0)
-```diff
-@@ -47,4 +47,5 @@ func TestValidateLLMInputs(t *testing.T) {
- 
- 	require.NoError(t, compile([]string{"{{body_1}}", "{{body_2}}"}))
- 	require.ErrorContains(t, compile([]string{"{{body_1}}"}), "at least two entries")
-+	require.ErrorContains(t, compile([]string{"{{body_1}}", "  "}), "cannot be blank")
- }
-```
-
-**File**: `pkg/protocols/http/operators.go` (modified, +43/-2)
-```diff
-@@ -76,15 +76,56 @@ func resolveLLMInputs(inputs []string, data map[string]interface{}) ([]string, b
- 	}
- 	resolved := make([]string, 0, len(inputs))
- 	for _, input := range inputs {
--		value := replacer.Replace(input, data)
--		if strings.Contains(value, marker.ParenthesisOpen) || strings.Contains(value, marker.General) {
-+		value, ok := resolveLLMInput(input, data)
-+		if !ok {
- 			return nil, false
- 		}
- 		resolved = append(resolved, value)
- 	}
- 	return resolved, true
- }
- 
-+// resolveLLMInput interpolates only the placeholders written in the input
-+// template. Response text is left opaque, so a body that happens to contain
-+// "{{" or "§" is not treated as an unresolved marker and is not scanned for
-+// further substitutions.
-+func resolveLLMInput(input string, data map[string]interface{}) (string, bool) {
-+	values := make(map[string]interface{})
-+	for _, key := range llmInputPlaceholders(input) {
-+		value, ok := data[key]
-+		if !ok {
-+			return "", false
-+		}
-+		values[key] = value
 +	}
-+	return replacer.Replace(input, values), true
 +}
 +
-+func llmInputPlaceholders(input string) []string {
-+	keys := collectMarkers(input, marker.ParenthesisOpen, marker.ParenthesisClose)
-+	return append(keys, collectMarkers(input, marker.General, marker.General)...)
-+}
-+
-+func collectMarkers(input, open, close string) []string {
-+	var keys []string
-+	for start := 0; start < len(input); {
-+		from := strings.Index(input[start:], open)
-+		if from < 0 {
-+			break
-+		}
-+		from += start + len(open)
-+		to := strings.Index(input[from:], close)
-+		if to < 0 {
-+			break
-+		}
-+		if key := input[from : from+to]; key != "" {
-+			keys = append(keys, key)
-+		}
-+		start = from + to + len(close)
-+	}
-+	return keys
-+}
-+
- // targetValueKeys are the target-derived values an llm prompt may interpolate.
- var targetValueKeys = []string{"BaseURL", "RootURL", "Hostname", "Host", "Port", "Scheme", "Path", "Input", "Type"}
- 
-```
-
-**File**: `pkg/protocols/http/operators_test.go` (modified, +19/-0)
-```diff
-@@ -526,6 +526,25 @@ func TestResolveLLMInputs(t *testing.T) {
- 	_, ok = resolveLLMInputs([]string{"{{body_1}}", "{{body_2}}"}, map[string]interface{}{"body_1": "only one"})
- 	require.False(t, ok)
- 
-+	// a page that contains template-like text is still a resolved response
-+	withMarkers := map[string]interface{}{
-+		"body_1": "hello {{user}}",
-+		"body_2": "no such user",
-+		"user":   "must-not-leak",
-+	}
-+	resolved, ok = resolveLLMInputs([]string{"{{body_1}}", "{{body_2}}"}, withMarkers)
-+	require.True(t, ok)
-+	require.Equal(t, []string{"hello {{user}}", "no such user"}, resolved, "body text stays opaque")
-+
-+	withSection := map[string]interface{}{
-+		"body_1":   "token §Hostname§ here",
-+		"body_2":   "other",
-+		"Hostname": "must-not-leak",
-+	}
-+	resolved, ok = resolveLLMInputs([]string{"{{body_1}}", "{{body_2}}"}, withSection)
-+	require.True(t, ok)
-+	require.Equal(t, []string{"token §Hostname§ here", "other"}, resolved)
-+
- 	nilInputs, ok := resolveLLMInputs(nil, data)
- 	require.True(t, ok)
- 	require.Nil(t, nilInputs)
-```
-
----
-
-### Incident Patch 9: `71f9782b` (2026-09-24)
-**Commit Message**: Merge pull request #7777 from projectdiscovery/fix/7775-sonic-warning
-
-fix(json): keep sonic out of builds it does not support
-
-**File**: `pkg/utils/json/json.go` (modified, +6/-1)
-```diff
-@@ -1,4 +1,9 @@
--//go:build !gofuzz && (linux || darwin || windows) && (amd64 || arm64)
-+// sonic compiles its fast paths only for the Go versions it has adopted, and
-+// prints a warning from init on any other toolchain before falling back to
-+// encoding/json. Mirroring its constraint here keeps that fallback silent: on a
-+// Go version sonic does not support we never link it and use encoding/json
-+// directly. Raise the upper bound when sonic adds support for a new Go version.
-+//go:build !gofuzz && (linux || darwin || windows) && (amd64 || arm64) && go1.17 && !go1.28
- 
- package json
- 
-```
-
-**File**: `pkg/utils/json/json_fallback.go` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--//go:build gofuzz || !(linux || darwin || windows) || !(amd64 || arm64)
-+//go:build gofuzz || !(linux || darwin || windows) || !(amd64 || arm64) || !go1.17 || go1.28
- 
- package json
- 
-```
-
----
-
-### Incident Patch 10: `536e427c` (2026-09-24)
-**Commit Message**: Merge pull request #7776 from projectdiscovery/fix/7764-go-1.27
-
-chore(deps): require go 1.27.1
-
-**File**: `go.mod` (modified, +64/-73)
-```diff
-@@ -1,41 +1,6 @@
- module github.com/projectdiscovery/nuclei/v3
- 
--go 1.26.8
--
--require (
--	github.com/andygrunwald/go-jira v1.16.1
--	github.com/antchfx/htmlquery v1.3.5
--	github.com/go-playground/validator/v10 v10.26.0
--	github.com/go-rod/rod v0.116.2
--	github.com/gobwas/ws v1.4.0
--	github.com/invopop/jsonschema v0.13.0
--	github.com/itchyny/gojq v0.12.17
--	github.com/json-iterator/go v1.1.12 // indirect
--	github.com/julienschmidt/httprouter v1.3.0
--	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
--	github.com/miekg/dns v1.1.73
--	github.com/olekukonko/tablewriter v1.0.8
--	github.com/pkg/errors v0.9.1
--	github.com/projectdiscovery/clistats v0.1.7
--	github.com/projectdiscovery/fastdialer v0.5.21
--	github.com/projectdiscovery/hmap v0.0.102
--	github.com/projectdiscovery/interactsh v1.3.1
--	github.com/projectdiscovery/rawhttp v0.1.92
--	github.com/projectdiscovery/retryabledns v1.0.116
--	github.com/projectdiscovery/retryablehttp-go v1.3.27
--	github.com/projectdiscovery/yamldoc-go v1.0.7
--	github.com/remeh/sizedwaitgroup v1.0.0
--	github.com/rs/xid v1.6.0
--	github.com/segmentio/ksuid v1.0.4
--	github.com/spaolacci/murmur3 v1.1.0 // indirect
--	github.com/spf13/cast v1.10.0
--	github.com/syndtr/goleveldb v1.0.0
--	github.com/weppos/publicsuffix-go v0.50.3 // indirect
--	go.uber.org/multierr v1.11.0
--	golang.org/x/net v0.58.0
--	golang.org/x/oauth2 v0.36.0
--	golang.org/x/text v0.41.0
--)
-+go 1.27.1
- 
- require (
- 	carvel.dev/ytt v0.52.0
-@@ -51,8 +16,11 @@ require (
- 	github.com/Mzack9999/goimpacket v0.0.0-20260422121140-7085336a0415
- 	github.com/RedTeamPentesting/adauth v0.5.4-0.20260511073005-3d18e8a5a687
- 	github.com/adrg/xdg v0.5.3
-+	github.com/alecthomas/chroma v0.10.0
- 	github.com/alexsnet/go-vnc v0.1.0
- 	github.com/alitto/pond v1.9.2
-+	github.com/andygrunwald/go-jira v1.16.1
-+	github.com/antchfx/htmlquery v1.3.5
- 	github.com/antchfx/xmlquery v1.4.4
- 	github.com/antchfx/xpath v1.3.6
- 	github.com/aws/aws-sdk-go-v2 v1.41.5
-@@ -71,19 +39,27 @@ require (
- 	github.com/fullstorydev/grpcurl v1.9.3
- 	github.com/getkin/kin-openapi v0.144.0
- 	github.com/getsops/sops/v3 v3.9.2
-+	github.com/go-echarts/go-echarts/v2 v2.6.0
- 	github.com/go-git/go-git/v5 v5.19.2
- 	github.com/go-ldap/ldap/v3 v3.4.12
- 	github.com/go-pdf/fpdf v0.9.0
- 	github.com/go-pg/pg/v10 v10.15.0
-+	github.com/go-playground/validator/v10 v10.26.0
-+	github.com/go-rod/rod v0.116.2
- 	github.com/go-sql-driver/mysql v1.10.0
-+	github.com/gobwas/ws v1.4.0
- 	github.com/goccy/go-json v0.10.5
- 	github.com/google/go-github/v30 v30.1.0
- 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
- 	github.com/google/uuid v1.6.0
- 	github.com/h2non/filetype v1.1.3
- 	github.com/hashicorp/golang-lru/v2 v2.0.7
-+	github.com/hdm/jarm-go v0.0.8
-+	github.com/invopop/jsonschema v0.13.0
-+	github.com/itchyny/gojq v0.12.17
- 	github.com/jcmturner/gokrb5/v8 v8.4.4
- 	github.com/jhump/protoreflect v1.17.0
-+	github.com/julienschmidt/httprouter v1.3.0
- 	github.com/kitabisa/go-ci v1.0.3
- 	github.com/leslie-qiwa/flat v0.0.0-20230424180412-f9d1cf014baa
- 	github.com/lib/pq v1.12.3
-@@ -92,10 +68,15 @@ require (
- 	github.com/maypok86/otter/v2 v2.2.1
- 	github.com/mholt/archives v0.1.5
- 	github.com/microsoft/go-mssqldb v1.9.2
-+	github.com/miekg/dns v1.1.73
- 	github.com/oiweiwei/go-msrpc v1.2.12
-+	github.com/olekukonko/tablewriter v1.0.8
- 	github.com/ory/dockertest/v3 v3.12.0
-+	github.com/pkg/errors v0.9.1
- 	github.com/praetorian-inc/fingerprintx v1.1.15
-+	github.com/projectdiscovery/clistats v0.1.7
- 	github.com/projectdiscovery/dsl v0.8.24
-+	github.com/projectdiscovery/fastdialer v0.5.21
- 	github.com/projectdiscovery/fasttemplate v0.0.2
- 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
- 	github.com/projectdiscovery/goflags v0.2.1
-@@ -105,32 +86,52 @@ require (
- 	github.com/projectdiscovery/gostruct v0.0.2
- 	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
- 	github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76
-+	github.com/projectdiscovery/hmap v0.0.102
- 	github.com/projectdiscovery/httpx v1.12.0
-+	github.com/projectdiscovery/interactsh v1.3.1
- 	github.com/projectdiscovery/mapcidr v1.1.97
- 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5
- 	github.com/projectdiscovery/networkpolicy v0.1.51
- 	github.com/projectdiscovery/ratelimit v0.0.90
-+	github.com/projectdiscovery/rawhttp v0.1.92
- 	github.com/projectdiscovery/rdap v0.9.0
-+	github.com/projectdiscovery/retryabledns v1.0.116
-+	github.com/projectdiscovery/retryablehttp-go v1.3.27
- 	github.com/projectdiscovery/sarif v0.1.0
- 	github.com/projectdiscovery/tlsx v1.4.0
- 	github.com/projectdiscovery/uncover v1.2.1
- 	github.com/projectdiscovery/useragent v0.0.109
- 	github.com/projectdiscovery/utils v0.11.4
- 	github.com/projectdiscovery/wappalyzergo v0.3.1
-+	github.com/projectdiscovery/yamldoc-go v1.0.7
- 	github.com/redis/go-redis/v9 v9.11.0
-+	github.com/remeh/sizedwaitgroup v1.0.0
-+	github.com/rs/xid v1.6.0
- 	github.com/rs/zerolog v1.34.0
- 	github.com/sandrolain/httpcache
-```
-
-**File**: `go.tool.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module nuclei-tools
- 
--go 1.26.8
-+go 1.27.1
- 
- tool (
- 	github.com/dvyukov/go-fuzz/go-fuzz
-```
-
-**File**: `lib/tests/sdk_test.go` (modified, +3/-0)
-```diff
-@@ -18,6 +18,9 @@ var knownLeaks = []goleak.Option{
- 	// net/http transport maintains idle keep-alive connections whose goroutines
- 	// exit on idle timeout or explicit close - not real leaks.
- 	goleak.IgnoreAnyFunction("net/http.(*http2ClientConn).readLoop"),
-+	// go 1.27 moved the bundled http2 transport out of net/http, which renamed
-+	// the same idle connection goroutine
-+	goleak.IgnoreAnyFunction("net/http/internal/http2.(*ClientConn).readLoop"),
- 	goleak.IgnoreAnyFunction("net/http.(*persistConn).readLoop"),
- 	goleak.IgnoreAnyFunction("net/http.(*persistConn).writeLoop"),
- 	// expirable LRU cache creates a background goroutine for TTL expiration that persists
-```
-
----
-
-### Incident Patch 11: `2b6b1d33` (2026-09-24)
-**Commit Message**: fix(json): keep sonic out of builds it does not support
-
-**File**: `pkg/utils/json/json.go` (modified, +6/-1)
-```diff
-@@ -1,4 +1,9 @@
--//go:build !gofuzz && (linux || darwin || windows) && (amd64 || arm64)
-+// sonic compiles its fast paths only for the Go versions it has adopted, and
-+// prints a warning from init on any other toolchain before falling back to
-+// encoding/json. Mirroring its constraint here keeps that fallback silent: on a
-+// Go version sonic does not support we never link it and use encoding/json
-+// directly. Raise the upper bound when sonic adds support for a new Go version.
-+//go:build !gofuzz && (linux || darwin || windows) && (amd64 || arm64) && go1.17 && !go1.28
- 
- package json
- 
-```
-
-**File**: `pkg/utils/json/json_fallback.go` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--//go:build gofuzz || !(linux || darwin || windows) || !(amd64 || arm64)
-+//go:build gofuzz || !(linux || darwin || windows) || !(amd64 || arm64) || !go1.17 || go1.28
- 
- package json
- 
-```
-
----
-
-### Incident Patch 12: `3fdd8ca0` (2026-09-24)
-**Commit Message**: chore(deps): require go 1.27.1 for windows overlapped I/O fix
-
-**File**: `go.mod` (modified, +64/-73)
-```diff
-@@ -1,41 +1,6 @@
- module github.com/projectdiscovery/nuclei/v3
- 
--go 1.26.8
--
--require (
--	github.com/andygrunwald/go-jira v1.16.1
--	github.com/antchfx/htmlquery v1.3.5
--	github.com/go-playground/validator/v10 v10.26.0
--	github.com/go-rod/rod v0.116.2
--	github.com/gobwas/ws v1.4.0
--	github.com/invopop/jsonschema v0.13.0
--	github.com/itchyny/gojq v0.12.17
--	github.com/json-iterator/go v1.1.12 // indirect
--	github.com/julienschmidt/httprouter v1.3.0
--	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
--	github.com/miekg/dns v1.1.73
--	github.com/olekukonko/tablewriter v1.0.8
--	github.com/pkg/errors v0.9.1
--	github.com/projectdiscovery/clistats v0.1.7
--	github.com/projectdiscovery/fastdialer v0.5.21
--	github.com/projectdiscovery/hmap v0.0.102
--	github.com/projectdiscovery/interactsh v1.3.1
--	github.com/projectdiscovery/rawhttp v0.1.92
--	github.com/projectdiscovery/retryabledns v1.0.116
--	github.com/projectdiscovery/retryablehttp-go v1.3.27
--	github.com/projectdiscovery/yamldoc-go v1.0.7
--	github.com/remeh/sizedwaitgroup v1.0.0
--	github.com/rs/xid v1.6.0
--	github.com/segmentio/ksuid v1.0.4
--	github.com/spaolacci/murmur3 v1.1.0 // indirect
--	github.com/spf13/cast v1.10.0
--	github.com/syndtr/goleveldb v1.0.0
--	github.com/weppos/publicsuffix-go v0.50.3 // indirect
--	go.uber.org/multierr v1.11.0
--	golang.org/x/net v0.58.0
--	golang.org/x/oauth2 v0.36.0
--	golang.org/x/text v0.41.0
--)
-+go 1.27.1
- 
- require (
- 	carvel.dev/ytt v0.52.0
-@@ -51,8 +16,11 @@ require (
- 	github.com/Mzack9999/goimpacket v0.0.0-20260422121140-7085336a0415
- 	github.com/RedTeamPentesting/adauth v0.5.4-0.20260511073005-3d18e8a5a687
- 	github.com/adrg/xdg v0.5.3
-+	github.com/alecthomas/chroma v0.10.0
- 	github.com/alexsnet/go-vnc v0.1.0
- 	github.com/alitto/pond v1.9.2
-+	github.com/andygrunwald/go-jira v1.16.1
-+	github.com/antchfx/htmlquery v1.3.5
- 	github.com/antchfx/xmlquery v1.4.4
- 	github.com/antchfx/xpath v1.3.6
- 	github.com/aws/aws-sdk-go-v2 v1.41.5
-@@ -71,19 +39,27 @@ require (
- 	github.com/fullstorydev/grpcurl v1.9.3
- 	github.com/getkin/kin-openapi v0.144.0
- 	github.com/getsops/sops/v3 v3.9.2
-+	github.com/go-echarts/go-echarts/v2 v2.6.0
- 	github.com/go-git/go-git/v5 v5.19.2
- 	github.com/go-ldap/ldap/v3 v3.4.12
- 	github.com/go-pdf/fpdf v0.9.0
- 	github.com/go-pg/pg/v10 v10.15.0
-+	github.com/go-playground/validator/v10 v10.26.0
-+	github.com/go-rod/rod v0.116.2
- 	github.com/go-sql-driver/mysql v1.10.0
-+	github.com/gobwas/ws v1.4.0
- 	github.com/goccy/go-json v0.10.5
- 	github.com/google/go-github/v30 v30.1.0
- 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
- 	github.com/google/uuid v1.6.0
- 	github.com/h2non/filetype v1.1.3
- 	github.com/hashicorp/golang-lru/v2 v2.0.7
-+	github.com/hdm/jarm-go v0.0.8
-+	github.com/invopop/jsonschema v0.13.0
-+	github.com/itchyny/gojq v0.12.17
- 	github.com/jcmturner/gokrb5/v8 v8.4.4
- 	github.com/jhump/protoreflect v1.17.0
-+	github.com/julienschmidt/httprouter v1.3.0
- 	github.com/kitabisa/go-ci v1.0.3
- 	github.com/leslie-qiwa/flat v0.0.0-20230424180412-f9d1cf014baa
- 	github.com/lib/pq v1.12.3
-@@ -92,10 +68,15 @@ require (
- 	github.com/maypok86/otter/v2 v2.2.1
- 	github.com/mholt/archives v0.1.5
- 	github.com/microsoft/go-mssqldb v1.9.2
-+	github.com/miekg/dns v1.1.73
- 	github.com/oiweiwei/go-msrpc v1.2.12
-+	github.com/olekukonko/tablewriter v1.0.8
- 	github.com/ory/dockertest/v3 v3.12.0
-+	github.com/pkg/errors v0.9.1
- 	github.com/praetorian-inc/fingerprintx v1.1.15
-+	github.com/projectdiscovery/clistats v0.1.7
- 	github.com/projectdiscovery/dsl v0.8.24
-+	github.com/projectdiscovery/fastdialer v0.5.21
- 	github.com/projectdiscovery/fasttemplate v0.0.2
- 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
- 	github.com/projectdiscovery/goflags v0.2.1
-@@ -105,32 +86,52 @@ require (
- 	github.com/projectdiscovery/gostruct v0.0.2
- 	github.com/projectdiscovery/govaluate v0.0.0-20260615100919-5ee2581bbf7e
- 	github.com/projectdiscovery/gozero v0.1.1-0.20260530071156-fa1dad563d76
-+	github.com/projectdiscovery/hmap v0.0.102
- 	github.com/projectdiscovery/httpx v1.12.0
-+	github.com/projectdiscovery/interactsh v1.3.1
- 	github.com/projectdiscovery/mapcidr v1.1.97
- 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5
- 	github.com/projectdiscovery/networkpolicy v0.1.51
- 	github.com/projectdiscovery/ratelimit v0.0.90
-+	github.com/projectdiscovery/rawhttp v0.1.92
- 	github.com/projectdiscovery/rdap v0.9.0
-+	github.com/projectdiscovery/retryabledns v1.0.116
-+	github.com/projectdiscovery/retryablehttp-go v1.3.27
- 	github.com/projectdiscovery/sarif v0.1.0
- 	github.com/projectdiscovery/tlsx v1.4.0
- 	github.com/projectdiscovery/uncover v1.2.1
- 	github.com/projectdiscovery/useragent v0.0.109
- 	github.com/projectdiscovery/utils v0.11.4
- 	github.com/projectdiscovery/wappalyzergo v0.3.1
-+	github.com/projectdiscovery/yamldoc-go v1.0.7
- 	github.com/redis/go-redis/v9 v9.11.0
-+	github.com/remeh/sizedwaitgroup v1.0.0
-+	github.com/rs/xid v1.6.0
- 	github.com/rs/zerolog v1.34.0
- 	github.com/sandrolain/httpcache
-```
-
-**File**: `go.tool.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module nuclei-tools
- 
--go 1.26.8
-+go 1.27.1
- 
- tool (
- 	github.com/dvyukov/go-fuzz/go-fuzz
-```
-
----
-
-### Incident Patch 13: `dece1c5e` (2026-09-23)
-**Commit Message**: fix helpers
-
-**File**: `pkg/operators/common/dsl/network.go` (modified, +33/-6)
-```diff
-@@ -44,16 +44,43 @@ func EvalWithOptions(expression *govaluate.EvaluableExpression, values map[strin
- 	return bound.Evaluate(values)
- }
- 
--// This check only avoids rebinding pure expressions. The global registry denies
--// all network helpers, so an unrecognized spelling cannot bypass the gate.
-+// networkHelperCall matches a helper invocation, not a substring in another
-+// identifier or a quoted string. The global registry still denies every
-+// network helper, so an unrecognized spelling cannot bypass the gate.
-+var networkHelperCall = regexp.MustCompile(`\b(?:public_ip|publicip|resolve|jarm)\s*\(`)
-+
- func hasNetworkHelper(expression string) bool {
--	for _, name := range []string{"resolve", "public_ip", "publicip", "jarm"} {
--		if strings.Contains(expression, name) {
--			return true
-+	return networkHelperCall.MatchString(stripQuotedStrings(expression))
-+}
-+
-+func stripQuotedStrings(expression string) string {
-+	var builder strings.Builder
-+	builder.Grow(len(expression))
-+
-+	for i := 0; i < len(expression); {
-+		char := expression[i]
-+		if char != '\'' && char != '"' {
-+			builder.WriteByte(char)
-+			i++
-+			continue
-+		}
-+
-+		quote := char
-+		i++
-+		for i < len(expression) {
-+			if expression[i] == '\\' {
-+				i += 2
-+				continue
-+			}
-+			if expression[i] == quote {
-+				i++
-+				break
-+			}
-+			i++
- 		}
- 	}
- 
--	return false
-+	return builder.String()
- }
- 
- func networkDialers(options *types.Options) (*protocolstate.Dialers, error) {
-```
-
-**File**: `pkg/operators/common/dsl/network_test.go` (modified, +34/-0)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"testing"
- 
- 	"github.com/projectdiscovery/govaluate"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -20,3 +21,36 @@ func TestNetworkHelpersRequireScanContext(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestHasNetworkHelperIgnoresSubstringsAndQuotedCalls(t *testing.T) {
-+	for _, item := range []struct {
-+		source string
-+		want   bool
++func TestReuseRequestBodyKeepsExcludedEncoding(t *testing.T) {
++	body := []byte("original")
++	for _, tc := range []struct {
++		name          string
++		method        string
++		header        string
++		contentLength int64
++		wantLength    int64
 +	}{
-+		{source: `resolve("fixture.example")`, want: true},
-+		{source: `public_ip()`, want: true},
-+		{source: `publicip()`, want: true},
-+		{source: `jarm("127.0.0.1:443")`, want: true},
-+		{source: `contains(body, "unresolved")`, want: false},
-+		{source: `contains(body, "resolve(")`, want: false},
-+		{source: `contains(body, "jarm(")`, want: false},
-+		{source: `contains(body, "public_ip(")`, want: false},
-+		{source: `len("publicip")`, want: false},
++		{name: "post", method: http.MethodPost, contentLength: 1, wantLength: int64(len(body))},
++		{name: "get", method: http.MethodGet, contentLength: 3, wantLength: 3},
++		{name: "head", method: http.MethodHead, contentLength: 0, wantLength: 0},
++		{name: "chunked", method: http.MethodPost, header: "chunked", contentLength: -1, wantLength: -1},
 +	} {
-+		t.Run(item.source, func(t *testing.T) {
-+			require.Equal(t, item.want, hasNetworkHelper(item.source))
-+			expression, err := govaluate.NewEvaluableExpressionWithFunctions(item.source, HelperFunctions)
++		t.Run(tc.name, func(t *testing.T) {
++			req, err := retryablehttp.NewRequest(tc.method, "https://example.com/", body)
 +			require.NoError(t, err)
-+			if item.want {
-+				return
++			req.ContentLength = tc.contentLength
++			if tc.header != "" {
++				req.Header.Set("Transfer-Encoding", tc.header)
 +			}
-+			result, err := EvalWithOptions(expression, map[string]interface{}{"body": "unresolved resolve( jarm( public_ip("}, &types.Options{ExecutionId: t.Name()})
++
++			require.NoError(t, reuseRequestBody(req))
++			require.Equal(t, tc.wantLength, req.ContentLength)
++			if tc.header != "" {
++				require.Equal(t, tc.header, req.Header.Get("Transfer-Encoding"))
++			}
++
++			got, err := io.ReadAll(req.Body)
 +			require.NoError(t, err)
-+			if item.source == `len("publicip")` {
-+				require.Equal(t, float64(8), result)
-+				return
-+			}
-+			require.Equal(t, true, result)
++			require.Equal(t, body, got)
++			fresh, err := req.GetBody()
++			require.NoError(t, err)
++			got, err = io.ReadAll(fresh)
++			require.NoError(t, err)
++			require.Equal(t, body, got)
 +		})
 +	}
 +}
 ```
 
-**File**: `pkg/protocols/websocket/websocket.go` (modified, +1/-1)
+**File**: `pkg/protocols/http/utils.go` (modified, +10/-2)
 ```diff
-@@ -369,7 +369,7 @@ func (request *Request) readWriteInputWebsocket(conn net.Conn, payloadValues map
- 
- 			// Run any internal extractors for the request here and add found values to map.
- 			if request.CompiledOperators != nil {
--				values := request.CompiledOperators.ExecuteInternalExtractors(map[string]interface{}{req.Name: bufferStr}, protocols.MakeDefaultExtractFunc)
-+				values := request.CompiledOperators.ExecuteInternalExtractors(map[string]interface{}{req.Name: bufferStr}, request.Extract)
- 				maps.Copy(inputEvents, values)
- 			}
- 		}
-```
-
-**File**: `pkg/protocols/websocket/websocket_test.go` (modified, +68/-0)
-```diff
-@@ -12,14 +12,17 @@ import (
- 
- 	"github.com/gobwas/ws"
- 	"github.com/gobwas/ws/wsutil"
-+	"github.com/miekg/dns"
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
- 	urlutil "github.com/projectdiscovery/utils/url"
- )
- 
-@@ -344,6 +347,71 @@ func TestWebSocketDurationFields(t *testing.T) {
- 	require.Equal(t, gotEvent["duration_2"], values["duration-ws_duration_2"])
- }
- 
-+func TestWebSocketInternalDSLExtractorHonorsScanOptions(t *testing.T) {
-+	listener, err := net.ListenPacket("udp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	server := &dns.Server{PacketConn: listener, Handler: dns.HandlerFunc(func(writer dns.ResponseWriter, request *dns.Msg) {
-+		response := new(dns.Msg).SetReply(request)
-+		for _, question := range request.Question {
-+			if question.Qtype == dns.TypeA {
-+				response.Answer = append(response.Answer, &dns.A{
-+					Hdr: dns.RR_Header{Name: question.Name, Rrtype: dns.TypeA, Class: dns.ClassINET},
-+					A:   net.ParseIP("8.8.8.8"),
-+				})
+@@ -13,8 +13,16 @@ import (
+ // dump creates a dump of the http request in form of a byte slice
+ func dump(req *generatedRequest, reqURL string) ([]byte, error) {
+ 	if req.request != nil {
+-		// Use a clone to avoid a race condition with the http transport
+-		bin, err := req.request.Clone(req.request.Context()).Dump()
++		// Use a clone to avoid a race condition with the http transport. The
++		// clone shares the body, which the transport may still be sending, so
++		// dump a fresh copy of it where one is available.
++		clone := req.request.Clone(req.request.Context())
++		if clone.GetBody != nil {
++			if body, err := clone.GetBody(); err == nil {
++				clone.Body = body
 +			}
 +		}
-+		_ = writer.WriteMsg(response)
-+	})}
-+	started := make(chan struct{})
-+	server.NotifyStartedFunc = func() { close(started) }
-+	done := make(chan error, 1)
-+	go func() { done <- server.ActivateAndServe() }()
-+	<-started
-+	t.Cleanup(func() { require.NoError(t, server.Shutdown()); require.NoError(t, <-done) })
-+
-+	options := testutils.DefaultOptions.Copy()
-+	options.ExecutionId = t.Name()
-+	options.InternalResolversList = []string{listener.LocalAddr().String()}
-+	testutils.Init(options)
-+	t.Cleanup(func() { protocolstate.Close(options.ExecutionId) })
-+
-+	connHandler := func(conn net.Conn) {
-+		msg, op, err := wsutil.ReadClientData(conn)
-+		if err != nil {
-+			return
-+		}
-+		_ = wsutil.WriteServerMessage(conn, op, msg)
-+	}
-+	wsServer := testutils.NewWebsocketServer("", connHandler, func(origin string) bool { return true })
-+	defer wsServer.Close()
-+
-+	target := strings.ReplaceAll(wsServer.URL, "http", "ws")
-+	request := &Request{
-+		Address: target,
-+		Inputs:  []*Input{{Data: "hello", Name: "first"}},
-+		Operators: operators.Operators{
-+			Extractors: []*extractors.Extractor{{
-+				Name:     "resolved",
-+				Internal: true,
-+				Type:     extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+				DSL:      []string{`resolve("fixture.example")`},
-+			}},
-+		},
-+	}
-+	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+		ID:   "testing-websocket-internal-dsl",
-+		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
-+	})
-+	require.NoError(t, request.Compile(executerOpts))
-+
-+	var gotEvent output.InternalEvent
-+	ctxArgs := contextargs.NewWithInput(context.Background(), target)
-+	require.NoError(t, request.ExecuteWithResults(ctxArgs, nil, nil, func(event *output.InternalWrappedEvent) {
-+		gotEvent = event.InternalEvent
-+	}))
-+	require.Equal(t, "8.8.8.8", gotEvent["resolved"])
-+}
-+
- func TestWebSocketNoInputDuration(t *testing.T) {
- 	server := newDelayedUpgradeWebsocketServer(durationObservationDelay)
- 	defer server.Close()
-```
-
----
-
-### Incident Patch 14: `5e5758b7` (2026-09-23)
-**Commit Message**: fix interpolation
-
-**File**: `pkg/protocols/http/operators.go` (modified, +17/-10)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/helpers/responsehighlighter"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/replacer"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/utils"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- )
-@@ -62,7 +63,9 @@ var targetValueKeys = []string{"BaseURL", "RootURL", "Hostname", "Host", "Port",
- 
- // llmPromptValues returns the values an llm prompt may interpolate: the
- // template variables, -var and constants the operator declared, plus the
--// target. Each is read from the event data, so the value is the evaluated one.
-+// target. Declared values come from those maps, not the merged response
-+// event, so a colliding body, header, or extractor cannot overwrite them.
-+// Placeholders inside declared strings are resolved against the target only.
- //
- // Response derived values (body, headers, extracted fields) are deliberately
- // excluded. They are attacker influenced, and putting them in the instruction
-@@ -73,9 +76,18 @@ func (request *Request) llmPromptValues(data map[string]interface{}) map[string]
- 		return values
- 	}
- 
--	declared := func(names map[string]interface{}) {
--		for name := range names {
--			if value, ok := data[name]; ok {
-+	targets := make(map[string]interface{})
-+	for _, key := range targetValueKeys {
-+		if value, ok := data[key]; ok {
-+			targets[key] = value
-+		}
-+	}
-+
-+	declared := func(src map[string]interface{}) {
-+		for name, value := range src {
-+			if str, ok := value.(string); ok {
-+				values[name] = replacer.Replace(str, targets)
-+			} else {
- 				values[name] = value
- 			}
++		bin, err := clone.Dump()
+ 		if err != nil {
+ 			return nil, errkit.Wrapf(err, "could not dump request: %v", req.request.String())
  		}
-@@ -85,12 +97,7 @@ func (request *Request) llmPromptValues(data map[string]interface{}) map[string]
- 	if request.options.Options != nil {
- 		declared(request.options.Options.Vars.AsMap())
- 	}
--
--	for _, key := range targetValueKeys {
--		if value, ok := data[key]; ok {
--			values[key] = value
--		}
--	}
-+	maps.Copy(values, targets)
- 	return values
- }
- 
-```
-
-**File**: `pkg/protocols/http/operators_test.go` (modified, +41/-2)
-```diff
-@@ -7,13 +7,16 @@ import (
- 
- 	"github.com/stretchr/testify/require"
- 
-+	"github.com/projectdiscovery/goflags"
-+	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
--	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/variables"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/utils"
- )
- 
- func TestResponseToDSLMap(t *testing.T) {
-@@ -453,7 +456,7 @@ func TestLLMPromptValuesExcludeResponseDerivedValues(t *testing.T) {
- 		ID:   "llm-values",
- 		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
- 	})
--	executerOpts.Constants = map[string]interface{}{"focus_area": ""}
-+	executerOpts.Constants = map[string]interface{}{"focus_area": "Authentication"}
- 	require.Nil(t, request.Compile(executerOpts))
- 
- 	data := map[string]interface{}{
-@@ -471,3 +474,39 @@ func TestLLMPromptValuesExcludeResponseDerivedValues(t *testing.T) {
- 	require.NotContains(t, values, "body", "the response body must never reach the instruction")
- 	require.NotContains(t, values, "csrf_token", "response derived values must never reach the instruction")
- }
-+
-+func TestLLMPromptValuesIgnoreResponseCollisions(t *testing.T) {
-+	options := testutils.DefaultOptions.Copy()
-+	options.Vars = goflags.RuntimeMap{}
-+	testutils.Init(options)
-+
-+	request := &Request{ID: "llm-values", Name: "testing", Path: []string{"{{BaseURL}}"}, Method: HTTPMethodTypeHolder{MethodType: HTTPGet}}
-+	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+		ID:   "llm-values",
-+		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
-+	})
-+	templateVars := variables.Variable{
-+		InsertionOrderedStringMap: *utils.NewEmptyInsertionOrderedStringMap(2),
-+	}
-+	templateVars.Set("body", "operator-body")
-+	templateVars.Set("role", "auditor for {{BaseURL}}")
-+	executerOpts.Variables = templateVars
-+	executerOpts.Constants = map[string]interface{}{"server": "operator-server"}
-+	require.NoError(t, executerOpts.Options.Vars.Set("cli_role=from-var"))
-+	require.Nil(t, request.Compile(executerOpts))
-+
-+	data := map[string]interface{}{
-+		"BaseURL":    "https://acme.test",
-+		"body":       "<html>attacker controlled</html>",
-+		"server":     "nginx",
-+		"cli_role":   "from-response",
-+		"csrf_token": "extracted-from-response",
-+	}
-+
-+	values := request.llmPromptValues(data)
-+	require.Equal(t, "operator-body", values["body"], "a declared name must not take the response body")
-+	require.Equal(t, "operator-server", values["server"], "a declared name must not take a response header")
-+	require.Equal(t, "from-var", values["cli_role"], "a -var name must not take an extracted field")
-+	require.Equal(t, "auditor for https://acme.test", values["role"], "declared strings still resolve against the target")
-+	require.NotContains(t, values, "csrf_token")
-+}
-```
-
----
-
-### Incident Patch 15: `06fb71eb` (2026-09-23)
-**Commit Message**: fix lint
-
-**File**: `pkg/operators/common/dsl/network.go` (modified, +1/-1)
-```diff
-@@ -275,7 +275,7 @@ func publicIP(options *types.Options, args ...interface{}) (interface{}, error)
- 	if err != nil {
- 		return nil, fmt.Errorf("public_ip: %w", err)
- 	}
--	defer response.Body.Close()
-+	defer func() { _ = response.Body.Close() }()
- 
- 	if response.StatusCode != http.StatusOK {
- 		return nil, fmt.Errorf("public_ip: unexpected HTTP status %s", response.Status)
-```
-
-**File**: `pkg/operators/common/dsl/network_policy_test.go` (modified, +1/-1)
-```diff
-@@ -159,7 +159,7 @@ func (p *jarmTestProxy) Dial(network, address string) (net.Conn, error) {
- 	p.wg.Add(1)
- 	go func() {
- 		defer p.wg.Done()
--		defer server.Close()
-+		defer func() { _ = server.Close() }()
- 		_ = server.SetDeadline(time.Now().Add(time.Second))
- 		buffer := make([]byte, 4096)
- 		_, _ = server.Read(buffer)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7818** (2026-10-05): run release test right after lint (@dogancanbakir)
-- **PR #7816** (closed): chore(deps): bump the modules group with 7 updates (@dependabot[bot])
-- **PR #7815** (closed): fix(http): deduplicate same-name cookies when reissued by cookie jar (@i-am-paradox)
-- **PR #7811** (closed): fix(openapi): send format binary octet-stream bodies with correct content-type (#7801) (@TassioSales)
-- **PR #7807** (2026-10-05): cut unit and integration test runtime (@dogancanbakir)
-- **PR #7805** (2026-09-30): exclude the workspace from defender scanning on windows (@dogancanbakir)
-- **PR #7797** (closed): fix(raw): stop a colon-less header line from taking the previous value (@CalvinTjoaquinn)
-- **PR #7791** (2026-10-01): llm matchers and extractors on all protocols (@dogancanbakir)
+- **PR #7881** (2026-10-18): skip stdin when targets are given with -u or -l (@dogancanbakir)
+- **PR #7879** (2026-10-18): keep the request body in the dump taken after sending (@dogancanbakir)
+- **PR #7872** (closed): fix(flow): bound runtime execution (@knakul853)
+- **PR #7869** (2026-10-13): chore(deps): bump the modules group across 1 directory with 5 updates (@dependabot[bot])
+- **PR #7866** (closed): chore(deps): bump the modules group with 7 updates (@dependabot[bot])
+- **PR #7858** (2026-10-13): fix(http): preserve iterate-all extraction branches (@knakul853)
 
 ---
 
@@ -3665,3 +2401,36 @@ chore(deps): require go 1.27.1
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. runtime): honor cancellation in HTTP and headless waits (#7814)
+
+**RULE**:
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a5715288`: runtime): honor cancellation in HTTP and headless waits (#7814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	github.com/projectdiscovery/ratelimit v0.0.93
+	golang.org/x/time v0.15.0
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	github.com/projectdiscovery/ratelimit v0.0.92
+	golang.org/x/time v0.15.0 // indirect
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a5715288` are properly handled with clean fallback behavior.

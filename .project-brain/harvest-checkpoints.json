@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:14:30.931Z",
+  "last_updated": "2026-10-18T23:20:41.824Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1712,14 +1712,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "a5614cf23de6c3061d0fbab4caf31a304cd823e1be20218d6bc5de0639d154fb",
-      "verified_at": "2026-10-17T20:31:59.655Z",
+      "content_hash": "d23b10048bec3a8a3851a41ba0db79b871a240b24d463e3454c9591aaa50d0e9",
+      "verified_at": "2026-10-18T23:20:33.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:31:59.655Z"
+      "last_updated": "2026-10-18T23:20:33.225Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -3584,14 +3584,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "54e02af92fd819098b2642d67f2f6d3ee2209638e85a9a68e1dc2afe59f73fc2",
-      "verified_at": "2026-10-18T21:14:07.361Z",
+      "content_hash": "0acbcd6567e87bbffa91ef6c10cd06ec6dc19270a7371e277ef3e0a30232e9fb",
+      "verified_at": "2026-10-18T23:20:41.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:14:07.361Z"
+      "last_updated": "2026-10-18T23:20:41.824Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5242,6 +5242,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:14:30.931Z"
+    },
+    "gluestack/gluestack-ui": {
+      "repository": "gluestack/gluestack-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gluestack-gluestack-ui",
+      "content_hash": "f93142f932e5e4b1a21d02c574e6b4e294d726e57b5a6113a25c7b3db5d51b50",
+      "verified_at": "2026-10-18T23:20:25.055Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:20:25.055Z"
+    },
+    "zeronsh/zeron": {
+      "repository": "zeronsh/zeron",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zeronsh-zeron",
+      "content_hash": "86a029e9ffc481351652a3a74394a74980ac846ca6905cf50e2683832ce2de78",
+      "verified_at": "2026-10-18T23:20:28.036Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:20:28.036Z"
+    },
+    "welldone-software/why-did-you-render": {
+      "repository": "welldone-software/why-did-you-render",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-welldone-software-why-did-you-render",
+      "content_hash": "44088a1a70705dd74b92ca7ebb85740680a296924bd4d4bac7a2a4762a5f7cb6",
+      "verified_at": "2026-10-18T23:20:32.636Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:20:32.636Z"
+    },
+    "projectdiscovery/nuclei": {
+      "repository": "projectdiscovery/nuclei",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-projectdiscovery-nuclei",
+      "content_hash": "221bfb9d43a68e799c590e08f80e0dac7f3f370756d2be4b1431f389ecc8c890",
+      "verified_at": "2026-10-18T23:20:37.388Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:20:37.388Z"
+    },
+    "okteto/okteto": {
+      "repository": "okteto/okteto",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-okteto-okteto",
+      "content_hash": "bb80839393d0024831f809923806b438bdea1aa77595c648b380db7bc1e8c113",
+      "verified_at": "2026-10-18T23:20:38.328Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:20:38.328Z"
+    },
+    "supervc-stack/VectorChord": {
+      "repository": "supervc-stack/VectorChord",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-supervc-stack-vectorchord",
+      "content_hash": "3b11ad50eb3ec613d9a8247ffec73f523a35c97245dfe76923fc7feb8662c7a0",
+      "verified_at": "2026-10-18T23:20:40.324Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:20:40.324Z"
     }
   },
   "repos": {

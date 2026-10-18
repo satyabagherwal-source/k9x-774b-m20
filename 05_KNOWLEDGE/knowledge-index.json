@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:14:30.904Z",
-  "total_verified_learnings": 365,
+  "last_updated": "2026-10-18T23:20:41.786Z",
+  "total_verified_learnings": 371,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2786,14 +2786,19 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "a5cbbdd2",
-      "content_hash": "54e02af92fd819098b2642d67f2f6d3ee2209638e85a9a68e1dc2afe59f73fc2",
+      "source_version": "a0ad5379",
+      "content_hash": "0acbcd6567e87bbffa91ef6c10cd06ec6dc19270a7371e277ef3e0a30232e9fb",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
         {
           "number": 1712,
           "title": "pre-release polish for 1.5.0 (Overview cards, ui:build hash, setup text, Playwri",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1844,
+          "title": "compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an e",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2802,7 +2807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:14:07.314Z",
+      "verified_at": "2026-10-18T23:20:41.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8270,22 +8275,35 @@
     "learn-github-gluestack-gluestack-ui": {
       "learning_id": "learn-github-gluestack-gluestack-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gluestack-gluestack-ui",
+      "source": "gluestack/gluestack-ui",
+      "repository": "gluestack/gluestack-ui",
       "slug": "gluestack-gluestack-ui",
       "platform": "github",
       "source_url": "https://github.com/gluestack/gluestack-ui",
-      "source_version": "HEAD",
-      "content_hash": "4f28cfd3fcc0ae2d70c557bcb616411a3d7a29a52c9b049596dbff53a1ff8482",
+      "source_version": "b712c854",
+      "content_hash": "f93142f932e5e4b1a21d02c574e6b4e294d726e57b5a6113a25c7b3db5d51b50",
       "dossier_path": "07_PROJECT_LEARNING/gluestack-gluestack-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluestack-gluestack-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1837,
+          "title": "Merge pull request #3450 from gluestack/fix/modal-scroll-overflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.094Z"
+      "verified_at": "2026-10-18T23:20:25.009Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-go-chassis-go-chassis": {
       "learning_id": "learn-github-go-chassis-go-chassis",
@@ -11086,7 +11104,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "a5614cf23de6c3061d0fbab4caf31a304cd823e1be20218d6bc5de0639d154fb",
+      "content_hash": "d23b10048bec3a8a3851a41ba0db79b871a240b24d463e3454c9591aaa50d0e9",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -11096,8 +11114,23 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": 498,
+          "title": "Tokenizer-Model Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 972,
+          "title": "Semantic Vector Normalization Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 979,
           "title": "Tokenizer Lowercase & Special Token Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1840,
+          "title": "Maximum Sequence Length Truncation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11118,7 +11151,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-10-17T20:31:59.604Z",
+      "verified_at": "2026-10-18T23:20:33.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27776,22 +27809,35 @@
     "learn-github-okteto-okteto": {
       "learning_id": "learn-github-okteto-okteto",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "okteto-okteto",
+      "source": "okteto/okteto",
+      "repository": "okteto/okteto",
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "HEAD",
-      "content_hash": "9c704bba6fa0ac34d8421dce6930a3f4fc1424318aad434e5da4e7bc2b27212e",
+      "source_version": "f599c1e6",
+      "content_hash": "bb80839393d0024831f809923806b438bdea1aa77595c648b380db7bc1e8c113",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1842,
+          "title": "wait until the namespace is fully deleted in `okteto namespace delete` (#5187)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.753Z"
+      "verified_at": "2026-10-18T23:20:38.283Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-local-old-english-font-free": {
       "learning_id": "learn-local-old-english-font-free",
@@ -29610,22 +29656,35 @@
     "learn-github-projectdiscovery-nuclei": {
       "learning_id": "learn-github-projectdiscovery-nuclei",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "projectdiscovery-nuclei",
+      "source": "projectdiscovery/nuclei",
+      "repository": "projectdiscovery/nuclei",
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "HEAD",
-      "content_hash": "08f46aedc83e6c3767ce19a44af0b96aa57f6aa7a204a47ca27beafabdcacb36",
+      "source_version": "10f1967c",
+      "content_hash": "221bfb9d43a68e799c590e08f80e0dac7f3f370756d2be4b1431f389ecc8c890",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1841,
+          "title": "runtime): honor cancellation in HTTP and headless waits (#7814)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.114Z"
+      "verified_at": "2026-10-18T23:20:37.343Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-prometheus-prometheus": {
       "learning_id": "learn-github-prometheus-prometheus",
@@ -33293,22 +33352,35 @@
     "learn-github-supervc-stack-vectorchord": {
       "learning_id": "learn-github-supervc-stack-vectorchord",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "supervc-stack-vectorchord",
+      "source": "supervc-stack/VectorChord",
+      "repository": "supervc-stack/VectorChord",
       "slug": "supervc-stack-vectorchord",
       "platform": "github",
       "source_url": "https://github.com/supervc-stack/VectorChord",
-      "source_version": "HEAD",
-      "content_hash": "fa1f4321eba92de31a69365d94614251295dd42e6efe483d9648b06247dddb65",
+      "source_version": "0768657e",
+      "content_hash": "3b11ad50eb3ec613d9a8247ffec73f523a35c97245dfe76923fc7feb8662c7a0",
       "dossier_path": "07_PROJECT_LEARNING/supervc-stack-vectorchord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/supervc-stack-vectorchord-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1843,
+          "title": "build(deps): bump actions/upload-artifact from 7.0.0 to 7.0.1 (#454)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.759Z"
+      "verified_at": "2026-10-18T23:20:40.278Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-surrealdb-surrealdb": {
       "learning_id": "learn-github-surrealdb-surrealdb",
@@ -36245,22 +36317,35 @@
     "learn-github-welldone-software-why-did-you-render": {
       "learning_id": "learn-github-welldone-software-why-did-you-render",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "welldone-software-why-did-you-render",
+      "source": "welldone-software/why-did-you-render",
+      "repository": "welldone-software/why-did-you-render",
       "slug": "welldone-software-why-did-you-render",
       "platform": "github",
       "source_url": "https://github.com/welldone-software/why-did-you-render",
-      "source_version": "HEAD",
-      "content_hash": "e35db1328e70c527bd58a933464eff1086f21284d81a09cb242da270a20c6792",
+      "source_version": "3ec3512d",
+      "content_hash": "44088a1a70705dd74b92ca7ebb85740680a296924bd4d4bac7a2a4762a5f7cb6",
       "dossier_path": "07_PROJECT_LEARNING/welldone-software-why-did-you-render-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/welldone-software-why-did-you-render-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1839,
+          "title": "README: fix negligible spelling",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.326Z"
+      "verified_at": "2026-10-18T23:20:32.584Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-williewangwei-swiftui-tutorials": {
       "learning_id": "learn-github-williewangwei-swiftui-tutorials",
@@ -37191,22 +37276,35 @@
     "learn-github-zeronsh-zeron": {
       "learning_id": "learn-github-zeronsh-zeron",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zeronsh-zeron",
+      "source": "zeronsh/zeron",
+      "repository": "zeronsh/zeron",
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "HEAD",
-      "content_hash": "76ce298b89acd124169cd49f2c643f50a1d16686502368533778774b4b75066d",
+      "source_version": "c526d6f7",
+      "content_hash": "86a029e9ffc481351652a3a74394a74980ac846ca6905cf50e2683832ce2de78",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1838,
+          "title": "Render LaTeX math in messages with zatex (#912)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.527Z"
+      "verified_at": "2026-10-18T23:20:27.992Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zhangzhengeric-sage": {
       "learning_id": "learn-github-zhangzhengeric-sage",
@@ -50416,14 +50514,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 498,
       "title": "Tokenizer-Model Alignment Invariant",
-      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T23:02:06.089Z"
+      "verified_at": "2026-10-18T23:20:33.182Z"
     },
     "rule-499": {
       "learning_id": "rule-499",
@@ -57051,15 +57149,15 @@
       "learning_id": "rule-972",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 972,
-      "title": "Semantic Vector Normalization Invariant (Harvested from BAAI/bge-base-en-v1.5)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Semantic Vector Normalization Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-18T23:20:33.182Z"
     },
     "rule-973": {
       "learning_id": "rule-973",
@@ -69430,6 +69528,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:14:30.900Z"
+    },
+    "rule-1837": {
+      "learning_id": "rule-1837",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1837,
+      "title": "Merge pull request #3450 from gluestack/fix/modal-scroll-overflow",
+      "source_url": "https://github.com/gluestack/gluestack-ui",
+      "source_version": "b712c854",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:25.009Z"
+    },
+    "rule-1838": {
+      "learning_id": "rule-1838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1838,
+      "title": "Render LaTeX math in messages with zatex (#912)",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "c526d6f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:27.992Z"
+    },
+    "rule-1839": {
+      "learning_id": "rule-1839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1839,
+      "title": "README: fix negligible spelling",
+      "source_url": "https://github.com/welldone-software/why-did-you-render",
+      "source_version": "3ec3512d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:32.584Z"
+    },
+    "rule-1840": {
+      "learning_id": "rule-1840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1840,
+      "title": "Maximum Sequence Length Truncation Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:33.182Z"
+    },
+    "rule-1841": {
+      "learning_id": "rule-1841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1841,
+      "title": "runtime): honor cancellation in HTTP and headless waits (#7814)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "10f1967c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:37.343Z"
+    },
+    "rule-1842": {
+      "learning_id": "rule-1842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1842,
+      "title": "wait until the namespace is fully deleted in `okteto namespace delete` (#5187)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "f599c1e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:38.283Z"
+    },
+    "rule-1843": {
+      "learning_id": "rule-1843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1843,
+      "title": "build(deps): bump actions/upload-artifact from 7.0.0 to 7.0.1 (#454)",
+      "source_url": "https://github.com/supervc-stack/VectorChord",
+      "source_version": "0768657e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:40.278Z"
+    },
+    "rule-1844": {
+      "learning_id": "rule-1844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1844,
+      "title": "compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an e",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "a0ad5379",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:20:41.779Z"
     }
   },
   "aliases": {
