@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T06:27:04.005893Z",
-  "total_verified_learnings": 1860,
+  "last_updated": "2026-10-18T06:36:31.873Z",
+  "total_verified_learnings": 212,
   "total_canonical_rules": 1627,
   "total_dossiers": 1435,
   "items": {
@@ -9636,56 +9636,56 @@
       "promoted_rules": [
         {
           "number": 282,
-          "title": "**Rule Title**: *Explicit Special\u2011Token Declaration*",
+          "title": "**Rule Title**: *Explicit Special‑Token Declaration*",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
           "verified_at": "2026-10-11T11:22:52.058Z"
         },
         {
           "number": 283,
-          "title": "**Rule Title**: *Avoid Hard\u2011Coded Dtype in Config*",
+          "title": "**Rule Title**: *Avoid Hard‑Coded Dtype in Config*",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
           "verified_at": "2026-10-11T11:22:52.058Z"
         },
         {
           "number": 336,
-          "title": "Consistent Data\u2011Type Propagation Across Model, Tokenizer, and Generation",
+          "title": "Consistent Data‑Type Propagation Across Model, Tokenizer, and Generation",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
           "verified_at": "2026-10-11T18:24:51.693Z"
         },
         {
           "number": 337,
-          "title": "Guarded Generation Length to Prevent Out\u2011of\u2011Memory (OOM) and Infinite Loops",
+          "title": "Guarded Generation Length to Prevent Out‑of‑Memory (OOM) and Infinite Loops",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
           "verified_at": "2026-10-11T18:24:51.693Z"
         },
         {
           "number": 338,
-          "title": "Explicit Tokenizer\u2011Model Alignment for Special Tokens",
+          "title": "Explicit Tokenizer‑Model Alignment for Special Tokens",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
           "verified_at": "2026-10-11T18:24:51.693Z"
         },
         {
           "number": 386,
-          "title": "Attention\u2011Bias Consistency Rule",
+          "title": "Attention‑Bias Consistency Rule",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
           "verified_at": "2026-10-12T00:36:37.670Z"
         },
         {
           "number": 387,
-          "title": "Full\u2011Attention Interval Alignment Rule",
+          "title": "Full‑Attention Interval Alignment Rule",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
           "verified_at": "2026-10-12T00:36:37.670Z"
         },
         {
           "number": 388,
-          "title": "Rope\u2011Theta Validity Rule",
+          "title": "Rope‑Theta Validity Rule",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
           "verified_at": "2026-10-12T00:36:37.670Z"
@@ -9697,7 +9697,7 @@
         },
         {
           "number": 688,
-          "title": "[Tokenizer Special\u2011Token Integrity]",
+          "title": "[Tokenizer Special‑Token Integrity]",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -9707,12 +9707,12 @@
         },
         {
           "number": 1022,
-          "title": "[BFloat16 Memory\u2011Efficiency Rule]",
+          "title": "[BFloat16 Memory‑Efficiency Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1023,
-          "title": "[Tokenizer Special\u2011Token Integrity Rule]",
+          "title": "[Tokenizer Special‑Token Integrity Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9722,22 +9722,22 @@
         },
         {
           "number": 1089,
-          "title": "Linear\u2011Attention Layer Placement",
+          "title": "Linear‑Attention Layer Placement",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1176,
-          "title": "**Special\u2011Token Uniqueness and Consistency**",
+          "title": "**Special‑Token Uniqueness and Consistency**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1177,
-          "title": "**Attention\u2011Schedule Integrity**",
+          "title": "**Attention‑Schedule Integrity**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1178,
-          "title": "**Dual\u2011EOS Handling in Generation**",
+          "title": "**Dual‑EOS Handling in Generation**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9752,22 +9752,22 @@
         },
         {
           "number": 1333,
-          "title": "Consistent Data\u2011Type Across Model, Tokenizer, and Generation Config",
+          "title": "Consistent Data‑Type Across Model, Tokenizer, and Generation Config",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": "EXISTING",
-          "title": "Token\u2011ID Consistency Across Configurations",
+          "title": "Token‑ID Consistency Across Configurations",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1334,
-          "title": "Attention\u2011Bias Invariant for Qwen3_5ForCausalLM",
+          "title": "Attention‑Bias Invariant for Qwen3_5ForCausalLM",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1478,
-          "title": "Configuration JSON Must Be a Single\u2011Level Object, Not a JSON\u2011Encoded String",
+          "title": "Configuration JSON Must Be a Single‑Level Object, Not a JSON‑Encoded String",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9777,22 +9777,22 @@
         },
         {
           "number": 1480,
-          "title": "Sampling Hyper\u2011Parameters Must Not Exceed Model Context Length",
+          "title": "Sampling Hyper‑Parameters Must Not Exceed Model Context Length",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1554,
-          "title": "Consistent Data\u2011Type Alignment Across Model, Tokenizer, and Serving",
+          "title": "Consistent Data‑Type Alignment Across Model, Tokenizer, and Serving",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1555,
-          "title": "Tokenizer\u2011Model Token ID Contract",
+          "title": "Tokenizer‑Model Token ID Contract",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1556,
-          "title": "Generation Stop\u2011Token Coverage",
+          "title": "Generation Stop‑Token Coverage",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9878,14 +9878,14 @@
       "promoted_rules": [
         {
           "number": 280,
-          "title": "2 Rule 2 \u2013 Layer\u2011Type Consistency",
+          "title": "2 Rule 2 – Layer‑Type Consistency",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
           "verified_at": "2026-10-11T11:20:00.755Z"
         },
         {
           "number": 281,
-          "title": "3 Rule 3 \u2013 Sparse Attention Safety",
+          "title": "3 Rule 3 – Sparse Attention Safety",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
           "verified_at": "2026-10-11T11:20:00.755Z"
@@ -9920,7 +9920,7 @@
         },
         {
           "number": 384,
-          "title": "**Cache\u2011Disabling Rule for Long\u2011Context VLMs**",
+          "title": "**Cache‑Disabling Rule for Long‑Context VLMs**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
           "verified_at": "2026-10-12T00:33:23.812Z"
@@ -9959,7 +9959,7 @@
         },
         {
           "number": 1085,
-          "title": "**Special\u2011Token Uniqueness Across Modalities**",
+          "title": "**Special‑Token Uniqueness Across Modalities**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -9984,22 +9984,22 @@
         },
         {
           "number": 1175,
-          "title": "Long\u2011Context Attention Interval Invariant",
+          "title": "Long‑Context Attention Interval Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1255,
-          "title": "**Special\u2011Token Consistency Rule**",
+          "title": "**Special‑Token Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1331,
-          "title": "Image\u2011Token Uniqueness Rule",
+          "title": "Image‑Token Uniqueness Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1332,
-          "title": "Mixed\u2011Precision Memory Rule",
+          "title": "Mixed‑Precision Memory Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -10009,12 +10009,12 @@
         },
         {
           "number": 1476,
-          "title": "**Linear\u2011Attention Layer Placement**",
+          "title": "**Linear‑Attention Layer Placement**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1477,
-          "title": "**Compression\u2011Mask Alignment**",
+          "title": "**Compression‑Mask Alignment**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11650,14 +11650,14 @@
       "promoted_rules": [
         {
           "number": 351,
-          "title": "Consistent Special\u2011Token Alignment Across Tokenizer and Model Config",
+          "title": "Consistent Special‑Token Alignment Across Tokenizer and Model Config",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
           "verified_at": "2026-10-11T19:49:22.705Z"
         },
         {
           "number": 352,
-          "title": "Joint\u2011Schema\u2011Head Output Dimensionality Enforcement",
+          "title": "Joint‑Schema‑Head Output Dimensionality Enforcement",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
           "verified_at": "2026-10-11T19:49:22.705Z"
@@ -11697,7 +11697,7 @@
         },
         {
           "number": 1041,
-          "title": "**Tokenizer\u2011Config Consistency**",
+          "title": "**Tokenizer‑Config Consistency**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11707,12 +11707,12 @@
         },
         {
           "number": 1120,
-          "title": "**Special\u2011Token Integrity Rule**",
+          "title": "**Special‑Token Integrity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1121,
-          "title": "**Joint\u2011Head Input Consistency Rule**",
+          "title": "**Joint‑Head Input Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11737,12 +11737,12 @@
         },
         {
           "number": 1282,
-          "title": "Consistent Data\u2011Type Propagation Across Backbone and Head",
+          "title": "Consistent Data‑Type Propagation Across Backbone and Head",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1283,
-          "title": "Tokenizer\u2011Model Special\u2011Token Alignment",
+          "title": "Tokenizer‑Model Special‑Token Alignment",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11767,17 +11767,17 @@
         },
         {
           "number": 1499,
-          "title": "**Rule\u202f#1 \u2013 Immutable Token\u2011Sequence Construction**",
+          "title": "**Rule #1 – Immutable Token‑Sequence Construction**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1500,
-          "title": "**Rule\u202f#2 \u2013 Explicit dtype Alignment Between Backbone & Joint Head**",
+          "title": "**Rule #2 – Explicit dtype Alignment Between Backbone & Joint Head**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1501,
-          "title": "**Rule\u202f#3 \u2013 Per\u2011Question Softmax Isolation**",
+          "title": "**Rule #3 – Per‑Question Softmax Isolation**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11787,12 +11787,12 @@
         },
         {
           "number": 1575,
-          "title": "Tokenizer Special\u2011Token Alignment",
+          "title": "Tokenizer Special‑Token Alignment",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1576,
-          "title": "Joint\u2011Head Input Shape Validation",
+          "title": "Joint‑Head Input Shape Validation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11859,21 +11859,21 @@
         },
         {
           "number": 401,
-          "title": "**Deterministic Token\u2011to\u2011Logit Mapping Rule**",
+          "title": "**Deterministic Token‑to‑Logit Mapping Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
           "verified_at": "2026-10-12T02:01:11.285Z"
         },
         {
           "number": 402,
-          "title": "**Safe Record\u2011Encoding Rule**",
+          "title": "**Safe Record‑Encoding Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
           "verified_at": "2026-10-12T02:01:11.285Z"
         },
         {
           "number": 403,
-          "title": "**Zero\u2011Copy Batch Collation Rule**",
+          "title": "**Zero‑Copy Batch Collation Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
           "verified_at": "2026-10-12T02:01:11.285Z"
@@ -11890,22 +11890,22 @@
         },
         {
           "number": 1039,
-          "title": "Per\u2011Question Softmax Rule",
+          "title": "Per‑Question Softmax Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1117,
-          "title": "**Token\u2011Boundary Integrity Rule**",
+          "title": "**Token‑Boundary Integrity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1118,
-          "title": "**Joint\u2011Head Attention Mask Rule**",
+          "title": "**Joint‑Head Attention Mask Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1119,
-          "title": "**Inference\u2011Mode Contextualization Rule**",
+          "title": "**Inference‑Mode Contextualization Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11920,7 +11920,7 @@
         },
         {
           "number": 1203,
-          "title": "**Data\u2011Type Fidelity Rule**",
+          "title": "**Data‑Type Fidelity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11940,17 +11940,17 @@
         },
         {
           "number": 1394,
-          "title": "**Model\u2011Head Device Co\u2011Location Rule**",
+          "title": "**Model‑Head Device Co‑Location Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1395,
-          "title": "**Tokenizer\u2011Processor Pre\u2011Load Rule**",
+          "title": "**Tokenizer‑Processor Pre‑Load Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1396,
-          "title": "**Inference\u2011Mode Enforcement Rule**",
+          "title": "**Inference‑Mode Enforcement Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -11960,27 +11960,27 @@
         },
         {
           "number": 1497,
-          "title": "**Safe Tokenizer\u2011Config Consistency Rule**",
+          "title": "**Safe Tokenizer‑Config Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1498,
-          "title": "**Device\u2011Aware Safetensor Loading Rule**",
+          "title": "**Device‑Aware Safetensor Loading Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1571,
-          "title": "**Rule\u202f#\u202fPAD\u2011TOKEN\u2011ID\u2011CONSISTENCY**",
+          "title": "**Rule # PAD‑TOKEN‑ID‑CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1572,
-          "title": "**Rule\u202f#\u202fDTYPE\u2011ALIGNMENT\u2011FOR\u2011INFERENCE**",
+          "title": "**Rule # DTYPE‑ALIGNMENT‑FOR‑INFERENCE**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1573,
-          "title": "**Rule\u202f#\u202fINFERENCE\u2011MODE\u2011ENFORCEMENT**",
+          "title": "**Rule # INFERENCE‑MODE‑ENFORCEMENT**",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -18953,14 +18953,14 @@
         },
         {
           "number": 340,
-          "title": "**Vision\u2011Input Size Consistency Rule**",
+          "title": "**Vision‑Input Size Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
           "verified_at": "2026-10-11T18:36:42.888Z"
         },
         {
           "number": 341,
-          "title": "**Context\u2011Length Guard Rule**",
+          "title": "**Context‑Length Guard Rule**",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
           "verified_at": "2026-10-11T18:36:42.888Z"
@@ -18993,7 +18993,7 @@
         },
         {
           "number": 1025,
-          "title": "Vision\u2011Encoder Output Alignment Rule",
+          "title": "Vision‑Encoder Output Alignment Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19003,17 +19003,17 @@
         },
         {
           "number": 1092,
-          "title": "Consistent Special\u2011Token Mapping Rule",
+          "title": "Consistent Special‑Token Mapping Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1093,
-          "title": "Vision\u2011Token Placement Rule",
+          "title": "Vision‑Token Placement Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1094,
-          "title": "Downsample\u2011Size Consistency Rule",
+          "title": "Downsample‑Size Consistency Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19028,7 +19028,7 @@
         },
         {
           "number": 1185,
-          "title": "BOS/EOS Token Null\u2011Safety Rule",
+          "title": "BOS/EOS Token Null‑Safety Rule",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19038,17 +19038,17 @@
         },
         {
           "number": 1260,
-          "title": "Token\u2011ID Consistency Across Subsystems",
+          "title": "Token‑ID Consistency Across Subsystems",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1261,
-          "title": "Image\u2011Token Boundary Enforcement",
+          "title": "Image‑Token Boundary Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1262,
-          "title": "Down\u2011sampling Ratio Validation",
+          "title": "Down‑sampling Ratio Validation",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -19078,17 +19078,17 @@
         },
         {
           "number": 1560,
-          "title": "Consistent Token\u2011ID Mapping Across All Sub\u2011systems",
+          "title": "Consistent Token‑ID Mapping Across All Sub‑systems",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1561,
-          "title": "Enforce Down\u2011sampling Ratio Consistency",
+          "title": "Enforce Down‑sampling Ratio Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1562,
-          "title": "Preserve Context\u2011Length Contract",
+          "title": "Preserve Context‑Length Contract",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -19647,7 +19647,7 @@
       "promoted_rules": [
         {
           "number": 342,
-          "title": "Tokenizer\u2011Model Configuration Consistency",
+          "title": "Tokenizer‑Model Configuration Consistency",
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
           "verified_at": "2026-10-11T18:48:56.153Z"
@@ -19707,7 +19707,7 @@
         },
         {
           "number": 1097,
-          "title": "Layer\u2011Type Consistency with Attention Bias",
+          "title": "Layer‑Type Consistency with Attention Bias",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -39043,7 +39043,7 @@
       "learning_id": "rule-225",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 225,
-      "title": "Mandatory Multi-Page Architecture (MPA) by Default (\"Single Page Me Kabhi Nahi Sametna \u2014 Hamesha Multi-Page Banani Hai\")",
+      "title": "Mandatory Multi-Page Architecture (MPA) by Default (\"Single Page Me Kabhi Nahi Sametna — Hamesha Multi-Page Banani Hai\")",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39071,7 +39071,7 @@
       "learning_id": "rule-227",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 227,
-      "title": "Universal 53-Phase Final Production Audit & Auto-Correction Protocol (\"Code Looks Correct \u2260 PASS\")",
+      "title": "Universal 53-Phase Final Production Audit & Auto-Correction Protocol (\"Code Looks Correct ≠ PASS\")",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39169,7 +39169,7 @@
       "learning_id": "rule-234",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 234,
-      "title": "Tiered Multi-LLM Effort Routing & Cost Envelope Enforcement (Claude \u00d7 GLM \u00d7 Gemini Cascade)",
+      "title": "Tiered Multi-LLM Effort Routing & Cost Envelope Enforcement (Claude × GLM × Gemini Cascade)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39813,7 +39813,7 @@
       "learning_id": "rule-280",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 280,
-      "title": "2 Rule 2 \u2013 Layer\u2011Type Consistency (Harvested from apple/LensVLM-9B)",
+      "title": "2 Rule 2 – Layer‑Type Consistency (Harvested from apple/LensVLM-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39827,7 +39827,7 @@
       "learning_id": "rule-281",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 281,
-      "title": "3 Rule 3 \u2013 Sparse Attention Safety (Harvested from apple/LensVLM-9B)",
+      "title": "3 Rule 3 – Sparse Attention Safety (Harvested from apple/LensVLM-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39841,7 +39841,7 @@
       "learning_id": "rule-282",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 282,
-      "title": "**Rule Title**: *Explicit Special\u2011Token Declaration* (Harvested from Altworld/Hemmingway-1)",
+      "title": "**Rule Title**: *Explicit Special‑Token Declaration* (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -39855,7 +39855,7 @@
       "learning_id": "rule-283",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 283,
-      "title": "**Rule Title**: *Avoid Hard\u2011Coded Dtype in Config* (Harvested from Altworld/Hemmingway-1)",
+      "title": "**Rule Title**: *Avoid Hard‑Coded Dtype in Config* (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40597,7 +40597,7 @@
       "learning_id": "rule-336",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 336,
-      "title": "Consistent Data\u2011Type Propagation Across Model, Tokenizer, and Generation (Harvested from Altworld/Hemmingway-1)",
+      "title": "Consistent Data‑Type Propagation Across Model, Tokenizer, and Generation (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40611,7 +40611,7 @@
       "learning_id": "rule-337",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 337,
-      "title": "Guarded Generation Length to Prevent Out\u2011of\u2011Memory (OOM) and Infinite Loops (Harvested from Altworld/Hemmingway-1)",
+      "title": "Guarded Generation Length to Prevent Out‑of‑Memory (OOM) and Infinite Loops (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40625,7 +40625,7 @@
       "learning_id": "rule-338",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 338,
-      "title": "Explicit Tokenizer\u2011Model Alignment for Special Tokens (Harvested from Altworld/Hemmingway-1)",
+      "title": "Explicit Tokenizer‑Model Alignment for Special Tokens (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40653,7 +40653,7 @@
       "learning_id": "rule-340",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 340,
-      "title": "**Vision\u2011Input Size Consistency Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
+      "title": "**Vision‑Input Size Consistency Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40667,7 +40667,7 @@
       "learning_id": "rule-341",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 341,
-      "title": "**Context\u2011Length Guard Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
+      "title": "**Context‑Length Guard Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40681,7 +40681,7 @@
       "learning_id": "rule-342",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 342,
-      "title": "Tokenizer\u2011Model Configuration Consistency (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)",
+      "title": "Tokenizer‑Model Configuration Consistency (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40807,7 +40807,7 @@
       "learning_id": "rule-351",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 351,
-      "title": "Consistent Special\u2011Token Alignment Across Tokenizer and Model Config (Harvested from Cloudflare/clef-flash)",
+      "title": "Consistent Special‑Token Alignment Across Tokenizer and Model Config (Harvested from Cloudflare/clef-flash)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -40821,7 +40821,7 @@
       "learning_id": "rule-352",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 352,
-      "title": "Joint\u2011Schema\u2011Head Output Dimensionality Enforcement (Harvested from Cloudflare/clef-flash)",
+      "title": "Joint‑Schema‑Head Output Dimensionality Enforcement (Harvested from Cloudflare/clef-flash)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41269,7 +41269,7 @@
       "learning_id": "rule-384",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 384,
-      "title": "**Cache\u2011Disabling Rule for Long\u2011Context VLMs** (Harvested from apple/LensVLM-9B)",
+      "title": "**Cache‑Disabling Rule for Long‑Context VLMs** (Harvested from apple/LensVLM-9B)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41297,7 +41297,7 @@
       "learning_id": "rule-386",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 386,
-      "title": "Attention\u2011Bias Consistency Rule (Harvested from Altworld/Hemmingway-1)",
+      "title": "Attention‑Bias Consistency Rule (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41311,7 +41311,7 @@
       "learning_id": "rule-387",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 387,
-      "title": "Full\u2011Attention Interval Alignment Rule (Harvested from Altworld/Hemmingway-1)",
+      "title": "Full‑Attention Interval Alignment Rule (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41325,7 +41325,7 @@
       "learning_id": "rule-388",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 388,
-      "title": "Rope\u2011Theta Validity Rule (Harvested from Altworld/Hemmingway-1)",
+      "title": "Rope‑Theta Validity Rule (Harvested from Altworld/Hemmingway-1)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41507,7 +41507,7 @@
       "learning_id": "rule-401",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 401,
-      "title": "**Deterministic Token\u2011to\u2011Logit Mapping Rule** (Harvested from Cloudflare/clef)",
+      "title": "**Deterministic Token‑to‑Logit Mapping Rule** (Harvested from Cloudflare/clef)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41521,7 +41521,7 @@
       "learning_id": "rule-402",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 402,
-      "title": "**Safe Record\u2011Encoding Rule** (Harvested from Cloudflare/clef)",
+      "title": "**Safe Record‑Encoding Rule** (Harvested from Cloudflare/clef)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -41535,7 +41535,7 @@
       "learning_id": "rule-403",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 403,
-      "title": "**Zero\u2011Copy Batch Collation Rule** (Harvested from Cloudflare/clef)",
+      "title": "**Zero‑Copy Batch Collation Rule** (Harvested from Cloudflare/clef)",
       "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
       "source_version": "HEAD",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
@@ -42038,7 +42038,7 @@
         },
         {
           "number": 625,
-          "title": "[Tokenizer Special\u2011Token Consistency]",
+          "title": "[Tokenizer Special‑Token Consistency]",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42069,7 +42069,7 @@
       "promoted_rules": [
         {
           "number": 582,
-          "title": "Consistent Token\u2011ID Mapping Across Modalities",
+          "title": "Consistent Token‑ID Mapping Across Modalities",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -42079,7 +42079,7 @@
         },
         {
           "number": 683,
-          "title": "`bfloat16` Inference Must Be Guarded Against Under\u2011Precision",
+          "title": "`bfloat16` Inference Must Be Guarded Against Under‑Precision",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42951,32 +42951,32 @@
       "promoted_rules": [
         {
           "number": 582,
-          "title": "Consistent Token\u2011ID Mapping Across Modalities",
+          "title": "Consistent Token‑ID Mapping Across Modalities",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1007,
-          "title": "[Configuration\u2011Consistency Rule]",
+          "title": "[Configuration‑Consistency Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1008,
-          "title": "[Special\u2011Token\u2011Uniqueness Rule]",
+          "title": "[Special‑Token‑Uniqueness Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1009,
-          "title": "[Vision\u2011Patch\u2011Size Alignment Rule]",
+          "title": "[Vision‑Patch‑Size Alignment Rule]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1074,
-          "title": "Consistent Data\u2011Type Across Modalities",
+          "title": "Consistent Data‑Type Across Modalities",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1075,
-          "title": "Explicitly Disable Word\u2011Embedding Tie in Multimodal Models",
+          "title": "Explicitly Disable Word‑Embedding Tie in Multimodal Models",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -42986,12 +42986,12 @@
         },
         {
           "number": 1155,
-          "title": "Consistent Special\u2011Token Mapping Across Tokenizer and Model",
+          "title": "Consistent Special‑Token Mapping Across Tokenizer and Model",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1156,
-          "title": "Uniform Dtype Across Text and Vision Sub\u2011Models",
+          "title": "Uniform Dtype Across Text and Vision Sub‑Models",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43001,17 +43001,17 @@
         },
         {
           "number": 1241,
-          "title": "**RULE\u2011TOKEN\u2011ID\u2011RANGE\u2011CONSISTENCY**",
+          "title": "**RULE‑TOKEN‑ID‑RANGE‑CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1242,
-          "title": "**RULE\u2011LINEAR\u2011ATTENTION\u2011SHAPE\u2011ALIGNMENT**",
+          "title": "**RULE‑LINEAR‑ATTENTION‑SHAPE‑ALIGNMENT**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1243,
-          "title": "**RULE\u2011PARTIAL\u2011ROPE\u2011CONSISTENCY**",
+          "title": "**RULE‑PARTIAL‑ROPE‑CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43026,7 +43026,7 @@
         },
         {
           "number": 1318,
-          "title": "**Special\u2011Token Isolation Rule**",
+          "title": "**Special‑Token Isolation Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43051,7 +43051,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "Tokenizer Special\u2011Token Integrity",
+          "title": "Tokenizer Special‑Token Integrity",
           "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
@@ -43116,7 +43116,7 @@
         },
         {
           "number": 1012,
-          "title": "Consistent Model\u2011Type Declaration",
+          "title": "Consistent Model‑Type Declaration",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43126,17 +43126,17 @@
         },
         {
           "number": 1014,
-          "title": "Linear\u2011Attention Head Consistency",
+          "title": "Linear‑Attention Head Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1080,
-          "title": "[Linear\u2011Attention Head Ratio]",
+          "title": "[Linear‑Attention Head Ratio]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1081,
-          "title": "[Vision Token Compression Pre\u2011Processing]",
+          "title": "[Vision Token Compression Pre‑Processing]",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43151,7 +43151,7 @@
         },
         {
           "number": 1167,
-          "title": "**Vision Encoder Must Compress Tokens Early to Meet On\u2011Device Latency Targets**",
+          "title": "**Vision Encoder Must Compress Tokens Early to Meet On‑Device Latency Targets**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43161,12 +43161,12 @@
         },
         {
           "number": 1248,
-          "title": "**Early\u2011Compression Positional Integrity Rule**",
+          "title": "**Early‑Compression Positional Integrity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1249,
-          "title": "**Cache\u2011Consistency Isolation Rule**",
+          "title": "**Cache‑Consistency Isolation Rule**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43181,7 +43181,7 @@
         },
         {
           "number": 1327,
-          "title": "**Lookahead Expert Scheduling (LES) Must Pre\u2011compute Expert Activations for the Next Token**",
+          "title": "**Lookahead Expert Scheduling (LES) Must Pre‑compute Expert Activations for the Next Token**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
@@ -43201,17 +43201,17 @@
         },
         {
           "number": 1548,
-          "title": "**MoE Routing Must Preserve Token\u2011Level Determinism**",
+          "title": "**MoE Routing Must Preserve Token‑Level Determinism**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1549,
-          "title": "**Linear\u2011Attention Layers Must Enforce Full\u2011Attention Every N Layers**",
+          "title": "**Linear‑Attention Layers Must Enforce Full‑Attention Every N Layers**",
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
           "number": 1550,
-          "title": "**Early\u2011Compression Tokenization Must Preserve Token Count Invariant**",
+          "title": "**Early‑Compression Tokenization Must Preserve Token Count Invariant**",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44035,7 +44035,7 @@
       "promoted_rules": [
         {
           "number": 1579,
-          "title": "render): \ud0ed \uc55e \uc704\uce58\uc5d0 \uae00\uc790\ucc98\ub7fc \ucde8\uae09\ud558\ub294 \uac1c\uccb4 \ud3ed\ub3c4 \ub123\ub294\ub2e4",
+          "title": "render): 탭 앞 위치에 글자처럼 취급하는 개체 폭도 넣는다",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45116,22 +45116,46 @@
     "learn-github-crawlcove-robots-txt-tester": {
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "CrawlCove/crawlcove-robots-txt-tester",
-      "slug": "crawlcove-robots-txt-tester",
+      "source": "CrawlCove/robots-txt-tester",
+      "repository": "CrawlCove/robots-txt-tester",
+      "slug": "crawlcove-crawlcove-robots-txt-tester",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-      "source_version": "main",
-      "content_hash": "bfadf5b54cbe4a7681e965e2d23975c9fcc8cda70f6a78f0821c35694f8bf41e",
-      "dossier_path": "07_PROJECT_LEARNING/crawlcove-robots-txt-tester-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/crawlcove-robots-txt-tester-learnings.md",
+      "source_version": "63245304",
+      "content_hash": "cbc78fdcd7fd7e177540e4f9588c227475798dc4384779e0092f1e0ca0d810a2",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "promoted_rules": [
-        "Rule 1623"
+        "Rule 1623",
+        {
+          "number": 1630,
+          "title": "Dual-Phase Text Linting Before AST/Parser Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1631,
+          "title": "HTTP Protocol Error Discrimination in Automated Crawlers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1632,
+          "title": "CI/CD Pre-Commit Distribution Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T06:36:31.866Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crawlcove-sitemap-validator": {
       "learning_id": "learn-github-crawlcove-sitemap-validator",
@@ -45153,6 +45177,44 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T06:27:04.005893Z"
+    },
+    "learn-github-crawlcove-xml-sitemap-validator": {
+      "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CrawlCove/xml-sitemap-validator",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "slug": "crawlcove-crawlcove-sitemap-validator",
+      "platform": "github",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "caa1d0b5",
+      "content_hash": "08a04c776cda6192fea8160e2cea3b50157ab06f733dcc7300e58d6d342f8fff",
+      "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1628,
+          "title": "Invariant Top-Level Node Filtering in Hybrid XML/JSON Parsers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1629,
+          "title": "Transport Header-Agnostic Gzip Magic-Byte Sniffing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T06:36:28.547Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

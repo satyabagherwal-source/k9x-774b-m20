@@ -112724,3 +112724,544 @@ function fetchSitemap(url) {
 Pass a buffer with magic bytes `0x1f 0x8b` followed by gzipped XML to `decodeSitemapPayload`. Assert that `isGzipped` is `true` and the output is valid XML string. Pass child timestamps with one timestamp newer than index date to `checkLastmodParity` and assert `isConsistent` is `false`.
 
 ---
+
+
+---
+
+## 1628. Invariant Top-Level Node Filtering in Hybrid XML/JSON Parsers (Harvested from CrawlCove/xml-sitemap-validator)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Top-Level Node Filtering in Hybrid XML/JSON Parsers",
+  "source": "CrawlCove/xml-sitemap-validator",
+  "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+  "source_version": "caa1d0b5",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T06:36:28.424Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/xml-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) (Revision: `caa1d0b5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When utilizing object-projection XML parsers (e.g., `fast-xml-parser`) where XML processing instructions (`<?...?>`), comments (`<!--...-->`), and directives are projected as top-level object keys, engineers MUST NOT assume the root XML tag is the only key or merely exclude `?xml`. Parsers MUST filter out all keys matching processing instructions (`?`), metadata directives (`!`), or internal text/comment indicators (`#`) to determine the canonical root element.
+
+**WHY**:
+CMS engines (WordPress, Yoast SEO, Rank Math) routinely inject XSL stylesheet processing instructions (e.g., `<?xml-stylesheet type="text/xsl" href="..."?>`) before the root tag to style sitemaps in browsers. When an XML parser projects these nodes as top-level object keys (e.g., `doc['?xml-stylesheet']`), naïve root selection logic like `Object.keys(doc).find(k => k !== '?xml')` will bind to `?xml-stylesheet` instead of `urlset` or `sitemapindex`. This yields false-positive structural failures (`wrong-root: root element is <?xml-stylesheet>`), completely halting downstream processing.
+
+**WHEN TO APPLY**:
+Apply in any Node.js, Go, or Python XML parser pipeline where XML is serialized into an untyped dictionary/hash-map before root tag extraction, especially when consuming third-party feeds, sitemaps, RSS, Atom, or SVG files.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Complete, working, production-grade pattern
+import { XMLParser, XMLValidator } from 'fast-xml-parser';
+
+export interface RootExtractionResult {
+  rootName: string;
+  rootNode: Record<string, unknown>;
+}
+
+export function extractCanonicalXmlRoot(text: string): RootExtractionResult {
+  const validation = XMLValidator.validate(text);
+  if (validation !== true) {
+    throw new Error(`Invalid XML structure: ${validation.err.msg} at line ${validation.err.line}`);
+  }
+
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '@_',
+    parseTagValue: false, // Prevents destructive number/boolean coercions
+    trimValues: true,
+  });
+
+  const parsedDoc = parser.parse(text) as Record<string, unknown>;
+
+  // Filter out XML Declarations (?), Directives (!), and Text/Comments (#)
+  const canonicalRootKey = Object.keys(parsedDoc).find(
+    (key) => !key.startsWith('?') && !key.startsWith('#') && !key.startsWith('!')
+  );
+
+  if (!canonicalRootKey || typeof parsedDoc[canonicalRootKey] !== 'object' || parsedDoc[canonicalRootKey] === null) {
+    throw new Error('Document does not contain a valid canonical root element');
+  }
+
+  return {
+    rootName: canonicalRootKey,
+    rootNode: parsedDoc[canonicalRootKey] as Record<string, unknown>,
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER assume ?xml is the only non-element top-level key
+const rootName = Object.keys(doc).find((k) => k !== '?xml');
+// FAILS: If <?xml-stylesheet ...?> is present, rootName becomes '?xml-stylesheet'
+```
+
+**VERIFICATION METHOD**:
+Verify using a unit test asserting root resolution over XML payloads containing multiple processing instructions and comments prior to the root node:
+```typescript
+import { test, expect } from 'vitest';
+import { extractCanonicalXmlRoot } from './extractCanonicalXmlRoot.js';
+
+test('resolves canonical root despite xml-stylesheet and comments', () => {
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+  <!-- Generator: Custom Engine -->
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>https://example.com/</loc></url>
+  </urlset>`;
+
+  const { rootName } = extractCanonicalXmlRoot(xml);
+  expect(rootName).toBe('urlset');
+});
+```
+
+---
+
+
+---
+
+## 1629. Transport Header-Agnostic Gzip Magic-Byte Sniffing (Harvested from CrawlCove/xml-sitemap-validator)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Transport Header-Agnostic Gzip Magic-Byte Sniffing",
+  "source": "CrawlCove/xml-sitemap-validator",
+  "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+  "source_version": "caa1d0b5",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T06:36:28.506Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/xml-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) (Revision: `caa1d0b5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When ingesting binary compressed payloads from untrusted public HTTP origins, decompression systems MUST NOT rely exclusively on the `Content-Type` header, `Content-Encoding` header, or URL file extensions. Ingestion systems MUST inspect the payload's first two bytes against the gzip magic number sequence (`0x1F 0x8B`) before decoding.
+
+**WHY**:
+Misconfigured web servers and CDNs frequently serve `.xml.gz` files with `Content-Type: text/xml` or omit the `Content-Encoding: gzip` header entirely. Conversely, reverse proxies may transparently decompress payloads while preserving the `.gz` filename or preserving stale gzip headers. Blindly passing non-gzipped bytes to `gunzipSync` causes unhandled `Z_DATA_ERROR` exceptions, while failing to decompress raw gzip bytes causes XML parser crashes on binary gibberish.
+
+**WHEN TO APPLY**:
+All HTTP client fetchers, scrapers, crawlers, and ingestors handling potentially compressed external files (`.gz`, `.tar.gz`, `.svgz`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { gunzipSync } from 'node:zlib';
+
+export interface DecodedBody {
+  text: string;
+  isGzipped: boolean;
+}
+
+export function decodeBufferPayload(buffer: Buffer): DecodedBody {
+  // Gzip Magic bytes: 0x1F (31), 0x8B (139)
+  const isGzipMagic = buffer.length >= 2 && buffer[0] === 0x1f && buffer[1] === 0x8b;
+
+  if (isGzipMagic) {
+    try {
+      const decompressed = gunzipSync(buffer);
+      return {
+        text: decompressed.toString('utf8'),
+        isGzipped: true,
+      };
+    } catch (err) {
+      throw new Error(`Decompression failed despite Gzip magic header: ${(err as Error).message}`);
+    }
+  }
+
+  return {
+    text: buffer.toString('utf8'),
+    isGzipped: false,
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER rely on file path extension or Content-Type headers for decompression decisions
+if (url.endsWith('.gz') || response.headers.get('content-encoding') === 'gzip') {
+  return gunzipSync(buffer).toString('utf8'); // Crashes if CDN already decompressed it!
+}
+```
+
+**VERIFICATION METHOD**:
+Automated fuzz test passing: (1) uncompressed XML named `sitemap.xml.gz`, (2) gzipped XML named `sitemap.xml`, and (3) corrupt buffers starting with `0x1F 0x8B`.
+
+---
+
+
+---
+
+## 1630. Dual-Phase Text Linting Before AST/Parser Normalization (Harvested from CrawlCove/robots-txt-tester)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Phase Text Linting Before AST/Parser Normalization",
+  "source": "CrawlCove/robots-txt-tester",
+  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+  "source_version": "63245304",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T06:36:31.666Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-robots-txt-tester",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `63245304`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When validating configuration or protocol text formats (such as `robots.txt`, crontab, dotenv, or nginx configs), you MUST run a non-destructive line-by-line lint pass BEFORE passing the payload to a compliant parser. You MUST NOT rely solely on compliant parsers for audit, diagnostic, or security assertions.
+
+**WHY**:
+Standard-compliant parsers are explicitly designed to be tolerant of syntax errors: they silently discard unknown tokens, strip out-of-order directives, ignore malformed directives, and auto-merge duplicate blocks. This tolerance masks critical production defects (e.g., a typo like `Dissallow: /` or placing `Disallow: /admin` before a `User-agent:` line is silently ignored by standard parsers, causing sensitive paths to be crawled and indexed).
+
+**WHEN TO APPLY**:
+Apply to all security, compliance, SEO, and infrastructure validators that process configuration languages where compliant parsers implement lenient fallback behavior.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+interface LintDiagnostic {
+  code: string;
+  line: number;
+  message: string;
+}
+
+export function lintRobotsDirectives(rawText: string): LintDiagnostic[] {
+  const diagnostics: LintDiagnostic[] = [];
+  // 1. Strip UTF-8 Byte Order Mark (BOM) before splitting lines
+  const cleanText = rawText.replace(/^\uFEFF/, '');
+  const lines = cleanText.split(/\r?\n/);
+
+  let currentAgentActive = false;
+  const agentLineTracker = new Map<string, number>();
+
+  for (let i = 0; i < lines.length; i++) {
+    const lineNo = i + 1;
+    // Strip trailing inline comments and whitespace
+    const line = lines[i].replace(/#.*$/, '').trim();
+    if (line === '') continue;
+
+    // Directives must match standard "field: value" shape
+    const match = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(line);
+    if (!match) {
+      diagnostics.push({
+        code: 'malformed-syntax',
+        line: lineNo,
+        message: `Line "${lines[i].trim()}" violates "field: value" directive format`
+      });
+      continue;
+    }
+
+    const field = match[1].toLowerCase();
+    const value = match[2].trim();
+
+    if (field === 'user-agent') {
+      currentAgentActive = true;
+      const normalizedAgent = value.toLowerCase();
+      if (agentLineTracker.has(normalizedAgent)) {
+        diagnostics.push({
+          code: 'duplicate-agent-group',
+          line: lineNo,
+          message: `User-agent "${value}" duplicated (first seen line ${agentLineTracker.get(normalizedAgent)})`
+        });
+      } else {
+        agentLineTracker.set(normalizedAgent, lineNo);
+      }
+      continue;
+    }
+
+    if (field === 'allow' || field === 'disallow') {
+      if (!currentAgentActive) {
+        diagnostics.push({
+          code: 'rule-without-agent',
+          line: lineNo,
+          message: `Directive "${field}: ${value}" precedes all User-agent declarations and will be dropped`
+        });
+      }
+    }
+  }
+
+  return diagnostics;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Feeding raw text straight to parser and assuming absence of errors equals validity
+import robotsParser from 'robots-parser';
+
+export function auditRobotsFile(url: string, content: string) {
+  const parsed = robotsParser(url, content);
+  // FLAW: If content has "Dissallow: /secret" or "Disallow" before "User-agent",
+  // parsed.isAllowed('/secret', 'Googlebot') will return true without warning!
+  // The system silently deploys a security/SEO disaster.
+  return {
+    isValid: true, // Complete false positive
+    canCrawl: parsed.isAllowed('/secret', '*')
+  };
+}
+```
+
+**VERIFICATION METHOD**:
+Write a test asserting that out-of-order and misspelled tokens yield exact line-numbered diagnostics:
+```typescript
+import { test, expect } from 'vitest';
+
+test('flags directives placed prior to User-agent line', () => {
+  const badRobots = `
+Disallow: /admin
+User-agent: *
+Disallow: /private
+  `.trim();
+  const results = lintRobotsDirectives(badRobots);
+  expect(results).toContainEqual({
+    code: 'rule-without-agent',
+    line: 1,
+    message: expect.stringContaining('precedes all User-agent declarations')
+  });
+});
+```
+
+---
+
+
+---
+
+## 1631. HTTP Protocol Error Discrimination in Automated Crawlers (Harvested from CrawlCove/robots-txt-tester)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "HTTP Protocol Error Discrimination in Automated Crawlers",
+  "source": "CrawlCove/robots-txt-tester",
+  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+  "source_version": "63245304",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T06:36:31.748Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-robots-txt-tester",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `63245304`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Automated client tools and crawlers interacting with RFC-defined endpoints (e.g., `/robots.txt`) MUST discriminate between distinct HTTP status codes (200 vs 404/410 vs 5xx vs other 4xx) and validate response body MIME/signature types before parsing. They MUST NOT treat all non-200 responses as generic fetch errors or treat 200 HTML catch-alls as valid text configurations.
+
+**WHY**:
+Under web crawler specifications (Googlebot / RFC 9309):
+- HTTP 404/410 indicates the file does not exist, granting unrestricted crawl permissions.
+- HTTP 5xx indicates a server-side failure; Googlebot halts all crawling on the host for up to 30 days to avoid indexing broken sites or hammering a failing backend.
+- Single Page Applications (SPAs) and misconfigured CDN edge proxies frequently return `HTTP 200 OK` with an `index.html` body or JSON error payload for missing `/robots.txt` paths. Treating HTML/JSON as plain-text robots rules causes the parser to see invalid directives, often defaulting to open crawl or unpredictable disallow behaviors.
+
+**WHEN TO APPLY**:
+Any HTTP client, SEO crawler, synthetic monitor, or edge router verifying robots exclusion protocols or well-known metadata files (`/.well-known/*`, `robots.txt`, `security.txt`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export interface HttpResponseAssessment {
+  canProceed: boolean;
+  cleanText: string | null;
+  fatalError: string | null;
+  advisoryWarning: string | null;
+}
+
+export function assessRobotsResponse(status: number, rawBuffer: Buffer): HttpResponseAssessment {
+  // 1. Unrestricted access on absolute absence
+  if (status === 404 || status === 410) {
+    return {
+      canProceed: true,
+      cleanText: '',
+      fatalError: null,
+      advisoryWarning: `HTTP ${status}: robots.txt absent; crawlers assume full unrestricted access`
+    };
+  }
+
+  // 2. Halting condition on server failure (RFC 9309 Section 2.3.1.2)
+  if (status >= 500) {
+    return {
+      canProceed: false,
+      cleanText: null,
+      fatalError: `HTTP ${status}: Server error forces search engines to pause crawling site-wide`,
+      advisoryWarning: null
+    };
+  }
+
+  // 3. Client error handling (401, 403, etc.)
+  if (status >= 400) {
+    return {
+      canProceed: false,
+      cleanText: null,
+      fatalError: `HTTP ${status}: Client error handled as crawl restriction by strict crawlers`,
+      advisoryWarning: null
+    };
+  }
+
+  // 4. Validate body signature on 200 OK
+  const text = rawBuffer.toString('utf8');
+  if (/^\s*(<!doctype|<html|<\?xml|{)/i.test(text)) {
+    return {
+      canProceed: false,
+      cleanText: null,
+      fatalError: 'Response body is HTML/XML/JSON (likely an SPA/framework catch-all 200 error page)',
+      advisoryWarning: null
+    };
+  }
+
+  return {
+    canProceed: true,
+    cleanText: text,
+    fatalError: null,
+    advisoryWarning: null
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blind text extraction checking only res.ok
+async function fetchRobotsBad(url: string) {
+  const res = await fetch(url);
+  if (!res.ok) {
+    // FLAW: Treats 404 (valid unrestricted access) as fatal error,
+    // and conflates 500 (total crawl stop) with 404!
+    throw new Error(`Failed to fetch: ${res.status}`);
+  }
+  const text = await res.text();
+  // FLAW: If server returned 200 OK with HTML <html><body>Not Found</body></html>,
+  // it is fed to parser as valid robots rules.
+  return text;
+}
+```
+
+**VERIFICATION METHOD**:
+Test with synthetic responses representing SPA catch-all and 500 error scenarios:
+```typescript
+import { test, expect } from 'vitest';
+
+test('detects HTML payload served under HTTP 200 OK', () => {
+  const htmlBuffer = Buffer.from('<!DOCTYPE html><html><body>Error</body></html>', 'utf8');
+  const result = assessRobotsResponse(200, htmlBuffer);
+  expect(result.canProceed).toBe(false);
+  expect(result.fatalError).toContain('Response body is HTML/XML/JSON');
+});
+
+test('handles HTTP 404 as proceedable empty ruleset', () => {
+  const result = assessRobotsResponse(404, Buffer.alloc(0));
+  expect(result.canProceed).toBe(true);
+  expect(result.cleanText).toBe('');
+});
+```
+
+---
+
+
+---
+
+## 1632. CI/CD Pre-Commit Distribution Synchronization Invariant (Harvested from CrawlCove/robots-txt-tester)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "CI/CD Pre-Commit Distribution Synchronization Invariant",
+  "source": "CrawlCove/robots-txt-tester",
+  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+  "source_version": "63245304",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T06:36:31.822Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-robots-txt-tester",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `63245304`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Repositories that publish compiled CLI binaries directly consumable via remote Git tarballs or `npx github:<org>/<repo>` MUST enforce in CI that the committed distribution directory (e.g., `dist/`) is byte-for-byte identical to the output of `npm run build` executed against clean sources.
+
+**WHY**:
+When users install CLI tools via GitHub tags or `npx github:...`, npm runs the pre-compiled files referenced in the `bin` field of `package.json`. If a developer modifies code in `src/`, commits, but forgets to run `tsc`, the remote install executes stale or broken JavaScript, while local unit tests (often run via Vitest/ts-node against `src/`) report green.
+
+**WHEN TO APPLY**:
+All Node.js/TypeScript repositories configuring the `bin` property pointing to a build output directory (`dist/`) intended for distribution through Git tags, GitHub releases, or direct Git URLs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+In `.github/workflows/ci.yml`:
+```yaml
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify-build-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      # The canonical invariant check: fail if tsc modified or added uncommitted files in dist/
+      - name: Assert dist/ is committed and up to date
+        run: git diff --exit-code -- dist
+      - run: npm test
+```
+
+**NEGATIVE CONSTRAINT**:
+```yaml
+# ANTI-PATTERN: Building without checking git diff in repos distributing compiled dist/
+steps:
+  - uses: actions/checkout@v4
+  - run: npm ci
+  - run: npm run build
+  - run: npm test
+# FLAW: If a developer commits src/ without updating dist/, tests pass against src/,
+# but end users installing via npx github:... execute obsolete dist/ code!
+```
+
+**VERIFICATION METHOD**:
+Local pre-commit hook or script verification:
+```sh
+npm run build && git diff --exit-code -- dist || (echo "ERROR: dist/ is out of date. Run npm run build and commit changes." && exit 1)
+```
+
+---
