@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4R04",
-    "timestamp": "2026-10-16T23:14:44.020Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "b42c055e158f10cf463dea6b032f28805275c4653edf4bae24ad26baf156ac47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-98VR",
     "timestamp": "2026-10-16T23:18:13.815Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7492,6 +7477,21 @@
     "contentHash": "f2ed96535ecec80963d6cd22154d228ec24cea8dbec61c837cc9f0493bf9e6f8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-VAAX",
+    "timestamp": "2026-10-18T03:34:59.049Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "4130bf7a9676c5cc3f54a49fbf46d894aeb9738712b7fad78588a4f414cf3d82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
