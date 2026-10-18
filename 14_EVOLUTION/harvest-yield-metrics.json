@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T03:34:59.056Z",
-  "total_cycles_completed": 2389,
-  "total_learnings_persisted": 2389,
+  "last_updated": "2026-10-18T03:38:25.168Z",
+  "total_cycles_completed": 2390,
+  "total_learnings_persisted": 2390,
   "total_rules_promoted": 1389,
   "history": [
-    {
-      "timestamp": "2026-10-17T16:10:54.217Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T16:14:02.764Z",
       "repository": "PSRben/VisionHOPE",
@@ -1403,6 +1396,13 @@
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T03:38:25.168Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

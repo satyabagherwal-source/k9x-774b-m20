@@ -2412,3 +2412,4 @@
 | `CYCLE-20261018-N0LJ` | `2026-10-18T03:28:33.223Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`d16adfc5...`) |
 | `CYCLE-20261018-QSZ2` | `2026-10-18T03:31:29.966Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`f2ed9653...`) |
 | `CYCLE-20261018-VAAX` | `2026-10-18T03:34:59.049Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1600, Rule 1601` | Yes (`4130bf7a...`) |
+| `CYCLE-20261018-ZPCB` | `2026-10-18T03:38:25.163Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`59c076a5...`) |
