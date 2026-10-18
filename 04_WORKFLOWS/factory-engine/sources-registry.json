@@ -1574,8 +1574,8 @@
     "sourceType": "github",
     "technology": "Jupyter Notebook",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T22:57:30.695Z",
-    "lastVerified": "2026-10-17T22:57:30.695Z",
+    "lastChecked": "2026-10-18T05:30:30.555Z",
+    "lastVerified": "2026-10-18T05:30:30.555Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T05:13:53.299Z",
-    "lastVerified": "2026-10-18T05:13:53.299Z",
+    "lastChecked": "2026-10-18T05:30:33.058Z",
+    "lastVerified": "2026-10-18T05:30:33.058Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -23858,5 +23858,12 @@
     "lastChecked": "2026-10-18T05:27:02.504Z",
     "revisionIdentifier": "HEAD",
     "lastVerified": "2026-10-18T05:27:02.504Z"
+  },
+  "serpapi-google-search-results-nodejs": {
+    "name": "google-search-results-nodejs",
+    "officialUrl": "https://github.com/serpapi/google-search-results-nodejs",
+    "lastChecked": "2026-10-18T05:30:20.554Z",
+    "revisionIdentifier": "HEAD",
+    "lastVerified": "2026-10-18T05:30:20.554Z"
   }
 }
