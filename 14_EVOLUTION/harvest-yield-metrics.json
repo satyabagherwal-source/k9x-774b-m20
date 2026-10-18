@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T02:38:32.470Z",
-  "total_cycles_completed": 2372,
-  "total_learnings_persisted": 2372,
+  "last_updated": "2026-10-18T02:41:26.687Z",
+  "total_cycles_completed": 2373,
+  "total_learnings_persisted": 2373,
   "total_rules_promoted": 1382,
   "history": [
-    {
-      "timestamp": "2026-10-17T15:17:15.216Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-altworld-hemmingway-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T15:20:12.991Z",
       "repository": "fastino/GLiNER2.5-Decide",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T02:41:26.687Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
