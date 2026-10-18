@@ -1126,8 +1126,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T22:36:16.499Z",
-    "lastVerified": "2026-10-17T22:36:16.499Z",
+    "lastChecked": "2026-10-18T05:10:28.974Z",
+    "lastVerified": "2026-10-18T05:10:28.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2150,8 +2150,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T01:48:35.165Z",
-    "lastVerified": "2026-10-18T01:48:35.165Z",
+    "lastChecked": "2026-10-18T05:10:26.476Z",
+    "lastVerified": "2026-10-18T05:10:26.476Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17514,8 +17514,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T04:39:56.364Z",
-    "lastVerified": "2026-10-18T04:39:56.364Z",
+    "lastChecked": "2026-10-18T05:10:31.469Z",
+    "lastVerified": "2026-10-18T05:10:31.469Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -23816,5 +23816,12 @@
     "lastChecked": "2026-10-18T05:07:00.254Z",
     "revisionIdentifier": "7e5d3c5",
     "lastVerified": "2026-10-18T05:07:00.254Z"
+  },
+  "melnixdev-seo-crawl-audit": {
+    "name": "seo-crawl-audit",
+    "officialUrl": "https://github.com/MelnixDev/seo-crawl-audit",
+    "lastChecked": "2026-10-18T05:10:18.976Z",
+    "revisionIdentifier": "082076c",
+    "lastVerified": "2026-10-18T05:10:18.976Z"
   }
 }
