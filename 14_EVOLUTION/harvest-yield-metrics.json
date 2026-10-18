@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T04:52:47.696Z",
-  "total_cycles_completed": 2412,
-  "total_learnings_persisted": 2412,
+  "last_updated": "2026-10-18T04:55:49.007Z",
+  "total_cycles_completed": 2413,
+  "total_learnings_persisted": 2413,
   "total_rules_promoted": 1394,
   "history": [
-    {
-      "timestamp": "2026-10-17T17:23:40.530Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T17:26:54.334Z",
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-18T04:52:47.696Z",
       "repository": "google/gemma-4-31B-it",
       "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-18T04:55:49.007Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
