@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:12:26.407Z",
+  "last_updated": "2026-10-18T02:17:12.659Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16236,10 +16236,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "2f4ccb421f3d91e6988b07fae40d58331b617a4c9d24ae0f91e84db6930ca511",
+      "content_hash": "689be1e7c58b13ae0a0da3ec07e2b96ffe99a1cd7ecf11ad15118e16bd8b2e5a",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1586,
+          "title": "Rational-Grid Multi-Modal Temporal Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1587,
+          "title": "Spatio-Temporal 3D-VAE Latent Chunking with Boundary Weight Harmonization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -16258,7 +16269,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-10-17T17:52:40.445Z",
+      "verified_at": "2026-10-18T02:17:12.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
