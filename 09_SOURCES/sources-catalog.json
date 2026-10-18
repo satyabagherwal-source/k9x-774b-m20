@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "c76fab4a8a0f064a215904a4a3988f01caaf4b91a0331eb958927e9ed8882686",
-    "lastHarvestedAt": "2026-10-17T16:51:51.569Z",
+    "contentHash": "dddb96c6ced1c9f12bc6fa3d64fe5b0d710fc0b5ac50b636afde41d8c4fc04e3",
+    "lastHarvestedAt": "2026-10-18T00:55:02.144Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {

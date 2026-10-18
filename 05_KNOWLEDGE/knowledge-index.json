@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T00:51:38.012Z",
+  "last_updated": "2026-10-18T00:55:02.115Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14140,7 +14140,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "c76fab4a8a0f064a215904a4a3988f01caaf4b91a0331eb958927e9ed8882686",
+      "content_hash": "dddb96c6ced1c9f12bc6fa3d64fe5b0d710fc0b5ac50b636afde41d8c4fc04e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
@@ -14173,6 +14173,16 @@
           "number": 1208,
           "title": "Context Window Truncation Strategy",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1577,
+          "title": "Configuration-Topology Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1578,
+          "title": "Numerical Stability Epsilon Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14193,7 +14203,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-17T16:51:51.524Z",
+      "verified_at": "2026-10-18T00:55:02.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

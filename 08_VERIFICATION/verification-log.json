@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-XTV5",
-    "timestamp": "2026-10-16T20:49:23.057Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "b1e9578b7a38363e91274812b1aba5398b29f3545b20cbf6c9b77e12a0e33c5f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-1KEM",
     "timestamp": "2026-10-16T20:52:17.422Z",
     "repository": "zai-org/GLM-5.3",
@@ -7492,6 +7477,21 @@
     "contentHash": "983658020163401ddacc8b7f84c47bd8c11661cfc6d64e8cadb32be959834c67",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-5LA3",
+    "timestamp": "2026-10-18T00:55:02.139Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "dddb96c6ced1c9f12bc6fa3d64fe5b0d710fc0b5ac50b636afde41d8c4fc04e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
