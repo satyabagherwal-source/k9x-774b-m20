@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-18T22:23:08.890Z",
+  "last_updated": "2026-10-18T22:48:14.498Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1608,6 +1608,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-ahmadhassan-bted-openopc-shadow-adapter"
+    },
+    {
+      "id": "CD-2DUQ",
+      "directive_title": "avoid global lineage gate during ALTER COPY preparation (#29798)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "2508ce70",
+      "date_staged": "2026-10-18",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-matrixorigin-matrixone"
     }
   ]
 }

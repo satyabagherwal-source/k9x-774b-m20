@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T22:41:59.915Z",
-  "total_verified_learnings": 335,
+  "last_updated": "2026-10-18T22:48:14.462Z",
+  "total_verified_learnings": 341,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4745,22 +4745,35 @@
     "learn-github-danilowoz-react-content-loader": {
       "learning_id": "learn-github-danilowoz-react-content-loader",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "danilowoz-react-content-loader",
+      "source": "danilowoz/react-content-loader",
+      "repository": "danilowoz/react-content-loader",
       "slug": "danilowoz-react-content-loader",
       "platform": "github",
       "source_url": "https://github.com/danilowoz/react-content-loader",
-      "source_version": "HEAD",
-      "content_hash": "4aba993a01b47d29072b97660ad0ec79cc7ac4fff66567860ec6078bee1a69b7",
+      "source_version": "c8a6b6c6",
+      "content_hash": "fe40e1ab35d90a579b04de1740a3e3cc0d7e569bc1d9dd8f7d8ad3d2ea1ad401",
       "dossier_path": "07_PROJECT_LEARNING/danilowoz-react-content-loader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/danilowoz-react-content-loader-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1802,
+          "title": "docs(README): fix title default value in README.md (#269)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.502Z"
+      "verified_at": "2026-10-18T22:48:06.109Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-darrylmorley-whatcable": {
       "learning_id": "learn-github-darrylmorley-whatcable",
@@ -7821,22 +7834,35 @@
     "learn-github-geekyants-nativebase": {
       "learning_id": "learn-github-geekyants-nativebase",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "geekyants-nativebase",
+      "source": "GeekyAnts/NativeBase",
+      "repository": "GeekyAnts/NativeBase",
       "slug": "geekyants-nativebase",
       "platform": "github",
       "source_url": "https://github.com/GeekyAnts/NativeBase",
-      "source_version": "HEAD",
-      "content_hash": "3049671e1619bf529293d84554baf5f6a8e46b54aa67ffe2501cb19167c83054",
+      "source_version": "335a1d5f",
+      "content_hash": "eff8d0923d6a11df32d9fa6d830568a5e79408ef4026464fcd346142f7023eca",
       "dossier_path": "07_PROJECT_LEARNING/geekyants-nativebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/geekyants-nativebase-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1800,
+          "title": "Merge pull request #5779 from GeekyAnts/feat/gui-banner",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.031Z"
+      "verified_at": "2026-10-18T22:47:58.733Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-genieincodebottle-generative-ai": {
       "learning_id": "learn-github-genieincodebottle-generative-ai",
@@ -14841,14 +14867,14 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "1ff8730553457306a1e69b739357a43b43bf59448f94dd39aca5cb37db33e0a9",
+      "content_hash": "9f58abfbc682005ca083813ded4463bbb6a79613faaea13b74e2ac782ddbdca2",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
         {
           "number": 969,
           "title": "Hybrid Attention Layer Interleaving Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 970,
@@ -14858,6 +14884,16 @@
         {
           "number": 971,
           "title": "Multimodal Token Boundary Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1803,
+          "title": "Multimodal Token Alignment & Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1804,
+          "title": "Structured Tool-Call Schema Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14878,7 +14914,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-17T20:16:06.611Z",
+      "verified_at": "2026-10-18T22:48:09.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24177,22 +24213,35 @@
     "learn-github-lunasec-io-lunasec": {
       "learning_id": "learn-github-lunasec-io-lunasec",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lunasec-io-lunasec",
+      "source": "lunasec-io/lunasec",
+      "repository": "lunasec-io/lunasec",
       "slug": "lunasec-io-lunasec",
       "platform": "github",
       "source_url": "https://github.com/lunasec-io/lunasec",
-      "source_version": "HEAD",
-      "content_hash": "ca9086bafbcc6f62c13f607ba11d4ce77bae7670f2f928a86715b2de7b01d480",
+      "source_version": "c6bb0762",
+      "content_hash": "0fc76fcb9db68b2ce86fddf18a4d7e3611cac92cd7f6dd5174b645cd59c4dbf1",
       "dossier_path": "07_PROJECT_LEARNING/lunasec-io-lunasec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lunasec-io-lunasec-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1806,
+          "title": "broken import",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.111Z"
+      "verified_at": "2026-10-18T22:48:13.226Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lysine-dev-okio": {
       "learning_id": "learn-github-lysine-dev-okio",
@@ -24517,22 +24566,29 @@
     "learn-github-matrixorigin-matrixone": {
       "learning_id": "learn-github-matrixorigin-matrixone",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "matrixorigin-matrixone",
+      "source": "matrixorigin/matrixone",
+      "repository": "matrixorigin/matrixone",
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "HEAD",
-      "content_hash": "baa16d49d27e197c42c66b061d8262128daed80b7089540cf3bb63fcf05c226b",
+      "source_version": "2508ce70",
+      "content_hash": "00d9ecea4561cff1fdfab4755a33b261f477dd1a0da1f01aac9e0aee1f2b7eb6",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.182Z"
+      "verified_at": "2026-10-18T22:48:14.457Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mattermost-mattermost": {
       "learning_id": "learn-github-mattermost-mattermost",
@@ -30988,22 +31044,35 @@
     "learn-github-sayanarijit-xplr": {
       "learning_id": "learn-github-sayanarijit-xplr",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sayanarijit-xplr",
+      "source": "sayanarijit/xplr",
+      "repository": "sayanarijit/xplr",
       "slug": "sayanarijit-xplr",
       "platform": "github",
       "source_url": "https://github.com/sayanarijit/xplr",
-      "source_version": "HEAD",
-      "content_hash": "c4c620dd4c2b42310e601988a610e10bd3280a43712a468f1acc62123b22c14d",
+      "source_version": "f1dbbfa5",
+      "content_hash": "cac7dce3f88d3069e7ecbb971a9fc5a5a26fe8b52e3dbbb6d567fbdaa589fed5",
       "dossier_path": "07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1801,
+          "title": "Redraw terminal screen after clearing (#786)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.398Z"
+      "verified_at": "2026-10-18T22:48:00.824Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sciphi-ai-r2r": {
       "learning_id": "learn-github-sciphi-ai-r2r",
@@ -32289,22 +32358,35 @@
     "learn-github-sorintlab-stolon": {
       "learning_id": "learn-github-sorintlab-stolon",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sorintlab-stolon",
+      "source": "sorintlab/stolon",
+      "repository": "sorintlab/stolon",
       "slug": "sorintlab-stolon",
       "platform": "github",
       "source_url": "https://github.com/sorintlab/stolon",
-      "source_version": "HEAD",
-      "content_hash": "54fac26c65ab3c6ce904eedb390973ba7ff1b70b47a3360a601b53511fcdb275",
+      "source_version": "bcea7a75",
+      "content_hash": "82a3b77b42131d2c757ca7e1407f6229ae2c5e152a0c8926c651602886e30b4a",
       "dossier_path": "07_PROJECT_LEARNING/sorintlab-stolon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sorintlab-stolon-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1805,
+          "title": "Switch uuid package to get around GO-2020-0018",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.629Z"
+      "verified_at": "2026-10-18T22:48:12.089Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sozercan-kaset": {
       "learning_id": "learn-github-sozercan-kaset",
@@ -56582,15 +56664,15 @@
       "learning_id": "rule-969",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
-      "title": "Hybrid Attention Layer Interleaving Invariant (Harvested from google/gemma-4-31B-it)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Hybrid Attention Layer Interleaving Invariant",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-18T22:48:09.133Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -68485,6 +68567,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T22:41:59.909Z"
+    },
+    "rule-1800": {
+      "learning_id": "rule-1800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1800,
+      "title": "Merge pull request #5779 from GeekyAnts/feat/gui-banner",
+      "source_url": "https://github.com/GeekyAnts/NativeBase",
+      "source_version": "335a1d5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:47:58.733Z"
+    },
+    "rule-1801": {
+      "learning_id": "rule-1801",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1801,
+      "title": "Redraw terminal screen after clearing (#786)",
+      "source_url": "https://github.com/sayanarijit/xplr",
+      "source_version": "f1dbbfa5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:48:00.824Z"
+    },
+    "rule-1802": {
+      "learning_id": "rule-1802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1802,
+      "title": "docs(README): fix title default value in README.md (#269)",
+      "source_url": "https://github.com/danilowoz/react-content-loader",
+      "source_version": "c8a6b6c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:48:06.109Z"
+    },
+    "rule-1803": {
+      "learning_id": "rule-1803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1803,
+      "title": "Multimodal Token Alignment & Padding Invariant",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:48:09.133Z"
+    },
+    "rule-1804": {
+      "learning_id": "rule-1804",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1804,
+      "title": "Structured Tool-Call Schema Enforcement",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:48:09.133Z"
+    },
+    "rule-1805": {
+      "learning_id": "rule-1805",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1805,
+      "title": "Switch uuid package to get around GO-2020-0018",
+      "source_url": "https://github.com/sorintlab/stolon",
+      "source_version": "bcea7a75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:48:12.089Z"
+    },
+    "rule-1806": {
+      "learning_id": "rule-1806",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1806,
+      "title": "broken import",
+      "source_url": "https://github.com/lunasec-io/lunasec",
+      "source_version": "c6bb0762",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T22:48:13.226Z"
     }
   },
   "aliases": {

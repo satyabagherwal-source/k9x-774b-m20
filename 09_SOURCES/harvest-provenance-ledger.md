@@ -2586,3 +2586,10 @@ Every entry in this ledger must capture:
 | `learn-github-taubyte-tau` | `https://github.com/taubyte/tau` | `d9841668` | Multi-dimensional audit evidence | 2026-10-18T22:41:54.692Z |
 | `learn-github-build-trust-ockam` | `https://github.com/build-trust/ockam` | `0435d8d7` | Multi-dimensional audit evidence | 2026-10-18T22:41:58.560Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `8138e4ba` | Multi-dimensional audit evidence | 2026-10-18T22:41:59.946Z |
+| `learn-github-geekyants-nativebase` | `https://github.com/GeekyAnts/NativeBase` | `335a1d5f` | Multi-dimensional audit evidence | 2026-10-18T22:47:58.770Z |
+| `learn-github-sayanarijit-xplr` | `https://github.com/sayanarijit/xplr` | `f1dbbfa5` | Multi-dimensional audit evidence | 2026-10-18T22:48:00.861Z |
+| `learn-github-danilowoz-react-content-loader` | `https://github.com/danilowoz/react-content-loader` | `c8a6b6c6` | Multi-dimensional audit evidence | 2026-10-18T22:48:06.156Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-18T22:48:09.169Z |
+| `learn-github-sorintlab-stolon` | `https://github.com/sorintlab/stolon` | `bcea7a75` | Multi-dimensional audit evidence | 2026-10-18T22:48:12.136Z |
+| `learn-github-lunasec-io-lunasec` | `https://github.com/lunasec-io/lunasec` | `c6bb0762` | Multi-dimensional audit evidence | 2026-10-18T22:48:13.263Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `2508ce70` | Multi-dimensional audit evidence | 2026-10-18T22:48:14.494Z |

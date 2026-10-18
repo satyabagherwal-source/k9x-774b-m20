@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "1ff8730553457306a1e69b739357a43b43bf59448f94dd39aca5cb37db33e0a9",
-    "lastHarvestedAt": "2026-10-17T20:16:06.656Z",
+    "contentHash": "9f58abfbc682005ca083813ded4463bbb6a79613faaea13b74e2ac782ddbdca2",
+    "lastHarvestedAt": "2026-10-18T22:48:09.169Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -3118,5 +3118,65 @@
     "contentHash": "a880b38edc879b9b0382a6116a07bdd61572cd3676fa1e96f8fc257a7e4b1776",
     "lastHarvestedAt": "2026-10-18T22:41:59.946Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
+  },
+  "geekyants-nativebase": {
+    "repository": "GeekyAnts/NativeBase",
+    "platform": "github",
+    "sourceUrl": "https://github.com/GeekyAnts/NativeBase",
+    "sourceVersion": "335a1d5f",
+    "license": "MIT",
+    "contentHash": "eff8d0923d6a11df32d9fa6d830568a5e79408ef4026464fcd346142f7023eca",
+    "lastHarvestedAt": "2026-10-18T22:47:58.770Z",
+    "learningId": "learn-github-geekyants-nativebase"
+  },
+  "sayanarijit-xplr": {
+    "repository": "sayanarijit/xplr",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sayanarijit/xplr",
+    "sourceVersion": "f1dbbfa5",
+    "license": "MIT",
+    "contentHash": "cac7dce3f88d3069e7ecbb971a9fc5a5a26fe8b52e3dbbb6d567fbdaa589fed5",
+    "lastHarvestedAt": "2026-10-18T22:48:00.861Z",
+    "learningId": "learn-github-sayanarijit-xplr"
+  },
+  "danilowoz-react-content-loader": {
+    "repository": "danilowoz/react-content-loader",
+    "platform": "github",
+    "sourceUrl": "https://github.com/danilowoz/react-content-loader",
+    "sourceVersion": "c8a6b6c6",
+    "license": "MIT",
+    "contentHash": "fe40e1ab35d90a579b04de1740a3e3cc0d7e569bc1d9dd8f7d8ad3d2ea1ad401",
+    "lastHarvestedAt": "2026-10-18T22:48:06.156Z",
+    "learningId": "learn-github-danilowoz-react-content-loader"
+  },
+  "sorintlab-stolon": {
+    "repository": "sorintlab/stolon",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sorintlab/stolon",
+    "sourceVersion": "bcea7a75",
+    "license": "Apache-2.0",
+    "contentHash": "82a3b77b42131d2c757ca7e1407f6229ae2c5e152a0c8926c651602886e30b4a",
+    "lastHarvestedAt": "2026-10-18T22:48:12.136Z",
+    "learningId": "learn-github-sorintlab-stolon"
+  },
+  "lunasec-io-lunasec": {
+    "repository": "lunasec-io/lunasec",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lunasec-io/lunasec",
+    "sourceVersion": "c6bb0762",
+    "license": "NOASSERTION",
+    "contentHash": "0fc76fcb9db68b2ce86fddf18a4d7e3611cac92cd7f6dd5174b645cd59c4dbf1",
+    "lastHarvestedAt": "2026-10-18T22:48:13.263Z",
+    "learningId": "learn-github-lunasec-io-lunasec"
+  },
+  "matrixorigin-matrixone": {
+    "repository": "matrixorigin/matrixone",
+    "platform": "github",
+    "sourceUrl": "https://github.com/matrixorigin/matrixone",
+    "sourceVersion": "2508ce70",
+    "license": "Apache-2.0",
+    "contentHash": "00d9ecea4561cff1fdfab4755a33b261f477dd1a0da1f01aac9e0aee1f2b7eb6",
+    "lastHarvestedAt": "2026-10-18T22:48:14.494Z",
+    "learningId": "learn-github-matrixorigin-matrixone"
   }
 }

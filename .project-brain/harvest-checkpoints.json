@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T22:41:59.953Z",
+  "last_updated": "2026-10-18T22:48:14.501Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1637,14 +1637,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "1ff8730553457306a1e69b739357a43b43bf59448f94dd39aca5cb37db33e0a9",
-      "verified_at": "2026-10-17T20:16:06.659Z",
+      "content_hash": "9f58abfbc682005ca083813ded4463bbb6a79613faaea13b74e2ac782ddbdca2",
+      "verified_at": "2026-10-18T22:48:09.175Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:16:06.659Z"
+      "last_updated": "2026-10-18T22:48:09.175Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -4792,6 +4792,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T22:41:59.953Z"
+    },
+    "GeekyAnts/NativeBase": {
+      "repository": "GeekyAnts/NativeBase",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-geekyants-nativebase",
+      "content_hash": "eff8d0923d6a11df32d9fa6d830568a5e79408ef4026464fcd346142f7023eca",
+      "verified_at": "2026-10-18T22:47:58.776Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:47:58.776Z"
+    },
+    "sayanarijit/xplr": {
+      "repository": "sayanarijit/xplr",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sayanarijit-xplr",
+      "content_hash": "cac7dce3f88d3069e7ecbb971a9fc5a5a26fe8b52e3dbbb6d567fbdaa589fed5",
+      "verified_at": "2026-10-18T22:48:00.869Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:48:00.869Z"
+    },
+    "danilowoz/react-content-loader": {
+      "repository": "danilowoz/react-content-loader",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-danilowoz-react-content-loader",
+      "content_hash": "fe40e1ab35d90a579b04de1740a3e3cc0d7e569bc1d9dd8f7d8ad3d2ea1ad401",
+      "verified_at": "2026-10-18T22:48:06.159Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:48:06.159Z"
+    },
+    "sorintlab/stolon": {
+      "repository": "sorintlab/stolon",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sorintlab-stolon",
+      "content_hash": "82a3b77b42131d2c757ca7e1407f6229ae2c5e152a0c8926c651602886e30b4a",
+      "verified_at": "2026-10-18T22:48:12.139Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:48:12.139Z"
+    },
+    "lunasec-io/lunasec": {
+      "repository": "lunasec-io/lunasec",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lunasec-io-lunasec",
+      "content_hash": "0fc76fcb9db68b2ce86fddf18a4d7e3611cac92cd7f6dd5174b645cd59c4dbf1",
+      "verified_at": "2026-10-18T22:48:13.269Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:48:13.269Z"
+    },
+    "matrixorigin/matrixone": {
+      "repository": "matrixorigin/matrixone",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-matrixorigin-matrixone",
+      "content_hash": "00d9ecea4561cff1fdfab4755a33b261f477dd1a0da1f01aac9e0aee1f2b7eb6",
+      "verified_at": "2026-10-18T22:48:14.501Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T22:48:14.501Z"
     }
   },
   "repos": {
