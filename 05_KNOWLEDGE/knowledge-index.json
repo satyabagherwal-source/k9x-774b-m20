@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T00:42:35.448Z",
+  "last_updated": "2026-10-18T00:48:14.179Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11621,7 +11621,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "e56e1649b9fa0dceeda1d6728bb6df8e4f97695b5bf58d071c6a11b2fc59dc0f",
+      "content_hash": "835ab192b4dee9b5740689bec6c44afe364f4a283107291f3db6d80c6cf09813",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -11756,6 +11756,21 @@
           "number": 1501,
           "title": "**Rule #3 – Per‑Question Softmax Isolation**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1574,
+          "title": "Consistent Numerical Precision Across Modalities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1575,
+          "title": "Tokenizer Special‑Token Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1576,
+          "title": "Joint‑Head Input Shape Validation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11776,7 +11791,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-17T16:45:39.033Z",
+      "verified_at": "2026-10-18T00:48:14.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
