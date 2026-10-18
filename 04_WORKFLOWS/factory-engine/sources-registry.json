@@ -1254,8 +1254,8 @@
     "sourceType": "github",
     "technology": "Go",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-17T22:39:48.561Z",
-    "lastVerified": "2026-10-17T22:39:48.561Z",
+    "lastChecked": "2026-10-18T05:13:50.799Z",
+    "lastVerified": "2026-10-18T05:13:50.799Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-18T04:46:43.859Z",
-    "lastVerified": "2026-10-18T04:46:43.859Z",
+    "lastChecked": "2026-10-18T05:13:53.299Z",
+    "lastVerified": "2026-10-18T05:13:53.299Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -23823,5 +23823,12 @@
     "lastChecked": "2026-10-18T05:10:18.976Z",
     "revisionIdentifier": "082076c",
     "lastVerified": "2026-10-18T05:10:18.976Z"
+  },
+  "istifano-seo-auditor": {
+    "name": "seo-auditor",
+    "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
+    "lastChecked": "2026-10-18T05:13:40.803Z",
+    "revisionIdentifier": "HEAD",
+    "lastVerified": "2026-10-18T05:13:40.803Z"
   }
 }
