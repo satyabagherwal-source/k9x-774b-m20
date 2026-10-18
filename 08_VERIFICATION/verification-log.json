@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0NJ6",
-    "timestamp": "2026-10-16T22:15:33.666Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "02c39941f64c66a9f079bad715a6277f81d092476614d715851ec2219040b942",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-506E",
     "timestamp": "2026-10-16T22:18:56.678Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "Tongyi-MAI/Z-Image-Turbo",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
     "contentHash": "1a0e892df7841a690198f9db99ea0844417f6be61239e381c91a141c91eb9374",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-UP72",
+    "timestamp": "2026-10-18T02:38:32.462Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "99edbc2d0c2d13fc49a8df3cd84cf318162aea1addeb6948e531c5e37e54f424",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

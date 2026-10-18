@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T02:35:07.927Z",
+  "last_updated": "2026-10-18T02:38:32.436Z",
   "total_verified_learnings": 199,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15984,7 +15984,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "c6d37019fb45c47e7b47d3ea08ffbe8a3587479a1acd63c20379d0a88beaeaf5",
+      "content_hash": "99edbc2d0c2d13fc49a8df3cd84cf318162aea1addeb6948e531c5e37e54f424",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -16008,6 +16008,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney",
           "verified_at": "2026-10-12T03:07:21.663Z"
+        },
+        {
+          "number": 552,
+          "title": "Prompt Injection & Output Sanitization Boundary",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1050,
+          "title": "Model Artifact Integrity & Supply Chain Security",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1134,
@@ -16068,6 +16078,11 @@
           "number": 1510,
           "title": "RoPE (Rotary Positional Embedding) Scaling Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1594,
+          "title": "Inference Context Window & Memory Bound Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16088,7 +16103,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-17T18:08:43.520Z",
+      "verified_at": "2026-10-18T02:38:32.430Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
