@@ -2373,3 +2373,4 @@
 | `CYCLE-20261018-DSLF` | `2026-10-18T01:01:24.867Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`c9b6d0ba...`) |
 | `CYCLE-20261018-ICAF` | `2026-10-18T01:04:57.015Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`4a440162...`) |
 | `CYCLE-20261018-MQX9` | `2026-10-18T01:08:22.605Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`b2e4c34d...`) |
+| `CYCLE-20261018-QYII` | `2026-10-18T01:11:39.066Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`9eedf2e4...`) |

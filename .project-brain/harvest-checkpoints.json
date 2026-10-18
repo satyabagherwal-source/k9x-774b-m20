@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T01:08:22.633Z",
+  "last_updated": "2026-10-18T01:11:39.072Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -963,14 +963,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "163d2232bd5c8c32c261e3ee75151f82599fa6e18c7fd087fec5119c0d712338",
-      "verified_at": "2026-10-17T17:07:50.399Z",
+      "content_hash": "9eedf2e48afe1304cbab3be6a5912df84647a7996369255cd0d8c8fd9a04d52a",
+      "verified_at": "2026-10-18T01:11:39.072Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T17:07:50.399Z"
+      "last_updated": "2026-10-18T01:11:39.072Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
