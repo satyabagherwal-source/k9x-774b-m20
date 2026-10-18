@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
+> **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
+> **Source Version**: `f70d0db4`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-18T23:08:29.266Z  
+> **Learning ID**: `learn-github-cilium-cilium`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): cilium/cilium
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:54:18.814Z  
+> **Harvest Timestamp**: 2026-10-18T23:08:29.075Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25608 stars
+- **Stars / Engagement**: 25681 stars
 
 ---
 
@@ -1239,237 +1253,20 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 		Ena
 ```
 
-### Core Architecture Module: `cilium-cli/utils/features/utils.go`
-```
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
-
-package features
-
-import (
-	"net/netip"
-
-	"github.com/cilium/cilium/pkg/subnet/topology"
-)
-
-type IPFamily int
-
-const (
-	// IPFamilyAny is used for non-IP based endpoints (e.g., HTTP URL),
-	// and when any IP family could be used.
-	IPFamilyAny IPFamily = iota
-	IPFamilyV4
-	IPFamilyV6
-)
-
-func (f IPFamily) String() string {
-	switch f {
-	case IPFamilyAny:
-		return "any"
-	case IPFamilyV4:
-		return "ipv4"
-	case IPFamilyV6:
-		return "ipv6"
-	}
-	return "undefined"
-}
-
-// GetIPFamilies function converts string slice to IPFamily slice.
-func GetIPFamilies(families []string) []IPFamily {
-	ipFams := make([]IPFamily, 0, len(families))
-	for i := range families {
-		ipFams = append(ipFams, NewIPFamily(families[i]))
-	}
-	return ipFams
-}
-
-// NewIPFamily is a factory function that consumes string and returns IPFamily.
-func NewIPFamily(s string) IPFamily {
-	switch s {
-	case "ipv4":
-		return IPFamilyV4
-	case "ipv6":
-		return IPFamilyV6
-	default:
-		return IPFamilyAny
-	}
-}
-
-func GetIPFamily(ip string) IPFamily {
-	addr, err := netip.ParseAddr(ip)
-	if err != nil {
-		return IPFamilyAny
-	}
-
-	// Treat IPv4-mapped IPv6 addresses as IPv4
-	addr = addr.Unmap()
-
-	if addr.Is4() {
-		return IPFamilyV4
-	}
-
-	if addr.Is6() {
-		return IPFamilyV6
-	}
-
-	return IPFamilyAny
-}
-
-// ComputeFailureExceptions computes a list of failure exceptions for various
-// tests, from a default list of exceptions and a diff given via a CLI flag.
-// The diff is given as a list of exceptions, with optional leading +/- signs.
-// A minus sign means the exception should be removed from the defaults; a plus
-// sign means the exception should be added to the defaults. If there are
-// neither minus nor plus signs, then the given exceptions are used directly
-// without considering the defaults.
-// See the unit tests for examples.
-func ComputeFailureExceptions(defaultExceptions, inputExceptions []string) []string {
-	exceptions := map[string]bool{}
-	if len(inputExceptions) > 0 {
-		// Build final list of failure exceptions based on default exceptions,
-		// added exceptions (+ prefix), and removed exceptions (- prefix).
-		addedAllDefaults := false
-		for _, exception := range inputExceptions {
-			if exception[0] == '+' || exception[0] == '-' {
-				if !addedAllDefaults {
-					for _, r := range defaultExceptions {
-						exceptions[r] = true
-					}
-					addedAllDefaults = true
-				}
-			}
-			switch exception[0] {
-			case '+':
-				exceptions[exception[1:]] = true
-			case '-':
-				exceptions[exception[1:]] = false
-			default:
-				exceptions[exception] = true
-			}
-		}
-	}
-
-	exceptionList := []string{}
-	for exception, isIn := range exceptions {
-		if isIn {
-			exceptionList = append(exceptionList, exception)
-		}
-	}
-	return exceptionList
-}
-
-// SameSubnet returns true if given two IP addresses belong to the same subnet, based on the subnet-topology.
-func SameSubnet(ip1, ip2, topologyStr string) bool {
-	if topologyStr == "" {
-		return false
-	}
-
-	parsedIP1, err := netip.ParseAddr(ip1)
-	if err != nil {
-		return false
-	}
-	parsedIP2, err := netip.ParseAddr(ip2)
-	if err != nil {
-		return false
-	}
-
-	entries, err := topology.Decode(topologyStr)
-	if err != nil {
-		return false
-	}
-
-	var group1, group2 uint32
-	for _, entry := range entries {
-		if entry.Key.Contains(parsedIP1) {
-			group1 = entry.Value
-		}
-		if entry.Key.Contains(parsedIP2) {
-			group2 = entry.Value
-		}
-		if group1 != 0 && group1 == group2 {
-			return true
-		}
-	}
-
-	return false
-}
-
-```
-
-### Core Architecture Module: `cilium-cli/utils/junit/junit.go`
-```
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
-
-package junit
-
-import (
-	"fmt"
-	"os"
-	"strings"
-)
-
-func NamespacedFileName(namespace string, junitFile string) string {
-	if junitFile == "" {
-		return ""
-	}
-	idx := strings.LastIndex(junitFile, string(os.PathSeparator))
-	if idx == -1 {
-		return fmt.Sprintf("%s-%s", namespace, junitFile)
-	}
-	return fmt.Sprintf("%s%s-%s", junitFile[:idx+1], namespace, junitFile[idx+1:])
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49172** (2026-10-05): **datapath: get rid of `ENABLE_SOCKET_LB_PEER`**
-  *Symptoms*: This gets rid of `ENABLE_SOCKET_LB_PEER`, as the macro is currently just used to get rid of `cil_sock4_getpeername` and `cil_sock6_getpeername` from the final ELF. The userspace logic remains unchanged, meaning that these programs are only attached when needed (see https://github.com/cilium/cilium/blob/07711254f5945c589d67364ea0d5cf231eee392d/pkg/socketlb/socketlb.go#L168-L170 and https://github.com/cilium/cilium/blob/07711254f5945c589d67364ea0d5cf231eee392d/pkg/socketlb/socketlb.go#L190-L192 ).  Closes https://github.com/cilium/cilium/issues/48830  AIL: 0
+- **Issue #49447** (2026-10-18): **fix(deps): update module github.com/azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 to v12.1.0 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12](https://redirect.github.com/Azure/azure-sdk-for-go) | `v12.0.0` → `v12.1.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fAzure%2fazure-sdk-for-go%2fsdk%2fresourcemanager%2fnetwork%2farmnetwork%2fv12/v12.1.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fAzure%2fazure-sdk-for-go%2fsdk%2fresourcemanager%2fnetwork%2farmnetwork%2fv12/v12.0.0/v12.1.0?slim=true) |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR has been generated by [Mend Renovate CLI](https://redirect.github.com/renovatebot/renovate). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNTUuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjE1NS4xIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6WyJraW5kL2VuaGFuY2VtZW50IiwicmVsZWFzZS1ub3RlL21pc2MiLCJyZW5vdmF0ZS9zdG9w
   **Post-Mortem & Fix Analysis**:
   > /test
   > /test
 
-- **Issue #49168** (2026-10-04): **fix(deps): update module github.com/aws/aws-sdk-go-v2/service/ec2 to v1.338.0 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/aws/aws-sdk-go-v2/service/ec2](https://redirect.github.com/aws/aws-sdk-go-v2) | `v1.337.0` → `v1.338.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2faws%2faws-sdk-go-v2%2fservice%2fec2/v1.338.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2faws%2faws-sdk-go-v2%2fservice%2fec2/v1.337.0/v1.338.0?slim=true) |  ---  ### Release Notes  <details> <summary>aws/aws-sdk-go-v2 (github.com/aws/aws-sdk-go-v2/service/ec2)</summary>  ### [`v1.338.0`](https://redirect.github.com/aws/aws-sdk-go-v2/blob/HEAD/CHANGELOG.md#Release-2026-09-29)  #### Module Highlights  - `github.com/aws/aws-sdk-go-v2/service/appstream`: [v1.71.0](service/appstream/CHANGELOG.md#v1710-2026-09-29)   - **Feature**: Add support for NVIDIA GRID driver version metadata in Workspace Applications image responses through the new ImageSoftwareMetadata field. - `github.com/aws/aws-sdk-go-v2/service/bedrockagentruntime`: [v1.64.0](service/bedrockagentruntime/CHANGELOG.md#v1640-2026-09-29)   - **Feature**: Amazon Bedrock Agentic Retrieve now supports the Bedrock Mantle (OpenAI Responses) endpoint via a new MantleFoundationModel configuration with an optional projectId. - `github.com/aws/aws-sdk-go-v2/service/deadline`: [v1.43.0](service/deadline/CH
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /test
-
-- **Issue #49167** (2026-10-04): **chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.133.0 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) |  | minor | [`44.132.6` → `44.133.0`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.132.6&to=44.133.0) | | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) | uses-with | minor | [`44.132.6` → `44.133.0`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.132.6&to=44.133.0) |  ---  ### Release Notes  <details> <summary>renovatebot/renovate (ghcr.io/renovatebot/renovate)</summary>  ### [`v44.133.0`](https://redirect.github.com/renovatebot/renovate/releases/tag/44.133.0)  [Compare Source](https://redirect.github.com/renovatebot/renovate/compare/44.132.6...44.133.0)  ##### Features  - **data:** automatic update of static data ([#&#8203;46734](https://redirect.github.com/renovatebot/renovate/issues/46734)) ([474cddd](https://redirect.github.com/renovatebot/renovate/commit/474cddd087adab35d555fd3fd3d2c8036a0eab55))  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /test
-
-- **Issue #49166** (2026-10-04): **chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.132.6 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) |  | patch | [`44.132.5` → `44.132.6`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.132.5&to=44.132.6) | | [ghcr.io/renovatebot/renovate](https://renovatebot.com) ([source](https://redirect.github.com/renovatebot/renovate)) | uses-with | patch | [`44.132.5` → `44.132.6`](https://octochangelog.com/compare?repo=renovatebot%2Frenovate&from=44.132.5&to=44.132.6) |  ---  ### Release Notes  <details> <summary>renovatebot/renovate (ghcr.io/renovatebot/renovate)</summary>  ### [`v44.132.6`](https://redirect.github.com/renovatebot/renovate/releases/tag/44.132.6)  [Compare Source](https://redirect.github.com/renovatebot/renovate/compare/44.132.5...44.132.6)  ##### Bug Fixes  - **deps:** update ghcr.io/renovatebot/base-image docker tag to v13.109.4 (main) ([#&#8203;46738](https://redirect.github.com/renovatebot/renovate/issues/46738)) ([eee241a](https://redirect.github.com/renovatebot/renovate/commit/eee241a6ef6cac4d381f91dd5ee4c21fd97bd5a1))  ##### Miscellaneous Chores  - **deps:** update dependency [@&#8203;containerbase/istanbul-reports-html](https://redirect.github.com/containerbase/istanbul-reports-html) to v2.0.20 (main) ([#&#8203;46736](https://redirect.github.com/renovatebot/renovate/issues/46736)) ([06a4f33](https://redirect.github.com/renova
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /test
-
-- **Issue #49165** (2026-10-04): **chore(deps): update renovatebot/github-action action to v46.3.6 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [renovatebot/github-action](https://redirect.github.com/renovatebot/github-action) | action | patch | `v46.3.5` → `v46.3.6` |  ---  ### Release Notes  <details> <summary>renovatebot/github-action (renovatebot/github-action)</summary>  ### [`v46.3.6`](https://redirect.github.com/renovatebot/github-action/releases/tag/v46.3.6)  [Compare Source](https://redirect.github.com/renovatebot/github-action/compare/v46.3.5...v46.3.6)  ##### Bug Fixes  - ensure logs use coloured output ([#&#8203;1083](https://redirect.github.com/renovatebot/github-action/issues/1083)) ([c368bd1](https://redirect.github.com/renovatebot/github-action/commit/c368bd1b3d8eed82a170a7f7d243e7f555ba3501)), closes [#&#8203;970](https://redirect.github.com/renovatebot/github-action/issues/970)  ##### Documentation  - update references to renovatebot/github-action to v46.3.5 ([95f5665](https://redirect.github.com/renovatebot/github-action/commit/95f566512987884f16c085b49a7aef3f76fb3c16))  ##### Miscellaneous Chores  - **deps:** update dependency typescript-eslint to v8.70.1 ([339064e](https://redirect.github.com/renovatebot/github-action/commit/339064e8edec2397719fa63793ba155f84d3e57d)) - **deps:** update semantic-release monorepo ([a0ea084](https://redirect.github.com/renovatebot/github-action/commit/a0ea08461f352d4a50cf3cf63ed521e5e9af9d33))  ##### Continuous Integration  - **deps:** update ghcr.io/renovatebot/renovat
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /test
-
-- **Issue #49163** (2026-10-04): **chore(deps): update all github action dependencies (v1.18)**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | google/cloud-sdk ([changelog](https://cloud.google.com/sdk/docs/release-notes)) | major | `586.0.0` → `587.0.0` | | [kubernetes/kubernetes](https://redirect.github.com/kubernetes/kubernetes) | patch | `v1.37.0` → `v1.37.1` |  ---  ### Release Notes  <details> <summary>kubernetes/kubernetes (kubernetes/kubernetes)</summary>  ### [`v1.37.1`](https://redirect.github.com/kubernetes/kubernetes/releases/tag/v1.37.1)  [Compare Source](https://redirect.github.com/kubernetes/kubernetes/compare/v1.37.0-rc.1...v1.37.1)  See [kubernetes-announce@](https://groups.google.com/forum/#!forum/kubernetes-announce). Additional binary downloads are linked in the [CHANGELOG](https://redirect.github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md).  See the [CHANGELOG](https://redirect.github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md) for more details.  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you 
-  **Post-Mortem & Fix Analysis**:
-  > /test
-
-- **Issue #49162** (2026-10-04): **chore(deps): update stable lvh-images (v1.18) (patch)**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | quay.io/lvh-images/complexity-test | patch | `6.12-20260921.012558` → `6.12-20260928.013030` | | quay.io/lvh-images/complexity-test | patch | `6.6-20260921.012558` → `6.6-20260928.013030` | | quay.io/lvh-images/complexity-test | patch | `6.1-20260921.012558` → `6.1-20260928.013030` | | quay.io/lvh-images/complexity-test | patch | `5.15-20260921.012558` → `5.15-20260928.013030` | | quay.io/lvh-images/complexity-test | patch | `5.10-20260921.012558` → `5.10-20260928.013030` | | quay.io/lvh-images/complexity-test | patch | `rhel8.10-20260921.012558` → `rhel8.10-20260928.013030` | | quay.io/lvh-images/kind | patch | `6.12-20260921.012558` → `6.12-20260928.013030` | | quay.io/lvh-images/kind | patch | `5.10-20260921.012558` → `5.10-20260928.013030` | | quay.io/lvh-images/kind | patch | `6.6-20260921.012558` → `6.6-20260928.013030` | | quay.io/lvh-images/kind | patch | `6.1-20260921.012558` → `6.1-20260928.013030` | | quay.io/lvh-images/kind | patch | `5.15-20260921.012558` → `5.15-20260928.013030` | | quay.io/lvh-images/kind | patch | `rhel8.10-20260921.012558` → `rhel8.10-20260928.013030` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox
-  **Post-Mortem & Fix Analysis**:
-  > /test
-
-- **Issue #49161** (2026-10-04): **chore(deps): update quay.io/cilium/cilium-envoy docker tag to v1.37.7-1791018873-971395586d20dcc31cedc8fc9290cf91173014a2 (v1.18)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | quay.io/cilium/cilium-envoy |  | patch | `v1.37.7-1790879678-3aca86e6e66670781346552575b4e4685c8b2469` → `v1.37.7-1791018873-971395586d20dcc31cedc8fc9290cf91173014a2` | | quay.io/cilium/cilium-envoy | stage | patch | `v1.37.7-1790879678-3aca86e6e66670781346552575b4e4685c8b2469` → `v1.37.7-1791018873-971395586d20dcc31cedc8fc9290cf91173014a2` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about these updates again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR has been generated by [Mend Renovate CLI](https://redirect.github.com/renovatebot/renovate). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xMTUuMTMiLCJ1cGRhdGVkSW5WZXIiOiI0NC4xMTUuMTMiLCJ0YXJnZXRCcmFuY2giOiJ2MS4xOCIsImxhYmVscyI6WyJraW5kL2VuaGFuY2VtZW50IiwicmVsZWFzZS1ub3RlL21pc2MiLCJyZW5vdmF0ZS9zdG9wLXVwZGF0aW5nIl19--> 
+- **Issue #49442** (2026-10-18): **chore(deps): update stable lvh-images (v1.18) (patch)**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | quay.io/lvh-images/complexity-test | patch | `6.12-20261005.013326` → `6.12-20261013.143814` | | quay.io/lvh-images/complexity-test | patch | `6.6-20261005.013326` → `6.6-20261013.143814` | | quay.io/lvh-images/complexity-test | patch | `6.1-20261005.013326` → `6.1-20261013.143814` | | quay.io/lvh-images/complexity-test | patch | `5.15-20261005.013326` → `5.15-20261013.143814` | | quay.io/lvh-images/complexity-test | patch | `5.10-20261005.013326` → `5.10-20261013.143814` | | quay.io/lvh-images/complexity-test | patch | `rhel8.10-20261005.013326` → `rhel8.10-20261013.143814` | | quay.io/lvh-images/kind | patch | `6.12-20261005.013326` → `6.12-20261013.143814` | | quay.io/lvh-images/kind | patch | `5.10-20261005.013326` → `5.10-20261013.143814` | | quay.io/lvh-images/kind | patch | `6.6-20261005.013326` → `6.6-20261013.143814` | | quay.io/lvh-images/kind | patch | `6.1-20261005.013326` → `6.1-20261013.143814` | | quay.io/lvh-images/kind | patch | `5.15-20261005.013326` → `5.15-20261013.143814` | | quay.io/lvh-images/kind | patch | `rhel8.10-20261005.013326` → `rhel8.10-20261013.143814` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/33550) for more information.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Pl
   **Post-Mortem & Fix Analysis**:
   > /test
 
@@ -1488,802 +1285,686 @@ func NamespacedFileName(namespace string, junitFile string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `757dbcac` (2026-09-25)
-**Commit Message**: bpf: turn `TRACE_NOTIFY` into runtime config
+### Incident Patch 1: `d5d5df67` (2026-10-05)
+**Commit Message**: datapath: Fix NAT46x64 gateway prefix conversion panic
 
-Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
+PR #43799 started populating the `nat_46x64_prefix` node config with
+`IPv6NAT46x64CIDRBase.As4()`. The base is the IPv6 address `64:ff9b::`,
+and `netip.Addr.As4()` panics on IPv6 addresses that are not IPv4-mapped,
+so the agent crashes with "As4 called on IPv6 address" while building
+the node configuration as soon as `--enable-nat46x64-gateway` is set.
 
-**File**: `bpf/complexity-tests/510/bpf_xdp/5.txt` (modified, +0/-1)
+The datapath only consumes the leading 32 bits of the RFC6052 prefix
+(see `nat46x64_prefix_copy_v6()`), which is what the previous
+`AsSlice()` based code passed. Take the first four bytes of `As16()`
+instead, and add a regression test.
+
+Fixes: b156a3abae ("bpf, nat46x64: move RFC6052 prefix into node config")
+
+Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
+
+**File**: `pkg/datapath/config/node.go` (modified, +4/-1)
 ```diff
-@@ -9,4 +9,3 @@
- -DTUNNEL_MODE=1
- -DENABLE_L7_LB=1
- -DENABLE_EGRESS_GATEWAY=1
---DTRACE_NOTIFY=1
-```
-
-**File**: `bpf/complexity-tests/510/bpf_xdp/6.txt` (modified, +0/-1)
-```diff
-@@ -18,5 +18,4 @@
- -DTUNNEL_MODE=1
- -DENABLE_L7_LB=1
- -DENABLE_EGRESS_GATEWAY=1
---DTRACE_NOTIFY=1
- -DENABLE_ACTIVE_CONNECTION_TRACKING=1
-```
-
-**File**: `bpf/complexity-tests/61/bpf_xdp/6.txt` (modified, +0/-1)
-```diff
-@@ -9,4 +9,3 @@
- -DTUNNEL_MODE=1
- -DENABLE_L7_LB=1
- -DENABLE_EGRESS_GATEWAY=1
---DTRACE_NOTIFY=1
-```
-
-**File**: `bpf/complexity-tests/61/bpf_xdp/7.txt` (modified, +0/-1)
-```diff
-@@ -18,5 +18,4 @@
- -DTUNNEL_MODE=1
- -DENABLE_L7_LB=1
- -DENABLE_EGRESS_GATEWAY=1
---DTRACE_NOTIFY=1
- -DENABLE_ACTIVE_CONNECTION_TRACKING=1
-```
-
-**File**: `bpf/complexity-tests/netnext/bpf_xdp/6.txt` (modified, +0/-1)
-```diff
-@@ -9,4 +9,3 @@
- -DTUNNEL_MODE=1
- -DENABLE_L7_LB=1
- -DENABLE_EGRESS_GATEWAY=1
---DTRACE_NOTIFY=1
-```
-
-**File**: `bpf/complexity-tests/netnext/bpf_xdp/7.txt` (modified, +0/-1)
-```diff
-@@ -18,5 +18,4 @@
- -DTUNNEL_MODE=1
- -DENABLE_L7_LB=1
- -DENABLE_EGRESS_GATEWAY=1
---DTRACE_NOTIFY=1
- -DENABLE_ACTIVE_CONNECTION_TRACKING=1
-```
-
-**File**: `bpf/ep_config.h` (modified, +0/-1)
-```diff
-@@ -12,4 +12,3 @@
- #ifndef SKIP_DEBUG
- #define DEBUG
- #endif
--#define TRACE_NOTIFY
-```
-
-**File**: `bpf/include/bpf/config/node.h` (modified, +1/-0)
-```diff
-@@ -180,6 +180,7 @@ NODE_CONFIG(__u32, encap4_ifindex,
- NODE_CONFIG(__u32, encap6_ifindex,
- 	    "Interface index of the IPv6 IPIP encapsulation device")
+@@ -112,7 +112,10 @@ func NodeConfig(lnc *Config) Node {
+ 	node.NodeportPortMaxNATExt = lnc.LBConfig.NodePortMaxNATExt
  
-+NODE_CONFIG(bool, enable_trace_notify, "Enable trace notifications")
- NODE_CONFIG(bool, enable_sctp, "Enable SCTP support")
+ 	if option.Config.EnableNat46X64Gateway {
+-		node.NAT46X64Prefix.Addr = option.Config.IPv6NAT46x64CIDRBase.As4()
++		// The datapath only stores the leading 32 bits of the RFC6052
++		// prefix, see nat46x64_prefix_copy_v6().
++		prefix := option.Config.IPv6NAT46x64CIDRBase.As16()
++		node.NAT46X64Prefix.Addr = [4]byte(prefix[:4])
+ 	}
  
- NODE_CONFIG(bool, enable_drop_notify, "Enable drop notifications")
+ 	if lnc.NodeIPv4.Is4() {
+```
+
+**File**: `pkg/datapath/config/node_test.go` (modified, +19/-0)
+```diff
+@@ -4,10 +4,12 @@
+ package config
+ 
+ import (
++	"net/netip"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+ 
++	"github.com/cilium/cilium/pkg/defaults"
+ 	"github.com/cilium/cilium/pkg/option"
+ )
+ 
+@@ -49,3 +51,20 @@ func TestNodeConfigIPMasqAgentIPv4(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestNodeConfigNAT46X64Prefix(t *testing.T) {
++	oldEnabled := option.Config.EnableNat46X64Gateway
++	oldBase := option.Config.IPv6NAT46x64CIDRBase
++	t.Cleanup(func() {
++		option.Config.EnableNat46X64Gateway = oldEnabled
++		option.Config.IPv6NAT46x64CIDRBase = oldBase
++	})
++
++	option.Config.IPv6NAT46x64CIDRBase = netip.MustParsePrefix(defaults.IPv6NAT46x64CIDR).Masked().Addr()
++
++	option.Config.EnableNat46X64Gateway = false
++	assert.Equal(t, [4]byte{}, NodeConfig(&Config{}).NAT46X64Prefix.Addr)
++
++	option.Config.EnableNat46X64Gateway = true
++	assert.Equal(t, [4]byte{0x00, 0x64, 0xff, 0x9b}, NodeConfig(&Config{}).NAT46X64Prefix.Addr)
++}
 ```
 
 ---
 
-### Incident Patch 2: `d4c45211` (2026-09-30)
-**Commit Message**: helm: fix duplicate privateKey in Hubble cert-manager certificates
-
-When hubble.tls.auto.privateKey.{algorithm,size,encoding} values are
-specified, YAML parsing drops the user-supplied configuration due to
-duplicate privateKey blocks, with cert-manager falling back to RSA 2048
-bit configuration silently. Impacts only hubble certs, not
-clustermesh-apiserver.
-
-Fixes: ca96e373774c ("helm/cert-manager: adds cert options.")
-Signed-off-by: Gabe Conradi <[REDACTED_EMAIL]>
-
-**File**: `Documentation/helm-values.rst` (modified, +1/-1)
-```diff
-@@ -2569,7 +2569,7 @@
-      - string
-      - ``"helm"``
-    * - :spelling:ignore:`hubble.tls.auto.privateKey`
--     - Private key options. These include the key algorithm and size, the used encoding and the rotation policy used when hubble.tls.auto.method=certmanager. https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificatePrivateKey
-+     - Private key options. These include the key algorithm and size, the used encoding and the rotation policy used when hubble.tls.auto.method=certmanager. ``rotationPolicy`` defaults to ``Always`` unless set here. https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificatePrivateKey
-      - object
-      - ``{}``
-    * - :spelling:ignore:`hubble.tls.auto.schedule`
-```
-
-**File**: `install/kubernetes/cilium/README.md` (modified, +1/-1)
-```diff
-@@ -692,7 +692,7 @@ contributors across the globe, there is almost always someone available to help.
- | hubble.tls.auto.certValidityDuration | int | `365` | Generated certificates validity duration in days.  Defaults to 365 days (1 year) because MacOS does not accept self-signed certificates with expirations > 825 days. |
- | hubble.tls.auto.enabled | bool | `true` | Auto-generate certificates. When set to true, automatically generate a CA and certificates to enable mTLS between Hubble server and Hubble Relay instances. If set to false, the certs for Hubble server need to be provided by setting appropriate values below. |
- | hubble.tls.auto.method | string | `"helm"` | Set the method to auto-generate certificates. Supported values: - helm:         This method uses Helm to generate all certificates. - cronJob:      This method uses a Kubernetes CronJob the generate any                 certificates not provided by the user at installation                 time. - certmanager:  This method use cert-manager to generate & rotate certificates. |
--| hubble.tls.auto.privateKey | object | `{}` | Private key options. These include the key algorithm and size, the used encoding and the rotation policy used when hubble.tls.auto.method=certmanager. https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificatePrivateKey |
-+| hubble.tls.auto.privateKey | object | `{}` | Private key options. These include the key algorithm and size, the used encoding and the rotation policy used when hubble.tls.auto.method=certmanager. `rotationPolicy` defaults to `Always` unless set here. https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificatePrivateKey |
- | hubble.tls.auto.schedule | string | `"0 0 1 */4 *"` | Schedule for certificates regeneration (regardless of their expiration date). Only used if method is "cronJob". If nil, then no recurring job will be created. Instead, only the one-shot job is deployed to generate the certificates at installation time.  Defaults to midnight of the first day of every fourth month. For syntax, see https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#schedule-syntax |
- | hubble.tls.auto.subject | object | `{}` | X509Subject Full X509 name specification used when hubble.tls.auto.method=certmanager. https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.X509Subject |
- | hubble.tls.disableDefaultVolumes | bool | `false` | Disable the default TLS certificate volumes and mounts for the Hubble server, allowing you to provide your own via extraVolumes/extraVolumeMounts. |
-```
-
-**File**: `install/kubernetes/cilium/templates/hubble/tls-certmanager/metrics-server-secret.yaml` (modified, +1/-5)
-```diff
-@@ -22,10 +22,6 @@ spec:
-   subject:
-     {{- toYaml . | nindent 4 }}
-   {{- end }}
--  {{- with .Values.hubble.tls.auto.privateKey }}
--  privateKey:
--    {{- toYaml . | nindent 4 }}
--  {{- end }}
-   secretName: hubble-metrics-server-certs
-   commonName: {{ $cn | quote }}
-   dnsNames:
-@@ -41,7 +37,7 @@ spec:
-   {{- end }}
-   duration: {{ printf "%dh0m0s" (mul .Values.hubble.tls.auto.certValidityDuration 24) }}
-   privateKey:
--    rotationPolicy: Always
-+    {{- toYaml (mergeOverwrite (dict "rotationPolicy" "Always") (.Values.hubble.tls.auto.privateKey | default dict)) | nindent 4 }}
-   isCA: false
-   usages:
-     - signing
-```
-
-**File**: `install/kubernetes/cilium/templates/hubble/tls-certmanager/relay-client-secret.yaml` (modified, +1/-5)
-```diff
-@@ -20,17 +20,13 @@ spec:
-   subject:
-     {{- toYaml . | nindent 4 }}
-   {{- end }}
--  {{- with .Values.hubble.tls.auto.privateKey }}
--  privateKey:
--    {{- toYaml . | nindent 4 }}
--  {{- end }}
-   secretName: hubble-relay-client-certs
-   commonName: "*.hubble-relay.cilium.io"
-   dnsNames:
-   - "*.hubble-relay.cilium.io"
-   duration: {{ printf "%dh0m0s" (mul .Values.hubble.tls.auto.certValidityDuration 24) }}
-   privateKey:
--    rotationPolicy: Always
-+    {{- toYaml (mergeOverwrite (dict "rotationPolicy" "Always") (.Values.hubble.tls.auto.privateKey | default dict)) | nindent 4 }}
-   isCA: false
-   usages:
-     - signing
-```
-
-**File**: `install/kubernetes/cilium/templates/hubble/tls-certmanager/relay-server-secret.yaml` (modified, +1/-5)
-```diff
-@@ -20,10 +20,6 @@ spec:
-   subject:
-     {{- toYaml . | nindent 4 }}
-   {{- end }}
--  {{- with .Values.hubble.tls.auto.privateKey }}
--  privateKey:
--    {{- toYaml . | nindent 4 }}
--  {{- end }}
-   secretName: hubble-relay-server-certs
-   commonName: "*.hubble-relay.cilium.io"
-   dnsNames:
-@@ -39,7 +35,7 @@ spec:
-   {{- end }}
-   duration: {{ printf "%dh0m0s" (mul .Values.hubble.tls.auto.certValidityDuration 24) }}
-   privateKey:
--    rotationPolicy: Always
-+    {{- toYaml (mergeOverwrite (dict "rotationPolicy" "Always") (.Values.hubble.tls.auto.privateKey | default dict)) | nindent 4 }}
-   isCA: false
-   usages:
-     - signing
-```
-
-**File**: `install/kubernetes/cilium/templates/hubble/tls-certmanager/server-secret.yaml` (modified, +1/-5)
-```diff
-@@ -22,10 +22,6 @@ spec:
-   subject:
-     {{- toYaml . | nindent 4 }}
-   {{- end }}
--  {{- with .Values.hubble.tls.auto.privateKey }}
--  privateKey:
--    {{- toYaml . | nindent 4 }}
--  {{- end }}
-   secretName: hubble-server-certs
-   commonName: {{ $cn | quote }}
-   dnsNames:
-@@ -41,7 +37,7 @@ spec:
-   {{- end }}
-   duration: {{ printf "%dh0m0s" (mul .Values.hubble.tls.auto.certValidityDuration 24) }}
-   privateKey:
--    rotationPolicy: Always
-+    {{- toYaml (mergeOverwrite (dict "rotationPolicy" "Always") (.Values.hubble.tls.auto.privateKey | default dict)) | nindent 4 }}
-   isCA: false
-   usages:
-     - signing
-```
-
-**File**: `install/kubernetes/cilium/templates/hubble/tls-certmanager/ui-client-certs.yaml` (modified, +1/-5)
-```diff
-@@ -20,17 +20,13 @@ spec:
-   subject:
-     {{- toYaml . | nindent 4 }}
-   {{- end }}
--  {{- with .Values.hubble.tls.auto.privateKey }}
--  privateKey:
--    {{- toYaml . | nindent 4 }}
--  {{- end }}
-   secretName: hubble-ui-client-certs
-   commonName: "*.hubble-ui.cilium.io"
-   dnsNames:
-   - "*.hubble-ui.cilium.io"
-   duration: {{ printf "%dh0m0s" (mul .Values.hubble.tls.auto.certValidityDuration 24) }}
-   privateKey:
--    rotationPolicy: Always
-+    {{- toYaml (mergeOverwrite (dict "rotationPolicy" "Always") (.Values.hubble.tls.auto.privateKey | default dict)) | nindent 4 }}
-   isCA: false
-   usages:
-     - signing
-```
-
-**File**: `install/kubernetes/cilium/values.yaml` (modified, +1/-0)
-```diff
-@@ -1742,6 +1742,7 @@ hubble:
-       # privateKey:
-       #   algorithm: ECDSA
-       # -- Private key options. These include the key algorithm and size, the used encoding and the rotation policy used when hubble.tls.auto.method=certmanager.
-+      # `rotationPolicy` defaults to `Always` unless set here.
-       # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificatePrivateKey
-       privateKey: {}
-     # -- The Hubble server certificate and private key
-```
-
----
-
-### Incident Patch 3: `bf4e52b3` (2026-09-24)
-**Commit Message**: gha: don't fail PR image builds on digest upload errors
-
-The CI image build uploads the image-digest artifact after pushing the
-images. An upload error, such as a 403 from FinalizeArtifact, fails the
-build job even though the images are already available. This also blocks
-jobs that depend on a successful build.
-
-The Display Digests job only uses the artifact to print the digest list.
-Building and publishing the images do not depend on it, so a missing
-copy should not make a PR image build fail. Make only this upload step
-non-fatal for pull requests in the main, v1.20 and v1.19 CI workflows.
-Build and push failures still fail the job, and digest upload failures
-remain fatal on push and merge-queue runs.
-
-This commit was prepared with AIL:3. I've checked the diff.
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build-images-ci-v1.19.yaml` (modified, +2/-0)
-```diff
-@@ -492,6 +492,8 @@ jobs:
- 
-       # Upload artifact digests
-       - name: Upload artifact digests
-+        # Nothing reads this artifact; the digests job only cats it into the log.
-+        continue-on-error: ${{ startsWith(github.event_name, 'pull_request') }}
-         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-         if: ${{ steps.check.outputs.build != '' }}
-         with:
-```
-
-**File**: `.github/workflows/build-images-ci-v1.20.yaml` (modified, +2/-0)
-```diff
-@@ -482,6 +482,8 @@ jobs:
- 
-       # Upload artifact digests
-       - name: Upload artifact digests
-+        # Nothing reads this artifact; the digests job only cats it into the log.
-+        continue-on-error: ${{ startsWith(github.event_name, 'pull_request') }}
-         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-         if: ${{ steps.check.outputs.build != '' }}
-         with:
-```
-
-**File**: `.github/workflows/build-images-ci.yaml` (modified, +2/-0)
-```diff
-@@ -496,6 +496,8 @@ jobs:
- 
-       # Upload artifact digests
-       - name: Upload artifact digests
-+        # Nothing reads this artifact; the digests job only cats it into the log.
-+        continue-on-error: ${{ startsWith(github.event_name, 'pull_request') }}
-         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-         if: ${{ steps.check.outputs.build != '' }}
-         with:
-```
-
----
-
-### Incident Patch 4: `9bedb381` (2026-09-29)
-**Commit Message**: eks: Fix pooled kubeconfig removal in the old cluster sweep
-
-When the pool manager reclaims a pooled cluster older than six hours,
-it removes the cluster's kubeconfig from S3 and then deletes the
-cluster. The removal never matches anything. The aws s3 rm --include
-pattern applies to the path under kubeconfig-pool/, but the kubeconfig
-sits one level deeper, under a per-pool prefix. In run 34173813741 [1],
-the us-west-2 sweep printed 13 of these lines and not one S3 delete:
-
-  Removing kubeconfigs for cluster cilium-pool-1-36-all-addons-1788798017-62a59b12 from S3 bucket cilium-cilium-eks-kubeconfig-pool
-
-As a result, the pool keeps kubeconfigs for clusters that no longer
-exist. Later jobs claim them one after another and fail the health
-check. Job 101905793276 [2] went through 11 of them in 52 seconds, each
-one failing with:
-
-  ResourceNotFoundException: No cluster found for name: cilium-pool-1-36-coredns-kubeproxy-1788798603-b1b8decf.
-
-This commit adds the missing "*/" to the pattern and restricts it to
-.yaml files, so the claimed/ copy of a kubeconfig that a job is
-downloading never matches.
-
-This commit was prepared with AIL:3. I personally checked the sweep
-log of run 3417381374
-
-**File**: `.github/workflows/eks-cluster-pool-manager.yaml` (modified, +1/-1)
-```diff
-@@ -177,7 +177,7 @@ jobs:
- 
-                 # Remove kubeconfig from S3 pool
-                 echo "Removing kubeconfigs for cluster ${cluster} from S3 bucket ${S3_BUCKET}"
--                aws s3 rm "s3://${S3_BUCKET}/kubeconfig-pool/" --recursive --exclude "*" --include "${cluster}-*" --region ${REGION} || true
-+                aws s3 rm "s3://${S3_BUCKET}/kubeconfig-pool/" --recursive --exclude "*" --include "*/${cluster}-*.yaml" --region ${REGION} || true
-               fi
- 
-               # Trigger the eks-cluster-delete workflow to delete the cluster
-```
-
----
-
-### Incident Patch 5: `fb96daa2` (2026-09-30)
-**Commit Message**: docs: fix "runing" typo in USERS.md
-
-Signed-off-by: yuwk <[REDACTED_EMAIL]>
-
-**File**: `USERS.md` (modified, +1/-1)
-```diff
-@@ -407,7 +407,7 @@ Users (Alphabetically)
-       L: https://www.guidewire.com
- 
-     * N: IDNIC | Kadabra
--      D: IDNIC is the National Internet Registry administering IP addresses for INDONESIA, uses Cilium to powered Kadabra project runing services across multi data centers.
-+      D: IDNIC is the National Internet Registry administering IP addresses for INDONESIA, uses Cilium to powered Kadabra project running services across multi data centers.
-       U: Networking, Network Policies, kube-proxy Replacement, Service Load Balancing and Cluster Mesh
-       L: https://ris.idnic.net/
-       Q: @ardikabs
-```
-
----
-
-### Incident Patch 6: `625f6f6c` (2026-10-04)
-**Commit Message**: fix(deps): update module github.com/aws/aws-sdk-go-v2/service/ec2 to v1.338.0
+### Incident Patch 2: `f70d0db4` (2026-10-18)
+**Commit Message**: fix(deps): update module github.com/azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 to v12.1.0
 
 Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2 v1.47.1
- 	github.com/aws/aws-sdk-go-v2/config v1.33.6
- 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1
--	github.com/aws/aws-sdk-go-v2/service/ec2 v1.337.0
-+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.0
- 	github.com/aws/smithy-go v1.28.2
- 	github.com/blang/semver/v4 v4.0.0
- 	github.com/cespare/xxhash/v2 v2.3.0
+@@ -8,7 +8,7 @@ require (
+ 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3
+ 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
+ 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0
+-	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.0.0
++	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.1.0
+ 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
+ 	github.com/aws/aws-sdk-go-v2 v1.47.3
+ 	github.com/aws/aws-sdk-go-v2/config v1.33.9
 ```
 
 **File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -88,8 +88,8 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 h1:dD4MR81I7YkpEBRk6UP
- github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4/go.mod h1:EcXV1kAFd5XwSkDHlj94gnF3q5CkJyYiIJfH8N0VmrE=
- github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 h1:7Wo47d/xn/7KttCSBd8EGYeZ7ULRFRkUHr6vkZPBzVQ=
- github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4/go.mod h1:tDB2IVC1xC3vX8o+6uRlzhTxP3g1b77CZXFX/oD2FnQ=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.337.0 h1:qvRAMBHqlGIc0mqv4jhgpfUSpBAIInwf3EXgBGZ/Nyk=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.337.0/go.mod h1:d0e0acsyS3WnFCFJiByGwnUgPpn2wAk97PTIksHN2NI=
-+github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.0 h1:nstK6ywHhUEdsGKkjg426iz8EucgZh9nZBZ7FGBh6NM=
-+github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.0/go.mod h1:d0e0acsyS3WnFCFJiByGwnUgPpn2wAk97PTIksHN2NI=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19 h1:bAdDl/HkGCcGPoe25ToSHEw23VIxt6CT5fLcg111BKg=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19/go.mod h1:KaUzbLxv4CeSxh6ZCl9B4m7CuFenS8kUEaDs+f/DQr4=
- github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.4 h1:29SvnfGhXjTl8ONxFwbj2rs6lbhiFXD2CgFQmbT/bXY=
+@@ -22,8 +22,8 @@ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0/go.mod h1:/PxYsqvSyfJS5vMkAAUByxUIlFUIJ4+LgpUK/fTheZk=
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/internal/v3 v3.2.0 h1:+lnLQhKh3cgSOIOVH61UZ3s/l9d+bAZp5d/spt1+7UI=
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/internal/v3 v3.2.0/go.mod h1:tStOHrivWUrcBolspvKV70Us1ckESYGYSHdG4LX8zyY=
+-github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.0.0 h1:KSPTp+F/wadsyVKqsMxsooMmlROoQ77Mo8cft+5ebOM=
+-github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.0.0/go.mod h1:K/MJIfdVb0kcukInWroiX9aLeX5rjK49NkvQXwuAqtw=
++github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.1.0 h1:CKFiN586Xt8Y1frHZgwZTOZ2+QP93HMQBx9T/sWiDqs=
++github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.1.0/go.mod h1:04aH1/RK9pmoiSqOCLpWVQ6tEJK04Pe+w3IzoTNExPE=
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armdeployments v1.0.0 h1:67nFqWXpo0x5Nz0XEb1yI7s8D+EHy8NsTinYw9sZnLk=
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armdeployments v1.0.0/go.mod h1:fewgRjNVE84QVVh798sIMFb7gPXPp7NmnekGnboSnXk=
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources/v3 v3.0.1 h1:guyQA4b8XB2sbJZXzUnOF9mn0WDBv/ZT7me9wTipKtE=
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/CHANGELOG.md` (modified, +4/-0)
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12/CHANGELOG.md` (modified, +52/-0)
 ```diff
-@@ -1,3 +1,7 @@
-+# v1.338.0 (2026-09-29)
-+
-+* **Feature**: Adds the LaunchStatus field to CapacityReservation in the DescribeCapacityReservations response. This field indicates whether you can currently launch instances into an UltraServer.
-+
- # v1.337.0 (2026-09-28)
+@@ -1,5 +1,57 @@
+ # Release History
  
- * **Feature**: API changes to AWS Client VPN to support device posture assessment and Cedar authorization policies
-```
-
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/deserializers.go` (modified, +13/-0)
-```diff
-@@ -89571,6 +89571,19 @@ func awsEc2query_deserializeDocumentCapacityReservation(v **types.CapacityReserv
- 				return err
- 			}
- 
-+		case strings.EqualFold("launchStatus", t.Name.Local):
-+			val, err := decoder.Value()
-+			if err != nil {
-+				return err
-+			}
-+			if val == nil {
-+				break
-+			}
-+			{
-+				xtv := string(val)
-+				sv.LaunchStatus = types.CapacityReservationLaunchStatus(xtv)
-+			}
++## 12.1.0 (2026-10-13)
++### Features Added
 +
- 		case strings.EqualFold("originalStartDate", t.Name.Local):
- 			val, err := decoder.Value()
- 			if err != nil {
++- New enum type `DdosContinent` with values `DdosContinentAfrica`, `DdosContinentAntarctica`, `DdosContinentAsia`, `DdosContinentEurope`, `DdosContinentNorthAmerica`, `DdosContinentOceania`, `DdosContinentSouthAmerica`
++- New enum type `DdosMitigationTrafficScope` with values `DdosMitigationTrafficScopeTCP`, `DdosMitigationTrafficScopeUDP`
++- New enum type `DdosSourcePolicyActionType` with values `DdosSourcePolicyActionTypeDeny`, `DdosSourcePolicyActionTypePermit`
++- New enum type `ExpressRouteLagAuthorizationUseStatus` with values `ExpressRouteLagAuthorizationUseStatusAvailable`, `ExpressRouteLagAuthorizationUseStatusInUse`
++- New enum type `VirtualNetworkApplianceCapabilityIPVersion` with values `VirtualNetworkApplianceCapabilityIPVersionDualStack`, `VirtualNetworkApplianceCapabilityIPVersionIPv6`
++- New enum type `VirtualNetworkApplianceCapabilityKind` with values `VirtualNetworkApplianceCapabilityKindNAT64`, `VirtualNetworkApplianceCapabilityKindPLGateway`, `VirtualNetworkApplianceCapabilityKindPLGatewayFastpath`, `VirtualNetworkApplianceCapabilityKindPLIPForwarders`
++- New function `*NAT64Capability.GetVirtualNetworkApplianceCapability() *VirtualNetworkApplianceCapability`
++- New function `*ClientFactory.NewExpressRouteLagAuthorizationsClient() *ExpressRouteLagAuthorizationsClient`
++- New function `*ClientFactory.NewVirtualNetworkApplianceCapabilitiesClient() *VirtualNetworkApplianceCapabilitiesClient`
++- New function `NewExpressRouteLagAuthorizationsClient(subscriptionID string, credential azcore.TokenCredential, options *arm.ClientOptions) (*ExpressRouteLagAuthorizationsClient, error)`
++- New function `*ExpressRouteLagAuthorizationsClient.BeginCreateOrUpdate(ctx context.Context, resourceGroupName string, expressRouteLagName string, authorizationName string, authorizationParameters ExpressRouteLagAuthorization, options *ExpressRouteLagAuthorizationsClientBeginCreateOrUpdateOptions) (*runtime.Poller[ExpressRouteLagAuthorizationsClientCreateOrUpdateResponse], error)`
++- New function `*ExpressRouteLagAuthorizationsClient.BeginDelete(ctx context.Context, resourceGroupName string, expressRouteLagName string, authorizationName string, options *ExpressRouteLagAuthorizationsClientBeginDeleteOptions) (*runtime.Poller[ExpressRouteLagAuthorizationsClientDeleteResponse], error)`
++- New function `*ExpressRouteLagAuthorizationsClient.Get(ctx context.Context, resourceGroupName string, expressRouteLagName string, authorizationName string, options *ExpressRouteLagAuthorizationsClientGetOptions) (ExpressRouteLagAuthorizationsClientGetResponse, error)`
++- New function `*ExpressRouteLagAuthorizationsClient.ListKeys(ctx context.Context, resourceGroupName string, expressRouteLagName string, authorizationName string, options *ExpressRouteLagAuthorizationsClientListKeysOptions) (ExpressRouteLagAuthorizationsClientListKeysResponse, error)`
++- New function `*ExpressRouteLagAuthorizationsClient.NewListPager(resourceGroupName string, expressRouteLagName string, options *ExpressRouteLagAuthorizationsClientListOptions) *runtime.Pager[ExpressRouteLagAuthorizationsClientListResponse]`
++- New function `*PLGatewayCapability.GetVirtualNetworkApplianceCapability() *VirtualNetworkApplianceCapability`
++- New function `*PLGatewayFastpathCapability.GetVirtualNetworkApplianceCapability() *VirtualNetworkApplianceCapability`
++- New function `*PLIPForwardersCapability.GetVirtualNetworkApplianceCapability() *VirtualNetworkApplianceCapability`
++- New function `NewVirtualNetworkApplianceCapabilitiesClient(subscriptionID string, credential azcore.TokenCredential, options *arm.ClientOptions) (*VirtualNetworkApplianceCapabilitiesClient, error)`
++- New function `*VirtualNetworkApplianceCapabilitiesClient.BeginCreateOrUpdate(ctx context.Context, resourceGroupName string, virtualNetworkApplianceName string, capabilityName string, parameters VirtualNetworkApplianceCapabilityClassification, options *VirtualNetworkApplianceCapabilitiesClientBeginCreateOrUpdateOptions) (*runtime.Poller[VirtualNetworkApplianceCapabilitiesClientCreateOrUpdateResponse], error)`
++- New function `*VirtualNetworkApplianceCapabilitiesClient.BeginDelete(ctx context.Context, resourceGroupName string, virtualNetworkApplianceName string, capabilityName string, options *VirtualNetworkApplianceCapabilitiesClientBeginDeleteOptions) (*runtime.Poller[VirtualNetworkApplianceCapabilitiesClientDeleteResponse], error)`
++- New function `*VirtualNetworkApplianceCapabilitiesClient.Get(ctx context.Context, resourceGroupName string, virtualNetworkApplianceName string, capabilityName string, options *VirtualNetworkApplianceCapabilitiesClientGetOptions) (VirtualNetworkApplianceCapabilitiesClientGetResponse, error)`
++- New function `*VirtualNetworkApplianceCapabilitiesClient.NewListPager(resourceGroupName string, virtualNetworkApplianceName string, options *VirtualNetworkApplianceCapabilitiesClientListOptions) *runtim
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/go_module_metadata.go` (modified, +1/-1)
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12/addressprefixsets_client.go` (modified, +11/-11)
 ```diff
-@@ -3,4 +3,4 @@
- package ec2
- 
- // goModuleVersion is the tagged release for this module
--const goModuleVersion = "1.337.0"
-+const goModuleVersion = "1.338.0"
-```
-
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/types/enums.go` (modified, +20/-0)
-```diff
-@@ -1577,6 +1577,26 @@ func (CapacityReservationInstancePlatform) Values() []CapacityReservationInstanc
+@@ -19,7 +19,7 @@ import (
+ // AddressPrefixSetsClient contains the methods for the AddressPrefixSets group.
+ // Don't use this type directly, use NewAddressPrefixSetsClient() instead.
+ //
+-// Generated from API version 2026-01-01
++// Generated from API version 2026-03-01
+ type AddressPrefixSetsClient struct {
+ 	internal       *arm.Client
+ 	subscriptionID string
+@@ -69,7 +69,7 @@ func (client *AddressPrefixSetsClient) BeginCreateOrUpdate(ctx context.Context,
  	}
  }
  
-+type CapacityReservationLaunchStatus string
-+
-+// Enum values for CapacityReservationLaunchStatus
-+const (
-+	CapacityReservationLaunchStatusLaunchable   CapacityReservationLaunchStatus = "launchable"
-+	CapacityReservationLaunchStatusUnlaunchable CapacityReservationLaunchStatus = "unlaunchable"
-+)
-+
-+// Values returns all known values for CapacityReservationLaunchStatus. Note that
-+// this can be expanded in the future, and so it is only as up to date as the
-+// client.
-+//
-+// The ordering of this slice is not guaranteed to be stable across updates.
-+func (CapacityReservationLaunchStatus) Values() []CapacityReservationLaunchStatus {
-+	return []CapacityReservationLaunchStatus{
-+		"launchable",
-+		"unlaunchable",
+-// CreateOrUpdate - Creates or updates an address prefix set.
++// createOrUpdate - Creates or updates an address prefix set.
+ // If the operation fails it returns an *azcore.ResponseError type.
+ func (client *AddressPrefixSetsClient) createOrUpdate(ctx context.Context, resourceGroupName string, applicationSecurityGroupName string, addressPrefixSetName string, resource AddressPrefixSet, options *AddressPrefixSetsClientBeginCreateOrUpdateOptions) (*http.Response, error) {
+ 	var err error
+@@ -91,7 +91,7 @@ func (client *AddressPrefixSetsClient) createOrUpdate(ctx context.Context, resou
+ 	return httpResp, nil
+ }
+ 
+-// createOrUpdateCreateRequest creates the CreateOrUpdate request.
++// createOrUpdateCreateRequest creates the createOrUpdate request.
+ func (client *AddressPrefixSetsClient) createOrUpdateCreateRequest(ctx context.Context, resourceGroupName string, applicationSecurityGroupName string, addressPrefixSetName string, resource AddressPrefixSet, _ *AddressPrefixSetsClientBeginCreateOrUpdateOptions) (*policy.Request, error) {
+ 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationSecurityGroups/{applicationSecurityGroupName}/addressPrefixSets/{addressPrefixSetName}"
+ 	if client.subscriptionID == "" {
+@@ -115,7 +115,7 @@ func (client *AddressPrefixSetsClient) createOrUpdateCreateRequest(ctx context.C
+ 		return nil, err
+ 	}
+ 	reqQP := req.Raw().URL.Query()
+-	reqQP.Set("api-version", version20260101)
++	reqQP.Set("api-version", version20260301)
+ 	req.Raw().URL.RawQuery = strings.ReplaceAll(reqQP.Encode(), "+", "%20")
+ 	req.Raw().Header["Accept"] = []string{"application/json"}
+ 	req.Raw().Header["Content-Type"] = []string{"application/json"}
+@@ -134,7 +134,7 @@ func (client *AddressPrefixSetsClient) createOrUpdateCreateRequest(ctx context.C
+ //     method.
+ func (client *AddressPrefixSetsClient) BeginDelete(ctx context.Context, resourceGroupName string, applicationSecurityGroupName string, addressPrefixSetName string, options *AddressPrefixSetsClientBeginDeleteOptions) (*runtime.Poller[AddressPrefixSetsClientDeleteResponse], error) {
+ 	if options == nil || options.ResumeToken == "" {
+-		resp, err := client.deleteOperation(ctx, resourceGroupName, applicationSecurityGroupName, addressPrefixSetName, options)
++		resp, err := client.delete(ctx, resourceGroupName, applicationSecurityGroupName, addressPrefixSetName, options)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -149,9 +149,9 @@ func (client *AddressPrefixSetsClient) BeginDelete(ctx context.Context, resource
+ 	}
+ }
+ 
+-// Delete - Deletes the specified address prefix set.
++// delete - Deletes the specified address prefix set.
+ // If the operation fails it returns an *azcore.ResponseError type.
+-func (client *AddressPrefixSetsClient) deleteOperation(ctx context.Context, resourceGroupName string, applicationSecurityGroupName string, addressPrefixSetName string, options *AddressPrefixSetsClientBeginDeleteOptions) (*http.Response, error) {
++func (client *AddressPrefixSetsClient) delete(ctx context.Context, resourceGroupName string, applicationSecurityGroupName string, addressPrefixSetName string, options *AddressPrefixSetsClientBeginDeleteOptions) (*http.Response, error) {
+ 	var err error
+ 	const operationName = "AddressPrefixSetsClient.BeginDelete"
+ 	ctx = context.WithValue(ctx, runtime.CtxAPINameKey{}, operationName)
+@@ -171,7 +171,7 @@ func (client *AddressPrefixSetsClient) deleteOperation(ctx context.Context, reso
+ 	return httpResp, nil
+ }
+ 
+-// deleteCreateRequest creates the Delete request.
++// deleteCreateRequest creates the delete request.
+ func (client *AddressPrefixSetsClient) deleteCreateRequest(ctx context.Context, resourceGroupName string, applicationSecurityGroupName string, addressPrefixSetName string, _ *AddressPrefixSetsClientBeginDeleteOptions) (*policy.Request, error) {
+ 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationSecurityGroups/{applicationSecurityGroupName}/addressPrefixSets/{addressPrefixSetName}"
+ 	if client.subscriptionID == "" {
+@@ -195,7 +195,7 @@ func (client *AddressPrefixSetsClient) deleteCreateRequest(ctx context.Context,
+ 		return nil, err
+ 	}
+ 	reqQP := req.Raw().URL.Query()
+-	reqQP.Set("api-version", version20260101)
++	reqQP.Set("api-version", version20260301)
+ 	req.Raw().URL.RawQuery = strings.ReplaceAll(reqQP.Encode(), "+", "%20")
+ 	return req, nil
+ }
+@@ -247,7 +247,7 @@ func (client *AddressPrefixSetsClient) getCreateRequest(ct
+```
+
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12/adminrulecollections_client.go` (modified, +70/-70)
+```diff
+@@ -20,7 +20,7 @@ import (
+ // AdminRuleCollectionsClient contains the methods for the AdminRuleCollections group.
+ // Don't use this type directly, use NewAdminRuleCollectionsClient() instead.
+ //
+-// Generated from API version 2026-01-01
++// Generated from API version 2026-03-01
+ type AdminRuleCollectionsClient struct {
+ 	internal       *arm.Client
+ 	subscriptionID string
+@@ -45,34 +45,55 @@ func NewAdminRuleCollectionsClient(subscriptionID string, credential azcore.Toke
+ 	return client, nil
+ }
+ 
+-// CreateOrUpdate - Creates or updates an admin rule collection.
++// BeginDelete - Deletes an admin rule collection.
+ // If the operation fails it returns an *azcore.ResponseError type.
+ //   - resourceGroupName - The name of the resource group. The name is case insensitive.
+ //   - networkManagerName - The name of the network manager.
+ //   - configurationName - The name of the network manager Security Configuration.
+ //   - ruleCollectionName - The name of the network manager security Configuration rule collection.
+-//   - ruleCollection - The Rule Collection to create or update
+-//   - options - AdminRuleCollectionsClientCreateOrUpdateOptions contains the optional parameters for the AdminRuleCollectionsClient.CreateOrUpdate
++//   - options - AdminRuleCollectionsClientBeginDeleteOptions contains the optional parameters for the AdminRuleCollectionsClient.BeginDelete
+ //     method.
+-func (client *AdminRuleCollectionsClient) CreateOrUpdate(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, ruleCollection AdminRuleCollection, options *AdminRuleCollectionsClientCreateOrUpdateOptions) (AdminRuleCollectionsClientCreateOrUpdateResponse, error) {
++func (client *AdminRuleCollectionsClient) BeginDelete(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, options *AdminRuleCollectionsClientBeginDeleteOptions) (*runtime.Poller[AdminRuleCollectionsClientDeleteResponse], error) {
++	if options == nil || options.ResumeToken == "" {
++		resp, err := client.delete(ctx, resourceGroupName, networkManagerName, configurationName, ruleCollectionName, options)
++		if err != nil {
++			return nil, err
++		}
++		poller, err := runtime.NewPoller(resp, client.internal.Pipeline(), &runtime.NewPollerOptions[AdminRuleCollectionsClientDeleteResponse]{
++			Tracer: client.internal.Tracer(),
++		})
++		return poller, err
++	} else {
++		return runtime.NewPollerFromResumeToken(options.ResumeToken, client.internal.Pipeline(), &runtime.NewPollerFromResumeTokenOptions[AdminRuleCollectionsClientDeleteResponse]{
++			Tracer: client.internal.Tracer(),
++		})
 +	}
 +}
 +
- type CapacityReservationModificationQuoteState string
++// delete - Deletes an admin rule collection.
++// If the operation fails it returns an *azcore.ResponseError type.
++func (client *AdminRuleCollectionsClient) delete(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, options *AdminRuleCollectionsClientBeginDeleteOptions) (*http.Response, error) {
+ 	var err error
+-	const operationName = "AdminRuleCollectionsClient.CreateOrUpdate"
++	const operationName = "AdminRuleCollectionsClient.BeginDelete"
+ 	ctx = context.WithValue(ctx, runtime.CtxAPINameKey{}, operationName)
+ 	ctx, endSpan := runtime.StartSpan(ctx, operationName, client.internal.Tracer(), nil)
+ 	defer func() { endSpan(err) }()
+-	req, err := client.createOrUpdateCreateRequest(ctx, resourceGroupName, networkManagerName, configurationName, ruleCollectionName, ruleCollection, options)
++	req, err := client.deleteCreateRequest(ctx, resourceGroupName, networkManagerName, configurationName, ruleCollectionName, options)
+ 	if err != nil {
+-		return AdminRuleCollectionsClientCreateOrUpdateResponse{}, err
++		return nil, err
+ 	}
+ 	httpResp, err := client.internal.Pipeline().Do(req)
+ 	if err != nil {
+-		return AdminRuleCollectionsClientCreateOrUpdateResponse{}, err
++		return nil, err
+ 	}
+-	return client.createOrUpdateHandleResponse(httpResp, http.StatusOK, http.StatusCreated)
++	if !runtime.HasStatusCode(httpResp, http.StatusOK, http.StatusAccepted, http.StatusNoContent) {
++		return nil, runtime.NewResponseError(httpResp)
++	}
++	return httpResp, nil
+ }
  
- // Enum values for CapacityReservationModificationQuoteState
+-// createOrUpdateCreateRequest creates the CreateOrUpdate request.
+-func (client *AdminRuleCollectionsClient) createOrUpdateCreateRequest(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, ruleCollection AdminRuleCollection, _ *AdminRuleCollectionsClientCreateOrUpdateOptions) (*policy.Request, error) {
++// deleteCreateRequest creates the delete request.
++func (client *AdminRuleCollectionsClient) deleteCreateRequest(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, options *AdminRuleCollectionsClientBeginDeleteOptions) (*policy.Request, error) {
+ 	urlPath := "/subscriptions/{subscriptionId
 ```
 
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/types/types.go` (modified, +11/-0)
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12/adminrules_client.go` (modified, +71/-71)
 ```diff
-@@ -2282,6 +2282,17 @@ type CapacityReservation struct {
- 	// source reservation for interruptible Capacity Reservations.
- 	InterruptionInfo *InterruptionInfo
+@@ -20,7 +20,7 @@ import (
+ // AdminRulesClient contains the methods for the AdminRules group.
+ // Don't use this type directly, use NewAdminRulesClient() instead.
+ //
+-// Generated from API version 2026-01-01
++// Generated from API version 2026-03-01
+ type AdminRulesClient struct {
+ 	internal       *arm.Client
+ 	subscriptionID string
+@@ -45,35 +45,55 @@ func NewAdminRulesClient(subscriptionID string, credential azcore.TokenCredentia
+ 	return client, nil
+ }
  
-+	// Only supported for UltraServers.
-+	//
-+	// Indicates whether you can launch instances into the Capacity Reservation. A
-+	// Capacity Reservation can have the following launch statuses:
-+	//
-+	//   - launchable - You can launch instances into the Capacity Reservation.
-+	//
-+	//   - unlaunchable - You can't launch instances into the Capacity Reservation. For
-+	//   example, the Capacity Reservation is not active.
-+	LaunchStatus CapacityReservationLaunchStatus
+-// CreateOrUpdate - Creates or updates an admin rule.
++// BeginDelete - Deletes an admin rule.
+ // If the operation fails it returns an *azcore.ResponseError type.
+ //   - resourceGroupName - The name of the resource group. The name is case insensitive.
+ //   - networkManagerName - The name of the network manager.
+ //   - configurationName - The name of the network manager Security Configuration.
+ //   - ruleCollectionName - The name of the network manager security Configuration rule collection.
+ //   - ruleName - The name of the rule.
+-//   - adminRule - The admin rule to create or update
+-//   - options - AdminRulesClientCreateOrUpdateOptions contains the optional parameters for the AdminRulesClient.CreateOrUpdate
+-//     method.
+-func (client *AdminRulesClient) CreateOrUpdate(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, ruleName string, adminRule BaseAdminRuleClassification, options *AdminRulesClientCreateOrUpdateOptions) (AdminRulesClientCreateOrUpdateResponse, error) {
++//   - options - AdminRulesClientBeginDeleteOptions contains the optional parameters for the AdminRulesClient.BeginDelete method.
++func (client *AdminRulesClient) BeginDelete(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, ruleName string, options *AdminRulesClientBeginDeleteOptions) (*runtime.Poller[AdminRulesClientDeleteResponse], error) {
++	if options == nil || options.ResumeToken == "" {
++		resp, err := client.delete(ctx, resourceGroupName, networkManagerName, configurationName, ruleCollectionName, ruleName, options)
++		if err != nil {
++			return nil, err
++		}
++		poller, err := runtime.NewPoller(resp, client.internal.Pipeline(), &runtime.NewPollerOptions[AdminRulesClientDeleteResponse]{
++			Tracer: client.internal.Tracer(),
++		})
++		return poller, err
++	} else {
++		return runtime.NewPollerFromResumeToken(options.ResumeToken, client.internal.Pipeline(), &runtime.NewPollerFromResumeTokenOptions[AdminRulesClientDeleteResponse]{
++			Tracer: client.internal.Tracer(),
++		})
++	}
++}
 +
- 	// The start date that you originally requested for the Capacity Reservation, in
- 	// the ISO8601 format in the UTC time zone ( YYYY-MM-DDThh:mm:ss.sssZ ). This value
- 	// doesn't change when you push out the start date.
++// delete - Deletes an admin rule.
++// If the operation fails it returns an *azcore.ResponseError type.
++func (client *AdminRulesClient) delete(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, ruleName string, options *AdminRulesClientBeginDeleteOptions) (*http.Response, error) {
+ 	var err error
+-	const operationName = "AdminRulesClient.CreateOrUpdate"
++	const operationName = "AdminRulesClient.BeginDelete"
+ 	ctx = context.WithValue(ctx, runtime.CtxAPINameKey{}, operationName)
+ 	ctx, endSpan := runtime.StartSpan(ctx, operationName, client.internal.Tracer(), nil)
+ 	defer func() { endSpan(err) }()
+-	req, err := client.createOrUpdateCreateRequest(ctx, resourceGroupName, networkManagerName, configurationName, ruleCollectionName, ruleName, adminRule, options)
++	req, err := client.deleteCreateRequest(ctx, resourceGroupName, networkManagerName, configurationName, ruleCollectionName, ruleName, options)
+ 	if err != nil {
+-		return AdminRulesClientCreateOrUpdateResponse{}, err
++		return nil, err
+ 	}
+ 	httpResp, err := client.internal.Pipeline().Do(req)
+ 	if err != nil {
+-		return AdminRulesClientCreateOrUpdateResponse{}, err
++		return nil, err
+ 	}
+-	return client.createOrUpdateHandleResponse(httpResp, http.StatusOK, http.StatusCreated)
++	if !runtime.HasStatusCode(httpResp, http.StatusOK, http.StatusAccepted, http.StatusNoContent) {
++		return nil, runtime.NewResponseError(httpResp)
++	}
++	return httpResp, nil
+ }
+ 
+-// createOrUpdateCreateRequest creates the CreateOrUpdate request.
+-func (client *AdminRulesClient) createOrUpdateCreateRequest(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, ruleName string, adminRule BaseAdminRuleClassification, _ *AdminRulesClientCreateOrUpdateOptions) (*policy.Request, error) {
++// deleteCreateRequest creates the delete request.
++func (client *AdminRulesClient) deleteCreateRequest(ctx context.Context, resourceGroupName string, networkManagerName string, configurationName string, ruleCollectionName string, ruleName string, options *AdminRulesClientBeginDeleteOptions) (*policy.Request, error) {
+ 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/securityAdminConfigurations/{configu
 ```
 
-**File**: `vendor/modules.txt` (modified, +1/-1)
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12/applicationgatewayprivateendpointconnections_client.go` (modified, +89/-89)
 ```diff
-@@ -234,7 +234,7 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
- github.com/aws/aws-sdk-go-v2/internal/v4a
- github.com/aws/aws-sdk-go-v2/internal/v4a/internal/crypto
- github.com/aws/aws-sdk-go-v2/internal/v4a/internal/v4
--# github.com/aws/aws-sdk-go-v2/service/ec2 v1.337.0
-+# github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.0
- ## explicit; go 1.24
- github.com/aws/aws-sdk-go-v2/service/ec2
- github.com/aws/aws-sdk-go-v2/service/ec2/internal/endpoints
+@@ -20,7 +20,7 @@ import (
+ // group.
+ // Don't use this type directly, use NewApplicationGatewayPrivateEndpointConnectionsClient() instead.
+ //
+-// Generated from API version 2026-01-01
++// Generated from API version 2026-03-01
+ type ApplicationGatewayPrivateEndpointConnectionsClient struct {
+ 	internal       *arm.Client
+ 	subscriptionID string
+@@ -54,7 +54,7 @@ func NewApplicationGatewayPrivateEndpointConnectionsClient(subscriptionID string
+ //     ApplicationGatewayPrivateEndpointConnectionsClient.BeginDelete method.
+ func (client *ApplicationGatewayPrivateEndpointConnectionsClient) BeginDelete(ctx context.Context, resourceGroupName string, applicationGatewayName string, connectionName string, options *ApplicationGatewayPrivateEndpointConnectionsClientBeginDeleteOptions) (*runtime.Poller[ApplicationGatewayPrivateEndpointConnectionsClientDeleteResponse], error) {
+ 	if options == nil || options.ResumeToken == "" {
+-		resp, err := client.deleteOperation(ctx, resourceGroupName, applicationGatewayName, connectionName, options)
++		resp, err := client.delete(ctx, resourceGroupName, applicationGatewayName, connectionName, options)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -69,9 +69,9 @@ func (client *ApplicationGatewayPrivateEndpointConnectionsClient) BeginDelete(ct
+ 	}
+ }
+ 
+-// Delete - Deletes the specified private endpoint connection on application gateway.
++// delete - Deletes the specified private endpoint connection on application gateway.
+ // If the operation fails it returns an *azcore.ResponseError type.
+-func (client *ApplicationGatewayPrivateEndpointConnectionsClient) deleteOperation(ctx context.Context, resourceGroupName string, applicationGatewayName string, connectionName string, options *ApplicationGatewayPrivateEndpointConnectionsClientBeginDeleteOptions) (*http.Response, error) {
++func (client *ApplicationGatewayPrivateEndpointConnectionsClient) delete(ctx context.Context, resourceGroupName string, applicationGatewayName string, connectionName string, options *ApplicationGatewayPrivateEndpointConnectionsClientBeginDeleteOptions) (*http.Response, error) {
+ 	var err error
+ 	const operationName = "ApplicationGatewayPrivateEndpointConnectionsClient.BeginDelete"
+ 	ctx = context.WithValue(ctx, runtime.CtxAPINameKey{}, operationName)
+@@ -91,7 +91,7 @@ func (client *ApplicationGatewayPrivateEndpointConnectionsClient) deleteOperatio
+ 	return httpResp, nil
+ }
+ 
+-// deleteCreateRequest creates the Delete request.
++// deleteCreateRequest creates the delete request.
+ func (client *ApplicationGatewayPrivateEndpointConnectionsClient) deleteCreateRequest(ctx context.Context, resourceGroupName string, applicationGatewayName string, connectionName string, _ *ApplicationGatewayPrivateEndpointConnectionsClientBeginDeleteOptions) (*policy.Request, error) {
+ 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/privateEndpointConnections/{connectionName}"
+ 	if client.subscriptionID == "" {
+@@ -115,11 +115,92 @@ func (client *ApplicationGatewayPrivateEndpointConnectionsClient) deleteCreateRe
+ 		return nil, err
+ 	}
+ 	reqQP := req.Raw().URL.Query()
+-	reqQP.Set("api-version", version20260101)
++	reqQP.Set("api-version", version20260301)
+ 	req.Raw().URL.RawQuery = strings.ReplaceAll(reqQP.Encode(), "+", "%20")
+ 	return req, nil
+ }
+ 
++// BeginUpdate - Updates the specified private endpoint connection on application gateway.
++// If the operation fails it returns an *azcore.ResponseError type.
++//   - resourceGroupName - The name of the resource group. The name is case insensitive.
++//   - applicationGatewayName - The name of the application gateway.
++//   - connectionName - Name of the private endpoint connection on an application gateway.
++//   - parameters - Parameters supplied to update application gateway private endpoint connection operation.
++//   - options - ApplicationGatewayPrivateEndpointConnectionsClientBeginUpdateOptions contains the optional parameters for the
++//     ApplicationGatewayPrivateEndpointConnectionsClient.BeginUpdate method.
++func (client *ApplicationGatewayPrivateEndpointConnectionsClient) BeginUpdate(ctx context.Context, resourceGroupName string, applicationGatewayName string, connectionName string, parameters ApplicationGatewayPrivateEndpointConnection, options *ApplicationGatewayPrivateEndpointConnectionsClientBeginUpdateOptions) (*runtime.Poller[ApplicationGatewayPrivateEndpointConnectionsClientUpdateResponse], error) {
++	if options == nil || options.ResumeToken == "" {
++		resp, err := client.update(ctx, resourceGroupName, applicationGatewayName, connectionName, parameters, options)
++		if err != nil {
++			return nil, err
++		}
++		poller, err := runtime.NewPoller(resp, client.internal.Pipeline(), &runtime.NewPollerOptions[ApplicationGatewayPrivateEndpointConnectionsClientUpdateResponse]{
++			Tracer: client.internal.Tracer(),
++		})
++		return poller, err
++	} else {
++		return runtime.NewPollerFrom
+```
+
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12/applicationgatewayprivatelinkresources_client.go` (modified, +2/-2)
+```diff
+@@ -19,7 +19,7 @@ import (
+ // ApplicationGatewayPrivateLinkResourcesClient contains the methods for the ApplicationGatewayPrivateLinkResources group.
+ // Don't use this type directly, use NewApplicationGatewayPrivateLinkResourcesClient() instead.
+ //
+-// Generated from API version 2026-01-01
++// Generated from API version 2026-03-01
+ type ApplicationGatewayPrivateLinkResourcesClient struct {
+ 	internal       *arm.Client
+ 	subscriptionID string
+@@ -102,7 +102,7 @@ func (client *ApplicationGatewayPrivateLinkResourcesClient) listCreateRequest(ct
+ 	}
+ 	if firstPage {
+ 		reqQP := req.Raw().URL.Query()
+-		reqQP.Set("api-version", version20260101)
++		reqQP.Set("api-version", version20260301)
+ 		req.Raw().URL.RawQuery = strings.ReplaceAll(reqQP.Encode(), "+", "%20")
+ 		req.Raw().Header["Accept"] = []string{"application/json"}
+ 	}
 ```
 
 ---
 
-### Incident Patch 7: `2aa6cb5f` (2026-10-04)
-**Commit Message**: images: update cilium-{runtime,builder}
-
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
-
-**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "Cilium",
--  "image": "quay.io/cilium/cilium-builder:e622fd8d9cead9bad7f199b8b092e4a01d94a0aa@sha256:9adf58f4d37680b02eb4e3b02466fc497b133d347be79c4cf1b16385885b1abe",
-+  "image": "quay.io/cilium/cilium-builder:2a420dfc2907847c327e53ab83353403a2956c14@sha256:3f6f4026b659df0060e9575ab84fca7333a2006cbc26ee0636db3b9f14353ac7",
-   "workspaceFolder": "/go/src/github.com/cilium/cilium",
-   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
-   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
-```
-
-**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--quay.io/cilium/cilium-runtime:de541d84b56a1268265478adea29e914a669a327@sha256:e43a75713ef552532c29ed8dd72014c7418cda4ac79a811608e496f61fb7fba2
-\ No newline at end of file
-+quay.io/cilium/cilium-runtime:9c282afffb5f1853dcc04827d2063b1118126789@sha256:dc29317ad51e89b95b198f3ff7abeebe8b03811429a61275aaf53b6bea37cf71
-\ No newline at end of file
-```
-
-**File**: `images/cilium/Dockerfile` (modified, +2/-2)
-```diff
-@@ -3,8 +3,8 @@
- # Copyright Authors of Cilium
- # SPDX-License-Identifier: Apache-2.0
- 
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:e622fd8d9cead9bad7f199b8b092e4a01d94a0aa@sha256:9adf58f4d37680b02eb4e3b02466fc497b133d347be79c4cf1b16385885b1abe
--ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:de541d84b56a1268265478adea29e914a669a327@sha256:e43a75713ef552532c29ed8dd72014c7418cda4ac79a811608e496f61fb7fba2
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:2a420dfc2907847c327e53ab83353403a2956c14@sha256:3f6f4026b659df0060e9575ab84fca7333a2006cbc26ee0636db3b9f14353ac7
-+ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:9c282afffb5f1853dcc04827d2063b1118126789@sha256:dc29317ad51e89b95b198f3ff7abeebe8b03811429a61275aaf53b6bea37cf71
- #
- # cilium-envoy from github.com/cilium/proxy
- #
-```
-
-**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
- ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:e2e927ec666bae08560abb3c55d0659eceabb657f56b6782ab500a9fc7f555e3
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.1@sha256:3680233e3204827fbdc66088528ae6d4b3d034f51d03a99d454f6de034888244
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:e622fd8d9cead9bad7f199b8b092e4a01d94a0aa@sha256:9adf58f4d37680b02eb4e3b02466fc497b133d347be79c4cf1b16385885b1abe
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:2a420dfc2907847c327e53ab83353403a2956c14@sha256:3f6f4026b659df0060e9575ab84fca7333a2006cbc26ee0636db3b9f14353ac7
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
-```
-
-**File**: `images/operator/Dockerfile` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- ARG BASE_IMAGE=scratch
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.1@sha256:3680233e3204827fbdc66088528ae6d4b3d034f51d03a99d454f6de034888244
- ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:e622fd8d9cead9bad7f199b8b092e4a01d94a0aa@sha256:9adf58f4d37680b02eb4e3b02466fc497b133d347be79c4cf1b16385885b1abe
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:2a420dfc2907847c327e53ab83353403a2956c14@sha256:3f6f4026b659df0060e9575ab84fca7333a2006cbc26ee0636db3b9f14353ac7
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
-```
-
----
-
-### Incident Patch 8: `3e1a950d` (2026-10-04)
+### Incident Patch 3: `a94d76bc` (2026-10-18)
 **Commit Message**: fix(deps): update all go dependencies main
 
 Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-**File**: `go.mod` (modified, +40/-40)
+**File**: `go.mod` (modified, +34/-34)
 ```diff
-@@ -5,15 +5,15 @@ go 1.26.0
+@@ -5,16 +5,16 @@ go 1.27
  require (
  	cel.dev/cel-go v0.32.0
  	github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6
--	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1
-+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.2
+-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.2
++	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3
  	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
--	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.3.0
-+	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0
+ 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0
  	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.0.0
  	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
--	github.com/aws/aws-sdk-go-v2 v1.47.0
--	github.com/aws/aws-sdk-go-v2/config v1.33.5
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0
--	github.com/aws/aws-sdk-go-v2/service/ec2 v1.336.0
-+	github.com/aws/aws-sdk-go-v2 v1.47.1
-+	github.com/aws/aws-sdk-go-v2/config v1.33.6
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1
-+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.337.0
- 	github.com/aws/smithy-go v1.28.2
+-	github.com/aws/aws-sdk-go-v2 v1.47.1
+-	github.com/aws/aws-sdk-go-v2/config v1.33.6
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1
+-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.1
+-	github.com/aws/smithy-go v1.28.2
++	github.com/aws/aws-sdk-go-v2 v1.47.3
++	github.com/aws/aws-sdk-go-v2/config v1.33.9
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3
++	github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.4
++	github.com/aws/smithy-go v1.28.5
  	github.com/blang/semver/v4 v4.0.0
  	github.com/cespare/xxhash/v2 v2.3.0
-@@ -41,7 +41,7 @@ require (
- 	github.com/fatih/color v1.19.0
- 	github.com/fsnotify/fsnotify v1.10.1
- 	github.com/go-logr/logr v1.4.4
--	github.com/go-openapi/errors v0.22.8
-+	github.com/go-openapi/errors v0.22.9
- 	github.com/go-openapi/loads v0.25.3
- 	github.com/go-openapi/runtime v0.33.2
- 	github.com/go-openapi/spec v1.0.1
-@@ -59,7 +59,7 @@ require (
- 	github.com/google/gops v0.3.28
- 	github.com/google/renameio/v2 v2.0.2
- 	github.com/google/uuid v1.6.0
--	github.com/gopacket/gopacket v1.7.2
-+	github.com/gopacket/gopacket v1.7.3
- 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4
- 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
- 	github.com/hashicorp/go-hclog v1.6.3
-@@ -68,11 +68,11 @@ require (
+ 	github.com/cilium/charts v0.0.0-20261002190002-21db35622a44
+@@ -29,7 +29,7 @@ require (
+ 	github.com/cilium/statedb v0.9.4
+ 	github.com/cilium/stream v0.0.1
+ 	github.com/cilium/workerpool v1.4.0
+-	github.com/cloudflare/cfssl v1.7.0
++	github.com/cloudflare/cfssl v1.7.1
+ 	github.com/containerd/nri v0.12.3
+ 	github.com/containernetworking/cni v1.3.1
+ 	github.com/coreos/go-iptables v0.8.0
+@@ -68,7 +68,7 @@ require (
  	github.com/jeremywohl/flatten v1.0.1
  	github.com/json-iterator/go v1.1.12
  	github.com/kevinburke/ssh_config v1.6.0
--	github.com/klauspost/compress v1.20.0
-+	github.com/klauspost/compress v1.20.1
+-	github.com/klauspost/compress v1.20.1
++	github.com/klauspost/compress v1.20.3
  	github.com/lthibault/jitterbug/v2 v2.2.2
  	github.com/mackerelio/go-osstat v0.2.8
- 	github.com/mattn/go-shellwords v1.0.15
--	github.com/mdlayher/arp v0.0.0-20260528070854-93566ba168e9
-+	github.com/mdlayher/arp v0.0.0-20260923112748-e9ee4960293e
- 	github.com/mdlayher/ethernet v0.0.0-20220221185849-529eae5b6118
- 	github.com/mdlayher/ndp v1.1.0
- 	github.com/mdlayher/packet v1.2.0
-@@ -87,7 +87,7 @@ require (
+ 	github.com/mattn/go-shellwords v1.0.16
+@@ -85,9 +85,9 @@ require (
+ 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
  	github.com/prometheus-community/pro-bing v0.9.1
- 	github.com/prometheus/client_golang v1.24.1
+-	github.com/prometheus/client_golang v1.24.1
++	github.com/prometheus/client_golang v1.25.0
  	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.71.0
-+	github.com/prometheus/common v0.72.0
+-	github.com/prometheus/common v0.72.0
++	github.com/prometheus/common v0.72.1
  	github.com/prometheus/procfs v0.22.0
  	github.com/russross/blackfriday/v2 v2.1.0
  	github.com/sasha-s/go-deadlock v0.3.9
-@@ -102,11 +102,11 @@ require (
+@@ -97,12 +97,12 @@ require (
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/spf13/pflag v1.0.10
+ 	github.com/spf13/viper v1.21.0
+-	github.com/spiffe/go-spiffe/v2 v2.8.2
++	github.com/spiffe/go-spiffe/v2 v2.9.0
+ 	github.com/spiffe/spire-api-sdk v1.15.3
  	github.com/stretchr/testify v1.12.1
- 	github.com/tidwall/gjson v1.19.0
+-	github.com/tidwall/gjson v1.19.1
++	github.com/tidwall/gjson v1.20.0
  	github.com/tidwall/sjson v1.2.5
--	github.com/vishvananda/netlink v1.3.2-0.20260831221819-dcee5577542a
-+	github.com/vishvananda/netlink v1.3.2-0.20261002201547-1d1c62507e3c
+-	github.com/vishvananda/netlink v1.3.2-0.20261002201547-1d1c62507e3c
++	github.com/vishvananda/netlink v1.3.2-0.20261015184244-3fdd74264153
  	github.com/vishvananda/netns v0.0.5
--	go.etcd.io/etcd/api/v3 v3.7.1
--	go.etcd.io/etcd/client/pkg/v3 v3.7.1
--	go.etcd.io/etcd/client/v3 v3.7.1
-+	go.etcd.io/etcd/api/v3 v3.7.2
-+	go.etcd.io/etcd/client/pkg/v3 v3.7.2
-+	go.etcd.io/etcd/client/v3 v3.7.2
- 	go.opentelemetry.io/otel v1.46.0
- 	go.opentelemetry.io/otel/trace v1.46.0
- 	go.uber.org/goleak v1.3.0
-@@ -124,21 +124,21 @@ require (
+ 	go.etcd.io/etcd/api/v3 v3.7.2
+ 	go.etcd.io/etcd/client/pkg/v3 v3.7.2
+@@ -113,18 +113,18 @@ require (
+ 	go.uber.org/zap v1.28.0
+ 	go.yaml.in/yaml/v3 v3.0.5
+ 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
+-	golang.org/x/crypto v0.57.0
++	golang.org/x/crypto v0.58.0
+ 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
+-	golang.org/x/mod v0.41.0
+-	golang.org/x/net v0.60.0
+-	golang.org/x/sync v0.23.0
+-	golang.org/x/sys v0.48.0
+-	golang.org/x/term v0.46.0
+-	golang.org/x/text v0.42.0
++	golang.org/x/mod v0.42.0
++	golang.org/x/net v0.61.0
++	golang.org/x/sync v0.24.0
++	golang.org/x/sys v0.49.0
++	golang.org/x/term v0.47.0
++	golang.org/x/text v0.43.0
  	golang.org/x/time v0.16.0
- 	golang.org/x/tools v0.50.0
+-	golang.org/x/tools v0.51.0
++	golang.org/x/tools v0.52.0
  	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20241231184526-a9ab2273dd10
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260921155816-b14227669459
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20261012220534-4341edf3f941
  	google.golang.org/grpc v1.84.0
  	google.golang.org/protobuf v1.36.12
  	helm.sh/helm/v4 v4.3.0
--	k8s.io/api v0.37.0
--	k8s.io/apiextensions-apiserver v0.37.0
--	k8s.io/apimachinery v0.37.0
--	k8s.io/cli-runtime v0.37.0
--	k8s.io/client-go v0.37.0
--	k8s.io/component-base v0.37.0
--	k8s.io/dynamic-resource-allocation v0.37.0
--	k8s.io/endpointslice v0.37.0
-+	k8s.io/api v0.37.1
-+	k8s.io/apiextensions-apiserver v0.37.1
-+	k8s.io/apimachinery v0.37.1
-+	k8s.io/cli-runtime v0.37.1
-+	k8s.io/client-go v0.37.1
-+	k8s.io/component-base v0.37.1
-+	k8s.io/dynamic-resource-allocation v0.37.1
-+	k8s.io/endpointslice v0.37.1
- 	k8s.io/klog/v2 v2.140.0
--	k8s.io/kubectl v0.37.0
--	k8s.io/metrics v0.37.0
-+	k8s.io/kubectl v0.37.1
-+	k8s.io/metrics v0.37.1
- 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
- 	sigs.k8s.io/controller-runtime v0.24.1
- 	sigs.k8s.io/gateway-api v1.6.1
-@@ -167,16 +167,16 @@ require (
+@@ -155,7 +155,7 @@ require (
+ require (
+ 	cel.dev/expr v0.25.2 // indirect
+ 	dario.cat/mergo v1.0.2 // indirect
+-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 // indirect
++	github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 // indirect
+ 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
+ 	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
+ 	github.com/BurntSushi/toml v1.6.0 // indirect
+@@ -169,16 +169,16 @@ require (
  	github.com/alecthomas/participle/v2 v2.1.0 // indirect
  	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
  	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.5 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.3 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.
+-	github.com/aws/aws-sdk-go-v2/credentials v1.20.6 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13
 ```
 
-**File**: `go.sum` (modified, +82/-82)
+**File**: `go.sum` (modified, +68/-68)
 ```diff
-@@ -10,16 +10,16 @@ filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
+@@ -10,14 +10,14 @@ filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
  filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
  github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6 h1:He8afgbRMd7mFxO99hRNu+6tazq8nFF9lIwo9JFroBk=
  github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6/go.mod h1:8o94RPi1/7XTJvwPpRSzSUedZrtlirdB3r9Z20bi2f8=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 h1:zvXfGJCWvywnCA814d8ZiVyt+fm9nnTE8xSb99zRyfo=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1/go.mod h1:iptorS+VYKFL2N6PnebpS91dubG35eAOEERnT4PJbQU=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.2 h1:utpeoEeZjd+A8J41zvoLsOOrqXHhX1Kx/X/tCW9dEYQ=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.2/go.mod h1:iptorS+VYKFL2N6PnebpS91dubG35eAOEERnT4PJbQU=
+-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.2 h1:utpeoEeZjd+A8J41zvoLsOOrqXHhX1Kx/X/tCW9dEYQ=
+-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.2/go.mod h1:iptorS+VYKFL2N6PnebpS91dubG35eAOEERnT4PJbQU=
++github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 h1:qgnWTiWs1G7AqcKZegFvkJD1bmXJcaDU3uC0ELSgZ5U=
++github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3/go.mod h1:XtxD48QPInqoj+GMlcRlXHEYsoOxFnP6w2JgIZ9rDS4=
  github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 h1:u93s+zU2JD62im61Bm5CZIc1ZrOJaIAWEg0WOrMVkEo=
  github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1/go.mod h1:oXtinPO4OLj9d1DOTrqrL1oRwGhcqadvAmrl6wTeGlk=
  github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
  github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0/go.mod h1:mCBhUhlMjLLJKr5aqw2TNS/VqJOie8MzWq3DAMJeKso=
- github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 h1:fhqpLE3UEXi9lPaBRpQ6XuRW0nU7hgg4zlmZZa+a9q4=
- github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0/go.mod h1:7dCRMLwisfRH3dBupKeNCioWYUZ4SS09Z14H+7i8ZoY=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.3.0 h1:9fxsQhv25YpYDqNV4EIuEOJWInhrJX0I2DS5kOaHLlo=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.3.0/go.mod h1:E7HnKr5NCwakxjN2GtTSE3eh+JIlSW44w6pnrRf1fMI=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0 h1:2lXb1GRZXYbM0M0NBINxqTAUgs2tLOkUxbDtdIqGT80=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0/go.mod h1:/PxYsqvSyfJS5vMkAAUByxUIlFUIJ4+LgpUK/fTheZk=
+-github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 h1:fhqpLE3UEXi9lPaBRpQ6XuRW0nU7hgg4zlmZZa+a9q4=
+-github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0/go.mod h1:7dCRMLwisfRH3dBupKeNCioWYUZ4SS09Z14H+7i8ZoY=
++github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 h1:Terj1CMW4+NY5CpWjSRkqLoxh2DkYDdv/FH2z0897Uc=
++github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0/go.mod h1:7Ut2Qw9vcwpLW5Q4MBy43uSxXS7tK2yjs94OJ6j5thE=
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0 h1:2lXb1GRZXYbM0M0NBINxqTAUgs2tLOkUxbDtdIqGT80=
+ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0/go.mod h1:/PxYsqvSyfJS5vMkAAUByxUIlFUIJ4+LgpUK/fTheZk=
  github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/internal/v3 v3.2.0 h1:+lnLQhKh3cgSOIOVH61UZ3s/l9d+bAZp5d/spt1+7UI=
- github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/internal/v3 v3.2.0/go.mod h1:tStOHrivWUrcBolspvKV70Us1ckESYGYSHdG4LX8zyY=
- github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 v12.0.0 h1:KSPTp+F/wadsyVKqsMxsooMmlROoQ77Mo8cft+5ebOM=
-@@ -74,34 +74,34 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPd
+@@ -74,36 +74,36 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPd
  github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
  github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
  github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
--github.com/aws/aws-sdk-go-v2 v1.47.0 h1:0jsHallhJCeaU0Ko48c/3FK1ctOQ7NpzggxriJOQ8MQ=
--github.com/aws/aws-sdk-go-v2 v1.47.0/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
--github.com/aws/aws-sdk-go-v2/config v1.33.5 h1:UA1dmokBFOLFoOyVBhO6HjM6edy0MIk5AZSkJVcksQw=
--github.com/aws/aws-sdk-go-v2/config v1.33.5/go.mod h1:Dop8axzz0xx38GExIYWXdeyc8QQ7Cr+nPsxpD/LYy4U=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.5 h1:wklUVvHMc9xTQ3rcp49/ISpiMnhbCicJcA6n6S8m7J8=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.5/go.mod h1:fyEdrn6ccLFOkoK84j5bQyGTxp9zPt5l2XMhxf4DVZs=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0 h1:AM4hHjww+PSFtt6E+UrBrPlZkWsePCLEt9AjkfQX+yM=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0/go.mod h1:3x/yXezeQjpOvBb4jEMxrS8SXvpdvJ5abv6l5c1gWM8=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.3 h1:Hp/VgjP0BysR3OgLlR057Vz2LcbbVnoWeJ+3qWiS/fY=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.3/go.mod h1:nwGV5qw7F1IZPgxCvA/ph8N2TAuz+BkRG/bXn808qMA=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.3 h1:MUaM4f+kj1ZIBPZfUS8cxP1GKXXZtHJjAthy93AN7SM=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.3/go.mod h1:6YmVmEVRI5ZZzRjCSsb9SryKH0hAlMRdgA7kG9aDvBU=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.3 h1:fuSCw4Z2qfRCztMPO3GXJNSiEp6Wee+WOLwrHHUMy9c=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.3/go.mod h1:6SxcHheD1pPR5+kWm1wGvjlL/YqUsh267sAfEmN4K7A=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.336.0 h1:gI2D7bXtlvknJfpTTjPIcy+ahnmVwoZa6/jnI020ubk=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.336.0/go.mod h1:2o5yJcnWuaBOsnNqlO1reYs1OQffFkqf2xJ2mmMWNH4=
-+github.com/aws/aws-sdk-go-v2 v1.47.1 h1:uOIZnp4PK3ZhKI0dNrJrhTEsLxbpXHTAJlwoS1pvAtw=
-+github.com/aws/aws-sdk-go-v2 v1.47.1/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
-+github.com/aws/aws-sdk-go-v2/config v1.33.6 h1:MBjkSTLczek/UgiK+EYPIoRTqE7gP8vtW3OFbFo7Nug=
-+github.com/aws/aws-sdk-go-v2/config v1.33.6/go.mod h1:grRAFzdAZJrwcbasJRg2MPvIrVjtlfXllHssN6+E1JE=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.6 h1:NpAFXCU7NzXNkdGK3zQTtsRJ+3
+-github.com/aws/aws-sdk-go-v2 v1.47.1 h1:uOIZnp4PK3ZhKI0dNrJrhTEsLxbpXHTAJlwoS1pvAtw=
+-github.com/aws/aws-sdk-go-v2 v1.47.1/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
+-github.com/aws/aws-sdk-go-v2/config v1.33.6 h1:MBjkSTLczek/UgiK+EYPIoRTqE7gP8vtW3OFbFo7Nug=
+-github.com/aws/aws-sdk-go-v2/config v1.33.6/go.mod h1:grRAFzdAZJrwcbasJRg2MPvIrVjtlfXllHssN6+E1JE=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.6 h1:NpAFXCU7NzXNkdGK3zQTtsRJ+3v9tZQV0xcdRw8uBdw=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.6/go.mod h1:mcZCoiPnyMvP8VMNbygNX5lLqSlkYJIMPODylQMurOk=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1 h1:8gALAAmacnIXh+z6VkdDanv4/IkG5APdg4DZLDTmLog=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1/go.mod h1:Z7IJhJU+poOdJjUR2wpyY21ossQ1XS/R3Lk9Msq5kM4=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 h1:CLq4+8UHCI+ZZYl/EuJxXovaIVN2xeeT8JV+dsApQ5E=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4/go.mod h1:Wv4q5sAM04xAMkoOedxLx2inVf6K5FdxYp+A61L+q/0=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 h1:dD4MR81I7YkpEBRk6UP9rocC2QnT3qVuXwzlYTtfGEs=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4/go.mod h1:EcXV1kAFd5XwSkDHlj94gnF3q5CkJyYiIJfH8N0VmrE=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 h1:7Wo47d/xn/7KttCSBd8EGYeZ7ULRFRkUHr6vkZPBzVQ=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4/go.mod h1:tDB2IVC1xC3vX8o+6uRlzhTxP3g1b77CZXFX/oD2FnQ=
+-github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.1 h1:sfwX4gbR9CGsMgBsOQNFMGigRjiZeIG0CF4BlWP/LBQ=
+-github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.1/go.mod h1:d0e0acsyS3WnFCFJiByGwnUgPpn2wAk97PTIksHN2NI=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19 h1:bAdDl/HkGCcGPoe25ToSHEw23VIxt6CT5fLcg111BKg=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19/go.mod h1:KaUzbLxv4CeSxh6ZCl9B4m7CuFenS8kUEaDs+f/DQr4=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.4 h1:29SvnfGhXjTl8ONxFwbj2rs6lbhiFXD2CgFQmbT/bXY=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.4/go.mod h1:wm04I5DMuNVvZHFe/dHnUxincvNbbK7AiNBbYsQivek=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.10.1 h1:DzCCWLzcIRQ77F3DEUljud7bEjTgFOIKXP52NmVRyhU=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.10.1/go.mod h1:xpo/geVldu8payT375WekctUzopG/hBU7miiqItMUlw=
+-github.com/aws/aws-sdk-go-v2/service/sso v1.38.1 h1:Umtl/0YZhng4xndfW3lK
 ```
 
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/CHANGELOG.md` (modified, +6/-0)
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/CHANGELOG.md` (modified, +11/-0)
 ```diff
-@@ -1,5 +1,11 @@
+@@ -1,5 +1,16 @@
  # Release History
  
-+## 1.23.2 (2026-09-28)
++## 1.23.3 (2026-10-06)
 +
 +### Bugs Fixed
 +
-+* Fixed unmarshalling `datetime.RFC7231` to use a fixed `GMT` zone.
++* Fixed `arm.ResourceID.Location` being empty when the `locations` segment uses different casing.
 +
- ## 1.23.1 (2026-08-27)
++### Other Changes
++
++* Added `azure-deprecating` to the default set of allowed (non-redacted) response headers for logging.
++* Replaced internal default HTTP client with the one from `sdk/internal`.
++
+ ## 1.23.2 (2026-09-28)
  
- ### Other Changes
+ ### Bugs Fixed
 ```
 
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/ci.yml` (modified, +0/-1)
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/arm/internal/resource/resource_identifier.go` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,6 @@ trigger:
-   branches:
-     include:
-       - main
--      - feature/*
-       - hotfix/*
-       - release/*
-   paths:
+@@ -141,7 +141,7 @@ func (id *ResourceID) init(parent *ResourceID, resourceType ResourceType, name s
+ 		id.SubscriptionID = name
+ 	}
+ 
+-	if resourceType.lastType() == locationsKey {
++	if strings.EqualFold(resourceType.lastType(), locationsKey) {
+ 		id.Location = name
+ 	}
+ 
 ```
 
 **File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/shared/constants.go` (modified, +1/-1)
@@ -2292,1076 +1973,83 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
  	Module = "azcore"
  
  	// Version is the semantic version (see http://semver.org) of this module.
--	Version = "v1.23.1"
-+	Version = "v1.23.2"
+-	Version = "v1.23.2"
++	Version = "v1.23.3"
  )
 ```
 
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime/datetime/RFC7231.go` (modified, +2/-2)
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime/pipeline.go` (modified, +2/-1)
 ```diff
-@@ -30,7 +30,7 @@ func (r RFC7231) MarshalText() ([]byte, error) {
- // UnmarshalJSON unmarshals a JSON byte slice into an RFC7231 timestamp.
- func (r *RFC7231) UnmarshalJSON(data []byte) error {
- 	t, err := time.Parse(rfc1123JSON, strings.ToUpper(string(data)))
--	*r = RFC7231(t.UTC())
-+	*r = RFC7231(t.In(gmt))
- 	return err
+@@ -6,6 +6,7 @@ package runtime
+ import (
+ 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/internal/exported"
+ 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
++	azt "github.com/Azure/azure-sdk-for-go/sdk/internal/transport"
+ )
+ 
+ // PipelineOptions contains Pipeline options for SDK developers
+@@ -85,7 +86,7 @@ func NewPipeline(module, version string, plOpts PipelineOptions, options *policy
+ 	policies = append(policies, exported.PolicyFunc(bodyDownloadPolicy))
+ 	transport := cp.Transport
+ 	if transport == nil {
+-		transport = defaultHTTPClient
++		transport = azt.DefaultHTTPClient
+ 	}
+ 	return exported.NewPipeline(transport, policies...)
  }
+```
+
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime/policy_logging.go` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ func NewLogPolicy(o *policy.LogOptions) policy.Policy {
+ 	// construct default hash set of allowed headers
+ 	allowedHeaders := map[string]struct{}{
+ 		"accept":                        {},
++		"azure-deprecating":             {},
+ 		"cache-control":                 {},
+ 		"connection":                    {},
+ 		"content-length":                {},
+```
+
+**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/internal/transport/transport.go` (renamed, +4/-3)
+```diff
+@@ -1,7 +1,7 @@
+ // Copyright (c) Microsoft Corporation. All rights reserved.
+ // Licensed under the MIT License.
  
-@@ -41,7 +41,7 @@ func (r *RFC7231) UnmarshalText(data []byte) error {
- 		return nil
- 	}
- 	t, err := time.Parse(time.RFC1123, string(data))
--	*r = RFC7231(t.UTC())
-+	*r = RFC7231(t.In(gmt))
- 	return err
- }
- 
-```
-
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8/CHANGELOG.md` (modified, +22/-0)
-```diff
-@@ -1,5 +1,27 @@
- # Release History
- 
-+## 8.4.0 (2026-09-20)
-+### Features Added
-+
-+- New value `ConfidentialVMEncryptionTypeDataDiskEncryptedWithCmk` added to enum type `ConfidentialVMEncryptionType`
-+- New enum type `GalleryImageVersionState` with values `GalleryImageVersionStateActive`, `GalleryImageVersionStateSoftDeleted`
-+- New enum type `MetadataType` with values `MetadataTypeSecretsProvisioningImageMetadata`, `MetadataTypeUserProvidedSecretsProvisioningMetadata`
-+- New enum type `SecretsProvisioningComponentName` with values `SecretsProvisioningComponentNameAzureGuestAgent`, `SecretsProvisioningComponentNameCloudInit`, `SecretsProvisioningComponentNameOS`, `SecretsProvisioningComponentNameSecretsProvisioningLibrary`
-+- New struct `DataDiskImageSecurityProfile`
-+- New struct `ImageMetadataProfile`
-+- New struct `MetadataKeyValue`
-+- New struct `SecretsProvisioningComponent`
-+- New struct `SecretsProvisioningSettings`
-+- New field `ConsumptionEndTime`, `ImageState` in struct `CommunityGalleryImageVersionProperties`
-+- New field `SecurityProfile` in struct `DataDiskImageEncryption`
-+- New field `ImageMetadataProfiles` in struct `GalleryImageVersionProperties`
-+- New field `BypassSoftDelete` in struct `GalleryImageVersionsClientBeginDeleteOptions`
-+- New field `ConsumptionEndTime`, `HardDeletionTargetTime` in struct `GallerySoftDeletedResourceProperties`
-+- New field `SecretsProvisioningSettings` in struct `ImageVersionSecurityProfile`
-+- New field `ConsumptionEndTime`, `ImageState` in struct `SharedGalleryImageVersionProperties`
-+- New field `GracePeriodInDays`, `RetentionPeriodInDays` in struct `SoftDeletePolicy`
-+
-+
- ## 8.3.0 (2026-08-12)
- ### Features Added
- 
-```
-
-**File**: `vendor/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8/availabilitysets_client.go` (modified, +14/-11)
-```diff
-@@ -30,6 +30,9 @@ type AvailabilitySetsClient struct {
- //   - credential - used to authorize requests. Usually a credential from azidentity.
- //   - options - Contains optional client configuration. Pass nil to accept the default values.
- func NewAvailabilitySetsClient(subscriptionID string, credential azcore.TokenCredential, options *arm.ClientOptions) (*AvailabilitySetsClient, error) {
-+	if subscriptionID == "" {
-+		return nil, errors.New("parameter subscriptionID cannot be empty")
-+	}
- 	cl, err := arm.NewClient(moduleName, moduleVersion, credential, options)
- 	if err != nil {
- 		return nil, err
-@@ -71,7 +74,7 @@ func (client *AvailabilitySetsClient) CancelMigrationToVirtualMachineScaleSet(ct
- func (client *AvailabilitySetsClient) cancelMigrationToVirtualMachineScaleSetCreateRequest(ctx context.Context, resourceGroupName string, availabilitySetName string, _ *AvailabilitySetsClientCancelMigrationToVirtualMachineScaleSetOptions) (*policy.Request, error) {
- 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}/cancelMigrationToVirtualMachineScaleSet"
- 	if client.subscriptionID == "" {
--		return nil, errors.New("parameter client.subscriptionID cannot be empty")
-+		return nil, errors.New("parameter subscriptionID cannot be empty")
- 	}
- 	urlPath = strings.ReplaceAll(urlPath, "{subscriptionId}", url.PathEscape(client.subscriptionID))
- 	if resourceGroupName == "" {
-@@ -143,7 +146,7 @@ func (client *AvailabilitySetsClient) convertToVirtualMachineScaleSet(ctx contex
- func (client *AvailabilitySetsClient) convertToVirtualMachineScaleSetCreateRequest(ctx context.Context, resourceGroupName string, availabilitySetName string, options *AvailabilitySetsClientBeginConvertToVirtualMachineScaleSetOptions) (*policy.Request, error) {
- 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}/convertToVirtualMachineScaleSet"
- 	if client.subscriptionID == "" {
--		return nil, errors.New("parameter client.subscriptionID cannot be empty")
-+		return nil, errors.New("parameter subscriptionID cannot be empty")
- 	}
- 	urlPath = strings.ReplaceAll(urlPath, "{subscriptionId}", url.PathEscape(client.subscriptionID))
- 	if resourceGroupName == "" {
-@@ -199,7 +202,7 @@ func (client *AvailabilitySetsClient) CreateOrUpdate(ctx context.Context, resour
- func (client *AvailabilitySetsClient) createOrUpdateCreateRequest(ctx context.Context, resourceGroupName string, availabilitySetName string, parameters AvailabilitySet, _ *AvailabilitySetsClientCreateOrUpdateOptions) (*policy.Request, error) {
- 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}"
- 	if client.subscriptionID == "" {
--		return nil, errors.New("parameter client.subscriptionID cannot be empty")
-+		return nil, errors.New("parameter subscriptionID cannot be empty")
- 	}
- 	urlPath = strings.ReplaceAll(urlPath, "{subscriptionId}", url.PathEscape(client.subscriptionID))
- 	if resourceGroupName == "" {
-@@ -266,7 +269,7 @@ func (client *AvailabilitySetsClient) Delete(ctx context.Context, resourceGroupN
- func (client *AvailabilitySetsClient) deleteCreateRequest(ctx context.Context, resourceGroupName string, availabilitySetName string, _ *AvailabilitySetsClientDeleteOptions) (*policy.Request, error) {
- 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}"
- 	if client.subscriptionID == "" {
--		return nil, errors.New("parameter client.subscriptionID cannot be empty")
-+		return nil, errors.New("parameter subscriptionID cannot be empty")
- 	}
- 	urlPath = strings.ReplaceAll(urlPath, "{subscriptionId}", url.PathEscape(client.subscriptionID))
- 	if resourceGroupName == "" {
-@@ -313,7 +316,7 @@ func (client *AvailabilitySetsClient) Get(ctx context.Context, resourceGroupName
- func (client *AvailabilitySetsClient) getCreateRequest(ctx context.Context, resourceGroupName string, availabilitySetName string, _ *AvailabilitySetsClientGetOptions) (*policy.Request, error) {
- 	urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}"
- 	if client.subscriptionID == "" {
--		return nil, errors.New("parameter client.subscriptionID cannot be empty")
-+		return nil, errors.New("parameter subscriptionID cannot be empty")
- 	}
- 	urlPath = strings.ReplaceAll(urlPath, "{subscriptionId}", url.PathEscape(client.subscriptionID))
- 	if resourceGroupName == "" {
-@@ -384,7 +387,7 @@ func (client *AvailabilitySetsClient) listCreateRequest(ctx context.Context, res
- 	if firstPage {
- 		urlPath := "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets"
- 		if client.subscriptionID == "" {
--			return nil, errors.New("parameter clie
-```
-
----
-
-### Incident Patch 9: `60484985` (2026-10-02)
-**Commit Message**: hubble: Fix typo in --port-forward flag description
-
-Fix "Analoguous" -> "Analogous" and update observe_help.txt.
-
-Signed-off-by: neronkang <[REDACTED_EMAIL]>
-
-**File**: `hubble/cmd/common/config/flags.go` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@ func initServerFlags() {
- 		KeyPortForward,
- 		"P",
- 		false,
--		"Automatically forward the relay port to the local machine. Analoguous to running: 'cilium hubble port-forward'.",
-+		"Automatically forward the relay port to the local machine. Analogous to running: 'cilium hubble port-forward'.",
- 	)
- 	ServerFlags.Uint16(
- 		KeyPortForwardPort,
-```
-
-**File**: `hubble/cmd/observe_help.txt` (modified, +1/-1)
-```diff
-@@ -156,7 +156,7 @@ Server Flags:
-       --kube-context string           Kubernetes configuration context. This option is only considered when --port-forward is set.
-       --kube-namespace string         Namespace Cilium is running in. This option is only considered when --port-forward is set. (default "kube-system")
-       --kubeconfig string             Path to the kubeconfig file. This option is only considered when --port-forward is set.
--  -P, --port-forward                  Automatically forward the relay port to the local machine. Analoguous to running: 'cilium hubble port-forward'.
-+  -P, --port-forward                  Automatically forward the relay port to the local machine. Analogous to running: 'cilium hubble port-forward'.
-       --port-forward-port uint16      Local port to forward to. 0 will select a random port. This option is only considered when --port-forward is set. (default 4245)
-       --request-timeout duration      Unary Request timeout. Only applies to non-streaming RPCs (ServerStatus, ListNodes, ListNamespaces). (default 12s)
-       --server string                 Address of a Hubble server. Ignored when --input-file or --port-forward is provided. (default "localhost:4245")
-```
-
----
-
-### Incident Patch 10: `850ec509` (2026-10-02)
-**Commit Message**: Revert "Prepare for release v1.21.0-pre.3"
-
-This reverts commit 918fc133366c6f15ed1dc1a9bf10c73a156517c6.
-
-Signed-off-by: Cilium Release Bot <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (removed, +0/-237)
-```diff
-@@ -1,237 +0,0 @@
--# Changelog
--
--## v1.21.0-pre.3
--
--Summary of Changes
--------------------
--
--**Major Changes:**
--* LB IPAM: introduce the lbipam.cilium.io/sharing-permit-different-pods annotation to allow sharing an IP between services with externalTrafficPolicy=Local that select different pods. The annotation must be set to "true" on all services in the sharing group and is intended for deployments that steer traffic outside Cilium's built-in announcers. (cilium/cilium#45819, @lexfrei)
--
--**Minor Changes:**
--* Add Helm values to configure Prometheus metrics container port names for the agent, operator, Envoy, Hubble, Hubble Relay, ClusterMesh API server, KVStoreMesh and etcd, supporting custom scrape configurations that require specific named ports. Existing names remain the defaults. (cilium/cilium#48955, @gcampbell12)
--* Add the internal path template matcher that later PRs use to emit a bounded `path` label on the Hubble HTTP metrics. No user-facing change on its own. (cilium/cilium#47813, @amaanx86)
--* auth: remove deprecated mutual authentication (cilium/cilium#48647, @mhofstetter)
--* clang: Bump llvm version to v21.1.8 (cilium/cilium#48425, @sayboras)
--* Fix a "No route to host" window on node reboot where BGP advertised routes before BPF programs were attached to native devices. (cilium/cilium#46948, @tkna)
--* Fix conntrack garbage collection deleting CT entries that the datapath reopened between the GC batch read and the delete, which could cascade into NAT mapping deletion and SNAT source-port reallocation for live connections. (cilium/cilium#46750, @gyutaeb)
--* Hubble observer server hardening (cilium/cilium#46290, @fristonio)
--* Hubble Relay startup can now be composed by downstream binaries with additional server options. (cilium/cilium#48461, @devodev)
--* IPsec subnet encryption under ENI, Azure and AlibabaCloud now derives its pod subnets from the VPC CIDRs directly, fixing cases where they were empty (no encryption policies installed) depending on agent startup ordering. AlibabaCloud gains subnet encryption, and the ip-masq-agent non-masquerade CIDRs are no longer treated as pod subnets. (cilium/cilium#48493, @HadrienPatte)
--* LB IPAM: whitespace around the namespaces in the lbipam.cilium.io/sharing-cross-namespace annotation no longer prevents services from sharing an IP. (cilium/cilium#48868, @lexfrei)
--* Migrate Azure IPAM to the Multi-pool allocator (cilium/cilium#48449, @jaredledvina)
--* network driver: operator managed node configs (cilium/cilium#47597, @bersoare)
--* network driver: track DRA allocations separately from device inventory (cilium/cilium#48755, @aarcamp)
--* Setting "policyCidrMatchMode=nodes" no longer causes unnecessary node identities to be allocated, saving space in the IPCache and policy maps. (cilium/cilium#48292, @squeed)
--* The agent option `--fixed-identity-mapping` is deprecated. It will be removed in a future release. (cilium/cilium#48946, @squeed)
--* Track peer AllowedIPs as netip.Prefix (cilium/cilium#47815, @Wise-Wizard)
--
--**Bugfixes:**
--* bpf: Fix ICMPv6 checksum handling after NAT of embedded SCTP packets. (cilium/cilium#48309, @zihan001)
--* bpf: icmp: use 576 byte of inner packet to avoid partial csum floor (cilium/cilium#48578, @tommyp1ckles)
--* bpf: lb: Do not drain terminating backends for UDP connections, preventing UDP packet drops during pod deletion and rolling updates.. (cilium/cilium#48715, @ankitaojha123)
--* ciliumendpointslice: fix flaky TestRegisterControllerNoCEPs (cilium/cilium#48014, @elskow)
--* daemon: fix a bug where L7 DNS policies could remain loaded in the datapath during agent shutdown, causing pods under a wildcard toFQDNs policy to lose DNS resolution for the duration of the restart. (cilium/cilium#48747, @41ks)
--* envoy: Corrently render tiers for specific port pass rules (cilium/cilium#48854, @jrajahalme)
--* envoy: handle listener additional address changes (cilium/cilium#48712, @nezdolik)
--* envoy: handle listener address changes in ADS (cilium/cilium#48798, @nezdolik)
--* envoy: track coalesced ADS snapshot updates (cilium/cilium#48631, @nezdolik)
--* Fix `proxy_protocol` listener filter incorrectly injected into GAMMA CiliumEnvoyConfigs when `gatewayAPI.enableProxyProtocol` is enabled (cilium/cilium#47555, @mkamadeus)
--* Fix cilium-cli clustermesh 'inspect-policy-default-cluster-local' command (cilium/cilium#48390, @fristonio)
--* Fix Gateway API ExternalAuth dropping request bodies when allowedResponseHeaders is unset (cilium/cilium#48770, @kirgene)
--* Fix incorrect deletion of new endpoint during GC iteration when reusing ID from a previously GC'd endpoint (cilium/cilium#48905, @fristonio)
--* Fix panic in agent when CiliumLocalRedirectPolicy `redirectBackend.toPorts` is declared as an empty array. The agent will now reject such a policy. (cilium/cilium#48491, @ajmmm)
--* Fix PMTU/ICMP replies for IPIP/Geneve DSR for GRO skbs (cilium/cilium#48489, @borkmann)
--* Fix rare data race in selector cache that could lead to agent panic
-```
-
-**File**: `Documentation/helm-values.rst` (modified, +18/-18)
-```diff
-@@ -95,7 +95,7 @@
-    * - :spelling:ignore:`authentication.mutual.spire.install.agent.image`
-      - SPIRE agent image
-      - object
--     - ``{"digest":"sha256:41b0dcd8b258a69db9e2768292a060766fb76fd866e4bc925849981ea1b825ff","override":null,"pullPolicy":"IfNotPresent","repository":"ghcr.io/spiffe/spire-agent","tag":"1.15.3","useDigest":true}``
-+     - ``{"digest":"sha256:41b0dcd8b258a69db9e2768292a060766fb76fd866e4bc925849981ea1b825ff","override":null,"pullPolicy":"Always","repository":"ghcr.io/spiffe/spire-agent","tag":"1.15.3","useDigest":true}``
-    * - :spelling:ignore:`authentication.mutual.spire.install.agent.labels`
-      - SPIRE agent labels
-      - object
-@@ -143,7 +143,7 @@
-    * - :spelling:ignore:`authentication.mutual.spire.install.initImage`
-      - init container image of SPIRE agent and server
-      - object
--     - ``{"digest":"sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e","override":null,"pullPolicy":"IfNotPresent","repository":"docker.io/library/busybox","tag":"1.38.0","useDigest":true}``
-+     - ``{"digest":"sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e","override":null,"pullPolicy":"Always","repository":"docker.io/library/busybox","tag":"1.38.0","useDigest":true}``
-    * - :spelling:ignore:`authentication.mutual.spire.install.namespace`
-      - SPIRE namespace to install into
-      - string
-@@ -183,7 +183,7 @@
-    * - :spelling:ignore:`authentication.mutual.spire.install.server.image`
-      - SPIRE server image
-      - object
--     - ``{"digest":"sha256:4082f30d3e0ddc4000a171392c4ea174345ee44d161ee917c70b97b2ecfba141","override":null,"pullPolicy":"IfNotPresent","repository":"ghcr.io/spiffe/spire-server","tag":"1.15.3","useDigest":true}``
-+     - ``{"digest":"sha256:4082f30d3e0ddc4000a171392c4ea174345ee44d161ee917c70b97b2ecfba141","override":null,"pullPolicy":"Always","repository":"ghcr.io/spiffe/spire-server","tag":"1.15.3","useDigest":true}``
-    * - :spelling:ignore:`authentication.mutual.spire.install.server.initContainers`
-      - SPIRE server init containers
-      - list
-@@ -479,7 +479,7 @@
-    * - :spelling:ignore:`certgen`
-      - Configure certificate generation for Hubble integration. If hubble.tls.auto.method=cronJob, these values are used for the Kubernetes CronJob which will be scheduled regularly to (re)generate any certificates not provided manually.
-      - object
--     - ``{"affinity":{},"annotations":{"cronJob":{},"job":{}},"cronJob":{"failedJobsHistoryLimit":1,"successfulJobsHistoryLimit":3},"enforceCAValidityThroughoutLeavesDuration":true,"extraVolumeMounts":[],"extraVolumes":[],"generateCA":true,"image":{"digest":"sha256:14d29a176fc96d15b154559ce1a5baf01367c10baabfa7bb8028b72f087a56f0","override":null,"pullPolicy":"IfNotPresent","repository":"quay.io/cilium/certgen","tag":"v0.4.11","useDigest":true},"nodeSelector":{},"podLabels":{},"priorityClassName":"","resources":{},"tolerations":[],"ttlSecondsAfterFinished":null}``
-+     - ``{"affinity":{},"annotations":{"cronJob":{},"job":{}},"cronJob":{"failedJobsHistoryLimit":1,"successfulJobsHistoryLimit":3},"enforceCAValidityThroughoutLeavesDuration":true,"extraVolumeMounts":[],"extraVolumes":[],"generateCA":true,"image":{"digest":"sha256:14d29a176fc96d15b154559ce1a5baf01367c10baabfa7bb8028b72f087a56f0","override":null,"pullPolicy":"Always","repository":"quay.io/cilium/certgen","tag":"v0.4.11","useDigest":true},"nodeSelector":{},"podLabels":{},"priorityClassName":"","resources":{},"tolerations":[],"ttlSecondsAfterFinished":null}``
-    * - :spelling:ignore:`certgen.affinity`
-      - Affinity for certgen
-      - object
-@@ -647,7 +647,7 @@
-    * - :spelling:ignore:`clustermesh.apiserver.image`
-      - Clustermesh API server image.
-      - object
--     - ``{"digest":"","override":null,"pullPolicy":"IfNotPresent","repository":"quay.io/cilium/clustermesh-apiserver","tag":"v1.21.0-pre.3","useDigest":false}``
-+     - ``{"digest":"","override":null,"pullPolicy":"Always","repository":"quay.io/cilium/clustermesh-apiserver-ci","tag":"latest","useDigest":false}``
-    * - :spelling:ignore:`clustermesh.apiserver.kvstoremesh.etcdQPS`
-      - Rate limit for the kvstoremesh container while syncing resources from all remote clusters to the local etcd.
-      - int
-@@ -1399,7 +1399,7 @@
-    * - :spelling:ignore:`encryption.ztunnel`
-      - ztunnel encryption configuration. ztunnel is Istio's purpose-built, per-node proxy for handling L4 traffic in ambient mesh mode. These settings only apply when encryption.type is set to "ztunnel".
-      - object
--     - ``{"affinity":{},"annotations":{},"ca":{"type":"internal"},"caAddress":"https://localhost:15012","extraEnv":[],"extraVolumeMounts":[],"extraVolumes":[],"healthPort":15021,"image":{"digest":"sha256:884de5adde400e39f58e36c7a729f7690466ca4a8eb4c2a8daa9c1c025115b24","override":null,"pullPolicy":"IfNotPresent","repository":"quay.io/cilium/ztunnel","tag":"v1.0.0","useDigest":true},"minReadySeconds":0,"nodeSelector":{"kubernetes.io/os":"linux"},"
-```
-
-**File**: `VERSION` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--1.21.0-pre.3
-+1.21.0-dev
-```
-
-**File**: `install/kubernetes/cilium/Chart.yaml` (modified, +2/-2)
-```diff
-@@ -2,8 +2,8 @@ apiVersion: v2
- name: cilium
- displayName: Cilium
- home: https://cilium.io/
--version: 1.21.0-pre.3
--appVersion: 1.21.0-pre.3
-+version: 1.21.0-dev
-+appVersion: 1.21.0-dev
- kubeVersion: ">= 1.21.0-0"
- icon: https://cdn.jsdelivr.net/gh/cilium/cilium@main/Documentation/images/logo-solo.svg
- description: eBPF-based Networking, Security, and Observability
-```
-
-**File**: `install/kubernetes/cilium/README.md` (modified, +19/-19)
-```diff
-@@ -1,6 +1,6 @@
- # cilium
- 
--![Version: 1.21.0-pre.3](https://img.shields.io/badge/Version-1.21.0--pre.3-informational?style=flat-square) ![AppVersion: 1.21.0-pre.3](https://img.shields.io/badge/AppVersion-1.21.0--pre.3-informational?style=flat-square)
-+![Version: 1.21.0-dev](https://img.shields.io/badge/Version-1.21.0--dev-informational?style=flat-square) ![AppVersion: 1.21.0-dev](https://img.shields.io/badge/AppVersion-1.21.0--dev-informational?style=flat-square)
- 
- Cilium is open source software for providing and transparently securing
- network connectivity and loadbalancing between application workloads such as
-@@ -73,7 +73,7 @@ contributors across the globe, there is almost always someone available to help.
- | authentication.mutual.spire.enabled | bool | `false` | Enable SPIRE integration (beta) |
- | authentication.mutual.spire.install.agent.affinity | object | `{}` | SPIRE agent affinity configuration |
- | authentication.mutual.spire.install.agent.annotations | object | `{}` | SPIRE agent annotations |
--| authentication.mutual.spire.install.agent.image | object | `{"digest":"sha256:41b0dcd8b258a69db9e2768292a060766fb76fd866e4bc925849981ea1b825ff","override":null,"pullPolicy":"IfNotPresent","repository":"ghcr.io/spiffe/spire-agent","tag":"1.15.3","useDigest":true}` | SPIRE agent image |
-+| authentication.mutual.spire.install.agent.image | object | `{"digest":"sha256:41b0dcd8b258a69db9e2768292a060766fb76fd866e4bc925849981ea1b825ff","override":null,"pullPolicy":"Always","repository":"ghcr.io/spiffe/spire-agent","tag":"1.15.3","useDigest":true}` | SPIRE agent image |
- | authentication.mutual.spire.install.agent.labels | object | `{}` | SPIRE agent labels |
- | authentication.mutual.spire.install.agent.nodeSelector | object | `{}` | SPIRE agent nodeSelector configuration ref: ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector |
- | authentication.mutual.spire.install.agent.podSecurityContext | object | `{}` | Security context to be added to spire agent pods. SecurityContext holds pod-level security attributes and common container settings. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
-@@ -85,7 +85,7 @@ contributors across the globe, there is almost always someone available to help.
- | authentication.mutual.spire.install.agent.tolerations | list | `[{"effect":"NoSchedule","key":"node.kubernetes.io/not-ready"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"},{"effect":"NoSchedule","key":"node.cloudprovider.kubernetes.io/uninitialized","value":"true"},{"key":"CriticalAddonsOnly","operator":"Exists"}]` | SPIRE agent tolerations configuration By default it follows the same tolerations as the agent itself to allow the Cilium agent on this node to connect to SPIRE. ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
- | authentication.mutual.spire.install.enabled | bool | `true` | Enable SPIRE installation. This will only take effect only if authentication.mutual.spire.enabled is true |
- | authentication.mutual.spire.install.existingNamespace | bool | `false` | SPIRE namespace already exists. Set to true if Helm should not create, manage, and import the SPIRE namespace. |
--| authentication.mutual.spire.install.initImage | object | `{"digest":"sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e","override":null,"pullPolicy":"IfNotPresent","repository":"docker.io/library/busybox","tag":"1.38.0","useDigest":true}` | init container image of SPIRE agent and server |
-+| authentication.mutual.spire.install.initImage | object | `{"digest":"sha256:fd7dc98638c8e305f4dc34e979f1c0fdfdcaeb0fbf8fcff77ae834b6da3d7e6e","override":null,"pullPolicy":"Always","repository":"docker.io/library/busybox","tag":"1.38.0","useDigest":true}` | init container image of SPIRE agent and server |
- | authentication.mutual.spire.install.namespace | string | `"cilium-spire"` | SPIRE namespace to install into |
- | authentication.mutual.spire.install.server.affinity | object | `{}` | SPIRE server affinity configuration |
- | authentication.mutual.spire.install.server.annotations | object | `{}` | SPIRE server annotations |
-@@ -95,7 +95,7 @@ contributors across the globe, there is almost always someone available to help.
- | authentication.mutual.spire.install.server.dataStorage.enabled | bool | `true` | Enable SPIRE server data storage |
- | authentication.mutual.spire.install.server.dataStorage.size | string | `"1Gi"` | Size of the SPIRE server data storage |
- | authentication.mutual.spire.install.server.dataStorage.storageClass | string | `nil` | StorageClass of the SPIRE server data storage |
--| authentication.mutual.spire.install.server.image | object | `{"digest":"sha256:4082f30d3e0ddc4000a171392c4ea174345ee44d161ee917c70b97b2ecfba141","override":null,"pullPolicy":"IfNotPresent","repository":"ghcr.io/spiffe/
-```
-
-**File**: `install/kubernetes/cilium/values.yaml` (modified, +26/-26)
-```diff
-@@ -246,9 +246,9 @@ image:
-   # type: [null, string]
-   # @schema
-   override: ~
--  repository: "quay.io/cilium/cilium"
--  tag: "v1.21.0-pre.3"
--  pullPolicy: "IfNotPresent"
-+  repository: "quay.io/cilium/cilium-ci"
-+  tag: "latest"
-+  pullPolicy: "Always"
-   # cilium-digest
-   digest: ""
-   useDigest: false
-@@ -1207,7 +1207,7 @@ encryption:
-       override: ~
-       repository: "quay.io/cilium/ztunnel"
-       tag: "v1.0.0"
--      pullPolicy: "IfNotPresent"
-+      pullPolicy: "Always"
-       digest: "sha256:884de5adde400e39f58e36c7a729f7690466ca4a8eb4c2a8daa9c1c025115b24"
-       useDigest: true
-     # -- CA server address for certificate requests.
-@@ -1407,7 +1407,7 @@ certgen:
-     tag: "v0.4.11"
-     digest: "sha256:14d29a176fc96d15b154559ce1a5baf01367c10baabfa7bb8028b72f087a56f0"
-     useDigest: true
--    pullPolicy: "IfNotPresent"
-+    pullPolicy: "Always"
-   # @schema
-   # type: [null, integer]
-   # @schema
-@@ -1770,12 +1770,12 @@ hubble:
-       # type: [null, string]
-       # @schema
-       override: ~
--      repository: "quay.io/cilium/hubble-relay"
--      tag: "v1.21.0-pre.3"
-+      repository: "quay.io/cilium/hubble-relay-ci"
-+      tag: "latest"
-       # hubble-relay-digest
-       digest: ""
-       useDigest: false
--      pullPolicy: "IfNotPresent"
-+      pullPolicy: "Always"
-     # -- Specifies the resources for the hubble-relay pods
-     resources: {}
-     # -- Number of replicas run for the hubble-relay deployment.
-@@ -2063,7 +2063,7 @@ hubble:
-         tag: "v0.13.6"
-         digest: "sha256:83b3fc763f3d49948c306bf49b08277383e195904b9ca5c0c0022b2112628787"
-         useDigest: true
--        pullPolicy: "IfNotPresent"
-+        pullPolicy: "Always"
-       # -- Hubble-ui backend security context.
-       securityContext:
-         # readOnlyRootFilesystem: true
-@@ -2096,7 +2096,7 @@ hubble:
-         tag: "v0.13.6"
-         digest: "sha256:049a80a03585c043d0c3121bdc518c72b0fd42bae07e4bcce0fdb8f1e88041d0"
-         useDigest: true
--        pullPolicy: "IfNotPresent"
-+        pullPolicy: "Always"
-       # -- Hubble-ui frontend security context.
-       securityContext:
-         # readOnlyRootFilesystem: true
-@@ -2880,7 +2880,7 @@ envoy:
-     override: ~
-     repository: "quay.io/cilium/cilium-envoy"
-     tag: "v1.39.1-1790794634-fbfb16f5f9d4c09131542931999a2cbe79a863f8"
--    pullPolicy: "IfNotPresent"
-+    pullPolicy: "Always"
-     digest: "sha256:0c59f308419ac92d18d61d381a8bb3004ba8ea0d5c2a03c5283626871b26953e"
-     useDigest: true
-   # -- Init containers added to the cilium Envoy DaemonSet.
-@@ -3288,7 +3288,7 @@ operator:
-     # @schema
-     override: ~
-     repository: "quay.io/cilium/operator"
--    tag: "v1.21.0-pre.3"
-+    tag: "latest"
-     # operator-generic-digest
-     genericDigest: ""
-     # operator-azure-digest
-@@ -3298,8 +3298,8 @@ operator:
-     # operator-alibabacloud-digest
-     alibabacloudDigest: ""
-     useDigest: false
--    pullPolicy: "IfNotPresent"
--    suffix: ""
-+    pullPolicy: "Always"
-+    suffix: "-ci"
-   # -- Number of replicas to run for the cilium-operator deployment
-   replicas: 2
-   # -- The priority class to use for cilium-operator
-@@ -3541,7 +3541,7 @@ nodeinit:
-     tag: "1782916218-36ae25f"
-     digest: "sha256:f99e2beda7324e93ba04d6240d9626a6b9ab023d7d56e3b029d3d9c823ce63ef"
-     useDigest: true
--    pullPolicy: "IfNotPresent"
-+    pullPolicy: "Always"
-   # -- The priority class to use for the nodeinit pod.
-   priorityClassName: ""
-   # -- Minimum number of seconds for which a newly created node-init pod should be ready
-@@ -3631,12 +3631,12 @@ preflight:
-     # type: [null, string]
-     # @schema
-     override: ~
--    repository: "quay.io/cilium/cilium"
--    tag: "v1.21.0-pre.3"
-+    repository: "quay.io/cilium/cilium-ci"
-+    tag: "latest"
-     # cilium-digest
-     digest: ""
-     useDigest: false
--    pullPolicy: "IfNotPresent"
-+    pullPolicy: "Always"
-   envoy:
-     # -- Envoy pre-flight image.
-     image:
-@@ -3646,7 +3646,7 @@ preflight:
-       override: ~
-       repository: "quay.io/cilium/cilium-envoy"
-       tag: "v1.39.1-1790794634-fbfb16f5f9d4c09131542931999a2cbe79a863f8"
--      pullPolicy: "IfNotPresent"
-+      pullPolicy: "Always"
-       digest: "sha256:0c59f308419ac92d18d61d381a8bb3004ba8ea0d5c2a03c5283626871b26953e"
-       useDigest: true
-   # -- The priority class to use for the preflight pod.
-@@ -3913,12 +3913,12 @@ clustermesh:
-       # type: [null, string]
-       # @schema
-       override: ~
--      repository: "quay.io/cilium/clustermesh-apiserver"
--      tag: "v1.21.0-pre.3"
-+      repository: "quay.io/cilium/clustermesh-apiserver-ci"
-+      tag: "latest"
-       # clustermesh-apiserver-digest
-       digest: ""
-       useDigest: false
--      pullPolicy: "IfNotPresent"
-+      pullPolicy: "Always"
-     # -- TCP port for the clustermesh-apiserver health API.
-     healthPort: 9880
-     # -- Configuration for the clustermesh-apiserver readiness probe.
-@@ -4443,7 +4443,7 @@ authentication:
-           tag: "1.38.0"
-           digest: "sha256:fd7dc98638c8e3
-```
-
----
-
-### Incident Patch 11: `cd7fdbe1` (2026-09-22)
-**Commit Message**: cli: fix netperf call to format duration in seconds
-
-Previously, running `cilium connectivity perf --duration 60s` would send a duration of `1m0s` to netperf, which would be interpreted as 1 million seconds. Fixes by sending `60s` to netperf. Also adds tests, and rejects fractional seconds.
-
-Fixes: #48948
-
-Signed-off-by: Ethan Ermovick <[REDACTED_EMAIL]>
-
-**File**: `cilium-cli/cli/connectivity.go` (modified, +3/-0)
-```diff
-@@ -247,6 +247,9 @@ func newCmdConnectivityPerf(hooks api.Hooks) *cobra.Command {
- 		Short: "Test network performance",
- 		Long:  ``,
- 		PreRunE: func(_ *cobra.Command, _ []string) error {
-+			if duration := params.PerfParameters.Duration; duration%time.Second != 0 {
-+				return fmt.Errorf("invalid --duration %s: fractional seconds are not supported", duration)
-+			}
- 			// This is a bit of hack that allows us to override default values
- 			// of these parameters that are not visible in perf subcommand options
- 			// as we can't have different defaults specified in test and perf subcommands
-```
-
-**File**: `cilium-cli/cli/connectivity_test.go` (modified, +28/-0)
-```diff
-@@ -112,6 +112,34 @@ func TestConnectivityTestFlags(t *testing.T) {
- 	require.Equal(t, map[string]string{"a": "b", "c": "d"}, params.NodeSelector)
- }
- 
-+func TestPerfDurationValidation(t *testing.T) {
-+	saved := params
-+	t.Cleanup(func() { params = saved })
-+	for _, tc := range []struct {
-+		duration string
-+		wantErr  bool
-+	}{
-+		{"30s", false},
-+		{"60s", false},
-+		{"1m0s", false},
-+		{"1.5m", false},
-+		{"500ms", true},
-+		{"1.5s", true},
-+		{"60.5s", true},
-+	} {
-+		t.Run(tc.duration, func(t *testing.T) {
-+			cmd := newCmdConnectivityPerf(&api.NopHooks{})
-+			require.NoError(t, cmd.Flags().Set("duration", tc.duration))
-+			err := cmd.PreRunE(cmd, nil)
-+			if tc.wantErr {
-+				require.ErrorContains(t, err, "fractional seconds are not supported")
-+			} else {
-+				require.NoError(t, err)
-+			}
-+		})
-+	}
-+}
-+
- func TestPrintImageArtifacts(t *testing.T) {
- 	ct := newCmdConnectivityTest(&api.NopHooks{})
- 	var buf bytes.Buffer
-```
-
-**File**: `cilium-cli/connectivity/perf/benchmarks/netperf/perfpod.go` (modified, +1/-1)
-```diff
-@@ -164,7 +164,7 @@ func (s *netPerf) Run(ctx context.Context, t *check.Test) {
- }
- 
- func buildExecCommand(test string, sip string, duration time.Duration, args []string) []string {
--	exec := []string{"/usr/local/bin/netperf", "-H", sip, "-l", duration.String(), "-t", test, "--", "-R", "1"}
-+	exec := []string{"/usr/local/bin/netperf", "-H", sip, "-l", strconv.FormatInt(int64(duration/time.Second), 10) + "s", "-t", test, "--", "-R", "1"}
- 	exec = append(exec, args...)
- 
- 	return exec
-```
-
-**File**: `cilium-cli/connectivity/perf/benchmarks/netperf/perfpod_test.go` (modified, +18/-0)
-```diff
-@@ -37,6 +37,24 @@ func (f *fakeAction) Fatalf(format string, args ...any) {
- 	panic(fakeActionError{fmt.Errorf(format, args...)})
- }
- 
-+func TestBuildExecCommandDuration(t *testing.T) {
-+	for _, tc := range []struct {
-+		duration time.Duration
-+		want     string
-+	}{
-+		{30 * time.Second, "30s"},
-+		{time.Minute, "60s"},
-+		{2 * time.Minute, "120s"},
-+		{5 * time.Minute, "300s"},
-+		{time.Hour, "3600s"},
-+	} {
-+		t.Run(tc.duration.String(), func(t *testing.T) {
-+			command := buildExecCommand("TCP_STREAM", "1.2.3.4", tc.duration, nil)
-+			require.Equal(t, tc.want, command[4])
-+		})
-+	}
-+}
-+
- func TestNetperfCmd(t *testing.T) {
- 	const (
- 		dst      = "1.2.3.4"
-```
-
----
-
-### Incident Patch 12: `a3a11c2f` (2026-09-29)
-**Commit Message**: hive: Remove redundant netip.Prefix config decode hook
-
-`cilium/hive` v1.0.6 includes cilium/hive#79, which adds
-`mapstructure.TextUnmarshallerHookFunc()` to the default config decode
-hooks. Config fields of any type implementing `encoding.TextUnmarshaler`,
-including `netip.Prefix`, now decode out of the box.
-
-The default hooks run before the extra hooks passed via
-`Options.DecodeHooks`, so the `netip.Prefix` hook in `pkg/hive` never sees
-a string input anymore and is dead code. Remove it, along with the
-associated TODO, which waited on go-viper/mapstructure#85 and is now
-obsolete.
-
-Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
-
-**File**: `pkg/hive/hive.go` (modified, +0/-18)
-```diff
-@@ -5,8 +5,6 @@ package hive
+-package runtime
++package transport
  
  import (
- 	"log/slog"
--	"net/netip"
--	"reflect"
- 	"runtime/pprof"
- 	"slices"
+ 	"crypto/tls"
+@@ -12,7 +12,8 @@ import (
+ 	"golang.org/x/net/http2"
+ )
  
-@@ -113,7 +111,6 @@ func New(cells ...cell.Cell) *Hive {
- 			EnvPrefix:              "CILIUM_",
- 			ModulePrivateProviders: modulePrivateProviders,
- 			ModuleDecorators:       moduleDecorators,
--			DecodeHooks:            decodeHooks,
- 			StartTimeout:           defaults.HiveStartTimeout,
- 			StopTimeout:            defaults.HiveStopTimeout,
- 			LogThreshold:           defaults.HiveLogThreshold,
-@@ -141,21 +138,6 @@ func GetOptions(cfg option.HiveConfig) []upstream.RunOptionFunc {
+-var defaultHTTPClient *http.Client
++// DefaultHTTPClient is the default configured http.Client used by all clients.
++var DefaultHTTPClient *http.Client
+ 
+ func init() {
+ 	defaultTransport := &http.Transport{
+@@ -39,7 +40,7 @@ func init() {
+ 		// if there's no response to the ping within the timeout, the connection will be closed
+ 		http2Transport.PingTimeout = 5 * time.Second
+ 	}
+-	defaultHTTPClient = &http.Client{
++	DefaultHTTPClient = &http.Client{
+ 		Transport: defaultTransport,
  	}
  }
- 
--var decodeHooks = cell.DecodeHooks{
--	// Decode netip.Prefix fields
--	// TODO: move to github.com/cilium/hive/cell.decoderConfig default decode hooks once
--	// https://github.com/go-viper/mapstructure/pull/85 is merged.
--	func(from reflect.Type, to reflect.Type, data any) (any, error) {
--		if from.Kind() != reflect.String {
--			return data, nil
--		}
--		if to != reflect.TypeFor[netip.Prefix]() {
--			return data, nil
--		}
--		return netip.ParsePrefix(data.(string))
--	},
--}
--
- func AddConfigOverride[Cfg cell.Flagger](h *Hive, override func(*Cfg)) {
- 	upstream.AddConfigOverride[Cfg](h, override)
- }
-```
-
----
-
-### Incident Patch 13: `6fc655c1` (2026-09-24)
-**Commit Message**: [ci] fix escaping in conformance ginkgo
-
-little-vm-helper requires `$` to be escaped in commands.
-
-Signed-off-by: Maciej Kwiek <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/conformance-ginkgo.yaml` (modified, +4/-4)
-```diff
-@@ -544,8 +544,8 @@ jobs:
-             HELM_OVERRIDES="${{ env.HELM_OVERRIDES }}"
-             # Only pass the imagePullSecrets helm override when registry auth is required.
-             if [[ "${{ vars.DOCKER_AUTH_REQUIRED }}" == "true" ]]; then
--              if [[ -n "${HELM_OVERRIDES}" ]]; then
--                HELM_OVERRIDES="${HELM_OVERRIDES},imagePullSecrets[0].name=cilium-registry"
-+              if [[ -n "\${HELM_OVERRIDES}" ]]; then
-+                HELM_OVERRIDES="\${HELM_OVERRIDES},imagePullSecrets[0].name=cilium-registry"
-               else
-                 HELM_OVERRIDES="-cilium.install-helm-overrides=imagePullSecrets[0].name=cilium-registry"
-               fi
-@@ -562,7 +562,7 @@ jobs:
-              -cilium.hubble-relay-image=${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/hubble-relay-ci \
-              -cilium.hubble-relay-tag=${{ needs.setup-vars.outputs.SHA }}${{ needs.setup-vars.outputs.image_tag_suffix }} \
-              -cilium.kubeconfig=/root/.kube/config \
--             ${HELM_OVERRIDES} \
-+             \${HELM_OVERRIDES} \
-              -cilium.operator-suffix=-ci"
- 
-               ./test.test \
-@@ -577,7 +577,7 @@ jobs:
-                -cilium.hubble-relay-image=${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/hubble-relay-ci \
-                -cilium.hubble-relay-tag=${{ needs.setup-vars.outputs.SHA }}${{ needs.setup-vars.outputs.image_tag_suffix }} \
-                -cilium.kubeconfig=/root/.kube/config \
--               ${HELM_OVERRIDES} \
-+               \${HELM_OVERRIDES} \
-                -cilium.operator-suffix=-ci
- 
-       - name: Fetch artifacts
-```
-
----
-
-### Incident Patch 14: `721720ce` (2026-09-29)
-**Commit Message**: policy: compare prefix lengths for denies in mapState.lookup()
-
-If two deny entries with the same precedence match a flow, lookup()
-always picked the one for the remote identity. The datapath only does
-this for priority 0 denies. For other priorities it compares the
-prefix lengths, just like for allows.
-
-The flow is dropped either way, but Hubble could show the wrong policy
-as the one that denied it.
-
-Do the same as the datapath and add tests for it.
-
-Signed-off-by: Tsotne Chakhvadze <[REDACTED_EMAIL]>
-
-**File**: `pkg/policy/mapstate.go` (modified, +15/-15)
-```diff
-@@ -453,34 +453,34 @@ func (ms *mapState) lookup(key Key) (mapStateEntry, bool) {
- 	// both specific and aggregate matches found
- 	if haveID && haveAgg {
- 		// Precedence rules of the bpf datapath between two policy entries:
--		// 1. higher precedence level entry wins.
--		// 2. if Deny at same precedence level, no further processing is needed
--		// 3. if both entries are allows at the same precedence level, the one with more
--		//    specific L4 is selected
--		// 4. If the two allows on the same precedence level have equal port/proto, then
-+		// 1. specific-id-entry with the highest possible precedence (a priority 0 deny) wins
-+		//    without looking at the aggregate entry.
-+		// 2. higher precedence level entry wins.
-+		// 3. if both entries are on the same precedence level (then both are denies or both
-+		//    are allows), the one with more specific L4 is selected
-+		// 4. If the two entries on the same precedence level have equal port/proto, then
- 		//    the policy for a specific L3 is selected (rather than the L4-only entry)
- 
--		// 1. Entry with higher precedence level is selected.
-+		// 1. The datapath does not look up the aggregate entry at all if the
-+		// specific-id-entry has the highest possible precedence.
-+		if idEntry.Precedence == types.MaxPrecedence {
-+			return idEntry, true
-+		}
-+
-+		// 2. Entry with higher precedence level is selected.
- 		if idEntry.Precedence > aggEntry.Precedence {
- 			return idEntry, true
- 		}
- 		if aggEntry.Precedence > idEntry.Precedence {
- 			return aggEntry, true
- 		}
- 
--		// 2. Entries at the same precedence,
--		// Check for the specific deny first to match the datapath behavior
--		if idEntry.IsDeny() {
--			return idEntry, true
--		}
--
--		// 3. Two allow entries, select the one with more specific L4
-+		// 3. Two entries at the same precedence, select the one with more specific L4
- 		// specific-id-entry must be selected if prefix lengths are the same!
- 		if aggKey.PrefixLength() > idKey.PrefixLength() {
- 			return aggEntry, true
- 		}
--		// 4. Two allow entries are equally specific port/proto or specific-id-entry is more
--		// specific
-+		// 4. Two entries are equally specific port/proto or specific-id-entry is more specific
- 		return idEntry, true
- 	}
- 
-```
-
-**File**: `pkg/policy/mapstate_test.go` (modified, +24/-0)
-```diff
-@@ -3198,6 +3198,30 @@ func TestMapState_lookupSpecificAndAggregate(t *testing.T) {
- 			aggEntry: denyEntry(),
- 			wantAgg:  false,
- 		},
-+		{
-+			name:     "denies on the same priority: aggregate has the more specific L4",
-+			idKey:    egressKey(id, 0, 0, 0),
-+			idEntry:  denyEntry().withLevel(5),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: denyEntry().withLevel(5),
-+			wantAgg:  true,
-+		},
-+		{
-+			name:     "denies on the same priority: specific has the more specific L4",
-+			idKey:    egressKey(id, 6, 80, 16),
-+			idEntry:  denyEntry().withLevel(5),
-+			aggKey:   egressKey(agg, 0, 0, 0),
-+			aggEntry: denyEntry().withLevel(5),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "denies on the same priority: equally specific L4",
-+			idKey:    egressKey(id, 6, 80, 16),
-+			idEntry:  denyEntry().withLevel(5),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: denyEntry().withLevel(5),
-+			wantAgg:  false,
-+		},
- 	}
- 
- 	for _, tt := range tests {
-```
-
----
-
-### Incident Patch 15: `ee333352` (2026-09-29)
-**Commit Message**: policy: fix prefix length check in mapState.lookup()
-
-If a flow matches two entries with the same precedence, one for the
-remote identity and one for its aggregate identity, the datapath picks
-the one with the longer prefix (more specific port). lookup() had the
-check the wrong way round, so it picked the other one.
-
-This does not change which traffic is allowed, but Hubble uses lookup()
-to find which policy allowed a flow, so it could show the wrong policy.
-
-Add a unit test for lookup() and a test that uses real rules.
-
-Fixes: #48945
-Fixes: 17838ff0876f ("pkg/policy: prepare for multiple aggregates")
-Signed-off-by: Tsotne Chakhvadze <[REDACTED_EMAIL]>
-
-**File**: `pkg/policy/mapstate.go` (modified, +3/-2)
-```diff
-@@ -476,10 +476,11 @@ func (ms *mapState) lookup(key Key) (mapStateEntry, bool) {
- 
- 		// 3. Two allow entries, select the one with more specific L4
- 		// specific-id-entry must be selected if prefix lengths are the same!
--		if idKey.PrefixLength() > aggKey.PrefixLength() {
-+		if aggKey.PrefixLength() > idKey.PrefixLength() {
- 			return aggEntry, true
- 		}
--		// 4. Two allow entries are equally specific port/proto or L3-entry is more specific
-+		// 4. Two allow entries are equally specific port/proto or specific-id-entry is more
-+		// specific
- 		return idEntry, true
- 	}
- 
-```
-
-**File**: `pkg/policy/mapstate_test.go` (modified, +200/-0)
-```diff
-@@ -3034,6 +3034,206 @@ func TestMapState_passValidation(t *testing.T) {
- 	}
- }
- 
-+// TestMapState_lookupSpecificAndAggregate checks that when a flow matches both an entry with the
-+// specific remote identity and an entry with the aggregate identity of that remote identity,
-+// lookup() selects the same entry as the bpf datapath (__policy_can_access() in
-+// bpf/lib/policy.h):
-+//
-+//  1. The specific-identity entry is selected if it has the highest possible precedence (a
-+//     priority 0 deny), without looking at the aggregate entry.
-+//  2. Otherwise, the entry with the higher precedence is selected.
-+//  3. On the same precedence, the entry with the longer L4 prefix is selected.
-+//  4. If the L4 prefixes are equally long, the specific-identity entry is selected.
-+//
-+// The entries are labeled, since two allow entries without a proxy redirect are otherwise
-+// indistinguishable, but the selected entry is what policy verdict correlation (e.g., Hubble)
-+// reports the flow as being allowed by.
-+func TestMapState_lookupSpecificAndAggregate(t *testing.T) {
-+	logger := hivetest.Logger(t)
-+
-+	// An in-cluster identity and its aggregate identity.
-+	id := identity.NumericIdentity(1001)
-+	agg := identity.ReservedIdentityAggregateCluster
-+	require.Equal(t, agg, aggregateFor(id, emptyMapState(logger).clusterInfo))
-+
-+	specificLabels := labels.LabelArrayList{labels.ParseLabelArray("rule=specific")}
-+	aggregateLabels := labels.LabelArrayList{labels.ParseLabelArray("rule=aggregate")}
-+
-+	// Flow to 'id' on TCP port 80.
-+	flow := egressKey(id, 6, 80, 16)
-+
-+	tests := []struct {
-+		name     string
-+		idKey    Key
-+		idEntry  mapStateEntry
-+		aggKey   Key
-+		aggEntry mapStateEntry
-+		wantAgg  bool // true if the datapath selects the aggregate entry
-+	}{
-+		{
-+			name:     "allow: aggregate has the more specific L4 (ANY vs. TCP/80)",
-+			idKey:    egressKey(id, 0, 0, 0),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: allowEntry(),
-+			wantAgg:  true,
-+		},
-+		{
-+			name:     "allow: aggregate has the more specific L4 (TCP/ANY vs. TCP/80)",
-+			idKey:    egressKey(id, 6, 0, 0),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: allowEntry(),
-+			wantAgg:  true,
-+		},
-+		{
-+			name:     "allow: aggregate has the more specific L4 (TCP/80-81 vs. TCP/80)",
-+			idKey:    egressKey(id, 6, 80, 15),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: allowEntry(),
-+			wantAgg:  true,
-+		},
-+		{
-+			name:     "allow: specific has the more specific L4 (TCP/80 vs. ANY)",
-+			idKey:    egressKey(id, 6, 80, 16),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 0, 0, 0),
-+			aggEntry: allowEntry(),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "allow: specific has the more specific L4 (TCP/80 vs. TCP/ANY)",
-+			idKey:    egressKey(id, 6, 80, 16),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 6, 0, 0),
-+			aggEntry: allowEntry(),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "allow: equally specific L4 (TCP/80)",
-+			idKey:    egressKey(id, 6, 80, 16),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: allowEntry(),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "allow: equally specific L4 (ANY)",
-+			idKey:    egressKey(id, 0, 0, 0),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 0, 0, 0),
-+			aggEntry: allowEntry(),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "proxy redirects with the same listener priority: aggregate has the more specific L4",
-+			idKey:    egressKey(id, 6, 0, 0),
-+			idEntry:  proxyEntryHTTP(1111),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: proxyEntryHTTP(2222),
-+			wantAgg:  true,
-+		},
-+		{
-+			name:     "proxy redirects with the same listener priority: specific has the more specific L4",
-+			idKey:    egressKey(id, 6, 80, 16),
-+			idEntry:  proxyEntryHTTP(1111),
-+			aggKey:   egressKey(agg, 6, 0, 0),
-+			aggEntry: proxyEntryHTTP(2222),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "higher precedence: specific proxy redirect over aggregate allow with the more specific L4",
-+			idKey:    egressKey(id, 6, 0, 0),
-+			idEntry:  proxyEntryHTTP(1111),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: allowEntry(),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "higher precedence: aggregate proxy redirect over specific allow with the more specific L4",
-+			idKey:    egressKey(id, 6, 80, 16),
-+			idEntry:  allowEntry(),
-+			aggKey:   egressKey(agg, 6, 0, 0),
-+			aggEntry: proxyEntryHTTP(2222),
-+			wantAgg:  true,
-+		},
-+		{
-+			name:     "higher precedence: specific allow on a higher priority over aggregate allow with the more specific L4",
-+			idKey:    egressKey(id, 0, 0, 0),
-+			idEntry:  allowEntry().withLevel(5),
-+			aggKey:   egressKey(agg, 6, 80, 16),
-+			aggEntry: allowEntry().withLevel(10),
-+			wantAgg:  false,
-+		},
-+		{
-+			name:     "higher precedence: aggregate allow on a higher priority over specific allow with the more specific L4
-```
-
-**File**: `pkg/policy/rule_test.go` (modified, +77/-0)
-```diff
-@@ -1451,6 +1451,83 @@ func TestRuleLog(t *testing.T) {
- 
- }
- 
-+// TestRuleLogSpecificAndAggregateEntries checks that a flow that is allowed by both a rule
-+// selecting the remote endpoint and a rule selecting all endpoints, but with different L4 matches,
-+// is attributed to the rule of the policy map entry that the bpf datapath selects: the one with the
-+// more specific L4 match.
-+func TestRuleLogSpecificAndAggregateEntries(t *testing.T) {
-+	flowAToB90 := types.Flow{From: idA, To: idB, Proto: u8proto.TCP, Dport: 90}
-+
-+	egressRule := func(to api.EndpointSelector, port string, log string) *api.Rule {
-+		rule := &api.Rule{
-+			EndpointSelector: endpointSelectorA,
-+			Egress: []api.EgressRule{{
-+				EgressCommonRule: api.EgressCommonRule{
-+					ToEndpoints: []api.EndpointSelector{to},
-+				},
-+			}},
-+			Log: api.LogConfig{Value: log},
-+		}
-+		if port != "" {
-+			rule.Egress[0].ToPorts = api.PortRules{{
-+				Ports: []api.PortProtocol{{Port: port, Protocol: api.ProtoTCP}},
-+			}}
-+		}
-+		return rule
-+	}
-+
-+	type check struct {
-+		flow    types.Flow
-+		wantLog []string
-+	}
-+	tests := []struct {
-+		name   string
-+		rules  api.Rules
-+		checks []check
-+	}{
-+		{
-+			// Entries: (b, ANY) and (aggregate, TCP/80)
-+			name: "rule selecting all endpoints has the more specific L4",
-+			rules: api.Rules{
-+				egressRule(endpointSelectorB, "", "b-any-port"),
-+				egressRule(api.WildcardEndpointSelector, "80", "all-tcp-80"),
-+			},
-+			checks: []check{
-+				{flowAToB, []string{"all-tcp-80"}},
-+				{flowAToB90, []string{"b-any-port"}},
-+				{flowAToC, []string{"all-tcp-80"}},
-+			},
-+		},
-+		{
-+			// Entries: (b, TCP/80) and (aggregate, ANY)
-+			name: "rule selecting the remote endpoint has the more specific L4",
-+			rules: api.Rules{
-+				egressRule(endpointSelectorB, "80", "b-tcp-80"),
-+				egressRule(api.WildcardEndpointSelector, "", "all-any-port"),
-+			},
-+			checks: []check{
-+				{flowAToB, []string{"b-tcp-80"}},
-+				{flowAToB90, []string{"all-any-port"}},
-+				{flowAToC, []string{"all-any-port"}},
-+			},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			td := newTestData(t, hivetest.Logger(t)).withIDs(ruleTestIDs)
-+			td.repo.MustAddList(tt.rules)
-+
-+			for _, c := range tt.checks {
-+				verdict, egress, _, err := LookupFlow(td.repo.logger, td.repo, td.identityManager, c.flow)
-+				require.NoError(t, err)
-+				require.True(t, verdict.Allowed(), "flow %d -> %d port %d", c.flow.From.ID, c.flow.To.ID, c.flow.Dport)
-+				require.Equal(t, c.wantLog, egress.Log(), "flow %d -> %d port %d", c.flow.From.ID, c.flow.To.ID, c.flow.Dport)
-+			}
-+		})
-+	}
-+}
-+
- var (
- 	labelsA = labels.LabelArray{
- 		labels.NewLabel("id", "a", labels.LabelSourceK8s),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49172** (2026-10-05): datapath: get rid of `ENABLE_SOCKET_LB_PEER` (@ekoops)
-- **PR #49168** (2026-10-04): fix(deps): update module github.com/aws/aws-sdk-go-v2/service/ec2 to v1.338.0 (main) (@cilium-renovate[bot])
-- **PR #49167** (2026-10-04): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.133.0 (main) (@cilium-renovate[bot])
-- **PR #49166** (2026-10-04): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.132.6 (main) (@cilium-renovate[bot])
-- **PR #49165** (2026-10-04): chore(deps): update renovatebot/github-action action to v46.3.6 (main) (@cilium-renovate[bot])
-- **PR #49163** (2026-10-04): chore(deps): update all github action dependencies (v1.18) (@cilium-renovate[bot])
-- **PR #49162** (2026-10-04): chore(deps): update stable lvh-images (v1.18) (patch) (@cilium-renovate[bot])
-- **PR #49161** (2026-10-04): chore(deps): update quay.io/cilium/cilium-envoy docker tag to v1.37.7-1791018873-971395586d20dcc31cedc8fc9290cf91173014a2 (v1.18) (@cilium-renovate[bot])
+- **PR #49447** (2026-10-18): fix(deps): update module github.com/azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 to v12.1.0 (main) (@cilium-renovate[bot])
+- **PR #49442** (2026-10-18): chore(deps): update stable lvh-images (v1.18) (patch) (@cilium-renovate[bot])
+- **PR #49435** (2026-10-18): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
+- **PR #49419** (closed): bpf: preserve L7 proxy redirection for remote NodePorts (@sakongpil2)
+- **PR #49416** (2026-10-16): [v1.20] Backports 2026-10-16 (@aanm)
+- **PR #49409** (closed): datapath/iptables: test backport of https://github.com/cilium/cilium/pull/49004 (@bersoare)
 
 ---
 
@@ -3375,3 +2063,37 @@ Signed-off-by: Tsotne Chakhvadze <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. datapath: Fix NAT46x64 gateway prefix conversion panic
+
+**RULE**:
+When implementing operations in `pkg/datapath/config/node.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d5d5df67`: datapath: Fix NAT46x64 gateway prefix conversion panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/datapath/config/node.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		// The datapath only stores the leading 32 bits of the RFC6052
+		// prefix, see nat46x64_prefix_copy_v6().
+		prefix := option.Config.IPv6NAT46x64CIDRBase.As16()
+		node.NAT46X64Prefix.Addr = [4]byte(prefix[:4])
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+		node.NAT46X64Prefix.Addr = option.Config.IPv6NAT46x64CIDRBase.As4()
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d5d5df67` are properly handled with clean fallback behavior.

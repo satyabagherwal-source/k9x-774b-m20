@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "ffee6f1ef12a6ef73ce2b9f428468aa417807f5e41239609c551f95bf884324a",
-    "lastHarvestedAt": "2026-10-17T20:25:41.059Z",
+    "contentHash": "adde2965e99b530edcac61c0bd777548612acb295672dd9b7e998a47c70f72bd",
+    "lastHarvestedAt": "2026-10-18T23:08:20.244Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -3298,5 +3298,65 @@
     "contentHash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
     "lastHarvestedAt": "2026-10-18T23:02:12.729Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
+  },
+  "21st-dev-magic-mcp": {
+    "repository": "21st-dev/magic-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/21st-dev/magic-mcp",
+    "sourceVersion": "6b5299e8",
+    "license": "ISC",
+    "contentHash": "dd84a29d5c01e9a13ccfea045958861bac87ad975bc22b8eab7ab3c625955191",
+    "lastHarvestedAt": "2026-10-18T23:08:13.671Z",
+    "learningId": "learn-github-21st-dev-magic-mcp"
+  },
+  "tach-org-tach": {
+    "repository": "tach-org/tach",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tach-org/tach",
+    "sourceVersion": "bc92d715",
+    "license": "MIT",
+    "contentHash": "1fd79fa2dcaf1dcc325210a0f193de2bb65c2bbaf989da0de9e671793b7c448f",
+    "lastHarvestedAt": "2026-10-18T23:08:16.604Z",
+    "learningId": "learn-github-tach-org-tach"
+  },
+  "openreplay-openreplay": {
+    "repository": "openreplay/openreplay",
+    "platform": "github",
+    "sourceUrl": "https://github.com/openreplay/openreplay",
+    "sourceVersion": "ded09d3e",
+    "license": "NOASSERTION",
+    "contentHash": "0be06f832b6208679795f5ea67b0d975c24bd89de5fe42736fbc86c47d64825e",
+    "lastHarvestedAt": "2026-10-18T23:08:21.371Z",
+    "learningId": "learn-github-openreplay-openreplay"
+  },
+  "kumahq-kuma": {
+    "repository": "kumahq/kuma",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kumahq/kuma",
+    "sourceVersion": "fd757fbf",
+    "license": "Apache-2.0",
+    "contentHash": "81fe5ac44fd7d0ac071e84b0f8d6f8d6db6a91c314866c247a82b98ef3995ab9",
+    "lastHarvestedAt": "2026-10-18T23:08:24.993Z",
+    "learningId": "learn-github-kumahq-kuma"
+  },
+  "cilium-cilium": {
+    "repository": "cilium/cilium",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cilium/cilium",
+    "sourceVersion": "f70d0db4",
+    "license": "Apache-2.0",
+    "contentHash": "7f0a7cd6ae67ffd858af87ea1270b45f311c37653c7324bf9edb62b8ea8ce166",
+    "lastHarvestedAt": "2026-10-18T23:08:29.476Z",
+    "learningId": "learn-github-cilium-cilium"
+  },
+  "seekstorm-seekstorm": {
+    "repository": "SeekStorm/SeekStorm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
+    "sourceVersion": "4faffc9c",
+    "license": "Apache-2.0",
+    "contentHash": "19ac9745d2cbf18d60000b883fd15c75181cbecdf4dbe4a58cbcf7b994d274f9",
+    "lastHarvestedAt": "2026-10-18T23:08:29.975Z",
+    "learningId": "learn-github-seekstorm-seekstorm"
   }
 }

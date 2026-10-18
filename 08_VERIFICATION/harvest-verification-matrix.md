@@ -2600,3 +2600,10 @@
 | `CYCLE-20261018-K93Q` | `2026-10-18T23:02:08.150Z` | `AliyunContainerService/pouch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1819` | Yes (`3b5f710f...`) |
 | `CYCLE-20261018-KAXQ` | `2026-10-18T23:02:10.526Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1820` | Yes (`c5719b60...`) |
 | `CYCLE-20261018-KCMU` | `2026-10-18T23:02:12.726Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1821` | Yes (`7dd15ae6...`) |
+| `CYCLE-20261018-S350` | `2026-10-18T23:08:13.668Z` | `21st-dev/magic-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1822` | Yes (`dd84a29d...`) |
+| `CYCLE-20261018-S5EH` | `2026-10-18T23:08:16.601Z` | `tach-org/tach` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1823` | Yes (`1fd79fa2...`) |
+| `CYCLE-20261018-S87L` | `2026-10-18T23:08:20.241Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1824, Rule 1825` | Yes (`adde2965...`) |
+| `CYCLE-20261018-S92V` | `2026-10-18T23:08:21.367Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1826` | Yes (`0be06f83...`) |
+| `CYCLE-20261018-SBVI` | `2026-10-18T23:08:24.990Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`81fe5ac4...`) |
+| `CYCLE-20261018-SFC1` | `2026-10-18T23:08:29.473Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1827` | Yes (`7f0a7cd6...`) |
+| `CYCLE-20261018-SFPX` | `2026-10-18T23:08:29.973Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1828` | Yes (`19ac9745...`) |

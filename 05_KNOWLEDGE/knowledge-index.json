@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:02:12.689Z",
-  "total_verified_learnings": 353,
+  "last_updated": "2026-10-18T23:08:29.937Z",
+  "total_verified_learnings": 359,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -109,22 +109,35 @@
     "learn-github-21st-dev-magic-mcp": {
       "learning_id": "learn-github-21st-dev-magic-mcp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "21st-dev-magic-mcp",
+      "source": "21st-dev/magic-mcp",
+      "repository": "21st-dev/magic-mcp",
       "slug": "21st-dev-magic-mcp",
       "platform": "github",
       "source_url": "https://github.com/21st-dev/magic-mcp",
-      "source_version": "HEAD",
-      "content_hash": "127f39b3df830d60c03b9a39c2266f89ca33740bdc53da305286a1c414c6864a",
+      "source_version": "6b5299e8",
+      "content_hash": "dd84a29d5c01e9a13ccfea045958861bac87ad975bc22b8eab7ab3c625955191",
       "dossier_path": "07_PROJECT_LEARNING/21st-dev-magic-mcp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/21st-dev-magic-mcp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1822,
+          "title": "Merge pull request #41 from 21st-dev/fix/security-patches",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.502Z"
+      "verified_at": "2026-10-18T23:08:13.614Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-2noise-chattts": {
       "learning_id": "learn-github-2noise-chattts",
@@ -3842,22 +3855,35 @@
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cilium-cilium",
+      "source": "cilium/cilium",
+      "repository": "cilium/cilium",
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "HEAD",
-      "content_hash": "0c01b075379ae7aabc0182e73578753ff6f47754509314ef90ab20e4ec7dead5",
+      "source_version": "f70d0db4",
+      "content_hash": "7f0a7cd6ae67ffd858af87ea1270b45f311c37653c7324bf9edb62b8ea8ce166",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1827,
+          "title": "datapath: Fix NAT46x64 gateway prefix conversion panic",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.305Z"
+      "verified_at": "2026-10-18T23:08:29.419Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cinnamon-kotaemon": {
       "learning_id": "learn-github-cinnamon-kotaemon",
@@ -11706,7 +11732,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "ffee6f1ef12a6ef73ce2b9f428468aa417807f5e41239609c551f95bf884324a",
+      "content_hash": "adde2965e99b530edcac61c0bd777548612acb295672dd9b7e998a47c70f72bd",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [
@@ -11743,6 +11769,16 @@
           "number": 1311,
           "title": "Multi-Class Detection/Segmentation Score-Threshold De-biasing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1824,
+          "title": "Model Artifact Versioning & Class Index Immutability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1825,
+          "title": "Deterministic Inference Environment for Model Artifacts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11762,7 +11798,7 @@
         "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
         "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
       ],
-      "verified_at": "2026-10-17T20:25:41.013Z",
+      "verified_at": "2026-10-18T23:08:20.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23360,22 +23396,29 @@
     "learn-github-kumahq-kuma": {
       "learning_id": "learn-github-kumahq-kuma",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kumahq-kuma",
+      "source": "kumahq/kuma",
+      "repository": "kumahq/kuma",
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "HEAD",
-      "content_hash": "0a16955acc655c4ff0c6d1c6dc05c621b97d9acb266ec3e0728a58d98a05deae",
+      "source_version": "fd757fbf",
+      "content_hash": "81fe5ac44fd7d0ac071e84b0f8d6f8d6db6a91c314866c247a82b98ef3995ab9",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.925Z"
+      "verified_at": "2026-10-18T23:08:24.932Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kunagent-kun": {
       "learning_id": "learn-github-kunagent-kun",
@@ -28292,22 +28335,35 @@
     "learn-github-openreplay-openreplay": {
       "learning_id": "learn-github-openreplay-openreplay",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "openreplay-openreplay",
+      "source": "openreplay/openreplay",
+      "repository": "openreplay/openreplay",
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "HEAD",
-      "content_hash": "bc898d055be1371678167e013368f4f0e7577a1a60e9d798ad13fe93577c5d1e",
+      "source_version": "ded09d3e",
+      "content_hash": "0be06f832b6208679795f5ea67b0d975c24bd89de5fe42736fbc86c47d64825e",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1826,
+          "title": "cli): use MinIO client image for RustFS cleanup (#4998)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.877Z"
+      "verified_at": "2026-10-18T23:08:21.323Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-opensolon-solon": {
       "learning_id": "learn-github-opensolon-solon",
@@ -31356,22 +31412,35 @@
     "learn-github-seekstorm-seekstorm": {
       "learning_id": "learn-github-seekstorm-seekstorm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "seekstorm-seekstorm",
+      "source": "SeekStorm/SeekStorm",
+      "repository": "SeekStorm/SeekStorm",
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "HEAD",
-      "content_hash": "7f74553bb1e2e0852130ba351af2afb9a3219a5fa85a44be76931cd95cbe1315",
+      "source_version": "4faffc9c",
+      "content_hash": "19ac9745d2cbf18d60000b883fd15c75181cbecdf4dbe4a58cbcf7b994d274f9",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1828,
+          "title": "union_scan_32 overflows past 32 query terms",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.429Z"
+      "verified_at": "2026-10-18T23:08:29.930Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sentelabsai-openexecutive": {
       "learning_id": "learn-github-sentelabsai-openexecutive",
@@ -33512,22 +33581,35 @@
     "learn-github-tach-org-tach": {
       "learning_id": "learn-github-tach-org-tach",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tach-org-tach",
+      "source": "tach-org/tach",
+      "repository": "tach-org/tach",
       "slug": "tach-org-tach",
       "platform": "github",
       "source_url": "https://github.com/tach-org/tach",
-      "source_version": "HEAD",
-      "content_hash": "5cc8c0d0bf1a56dc73e4f439ad6f75bf239fabda75fd849f1c999227449f2968",
+      "source_version": "bc92d715",
+      "content_hash": "1fd79fa2dcaf1dcc325210a0f193de2bb65c2bbaf989da0de9e671793b7c448f",
       "dossier_path": "07_PROJECT_LEARNING/tach-org-tach-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tach-org-tach-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1823,
+          "title": "report syntax errors as errors, not warnings (#931)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.827Z"
+      "verified_at": "2026-10-18T23:08:16.548Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tadata-org-fastapi_mcp": {
       "learning_id": "learn-github-tadata-org-fastapi_mcp",
@@ -69050,6 +69132,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:02:12.681Z"
+    },
+    "rule-1822": {
+      "learning_id": "rule-1822",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1822,
+      "title": "Merge pull request #41 from 21st-dev/fix/security-patches",
+      "source_url": "https://github.com/21st-dev/magic-mcp",
+      "source_version": "6b5299e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:08:13.614Z"
+    },
+    "rule-1823": {
+      "learning_id": "rule-1823",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1823,
+      "title": "report syntax errors as errors, not warnings (#931)",
+      "source_url": "https://github.com/tach-org/tach",
+      "source_version": "bc92d715",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:08:16.548Z"
+    },
+    "rule-1824": {
+      "learning_id": "rule-1824",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1824,
+      "title": "Model Artifact Versioning & Class Index Immutability",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:08:20.199Z"
+    },
+    "rule-1825": {
+      "learning_id": "rule-1825",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1825,
+      "title": "Deterministic Inference Environment for Model Artifacts",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:08:20.199Z"
+    },
+    "rule-1826": {
+      "learning_id": "rule-1826",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1826,
+      "title": "cli): use MinIO client image for RustFS cleanup (#4998)",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "ded09d3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:08:21.323Z"
+    },
+    "rule-1827": {
+      "learning_id": "rule-1827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1827,
+      "title": "datapath: Fix NAT46x64 gateway prefix conversion panic",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "f70d0db4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:08:29.419Z"
+    },
+    "rule-1828": {
+      "learning_id": "rule-1828",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1828,
+      "title": "union_scan_32 overflows past 32 query terms",
+      "source_url": "https://github.com/SeekStorm/SeekStorm",
+      "source_version": "4faffc9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-18T23:08:29.930Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-18T23:02:12.736Z",
+  "last_updated": "2026-10-18T23:08:29.983Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1682,14 +1682,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bingsu-adetailer",
-      "content_hash": "ffee6f1ef12a6ef73ce2b9f428468aa417807f5e41239609c551f95bf884324a",
-      "verified_at": "2026-10-17T20:25:41.063Z",
+      "content_hash": "adde2965e99b530edcac61c0bd777548612acb295672dd9b7e998a47c70f72bd",
+      "verified_at": "2026-10-18T23:08:20.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T20:25:41.063Z"
+      "last_updated": "2026-10-18T23:08:20.255Z"
     },
     "lilylilith/QI_2.1_AnyAngle": {
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -5062,6 +5062,96 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-18T23:02:12.736Z"
+    },
+    "21st-dev/magic-mcp": {
+      "repository": "21st-dev/magic-mcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-21st-dev-magic-mcp",
+      "content_hash": "dd84a29d5c01e9a13ccfea045958861bac87ad975bc22b8eab7ab3c625955191",
+      "verified_at": "2026-10-18T23:08:13.674Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:08:13.674Z"
+    },
+    "tach-org/tach": {
+      "repository": "tach-org/tach",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tach-org-tach",
+      "content_hash": "1fd79fa2dcaf1dcc325210a0f193de2bb65c2bbaf989da0de9e671793b7c448f",
+      "verified_at": "2026-10-18T23:08:16.607Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:08:16.607Z"
+    },
+    "openreplay/openreplay": {
+      "repository": "openreplay/openreplay",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-openreplay-openreplay",
+      "content_hash": "0be06f832b6208679795f5ea67b0d975c24bd89de5fe42736fbc86c47d64825e",
+      "verified_at": "2026-10-18T23:08:21.379Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:08:21.379Z"
+    },
+    "kumahq/kuma": {
+      "repository": "kumahq/kuma",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kumahq-kuma",
+      "content_hash": "81fe5ac44fd7d0ac071e84b0f8d6f8d6db6a91c314866c247a82b98ef3995ab9",
+      "verified_at": "2026-10-18T23:08:24.997Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:08:24.997Z"
+    },
+    "cilium/cilium": {
+      "repository": "cilium/cilium",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cilium-cilium",
+      "content_hash": "7f0a7cd6ae67ffd858af87ea1270b45f311c37653c7324bf9edb62b8ea8ce166",
+      "verified_at": "2026-10-18T23:08:29.480Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:08:29.480Z"
+    },
+    "SeekStorm/SeekStorm": {
+      "repository": "SeekStorm/SeekStorm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-seekstorm-seekstorm",
+      "content_hash": "19ac9745d2cbf18d60000b883fd15c75181cbecdf4dbe4a58cbcf7b994d274f9",
+      "verified_at": "2026-10-18T23:08:29.983Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-18T23:08:29.983Z"
     }
   },
   "repos": {

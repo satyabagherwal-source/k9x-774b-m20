@@ -2607,3 +2607,10 @@ Every entry in this ledger must capture:
 | `learn-github-aliyuncontainerservice-pouch` | `https://github.com/AliyunContainerService/pouch` | `ba854f2d` | Multi-dimensional audit evidence | 2026-10-18T23:02:08.153Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `bcdba2b0` | Multi-dimensional audit evidence | 2026-10-18T23:02:10.529Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `e022bce9` | Multi-dimensional audit evidence | 2026-10-18T23:02:12.729Z |
+| `learn-github-21st-dev-magic-mcp` | `https://github.com/21st-dev/magic-mcp` | `6b5299e8` | Multi-dimensional audit evidence | 2026-10-18T23:08:13.671Z |
+| `learn-github-tach-org-tach` | `https://github.com/tach-org/tach` | `bc92d715` | Multi-dimensional audit evidence | 2026-10-18T23:08:16.604Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-18T23:08:20.244Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `ded09d3e` | Multi-dimensional audit evidence | 2026-10-18T23:08:21.371Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `fd757fbf` | Multi-dimensional audit evidence | 2026-10-18T23:08:24.993Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f70d0db4` | Multi-dimensional audit evidence | 2026-10-18T23:08:29.476Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `4faffc9c` | Multi-dimensional audit evidence | 2026-10-18T23:08:29.975Z |
