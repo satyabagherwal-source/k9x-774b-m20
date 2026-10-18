@@ -2470,3 +2470,4 @@ Every entry in this ledger must capture:
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `e03b48ba` | Multi-dimensional audit evidence | 2026-10-18T07:44:29.159Z |
 | `learn-github-expressjs-express` | `https://github.com/expressjs/express` | `0dee2c52` | Multi-dimensional audit evidence | 2026-10-18T07:55:05.951Z |
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `e3378f94` | Multi-dimensional audit evidence | 2026-10-18T07:55:31.686Z |
+| `learn-github-h3js-h3` | `https://github.com/unjs/h3` | `b64166ae` | Multi-dimensional audit evidence | 2026-10-18T08:01:01.459Z |

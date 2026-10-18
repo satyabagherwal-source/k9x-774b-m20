@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T07:55:31.657Z",
-  "total_verified_learnings": 224,
+  "last_updated": "2026-10-18T08:01:01.433Z",
+  "total_verified_learnings": 225,
   "total_canonical_rules": 1634,
   "total_dossiers": 1528,
   "items": {
@@ -47384,6 +47384,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-18T07:55:31.650Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-h3js-h3": {
+      "learning_id": "learn-github-h3js-h3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "h3js/h3",
+      "repository": "h3js/h3",
+      "slug": "unjs-h3",
+      "platform": "github",
+      "source_url": "https://github.com/unjs/h3",
+      "source_version": "b64166ae",
+      "content_hash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
+      "dossier_path": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1679,
+          "title": "Invariant Scope Confinement for Dynamic URI Redirection and Proxy Rewrites",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1680,
+          "title": "Stateless Evaluation Invariant for Shared Regular Expressions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1681,
+          "title": "Sentinel Error Quarantine for Committed Stream Handlers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-18T08:01:01.427Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

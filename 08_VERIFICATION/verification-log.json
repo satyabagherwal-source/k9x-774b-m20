@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-5DDW",
-    "timestamp": "2026-10-17T02:03:10.724Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "4e9f471780bcd850f217198792b552067597ea1492e1019aa93ed6edaddb690c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-9XEU",
     "timestamp": "2026-10-17T02:06:43.302Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "nitrojs/nitro",
     "learningId": "learn-github-nitrojs-nitro",
     "contentHash": "ceab1b673aca60ffc5ce1f5a179c1872fb62a16064281e56f7973cdf27bdc8eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261018-DEZ4",
+    "timestamp": "2026-10-18T08:01:01.456Z",
+    "repository": "h3js/h3",
+    "learningId": "learn-github-h3js-h3",
+    "contentHash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

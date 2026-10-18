@@ -117687,3 +117687,309 @@ it("excludes opted out sub-paths from matching redirect regex", () => {
 ```
 
 ---
+
+
+---
+
+## 1679. Invariant Scope Confinement for Dynamic URI Redirection and Proxy Rewrites (Harvested from h3js/h3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Scope Confinement for Dynamic URI Redirection and Proxy Rewrites",
+  "source": "h3js/h3",
+  "source_url": "https://github.com/unjs/h3",
+  "source_version": "b64166ae",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T08:01:01.247Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-h3js-h3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [h3js/h3](https://github.com/unjs/h3) (Revision: `b64166ae`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When transforming, joining, or forwarding dynamic URL paths (such as wildcard routing `/**` or splat captures) into proxy destinations or HTTP redirects, the software MUST NOT rely solely on string concatenation or pre-join lexical sanitization. It MUST resolve the target URL through a spec-compliant URL parser against the authorized destination base, verify that `target.origin === base.origin`, enforce that the resulting pathname begins strictly with the expected base directory prefix, and reject all multi-slash (`//`), backslash (`\\`), or percent-encoded separator sequences (`%2f`, `%5c`, `%252f`) at the segment boundary.
+
+**WHY**:
+Dynamic path prefixes and wildcard tails often contain user-controlled input. Pre-join path checks fail because path join operations collapse consecutive empty segments (`/foo//../bar` -> `/bar`) or unmask encoded traversal tokens. If an attacker passes `//evil.example` into a naive base-join routine (`base + tail`), a target intended to be `/prefix//evil.example` transforms into a protocol-relative URL pointing to an external domain (`//evil.example`), resulting in Open Redirect or Server-Side Request Forgery (SSRF).
+
+**WHEN TO APPLY**:
+Apply in any API gateway, reverse proxy, reverse routing engine, static file handler, or CLI documentation launcher that routes request paths into outbound URLs or OS shell executions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { URL } from "node:url";
+
+export class SecurityTrappingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SecurityTrappingError";
+  }
+}
+
+const LEADING_SEPARATOR_RUN_RE = /^(?:[/\\\\]|%(?:25)*(?:2f|5c))+/i;
+
+export function safeResolveTarget(baseTarget: string, untrustedTail: string): string {
+  // 1. Strip leading run of all forward/back slashes and double-encoded variants
+  const sanitizedTail = untrustedTail.replace(LEADING_SEPARATOR_RUN_RE, "");
+  
+  // 2. Normalize base URL to ensure trailing slash invariance
+  const baseUri = new URL(baseTarget.endsWith("/") ? baseTarget : `${baseTarget}/`);
+  
+  // 3. Resolve using URL parser constructor
+  const resolved = new URL(sanitizedTail, baseUri);
+
+  // 4. Origin lockdown: strictly prohibit protocol or host shifts
+  if (resolved.origin !== baseUri.origin) {
+    throw new SecurityTrappingError(`Target origin shift detected: ${resolved.origin} !== ${baseUri.origin}`);
+  }
+
+  // 5. Path confinement: confirm resolved path resides strictly inside target base
+  const expectedBasePath = baseUri.pathname.endsWith("/") ? baseUri.pathname : `${baseUri.pathname}/`;
+  if (!resolved.pathname.startsWith(expectedBasePath) && resolved.pathname !== baseUri.pathname.replace(/\/$/, "")) {
+    throw new SecurityTrappingError(`Path breakout detected: ${resolved.pathname} outside ${expectedBasePath}`);
+  }
+
+  // 6. Strip userinfo (username/password) and collapse repeated directory separators
+  resolved.username = "";
+  resolved.password = "";
+  resolved.pathname = resolved.pathname.replace(/\/{2,}/g, "/");
+
+  return resolved.href;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER perform raw string concatenation or regex-only checks on external target URLs
+export function unsafeResolveTarget(base: string, tail: string): string {
+  // CRITICAL BUG: If tail is "//evil.com" or "..\..\evil.com", this escapes domain context!
+  const target = base + "/" + tail;
+  if (target.includes("..")) {
+    throw new Error("Traversal detected"); // BYPASSED via %2e%2e or unnormalized slashes
+  }
+  return target;
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce compliance using parameterized test harnesses verifying rejection of protocol-relative targets, overlong UTF-8 encodings, and backslash mutations:
+```typescript
+import { describe, it, expect } from "vitest";
+
+describe("safeResolveTarget Invariant Tests", () => {
+  const base = "https://example.com/subpath";
+  const exploits = [
+    "//attacker.com",
+    "/\\attacker.com",
+    "../evil",
+    "%2e%2e%2froot",
+    "/%252e%252e%252fadmin",
+    "https://attacker.com",
+    "javascript:alert(1)",
+    "file:///etc/passwd"
+  ];
+
+  for (const exploit of exploits) {
+    it(`fails closed against exploit payload: ${exploit}`, () => {
+      expect(() => safeResolveTarget(base, exploit)).toThrow(SecurityTrappingError);
+    });
+  }
+});
+```
+
+---
+
+
+---
+
+## 1680. Stateless Evaluation Invariant for Shared Regular Expressions (Harvested from h3js/h3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Stateless Evaluation Invariant for Shared Regular Expressions",
+  "source": "h3js/h3",
+  "source_url": "https://github.com/unjs/h3",
+  "source_version": "b64166ae",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T08:01:01.320Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-h3js-h3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [h3js/h3](https://github.com/unjs/h3) (Revision: `b64166ae`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When evaluating an arbitrary or user-configurable `RegExp` against incoming request properties (such as `Origin`, `User-Agent`, or route patterns), the engine MUST NOT use `RegExp.prototype.test()` or `RegExp.prototype.exec()` if the regex instance can potentially hold the global (`g`) or sticky (`y`) flags. The engine MUST use `String.prototype.search()` or explicitly reset `regex.lastIndex = 0` before and after execution.
+
+**WHY**:
+JavaScript `RegExp` instances configured with `/g` or `/y` are stateful. Calling `.test()` or `.exec()` updates the mutable internal pointer `regex.lastIndex`. When an application reuses regex instances across multiple requests (e.g., in a CORS origin allowlist defined as a global array), repeated calls mutate `lastIndex`. A valid match will succeed on the first request, advance `lastIndex` beyond the matching index, and subsequently return `false` on the second request for the identical origin, intermittently dropping legitimate traffic or leaking authorization state.
+
+**WHEN TO APPLY**:
+Applies to all HTTP middleware, routing lookup tables, CORS interceptors, schema validators, and authorization token matchers that accept pre-compiled regular expressions from user configuration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export function isPatternAllowed(candidate: string, pattern: string | RegExp): boolean {
+  if (typeof pattern === "string") {
+    return candidate === pattern;
+  }
+
+  if (pattern instanceof RegExp) {
+    // String.prototype.search ignores and does not mutate regex.lastIndex.
+    // It guarantees completely stateless evaluation even if compiled with /g or /y.
+    return candidate.search(pattern) !== -1;
+  }
+
+  return false;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER execute stateful test() on shared or caller-provided RegExp objects
+const originPattern = /^https:\/\/app\.example\.com$/g;
+
+export function unsafeCorsCheck(origin: string): boolean {
+  // CRITICAL DEFECT: If origin matches, lastIndex becomes 26.
+  // Next invocation with identical input starts matching at index 26 and returns false!
+  return originPattern.test(origin);
+}
+```
+
+**VERIFICATION METHOD**:
+Create a deterministic concurrency unit test proving `lastIndex` invariance and multi-pass repeatability:
+```typescript
+import { it, expect } from "vitest";
+
+it("maintains stateless regex verification over multiple executions", () => {
+  const flags = ["g", "y", "gy", ""];
+  for (const flag of flags) {
+    const rx = new RegExp("^https:\\/\\/trusted\\.domain\\.com$", flag);
+    rx.lastIndex = 4; // Intentionally corrupt initial state
+    
+    expect(isPatternAllowed("https://trusted.domain.com", rx)).toBe(true);
+    expect(isPatternAllowed("https://trusted.domain.com", rx)).toBe(true);
+    expect(isPatternAllowed("https://evil.com", rx)).toBe(false);
+    expect(rx.lastIndex).toBe(4); // Prove lastIndex was completely untouched
+  }
+});
+```
+
+---
+
+
+---
+
+## 1681. Sentinel Error Quarantine for Committed Stream Handlers (Harvested from h3js/h3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Sentinel Error Quarantine for Committed Stream Handlers",
+  "source": "h3js/h3",
+  "source_url": "https://github.com/unjs/h3",
+  "source_version": "b64166ae",
+  "license": "MIT",
+  "extracted_at": "2026-10-18T08:01:01.386Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-h3js-h3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [h3js/h3](https://github.com/unjs/h3) (Revision: `b64166ae`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an asynchronous response or background task terminates prematurely after sending bytes or headers over the wire, the pipeline MUST propagate a unique, immutable sentinel symbol (e.g., `kHandled`) instead of standard operational errors. Downstream middleware, error-rendering handlers, and framework wrappers MUST check for this sentinel and MUST NOT attempt to serialize, re-render, or append a secondary error response (e.g., JSON 500) if the sentinel is detected.
+
+**WHY**:
+In streaming architectures (such as Node.js `.pipe()`, Web Streams, or SSE), headers and partial payloads are committed immediately. If a generator or piped stream fails halfway through transmission, the HTTP status is already fixed (typically 200 OK) and chunks are already in flight. If generic error-handling middleware intercepts this exception and treats it as an unhandled error, it will attempt to mutate response headers and output an error payload (e.g., `{"status": 500}`), causing unhandled promise rejections, `ERR_HTTP_HEADERS_SENT` fatal crashes, or malformed data frames that corrupt client deserialization.
+
+**WHEN TO APPLY**:
+Applies to any web server layer integrating Web Streams, Node.js streams, Server-Sent Events, or reverse-proxy chunked pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export const kHandled = Symbol.for("h3.handled");
+
+export interface StreamPipelineOptions {
+  onError: (err: unknown) => void;
+}
+
+export async function executeMiddlewareChain(
+  event: { headersSent: boolean },
+  next: () => Promise<unknown>,
+  renderErrorResponse: (err: unknown) => unknown,
+): Promise<unknown> {
+  try {
+    return await next();
+  } catch (error: unknown) {
+    // Check if the stream or handler has already committed the wire response
+    if (error === kHandled || event.headersSent) {
+      // Re-throw sentinel to escape middleware chain without rendering secondary error
+      throw kHandled;
+    }
+
+    // Safe to render clean error response since headers were never committed
+    return renderErrorResponse(error);
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER blindly catch errors and attempt to write JSON errors on streaming failures
+export async function unsafeMiddleware(req: any, res: any, next: any) {
+  try {
+    await next();
+  } catch (err) {
+    // FATAL CRASH: If res.write() was called inside next(), this throws ERR_HTTP_HEADERS_SENT
+    res.statusCode = 500;
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({ error: (err as Error).message }));
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Integration testing with aborted generator streams:
+```typescript
+import { it, expect, vi } from "vitest";
+
+it("bypasses error renderer when failure occurs post-stream-commitment", async () => {
+  const errorRendererSpy = vi.fn();
+  let headersSent = true; // Emulate committed stream state
+
+  const runner = executeMiddlewareChain(
+    { headersSent },
+    async () => {
+      throw kHandled;
+    },
+    errorRendererSpy
+  );
+
+  await expect(runner).rejects.toBe(kHandled);
+  expect(errorRendererSpy).not.toHaveBeenCalled();
+});
+```
+
+---

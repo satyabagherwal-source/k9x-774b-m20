@@ -2028,5 +2028,15 @@
     "contentHash": "ceab1b673aca60ffc5ce1f5a179c1872fb62a16064281e56f7973cdf27bdc8eb",
     "lastHarvestedAt": "2026-10-18T07:55:31.686Z",
     "learningId": "learn-github-nitrojs-nitro"
+  },
+  "unjs-h3": {
+    "repository": "h3js/h3",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unjs/h3",
+    "sourceVersion": "b64166ae",
+    "license": "MIT",
+    "contentHash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
+    "lastHarvestedAt": "2026-10-18T08:01:01.459Z",
+    "learningId": "learn-github-h3js-h3"
   }
 }
