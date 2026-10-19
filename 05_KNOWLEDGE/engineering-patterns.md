@@ -201407,3 +201407,205 @@ pub fn spawn_leaky_heartbeat(task_id: u64) {
 2. Ensure with a high concurrency test that when `finalize_success` is called concurrently with a heartbeat interval, the `biased;` select guarantees immediate exit without firing a subsequent DB query.
 
 ---
+
+
+---
+
+## 2810. Environment Variable Validation Rule (Harvested from agamm/pseo-next)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Environment Variable Validation Rule",
+  "source": "agamm/pseo-next",
+  "source_url": "https://github.com/agamm/pseo-next",
+  "source_version": "2f816d2c",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-19T21:02:31.045Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agamm-pseo-next",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [agamm/pseo-next](https://github.com/agamm/pseo-next) (Revision: `2f816d2c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+`MUST` validate all required environment variables at application startup and throw a descriptive error if any are missing.
+
+**WHY**:  
+Missing `SITE_URL`, `DATABASE_URL`, or GA IDs cause silent failures (e.g., sitemap generation defaults to localhost, GA never fires). Validation prevents runtime surprises and makes debugging deterministic.
+
+**WHEN TO APPLY**:  
+During the first request in a server component or in a custom `next.config.js`/`next-sitemap.config.js` file.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ts
+// lib/env.ts
+export const requiredEnv = (key: string): string => {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return value;
+};
+
+// next-sitemap.config.js
+const siteURL = requiredEnv('SITE_URL');
+module.exports = { siteUrl: siteURL, /* … */ };
+```
+
+**NEGATIVE CONSTRAINT**:
+```ts
+// ❌ Never use a hard‑coded fallback that masks missing env vars
+const siteURL = process.env.SITE_URL || 'http://localhost:3000';
+```
+
+**VERIFICATION METHOD**:  
+Add a Jest test that spawns the config module with `process.env.SITE_URL` unset and expects an exception.
+
+---
+
+
+---
+
+## 2811. Client‑Only Component Isolation Rule (Harvested from agamm/pseo-next)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Client‑Only Component Isolation Rule",
+  "source": "agamm/pseo-next",
+  "source_url": "https://github.com/agamm/pseo-next",
+  "source_version": "2f816d2c",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-19T21:02:31.172Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agamm-pseo-next",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [agamm/pseo-next](https://github.com/agamm/pseo-next) (Revision: `2f816d2c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+`MUST` mark any component that accesses `window`, `document`, or third‑party libraries requiring a browser context with `"use client"` and wrap it in `<Suspense>` or `<ClientOnly>` when used inside a server component.
+
+**WHY**:  
+Without the directive, Next renders the component on the server, leading to hydration mismatches and runtime errors. Wrapping ensures the component is only rendered on the client.
+
+**WHEN TO APPLY**:  
+Any component that imports `react-cookie-consent`, `react-ga`, or directly references `window`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```tsx
+// src/components/CookieBanner.tsx
+"use client";
+import CookieConsent from "react-cookie-consent";
+
+export function CookieBanner() {
+  return (
+    <CookieConsent>
+      This website uses cookies to enhance the user experience.
+    </CookieConsent>
+  );
+}
+```
+
+```tsx
+// src/app/layout.tsx
+import { CookieBanner } from "@/components/CookieBanner";
+import { Suspense } from "react";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <header>Header</header>
+        <main>{children}</main>
+        <footer>Footer</footer>
+        <Suspense fallback={null}>
+          <CookieBanner />
+        </Suspense>
+      </body>
+    </html>
+  );
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```tsx
+// ❌ Never render a client component directly inside a server component without Suspense
+<CookieBanner /> // hydration mismatch
+```
+
+**VERIFICATION METHOD**:  
+Run `next build` and inspect the console for hydration warnings. Add a unit test that renders `<RootLayout>` in a server‑side environment and expects no hydration errors.
+
+---
+
+
+---
+
+## 2812. Immutable Data Handling Rule (Harvested from agamm/pseo-next)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Immutable Data Handling Rule",
+  "source": "agamm/pseo-next",
+  "source_url": "https://github.com/agamm/pseo-next",
+  "source_version": "2f816d2c",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-19T21:02:31.289Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agamm-pseo-next",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [agamm/pseo-next](https://github.com/agamm/pseo-next) (Revision: `2f816d2c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+`MUST` treat all data returned from `contentlayer` as immutable; never mutate objects or arrays in place.
+
+**WHY**:  
+ContentLayer generates read‑only objects. Mutating them can corrupt the internal cache, leading to stale or missing content during ISR or static generation.
+
+**WHEN TO APPLY**:  
+Any function that receives `Post` or other ContentLayer documents (e.g., `generateStaticParams`, `getPost`, `getAllPosts`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ts
+export async function generateStaticParams() {
+  return allPosts.map((post) => ({ slug: post.slug }));
+}
+
+export async function getAllPosts() {
+  return [...allPosts].sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```ts
+// ❌ Mutating the array returned by contentlayer
+const posts = allPosts;
+posts.push({ slug: "new", title: "New", date: new Date() }); // corrupts cache
+```
+
+**VERIFICATION METHOD**:  
+Add a test that attempts to mutate `allPosts` and asserts that the original array remains unchanged.
+
+---

@@ -3497,3 +3497,5 @@ Every entry in this ledger must capture:
 | `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `2969b086` | Multi-dimensional audit evidence | 2026-10-19T20:53:18.500Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `9b951080` | Multi-dimensional audit evidence | 2026-10-19T20:53:23.135Z |
 | `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `190f0aa4` | Multi-dimensional audit evidence | 2026-10-19T20:54:24.262Z |
+| `learn-github-shubham0812-swiftui-animations` | `https://github.com/Shubham0812/SwiftUI-Animations` | `494a3635` | Multi-dimensional audit evidence | 2026-10-19T21:02:24.005Z |
+| `learn-github-agamm-pseo-next` | `https://github.com/agamm/pseo-next` | `2f816d2c` | Multi-dimensional audit evidence | 2026-10-19T21:02:31.432Z |

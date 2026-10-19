@@ -9038,5 +9038,25 @@
     "contentHash": "b0731d03b1755c04ab29ab9e914f832829671a2bddca7605fde02db5b9b6b7c3",
     "lastHarvestedAt": "2026-10-19T20:53:18.500Z",
     "learningId": "learn-github-yattee-yattee"
+  },
+  "shubham0812-swiftui-animations": {
+    "repository": "Shubham0812/SwiftUI-Animations",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Shubham0812/SwiftUI-Animations",
+    "sourceVersion": "494a3635",
+    "license": "Apache-2.0",
+    "contentHash": "9ef0571e4aaa5b60ac6a6b1df580c9d6552c874510a8ce2a4d68848a00158a5b",
+    "lastHarvestedAt": "2026-10-19T21:02:24.005Z",
+    "learningId": "learn-github-shubham0812-swiftui-animations"
+  },
+  "agamm-pseo-next": {
+    "repository": "agamm/pseo-next",
+    "platform": "github",
+    "sourceUrl": "https://github.com/agamm/pseo-next",
+    "sourceVersion": "2f816d2c",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "a55aee970340d438aef56f0a6bb40a4aceb4f353fe7777aa2240f4b913ad9704",
+    "lastHarvestedAt": "2026-10-19T21:02:31.432Z",
+    "learningId": "learn-github-agamm-pseo-next"
   }
 }

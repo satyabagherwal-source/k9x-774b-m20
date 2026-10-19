@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T20:54:24.268Z",
+  "last_updated": "2026-10-19T21:02:31.437Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13602,6 +13602,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T20:53:18.505Z"
+    },
+    "Shubham0812/SwiftUI-Animations": {
+      "repository": "Shubham0812/SwiftUI-Animations",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-shubham0812-swiftui-animations",
+      "content_hash": "9ef0571e4aaa5b60ac6a6b1df580c9d6552c874510a8ce2a4d68848a00158a5b",
+      "verified_at": "2026-10-19T21:02:24.010Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:02:24.010Z"
+    },
+    "agamm/pseo-next": {
+      "repository": "agamm/pseo-next",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-agamm-pseo-next",
+      "content_hash": "a55aee970340d438aef56f0a6bb40a4aceb4f353fe7777aa2240f4b913ad9704",
+      "verified_at": "2026-10-19T21:02:31.437Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:02:31.437Z"
     }
   },
   "repos": {

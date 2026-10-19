@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:54:24.226Z",
-  "total_verified_learnings": 919,
+  "last_updated": "2026-10-19T21:02:31.365Z",
+  "total_verified_learnings": 921,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -38919,22 +38919,29 @@
     "learn-github-shubham0812-swiftui-animations": {
       "learning_id": "learn-github-shubham0812-swiftui-animations",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "shubham0812-swiftui-animations",
+      "source": "Shubham0812/SwiftUI-Animations",
+      "repository": "Shubham0812/SwiftUI-Animations",
       "slug": "shubham0812-swiftui-animations",
       "platform": "github",
       "source_url": "https://github.com/Shubham0812/SwiftUI-Animations",
-      "source_version": "HEAD",
-      "content_hash": "edee28ca92a5ab77c94643e10dec213bfadf0654b810392f3b93936d87676768",
+      "source_version": "494a3635",
+      "content_hash": "9ef0571e4aaa5b60ac6a6b1df580c9d6552c874510a8ce2a4d68848a00158a5b",
       "dossier_path": "07_PROJECT_LEARNING/shubham0812-swiftui-animations-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shubham0812-swiftui-animations-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.498Z"
+      "verified_at": "2026-10-19T21:02:23.953Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sickn33-agentic-awesome-skills": {
       "learning_id": "learn-github-sickn33-agentic-awesome-skills",
@@ -56400,22 +56407,46 @@
     "learn-github-agamm-pseo-next": {
       "learning_id": "learn-github-agamm-pseo-next",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "agamm/pseo-next",
       "repository": "agamm/pseo-next",
       "slug": "agamm-pseo-next",
       "platform": "github",
       "source_url": "https://github.com/agamm/pseo-next",
-      "source_version": "main",
-      "content_hash": "9029d6f0ee99096bd9ef0cbcc458ebaffe2a6ebf0ef773fd09e69baffd33a5ad",
+      "source_version": "2f816d2c",
+      "content_hash": "a55aee970340d438aef56f0a6bb40a4aceb4f353fe7777aa2240f4b913ad9704",
       "dossier_path": "07_PROJECT_LEARNING/agamm-pseo-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agamm-pseo-next-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2810,
+          "title": "Environment Variable Validation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2811,
+          "title": "Client‑Only Component Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2812,
+          "title": "Immutable Data Handling Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:02:31.354Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-santifer-santifer-irepair": {
       "learning_id": "learn-github-santifer-santifer-irepair",
@@ -92499,6 +92530,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:54:24.215Z"
+    },
+    "rule-2810": {
+      "learning_id": "rule-2810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2810,
+      "title": "Environment Variable Validation Rule",
+      "source_url": "https://github.com/agamm/pseo-next",
+      "source_version": "2f816d2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:02:31.354Z"
+    },
+    "rule-2811": {
+      "learning_id": "rule-2811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2811,
+      "title": "Client‑Only Component Isolation Rule",
+      "source_url": "https://github.com/agamm/pseo-next",
+      "source_version": "2f816d2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:02:31.354Z"
+    },
+    "rule-2812": {
+      "learning_id": "rule-2812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2812,
+      "title": "Immutable Data Handling Rule",
+      "source_url": "https://github.com/agamm/pseo-next",
+      "source_version": "2f816d2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:02:31.354Z"
     }
   },
   "aliases": {
