@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `83c6778f`  
+> **Source Version**: `11479fb9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:08:18.525Z  
+> **Timestamp**: 2026-10-19T23:28:26.647Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:08:18.516Z  
+> **Harvest Timestamp**: 2026-10-19T23:28:26.069Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: XERJ is the new way for AI to search data. Its autoindex capability activates agents to know your data without the token waste of grep (1974 tool). One command indexes code, docs, logs and PDFs for search, RAG, security audits and agent memory, using 40x fewer tokens than grep. It’s durable and can replace ElasticSearch saving you x10 infra costs.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8772 stars
+- **Stars / Engagement**: 10492 stars
 
 ---
 
@@ -1919,405 +1919,405 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b809437d` (2026-10-18)
-**Commit Message**: fix(feedback): fork --open-pr when the account cannot push (#1771)
+### Incident Patch 1: `0e9a4fd5` (2026-10-19)
+**Commit Message**: fix(deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#1869)
 
---open-pr pushed to origin and created the branch before it knew
-whether gh was authenticated or git had an identity. A fresh agent
-with no user.name was left on a dirty field-report/* branch.
+cargo-audit is red on every PR and on main: zip 7.2.0 and 8.6.0 carry
+RUSTSEC-2026-0367/0368/0369 (fixed in zip 9.0.0).
 
-Checks now run before checkout -b: the checkout's origin is
-xerj-org/xerj, gh auth status succeeds, and user.name / user.email
-(or GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL) are set. An account without
-push rights forks xerj-org/xerj and pushes the xerj-fork remote;
-gh pr create --head is LOGIN:branch. A failure after the branch
-exists checks the original branch back out, deletes the local
-field-report branch, and removes the report file.
+- xerj-autoindex: zip 8 -> 9; calamine =0.36.1 -> =0.37.0 (zip ^9);
+  office_oxide 0.1.8 -> 0.1.15 in the lockfile (zip ^9, via pdf_oxide).
+  zip 8.6.0 leaves the tree.
+- Adapt the four call sites to zip 9's fallible entry names
+  (file_names() / ZipFile::name() now return Result): a name that cannot
+  be decoded is skipped, never a panic.
+- zip 7.2.0 remains only through candle-core 0.9.2 (optional neural /
+  decide-local features). No candle-core release uses zip >= 9 (0.11.0
+  still requires ^8.6). candle only reads .npz/.pth members into memory and
+  never calls extract(), where all three advisories live, and xerj loads
+  only safetensors through candle. engine/.cargo/audit.toml ignores the
+  three IDs with that justification and the removal condition.
 
-The dry-run commands clone, fork, keep --agent, push xerj-fork, and
-use --head YOUR_LOGIN:… so a placeholder in angle brackets is not
-eaten by HTML-to-text. An https origin with user:token@ is still
-xerj-org/xerj; the credential is stripped before the check and before
-it is printed.
-
-Verified:
-  cargo +1.97.1 test --locked -p xerj-autoindex --lib -- open_pr dry_run origin_is origin_url the_rerun the_field_report_commit
-  cargo +1.97.1 clippy --locked -p xerj-autoindex --all-targets -- -D warnings
-
-**File**: `engine/crates/xerj-autoindex/src/feedback.rs` (modified, +534/-74)
+**File**: `engine/.cargo/audit.toml` (added, +31/-0)
 ```diff
-@@ -364,18 +364,22 @@ pub fn pr_commands(d: &Draft) -> String {
-         format!(" \\\n --agent {:?}", d.agent)
-     };
-     format!(
--        "# Ready-to-run — files ONLY the field report, nothing else:\n\
-+        "# Ready-to-run — files ONLY the field report, nothing else.\n\
-+         # Run these in a clone of xerj-org/xerj, not in the project you are working in.\n\
-+         git clone https://github.com/xerj-org/xerj.git\n\
-+         cd xerj\n\
-+         gh repo fork xerj-org/xerj --remote --remote-name xerj-fork\n\
-          xerj feedback{agent_line} \\\n\
-          \x20 --used-for {used_for:?} --pointed-at {pointed_at:?} \\\n\
-          \x20 --verdict {verdict:?} --numbers {numbers:?} \\\n\
-          \x20 -o {relpath}\n\
-          git checkout -b {branch}\n\
-          git add {relpath}\n\
-          git commit --only {relpath} -m \"docs(field-report): {slug}\"\n\
--         git push -u origin {branch}\n\
--         gh pr create --repo xerj-org/xerj --base main --head {branch} \\\n\
-+         git push -u xerj-fork {branch}\n\
-+         gh pr create --repo xerj-org/xerj --base main --head YOUR_LOGIN:{branch} \\\n\
-          \x20 --title \"Agent field report: {title}\" \\\n\
--         \x20 --body \"Written by an AI agent on behalf of a human. Field report only; see {relpath}.\"",
-+         \x20 --body \"Field report only; see {relpath}.\"",
-         used_for = d.used_for,
-         pointed_at = d.pointed_at,
-         verdict = d.verdict,
-@@ -433,12 +437,38 @@ const XERJ_ORIGIN_URLS: &[&str] = &[
- /// same-prefix repository (`xerj-org/xerj-fork`) or someone else's project
- /// never passes. #960.
- fn origin_url_is_xerj(url: &str) -> bool {
-+    let normalized = normalize_origin_url(url);
-+    XERJ_ORIGIN_URLS.contains(&normalized.as_str())
-+}
+@@ -0,0 +1,31 @@
++# cargo-audit configuration (read by `cargo audit` run from engine/, as CI does).
++#
++# Policy: every RUSTSEC *vulnerability* fails CI unless it is listed here with
++# a justification that says why it cannot reach us AND what removes the entry.
++# Keep this list as short as possible; delete an entry as soon as it is fixable.
 +
-+/// Lower-case, drop a trailing `.git` and slash, and drop `user:secret@` from
-+/// an `https://` or `ssh://` URL. An authenticated clone of xerj-org/xerj is
-+/// still that repository; the credential must not change the answer, and it
-+/// must not be printed.
-+fn normalize_origin_url(url: &str) -> String {
-     let normalized = url.trim().to_ascii_lowercase();
-     let normalized = normalized
-         .strip_suffix(".git")
-         .unwrap_or(normalized.as_str());
-     let normalized = normalized.trim_end_matches('/');
--    XERJ_ORIGIN_URLS.contains(&normalized)
-+    strip_credential_userinfo(normalized)
-+}
-+
-+fn strip_credential_userinfo(url: &str) -> String {
-+    let Some(scheme_end) = url.find("://") else {
-+        return url.to_string();
-+    };
-+    let after = &url[scheme_end + 3..];
-+    let Some(slash) = after.find('/') else {
-+        return url.to_string();
-+    };
-+    let authority = &after[..slash];
-+    if let Some((userinfo, host)) = authority.rsplit_once('@') {
-+        if userinfo.contains(':') {
-+            return format!("{}://{host}{}", &url[..scheme_end], &after[slash..]);
-+        }
-+    }
-+    url.to_string()
- }
++[advisories]
++ignore = [
++    # zip < 9.0.0 — RUSTSEC-2026-0367 (SUID/SGID bits preserved on extract),
++    # RUSTSEC-2026-0368 (extract creates symlinks pointing outside the dest dir),
++    # RUSTSEC-2026-0369 (extract applies Unix permissions through symlinks).
++    #
++    # Every zip we depend on directly or through autoindex (calamine 0.37,
++    # office_oxide 0.1.15, xerj-autoindex itself) is on the fixed zip 9.x line.
++    # The only remaining vulnerable copy is zip 7.2.0, pulled in by
++    # candle-core 0.9.2 (optional `neural` / `decide-local` features of
++    # xerj-ai). No candle-core release depends on zip >= 9 (latest 0.11.0 still
++    # requires zip ^8.6), so it cannot be upgraded yet.
++    #
++    # Not reachable: all three advisories are in `ZipArchive::extract` /
++    # `ZipStreamReader::extract` (writing archive entries to disk). candle-core
++    # only opens .npz/.pth files with `ZipArchive::new` and reads named entries
++    # into memory (src/npy.rs, src/pickle.rs); it never calls `extract`. XERJ
++    # itself only loads `model.safetensors` through candle (xerj-ai
++    # neural.rs), so even those zip readers are not on any code path we use.
++    #
++    # Remove these three entries when candle-core ships with zip >= 9.0.0.
++    "RUSTSEC-2026-0367",
++    "RUSTSEC-2026-0368",
++    "RUSTSEC-2026-0369",
++]
+```
+
+**File**: `engine/Cargo.lock` (modified, +39/-17)
+```diff
+@@ -956,9 +956,9 @@ dependencies = [
  
- /// `git remote get-url origin` run in `dir` (the process working directory
-@@ -494,7 +524,7 @@ fn open_pr_at(dir: Option<&Path>, draft: &Draft, report: &str, commands: &str) -
-     // xerj-org/xerj itself.
-     if !origin_is_xerj_checkout(dir) {
-         let found = match origin_remote_url(dir) {
--            Some(url) => format!("{url:?}"),
-+            Some(url) => format!("{:?}", normalize_origin_url(&url)),
-             None => "none — this directory is not a git repository, or it has no \
-                      `origin` remote"
-                 .to_string(),
-@@ -510,15 +540,16 @@ fn open_pr_at(dir: Option<&Path>, draft: &Draft, report: &str, commands: &str) -
-         eprintln!(
-             "To file the report: run this command again from a clone of xerj-org/xerj, or \
-              fork it, push `{branch}` to your fork and open the PR with \
--             `gh pr create --repo xerj-org/xerj --head <your-login>:{branch}`."
-+             `gh pr create --repo xerj-org/xerj --head YOUR_LOGIN:{branch}`."
-         );
-         eprintln!("The report and the exact commands to run there:\n");
-         println!("{report}");
-         println!("\n{commands}");
-         return 1;
+ [[package]]
+ name = "calamine"
+-version = "0.36.1"
++version = "0.37.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5fa68281b1a76b54a62156474adb06bb380a67e07dd60656e3217152b42183f3"
++checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
+ dependencies = [
+  "atoi_simd",
+  "byteorder",
+@@ -967,9 +967,9 @@ dependencies = [
+  "encoding_rs",
+  "fast-float2",
+  "log",
+- "quick-xml",
++ "quick-xml 0.42.0",
+  "serde",
+- "zip 8.6.0",
++ "zip 9.0.5",
+ ]
+ 
+ [[package]]
+@@ -3169,9 +3169,9 @@ checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
+ 
+ [[package]]
+ name = "libc"
+-version = "0.2.185"
++version = "0.2.191"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "52ff2c0fe9bc6cb6b14a0592c2ff4fa9ceb83eea9db979b0487cd054946a2b8f"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+ 
+ [[package]]
+ name = "libm"
+@@ -3532,6 +3532,18 @@ dependencies = [
+  "libc",
+ ]
+ 
++[[package]]
++name = "nix"
++version = "0.31.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
++dependencies = [
++ "bitflags 2.11.1",
++ "cfg-if",
++ "cfg_aliases",
++ "libc",
++]
++
+ [[package]]
+ name = "nom"
+ version = "7.1.3"
+@@ -3694,20 +3706,20 @@ dependencies = [
+ 
+ [[package]]
+ name = "office_oxide"
+-version = "0.1.8"
++version = "0.1.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "317c254cebe5b87c74a0fbd84e889d51ec0c4db885fa5aca98700ad85fd9ec5f"
++checksum = "7993e747e60a6b06c8c0b7060f0bd7f7e8e03921f18a4b42b23738ff276a4715"
+ dependencies = [
+  "atoi_simd",
+  "encoding_rs",
+  "fast-float2",
+- "libc",
++ "flate2",
+  "log",
+- "quick-xml",
++ "quick-xml 0.42.0",
+  "serde",
+  "serde_json",
+  "thiserror 2.0.18",
+- "zip 8.6.0",
++ "zip 9.0.5",
+ ]
+ 
+ [[package]]
+@@ -3909,7 +3921,7 @@ dependencies = [
+  "nom 8.0.0",
+  "office_oxide",
+  "phf 0.14.0",
+- "quick-xml",
++ "quick-xml 0.41.0",
+  "regex",
+  "serde",
+  "serde_json",
+@@ -4174,7 +4186,7 @@ dependencies = [
+  "findshlibs",
+  "libc",
+  "log",
+- "nix",
++ "nix 0.26.4",
+  "once_cell",
+  "prost 0.12.6",
+  "prost-build 0.12.6",
+@@ -4451,6 +4463,15 @@ name = "quick-xml"
+ version = "0.41.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
++dependencies = [
++ "memchr",
++]
++
++[[package]]
++name = "quick-xml"
++version = "0.42.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
+ dependencies = [
+  "encoding_rs",
+  "memchr",
+@@ -7386,7 +7407,7 @@ dependencies = [
+  "memchr",
+  "notify",
+  "pdf_oxide",
+- "quick-xml",
++ "quick-xml 0.41.0",
+  "rayon",
+  "regex",
+  "reqwest",
+@@ -7440,7 +7461,7 @@ dependencies = [
+  "walkdir",
+  "xerj-common",
+  "xxhash-rust",
+- "zip 8.6.0",
++ "zip 9.0.5",
+ ]
+ 
+ [[package]]
+@@ -7965,14 +7986,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "zip"
+-version = "8.6.0"
++version = "9.0.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2d04a6b5381502aa6087c94c669499eb1602eb9c5e8198e534de571f7154809b"
++checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
+ dependencies = [
+  "crc32fast",
+  "flate2",
+  "indexmap 2.14.0",
+  "memchr",
++ "nix 0.31.3",
+  "typed-path",
+  "zopfli",
+ ]
+```
+
+**File**: `engine/crates/xerj-autoindex/Cargo.toml` (modified, +6/-5)
+```diff
+@@ -132,16 +132,17 @@ flate2 = "1"                                     # gzip streaming (rust backend)
+ pdf_oxide = { version = "=0.3.75", default-features = false, features = ["legacy-crypto"] }
+ csv = "1"                                        # streaming CSV with sniffed dialect
+ quick-xml = "0.41"                               # XML pull parser + DOCX internals
+-zip = { version = "8", default-features = false, features = ["deflate"] }  # DOCX container
++zip = { version = "9", default-features = false, features = ["deflate"] }  # DOCX container
+ # --- Legacy Microsoft Office binary formats (OLE2 / Compound File Binary) ---
+ # calamine reads the legacy BIFF `.xls` worksheet stream (it ships its own CFB
+-# reader internally); pinned to 0.36.1, which depends on `zip ^8.6` and
+-# `quick-xml ^0.41` so it shares this crate's `zip 8` and `quick-xml 0.41`
+-# majors without retaining `quick-xml 0.31.0` (RUSTSEC-2026-0194 / 0195).
++# reader internally); pinned to 0.37.0, which depends on `zip ^9` (the
++# zip 8.x line carries RUSTSEC-2026-0367/0368/0369, fixed in 9.0.0) so it
++# shares this crate's `zip 9` major, and never retains `quick-xml 0.31.0`
++# (RUSTSEC-2026-0194 / 0195); it brings `quick-xml 0.42` alongside our 0.41.
+ # Licence: MIT. Its transitive adds are codepage (MIT, for the legacy 8-bit
+ # cell codepage) and log (MIT/Apache-2.0); byteorder and encoding_rs are
+ # already here.
+-calamine = { version = "=0.36.1", features = ["dates"] }
++calamine = { version = "=0.37.0", features = ["dates"] }
+ # `cfb` reads the OLE2/Compound File Binary container directly: used by the
+ # content sniffer to route a `.doc`/`.xls`/other OLE2 file by its stream names,
+ # and by the `.doc` extractor to pull the WordDocument + Table streams and the
+```
+
+**File**: `engine/crates/xerj-autoindex/src/extract/pptx.rs` (modified, +2/-0)
+```diff
+@@ -187,6 +187,8 @@ fn slide_order<R: Read + Seek>(z: &mut zip::ZipArchive<R>, budget: &mut Budget)
+     let mut numbered: Vec<(u32, String)> = z
+         .file_names()
+         .filter_map(|n| {
++            // zip 9: entry names are fallible (non-UTF-8 names); skip those.
++            let n = n.ok()?;
+             let num = n.strip_prefix("ppt/slides/slide")?.strip_suffix(".xml")?;
+             Some((num.parse().ok()?, n.to_string()))
+         })
+```
+
+**File**: `engine/crates/xerj-autoindex/src/extract/xlsx.rs` (modified, +2/-0)
+```diff
+@@ -223,6 +223,8 @@ fn sheet_parts<R: Read + Seek>(
+     let mut numbered: Vec<(u32, String)> = z
+         .file_names()
+         .filter_map(|n| {
++            // zip 9: entry names are fallible (non-UTF-8 names); skip those.
++            let n = n.ok()?;
+             let num = n
+                 .strip_prefix("xl/worksheets/sheet")?
+                 .strip_suffix(".xml")?;
+```
+
+**File**: `engine/crates/xerj-autoindex/src/harvest/source.rs` (modified, +5/-1)
+```diff
+@@ -195,7 +195,11 @@ pub fn extract_zip(zip: &Path, dest: &Path) -> Result<usize> {
+             skipped += 1;
+             continue;
+         }
+-        let raw = entry.name().to_string();
++        // zip 9: an entry name that cannot be decoded is skipped like an unsafe one.
++        let Ok(raw) = entry.name().map(|n| n.to_string()) else {
++            skipped += 1;
++            continue;
++        };
+         let Some(safe) = sanitize_entry_path(&raw) else {
+             skipped += 1;
+             continue;
+```
+
+**File**: `engine/crates/xerj-autoindex/src/sniff.rs` (modified, +1/-1)
+```diff
+@@ -1245,7 +1245,7 @@ fn zip_container_kind<R: Read + std::io::Seek>(z: &mut zip::ZipArchive<R>) -> &'
+         }
      }
--    // A `gh` that cannot open the PR turns a committed branch into a dead end.
--    // Say so and hand over the commands instead.
-+    // A `gh` that cannot open the PR, or a git that cannot commit, must fail
-+    // before any branch exists. The fresh-agent failure mode was a dirty
-+    // `field-report/*` branch left behind when identity was missing.
-     if let Err(reason) = gh_ready() {
-         eprintln!("error: cannot open the pull request automatically: {reason}");
-         eprintln!(
-@@ -527,48 +558,110 @@ fn open_pr_at(dir: Option<&Path>, draft: &Draft, report: &str, commands: &str) -
-         println!("{commands}");
-         return 1;
+     // numpy.savez: a zip of `.npy` members.
+-    if !z.is_empty() && z.file_names().all(|n| n.ends_with(".npy")) {
++    if !z.is_empty() && z.file_names().all(|n| n.is_ok_and(|n| n.ends_with(".npy"))) {
+         return "npz";
      }
-+    if let Err(reason) = git_identity_ready(dir) {
-+        eprintln!("error: cannot commit the field report: {reason}");
-+        eprintln!("Nothing was branched. The report and the commands:\n");
-+    
+     let mut mime = Vec::with_capacity(64);
 ```
 
 ---
 
-### Incident Patch 2: `008d9b6e` (2026-10-18)
-**Commit Message**: fix(search): blame the prefix only when the index is missing (#1718)
+### Incident Patch 2: `d23bb7e5` (2026-10-19)
+**Commit Message**: fix(installer): resolve latest release without api.github.com (#1852)
 
-* fix(search): blame the prefix only when the index is missing
+Squash-merged by Xerj Merger at 54a04d04dbfb6e8c7b8b3dd4ebfe8e05ded00f4e after Build + Test passed.
 
-xerj search and xerj def appended "is the prefix right?" to every
-query failure. HTTP 400 `For input string` is a numeric field queried
-as text, and that sentence sends the reader to change --prefix.
-
-The sentence stays for index_not_found and "no such index". Other
-failures print the error and stop.
-
-Verified: cargo +1.97.1 test --locked -p xerj-autoindex --lib
-query_failure_blames; clippy -D warnings; rustfmt.
-
-Co-authored-by: xerj-org <[REDACTED_EMAIL]>
-
-* fix: close the query_failure test brace lost in the merge
-
----------
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: xerj-org <[REDACTED_EMAIL]>
-
-**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +2/-5)
+**File**: `landing/get` (modified, +13/-3)
 ```diff
-@@ -17,6 +17,7 @@ use crate::esclient::Es;
- use crate::search::{
-     corpus_snapshot, empty_lookup_report, field_lookup_ok, hit_location, is_identifier,
-     mapped_property_names, numeric_property_names, parse_count_arg, passage_text,
-+    query_failure_message,
-     weighted_query_fields,
- };
- use serde_json::{json, Value};
-@@ -482,11 +483,7 @@ pub fn run_def_cli() -> i32 {
-     let mut resp = match es.search(&pattern, &body) {
-         Ok(v) => v,
-         Err(e) => {
--            eprintln!(
--                "xerj def: query failed against {url}/{pattern}: {e}\n\
--                 (is the prefix right? `xerj autoindex` writes 'ax' by default — \
--                 pass --prefix if you indexed under another.)"
--            );
-+            eprintln!("{}", query_failure_message("def", &url, &pattern, e));
-             return 1;
-         }
-     };
+@@ -88,9 +88,19 @@ target="${cpu}-${plat}"
+ # --- resolve version --------------------------------------------------------
+ if [ "${XERJ_VERSION:-}" = "" ]; then
+   info "resolving latest release of ${REPO}…"
+-  # Follow the /releases/latest redirect to read the tag without jq.
+-  tag=$(DLS "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null \
+-        | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -n1)
++  # Prefer github.com /releases/latest redirect (no api.github.com rate limit).
++  # curl -w '%{url_effective}' follows redirects and prints the final .../tag/vX.Y.Z URL.
++  tag=""
++  if command -v curl >/dev/null 2>&1; then
++    tag=$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
++      "https://github.com/${REPO}/releases/latest" 2>/dev/null \
++      | sed -n 's|.*/tag/\([^/]*\)$|\1|p' | head -n1)
++  fi
++  # Fall back to the REST endpoint when the redirect path yields nothing.
++  if [ -z "$tag" ]; then
++    tag=$(DLS "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null \
++          | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -n1)
++  fi
+   [ -n "$tag" ] || die "could not resolve latest release — set XERJ_VERSION=vX.Y.Z (see https://github.com/${REPO}/releases)"
+ else
+   tag="$XERJ_VERSION"
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/search.rs` (modified, +71/-5)
+**File**: `landing/get.ps1` (modified, +16/-3)
 ```diff
-@@ -669,6 +669,30 @@ fn catalog_run_prefixes(es: &Es) -> Option<Vec<String>> {
-     Some(prefixes.into_iter().collect())
- }
- 
-+/// What `xerj search` / `xerj def` print when the query request itself fails.
-+///
-+/// A missing index (`index_not_found_exception`, or a body that says
-+/// `no such index`) is the case the prefix sentence was written for. Every
-+/// other failure — including HTTP 400 `For input string`, which is a numeric
-+/// field being queried as text — must not tell the reader to change `--prefix`.
-+pub(crate) fn query_failure_message(
-+    command: &str,
-+    url: &str,
-+    pattern: &str,
-+    err: impl std::fmt::Display,
-+) -> String {
-+    let err = err.to_string();
-+    let mut msg = format!("xerj {command}: query failed against {url}/{pattern}: {err}");
-+    let lower = err.to_ascii_lowercase();
-+    if lower.contains("index_not_found") || lower.contains("no such index") {
-+        msg.push_str(
-+            "\n(is the prefix right? `xerj autoindex` writes 'ax' by default — \
-+             pass --prefix if you indexed under another.)",
-+        );
+@@ -59,11 +59,24 @@
+     if ($tag -notmatch '^v') { $tag = "v$tag" }  # release tags are v-prefixed
+   } else {
+     Write-Step "resolving latest release of $Repo..."
++    # Prefer github.com /releases/latest redirect (no api.github.com rate limit).
+     try {
+-      $rel = Invoke-RestMethod -UseBasicParsing -Uri "https://api.github.com/repos/$Repo/releases/latest"
+-      $tag = $rel.tag_name
++      $resp = Invoke-WebRequest -UseBasicParsing -MaximumRedirection 0 -Uri "https://github.com/$Repo/releases/latest" -ErrorAction SilentlyContinue
+     } catch {
+-      Fail "could not resolve the latest release ($($_.Exception.Message)) - set `$env:XERJ_VERSION='vX.Y.Z' (see https://github.com/$Repo/releases)"
++      # 302 is expected; PowerShell surfaces it as an error when MaxRedirection=0.
++      $resp = $_.Exception.Response
 +    }
-+    msg
-+}
-+
- /// Default `--full` width, and the width suggested when the user asked for 0.
- const DEFAULT_FULL_CHARS: usize = 600;
- 
-@@ -857,11 +881,7 @@ pub fn run_search_cli() -> i32 {
-     let mut resp = match es.search(&pattern, &body) {
-         Ok(v) => v,
-         Err(e) => {
--            eprintln!(
--                "xerj search: query failed against {url}/{pattern}: {e}\n\
--                 (is the prefix right? `xerj autoindex` writes 'ax' by default — \
--                 pass --prefix if you indexed under another.)"
--            );
-+            eprintln!("{}", query_failure_message("search", &url, &pattern, e));
-             return 1;
-         }
-     };
-@@ -943,6 +963,52 @@ mod tests {
-     use super::*;
-     use xerj_common::code_query::normalize_code_search_query;
- 
-+    /// HTTP 400 `For input string` is a numeric field, not a wrong prefix.
-+    /// A missing index still gets the prefix sentence.
-+    #[test]
-+    fn query_failure_blames_the_prefix_only_when_the_index_is_missing() {
-+        let numeric = query_failure_message(
-+            "search",
-+            "http://127.0.0.1:9200",
-+            "ax-*",
-+            "search /ax-* HTTP 400: {\"error\":{\"reason\":\"For input string: \\\"fingerprint dedupe comment\\\"\"}}",
-+        );
-+        assert!(numeric.contains("For input string"), "{numeric}");
-+        assert!(
-+            !numeric.contains("is the prefix right"),
-+            "a parse failure must not blame --prefix, got: {numeric}"
-+        );
-+        assert!(
-+            numeric.starts_with("xerj search: query failed against http://127.0.0.1:9200/ax-*: ")
-+        );
-+
-+        let missing = query_failure_message(
-+            "def",
-+            "http://127.0.0.1:9200",
-+            "nope-*",
-+            "search /nope-* HTTP 404: {\"error\":{\"type\":\"index_not_found_exception\"}}",
-+        );
-+        assert!(missing.contains("index_not_found_exception"), "{missing}");
-+        assert!(missing.contains("is the prefix right"), "{missing}");
-+        assert!(missing.contains("xerj def:"), "{missing}");
-+
-+        let phrase = query_failure_message(
-+            "search",
-+            "http://localhost:9200",
-+            "ax-*",
-+            "no such index: ax-missing",
-+        );
-+        assert!(phrase.contains("is the prefix right"), "{phrase}");
-+
-+        let other = query_failure_message(
-+            "search",
-+            "http://localhost:9200",
-+            "ax-*",
-+            "search /ax-* HTTP 403: {\"error\":{\"type\":\"security_exception\"}}",
-+        );
-+        assert!(!other.contains("is the prefix right"), "{other}");
++    if ($resp -and $resp.Headers -and $resp.Headers.Location) {
++      $loc = [string]$resp.Headers.Location
++      if ($loc -match '/tag/([^/\s]+)$') { $tag = $Matches[1] }
 +    }
-+
-     #[test]
-     fn search_refuses_a_mode_flag_and_names_the_embedder() {
-         for asked in ["semantic", "hybrid", "bm25"] {
++    if (-not $tag) {
++      try {
++        $rel = Invoke-RestMethod -UseBasicParsing -Uri "https://api.github.com/repos/$Repo/releases/latest"
++        $tag = $rel.tag_name
++      } catch {
++        Fail "could not resolve the latest release ($($_.Exception.Message)) - set `$env:XERJ_VERSION='vX.Y.Z' (see https://github.com/$Repo/releases)"
++      }
+     }
+     if (-not $tag) { Fail "could not resolve the latest release - set `$env:XERJ_VERSION='vX.Y.Z'" }
+   }
 ```
 
 ---
 
-### Incident Patch 3: `d060f1c8` (2026-10-18)
-**Commit Message**: fix(cli): say that default search ranking is lexical (#1655)
+### Incident Patch 3: `9db3dbfb` (2026-10-19)
+**Commit Message**: fix(cli): xerj --help feedback blurb names --submit (#1849)
 
-search, def, and code help described retrieval and never said what
-the ranker does. Agents treated the default as a neural reading of
-the code and reported natural-language misses as a broken index.
+Squash-merged by Xerj Merger at c5dab27534f03d31457cc719bd784225de741553 after Build + Test passed.
 
-Each usage string now says the default ranking matches the words
-typed and is not a neural reading. xerj code also says --mode
-semantic and --mode hybrid embed with lexical feature hashing unless
-the node was started with --embed-mode neural.
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: xerj-org <[REDACTED_EMAIL]>
-
-**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +10/-2)
+**File**: `engine/crates/xerj-server/src/main.rs` (modified, +4/-4)
 ```diff
-@@ -17,13 +17,13 @@ use crate::esclient::Es;
- use crate::search::{
-     corpus_snapshot, empty_lookup_report, field_lookup_ok, hit_location, is_identifier,
-     mapped_property_names, numeric_property_names, parse_count_arg, passage_text,
--    query_failure_message,
--    weighted_query_fields,
-+    query_failure_message, weighted_query_fields,
- };
- use serde_json::{json, Value};
- 
- const USAGE: &str = "\
- xerj def — find where a symbol is defined (go-to-definition, no scripts)
-+Default ranking is lexical: it matches the words you typed, and it is not a neural reading of the code.
- 
- USAGE:
-     xerj def [OPTIONS] \"<symbol or capability>\"
-@@ -571,6 +571,14 @@ fn unique_locations(hits: Vec<Value>) -> Vec<Value> {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn help_says_the_default_ranking_is_lexical() {
-+        assert!(
-+            USAGE.contains("Default ranking is lexical") && USAGE.contains("not a neural reading"),
-+            "{USAGE}"
-+        );
-+    }
-+
-     #[test]
-     fn declaration_preview_keeps_a_later_constant_and_caps_a_huge_line() {
-         let sig = "pub fn open(\n    path: &Path,\n    mode: u32,\n) -> Result<File> {\n    const MODE_MASK: u32 = 0o777;\n    let _ = path;\n";
-```
-
-**File**: `engine/crates/xerj-autoindex/src/search.rs` (modified, +9/-0)
-```diff
-@@ -16,6 +16,7 @@ use xerj_common::xccode::demote_catalog_noise;
- 
- const USAGE: &str = "\
- xerj search — retrieve code from a running XERJ node (reference coding, no scripts)
-+Default ranking is lexical: it matches the words you typed, and it is not a neural reading of the code.
- 
- USAGE:
-     xerj search [OPTIONS] \"<what you need, in plain words>\"
-@@ -963,6 +964,14 @@ mod tests {
-     use super::*;
-     use xerj_common::code_query::normalize_code_search_query;
- 
-+    #[test]
-+    fn help_says_the_default_ranking_is_lexical() {
-+        assert!(
-+            USAGE.contains("Default ranking is lexical") && USAGE.contains("not a neural reading"),
-+            "{USAGE}"
-+        );
-+    }
-+
-     /// HTTP 400 `For input string` is a numeric field, not a wrong prefix.
-     /// A missing index still gets the prefix sentence.
-     #[test]
-```
-
-**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +10/-0)
-```diff
-@@ -119,6 +119,10 @@ const CODE_USAGE: &str =
- retrieval over a reference corpus (see `xerj corpus list`):
-   -k N            passages to return (default 5)
-   --mode MODE     bm25 (default, measured 12/12 top-3), semantic, or hybrid
-+                  Default ranking is lexical: it matches the words you typed,
-+                  and it is not a neural reading of the code. --mode semantic
-+                  and --mode hybrid embed with lexical feature hashing unless
-+                  the node was started with --embed-mode neural.
-   --hybrid        shorthand for --mode hybrid
-   --lang LG       filter to one language field (e.g. rust, go)
-   --full N        max chars per passage (default 800; 0 = file head only)
-@@ -2189,6 +2193,12 @@ mod tests {
-             assert!(CODE_USAGE.contains(f), "{f} missing from usage");
-         }
-         assert!(CORPUS_USAGE.contains("--from"));
-+        assert!(
-+            CODE_USAGE.contains("Default ranking is lexical")
-+                && CODE_USAGE.contains("not a neural reading")
-+                && CODE_USAGE.contains("--embed-mode neural"),
-+            "{CODE_USAGE}"
-+        );
-     }
- 
-     /// The `--from` name swap: explicit beats the manifest, the manifest
+@@ -297,8 +297,8 @@ fn help_text(feedback: bool) -> String {
+          \x20\x20\x20\x20xerj share <index|folder>           give someone read-only search over one\n\
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20index: link + passcode + expiry (see xerj\n\
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20share --help)\n\
+-         \x20\x20\x20\x20xerj feedback [OPTIONS]             draft the agent field report (and open its\n\
+-         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20PR) — see xerj feedback --help\n\
++         \x20\x20\x20\x20xerj feedback [OPTIONS]             draft or --submit the agent field report —\n\
++         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20see xerj feedback --help\n\
+          \n\
+          OPTIONS (for `xerj [OPTIONS]`, the bare server start):\n\
+          \x20\x20\x20\x20--config,   -c <PATH>  Path to TOML config file. CORS is off by default (no\n\
+@@ -414,8 +414,8 @@ fn help_text(feedback: bool) -> String {
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Proxies to a node you already started — set XERJ_URL or\n\
+          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--url (see xerj mcp --help)\n\
+          \x20\x20\x20\x20xerj feedback   [opts]          draft the agent field report XERJ asks every agent to\n\
+-         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20file, auto-filling version/OS/what-was-indexed; --open-pr\n\
+-         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20files it, --dry-run just prints (see xerj feedback --help)\n\
++         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20file; --submit sends it (GitHub PR first, API fallback),\n\
++         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--dry-run just prints (see xerj feedback --help)\n\
+          \n\
+          SEARCHING A CODEBASE:\n\
+          \x20\x20\x20\x20A search hit returns the whole indexed document, which for source code is the\n\
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1807** (closed): chore(seo): refresh the sitemap lastmod on / and /for-agents (@omertahaoztop)
-- **PR #1805** (closed): fix(query): bind bare + and | in simple_query_string (#1751) (@omertahaoztop)
-- **PR #1795** (2026-10-19): docs(roadmap): add 1.0 feature shortlist (#1785-#1794) (@xerj-org)
-- **PR #1784** (2026-10-19): fix(hub): an explicit `xerj hub pull` fetches a pack over the auto-pull cap (@xerj-org)
-- **PR #1778** (2026-10-19): fix: repair three merge-skew compile/test breaks on main (autoindex + hub) (@xerj-org)
-- **PR #1777** (2026-10-18): fix(hub): consumer gate passes defs-0 packs on the question check alone (@xerj-org)
+- **PR #1902** (2026-10-19): hub contributors: say the corpus is the whole repo at the pin (#1894) (@xerj-org)
+- **PR #1901** (2026-10-19): hub contributors: say a corpus in licence review is not installable yet (#1890) (@xerj-org)
+- **PR #1900** (2026-10-19): hub llms.txt: busy-port case in step 2, and which port --url takes (#1891) (@xerj-org)
+- **PR #1899** (2026-10-19): hub site: real 404 for unknown paths, JSON 404 under /api (#1895) (@xerj-org)
+- **PR #1898** (2026-10-19): hub: add swift-book and swift-evolution corpora (@xerj-org)
+- **PR #1887** (2026-10-19): hub site: Agent score panel on corpus pages (separate from hub stars) + sort by agent score (@xerj-org)
 
 ---
 
@@ -2337,62 +2337,49 @@ Co-authored-by: xerj-org <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feedback): fork --open-pr when the account cannot push (#1771)
+## X. deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#186
 
 **RULE**:
-When implementing operations in `engine/crates/xerj-autoindex/src/feedback.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b809437d`: feedback): fork --open-pr when the account cannot push (#1771). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e9a4fd5`: deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#1869). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-autoindex/src/feedback.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/.cargo/audit.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "# Ready-to-run — files ONLY the field report, nothing else.\n\
-         # Run these in a clone of xerj-org/xerj, not in the project you are working in.\n\
-         git clone https://github.com/xerj-org/xerj.git\n\
-         cd xerj\n\
-         gh repo fork xerj-org/xerj --remote --remote-name xerj-fork\n\
-         git push -u xerj-fork {branch}\n\
-         gh pr create --repo xerj-org/xerj --base main --head YOUR_LOGIN:{branch} \\\n\
-         \x20 --body \"Field report only; see {relpath}.\"",
-    let normalized = normalize_origin_url(url);
-    XERJ_ORIGIN_URLS.contains(&normalized.as_str())
-}
+# cargo-audit configuration (read by `cargo audit` run from engine/, as CI does).
+#
+# Policy: every RUSTSEC *vulnerability* fails CI unless it is listed here with
+# a justification that says why it cannot reach us AND what removes the entry.
+# Keep this list as short as possible; delete an entry as soon as it is fixable.
 
-/// Lower-case, drop a trailing `.git` and slash, and drop `user:secret@` from
-/// an `https://` or `ssh://` URL. An authenticated clone of xerj-org/xerj is
-/// still that repository; the credential must not change the answer, and it
-/// must not be printed.
-fn normalize_origin_url(url: &str) -> String {
-    strip_credential_userinfo(normalized)
-}
-
-fn strip_credential_userinfo(url: &str) -> String {
-    let Some(scheme_end) = url.find("://") else {
-        return url.to_string();
-    };
-    let after = &url[scheme_end + 3..];
-    let Some(slash) = after.find('/') else {
-        retur
+[advisories]
+ignore = [
+    # zip < 9.0.0 — RUSTSEC-2026-0367 (SUID/SGID bits preserved on extract),
+    # RUSTSEC-2026-0368 (extract creates symlinks pointing outside the dest dir),
+    # RUSTSEC-2026-0369 (extract applies Unix permissions through symlinks).
+    #
+    # Every zip we depend on directly or through autoindex (calamine 0.37,
+    # office_oxide 0.1.15, xerj-autoindex itself) is on the fixed zip 9.x line.
+    # The only remaining vulnerable copy is zip 7.2.0, pulled in by
+    # candle-core 0.9.2 (optional `neural` / `decide-local` features of
+    # xerj-ai). No candle-core release depends on zip >= 9 (latest 0.11.0 still
+    # requires zip ^8.6), so it cannot be upgraded yet.
+    #
+    # Not reachable: all three advisories are in `ZipArchive::extract` /
+    # `ZipStreamReader::extract` (writing archive entries to disk). candle-core
+    # only opens .np
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        "# Ready-to-run — files ONLY the field report, nothing else:\n\
-         git push -u origin {branch}\n\
-         gh pr create --repo xerj-org/xerj --base main --head {branch} \\\n\
-         \x20 --body \"Written by an AI agent on behalf of a human. Field report only; see {relpath}.\"",
-    XERJ_ORIGIN_URLS.contains(&normalized)
-            Some(url) => format!("{url:?}"),
-             `gh pr create --repo xerj-org/xerj --head <your-login>:{branch}`."
-    // A `gh` that cannot open the PR turns a committed branch into a dead end.
-    // Say so and hand over the commands instead.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b809437d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e9a4fd5` are properly handled with clean fallback behavior.

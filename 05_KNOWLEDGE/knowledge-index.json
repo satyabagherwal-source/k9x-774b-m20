@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:22:07.934Z",
-  "total_verified_learnings": 962,
+  "last_updated": "2026-10-19T23:28:26.925Z",
+  "total_verified_learnings": 964,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3758,22 +3758,45 @@
     "learn-github-blackjacx-wwdc": {
       "learning_id": "learn-github-blackjacx-wwdc",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "blackjacx-wwdc",
+      "source": "Blackjacx/WWDC",
+      "repository": "Blackjacx/WWDC",
       "slug": "blackjacx-wwdc",
       "platform": "github",
       "source_url": "https://github.com/Blackjacx/WWDC",
-      "source_version": "HEAD",
-      "content_hash": "a30a762fe62ceab6331f608a376fd936356a2852a324b7af25bf0acafd8a8480",
+      "source_version": "4973be7a",
+      "content_hash": "4aed7f518cb963570bcab3934172a9f390e17d82a32434fb518eb7680ff47ed8",
       "dossier_path": "07_PROJECT_LEARNING/blackjacx-wwdc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/blackjacx-wwdc-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2891,
+          "title": "[Shell Variable Quoting Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2892,
+          "title": "[Path Sanitization Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2893,
+          "title": "[CI Checkout Depth Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.094Z"
+      "verified_at": "2026-10-19T23:28:25.523Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-blazickjp-arxiv-mcp-server": {
       "learning_id": "learn-github-blazickjp-arxiv-mcp-server",
@@ -35274,14 +35297,19 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "3a20aa84",
-      "content_hash": "bf12ff01a9294ab065ff777685f9fff73a8d67078a6cd5a5dafb6c79c8fd9ca3",
+      "source_version": "c8af0940",
+      "content_hash": "e079c61f9aa2c11e26fdc9b44683836a48ee631dd832d2dece5008ec8ba13ffa",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
         {
           "number": 1856,
           "title": "classify mysql lock wait timeout as retry recoverable (#4916)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2890,
+          "title": "(patch): CI fix timeout on failed dep startup (#4935)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35290,7 +35318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:32:53.881Z",
+      "verified_at": "2026-10-19T23:28:22.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45252,8 +45280,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "83c6778f",
-      "content_hash": "9a2aebf20eb56c835eb1a0f2e568c2c35ce635c902dc3d2fcfeee0778b1ff201",
+      "source_version": "11479fb9",
+      "content_hash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -45266,6 +45294,11 @@
           "number": 2522,
           "title": "feedback): fork --open-pr when the account cannot push (#1771)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2894,
+          "title": "deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#186",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45273,7 +45306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:08:18.722Z",
+      "verified_at": "2026-10-19T23:28:26.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57688,20 +57721,35 @@
     "learn-github-syntax-tree-hast-util-from-html": {
       "learning_id": "learn-github-syntax-tree-hast-util-from-html",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "syntax-tree/hast-util-from-html",
       "repository": "syntax-tree/hast-util-from-html",
       "slug": "syntax-tree-hast-util-from-html",
       "platform": "github",
       "source_url": "https://github.com/syntax-tree/hast-util-from-html",
-      "source_version": "main",
-      "content_hash": "d8cf3838ea3cae364917930b0d70f19fe38cfd22fb5d7e36a9eafdef528d5b77",
+      "source_version": "1ade8935",
+      "content_hash": "2990cfc6a5ea9337b01d3badad58bc33072845b89d2e99cedd5eabceff9f1d48",
       "dossier_path": "07_PROJECT_LEARNING/syntax-tree-hast-util-from-html-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/syntax-tree-hast-util-from-html-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2889,
+          "title": "Change to require Node.js 16",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:28:17.405Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-syntax-tree-hast-util-to-html": {
       "learning_id": "learn-github-syntax-tree-hast-util-to-html",
@@ -94415,6 +94463,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:22:07.918Z"
+    },
+    "rule-2889": {
+      "learning_id": "rule-2889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2889,
+      "title": "Change to require Node.js 16",
+      "source_url": "https://github.com/syntax-tree/hast-util-from-html",
+      "source_version": "1ade8935",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:28:17.405Z"
+    },
+    "rule-2890": {
+      "learning_id": "rule-2890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2890,
+      "title": "(patch): CI fix timeout on failed dep startup (#4935)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "c8af0940",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:28:22.472Z"
+    },
+    "rule-2891": {
+      "learning_id": "rule-2891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2891,
+      "title": "[Shell Variable Quoting Rule]",
+      "source_url": "https://github.com/Blackjacx/WWDC",
+      "source_version": "4973be7a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:28:25.523Z"
+    },
+    "rule-2892": {
+      "learning_id": "rule-2892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2892,
+      "title": "[Path Sanitization Rule]",
+      "source_url": "https://github.com/Blackjacx/WWDC",
+      "source_version": "4973be7a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:28:25.523Z"
+    },
+    "rule-2893": {
+      "learning_id": "rule-2893",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2893,
+      "title": "[CI Checkout Depth Rule]",
+      "source_url": "https://github.com/Blackjacx/WWDC",
+      "source_version": "4973be7a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:28:25.523Z"
+    },
+    "rule-2894": {
+      "learning_id": "rule-2894",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2894,
+      "title": "deps): zip 9 for RUSTSEC-2026-0367/0368/0369 (cargo-audit red on every PR) (#186",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "11479fb9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:28:26.908Z"
     }
   },
   "aliases": {

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-P5FZ",
-    "timestamp": "2026-10-19T07:29:49.775Z",
-    "repository": "flux-iac/tofu-controller",
-    "learningId": "learn-github-flux-iac-tofu-controller",
-    "contentHash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-045G",
-    "timestamp": "2026-10-19T07:38:21.316Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "b65b3f8fa8520c8726b10604e76eeabd2f150a0cfb0acf29dda7c436c465561a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0B7S",
-    "timestamp": "2026-10-19T07:38:30.472Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0EUN",
-    "timestamp": "2026-10-19T07:38:35.183Z",
-    "repository": "apollographql/apollo-kotlin",
-    "learningId": "learn-github-apollographql-apollo-kotlin",
-    "contentHash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-2QX8",
     "timestamp": "2026-10-19T07:40:24.140Z",
     "repository": "bvaughn/react-virtualized",
@@ -7492,6 +7432,66 @@
     "contentHash": "8dd436933451ea5a18af95467e1bd25c7a370b3dd5f9d499864d3f115df71fa8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XQOA",
+    "timestamp": "2026-10-19T23:28:17.482Z",
+    "repository": "syntax-tree/hast-util-from-html",
+    "learningId": "learn-github-syntax-tree-hast-util-from-html",
+    "contentHash": "2990cfc6a5ea9337b01d3badad58bc33072845b89d2e99cedd5eabceff9f1d48",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XUKM",
+    "timestamp": "2026-10-19T23:28:22.534Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "e079c61f9aa2c11e26fdc9b44683836a48ee631dd832d2dece5008ec8ba13ffa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XWX9",
+    "timestamp": "2026-10-19T23:28:25.581Z",
+    "repository": "Blackjacx/WWDC",
+    "learningId": "learn-github-blackjacx-wwdc",
+    "contentHash": "4aed7f518cb963570bcab3934172a9f390e17d82a32434fb518eb7680ff47ed8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XXZT",
+    "timestamp": "2026-10-19T23:28:26.969Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

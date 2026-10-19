@@ -3564,3 +3564,7 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3c67eeea` | Multi-dimensional audit evidence | 2026-10-19T23:15:45.589Z |
 | `learn-github-nalexn-viewinspector` | `https://github.com/nalexn/ViewInspector` | `4d5e732c` | Multi-dimensional audit evidence | 2026-10-19T23:21:59.234Z |
 | `learn-github-rehypejs-rehype` | `https://github.com/rehypejs/rehype` | `cae74c7f` | Multi-dimensional audit evidence | 2026-10-19T23:22:08.014Z |
+| `learn-github-syntax-tree-hast-util-from-html` | `https://github.com/syntax-tree/hast-util-from-html` | `1ade8935` | Multi-dimensional audit evidence | 2026-10-19T23:28:17.485Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `c8af0940` | Multi-dimensional audit evidence | 2026-10-19T23:28:22.536Z |
+| `learn-github-blackjacx-wwdc` | `https://github.com/Blackjacx/WWDC` | `4973be7a` | Multi-dimensional audit evidence | 2026-10-19T23:28:25.583Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `11479fb9` | Multi-dimensional audit evidence | 2026-10-19T23:28:26.972Z |

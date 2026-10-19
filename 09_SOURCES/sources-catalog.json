@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "83c6778f",
+    "sourceVersion": "11479fb9",
     "license": "Apache-2.0",
-    "contentHash": "9a2aebf20eb56c835eb1a0f2e568c2c35ce635c902dc3d2fcfeee0778b1ff201",
-    "lastHarvestedAt": "2026-10-19T11:08:18.778Z",
+    "contentHash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
+    "lastHarvestedAt": "2026-10-19T23:28:26.972Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "3a20aa84",
+    "sourceVersion": "c8af0940",
     "license": "AGPL-3.0",
-    "contentHash": "bf12ff01a9294ab065ff777685f9fff73a8d67078a6cd5a5dafb6c79c8fd9ca3",
-    "lastHarvestedAt": "2026-10-18T23:32:53.909Z",
+    "contentHash": "e079c61f9aa2c11e26fdc9b44683836a48ee631dd832d2dece5008ec8ba13ffa",
+    "lastHarvestedAt": "2026-10-19T23:28:22.536Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -9468,5 +9468,25 @@
     "contentHash": "8dd436933451ea5a18af95467e1bd25c7a370b3dd5f9d499864d3f115df71fa8",
     "lastHarvestedAt": "2026-10-19T23:22:08.014Z",
     "learningId": "learn-github-rehypejs-rehype"
+  },
+  "syntax-tree-hast-util-from-html": {
+    "repository": "syntax-tree/hast-util-from-html",
+    "platform": "github",
+    "sourceUrl": "https://github.com/syntax-tree/hast-util-from-html",
+    "sourceVersion": "1ade8935",
+    "license": "MIT",
+    "contentHash": "2990cfc6a5ea9337b01d3badad58bc33072845b89d2e99cedd5eabceff9f1d48",
+    "lastHarvestedAt": "2026-10-19T23:28:17.485Z",
+    "learningId": "learn-github-syntax-tree-hast-util-from-html"
+  },
+  "blackjacx-wwdc": {
+    "repository": "Blackjacx/WWDC",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Blackjacx/WWDC",
+    "sourceVersion": "4973be7a",
+    "license": "MIT",
+    "contentHash": "4aed7f518cb963570bcab3934172a9f390e17d82a32434fb518eb7680ff47ed8",
+    "lastHarvestedAt": "2026-10-19T23:28:25.583Z",
+    "learningId": "learn-github-blackjacx-wwdc"
   }
 }

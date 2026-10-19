@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T23:22:08.022Z",
+  "last_updated": "2026-10-19T23:28:26.978Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4279,14 +4279,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "9a2aebf20eb56c835eb1a0f2e568c2c35ce635c902dc3d2fcfeee0778b1ff201",
-      "verified_at": "2026-10-19T11:08:18.784Z",
+      "content_hash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
+      "verified_at": "2026-10-19T23:28:26.978Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:08:18.784Z"
+      "last_updated": "2026-10-19T23:28:26.978Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -5479,14 +5479,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "bf12ff01a9294ab065ff777685f9fff73a8d67078a6cd5a5dafb6c79c8fd9ca3",
-      "verified_at": "2026-10-18T23:32:53.914Z",
+      "content_hash": "e079c61f9aa2c11e26fdc9b44683836a48ee631dd832d2dece5008ec8ba13ffa",
+      "verified_at": "2026-10-19T23:28:22.543Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:32:53.914Z"
+      "last_updated": "2026-10-19T23:28:22.543Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -14247,6 +14247,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T23:22:08.021Z"
+    },
+    "syntax-tree/hast-util-from-html": {
+      "repository": "syntax-tree/hast-util-from-html",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-syntax-tree-hast-util-from-html",
+      "content_hash": "2990cfc6a5ea9337b01d3badad58bc33072845b89d2e99cedd5eabceff9f1d48",
+      "verified_at": "2026-10-19T23:28:17.491Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:28:17.491Z"
+    },
+    "Blackjacx/WWDC": {
+      "repository": "Blackjacx/WWDC",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-blackjacx-wwdc",
+      "content_hash": "4aed7f518cb963570bcab3934172a9f390e17d82a32434fb518eb7680ff47ed8",
+      "verified_at": "2026-10-19T23:28:25.590Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:28:25.590Z"
     }
   },
   "repos": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `3a20aa84`  
+> **Source Version**: `c8af0940`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:32:53.775Z  
+> **Timestamp**: 2026-10-19T23:28:22.197Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:32:53.316Z  
+> **Harvest Timestamp**: 2026-10-19T23:28:21.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3307 stars
+- **Stars / Engagement**: 3309 stars
 
 ---
 
@@ -1860,789 +1860,305 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d94f8758` (2026-10-13)
-**Commit Message**: classify mysql lock wait timeout as retry recoverable (#4916)
+### Incident Patch 1: `eb61e655` (2026-10-19)
+**Commit Message**: (patch): CI fix timeout on failed dep startup (#4935)
 
-MySQL `ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting
-transaction` (`ER_LOCK_WAIT_TIMEOUT`) is transient lock contention on
-the source. It was classified as `OTHER` and paged on-call, though the
-pipe recovered on retry.
+This commit bounds the CI startup timeout and ensures that jobs don't
+continue to progress when there is a startup failture and eat up 60
+minutes of runner time incuring extra cost
 
-Classify as `ErrorRetryRecoverable`, alongside the other transient MySQL
-errors.
-Resolves: DBI-1213
+---------
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+Co-authored-by: Pablo Francisco Pérez Hidalgo <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `flow/alerting/classifier.go` (modified, +1/-0)
+**File**: `.github/workflows/flow.yml` (modified, +2/-1)
 ```diff
-@@ -961,6 +961,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 		case 1943: // ER_DUPLICATE_GTID_DOMAIN (MariaDB)
- 			return ErrorNotifyBadGTIDSetup, myErrorInfo
- 		case 5, // ERR_OUT_OF_MEMORY
-+			1205, // ER_LOCK_WAIT_TIMEOUT, transient lock contention on source
- 			1317: // ER_QUERY_INTERRUPTED
- 			return ErrorRetryRecoverable, myErrorInfo
- 		default:
+@@ -125,7 +125,8 @@ jobs:
+ 
+   flow_test:
+     name: ${{ matrix.target.label }}
+-    needs: [gate]
++    # Validate the common code before allocating runners for every permutation.
++    needs: [gate, unit_tests, test_selection_coverage]
+     strategy:
+       fail-fast: false
+       matrix:
 ```
 
-**File**: `flow/alerting/classifier_test.go` (modified, +15/-0)
+**File**: `.github/workflows/tilt-flow.yml` (modified, +10/-8)
 ```diff
-@@ -1510,6 +1510,21 @@ func TestMySQLBinlogEventExceededMaxAllowedPacket(t *testing.T) {
- 	}, errInfo, "Unexpected error info")
- }
+@@ -385,6 +385,9 @@ jobs:
+       # reload the individual resource with `tilt trigger` and wait again, up to
+       # CORE_SERVICE_RECOVERY_ATTEMPTS times before failing the run.
+       - name: Bring up core PeerDB services (with recovery)
++        # Bound startup separately so stalled dependencies cannot consume the
++        # entire job budget, and leave time for diagnostics and artifact upload.
++        timeout-minutes: 5
+         run: |
+           set -uo pipefail
  
-+func TestMySQLLockWaitTimeout(t *testing.T) {
-+	mysqlErr := &mysql.MyError{
-+		Code:    1205, // ER_LOCK_WAIT_TIMEOUT
-+		State:   "HY000",
-+		Message: "Lock wait timeout exceeded; try restarting transaction",
-+	}
-+	err := exceptions.NewMySQLExecuteError(mysqlErr)
-+	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("connection to source down: %w", err))
-+	assert.Equal(t, ErrorRetryRecoverable, errorClass, "Unexpected error class")
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceMySQL,
-+		Code:   "1205",
-+	}, errInfo, "Unexpected error info")
-+}
-+
- func TestMySQLNoSpaceLeftOnDevice(t *testing.T) {
- 	mysqlErr := &mysql.MyError{
- 		Code:    14, // EE_CANT_CHSIZE
+@@ -452,16 +455,15 @@ jobs:
+             return 1
+           }
+ 
+-          rc=0
+           for res in $MAIN_SERVICES; do
+-            wait_or_recover "$res" || rc=1
++            # All of these services are required. In particular, the API and
++            # workers cannot start after flow-migrate has failed.
++            if ! wait_or_recover "$res"; then
++              echo "::error::Required core service $res could not be recovered; stopping startup."
++              cat "$RUNNER_TEMP/tilt-startup.log" || true
++              exit 1
++            fi
+           done
+-
+-          if [ "$rc" -ne 0 ]; then
+-            echo "::error::One or more core PeerDB services could not be recovered."
+-            cat "$RUNNER_TEMP/tilt-startup.log" || true
+-            exit 1
+-          fi
+           echo "Core PeerDB services are up."
+ 
+       - name: Stop capturing Tilt startup logs
 ```
 
 ---
 
-### Incident Patch 2: `98579bc2` (2026-10-09)
-**Commit Message**: Bugfix for PG domain type handling during CDC (#4903)
+### Incident Patch 2: `c8af0940` (2026-10-19)
+**Commit Message**: fix(postgres): route a child of several mirrored tables to the same parent (#4932)
 
-PG supports [domain
-type](https://www.postgresql.org/docs/current/domains.html) which is a
-user-defined data type based on an underlying type. e.g.
+Follows #4930. This is the routing half of the change reviewed on the
+fork; the deduplication of child-only column deltas is #4933. The two
+are independent and can merge in either order.
 
-```
-create domain mydomain as bytea;
-CREATE TABLE IF NOT EXISTS test_domain (id INT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY, val bytea, val2 mydomain);
-```
+## Problem
 
-During setup, we store `val2`'s type as type bytea into the catalog,
-since that is what the field descriptor returns:
+A child of several mirrored tables (`CREATE TABLE c () INHERITS (a, b)`)
+could reach a different destination depending on how CDC found it:
 
-```
-postgres=# select val, val2 from test_domain LIMIT 0 \gdesc
- Column | Type
---------+-------
- val    | bytea
- val2   | bytea
-```
+- At pull start, `getChildToParentRelIDMap` reads every `(parent,
+child)` row of `pg_inherits` without an order and keeps the last one per
+child.
+- At runtime discovery, `checkIfUnknownTableInherits` takes the first
+parent of a qualifying relkind, mirrored or not. When that parent is not
+in the mirror, the child's changes are not replicated.
 
-During logical replication, the relation message carries val2's the
-_domain_ type id, which is different from bytea's type id; PeerDB does
-not recognize that ID as bytea, so it treats the value as a string, and
-the `\x...` text is stored in the raw table as is without being decoded
-into bytes
+So the child's changes could move to another mirrored parent after a
+restart, or stop.
 
-```
-postgres=#  SELECT a.atttypid AS column_type_id, a.atttypid::regtype AS column_type,
-            t.typtype, t.typbasetype AS base_type_id, t.typbasetype::regtype AS base_type
-     FROM pg_attribute a JOIN pg_type t ON t.oid = a.atttypid
-     WHERE a.attrelid = 'test_domain'::regclas
+## Fix
 
-**File**: `flow/connectors/postgres/cdc.go` (modified, +17/-3)
+- Both now consider only the mirrored parents with a qualifying relkind,
+and pick the one with the lowest `pg_inherits.inhseqno`, which is the
+order of the `INHERITS` list.
+- Runtime discovery also records that parent's relkind. It was missing
+for a parent that had no children when the pull started, and the
+`publish_via_partition_ro
+
+**File**: `docs/deep-dive-design-document.md` (modified, +5/-2)
 ```diff
-@@ -394,6 +394,8 @@ func (p *PostgresCDCSource) decodeColumnData(
- 	var parsedData any
- 	var err error
+@@ -152,8 +152,11 @@ relation IDs from the mirrored parent:
+ childToParentRelIDMapping map[uint32]uint32  // child relid → parent relid
+ ```
  
-+	dataType, typmod = pkg_pg.ResolveDataType(dataType, typmod, customTypeMapping)
-+
- 	// Special handling for JSON types to use relaxed number parsing
- 	if dataType == pgtype.JSONOID || dataType == pgtype.JSONBOID {
- 		var text pgtype.Text
-@@ -1352,9 +1354,16 @@ func processRelationMessage[Items model.Items](
- 	for _, column := range currRel.Columns {
- 		switch prevSchema.System {
- 		case protos.TypeSystem_Q:
--			qKind := p.postgresOIDToQValueKind(column.DataType, customTypeMapping, p.internalVersion)
-+			if _, err := pkg_pg.OIDToName(p.typeMap, column.DataType, customTypeMapping); err != nil {
-+				p.logger.Warn("unknown type oid in relation message, cached custom type mapping may be stale",
-+					slog.String("tableName", currRelName),
-+					slog.String("columnName", column.Name),
-+					slog.Uint64("typeOid", uint64(column.DataType)))
-+			}
-+			dataType, _ := pkg_pg.ResolveDataType(column.DataType, column.TypeModifier, customTypeMapping)
-+			qKind := p.postgresOIDToQValueKind(dataType, customTypeMapping, p.internalVersion)
- 			if qKind == types.QValueKindInvalid {
--				if typeName, ok := customTypeMapping[column.DataType]; ok {
-+				if typeName, ok := customTypeMapping[dataType]; ok {
- 					qKind = CustomTypeToQKind(typeName, p.internalVersion)
- 				}
- 			}
-@@ -1427,10 +1436,14 @@ func processRelationMessage[Items model.Items](
- 					defaultExpr = &literal
- 				}
- 			}
-+			typmod := column.TypeModifier
-+			if prevSchema.System == protos.TypeSystem_Q {
-+				_, typmod = pkg_pg.ResolveDataType(column.DataType, column.TypeModifier, customTypeMapping)
-+			}
- 			addedColumn := &protos.FieldDescription{
- 				Name:           column.Name,
- 				Type:           currRelMap[column.Name],
--				TypeModifier:   column.TypeModifier,
-+				TypeModifier:   typmod,
- 				Nullable:       !catalogInfo.notNull,
- 				TypeSchemaName: typeSchemaNameMapping[column.DataType],
- 				DefaultExpr:    defaultExpr,
-@@ -1474,6 +1487,7 @@ func processRelationMessage[Items model.Items](
- 				schemaDelta.SrcTableName))
- 		}
- 	}
-+
- 	p.relationMessageMapping[currRel.RelationID] = currRel
- 	// only log audit if there is actionable delta
- 	if len(schemaDelta.AddedColumns) > 0 {
+-`checkIfUnknownTableInherits()` translates child→parent when an unknown relation ID appears, ensuring child events
+-are attributed to the parent's table mapping.
++`getChildToParentRelIDMap()` builds the map when a pull starts and `checkIfUnknownTableInherits()` extends it
++when an unknown relation ID appears, ensuring child events are attributed to the parent's table mapping. Both
++use the same rule: the candidates are mirrored tables with a qualifying relkind, and the one with the lowest
++`pg_inherits.inhseqno` wins, so a child of several mirrored tables always goes to the same one. Only direct
++children are remapped; deeper descendants are not replicated by CDC although the initial snapshot includes them.
+ 
+ **Column layouts are per relation.** A child's tuples follow the child's own column order, which can differ from
+ the parent's and from its siblings (`ALTER TABLE ... INHERIT` only requires matching names and types, and a
 ```
 
-**File**: `flow/e2e/clickhouse_suite.go` (modified, +54/-0)
+**File**: `flow/connectors/postgres/cdc.go` (modified, +47/-25)
 ```diff
-@@ -1281,6 +1281,60 @@ func (s ClickHouseSuite) Test_Binary_Format_Base64() {
- 	s.testBinaryFormat("base64", "AAEwMTIzf/8=")
+@@ -57,7 +57,9 @@ type PostgresCDCSource struct {
+ 	// for partitioned tables, maps child relid to parent relid
+ 	childToParentRelIDMapping map[uint32]uint32
+ 	idToRelKindMap            map[uint32]byte
+-	publishViaPartitionRoot   bool
++	// relids of the tables in the mirror, the only candidates a child can be remapped to
++	mirroredRelIDs          []uint32
++	publishViaPartitionRoot bool
+ 
+ 	// for storing schema delta audit logs to catalog
+ 	catalogPool                              shared.CatalogPool
+@@ -133,9 +135,9 @@ func (c *PostgresConnector) queryPostgresClockOffset(ctx context.Context) (time.
+ 
+ // Create a new PostgresCDCSource
+ func (c *PostgresConnector) NewPostgresCDCSource(ctx context.Context, cdcConfig *PostgresCDCConfig) (*PostgresCDCSource, error) {
++	mirroredRelIDs := slices.Collect(maps.Keys(cdcConfig.SrcTableIDNameMapping))
+ 	childToParentRelIDMap, idToRelKindMap, err := getChildToParentRelIDMap(ctx,
+-		c.conn, slices.Collect(maps.Keys(cdcConfig.SrcTableIDNameMapping)),
+-		cdcConfig.HandleInheritanceForNonPartitionedTables)
++		c.conn, mirroredRelIDs, cdcConfig.HandleInheritanceForNonPartitionedTables)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error getting child to parent relid map: %w", err)
+ 	}
+@@ -174,6 +176,7 @@ func (c *PostgresConnector) NewPostgresCDCSource(ctx context.Context, cdcConfig
+ 		commitLock:                               nil,
+ 		childToParentRelIDMapping:                childToParentRelIDMap,
+ 		idToRelKindMap:                           idToRelKindMap,
++		mirroredRelIDs:                           mirroredRelIDs,
+ 		publishViaPartitionRoot:                  publishViaPartitionRoot,
+ 		catalogPool:                              cdcConfig.CatalogPool,
+ 		alerter:                                  alerting.NewAlerter(ctx, cdcConfig.CatalogPool, cdcConfig.OtelManager),
+@@ -204,23 +207,42 @@ func (p *PostgresCDCSource) getSourceSchemaForDestinationColumn(relID uint32, ta
+ 	return schemaTable.Namespace, nil
  }
  
-+// Test_PG_Domain_Bytea covers domains over bytea: table schema reports the base type,
-+// but pgoutput relation messages carry the domain's own oid
-+func (s ClickHouseSuite) Test_PG_Domain_Bytea() {
-+	if _, ok := s.source.(*PostgresSource); !ok {
-+		s.t.Skip("only applies to postgres")
-+	}
+-func getChildToParentRelIDMap(ctx context.Context,
+-	conn *pgx.Conn, parentTableOIDs []uint32, handleInheritanceForNonPartitionedTables bool,
+-) (map[uint32]uint32, map[uint32]byte, error) {
+-	relkinds := "'p'"
++// inheritanceParentRelkinds lists the relkinds a parent may have for its children to be remapped onto it:
++// partitioned tables always, plain tables only when inheritance handling is enabled.
++func inheritanceParentRelkinds(handleInheritanceForNonPartitionedTables bool) string {
+ 	if handleInheritanceForNonPartitionedTables {
+-		relkinds = "'p', 'r'"
++		return "'p', 'r'"
+ 	}
++	return "'p'"
++}
+ 
+-	query := fmt.Sprintf(`
+-		SELECT parent.oid AS parentrelid, child.oid AS childrelid, parent.relkind
+-		FROM pg_inherits
+-		JOIN pg_class parent ON pg_inherits.inhparent = parent.oid
+-		JOIN pg_class child ON pg_inherits.inhrelid = child.oid
+-		WHERE parent.relkind IN (%s) AND parent.oid=ANY($1);
+-	`, relkinds)
++// childToParentRelIDMapQuery and inheritedParentQuery must agree on which parent a child is remapped to:
++// candidates are the mirrored tables ($1 / $2) with a qualifying relkind, and the one with the lowest
++// inhseqno wins. The startup map and runtime discovery would otherwise route a child of several mirrored
++// parents differently across pulls.
++func childToParentRelIDMapQuery(handleInheritanceForNonPartitionedTables bool) string {
++	return fmt.Sprintf(`
++		SELECT DISTINCT ON (i.inhrelid) i.inhparent AS parentrelid, i.inhrelid AS childrelid, parent.relkind
++		FROM pg_inherits i
++		JOIN pg_class parent ON i.inhparent = parent.oid
++		WHERE parent.relkind IN (%s) AND i.inhparent = ANY($1)
++		ORDER BY i.inhrelid, i.inhseqno`, inheritanceParentRelkinds(handleInheritanceForNonPartitionedTables))
++}
+ 
+-	rows, err := conn.Query(ctx, query, parentTableOIDs)
++func inheritedParentQuery(handleInheritanceForNonPartitionedTables bool) string {
++	return fmt.Sprintf(`
++		SELECT i.inhparent, parent.relkind
++		FROM pg_inherits i
++		JOIN pg_class parent ON i.inhparent = parent.oid
++		WHERE i.inhrelid = $1 AND parent.relkind IN (%s) AND i.inhparent = ANY($2)
++		ORDER BY i.inhseqno
++		LIMIT 1`, inheritanceParentRelkinds(handleInheritanceForNonPartitionedTables))
++}
 +
-+	srcTableName := "test_domain_bytea"
-+	srcFullName := s.attachSchemaSuffix(srcTableName)
-+	dstTableName := "test_domain_bytea_dst"
-+	domainBytea := s.attachSchemaSuffix("dom_bytea")
-+	domainNested := s.attachSchemaSuffix("dom_bytea_nested")
++func getChildToParentRelIDMap(ctx context.Context,
++	conn *pgx.Conn, parentTableOIDs []uint32, handleInheritanceForNonPartitionedTables bool,
++) (map[uint32]uint32, map[uint32]byte, error) {
++	rows, err := conn.Query(ctx, childToParentRelIDMapQuery(handleInheritanceForNonPartitionedTables), parentTableOIDs)
+ 	if err != nil {
+ 		return nil, nil, fmt.Errorf("error querying for child to parent relid map: %w", err)
+ 	}
+@@ -1676,26 +1698,26 @@ func (p *PostgresCDCSource) checkIfUnknownTableInherits(ctx context.Context,
+ 	relID uint32,
+ ) (uint32, byte, error) {
+ 	relID = p.getParentRelIDIfPartitioned(relID)
+-	relkinds := "'p'"
+-	if p.handleInheritanceForNonPartitionedTables {
+-		relkinds = "'p', 'r'"
+-	}
+ 
++	// Relations with no mirrored parent are looked up again on each of their RelationMessages (before their
++	/
+```
+
+**File**: `flow/connectors/postgres/cdc_inheritance_test.go` (modified, +1/-0)
+```diff
+@@ -54,6 +54,7 @@ func newInheritanceTestCDCSource(t *testing.T) *PostgresCDCSource {
+ 		relationMessageMapping:       model.RelationMessageMapping{},
+ 		childToParentRelIDMapping:    map[uint32]uint32{inhChildARelID: inhParentRelID, inhChildBRelID: inhParentRelID},
+ 		idToRelKindMap:               map[uint32]byte{inhParentRelID: 'r'},
++		mirroredRelIDs:               []uint32{inhParentRelID},
+ 		hushWarnUnknownTableDetected: map[uint32]struct{}{},
+ 	}
+ }
+```
+
+**File**: `flow/e2e/clickhouse_inheritance_suite.go` (modified, +53/-0)
+```diff
+@@ -204,6 +204,59 @@ func (s ClickHouseSuite) Test_Inheritance_Divergent_Child_Layouts() {
+ 	RequireEnvCanceled(s.t, env)
+ }
+ 
++func (s ClickHouseSuite) Test_Inheritance_Child_Of_Two_Mirrored_Parents() {
++	s.inhRequirePostgres()
 +
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), "CREATE DOMAIN "+domainBytea+" AS bytea"))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		"CREATE DOMAIN "+domainNested+" AS "+domainBytea+" CHECK (octet_length(VALUE) > 0)"))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(`
-+		CREATE TABLE IF NOT EXISTS %s(
-+			id INT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY,
-+			val bytea,
-+			val_dom %s,
-+			val_dom_nested %s
-+		)`, srcFullName, domainBytea, domainNested)))
++	parent1Name, parent2Name := "inh_multi_p1", "inh_multi_p2"
++	parent1, parent2 := s.attachSchemaSuffix(parent1Name), s.attachSchemaSuffix(parent2Name)
++	dst1, dst2 := "inh_multi_p1_dst", "inh_multi_p2_dst"
++	flowJobName := s.attachSuffix("inh_multi")
++	schemaM := s.inhTenantSchema("mm")
 +
-+	testcase := []byte(binaryFormatTestcase)
-+	insertRow := fmt.Sprintf("INSERT INTO %s(val, val_dom, val_dom_nested) VALUES($1, $2, $3)", srcFullName)
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), insertRow, testcase, testcase, testcase))
++	s.inhExec(`CREATE TABLE %s (id BIGINT PRIMARY KEY, name TEXT)`, parent1)
++	s.inhExec(`CREATE TABLE %s (id BIGINT PRIMARY KEY, name TEXT)`, parent2)
++	s.inhExec(`INSERT INTO %s (id, name) VALUES (1, 'p1')`, parent1)
++	s.inhExec(`INSERT INTO %s (id, name) VALUES (2, 'p2')`, parent2)
 +
 +	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      s.attachSuffix(srcTableName),
-+		TableNameMapping: map[string]string{srcFullName: dstTableName},
++		FlowJobName:      flowJobName,
++		TableNameMapping: map[string]string{parent1: dst1, parent2: dst2},
 +		Destination:      s.Peer().Name,
 +	}
 +	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
 +	flowConnConfig.DoInitialSnapshot = true
-+	flowConnConfig.Env = map[string]string{"PEERDB_CLICKHOUSE_BINARY_FORMAT": "raw"}
 +
 +	tc := NewTemporalClient(s.t)
 +	env := ExecutePeerflow(s.t, tc, flowConnConfig)
 +	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial p1", parent1Name, dst1, "id,name")
++	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial p2", parent2Name, dst2, "id,name")
 +
-+	const cols = "id,val,val_dom,val_dom_nested"
-+	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial", srcTableName, dstTableName, cols)
++	// created after start, so the first rows go through runtime discovery; inhseqno 1 is parent1
++	s.inhExec(`CREATE TABLE %s.inh_multi_child (id BIGINT PRIMARY KEY, name TEXT) INHERITS (%s, %s)`,
++		schemaM, parent1, parent2)
++	s.inhExec(`ALTER PUBLICATION %s ADD TABLE %s.inh_multi_child`, connpostgres.GetDefaultPublicationName(flowJobName), schemaM)
++	s.inhExec(`INSERT INTO %s.inh_multi_child (id, name) VALUES (10, 'm10')`, schemaM)
++	s.inhExec(`INSERT INTO %s (id, name) VALUES (3, 'p1-3')`, parent1)
++	s.inhExec(`INSERT INTO %s (id, name) VALUES (4, 'p2-4')`, parent2)
 +
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), insertRow, testcase, testcase, testcase))
-+	updated := []byte("\xde\xad\xbe\xef")
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+		"UPDATE %s SET val = $1, val_dom = $2, val_dom_nested = $3 WHERE id = 1", srcFullName), updated, updated, updated))
-+	EnvWaitForEqualTablesWithNames(env, s, "waiting on cdc", srcTableName, dstTableName, cols)
++	// parent1's source rows include the child's, parent2's destination must only hold parent2's own rows
++	EnvWaitForEqualTablesWithNames(env, s, "child routed to first parent", parent1Name, dst1, "id,name")
++	EnvWaitForEqualTablesWithNames_Only(env, s, "child not routed to second parent", parent2Name, dst2, "id,name")
++
++	// after a restart the child comes from the startup map instead, and must still go to parent1
++	s.inhRestartReplication(env, flowJobName)
++	s.inhExec(`INSERT INTO %s.inh_multi_child (id, name) VALUES (11, 'm11')`, schemaM)
++	s.inhExec(`UPDATE %s.inh_multi_child SET name = 'm10-upd' WHERE id = 10`, schemaM)
++	s.inhExec(`INSERT INTO %s (id, name) VALUES (5, 'p2-5')`, parent2)
++
++	EnvWaitForEqualTablesWithNames(env, s, "child still routed to first parent", parent1Name, dst1, "id,name")
++	EnvWaitForEqualTablesWithNames_Only(env, s, "child still not routed to second parent", parent2Name, dst2, "id,name")
 +
 +	env.Cancel(s.t.Context())
 +	RequireEnvCanceled(s.t, env)
 +}
 +
- func (s ClickHouseSuite) Test_Types_CH() {
- 	if _, ok := s.source.(*PostgresSource); !ok {
- 		s.t.Skip("only applies to postgres")
-```
-
-**File**: `flow/pkg/postgres/oid.go` (modified, +30/-3)
-```diff
-@@ -13,13 +13,17 @@ type CustomDataType struct {
- 	Name  string
- 	Type  byte
- 	Delim byte // non-zero for array types
-+
-+	// for domain types
-+	BaseOID    uint32
-+	BaseTypmod int32
- }
+ func (s ClickHouseSuite) inhPartitionDivergentLayout(pubViaRoot bool) {
+ 	s.inhRequirePostgres()
  
- // GetCustomDataTypes fetches all types from the PostgreSQL catalog.
- // pg_catalog stays included: pgtype's map does not know every built-in (regclass, pg_lsn, oidvector, ...) and OIDToName falls back here.
- func GetCustomDataTypes(ctx context.Context, conn *pgx.Conn) (map[uint32]CustomDataType, error) {
- 	rows, err := conn.Query(ctx, `
--		SELECT t.oid, t.typname, coalesce(at.typtype, t.typtype), coalesce(at.typdelim, 0::"char")
-+		SELECT t.oid, t.typname, coalesce(at.typtype, t.typtype), coalesce(at.typdelim, 0::"char"), t.typbasetype, t.typtypmod
- 		FROM pg_catalog.pg_type t
- 		LEFT JOIN pg_catalog.pg_class c ON c.oid = t.typrelid
- 		LEFT JOIN pg_catalog.pg_type at ON at.typarray = t.oid
-@@ -30,17 +34,40 @@ func GetCustomDataTypes(ctx context.Context, conn *pgx.Conn) (map[uint32]CustomD
- 	}
- 
- 	customTypeMap := map[uint32]CustomDataType{}
--	var typeID pgtype.Uint32
-+	var typeID, baseTypeID pgtype.Uint32
- 	var cdt CustomDataType
--	if _, err := pgx.ForEachRow(rows, []any{&typeID, &cdt.Name, &cdt.Type, &cdt.Delim}, func() error {
-+	if _, err := pgx.ForEachRow(rows, []any{&typeID, &cdt.Name, &cdt.Type, &cdt.Delim, &baseTypeID, &cdt.BaseTypmod}, func() error {
-+		cdt.BaseOID = baseTypeID.Uint32
- 		customTypeMap[typeID.Uint32] = cdt
- 		return nil
- 	}); err != nil {
- 		return nil, fmt.Errorf("failed to scan into custom type mapping: %w", err)
- 	}
-+
-+	for oid, cdt := range customTypeMap {
-+		// domain types can be nested, so make sure the root type's oid and typmod are set
-+		for cdt.BaseOID != 0 {
-+			base, ok := customTypeMap[cdt.BaseOID]
-+			if !ok || base.BaseOID == 0 {
-+				break
-+			}
-+			cdt.BaseTypmod = base.BaseTypmod
-+			cdt.BaseOID = base.BaseOID
-+		}
-+		customTypeMap[oid] = cdt
-+	}
- 	return customTypeMap, nil
- }
- 
-+// ResolveDataType checks custom type mapping and resolves oid  and typmod to its base type for a domain type
-+func ResolveDataType(oid uint32, typmod int32, customTypeMapping map[uint32]CustomDataType) (uint32, int32) {
-+	typeData := customTypeMapping[oid]
-+	if isDomainType := typeData.BaseOID != 0; isDomainType {
-+		return typeData.BaseOID, typeData.BaseTypmod
-+	}
-+	return oid, typmod
-+}
-+
- // OID constants for types not covered by pgtype's built-in map.
- const (
- 	MoneyOID        uint32 = 790
-```
-
----
-
-### Incident Patch 3: `285bcdf6` (2026-10-16)
-**Commit Message**: fix(postgres): decode inheritance children with their own column layout (#4930)
-
-Fixes #3935.
-
-## Problem
-
-With `PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES`
-on (the default), every child's RelationMessage is stored under the
-parent's relid. pgoutput sends a relation's RelationMessage before its
-first change and again only after its schema changes, so after `Rel(A)
-Ins(A) Rel(B) Ins(B) Ins(A)` the last insert into A is decoded with B's
-columns.
-
-When the children differ in column count, the mirror stalls on `tuple
-has more columns than the last RelationMessage`. When they have the same
-count in a different order, values land in the wrong columns without any
-error. Partitions published without `publish_via_partition_root` take
-the same path.
-
-Divergent orders are common: `ALTER TABLE ... INHERIT` only checks names
-and types. Our schema-per-tenant database has about 3,150 children per
-parent table, and its largest table has 39 distinct column orders among
-them.
-
-## Fix
-
-- Store each RelationMessage under the relid its tuples arrive with, and
-decode Insert, Update and Delete with that layout. Table, mapping and
-schema lookups still go through the parent. With
-`pu
-
-**File**: `docs/deep-dive-design-document.md` (modified, +16/-3)
-```diff
-@@ -142,15 +142,28 @@ When a DDL change occurs (e.g., `ALTER TABLE ADD COLUMN`), PostgreSQL sends a `R
- 
- Replica identity can change at runtime (e.g., `ALTER TABLE ... REPLICA IDENTITY FULL`), but the current code caches it on first read.
- 
--### 1.6 Partitioned Table Support
-+### 1.6 Partitioned Table and Table Inheritance Support
- 
--For PostgreSQL partitioned tables, child partitions have separate relation IDs from the parent:
-+For PostgreSQL partitioned tables, and for plain tables with inheritance children when
-+`PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES` is on (the default), children have separate
-+relation IDs from the mirrored parent:
- 
- ```go
- childToParentRelIDMapping map[uint32]uint32  // child relid → parent relid
- ```
- 
--`checkIfUnknownTableInherits()` translates child→parent when an unknown relation ID appears, ensuring partitioned table events are correctly attributed.
-+`checkIfUnknownTableInherits()` translates child→parent when an unknown relation ID appears, ensuring child events
-+are attributed to the parent's table mapping.
-+
-+**Column layouts are per relation.** A child's tuples follow the child's own column order, which can differ from
-+the parent's and from its siblings (`ALTER TABLE ... INHERIT` only requires matching names and types, and a
-+partition can be attached from an existing table). pgoutput sends a relation's RelationMessage before its first
-+change and again only after its schema changes, so `relationMessageMapping` is keyed by the relation's own ID,
-+never by the parent's, and tuples are decoded with their own relation's layout. Table and schema lookups still go
-+through the parent. With `publish_via_partition_root`, tuples arrive under the root's relid in the root's layout.
-+A tuple whose column count differs from its RelationMessage is rejected. Earlier versions of PeerDB may have
-+decoded a child's tuples with a sibling's column order. Upgrading fixes new changes but does not repair rows
-+already written. If a mirror has children with different column orders, resync the affected tables.
- 
- ### 1.7 LSN Checkpoint Management
- 
-```
-
-**File**: `flow/connectors/postgres/cdc.go` (modified, +50/-29)
-```diff
-@@ -353,13 +353,15 @@ func processTuple[Items model.Items](
- 	items := processor.NewItems(len(tuple.Columns))
- 	var unchangedToastColumns map[string]struct{}
- 
-+	// pgoutput writes the RelationMessage attributes and every tuple with the same column filter, so any
-+	// difference means the tuple would be decoded against the wrong layout
- 	var none Items
--	if len(tuple.Columns) > len(rel.Columns) {
-+	if len(tuple.Columns) != len(rel.Columns) {
- 		return none, nil, fmt.Errorf(
--			"tuple has more columns than the last RelationMessage: %d > %d. "+
-+			"column-count mismatch between tuple and RelationMessage for %s.%s (relid %d): %d != %d. "+
- 				"One known occurrence of this was due to a bug with replication column lists in PG 15-15.1. "+
- 				"https://www.postgresql.org/message-id/CADGJaX9kiRZ-OH0EpWF5Fkyh1ZZYofoNRCrhapBfdk02tj5EKg@mail.gmail.com",
--			len(tuple.Columns), len(rel.Columns))
-+			rel.Namespace, rel.RelationName, rel.RelationID, len(tuple.Columns), len(rel.Columns))
- 	}
- 
- 	for idx, tcol := range tuple.Columns {
-@@ -1099,34 +1101,33 @@ func processMessage[Items model.Items](
- 			time.Now().UTC().Add(postgresClockOffset).Sub(msg.CommitTime).Milliseconds())
- 		p.commitLock = nil
- 	case *pglogrepl.RelationMessage:
--		originalRelID := msg.RelationID
--		var parentRelKind byte
--		// treat all relation messages as corresponding to parent if partitioned.
--		msg.RelationID, parentRelKind, err = p.checkIfUnknownTableInherits(ctx, msg.RelationID)
-+		// a child's table and schema mapping is its parent's, but its tuples follow its own column layout,
-+		// so the message keeps its own relid and is stored under it
-+		mappedRelID, parentRelKind, err := p.checkIfUnknownTableInherits(ctx, msg.RelationID)
- 		if err != nil {
- 			return nil, err
- 		}
- 
--		if _, exists := p.srcTableIDNameMapping[msg.RelationID]; !exists {
-+		if _, exists := p.srcTableIDNameMapping[mappedRelID]; !exists {
- 			return nil, nil
- 		}
- 
- 		// With publish_via_partition_root = true, PG emits a parent RelationMessage
--		// followed by a child RelationMessage for each partition. The parent's
--		// column list matches the tuple data wire format, so skip the child's
--		// to avoid overwriting with a potentially reordered column definition.
--		if originalRelID != msg.RelationID && parentRelKind == 'p' && p.publishViaPartitionRoot {
-+		// followed by a child RelationMessage for each partition. Tuples are sent
-+		// under the parent's relid in the parent's layout, so the child's message is never used.
-+		if msg.RelationID != mappedRelID && parentRelKind == 'p' && p.publishViaPartitionRoot {
- 			return nil, nil
- 		}
- 
- 		logger.Info("processing RelationMessage",
- 			slog.Any("LSN", currentClientXlogPos),
- 			slog.Uint64("RelationID", uint64(msg.RelationID)),
-+			slog.Uint64("MappedRelationID", uint64(mappedRelID)),
- 			slog.String("Namespace", msg.Namespace),
- 			slog.String("RelationName", msg.RelationName),
- 			slog.Any("Columns", msg.Columns))
- 
--		return processRelationMessage[Items](ctx, p, currentClientXlogPos, msg)
-+		return processRelationMessage[Items](ctx, p, currentClientXlogPos, msg, mappedRelID)
- 	case *pglogrepl.LogicalDecodingMessage:
- 		logger.Debug("LogicalDecodingMessage",
- 			slog.Bool("Transactional", msg.Transactional),
-@@ -1167,9 +1168,9 @@ func processInsertMessage[Items model.Items](
- 	// log lsn and relation id for debugging
- 	p.logger.Debug("InsertMessage", slog.Any("LSN", lsn), slog.Uint64("RelationID", uint64(relID)), slog.String("Relation Name", tableName))
- 
--	rel, ok := p.relationMessageMapping[relID]
--	if !ok {
--		return nil, fmt.Errorf("unknown relation id %d for table %s", relID, tableName)
-+	rel, err := p.relationMessageFor(msg.RelationID, relID, tableName)
-+	if err != nil {
-+		return nil, err
- 	}
- 
- 	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
-@@ -1224,9 +1225,9 @@ func processUpdateMessage[Items model.Items](
- 		}
- 	}
- 
--	rel, ok := p.relationMessageMapping[relID]
--	if !ok {
--		return nil, fmt.Errorf("unknown relation id %d for table %s", relID, tableName)
-+	rel, err := p.relationMessageFor(msg.RelationID, relID, tableName)
-+	if err != nil {
-+		return nil, err
- 	}
- 
- 	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
-@@ -1287,9 +1288,9 @@ func processDeleteMessage[Items model.Items](
- 	// log lsn and relation id for debugging
- 	p.logger.Debug("DeleteMessage", slog.Any("LSN", lsn), slog.Uint64("RelationID", uint64(relID)), slog.String("Relation Name", tableName))
- 
--	rel, ok := p.relationMessageMapping[relID]
--	if !ok {
--		return nil, fmt.Errorf("unknown relation id %d for table %s", relID, tableName)
-+	rel, err := p.relationMessageFor(msg.RelationID, relID, tableName)
-+	if err != nil {
-+		return nil, err
- 	}
- 
- 	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
-@@ -1311,18 +1312,22 @@ func processDeleteMessage[Items model.Items](
- 	}, nil
- }
- 
--// processRelationMessage processes a RelationMessage and returns a TableSchemaDelta
-+// p
-```
-
-**File**: `flow/connectors/postgres/cdc_inheritance_test.go` (added, +212/-0)
-```diff
-@@ -0,0 +1,212 @@
-+package connpostgres
-+
-+import (
-+	"log/slog"
-+	"testing"
-+
-+	"github.com/jackc/pglogrepl"
-+	"github.com/jackc/pgx/v5/pgtype"
-+	"github.com/stretchr/testify/require"
-+	"go.temporal.io/sdk/log"
-+
-+	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/model"
-+	"github.com/PeerDB-io/peerdb/flow/otel_metrics"
-+	pkg_pg "github.com/PeerDB-io/peerdb/flow/pkg/postgres"
-+	"github.com/PeerDB-io/peerdb/flow/shared/types"
-+)
-+
-+const (
-+	inhParentRelID uint32 = 100
-+	inhChildARelID uint32 = 101
-+	inhChildBRelID uint32 = 102
-+	inhChildCRelID uint32 = 103
-+)
-+
-+// newInheritanceTestCDCSource builds a CDC source mirroring public.parent, whose inheritance children
-+// 101 and 102 are already known from the startup map.
-+func newInheritanceTestCDCSource(t *testing.T) *PostgresCDCSource {
-+	t.Helper()
-+	return &PostgresCDCSource{
-+		PostgresConnector: &PostgresConnector{
-+			logger:            log.NewStructuredLogger(slog.Default()),
-+			typeMap:           pgtype.NewMap(),
-+			customTypeMapping: map[uint32]pkg_pg.CustomDataType{},
-+			hushWarnOID:       map[uint32]struct{}{},
-+		},
-+		otelManager:           &otel_metrics.OtelManager{},
-+		srcTableIDNameMapping: map[uint32]string{inhParentRelID: "public.parent"},
-+		tableNameMapping: map[string]model.SourceTableMapping{
-+			"public.parent": {Name: "parent", Exclude: map[string]struct{}{}},
-+		},
-+		tableNameSchemaMapping: map[string]*protos.TableSchema{
-+			"parent": {
-+				TableIdentifier: "public.parent",
-+				System:          protos.TypeSystem_Q,
-+				Columns: []*protos.FieldDescription{
-+					{Name: "id", Type: string(types.QValueKindInt64)},
-+					{Name: "name", Type: string(types.QValueKindString)},
-+					{Name: "val", Type: string(types.QValueKindString)},
-+					{Name: "n", Type: string(types.QValueKindInt32)},
-+				},
-+			},
-+		},
-+		relationMessageMapping:       model.RelationMessageMapping{},
-+		childToParentRelIDMapping:    map[uint32]uint32{inhChildARelID: inhParentRelID, inhChildBRelID: inhParentRelID},
-+		idToRelKindMap:               map[uint32]byte{inhParentRelID: 'r'},
-+		hushWarnUnknownTableDetected: map[uint32]struct{}{},
-+	}
-+}
-+
-+func relColumn(name string, oid uint32) *pglogrepl.RelationMessageColumn {
-+	return &pglogrepl.RelationMessageColumn{Name: name, DataType: oid, TypeModifier: -1}
-+}
-+
-+// child A has the parent's column order, child B was created standalone and then INHERITed,
-+// so its text columns are swapped
-+func childARelation() *pglogrepl.RelationMessage {
-+	return &pglogrepl.RelationMessage{
-+		RelationID: inhChildARelID, Namespace: "tenant_a", RelationName: "parent",
-+		Columns: []*pglogrepl.RelationMessageColumn{
-+			relColumn("id", pgtype.Int8OID), relColumn("name", pgtype.TextOID),
-+			relColumn("val", pgtype.TextOID), relColumn("n", pgtype.Int4OID),
-+		},
-+		ColumnNum: 4,
-+	}
-+}
-+
-+func childBRelation() *pglogrepl.RelationMessage {
-+	return &pglogrepl.RelationMessage{
-+		RelationID: inhChildBRelID, Namespace: "tenant_b", RelationName: "parent",
-+		Columns: []*pglogrepl.RelationMessageColumn{
-+			relColumn("id", pgtype.Int8OID), relColumn("val", pgtype.TextOID),
-+			relColumn("name", pgtype.TextOID), relColumn("n", pgtype.Int4OID),
-+		},
-+		ColumnNum: 4,
-+	}
-+}
-+
-+// tuple builds a text-format tuple; nil entries are SQL NULLs
-+func tuple(values ...*string) *pglogrepl.TupleData {
-+	columns := make([]*pglogrepl.TupleDataColumn, 0, len(values))
-+	for _, v := range values {
-+		if v == nil {
-+			columns = append(columns, &pglogrepl.TupleDataColumn{DataType: pglogrepl.TupleDataTypeNull})
-+		} else {
-+			columns = append(columns, &pglogrepl.TupleDataColumn{
-+				DataType: pglogrepl.TupleDataTypeText, Length: uint32(len(*v)), Data: []byte(*v),
-+			})
-+		}
-+	}
-+	return &pglogrepl.TupleData{ColumnNum: uint16(len(columns)), Columns: columns}
-+}
-+
-+func str(v string) *string { return &v }
-+
-+func requireRow(t *testing.T, items model.RecordItems, id int64, name string, val string, n int32) {
-+	t.Helper()
-+	require.Equal(t, types.QValueInt64{Val: id}, items.GetColumnValue("id"))
-+	require.Equal(t, types.QValueString{Val: name}, items.GetColumnValue("name"))
-+	require.Equal(t, types.QValueString{Val: val}, items.GetColumnValue("val"))
-+	require.Equal(t, types.QValueInt32{Val: n}, items.GetColumnValue("n"))
-+}
-+
-+func TestInheritanceChildrenDecodeWithOwnLayout(t *testing.T) {
-+	t.Parallel()
-+	p := newInheritanceTestCDCSource(t)
-+	ctx := t.Context()
-+	customTypes := p.customTypeMapping
-+
-+	// pgoutput announces each child before its first tuple: A first, then B
-+	relA, relB := childARelation(), childBRelation()
-+	rec, err := processRelationMessage[model.RecordItems](ctx, p, 1, relA, inhParentRelID)
-+	require.NoError(t, err)
-+	require.Nil(t, rec, "child A has no columns beyond the destination schema")
-+	rec, err = processRelationMessage[model.RecordItems](ctx, p, 2, relB, inhParentRelID)
-+	require.NoError(t, err)
-+	require.Nil(t, rec)
-+
-+	require.Same(t, relA, p.relationMessageMapping[inhChildARelID
-```
-
-**File**: `flow/e2e/clickhouse_inheritance_suite.go` (added, +270/-0)
-```diff
-@@ -0,0 +1,270 @@
-+package e2e
-+
-+import (
-+	"context"
-+	"fmt"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	connpostgres "github.com/PeerDB-io/peerdb/flow/connectors/postgres"
-+	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/model"
-+)
-+
-+// Tests for Postgres sources whose mirrored tables have inheritance children or partitions laid out
-+// differently from each other. pgoutput announces each relation's column layout before its first change, and
-+// again only after a schema change, so every child's tuples must be decoded with that child's own layout, not
-+// whichever sibling was announced last.
-+
-+func (s ClickHouseSuite) inhRequirePostgres() {
-+	s.t.Helper()
-+	if _, ok := s.source.(*PostgresSource); !ok {
-+		s.t.Skip("only applies to postgres")
-+	}
-+}
-+
-+func (s ClickHouseSuite) inhExec(format string, args ...any) {
-+	s.t.Helper()
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(format, args...)))
-+}
-+
-+// inhTenantSchema creates an extra schema, standing in for a tenant, dropped when the test ends
-+func (s ClickHouseSuite) inhTenantSchema(name string) string {
-+	s.t.Helper()
-+	schema := fmt.Sprintf("e2e_test_%s_%s", s.suffix, name)
-+	s.inhExec(`CREATE SCHEMA %s`, schema)
-+	s.t.Cleanup(func() {
-+		// the test's context is already canceled when cleanups run
-+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-+		defer cancel()
-+		pg := s.source.(*PostgresSource)
-+		if _, err := pg.PostgresConnector.Conn().Exec(ctx, fmt.Sprintf(`DROP SCHEMA IF EXISTS %s CASCADE`, schema)); err != nil {
-+			s.t.Logf("failed to drop tenant schema %s: %v", schema, err)
-+		}
-+	})
-+	return schema
-+}
-+
-+// inhRestartReplication pauses the mirror, ends its walsender and resumes it, so the next pull starts a new
-+// replication session in which pgoutput announces every relation again and the child map is rebuilt
-+func (s ClickHouseSuite) inhRestartReplication(env WorkflowRun, flowJobName string) {
-+	s.t.Helper()
-+	SignalWorkflow(s.t.Context(), env, model.FlowSignal, model.PauseSignal)
-+	EnvWaitFor(s.t, env, 4*time.Minute, "pausing", func() bool {
-+		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_PAUSED
-+	})
-+
-+	conn := s.source.Connector().(*connpostgres.PostgresConnector).Conn()
-+	_, err := conn.Exec(s.t.Context(), fmt.Sprintf(`SELECT pg_terminate_backend(pid) FROM pg_stat_activity
-+		WHERE query LIKE '%%START_REPLICATION%%' AND query LIKE '%%%s%%' AND backend_type='walsender'`, flowJobName))
-+	require.NoError(s.t, err)
-+	EnvWaitFor(s.t, env, 3*time.Minute, "waiting for replication to stop", func() bool {
-+		rows, err := conn.Query(s.t.Context(), fmt.Sprintf(`SELECT pid FROM pg_stat_activity
-+			WHERE query LIKE '%%START_REPLICATION%%' AND query LIKE '%%%s%%' AND backend_type='walsender'`, flowJobName))
-+		require.NoError(s.t, err)
-+		defer rows.Close()
-+		return !rows.Next()
-+	})
-+
-+	SignalWorkflow(s.t.Context(), env, model.FlowSignal, model.NoopSignal)
-+	EnvWaitFor(s.t, env, 4*time.Minute, "resuming", func() bool {
-+		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
-+	})
-+}
-+
-+// inhWaitForColumn waits until every non-deleted destination row has the expected value of column,
-+// keyed by id; ids missing from expected must be NULL
-+//
-+//nolint:unparam // a helper for column checks on any destination table
-+func (s ClickHouseSuite) inhWaitForColumn(env WorkflowRun, dstTable string, column string, expected map[int64]string) {
-+	s.t.Helper()
-+	EnvWaitFor(s.t, env, 3*time.Minute, "waiting on "+column, func() bool {
-+		rows, err := s.GetRows(dstTable, "id,"+column)
-+		if err != nil {
-+			s.t.Log(err)
-+			return false
-+		}
-+		matched := 0
-+		for _, row := range rows.Records {
-+			id, ok := row[0].Value().(int64)
-+			if !ok {
-+				s.t.Logf("unexpected id %v", row[0].Value())
-+				return false
-+			}
-+			want, hasWant := expected[id]
-+			got := row[1].Value()
-+			if !hasWant {
-+				if got != nil {
-+					s.t.Logf("id %d: expected NULL %s, got %v", id, column, got)
-+					return false
-+				}
-+				continue
-+			}
-+			if got != want {
-+				s.t.Logf("id %d: expected %s=%q, got %v", id, column, want, got)
-+				return false
-+			}
-+			matched++
-+		}
-+		return matched == len(expected)
-+	})
-+}
-+
-+func (s ClickHouseSuite) Test_Inheritance_Divergent_Child_Layouts() {
-+	s.inhRequirePostgres()
-+
-+	srcTableName := "inh_layouts"
-+	parent := s.attachSchemaSuffix(srcTableName)
-+	dstTableName := "inh_layouts_dst"
-+	flowJobName := s.attachSuffix("inh_layouts")
-+	schemaA, schemaB, schemaC, schemaD := s.inhTenantSchema("ta"), s.inhTenantSchema("tb"), s.inhTenantSchema("tc"), s.inhTenantSchema("td")
-+
-+	s.inhExec(`CREATE TABLE %s (id BIGINT PRIMARY KEY, name TEXT, val TEXT, n INT, secret TEXT)`, parent)
-+	// A has the parent's column order
-+	s.inhExec(`CREATE TABLE %s.%s () INHERITS (%s)`, schemaA, srcTableName, parent)
-+	s.inhExec(`ALTER TABLE %s.%s ADD PRIMARY KEY (id)`, schemaA, srcTableName)
-+	// B was created on its own and INHERITed afterwards
-```
-
-**File**: `flow/e2e/clickhouse_suite.go` (modified, +32/-0)
-```diff
-@@ -3870,6 +3870,12 @@ func (s ClickHouseSuite) Test_CTID_Inherited_Table_Extra_Columns() {
- 	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
- 		`CREATE TABLE %s_child1 (email TEXT, country_code TEXT) INHERITS (%s)`, srcFullName, srcFullName)))
- 
-+	// primary keys are not inherited; children need their own to be updated once published
-+	for _, child := range []string{"child0", "child1"} {
-+		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+			`ALTER TABLE %s_%s ADD PRIMARY KEY (id)`, srcFullName, child)))
-+	}
-+
- 	rowsPerTable := 5
- 	totalRows := 0
- 	for j := range rowsPerTable {
-@@ -3909,6 +3915,32 @@ func (s ClickHouseSuite) Test_CTID_Inherited_Table_Extra_Columns() {
- 		`INSERT INTO %s_child0 (name, age) VALUES ('cdc_extra_col', 99)`, srcFullName)))
- 	EnvWaitForCount(env, s, "wait on cdc after inherited extra cols snapshot", dstTableName, "id", totalRows+1)
- 
-+	// the children have different column counts; interleave them so each is decoded after the other's
-+	// RelationMessage, and compare values rather than counts
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+		`INSERT INTO %s_child1 (name, email, country_code) VALUES ('cdc_child1', 'cdc@test.com', 'FR')`, srcFullName)))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+		`INSERT INTO %s_child0 (name, age) VALUES ('cdc_child0_again', 42)`, srcFullName)))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+		`UPDATE %s_child1 SET name = 'cdc_child1_upd' WHERE name = 'cdc_child1'`, srcFullName)))
-+	EnvWaitForEqualTablesWithNames(env, s, "wait on interleaved cdc across children", srcTableName, dstTableName, "id,name")
-+	// decoded with child1's layout, child0's age would land in child1's email column
-+	EnvWaitFor(s.t, env, time.Minute, "child0 row decoded with its own layout", func() bool {
-+		rows, err := s.GetRows(dstTableName, "name,email")
-+		if err != nil {
-+			s.t.Log(err)
-+			return false
-+		}
-+		for _, row := range rows.Records {
-+			if row[0].Value() == "cdc_child0_again" {
-+				// empty or NULL depending on nullable mode, never child0's age
-+				email := row[1].Value()
-+				return email == nil || email == ""
-+			}
-+		}
-+		return false
-+	})
-+
- 	env.Cancel(s.t.Context())
- 	RequireEnvCanceled(s.t, env)
- }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4935** (2026-10-19): (patch): CI fix timeout on failed dep startup (@Jeremyyang920)
+- **PR #4932** (2026-10-19): fix(postgres): route a child of several mirrored tables to the same parent (@CHeavyarms)
 - **PR #4930** (2026-10-16): fix(postgres): decode inheritance children with their own column layout (@CHeavyarms)
 - **PR #4929** (2026-10-16): add e2e test for non-owner user with owner-managed custom publication (@jgao54)
 - **PR #4928** (2026-10-15): add org id to template (@jgao54)
 - **PR #4927** (2026-10-15): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
-- **PR #4926** (2026-10-16): Deflake pg_dump pipeline - who killed whom and why somebody is dead (@deadtrickster)
-- **PR #4925** (closed): fix: update AWS RDS CA bundle checksum (@dtunikov)
 
 ---
 
@@ -2662,28 +2178,29 @@ schema lookups still go through the parent. With
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. classify mysql lock wait timeout as retry recoverable (#4916)
+## X. (patch): CI fix timeout on failed dep startup (#4935)
 
 **RULE**:
-When implementing operations in `flow/alerting/classifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/flow.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d94f8758`: classify mysql lock wait timeout as retry recoverable (#4916). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb61e655`: (patch): CI fix timeout on failed dep startup (#4935). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/alerting/classifier.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/flow.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			1205, // ER_LOCK_WAIT_TIMEOUT, transient lock contention on source
+    # Validate the common code before allocating runners for every permutation.
+    needs: [gate, unit_tests, test_selection_coverage]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    needs: [gate]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d94f8758` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb61e655` are properly handled with clean fallback behavior.

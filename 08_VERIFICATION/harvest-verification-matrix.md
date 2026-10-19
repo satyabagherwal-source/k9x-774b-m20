@@ -3557,3 +3557,7 @@
 | `CYCLE-20261019-HMIA` | `2026-10-19T23:15:45.586Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2884` | Yes (`429bfb38...`) |
 | `CYCLE-20261019-PMTB` | `2026-10-19T23:21:59.231Z` | `nalexn/ViewInspector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2885` | Yes (`d8a3d3bd...`) |
 | `CYCLE-20261019-PTL7` | `2026-10-19T23:22:08.011Z` | `rehypejs/rehype` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2886, Rule 2887, Rule 2888` | Yes (`8dd43693...`) |
+| `CYCLE-20261019-XQOA` | `2026-10-19T23:28:17.482Z` | `syntax-tree/hast-util-from-html` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2889` | Yes (`2990cfc6...`) |
+| `CYCLE-20261019-XUKM` | `2026-10-19T23:28:22.534Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2890` | Yes (`e079c61f...`) |
+| `CYCLE-20261019-XWX9` | `2026-10-19T23:28:25.581Z` | `Blackjacx/WWDC` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2891, Rule 2892, Rule 2893` | Yes (`4aed7f51...`) |
+| `CYCLE-20261019-XXZT` | `2026-10-19T23:28:26.969Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2894` | Yes (`dd6f88ee...`) |
