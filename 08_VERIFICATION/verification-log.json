@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-DEZ4",
-    "timestamp": "2026-10-18T08:01:01.456Z",
-    "repository": "h3js/h3",
-    "learningId": "learn-github-h3js-h3",
-    "contentHash": "86f67e5f444f0dbc9889970b4dffdaf57efdfebe1bf32b2ef6c577f71b351788",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-J5FJ",
-    "timestamp": "2026-10-18T08:05:29.023Z",
-    "repository": "unjs/ufo",
-    "learningId": "learn-github-unjs-ufo",
-    "contentHash": "9f11581a348bd81b84978da25674b79b63085dfaa0e112d39c685608aab8422d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-J5NI",
-    "timestamp": "2026-10-18T08:05:29.310Z",
-    "repository": "unjs/ofetch",
-    "learningId": "learn-github-unjs-ofetch",
-    "contentHash": "15a835f51f0adc5f5b1643961825ea43487580c9ad9c868a6e2a17b784d1b7df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-YL7T",
-    "timestamp": "2026-10-18T08:17:29.321Z",
-    "repository": "autogluon/chronos-2",
-    "learningId": "learn-huggingface-autogluon-chronos-2",
-    "contentHash": "c98310c4118abbd88bcc0c86a4f2b300223699e0d2bf806832192ceb90403053",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-DXLV",
-    "timestamp": "2026-10-18T11:45:22.531Z",
-    "repository": "deeplethe/solid-glass",
-    "learningId": "learn-github-deeplethe-solid-glass",
-    "contentHash": "fbde58a627d232ac0b6b52f99437bfe77441b2eae39254bb796d9796e3ee54e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-9LTR",
-    "timestamp": "2026-10-18T14:29:58.335Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "16777f2a8e280f9435840860c4263a7ca52a0edb4b2d2560d0e31cb65255fb89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-5NVX",
     "timestamp": "2026-10-18T16:46:52.461Z",
     "repository": "bvaughn/react-virtualized",
@@ -7492,6 +7402,96 @@
     "contentHash": "e05c2a8268df9472f5d342dd7f38ce48b958c86ca2bbde5636fcdf1b49c1b68a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QP1S",
+    "timestamp": "2026-10-19T05:39:03.376Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "4b4aee84a0443cba590b8c35a5358bb08acb7b7fa1af668f2cd32ca0cd9d1fcc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QPAN",
+    "timestamp": "2026-10-19T05:39:03.695Z",
+    "repository": "emilkowalski/vaul",
+    "learningId": "learn-github-emilkowalski-vaul",
+    "contentHash": "9646abe03bde4552fc5cf80f398f69de482b45ae7582611827cc6962a7cfd885",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QQAJ",
+    "timestamp": "2026-10-19T05:39:04.987Z",
+    "repository": "graykode/abtop",
+    "learningId": "learn-github-graykode-abtop",
+    "contentHash": "2aacbb67b9e938c168c13b340ec219cd1c203c275aefcb7609353337daf2f1d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QUSZ",
+    "timestamp": "2026-10-19T05:39:10.835Z",
+    "repository": "open-ani/animeko",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "0bd3c8bfede4dcaa7d2ba81b6344801fdcd4c554469001daadec6b8847bb26e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QX0Q",
+    "timestamp": "2026-10-19T05:39:13.706Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "c3208c0b68847869f5d1546d2c760904373897a16457fa7cbe06cd2244076701",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R0WX",
+    "timestamp": "2026-10-19T05:39:18.753Z",
+    "repository": "Open-Source-Legal/OpenContracts",
+    "learningId": "learn-github-open-source-legal-opencontracts",
+    "contentHash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -2970,3 +2970,9 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `25f00f0a` | Multi-dimensional audit evidence | 2026-10-19T05:32:07.853Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T05:32:50.617Z |
 | `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `48192318` | Multi-dimensional audit evidence | 2026-10-19T05:33:01.991Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-19T05:39:03.379Z |
+| `learn-github-emilkowalski-vaul` | `https://github.com/emilkowalski/vaul` | `3e97aac6` | Multi-dimensional audit evidence | 2026-10-19T05:39:03.698Z |
+| `learn-github-graykode-abtop` | `https://github.com/graykode/abtop` | `4b965686` | Multi-dimensional audit evidence | 2026-10-19T05:39:04.990Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `712b9c97` | Multi-dimensional audit evidence | 2026-10-19T05:39:10.838Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `e81264f5` | Multi-dimensional audit evidence | 2026-10-19T05:39:13.709Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `8bc8254d` | Multi-dimensional audit evidence | 2026-10-19T05:39:18.756Z |

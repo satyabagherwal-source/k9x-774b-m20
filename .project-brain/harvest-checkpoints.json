@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:33:01.997Z",
+  "last_updated": "2026-10-19T05:39:18.762Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -195,17 +195,18 @@
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-open-source-legal-opencontracts-mv0ds8j9",
-      "content_hash": "19b8cee6bf32d2c8f8e00676868d47d135ca84bfbcf266bb33e0b9a85b0850a4",
-      "verified_at": "2026-10-09T03:03:35.034Z",
+      "learning_id": "learn-github-open-source-legal-opencontracts",
+      "content_hash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
+      "verified_at": "2026-10-19T05:39:18.762Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T03:03:35.034Z"
+      "last_updated": "2026-10-19T05:39:18.762Z"
     },
     "Qwen/Qwen3.8-27B": {
       "repository": "Qwen/Qwen3.8-27B",
@@ -648,14 +649,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "f5aa99691150bf4ef0855e3aa7056acc14296fa8cf72cff8a162aa408d9823c6",
-      "verified_at": "2026-10-17T23:46:23.019Z",
+      "content_hash": "4b4aee84a0443cba590b8c35a5358bb08acb7b7fa1af668f2cd32ca0cd9d1fcc",
+      "verified_at": "2026-10-19T05:39:03.385Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:46:23.019Z"
+      "last_updated": "2026-10-19T05:39:03.385Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -9532,6 +9533,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:33:01.996Z"
+    },
+    "emilkowalski/vaul": {
+      "repository": "emilkowalski/vaul",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-emilkowalski-vaul",
+      "content_hash": "9646abe03bde4552fc5cf80f398f69de482b45ae7582611827cc6962a7cfd885",
+      "verified_at": "2026-10-19T05:39:03.704Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:39:03.704Z"
+    },
+    "graykode/abtop": {
+      "repository": "graykode/abtop",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-graykode-abtop",
+      "content_hash": "2aacbb67b9e938c168c13b340ec219cd1c203c275aefcb7609353337daf2f1d2",
+      "verified_at": "2026-10-19T05:39:04.995Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:39:04.995Z"
+    },
+    "open-ani/animeko": {
+      "repository": "open-ani/animeko",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-open-ani-animeko",
+      "content_hash": "0bd3c8bfede4dcaa7d2ba81b6344801fdcd4c554469001daadec6b8847bb26e6",
+      "verified_at": "2026-10-19T05:39:10.843Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:39:10.843Z"
+    },
+    "k3s-io/k3s": {
+      "repository": "k3s-io/k3s",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-k3s-io-k3s",
+      "content_hash": "c3208c0b68847869f5d1546d2c760904373897a16457fa7cbe06cd2244076701",
+      "verified_at": "2026-10-19T05:39:13.715Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:39:13.715Z"
     }
   },
   "repos": {

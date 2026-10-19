@@ -2963,3 +2963,9 @@
 | `CYCLE-20261019-HSFE` | `2026-10-19T05:32:07.850Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2188` | Yes (`23108489...`) |
 | `CYCLE-20261019-IPFA` | `2026-10-19T05:32:50.614Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2189, Rule 2190, Rule 2191` | Yes (`3fcf4ff4...`) |
 | `CYCLE-20261019-IY78` | `2026-10-19T05:33:01.988Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2192, Rule 2193, Rule 2194` | Yes (`e05c2a82...`) |
+| `CYCLE-20261019-QP1S` | `2026-10-19T05:39:03.376Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`4b4aee84...`) |
+| `CYCLE-20261019-QPAN` | `2026-10-19T05:39:03.695Z` | `emilkowalski/vaul` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2195` | Yes (`9646abe0...`) |
+| `CYCLE-20261019-QQAJ` | `2026-10-19T05:39:04.987Z` | `graykode/abtop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2196` | Yes (`2aacbb67...`) |
+| `CYCLE-20261019-QUSZ` | `2026-10-19T05:39:10.835Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2197` | Yes (`0bd3c8bf...`) |
+| `CYCLE-20261019-QX0Q` | `2026-10-19T05:39:13.706Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2198` | Yes (`c3208c0b...`) |
+| `CYCLE-20261019-R0WX` | `2026-10-19T05:39:18.753Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2199` | Yes (`c9a36992...`) |

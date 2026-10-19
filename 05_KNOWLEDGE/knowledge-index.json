@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:33:01.951Z",
-  "total_verified_learnings": 647,
+  "last_updated": "2026-10-19T05:39:18.714Z",
+  "total_verified_learnings": 651,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7396,22 +7396,35 @@
     "learn-github-emilkowalski-vaul": {
       "learning_id": "learn-github-emilkowalski-vaul",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "emilkowalski-vaul",
+      "source": "emilkowalski/vaul",
+      "repository": "emilkowalski/vaul",
       "slug": "emilkowalski-vaul",
       "platform": "github",
       "source_url": "https://github.com/emilkowalski/vaul",
-      "source_version": "HEAD",
-      "content_hash": "93f40c7127ea79f4ad889c29690cd3a95f223546abc19c7bcf137e35f89dc2be",
+      "source_version": "3e97aac6",
+      "content_hash": "9646abe03bde4552fc5cf80f398f69de482b45ae7582611827cc6962a7cfd885",
       "dossier_path": "07_PROJECT_LEARNING/emilkowalski-vaul-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emilkowalski-vaul-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2195,
+          "title": "Added missing modal prop to Drawer.Root (#580)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.790Z"
+      "verified_at": "2026-10-19T05:39:03.647Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-enaqx-awesome-react": {
       "learning_id": "learn-github-enaqx-awesome-react",
@@ -10229,22 +10242,35 @@
     "learn-github-graykode-abtop": {
       "learning_id": "learn-github-graykode-abtop",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "graykode-abtop",
+      "source": "graykode/abtop",
+      "repository": "graykode/abtop",
       "slug": "graykode-abtop",
       "platform": "github",
       "source_url": "https://github.com/graykode/abtop",
-      "source_version": "HEAD",
-      "content_hash": "a6a9be1f519b669025b4132e578b91d1744773d84cd4af3a45745010bde5ff10",
+      "source_version": "4b965686",
+      "content_hash": "2aacbb67b9e938c168c13b340ec219cd1c203c275aefcb7609353337daf2f1d2",
       "dossier_path": "07_PROJECT_LEARNING/graykode-abtop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/graykode-abtop-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2196,
+          "title": "codex): parse the new rollout schema (item_completed) from Codex ≥ ~0.149 (#170)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.199Z"
+      "verified_at": "2026-10-19T05:39:04.937Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gregberge-svgr": {
       "learning_id": "learn-github-gregberge-svgr",
@@ -11432,7 +11458,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "f5aa99691150bf4ef0855e3aa7056acc14296fa8cf72cff8a162aa408d9823c6",
+      "content_hash": "4b4aee84a0443cba590b8c35a5358bb08acb7b7fa1af668f2cd32ca0cd9d1fcc",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -11495,7 +11521,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-17T23:46:22.992Z",
+      "verified_at": "2026-10-19T05:39:03.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24429,22 +24455,35 @@
     "learn-github-k3s-io-k3s": {
       "learning_id": "learn-github-k3s-io-k3s",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "k3s-io-k3s",
+      "source": "k3s-io/k3s",
+      "repository": "k3s-io/k3s",
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "HEAD",
-      "content_hash": "23f7c20134cf72a85569d41a205e466f1fee6056e6f7e57f2cc4071e114cb511",
+      "source_version": "e81264f5",
+      "content_hash": "c3208c0b68847869f5d1546d2c760904373897a16457fa7cbe06cd2244076701",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2198,
+          "title": "build(deps): bump the action-deps group across 1 directory with 9 updates (#1462",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.749Z"
+      "verified_at": "2026-10-19T05:39:13.644Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kamgurgul-cpu-info": {
       "learning_id": "learn-github-kamgurgul-cpu-info",
@@ -30652,22 +30691,35 @@
     "learn-github-open-ani-animeko": {
       "learning_id": "learn-github-open-ani-animeko",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "open-ani-animeko",
+      "source": "open-ani/animeko",
+      "repository": "open-ani/animeko",
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "HEAD",
-      "content_hash": "8820a047a3f4e246f0a886f1ccaf75faeb0bd86e277157b246d18518f31d31cc",
+      "source_version": "712b9c97",
+      "content_hash": "0bd3c8bfede4dcaa7d2ba81b6344801fdcd4c554469001daadec6b8847bb26e6",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2197,
+          "title": "build(datasource-test-mcp): CI 构建自带 JBR 的 Windows 发行包, 修复 probe_video 实播 (#3617)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.804Z"
+      "verified_at": "2026-10-19T05:39:10.784Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-open-metadata-openmetadata": {
       "learning_id": "learn-github-open-metadata-openmetadata",
@@ -30765,24 +30817,30 @@
     "learn-github-open-source-legal-opencontracts": {
       "learning_id": "learn-github-open-source-legal-opencontracts",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "open-source-legal-opencontracts",
+      "source": "Open-Source-Legal/OpenContracts",
+      "repository": "Open-Source-Legal/OpenContracts",
       "slug": "open-source-legal-opencontracts",
       "platform": "github",
       "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
-      "source_version": "1e859dce",
-      "content_hash": "19b8cee6bf32d2c8f8e00676868d47d135ca84bfbcf266bb33e0b9a85b0850a4",
+      "source_version": "8bc8254d",
+      "content_hash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
       "dossier_path": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2199,
+          "title": "production chat handshake timeout and Apollo warnings (#2451)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [
         "learn-github-open-source-legal-opencontracts-mv0ds8j9"
       ],
-      "verified_at": "2026-10-09T03:03:34.996Z",
+      "verified_at": "2026-10-19T05:39:18.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78419,6 +78477,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:33:01.941Z"
+    },
+    "rule-2195": {
+      "learning_id": "rule-2195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2195,
+      "title": "Added missing modal prop to Drawer.Root (#580)",
+      "source_url": "https://github.com/emilkowalski/vaul",
+      "source_version": "3e97aac6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:39:03.647Z"
+    },
+    "rule-2196": {
+      "learning_id": "rule-2196",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2196,
+      "title": "codex): parse the new rollout schema (item_completed) from Codex ≥ ~0.149 (#170)",
+      "source_url": "https://github.com/graykode/abtop",
+      "source_version": "4b965686",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:39:04.937Z"
+    },
+    "rule-2197": {
+      "learning_id": "rule-2197",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2197,
+      "title": "build(datasource-test-mcp): CI 构建自带 JBR 的 Windows 发行包, 修复 probe_video 实播 (#3617)",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "712b9c97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:39:10.785Z"
+    },
+    "rule-2198": {
+      "learning_id": "rule-2198",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2198,
+      "title": "build(deps): bump the action-deps group across 1 directory with 9 updates (#1462",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "e81264f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:39:13.644Z"
+    },
+    "rule-2199": {
+      "learning_id": "rule-2199",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2199,
+      "title": "production chat handshake timeout and Apollo warnings (#2451)",
+      "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
+      "source_version": "8bc8254d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:39:18.704Z"
     }
   },
   "aliases": {
