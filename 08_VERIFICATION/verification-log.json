@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-GL56",
-    "timestamp": "2026-10-19T03:39:13.290Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "e93b250e05894e0a8b2bcbad99d6b452075be98c938525a6ab0f4917a808aaeb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-GPD3",
-    "timestamp": "2026-10-19T03:39:18.759Z",
-    "repository": "crazycodeboy/react-native-splash-screen",
-    "learningId": "learn-github-crazycodeboy-react-native-splash-screen",
-    "contentHash": "a3f854512f81231efaac89adf24c2d9f4ae0b53cf1113a267d91cdb9efa680dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-GR1L",
-    "timestamp": "2026-10-19T03:39:20.937Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "507aded4a72803a18a834a4108c70a335a297ec83fe5363cc0646bff25d362a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-GVOL",
-    "timestamp": "2026-10-19T03:39:26.949Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-R2ZR",
     "timestamp": "2026-10-19T03:47:22.983Z",
     "repository": "arco-design/arco-design-vue",
@@ -7490,6 +7430,66 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "d8c185f9362f7054007974909b9ed27f0381dd53996ecf82a7155e29f2eb7087",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-97SR",
+    "timestamp": "2026-10-19T16:37:18.651Z",
+    "repository": "serpapi/google-search-results-python",
+    "learningId": "learn-github-serpapi-google-search-results-python",
+    "contentHash": "661a4f32d9c85292811f1f2fc67f90b40301360f1b47be52904a9fcd9be9e922",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-990W",
+    "timestamp": "2026-10-19T16:37:20.240Z",
+    "repository": "touchlab/SKIE",
+    "learningId": "learn-github-touchlab-skie",
+    "contentHash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9ALF",
+    "timestamp": "2026-10-19T16:37:22.275Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "bf53c8ee4e373cd07e5b4a80852767d7f4f62685854ddee6633be1224a1d5223",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9ENU",
+    "timestamp": "2026-10-19T16:37:27.546Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

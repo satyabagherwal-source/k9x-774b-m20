@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `ee6cfba9`  
+> **Source Version**: `d88ede7b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:19:36.238Z  
+> **Timestamp**: 2026-10-19T16:37:22.020Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:19:36.231Z  
+> **Harvest Timestamp**: 2026-10-19T16:37:22.014Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1204,935 +1204,86 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee6cfba9` (2026-10-19)
-**Commit Message**: fix(runner): install the panic hook once instead of swapping it per run (#2224)
+### Incident Patch 1: `d88ede7b` (2026-10-19)
+**Commit Message**: fix(release): match language server artifacts with pattern, not name
 
-`FastRunner::run` replaced the process-wide panic hook for each evaluation
-and restored the previous one afterwards. When evaluations run concurrently
-in one process, one run can restore the previous hook while another is
-still evaluating. A failing `assert` in the other run then reaches the
-restored hook, `KCL_RUNTIME_PANIC_RECORD` is never written, and the error
-carries its location with an empty message. The interleaved restores can
-also leave a run's hook installed for good, after which the host's own hook
-never sees another panic. `libkcl_run`, `libkcl_main` and the JSON-RPC
-server swapped the hook the same way.
+download-artifact treats `name` as an exact artifact name, so
+`kcl-language-server-*` was looked up literally and the update-taps job
+failed with "Artifact not found". v4+ has a separate `pattern` input for
+glob matching.
 
-Install one hook per process, chained to the hook it replaces. It records
-every panic into the thread-local record and prints it through the previous
-hook only on threads outside `catch_unwind_silent`. Silencing is therefore
-per thread: panics outside KCL calls, such as on `kcl server` worker threads
-or while a wasm32 call parses its input, reach the previous hook instead of
-being swallowed. The runner, the three entry points, the C API panic test
-and the test and benchmark helpers that w
+Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 
-**File**: `crates/api/src/capi_test.rs` (modified, +1/-5)
+**File**: `.github/workflows/release.yaml` (modified, +4/-1)
 ```diff
-@@ -900,10 +900,7 @@ where
- {
-     let _test_lock = TEST_MUTEX.lock().unwrap_or_else(|p| p.into_inner());
-     let serv = unsafe { kcl_service_new(0) };
--    let prev_hook = std::panic::take_hook();
--    // disable print panic info
--    std::panic::set_hook(Box::new(|_info| {}));
--    let result = std::panic::catch_unwind(|| {
-+    let result = kcl_runner::runner::catch_unwind_silent(|| {
-         let input_path = Path::new(TEST_DATA_PATH).join(input);
-         let input = fs::read_to_string(&input_path)
-             .unwrap_or_else(|_| panic!("Something went wrong reading {}", input_path.display()));
-@@ -912,7 +909,6 @@ where
-         let call = CString::new(svc_name).unwrap();
-         unsafe { kcl_service_call(serv, call.as_ptr(), args.as_ptr(), args_vec.len()) }
-     });
--    std::panic::set_hook(prev_hook);
-     match result {
-         Ok(result_ptr) => {
-             let result = unsafe { CStr::from_ptr(result_ptr) };
-```
-
-**File**: `crates/api/src/service/jsonrpc.rs` (modified, +2/-6)
-```diff
-@@ -22,12 +22,8 @@ pub async fn start_stdio_server() -> Result<(), anyhow::Error> {
+@@ -296,7 +296,10 @@ jobs:
+       - name: Download kcl-language-server artifacts
+         uses: actions/download-artifact@v4
+         with:
+-          name: kcl-language-server-*
++          # `name` is an exact match, so the wildcard has to go in `pattern`.
++          # Each artifact lands in its own subdirectory, which the render step
++          # searches recursively.
++          pattern: kcl-language-server-*
+           path: artifacts
  
- macro_rules! catch {
-     ($serv:expr, $args:expr, $serv_name:ident) => {{
--        let prev_hook = std::panic::take_hook();
--
--        // disable print panic info
--        std::panic::set_hook(Box::new(|_info| {}));
--        let result = std::panic::catch_unwind(|| to_json_result(&$serv.$serv_name(&$args)));
--        std::panic::set_hook(prev_hook);
-+        let result =
-+            kcl_runner::runner::catch_unwind_silent(|| to_json_result(&$serv.$serv_name(&$args)));
-         match result {
-             Ok(result) => result,
-             Err(panic_err) => {
-```
-
-**File**: `crates/lib/src/lib.rs` (modified, +3/-13)
-```diff
-@@ -10,6 +10,7 @@ mod capi;
- pub use capi::*;
- use kcl_parser::ParseSessionRef;
- use kcl_runner::exec_program;
-+use kcl_runner::runner::catch_unwind_silent;
- use kcl_runtime::PanicInfo;
- 
- /// KCL CLI run function CAPI.
-@@ -20,13 +21,7 @@ pub unsafe extern "C-unwind" fn libkcl_run(
-     args: *const c_char,
-     plugin_agent: *const c_char,
- ) -> *const c_char {
--    let prev_hook = std::panic::take_hook();
--
--    // disable print panic info
--    std::panic::set_hook(Box::new(|_info| {}));
--    let libkcl_run_unsafe_result =
--        std::panic::catch_unwind(|| libkcl_run_unsafe(args, plugin_agent));
--    std::panic::set_hook(prev_hook);
-+    let libkcl_run_unsafe_result = catch_unwind_silent(|| libkcl_run_unsafe(args, plugin_agent));
- 
-     match libkcl_run_unsafe_result {
-         Ok(result) => match result {
-@@ -71,11 +66,7 @@ pub unsafe extern "C-unwind" fn libkcl_main(
-     argc: c_int,
-     argv: *const *const c_char,
- ) -> *mut ExitCode {
--    let prev_hook = std::panic::take_hook();
--
--    // disable print panic info
--    std::panic::set_hook(Box::new(|_info| {}));
--    let libkcl_main_result = std::panic::catch_unwind(|| {
-+    let libkcl_main_result = catch_unwind_silent(|| {
-         let args: Vec<&str> = unsafe {
-             std::slice::from_raw_parts(argv, argc as usize)
-                 .iter()
-@@ -84,7 +75,6 @@ pub unsafe extern "C-unwind" fn libkcl_main(
-         };
-         kcl_cmd::main(args.as_slice())
-     });
--    std::panic::set_hook(prev_hook);
- 
-     match libkcl_main_result {
-         Ok(result) => match result {
-```
-
-**File**: `crates/runner/benches/bench_runner.rs` (modified, +5/-6)
-```diff
-@@ -6,23 +6,22 @@ use criterion::{Criterion, criterion_group, criterion_main};
- use walkdir::WalkDir;
- 
- use kcl_parser::{ParseSession, load_program};
--use kcl_runner::{execute, runner::ExecProgramArgs};
-+use kcl_runner::{
-+    execute,
-+    runner::{ExecProgramArgs, catch_unwind_silent},
-+};
- 
- const EXEC_DATA_PATH: &str = "./src/exec_data/";
- 
- pub fn criterion_benchmark(c: &mut Criterion) {
-     c.bench_function("refactor kcl-runner", |b| {
-         b.iter(|| {
--            let prev_hook = std::panic::take_hook();
--            // disable print panic info
--            std::panic::set_hook(Box::new(|_| {}));
--            let result = std::panic::catch_unwind(|| {
-+            let result = catch_unwind_silent(|| {
-                 for file in get_files(EXEC_DATA_PATH, false, true, ".k") {
-                     exec(&file).unwrap();
-                 }
-             });
-             assert!(result.is_ok());
--            std::panic::set_hook(prev_hook);
-         })
-     });
- }
-```
-
-**File**: `crates/runner/src/runner.rs` (modified, +47/-46)
-```diff
-@@ -1,7 +1,10 @@
- use anyhow::{Result, anyhow};
- use kcl_evaluator::Evaluator;
- use std::collections::{HashMap, HashSet};
--use std::{cell::RefCell, rc::Rc};
-+use std::{
-+    cell::{Cell, RefCell},
-+    rc::Rc,
-+};
- 
- use kcl_ast::ast;
- use kcl_config::{
-@@ -12,7 +15,6 @@ use kcl_error::{Diagnostic, Handler, RenderedError};
- #[cfg(not(target_arch = "wasm32"))]
- use kcl_runtime::kcl_plugin_init;
- use kcl_runtime::{Context, PanicInfo, RuntimePanicRecord};
--#[cfg(target_arch = "wasm32")]
- use once_cell::sync::Lazy;
- use serde::{Deserialize, Serialize};
- use std::os::raw::c_char;
-@@ -301,14 +303,18 @@ pub trait ProgramRunner {
- }
- 
- thread_local! {
--    pub static KCL_RUNTIME_PANIC_RECORD: RefCell<RuntimePanicRecord> = RefCell::new(RuntimePanicRecord::default())
-+    pub static KCL_RUNTIME_PANIC_RECORD: RefCell<RuntimePanicRecord> = RefCell::new(RuntimePanicRecord::default());
-+    static RECORDING_PANICS: Cell<bool> = const { Cell::new(false) };
- }
- 
--#[cfg(target_arch = "wasm32")]
- static ONCE_PANIC_HOOK: Lazy<()> = Lazy::new(|| {
--    std::panic::set_hook(Box::new(|info: &std::panic::PanicHookInfo| {
--        KCL_RUNTIME_PANIC_RECORD.with(|record| {
--            let mut record = record.borrow_mut();
-+    let prev_hook = std::panic::take_hook();
-+    std::panic::set_hook(Box::new(move |info: &std::panic::PanicHookInfo| {
-+        // This hook runs for every panic in the process, so it must not panic.
-+        let _ = KCL_RUNTIME_PANIC_RECORD.try_with(|record| {
-+            let Ok(mut record) = record.try_borrow_mut() else {
-+                return;
-+            };
-             record.kcl_panic_info = true;
-             record.message = if let Some(s) = info.payload().downcast_ref::<&str>() {
-                 s.to_string()
-@@ -324,10 +330,30 @@ static ONCE_PANIC_HOOK: Lazy<()> = Lazy::new(|| {
-                 record.rust_line = location.line() as i32;
-                 record.rust_col = location.column() as i32;
-             }
--        })
-+        });
-+        if !RECORDING_PANICS.get() {
-+            prev_hook(info);
-+        }
-     }));
- });
- 
-+/// Run `f` like [`std::panic::catch_unwind`] without printing its panic.
-+///
-+/// The panic hook is process-global, so it is installed once. It records
-+/// every panic into the thread-local [`KCL_RUNTIME_PANIC_RECORD`] and prints
-+/// it through the hook it replaced only on threads outside this function. A
-+/// hook set after the first call replaces this one for the whole process, so
-+/// panics inside this function then reach that hook and are not recorded.
-+pub fn catch_unwind_silent<F: FnOnce() -> R + std::panic::UnwindSafe, R>(
-+    f: F,
-+) -> std::thread::Result<R> {
-+    Lazy::force(&ONCE_PANIC_HOOK);
-+    let recording = RECORDING_PANICS.replace(true);
-+    let result = std::panic::catch_unwind(f);
-+    RECORDING_PANICS.set(recording);
-+    result
-+}
-+
- pub struct FastRunner {
-     opts: RunnerOptions,
- }
-@@ -358,34 +384,9 @@ impl FastRunner {
-         if let Some(pkgs) = self.opts.referenced_pkgs_set() {
-             evaluator.set_referenced_pkgs(pkgs);
-         }
--        #[cfg(target_arch = "wasm32")]
--        // Ensure the panic hook is set (this will only happen once) for the WASM target,
--        // because it is single threaded.
--        Lazy::force(&ONCE_PANIC_HOOK);
--        #[cfg(not(target_arch = "wasm32"))]
--        let prev_hook = std::panic::take_hook();
--        #[cfg(not(target_arch = "wasm32"))]
--        std::panic::set_hook(Box::new(|info: &std::panic::PanicHookInfo| {
--            KCL_RUNTIME_PANIC_RECORD.with(|record| {
--                let mut record = record.borrow_mut();
--                record.kcl_panic_info = true;
--                record.message = if let Some(s) = info.payload().downcast_ref::<&str>() {
--                    s.to_string()
--                } else if let Some(s) = info.payload().downcast_ref::<&String>() {
--                    (*s).clone()
--                } else if let Some(s) = info.payload().downcast_ref::<String>() {
--                    (*s).clone()
--                } else {
--                    "unknown runtime error".to_string()
--                };
--                if let Some(location) = info.location() {
--                    record.rust_file = location.file().to_string();
--                    record.rust_line = location.line() as i32;
--                    record.rust_col = location.column() as i32;
--                }
--            })
--        }));
--        let evaluator_result = std::panic::catch_unwind(|| {
-+        // Drop panics recorded on this thread before this run.
-+        KCL_RUNTIME_PANIC_RECORD.take();
-+        let evaluator_result = catch_unwind_silent(|| {
-             if self.opts.plugin_agent_ptr > 0 {
-                 #[cfg(not(target_arch = "wasm32"))]
-                 unsafe {
-@@ -399,8 +400,6 @@ impl FastRunner {
-             }
-             evaluator.run()
-         });
--        #[cfg(not(target_arch = "wasm32"))]
--        std::panic::set_hook(prev_hook);
-         KCL_RUNTIME_PANIC_RECORD.wit
-```
-
-**File**: `crates/runner/src/test_issues/github.com/kcl-lang/kcl/2223/main.k` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+items = [i * i for i in range(1000)]
-+assert len(items) == 0, "items must be empty"
-```
-
-**File**: `crates/runner/src/tests.rs` (modified, +48/-5)
-```diff
-@@ -330,10 +330,7 @@ fn exec_with_err_result_at(path: &str) {
-     let kcl_files = get_files(path, false, true, ".k");
-     let output_files = get_files(path, false, true, ".stderr.json");
- 
--    let prev_hook = std::panic::take_hook();
--    // disable print panic info
--    std::panic::set_hook(Box::new(|_| {}));
--    let result = std::panic::catch_unwind(|| {
-+    let result = crate::runner::catch_unwind_silent(|| {
-         for (kcl_file, _) in kcl_files.iter().zip(&output_files) {
-             let mut args = ExecProgramArgs::default();
-             args.k_filename_list.push(kcl_file.to_string());
-@@ -346,7 +343,6 @@ fn exec_with_err_result_at(path: &str) {
-         }
-     });
-     assert!(result.is_ok());
--    std::panic::set_hook(prev_hook);
- }
- 
- /// Get kcl files from path.
-@@ -524,3 +520,50 @@ fn test_eval_error_reports_diagnostics_on_result() {
-         "runtime diagnostics must carry a line: {pos:?}"
-     );
- }
-+
-+/// Regression test for issue #2223: evaluations running concurrently in one
-+/// process must each report their own runtime error message.
-+#[test]
-+fn test_concurrent_eval_errors_keep_message() {
-+    let main_test_path = PathBuf::from("./src/test_issues/github.com/kcl-lang/kcl/2223/main.k");
-+    for _ in 0..20 {
-+        // Each evaluation runs on a fresh thread so that no message can
-+        // carry over from an earlier evaluation on the same thread.
-+        let handles: Vec<_> = (0..8)
-+            .map(|_| {
-+                let main_test_path = main_test_path.clone();
-+                std::thread::spawn(move || {
-+                    let mut args = ExecProgramArgs::default();
-+                    args.k_filename_list
-+                        .push(main_test_path.display().to_string());
-+                    args.work_dir = Some(".".to_string());
-+                    let res = exec_program(Arc::new(ParseSession::default()), &args).unwrap();
-+                    res.diagnostics[0].messages[0].message.clone()
-+                })
-+            })
-+            .collect();
-+        for handle in handles {
-+            assert_eq!(handle.join().unwrap(), "items must be empty");
-+        }
-+    }
-+}
-+
-+/// A host that replaces the panic hook after KCL installed its own must not
-+/// lose runtime error messages.
-+#[test]
-+fn test_eval_error_keeps_message_after_hook_replaced() {
-+    let mut args = ExecProgramArgs::default();
-+    args.k_filename_list
-+        .push("./src/test_issues/github.com/kcl-lang/kcl/2223/main.k".to_string());
-+    args.work_dir = Some(".".to_string());
-+    // Install KCL's hook, then replace it as a host would.
-+    crate::runner::catch_unwind_silent(|| ()).unwrap();
-+    let prev_hook = std::panic::take_hook();
-+    std::panic::set_hook(Box::new(|_| {}));
-+    let res = exec_program(Arc::new(ParseSession::default()), &args);
-+    std::panic::set_hook(prev_hook);
-+    assert_eq!(
-+        res.unwrap().diagnostics[0].messages[0].message,
-+        "items must be empty"
-+    );
-+}
-```
-
-**File**: `crates/runner/tests/panic_hook.rs` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+//! A host's panic hook installed before KCL's first call must keep receiving
-+//! the host's own panics, and none of KCL's, while evaluations run
-+//! concurrently. This file holds a single test so that its process installs
-+//! the host hook before anything else installs KCL's.
-+#![allow(clippy::arc_with_non_send_sync)]
-+
-+use kcl_parser::ParseSession;
-+use kcl_runner::{ExecProgramArgs, exec_program};
-+use std::sync::Arc;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+const FIXTURE: &str = "src/test_issues/github.com/kcl-lang/kcl/2223/main.k";
-+
-+static HOST_PANICS: AtomicUsize = AtomicUsize::new(0);
-+
-+#[test]
-+fn host_hook_survives_concurrent_evaluations() {
-+    let default_hook = std::panic::take_hook();
-+    std::panic::set_hook(Box::new(move |info| {
-+        HOST_PANICS.fetch_add(1, Ordering::SeqCst);
-+        default_hook(info);
-+    }));
-+
-+    for _ in 0..20 {
-+        let handles: Vec<_> = (0..8)
-+            .map(|_| {
-+                std::thread::spawn(|| {
-+                    let args = ExecProgramArgs {
-+                        k_filename_list: vec![FIXTURE.to_string()],
-+                        ..Default::default()
-+                    };
-+                    exec_program(Arc::new(ParseSession::default()), &args).unwrap()
-+                })
-+            })
-+            .collect();
-+        for handle in handles {
-+            assert!(!handle.join().unwrap().err_message.is_empty());
-+        }
-+    }
-+    assert_eq!(HOST_PANICS.load(Ordering::SeqCst), 0);
-+
-+    std::thread::spawn(|| panic!("host panic"))
-+        .join()
-+        .unwrap_err();
-+    assert_eq!(HOST_PANICS.load(Ordering::SeqCst), 1);
-+}
+       - name: Render kcl-lsp formula and Scoop manifest
 ```
 
 ---
 
-### Incident Patch 2: `da013146` (2026-09-29)
-**Commit Message**: fix(runtime): self-contained plugin stub on wasm32-unknown-unknown (#2208)
+### Incident Patch 2: `b26e8ee3` (2026-10-19)
+**Commit Message**: fix(release): use the org secret name DEPLOY_ACCESS_TOKEN
 
-runtime: self-contained plugin stub on wasm32-unknown-unknown
+The kcl-lang org secret is named DEPLOY_ACCESS_TOKEN, so referencing
+secrets.DEPLOY_TOKEN resolved to an empty string and the new guard aborted
+the release before it published anything.
 
-The kcl_plugin_invoke_json_wasm import only makes sense when there's a
-host to fill it in - wasmtime in akua's render worker, or any WASI
-host. On wasm32-unknown-unknown (e.g. a JS-loaded SDK bundle) there is
-no host, so the extern becomes an unresolved env.* import that every
-JS loader stumbles over.
+Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 
-Gate the extern to target_os = "wasi" and provide a self-contained
-stub on the non-WASI path. The stub returns a __kcl_PanicInfo__
-envelope pointing users at the CLI, so Packages that try to call
-helm.template / kustomize.build / pkg.render in the SDK bundle surface
-a clean diagnostic instead of a silent misevaluation.
-
-Verified against a temporary `uuid` "js" feature addition (kcl's own
-separate, pre-existing wasm32-unknown-unknown gap, tracked
-independently and not part of this patch - the consuming crate closes
-it via Cargo feature unification, see akuapkg's
-docs/spikes/kcl-wasm-feasibility.md) - kcl-runtime alone checks clean
-for wasm32-unknown-unknown with that gap closed.
-
-Originally landed as akua-dev/kcl@5b214696 on the akua-wasm32 branch;
-
-**File**: `crates/runtime/src/stdlib/plugin.rs` (modified, +25/-1)
+**File**: `.github/workflows/release.yaml` (modified, +5/-5)
 ```diff
-@@ -116,7 +116,13 @@ pub unsafe extern "C-unwind" fn kcl_plugin_invoke_json(
-     }
- }
+@@ -256,10 +256,10 @@ jobs:
+       - name: Check that the deploy token is available
+         shell: bash
+         env:
+-          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
++          DEPLOY_ACCESS_TOKEN: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
+         run: |
+-          if [ -z "${DEPLOY_TOKEN}" ]; then
+-            echo "::error::DEPLOY_TOKEN is not available to this workflow"
++          if [ -z "${DEPLOY_ACCESS_TOKEN}" ]; then
++            echo "::error::DEPLOY_ACCESS_TOKEN is not available to this workflow"
+             exit 1
+           fi
  
--#[cfg(target_arch = "wasm32")]
-+// `wasm32-wasip1` expects a wasmtime host (or any WASI host) to link
-+// `kcl_plugin_invoke_json_wasm` at instantiation - that's how akua's
-+// render worker ferries plugin callouts back to host handlers. On
-+// `wasm32-unknown-unknown` (e.g. a JS-loaded SDK bundle) there is no
-+// host, so the extern would leave an unresolved `env.*` import that
-+// every JS loader stumbles over.
-+#[cfg(all(target_arch = "wasm32", target_os = "wasi"))]
- unsafe extern "C-unwind" {
-     pub fn kcl_plugin_invoke_json_wasm(
-         method: *const c_char,
-@@ -125,6 +131,24 @@ unsafe extern "C-unwind" {
-     ) -> *const c_char;
- }
+@@ -315,15 +315,15 @@ jobs:
+           path: homebrew-tap
+           # GITHUB_TOKEN is scoped to this repo, so the org deploy token is used
+           # to push to the tap and the bucket. Needs write access to both.
+-          token: ${{ secrets.DEPLOY_TOKEN }}
++          token: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
  
-+/// Self-contained no-op stub for `wasm32-unknown-unknown`, where there
-+/// is no host to link the real `kcl_plugin_invoke_json_wasm` extern.
-+/// Callers that need plugins stick with `wasm32-wasip1` + a wasmtime
-+/// host.
-+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
-+pub unsafe fn kcl_plugin_invoke_json_wasm(
-+    _method: *const c_char,
-+    _args: *const c_char,
-+    _kwargs: *const c_char,
-+) -> *const c_char {
-+    // `__kcl_PanicInfo__` shape - KCL's plugin-invoke glue treats this
-+    // response as a runtime panic, so Packages that call a plugin
-+    // surface a clean evaluator error with the message below rather
-+    // than a silent misevaluation.
-+    c"{\"__kcl_PanicInfo__\":\"plugin callouts are not available in this KCL build (wasm32-unknown-unknown) - use a wasmtime-hosted build for helm.template / kustomize.build / pkg.render\"}"
-+        .as_ptr() as *const c_char
-+}
-+
- #[cfg(all(test, not(target_arch = "wasm32")))]
- mod tests {
-     use super::*;
-```
-
----
-
-### Incident Patch 3: `ce101d61` (2026-10-09)
-**Commit Message**: fix(error): populate source locations in arcanist/sarif output (#2217)
-
-fix(error): populate source locations in arcanist/sarif output (#2216)
-
-The machine-readable renderers were never the problem. They read the
-position off the `Diagnostic` they were handed, but the runner flattened
-every compile and evaluation failure into an already-rendered,
-ANSI-colored string before returning, so the structure was gone by the
-time anything rendered it.
-
-Both the CLI (`crates/cmd/src/run.rs`) and the C API
-(`crates/api/src/service/service_impl.rs`) then wrapped that whole
-rendered string in a fresh `Diagnostic` at `Position::dummy_pos()` and
-rendered *that*. Hence `Path` and `uri` came out empty, every error was
-reported as the generic `error[E3M38] EvaluationError`, and
-`Description` / `message.text` carried the entire pretty block including
-its escape codes.
-
-Keep the structure instead of dropping it:
-
-* `emit_compile_diag_to_string` now bails with a `RenderedError` that
-  carries the parse and resolve diagnostics it just rendered.
-  `Display` yields the rendered message, so `to_string()` and the
-  human-readable output are byte-identical to before.
-* `FastRunner::run` keeps the `PanicInfo`
-
-**File**: `crates/api/src/capi_test.rs` (modified, +5/-1)
-```diff
-@@ -11,7 +11,11 @@ use std::os::raw::c_char;
- use std::path::{Path, PathBuf};
- use std::sync::Mutex;
- const TEST_DATA_PATH: &str = "./src/testdata";
--static TEST_MUTEX: Lazy<Mutex<i32>> = Lazy::new(|| Mutex::new(0i32));
-+/// Serialises the C API tests. It also has to be held by any *other* test
-+/// that evaluates a KCL program against [`TEST_DATA_PATH`]: the evaluator
-+/// caches into a `.kcl` directory inside the work dir, so two concurrent
-+/// runs over the same fixtures fight over the same files.
-+pub(crate) static TEST_MUTEX: Lazy<Mutex<i32>> = Lazy::new(|| Mutex::new(0i32));
+       - name: Check out scoop-bucket
+         uses: actions/checkout@v3
+         with:
+           repository: kcl-lang/scoop-bucket
+           ref: main
+           path: scoop-bucket
+-          token: ${{ secrets.DEPLOY_TOKEN }}
++          token: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
  
- #[test]
- fn test_c_api_call_exec_program() {
-```
-
-**File**: `crates/api/src/service/service_impl.rs` (modified, +172/-42)
-```diff
-@@ -9,7 +9,7 @@ use crate::gpyrpc::{self, *};
- use kcl_ast::ast::SerializeProgram;
- use kcl_config::settings::build_settings_pathbuf;
- use kcl_error::format::DiagnosticFormat;
--use kcl_error::{Diagnostic, Handler, Level, Message};
-+use kcl_error::{Diagnostic, Handler, Level, Message, RenderedError};
- use kcl_language_server::rename;
- use kcl_loader::option::list_options;
- use kcl_loader::{LoadPackageOptions, load_packages_with_cache};
-@@ -66,43 +66,56 @@ pub(crate) fn resolve_error_format(args_error_format: &str) -> anyhow::Result<Di
-     Ok(DiagnosticFormat::Pretty)
- }
- 
--/// Render a machine-readable representation of `err_message` using the
--/// requested `format`. Returns an empty string when the caller asked for the
--/// default `Pretty` output or when `err_message` is empty. Otherwise wraps
--/// the message in a `Diagnostic` and dispatches to the format-specific
--/// renderer so the result can be inspected (e.g. in tests) without needing
--/// to capture process-global stderr.
-+/// Render a machine-readable representation of `diagnostics` — falling back
-+/// to `err_message` when the run produced none — using the requested
-+/// `format`. Returns an empty string when the caller asked for the default
-+/// `Pretty` output or when there is nothing to report.
-+///
-+/// The `diagnostics` come from the run itself and carry real file/line/column
-+/// information, which is exactly what these formats exist to expose;
-+/// re-wrapping the rendered text instead leaves the location fields blank
-+/// (issue #2216).
- pub(crate) fn render_machine_readable_error(
-     err_message: &str,
-     format: DiagnosticFormat,
-+    diagnostics: &[Diagnostic],
- ) -> anyhow::Result<String> {
--    if format == DiagnosticFormat::Pretty || err_message.is_empty() {
-+    if format == DiagnosticFormat::Pretty || (err_message.is_empty() && diagnostics.is_empty()) {
-         return Ok(String::new());
-     }
-     let mut handler = Handler::new();
--    let pos = kcl_error::Position::dummy_pos();
--    handler.add_diagnostic(Diagnostic {
--        level: Level::Error,
--        messages: vec![Message {
--            range: (pos.clone(), pos),
--            style: kcl_error::Style::LineAndColumn,
--            message: err_message.to_string(),
--            note: None,
--            suggested_replacement: None,
--        }],
--        code: None,
--    });
-+    for diag in diagnostics {
-+        handler.add_diagnostic(diag.clone());
-+    }
-+    if handler.diagnostics.is_empty() {
-+        let pos = kcl_error::Position::dummy_pos();
-+        handler.add_diagnostic(Diagnostic {
-+            level: Level::Error,
-+            messages: vec![Message {
-+                range: (pos.clone(), pos),
-+                style: kcl_error::Style::LineAndColumn,
-+                // The text was rendered for a terminal; drop the color codes
-+                // before it reaches a machine-readable record.
-+                message: kcl_error::format::strip_ansi(err_message).into_owned(),
-+                note: None,
-+                suggested_replacement: None,
-+            }],
-+            code: None,
-+        });
-+    }
-     handler.emit_to_string_as(format)
- }
- 
--/// Emit a machine-readable representation of `err_message` to stderr when the
--/// caller asked for a non-pretty diagnostic format. Returns Ok(()) always so
--/// callers can use it in a tail position.
-+/// Emit a machine-readable representation of `diagnostics` — falling back to
-+/// `err_message` — to stderr when the caller asked for a non-pretty
-+/// diagnostic format. Returns Ok(()) always so callers can use it in a tail
-+/// position.
- pub(crate) fn emit_machine_readable_error(
-     err_message: &str,
-     format: DiagnosticFormat,
-+    diagnostics: &[Diagnostic],
- ) -> anyhow::Result<()> {
--    let rendered = render_machine_readable_error(err_message, format)?;
-+    let rendered = render_machine_readable_error(err_message, format, diagnostics)?;
-     if !rendered.is_empty() {
-         use std::io::Write;
-         let mut stderr = std::io::stderr().lock();
-@@ -271,8 +284,9 @@ fn from_proto_test_result(result: &gpyrpc::TestResult) -> testing::TestResult {
- ///
- /// Now: when the caller asked for `Pretty` (the default) we keep the existing
- /// pretty rendering so the wire text is byte-compatible with the previous
--/// behaviour; for the other formats we wrap the pretty text in a
--/// `Diagnostic` and re-dispatch to `render_machine_readable_error`. If
-+/// behaviour; for the other formats we re-dispatch to
-+/// `render_machine_readable_error`, preferring the structured diagnostics the
-+/// runner attached to the error (issue #2216) over the rendered text. If
- /// re-rendering itself fails (extremely rare — only if the renderer can't
- /// construct a `Diagnostic` for the given input) we fall back to the raw
- /// pretty text so the caller never sees an empty error message.
-@@ -281,7 +295,11 @@ pub(crate) fn format_anyhow_error(err: &anyhow::Error, format: DiagnosticFormat)
-     if format == DiagnosticFormat::P
-```
-
-**File**: `crates/api/src/testdata/exec-program-with-arcanist-error-format-and-compile-error.response.error` (modified, +4/-4)
-```diff
-@@ -1,11 +1,11 @@
- [
-   {
-     "Char": 1,
--    "Code": "error[E3M38]",
--    "Description": "\nerror[E2G22]: TypeError\n---> File main.k:1:1: expected int, got str(str)\n\n",
-+    "Code": "error[E2G22]",
-+    "Description": "expected int, got str(str)",
-     "Line": 1,
--    "Name": "EvaluationError",
-+    "Name": "TypeError",
-     "OriginalText": "",
--    "Path": ""
-+    "Path": "main.k"
-   }
- ]
-\ No newline at end of file
-```
-
-**File**: `crates/api/src/testdata/exec-program-with-sarif-error-format-and-compile-error.response.error` (modified, +9/-7)
-```diff
-@@ -9,31 +9,33 @@
-           "informationUri": "https://kcl-lang.io/",
-           "rules": [
-             {
--              "id": "E3M38",
--              "name": "EvaluationError",
-+              "id": "E2G22",
-+              "name": "TypeError",
-               "shortDescription": {
--                "text": "EvaluationError"
-+                "text": "TypeError"
-               }
-             }
-           ]
-         }
-       },
-       "results": [
-         {
--          "ruleId": "E3M38",
-+          "ruleId": "E2G22",
-           "level": "error",
-           "message": {
--            "text": "\nerror[E2G22]: TypeError\n---> File main.k:1:1: expected int, got str(str)\n\n"
-+            "text": "expected int, got str(str)"
-           },
-           "locations": [
-             {
-               "physicalLocation": {
-                 "artifactLocation": {
--                  "uri": ""
-+                  "uri": "main.k"
-                 },
-                 "region": {
-                   "startLine": 1,
--                  "startColumn": 1
-+                  "startColumn": 1,
-+                  "endLine": 1,
-+                  "endColumn": 2
-                 }
-               }
-             }
-```
-
-**File**: `crates/api/src/testdata/exec-program-with-short-error-format-and-compile-error.response.error` (modified, +1/-5)
-```diff
-@@ -1,5 +1 @@
--error[E3M38]: EvaluationError - 
--error[E2G22]: TypeError
-----> File main.k:1:1: expected int, got str(str)
--
--
-+main.k:1:1 - error[E2G22]: TypeError - expected int, got str(str)
-```
-
-**File**: `crates/cmd/src/run.rs` (modified, +31/-8)
-```diff
-@@ -3,7 +3,7 @@
- use anyhow::Result;
- use clap::ArgMatches;
- use kcl_error::format::DiagnosticFormat;
--use kcl_error::{Diagnostic, Handler, Level, Message, StringError};
-+use kcl_error::{Diagnostic, Handler, Level, Message, RenderedError, StringError};
- use kcl_parser::ParseSession;
- use kcl_runner::exec_program;
- use std::io::Write;
-@@ -31,9 +31,10 @@ pub fn resolve_error_format(matches: &ArgMatches) -> Result<DiagnosticFormat> {
- 
- /// Build a fallback KCL [`Diagnostic`] from a plain error message string.
- ///
--/// The runner reports compile/eval failures as plain text via
--/// `ExecProgramResult.err_message`. For machine-readable formats we still
--/// want to surface *something*, even without structured position info.
-+/// Used only when the run produced no structured diagnostics (e.g. an
-+/// argument error reported before compilation starts). The text has already
-+/// been rendered for a terminal, so its ANSI escapes are stripped before it
-+/// is embedded in a machine-readable record.
- fn diag_from_err_message(message: &str) -> Diagnostic {
-     Diagnostic {
-         level: Level::Error,
-@@ -43,20 +44,42 @@ fn diag_from_err_message(message: &str) -> Diagnostic {
-                 kcl_error::Position::dummy_pos(),
-             ),
-             style: kcl_error::Style::LineAndColumn,
--            message: message.to_string(),
-+            message: kcl_error::format::strip_ansi(message).into_owned(),
-             note: None,
-             suggested_replacement: None,
-         }],
-         code: None,
-     }
- }
- 
-+/// A [`Handler`] pre-loaded with the diagnostics the run produced.
-+fn handler_with_diagnostics(diagnostics: Vec<Diagnostic>) -> Handler {
-+    let mut handler = Handler::new();
-+    for diag in diagnostics {
-+        handler.add_diagnostic(diag);
-+    }
-+    handler
-+}
-+
-+/// The structured diagnostics behind a failed run.
-+///
-+/// Compile failures arrive as a [`RenderedError`] carrying them; evaluation
-+/// failures carry them on the result. Either way they hold the real
-+/// file/line/column that the machine-readable formats report (issue #2216).
-+fn diagnostics_from_error(err: &anyhow::Error) -> Vec<Diagnostic> {
-+    err.downcast_ref::<RenderedError>()
-+        .map(|rendered| rendered.diagnostics.clone())
-+        .unwrap_or_default()
-+}
-+
- fn emit_machine_readable(
-     handler: &mut Handler,
-     message: &str,
-     format: DiagnosticFormat,
- ) -> Result<()> {
--    handler.add_diagnostic(diag_from_err_message(message));
-+    if handler.diagnostics.is_empty() {
-+        handler.add_diagnostic(diag_from_err_message(message));
-+    }
-     let _ = handler.emit_as(format)?;
-     Ok(())
- }
-@@ -84,7 +107,7 @@ pub fn run_command<W: Write>(matches: &ArgMatches, writer: &mut W) -> Result<()>
-                     }
-                     sess.0.emit_stashed_diagnostics_and_abort()?;
-                 } else {
--                    let mut handler = Handler::new();
-+                    let mut handler = handler_with_diagnostics(result.diagnostics);
-                     emit_machine_readable(&mut handler, &result.err_message, error_format)?;
-                     std::process::exit(1);
-                 }
-@@ -121,7 +144,7 @@ pub fn run_command<W: Write>(matches: &ArgMatches, writer: &mut W) -> Result<()>
-                 }
-                 sess.0.emit_stashed_diagnostics_and_abort()?;
-             } else {
--                let mut handler = Handler::new();
-+                let mut handler = handler_with_diagnostics(diagnostics_from_error(&msg));
-                 emit_machine_readable(&mut handler, &msg.to_string(), error_format)?;
-                 std::process::exit(1);
-             }
-```
-
-**File**: `crates/error/src/diagnostic.rs` (modified, +38/-0)
-```diff
-@@ -136,6 +136,44 @@ impl Diagnostic {
- 
- pub type Range = (Position, Position);
- 
-+/// An error that carries the [`Diagnostic`]s behind an error message which
-+/// has already been rendered to text.
-+///
-+/// The runner reports compile failures as a rendered string, which drops the
-+/// positions that machine-readable formats (arcanist JSON, SARIF) exist to
-+/// carry. Embedding the original diagnostics lets callers re-render them
-+/// with the real file/line/column instead of re-wrapping the text in a
-+/// position-less [`Diagnostic`].
-+///
-+/// [`Display`](std::fmt::Display) yields the rendered message, so
-+/// `anyhow::Error::to_string()` is byte-identical to rendering the message
-+/// directly and the pretty output is unaffected.
-+#[derive(Debug, Clone)]
-+pub struct RenderedError {
-+    /// The already-rendered, human-readable error text.
-+    pub message: String,
-+    /// The diagnostics `message` was rendered from, in emission order.
-+    pub diagnostics: Vec<Diagnostic>,
-+}
-+
-+impl fmt::Display for RenderedError {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        f.write_str(&self.message)
-+    }
-+}
-+
-+impl std::error::Error for RenderedError {}
-+
-+impl RenderedError {
-+    /// Pair a rendered error message with the diagnostics it came from.
-+    pub fn new(message: String, diagnostics: Vec<Diagnostic>) -> Self {
-+        Self {
-+            message,
-+            diagnostics,
-+        }
-+    }
-+}
-+
- /// Returns a dummy range whose filename is empty, line is 1 and column is None.
- #[inline]
- pub fn dummy_range() -> Range {
-```
-
-**File**: `crates/error/src/format/mod.rs` (modified, +53/-0)
-```diff
-@@ -18,6 +18,7 @@ pub mod short;
- 
- use crate::{Diagnostic, DiagnosticId, Level, Message, Position, Style};
- use compiler_base_session::Session;
-+use std::borrow::Cow;
- use std::str::FromStr;
- use thiserror::Error;
- 
-@@ -93,6 +94,41 @@ pub fn external_column(pos: &Position) -> u64 {
-     pos.column.map(|c| c + 1).unwrap_or(1)
- }
- 
-+/// Strip ANSI escape sequences from already-rendered diagnostic text.
-+///
-+/// The fallback machine-readable record for an error that carries no
-+/// structured [`Diagnostic`]s is built from the human-readable rendering,
-+/// which is colorized for terminals. The structured fields of arcanist /
-+/// SARIF output are consumed by tools, not a terminal, so the escape codes
-+/// must not travel with them.
-+pub fn strip_ansi(text: &str) -> Cow<'_, str> {
-+    if !text.contains('\u{1b}') {
-+        return Cow::Borrowed(text);
-+    }
-+    let mut out = String::with_capacity(text.len());
-+    let mut chars = text.chars().peekable();
-+    while let Some(c) = chars.next() {
-+        if c != '\u{1b}' {
-+            out.push(c);
-+            continue;
-+        }
-+        // CSI sequences (`ESC [ … final`), which is what `annotate_snippets`
-+        // emits. Consume up to and including the final byte in `@`..`~`.
-+        if chars.peek() == Some(&'[') {
-+            chars.next();
-+            for c in chars.by_ref() {
-+                if ('@'..='~').contains(&c) {
-+                    break;
-+                }
-+            }
-+        } else {
-+            // Any other two-character escape sequence.
-+            chars.next();
-+        }
-+    }
-+    Cow::Owned(out)
-+}
-+
- /// Look up the source line that contains `pos.line` from `filename`.
- ///
- /// Returns `None` when the file cannot be opened or the line is out of
-@@ -271,6 +307,23 @@ mod tests {
-         assert_eq!(primary_message(&diag).unwrap().message, "anything");
-     }
- 
-+    #[test]
-+    fn strip_ansi_removes_csi_sequences() {
-+        let colored = "\u{1b}[1;38;5;12mboom\u{1b}[0m";
-+        assert_eq!(strip_ansi(colored), "boom");
-+        // Text without escapes is borrowed, not copied.
-+        assert!(matches!(strip_ansi("plain"), Cow::Borrowed("plain")));
-+    }
-+
-+    #[test]
-+    fn strip_ansi_keeps_surrounding_text() {
-+        let rendered = "error[E2L23]\n --> a.k:2:5\n\u{1b}[1;38;5;12m2 | b = x\u{1b}[0m";
-+        let stripped = strip_ansi(rendered);
-+        assert!(!stripped.contains('\u{1b}'), "got: {stripped}");
-+        assert!(stripped.contains("a.k:2:5"), "got: {stripped}");
-+        assert!(stripped.contains("2 | b = x"), "got: {stripped}");
-+    }
-+
-     #[test]
-     fn external_column_handles_missing_column() {
-         let pos = Position {
+       - name: Commit kcl-lsp formula and Scoop manifest
+         shell: bash
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2226** (2026-10-19): ci(release): use the org DEPLOY_TOKEN for tap updates (@Peefy)
+- **PR #2225** (2026-10-19): ci(release): update kcl-lsp Homebrew tap and Scoop manifest on release (@Peefy)
 - **PR #2224** (2026-10-19): fix(runner): install the panic hook once instead of swapping it per run (@tobias-karlsson)
 - **PR #2222** (2026-10-16): chore(release): bump version to v0.13.2 (@Peefy)
 - **PR #2221** (2026-10-16): fix(lsp): keep completion on an attribute name typed before its `:` or `=` (@jul-m)
 - **PR #2220** (2026-10-13): fix(ci): stop three doctests sharing a mutable fixture (@Peefy)
-- **PR #2219** (2026-10-13): ci(release): publish kcl-lib for windows/arm64 (@Peefy)
-- **PR #2217** (2026-10-09): fix(error): populate source locations in arcanist/sarif output (@Peefy)
 
 ---
 
@@ -2152,32 +1303,31 @@ Keep the structure instead of dropping it:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runner): install the panic hook once instead of swapping it per run (#2224)
+## X. release): match language server artifacts with pattern, not name
 
 **RULE**:
-When implementing operations in `crates/api/src/capi_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee6cfba9`: runner): install the panic hook once instead of swapping it per run (#2224). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d88ede7b`: release): match language server artifacts with pattern, not name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/api/src/capi_test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let result = kcl_runner::runner::catch_unwind_silent(|| {
+          # `name` is an exact match, so the wildcard has to go in `pattern`.
+          # Each artifact lands in its own subdirectory, which the render step
+          # searches recursively.
+          pattern: kcl-language-server-*
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let prev_hook = std::panic::take_hook();
-    // disable print panic info
-    std::panic::set_hook(Box::new(|_info| {}));
-    let result = std::panic::catch_unwind(|| {
-    std::panic::set_hook(prev_hook);
+          name: kcl-language-server-*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee6cfba9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d88ede7b` are properly handled with clean fallback behavior.

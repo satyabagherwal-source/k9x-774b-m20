@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T16:31:19.342Z",
+  "last_updated": "2026-10-19T16:37:27.555Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2884,14 +2884,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-serpapi-google-search-results-python",
-      "content_hash": "a70f6842e25c16c60c41a46ca4fbbc5a01787432d51068a0dabb9fdaeb53c958",
-      "verified_at": "2026-10-18T04:59:15.196Z",
+      "content_hash": "661a4f32d9c85292811f1f2fc67f90b40301360f1b47be52904a9fcd9be9e922",
+      "verified_at": "2026-10-19T16:37:18.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:59:15.196Z"
+      "last_updated": "2026-10-19T16:37:18.659Z"
     },
     "serpapi/google-search-results-ruby": {
       "repository": "serpapi/google-search-results-ruby",
@@ -8179,14 +8179,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
-      "verified_at": "2026-10-19T03:33:09.468Z",
+      "content_hash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
+      "verified_at": "2026-10-19T16:37:27.554Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:33:09.468Z"
+      "last_updated": "2026-10-19T16:37:27.554Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -8689,14 +8689,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "cfa1e84bbe07914d606e2f4e8ac509c763038ab9a51c04dad4fba5b42901c696",
-      "verified_at": "2026-10-19T04:19:36.480Z",
+      "content_hash": "bf53c8ee4e373cd07e5b4a80852767d7f4f62685854ddee6633be1224a1d5223",
+      "verified_at": "2026-10-19T16:37:22.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:19:36.480Z"
+      "last_updated": "2026-10-19T16:37:22.283Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",
@@ -12597,6 +12597,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T16:31:10.476Z"
+    },
+    "touchlab/SKIE": {
+      "repository": "touchlab/SKIE",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-touchlab-skie",
+      "content_hash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
+      "verified_at": "2026-10-19T16:37:20.248Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T16:37:20.248Z"
     }
   },
   "repos": {

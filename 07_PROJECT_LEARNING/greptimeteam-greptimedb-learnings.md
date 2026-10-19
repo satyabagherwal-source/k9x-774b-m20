@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `baa56301`  
+> **Source Version**: `da88ff86`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:33:09.235Z  
+> **Timestamp**: 2026-10-19T16:37:27.294Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:33:09.227Z  
+> **Harvest Timestamp**: 2026-10-19T16:37:27.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6745 stars
+- **Stars / Engagement**: 6747 stars
 
 ---
 
@@ -1651,13 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9713** (2026-10-19): **fix(puffin): keep puffin_metadata cache bytes non-negative**
-  *Symptoms*: ## Summary - Adjust `PuffinMetadataCache` gauge updates so replacements do not subtract twice from `greptime_mito_cache_bytes{type="puffin_metadata"}`. - Skip `RemovalCause::Replaced` in the eviction listener and subtract the previous entry weight before inserting an updated value.  Fixes #5727.  ## Test plan - [ ] CI (fork PR checks) 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for looking into this. The missing gauge increment was already fixed in #7539, merged on January 13, 2026. Before that change, put_metadata() inserted entries without increasing the gauge, while the eviction listener decreased it.  Current main adds the new entry weight before insertion, and the Moka replacement notification subtracts the old entry weight. That balances correctly without a double subtraction.  The proposed get-then-insert accounting introduces a race: an entry can be invalidated after get(), causing both the eviction listener and put_metadata() to subtract its weight. Concurrent inserts for an absent key can also overcount because replacement notifications are ignored.  Closing as unnecessary. If negative values can still be reproduced on current main, please share a reproduction so we can investigate that separately.
+- **Issue #9727** (2026-10-19): **test(promql): prove the composed Window -> Map -> Window chain**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Stacked on the chunk-consumer branch. **This PR's own diff is a single file, `src/promql/src/range_eval/tests.rs`.**  ## What's changed and what's your intention?  The chunk protocol had a producer test (#9719) and a consumer test (#9726), but nothing drove both sides together. The properties worth pinning are exactly the ones that only appear when the layers are stacked:  ``` raw chunks -> RangeEvaluator(inner grid) -> EvaluatedChunk            -> map_chunk(ops)              -> EvaluatedChunk, same range and is_last            -> RangeEvaluator(outer grid)  -> EvaluatedChunk on the outer grid ```  This PR adds four tests for that chain. The whole-series comparison in each test runs the **same** implementation, so what it proves is that chunking does not change the result — a chunking invariance check, not an independent oracle. The other assertions in each test are what pin the individual protocol properties: progress across a valueless chunk, per-layer grid indexing, and the closing signal.  ### The four properties  - **`a_prefix_reaches_the_outer_layer_before_the_inner_series_ends`** — the outer layer emits chunks while the inner series has not yet received its closing chunk. The chain streams; it does not buffer to the end. - **`an_all_null_middle_chunk_still_advances_the_outer_window`** — an inner chunk that de
 
-- **Issue #9696** (2026-10-18): **feat(promql): match vectors holding native histograms**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  MATCH-HIST in internal-docs#27. Builds on #9679 (`vector_match`) and #9686 (`FloatHistogram`).  ## What's changed and what's your intention?  ### Problem `binary_vectors` and `set_vectors` rejected native histogram samples with `NotImplemented`.  ### Change - `vector_match::elem_binop` ports Prometheus `vectorElemBinop` for histograms:   - histogram `+`/`-` histogram, compacted, with `-` marking the result as a gauge;   - histogram `==`/`!=` histogram, layout-sensitive like Go's `Equals`, keeping the left histogram;   - histogram `*` float, float `*` histogram, histogram `/` float, compacted. - Every other pairing that involves a histogram, and a `+`/`-` between exponential and custom buckets, is skipped: no result, `bool` included, and the pair does not count as a match. This follows Prometheus, which reports these as annotations before recording the match. - The one-to-one "multiple matches" check now counts the matches actually made per group and point, so skipped pairs do not count. - Set operators carry histogram values through; results with histograms are built with `GridSeriesBuilder::push_samples`. - Operand presence no longer reads values, and the helpers that could only fail on histograms are infallible now.  Review focus: - `elem_binop` against `vectorElemBinop`: which pairings keep, filter or skip. - `bi
+- **Issue #9722** (2026-10-19): **fix(mito2): build indexes for encoded bulk parts flushed in sync mode**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  ### Problem  With the flat format, `BulkMemtable` encodes a merged part as an `EncodedBulkPart` once it exceeds about 1M rows or 64 MiB. Flush uploads these parts with `put_sst` and never runs the indexer, so the SST has no inverted, skipping, or fulltext index. With the default `index.build_mode = sync`, nothing builds them later, and the files stay unindexed until compaction rewrites them. High-ingest regions hit this most, on their newest data.  ### Change  - `RegionFlushTask` tags each flush output with whether the indexer ran while writing it. Encoded parts are tagged as unindexed, and `FlushFinished` carries their file ids in `unindexed_files`. - In sync mode, `handle_flush_finished` sends those files to `handle_rebuild_index` with `IndexBuildType::Flush`, the path async mode already uses for every flushed file. Files whose indexes already match the region metadata are skipped. Async mode schedules the same files as before. - `IndexBuildTask::index_build` builds the indexer before reading any row and returns when no index creator is active (for example, the region's index types are disabled on flush or all their columns are ignored). Such a build reads only the SST footer. This applies to every build type.  ### Non-goals  - Building the index from the in-memory enc
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1674,643 +1672,1466 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `deae75ff` (2026-10-15)
-**Commit Message**: fix(log-store): refuse to open object store WAL regions whose history is missing (#9561)
+### Incident Patch 1: `1e29e8d4` (2026-10-19)
+**Commit Message**: fix(meta): validate persisted partition bounds before altering regions (#9487)
 
-* fix(log-store): refuse to open object store WAL regions whose history is missing
+* fix(meta): validate persisted partition bounds before altering regions
 
-A region persists only its WAL prefix, not the object store that holds it.
-After `[wal].storage_provider`, or the bucket or root of the provider it
-names, changes, or after the objects under the prefix are deleted, every
-region reopened against a prefix without its history, replayed nothing and
-silently lost its acknowledged writes that were not flushed.
+A partition bound is persisted with the type of the column at the time
+it was written. When an ALTER TABLE changes the type of a column
+referenced by a partition expression (widening the time index unit is
+the common case), each region rewrites the bound literal to the new
+type while building its scan predicate. A millisecond bound like year
+3000 fits milliseconds but overflows nanoseconds, so every scan of the
+region fails once the table schema is updated -- and some regions may
+already be altered when the failure surfaces.
 
-Add `LogStore::check_region_history` and `LogStore::start_region_history`,
-whose defaults accept and do nothing, so Raft Engine and Kafka are
-unchanged. The object store WAL reports the history of a region as missing
-when recovery found no object under the prefix, or when the region's
-watermark names an object above the newest object holding entries that
-recovery indexed, unless the catalog holds the region's entries through the
-watermark or the region's history starts in the store. Both rest on
-invariants of the prefix: an opened prefix is never empty, and a persisted
-watermark names an object at or below the newest object holding entries,
-which collection ne
+Validate every region's persisted expression on prepare, before any
+region is modified: parse the persisted JSON (mirrored types, since
+common-meta cannot depend on the partition crate which depends on it),
+replay the same value -> ScalarValue conversion and checked cast the
+region performs, and reject the ALTER naming the offending region when
+a bound cannot be represented with the new column type. Incompatible
+changes are rejected atomically; compatible widening proceeds unchanged.
 
-**File**: `config/config.md` (modified, +2/-0)
-```diff
-@@ -131,6 +131,7 @@
- | `wal.max_unpersisted_bytes` | String | `64MB` | The size of the unpersisted backlog at which new appends stall until an upload completes, in `enqueued` mode.<br/>Nothing is dropped and nothing is rejected; the threshold does not bound what a crash during an outage can lose.<br/>**It's only used when the provider is `experimental_object_store` and `ack_mode` is `enqueued`**. |
- | `wal.max_unpersisted_age` | String | `8s` | The age of the oldest unpersisted entry at which new appends stall until an upload completes, in `enqueued` mode.<br/>**It's only used when the provider is `experimental_object_store` and `ack_mode` is `enqueued`**. |
- | `wal.on_corrupted_segment` | String | `skip` | What a read does with a segment that still does not decode after a second fetch, because its checksum does not match or its content disagrees with its footer entry.<br/>- `skip`: the segment is skipped and recorded as a WAL hole of its region, a metric is incremented and a warning is logged; the other regions of the object are unaffected (the default).<br/>- `fail`: the read fails, so the region does not open.<br/>**It's only used when the provider is `experimental_object_store`**. |
-+| `wal.accept_missing_history` | Bool | `false` | Whether a region opens although the WAL objects under the prefix do not hold its history.<br/>An existing region fails to open when the prefix held no object when the WAL opened, or when the flushed entry id of the region names an object above every object of the prefix that holds entries. Both happen after `storage_provider`, or the bucket or root of the provider it names, changed without the WAL objects being copied, or after the objects were deleted.<br/>To move the WAL, stop the instance, copy every object under the prefix to the new location and then change the configuration; the regions open with all their writes.<br/>When the old WAL is lost, set this to `true` for one start: the regions open without their writes that were not flushed, which are lost, a warning names each region, and `greptime_logstore_object_store_wal_missing_history_accepted_total` counts them. Turn it off again once the instance has written to the WAL after that start; until then a later start refuses a region whose flushed entry id names an object above every object of the prefix that holds entries.<br/>**It's only used when the provider is `experimental_object_store`**. |
- | `metadata_store` | -- | -- | Metadata storage options. |
- | `metadata_store.file_size` | String | `64MB` | The size of the metadata store log file. |
- | `metadata_store.purge_threshold` | String | `256MB` | The threshold of the metadata store size to trigger a purge. |
-@@ -614,6 +615,7 @@
- | `wal.max_unpersisted_bytes` | String | `64MB` | The size of the unpersisted backlog at which new appends stall until an upload completes, in `enqueued` mode.<br/>Nothing is dropped and nothing is rejected; the threshold does not bound what a crash during an outage can lose.<br/>**It's only used when the provider is `experimental_object_store` and `ack_mode` is `enqueued`**. |
- | `wal.max_unpersisted_age` | String | `8s` | The age of the oldest unpersisted entry at which new appends stall until an upload completes, in `enqueued` mode.<br/>**It's only used when the provider is `experimental_object_store` and `ack_mode` is `enqueued`**. |
- | `wal.on_corrupted_segment` | String | `skip` | What a read does with a segment that still does not decode after a second fetch, because its checksum does not match or its content disagrees with its footer entry.<br/>- `skip`: the segment is skipped and recorded as a WAL hole of its region, a metric is incremented and a warning is logged; the other regions of the object are unaffected (the default).<br/>- `fail`: the read fails, so the region does not open.<br/>**It's only used when the provider is `experimental_object_store`**. |
-+| `wal.accept_missing_history` | Bool | `false` | Whether a region opens although the WAL objects under the prefix do not hold its history.<br/>An existing region fails to open when the prefix held no object when the WAL opened, or when the flushed entry id of the region names an object above every object of the prefix that holds entries. Both happen after `storage_provider`, or the bucket or root of the provider it names, changed without the WAL objects being copied, or after the objects were deleted.<br/>To move the WAL, stop the instance, copy every object under the prefix to the new location and then change the configuration; the regions open with all their writes.<br/>When the old WAL is lost, set this to `true` for one start: the regions open without their writes that were not flushed, which are lost, a warning names each region, and `greptime_logstore_object_store_wal_missing_history_accepted_total` counts them. Turn it off again once the instance has written to the WAL after that start; until then a later start refuses a region whose flushed entry id names an object abo
-```
-
-**File**: `config/datanode.example.toml` (modified, +7/-0)
-```diff
-@@ -258,6 +258,13 @@ overwrite_entry_start_id = false
- ## **It's only used when the provider is `experimental_object_store`**.
- #+ on_corrupted_segment = "skip"
- 
-+## Whether a region opens although the WAL objects under the prefix do not hold its history.
-+## An existing region fails to open when the prefix held no object when the WAL opened, or when the flushed entry id of the region names an object above every object of the prefix that holds entries. Both happen after `storage_provider`, or the bucket or root of the provider it names, changed without the WAL objects being copied, or after the objects were deleted.
-+## To move the WAL, stop the instance, copy every object under the prefix to the new location and then change the configuration; the regions open with all their writes.
-+## When the old WAL is lost, set this to `true` for one start: the regions open without their writes that were not flushed, which are lost, a warning names each region, and `greptime_logstore_object_store_wal_missing_history_accepted_total` counts them. Turn it off again once the instance has written to the WAL after that start; until then a later start refuses a region whose flushed entry id names an object above every object of the prefix that holds entries.
-+## **It's only used when the provider is `experimental_object_store`**.
-+#+ accept_missing_history = false
-+
- # The Kafka SASL configuration.
- # **It's only used when the provider is `kafka`**.
- # Available SASL mechanisms:
-```
-
-**File**: `config/standalone.example.toml` (modified, +7/-0)
-```diff
-@@ -449,6 +449,13 @@ overwrite_entry_start_id = false
- ## **It's only used when the provider is `experimental_object_store`**.
- #+ on_corrupted_segment = "skip"
- 
-+## Whether a region opens although the WAL objects under the prefix do not hold its history.
-+## An existing region fails to open when the prefix held no object when the WAL opened, or when the flushed entry id of the region names an object above every object of the prefix that holds entries. Both happen after `storage_provider`, or the bucket or root of the provider it names, changed without the WAL objects being copied, or after the objects were deleted.
-+## To move the WAL, stop the instance, copy every object under the prefix to the new location and then change the configuration; the regions open with all their writes.
-+## When the old WAL is lost, set this to `true` for one start: the regions open without their writes that were not flushed, which are lost, a warning names each region, and `greptime_logstore_object_store_wal_missing_history_accepted_total` counts them. Turn it off again once the instance has written to the WAL after that start; until then a later start refuses a region whose flushed entry id names an object above every object of the prefix that holds entries.
-+## **It's only used when the provider is `experimental_object_store`**.
-+#+ accept_missing_history = false
-+
- # The Kafka SASL configuration.
- # **It's only used when the provider is `kafka`**.
- # Available SASL mechanisms:
-```
-
-**File**: `docs/rfcs/2026-09-06-object-store-wal.md` (modified, +22/-9)
-```diff
-@@ -50,7 +50,7 @@ The provider is added to the four parallel WAL enums so that every resolution pa
- 
- Two choices are deliberate:
- 
--- The persisted `WalOptions` carry the derived node prefix `<prefix>/datanodes/<node_id>/epochs/<generation>` described under *Object format*, not the configured root. On reopen the log store compares the persisted prefix with the one it runs under and fails fast on a mismatch, so an operator who changes the prefix or the node id cannot silently point a region at an empty WAL. Changing the prefix of an existing region requires an explicit migration, which is out of scope here.
-+- The persisted `WalOptions` carry the derived node prefix `<prefix>/datanodes/<node_id>/epochs/<generation>` described under *Object format*, not the configured root. On reopen the log store compares the persisted prefix with the one it runs under and fails fast on a mismatch, so an operator who changes the prefix or the node id cannot silently point a region at an empty WAL. Changing the prefix of an existing region requires an explicit migration, which is out of scope here. The prefix does not name the object store that holds it, so changing `storage_provider`, or the bucket or root of the provider it names, keeps the prefix; the history check under *Log store* catches such a change when a region opens.
- - `Provider::ObjectStore` is classified as a remote WAL. Mito's remote-WAL branches (initial flushed entry id from `latest_entry_id`, `topic_latest_entry_id` after replay, region-scoped reads, no topic grouping on batch open) apply unchanged. This is a classification of replay semantics, not of physical location.
- 
- A datanode that is configured with a metasrv client rejects the provider before any store is built: `DatanodeBuilder` returns an error stating that the object store WAL is standalone-only. Separately, `DatanodeWalConfig::ObjectStore` cannot be converted into `MetasrvWalConfig`, so a metasrv cannot be configured with it either. The standalone bootstrap matches the datanode WAL configuration before that conversion and constructs `WalProvider::ObjectStore` directly.
-@@ -102,11 +102,11 @@ Positions start at one, so entry id zero is never assigned: Mito treats zero as
- 
- `latest_entry_id(provider)` is region-scoped: the highest entry id durable under the prefix for the provider's region, or zero when the region has none. A freshly created region therefore starts at zero even if other regions under the prefix have entries. This differs from Kafka, whose high watermark is per topic; it is sufficient here because ids are per region, and Mito consumes the value only for the region that asked.
- 
--Two rules keep every new id of a region above every id it already has, on a prefix that already holds objects and across the watermark Mito hands the store. On open, the next object sequence is the larger of the largest listed sequence plus one, orphans included, and, over every region, the object named by the region's largest existing entry id plus one, that is `(max_entry_id >> 20) + 1`, so that the catalog's strictly increasing ranges hold; sequence gaps are tolerated, and a sequence at or above `2^44` is rejected as exhausted. Objects written under an earlier contiguous scheme are not rewritten: they remain readable, their ids carry no object information, and the rule places them by their high bits just the same.
-+Two rules keep every new id of a region above every id it already has, on a prefix that already holds objects and across the watermark Mito hands the store. On open, the next object sequence is the larger of the largest listed sequence plus one, orphans included, and, over every region, the object named by the region's largest existing entry id plus one, that is `(max_entry_id >> 20) + 1`, so that the catalog's strictly increasing ranges hold; sequence gaps are tolerated, and a sequence at or above `2^44` is rejected as exhausted. Ids have been object-sequence-major since the first version of the provider; a contiguous scheme existed only in the reference implementation before release, so no deployed prefix holds ids without object information, and the history check under *Log store* relies on that.
- 
--The second rule is the sequence floor of `obsolete`. Mito calls `obsolete` with the manifest's `flushed_entry_id` when it opens a region, and the actor applies the watermark and a floor derived from that entry id together: the next object sequence is raised to `(entry_id >> 20) + 1` unless it is there already, while zero, the watermark of a region without entries, names no object and needs no floor, so that a watermark assigned under another prefix, or one whose object this prefix no longer holds, is never passed by a new id. The floor moves only the next sequence, never the chain: the next batch still links to its predecessor, so a skipped sequence leaves no gap in the history recovery replays. While the open batch holds ids under the next sequence, the call is refused with a retryable error a
-```
-
-**File**: `src/common/wal/src/config.rs` (modified, +4/-0)
-```diff
-@@ -298,6 +298,7 @@ mod tests {
-         assert_eq!(config.max_unpersisted_bytes, ReadableSize::mb(64));
-         assert_eq!(config.max_unpersisted_age, Duration::from_secs(8));
-         assert_eq!(config.on_corrupted_segment, CorruptedSegmentAction::Skip);
-+        assert!(!config.accept_missing_history);
-         assert!(matches!(
-             MetasrvWalConfig::try_from(datanode_wal_config).unwrap_err(),
-             Error::UnsupportedWalProvider { .. }
-@@ -313,6 +314,7 @@ mod tests {
-             max_unpersisted_bytes = "32MB"
-             max_unpersisted_age = "4s"
-             on_corrupted_segment = "fail"
-+            accept_missing_history = true
-         "#;
-         let datanode_wal_config: DatanodeWalConfig = toml::from_str(toml_str).unwrap();
-         let expected = ObjectStoreWalConfig {
-@@ -324,6 +326,7 @@ mod tests {
-             max_unpersisted_bytes: ReadableSize::mb(32),
-             max_unpersisted_age: Duration::from_secs(4),
-             on_corrupted_segment: CorruptedSegmentAction::Fail,
-+            accept_missing_history: true,
-         };
-         assert_eq!(
-             datanode_wal_config,
-@@ -334,6 +337,7 @@ mod tests {
-         assert_eq!(table["ack_mode"].as_str(), Some("enqueued"));
-         assert_eq!(table["max_unpersisted_bytes"].as_str(), Some("32MiB"));
-         assert_eq!(table["max_unpersisted_age"].as_str(), Some("4s"));
-+        assert_eq!(table["accept_missing_history"].as_bool(), Some(true));
-         assert_eq!(
-             datanode_wal_config,
-             toml::from_str::<DatanodeWalConfig>(&serialized).unwrap()
-```
-
-**File**: `src/common/wal/src/config/object_store.rs` (modified, +6/-0)
-```diff
-@@ -81,6 +81,11 @@ pub struct ObjectStoreWalConfig {
-     /// second fetch, because its checksum does not match or its content
-     /// disagrees with its footer entry, defaults to `skip`.
-     pub on_corrupted_segment: CorruptedSegmentAction,
-+    /// Whether a region whose WAL history the configured location does not
-+    /// hold opens anyway, with its writes that were not flushed lost, instead
-+    /// of failing to open, defaults to false. Meant for one start after the
-+    /// old WAL location is lost.
-+    pub accept_missing_history: bool,
- }
- 
- impl Default for ObjectStoreWalConfig {
-@@ -94,6 +99,7 @@ impl Default for ObjectStoreWalConfig {
-             max_unpersisted_bytes: ReadableSize::mb(64),
-             max_unpersisted_age: Duration::from_secs(8),
-             on_corrupted_segment: CorruptedSegmentAction::Skip,
-+            accept_missing_history: false,
-         }
-     }
- }
-```
-
-**File**: `src/log-store/src/error.rs` (modified, +33/-0)
-```diff
-@@ -424,6 +424,37 @@ pub enum Error {
-         location: Location,
-     },
- 
-+    #[snafu(display(
-+        "Object store WAL prefix {} on {} does not hold the history of region {}: {}. \
-+         If the WAL was moved, stop the instance, copy every object under the prefix from the \
-+         old location to this one and start again. If the old WAL is lost, start once with \
-+         `[wal].accept_missing_history = true`, which opens the region without its writes that \
-+         were not flushed, and turn the option off again once the instance has written to the WAL",
-+        prefix,
-+        storage,
-+        region_id,
-+        reason
-+    ))]
-+    MissingWalHistory {
-+        region_id: RegionId,
-+        prefix: String,
-+        /// The storage the prefix is read from, as configured.
-+        storage: String,
-+        reason: String,
-+        #[snafu(implicit)]
-+        location: Location,
-+    },
-+
-+    #[snafu(display(
-+        "Object store WAL gave up its start object {} after refusing a region without its history, and accepts nothing more until it opens again",
-+        path
-+    ))]
-+    WalStartWithdrawn {
-+        path: String,
-+        #[snafu(implicit)]
-+        location: Location,
-+    },
-+
-     #[snafu(display("Object store WAL log store is stopped"))]
-     ObjectStoreWalStopped {
-         #[snafu(implicit)]
-@@ -478,6 +509,7 @@ impl ErrorExt for Error {
-             | OverrideCompactedEntry { .. }
-             | InvalidWalObjectStore { .. }
-             | MismatchedWalPrefix { .. }
-+            | MissingWalHistory { .. }
-             | MismatchedWalRegion { .. }
-             | IncompleteWalEntry { .. }
-             | InvalidWalEntryRange { .. } => StatusCode::InvalidArguments,
-@@ -494,6 +526,7 @@ impl ErrorExt for Error {
-             | WaitProduceResultReceiver { .. }
-             | MetaLengthExceededLimit { .. }
-             | ObjectStoreWalStopped { .. }
-+            | WalStartWithdrawn { .. }
-             | WalSegmentFetch { .. } => StatusCode::Internal,
- 
-             CorruptedWalObject { .. }
-```
-
-**File**: `src/log-store/src/metrics.rs` (modified, +11/-0)
-```diff
-@@ -97,6 +97,17 @@ lazy_static! {
-         "object store logstore skipped corrupted segments total",
-     )
-     .unwrap();
-+
-+    /// Counter of regions the object store logstore let open although its
-+    /// prefix does not hold their WAL history, because
-+    /// `accept_missing_history` is set; their writes that were not flushed
-+    /// are lost.
-+    pub static ref METRIC_OBJECT_STORE_WAL_MISSING_HISTORY_ACCEPTED_TOTAL: IntCounter = register_int_counter!(
-+        "greptime_logstore_object_store_wal_missing_history_accepted_total",
-+        "object store logstore regions opened without their WAL history total",
-+    )
-+    .unwrap();
-+
-     /// Counter of objects the object store logstore deleted because no
-     /// region needs them any more.
-     pub static ref METRIC_OBJECT_STORE_WAL_DELETED_OBJECTS_TOTAL: IntCounter = register_int_counter!(
-```
-
----
-
-### Incident Patch 2: `c3469fad` (2026-10-15)
-**Commit Message**: fix(flow): retain tracked write completion across transient failures (#9525)
-
-* fix(flow): retain tracked write completion across transient failures
-
-Use receiver-issued single-write capabilities at the frontend and datanode. Rejoin exact admitted writes across unknown transport outcomes, then close and drain before allowing subsequent rounds. Keep ordinary clients and reads on their existing paths.
-
-Separate schema map equality from encoded row identity so fresh protobuf decodes replay consistently even with NaN values. Cover receiver admission, owner cancellation, all-child drain, and retired capabilities.
-
-Local feature-worktree checkpoint only. Main verified core enterprise check and 484 tests, plus DN enterprise check and all four tracked owner tests. Corrected seven-case timer acceptance remains to be rerun; this checkpoint does not authorize publishing or integration.
-
-Signed-off-by: discord9 <[REDACTED_EMAIL]>
-
-* fix(flow): preserve upstream dependencies after rebase
-
-Signed-off-by: discord9 <[REDACTED_EMAIL]>
-
-* fix(flow): fail fast on definitive tracked-write open rejection
-
-A tracked write treats every application-level error from the frontend as
-an ambiguous transport f
+Adds meta-level tests (m
 
 **File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -2581,6 +2581,7 @@ dependencies = [
-  "tokio-util",
-  "tonic 0.14.2",
-  "tower 0.5.2",
-+ "uuid",
-  "vec1",
- ]
- 
+@@ -2673,6 +2673,7 @@ dependencies = [
+  "common-wal",
+  "common-workload",
+  "datafusion-common",
++ "datafusion-expr",
+  "datatypes",
+  "deadpool",
+  "deadpool-postgres",
 ```
 
-**File**: `licenserc-enterprise.toml` (modified, +5/-0)
+**File**: `src/common/meta/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -15,6 +15,11 @@ headerPath = "licenses/enterprise-header.txt"
- # with the "# enterprise" block in `licenserc.toml`'s `excludes` — both are
- # enforced by `make check-enterprise-license`.
- includes = [
-+    "src/common/grpc/src/flow_write.rs",
-+    "src/frontend/src/instance/flow_write.rs",
-+    "src/datanode/src/region_server/flow_write.rs",
-+    "src/operator/src/insert/flow_write.rs",
-+    "src/flow/src/batching_mode/frontend_client/flow_write.rs",
-     "src/common/meta/src/rpc/ddl/trigger.rs",
-     "src/operator/src/expr_helper/trigger.rs",
-     "src/sql/src/statements/alter/trigger.rs",
+@@ -46,6 +46,7 @@ common-time.workspace = true
+ common-wal.workspace = true
+ common-workload.workspace = true
+ datafusion-common.workspace = true
++datafusion-expr.workspace = true
+ datatypes.workspace = true
+ deadpool = { workspace = true, optional = true }
+ deadpool-postgres = { workspace = true, optional = true }
 ```
 
-**File**: `licenserc.toml` (modified, +5/-0)
+**File**: `src/common/meta/src/ddl/alter_table.rs` (modified, +45/-0)
 ```diff
-@@ -31,6 +31,11 @@ excludes = [
-     # Keep this list in sync with that file's `includes`; enforced by
-     # `make check-enterprise-license`.
-     # enterprise:start
-+    "src/common/grpc/src/flow_write.rs",
-+    "src/frontend/src/instance/flow_write.rs",
-+    "src/datanode/src/region_server/flow_write.rs",
-+    "src/operator/src/insert/flow_write.rs",
-+    "src/flow/src/batching_mode/frontend_client/flow_write.rs",
-     "src/common/meta/src/rpc/ddl/trigger.rs",
-     "src/operator/src/expr_helper/trigger.rs",
-     "src/sql/src/statements/alter/trigger.rs",
-```
-
-**File**: `src/common/grpc/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -7,6 +7,9 @@ license.workspace = true
- [lints]
- workspace = true
+@@ -14,8 +14,11 @@
  
-+[features]
-+enterprise = []
-+
- [dependencies]
- api.workspace = true
- arrow-flight.workspace = true
-@@ -32,6 +35,7 @@ tokio.workspace = true
- tokio-util.workspace = true
- tonic.workspace = true
- tower.workspace = true
-+uuid.workspace = true
- vec1 = "1.12"
+ mod executor;
+ mod metadata;
++mod partition_compat;
+ mod region_request;
  
- [dev-dependencies]
-```
-
-**File**: `src/common/grpc/src/flow_write.rs` (added, +477/-0)
-```diff
-@@ -0,0 +1,477 @@
-+// Copyright 2023-2026 GrepTime Inc.
-+//
-+// This file is part of the GreptimeDB Enterprise Edition and is licensed under
-+// the GreptimeDB Enterprise License. You may not use this file except in
-+// compliance with that license. A copy of the license is available at the root
-+// of this repository in the file LICENSE-ENTERPRISE.
-+//
-+// Unless required by applicable law or agreed to in writing, this software is
-+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-+// either express or implied.
++pub use partition_compat::validate_region_partition_bounds;
 +
-+use std::collections::HashMap;
-+use std::sync::{Arc, Mutex};
-+
-+use common_error::ext::{ErrorExt, StackError};
-+use common_error::status_code::StatusCode;
-+
-+use common_recordbatch::{RecordBatch, RecordBatches};
-+use datatypes::arrow::array::{Array, StringArray};
-+use datatypes::prelude::{ConcreteDataType, VectorRef};
-+use datatypes::schema::{ColumnSchema, Schema};
-+use datatypes::vectors::StringVector;
-+use serde::{Deserialize, Serialize};
-+use tokio::sync::watch;
-+use uuid::Uuid;
-+
-+pub const COMMAND_KEY: &str = "flow_write_command";
-+pub const CHILD_KEY: &str = "flow_write_child";
-+
-+/// The control command carried by a Flow write request.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+pub enum Command {
-+    Open { nonce: String },
-+    Write { capability: String },
-+    Close { capability: String },
-+}
-+
-+impl Command {
-+    /// Serializes this command as JSON.
-+    pub fn encode(&self) -> serde_json::Result<String> {
-+        serde_json::to_string(self)
-+    }
-+
-+    /// Parses a serialized command.
-+    pub fn decode(value: &str) -> serde_json::Result<Self> {
-+        serde_json::from_str(value)
-+    }
-+}
-+
-+/// A safe terminal application error.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct TerminalError {
-+    pub code: u32,
-+    pub message: String,
-+}
-+
-+impl std::fmt::Display for TerminalError {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        write!(f, "{}", self.message)
-+    }
-+}
-+
-+impl std::error::Error for TerminalError {}
-+
-+impl StackError for TerminalError {
-+    fn debug_fmt(&self, layer: usize, buf: &mut Vec<String>) {
-+        buf.push(format!("{layer}: {self:?}"));
-+    }
-+
-+    fn next(&self) -> Option<&dyn StackError> {
-+        None
-+    }
-+}
-+
-+impl ErrorExt for TerminalError {
-+    fn status_code(&self) -> StatusCode {
-+        StatusCode::from_u32(self.code).unwrap_or(StatusCode::Internal)
-+    }
-+
-+    fn as_any(&self) -> &dyn std::any::Any {
-+        self
-+    }
-+}
-+
-+/// A finite response for a tracked Flow write.
-+#[derive(Debug, Clone, Serialize, Deserialize)]
-+pub enum Reply {
-+    Opened {
-+        capability: String,
-+    },
-+    Closed,
-+    Complete {
-+        rows: usize,
-+        cost: usize,
-+        metrics: Option<common_recordbatch::adapter::RecordBatchMetrics>,
-+        error: Option<TerminalError>,
-+    },
-+}
-+
-+fn envelope_schema() -> Arc<Schema> {
-+    Arc::new(Schema::new(vec![ColumnSchema::new(
-+        "envelope",
-+        ConcreteDataType::string_datatype(),
-+        false,
-+    )]))
-+}
-+
-+fn response_error(reason: impl Into<String>) -> common_recordbatch::error::Error {
-+    common_recordbatch::error::Error::CreateRecordBatches {
-+        reason: reason.into(),
-+        location: snafu::Location::new(file!(), line!(), column!()),
-+    }
-+}
-+
-+/// Encodes a reply in the finite one-string-column record-batch envelope.
-+pub fn reply_batches(reply: &Reply) -> common_recordbatch::error::Result<RecordBatches> {
-+    let value = serde_json::to_string(reply).map_err(|e| response_error(e.to_string()))?;
-+    let batch = RecordBatch::new(
-+        envelope_schema(),
-+        vec![Arc::new(StringVector::from(vec![value])) as VectorRef],
-+    )?;
-+    RecordBatches::try_new(batch.schema.clone(), vec![batch])
-+}
-+
-+/// Decodes a reply from its finite one-string-column record-batch envelope.
-+pub fn decode_reply(batches: &RecordBatches) -> common_recordbatch::error::Result<Reply> {
-+    let batch = batches
-+        .iter()
-+        .next()
-+        .ok_or_else(|| response_error("missing reply batch"))?;
-+    if batches.iter().count() != 1 || batch.num_columns() != 1 || batch.num_rows() != 1 {
-+        return Err(response_error("reply must be exactly one string value"));
-+    }
-+    let values = batch.columns()[0]
-+        .as_any()
-+        .downcast_ref::<StringArray>()
-+        .ok_or_else(|| response_error("reply value is not a string"))?;
-+    if values.is_null(0) {
-+        return Err(response_error("reply value is null"));
-+    }
-+    let value = values.value(0);
-+    serde_json::from_str(value).map_err(|e| response_error(e.to_string()))
-+}
-+
-+/// Errors that reject admission or indicate that an admitted writer was lost.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub enum RegistryError {
-+    UnknownCapability,
-+    Closing,
-+    WriterLost,
-+    PayloadMismatch,
-+}
-+
-+impl std::fmt::Display for RegistryError {
-+    fn fmt(&self, f: &mut s
-```
-
-**File**: `src/common/grpc/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -15,6 +15,8 @@
- pub mod channel_manager;
- pub mod error;
- pub mod flight;
-+#[cfg(feature = "enterprise")]
-+pub mod flow_write;
- pub mod precision;
- pub mod reloadable_tls;
- pub mod select;
-```
-
-**File**: `src/datanode/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ license.workspace = true
+ use std::collections::HashSet;
+ use std::vec;
  
- [features]
- testing = []
--enterprise = ["mito2/enterprise"]
-+enterprise = ["mito2/enterprise", "common-grpc/enterprise"]
+@@ -147,6 +150,10 @@ impl AlterTableProcedure {
+         )?;
+         self.new_table_info = Some(new_table_info);
  
- [lints]
- workspace = true
-```
-
-**File**: `src/datanode/src/region_server.rs` (modified, +31/-1)
-```diff
-@@ -13,6 +13,10 @@
- // limitations under the License.
- 
- mod catalog;
-+#[cfg(feature = "enterprise")]
-+mod flow_write;
-+#[cfg(feature = "enterprise")]
-+use flow_write::TrackedPayload;
- mod registrations;
- mod remote_dyn_filter;
- 
-@@ -29,14 +33,17 @@ use api::region::RegionResponse;
- use api::v1::meta::TopicStat;
- use api::v1::region::sync_request::ManifestInfo;
- use api::v1::region::{
--    ListMetadataRequest, RegionResponse as RegionResponseV1, SyncRequest, region_request,
-+    ListMetadataRequest, RegionRequest as RegionRequestV1, RegionResponse as RegionResponseV1,
-+    SyncRequest, region_request,
- };
- use api::v1::{ResponseHeader, Status};
- use arrow_flight::{FlightData, Ticket};
- use async_trait::async_trait;
- use bytes::Bytes;
- use common_error::ext::{BoxedError, ErrorExt};
- use common_error::status_code::StatusCode;
-+#[cfg(feature = "enterprise")]
-+use common_grpc::flow_write::{COMMAND_KEY, FlowWriteRegistry, Reply};
- use common_meta::datanode::TopicStatsReporter;
- use common_query::OutputData;
- use common_query::request::QueryRequest;
-@@ -115,6 +122,8 @@ pub struct RegionServer {
-     inner: Arc<RegionServerInner>,
-     flight_compression: FlightCompression,
-     suspend: Arc<AtomicBool>,
-+    #[cfg(feature = "enterprise")]
-+    flow_write_registry: Arc<FlowWriteRegistry<TrackedPayload, Reply>>,
- }
- 
- pub struct RegionStat {
-@@ -163,6 +172,8 @@ impl RegionServer {
-             )),
-             flight_compression,
-             suspend: Arc::new(AtomicBool::new(false)),
-+            #[cfg(feature = "enterprise")]
-+            flow_write_registry: Arc::new(FlowWriteRegistry::default()),
-         }
++        // Reject schema changes that the persisted partition expressions of some
++        // region cannot survive, before any region is altered.
++        self.validate_region_partition_exprs().await?;
++
+         // Safety: Checked in `AlterTableProcedure::new`.
+         let alter_kind = self.data.task.alter_table.kind.as_ref().unwrap();
+         if sets_skip_wal(alter_kind) {
+@@ -241,6 +248,44 @@ impl AlterTableProcedure {
+         Ok(Status::executing(true))
      }
  
-@@ -925,6 +936,25 @@ impl Stream for RegionWatermarkStream {
- 
- #[async_trait]
- impl RegionServerHandler for RegionServer {
-+    async fn handle_region_request(
-+        &self,
-+        request: RegionRequestV1,
-+    ) -> ServerResult<RegionResponseV1> {
-+        #[cfg(feature = "enterprise")]
-+        if request
-+            .header
++    /// Validates the persisted partition expressions of every region against the
++    /// schema proposed by this ALTER TABLE, so an ALTER that would break a region's
++    /// partition predicate is rejected before any region is modified.
++    async fn validate_region_partition_exprs(&self) -> Result<()> {
++        // Safety: filled in `fill_table_info`.
++        let old_schema = &self
++            .data
++            .table_info_value
 +            .as_ref()
-+            .and_then(|header| header.query_context.as_ref())
-+            .is_some_and(|context| context.extensions.contains_key(COMMAND_KEY))
-+        {
-+            return self.handle_flow_write_request(request).await;
++            .unwrap()
++            .table_info
++            .meta
++            .schema;
++        // Safety: set right after the new table info is built in `on_prepare`.
++        let new_schema = &self.new_table_info.as_ref().unwrap().meta.schema;
++        let changed_columns = partition_compat::changed_column_types(old_schema, new_schema);
++        if changed_columns.is_empty() {
++            return Ok(());
 +        }
-+        let body = request.body.context(servers_error::InvalidQuerySnafu {
-+            reason: "Expecting non-empty region request body.",
-+        })?;
-+        self.handle(body).await
++
++        let (physical_table_id, physical_table_route) = self
++            .context
++            .table_metadata_manager
++            .table_route_manager()
++            .get_physical_table_route(self.data.table_id())
++            .await?;
++        if physical_table_id != self.data.table_id() {
++            // Partition expressions are persisted on the regions of the physical
++            // table; the altered schema here belongs to a logical table.
++            return Ok(());
++        }
++
++        partition_compat::validate_region_partition_bounds(
++            &changed_columns,
++            &physical_table_route.region_routes,
++        )
 +    }
 +
-     async fn handle(&self, request: region_request::Body) -> ServerResult<RegionResponseV1> {
-         let failed_requests_cnt = crate::metrics::REGION_SERVER_REQUEST_FAILURE_COUNT
-             .with_label_values(&[request.as_ref()]);
+     fn table_poison_key(&self) -> PoisonKey {
+         table_poison_key(self.data.table_id())
+     }
+```
+
+**File**: `src/common/meta/src/ddl/alter_table/partition_compat.rs` (added, +565/-0)
+```diff
+@@ -0,0 +1,565 @@
++// Copyright 2023 Greptime Team
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! Preflight validation of persisted partition expressions against an ALTER TABLE schema change.
++//!
++//! Persisted partition bounds keep the types they were written with. A column whose
++//! type changes while a partition expression references it breaks the region on both
++//! paths that consume the bounds:
++//!
++//! * On scan, the region coerces the bound literal and the new column type to a
++//!   common comparison type while building the partition predicate. If no common type
++//!   exists, or the bound cannot be cast to it (a classic example is a millisecond
++//!   timestamp bound that overflows when the time index column is widened to
++//!   nanoseconds), every scan of that region fails at that point.
++//! * On write, the region routes rows through `MultiDimPartitionRule::find_region`,
++//!   which compares the persisted bound against row values directly (`Value::cmp`): a
++//!   bound whose variant no longer matches the column's panics on ordered comparisons
++//!   and misroutes silently on equality. Only a timestamp unit widening keeps the two
++//!   comparable — `Timestamp` comparisons convert units before comparing — so every
++//!   other type change of a referenced column is rejected outright, and the widening
++//!   keeps the scan check below.
++//!
++//! Such an ALTER must be rejected before it is submitted to any region, otherwise
++//! already-altered regions keep failing while the rest of the table is untouched.
++//!
++//! The `partition` crate depends on `common-meta`, so this crate cannot depend on
++//! `partition` back and cannot reuse [`partition::expr::PartitionExpr`]. The `Persisted*`
++//! types below mirror the JSON representation of `partition::partition::PartitionBound` and
++//! `partition::expr::PartitionExpr` and must be kept in sync with `partition/src/partition.rs`
++//! and `partition/src/expr.rs`; round-trip tests in `partition` run real serialized
++//! expressions through this validator so drift fails in CI. The compatibility check itself
++//! deliberately repeats the same conversion (value -> [`ScalarValue`]) and the same
++//! comparison coercion the region performs when it builds the partition predicate
++//! (`ExprSimplifier::coerce` / [`comparison_coercion`]): both sides are cast to the common
++//! comparison type, and the persisted bound must be castable to that type with
++//! [`ScalarValue::cast_to`]. A bound that would fail on scan is rejected here as well.
++
++use std::collections::HashMap;
++
++use common_telemetry::warn;
++use datafusion_common::ScalarValue;
++use datafusion_expr::type_coercion::binary::comparison_coercion;
++use datatypes::data_type::{ConcreteDataType, DataType};
++use datatypes::schema::Schema;
++use datatypes::value::{
++    Value, duration_to_scalar_value, time_to_scalar_value, timestamp_to_scalar_value,
++};
++use serde::Deserialize;
++use store_api::storage::RegionId;
++
++use crate::error::{PartitionExprIncompatibleSnafu, Result};
++use crate::rpc::router::RegionRoute;
++
++/// Mirrors `partition::partition::PartitionBound`.
++#[derive(Debug, Deserialize)]
++enum PersistedPartitionBound {
++    /// Deprecated since 0.9.0. Only deserialized to keep unknown old formats parseable.
++    #[allow(dead_code)]
++    Value(Value),
++    /// Deprecated since 0.15.0.
++    MaxValue,
++    Expr(PersistedPartitionExpr),
++}
++
++/// Mirrors `partition::expr::PartitionExpr`.
++#[derive(Debug, Deserialize)]
++struct PersistedPartitionExpr {
++    lhs: Box<PersistedOperand>,
++    op: PersistedOp,
++    rhs: Box<PersistedOperand>,
++}
++
++/// Mirrors `partition::expr::Operand`.
++#[derive(Debug, Deserialize)]
++enum PersistedOperand {
++    Column(String),
++    Value(Value),
++    Expr(PersistedPartitionExpr),
++}
++
++/// Mirrors `partition::expr::RestrictedOp`.
++#[derive(Debug, Deserialize)]
++enum PersistedOp {
++    Eq,
++    NotEq,
++    Lt,
++    LtEq,
++    Gt,
++    GtEq,
++    And,
++    Or,
++}
++
++/// Returns the columns whose data type differs between `old_schema` and `new_schema`,
++/// mapped to (old type, new type). Columns only present in one of the schemas (added or
++/// dropped) are not included; dropping a column referenced by a partition expression is
++/// already rejected by the table metadata validation.
++pub(crate) fn changed_column_types(
++    old_schema: &Schema,
++    new_schema: &Schema,
++) -> HashMap<String, (ConcreteDataType, ConcreteDataType)> {
++    let mut changed = HashMa
+```
+
+**File**: `src/common/meta/src/ddl/tests/alter_table.rs` (modified, +173/-0)
+```diff
+@@ -1478,3 +1478,176 @@ async fn test_annotation_alter_is_metadata_only() {
+         }
+     }
+ }
++
++/// Builds the persisted partition expression `ts < <millis>` in the format the
++/// partition crate writes to region metadata.
++fn test_ts_partition_bound(millis: i64) -> String {
++    format!(
++        r#"{{"Expr":{{"lhs":{{"Column":"ts"}},"op":"Lt","rhs":{{"Value":{{"Timestamp":{{"value":{millis},"unit":"Millisecond"}}}}}}}}}}"#
++    )
++}
++
++fn test_partitioned_table_route(table_id: u32, region_bounds: &[i64]) -> TableRouteValue {
++    TableRouteValue::physical(
++        region_bounds
++            .iter()
++            .enumerate()
++            .map(|(index, bound)| RegionRoute {
++                region: Region {
++                    id: RegionId::new(table_id, index as u32 + 1),
++                    partition_expr: test_ts_partition_bound(*bound),
++                    ..Default::default()
++                },
++                leader_peer: Some(Peer::empty(index as u64 + 1)),
++                ..Default::default()
++            })
++            .collect(),
++    )
++}
++
++fn test_widen_ts_unit_task(table_name: &str, target_type: ColumnDataType) -> AlterTableTask {
++    AlterTableTask {
++        alter_table: AlterTableExpr {
++            catalog_name: DEFAULT_CATALOG_NAME.to_string(),
++            schema_name: DEFAULT_SCHEMA_NAME.to_string(),
++            table_name: table_name.to_string(),
++            kind: Some(Kind::ModifyColumnTypes(api::v1::ModifyColumnTypes {
++                modify_column_types: vec![api::v1::ModifyColumnType {
++                    column_name: "ts".to_string(),
++                    target_type: target_type as i32,
++                    target_type_extension: None,
++                }],
++            })),
++        },
++    }
++}
++
++#[tokio::test]
++async fn test_widen_ts_unit_rejects_incompatible_partition_bounds_before_altering() {
++    let node_manager = Arc::new(MockDatanodeManager::new(()));
++    let ddl_context = new_ddl_context(node_manager);
++    let table_name = "foo";
++    let table_id = 1024;
++    let task = test_create_table_task(table_name, table_id);
++
++    // Region 1 holds 2024-01-01, which fits nanoseconds. Region 2 holds 3000-01-01,
++    // which fits milliseconds but overflows nanoseconds.
++    let routes = test_partitioned_table_route(table_id, &[1_704_067_200_000, 32_503_680_000_000]);
++    ddl_context
++        .table_metadata_manager
++        .create_table_metadata(task.table_info.clone(), routes.clone(), HashMap::new())
++        .await
++        .unwrap();
++
++    let task = test_widen_ts_unit_task(table_name, ColumnDataType::TimestampNanosecond);
++    let mut procedure = AlterTableProcedure::new(table_id, task, ddl_context.clone()).unwrap();
++    let err = procedure.on_prepare().await.unwrap_err();
++
++    assert_matches!(err, Error::PartitionExprIncompatible { .. });
++    assert_eq!(err.status_code(), StatusCode::InvalidArguments);
++    // The rejection names the offending region and column.
++    assert!(
++        err.to_string().contains("4398046511106"),
++        "unexpected error: {err}"
++    );
++    assert!(err.to_string().contains("'ts'"), "unexpected error: {err}");
++
++    // The rejected ALTER left the table schema and the whole route unchanged.
++    let table_info = ddl_context
++        .table_metadata_manager
++        .table_info_manager()
++        .get(table_id)
++        .await
++        .unwrap()
++        .unwrap()
++        .into_inner()
++        .table_info;
++    assert_eq!(
++        table_info
++            .meta
++            .schema
++            .column_schema_by_name("ts")
++            .unwrap()
++            .data_type,
++        ConcreteDataType::timestamp_millisecond_datatype()
++    );
++    let (physical_table_id, physical_table_route) = ddl_context
++        .table_metadata_manager
++        .table_route_manager()
++        .get_physical_table_route(table_id)
++        .await
++        .unwrap();
++    assert_eq!(physical_table_id, table_id);
++    assert_eq!(
++        routes,
++        TableRouteValue::physical(physical_table_route.region_routes)
++    );
++}
++
++#[tokio::test]
++async fn test_widen_ts_unit_with_compatible_partition_bounds_completes() {
++    let node_manager = Arc::new(MockDatanodeManager::new(()));
++    let ddl_context = new_ddl_context(node_manager);
++    let table_name = "foo";
++    let table_id = 1024;
++    let task = test_create_table_task(table_name, table_id);
++
++    // Both persisted bounds fit nanoseconds.
++    let routes = test_partitioned_table_route(table_id, &[0, 1_704_067_200_000]);
++    ddl_context
++        .table_metadata_manager
++        .create_table_metadata(task.table_info.clone(), routes, HashMap::new())
++        .await
++        .unwrap();
++
++    let task = test_widen_ts_unit_task(table_name, ColumnDataType::TimestampNanosecond);
++    let procedure_id = ProcedureId::random();
++    let provider = Arc::new(MockContextProvider::default());
++    let mut procedure = AlterTableProcedure::new(table_id, task, ddl_context.clone()).unwrap();
++ 
+```
+
+**File**: `src/common/meta/src/error.rs` (modified, +16/-1)
+```diff
+@@ -1149,6 +1149,20 @@ pub enum Error {
+         actual_column_id: u32,
+     },
+ 
++    #[snafu(display(
++        "Partition expression of region {} is incompatible with the altered column '{}': the persisted bound can no longer be compared with the new column type {}",
++        region_id,
++        column,
++        target_type
++    ))]
++    PartitionExprIncompatible {
++        region_id: RegionId,
++        column: String,
++        target_type: String,
++        #[snafu(implicit)]
++        location: Location,
++    },
++
+     #[cfg(feature = "enterprise")]
+     #[snafu(display("Too large duration"))]
+     TooLargeDuration {
+@@ -1268,7 +1282,8 @@ impl ErrorExt for Error {
+             | InvalidFileName { .. }
+             | InvalidFlowRequestBody { .. }
+             | InvalidFilePath { .. }
+-            | ConflictingSchemaOptions { .. } => StatusCode::InvalidArguments,
++            | ConflictingSchemaOptions { .. }
++            | PartitionExprIncompatible { .. } => StatusCode::InvalidArguments,
+ 
+             #[cfg(feature = "enterprise")]
+             MissingInterval { .. } | NegativeDuration { .. } | TooLargeDuration { .. } => {
+```
+
+**File**: `src/partition/src/expr.rs` (modified, +117/-0)
+```diff
+@@ -463,6 +463,14 @@ impl Display for PartitionExpr {
+ 
+ #[cfg(test)]
+ mod tests {
++    use std::collections::HashMap;
++
++    use common_meta::ddl::alter_table::validate_region_partition_bounds;
++    use common_meta::error::Error;
++    use common_meta::rpc::router::{Region, RegionRoute};
++    use datatypes::data_type::ConcreteDataType;
++    use store_api::storage::RegionId;
++
+     use super::*;
+ 
+     #[test]
+@@ -863,4 +871,113 @@ mod tests {
+         assert!(columns.contains("b"));
+         assert!(columns.contains("c"));
+     }
++
++    /// Real serialized expressions must survive the round trip through
++    /// `common-meta`'s persisted-expression mirror: whenever that mirror drifts
++    /// from these types, deserialization fails, validation is skipped and the
++    /// overflowing cases below stop producing `PartitionExprIncompatible`.
++    #[test]
++    fn test_serialized_expressions_validate_against_type_changes() {
++        let overflow_ms = serde_json::from_str::<Value>(
++            r#"{"Timestamp":{"value":32503680000000,"unit":"Millisecond"}}"#,
++        )
++        .unwrap();
++        let start_ms =
++            serde_json::from_str::<Value>(r#"{"Timestamp":{"value":0,"unit":"Millisecond"}}"#)
++                .unwrap();
++        let ts_ms = ConcreteDataType::timestamp_millisecond_datatype();
++        let ts_ns = ConcreteDataType::timestamp_nanosecond_datatype();
++
++        let routes = |expr: &PartitionExpr| {
++            vec![RegionRoute {
++                region: Region {
++                    id: RegionId::new(1024, 1),
++                    partition_expr: expr.as_json_str().unwrap(),
++                    ..Default::default()
++                },
++                ..Default::default()
++            }]
++        };
++        let changed = |column: &str, old_type: ConcreteDataType, new_type: ConcreteDataType| {
++            HashMap::from([(column.to_string(), (old_type, new_type))])
++        };
++
++        // Compile-time tripwire: exhaustively matching the operand and operator
++        // variants makes a new variant break this test at compile time, so the
++        // `partition_compat::Persisted*` mirror and these cases must be extended
++        // together instead of silently skipping validation.
++        fn walk(expr: &PartitionExpr) {
++            walk_operand(&expr.lhs);
++            walk_operand(&expr.rhs);
++            match expr.op {
++                RestrictedOp::Eq
++                | RestrictedOp::NotEq
++                | RestrictedOp::Lt
++                | RestrictedOp::LtEq
++                | RestrictedOp::Gt
++                | RestrictedOp::GtEq
++                | RestrictedOp::And
++                | RestrictedOp::Or => {}
++            }
++        }
++        fn walk_operand(operand: &Operand) {
++            match operand {
++                Operand::Column(_) | Operand::Value(_) => {}
++                Operand::Expr(expr) => walk(expr),
++            }
++        }
++
++        // Every expression shape must be rejected while the bound overflows
++        // nanoseconds, with the error naming the offending column.
++        let simple = col("ts").lt(overflow_ms.clone());
++        let nested_and = col("ts")
++            .gt_eq(start_ms.clone())
++            .and(col("ts").lt(overflow_ms.clone()));
++        let nested_or = PartitionExpr::new(
++            Operand::Expr(col("host").eq(Value::String("a".into()))),
++            RestrictedOp::Or,
++            Operand::Expr(col("ts").lt(overflow_ms.clone())),
++        );
++        for expr in [&simple, &nested_and, &nested_or] {
++            walk(expr);
++            let err = validate_region_partition_bounds(
++                &changed("ts", ts_ms.clone(), ts_ns.clone()),
++                &routes(expr),
++            )
++            .unwrap_err();
++            assert!(
++                matches!(
++                    err,
++                    Error::PartitionExprIncompatible { ref column, .. } if column == "ts"
++                ),
++                "unexpected error: {err}"
++            );
++        }
++
++        // A representable bound passes.
++        let compatible = col("ts").lt(start_ms);
++        validate_region_partition_bounds(&changed("ts", ts_ms, ts_ns), &routes(&compatible))
++            .unwrap();
++
++        // Narrowing a field column must be rejected as well: the region's write
++        // path compares the persisted Int64 bound against Int32 rows directly
++        // and panics, even though the scan would coerce both sides.
++        let narrowing = col("v").lt(Value::Int64(3_000_000_000));
++        let err = validate_region_partition_bounds(
++            &changed(
++                "v",
++                ConcreteDataType::int64_datatype(),
++                ConcreteDataType::int32_datatype(),
++            ),
++            &routes(&narrowing),
++        )
++        .unwrap_err();
++        assert!(
++            matches!(
++                err,
++                Error::PartitionExprIncompatible { ref column, .. } if column == "v"
++            ),
++            
+```
+
+**File**: `tests/cases/standalone/common/alter/change_col_type.result` (modified, +67/-0)
+```diff
+@@ -386,3 +386,70 @@ DROP TABLE ts_overflow;
+ 
+ Affected Rows: 0
+ 
++-- Issue 9454: persisted partition bounds keep their original unit. Widening the
++-- time index unit must be rejected before any region is altered when a persisted
++-- bound overflows the new unit.
++CREATE TABLE ts_bound_overflow (host STRING, ts TIMESTAMP TIME INDEX)
++PARTITION ON COLUMNS (ts) (
++  ts < '2024-01-01 00:00:00',
++  ts >= '2024-01-01 00:00:00' AND ts < '3000-01-01 00:00:00',
++  ts >= '3000-01-01 00:00:00'
++);
++
++Affected Rows: 0
++
++INSERT INTO ts_bound_overflow VALUES ("a", "2024-06-01 12:00:00");
++
++Affected Rows: 1
++
++-- 3000-01-01 fits milliseconds but overflows nanoseconds, so the widening is
++-- rejected before any region is altered.
++-- SQLNESS REPLACE \d+\(\d+,\s+\d+\) REDACTED
++ALTER TABLE ts_bound_overflow MODIFY COLUMN ts TIMESTAMP_NS;
++
++Error: 1004(InvalidArguments), Partition expression of region REDACTED is incompatible with the altered column 'ts': the persisted bound can no longer be compared with the new column type TimestampNanosecond
++
++-- The rejected ALTER leaves the schema and the stored data unchanged.
++DESCRIBE ts_bound_overflow;
++
+++--------+----------------------+-----+------+---------+---------------+
++| Column | Type                 | Key | Null | Default | Semantic Type |
+++--------+----------------------+-----+------+---------+---------------+
++| host   | String               |     | YES  |         | FIELD         |
++| ts     | TimestampMillisecond | PRI | NO   |         | TIMESTAMP     |
+++--------+----------------------+-----+------+---------+---------------+
++
++SELECT * FROM ts_bound_overflow ORDER BY ts;
++
+++------+---------------------+
++| host | ts                  |
+++------+---------------------+
++| a    | 2024-06-01T12:00:00 |
+++------+---------------------+
++
++-- Widening to microseconds keeps every persisted bound representable.
++ALTER TABLE ts_bound_overflow MODIFY COLUMN ts TIMESTAMP_US;
++
++Affected Rows: 0
++
++DESCRIBE ts_bound_overflow;
++
+++--------+----------------------+-----+------+---------+---------------+
++| Column | Type                 | Key | Null | Default | Semantic Type |
+++--------+----------------------+-----+------+---------+---------------+
++| host   | String               |     | YES  |         | FIELD         |
++| ts     | TimestampMicrosecond | PRI | NO   |         | TIMESTAMP     |
+++--------+----------------------+-----+------+---------+---------------+
++
++SELECT * FROM ts_bound_overflow ORDER BY ts;
++
+++------+---------------------+
++| host | ts                  |
+++------+---------------------+
++| a    | 2024-06-01T12:00:00 |
+++------+---------------------+
++
++DROP TABLE ts_bound_overflow;
++
++Affected Rows: 0
++
 ```
 
 ---
 
-### Incident Patch 3: `0dc81777` (2026-10-15)
-**Commit Message**: fix(pprof): initialize framehop before signal sampling (#9612)
+### Incident Patch 2: `791f4292` (2026-10-19)
+**Commit Message**: fix(mito2): validate bulk insert batches against the region schema (#9698)
 
-fix(pprof): pin upstream framehop initialization fix
+* fix(mito2): validate bulk insert batches against the region schema
 
-Pin pprof workspace-wide to 01cff82d containing tikv/pprof-rs#282. Initialize framehop before sampling instead of allocating and discovering shared libraries in the first SIGPROF handler. Regenerate the lockfile without unrelated dependency changes.
+Bulk inserts were only checked for the time index column, unlike row
+writes, which WriteRequest::check_schema checks against the region
+schema. A batch with columns of another type, nulls in the time index or
+in non-nullable columns, duplicate or unknown columns reached the region
+worker: a time index that is not a timestamp or holds only nulls made
+the worker fail, and other mismatches failed after the WAL append or
+were stored as written, depending on the SST format.
 
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+Move the column checks of check_schema into a core shared by row writes
+and bulk inserts, and check bulk insert batches at the same points as
+rows: when the engine builds the worker request, and again in the worker
+if the region schema changed since. check_schema keeps its behavior.
+Bulk insert columns must have the column's Arrow type, except that tags
+may use any string encoding, as the memtables already convert them.
+Sparse batches must carry one encoded primary key column of binary
+without nulls. A batch that misses columns gets them filled by the
+worker even if it cla
 
-**File**: `Cargo.lock` (modified, +1/-2)
+**File**: `src/metric-engine/src/engine/bulk_insert.rs` (modified, +94/-1)
 ```diff
-@@ -11106,8 +11106,7 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
- [[package]]
- name = "pprof"
- version = "0.15.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "38a01da47675efa7673b032bf8efd8214f1917d89685e07e395ab125ea42b187"
-+source = "git+https://github.com/tikv/pprof-rs?rev=01cff82dbe6fe110a707bf2b38d8ebb1d14a18f8#01cff82dbe6fe110a707bf2b38d8ebb1d14a18f8"
- dependencies = [
-  "aligned-vec",
-  "backtrace",
+@@ -16,9 +16,11 @@ use std::collections::HashSet;
+ 
+ use api::v1::{ArrowIpc, SemanticType};
+ use bytes::Bytes;
++use common_error::ext::BoxedError;
+ use common_grpc::flight::{FlightEncoder, FlightMessage};
+ use datatypes::arrow::record_batch::RecordBatch;
+-use snafu::{OptionExt, ensure};
++use mito2::request::check_bulk_insert_batch;
++use snafu::{OptionExt, ResultExt, ensure};
+ use store_api::codec::PrimaryKeyEncoding;
+ use store_api::metadata::RegionMetadataRef;
+ use store_api::region_request::{AffectedRows, RegionBulkInsertsRequest, RegionRequest};
+@@ -111,6 +113,11 @@ impl MetricEngineInner {
+             &batch,
+             &logical_metadata,
+         )?;
++        // The rewrite below copies columns without checking them, and would encode a
++        // duplicated tag into the primary key twice.
++        check_bulk_insert_batch(&logical_metadata, &batch)
++            .map_err(BoxedError::new)
++            .context(error::MitoWriteOperationSnafu)?;
+         let modified_batch = modify_batch_sparse(
+             batch.clone(),
+             region_id.table_id(),
+@@ -307,6 +314,92 @@ mod tests {
+         })
+     }
+ 
++    #[tokio::test]
++    async fn test_bulk_insert_rejects_duplicate_tag() {
++        use common_error::status_code::StatusCode;
++
++        let env = TestEnv::new().await;
++        env.init_metric_region().await;
++        let logical_region_id = env.default_logical_region_id();
++
++        let batch = build_logical_batch(0, 2);
++        let mut fields = batch.schema().fields().to_vec();
++        let mut columns = batch.columns().to_vec();
++        fields.push(fields[2].clone());
++        columns.push(columns[2].clone());
++        let batch = RecordBatch::try_new(Arc::new(ArrowSchema::new(fields)), columns).unwrap();
++        let err = env
++            .metric()
++            .handle_request(
++                logical_region_id,
++                build_bulk_request(logical_region_id, batch, false),
++            )
++            .await
++            .unwrap_err();
++        assert_eq!(err.status_code(), StatusCode::InvalidArguments, "{err:?}");
++    }
++
++    #[tokio::test]
++    async fn test_bulk_insert_physical_region_rejects_malformed_primary_key() {
++        use common_error::status_code::StatusCode;
++        use datatypes::arrow::array::{ArrayRef, BinaryArray, Int64Array};
++        use store_api::storage::consts::PRIMARY_KEY_COLUMN_NAME;
++
++        let env = TestEnv::new().await;
++        env.init_metric_region().await;
++        let physical_region_id = env.default_physical_region_id();
++        let logical_region_id = env.default_logical_region_id();
++        let tag_columns = vec![TagColumnInfo {
++            name: "job".to_string(),
++            index: 2,
++            column_id: 2,
++        }];
++        let batch = modify_batch_sparse(
++            build_logical_batch(0, 2),
++            logical_region_id.table_id(),
++            &tag_columns,
++            &[0, 1],
++        )
++        .unwrap();
++        let primary_key_index = batch.schema().index_of(PRIMARY_KEY_COLUMN_NAME).unwrap();
++        let with_primary_key = |primary_key: Option<ArrayRef>, extra: Option<ArrayRef>| {
++            let mut fields = batch.schema().fields().to_vec();
++            let mut columns = batch.columns().to_vec();
++            fields.remove(primary_key_index);
++            columns.remove(primary_key_index);
++            for array in [primary_key, extra].into_iter().flatten() {
++                fields.push(Arc::new(Field::new(
++                    PRIMARY_KEY_COLUMN_NAME,
++                    array.data_type().clone(),
++                    true,
++                )));
++                columns.push(array);
++            }
++            RecordBatch::try_new(Arc::new(ArrowSchema::new(fields)), columns).unwrap()
++        };
++        let encoded = batch.column(primary_key_index).clone();
++        let rejected = [
++            with_primary_key(None, None),
++            with_primary_key(Some(Arc::new(Int64Array::from(vec![1, 2]))), None),
++            with_primary_key(
++                Some(Arc::new(BinaryArray::from_opt_vec(vec![Some(b"a"), None]))),
++                None,
++            ),
++            with_primary_key(Some(encoded.clone()), Some(encoded)),
++        ];
++        for batch in rejected {
++            let err = env
++                .metric()
++                .handle_request(
++                    physical_region_id,
++                    build_bulk_request(physical_region_id, batch, false),
++                )
++                .await
++                .unwrap_err();
++            assert_eq!(err.status_code(), StatusCode::InvalidArguments, "{err:?}");
++        }
++    }
++
+     async fn init_dense_metric_region(env: &TestEnv) -> RegionId {
+         let physical_region_id = env.default_physical_region_id();
+         env.create_physical_region(
 ```
 
-**File**: `Cargo.toml` (modified, +4/-0)
+**File**: `src/mito2/src/engine.rs` (modified, +2/-0)
 ```diff
-@@ -384,6 +384,10 @@ datafusion-pg-catalog = { git = "https://github.com/datafusion-contrib/datafusio
- arrow-pg = { git = "https://github.com/datafusion-contrib/datafusion-postgres.git", rev = "ffb14a52b3d7c7489559812e1ec38096f225ce93" }
- sqlparser = { git = "https://github.com/GreptimeTeam/sqlparser-rs.git", rev = "9e9019bb1c7040ed956f654e39378dd42ab17884" }
- 
-+# pprof 0.15.0 initializes framehop inside SIGPROF; pin the unreleased fix
-+# that initializes it before sampling. Remove once tikv/pprof-rs#282 is released.
-+pprof = { git = "https://github.com/tikv/pprof-rs", rev = "01cff82dbe6fe110a707bf2b38d8ebb1d14a18f8" }
+@@ -25,6 +25,8 @@ mod batch_catchup_test;
+ #[cfg(test)]
+ mod batch_open_test;
+ #[cfg(test)]
++mod bulk_insert_validation_test;
++#[cfg(test)]
+ mod bump_committed_sequence_test;
+ #[cfg(test)]
+ mod catchup_test;
+```
+
+**File**: `src/mito2/src/engine/bulk_insert_validation_test.rs` (added, +329/-0)
+```diff
+@@ -0,0 +1,329 @@
++// Copyright 2023 Greptime Team
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
- # Temporary: use the GreptimeTeam fork of tikv-jemalloc-sys embedding
- # jemalloc 5.3.1 + backport of 54f22c83 ("Initialize TSD tcache before
- # enabling it"), fixing the TSD/tcache enable-before-init reentrancy
++//! Bulk inserts checked against the region schema.
++
++use std::sync::Arc;
++
++use api::v1::{ArrowIpc, Rows};
++use common_error::ext::ErrorExt;
++use common_error::status_code::StatusCode;
++use common_recordbatch::{DfRecordBatch, RecordBatches};
++use common_test_util::flight::encode_to_flight_data;
++use datatypes::arrow::array::{
++    ArrayRef, Float64Array, Int64Array, LargeStringArray, ListArray, StringArray, StringViewArray,
++    TimestampMillisecondArray, TimestampSecondArray,
++};
++use datatypes::arrow::datatypes::{Field, Int64Type, Schema};
++use datatypes::prelude::ConcreteDataType;
++use store_api::region_engine::RegionEngine;
++use store_api::region_request::{
++    AlterKind, ModifyColumnType, RegionAlterRequest, RegionBulkInsertsRequest, RegionPutRequest,
++    RegionRequest,
++};
++use store_api::storage::{RegionId, ScanRequest};
++
++use crate::config::MitoConfig;
++use crate::engine::MitoEngine;
++use crate::request::WorkerRequest;
++use crate::test_util::{CreateRequestBuilder, TestEnv, build_rows, reopen_region, rows_schema};
++
++const SST_FORMATS: [&str; 2] = ["flat", "primary_key"];
++
++fn column(name: &str, array: ArrayRef) -> (Field, ArrayRef) {
++    (Field::new(name, array.data_type().clone(), true), array)
++}
++
++fn tag() -> (Field, ArrayRef) {
++    column("tag_0", Arc::new(StringArray::from(vec!["a", "b"])))
++}
++
++fn field() -> (Field, ArrayRef) {
++    column("field_0", Arc::new(Float64Array::from(vec![1.0, 2.0])))
++}
++
++fn ts() -> (Field, ArrayRef) {
++    column(
++        "ts",
++        Arc::new(TimestampMillisecondArray::from(vec![0, 1000])),
++    )
++}
++
++fn bulk_request(region_id: RegionId, columns: Vec<(Field, ArrayRef)>) -> RegionRequest {
++    RegionRequest::BulkInserts(bulk_insert(region_id, columns))
++}
++
++fn bulk_insert(region_id: RegionId, columns: Vec<(Field, ArrayRef)>) -> RegionBulkInsertsRequest {
++    let (fields, arrays): (Vec<_>, Vec<_>) = columns.into_iter().unzip();
++    let payload = DfRecordBatch::try_new(Arc::new(Schema::new(fields)), arrays).unwrap();
++    let (schema, record_batch) = encode_to_flight_data(payload.clone());
++    RegionBulkInsertsRequest {
++        skip_wal: false,
++        region_id,
++        payload,
++        raw_data: ArrowIpc {
++            schema: schema.data_header,
++            data_header: record_batch.data_header,
++            payload: record_batch.data_body,
++        },
++        partition_expr_version: None,
++        aligned_schema_version: None,
++    }
++}
++
++async fn scan_num_rows(engine: &MitoEngine, region_id: RegionId) -> usize {
++    let stream = engine
++        .scan_to_stream(region_id, ScanRequest::default())
++        .await
++        .unwrap();
++    let batches = RecordBatches::try_collect(stream).await.unwrap();
++    batches.iter().map(|batch| batch.num_rows()).sum()
++}
++
++/// Batches that do not match the region schema are rejected before they are
++/// appended to the WAL, and the region keeps accepting writes.
++#[tokio::test]
++async fn test_bulk_insert_rejects_batches_not_matching_schema() {
++    common_telemetry::init_default_ut_logging();
++    let list = ListArray::from_iter_primitive::<Int64Type, _, _>(vec![
++        Some(vec![Some(1)]),
++        Some(vec![Some(2)]),
++    ]);
++    let rejected = vec![
++        vec![
++            tag(),
++            field(),
++            column("ts", Arc::new(Int64Array::from(vec![0, 1000]))),
++        ],
++        vec![
++            tag(),
++            field(),
++            column(
++                "ts",
++                Arc::new(TimestampMillisecondArray::from(vec![Some(0), None])),
++            ),
++        ],
++        vec![
++            tag(),
++            field(),
++            column(
++                "ts",
++                Arc::new(TimestampMillisecondArray::from(vec![None, None])),
++            ),
++        ],
++        vec![
++            tag(),
++            field(),
++            column("ts", Arc::new(TimestampSecondArray::from(vec![0, 1]))),
++        ],
++        vec![tag(), field()],
++        vec![
++            tag(),
++            column("field_0", Arc::new(StringArray::from(vec!["1", "2"]))),
++            ts(),
++        ],
++        vec![tag(), column("field_0", Arc::new(list)), ts()],
++        vec![
++            tag(),
++            column(
++                "field_0",
++                Arc::new(Float64Array::from(vec![Some(1.0), None])),
++            ),
++            ts(),
++        ],
++        v
+```
+
+**File**: `src/mito2/src/memtable/time_series.rs` (modified, +22/-2)
+```diff
+@@ -17,7 +17,7 @@ use std::collections::{BTreeMap, Bound, HashSet};
+ use std::fmt::{Debug, Formatter};
+ use std::iter;
+ use std::sync::atomic::{AtomicI64, AtomicU64, AtomicUsize, Ordering};
+-use std::sync::{Arc, RwLock};
++use std::sync::{Arc, PoisonError, RwLock};
+ use std::time::{Duration, Instant};
+ 
+ use api::v1::OpType;
+@@ -474,7 +474,13 @@ impl Drop for SeriesMap {
+         let num_field_builders = self
+             .0
+             .values()
+-            .map(|v| v.read().unwrap().active.num_field_builders())
++            // The map may be dropped while unwinding from a panic that poisoned a lock.
++            .map(|v| {
++                v.read()
++                    .unwrap_or_else(PoisonError::into_inner)
++                    .active
++                    .num_field_builders()
++            })
+             .sum::<usize>();
+         MEMTABLE_ACTIVE_SERIES_COUNT.sub(num_series as i64);
+         MEMTABLE_ACTIVE_FIELD_BUILDER_COUNT.sub(num_field_builders as i64);
+@@ -1493,6 +1499,20 @@ mod tests {
+         assert_eq!(expect, &read);
+     }
+ 
++    #[test]
++    fn test_series_map_drop_with_poisoned_lock() {
++        let region_metadata = schema_for_test();
++        let series = Arc::new(RwLock::new(Series::new(&region_metadata)));
++        let map = SeriesMap(BTreeMap::from([(vec![1], series.clone())]));
++        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
++            let _guard = series.write().unwrap();
++            panic!("poison the series lock");
++        }))
++        .unwrap_err();
++        assert!(series.is_poisoned());
++        drop(map);
++    }
++
+     #[test]
+     fn test_series() {
+         let region_metadata = schema_for_test();
+```
+
+**File**: `src/mito2/src/region_write_ctx.rs` (modified, +22/-1)
+```diff
+@@ -23,7 +23,7 @@ use store_api::logstore::LogStore;
+ use store_api::logstore::provider::Provider;
+ use store_api::storage::{RegionId, SequenceNumber};
+ 
+-use crate::error::{Error, Result, WriteGroupSnafu};
++use crate::error::{Error, Result, UnexpectedSnafu, WriteGroupSnafu};
+ use crate::memtable::KeyValues;
+ use crate::memtable::bulk::part::BulkPart;
+ use crate::metrics;
+@@ -66,6 +66,15 @@ impl WriteNotify {
+ 
+ impl Drop for WriteNotify {
+     fn drop(&mut self) {
++        // A panic may have interrupted the write, so it must not be reported as written.
++        if self.err.is_none() && std::thread::panicking() {
++            self.err = Some(Arc::new(
++                UnexpectedSnafu {
++                    reason: "the write was interrupted by a panic",
++                }
++                .build(),
++            ));
++        }
+         self.notify_result();
+     }
+ }
+@@ -583,6 +592,18 @@ mod tests {
+     use crate::memtable::bulk::part::BulkPart;
+     use crate::test_util::version_util::VersionControlBuilder;
+ 
++    #[test]
++    fn test_write_notify_dropped_by_panic_reports_error() {
++        let (tx, rx) = oneshot::channel();
++        let notify = WriteNotify::new(OptionOutputTx::from(tx), 3);
++        std::panic::catch_unwind(std::panic::AssertUnwindSafe(move || {
++            let _notify = notify;
++            panic!("interrupt the write");
++        }))
++        .unwrap_err();
++        assert!(rx.blocking_recv().unwrap().is_err());
++    }
++
+     #[test]
+     fn test_request_skip_wal_preserves_sequences_and_other_writes() {
+         // Ablate only the request flag: the workload and sequence allocation stay identical.
+```
+
+**File**: `src/mito2/src/request.rs` (modified, +265/-86)
+```diff
+@@ -25,6 +25,9 @@ use api::helper::{
+ use api::v1::column_def::options_from_column_schema;
+ use api::v1::{ColumnDataType, ColumnSchema, OpType, Rows, SemanticType, Value, WriteHint};
+ use common_telemetry::info;
++use datatypes::arrow::array::{Array, ArrayRef};
++use datatypes::arrow::datatypes::DataType as ArrowDataType;
++use datatypes::arrow::record_batch::RecordBatch;
+ use datatypes::prelude::DataType;
+ use partition::expr::PartitionExpr;
+ use prometheus::HistogramTimer;
+@@ -44,6 +47,7 @@ use store_api::region_request::{
+     RegionFlushRequest, RegionOpenRequest, RegionRequest, RegionTruncateRequest,
+     StagingPartitionDirective,
+ };
++use store_api::storage::consts::PRIMARY_KEY_COLUMN_NAME;
+ use store_api::storage::{FileId, RegionId, SequenceNumber};
+ use tokio::sync::oneshot::{self, Receiver, Sender};
+ 
+@@ -194,85 +198,22 @@ impl WriteRequest {
+ 
+         let region_id = self.region_id;
+         // Index all columns in rows.
+-        let mut rows_columns: HashMap<_, _> = self
++        let rows_columns = self
+             .rows
+             .schema
+             .iter()
+-            .map(|column| (&column.column_name, column))
++            .map(|schema| {
++                let column = RowColumn {
++                    request: self,
++                    schema,
++                };
++                (schema.column_name.as_str(), column)
++            })
+             .collect();
+-
+-        let mut need_fill_default = false;
+-        // Checks all columns in this region.
+-        for column in &metadata.column_metadatas {
+-            if let Some(input_col) = rows_columns.remove(&column.column_schema.name) {
+-                // Check data type.
+-                ensure!(
+-                    is_column_type_value_eq(
+-                        input_col.datatype,
+-                        input_col.datatype_extension.clone(),
+-                        &column.column_schema.data_type
+-                    ),
+-                    InvalidRequestSnafu {
+-                        region_id,
+-                        reason: format!(
+-                            "column {} expect type {:?}, given: {}({})",
+-                            column.column_schema.name,
+-                            column.column_schema.data_type,
+-                            ColumnDataType::try_from(input_col.datatype)
+-                                .map(|v| v.as_str_name())
+-                                .unwrap_or("Unknown"),
+-                            input_col.datatype,
+-                        )
+-                    }
+-                );
+-
+-                // Check semantic type.
+-                ensure!(
+-                    is_semantic_type_eq(input_col.semantic_type, column.semantic_type),
+-                    InvalidRequestSnafu {
+-                        region_id,
+-                        reason: format!(
+-                            "column {} has semantic type {:?}, given: {}({})",
+-                            column.column_schema.name,
+-                            column.semantic_type,
+-                            api::v1::SemanticType::try_from(input_col.semantic_type)
+-                                .map(|v| v.as_str_name())
+-                                .unwrap_or("Unknown"),
+-                            input_col.semantic_type
+-                        ),
+-                    }
+-                );
+-
+-                // Check nullable.
+-                // Safety: `rows_columns` ensures this column exists.
+-                let has_null = self.has_null[self.name_to_index[&column.column_schema.name]];
+-                ensure!(
+-                    !has_null || column.column_schema.is_nullable(),
+-                    InvalidRequestSnafu {
+-                        region_id,
+-                        reason: format!(
+-                            "column {} is not null but input has null",
+-                            column.column_schema.name
+-                        ),
+-                    }
+-                );
+-            } else {
+-                // Rows don't have this column.
+-                self.check_missing_column(column)?;
+-
+-                need_fill_default = true;
+-            }
+-        }
+-
+-        // Checks all columns in rows exist in the region.
+-        if !rows_columns.is_empty() {
+-            let names: Vec<_> = rows_columns.into_keys().collect();
+-            return InvalidRequestSnafu {
+-                region_id,
+-                reason: format!("unknown columns: {:?}", names),
+-            }
+-            .fail();
+-        }
++        let need_fill_default =
++            check_request_columns(region_id, metadata, rows_columns, |column| {
++                self.check_missing_column(column)
++            })?;
+ 
+         // If we need to fill default values, return a special error.
+         ensure!(!need_fill_default, FillDefaultSnafu { region_id });
+@@ -369,16 +310,7 @@ impl WriteRequest {
+         }
+ 
+         // Not a delete request. Checks whether they have default value.
+-        ensure!(
+-            colu
+```
+
+**File**: `src/mito2/src/worker/handle_bulk_insert.rs` (modified, +4/-2)
+```diff
+@@ -71,10 +71,12 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+             return;
+         }
+ 
+-        // safety: ts data type must be a timestamp type.
++        // safety: `WorkerRequest::try_from_region_request` checked the batch against
++        // `region_metadata`, so the time index is a timestamp array without nulls.
+         let (ts_primitive, _) = datatypes::timestamp::timestamp_array_to_primitive(ts).unwrap();
+ 
+-        // safety: we've checked ts.len() == batch.num_rows() and batch is not empty
++        // safety: we've checked ts.len() == batch.num_rows(), batch is not empty and
++        // the time index has no nulls.
+         let min_ts = arrow::compute::min(&ts_primitive).unwrap();
+         let max_ts = arrow::compute::max(&ts_primitive).unwrap();
+ 
+```
+
+**File**: `src/mito2/src/worker/handle_write.rs` (modified, +13/-9)
+```diff
+@@ -34,7 +34,9 @@ use crate::metrics::{
+ };
+ use crate::region::{RegionLeaderState, RegionRoleState};
+ use crate::region_write_ctx::{RegionWriteCtx, WriteSource};
+-use crate::request::{SenderBulkRequest, SenderWriteRequest, WriteRequest};
++use crate::request::{
++    SenderBulkRequest, SenderWriteRequest, WriteRequest, check_bulk_insert_batch,
++};
+ use crate::wal::Wal;
+ use crate::worker::RegionWorkerLoop;
+ 
+@@ -552,14 +554,16 @@ impl<S> RegionWorkerLoop<S> {
+                     aligned_schema.schema_version == region_ctx.version().metadata.schema_version
+                 });
+ 
+-            // Fill missing columns if needed
+-            if need_fill_missing_columns
+-                && let Err(e) = bulk_req
+-                    .request
+-                    .fill_missing_columns(&region_ctx.version().metadata)
+-            {
+-                bulk_req.sender.send(Err(e));
+-                continue;
++            // Fill missing columns if needed. The batch is checked again as the region
++            // schema may have changed since the request was checked.
++            if need_fill_missing_columns {
++                let metadata = &region_ctx.version().metadata;
++                if let Err(e) = check_bulk_insert_batch(metadata, &bulk_req.request.batch)
++                    .and_then(|_| bulk_req.request.fill_missing_columns(metadata))
++                {
++                    bulk_req.sender.send(Err(e));
++                    continue;
++                }
+             }
+ 
+             // Collect requests by region.
+```
+
+---
+
+### Incident Patch 3: `cca95b26` (2026-10-19)
+**Commit Message**: fix(datanode): stop the object store WAL before the region server (#9639)
+
+* fix(mito2): cancel flushes waiting for the WAL when the engine stops
+
+A flush waits for the WAL to be durable through the entry id it records
+before it writes its manifest edit. With the object store WAL in the
+`enqueued` mode that wait lasts until an upload succeeds, while the log
+store is stopped only after the engines. A graceful shutdown during an
+outage of the WAL's object store therefore never finished: closing a
+region does not cancel its running flush, stopping the worker group
+waits for running flushes and runs the queued ones, and a region holding
+writes that skipped the WAL is flushed on close.
+
+The worker group now owns a cancellation token, raised before its
+schedulers stop and kept raised. `RegionEngine::begin_stop`, which the
+region server calls before it closes regions, raises it earlier, so that
+a close-time flush cannot wait either. A flush polls its durability
+barrier first and gives up at the barrier once the token is raised: it
+writes no manifest edit, deletes its SSTs and fails as cancelled. A
+flush whose entries are already durable commits as before. The region
+server reports a faile
+
+**File**: `src/datanode/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -81,5 +81,6 @@ common-meta = { workspace = true, features = ["testing"] }
+ common-query.workspace = true
+ common-test-util.workspace = true
+ datafusion-common.workspace = true
++log-store = { workspace = true, features = ["testing"] }
+ mito2 = { workspace = true, features = ["test"] }
+ session.workspace = true
+```
+
+**File**: `src/datanode/src/datanode.rs` (modified, +273/-4)
+```diff
+@@ -167,7 +167,10 @@ impl Datanode {
+                     .context(ShutdownInstanceSnafu),
+             );
+         }
+-        record_shutdown_error(&mut first_error, self.region_server.stop().await);
++        // The object store WAL stops before the regions close: its stop
++        // uploads the backlog or drops it, and answers every wait for its
++        // entries, so a flush that waits for the WAL, queued or run by the
++        // close of a region, cannot hold up the shutdown.
+         if let Some(log_store) = &self.object_store_log_store {
+             record_shutdown_error(
+                 &mut first_error,
+@@ -178,6 +181,7 @@ impl Datanode {
+                     .context(ShutdownInstanceSnafu),
+             );
+         }
++        record_shutdown_error(&mut first_error, self.region_server.stop().await);
+         first_error.map_or(Ok(()), Err)
+     }
+ 
+@@ -1055,11 +1059,13 @@ mod tests {
+     use std::assert_matches;
+     use std::collections::{BTreeMap, HashMap};
+     use std::io::Write;
++    use std::ops::Range;
+     use std::path::Path;
+     use std::sync::Arc;
+     use std::sync::atomic::{AtomicUsize, Ordering};
+     use std::time::Duration;
+ 
++    use api::v1::{ColumnSchema, Rows};
+     use cache::build_datanode_layered_cache_registry;
+     use common_base::Plugins;
+     use common_base::readable_size::ReadableSize;
+@@ -1073,28 +1079,34 @@ mod tests {
+     use common_meta::node_manager::NodeManagerRef;
+     use common_test_util::temp_dir::{create_named_temp_file, create_temp_dir};
+     use common_wal::config::DatanodeWalConfig;
+-    use common_wal::config::object_store::{ObjectStoreWalConfig, STANDALONE_GENERATION};
++    use common_wal::config::object_store::{AckMode, ObjectStoreWalConfig, STANDALONE_GENERATION};
++    use common_wal::options::{ObjectStoreWalOptions, WAL_OPTIONS_KEY, WalOptions};
+     use log_store::ObjectStoreLogStore;
+     use log_store::error::Error as LogStoreError;
+     use meta_client::client::MetaClientBuilder;
+     use mito2::engine::MITO_ENGINE_NAME;
++    use mito2::test_util::{CreateRequestBuilder, build_rows, rows_schema};
+     use object_store::ObjectStore;
+     use object_store::manager::ObjectStoreManager;
+     use partition::manager::PartitionRuleManagerRef;
+     use query::region_query::{RegionQueryHandlerFactory, RegionQueryHandlerFactoryRef};
+     use store_api::logstore::LogStore;
+-    use store_api::region_request::RegionRequest;
++    use store_api::logstore::provider::Provider;
++    use store_api::region_request::{PathType, RegionOpenRequest, RegionPutRequest, RegionRequest};
+     use store_api::storage::RegionId;
+ 
+     use crate::config::{DatanodeOptions, RegionEngineConfig, StorageConfig};
+     use crate::datanode::{
+-        DatanodeBuilder, validate_object_store_wal_config, validate_region_engine_config,
++        Datanode, DatanodeBuilder, validate_object_store_wal_config, validate_region_engine_config,
+         wal_object_store,
+     };
+     use crate::error::{self, Error};
+     use crate::region_query::DatanodeRegionQueryHandler;
++    use crate::region_server::RegionServer;
+     use crate::tests::{MockRegionEngine, mock_region_server};
+ 
++    const WAIT: Duration = Duration::from_secs(30);
++
+     async fn setup_table_datanode(kv: &KvBackendRef) {
+         let mgr = DatanodeTableManager::new(kv.clone());
+         let txn = mgr
+@@ -1579,6 +1591,263 @@ mod tests {
+         assert!(is_stopped(log_store).await);
+     }
+ 
++    const REGION: RegionId = RegionId::new(1024, 1);
++
++    fn enqueued_wal_config(flush_interval: Duration) -> ObjectStoreWalConfig {
++        ObjectStoreWalConfig {
++            ack_mode: AckMode::Enqueued,
++            flush_interval,
++            ..Default::default()
++        }
++    }
++
++    /// The options that put a region on the WAL of a datanode with `config`.
++    fn region_wal_options(config: &ObjectStoreWalConfig) -> HashMap<String, String> {
++        let prefix = config.node_prefix(0, STANDALONE_GENERATION);
++        let wal_options =
++            serde_json::to_string(&WalOptions::ObjectStore(ObjectStoreWalOptions::new(prefix)))
++                .unwrap();
++        HashMap::from([(WAL_OPTIONS_KEY.to_string(), wal_options)])
++    }
++
++    async fn put_rows(
++        region_server: &RegionServer,
++        schema: &[ColumnSchema],
++        rows: Range<usize>,
++        skip_wal: bool,
++    ) {
++        if rows.is_empty() {
++            return;
++        }
++        region_server
++            .handle_request(
++                REGION,
++                RegionRequest::Put(RegionPutRequest {
++                    rows: Rows {
++                        schema: schema.to_vec(),
++                        rows: build_rows(rows.start, rows.end),
++                    },
++                    skip_wal,
++                    hint: None,
++                    partition_expr_version: None,
++                }),
++            )
++            .await
++            .unwrap();
++    }
++
++    /// Builds a datanode on an `enqueued` object store WAL with
++    /// 
+```
+
+**File**: `src/datanode/src/region_server.rs` (modified, +51/-2)
+```diff
+@@ -1986,6 +1986,7 @@ impl RegionServerInner {
+             .collect::<Vec<_>>();
+         let num_regions = regions.len();
+ 
++        let mut first_error = None;
+         for (region_id, engine) in regions {
+             let closed = engine
+                 .handle_request(
+@@ -1995,15 +1996,22 @@ impl RegionServerInner {
+                 .await;
+             match closed {
+                 Ok(_) => debug!("Region {region_id} is closed"),
+-                Err(e) => warn!("Failed to close region {region_id}, err: {e}"),
++                Err(e) => {
++                    // A close that failed may not have flushed writes that
++                    // skipped the WAL, which nothing replays.
++                    error!(e; "Failed to close region {region_id}; writes that skipped the WAL may be lost");
++                    record_shutdown_error(
++                        &mut first_error,
++                        Err(e).context(HandleRegionRequestSnafu { region_id }),
++                    );
++                }
+             }
+         }
+         self.region_map.clear();
+         info!("closed {num_regions} regions");
+ 
+         drop(self.mito_engine.write().unwrap().take());
+         let engines = self.engines.write().unwrap().drain().collect::<Vec<_>>();
+-        let mut first_error = None;
+         for (engine_name, engine) in engines {
+             let result = engine
+                 .stop()
+@@ -2539,6 +2547,47 @@ mod tests {
+         assert!(status.is_some());
+     }
+ 
++    /// A region that fails to close is reported in the result of the stop,
++    /// which still closes the other regions.
++    #[tokio::test]
++    async fn test_stop_reports_a_region_that_failed_to_close() {
++        common_telemetry::init_default_ut_logging();
++
++        let mut mock_region_server = mock_region_server();
++        let failing = RegionId::new(1, 1);
++        let closing = RegionId::new(1, 2);
++        let closed = Arc::new(std::sync::Mutex::new(Vec::new()));
++        let (engine, _receiver) = MockRegionEngine::with_mock_fn(MITO_ENGINE_NAME, {
++            let closed = closed.clone();
++            Box::new(move |region_id, request| {
++                if matches!(request, RegionRequest::Close(_)) {
++                    closed.lock().unwrap().push(region_id);
++                    if region_id == failing {
++                        return error::UnexpectedSnafu {
++                            violated: "close failed".to_string(),
++                        }
++                        .fail();
++                    }
++                }
++                Ok(0)
++            })
++        });
++        mock_region_server.register_engine(engine.clone());
++        for region_id in [failing, closing] {
++            mock_region_server
++                .inner
++                .region_map
++                .insert(region_id, RegionEngineWithStatus::Ready(engine.clone()));
++        }
++
++        let err = mock_region_server.stop().await.unwrap_err();
++
++        assert_matches!(err, error::Error::HandleRegionRequest { region_id, .. } if region_id == failing);
++        let mut closed = closed.lock().unwrap().clone();
++        closed.sort();
++        assert_eq!(vec![failing, closing], closed);
++    }
++
+     #[tokio::test]
+     async fn test_batch_open_region_ignore_nonexistent_regions() {
+         common_telemetry::init_default_ut_logging();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9727** (closed): test(promql): prove the composed Window -> Map -> Window chain (@discord9)
+- **PR #9722** (2026-10-19): fix(mito2): build indexes for encoded bulk parts flushed in sync mode (@killme2008)
+- **PR #9721** (2026-10-19): ci: do not run these actions on fork (@yihong0618)
+- **PR #9719** (2026-10-19): perf(promql): hand out evaluated series as chunks instead of one buffered series (@discord9)
+- **PR #9716** (2026-10-19): fix(mito2): fence writes before a graceful downgrade (@fengjiachun)
 - **PR #9713** (closed): fix(puffin): keep puffin_metadata cache bytes non-negative (@Tyagiquamar)
-- **PR #9696** (2026-10-18): feat(promql): match vectors holding native histograms (@killme2008)
-- **PR #9695** (2026-10-18): feat(promql): evaluate range functions over native histogram samples (@killme2008)
-- **PR #9694** (2026-10-17): feat(promql): cover absent_over_time and vector(), sort quantile_over_time like Go (@killme2008)
-- **PR #9690** (2026-10-17): fix(promql): keep no samples past a skipped anchored window and trim Narthex operators (@killme2008)
-- **PR #9689** (2026-10-17): chore(promql): import parent items through crate paths (@killme2008)
 
 ---
 
@@ -2330,21 +3151,21 @@ Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. log-store): refuse to open object store WAL regions whose history is missing (#9
+## X. meta): validate persisted partition bounds before altering regions (#9487)
 
 **RULE**:
-When implementing operations in `config/config.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `deae75ff`: log-store): refuse to open object store WAL regions whose history is missing (#9561). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e29e8d4`: meta): validate persisted partition bounds before altering regions (#9487). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `config/config.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| `wal.accept_missing_history` | Bool | `false` | Whether a region opens although the WAL objects under the prefix do not hold its history.<br/>An existing region fails to open when the prefix held no object when the WAL opened, or when the flushed entry id of the region names an object above every object of the prefix that holds entries. Both happen after `storage_provider`, or the bucket or root of the provider it names, changed without the WAL objects being copied, or after the objects were deleted.<br/>To move the WAL, stop the instance, copy every object under the prefix to the new location and then change the configuration; the regions open with all their writes.<br/>When the old WAL is lost, set this to `true` for one start: the regions open without their writes that were not flushed, which are lost, a warning names each region, and `greptime_logstore_object_store_wal_missing_history_accepted_total` counts them. Turn it off again once the instance has written to the WAL after that start; until then a later start refuses a region whose flushed entry id names an object above every object of the prefix that holds entries.<br/>**It's only used when the provider is `experimental_
+ "datafusion-expr",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2354,4 +3175,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `deae75ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e29e8d4` are properly handled with clean fallback behavior.

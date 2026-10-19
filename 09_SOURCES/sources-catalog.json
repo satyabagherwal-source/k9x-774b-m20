@@ -1833,10 +1833,10 @@
     "repository": "serpapi/google-search-results-python",
     "platform": "github",
     "sourceUrl": "https://github.com/serpapi/google-search-results-python",
-    "sourceVersion": "HEAD",
-    "license": "Open-Source",
-    "contentHash": "a70f6842e25c16c60c41a46ca4fbbc5a01787432d51068a0dabb9fdaeb53c958",
-    "lastHarvestedAt": "2026-10-18T04:59:15.180Z",
+    "sourceVersion": "345d31a9",
+    "license": "MIT",
+    "contentHash": "661a4f32d9c85292811f1f2fc67f90b40301360f1b47be52904a9fcd9be9e922",
+    "lastHarvestedAt": "2026-10-19T16:37:18.653Z",
     "learningId": "learn-github-serpapi-google-search-results-python"
   },
   "serpapi-google-search-results-ruby": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "baa56301",
+    "sourceVersion": "da88ff86",
     "license": "Apache-2.0",
-    "contentHash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
-    "lastHarvestedAt": "2026-10-19T03:33:09.463Z",
+    "contentHash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
+    "lastHarvestedAt": "2026-10-19T16:37:27.549Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "ee6cfba9",
+    "sourceVersion": "d88ede7b",
     "license": "Apache-2.0",
-    "contentHash": "cfa1e84bbe07914d606e2f4e8ac509c763038ab9a51c04dad4fba5b42901c696",
-    "lastHarvestedAt": "2026-10-19T04:19:36.475Z",
+    "contentHash": "bf53c8ee4e373cd07e5b4a80852767d7f4f62685854ddee6633be1224a1d5223",
+    "lastHarvestedAt": "2026-10-19T16:37:22.277Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {
@@ -8368,5 +8368,15 @@
     "contentHash": "c13dbe1a461c7b40e869829936467e8332b826828b6fa3ea4132436a8ab46e81",
     "lastHarvestedAt": "2026-10-19T16:31:10.470Z",
     "learningId": "learn-github-sayaka-sh-spmp"
+  },
+  "touchlab-skie": {
+    "repository": "touchlab/SKIE",
+    "platform": "github",
+    "sourceUrl": "https://github.com/touchlab/SKIE",
+    "sourceVersion": "e3e85015",
+    "license": "Apache-2.0",
+    "contentHash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
+    "lastHarvestedAt": "2026-10-19T16:37:20.242Z",
+    "learningId": "learn-github-touchlab-skie"
   }
 }

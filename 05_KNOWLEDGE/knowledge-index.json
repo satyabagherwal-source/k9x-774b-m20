@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:31:19.287Z",
-  "total_verified_learnings": 852,
+  "last_updated": "2026-10-19T16:37:27.490Z",
+  "total_verified_learnings": 853,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -11347,14 +11347,19 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "baa56301",
-      "content_hash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
+      "source_version": "da88ff86",
+      "content_hash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
         {
           "number": 2079,
           "title": "log-store): refuse to open object store WAL regions whose history is missing (#9",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2686,
+          "title": "meta): validate persisted partition bounds before altering regions (#9487)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11363,7 +11368,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:33:09.410Z",
+      "verified_at": "2026-10-19T16:37:27.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26355,14 +26360,19 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "ee6cfba9",
-      "content_hash": "cfa1e84bbe07914d606e2f4e8ac509c763038ab9a51c04dad4fba5b42901c696",
+      "source_version": "d88ede7b",
+      "content_hash": "bf53c8ee4e373cd07e5b4a80852767d7f4f62685854ddee6633be1224a1d5223",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
         {
           "number": 2120,
           "title": "runner): install the panic hook once instead of swapping it per run (#2224)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2685,
+          "title": "release): match language server artifacts with pattern, not name",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26371,7 +26381,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:19:36.424Z",
+      "verified_at": "2026-10-19T16:37:22.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41917,22 +41927,35 @@
     "learn-github-touchlab-skie": {
       "learning_id": "learn-github-touchlab-skie",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "touchlab-skie",
+      "source": "touchlab/SKIE",
+      "repository": "touchlab/SKIE",
       "slug": "touchlab-skie",
       "platform": "github",
       "source_url": "https://github.com/touchlab/SKIE",
-      "source_version": "HEAD",
-      "content_hash": "4391e7595b0e730e68b6175c009d7df90bc5520720a59040b5a56d6d17e22a9f",
+      "source_version": "e3e85015",
+      "content_hash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-skie-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-skie-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2684,
+          "title": "configuration cache serialization of the Swift source set",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.027Z"
+      "verified_at": "2026-10-19T16:37:20.184Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-touchlab-xcode-kotlin": {
       "learning_id": "learn-github-touchlab-xcode-kotlin",
@@ -54108,17 +54131,23 @@
       "slug": "serpapi-google-search-results-python",
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-python",
-      "source_version": "HEAD",
-      "content_hash": "a70f6842e25c16c60c41a46ca4fbbc5a01787432d51068a0dabb9fdaeb53c958",
+      "source_version": "345d31a9",
+      "content_hash": "661a4f32d9c85292811f1f2fc67f90b40301360f1b47be52904a9fcd9be9e922",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-python-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-python-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2683,
+          "title": "order by comment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:59:15.094Z",
+      "verified_at": "2026-10-19T16:37:18.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89451,6 +89480,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:31:19.275Z"
+    },
+    "rule-2683": {
+      "learning_id": "rule-2683",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2683,
+      "title": "order by comment",
+      "source_url": "https://github.com/serpapi/google-search-results-python",
+      "source_version": "345d31a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:37:18.603Z"
+    },
+    "rule-2684": {
+      "learning_id": "rule-2684",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2684,
+      "title": "configuration cache serialization of the Swift source set",
+      "source_url": "https://github.com/touchlab/SKIE",
+      "source_version": "e3e85015",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:37:20.184Z"
+    },
+    "rule-2685": {
+      "learning_id": "rule-2685",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2685,
+      "title": "release): match language server artifacts with pattern, not name",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "d88ede7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:37:22.224Z"
+    },
+    "rule-2686": {
+      "learning_id": "rule-2686",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2686,
+      "title": "meta): validate persisted partition bounds before altering regions (#9487)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "da88ff86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:37:27.480Z"
     }
   },
   "aliases": {
