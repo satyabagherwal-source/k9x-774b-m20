@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "4789066e54cab96d06d171c324ef8a17cf340e062771c06bfbbed97f1fbf3795",
-    "lastHarvestedAt": "2026-10-18T04:11:53.135Z",
+    "contentHash": "5eb91eec8bc9142c2e855d253a3e15405b9913adae658984e51236472f084904",
+    "lastHarvestedAt": "2026-10-19T14:20:59.686Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "b9e87ddf",
+    "sourceVersion": "55676740",
     "license": "Apache-2.0",
-    "contentHash": "acb6deeda8e73084afab21d76519d5a0b5e38ab78d93b4795d98b741c531329c",
-    "lastHarvestedAt": "2026-10-19T01:57:10.298Z",
+    "contentHash": "de79fc0c6673e8471a8fc991d8429d9dcd2533f4bef981499d29a022838960f1",
+    "lastHarvestedAt": "2026-10-19T14:21:10.695Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -5233,10 +5233,10 @@
     "repository": "lobehub/lobe-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/lobehub/lobe-ui",
-    "sourceVersion": "0936dc40",
+    "sourceVersion": "4ffde053",
     "license": "MIT",
-    "contentHash": "4582b1af249d8f61ac846a47a94b827f1a33d5e598b826e802af86049990b527",
-    "lastHarvestedAt": "2026-10-19T03:20:17.721Z",
+    "contentHash": "e76898729a4f283f8dd66bcdb0a1692ba8aac50edde4cf2c277de9b39ee736a4",
+    "lastHarvestedAt": "2026-10-19T14:21:01.250Z",
     "learningId": "learn-github-lobehub-lobe-ui"
   },
   "gitui-org-gitui": {
@@ -8158,5 +8158,15 @@
     "contentHash": "aa645f5ecd0b4e05c58f556659a730be57b240d1802373394e2d0fb6705e4168",
     "lastHarvestedAt": "2026-10-19T14:14:59.747Z",
     "learningId": "learn-github-igorescodro-alkaa"
+  },
+  "vanniktech-emoji": {
+    "repository": "vanniktech/Emoji",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vanniktech/Emoji",
+    "sourceVersion": "69e998da",
+    "license": "Apache-2.0",
+    "contentHash": "a6b95a80db7f5d99c070e9255a7cb819859ae9e551429e3066b41a0863c27500",
+    "lastHarvestedAt": "2026-10-19T14:21:07.545Z",
+    "learningId": "learn-github-vanniktech-emoji"
   }
 }

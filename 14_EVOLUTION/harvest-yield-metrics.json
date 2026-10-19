@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T14:15:06.778Z",
-  "total_cycles_completed": 3260,
-  "total_learnings_persisted": 3260,
-  "total_rules_promoted": 2416,
+  "last_updated": "2026-10-19T14:21:10.698Z",
+  "total_cycles_completed": 3264,
+  "total_learnings_persisted": 3264,
+  "total_rules_promoted": 2419,
   "history": [
-    {
-      "timestamp": "2026-10-19T08:14:32.692Z",
-      "repository": "Tencent-TDS/KuiklyUI",
-      "learningId": "learn-github-tencent-tds-kuiklyui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:14:49.144Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:22:26.445Z",
-      "repository": "MobileNativeFoundation/Store",
-      "learningId": "learn-github-mobilenativefoundation-store",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:22:31.034Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T08:22:33.473Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T14:15:06.778Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:20:59.688Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:21:01.253Z",
+      "repository": "lobehub/lobe-ui",
+      "learningId": "learn-github-lobehub-lobe-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:21:07.548Z",
+      "repository": "vanniktech/Emoji",
+      "learningId": "learn-github-vanniktech-emoji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:21:10.698Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

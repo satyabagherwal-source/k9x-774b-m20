@@ -3290,3 +3290,7 @@ Every entry in this ledger must capture:
 | `learn-github-igorescodro-alkaa` | `https://github.com/igorescodro/alkaa` | `8524e062` | Multi-dimensional audit evidence | 2026-10-19T14:14:59.747Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `b65f3230` | Multi-dimensional audit evidence | 2026-10-19T14:15:01.667Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `89acffc2` | Multi-dimensional audit evidence | 2026-10-19T14:15:06.774Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-19T14:20:59.686Z |
+| `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `4ffde053` | Multi-dimensional audit evidence | 2026-10-19T14:21:01.250Z |
+| `learn-github-vanniktech-emoji` | `https://github.com/vanniktech/Emoji` | `69e998da` | Multi-dimensional audit evidence | 2026-10-19T14:21:07.545Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `55676740` | Multi-dimensional audit evidence | 2026-10-19T14:21:10.695Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `b9e87ddf`  
+> **Source Version**: `55676740`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:57:10.117Z  
+> **Timestamp**: 2026-10-19T14:21:10.542Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:57:09.952Z  
+> **Harvest Timestamp**: 2026-10-19T14:21:10.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25791 stars
+- **Stars / Engagement**: 25795 stars
 
 ---
 
@@ -1699,13 +1699,13 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #25259** (2026-10-19): **pulumi package publish fails with "Unsupported type" for single-value string literal and regular enum in component input args**
+  *Symptoms*: ## Describe the bug  When a `ComponentResource` input arg uses a single-value string literal type (e.g. `type Foo = "bar"`) or a regular TypeScript `enum`, `pulumi package publish` fails with:  ``` error: failed to get schema: rpc error: code = Unknown desc = Unsupported type for component 'MyComponent' input 'MyArgs.field': type 'Foo' ```  Multi-value string unions (`"a" | "b"`) work fine. The schema extractor appears to require at least two values in a union to generate a valid enum schema, and does not handle regular `enum` declarations at all.  ## Steps to reproduce  ```ts // Fails: single-value string literal export type Environment = "development";  // Also fails: regular enum export enum Environment { dev = "development" }  export interface MyArgs {   env: pulumi.Input<Environment>; } ```  Run `pulumi package publish .`  ## Expected behavior  Single-value string literals and regular `enum` types should be supported, emitting a one-entry enum in the schema. At minimum, the error message should suggest the workaround.  ## Workaround  Use a multi-value string union (`"development" | "production"`), or use plain `string`.
+
 - **Issue #25244** (2026-10-16): **Workflow failure: On Push at dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64 (+5 more)**
   *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-16T02:06:26.000Z](https://github.com/pulumi/pulumi/actions/runs/38837564833)   - ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009412): Post Run actions/setup-go@v6 (cancelled)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009463): Package (failure)   - ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009498): Package (cancelled)   - ❌ [dev-release / build-release (linux, arm64, ubuntu-latest) / linux-arm64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009526): Package (cancelled)   - ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009550): Package (cancelled)   - ❌ [dev-release / build-release (windows, amd64, ubuntu-latest) / windows-amd64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009573): Package (cancelled)
   **Post-Mortem & Fix Analysis**:
   > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-16T05:37:13.000Z](https://github.com/pulumi/pulumi/actions/runs/38855320725)
-
-- **Issue #25216** (2026-10-16): **Postgres DIY backend runs DDL on every connection, so a read-only role can't run `pulumi preview`**
-  *Symptoms*: `NewPostgresBucket` (pkg/backend/diy/postgres/bucket.go) runs `CREATE TABLE IF NOT EXISTS` and `CREATE INDEX IF NOT EXISTS` from schema.sql every time it opens the backend. Postgres checks privileges before it checks `IF NOT EXISTS`, so a role that can only read the state table can't open the backend at all. That rules out least-privilege credentials for previews in CI.  Repro (v3.268.0, Postgres 17): create the table as its owner, then `GRANT SELECT ON pulumi_state TO ro`. `pulumi stack ls` as `ro` fails with `permission denied for schema public`. Adding CREATE on the schema fails with `must be owner of table pulumi_state`. A view in the role's own schema fails with `cannot create index on relation`.  Proposed fix: check `SELECT to_regclass($1)` first and only run the schema DDL when the table is missing. Happy to send a PR. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1722,451 +1722,330 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb37065b` (2026-10-14)
-**Commit Message**: Build the result of entries as a tuple when the entry types differ (#24783)
+### Incident Patch 1: `7351ff80` (2026-10-19)
+**Commit Message**: Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271)
 
-The entries built-in declared a static list return type and always built
-its result with cty.ListVal, which panics when the entry objects have
-different types and when the map is empty. Every PCL map literal
-evaluates to a cty object, so a map whose values are objects or tuples
-of different shapes failed with "inconsistent list element types".
+This PR contains the following updates:
 
-The return type is now computed from the argument, as cty's values
-function does: a map gives a list of entries over its element type, an
-object gives a list when every attribute has the same type and a tuple
-of entry types otherwise, and an empty object gives an empty list.
-
-**File**: `changelog/pending/pcl-fix-20260924-144657.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: pcl
-+kind: fix
-+body: Fix a panic in the PCL interpreter's `entries` built-in on a map whose values have different shapes or on an empty map
-+time: 2026-09-24T14:46:57.734371+02:00
-```
-
-**File**: `pkg/pcl/runtime/builtinFunctions.go` (modified, +50/-24)
-```diff
-@@ -22,9 +22,10 @@ import (
- 	"encoding/hex"
- 	"errors"
- 	"fmt"
-+	"maps"
- 	"os"
- 	"path/filepath"
--	"sort"
-+	"slices"
- 	"strings"
- 
- 	"github.com/hashicorp/hcl/v2"
-@@ -910,31 +911,56 @@ func (ectx *EvalContext) builtinFunctions() map[string]function.Function {
- 				Type: cty.DynamicPseudoType,
- 			},
- 		},
--		Type: function.StaticReturnType(cty.List(cty.Object(map[string]cty.Type{
--			"key":   cty.String,
--			"value": cty.DynamicPseudoType,
--		}))),
-+		Type: func(args []cty.Value) (cty.Type, error) {
-+			collection := args[0].Type()
-+			keyType := cty.String
-+			if collection.IsListType() || collection.IsTupleType() {
-+				keyType = cty.Number
-+			}
-+			entryType := func(valueType cty.Type) cty.Type {
-+				return cty.Object(map[string]cty.Type{"key": keyType, "value": valueType})
-+			}
-+			switch {
-+			case collection.IsMapType() || collection.IsListType():
-+				return cty.List(entryType(collection.ElementType())), nil
-+			case collection.IsObjectType() || collection.IsTupleType():
-+				var types []cty.Type
-+				if collection.IsObjectType() {
-+					attributes := collection.AttributeTypes()
-+					for _, k := range slices.Sorted(maps.Keys(attributes)) {
-+						types = append(types, entryType(attributes[k]))
-+					}
-+				} else {
-+					for _, t := range collection.TupleElementTypes() {
-+						types = append(types, entryType(t))
-+					}
-+				}
-+				if len(types) == 0 {
-+					return cty.List(entryType(cty.DynamicPseudoType)), nil
-+				}
-+				for _, t := range types[1:] {
-+					if !t.Equals(types[0]) {
-+						return cty.Tuple(types), nil
-+					}
-+				}
-+				return cty.List(types[0]), nil
-+			}
-+			return cty.NilType, fmt.Errorf("entries argument must be a collection, was %s", collection.FriendlyName())
-+		},
- 		Impl: func(args []cty.Value, retType cty.Type) (cty.Value, error) {
--			if len(args) != 1 {
--				return cty.NilVal, errors.New("entries requires a collection argument")
-+			entries := make([]cty.Value, 0, args[0].LengthInt())
-+			for it := args[0].ElementIterator(); it.Next(); {
-+				key, value := it.Element()
-+				entries = append(entries, cty.ObjectVal(map[string]cty.Value{
-+					"key":   key,
-+					"value": value,
-+				}))
- 			}
--			if !args[0].Type().IsMapType() && !args[0].Type().IsObjectType() {
--				return cty.NilVal, fmt.Errorf("entries argument must be a collection, was %s", args[0].Type().FriendlyName())
--			}
--			obj := args[0]
--			valueMap := obj.AsValueMap()
--			keys := make([]string, 0, len(valueMap))
--			for k := range valueMap {
--				keys = append(keys, k)
--			}
--			sort.Strings(keys)
--			var entries []cty.Value
--			for _, k := range keys {
--				entry := cty.ObjectVal(map[string]cty.Value{
--					"key":   cty.StringVal(k),
--					"value": valueMap[k],
--				})
--				entries = append(entries, entry)
-+			switch {
-+			case retType.IsTupleType():
-+				return cty.TupleVal(entries), nil
-+			case len(entries) == 0:
-+				return cty.ListValEmpty(retType.ElementType()), nil
- 			}
- 			return cty.ListVal(entries), nil
- 		},
-```
-
-**File**: `pkg/pcl/runtime/builtinFunctions_test.go` (modified, +45/-0)
-```diff
-@@ -68,6 +68,51 @@ map = length({for k, v in {"a" = 1, "b" = 2, "c" = 3} : k => v})
- 	}, values)
- }
- 
-+func TestEntries(t *testing.T) {
-+	t.Parallel()
-+
-+	entry := func(key string, value property.Value) property.Value {
-+		return property.New(map[string]property.Value{"key": property.New(key), "value": value})
-+	}
-+	indexedEntry := func(key float64, value property.Value) property.Value {
-+		return property.New(map[string]property.Value{"key": property.New(key), "value": value})
-+	}
-+	list := func(entries ...property.Value) property.Value {
-+		return property.New(append([]property.Value{}, entries...))
-+	}
-+	values := evaluateLocals(t, `
-+uniform = entries({"a" = 1, "b" = 2})
-+mixed = entries({"a" = [true], "b" = [true, false]})
-+empty = entries({})
-+tuple = entries([1, 2, 3])
-+mixedTuple = entries([true, "hello"])
-+emptyTuple = entries([])
-+list = entries(range(3))
-+emptyList = entries(range(0))
-+`)
-+	assert.Equal(t, map[string]property.Value{
-+		"uniform": list(entry("a", property.New(1.0)), entry("b", property.New(2.0))),
-+		"mixed": list(
-+			entry("a", property.New([]property.Value{property.New(true)})),
-+			entry("b", property.New([]property.Value{property.New(true), property.New(false)})),
-+		),
-+		"empty": list(),
-+		"tuple": list(
-+			indexedEntry(0, property.New(1.0)),
-+			indexedEntry(1, property.New(2.0)),
-+			indexedEntry(2, property.New(3.0)),
-+		),
-+		"mixedTuple": list(indexedEntry(0, property.New(true)), indexedEntry(1, property.New("hello"))),
-+		"emptyTuple": list(),
-+		"list": list(
-+			indexedEntry(0, property.New(0.0)),
-+			indexedEntry(1, property.New(1.0)),
-+			indexedEntry(2, property.New(2.0)),
-+		),
-+		"emptyList": list(),
-+	}, values)
-+}
-+
- func TestRange(t *testing.T) {
- 	t.Parallel()
- 
-```
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.58.0` →
+`v0.60.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.58.0...refs/tags/v0.60.0)
+|
+![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.60.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.58.0/v0.60.0?slim=true)
+|
+| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.59.0` →
+`v0.60.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.59.0...refs/tags/v0.60.0)
+|
+![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.60.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.59.0/v0.60.0?slim=true)
+|
 
 ---
 
-### Incident Patch 2: `194c65d8` (2026-10-16)
-**Commit Message**: Revert "Freeze v3.269.0" (#25247)
-
-Reverts pulumi/pulumi#25245
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.release-pending` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--v3.270.0
-```
-
-**File**: `npm/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-     "name": "pulumi",
--    "version": "3.270.0",
-+    "version": "3.269.0",
-     "description": "Pulumi Infrastructure as Code CLI",
-     "license": "Apache-2.0",
-     "repository": {
-```
-
-**File**: `sdk/.version` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--3.270.0
-+3.269.0
-```
-
-**File**: `sdk/nodejs/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-     "name": "@pulumi/pulumi",
--    "version": "3.270.0",
-+    "version": "3.269.0",
-     "description": "Pulumi's Node.js SDK",
-     "license": "Apache-2.0",
-     "repository": {
-```
-
-**File**: `sdk/nodejs/version.ts` (modified, +1/-1)
-```diff
-@@ -12,4 +12,4 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--export const version = "3.270.0";
-+export const version = "3.269.0";
-```
-
-**File**: `sdk/python/lib/pulumi/_version.py` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
- 
- from semver import VersionInfo
- 
--_VERSION = "3.270.0"
-+_VERSION = "3.269.0"
- 
- version = VersionInfo.parse(_VERSION)
- """Version is the Pulumi SDK's release version."""
-```
-
-**File**: `sdk/python/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
- 
- [project]
- name = "pulumi"
--version = "3.270.0"
-+version = "3.269.0"
- license = "Apache-2.0"
- license-files = ["LICENSE"]
- requires-python = ">=3.10"
-```
-
-**File**: `sdk/python/uv.lock` (modified, +1/-1)
-```diff
-@@ -1028,7 +1028,7 @@ wheels = [
- 
- [[package]]
- name = "pulumi"
--version = "3.270.0"
-+version = "3.269.0"
- source = { editable = "." }
- dependencies = [
-     { name = "debugpy" },
-```
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/21045) for more information.
 
 ---
 
-### Incident Patch 3: `463235d1` (2026-10-16)
-**Commit Message**: Fix Go program generation for split and string length (#25214)
+### HTTP/2 server memory exhaustion due
 
-PCL `split("-", s)` was lowered to `pulumi.StringArray(strings.Split(s,
-"-"))`, but `pulumi.StringArray` is `[]pulumi.String`, not `[]string`,
-so the conversion did not compile. Use `pulumi.ToStringArray` (and the
-matching `pulumi.To<Suffix>` helpers for other scalar array/map types)
-when wrapping a plain Go slice/map value in a Pulumi input container.
-
-PCL `length(string)` is specified as the Unicode grapheme cluster count,
-so emit `uniseg.GraphemeClusterCount` instead of Go's byte-oriented
-`len`.
-
-Unskips `l1-builtin-string` in the Go language conformance suite.
-
-Co-authored-by: Claude Opus 4.7 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `changelog/pending/20261014--codegen-go--l1-builtin-string.yaml` (added, +4/-0)
+**File**: `sdk/go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+component: codegen/go
-+kind: fix
-+body: Fix Go program generation for `split` and string `length` so they produce compilable, Unicode-correct code
-+time: 2026-10-14T12:00:00.000000+00:00
+@@ -27,7 +27,7 @@ require (
+ 	go.opentelemetry.io/otel/bridge/opentracing v1.45.0
+ 	golang.org/x/crypto v0.57.0
+ 	golang.org/x/mod v0.40.0 // indirect
+-	golang.org/x/net v0.59.0
++	golang.org/x/net v0.60.0
+ 	golang.org/x/sys v0.48.0
+ 	google.golang.org/grpc v1.83.2
+ 	gopkg.in/yaml.v2 v2.4.0
 ```
 
-**File**: `pkg/codegen/go/gen_program_expressions.go` (modified, +40/-1)
+**File**: `sdk/go.sum` (modified, +2/-2)
 ```diff
-@@ -479,6 +479,12 @@ func (g *generator) GenFunctionCallExpression(w io.Writer, expr *model.FunctionC
- 					} else {
- 						g.Fgenf(w, "%.v.(%s)", from, typeName)
- 					}
-+				} else if conv, ok := plainCollectionConverter(g, fromType, typeName); ok && !isFromOutput {
-+					// `pulumi.StringArray` is `[]pulumi.String`, not `[]string`, so a plain
-+					// `[]string` value (e.g. from `strings.Split`) can't be wrapped with the
-+					// input type directly. Use the SDK's `pulumi.ToStringArray` helper
-+					// (and similarly for other scalar array/map types).
-+					g.Fgenf(w, "%s(%.v)", conv, from)
- 				} else {
- 					g.Fgenf(w, "%s(%.v)", typeName, from)
- 				}
-@@ -649,7 +655,15 @@ func (g *generator) GenFunctionCallExpression(w io.Writer, expr *model.FunctionC
- 	case "join":
- 		g.Fgenf(w, "strings.Join(%v, %v)", expr.Args[1], expr.Args[0])
- 	case "length":
--		g.Fgenf(w, "len(%.20v)", expr.Args[0])
-+		// PCL's `length` on a string returns the Unicode grapheme cluster
-+		// count (so "🕹️" is 1), not the byte or rune length, so use
-+		// uniseg.GraphemeClusterCount for strings.
-+		argType := model.ResolveOutputs(expr.Args[0].Type())
-+		if argType.Equals(model.StringType) {
-+			g.Fgenf(w, "uniseg.GraphemeClusterCount(%.20v)", expr.Args[0])
-+		} else {
-+			g.Fgenf(w, "len(%.20v)", expr.Args[0])
-+		}
- 	case "readFile":
- 		// Assuming the existence of the following helper method located earlier in the preamble
- 		g.Fgenf(w, "readFileOrPanic(%v)", expr.Args[0])
-@@ -1945,6 +1959,26 @@ func pulumiConverterSuffix(goType string) (string, bool) {
- 	return pulumiScalarSuffix(goType)
- }
- 
-+// plainCollectionConverter returns the `pulumi.To<Suffix>` helper that
-+// converts a plain Go slice/map value (e.g. `[]string`) into the matching
-+// Pulumi input type (e.g. `pulumi.StringArray`). Returns ok=false if the
-+// source isn't a convertible slice/map or the destination doesn't name the
-+// corresponding input container type.
-+func plainCollectionConverter(g *generator, fromType model.Type, destTypeName string) (string, bool) {
-+	argGoType := g.argumentTypeName(fromType, false)
-+	suffix, ok := pulumiConverterSuffix(argGoType)
-+	if !ok {
-+		return "", false
-+	}
-+	if destTypeName != "pulumi."+suffix {
-+		return "", false
-+	}
-+	if !strings.HasSuffix(suffix, "Array") && !strings.HasSuffix(suffix, "Map") {
-+		return "", false
-+	}
-+	return "pulumi.To" + suffix, true
-+}
-+
- // pulumiScalarSuffix returns the Pulumi suffix for a scalar Go type. Only
- // primitive scalars have generated Ptr/Map/Array containers in the SDK, so
- // callers use this to gate composition of the compound suffixes above.
-@@ -2368,6 +2402,11 @@ var functionPackages = map[string][]string{
- }
- 
- func (g *generator) genFunctionPackages(x *model.FunctionCallExpression) []string {
-+	if x.Name == "length" && len(x.Args) == 1 {
-+		if model.ResolveOutputs(x.Args[0].Type()).Equals(model.StringType) {
-+			return []string{"github.com/rivo/uniseg"}
-+		}
-+	}
- 	return functionPackages[x.Name]
- }
- 
+@@ -391,8 +391,8 @@ golang.org/x/net v0.54.0/go.mod h1:Sj4oj8jK6XmHpBZU/zWHw3BV3abl4Kvi+Ut7cQcY+cQ=
+ golang.org/x/net v0.55.0/go.mod h1:L5U2KuzuOe1lY7Z+aWVIKK6qEeJXnXV9yzGA+WCHJww=
+ golang.org/x/net v0.56.0/go.mod h1:D3Ku6r+V6JROoZK144D2XfMHFcMq/0zSfLelVTCFKec=
+ golang.org/x/net v0.57.0/go.mod h1:KpXc8iv+r3XplLAG/f7Jsf9RPszJzdR0f58q9vGOuEU=
+-golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+-golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 ```
 
-**File**: `sdk/go/pulumi-language-go/language_test.go` (modified, +0/-2)
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +7/-7)
 ```diff
-@@ -141,8 +141,6 @@ var expectedFailures = map[string]string{
- 	"l3-range-map-ref":  "fails with syntax errors: mapResource.K1 undefined (type []*nestedobject.Target has no field or method K1)", //nolint:lll
- 	"l3-range-bool-ref": "fails with syntax errors: index < createBool (mismatched types int and bool)",
- 
--	"l1-builtin-string": "cannot convert strings.Split(aString, \"-\") (value of type []string) to type pulumi.StringArray", //nolint:lll
--
- 	"l2-recover-invoke": "Go SDK output recovery is not implemented",
- 
- 	"l2-invoke-per-value-deps": "output aware invokes not yet implemented",
+@@ -98,14 +98,14 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.56.0 // indirect
++	golang.org/x/crypto v0.57.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+-	golang.org/x/mod v0.40.0 // indirect
+-	golang.org/x/net v0.58.0 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/term v0.45.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.org/x/tools v0.49.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
 ```
 
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l1-builtin-string/main.go` (modified, +5/-4)
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +14/-14)
 ```diff
-@@ -5,16 +5,17 @@ import (
- 
- 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
- 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
-+	"github.com/rivo/uniseg"
- )
- 
- func main() {
- 	pulumi.Run(func(ctx *pulumi.Context) error {
- 		cfg := config.New(ctx, "")
- 		aString := cfg.Require("aString")
--		ctx.Export("lengthOutput", pulumi.Int(len(aString)))
--		ctx.Export("splitOutput", pulumi.StringArray(strings.Split(aString, "-")))
--		ctx.Export("joinOutput", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
--		ctx.Export("interpolateOutput", pulumi.Sprintf("prefix-%v", aString))
-+		ctx.Export("lengthResult", pulumi.Int(uniseg.GraphemeClusterCount(aString)))
-+		ctx.Export("splitResult", pulumi.ToStringArray(strings.Split(aString, "-")))
-+		ctx.Export("joinResult", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
-+		ctx.Export("interpolateResult", pulumi.Sprintf("prefix-%v", aString))
- 		return nil
- 	})
- }
+@@ -266,29 +266,29 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
+-golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
+ golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+-golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
+-golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+-golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+-golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -302,16 +302,16 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+-golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
+-golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
++golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
++golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text
 ```
 
-**File**: `sdk/go/pulumi-language-go/testdata/published/projects/l1-builtin-string/main.go` (modified, +5/-4)
+**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +7/-7)
 ```diff
-@@ -5,16 +5,17 @@ import (
- 
- 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
- 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
-+	"github.com/rivo/uniseg"
- )
- 
- func main() {
- 	pulumi.Run(func(ctx *pulumi.Context) error {
- 		cfg := config.New(ctx, "")
- 		aString := cfg.Require("aString")
--		ctx.Export("lengthOutput", pulumi.Int(len(aString)))
--		ctx.Export("splitOutput", pulumi.StringArray(strings.Split(aString, "-")))
--		ctx.Export("joinOutput", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
--		ctx.Export("interpolateOutput", pulumi.Sprintf("prefix-%v", aString))
-+		ctx.Export("lengthResult", pulumi.Int(uniseg.GraphemeClusterCount(aString)))
-+		ctx.Export("splitResult", pulumi.ToStringArray(strings.Split(aString, "-")))
-+		ctx.Export("joinResult", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
-+		ctx.Export("interpolateResult", pulumi.Sprintf("prefix-%v", aString))
- 		return nil
- 	})
- }
+@@ -98,14 +98,14 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.56.0 // indirect
++	golang.org/x/crypto v0.57.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+-	golang.org/x/mod v0.40.0 // indirect
+-	golang.org/x/net v0.58.0 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/term v0.45.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.org/x/tools v0.49.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +14/-14)
+```diff
+@@ -266,29 +266,29 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
+-golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
+ golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+-golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
+-golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+-golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+-golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -302,16 +302,16 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+-golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
+-golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
++golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
++golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text
+```
+
+**File**: `sdk/go/auto/test/errors/runtime_error/go/go.mod` (modified, +7/-7)
+```diff
+@@ -98,14 +98,14 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.56.0 // indirect
++	golang.org/x/crypto v0.57.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+-	golang.org/x/mod v0.40.0 // indirect
+-	golang.org/x/net v0.58.0 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/term v0.45.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.org/x/tools v0.49.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/runtime_error/go/go.sum` (modified, +14/-14)
+```diff
+@@ -266,29 +266,29 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
+-golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
+ golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+-golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
+-golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+-golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+-golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -302,16 +302,16 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+-golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
+-golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
++golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
++golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25277** (2026-10-19): Add a mapper target to GenerateProgram and GenerateProject requests (@iwahbe)
+- **PR #25273** (2026-10-19): [sdk/nodejs] Support single-member enums in component schemas (@cestercian)
+- **PR #25271** (2026-10-19): Update module golang.org/x/net to v0.60.0 [SECURITY] (@pulumi-renovate[bot])
+- **PR #25270** (2026-10-19): Migrate converter plugins to use propertyrpc (@Frassle)
 - **PR #25268** (2026-10-16): Changelog and go.mod updates for v3.270.0 (@pulumi-bot)
 - **PR #25266** (2026-10-17): Update analyzer plugin to use propertyrpc (@Frassle)
-- **PR #25265** (closed): Move code shared by pkg and sdk into a new shared module (@i-am-tom)
-- **PR #25264** (2026-10-16): Freeze v3.270.0 (@pulumi-bot)
-- **PR #25263** (2026-10-16): Skip to 3.270.0 (@i-am-tom)
-- **PR #25258** (2026-10-16): Add AcceptsOutputsInCheck handshake negotiation (@Frassle)
 
 ---
 
@@ -2186,31 +2065,28 @@ Co-authored-by: Claude Opus 4.7 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build the result of entries as a tuple when the entry types differ (#24783)
+## X. Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271)
 
 **RULE**:
-When implementing operations in `changelog/pending/pcl-fix-20260924-144657.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb37065b`: Build the result of entries as a tuple when the entry types differ (#24783). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7351ff80`: Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/pcl-fix-20260924-144657.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: pcl
-kind: fix
-body: Fix a panic in the PCL interpreter's `entries` built-in on a map whose values have different shapes or on an empty map
-time: 2026-09-24T14:46:57.734371+02:00
+	golang.org/x/net v0.60.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	golang.org/x/net v0.59.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb37065b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7351ff80` are properly handled with clean fallback behavior.

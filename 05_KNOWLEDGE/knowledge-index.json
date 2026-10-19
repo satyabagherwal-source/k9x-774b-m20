@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:15:06.731Z",
-  "total_verified_learnings": 830,
+  "last_updated": "2026-10-19T14:21:10.670Z",
+  "total_verified_learnings": 831,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -28210,14 +28210,19 @@
       "slug": "lobehub-lobe-ui",
       "platform": "github",
       "source_url": "https://github.com/lobehub/lobe-ui",
-      "source_version": "0936dc40",
-      "content_hash": "4582b1af249d8f61ac846a47a94b827f1a33d5e598b826e802af86049990b527",
+      "source_version": "4ffde053",
+      "content_hash": "e76898729a4f283f8dd66bcdb0a1692ba8aac50edde4cf2c277de9b39ee736a4",
       "dossier_path": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 2066,
           "title": "🐛 fix: drop leftover ant- class names and the antd eslint bans (#749)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2624,
+          "title": "✨ feat: stable BEM class names for CSS overrides (#750)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28226,7 +28231,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:20:17.665Z",
+      "verified_at": "2026-10-19T14:21:01.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35186,14 +35191,19 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "b9e87ddf",
-      "content_hash": "acb6deeda8e73084afab21d76519d5a0b5e38ab78d93b4795d98b741c531329c",
+      "source_version": "55676740",
+      "content_hash": "de79fc0c6673e8471a8fc991d8429d9dcd2533f4bef981499d29a022838960f1",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
         {
           "number": 1998,
           "title": "Build the result of entries as a tuple when the entry types differ (#24783)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2626,
+          "title": "Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35202,7 +35212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:57:10.257Z",
+      "verified_at": "2026-10-19T14:21:10.664Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42471,22 +42481,35 @@
     "learn-github-vanniktech-emoji": {
       "learning_id": "learn-github-vanniktech-emoji",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vanniktech-emoji",
+      "source": "vanniktech/Emoji",
+      "repository": "vanniktech/Emoji",
       "slug": "vanniktech-emoji",
       "platform": "github",
       "source_url": "https://github.com/vanniktech/Emoji",
-      "source_version": "HEAD",
-      "content_hash": "7678f27a76991fa7ccea94040099906f7b15d2bd4e366d91f8db6ef1380b6c9a",
+      "source_version": "69e998da",
+      "content_hash": "a6b95a80db7f5d99c070e9255a7cb819859ae9e551429e3066b41a0863c27500",
       "dossier_path": "07_PROJECT_LEARNING/vanniktech-emoji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vanniktech-emoji-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2625,
+          "title": "fix: Don't double lock when destroying EmojiManager. (#1242)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.185Z"
+      "verified_at": "2026-10-19T14:21:07.510Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vanniktech-gradle-maven-publish-plugin": {
       "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
@@ -51967,7 +51990,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "4789066e54cab96d06d171c324ef8a17cf340e062771c06bfbbed97f1fbf3795",
+      "content_hash": "5eb91eec8bc9142c2e855d253a3e15405b9913adae658984e51236472f084904",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -52012,7 +52035,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:11:53.090Z",
+      "verified_at": "2026-10-19T14:20:59.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88098,6 +88121,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:15:01.611Z"
+    },
+    "rule-2624": {
+      "learning_id": "rule-2624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2624,
+      "title": "✨ feat: stable BEM class names for CSS overrides (#750)",
+      "source_url": "https://github.com/lobehub/lobe-ui",
+      "source_version": "4ffde053",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:21:01.216Z"
+    },
+    "rule-2625": {
+      "learning_id": "rule-2625",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2625,
+      "title": "fix: Don't double lock when destroying EmojiManager. (#1242)",
+      "source_url": "https://github.com/vanniktech/Emoji",
+      "source_version": "69e998da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:21:07.510Z"
+    },
+    "rule-2626": {
+      "learning_id": "rule-2626",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2626,
+      "title": "Update module golang.org/x/net to v0.60.0 [SECURITY] (#25271)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "55676740",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:21:10.664Z"
     }
   },
   "aliases": {
