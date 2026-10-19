@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:50:00.670Z",
-  "total_verified_learnings": 856,
+  "last_updated": "2026-10-19T16:56:13.207Z",
+  "total_verified_learnings": 857,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7805,22 +7805,35 @@
     "learn-github-ehpanda-team-ehpanda": {
       "learning_id": "learn-github-ehpanda-team-ehpanda",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ehpanda-team-ehpanda",
+      "source": "EhPanda-Team/EhPanda",
+      "repository": "EhPanda-Team/EhPanda",
       "slug": "ehpanda-team-ehpanda",
       "platform": "github",
       "source_url": "https://github.com/EhPanda-Team/EhPanda",
-      "source_version": "HEAD",
-      "content_hash": "d7b12856bfdbad2398665ecc14a01a7d3acc65f7455ac34660c31345d0daa303",
+      "source_version": "37b97996",
+      "content_hash": "74a69825a8fd9ef6b52413e1afd5cd3ad85c4f66a27e98b9d1525ea90e55aee0",
       "dossier_path": "07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ehpanda-team-ehpanda-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2694,
+          "title": "Resolve EhSetting page crash issue",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.742Z"
+      "verified_at": "2026-10-19T16:56:13.195Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ekkolearnai-ekko-studio": {
       "learning_id": "learn-github-ekkolearnai-ekko-studio",
@@ -9194,8 +9207,8 @@
       "slug": "fastapi-fastapi",
       "platform": "github",
       "source_url": "https://github.com/fastapi/fastapi",
-      "source_version": "3070b510",
-      "content_hash": "693159c1922165e2957c3bc14d6d882a0f9fdf295aaddfd177123a629f63266b",
+      "source_version": "e5fc7ef5",
+      "content_hash": "4e69fa7e671eb5347718be25be638d16535c98afd0f46930d5669ac247b5ffb6",
       "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
@@ -9218,6 +9231,11 @@
           "number": 2200,
           "title": "✨ Add WebSocket support to security dependencies (#10147)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2693,
+          "title": "🐛 Fix default handling for request parameters and models (#16527)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9225,7 +9243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:45:24.356Z",
+      "verified_at": "2026-10-19T16:56:06.674Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89676,6 +89694,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:50:00.660Z"
+    },
+    "rule-2693": {
+      "learning_id": "rule-2693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2693,
+      "title": "🐛 Fix default handling for request parameters and models (#16527)",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "e5fc7ef5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:56:06.674Z"
+    },
+    "rule-2694": {
+      "learning_id": "rule-2694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2694,
+      "title": "Resolve EhSetting page crash issue",
+      "source_url": "https://github.com/EhPanda-Team/EhPanda",
+      "source_version": "37b97996",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:56:13.195Z"
     }
   },
   "aliases": {

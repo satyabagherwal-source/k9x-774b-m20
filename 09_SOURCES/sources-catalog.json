@@ -6333,10 +6333,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/fastapi/fastapi",
-    "sourceVersion": "3070b510",
+    "sourceVersion": "e5fc7ef5",
     "license": "MIT",
-    "contentHash": "693159c1922165e2957c3bc14d6d882a0f9fdf295aaddfd177123a629f63266b",
-    "lastHarvestedAt": "2026-10-19T05:45:24.410Z",
+    "contentHash": "4e69fa7e671eb5347718be25be638d16535c98afd0f46930d5669ac247b5ffb6",
+    "lastHarvestedAt": "2026-10-19T16:56:06.732Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "ataraxy-labs-sem": {
@@ -8408,5 +8408,15 @@
     "contentHash": "e8a57e4828415c9527c1d126debf373317f9adec0de8cb586ceeb85ce02b292c",
     "lastHarvestedAt": "2026-10-19T16:49:51.419Z",
     "learningId": "learn-github-dimillian-redditos"
+  },
+  "ehpanda-team-ehpanda": {
+    "repository": "EhPanda-Team/EhPanda",
+    "platform": "github",
+    "sourceUrl": "https://github.com/EhPanda-Team/EhPanda",
+    "sourceVersion": "37b97996",
+    "license": "MIT",
+    "contentHash": "74a69825a8fd9ef6b52413e1afd5cd3ad85c4f66a27e98b9d1525ea90e55aee0",
+    "lastHarvestedAt": "2026-10-19T16:56:13.266Z",
+    "learningId": "learn-github-ehpanda-team-ehpanda"
   }
 }

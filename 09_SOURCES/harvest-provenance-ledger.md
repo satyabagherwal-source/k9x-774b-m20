@@ -3374,3 +3374,5 @@ Every entry in this ledger must capture:
 | `learn-github-jeffli1993-seo-audit-skill` | `https://github.com/JeffLi1993/seo-audit-skill` | `523bdfb2` | Multi-dimensional audit evidence | 2026-10-19T16:49:48.774Z |
 | `learn-github-dimillian-redditos` | `https://github.com/Dimillian/RedditOS` | `525cd241` | Multi-dimensional audit evidence | 2026-10-19T16:49:51.419Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `27363b95` | Multi-dimensional audit evidence | 2026-10-19T16:50:00.717Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `e5fc7ef5` | Multi-dimensional audit evidence | 2026-10-19T16:56:06.732Z |
+| `learn-github-ehpanda-team-ehpanda` | `https://github.com/EhPanda-Team/EhPanda` | `37b97996` | Multi-dimensional audit evidence | 2026-10-19T16:56:13.266Z |

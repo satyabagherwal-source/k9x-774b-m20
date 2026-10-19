@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T16:50:00.719Z",
-  "total_cycles_completed": 3344,
-  "total_learnings_persisted": 3344,
-  "total_rules_promoted": 2489,
+  "last_updated": "2026-10-19T16:56:13.270Z",
+  "total_cycles_completed": 3346,
+  "total_learnings_persisted": 3346,
+  "total_rules_promoted": 2491,
   "history": [
-    {
-      "timestamp": "2026-10-19T10:41:12.245Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T10:41:16.984Z",
-      "repository": "mrkai77/Loop",
-      "learningId": "learn-github-mrkai77-loop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T10:48:28.699Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-19T16:50:00.719Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T16:56:06.736Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T16:56:13.270Z",
+      "repository": "EhPanda-Team/EhPanda",
+      "learningId": "learn-github-ehpanda-team-ehpanda",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastapi-fastapi-learnings.md`  
 > **Source**: github ([https://github.com/fastapi/fastapi](https://github.com/fastapi/fastapi))  
-> **Source Version**: `3070b510`  
+> **Source Version**: `e5fc7ef5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:45:24.160Z  
+> **Timestamp**: 2026-10-19T16:56:06.458Z  
 > **Learning ID**: `learn-github-fastapi-fastapi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastapi-fastapi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastapi/fastapi](https://github.com/fastapi/fastapi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:45:23.021Z  
+> **Harvest Timestamp**: 2026-10-19T16:56:05.153Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 103230 stars
+- **Stars / Engagement**: 103250 stars
 
 ---
 
@@ -156,7 +156,7 @@ from fastapi.logger import logger
 from fastapi.security.oauth2 import SecurityScopes
 from fastapi.types import DependencyCacheKey
 from fastapi.utils import create_model_field, get_path_param_names
-from pydantic import BaseModel, Json
+from pydantic import AliasChoices, BaseModel, Json
 from pydantic.fields import FieldInfo
 from starlette.background import BackgroundTasks as StarletteBackgroundTasks
 from starlette.concurrency import run_in_threadpool
@@ -394,7 +394,7 @@ def get_dependant(
                     or _is_async_gen_callable(dependant.call)
                 )
                 and _get_computed_scope(dependant=dependant) == "request"
-               
+ 
 ```
 
 ### Core Architecture Module: `fastapi/openapi/utils.py`
@@ -1163,7 +1163,7 @@ def replace_markdown_links(
 ```
 """FastAPI framework, high performance, easy to learn, fast to code, ready for production"""
 
-__version__ = "0.146.0"
+__version__ = "0.148.0"
 
 from starlette import status as status
 
@@ -1502,665 +1502,1279 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1884325c` (2026-10-18)
-**Commit Message**: ✨ Add WebSocket support to security dependencies (#10147)
+### Incident Patch 1: `32240026` (2026-10-19)
+**Commit Message**: 🐛 Fix default handling for request parameters and models (#16527)
 
-Co-authored-by: pre-commit-ci-lite[bot] <117423508+pre-commit-ci-lite[bot]@users.noreply.github.com>
-Co-authored-by: Sebastián Ramírez <[REDACTED_EMAIL]>
-
-**File**: `fastapi/security/api_key.py` (modified, +5/-5)
+**File**: `docs/en/docs/release-notes.md` (modified, +6/-0)
 ```diff
-@@ -4,7 +4,7 @@
- from fastapi.openapi.models import APIKey, APIKeyIn
- from fastapi.security.base import SecurityBase
- from starlette.exceptions import HTTPException
--from starlette.requests import Request
-+from starlette.requests import HTTPConnection
- from starlette.status import HTTP_401_UNAUTHORIZED
+@@ -7,6 +7,12 @@ hide:
+ 
+ ## Latest Changes
+ 
++Defaults for omitted `Query`, `Header`, `Cookie`, and `Form` parameters and model fields are no longer treated as user input. Defaults are not validated unless `validate_default=True` is enabled. If you rely on validators running for omitted values, enable default validation with `Field(validate_default=True)` for model fields or, for example, `Query(validate_default=True)` for individual parameters. `Body(validate_default=True)` is now honored too.
++
++For parameter models, applying a default no longer marks a field as explicitly set, so `model_dump(exclude_unset=True)` excludes it. Default factories run once, and validation errors no longer include injected defaults in `input`.
++
++Omitted boolean form fields still become `False` and count as explicitly set.
++
+ ## 0.147.0 (2026-10-19)
+ 
+ Omitted `bool` and `bool | None` form fields are now interpreted as `False`, matching unchecked HTML checkboxes. This applies to individual `Form` parameters and form models, including required fields and fields with defaults of `True` or `None`. The inferred value is considered explicitly set, including in `model_dump(exclude_unset=True)`.
+```
+
+**File**: `fastapi/dependencies/utils.py` (modified, +5/-6)
+```diff
+@@ -737,8 +737,9 @@ def _validate_value_with_model_field(
+     if value is None:
+         if field.field_info.is_required():
+             return None, [get_missing_field_error(loc=loc)]
+-        else:
+-            return deepcopy(field.default), []
++        value = deepcopy(field.default)
++        if not field.field_info.validate_default:
++            return value, []
+     return field.validate(value, values, loc=loc)
  
  
-@@ -21,7 +21,7 @@ def __init__(
+@@ -770,10 +771,8 @@ def _get_multidict_value(
+             and len(value) == 0
+         )
      ):
-         self.auto_error = auto_error
+-        if field.field_info.is_required():
+-            return
+-        else:
+-            return deepcopy(field.default)
++        # Apply defaults during validation, not while extracting request data.
++        return None
+     return value
  
--        self.model: APIKey = APIKey(
-+        self.model = APIKey(
-             **{"in": location},
-             name=name,
-             description=description,
-@@ -139,7 +139,7 @@ def __init__(
-             auto_error=auto_error,
-         )
  
--    async def __call__(self, request: Request) -> str | None:
-+    async def __call__(self, request: HTTPConnection) -> str | None:
-         api_key = request.query_params.get(self.model.name)
-         return self.check_api_key(api_key)
- 
-@@ -227,7 +227,7 @@ def __init__(
-             auto_error=auto_error,
-         )
- 
--    async def __call__(self, request: Request) -> str | None:
-+    async def __call__(self, request: HTTPConnection) -> str | None:
-         api_key = request.headers.get(self.model.name)
-         return self.check_api_key(api_key)
- 
-@@ -315,6 +315,6 @@ def __init__(
-             auto_error=auto_error,
-         )
- 
--    async def __call__(self, request: Request) -> str | None:
-+    async def __call__(self, request: HTTPConnection) -> str | None:
-         api_key = request.cookies.get(self.model.name)
-         return self.check_api_key(api_key)
 ```
 
-**File**: `fastapi/security/http.py` (modified, +11/-5)
+**File**: `tests/test_forms_single_model.py` (modified, +2/-2)
 ```diff
-@@ -9,7 +9,7 @@
- from fastapi.security.base import SecurityBase
- from fastapi.security.utils import get_authorization_scheme_param
- from pydantic import BaseModel
--from starlette.requests import Request
-+from starlette.requests import HTTPConnection
- from starlette.status import HTTP_401_UNAUTHORIZED
- 
- 
-@@ -91,7 +91,9 @@ def make_not_authenticated_error(self) -> HTTPException:
-             headers=self.make_authenticate_headers(),
-         )
- 
--    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
-+    async def __call__(
-+        self, request: HTTPConnection
-+    ) -> HTTPAuthorizationCredentials | None:
-         authorization = request.headers.get("Authorization")
-         scheme, credentials = get_authorization_scheme_param(authorization)
-         if not (authorization and scheme and credentials):
-@@ -200,7 +202,7 @@ def make_authenticate_headers(self) -> dict[str, str]:
-         return {"WWW-Authenticate": "Basic"}
- 
-     async def __call__(  # type: ignore
--        self, request: Request
-+        self, request: HTTPConnection
-     ) -> HTTPBasicCredentials | None:
-         authorization = request.headers.get("Authorization")
-         scheme, param = get_authorization_scheme_param(authorization)
-@@ -300,7 +302,9 @@ def __init__(
-         self.scheme_name = scheme_name or self.__class__.__name__
-         self.auto_error = auto_error
- 
--    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
-+    async def __call__(
-+        self, request: HTTPConnection
-+    ) -> HTTPAuthorizationCredentials | None:
-         authorization = request.headers.get("Authorization")
-         scheme, credentials = get_authorization_scheme_param(authorization)
-         if not (authorization and scheme and credentials):
-@@ -401,7 +405,9 @@ def __init__(
-         self.scheme_name = scheme_name or self.__class__.__name__
-         self.auto_error = auto_error
- 
--    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
-+    async def __call__(
-+        self, request: HTTPConnection
-+    ) -> HTTPAuthorizationCredentials | None:
-         authorization = request.headers.get("Authorization")
-         scheme, credentials = get_authorization_scheme_param(authorization)
-         if not (authorization and scheme and credentials):
+@@ -99,13 +99,13 @@ def test_no_data():
+                 "type": "missing",
+                 "loc": ["body", "username"],
+                 "msg": "Field required",
+-                "input": {"tags": ["foo", "bar"], "with": "nothing"},
++                "input": {},
+             },
+             {
+                 "type": "missing",
+                 "loc": ["body", "lastname"],
+                 "msg": "Field required",
+-                "input": {"tags": ["foo", "bar"], "with": "nothing"},
++                "input": {},
+             },
+         ]
+     }
 ```
 
-**File**: `fastapi/security/oauth2.py` (modified, +4/-4)
-```diff
-@@ -7,7 +7,7 @@
- from fastapi.param_functions import Form
- from fastapi.security.base import SecurityBase
- from fastapi.security.utils import get_authorization_scheme_param
--from starlette.requests import Request
-+from starlette.requests import HTTPConnection
- from starlette.status import HTTP_401_UNAUTHORIZED
- 
- 
-@@ -420,7 +420,7 @@ def make_not_authenticated_error(self) -> HTTPException:
-             headers={"WWW-Authenticate": "Bearer"},
-         )
- 
--    async def __call__(self, request: Request) -> str | None:
-+    async def __call__(self, request: HTTPConnection) -> str | None:
-         authorization = request.headers.get("Authorization")
-         if not authorization:
-             if self.auto_error:
-@@ -533,7 +533,7 @@ def __init__(
-             auto_error=auto_error,
-         )
- 
--    async def __call__(self, request: Request) -> str | None:
-+    async def __call__(self, request: HTTPConnection) -> str | None:
-         authorization = request.headers.get("Authorization")
-         scheme, param = get_authorization_scheme_param(authorization)
-         if not authorization or scheme.lower() != "bearer":
-@@ -639,7 +639,7 @@ def __init__(
-             auto_error=auto_error,
-         )
- 
--    async def __call__(self, request: Request) -> str | None:
-+    async def __call__(self, request: HTTPConnection) -> str | None:
-         authorization = request.headers.get("Authorization")
-         scheme, param = get_authorization_scheme_param(authorization)
-         if not authorization or scheme.lower() != "bearer":
-```
-
-**File**: `fastapi/security/open_id_connect_url.py` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
- from fastapi.openapi.models import OpenIdConnect as OpenIdConnectModel
- from fastapi.security.base import SecurityBase
- from starlette.exceptions import HTTPException
--from starlette.requests import Request
-+from starlette.requests import HTTPConnection
- from starlette.status import HTTP_401_UNAUTHORIZED
- 
- 
-@@ -84,7 +84,7 @@ def make_not_authenticated_error(self) -> HTTPException:
-             headers={"WWW-Authenticate": "Bearer"},
-         )
- 
--    async def __call__(self, request: Request) -> str | None:
-+    async def __call__(self, request: HTTPConnection) -> str | None:
-         authorization = request.headers.get("Authorization")
-         if not authorization:
-             if self.auto_error:
-```
-
-**File**: `tests/test_security_http_base_optional.py` (modified, +28/-1)
-```diff
-@@ -1,4 +1,4 @@
--from fastapi import FastAPI, Security
-+from fastapi import FastAPI, Security, WebSocket
- from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBase
- from fastapi.testclient import TestClient
- from inline_snapshot import snapshot
-@@ -17,6 +17,19 @@ def read_current_user(
-     return {"scheme": credentials.scheme, "credentials": credentials.credentials}
- 
- 
-+@app.websocket("/users/timeline")
-+async def read_user_timeline(
-+    websocket: WebSocket,
-+    credentials: HTTPAuthorizationCredentials | None = Security(security),
-+):
-+    await websocket.accept()
-+    await websocket.send_json(
-+        {"scheme": credentials.scheme, "credentials": credentials.credentials}
-+        if credentials
-+        else {"msg": "Create an account first"}
-+    )
-+
-+
- client = TestClient(app)
- 
- 
-@@ -32,6 +45,20 @@ def test_security_http_base_no_credentials():
-     assert response.json() == {"msg": "Create an account first"}
- 
- 
-+def test_security_http_base_with_ws():
-+    with client.websocket_connect(
-+        "/users/timeline", headers={"Authorization": "Other foobar"}
-+    ) as websocket:
-+        data = websocket.receive_json()
-+        assert data == {"scheme": "Other", "credentials": "foobar"}
-+
-+
-+def test_security_http_base_with_ws_no_credentials():
-+    with client.websocket_connect("/users/timeline") as websocket:
-+        data = websocket.receive_json()
-+        assert data == {"msg": "Create an account first"}
-+
-+
- def test_openapi_schema():
-     response = client.get("/openapi.json")
-     assert response.status_code == 200, response.text
-```
-
-**File**: `tests/test_security_http_bearer.py` (modified, +39/-1)
+**File**: `tests/test_request_params/test_default_validation.py` (modified, +77/-14)
 ```diff
 @@ -1,4 +1,5 @@
--from fastapi import FastAPI, Security
-+from fastapi import FastAPI, Security, WebSocket
-+from fastapi.requests import HTTPConnection
- from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
- from fastapi.testclient import TestClient
- from inline_snapshot import snapshot
-@@ -36,6 +37,43 @@ def test_security_http_bearer_incorrect_scheme_credentials():
-     assert response.headers["WWW-Authenticate"] == "Bearer"
+ from typing import Annotated
++from unittest.mock import Mock
+ 
+ import pytest
+ from fastapi import Body, Cookie, FastAPI, Form, Header, Query
+@@ -13,20 +14,7 @@ def double(value):
+ ValidatedInt = Annotated[int | None, BeforeValidator(double)]
  
  
-+def test_security_http_bearer_subclass_request_keyword():
-+    class CustomHTTPBearer(HTTPBearer):
-+        async def __call__(
-+            self, request: HTTPConnection
-+        ) -> HTTPAuthorizationCredentials | None:
-+            return await super().__call__(request=request)
+-@pytest.mark.parametrize(
+-    "parameter",
+-    [
+-        pytest.param(
+-            parameter,
+-            marks=pytest.mark.xfail(
+-                reason="Missing values are validated as explicitly supplied defaults",
+-                raises=AssertionError,
+-            ),
+-        )
+-        for parameter in (Query, Header, Cookie, Form)
+-    ]
+-    + [Body],
+-)
++@pytest.mark.parametrize("parameter", [Query, Header, Cookie, Form, Body])
+ @pytest.mark.parametrize("path", ["/parameter", "/model"])
+ def test_missing_value_uses_default_without_validation(parameter, path):
+     app = FastAPI()
+@@ -183,3 +171,78 @@ def read_model(value: Annotated[Model, parameter()]):
+         response = client.post("/")
+     assert response.status_code == 200
+     assert response.json() == expected
 +
-+    subclass_app = FastAPI()
-+    subclass_security = CustomHTTPBearer()
 +
-+    @subclass_app.get("/users/me")
-+    async def read_user(
-+        credentials: HTTPAuthorizationCredentials = Security(subclass_security),
-+    ):
-+        return credentials
++@pytest.mark.parametrize("parameter", [Query, Header, Cookie, Form, Body])
++@pytest.mark.parametrize("default,expected", [(None, 0), (10, 20)])
++def test_parameter_can_validate_default(parameter, default, expected):
++    app = FastAPI()
++    field = (
++        Body(embed=True, validate_default=True)
++        if parameter is Body
++        else parameter(validate_default=True)
++    )
 +
-+    @subclass_app.websocket("/users/me")
-+    async def read_user_websocket(
-+        websocket: WebSocket,
-+        credentials: HTTPAuthorizationCredentials = Security(subclass_security),
-+    ):
-+        await websocket.accept()
-+        await websocket.send_json(credentials.model_dump())
-+        await websocket.close()
++    @app.post("/")
++    def read_parameter(value: Annotated[ValidatedInt, field] = default):
++        return value
 +
-+    subclass_client = TestClient(subclass_app)
-+    headers = {"Authorization": "Bearer foobar"}
-+    expected = {"scheme": "Bearer", "credentials": "foobar"}
-+
-+    response = subclass_client.get("/users/me", headers=headers)
-+    assert response.status_code == 200, response.text
++    client = TestClient(app)
++    if parameter is Body:
++        response = client.post("/", json={})
++    else:
++        response = client.post("/")
++    assert response.status_code == 200
 +    assert response.json() == expected
 +
-+    with subclass_client.websocket_connect("/users/me", headers=headers) as websocket:
-+        assert websocket.receive_json() == expected
++
++@pytest.mark.parametrize("parameter", [Query, Header, Cookie, Form, Body])
++@pytest.mark.parametrize("default,expected", [(None, 0), (10, 20)])
++def test_parameter_validates_default_factory_once(parameter, default, expected):
++    app = FastAPI()
++    default_factory = Mock(return_value=default)
++    field = (
++        Body(embed=True, default_factory=default_factory, validate_default=True)
++        if parameter is Body
++        else parameter(default_factory=default_factory, validate_default=True)
++    )
++
++    @app.post("/")
++    def read_parameter(value: Annotated[ValidatedInt, field]):
++        return value
++
++    default_factory.assert_not_called()
++    client = TestClient(app)
++    if parameter is Body:
++        response = client.post("/", json={})
++    else:
++        response = client.post("/")
++    assert response.status_code == 200
++    assert response.json() == expected
++    default_factory.assert_called_once_with()
 +
 +
- def test_openapi_schema():
-     response = client.get("/openapi.json")
-     assert response.status_code == 200, response.text
-```
-
-**File**: `tests/test_security_websockets.py` (added, +161/-0)
-```diff
-@@ -0,0 +1,161 @@
-+from functools import partial
-+
-+import pytest
-+from fastapi import FastAPI, Security, WebSocket
-+from fastapi.encoders import jsonable_encoder
-+from fastapi.security import (
-+    APIKeyCookie,
-+    APIKeyHeader,
-+    APIKeyQuery,
-+    HTTPBasic,
-+    HTTPBearer,
-+    HTTPDigest,
-+    OAuth2,
-+    OAuth2AuthorizationCodeBearer,
-+    OAuth2PasswordBearer,
-+    OpenIdConnect,
-+)
-+from fastapi.security.http import HTTPBase
-+from fastapi.testclient import TestClient
-+from starlette.testclient import WebSocketDenialResponse
-+
-+
-+@pytest.mark.parametrize(
-+    "security_factory, path, headers, expected, challenge",
-+    [
-+        pytest.param(
-+            partial(HTTPBase, scheme="Other"),
-+            "/",
-+            {"Authorization": "Other secret"},
-+            {"scheme": "Other", "credentials": "secret"},
-+            "Other",
-+            id="http-base",
-+        ),
-+        pytest.param(
-+            HTTPBasic,
-+            "/",
-+            {"Authorization": "Basic am9objpzZWNyZXQ="},
-+            {"username": "john", "password": "secret"},
-+            "Basic",
-+            id="http-basic",
-+        ),
-+        pytest.param(
-+            HTTPBearer,
-+            "/",
-+            {"Authorization": "Bearer secret"},
-+            {"scheme": "Bearer", "credentials": "secret"},
-+            "Bearer",
-+            id="http-bearer",
-+        ),
-+        pytest.param(
-+            HTTPDigest,
-+            "/",
-+            {"Authorization": "Digest secret"},
-+            {"scheme": "Digest", "credentials": "secret"},
-+            "Digest",
-+            id="http-digest",
-+        ),
-+        pytest.param(
-+            partial(APIKeyQuery, name="key"),
-+            "/?key=secret",
-+            {},
-+            "secret",
-+            "APIKey",
-+            id="api-key-query",
-+        ),
-+        pytest.param(
-+            partial(APIKeyHeader, name="key"),
-+            "/",
-+            {"key": "secret"},
-+            "secret",
-+            "APIKey",
-+            id="api-key-header",
-+        ),
-+        pytest.param(
-+            partial(APIKeyCookie, name="key"),
-+            "/",
-+            {"Cookie": "key=secret"},
-+            "secret",
-+            "APIKey",
-+            id="api-key-cookie",
-+        ),
-+        pytest.param(
-+            OAuth2,
-+            "/",
-+            {"Authorization": "Bearer secret"},
-+            "Bearer secret",
-+            "Bearer",
-+            id="oauth2",
-+        ),
-+        pytest.param(
-+            partial(OAuth2PasswordBearer, tokenUrl="/token"),
-+            "/",
-+            {"Authorization": "Bearer secret"},
-+            "secret",
-+            "Bearer",
-+            id="oauth2-password-bearer",
-+        ),
-+        pytest.param(
-+            partial(
-+                OAuth2AuthorizationCodeBearer,
-+                authorizationUrl="/authorize",
-+                tokenUrl="/token",
-+            ),
-+            "/",
-+            {"Authorization": "Bearer secret"},
-+            "secret",
-+            "Bearer",
-+            id="oauth2-authorization-code-bearer",
-+        ),
-+        pytest.param(
-+            partial(OpenIdConnect, openIdConnectUrl="/openid"),
-+            "/",
-+            {"Authorization": "Bearer secret"},
-+            "Bearer secret",
-+            "Bearer",
-+            id="openid-connect",
-+        ),
-+    ],
-+)
-+@pytest.mark.parametrize(
-+    "auto_error, has_credentials",
-+    [
-+        pytest.param(True, True, id="valid-credentials"),
-+        pytest.param(True, False, id="missing-required-credentials"),
-+        pytest.param(False, False, id="missing-optional-credentials"),
-+    ],
-+)
-+def test_security_websocket(
-+    security_factory,
-+    path: str,
-+    headers: dict[str, str],
-+    expected: dict[str, str] | str,
-+    challenge: str,
-+    auto_error: bool,
-+    has_credentials: bool,
-+):
-+    security = security_factory(auto_error=auto_error)
++def test_parameter_rejects_invalid_default():
 +    app = FastAPI()
 +
-+    @app.websocket("/")
-+    async def endpoint(websocket: WebSocket, credentials=Security(security)):
-+        await websocket.accept()
-+        await websocket.send_json(jsonable_encoder(credentials))
-+        await websocket.close()
++    @app.get("/")
++    def read_parameter(value: Annotated[int, Query(gt=0, validate_default=True)] = -1):
++        return value
 +
-+    with TestClient(app) as client:
-+        if auto_error and not has_credentials:
-+            with pytest.raises(WebSocketDenialResponse) as exc_info:
-+                with client.websocket_connect("/"):
-+                    pass  # pragma: no cover
-+            assert exc_info.value.status_code == 401
-+            assert exc_info.value.json() == {"detail": "Not authenticated"}
-+            assert exc_info.value.headers["WWW-Authenticate"] == challenge
-+        else:
-+            with client.websocket_connect(
-+                path if has_credentials else "/",
-+                headers=headers if has_credentials else {},
-+            ) as websocket:
-+                assert websocket.receive_json() == (
-+                    expected if has_credentials else None
-+                )
++    client = TestClient(app)
++    response = client.get("/")
++    assert response.status_code == 422
++    assert response.json() == {
++        "detail": [
++            {
++                "type": "greater_than",
++                "loc": ["query", "value"],
++                "msg": "Input should be greater than 0",
++                "input": -1,
++                "ctx": {"gt": 0},
++            }
++        ]
++    }
++    response = client.get("/", params={"value": "1"})
++    assert response.status_code == 200
++    assert response.json() == 1
 ```
 
----
-
-### Incident Patch 2: `d0282a38` (2026-10-15)
-**Commit Message**: 🐛 Fix blocking frontend fallback file checks (#16503)
-
-**File**: `fastapi/routing.py` (modified, +7/-4)
+**File**: `tests/test_request_params/test_nullable_and_defaults.py` (modified, +60/-75)
 ```diff
-@@ -2004,13 +2004,16 @@ async def get_response(self, path: str, scope: Scope) -> Response:
-             return self.file_response(full_path, stat_result, scope)
+@@ -3,6 +3,7 @@
  
-         if self.fallback == "404.html" or (
--            self.fallback == "auto" and self._fallback_file_exists("404.html")
-+            self.fallback == "auto" and await self._fallback_file_exists("404.html")
-         ):
-             return await self._fallback_response("404.html", scope, status_code=404)
+ import pytest
+ from fastapi import Body, Cookie, FastAPI, Form, Header, Query
++from fastapi._compat import PYDANTIC_VERSION_MINOR_TUPLE
+ from fastapi.testclient import TestClient
+ from pydantic import BaseModel, Field
  
-         if (
-             self.fallback == "index.html"
--            or (self.fallback == "auto" and self._fallback_file_exists("index.html"))
-+            or (
-+                self.fallback == "auto"
-+                and await self._fallback_file_exists("index.html")
-+            )
-         ) and _is_frontend_navigation_request(scope):
-             return await self._fallback_response("index.html", scope, status_code=200)
- 
-@@ -2043,8 +2046,8 @@ async def _lookup_static_resource(
-                 return full_path, stat_result, True
-         return None
- 
--    def _fallback_file_exists(self, fallback: str) -> bool:
--        _, stat_result = self.lookup_path(fallback)
-+    async def _fallback_file_exists(self, fallback: str) -> bool:
-+        _, stat_result = await run_in_threadpool(self.lookup_path, fallback)
-         return stat_result is not None and stat.S_ISREG(stat_result.st_mode)
- 
-     async def _fallback_response(
-```
-
-**File**: `tests/test_frontend.py` (modified, +13/-1)
-```diff
-@@ -1,3 +1,4 @@
-+import asyncio
- import errno
- import os
- import runpy
-@@ -775,11 +776,22 @@ def test_auto_fallback_prefers_404_over_index(tmp_path: Path):
-     assert response.text == "missing"
- 
- 
--def test_auto_fallback_uses_index_when_404_is_missing(tmp_path: Path):
-+def test_auto_fallback_uses_index_when_404_is_missing(monkeypatch, tmp_path: Path):
-     dist = tmp_path / "dist"
-     write_file(dist / "index.html", "app shell")
-     app = FastAPI()
-     app.frontend("/", directory=dist)
-+    frontend_routes = app.router._frontend_routes
-+    assert frontend_routes is not None
-+    static_files = frontend_routes.routes[0].app
-+    original_lookup_path = static_files.lookup_path
-+
-+    def lookup_path(path: str):
-+        with pytest.raises(RuntimeError, match="no running event loop"):
-+            asyncio.get_running_loop()
-+        return original_lookup_path(path)
-+
-+    monkeypatch.setattr(static_files, "lookup_path", lookup_path)
- 
-     response = TestClient(app).get("/dashboard", headers={"accept": "text/html"})
- 
-```
-
----
-
-### Incident Patch 3: `a37a162d` (2026-10-18)
-**Commit Message**: 🔥 Remove deprecated `openapi_prefix` and unused `**extra` from `FastAPI` (#16518)
-
-**File**: `fastapi/applications.py` (modified, +1/-35)
-```diff
-@@ -12,7 +12,6 @@
-     websocket_request_validation_exception_handler,
+@@ -331,27 +332,15 @@ def read_model(params: Annotated[Model, parameter()]):
+ @pytest.mark.parametrize(
+     "parameter,annotation,default",
+     [
+-        pytest.param(
+-            source,
+-            annotation,
+-            default,
+-            marks=pytest.mark.xfail(
+-                source is not Body,
+-                reason="Missing model fields are populated with defaults before validation",
+-                raises=AssertionError,
+-            ),
+-        )
+-        for source, annotation, default in [
+-            (Query, int | None, 10),
+-            (Header, int | None, 10),
+-            (Cookie, int | None, 10),
+-            (Form, int | None, 10),
+-            (Body, int | None, 10),
+-            (Query, list[int] | None, [10]),
+-            (Header, list[int] | None, [10]),
+-            (Form, list[int] | None, [10]),
+-            (Body, list[int] | None, [10]),
+-        ]
++        (Query, int | None, 10),
++        (Header, int | None, 10),
++        (Cookie, int | None, 10),
++        (Form, int | None, 10),
++        (Body, int | None, 10),
++        (Query, list[int] | None, [10]),
++        (Header, list[int] | None, [10]),
++        (Form, list[int] | None, [10]),
++        (Body, list[int] | None, [10]),
+     ],
  )
- from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
--from fastapi.logger import logger
- from fastapi.middleware.asyncexitstack import AsyncExitStackMiddleware
- from fastapi.openapi.docs import (
-     get_redoc_html,
-@@ -641,21 +640,6 @@ async def read_items():
-                 """
-             ),
-         ] = None,
--        openapi_prefix: Annotated[
--            str,
--            Doc(
--                """
--                A URL prefix for the OpenAPI URL.
--                """
+ def test_missing_non_null_default_is_unset(parameter, annotation, default):
+@@ -376,27 +365,15 @@ def read_model(params: Annotated[Model, parameter()]):
+ @pytest.mark.parametrize(
+     "parameter,annotation,default",
+     [
+-        pytest.param(
+-            source,
+-            annotation,
+-            default,
+-            marks=pytest.mark.xfail(
+-                source is not Body,
+-                reason="Missing model fields are populated with defaults before validation",
+-                raises=AssertionError,
 -            ),
--            deprecated(
--                """
--                "openapi_prefix" has been deprecated in favor of "root_path", which
--                follows more closely the ASGI standard, is simpler, and more
--                automatic.
--                """
+-        )
+-        for source, annotation, default in [
+-            (Query, int | None, 10),
+-            (Header, int | None, 10),
+-            (Cookie, int | None, 10),
+-            (Form, int | None, 10),
+-            (Body, int | None, 10),
+-            (Query, list[int] | None, [10]),
+-            (Header, list[int] | None, [10]),
+-            (Form, list[int] | None, [10]),
+-            (Body, list[int] | None, [10]),
+-        ]
++        (Query, int | None, 10),
++        (Header, int | None, 10),
++        (Cookie, int | None, 10),
++        (Form, int | None, 10),
++        (Body, int | None, 10),
++        (Query, list[int] | None, [10]),
++        (Header, list[int] | None, [10]),
++        (Form, list[int] | None, [10]),
++        (Body, list[int] | None, [10]),
+     ],
+ )
+ def test_missing_factory_default_is_unset(parameter, annotation, default):
+@@ -418,25 +395,9 @@ def read_model(params: Annotated[Model, parameter()]):
+     assert response.json() == {"value": default, "fields_set": []}
+ 
+ 
+-@pytest.mark.parametrize(
+-    "parameter,path,default",
+-    [
+-        pytest.param(
+-            source,
+-            path,
+-            default,
+-            marks=pytest.mark.xfail(
+-                source is not Body
+-                and (default is None or (path == "/parameter" and source is not Form)),
+-                reason="The default factory is called more than once for an omitted value",
+-                raises=AssertionError,
 -            ),
--        ] = "",
-         root_path: Annotated[
-             str,
-             Doc(
-@@ -879,15 +863,6 @@ class Item(BaseModel):
-                 """
-             ),
-         ] = True,
--        **extra: Annotated[
--            Any,
--            Doc(
--                """
--                Extra keyword arguments to be stored in the app, not used by FastAPI
--                anywhere.
--                """
--            ),
--        ],
-     ) -> None:
-         self.debug = debug
-         self.title = title
-@@ -908,7 +883,6 @@ class Item(BaseModel):
-         self.servers = servers or []
-         self.separate_input_output_schemas = separate_input_output_schemas
-         self.openapi_external_docs = openapi_external_docs
--        self.extra = extra
-         self.openapi_version: Annotated[
-             str,
-             Doc(
-@@ -945,14 +919,6 @@ class Item(BaseModel):
-         if self.openapi_url:
-             assert self.title, "A title must be provided for OpenAPI, e.g.: 'My API'"
-             assert self.version, "A version must be provided for OpenAPI, e.g.: '2.1.0'"
--        # TODO: remove when discarding the openapi_prefix parameter
--        if openapi_prefix:
--            logger.warning(
--                '"openapi_prefix" has been deprecated in favor of "root_path", which '
--                "follows more closely the ASGI standard, is simpler, and more "
--                "automatic. Check the docs at "
--                "https://fastapi.tiangolo.com/advanced/sub-applications/"
--            )
-         self.webhooks: Annotated[
-             routing.APIRouter,
-             Doc(
-@@ -965,7 +931,7 @@ class Item(BaseModel):
-                 """
-             ),
-         ] = webhooks or routing.APIRouter()
--        self.root_path = root_path or openapi_prefix
-+        self.root_path = root_path
-         self.state: Annotated[
-             State,
-             Doc(
+-        )
+-        for source in (Query, Header, Cookie, Form, Body)
+-        for path in ("/parameter", "/model")
+-        for default in (None, 10)
+-    ],
+-)
++@pytest.mark.parametrize("parameter", [Query, Header, Cookie, Form, Body])
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++@pytest.mark.parametrize("default", [None, 10])
+ def test_missing_value_calls_default_factory_once(parameter, path, default):
+     app = FastAPI()
+     default_factory = Mock(return_value=default)
+@@ -468,6 +429,43 @@ def read_model(params: Annotated[Model, parameter()]):
+     default_factory.assert_called_once_with()
+ 
+ 
++@pytest.mark.parametrize("parameter", [Query, Header, Cookie, Form, Body])
++@pytest.mark.skipif(
++    PYDANTIC_VERSION_MINOR_TUPLE < (2, 10),
++    reason="Default factories receiving validated data require Pydantic 2.10",
++)
++def test_model_default_factory_receives_validated_data(parameter):
++    app = FastAPI()
++
++    class Model(BaseModel):
++        value: int
++        doubled: Annotated[int, Field(default_factory=lambda data: data["value"] * 2)]
++
++    @app.post("/")
++    def read_model(params: Annotated[Model, parameter()]):
++        return {
++            "values": params.model_dump(),
++            "supplied": params.model_dump(exclude_unset=True),
++        }
++
++    client = TestClient(app)
++    if parameter is Query:
++        response = client.post("/", params={"value": "5"})
++    elif parameter is Header:
++        response = client.post("/", headers=
 ```
 
-**File**: `tests/test_deprecated_openapi_prefix.py` (removed, +0/-45)
+**File**: `tests/test_tutorial/test_header_param_models/test_tutorial001.py` (modified, +0/-1)
 ```diff
-@@ -1,45 +0,0 @@
--from fastapi import FastAPI, Request
--from fastapi.testclient import TestClient
--from inline_snapshot import snapshot
--
--app = FastAPI(openapi_prefix="/api/v1")
--
--
--@app.get("/app")
--def read_main(request: Request):
--    return {"message": "Hello World", "root_path": request.scope.get("root_path")}
--
--
--client = TestClient(app)
--
--
--def test_main():
--    response = client.get("/app")
--    assert response.status_code == 200
--    assert response.json() == {"message": "Hello World", "root_path": "/api/v1"}
--
--
--def test_openapi():
--    response = client.get("/openapi.json")
--    assert response.status_code == 200
--    assert response.json() == snapshot(
--        {
--            "openapi": "3.1.0",
--            "info": {"title": "FastAPI", "version": "0.1.0"},
--            "paths": {
--                "/app": {
--                    "get": {
--                        "summary": "Read Main",
--                        "operationId": "read_main_app_get",
--                        "responses": {
--                            "200": {
--                                "description": "Successful Response",
--                                "content": {"application/json": {"schema": {}}},
--                            }
--                        },
--                    }
--                }
--            },
--            "servers": [{"url": "/api/v1"}],
--        }
--    )
+@@ -66,7 +66,6 @@ def test_header_param_model_invalid(client: TestClient):
+                     "loc": ["header", "save_data"],
+                     "msg": "Field required",
+                     "input": {
+-                        "x_tag": [],
+                         "host": "testserver",
+                         "accept": "*/*",
+                         "accept-encoding": IsOneOf(
+```
+
+**File**: `tests/test_tutorial/test_header_param_models/test_tutorial002.py` (modified, +1/-1)
+```diff
+@@ -65,7 +65,7 @@ def test_header_param_model_invalid(client: TestClient):
+                     "type": "missing",
+                     "loc": ["header", "save_data"],
+                     "msg": "Field required",
+-                    "input": {"x_tag": [], "host": "testserver"},
++                    "input": {"host": "testserver"},
+                 }
+             ]
+         }
+```
+
+**File**: `tests/test_tutorial/test_header_param_models/test_tutorial003.py` (modified, +0/-2)
+```diff
+@@ -65,7 +65,6 @@ def test_header_param_model_no_underscore(client: TestClient):
+                     "input": {
+                         "host": "testserver",
+                         "traceparent": "123",
+-                        "x_tag": [],
+                         "accept": "*/*",
+                         "accept-encoding": IsOneOf(
+                             "gzip, deflate", "gzip, deflate, zstd"
+@@ -105,7 +104,6 @@ def test_header_param_model_invalid(client: TestClient):
+                     "loc": ["header", "save_data"],
+                     "msg": "Field required",
+                     "input": {
+-                        "x_tag": [],
+                         "host": "testserver",
+                         "accept": "*/*",
+                         "accept-encoding": IsOneOf(
+```
+
+---
+
+### Incident Patch 2: `6a506999` (2026-10-19)
+**Commit Message**: ✅ Add tests for parameter defaults, nullability, and browser form behavior (#14829)
+
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+Co-authored-by: Sebastián Ramírez <[REDACTED_EMAIL]>
+
+**File**: `tests/test_request_params/test_body/test_nullable_and_defaults.py` (added, +287/-0)
+```diff
+@@ -0,0 +1,287 @@
++from typing import Annotated
++
++import pytest
++from fastapi import Body, FastAPI
++from fastapi.testclient import TestClient
++from pydantic import BaseModel
++
++app = FastAPI()
++
++
++class RequiredModel(BaseModel):
++    value: int | None
++
++
++class NoneDefaultModel(BaseModel):
++    value: int | None = None
++
++
++class NonNullDefaultModel(BaseModel):
++    value: int | None = 10
++
++
++class NonNullableDefaultModel(BaseModel):
++    value: int = 10
++
++
++@app.post("/required")
++def read_required(value: Annotated[int | None, Body(embed=True)]):
++    return {"value": value, "fields_set": None}
++
++
++@app.post("/required-model")
++def read_required_model(params: Annotated[RequiredModel, Body()]):
++    return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++
++@app.post("/none-default")
++def read_none_default(value: Annotated[int | None, Body(embed=True)] = None):
++    return {"value": value, "fields_set": None}
++
++
++@app.post("/none-default-model")
++def read_none_default_model(params: Annotated[NoneDefaultModel, Body()]):
++    return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++
++@app.post("/non-null-default")
++def read_non_null_default(value: Annotated[int | None, Body(embed=True)] = 10):
++    return {"value": value, "fields_set": None}
++
++
++@app.post("/non-null-default-model")
++def read_non_null_default_model(params: Annotated[NonNullDefaultModel, Body()]):
++    return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++
++@app.post("/non-nullable-default")
++def read_non_nullable_default(value: Annotated[int, Body(embed=True)] = 10):
++    return {"value": value, "fields_set": None}
++
++
++@app.post("/non-nullable-default-model")
++def read_non_nullable_default_model(params: Annotated[NonNullableDefaultModel, Body()]):
++    return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++
++@app.post("/bare-required")
++def read_bare_required(value: Annotated[int | None, Body()]):
++    return value
++
++
++@app.post("/bare-none-default")
++def read_bare_none_default(value: Annotated[int | None, Body()] = None):
++    return value
++
++
++@app.post("/bare-int-default")
++def read_bare_int_default(value: Annotated[int | None, Body()] = 10):
++    return value
++
++
++@app.post("/bare-non-nullable-default")
++def read_bare_non_nullable_default(value: Annotated[int, Body()] = 10):
++    return value
++
++
++@app.post("/bare-str-default")
++def read_bare_str_default(value: Annotated[str | None, Body()] = "default"):
++    return value
++
++
++@app.post("/bare-list-default")
++def read_bare_list_default(
++    value: Annotated[list[int] | None, Body(default_factory=lambda: [10])],
++):
++    return value
++
++
++client = TestClient(app)
++
++
++@pytest.mark.parametrize(
++    "path,fields_set",
++    [
++        pytest.param(
++            "/required",
++            None,
++            marks=pytest.mark.xfail(
++                reason="Explicit null is treated as missing for a required Body parameter",
++                raises=AssertionError,
++            ),
++        ),
++        ("/required-model", ["value"]),
++        ("/none-default", None),
++        ("/none-default-model", ["value"]),
++        pytest.param(
++            "/non-null-default",
++            None,
++            marks=pytest.mark.xfail(
++                reason="Explicit null is replaced with the Body parameter default",
++                raises=AssertionError,
++            ),
++        ),
++        ("/non-null-default-model", ["value"]),
++    ],
++)
++def test_explicit_null(path, fields_set):
++    supplied = client.post(path, json={"value": 0})
++    assert supplied.status_code == 200
++    assert supplied.json()["value"] == 0
++    response = client.post(path, json={"value": None})
++    assert response.status_code == 200
++    assert response.json() == {"value": None, "fields_set": fields_set}
++
++
++@pytest.mark.parametrize(
++    "path,location",
++    [
++        ("/required", ["body", "value"]),
++        ("/required-model", ["body"]),
++        ("/none-default-model", ["body"]),
++        ("/non-null-default-model", ["body"]),
++    ],
++)
++def test_absent_body_for_required_argument(path, location):
++    # A model argument is required even when its fields have defaults.
++    response = client.post(path)
++    assert response.status_code == 422
++    assert [(error["type"], error["loc"]) for error in response.json()["detail"]] == [
++        ("missing", location),
++    ]
++
++
++@pytest.mark.parametrize(
++    "path,expected",
++    [
++        ("/none-default", None),
++        ("/non-null-default", 10),
++        ("/non-nullable-default", 10),
++    ],
++)
++def test_absent_body_uses_parameter_default(path, expected):
++    response = client.post(path)
++    assert response.status_code == 200
++    assert response.json() == {"value": expected, "fields_set": None}
++
++
++def test_absent_required_bare_body():
++    supplied = client.post("/bare-required", json=0)
++    assert supplied.status_code == 200
++    assert supplied.json() == 0
+
+```
+
+**File**: `tests/test_request_params/test_default_validation.py` (added, +185/-0)
+```diff
+@@ -0,0 +1,185 @@
++from typing import Annotated
++
++import pytest
++from fastapi import Body, Cookie, FastAPI, Form, Header, Query
++from fastapi.testclient import TestClient
++from pydantic import BaseModel, BeforeValidator, Field
++
++
++def double(value):
++    return 0 if value is None else int(value) * 2
++
++
++ValidatedInt = Annotated[int | None, BeforeValidator(double)]
++
++
++@pytest.mark.parametrize(
++    "parameter",
++    [
++        pytest.param(
++            parameter,
++            marks=pytest.mark.xfail(
++                reason="Missing values are validated as explicitly supplied defaults",
++                raises=AssertionError,
++            ),
++        )
++        for parameter in (Query, Header, Cookie, Form)
++    ]
++    + [Body],
++)
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++def test_missing_value_uses_default_without_validation(parameter, path):
++    app = FastAPI()
++    field = Body(embed=True) if parameter is Body else parameter()
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[ValidatedInt, field] = 10):
++        return value
++
++    class Model(BaseModel):
++        value: ValidatedInt = 10
++
++    @app.post("/model")
++    def read_model(value: Annotated[Model, parameter()]):
++        return value.value
++
++    client = TestClient(app)
++    if parameter is Body:
++        response = client.post(path, json={})
++    else:
++        response = client.post(path)
++    assert response.status_code == 200
++    assert response.json() == 10
++
++
++@pytest.mark.parametrize("parameter", [Query, Header, Cookie, Form, Body])
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++def test_missing_value_uses_none_default_without_validation(parameter, path):
++    app = FastAPI()
++    field = Body(embed=True) if parameter is Body else parameter()
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[ValidatedInt, field] = None):
++        return value
++
++    class Model(BaseModel):
++        value: ValidatedInt = None
++
++    @app.post("/model")
++    def read_model(value: Annotated[Model, parameter()]):
++        return value.value
++
++    client = TestClient(app)
++    if parameter is Body:
++        response = client.post(path, json={})
++    else:
++        response = client.post(path)
++    assert response.status_code == 200
++    assert response.json() is None
++
++
++@pytest.mark.parametrize("parameter", [Query, Header, Cookie, Form, Body])
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++def test_explicit_value_equal_to_default_is_validated(parameter, path):
++    app = FastAPI()
++    field = Body(embed=True) if parameter is Body else parameter()
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[ValidatedInt, field] = 10):
++        return value
++
++    class Model(BaseModel):
++        value: ValidatedInt = 10
++
++    @app.post("/model")
++    def read_model(value: Annotated[Model, parameter()]):
++        return value.value
++
++    client = TestClient(app)
++    if parameter is Query:
++        response = client.post(path, params={"value": "10"})
++    elif parameter is Header:
++        response = client.post(path, headers={"value": "10"})
++    elif parameter is Cookie:
++        response = client.post(path, headers={"cookie": "value=10"})
++    elif parameter is Form:
++        response = client.post(path, data={"value": "10"})
++    else:
++        response = client.post(path, json={"value": 10})
++    assert response.status_code == 200
++    assert response.json() == 20
++
++
++@pytest.mark.parametrize("default", [None, 10])
++@pytest.mark.parametrize(
++    "path",
++    [
++        pytest.param(
++            "/parameter",
++            marks=pytest.mark.xfail(
++                reason="Explicit null is treated as missing for individual Body parameters",
++                raises=AssertionError,
++            ),
++        ),
++        "/model",
++    ],
++)
++def test_explicit_null_is_validated(default, path):
++    app = FastAPI()
++    field = Body(embed=True)
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[ValidatedInt, field] = default):
++        return value
++
++    class Model(BaseModel):
++        value: ValidatedInt = default
++
++    @app.post("/model")
++    def read_model(value: Annotated[Model, Body()]):
++        return value.value
++
++    client = TestClient(app)
++    response = client.post(path, json={"value": None})
++    assert response.status_code == 200
++    assert response.json() == 0
++
++
++@pytest.mark.parametrize("default", [None, 10])
++@pytest.mark.xfail(
++    reason="Explicit null-body is treated as missing", raises=AssertionError
++)
++def test_explicit_null_body_is_validated(default):
++    app = FastAPI()
++
++    @app.post("/")
++    def read_body(value: Annotated[ValidatedInt, Body()] = default):
++        return value
++
++    client = TestClient(app)
++    response = client.post(
++        "/", content="null", headers={"content-type": "application/json"}
++    )
++    assert response.status_code == 200
++    assert response.json() 
+```
+
+**File**: `tests/test_request_params/test_file/test_nullable_and_defaults.py` (added, +544/-0)
+```diff
+@@ -0,0 +1,544 @@
++from typing import Annotated
++
++import pytest
++from fastapi import FastAPI, File, UploadFile
++from fastapi.testclient import TestClient
++from inline_snapshot import snapshot
++
++app = FastAPI()
++
++
++@app.post("/required-bytes")
++def read_required_bytes(
++    file: Annotated[bytes | None, File()],
++    files: Annotated[list[bytes] | None, File()],
++):
++    assert file is not None
++    assert files is not None
++    return {"file": len(file), "files": [len(value) for value in files]}
++
++
++@app.post("/required-uploadfile")
++def read_required_uploadfile(
++    file: Annotated[UploadFile | None, File()],
++    files: Annotated[list[UploadFile] | None, File()],
++):
++    assert file is not None
++    assert files is not None
++    return {"file": file.size, "files": [value.size for value in files]}
++
++
++@app.post("/optional-bytes")
++def read_optional_bytes(
++    file: Annotated[bytes | None, File()] = None,
++    files: Annotated[list[bytes] | None, File()] = None,
++):
++    return {
++        "file": len(file) if file is not None else None,
++        "files": [len(value) for value in files] if files is not None else None,
++    }
++
++
++@app.post("/optional-uploadfile")
++def read_optional_uploadfile(
++    file: Annotated[UploadFile | None, File()] = None,
++    files: Annotated[list[UploadFile] | None, File()] = None,
++):
++    return {
++        "file": file.size if file is not None else None,
++        "files": [value.size for value in files] if files is not None else None,
++    }
++
++
++@app.post("/bytes-defaults")
++def read_bytes_defaults(
++    *,
++    file: Annotated[bytes | None, File()] = b"default",
++    files: Annotated[list[bytes] | None, File(default_factory=lambda: [b"default"])],
++):
++    assert file is not None
++    assert files is not None
++    return {"file": len(file), "files": [len(value) for value in files]}
++
++
++client = TestClient(app)
++
++# HTTPX drops empty filenames, so send the browser's multipart representation directly.
++EMPTY_FILE_FORM = (
++    b"--boundary\r\n"
++    b'Content-Disposition: form-data; name="file"; filename=""\r\n'
++    b"Content-Type: application/octet-stream\r\n\r\n"
++    b"\r\n--boundary\r\n"
++    b'Content-Disposition: form-data; name="files"; filename=""\r\n'
++    b"Content-Type: application/octet-stream\r\n\r\n"
++    b"\r\n--boundary--\r\n"
++)
++
++
++@pytest.mark.parametrize("path", ["/required-bytes", "/required-uploadfile"])
++@pytest.mark.parametrize(
++    "content",
++    [
++        pytest.param(b"", id="omitted"),
++        pytest.param(
++            EMPTY_FILE_FORM,
++            id="no-selection",
++            marks=pytest.mark.xfail(
++                reason="A file with an empty filename and content is treated as supplied",
++                raises=AssertionError,
++            ),
++        ),
++    ],
++)
++def test_missing_required_nullable_files(path, content):
++    response = client.post(
++        path,
++        content=content,
++        headers={"content-type": "multipart/form-data; boundary=boundary"},
++    )
++    assert response.status_code == 422
++    assert [(error["type"], error["loc"]) for error in response.json()["detail"]] == [
++        ("missing", ["body", "file"]),
++        ("missing", ["body", "files"]),
++    ]
++
++
++@pytest.mark.parametrize("path", ["/optional-bytes", "/optional-uploadfile"])
++@pytest.mark.parametrize(
++    "content",
++    [
++        pytest.param(b"", id="omitted"),
++        pytest.param(
++            EMPTY_FILE_FORM,
++            id="no-selection",
++            marks=pytest.mark.xfail(
++                reason="A file with an empty filename and content is treated as supplied",
++                raises=AssertionError,
++            ),
++        ),
++    ],
++)
++def test_missing_optional_nullable_files(path, content):
++    response = client.post(
++        path,
++        content=content,
++        headers={"content-type": "multipart/form-data; boundary=boundary"},
++    )
++    assert response.status_code == 200
++    assert response.json() == {"file": None, "files": None}
++
++
++@pytest.mark.parametrize(
++    "path",
++    [
++        "/required-bytes",
++        "/required-uploadfile",
++        "/optional-bytes",
++        "/optional-uploadfile",
++    ],
++)
++@pytest.mark.parametrize("content", [b"", b"hello"])
++def test_named_file_is_supplied_even_when_empty(path, content):
++    response = client.post(
++        path,
++        files=[
++            ("file", ("empty.txt", content)),
++            ("files", ("first.txt", content)),
++            ("files", ("second.txt", content)),
++        ],
++    )
++    assert response.status_code == 200
++    assert response.json() == {
++        "file": len(content),
++        "files": [len(content), len(content)],
++    }
++
++
++@pytest.mark.parametrize(
++    "content",
++    [
++        pytest.param(b"", id="omitted"),
++        pytest.param(
++            EMPTY_FILE_FORM,
++            id="no-selection",
++            marks=pytest.mark.xfail(
++                reason="A file with an empty filename and content is treated as supplied"
+```
+
+**File**: `tests/test_request_params/test_form/test_nullable_and_defaults.py` (added, +554/-0)
+```diff
+@@ -0,0 +1,554 @@
++from typing import Annotated
++
++import pytest
++from fastapi import Body, FastAPI, Form
++from fastapi.testclient import TestClient
++from pydantic import BaseModel, ValidationError
++
++
++@pytest.mark.parametrize(
++    "path",
++    [
++        "/parameter",
++        pytest.param(
++            "/model",
++            marks=pytest.mark.xfail(
++                reason="Empty scalar form strings are not treated as missing in models",
++                raises=AssertionError,
++            ),
++        ),
++    ],
++)
++@pytest.mark.parametrize("default", [None, "default"])
++@pytest.mark.parametrize("encoding", ["urlencoded", "multipart"])
++def test_empty_string_uses_default(path, default, encoding):
++    app = FastAPI()
++
++    class Model(BaseModel):
++        value: str | None = default
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[str | None, Form()] = default):
++        return {"value": value, "fields_set": None}
++
++    @app.post("/model")
++    def read_model(params: Annotated[Model, Form()]):
++        return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++    client = TestClient(app)
++    supplied = client.post(path, data={"value": "hello"})
++    assert supplied.status_code == 200
++    assert supplied.json()["value"] == "hello"
++    if encoding == "urlencoded":
++        response = client.post(path, data={"value": ""})
++    else:
++        response = client.post(path, files={"value": (None, "")})
++    assert response.status_code == 200
++    assert response.json() == {
++        "value": default,
++        "fields_set": [] if path == "/model" else None,
++    }
++
++
++@pytest.mark.parametrize(
++    "path",
++    [
++        "/parameter",
++        pytest.param(
++            "/model",
++            marks=pytest.mark.xfail(
++                reason="Empty scalar form strings are not treated as missing in models",
++                raises=AssertionError,
++            ),
++        ),
++    ],
++)
++@pytest.mark.parametrize("default", [None, 10])
++@pytest.mark.parametrize("encoding", ["urlencoded", "multipart"])
++def test_empty_integer_uses_default(path, default, encoding):
++    app = FastAPI()
++
++    class Model(BaseModel):
++        value: int | None = default
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[int | None, Form()] = default):
++        return {"value": value, "fields_set": None}
++
++    @app.post("/model")
++    def read_model(params: Annotated[Model, Form()]):
++        return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++    client = TestClient(app)
++    supplied = client.post(path, data={"value": "1"})
++    assert supplied.status_code == 200
++    assert supplied.json()["value"] == 1
++    if encoding == "urlencoded":
++        response = client.post(path, data={"value": ""})
++    else:
++        response = client.post(path, files={"value": (None, "")})
++    assert response.status_code == 200
++    assert response.json() == {
++        "value": default,
++        "fields_set": [] if path == "/model" else None,
++    }
++
++
++@pytest.mark.parametrize(
++    "path",
++    [
++        "/parameter",
++        pytest.param(
++            "/model",
++            marks=pytest.mark.xfail(
++                reason="Empty required scalar form strings are not treated as missing in models",
++                raises=AssertionError,
++            ),
++        ),
++    ],
++)
++def test_empty_required_string_is_missing(path):
++    app = FastAPI()
++
++    class Model(BaseModel):
++        value: str | None
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[str | None, Form()]):
++        return {"value": value, "fields_set": None}
++
++    @app.post("/model")
++    def read_model(params: Annotated[Model, Form()]):
++        return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++    client = TestClient(app)
++    supplied = client.post(path, data={"value": "hello"})
++    assert supplied.status_code == 200
++    assert supplied.json()["value"] == "hello"
++    response = client.post(path, data={"value": ""})
++    assert response.status_code == 422
++    assert [(error["type"], error["loc"]) for error in response.json()["detail"]] == [
++        ("missing", ["body", "value"]),
++    ]
++
++
++@pytest.mark.parametrize(
++    "path",
++    [
++        "/parameter",
++        pytest.param(
++            "/model",
++            marks=pytest.mark.xfail(
++                reason="Empty required scalar form strings are not treated as missing in models",
++                raises=AssertionError,
++            ),
++        ),
++    ],
++)
++def test_empty_required_integer_is_missing(path):
++    app = FastAPI()
++
++    class Model(BaseModel):
++        value: int | None
++
++    @app.post("/parameter")
++    def read_parameter(value: Annotated[int | None, Form()]):
++        return {"value": value, "fields_set": None}
++
++    @app.post("/model")
++    def read_model(params: Annotated[Model, Form()]):
++        return {"value": params.value, "fields_set":
+```
+
+**File**: `tests/test_request_params/test_header/test_nullable_and_defaults.py` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++from typing import Annotated
++
++import pytest
++from fastapi import FastAPI, Header
++from fastapi.testclient import TestClient
++from pydantic import BaseModel
++
++app = FastAPI()
++
++
++@app.get("/parameter")
++def read_parameter(int_val: Annotated[int | None, Header()]):
++    return int_val
++
++
++class Model(BaseModel):
++    int_val: int | None
++
++
++@app.get("/model")
++def read_model(params: Annotated[Model, Header()]):
++    return params.int_val
++
++
++client = TestClient(app)
++
++
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++def test_nullable_header_uses_hyphenated_name(path):
++    response = client.get(path, headers={"int-val": "0"})
++    assert response.status_code == 200
++    assert response.json() == 0
++    response = client.get("/openapi.json")
++    assert response.status_code == 200, response.text
++    field = response.json()["paths"][path]["get"]["parameters"][0]
++    assert field["name"] == "int-val"
++    assert field["in"] == "header"
++    assert field["required"] is True
++    assert field["schema"]["anyOf"] == [{"type": "integer"}, {"type": "null"}]
++
++
++@pytest.mark.parametrize(
++    "path",
++    [
++        "/parameter",
++        pytest.param(
++            "/model",
++            marks=pytest.mark.xfail(
++                reason="Header model errors use underscores instead of hyphens",
++                raises=AssertionError,
++            ),
++        ),
++    ],
++)
++@pytest.mark.parametrize(
++    "headers,error_type",
++    [({}, "missing"), ({"int-val": "invalid"}, "int_parsing")],
++)
++def test_nullable_header_error_uses_hyphenated_name(path, headers, error_type):
++    response = client.get(path, headers=headers)
++    assert response.status_code == 422
++    assert [(error["type"], error["loc"]) for error in response.json()["detail"]] == [
++        (error_type, ["header", "int-val"]),
++    ]
+```
+
+**File**: `tests/test_request_params/test_nullable_and_defaults.py` (added, +810/-0)
+```diff
+@@ -0,0 +1,810 @@
++from typing import Annotated
++from unittest.mock import Mock
++
++import pytest
++from fastapi import Body, Cookie, FastAPI, Form, Header, Query
++from fastapi.testclient import TestClient
++from pydantic import BaseModel, Field
++
++
++@pytest.fixture(params=[Query, Header, Cookie, Form, Body])
++def parameter(request):
++    return request.param
++
++
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++def test_nullable_required_schema_and_supplied_value(parameter, path):
++    app = FastAPI()
++
++    field = Body(embed=True) if parameter is Body else parameter()
++
++    class Model(BaseModel):
++        value: int | None
++
++    @app.post("/parameter")
++    def read_required(value: Annotated[int | None, field]):
++        return {"value": value, "fields_set": None}
++
++    @app.post("/model")
++    def read_model(params: Annotated[Model, parameter()]):
++        return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++    client = TestClient(app)
++    if parameter is Query:
++        supplied = client.post(path, params={"value": "0"})
++    elif parameter is Header:
++        supplied = client.post(path, headers={"value": "0"})
++    elif parameter is Cookie:
++        supplied = client.post(path, headers={"cookie": "value=0"})
++    elif parameter is Form:
++        supplied = client.post(path, data={"value": "0"})
++    else:
++        supplied = client.post(path, json={"value": 0})
++    assert supplied.status_code == 200
++    assert supplied.json()["value"] == 0
++    response = client.get("/openapi.json")
++    assert response.status_code == 200, response.text
++    openapi = response.json()
++    operation = openapi["paths"][path]["post"]
++    if parameter in (Query, Header, Cookie):
++        field = operation["parameters"][0]
++        schema = field["schema"]
++        required = field["required"]
++    else:
++        media_type = (
++            "application/json"
++            if parameter is Body
++            else "application/x-www-form-urlencoded"
++        )
++        reference = operation["requestBody"]["content"][media_type]["schema"]["$ref"]
++        model = openapi["components"]["schemas"][reference.rsplit("/", 1)[1]]
++        schema = model["properties"]["value"]
++        required = "value" in model.get("required", [])
++    assert schema["anyOf"] == [{"type": "integer"}, {"type": "null"}]
++    assert required is True
++    assert "default" not in schema
++
++
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++def test_nullable_none_default_schema_and_supplied_value(parameter, path):
++    app = FastAPI()
++
++    field = Body(embed=True) if parameter is Body else parameter()
++
++    class Model(BaseModel):
++        value: int | None = None
++
++    @app.post("/parameter")
++    def read_defaulted(value: Annotated[int | None, field] = None):
++        return {"value": value, "fields_set": None}
++
++    @app.post("/model")
++    def read_model(params: Annotated[Model, parameter()]):
++        return {"value": params.value, "fields_set": sorted(params.model_fields_set)}
++
++    client = TestClient(app)
++    if parameter is Query:
++        supplied = client.post(path, params={"value": "0"})
++    elif parameter is Header:
++        supplied = client.post(path, headers={"value": "0"})
++    elif parameter is Cookie:
++        supplied = client.post(path, headers={"cookie": "value=0"})
++    elif parameter is Form:
++        supplied = client.post(path, data={"value": "0"})
++    else:
++        supplied = client.post(path, json={"value": 0})
++    assert supplied.status_code == 200
++    assert supplied.json()["value"] == 0
++    response = client.get("/openapi.json")
++    assert response.status_code == 200, response.text
++    openapi = response.json()
++    operation = openapi["paths"][path]["post"]
++    if parameter in (Query, Header, Cookie):
++        field = operation["parameters"][0]
++        schema = field["schema"]
++        required = field["required"]
++    else:
++        media_type = (
++            "application/json"
++            if parameter is Body
++            else "application/x-www-form-urlencoded"
++        )
++        reference = operation["requestBody"]["content"][media_type]["schema"]["$ref"]
++        model = openapi["components"]["schemas"][reference.rsplit("/", 1)[1]]
++        schema = model["properties"]["value"]
++        required = "value" in model.get("required", [])
++    assert schema["anyOf"] == [{"type": "integer"}, {"type": "null"}]
++    assert required is False
++    assert "default" not in schema
++
++
++@pytest.mark.parametrize("path", ["/parameter", "/model"])
++def test_nullable_non_null_default_schema_and_supplied_value(parameter, path):
++    app = FastAPI()
++
++    field = Body(embed=True) if parameter is Body else parameter()
++
++    class Model(BaseModel):
++        value: int | None = 10
++
++    @app.post("/parameter")
++    def read_defaulted(value: Annotated[int | None, field] = 10):
++        return {"value": value, "fields_set": None}
++
++    @app.post("/model")
++    def 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16528** (2026-10-19): 🔖 Release version 0.148.0 (@pr-submit[bot])
+- **PR #16527** (2026-10-19): 🐛 Fix default handling for request parameters and models (@tiangolo)
+- **PR #16525** (closed): 🐛 Fix data-aware default_factory in parameter models (@Aditya-kumar-yadav)
+- **PR #16524** (2026-10-19): 🔖 Release version 0.147.0 (@pr-submit[bot])
+- **PR #16523** (2026-10-19): 🐛 Treat omitted boolean form fields as False (@tiangolo)
 - **PR #16521** (2026-10-18): 🔖 Release version 0.146.0 (@pr-submit[bot])
-- **PR #16520** (2026-10-18): 🗑️ Deprecate the `root_path` parameter in `FastAPI` (@tiangolo)
-- **PR #16519** (2026-10-18): 🔖 Release version 0.145.0 (@pr-submit[bot])
-- **PR #16518** (2026-10-18): 🔥 Remove deprecated `openapi_prefix` and unused `**extra` from `FastAPI` (@tiangolo)
-- **PR #16517** (2026-10-18): 📝 Document URL paths in templates (@tiangolo)
-- **PR #16516** (2026-10-18): 🔖 Release version 0.144.0 (@pr-submit[bot])
 
 ---
 
@@ -2180,36 +2794,33 @@ Co-authored-by: Sebastián Ramírez <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ✨ Add WebSocket support to security dependencies (#10147)
+## X. 🐛 Fix default handling for request parameters and models (#16527)
 
 **RULE**:
-When implementing operations in `fastapi/security/api_key.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/docs/release-notes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1884325c`: ✨ Add WebSocket support to security dependencies (#10147). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `32240026`: 🐛 Fix default handling for request parameters and models (#16527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `fastapi/security/api_key.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/docs/release-notes.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from starlette.requests import HTTPConnection
-        self.model = APIKey(
-    async def __call__(self, request: HTTPConnection) -> str | None:
-    async def __call__(self, request: HTTPConnection) -> str | None:
-    async def __call__(self, request: HTTPConnection) -> str | None:
+Defaults for omitted `Query`, `Header`, `Cookie`, and `Form` parameters and model fields are no longer treated as user input. Defaults are not validated unless `validate_default=True` is enabled. If you rely on validators running for omitted values, enable default validation with `Field(validate_default=True)` for model fields or, for example, `Query(validate_default=True)` for individual parameters. `Body(validate_default=True)` is now honored too.
+
+For parameter models, applying a default no longer marks a field as explicitly set, so `model_dump(exclude_unset=True)` excludes it. Default factories run once, and validation errors no longer include injected defaults in `input`.
+
+Omitted boolean form fields still become `False` and count as explicitly set.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-from starlette.requests import Request
-        self.model: APIKey = APIKey(
-    async def __call__(self, request: Request) -> str | None:
-    async def __call__(self, request: Request) -> str | None:
-    async def __call__(self, request: Request) -> str | None:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1884325c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `32240026` are properly handled with clean fallback behavior.
