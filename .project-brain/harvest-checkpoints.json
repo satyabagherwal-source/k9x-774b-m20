@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T16:12:10.638Z",
+  "last_updated": "2026-10-19T16:18:27.690Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3664,14 +3664,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
-      "verified_at": "2026-10-19T13:14:54.496Z",
+      "content_hash": "d171b1761c47c672f7d34c898b905b85c39a236771dab64c5722cfec82c8d104",
+      "verified_at": "2026-10-19T16:18:20.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:14:54.496Z"
+      "last_updated": "2026-10-19T16:18:20.322Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -7954,14 +7954,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
-      "verified_at": "2026-10-19T03:14:05.529Z",
+      "content_hash": "eb0679628a36d450d63660e4122bf30a6e77aa1de7770eaa74e553e54ea730ed",
+      "verified_at": "2026-10-19T16:18:24.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:14:05.529Z"
+      "last_updated": "2026-10-19T16:18:24.381Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -9169,14 +9169,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-taiga-family-taiga-ui",
-      "content_hash": "e7a1ad477c19ee0ecac3a95210cb9b5c66a45eabdf1b427d066a66efeea20881",
-      "verified_at": "2026-10-19T05:05:32.318Z",
+      "content_hash": "190485c0f8028dd9dd16594b368f47ba759e019b9dd60dfd64b97284a57d4a57",
+      "verified_at": "2026-10-19T16:18:09.811Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:05:32.318Z"
+      "last_updated": "2026-10-19T16:18:09.811Z"
     },
     "u-root/u-root": {
       "repository": "u-root/u-root",
@@ -12537,6 +12537,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T16:12:07.010Z"
+    },
+    "sergdort/ModernCleanArchitectureSwiftUI": {
+      "repository": "sergdort/ModernCleanArchitectureSwiftUI",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sergdort-moderncleanarchitectureswiftui",
+      "content_hash": "807ae6408a7b5c6aaf5815bc367e7ef506cf87ffe70d504f6514600beee3a2ec",
+      "verified_at": "2026-10-19T16:18:17.785Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T16:18:17.785Z"
+    },
+    "Maatify/php-seo": {
+      "repository": "Maatify/php-seo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-maatify-php-seo",
+      "content_hash": "af9e3c15e90db4e7c7e5476eab48cf15abb61127a6175d514cc828601bbd1c7f",
+      "verified_at": "2026-10-19T16:18:27.690Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T16:18:27.690Z"
     }
   },
   "repos": {

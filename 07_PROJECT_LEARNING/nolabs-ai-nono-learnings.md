@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `279c26ae`  
+> **Source Version**: `c8832db4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:14:54.316Z  
+> **Timestamp**: 2026-10-19T16:18:20.093Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:14:54.311Z  
+> **Harvest Timestamp**: 2026-10-19T16:18:20.087Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4575 stars
+- **Stars / Engagement**: 4577 stars
 
 ---
 
@@ -2946,14 +2946,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2159** (2026-10-19): **fix(cli): keep --log-file output under --silent**
+  *Symptoms*: ## Linked Issue  Closes #2158  ## Summary  **Problem.** `--silent` set the tracing filter to `off` for every subscriber. The `--log-file` / `NONO_LOG_FILE` subscriber was muted too, so `nono_proxy::audit` lines never reached the file.  **Fix.** In `crates/nono-cli/src/cli_bootstrap.rs`, `tracing_filter` now takes a `to_file` flag.  - The file subscriber uses the new `cli_verbosity_level`. It is the `-v` mapping without the silent check, then `RUST_LOG`, then `warn`. - The stderr subscribers keep `cli_log_override`, so `--silent` still mutes the terminal. - The file filter is resolved before `RUST_LOG` is exported as `off` for subprocesses. Without this, a silent run without `RUST_LOG` would read back that `off`. - The export block itself is unchanged. Subprocesses such as the command-mediation launcher write to stderr, so they stay silent.  `docs/cli/usage/flags.mdx` now says that `--silent` keeps the log file.  ## Agent Disclosure  This PR was written by an AI agent (Claude Code, Claude Opus 5.5) at the request of the issue author, @sreyas-endor. The agent read `CONTRIBUTING.md`, `AGENTS.md`, `NOGENT.md`, this template, `Makefile` and `.github/workflows/ci.yml`. The change follows those rules: no `unwrap`/`expect` in production code, the test holds `ENV_LOCK` and restores `RUST_LOG` through `EnvVarGuard`, and the commit is DCO signed.  ## Test Plan  New unit test `cli_bootstrap::tests::silent_mutes_stderr_filter_but_not_log_file_filter`. With `--silent`, it checks that:  - t
+
 - **Issue #2152** (2026-10-19): **listen_port_range undocumented**
   *Symptoms*: ### What happened?  The policy option `network.listen_port_range` is not documented anywhere.  ### What did you expect to happen?  I expected to find it on `docs/cli/features/profiles-groups.mdx` alongside `listen_port`.  ### Steps to reproduce  Documentation bug. Not applicable.  ### Relevant output or logs  ```shell  ```  ### nono version  0.80.0  ### Operating system  Linux  ### OS version / distro  Aurora 44  ### Kernel version (Linux only)  7.2.5-200.fc44.x86_64  ### Profile (if relevant)  ```json  ```  ### Additional context  _No response_
   **Post-Mortem & Fix Analysis**:
   > ## 🛡️ nogent issue triage  **Assessment:** needs-code-change  **Suggested resolution:** Update documentation in `docs/cli/features/profiles-groups.mdx` and `crates/nono-cli/data/profile-authoring-guide.md` to document `network.listen_port_range`.  **Notes for maintainers:** Requires repository documentation updates to explain `network.listen_port_range` alongside `listen_port`.  <sub>Automated triage suggestion. Not a maintainer decision.</sub>
   > Agent disclosure for #2152: I am an AI coding agent working under LuckVd's direction. I prepared a documentation-only update in `docs/cli/features/profiles-groups.mdx` to add `listen_port_range` to the network example and field table, matching the existing profile schema and authoring guide. No runtime or security-policy behavior changes. This is an intent/approach disclosure, not an assignment request.
-
-- **Issue #2151** (2026-10-19): **fix(policy): enable Nix runtime and cache/channel access**
-  *Symptoms*: ## Linked Issue  <!-- External and agent-proposed PRs must reference an existing issue. Maintainer-directed routine PRs may leave this blank and explain the exception in the Summary. -->  None.  ## Summary  <!-- Briefly describe what this PR does and why. -->  This has three fixes for the Nix runtime, extending the policy group with read access to `~/.local/share/nix/` - the client's state directory - where files such as `trusted-settings.json` record the user's accepted trust decisions.  it adds the NixOS cache and channels URLs to the `package_registries` network group.  Also found that `nix profile` was blocked from write access to `~/.local/state/nix/profiles` so added a separate policy group for allowing that.  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  Already applied to my own configuration and test cases in the repo enhanced to include this.  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [X] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [X] Code changes follow the 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2970,617 +2970,175 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e85c057` (2026-10-19)
-**Commit Message**: fix(proxy): tolerate skew in certificates (#2126)
+### Incident Patch 1: `fd33b4d9` (2026-10-19)
+**Commit Message**: fix(cli): keep --log-file output under --silent (#2159)
 
-* fix(proxy): tolerate clock skew in certificates
+--silent set the tracing filter to "off" for every subscriber, so the
+--log-file / NONO_LOG_FILE subscriber wrote nothing. The log file now
+uses the verbosity / RUST_LOG filter. Only the stderr subscriber is
+muted.
 
-Backdates session CA and leaf not_before by one hour using a shared
-tolerance. Preserves expiry calculations and issuer caps and fails
-closed on time arithmetic errors.
+The file filter is resolved before RUST_LOG is exported as "off" for
+subprocesses, so a silent run without RUST_LOG still logs at "warn".
 
-Adds deterministic DER validity and rustls verification boundary tests.
+Fixes #2158
 
-Refs #2063.
+Signed-off-by: sreyas-endor <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: Kurtis Charnock <[REDACTED_EMAIL]>
-
-* fix(proxy): clarify TLS handshake failures
-
-Suggests clock and validity checks for typed certificate-validity
-failures.
-
-Keeps ambiguous alerts and EOFs neutral, and removes advice to disable
-route inspection.
-
-Preserves denied audit events and hard-fail behavior.
-
-Closes #2063.
-
-Signed-off-by: Kurtis Charnock <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Kurtis Charnock <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-proxy/src/tls_intercept/ca.rs` (modified, +55/-7)
+**File**: `crates/nono-cli/src/cli_bootstrap.rs` (modified, +67/-10)
 ```diff
-@@ -8,9 +8,9 @@
- //! ## Properties
- //!
- //! * Algorithm: ECDSA P-256 (matches the rustls/ring stack already in use)
--//! * Validity: 24 hours from generation. Long enough to outlive any plausible
--//!   `nono` invocation; short enough that a leaked cert file becomes useless
--//!   quickly.
-+//! * Validity: from one hour before generation to 24 hours after it. Tolerates
-+//!   clock skew and outlives any plausible `nono` invocation; short enough that
-+//!   a leaked cert file becomes useless quickly.
- //! * Subject: `CN=nono-session-ca`
- //! * Basic constraints: `CA:TRUE`
- //! * No CRL/OCSP — meaningless for an ephemeral, local-only CA.
-@@ -37,6 +37,17 @@ use zeroize::Zeroizing;
- /// any plausible session, short enough to limit blast radius if the cert file leaks.
- pub const CA_VALIDITY_DEFAULT: Duration = Duration::from_secs(24 * 60 * 60);
- 
-+/// Finite tolerance for clock differences between the issuer and TLS clients.
-+/// 1 hour, suggested in https://github.com/nolabs-ai/nono/issues/2063
-+pub(super) const NOT_BEFORE_SKEW: Duration = Duration::from_secs(60 * 60);
-+
-+pub(super) fn certificate_not_before(now: SystemTime) -> Result<OffsetDateTime> {
-+    let not_before = now
-+        .checked_sub(NOT_BEFORE_SKEW)
-+        .ok_or_else(|| ProxyError::Config("certificate not_before time underflow".to_string()))?;
-+    system_time_to_offset(not_before)
-+}
-+
- /// Ephemeral CA used to sign per-hostname leaf certificates for TLS interception.
- ///
- /// `Drop` zeroizes the private key bytes. The public certificate is exposed
-@@ -124,6 +135,14 @@ impl EphemeralCa {
-     /// Used by `--trust-proxy-ca` to create a CA with `CN=nono-proxy-ca` so
-     /// it appears with a recognizable name in macOS Keychain and trust store.
-     pub fn generate_with_cn(cn: &str, validity: Duration) -> Result<Self> {
-+        Self::generate_with_cn_at(cn, validity, SystemTime::now())
-+    }
-+
-+    pub(super) fn generate_with_cn_at(
-+        cn: &str,
-+        validity: Duration,
-+        now: SystemTime,
-+    ) -> Result<Self> {
-         let key_pair = KeyPair::generate_for(&PKCS_ECDSA_P256_SHA256).map_err(|e| {
-             ProxyError::Config(format!("failed to generate ephemeral CA key pair: {}", e))
-         })?;
-@@ -137,9 +156,10 @@ impl EphemeralCa {
-             KeyUsagePurpose::DigitalSignature,
-         ];
- 
--        let now = SystemTime::now();
--        let not_after = now + validity;
--        params.not_before = system_time_to_offset(now)?;
-+        let not_after = now
-+            .checked_add(validity)
-+            .ok_or_else(|| ProxyError::Config("CA certificate expiry time overflow".to_string()))?;
-+        params.not_before = certificate_not_before(now)?;
-         params.not_after = system_time_to_offset(not_after)?;
- 
-         let mut dn = DistinguishedName::new();
-@@ -306,7 +326,7 @@ pub fn split_key_cert_pem(combined: &str) -> Result<(Zeroizing<Vec<u8>>, String)
+@@ -43,6 +43,10 @@ pub(crate) fn init_internal_entrypoint_tracing() {
  }
  
- /// Convert `SystemTime` to the `time::OffsetDateTime` that `rcgen` expects.
--fn system_time_to_offset(t: SystemTime) -> Result<OffsetDateTime> {
-+pub(super) fn system_time_to_offset(t: SystemTime) -> Result<OffsetDateTime> {
-     OffsetDateTime::from_unix_timestamp(
-         t.duration_since(SystemTime::UNIX_EPOCH)
-             .map_err(|e| ProxyError::Config(format!("system time before unix epoch: {}", e)))?
-@@ -324,6 +344,34 @@ mod tests {
-     use rustls::pki_types::CertificateDer;
-     use rustls::pki_types::pem::PemObject;
- 
-+    #[test]
-+    fn generated_ca_backdates_start_without_extending_expiry() {
-+        use x509_parser::prelude::FromDer;
+ pub(crate) fn init_tracing(cli: &Cli) {
++    // Resolve the log file filter before RUST_LOG is exported below. Under
++    // `--silent` the export is "off", which must not reach the log file.
++    let file_filter = tracing_filter(cli, true);
 +
-+        let now = SystemTime::UNIX_EPOCH + Duration::from_secs(1_800_000_000);
-+        let validity = Duration::from_secs(600);
-+        let ca = EphemeralCa::generate_with_cn_at("test-ca", validity, now).unwrap();
-+        let (_, cert) = x509_parser::certificate::X509Certificate::from_der(ca.cert_der()).unwrap();
-+        assert_eq!(cert.validity().not_before.timestamp(), 1_800_000_000 - 3600);
-+        assert_eq!(cert.validity().not_after.timestamp(), 1_800_000_000 + 600);
-+        assert_eq!(ca.not_after(), now + validity);
-+
-+        // Loading persisted material must not rewrite either validity bound.
-+        let restored = EphemeralCa::from_existing(ca.key_der(), ca.cert_pem()).unwrap();
-+        assert_eq!(restored.cert_der(), ca.cert_der());
-+        assert_eq!(restored.not_after(), ca.not_after());
-+    }
-+
-+    #[test]
-+    fn invalid_certificate_times_fail_closed() {
-+        let now = SystemTime::UNIX_EPOCH + Duration::from_secs(1_800_000_000);
-+        assert!(EphemeralCa::generate_with_cn_at("test-ca", Duration::MAX, now).is_err());
-+        assert!(certificate_not_before(SystemTime::UNIX_EPOCH).is_err());
-+        assert!(system_time_to_offset(SystemTime::UNIX_EPOCH - Duration::from_secs(1)).is_err());
-+        let beyond_x509 = SystemTime::UNIX_EPOCH + Duration::from_secs(1_000_000_000_000);
-+        assert!(system_time_to_offset(beyond_x509).is_err());
-+    }
-+
-     #[test]
-     fn gen
-```
-
-**File**: `crates/nono-proxy/src/tls_intercept/cert_cache.rs` (modified, +89/-19)
-```diff
-@@ -22,7 +22,7 @@
- //! tunnel for a route that asked for L7 visibility.
- 
- use crate::error::{ProxyError, Result};
--use crate::tls_intercept::ca::EphemeralCa;
-+use crate::tls_intercept::ca::{EphemeralCa, certificate_not_before, system_time_to_offset};
- use rcgen::{
-     CertificateParams, DistinguishedName, DnType, ExtendedKeyUsagePurpose, KeyPair,
-     PKCS_ECDSA_P256_SHA256, SanType,
-@@ -33,7 +33,6 @@ use rustls::sign::CertifiedKey;
- use std::collections::HashMap;
- use std::sync::{Arc, Mutex};
- use std::time::{Duration, SystemTime};
--use time::OffsetDateTime;
- use tracing::{debug, warn};
- 
- /// Per-hostname leaf certificate cache backed by the session's [`EphemeralCa`].
-@@ -137,6 +136,15 @@ fn mint_leaf(
-     ca: &EphemeralCa,
-     hostname: &str,
-     leaf_validity: Option<Duration>,
-+) -> Result<Arc<CertifiedKey>> {
-+    mint_leaf_at(ca, hostname, leaf_validity, SystemTime::now())
-+}
-+
-+fn mint_leaf_at(
-+    ca: &EphemeralCa,
-+    hostname: &str,
-+    leaf_validity: Option<Duration>,
-+    now: SystemTime,
- ) -> Result<Arc<CertifiedKey>> {
-     // Generate a new key pair for this leaf. Distinct from the CA key:
-     // we never expose the CA's signing key in any TLS handshake.
-@@ -156,18 +164,20 @@ fn mint_leaf(
-     // without an Extended Key Usage extension containing id-kp-serverAuth.
-     params.extended_key_usages = vec![ExtendedKeyUsagePurpose::ServerAuth];
- 
--    let now = SystemTime::now();
-     let ca_not_after = ca.not_after();
-     if ca_not_after <= now {
-         return Err(ProxyError::Config(format!(
-             "CA certificate has expired; cannot mint leaf for '{hostname}'"
-         )));
+     // Export the resolved CLI verbosity into RUST_LOG (unless already set) so it
+     // propagates to internal re-exec subprocesses — notably the command-mediation
+     // child launcher, which forwards RUST_LOG and inits its own subscriber. This
+@@ -62,7 +66,7 @@ pub(crate) fn init_tracing(cli: &Cli) {
+         Some(path) => match SharedFileMakeWriter::new(path) {
+             Ok(writer) => {
+                 tracing_subscriber::fmt()
+-                    .with_env_filter(tracing_filter(cli))
++                    .with_env_filter(file_filter)
+                     .with_target(false)
+                     .with_ansi(false)
+                     .with_writer(writer)
+@@ -75,35 +79,43 @@ pub(crate) fn init_tracing(cli: &Cli) {
+                     err
+                 );
+                 tracing_subscriber::fmt()
+-                    .with_env_filter(tracing_filter(cli))
++                    .with_env_filter(tracing_filter(cli, false))
+                     .with_target(false)
+                     .with_writer(io::stderr)
+                     .init();
+             }
+         },
+         None => {
+             tracing_subscriber::fmt()
+-                .with_env_filter(tracing_filter(cli))
++                .with_env_filter(tracing_filter(cli, false))
+                 .with_target(false)
+                 .with_writer(io::stderr)
+                 .init();
+         }
      }
--    let leaf_not_after = leaf_validity
--        .and_then(|validity| now.checked_add(validity))
--        .map(|requested| requested.min(ca_not_after))
--        .unwrap_or(ca_not_after);
--    params.not_before = system_time_to_offset(now)?;
-+    let leaf_not_after = match leaf_validity {
-+        Some(validity) => now
-+            .checked_add(validity)
-+            .ok_or_else(|| ProxyError::Config("leaf certificate expiry time overflow".to_string()))?
-+            .min(ca_not_after),
-+        None => ca_not_after,
+ }
+ 
+-fn tracing_filter(cli: &Cli) -> EnvFilter {
+-    cli_log_override(cli)
+-        .map(EnvFilter::new)
+-        .unwrap_or_else(|| {
+-            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
+-        })
++// `--silent` only mutes terminal output. An explicit log file keeps the
++// verbosity / RUST_LOG filter.
++fn tracing_filter(cli: &Cli, to_file: bool) -> EnvFilter {
++    let level = if to_file {
++        cli_verbosity_level(cli)
++    } else {
++        cli_log_override(cli)
 +    };
-+    params.not_before = certificate_not_before(now)?;
-     params.not_after = system_time_to_offset(leaf_not_after)?;
- 
-     let mut dn = DistinguishedName::new();
-@@ -217,17 +227,6 @@ fn is_plausible_dns_name(s: &str) -> bool {
-         && s.contains(|c: char| c.is_ascii_alphabetic())
++    level.map(EnvFilter::new).unwrap_or_else(|| {
++        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
++    })
  }
  
--fn system_time_to_offset(t: SystemTime) -> Result<OffsetDateTime> {
--    OffsetDateTime::from_unix_timestamp(
--        t.duration_since(SystemTime::UNIX_EPOCH)
--            .map_err(|e| ProxyError::Config(format!("system time before unix epoch: {}", e)))?
--            .as_secs()
--            .try_into()
--            .map_err(|_| ProxyError::Config("system time exceeds i64::MAX".to_string()))?,
--    )
--    .map_err(|e| ProxyError::Config(format!("invalid system time for cert validity: {}", e)))
--}
--
- #[cfg(test)]
- #[allow(clippy::unwrap_used)]
- mod tests {
-@@ -237,6 +236,77 @@ mod tests {
-         CertCache::new(Arc::new(EphemeralCa::generate().unwrap()))
+ fn cli_log_override(cli: &Cli) -> Option<&'static str> {
+     if cli.silent {
+         return Some("off");
      }
- 
-+    #[test]
-+    fn leaf_validity_backdates_start_and_preserves_expiry_limits() {
-+        use x509_parser::prelude::FromDer;
-+
-+        let now = SystemTime::UNIX_EPOCH + Duration::from_secs(1_800_000_000);
-+        let ca =
-+            EphemeralCa::generate_with_cn_at("test-ca", Duration::from_secs(600), now).unwrap();
-+        for (requested, expected_expiry) in [
-+            (None, 600),
-+            (Some(Duration::from_secs(60)), 60),
-+            (Some(Duration::from_secs(1200)), 600),
-+        ] {
-+            let leaf = mint_leaf_at(&ca, "api.example.com", requested, now).unwrap();
-+            let (_, cert) =
-+                x509_parser::certificate::X509Certificate::from_der(leaf.cert[0].as_ref()).unwrap();
-+            assert_eq!(cert.validity().not_before.timestamp(), 1_800_000_000 - 3600);
-+            assert_eq!(
-+                cert.validity().not_after.timestamp(),
-+                1_800_000_000 + expected_expiry
-+            );
-+        }
-+        assert!(mint_leaf_at(&ca, "api.example.com", Some(Duration::MAX), now).is_err());
-+        assert!(mint_leaf_at(&ca, "api.example.com", None, ca.not_after()).is_err());
-+    }
-+
-+    #[test]
-+    fn leaf_verifies_at_skew_boundary_but_not_outside_validity() {
-+        use rustls::client::danger::ServerCertVerifier;
-+        use rustls::pki_types::{ServerName, UnixTime};
-+
-+        let now = SystemTime::UNIX_EPOCH + Duration::from_secs(1_800_000_000);
-+        let ca =
-+            EphemeralCa::generate_with_cn_at("test-ca", Duration::from_secs(600), now).unwrap();
-+        let leaf = mint_leaf_at(&ca, "api.example.com", None, now).unwrap();
-+        let mut roots = rustls::RootCertStore::empty();
-+        roots
-+            .add(CertificateDer::from(ca.cert_der().to_vec()))
-+            .unwrap();
-+        let verifier = rustls::client::WebPkiServerVerifier::builder_
-```
-
-**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +67/-4)
-```diff
-@@ -179,10 +179,11 @@ pub async fn handle_intercept_connect(stream: &mut TcpStream, ctx: InterceptCtx<
-             let reason = format!("tls handshake failed: {}", e);
-             warn!(
-                 "tls_intercept: handshake failed for {}:{} — {}. \
--                 Agent likely pins certs or carries a hard-coded trust list. \
--                 Remove endpoint_rules / credential_key from the route to fall \
--                 back to a transparent CONNECT tunnel.",
--                ctx.host, ctx.port, e
-+                 {}",
-+                ctx.host,
-+                ctx.port,
-+                e,
-+                handshake_failure_hint(&e)
-             );
-             audit::log_denied(
-                 ctx.audit_log,
-@@ -246,6 +247,28 @@ pub async fn handle_intercept_connect(stream: &mut TcpStream, ctx: InterceptCtx<
-     Ok(())
- }
- 
-+/// TLS alerts do not always identify the client's precise verification error.
-+/// In particular, an EOF alone provides no evidence of certificate pinning.
-+fn handshake_failure_hint(error: &std::io::Error) -> &'static str {
-+    match error
-+        .get_ref()
-+        .and_then(|e| e.downcast_ref::<rustls::Error>())
-+    {
-+        Some(rustls::Error::AlertReceived(rustls::AlertDescription::CertificateExpired))
-+        | Some(rustls::Error::InvalidCertificate(rustls::CertificateError::Expired))
-+        | Some(rustls::Error::InvalidCertificate(rustls::CertificateError::NotValidYet))
-+        | Some(rustls::Error::InvalidCertificate(rustls::CertificateError::ExpiredContext {
-+            ..
-+        }))
-+        | Some(rustls::Error::InvalidCertificate(rustls::CertificateError::NotValidYetContext {
-+            ..
-+        })) => "Check client and proxy clocks and certificate validity/expiry.",
-+        _ => {
-+            "Check client TLS diagnostics, client/proxy clocks, certificate validity, and trust configuration."
-+        }
-+    }
++    cli_verbosity_level(cli)
 +}
-+
- /// The parts of an inner HTTP/1.1 request that have been read off the wire
- /// but not yet acted on. Produced by [`parse_inner_request`] and consumed by
- /// [`handle_inner_request`].
-@@ -2219,6 +2242,46 @@ fn parse_request_line(line: &str) -> Result<(String, String, String)> {
+ 
++fn cli_verbosity_level(cli: &Cli) -> Option<&'static str> {
+     match cli_verbosity(cli) {
+         0 => None,
+         1 => Some("info"),
+@@ -195,10 +207,55 @@ impl Write for SharedFileWriter {
+ 
+ #[cfg(test)]
  mod tests {
-     use super::*;
+-    use super::SharedFileMakeWriter;
++    use super::{SharedFileMakeWriter, tracing_filter};
++    use crate::cli::Cli;
++    use crate::test_env::{ENV_LOCK, EnvVarGuard};
++    use clap::Parser;
+     use std::io::{Read, Write};
+     use tracing_subscriber::fmt::writer::MakeWriter;
  
 +    #[test]
-+    fn handshake_validity_errors_suggest_clocks_and_expiry() {
-+        let time = rustls::pki_types::UnixTime::since_unix_epoch(std::time::Duration::from_secs(1));
-+        for error in [
-+            rustls::Error::AlertReceived(rustls::AlertDescription::CertificateExpired),
-+            rustls::Error::InvalidCertificate(rustls::CertificateError::Expired),
-+            rustls::Error::InvalidCertificate(rustls::CertificateError::NotValidYet),
-+            rustls::Error::InvalidCertificate(rustls::CertificateError::ExpiredContext {
-+                time,
-+                not_after: time,
-+            }),
-+            rustls::Error::InvalidCertificate(rustls::CertificateError::NotValidYetContext {
-+                time,
-+                not_before: time,
-+            }),
-+        ] {
-+            let error = std::io::Error::new(std::io::ErrorKind::InvalidData, error);
-+            let hint = handshake_failure_hint(&error);
-+            assert!(hint.contains("clocks"));
-+            assert!(hint.contains("expiry"));
-+            assert!(!hint.contains("pinning"));
-+        }
-+    }
++    fn silent_mutes_stderr_filter_but_not_log_file_filter() {
++        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
++        let env = EnvVarGuard::set_all(&[("RUST_LOG", "nono_proxy::audit=info")]);
 +
-+    #[test]
-+    fn handshake_eof_and_ambiguous_alerts_do_not_diagnose_pinning() {
-+        for error in [
-+            std::io::Error::from(std::io::ErrorKind::UnexpectedEof),
-+            std::io::Error::new(
-+                std::io::ErrorKind::InvalidData,
-+                rustls::Error::AlertReceived(rustls::AlertDescription::BadCertificate),
-+            ),
-+        ] {
-+            let hint = handshake_failure_hint(&error);
-+            assert!(hint.contains("client TLS diagnostics"));
-+            assert!(!hint.contains("pinning"));
-+            assert!(!hint.contains("Remove"));
-+        }
-+    }
-+
-     #[test]
-     fn parse_request_line_extracts_components() {
-         let (m, p, v) = parse_request_line("GET /v1/models HTTP/1.1").unwrap();
-```
-
----
-
-### Incident Patch 2: `dacbc5a2` (2026-10-19)
-**Commit Message**: fix(proxy): resolve the Authorization phantom on token endpoint requests (#2136)
-
-Signed-off-by: James Carnegie <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-proxy/src/oauth_capture/mod.rs` (modified, +86/-0)
-```diff
-@@ -512,6 +512,92 @@ mod tests {
-         assert_eq!(rewritten, body);
-     }
- 
-+    #[test]
-+    fn request_header_rewrite_resolves_provider_phantom() {
-+        let store = store();
-+        let endpoint = store.lookup("auth.openai.com:443", "/oauth/token").unwrap();
-+        let rewritten = store
-+            .rewrite_response_body(
-+                endpoint,
-+                br#"{"access_token":"real-access","refresh_token":"real-refresh"}"#,
-+            )
-+            .unwrap();
-+        let json: Value = serde_json::from_slice(&rewritten).unwrap();
-+        let phantom = json["access_token"].as_str().unwrap();
-+
-+        let resolved = store
-+            .rewrite_request_header_value(endpoint, &format!("Bearer {phantom}"))
-+            .expect("provider consumer resolves the minted phantom");
-+        assert_eq!(resolved, "Bearer real-access");
-+    }
-+
-+    #[test]
-+    fn request_header_rewrite_passes_plain_and_unknown_values_through() {
-+        let store = store();
-+        let endpoint = store.lookup("auth.openai.com:443", "/oauth/token").unwrap();
-+        let unknown = format!("nono_{}", "f".repeat(64));
-+
++        let cli = Cli::parse_from([
++            "nono",
++            "--silent",
++            "--log-file",
++            "/tmp/nono.log",
++            "run",
++            "--allow",
++            ".",
++            "echo",
++            "hi",
++        ]);
++        assert_eq!(tracing_filter(&cli, false).to_string(), "off");
 +        assert_eq!(
-+            store.rewrite_request_header_value(endpoint, "Bearer plain-token"),
-+            None
++            tracing_filter(&cli, true).to_string(),
++            "nono_proxy::audit=info"
 +        );
-+        assert!(
-+            store
-+                .rewrite_request_header_value(endpoint, &format!("Bearer {unknown}"))
-+                .is_none(),
-+            "an unknown phantom must pass through unchanged"
-+        );
-+    }
 +
-+    #[test]
-+    fn request_header_rewrite_does_not_resolve_other_providers_phantom() {
-+        let store = OAuthCaptureStore::load(&[
-+            OAuthCaptureConfig {
-+                provider: "github".to_string(),
-+                token_endpoints: vec![OAuthTokenEndpointConfig {
-+                    host: "https://github.com".to_string(),
-+                    path: "/login/oauth/access_token".to_string(),
-+                    response_fields: opaque_fields(["access_token"]),
-+                    request_body: OAuthTokenRequestBodyFormat::Auto,
-+                    request_nonce_fields: vec!["refresh_token".to_string()],
-+                }],
-+                admitted_consumers: vec!["proxy.github".to_string()],
-+            },
-+            OAuthCaptureConfig {
-+                provider: "other".to_string(),
-+                token_endpoints: vec![OAuthTokenEndpointConfig {
-+                    host: "https://auth.other.com".to_string(),
-+                    path: "/oauth/token".to_string(),
-+                    response_fields: opaque_fields(["access_token"]),
-+                    request_body: OAuthTokenRequestBodyFormat::Auto,
-+                    request_nonce_fields: vec!["refresh_token".to_string()],
-+                }],
-+                admitted_consumers: vec!["proxy.other".to_string()],
-+            },
-+        ])
-+        .unwrap();
++        env.remove("RUST_LOG");
++        assert_eq!(tracing_filter(&cli, false).to_string(), "off");
++        assert_eq!(tracing_filter(&cli, true).to_string(), "warn");
 +
-+        let github_endpoint = store
-+            .lookup("github.com:443", "/login/oauth/access_token")
-+            .unwrap();
-+        let other_endpoint = store.lookup("auth.other.com:443", "/oauth/token").unwrap();
-+        let rewritten = store
-+            .rewrite_response_body(
-+                other_endpoint,
-+                br#"{"access_token":"other-provider-token"}"#,
-+            )
-+            .unwrap();
-+        let json: Value = serde_json::from_slice(&rewritten).unwrap();
-+        let other_phantom = json["access_token"].as_str().unwrap();
-+
-+        assert!(
-+            store
-+                .rewrite_request_header_value(github_endpoint, &format!("Bearer {other_phantom}"))
-+                .is_none(),
-+            "a phantom minted for another provider must not resolve on this endpoint"
-+        );
++        let cli = Cli::parse_from([
++            "nono",
++            "--silent",
++            "--log-file",
++            "/tmp/nono.log",
++            "run",
++            "-vv",
++            "--allow",
++            ".",
++            "echo",
++            "hi",
++        ]);
++        assert_eq!(tracing_filter(&cli, false).to_string(), "off");
++        assert_eq!(tracing_filter(&cli, true).to_string(), "debug");
 +    }
 +
      #[test]
-     fn request_rewrite_resolves_form_refresh_phantom() {
-         let store = store();
+     fn shared_file_make_writer_appends_output() {
+         let temp_dir = tempfile::tempdir().expect("tempdir");
 ```
 
-**File**: `crates/nono-proxy/src/oauth_capture/rewrite.rs` (modified, +12/-0)
+**File**: `docs/cli/usage/flags.mdx` (modified, +2/-0)
 ```diff
-@@ -9,6 +9,18 @@ use std::collections::HashSet;
- use tracing::debug;
+@@ -11,6 +11,8 @@ These options work with all commands.
  
- impl OAuthCaptureStore {
-+    /// Resolve an OAuth-capture phantom in a token endpoint request header
-+    /// value (e.g. `Authorization: Bearer <phantom>`) back to the real token
-+    /// for this endpoint's provider. `None` leaves the value unchanged.
-+    pub fn rewrite_request_header_value(
-+        &self,
-+        endpoint: &LoadedOAuthEndpoint,
-+        value: &str,
-+    ) -> Option<String> {
-+        let consumer = provider_consumer(&endpoint.provider);
-+        self.rewrite_header_value(value, &consumer)
-+    }
-+
-     pub fn rewrite_request_body(
-         &self,
-         endpoint: &LoadedOAuthEndpoint,
-```
-
-**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +377/-0)
-```diff
-@@ -1274,6 +1274,14 @@ where
-                     resolve_nonce_in_header_value(value, consumer, redeem_phantoms, resolver)
-                 })
-             })
-+            .or_else(|| {
-+                // Token endpoint requests bypass route selection, so without
-+                // this the Bearer phantom would reach the upstream verbatim.
-+                oauth_endpoint.and_then(|endpoint| {
-+                    ctx.oauth_capture_store
-+                        .rewrite_request_header_value(endpoint, value)
-+                })
-+            })
-             .unwrap_or_else(|| value.clone());
-         request.push_str(&format!("{}: {}\r\n", name, resolved_value));
-     }
-@@ -3634,4 +3642,373 @@ mod tests {
+ Suppress all nono output (banner, summary, status messages). Only the executed command's output will be shown.
  
-         assert!(tunnel_result.is_ok());
-     }
++Logs still go to the file set by `--log-file` or `NONO_LOG_FILE`. Only terminal output is suppressed.
 +
-+    // --- OAuth token endpoint request forwarding (issue #1954) ---
-+
-+    fn oauth_capture_config(port: u16) -> crate::config::OAuthCaptureConfig {
-+        use crate::config::{
-+            OAuthCaptureConfig, OAuthTokenEndpointConfig, OAuthTokenRequestBodyFormat,
-+            OAuthTokenResponseFieldConfig, OAuthTokenResponseFieldKind,
-+        };
-+
-+        OAuthCaptureConfig {
-+            provider: "github".to_string(),
-+            token_endpoints: vec![OAuthTokenEndpointConfig {
-+                host: format!("https://localhost:{port}"),
-+                path: "/copilot_internal/v2/token".to_string(),
-+                response_fields: vec![
-+                    OAuthTokenResponseFieldConfig {
-+                        path: "access_token".to_string(),
-+                        kind: OAuthTokenResponseFieldKind::Opaque,
-+                        format: None,
-+                    },
-+                    OAuthTokenResponseFieldConfig {
-+                        path: "refresh_token".to_string(),
-+                        kind: OAuthTokenResponseFieldKind::Opaque,
-+                        format: None,
-+                    },
-+                ],
-+                request_body: OAuthTokenRequestBodyFormat::Auto,
-+                request_nonce_fields: vec!["refresh_token".to_string()],
-+            }],
-+            admitted_consumers: vec!["proxy.github_oauth".to_string()],
-+        }
-+    }
-+
-+    /// Mint access and refresh phantoms the way a real capture would, and
-+    /// return the strings a sandboxed client would hold afterwards.
-+    fn mint_oauth_phantoms(store: &OAuthCaptureStore, port: u16) -> (String, String) {
-+        let endpoint = store
-+            .lookup(&format!("localhost:{port}"), "/copilot_internal/v2/token")
-+            .unwrap();
-+        let rewritten = store
-+            .rewrite_response_body(
-+                endpoint,
-+                br#"{"access_token":"gho_real_access","refresh_token":"gho_real_refresh"}"#,
-+            )
-+            .unwrap();
-+        let json: serde_json::Value = serde_json::from_slice(&rewritten).unwrap();
-+        (
-+            json["access_token"].as_str().unwrap().to_string(),
-+            json["refresh_token"].as_str().unwrap().to_string(),
-+        )
-+    }
-+
-+    /// TLS server config for a mock HTTP/1.1 upstream, signed by the
-+    /// session CA so the proxy's connector trusts it.
-+    fn http1_upstream_server_config(
-+        ca: &crate::tls_intercept::ca::EphemeralCa,
-+    ) -> Arc<rustls::server::ServerConfig> {
-+        use rcgen::{CertificateParams, KeyPair};
-+        use rustls::pki_types::{PrivateKeyDer, PrivatePkcs8KeyDer};
-+        use time::OffsetDateTime;
-+
-+        let mut params = CertificateParams::new(vec!["localhost".to_string()]).unwrap();
-+        params.not_before = OffsetDateTime::now_utc();
-+        params.not_after = OffsetDateTime::now_utc() + time::Duration::hours(1);
-+        let key_pair = KeyPair::generate_for(&rcgen::PKCS_ECDSA_P256_SHA256).unwrap();
-+        let cert = params.signed_by(&key_pair, ca.issuer()).unwrap();
-+        let private_key = PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(key_pair.serialize_der()));
-+
-+        let config = rustls::server::ServerConfig::builder_with_provider(Arc::new(
-+            rustls::crypto::ring::default_provider(),
-+        ))
-+        .with_safe_default_protocol_versions()
-+        .unwrap()
-+        .with_no_client_auth()
-+        .with_single_cert(vec![cert.der().clone()], private_key)
-+        .unwrap();
-+        Arc::new(config)
-+    }
-+
-+    /// Client TLS config trusting only the session CA, mirroring the
-+    /// production HTTP/1.1 upstream connector (no ALPN).
-+    fn https_connector_trusting(ca_pem: &str) -> tokio_rustls::TlsConnector {
-+        use rustls::pki_types::pem::PemObject;
-+
-+        let mut roots = rustls::RootCertStore::empty();
-+        let cert = rustls::pki_types::CertificateDer::from_pem_slice(ca_pem.as_bytes()).unwrap();
-+        roots.add(cert).unwrap();
-+        let config = rustls::ClientConfig::builder_with_provider(Arc::new(
-+            rustls::crypto::ring::default_provider(),
-+        ))
-+        .with_safe_default_protocol_versions()
-+        .unwrap()
-+        .with_root_certificates(
+ ```bash
+ nono -s run --allow-cwd -- my-agent
+ nono --silent why --path ~/.ssh/id_rsa --op read
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2162** (2026-10-19): chore(deps): bump the routine-rust group with 5 updates (@dependabot[bot])
+- **PR #2161** (2026-10-19): chore(deps): bump cachix/install-nix-action from 31.11.1 to 31.11.2 in the routine-actions group (@dependabot[bot])
+- **PR #2159** (2026-10-19): fix(cli): keep --log-file output under --silent (@sreyas-endor)
 - **PR #2153** (2026-10-19): docs(cli): document network.listen_port_range in profiles-groups (@LuckVd)
 - **PR #2151** (2026-10-19): fix(policy): enable Nix runtime and cache/channel access (@jpds)
 - **PR #2150** (2026-10-19): docs(neps): add NEP 0007 for remote supervisor decisions over vsock (@lukehinds)
-- **PR #2149** (2026-10-19): fix(policy): grant system_read_linux_core access to /var/lib/ca-certificates (@bharathvemula)
-- **PR #2145** (2026-10-19): feat(linux): opt-in namespace isolation (NEP-0004) (@lukehinds)
-- **PR #2144** (2026-10-19): chore(release): automate NEP roadmap generation script and workflow (@lukehinds)
 
 ---
 
@@ -3600,60 +3158,65 @@ Signed-off-by: James Carnegie <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy): tolerate skew in certificates (#2126)
+## X. cli): keep --log-file output under --silent (#2159)
 
 **RULE**:
-When implementing operations in `crates/nono-proxy/src/tls_intercept/ca.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/cli_bootstrap.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e85c057`: proxy): tolerate skew in certificates (#2126). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd33b4d9`: cli): keep --log-file output under --silent (#2159). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-proxy/src/tls_intercept/ca.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/cli_bootstrap.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! * Validity: from one hour before generation to 24 hours after it. Tolerates
-//!   clock skew and outlives any plausible `nono` invocation; short enough that
-//!   a leaked cert file becomes useless quickly.
-/// Finite tolerance for clock differences between the issuer and TLS clients.
-/// 1 hour, suggested in https://github.com/nolabs-ai/nono/issues/2063
-pub(super) const NOT_BEFORE_SKEW: Duration = Duration::from_secs(60 * 60);
+    // Resolve the log file filter before RUST_LOG is exported below. Under
+    // `--silent` the export is "off", which must not reach the log file.
+    let file_filter = tracing_filter(cli, true);
 
-pub(super) fn certificate_not_before(now: SystemTime) -> Result<OffsetDateTime> {
-    let not_before = now
-        .checked_sub(NOT_BEFORE_SKEW)
-        .ok_or_else(|| ProxyError::Config("certificate not_before time underflow".to_string()))?;
-    system_time_to_offset(not_before)
+                    .with_env_filter(file_filter)
+                    .with_env_filter(tracing_filter(cli, false))
+                .with_env_filter(tracing_filter(cli, false))
+// `--silent` only mutes terminal output. An explicit log file keeps the
+// verbosity / RUST_LOG filter.
+fn tracing_filter(cli: &Cli, to_file: bool) -> EnvFilter {
+    let level = if to_file {
+        cli_verbosity_level(cli)
+    } else {
+        cli_log_override(cli)
+    };
+    level.map(EnvFilter::new).unwrap_or_else(|| {
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
+    })
+    cli_verbosity_level(cli)
 }
-
-        Self::generate_with_cn_at(cn, validity, SystemTime::now())
-    }
-
-    pub(super) fn generate_with_cn_at(
-        cn: &str,
-        validity: Duration,
-        now: SystemTime,
-    ) -> Result<Self> {
-        let not_after = now
-            .checked_add(validity)
-            .ok_or_else(|| ProxyError::Config("CA certificate expiry time overflow".to_string()))?;
-        params.not_before = certificate_not_before(now)?;
-pub(super) fn system_time_to_offset(t: SystemTime)
+fn cli_verbosity_level(cli: &Cli) -> Option<&'static str> {
+    use super::{SharedFileMakeWriter, tracing_filter};
+    use crate::cli::Cli;
+    use crate::test_env::{ENV_LOCK, EnvVarGuard};
+    use clap::Parser;
+    #[test]
+    fn silent_mutes_stderr_filter_but_not_log_file_filter() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let env =
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-//! * Validity: 24 hours from generation. Long enough to outlive any plausible
-//!   `nono` invocation; short enough that a leaked cert file becomes useless
-//!   quickly.
-        let now = SystemTime::now();
-        let not_after = now + validity;
-        params.not_before = system_time_to_offset(now)?;
-fn system_time_to_offset(t: SystemTime) -> Result<OffsetDateTime> {
+                    .with_env_filter(tracing_filter(cli))
+                    .with_env_filter(tracing_filter(cli))
+                .with_env_filter(tracing_filter(cli))
+fn tracing_filter(cli: &Cli) -> EnvFilter {
+    cli_log_override(cli)
+        .map(EnvFilter::new)
+        .unwrap_or_else(|| {
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
+        })
+    use super::SharedFileMakeWriter;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e85c057` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd33b4d9` are properly handled with clean fallback behavior.

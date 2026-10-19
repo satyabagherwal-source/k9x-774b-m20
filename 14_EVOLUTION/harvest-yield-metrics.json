@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T16:12:10.636Z",
-  "total_cycles_completed": 3323,
-  "total_learnings_persisted": 3323,
-  "total_rules_promoted": 2466,
+  "last_updated": "2026-10-19T16:18:27.688Z",
+  "total_cycles_completed": 3328,
+  "total_learnings_persisted": 3328,
+  "total_rules_promoted": 2473,
   "history": [
-    {
-      "timestamp": "2026-10-19T10:10:05.208Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T10:16:09.558Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T10:16:11.402Z",
-      "repository": "facebook/folly",
-      "learningId": "learn-github-facebook-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T10:16:16.409Z",
-      "repository": "Kotlin/kmp-production-sample",
-      "learningId": "learn-github-kotlin-kmp-production-sample",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T10:16:21.125Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T10:22:25.468Z",
       "repository": "vllm-sr/d3",
@@ -1403,6 +1368,41 @@
       "repository": "Checkmarx/kics",
       "learningId": "learn-github-checkmarx-kics",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T16:18:09.809Z",
+      "repository": "taiga-family/taiga-ui",
+      "learningId": "learn-github-taiga-family-taiga-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T16:18:17.783Z",
+      "repository": "sergdort/ModernCleanArchitectureSwiftUI",
+      "learningId": "learn-github-sergdort-moderncleanarchitectureswiftui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T16:18:20.321Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T16:18:24.379Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T16:18:27.688Z",
+      "repository": "Maatify/php-seo",
+      "learningId": "learn-github-maatify-php-seo",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

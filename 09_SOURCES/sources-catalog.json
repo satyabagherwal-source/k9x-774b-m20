@@ -1800,14 +1800,14 @@
     "learningId": "learn-github-hartemyaakoub-seo-toolkit"
   },
   "maatify-seo": {
-    "repository": "Maatify/seo",
+    "repository": "Maatify/php-seo",
     "platform": "github",
     "sourceUrl": "https://github.com/Maatify/seo",
-    "sourceVersion": "HEAD",
-    "license": "Open-Source",
-    "contentHash": "c4d354fc1fda891573de67d96c74b4f6cf2256846e7d6a2a2c15718cddf17877",
-    "lastHarvestedAt": "2026-10-18T04:59:14.453Z",
-    "learningId": "learn-github-maatify-seo"
+    "sourceVersion": "47d17d7d",
+    "license": "MIT",
+    "contentHash": "af9e3c15e90db4e7c7e5476eab48cf15abb61127a6175d514cc828601bbd1c7f",
+    "lastHarvestedAt": "2026-10-19T16:18:27.685Z",
+    "learningId": "learn-github-maatify-php-seo"
   },
   "davo20019-seo-analysis": {
     "repository": "davo20019/seo-analysis",
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "279c26ae",
+    "sourceVersion": "c8832db4",
     "license": "Apache-2.0",
-    "contentHash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
-    "lastHarvestedAt": "2026-10-19T13:14:54.492Z",
+    "contentHash": "d171b1761c47c672f7d34c898b905b85c39a236771dab64c5722cfec82c8d104",
+    "lastHarvestedAt": "2026-10-19T16:18:20.318Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "158cf605",
+    "sourceVersion": "8647602b",
     "license": "Apache-2.0",
-    "contentHash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
-    "lastHarvestedAt": "2026-10-19T03:14:05.517Z",
+    "contentHash": "eb0679628a36d450d63660e4122bf30a6e77aa1de7770eaa74e553e54ea730ed",
+    "lastHarvestedAt": "2026-10-19T16:18:24.376Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -6033,10 +6033,10 @@
     "repository": "taiga-family/taiga-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/taiga-family/taiga-ui",
-    "sourceVersion": "3ae41cf8",
+    "sourceVersion": "65e3ce22",
     "license": "Apache-2.0",
-    "contentHash": "e7a1ad477c19ee0ecac3a95210cb9b5c66a45eabdf1b427d066a66efeea20881",
-    "lastHarvestedAt": "2026-10-19T05:05:32.309Z",
+    "contentHash": "190485c0f8028dd9dd16594b368f47ba759e019b9dd60dfd64b97284a57d4a57",
+    "lastHarvestedAt": "2026-10-19T16:18:09.806Z",
     "learningId": "learn-github-taiga-family-taiga-ui"
   },
   "u-root-u-root": {
@@ -8338,5 +8338,15 @@
     "contentHash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
     "lastHarvestedAt": "2026-10-19T16:12:07.006Z",
     "learningId": "learn-github-jellyfin-swiftfin"
+  },
+  "sergdort-moderncleanarchitectureswiftui": {
+    "repository": "sergdort/ModernCleanArchitectureSwiftUI",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
+    "sourceVersion": "4fd07daa",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "807ae6408a7b5c6aaf5815bc367e7ef506cf87ffe70d504f6514600beee3a2ec",
+    "lastHarvestedAt": "2026-10-19T16:18:17.781Z",
+    "learningId": "learn-github-sergdort-moderncleanarchitectureswiftui"
   }
 }

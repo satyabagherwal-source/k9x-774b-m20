@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:12:10.606Z",
-  "total_verified_learnings": 848,
+  "last_updated": "2026-10-19T16:18:27.651Z",
+  "total_verified_learnings": 850,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -32394,8 +32394,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "279c26ae",
-      "content_hash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
+      "source_version": "c8832db4",
+      "content_hash": "d171b1761c47c672f7d34c898b905b85c39a236771dab64c5722cfec82c8d104",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -32413,6 +32413,11 @@
           "number": 2602,
           "title": "proxy): tolerate skew in certificates (#2126)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2672,
+          "title": "cli): keep --log-file output under --silent (#2159)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32420,7 +32425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:14:54.460Z",
+      "verified_at": "2026-10-19T16:18:20.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37876,22 +37881,35 @@
     "learn-github-sergdort-moderncleanarchitectureswiftui": {
       "learning_id": "learn-github-sergdort-moderncleanarchitectureswiftui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sergdort-moderncleanarchitectureswiftui",
+      "source": "sergdort/ModernCleanArchitectureSwiftUI",
+      "repository": "sergdort/ModernCleanArchitectureSwiftUI",
       "slug": "sergdort-moderncleanarchitectureswiftui",
       "platform": "github",
       "source_url": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
-      "source_version": "HEAD",
-      "content_hash": "6567d94dda0deec2e7f5ab0e97de20f4132730fc7919f856f6c4012ed12cb8f5",
+      "source_version": "4fd07daa",
+      "content_hash": "807ae6408a7b5c6aaf5815bc367e7ef506cf87ffe70d504f6514600beee3a2ec",
       "dossier_path": "07_PROJECT_LEARNING/sergdort-moderncleanarchitectureswiftui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sergdort-moderncleanarchitectureswiftui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2671,
+          "title": "Use tuist 4.41.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.447Z"
+      "verified_at": "2026-10-19T16:18:17.730Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sfu-db-connector-x": {
       "learning_id": "learn-github-sfu-db-connector-x",
@@ -39572,14 +39590,19 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "158cf605",
-      "content_hash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
+      "source_version": "8647602b",
+      "content_hash": "eb0679628a36d450d63660e4122bf30a6e77aa1de7770eaa74e553e54ea730ed",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
         {
           "number": 2065,
           "title": "[BugFix] Drop repeated policy lookups and unbounded waits left by the planner lo",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2673,
+          "title": "[BugFix] Fail an mv refresh on a non-ref base table lock timeout and keep inspec",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39588,7 +39611,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:14:05.467Z",
+      "verified_at": "2026-10-19T16:18:24.323Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40570,14 +40593,19 @@
       "slug": "taiga-family-taiga-ui",
       "platform": "github",
       "source_url": "https://github.com/taiga-family/taiga-ui",
-      "source_version": "3ae41cf8",
-      "content_hash": "e7a1ad477c19ee0ecac3a95210cb9b5c66a45eabdf1b427d066a66efeea20881",
+      "source_version": "65e3ce22",
+      "content_hash": "190485c0f8028dd9dd16594b368f47ba759e019b9dd60dfd64b97284a57d4a57",
       "dossier_path": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 2158,
           "title": "layout): `AppBar` align title to start when it overflows on iOS liquid glass (#1",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2670,
+          "title": "addon-mobile): `DropdownSheet` no longer closes and reopens in a loop under a ho",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40586,7 +40614,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:05:32.214Z",
+      "verified_at": "2026-10-19T16:18:09.759Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89150,6 +89178,147 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:12:10.599Z"
+    },
+    "rule-2670": {
+      "learning_id": "rule-2670",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2670,
+      "title": "addon-mobile): `DropdownSheet` no longer closes and reopens in a loop under a ho",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "65e3ce22",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:18:09.759Z"
+    },
+    "rule-2671": {
+      "learning_id": "rule-2671",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2671,
+      "title": "Use tuist 4.41.0",
+      "source_url": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
+      "source_version": "4fd07daa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:18:17.730Z"
+    },
+    "rule-2672": {
+      "learning_id": "rule-2672",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2672,
+      "title": "cli): keep --log-file output under --silent (#2159)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "c8832db4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:18:20.265Z"
+    },
+    "rule-2673": {
+      "learning_id": "rule-2673",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2673,
+      "title": "[BugFix] Fail an mv refresh on a non-ref base table lock timeout and keep inspec",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "8647602b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:18:24.323Z"
+    },
+    "learn-github-maatify-php-seo": {
+      "learning_id": "learn-github-maatify-php-seo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Maatify/php-seo",
+      "repository": "Maatify/php-seo",
+      "slug": "maatify-seo",
+      "platform": "github",
+      "source_url": "https://github.com/Maatify/seo",
+      "source_version": "47d17d7d",
+      "content_hash": "af9e3c15e90db4e7c7e5476eab48cf15abb61127a6175d514cc828601bbd1c7f",
+      "dossier_path": "07_PROJECT_LEARNING/maatify-seo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/maatify-seo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2674,
+          "title": "The Single Source of Truth for Entity Identity (Slug Decoupling)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2675,
+          "title": "Pure Domain Logic Isolation (No Global State)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2676,
+          "title": "Pre-Stable API Contract Rigidity",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T16:18:27.642Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2674": {
+      "learning_id": "rule-2674",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2674,
+      "title": "The Single Source of Truth for Entity Identity (Slug Decoupling)",
+      "source_url": "https://github.com/Maatify/seo",
+      "source_version": "47d17d7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:18:27.642Z"
+    },
+    "rule-2675": {
+      "learning_id": "rule-2675",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2675,
+      "title": "Pure Domain Logic Isolation (No Global State)",
+      "source_url": "https://github.com/Maatify/seo",
+      "source_version": "47d17d7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:18:27.642Z"
+    },
+    "rule-2676": {
+      "learning_id": "rule-2676",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2676,
+      "title": "Pre-Stable API Contract Rigidity",
+      "source_url": "https://github.com/Maatify/seo",
+      "source_version": "47d17d7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:18:27.642Z"
     }
   },
   "aliases": {

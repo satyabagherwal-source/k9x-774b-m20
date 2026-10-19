@@ -3353,3 +3353,8 @@ Every entry in this ledger must capture:
 | `learn-github-hartemyaakoub-seo-toolkit` | `https://github.com/hartemyaakoub/seo-toolkit` | `e1126c75` | Multi-dimensional audit evidence | 2026-10-19T16:12:04.446Z |
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `7a1994d6` | Multi-dimensional audit evidence | 2026-10-19T16:12:07.006Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a1c1b947` | Multi-dimensional audit evidence | 2026-10-19T16:12:10.634Z |
+| `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `65e3ce22` | Multi-dimensional audit evidence | 2026-10-19T16:18:09.806Z |
+| `learn-github-sergdort-moderncleanarchitectureswiftui` | `https://github.com/sergdort/ModernCleanArchitectureSwiftUI` | `4fd07daa` | Multi-dimensional audit evidence | 2026-10-19T16:18:17.781Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `c8832db4` | Multi-dimensional audit evidence | 2026-10-19T16:18:20.318Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `8647602b` | Multi-dimensional audit evidence | 2026-10-19T16:18:24.376Z |
+| `learn-github-maatify-php-seo` | `https://github.com/Maatify/seo` | `47d17d7d` | Multi-dimensional audit evidence | 2026-10-19T16:18:27.685Z |

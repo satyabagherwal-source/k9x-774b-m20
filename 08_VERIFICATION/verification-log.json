@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0KI4",
-    "timestamp": "2026-10-19T03:26:45.964Z",
-    "repository": "czy0729/Bangumi",
-    "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "2f8c2f1c638b978448b1d8392352df456eabd1f8c65fee434cd98e0ce691092b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0OPT",
-    "timestamp": "2026-10-19T03:26:51.425Z",
-    "repository": "aquasecurity/tfsec",
-    "learningId": "learn-github-aquasecurity-tfsec",
-    "contentHash": "9ae104402e152cab524ba6be554959a8869a7f6b3543d286a3d4356b11b8135a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0ROG",
-    "timestamp": "2026-10-19T03:26:55.264Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8HOT",
-    "timestamp": "2026-10-19T03:32:55.565Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8HUB",
-    "timestamp": "2026-10-19T03:32:55.763Z",
-    "repository": "React95/React95",
-    "learningId": "learn-github-react95-react95",
-    "contentHash": "88e795ad598c759efc38c6bfa91486f59d93ebe1d35dc68d204174b0640e5bac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-8IQB",
     "timestamp": "2026-10-19T03:32:56.915Z",
     "repository": "embassy-rs/embassy",
@@ -7492,6 +7417,81 @@
     "contentHash": "93d09dc5b103e1a03c4057ca7bac5f709b42e293a0236207b2c18421c1ce448f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KLCB",
+    "timestamp": "2026-10-19T16:18:09.803Z",
+    "repository": "taiga-family/taiga-ui",
+    "learningId": "learn-github-taiga-family-taiga-ui",
+    "contentHash": "190485c0f8028dd9dd16594b368f47ba759e019b9dd60dfd64b97284a57d4a57",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KRHU",
+    "timestamp": "2026-10-19T16:18:17.778Z",
+    "repository": "sergdort/ModernCleanArchitectureSwiftUI",
+    "learningId": "learn-github-sergdort-moderncleanarchitectureswiftui",
+    "contentHash": "807ae6408a7b5c6aaf5815bc367e7ef506cf87ffe70d504f6514600beee3a2ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KTGB",
+    "timestamp": "2026-10-19T16:18:20.316Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "d171b1761c47c672f7d34c898b905b85c39a236771dab64c5722cfec82c8d104",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KWL2",
+    "timestamp": "2026-10-19T16:18:24.374Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "eb0679628a36d450d63660e4122bf30a6e77aa1de7770eaa74e553e54ea730ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KZ4Z",
+    "timestamp": "2026-10-19T16:18:27.683Z",
+    "repository": "Maatify/php-seo",
+    "learningId": "learn-github-maatify-php-seo",
+    "contentHash": "af9e3c15e90db4e7c7e5476eab48cf15abb61127a6175d514cc828601bbd1c7f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
