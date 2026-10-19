@@ -2952,3 +2952,9 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `3d919010` | Multi-dimensional audit evidence | 2026-10-19T05:12:49.515Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `7bcf8618` | Multi-dimensional audit evidence | 2026-10-19T05:12:52.305Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1a9f1f6f` | Multi-dimensional audit evidence | 2026-10-19T05:12:57.157Z |
+| `learn-github-danielpetho-fancy` | `https://github.com/danielpetho/fancy` | `f9f62c61` | Multi-dimensional audit evidence | 2026-10-19T05:18:59.140Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `2680518d` | Multi-dimensional audit evidence | 2026-10-19T05:18:59.952Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-19T05:19:03.836Z |
+| `learn-github-xinthink-react-native-material-kit` | `https://github.com/xinthink/react-native-material-kit` | `3a1c7a7e` | Multi-dimensional audit evidence | 2026-10-19T05:19:04.317Z |
+| `learn-github-kubeshark-kubeshark` | `https://github.com/kubeshark/kubeshark` | `e27687a8` | Multi-dimensional audit evidence | 2026-10-19T05:19:06.577Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `16917f94` | Multi-dimensional audit evidence | 2026-10-19T05:19:12.530Z |

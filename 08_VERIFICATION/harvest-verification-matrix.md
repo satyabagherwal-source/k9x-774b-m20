@@ -2945,3 +2945,9 @@
 | `CYCLE-20261019-SYN9` | `2026-10-19T05:12:49.509Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2167` | Yes (`c8f6a263...`) |
 | `CYCLE-20261019-T0SR` | `2026-10-19T05:12:52.299Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2168` | Yes (`bb2ecf30...`) |
 | `CYCLE-20261019-T4JJ` | `2026-10-19T05:12:57.151Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2169` | Yes (`3563cde1...`) |
+| `CYCLE-20261019-0VUM` | `2026-10-19T05:18:59.134Z` | `danielpetho/fancy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2170` | Yes (`591dd576...`) |
+| `CYCLE-20261019-0WH6` | `2026-10-19T05:18:59.946Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2171` | Yes (`bd6c6487...`) |
+| `CYCLE-20261019-0ZH2` | `2026-10-19T05:19:03.830Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2172, Rule 2173, Rule 2174` | Yes (`f5692bca...`) |
+| `CYCLE-20261019-0ZUE` | `2026-10-19T05:19:04.310Z` | `xinthink/react-native-material-kit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2175` | Yes (`9d147f35...`) |
+| `CYCLE-20261019-11L6` | `2026-10-19T05:19:06.570Z` | `kubeshark/kubeshark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kubeshark-kubeshark-learnings.md` | Yes (`638ea29c...`) |
+| `CYCLE-20261019-166J` | `2026-10-19T05:19:12.523Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2176` | Yes (`edb9bc72...`) |

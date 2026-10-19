@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:12:57.163Z",
+  "last_updated": "2026-10-19T05:19:12.543Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -603,14 +603,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "9d5ef725b30723cfd2374fc969a46c66e472f8217bba64bc35a553ef8008f4cd",
-      "verified_at": "2026-10-17T23:36:18.111Z",
+      "content_hash": "f5692bcad981b5781e09a6e8eacd7d82346c4dc29b0252a723dd6b61a440930c",
+      "verified_at": "2026-10-19T05:19:03.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:36:18.111Z"
+      "last_updated": "2026-10-19T05:19:03.842Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -9307,6 +9307,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:12:57.163Z"
+    },
+    "danielpetho/fancy": {
+      "repository": "danielpetho/fancy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-danielpetho-fancy",
+      "content_hash": "591dd576f8250143e66b9f3f37bfa64c1ded8090eed7e30edede5b2c9e08cb9f",
+      "verified_at": "2026-10-19T05:18:59.145Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:18:59.145Z"
+    },
+    "Dicklesworthstone/destructive_command_guard": {
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
+      "content_hash": "bd6c64876c849ed85f29ecb1f0a8146dcd8e32731866d9d915806ed6cbc40b5c",
+      "verified_at": "2026-10-19T05:18:59.957Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:18:59.957Z"
+    },
+    "xinthink/react-native-material-kit": {
+      "repository": "xinthink/react-native-material-kit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-xinthink-react-native-material-kit",
+      "content_hash": "9d147f35b2a3fd8ab3c0825cb217b2e644de3a2a37cb0c1ad0c3d5aea343b6bd",
+      "verified_at": "2026-10-19T05:19:04.331Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:19:04.331Z"
+    },
+    "kubeshark/kubeshark": {
+      "repository": "kubeshark/kubeshark",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kubeshark-kubeshark",
+      "content_hash": "638ea29ccce165777a7f0980977d92550264a320ad0d6cc0cee4f63a9d50afaa",
+      "verified_at": "2026-10-19T05:19:06.584Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:19:06.584Z"
+    },
+    "duckdb/duckdb": {
+      "repository": "duckdb/duckdb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-duckdb-duckdb",
+      "content_hash": "edb9bc7286c86cb78ced99ea50ad94dcf151d09e8ba07f5448016421d17625cd",
+      "verified_at": "2026-10-19T05:19:12.542Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:19:12.542Z"
     }
   },
   "repos": {

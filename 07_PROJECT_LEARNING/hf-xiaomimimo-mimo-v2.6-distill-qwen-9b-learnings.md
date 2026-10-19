@@ -3,7 +3,7 @@
 > **Source Version**: `hf-xiaomimim`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T23:36:17.921Z  
+> **Timestamp**: 2026-10-19T05:19:03.387Z  
 > **Learning ID**: `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,260 +14,227 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): XiaomiMiMo/MiMo‑V2.6‑Distill‑Qwen‑9B
 
-## 1. Executive Forensic Architecture & System Mechanics  
-The repository delivers a **9 B parameter, multimodal, agentic language model** that extends the base **Qwen3.5‑9B** checkpoint with supervised fine‑tuning on a curated MiMo dataset.  
-- **Subsystems**  
-  1. **Tokenizer** – `tokenizer_config.json` defines multimodal special tokens (`<|image_pad|>`, `<|video_pad|>`, `<|audio_start|>`, etc.) and a pre‑tokenization regex that preserves contractions and non‑ASCII characters.  
-  2. **Model Configuration** – `config.json` contains the full transformer hyper‑parameters (layer types, attention heads, rope settings, etc.) and multimodal token IDs (`image_token_id`, `video_token_id`).  
-  3. **Generation Configuration** – `generation_config.json` specifies `eos_token_id` list, sampling hyper‑parameters (`temperature`, `top_k`, `top_p`), and `do_sample=true`.  
-  4. **Deployment** – The README shows a **SGLang** server invocation that exposes a REST endpoint. The server expects a `reasoning_parser` of type `mimo` and a `chat_template_kwargs` payload to enable explicit thinking.  
-- **Architectural Boundaries**  
-  - **Model Layer**: Purely inference‑only; no training code is present.  
-  - **Tokenizer Layer**: Stateless, pure‑function mapping between text and token IDs.  
-  - **Server Layer**: Stateless HTTP endpoint that forwards requests to the SGLang runtime.  
-  - **Data Flow**: Text → Tokenizer → Model → Decoder → Text. Multimodal tokens are treated as padding tokens; no image/video decoding logic is bundled.  
-- **Critical Abstractions**  
-  - `Qwen3_5ForConditionalGeneration` – the base class that implements the forward pass.  
-  - `Qwen2Tokenizer` – the tokenizer class that handles multimodal tokenization.  
-  - `Qwen3VLProcessor` – the processor that merges text and multimodal inputs (referenced in `tokenizer_config.json`).  
+## 1. Executive Forensic Architecture & System Mechanics
+The repository contains a fine‑tuned Qwen3.5‑9B checkpoint engineered for agentic workloads.  
+* **Subsystems**  
+  * **Tokenizer** – `tokenizer_config.json` defines special tokens (`<|image_pad|>`, `<|video_pad|>`, `<|vision_start|>`, etc.) and the processor class `Qwen3VLProcessor`.  
+  * **Model** – `config.json` specifies a hybrid text‑vision architecture: 32 text layers (mostly `linear_attention` with occasional `full_attention`), 27 vision layers, and a shared embedding space.  
+  * **Generation** – `generation_config.json` sets sampling hyper‑parameters (temperature 0.6, top‑k 20, top‑p 0.95).  
+  * **Deployment** – The README shows a SGLang‑based server exposing an OpenAI‑compatible endpoint; the model is served with a reasoning parser (`mimo`) that injects a “thinking” phase into the chat template.  
+
+* **Architectural boundaries**  
+  * **Text vs Vision** – Separate `text_config` and `vision_config` blocks; shared `model_type` and `tie_word_embeddings` flags.  
+  * **Attention mix** – Linear attention layers dominate; full attention is interleaved every 4 layers to preserve global context.  
+  * **Tokenization** – All token IDs are hard‑coded in the config; the tokenizer must load these IDs exactly to avoid mis‑alignment.  
+
+* **Critical abstractions**  
+  * **`Qwen3_5ForConditionalGeneration`** – the main model class.  
+  * **`Qwen3VLProcessor`** – handles multimodal input concatenation and tokenization.  
+  * **`mimo` reasoning parser** – a custom prompt‑chain that injects a “thinking” block before the final answer.  
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. JSON Configuration Integrity Rule  
+### 1. Token ID Consistency Across All Configuration Artifacts
 **RULE**:  
-> **MUST** ensure that every configuration file (`config.json`, `generation_config.json`, `tokenizer_config.json`) is **valid, single‑level JSON** without double‑escaping or embedded quotes that would break a JSON parser.  
-**WHY**:  
-Double‑escaped strings (e.g., `\"{\\n  \\\"architectures\\\": [...]\\n}\"`) cause the tokenizer or model loader to interpret the entire string as a single token ID or fail to parse, leading to silent mis‑configuration or runtime crashes.  
-**WHEN TO APPLY**:  
-During **model packaging** and **CI build** for any Hugging Face model that includes custom config files.  
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "architectures": ["Qwen3_5ForConditionalGeneration"],
-  "image_token_id": 248056,
-  "model_type": "qwen3_5",
-  "text_config": {
-    "attention_bias": false,
-    "attention_dropout": 0.0,
-    "attn_output_gate": true,
-    "bos_token_id": null,
-    "dtype": "bfloat16",
-    "eos_token_id": 248044,
-    "full_attention_interval": 4,
-    "head_dim": 256,
-    "hidden_act": "silu",
-    "hidden_size": 4096,
-    "initializer_range": 0.02,
-    "intermediate_size": 12288,
-    "layer_types": [
-      "linear_attention", "linear_attention", "linear_attention",
-      "full_attention", "linear_attention", "linear_attention",
-      "linear_attention", "full_attention", "linear_attention",
-      "linear_attention", "linear_attention", "linear_attention",
-      "full_attention", "linear_attention", "linear_attention",
-      "linear_attention", "linear_attention", "full_attention",
-      "linear_attention", "linear_attention", "linear_attention",
-      "linear_attention", "full_attention", "linear_attention",
-      "linear_attention", "linear_attention", "linear_attention",
-      "full_attention", "linear_attention", "linear_attention",
-      "linear_attention", "linear_attention", "full_attention",
-      "linear_attention", "linear_attention", "linear_attention",
-      "linear_attention", "full_attention"
-    ],
-    "linear_conv_kernel_dim": 4,
-    "linear_key_head_dim": 128,
-    "linear_num_key_heads": 16,
-    "linear_num_value_heads": 32,
-    "linear_value_head_dim": 128,
-    "mamba_ssm_dtype": "float32",
-    "max_position_embeddings": 262144,
-    "mlp_only_layers": [],
-    "model_type": "qwen3_5_text",
-    "mtp_num_hidden_layers": 1,
-    "mtp_use_dedicated_embeddings": false,
-    "num_attention_heads": 16,
-    "num_hidden_layers": 32,
-    "num_key_value_heads": 4,
-    "pad_token_id": null,
-    "partial_rotary_factor": 0.25,
-    "rms_norm_eps": 1e-06,
-    "rope_parameters": {
-      "mrope_interleaved": true,
-      "mrope_section": [11, 11, 10],
-      "partial_rotary_factor": 0.25,
-      "rope_theta": 10000000,
-      "rope_type": "default"
-    },
-    "tie_word_embeddings": false,
-    "use_cache": true,
-    "vocab_size": 248320
-  },
-  "tie_word_embeddings": false,
-  "transformers_version": "5.12.1",
-  "video_token_id": 248057,
-  "vision_config": {
-    "deepstack_visual_indexes": [],
-    "depth": 27,
-    "hidden_act": "gelu_pytorch_tanh",
-    "hidden_size": 1152,
-    "in_channels": 3,
-    "initializer_range": 0.02,
-    "intermediate_size": 4304,
-    "model_type": "qwen3_5_vision",
-    "num_heads": 16,
-    "num_position_embeddings": 2304,
-    "out_hidden_size": 4096,
-    "patch_size": 16,
-    "spatial_merge_size": 2,
-    "tempor"
-}
-```
-**NEGATIVE CONSTRAINT**:
-```json
-{
-  "config": "\"{\\n  \\\"architectures\\\": [\\n    \\\"Qwen3_5ForConditionalGeneration\\\"\\n  ],\\n  \\\"image_token_id\\\": 248056,\\n  \\\"model_type\\\": \\\"qwen3_5\\\",\\n  \\\"text_config\\\": {\\n    \\\"attention_bias\\\": false,\\n    \\\"attention_dropout\\\": 0.0,\\n    \\\"attn_output_gate\\\": true,\\n    \\\"bos_token_id\\\": null,\\n    \\\"dtype\\\": \\\"bfloat16\\\",\\n    \\\"eos_token_id\\\": 248044,\\n    \\\"full_attention_interval\\\": 4,\\n    \\\"head_dim\\\": 256,\\n    \\\"hidden_act\\\": \\\"silu\\\",\\n    \\\"hidden_size\\\": 4096,\\n    \\\"initializer_range\\\": 0.02,\\n    \\\"intermediate_size\\\": 12288,\\n    \\\"layer_types\\\": [\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"linear_attention\\\",\\n      \\\"full_attention\\\"\\n    ],\\n    \\\"linear_conv_kernel_dim\\\": 4,\\n    \\\"linear_key_head_dim\\\": 128,\\n    \\\"linear_num_key_heads\\\": 16,\\n    \\\"linear_num_value_heads\\\": 32,\\n    \\\"linear_value_head_dim\\\": 128,\\n    \\\"mamba_ssm_dtype\\\": \\\"float32\\\",\\n    \\\"max_position_embeddings\\\": 262144,\\n    \\\"mlp_only_layers\\\": [],\\n    \\\"model_type\\\": \\\"qwen3_5_text\\\",\\n    \\\"mtp_num_hidden_layers\\\": 1,\\n    \\\"mtp_use_dedicated_embeddings\\\": false,\\n    \\\"num_attention_heads\\\": 16,\\n    \\\"num_hidden_layers\\\": 32,\\n    \\\"num_key_value_heads\\\": 4,\\n    \\\"pad_token_id\\\": null,\\n    \\\"partial_rotary_factor\\\": 0.25,\\n    \\\"rms_norm_eps\\\": 1e-06,\\n    \\\"rope_parameters\\\": {\\n      \\\"mrope_interleaved\\\": true,\\n      \\\"mrope_section\\\": [\\n        11,\\n        11,\\n        10\\n      ],\\n      \\\"partial_rotary_factor\\\": 0.25,\\n      \\\"rope_theta\\\": 10000000,\\n      \\\"rope_type\\\": \\\"default\\\"\\n    },\\n    \\\"tie_word_embeddings\\\": false,\\n    \\\"use_cache\\\": true,\\n    \\\"vocab_size\\\": 248320\\n  },\\n  \\\"tie_word_embeddings\\\": false,\\n  \\\"transformers_version\\\": \\\"5.12.1\\\",\\n  \\\"video_token_id\\\": 248057,\\n  \\\"vision_config\\\": {\\n    \\\"deepstack_visual_indexes\\\": [],\\n    \\\"depth\\\": 27,\\n    \\\"hidden_act\\\": \\\"gelu_pytorch_tanh\\\",\\n    \\\"hidden_size\\\": 1152,\\n    \\\"in_channels\\\": 3,\\n    \\\"initializer_range\\\": 0.02,\\n    \\\"intermediate_size\\\": 4304,\\n    \\\"model_type\\\": \\\"qwen3_5_vision\\\",\\n    \\\"num_heads\\\": 16,\\n    \\\"num_position_embeddings\\\": 2304,\\n    \\\"out_hidden_size\\\": 4096,\\n    \\\"patch_size\\\": 16,\\n    \\\"spatial_merge_size\\\": 2,\\n    \\\"tempor"
-}
-```
-**VERIFICATION METHOD**:  
-Run `python -m json.tool config.json` and `python -m json.tool tokenizer_config.json` in CI; fail if parsing errors. Add a linter rule that rejects any string value containing `\\n` or `\\\"` sequences.
+> **MUST** ensure that every special token ID referenced in `config.json`, `tokenizer_config.json`, and `generation_config.json` is identical across all files.
 
-### 2. Multimodal Tokenization Consistency Rule  
-**RULE**:  
-> **MUST** register every multimodal special token (`<|image_pad|>`, `<|video_pad|>`, `<|audio_start|>`, `<|audio_end|>`, `<|audio_pad|>`, `<|vision_start|>`, `<|vision_end|>`) in the tokenizer vocabulary **before** any model inference.  
 **WHY**:  
-Missing a multimodal token leads to an `UnknownTokenError` or silent padding, corrupting the attention mask and causing incorrect generation or memory over‑allocation.  
+Mismatched token IDs cause the tokenizer to produce tokens that the model does not recognize, leading to silent truncation or mis‑generation. In multimodal settings, an incorrect image or video token ID can cause the model to treat visual input as text, corrupting the attention context.
+
 **WHEN TO APPLY**:  
-During **tokenizer initialization** in any inference pipeline that accepts multimodal input.  
+* During model packaging (post‑training export).  
+* Before any inference pipeline that uses the tokenizer and the model.  
+* In CI pipelines that validate model artifacts.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import Qwen2Tokenizer
+import json
 
-tokenizer = Qwen2Tokenizer.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
+def load_config(path):
+    with open(path, "r") as f:
+        return json.loads(f.read())
 
-# Ensure multimodal tokens exist
-required_tokens = [
-    "<|image_pad|>", "<|video_pad|>", "<|audio_start|>",
-    "<|audio_end|>", "<|audio_pad|>", "<|vision_start|>",
-    "<|vision_end|>"
-]
-for tok in required_tokens:
-    assert tokenizer.convert_tokens_to_ids(tok) != tokenizer.unk_token_id, f"Missing token {tok}"
+config = load_config("config.json")
+tokenizer_cfg = load_config("tokenizer_config.json")
+gen_cfg = load_config("generation_config.json")
+
+special_tokens = {
+    "image_token_id": config["image_token_id"],
+    "video_token_id": config["video_token_id"],
+    "eos_token_id": config["text_config"]["eos_token_id"],
+}
+
+for name, expected in special_tokens.items():
+    actual = tokenizer_cfg.get(name) or gen_cfg.get(name)
+    assert actual == expected, f"{name} mismatch: expected {expected}, got {actual}"
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# Bad: using raw string literals without ensuring token presence
-input_ids = tokenizer.encode("<|image_pad|> some text")
-# This will silently map to unk_token_id if the token is absent
+# BAD: hard‑coding token IDs in multiple places
+image_token_id = 248056
+video_token_id = 248057
+eos_token_id = 248044
+# BAD: duplicate definitions in tokenizer_cfg and config.json
 ```
-**VERIFICATION METHOD**:  
-Add a unit test that asserts `convert_tokens_to_ids` for each multimodal token is not equal to `unk_token_id`. Run on every CI build.
 
-### 3. Generation EOS Token List Rule  
-**RULE**:  
-> **MUST** provide an `eos_token_id` list in `generation_config.json` that includes all possible termination tokens (`248046`, `248044`) to prevent runaway generation.  
-**WHY**:  
-If the EOS list is incomplete, the model may generate beyond the intended length, consuming GPU memory and causing OOM errors.  
-**WHEN TO APPLY**:  
-During **generation configuration** for any inference request.  
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "eos_token_id": [248046, 248044],
-  "do_sample": true,
-  "temperature": 0.6,
-  "top_k": 20,
-  "top_p": 0.95
-}
-```
-**NEGATIVE CONSTRAINT**:
-```json
-{
-  "eos_token_id": [],
-  "do_sample": true
-}
-```
 **VERIFICATION METHOD**:  
-CI lint that checks `eos_token_id` array length > 0 and contains at least the base EOS IDs.
+* Unit test that loads all three JSON files and asserts equality of each special token ID.  
+* Linter rule that flags duplicate token ID definitions across files.
+
+---
+
+### 2. Data‑Type Uniformity Within Sub‑Modules
+**RULE**:  
+> **MUST** enforce that the `dtype` specified in `text_config` and `vision_config` matches the actual tensor precision used during training and inference.
+
+**WHY**:  
+Using mismatched dtypes (e.g., `bfloat16` for text but `float32` for vision) can lead to silent precision loss, inconsistent gradients, and runtime errors on hardware that does not support mixed precision.
+
+**WHEN TO APPLY**:  
+* During model initialization.  
+* When loading a checkpoint into a new environment.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+text_dtype = torch.bfloat16 if config["text_config"]["dtype"] == "bfloat16" else torch.float32
+vision_dtype = torch.float32 if config["vision_config"]["dtype"] == "float32" else torch.float16
+
+assert model.text_module.dtype == text_dtype, "Text module dtype mismatch"
+assert model.vision_module.dtype == vision_dtype, "Vision module dtype mismatch"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: mixing dtypes within a single attention layer
+layer.weight = layer.weight.to(torch.float32)  # while the rest of the model is bfloat16
+```
+
+**VERIFICATION METHOD**:  
+* Runtime assertion during model construction.  
+* Static type checker rule that flags dtype mismatches in layer definitions.
+
+---
+
+### 3. Linear Attention Bias Suppression
+**RULE**:  
+> **MUST NOT** enable `attention_bias` for any layer that uses `linear_attention`.
+
+**WHY**:  
+Linear attention layers assume a bias‑free attention matrix for efficient kernel approximation. Enabling bias introduces a dense component that invalidates the linearity assumption, leading to incorrect attention scores and degraded performance.
+
+**WHEN TO APPLY**:  
+* In the `config.json` `text_config` block.  
+* During any custom fine‑tuning that modifies attention layers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+assert not config["text_config"]["attention_bias"], \
+    "Linear attention layers must have attention_bias set to False"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: setting attention_bias to True for a linear attention layer
+config["text_config"]["attention_bias"] = True
+```
+
+**VERIFICATION METHOD**:  
+* CI test that parses `config.json` and fails if `attention_bias` is true.  
+* Linter rule that flags any assignment to `attention_bias` within a linear attention context.
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-| Incident | Status |
-|----------|--------|
-| 1 | **None found** – No commits, PRs, or issue logs reference a bug fix. |
-| 2 | **None found** – Repository contains only static config and README. |
-| 3 | **None found** – No runtime logs or crash reports are present. |
-| 4 | **None found** – No test failures in CI. |
-| 5 | **None found** – No security advisories linked. |
+No commit history, issue tracker, or patch files are present in the repository snapshot. Consequently, no concrete bug incidents or production patches can be extracted. The absence of source code and change logs precludes forensic reconstruction of runtime failures.
 
-**Conclusion**: The current snapshot is a *release artifact* with no recorded production incidents. All forensic analysis is based on static artifacts.
+> **Status**: *No incidents discovered.*
+
+---
 
 ## 4. Microscopic Code‑Level Invariants
 
 | Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | **Avoid double‑escaped JSON** – `\"{\\n  \\\"key\\\": \\\"value\\\"}\\n\"` must be replaced with a raw JSON object. | `config.json` must be parsed by `json.load`; any string‑wrapped JSON will be treated as a single token ID. |
-| | **Strict type coercion** – `if (value)` must not rely on truthiness of `0` or `""`. Use `value !== undefined && value !== null`. | `eos_token_id` is an array; `if (eos_token_id)` is safe, but `if (eos_token_id.length)` must be checked explicitly. |
-| | **Deep immutability** – Do not mutate `tokenizer.vocab` after initialization. | `tokenizer.vocab["<|image_pad|>"] = 9999` will silently corrupt the mapping. |
-| **Infinite Loop & Recursion Guards** | **Base condition for recursion** – `function recurse(n) { if (n <= 0) return; recurse(n-1); }` ensures termination. | No recursion in provided code, but any custom inference loop must check `max_new_tokens`. |
-| | **Event loop yield** – In async generation, use `await` or `setImmediate` to avoid blocking the event loop. | `while (true) { await generate(); }` is safe; `while (true) { generate(); }` blocks. |
-| **UI & UX Micro‑Mechanics** | **Debounce user input** – Use `lodash.debounce` with a 200 ms delay to prevent rapid tokenization. | Not applicable in this repo, but recommended for any front‑end wrapper. |
-| | **Focus restoration** – After modal close, call `element.focus()` to avoid focus trap. | Not present. |
-| **Backend Concurrency & Memory Safety** | **Avoid TOCTOU** – When checking `model.is_loaded`, immediately use the flag without re‑checking after a context switch. | `if (model.is_loaded) { model.generate(); }` is safe if `is_loaded` is atomic. |
-| | **Connection pool starvation** – Limit concurrent inference requests to `max_workers`. | SGLang server should expose a `--max-concurrent` flag. |
-| | **Memory leak prevention** – Dispose of `torch.Tensor` objects after use. | `output.detach().cpu()` and delete references. |
-| **Defect & Error Prevention** | **Null/undefined chaining** – Use `tokenizer?.convert_tokens_to_ids(token)` to avoid runtime errors. | `tokenizer.convert_tokens_to_ids(token)` will throw if `tokenizer` is undefined. |
-| | **Off‑by‑one checks** – Ensure `max_new_tokens` is not negative. | `if (max_new_tokens <= 0) throw new Error("Invalid token count");` |
-| | **Error boundary** – Wrap inference in try/catch and return a graceful error message. | `try { ... } catch (e) { return {error: e.message}; }` |
+| **Micro‑Syntax & Token‑Level Precision** | `==` vs `===` in JavaScript; `is` vs `==` in Python | `if token_id is None:` (Python) |
+| **Infinite Loop & Recursion Guards** | Base case in recursion; loop counter < limit | `while i < max_iter: i += 1` |
+| **UI & UX Micro‑Mechanics** | Debounce input events to avoid thrashing | `setTimeout(() => handleInput(), 200)` |
+| **Backend Concurrency & Memory Safety** | Acquire lock before shared state mutation | `with lock: shared_state.append(item)` |
+| **Defect & Error Prevention** | Null‑safe chaining | `obj?.prop?.subprop` |
+
+*These invariants are generic guidelines applicable to any codebase; they are not derived from specific source lines in this repository.*
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observed Design | Key Invariants |
-|-----------|-----------------|----------------|
-| **Architecture** | 32‑layer transformer with alternating `linear_attention` and `full_attention` blocks; multimodal token IDs embedded in the same vocabulary. | Subsystem boundaries: tokenizer, model, generation. |
-| **Core Abstractions** | `Qwen3_5ForConditionalGeneration` encapsulates the forward pass; `Qwen2Tokenizer` abstracts tokenization; `Qwen3VLProcessor` merges modalities. | Domain primitives: token IDs, attention masks, rope parameters. |
-| **Error Handling** | No explicit error handling in config; relies on Hugging Face runtime. | Must propagate `ValueError` for missing tokens. |
-| **Testing** | No unit tests in repo; CI likely runs `transformers` tests. | Regression tests should cover multimodal token presence. |
-| **Security** | No credentials; uses public Hugging Face model. | Least privilege: no external network calls during inference. |
-| **Performance** | Uses `bfloat16` dtype; `full_attention_interval=4` to reduce compute. | Zero‑copy tokenization via `tokenizer.encode`. |
-| **Deployment** | SGLang server with `--reasoning-parser mimo`. | Reproducible builds via pinned `transformers` 5.12.1. |
-| **Agent Patterns** | Chat template includes `enable_thinking`; uses `mimo` reasoning parser. | Prompt chain: user → reasoning → action → response. |
-| **Data Flow** | Text → tokenizer → model → decoder → text; multimodal tokens treated as padding. | Streams: no streaming output in config; can be added via `stream=True`. |
+| Dimension | Observations from Config & README | Key Invariants |
+|-----------|-----------------------------------|----------------|
+| **Architecture** | Hybrid text‑vision model; 32 text layers, 27 vision layers; interleaved full attention | Separate text and vision modules; shared embedding space |
+| **Core Abstractions** | `Qwen3_5ForConditionalGeneration`, `Qwen3VLProcessor` | Clear interface between tokenizer, processor, and model |
+| **Error Handling** | No explicit error handling in config; inference relies on SGLang server | Server must catch tokenization errors and return informative messages |
+| **Testing** | No tests present; CI not configured | Unit tests for config consistency, dtype checks, and token ID alignment |
+| **Security** | No credentials; open‑source model | Ensure no hard‑coded secrets in config; use least privilege for server |
+| **Performance** | Linear attention layers for speed; full attention every 4 layers | Maintain linear attention bias off; use bfloat16 for text to reduce memory |
+| **Deployment** | SGLang server with OpenAI API compatibility | CI/CD pipeline must rebuild container with same `transformers` version |
+| **Agent Patterns** | Custom `mimo` reasoning parser; prompt chain with thinking | Parser must inject thinking block before answer; enforce token limits |
+| **Data Flow** | Token IDs for image/video/vision start/end; streaming generation | Ensure tokenization order matches model expectations; avoid re‑ordering |
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The JSON integrity rule pattern shown in Section 2.1. |
-| **Rule** | The multimodal tokenization consistency rule (Section 2.2). |
-| **Architecture Principle** | *“Separate tokenizer, model, and generation layers to enable independent scaling and security isolation.”* |
-| **Failure Mode** | Double‑escaped JSON leading to silent mis‑configuration and OOM. |
-| **Reusable Skill** | Checklist for verifying multimodal token presence before inference. |
-| **Decision** | Chose `bfloat16` over `float32` to reduce memory footprint while maintaining accuracy. |
-| **Anti‑pattern** | Embedding multimodal tokens as unknowns in the vocabulary. |
-| **Verification Method** | CI lint that parses JSON and asserts token IDs. |
+| **Pattern** | Token ID consistency checker (see Section 2.1) |
+| **Rule** | Token ID consistency rule (Section 2.1) |
+| **Architecture Principle** | Separate text and vision modules with shared embedding space |
+| **Failure Mode** | Token ID mismatch → silent truncation |
+| **Reusable Skill** | CI test that validates config consistency |
+| **Decision** | Chose linear attention for speed; interleaved full attention for context |
+| **Anti‑Pattern** | Hard‑coding token IDs in multiple files |
+| **Verification Method** | Unit test asserting equality of token IDs across config files |
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Config Files**  
-   - Run `python -m json.tool` on `config.json`, `generation_config.json`, `tokenizer_config.json`.  
-   - Ensure no string‑wrapped JSON; fail CI if present.  
-2. **Verify Multimodal Tokens**  
-   - Load tokenizer and assert each multimodal token maps to a known ID.  
-   - Add unit test: `assert tokenizer.convert_tokens_to_ids("<|image_pad|>") != tokenizer.unk_token_id`.  
-3. **Check EOS Token List**  
-   - Confirm `generation_config.eos_token_id` contains all termination IDs.  
-   - Add lint rule: `assert len(eos_token_id) > 0`.  
-4. **Enforce Type Safety**  
-   - Use explicit type checks (`!== undefined && !== null`) before accessing config values.  
-5. **Guard Against Infinite Generation**  
-   - Set `max_new_tokens` in inference calls; verify it is positive.  
-6. **Deploy with SGLang**  
-   - Use `sglang serve --reasoning-parser mimo` and expose `chat_template_kwargs.enable_thinking`.  
-7. **Monitor Runtime**  
-   - Log GPU memory usage; set alerts for OOM.  
-8. **Automated Regression Tests**  
-   - Create a minimal inference test that passes a multimodal prompt and checks for correct tokenization and generation length.  
-9. **Security Hardening**  
-   - Ensure no external network calls during inference; pin dependencies.  
+1. **Load Configs**  
+   * Parse `config.json`, `tokenizer_config.json`, `generation_config.json`.  
+   * Verify that all required fields exist.
 
-Follow this checklist in every CI pipeline to guarantee that the model, tokenizer, and deployment remain robust, secure, and performant.
+2. **Validate Special Tokens**  
+   * Assert equality of `image_token_id`, `video_token_id`, `eos_token_id`, etc. across files.
+
+3. **Check Data Types**  
+   * Ensure `text_config["dtype"]` is `bfloat16` and `vision_config["dtype"]` is `float32`.  
+   * Confirm that the model layers use the same dtypes.
+
+4. **Enforce Attention Bias**  
+   * Confirm `text_config["attention_bias"]` is `false`.  
+   * If modifying layers, keep bias off for linear attention.
+
+5. **Instantiate Model & Processor**  
+   * Load `Qwen3_5ForConditionalGeneration` with the validated config.  
+   * Load `Qwen3VLProcessor` with the tokenizer config.
+
+6. **Run Inference Test**  
+   * Feed a minimal multimodal prompt (text + image token).  
+   * Verify that the output contains a valid `thinking` block followed by an answer.
+
+7. **Deploy Server**  
+   * Use SGLang with `--reasoning-parser mimo`.  
+   * Expose OpenAI‑compatible endpoint.
+
+8. **CI/CD Validation**  
+   * Add unit tests for config consistency, dtype checks, and token ID alignment.  
+   * Run tests on every push to the main branch.
+
+9. **Monitor Runtime**  
+   * Log tokenization errors.  
+   * Capture latency per layer to detect performance regressions.
+
+---

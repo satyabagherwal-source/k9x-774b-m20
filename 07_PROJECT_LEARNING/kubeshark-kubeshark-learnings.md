@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeshark-kubeshark-learnings.md`  
+> **Source**: github ([https://github.com/kubeshark/kubeshark](https://github.com/kubeshark/kubeshark))  
+> **Source Version**: `e27687a8`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T05:19:06.437Z  
+> **Learning ID**: `learn-github-kubeshark-kubeshark`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): kubeshark/kubeshark
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeshark-kubeshark-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeshark/kubeshark](https://github.com/kubeshark/kubeshark))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:53:55.367Z  
+> **Harvest Timestamp**: 2026-10-19T05:19:06.429Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: eBPF-powered network observability for Kubernetes. Indexes L4/L7 traffic with full K8s context, decrypts TLS without keys. Queryable by AI agents via MCP and humans via dashboard.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12093 stars
+- **Stars / Engagement**: 12100 stars
 
 ---
 
@@ -653,85 +667,6 @@ func Diff(a, b []string) []string {
 
 ```
 
-### Core Architecture Module: `utils/wait.go`
-```
-package utils
-
-import (
-	"context"
-	"os"
-	"os/signal"
-	"syscall"
-
-	"github.com/rs/zerolog/log"
-)
-
-func WaitForTermination(ctx context.Context, cancel context.CancelFunc) {
-	log.Debug().Msg("Waiting to finish...")
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-
-	// block until ctx cancel is called or termination signal is received
-	select {
-	case <-ctx.Done():
-		log.Debug().Msg("Context done.")
-		break
-	case <-sigChan:
-		log.Debug().Msg("Got a termination signal, canceling execution...")
-		cancel()
-	}
-}
-
-```
-
-### Core Architecture Module: `cmd/clean.go`
-```
-package cmd
-
-import (
-	"fmt"
-
-	"github.com/creasty/defaults"
-	"github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
-
-	"github.com/kubeshark/kubeshark/config"
-	"github.com/kubeshark/kubeshark/config/configStructs"
-	"github.com/kubeshark/kubeshark/kubernetes/helm"
-	"github.com/kubeshark/kubeshark/misc"
-)
-
-var cleanCmd = &cobra.Command{
-	Use:   "clean",
-	Short: fmt.Sprintf("Removes all %s resources", misc.Software),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		resp, err := helm.NewHelm(
-			config.Config.Tap.Release.Repo,
-			config.Config.Tap.Release.Name,
-			config.Config.Tap.Release.Namespace,
-		).Uninstall()
-		if err != nil {
-			log.Error().Err(err).Send()
-		} else {
-			log.Info().Msgf("Uninstalled the Helm release: %s", resp.Release.Name)
-		}
-		return nil
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(cleanCmd)
-
-	defaultTapConfig := configStructs.TapConfig{}
-	if err := defaults.Set(&defaultTapConfig); err != nil {
-		log.Debug().Err(err).Send()
-	}
-
-	cleanCmd.Flags().StringP(configStructs.ReleaseNamespaceLabel, "s", defaultTapConfig.Release.Namespace, "Release namespace of Kubeshark")
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -743,38 +678,6 @@ func init() {
 
 - **Issue #1900** (2026-04-10): **EFS persistent storage: workers crash with PebbleDB lock conflict**
   *Symptoms*: ## Description  When using AWS EFS as persistent storage (`persistentStorage: true` + `persistentStorageStatic: true`), all worker DaemonSet pods share the same PVC and write PebbleDB to the same path `/app/data/captureDB`, causing file lock conflicts.  ## Error  ``` {"level":"fatal","error":"failed to create pebble db: resource temporarily unavailable","backend":"pebble","message":"Failed to initialize common storage for extensions"} ```  All workers except one enter CrashLoopBackOff with this error.  ## Root Cause  The init container `cleanup-data-dir` correctly creates per-node directories (`/app/data/$NODE_NAME`) using `spec.nodeName`, but the `sniffer` and `tracer` containers mount `/app/data` directly without `subPathExpr`. This means all workers on all nodes write to the same `captureDB` path on the shared EFS volume.  With `emptyDir` this is not an issue because each pod gets its own isolated volume. But with a shared PVC (EFS ReadWriteMany), all pods see the same filesystem.  ## Proposed Fix  Add `NODE_NAME` env var (from `spec.nodeName`) and `subPathExpr: $(NODE_NAME)` to the `sniffer` and `tracer` volume mounts in `helm-chart/templates/09-worker-daemon-set.yaml`, only when `persistentStorage` is enabled.  ## Environment  - Kubeshark chart version: 53.1.0 - Kubernetes: EKS 1.34 - Storage: AWS EFS with aws-efs-csi-driver v2.1.15 - Region: eu-central-1 - Static PV with `volumeHandle` pointing to EFS filesystem ID
-  **Post-Mortem & Fix Analysis**:
-  > > 🤖 *This analysis was generated by [Claude Code](https://claude.ai/code) (RCA Agent)*  **Likely Affected Repos**: kubeshark  **Summary**: The worker DaemonSet's init container (`cleanup-data-dir`) creates per-node subdirectories under `/app/data/$NODE_NAME`, but the `sniffer` and `tracer` containers mount `/app/data` directly without `subPathExpr`, so all pods on a shared EFS volume write PebbleDB to the same path and conflict on file locks.  **Detailed Findings**: - The init container (line 50–69 of `09-worker-daemon-set.yaml`) correctly sets `NODE_NAME` from `spec.nodeName` and runs `mkdir -p /app/data/$NODE_NAME`, creating per-node directories on the shared EFS filesystem. - The `sniffer` container volume mount (lines 220–229) mounts volume `data` at `/app/data` with no `subPath` or `subPathExpr`, meaning all nodes write to the same root path. - The `tracer` container volume mount (lines 321–330) has the identical issue — mounts `/app/data` directly without per-node isolation. - T
-
-- **Issue #1882** (2026-03-24): **Decrypted TLS traffic missing from snapshots during delayed dissection**
-  *Symptoms*: ### Description  TLS traffic that is successfully decrypted and displayed in real-time is not present when viewing a snapshot. During delayed dissection of a snapshot, the decrypted TLS content is missing — only the non-TLS traffic appears. This means snapshots do not accurately represent what was observed during live capture.  ### Why Is This Needed?  Snapshots are a core feature for offline analysis, sharing, and incident review. If decrypted TLS traffic is visible in real-time but absent from snapshots, users lose visibility into a significant portion of their traffic when reviewing captured data later. This undermines the value of snapshots for post-incident analysis and collaboration.  ### Additional Context  - In real-time mode, TLS traffic is decrypted via eBPF hooks and displayed as dissected API calls. - During snapshot creation/delayed dissection, the decrypted plaintext is apparently not persisted or re-dissected, resulting in the TLS traffic being absent from the snapshot. - The fix likely involves ensuring that the decrypted plaintext (captured via eBPF at the TLS layer) is included in the PCAP data or stored alongside it, so that delayed dissection can access and process it. - This is related to the PCAP capture pipeline — if raw PCAP only contains the encrypted bytes, delayed dissection has no way to recover the plaintext without the original eBPF hooks being active.
-
-- **Issue #1741** (2025-04-10): **443 TCP traffic is filtered out automatically, when using eBPF implementation (with not supported TLS libraries)**
-  *Symptoms*: On some occasions, especially with TLS libraries not supported by Kubeshark are used (e.g. with Java apps), 443 TCP traffic will be filtered out and will not show in the dashboard. This happens when the EBPF implementation is used. The issue does not exists with the AF_PACKET implementation. Same traffic will show when using the AF_PACKET implementation.  As an interim fix: To use AF_PACKET, use: `--set tap.packetCApture=af_packet`
-  **Post-Mortem & Fix Analysis**:
-  > fixed with: https://github.com/kubeshark/kubeshark/releases/tag/v52.6.0
-
-- **Issue #1720** (2025-03-07): **Worker random and occasional processing halt**
-  *Symptoms*: It was reported by several users that on rare and random occasions, and after some time, the Worker would stop processing traffic (go into a halt state), and require restart to resume operations. 
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in: https://github.com/kubeshark/kubeshark/releases/tag/v52.5.0 and https://github.com/kubeshark/kubeshark/releases/tag/v52.4.0
-
-- **Issue #1602** (2024-09-10): **fix: respect `tap.docker.imagePullSecrets`**
-  *Symptoms*: fixes #1601 
-  **Post-Mortem & Fix Analysis**:
-  > @zyue110026 thank you so much! Seems correct but we need to add it to three more places as well:  https://github.com/kubeshark/kubeshark/blob/f155e4f1b7f2c632341ed6aeba23389e8ec9a81c/helm-chart/templates/09-worker-daemon-set.yaml#L32  https://github.com/kubeshark/kubeshark/blob/f155e4f1b7f2c632341ed6aeba23389e8ec9a81c/helm-chart/templates/09-worker-daemon-set.yaml#L78  https://github.com/kubeshark/kubeshark/blob/f155e4f1b7f2c632341ed6aeba23389e8ec9a81c/helm-chart/templates/09-worker-daemon-set.yaml#L181  Would you do these three as well? or should I do them after merging this PR?
-  > @mertyildiran I added the fixes in these three places, please check.
-  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/kubeshark/kubeshark/pull/1602?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None) Report All modified and coverable lines are covered by tests :white_check_mark: > Project coverage is 23.14%. Comparing base [(`d3789f2`)](https://app.codecov.io/gh/kubeshark/kubeshark/commit/d3789f2bc0db9b86a56760aa0f6402feedb05470?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None) to head [(`b871d18`)](https://app.codecov.io/gh/kubeshark/kubeshark/commit/b871d18d74caaf94ccee69696e754cf9cfdbdec7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comment
-
-- **Issue #1534** (2024-04-19): **Upgrade fails**
-  *Symptoms*: ```Error: UPGRADE FAILED: cannot patch "kubeshark-worker-daemon-set" with kind DaemonSet: DaemonSet.apps "kubeshark-worker-daemon-set" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"<http://app.kubernetes.io/instance|app.kubernetes.io/instance>":"kubeshark", "<http://app.kubernetes.io/managed-by|app.kubernetes.io/managed-by>":"Helm", "<http://app.kubernetes.io/name|app.kubernetes.io/name>":"kubeshark", "<http://app.kubernetes.io/version|app.kubernetes.io/version>":"52.1.77", "<http://app.kubeshark.co/app|app.kubeshark.co/app>":"worker", "<http://helm.sh/chart|helm.sh/chart>":"kubeshark-52.1.77"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable &amp;&amp; cannot patch "kubeshark-hub" with kind Deployment: Deployment.apps "kubeshark-hub" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"<http://app.kubernetes.io/instance|app.kubernetes.io/instance>":"kubeshark", "<http://app.kubernetes.io/managed-by|app.kubernetes.io/managed-by>":"Helm", "<http://app.kubernetes.io/name|app.kubernetes.io/name>":"kubeshark", "<http://app.kubernetes.io/version|app.kubernetes.io/version>":"52.1.77", "<http://app.kubeshark.co/app|app.kubeshark.co/app>":"hub", "<http://helm.sh/chart|helm.sh/chart>":"kubeshark-52.1.77"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable &amp;&amp; cannot patch "kubeshark-front" with kind Deployment: Deployment.apps "kubeshark-front" is inv
-  **Post-Mortem & Fix Analysis**:
-  > Fixed with: https://github.com/kubeshark/kubeshark/commit/6b6915c7ee43ababc9180bd1945ac3b53fa3c3fd
-
-- **Issue #1466** (2023-12-19): **PF-RING doesn't load when Tracer is running**
-  *Symptoms*: When both `tracer` and `sniffer` run as part of the Worker DaemonSet, PF-RING doesn't load. PF-RING does load when running without the `tracer` (e.g. by using `--set tap.tls=false`)
-  **Post-Mortem & Fix Analysis**:
-  > Fixed with v52.0.x
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -791,170 +694,7 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35e484c9` (2026-09-24)
-**Commit Message**: fix: compare semantic versions numerically (#1925)
-
-Co-authored-by: Volodymyr Stoiko <[REDACTED_EMAIL]>
-
-**File**: `kubernetes/provider_test.go` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+package kubernetes
-+
-+import (
-+	"testing"
-+
-+	"github.com/kubeshark/kubeshark/semver"
-+)
-+
-+func TestValidateKubernetesVersionRejectsNumericVersionBelowMinimum(t *testing.T) {
-+	serverVersion := semver.SemVersion("v1.9.0")
-+
-+	if err := ValidateKubernetesVersion(&serverVersion); err == nil {
-+		t.Fatalf("expected Kubernetes version %s to be rejected", serverVersion)
-+	}
-+}
-+
-+func TestValidateKubernetesVersionAcceptsMinimumVersion(t *testing.T) {
-+	serverVersion := semver.SemVersion(MinKubernetesServerVersion)
-+
-+	if err := ValidateKubernetesVersion(&serverVersion); err != nil {
-+		t.Fatalf("expected Kubernetes version %s to be accepted: %v", serverVersion, err)
-+	}
-+}
-```
-
-**File**: `semver/semver.go` (modified, +19/-5)
-```diff
-@@ -2,6 +2,7 @@ package semver
- 
- import (
- 	"regexp"
-+	"strconv"
- )
- 
- type SemVersion string
-@@ -36,21 +37,34 @@ func (v SemVersion) Patch() string {
- }
- 
- func (v SemVersion) GreaterThan(v2 SemVersion) bool {
--	if v.Major() > v2.Major() {
-+	vMajor, vMinor, vPatch := v.breakdownInt()
-+	v2Major, v2Minor, v2Patch := v2.breakdownInt()
-+
-+	if vMajor > v2Major {
- 		return true
--	} else if v.Major() < v2.Major() {
-+	} else if vMajor < v2Major {
- 		return false
- 	}
- 
--	if v.Minor() > v2.Minor() {
-+	if vMinor > v2Minor {
- 		return true
--	} else if v.Minor() < v2.Minor() {
-+	} else if vMinor < v2Minor {
- 		return false
- 	}
- 
--	if v.Patch() > v2.Patch() {
-+	if vPatch > v2Patch {
- 		return true
- 	}
- 
- 	return false
- }
-+
-+func (v SemVersion) breakdownInt() (int, int, int) {
-+	major, minor, patch := v.Breakdown()
-+
-+	majorInt, _ := strconv.Atoi(major)
-+	minorInt, _ := strconv.Atoi(minor)
-+	patchInt, _ := strconv.Atoi(patch)
-+
-+	return majorInt, minorInt, patchInt
-+}
-```
-
-**File**: `semver/semver_test.go` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+package semver
-+
-+import "testing"
-+
-+func TestGreaterThanComparesNumericComponents(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		v1   SemVersion
-+		v2   SemVersion
-+		want bool
-+	}{
-+		{
-+			name: "minor component with fewer digits",
-+			v1:   "1.16.0",
-+			v2:   "1.9.0",
-+			want: true,
-+		},
-+		{
-+			name: "patch component with fewer digits",
-+			v1:   "1.16.10",
-+			v2:   "1.16.9",
-+			want: true,
-+		},
-+		{
-+			name: "lower major component",
-+			v1:   "1.30.0",
-+			v2:   "2.0.0",
-+			want: false,
-+		},
-+		{
-+			name: "same version",
-+			v1:   "1.16.0",
-+			v2:   "1.16.0",
-+			want: false,
-+		},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			if got := test.v1.GreaterThan(test.v2); got != test.want {
-+				t.Fatalf("%s.GreaterThan(%s) = %t, want %t", test.v1, test.v2, got, test.want)
-+			}
-+		})
-+	}
-+}
-+
-+func TestGreaterThanSupportsKubernetesGitVersionPrefix(t *testing.T) {
-+	if !SemVersion("v1.16.0").GreaterThan("v1.9.0") {
-+		t.Fatal("expected v1.16.0 to be greater than v1.9.0")
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `d3ac79a2` (2026-07-20)
-**Commit Message**: Add required top-level 'owner' field to marketplace.json (#1948)
-
-Fixes #1947
-
-Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
-
-**File**: `.claude-plugin/marketplace.json` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- {
-   "name": "kubeshark",
-+  "owner": { "name": "kubeshark" },
-   "description": "Kubeshark network observability skills for Kubernetes",
-   "plugins": [
-     {
-```
-
----
-
-### Incident Patch 3: `9396e64b` (2026-05-21)
+### Incident Patch 1: `9396e64b` (2026-05-21)
 **Commit Message**: Fix tool-to-section mapping in security-audit skill (#1940)
 
 Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
@@ -1070,7 +810,7 @@ Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 4: `cd13d8f8` (2026-05-15)
+### Incident Patch 2: `cd13d8f8` (2026-05-15)
 **Commit Message**: Add security-audit skill for MITRE ATT&CK-based threat detection (#1934)
 
 New skill that guides systematic 8-phase network security audits across
@@ -1471,1397 +1211,65 @@ Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 5: `ad9dfbf5` (2026-05-15)
-**Commit Message**: Add install skill for Kubeshark deployment guidance (#1933)
+### Incident Patch 3: `e27687a8` (2026-10-15)
+**Commit Message**: Document the trace log level and the identity data it emits (#1976)
 
-* Add install skill for Kubeshark deployment guidance
+* Document the trace log level and the identity data it emits
 
-New skill that helps users install and configure Kubeshark with a clear
-CLI vs Helm decision tree, opinionated production defaults, and
-platform-specific storage class recommendations.
-
-* Add user-invocable flag to install skill frontmatter
-
-* Add backup/overwrite check guidance for ~/.kubeshark/ config files
+* Describe what trace actually logs from the OIDC tokens
 
 ---------
 
 Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
 
-**File**: `skills/README.md` (modified, +2/-0)
+**File**: `helm-chart/README.md` (modified, +1/-0)
 ```diff
-@@ -14,6 +14,8 @@ compatible agents.
- |-------|-------------|
- | [`network-rca`](network-rca/) | Network Root Cause Analysis. Retrospective traffic analysis via snapshots, with two investigation routes: PCAP (for Wireshark/compliance) and Dissection (for AI-driven API-level investigation). |
- | [`kfl`](kfl/) | KFL2 (Kubeshark Filter Language) expert. Complete reference for writing, debugging, and optimizing CEL-based traffic filters across all supported protocols. |
-+| [`security-audit`](security-audit/) | Network Security Audit. Systematic 8-phase threat detection across MITRE ATT&CK tactics — C2, exfiltration, lateral movement, credential theft, cryptomining, protocol abuse — using snapshot-based traffic analysis. |
-+| [`install`](install/) | Installation & Deployment. Guides CLI and Helm installation, builds custom values files, handles platform-specific config (EKS/GKE/AKS/OpenShift/KinD), auth, ingress, cloud storage, and troubleshooting. |
- 
- ## Prerequisites
- 
+@@ -317,6 +317,7 @@ Example for overriding image names:
+ | `dumpLogs`                                | Enable dumping of logs         | `false`                                                                                                                                                                                                                                          |
+ | `headless`                                | Enable running in headless mode               | `false`                                                                                                                                                                                                                                          |
+ | `license`                                 | License key for the Pro/Enterprise edition    | `""`                                                                                                                                                                                                                                             |
++| `logLevel`                                | Log verbosity for the Hub, sniffer and tracer. One of `error`, `warning`, `info`, `debug`, `trace`. `trace` logs per-request authorization detail, including the OIDC subject and group memberships, so treat it as a diagnostic setting rather than a steady-state one. | `warning`                                                                                                                                                                                                                                        |
+ | `scripting.enabled`                       | Enables scripting. Also gates the scripting API: when `false` the Hub answers `/scripts`, `/scripts/exec`, `/jobs` and the AI assistant with 409, and the dashboard hides the scripting UI. Scripting is deployment-wide rather than a per-role capability, so this is the only switch that closes it. | `false` |
+ | `scripting.env`                           | Environment variables for the scripting      | `{}`                                                                                                                                                                                                                                             |
+ | `scripting.source`                        | Source directory of the scripts                | `""`                                                                                                                                                                                                                                             |
 ```
 
-**File**: `skills/install/SKILL.md` (added, +489/-0)
+**File**: `skills/install/references/helm-values.md` (modified, +15/-1)
 ```diff
-@@ -0,0 +1,489 @@
-+---
-+name: install
-+user-invocable: true
-+description: >
-+  Kubeshark installation and deployment skill. Use this skill whenever the user wants
-+  to install Kubeshark, deploy Kubeshark to a Kubernetes cluster, set up Kubeshark,
-+  configure Kubeshark helm values, generate a Kubeshark config file, customize
-+  Kubeshark deployment, troubleshoot Kubeshark installation, upgrade Kubeshark,
-+  uninstall Kubeshark, or manage the Kubeshark Helm release. Also trigger when
-+  the user mentions "kubeshark tap", "kubeshark clean", "helm install kubeshark",
-+  "get kubeshark running", "set up traffic capture", "deploy kubeshark",
-+  "kubeshark not starting", "kubeshark pods not ready", "configure namespaces",
-+  "persistent storage", "cloud storage for snapshots", "kubeshark ingress",
-+  "kubeshark auth", "kubeshark SAML", "kubeshark license", "kubeshark config",
-+  "custom helm values", "kubeshark on EKS/GKE/AKS", "kubeshark on OpenShift",
-+  "kubeshark on KinD/minikube/k3s", "air-gapped", "offline install",
-+  or any request related to getting Kubeshark installed, configured, and running
-+  in a Kubernetes cluster.
-+---
-+
-+# Kubeshark Installation & Deployment
-+
-+You are a Kubeshark deployment specialist. Your job is to help users install,
-+configure, and deploy Kubeshark to their Kubernetes cluster — tailoring the
-+configuration to their specific environment, requirements, and use case.
-+
-+Kubeshark deploys via Helm. The CLI (`kubeshark tap`) is a thin wrapper that
-+installs a basic Helm chart and establishes a port-forward — nothing more.
-+For larger or production clusters, use Helm directly with a custom values file.
-+
-+## Decision: CLI or Helm?
-+
-+**Use the CLI** when:
-+- Quick install on a dev/test cluster (minikube, KinD, k3s)
-+- Personal environment, single user
-+- Just want to try Kubeshark quickly
-+
-+**Use Helm directly** when:
-+- Larger cluster (staging, production)
-+- Need custom configuration (ingress, auth, storage, namespaces)
-+- GitOps / infrastructure-as-code workflows
-+- Team environment
-+
-+## Path A: CLI (Dev/Test Clusters)
-+
-+### Step 1 — Install the CLI
-+
-+Check if Kubeshark is already installed:
-+
-+```bash
-+kubeshark version
-+```
-+
-+If not installed, offer one of these methods:
-+
-+**Homebrew (easiest, where available):**
-+
-+```bash
-+brew tap kubeshark/kubeshark
-+brew install kubeshark
-+```
-+
-+**Binary download:**
-+
-+For the full list of platforms and architectures, see https://docs.kubeshark.com/en/install
-+
-+```bash
-+# Linux (amd64)
-+curl -Lo kubeshark https://github.com/kubeshark/kubeshark/releases/latest/download/kubeshark_linux_amd64
-+chmod +x kubeshark
-+sudo mv kubeshark /usr/local/bin/
-+
-+# Linux (arm64)
-+curl -Lo kubeshark https://github.com/kubeshark/kubeshark/releases/latest/download/kubeshark_linux_arm64
-+chmod +x kubeshark
-+sudo mv kubeshark /usr/local/bin/
-+
-+# macOS (Apple Silicon)
-+curl -Lo kubeshark https://github.com/kubeshark/kubeshark/releases/latest/download/kubeshark_darwin_arm64
-+chmod +x kubeshark
-+sudo mv kubeshark /usr/local/bin/
-+
-+# macOS (Intel)
-+curl -Lo kubeshark https://github.com/kubeshark/kubeshark/releases/latest/download/kubeshark_darwin_amd64
-+chmod +x kubeshark
-+sudo mv kubeshark /usr/local/bin/
-+```
-+
-+### Step 2 — Check for Updates
-+
-+**Always check for updates before using the CLI.** This is critical — Kubeshark
-+releases frequently and running an outdated version can cause issues.
-+
-+```bash
-+# Homebrew
-+brew upgrade kubeshark
-+
-+# Binary — check the latest release and re-download if newer
-+kubeshark version
-+# Compare with https://github.com/kubeshark/kubeshark/releases/latest
-+```
-+
-+### Step 3 — Deploy with `kubeshark tap`
-+
-+```bash
-+kubeshark tap
-+```
-+
-+This installs the Helm chart with defaults and opens the dashboard in your browser.
-+That's it for dev/test clusters.
-+
-+### Step 4 — Reconnect if Connection Breaks
-+
-+If the port-forward drops (laptop sleep, network change, terminal closed):
-+
-+```bash
-+kubeshark proxy
-+```
-+
-+This re-establishes the port-forward and reopens the dashboard. It does **not**
-+reinstall — Kubeshark is still running in the cluster.
-+
-+### Step 5 — Clean Up After Use
-+
-+**Always clean up when done.** Kubeshark runs eBPF probes and DaemonSet workers
-+on every node — leaving it running wastes cluster resources.
-+
-+```bash
-+kubeshark clean
-+```
-+
-+Always remind the user to run `kubeshark clean` when they're finished. This is
-+easy to forget and important.
-+
-+## Path B: Helm (Larger / Production Clusters)
-+
-+### Step 1 — Upgrade the Helm Chart
-+
-+**Always update the Helm repo first.** This is the most important first step —
-+running an outdated chart can cause issues.
-+
-+```bash
-+helm repo add kubeshark https://helm.kubeshark.com
-+helm repo update
-+```
-+
-+### Step 2 — Create a Config Directory
-+
-+Store all configuration files in `~/.kubeshark/`:
-+
-+```bash
-+mkdir -p ~/.kubeshark
-+```
-+
-+**Before writing any file to `~/.kubeshark/`, check if it already exists.**
-+If `~/.kubeshark/values.yaml` (or any target f
-```
-
-**File**: `skills/install/references/cloud-storage.md` (added, +96/-0)
-```diff
-@@ -0,0 +1,96 @@
-+# Cloud Storage for Snapshots
-+
-+This is a pointer to the authoritative cloud storage documentation maintained in
-+the Helm chart:
-+
-+**Source of truth**: `helm-chart/docs/snapshots_cloud_storage.md`
-+
-+Always read that file for the latest configuration details, including:
-+
-+- Amazon S3 (static credentials, IRSA, cross-account AssumeRole)
-+- Azure Blob Storage (storage key, Workload Identity / DefaultAzureCredential)
-+- Google Cloud Storage (service account JSON, GKE Workload Identity)
-+- IAM permissions and trust policy examples
-+- ConfigMap and Secret setup patterns
-+- Inline values vs. external ConfigMap/Secret approaches
-+
-+## Quick Reference
-+
-+### Helm Values Structure
-+
-+```yaml
-+tap:
-+  snapshots:
-+    cloud:
-+      provider: ""      # "s3", "azblob", or "gcs" (empty = disabled)
-+      prefix: ""        # Key prefix in the bucket/container
-+      configMaps: []    # Pre-existing ConfigMaps with cloud config env vars
-+      secrets: []       # Pre-existing Secrets with cloud credentials
-+      s3:
-+        bucket: ""
-+        region: ""
-+        accessKey: ""
-+        secretKey: ""
-+        roleArn: ""
-+        externalId: ""
-+      azblob:
-+        storageAccount: ""
-+        container: ""
-+        storageKey: ""
-+      gcs:
-+        bucket: ""
-+        project: ""
-+        credentialsJson: ""
-+```
-+
-+### Recommended Auth Per Provider
-+
-+| Provider | Production Recommendation |
-+|----------|-------------------------|
-+| S3 (EKS) | IRSA (IAM Roles for Service Accounts) — no static credentials |
-+| S3 (non-EKS) | Static credentials via Secret, or default AWS credential chain |
-+| Azure Blob (AKS) | Workload Identity / Managed Identity |
-+| Azure Blob (non-AKS) | Storage account key via Secret |
-+| GCS (GKE) | GKE Workload Identity — no JSON key file |
-+| GCS (non-GKE) | Service account JSON key via Secret |
-+
-+### Inline Values (Simplest Approach)
-+
-+Set credentials directly in values.yaml. The Helm chart creates the necessary
-+ConfigMap/Secret resources automatically.
-+
-+**S3:**
-+```yaml
-+tap:
-+  snapshots:
-+    cloud:
-+      provider: "s3"
-+      s3:
-+        bucket: my-kubeshark-snapshots
-+        region: us-east-1
-+```
-+
-+**GCS:**
-+```yaml
-+tap:
-+  snapshots:
-+    cloud:
-+      provider: "gcs"
-+      gcs:
-+        bucket: my-kubeshark-snapshots
-+        project: my-gcp-project
-+```
-+
-+**Azure Blob:**
-+```yaml
-+tap:
-+  snapshots:
-+    cloud:
-+      provider: "azblob"
-+      azblob:
-+        storageAccount: mykubesharksa
-+        container: snapshots
-+```
-+
-+For production setups with proper IAM integration, see the full documentation
-+in `helm-chart/docs/snapshots_cloud_storage.md`.
-```
-
-**File**: `skills/install/references/helm-values.md` (added, +376/-0)
-```diff
-@@ -0,0 +1,376 @@
-+# Kubeshark Helm Values Reference
-+
-+Complete reference for all Kubeshark Helm chart values. Use this when building
-+custom `values.yaml` files or `--set` flags.
-+
-+## Docker Images
-+
-+```yaml
-+tap:
-+  docker:
-+    registry: docker.io/kubeshark    # Docker registry
-+    tag: ""                          # Image tag (empty = chart appVersion)
-+    tagLocked: true                  # Lock to specific tag
-+    imagePullPolicy: Always          # Always, IfNotPresent, Never
-+    imagePullSecrets: []             # Registry pull secrets
-+    overrideImage:                   # Override individual component images
-+      worker: ""
-+      hub: ""
-+      front: ""
-+    overrideTag:                     # Override individual component tags
-+      worker: ""
-+      hub: ""
-+      front: ""
-+```
-+
-+## Proxy / Port-Forward
-+
-+```yaml
-+tap:
-+  proxy:
-+    worker:
-+      srvPort: 48999
-+    hub:
-+      srvPort: 8898
-+    front:
-+      port: 8899                     # Local port for port-forward
-+    host: 127.0.0.1                  # Bind address
-+```
-+
-+## Pod Targeting
-+
-+```yaml
-+tap:
-+  regex: .*                          # Pod name regex filter
-+  namespaces: []                     # Target namespaces (empty = all)
-+  excludedNamespaces: []             # Namespaces to exclude
-+  bpfOverride: ""                    # Custom BPF filter override
-+```
-+
-+## Capture & Dissection
-+
-+```yaml
-+tap:
-+  capture:
-+    dissection:
-+      enabled: true                  # Enable L7 dissection
-+      stopAfter: 5m                  # Auto-stop dissection after duration
-+    captureSelf: false               # Capture Kubeshark's own traffic
-+    raw:
-+      enabled: true                  # Enable raw packet capture (needed for snapshots)
-+      storageSize: 1Gi               # FIFO buffer size per node
-+    dbMaxSize: 500Mi                 # Max L7 database size per node
-+  delayedDissection:
-+    cpu: "1"                         # CPU for delayed dissection jobs
-+    memory: 4Gi                      # Memory for delayed dissection jobs
-+    storageSize: ""                  # Storage for delayed dissection
-+    storageClass: ""                 # Storage class for delayed dissection
-+```
-+
-+## Snapshots
-+
-+```yaml
-+tap:
-+  snapshots:
-+    local:
-+      storageClass: ""               # Storage class for local snapshots
-+      storageSize: 20Gi              # PVC size for local snapshots
-+    cloud:
-+      provider: ""                   # s3, gcs, or azblob
-+      prefix: ""                     # Path prefix in bucket
-+      configMaps: []                 # Additional ConfigMaps to mount
-+      secrets: []                    # Additional Secrets to mount
-+      s3:
-+        bucket: ""
-+        region: ""
-+        accessKey: ""
-+        secretKey: ""
-+        roleArn: ""                  # IAM role ARN (IRSA)
-+        externalId: ""               # STS external ID
-+      azblob:
-+        storageAccount: ""
-+        container: ""
-+        storageKey: ""
-+      gcs:
-+        bucket: ""
-+        project: ""
-+        credentialsJson: ""          # Service account JSON
-+```
-+
-+## Helm Release
-+
-+```yaml
-+tap:
-+  release:
-+    repo: https://helm.kubeshark.com  # Helm chart repository
-+    name: kubeshark                    # Release name
-+    namespace: default                 # Release namespace
-+    helmChartPath: ""                  # Path to local chart (overrides repo)
-+```
-+
-+## Storage
-+
-+```yaml
-+tap:
-+  persistentStorage: false           # Enable PVC for worker data
-+  persistentStorageStatic: false     # Static provisioning
-+  persistentStoragePvcVolumeMode: FileSystem  # FileSystem or Block
-+  efsFileSytemIdAndPath: ""          # EFS file system ID (EKS)
-+  secrets: []                        # Additional secrets to mount
-+  storageLimit: 10Gi                 # Max storage per node
-+  storageClass: standard             # Default storage class
-+```
-+
-+## Resources
-+
-+```yaml
-+tap:
-+  resources:
-+    hub:
-+      limits:
-+        cpu: "0"                     # 0 = no limit
-+        memory: 5Gi
-+      requests:
-+        cpu: 50m
-+        memory: 50Mi
-+    sniffer:
-+      limits:
-+        cpu: "0"
-+        memory: 5Gi
-+      requests:
-+        cpu: 50m
-+        memory: 50Mi
-+    tracer:
-+      limits:
-+        cpu: "0"
-+        memory: 5Gi
-+      requests:
-+        cpu: 50m
-+        memory: 50Mi
-+```
-+
-+## Health Probes
-+
-+```yaml
-+tap:
-+  probes:
-+    hub:
-+      initialDelaySeconds: 5
-+      periodSeconds: 5
-+      successThreshold: 1
-+      failureThreshold: 3
-+    sniffer:
-+      initialDelaySeconds: 5
-+      periodSeconds: 5
-+      successThreshold: 1
-+      failureThreshold: 3
-+```
-+
-+## TLS & Service Mesh
-+
-+```yaml
-+tap:
-+  serviceMesh: true                  # Capture mTLS traffic (service mesh)
-+  tls: true                          # Capture OpenSSL/Go TLS traffic
-+  disableTlsLog: true                # Suppress TLS debug logging
-+  packetCapture: best                # Capture method: best, af_packet, pcap
-+```
-+
-+##
-```
-
----
-
-### Incident Patch 6: `9f5a1a41` (2026-05-01)
-**Commit Message**: fix(release-pr): sync bumped Chart.yaml to kubeshark.github.io (#1913)
-
-* fix(release-pr): sync bumped Chart.yaml to kubeshark.github.io
-
-The release-pr target was switching back to master (and pulling)
-BEFORE copying helm-chart/ into ../kubeshark.github.io/charts/chart.
-That reverted the working tree to the pre-bump Chart.yaml, so the
-kubeshark.github.io PR shipped the previous version and the
-chart-releaser action failed trying to recreate an existing tag.
-
-Copy the bumped chart from the release/vX.Y.Z working tree, then
-switch kubeshark back to master at the end of the target.
-
-Also consolidate iterative robustness improvements: VERSION
-validation, idempotent sibling-repo tagging, idempotent branch /
-commit / push / PR creation, and a "nothing to commit" guard so
-reruns of release-pr do not fail.
-
-* refactor(release): split release-pr into three rerunnable targets
-
-Before, release-pr did three things in one recipe: tag sibling
-repos, create the kubeshark release PR, and create the helm chart
-PR. If any step failed, the whole target had to be rerun, even for
-the parts that had already succeeded, and some sub-steps (like
-tagging worker/hub/front after a docker-image-only rebuild) 
-
-**File**: `Makefile` (modified, +92/-33)
-```diff
-@@ -253,52 +253,111 @@ port-forward:
- 	kubectl port-forward $$(kubectl get pods | awk '$$1 ~ /^$(POD_PREFIX)/' | awk 'END {print $$1}') $(SRC_PORT):$(DST_PORT)
+@@ -371,9 +371,23 @@ tap:
+ headless: false                      # Suppress browser auto-open
+ license: ""                          # Kubeshark Pro license key
+ timezone: ""                         # Override timezone
+-logLevel: warning                    # Log level: debug, info, warning, error
++logLevel: warning                    # Log level: trace, debug, info, warning, error
  
- release: ## Print release workflow instructions.
--	@echo "Release workflow (2 steps):"
-+	@echo "Release workflow — each step is idempotent and can be rerun on its own:"
- 	@echo ""
--	@echo "  1. make release-pr VERSION=x.y.z"
--	@echo "     Tags sibling repos, bumps version, creates PRs"
--	@echo "     (kubeshark + kubeshark.github.io helm chart)."
--	@echo "     Review and merge both PRs manually."
-+	@echo "  1. make release-siblings VERSION=x.y.z"
-+	@echo "     Tag worker, hub, front with vx.y.z. Also run standalone when"
-+	@echo "     rebuilding docker images without cutting a full release."
- 	@echo ""
--	@echo "  2. (automatic) Tag is created when release PR merges."
--	@echo "     Fallback: make release-tag VERSION=x.y.z"
--
--release-pr: ## Step 1: Tag sibling repos, bump version, create release PR.
--	@cd ../worker && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
--	@cd ../hub && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
--	@cd ../front && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
-+	@echo "  2. make release-pr-kubeshark VERSION=x.y.z"
-+	@echo "     Bump Helm Chart.yaml, build, open release PR on kubeshark."
-+	@echo ""
-+	@echo "  3. make release-pr-helm VERSION=x.y.z"
-+	@echo "     Sync helm-chart/ into kubeshark.github.io, open helm PR."
-+	@echo "     Requires release/vx.y.z branch (created by step 2)."
-+	@echo ""
-+	@echo "  Shortcut: make release-pr VERSION=x.y.z runs 1 → 2 → 3."
-+	@echo ""
-+	@echo "  After both PRs merge: tag is created automatically,"
-+	@echo "  or run: make release-tag VERSION=x.y.z"
+ kube:
+   configPath: ""                     # Custom kubeconfig path
+   context: ""                        # Kubernetes context name
+ ```
 +
-+# Internal: validate VERSION before any release-* target runs.
-+_release-check-version:
-+	@if [ -z "$(VERSION)" ]; then echo "ERROR: VERSION is required. Usage: make <target> VERSION=x.y.z"; exit 1; fi
-+	@echo "$(VERSION)" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+' || { echo "ERROR: VERSION must be semver (e.g. 53.2.4)"; exit 1; }
++### Log levels
 +
-+release-siblings: _release-check-version ## Tag worker, hub, front with v$(VERSION). Idempotent; standalone for docker-image-only updates.
-+	@for repo in worker hub front; do \
-+		echo "==> $$repo: ensuring v$(VERSION) tag"; \
-+		(cd ../$$repo && git checkout master && git pull) || exit 1; \
-+		if (cd ../$$repo && git ls-remote --tags origin "refs/tags/v$(VERSION)" | grep -q .); then \
-+			echo "    v$(VERSION) already on origin — skipping"; \
-+		else \
-+			(cd ../$$repo && git tag -d v$(VERSION) 2>/dev/null; git tag v$(VERSION) && git push origin "refs/tags/v$(VERSION)") || exit 1; \
-+		fi; \
-+	done
++`logLevel` applies to the Hub, the sniffer and the tracer, since the chart passes the same
++value to every container. Levels, least verbose first: `error`, `warning` (default), `info`,
++`debug`, `trace`.
 +
-+release-pr-kubeshark: _release-check-version ## Bump Chart.yaml, build, open release PR on kubeshark.
- 	@cd ../kubeshark && git checkout master && git pull
--	@sed -i '' "s/^version:.*/version: \"$(shell echo $(VERSION) | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+)\..*/\1/')\"/" helm-chart/Chart.yaml
-+	@NEW=$$(echo $(VERSION) | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+).*/\1/'); \
-+	CUR=$$(awk '/^version:/ {gsub(/"/,"",$$2); print $$2; exit}' helm-chart/Chart.yaml); \
-+	if [ "$$CUR" != "$$NEW" ]; then \
-+		sed -i '' "s/^version:.*/version: \"$$NEW\"/" helm-chart/Chart.yaml; \
-+	else \
-+		echo "Chart.yaml already at $$NEW"; \
-+	fi
- 	@$(MAKE) build VER=$(VERSION)
- 	@if [ "$(shell uname)" = "Darwin" ]; then \
- 		codesign --sign - --force --preserve-metadata=entitlements,requirements,flags,runtime ./bin/kubeshark__; \
- 	fi
- 	@$(MAKE) generate-helm-values && $(MAKE) generate-manifests
-+	@if git show-ref --verify --quiet refs/heads/release/v$(VERSION); then \
-+		git branch -D release/v$(VERSION); \
-+	fi
- 	@git checkout -b release/v$(VERSION)
- 	@git add -A .
--	@git commit -m ":bookmark: Bump the Helm chart version to $(VERSION)"
--	@git push -u origin release/v$(VERSION)
--	@gh pr create --title ":bookmark: Release v$(VERSION)" \
--		--body "Automated release PR for v$(VERSION)." \
--		--base master \
--		--reviewer corest
--	@git checkout master && git pull
--	@cd ../kubeshark.github.io \
--		&& git checkout master && git pull \
--		&& rm -rf charts/chart \
--		&& mkdir charts/chart \
--		&& cp -r ../kubeshark/helm-chart/ charts/chart/ \
--		&& git checkout -b helm-v$(VERSION) \
--		&& git add -A . \
--		&& git commit -m ":sparkles: Update the Helm chart to v$(VERSION)" \
--		&& git push -u origin helm-v$(VERSION) \
--		&& gh pr create --title ":sparkles: Helm chart v$(VERSION)" \
-+	@if ! git diff --cached --quiet; then \
-+		git commit -m ":bookmark: Bump the Helm chart version to $(VERSION)"; \
-+	else \
-+		echo "nothing to commit"; \
-+	fi
-+	@git push --force-with-lease -u origin release/v$(VERSION)
-+	@if gh pr view release/v$(VERSION) --json number >/dev/null 2>&1; then \
-+		echo "PR already exists for release/v$(VERSION)"; \
-+	else \
-+		gh pr create --title ":bookmark: Release v$
-```
-
----
-
-### Incident Patch 7: `3a1ad64b` (2026-04-10)
-**Commit Message**: fix: add subPathExpr to worker DaemonSet for shared persistent storage (#1901)
-
-Co-authored-by: Volodymyr Stoiko <[REDACTED_EMAIL]>
-Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
-
-**File**: `helm-chart/templates/09-worker-daemon-set.yaml` (modified, +14/-0)
-```diff
-@@ -131,6 +131,10 @@ spec:
-             valueFrom:
-               fieldRef:
-                 fieldPath: metadata.namespace
-+          - name: NODE_NAME
-+            valueFrom:
-+              fieldRef:
-+                fieldPath: spec.nodeName
-           - name: TCP_STREAM_CHANNEL_TIMEOUT_MS
-             value: '{{ .Values.tap.misc.tcpStreamChannelTimeoutMs }}'
-           - name: TCP_STREAM_CHANNEL_TIMEOUT_SHOW
-@@ -227,6 +231,9 @@ spec:
-               mountPropagation: HostToContainer
-             - mountPath: /app/data
-               name: data
-+{{- if .Values.tap.persistentStorage }}
-+              subPathExpr: $(NODE_NAME)
-+{{- end }}
-       {{- if .Values.tap.tls }}
-         - command:
-             - ./tracer
-@@ -257,6 +264,10 @@ spec:
-             valueFrom:
-               fieldRef:
-                 fieldPath: metadata.namespace
-+          - name: NODE_NAME
-+            valueFrom:
-+              fieldRef:
-+                fieldPath: spec.nodeName
-           - name: PROFILING_ENABLED
-             value: '{{ .Values.tap.pprof.enabled }}'
-           - name: SENTRY_ENABLED
-@@ -328,6 +339,9 @@ spec:
-               mountPropagation: HostToContainer
-             - mountPath: /app/data
-               name: data
-+{{- if .Values.tap.persistentStorage }}
-+              subPathExpr: $(NODE_NAME)
-+{{- end }}
-             - mountPath: /etc/os-release
-               name: os-release
-               readOnly: true
-```
-
----
-
-### Incident Patch 8: `4de0ac6a` (2026-04-07)
-**Commit Message**: refactor: replace Split in loops with more efficient SplitSeq and gofmt the code (#1888)
-
-Signed-off-by: stringsbuilder <[REDACTED_EMAIL]>
-Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
-
-**File**: `cmd/mcpRunner.go` (modified, +17/-18)
-```diff
-@@ -86,9 +86,9 @@ type mcpContent struct {
- }
- 
- type mcpPrompt struct {
--	Name        string            `json:"name"`
--	Description string            `json:"description,omitempty"`
--	Arguments   []mcpPromptArg    `json:"arguments,omitempty"`
-+	Name        string         `json:"name"`
-+	Description string         `json:"description,omitempty"`
-+	Arguments   []mcpPromptArg `json:"arguments,omitempty"`
- }
- 
- type mcpPromptArg struct {
-@@ -117,11 +117,11 @@ type mcpGetPromptResult struct {
- // Hub MCP API response types
- 
- type hubMCPResponse struct {
--	Name        string          `json:"name"`
--	Description string          `json:"description"`
--	Version     string          `json:"version"`
--	Tools       []hubMCPTool    `json:"tools"`
--	Prompts     []hubMCPPrompt  `json:"prompts"`
-+	Name        string         `json:"name"`
-+	Description string         `json:"description"`
-+	Version     string         `json:"version"`
-+	Tools       []hubMCPTool   `json:"tools"`
-+	Prompts     []hubMCPPrompt `json:"prompts"`
- }
- 
- type hubMCPTool struct {
-@@ -131,9 +131,9 @@ type hubMCPTool struct {
- }
- 
- type hubMCPPrompt struct {
--	Name        string              `json:"name"`
--	Description string              `json:"description,omitempty"`
--	Arguments   []hubMCPPromptArg   `json:"arguments,omitempty"`
-+	Name        string            `json:"name"`
-+	Description string            `json:"description,omitempty"`
-+	Arguments   []hubMCPPromptArg `json:"arguments,omitempty"`
- }
- 
- type hubMCPPromptArg struct {
-@@ -151,10 +151,10 @@ type mcpServer struct {
- 	stdout             io.Writer
- 	backendInitialized bool
- 	backendMu          sync.Mutex
--	setFlags           []string // --set flags to pass to 'kubeshark tap' when starting
--	directURL          string   // If set, connect directly to this URL (no kubectl/proxy)
--	urlMode            bool     // True when using direct URL mode
--	allowDestructive   bool     // If true, enable start/stop tools
-+	setFlags           []string        // --set flags to pass to 'kubeshark tap' when starting
-+	directURL          string          // If set, connect directly to this URL (no kubectl/proxy)
-+	urlMode            bool            // True when using direct URL mode
-+	allowDestructive   bool            // If true, enable start/stop tools
- 	cachedHubMCP       *hubMCPResponse // Cached tools/prompts from Hub
- 	cachedAt           time.Time       // When the cache was populated
- 	hubMCPMu           sync.Mutex
-@@ -772,7 +772,6 @@ func (s *mcpServer) callHubTool(toolName string, args map[string]any) (string, b
- 	return prettyJSON.String(), false
- }
- 
--
- func (s *mcpServer) callGetFileURL(args map[string]any) (string, bool) {
- 	filePath, _ := args["path"].(string)
- 	if filePath == "" {
-@@ -869,8 +868,8 @@ func (s *mcpServer) callStartKubeshark(args map[string]any) (string, bool) {
- 
- 	// Add namespaces if provided
- 	if v, ok := args["namespaces"].(string); ok && v != "" {
--		namespaces := strings.Split(v, ",")
--		for _, ns := range namespaces {
-+		namespaces := strings.SplitSeq(v, ",")
-+		for ns := range namespaces {
- 			ns = strings.TrimSpace(ns)
- 			if ns != "" {
- 				cmdArgs = append(cmdArgs, "-n", ns)
-```
-
-**File**: `cmd/mcp_test.go` (modified, +1/-1)
-```diff
-@@ -417,7 +417,7 @@ func TestMCP_CommandArgs(t *testing.T) {
- 			cmdArgs = append(cmdArgs, v)
- 		}
- 		if v, _ := tc.args["namespaces"].(string); v != "" {
--			for _, ns := range strings.Split(v, ",") {
-+			for ns := range strings.SplitSeq(v, ",") {
- 				cmdArgs = append(cmdArgs, "-n", strings.TrimSpace(ns))
- 			}
- 		}
-```
-
----
-
-### Incident Patch 9: `4695acb4` (2026-03-31)
-**Commit Message**: :bug: Fix release-pr Makefile target cleanup and macOS sed compatibility (#1890)
-
-- Fix macOS sed -i requiring empty backup extension argument
-- Checkout master after creating kubeshark release PR
-- Checkout master in kubeshark.github.io before and after creating helm PR
-- Run all kubeshark.github.io operations in a single shell to avoid lost cd context
-
-Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
-
-**File**: `Makefile` (modified, +12/-10)
-```diff
-@@ -264,10 +264,10 @@ release: ## Print release workflow instructions.
- 	@echo "     Fallback: make release-tag VERSION=x.y.z"
- 
- release-pr: ## Step 1: Tag sibling repos, bump version, create release PR.
--# 	@cd ../worker && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
--# 	@cd ../hub && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
--# 	@cd ../front && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
--# 	@cd ../kubeshark && git checkout master && git pull
-+	@cd ../worker && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
-+	@cd ../hub && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
-+	@cd ../front && git checkout master && git pull && git tag -d v$(VERSION); git tag v$(VERSION) && git push origin --tags
-+	@cd ../kubeshark && git checkout master && git pull
- 	@sed -i '' "s/^version:.*/version: \"$(shell echo $(VERSION) | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+)\..*/\1/')\"/" helm-chart/Chart.yaml
- 	@$(MAKE) build VER=$(VERSION)
- 	@if [ "$(shell uname)" = "Darwin" ]; then \
-@@ -282,19 +282,21 @@ release-pr: ## Step 1: Tag sibling repos, bump version, create release PR.
- 		--body "Automated release PR for v$(VERSION)." \
- 		--base master \
- 		--reviewer corest
--	@rm -rf ../kubeshark.github.io/charts/chart
--	@mkdir ../kubeshark.github.io/charts/chart
--	@cp -r helm-chart/ ../kubeshark.github.io/charts/chart/
--	@cd ../kubeshark.github.io && git checkout master && git pull \
-+	@git checkout master && git pull
-+	@cd ../kubeshark.github.io \
-+		&& git checkout master && git pull \
-+		&& rm -rf charts/chart \
-+		&& mkdir charts/chart \
-+		&& cp -r ../kubeshark/helm-chart/ charts/chart/ \
- 		&& git checkout -b helm-v$(VERSION) \
- 		&& git add -A . \
- 		&& git commit -m ":sparkles: Update the Helm chart to v$(VERSION)" \
- 		&& git push -u origin helm-v$(VERSION) \
- 		&& gh pr create --title ":sparkles: Helm chart v$(VERSION)" \
- 			--body "Update Helm chart for release v$(VERSION)." \
- 			--base master \
--			--reviewer corest
--	@cd ../kubeshark
-+			--reviewer corest \
-+		&& git checkout master
- 	@echo ""
- 	@echo "Release PRs created:"
- 	@echo "  - kubeshark: Review and merge the release PR."
-```
-
----
-
-### Incident Patch 10: `c63740ec` (2026-03-20)
-**Commit Message**: :bug: Fix dissection-control `front` env logic (#1878)
-
-**File**: `helm-chart/templates/06-front-deployment.yaml` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ spec:
-               value: '{{- if and (not .Values.demoModeEnabled) (not .Values.tap.capture.dissection.enabled) -}}
-                         true
-                       {{- else -}}
--                        {{ not (default false .Values.demoModeEnabled) | ternary false true }}
-+                        {{ (default false .Values.demoModeEnabled) | ternary false true }}
-                       {{- end -}}'
-             - name: 'REACT_APP_CLOUD_LICENSE_ENABLED'
-               value: '{{- if or (and .Values.cloudLicenseEnabled (not (empty .Values.license))) (not .Values.internetConnectivity) -}}
-```
-
----
-
-### Incident Patch 11: `963b3e4a` (2026-03-17)
-**Commit Message**: :bug: Add default value for `demoModeEnabled` (#1872)
-
-**File**: `helm-chart/templates/12-config-map.yaml` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ data:
-     INGRESS_HOST: '{{ .Values.tap.ingress.host }}'
-     PROXY_FRONT_PORT: '{{ .Values.tap.proxy.front.port }}'
-     AUTH_ENABLED: '{{- if and .Values.cloudLicenseEnabled (not (empty .Values.license)) -}}
--                        {{ .Values.demoModeEnabled | ternary true ((and .Values.tap.auth.enabled (eq .Values.tap.auth.type "dex")) | ternary true false) }}
-+                        {{ (default false .Values.demoModeEnabled) | ternary true ((and .Values.tap.auth.enabled (eq .Values.tap.auth.type "dex")) | ternary true false) }}
-                   {{- else -}}
-                         {{ .Values.cloudLicenseEnabled | ternary "true" ((default false .Values.demoModeEnabled) | ternary "true" .Values.tap.auth.enabled) }}
-                   {{- end }}'
-```
-
----
-
-### Incident Patch 12: `f9a5fbbb` (2026-03-06)
-**Commit Message**: Fix snapshots local storage size (#1859)
-
-Co-authored-by: Alon Girmonsky <[REDACTED_EMAIL]>
-
-**File**: `helm-chart/templates/04-hub-deployment.yaml` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ spec:
-             - -capture-stop-after
-             - "{{ if hasKey .Values.tap.capture.dissection "stopAfter" }}{{ .Values.tap.capture.dissection.stopAfter }}{{ else }}5m{{ end }}"
-             - -snapshot-size-limit
--            - '{{ .Values.tap.snapshots.storageSize }}'
-+            - '{{ .Values.tap.snapshots.local.storageSize }}'
-             - -dissector-image
-           {{- if .Values.tap.docker.overrideImage.worker }}
-             - '{{ .Values.tap.docker.overrideImage.worker }}'
-```
-
----
-
-### Incident Patch 13: `a6daefc5` (2026-03-06)
-**Commit Message**: Fix MCP Registry publish by using OIDC auth instead of interactive OAuth (#1857)
-
-mcp-publisher login github uses the device flow (interactive OAuth) which
-requires a human to visit a URL - this can never work in CI. Switch to
-github-oidc which uses the OIDC token provided by GitHub Actions.
-
-**File**: `.github/workflows/mcp-publish.yml` (modified, +1/-1)
-```diff
-@@ -168,7 +168,7 @@ jobs:
-       - name: Login to MCP Registry
-         if: github.event_name != 'workflow_dispatch' || github.event.inputs.dry_run != 'true'
-         shell: bash
--        run: mcp-publisher login github
-+        run: mcp-publisher login github-oidc
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
-```
-
----
-
-### Incident Patch 14: `a46f05c4` (2026-03-03)
-**Commit Message**: Revert "Add get_file_url and download_file MCP tools"
-
-This reverts commit dbfd17d901ffdbb43cb470ddb1b8499969761638.
-
-**File**: `cmd/mcpRunner.go` (modified, +3/-155)
-```diff
-@@ -10,7 +10,6 @@ import (
- 	"net/http"
- 	"os"
- 	"os/exec"
--	"path"
- 	"strings"
- 	"sync"
- 	"time"
-@@ -325,16 +324,6 @@ func (s *mcpServer) invalidateHubMCPCache() {
- 	s.cachedHubMCP = nil
- }
- 
--// getBaseURL returns the hub API base URL by stripping /mcp from hubBaseURL.
--// The hub URL is always the frontend URL + /api, and hubBaseURL is frontendURL/api/mcp.
--// Ensures backend connection is established first.
--func (s *mcpServer) getBaseURL() (string, error) {
--	if errMsg := s.ensureBackendConnection(); errMsg != "" {
--		return "", fmt.Errorf("%s", errMsg)
--	}
--	return strings.TrimSuffix(s.hubBaseURL, "/mcp"), nil
--}
--
- func writeErrorToStderr(format string, args ...any) {
- 	fmt.Fprintf(os.Stderr, format+"\n", args...)
- }
-@@ -390,14 +379,6 @@ func (s *mcpServer) handleRequest(req *jsonRPCRequest) {
- 
- func (s *mcpServer) handleInitialize(req *jsonRPCRequest) {
- 	var instructions string
--	fileDownloadInstructions := `
--
--Downloading files (e.g., PCAP exports):
--When a tool like export_snapshot_pcap returns a relative file path, you MUST use the file tools to retrieve the file:
--- get_file_url: Resolves the relative path to a full download URL you can share with the user.
--- download_file: Downloads the file to the local filesystem so it can be opened or analyzed.
--Typical workflow: call export_snapshot_pcap → receive a relative path → call download_file with that path → share the local file path with the user.`
--
- 	if s.urlMode {
- 		instructions = fmt.Sprintf(`Kubeshark MCP Server - Connected to: %s
- 
-@@ -411,7 +392,7 @@ Available tools for traffic analysis:
- - get_api_stats: Get aggregated API statistics
- - And more - use tools/list to see all available tools
- 
--Use the MCP tools directly - do NOT use kubectl or curl to access Kubeshark.`, s.directURL) + fileDownloadInstructions
-+Use the MCP tools directly - do NOT use kubectl or curl to access Kubeshark.`, s.directURL)
- 	} else if s.allowDestructive {
- 		instructions = `Kubeshark MCP Server - Proxy Mode (Destructive Operations ENABLED)
- 
-@@ -429,7 +410,7 @@ Safe operations:
- Traffic analysis tools (require Kubeshark to be running):
- - list_workloads, list_api_calls, list_l4_flows, get_api_stats, and more
- 
--Use the MCP tools - do NOT use kubectl, helm, or curl directly.` + fileDownloadInstructions
-+Use the MCP tools - do NOT use kubectl, helm, or curl directly.`
- 	} else {
- 		instructions = `Kubeshark MCP Server - Proxy Mode (Read-Only)
- 
-@@ -444,7 +425,7 @@ Available operations:
- Traffic analysis tools (require Kubeshark to be running):
- - list_workloads, list_api_calls, list_l4_flows, get_api_stats, and more
- 
--Use the MCP tools - do NOT use kubectl, helm, or curl directly.` + fileDownloadInstructions
-+Use the MCP tools - do NOT use kubectl, helm, or curl directly.`
- 	}
- 
- 	result := mcpInitializeResult{
-@@ -475,40 +456,6 @@ func (s *mcpServer) handleListTools(req *jsonRPCRequest) {
- 		}`),
- 	})
- 
--	// Add file URL and download tools - available in all modes
--	tools = append(tools, mcpTool{
--		Name:        "get_file_url",
--		Description: "When a tool (e.g., export_snapshot_pcap) returns a relative file path, use this tool to resolve it into a fully-qualified download URL. The URL can be shared with the user for manual download.",
--		InputSchema: json.RawMessage(`{
--			"type": "object",
--			"properties": {
--				"path": {
--					"type": "string",
--					"description": "The relative file path returned by a Hub tool (e.g., '/snapshots/abc/data.pcap')"
--				}
--			},
--			"required": ["path"]
--		}`),
--	})
--	tools = append(tools, mcpTool{
--		Name:        "download_file",
--		Description: "When a tool (e.g., export_snapshot_pcap) returns a relative file path, use this tool to download the file to the local filesystem. This is the preferred way to retrieve PCAP exports and other files from Kubeshark.",
--		InputSchema: json.RawMessage(`{
--			"type": "object",
--			"properties": {
--				"path": {
--					"type": "string",
--					"description": "The relative file path returned by a Hub tool (e.g., '/snapshots/abc/data.pcap')"
--				},
--				"dest": {
--					"type": "string",
--					"description": "Local destination file path. If not provided, uses the filename from the path in the current directory."
--				}
--			},
--			"required": ["path"]
--		}`),
--	})
--
- 	// Add destructive tools only if --allow-destructive flag was set (and not in URL mode)
- 	if !s.urlMode && s.allowDestructive {
- 		tools = append(tools, mcpTool{
-@@ -706,20 +653,6 @@ func (s *mcpServer) handleCallTool(req *jsonRPCRequest) {
- 			IsError: isError,
- 		})
- 		return
--	case "get_file_url":
--		result, isError = s.callGetFileURL(params.Arguments)
--		s.sendResult(req.ID, mcpCallToolResult{
--			Content: []mcpContent{{Type: "text", Text: result}},
--			IsError: isError,
--		})
--		return
--	case "download_file":
--		result, isError = s.callDownloadFile(params.Arguments)
--		s.sendResult(req.ID, mcpCallToolResult{
--			Content: []mcpContent{{Type: "text", Text: result}},
--			IsError: isError,
--		})
--		return
- 	}
- 
- 	// Forward 
-```
-
-**File**: `cmd/mcp_test.go` (modified, +5/-198)
-```diff
-@@ -5,8 +5,6 @@ import (
- 	"encoding/json"
- 	"net/http"
- 	"net/http/httptest"
--	"os"
--	"path/filepath"
- 	"strings"
- 	"testing"
- )
-@@ -128,18 +126,8 @@ func TestMCP_ToolsList_CLIOnly(t *testing.T) {
- 		t.Fatalf("Unexpected error: %v", resp.Error)
- 	}
- 	tools := resp.Result.(map[string]any)["tools"].([]any)
--	// Should have check_kubeshark_status + get_file_url + download_file = 3 tools
--	if len(tools) != 3 {
--		t.Errorf("Expected 3 tools, got %d", len(tools))
--	}
--	toolNames := make(map[string]bool)
--	for _, tool := range tools {
--		toolNames[tool.(map[string]any)["name"].(string)] = true
--	}
--	for _, expected := range []string{"check_kubeshark_status", "get_file_url", "download_file"} {
--		if !toolNames[expected] {
--			t.Errorf("Missing expected tool: %s", expected)
--		}
-+	if len(tools) != 1 || tools[0].(map[string]any)["name"] != "check_kubeshark_status" {
-+		t.Error("Expected only check_kubeshark_status tool")
- 	}
- }
- 
-@@ -175,9 +163,9 @@ func TestMCP_ToolsList_WithHubBackend(t *testing.T) {
- 		t.Fatalf("Unexpected error: %v", resp.Error)
- 	}
- 	tools := resp.Result.(map[string]any)["tools"].([]any)
--	// Should have CLI tools (3) + file tools (2) + Hub tools (2) = 7 tools
--	if len(tools) < 7 {
--		t.Errorf("Expected at least 7 tools, got %d", len(tools))
-+	// Should have CLI tools (3) + Hub tools (2) = 5 tools
-+	if len(tools) < 5 {
-+		t.Errorf("Expected at least 5 tools, got %d", len(tools))
- 	}
- }
- 
-@@ -475,187 +463,6 @@ func TestMCP_BackendInitialization_Concurrent(t *testing.T) {
- 	}
- }
- 
--func TestMCP_GetFileURL_ProxyMode(t *testing.T) {
--	s := &mcpServer{
--		httpClient:         &http.Client{},
--		stdin:              &bytes.Buffer{},
--		stdout:             &bytes.Buffer{},
--		hubBaseURL:         "http://127.0.0.1:8899/api/mcp",
--		backendInitialized: true,
--	}
--	resp := parseResponse(t, sendRequest(s, "tools/call", 1, mcpCallToolParams{
--		Name:      "get_file_url",
--		Arguments: map[string]any{"path": "/snapshots/abc/data.pcap"},
--	}))
--	if resp.Error != nil {
--		t.Fatalf("Unexpected error: %v", resp.Error)
--	}
--	text := resp.Result.(map[string]any)["content"].([]any)[0].(map[string]any)["text"].(string)
--	expected := "http://127.0.0.1:8899/api/snapshots/abc/data.pcap"
--	if text != expected {
--		t.Errorf("Expected %q, got %q", expected, text)
--	}
--}
--
--func TestMCP_GetFileURL_URLMode(t *testing.T) {
--	s := &mcpServer{
--		httpClient:         &http.Client{},
--		stdin:              &bytes.Buffer{},
--		stdout:             &bytes.Buffer{},
--		hubBaseURL:         "https://kubeshark.example.com/api/mcp",
--		backendInitialized: true,
--		urlMode:            true,
--		directURL:          "https://kubeshark.example.com",
--	}
--	resp := parseResponse(t, sendRequest(s, "tools/call", 1, mcpCallToolParams{
--		Name:      "get_file_url",
--		Arguments: map[string]any{"path": "/snapshots/xyz/export.pcap"},
--	}))
--	if resp.Error != nil {
--		t.Fatalf("Unexpected error: %v", resp.Error)
--	}
--	text := resp.Result.(map[string]any)["content"].([]any)[0].(map[string]any)["text"].(string)
--	expected := "https://kubeshark.example.com/api/snapshots/xyz/export.pcap"
--	if text != expected {
--		t.Errorf("Expected %q, got %q", expected, text)
--	}
--}
--
--func TestMCP_GetFileURL_MissingPath(t *testing.T) {
--	s := &mcpServer{
--		httpClient:         &http.Client{},
--		stdin:              &bytes.Buffer{},
--		stdout:             &bytes.Buffer{},
--		hubBaseURL:         "http://127.0.0.1:8899/api/mcp",
--		backendInitialized: true,
--	}
--	resp := parseResponse(t, sendRequest(s, "tools/call", 1, mcpCallToolParams{
--		Name:      "get_file_url",
--		Arguments: map[string]any{},
--	}))
--	result := resp.Result.(map[string]any)
--	if !result["isError"].(bool) {
--		t.Error("Expected isError=true when path is missing")
--	}
--	text := result["content"].([]any)[0].(map[string]any)["text"].(string)
--	if !strings.Contains(text, "path") {
--		t.Error("Error message should mention 'path'")
--	}
--}
--
--func TestMCP_DownloadFile(t *testing.T) {
--	fileContent := "test pcap data content"
--	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		if r.URL.Path == "/api/snapshots/abc/data.pcap" {
--			_, _ = w.Write([]byte(fileContent))
--		} else {
--			w.WriteHeader(http.StatusNotFound)
--		}
--	}))
--	defer mockServer.Close()
--
--	// Use temp dir for download destination
--	tmpDir := t.TempDir()
--	dest := filepath.Join(tmpDir, "downloaded.pcap")
--
--	s := &mcpServer{
--		httpClient:         &http.Client{},
--		stdin:              &bytes.Buffer{},
--		stdout:             &bytes.Buffer{},
--		hubBaseURL:         mockServer.URL + "/api/mcp",
--		backendInitialized: true,
--	}
--	resp := parseResponse(t, sendRequest(s, "tools/call", 1, mcpCallToolParams{
--		Name:      "download_file",
--		Arguments: map[string]any{"path": "/snapshots/abc/data.pcap", "dest": dest},
--	}))
--	if resp.Error != nil {
--		t.Fatalf("Unexpected error: %v", resp.Error)
--	}
--	result := resp.Result.(map[string]any)
--	if result["isError"] != nil && result["isError"].(bool) {
--		t
-```
-
----
-
-### Incident Patch 15: `1ad61798` (2026-02-18)
-**Commit Message**: Set tcp and udp flows timeouts. Default is 20 minutes (#1847)
-
-* Set tcp and udp flows timeouts. Default is 10 minutes
-
-* fix make test
-
-**File**: `cmd/mcp_test.go` (modified, +1/-1)
-```diff
-@@ -218,7 +218,7 @@ func newTestMCPServerWithMockBackend(handler http.HandlerFunc) (*mcpServer, *htt
- }
- 
- type hubToolCallRequest struct {
--	Tool      string         `json:"tool"`
-+	Tool      string         `json:"name"`
- 	Arguments map[string]any `json:"arguments"`
- }
- 
-```
-
-**File**: `config/configStructs/tapConfig.go` (modified, +2/-0)
-```diff
-@@ -261,6 +261,8 @@ type MiscConfig struct {
- 	DuplicateTimeframe          string `yaml:"duplicateTimeframe" json:"duplicateTimeframe" default:"200ms"`
- 	DetectDuplicates            bool   `yaml:"detectDuplicates" json:"detectDuplicates" default:"false"`
- 	StaleTimeoutSeconds         int    `yaml:"staleTimeoutSeconds" json:"staleTimeoutSeconds" default:"30"`
-+	TcpFlowTimeout              int    `yaml:"tcpFlowTimeout" json:"tcpFlowTimeout" default:"1200"`
-+	UdpFlowTimeout              int    `yaml:"udpFlowTimeout" json:"udpFlowTimeout" default:"1200"`
- }
- 
- type PcapDumpConfig struct {
-```
-
-**File**: `helm-chart/README.md` (modified, +2/-0)
-```diff
-@@ -220,6 +220,8 @@ Example for overriding image names:
- | `tap.mountBpf`                            | BPF filesystem needs to be mounted for eBPF to work properly. This helm value determines whether Kubeshark will attempt to mount the filesystem. This option is not required if filesystem is already mounts. │ `true`|
- | `tap.hostNetwork`                         | Enable host network mode for worker DaemonSet pods. When enabled, worker pods use the host's network namespace for direct network access. | `true`                                                                                                                                                                                                                                           |
- | `tap.gitops.enabled`                          | Enable GitOps functionality. This will allow you to use GitOps to manage your Kubeshark configuration. | `false`                                                                                                                                                                                                                                          |
-+| `tap.misc.tcpFlowTimeout`                 | TCP flow aggregation timeout in seconds. Controls how long the worker waits before finalizing a TCP flow. | `1200`                                                                                                                                                                                                                                           |
-+| `tap.misc.udpFlowTimeout`                 | UDP flow aggregation timeout in seconds. Controls how long the worker waits before finalizing a UDP flow. | `1200`                                                                                                                                                                                                                                           |
- | `logs.file`                               | Logs dump path                      | `""`                                                                                                                                                                                                                                             |
- | `pcapdump.enabled`                        | Enable recording of all traffic captured according to other parameters. Whatever Kubeshark captures, considering pod targeting rules, will be stored in pcap files ready to be viewed by tools                 | `false`                                                                                                                                                                                                                                           |
- | `pcapdump.maxTime`                        | The time window into the past that will be stored. Older traffic will be discarded.  | `2h`                                                                                                                                                                                                                                             |
-```
-
-**File**: `helm-chart/templates/09-worker-daemon-set.yaml` (modified, +4/-0)
-```diff
-@@ -99,6 +99,10 @@ spec:
-             - '{{ .Values.tap.misc.resolutionStrategy }}'
-             - -staletimeout
-             - '{{ .Values.tap.misc.staleTimeoutSeconds }}'
-+            - -tcp-flow-full-timeout
-+            - '{{ .Values.tap.misc.tcpFlowTimeout }}'
-+            - -udp-flow-full-timeout
-+            - '{{ .Values.tap.misc.udpFlowTimeout }}'
-             - -storage-size
-             - '{{ .Values.tap.storageLimit }}'
-             - -capture-db-max-size
-```
-
-**File**: `helm-chart/values.yaml` (modified, +4/-2)
-```diff
-@@ -191,8 +191,8 @@ tap:
-   - diameter
-   - udp-flow
-   - tcp-flow
--  - tcp-conn
-   - udp-conn
-+  - tcp-conn
-   portMapping:
-     http:
-     - 80
-@@ -228,6 +228,8 @@ tap:
-     duplicateTimeframe: 200ms
-     detectDuplicates: false
-     staleTimeoutSeconds: 30
-+    tcpFlowTimeout: 1200
-+    udpFlowTimeout: 1200
-   securityContext:
-     privileged: true
-     appArmorProfile:
-@@ -270,7 +272,7 @@ kube:
- dumpLogs: false
- headless: false
- license: ""
--cloudApiUrl: "https://api.kubeshark.com"
-+cloudApiUrl: https://api.kubeshark.com
- cloudLicenseEnabled: true
- demoModeEnabled: false
- supportChatEnabled: false
-```
-
-**File**: `manifests/complete.yaml` (modified, +14/-8)
-```diff
-@@ -257,6 +257,7 @@ data:
-     EXCLUDED_NAMESPACES: ''
-     BPF_OVERRIDE: ''
-     DISSECTION_ENABLED: 'true'
-+    CAPTURE_SELF: 'false'
-     SCRIPTING_SCRIPTS: '{}'
-     SCRIPTING_ACTIVE_SCRIPTS: ''
-     INGRESS_ENABLED: 'false'
-@@ -266,7 +267,7 @@ data:
-     AUTH_TYPE: 'default'
-     AUTH_SAML_IDP_METADATA_URL: ''
-     AUTH_SAML_ROLE_ATTRIBUTE: 'role'
--    AUTH_SAML_ROLES: '{"admin":{"canDownloadPCAP":true,"canStopTrafficCapturing":true,"canUpdateTargetedPods":true,"canUseScripting":true,"filter":"","scriptingPermissions":{"canActivate":true,"canDelete":true,"canSave":true},"showAdminConsoleLink":true}}'
-+    AUTH_SAML_ROLES: '{"admin":{"canControlDissection":true,"canDownloadPCAP":true,"canStopTrafficCapturing":true,"canUpdateTargetedPods":true,"canUseScripting":true,"filter":"","scriptingPermissions":{"canActivate":true,"canDelete":true,"canSave":true},"showAdminConsoleLink":true}}'
-     AUTH_OIDC_ISSUER: 'not set'
-     AUTH_OIDC_REFRESH_TOKEN_LIFETIME: '3960h'
-     AUTH_OIDC_STATE_PARAM_EXPIRY: '10m'
-@@ -285,7 +286,6 @@ data:
-     PCAP_ERROR_TTL: '0'
-     TIMEZONE: ' '
-     CLOUD_LICENSE_ENABLED: 'true'
--    AI_ASSISTANT_ENABLED: 'true'
-     DUPLICATE_TIMEFRAME: '200ms'
-     ENABLED_DISSECTORS: 'amqp,dns,http,icmp,kafka,redis,ws,ldap,radius,diameter,udp-flow,tcp-flow,udp-conn,tcp-conn'
-     CUSTOM_MACROS: '{"https":"tls and (http or http2)"}'
-@@ -606,10 +606,16 @@ spec:
-             - 'auto'
-             - -staletimeout
-             - '30'
-+            - -tcp-flow-full-timeout
-+            - '1200'
-+            - -udp-flow-full-timeout
-+            - '1200'
-             - -storage-size
-             - '10Gi'
-             - -capture-db-max-size
-             - '500Mi'
-+            - -cloud-api-url
-+            - 'https://api.kubeshark.com'
-           image: 'docker.io/kubeshark/worker:v52.12'
-           imagePullPolicy: Always
-           name: sniffer
-@@ -630,8 +636,6 @@ spec:
-             value: '10000'
-           - name: TCP_STREAM_CHANNEL_TIMEOUT_SHOW
-             value: 'false'
--          - name: KUBESHARK_CLOUD_API_URL
--            value: 'https://api.kubeshark.com'
-           - name: PROFILING_ENABLED
-             value: 'false'
-           - name: SENTRY_ENABLED
-@@ -820,6 +824,8 @@ spec:
-             - '1'
-             - -dissector-memory
-             - '4Gi'
-+            - -cloud-api-url
-+            - 'https://api.kubeshark.com'
-           env:
-           - name: POD_NAME
-             valueFrom:
-@@ -833,8 +839,6 @@ spec:
-             value: 'false'
-           - name: SENTRY_ENVIRONMENT
-             value: 'production'
--          - name: KUBESHARK_CLOUD_API_URL
--            value: 'https://api.kubeshark.com'
-           - name: PROFILING_ENABLED
-             value: 'false'
-           image: 'docker.io/kubeshark/hub:v52.12'
-@@ -943,6 +947,8 @@ spec:
-               value: ' '
-             - name: REACT_APP_TIMEZONE
-               value: ' '
-+            - name: REACT_APP_SCRIPTING_HIDDEN
-+              value: 'true'
-             - name: REACT_APP_SCRIPTING_DISABLED
-               value: 'false'
-             - name: REACT_APP_TARGETED_PODS_UPDATE_DISABLED
-@@ -953,12 +959,12 @@ spec:
-               value: 'true'
-             - name: REACT_APP_RECORDING_DISABLED
-               value: 'false'
-+            - name: REACT_APP_DISSECTION_ENABLED
-+              value: 'true'
-             - name: REACT_APP_DISSECTION_CONTROL_ENABLED
-               value: 'true'
-             - name: 'REACT_APP_CLOUD_LICENSE_ENABLED'
-               value: 'true'
--            - name: 'REACT_APP_AI_ASSISTANT_ENABLED'
--              value: 'true'
-             - name: REACT_APP_SUPPORT_CHAT_ENABLED
-               value: 'false'
-             - name: REACT_APP_BETA_ENABLED
++`trace` is for diagnosing a specific problem, not for running a deployment. It adds a
++per-request narrative of authentication and authorization: the resolved role, capabilities
++and namespace scope, and from the OIDC tokens the subject, issuer, audience, the names of
++the claims present and the value of the configured roles claim. That means the subject
++identifier and the caller's group memberships reach the container logs and anything
++collecting them. Token payloads are not logged in full, and neither are signatures.
++Turn it on to answer a question, then turn it back down.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1977** (2026-10-15): Expose the snapshot S3 skip TLS verification flag in the chart and CLI config (@corest)
+- **PR #1976** (2026-10-15): Document the trace log level and the identity data it emits (@corest)
+- **PR #1973** (2026-10-07): :bookmark: Release v53.5.0 (@corest)
+- **PR #1970** (2026-10-07): chart: add endpoint and path-style options for S3-compatible snapshot storage (@corest)
 - **PR #1969** (closed): Link testing methodology from release notes (@corest)
 - **PR #1966** (2026-09-09): chart: drop demoModeEnabled in favour of tap.auth.defaultRole (@corest)
-- **PR #1965** (closed): cmd: iterate MCP path segments with SplitSeq (@daixiheguu)
-- **PR #1964** (closed): Document BoringSSL TLS support (@kVinsom)
-- **PR #1962** (2026-09-08): Add support for extra objects in helm chart (@corest)
-- **PR #1961** (closed): feat: validate configuration schema version (@kVinsom)
-- **PR #1958** (2026-08-13): :bookmark: Release v53.4.0 (@corest)
-- **PR #1957** (2026-08-12): mcp: confine download_file destination and harden start_kubeshark argument handling (@corest)
 
 ---
 
@@ -2875,3 +1283,74 @@ This reverts commit dbfd17d901ffdbb43cb470ddb1b8499969761638.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. tool-to-section mapping in security-audit skill (#1940)
+
+**RULE**:
+When implementing operations in `skills/security-audit/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeshark/kubeshark. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9396e64b`: tool-to-section mapping in security-audit skill (#1940). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/security-audit/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+### Step 2: Query Live Traffic
+**Tool**: `get_l7_data_boundaries`
+Check the time boundaries of dissected API calls in the real-time database.
+This tells you how far back L7 data is available — use it to understand
+the scope of your real-time queries before running them.
+Then query the real-time dissected traffic across key dimensions.
+**Tool**: `get_data_boundaries`
+
+Check how far back raw capture data exists. Raw capture is the FIFO buffer
+that feeds snapshot creation — this tells you the time window available
+for snapshots (which is different from the L7 boundaries in Step 2).
+
+Use `get_data_boundaries` to calculate how many snapshots are needed:
+  ├── Phase 3: list_api_calls — external HTTP communication
+  ├── Phase 4: list_api_calls — lateral movement, K8s API access
+**Data source**: L7 dissection (after indexing).
+**Note**: L4 flow analysis for external communication is covered in
+Section A (Step 2) using `list_l4_flows` against real-time data. In
+Section B, use `list_api_calls` against dissected snapshot data for
+deeper L7 inspection of external traffic.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+**Tool**: `get_data_boundaries`
+
+Check how far back raw capture data exists. You need this to plan snapshot
+creation in Step 3 — call it now so the data is ready when you need it.
+
+**Tool**: `list_workloads` (no snapshot_id — queries live state)
+
+Get the current workload inventory for the target namespace. This returns
+pod names, namespaces, and IP addresses. Save the IPs — you'll need them
+throughout the audit.
+**Note**: `list_workloads` without a `snapshot_id` may fail with some
+Kubeshark versions (`snapshot_id is required for filtered listing`). If
+this happens, use individual lookups with `name` + `namespace` parameters,
+or skip to Step 3 and get the workload inventory from the first snapshot.
+### Step 2: Query Live Traffic
+In parallel, query the real-time dissected traffic across key dimensions.
+Use the data boundaries from Step 1 (`get_data_boundaries`) to calculate
+how many snapshots are needed:
+| **L4 Flows** | Immediately | `list_l4_flows` with `snapshot_id` | TCP/UDP connections: src/dst IPs, ports, bytes, duration |
+  ├── Phase 3: list_l4_flows (immediate) — external flows, port scanning
+  ├── Phase 4: list_l4_flows (immediate) — lateral movement, fan-out
+**Data source**
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9396e64b` are properly handled with clean fallback behavior.

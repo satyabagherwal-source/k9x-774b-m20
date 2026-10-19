@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:12:57.113Z",
-  "total_verified_learnings": 632,
+  "last_updated": "2026-10-19T05:19:12.486Z",
+  "total_verified_learnings": 637,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5540,22 +5540,35 @@
     "learn-github-danielpetho-fancy": {
       "learning_id": "learn-github-danielpetho-fancy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "danielpetho-fancy",
+      "source": "danielpetho/fancy",
+      "repository": "danielpetho/fancy",
       "slug": "danielpetho-fancy",
       "platform": "github",
       "source_url": "https://github.com/danielpetho/fancy",
-      "source_version": "HEAD",
-      "content_hash": "6749e9e665c698d434c1ea5d4853acb2ba52ab918db10acfe06d0d65f0f567bc",
+      "source_version": "f9f62c61",
+      "content_hash": "591dd576f8250143e66b9f3f37bfa64c1ded8090eed7e30edede5b2c9e08cb9f",
       "dossier_path": "07_PROJECT_LEARNING/danielpetho-fancy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/danielpetho-fancy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2170,
+          "title": "Merge pull request #63 from danielpetho/feat/fix-ui-issues",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.500Z"
+      "verified_at": "2026-10-19T05:18:59.088Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-danilowoz-react-content-loader": {
       "learning_id": "learn-github-danilowoz-react-content-loader",
@@ -6173,22 +6186,35 @@
     "learn-github-dicklesworthstone-destructive_command_guard": {
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dicklesworthstone-destructive_command_guard",
+      "source": "Dicklesworthstone/destructive_command_guard",
+      "repository": "Dicklesworthstone/destructive_command_guard",
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "HEAD",
-      "content_hash": "95305284af8582d77aa8b9f42ed0ef9097f9bf615382eb84318f2dd5c31e1df6",
+      "source_version": "2680518d",
+      "content_hash": "bd6c64876c849ed85f29ecb1f0a8146dcd8e32731866d9d915806ed6cbc40b5c",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2171,
+          "title": "config): preserve trusted-policy failures and restore verified #568 publication",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.606Z"
+      "verified_at": "2026-10-19T05:18:59.893Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-didilili-ai-agents-from-zero": {
       "learning_id": "learn-github-didilili-ai-agents-from-zero",
@@ -6796,22 +6822,35 @@
     "learn-github-duckdb-duckdb": {
       "learning_id": "learn-github-duckdb-duckdb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "duckdb-duckdb",
+      "source": "duckdb/duckdb",
+      "repository": "duckdb/duckdb",
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "HEAD",
-      "content_hash": "56698ae633ff000ad26b69d99d4541a9a7f580ac1d21706e97930fc76209ad8c",
+      "source_version": "16917f94",
+      "content_hash": "edb9bc7286c86cb78ced99ea50ad94dcf151d09e8ba07f5448016421d17625cd",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2176,
+          "title": "Correctly tag memory for blocks of the database file (#26517)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.709Z"
+      "verified_at": "2026-10-19T05:19:12.477Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-duongductrong-snapzy": {
       "learning_id": "learn-github-duongductrong-snapzy",
@@ -21899,7 +21938,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "9d5ef725b30723cfd2374fc969a46c66e472f8217bba64bc35a553ef8008f4cd",
+      "content_hash": "f5692bcad981b5781e09a6e8eacd7d82346c4dc29b0252a723dd6b61a440930c",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -22042,6 +22081,21 @@
           "number": 1565,
           "title": "Generation EOS Token List Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2172,
+          "title": "Token ID Consistency Across All Configuration Artifacts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2173,
+          "title": "Data‑Type Uniformity Within Sub‑Modules",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2174,
+          "title": "Linear Attention Bias Suppression",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22062,7 +22116,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-17T23:36:18.089Z",
+      "verified_at": "2026-10-19T05:19:03.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25173,22 +25227,29 @@
     "learn-github-kubeshark-kubeshark": {
       "learning_id": "learn-github-kubeshark-kubeshark",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kubeshark-kubeshark",
+      "source": "kubeshark/kubeshark",
+      "repository": "kubeshark/kubeshark",
       "slug": "kubeshark-kubeshark",
       "platform": "github",
       "source_url": "https://github.com/kubeshark/kubeshark",
-      "source_version": "HEAD",
-      "content_hash": "3087197b8176f938eb371b2e330ea48ef8907d201e5e0e78db3c813cd3bc6810",
+      "source_version": "e27687a8",
+      "content_hash": "638ea29ccce165777a7f0980977d92550264a320ad0d6cc0cee4f63a9d50afaa",
       "dossier_path": "07_PROJECT_LEARNING/kubeshark-kubeshark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeshark-kubeshark-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.901Z"
+      "verified_at": "2026-10-19T05:19:06.520Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kubeshop-botkube": {
       "learning_id": "learn-github-kubeshop-botkube",
@@ -40326,22 +40387,35 @@
     "learn-github-xinthink-react-native-material-kit": {
       "learning_id": "learn-github-xinthink-react-native-material-kit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "xinthink-react-native-material-kit",
+      "source": "xinthink/react-native-material-kit",
+      "repository": "xinthink/react-native-material-kit",
       "slug": "xinthink-react-native-material-kit",
       "platform": "github",
       "source_url": "https://github.com/xinthink/react-native-material-kit",
-      "source_version": "HEAD",
-      "content_hash": "2db882baf3d36342f63723d136454f07aae6d4545164e8cb0b93c9d89f7ece70",
+      "source_version": "3a1c7a7e",
+      "content_hash": "9d147f35b2a3fd8ab3c0825cb217b2e644de3a2a37cb0c1ad0c3d5aea343b6bd",
       "dossier_path": "07_PROJECT_LEARNING/xinthink-react-native-material-kit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xinthink-react-native-material-kit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2175,
+          "title": "publish workflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.427Z"
+      "verified_at": "2026-10-19T05:19:04.261Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-xpf0000-flyenv": {
       "learning_id": "learn-github-xpf0000-flyenv",
@@ -77805,6 +77879,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:12:57.105Z"
+    },
+    "rule-2170": {
+      "learning_id": "rule-2170",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2170,
+      "title": "Merge pull request #63 from danielpetho/feat/fix-ui-issues",
+      "source_url": "https://github.com/danielpetho/fancy",
+      "source_version": "f9f62c61",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:18:59.088Z"
+    },
+    "rule-2171": {
+      "learning_id": "rule-2171",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2171,
+      "title": "config): preserve trusted-policy failures and restore verified #568 publication",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "2680518d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:18:59.893Z"
+    },
+    "rule-2172": {
+      "learning_id": "rule-2172",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2172,
+      "title": "Token ID Consistency Across All Configuration Artifacts",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:19:03.783Z"
+    },
+    "rule-2173": {
+      "learning_id": "rule-2173",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2173,
+      "title": "Data‑Type Uniformity Within Sub‑Modules",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:19:03.783Z"
+    },
+    "rule-2174": {
+      "learning_id": "rule-2174",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2174,
+      "title": "Linear Attention Bias Suppression",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:19:03.783Z"
+    },
+    "rule-2175": {
+      "learning_id": "rule-2175",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2175,
+      "title": "publish workflow",
+      "source_url": "https://github.com/xinthink/react-native-material-kit",
+      "source_version": "3a1c7a7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:19:04.261Z"
+    },
+    "rule-2176": {
+      "learning_id": "rule-2176",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2176,
+      "title": "Correctly tag memory for blocks of the database file (#26517)",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "16917f94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:19:12.477Z"
     }
   },
   "aliases": {

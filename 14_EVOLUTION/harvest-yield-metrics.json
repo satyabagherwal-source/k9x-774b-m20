@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T05:12:57.161Z",
-  "total_cycles_completed": 2922,
-  "total_learnings_persisted": 2922,
-  "total_rules_promoted": 1953,
+  "last_updated": "2026-10-19T05:19:12.540Z",
+  "total_cycles_completed": 2928,
+  "total_learnings_persisted": 2928,
+  "total_rules_promoted": 1960,
   "history": [
-    {
-      "timestamp": "2026-10-19T01:28:32.357Z",
-      "repository": "xiaolin/react-image-gallery",
-      "learningId": "learn-github-xiaolin-react-image-gallery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:28:32.381Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-francisring-prism",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:28:33.894Z",
-      "repository": "fujiapple852/trippy",
-      "learningId": "learn-github-fujiapple852-trippy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:28:40.845Z",
-      "repository": "BuilderIO/builder",
-      "learningId": "learn-github-builderio-builder",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:28:42.528Z",
-      "repository": "gocrane/crane",
-      "learningId": "learn-github-gocrane-crane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:28:46.306Z",
-      "repository": "AmrDeveloper/GQL",
-      "learningId": "learn-github-amrdeveloper-gql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T01:34:47.393Z",
       "repository": "keenthemes/reui",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T05:12:57.161Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:18:59.143Z",
+      "repository": "danielpetho/fancy",
+      "learningId": "learn-github-danielpetho-fancy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:18:59.955Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:19:03.839Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:19:04.329Z",
+      "repository": "xinthink/react-native-material-kit",
+      "learningId": "learn-github-xinthink-react-native-material-kit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:19:06.582Z",
+      "repository": "kubeshark/kubeshark",
+      "learningId": "learn-github-kubeshark-kubeshark",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:19:12.540Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

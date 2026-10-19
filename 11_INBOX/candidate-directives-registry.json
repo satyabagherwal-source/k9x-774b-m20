@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T04:26:06.754Z",
+  "last_updated": "2026-10-19T05:19:06.581Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1740,6 +1740,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-benoitvallon-react-native-nw-react-calculator"
+    },
+    {
+      "id": "CD-11LH",
+      "directive_title": "tool-to-section mapping in security-audit skill (#1940)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "kubeshark/kubeshark",
+      "source_commit": "e27687a8",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kubeshark-kubeshark"
     }
   ]
 }
