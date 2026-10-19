@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "81f630351dd6f162406ed19908ce33335230ae90ceeacfd05eaadbf5b4b63a43",
-    "lastHarvestedAt": "2026-10-18T00:42:35.480Z",
+    "contentHash": "b65b3f8fa8520c8726b10604e76eeabd2f150a0cfb0acf29dda7c436c465561a",
+    "lastHarvestedAt": "2026-10-19T07:38:21.319Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -2093,10 +2093,10 @@
     "repository": "bvaughn/react-virtualized",
     "platform": "github",
     "sourceUrl": "https://github.com/bvaughn/react-virtualized",
-    "sourceVersion": "409d50e1",
+    "sourceVersion": "dad013db",
     "license": "MIT",
-    "contentHash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
-    "lastHarvestedAt": "2026-10-18T16:46:52.463Z",
+    "contentHash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
+    "lastHarvestedAt": "2026-10-19T07:40:24.143Z",
     "learningId": "learn-github-bvaughn-react-virtualized"
   },
   "dkhamsing-open-source-ios-apps": {
@@ -7048,5 +7048,45 @@
     "contentHash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
     "lastHarvestedAt": "2026-10-19T07:29:49.778Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
+  },
+  "clockworklabs-spacetimedb": {
+    "repository": "clockworklabs/SpacetimeDB",
+    "platform": "github",
+    "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
+    "sourceVersion": "7cdacda3",
+    "license": "NOASSERTION",
+    "contentHash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
+    "lastHarvestedAt": "2026-10-19T07:38:30.475Z",
+    "learningId": "learn-github-clockworklabs-spacetimedb"
+  },
+  "apollographql-apollo-kotlin": {
+    "repository": "apollographql/apollo-kotlin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/apollographql/apollo-kotlin",
+    "sourceVersion": "afe947c8",
+    "license": "MIT",
+    "contentHash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
+    "lastHarvestedAt": "2026-10-19T07:38:35.186Z",
+    "learningId": "learn-github-apollographql-apollo-kotlin"
+  },
+  "crate-ci-typos": {
+    "repository": "crate-ci/typos",
+    "platform": "github",
+    "sourceUrl": "https://github.com/crate-ci/typos",
+    "sourceVersion": "7f9d0819",
+    "license": "Apache-2.0",
+    "contentHash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
+    "lastHarvestedAt": "2026-10-19T07:40:35.174Z",
+    "learningId": "learn-github-crate-ci-typos"
+  },
+  "emberstack-kubernetes-reflector": {
+    "repository": "emberstack/kubernetes-reflector",
+    "platform": "github",
+    "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
+    "sourceVersion": "0d074fb0",
+    "license": "MIT",
+    "contentHash": "4d6bed7552adcccbacf0091a91a8d6407c163c2a9bd9d06ae35f7bfe5e72957f",
+    "lastHarvestedAt": "2026-10-19T07:40:37.697Z",
+    "learningId": "learn-github-emberstack-kubernetes-reflector"
   }
 }

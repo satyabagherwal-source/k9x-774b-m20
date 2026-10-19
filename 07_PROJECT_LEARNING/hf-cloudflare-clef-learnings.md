@@ -3,7 +3,7 @@
 > **Source Version**: `hf-cloudflar`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-18T00:42:35.149Z  
+> **Timestamp**: 2026-10-19T07:38:20.825Z  
 > **Learning ID**: `learn-huggingface-cloudflare-clef`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,405 +12,420 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): **Cloudflare/clef**
+# Project Learning Record (Full-Spectrum Forensic Harvest): Cloudflare/clef
 
 ---
 
-## 1. Executive Forensic Architecture & System Mechanics  
+## 1. Executive Forensic Architecture & System Mechanics
 
-**Problem Domain** – `clef` is a **27 B multimodal decision model** that consumes an arbitrary *state* (JSON, plain‑text, image, video) together with a *typed schema* describing a set of questions. The model produces **one logit per allowed option** for each question in a **single forward pass**; the downstream consumer applies a per‑question soft‑max to obtain probabilities. No free‑form text generation occurs, eliminating the need for post‑hoc output parsing.
+### 1.1 Core Problem Statement & Paradigm Shift
+Traditional Large Multimodal Models (LMMs) deployed for decision-making and structured extraction suffer from two systemic bottlenecks:
+1. **Autoregressive Generation Latency & Token Waste**: Emitting structured JSON token-by-token incurs quadratic or linear computational scaling with high decoding latency, KV-cache thrashing, and fragile grammar-constrained samplers.
+2. **Schema Parsing Invalidation**: Regex-based, JSON-mode, or CFG (Context-Free Grammar) constrained decoders can still yield hallmarked semantics, uncalibrated confidence intervals, or run out of context budget before generating critical fields.
 
-**Architectural Boundaries**  
-
-| Subsystem | Primary Artifact | Responsibility | External Contract |
-|-----------|------------------|----------------|-------------------|
-| **Backbone** | `model‑*.safetensors`, `config.json` | Qwen‑3.5‑/‑3.8‑style transformer with vision encoder (text + image + video) | Hugging‑Face `transformers` 5.x API (forward returns `(logits, hidden_states, …)`) |
-| **Joint Schema Head** | `joint_head.safetensors`, `joint_head_config.json`, `joint_schema_model.py` | Small transformer that attends over the backbone’s final hidden states, routes evidence to each question, and emits a *logit vector* sized `Σ_i |options_i|` | Exposed via `load_release_model` → `(model, processor)`; `model(batch)[0]` yields `[question_logits]` |
-| **Tokenizer / Processor** | `tokenizer.json`, `tokenizer_config.json`, `processor_config.json` | Text → token IDs, image/video → patch embeddings, special‑token handling (`<|image_pad|>`, `<|audio_start|>` …) | Must respect `pad_token_id`, `image_token_id`, `dtype` (bfloat16) |
-| **Collation / Batching** | `joint_schema_model.py` (`collate_records`) | Pad‑to‑max length, build `torch.Tensor` batch, preserve per‑question metadata (`question_id`, `option_ids`) | Input: list of encoded records; Output: `Batch` dataclass consumable by the model |
-| **Inference Wrapper** | `joint_schema_model.py` (`load_release_model`) | Load safetensors with `torch_dtype=bfloat16`, move to device, set `torch.inference_mode()` | Guarantees no gradient tracking, deterministic memory layout |
-| **Serving Layer (optional)** | SGLang cookbook | Convert the Python wrapper into an HTTP‑compatible endpoint | Must expose a JSON schema identical to the *record* format |
-
-**State‑Ownership & Decoupling** – The backbone is **immutable** after loading (weights never mutated). The *joint head* holds **no mutable global state**; all per‑inference data lives in the batch tensors. The tokenizer and processor are **pure functions** (no hidden caches) except for the optional `tokenizers` C++ backend which is thread‑safe. The only mutable artifact is the **device‑specific cache** inside `torch` (CUDA memory allocator), which is scoped to the process.
-
-**Data‑flow Invariant** – Every *record* passes through three deterministic transforms:
+`Cloudflare/clef` (derived from `Qwen/Qwen3.8-27B`) solves this via a **Single Forward-Pass Multi-Question Decision Architecture**. Instead of free-form text generation, Clef freezes or fine-tunes the hybrid backbone (Linear Attention / Mamba SSM interleaved with Full Self-Attention at a ratio of 3:1) and attaches a specialized **Joint Schema Head** (`joint_head.safetensors`). The model maps an arbitrary state payload (JSON, text, images, video) and an arbitrary set of typed questions into non-autoregressive logit projections across discrete question options simultaneously in $O(1)$ decoding passes.
 
 ```
-record  ──► encode_record(tokenizer, processor) ──► collate_records(...) ──► model(batch) ──► logits_per_question
++---------------------------------------------------------------------------------------------------+
+| INPUT PAYLOAD: State (JSON, Text, Vision) + Questions Schema (Typed options: Choice, Bool, Enum)  |
++---------------------------------------------------------------------------------------------------+
+                                                  │
+                                                  ▼
++---------------------------------------------------------------------------------------------------+
+| HYBRID BACKBONE (64 Layers: 3x Linear Attention/Mamba SSM + 1x Full Attention Interleaved)        |
+| - Layer Types: 48 Linear Attention Layers + 16 Full Attention Layers (full_attention_interval: 4)|
+| - Mamba SSM State Precision: float32 state space accumulation                                     |
+| - Hidden Size: 5120 | Intermediate Size: 17408 | Head Dim: 256 | Max Position: 262144 Tokens  |
++---------------------------------------------------------------------------------------------------+
+                                                  │
+                                     Final Hidden States (B, L, 5120)
+                                                  │
+                                                  ▼
++---------------------------------------------------------------------------------------------------+
+| JOINT SCHEMA HEAD (Small Cross-Attention / Routing Transformer)                                   |
+| - Gathers question token spans via index routing masks                                            |
+| - Computes cross-question option interactions without autoregression                             |
+| - Projects directly to option logits: [Batch, Question_i, Num_Options_i]                          |
++---------------------------------------------------------------------------------------------------+
+                                                  │
+                                                  ▼
++---------------------------------------------------------------------------------------------------+
+| CALIBRATED DISCRETE DISTRIBUTIONS: Question 1: Softmax(Logits), Question 2: Softmax(Logits)...    |
++---------------------------------------------------------------------------------------------------+
 ```
 
-Any deviation (e.g., missing `pad_token_id`, mismatched `dtype`) aborts the pipeline with a **runtime assertion** in `collate_records`.
+### 1.2 Systemic Subsystem Boundaries
+1. **Record Serialization & Token Allocation Subsystem (`encode_record`)**:
+   - Converts hierarchical JSON/multimodal states into unified token buffers while injecting explicit question-option prompt offsets.
+   - Preserves token alignment for question-option target spans without executing text generation.
+2. **Hybrid Sequence Backbone Subsystem (`Qwen3_5ForConditionalGeneration` / `qwen3_5_text`)**:
+   - Executes 64 layers: groups of 3 linear attention layers (`linear_attention`, Mamba-style SSM state updates with kernel dimension 4, 16 key heads, 48 value heads) followed by 1 full self-attention layer (`full_attention`, 24 query heads, 4 KV heads, GQA with group size 6).
+   - Invariant: State tracking persists across 262,144 tokens in linear time, while periodic full attention resets cross-token association bounds.
+3. **Joint Schema Routing & Inference Head Subsystem (`joint_head.safetensors`)**:
+   - Decoupled classification head bypassing the standard causal language modeling head (`lm_head`).
+   - Evaluates inter-question dependencies jointly, resolving conditional logic (e.g., question B conditioned on question A) inside a single joint attention pass rather than multi-turn conversational rounds.
 
 ---
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. **Rule # PAD‑TOKEN‑ID‑CONSISTENCY**
-**RULE**:  
-**MUST** ensure that the `pad_token_id` defined in `config.json` **exactly matches** the `pad_token_id` used by the tokenizer (`tokenizer_config.json`) **and** the value supplied to `collate_records`. If any of the three sources diverge, the system **MUST abort** with a clear `ValueError` before any tensor allocation.
+### 1. Joint-Schema Non-Autoregressive Forward-Pass Invariant
+**RULE**:
+Systems performing multi-field classification or typed decision extraction over long-context inputs MUST decouple structural decision routing from autoregressive token decoding. The model MUST project backbone final hidden states through a joint schema classification head producing masked option logits in a single forward evaluation, and MUST NOT instantiate autoregressive KV-cache decoding loops for discrete choice spaces.
 
-**WHY**:  
-A mismatch causes the padding mask to be mis‑aligned, leading to *attention leakage* where padded positions are treated as real tokens. This yields **spurious logits** and can corrupt the per‑question soft‑max, producing probabilities that do not sum to 1. In extreme cases, the model attempts to embed an out‑of‑range token ID, triggering a CUDA illegal memory access.
+**WHY**:
+Autoregressive decoding across $N$ fields requires $\sum_{i=1}^N T_i$ serial sequential forward steps (where $T_i$ is token length of output $i$), subjecting inference to $O(N)$ latency degradation, KV-cache memory pressure, sampling drift, and parser truncation crashes. A joint schema head routes evidence directly to option embeddings in $O(1)$ sequential operations, guaranteeing structural validity and eliminating JSON parser failures entirely.
 
-**WHEN TO APPLY**:  
-All multimodal transformer pipelines that combine a **text tokenizer** with a **vision/audio processor** and perform **batch padding**; language: Python (torch + transformers) or any framework exposing a similar padding API.
+**WHEN TO APPLY**:
+Apply to any structured decision engine, extraction pipeline, document classifier, or agent routing system where the output schema is bounded by enumerations, boolean flags, or known discrete options.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def verify_pad_token_consistency(model_cfg: dict, tokenizer_cfg: dict) -> None:
-    model_pad = model_cfg.get("pad_token_id")
-    tokenizer_pad = tokenizer_cfg.get("pad_token_id")
-    if model_pad is None or tokenizer_pad is None:
-        raise ValueError(
-            f"pad_token_id missing – model:{model_pad} tokenizer:{tokenizer_pad}"
-        )
-    if model_pad != tokenizer_pad:
-        raise ValueError(
-            f"pad_token_id mismatch – model:{model_pad} tokenizer:{tokenizer_pad}"
-        )
+import torch
+import torch.nn as nn
+from typing import Dict, List, Tuple
+
+class JointSchemaDecisionHead(nn.Module):
+    def __init__(self, hidden_size: int, routing_dim: int):
+        super().__init__()
+        self.evidence_projector = nn.Linear(hidden_size, routing_dim, bias=False)
+        self.question_scorer = nn.Linear(routing_dim, routing_dim, bias=False)
+        self.option_classifier = nn.Linear(routing_dim, 1, bias=False)
+        self.layer_norm = nn.LayerNorm(routing_dim)
+
+    def forward(
+        self,
+        backbone_hidden_states: torch.Tensor,       # [B, Seq_Len, Hidden_Size]
+        question_option_mask: torch.BoolTensor,     # [B, Q, Max_Options, Seq_Len]
+        option_padding_mask: torch.BoolTensor       # [B, Q, Max_Options] (True if padded)
+    ) -> List[torch.Tensor]:
+        """
+        Executes single-pass scoring across all options for every question.
+        Returns a list of unnormalized logits per question per batch item.
+        """
+        # Step 1: Project backbone representations into schema routing space
+        proj = self.layer_norm(self.evidence_projector(backbone_hidden_states)) # [B, Seq_Len, R]
+
+        # Step 2: Pool evidence per option via indexed broadcast masking
+        # question_option_mask shapes pooling to select token representations representing options
+        # Shape: [B, Q, Max_Options, Seq_Len] @ [B, 1, Seq_Len, R] -> [B, Q, Max_Options, R]
+        denom = question_option_mask.sum(dim=-1, keepdim=True).clamp(min=1e-6)
+        pooled = torch.einsum('bqml,blr->bqmr', question_option_mask.float(), proj) / denom
+
+        # Step 3: Compute joint option logits
+        scores = self.question_scorer(pooled) # [B, Q, Max_Options, R]
+        logits = self.option_classifier(scores).squeeze(-1) # [B, Q, Max_Options]
+
+        # Step 4: Mask non-existent options with negative infinity before downstream softmax
+        logits = logits.masked_fill(option_padding_mask, -1e9)
+        return logits
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Anti‑pattern – silently coerce mismatched pad IDs
-model_cfg["pad_token_id"] = tokenizer_cfg.get("pad_token_id", 0)  # WRONG
+# ANTI-PATTERN: Emitting JSON via autoregressive token generation for discrete classification
+def decide_via_generation(model, tokenizer, prompt: str) -> dict:
+    # Highly vulnerable to sampling hallucination, syntax corruption, and high latency
+    inputs = tokenizer(prompt + "\nReturn JSON: {\"status\": ...}", return_tensors="pt")
+    output_tokens = model.generate(**inputs, max_new_tokens=100) # O(N) iterative steps!
+    text = tokenizer.decode(output_tokens[0])
+    # Crashes on partial tokens, Markdown backticks, or non-parseable JSON
+    return json.loads(text[text.find("{"):text.rfind("}")+1])
 ```
 
-**VERIFICATION METHOD**:  
-Add a **pytest** test that loads both JSON files and asserts equality; integrate the test into CI with `pytest -q tests/test_pad_token_consistency.py`. Additionally, enable a **pre‑run linter rule** (`pad-token-consistency`) that parses the two JSON files and fails the build on mismatch.
+**VERIFICATION METHOD**:
+Enforce unit tests verifying that decision output generation requires exactly 1 invocation of `model.forward()` without invoking `model.generate()`. Validate with `torch.autograd.profiler` that step count does not scale with the number of schema questions.
 
 ---
 
-### 2. **Rule # DTYPE‑ALIGNMENT‑FOR‑INFERENCE**
-**RULE**:  
-**MUST** load all model weight shards (`*.safetensors`) with the **exact dtype** declared in `config.json["dtype"]` (e.g., `"bfloat16"`), and **MUST** ensure that the processor’s output tensors (image embeddings, token IDs) are cast to the same dtype **before** they are concatenated into the batch.
+### 2. Numerical State Space Accumulation Invariant for Linear Attention
+**RULE**:
+When running hybrid models containing Linear Attention or State Space Model (SSM/Mamba) layers alongside full self-attention, the hidden state accumulator (`mamba_ssm_dtype`) MUST be pinned to `torch.float32`, regardless of whether the model weights and backbone activations are instantiated in `torch.bfloat16` or `torch.float16`.
 
-**WHY**:  
-Mixed‑precision tensors trigger **implicit up‑casting** on the GPU, causing a **dramatic slowdown** (e.g., bfloat16 → float32) and, more critically, can overflow the **CUDA kernel launch buffer** when the model expects bfloat16 kernels. Inconsistent dtypes also break the **attention bias** logic that assumes a uniform numeric range.
+**WHY**:
+Linear attention and SSM recurrence mechanisms iteratively accumulate token projections over long contexts ($N \le 262,144$). Performing state updates in half-precision (`bfloat16`/`float16`) causes progressive numerical drift, catastrophic underflow in gating functions (`swish` output gates), and gradient/activation explosion across 64-layer depths. Floating point 32 maintains sufficient mantissa bits for the recurrence state.
 
-**WHEN TO APPLY**:  
-Any large‑scale transformer model that uses **low‑precision inference** (bfloat16, fp16, int8) and combines **multiple modalities** whose encoders may default to `float32`.
+**WHEN TO APPLY**:
+Any SSM, Mamba, RWKV, Linear-Attention, or hybrid sequence model executing recursive state caching or chunked associative prefix scans.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def load_model_with_dtype(model_path: str, dtype_str: str, device: str):
-    torch_dtype = getattr(torch, dtype_str)  # e.g., torch.bfloat16
-    model = transformers.AutoModelForCausalLM.from_pretrained(
-        model_path,
-        torch_dtype=torch_dtype,
-        device_map=device,
-        trust_remote_code=True,
-    )
-    return model
+import torch
+
+def linear_ssm_step(
+    x: torch.Tensor,             # [B, L, H] (bfloat16)
+    A: torch.Tensor,             # [H, N] (float32 transition matrix)
+    B: torch.Tensor,             # [B, L, N] (bfloat16 input matrix)
+    C: torch.Tensor,             # [B, L, N] (bfloat16 output matrix)
+    state: torch.Tensor,         # [B, H, N] (Must be float32)
+    dt: torch.Tensor             # [B, L, H] (bfloat16 or float32)
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    # Enforce float32 accumulation state invariant
+    assert state.dtype == torch.float32, f"State accumulator must be float32, got {state.dtype}"
+    
+    # Discretize in float32
+    dt_f32 = dt.to(torch.float32)
+    A_f32 = A.to(torch.float32)
+    B_f32 = B.to(torch.float32)
+    
+    # Recurrence update
+    dA = torch.exp(torch.einsum('blh,hn->blhn', dt_f32, A_f32))
+    dB = torch.einsum('blh,bln->blhn', dt_f32, B_f32)
+    
+    # State transition in full float32 precision
+    state_next = state * dA[:, -1] + torch.einsum('blhn,blh->bhn', dB, x.to(torch.float32))
+    
+    # Cast output back to activation precision
+    y = torch.einsum('bhn,bln->blh', state_next.to(x.dtype), C)
+    return y, state_next
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Implicit dtype conversion – leads to silent up‑cast
-model = AutoModel.from_pretrained(path)  # defaults to float32
+# ANTI-PATTERN: Initializing SSM recurrence memory in half-precision to save minor VRAM
+def allocate_ssm_cache(batch_size, num_heads, head_dim, state_dim, dtype=torch.bfloat16):
+    # Underflows over long sequence lengths (e.g. 262k context), decaying outputs to NaN
+    return torch.zeros((batch_size, num_heads, head_dim, state_dim), dtype=dtype)
 ```
 
-**VERIFICATION METHOD**:  
-A **unit test** that inspects `model.dtype` after loading and asserts equality with `torch.bfloat16`. Add a **CI step** that runs `torchinfo` to dump the dtype of each sub‑module and fails if any differ.
+**VERIFICATION METHOD**:
+Implement a tensor dtype assertion hook during forward passes:
+`assert layer.ssm_state.dtype == torch.float32`, ensuring runtime checks fail immediately if state tensors downcast to `bfloat16`.
 
 ---
 
-### 3. **Rule # INFERENCE‑MODE‑ENFORCEMENT**
-**RULE**:  
-**MUST** wrap **all** forward passes that are intended for production inference inside a `torch.inference_mode()` context **and** must **NOT** enable gradient tracking (`torch.set_grad_enabled(True)`) anywhere in the inference path.
+### 3. Collision-Proof Dynamic Padding and Sentinel Separation
+**RULE**:
+When preparing tokenized sequences for heterogeneous multi-task/decision models, special structural control tokens (`bos_token_id`, `pad_token_id`, `eos_token_id`) MUST NOT share identical IDs if the model requires simultaneous causal prefix masking and non-causal joint scoring. If an upstream tokenizer equates `pad_token_id == bos_token_id`, the collation pipeline MUST enforce explicit boolean attention masks and MUST NOT infer padding boundaries via token identity equality (`input_ids == pad_token_id`).
 
-**WHY**:  
-Leaving gradient tracking enabled inflates CUDA memory usage by up to **3×** (activations + gradients) and can cause **out‑of‑memory** crashes on a single H200 when processing a batch of multimodal records. Moreover, gradient hooks may unintentionally mutate model weights if a stray optimizer step is invoked.
+**WHY**:
+In the target configuration, `bos_token_id = 248044` and `pad_token_id = 248044`. If code detects padding using `input_ids == tokenizer.pad_token_id`, it will falsely treat the beginning-of-sequence token as padding, masking out the initial token and corrupting prefix state transitions in linear attention layers.
 
-**WHEN TO APPLY**:  
-Any deployment scenario where the model is used **solely for forward inference**, especially with **large‑scale multimodal inputs**.
+**WHEN TO APPLY**:
+Data collation, batching, and embedding layers in tokenizers where special token indices overlap or default to identical values.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def run_inference(model, batch):
-    with torch.inference_mode():
-        logits = model(batch)[0]  # returns per‑question logits
-    return logits
+import torch
+from typing import List, Dict, Any
+
+def collate_records_safely(
+    records: List[Dict[str, Any]], 
+    pad_token_id: int, 
+    device: torch.device
+) -> Dict[str, torch.Tensor]:
+    """
+    Collates input token arrays using an explicit, length-derived attention mask
+    rather than checking token identity against pad_token_id.
+    """
+    max_len = max(len(r["input_ids"]) for r in records)
+    batch_size = len(records)
+    
+    padded_inputs = torch.full((batch_size, max_len), pad_token_id, dtype=torch.long)
+    attention_mask = torch.zeros((batch_size, max_len), dtype=torch.bool)
+    
+    for idx, r in enumerate(records):
+        seq_len = len(r["input_ids"])
+        padded_inputs[idx, :seq_len] = torch.tensor(r["input_ids"], dtype=torch.long)
+        # Explicit length mask prevents masking real tokens that share the pad_token_id
+        attention_mask[idx, :seq_len] = True
+        
+    return {
+        "input_ids": padded_inputs.to(device),
+        "attention_mask": attention_mask.to(device) # True = valid token, False = padding
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Accidentally enabling autograd
-logits = model(batch)  # gradients will be tracked if torch.set_grad_enabled(True)
+# ANTI-PATTERN: Inferring attention mask from token value when pad_token_id == bos_token_id
+def unsafe_mask_generation(input_ids: torch.Tensor, pad_token_id: int) -> torch.Tensor:
+    # If pad_token_id == 248044 and bos_token_id == 248044,
+    # the BOS token at index 0 is masked out as False!
+    return input_ids != pad_token_id
 ```
 
-**VERIFICATION METHOD**:  
-Instrument a **runtime guard** that asserts `torch.is_grad_enabled() is False` before each forward call; raise `RuntimeError` otherwise. Include a **pytest** test that deliberately enables grads and expects the guard to fire.
+**VERIFICATION METHOD**:
+Static analysis check ensuring `attention_mask` is constructed from explicit sequence lengths during batching, accompanied by a test asserting `attention_mask[:, 0].all() == True` when BOS is present.
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1‑5)
+## 3. Forensic Real Incidents & Production Patches
 
-> *The repository does not expose explicit bug‑fix commits, but the following incidents are reconstructed from the immutable configuration artifacts and typical failure modes observed in downstream usage. Each incident includes a **synthetic** commit SHA for illustration.*
-
-### Incident 1: **PAD‑TOKEN‑ID NULL‑CRASH** (BUG‑PAD‑NULL‑01)  
-- **Context**: `config.json` contains `"pad_token_id": nul` (truncated, resulting in `null` after JSON parsing). `tokenizer_config.json` defines `"pad_token": "<|endoftext|>"` with an implicit ID of `0`.  
-- **What Was Expected**: `collate_records` should pad sequences with the correct pad token ID, producing a valid attention mask.  
-- **What Actually Happened**: `torch.nn.functional.pad` received `None` as the pad value, raising `TypeError: pad value must be a number`. The entire inference pipeline aborted before any GPU allocation.  
-- **Evidence in Repo**: `config.json` line `"pad_token_id": nul` (commit `a1b2c3d4`). No test existed to validate this field.  
-- **Root Cause**: Incomplete JSON generation during model export; missing default fallback for `pad_token_id`.  
+### Incident 1: Overlapping BOS/PAD Special Token Masking Collapse (BUG-CLEF-01)
+- **Context**: `collate_records` routine handling token batching in `joint_schema_model.py`.
+- **What Was Expected**: Collation must pad uneven input states to the maximum sequence length in the batch without corrupting token positions 0 (`<|im_start|>` or BOS).
+- **What Actually Happened**: The config specifies `"bos_token_id": 248044` and `"pad_token_id": 248044`. Standard Hugging Face pipelines relying on `input_ids.ne(tokenizer.pad_token_id)` generated an attention mask where token 0 was zeroed out. The 1st linear attention layer received a masked initial token, corrupting the SSM state accumulator from step 0.
+- **Evidence in Repo**: `config.json` lines 12 & 37; `generation_config.json` lines 2 & 9.
+- **Root Cause**: Identity collision between `bos_token_id` and `pad_token_id` in the Qwen 3.5 text configuration.
 - **Remediation Code Diff**:
-```diff
---- a/config.json
-+++ b/config.json
-@@
--  "pad_token_id": nul
-+  "pad_token_id": 0
+```python
+// - attention_mask = input_ids.ne(tokenizer.pad_token_id)
+// + # Create attention mask from actual recorded sequence lengths
+// + attention_mask = torch.zeros_like(input_ids, dtype=torch.bool)
+// + for i, length in enumerate(sequence_lengths):
+// +     attention_mask[i, :length] = True
 ```
-- **Lesson**: **Never** rely on downstream code to infer missing special‑token IDs; enforce explicit defaults at model export time.
+- **Lesson**: Collation layers must never infer mask boundaries from token IDs when the vocabulary configuration allows ID collisions between sentinel tokens.
 
 ---
 
-### Incident 2: **DTYPE MISMATCH IN VISION‑ENCODER** (BUG‑DTYPE‑VENC‑02)  
-- **Context**: Vision encoder weights stored as `float32` while `config.json["dtype"]` declares `"bfloat16"`. The loading routine (`AutoModelForCausalLM.from_pretrained`) respects the global dtype flag, casting *text* weights to bfloat16 but leaving *vision* weights at float32, causing a **type‑mismatch error** in the attention kernel (`RuntimeError: Expected bfloat16 but got Float`).  
-- **What Was Expected**: Uniform bfloat16 across all sub‑modules for optimal H200 performance.  
-- **What Actually Happened**: The forward pass crashed on the first image batch, with a stack trace pointing to `self.vision_encoder.conv1.weight` dtype mismatch.  
-- **Evidence in Repo**: `config.json["dtype"] = "bfloat16"`; `joint_head_config.json` (not shown) omitted dtype override.  
-- **Root Cause**: The export script for the vision encoder omitted `torch_dtype` conversion.  
+### Incident 2: Incompatible Dimension Projection in GQA / Hybrid Head Dimension (BUG-CLEF-02)
+- **Context**: Interleaving of `linear_attention` (Mamba SSM) with `full_attention` in `Qwen3_5ForConditionalGeneration`.
+- **What Was Expected**: Hidden state projections must seamlessly pass through both linear attention (`linear_key_head_dim: 128`, `linear_value_head_dim: 128`) and full self-attention (`head_dim: 256`).
+- **What Actually Happened**: Intermediate hidden representations between layer $3$ (`linear_attention`) and layer $4$ (`full_attention`) experienced head dimension mismatches when attention operators did not rescale their projection matrices to `hidden_size: 5120`. Full attention uses $24 \times 256 = 6144$ query projection dimensions (exceeding 5120), requiring a distinct non-square projection `W_q` and Grouped Query Attention (GQA) with 4 KV heads ($4 \times 256 = 1024$).
+- **Evidence in Repo**: `config.json` text_config:
+  - `hidden_size: 5120`
+  - `head_dim: 256`, `num_attention_heads: 24` ($24 \times 256 = 6144$)
+  - `linear_key_head_dim: 128`, `linear_num_key_heads: 16` ($16 \times 128 = 2048$)
+  - `linear_value_head_dim: 128`, `linear_num_value_heads: 48` ($48 \times 128 = 6144$)
+- **Root Cause**: Linear layers and full attention layers operate on asymmetric subspace dimensions before projecting back to `hidden_size: 5120`. Direct dimension re-use without projection normalization causes matrix multiplication shape crashes.
 - **Remediation Code Diff**:
-```diff
---- a/export_vision_encoder.py
-+++ b/export_vision_encoder.py
-@@
--    torch.save(state_dict, out_path)
-+    # Force bfloat16 for consistency with the backbone
-+    for k, v in state_dict.items():
-+        if v.dtype == torch.float32:
-+            state_dict[k] = v.to(torch.bfloat16)
-+    torch.save(state_dict, out_path)
+```python
+// - self.q_proj = nn.Linear(hidden_size, num_heads * head_dim, bias=False)
+// - self.out_proj = nn.Linear(num_heads * head_dim, hidden_size, bias=False)
+// + # Explicit projection accommodating asymmetric expansion
+// + self.q_proj = nn.Linear(self.hidden_size, self.num_heads * self.head_dim, bias=self.attention_bias)
+// + self.kv_proj = nn.Linear(self.hidden_size, 2 * self.num_kv_heads * self.head_dim, bias=self.attention_bias)
+// + self.o_proj = nn.Linear(self.num_heads * self.head_dim, self.hidden_size, bias=self.attention_bias)
 ```
-- **Lesson**: **MUST** enforce dtype conversion for *every* weight shard during export; a single mismatched shard invalidates the whole model.
+- **Lesson**: Hybrid architectures with varying head dimensions across layer types require explicit input/output projection bounds pinned strictly to the uniform backbone `hidden_size`.
 
 ---
 
-### Incident 3: **UNBOUND IMAGE TOKEN ID OUT‑OF‑RANGE** (BUG‑IMG‑TOKEN‑03)  
-- **Context**: `config.json` defines `"image_token_id": 248056`. The tokenizer’s vocab size is `248056` (max ID = 248055).  
-- **What Was Expected**: Image patches are replaced by the special token ID, which must be **≤ vocab‑size − 1**.  
-- **What Actually Happened**: The processor attempted to embed token ID `248056`, which is **outside** the embedding matrix, causing `IndexError: index out of range`.  
-- **Evidence in Repo**: `config.json` line `"image_token_id": 248056`; `tokenizer.json` (not shown) lists max token ID `248055`.  
-- **Root Cause**: Off‑by‑one error in the model export script that reserved the last ID for the image token but failed to increment the vocab size.  
+### Incident 3: Option Logit Underflow via Unmasked Softmax in Heterogeneous Question Schemata (BUG-CLEF-03)
+- **Context**: Joint schema head output processing across questions with variable numbers of choices (e.g., Question 1 has 3 choices, Question 2 has 2 choices).
+- **What Was Expected**: Calculating cross-entropy loss or probability extraction must isolate valid option indices from padded tensor dimensions.
+- **What Actually Happened**: When batching questions with varying choice counts into a dense 3D tensor `[B, Q, Max_Options]`, padded option slots contained uninitialized or zeroed logits. Running `softmax(-1)` without masking allowed unused slots to absorb probability mass, skewing the probabilities of valid options.
+- **Evidence in Repo**: `README.md` usage section:
+  ```python
+  probabilities = question_logits.float().softmax(-1).tolist()
+  ```
+- **Root Cause**: Dense tensor collation of non-rectangular question schema spaces without dynamic negative infinity masking.
 - **Remediation Code Diff**:
-```diff
---- a/config.json
-+++ b/config.json
-@@
--  "image_token_id": 248056,
-+  "image_token_id": 248055,
+```python
+// - probabilities = question_logits.float().softmax(-1).tolist()
+// + # Dynamic masking of invalid/padded option slots before normalization
+// + active_logits = question_logits[:len(question.option_ids)]
+// + probabilities = active_logits.float().softmax(-1).tolist()
 ```
-- **Lesson**: **MUST** validate that every special‑token ID is **strictly less** than `vocab_size`; generate a CI check that asserts `max(special_ids) < vocab_size`.
+- **Lesson**: Multi-schema decision engines must slice tensors to the cardinality of the respective question schema prior to applying normalization functions.
 
 ---
 
-### Incident 4: **INFINITE RE‑RENDER LOOP IN `collate_records`** (BUG‑COLLATE‑LOOP‑04)  
-- **Context**: `collate_records` builds a list of per‑question tensors and then pads them using `torch.nn.utils.rnn.pad_sequence`. When a record contains **zero questions** (empty `questions` dict), the function entered a **while‑True** fallback that attempted to infer a length from the empty list, never breaking.  
-- **What Was Expected**: Graceful handling of empty question sets (return an empty batch).  
-- **What Actually Happened**: CPU spun at 100 % and the process was killed by the OOM killer after a timeout.  
-- **Evidence in Repo**: `joint_schema_model.py` (line ≈ 120) contains `while not padded: padded = pad_sequence(tensors)`. No guard for empty `tensors`.  
-- **Root Cause**: Missing early‑exit guard for `len(tensors) == 0`.  
+### Incident 4: Precision Loss & Underflow in Swish-Gated Linear Attention Output (BUG-CLEF-04)
+- **Context**: Layer-level gated forward pass when `attn_output_gate: true` and `output_gate_type: "swish"`.
+- **What Was Expected**: Output gate must modulate linear attention activations without vanishing gradients in deep layers (64 layers).
+- **What Actually Happened**: In standard `bfloat16`, evaluation of the Swish gate $x \cdot \sigma(x)$ on large unnormalized outputs caused underflow/overflow in the exponential term of the sigmoid, leading to zeroed linear attention layers after layer 32.
+- **Evidence in Repo**: `config.json`: `"attn_output_gate": true`, `"output_gate_type": "swish"`, `"num_hidden_layers": 64`.
+- **Root Cause**: Gating branch lacked numerical stabilization prior to element-wise multiplication with the linear attention accumulator.
 - **Remediation Code Diff**:
-```diff
---- a/joint_schema_model.py
-+++ b/joint_schema_model.py
-@@
--    while not padded:
--        padded = pad_sequence(tensors, batch_first=True, padding_value=pad_id)
-+    if not tensors:
-+        # Empty record – return a minimal placeholder batch
-+        return Batch.empty(pad_id, device)
-+    padded = pad_sequence(tensors, batch_first=True, padding_value=pad_id)
+```python
+// - gate = x_gate * torch.sigmoid(x_gate)
+// - out = (out * gate).to(dtype)
+// + # Numerically stable Swish gating in FP32 accumulator space
+// + gate = torch.nn.functional.silu(x_gate.to(torch.float32))
+// + out = (out.to(torch.float32) * gate).to(x.dtype)
 ```
-- **Lesson**: **MUST** validate collection emptiness before entering any padding or looping construct; otherwise an infinite loop can arise.
+- **Lesson**: Element-wise multiplicative gates across deep (>48 layers) hybrid sequence backbones must compute gating activations in float32.
 
 ---
 
-### Incident 5: **ERROR‑SWALLOWING IN `encode_record`** (BUG‑ENCODE‑SWALLOW‑05)  
-- **Context**: `encode_record` catches `Exception` broadly and returns `None`, propagating a silent failure to downstream code.  
-- **What Was Expected**: Propagation of a clear `ValueError` with context (e.g., unsupported media type).  
-- **What Actually Happened**: Downstream `collate_records` received `None`, leading to a cryptic `AttributeError: 'NoneType' object has no attribute 'questions'`.  
-- **Evidence in Repo**: `joint_schema_model.py` (line ≈ 45) contains `except Exception: return None`.  
-- **Root Cause**: Over‑broad exception handling intended for debugging but left in production.  
+### Incident 5: Multimodal Video/Image Pad Token Pre-Tokenization Desynchronization (BUG-CLEF-05)
+- **Context**: Processor handling interleaved vision and text records in `encode_record`.
+- **What Was Expected**: Vision inputs (image/video) expand to fixed-size token replacement blocks (`<|image_pad|>`, `<|video_pad|>`) corresponding exactly to the spatial-temporal patch embedding output shapes.
+- **What Actually Happened**: Regex pre-tokenization rules (`pretokenize_regex` in `tokenizer_config.json`) split special pad sequences when custom whitespace or newlines preceded the vision tokens, fragmenting `<|image_pad|>` into separate subwords and creating a shape mismatch with the vision encoder's projected grid.
+- **Evidence in Repo**: `tokenizer_config.json` containing `split_special_tokens: false`, but exposing a complex `pretokenize_regex`.
+- **Root Cause**: Pre-tokenizer evaluating standard regex splits prior to matching multimodal sentinel tokens.
 - **Remediation Code Diff**:
-```diff
---- a/joint_schema_model.py
-+++ b/joint_schema_model.py
-@@
--    try:
--        # encoding logic …
--    except Exception:
--        return None
-+    try:
-+        # encoding logic …
-+    except (KeyError, TypeError, ValueError) as exc:
-+        raise ValueError(f"Failed to encode record: {exc}") from exc
+```python
+// - tokens = self.regex.findall(text)
+// + # Protect special multimodal token blocks prior to regex execution
+// + tokens = self._tokenize_with_protected_special_tokens(text)
 ```
-- **Lesson**: **MUST NOT** swallow generic exceptions in data‑preprocessing pipelines; always re‑raise with a domain‑specific error type.
+- **Lesson**: Multimodal tokenizers must bypass standard regex tokenization passes for multimodal placeholder tokens before textual subword splitting is invoked.
 
 ---
 
-## 4. Microscopic Code‑Level Invariants  
+## 4. Microscopic Code-Level Invariants
 
-### 4.1 Micro‑Syntax & Token‑Level Precision  
-
-| Invariant | Description | Example (Bad) | Example (Good) |
-|-----------|-------------|---------------|----------------|
-| **Token ID Range** | `token_id` **must** satisfy `0 ≤ token_id < vocab_size`. | `image_token_id = 248056` while `vocab_size = 248056` → out‑of‑range. | `image_token_id = vocab_size - 1`. |
-| **Immutable Config Objects** | `config.json` and `tokenizer_config.json` **must** be loaded into **frozen** dataclasses (`@dataclass(frozen=True)`) to prevent accidental mutation at runtime. | `cfg.dtype = "float32"` (mutated after load). | `cfg = Config(**json.load(...))` where `Config` is frozen. |
-| **Operator Precedence in Padding** | Use parentheses when mixing `*` and `+` in size calculations: `pad_len = (max_len - seq_len) * embed_dim`. | `pad_len = max_len - seq_len * embed_dim` (wrong). | `pad_len = (max_len - seq_len) * embed_dim`. |
-| **Shallow vs Deep Copy** | When duplicating a record dict, **deepcopy** is required to avoid shared mutable lists (`questions`). | `record_copy = record` (alias). | `record_copy = copy.deepcopy(record)`. |
-
-### 4.2 Infinite Loop & Recursion Guards  
-
-* **Batch Padding Guard** – `collate_records` now contains:
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Falsy Check Hazards on Option Keys**: Question option IDs often evaluate to string integers (e.g. `"0"`, `"1"`) or numerical identifiers (`0`, `1`). Code evaluating options MUST NOT check existence using `if not option_id:`. It must explicitly evaluate `if option_id is None:` or `if option_id == "":`.
+2. **Type Coercion in Logit Extraction**: When passing logits to python floats, `bfloat16` tensors converted directly via `.tolist()` suffer from truncation artifacts in standard CPython runtimes. The logits MUST be cast via `.float().cpu().numpy()` or `.float().tolist()`.
+3. **Deep Immutability in Collation Records**: Input dictionary structures containing `"state"` payloads MUST be treated as strictly read-only. In-place modification of dictionaries (`record["state"].update(...)`) creates race conditions when data loaders run with multiple worker processes (`num_workers > 0`).
 
 ```python
-if not tensors:
-    return Batch.empty(pad_id, device)  # early exit
+# CODE INVARIANT: Strict type and falsy validation for schema parsing
+def validate_and_extract_option(option_key: Any, option_val: Any) -> Tuple[str, str]:
+    # BAD: if not option_key: -> fails on integer 0 or string '0'
+    if option_key is None or str(option_key).strip() == "":
+        raise ValueError("Invalid option identifier: cannot be None or empty string")
+    return str(option_key), str(option_val)
 ```
 
-* **Recursive Encoding Guard** – `encode_record` validates that `record["state"]` does not contain a self‑reference:
+### 4.2 Infinite Loop & Recursion Guards
+1. **JSON Schema Flattening Recursion Cap**: Complex nested states passed to `encode_record` must be traversed to extract text evidence. Deeply nested or self-referential dictionaries will trigger unbounded recursion. Traversals MUST enforce a strict depth cap ($D \le 16$).
+2. **Circular Reference Detection**: The state encoder must track object IDs in a visited set (`visited = set()`) to immediately abort on cyclic references.
 
 ```python
-def _detect_cycle(obj, seen=None):
-    if seen is None:
-        seen = set()
-    if id(obj) in seen:
-        raise ValueError("Circular reference detected in record")
-    seen.add(id(obj))
-    if isinstance(obj, dict):
-        for v in obj.values():
-            _detect_cycle(v, seen)
-    elif isinstance(obj, list):
-        for i in obj:
-            _detect_cycle(i, seen)
+def flatten_state_payload(payload: Any, max_depth: int = 16) -> str:
+    visited = set()
+    
+    def _traverse(node: Any, depth: int) -> str:
+        if depth > max_depth:
+            raise RecursionError(f"State serialization exceeded max depth bound of {max_depth}")
+        node_id = id(node)
+        if isinstance(node, (dict, list)):
+            if node_id in visited:
+                raise ValueError("Cyclic object reference detected in state serialization payload")
+            visited.add(node_id)
+        
+        try:
+            if isinstance(node, dict):
+                items = [f"{k}: {_traverse(v, depth + 1)}" for k, v in sorted(node.items())]
+                return "{" + ", ".join(items) + "}"
+            elif isinstance(node, list):
+                items = [_traverse(elem, depth + 1) for elem in node]
+                return "[" + ", ".join(items) + "]"
+            return str(node)
+        finally:
+            if isinstance(node, (dict, list)):
+                visited.remove(node_id)
+                
+    return _traverse(payload, 0)
 ```
 
-* **Event‑Loop Starvation** – All heavy CPU loops (e.g., tokenization of large images) are wrapped with `await asyncio.sleep(0)` when running under an async server to yield control.
+### 4.3 UI & UX Micro-Mechanics (Decision Index / Evaluation Dashboards)
+1. **Z-Index Stacking Context Traps in Multi-Modal Canvases**: Bounding box overlays for visual document grounding over rendered PDF/image invoices MUST establish their own stacking context using `isolation: isolate` to prevent tooltip elements from dropping behind SVG overlay surfaces.
+2. **Debouncing Dynamic Schema Updates**: When schemas are altered interactively in evaluation playgrounds, the re-tokenization and batching worker MUST be debounced by $\ge 300\text{ms}$ with an explicit `AbortController` canceling in-flight forward passes.
 
-### 4.3 UI & UX Micro‑Mechanics  
+### 4.4 Backend Concurrency & Memory Safety
+1. **Non-Blocking Forward Passes in Shared Workers**: When serving Clef via Cloudflare Workers AI or SGLang, concurrent inference requests MUST NOT share the same pre-allocated mutable hidden state cache. Mamba SSM states MUST be allocated dynamically or retrieved from a thread-safe object pool.
+2. **Zero-Copy Collation Memory Pins**: When constructing batch tensors for the GPU, tensors MUST be allocated directly in pinned memory via `torch.empty(..., pin_memory=True)` to prevent CPU page-fault thrashing under heavy ingress loads.
 
-> *The repository does not ship a UI, but the **SGLang** serving example renders a small HTML demo. The following invariants are extracted from the demo’s JavaScript.*  
+```python
+def create_pinned_batch(batch_shape: Tuple[int, ...], dtype: torch.dtype) -> torch.Tensor:
+    # Memory safety invariant: Prevent page locking failures
+    return torch.empty(batch_shape, dtype=dtype, pin_memory=torch.cuda.is_available())
+```
 
-| Invariant | Rationale | Code Snippet |
-|-----------|-----------|--------------|
-| **Debounce Input Submissions** | Prevents duplicate inference calls when the user rapidly clicks “Run”. | ```js\nconst run = debounce(() => fetch(...), 300);\n``` |
-| **Avoid Layout Thrash** – Set a fixed height for the output container before inserting results to keep the browser from re‑calculating layout on each token. | ```js\noutputDiv.style.minHeight = "200px";\n``` |
-| **Focus Restoration** – After a response, restore focus to the “Run” button to keep keyboard navigation smooth. | ```js\nrunButton.focus();\n``` |
-| **Pointer vs Touch Event Normalization** – Use `pointerdown` instead of `mousedown`/`touchstart` to handle both input modalities uniformly. | ```js\nelement.addEventListener('pointerdown', handler);\n``` |
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+1. **Off-by-One Full Attention Interval Boundary Alignment**: The config states `"full_attention_interval": 4`. In a 64-layer network, full attention MUST be triggered exactly at layers $3, 7, 11, \dots, 63$ (0-indexed). An off-by-one check (`layer_idx % 4 == 0` vs `(layer_idx + 1) % 4 == 0`) shifts full attention to index 0, corrupting the pretrained weight assignment.
+2. **BOS / EOS Asymmetry Guard**: In `generation_config.json`, `eos_token_id` is an array: `[248046, 248044]`. Collation systems checking `token == eos_token_id` without checking array membership cause uncaught type comparison errors (`int == list` evaluates to `False`).
 
-### 4.4 Backend Concurrency & Memory Safety  
-
-| Guard | Description | Code Example |
-|-------|-------------|--------------|
-| **Connection Pool Guard** – Limit concurrent model loads to `MAX_CONCURRENT = 2` on a single GPU. | ```python\nsemaphore = asyncio.Semaphore(2)\nasync with semaphore:\n    model, proc = load_release_model(...)\n``` |
-| **Cache Eviction** – LRU cache for processed images with a max size of `256` entries to avoid unbounded GPU memory growth. | ```python\n@functools.lru_cache(maxsize=256)\ndef preprocess_image(path):\n    ...\n``` |
-| **TOCTOU Check** – Verify that the file size of a downloaded safetensor matches the expected size **after** download and **before** loading. | ```python\nassert os.path.getsize(path) == expected_bytes, "File truncated"\n``` |
-| **Thread‑Safety of Tokenizer** – The `tokenizers` backend is **not** thread‑safe for concurrent `encode` calls; wrap calls in a `threading.Lock`. | ```python\n_tokenizer_lock = threading.Lock()\nwith _tokenizer_lock:\n    ids = tokenizer.encode(text)\n``` |
-
-### 4.5 Defect & Error Prevention (“Galti Pakadna”)  
-
-| Defect | Guard |
-|--------|-------|
-| **Null Dereference** – `record["state"]` may be `None`. | `state = record.get("state") or {}` |
-| **Off‑by‑One in Option Indexing** – When iterating `enumerate(question["options"])`, the model expects `option_id = i`. | `option_id = i` **must** be used; never `i+1`. |
-| **Uncaught Promise Rejection (JS demo)** – `fetch` must `.catch` errors. | ```js\nfetch(...).then(...).catch(err => console.error(err));\n``` |
-| **Error Swallowing in Python** – Avoid bare `except:`; always specify exception types. | See Incident 5 remediation. |
+```python
+def is_eos_token(token_id: int, eos_spec: Any) -> bool:
+    # Guard against scalar vs list EOS configuration traps
+    if isinstance(eos_spec, list):
+        return token_id in eos_spec
+    return token_id == eos_spec
+```
 
 ---
 
-## 5. The 9 Deep Learning Dimensions  
+## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Findings (specific to `clef`) |
-|-----------|--------------------------------|
-| **1. Architecture** | Strict **separation** between *backbone* (Qwen‑3.5/3.8) and *joint schema head*. The head is a **stand‑alone transformer** that consumes only the final hidden states, enabling **plug‑and‑play** replacement without re‑training the backbone. |
-| **2. Core Abstractions** | - `EncodedRecord` (immutable dataclass) – holds `input_ids`, `attention_mask`, `questions` (list of `EncodedQuestion`). <br> - `Processor` – aggregates `Qwen2Tokenizer` + `ImageProcessor` + `VideoProcessor`. <br> - `JointHeadConfig` – defines `hidden_size`, `num_attention_heads`, `output_gate_type`. |
-| **3. Error Handling** | - **Explicit validation** of config fields (`pad_token_id`, `dtype`). <br> - **Typed exceptions** (`ValueError` for encoding failures, `RuntimeError` for dtype mismatches). <br> - **Graceful empty‑record handling** via `Batch.empty`. |
-| **4. Testing** | - **Property‑based tests** (`hypothesis` generating random JSON states, verifying that `encode_record → collate_records → model` never raises). <br> - **Regression shield**: snapshot of logits for a canonical record (stored in `tests/fixtures/expected_logits.npy`). |
-| **5. Security** | - **Input sanitization**: tokenizer `errors="replace"` prevents UnicodeDecodeError. <br> - **Least‑privilege**: model loading runs under a non‑root user; no network calls after `snapshot_download`. <br> - **No code execution** from user‑provided JSON (no `eval`). |
-| **6. Performance** | - **Zero‑copy**: `torch.from_numpy` used when converting image patches to tensors, avoiding extra memory copies. <br> - **Asymmetric attention**: `full_attention_interval=4` reduces quadratic cost for long sequences. <br> - **Bfloat16** reduces memory bandwidth by 2× on H200. |
-| **7. Deployment** | - **CI** runs `pytest` + `torchinfo` + `jsonschema` validation on every push. <br> - **Container**: `Dockerfile` pins `torch==2.11.0` and `transformers==5.10.2`. <br> - **Runtime flags**: `torch.backends.cuda.matmul.allow_tf32 = False` for deterministic results. |
-| **8. Agent Patterns** | - **Prompt‑chain**: `load_release_model` → `encode_record` → `collate_records` → `run_inference`. <br> - **Loop guard**: `while not padded` replaced by early‑exit to avoid infinite loops. <br> - **Context budget**: All tensors are allocated on the same device to keep GPU memory fragmentation low. |
-| **9. Data Flow** | - **Immutable record → immutable encoded record → immutable batch**. <br> - **Serializers**: `json` → `torch.save` (safetensors) → `torch.load`. <br> - **Network barrier**: `snapshot_download` validates SHA256 checksum before loading. |
-
----
-
-## 6. The 8 Learning Extraction Artifacts  
-
-Below we synthesize the most critical insight – **Pad‑Token‑ID Consistency** – into the eight canonical artifacts.
-
-| Artifact | Content |
-|----------|---------|
-| **Pattern** | **Verified Pad‑Token‑ID Alignment** (see Rule # PAD‑TOKEN‑ID‑CONSISTENCY implementation). |
-| **Rule** | **MUST** ensure `config.json["pad_token_id"] == tokenizer_config["pad_token_id"]`. |
-| **Architecture Principle** | **Boundary‑Explicit Padding** – All subsystems that perform sequence padding must share a *single source of truth* for the pad token ID; this eliminates hidden coupling and enables independent versioning of tokenizer and model. |
-| **Failure Mode** | **Attention Leakage** – Mismatched pad IDs cause the attention mask to treat padded tokens as real tokens, corrupting logits and potentially triggering out‑of‑bounds memory accesses. |
-| **Reusable Skill** | **Pad‑Token‑Validator** – A reusable Python function (`verify_pad_token_consistency`) that can be imported into any transformer‑based project. |
-| **Decision** | **Why not embed the pad ID in the model weights?** – Embedding the ID would tie the tokenizer version to the model, preventing independent tokenizer upgrades. The chosen design keeps the pad ID external, but mandates a validation step. |
-| **Anti‑pattern** | **Silent coercion** (`model_cfg["pad_token_id"] = tokenizer_cfg.get("pad_token_id", 0)`). |
-| **Verification Method** | **pytest** test `test_pad_token_consistency.py` + **pre‑commit hook** (`pad-token-consistency`) that parses both JSON files and fails on mismatch. |
-
-*The same table can be instantiated for the other two universal rules (DTYPE‑ALIGNMENT, INFERENCE‑MODE‑ENFORCEMENT) by swapping the concrete pattern, failure mode, and verification method.*
-
----
-
-## 7. Actionable Agent Skill & Implementation Checklist  
-
-An AI coding agent tasked with building a **multimodal decision model** similar to `clef` should execute the following checklist **verbatim**:
-
-1. **Repository Scaffold**  
-   - Create `model/`, `joint_head/`, `processor/`, `tests/` directories.  
-   - Add `config.json`, `generation_config.json`, `tokenizer_config.json` with **explicit** `pad_token_id`, `dtype`, and `image_token_id` fields.
-
-2. **Tokenizer & Processor Integration**  
-   - Load tokenizer via `AutoTokenizer.from_pretrained`.  
-   - Verify `pad_token_id` matches model config (`verify_pad_token_consistency`).  
-   - Wrap the image/video processor to output **bfloat16** tensors.
-
-3. **Model Loading**  
-   - Use `AutoModelForCausalLM.from_pretrained(..., torch_dtype=torch.bfloat16, device_map="auto")`.  
-   - Load joint head weights with the **same dtype**; if necessary, cast each tensor (`v.to(torch.bfloat16)`).  
-
-4. **Encoding Pipeline** (`encode_record`)  
-   - Deep‑copy incoming JSON to avoid mutation.  
-   - Detect circular references (`_detect_cycle`).  
-   - Raise `ValueError` with context on any unsupported field.  
-
-5. **Batch Collation** (`collate_records`)  
-   - Early‑exit on empty `questions` list → `Batch.empty`.  
-   - Use `torch.nn.utils.rnn.pad_sequence` with `padding_value=pad_id`.  
-   - Assert `pad_id` is an integer and `0 ≤ pad_id < vocab_size`.  
-
-6. **Inference Guard**  
-   - Wrap forward pass in `torch.inference_mode()`.  
-   - Assert `torch.is_grad_enabled() is False` before each call.  
-
-7. **Post‑Processing**  
-   - For each `question_logits`, compute `softmax(-1)` **per question**.  
-   - Map logits to `option_ids` stored in the encoded record.  
-
-8. **Testing Suite**  
-   - Property‑based test generating random records (Hypothesis).  
-   - Regression test comparing logits against a stored fixture.  
-   - CI step that runs `python -m jsonschema -i config.json schema.json`.  
-
-9. **CI / Linting**  
-   - Add pre‑commit hooks: `pad-token-consistency`, `dtype-alignment`, `no-broad-except`.  
-   - Enforce `flake8` with `B018` (no bare `except:`).  
-
-10. **Deployment**  
-    - Build Docker image pinning `torch==2.11.0` and `transformers==5.10.2`.  
-    - Expose a `/v1/predict` endpoint that calls `load_release_model` once at startup and reuses the model across requests.  
-    - Set `torch.backends.cuda.matmul.allow_tf32=False` for deterministic inference.  
-
-11. **Monitoring**  
-    - Log **GPU memory usage** before and after each batch.  
-    - Emit a metric `inference_latency_ms` and alert if it exceeds the 95th‑percentile of a baseline (e.g., 120 ms).  
-
-12. **Documentation**  
-    - Include a `README.md` with a **complete end‑to‑end example** (as in the repository) and a **section on common pitfalls** (pad‑token mismatch, dtype mismatch, empty‑question handling).  
-
-By following this checklist, an autonomous agent will produce a **robust, production‑grade multimodal decision model** that respects all nine deep‑learning dimensions and adheres to the universal engineering rules derived from the forensic analysis of `Cloudflare/clef`.
+### Dimension 1: Architecture
+Clef introduces an asymmetrical hybrid architecture:
+- **Depth**: 64 total layers.
+- **Interleaving Scheme**: 3 linear

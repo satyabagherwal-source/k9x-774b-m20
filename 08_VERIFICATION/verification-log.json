@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-E39N",
-    "timestamp": "2026-10-18T22:29:21.035Z",
-    "repository": "hunvreus/basecoat",
-    "learningId": "learn-github-hunvreus-basecoat",
-    "contentHash": "442d4707fea3a29a1097cd7edf97ca22433aac34089c6c047d6ff9710f99ba1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-E42G",
-    "timestamp": "2026-10-18T22:29:22.072Z",
-    "repository": "Michael-A-Kuykendall/shimmy",
-    "learningId": "learn-github-michael-a-kuykendall-shimmy",
-    "contentHash": "e71b8233c157dcd25afb446297d018333f6024b65ecceb64c4bc4e74c17d3b47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-E63Z",
-    "timestamp": "2026-10-18T22:29:24.719Z",
-    "repository": "CrawlCove/robots-txt-tester",
-    "learningId": "learn-github-crawlcove-robots-txt-tester",
-    "contentHash": "3ffdfceffefcdfed39899f14645756a2e839bc3717bee98deb678bf1c69a41ed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-E8GE",
-    "timestamp": "2026-10-18T22:29:27.758Z",
-    "repository": "infinitered/reactotron",
-    "learningId": "learn-github-infinitered-reactotron",
-    "contentHash": "5594d195530fb4f9b5b16f7df0d7ac3bfa558f0a17f7e6ec22d34ba2e54f46ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-EBE5",
-    "timestamp": "2026-10-18T22:29:31.565Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "6da2aa32cb0d4cec4f4da89118e94ed25a12fc938ca8e37d259f3334aa254907",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-ECAR",
-    "timestamp": "2026-10-18T22:29:32.739Z",
-    "repository": "cryfs/cryfs",
-    "learningId": "learn-github-cryfs-cryfs",
-    "contentHash": "0b8945b80cac5c9f8b0b4b7f211d45b0b53418a3f8907ca4a3d5a9028888bf31",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-EE4T",
     "timestamp": "2026-10-18T22:29:35.117Z",
     "repository": "lioensky/VCPToolBox",
@@ -7490,6 +7400,96 @@
     "repository": "flux-iac/tofu-controller",
     "learningId": "learn-github-flux-iac-tofu-controller",
     "contentHash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-045G",
+    "timestamp": "2026-10-19T07:38:21.316Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "b65b3f8fa8520c8726b10604e76eeabd2f150a0cfb0acf29dda7c436c465561a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0B7S",
+    "timestamp": "2026-10-19T07:38:30.472Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0EUN",
+    "timestamp": "2026-10-19T07:38:35.183Z",
+    "repository": "apollographql/apollo-kotlin",
+    "learningId": "learn-github-apollographql-apollo-kotlin",
+    "contentHash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-2QX8",
+    "timestamp": "2026-10-19T07:40:24.140Z",
+    "repository": "bvaughn/react-virtualized",
+    "learningId": "learn-github-bvaughn-react-virtualized",
+    "contentHash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-2ZFN",
+    "timestamp": "2026-10-19T07:40:35.171Z",
+    "repository": "crate-ci/typos",
+    "learningId": "learn-github-crate-ci-typos",
+    "contentHash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-31DP",
+    "timestamp": "2026-10-19T07:40:37.693Z",
+    "repository": "emberstack/kubernetes-reflector",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "4d6bed7552adcccbacf0091a91a8d6407c163c2a9bd9d06ae35f7bfe5e72957f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

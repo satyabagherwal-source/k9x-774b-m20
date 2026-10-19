@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T07:29:49.734Z",
-  "total_verified_learnings": 719,
+  "last_updated": "2026-10-19T07:40:37.653Z",
+  "total_verified_learnings": 723,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1871,22 +1871,45 @@
     "learn-github-apollographql-apollo-kotlin": {
       "learning_id": "learn-github-apollographql-apollo-kotlin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "apollographql-apollo-kotlin",
+      "source": "apollographql/apollo-kotlin",
+      "repository": "apollographql/apollo-kotlin",
       "slug": "apollographql-apollo-kotlin",
       "platform": "github",
       "source_url": "https://github.com/apollographql/apollo-kotlin",
-      "source_version": "HEAD",
-      "content_hash": "d699fd1f459408ce1edd67c86f78958803744974bb139ce754556f1e243f454d",
+      "source_version": "afe947c8",
+      "content_hash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
       "dossier_path": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2320,
+          "title": "Invariant Graph Traversal via Local Definition Scoping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2321,
+          "title": "Mock Transport Enqueue Precedence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2322,
+          "title": "Lossless Primitive Boundary Casting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.840Z"
+      "verified_at": "2026-10-19T07:38:35.131Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apple-foundationdb": {
       "learning_id": "learn-github-apple-foundationdb",
@@ -4849,22 +4872,45 @@
     "learn-github-clockworklabs-spacetimedb": {
       "learning_id": "learn-github-clockworklabs-spacetimedb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "clockworklabs-spacetimedb",
+      "source": "clockworklabs/SpacetimeDB",
+      "repository": "clockworklabs/SpacetimeDB",
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "HEAD",
-      "content_hash": "a5033f7e831d9d9356f2c9e74e252eff58979935e5d3c2e832e9c3860437799a",
+      "source_version": "7cdacda3",
+      "content_hash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2317,
+          "title": "Zero-Cost Weak-Handle Registration for Copy-Constrained Subsystem Contexts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2318,
+          "title": "ABI-Safe WASM Host-to-Engine Dynamic Dispatch Detection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2319,
+          "title": "Cross-Platform Static Linker Initialization Registration for Embedded Test Utilities",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.339Z"
+      "verified_at": "2026-10-19T07:38:30.420Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cloudscape-design-components": {
       "learning_id": "learn-github-cloudscape-design-components",
@@ -5298,22 +5344,45 @@
     "learn-github-crate-ci-typos": {
       "learning_id": "learn-github-crate-ci-typos",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "crate-ci-typos",
+      "source": "crate-ci/typos",
+      "repository": "crate-ci/typos",
       "slug": "crate-ci-typos",
       "platform": "github",
       "source_url": "https://github.com/crate-ci/typos",
-      "source_version": "HEAD",
-      "content_hash": "5b89f78ffbb85559cd096d269966b904f72e2cdd9be73eaecf602ea77752d3b6",
+      "source_version": "7f9d0819",
+      "content_hash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
       "dossier_path": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2326,
+          "title": "Zero-Allocation String Case Mutation and UTF-8 Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2327,
+          "title": "Environment-Deterministic CLI Snapshot Testing Harness",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2328,
+          "title": "Length-Bounded Static Perfect Hash Table Pruning",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.421Z"
+      "verified_at": "2026-10-19T07:40:35.119Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crate-crate": {
       "learning_id": "learn-github-crate-crate",
@@ -7513,22 +7582,45 @@
     "learn-github-emberstack-kubernetes-reflector": {
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "emberstack-kubernetes-reflector",
+      "source": "emberstack/kubernetes-reflector",
+      "repository": "emberstack/kubernetes-reflector",
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "HEAD",
-      "content_hash": "d83bb626e08b5cb6b950499c0cf0d53433cb4c11921d7f21546b81ea8df14a66",
+      "source_version": "0d074fb0",
+      "content_hash": "4d6bed7552adcccbacf0091a91a8d6407c163c2a9bd9d06ae35f7bfe5e72957f",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2329,
+          "title": "Resilient Stream-Lease Recycle Pattern for Long-Lived Kubernetes Watchers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2330,
+          "title": "Deep Content-Hash Guard Before Kubernetes Mutation Calls",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2331,
+          "title": "Least-Privilege ClusterRole Scoping for Namespace Operators",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.782Z"
+      "verified_at": "2026-10-19T07:40:37.642Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-emcie-co-parlant": {
       "learning_id": "learn-github-emcie-co-parlant",
@@ -14299,7 +14391,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "81f630351dd6f162406ed19908ce33335230ae90ceeacfd05eaadbf5b4b63a43",
+      "content_hash": "b65b3f8fa8520c8726b10604e76eeabd2f150a0cfb0acf29dda7c436c465561a",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -14449,6 +14541,21 @@
           "number": 1573,
           "title": "**Rule # INFERENCE‑MODE‑ENFORCEMENT**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2314,
+          "title": "Joint-Schema Non-Autoregressive Forward-Pass Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2315,
+          "title": "Numerical State Space Accumulation Invariant for Linear Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2316,
+          "title": "Collision-Proof Dynamic Padding and Sentinel Separation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14469,7 +14576,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-18T00:42:35.439Z",
+      "verified_at": "2026-10-19T07:38:21.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72336,14 +72443,29 @@
       "slug": "bvaughn-react-virtualized",
       "platform": "github",
       "source_url": "https://github.com/bvaughn/react-virtualized",
-      "source_version": "409d50e1",
-      "content_hash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
+      "source_version": "dad013db",
+      "content_hash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
       "dossier_path": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
       "promoted_rules": [
         {
           "number": 1690,
           "title": "Revert stale.yml",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2323,
+          "title": "Hybrid Exponential-Binary Search for Unbounded Lazy Sequences",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2324,
+          "title": "Physical Layout Ceiling Normalization via Scaled Percentage Mapping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2325,
+          "title": "Scroll-Phase Conditional Caching with Mutation Guard",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -72352,7 +72474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T16:46:52.442Z",
+      "verified_at": "2026-10-19T07:40:24.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81307,6 +81429,258 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T07:29:49.723Z"
+    },
+    "rule-2314": {
+      "learning_id": "rule-2314",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2314,
+      "title": "Joint-Schema Non-Autoregressive Forward-Pass Invariant",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:21.264Z"
+    },
+    "rule-2315": {
+      "learning_id": "rule-2315",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2315,
+      "title": "Numerical State Space Accumulation Invariant for Linear Attention",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:21.264Z"
+    },
+    "rule-2316": {
+      "learning_id": "rule-2316",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2316,
+      "title": "Collision-Proof Dynamic Padding and Sentinel Separation",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:21.264Z"
+    },
+    "rule-2317": {
+      "learning_id": "rule-2317",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2317,
+      "title": "Zero-Cost Weak-Handle Registration for Copy-Constrained Subsystem Contexts",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "7cdacda3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:30.420Z"
+    },
+    "rule-2318": {
+      "learning_id": "rule-2318",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2318,
+      "title": "ABI-Safe WASM Host-to-Engine Dynamic Dispatch Detection",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "7cdacda3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:30.420Z"
+    },
+    "rule-2319": {
+      "learning_id": "rule-2319",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2319,
+      "title": "Cross-Platform Static Linker Initialization Registration for Embedded Test Utilities",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "7cdacda3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:30.420Z"
+    },
+    "rule-2320": {
+      "learning_id": "rule-2320",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2320,
+      "title": "Invariant Graph Traversal via Local Definition Scoping",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "afe947c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:35.131Z"
+    },
+    "rule-2321": {
+      "learning_id": "rule-2321",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2321,
+      "title": "Mock Transport Enqueue Precedence Invariant",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "afe947c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:35.131Z"
+    },
+    "rule-2322": {
+      "learning_id": "rule-2322",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2322,
+      "title": "Lossless Primitive Boundary Casting Invariant",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "afe947c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:38:35.131Z"
+    },
+    "rule-2323": {
+      "learning_id": "rule-2323",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2323,
+      "title": "Hybrid Exponential-Binary Search for Unbounded Lazy Sequences",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "dad013db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:24.088Z"
+    },
+    "rule-2324": {
+      "learning_id": "rule-2324",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2324,
+      "title": "Physical Layout Ceiling Normalization via Scaled Percentage Mapping",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "dad013db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:24.088Z"
+    },
+    "rule-2325": {
+      "learning_id": "rule-2325",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2325,
+      "title": "Scroll-Phase Conditional Caching with Mutation Guard",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "dad013db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:24.088Z"
+    },
+    "rule-2326": {
+      "learning_id": "rule-2326",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2326,
+      "title": "Zero-Allocation String Case Mutation and UTF-8 Boundary Guard",
+      "source_url": "https://github.com/crate-ci/typos",
+      "source_version": "7f9d0819",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:35.119Z"
+    },
+    "rule-2327": {
+      "learning_id": "rule-2327",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2327,
+      "title": "Environment-Deterministic CLI Snapshot Testing Harness",
+      "source_url": "https://github.com/crate-ci/typos",
+      "source_version": "7f9d0819",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:35.119Z"
+    },
+    "rule-2328": {
+      "learning_id": "rule-2328",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2328,
+      "title": "Length-Bounded Static Perfect Hash Table Pruning",
+      "source_url": "https://github.com/crate-ci/typos",
+      "source_version": "7f9d0819",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:35.119Z"
+    },
+    "rule-2329": {
+      "learning_id": "rule-2329",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2329,
+      "title": "Resilient Stream-Lease Recycle Pattern for Long-Lived Kubernetes Watchers",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "0d074fb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:37.642Z"
+    },
+    "rule-2330": {
+      "learning_id": "rule-2330",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2330,
+      "title": "Deep Content-Hash Guard Before Kubernetes Mutation Calls",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "0d074fb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:37.642Z"
+    },
+    "rule-2331": {
+      "learning_id": "rule-2331",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2331,
+      "title": "Least-Privilege ClusterRole Scoping for Namespace Operators",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "0d074fb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:40:37.642Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T07:29:49.785Z",
+  "last_updated": "2026-10-19T07:40:37.705Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -860,14 +860,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef",
-      "content_hash": "81f630351dd6f162406ed19908ce33335230ae90ceeacfd05eaadbf5b4b63a43",
-      "verified_at": "2026-10-18T00:42:35.486Z",
+      "content_hash": "b65b3f8fa8520c8726b10604e76eeabd2f150a0cfb0acf29dda7c436c465561a",
+      "verified_at": "2026-10-19T07:38:21.325Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:42:35.486Z"
+      "last_updated": "2026-10-19T07:38:21.325Z"
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
@@ -3273,14 +3273,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bvaughn-react-virtualized",
-      "content_hash": "cf7252ab27a20d56a2b476dba209580dc6dc4c0cb9ab19b8d0db064a3cc616bf",
-      "verified_at": "2026-10-18T16:46:52.465Z",
+      "content_hash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
+      "verified_at": "2026-10-19T07:40:24.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T16:46:52.465Z"
+      "last_updated": "2026-10-19T07:40:24.149Z"
     },
     "dkhamsing/open-source-ios-apps": {
       "repository": "dkhamsing/open-source-ios-apps",
@@ -10616,6 +10616,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T07:29:49.784Z"
+    },
+    "clockworklabs/SpacetimeDB": {
+      "repository": "clockworklabs/SpacetimeDB",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-clockworklabs-spacetimedb",
+      "content_hash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
+      "verified_at": "2026-10-19T07:38:30.481Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:38:30.481Z"
+    },
+    "apollographql/apollo-kotlin": {
+      "repository": "apollographql/apollo-kotlin",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-apollographql-apollo-kotlin",
+      "content_hash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
+      "verified_at": "2026-10-19T07:38:35.192Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:38:35.192Z"
+    },
+    "crate-ci/typos": {
+      "repository": "crate-ci/typos",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-crate-ci-typos",
+      "content_hash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
+      "verified_at": "2026-10-19T07:40:35.180Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:40:35.180Z"
+    },
+    "emberstack/kubernetes-reflector": {
+      "repository": "emberstack/kubernetes-reflector",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-emberstack-kubernetes-reflector",
+      "content_hash": "4d6bed7552adcccbacf0091a91a8d6407c163c2a9bd9d06ae35f7bfe5e72957f",
+      "verified_at": "2026-10-19T07:40:37.704Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:40:37.704Z"
     }
   },
   "repos": {

@@ -3065,3 +3065,9 @@ Every entry in this ledger must capture:
 | `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `b499d890` | Multi-dimensional audit evidence | 2026-10-19T07:29:47.125Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `65b33d6c` | Multi-dimensional audit evidence | 2026-10-19T07:29:48.254Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `8fc67730` | Multi-dimensional audit evidence | 2026-10-19T07:29:49.778Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-19T07:38:21.319Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `7cdacda3` | Multi-dimensional audit evidence | 2026-10-19T07:38:30.475Z |
+| `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `afe947c8` | Multi-dimensional audit evidence | 2026-10-19T07:38:35.186Z |
+| `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `dad013db` | Multi-dimensional audit evidence | 2026-10-19T07:40:24.143Z |
+| `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `7f9d0819` | Multi-dimensional audit evidence | 2026-10-19T07:40:35.174Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `0d074fb0` | Multi-dimensional audit evidence | 2026-10-19T07:40:37.697Z |
