@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "da16c5c14e1709d0190db610e99cb82b89ee0ea1b2a7c69ab4af04ffc925d819",
-    "lastHarvestedAt": "2026-10-18T01:42:04.665Z",
+    "contentHash": "0c2141b08dfe8480dd363f65ea36a4b7a98ccf46cef44474986070b8c8f07da7",
+    "lastHarvestedAt": "2026-10-19T09:19:11.068Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -7498,5 +7498,35 @@
     "contentHash": "13d55699415a97c5356b5ea375e48bbf9c99b665f2b747b68eed2869b2041a1b",
     "lastHarvestedAt": "2026-10-19T09:12:56.328Z",
     "learningId": "learn-github-databendlabs-databend"
+  },
+  "atanunq-viu": {
+    "repository": "atanunq/viu",
+    "platform": "github",
+    "sourceUrl": "https://github.com/atanunq/viu",
+    "sourceVersion": "5733be5f",
+    "license": "MIT",
+    "contentHash": "316ba11dbdd3b149f5f993fc196e23613494d83f5885d1b325348b66007034e5",
+    "lastHarvestedAt": "2026-10-19T09:19:02.112Z",
+    "learningId": "learn-github-atanunq-viu"
+  },
+  "oblador-react-native-vector-icons": {
+    "repository": "oblador/react-native-vector-icons",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oblador/react-native-vector-icons",
+    "sourceVersion": "666a7437",
+    "license": "MIT",
+    "contentHash": "1da9d3bb98695865986fe1d21233ad21d72f26bfeb9a65294f407a47f75a3f8e",
+    "lastHarvestedAt": "2026-10-19T09:19:07.512Z",
+    "learningId": "learn-github-oblador-react-native-vector-icons"
+  },
+  "oceanbase-oceanbase": {
+    "repository": "oceanbase/oceanbase",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oceanbase/oceanbase",
+    "sourceVersion": "5e8a63d2",
+    "license": "Apache-2.0",
+    "contentHash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
+    "lastHarvestedAt": "2026-10-19T09:19:17.850Z",
+    "learningId": "learn-github-oceanbase-oceanbase"
   }
 }

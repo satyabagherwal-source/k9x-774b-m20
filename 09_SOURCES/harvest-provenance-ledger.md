@@ -3127,3 +3127,7 @@ Every entry in this ledger must capture:
 | `learn-github-linkwarden-linkwarden` | `https://github.com/linkwarden/linkwarden` | `952ac454` | Multi-dimensional audit evidence | 2026-10-19T09:12:48.212Z |
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-19T09:12:49.478Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `d9eea49a` | Multi-dimensional audit evidence | 2026-10-19T09:12:56.328Z |
+| `learn-github-atanunq-viu` | `https://github.com/atanunq/viu` | `5733be5f` | Multi-dimensional audit evidence | 2026-10-19T09:19:02.112Z |
+| `learn-github-oblador-react-native-vector-icons` | `https://github.com/oblador/react-native-vector-icons` | `666a7437` | Multi-dimensional audit evidence | 2026-10-19T09:19:07.512Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-19T09:19:11.068Z |
+| `learn-github-oceanbase-oceanbase` | `https://github.com/oceanbase/oceanbase` | `5e8a63d2` | Multi-dimensional audit evidence | 2026-10-19T09:19:17.850Z |

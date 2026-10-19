@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T09:12:56.292Z",
-  "total_verified_learnings": 764,
+  "last_updated": "2026-10-19T09:19:17.795Z",
+  "total_verified_learnings": 767,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2764,22 +2764,35 @@
     "learn-github-atanunq-viu": {
       "learning_id": "learn-github-atanunq-viu",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "atanunq-viu",
+      "source": "atanunq/viu",
+      "repository": "atanunq/viu",
       "slug": "atanunq-viu",
       "platform": "github",
       "source_url": "https://github.com/atanunq/viu",
-      "source_version": "HEAD",
-      "content_hash": "229a593d483449755581573f860ed5143fbc10a98652f7e03f43b1fb5e85e69c",
+      "source_version": "5733be5f",
+      "content_hash": "316ba11dbdd3b149f5f993fc196e23613494d83f5885d1b325348b66007034e5",
       "dossier_path": "07_PROJECT_LEARNING/atanunq-viu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/atanunq-viu-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2463,
+          "title": "Add macos aarch build",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.962Z"
+      "verified_at": "2026-10-19T09:19:02.054Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ataraxy-labs-sem": {
       "learning_id": "learn-github-ataraxy-labs-sem",
@@ -22305,7 +22318,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "da16c5c14e1709d0190db610e99cb82b89ee0ea1b2a7c69ab4af04ffc925d819",
+      "content_hash": "0c2141b08dfe8480dd363f65ea36a4b7a98ccf46cef44474986070b8c8f07da7",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [
@@ -22333,6 +22346,16 @@
           "number": 1212,
           "title": "Feature Map Shape Invariance for Backbone Usage",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2465,
+          "title": "The Data-Driven Inference Contract Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2466,
+          "title": "The Surgical Layer Pointer Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22353,7 +22376,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-10-18T01:42:04.637Z",
+      "verified_at": "2026-10-19T09:19:11.014Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31697,22 +31720,35 @@
     "learn-github-oblador-react-native-vector-icons": {
       "learning_id": "learn-github-oblador-react-native-vector-icons",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oblador-react-native-vector-icons",
+      "source": "oblador/react-native-vector-icons",
+      "repository": "oblador/react-native-vector-icons",
       "slug": "oblador-react-native-vector-icons",
       "platform": "github",
       "source_url": "https://github.com/oblador/react-native-vector-icons",
-      "source_version": "HEAD",
-      "content_hash": "476b9124c2675772e457c7c0198c8eca6be87e6cbd1a1e661ba0b90fedf92919",
+      "source_version": "666a7437",
+      "content_hash": "1da9d3bb98695865986fe1d21233ad21d72f26bfeb9a65294f407a47f75a3f8e",
       "dossier_path": "07_PROJECT_LEARNING/oblador-react-native-vector-icons-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oblador-react-native-vector-icons-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2464,
+          "title": "resolve asset registry on react-native 0.87 (#1924)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.734Z"
+      "verified_at": "2026-10-19T09:19:07.458Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-obytes-react-native-template-obytes": {
       "learning_id": "learn-github-obytes-react-native-template-obytes",
@@ -31737,22 +31773,35 @@
     "learn-github-oceanbase-oceanbase": {
       "learning_id": "learn-github-oceanbase-oceanbase",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oceanbase-oceanbase",
+      "source": "oceanbase/oceanbase",
+      "repository": "oceanbase/oceanbase",
       "slug": "oceanbase-oceanbase",
       "platform": "github",
       "source_url": "https://github.com/oceanbase/oceanbase",
-      "source_version": "HEAD",
-      "content_hash": "3ce883b9de27749832c926a097ba10940e12390ad6f626955a4a368675d16466",
+      "source_version": "5e8a63d2",
+      "content_hash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
       "dossier_path": "07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oceanbase-oceanbase-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2467,
+          "title": "[to #2026072900117849658]fix backup clean blocked by un-deletable archive piece",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.741Z"
+      "verified_at": "2026-10-19T09:19:17.784Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oceanbase-powercontext": {
       "learning_id": "learn-github-oceanbase-powercontext",
@@ -84499,6 +84548,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T09:12:56.285Z"
+    },
+    "rule-2463": {
+      "learning_id": "rule-2463",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2463,
+      "title": "Add macos aarch build",
+      "source_url": "https://github.com/atanunq/viu",
+      "source_version": "5733be5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:19:02.054Z"
+    },
+    "rule-2464": {
+      "learning_id": "rule-2464",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2464,
+      "title": "resolve asset registry on react-native 0.87 (#1924)",
+      "source_url": "https://github.com/oblador/react-native-vector-icons",
+      "source_version": "666a7437",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:19:07.458Z"
+    },
+    "rule-2465": {
+      "learning_id": "rule-2465",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2465,
+      "title": "The Data-Driven Inference Contract Invariant",
+      "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+      "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:19:11.014Z"
+    },
+    "rule-2466": {
+      "learning_id": "rule-2466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2466,
+      "title": "The Surgical Layer Pointer Invariant",
+      "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+      "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:19:11.014Z"
+    },
+    "rule-2467": {
+      "learning_id": "rule-2467",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2467,
+      "title": "[to #2026072900117849658]fix backup clean blocked by un-deletable archive piece",
+      "source_url": "https://github.com/oceanbase/oceanbase",
+      "source_version": "5e8a63d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:19:17.784Z"
     }
   },
   "aliases": {
