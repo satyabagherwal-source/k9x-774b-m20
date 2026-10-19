@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:40:32.229Z",
-  "total_verified_learnings": 607,
+  "last_updated": "2026-10-19T04:47:11.530Z",
+  "total_verified_learnings": 612,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2268,22 +2268,35 @@
     "learn-github-argoproj-argo-workflows": {
       "learning_id": "learn-github-argoproj-argo-workflows",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "argoproj-argo-workflows",
+      "source": "argoproj/argo-workflows",
+      "repository": "argoproj/argo-workflows",
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "HEAD",
-      "content_hash": "b86613357c6b9cc835a0cb8e7925e5ca76e8bc565321484343895a780998be15",
+      "source_version": "f40f8dc6",
+      "content_hash": "0a6807d766a7f3afea3d733010a5dc1fa2d510c962ae3b21fefeaacbe076d20d",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2145,
+          "title": "deps): update step-security/harden-runner action to v2.22.1 (main) (#17202)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.908Z"
+      "verified_at": "2026-10-19T04:47:05.952Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-arkivanov-decompose": {
       "learning_id": "learn-github-arkivanov-decompose",
@@ -18999,7 +19012,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "33e79a917c1627899beca648d39ed6062cfdd856374477b79eacf887ae8feb23",
+      "content_hash": "7136f62a6242a5f607cb5cb91dc556acdafe3da635827bb96133218d75b4037c",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [],
@@ -19021,7 +19034,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
       ],
-      "verified_at": "2026-10-17T23:19:55.594Z",
+      "verified_at": "2026-10-19T04:46:57.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31847,22 +31860,35 @@
     "learn-github-postgresml-postgresml": {
       "learning_id": "learn-github-postgresml-postgresml",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "postgresml-postgresml",
+      "source": "postgresml/postgresml",
+      "repository": "postgresml/postgresml",
       "slug": "postgresml-postgresml",
       "platform": "github",
       "source_url": "https://github.com/postgresml/postgresml",
-      "source_version": "HEAD",
-      "content_hash": "0d4684ce1cf11377ea89b3a43292d71de3a1acea1b0639880bf101debdbbff84",
+      "source_version": "caf2b6cc",
+      "content_hash": "139f6e082c52eba25840962f61a58c0eb130bd977a0c9994c4dfb944d565fe33",
       "dossier_path": "07_PROJECT_LEARNING/postgresml-postgresml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/postgresml-postgresml-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2146,
+          "title": "Added delete security group (#1651)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.085Z"
+      "verified_at": "2026-10-19T04:47:11.522Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-potpie-ai-potpie": {
       "learning_id": "learn-github-potpie-ai-potpie",
@@ -32378,22 +32404,35 @@
     "learn-github-radix-ui-themes": {
       "learning_id": "learn-github-radix-ui-themes",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "radix-ui-themes",
+      "source": "radix-ui/themes",
+      "repository": "radix-ui/themes",
       "slug": "radix-ui-themes",
       "platform": "github",
       "source_url": "https://github.com/radix-ui/themes",
-      "source_version": "HEAD",
-      "content_hash": "4edbca78385aabbabc0ec4223eb17589e778f3b95bf70e1477919aaa029edda8",
+      "source_version": "1faff10a",
+      "content_hash": "b25283f485d7286540a181b60aca63dc0eef541477f938e0846edc8e47eee503",
       "dossier_path": "07_PROJECT_LEARNING/radix-ui-themes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/radix-ui-themes-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2143,
+          "title": "theme panel regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.173Z"
+      "verified_at": "2026-10-19T04:46:56.952Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rafsoh-dimeapp": {
       "learning_id": "learn-github-rafsoh-dimeapp",
@@ -32511,22 +32550,35 @@
     "learn-github-rcbyr-keen-slider": {
       "learning_id": "learn-github-rcbyr-keen-slider",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rcbyr-keen-slider",
+      "source": "rcbyr/keen-slider",
+      "repository": "rcbyr/keen-slider",
       "slug": "rcbyr-keen-slider",
       "platform": "github",
       "source_url": "https://github.com/rcbyr/keen-slider",
-      "source_version": "HEAD",
-      "content_hash": "6223357979a5d64a28c24e2c2e334d58dd88505cdb77c2b9782a4d62c6d3666d",
+      "source_version": "520c757a",
+      "content_hash": "6c4d3624c2fb786d448e447d9624b6680e446cd4f243fd6469f8a8aa0dc64c09",
       "dossier_path": "07_PROJECT_LEARNING/rcbyr-keen-slider-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rcbyr-keen-slider-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2144,
+          "title": "Bump braces from 3.0.2 to 3.0.3",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.192Z"
+      "verified_at": "2026-10-19T04:47:03.378Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-bootstrap-react-bootstrap": {
       "learning_id": "learn-github-react-bootstrap-react-bootstrap",
@@ -40062,22 +40114,29 @@
     "learn-github-xudong-huang-may": {
       "learning_id": "learn-github-xudong-huang-may",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "xudong-huang-may",
+      "source": "Xudong-Huang/may",
+      "repository": "Xudong-Huang/may",
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "HEAD",
-      "content_hash": "388cf428caef5d372175b37db4733639839e6966d370106c38d864382c7170fb",
+      "source_version": "9df483f2",
+      "content_hash": "9d7f6d7720da94751be173b10db60281f60a644fd29c3a4cdc02dcdec2e13df3",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.437Z"
+      "verified_at": "2026-10-19T04:46:58.222Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-xvirobotics-metabot": {
       "learning_id": "learn-github-xvirobotics-metabot",
@@ -77096,6 +77155,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:40:32.221Z"
+    },
+    "rule-2143": {
+      "learning_id": "rule-2143",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2143,
+      "title": "theme panel regression",
+      "source_url": "https://github.com/radix-ui/themes",
+      "source_version": "1faff10a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:46:56.952Z"
+    },
+    "rule-2144": {
+      "learning_id": "rule-2144",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2144,
+      "title": "Bump braces from 3.0.2 to 3.0.3",
+      "source_url": "https://github.com/rcbyr/keen-slider",
+      "source_version": "520c757a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:47:03.378Z"
+    },
+    "rule-2145": {
+      "learning_id": "rule-2145",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2145,
+      "title": "deps): update step-security/harden-runner action to v2.22.1 (main) (#17202)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "f40f8dc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:47:05.952Z"
+    },
+    "rule-2146": {
+      "learning_id": "rule-2146",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2146,
+      "title": "Added delete security group (#1651)",
+      "source_url": "https://github.com/postgresml/postgresml",
+      "source_version": "caf2b6cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:47:11.522Z"
     }
   },
   "aliases": {

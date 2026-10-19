@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
+> **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
+> **Source Version**: `9df483f2`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T04:46:58.135Z  
+> **Learning ID**: `learn-github-xudong-huang-may`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Xudong-Huang/may
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:58:55.309Z  
+> **Harvest Timestamp**: 2026-10-19T04:46:58.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: rust stackful coroutine library
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2439 stars
+- **Stars / Engagement**: 2440 stars
 
 ---
 
@@ -199,7 +213,8 @@ impl AtomicUsize {
     /// All mutations must have happened before the unsynchronized load.
     /// Additionally, there must be no concurrent mutations.
     pub(crate) unsafe fn unsync_load(&self) -> usize {
-        *(*self.inner.get()).get_mut()
+        // don't use `get_mut`, it would create a `&mut` that conflicts with concurrent atomic loads
+        (*self.inner.get()).as_ptr().read()
     }
 }
 
@@ -239,7 +254,8 @@ impl<T> AtomicPtr<T> {
     /// All mutations must have happened before the unsynchronized load.
     /// Additionally, there must be no concurrent mutations.
     pub(crate) unsafe fn unsync_load(&self) -> *mut T {
-        *(*self.inner.get()).get_mut()
+        // don't use `get_mut`, it would create a `&mut` that conflicts with concurrent atomic loads
+        (*self.inner.get()).as_ptr().read()
     }
 }
 
@@ -451,15 +467,13 @@ impl<T> BlockPtr<T> {
 
     #[inline]
     fn unpack(ptr: *mut BlockNode<T>) -> (*mut BlockNode<T>, usize) {
-        let ptr = ptr as usize;
-        let index = ptr & BLOCK_MASK;
-        let ptr = (ptr & !BLOCK_MASK) as *mut BlockNode<T>;
-        (ptr, index)
+        let index = ptr.addr() & BLOCK_MASK;
+        (ptr.map_addr(|a| a & !BLOCK_MASK), index)
     }
 
     #[inline]
     fn pack(ptr: *const BlockNode<T>, index: usize) -> *mut BlockNode<T> {
-        ((ptr as usize) | index) as *mut BlockNode<T>
+        ptr.cast_mut().map_addr(|a| a | index)
     }
 }
 
@@ -474,7 +488,7 @@ pub struct Queue<T> {
     // use for pop
     head: Position<T>,
     // used to delay the drop of the old block
-    old_block: UnsafeCell<Option<Box<BlockNode<T>>>>,
+    old_block: AtomicPtr<BlockNode<T>>,
 
     /// Indicates that dropping a `Queue<T>` may drop values of type `T`.
     _marker: PhantomData<T>,
@@ -497,7 +511,7 @@ impl<T> Queue<T> {
         Queue {
             head: Position::new(init_block),
             tail: BlockPtr::new(init_block).into(),
-            old_block: UnsafeCell::new(None),
+            old_block: AtomicPtr::new(ptr::null_mut()),
             _marker: PhantomData,
         }
     }
@@ -508,14 +522,14 @@ impl<T> Queue<T> {
         let mut tail = self.tail.0.load(Ordering::Acquire);
 
         loop {
-            tail = (tail as usize & !(1 << 63)) as *mut BlockNode<T>;
-            let (block, id) = BlockPtr::unpack(tail);
-            let block = unsafe { &*block };
+            tail = tail.map_addr(|a| a & !(1 << 63));
+            // the block may be stale, only dereference it after the CAS succeeds
+            let (block_ptr, id) = BlockPtr::unpack(tail);
 
             let new_tail = if id < BLOCK_MASK {
-                BlockPtr::pack(block, id + 1)
+                BlockPtr::pack(block_ptr, id + 1)
             } else {
-                (tail as usize | (1 << 63)) as *mut BlockNode<T>
+                tail.map_addr(|a| a | (1 << 63))
             };
 
             match self.tail.0.compare_exchange_weak(
@@ -525,15 +539,18 @@ impl<T> Queue<T> {
                 Ordering::Acquire,
             ) {
                 Ok(_) => {
+                    let block = unsafe { &*block_ptr };
                     // set the data
                     block.set(id, v);
                     // the block may be released here by the consumer,
                     // so we need to use old_block to delay the drop
                     if id == BLOCK_MASK {
                         let new_block = BlockNode::new_box(block.start + BLOCK_SIZE * 2);
-                        let next_block = unsafe { &mut *block.wait_next_block() };
+                        let next_block = block.wait_next_block();
                         // install the next-next block
-                        next_block.next.store(new_block, Ordering::Release);
+                        unsafe { &*next_block }
+                            .next
+                            .store(new_block, Ordering::Release);
                         self.tail.0.store(next_block, Ordering::Release);
                     }
                     return;
@@ -550,13 +567,14 @@ impl<T> Queue<T> {
     fn push_index(&self) -> usize {
         let tail = self.tail.0.load(Ordering::Acquire);
         let (tail_block, id) = BlockPtr::unpack(tail);
-        let tail_block = (tail_block as usize & !(1 << 63)) as *mut BlockNode<T>;
+        let tail_block = tail_block.map_addr(|a| a & !(1 << 63));
         unsafe { &*tail_block }.start + id
     }
 
     /// pop from the queue, if it's empty return None
     pub fn pop(&self) -> Option<T> {
-        let head = unsafe { &mut *self.head.block.unsync_load() };
+        let head_ptr = unsafe { self.head.block.unsync_load() };
+        let head = unsafe { &*head_ptr };
         let pop_index = unsafe { self.head.index.unsync_load() };
         let id = pop_index & BLOCK_MASK;
 
@@ -576,8 +594,7 @@ impl<T> Queue<T> {
 
         if id == BLOCK_MASK {
             // we need to delay the drop of the block to let the push's `wait_next_block` return
-            let old_block = unsafe { &mut *(self.old_block.get()) };
-            old_block.replace(unsafe { Box::from_raw(head) });
+            self.swap_and_free_old_block(head_ptr);
 
             let next_block = head.wait_next_block();
             self.head.block.store(next_block, Ordering::Relaxed);
@@ -589,7 +606,12 @@ impl<T> Queue<T> {
     /// fast pop from the queue, if it's empty return None, or else return `SmallVec<[T; BLOCK_SIZE]>`
     /// don't check the push index, but only the ready flag
     #[inline]
-    fn fast_bulk_pop(&self, index: usize, head: &mut BlockNode<T>) -> SmallVec<[T; BLOCK_SIZE]> {
+    fn fast_bulk_pop(
+        &self,
+        index: usize,
+        head_ptr: *mut BlockNode<T>,
+    ) -> SmallVec<[T; BLOCK_SIZE]> {
+        let head = unsafe { &*head_ptr };
         // only pop within a block
         let block_end = (index + BLOCK_SIZE) & !BLOCK_MASK;
         let len = block_end - index;
@@ -612,8 +634,7 @@ impl<T> Queue<T> {
 
         // free the old block node
         if new_index & BLOCK_MASK == 0 {
-            let old_block = unsafe { &mut *(self.old_block.get()) };
-            old_block.replace(un
+            self.swap_
 ```
 
 ### Core Architecture Module: `may_queue/src/mpsc_list.rs`
@@ -835,7 +856,7 @@ mod bench {
     fn multi_1p1c_test(b: &mut Bencher) {
         b.iter(|| {
             let q = Arc::new(Queue::new());
-            let total_work: usize = 1_000_000;
+            let total_work: usize = if cfg!(miri) { 200 } else { 1_000_000 };
             // create worker threads that generate mono increasing index
             let _q = q.clone();
             // in other thread the value should be still 100
@@ -856,7 +877,7 @@ mod bench {
     fn multi_2p1c_test(b: &mut Bencher) {
         b.iter(|| {
             let q = Arc::new(Queue::new());
-            let total_work: usize = 1_000_000;
+            let total_work: usize = if cfg!(miri) { 200 } else { 1_000_000 };
             // create worker threads that generate mono increasing index
             // in other thread the value should be still 100
             let mut total = 0;
@@ -921,9 +942,8 @@ mod bench {
 
 ### Core Architecture Module: `may_queue/src/mpsc_list_v1.rs`
 ```
-use std::cell::UnsafeCell;
 use std::ptr;
-use std::sync::atomic::{AtomicPtr, Ordering};
+use std::sync::atomic::{AtomicPtr, AtomicUsize, Ordering};
 
 use crossbeam_utils::{Backoff, CachePadded};
 
@@ -931,7 +951,7 @@ struct Node<T> {
     prev: *mut Node<T>,
     next: AtomicPtr<Node<T>>,
     value: Option<T>,
-    refs: usize,
+    refs: AtomicUsize,
 }
 // linked bit is MSB, ref count is 2 for handle and list
 const REF_INIT: usize = 0x1000_0002;
@@ -943,7 +963,7 @@ impl<T> Node<T> {
             prev: ptr::null_mut(),
             next: AtomicPtr::new(ptr::null_mut()),
             value: v,
-            refs: REF_INIT,
+            refs: AtomicUsize::new(REF_INIT),
         }))
     }
 }
@@ -962,16 +982,18 @@ impl<T> Entry<T> {
     where
         F: FnOnce(&mut T),
     {
-        let node = &mut *self.0.as_ptr();
-        let data = node.value.as_mut().expect("Node value is None");
+        let data = (*self.0.as_ptr())
+            .value
+            .as_mut()
+            .expect("Node value is None");
         f(data);
     }
 
     /// judge if the node is still linked in the list
     #[inline]
     pub fn is_link(&self) -> bool {
-        let node = unsafe { &mut *self.0.as_ptr() };
-        node.refs & !REF_COUNT_MASK != 0
+        let refs = unsafe { (*self.0.as_ptr()).refs.load(Ordering::Acquire) };
+        refs & !REF_COUNT_MASK != 0
     }
 
     #[inline]
@@ -991,23 +1013,24 @@ impl<T> Entry<T> {
 
     // remove the entry from it's list and return the contained value
     // it's only safe for the consumer that call pop()
-    pub fn remove(mut self) -> Option<T> {
+    pub fn remove(self) -> Option<T> {
         unsafe {
-            let node = self.0.as_mut();
+            // don't create a `&mut Node`, other threads may access `next` concurrently
+            let node = self.0.as_ptr();
 
             // when the link bit is cleared, next and prev is no longer valid
-            if node.refs & !REF_COUNT_MASK == 0 {
+            if (*node).refs.load(Ordering::Acquire) & !REF_COUNT_MASK == 0 {
                 // already removed
                 return None;
             }
 
             // this is a new tail just return
-            if node.prev.is_null() {
+            if (*node).prev.is_null() {
                 return None;
             }
 
-            let next = node.next.load(Ordering::Acquire);
-            let prev = &mut *node.prev;
+            let next = (*node).next.load(Ordering::Acquire);
+            let prev = (*node).prev;
 
             // here we must make sure the next is not equal to null
             // other thread may modify the next value if it's null
@@ -1021,17 +1044,16 @@ impl<T> Entry<T> {
             // that prevent frequent queue create and destroy
             if !next.is_null() {
                 // clear the link bit
-                node.refs &= REF_COUNT_MASK;
+                (*node).refs.fetch_and(REF_COUNT_MASK, Ordering::AcqRel);
 
                 // this is not the last node, just unlink it
                 (*next).prev = prev;
-                prev.next.store(next, Ordering::Release);
+                (*prev).next.store(next, Ordering::Release);
 
-                let ret = node.value.take();
+                let ret = (*node).value.take();
 
                 // since self is not dropped, below is always false
-                node.refs -= 1;
-                if node.refs == 0 {
+                if (*node).refs.fetch_sub(1, Ordering::AcqRel) == 1 {
                     // release the node only when the ref count becomes 0
                     let _: Box<Node<T>> = Box::from_raw(node);
                 }
@@ -1049,10 +1071,9 @@ impl<T> Drop for Entry<T> {
     // running in a coroutine is a kind of sequential operation, so it can safely drop there after
     // returning from "kernel"
     fn drop(&mut self) {
-        let node = unsafe { self.0.as_mut() };
+        let node = self.0.as_ptr();
         // dec the ref count of node
-        node.refs -= 1;
-        if node.refs == 0 {
+        if unsafe { (*node).refs.fetch_sub(1, Ordering::AcqRel) } == 1 {
             // release the node
             let _: Box<Node<T>> = unsafe { Box::from_raw(node) };
         }
@@ -1066,7 +1087,8 @@ unsafe impl<T: Send> Send for Entry<T> {}
 /// popper at a time (many pushers are allowed).
 pub struct Queue<T> {
     head: CachePadded<AtomicPtr<Node<T>>>,
-    tail: UnsafeCell<*mut Node<T>>,
+    // only written by the consumer, but read by the producers
+    tail: AtomicPtr<Node<T>>,
 }
 
 unsafe impl<T: Send> Send for Queue<T> {}
@@ -1078,10 +1100,10 @@ impl<T> Queue<T> {
     pub fn new() -> Queue<T> {
         let stub = unsafe { Node::new(None) };
         // there is no handle for the node, so it's ref should be 1 now
-        unsafe { &mut *stub }.refs = 1;
+        unsafe { &*stub }.refs.store(1, Ordering::Relaxed);
         Queue {
             head: AtomicPtr::new(stub).into(),
-            tail: UnsafeCell::new(stub),
+            tail: AtomicPtr::new(stub),
         }
     }
 
@@ -1094,7 +1116,7 @@ impl<T> Queue<T> {
             let prev = self.head.swap(node, Ordering::AcqRel);
             (*node).prev = prev;
             (*prev).next.store(node, Ordering::Release);
-            let tail = *self.tail.get();
+            let tail = self.tail.load(Ordering::Relaxed);
             let is_head = std::ptr::eq(tail, prev);
             (Entry(ptr::NonNull::new_unchecked(node)), is_head)
         }
@@ -1103,7 +1125,7 @@ impl<T> Queue<T> {
     /// if the queue is empty
     #[inline]
     pub fn is_empty(&self) -> bool {
-        let tail = unsafe { *self.tail.get() };
+        let tail = self.tail.load(Ordering::Relaxed);
         // the list is empty
         std::ptr::eq(self.head.load(Ordering::Acquire), tail)
     }
@@ -1113,7 +1135,7 @@ impl<T> Queue<T> {
     /// the if you pop the head, it's unsafe hold the head ref
     #[inline]
     pub unsafe fn peek(&self) -> Option<&T> {
-        let tail = *self.tail.get();
+        let tail = self.tail.load(Ordering::Relaxed);
         // the list is empty
         if std::ptr::eq(self.head.load(Ordering::Acquire), tail) {
             return None;
@@ -1140,7 +1162,7 @@ impl<T> Queue<T> {
         F: Fn(&T) -> bool,
     {
         unsafe {
-            let tail = *self.tail.get();
+            let tail = self.tail.load(Ordering::Relaxed);
             // the list is empty
             if std::ptr::eq(self.head.load(Ordering::Acquire), tail) {
                 return None;
@@ -1167,18 +1189,17 @@ impl<T> Queue<T> {
             }
 
             // clear the link bit
-            assert!((*tail).refs & REF_COUNT_MASK != 0);
-            (*tail).refs &= REF_COUNT_MASK;
+            let old = (*tail).refs.fetch_and(REF_COUNT_MASK, Ordering::AcqRel);
+            assert!(old & REF_COUNT_MASK != 0);
 
             // clear the prev pointer indicate a new end point
             (*next).prev = ptr::null_mut();
             // move the tail to next
-            *self.tail.get() = next;
+            self.tail.store(next, Ordering::Relaxed);
 
             // we take the next value, this is why use option to host the value
             let ret = (*next).value.take().unwrap();
-            (*tail).refs -= 1;
-            if (*tail).refs == 0 {
+            if (*tail).refs.fetch_sub(1, Ordering::AcqRel) == 1 {
                 // release the node only when the ref count becomes 0
                 let _: Box<Node<T>> = Box::from_raw(tail);
             }
@@ -1190,7 +1211,7 @@ impl<T> Queue<T> {
     /// Pops some data from this queue.
     pub fn pop(&self) -> Option<T> {
         unsafe {
-            let tail = *self.tail.get();
+            let tail = self.tail.load(Ordering::Relaxed);
 
             // the list is empty
             if std::ptr::eq(self.head.load(Ordering::Acquire), tail) {
@@ -1198,8 +1219,8 @@ impl<T> Queue<T> {
             }
 
             // clear the link bit
-            assert!((*tail).refs & REF_COUNT_MASK != 0);
-            (*tail).refs &= REF_COUNT_MASK;
+            let old = (*tail).refs.fetch_and(REF_COUNT_MASK, Ordering::AcqRel);
+            assert!(old & REF_COUNT_MASK != 0);
 
             // spin until tail next become non-null
             let mut next;
@@ -1213,42 +1234,16 @@ impl<T> Queue<T> {
             }
             (*next).prev = ptr::null_mut();
             // move the tail to next
-            *self.tail.get() = next;
+            self.tail.store(next, Ordering::Relaxed);
 
             assert!((*tail).value.is_none());
             assert!((*next).value.is_some());
             // we tack the next value, this is why use option to host the value
             let ret = (*next).value.take().unwrap();
-            (*tail).refs -= 1;
-            if (*tail).refs == 0 {
+            if (*tail).refs.fetch_sub(1, Ordering::AcqRel) == 1 {
                 // release the node only when the ref count becomes 0
                 let _: Box<Node<T>> = Box::from_raw(tail);
-            }
-
-            Some(ret)
-        }
-    }
-}
-
-impl<T> Default for Queue<T> {
-    fn default() -> Self {
-        Queue::new()
-    }
-}
-
-impl<T> Drop for Queue<T> {
-    fn drop(&mut self) {
-        while self.pop().is_some() {}
-        // release the stub
-        let _: Box<Node<T>> = unsafe { Box::from_raw(*self.tail.get()) };
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::sync::mpsc::channel;
-    use std::sync::Ar
+   
 ```
 
 ### Core Architecture Module: `may_queue/src/spmc.rs`
@@ -1335,7 +1330,8 @@ impl<T> BlockNode<T> {
     /// if all slots read, then we can safely free the block
     #[inline]
     fn mark_slots_read(&self, size: usize) -> bool {
-        let old = self.used.fetch_sub(size, Ordering::Relaxed);
+        // AcqRel so the thread that frees the block sees all the reads from the other threads
+        let old = self.used.fetch_sub(size, Ordering::AcqRel);
         old == size
     }
 
@@ -1377,15 +1373,13 @@ impl<T> BlockPtr<T> {
 
     #[inline]
     fn unpack(ptr: *mut BlockNode<T>) -> (*mut BlockNode<T>, usize) {
-        let ptr = ptr as usize;
-        let index = ptr & BLOCK_MASK;
-        let ptr = (ptr & !BLOCK_MASK) as *mut BlockNode<T>;
-        (ptr, index)
+        let index = ptr.addr() & BLOCK_MASK;
+        (ptr.map_addr(|a| a & !BLOCK_MASK), index)
     }
 
     #[inline]
     fn pack(ptr: *const BlockNode<T>, index: usize) -> *mut BlockNode<T> {
-        ((ptr as usize) | index) as *mut BlockNode<T>
+        ptr.cast_mut().map_addr(|a| a | index)
     }
 }
 
@@ -1420,7 +1414,7 @@ impl<T> Queue<T> {
 
     /// push a value to the back of queue
     pub fn push(&self, v: T) {
-        let tail = unsafe { &mut *self.tail.block.unsync_load() };
+        let tail = unsafe { &*self.tail.block.unsync_load() };
         let push_index = unsafe { self.tail.index.unsync_load() };
         // store the data
         tail.set(push_index, v);
@@ -1448,7 +1442,7 @@ impl<T> Queue<T> {
         let mut tail_block = self.tail.block.load(Ordering::Acquire);
 
         loop {
-            head = (head as usize & !(1 << 63)) as *mut BlockNode<T>;
+            head = head.map_addr(|a| a & !(1 << 63));
             let (block, id) = BlockPtr::unpack(head);
             if std::ptr::eq(block, tail_block) && id >= (push_index & BLOCK_MASK) {
                 return None;
@@ -1457,10 +1451,8 @@ impl<T> Queue<T> {
             let new_head = if id != BLOCK_MASK {
                 BlockPtr::pack(block, id + 1)
             } else {
-                (head as usize | (1 << 63)) as *mut BlockNode<T>
+                head.map_addr(|a| a | (1 << 63))
             };
-
-            let block = unsafe { &mut *block };
 
             // commit the pop
             match self.head.0.compare_exchange_weak(
@@ -1470,6 +1462,9 @@ impl<T> Queue<T> {
                 Ordering::Acquire,
             ) {
                 Ok(_) => {
+                    // the block may be stale before the CAS, only deref it after success
+                    let block_ptr = block;
+                    let block = unsafe { &*block_ptr };
                     let block_start = block.start.load(Ordering::Relaxed);
                     let pop_index = block_start + id;
                     if id == BLOCK_MASK {
@@ -1495,7 +1490,7 @@ impl<T> Queue<T> {
 
                     if block.mark_slots_read(1) {
                         // we need to free the old block
-                        let _unused_block = unsafe { Box::from_raw(block) };
+                        let _unused_block = unsafe { Box::from_raw(block_ptr) };
                     }
                     return Some(v);
                 }
@@ -1518,7 +1513,7 @@ impl<T> Queue<T> {
         let tail_block = unsafe { self.tail.block.unsync_load() };
 
         loop {
-            head = (head as usize & !(1 << 63)) as *mut BlockNode<T>;
+            head = head.map_addr(|a| a & !(1 << 63));
             let (block, id) = BlockPtr::unpack(head);
             if std::ptr::eq(block, tail_block) && id >= (push_index & BLOCK_MASK) {
                 return None;
@@ -1527,10 +1522,8 @@ impl<T> Queue<T> {
             let new_head = if id != BLOCK_MASK {
                 BlockPtr::pack(block, id + 1)
             } else {
-                (head as usize | (1 << 63)) as *mut BlockNode<T>
+                head.map_addr(|a| a | (1 << 63))
             };
-
-            let block = unsafe { &mut *block };
 
             // commit the pop
             match self.head.0.compare_exchange_weak(
@@ -1540,6 +1533,9 @@ impl<T> Queue<T> {
                 Ordering::Acquire,
             ) {
                 Ok(_) => {
+                    // the block may be stale before the CAS, only deref it after success
+                    let block_ptr = block;
+                    let block = unsafe { &*block_ptr };
                     let block_start = block.start.load(Ordering::Relaxed);
                     let pop_index = block_start + id;
                     if id == BLOCK_MASK {
@@ -1547,11 +1543,7 @@ impl<T> Queue<T> {
                         if pop_index >= push_index {
                             // recover the old head, and return None
                             self.head.0.store(head, Ordering::Release);
-                            return None;
-                        }
-                        let next = block.next.load(Ordering::Acquire);
-                        self.head.0.store(next, Ordering::Release);
-                    } else if pop_index >=
+
 ```
 
 ### Core Architecture Module: `may_queue/src/spsc.rs`
@@ -1561,12 +1553,14 @@ use smallvec::SmallVec;
 
 use crate::atomic::{AtomicPtr, AtomicUsize};
 
+use std::cell::Cell;
 use std::cell::UnsafeCell;
 use std::cmp;
 use std::marker::PhantomData;
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::sync::atomic::Ordering;
+use std::sync::Arc;
 
 // size for block_node
 pub const BLOCK_SIZE: usize = 1 << BLOCK_SHIFT;
@@ -1695,8 +1689,9 @@ pub struct Queue<T> {
     _marker: PhantomData<T>,
 }
 
-unsafe impl<T: Send> Send for Queue<T> {}
-unsafe impl<T: Send> Sync for Queue<T> {}
+// Sync implementation for Queue does not allow for unsynchronised concurrent push/pop operations.
+// unsafe impl<T: Send> Send for Queue<T> {}
+// unsafe impl<T: Send> Sync for Queue<T> {}
 
 impl<T> Queue<T> {
     /// create a spsc queue
@@ -1717,20 +1712,21 @@ impl<T> Queue<T> {
     #[inline]
     #[cfg(feature = "inner_cache")]
     fn alloc_node(&self) -> *mut BlockNode<T> {
-        let first = unsafe { &mut *self.first.unsync_load() };
-        let mut last_head = unsafe { &mut *self.last_head.unsync_load() };
+        let first = unsafe { self.first.unsync_load() };
+        let mut last_head = unsafe { self.last_head.unsync_load() };
         if !ptr::eq(first, last_head) {
-            let next = unsafe { first.next.unsync_load() };
+            let next = unsafe { (*first).next.unsync_load() };
             self.first.store(next, Ordering::Relaxed);
             // first.next.store(ptr::null_mut(), Ordering::Relaxed);
             return first;
         }
 
-        last_head = unsafe { &mut *self.head.block.unsync_load() };
+        // the consumer updates the head concurrently, and has finished reading the blocks before it
+        last_head = self.head.block.load(Ordering::Acquire);
         self.last_head.store(last_head, Ordering::Relaxed);
 
         if !ptr::eq(first, last_head) {
-            let next = unsafe { first.next.unsync_load() };
+            let next = unsafe { (*first).next.unsync_load() };
             self.first.store(next, Ordering::Relaxed);
             // first.next.store(ptr::null_mut(), Ordering::Relaxed);
             first
@@ -1741,7 +1737,7 @@ impl<T> Queue<T> {
 
     /// push a value to the queue
     pub fn push(&self, v: T) {
-        let tail = unsafe { &mut *self.tail.block.unsync_load() };
+        let tail = unsafe { &*self.tail.block.unsync_load() };
         let push_index = unsafe { self.tail.index.unsync_load() };
         // store the data
         tail.set(push_index, v);
@@ -1772,7 +1768,7 @@ impl<T> Queue<T> {
             return None;
         }
 
-        let head = &mut *self.head.block.unsync_load();
+        let head = &*self.head.block.unsync_load();
         Some(head.peek(index))
     }
 
@@ -1784,7 +1780,8 @@ impl<T> Queue<T> {
             return None;
         }
 
-        let head = unsafe { &mut *self.head.block.unsync_load() };
+        let head_ptr = unsafe { self.head.block.unsync_load() };
+        let head = unsafe { &*head_ptr };
         // get the data
         let v = head.get(index & BLOCK_MASK);
 
@@ -1794,8 +1791,8 @@ impl<T> Queue<T> {
             let new_head = head.next.load(Ordering::Relaxed);
             // assert!(!new_head.is_null());
             #[cfg(not(feature = "inner_cache"))]
-            let _unused_head = unsafe { Box::from_raw(head) };
-            self.head.block.store(new_head, Ordering::Relaxed);
+            let _unused_head = unsafe { Box::from_raw(head_ptr) };
+            self.head.block.store(new_head, Ordering::Release);
         }
 
         // commit the pop
@@ -1827,7 +1824,8 @@ impl<T> Queue<T> {
             return SmallVec::new();
         }
 
-        let head = unsafe { &mut *self.head.block.unsync_load() };
+        let head_ptr = unsafe { self.head.block.unsync_load() };
+        let head = unsafe { &*head_ptr };
 
         // only pop within a block
         let end = bulk_end(index, push_index);
@@ -1840,8 +1838,8 @@ impl<T> Queue<T> {
             let new_head = head.next.load(Ordering::Relaxed);
             // assert!(!new_head.is_null());
             #[cfg(not(feature = "inner_cache"))]
-            let _unused_head = unsafe { Box::from_raw(head) };
-            self.head.block.store(new_head, Ordering::Relaxed);
+            let _unused_head = unsafe { Box::from_raw(head_ptr) };
+            self.head.block.store(new_head, Ordering::Release);
         }
 
         // commit the pop
@@ -1851,46 +1849,38 @@ impl<T> Queue<T> {
     }
 }
 
-impl<T> Default for Queue<T> {
-    fn default() -> Self {
-        Queue::new()
+/// The producer half of a split [`Queue`]. It is `Send` but not `Sync`.
+pub struct Sender<T> {
+    queue: Arc<Queue<T>>,
+    _not_sync: PhantomData<Cell<()>>,
+}
+
+/// The consumer half of a split [`Queue`]. It is `Send` but not `Sync`.
+pub struct Receiver<T> {
+    queue: Arc<Queue<T>>,
+    _not_sync: PhantomData<Cell<()>>,
+}
+
+impl<T> Sender<T> {
+    /// push a value to the queue
+    pub fn push(&mut self, v: T) {
+        self.queue.push(v)
+    }
+
+    /// the number of elements in the queue
+    pub fn len(&self) -> usize {
+        self.queue.len()
+    }
+
+    /// check if the queue is empty
+    pub fn is_empty(&self) -> bool {
+        self.queue.is_empty()
     }
 }
 
-impl<T> Drop for Queue<T> {
-    fn drop(&mut self) {
-        //  pop all the element to make sure the queue is empty
-        while !self.bulk_pop().is_empty() {}
-        let head = self.head.block.load(Ordering::Relaxed);
-        let tail = self.tail.block.load(Ordering::Relaxed);
-        assert_eq!(head, tail);
-
-        #[cfg(feature = "inner_cache")]
-        let mut first = self.first.load(Ordering::Relaxed);
-        #[cfg(feature = "inner_cache")]
-        while !std::ptr::eq(first, tail) {
-            let next = unsafe { &*first }.next.load(Ordering::Relaxed);
-            let _ = unsafe { Box::from_raw(first) };
-            first = next;
-        }
-
-        let _unused_block = unsafe { Box::from_raw(head) };
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn queue_sanity() {
-        let q = Queue::<usize>::new();
-        assert_eq!(q.len(), 0);
-        for i in 0..100 {
-            q.push(i);
-        }
-        assert_eq!(q.len(), 100);
-   
+impl<T> Receiver<T> {
+    /// pop a value from the queue
+    pub fn pop(&mut s
 ```
 
 ### Core Architecture Module: `src/cqueue.rs`
@@ -2219,107 +2209,6 @@ where
         is_panicking: AtomicBool::new(false),
     };
     f(&cqueue)
-}
-
-```
-
-### Core Architecture Module: `src/crossbeam_queue_shim.rs`
-```
-use crossbeam::deque::{Stealer, Worker};
-
-pub struct Local<T>(Worker<T>);
-impl<T> Local<T> {
-    pub fn pop(&self) -> Option<T> {
-        self.0.pop()
-    }
-
-    pub fn push_back(&self, value: T) {
-        self.0.push(value);
-    }
-
-    pub fn has_tasks(&self) -> bool {
-        !self.0.is_empty()
-    }
-}
-
-pub struct Steal<T>(Stealer<T>);
-
-impl<T> Clone for Steal<T> {
-    fn clone(&self) -> Self {
-        Self(self.0.clone())
-    }
-}
-
-impl<T> Steal<T> {
-    pub fn steal_into(&self, target: &Local<T>) -> Option<T> {
-        loop {
-            match self.0.steal_batch_and_pop(&target.0) {
-                crossbeam::deque::Steal::Empty => return None,
-                crossbeam::deque::Steal::Success(v) => return Some(v),
-                crossbeam::deque::Steal::Retry => {}
-            }
-        }
-    }
-}
-
-pub fn local<T: 'static>() -> (Steal<T>, Local<T>) {
-    let worker = Worker::new_fifo();
-    let stealer = Steal(worker.stealer());
-    (stealer, Local(worker))
-}
-
-```
-
-### Core Architecture Module: `src/io/event_loop.rs`
-```
-use std::io;
-
-use super::sys::{Selector, SysEvent};
-use crate::scheduler::{get_scheduler, WORKER_ID};
-
-const IO_POLLS_MAX: usize = 1024;
-
-/// Single threaded IO event loop.
-pub struct EventLoop {
-    selector: Selector,
-}
-
-impl EventLoop {
-    pub fn new(io_workers: usize) -> io::Result<EventLoop> {
-        Selector::new(io_workers).map(|selector| EventLoop { selector })
-    }
-
-    /// Keep spinning the event loop indefinitely, and notify the handler whenever
-    /// any of the registered handles are ready.
-    pub fn run(&self, id: usize) {
-        WORKER_ID.set(id);
-
-        let mut events_buf: [SysEvent; IO_POLLS_MAX] = unsafe { std::mem::zeroed() };
-        let mut next_expire = None;
-        let selector = &self.selector;
-        let scheduler = get_scheduler();
-
-        #[cfg(feature = "io_timeout")]
-        let timeout_ns = crate::config().get_timeout_ns();
-        #[cfg(not(feature = "io_timeout"))]
-        let timeout_ns = 1_000_000_000; // 1s
-
-        loop {
-            next_expire = match selector.select(scheduler, id, &mut events_buf, next_expire) {
-                Ok(t) => t.or(Some(timeout_ns)),
-                Err(e) => {
-                    error!("select error = {e:?}");
-                    Some(timeout_ns)
-                }
-            }
-        }
-    }
-
-    // get the internal selector
-    #[inline]
-    pub fn get_selector(&self) -> &Selector {
-        &self.selector
-    }
 }
 
 ```
@@ -3049,774 +2938,709 @@ Remap 10061 explicitly in connect_complete().
 
 ---
 
-### Incident Patch 2: `51d17e00` (2025-11-26)
-**Commit Message**: :pencil: fix test warnings
+### Incident Patch 2: `af1e1977` (2026-10-14)
+**Commit Message**: :pencil: fix all miri errors
 
-**File**: `tests/lib.rs` (modified, +1/-0)
+**File**: `may_queue/src/atomic.rs` (modified, +4/-2)
 ```diff
-@@ -260,6 +260,7 @@ fn park_timeout() {
-             coroutine::park_timeout(Duration::from_millis(100));
-             // this test may fail if the scheduler is a little bit slow
-             // assert!(now.elapsed() < Duration::from_millis(100));
-+            assert_eq!(a, 5);
-             a = 10;
-         });
- 
-```
-
----
-
-### Incident Patch 3: `827ec065` (2025-08-21)
-**Commit Message**: :bug: temp fix
-
-**File**: `Cargo.toml` (modified, +2/-1)
-```diff
-@@ -29,7 +29,8 @@ log = "0.4"
- cfg-if = "1"
- num_cpus = "1"
- smallvec = "1"
--generator = "0.8"
-+# generator = "0.8"
-+generator = { git = "https://github.com/Xudong-Huang/generator-rs.git" }
- crossbeam = "0.8"
- parking_lot = "0.12"
- core_affinity = "0.8"
-```
-
----
-
-### Incident Patch 4: `8cc314b7` (2025-08-12)
-**Commit Message**: :pencil: fix clippy warnings
-
-**File**: `src/os/unix/net.rs` (modified, +1/-1)
-```diff
-@@ -531,7 +531,7 @@ impl UnixListener {
-     ///     }
-     /// }
-     /// ```
--    pub fn incoming(&self) -> Incoming {
-+    pub fn incoming(&self) -> Incoming<'_> {
-         Incoming { listener: self }
+@@ -63,7 +63,8 @@ impl AtomicUsize {
+     /// All mutations must have happened before the unsynchronized load.
+     /// Additionally, there must be no concurrent mutations.
+     pub(crate) unsafe fn unsync_load(&self) -> usize {
+-        *(*self.inner.get()).get_mut()
++        // don't use `get_mut`, it would create a `&mut` that conflicts with concurrent atomic loads
++        (*self.inner.get()).as_ptr().read()
      }
  }
-```
-
----
-
-### Incident Patch 5: `af5ba992` (2025-08-12)
-**Commit Message**: :pencil: fix cargo clippy warnings
-
-**File**: `src/io/sys/windows/miow.rs` (modified, +1/-1)
-```diff
-@@ -632,7 +632,7 @@ impl AcceptAddrsBuf {
-     ///
-     /// This function can be called after a call to `accept_overlapped` has
-     /// succeeded to parse out the data that was written in.
--    pub fn parse(&self, socket: &TcpListener) -> io::Result<AcceptAddrs> {
-+    pub fn parse(&self, socket: &TcpListener) -> io::Result<AcceptAddrs<'_>> {
-         let mut ret = AcceptAddrs {
-             local: std::ptr::null_mut(),
-             local_len: 0,
-```
-
-**File**: `src/net/tcp.rs` (modified, +1/-1)
-```diff
-@@ -412,7 +412,7 @@ impl TcpListener {
-         a.done()
-     }
  
--    pub fn incoming(&self) -> Incoming {
-+    pub fn incoming(&self) -> Incoming<'_> {
-         Incoming { listener: self }
-     }
- 
-```
-
-**File**: `src/park.rs` (modified, +1/-1)
-```diff
-@@ -172,7 +172,7 @@ impl Park {
-         Ok(())
-     }
- 
--    fn delay_drop(&self) -> DropGuard {
-+    fn delay_drop(&self) -> DropGuard<'_> {
-         self.wait_kernel.store(true, Ordering::Release);
-         DropGuard(self)
-     }
-```
-
-**File**: `src/sync/delay_drop.rs` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ impl DelayDrop {
-         }
-     }
- 
--    pub fn delay_drop(&self) -> DropGuard {
-+    pub fn delay_drop(&self) -> DropGuard<'_> {
-         self.can_drop.store(2, Ordering::Release);
-         DropGuard(self)
-     }
-```
-
-**File**: `src/sync/mpmc.rs` (modified, +2/-2)
-```diff
-@@ -224,11 +224,11 @@ impl<T> Receiver<T> {
-         self.inner.recv(Some(timeout))
-     }
- 
--    pub fn iter(&self) -> Iter<T> {
-+    pub fn iter(&self) -> Iter<'_, T> {
-         Iter { rx: self }
-     }
- 
--    pub fn try_iter(&self) -> TryIter<T> {
-+    pub fn try_iter(&self) -> TryIter<'_, T> {
-         TryIter { rx: self }
+@@ -103,7 +104,8 @@ impl<T> AtomicPtr<T> {
+     /// All mutations must have happened before the unsynchronized load.
+     /// Additionally, there must be no concurrent mutations.
+     pub(crate) unsafe fn unsync_load(&self) -> *mut T {
+-        *(*self.inner.get()).get_mut()
++        // don't use `get_mut`, it would create a `&mut` that conflicts with concurrent atomic loads
++        (*self.inner.get()).as_ptr().read()
      }
  }
+ 
 ```
 
-**File**: `src/sync/mpsc.rs` (modified, +2/-2)
+**File**: `may_queue/src/mpsc.rs` (modified, +42/-24)
 ```diff
-@@ -228,11 +228,11 @@ impl<T> Receiver<T> {
+@@ -186,7 +186,7 @@ pub struct Queue<T> {
+     // use for pop
+     head: Position<T>,
+     // used to delay the drop of the old block
+-    old_block: UnsafeCell<Option<Box<BlockNode<T>>>>,
++    old_block: AtomicPtr<BlockNode<T>>,
+ 
+     /// Indicates that dropping a `Queue<T>` may drop values of type `T`.
+     _marker: PhantomData<T>,
+@@ -209,7 +209,7 @@ impl<T> Queue<T> {
+         Queue {
+             head: Position::new(init_block),
+             tail: BlockPtr::new(init_block).into(),
+-            old_block: UnsafeCell::new(None),
++            old_block: AtomicPtr::new(ptr::null_mut()),
+             _marker: PhantomData,
          }
      }
+@@ -221,11 +221,11 @@ impl<T> Queue<T> {
  
--    pub fn iter(&self) -> Iter<T> {
-+    pub fn iter(&self) -> Iter<'_, T> {
-         Iter { rx: self }
-     }
- 
--    pub fn try_iter(&self) -> TryIter<T> {
-+    pub fn try_iter(&self) -> TryIter<'_, T> {
-         TryIter { rx: self }
-     }
- }
-```
-
-**File**: `src/sync/mutex.rs` (modified, +2/-2)
-```diff
-@@ -51,7 +51,7 @@ impl<T> Mutex<T> {
- }
- 
- impl<T: ?Sized> Mutex<T> {
--    pub fn lock(&self) -> LockResult<MutexGuard<T>> {
-+    pub fn lock(&self) -> LockResult<MutexGuard<'_, T>> {
-         // try lock first
-         match self.try_lock() {
-             Ok(g) => return Ok(g),
-@@ -113,7 +113,7 @@ impl<T: ?Sized> Mutex<T> {
-         MutexGuard::new(self)
-     }
- 
--    pub fn try_lock(&self) -> TryLockResult<MutexGuard<T>> {
-+    pub fn try_lock(&self) -> TryLockResult<MutexGuard<'_, T>> {
-         match self
-             .cnt
-             .compare_exchange(0, 1, Ordering::SeqCst, Ordering::Relaxed)
-```
-
-**File**: `src/sync/rwlock.rs` (modified, +4/-4)
-```diff
-@@ -142,7 +142,7 @@ impl<T: ?Sized> RwLock<T> {
-         }
-     }
- 
--    pub fn read(&self) -> LockResult<RwLockReadGuard<T>> {
-+    pub fn read(&self) -> LockResult<RwLockReadGuard<'_, T>> {
-         let mut r = self.rlock.lock().expect("rwlock read");
-         if *r == 0 {
-             if let Err(ParkError::Canceled) = self.lock() {
-@@ -159,7 +159,7 @@ impl<T: ?Sized> RwLock<T> {
-         RwLockReadGuard::new(self)
-     }
- 
--    pub fn try_read(&self) -> TryLockResult<RwLockReadGuard<T>> {
-+    pub fn try_read(&self) -> TryLockResult<RwLockReadGuard<'_, T>> {
-         let mut r = match self.rlock.try_lock() {
-             Ok(r) => r,
-             Err(TryLockError::Poisoned(_)) => {
-@@ -190,15 +190,15 @@ impl<T: ?Sized> RwLock<T> {
-         }
-     }
- 
--    pub fn write(&self) -> LockResult<RwLockWriteGuard<T>> {
-+    pub fn write(&self) -> LockResult<RwLockWriteGuard<'_, T>> {
-         if let Err(ParkError::Canceled) = self.lock() {
-             // now we can safely go with the cancel panic
-             trigger_cancel_panic();
-         }
-         RwLockWriteGuard::new(self)
-     }
- 
--    pub fn try_write(&self) -> TryLockResult<RwLockWriteGuard<T>> {
-+    pub fn try_write(&self) -> TryLockResult<RwLockWriteGuard<'_, T>> {
-         if let Err(TryLockError::WouldBlock) = self.try_lock() {
-             return Err(TryLockError::WouldBlock);
-         }
-```
-
----
-
-### Incident Patch 6: `b3b67a39` (2025-05-14)
-**Commit Message**: :pencil: fix cargo clippy warnings
-
-**File**: `src/io/sys/unix/epoll.rs` (modified, +4/-4)
-```diff
-@@ -153,7 +153,7 @@ impl Selector {
-     pub fn wakeup(&self, id: usize) {
-         let buf = 1u64.to_le_bytes();
-         let ret = write(&self.vec[id].evfd, &buf);
--        trace!("wakeup id={:?}, ret={:?}", id, ret);
-+        trace!("wakeup id={id:?}, ret={ret:?}");
-     }
- 
-     // register io event to the selector
-@@ -171,7 +171,7 @@ impl Selector {
-         let id = fd as usize % self.vec.len();
-         let single_selector = &self.vec[id];
-         let epoll = &single_selector.epoll;
--        info!("add fd to epoll select, fd={:?}", fd);
-+        info!("add fd to epoll select, fd={fd:?}");
-         epoll
-             .add(unsafe { BorrowedFd::borrow_raw(fd) }, info)
-             .map_err(from_nix_error)
-@@ -196,7 +196,7 @@ impl Selector {
-         let id = fd as usize % self.vec.len();
-         let single_selector = &self.vec[id];
-         let epoll = &single_selector.epoll;
--        info!("mod fd to epoll select, fd={:?}, is_read={}", fd, is_read);
-+        info!("mod fd to epoll select, fd={fd:?}, is_read={is_read}");
-         epoll
-             .modify(unsafe { BorrowedFd::borrow_raw(fd) }, &mut info)
-             .map_err(from_nix_error)
-@@ -219,7 +219,7 @@ impl Selector {
-         let id = fd as usize % self.vec.len();
-         let single_selector = &self.vec[id];
-         let epoll = &single_selector.epoll;
--        info!("del fd from epoll select, fd={:?}", fd);
-+        info!("del fd from epoll select, fd={fd:?}");
-         epoll.delete(unsafe { BorrowedFd::borrow_raw(fd) }).ok();
- 
-         // after EpollCtlDel push the unused event data
-```
-
----
-
-### Incident Patch 7: `ba004942` (2025-05-13)
-**Commit Message**: :pencil: fix nix read
-
-**File**: `src/io/sys/unix/epoll.rs` (modified, +1/-2)
-```diff
-@@ -1,6 +1,5 @@
- use std::io;
- use std::os::fd::AsFd;
--use std::os::fd::AsRawFd;
- use std::os::fd::BorrowedFd;
- use std::sync::atomic::Ordering;
- use std::sync::Arc;
-@@ -100,7 +99,7 @@ impl Selector {
-                 // this is just a wakeup event, ignore it
-                 let mut buf = [0u8; 8];
-                 // clear the eventfd, ignore the result
--                read(single_selector.evfd.as_raw_fd(), &mut buf).ok();
-+                read(single_selector.evfd.as_fd(), &mut buf).ok();
-                 // info!("got wakeup event in select, id={}", id);
-                 scheduler.collect_global(id);
-                 continue;
-```
-
-**File**: `src/io/sys/unix/net/socket_read.rs` (modified, +3/-1)
-```diff
-@@ -1,4 +1,5 @@
- use std::io;
-+use std::os::fd::BorrowedFd;
- use std::sync::atomic::Ordering;
- #[cfg(feature = "io_timeout")]
- use std::time::Duration;
-@@ -35,14 +36,15 @@ impl<'a> SocketRead<'a> {
-     }
- 
-     pub fn done(&mut self) -> io::Result<usize> {
-+        let fd = unsafe { BorrowedFd::borrow_raw(self.io_data.fd) };
          loop {
-             co_io_result(self.is_coroutine)?;
+             tail = tail.map_addr(|a| a & !(1 << 63));
+-            let (block, id) = BlockPtr::unpack(tail);
+-            let block = unsafe { &*block };
++            // the block may be stale, only dereference it after the CAS succeeds
++            let (block_ptr, id) = BlockPtr::unpack(tail);
  
-             // clear the io_flag
-             self.io_data.io_flag.store(0, Ordering::Relaxed);
+             let new_tail = if id < BLOCK_MASK {
+-                BlockPtr::pack(block, id + 1)
++                BlockPtr::pack(block_ptr, id + 1)
+             } else {
+                 tail.map_addr(|a| a | (1 << 63))
+             };
+@@ -237,15 +237,18 @@ impl<T> Queue<T> {
+                 Ordering::Acquire,
+             ) {
+                 Ok(_) => {
++                    let block = unsafe { &*block_ptr };
+                     // set the data
+                     block.set(id, v);
+                     // the block may be released here by the consumer,
+                     // so we need to use old_block to delay the drop
+                     if id == BLOCK_MASK {
+                         let new_block = BlockNode::new_box(block.start + BLOCK_SIZE * 2);
+-                        let next_block = unsafe { &mut *block.wait_next_block() };
++                        let next_block = block.wait_next_block();
+                         // install the next-next block
+-                        next_block.next.store(new_block, Ordering::Release);
++                        unsafe { &*next_block }
++                            .next
++                            .store(new_block, Ordering::Release);
+                         self.tail.0.store(next_block, Ordering::Release);
+                     }
+                     return;
+@@ -268,7 +271,8 @@ impl<T> Queue<T> {
  
-             // finish the read operation
--            match read(self.io_data.fd, self.buf) {
-+            match read(fd, self.buf) {
-                 Ok(n) => return Ok(n),
-                 Err(e) => {
-                     if e == nix::errno::Errno::EAGAIN {
-```
-
----
-
-### Incident Patch 8: `05dfb349` (2025-05-13)
-**Commit Message**: :pencil: fix clippy warnings
-
-**File**: `src/config.rs` (modified, +3/-3)
-```diff
-@@ -39,7 +39,7 @@ impl Config {
-     ///
-     /// the minimum worker thread is 1, if you pass 0 to it, will use internal default
-     pub fn set_workers(&self, workers: usize) -> &Self {
--        info!("set workers={:?}", workers);
-+        info!("set workers={workers:?}");
-         WORKERS.store(workers, Ordering::Relaxed);
-         self
-     }
-@@ -66,7 +66,7 @@ impl Config {
-     ///
-     /// if you pass 0 to it, will use internal default
-     pub fn set_pool_capacity(&self, capacity: usize) -> &Self {
--        info!("set pool capacity={:?}", capacity);
-+        info!("set pool capacity={capacity:?}");
-         POOL_CAPACITY.store(capacity, Ordering::Release);
-         self
-     }
-@@ -85,7 +85,7 @@ impl Config {
-     ///
-     /// if you pass 0 to it, will use internal default
-     pub fn set_stack_size(&self, size: usize) -> &Self {
--        info!("set stack size={:?}", size);
-+        info!("set stack size={size:?}");
-         STACK_SIZE.store(size, Ordering::Release);
-         self
-     }
-```
-
-**File**: `src/io/event_loop.rs` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ impl EventLoop {
-             next_expire = match selector.select(scheduler, id, &mut events_buf, next_expire) {
-                 Ok(t) => t.or(Some(timeout_ns)),
-                 Err(e) => {
--                    error!("select error = {:?}", e);
-+                    error!("select error = {e:?}");
-                     Some(timeout_ns)
-                 }
-             }
-```
-
-**File**: `src/io/sys/windows/cancel.rs` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ impl CancelIoData {
-         let ret = CancelIoEx(handle, overlapped);
-         if ret == 0 {
-             let err = io::Error::last_os_error();
--            error!("cancel err={:?}", err);
-+            error!("cancel err={err:?}");
-             // ev.co.take().map(|co| get_scheduler().schedule(co));
-             Err(err)
-         } else {
-```
-
-**File**: `src/io/sys/windows/iocp.rs` (modified, +2/-2)
-```diff
-@@ -165,7 +165,7 @@ impl Selector {
-                     // the timeout function would remove the timer handle
-                 }
-                 err => {
--                    error!("iocp err=0x{:08x}", err);
-+                    error!("iocp err=0x{err:08x}");
-                     unsafe {
-                         // convert the ntstatus to winerr
-                         let mut size: u32 = 0;
-@@ -248,6 +248,6 @@ pub fn timeout_handler(data: TimerData) {
-         event_data.timer.take();
-         // ignore the error, the select may grab the data first!
-         cancel_io(event_data.handle, event_data.get_overlapped())
--            .unwrap_or_else(|e| error!("CancelIoEx failed! e = {}", e));
-+            .unwrap_or_else(|e| error!("CancelIoEx failed! e = {e}"));
-     }
- }
-```
-
----
-
-### Incident Patch 9: `3ff1a096` (2025-03-24)
-**Commit Message**: :pencil: fix cargo clippy warnings
-
-**File**: `src/io/sys/windows/net/tcp_listener_accept.rs` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ impl<'a> TcpListenerAccept<'a> {
+     /// pop from the queue, if it's empty return None
+     pub fn pop(&self) -> Option<T> {
+-        let head = unsafe { &mut *self.head.block.unsync_load() };
++        let head_ptr = unsafe { self.head.block.unsync_load() };
++        let head = unsafe { &*head_ptr };
+         let pop_index = unsafe { self.head.index.unsync_load() };
+         let id = pop_index & BLOCK_MASK;
  
-         let addr = self.addr.parse(self.socket).and_then(|a| {
-             a.remote().ok_or_else(|| {
--                io::Error::new(io::ErrorKind::Other, "could not obtain remote address")
-+                io::Error::other("could not obtain remote address")
-             })
-         })?;
+@@ -288,8 +292,7 @@ impl<T> Queue<T> {
  
-```
-
-**File**: `src/io/sys/windows/net/tcp_stream_connect.rs` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ impl TcpStreamConnect {
-         // here we should use a thread to finish the resolve?
-         addr.to_socket_addrs()?
-             .next()
--            .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "no socket addresses resolved"))
-+            .ok_or_else(|| io::Error::other("no socket addresses resolved"))
-             .and_then(|addr| {
-                 let socket = match addr {
-                     SocketAddr::V4(..) => Socket::new(Domain::IPV4, Type::STREAM, None)?,
-```
-
-**File**: `src/io/sys/windows/net/udp_recv_from.rs` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ impl<'a> UdpRecvFrom<'a> {
-     pub fn done(&mut self) -> io::Result<(usize, SocketAddr)> {
-         let size = co_io_result(&self.io_data, self.is_coroutine)?;
-         let addr = self.addr.get_socket_addr().ok_or_else(|| {
--            io::Error::new(io::ErrorKind::Other, "could not obtain remote address")
-+            io::Error::other("could not obtain remote address")
-         })?;
-         Ok((size, addr))
-     }
-```
-
-**File**: `src/io/sys/windows/net/udp_send_to.rs` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ impl<'a> UdpSendTo<'a> {
-     ) -> io::Result<Self> {
-         addr.to_socket_addrs()?
-             .next()
--            .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "no socket addresses resolved"))
-+            .ok_or_else(|| io::Error::other("no socket addresses resolved"))
-             .map(|addr| UdpSendTo {
-                 io_data: EventData::new(socket.as_raw_socket() as HANDLE),
-                 buf,
-```
-
----
-
-### Incident Patch 10: `dda84cb1` (2025-03-24)
-**Commit Message**: :pencil: fix cargo clippy warnings
-
-**File**: `examples/echo_client.rs` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ fn main() {
+         if id == BLOCK_MASK {
+             // we need to delay the drop of the block to let the push's `wait_next_block` return
+-            let old_block = unsafe { &mut *(self.old_block.get()) };
+-            old_block.replace(unsafe { Box::from_raw(head) });
++            self.swap_and_free_old_block(head_ptr);
  
-     let msg = vec![0; test_msg_len];
+             let next_block = head.wait_next_block();
+             self.head.block.store(next_block, Ordering::Relaxed);
+@@ -301,7 +304,12 @@ impl<T> Queue<T> {
+     /// fast pop from the queue, if it's empty return None, or else return `SmallVec<[T; BLOCK_SIZE]>`
+     /// don't check the push index, but only the ready flag
+     #[inline]
+-    fn fast_bulk_pop(&self, index: usize, head: &mut BlockNode<T>) -> SmallVec<[T; BLOCK_SIZE]> {
++    fn fast_bulk_pop(
++        &self,
++        index: usize,
++        head_ptr: *mut BlockNode<T>,
++    ) -> SmallVec<[T; BLOCK_SIZE]> {
++        let head = unsafe { &*head_ptr };
+         // only pop within a block
+         let block_end = (index + BLOCK_SIZE) & !BLOCK_MASK;
+         let len = block_end - index;
+@@ -324,8 +332,7 @@ impl<T> Queue<T> {
  
--    let err = io::Error::new(io::ErrorKind::Other, "can't resolve socket addresses");
-+    let err = io::Error::other("can't resolve socket addresses");
-     let addr = t!(target_addr.to_socket_addrs())
-         .fold(Err(err), |prev, addr| prev.or(Ok(addr)))
-         .unwrap();
-```
-
-**File**: `examples/echo_udp_client.rs` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ fn main() {
-     let test_conn_num = args.flag_c;
-     let test_seconds = args.flag_d;
+         // free the old block node
+         if new_index & BLOCK_MASK == 0 {
+-            let old_block = unsafe { &mut *(self.old_block.get()) };
+-            old_block.replace(unsafe { Box::from_raw(head) });
++            self.swap_and_free_old_block(head_ptr);
  
--    let err = io::Error::new(io::ErrorKind::Other, "can't resolve socket addresses");
-+    let err = io::Error::other("can't resolve socket addresses");
-     let addr = t!(target_addr.to_socket_addrs())
-         .fold(Err(err), |prev, addr| prev.or(Ok(addr)))
-         .unwrap();
-```
-
-**File**: `examples/echo_udp_client1.rs` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ fn main() {
-     let test_conn_num = args.flag_c;
-     let test_seconds = args.flag_d;
+             let next_block = head.wait_next_block();
+             self.head.block.store(next_block, Ordering::Relaxed);
+@@ -337,8 +344,8 @@ impl<T> Queue<T> {
+     /// pop from the queue, if it's empty return None, or else return `SmallVec<[T; BLOCK_SIZE]>`
+     pub fn bulk_pop(&self) -> SmallVec<[T; BLOCK_SIZE]> {
+         let pop_index = unsafe { self.head.index.unsync_load() };
+-        let head = unsafe { &mut *self.head.block.unsync_load() };
+-        let v = self.fast_bulk_pop(pop_index, head);
++        let head_ptr = unsafe { self.head.block.unsync_load() };
++        let v = self.fast_bulk_pop(pop_index, head_ptr);
+         if !v.is_empty() {
+             return v;
+         }
+@@ -350,15 +357,15 @@ impl<T> Queue<T> {
  
--    let err = io::Error::new(io::ErrorKind::Other, "can't resolve socket addresses");
-+    let err = io::Error::other("can't resolve socket addresses");
-     let addr = t!(target_addr.to_socket_addrs())
-         .fold(Err(err), |prev, addr| prev.or(Ok(addr)))
-         .unwrap();
+         // only pop within a block
+         let end = bulk_end(pop_index, push_ind
 ```
 
 **File**: `may_queue/src/mpsc_list.rs` (modified, +2/-2)
 ```diff
-@@ -53,7 +53,7 @@ impl<T> Queue<T> {
-     pub fn is_empty(&self) -> bool {
-         let tail = unsafe { *self.tail.get() };
-         // the list is empty
--        self.head.load(Ordering::Acquire) == tail
-+        std::ptr::eq(self.head.load(Ordering::Acquire), tail)
+@@ -215,7 +215,7 @@ mod bench {
+     fn multi_1p1c_test(b: &mut Bencher) {
+         b.iter(|| {
+             let q = Arc::new(Queue::new());
+-            let total_work: usize = 1_000_000;
++            let total_work: usize = if cfg!(miri) { 200 } else { 1_000_000 };
+             // create worker threads that generate mono increasing index
+             let _q = q.clone();
+             // in other thread the value should be still 100
+@@ -236,7 +236,7 @@ mod bench {
+     fn multi_2p1c_test(b: &mut Bencher) {
+         b.iter(|| {
+             let q = Arc::new(Queue::new());
+-            let total_work: usize = 1_000_000;
++            let total_work: usize = if cfg!(miri) { 200 } else { 1_000_000 };
+             // create worker threads that generate mono increasing index
+             // in other thread the value should be still 100
+             let mut total = 0;
+```
+
+**File**: `may_queue/src/mpsc_list_v1.rs` (modified, +40/-41)
+```diff
+@@ -1,14 +1,13 @@
+-use std::cell::UnsafeCell;
+ use std::ptr;
+-use std::sync::atomic::{AtomicPtr, Ordering};
++use std::sync::atomic::{AtomicPtr, AtomicUsize, Ordering};
+ 
+ use crossbeam_utils::{Backoff, CachePadded};
+ 
+ struct Node<T> {
+     prev: *mut Node<T>,
+     next: AtomicPtr<Node<T>>,
+     value: Option<T>,
+-    refs: usize,
++    refs: AtomicUsize,
+ }
+ // linked bit is MSB, ref count is 2 for handle and list
+ const REF_INIT: usize = 0x1000_0002;
+@@ -20,7 +19,7 @@ impl<T> Node<T> {
+             prev: ptr::null_mut(),
+             next: AtomicPtr::new(ptr::null_mut()),
+             value: v,
+-            refs: REF_INIT,
++            refs: AtomicUsize::new(REF_INIT),
+         }))
+     }
+ }
+@@ -39,16 +38,18 @@ impl<T> Entry<T> {
+     where
+         F: FnOnce(&mut T),
+     {
+-        let node = &mut *self.0.as_ptr();
+-        let data = node.value.as_mut().expect("Node value is None");
++        let data = (*self.0.as_ptr())
++            .value
++            .as_mut()
++            .expect("Node value is None");
+         f(data);
      }
  
-     /// Pops some data from this queue.
-@@ -62,7 +62,7 @@ impl<T> Queue<T> {
-             let tail = *self.tail.get();
+     /// judge if the node is still linked in the list
+     #[inline]
+     pub fn is_link(&self) -> bool {
+-        let node = unsafe { &mut *self.0.as_ptr() };
+-        node.refs & !REF_COUNT_MASK != 0
++        let refs = unsafe { (*self.0.as_ptr()).refs.load(Ordering::Acquire) };
++        refs & !REF_COUNT_MASK != 0
+     }
  
-             // the list is empty
--            if self.head.load(Ordering::Acquire) == tail {
-+            if std::ptr::eq(self.head.load(Ordering::Acquire), tail) {
+     #[inline]
+@@ -68,23 +69,24 @@ impl<T> Entry<T> {
+ 
+     // remove the entry from it's list and return the contained value
+     // it's only safe for the consumer that call pop()
+-    pub fn remove(mut self) -> Option<T> {
++    pub fn remove(self) -> Option<T> {
+         unsafe {
+-            let node = self.0.as_mut();
++            // don't create a `&mut Node`, other threads may access `next` concurrently
++            let node = self.0.as_ptr();
+ 
+             // when the link bit is cleared, next and prev is no longer valid
+-            if node.refs & !REF_COUNT_MASK == 0 {
++            if (*node).refs.load(Ordering::Acquire) & !REF_COUNT_MASK == 0 {
+                 // already removed
                  return None;
              }
  
+             // this is a new tail just return
+-            if node.prev.is_null() {
++            if (*node).prev.is_null() {
+                 return None;
+             }
+ 
+-            let next = node.next.load(Ordering::Acquire);
+-            let prev = &mut *node.prev;
++            let next = (*node).next.load(Ordering::Acquire);
++            let prev = (*node).prev;
+ 
+             // here we must make sure the next is not equal to null
+             // other thread may modify the next value if it's null
+@@ -98,17 +100,16 @@ impl<T> Entry<T> {
+             // that prevent frequent queue create and destroy
+             if !next.is_null() {
+                 // clear the link bit
+-                node.refs &= REF_COUNT_MASK;
++                (*node).refs.fetch_and(REF_COUNT_MASK, Ordering::AcqRel);
+ 
+                 // this is not the last node, just unlink it
+                 (*next).prev = prev;
+-                prev.next.store(next, Ordering::Release);
++                (*prev).next.store(next, Ordering::Release);
+ 
+-                let ret = node.value.take();
++                let ret = (*node).value.take();
+ 
+                 // since self is not dropped, below is always false
+-                node.refs -= 1;
+-                if node.refs == 0 {
++                if (*node).refs.fetch_sub(1, Ordering::AcqRel) == 1 {
+                     // release the node only when the ref count becomes 0
+                     let _: Box<Node<T>> = Box::from_raw(node);
+                 }
+@@ -126,10 +127,9 @@ impl<T> Drop for Entry<T> {
+     // running in a coroutine is a kind of sequential operation, so it can safely drop there after
+     // returning from "kernel"
+     fn drop(&mut self) {
+-        let node = unsafe { self.0.as_mut() };
++        let node = self.0.as_ptr();
+         // dec the ref count of node
+-        node.refs -= 1;
+-        if node.refs == 0 {
++        if unsafe { (*node).refs.fetch_sub(1, Ordering::AcqRel) } == 1 {
+             // release the node
+             let _: Box<Node<T>> = unsafe { Box::from_raw(node) };
+         }
+@@ -143,7 +143,8 @@ unsafe impl<T: Send> Send for Entry<T> {}
+ /// popper at a time (many pushers are allowed).
+ pub struct Queue<T> {
+     head: CachePadded<AtomicPtr<Node<T>>>,
+-    tail: UnsafeCell<*mut Node<T>>,
++    // only written by the consumer, but read by the producers
++    tail: AtomicPtr<Node<T>>,
+ }
+ 
+ unsafe impl<T: Send> Send for Queue<T> {}
+@@ -155,10 +156,10 @@ impl<T> Queue<T> {
+     pub fn new() -> Queue<T> {
+         let stub = unsafe { Node::new(None) };
+         // there is no handle for the node, so it's ref should be 1 now
+-        unsafe { &mut *stub }.refs = 1;
++        unsafe { &*stub }.refs.store(1, Ordering::Relaxed);
+         Queue {
+             head: AtomicPtr::new(stub).into(),
+-            tail: UnsafeCell::new(stub),
++            tail: AtomicPtr::new(stub)
 ```
 
-**File**: `may_queue/src/mpsc_list_v1.rs` (modified, +5/-5)
+**File**: `may_queue/src/spmc.rs` (modified, +22/-17)
 ```diff
-@@ -172,7 +172,7 @@ impl<T> Queue<T> {
-             (*node).prev = prev;
-             (*prev).next.store(node, Ordering::Release);
-             let tail = *self.tail.get();
--            let is_head = tail == prev;
-+            let is_head = std::ptr::eq(tail, prev);
-             (Entry(ptr::NonNull::new_unchecked(node)), is_head)
-         }
-     }
-@@ -182,7 +182,7 @@ impl<T> Queue<T> {
-     pub fn is_empty(&self) -> bool {
-         let tail = unsafe { *self.tail.get() };
-         // the list is empty
--        self.head.load(Ordering::Acquire) == tail
-+        std::ptr::eq(self.head.load(Ordering::Acquire), tail)
+@@ -80,7 +80,8 @@ impl<T> BlockNode<T> {
+     /// if all slots read, then we can safely free the block
+     #[inline]
+     fn mark_slots_read(&self, size: usize) -> bool {
+-        let old = self.used.fetch_sub(size, Ordering::Relaxed);
++        // AcqRel so the thread that frees the block sees all the reads from the other threads
++        let old = self.used.fetch_sub(size, Ordering::AcqRel);
+         old == size
      }
  
-     /// get the head ref
-@@ -192,7 +192,7 @@ impl<T> Queue<T> {
-     pub unsafe fn peek(&self) -> Option<&T> {
-         let tail = *self.tail.get();
-         // the list is empty
--        if self.head.load(Ordering::Acquire) == tail {
-+        if std::ptr::eq(self.head.load(Ordering::Acquire), tail) {
+@@ -163,7 +164,7 @@ impl<T> Queue<T> {
+ 
+     /// push a value to the back of queue
+     pub fn push(&self, v: T) {
+-        let tail = unsafe { &mut *self.tail.block.unsync_load() };
++        let tail = unsafe { &*self.tail.block.unsync_load() };
+         let push_index = unsafe { self.tail.index.unsync_load() };
+         // store the data
+         tail.set(push_index, v);
+@@ -203,8 +204,6 @@ impl<T> Queue<T> {
+                 head.map_addr(|a| a | (1 << 63))
+             };
+ 
+-            let block = unsafe { &mut *block };
+-
+             // commit the pop
+             match self.head.0.compare_exchange_weak(
+                 head,
+@@ -213,6 +212,9 @@ impl<T> Queue<T> {
+                 Ordering::Acquire,
+             ) {
+                 Ok(_) => {
++                    // the block may be stale before the CAS, only deref it after success
++                    let block_ptr = block;
++                    let block = unsafe { &*block_ptr };
+                     let block_start = block.start.load(Ordering::Relaxed);
+                     let pop_index = block_start + id;
+                     if id == BLOCK_MASK {
+@@ -238,7 +240,7 @@ impl<T> Queue<T> {
+ 
+                     if block.mark_slots_read(1) {
+                         // we need to free the old block
+-                        let _unused_block = unsafe { Box::from_raw(block) };
++                        let _unused_block = unsafe { Box::from_raw(block_ptr) };
+                     }
+                     return Some(v);
+                 }
+@@ -273,8 +275,6 @@ impl<T> Queue<T> {
+                 head.map_addr(|a| a | (1 << 63))
+             };
+ 
+-            let block = unsafe { &mut *block };
+-
+             // commit the pop
+             match self.head.0.compare_exchange_weak(
+                 head,
+@@ -283,6 +283,9 @@ impl<T> Queue<T> {
+                 Ordering::Acquire,
+             ) {
+                 Ok(_) => {
++                    // the block may be stale before the CAS, only deref it after success
++                    let block_ptr = block;
++                    let block = unsafe { &*block_ptr };
+                     let block_start = block.start.load(Ordering::Relaxed);
+                     let pop_index = block_start + id;
+                     if id == BLOCK_MASK {
+@@ -301,7 +304,7 @@ impl<T> Queue<T> {
+                         self.tail.index.store(push_index + 1, Ordering::Relaxed);
+                         if block.mark_slots_read(1) {
+                             // we need to free the old block
+-                            let _unused_block = unsafe { Box::from_raw(block) };
++                            let _unused_block = unsafe { Box::from_raw(block_ptr) };
+                         }
+                         return None;
+                     }
+@@ -311,7 +314,7 @@ impl<T> Queue<T> {
+ 
+                     if block.mark_slots_read(1) {
+                         // we need to free the old block
+-                        let _unused_block = unsafe { Box::from_raw(block) };
++                        let _unused_block = unsafe { Box::from_raw(block_ptr) };
+                     }
+                     return Some(v);
+                 }
+@@ -350,7 +353,6 @@ impl<T> Queue<T> {
+                 BlockPtr::pack(block, new_id)
+             };
+ 
+-            let block = unsafe { &mut *block };
+             // only pop within a block
+             match self.head.0.compare_exchange_weak(
+                 head,
+@@ -359,6 +361,9 @@ impl<T> Queue<T> {
+                 Ordering::Acquire,
+             ) {
+                 Ok(_) => {
++                    // the block may be stale before the CAS, only deref it after success
++                    let block_ptr = block;
++                    let block = unsafe { &*block_ptr };
+                     let block_start = block.start.load(Ordering::Relaxed);
+                     let pop_index = block_start + id;
+ 
+@@ -394,7 +399,7 @@ impl<T> Queue<T> {
+ 
+                     if block.mark_slots_read(end - pop_index) {
+                         // we need to free the old block
+-                        let _unused_block = unsafe { Box::from_raw(block) };
++                        let _unused_block = unsafe { Box::from_raw(block_ptr) };
+                     }
+                     return value;
+                 }
+@@ -418,7 +423,7 @@ impl<T> Queue<T> {
+         let head = self.head.0.load(Ordering::Acquire);
+         let head = head.map_addr(|a| a & !(1 << 63));
+         let (block, id) = BlockPtr::unpack(head);
+-        let block = unsafe { &mut *block };
++        let block = unsafe { &*block };
+         // it'
+```
+
+**File**: `may_queue/src/spsc.rs` (modified, +18/-15)
+```diff
+@@ -162,20 +162,21 @@ impl<T> Queue<T> {
+     #[inline]
+     #[cfg(feature = "inner_cache")]
+     fn alloc_node(&self) -> *mut BlockNode<T> {
+-        let first = unsafe { &mut *self.first.unsync_load() };
+-        let mut last_head = unsafe { &mut *self.last_head.unsync_load() };
++        let first = unsafe { self.first.unsync_load() };
++        let mut last_head = unsafe { self.last_head.unsync_load() };
+         if !ptr::eq(first, last_head) {
+-            let next = unsafe { first.next.unsync_load() };
++            let next = unsafe { (*first).next.unsync_load() };
+             self.first.store(next, Ordering::Relaxed);
+             // first.next.store(ptr::null_mut(), Ordering::Relaxed);
+             return first;
+         }
+ 
+-        last_head = unsafe { &mut *self.head.block.unsync_load() };
++        // the consumer updates the head concurrently, and has finished reading the blocks before it
++        last_head = self.head.block.load(Ordering::Acquire);
+         self.last_head.store(last_head, Ordering::Relaxed);
+ 
+         if !ptr::eq(first, last_head) {
+-            let next = unsafe { first.next.unsync_load() };
++            let next = unsafe { (*first).next.unsync_load() };
+             self.first.store(next, Ordering::Relaxed);
+             // first.next.store(ptr::null_mut(), Ordering::Relaxed);
+             first
+@@ -186,7 +187,7 @@ impl<T> Queue<T> {
+ 
+     /// push a value to the queue
+     pub fn push(&self, v: T) {
+-        let tail = unsafe { &mut *self.tail.block.unsync_load() };
++        let tail = unsafe { &*self.tail.block.unsync_load() };
+         let push_index = unsafe { self.tail.index.unsync_load() };
+         // store the data
+         tail.set(push_index, v);
+@@ -217,7 +218,7 @@ impl<T> Queue<T> {
              return None;
          }
-         // spin until tail next become non-null
-@@ -219,7 +219,7 @@ impl<T> Queue<T> {
-         unsafe {
-             let tail = *self.tail.get();
-             // the list is empty
--            if self.head.load(Ordering::Acquire) == tail {
-+            if std::ptr::eq(self.head.load(Ordering::Acquire), tail) {
-                 return None;
-             }
  
-@@ -270,7 +270,7 @@ impl<T> Queue<T> {
-             let tail = *self.tail.get();
+-        let head = &mut *self.head.block.unsync_load();
++        let head = &*self.head.block.unsync_load();
+         Some(head.peek(index))
+     }
  
-             // the list is empty
--            if self.head.load(Ordering::Acquire) == tail {
-+            if std::ptr::eq(self.head.load(Ordering::Acquire), tail) {
-                 return None;
-             }
+@@ -229,7 +230,8 @@ impl<T> Queue<T> {
+             return None;
+         }
  
+-        let head = unsafe { &mut *self.head.block.unsync_load() };
++        let head_ptr = unsafe { self.head.block.unsync_load() };
++        let head = unsafe { &*head_ptr };
+         // get the data
+         let v = head.get(index & BLOCK_MASK);
+ 
+@@ -239,8 +241,8 @@ impl<T> Queue<T> {
+             let new_head = head.next.load(Ordering::Relaxed);
+             // assert!(!new_head.is_null());
+             #[cfg(not(feature = "inner_cache"))]
+-            let _unused_head = unsafe { Box::from_raw(head) };
+-            self.head.block.store(new_head, Ordering::Relaxed);
++            let _unused_head = unsafe { Box::from_raw(head_ptr) };
++            self.head.block.store(new_head, Ordering::Release);
+         }
+ 
+         // commit the pop
+@@ -272,7 +274,8 @@ impl<T> Queue<T> {
+             return SmallVec::new();
+         }
+ 
+-        let head = unsafe { &mut *self.head.block.unsync_load() };
++        let head_ptr = unsafe { self.head.block.unsync_load() };
++        let head = unsafe { &*head_ptr };
+ 
+         // only pop within a block
+         let end = bulk_end(index, push_index);
+@@ -285,8 +288,8 @@ impl<T> Queue<T> {
+             let new_head = head.next.load(Ordering::Relaxed);
+             // assert!(!new_head.is_null());
+             #[cfg(not(feature = "inner_cache"))]
+-            let _unused_head = unsafe { Box::from_raw(head) };
+-            self.head.block.store(new_head, Ordering::Relaxed);
++            let _unused_head = unsafe { Box::from_raw(head_ptr) };
++            self.head.block.store(new_head, Ordering::Release);
+         }
+ 
+         // commit the pop
+@@ -499,7 +502,7 @@ mod bench {
+     fn bulk_pop_1p1c_bench(b: &mut Bencher) {
+         b.iter(|| {
+             let q = Arc::new(Queue::new());
+-            let total_work: usize = 1_000_000;
++            let total_work: usize = if cfg!(miri) { 200 } else { 1_000_000 };
+             // create worker threads that generate mono increasing index
+             let _q = q.clone();
+             // in other thread the value should be still 100
+@@ -535,7 +538,7 @@ mod bench {
+     fn multi_1p1c_test(b: &mut Bencher) {
+         b.iter(|| {
+             let q = Arc::new(Queue::new());
+-            let total_work: usize = 1_000_000;
++            let total_work: usize = if cfg!(miri) { 200 } else { 1_000_000 };
+             // create worker threads that generate mono increasing index
+             let _q = q.clone();
+             // in other thread the value should be still 100
 ```
 
-**File**: `may_queue/src/spmc.rs` (modified, +9/-5)
+---
+
+### Incident Patch 3: `7d6ddce3` (2026-10-14)
+**Commit Message**: :pencil: fix spsc sync bug (#128)
+
+**File**: `Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -195,7 +195,7 @@ impl<T> Queue<T> {
-         loop {
-             head = (head as usize & !(1 << 63)) as *mut BlockNode<T>;
-             let (block, id) = BlockPtr::unpack(head);
--            if block == tail_block && id >= (push_index & BLOCK_MASK) {
-+            if std::ptr::eq(block, tail_block) && id >= (push_index & BLOCK_MASK) {
-                 return None;
-             }
+@@ -5,7 +5,6 @@ edition = "2021"
+ authors = ["Xudong Huang <huangxu008@hotmail.com>"]
+ license = "MIT/Apache-2.0"
+ repository = "https://github.com/Xudong-Huang/may.git"
+-homepage = "https://github.com/Xudong-Huang/may.git"
+ documentation = "https://docs.rs/may"
+ description = "Rust Stackful Coroutine Library"
+ readme = "README.md"
+```
+
+**File**: `may_queue/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -5,7 +5,6 @@ edition = "2021"
+ authors = ["Xudong Huang <huangxu008@hotmail.com>"]
+ license = "MIT/Apache-2.0"
+ repository = "https://github.com/Xudong-Huang/may.git"
+-homepage = "https://github.com/Xudong-Huang/may.git"
+ documentation = "https://docs.rs/may_queue"
+ description = "May's internal queue library"
+ keywords = ["queue", "mpsc", "spsc", "spmc", "mpmc"]
+```
+
+**File**: `may_queue/src/spsc.rs` (modified, +100/-2)
+```diff
+@@ -3,12 +3,14 @@ use smallvec::SmallVec;
  
-@@ -265,7 +265,7 @@ impl<T> Queue<T> {
-         loop {
-             head = (head as usize & !(1 << 63)) as *mut BlockNode<T>;
-             let (block, id) = BlockPtr::unpack(head);
--            if block == tail_block && id >= (push_index & BLOCK_MASK) {
-+            if std::ptr::eq(block, tail_block) && id >= (push_index & BLOCK_MASK) {
-                 return None;
-             }
+ use crate::atomic::{AtomicPtr, AtomicUsize};
  
-@@ -336,11 +336,15 @@ impl<T> Queue<T> {
-             let (block, id) = BlockPtr::unpack(head);
-             let push_id = push_index & BLOCK_MASK;
-             // at least leave one element to the owner
--            if block == tail_block && id >= push_id {
-+            if std::ptr::eq(block, tail_block) && id >= push_id {
-                 return SmallVec::new();
-             }
++use std::cell::Cell;
+ use std::cell::UnsafeCell;
+ use std::cmp;
+ use std::marker::PhantomData;
+ use std::mem::MaybeUninit;
+ use std::ptr;
+ use std::sync::atomic::Ordering;
++use std::sync::Arc;
  
--            let new_id = if block != tail_block { 0 } else { push_id };
-+            let new_id = if !std::ptr::eq(block, tail_block) {
-+                0
-+            } else {
-+                push_id
-+            };
+ // size for block_node
+ pub const BLOCK_SIZE: usize = 1 << BLOCK_SHIFT;
+@@ -137,8 +139,9 @@ pub struct Queue<T> {
+     _marker: PhantomData<T>,
+ }
  
-             let new_head = if new_id == 0 {
-                 (head as usize | (1 << 63)) as *mut BlockNode<T>
-@@ -435,7 +439,7 @@ impl<T> Queue<T> {
-         let push_index = self.tail.index.load(Ordering::Acquire);
-         let tail_block = self.tail.block.load(Ordering::Acquire);
+-unsafe impl<T: Send> Send for Queue<T> {}
+-unsafe impl<T: Send> Sync for Queue<T> {}
++// Sync implementation for Queue does not allow for unsynchronised concurrent push/pop operations.
++// unsafe impl<T: Send> Send for Queue<T> {}
++// unsafe impl<T: Send> Sync for Queue<T> {}
  
--        block == tail_block && id == (push_index & BLOCK_MASK)
-+        std::ptr::eq(block, tail_block) && id == (push_index & BLOCK_MASK)
+ impl<T> Queue<T> {
+     /// create a spsc queue
+@@ -293,6 +296,80 @@ impl<T> Queue<T> {
      }
  }
  
-```
-
-**File**: `may_queue/src/spsc.rs` (modified, +1/-1)
-```diff
-@@ -310,7 +310,7 @@ impl<T> Drop for Queue<T> {
-         #[cfg(feature = "inner_cache")]
-         let mut first = self.first.load(Ordering::Relaxed);
-         #[cfg(feature = "inner_cache")]
--        while first != tail {
-+        while !std::ptr::eq(first, tail) {
-             let next = unsafe { &*first }.next.load(Ordering::Relaxed);
-             let _ = unsafe { Box::from_raw(first) };
-             first = next;
-```
-
-**File**: `src/cancel.rs` (modified, +1/-1)
-```diff
-@@ -134,7 +134,7 @@ impl<T: CancelIo> CancelImpl<T> {
-             if let Some(mut co) = co.take() {
-                 // this is not safe, the kernel may still need to use the overlapped
-                 // set the cancel result for the coroutine
--                set_co_para(&mut co, io::Error::new(io::ErrorKind::Other, "Canceled"));
-+                set_co_para(&mut co, io::Error::other("Canceled"));
-                 get_scheduler().schedule(co);
-             }
-         }
-```
-
----
-
-### Incident Patch 11: `b9dae541` (2025-02-25)
-**Commit Message**: :pencil: fix windows struct offset
-
-**File**: `src/io/sys/windows/miow.rs` (modified, +1/-2)
-```diff
-@@ -662,8 +662,7 @@ impl AcceptAddrsBuf {
- 
-     #[allow(deref_nullptr)]
-     fn args(&self) -> (*mut std::ffi::c_void, u32, u32, u32) {
--        let remote_offset =
--            unsafe { &(*(std::ptr::null::<AcceptAddrsBuf>())).remote as *const _ as usize };
-+        let remote_offset = std::mem::offset_of!(AcceptAddrsBuf, remote);
-         (
-             self as *const _ as *mut _,
-             0,
-```
-
----
-
-### Incident Patch 12: `f31fd807` (2025-01-15)
-**Commit Message**: :pencil: fix compile error
-
-**File**: `src/io/event_loop.rs` (modified, +4/-1)
-```diff
-@@ -33,7 +33,10 @@ impl EventLoop {
-         loop {
-             next_expire = match selector.select(scheduler, id, &mut events_buf, next_expire) {
-                 Ok(t) => t.or(Some(timeout_ns)),
--                Err(e) => error!("select error = {:?}", e),
-+                Err(e) => {
-+                    error!("select error = {:?}", e);
-+                    Some(timeout_ns)
-+                }
-             }
-         }
-     }
-```
-
----
-
-### Incident Patch 13: `d3947897` (2024-12-23)
-**Commit Message**: :pencil: panic on eventloop select error
-
-**File**: `src/io/event_loop.rs` (modified, +1/-4)
-```diff
-@@ -33,10 +33,7 @@ impl EventLoop {
-         loop {
-             next_expire = match selector.select(scheduler, id, &mut events_buf, next_expire) {
-                 Ok(t) => t.or(Some(timeout_ns)),
--                Err(e) => {
--                    error!("select error = {:?}", e);
--                    continue;
--                }
-+                Err(e) => panic!("select error = {:?}", e),
-             }
-         }
-     }
-```
-
----
-
-### Incident Patch 14: `78434623` (2024-12-23)
-**Commit Message**: pencil: fix wrongly set std io nonblocking
-
-this test was setting std input to nonblocking mode, and would affect
-std out print function. so we have to use a real file that is safe to
-set to nonblocking
-
-**File**: `src/io/sys/unix/co_io.rs` (modified, +15/-3)
-```diff
-@@ -268,11 +268,23 @@ mod tests {
-     #[test]
-     fn compile_co_io() {
-         #[derive(Debug)]
--        struct Fd;
-+        struct Fd {
-+            file: std::net::UdpSocket,
-+        }
++/// The producer half of a split [`Queue`]. It is `Send` but not `Sync`.
++pub struct Sender<T> {
++    queue: Arc<Queue<T>>,
++    _not_sync: PhantomData<Cell<()>>,
++}
 +
-+        impl Fd {
-+            fn new() -> Self {
-+                Fd {
-+                    // this would call set_nonblocking for the fd
-+                    // so we need to open a real fd here
-+                    file: std::net::UdpSocket::bind(("127.0.0.1", 9765)).unwrap(),
-+                }
++/// The consumer half of a split [`Queue`]. It is `Send` but not `Sync`.
++pub struct Receiver<T> {
++    queue: Arc<Queue<T>>,
++    _not_sync: PhantomData<Cell<()>>,
++}
++
++impl<T> Sender<T> {
++    /// push a value to the queue
++    pub fn push(&mut self, v: T) {
++        self.queue.push(v)
++    }
++
++    /// the number of elements in the queue
++    pub fn len(&self) -> usize {
++        self.queue.len()
++    }
++
++    /// check if the queue is empty
++    pub fn is_empty(&self) -> bool {
++        self.queue.is_empty()
++    }
++}
++
++impl<T> Receiver<T> {
++    /// pop a value from the queue
++    pub fn pop(&mut self) -> Option<T> {
++        self.queue.pop()
++    }
++
++    /// pop all the currently available values
++    pub fn bulk_pop(&mut self) -> SmallVec<[T; BLOCK_SIZE]> {
++        self.queue.bulk_pop()
++    }
++
++    /// the number of elements in the queue
++    pub fn len(&self) -> usize {
++        self.queue.len()
++    }
++
++    /// check if the queue is empty
++    pub fn is_empty(&self) -> bool {
++        self.queue.is_empty()
++    }
++}
++
++impl<T> Queue<T> {
++    /// split the queue into a `Sender`/`Receiver` pair, each can be sent to
++    /// another thread but can't be shared between threads
++    pub fn split(self) -> (Sender<T>, Receiver<T>) {
++        let queue = Arc::new(self);
++        (
++            Sender {
++                queue: queue.clone(),
++                _not_sync: PhantomData,
++            },
++            Receiver {
++                queue,
++                _not_sync: PhantomData,
++            },
++        )
++    }
++}
++
++/// create a new spsc channel
++pub fn channel<T>() -> (Sender<T>, Receiver<T>) {
++    Queue::new().split()
++}
++
+ impl<T> Default for Queue<T> {
+     fn default() -> Self {
+         Queue::new()
+@@ -324,6 +401,27 @@ impl<T> Drop for Queue<T> {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn split_send_not_sync() {
++        fn is_send<S: Send>() {}
++        is_send::<Sender<usize>>();
++        is_send::<Receiver<usize>>();
++        let (mut tx, mut rx) = Queue::new().split();
++        let h = std::thread::spawn(move || {
++            for i in 0..1000usize {
++                tx.push(i);
++            }
++        });
++        let mut n = 0;
++        while n < 1000 {
++            if let Some(v) = rx.pop() {
++                assert_eq!(v, n);
++                n += 1;
 +            }
 +        }
- 
-         impl AsRawFd for Fd {
-             fn as_raw_fd(&self) -> RawFd {
--                0
-+                self.file.as_raw_fd()
-             }
-         }
- 
-@@ -283,7 +295,7 @@ mod tests {
-             }
-         }
- 
--        let a = Fd;
-+        let a = Fd::new();
-         let mut io = CoIo::new(a).unwrap();
-         let mut buf = [0u8; 100];
-         io.read_exact(&mut buf).unwrap();
-```
-
----
-
-### Incident Patch 15: `d3d4042e` (2024-12-19)
-**Commit Message**: :pencil: fix cargo clippy
-
-**File**: `src/io/sys/unix/kqueue.rs` (modified, +2/-2)
-```diff
-@@ -282,15 +282,15 @@ impl Selector {
-     #[inline]
-     pub fn del_fd(&self, io_data: &IoData) {
-         #[cfg(feature = "io_timeout")]
--        io_data.timer.borrow_mut().take().map(|h| {
-+        if let Some(h) = io_data.timer.borrow_mut().take() {
-             unsafe {
-                 // mark the timer as removed if any, this only happened
-                 // when cancel an IO. what if the timer expired at the same time?
-                 // because we run this func in the user space, so the timer handler
-                 // will not got the coroutine
-                 h.with_mut_data(|value| value.data.event_data = ptr::null_mut());
-             }
--        });
-+        }
- 
-         let fd = io_data.fd;
-         let id = fd as usize % self.vec.len();
++        h.join().unwrap();
++    }
++
+     #[test]
+     fn queue_sanity() {
+         let q = Queue::<usize>::new();
 ```
 
 #### Recent Merged Pull Requests:
@@ -3826,8 +3650,6 @@ set to nonblocking
 - **PR #118** (closed): safe coroutine spawning (@casibbald)
 - **PR #116** (closed): 2025-05-12 @weix2025 (@ghost)
 - **PR #113** (2025-03-15): Remove object lifetime cast (@BoxyUwU)
-- **PR #108** (2024-09-01): A variety of changes (@pyprogrammer)
-- **PR #104** (2023-06-09): add aarch64 macOS support to README (@Leandros)
 
 ---
 

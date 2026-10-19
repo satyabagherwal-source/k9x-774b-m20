@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "33e79a917c1627899beca648d39ed6062cfdd856374477b79eacf887ae8feb23",
-    "lastHarvestedAt": "2026-10-17T23:19:55.623Z",
+    "contentHash": "7136f62a6242a5f607cb5cb91dc556acdafe3da635827bb96133218d75b4037c",
+    "lastHarvestedAt": "2026-10-19T04:46:57.454Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -5878,5 +5878,55 @@
     "contentHash": "e27c7480410713827f221a67e724104a91d4b4fed5449525074f0eb177e78534",
     "lastHarvestedAt": "2026-10-19T04:40:32.271Z",
     "learningId": "learn-github-vespa-engine-vespa"
+  },
+  "radix-ui-themes": {
+    "repository": "radix-ui/themes",
+    "platform": "github",
+    "sourceUrl": "https://github.com/radix-ui/themes",
+    "sourceVersion": "1faff10a",
+    "license": "MIT",
+    "contentHash": "b25283f485d7286540a181b60aca63dc0eef541477f938e0846edc8e47eee503",
+    "lastHarvestedAt": "2026-10-19T04:46:57.012Z",
+    "learningId": "learn-github-radix-ui-themes"
+  },
+  "xudong-huang-may": {
+    "repository": "Xudong-Huang/may",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Xudong-Huang/may",
+    "sourceVersion": "9df483f2",
+    "license": "Apache-2.0",
+    "contentHash": "9d7f6d7720da94751be173b10db60281f60a644fd29c3a4cdc02dcdec2e13df3",
+    "lastHarvestedAt": "2026-10-19T04:46:58.277Z",
+    "learningId": "learn-github-xudong-huang-may"
+  },
+  "rcbyr-keen-slider": {
+    "repository": "rcbyr/keen-slider",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rcbyr/keen-slider",
+    "sourceVersion": "520c757a",
+    "license": "MIT",
+    "contentHash": "6c4d3624c2fb786d448e447d9624b6680e446cd4f243fd6469f8a8aa0dc64c09",
+    "lastHarvestedAt": "2026-10-19T04:47:03.433Z",
+    "learningId": "learn-github-rcbyr-keen-slider"
+  },
+  "argoproj-argo-workflows": {
+    "repository": "argoproj/argo-workflows",
+    "platform": "github",
+    "sourceUrl": "https://github.com/argoproj/argo-workflows",
+    "sourceVersion": "f40f8dc6",
+    "license": "Apache-2.0",
+    "contentHash": "0a6807d766a7f3afea3d733010a5dc1fa2d510c962ae3b21fefeaacbe076d20d",
+    "lastHarvestedAt": "2026-10-19T04:47:06.008Z",
+    "learningId": "learn-github-argoproj-argo-workflows"
+  },
+  "postgresml-postgresml": {
+    "repository": "postgresml/postgresml",
+    "platform": "github",
+    "sourceUrl": "https://github.com/postgresml/postgresml",
+    "sourceVersion": "caf2b6cc",
+    "license": "MIT",
+    "contentHash": "139f6e082c52eba25840962f61a58c0eb130bd977a0c9994c4dfb944d565fe33",
+    "lastHarvestedAt": "2026-10-19T04:47:11.581Z",
+    "learningId": "learn-github-postgresml-postgresml"
   }
 }

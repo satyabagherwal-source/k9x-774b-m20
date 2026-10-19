@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:40:32.278Z",
+  "last_updated": "2026-10-19T04:47:11.595Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -543,14 +543,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "33e79a917c1627899beca648d39ed6062cfdd856374477b79eacf887ae8feb23",
-      "verified_at": "2026-10-17T23:19:55.625Z",
+      "content_hash": "7136f62a6242a5f607cb5cb91dc556acdafe3da635827bb96133218d75b4037c",
+      "verified_at": "2026-10-19T04:46:57.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:19:55.625Z"
+      "last_updated": "2026-10-19T04:46:57.460Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -8932,6 +8932,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:40:32.278Z"
+    },
+    "radix-ui/themes": {
+      "repository": "radix-ui/themes",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-radix-ui-themes",
+      "content_hash": "b25283f485d7286540a181b60aca63dc0eef541477f938e0846edc8e47eee503",
+      "verified_at": "2026-10-19T04:46:57.017Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:46:57.017Z"
+    },
+    "Xudong-Huang/may": {
+      "repository": "Xudong-Huang/may",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-xudong-huang-may",
+      "content_hash": "9d7f6d7720da94751be173b10db60281f60a644fd29c3a4cdc02dcdec2e13df3",
+      "verified_at": "2026-10-19T04:46:58.282Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:46:58.282Z"
+    },
+    "rcbyr/keen-slider": {
+      "repository": "rcbyr/keen-slider",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rcbyr-keen-slider",
+      "content_hash": "6c4d3624c2fb786d448e447d9624b6680e446cd4f243fd6469f8a8aa0dc64c09",
+      "verified_at": "2026-10-19T04:47:03.439Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:47:03.439Z"
+    },
+    "argoproj/argo-workflows": {
+      "repository": "argoproj/argo-workflows",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-argoproj-argo-workflows",
+      "content_hash": "0a6807d766a7f3afea3d733010a5dc1fa2d510c962ae3b21fefeaacbe076d20d",
+      "verified_at": "2026-10-19T04:47:06.014Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:47:06.014Z"
+    },
+    "postgresml/postgresml": {
+      "repository": "postgresml/postgresml",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-postgresml-postgresml",
+      "content_hash": "139f6e082c52eba25840962f61a58c0eb130bd977a0c9994c4dfb944d565fe33",
+      "verified_at": "2026-10-19T04:47:11.594Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:47:11.594Z"
     }
   },
   "repos": {

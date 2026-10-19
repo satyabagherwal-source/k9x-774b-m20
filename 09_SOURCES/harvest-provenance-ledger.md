@@ -2922,3 +2922,9 @@ Every entry in this ledger must capture:
 | `learn-github-itinance-react-native-fs` | `https://github.com/itinance/react-native-fs` | `64aa755c` | Multi-dimensional audit evidence | 2026-10-19T04:40:24.759Z |
 | `learn-github-camptocamp-terraboard` | `https://github.com/camptocamp/terraboard` | `6f6b6b60` | Multi-dimensional audit evidence | 2026-10-19T04:40:26.997Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `fdbd35a4` | Multi-dimensional audit evidence | 2026-10-19T04:40:32.271Z |
+| `learn-github-radix-ui-themes` | `https://github.com/radix-ui/themes` | `1faff10a` | Multi-dimensional audit evidence | 2026-10-19T04:46:57.012Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-19T04:46:57.454Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `9df483f2` | Multi-dimensional audit evidence | 2026-10-19T04:46:58.277Z |
+| `learn-github-rcbyr-keen-slider` | `https://github.com/rcbyr/keen-slider` | `520c757a` | Multi-dimensional audit evidence | 2026-10-19T04:47:03.433Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `f40f8dc6` | Multi-dimensional audit evidence | 2026-10-19T04:47:06.008Z |
+| `learn-github-postgresml-postgresml` | `https://github.com/postgresml/postgresml` | `caf2b6cc` | Multi-dimensional audit evidence | 2026-10-19T04:47:11.581Z |
