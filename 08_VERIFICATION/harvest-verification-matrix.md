@@ -2987,3 +2987,9 @@
 | `CYCLE-20261019-G49Q` | `2026-10-19T05:58:49.502Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2213` | Yes (`9fb4a97c...`) |
 | `CYCLE-20261019-G54E` | `2026-10-19T05:58:50.606Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2214, Rule 1538, Rule EXISTING` | Yes (`718ed22a...`) |
 | `CYCLE-20261019-G7SD` | `2026-10-19T05:58:54.061Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2215` | Yes (`037a6fed...`) |
+| `CYCLE-20261019-NMHA` | `2026-10-19T06:04:39.694Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`f91a9ba4...`) |
+| `CYCLE-20261019-NMIH` | `2026-10-19T06:04:39.737Z` | `shadcn-ui/taxonomy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2216` | Yes (`816c7e7e...`) |
+| `CYCLE-20261019-NNY2` | `2026-10-19T06:04:41.594Z` | `SilasMarvin/lsp-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2217` | Yes (`a5dce722...`) |
+| `CYCLE-20261019-NR5D` | `2026-10-19T06:04:45.745Z` | `ResoCoder/flutter-tdd-clean-architecture-course` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2218` | Yes (`aa651298...`) |
+| `CYCLE-20261019-NTTG` | `2026-10-19T06:04:49.204Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2219` | Yes (`8d0f240b...`) |
+| `CYCLE-20261019-NZ7Q` | `2026-10-19T06:04:56.198Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2220` | Yes (`7fa1d91a...`) |

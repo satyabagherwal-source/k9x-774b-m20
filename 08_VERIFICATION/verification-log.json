@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-P7EY",
-    "timestamp": "2026-10-18T21:14:00.778Z",
-    "repository": "fission/fission",
-    "learningId": "learn-github-fission-fission",
-    "contentHash": "2e9957b103376e8773d9e2ef7b2788932e40831cd6bb732e1aa4c0621363536c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-P86M",
-    "timestamp": "2026-10-18T21:14:01.774Z",
-    "repository": "smallstep/cli",
-    "learningId": "learn-github-smallstep-cli",
-    "contentHash": "194b4f7941755c97fe579bfd8f6e510142dfb9ae6e436ebc15df556d8536f302",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-PB07",
-    "timestamp": "2026-10-18T21:14:05.431Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "2d05eea0d5cf6abaacf2aa4d819c0398b4a118d0651987addd2ad9f56f2a0910",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-PCHM",
-    "timestamp": "2026-10-18T21:14:07.354Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "54e02af92fd819098b2642d67f2f6d3ee2209638e85a9a68e1dc2afe59f73fc2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-X2IR",
-    "timestamp": "2026-10-18T21:20:07.683Z",
-    "repository": "adobe/react-spectrum",
-    "learningId": "learn-github-adobe-react-spectrum",
-    "contentHash": "614264b654caf0858a7564fc40ed2ae3bbc35a081b66c27741f65ec5f22ee33a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-X3PF",
-    "timestamp": "2026-10-18T21:20:09.219Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "373487cf17cc1c2ad414def9453bfc7977c55e2e08db85b6b8402334b1d666bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-X8MY",
     "timestamp": "2026-10-18T21:20:15.610Z",
     "repository": "mattermost/mattermost",
@@ -7490,6 +7400,96 @@
     "repository": "Mintplex-Labs/anything-llm",
     "learningId": "learn-github-mintplex-labs-anything-llm",
     "contentHash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NMHA",
+    "timestamp": "2026-10-19T06:04:39.694Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "f91a9ba40f3bfc1d1547ffb7452dbc88b63d891e5c08efbcd9857137e02d1ec7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NMIH",
+    "timestamp": "2026-10-19T06:04:39.737Z",
+    "repository": "shadcn-ui/taxonomy",
+    "learningId": "learn-github-shadcn-ui-taxonomy",
+    "contentHash": "816c7e7ebc348f1d327e73378bf0b12395e6fb3bc535a55216e0e52f1d9d32d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NNY2",
+    "timestamp": "2026-10-19T06:04:41.594Z",
+    "repository": "SilasMarvin/lsp-ai",
+    "learningId": "learn-github-silasmarvin-lsp-ai",
+    "contentHash": "a5dce722bbb3c3b969a79e39753f3f3c448d525bc856497ab0956ca543eaa0a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NR5D",
+    "timestamp": "2026-10-19T06:04:45.745Z",
+    "repository": "ResoCoder/flutter-tdd-clean-architecture-course",
+    "learningId": "learn-github-resocoder-flutter-tdd-clean-architecture-course",
+    "contentHash": "aa6512980de07a49645a5c663f09b4fcc23113b1a0953c3116dfbaa6bae2aed0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NTTG",
+    "timestamp": "2026-10-19T06:04:49.204Z",
+    "repository": "stakater/Reloader",
+    "learningId": "learn-github-stakater-reloader",
+    "contentHash": "8d0f240ba0fe7ccd610f70d60673c036039f7906a22a83eadb1d017683074fd1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NZ7Q",
+    "timestamp": "2026-10-19T06:04:56.198Z",
+    "repository": "pathwaycom/serviette",
+    "learningId": "learn-github-pathwaycom-serviette",
+    "contentHash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

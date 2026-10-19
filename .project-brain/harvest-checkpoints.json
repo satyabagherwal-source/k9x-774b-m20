@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:58:54.070Z",
+  "last_updated": "2026-10-19T06:04:56.204Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -709,14 +709,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "020b326aa33607761d3d4f8a953e4adec8d8ba1f061dcd808ed75b2b67a178ed",
-      "verified_at": "2026-10-17T23:59:15.009Z",
+      "content_hash": "f91a9ba40f3bfc1d1547ffb7452dbc88b63d891e5c08efbcd9857137e02d1ec7",
+      "verified_at": "2026-10-19T06:04:39.700Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:59:15.009Z"
+      "last_updated": "2026-10-19T06:04:39.700Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -2322,17 +2322,18 @@
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-pathwaycom-serviette-mv8c0rd1",
-      "content_hash": "a24ccc15521ccdc8ffea3d84b4979663af1359492997d219676448250cd025cb",
-      "verified_at": "2026-10-14T16:36:22.943Z",
+      "learning_id": "learn-github-pathwaycom-serviette",
+      "content_hash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
+      "verified_at": "2026-10-19T06:04:56.204Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T16:36:22.943Z"
+      "last_updated": "2026-10-19T06:04:56.204Z"
     },
     "EverMind-AI/Raven": {
       "repository": "EverMind-AI/Raven",
@@ -9803,6 +9804,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:58:54.070Z"
+    },
+    "shadcn-ui/taxonomy": {
+      "repository": "shadcn-ui/taxonomy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-shadcn-ui-taxonomy",
+      "content_hash": "816c7e7ebc348f1d327e73378bf0b12395e6fb3bc535a55216e0e52f1d9d32d4",
+      "verified_at": "2026-10-19T06:04:39.743Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:04:39.743Z"
+    },
+    "SilasMarvin/lsp-ai": {
+      "repository": "SilasMarvin/lsp-ai",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-silasmarvin-lsp-ai",
+      "content_hash": "a5dce722bbb3c3b969a79e39753f3f3c448d525bc856497ab0956ca543eaa0a3",
+      "verified_at": "2026-10-19T06:04:41.600Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:04:41.600Z"
+    },
+    "ResoCoder/flutter-tdd-clean-architecture-course": {
+      "repository": "ResoCoder/flutter-tdd-clean-architecture-course",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-resocoder-flutter-tdd-clean-architecture-course",
+      "content_hash": "aa6512980de07a49645a5c663f09b4fcc23113b1a0953c3116dfbaa6bae2aed0",
+      "verified_at": "2026-10-19T06:04:45.751Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:04:45.751Z"
+    },
+    "stakater/Reloader": {
+      "repository": "stakater/Reloader",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-stakater-reloader",
+      "content_hash": "8d0f240ba0fe7ccd610f70d60673c036039f7906a22a83eadb1d017683074fd1",
+      "verified_at": "2026-10-19T06:04:49.211Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:04:49.211Z"
     }
   },
   "repos": {

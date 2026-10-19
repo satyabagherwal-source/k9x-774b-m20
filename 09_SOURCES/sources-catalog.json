@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "020b326aa33607761d3d4f8a953e4adec8d8ba1f061dcd808ed75b2b67a178ed",
-    "lastHarvestedAt": "2026-10-17T23:59:15.006Z",
+    "contentHash": "f91a9ba40f3bfc1d1547ffb7452dbc88b63d891e5c08efbcd9857137e02d1ec7",
+    "lastHarvestedAt": "2026-10-19T06:04:39.696Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -6478,5 +6478,55 @@
     "contentHash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
     "lastHarvestedAt": "2026-10-19T05:58:54.065Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
+  },
+  "shadcn-ui-taxonomy": {
+    "repository": "shadcn-ui/taxonomy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/shadcn-ui/taxonomy",
+    "sourceVersion": "298a8857",
+    "license": "MIT",
+    "contentHash": "816c7e7ebc348f1d327e73378bf0b12395e6fb3bc535a55216e0e52f1d9d32d4",
+    "lastHarvestedAt": "2026-10-19T06:04:39.739Z",
+    "learningId": "learn-github-shadcn-ui-taxonomy"
+  },
+  "silasmarvin-lsp-ai": {
+    "repository": "SilasMarvin/lsp-ai",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SilasMarvin/lsp-ai",
+    "sourceVersion": "1e910a8c",
+    "license": "MIT",
+    "contentHash": "a5dce722bbb3c3b969a79e39753f3f3c448d525bc856497ab0956ca543eaa0a3",
+    "lastHarvestedAt": "2026-10-19T06:04:41.596Z",
+    "learningId": "learn-github-silasmarvin-lsp-ai"
+  },
+  "resocoder-flutter-tdd-clean-architecture-course": {
+    "repository": "ResoCoder/flutter-tdd-clean-architecture-course",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
+    "sourceVersion": "6c515614",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "aa6512980de07a49645a5c663f09b4fcc23113b1a0953c3116dfbaa6bae2aed0",
+    "lastHarvestedAt": "2026-10-19T06:04:45.747Z",
+    "learningId": "learn-github-resocoder-flutter-tdd-clean-architecture-course"
+  },
+  "stakater-reloader": {
+    "repository": "stakater/Reloader",
+    "platform": "github",
+    "sourceUrl": "https://github.com/stakater/Reloader",
+    "sourceVersion": "fdd50121",
+    "license": "Apache-2.0",
+    "contentHash": "8d0f240ba0fe7ccd610f70d60673c036039f7906a22a83eadb1d017683074fd1",
+    "lastHarvestedAt": "2026-10-19T06:04:49.207Z",
+    "learningId": "learn-github-stakater-reloader"
+  },
+  "pathwaycom-llm-app": {
+    "repository": "pathwaycom/serviette",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pathwaycom/llm-app",
+    "sourceVersion": "e2a7a09b",
+    "license": "MIT",
+    "contentHash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
+    "lastHarvestedAt": "2026-10-19T06:04:56.200Z",
+    "learningId": "learn-github-pathwaycom-serviette"
   }
 }

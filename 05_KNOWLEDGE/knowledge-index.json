@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:58:54.034Z",
-  "total_verified_learnings": 665,
+  "last_updated": "2026-10-19T06:04:56.173Z",
+  "total_verified_learnings": 669,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -33786,22 +33786,35 @@
     "learn-github-resocoder-flutter-tdd-clean-architecture-course": {
       "learning_id": "learn-github-resocoder-flutter-tdd-clean-architecture-course",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "resocoder-flutter-tdd-clean-architecture-course",
+      "source": "ResoCoder/flutter-tdd-clean-architecture-course",
+      "repository": "ResoCoder/flutter-tdd-clean-architecture-course",
       "slug": "resocoder-flutter-tdd-clean-architecture-course",
       "platform": "github",
       "source_url": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
-      "source_version": "HEAD",
-      "content_hash": "b6ac0e7a912de3af8328799cfa8f5f96c0b17c1169839c10fe51292b7b6f7377",
+      "source_version": "6c515614",
+      "content_hash": "aa6512980de07a49645a5c663f09b4fcc23113b1a0953c3116dfbaa6bae2aed0",
       "dossier_path": "07_PROJECT_LEARNING/resocoder-flutter-tdd-clean-architecture-course-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/resocoder-flutter-tdd-clean-architecture-course-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2218,
+          "title": "Added architecture proposal to README",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.256Z"
+      "verified_at": "2026-10-19T06:04:45.714Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-restatedev-restate": {
       "learning_id": "learn-github-restatedev-restate",
@@ -35068,22 +35081,35 @@
     "learn-github-shadcn-ui-taxonomy": {
       "learning_id": "learn-github-shadcn-ui-taxonomy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "shadcn-ui-taxonomy",
+      "source": "shadcn-ui/taxonomy",
+      "repository": "shadcn-ui/taxonomy",
       "slug": "shadcn-ui-taxonomy",
       "platform": "github",
       "source_url": "https://github.com/shadcn-ui/taxonomy",
-      "source_version": "HEAD",
-      "content_hash": "14c93cc7f05f3141b919ae8522709a3fcd3e847dab41f5805d97147c9a036cf8",
+      "source_version": "298a8857",
+      "content_hash": "816c7e7ebc348f1d327e73378bf0b12395e6fb3bc535a55216e0e52f1d9d32d4",
       "dossier_path": "07_PROJECT_LEARNING/shadcn-ui-taxonomy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shadcn-ui-taxonomy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2216,
+          "title": "make NEXTAUTH_URL optional",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.457Z"
+      "verified_at": "2026-10-19T06:04:39.677Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-shadcn-ui-ui": {
       "learning_id": "learn-github-shadcn-ui-ui",
@@ -35573,22 +35599,35 @@
     "learn-github-silasmarvin-lsp-ai": {
       "learning_id": "learn-github-silasmarvin-lsp-ai",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "silasmarvin-lsp-ai",
+      "source": "SilasMarvin/lsp-ai",
+      "repository": "SilasMarvin/lsp-ai",
       "slug": "silasmarvin-lsp-ai",
       "platform": "github",
       "source_url": "https://github.com/SilasMarvin/lsp-ai",
-      "source_version": "HEAD",
-      "content_hash": "56e0950553cfcb8569b1b0ad19598f23d6d70bdba638e834160904db1ec94ac1",
+      "source_version": "1e910a8c",
+      "content_hash": "a5dce722bbb3c3b969a79e39753f3f3c448d525bc856497ab0956ca543eaa0a3",
       "dossier_path": "07_PROJECT_LEARNING/silasmarvin-lsp-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/silasmarvin-lsp-ai-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2217,
+          "title": "tag issue / bump version",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.533Z"
+      "verified_at": "2026-10-19T06:04:41.563Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-silexlabs-silex": {
       "learning_id": "learn-github-silexlabs-silex",
@@ -36484,22 +36523,35 @@
     "learn-github-stakater-reloader": {
       "learning_id": "learn-github-stakater-reloader",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "stakater-reloader",
+      "source": "stakater/Reloader",
+      "repository": "stakater/Reloader",
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "HEAD",
-      "content_hash": "1eefae98e7beefcfa082b94b6adf161b163f1845399ef1b6d2cdf8256a4b0f3b",
+      "source_version": "fdd50121",
+      "content_hash": "8d0f240ba0fe7ccd610f70d60673c036039f7906a22a83eadb1d017683074fd1",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2219,
+          "title": "Address review: fix no-op chart assertions, document enableHA gate, serialize du",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.678Z"
+      "verified_at": "2026-10-19T06:04:49.172Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-stakpak-agent": {
       "learning_id": "learn-github-stakpak-agent",
@@ -48335,33 +48387,40 @@
     "learn-github-pathwaycom-serviette": {
       "learning_id": "learn-github-pathwaycom-serviette",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "pathwaycom/serviette",
       "repository": "pathwaycom/serviette",
-      "slug": "pathwaycom-serviette",
+      "slug": "pathwaycom-llm-app",
       "platform": "github",
-      "source_url": "https://github.com/pathwaycom/serviette",
-      "source_version": "beb17f1e",
-      "content_hash": "a24ccc15521ccdc8ffea3d84b4979663af1359492997d219676448250cd025cb",
-      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
+      "source_url": "https://github.com/pathwaycom/llm-app",
+      "source_version": "e2a7a09b",
+      "content_hash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
+      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
       "promoted_rules": [
         {
           "number": 926,
           "title": "relative links to assets in llm-app (#9439)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2220,
+          "title": "adapt Pathway's contribution guide and template",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T06:04:56.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
         "content_hash_verified": true,
         "rules_verified": true,
         "index_read_back_verified": true
-      },
-      "verified_at": "2026-10-14T16:36:22.886Z"
+      }
     },
     "learn-github-evermind-ai-raven": {
       "learning_id": "learn-github-evermind-ai-raven",
@@ -78990,6 +79049,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:58:54.028Z"
+    },
+    "rule-2216": {
+      "learning_id": "rule-2216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2216,
+      "title": "make NEXTAUTH_URL optional",
+      "source_url": "https://github.com/shadcn-ui/taxonomy",
+      "source_version": "298a8857",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:04:39.678Z"
+    },
+    "rule-2217": {
+      "learning_id": "rule-2217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2217,
+      "title": "tag issue / bump version",
+      "source_url": "https://github.com/SilasMarvin/lsp-ai",
+      "source_version": "1e910a8c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:04:41.563Z"
+    },
+    "rule-2218": {
+      "learning_id": "rule-2218",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2218,
+      "title": "Added architecture proposal to README",
+      "source_url": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
+      "source_version": "6c515614",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:04:45.714Z"
+    },
+    "rule-2219": {
+      "learning_id": "rule-2219",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2219,
+      "title": "Address review: fix no-op chart assertions, document enableHA gate, serialize du",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "fdd50121",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:04:49.172Z"
+    },
+    "rule-2220": {
+      "learning_id": "rule-2220",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2220,
+      "title": "adapt Pathway's contribution guide and template",
+      "source_url": "https://github.com/pathwaycom/llm-app",
+      "source_version": "e2a7a09b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:04:56.166Z"
     }
   },
   "aliases": {

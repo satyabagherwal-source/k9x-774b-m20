@@ -2994,3 +2994,9 @@ Every entry in this ledger must capture:
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `f4318206` | Multi-dimensional audit evidence | 2026-10-19T05:58:49.504Z |
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-19T05:58:50.607Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `d7d68e75` | Multi-dimensional audit evidence | 2026-10-19T05:58:54.065Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-19T06:04:39.696Z |
+| `learn-github-shadcn-ui-taxonomy` | `https://github.com/shadcn-ui/taxonomy` | `298a8857` | Multi-dimensional audit evidence | 2026-10-19T06:04:39.739Z |
+| `learn-github-silasmarvin-lsp-ai` | `https://github.com/SilasMarvin/lsp-ai` | `1e910a8c` | Multi-dimensional audit evidence | 2026-10-19T06:04:41.596Z |
+| `learn-github-resocoder-flutter-tdd-clean-architecture-course` | `https://github.com/ResoCoder/flutter-tdd-clean-architecture-course` | `6c515614` | Multi-dimensional audit evidence | 2026-10-19T06:04:45.747Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `fdd50121` | Multi-dimensional audit evidence | 2026-10-19T06:04:49.207Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `e2a7a09b` | Multi-dimensional audit evidence | 2026-10-19T06:04:56.200Z |
