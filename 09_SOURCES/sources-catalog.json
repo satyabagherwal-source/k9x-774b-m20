@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "2ef6632f",
+    "sourceVersion": "1fba4a0e",
     "license": "Apache-2.0",
-    "contentHash": "c8468d44417aeb951751853d857322a1cc4e68995dcd466ec7125a5b4d0c4d33",
-    "lastHarvestedAt": "2026-10-19T05:31:54.706Z",
+    "contentHash": "84240954d5ca9f6badc44305801ee922f5ec985c2606906042f7d3ec1c2efeee",
+    "lastHarvestedAt": "2026-10-19T20:28:48.739Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "7cdacda3",
+    "sourceVersion": "08e1aba1",
     "license": "NOASSERTION",
-    "contentHash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
-    "lastHarvestedAt": "2026-10-19T07:38:30.475Z",
+    "contentHash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
+    "lastHarvestedAt": "2026-10-19T20:29:00.474Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "c77b9a50",
+    "sourceVersion": "7cba11fd",
     "license": "Apache-2.0",
-    "contentHash": "eb3307148a48c6e85543ef27d2ccf241a59dc8b40060980be5e02c6205620c07",
-    "lastHarvestedAt": "2026-10-19T08:40:56.586Z",
+    "contentHash": "94e8f36f97ba276fedf356a98260703a353b99c752b720a3a5b9746934ef12a0",
+    "lastHarvestedAt": "2026-10-19T20:28:56.341Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -8938,5 +8938,25 @@
     "contentHash": "3854aa43175b3881de8c940b332e4b40d40c8af68efeb2bfa08e5b9fcf55a801",
     "lastHarvestedAt": "2026-10-19T20:22:51.462Z",
     "learningId": "learn-github-kevinnzou-compose-webview-multiplatform"
+  },
+  "jafforgehq-site-analytics-tool": {
+    "repository": "jafforgehq/site-analytics-tool",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jafforgehq/site-analytics-tool",
+    "sourceVersion": "1788648c",
+    "license": "MIT",
+    "contentHash": "d2daf18116cadd27e64010ac827a16195c8152f4f9e78307914b30eac1b45b7f",
+    "lastHarvestedAt": "2026-10-19T20:28:51.115Z",
+    "learningId": "learn-github-jafforgehq-site-analytics-tool"
+  },
+  "aakira-napier": {
+    "repository": "AAkira/Napier",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AAkira/Napier",
+    "sourceVersion": "50835e2e",
+    "license": "Apache-2.0",
+    "contentHash": "d0514b50739a199eaef9530e288d5994fc2e56fe5945fd85d2c24bd6b3a605bd",
+    "lastHarvestedAt": "2026-10-19T20:28:53.960Z",
+    "learningId": "learn-github-aakira-napier"
   }
 }

@@ -3471,3 +3471,8 @@
 | `CYCLE-20261019-B90D` | `2026-10-19T20:22:50.461Z` | `GateNLP/ultimate-sitemap-parser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2793` | Yes (`57823c25...`) |
 | `CYCLE-20261019-B9S5` | `2026-10-19T20:22:51.461Z` | `KevinnZou/compose-webview-multiplatform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2794` | Yes (`3854aa43...`) |
 | `CYCLE-20261019-BF9T` | `2026-10-19T20:22:58.577Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2750` | Yes (`a8c83568...`) |
+| `CYCLE-20261019-IXGH` | `2026-10-19T20:28:48.737Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2795` | Yes (`84240954...`) |
+| `CYCLE-20261019-IZAF` | `2026-10-19T20:28:51.111Z` | `jafforgehq/site-analytics-tool` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jafforgehq-site-analytics-tool-learnings.md` | Yes (`d2daf181...`) |
+| `CYCLE-20261019-J1HH` | `2026-10-19T20:28:53.957Z` | `AAkira/Napier` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2796` | Yes (`d0514b50...`) |
+| `CYCLE-20261019-J3BN` | `2026-10-19T20:28:56.339Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2797` | Yes (`94e8f36f...`) |
+| `CYCLE-20261019-J6IG` | `2026-10-19T20:29:00.472Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2798` | Yes (`e98ee9d8...`) |

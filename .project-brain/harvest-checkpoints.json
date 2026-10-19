@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T20:22:58.584Z",
+  "last_updated": "2026-10-19T20:29:00.479Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9469,14 +9469,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "c8468d44417aeb951751853d857322a1cc4e68995dcd466ec7125a5b4d0c4d33",
-      "verified_at": "2026-10-19T05:31:54.712Z",
+      "content_hash": "84240954d5ca9f6badc44305801ee922f5ec985c2606906042f7d3ec1c2efeee",
+      "verified_at": "2026-10-19T20:28:48.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:31:54.712Z"
+      "last_updated": "2026-10-19T20:28:48.744Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -10624,14 +10624,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
-      "verified_at": "2026-10-19T07:38:30.481Z",
+      "content_hash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
+      "verified_at": "2026-10-19T20:29:00.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:38:30.481Z"
+      "last_updated": "2026-10-19T20:29:00.478Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -11044,14 +11044,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "eb3307148a48c6e85543ef27d2ccf241a59dc8b40060980be5e02c6205620c07",
-      "verified_at": "2026-10-19T08:40:56.590Z",
+      "content_hash": "94e8f36f97ba276fedf356a98260703a353b99c752b720a3a5b9746934ef12a0",
+      "verified_at": "2026-10-19T20:28:56.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:40:56.590Z"
+      "last_updated": "2026-10-19T20:28:56.345Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",
@@ -13452,6 +13452,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T20:22:51.467Z"
+    },
+    "jafforgehq/site-analytics-tool": {
+      "repository": "jafforgehq/site-analytics-tool",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jafforgehq-site-analytics-tool",
+      "content_hash": "d2daf18116cadd27e64010ac827a16195c8152f4f9e78307914b30eac1b45b7f",
+      "verified_at": "2026-10-19T20:28:51.121Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:28:51.121Z"
+    },
+    "AAkira/Napier": {
+      "repository": "AAkira/Napier",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-aakira-napier",
+      "content_hash": "d0514b50739a199eaef9530e288d5994fc2e56fe5945fd85d2c24bd6b3a605bd",
+      "verified_at": "2026-10-19T20:28:53.968Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:28:53.968Z"
     }
   },
   "repos": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:22:58.544Z",
-  "total_verified_learnings": 909,
+  "last_updated": "2026-10-19T20:29:00.445Z",
+  "total_verified_learnings": 911,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -240,22 +240,35 @@
     "learn-github-aakira-napier": {
       "learning_id": "learn-github-aakira-napier",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aakira-napier",
+      "source": "AAkira/Napier",
+      "repository": "AAkira/Napier",
       "slug": "aakira-napier",
       "platform": "github",
       "source_url": "https://github.com/AAkira/Napier",
-      "source_version": "HEAD",
-      "content_hash": "3ff3d245955db0673302162aef153076439465bfbb3e83acc0579a1bf5f2d820",
+      "source_version": "50835e2e",
+      "content_hash": "d0514b50739a199eaef9530e288d5994fc2e56fe5945fd85d2c24bd6b3a605bd",
       "dossier_path": "07_PROJECT_LEARNING/aakira-napier-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aakira-napier-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2796,
+          "title": "Merge pull request #119 from AAkira/fix-napier-tests",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.524Z"
+      "verified_at": "2026-10-19T20:28:53.921Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-actions-actions-runner-controller": {
       "learning_id": "learn-github-actions-actions-runner-controller",
@@ -5346,8 +5359,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "7cdacda3",
-      "content_hash": "908498ed4231901e4b86db5b5e5a2cfc2669e04fd06f3bcc23de09c38f47aec5",
+      "source_version": "08e1aba1",
+      "content_hash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -5365,6 +5378,11 @@
           "number": 2319,
           "title": "Cross-Platform Static Linker Initialization Registration for Embedded Test Utilities",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2798,
+          "title": "Enable simplified arguments for views (#6324)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5372,7 +5390,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:38:30.420Z",
+      "verified_at": "2026-10-19T20:29:00.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28800,8 +28818,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "c77b9a50",
-      "content_hash": "eb3307148a48c6e85543ef27d2ccf241a59dc8b40060980be5e02c6205620c07",
+      "source_version": "7cba11fd",
+      "content_hash": "94e8f36f97ba276fedf356a98260703a353b99c752b720a3a5b9746934ef12a0",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -28814,6 +28832,11 @@
           "number": 2426,
           "title": "Defensive CLI Host Mount Version Pinning Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2797,
+          "title": "ci: verify the config schema is up to date in lint-oss (#2570)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28821,7 +28844,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:40:56.533Z",
+      "verified_at": "2026-10-19T20:28:56.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45465,14 +45488,19 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "2ef6632f",
-      "content_hash": "c8468d44417aeb951751853d857322a1cc4e68995dcd466ec7125a5b4d0c4d33",
+      "source_version": "1fba4a0e",
+      "content_hash": "84240954d5ca9f6badc44305801ee922f5ec985c2606906042f7d3ec1c2efeee",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
         {
           "number": 2185,
           "title": "opencode): explain an unbound session; rules name only offered tools",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2795,
+          "title": "Align public messaging with Context Gateway (#2121)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45481,7 +45509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:31:54.653Z",
+      "verified_at": "2026-10-19T20:28:48.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56144,20 +56172,29 @@
     "learn-github-jafforgehq-site-analytics-tool": {
       "learning_id": "learn-github-jafforgehq-site-analytics-tool",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jafforgehq/site-analytics-tool",
       "repository": "jafforgehq/site-analytics-tool",
       "slug": "jafforgehq-site-analytics-tool",
       "platform": "github",
       "source_url": "https://github.com/jafforgehq/site-analytics-tool",
-      "source_version": "main",
-      "content_hash": "64fcbfed7e1b9aedc4b12c7e601af3c955e4a466a501499ace7c1b6a0d0c7471",
+      "source_version": "1788648c",
+      "content_hash": "d2daf18116cadd27e64010ac827a16195c8152f4f9e78307914b30eac1b45b7f",
       "dossier_path": "07_PROJECT_LEARNING/jafforgehq-site-analytics-tool-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jafforgehq-site-analytics-tool-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:28:51.069Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-melihandic-deep-in-gsc": {
       "learning_id": "learn-github-melihandic-deep-in-gsc",
@@ -92131,6 +92168,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:22:51.427Z"
+    },
+    "rule-2795": {
+      "learning_id": "rule-2795",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2795,
+      "title": "Align public messaging with Context Gateway (#2121)",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "1fba4a0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:28:48.706Z"
+    },
+    "rule-2796": {
+      "learning_id": "rule-2796",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2796,
+      "title": "Merge pull request #119 from AAkira/fix-napier-tests",
+      "source_url": "https://github.com/AAkira/Napier",
+      "source_version": "50835e2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:28:53.921Z"
+    },
+    "rule-2797": {
+      "learning_id": "rule-2797",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2797,
+      "title": "ci: verify the config schema is up to date in lint-oss (#2570)",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "7cba11fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:28:56.304Z"
+    },
+    "rule-2798": {
+      "learning_id": "rule-2798",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2798,
+      "title": "Enable simplified arguments for views (#6324)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "08e1aba1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:29:00.438Z"
     }
   },
   "aliases": {

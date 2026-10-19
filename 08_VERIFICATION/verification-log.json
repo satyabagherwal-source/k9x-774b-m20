@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-YVZD",
-    "timestamp": "2026-10-19T05:45:25.609Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "f65d97b61106f07ade9b9d3e011a4be2bff0c822c4606733a36fa0cb3f7e1ab9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-YZGZ",
-    "timestamp": "2026-10-19T05:45:30.131Z",
-    "repository": "komi-store/komi-store",
-    "learningId": "learn-github-komi-store-komi-store",
-    "contentHash": "a87e8d30dde23fd3e2db932332ac869d88fc5b5f8a62d9e1bdf58a3406303f23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Z1GK",
-    "timestamp": "2026-10-19T05:45:32.708Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "0730c7ad4b7ca8fad3890795baf71ad5ee16d5d35f39d61d0649f605d3b11e13",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Z62D",
-    "timestamp": "2026-10-19T05:45:38.677Z",
-    "repository": "surrealdb/surrealdb",
-    "learningId": "learn-github-surrealdb-surrealdb",
-    "contentHash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-72SY",
-    "timestamp": "2026-10-19T05:51:47.698Z",
-    "repository": "mantinedev/mantine",
-    "learningId": "learn-github-mantinedev-mantine",
-    "contentHash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-73Q0",
     "timestamp": "2026-10-19T05:51:48.888Z",
     "repository": "sentrux/sentrux",
@@ -7490,6 +7415,81 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IXGH",
+    "timestamp": "2026-10-19T20:28:48.737Z",
+    "repository": "yvgude/lean-ctx",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "84240954d5ca9f6badc44305801ee922f5ec985c2606906042f7d3ec1c2efeee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IZAF",
+    "timestamp": "2026-10-19T20:28:51.111Z",
+    "repository": "jafforgehq/site-analytics-tool",
+    "learningId": "learn-github-jafforgehq-site-analytics-tool",
+    "contentHash": "d2daf18116cadd27e64010ac827a16195c8152f4f9e78307914b30eac1b45b7f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J1HH",
+    "timestamp": "2026-10-19T20:28:53.957Z",
+    "repository": "AAkira/Napier",
+    "learningId": "learn-github-aakira-napier",
+    "contentHash": "d0514b50739a199eaef9530e288d5994fc2e56fe5945fd85d2c24bd6b3a605bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J3BN",
+    "timestamp": "2026-10-19T20:28:56.339Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "94e8f36f97ba276fedf356a98260703a353b99c752b720a3a5b9746934ef12a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J6IG",
+    "timestamp": "2026-10-19T20:29:00.472Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `2ef6632f`  
+> **Source Version**: `1fba4a0e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:31:54.477Z  
+> **Timestamp**: 2026-10-19T20:28:48.551Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:31:53.813Z  
+> **Harvest Timestamp**: 2026-10-19T20:28:47.706Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `yvgude/lean-ctx`
-- **Description**: LeanCTX — Context Gateway for AI Systems. Control what your AI can see. Open-source Engine for context selection, supported controls, and evidence.
+- **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3888 stars
+- **Stars / Engagement**: 3890 stars
 
 ---
 
@@ -1625,1204 +1625,247 @@ function drawingFor(tool: LeanTool, key: string, output: unknown, input: unknown
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01d06654` (2026-10-17)
-**Commit Message**: fix(opencode): explain an unbound session; rules name only offered tools
+### Incident Patch 1: `1fba4a0e` (2026-10-19)
+**Commit Message**: Align public messaging with Context Gateway (#2121)
 
-Reproduced with OpenCode's MCP handshake (clientInfo "opencode", no roots,
-cwd = where `opencode` was started) on a fresh `init --agent opencode`:
+Align public repository, Engine and package source messaging with Context Gateway, supported control/evidence scope, and [REDACTED_EMAIL].
 
-- Started in the home directory, lean-ctx has no project. A search or tree
-  without `path` said only "active project root is required", and a
-  relative read resolved against ~ ("file not found: ~/src/main.rs").
-  Both now say the session has no project yet and to pass the absolute
-  project path, which then stays bound. Both path resolvers share one
-  check (`path_resolve::unbound_relative_path`). In telemetry OpenCode hit
-  "not bound to a project" 27 times per installation, Claude Code 7.
-- With no profile pinned the rules were rendered for `Power`, but
-  `tools/list` offers the lazy core (11 tools for OpenCode). Rules, MCP
-  instructions, the shared rule files and the project LEAN-CTX.md named
-  ctx_knowledge (and ctx_patch for native-editor clients) as callable.
-  `guidance_profile` now narrows to CORE_TOOL_NAMES on the lazy-core
-  surface; non-core tools are reached through ctx_call, whose hint is
-  shortened to stay within the instruction token budget. The
+Synchronize generated agent guidance and hash-bound contract/test fixtures. Keep package versions, legal text and release workflows unchanged.
+
+**File**: `.github/DISCUSSION_WELCOME.md` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++# Welcome to LeanCTX — the Context Gateway for AI Systems
++
++**Control what your AI can see.**
++
++LeanCTX helps existing AI tools select task-relevant context, apply supported
++controls, retain local knowledge and inspect the evidence their integration can
++observe. Your application, agent loop and model remain yours.
++
++- **Select:** find the relevant sources and choose the useful level of detail.
++- **Control:** apply configured path permissions, content filters and budgets.
++- **Learn:** keep local task, finding and decision records and connect code and
++  knowledge across sessions. This does not train your model.
++- **Prove:** inspect recorded context operations with `lean-ctx inspect`. A
++  context-only integration records preparation; the host owns its later model call.
++
++Start with the [setup guide](https://leanctx.com/docs/getting-started),
++[what LeanCTX does](https://github.com/yvgude/lean-ctx/blob/main/docs/what-is-leanctx.md)
++and the [tool reference](https://leanctx.com/docs/tools/).
++
++Use Discussions for setup questions, scoped proposals and field reports. Include
++the Engine version, host, integration path and a reproducible example when useful.
++If reporting a measured result, distinguish estimates, provider usage and quality.
++
++Report vulnerabilities privately through [SECURITY.md](https://github.com/yvgude/lean-ctx/blob/main/SECURITY.md)
++or hello@thinkery.ch. Follow the [Code of Conduct](https://github.com/yvgude/lean-ctx/blob/main/CODE_OF_CONDUCT.md).
+```
+
+**File**: `ARCHITECTURE.md` (modified, +3/-2)
+```diff
+@@ -8,14 +8,15 @@ The LeanCTX Engine operates between sources/tools and the AI application that
+ consumes their results. The LeanCTX SDK exposes supported Engine interfaces to
+ applications that own their model calls and workflow.
+ 
+-## Select → Control → Prove
++## Select → Control → Learn → Prove
+ 
+ ```mermaid
+ flowchart TD
+   S[Files, repositories, tool results and configured providers] --> G
+   subgraph G[LeanCTX Engine]
+     A[Select task-relevant context] --> B[Control supported access and content]
+-    B --> C[Prove with source references and observable evidence]
++    B --> L[Learn through local task and knowledge continuity]
++    L --> C[Prove with source references and observable evidence]
+   end
+   G --> H[Your application or agent]
+   H --> M[Your chosen model]
+```
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -32,6 +32,8 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+@@ -12,6 +12,8 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
  
- ### Fixed
+ ### Changed
  
-+- **Agents outside a project are told what is missing (OpenCode).** When a host starts lean-ctx outside a project (OpenCode launched from the home directory) and reports no project directory, a search or tree without `path` said only "active project root is required", and a relative read failed as "file not found: ~/src/main.rs". Both now say that the session has no project yet and to pass the absolute project path, after which that project stays bound. OpenCode installations hit this four times as often per installation as Claude Code.
-+- **Rules name only the tools the session is offered.** With no profile pinned, the injected rules and MCP instructions were written for the full tool set, while `tools/list` offers the lean core (OpenCode, Cursor and other clients: 11 tools). They named `ctx_knowledge` and, for native-editor clients, `ctx_patch` as if callable, and agents called tools their list did not contain. Guidance now describes the lean core and points to `ctx_call` for the rest; the skill shows non-core tools in their `ctx_call` form. A pinned profile keeps its full set.
- - **Reading a file in windows is no longer booked as a correction.** A `lines:` window (and the `head`, `tail` and `sed -n` reads the shell hook maps onto it) counted as a compressed read, and `head`/`tail` through `ctx_shell` as a full re-read, so paging through a long file produced a correction for nearly every window — hundreds on a single long instruction file in Codex sessions. A correction is now only a lossy compressed view (`map`, `signatures`, `aggressive`, `entropy`, `task`, `reference`, `cognitive`, `mdl`, `density:`, `auto` resolved to one of them) followed by the full content (`full`, `raw`, whole-file `anchored`, or `cat`/`bat`/`less`/`more` without a range). Windows, `head`, `tail`, `sed -n` ranges and `diff` deltas are partial reads: they neither start nor complete a correction. `anchored`, which is verbatim plus line anchors, no longer starts one either. A failed edit after a window read is no longer charged to a compressed read.
- - **Edits made through the shell cancel a provisional correction.** `sed -i`, `perl -i`, output redirection (`>`, `>>`, `>|`, `&>`), `tee [-a]`, `cp`/`mv`/`install` onto a file and `apply_patch` bodies — through `ctx_shell`, also in `&&`/`;` chains, after `cd` and inside `sh -c`/`lean-ctx -c` — now count as edits of their target files, like `ctx_patch`. Native shell commands seen by the Claude Code, Cursor and Codex Bash hooks and Codex `apply_patch` calls (the Codex observer hook now also matches `apply_patch`) report the edit through the edit beacon. `2>/dev/null`, `2>&1`, `>&2` and targets built from `$VAR` are never edits. Shell reads are resolved against the command's working directory, so a relative `cat src/x.rs` now matches the file `ctx_read` read.
- - **Reading a file before editing it is no longer booked as a correction.** A compressed read followed by a full read of the same file was booked as a bounce (a correction that cancels the read's savings) at once, even when the full read was the preparation for an edit — the flow lean-ctx itself recommends (map to orient, full to edit). A detected bounce is now provisional for 10 read ticks: an edit of the file inside that window — `ctx_patch`, `ctx_edit`, or a native host edit (Claude Code `Edit`/`Write`, Cursor `StrReplace`, …) reported by the hook through a small edit beacon in the data directory — cancels it; otherwise it is booked when the window passes, and at shutdown at the latest. Only booked bounces reach the ledger, the per-path memory, the quality signal and the scent field.
++- **The Engine identifies itself as the Context Gateway for AI Systems.** README, agent instructions, CLI help, MCP server metadata and package descriptions use Select · Control · Learn · Prove, with local knowledge and observable-evidence limits stated. Security and support contacts use `hello@thinkery.ch`.
++
+ - **Usage statistics arrive within half an hour.** While LeanCTX is in use, the anonymous daily totals are now re-sent every 30 minutes (at most 48 times per UTC day) instead of at doubling intervals that stretched to two hours after a handful of sends, which left a day's evening activity unreported until the next morning. Only the timing changes: the same cumulative totals are sent, and nothing new is collected. `lean-ctx telemetry show` states the limit.
+ - **`ctx_read` with `engine_interface="v1"` says how to recover.** The engine interface reads one file per call. Its refusal of `paths` now tells the agent to pass `path` once per file or to leave out `engine_interface` for a batch read, and its refusal of other modes says to leave it out; one OpenCode installation had repeated the same refused call 802 times.
+ - **Native tool calls are no longer refused by default.** Codex, Cursor, Windsurf, OpenCode, Gemini and CodeBuddy defaulted to Replace mode, whose hooks refused native Bash, Grep and Glob calls. Each refusal cost the agent a whole extra request (in 30 days of Codex sessions: 249 refusals, median 67k prompt tokens re-read per refusal) — mostly for commands like `pwd`, `mkdir -p`, `wc -l` or `shasum` whose native output costs next to nothing — and users found it disruptive. Every hook-capable agent now defaults to Hybrid: lean-ctx steers agents to `ctx_*` tools and rewrites known shell reads and searches, and other native calls go through. Deny hooks check the setting on every call, so hooks installed by earlier versions stand down as soon as the binary updates. Claude Code keeps native Grep and Glob out of its tool list in the default mode: Claude Code drops a tool named in `permissions.deny`, so this costs no error and no retry (0 refusals in 380 measured sessions), and native Glob returned ~12× the tokens of `ctx_glob` for the same patterns. `hook_mode = "hybrid"` gives Claude both tools back; CodeBuddy, which shares that contract, does the same and gets native Bash back (it was hidden too). OpenCode no longer sets native read, grep, glob and bash to `ask`, which prompted on every call and refused them in headless runs; the entries an earlier version wrote are removed on the next MCP server start, also after an update through a package manager. Replace stays available on request: `lean-ctx config set hook_mode replace` or `lean-ctx harden --hard` (which now records the choice), `lean-ctx harden --undo` to go back. `hook_mode` is now part of the config schema (`auto`, `hybrid`, `replace`, `mcp`).
 ```
 
-**File**: `integrations/claude-code-mod/hooks/register.ts` (modified, +18/-0)
+**File**: `CODE_OF_CONDUCT.md` (modified, +1/-1)
 ```diff
-@@ -59,13 +59,23 @@ const LEAN_CTX_HOOK_TEXT_SIGNATURES: readonly LeanCtxHookTextSignature[] = [
-       {
-         end: "Use native Read for out-of-root; `lean-ctx doctor` shows effective roots.",
-         continues: [
-+          "Other tools: ctx_call(tool=<name>).",
-           "Advanced tools not in your profile are available via ctx_call(tool=<name>) gateway.",
-           "Prefer stdlib and native platform alternatives before adding code or dependencies.",
-           "Solution efficiency ladder:",
-           "challenge every requirement, prefer deletion.",
-         ],
-       },
-       {
-+        end: "Other tools: ctx_call(tool=<name>).",
-+        continues: [
-+          "Prefer stdlib and native platform alternatives before adding code or dependencies.",
-+          "Solution efficiency ladder:",
-+          "challenge every requirement, prefer deletion.",
-+        ],
-+      },
-+      {
-+        // Emitted by lean-ctx 3.11.4 and earlier.
-         end: "Advanced tools not in your profile are available via ctx_call(tool=<name>) gateway.",
-         continues: [
-           "Prefer stdlib and native platform alternatives before adding code or dependencies.",
-@@ -104,6 +114,14 @@ const LEAN_CTX_HOOK_TEXT_SIGNATURES: readonly LeanCtxHookTextSignature[] = [
-           "challenge every requirement, prefer deletion.",
-         ],
-       },
-+      {
-+        end: "ctx_session (memory).",
-+        continues: [
-+          "Prefer stdlib and native platform alternatives before adding code or dependencies.",
-+          "Solution efficiency ladder:",
-+          "challenge every requirement, prefer deletion.",
-+        ],
-+      },
-       { end: "Prefer stdlib and native platform alternatives before adding code or dependencies." },
-       { end: "Preserve validation, security, and error-handling." },
-     ],
+@@ -38,7 +38,7 @@ This Code of Conduct applies within all community spaces, and also applies when
+ 
+ ## Enforcement
+ 
+-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at **yves@pounce.ch**. All complaints will be reviewed and investigated promptly and fairly.
++Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at **hello@thinkery.ch**. All complaints will be reviewed and investigated promptly and fairly.
+ 
+ All community leaders are obligated to respect the privacy and security of the reporter of any incident.
+ 
 ```
 
-**File**: `rust/src/core/path_resolve.rs` (modified, +52/-0)
+**File**: `LEAN-CTX.md` (modified, +3/-1)
 ```diff
-@@ -130,6 +130,12 @@ pub fn resolve_tool_path_with_roots(
-         Path::new(&jail_root).join(&normalized)
-     };
+@@ -1,9 +1,11 @@
+ <!-- lean-ctx-owned: PROJECT-LEAN-CTX.md v1 -->
+ <!-- lean-ctx-rules -->
+-<!-- version: 11 -->
++<!-- version: 12 -->
  
-+    if project_root.is_none()
-+        && let Some(error) = unbound_relative_path(raw, &resolved, shell_cwd.unwrap_or(&jail_root))
-+    {
-+        return Err(error);
-+    }
-+
-     let jail_root_path = Path::new(&jail_root);
-     let jailed =
-         crate::core::pathjail::jail_path_auto_admitting(&resolved, jail_root_path, extra_roots)
-@@ -141,6 +147,29 @@ pub fn resolve_tool_path_with_roots(
-     ))
- }
+ CRITICAL: ALWAYS use lean-ctx ctx_* tools as mapped below.
  
-+/// Refusal for a relative path that cannot mean anything yet: the session has
-+/// no project, the host started lean-ctx in a broad directory (OpenCode
-+/// launched from `~`), and nothing exists at `resolved`. Without it agents got
-+/// "file not found: ~/src/main.rs" and searched the wrong tree. `None` when the
-+/// path is absolute, exists, or `base` is an ordinary working directory.
-+pub(crate) fn unbound_relative_path(raw: &str, resolved: &Path, base: &str) -> Option<String> {
-+    let normalized = crate::core::pathutil::normalize_tool_path(raw);
-+    if Path::new(&normalized).is_absolute() || resolved.exists() {
-+        return None;
-+    }
-+    let base = std::path::absolute(base).unwrap_or_else(|_| PathBuf::from(base));
-+    if !crate::core::pathutil::is_broad_or_unsafe_root(&base) {
-+        return None;
-+    }
-+    Some(format!(
-+        "relative path '{raw}' has no project to resolve against: lean-ctx has no project for \
-+         this session yet (the host started it in {}, outside a project). Pass the absolute \
-+         path instead, e.g. /home/me/code/my-app/{normalized}; that project then stays the \
-+         session project.",
-+        base.display()
-+    ))
-+}
++LeanCTX (lean-ctx) — Context Gateway for AI Systems.
 +
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -152,6 +181,29 @@ mod tests {
-         assert_eq!(resolve_tool_path(None, None, ".").unwrap(), ".");
-     }
+ ACTUALLY EMIT the ctx_* tool call (ctx_compose first) — describing a tool is not calling it.
  
-+    #[test]
-+    fn missing_relative_path_without_a_project_says_what_is_missing() {
-+        // A host started outside a project (`/` here; `~` behaves the same).
-+        let error = resolve_tool_path(None, Some("/"), "src/no_such_file_lc.rs").unwrap_err();
-+        assert!(
-+            error.contains("has no project to resolve against"),
-+            "{error}"
-+        );
-+        assert!(error.contains("absolute path"), "{error}");
-+
-+        // A relative path in an ordinary working directory keeps resolving there.
-+        let dir = tempfile::tempdir().unwrap();
-+        let cwd = dir.path().to_string_lossy().to_string();
-+        let outcome = resolve_tool_path(None, Some(&cwd), "src/no_such_file_lc.rs");
-+        assert!(
-+            outcome
-+                .as_ref()
-+                .err()
-+                .is_none_or(|e| !e.contains("no project to resolve against")),
-+            "{outcome:?}"
-+        );
-+    }
-+
-     #[test]
-     fn relative_resolves_against_project_root() {
-         let _environment = crate::core::data_dir::test_env_lock();
+ MANDATORY MAPPING:
 ```
 
-**File**: `rust/src/core/rules_sections.rs` (modified, +28/-14)
+**File**: `LEANCTX_FEATURE_CATALOG.md` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,17 @@ fn has(p: &ToolProfile, name: &str) -> bool {
-     p.is_tool_enabled(name)
- }
+@@ -4,7 +4,7 @@ Status: Technical inventory; not a release or availability record.
  
-+/// The memory tools the profile offers, in the wording the rules use. The lazy
-+/// core offers ctx_session but keeps ctx_knowledge behind ctx_call.
-+fn memory_tools(p: &ToolProfile) -> Option<&'static str> {
-+    match (has(p, "ctx_session"), has(p, "ctx_knowledge")) {
-+        (true, true) => Some("ctx_session / ctx_knowledge"),
-+        (true, false) => Some("ctx_session"),
-+        (false, true) => Some("ctx_knowledge"),
-+        (false, false) => None,
-+    }
-+}
-+
- /// Intent-to-tool playbook — only advertises tools the profile exposes.
- pub(crate) fn intent_section(p: &ToolProfile) -> String {
-     let mut lines = vec!["Tool selection by intent:".to_string()];
-@@ -42,8 +53,8 @@ pub(crate) fn intent_section(p: &ToolProfile) -> String {
-     lines.push(nav);
+ **LeanCTX — Context Gateway for AI Systems. Control what your AI can see.**
  
-     let mut verify = String::from("• Verify after edits -> ctx_shell(test/build)");
--    if has(p, "ctx_session") || has(p, "ctx_knowledge") {
--        verify.push_str("; memory -> ctx_session / ctx_knowledge");
-+    if let Some(memory) = memory_tools(p) {
-+        verify.push_str(&format!("; memory -> {memory}"));
-     }
-     lines.push(verify);
+-The product story is **Select → Control → Prove**. The LeanCTX Engine implements
++The product story is **Select → Control → Learn → Prove**. The LeanCTX Engine implements
+ the mechanisms; the LeanCTX SDK provides supported integration interfaces.
  
-@@ -84,12 +95,10 @@ pub(crate) fn hook_covered_tools_section(p: &ToolProfile) -> String {
-         );
-     }
- 
--    if has(p, "ctx_session") || has(p, "ctx_knowledge") {
--        lines.push(
--            "• ctx_session / ctx_knowledge — persistent memory — record decisions & \
--             progress after milestones"
--                .into(),
--        );
-+    if let Some(memory) = memory_tools(p) {
-+        lines.push(format!(
-+            "• {memory} — persistent memory — record decisions & progress after milestones"
-+        ));
-     }
- 
-     if has(p, "ctx_expand") {
-@@ -114,8 +123,14 @@ pub(crate) fn shadow_minimal_section(p: &ToolProfile) -> String {
-     if has(p, "ctx_callgraph") {
-         exclusives.push("ctx_callgraph (callers)");
-     }
--    if has(p, "ctx_knowledge") || has(p, "ctx_session") {
--        exclusives.push("ctx_knowledge / ctx_session (memory)");
-+    // Name only what the profile offers (the lazy core has ctx_session but
-+    // keeps ctx_knowledge behind ctx_call, which `ctx_call_fallback` covers).
-+    // The full pair keeps its established order (identical to SHADOW_MINIMAL).
-+    match (has(p, "ctx_session"), has(p, "ctx_knowledge")) {
-+        (true, true) => exclusives.push("ctx_knowledge / ctx_session (memory)"),
-+        (true, false) => exclusives.push("ctx_session (memory)"),
-+        (false, true) => exclusives.push("ctx_knowledge (memory)"),
-+        (false, false) => {}
-     }
- 
-     // #1849: the same text goes to every host, and their edit tools differ
-@@ -212,10 +227,9 @@ pub(crate) fn ctx_call_fallback(p: &ToolProfile) -> Option<String> {
-     if matches!(p, ToolProfile::Power) {
-         return None;
-     }
--    Some(
--        "Advanced tools not in your profile are available via ctx_call(tool=<name>) gateway."
--            .into(),
--    )
-+    // Kept short: the lean core now carries this line in every session's
-+    // instructions, which have a fixed token budget.
-+    Some("Other tools: ctx_call(tool=<name>).".into())
- }
- 
- #[cfg(test)]
+ Use the [canonical positioning](docs/POSITIONING_CANONICAL.md),
 ```
 
-**File**: `rust/src/rules_inject/mod.rs` (modified, +12/-3)
+**File**: `README.md` (modified, +44/-35)
 ```diff
-@@ -28,12 +28,21 @@ pub use content::{
- };
- pub use skills::{install_all_skills, install_skill_for_agent};
+@@ -54,7 +54,7 @@ Files · repositories · tool results · configured providers
+                           │
+                           ▼
+                 LeanCTX Context Gateway
+-                Select → Control → Prove
++             Select · Control · Learn · Prove
+                           │
+                           ▼
+                 Your AI application / agent
+@@ -67,6 +67,8 @@ Files · repositories · tool results · configured providers
+   compression and reuse.
+ - **Control:** apply configured path permissions, content filters and context
+   budgets to supported calls.
++- **Learn:** retain local task records and connect code and knowledge across
++  sessions, within the configured access and retention rules.
+ - **Prove:** inspect source references, policy decisions and usage evidence.
+   A context-only integration records its prepared result; the host owns the
+   subsequent model call.
+@@ -106,7 +108,7 @@ first-class paths from other compatibility references.
+     <td align="center" width="33%">
+       <img src="assets/leanctx-benchmark.gif" width="320" alt="lean-ctx benchmark report demo">
+       <br/>
+-      <strong>Benchmark proof</strong>
++      <strong>Benchmark measurement</strong>
+       <br/>
+       Measure compression by language + mode
+     </td>
+@@ -127,23 +129,21 @@ first-class paths from other compatibility references.
+ ---
  
-+/// The tool set client-neutral rule files may name: what `tools/list` offers a
-+/// client without quirks (the lean core when no profile is pinned). These files
-+/// are shared by every agent in a home or project, so no client is known.
-+fn shared_surface_profile(
-+    cfg: &crate::core::config::Config,
-+) -> crate::core::tool_profiles::ToolProfile {
-+    crate::server::tool_visibility::guidance_profile(cfg, "")
-+}
-+
- /// Forwarding functions — content is delegated to `core::rules_canonical`.
- pub fn canonical_rules_block() -> String {
-     let cfg = crate::core::config::Config::load();
-     let shadow = cfg.shadow_mode;
-     let level = crate::core::config::CompressionLevel::effective(&cfg);
--    let profile = crate::core::tool_profiles::ToolProfile::from_config(&cfg);
-+    let profile = shared_surface_profile(&cfg);
-     crate::core::rules_canonical::render(
-         shadow,
-         crate::core::rules_canonical::Wrapper::Shared,
-@@ -48,7 +57,7 @@ pub fn rules_dedicated_markdown() -> String {
-     let cfg = crate::core::config::Config::load();
-     let shadow = cfg.shadow_mode;
-     let level = crate::core::config::CompressionLevel::effective(&cfg);
--    let profile = crate::core::tool_profiles::ToolProfile::from_config(&cfg);
-+    let profile = shared_surface_profile(&cfg);
-     crate::core::rules_canonical::render(
-         shadow,
-         crate::core::rules_canonical::Wrapper::Dedicated,
-@@ -64,7 +73,7 @@ pub fn rules_longform_markdown() -> String {
-     let cfg = crate::core::config::Config::load();
-     let shadow = cfg.shadow_mode;
-     let level = crate::core::config::CompressionLevel::effective(&cfg);
--    let profile = crate::core::tool_profiles::ToolProfile::from_config(&cfg);
-+    let profile = shared_surface_profile(&cfg);
-     crate::core::rules_canonical::render(
-         shadow,
-         crate::core::rules_canonical::Wrapper::Longform,
+ <p align="center">
+-  <strong>Saves you tokens?</strong> <a href="https://github.com/yvgude/lean-ctx">Give it a star</a> — it helps others discover LeanCTX.
++  <strong>Find LeanCTX useful?</strong> <a href="https://github.com/yvgude/lean-ctx">Give it a star</a> — it helps others find the Context Gateway for AI systems.
+ </p>
+ 
+ ---
+ 
+ ## Inside the LeanCTX Engine
+ 
+-Context Intelligence is how LeanCTX selects and prepares information for a task.
+-These mechanisms support the Gateway's Select → Control → Prove flow.
++The Engine puts Select, Control, Learn and Prove into the context paths of your
++existing AI tools. Your host keeps control of the task, agent loop and model.
+ 
+-### 1. Context Compression — input efficiency
++### 1. Select — the context each task needs
+ 
+-For supported read and shell paths, LeanCTX can select compact representations
+-of the files and command output your AI agent uses.
+-
+-- **Workload-specific token reduction** on eligible context, with recovery paths
+-  and a local Shadow Mode baseline for measurement
++Search and structural views help an agent find relevant information before
++reading entire files. Supported read and shell paths can return focused views
++of files and command output, with references for recovering detail.
+ 
+ - **File reads**: 16 read modes (`full`, `map`, `signatures`, `diff`, `lines:N-M`, `density:X`, …) — eligible cached re-reads return a compact reference instead of repeating content
+ - **Target density** (`density:0.4`): SDE-style budget compression — keeps the highest-entropy lines until ~40% of the original tokens remain, deterministic
+@@ -152,56 +152,65 @@ of the files and command output your AI agent uses.
+ - **Tree-sitter AST**: structural understanding for 27 languages — not just text compression
+ - **Source recovery (CCR)**: supported compact views retain source or archive references for expansion through `ctx_expand`, `ctx_retrieve` or the reference API. Recovery depends on permissions, retention and the source remaining available. [Read modes and detail →](docs/reference/02-daily-use.md#1-reading-files)
+ 
+-### 2. Intelligent Triage — task understanding
++### 2. Control — configured rules on supported paths
+ 
+-Not every task or file needs the same depth. LeanCTX classifies the task, then
+-sends the signal rather than the noise.
++- **PathJail and roles:** constrain tool filesystem access to the configured scope.
++- **Content filters:** configured detectors can warn, redact or block on supported
++  paths. Detection coverage and enforcement depend on the integration and settings.
++- **Context budgets:** bound selected input and supported tool output.
++- **Host-owned model choice:** the host chooses the model and performs any model
++  calls outside the Engine's observed path.
+ 
+-- **16 read modes**: from full content down to AST signatures and entropy-filtered views
+-- **Adaptive `ModePredictor`**: learns the optimal read mode per file type from past sessions
+-- **`IntentEngine`**: classifies query complexity so simple lookups stay cheap
++Review [the security policy](SECURITY.md) for defaults, supported controls and
++coverage limits. A filesystem boundary is not an operating-system sandbox.
+ 
+-### 3. Knowledge Routing — cross-source context
++### 3. Learn — connect work across sessions
+ 
+-Relevant code, sessions, and connected sources become focused context instead of
+-a larger prompt.
++Keep useful task records and discover relationships between code and local
++knowledge. Learning here means context continuity; it does not train your model.
+ 
+ - **Session memory (CCP)**: persist task/facts/decisions across chats — str
 ```
 
-**File**: `rust/src/rules_inject/tests.rs` (modified, +10/-0)
-```diff
-@@ -352,6 +352,10 @@ fn rules_file_without_section_strips_lean_ctx_block() {
- 
- #[test]
- fn inject_rules_for_agent_opencode() {
-+    // Injection reads LEAN_CTX_RULES_INJECTION, which other tests set to "off"
-+    // under the env lock; without the lock this test raced them.
-+    let _guard = crate::core::data_dir::test_env_lock();
-+    let _injection_guard = crate::setup::EnvVarGuard::set("LEAN_CTX_RULES_INJECTION", "shared");
-     let home = std::env::temp_dir().join("test_inject_rules_agent");
-     let _ = std::fs::remove_dir_all(&home);
-     let _ = std::fs::create_dir_all(&home);
-@@ -377,6 +381,8 @@ fn inject_rules_for_agent_opencode() {
- 
- #[test]
- fn inject_rules_for_agent_cursor() {
-+    let _guard = crate::core::data_dir::test_env_lock();
-+    let _injection_guard = crate::setup::EnvVarGuard::set("LEAN_CTX_RULES_INJECTION", "shared");
-     let home = std::env::temp_dir().join("test_inject_rules_cursor");
-     let _ = std::fs::remove_dir_all(&home);
-     let _ = std::fs::create_dir_all(&home);
-@@ -485,6 +491,8 @@ fn skill_targets_count() {
- 
- #[test]
- fn install_skill_creates_file() {
-+    let _guard = crate::core::data_dir::test_env_lock();
-+    let _injection_guard = crate::setup::EnvVarGuard::set("LEAN_CTX_RULES_INJECTION", "shared");
-     let home = std::env::temp_dir().join("test_skill_install");
-     let _ = std::fs::create_dir_all(&home);
-     let fake_cursor = home.join(".cursor");
-@@ -501,6 +509,8 @@ fn install_skill_creates_file() {
- 
- #[test]
- fn install_skill_idempotent() {
-+    let _guard = crate::core::data_dir::test_env_lock();
-+    let _injection_guard = crate::setup::EnvVarGuard::set("LEAN_CTX_RULES_INJECTION", "shared");
-     let home = std::env::temp_dir().join("test_skill_idempotent");
-     let _ = std::fs::create_dir_all(&home);
-     let fake_cursor = home.join(".cursor");
-```
-
-**File**: `rust/src/server/multi_path.rs` (modified, +17/-3)
-```diff
-@@ -3,6 +3,13 @@ use serde_json::{Map, Value};
- 
- use crate::server::tool_trait::{ToolContext, get_str, get_str_array};
- 
-+/// Refusal for a walk without `path` while the session has no project: the
-+/// host started lean-ctx in a broad directory and reported none.
-+const NO_PROJECT_GUIDANCE: &str = "lean-ctx has no project for this session yet: the host \
-+     started it outside a project (often the home directory) and reported no project \
-+     directory. Pass the absolute path of the project directory as `path`, e.g. \
-+     path=\"/home/me/code/my-app\"; any path inside a project then stays the session project.";
-+
- #[derive(Debug)]
- pub struct ResolvedPaths {
-     pub roots: Vec<String>,
-@@ -134,11 +141,14 @@ pub fn resolve_tool_paths(
- 
-     // Validate before extra roots can return a default scope. An empty or
-     // relative primary must never be interpreted against the process CWD.
-+    // The refusal says how to recover: hosts that start lean-ctx in the home
-+    // directory (OpenCode launched from `~`) hit it on the first call of a
-+    // session, and a bare "root is required" left agents repeating the call.
-     if ctx.project_root.trim().is_empty() {
--        return Err("active project root is required when no path is supplied".to_string());
-+        return Err(NO_PROJECT_GUIDANCE.to_string());
-     }
-     if !std::path::Path::new(&ctx.project_root).is_absolute() {
--        return Err("active project root must be absolute when no path is supplied".to_string());
-+        return Err(NO_PROJECT_GUIDANCE.to_string());
-     }
- 
-     if let Some(session_lock) = ctx.session.as_ref() {
-@@ -264,7 +274,11 @@ mod tests {
-         let mut ctx = test_ctx();
-         ctx.project_root.clear();
-         let error = resolve_tool_paths(&Map::new(), &ctx).unwrap_err();
--        assert!(error.contains("active project root is required"));
-+        assert!(error.contains("no project for this session"), "{error}");
-+        assert!(
-+            error.contains("absolute path of the project directory"),
-+            "{error}"
-+        );
-     }
- 
-     #[test]
-```
-
-**File**: `rust/src/server/tool_visibility.rs` (modified, +43/-1)
-```diff
-@@ -215,12 +215,29 @@ pub fn guidance_profile(cfg: &crate::core::config::Config, client_name: &str) ->
-         hook_covered: false, // no longer affects the candidate set (GH #1474)
-     });
-     narrow_to_surface(
--        cfg.tool_profile_effective(),
-+        lazy_core_surface(cfg.tool_profile_effective(), candidate),
-         &cfg.disabled_tools_effective(),
-         ClientQuirks::resolve(client_name, candidate),
-     )
- }
- 
-+/// The unpinned default resolves to `Power`, but `tools/list` advertises only
-+/// `CORE_TOOL_NAMES` there; the rest is reached through `ctx_call`. Guidance
-+/// written for `Power` named tools such as `ctx_knowledge` that OpenCode and
-+/// other lazy-core clients never saw, and agents called them directly.
-+fn lazy_core_surface(profile: ToolProfile, candidate: CandidateSet) -> ToolProfile {
-+    if candidate != CandidateSet::LazyCore {
-+        return profile;
-+    }
-+    ToolProfile::Custom(
-+        crate::tool_defs::CORE_TOOL_NAMES
-+            .iter()
-+            .filter(|name| profile.is_tool_enabled(name))
-+            .map(|name| (*name).to_string())
-+            .collect(),
-+    )
-+}
-+
- /// Pure core of [`guidance_profile`]: `profile` minus every tool the surface
- /// withholds. `Auto` is taken at its starting point (minimal) — guidance is
- /// written once per session and must not promise a tool before escalation.
-@@ -579,6 +596,31 @@ mod tests {
-         assert!(text.contains("ctx_compose"));
-     }
- 
-+    #[test]
-+    fn lazy_core_guidance_names_only_core_tools() {
-+        // The unpinned default is `Power`, yet a lazy-core session (OpenCode,
-+        // Cursor, …) is offered only CORE_TOOL_NAMES. Its rules named
-+        // ctx_knowledge, which the agent then called and could not find.
-+        let core = lazy_core_surface(ToolProfile::Power, CandidateSet::LazyCore);
-+        let native = ClientQuirks {
-+            hide_ctx_edit: false,
-+            hide_ctx_patch: true,
-+        };
-+        let surface = narrow_to_surface(core, &[], native);
-+        let text = guidance_names(&surface);
-+        for absent in ["ctx_knowledge", "ctx_patch", "ctx_graph", "ctx_overview"] {
-+            assert!(!text.contains(absent), "names {absent}:\n{text}");
-+        }
-+        for present in ["ctx_compose", "ctx_session", "ctx_callgraph", "ctx_call("] {
-+            assert!(text.contains(present), "misses {present}:\n{text}");
-+        }
-+        // A pinned profile is authoritative and keeps its full set.
-+        assert_eq!(
-+            lazy_core_surface(ToolProfile::Power, CandidateSet::ProfileAuthoritative),
-+            ToolProfile::Power
-+        );
-+    }
-+
-     #[test]
-     fn a_hidden_ctx_patch_leaves_the_guidance() {
-         // #1849: `prefer_native_editor` folds ctx_patch into the disabled
-```
-
----
-
-### Incident Patch 2: `c43445f1` (2026-10-17)
-**Commit Message**: fix(security): precise SEC001 rule and a fresh full-history baseline
-
-The history gate matched bare prefixes (ghp_, AKIA, sk_live_, PRIVATE
-KEY-----) and any database URL with a password field, so it flagged
-secret detectors, test fakes, warning docs, ${VAR} placeholders and dev
-defaults; on the private integration tree 93 findings, all noise, hid
-real signals.
-
-- Two stages: an interval-free candidate ERE for git pickaxe/grep (keeps
-  git fast), then a precise in-process check: full-length GitHub tokens,
-  github_pat_, AWS key IDs (EXAMPLE keys excluded), Stripe live keys, PEM
-  blocks with key material, DB URLs with a real literal password.
-- Narrow filters: ascending 8-character runs mark hand-made fixtures; one
-  reviewed self-signed loopback test key is exempt by blob ID only.
-- History counts introductions only (precise count rises in a commit).
-- command_timeout_seconds 120 -> 300 (candidate pickaxe took 81 s on the
-  private tree).
-- New baseline at b37ee3be11 over main, cla-signatures and tags: 17,061
-  commits, 369 findings (368 path classes, 1 credential tracked for
-  rotation), 0 current-tree findings (was 11). Full audit 533 s.
-- Tests: 17 positive credential shapes bu
-
-**File**: `scripts/history-policy-gate.py` (modified, +149/-16)
-```diff
-@@ -1,5 +1,37 @@
- #!/usr/bin/env python3
--"""Bounded full-history audit and required baseline-delta policy gate."""
-+"""Bounded full-history audit and required baseline-delta policy gate.
-+
-+Secret detection is two-stage:
-+
-+1. ``secret_rule.pickaxe_regex`` is a POSIX ERE that git evaluates natively
-+   (``git log -S --pickaxe-regex`` for history, ``git grep -E`` for a tree).
-+   It only narrows candidates cheaply; it is deliberately a superset of the
-+   precise patterns on the line that carries the credential prefix, and it is
-+   interval-free: bounded repetitions such as ``{36}`` make git's POSIX
-+   matcher markedly slower over full history.
-+2. ``secret_rule.credential_patterns`` are Python regexes evaluated over the
-+   whole blob. They decide. Whole-blob matching lets a PEM block require key
-+   material on the lines after its BEGIN line (git's pickaxe is line-bound),
-+   and the ``password`` group of a database URL is checked against
-+   ``secret_rule.password_policy`` so placeholders and documented local
-+   development defaults are not reported as credentials.
-+
-+Two further, narrow filters keep test fixtures out without path allowlists:
-+
-+* ``synthetic_run_length``: a match containing an ascending run of that many
-+  consecutive digits or letters (``ABCDEFGH``, ``01234567``) is a hand-made
-+  fixture. A random credential contains such a run with negligible
-+  probability (about 3e-11 for a 36-character token and a run of 8).
-+* ``reviewed_blobs``: individually reviewed git blob IDs (for example a
-+  self-signed loopback TLS key read only by tests). The exemption is bound to
-+  the exact content; any edit produces a new blob and is scanned again.
-+
-+A history candidate counts only when the precise match count of the path rises
-+in that commit (an introduction). Bare prefixes in detectors, tests and
-+warning docs never reach a finding. The current-tree scan applies the same
-+precise check at the tip, so an introduction the pickaxe cannot see (its
-+candidate count unchanged) is still caught there.
-+"""
- 
- import argparse
- import hashlib
-@@ -15,8 +47,20 @@ class GateError(RuntimeError):
-     pass
- 
- 
--FULL_AUDIT_SCANNER_VERSIONS = ["commit-path/v2", "diff-pickaxe/v2", "public-tree/v2"]
-+FULL_AUDIT_SCANNER_VERSIONS = ["commit-path/v2", "diff-pickaxe/v3", "public-tree/v3"]
- BASELINE_SCANNER_VERSIONS = FULL_AUDIT_SCANNER_VERSIONS
-+SECRET_RULE_KEYS = {
-+    "id",
-+    "rationale",
-+    "pickaxe_regex",
-+    "credential_patterns",
-+    "password_policy",
-+    "synthetic_run_length",
-+    "reviewed_blobs",
-+}
-+MIN_SYNTHETIC_RUN_LENGTH = 8
-+SEQUENCES = ("0123456789", "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-+PASSWORD_POLICY_KEYS = {"min_length", "placeholder_prefixes", "placeholder_markers", "dev_default_passwords"}
- 
- 
- def canonical(value):
-@@ -68,9 +112,93 @@ def load_policy(path):
-         or set(source_paths) - {policy["policy_source_path"]} != set(sources)
-     ):
-         raise GateError("invalid scanner-source contract")
-+    validate_secret_rule(policy["secret_rule"])
-     return policy
- 
- 
-+def string_list(value):
-+    return isinstance(value, list) and all(isinstance(item, str) and item for item in value)
-+
-+
-+def validate_secret_rule(rule):
-+    if not isinstance(rule, dict) or set(rule) != SECRET_RULE_KEYS:
-+        raise GateError("invalid secret-rule contract")
-+    if not all(isinstance(rule[key], str) and rule[key] for key in ("id", "rationale", "pickaxe_regex")):
-+        raise GateError("invalid secret-rule contract")
-+    patterns = rule["credential_patterns"]
-+    if (
-+        not isinstance(patterns, list)
-+        or not patterns
-+        or not all(isinstance(item, dict) and set(item) == {"id", "regex"} and all(isinstance(v, str) and v for v in item.values()) for item in patterns)
-+        or len({item["id"] for item in patterns}) != len(patterns)
-+    ):
-+        raise GateError("invalid credential-pattern contract")
-+    for item in patterns:
-+        try:
-+            compiled = re.compile(item["regex"])
-+        except re.error as exc:
-+            raise GateError(f"invalid credential pattern: {item['id']}") from exc
-+        if compiled.groupindex and set(compiled.groupindex) != {"password"}:
-+            raise GateError(f"credential pattern may only name a password group: {item['id']}")
-+    passwords = rule["password_policy"]
-+    if (
-+        not isinstance(passwords, dict)
-+        or set(passwords) != PASSWORD_POLICY_KEYS
-+        or not isinstance(passwords["min_length"], int)
-+        or passwords["min_length"] < 1
-+        or not all(string_list(passwords[key]) for key in PASSWORD_POLICY_KEYS - {"min_length"})
-+        or any(value != value.lower() for value in passwords["dev_default_passwords"])
-+    ):
-+        raise GateError("invalid password-policy contract")
-+    run = rule["synthetic_run_length"]
-+    if not isinstance(run, int) or isinstance(run, bool) or run < MIN_SYNTHETIC_RUN_LENGTH:
-+        raise GateError("invalid synthetic-run contra
-```
-
-**File**: `security/evidence/full-history-baseline-v1-review.md` (modified, +49/-0)
-```diff
-@@ -39,3 +39,52 @@ objects, not a newly accepted finding class.
- No rule, forbidden-path entry, source-binding requirement, or allowlist was
- weakened. The pending audit status remains intentional because remediation of
- other historical classes is outside this baseline rotation.
-+
-+## Precise SEC001 rule and baseline rotation (2026-10-17)
-+
-+The SEC001 rule matched bare prefixes (`ghp_`, `AKIA`, `sk_live_`,
-+`PRIVATE KEY-----`) and any database URL with a password field. Every
-+current-tree hit on the private integration tree (40, plus 53 history
-+introductions) was a secret *detector*, a test fake, a warning in
-+documentation, a `${VAR}` or `{placeholder}` password, a local development
-+default or a self-signed loopback test key. The noise hid real signals.
-+
-+- **Two stages.** The git pickaxe uses an interval-free POSIX ERE that only
-+  narrows candidates (intervals such as `{36}` made `git log -S` exceed the
-+  per-command timeout on the larger private tree). A precise Python check over
-+  the blob decides: GitHub tokens with their full length, fine-grained
-+  `github_pat_`, AWS key IDs (`…EXAMPLE` documentation keys excluded), Stripe
-+  live keys, PEM blocks only with base64 key material, and database URLs only
-+  with a literal password of at least eight characters that is neither a
-+  placeholder nor a documented development default.
-+- **Two narrow filters.** A match containing an ascending run of eight
-+  characters (`ABCDEFGH`, `01234567`) is a hand-made fixture; one reviewed
-+  self-signed loopback TLS test key is exempt by Git blob ID only, so any change
-+  to its content is scanned again.
-+- **History** reports an introduction only when the precise match count of a
-+  blob rises in a commit.
-+- **Limits.** `command_timeout_seconds` is raised from 120 to 300 s: the
-+  candidate pickaxe over the private tree took 81 s, too close to the old limit
-+  for slower runners.
-+
-+### Baseline audit
-+
-+- Audit target: `b37ee3be11f2525cd785348d3e43ccdbb590fe94`
-+- Audit source: fresh clone of the public repository with `main`,
-+  `cla-signatures` and all tags — the ref set of the 16,291-commit audit above
-+  (recomputed: `main` up to `bff280` plus `cla-signatures` plus its tags gives
-+  exactly 16,291). Open pull-request branches are not part of the baseline.
-+- Scanner contract: `commit-path/v2`, `diff-pickaxe/v3`, `public-tree/v3`
-+- Coverage: 17,061 commits, 109,865 objects, 369 findings — 368 path findings
-+  (IP001–IP006) and one SEC001 finding (`server.md` in commit `13e3e76353`,
-+  reachable from an archive tag). The SEC001 finding is a credential; its
-+  rotation is tracked privately.
-+- Current tree: 0 accepted finding IDs (previously 11, all removed by the
-+  precise rule).
-+- Runtime: full audit 533 s (limit 1,800 s).
-+- The evidence that shipped with the 3.11.0 export named 8,818 commits, which
-+  matches no public ref set; it most likely came from the private integration
-+  tree. This rotation replaces it with an audit of the public refs.
-+
-+Verified against the private integration tree: of the 93 findings the previous
-+rule reported there, none remains.
-```
-
-**File**: `security/history-policy-v1.json` (modified, +64/-6)
+**File**: `SECURITY.md` (modified, +3/-3)
 ```diff
 @@ -4,7 +4,7 @@
-     "max_commits": 20000,
-     "max_objects": 300000,
-     "max_findings": 5000,
--    "command_timeout_seconds": 120,
-+    "command_timeout_seconds": 300,
-     "full_audit_timeout_seconds": 1800
-   },
-   "forbidden_paths": [
-@@ -35,7 +35,65 @@
-   ],
-   "secret_rule": {
-     "id": "SEC001",
--    "pickaxe_regex": "AKIA|ghp_|gho_|ghs_|ghu_|ghr_|sk_live_|PRIVATE KEY-----|postgres://[^\\s]+:[^@\\s]+@|postgresql://[^\\s]+:[^@\\s]+@|mysql://[^\\s]+:[^@\\s]+@"
-+    "rationale": "Two stages. pickaxe_regex is a POSIX ERE git evaluates natively to narrow candidates (git log -S --pickaxe-regex, git grep -E); it is a line-level superset of credential_patterns and deliberately interval-free, because bounded repetitions make git's POSIX matcher several times slower over full history. credential_patterns are Python regexes over the whole blob and decide: real credential shapes only, never bare prefixes. PEM blocks need base64 key material after the BEGIN line. Database URLs need a literal password of at least min_length characters that is neither a placeholder ($VAR, {var}, <var>, [var], %s, masked ***) nor a documented local development default. AWS documentation keys ending in EXAMPLE are not credentials. A match holding an ascending run of synthetic_run_length digits or letters is a hand-made fixture. reviewed_blobs exempts individually reviewed content by git blob ID only; any edit is scanned again.",
-+    "pickaxe_regex": "gh[pousr]_[A-Za-z0-9]|github_pat_|A[KS]IA[0-9A-Z]|[rs]k_live_[0-9A-Za-z]|PRIVATE KEY-----|(postgres|postgresql|mysql|mariadb)[+a-z0-9]*://[^@[:space:]]+@",
-+    "credential_patterns": [
-+      {
-+        "id": "github-token",
-+        "regex": "\\bgh[pousr]_[A-Za-z0-9]{36,}\\b"
-+      },
-+      {
-+        "id": "github-fine-grained-token",
-+        "regex": "\\bgithub_pat_[A-Za-z0-9_]{22,}"
-+      },
-+      {
-+        "id": "aws-access-key-id",
-+        "regex": "\\b(?:AKIA|ASIA)(?![0-9A-Z]{9}EXAMPLE\\b)[0-9A-Z]{16}\\b"
-+      },
-+      {
-+        "id": "stripe-live-key",
-+        "regex": "\\b(?:sk|rk)_live_[0-9A-Za-z]{24,}\\b"
-+      },
-+      {
-+        "id": "pem-private-key",
-+        "regex": "-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----(?:\\\\r)?(?:\\\\n|\\r?\\n)(?:[ \\t\\\"'+,]*[A-Za-z-]+:[^\\r\\n]*?(?:\\\\r)?(?:\\\\n|\\r?\\n))*(?:[ \\t\\\"'+,]*(?:\\\\r)?(?:\\\\n|\\r?\\n))?[ \\t\\\"'+,]*[A-Za-z0-9+/]{40,}"
-+      },
-+      {
-+        "id": "database-url-password",
-+        "regex": "\\b(?:postgres|postgresql|mysql|mariadb)(?:\\+[a-z0-9]+)?://[^\\s:@/'\\\"`]+:(?P<password>[^\\s@/'\\\"`]+)@"
-+      }
-+    ],
-+    "password_policy": {
-+      "min_length": 8,
-+      "placeholder_prefixes": [
-+        "$",
-+        "{",
-+        "<",
-+        "[",
-+        "%"
-+      ],
-+      "placeholder_markers": [
-+        "${",
-+        "{{",
-+        "$(",
-+        "***",
-+        "%s"
-+      ],
-+      "dev_default_passwords": [
-+        "changeme",
-+        "password",
-+        "leanctx-dev",
-+        "leanctx_e2e",
-+        "localtest"
-+      ]
-+    },
-+    "synthetic_run_length": 8,
-+    "reviewed_blobs": [
-+      {
-+        "blob": "9698c59bbf61ff6742c4d9762ea1f452139c01c5",
-+        "reason": "Self-signed loopback TLS test key (certificate CN=localhost, SAN localhost and 127.0.0.1, reviewed 2026-10-17). Read only by HTTPS loopback integration tests; it authenticates nothing outside the test process."
-+      }
-+    ]
-   },
-   "policy_source_path": "security/history-policy-v1.json",
-   "scanner_source_paths": [
-@@ -54,8 +112,8 @@
-   ],
-   "scanner_source_sha256": {
-     ".github/workflows/security-check.yml": "5afe73f93ce67b5832fb1839c707c5a75a18951cdf015aedca3b6177743e9d83",
--    "scripts/history-policy-gate.py": "6191eb7e86b7253aef09c9ef9bb5167ba599f91f9e23d43be61452d039511ba8",
--    "tests/security/test_history_policy_gate.py": "ad6c71cadb5e5896ba926f9633249c571c9449af63605cc0d91c27ccbabfd108",
-+    "scripts/history-policy-gate.py": "d018605b96d155293854985a1627da3bfc18e2721a7640b5530c9889ecfdb899",
-+    "tests/security/test_history_policy_gate.py": "3aac0ee607d6968a9a0e755e2020be2a0fdfb2f44760cb91dba6fbc1aabb2f29",
-     "tests/security/test_security_check_workflow.py": "2d0c9b9a6ceb61c97379290d549bbdcf7812ce17db9794b5d1b067e2202c2844",
-     "rust/src/proxy/anthropic.rs": "02be2417f1eaab0730b4328fee90c91179c46f8ed4c0c2ae2f4737d2331537b7",
-     "rust/src/proxy/anthropic_tests.rs": "d8e6572b778d48b2a158c2caf1ea9807ae03621b3215f31f3a2cde078b2a8c53",
-@@ -66,8 +124,8 @@
-     "rust/src/proxy/openai_responses_ws.rs": "968b11785cc3fb3229b2dbd0c7e8339654f9b15e9af0c8a2cbe8215c35bea284"
-   },
-   "baseline": {
--    "commit": "bff280bfc8eba6959854fafcbf104b5745d794c3",
-+    "commit": "b37ee3be11f2525cd785348d3e43ccdbb590fe94",
-     "report": "security/evidence/full-history-baseline-v1.json",
--    "report_sha256": "f2698fc347bd51b756b3ecbde00231e12953beb5a16db64ffd40fd9df5e2f3e6"
-+    "report_sha256": "29fb4b0997f3f45cd80091dd6d365a3097644d7dae6dc1a41c88303a6572501e"
-   }
- }
-```
-
-**File**: `tests/security/test_history_policy_gate.py` (modified, +150/-9)
-```diff
-@@ -12,6 +12,17 @@
- SPEC = importlib.util.spec_from_file_location("history_gate", ROOT / "scripts/history-policy-gate.py")
- GATE = importlib.util.module_from_spec(SPEC)
- SPEC.loader.exec_module(GATE)
-+REPO_SECRET_RULE = json.loads((ROOT / "security/history-policy-v1.json").read_text())["secret_rule"]
-+
-+# Fake credentials are assembled at runtime so this file never holds a literal
-+# that a scanner (this gate, push protection, the CI pattern scan) would match.
-+MARKER = "DONOTPRINTTHISVALUE"
-+STRIPE_LIVE = "sk" + "_live_" + MARKER + "Q1w2E3r4T5"
-+
-+
-+def fake_stripe(tag):
-+    # No ascending runs: those mark a fixture as synthetic (synthetic_run_length).
-+    return "sk" + "_live_" + tag + "Q1w2E3r4T5y6U7i8O9p0A1s2"
  
+ If you discover a security vulnerability in lean-ctx, please report it privately:
  
- class HistoryPolicyGateTests(unittest.TestCase):
-@@ -72,9 +83,9 @@ def commit(self, message):
-     def write_policy(self, commit, digest, report="baseline.json"):
-         policy = {
-             "schema_version": "leanctx.history-policy/v1",
--            "limits": {"max_commits": 50, "max_objects": 500, "max_findings": 20, "command_timeout_seconds": 10},
-+            "limits": {"max_commits": 50, "max_objects": 500, "max_findings": 100, "command_timeout_seconds": 10},
-             "forbidden_paths": [{"id": "IP001", "prefix": "private/"}],
--            "secret_rule": {"id": "SEC001", "pickaxe_regex": "sk_" + "live_|PRIVATE " + "KEY-----"},
-+            "secret_rule": REPO_SECRET_RULE,
-             "policy_source_path": "policy.json",
-             "scanner_source_paths": ["policy.json", "scanner.py"],
-             "scanner_source_sha256": {"scanner.py": hashlib.sha256((self.repo / "scanner.py").read_bytes()).hexdigest()},
-@@ -86,7 +97,7 @@ def policy(self):
-         return GATE.load_policy(self.policy_path)
+-- **Email**: yves@pounce.ch
++- **Email**: hello@thinkery.ch
+ - **GitHub**: [Create a private security advisory](https://github.com/yvgude/lean-ctx/security/advisories/new)
+ - **Response time**: We aim to acknowledge reports within 48 hours
+ - **Disclosure**: We follow responsible disclosure practices (90-day embargo)
+@@ -385,10 +385,10 @@ The team server is part of `lean-ctx-enterprise` (ADR-023). When deployed:
  
-     def test_full_audit_is_bounded_and_redacted(self):
--        secret = "sk_" + "live_DO_NOT_PRINT_THIS_VALUE"
-+        secret = STRIPE_LIVE
-         (self.repo / "leak.txt").write_text(secret + "\n")
-         (self.repo / "private").mkdir()
-         (self.repo / "private/data.txt").write_text("internal\n")
-@@ -105,12 +116,12 @@ def test_clean_current_and_delta_pass(self):
-         self.assertEqual(report["findings"], [])
+ ## Contact
  
-     def test_current_and_delta_secret_fail_closed(self):
--        (self.repo / "leak.txt").write_text("sk_" + "live_DO_NOT_PRINT_THIS_VALUE\n")
-+        (self.repo / "leak.txt").write_text(STRIPE_LIVE + "\n")
-         self.commit("secret delta")
-         report = GATE.gate(self.repo, self.policy())
-         scanners = {item["scanner"] for item in report["findings"]}
-         self.assertEqual(scanners, {"current-secret", "delta-secret"})
--        self.assertNotIn(b"DO_NOT_PRINT_THIS_VALUE", GATE.canonical(report))
-+        self.assertNotIn(MARKER.encode(), GATE.canonical(report))
+-- **Security issues**: yves@pounce.ch
++- **Security issues**: hello@thinkery.ch
+ - **General questions**: [GitHub Discussions](https://github.com/yvgude/lean-ctx/discussions)
+ - **Discord**: [Join our server](https://discord.gg/pTHkG9Hew9)
  
-     def test_current_and_delta_private_path_fail_closed(self):
-         (self.repo / "private").mkdir()
-@@ -151,7 +162,7 @@ def test_present_non_ancestor_baseline_is_accepted(self):
+ ---
  
-     def test_pr_base_current_findings_are_inherited(self):
-         self.git("checkout", "-b", "main")
--        (self.repo / "leak.txt").write_text("sk_" + "live_BASE_EXAMPLE\n")
-+        (self.repo / "leak.txt").write_text(fake_stripe("BASE") + "\n")
-         self.commit("base branch fixture")
-         self.git("update-ref", "refs/remotes/origin/main", "main")
-         self.git("checkout", "-b", "feature")
-@@ -257,12 +268,12 @@ def _rebaseline_current_tree(self):
-     def test_edit_baselined_secret_path_still_passes(self):
-         """Content churn on a path already known at baseline must not fail the gate."""
-         (self.repo / "docs").mkdir(exist_ok=True)
--        (self.repo / "docs/readme.md").write_text("token = sk_" + "live_BASELINE_EXAMPLE\n")
-+        (self.repo / "docs/readme.md").write_text("token = " + fake_stripe("BASELINE") + "\n")
-         self.commit("baseline secret example")
-         self._rebaseline_current_tree()
-         # Edit same file (new blob) while keeping a matching pattern.
-         (self.repo / "docs/readme.md").write_text(
--            "# note\ntoken = sk_" + "live_BASELINE_EXAMPLE\nmore\n"
-+            "# note\ntoken = " + fake_stripe("BASELINE") + "\nmore\n"
-         )
-         self.commit("docs edit keeping secret-like example")
-         report = GATE.gate(self.repo, self.policy())
-@@ -271,14 +282,144 @@ def test_edit_baselined_secret_path_still_passes(self):
-     def test_remove_baselined_secret_passes(self):
-         """Removing a baselined secret-like example must not fail via delta pickaxe."""
-         (self.repo / "docs").mkdir(exist_ok=True)
--        (self.repo / "docs/readme.md").write_text("token = sk_" + "live_BASELINE_EXAMPLE\n")
-+        (self.repo / "docs/readme.md").write_text("token = " + fake_stripe("BASELINE") + "\n")
-         self.commit("baseline secret example")
-         self._rebaseline_current_tree()
-         (self.repo / "docs/readme.md").write_text("token = <redacted>\n")
-         self.commit("remove secret-like example")
-         report = GATE.g
-```
-
----
-
-### Incident Patch 3: `c9c3b8fb` (2026-10-18)
-**Commit Message**: fix(ledger,memory): record the model in use; keep activity out of memory
-
-Savings ledger: entries from LeanCTX tools recorded the pricing table's key,
-not the model the agent ran. The MCP process never loaded the live price
-list, so a current model the built-in table does not know fell to its family
-heuristic: every claude-opus-5-5 reduction was booked as claude-opus-4.5 at
-$5/M instead of $4/M (~25 % too much value), and Codex sessions were valued
-at the proxy's Claude model although Codex never passes the proxy.
-
-The model is now resolved per process, after initialize: LEAN_CTX_MODEL,
-then [cost.models] for the client or [cost] default_model, then Codex's own
-configured model (profile overlay first), then the model the proxy measured
-most. The price comes from the proxy's on-disk price list (no network), else
-the built-in table; an estimated price keeps the real model name.
-
-Memory: every ctx_read left a session finding ("Read task_control.rs
-(438L)") that the session-save path stored as an auto:blocker fact, and that
-path never ran the lifecycle, so a store grew to 638 records against a
-budget of 200 (441 of them read records). Plain read/search/graph records
-stay session activi
-
-**File**: `rust/src/core/auto_findings.rs` (modified, +67/-0)
-```diff
-@@ -16,6 +16,30 @@ static RECENT: Mutex<Vec<RecentEntry>> = Mutex::new(Vec::new());
- const DEDUP_WINDOW_SECS: u64 = 60;
- const MAX_SUMMARY_LEN: usize = 120;
- 
-+/// Whether a finding only records what the agent itself did — a read, a search,
-+/// a graph lookup, in exactly the wording [`extract`] produces. Such records serve
-+/// the running session (briefing, recap, handoff); they are activity, not
-+/// knowledge, so they never become durable facts. Failures, test and build
-+/// results stay findings. Matching the producer's own formats also catches the
-+/// records older sessions still carry.
-+pub(crate) fn is_activity_record(summary: &str) -> bool {
-+    if let Some(rest) = summary.strip_prefix("Read ") {
-+        let head = rest.split_once(" — ").map_or(rest, |(head, _)| head);
-+        let (path, tail) = head
-+            .split_once(' ')
-+            .map_or((head, None), |(p, t)| (p, Some(t)));
-+        let line_count = |tail: &str| {
-+            tail.strip_prefix('(')
-+                .and_then(|t| t.strip_suffix("L)"))
-+                .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()))
-+        };
-+        return looks_like_path(path) && tail.is_none_or(line_count);
-+    }
-+    (summary.starts_with("Found `") && summary.contains("` in ") && summary.contains(" files"))
-+        || summary.starts_with("Semantic search `")
-+        || summary.starts_with("Files related to ")
-+}
-+
- /// Extract a finding from a tool call result. Returns `None` if the output
- /// is not interesting or if a duplicate was emitted within the dedup window.
- ///
-@@ -596,6 +620,49 @@ mod tests {
-     use super::*;
-     use serial_test::serial;
- 
-+    #[test]
-+    fn activity_records_are_exactly_what_the_producer_writes() {
-+        let activity = [
-+            extract_ctx_read("src/server/mod.rs 1400L\n   deps: tokio, serde\n", None),
-+            extract_ctx_read(
-+                "src/lib.rs [45L, full mode, 320 tok]\npub fn main() {}",
-+                None,
-+            ),
-+            extract_ctx_read(
-+                "rust/src/core/very/deeply/nested/module/task_control.rs 438L\n\n",
-+                None,
-+            ),
-+            extract_ctx_search(
-+                "pattern: \"pub fn extract\"\nsrc/a.rs:19: pub fn extract\n[1 matches in 1 files]",
-+            ),
-+            extract_ctx_graph("Files related to mod.rs (15):"),
-+        ];
-+        for finding in activity {
-+            let summary = finding.expect("producer output").summary;
-+            assert!(is_activity_record(&summary), "activity: {summary}");
-+        }
-+        let knowledge = [
-+            extract_ctx_shell("exit: 1\n$ cargo clippy\nerror[E0425]: cannot find value `x`"),
-+            extract_ctx_shell(
-+                "exit: 0\n$ cargo test --lib\nrunning 2 tests\ntest result: ok. 2 passed; 0 failed;",
-+            ),
-+        ];
-+        for finding in knowledge {
-+            let summary = finding.expect("producer output").summary;
-+            assert!(!is_activity_record(&summary), "knowledge: {summary}");
-+        }
-+        for written in [
-+            "Read the docs and found the retry bug",
-+            "Read src/a.rs: the lock is taken twice",
-+            "Blocker: cannot connect to the registry",
-+        ] {
-+            assert!(
-+                !is_activity_record(written),
-+                "a person's finding stays: {written}"
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn ctx_read_extracts_path_and_content() {
-         let output = "src/server/mod.rs 1400L\n   deps: tokio, serde\n\npub struct Server {";
-```
-
-**File**: `rust/src/core/consolidation_engine.rs` (modified, +4/-0)
-```diff
-@@ -210,6 +210,9 @@ pub fn import_session_into(
-         if opts.finding_budget.is_some_and(|n| finding_count >= n) {
-             break;
-         }
-+        if crate::core::auto_findings::is_activity_record(f.summary.trim()) {
-+            continue;
-+        }
-         if let Some(floor) = opts.finding_salience_floor
-             && crate::core::memory_salience::text_salience(&f.summary) < floor
-         {
-@@ -231,6 +234,7 @@ pub fn import_session_into(
-         for fact in extract_session_facts(session) {
-             knowledge.add_fact(fact);
-         }
-+        knowledge.enforce_capacity(policy);
-     }
- 
-     ImportCounts {
-```
-
-**File**: `rust/src/core/knowledge/core.rs` (modified, +14/-9)
-```diff
-@@ -22,6 +22,19 @@ pub(super) fn admit_fact_fields<const N: usize>(fields: [&str; N]) -> Option<[St
- }
- 
- impl ProjectKnowledge {
-+    /// Runs the lifecycle as soon as the store exceeds its budget. `run_lifecycle`
-+    /// sorts by importance and drains the excess back down to `max_facts`
-+    /// (archiving it), so the store settles at <= max_facts. Every ingestion path
-+    /// calls it — `remember` per fact, batch paths of pre-built facts once after
-+    /// the batch: the session-save path that skipped it let a store grow to 638
-+    /// records against a budget of 200. The earlier `* 2` guard let stores sit at
-+    /// 103% (206/200) with no reclamation.
-+    pub fn enforce_capacity(&mut self, policy: &MemoryPolicy) {
-+        if self.facts.len() > policy.knowledge.max_facts {
-+            let _ = self.run_memory_lifecycle(policy);
-+        }
-+    }
-+
-     pub fn run_memory_lifecycle(
-         &mut self,
-         policy: &MemoryPolicy,
-@@ -276,15 +289,7 @@ impl ProjectKnowledge {
-             });
-         }
- 
--        // Run the lifecycle as soon as we exceed the configured budget.
--        // `run_lifecycle` sorts by importance and drains the excess back down to
--        // `max_facts` (archiving it), so this is self-limiting: the store settles
--        // at <= max_facts. The previous `* 2` guard let a project's facts grow to
--        // twice the cap before any eviction fired, which is why stores were
--        // observed sitting at 103% (206/200) with no reclamation.
--        if self.facts.len() > policy.knowledge.max_facts {
--            let _ = self.run_memory_lifecycle(policy);
--        }
-+        self.enforce_capacity(policy);
- 
-         self.updated_at = Utc::now();
-         self.rebuild_index();
-```
-
-**File**: `rust/src/core/knowledge/mod.rs` (modified, +39/-0)
-```diff
-@@ -359,6 +359,45 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn batches_of_prebuilt_facts_settle_at_the_cap() {
-+        let _iso = crate::core::data_dir::isolated_data_dir();
-+        let root = tempfile::tempdir().unwrap();
-+        // Regression: the session-save path adds pre-built facts with add_fact()
-+        // and never ran the lifecycle, so a store grew to 638 records against a
-+        // budget of 200. enforce_capacity() after the batch settles it.
-+        let mut source_policy = default_policy();
-+        source_policy.knowledge.max_facts = 1000;
-+        let mut source = ProjectKnowledge::new("/tmp/test-batch-source");
-+        for i in 0..40 {
-+            source.remember(
-+                "finding",
-+                &format!("key-{i}"),
-+                &format!("value number {i}"),
-+                "s1",
-+                0.7,
-+                &source_policy,
-+            );
-+        }
-+        let mut policy = default_policy();
-+        policy.knowledge.max_facts = 5;
-+        let mut k = ProjectKnowledge::new(root.path().to_str().unwrap());
-+        for fact in source.facts.clone() {
-+            k.add_fact(fact);
-+        }
-+        assert!(
-+            k.facts.len() > policy.knowledge.max_facts,
-+            "add_fact alone never evicts"
-+        );
-+        k.enforce_capacity(&policy);
-+        assert!(
-+            k.facts.len() <= policy.knowledge.max_facts,
-+            "expected <= {} facts after the batch, got {}",
-+            policy.knowledge.max_facts,
-+            k.facts.len()
-+        );
-+    }
-+
-     #[test]
-     fn import_facts_evict_down_to_cap_not_double() {
-         let _iso = crate::core::data_dir::isolated_data_dir();
-```
-
-**File**: `rust/src/core/savings_ledger/mod.rs` (modified, +158/-11)
-```diff
-@@ -49,25 +49,88 @@ fn enabled_from(value: Option<&str>) -> bool {
-     }
- }
- 
--/// Resolved (model_key, input_price_per_m) for this process. The active model is stable
--/// within a process, so we resolve the pricing table once.
-+/// Resolved (model_id, input_price_per_m) for this process. The active model is stable
-+/// within a process, so it is resolved once, at the first event: by then `initialize`
-+/// has named the MCP client (see [`agent_id`]).
- fn model_and_price() -> &'static (String, f64) {
-     static CACHE: OnceLock<(String, f64)> = OnceLock::new();
-     CACHE.get_or_init(|| {
--        let resolved = std::env::var("LEAN_CTX_MODEL")
-+        let agent = agent_id();
-+        let client = agent.split(':').next().unwrap_or_default();
-+        let explicit = std::env::var("LEAN_CTX_MODEL")
-             .or_else(|_| std::env::var("LCTX_MODEL"))
--            .ok()
--            .filter(|s| !s.trim().is_empty())
--            // No explicit model → value savings against the real model the proxy
--            // measured most, instead of the blended fallback (cross-process hint
--            // from `proxy_usage.json`). Falls back to blended when absent.
--            .or_else(crate::proxy::usage_meter::persisted_dominant_model);
-+            .ok();
-+        let configured = crate::core::config::Config::load()
-+            .cost
-+            .model_for_client(client);
-+        let resolved = resolve_ledger_model(
-+            explicit,
-+            configured,
-+            client.starts_with("codex"),
-+            codex_configured_model,
-+            crate::proxy::usage_meter::persisted_dominant_model,
-+        );
-+        // Disk cache only, no network: the price list the proxy keeps current.
-+        crate::core::gain::live_pricing::ensure_loaded();
-         let quote =
-             crate::core::gain::model_pricing::ModelPricing::load().quote(resolved.as_deref());
--        (quote.model_key, quote.cost.input_per_m)
-+        (
-+            recorded_model(resolved.as_deref(), &quote),
-+            quote.cost.input_per_m,
-+        )
-     })
- }
- 
-+/// The model this process's agent actually runs, first available wins:
-+/// 1. `LEAN_CTX_MODEL` / `LCTX_MODEL`
-+/// 2. `[cost.models]` for the client, then `[cost] default_model`
-+/// 3. Codex: the `model` of its own configuration (Codex bypasses the proxy)
-+/// 4. the model the LeanCTX proxy measured most (Claude Code and other proxied hosts)
-+fn resolve_ledger_model(
-+    explicit: Option<String>,
-+    configured: Option<String>,
-+    codex: bool,
-+    codex_model: impl FnOnce() -> Option<String>,
-+    proxy_model: impl FnOnce() -> Option<String>,
-+) -> Option<String> {
-+    let given = |value: Option<String>| {
-+        value
-+            .map(|model| model.trim().to_string())
-+            .filter(|model| !model.is_empty())
-+    };
-+    given(explicit)
-+        .or_else(|| given(configured))
-+        .or_else(|| if codex { given(codex_model()) } else { None })
-+        .or_else(|| given(proxy_model()))
-+}
-+
-+/// The `model` Codex runs with: its active profile overlay first, then the base config.
-+fn codex_configured_model() -> Option<String> {
-+    let paths = crate::core::home::resolve_codex_config_paths()?;
-+    let model_in = |path: &std::path::Path| -> Option<String> {
-+        let doc: toml::Value = toml::from_str(&std::fs::read_to_string(path).ok()?).ok()?;
-+        doc.get("model")?.as_str().map(str::to_string)
-+    };
-+    paths
-+        .profile()
-+        .and_then(model_in)
-+        .or_else(|| model_in(paths.base()))
-+}
-+
-+/// The model name an event records. An exact or live price names its model; an
-+/// estimated price keeps the real model name rather than the stand-in it was priced
-+/// by (`claude-opus-5-5`, never `claude-opus-4.5`). Without any known model the
-+/// blended fallback says exactly that.
-+fn recorded_model(
-+    resolved: Option<&str>,
-+    quote: &crate::core::gain::model_pricing::ModelQuote,
-+) -> String {
-+    match resolved.map(str::trim).filter(|model| !model.is_empty()) {
-+        Some(model) if quote.match_kind.is_estimated() => model.to_lowercase(),
-+        _ => quote.model_key.clone(),
-+    }
-+}
-+
- /// Privacy-preserving repo attribution: truncated SHA-256 of the process working
- /// directory. Never the file path or contents. Process-scoped (cached once).
- fn repo_hash() -> &'static str {
-@@ -345,7 +408,7 @@ pub fn record_caching_event(model: &str, cache_read_tokens: u64, discount_usd: f
-             .to_string(),
-     );
-     let quote = crate::core::gain::model_pricing::ModelPricing::load().quote(Some(model));
--    event.model_id = quote.model_key;
-+    event.model_id = recorded_model(Some(model), &quote);
-     event.unit_price_per_m_usd = quote.cost.input_per_m;
-     event.baseline_tokens = cache_read_tokens;
-     event.actual_tokens = cache_read_tokens;
-@@ -436,6 +499,90 @@ mod tests {
-         assert!(!enabled_from(Some(" No ")), "trim + case-insensitive");
-     }
- 
-+    fn some(model: &str) -> Option<String> {
-+     
-```
-
-**File**: `rust/src/core/session/persistence.rs` (modified, +3/-0)
-```diff
-@@ -362,6 +362,9 @@ fn persist_session_facts(session: &SessionState) -> Result<(), String> {
-     for fact in facts {
-         knowledge.add_fact(fact);
-     }
-+    if let Ok(policy) = crate::core::config::Config::load().memory_policy_effective() {
-+        knowledge.enforce_capacity(&policy);
-+    }
-     knowledge.save()
- }
- 
-```
-
-**File**: `rust/src/core/session/state.rs` (modified, +1/-1)
-```diff
-@@ -116,7 +116,7 @@ pub(crate) fn extract_session_facts(
- 
-     facts.extend(session.findings.iter().filter_map(|finding| {
-         let summary = finding.summary.trim();
--        if summary.is_empty() {
-+        if summary.is_empty() || crate::core::auto_findings::is_activity_record(summary) {
-             return None;
-         }
-         let normalized = summary.to_ascii_lowercase();
+-**Last updated**: 2026-10-02
++**Last updated**: 2026-10-19
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2121** (2026-10-19): Align public messaging with Context Gateway (@yvgude)
 - **PR #2118** (2026-10-18): fix(windows): give each artifact capability probe its own name (@yvgude)
 - **PR #2117** (2026-10-18): fix(deps): patch rustls and katex advisories in clients and cookbook (@yvgude)
 - **PR #2116** (2026-10-18): fix(solution): merge tracker counts across concurrent MCP servers (@yvgude)
 - **PR #2115** (closed): fix(solution): reload tracker from disk before each write (@Shaderzx)
 - **PR #2114** (2026-10-18): test(knowledge): fill the capacity regression store through remember() (@yvgude)
-- **PR #2113** (2026-10-18): fix(ledger,memory): record the model in use, keep activity out of memory, keep team notices (@yvgude)
 
 ---
 
@@ -2842,22 +1885,42 @@ stay session activi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. opencode): explain an unbound session; rules name only offered tools
+## X. Align public messaging with Context Gateway (#2121)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/DISCUSSION_WELCOME.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01d06654`: opencode): explain an unbound session; rules name only offered tools. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fba4a0e`: Align public messaging with Context Gateway (#2121). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/DISCUSSION_WELCOME.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Agents outside a project are told what is missing (OpenCode).** When a host starts lean-ctx outside a project (OpenCode launched from the home directory) and reports no project directory, a search or tree without `path` said only "active project root is required", and a relative read failed as "file not found: ~/src/main.rs". Both now say that the session has no project yet and to pass the absolute project path, after which that project stays bound. OpenCode installations hit this four times as often per installation as Claude Code.
-- **Rules name only the tools the session is offered.** With no profile pinned, the injected rules and MCP instructions were written for the full tool set, while `tools/list` offers the lean core (OpenCode, Cursor and other clients: 11 tools). They named `ctx_knowledge` and, for native-editor clients, `ctx_patch` as if callable, and agents called tools their list did not contain. Guidance now describes the lean core and points to `ctx_call` for the rest; the skill shows non-core tools in their `ctx_call` form. A pinned profile keeps its full set.
+# Welcome to LeanCTX — the Context Gateway for AI Systems
+
+**Control what your AI can see.**
+
+LeanCTX helps existing AI tools select task-relevant context, apply supported
+controls, retain local knowledge and inspect the evidence their integration can
+observe. Your application, agent loop and model remain yours.
+
+- **Select:** find the relevant sources and choose the useful level of detail.
+- **Control:** apply configured path permissions, content filters and budgets.
+- **Learn:** keep local task, finding and decision records and connect code and
+  knowledge across sessions. This does not train your model.
+- **Prove:** inspect recorded context operations with `lean-ctx inspect`. A
+  context-only integration records preparation; the host owns its later model call.
+
+Start with the [setup guide](https://leanctx.com/docs/getting-started),
+[what LeanCTX does](https://github.com/yvgude/lean-ctx/blob/main/docs/what-is-leanctx.md)
+and the [tool reference](https://leanctx.com/docs/tools/).
+
+Use Discussions for setup questions, scoped proposals and field reports. Include
+the Engine version, host, integration path and a reproducible example when useful.
+If reporting a measured result, disting
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2867,4 +1930,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01d06654` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fba4a0e` are properly handled with clean fallback behavior.

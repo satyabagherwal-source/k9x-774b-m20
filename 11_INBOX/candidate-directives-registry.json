@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T19:36:30.806Z",
+  "last_updated": "2026-10-19T20:28:51.118Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1916,6 +1916,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-realm-realm-kotlin"
+    },
+    {
+      "id": "CD-IZAM",
+      "directive_title": "Add CHANGELOG.md; fix stale AI-briefing docs in README",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "jafforgehq/site-analytics-tool",
+      "source_commit": "1788648c",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-jafforgehq-site-analytics-tool"
     }
   ]
 }

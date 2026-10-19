@@ -3478,3 +3478,8 @@ Every entry in this ledger must capture:
 | `learn-github-gatenlp-ultimate-sitemap-parser` | `https://github.com/GateNLP/ultimate-sitemap-parser` | `6ab7704f` | Multi-dimensional audit evidence | 2026-10-19T20:22:50.463Z |
 | `learn-github-kevinnzou-compose-webview-multiplatform` | `https://github.com/KevinnZou/compose-webview-multiplatform` | `68e76907` | Multi-dimensional audit evidence | 2026-10-19T20:22:51.462Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d64e478e` | Multi-dimensional audit evidence | 2026-10-19T20:22:58.579Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `1fba4a0e` | Multi-dimensional audit evidence | 2026-10-19T20:28:48.739Z |
+| `learn-github-jafforgehq-site-analytics-tool` | `https://github.com/jafforgehq/site-analytics-tool` | `1788648c` | Multi-dimensional audit evidence | 2026-10-19T20:28:51.115Z |
+| `learn-github-aakira-napier` | `https://github.com/AAkira/Napier` | `50835e2e` | Multi-dimensional audit evidence | 2026-10-19T20:28:53.960Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `7cba11fd` | Multi-dimensional audit evidence | 2026-10-19T20:28:56.341Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `08e1aba1` | Multi-dimensional audit evidence | 2026-10-19T20:29:00.474Z |
