@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "28cc4142b3c37b87a49617616b40d72433dd442d18a65f6335f6fffe6c7e78bd",
-    "lastHarvestedAt": "2026-10-17T22:29:20.967Z",
+    "contentHash": "c085fa80b263778ee8733a5d2499cde9f005f666f6437ecfcce25b4fca16f693",
+    "lastHarvestedAt": "2026-10-19T03:07:40.430Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -5128,5 +5128,55 @@
     "contentHash": "d919aecb72c3fc8f054fc499a6b5e320d0079229ac74d1177d788b139b135869",
     "lastHarvestedAt": "2026-10-19T03:01:34.276Z",
     "learningId": "learn-github-apache-zookeeper"
+  },
+  "primer-react": {
+    "repository": "primer/react",
+    "platform": "github",
+    "sourceUrl": "https://github.com/primer/react",
+    "sourceVersion": "7f96c0d5",
+    "license": "MIT",
+    "contentHash": "4da84ec550af2d1b426ac593931b519e8791e693ffecfb1d49c45db5c2681ddd",
+    "lastHarvestedAt": "2026-10-19T03:07:40.606Z",
+    "learningId": "learn-github-primer-react"
+  },
+  "smol-rs-smol": {
+    "repository": "smol-rs/smol",
+    "platform": "github",
+    "sourceUrl": "https://github.com/smol-rs/smol",
+    "sourceVersion": "4892eb0d",
+    "license": "Apache-2.0",
+    "contentHash": "6840503ada1417ca224c2953e63d934031d703b6e80d1c8666582583e75ed7ed",
+    "lastHarvestedAt": "2026-10-19T03:07:41.701Z",
+    "learningId": "learn-github-smol-rs-smol"
+  },
+  "ptomasroos-react-native-scrollable-tab-view": {
+    "repository": "ptomasroos/react-native-scrollable-tab-view",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
+    "sourceVersion": "583a66f7",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "c75fea1f349ba145abbf449e499da95dc062a98968bcc39ed29067b82902225c",
+    "lastHarvestedAt": "2026-10-19T03:07:47.137Z",
+    "learningId": "learn-github-ptomasroos-react-native-scrollable-tab-view"
+  },
+  "gocd-gocd": {
+    "repository": "gocd/gocd",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gocd/gocd",
+    "sourceVersion": "9d623e5e",
+    "license": "Apache-2.0",
+    "contentHash": "cf0ba426d88d8cdabe25f9e3940f75ab518ad33332ed3a20cafe4c436a95b82f",
+    "lastHarvestedAt": "2026-10-19T03:07:49.879Z",
+    "learningId": "learn-github-gocd-gocd"
+  },
+  "citusdata-citus": {
+    "repository": "citusdata/citus",
+    "platform": "github",
+    "sourceUrl": "https://github.com/citusdata/citus",
+    "sourceVersion": "84489d85",
+    "license": "AGPL-3.0",
+    "contentHash": "1fd1048d5f9577e098cf480f84342efc21c2a8537d147752081b4ef70ed02290",
+    "lastHarvestedAt": "2026-10-19T03:07:54.590Z",
+    "learningId": "learn-github-citusdata-citus"
   }
 }

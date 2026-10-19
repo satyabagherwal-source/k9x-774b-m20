@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:01:38.600Z",
-  "total_verified_learnings": 534,
+  "last_updated": "2026-10-19T03:07:54.547Z",
+  "total_verified_learnings": 539,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4328,22 +4328,35 @@
     "learn-github-citusdata-citus": {
       "learning_id": "learn-github-citusdata-citus",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "citusdata-citus",
+      "source": "citusdata/citus",
+      "repository": "citusdata/citus",
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "HEAD",
-      "content_hash": "25da4cd196383ff6163a5ff2564cdd744bb02f66fa2ff464317f83d9bf741f00",
+      "source_version": "84489d85",
+      "content_hash": "1fd1048d5f9577e098cf480f84342efc21c2a8537d147752081b4ef70ed02290",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2057,
+          "title": "transaction recovery after node removal (#8885)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.312Z"
+      "verified_at": "2026-10-19T03:07:54.538Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-clastix-kamaji": {
       "learning_id": "learn-github-clastix-kamaji",
@@ -9150,22 +9163,35 @@
     "learn-github-gocd-gocd": {
       "learning_id": "learn-github-gocd-gocd",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gocd-gocd",
+      "source": "gocd/gocd",
+      "repository": "gocd/gocd",
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "HEAD",
-      "content_hash": "189fb5d79a646f22c81cbd7702f05c5735e6789dec3e027c8990b09b850aa499",
+      "source_version": "9d623e5e",
+      "content_hash": "cf0ba426d88d8cdabe25f9e3940f75ab518ad33332ed3a20cafe4c436a95b82f",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2056,
+          "title": "build(deps): bump ldap plugin to version with CVE-patched LDAP API",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.111Z"
+      "verified_at": "2026-10-19T03:07:49.830Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gocrane-crane": {
       "learning_id": "learn-github-gocrane-crane",
@@ -19157,7 +19183,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "28cc4142b3c37b87a49617616b40d72433dd442d18a65f6335f6fffe6c7e78bd",
+      "content_hash": "c085fa80b263778ee8733a5d2499cde9f005f666f6437ecfcce25b4fca16f693",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -19187,7 +19213,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-10-17T22:29:20.936Z",
+      "verified_at": "2026-10-19T03:07:40.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31202,22 +31228,35 @@
     "learn-github-primer-react": {
       "learning_id": "learn-github-primer-react",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "primer-react",
+      "source": "primer/react",
+      "repository": "primer/react",
       "slug": "primer-react",
       "platform": "github",
       "source_url": "https://github.com/primer/react",
-      "source_version": "HEAD",
-      "content_hash": "1cb329cacd610bb0e71df4c1fd81bb6bde2b74256410a8dd2e0730f18fe7ce0f",
+      "source_version": "7f96c0d5",
+      "content_hash": "4da84ec550af2d1b426ac593931b519e8791e693ffecfb1d49c45db5c2681ddd",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2053,
+          "title": "FormControl): prevent duplicate input rendering in horizontal layout (#8508)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.102Z"
+      "verified_at": "2026-10-19T03:07:40.557Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-productdevbook-port-killer": {
       "learning_id": "learn-github-productdevbook-port-killer",
@@ -31355,22 +31394,35 @@
     "learn-github-ptomasroos-react-native-scrollable-tab-view": {
       "learning_id": "learn-github-ptomasroos-react-native-scrollable-tab-view",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ptomasroos-react-native-scrollable-tab-view",
+      "source": "ptomasroos/react-native-scrollable-tab-view",
+      "repository": "ptomasroos/react-native-scrollable-tab-view",
       "slug": "ptomasroos-react-native-scrollable-tab-view",
       "platform": "github",
       "source_url": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
-      "source_version": "HEAD",
-      "content_hash": "772b426c9411153edec389f663a5036b80d8ad294f91893c51754932916e2ebc",
+      "source_version": "583a66f7",
+      "content_hash": "c75fea1f349ba145abbf449e499da95dc062a98968bcc39ed29067b82902225c",
       "dossier_path": "07_PROJECT_LEARNING/ptomasroos-react-native-scrollable-tab-view-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ptomasroos-react-native-scrollable-tab-view-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2055,
+          "title": "[fixed: changed default tabbar tabUnderlineStyle prop to tabBarUnderlineStyle] (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.123Z"
+      "verified_at": "2026-10-19T03:07:47.078Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pubkey-rxdb": {
       "learning_id": "learn-github-pubkey-rxdb",
@@ -34471,22 +34523,35 @@
     "learn-github-smol-rs-smol": {
       "learning_id": "learn-github-smol-rs-smol",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "smol-rs-smol",
+      "source": "smol-rs/smol",
+      "repository": "smol-rs/smol",
       "slug": "smol-rs-smol",
       "platform": "github",
       "source_url": "https://github.com/smol-rs/smol",
-      "source_version": "HEAD",
-      "content_hash": "44cc52bdd76dea8fb5734cf0a451049f570323853d2fc84f522511708fac3ffe",
+      "source_version": "4892eb0d",
+      "content_hash": "6840503ada1417ca224c2953e63d934031d703b6e80d1c8666582583e75ed7ed",
       "dossier_path": "07_PROJECT_LEARNING/smol-rs-smol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smol-rs-smol-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2054,
+          "title": "ci: Use reusable workflows for fmt and security_audit",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.601Z"
+      "verified_at": "2026-10-19T03:07:41.635Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-smythos-sre": {
       "learning_id": "learn-github-smythos-sre",
@@ -74837,6 +74902,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:01:38.587Z"
+    },
+    "rule-2053": {
+      "learning_id": "rule-2053",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2053,
+      "title": "FormControl): prevent duplicate input rendering in horizontal layout (#8508)",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "7f96c0d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:07:40.557Z"
+    },
+    "rule-2054": {
+      "learning_id": "rule-2054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2054,
+      "title": "ci: Use reusable workflows for fmt and security_audit",
+      "source_url": "https://github.com/smol-rs/smol",
+      "source_version": "4892eb0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:07:41.635Z"
+    },
+    "rule-2055": {
+      "learning_id": "rule-2055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2055,
+      "title": "[fixed: changed default tabbar tabUnderlineStyle prop to tabBarUnderlineStyle] (",
+      "source_url": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
+      "source_version": "583a66f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:07:47.078Z"
+    },
+    "rule-2056": {
+      "learning_id": "rule-2056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2056,
+      "title": "build(deps): bump ldap plugin to version with CVE-patched LDAP API",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "9d623e5e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:07:49.830Z"
+    },
+    "rule-2057": {
+      "learning_id": "rule-2057",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2057,
+      "title": "transaction recovery after node removal (#8885)",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "84489d85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:07:54.538Z"
     }
   },
   "aliases": {

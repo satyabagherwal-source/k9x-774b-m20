@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T03:01:38.656Z",
+  "last_updated": "2026-10-19T03:07:54.596Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -363,14 +363,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "28cc4142b3c37b87a49617616b40d72433dd442d18a65f6335f6fffe6c7e78bd",
-      "verified_at": "2026-10-17T22:29:20.969Z",
+      "content_hash": "c085fa80b263778ee8733a5d2499cde9f005f666f6437ecfcce25b4fca16f693",
+      "verified_at": "2026-10-19T03:07:40.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:29:20.969Z"
+      "last_updated": "2026-10-19T03:07:40.436Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7807,6 +7807,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T03:01:34.281Z"
+    },
+    "primer/react": {
+      "repository": "primer/react",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-primer-react",
+      "content_hash": "4da84ec550af2d1b426ac593931b519e8791e693ffecfb1d49c45db5c2681ddd",
+      "verified_at": "2026-10-19T03:07:40.611Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:07:40.611Z"
+    },
+    "smol-rs/smol": {
+      "repository": "smol-rs/smol",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-smol-rs-smol",
+      "content_hash": "6840503ada1417ca224c2953e63d934031d703b6e80d1c8666582583e75ed7ed",
+      "verified_at": "2026-10-19T03:07:41.706Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:07:41.706Z"
+    },
+    "ptomasroos/react-native-scrollable-tab-view": {
+      "repository": "ptomasroos/react-native-scrollable-tab-view",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ptomasroos-react-native-scrollable-tab-view",
+      "content_hash": "c75fea1f349ba145abbf449e499da95dc062a98968bcc39ed29067b82902225c",
+      "verified_at": "2026-10-19T03:07:47.141Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:07:47.141Z"
+    },
+    "gocd/gocd": {
+      "repository": "gocd/gocd",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gocd-gocd",
+      "content_hash": "cf0ba426d88d8cdabe25f9e3940f75ab518ad33332ed3a20cafe4c436a95b82f",
+      "verified_at": "2026-10-19T03:07:49.884Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:07:49.884Z"
+    },
+    "citusdata/citus": {
+      "repository": "citusdata/citus",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-citusdata-citus",
+      "content_hash": "1fd1048d5f9577e098cf480f84342efc21c2a8537d147752081b4ef70ed02290",
+      "verified_at": "2026-10-19T03:07:54.595Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:07:54.595Z"
     }
   },
   "repos": {

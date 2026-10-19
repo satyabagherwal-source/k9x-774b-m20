@@ -2832,3 +2832,9 @@ Every entry in this ledger must capture:
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `7a6782e3` | Multi-dimensional audit evidence | 2026-10-19T03:01:29.715Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `48f7cb00` | Multi-dimensional audit evidence | 2026-10-19T03:01:34.276Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `02ebdf27` | Multi-dimensional audit evidence | 2026-10-19T03:01:38.650Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T03:07:40.430Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `7f96c0d5` | Multi-dimensional audit evidence | 2026-10-19T03:07:40.606Z |
+| `learn-github-smol-rs-smol` | `https://github.com/smol-rs/smol` | `4892eb0d` | Multi-dimensional audit evidence | 2026-10-19T03:07:41.701Z |
+| `learn-github-ptomasroos-react-native-scrollable-tab-view` | `https://github.com/ptomasroos/react-native-scrollable-tab-view` | `583a66f7` | Multi-dimensional audit evidence | 2026-10-19T03:07:47.137Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `9d623e5e` | Multi-dimensional audit evidence | 2026-10-19T03:07:49.879Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `84489d85` | Multi-dimensional audit evidence | 2026-10-19T03:07:54.590Z |
