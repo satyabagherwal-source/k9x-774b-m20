@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-98QE",
-    "timestamp": "2026-10-19T05:25:29.078Z",
-    "repository": "golutra/golutra",
-    "learningId": "learn-github-golutra-golutra",
-    "contentHash": "23e303a1560d09a0e9a16956adb2b2bef2d517d1ba3b6531ea40694c994d372f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9BLF",
-    "timestamp": "2026-10-19T05:25:32.787Z",
-    "repository": "gitpoint/git-point",
-    "learningId": "learn-github-gitpoint-git-point",
-    "contentHash": "68aa32a545a6556aeb80850252807a462a3c32e871618d0bf180a52083d02d89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9CO9",
-    "timestamp": "2026-10-19T05:25:34.185Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "362e0802e85915e31d65213f9cffb448d82ed8fc644d46e49a40b74960370f26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-9D3T",
     "timestamp": "2026-10-19T05:25:34.745Z",
     "repository": "linkerd/linkerd2",
@@ -7490,6 +7445,51 @@
     "repository": "icerockdev/moko-mvvm",
     "learningId": "learn-github-icerockdev-moko-mvvm",
     "contentHash": "1d1b4071a95bd751b883fa2756bcc3f65005fc3693ed0a654d9626ad659a5d79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5AF6",
+    "timestamp": "2026-10-19T19:50:12.738Z",
+    "repository": "giuucmp/seoaudit",
+    "learningId": "learn-github-giuucmp-seoaudit",
+    "contentHash": "32569ac7dfc9b36674c99ff9427c42b5b93d6c15f6e3b88305d3e820b045758a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5BHN",
+    "timestamp": "2026-10-19T19:50:14.123Z",
+    "repository": "mikepenz/multiplatform-markdown-renderer",
+    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+    "contentHash": "d3bca0526017b5f97432fad399e0eab9606ddb00efd69db8ab4d8063f7300dbe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5DQR",
+    "timestamp": "2026-10-19T19:50:17.043Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "3c99a812eaa0ca2b44887bec8a5fbcacf42dd10947615572d7936cb5eaba345a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

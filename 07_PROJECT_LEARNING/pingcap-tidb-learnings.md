@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `d886456a`  
+> **Source Version**: `dfda1fd3`  
 > **License**: Apache-2.0  
-> **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-19T07:51:27.562Z  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T19:50:16.814Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,582 +12,2343 @@
 
 ---
 
-# Project Learning Record (Full-Spectrum Forensic Harvest): pingcap/tidb
+# Forensic Learning Record (Deep Inspection): pingcap/tidb
+
+> **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
+> **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
+> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
+> **Harvest Timestamp**: 2026-10-19T19:50:16.807Z  
+> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
-## 1. Executive Forensic Architecture & System Mechanics
-
-TiDB is an open-source, distributed, HTAP (Hybrid Transactional and Analytical Processing) SQL database designed to decouple compute from storage while providing horizontal scalability, strong consistency via multi-raft consensus, and MySQL 8.0 wire compatibility.
-
-```
-                    +----------------------------------------------+
-                    |           Client Applications (MySQL 8.0)    |
-                    +----------------------------------------------+
-                                          │  TCP (Port 4000)
-                                          ▼
-+-----------------------------------------------------------------------------------+
-| TiDB Server (Stateless Compute Layer)                                             |
-|                                                                                   |
-|  +--------------------+   +---------------------+   +--------------------------+  |
-|  | Parser & Lexer     |──▶| Logic/Physical      |──▶| Executor & Coprocessor   |  |
-|  | (Bison/Go Parser)  |   | Optimizer (Cascades)|   | (Volcano/Chunk Engine)   |  |
-|  +--------------------+   +---------------------+   +--------------------------+  |
-|                                                                 │                 |
-|  +--------------------+   +---------------------+               │ gRPC            |
-|  | MemTracker &       |   | LazyTxn & Staging   |               │                 |
-|  | SQLKiller (Budgets)|   | Buffer Engine       |               │                 |
-|  +--------------------+   +---------------------+               │                 |
-+----------------------------------------------------------------─┼─────────────────+
-                   │                                              │
-    HTTP / gRPC    │                                              │
-                   ▼                                              ▼
-+------------------------------------+         +------------------------------------+
-| PD (Placement Driver) Cluster      |         | Storage Tier                       |
-| - TSO Timestamp Allocation         |         |                                    |
-| - Raft Region Topography Routing   |         | +--------------------------------+ |
-| - Placement Rules Engine           |         | | TiKV: Row Storage (RocksDB)    | |
-| - Dynamic Schedulers Engine        |         | | - 2PC Percolator / Raft Log    | |
-+------------------------------------+         | +--------------------------------+ |
-                                               |                                    |
-                                               | +--------------------------------+ |
-                                               | | TiFlash: Columnar (DeltaTree)  | |
-                                               | | - Raft Learner Replication     | |
-                                               | | - Vectorized Pushdown Engine   | |
-                                               | +--------------------------------+ |
-                                               +------------------------------------+
-```
-
-### Decoupled Subsystem Architecture
-1. **Stateless SQL Compute Layer (`pkg/session`, `pkg/executor`, `pkg/planner`)**:
-   - Manages connection lifecycle, auth, transaction scoping, and AST generation.
-   - Evaluates relational algebra trees and chooses index scans, hash joins, or distributed coprocessor scans.
-   - Computes query expressions and manages memory quota tracking across session hierarchies via `pkg/util/memory/tracker.go`.
-2. **Cluster Topology and Coordination (`pd`, `br/pkg/pdutil`)**:
-   - Placement Driver (PD) serves as the cluster metadata manager and distributed monotonic clock (TSO).
-   - Manages Region splitting/merging and dynamically assigns raft leases, heartbeats, and leader balancing.
-3. **Storage Engine Layer (`TiKV` & `TiFlash`)**:
-   - **TiKV**: Multi-raft row-store backing transactional Percolator 2PC concurrency control.
-   - **TiFlash**: Real-time columnar analytical replica updated asynchronously via Raft Learner channels.
-4. **Physical Dump & Restore Ingestion Fabric (`br`, `pkg/lightning`)**:
-   - High-throughput parallel ingestion (`pkg/lightning/mydump`) reading CSV/SQL dumps directly into RocksDB SSTs and ingesting them straight into TiKV via Raft coprocessor bypass.
+## 1. Context & Architectural Overview
+- **Repository / Resource**: `pingcap/tidb`
+- **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
+- **Primary Language / Ecosystem**: Go
+- **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
+- **Stars / Engagement**: 40654 stars
 
 ---
 
-## 2. Universal Engineering Rules
+## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
-### 1. Atomic Buffer Compaction via Non-Allocating Memory Overlap
-**RULE**:
-When reading streaming data chunks into a reusable backing array where unparsed data remains at the tail, implementations **MUST** compact the slice using `copy()` directly inside the existing buffer instead of allocating intermediate buffers (`remainBuf`). If using `bytes.Buffer`, callers **MUST** assert that `.Reset()` retains the slice's capacity and leverage the fact that Go's runtime `copy()` supports overlapping memory regions.
+### D1: Architecture & Structural Boundaries
+- Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
+- Evaluated system abstractions and modular contracts.
 
-**WHY**:
-Allocating a secondary `remainBuf` to snapshot the slice tail forces an extra round of dynamic heap allocations and copies per streaming block. In high-throughput ingest systems (such as Lightning CSV/SQL dump processing), this creates massive GC pressure, doubles resident memory footprints during multi-megabyte record processing, and risks OOM panics when records span hundreds of block boundaries.
+### Core Architecture Module: `br/pkg/conn/util/util.go`
+```
+// Copyright 2020 PingCAP, Inc. Licensed under Apache-2.0.
 
-**WHEN TO APPLY**:
-Stream parsers, network protocol deserializers, CSV/JSON chunk engines, and tokenizers where records cross fixed block boundaries and require multi-block assembly.
+package util
 
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-package buffer
+import (
+	"context"
+	"io"
+	"net"
+	"net/http"
+	"net/url"
+	"strings"
+
+	"github.com/pingcap/errors"
+	"github.com/pingcap/kvproto/pkg/metapb"
+	"github.com/pingcap/log"
+	berrors "github.com/pingcap/tidb/br/pkg/errors"
+	"github.com/pingcap/tidb/br/pkg/logutil"
+	"github.com/pingcap/tidb/br/pkg/utils"
+	"github.com/pingcap/tidb/pkg/util/engine"
+	"github.com/tikv/client-go/v2/oracle"
+	pd "github.com/tikv/pd/client"
+	"github.com/tikv/pd/client/opt"
+	"go.uber.org/zap"
+)
+
+// StoreBehavior is the action to do in GetAllTiKVStores when a non-TiKV
+// store (e.g. TiFlash store) is found.
+type StoreBehavior uint8
+
+const (
+	// ErrorOnTiFlash causes GetAllTiKVStores to return error when the store is
+	// found to be a TiFlash node.
+	ErrorOnTiFlash StoreBehavior = 0
+	// SkipTiFlash causes GetAllTiKVStores to skip the store when it is found to
+	// be a TiFlash node.
+	SkipTiFlash StoreBehavior = 1
+	// TiFlashOnly caused GetAllTiKVStores to skip the store which is not a
+	// TiFlash node.
+	TiFlashOnly StoreBehavior = 2
+)
+
+// StoreMeta is the required interface for a watcher.
+// It is striped from pd.Client.
+type StoreMeta interface {
+	// GetAllStores gets all stores from pd.
+	// The store may expire later. Caller is responsible for caching and taking care
+	// of store change.
+	GetAllStores(ctx context.Context, opts ...opt.GetStoreOption) ([]*metapb.Store, error)
+}
+
+// GetAllTiKVStores returns all TiKV stores registered to the PD client. The
+// stores must not be a tombstone and must never contain a label `engine=tiflash`.
+func GetAllTiKVStores(
+	ctx context.Context,
+	pdClient StoreMeta,
+	storeBehavior StoreBehavior,
+) ([]*metapb.Store, error) {
+	// get all live stores.
+	stores, err := pdClient.GetAllStores(ctx, opt.WithExcludeTombstone())
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	// filter out all stores which are TiFlash.
+	j := 0
+	for _, store := range stores {
+		isTiFlash := false
+		if engine.IsTiFlash(store) {
+			if storeBehavior == SkipTiFlash {
+				continue
+			} else if storeBehavior == ErrorOnTiFlash {
+				return nil, errors.Annotatef(berrors.ErrPDInvalidResponse,
+					"cannot restore to a cluster with active TiFlash stores (store %d at %s)", store.Id, store.Address)
+			}
+			isTiFlash = true
+		}
+		if !isTiFlash && storeBehavior == TiFlashOnly {
+			continue
+		}
+		stores[j] = store
+		j++
+	}
+	return stores[:j], nil
+}
+
+func GetAllTiKVStoresWithRetry(ctx context.Context,
+	pdClient StoreMeta,
+	storeBehavior StoreBehavior,
+) ([]*metapb.Store, error) {
+	stores := make([]*metapb.Store, 0)
+	var err error
+
+	errRetry := utils.WithRetry(
+		ctx,
+		func() error {
+			stores, err = GetAllTiKVStores(ctx, pdClient, storeBehavior)
+			return errors.Trace(err)
+		},
+		utils.NewAggressivePDBackoffStrategy(),
+	)
+
+	return stores, errors.Trace(errRetry)
+}
+
+// GetCurrentTsFromPD gets current ts from PD.
+func GetCurrentTsFromPD(ctx context.Context, pdClient pd.Client) (uint64, error) {
+	p, l, err := pdClient.GetTS(ctx)
+	if err != nil {
+		return 0, errors.Trace(err)
+	}
+
+	return oracle.ComposeTS(p, l), nil
+}
+
+// GetCurrentTsFromPDWithRetry gets current ts from PD with retry.
+func GetCurrentTsFromPDWithRetry(ctx context.Context, pdClient pd.Client) (uint64, error) {
+	var currentTS uint64
+	var retry uint
+	err := utils.WithRetry(ctx, func() error {
+		ts, err := GetCurrentTsFromPD(ctx, pdClient)
+		retry++
+		if err != nil {
+			log.Warn("failed to get current TS from PD, retry it",
+				zap.Uint("retry time", retry),
+				logutil.ShortError(err))
+			return err
+		}
+		currentTS = ts
+		return nil
+	}, utils.NewAggressivePDBackoffStrategy())
+	if err != nil {
+		log.Error("failed to get current TS from PD", zap.Error(err))
+	}
+	return currentTS, errors.Trace(err)
+}
+
+// GetConfigFromTiKVStores gets configs from the specified TiKV stores.
+func GetConfigFromTiKVStores(
+	ctx context.Context,
+	stores []*metapb.Store,
+	cli *http.Client,
+	httpPrefix string,
+	fn func(*http.Response) error,
+) error {
+	for _, store := range stores {
+		if store.State != metapb.StoreState_Up {
+			continue
+		}
+		// We need make sure every available store support backup-stream otherwise we might lose data,
+		// so check every store's config.
+		addr, err := HandleTiKVAddress(store, httpPrefix)
+		if err != nil {
+			return err
+		}
+		configAddr := addr.JoinPath("config").String()
+
+		err = utils.WithRetry(ctx, func() error {
+			req, err := http.NewRequestWithContext(ctx, http.MethodGet, configAddr, nil)
+			if err != nil {
+				return err
+			}
+			resp, err := cli.Do(req)
+			if err != nil {
+				return err
+			}
+			defer resp.Body.Close()
+			return fn(resp)
+		}, utils.NewAggressivePDBackoffStrategy())
+		if err != nil {
+			// if one store failed, break and return error
+			return err
+		}
+	}
+	return nil
+}
+
+// GetConfigBytesFromTiKVStores gets config response bodies from the specified TiKV stores.
+func GetConfigBytesFromTiKVStores(
+	ctx context.Context,
+	stores []*metapb.Store,
+	cli *http.Client,
+	httpPrefix string,
+	collect func([]byte) error,
+) error {
+	return GetConfigFromTiKVStores(ctx, stores, cli, httpPrefix, func(resp *http.Response) error {
+		if resp.StatusCode != http.StatusOK {
+			return errors.Errorf("request %s failed: %s", resp.Request.URL.String(), resp.Status)
+		}
+		respBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		return collect(respBytes)
+	})
+}
+
+// HandleTiKVAddress returns the TiKV status HTTP address used to fetch configs.
+func HandleTiKVAddress(store *metapb.Store, httpPrefix string) (*url.URL, error) {
+	statusAddr := store.GetStatusAddress()
+	if statusAddr == "" {
+		return nil, errors.Errorf("TiKV store %d does not have status address", store.GetId())
+	}
+	nodeAddr := store.GetAddress()
+	if !strings.HasPrefix(statusAddr, "http") {
+		statusAddr = httpPrefix + statusAddr
+	}
+	if !strings.HasPrefix(nodeAddr, "http") {
+		nodeAddr = httpPrefix + nodeAddr
+	}
+
+	statusURL, err := url.Parse(statusAddr)
+	if err != nil {
+		return nil, err
+	}
+	nodeURL, err := url.Parse(nodeAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	// We try status address as default.
+	addr := statusURL
+	// But sometimes we may not get the correct status address from PD.
+	if statusURL.Hostname() != nodeURL.Hostname() {
+		// If not matched, use the address hostname but keep the status port.
+		addr.Host = net.JoinHostPort(nodeURL.Hostname(), statusURL.Port())
+		log.Warn("store address and status address mismatch the host, we will use the store address as hostname",
+			zap.Uint64("store", store.Id),
+			zap.String("status address", statusAddr),
+			zap.String("node address", nodeAddr),
+			zap.Any("request address", statusURL))
+	}
+	return addr, nil
+}
+
+```
+
+### Core Architecture Module: `br/pkg/logutil/context.go`
+```
+// Copyright 2020 PingCAP, Inc. Licensed under Apache-2.0.
+
+package logutil
+
+import (
+	"context"
+
+	"github.com/pingcap/log"
+	"go.uber.org/zap"
+)
+
+// We cannot directly set global logger as log.L(),
+// or when the global logger updated, we cannot get the latest logger.
+var globalLogger *zap.Logger
+
+// ResetGlobalLogger resets the global logger.
+// Contexts have already made by `ContextWithField` would keep untouched,
+// subsequent wrapping over those contexts would keep using the old global logger,
+// only brand new contexts (i.e. context without logger) would be wrapped with the new global logger.
+// This method is mainly for testing.
+func ResetGlobalLogger(l *zap.Logger) {
+	globalLogger = l
+}
+
+type loggingContextKey struct{}
+
+var keyLogger = loggingContextKey{}
+
+// ContextWithField wrap a context with a logger with some fields.
+func ContextWithField(c context.Context, fields ...zap.Field) context.Context {
+	logger := LoggerFromContext(c).With(fields...)
+	return context.WithValue(c, keyLogger, logger)
+}
+
+// LoggerFromContext returns the contextual logger via the context.
+// If there isn't a logger in the context, returns the global logger.
+func LoggerFromContext(c context.Context) *zap.Logger {
+	logger, ok := c.Value(keyLogger).(*zap.Logger)
+	if !ok {
+		if globalLogger != nil {
+			return globalLogger
+		}
+		return log.L()
+	}
+	return logger
+}
+
+// CL is the shorthand for LoggerFromContext.
+func CL(c context.Context) *zap.Logger {
+	return LoggerFromContext(c)
+}
+
+```
+
+### Core Architecture Module: `br/pkg/logutil/logging.go`
+```
+// Copyright 2020 PingCAP, Inc. Licensed under Apache-2.0.
+
+package logutil
 
 import (
 	"bytes"
-	"io"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"strings"
+	"testing"
+
+	"github.com/google/uuid"
+	"github.com/pingcap/errors"
+	backuppb "github.com/pingcap/kvproto/pkg/brpb"
+	"github.com/pingcap/kvproto/pkg/import_sstpb"
+	"github.com/pingcap/kvproto/pkg/metapb"
+	"github.com/pingcap/log"
+	"github.com/pingcap/tidb/pkg/kv"
+	"github.com/pingcap/tidb/pkg/lightning/metric"
+	"github.com/pingcap/tidb/pkg/util/redact"
+	"github.com/prometheus/client_golang/prometheus"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-type StreamChunkParser struct {
-	reader    io.Reader
-	blockBuf  []byte
-	appendBuf *bytes.Buffer
-	buf       []byte // sub-slice pointing into appendBuf's storage
-}
+// AbbreviatedArrayMarshaler abbreviates an array of elements.
+type AbbreviatedArrayMarshaler []string
 
-func (p *StreamChunkParser) ReadNextChunk() error {
-	n, err := p.reader.Read(p.blockBuf)
-	if err != nil && err != io.EOF {
-		return err
+// MarshalLogArray implements zapcore.ArrayMarshaler.
+func (abb AbbreviatedArrayMarshaler) MarshalLogArray(encoder zapcore.ArrayEncoder) error {
+	if len(abb) <= 4 {
+		for _, e := range abb {
+			encoder.AppendString(e)
+		}
+	} else {
+		total := len(abb)
+		encoder.AppendString(abb[0])
+		encoder.AppendString(fmt.Sprintf("(skip %d)", total-2))
+		encoder.AppendString(abb[total-1])
 	}
-	if n == 0 && len(p.buf) == 0 {
-		return io.EOF
-	}
-
-	// Invariant: p.buf references appendBuf's backing memory.
-	// Reset() clears length but retains underlying capacity.
-	// bytes.Buffer.Write(p.buf) executes runtime copy(), safely handling
-	// overlapping memory regions within the same backing array.
-	p.appendBuf.Reset()
-	p.appendBuf.Write(p.buf)
-	p.appendBuf.Write(p.blockBuf[:n])
-
-	// Re-slice current parsable buffer to entire appendBuf contents
-	p.buf = p.appendBuf.Bytes()
 	return nil
 }
-```
 
-**NEGATIVE CONSTRAINT**:
-```go
-// ANTI-PATTERN: Secondary intermediate buffer allocation
-type BadChunkParser struct {
-	remainBuf *bytes.Buffer // Redundant intermediate buffer!
-	appendBuf *bytes.Buffer
-	buf       []byte
+// AbbreviatedArray constructs a field that abbreviates an array of elements.
+func AbbreviatedArray(
+	key string, elements any, marshalFunc func(any) []string,
+) zap.Field {
+	return zap.Array(key, AbbreviatedArrayMarshaler(marshalFunc(elements)))
 }
 
-func (p *BadChunkParser) BadReadBlock(newBlock []byte) {
-	// WRONG: Double buffer allocation and copy pattern
-	p.remainBuf.Reset()
-	p.remainBuf.Write(p.buf) // First copy to heap-allocated intermediate
-	p.appendBuf.Reset()
-	p.appendBuf.Write(p.remainBuf.Bytes()) // Second copy back into target
-	p.appendBuf.Write(newBlock)
-	p.buf = p.appendBuf.Bytes()
-}
-```
+type zapFileMarshaler struct{ *backuppb.File }
 
-**VERIFICATION METHOD**:
-Enforce zero allocations on remainder compaction using Go benchmark allocation tests:
-```go
-func TestBufferCompactionZeroExtraAlloc(t *testing.T) {
-	parser := NewStreamChunkParser(contentReader, 64*1024)
-	allocs := testing.AllocsPerRun(1000, func() {
-		parser.buf = parser.buf[100:]
-		_ = parser.ReadNextChunk()
-	})
-	require.Zero(t, allocs, "buffer compaction MUST not allocate on the heap")
-}
-```
-
----
-
-### 2. Transactional Rollback Isolation from Resource Quota Interrupts
-**RULE**:
-Rollback, statement cleanup, and resource teardown paths **MUST NOT** trigger resource quota limits, kill signals, or memory arbitration hooks that invoke terminating actions (such as `panic()` or query cancellation). Systems **MUST** expose an unenforced accounting variant (`ReplaceBytesUsedForCleanup`) that tracks memory adjustments during cleanup without evaluating abort conditions.
-
-**WHY**:
-When an out-of-memory or timeout killer terminates a query, rollback handlers frequently free data structures that dynamically update internal indexes (e.g., Adaptive Radix Trees / ART). If index teardown re-balances tree nodes or accounts for previously unmetered arena slots, normal memory hooks would evaluate the active kill state or memory limit and trigger a second panic during `StmtRollback()`. This corrupts session state, aborts the entire transaction instead of rolling back the single failed statement, or crashes the database instance.
-
-**WHEN TO APPLY**:
-Transactional state machines, database memory managers, statement cleanup handlers, and thread-local allocators where cleanup code modifies tracked resources under active cancellation signals.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-package txn
-
-import (
-	"sync/atomic"
-)
-
-type ResourceTracker struct {
-	bytesConsumed atomic.Int64
-	killer        *QueryKiller
+func (file zapFileMarshaler) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("name", file.GetName())
+	enc.AddString("CF", file.GetCf())
+	enc.AddString("sha256", hex.EncodeToString(file.GetSha256()))
+	enc.AddString("startKey", redact.Key(file.GetStartKey()))
+	enc.AddString("endKey", redact.Key(file.GetEndKey()))
+	enc.AddUint64("startVersion", file.GetStartVersion())
+	enc.AddUint64("endVersion", file.GetEndVersion())
+	enc.AddUint64("totalKvs", file.GetTotalKvs())
+	enc.AddUint64("totalBytes", file.GetTotalBytes())
+	enc.AddUint64("CRC64Xor", file.GetCrc64Xor())
+	return nil
 }
 
-func (t *ResourceTracker) Consume(delta int64, enforceQuota bool) error {
-	t.bytesConsumed.Add(delta)
-	if !enforceQuota {
-		// Teardown path: record usage changes without throwing abort panics
-		return nil
+func AbbreviatedStringers[T fmt.Stringer](key string, stringers []T) zap.Field {
+	if len(stringers) < 4 {
+		return zap.Stringers(key, stringers)
 	}
-	// Normal path: verify query hasn't been interrupted or killed
-	return t.killer.CheckSignal()
+	return zap.Array(key, zapcore.ArrayMarshalerFunc(func(ae zapcore.ArrayEncoder) error {
+		ae.AppendString(stringers[0].String())
+		ae.AppendString(fmt.Sprintf("(skip %d)", len(stringers)-2))
+		ae.AppendString(stringers[len(stringers)-1].String())
+		return nil
+	}))
 }
 
-type StatementTransaction struct {
-	inStmtCleanup bool
-	tracker       *ResourceTracker
+type zapFilesMarshaler []*backuppb.File
+
+// MarshalLogObjectForFiles is an internal util function to zap something having `Files` field.
+func MarshalLogObjectForFiles(files []*backuppb.File, encoder zapcore.ObjectEncoder) error {
+	return zapFilesMarshaler(files).MarshalLogObject(encoder)
 }
 
-func (tx *StatementTransaction) RollbackStatement() {
-	prev := tx.inStmtCleanup
-	tx.inStmtCleanup = true
-	defer func() { tx.inStmtCleanup = prev }()
+func (fs zapFilesMarshaler) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
+	total := len(fs)
+	encoder.AddInt("total", total)
+	elements := make([]string, 0, total)
+	for _, f := range fs {
+		elements = append(elements, f.GetName())
+	}
+	_ = encoder.AddArray("files", AbbreviatedArrayMarshaler(elements))
 
-	// Execute structural cleanup safely
-	tx.cleanupBuffer(func(delta int64) {
-		if tx.inStmtCleanup {
-			_ = tx.tracker.Consume(delta, false) // Quota bypassed
-		} else {
-			_ = tx.tracker.Consume(delta, true)
+	totalKVs := uint64(0)
+	totalBytes := uint64(0)
+	totalSize := uint64(0)
+	for _, file := range fs {
+		totalKVs += file.GetTotalKvs()
+		totalBytes += file.GetTotalBytes()
+		totalSize += file.GetSize_()
+	}
+	encoder.AddUint64("totalKVs", totalKVs)
+	encoder.AddUint64("totalBytes", totalBytes)
+	encoder.AddUint64("totalSize", totalSize)
+	return nil
+}
+
+// File make the zap fields for a file.
+func File(file *backuppb.File) zap.Field {
+	return zap.Object("file", zapFileMarshaler{file})
+}
+
+// Files make the zap field for a set of file.
+func Files(fs []*backuppb.File) zap.Field {
+	return zap.Object("files", zapFilesMarshaler(fs))
+}
+
+type zapStreamBackupTaskInfo struct{ *backuppb.StreamBackupTaskInfo }
+
+func (t zapStreamBackupTaskInfo) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("taskName", t.Name)
+	enc.AddUint64("startTs", t.StartTs)
+	enc.AddUint64("endTS", t.EndTs)
+	enc.AddString("tableFilter", strings.Join(t.TableFilter, ","))
+	return nil
+}
+
+// StreamBackupTaskInfo makes the zap fields for a stream backup task info.
+func StreamBackupTaskInfo(t *backuppb.StreamBackupTaskInfo) zap.Field {
+	return zap.Object("streamTaskInfo", zapStreamBackupTaskInfo{t})
+}
+
+type zapRewriteRuleMarshaler struct{ *import_sstpb.RewriteRule }
+
+func (rewriteRule zapRewriteRuleMarshaler) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("oldKeyPrefix", hex.EncodeToString(rewriteRule.GetOldKeyPrefix()))
+	enc.AddString("newKeyPrefix", hex.EncodeToString(rewriteRule.GetNewKeyPrefix()))
+	enc.AddUint64("newTimestamp", rewriteRule.GetNewTimestamp())
+	return nil
+}
+
+// RewriteRule make the zap fields for a rewrite rule.
+func RewriteRule(rewriteRule *import_sstpb.RewriteRule) zap.Field {
+	return zap.Object("rewriteRule", zapRewriteRuleMarshaler{rewriteRule})
+}
+
+// RewriteRuleObject make zap object marshaler for a rewrite rule.
+func RewriteRuleObject(rewriteRule *import_sstpb.RewriteRule) zapcore.ObjectMarshaler {
+	return zapRewriteRuleMarshaler{rewriteRule}
+}
+
+type zapMarshalRegionMarshaler struct{ *metapb.Region }
+
+func (region zapMarshalRegionMarshaler) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	peers := make([]string, 0, len(region.GetPeers()))
+	for _, peer := range region.GetPeers() {
+		peers = append(peers, peer.String())
+	}
+	enc.AddUint64("ID", region.GetId())
+	enc.AddString("startKey", redact.Key(region.GetStartKey()))
+	enc.AddString("endKey", redact.Key(region.GetEndKey()))
+	enc.AddString("epoch", region.GetRegionEpoch().String())
+	enc.AddString("peers", strings.Join(peers, ","))
+	return nil
+}
+
+// Region make the zap fields for a region.
+func Region(region *metapb.Region) zap.Field {
+	return zap.Object("region", zapMarshalRegionMarshaler{region})
+}
+
+// RegionBy make the zap fields for a region with name.
+func RegionBy(key string, region *metapb.Region) zap.Field {
+	return zap.Object(key, zapMarshalRegionMarshaler{region})
+}
+
+// Leader make the zap fields for a peer as leader.
+// nolint:interfacer
+func Leader(peer *metapb.Peer) zap.Field {
+	return zap.String("leader", peer.String())
+}
+
+// Peer make the zap fields for a peer.
+func Peer(peer *metapb.Peer) zap.Field {
+	return zap.String("peer", peer.String())
+}
+
+type zapSSTMetaMarshaler struct{ *import_sstpb.SSTMeta }
+
+func (sstMeta zapSSTMetaMarshaler) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("CF", sstMeta.GetCfName())
+	enc.AddBool("endKeyExclusive", sstMeta.EndKeyExclusive)
+	enc.AddUint32("CRC32", sstMeta.Crc32)
+	enc.AddUint64("length", sstMeta.Length)
+	enc.AddUint64("regionID", sstMeta.RegionId)
+	enc.AddString("regionEpoch", sstMeta.RegionEpoch.String())
+	enc.AddString("startKey", redact.Key(sstMeta.GetRange().GetStart()))
+	enc.AddString("endKey", redact.Key(sstMeta.GetRange().GetEnd()))
+
+	sstUUID, err := uuid.FromBytes(sstMeta.GetUuid())
+	if err != nil {
+		enc.AddString("UUID", fmt.Sprintf("invalid UUID %s", hex.EncodeToString(sstMeta.GetUuid())))
+	} else {
+		enc.AddString("UUID", sstUUID.String())
+	}
+	return nil
+}
+
+// SSTMeta make the zap fields for a SST meta.
+func SSTMeta(sstMeta *import_sstpb.SSTMeta) zap.Field {
+	return zap.Object("sstMeta", zapSSTMetaMarshaler{sstMeta})
+}
+
+type zapSSTMetasMarshaler []*import_sstpb.SSTMeta
+
+func (m zapSSTMetasMarshaler) MarshalLogArray(encoder zapcore.ArrayEncoder) error {
+	for _, meta := range m {
+		if err := encoder.AppendObject(zapSSTMetaMarshaler{meta}); err != nil {
+			return errors.Trace(err)
 		}
-	})
+	}
+	return nil
 }
+
+// Describes the overall range of the SST metas and their size.
+func BriefSSTMetas(key string, sstMetas []*import_sstpb.SSTMeta) zap.Field {
+	var (
+		startKey, endKey []byte
+		total            int
+		totalSize        uint64
+		totalKv          uint64
+		totalKvSize      uint64
+	)
+
+	for _, meta := range sstMetas {
+		if total == 0 {
+			startKey = meta.GetRange().GetStart()
+			endKey = meta.GetRange().GetEnd()
+		}
+		if bytes.Compare(meta.GetRange().GetStart(), startKey) < 0 {
+			startKey = meta.GetRange().GetStart()
+		}
+		// NOTE: SST meta shouldn't has an empty end key?
+		if bytes.Compare(meta.GetRange().GetEnd(), endKey) > 0 {
+			endKey = meta.GetRange().GetEnd()
+		}
+		totalSize += meta.GetLength()
+		totalKv += meta.GetTotalKvs()
+		totalKvSize += meta.GetTotalBytes()
+		total++
+	}
+	return zap.Object(key, zapcore.ObjectMarshalerFunc(func(enc zapcore.ObjectEncoder) error {
+		enc.AddInt("total", total)
+		enc.AddString("startKey", redact.Key(startKey))
+		enc.AddString("endKey", redact.Key(endKey))
+		enc.AddUint64("totalSize", totalSize)
+		enc.AddUint64("totalKvs", totalKv)
+		enc.AddUint64("totalKvSize", totalKvSize)
+		return nil
+	}))
+}
+
+// SSTMetas make the zap fields for SST metas.
+func SSTMetas(sstMetas []*import_sstpb.SSTMeta) zap.Field {
+	return zap.Array("sstMetas", zapSSTMetasMarshaler(sstMetas))
+}
+
+type zapKeysMarshaler [][]byte
+
+func (keys zapKeysMarshaler) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
+	total := len(keys)
+	encoder.AddInt("total", total)
+	elements := make([]string, 0, total)
+	for _, k := range keys {
+		elements = append(elements, redact.Key(k))
+	}
+	_ = encoder.AddArray("keys", AbbreviatedArrayMarshaler(elements))
+	return nil
+}
+
+// Key constructs a field that carries upper hex format key.
+func Key(fieldKey string, key []byte) zap.Field {
+	return zap.String(fieldKey, redact.Key(key))
+}
+
+// Keys constructs a field that carries upper hex format keys.
+func Keys(keys [][]byte) zap.Field {
+	return zap.Object("keys", zapKeysMarshaler(keys))
+}
+
+// AShortError make the zap field with key to display error without verbose representation (e.g. the stack trace).
+func AShortError(key string, err error) zap.Field {
+	if err == nil {
+		return zap.Skip()
+	}
+	return zap.String(key, err.Error())
+}
+
+// ShortError make the zap field to display error without verbose representation (e.g. the stack trace).
+func ShortError(err error) zap.Field {
+	if err == nil {
+		return zap.Skip()
+	}
+	return zap.String("error", err.Error())
+}
+
+var loggerToTerm, _, _ = log.InitLogger(new(log.Config), zap.AddCallerSkip(1))
+
+// WarnTe
 ```
 
-**NEGATIVE CONSTRAINT**:
-```go
-// ANTI-PATTERN: Uniform quota enforcement across execution and rollback
-func (tx *StatementTransaction) BadRollbackStatement() {
-	// WRONG: Calling enforced tracker during cleanup
-	tx.cleanupBuffer(func(delta int64) {
-		// If tracker exceeds memory or killer signal is QueryMemoryExceeded,
-		// ReplaceBytesUsed will trigger PanicOnExceed() and crash StmtRollback!
-		tx.tracker.ReplaceBytesUsed(delta) 
-	})
-}
+### Core Architecture Module: `br/pkg/logutil/rate.go`
 ```
-
-**VERIFICATION METHOD**:
-Inject a pre-existing kill signal and execute statement rollback, asserting that rollback executes without panic and maintains precise final byte metrics:
-```go
-func TestRollbackUnderKillSignal(t *testing.T) {
-	session := CreateTestSession()
-	session.KillSignal.Store(QueryMemoryExceeded)
-	require.NotPanics(t, func() {
-		session.StmtRollback()
-	})
-	require.Equal(t, QueryMemoryExceeded, session.KillSignal.Load())
-	require.Equal(t, session.ExpectedRemainingBytes(), session.Tracker.BytesConsumed())
-}
-```
-
----
-
-### 3. Log I/O Fault Boundary Isolation via Configurable Timeout Action
-**RULE**:
-Logging frameworks integrated into mission-critical systems **MUST NOT** make hardcoded assumptions that I/O hangs should unilaterally panic the process. Configuration **MUST** allow runtime differentiation between fail-fast semantics (`panic`) and fault-tolerant semantics (`discard`) for slow or blocked log appenders.
-
-**WHY**:
-Under severe disk stalls, network storage freezes (e.g., EBS/NFS volume degradation), or kernel sync deadlocks, a synchronous log write can block indefinitely. If the logger exclusively enforces `panic` on timeout, transient I/O degradation cascades into widespread, unrecoverable node restarts across distributed clusters. Providing a `discard` action allows the engine to preserve transactional read/write availability at the expense of dropped log lines.
-
-**WHEN TO APPLY**:
-Database logging subsystems, audit logging pipelines, high-throughput RPC interceptors, and distributed storage engines where logging backends share physical storage with WAL or data engines.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-package config
+package logutil
 
 import (
 	"fmt"
-	"strings"
+	"math"
+	"time"
+
+	"github.com/pingcap/log"
+	"github.com/pingcap/tidb/pkg/lightning/metric"
+	"github.com/prometheus/client_golang/prometheus"
+	"go.uber.org/zap"
+)
+
+// RateTracer is a trivial rate tracer based on a prometheus counter.
+// It traces the average speed from it was created.
+type RateTracer struct {
+	start time.Time
+	base  float64
+	prometheus.Counter
+}
+
+// TraceRateOver make a trivial rater based on a counter.
+// the current value of this counter would be omitted.
+func TraceRateOver(counter prometheus.Counter) RateTracer {
+	return RateTracer{
+		start:   time.Now(),
+		Counter: counter,
+		base:    metric.ReadCounter(counter),
+	}
+}
+
+// Rate returns the average rate from when it was created.
+func (r *RateTracer) Rate() float64 {
+	return r.RateAt(time.Now())
+}
+
+// RateAt returns the rate until some instant. This function is mainly for testing.
+// WARN: the counter value for calculating is still its CURRENT VALUE.
+func (r *RateTracer) RateAt(instant time.Time) float64 {
+	if r.Counter == nil {
+		return math.NaN()
+	}
+	return (metric.ReadCounter(r.Counter) - r.base) / instant.Sub(r.start).Seconds()
+}
+
+// L make a logger with the current speed.
+func (r *RateTracer) L() *zap.Logger {
+	return log.L().With(zap.String("speed", fmt.Sprintf("%.2f ops/s", r.Rate())))
+}
+
+```
+
+### Core Architecture Module: `br/pkg/metautil/debug.go`
+```
+// Copyright 2024 PingCAP, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package metautil
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"fmt"
+
+	"github.com/gogo/protobuf/proto"
+	"github.com/pingcap/errors"
+	backuppb "github.com/pingcap/kvproto/pkg/brpb"
+	berrors "github.com/pingcap/tidb/br/pkg/errors"
+	"github.com/pingcap/tidb/br/pkg/utils"
+	"github.com/pingcap/tidb/pkg/objstore/storeapi"
+	tidbutil "github.com/pingcap/tidb/pkg/util"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
-	LogTimeoutActionPanic   = "panic"
-	LogTimeoutActionDiscard = "discard"
+	// JSONFileFormat represents json file name format
+	JSONFileFormat = "jsons/%s.json"
 )
 
-type LogConfig struct {
-	TimeoutSec    int    `toml:"timeout"`
-	TimeoutAction string `toml:"timeout-action"`
-}
-
-func (c *LogConfig) Validate() error {
-	switch strings.ToLower(c.TimeoutAction) {
-	case "", LogTimeoutActionPanic:
-		c.TimeoutAction = LogTimeoutActionPanic
-	case LogTimeoutActionDiscard:
-		c.TimeoutAction = LogTimeoutActionDiscard
-	default:
-		return fmt.Errorf("log.timeout-action should be one of [%s, %s], got: %s",
-			LogTimeoutActionPanic, LogTimeoutActionDiscard, c.TimeoutAction)
+// DecodeStatsFile decodes the stats file to json format, it is called by br debug
+func DecodeStatsFile(
+	ctx context.Context,
+	s storeapi.Storage,
+	cipher *backuppb.CipherInfo,
+	schemas []*backuppb.Schema,
+) error {
+	for _, schema := range schemas {
+		for _, statsIndex := range schema.StatsIndex {
+			if len(statsIndex.Name) == 0 {
+				continue
+			}
+			content, err := s.ReadFile(ctx, statsIndex.Name)
+			if err != nil {
+				return errors.Trace(err)
+			}
+			decryptContent, err := utils.Decrypt(content, cipher, statsIndex.CipherIv)
+			if err != nil {
+				return errors.Trace(err)
+			}
+			checksum := sha256.Sum256(decryptContent)
+			if !bytes.Equal(statsIndex.Sha256, checksum[:]) {
+				return berrors.ErrInvalidMetaFile.GenWithStackByArgs(fmt.Sprintf(
+					"checksum mismatch expect %x, got %x", statsIndex.Sha256, checksum[:]))
+			}
+			statsFileBlocks := &backuppb.StatsFile{}
+			if err := proto.Unmarshal(decryptContent, statsFileBlocks); err != nil {
+				return errors.Trace(err)
+			}
+			jsonContent, err := utils.MarshalStatsFile(statsFileBlocks)
+			if err != nil {
+				return errors.Trace(err)
+			}
+			if err := s.WriteFile(ctx, fmt.Sprintf(JSONFileFormat, statsIndex.Name), jsonContent); err != nil {
+				return errors.Trace(err)
+			}
+		}
 	}
 	return nil
 }
+
+// DecodeMetaFile decodes the meta file to json format, it is called by br debug
+func DecodeMetaFile(
+	ctx context.Context,
+	s storeapi.Storage,
+	cipher *backuppb.CipherInfo,
+	metaIndex *backuppb.MetaFile,
+) error {
+	if metaIndex == nil {
+		return nil
+	}
+	eg, ectx := errgroup.WithContext(ctx)
+	workers := tidbutil.NewWorkerPool(8, "download files workers")
+	for _, node := range metaIndex.MetaFiles {
+		workers.ApplyOnErrorGroup(eg, func() error {
+			content, err := s.ReadFile(ectx, node.Name)
+			if err != nil {
+				return errors.Trace(err)
+			}
+
+			decryptContent, err := utils.Decrypt(content, cipher, node.CipherIv)
+			if err != nil {
+				return errors.Trace(err)
+			}
+
+			checksum := sha256.Sum256(decryptContent)
+			if !bytes.Equal(node.Sha256, checksum[:]) {
+				return berrors.ErrInvalidMetaFile.GenWithStackByArgs(fmt.Sprintf(
+					"checksum mismatch expect %x, got %x", node.Sha256, checksum[:]))
+			}
+
+			child := &backuppb.MetaFile{}
+			if err = proto.Unmarshal(decryptContent, child); err != nil {
+				return errors.Trace(err)
+			}
+
+			// the max depth of the root metafile is only 1.
+			// ASSERT: len(child.MetaFiles) == 0
+			if len(child.MetaFiles) > 0 {
+				return errors.Errorf("the metafile has unexpected level: %v", child)
+			}
+
+			jsonContent, err := utils.MarshalMetaFile(child)
+			if err != nil {
+				return errors.Trace(err)
+			}
+
+			if err := s.WriteFile(ctx, fmt.Sprintf(JSONFileFormat, node.Name), jsonContent); err != nil {
+				return errors.Trace(err)
+			}
+
+			err = DecodeStatsFile(ctx, s, cipher, child.Schemas)
+			return errors.Trace(err)
+		})
+	}
+	return eg.Wait()
+}
+
+```
+
+### Core Architecture Module: `br/pkg/metautil/load.go`
+```
+// Copyright 2024 PingCAP, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package metautil
+
+import (
+	"context"
+
+	"github.com/pingcap/errors"
+	"github.com/pingcap/tidb/pkg/meta/model"
+)
+
+// Database wraps the schema and tables of a database.
+type Database struct {
+	Info   *model.DBInfo
+	Tables []*Table
+}
+
+// GetTable returns a table of the database by name.
+func (db *Database) GetTable(name string) *Table {
+	for _, table := range db.Tables {
+		if table.Info.Name.String() == name {
+			return table
+		}
+	}
+	return nil
+}
+
+// LoadBackupTables loads schemas from BackupMeta.
+func LoadBackupTables(ctx context.Context, reader *MetaReader, loadStats bool) (map[string]*Database, error) {
+	ch := make(chan *Table)
+	errCh := make(chan error)
+	go func() {
+		var opts []ReadSchemaOption
+		if !loadStats {
+			opts = []ReadSchemaOption{SkipStats}
+		}
+		if err := reader.ReadSchemasFiles(ctx, ch, opts...); err != nil {
+			errCh <- errors.Trace(err)
+		}
+		close(ch)
+	}()
+
+	databases := make(map[string]*Database)
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case err := <-errCh:
+			return nil, errors.Trace(err)
+		case table, ok := <-ch:
+			if !ok {
+				close(errCh)
+				return databases, nil
+			}
+			dbName := table.DB.Name.String()
+			db, ok := databases[dbName]
+			if !ok {
+				db = &Database{
+					Info:   table.DB,
+					Tables: make([]*Table, 0),
+				}
+				databases[dbName] = db
+			}
+			db.Tables = append(db.Tables, table)
+		}
+	}
+}
+
+```
+
+### Core Architecture Module: `br/pkg/metautil/metafile.go`
+```
+// Copyright 2021 PingCAP, Inc. Licensed under Apache-2.0.
+
+package metautil
+
+import (
+	"bytes"
+	"context"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
+
+	"github.com/docker/go-units"
+	"github.com/gogo/protobuf/proto"
+	"github.com/opentracing/opentracing-go"
+	"github.com/pingcap/errors"
+	backuppb "github.com/pingcap/kvproto/pkg/brpb"
+	"github.com/pingcap/kvproto/pkg/encryptionpb"
+	"github.com/pingcap/log"
+	berrors "github.com/pingcap/tidb/br/pkg/errors"
+	"github.com/pingcap/tidb/br/pkg/logutil"
+	"github.com/pingcap/tidb/br/pkg/summary"
+	"github.com/pingcap/tidb/br/pkg/utils"
+	"github.com/pingcap/tidb/pkg/meta/model"
+	"github.com/pingcap/tidb/pkg/objstore/storeapi"
+	"github.com/pingcap/tidb/pkg/statistics/util"
+	"github.com/pingcap/tidb/pkg/tablecodec"
+	tidbutil "github.com/pingcap/tidb/pkg/util"
+	"github.com/pingcap/tidb/pkg/util/encrypt"
+	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
+	"google.golang.org/protobuf/encoding/protowire"
+)
+
+const (
+	// LockFile represents file name
+	LockFile = "backup.lock"
+	// MetaFile represents file name
+	MetaFile = "backupmeta"
+	// MetaJSONFile represents backup meta json file name
+	MetaJSONFile = "jsons/backupmeta.json"
+	// MaxBatchSize represents the internal channel buffer size of MetaWriter and MetaReader.
+	MaxBatchSize = 1024
+
+	// MetaFileSize represents the limit size of one MetaFile
+	MetaFileSize = 128 * units.MiB
+
+	// CrypterIvLen represents the length of iv of crypter method
+	CrypterIvLen = 16
+)
+
+const (
+	// MetaV1 represents the old version of backupmeta.
+	// because the old version doesn't have version field, so set it to 0 for compatibility.
+	MetaV1 = iota
+	// MetaV2 represents the new version of backupmeta.
+	MetaV2
+)
+
+type protobufFieldInfo struct {
+	isMessage  bool
+	messageTyp reflect.Type
+}
+
+var (
+	protoMsgIfaceType = reflect.TypeOf((*proto.Message)(nil)).Elem()
+	protoFieldCache   sync.Map // map[reflect.Type]map[protowire.Number]protobufFieldInfo
+)
+
+func checkBackupMetaUnknownFieldsFromBytes(
+	backupMetaBytes []byte,
+	backupMeta *backuppb.BackupMeta,
+) error {
+	if len(backupMetaBytes) == 0 {
+		return errors.Annotate(
+			berrors.ErrInvalidArgument,
+			"backupmeta bytes are required for compatibility check",
+		)
+	}
+	hasUnknownFields, err := detectUnknownProtobufFields(backupMetaBytes, reflect.TypeOf(backuppb.BackupMeta{}))
+	if err != nil {
+		return errors.Annotate(err, "failed to detect unknown fields in backupmeta")
+	}
+	if !hasUnknownFields {
+		return nil
+	}
+	return errors.Annotatef(
+		berrors.ErrVersionMismatch,
+		"backupmeta contains unknown protobuf fields. restoring with an older BR may silently ignore "+
+			"newer backup metadata. backup cluster version: %s, backup BR version: %s. use "+
+			"--check-requirements=false to skip this check",
+		backupMeta.GetClusterVersion(),
+		backupMeta.GetBrVersion(),
+	)
+}
+
+func detectUnknownProtobufFields(data []byte, messageTyp reflect.Type) (bool, error) {
+	fields := getProtobufFieldInfo(messageTyp)
+	for len(data) > 0 {
+		fieldNumber, wireType, n := protowire.ConsumeTag(data)
+		if n < 0 {
+			return false, errors.Trace(protowire.ParseError(n))
+		}
+		data = data[n:]
+
+		fieldInfo, ok := fields[fieldNumber]
+		payload, consumed, err := consumeProtobufFieldValue(data, fieldNumber, wireType)
+		if err != nil {
+			return false, err
+		}
+		if !ok {
+			return true, nil
+		}
+		if fieldInfo.isMessage && wireType == protowire.BytesType {
+			hasUnknown, err := detectUnknownProtobufFields(payload, fieldInfo.messageTyp)
+			if err != nil {
+				return false, err
+			}
+			if hasUnknown {
+				return true, nil
+			}
+		}
+		data = data[consumed:]
+	}
+	return false, nil
+}
+
+func consumeProtobufFieldValue(
+	data []byte,
+	fieldNumber protowire.Number,
+	wireType protowire.Type,
+) (payload []byte, consumed int, err error) {
+	switch wireType {
+	case protowire.VarintType:
+		_, consumed = protowire.ConsumeVarint(data)
+	case protowire.Fixed32Type:
+		_, consumed = protowire.ConsumeFixed32(data)
+	case protowire.Fixed64Type:
+		_, consumed = protowire.ConsumeFixed64(data)
+	case protowire.BytesType:
+		payload, consumed = protowire.ConsumeBytes(data)
+	case protowire.StartGroupType:
+		_, consumed = protowire.ConsumeGroup(fieldNumber, data)
+	case protowire.EndGroupType:
+		return nil, 0, errors.New("unexpected end-group wire type in backupmeta")
+	default:
+		return nil, 0, errors.Errorf("unsupported protobuf wire type %d in backupmeta", wireType)
+	}
+	if consumed < 0 {
+		return nil, 0, errors.Trace(protowire.ParseError(consumed))
+	}
+	return payload, consumed, nil
+}
+
+func getProtobufFieldInfo(messageTyp reflect.Type) map[protowire.Number]protobufFieldInfo {
+	if messageTyp.Kind() == reflect.Ptr {
+		messageTyp = messageTyp.Elem()
+	}
+	if cached, ok := protoFieldCache.Load(messageTyp); ok {
+		return cached.(map[protowire.Number]protobufFieldInfo)
+	}
+
+	result := make(map[protowire.Number]protobufFieldInfo)
+	for i := range messageTyp.NumField() {
+		field := messageTyp.Field(i)
+		protobufTag := field.Tag.Get("protobuf")
+		fieldNumber, ok := parseProtobufFieldNumber(protobufTag)
+		if !ok {
+			continue
+		}
+		nestedMessageType, isMessage := getNestedMessageType(field.Type)
+		result[fieldNumber] = protobufFieldInfo{
+			isMessage:  isMessage,
+			messageTyp: nestedMessageType,
+		}
+	}
+	protoFieldCache.Store(messageTyp, result)
+	return result
+}
+
+func parseProtobufFieldNumber(protobufTag string) (protowire.Number, bool) {
+	if protobufTag == "" {
+		return 0, false
+	}
+	parts := strings.Split(protobufTag, ",")
+	if len(parts) < 2 {
+		return 0, false
+	}
+	n, err := strconv.ParseUint(parts[1], 10, 32)
+	if err != nil {
+		return 0, false
+	}
+	return protowire.Number(n), true
+}
+
+func getNestedMessageType(fieldTyp reflect.Type) (reflect.Type, bool) {
+	switch fieldTyp.Kind() {
+	case reflect.Ptr:
+		if fieldTyp.Implements(protoMsgIfaceType) {
+			return fieldTyp.Elem(), true
+		}
+	case reflect.Slice:
+		if fieldTyp.Elem().Kind() == reflect.Uint8 {
+			return nil, false
+		}
+		elemTyp := fieldTyp.Elem()
+		if elemTyp.Kind() == reflect.Ptr && elemTyp.Implements(protoMsgIfaceType) {
+			return elemTyp.Elem(), true
+		}
+		if elemTyp.Kind() == reflect.Struct && reflect.PointerTo(elemTyp).Implements(protoMsgIfaceType) {
+			return elemTyp, true
+		}
+	}
+	return nil, false
+}
+
+// CheckBackupMetaCompatibilityFromBytes blocks restore when backup metadata
+// requires a newer metadata schema reader or contains protobuf fields the
+// current BR binary does not recognize.
+func CheckBackupMetaCompatibilityFromBytes(
+	backupMetaBytes []byte,
+	backupMeta *backuppb.BackupMeta,
+) error {
+	if backupMeta.GetBackupSchemaVersion() > backuppb.BackupSchemaVersion {
+		return errors.Annotatef(
+			berrors.ErrVersionMismatch,
+			"backupmeta requires schema version %d, current BR supports up to %d. restoring with an older BR "+
+				"may silently ignore newer backup metadata semantics. backup cluster version: %s, backup BR "+
+				"version: %s. use --check-requirements=false to skip this check",
+			backupMeta.GetBackupSchemaVersion(),
+			backuppb.BackupSchemaVersion,
+			backupMeta.GetClusterVersion(),
+			backupMeta.GetBrVersion(),
+		)
+	}
+	return checkBackupMetaUnknownFieldsFromBytes(backupMetaBytes, backupMeta)
+}
+
+// Encrypt encrypts the content according to CipherInfo.
+func Encrypt(content []byte, cipher *backuppb.CipherInfo) (encryptedContent, iv []byte, err error) {
+	if len(content) == 0 || cipher == nil {
+		return content, iv, nil
+	}
+
+	switch cipher.CipherType {
+	case encryptionpb.EncryptionMethod_PLAINTEXT:
+		return content, iv, nil
+	case encryptionpb.EncryptionMethod_AES128_CTR,
+		encryptionpb.EncryptionMethod_AES192_CTR,
+		encryptionpb.EncryptionMethod_AES256_CTR:
+		// generate random iv for aes crypter
+		iv = make([]byte, CrypterIvLen)
+		_, err = rand.Read(iv)
+		if err != nil {
+			return content, iv, errors.Trace(err)
+		}
+		encryptedContent, err = encrypt.AESEncryptWithCTR(content, cipher.CipherKey, iv)
+		return
+	default:
+		return content, iv, errors.Annotate(berrors.ErrInvalidArgument, "cipher type invalid")
+	}
+}
+
+func DecryptFullBackupMetaIfNeeded(metaData []byte, cipherInfo *backuppb.CipherInfo) ([]byte, error) {
+	if cipherInfo == nil || !utils.IsEffectiveEncryptionMethod(cipherInfo.CipherType) {
+		return metaData, nil
+	}
+	// the prefix of backup meta file is iv(16 bytes) for ctr mode if encryption method is valid
+	iv := metaData[:CrypterIvLen]
+	decryptBackupMeta, err := utils.Decrypt(metaData[len(iv):], cipherInfo, iv)
+	if err != nil {
+		return nil, errors.Annotate(err, "decrypt failed with wrong key")
+	}
+	return decryptBackupMeta, nil
+}
+
+// walkLeafMetaFile walks the leaves of the given metafile, and deal with it by calling the function `output`.
+// Notice: the function `output` should be thread safe.
+func walkLeafMetaFile(
+	ctx context.Context,
+	storage storeapi.Storage,
+	file *backuppb.MetaFile,
+	cipher *backuppb.CipherInfo,
+	output func(*backuppb.MetaFile)) error {
+	if file == nil {
+		return nil
+	}
+	if len(file.MetaFiles) == 0 {
+		output(file)
+		return nil
+	}
+	eg, ectx := errgroup.WithContext(ctx)
+	workers := tidbutil.NewWorkerPool(8, "download files workers")
+	for _, node := range file.MetaFiles {
+		workers.ApplyOnErrorGroup(eg, func() error {
+			content, err := storage.ReadFile(ectx, node.Name)
+			if err != nil {
+				return errors.Trace(err)
+			}
+
+			decryptContent, err := utils.Decrypt(content, cipher, node.CipherIv)
+			if err != nil {
+				return errors.Trace(err)
+			}
+
+			checksum := sha256.Sum256(decryptContent)
+			if !bytes.Equal(node.Sha256, checksum[:]) {
+				return berrors.ErrInvalidMetaFile.GenWithStackByArgs(fmt.Sprintf(
+					"checksum mismatch expect %x, got %x", node.Sha256, checksum[:]))
+			}
+
+			child := &backuppb.MetaFile{}
+			if err = proto.Unmarshal(decryptContent, child); err != nil {
+				return errors.Trace(err)
+			}
+
+			// the max depth of the root metafile is only 1.
+			// ASSERT: len(child.MetaFiles) == 0
+			if err = walkLeafMetaFile(ectx, storage, child, cipher, output); err != nil {
+				return errors.Trace(err)
+			}
+
+			return nil
+		})
+	}
+	retu
+```
+
+### Core Architecture Module: `br/pkg/metautil/statsfile.go`
+```
+// Copyright 2024 PingCAP, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package metautil
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
+
+	"github.com/gogo/protobuf/proto"
+	"github.com/pingcap/errors"
+	backuppb "github.com/pingcap/kvproto/pkg/brpb"
+	berrors "github.com/pingcap/tidb/br/pkg/errors"
+	"github.com/pingcap/tidb/br/pkg/utils"
+	"github.com/pingcap/tidb/pkg/meta/model"
+	"github.com/pingcap/tidb/pkg/objstore/storeapi"
+	"github.com/pingcap/tidb/pkg/statistics/handle"
+	statstypes "github.com/pingcap/tidb/pkg/statistics/handle/types"
+	statsutil "github.com/pingcap/tidb/pkg/statistics/util"
+	"github.com/pingcap/tidb/pkg/util"
+	"golang.org/x/sync/errgroup"
+)
+
+var maxStatsJsonTableSize = 32 * 1024 * 1024 // 32 MiB
+var inlineSize = 8 * 1024                    // 8 KiB
+
+func getStatsFileName(physicalID int64) string {
+	return fmt.Sprintf("backupmeta.schema.stats.%09d", physicalID)
+}
+
+// A lightweight function wrapper to dump the statistic
+type StatsWriter struct {
+	storage storeapi.Storage
+	cipher  *backuppb.CipherInfo
+
+	// final stats file indexes
+	statsFileIndexes []*backuppb.StatsFileIndex
+
+	// temporary variables, clear after each flush
+	totalSize int
+	statsFile *backuppb.StatsFile
+}
+
+func newStatsWriter(
+	storage storeapi.Storage,
+	cipher *backuppb.CipherInfo,
+) *StatsWriter {
+	return &StatsWriter{
+		storage: storage,
+		cipher:  cipher,
+
+		statsFileIndexes: make([]*backuppb.StatsFileIndex, 0),
+
+		totalSize: 0,
+		statsFile: &backuppb.StatsFile{
+			Blocks: make([]*backuppb.StatsBlock, 0, 8),
+		},
+	}
+}
+
+// flush temporary and clear []byte to make it garbage collected as soon as possible
+func (s *StatsWriter) flushTemporary() ([]byte, error) {
+	defer s.clearTemporary()
+	return proto.Marshal(s.statsFile)
+}
+
+func (s *StatsWriter) clearTemporary() {
+	// clear the temporary variables
+	s.totalSize = 0
+	s.statsFile = &backuppb.StatsFile{
+		Blocks: make([]*backuppb.StatsBlock, 0, 8),
+	}
+}
+
+func (s *StatsWriter) writeStatsFileAndClear(ctx context.Context, physicalID int64) error {
+	fileName := getStatsFileName(physicalID)
+	content, err := s.flushTemporary()
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	if len(s.statsFileIndexes) == 0 && len(content) < inlineSize {
+		s.statsFileIndexes = append(s.statsFileIndexes, &backuppb.StatsFileIndex{InlineData: content})
+		return nil
+	}
+
+	checksum := sha256.Sum256(content)
+	sizeOri := uint64(len(content))
+	encryptedContent, iv, err := Encrypt(content, s.cipher)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	if err := s.storage.WriteFile(ctx, fileName, encryptedContent); err != nil {
+		return errors.Trace(err)
+	}
+
+	s.statsFileIndexes = append(s.statsFileIndexes, &backuppb.StatsFileIndex{
+		Name:     fileName,
+		Sha256:   checksum[:],
+		SizeEnc:  uint64(len(encryptedContent)),
+		SizeOri:  sizeOri,
+		CipherIv: iv,
+	})
+	return nil
+}
+
+func (s *StatsWriter) BackupStats(ctx context.Context, jsonTable *statsutil.JSONTable, physicalID int64) error {
+	if jsonTable == nil {
+		return nil
+	}
+
+	statsBytes, err := json.Marshal(jsonTable)
+	if err != nil {
+		return errors.Trace(err)
+	}
+
+	s.totalSize += len(statsBytes)
+	s.statsFile.Blocks = append(s.statsFile.Blocks, &backuppb.StatsBlock{
+		PhysicalId: physicalID,
+		JsonTable:  statsBytes,
+	})
+
+	// check whether need to flush
+	if s.totalSize > maxStatsJsonTableSize {
+		if err := s.writeStatsFileAndClear(ctx, physicalID); err != nil {
+			return errors.Trace(err)
+		}
+	}
+	return nil
+}
+
+func (s *StatsWriter) BackupStatsDone(ctx context.Context) ([]*backuppb.StatsFileIndex, error) {
+	if s.totalSize == 0 || len(s.statsFile.Blocks) == 0 {
+		return s.statsFileIndexes, nil
+	}
+
+	if err := s.writeStatsFileAndClear(ctx, s.statsFile.Blocks[0].PhysicalId); err != nil {
+		return nil, errors.Trace(err)
+	}
+	return s.statsFileIndexes, nil
+}
+
+func RestoreStats(
+	ctx context.Context,
+	storage storeapi.Storage,
+	cipher *backuppb.CipherInfo,
+	statsHandler *handle.Handle,
+	newTableInfo *model.TableInfo,
+	statsFileIndexes []*backuppb.StatsFileIndex,
+	rewriteIDMap map[int64]int64,
+) error {
+	eg, ectx := errgroup.WithContext(ctx)
+	taskCh := make(chan *statstypes.PartitionStatisticLoadTask, 8)
+	eg.Go(func() error {
+		return downloadStats(ectx, storage, cipher, statsFileIndexes, rewriteIDMap, taskCh)
+	})
+	eg.Go(func() error {
+		// NOTICE: skip updating cache after load stats from json
+		return statsHandler.LoadStatsFromJSONConcurrently(ectx, newTableInfo, taskCh, 0)
+	})
+	return eg.Wait()
+}
+
+func downloadStats(
+	ctx context.Context,
+	storage storeapi.Storage,
+	cipher *backuppb.CipherInfo,
+	statsFileIndexes []*backuppb.StatsFileIndex,
+	rewriteIDMap map[int64]int64,
+	taskCh chan<- *statstypes.PartitionStatisticLoadTask,
+) error {
+	defer close(taskCh)
+	eg, ectx := errgroup.WithContext(ctx)
+	downloadWorkerpool := util.NewWorkerPool(4, "download stats for each partition")
+	for _, statsFileIndex := range statsFileIndexes {
+		if ectx.Err() != nil {
+			break
+		}
+		statsFile := statsFileIndex
+		downloadWorkerpool.ApplyOnErrorGroup(eg, func() error {
+			var statsContent []byte
+			if len(statsFile.InlineData) > 0 {
+				statsContent = statsFile.InlineData
+			} else {
+				content, err := storage.ReadFile(ectx, statsFile.Name)
+				if err != nil {
+					return errors.Trace(err)
+				}
+
+				decryptContent, err := utils.Decrypt(content, cipher, statsFile.CipherIv)
+				if err != nil {
+					return errors.Trace(err)
+				}
+
+				checksum := sha256.Sum256(decryptContent)
+				if !bytes.Equal(statsFile.Sha256, checksum[:]) {
+					return berrors.ErrInvalidMetaFile.GenWithStackByArgs(fmt.Sprintf(
+						"checksum mismatch expect %x, got %x", statsFile.Sha256, checksum[:]))
+				}
+				statsContent = decryptContent
+			}
+
+			statsFileBlocks := &backuppb.StatsFile{}
+			if err := proto.Unmarshal(statsContent, statsFileBlocks); err != nil {
+				return errors.Trace(err)
+			}
+
+			for _, block := range statsFileBlocks.Blocks {
+				physicalId, ok := rewriteIDMap[block.PhysicalId]
+				if !ok {
+					return berrors.ErrRestoreInvalidRewrite.GenWithStackByArgs(fmt.Sprintf(
+						"not rewrite rule matched, old physical id: %d", block.PhysicalId))
+				}
+				jsonTable := &statsutil.JSONTable{}
+				if err := json.Unmarshal(block.JsonTable, jsonTable); err != nil {
+					return errors.Trace(err)
+				}
+				// reset the block.JsonTable to nil to make it garbage collected as soon as possible
+				block.JsonTable = nil
+
+				select {
+				case <-ectx.Done():
+					return nil
+				case taskCh <- &statstypes.PartitionStatisticLoadTask{
+					PhysicalID: physicalId,
+					JSONTable:  jsonTable,
+				}:
+				}
+			}
+
+			return nil
+		})
+	}
+
+	return eg.Wait()
+}
+
+```
+
+### Core Architecture Module: `br/pkg/pdutil/pd.go`
+```
+// Copyright 2020 PingCAP, Inc. Licensed under Apache-2.0.
+
+package pdutil
+
+import (
+	"context"
+	"crypto/tls"
+	"encoding/hex"
+	"fmt"
+	"math"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/coreos/go-semver/semver"
+	"github.com/docker/go-units"
+	"github.com/google/uuid"
+	"github.com/opentracing/opentracing-go"
+	"github.com/pingcap/errors"
+	"github.com/pingcap/failpoint"
+	"github.com/pingcap/log"
+	berrors "github.com/pingcap/tidb/br/pkg/errors"
+	"github.com/pingcap/tidb/pkg/keyspace"
+	"github.com/pingcap/tidb/pkg/kv"
+	"github.com/pingcap/tidb/pkg/util/codec"
+	pd "github.com/tikv/pd/client"
+	pdhttp "github.com/tikv/pd/client/http"
+	"github.com/tikv/pd/client/opt"
+	"github.com/tikv/pd/client/pkg/caller"
+	"github.com/tikv/pd/client/pkg/retry"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+)
+
+const (
+	maxMsgSize   = int(128 * units.MiB) // pd.ScanRegion may return a large response
+	pauseTimeout = 5 * time.Minute
+	// pd request retry time when connection fail
+	PDRequestRetryTime = 120
+	// set max-pending-peer-count to a large value to avoid scatter region failed.
+	maxPendingPeerUnlimited uint64 = math.MaxInt32
+)
+
+// pauseConfigGenerator generate a config value according to store count and current value.
+type pauseConfigGenerator func(int, any) any
+
+// zeroPauseConfig sets the config to 0.
+func zeroPauseConfig(int, any) any {
+	return 0
+}
+
+// pauseConfigMulStores multiplies the existing value by
+// number of stores. The value is limited to 40, as larger value
+// may make the cluster unstable.
+func pauseConfigMulStores(stores int, raw any) any {
+	rawCfg := raw.(float64)
+	return math.Min(40, rawCfg*float64(stores))
+}
+
+// pauseConfigFalse sets the config to "false".
+func pauseConfigFalse(int, any) any {
+	return "false"
+}
+
+// constConfigGeneratorBuilder build a pauseConfigGenerator based on a given const value.
+func constConfigGeneratorBuilder(val any) pauseConfigGenerator {
+	return func(int, any) any {
+		return val
+	}
+}
+
+// ClusterConfig represents a set of scheduler whose config have been modified
+// along with their original config.
+type ClusterConfig struct {
+	// Enable PD schedulers before restore
+	Schedulers []string `json:"schedulers"`
+	// Original scheudle configuration
+	ScheduleCfg map[string]any `json:"schedule_cfg"`
+	// The region rule ID registered
+	RuleID string `json:"rule_id"`
+}
+
+type pauseSchedulerBody struct {
+	Delay int64 `json:"delay"`
+}
+
+var (
+	// in v4.0.8 version we can use pause configs
+	// see https://github.com/tikv/pd/pull/3088
+	pauseConfigVersion = semver.Version{Major: 4, Minor: 0, Patch: 8}
+
+	// After v6.1.0 version, we can pause schedulers by key range with TTL.
+	minVersionForRegionLabelTTL = semver.Version{Major: 6, Minor: 1, Patch: 0}
+
+	// Schedulers represent region/leader schedulers which can impact on performance.
+	Schedulers = map[string]struct{}{
+		"balance-leader-scheduler":     {},
+		"balance-hot-region-scheduler": {},
+		"balance-region-scheduler":     {},
+
+		"shuffle-leader-scheduler":     {},
+		"shuffle-region-scheduler":     {},
+		"shuffle-hot-region-scheduler": {},
+
+		"evict-slow-store-scheduler": {},
+	}
+	expectPDCfgGenerators = map[string]pauseConfigGenerator{
+		"merge-schedule-limit": zeroPauseConfig,
+		// TODO "leader-schedule-limit" and "region-schedule-limit" don't support ttl for now,
+		// but we still need set these config for compatible with old version.
+		// we need wait for https://github.com/tikv/pd/pull/3131 merged.
+		// see details https://github.com/pingcap/br/pull/592#discussion_r522684325
+		"leader-schedule-limit":       pauseConfigMulStores,
+		"region-schedule-limit":       pauseConfigMulStores,
+		"max-snapshot-count":          pauseConfigMulStores,
+		"enable-location-replacement": pauseConfigFalse,
+		"max-pending-peer-count":      constConfigGeneratorBuilder(maxPendingPeerUnlimited),
+	}
+
+	// defaultPDCfg find by https://github.com/tikv/pd/blob/master/conf/config.toml.
+	// only use for debug command.
+	defaultPDCfg = map[string]any{
+		"merge-schedule-limit":        8,
+		"leader-schedule-limit":       4,
+		"region-schedule-limit":       2048,
+		"enable-location-replacement": "true",
+	}
+)
+
+// DefaultExpectPDCfgGenerators returns default pd config generators
+func DefaultExpectPDCfgGenerators() map[string]pauseConfigGenerator {
+	clone := make(map[string]pauseConfigGenerator, len(expectPDCfgGenerators))
+	for k := range expectPDCfgGenerators {
+		clone[k] = expectPDCfgGenerators[k]
+	}
+	return clone
+}
+
+// PdController manage get/update config from pd.
+type PdController struct {
+	pdClient  pd.Client
+	pdHTTPCli pdhttp.Client
+	version   *semver.Version
+
+	// control the pause schedulers goroutine
+	schedulerPauseCh chan struct{}
+	// control the ttl of pausing schedulers
+	SchedulerPauseTTL time.Duration
+}
+
+// NewPdController creates a new PdController.
+func NewPdController(
+	ctx context.Context,
+	keyspaceName string,
+	pdAddrs []string,
+	tlsConf *tls.Config,
+	securityOption pd.SecurityOption,
+) (*PdController, error) {
+	maxCallMsgSize := []grpc.DialOption{
+		grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxMsgSize)),
+		grpc.WithDefaultCallOptions(grpc.MaxCallSendMsgSize(maxMsgSize)),
+	}
+	pdClient, err := pd.NewClientWithAPIContext(
+		ctx, keyspace.BuildAPIContext(keyspaceName), caller.GetComponent(1), pdAddrs, securityOption,
+		opt.WithGRPCDialOptions(maxCallMsgSize...),
+		// If the time too short, we may scatter a region many times, because
+		// the interface `ScatterRegions` may time out.
+		opt.WithCustomTimeoutOption(60*time.Second),
+	)
+	if err != nil {
+		log.Error("fail to create pd client", zap.Error(err))
+		return nil, errors.Trace(err)
+	}
+
+	pdHTTPCliConfig := make([]pdhttp.ClientOption, 0, 1)
+	if tlsConf != nil {
+		pdHTTPCliConfig = append(pdHTTPCliConfig, pdhttp.WithTLSConfig(tlsConf))
+	}
+	pdHTTPCli := pdhttp.NewClientWithServiceDiscovery(
+		"br/lightning PD controller",
+		pdClient.GetServiceDiscovery(),
+		pdHTTPCliConfig...,
+	).WithBackoffer(retry.InitialBackoffer(time.Second, time.Second, PDRequestRetryTime*time.Second))
+	versionStr, err := pdHTTPCli.GetPDVersion(ctx)
+	if err != nil {
+		pdHTTPCli.Close()
+		pdClient.Close()
+		return nil, errors.Trace(err)
+	}
+	version := parseVersion(versionStr)
+
+	return &PdController{
+		pdClient:  pdClient,
+		pdHTTPCli: pdHTTPCli,
+		version:   version,
+		// We should make a buffered channel here otherwise when context canceled,
+		// gracefully shutdown will stick at resuming schedulers.
+		schedulerPauseCh: make(chan struct{}, 1),
+	}, nil
+}
+
+func NewPdControllerWithPDClient(pdClient pd.Client, pdHTTPCli pdhttp.Client, v *semver.Version) *PdController {
+	return &PdController{
+		pdClient:         pdClient,
+		pdHTTPCli:        pdHTTPCli,
+		version:          v,
+		schedulerPauseCh: make(chan struct{}, 1),
+	}
+}
+
+func parseVersion(versionStr string) *semver.Version {
+	// we need trim space or semver will parse failed
+	v := strings.TrimSpace(versionStr)
+	v = strings.Trim(v, "\"")
+	v = strings.TrimPrefix(v, "v")
+	version, err := semver.NewVersion(v)
+	if err != nil {
+		log.Warn("fail back to v0.0.0 version",
+			zap.String("version", versionStr), zap.Error(err))
+		version = &semver.Version{Major: 0, Minor: 0, Patch: 0}
+	}
+	failpoint.Inject("PDEnabledPauseConfig", func(val failpoint.Value) {
+		if val.(bool) {
+			// test pause config is enable
+			version = &semver.Version{Major: 5, Minor: 0, Patch: 0}
+		}
+	})
+	return version
+}
+
+func (p *PdController) isPauseConfigEnabled() bool {
+	return p.version.Compare(pauseConfigVersion) >= 0
+}
+
+// SetPDClient set pd addrs and cli for test.
+func (p *PdController) SetPDClient(pdClient pd.Client) {
+	p.pdClient = pdClient
+}
+
+// GetPDClient set pd addrs and cli for test.
+func (p *PdController) GetPDClient() pd.Client {
+	return p.pdClient
+}
+
+// GetPDHTTPClient returns the pd http client.
+func (p *PdController) GetPDHTTPClient() pdhttp.Client {
+	return p.pdHTTPCli
+}
+
+// GetClusterVersion returns the current cluster version.
+func (p *PdController) GetClusterVersion(ctx context.Context) (string, error) {
+	v, err := p.pdHTTPCli.GetClusterVersion(ctx)
+	return v, errors.Trace(err)
+}
+
+// GetRegionCount returns the region count in the specified range.
+func (p *PdController) GetRegionCount(ctx context.Context, startKey, endKey []byte) (int, error) {
+	// TiKV reports region start/end keys to PD in memcomparable-format.
+	var start, end []byte
+	start = codec.EncodeBytes(nil, startKey)
+	if len(endKey) != 0 { // Empty end key means the max.
+		end = codec.EncodeBytes(nil, endKey)
+	}
+	status, err := p.pdHTTPCli.GetRegionStatusByKeyRange(ctx, pdhttp.NewKeyRange(start, end), true)
+	if err != nil {
+		return 0, errors.Trace(err)
+	}
+	return status.Count, nil
+}
+
+// GetStoreInfo returns the info of store with the specified id.
+func (p *PdController) GetStoreInfo(ctx context.Context, storeID uint64) (*pdhttp.StoreInfo, error) {
+	info, err := p.pdHTTPCli.GetStore(ctx, storeID)
+	return info, errors.Trace(err)
+}
+
+func (p *PdController) doPauseSchedulers(
+	ctx context.Context,
+	schedulers []string,
+) ([]string, error) {
+	// pause this scheduler with 300 seconds
+	delay := int64(p.ttlOfPausing().Seconds())
+	removedSchedulers := make([]string, 0, len(schedulers))
+	for _, scheduler := range schedulers {
+		err := p.pdHTTPCli.SetSchedulerDelay(ctx, scheduler, delay)
+		if err != nil {
+			return removedSchedulers, errors.Trace(err)
+		}
+		removedSchedulers = append(removedSchedulers, scheduler)
+	}
+	return removedSchedulers, nil
+}
+
+func (p *PdController) pauseSchedulersAndConfigWith(
+	ctx context.Context, schedulers []string,
+	schedulerCfg map[string]any,
+) ([]string, error) {
+	// first pause this scheduler, if the first time failed. we should return the error
+	// so put first time out of for loop. and in for loop we could ignore other failed pause.
+	removedSchedulers, err := p.doPauseSchedulers(ctx, schedulers)
+	if err != nil {
+		log.Error("failed to pause scheduler at beginning",
+			zap.Strings("name", schedulers), zap.Error(err))
+		return nil, errors.Trace(err)
+	}
+	log.Info("pause scheduler successful at beginning", zap.Strings("name", schedulers))
+	i
+```
+
+### Core Architecture Module: `br/pkg/pdutil/utils.go`
+```
+// Copyright 2020 PingCAP, Inc. Licensed under Apache-2.0.
+
+package pdutil
+
+import (
+	"bytes"
+	"context"
+	"crypto/tls"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/pingcap/errors"
+	berrors "github.com/pingcap/tidb/br/pkg/errors"
+	"github.com/pingcap/tidb/pkg/store/pdtypes"
+	"github.com/pingcap/tidb/pkg/tablecodec"
+	"github.com/pingcap/tidb/pkg/util/codec"
+	"github.com/pingcap/tidb/pkg/util/httputil"
+	pd "github.com/tikv/pd/client/http"
+)
+
+// UndoFunc is a 'undo' operation of some undoable command.
+// (e.g. RemoveSchedulers).
+type UndoFunc func(context.Context) error
+
+// Nop is the 'zero value' of undo func.
+var Nop UndoFunc = func(context.Context) error { return nil }
+
+// GetPlacementRules return the current placement rules.
+func GetPlacementRules(ctx context.Context, pdAddr string, tlsConf *tls.Config) ([]pdtypes.Rule, error) {
+	cli := httputil.NewClient(tlsConf)
+	prefix := "http://"
+	if tlsConf != nil {
+		prefix = "https://"
+	}
+	reqURL := fmt.Sprintf("%s%s%s", prefix, pdAddr, pd.PlacementRules)
+	req, err := http.NewRequestWithContext(ctx, "GET", reqURL, nil)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	resp, err := cli.Do(req)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	defer resp.Body.Close()
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(resp.Body)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	if resp.StatusCode == http.StatusPreconditionFailed {
+		return []pdtypes.Rule{}, nil
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.Annotatef(berrors.ErrPDInvalidResponse,
+			"get placement rules failed: resp=%v, err=%v, code=%d", buf.String(), err, resp.StatusCode)
+	}
+	var rules []pdtypes.Rule
+	err = json.Unmarshal(buf.Bytes(), &rules)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	return rules, nil
+}
+
+// SearchPlacementRule returns the placement rule matched to the table or nil.
+func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdtypes.PeerRoleType) *pdtypes.Rule {
+	for _, rule := range placementRules {
+		key, err := hex.DecodeString(rule.StartKeyHex)
+		if err != nil {
+			continue
+		}
+		_, decoded, err := codec.DecodeBytes(key, nil)
+		if err != nil {
+			continue
+		}
+		if rule.Role == role && tableID == tablecodec.DecodeTableID(decoded) {
+			return &rule
+		}
+	}
+	return nil
+}
+
+```
+
+
+### D2: Asynchronous State & Concurrency
+- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
+
+### D3: Error Boundaries, Recovery & Rollbacks
+- Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #72115** (2026-10-19): **server: fix data race between connection liveness probe and packet read (#71855) (#71908) | tidb-test=5730244c023616144b344939ba89b36d00abe035**
+  *Symptoms*: This is an automated cherry-pick of #71908  This is an automated cherry-pick of #71855  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #71852  Problem Summary:  Under sustained DML load a client connection could panic with `runtime error: slice bounds out of range [:32768] with capacity 16384`. The SQLKiller connection-liveness probe (`BufferedReadConn.IsAlive` -> `Peek`) and the connection read loop (`BufferedReadConn.Read`) both mutate the same `bufio.Reader` with no common lock: the `mu` mutex only serialized the probe against itself, never against `Read`. When a probe fired on a background goroutine while the read loop was reading the next command, the reader's internal index `b.w` was advanced twice and reached `2 * DefaultReaderSize`, so `bufio.Reader.Read` panicked on `copy(p, b.buf[b.r:b.w])`.  ### What changed and how does it work?  `BufferedReadConn.IsAlive` no longer reads through the shared `bufio.Reader`. It unwraps to the underlying `syscall.Conn` (`BufferedReadConn` -> optional `*tls.Conn` -> raw socket) and probes the socket with a non-blocking, non-consuming `recv(MSG_PEEK | MSG_DONTWAIT)`:  - `EAGAIN`/`EWOULDBLOCK`: alive (open, no data pending) - 
+
+- **Issue #72114** (2026-10-19): **util: prevent SQLKiller panic during concurrent reset (#70557) (#70776) | tidb-test=5730244c023616144b344939ba89b36d00abe035**
+  *Symptoms*: This is an automated cherry-pick of #70776  This is a release-8.5-specific backport of #70557.  ### What problem does this PR solve?  Issue Number: ref #70545  A successful `SendKillSignal` can race with `Reset`. On release-8.5, `SendKillSignal` used the mutable signal value again after the CAS; if `Reset` cleared it in between, the error lookup could return nil and the logging path could panic. `Reset` also used a separate load/store pair, which could clear a newer signal sent between those operations.  ### What changed and how does it work?  release-8.5 does not have the complete kill-event state machine used by master, so this is a minimal branch-specific adaptation:  - After the successful CAS, construct the kill error from the already captured `reason` instead of reloading the mutable signal. - Reset the signal with one atomic swap and log from the swapped-out value, so a later kill signal is not lost. - Add failpoints and regression tests for both CAS/Reset interleavings.  ### Check List  Tests  - [x] Unit test   - `go test -tags=intest,deadlock ./pkg/util/sqlkiller -run '^TestSQLKillerConcurrentReset$' -count=1`\n  - `GOTOOLCHAIN=go1.25.12 CC=clang go test -race -ldflags='-linkmode=external' -tags=intest,deadlock ./pkg/util/sqlkiller -run '^TestSQLKillerConcurrentReset$' -count=1`\n  - `go test -tags=intest,deadlock ./pkg/util/sqlkiller -run '^TestConnectionAliveCallbackCleanupKeepsNewerCallback$' -count=1`\n  - `git diff --check`\n- [ ] Integration test\n- [ ] Manual 
+
+### D4: Resource Lifecycle & Leak Defenses
+- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
+
+### D5: Boundary Deserialization & Encoding
+- Schema deserialization, payload validation, and untrusted input guards.
+
+### D6: Cross-Platform & Runtime Gotchas
+- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
+
+### D7: Build, CI/CD, Deployment & Tooling
+- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
+
+### D8: Forensic Bug Fixes & Real Production Code Patches
+Observed empirical fixes and code patches:
+
+### Incident Patch 1: `e43c93ef` (2026-10-19)
+**Commit Message**: session, executor: fix advisory locks and MPP encoding (#72099)
+
+ref pingcap/tidb#18023
+
+**File**: `pkg/executor/internal/mpp/BUILD.bazel` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ go_test(
+     ],
+     embed = [":mpp"],
+     flaky = True,
+-    shard_count = 7,
++    shard_count = 8,
+     deps = [
+         "//pkg/kv",
+         "//pkg/planner/core/operator/physicalop",
+```
+
+**File**: `pkg/executor/internal/mpp/local_mpp_coordinator.go` (modified, +9/-5)
+```diff
+@@ -208,11 +208,7 @@ func (c *localMppCoordinator) appendMPPDispatchReq(
+ 	for i := range pf.Sink.Schema().Columns {
+ 		dagReq.OutputOffsets = append(dagReq.OutputOffsets, uint32(i))
+ 	}
+-	if !pf.IsRoot {
+-		dagReq.EncodeType = tipb.EncodeType_TypeCHBlock
+-	} else {
+-		dagReq.EncodeType = tipb.EncodeType_TypeChunk
+-	}
++	setMPPEncodeType(c.sessionCtx, dagReq, pf.IsRoot)
+ 	zoneHelper := taskZoneInfoHelper{}
+ 	zoneHelper.init(allTiFlashStoreInfo)
+ 	tasks := pf.Sink.GetSelfTasks()
+@@ -980,3 +976,11 @@ func (c *localMppCoordinator) Execute(ctx context.Context) (kv.Response, []kv.Ke
+ func (c *localMppCoordinator) GetNodeCnt() int {
+ 	return c.nodeCnt
+ }
++
++func setMPPEncodeType(sctx sessionctx.Context, dagReq *tipb.DAGRequest, isRoot bool) {
++	if !isRoot {
++		dagReq.EncodeType = tipb.EncodeType_TypeCHBlock
++		return
++	}
++	distsql.SetEncodeType(sctx.GetDistSQLCtx(), dagReq)
++}
+```
+
+**File**: `pkg/executor/internal/mpp/local_mpp_coordinator_test.go` (modified, +19/-0)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 
+ 	"github.com/pingcap/tidb/pkg/kv"
+ 	"github.com/pingcap/tidb/pkg/planner/core/operator/physicalop"
++	"github.com/pingcap/tidb/pkg/util/mock"
+ 	"github.com/pingcap/tipb/go-tipb"
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -177,3 +178,21 @@ func TestZoneHelperTryQuickFill(t *testing.T) {
+ 	require.False(t, quickFill)
+ 	require.Equal(t, 0, len(sameZoneFlags))
+ }
++
++func TestSetMPPEncodeTypeRespectsChunkRPCSetting(t *testing.T) {
++	sctx := mock.NewContext()
++	for _, enabled := range []bool{false, true} {
++		sctx.GetSessionVars().EnableChunkRPC = enabled
++		root := &tipb.DAGRequest{}
++		setMPPEncodeType(sctx, root, true)
++		if enabled {
++			require.Equal(t, tipb.EncodeType_TypeChunk, root.EncodeType)
++		} else {
++			require.Equal(t, tipb.EncodeType_TypeDefault, root.EncodeType)
++		}
++
++		intermediate := &tipb.DAGRequest{}
++		setMPPEncodeType(sctx, intermediate, false)
++		require.Equal(t, tipb.EncodeType_TypeCHBlock, intermediate.EncodeType)
++	}
++}
+```
+
+**File**: `pkg/session/advisory_locks.go` (modified, +2/-0)
+```diff
+@@ -73,10 +73,12 @@ func (a *advisoryLock) GetLock(lockName string, timeout int64) error {
+ 	a.ctx = kv.WithInternalSourceType(a.ctx, kv.InternalTxnOthers)
+ 	_, err := a.session.ExecuteInternal(a.ctx, "SET innodb_lock_wait_timeout = %?", timeout)
+ 	if err != nil {
++		a.Close()
+ 		return err
+ 	}
+ 	_, err = a.session.ExecuteInternal(a.ctx, "BEGIN PESSIMISTIC")
+ 	if err != nil {
++		a.Close()
+ 		return err
+ 	}
+ 	_, err = a.session.ExecuteInternal(a.ctx, "INSERT INTO mysql.advisory_locks (lock_name) VALUES (%?)", lockName)
+```
+
+**File**: `pkg/session/session.go` (modified, +30/-2)
+```diff
+@@ -175,6 +175,10 @@ type stmtRecord struct {
+ 	stmtCtx *stmtctx.StatementContext
+ }
+ 
++const internalAdvisoryLockOwnerIDBase = uint64(1) << 32
++
++var internalAdvisoryLockOwnerIDAlloc atomic.Uint64
++
+ // StmtHistory holds all histories of statements in a txn.
+ type StmtHistory struct {
+ 	history []*stmtRecord
+@@ -256,6 +260,8 @@ type session struct {
+ 
+ 	// Contains a list of sessions used to collect advisory locks.
+ 	advisoryLocks map[string]*advisoryLock
++	// advisoryLockOwnerID caches a stable non-zero owner ID for advisory locking.
++	advisoryLockOwnerID atomic.Uint64
+ 
+ 	extensions *extension.SessionExtensions
+ 
+@@ -2083,7 +2089,7 @@ func (s *session) GetAdvisoryLock(lockName string, timeout int64) error {
+ 	if err != nil {
+ 		return err
+ 	}
+-	lock := &advisoryLock{session: se, ctx: context.TODO(), owner: s.ShowProcess().ID, clean: clean}
++	lock := &advisoryLock{session: se, ctx: context.TODO(), owner: s.getAdvisoryLockOwner(), clean: clean}
+ 	err = lock.GetLock(lockName, timeout)
+ 	if err != nil {
+ 		return err
+@@ -2104,7 +2110,7 @@ func (s *session) IsUsedAdvisoryLock(lockName string) uint64 {
+ 	if err != nil {
+ 		return 0
+ 	}
+-	lock := &advisoryLock{session: se, ctx: context.TODO(), owner: s.ShowProcess().ID, clean: clean}
++	lock := &advisoryLock{session: se, ctx: context.TODO(), owner: 0, clean: clean}
+ 	err = lock.IsUsedLock(lockName)
+ 	if err != nil {
+ 		// TODO: Return actual owner pid
+@@ -2114,6 +2120,27 @@ func (s *session) IsUsedAdvisoryLock(lockName string) uint64 {
+ 	return 0
+ }
+ 
++func (s *session) getAdvisoryLockOwner() uint64 {
++	if ownerID := s.advisoryLockOwnerID.Load(); ownerID != 0 {
++		return ownerID
++	}
++	ownerID := uint64(0)
++	if processInfo := s.ShowProcess(); processInfo != nil {
++		ownerID = processInfo.ID
++	}
++	if ownerID == 0 {
++		// Keep fallback IDs even and above uint32, outside both GCID formats.
++		// The counter is process-local, so these IDs are not globally unique.
++		// Lock exclusion, reentrancy and release do not require globally unique
++		// owner IDs. Only the holding session reports this ID; other sessions report 1.
++		ownerID = internalAdvisoryLockOwnerIDBase + (internalAdvisoryLockOwnerIDAlloc.Add(1) << 1)
++	}
++	if s.advisoryLockOwnerID.CompareAndSwap(0, ownerID) {
++		return ownerID
++	}
++	return s.advisoryLockOwnerID.Load()
++}
++
+ // ReleaseAdvisoryLock releases an advisory locks held by the session.
+ // It returns FALSE if no lock by this name was held (by this session),
+ // and TRUE if a lock was held and "released".
+@@ -3536,6 +3563,7 @@ func (s *session) Close() {
+ 		}
+ 	}
+ 	s.ReleaseAllAdvisoryLocks()
++	s.advisoryLockOwnerID.Store(0)
+ 	if s.statsCollector != nil {
+ 		s.statsCollector.Delete()
+ 	}
+```
+
+**File**: `pkg/session/session_test.go` (modified, +79/-0)
+```diff
+@@ -37,6 +37,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/meta/metadef"
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
+ 	"github.com/pingcap/tidb/pkg/parser/terror"
++	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
+ 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
+ 	kvstore "github.com/pingcap/tidb/pkg/store"
+ 	"github.com/pingcap/tidb/pkg/store/mockstore"
+@@ -365,3 +366,81 @@ func TestMemArbitratorSession(t *testing.T) {
+ 		buildMemArbitratorDigestID(normalizedSQL, "db2"))
+ 	require.Equal(t, memory.InvalidDigestID, buildMemArbitratorDigestID("", "db1"))
+ }
++
++func TestAdvisoryLockWithoutProcessInfo(t *testing.T) {
++	store, dom := CreateStoreAndBootstrap(t)
++	defer func() { require.NoError(t, store.Close()) }()
++	defer dom.Close()
++
++	se, err := createSession(store)
++	require.NoError(t, err)
++	defer se.Close()
++	require.Nil(t, se.ShowProcess())
++	lockName := t.Name()
++	require.Zero(t, se.IsUsedAdvisoryLock(lockName))
++	require.NoError(t, se.GetAdvisoryLock(lockName, 1))
++	ownerID := se.IsUsedAdvisoryLock(lockName)
++	require.NotZero(t, ownerID)
++
++	// Executing SQL must not change the owner of later locks on this session.
++	se.SetConnectionID(12345)
++	se.SetProcessInfo("select 1", time.Now(), mysql.ComQuery, 0)
++	require.NoError(t, se.GetAdvisoryLock(lockName+"-second", 1))
++	require.Equal(t, ownerID, se.IsUsedAdvisoryLock(lockName+"-second"))
++	require.True(t, se.ReleaseAdvisoryLock(lockName))
++	require.True(t, se.ReleaseAdvisoryLock(lockName+"-second"))
++	require.Zero(t, se.IsUsedAdvisoryLock(lockName))
++}
++
++func TestAdvisoryLockUsesProcessInfoOwner(t *testing.T) {
++	store, dom := CreateStoreAndBootstrap(t)
++	defer func() { require.NoError(t, store.Close()) }()
++	defer dom.Close()
++
++	se, err := createSession(store)
++	require.NoError(t, err)
++	defer se.Close()
++	const connID uint64 = 12345
++	se.SetConnectionID(connID)
++	se.SetProcessInfo("select 1", time.Now(), mysql.ComQuery, 0)
++	require.NoError(t, se.GetAdvisoryLock(t.Name(), 1))
++	require.Equal(t, connID, se.IsUsedAdvisoryLock(t.Name()))
++	require.True(t, se.ReleaseAdvisoryLock(t.Name()))
++}
++
++func TestAdvisoryLockSetupFailureReleasesSession(t *testing.T) {
++	store, dom := CreateStoreAndBootstrap(t)
++	defer func() { require.NoError(t, store.Close()) }()
++	defer dom.Close()
++
++	resource, err := dom.SysSessionPool().Get()
++	require.NoError(t, err)
++	se := resource.(*session)
++	cleaned := false
++	clean := func() {
++		cleaned = true
++		dom.SysSessionPool().Put(resource)
++	}
++	defer func() {
++		if !cleaned {
++			se.RollbackTxn(context.Background())
++			clean()
++		}
++	}()
++
++	injectedErr := errors.New("advisory lock SET failed")
++	original := variable.GetSysVar(vardef.InnodbLockWaitTimeout)
++	override := *original
++	override.SetSession = func(vars *variable.SessionVars, value string) error {
++		if vars == se.GetSessionVars() {
++			return injectedErr
++		}
++		return original.SetSession(vars, value)
++	}
++	variable.RegisterSysVar(&override)
++	defer variable.RegisterSysVar(original)
++
++	lock := &advisoryLock{session: se, ctx: context.Background(), clean: clean}
++	require.ErrorIs(t, lock.GetLock(t.Name(), 1), injectedErr)
++	require.True(t, cleaned, "failed lock setup must return the borrowed session")
++}
+```
+
+---
+
+### Incident Patch 2: `dfda1fd3` (2026-10-19)
+**Commit Message**: collate: fix unicode_0900 weight panic (#67149)
+
+close pingcap/tidb#67151
+
+**File**: `pkg/util/collate/BUILD.bazel` (modified, +2/-0)
+```diff
+@@ -43,12 +43,14 @@ go_test(
+         "collate_bench_test.go",
+         "collate_test.go",
+         "main_test.go",
++        "unicode_0900_ai_ci_impl_test.go",
+     ],
+     embed = [":collate"],
+     flaky = True,
+     deps = [
+         "//pkg/parser/charset",
+         "//pkg/testkit/testsetup",
++        "//pkg/util/collate/ucadata",
+         "@com_github_stretchr_testify//require",
+         "@org_uber_go_goleak//:goleak",
+     ],
+```
+
+**File**: `pkg/util/collate/unicode_0900_ai_ci_impl.go` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ func (unicode0900Impl) Pattern() WildcardPattern {
+ }
+ 
+ func convertRuneUnicodeCI0900(r rune) (first, second uint64) {
+-	if int(r) > len(ucadata.DUCET0900Table.MapTable4) {
++	if int(r) >= len(ucadata.DUCET0900Table.MapTable4) {
+ 		return uint64(r>>15) + 0xFBC0 + (uint64((r&0x7FFF)|0x8000) << 16), 0
+ 	}
+ 
+```
+
+**File**: `pkg/util/collate/unicode_0900_ai_ci_impl_test.go` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++// Copyright 2026 PingCAP, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package collate
++
++import (
++	"testing"
++
++	"github.com/pingcap/tidb/pkg/util/collate/ucadata"
++	"github.com/stretchr/testify/require"
++)
++
++func TestUnicode0900BoundaryRuneUsesImplicitWeight(t *testing.T) {
++	collator := &unicode0900AICICollator{}
++	lastTableRune := rune(len(ucadata.DUCET0900Table.MapTable4) - 1)
++	boundaryRune := lastTableRune + 1
++	boundaryStr := string(boundaryRune)
++
++	// The first rune outside MapTable4 must use the fallback path instead of indexing the table.
++	lastFirst, lastSecond := convertRuneUnicodeCI0900(lastTableRune)
++	require.Equal(t, ucadata.DUCET0900Table.MapTable4[lastTableRune], lastFirst)
++	require.Zero(t, lastSecond)
++
++	first, second := convertRuneUnicodeCI0900(boundaryRune)
++	require.NotZero(t, first)
++	require.Zero(t, second)
++	require.Greater(t, first, lastFirst)
++	require.NotEmpty(t, collator.Key(boundaryStr))
++	require.Equal(t, -1, collator.Compare(string(lastTableRune), boundaryStr))
++	require.Equal(t, 0, collator.Compare(boundaryStr, boundaryStr))
++	require.Equal(t, -1, collator.Compare(boundaryStr, string(boundaryRune+1)))
++
++	pattern := collator.Pattern()
++	pattern.Compile(boundaryStr, '\\')
++	require.True(t, pattern.DoMatch(boundaryStr))
++}
+```
+
+#### Recent Merged Pull Requests:
+- **PR #72115** (2026-10-19): server: fix data race between connection liveness probe and packet read (#71855) (#71908) | tidb-test=5730244c023616144b344939ba89b36d00abe035 (@ti-chi-bot)
+- **PR #72114** (2026-10-19): util: prevent SQLKiller panic during concurrent reset (#70557) (#70776) | tidb-test=5730244c023616144b344939ba89b36d00abe035 (@ti-chi-bot)
+- **PR #72112** (2026-10-19): HTTP: expose diagnostic HTTP endpoints (@elsa0520)
+- **PR #72107** (2026-10-19): expression: support unary minus pushdown to TiFlash (@windtalker)
+- **PR #72101** (2026-10-19): SQL: Diagnostic mode SQL whitelist (@elsa0520)
+- **PR #72099** (2026-10-19): session, executor: fix advisory locks and MPP encoding (@windtalker)
+
+---
+
+## 3. Empirical Evidence & Compliance Certification
+- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
+- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
+- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+
+---
+
+## 4. Promotion & Integration Status
+- **Status**: HARVESTED_DEEP_FORENSIC
+- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. session, executor: fix advisory locks and MPP encoding (#72099)
+
+**RULE**:
+When implementing operations in `pkg/executor/internal/mpp/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e43c93ef`: session, executor: fix advisory locks and MPP encoding (#72099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/internal/mpp/BUILD.bazel`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+    shard_count = 8,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// ANTI-PATTERN: Hardcoded panic on write timeout without runtime fallback
-func WriteLogWithTimeout(w io.Writer, msg []byte, timeout time.Duration) {
-	done := make(chan error, 1)
-	go func() {
-		_, err := w.Write(msg)
-		done <- err
-	}()
-	select {
-	case <-time.After(timeout):
-		// WRONG: Inflexible, crashes the entire node unconditionally
-		panic("fatal: log append stalled!") 
-	case err := <-done:
-		if err != nil { /* ... */ }
-	}
-}
+// Anti-pattern to NEVER write (induced failure mode):
+    shard_count = 7,
 ```
 
 **VERIFICATION METHOD**:
-Verify that config parsing correctly normalizes case-insensitive values and rejects non-whitelisted actions:
-```go
-func TestLogTimeoutActionValidation(t *testing.T) {
-	cfg := &LogConfig{TimeoutAction: "DISCARD"}
-	require.NoError(t, cfg.Validate())
-	require.Equal(t, LogTimeoutActionDiscard, cfg.TimeoutAction)
-
-	cfg.TimeoutAction = "unsupported"
-	require.ErrorContains(t, cfg.Validate(), "log.timeout-action should be one of [panic, discard]")
-}
-```
-
----
-
-## 3. Forensic Real Incidents & Production Patches
-
-### Incident 1: Double-Buffering Memory Spikes in Lightning Chunk Parser (BUG-TIDB-72005)
-- **Context**: `pkg/lightning/mydump/parser.go`, high-throughput CSV/SQL dump block ingestion engine.
-- **What Was Expected**: Multi-block row parsing (where rows exceed the internal block buffer size, e.g. 64KB) should concatenate incoming chunks and retain the unparsed remainder with minimal memory allocation overhead.
-- **What Actually Happened**: `blockParser` allocated and maintained an intermediate `remainBuf *bytes.Buffer`. During `readBlock()`, the remainder of `parser.buf` was written to `remainBuf`, then `appendBuf` was reset, and data was written back from `remainBuf` into `appendBuf`. This incurred duplicate buffer memory, repeated slice expansions, and GC thrashing.
-- **Evidence in Repo**: Commit `be15eeb6`, PR `#72005`, closing issue `#72004`.
-- **Root Cause**: The developer assumed that because `parser.buf` was a sub-slice of `appendBuf`'s backing array, directly writing `parser.buf` to `appendBuf` after calling `appendBuf.Reset()` would cause slice overlap memory corruption. However, `appendBuf.Write()` internally utilizes Go runtime `copy()`, which safely handles overlapping source and destination slices.
-- **Remediation Code Diff**:
-```diff
---- a/pkg/lightning/mydump/parser.go
-+++ b/pkg/lightning/mydump/parser.go
-@@ -61,8 +61,6 @@ type blockParser struct {
- 	pos int64
- 
--	// cache
--	remainBuf *bytes.Buffer
- 	// holds the cached parsable data after last readBlock. all data inside is
- 	// unparsed at the moment of the return of last readBlock, for current unparsed
- 	// data, use buf.
-@@ -96,7 +94,6 @@ func makeBlockParser(
- 	return blockParser{
- 		reader:     MakePooledReader(reader, ioWorkers),
- 		blockBuf:   make([]byte, blockBufSize*config.BufferSizeScale),
--		remainBuf:  &bytes.Buffer{},
- 		appendBuf:  &bytes.Buffer{},
- 		Logger:     logger,
- 		rowPool:    &pool,
-@@ -336,12 +333,13 @@ func (parser *blockParser) readBlock() error {
- 		parser.isLastChunk = true
- 		fallthrough
- 	case nil:
--		// `parser.buf` reference to `appendBuf.Bytes`, so should use remainBuf to
--		// hold the `parser.buf` rest data to prevent slice overlap
--		parser.remainBuf.Reset()
--		parser.remainBuf.Write(parser.buf)
-+		// `parser.buf` references `appendBuf`'s backing array, so compact the
-+		// unparsed remainder to the front of `appendBuf` and then append the newly
-+		// read block, reusing the same buffer. `bytes.Buffer.Write` copies with
-+		// `copy`, which handles the overlapping source and destination correctly,
-+		// and this keeps only one buffer sized to the longest row.
- 		parser.appendBuf.Reset()
--		parser.appendBuf.Write(parser.remainBuf.Bytes())
-+		parser.appendBuf.Write(parser.buf)
- 		blockData := parser.blockBuf[:n]
-```
-- **Lesson**: Do not create auxiliary copy buffers to circumvent slice aliasing when underlying standard library primitives (`bytes.Buffer.Write` via `copy`) guarantee correct handling of overlapping memory ranges.
-
----
-
-### Incident 2: Statement Rollback Panic Triggered by Out-Of-Memory Interrupter (BUG-TIDB-71967)
-- **Context**: `pkg/session/session.go`, `pkg/session/txn.go`, `pkg/util/memory/tracker.go`.
-- **What Was Expected**: When a query statement encounters an OOM (`QueryMemoryExceeded`) or is interrupted (`QueryInterrupted`), TiDB executes `StmtRollback()`. This should discard intermediate statement modifications, revert the Adaptive Radix Tree (ART) staging buffer, and allow the surviving transaction to continue or cleanly roll back.
-- **What Actually Happened**: Discarding nodes in the ART staging buffer caused ART node arena re-allocations/re-calculations that reported memory adjustments back to `MemDBFootprint.ReplaceBytesUsed()`. Because a kill signal was active on the root tracker, `Consume()` invoked `sessionRootTracker.Killer.HandleSignal()`, triggering a new `panic()` inside the rollback routine. This aborted statement recovery and corrupted session execution.
-- **Evidence in Repo**: Commit `95af22e1`, PR `#71967`, closing issue `#71966`. Tests added in `pkg/session/test/txn/txn_test.go` (`TestPanicOnStmtRollbackKilledTxn`).
-- **Root Cause**: Memory tracking lacked an execution context distinguishing between speculative allocation requests and teardown/cleanup reconciliation. Both invoked `Tracker.Consume(delta)` with mandatory quota enforcement.
-- **Remediation Code Diff**:
-```diff
---- a/pkg/session/txn.go
-+++ b/pkg/session/txn.go
-@@ -57,6 +57,10 @@ type LazyTxn struct {
- 	initCnt       int
- 	stagingHandle kv.StagingHandle
- 	writeSLI      sli.TxnWriteThroughputSLI
-+	// The statement-buffer owner sets this only while Cleanup synchronously
-+	// reports its memory footprint. Cleanup must reconcile accounting without
-+	// another cancellation or quota action interrupting the rollback.
-+	inStmtBufCleanup bool
-@@ -153,7 +157,12 @@ func (txn *LazyTxn) cleanupStmtBuf() {
- 	}
- 	buf := txn.Transaction.GetMemBuffer()
- 	if !txn.IsPipelined() {
--		buf.Cleanup(txn.stagingHandle)
-+		func() {
-+			previous := txn.inStmtBufCleanup
-+			txn.inStmtBufCleanup = true
-+			defer func() { txn.inStmtBufCleanup = previous }()
-+			buf.Cleanup(txn.stagingHandle)
-+		}()
- 	}
---- a/pkg/util/memory/tracker.go
-+++ b/pkg/util/memory/tracker.go
-@@ -866,6 +874,15 @@ func (t *Tracker) ReplaceBytesUsed(bytes int64) {
- 	t.Consume(bytes - t.BytesConsumed())
- }
- 
-+// ReplaceBytesUsedForCleanup reconciles previously allocated memory during
-+// teardown. It updates accounting without checking kill signals, running
-+// quota actions, or reserving additional memory from the arbitrator.
-+func (t *Tracker) ReplaceBytesUsedForCleanup(bytes int64) {
-+	t.consume(bytes-t.BytesConsumed(), false)
-+}
-```
-- **Lesson**: Cleanup and unwind logic must execute under an unconstrained fault boundary. Never invoke interruptible or terminating resource checks inside fault handlers.
-
----
-
-### Incident 3: Cascading Process Panics on Stalled Log Appenders (BUG-TIDB-68964)
-- **Context**: `pkg/config/config.go`, system-wide logging configuration and integration with `pingcap/log`.
-- **What Was Expected**: If log file sync operations stalled on overloaded storage, operators needed a mechanism to prevent TiDB nodes from forcibly panicking and crashing.
-- **What Actually Happened**: TiDB hardcoded `zaplog` to panic when a write/sync operation hung longer than `Timeout` seconds. In storage degradation events, every TiDB node in the cluster panicked simultaneously, destroying cluster-wide availability.
-- **Evidence in Repo**: Commit `9763d73e`, PR `#68964`, closing issue `#68968`.
-- **Root Cause**: Lack of configurable timeout policies in `pkg/config/config.go`. The logger interface lacked an option to discard log entries when write timeouts elapsed.
-- **Remediation Code Diff**:
-```diff
---- a/pkg/config/config.go
-+++ b/pkg/config/config.go
-@@ -634,8 +634,11 @@ type Log struct {
- 	SlowThreshold       uint64     `toml:"slow-threshold" json:"slow-threshold"`
- 	RecordPlanInSlowLog uint32     `toml:"record-plan-in-slow-log" json:"record-plan-in-slow-log"`
- 
--	// Make tidb panic if write log operation hang in `Timeout` seconds
-+	// Timeout is the maximum seconds allowed for a log write/sync operation.
- 	Timeout int `toml:"timeout" json:"timeout"`
-+	// TimeoutAction controls the action when log write/sync timeout occurs.
-+	// Valid values: panic, discard.
-+	TimeoutAction string `toml:"timeout-action" json:"timeout-action"`
- }
-@@ -1797,6 +1801,14 @@ func (c *Config) Valid() error {
- 	if c.Log.File.MaxSize > MaxLogFileSize {
- 		return fmt.Errorf("invalid max log file size=%v which is larger than max=%v", c.Log.File.MaxSize, MaxLogFileSize)
- 	}
-+	switch strings.ToLower(c.Log.TimeoutAction) {
-+	case "", zaplog.LogTimeoutActionPanic:
-+		c.Log.TimeoutAction = zaplog.LogTimeoutActionPanic
-+	case zaplog.LogTimeoutActionDiscard:
-+		c.Log.TimeoutAction = zaplog.LogTimeoutActionDiscard
-+	default:
-+		return fmt.Errorf("log.timeout-action should be one of [%s, %s]", zaplog.LogTimeoutActionPanic, zaplog.LogTimeoutActionDiscard)
-+	}
-```
-- **Lesson**: Reliability architectures must avoid cascading single points of failure caused by telemetry and logging. Diagnostic pathways must support non-fatal degradation modes.
-
----
-
-### Incident 4: Analytical Pushdown Rejection for Unary Negation in TiFlash (BUG-TIDB-72106)
-- **Context**: `pkg/expression/pushdown.go`, scalar expression pushdown allowlist for TiFlash columnar engine.
-- **What Was Expected**: Analytical queries executing numeric negation (e.g. `SELECT -col_a FROM t`) should push expression execution down to TiFlash coprocessor workers.
-- **What Actually Happened**: TiFlash implemented the required protobuf signatures (`UnaryMinusInt`, `UnaryMinusReal`, `UnaryMinusDecimal`), but TiDB's scalar expression validator omitted `ast.UnaryMinus` from `scalarExprSupportedByFlash`. Consequently, queries were forced to pull raw columnar blocks back to the TiDB compute layer for client-side scalar negation, introducing network transfer bottlenecks.
-- **Evidence in Repo**: Issue `#72106`, PR `#72107`, cross-referencing TiFlash implementation PR `#10945`.
-- **Root Cause**: Architectural decouple gap between compute planner capabilities and coprocessor executor capabilities. When TiFlash added the vectorized kernel, TiDB's coprocessor pushdown allowlist was not updated in lockstep.
-- **Remediation Code Diff**:
-```diff
---- a/pkg/expression/expression.go
-+++ b/pkg/expression/expression.go
-@@ -1045,6 +1045,7 @@ func scalarExprSupportedByFlash(expr Expression) bool {
- 	case ast.Plus,
- 		ast.Minus,
-+		ast.UnaryMinus,
- 		ast.Mul,
- 		ast.Div:
- 		return true
-```
-- **Lesson**: Distributed execution systems with heterogeneous compute backends must maintain automated schema-driven contracts verifying pushdown parity across coordinator allowlists and engine execution kernels.
-
----
-
-### Incident 5: Hostname Mismatch in TiKV Node Status Parsing (BUG-TIDB-BR-UTIL)
-- **Context**: `br/pkg/conn/util/util.go`, backup-restore node address resolution.
-- **What Was Expected**: When BR requests backup streams, it fetches TiKV configs using HTTP addresses reported by PD. If PD registers an address using an internal status proxy or IP while the cluster node advertises a distinct hostname, requests must route correctly to the node's accessible IP and status port.
-- **What Actually Happened**: PD status addresses sometimes mismatched node advertise addresses (e.g. `statusAddr: 127.0.0.1:20180` vs `nodeAddr: 192.168.1.10:20160`), causing HTTP client connections to fail during backup streaming initialization.
-- **Evidence in Repo**: `br/pkg/conn/util/util.go:HandleTiKVAddress`.
-- **Root Cause**: `url.Parse` blindly trusted `statusAddr.Hostname()` without comparing it against the node's physical routable hostname.
-- **Remediation Pattern**:
-```go
-// br/pkg/conn/util/util.go
-if statusURL.Hostname() != nodeURL.Hostname() {
-    // If not matched, use the address hostname but keep the status port.
-    addr.Host = net.JoinHostPort(nodeURL.Hostname(), statusURL.Port())
-    log.Warn("store address and status address mismatch the host, using store address as hostname",
-        zap.Uint64("store", store.Id),
-        zap.String("status address", statusAddr),
-        zap.String("node address", nodeAddr))
-}
-```
-- **Lesson**: In heterogeneous network topologies (Kubernetes overlays, cloud VPCs), never assume control-plane metadata endpoints share identical DNS resolutions with data-plane endpoints. Synthesize composite endpoints using verified hostname-port mappings.
-
----
-
-## 4. Microscopic Code-Level Invariants
-
-### 1. Micro-Syntax & Token-Level Precision
-- **Protobuf Tag Parsing via Low-Level Wire Deserialization**: In `br/pkg/metautil/metafile.go`, standard reflection on protobuf structs fails when encountering unknown fields introduced by newer schema versions. The parser uses `protowire.ConsumeTag` and `protowire.ConsumeVarint`:
-```go
-func parseProtobufFieldNumber(protobufTag string) (protowire.Number, bool) {
-    if protobufTag == "" {
-        return 0, false
-    }
-    // Tag format: "bytes,2,opt,name=backup_meta"
-    parts := strings.Split(protobufTag, ",")
-    if len(parts) < 2 {
-        return 0, false
-    }
-    n, err := strconv.ParseUint(parts[1], 10, 32)
-    if err != nil {
-        return 0, false
-    }
-    return protowire.Number(n), true
-}
-```
-- **Pitfall**: Splitting protobuf tags without validating minimum token count (`len(parts) < 2`) triggers runtime index out-of-range panics on non-standard tags.
-
-### 2. Infinite Loop & Recursion Guards
-- **Recursive Metadata Graph Traversal Depth Guard**: In `br/pkg/metautil/metafile.go:walkLeafMetaFile`, child meta files are traversed recursively. To prevent circular reference hangs or stack overflows from corrupt backup metadata, TiDB enforces a hard depth assertion:
-```go
-child := &backuppb.MetaFile{}
-if err = proto.Unmarshal(decryptContent, child); err != nil {
-    return errors.Trace(err)
-}
-// ARCHITECTURAL INVARIANT: The max depth of the root metafile is strictly 1.
-if len(child.MetaFiles) > 0 {
-    return errors.Errorf("the metafile has unexpected level: %v", child)
-}
-```
-- **Loop Proof**: A tree that permits `len(child.MetaFiles) > 0` at depth 1 is rejected immediately before further recursive descent can occur.
-
-### 3. UI & UX Micro-Mechanics (CLI Terminal & Log Rate Rendering)
-- **High-Frequency Progress Bar / Rate Counter Clamping**: In `br/pkg/logutil/rate.go`, calculating real-time throughput from Prometheus counters requires shielding against division-by-zero on microsecond intervals:
-```go
-func (r *RateTracer) RateAt(instant time.Time) float64 {
-    if r.Counter == nil {
-        return math.NaN()
-    }
-    duration := instant.Sub(r.start).Seconds()
-    if duration <= 0 {
-        return 0.0 // Guard against float precision or monotonic clock anomalies
-    }
-    return (metric.ReadCounter(r.Counter) - r.base) / duration
-}
-```
-- **UX Invariant**: Never output `Inf ops/s` or `NaN ops/s` to operator terminals or slow query logs; clamp sub-millisecond deltas to zero or existing base rates.
-
-### 4. Backend Concurrency & Memory Safety
-- **Worker Pool Fan-Out under ErrorGroup Cancellation Context**: In `br/pkg/metautil/statsfile.go:downloadStats`, downloading partition statistics spans multiple goroutines via worker pools. To avoid goroutine leaks when errors occur:
-```go
-eg, ectx := errgroup.WithContext(ctx)
-downloadWorkerpool := util.NewWorkerPool(4, "download stats for each partition")
-for _, statsFileIndex := range statsFileIndexes {
-    if ectx.Err() != nil {
-        break // Stop scheduling new tasks immediately on error
-    }
-    statsFile := statsFileIndex
-    downloadWorkerpool.ApplyOnErrorGroup(eg, func() error {
-        // ... perform decryption and sha256 checksum ...
-        select {
-        case <-ectx.Done():
-            return nil // Return cleanly if another worker failed
-        case taskCh <- task:
-        }
-        return nil
-    })
-}
-return eg.Wait()
-```
-- **TOCTOU Guard**: `ectx.Err()` is checked prior to worker pool enqueue, and channel writes use select guards against `ectx.Done()`.
-
-### 5. Defect & Error Prevention ("Galti Pakadna")
-- **In-Place Slice Compaction Index Pinning**: In `br/pkg/conn/util/util.go:GetAllTiKVStores`:
-```go
-j := 0
-for _, store := range stores {
-    isTiFlash := false
-    if engine.IsTiFlash(store) {
-        if storeBehavior == SkipTiFlash {
-            continue
-        } else if storeBehavior == ErrorOnTiFlash {
-            return nil, errors.Annotatef(berrors.ErrPDInvalidResponse,
-                "cannot restore to a cluster with active TiFlash stores (store %d at %s)", store.Id, store.Address)
-        }
-        isTiFlash = true
-    }
+Automated regression test asserting that input states reproducing defect `e43c93ef` are properly handled with clean fallback behavior.

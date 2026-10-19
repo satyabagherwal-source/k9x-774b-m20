@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "d886456a",
+    "sourceVersion": "dfda1fd3",
     "license": "Apache-2.0",
-    "contentHash": "d831b0e7e24cbc9dc01a29fd40dc3c8bd8ad882239b2f6455bd7c8f9ce1b0cbd",
-    "lastHarvestedAt": "2026-10-19T07:51:27.980Z",
+    "contentHash": "3c99a812eaa0ca2b44887bec8a5fbcacf42dd10947615572d7936cb5eaba345a",
+    "lastHarvestedAt": "2026-10-19T19:50:17.046Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -8818,5 +8818,25 @@
     "contentHash": "1d1b4071a95bd751b883fa2756bcc3f65005fc3693ed0a654d9626ad659a5d79",
     "lastHarvestedAt": "2026-10-19T19:42:32.312Z",
     "learningId": "learn-github-icerockdev-moko-mvvm"
+  },
+  "giuucmp-seoaudit": {
+    "repository": "giuucmp/seoaudit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/giuucmp/seoaudit",
+    "sourceVersion": "9d5b0d4f",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "32569ac7dfc9b36674c99ff9427c42b5b93d6c15f6e3b88305d3e820b045758a",
+    "lastHarvestedAt": "2026-10-19T19:50:12.741Z",
+    "learningId": "learn-github-giuucmp-seoaudit"
+  },
+  "mikepenz-multiplatform-markdown-renderer": {
+    "repository": "mikepenz/multiplatform-markdown-renderer",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+    "sourceVersion": "71a5b18c",
+    "license": "Apache-2.0",
+    "contentHash": "d3bca0526017b5f97432fad399e0eab9606ddb00efd69db8ab4d8063f7300dbe",
+    "lastHarvestedAt": "2026-10-19T19:50:14.125Z",
+    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
   }
 }

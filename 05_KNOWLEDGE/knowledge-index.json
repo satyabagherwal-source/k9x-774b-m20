@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:42:32.279Z",
-  "total_verified_learnings": 897,
+  "last_updated": "2026-10-19T19:50:17.006Z",
+  "total_verified_learnings": 899,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -30615,22 +30615,35 @@
     "learn-github-mikepenz-multiplatform-markdown-renderer": {
       "learning_id": "learn-github-mikepenz-multiplatform-markdown-renderer",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mikepenz-multiplatform-markdown-renderer",
+      "source": "mikepenz/multiplatform-markdown-renderer",
+      "repository": "mikepenz/multiplatform-markdown-renderer",
       "slug": "mikepenz-multiplatform-markdown-renderer",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-      "source_version": "HEAD",
-      "content_hash": "b9ad80f36cba05c4ba6138236847a6e43efc54c7e041c27a42720a67e62a229e",
+      "source_version": "71a5b18c",
+      "content_hash": "d3bca0526017b5f97432fad399e0eab9606ddb00efd69db8ab4d8063f7300dbe",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2778,
+          "title": "Merge pull request #652 from mikepenz/test/detached-placement-regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.347Z"
+      "verified_at": "2026-10-19T19:50:14.069Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mikeroyal-apple-silicon-guide": {
       "learning_id": "learn-github-mikeroyal-apple-silicon-guide",
@@ -35167,8 +35180,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "d886456a",
-      "content_hash": "d831b0e7e24cbc9dc01a29fd40dc3c8bd8ad882239b2f6455bd7c8f9ce1b0cbd",
+      "source_version": "dfda1fd3",
+      "content_hash": "3c99a812eaa0ca2b44887bec8a5fbcacf42dd10947615572d7936cb5eaba345a",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -35186,6 +35199,11 @@
           "number": 2340,
           "title": "Log I/O Fault Boundary Isolation via Configurable Timeout Action",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2779,
+          "title": "session, executor: fix advisory locks and MPP encoding (#72099)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35193,7 +35211,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:51:27.914Z",
+      "verified_at": "2026-10-19T19:50:16.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55832,22 +55850,36 @@
     "learn-github-giuucmp-seoaudit": {
       "learning_id": "learn-github-giuucmp-seoaudit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "giuucmp/seoaudit",
       "repository": "giuucmp/seoaudit",
       "slug": "giuucmp-seoaudit",
       "platform": "github",
       "source_url": "https://github.com/giuucmp/seoaudit",
-      "source_version": "main",
-      "content_hash": "3b843f18060fca32d37aa599e21c3466156af35b0c603595935bca37d37fe040",
+      "source_version": "9d5b0d4f",
+      "content_hash": "32569ac7dfc9b36674c99ff9427c42b5b93d6c15f6e3b88305d3e820b045758a",
       "dossier_path": "07_PROJECT_LEARNING/giuucmp-seoaudit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giuucmp-seoaudit-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2777,
+          "title": "Initial public release",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:50:12.694Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ugolbck-seofordev": {
       "learning_id": "learn-github-ugolbck-seofordev",
@@ -91687,6 +91719,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:42:32.271Z"
+    },
+    "rule-2777": {
+      "learning_id": "rule-2777",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2777,
+      "title": "Initial public release",
+      "source_url": "https://github.com/giuucmp/seoaudit",
+      "source_version": "9d5b0d4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:50:12.694Z"
+    },
+    "rule-2778": {
+      "learning_id": "rule-2778",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2778,
+      "title": "Merge pull request #652 from mikepenz/test/detached-placement-regression",
+      "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+      "source_version": "71a5b18c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:50:14.069Z"
+    },
+    "rule-2779": {
+      "learning_id": "rule-2779",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2779,
+      "title": "session, executor: fix advisory locks and MPP encoding (#72099)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "dfda1fd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:50:16.996Z"
     }
   },
   "aliases": {
