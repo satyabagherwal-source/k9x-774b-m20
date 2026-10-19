@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:16:44.773Z",
-  "total_verified_learnings": 420,
+  "last_updated": "2026-10-19T00:22:57.987Z",
+  "total_verified_learnings": 425,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -18984,7 +18984,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "1e06d33d1b739b8ccd8d4b4bc431cb4e3b33dd5548b4e253673cf84fc71a45d5",
+      "content_hash": "5de55e398ba165dd5a4158cac649952351b78db61bb29b152be88704eac24085",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -19015,6 +19015,11 @@
         {
           "number": 997,
           "title": "Tokenizer Truncation and Padding Strategy Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1912,
+          "title": "Masked Aggregation Invariant for Variable-Length Sequences",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -19357,7 +19362,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-17T21:03:59.233Z",
+      "verified_at": "2026-10-19T00:22:52.890Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23493,22 +23498,35 @@
     "learn-github-krakend-krakend-ce": {
       "learning_id": "learn-github-krakend-krakend-ce",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "krakend-krakend-ce",
+      "source": "krakend/krakend-ce",
+      "repository": "krakend/krakend-ce",
       "slug": "krakend-krakend-ce",
       "platform": "github",
       "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "HEAD",
-      "content_hash": "2dd2df979d419e95461ef43e054b87778e26f23c4d79da230089051908da4119",
+      "source_version": "153d87ac",
+      "content_hash": "5837eeffb9679282327164723905c58ae31ddd141737e15a01d5331aa59809f9",
       "dossier_path": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1913,
+          "title": "Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.860Z"
+      "verified_at": "2026-10-19T00:22:53.704Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kruszoneq-macusb": {
       "learning_id": "learn-github-kruszoneq-macusb",
@@ -25984,22 +26002,35 @@
     "learn-github-microsoft-fluentui": {
       "learning_id": "learn-github-microsoft-fluentui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "microsoft-fluentui",
+      "source": "microsoft/fluentui",
+      "repository": "microsoft/fluentui",
       "slug": "microsoft-fluentui",
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
-      "source_version": "HEAD",
-      "content_hash": "65fb5e07f9e010529150c5647fe0cda538b3d5da4df54f13dbf30d7192af42bb",
+      "source_version": "f02cfa8f",
+      "content_hash": "55ce1c8809d577dd09d50d317b9bc823f1e9bc9b0145b027252a39b3ed0fe575",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1909,
+          "title": "react-charts): handle stale legend overflow counts (#36691)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.321Z"
+      "verified_at": "2026-10-19T00:22:45.344Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-microsoft-graphrag": {
       "learning_id": "learn-github-microsoft-graphrag",
@@ -28127,22 +28158,35 @@
     "learn-github-o2sh-onefetch": {
       "learning_id": "learn-github-o2sh-onefetch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "o2sh-onefetch",
+      "source": "o2sh/onefetch",
+      "repository": "o2sh/onefetch",
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "HEAD",
-      "content_hash": "82f97059b9f05d46812b7f98b305b37dcfb0a4f7581368ce8fda6942faa881a6",
+      "source_version": "aeb7a35a",
+      "content_hash": "ad5dfe0e568423b421d270981ba4a6d0c58f428f52ce20b291702d6ee25e56d1",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1910,
+          "title": "deny deprecations via CI rustflags, lock release builds, publish only needed fil",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.727Z"
+      "verified_at": "2026-10-19T00:22:45.864Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oblador-hush": {
       "learning_id": "learn-github-oblador-hush",
@@ -31537,22 +31581,35 @@
     "learn-github-runanywhereai-runanywhere-sdks": {
       "learning_id": "learn-github-runanywhereai-runanywhere-sdks",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "runanywhereai-runanywhere-sdks",
+      "source": "RunanywhereAI/runanywhere-sdks",
+      "repository": "RunanywhereAI/runanywhere-sdks",
       "slug": "runanywhereai-runanywhere-sdks",
       "platform": "github",
       "source_url": "https://github.com/RunanywhereAI/runanywhere-sdks",
-      "source_version": "HEAD",
-      "content_hash": "1d105f1630338ab321a5f6655a0b3b937f635cc65db3fb973749d1790928ac19",
+      "source_version": "259521e2",
+      "content_hash": "a69cc8ba29e2fec32ac660b7a4df9b5963a08f1c648a345d86f55449cbf93399",
       "dossier_path": "07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1911,
+          "title": "swift): return the Sendable handle ref from RagSession, not the raw pointer (#10",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.331Z"
+      "verified_at": "2026-10-19T00:22:52.575Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rusq-slackdump": {
       "learning_id": "learn-github-rusq-slackdump",
@@ -35569,22 +35626,35 @@
     "learn-github-trailbaseio-trailbase": {
       "learning_id": "learn-github-trailbaseio-trailbase",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "trailbaseio-trailbase",
+      "source": "trailbaseio/trailbase",
+      "repository": "trailbaseio/trailbase",
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "HEAD",
-      "content_hash": "b5fc9f46401cc3c57a6eb47c5aa4d6978497fb54a48776dbc95c428187130853",
+      "source_version": "58b8411a",
+      "content_hash": "77deab97882f474eaa677f0b9587cfc16a0f4d7ed17c145a3b6514b5503544d3",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1914,
+          "title": "Update Rust dependencies to address Wasmtime security advisory.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.038Z"
+      "verified_at": "2026-10-19T00:22:57.980Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-trailhq-graft": {
       "learning_id": "learn-github-trailhq-graft",
@@ -71253,6 +71323,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:16:44.762Z"
+    },
+    "rule-1909": {
+      "learning_id": "rule-1909",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1909,
+      "title": "react-charts): handle stale legend overflow counts (#36691)",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "f02cfa8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:22:45.344Z"
+    },
+    "rule-1910": {
+      "learning_id": "rule-1910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1910,
+      "title": "deny deprecations via CI rustflags, lock release builds, publish only needed fil",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "aeb7a35a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:22:45.864Z"
+    },
+    "rule-1911": {
+      "learning_id": "rule-1911",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1911,
+      "title": "swift): return the Sendable handle ref from RagSession, not the raw pointer (#10",
+      "source_url": "https://github.com/RunanywhereAI/runanywhere-sdks",
+      "source_version": "259521e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:22:52.575Z"
+    },
+    "rule-1912": {
+      "learning_id": "rule-1912",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1912,
+      "title": "Masked Aggregation Invariant for Variable-Length Sequences",
+      "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:22:52.890Z"
+    },
+    "rule-1913": {
+      "learning_id": "rule-1913",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1913,
+      "title": "Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc",
+      "source_url": "https://github.com/krakend/krakend-ce",
+      "source_version": "153d87ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:22:53.704Z"
+    },
+    "rule-1914": {
+      "learning_id": "rule-1914",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1914,
+      "title": "Update Rust dependencies to address Wasmtime security advisory.",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "58b8411a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:22:57.980Z"
     }
   },
   "aliases": {

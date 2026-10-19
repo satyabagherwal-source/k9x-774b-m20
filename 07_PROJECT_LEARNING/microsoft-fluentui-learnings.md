@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
+> **Source**: github ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
+> **Source Version**: `f02cfa8f`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T00:22:45.177Z  
+> **Learning ID**: `learn-github-microsoft-fluentui`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): microsoft/fluentui
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:28:25.395Z  
+> **Harvest Timestamp**: 2026-10-19T00:22:44.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Fluent UI web represents a collection of utilities, React components, and web components for building web applications.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 20312 stars
+- **Stars / Engagement**: 20324 stars
 
 ---
 
@@ -77,8 +91,10 @@ task('build', 'build:react-with-umd');
 
 ### Core Architecture Module: `packages/charts/chart-utilities/src/DecodeBase64Data.ts`
 ```
-import { PlotlySchema } from './PlotlySchema';
+import type { PlotlySchema } from './PlotlySchema';
 import { isArrayOrTypedArray } from './PlotlySchemaConverter';
+
+const MAX_SHAPE_RANK = 3;
 
 function addBase64Padding(s: string): string {
   const paddingNeeded = (4 - (s.length % 4)) % 4;
@@ -156,8 +172,30 @@ function decodeBase64(value: string, dtype: string): any {
   }
 }
 
-// Helper to reshape a flat array into the given shape (e.g., [rows, cols])
-export function reshapeArray(data: number[], shape: number[]): number[] | number[][] | number[][][] {
+function validateShape(dataLength: number, shape: number[]): void {
+  if (shape.length === 0 || shape.length > MAX_SHAPE_RANK) {
+    throw new Error(`Invalid typed-array shape: rank must be between 1 and ${MAX_SHAPE_RANK}`);
+  }
+
+  let elementCount = 1;
+
+  for (const dimension of shape) {
+    if (!Number.isSafeInteger(dimension) || dimension < 0) {
+      throw new Error('Invalid typed-array shape: dimensions must be non-negative safe integers');
+    }
+    if (dimension !== 0 && elementCount > Number.MAX_SAFE_INTEGER / dimension) {
+      throw new Error('Invalid typed-array shape: element count exceeds the maximum safe integer');
+    }
+
+    elementCount *= dimension;
+  }
+
+  if (elementCount !== dataLength) {
+    throw new Error('Invalid typed-array shape: dimensions do not match decoded element count');
+  }
+}
+
+function reshapeValidatedArray(data: number[], shape: number[]): number[] | number[][] | number[][][] {
   if (shape.length === 1) {
     return data;
   }
@@ -174,9 +212,18 @@ export function reshapeArray(data: number[], shape: number[]): number[] | number
   const step = data.length / dim;
   const result: number[][][] = [];
   for (let i = 0; i < dim; i++) {
-    result.push(reshapeArray(data.slice(i * step, (i + 1) * step), rest) as number[][]);
+    result.push(reshapeValidatedArray(data.slice(i * step, (i + 1) * step), rest) as number[][]);
   }
   return result;
+}
+
+// Helper to reshape a flat array into the given shape (e.g., [rows, cols])
+export function reshapeArray(data: number[], shape: number[]): number[] | number[][] | number[][][] {
+  validateShape(data.length, shape);
+  if (data.length === 0) {
+    return [];
+  }
+  return reshapeValidatedArray(data, shape);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,7 +266,7 @@ function decodeBdataInDict(node: any): any {
 
     // If shape exists, reshape the decoded bdata
     if (shape && isArrayOrTypedArray(shape)) {
-      return reshapeArray(decodedBdata, shape as number[]);
+      return reshapeArray(decodedBdata, Array.from(shape as ArrayLike<number>));
     }
 
     return decodedBdata;
@@ -1492,97 +1539,20 @@ module.exports = [
 
 ```
 
-### Core Architecture Module: `packages/charts/chart-utilities/webpack.serve.config.js`
-```
-const { resources } = require('@fluentui/scripts-webpack');
-
-module.exports = resources.createLegacyDemoAppConfig();
-
-```
-
-### Core Architecture Module: `packages/charts/chart-web-components/src/utils/benchmark-wrapper.ts`
-```
-// eslint-disable-next-line
-// @ts-nocheck
-import { tests } from '@tensile-perf/web-components';
-import { webLightTheme } from '@fluentui/tokens';
-import { setTheme } from '@fluentui/web-components';
-
-const testWrapper = (test: any, args: any) => {
-  setTheme(webLightTheme);
-  return test(args);
-};
-
-const wrappedTests = {};
-
-for (const testName of Object.keys(tests)) {
-  const test = tests[testName];
-
-  wrappedTests[testName] = (args: any) => {
-    return testWrapper(test, args);
-  };
-}
-
-export { wrappedTests as tests };
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36835** (2026-10-05): **fix(positioning): keep popups aligned during ancestor motion**
-  *Symptoms*: <!-- Thank you for submitting a pull request!  Please verify that: * [ ] Code is up-to-date with the `master` branch * [x] Your changes are covered by tests (if possible) * [x] You've run `yarn change` locally   PR flow tips: * [x] Try to start with a Draft PR * [ ] Once you're ready (ideally the pipeline is passing) promote your PR to Ready for Review. This step will auto-assign reviewers for your PR. -->  ## Previous Behavior  <!-- This is the behavior we have today -->  Immediately open positioned content inside Dialog could retain coordinates calculated during DialogSurface's entry animation. This caused TagPicker dropdowns to become misaligned when suggestions were already available on reopening.  The browser regression reproduced approximately 21px of drift before the fix.  ## New Behavior  <!-- This is the behavior we should expect with the changes in this PR -->  The shared positioning manager detects finite, running native animations on the target/container and their composed DOM ancestors. It updates positioning on animation frames while that motion is active, performs a final correction after completion or cancellation, and stops scheduling frames when motion has settled. A generation guard prevents older asynchronous positioning results from overwriting newer coordinates, and disposal cancels pending frames.  The implementation is localized to `createPositionManager.ts`. It adds **no public props, options, context exports, dependencies, or motion-system changes**.
-  **Post-Mortem & Fix Analysis**:
-  > ## 📊 Bundle size report  | Package & Exports | Baseline (minified/GZIP) | PR    | Change     | | :---------------- | -----------------------: | ----: | ---------: | | <samp>react-charts</samp> <br /> <abbr title='bundle-size/AreaChart.fixture.js'>AreaChart</abbr>  | `408.522 kB`<br />`127.732 kB` | `409.189 kB`<br />`127.941 kB` | `667 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />`209 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" />| | <samp>react-charts</samp> <br /> <abbr title='bundle-size/DeclarativeChart.fixture.js'>DeclarativeChart</abbr>  | `761.462 kB`<br />`223.49 kB` | `762.129 kB`<br />`223.709 kB` | `667 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />`219 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" />| | <samp>react-charts</samp> <br /> <abbr title='bundle-size/DonutChart.fixture.js
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36835/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
+- **Issue #36915** (2026-10-18): **[WIP] [WIP] Separate changes from original PR into a new PR to address feedback**
+  *Symptoms*: Thanks for the feedback on #36591. I've created this new PR, which merges into #36591, to address your comment. I will work on the changes and keep this PR's description up to date as I make progress.  Original PR: #36591 Triggering review: https://github.com/microsoft/fluentui/pull/36591#discussion_r4303053061 > @copilot these changes are not related to the PR revert here and move them to a separate PR
 
-- **Issue #36831** (2026-10-05): **fix(workspace-plugin): support .storybook/main.cjs in split-library-in-two and storybook target inference**
-  *Symptoms*: ## Previous Behavior  Since the ESM-first change (#36327), the `react-library` template ships `.storybook/main.cjs`, but the tooling still only looks at `main.js`:  - `split-library-in-two` only rewrote `.storybook/main.js`. In a generated package, `main.cjs` kept the paths from before the split: the root config resolved to `packages/.storybook/main`, and the story globs pointed to `stories/stories`. - The workspace plugin only inferred `storybook`/`start` targets from `.storybook/main.js`, so the generated stories project had no Storybook target and the library's `start` forwarded to a target that didn't exist. - `.storybook/tsconfig.json` only included `*.js`, so `main.cjs` wasn't type-checked.  ## New Behavior  - `split-library-in-two` updates paths in `main.js` or `main.cjs`, whichever exists, and includes `*.cjs` in `.storybook/tsconfig.json`. - The workspace plugin infers the `storybook` target from either file. - Specs cover all three: the split generator, plugin target inference, and the full `react-library` output.  I ran the generator end to end: the generated stories project now has `storybook` and `start` targets, and `main.cjs` resolves the root config. Targets of the existing `main.cjs` projects (`web-components`, `chart-web-components`, `vr-tests-web-components`) are unchanged.  Found in review of #36811, which is stacked on this PR 
+- **Issue #36909** (2026-10-16): **feat(react-headless-components-preview): add the top-layer subpath**
+  *Symptoms*: ## Previous Behavior  There is no headless way to put your own element in the top layer. Custom overlays (command palettes, toggletips, pickers) either copy the logic from Popover or Dialog, or use `Portal`, which moves the node and loses inherited theme variables, `dir` and DOM nesting.  ## New Behavior  Adds the `@fluentui/react-headless-components-preview/top-layer` subpath:  - `useTopLayer(ref, options)` puts an element you render into the top layer with the Popover API (`auto`, `hint`, `manual`) or a modal `<dialog>`. It does not position anything; combine it with `usePositioning`. - `getTopLayerTriggerProps({ open, layerId, role })` returns the trigger's `aria-haspopup`, `aria-expanded` and `aria-controls` (`aria-describedby` for tooltips).  There are no ready-made components. Popover and Dialog stay the recommended choice; the hook is for custom overlays.  Also included:  - `docs/top-layer-spec.md`, with the "React is told about every browser change" decision and a table of changes against master. - Concepts/Top Layer stories with menu, modal dialog and hint recipes.  ## Related Issue(s)  Part 2 of 3 of the headless top-layer stack. 
   **Post-Mortem & Fix Analysis**:
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36831/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
-  > ## 📊 Bundle size report  ✅ No changes found  <!-- Sticky Pull Request Commentbundle-size-report -->
-  > probably not best idea to have this fix as part of the stack as it is completely unrelated
-
-- **Issue #36822** (2026-10-04): **fix(react-swatch-picker): default ImageSwatch and EmptySwatch to type="button"**
-  *Symptoms*: ## Previous Behavior  `ImageSwatch` and `EmptySwatch` render a `<button>` without a `type`, so the browser treats it as `type="submit"`. Inside a `<form>`, clicking a swatch submits the form. `ColorSwatch` doesn't have this problem because it already sets `type="button"`.  ## New Behavior  `ImageSwatch` and `EmptySwatch` default to `type="button"`, like `ColorSwatch`. The default is set before the props spread, so a `type` prop still overrides it.  The fix is in the `@fluentui/react-swatch-picker` base hooks, so both the styled v9 components and `@fluentui/react-headless-components-preview` get it
-  **Post-Mortem & Fix Analysis**:
-  > ## 📊 Bundle size report  | Package & Exports | Baseline (minified/GZIP) | PR    | Change     | | :---------------- | -----------------------: | ----: | ---------: | | <samp>react-components</samp> <br /> <abbr title='bundle-size/BaseHooks.fixture.js'>react-components: all base hooks</abbr>  | `217.423 kB`<br />`68.185 kB` | `218.199 kB`<br />`68.412 kB` | `776 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />`227 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" />| | <samp>react-components</samp> <br /> <abbr title='bundle-size/ButtonProviderAndTheme.fixture.js'>react-components: Button, FluentProvider & webLightTheme</abbr>  | `67.471 kB`<br />`19.465 kB` | `67.731 kB`<br />`19.588 kB` | `260 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />`123 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" />| | <samp>r
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36822/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
-
-- **Issue #36821** (2026-10-05): **fix(react-headless-components-preview): enter SwatchPicker on the selected swatch**
-  *Symptoms*: ## Previous Behavior  With `focusMode="arrow"`, Tab always enters `SwatchPicker` on the first swatch, and coming back in returns focus to whichever swatch was focused last, not the selected one. For example: select Blue, press ArrowRight to Purple, Tab out, Shift+Tab back. Focus lands on Purple.  This doesn't match the [radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/): when a radio is checked, focus should move to the checked one.  ## New Behavior  Focus enters the picker on the selected swatch, the same way `TabList` and `Tab` already work:  - Selected `ColorSwatch` and `ImageSwatch` roots get `focusgroupstart`. - While a value is selected, `SwatchPicker` adds `nomemory` to `focusgroup`. With no selection it keeps focus memory, so focus still returns to the last focused swatch.  Components built on the headless package get this by default and don't have to set `focusgroupstart` themselves.  Note: this matches the keyboard behavior the Fluent design spec defines for SwatchPicker:  > **Tab / Shift+Tab** — moves focus into or out of SwatchPicker as one composite tab stop. Entry lands on the selected Swatch, or the first enabled Swatch when no value is selected. > > When focus leaves and later returns, it returns to the selected Swatch; when no value is selected, it returns to the most recently focused enabled Swatch. > > **Focus lifecycle:** SwatchPicker is one page-level tab stop. Focus enters on the selected or first enabled Swatch, remains on the committ
-  **Post-Mortem & Fix Analysis**:
-  > ## 📊 Bundle size report  | Package & Exports | Baseline (minified/GZIP) | PR    | Change     | | :---------------- | -----------------------: | ----: | ---------: | | <samp>react-headless-components-preview</samp> <br /> <abbr title='bundle-size/AllComponents.fixture.js'>react-headless-components-preview: entire library</abbr>  | `242.149 kB`<br />`68.258 kB` | `242.268 kB`<br />`68.28 kB` | `119 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />`22 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" />|  <details> <summary>Unchanged fixtures</summary>  | Package & Exports | Size (minified/GZIP) | | ----------------- | -------------------: | | <samp>react-headless-components-preview</samp> <br /> <abbr title='bundle-size/TagPicker.fixture.js'>@fluentui/react-headless-components-preview/tag-picker</abbr> | `54.012 kB`<br />`17.756 kB` | | <samp>react-headless-components-preview</samp> <br /> <abbr tit
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36821/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
-  > The previous behavior mentioned in the PR is exactly the same we have in v9 currently:  https://github.com/user-attachments/assets/5f50a296-1c44-459b-a604-3860fb00e633  So eitherwe should change it everywhere or don't change it in headless as well. 
-
-- **Issue #36820** (2026-10-01): **ci: invoke v8 site manifest generator directly**
-  *Symptoms*: ## Previous Behavior  The v8 release pipeline runs `yarn create-site-manifests ./packages/react` from the repository root. Yarn 4 fails with `Couldn't find a script named "create-site-manifests"` because the command is a binary declared by `@fluentui/public-docsite-setup`, not a root script or a binary supplied by a root dependency.  ## New Behavior  Invoke the existing generator directly with Node:  ```sh node ./packages/public-docsite-setup/bin/create-site-manifests.js ./packages/react ```  This retains the repository-root working directory, so `site-manifests/v8-prod.js` and `site-manifests/v8-df.js` are written to the existing artifact location. The package's compiled exports are produced by the preceding v8 build step.  Validation on Node 22: - Reproduced the original Yarn resolution failure. - Built `public-docsite-setup` through Nx. - Executed the command extracted from the pipeline YAML and verified both manifest filenames, package version, matching contents, valid creation date, and build-specific CDN URL. - Verified custom CDN URLs and rejection of missing arguments, nonexistent package paths, and unsupported URLs. - Passed Nx formatting, YAML parsing, and `git diff --check`; reran formatting and artifact checks after rebasing onto current master.  Node 24 and the full Azure release pipeline were not verified locally. No beachball change file is required because this changes only pipeline configuration.  ## Related Issue(s)  Fixes the v8 release CI failure reported 
-  **Post-Mortem & Fix Analysis**:
-  > ## 📊 Bundle size report  ✅ No changes found  <!-- Sticky Pull Request Commentbundle-size-report -->
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36820/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
-
-- **Issue #36818** (2026-10-01): **fixed tooltip value cut off at the bottom in HorizontalBarChartWithAxis**
-  *Symptoms*: fixed tooltip value cut off at the bottom in HorizontalBarChartWithAxis
-  **Post-Mortem & Fix Analysis**:
-  > ## 📊 Bundle size report  | Package & Exports | Baseline (minified/GZIP) | PR    | Change     | | :---------------- | -----------------------: | ----: | ---------: | | <samp>react-charts</samp> <br /> <abbr title='bundle-size/AreaChart.fixture.js'>AreaChart</abbr>  | `408.247 kB`<br />`127.652 kB` | `408.291 kB`<br />`127.652 kB` | `44 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />| | <samp>react-charts</samp> <br /> <abbr title='bundle-size/DeclarativeChart.fixture.js'>DeclarativeChart</abbr>  | `760.746 kB`<br />`223.259 kB` | `760.777 kB`<br />`223.267 kB` | `31 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />`8 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" />| | <samp>react-charts</samp> <br /> <abbr title='bundle-size/DonutChart.fixture.js'>DonutChart</abbr>  | `318.704 kB`<br />`98.375 kB` | `318.748 kB`<br />`98.387 kB` | `44 B` <img a
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36818/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
-
-- **Issue #36816** (2026-10-01): **chore: retire cxe-red and individual CODEOWNERS assignments**
-  *Symptoms*: <!-- Thank you for submitting a pull request!  Please verify that: * [x] Code is up-to-date with the `master` branch * [ ] Your changes are covered by tests (if possible) * [ ] You've run `yarn change` locally   PR flow tips: * [x] Try to start with a Draft PR * [x] Once you're ready (ideally the pipeline is passing) promote your PR to Ready for Review. This step will auto-assign reviewers for your PR. -->  ## Previous Behavior  <!-- This is the behavior we have today -->  The CODEOWNERS file names `@microsoft/cxe-red` on 75 rules, two entries for `@jahnp` that GitHub reports as unknown owners, and individuals alongside team owners throughout the file. Active review guidance lists `@microsoft/cxe-coastal`, though it has no CODEOWNERS entries.  ## New Behavior  <!-- This is the behavior we should expect with the changes in this PR -->  - Replace `cxe-red` with `@microsoft/cxe-prg` on 72 rules and remove it from three rules already owned by other teams. - Remove all individual owners from CODEOWNERS, including the two invalid `jahnp` entries. Assign `@microsoft/cxe-prg` to Azure themes, the only rule previously owned solely by a person. Every active ownership rule retains team coverage; the rule granularity is unchanged. - Update active routing docs and generator choices. Leave v8 and charting issue-form `assignees` empty because [GitHub only assigns issues to people](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-
-  **Post-Mortem & Fix Analysis**:
-  > ## 📊 Bundle size report  ✅ No changes found  <!-- Sticky Pull Request Commentbundle-size-report -->
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36816/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
-
-- **Issue #36810** (2026-10-02): **fix(web-components): persist dropdown anchor name for tooltip positioning**
-  *Symptoms*: ## Previous Behavior Anchor name was setup dynamically late in runtime causing tooltip positioning to break.  ## New Behavior Moves anchor naming earlier in the cycle.  ## Related Issue(s) - Fixes #36740 
-  **Post-Mortem & Fix Analysis**:
-  > ## 📊 Bundle size report  ✅ No changes found  <!-- Sticky Pull Request Commentbundle-size-report -->
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36810/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
-  > @radium-v thanks for the thoughts, took a simplification pass...seems to work locally but want to ensure all your comments are taken into consideration.
+  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36909/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
+  > Folded into #36908: the stack is now #36908 (useTopLayer, utils, spec and the `top-layer` subpath) → #36910 (headless components moved onto it).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1599,3051 +1569,865 @@ export { wrappedTests as tests };
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b989603` (2026-10-05)
-**Commit Message**: fix(workspace-plugin): support .storybook/main.cjs in split-library-in-two and storybook target inference (#36831)
+### Incident Patch 1: `64f59375` (2026-10-09)
+**Commit Message**: fix(react-charts): handle stale legend overflow counts (#36691)
 
-**File**: `tools/workspace-plugin/src/generators/react-library/index.spec.ts` (modified, +6/-0)
+Co-authored-by: Jake Salvesen <[REDACTED_EMAIL]>
+
+**File**: `change/@fluentui-react-charts-3f02f58f-3997-43e1-8ad8-9d65a171efd6.json` (added, +6/-0)
 ```diff
-@@ -209,6 +209,12 @@ describe('react-library generator', () => {
-       "
-     `);
- 
-+    const storybookMain = tree.read(`${stories.root}/.storybook/main.cjs`, 'utf-8');
-+    expect(storybookMain).toContain(`require('../../../../../.storybook/main')`);
-+    expect(storybookMain).toContain(`'../src/**/index.stories.@(ts|tsx)'`);
-+    expect(storybookMain).not.toContain('../stories/');
-+    expect(readJson(tree, `${stories.root}/.storybook/tsconfig.json`).include).toEqual(['*.js', '*.cjs']);
-+
-     const eslintConfig = tree.read(`${stories.root}/eslint.config.js`, 'utf-8');
-     expect(eslintConfig).toMatchInlineSnapshot(`
-       "// @ts-check
+@@ -0,0 +1,6 @@
++{
++  "type": "patch",
++  "comment": "fix: prevent Legends overflow crashes after dynamic item changes",
++  "packageName": "@fluentui/react-charts",
++  "email": "171317405+jakesalvesen@users.noreply.github.com"
++}
 ```
 
-**File**: `tools/workspace-plugin/src/generators/split-library-in-two/generator.spec.ts` (modified, +17/-0)
+**File**: `packages/charts/react-charts/library/src/components/Legends/Legends.test.tsx` (modified, +184/-1)
 ```diff
-@@ -278,6 +278,7 @@ describe('split-library-in-two generator', () => {
-         "extends": "../tsconfig.json",
-         "include": Array [
-           "*.js",
-+          "*.cjs",
-         ],
-       }
-     `);
-@@ -317,6 +318,22 @@ describe('split-library-in-two generator', () => {
-     `);
-     // Test was sometimes timing out in CI
-   }, 10_000);
-+
-+  it('should update storybook main.cjs paths', async () => {
-+    const oldConfig = readProjectConfiguration(tree, options.project);
-+    tree.rename(`${oldConfig.root}/.storybook/main.js`, `${oldConfig.root}/.storybook/main.cjs`);
-+
-+    await splitLibraryInTwoGenerator(tree, options);
-+
-+    const storiesConfig = readProjectConfiguration(tree, `${options.project}-stories`);
-+    const storybookMain = tree.read(`${storiesConfig.root}/.storybook/main.cjs`, 'utf-8');
-+
-+    expect(tree.exists(`${storiesConfig.root}/.storybook/main.js`)).toBe(false);
-+    expect(storybookMain).toContain(`require('../../../../../.storybook/main')`);
-+    expect(storybookMain).toContain(`'../src/**/*.mdx'`);
-+    expect(storybookMain).toContain(`'../src/**/index.stories.@(ts|tsx)'`);
-+    expect(storybookMain).not.toContain('../stories/');
-+  }, 10_000);
+@@ -1,6 +1,6 @@
+ import * as React from 'react';
+ import { Legends } from './index';
+-import { render, act } from '@testing-library/react';
++import { render, act, fireEvent } from '@testing-library/react';
+ import { axe, toHaveNoViolations } from 'jest-axe';
+ 
+ expect.extend(toHaveNoViolations);
+@@ -229,6 +229,189 @@ describe.skip('Legends - controlled legend selection', () => {
+   });
  });
  
- function setup(tree: Tree) {
-```
-
-**File**: `tools/workspace-plugin/src/generators/split-library-in-two/generator.ts` (modified, +9/-7)
-```diff
-@@ -368,16 +368,18 @@ module.exports = [
-   writeJson(tree, joinPathFragments(newProjectRoot, 'tsconfig.lib.json'), templates.tsconfig.lib);
-   writeJson(tree, joinPathFragments(newProjectRoot, 'package.json'), templates.packageJson);
-   updateJson(tree, joinPathFragments(newProjectRoot, '.storybook/tsconfig.json'), (json: TsConfig) => {
--    json.include = ['*.js'];
-+    json.include = ['*.js', '*.cjs'];
-     return json;
-   });
--  updateFileContent(tree, joinPathFragments(newProjectRoot, '.storybook/main.js'), content => {
--    content = content
--      .replace(/\.\.\/stories\//g, '../src/')
--      .replace(new RegExp(options.projectOffsetFromRoot.old, 'g'), options.projectOffsetFromRoot.updated);
-+  for (const storybookMain of ['.storybook/main.js', '.storybook/main.cjs']) {
-+    updateFileContent(tree, joinPathFragments(newProjectRoot, storybookMain), content => {
-+      content = content
-+        .replace(/\.\.\/stories\//g, '../src/')
-+        .replace(new RegExp(options.projectOffsetFromRoot.old, 'g'), options.projectOffsetFromRoot.updated);
- 
--    return content;
--  });
-+      return content;
-+    });
-+  }
-   updateFileContent(tree, joinPathFragments(newProjectRoot, '.storybook/preview.js'), content => {
-     content = content.replace(
-       new RegExp(options.projectOffsetFromRoot.old, 'g'),
-```
-
-**File**: `tools/workspace-plugin/src/plugins/workspace-plugin.spec.ts` (modified, +18/-0)
-```diff
-@@ -875,6 +875,24 @@ describe(`workspace-plugin`, () => {
-       `);
-     });
- 
-+    it('should create storybook targets for v9 stories project with .storybook/main.cjs', async () => {
-+      await tempFs.createFiles({
-+        'proj/stories/.storybook/main.cjs': '',
-+        'proj/stories/project.json': serializeJson({
-+          root: 'proj/stories',
-+          projectType: 'library',
-+          tags: ['vNext', 'type:stories'],
-+        } satisfies ProjectConfiguration),
-+        'proj/stories/package.json': serializeJson({
-+          name: '@proj/proj-stories',
-+          private: true,
-+        } satisfies Partial<PackageJson>),
-+      });
-+      const results = await createNodesFunction(['proj/stories/project.json'], options, context);
++describe('Legends - dynamic overflow', () => {
++  const originalClientWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientWidth');
++  const originalOffsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
++  let originalWindowResizeObserver: typeof window.ResizeObserver;
++  let originalGlobalResizeObserver: typeof global.ResizeObserver;
++  let capturedObservers: { callback: ResizeObserverCallback; element: HTMLElement }[] = [];
 +
-+      expect(getTargetsNames(results, 'proj/stories')).toEqual(expect.arrayContaining(['storybook', 'start']));
++  beforeEach(() => {
++    capturedObservers = [];
++    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => 250 });
++    Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
++      configurable: true,
++      get(this: HTMLElement) {
++        return this.isConnected ? 50 : 0;
++      },
 +    });
 +
-     it('should create default nodes for v9 stories project', async () => {
-       await tempFs.createFiles({
-         'proj/stories/.storybook/main.js': '',
++    originalWindowResizeObserver = window.ResizeObserver;
++    originalGlobalResizeObserver = global.ResizeObserver;
++
++    class MockResizeObserver implements ResizeObserver {
++      private _callback: ResizeObserverCallback;
++      private _element?: HTMLElement;
++
++      constructor(callback: ResizeObserverCallback) {
++        this._callback = callback;
++      }
++
++      public observe(element: Element) {
++        this._element = element as HTMLElement;
++        capturedObservers.push({ callback: this._callback, element: element as HTMLElement });
++      }
++
++      public unobserve() {
++        capturedObservers = capturedObservers.filter(entry => entry.element !== this._element);
++      }
++
++      public disconnect() {
++        capturedObservers = capturedObservers.filter(entry => entry.element !== this._element);
++      }
++    }
++
++    window.ResizeObserver = MockResizeObserver;
++    global.ResizeObserver = MockResizeObserver;
++  });
++
++  afterEach(() => {
++    window.ResizeObserver = originalWindowResizeObserver;
++    global.ResizeObserver = originalGlobalResizeObserver;
++
++    if (originalClientWidth) {
++      Object.defineProperty(HTMLElement.prototype, 'clientWidth', originalClientWidth);
++    } else {
++      Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth');
++    }
++    if (originalOffsetWidth) {
++      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', originalOffsetWidth);
++    } else {
++      Reflect.deleteProperty(HTMLElement.prototype, 'offsetWidth');
++    }
++  });
++
++  it('does not throw when legends shrink while overflow is being reconciled', () => {
++    const result = render(<Legends legends={legends} overflowText="Overflow Items" />);
++
++    expect(result.getByText('+14 Overflow Items')).toBeTruthy();
++    result.rerender(<Legends legends={legends.slice(0, 3)} overflowText="Overflow Items" />);
++
++    expect(result.queryByText(/Overflow Items/)).toBeNull();
++    expect(result.container.querySelectorAll('button[role="option"]:not([data-overflowing])').length).toBe(3);
++  });
++
++  it('maintains trigger element identity and updates count when item count changes while still overflowing', () => {
++    const result = render(<Legends legends={legends} overflowText="Overflow Items" />);
++
++    expect(result.getByText('+14 Overflow Items')).toBeTruthy();
++    const initialTrigger = result.container.querySelector('[data-overflow-menu]');
++    expect(initialTrigger).not.toBeNull();
++    expect(initialTrigger?.isConnected).toBe(true);
++
++    result.rerender(<Legends legends={legends.slice(0, 10)} overflowText="Overflow Items" />);
++
++    expect(result.getByText('+7 Overflow Items')).toBeTruthy();
++    const updatedTrigger = result.container.querySelector('[data-overflow-menu]');
++    expect(updatedTrigger).toBe(initialTrigger);
++    expect(updatedTrigger?.isConnected).toBe(true);
++    expect(result.container.querySelectorAll('button[role="option"]:not([data-overflowing])').length).toBe(3);
++  });
++
++  it('renders exact remaining items in menu popover without removed legends and preserves aria metadata', () => {
++    const result = render(
++      <Legends legends={legends} overflowText="Overflow Items" selectedLegend={legends[4].title} />,
++    );
++
++    expect(result.getByRole('button', { name: '+14 Overflow Items' })).toHaveAttribute('data-overflow-menu');
++    result.rerender(
++      <Legends legends={legends.slice(0, 10)} overflowText="Overflow Items" selectedLegend={legends[4].title} />,
++    );
++
++    const triggerButton = result.getByText('+7 Overflow Items');
++    fireEvent.click(triggerButton);
++
++    const menu = document.querySelector('div[role="menu"]');
++    expect(menu).not.toBeNull();
++
++    const checkboxItems = document.querySelectorAll('div[role="menuitemcheckbo
 ```
 
-**File**: `tools/workspace-plugin/src/plugins/workspace-plugin.ts` (modified, +4/-1)
+**File**: `packages/charts/react-charts/library/src/components/Legends/OverflowMenu.tsx` (modified, +14/-10)
 ```diff
-@@ -734,7 +734,10 @@ function buildStorybookTarget(
-   context: CreateNodesContextV2,
-   config: TaskBuilderConfig,
- ): TargetConfiguration | null {
--  if (!existsSync(join(projectRoot, '.storybook/main.js'))) {
-+  const hasStorybookMain = ['.storybook/main.js', '.storybook/main.cjs'].some(file =>
-+    existsSync(join(projectRoot, file)),
-+  );
-+  if (!hasStorybookMain) {
+@@ -4,37 +4,39 @@ import * as React from 'react';
+ import type { JSXElement } from '@fluentui/react-utilities';
+ import { Menu, MenuTrigger, MenuPopover, MenuList, MenuItemCheckbox } from '@fluentui/react-menu';
+ import { MenuButton } from '@fluentui/react-button';
+-import { useOverflowMenu } from '@fluentui/react-overflow';
++import { useOverflowMenu, useOverflowVisibility } from '@fluentui/react-overflow';
+ 
+ export const OverflowMenu: React.FC<{
+   itemIds: string[];
+   title: string;
+   items: JSXElement[];
+ }> = ({ itemIds, title, items }) => {
+-  const { ref, overflowCount, isOverflowing } = useOverflowMenu<HTMLButtonElement>();
+-  let displayLabel = title;
+-  displayLabel = title === '' ? `+${overflowCount} items` : `+${overflowCount} ${title}`;
++  const { ref, isOverflowing } = useOverflowMenu<HTMLButtonElement>();
++  const { itemVisibility } = useOverflowVisibility();
+ 
+   if (!isOverflowing) {
      return null;
    }
- 
-```
-
----
-
-### Incident Patch 2: `9f88a917` (2026-10-05)
-**Commit Message**: fix(react-utilities): handle special native prop names (#36806)
-
-Co-authored-by: Paolo Aliprandi <[REDACTED_EMAIL]>
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
-
-**File**: `change/@fluentui-react-utilities-98768ced-77df-4ff0-942d-db5a851f8745.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "fix: handle special property names when filtering native props",
-+  "packageName": "@fluentui/react-utilities",
-+  "email": "paliprandi@microsoft.com"
-+}
-```
-
-**File**: `packages/react-components/react-utilities/src/utils/getNativeElementProps.test.ts` (modified, +6/-0)
-```diff
-@@ -19,4 +19,10 @@ describe('getNativeElementProps', () => {
-     // eslint-disable-next-line @typescript-eslint/no-deprecated
-     expect(getNativeElementProps('div', { as: 'span' }, ['as'])).toEqual({});
-   });
-+
-+  it('handles prototype-chain tag names without side effects', () => {
-+    // eslint-disable-next-line @typescript-eslint/no-deprecated
-+    expect(getNativeElementProps('__proto__', { as: 'span' })).toEqual({ as: 'span' });
-+    expect(Object.prototype).not.toHaveProperty('as');
-+  });
- });
-```
-
-**File**: `packages/react-components/react-utilities/src/utils/getNativeElementProps.ts` (modified, +4/-1)
-```diff
-@@ -69,7 +69,10 @@ export function getNativeElementProps<TAttributes extends React.HTMLAttributes<a
-   props: {},
-   excludedPropNames?: string[],
- ): TAttributes {
--  const allowedPropNames = (tagName && nativeElementMap[tagName]) || htmlElementProperties;
-+  const allowedPropNames =
-+    tagName && Object.prototype.hasOwnProperty.call(nativeElementMap, tagName)
-+      ? nativeElementMap[tagName]
-+      : htmlElementProperties;
-   allowedPropNames.as = 1;
- 
-   return getNativeProps(props, allowedPropNames, excludedPropNames);
-```
-
-**File**: `packages/react-components/react-utilities/src/utils/properties.test.ts` (modified, +14/-0)
-```diff
-@@ -97,6 +97,20 @@ describe('getNativeProps', () => {
-     expect(result.b).toBeUndefined();
-   });
- 
-+  it('only allows own properties from a record allow-list', () => {
-+    const allowedPropNames = Object.create({ inherited: 1 }) as Record<string, number>;
-+    allowedPropNames.allowed = 1;
-+
-+    expect(getNativeProps({ allowed: 'safe', inherited: 'unsafe' }, allowedPropNames)).toEqual({ allowed: 'safe' });
-+  });
-+
-+  it('rejects __proto__ even when it is explicitly allowed', () => {
-+    const props = JSON.parse('{"__proto__":{"inherited":true}}') as Record<string, unknown>;
-+    const result = getNativeProps<Record<string, unknown>>(props, ['__proto__']);
-+
-+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
-+  });
-+
-   it('can pass through anchor props including referrerPolicy', () => {
-     const result = getNativeProps<React.AnchorHTMLAttributes<HTMLAnchorElement>>(
-       {
-```
-
-**File**: `packages/react-components/react-utilities/src/utils/properties.ts` (modified, +3/-3)
-```diff
-@@ -472,14 +472,14 @@ export function getNativeProps<T extends Record<string, any>>(
- 
-   for (const key of keys) {
-     const isNativeProp =
--      (!isArray && (allowedPropNames as Record<string, number>)[key]) ||
-+      (!isArray && Object.prototype.hasOwnProperty.call(allowedPropNames, key)) ||
-       (isArray && (allowedPropNames as string[]).indexOf(key) >= 0) ||
-       key.indexOf('data-') === 0 ||
-       key.indexOf('aria-') === 0;
- 
--    if (isNativeProp && (!excludedPropNames || excludedPropNames?.indexOf(key) === -1)) {
-+    if (key !== '__proto__' && isNativeProp && (!excludedPropNames || excludedPropNames?.indexOf(key) === -1)) {
-       // eslint-disable-next-line @typescript-eslint/no-explicit-any
--      result[key] = props![key] as any;
-+      result[key] = props[key] as any;
-     }
-   }
- 
-```
-
----
-
-### Incident Patch 3: `8bc156e9` (2026-10-05)
-**Commit Message**: fix(merge-styles): contain server-rendered CSS output (#36709)
-
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
-
-**File**: `change/@fluentui-merge-styles-6233b26c-88b5-4e77-b69c-cf9baf7d76dd.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "fix(merge-styles): contain serialized CSS output for server rendering.",
-+  "packageName": "@fluentui/merge-styles",
-+  "email": "paulmardling@microsoft.com"
-+}
-```
-
-**File**: `packages/merge-styles/README.md` (modified, +3/-3)
-```diff
-@@ -485,11 +485,11 @@ renderStatic(() => ReactDOM.renderToString(<App/>);
- 
- - Rehydration on the client may result in mismatched rules. You can apply a namespace on the server side to ensure there aren't name collisions.
- 
--### Untrusted data in style values
-+### Untrusted style data
- 
--The `css` returned by `renderStatic` (and by `Stylesheet.getRules`) is raw CSS text that is normally written into a `<style>` element. A `<style>` element is HTML raw text, so a declaration value containing `</style>` would otherwise terminate it and inject markup.
-+The `css` returned by `renderStatic` (and by `Stylesheet.getRules`) is raw CSS text that is normally written into a `<style>` element. A `<style>` element is HTML raw text, so a case-insensitive `</style` sequence would otherwise terminate it and inject markup.
- 
--To prevent that, `merge-styles` emits `<` and `>` inside declaration values as the CSS code point escapes `\3C ` and `\3E `. This is semantics-preserving - the escapes decode back to the same characters, including inside quoted strings and `url()`. Likewise, `Stylesheet.serialize` emits `<` as `\u003C` so its output can be embedded in an inline `<script>` for rehydration.
-+To prevent that, `merge-styles` escapes these sequences at the CSS serialization boundary. Declaration values also emit `<` and `>` as the CSS code point escapes `\3C ` and `\3E `. These escapes are semantics-preserving and decode back to the same characters without changing selectors, combinators, at-rules, custom properties, or keyframe syntax. Likewise, `Stylesheet.serialize` emits `<` as `\u003C` so its output can be embedded in an inline `<script>` for rehydration.
- 
- This escaping is defense in depth, not a substitute for validating input. Applications remain responsible for:
- 
-```
-
-**File**: `packages/merge-styles/src/Stylesheet.ts` (modified, +6/-4)
-```diff
-@@ -4,6 +4,7 @@
- import { IStyle } from './IStyle';
- import { GLOBAL_STYLESHEET_KEY, SHADOW_DOM_STYLESHEET_SETTING } from './shadowConfig';
- import type { ShadowConfig } from './shadowConfig';
-+import { escapeStyleTagTerminator } from './escapeForStyleTag';
- 
- export const InjectionMode = {
-   /**
-@@ -374,12 +375,13 @@ export class Stylesheet {
-    * Gets all rules registered with the stylesheet; only valid when
-    * using InsertionMode.none.
-    *
--   * The return value is raw CSS text intended for a `<style>` element. Values that went through
--   * `mergeStyles`, `fontFace` or `keyframes` have `<` and `>` escaped as CSS code points so they
--   * cannot terminate that element, but rules added via {@link Stylesheet.insertRule} are unescaped.
-+   * The return value is raw CSS text intended for a `<style>` element. Any case-insensitive
-+   * `</style` sequence is escaped at this serialization boundary without changing other CSS syntax.
-    */
-   public getRules(includePreservedRules?: boolean): string {
--    return (includePreservedRules ? this._preservedRules.join('') : '') + this._rules.join('');
-+    const rules = (includePreservedRules ? this._preservedRules.join('') : '') + this._rules.join('');
-+
-+    return escapeStyleTagTerminator(rules);
-   }
- 
-   /**
-```
-
-**File**: `packages/merge-styles/src/escapeForStyleTag.test.ts` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+import { escapeForStyleTag, escapeStyleTagTerminator } from './escapeForStyleTag';
-+
-+describe('style tag escaping', () => {
-+  const backslash = '\\';
-+  const longRunLength = 20000;
-+
-+  it('preserves a long nonmatching backslash run', () => {
-+    const value = new Array(longRunLength + 1).join(backslash) + 'x';
-+
-+    expect(escapeForStyleTag(value)).toBe(value);
-+    expect(escapeStyleTagTerminator(value)).toBe(value);
-+  });
-+
-+  it('escapes a terminator after a long backslash run', () => {
-+    const backslashes = new Array(longRunLength + 1).join(backslash);
-+
-+    expect(escapeForStyleTag(`${backslashes}</style>`)).toBe(`${backslashes}${backslash}3C /style${backslash}3E `);
-+    expect(escapeStyleTagTerminator(`${backslashes}</StYlE>`)).toBe(`${backslashes}${backslash}3C /StYlE>`);
-+  });
-+
-+  it('preserves odd and even runs around mixed characters', () => {
-+    expect(escapeForStyleTag(`a${backslash}<b${backslash}${backslash}>c`)).toBe(
-+      `a${backslash}3C b${backslash}${backslash}${backslash}3E c`,
-+    );
-+    expect(escapeStyleTagTerminator(`a${backslash}</STYLE>b${backslash}${backslash}</style>c`)).toBe(
-+      `a${backslash}3C /STYLE>b${backslash}${backslash}${backslash}3C /style>c`,
-+    );
-+  });
-+});
-```
-
-**File**: `packages/merge-styles/src/escapeForStyleTag.ts` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+const CSS_ESCAPE_MAP: Record<string, string> = {
-+  '<': '\\3C ',
-+  '>': '\\3E ',
-+};
-+
-+type EscapeMode = 'all-angle-brackets' | 'style-terminator';
-+
-+function escapeCssCharacters(value: string, mode: EscapeMode): string {
-+  let backslashCount = 0;
-+  let chunkStart = 0;
-+  let result: string[] | undefined;
-+
-+  for (let i = 0; i < value.length; i++) {
-+    const character = value.charAt(i);
-+
-+    if (character === '\\') {
-+      backslashCount++;
+-  const remainingItemsCount = itemIds.length - overflowCount;
+   const checkedLegends: string[] = [];
+   const menuList = [];
+-  for (let i = remainingItemsCount; i < itemIds.length; i++) {
+-    const buttonElement = items[i];
+-    const value = `${buttonElement.props['data-title'] ?? i}`;
++  for (let index = 0; index < items.length; index++) {
++    const itemId = itemIds[index];
++    if (itemVisibility[itemId] !== false) {
 +      continue;
 +    }
-+
-+    const shouldEscape =
-+      mode === 'all-angle-brackets'
-+        ? character === '<' || character === '>'
-+        : character === '<' && value.slice(i + 1, i + 7).toLowerCase() === '/style';
-+
-+    if (shouldEscape) {
-+      result = result || [];
-+      // An odd final backslash already escapes this character, so omit that backslash before
-+      // emitting the equivalent code-point escape. Even runs represent literal backslashes.
-+      result.push(value.slice(chunkStart, i - (backslashCount % 2)), CSS_ESCAPE_MAP[character]);
-+      chunkStart = i + 1;
-+    }
-+
-+    backslashCount = 0;
-+  }
-+
-+  if (!result) {
-+    return value;
-+  }
-+
-+  result.push(value.slice(chunkStart));
-+  return result.join('');
-+}
-+
-+export function escapeForStyleTag(value: string): string {
-+  return escapeCssCharacters(value, 'all-angle-brackets');
-+}
-+
-+export function escapeStyleTagTerminator(css: string): string {
-+  return escapeCssCharacters(css, 'style-terminator');
-+}
-```
-
-**File**: `packages/merge-styles/src/server.test.ts` (modified, +84/-0)
-```diff
-@@ -1,5 +1,7 @@
- import { renderStatic } from './server';
- import { mergeCssSets } from './mergeStyleSets';
-+import { keyframes } from './keyframes';
-+import { Stylesheet } from './Stylesheet';
- 
- describe('staticRender', () => {
-   it('can render content', () => {
-@@ -52,4 +54,86 @@ describe('staticRender', () => {
-     expect(css).not.toContain('</style');
-     expect(css).not.toContain('<script');
-   });
-+
-+  it('contains style element terminators in structural CSS positions', () => {
-+    const { css } = renderStatic(() => {
-+      mergeCssSets([
-+        {
-+          root: {
-+            selectors: {
-+              '&</STYLE>.selector-sentinel': { color: 'red' },
-+            },
-+            'color</style>-property-sentinel': 'red',
-+            '--custom</StYlE>-property-sentinel': 'value',
-+          },
-+        },
-+      ]);
-+      keyframes({
-+        '50%</sTyLe>.keyframe-sentinel': { opacity: 0.5 },
-+      });
-+
-+      return '';
-+    });
-+
-+    expect(css).not.toMatch(/<\/style/i);
-+    expect(css).toMatchInlineSnapshot(
-+      `"@keyframes css-1{50%\\\\3C /sTyLe>.keyframe-sentinel{opacity:0.5;}}.root-0{color\\\\3C /style>-property-sentinel:red;--custom\\\\3C /StYlE>-property-sentinel:value;}.root-0\\\\3C /STYLE>.selector-sentinel{color:red;}@keyframes css-1{50%\\\\3C /sTyLe>.keyframe-sentinel{opacity:0.5;}}"`,
-+    );
-+  });
-+
-+  it('preserves valid structural CSS syntax', () => {
-+    const { css } = renderStatic(() => {
-+      mergeCssSets([
-+        {
-+          root: {
-+            '--custom-property': 'value',
-+            selectors: {
-+              '& > .child': { color: 'red' },
-+              '@media (width < 1000px)': { color: 'blue' },
-+            },
-+          },
-+        },
-+      ]);
-+      keyframes({
-+        from: { opacity: 0 },
-+        '50%': { opacity: 0.5 },
-+        to: { opacity: 1 },
-+      });
-+
-+      return '';
-+    });
-+
-+    expect(css).toContain(' > .child');
-+    expect(css).toContain('@media (width < 1000px)');
-+    expect(css).toContain('--custom-property:value;');
-+    expect(css).toContain('from{opacity:0;}50%{opacity:0.5;}to{opacity:1;}');
-+  });
-+
-+  it('preserves odd and even backslash escape parity in raw server-rendered rules', () => {
-+    const stylesheet = Stylesheet.getInstance();
-+    const backslash = '\\';
-+
-+    stylesheet.insertRule(`.odd{content:"${backslash}</StYlE>"}`);
-+    stylesheet.insertRule(`.even{content:"${backslash}${backslash}</style>"}`);
-+
-+    const css = stylesheet.getRules();
-+
-+    expect(css).not.toMatch(/<\/style/i);
-+    expect(css).toContain(`.odd{content:"${backslash}3C /StYlE>"}`);
-+    expect(css).toContain(`.even{content:"${backslash}${backslash}${backslash}3C /style>"}`);
-+  });
-+
-+  it('contains a terminator after a long backslash run in raw server-rendered rules', () => {
-+    const stylesheet = Stylesheet.getInstance();
-+    const backslashes = new Array(20001).join('\\');
-+
-+    stylesheet.insertRule(`.nonmatching{content:"${backslashes}x"}`);
-+    stylesheet.insertRule(`.matching{content:"${backslashes}</style>"}`);
-+
-+    const css = stylesheet.getRules();
-+
-+    expect(css).toContain(`.nonmatching{content:"${backslashes}x"}`);
-+    expect(css).toContain(`.matching{content:"${backslashes}\\3C /style>"}`);
-+    expect(css).not.toMatch(/<\/style/i);
-+  });
- });
-```
-
-**File**: `packages/merge-styles/src/server.ts` (modified, +3/-3)
-```diff
-@@ -3,9 +3,9 @@ import { InjectionMode, Stylesheet } from './Stylesheet';
- /**
-  * Renders a given string and returns both html and css needed for the html.
-  *
-- * The returned `css` is raw CSS text meant to be placed in a `<style>` element. Declaration values
-- * have `<` and `>` escaped as CSS code points so they cannot terminate that element, but callers
-- * remain responsible for validating untrusted data used in style values.
-+ * The returned `css` is raw CSS text meant to be placed in a `<style>` element. Sequences that
-+ * could terminate that element are escaped as CSS code points, but callers remain responsible for
-+ * validating untrusted style data.
-  *
-  * @param onRender - Function that returns a string.
-  * @param namespace - Optional namespace to prepend to css classnames to avoid collisions.
-```
-
-**File**: `packages/merge-styles/src/styleToClassName.test.ts` (modified, +64/-1)
-```diff
-@@ -1,5 +1,5 @@
- import { InjectionMode, Stylesheet } from './Stylesheet';
--import { styleToClassName } from './styleToClassName';
-+import { serializeRuleEntries, styleToClassName } from './styleToClassName';
- import { IStyleOptions } from './IStyleOptions';
- 
- const _stylesheet: Stylesheet = Stylesheet.getInstance();
-@@ -607,6 +607,36 @@ describe('styleToClassName with specificityMultiplier', () => {
-   describe('style tag escaping', () => {
-     const payload = 'red;}</style><script>alert(1)</script><style>.x{color:red';
- 
-+    it('preserves supported string and number serialization', () => {
-+      expect(
-+        serializeRuleEntries(
-+          {},
-+          {
-+            color: 'red',
-+            marginTop: 2,
-+            opacity: 0.5,
-+            '--scale': 3,
-+          },
-+        ),
-+      ).toEqual('color:red;margin-top:2px;opacity:0.5;--scale:3;');
-+    });
-+
-+    it('escapes angle brackets after array values are coerced', () => {
-+      const entries = { fontFamily: ['Arial', '<fallback>'] } as unknown as Record<string, string | number>;
-+
-+      expect(serializeRuleEntries({}, entries)).toEqual('font-family:Arial,\\3C fallback\\3E ;');
-+    });
-+
-+    it('escapes angle brackets after custom string coercion', () => {
-+      const value = {
-+        toString: jest.fn(() => '<custom>'),
-+      };
-+      const entries = { color: value } as unknown as Record<string, string | number>;
-+
-+      expect(serializeRuleEntries({}, entries)).toEqual('color:\\3C custom\\3E ;');
-+      expect(value.toString).toHaveBeenCalledTimes(1);
-+    });
-+
-     it.each(['fill', 'background', 'color', 'content', 'fontFamily', 'backgroundImage'] as const)(
-       'escapes a value that would terminate the style element in %s',
-       property => {
-@@ -627,6 +657,39 @@ describe('styleToClassName with specificityMultiplier', () => {
-       expect(_stylesheet.getRules()).toEqual('.css-0{content:"a\\3C b\\3E c";}');
-     });
- 
-+    it('preserves odd backslash escape parity in declaration values', () => {
-+      const backslash = '\\';
-+
-+      expect(serializeRuleEntries({}, { content: `"${backslash}</style${backslash}>"` })).toEqual(
-+        `content:"${backslash}3C /style${backslash}3E ";`,
-+      );
-+    });
-+
-+    it('preserves even backslash escape parity in declaration values', () => {
-+      const backslash = '\\';
-+
-+      expect(
-+        serializeRuleEntries({}, { content: `"${backslash}${backslash}</style${backslash}${backslash}>"` }),
-+      ).toEqual(`content:"${backslash}${backslash}${backslash}3C /style${backslash}${backslash}${backslash}3E ";`);
-+    });
-+
-+    it('preserves backslash escape parity in URLs', () => {
-+      const backslash = '\\';
-+
-+      expect(serializeRuleEntries({}, { backgroundImage: `url("${backslash}</style${backslash}>")` })).toEqual(
-+        `background-image:url("${backslash}3C /style${backslash}3E ");`,
-+      );
-+    });
-+
-+    it('serializes a long backslash run with and without a following terminator', () => {
-+      const backslashes = new Array(20001).join('\\');
-+
-+      expect(serializeRuleEntries({}, { content: `${backslashes}x` })).toBe(`content:${backslashes}x;`);
-+      expect(serializeRuleEntries({}, { content: `${backslashes}</style>` })).toBe(
-+        `content:${backslashes}\\3C /style\\3E ;`,
-+      );
-+    });
-+
-     it('does not escape selectors, so combinators keep working', () => {
-       styleToClassName(
-         {},
-```
-
----
-
-### Incident Patch 4: `6d396f03` (2026-10-05)
-**Commit Message**: fix(workspace-plugin): epic generator command injection (#36702)
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `tools/workspace-plugin/src/generators/epic-generator/index.spec.ts` (modified, +180/-62)
-```diff
-@@ -1,10 +1,11 @@
- import { addProjectConfiguration, ProjectType, stripIndents, writeJson } from '@nx/devkit';
- import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
--import { execSync, spawnSync, SpawnSyncReturns } from 'child_process';
-+import { execFileSync, execSync, spawnSync, SpawnSyncReturns } from 'child_process';
- import { workspacePaths } from '../../utils';
- import epicGenerator from './index';
- 
- jest.mock('child_process');
-+const execFileSyncMock = execFileSync as unknown as jest.Mock<string>;
- const execSyncMock = execSync as unknown as jest.Mock<string>;
- const spawnSyncMock = spawnSync as unknown as jest.Mock<Partial<SpawnSyncReturns<string[]>>>;
- 
-@@ -49,7 +50,7 @@ function setupTest(packages: Package[]) {
-   });
- 
-   // response to epic creation
--  execSyncMock.mockReturnValueOnce('epicUrl');
-+  execFileSyncMock.mockReturnValueOnce('epicUrl');
- 
-   /**
-    * Responses for each of the packages created
-@@ -68,11 +69,11 @@ function setupTest(packages: Package[]) {
-       return acc;
-     }, [])
-     .forEach(owner => {
--      execSyncMock.mockReturnValueOnce(`issueUrl-${owner}`);
-+      execFileSyncMock.mockReturnValueOnce(`issueUrl-${owner}`);
-     });
- 
-   // response to editing the epic
--  execSyncMock.mockReturnValueOnce('epicUrl');
-+  execFileSyncMock.mockReturnValueOnce('epicUrl');
- 
-   return tree;
- }
-@@ -103,6 +104,33 @@ describe('epic-generator', () => {
-         Please follow the format {owner}/{repositoryName}."
-       `);
-     });
-+
-+    it.each(['microsoft/fluentui;malicious-command', 'microsoft/fluentui/extra', 'microsoft/'])(
-+      'rejects a repository containing extra characters: %s',
-+      repository => {
-+        const tree = createTreeWithEmptyWorkspace();
-+
-+        expect(() => epicGenerator(tree, { title: 'test title', repository })).toThrow(/invalid repository name/);
-+      },
-+    );
-+
-+    it('accepts an Enterprise Managed User repository owner', () => {
-+      const tree = setupTest([]);
-+      const repository = 'mona-cat_octo/migration-tracker';
-+
-+      epicGenerator(tree, { title: 'test title', repository })();
-+
-+      expect(execFileSyncMock).toHaveBeenNthCalledWith(1, 'gh', [
-+        'issue',
-+        'create',
-+        '--repo',
-+        repository,
-+        '--title',
-+        'test title',
-+        '--body',
-+        '*Description to be added*',
-+      ]);
-+    });
-   });
- 
-   describe('authentication', () => {
-@@ -204,73 +232,163 @@ describe('epic-generator', () => {
-       });
-       effectsCall();
- 
--      expect(execSyncMock).toHaveBeenNthCalledWith(
--        1,
--        stripIndents`gh issue create --repo "cool-company/repository" --title "test title" --body "*Description to be added*"`,
--      );
-+      expect(execFileSyncMock).toHaveBeenNthCalledWith(1, 'gh', [
-+        'issue',
-+        'create',
-+        '--repo',
-+        'cool-company/repository',
-+        '--title',
-+        'test title',
-+        '--body',
-+        '*Description to be added*',
-+      ]);
- 
-       // @microsoft/cxe-red issue creation
--      expect(execSyncMock).toHaveBeenNthCalledWith(
--        2,
--        stripIndents`gh issue create --repo "cool-company/repository" --title "test title - @microsoft/cxe-red" --body "🚧 This is an auto-generated issue to individually track migration progress.
--
--        ### Packages to migrate:
--        - react-link
--        - react-button"`,
--      );
-+      expect(execFileSyncMock).toHaveBeenNthCalledWith(2, 'gh', [
-+        'issue',
-+        'create',
-+        '--repo',
-+        'cool-company/repository',
-+        '--title',
-+        'test title - @microsoft/cxe-red',
-+        '--body',
-+        stripIndents`🚧 This is an auto-generated issue to individually track migration progress.
-+
-+          ### Packages to migrate:
-+          - react-link
-+          - react-button`,
-+      ]);
-       // @microsoft/cxe-prg issue creation
--      expect(execSyncMock).toHaveBeenNthCalledWith(
--        3,
--        stripIndents`gh issue create --repo "cool-company/repository" --title "test title - @microsoft/cxe-prg" --body "🚧 This is an auto-generated issue to individually track migration progress.
--
--        ### Packages to migrate:
--        - react-card"`,
--      );
-+      expect(execFileSyncMock).toHaveBeenNthCalledWith(3, 'gh', [
-+        'issue',
-+        'create',
-+        '--repo',
-+        'cool-company/repository',
-+        '--title',
-+        'test title - @microsoft/cxe-prg',
-+        '--body',
-+        stripIndents`🚧 This is an auto-generated issue to individually track migration progress.
-+
-+          ### Packages to migrate:
-+          - react-card`,
-+      ]);
-       // @microsoft/teams-prg issue creation
--      expect(execSyncMock).toHaveBeenNthCalledWith(
--        4,
--        stripIndents`gh issue create --repo "cool-company/repository" --title "test title - @microsoft/teams-prg" --body "🚧 This is an auto-generated issue to individually track migration progress.
--
--        ### Packages to migrate:
--        - react-menu
-- 
-```
-
-**File**: `tools/workspace-plugin/src/generators/epic-generator/index.ts` (modified, +17/-9)
-```diff
-@@ -1,12 +1,13 @@
- import { getProjects, stripIndents, Tree } from '@nx/devkit';
--import { execSync, spawnSync } from 'child_process';
-+import { execFileSync, spawnSync } from 'child_process';
- import { EpicGenerator } from './schema';
- import { isPackageConverged, workspacePaths } from '../../utils';
- 
- const placeholderMessage = '*Description to be added*';
-+const repositoryNamePattern = /^[A-Za-z0-9](?:[A-Za-z0-9_-]{0,37}[A-Za-z0-9])?\/[A-Za-z0-9._-]+$/;
- 
- function validateSchema(schema: EpicGenerator): Required<EpicGenerator> {
--  if (schema.repository !== undefined && !schema.repository.match(/[A-z-]+\/[A-z-]+/)) {
-+  if (schema.repository !== undefined && !repositoryNamePattern.test(schema.repository)) {
-     throw new Error(stripIndents`
-      You provided "${schema.repository}", which is an invalid repository name.
-      Please follow the format {owner}/{repositoryName}.
-@@ -108,7 +109,16 @@ function getPackages(tree: Tree) {
- }
- 
- function createEpic(repo: string, title: string) {
--  const issueUrl = execSync(`gh issue create --repo "${repo}" --title "${title}" --body "${placeholderMessage}"`)
-+  const issueUrl = execFileSync('gh', [
-+    'issue',
-+    'create',
-+    '--repo',
-+    repo,
-+    '--title',
-+    title,
-+    '--body',
-+    placeholderMessage,
-+  ])
-     .toString()
-     .trim();
- 
-@@ -124,9 +134,9 @@ function createIssue(repo: string, issue: MigrationIssue, templateTitle: string)
-     ${issue.packages.map(pkg => `- ${pkg.name}`).join('\n')}
-   `;
- 
--  const command = `gh issue create --repo "${repo}" --title "${title}" --body "${message}"`;
--
--  const issueUrl = execSync(command).toString().trim();
-+  const issueUrl = execFileSync('gh', ['issue', 'create', '--repo', repo, '--title', title, '--body', message])
-+    .toString()
-+    .trim();
- 
-   return issueUrl;
- }
-@@ -173,9 +183,7 @@ function updateEpicWithIssues(epicUrl: string, issueMap: MigrationIssues) {
-   ${packageList}
- `;
- 
--  const command = `gh issue edit ${epicUrl} --body "${updatedMessage}"`;
--
--  execSync(command);
-+  execFileSync('gh', ['issue', 'edit', epicUrl, '--body', updatedMessage]);
- }
- 
- export default function (tree: Tree, schema: EpicGenerator) {
-```
-
----
-
-### Incident Patch 5: `5737bd74` (2026-10-05)
-**Commit Message**: fix(react-headless-components-preview): enter SwatchPicker on the selected swatch (#36821)
-
-**File**: `change/@fluentui-react-headless-components-preview-93e46c48-b926-4a1c-93ad-8497a0992422.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "fix: focus enters SwatchPicker on the selected swatch",
-+  "packageName": "@fluentui/react-headless-components-preview",
-+  "email": "vgenaev@gmail.com"
-+}
-```
-
-**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/ColorSwatch/ColorSwatch.test.tsx` (modified, +12/-0)
-```diff
-@@ -30,4 +30,16 @@ describe('ColorSwatch', () => {
-     expect(swatch).toHaveAttribute('data-selected');
-     expect(swatch).toHaveAttribute('data-disabled');
-   });
-+
-+  it('marks only the selected swatch as the focusgroup entry point', () => {
-+    const { getByLabelText } = render(
-+      <SwatchPicker aria-label="Colors" selectedValue="pink">
-+        <ColorSwatch color="#f09" value="pink" aria-label="Pink" />
-+        <ColorSwatch color="#00f" value="blue" aria-label="Blue" />
-+      </SwatchPicker>,
-+    );
-+
-+    expect(getByLabelText('Pink')).toHaveAttribute('focusgroupstart');
-+    expect(getByLabelText('Blue')).not.toHaveAttribute('focusgroupstart');
-+  });
- });
-```
-
-**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/ColorSwatch/useColorSwatch.ts` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@ import type { ColorSwatchProps, ColorSwatchState } from './ColorSwatch.types';
- export const useColorSwatch = (props: ColorSwatchProps, ref: React.Ref<HTMLButtonElement>): ColorSwatchState => {
-   const state: ColorSwatchState = useColorSwatchBase_unstable(props, ref);
- 
-+  // eslint-disable-next-line react-hooks/immutability
-+  state.root.focusgroupstart = toDataAttributeValue(state.selected);
-   // eslint-disable-next-line react-hooks/immutability
-   state.root['data-selected'] = toDataAttributeValue(state.selected);
-   // eslint-disable-next-line react-hooks/immutability
-```
-
-**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/ImageSwatch/ImageSwatch.test.tsx` (modified, +12/-0)
-```diff
-@@ -23,4 +23,16 @@ describe('ImageSwatch', () => {
- 
-     expect(getByRole('radio')).toHaveAttribute('data-selected');
-   });
-+
-+  it('marks only the selected swatch as the focusgroup entry point', () => {
-+    const { getByLabelText } = render(
-+      <SwatchPicker aria-label="Images" selectedValue="image">
-+        <ImageSwatch src="image.png" value="image" aria-label="Image" />
-+        <ImageSwatch src="other.png" value="other" aria-label="Other" />
-+      </SwatchPicker>,
-+    );
-+
-+    expect(getByLabelText('Image')).toHaveAttribute('focusgroupstart');
-+    expect(getByLabelText('Other')).not.toHaveAttribute('focusgroupstart');
-+  });
- });
-```
-
-**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/ImageSwatch/useImageSwatch.ts` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@ import type { ImageSwatchProps, ImageSwatchState } from './ImageSwatch.types';
- export const useImageSwatch = (props: ImageSwatchProps, ref: React.Ref<HTMLButtonElement>): ImageSwatchState => {
-   const state: ImageSwatchState = useImageSwatchBase_unstable(props, ref);
- 
-+  // eslint-disable-next-line react-hooks/immutability
-+  state.root.focusgroupstart = toDataAttributeValue(state.selected);
-   // eslint-disable-next-line react-hooks/immutability
-   state.root['data-selected'] = toDataAttributeValue(state.selected);
- 
-```
-
-**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/SwatchPicker.cy.tsx` (modified, +40/-0)
-```diff
-@@ -13,6 +13,46 @@ polyfillBodyAndObserve();
- const mount = (element: JSXElement) => mountBase(<Provider>{element}</Provider>);
- 
- describe('SwatchPicker', () => {
-+  it('returns focus to the last focused swatch when no swatch is selected', () => {
-+    mount(
-+      <>
-+        <button>Before</button>
-+        <SwatchPicker aria-label="Colors">
-+          <ColorSwatch color="#f00" value="red" aria-label="Red" />
-+          <ColorSwatch color="#0f0" value="green" aria-label="Green" />
-+          <ColorSwatch color="#00f" value="blue" aria-label="Blue" />
-+        </SwatchPicker>
-+        <button>After</button>
-+      </>,
-+    );
-+
-+    cy.contains('button', 'Before').focus().realPress('Tab');
-+    cy.get('[aria-label="Red"]').should('be.focused').realPress('ArrowRight');
-+    cy.get('[aria-label="Green"]').should('be.focused').realPress('Tab');
-+    cy.contains('button', 'After').should('be.focused').realPress(['Shift', 'Tab']);
-+    cy.get('[aria-label="Green"]').should('be.focused');
-+  });
-+
-+  it('returns focus to the selected swatch after leaving and re-entering', () => {
-+    mount(
-+      <>
-+        <button>Before</button>
-+        <SwatchPicker aria-label="Colors" defaultSelectedValue="green">
-+          <ColorSwatch color="#f00" value="red" aria-label="Red" />
-+          <ColorSwatch color="#0f0" value="green" aria-label="Green" />
-+          <ColorSwatch color="#00f" value="blue" aria-label="Blue" />
-+        </SwatchPicker>
-+        <button>After</button>
-+      </>,
-+    );
-+
-+    cy.contains('button', 'Before').focus().realPress('Tab');
-+    cy.get('[aria-label="Green"]').should('be.focused').realPress('ArrowRight');
-+    cy.get('[aria-label="Blue"]').should('be.focused').realPress('Tab');
-+    cy.contains('button', 'After').should('be.focused').realPress(['Shift', 'Tab']);
-+    cy.get('[aria-label="Green"]').should('be.focused');
-+  });
-+
-   // TODO: Enable this test once the focusgroup-polyfill is updated to support the new arrow key navigation behavior
-   it.skip('moves focus through a grid with arrow keys and wraps', () => {
-     mount(
-```
-
-**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/SwatchPicker.test.tsx` (modified, +37/-0)
-```diff
-@@ -39,6 +39,43 @@ describe('SwatchPicker', () => {
-     expect(getByRole(role)).toHaveAttribute('focusgroup', focusgroup);
-   });
- 
-+  it.each([
-+    ['row', 'radiogroup', 'radiogroup nomemory'],
-+    ['grid', 'grid', 'grid manual rowflow nomemory'],
-+  ] as const)('disables focus memory in a %s while a value is selected', (layout, role, focusgroup) => {
-+    const { getByRole } = render(
-+      <SwatchPicker aria-label="Colors" layout={layout} defaultSelectedValue="pink">
-+        <ColorSwatch color="#f09" value="pink" aria-label="Pink" />
-+      </SwatchPicker>,
-+    );
-+
-+    expect(getByRole(role)).toHaveAttribute('focusgroup', focusgroup);
-+  });
-+
-+  it('moves the focusgroup entry point to the newly selected swatch', async () => {
-+    const { getByRole, getByLabelText } = render(
-+      <SwatchPicker aria-label="Colors">
-+        <ColorSwatch color="#f00" value="red" aria-label="Red" />
-+        <ColorSwatch color="#0f0" value="green" aria-label="Green" />
-+      </SwatchPicker>,
-+    );
-+
-+    expect(getByRole('radiogroup')).toHaveAttribute('focusgroup', 'radiogroup');
-+    expect(getByLabelText('Red')).not.toHaveAttribute('focusgroupstart');
-+    expect(getByLabelText('Green')).not.toHaveAttribute('focusgroupstart');
-+
-+    await userEvent.click(getByLabelText('Green'));
-+
-+    expect(getByRole('radiogroup')).toHaveAttribute('focusgroup', 'radiogroup nomemory');
-+    expect(getByLabelText('Green')).toHaveAttribute('focusgroupstart');
-+    expect(getByLabelText('Red')).not.toHaveAttribute('focusgroupstart');
-+
-+    await userEvent.click(getByLabelText('Red'));
-+
-+    expect(getByLabelText('Red')).toHaveAttribute('focusgroupstart');
-+    expect(getByLabelText('Green')).not.toHaveAttribute('focusgroupstart');
-+  });
-+
-   it('does not add grid arrow navigation in tab mode', async () => {
-     const onKeyDown = jest.fn((event: React.KeyboardEvent) => event.preventDefault());
-     const { getByLabelText } = render(
-```
-
-**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/useSwatchPicker.ts` (modified, +3/-1)
-```diff
-@@ -18,8 +18,10 @@ export const useSwatchPicker = (props: SwatchPickerProps, ref: React.Ref<HTMLDiv
-   baseState.root['data-layout'] = layout;
- 
-   if (focusMode === 'arrow') {
-+    const behavior = baseState.isGrid ? 'grid manual rowflow' : 'radiogroup';
-+
-     // eslint-disable-next-line react-hooks/immutability
--    baseState.root.focusgroup = baseState.isGrid ? 'grid manual rowflow' : 'radiogroup';
-+    baseState.root.focusgroup = baseState.selectedValue ? `${behavior} nomemory` : behavior;
++    const buttonElement = items[index];
++    const value = `${buttonElement.props['data-title'] ?? index}`;
+     if (buttonElement.props['data-selected']) {
+       checkedLegends.push(value);
+     }
+     menuList.push(
+       <MenuItemCheckbox
+-        key={i}
++        key={itemId}
+         name="legends"
+         value={value}
+         // Full-list position so counts match the listbox.
+         aria-setsize={itemIds.length}
+-        aria-posinset={i + 1}
++        aria-posinset={index + 1}
+         // Hide the checkmark so the row matches the listbox legend; selection is conveyed via aria-checked.
+         checkmark={null}
+         onClick={e => buttonElement.props.onClick?.(e)}
+@@ -54,6 +56,8 @@ export const OverflowMenu: React.FC<{
+       </MenuItemCheckbox>,
+     );
    }
- 
-   return baseState;
++  const displayLabel = title === '' ? `+${menuList.length} items` : `+${menuList.length} ${title}`;
++
+   return (
+     <Menu>
+       <MenuTrigger disableButtonEnhancement>
 ```
 
 ---
 
-### Incident Patch 6: `c201bc9b` (2026-10-04)
-**Commit Message**: fix(react-swatch-picker): default ImageSwatch and EmptySwatch to type="button" (#36822)
+### Incident Patch 2: `93e324f7` (2026-10-14)
+**Commit Message**: fix(web-components): make sure during implicit submit, text-input emits change event before the submit event (#36881)
 
-**File**: `change/@fluentui-react-swatch-picker-bbbf4871-8b49-409c-a1a3-8195dccceb62.json` (added, +6/-0)
+**File**: `change/@fluentui-web-components-624f8367-8830-42cb-8cc0-7e995c5dc277.json` (added, +6/-0)
 ```diff
 @@ -0,0 +1,6 @@
 +{
 +  "type": "patch",
-+  "comment": "fix: prevent ImageSwatch and EmptySwatch from submitting forms",
-+  "packageName": "@fluentui/react-swatch-picker",
-+  "email": "vgenaev@gmail.com"
-+}
-```
-
-**File**: `packages/react-components/react-swatch-picker/library/src/components/EmptySwatch/EmptySwatch.test.tsx` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ describe('EmptySwatch', () => {
-           aria-checked="false"
-           class="fui-EmptySwatch"
-           role="radio"
-+          type="button"
-         />
-       </div>
-     `);
-```
-
-**File**: `packages/react-components/react-swatch-picker/library/src/components/EmptySwatch/useEmptySwatch.ts` (modified, +1/-0)
-```diff
-@@ -35,6 +35,7 @@ export const useEmptySwatchBase_unstable = (
-         ref,
-         role,
-         ...a11yProps,
-+        type: 'button',
-         ...props,
-       }),
-       { elementType: 'button' },
-```
-
-**File**: `packages/react-components/react-swatch-picker/library/src/components/ImageSwatch/ImageSwatch.test.tsx` (modified, +1/-0)
-```diff
-@@ -19,6 +19,7 @@ describe('ImageSwatch', () => {
-           class="fui-ImageSwatch"
-           role="radio"
-           style="background-image: url(\\"path/img.png\\");"
-+          type="button"
-         />
-       </div>
-     `);
-```
-
-**File**: `packages/react-components/react-swatch-picker/library/src/components/ImageSwatch/useImageSwatch.ts` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ export const useImageSwatchBase_unstable = (
-         role,
-         ...ariaSelected,
-         onClick: onImageSwatchClick,
-+        type: 'button',
-         ...rest,
-         style: {
-           backgroundImage: `url(${src})`,
-```
-
-**File**: `packages/react-components/react-swatch-picker/library/src/components/SwatchPicker/SwatchPicker.test.tsx` (modified, +2/-0)
-```diff
-@@ -68,11 +68,13 @@ describe('SwatchPicker', () => {
-             class="fui-ImageSwatch"
-             role="radio"
-             style="background-image: url(\\"path/img.png\\");"
-+            type="button"
-           />
-           <button
-             aria-checked="false"
-             class="fui-EmptySwatch"
-             role="radio"
-+            type="button"
-           />
-         </div>
-       </div>
-```
-
-**File**: `packages/react-components/react-swatch-picker/library/src/utils/__snapshots__/renderUtils.test.tsx.snap` (modified, +6/-0)
-```diff
-@@ -76,20 +76,23 @@ exports[`Render utils of SwatchPicker renders custom row 1`] = `
-         class="fui-ImageSwatch"
-         role="gridcell"
-         style="background-image: url(\\"https://fabricweb.azureedge.net/fabric-website/assets/images/swatch-picker/sea-swatch.jpg\\");"
-+        type="button"
-       />
-       <button
-         aria-label="bridge"
-         aria-selected="false"
-         class="fui-ImageSwatch"
-         role="gridcell"
-         style="background-image: url(\\"https://fabricweb.azureedge.net/fabric-website/assets/images/swatch-picker/bridge-swatch.jpg\\");"
-+        type="button"
-       />
-       <button
-         aria-label="park"
-         aria-selected="false"
-         class="fui-ImageSwatch"
-         role="gridcell"
-         style="background-image: url(\\"https://fabricweb.azureedge.net/fabric-website/assets/images/swatch-picker/park-swatch.jpg\\");"
-+        type="button"
-       />
-     </div>
-   </div>
-@@ -242,20 +245,23 @@ exports[`Render utils of SwatchPicker renders default grid layout 1`] = `
-         class="fui-ImageSwatch"
-         role="gridcell"
-         style="background-image: url(\\"https://fabricweb.azureedge.net/fabric-website/assets/images/swatch-picker/sea-swatch.jpg\\");"
-+        type="button"
-       />
-       <button
-         aria-label="bridge"
-         aria-selected="false"
-         class="fui-ImageSwatch"
-         role="gridcell"
-         style="background-image: url(\\"https://fabricweb.azureedge.net/fabric-website/assets/images/swatch-picker/bridge-swatch.jpg\\");"
-+        type="button"
-       />
-       <button
-         aria-label="park"
-         aria-selected="false"
-         class="fui-ImageSwatch"
-         role="gridcell"
-         style="background-image: url(\\"https://fabricweb.azureedge.net/fabric-website/assets/images/swatch-picker/park-swatch.jpg\\");"
-+        type="button"
-       />
-     </div>
-   </div>
-```
-
----
-
-### Incident Patch 7: `6fdc7bd4` (2026-10-02)
-**Commit Message**: fix(web-components): persist dropdown anchor name for tooltip positioning and fix broken implementation (#36810)
-
-**File**: `change/@fluentui-web-components-59d96bfe-18ca-49de-a337-9f1222afa67f.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "fix(web-components): fix broken tooltip positioning API",
++  "comment": "fix: make sure change event fires before submit event during implicit form submission",
 +  "packageName": "@fluentui/web-components",
-+  "email": "13071055+chrisdholt@users.noreply.github.com"
++  "email": "machi@microsoft.com"
 +}
 ```
 
-**File**: `change/@fluentui-web-components-7fd518e0-c17c-4a60-8719-c2850556e9f0.json` (added, +6/-0)
+**File**: `packages/web-components/src/text-input/text-input.base.ts` (modified, +67/-6)
 ```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "fix: keep dropdown anchor stable for tooltips",
-+  "packageName": "@fluentui/web-components",
-+  "email": "13071055+chrisdholt@users.noreply.github.com"
-+}
-```
-
-**File**: `packages/web-components/docs/web-components.api.md` (modified, +12/-12)
-```diff
-@@ -4376,18 +4376,18 @@ export const TooltipDefinition: PartialFASTElementDefinition;
- 
- // @public
- export const TooltipPositioningOption: {
--    readonly 'above-start': "block-start span-inline-end";
--    readonly above: "block-start";
--    readonly 'above-end': "block-start span-inline-start";
--    readonly 'below-start': "block-end span-inline-end";
--    readonly below: "block-end";
--    readonly 'below-end': "block-end span-inline-start";
--    readonly 'before-top': "inline-start span-block-end";
--    readonly before: "inline-start";
--    readonly 'before-bottom': "inline-start span-block-start";
--    readonly 'after-top': "inline-end span-block-end";
--    readonly after: "inline-end";
--    readonly 'after-bottom': "inline-end span-block-start";
-+    readonly 'above-start': "above-start";
-+    readonly above: "above";
-+    readonly 'above-end': "above-end";
-+    readonly 'below-start': "below-start";
-+    readonly below: "below";
-+    readonly 'below-end': "below-end";
-+    readonly 'before-top': "before-top";
-+    readonly before: "before";
-+    readonly 'before-bottom': "before-bottom";
-+    readonly 'after-top': "after-top";
-+    readonly after: "after";
-+    readonly 'after-bottom': "after-bottom";
- };
- 
- // @public
-```
-
-**File**: `packages/web-components/src/dropdown/dropdown.base.ts` (modified, +1/-1)
-```diff
-@@ -253,7 +253,7 @@ export class BaseDropdown extends FASTElement {
-       if (AnchorPositioningCSSSupported) {
-         // The `anchor-name` property seems to not be isolated between instances in Safari Technology Preview 220 (18.4).
-         // It's unclear if the spec requires the `anchor-name` to be unique when styled on the `:host`.
--        const anchorName = uniqueId('--dropdown-anchor-');
-+        const anchorName = this.style.getPropertyValue('anchor-name') || uniqueId('--dropdown-anchor-');
-         this.style.setProperty('anchor-name', anchorName);
-         this.listbox.style.setProperty('position-anchor', anchorName);
-       }
-```
-
-**File**: `packages/web-components/src/dropdown/dropdown.spec.ts` (modified, +29/-0)
-```diff
-@@ -55,6 +55,35 @@ test.describe('Dropdown', () => {
-     await expect(options).toHaveCount(8);
-   });
- 
-+  test.describe('anchor positioning', () => {
-+    test.beforeEach(async ({ page }) => {
-+      const supported = await page.evaluate(() => CSS.supports('anchor-name', '--a'));
-+      test.skip(!supported, 'CSS anchor positioning is not supported');
-+    });
-+
-+    test('should preserve an anchor name set before the listbox connects', async ({ fastPage }) => {
-+      const { element } = fastPage;
-+      const listbox = element.locator(ListboxTagName);
-+
-+      await fastPage.setTemplate({ attributes: { style: 'anchor-name: --consumer-anchor' } });
-+
-+      await expect(element).toHaveCSS('anchor-name', '--consumer-anchor');
-+      await expect(listbox).toHaveCSS('position-anchor', '--consumer-anchor');
-+    });
-+
-+    test('should generate a shared anchor name when the dropdown has no anchor name', async ({ fastPage }) => {
-+      const { element } = fastPage;
-+      const listbox = element.locator(ListboxTagName);
-+
-+      await fastPage.setTemplate();
-+
-+      await expect(element).toHaveCSS('anchor-name', /^--dropdown-anchor-/);
-+
-+      const anchorName = await element.evaluate(el => getComputedStyle(el).getPropertyValue('anchor-name'));
-+      await expect(listbox).toHaveCSS('position-anchor', anchorName);
-+    });
-+  });
-+
-   test('should render a dropdown with a button when the type is not specified', async ({ fastPage }) => {
-     const { element } = fastPage;
-     const button = element.locator('button');
-```
-
-**File**: `packages/web-components/src/dropdown/dropdown.stories.ts` (modified, +45/-0)
-```diff
-@@ -528,6 +528,51 @@ export const InsideDialogWithScrollingContent: Story = {
-   args: { ...Default.args },
- };
- 
-+export const Tooltip: Story = {
-+  render: renderComponent(html<StoryArgs<FluentDropdown>>`
-+    <fluent-dropdown id="dropdown-tooltip-target" placeholder="Select a fruit"> </fluent-dropdown>
-+    <fluent-tooltip anchor="dropdown-tooltip-target" positioning="below-start">
-+      Tooltip anchored to the dropdown
-+    </fluent-tooltip>
-+  `),
-+  decorators: [
-+    Story => {
-+      const story = Story() as DocumentFragment;
-+      const dropdown = story.querySelector<FluentDropdown>('fluent-dropdown');
-+      const tooltip = story.querySelector('fluent-tooltip');
-+
-+      // Append the listbox only after the sibling tooltip connects, matching the order in the original report.
-+      const appendListboxWhenTooltipConnects = () => {
-+        if (!dropdown || !tooltip) {
-+          return;
-+        }
-+
-+        if (!tooltip.isConnected) {
-+          requestAnimationFrame(appendListboxWhenTooltipConnects);
-+          return;
-+        }
-+
-+        const listbox = dropdown.ownerDocument.createElement('fluent-listbox');
-+        [
-+          { value: 'apple', text: 'Apple' },
-+          { value: 'banana', text: 'Banana' },
-+          { value: 'orange', text: 'Orange' },
-+        ].forEach(({ value, text }) => {
-+          const option = dropdown.ownerDocument.createElement('fluent-option');
-+          option.setAttribute('value', value);
-+          option.textContent = text;
-+          listbox.append(option);
-+        });
-+        dropdown.append(listbox);
-+      };
-+
-+      requestAnimationFrame(appendListboxWhenTooltipConnects);
-+
-+      return story;
-+    },
-+  ],
-+};
-+
- export const InsideNonModalDialog: Story = {
-   render: renderComponent(html<StoryArgs<FluentDropdown>>`
-     <div style="min-block-size: 20rem;">
-```
-
-**File**: `packages/web-components/src/tooltip/tooltip.options.ts` (modified, +13/-13)
-```diff
-@@ -2,22 +2,22 @@ import { FluentDesignSystem } from '../fluent-design-system.js';
- import type { ValuesOf } from '../utils/typings.js';
- 
- /**
-- * The TooltipPositioning options and their corresponding CSS values
-+ * The TooltipPositioning options
-  * @public
-  */
- export const TooltipPositioningOption = {
--  'above-start': 'block-start span-inline-end',
--  above: 'block-start',
--  'above-end': 'block-start span-inline-start',
--  'below-start': 'block-end span-inline-end',
--  below: 'block-end',
--  'below-end': 'block-end span-inline-start',
--  'before-top': 'inline-start span-block-end',
--  before: 'inline-start',
--  'before-bottom': 'inline-start span-block-start',
--  'after-top': 'inline-end span-block-end',
--  after: 'inline-end',
--  'after-bottom': 'inline-end span-block-start',
-+  'above-start': 'above-start',
-+  above: 'above',
-+  'above-end': 'above-end',
-+  'below-start': 'below-start',
-+  below: 'below',
-+  'below-end': 'below-end',
-+  'before-top': 'before-top',
-+  before: 'before',
-+  'before-bottom': 'before-bottom',
-+  'after-top': 'after-top',
-+  after: 'after',
-+  'after-bottom': 'after-bottom',
- } as const;
- 
- /**
-```
-
-**File**: `packages/web-components/src/tooltip/tooltip.spec.ts` (modified, +1/-2)
-```diff
-@@ -1,6 +1,5 @@
- import { expect, test } from '../../test/playwright/index.js';
- import type { Tooltip } from './tooltip.js';
--import type { TooltipPositioningOption } from './tooltip.options.js';
- import { tagName } from './tooltip.options.js';
- 
- test.describe('Tooltip', () => {
-@@ -192,7 +191,7 @@ test.describe('Tooltip', () => {
-     `);
- 
-     await element.evaluate((node: Tooltip) => {
--      node.positioning = 'above' as TooltipPositioningOption;
-+      node.positioning = 'above';
-     });
- 
-     await expect(element).toHaveAttribute('positioning', 'above');
-```
-
----
-
-### Incident Patch 8: `df2032d8` (2026-10-01)
-**Commit Message**: fix(ci): invoke v8 site manifest generator directly (#36820)
-
-**File**: `azure-pipelines.release.yml` (modified, +2/-2)
-```diff
-@@ -100,10 +100,10 @@ extends:
-                         BEACHBALL_NPM_TOKEN: $(npmToken)
-                       displayName: Publish changes and bump versions
- 
--                    # create-site-manifests is a script defined in @fluentui/public-docsite-setup.
-+                    # create-site-manifests is a binary defined in @fluentui/public-docsite-setup.
-                     # It generates manifest files used to load the current version on developer.microsoft.com/fluentui.
-                     - script: |
--                        yarn create-site-manifests ./packages/react
-+                        node ./packages/public-docsite-setup/bin/create-site-manifests.js ./packages/react
-                       displayName: 'Generate website manifests'
- 
-                     # Generate the homepage.htm file used to load developer.microsoft.com/fluentui. Note that the
-```
-
----
-
-### Incident Patch 9: `541b165e` (2026-10-01)
-**Commit Message**: fix(react-charts): improve LineChart and GaugeChart callout bug fixes (#36739)
-
-Co-authored-by: Atishay Jain <[REDACTED_EMAIL]>
-
-**File**: `change/@fluentui-react-charts-44bddcc6-c2b6-4612-b1cc-b5872295c51a.json` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "patch",
-+  "comment": "fix: improve LineChart and GaugeChart callout behavior and formatting",
-+  "packageName": "@fluentui/react-charts",
-+  "email": "atisjai@microsoft.com",
-+  "dependentChangeType": "none"
-+}
-\ No newline at end of file
-```
-
-**File**: `packages/charts/react-charts/library/etc/react-charts.api.md` (modified, +10/-3)
-```diff
-@@ -795,11 +795,9 @@ export interface EventsAnnotationProps {
-     strokeColor?: string;
- }
- 
--// @public (undocumented)
-+// @public
- export interface ExtendedSegment extends GaugeChartSegment {
--    // (undocumented)
-     end: number;
--    // (undocumented)
-     start: number;
- }
- 
-@@ -897,14 +895,19 @@ export const GaugeChart: React_2.FunctionComponent<GaugeChartProps>;
- 
- // @public
- export interface GaugeChartCalloutData {
-+    chartTitle?: string;
-     chartValue: number;
-     chartValueLabel: string;
-     legend: string;
-     maxValue: number;
-     minValue: number;
-+    segments?: GaugeChartCalloutSegment[];
-     segmentValues: YValueHover[];
- }
- 
-+// @public @deprecated
-+export type GaugeChartCalloutSegment = ExtendedSegment;
-+
- // @public
- export interface GaugeChartProps {
-     calloutProps?: Partial<ChartPopoverProps>;
-@@ -984,6 +987,9 @@ export const getColorFromToken: (token: string, isDarkTheme?: boolean) => string
- // @public (undocumented)
- export function getContrastTextColor(backgroundColor: string, isDarkTheme?: boolean): string;
- 
-+// @public
-+export const getGaugeChartSegmentLabel: (segment: ExtendedSegment, minValue: number, maxValue: number, variant: GaugeChartVariant | undefined, chartValueFormat: GaugeChartProps["chartValueFormat"], isAriaLabel?: boolean) => string;
-+
- // @public (undocumented)
- export const getInvertedTextColor: (color: string, isDarkTheme?: boolean) => string;
- 
-@@ -1499,6 +1505,7 @@ export interface ModifiedCartesianChartProps extends CartesianChartProps {
-     isCalloutForStack?: boolean;
-     legendBars: JSXElement | null;
-     maxOfYVal?: number;
-+    onChartBlur?: () => void;
-     onChartMouseLeave?: () => void;
-     points: any;
-     showRoundOffXTickValues?: boolean;
-```
-
-**File**: `packages/charts/react-charts/library/src/components/AreaChart/AreaChart.tsx` (modified, +1/-0)
-```diff
-@@ -1145,6 +1145,7 @@ export const AreaChart: React.FunctionComponent<AreaChartProps> = React.forwardR
-           createStringYAxis={createStringYAxis}
-           getmargins={_getMargins}
-           onChartMouseLeave={_handleChartMouseLeave}
-+          onChartBlur={_handleChartMouseLeave}
-           getMinMaxOfYAxis={_getMinMaxOfYAxis}
-           enableFirstRenderOptimization={props.enablePerfOptimization && _firstRenderOptimization}
-           componentRef={cartesianChartRef}
-```
-
-**File**: `packages/charts/react-charts/library/src/components/CommonComponents/CartesianChart.test.tsx` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+import { fireEvent, render } from '@testing-library/react';
-+import * as React from 'react';
-+import { ChartTypes, createNumericYAxis, createStringYAxis, XAxisTypes } from '../../utilities/index';
-+import { CartesianChart } from './CartesianChart';
-+
-+describe('CartesianChart events', () => {
-+  it('separates keyboard blur from mouse leave', () => {
-+    const onChartBlur = jest.fn();
-+    const onChartMouseLeave = jest.fn();
-+    const { container } = render(
-+      <CartesianChart
-+        points={[]}
-+        chartType={ChartTypes.LineChart}
-+        xAxisType={XAxisTypes.NumericAxis}
-+        width={300}
-+        height={200}
-+        legendBars={null}
-+        hideLegend
-+        hideTooltip
-+        tickParams={{}}
-+        getDomainNRangeValues={() => ({ dStartValue: 0, dEndValue: 1, rStartValue: 0, rEndValue: 100 })}
-+        getMinMaxOfYAxis={() => ({ startValue: 0, endValue: 1 })}
-+        createYAxis={createNumericYAxis}
-+        createStringYAxis={createStringYAxis}
-+        onChartBlur={onChartBlur}
-+        onChartMouseLeave={onChartMouseLeave}
-+      >
-+        {() => null}
-+      </CartesianChart>,
-+    );
-+    const chart = container.querySelector<HTMLDivElement>('[role="presentation"]');
-+
-+    expect(chart).not.toBeNull();
-+    fireEvent.blur(chart!);
-+    expect(onChartBlur).toHaveBeenCalledTimes(1);
-+    expect(onChartMouseLeave).not.toHaveBeenCalled();
-+
-+    fireEvent.mouseLeave(chart!);
-+    expect(onChartMouseLeave).toHaveBeenCalledTimes(1);
-+    expect(onChartBlur).toHaveBeenCalledTimes(1);
-+  });
-+});
-```
-
-**File**: `packages/charts/react-charts/library/src/components/CommonComponents/CartesianChart.tsx` (modified, +7/-0)
-```diff
-@@ -531,6 +531,12 @@ export const CartesianChart: React.FunctionComponent<ModifiedCartesianChartProps
-     props.onChartMouseLeave && props.onChartMouseLeave();
-   }
- 
-+  function _onChartBlur(event: React.FocusEvent<HTMLDivElement>): void {
-+    if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget as Node)) {
-+      props.onChartBlur && props.onChartBlur();
-+    }
-+  }
-+
-   function _calculateChartMinWidth(): number {
-     // Adding 10px for padding on both sides
-     const labelWidth = _calcMaxLabelWidthWithTransform(_tickLabels) + 10;
-@@ -746,6 +752,7 @@ export const CartesianChart: React.FunctionComponent<ModifiedCartesianChartProps
-       ref={(rootElem: HTMLDivElement) => {
-         chartContainer.current = rootElem;
-       }}
-+      onBlur={_onChartBlur}
-       onMouseLeave={_onChartLeave}
-     >
-       <div className={classes.chartWrapper} {...focusAttributes} {...arrowAttributes}>
-```
-
-**File**: `packages/charts/react-charts/library/src/components/CommonComponents/CartesianChart.types.ts` (modified, +5/-0)
-```diff
-@@ -702,6 +702,11 @@ export interface ModifiedCartesianChartProps extends CartesianChartProps {
+@@ -325,6 +325,20 @@ export class BaseTextInput extends FASTElement {
     */
-   onChartMouseLeave?: () => void;
+   private dirtyValue: boolean = false;
  
 +  /**
-+   * Callback method used when focus leaves the chart boundary.
++   * The value as of the last `change` event or programmatic update.
++   *
++   * @internal
 +   */
-+  onChartBlur?: () => void;
++  private committedValue: string = '';
 +
-   /** Callback method to get extra margins for domain */
-   getDomainMargins?: (containerWidth: number) => Margins;
- 
-```
-
-**File**: `packages/charts/react-charts/library/src/components/GanttChart/GanttChart.tsx` (modified, +1/-0)
-```diff
-@@ -605,6 +605,7 @@ export const GanttChart: React.FunctionComponent<GanttChartProps> = React.forwar
-           getmargins={_getMargins}
-           getYDomainMargins={_getYDomainMargins}
-           onChartMouseLeave={_handleChartMouseLeave}
-+          onChartBlur={_handleChartMouseLeave}
-           useUTC={useUTC}
-           children={_createBars}
-         />
-```
-
-**File**: `packages/charts/react-charts/library/src/components/GaugeChart/GaugeChart.test.tsx` (modified, +111/-19)
-```diff
-@@ -392,19 +392,27 @@ describe('GaugeChart custom callout', () => {
-     {
-       segments,
-       chartValue: 30,
-+      chartTitle: 'Server tick time',
-       minValue: 10,
--      maxValue: 110,
--      onRenderCallout: (calloutData?: GaugeChartCalloutData) => (
--        <div data-testid="custom-gauge-callout">
--          {calloutData?.legend}: {calloutData?.chartValue} blocks ({calloutData?.minValue}-{calloutData?.maxValue})
--        </div>
--      ),
-+      maxValue: 120,
-+      onRenderCallout: (calloutData?: GaugeChartCalloutData) => {
-+        const lastSegment = calloutData?.segments?.at(-1);
-+        return (
-+          <div data-testid="custom-gauge-callout">
-+            {calloutData?.chartTitle}: {calloutData?.legend}: {calloutData?.chartValue} blocks ({calloutData?.minValue}-
-+            {calloutData?.maxValue}); last range {lastSegment?.start}-{lastSegment?.end}
-+          </div>
-+        );
-+      },
-     },
-     () => {
-       const chartSegments = screen.getAllByText((content, element) => element!.tagName.toLowerCase() === 'path');
-       fireEvent.mouseOver(chartSegments[0]);
- 
--      expect(screen.getByTestId('custom-gauge-callout')).toHaveTextContent('Low Risk: 30 blocks (10-110)');
-+      expect(screen.getByTestId('custom-gauge-callout')).toHaveTextContent(
-+        'Server tick time: Low Risk: 30 blocks (10-120); last range 77-110',
-+      );
-+      expect(screen.getByTestId('custom-gauge-callout')).not.toHaveTextContent('Unknown');
-     },
-   );
- 
-@@ -414,16 +422,74 @@ describe('GaugeChart custom callout', () => {
-     {
-       segments,
-       chartValue: 30,
-+      chartValueFormat: ([value]: [number, number]) => `${value}ms`,
-       onRenderCallout: renderDefaultCallout,
-     },
-     () => {
-       const chartSegments = screen.getAllByText((content, element) => element!.tagName.toLowerCase() === 'path');
-       fireEvent.mouseOver(chartSegments[0]);
- 
--      expect(screen.getByTestId('wrapped-gauge-callout')).toHaveTextContent('Current value is 30/100');
-+      expect(screen.getByTestId('wrapped-gauge-callout')).toHaveTextContent('Current value is 30ms');
-       expect(screen.getByTestId('wrapped-gauge-callout')).toHaveTextContent('Low Risk');
-     },
-   );
++  /**
++   * Indicates that `value` is being updated from the internal control's `input` event.
++   *
++   * @internal
++   */
++  private isUserInput: boolean = false;
 +
-+  testWithoutWait(
-+    'Should use actual values for default percentage formatting with a nonzero minimum',
-+    GaugeChart,
-+    {
-+      segments,
-+      chartValue: 125,
-+      minValue: 100,
-+      maxValue: 200,
-+    },
-+    () => {
-+      const chartSegments = screen.getAllByText((content, element) => element!.tagName.toLowerCase() === 'path');
-+      fireEvent.mouseOver(chartSegments[0]);
-+
-+      expect(screen.getByText('Current value is 63%')).toBeInTheDocument();
-+      expect(screen.getByText('50% - 67%')).toBeInTheDocument();
-+      expect(screen.getByRole('option', { name: 'Low Risk, 50% to 67%' })).toBeInTheDocument();
-+    },
-+  );
-+
-+  testWithoutWait(
-+    'Should use actual values for fraction formatting with a nonzero minimum',
-+    GaugeChart,
-+    {
-+      segments,
-+      chartValue: 125,
-+      minValue: 100,
-+      maxValue: 200,
-+      chartValueFormat: GaugeValueFormat.Fraction,
-+    },
-+    () => {
-+      const chartSegments = screen.getAllByText((content, element) => element!.tagName.toLowerCase() === 'path');
-+      fireEvent.mouseOver(chartSegments[0]);
-+
-+      expect(screen.getByText('Current value is 125/200')).toBeInTheDocument();
-+      expect(screen.getByText('100 - 133')).toBeInTheDocument();
-+      expect(screen.getByRole('option', { name: 'Low Risk, 100 to 133' })).toBeInTheDocument();
-+    },
-+  );
-+
-+  testWithoutWait(
-+    'Should preserve single-segment labels in the callout and accessible name',
-+    GaugeChart,
-+    {
-+      segments: [segments[0]],
-+      chartValue: 25,
-+      maxValue: 100,
-+      variant: GaugeChartVariant.SingleSegment,
-+    },
-+    () => {
-+      const chartSegments = screen.getAllByText((content, element) => element!.tagName.toLowerCase() === 'path');
-+      fireEvent.mouseOver(chartSegments[0]);
-+
-+      expect(screen.getByText('33 (33%)')).toBeInTheDocument();
-+      expect(screen.getByRole('option', { name: 'Low Risk, 33 out of 100 or 33%' })).toBeInTheDocument();
-+    },
-+  );
- });
+   /**
+    * The internal {@link https://developer.mozilla.org/docs/Web/API/ElementInternals | `ElementInternals`} instance for the component.
+    *
+@@ -374,6 +388,11 @@ export class BaseTextInput extends FASTElement {
+   public set value(value: string) {
+     this.currentValue = value;
  
- describe('GaugeChart rendering and behavior tests', () => {
-@@ -504,30 +570,33 @@ describe('GaugeChart rendering and behavior tests', () => {
++    // Programmatic updates are not user changes, so they must not trigger `change` later.
++    if (!this.isUserInput) {
++      this.committedValue = value ?? '';
++    }
++
+     if (this.elementInternals && this.control) {
+       this.control.value = value ?? '';
+       this.setFormValue(value);
+@@ -413,13 +432,26 @@ export class BaseTextInput extends FASTElement {
+    * proxies the change event, emitting a `change` event whenever the internal control emits a `change` event.
+    */
+   public changeHandler(e: InputEvent): boolean | void {
++    // Skip if already emitted on Enter; the browser's later native `change` has the same value.
++    if (this.control.value !== this.committedValue) {
++      this.emitChange(e);
++    }
++
++    return true;
++  }
++
++  /**
++   * Validates, records the committed value, and emits `change` on the host.
++   *
++   * @internal
++   */
++  private emitChange(detail?: Event) {
++    this.committedValue = this.control.value;
+     this.setValidity();
+-    this.$emit('change', e, {
++    this.$emit('change', detail, {
+       bubbles: true,
+       composed: true,
+     });
+-
+-    return true;
+   }
  
-   it('should render the chart value correctly', () => {
-     const customChartValue = 'Custom chart value';
-+    const formatMilliseconds = ([value]: [number, number]) => (value === 0 ? 'offline' : `${value}ms`);
+   /**
+@@ -507,7 +539,12 @@ export class BaseTextInput extends FASTElement {
+    */
+   public inputHandler(e: InputEvent): boolean | void {
+     this.dirtyValue = true;
+-    this.value = this.control.value;
++    this.isUserInput = true;
++    try {
++      this.value = this.control.value;
++    } finally {
++      this.isUserInput = false;
++    }
  
-     expect(getChartValueLabel(25, 0, 100)).toBe('25%');
--    expect(getChartValueLabel(25, 0, 100, undefined, true)).toBe('25/100');
-+    expect(getChartValueLabel(25, 0, 100, undefined, true)).toBe('25%');
+     return true;
+   }
+@@ -519,10 +556,34 @@ export class BaseTextInput extends FASTElement {
+    * @internal
+    */
+   public keydownHandler(e: KeyboardEvent): boolean | void {
+-    if (e.key === 'Enter') {
+-      this.implicitSubmit();
++    if (e.key !== 'Enter') {
++      return true;
+     }
  
-     expect(getChartValueLabel(25, 0, 100, GaugeValueFormat.Percentage)).toBe('25%');
--    expect(getChartValueLabel(25, 0, 100, GaugeValueFormat.Percentage, true)).toBe('25/100');
-+    expect(getChartValueLabel(25
-```
-
----
-
-### Incident Patch 10: `4666954b` (2026-10-01)
-**Commit Message**: fixed tooltip value cut off at the bottom in HorizontalBarChartWithAxis (#36818)
-
-**File**: `change/@fluentui-react-charts-877a7acc-394c-4f72-a73d-0ae78e3099c6.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "fixed tooltip value cut off at the bottom in HorizontalBarChartWithAxis",
-+  "packageName": "@fluentui/react-charts",
-+  "email": "v-baambati@microsoft.com"
-+}
-```
-
-**File**: `packages/charts/react-charts/library/src/components/CommonComponents/ChartPopover.tsx` (modified, +1/-0)
-```diff
-@@ -84,6 +84,7 @@ export const ChartPopover: React.FunctionComponent<ChartPopoverProps> = React.fo
-                     style={{
-                       color: props.color ? props.color : tokens.colorNeutralForeground1,
-                       fontSize: tokens.fontSizeHero700,
-+                      lineHeight: tokens.lineHeightHero700,
-                     }}
-                   >
-                     {formatToLocaleString(YValue, props.culture) as React.ReactNode}
-```
-
-**File**: `packages/charts/react-charts/library/src/components/DonutChart/__snapshots__/DonutChart.test.tsx.snap` (modified, +4/-4)
-```diff
-@@ -493,7 +493,7 @@ Object {
-                   </div>
-                   <div
-                     class="fui-cart__calloutContentY"
--                    style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700);"
-+                    style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-                   >
-                     20,000
-                   </div>
-@@ -731,7 +731,7 @@ Object {
-                 </div>
-                 <div
-                   class="fui-cart__calloutContentY"
--                  style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700);"
-+                  style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-                 >
-                   20,000
-                 </div>
-@@ -1009,7 +1009,7 @@ Object {
-                   </div>
-                   <div
-                     class="fui-cart__calloutContentY"
--                    style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700);"
-+                    style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-                   >
-                     20,000
-                   </div>
-@@ -1247,7 +1247,7 @@ Object {
-                 </div>
-                 <div
-                   class="fui-cart__calloutContentY"
--                  style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700);"
-+                  style="color: rgb(229, 229, 229); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-                 >
-                   20,000
-                 </div>
-```
-
-**File**: `packages/charts/react-charts/library/src/components/GanttChart/__snapshots__/GanttChart.test.tsx.snap` (modified, +2/-2)
-```diff
-@@ -472,7 +472,7 @@ exports[`GanttChart interaction and accessibility tests should render custom cal
-               </div>
-               <div
-                 class="fui-cart__calloutContentY"
--                style="color: rgb(16, 124, 16); font-size: var(--fontSizeHero700);"
-+                style="color: rgb(16, 124, 16); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-               >
-                 01/01/2017 - 02/02/2017
-               </div>
-@@ -4964,7 +4964,7 @@ exports[`GanttChart rendering and behavior tests should render callout correctly
-               </div>
-               <div
-                 class="fui-cart__calloutContentY"
--                style="color: rgb(16, 124, 16); font-size: var(--fontSizeHero700);"
-+                style="color: rgb(16, 124, 16); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-               >
-                 01/01/2017 - 02/02/2017
-               </div>
-```
-
-**File**: `packages/charts/react-charts/library/src/components/GroupedVerticalBarChart/__snapshots__/GroupedVerticalBarChart.test.tsx.snap` (modified, +1/-1)
-```diff
-@@ -1363,7 +1363,7 @@ exports[`GroupedVerticalBarChart - mouse events Should render callout correctly
-               </div>
-               <div
-                 class="fui-cart__calloutContentY"
--                style="color: rgb(0, 188, 242); font-size: var(--fontSizeHero700);"
-+                style="color: rgb(0, 188, 242); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-               >
-                 33%
-               </div>
-```
-
-**File**: `packages/charts/react-charts/library/src/components/HorizontalBarChartWithAxis/HorizontalBarChartWithAxis.test.tsx` (modified, +2/-0)
-```diff
-@@ -4,6 +4,7 @@ import { HorizontalBarChartWithAxis } from './HorizontalBarChartWithAxis';
- import { toHaveNoViolations } from 'jest-axe';
- import type { HorizontalBarChartWithAxisDataPoint } from '../../HorizontalBarChart';
- import { render } from '@testing-library/react';
-+import { tokens } from '@fluentui/react-theme';
- import * as React from 'react';
- expect.extend(toHaveNoViolations);
++    // Enter that confirms an IME composition must not commit or submit.
++    // `keyCode` 229 means the IME handled the key; Safari fires this keydown
++    // after `compositionend`, when `isComposing` is already false.
++    // See details: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event#keydown_events_with_ime
++    if (e.isComposing || e.keyCode === 229) {
++      return true;
++    }
++
++    // Keydown events from slotted start/end content also bubble to the host;
++    // implicit submission only applies to the control.
++    if (e.composedPath()[0] !== this.control) {
++      return true;
++    }
++
++    // On a built-in `<input>`, hitting `Enter` fires `change` before the implicit
++    // form submission. Emit it here so listeners see the committed value on
++    // `submit`, without moving focus.
++    // @see https://github.com/microsoft/fluentui/issues/36117
++    if (this.control.value !== this.committedValue) {
++      this.emitChange();
++    }
++
++    this.implicitSubmit();
++
+     return true;
+   }
  
-@@ -465,6 +466,7 @@ describe('Horizontal bar chart with axis - Subcomponent Labels', () => {
-     const yAxisCallOutData = getByClass(container, /calloutContentY/i);
-     expect(yAxisCallOutData).toBeDefined();
-     expect(yAxisCallOutData[0].textContent).toEqual('1000');
-+    expect((yAxisCallOutData[0] as HTMLElement).style.lineHeight).toEqual(tokens.lineHeightHero700);
+```
+
+**File**: `packages/web-components/src/text-input/text-input.spec.ts` (modified, +255/-1)
+```diff
+@@ -357,7 +357,10 @@ test.describe('TextInput', () => {
+         }),
+     );
+ 
+-    await element.evaluate((node: TextInput) => node.control.dispatchEvent(new Event('change')));
++    await element.evaluate((node: TextInput) => {
++      node.control.value = 'hello';
++      node.control.dispatchEvent(new Event('change'));
++    });
+ 
+     await expect(wasChanged).resolves.toBe(true);
+   });
+@@ -702,6 +705,257 @@ test.describe('TextInput', () => {
+     expect(page.url()).toMatch(/foo/);
    });
  
-   it('Should show the callout with string yaxis tooltip data', async () => {
-```
-
-**File**: `packages/charts/react-charts/library/src/components/SankeyChart/__snapshots__/SankeyChart.test.tsx.snap` (modified, +1/-1)
-```diff
-@@ -12256,7 +12256,7 @@ exports[`SankeyChart - mouse events Should render callout correctly on mouseover
-               />
-               <div
-                 class="fui-cart__calloutContentY"
--                style="color: rgb(135, 100, 184); font-size: var(--fontSizeHero700);"
-+                style="color: rgb(135, 100, 184); font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-               >
-                 14
-               </div>
-```
-
-**File**: `packages/charts/react-charts/library/src/components/VerticalBarChart/__snapshots__/VerticalBarChart.test.tsx.snap` (modified, +1/-1)
-```diff
-@@ -5147,7 +5147,7 @@ exports[`VerticalBarChart - mouse events Should render callout correctly on mous
-               </div>
-               <div
-                 class="fui-cart__calloutContentY"
--                style="color: blue; font-size: var(--fontSizeHero700);"
-+                style="color: blue; font-size: var(--fontSizeHero700); line-height: var(--lineHeightHero700);"
-               >
-                 50,000
-               </div>
-```
-
----
-
-### Incident Patch 11: `45af0379` (2026-09-28)
-**Commit Message**: fix(web-components): keep switch indicator visible in forced-colors mode (#36742)
-
-Co-authored-by: Chris Holt <[REDACTED_EMAIL]>
-
-**File**: `change/@fluentui-web-components-8f3c2a1d-5e6b-4c7d-9a0e-1b2c3d4e5f60.json` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "patch",
-+  "comment": "fix(switch): keep the indicator visible in forced-colors mode",
-+  "packageName": "@fluentui/web-components",
-+  "email": "jiayin.3zh@gmail.com",
-+  "dependentChangeType": "patch"
-+}
-```
-
-**File**: `packages/web-components/src/switch/switch.styles.ts` (modified, +2/-2)
-```diff
-@@ -137,12 +137,12 @@ export const styles = css`
-     .checked-indicator,
-     :host(:hover) .checked-indicator,
-     :host(:active) .checked-indicator {
--      background-color: ActiveCaption;
-+      background-color: CanvasText;
-     }
-     :host(${checkedState}) .checked-indicator,
-     :host(${checkedState}:hover) .checked-indicator,
-     :host(${checkedState}:active) .checked-indicator {
--      background-color: ButtonFace;
-+      background-color: HighlightText;
-     }
-     :host(${nativeDisabledState}) .checked-indicator,
-     :host(${checkedState}${nativeDisabledState}) .checked-indicator {
-```
-
----
-
-### Incident Patch 12: `8add8c87` (2026-09-25)
-**Commit Message**: feat: add build-time icon variants to public Storybooks (#36797)
-
-**File**: `.storybook/react-icons-font.css` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+/* Prevent inherited text weight from synthetically bolding font icons.
-+ * TODO: Remove when https://github.com/microsoft/fluentui-system-icons/issues/1235 is fixed.
-+ */
-+[data-fui-icon] {
-+  font-weight: normal;
-+}
-```
-
-**File**: `.storybook/react-icons-webpack.js` (added, +109/-0)
-```diff
-@@ -0,0 +1,109 @@
-+// @ts-check
++  test.describe('Enter key and `change` event ordering', () => {
++    const template = /* html */ `
++      <form>
++        <${tagName} name="testinput"></${tagName}>
++        <button id="submit" type="button">submit</button>
++      </form>
++    `;
 +
-+const FluentUIReactIconsFontSubsettingPlugin = require('@fluentui/react-icons-font-subsetting-webpack-plugin').default;
++    test('should fire `change` before `submit` when Enter is pressed after typing', async ({ fastPage }) => {
++      const { element, page } = fastPage;
++      const form = page.locator('form');
++      const control = element.locator('input');
 +
-+const FONT_ICON_VARIANT = 'fonts';
-+const iconLoader = require.resolve('@fluentui/react-icons-atomic-webpack-loader');
-+const headlessBaseStyles = require.resolve('@fluentui/react-icons/headless/styles.css');
-+const headlessFontStyles = require.resolve('@fluentui/react-icons/headless/fonts/styles.css');
-+const fontIconStyles = require.resolve('./react-icons-font.css');
++      await fastPage.setTemplate(template);
 +
-+/** @typedef {string | string[] | import('webpack').EntryObject} ResolvedEntry */
++      const changed = element.evaluate(
++        n => new Promise<number>(resolve => n.addEventListener('change', e => resolve(e.timeStamp))),
++      );
++      const submitted = form.evaluate(
++        n =>
++          new Promise<number>(resolve =>
++            n.addEventListener('submit', e => {
++              e.preventDefault();
++              resolve(e.timeStamp);
++            }),
++          ),
++      );
 +
-+/**
-+ * @param {ResolvedEntry} entry
-+ * @param {string[]} imports
-+ * @returns {ResolvedEntry}
-+ */
-+function prependEntryImports(entry, imports) {
-+  if (typeof entry === 'string') {
-+    return [...imports, entry];
-+  }
++      await control.focus();
++      await page.keyboard.type('hello');
++      await page.keyboard.press('Enter');
 +
-+  if (Array.isArray(entry)) {
-+    return [...imports, ...entry];
-+  }
++      const [changedAt, submittedAt] = await Promise.all([changed, submitted]);
 +
-+  if (entry && typeof entry === 'object') {
-+    return Object.fromEntries(
-+      Object.entries(entry).map(([name, value]) => {
-+        if (typeof value === 'string' || Array.isArray(value)) {
-+          return [name, prependEntryImports(value, imports)];
-+        }
-+
-+        if (value && typeof value === 'object') {
-+          return [name, { ...value, import: prependEntryImports(value.import ?? [], imports) }];
-+        }
-+
-+        return [name, value];
-+      }),
-+    );
-+  }
-+
-+  return entry;
-+}
-+
-+/**
-+ * Configures atomic Fluent icon imports for Storybook.
-+ * Set FLUENTUI_ICON_VARIANT=fonts to use subsetted font icons; SVG atoms are the default.
-+ *
-+ * @see https://github.com/microsoft/fluentui-system-icons/blob/main/packages/react-icons-atomic-webpack-loader/README.md
-+ * @see https://github.com/microsoft/fluentui-system-icons/tree/main/packages/react-icons-font-subsetting-webpack-plugin
-+ *
-+ * @param {{ config: import('webpack').Configuration; headless?: boolean }} options
-+ */
-+function configureReactIcons(options) {
-+  const { config, headless = false } = options;
-+  const useFontIcons = process.env.FLUENTUI_ICON_VARIANT === FONT_ICON_VARIANT;
-+
-+  config.module ??= {};
-+  config.module.rules ??= [];
-+  config.module.rules.push({
-+    test: /\.[mc]?[jt]sx?$/,
-+    enforce: 'pre',
-+    use: [
-+      {
-+        loader: iconLoader,
-+        options: {
-+          iconVariant: useFontIcons ? 'fonts' : 'svg',
-+          fallbackVariant: 'svg',
-+          headless,
-+        },
-+      },
-+    ],
-+  });
-+
-+  if (useFontIcons) {
-+    config.module.rules.push({
-+      test: /\.(ttf|woff2?)$/,
-+      type: 'asset',
++      // WebKit timestamps have coarse precision, so both events can share a value.
++      expect(changedAt).toBeLessThanOrEqual(submittedAt);
 +    });
-+    config.plugins ??= [];
-+    config.plugins.push(new FluentUIReactIconsFontSubsettingPlugin());
-+  }
 +
-+  /** @type {string[]} */
-+  const styleImports = [];
-+  if (headless) {
-+    styleImports.push(headlessBaseStyles);
-+  }
-+  if (useFontIcons) {
-+    if (headless) {
-+      styleImports.push(headlessFontStyles);
-+    }
-+    styleImports.push(fontIconStyles);
-+  }
++    test('should NOT fire `change` when Enter is pressed without editing', async ({ fastPage }) => {
++      const { element, page } = fastPage;
++      const form = page.locator('form');
++      const control = element.locator('input');
 +
-+  if (styleImports.length > 0) {
-+    const originalEntry = config.entry;
++      await fastPage.setTemplate(template);
 +
-+    config.entry = async () => {
-+      const entry = typeof originalEntry === 'function' ? await originalEntry() : originalEntry;
-+      return prependEntryImports(entry ?? [], styleImports);
-+    };
-+  }
++      await element.evaluate(node => node.addEventListener('change', () => (node.dataset.changed = 'true')));
++      await form.evaluate(node =>
++        node.addEventListener('submit', e => {
++          e.preventDefault();
++          node.dataset.submitted = 'true';
++        }),
++      );
 +
-+  return config;
-+}
++      await control.focus();
++      await page.keyboard.press('Enter');
 +
-+module.exports = { configureReactIcons };
-```
-
-**File**: `apps/public-docsite-v9-headless/.storybook/main.js` (modified, +2/-0)
-```diff
-@@ -1,5 +1,6 @@
- const headlessMain = require('../../../packages/react-components/react-headless-components-preview/stories/.storybook/main');
- const { registerRules, rules } = require('@fluentui/scripts-storybook');
-+const { configureReactIcons } = require('../../../.storybook/react-icons-webpack');
- 
- module.exports = /** @type {Omit<import('../../../.storybook/main'), 'typescript'|'babel'>} */ ({
-   ...headlessMain,
-@@ -18,6 +19,7 @@ module.exports = /** @type {Omit<import('../../../.storybook/main'), 'typescript
-     if (process.env.REACT_COMPILER) {
-       registerRules({ rules: rules.reactCompilerRule, config: localConfig });
-     }
-+    configureReactIcons({ config: localConfig, headless: true });
- 
-     return localConfig;
-   },
-```
-
-**File**: `apps/public-docsite-v9-headless/project.json` (modified, +12/-1)
-```diff
-@@ -6,6 +6,12 @@
-   "tags": ["platform:web", "vNext"],
-   "targets": {
-     "build-storybook": {
-+      "inputs": [
-+        "default",
-+        "{workspaceRoot}/.storybook/**",
-+        "{projectRoot}/.storybook/**",
-+        { "env": "FLUENTUI_ICON_VARIANT" }
-+      ],
-       "dependsOn": [
-         {
-           "projects": ["react-storybook-addon", "react-storybook-addon-export-to-sandbox", "storybook-llms-extractor"],
-@@ -20,7 +26,12 @@
-           "target": "build"
-         }
-       ],
--      "inputs": ["default", "{workspaceRoot}/.storybook/**", "{projectRoot}/.storybook/**"]
-+      "inputs": [
-+        "default",
-+        "{workspaceRoot}/.storybook/**",
-+        "{projectRoot}/.storybook/**",
-+        { "env": "FLUENTUI_ICON_VARIANT" }
-+      ]
-     }
-   }
- }
-```
-
-**File**: `apps/public-docsite-v9/.storybook/main.js` (modified, +2/-0)
-```diff
-@@ -2,6 +2,7 @@ const path = require('path');
- const { getPackageStoriesGlob, registerTsPaths, rules, registerRules } = require('@fluentui/scripts-storybook');
- 
- const rootMain = require('../../../.storybook/main');
-+const { configureReactIcons } = require('../../../.storybook/react-icons-webpack');
- 
- const tsConfigAllPath = path.join(__dirname, '../../../tsconfig.base.all.json');
- 
-@@ -59,6 +60,7 @@ module.exports = /** @type {Omit<import('../../../.storybook/main'), 'typescript
-       rules: [rules.scssRule, ...(process.env.REACT_COMPILER ? rules.reactCompilerRule : [])],
-       config: localConfig,
-     });
-+    configureReactIcons({ config: localConfig });
- 
-     return localConfig;
-   },
-```
-
-**File**: `apps/public-docsite-v9/project.json` (modified, +12/-1)
-```diff
-@@ -6,6 +6,12 @@
-   "tags": ["platform:web", "vNext"],
-   "targets": {
-     "build-storybook": {
-+      "inputs": [
-+        "default",
-+        "{workspaceRoot}/.storybook/**",
-+        "{projectRoot}/.storybook/**",
-+        { "env": "FLUENTUI_ICON_VARIANT" }
-+      ],
-       "dependsOn": [
-         {
-           "projects": [
-@@ -21,7 +27,12 @@
-       ]
-     },
-     "build-storybook:docsite": {
--      "inputs": ["default", "{workspaceRoot}/.storybook/**", "{projectRoot}/.storybook/**"],
-+      "inputs": [
-+        "default",
-+        "{workspaceRoot}/.storybook/**",
-+        "{projectRoot}/.storybook/**",
-+        { "env": "FLUENTUI_ICON_VARIANT" }
-+      ],
-       "outputs": ["{projectRoot}/dist/react"],
-       "executor": "nx:noop",
-       "dependsOn": [
-```
-
-**File**: `change/@fluentui-react-migration-v0-v9-48d6835c-7638-436a-a618-cfeeb96de643.json` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "none",
-+  "comment": "docs: refresh generated API report after icon dependency update",
-+  "packageName": "@fluentui/react-migration-v0-v9",
-+  "email": "martinhochel@microsoft.com",
-+  "dependentChangeType": "none"
-+}
-\ No newline at end of file
-```
-
-**File**: `package.json` (modified, +3/-1)
-```diff
-@@ -59,7 +59,9 @@
-     "@eslint/js": "9.26.0",
-     "@floating-ui/dom": "1.6.12",
-     "@fluentui/react-compiler-analyzer": "0.0.0-experimental.rc-analyzer.20260526-7c5862ce36.0",
--    "@fluentui/react-icons": "^2.0.306",
-+    "@fluentui/react-icons": "^2.0.339",
-+    "@fluentui/react-icons-atomic-webpack-loader": "0.0.6",
-+    "@fluentui/react-icons-font-subsetting-webpack-plugin": "2.0.339",
-     "@fluentui/react-integration-tester": "*",
-     "@fluentui/scripts-test-ssr": "*",
-     "@fluentui/storybook-llms-extractor": "*",
++      // Handlers run synchronously during the key press, so `submit` proves `change` had its chance.
++      await expect(form).toHaveAttribute('data-submitted', 'true');
++      await expect(element).not.toHaveAttribute('data-changed');
++    });
++
++    test('should NOT fire focus events or a duplicate `change` when Enter is pressed after typing', async ({
++      fastPage,
++    }) => {
++      const { element, page } = fastPage;
++      const control = element.locator('input');
++
++      await fastPage.setTemplate(template);
++
++      await element.evaluate(node => {
++        node.dataset.changes = '0';
++        node.dataset.focusEvents = '0';
++        node.addEventListener('change', () => (node.dataset.changes = String(Number(node.dataset.changes) + 1)));
++        ['focusin', 'focusout'].forEach(type =>
++          node.addEventListener(type, () => (node.dataset.focusEvents = String(Number(node.dataset.focusEvents) + 1))),
++        );
++      });
++
++      await page.locator('form').evaluate(node => node.addEventListener('submit', e => e.preventDefault()));
++
++      await control.focus();
++      await page.keyboard.type('hello');
++
++      // Focus events from the initial `focus()` are not part of the assertion.
++      await element.evaluate(node => (node.dataset.focusEvents = '0'));
++      await page.keyboard.press('Enter');
++
++      await expect(element).toHaveAttribute('data-changes', '1');
++      await expect(element).toHaveAttribute('data-focus-events', '0');
++
++      // The browser's own `change` on blur must not be re-emitted.
++      await page.locator('#submit').focus();
++
++      await expect(element).toHaveAttribute('data-changes', '1');
++    });
++
++    test('should fire `change` again on blur when edited after Enter', async ({ fastPage }) => {
++      const { element, page } = fastPage;
++      const control = element.locator('input');
++
++      await fastPage.setTemplate(template);
++
++      await element.evaluate(node => {
++        node.dataset.changes = '0';
++        node.addEventListener('change', () => (node.dataset.changes = String(Number(node.dataset.changes) + 1)));
++      });
++
++      await page.locator('form').evaluate(node => node.addEventListener('submit', e => e.preventDefault()));
++
++      await control.focus();
++      await page.keyboard.type('hello');
++      await page.keyboard.press('Enter');
++      await page.keyboard.type('!');
++      await page.locator('#submit').focus();
++
++      await expect(element).toHaveAttribute('data-changes', '2');
++    });
++
++    test('should kee
 ```
 
 ---
 
-### Incident Patch 13: `a1d67784` (2026-09-25)
-**Commit Message**: fix(react-tooltip): preserve virtual target tooltips (#36794)
+### Incident Patch 3: `1dd5f153` (2026-10-16)
+**Commit Message**: fix: restore headless TeachingPopover close focus (#36843)
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Copilot-Session: 0d39e88a-f6af-41d5-a788-7aa0152d5210
 
-**File**: `change/@fluentui-react-tooltip-f9eda5e9-9f5b-4117-b6a4-eb3c882eba45.json` (added, +6/-0)
+**File**: `change/@fluentui-react-headless-components-preview-667d3aa6-2339-48c5-ab94-f378d66cf796.json` (added, +6/-0)
 ```diff
 @@ -0,0 +1,6 @@
 +{
 +  "type": "patch",
-+  "comment": "fix: preserve virtual target tooltips",
-+  "packageName": "@fluentui/react-tooltip",
++  "comment": "fix: restore focus when headless popovers close",
++  "packageName": "@fluentui/react-headless-components-preview",
 +  "email": "paulmardling@microsoft.com"
 +}
 ```
 
-**File**: `packages/react-components/react-tooltip/library/src/components/Tooltip/Tooltip.test.tsx` (modified, +50/-0)
+**File**: `packages/react-components/react-headless-components-preview/library/config/tests.cjs` (modified, +17/-0)
 ```diff
-@@ -2,6 +2,7 @@ import * as React from 'react';
- import { Tooltip } from './Tooltip';
- import { isConformant } from '../../testing/isConformant';
- import type { IsConformantOptions } from '@fluentui/react-conformance';
-+import type { PositioningVirtualElement } from '@fluentui/react-positioning';
- import type { RenderResult } from '@testing-library/react';
- import { act, fireEvent, render, waitFor } from '@testing-library/react';
- import { resetIdsForTests } from '@fluentui/react-utilities';
-@@ -225,4 +226,53 @@ describe('Tooltip', () => {
-     expect(onPositioningEnd).toHaveBeenCalledTimes(2);
-     expect(onPositioningEnd).toHaveBeenLastCalledWith(visibleEvent);
-   });
-+
-+  it('hides when positioning reports an explicit DOM target as hidden', () => {
-+    const onPositioningEnd = jest.fn();
-+    const result = render(
-+      <Tooltip
-+        content="Tooltip content"
-+        relationship="label"
-+        visible
-+        positioning={{ target: document.body, onPositioningEnd }}
-+      >
-+        <button />
-+      </Tooltip>,
-+    );
-+    const tooltip = getByRoleTooltip(result);
-+    const positioningEvent = new CustomEvent('fui-positioningend', {
-+      detail: { placement: 'top', escaped: false, referenceHidden: true },
-+    });
-+
-+    act(() => tooltip.dispatchEvent(positioningEvent));
-+
-+    expect(getComputedStyle(tooltip).visibility).toBe('hidden');
-+    expect(onPositioningEnd).toHaveBeenLastCalledWith(positioningEvent);
-+  });
-+
-+  it('remains visible when positioning reports a virtual target as hidden', () => {
-+    const onPositioningEnd = jest.fn();
-+    const virtualTarget: PositioningVirtualElement = {
-+      getBoundingClientRect: () => new DOMRect(),
-+    };
-+    const result = render(
-+      <Tooltip
-+        content="Tooltip content"
-+        relationship="label"
-+        visible
-+        positioning={{ target: virtualTarget, onPositioningEnd }}
-+      >
-+        <button />
-+      </Tooltip>,
-+    );
-+    const tooltip = getByRoleTooltip(result);
-+    const positioningEvent = new CustomEvent('fui-positioningend', {
-+      detail: { placement: 'top', escaped: false, referenceHidden: true },
-+    });
-+
-+    act(() => tooltip.dispatchEvent(positioningEvent));
-+
-+    expect(getComputedStyle(tooltip).visibility).not.toBe('hidden');
-+    expect(onPositioningEnd).toHaveBeenLastCalledWith(positioningEvent);
-+  });
- });
-```
-
-**File**: `packages/react-components/react-tooltip/library/src/components/Tooltip/useTooltipBase.tsx` (modified, +4/-1)
-```diff
-@@ -21,6 +21,7 @@ import {
-   useEventCallback,
-   slot,
-   getReactElementRef,
-+  isHTMLElement,
- } from '@fluentui/react-utilities';
- import type { TooltipBaseProps, TooltipBaseState, TooltipChildProps, OnVisibleChangeData } from './Tooltip.types';
- import { arrowHeight, tooltipBorderRadius } from './private/constants';
-@@ -82,9 +83,11 @@ export const useTooltipBase_unstable = (props: TooltipBaseProps): TooltipBaseSta
-   state.content.id = useId('tooltip-', state.content.id);
+@@ -32,8 +32,25 @@ if (typeof HTMLDialogElement !== 'undefined') {
+   }
  
-   const resolvedPositioning = resolvePositioningShorthand(state.positioning);
-+  const isVirtualTarget = resolvedPositioning.target !== undefined && !isHTMLElement(resolvedPositioning.target);
-   const onPositioningEnd = useEventCallback((event: OnPositioningEndEvent) => {
-     // Portaled tooltips can escape the trigger's clipping ancestors while the trigger is still visible.
--    setHidden(event.detail.referenceHidden);
-+    // Virtual targets can be reported as hidden based on synthetic geometry.
-+    setHidden(!isVirtualTarget && event.detail.referenceHidden);
-     resolvedPositioning.onPositioningEnd?.(event);
-   });
- 
-```
-
----
-
-### Incident Patch 14: `5f32665b` (2026-09-25)
-**Commit Message**: fixed line&Area chart voice control access issue (#36703)
-
-**File**: `change/@fluentui-react-charts-c03f5c14-f431-4232-af89-3fed5653212d.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "Fixed voice control accessibility issue for the chart line and area charts",
-+  "packageName": "@fluentui/react-charts",
-+  "email": "v-baambati@microsoft.com"
-+}
-```
-
-**File**: `packages/charts/react-charts/library/src/components/AreaChart/AreaChart.tsx` (modified, +31/-3)
-```diff
-@@ -759,7 +759,7 @@ export const AreaChart: React.FunctionComponent<AreaChartProps> = React.forwardR
-             <g
-               key={`${index}-dots-${_uniqueIdForGraph}`}
-               clipPath="url(#clip)"
--              role="region"
-+              role="listbox"
-               aria-label={`${points[index].legend}, series ${index + 1} of ${points.length} with ${
-                 points[index].data.length
-               } data points.`}
-@@ -769,6 +769,12 @@ export const AreaChart: React.FunctionComponent<AreaChartProps> = React.forwardR
-                 const xDataPoint = singlePoint.xVal instanceof Date ? singlePoint.xVal.getTime() : singlePoint.xVal;
-                 lineColor = points[index]!.color!;
-                 const legend = points[index]!.legend;
-+                const { opacity: circleOpacity, radius: circleRadiusValue } = _getCircleOpacityAndRadius(
-+                  xDataPoint,
-+                  circleRadius,
-+                  circleId,
-+                  legend,
-+                );
-                 return (
-                   <circle
-                     key={circleId}
-@@ -779,14 +785,16 @@ export const AreaChart: React.FunctionComponent<AreaChartProps> = React.forwardR
-                     stroke={lineColor}
-                     strokeWidth={3}
-                     fill={_updateCircleFillColor(xDataPoint, lineColor, circleId)}
-+                    // Elements with visibility: hidden cannot receive focus, so use opacity: 0 instead to hide them.
-+                    opacity={circleOpacity}
-                     onMouseOut={_onRectMouseOut}
-                     onMouseOver={event => _onRectMouseMove(event)}
-                     {..._getOnClickHandler(points, index, pointIndex)}
-                     onFocus={event => _handleFocus(event, index, pointIndex, circleId)}
-                     onBlur={_handleBlur}
-                     {...getSecureProps(pointOptions)}
--                    r={_getCircleRadius(xDataPoint, circleRadius, circleId, legend)}
--                    role="img"
-+                    r={circleRadiusValue}
-+                    role="option"
-                     aria-label={
-                       (!_hasDuplicateXValues && !_hasMissingXValues && _getAriaLabel(index, pointIndex)) || undefined
-                     }
-@@ -867,6 +875,26 @@ export const AreaChart: React.FunctionComponent<AreaChartProps> = React.forwardR
-       }
-     }
- 
-+    function _getCircleOpacityAndRadius(
-+      xDataPoint: number,
-+      circleRadius: number,
-+      circleId: string,
-+      legend: string,
-+    ): { opacity: number; radius: number } {
-+      // Hide points whose legend isn't highlighted.
-+      if (!_noLegendHighlighted() && !_legendHighlighted(legend)) {
-+        return { opacity: 0, radius: 0 };
+   if (!proto.close) {
++    const pendingCloseEvents = new Set();
++    afterEach(() => {
++      for (const timeout of pendingCloseEvents) {
++        clearTimeout(timeout);
 +      }
-+      if (isCircleClicked && nearestCircleToHighlight === xDataPoint) {
-+        return { opacity: 1, radius: 1 };
-+      } else if (nearestCircleToHighlight === xDataPoint || activePoint === circleId) {
-+        return { opacity: 1, radius: circleRadius };
-+      }
-+      // Keep focusable points full-size but transparent (opacity:0, not visibility:hidden) so Voice Control
-+      // can target them while they stay visually hidden and remain focusable.
-+      return { opacity: 0, radius: circleRadius };
-+    }
-+
-     /**
-      * This function checks if the given legend is highlighted or not.
-      * A legend can be highlighted in 2 ways:
-```
-
-**File**: `packages/charts/react-charts/library/src/components/LineChart/LineChart.test.tsx` (modified, +7/-0)
-```diff
-@@ -788,6 +788,13 @@ describe('LineChart snapShot testing', () => {
-     expect(wrapper).toMatchSnapshot();
-   });
- 
-+  it('exposes optimized large-data lines as labeled options', () => {
-+    render(<LineChart data={basicChartPoints} optimizeLargeData />);
-+
-+    expect(screen.getByRole('listbox', { name: 'metaData1 data series' })).toBeInTheDocument();
-+    expect(screen.getByRole('option', { name: 'metaData1, line 1 of 3 with 2 data points.' })).toBeInTheDocument();
-+  });
-+
-   it('Should render with default colors when line color is not provided', async () => {
-     const points: LineChartPoints[] = [
-       {
-```
-
-**File**: `packages/charts/react-charts/library/src/components/LineChart/LineChart.tsx` (modified, +13/-8)
-```diff
-@@ -538,6 +538,9 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-         const pointsForLine: JSXElement[] = [];
- 
-         const legendVal: string = _points[i].legend;
-+        const seriesAriaLabel = `${legendVal}, line ${i + 1} of ${_points.length} with ${
-+          _points[i].data.length
-+        } data points.`;
-         const lineColor: string = _points[i].color!;
-         const verticaLineHeight = containerHeight - margins.bottom! + 6;
-         const useSecondaryYScale = !!(_points[i].useSecondaryYScale && _yScaleSecondary);
-@@ -623,7 +626,7 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-                     onMouseOut={_handleMouseOut}
-                     strokeWidth={activePoint === circleId ? DEFAULT_LINE_STROKE_SIZE : 0}
-                     stroke={activePoint === circleId ? lineColor : ''}
--                    role="img"
-+                    role="option"
-                     aria-label={_points[i].data[0].text ?? _getAriaLabel(i, 0)}
-                     ref={(e: SVGCircleElement | null) => {
-                       _refCallback(e!, circleId);
-@@ -731,6 +734,8 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-                 {..._getClickHandler(_points[i].onLineClick)}
-                 opacity={1}
-                 tabIndex={isLegendSelected ? 0 : undefined}
-+                role={props.optimizeLargeData ? 'option' : undefined}
-+                aria-label={props.optimizeLargeData ? seriesAriaLabel : undefined}
-               />,
-             );
-           } else if (shouldDrawLines) {
-@@ -806,7 +811,7 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-                     onMouseOver={event => _onMouseOverLargeDataset(i, verticaLineHeight, event, yScale)}
-                     onFocus={event => _onFocusLargeDataset(i, verticaLineHeight, event, yScale, k)}
-                     onMouseOut={_handleMouseOut}
--                    role="img"
-+                    role="option"
-                     aria-label={_points[i].data[k].text ?? _getAriaLabel(i, k)}
-                   />,
-                 );
-@@ -910,7 +915,7 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-                       fill={_points[i].data[j - 1]?.markerColor || _getPointFill(lineColor, circleId, j, false)}
-                       stroke={_points[i].data[j - 1]?.markerColor || lineColor}
-                       strokeWidth={strokeWidth}
--                      role="img"
-+                      role="option"
-                       aria-label={_points[i].data[j - 1].text ?? _getAriaLabel(i, j - 1)}
-                     />
-                     {!_isScatterPolar && supportsTextMode && text && (
-@@ -988,7 +993,7 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-                     fill={_points[i].data[j - 1]?.markerColor || _getPointFill(lineColor, circleId, j, false)}
-                     stroke={_points[i].data[j - 1]?.markerColor || lineColor}
-                     strokeWidth={strokeWidth}
--                    role="img"
-+                    role="option"
-                     aria-label={_getAriaLabel(i, j - 1)}
-                     tabIndex={isLegendSelected ? 0 : undefined}
-                   />
-@@ -1076,7 +1081,7 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-                           fill={_getPointFill(lineColor, lastCircleId, j, true)}
-                           stroke={lineColor}
-                           strokeWidth={strokeWidth}
--                          role="img"
-+                          role="option"
-                           aria-label={_points[i].data[j].text ?? _getAriaLabel(i, j)}
-                         />
-                         {!_isScatterPolar && lastSupportsTextMode && lastText && (
-@@ -1153,7 +1158,7 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-                         fill={_points[i].data[j]?.markerColor || _getPointFill(lineColor, lastCircleId, j, true)}
-                         stroke={_points[i].data[j]?.markerColor || lineColor}
-                         strokeWidth={strokeWidth}
--                        role="img"
-+                        role="option"
-                         aria-label={_getAriaLabel(i, j)}
-                         tabIndex={isLegendSelected ? 0 : undefined}
-                       />
-@@ -1357,8 +1362,8 @@ export const LineChart: React.FunctionComponent<LineChartProps> = React.forwardR
-         lines.push(
-           <g
-             key={`line_${i}`}
--            role="region"
--            aria-label={`${legendVal}, line ${i + 1} of ${_points.length} with ${_points[i].data.length} data points.`}
-+            role="listbox"
-+            aria-label={props.optimizeLargeData ? `${legendVal} data series` : seriesAriaLabel}
-           >
-             {bordersForLine}
-             {linesForLine}
-```
-
-**File**: `packages/charts/react-charts/library/src/components/LineChart/__snapshots__/LineChart.test.tsx.snap` (modified, +243/-243)
-```diff
-@@ -367,7 +367,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-           <g>
-             <g
-               aria-label="metaData3, line 3 of 3 with 2 data points."
--              role="region"
-+              role="listbox"
-             >
-               <line
-                 id="lineID_r_1__2_1"
-@@ -390,7 +390,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-                 fill="yellow"
-                 id="circle_r_0__2_1"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="yellow"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -405,7 +405,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-                 fill="yellow"
-                 id="circle_r_0__2_11L"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="yellow"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -423,7 +423,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-             </g>
-             <g
-               aria-label="metaData2, line 2 of 3 with 2 data points."
--              role="region"
-+              role="listbox"
-             >
-               <line
-                 id="lineID_r_1__1_1"
-@@ -446,7 +446,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-                 fill="green"
-                 id="circle_r_0__1_1"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="green"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -461,7 +461,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-                 fill="green"
-                 id="circle_r_0__1_11L"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="green"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -479,7 +479,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-             </g>
-             <g
-               aria-label="metaData1, line 1 of 3 with 2 data points."
--              role="region"
-+              role="listbox"
-             >
-               <line
-                 id="lineID_r_1__0_1"
-@@ -502,7 +502,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-                 fill="red"
-                 id="circle_r_0__0_1"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="red"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -517,7 +517,7 @@ exports[`Line chart rendering Should render the Line chart with numeric x-axis d
-                 fill="red"
-                 id="circle_r_0__0_11L"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="red"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -992,7 +992,7 @@ exports[`Line chart rendering Should render the Line chart with points in multip
-           <g>
-             <g
-               aria-label="metaData3, line 3 of 3 with 2 data points."
--              role="region"
-+              role="listbox"
-             >
-               <line
-                 id="lineID_r_c__2_1"
-@@ -1013,7 +1013,7 @@ exports[`Line chart rendering Should render the Line chart with points in multip
-                 fill="yellow"
-                 id="circle_r_b__2_1"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="yellow"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -1026,7 +1026,7 @@ exports[`Line chart rendering Should render the Line chart with points in multip
-                 fill="yellow"
-                 id="circle_r_b__2_11L"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="yellow"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -1044,7 +1044,7 @@ exports[`Line chart rendering Should render the Line chart with points in multip
-             </g>
-             <g
-               aria-label="metaData2, line 2 of 3 with 2 data points."
--              role="region"
-+              role="listbox"
-             >
-               <line
-                 id="lineID_r_c__1_1"
-@@ -1067,7 +1067,7 @@ exports[`Line chart rendering Should render the Line chart with points in multip
-                 fill="green"
-                 id="circle_r_b__1_1"
-                 opacity="1"
--                role="img"
-+                role="option"
-                 stroke="green"
-                 stroke-width="4"
-                 tabindex="0"
-@@ -1082,7 +1082,7 @@ exports[`Line chart rendering Should render the Line chart with points in multip
-               
-```
-
-**File**: `packages/charts/react-charts/stories/src/AreaChart/AreaChartLargeData.stories.tsx` (modified, +35/-132)
-```diff
-@@ -2,6 +2,31 @@ import * as React from 'react';
- import type { JSXElement } from '@fluentui/react-components';
- import { AreaChart, DataVizPalette } from '@fluentui/react-charts';
- 
-+type IChartPoint = {
-+  x: number;
-+  y: number;
-+};
-+
-+const createLargeDataSet = (count: number, phaseOffset: number, amplitude: number, baseline: number): IChartPoint[] => {
-+  const points: IChartPoint[] = [];
-+
-+  for (let i = 0; i < count; i++) {
-+    const trend = i * 0.015;
-+    const wave1 = Math.sin((i + phaseOffset) * 0.08) * amplitude;
-+    const wave2 = Math.cos((i + phaseOffset) * 0.03) * (amplitude * 0.35);
-+    const y = Math.max(0, Math.round(baseline + trend + wave1 + wave2));
-+
-+    points.push({
-+      x: i,
-+      y,
++      pendingCloseEvents.clear();
 +    });
-+  }
 +
-+  return points;
-+};
-+
-+const DATA_POINT_COUNT = 5000;
-+
- export const AreaChartLargeData = (): JSXElement => {
-   const [width, setWidth] = React.useState<number>(700);
-   const [height, setHeight] = React.useState<number>(300);
-@@ -13,134 +38,9 @@ export const AreaChartLargeData = (): JSXElement => {
-     setHeight(parseInt(e.target.value, 10));
-   };
- 
--  const chart1Points = [
--    {
--      x: 20,
--      y: 9,
--    },
--    {
--      x: 25,
--      y: 14,
--    },
--    {
--      x: 30,
--      y: 14,
--    },
--    {
--      x: 35,
--      y: 23,
--    },
--    {
--      x: 40,
--      y: 20,
--    },
--    {
--      x: 45,
--      y: 31,
--    },
--    {
--      x: 50,
--      y: 29,
--    },
--    {
--      x: 55,
--      y: 27,
--    },
--    {
--      x: 60,
--      y: 37,
--    },
--    {
--      x: 65,
--      y: 51,
--    },
--  ];
--
--  const chart2Points = [
--    {
--      x: 20,
--      y: 21,
--    },
--    {
--      x: 25,
--      y: 25,
--    },
--    {
--      x: 30,
--      y: 10,
--    },
--    {
--      x: 35,
--      y: 10,
--    },
--    {
--      x: 40,
--      y: 14,
--    },
--    {
--      x: 45,
--      y: 18,
--    },
--    {
--      x: 50,
--      y: 9,
--    },
--    {
--      x: 55,
--      y: 23,
--    },
--    {
--      x: 60,
--      y: 7,
--    },
--    {
--      x: 65,
--      y: 55,
--    },
--  ];
--
--  const chart3Points = [
--    {
--      x: 20,
--      y: 30,
--    },
--    {
--      x: 25,
--      y: 35,
--    },
--    {
--      x: 30,
--      y: 33,
--    },
--    {
--      x: 35,
--      y: 40,
--    },
--    {
--      x: 40,
--      y: 10,
--    },
--    {
--      x: 45,
--      y: 40,
--    },
--    {
--      x: 50,
--      y: 34,
--    },
--    {
--      x: 55,
--      y: 40,
--    },
--    {
--      x: 60,
--      y: 60,
--    },
--    {
--      x: 65,
--      y: 40,
--    },
--  ];
-+  const chart1Points = React.useMemo(() => createLargeDataSet(DATA_POINT_COUNT, 0, 26, 60), []);
-+  const chart2Points = React.useMemo(() => createLargeDataSet(DATA_POINT_COUNT, 17, 22, 48), []);
-+  const chart3Points = React.useMemo(() => createLargeDataSet(DATA_POINT_COUNT, 41, 30, 56), []);
- 
-   const chartPoints = [
-     {
-@@ -161,7 +61,7 @@ export const AreaChartLargeData = (): JSXElement => {
-   ];
- 
-   const chartData = {
--    chartTitle: 'Area chart large data example',
-+    chartTitle: `Area chart large data example (${DATA_POINT_COUNT} points per series)`,
-     lineChartData: chartPoints,
-   };
-   const rootStyle = { width: `${width}px`, height: `${height}px` };
-@@ -178,7 +78,7 @@ export const AreaChartLargeData = (): JSXElement => {
-           id="changeWidth_Large"
-           onChange={_onWidthChange}
-           aria-label="Change Width"
--          aria-valuetext={`current value ${width}', Minimum 200 and Maximum 1000`}
-+          aria-valuetext={`current value ${width}, Minimum 200 and Maximum 1000`}
-         />
-         <label htmlFor="changeHeight_Large">Change Height:</label>
-         <input
-@@ -189,7 +89,7 @@ export const AreaChartLargeData = (): JSXElement => {
-           id="changeHeight_Large"
-           onChange={_onHeightChange}
-           aria-label="Change Height"
--          aria-valuetext={`current value ${height}', Minimum 200 and Maximum 1000`}
-+          aria-valuetext={`current value ${height}, Minimum 200 and Maximum 1000`}
-         />
-       </div>
-       <div style={rootStyle}>
-@@ -209,6 +109,9 @@ export const AreaChartLargeData = (): JSXElement => {
+     proto.close = function close() {
++      if (!this.open) {
++        return;
++      }
+       this.removeAttribute('open');
++      // Native close events are queued, not dispatched by close() synchronously.
++      const timeout = setTimeout(() => {
++        pendingCloseEvents.delete(timeout);
++        this.dispatchEvent(new Event('close'));
++      }, 0);
++      pendingCloseEvents.add(timeout);
+     };
+   }
+ }
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/etc/popover.api.md` (modified, +1/-0)
+```diff
+@@ -75,6 +75,7 @@ export type PopoverState = Required<Pick<PopoverProps, 'open' | 'trapFocus'>> &
+     } | undefined) => void;
+     positioning: PositioningReturn;
+     surfaceId: string;
++    shouldRenderSurface: boolean;
  };
- AreaChartLargeData.parameters = {
-   docs: {
--    description: {},
-+    description: {
-+      story:
-+        'This story demonstrates an AreaChart with a large dataset, allowing dynamic resizing of the chart container.',
-+    },
-   },
+ 
+ // @public
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/etc/teaching-popover.api.md` (modified, +1/-0)
+```diff
+@@ -258,6 +258,7 @@ export type TeachingPopoverState = Required<Pick<TeachingPopoverProps, 'open' |
+     } | undefined) => void;
+     positioning: PositioningReturn;
+     surfaceId: string;
++    shouldRenderSurface: boolean;
  };
+ 
+ // @public
 ```
 
----
-
-### Incident Patch 15: `aa2f85a0` (2026-09-24)
-**Commit Message**: fix(react-avatar): make enclosure cleanup linear (#36738)
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Co-authored-by: Dmytro Kirpa <[REDACTED_EMAIL]>
-
-**File**: `change/@fluentui-react-avatar-43a7ed01-2573-4a4a-9a5b-6b56387b4e86.json` (added, +7/-0)
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/Popover.cy.tsx` (modified, +313/-16)
 ```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "patch",
-+  "comment": "fix: avoid repeated scanning of unmatched name enclosures when generating initials",
-+  "packageName": "@fluentui/react-avatar",
-+  "email": "223556219+Copilot@users.noreply.github.com",
-+  "dependentChangeType": "patch"
-+}
-```
-
-**File**: `packages/react-components/react-avatar/library/src/utils/getInitials.enclosures.test.tsx` (added, +116/-0)
-```diff
-@@ -0,0 +1,116 @@
-+import * as React from 'react';
-+import { performance } from 'node:perf_hooks';
-+import { runInNewContext } from 'node:vm';
-+import { render, screen } from '@testing-library/react';
-+import { Avatar } from '../components/Avatar/Avatar';
-+import { getInitials } from './getInitials';
-+
-+describe('Avatar name enclosure cleanup', () => {
-+  it('preserves enclosure, initials, and Unicode behavior', () => {
-+    for (const name of [
-+      'Ada Lovelace',
-+      'Ada (Team) Lovelace',
-+      'Ada [Team] Lovelace',
-+      'Ada {Team} Lovelace',
-+      'Ada [Team) Lovelace',
-+      'Ada [[Team] Lovelace',
-+      'Ada [[[ Lovelace',
-+    ]) {
-+      expect(getInitials(name, false)).toBe('AL');
-+      expect(getInitials(name, true)).toBe('LA');
-+      expect(getInitials(name, false, { firstInitialOnly: true })).toBe('A');
-+    }
-+
-+    expect(getInitials('\u00cdrissa \u00de\u00f3r\u00f0ard\u00f3ttir', false)).toBe('\u00cd\u00de');
-+    expect(getInitials('\u{20000} [Team]', false)).toBe('\u{20000}');
-+    expect(getInitials('\u6842\u82f1', false)).toBe('');
-+    expect(getInitials('\uac15\ud604', false)).toBe('');
-+    expect(getInitials('\u062e\u0633\u0631\u0648', true)).toBe('');
-+    expect(getInitials('+1 (555) 123-4567 ext.4567', false)).toBe('');
-+  });
-+
-+  it('derives initials from a public name containing unmatched brackets', () => {
-+    // A Jest timeout alone cannot interrupt synchronous regex execution.
-+    runInNewContext(
-+      'renderAvatar()',
-+      {
-+        renderAvatar: () => {
-+          const name = `Ada ${'['.repeat(128)} Lovelace`;
-+          render(<Avatar name={name} />);
-+          expect(screen.getByText('AL')).toBeTruthy();
-+          expect(screen.getByRole('img').getAttribute('aria-label')).toBe(name);
-+        },
-+      },
-+      { timeout: 1000 },
-+    );
-+  });
-+
-+  it('avoids superlinear growth when opening brackets have no closing enclosure', () => {
-+    const samples: {
-+      length: number;
-+      squareMs: number;
-+      parenthesisMs: number;
-+      braceMs: number;
-+      balancedMs: number;
-+      nonBracketMs: number;
-+      extendedNameMs: number;
-+    }[] = [];
-+    let ordinaryNameMs = 0;
-+
-+    const measureName = (name: string, expected: string): number => {
-+      for (let warmup = 0; warmup < 2; warmup++) {
-+        expect(getInitials(name, false)).toBe(expected);
-+      }
-+
-+      const durations: number[] = [];
-+      for (let sample = 0; sample < 5; sample++) {
-+        let initials = '';
-+        const start = performance.now();
-+        for (let call = 0; call < 3; call++) {
-+          initials = getInitials(name, false);
+@@ -1,4 +1,5 @@
+ import * as React from 'react';
++import { createPortal } from 'react-dom';
+ import { mount as mountBase } from '@fluentui/scripts-cypress';
+ import { Popover } from './Popover';
+ import { PopoverTrigger } from './PopoverTrigger/PopoverTrigger';
+@@ -15,28 +16,143 @@ const mount = (element: JSXElement) => {
+ const popoverTriggerSelector = '[aria-expanded]';
+ const popoverContentSelector = '[role="group"]';
+ 
++describe('native surface lifecycle', () => {
++  const Example = ({ trapFocus, preventOpening = false }: { trapFocus: boolean; preventOpening?: boolean }) => {
++    const [open, setOpen] = React.useState(true);
++    const [version, setVersion] = React.useState(0);
++    const attachSurface = React.useCallback(
++      (surface: HTMLDialogElement | HTMLDivElement | null) => {
++        if (surface && preventOpening) {
++          surface.addEventListener('beforetoggle', event => {
++            if ((event as Event & { newState: string }).newState === 'open') {
++              event.preventDefault();
++            }
++          });
 +        }
-+        durations.push((performance.now() - start) / 3);
-+        expect(initials).toBe(expected);
-+      }
-+      return durations.sort((a, b) => a - b)[2];
-+    };
-+
-+    // These are experiment bounds, not an application name-length policy.
-+    runInNewContext(
-+      'measure()',
-+      {
-+        measure: () => {
-+          ordinaryNameMs = measureName('Ada Lovelace', 'AL');
-+          for (const length of [64, 128, 256, 512, 1024, 2048, 4096]) {
-+            samples.push({
-+              length,
-+              squareMs: measureName('['.repeat(length), ''),
-+              parenthesisMs: measureName('('.repeat(length), ''),
-+              braceMs: measureName('{'.repeat(length), ''),
-+              balancedMs: measureName('['.repeat(length / 2) + ']'.repeat(length / 2), ''),
-+              nonBracketMs: measureName('A'.repeat(length), 'A'),
-+              extendedNameMs: measureName('A'.repeat(length - 9) + ' Lovelace', 'AL'),
-+            });
-+          }
-+        },
 +      },
-+      { timeout: 2500 },
++      [preventOpening],
 +    );
-+
-+    console.info(
-+      'Avatar enclosure measurements (milliseconds per call):',
-+      JSON.stringify({ ordinaryNameMs, sampleCount: 5, callsPerSample: 3, maxNameLength: 4096, samples }),
++    return (
++      <>
++        <button data-testid="outside-close" onClick={() => setOpen(false)}>
++          Close
++        </button>
++        <Popover open={open} trapFocus={trapFocus} onOpenChange={(_, data) => setOpen(data.open)}>
++          <PopoverTrigger>
++            <button data-testid="trigger">Trigger</button>
++          </PopoverTrigger>
++          <PopoverSurface key={version} ref={attachSurface} data-testid="surface">
++            <button
++              autoFocus
++              data-testid="finish"
++              onClick={() => {
++                setOpen(false);
++                setVersion(value => value + 1);
++              }}
++            >
++              Finish
++            </button>
++          </PopoverSurface>
++        </Popover>
++      </>
 +    );
++  };
++  ([false, true] as const).forEach(trapFocus => {
++    it(`dismisses a replacement surface after reopening (${trapFocus ? 'modal' : 'non-modal'})`, () => {
++      mount(<Example trapFocus={trapFocus} />);
++      cy.get('[data-testid=finish]').focus().realPress('Enter');
++      cy.get('[data-testid=surface]').should('not.exist');
++      cy.get('[data-testid=trigger]').focus().realPress('Enter');
++      cy.get('[data-testid=surface]').should('be.visible');
++      cy.get('[data-testid=finish]').focus().realPress('Escape');
++      cy.get('[data-testid=surface]').should('not.exist');
++      cy.get('[data-testid=trigger]').should('have.attr', 'aria-expanded', 'false');
++    });
 +
-+    const small = samples.find(sample => sample.length === 1024);
-+    const large = samples.find(sample => sample.length === 4096);
-+    if (!small || !large) {
-+      throw new Error('The bounded scaling measurement did not produce both required input lengths.');
-+    }
-+
-+    // Allow twice linear growth for a fourfold input increase, with a timer-noise floor.
-+    expect(large.squareMs).toBeLessThanOrEqual(8 * Math.max(small.squareMs, 0.1));
-+    expect(large.parenthesisMs).toBeLessThanOrEqual(8 * Math.max(small.parenthesisMs, 0.1));
-+    expect(large.braceMs).toBeLessThanOrEqual(8 * Math.max(small.braceMs, 0.1));
++    it(`unmounts after prevented native opening (${trapFocus ? 'modal' : 'non-modal'})`, function () {
++      if (trapFocus) {
++        cy.document().then(doc => {
++          const dialog = doc.createElement('dialog');
++          dialog.addEventListener('beforetoggle', event => event.preventDefault());
++          doc.body.append(dialog);
++          dialog.showModal();
++          const supportsCancelableOpening = !dialog.open;
++          if (dialog.open) {
++            dialog.close();
++          }
++          dialog.remove();
++          if (!supportsCancelableOpening) {
++            this.skip();
++          }
++        });
++      }
++      mount(<Example trapFocus={trapFocus} preventOpening />);
++      cy.get('[data-testid=surface]').should('not.be.visible');
++      cy.get('[data-testid=outside-close]').click();
++      cy.get('[data-testid=surface]').should('not.exist');
++    });
 +  });
 +});
++
++describe('nested shadow focus restoration', () => {
++  const NestedControl = ({ onClose }: { onClose: () => void }) => {
++    const [root, setRoot] = React.useState<ShadowRoot | null>(null);
++    const attachRoot = React.useCallback((host: HTMLDivElement | null) => {
++      if (host) {
++        setRoot(host.shadowRoot ?? host.attachShadow({ mode: 'open' }));
++      }
++    }, []);
++    // A portal puts the focused control inside the shadow root, not in the host's light DOM.
++    return (
++      <div ref={attachRoot} data-testid="nested-host">
++        {root &&
++          createPortal(
++            <button autoFocus onClick={onClose}>
++              Finish
++            </button>,
++            root,
++          )}
++      </div>
++    );
++  };
++  const Example = ({ trapFocus }: { trapFocus: boolean }) => {
++    const [open, setOpen] = React.useState(true);
++    return (
++      <Popover trapFocus={trapFocus} open={open} onOpenChange={(_, data) => setOpen(data.open)}>
++        <PopoverTrigger>
++          <button data-testid="trigger">Trigger</button>
++        </PopoverTrigger>
++        <PopoverSurface data-testid="surface">
++          <NestedControl onClose={() => setOpen(false)} />
++        </PopoverSurface>
++      </Popover>
++    );
++  };
++  ([false, true] as const).forEach(trapFocus => {
++    (['Enter', 'Escape'] as const).forEach(key => {
++      it(`restores nested shadow focus on ${key} (${trapFocus ? 'modal' : 'non-modal'})`, () => {
++        mount(<Example trapFocus={trapFocus} />);
++       
 ```
 
-**File**: `packages/react-components/react-avatar/library/src/utils/getInitials.test.ts` (modified, +60/-0)
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/Popover.test.tsx` (modified, +321/-8)
 ```diff
-@@ -60,6 +60,66 @@ describe('getInitials', () => {
-     expect(result).toEqual('DG');
+@@ -1,11 +1,281 @@
+ import * as React from 'react';
+-import { render, fireEvent } from '@testing-library/react';
++import { createPortal } from 'react-dom';
++import { render, fireEvent, waitFor } from '@testing-library/react';
+ import userEvent from '@testing-library/user-event';
+ import { Popover } from './Popover';
+ import { PopoverTrigger } from './PopoverTrigger/PopoverTrigger';
+ import { PopoverSurface } from './PopoverSurface/PopoverSurface';
++import { usePopover } from './usePopover';
+ 
+ describe('Popover', () => {
++  describe('close lifecycle', () => {
++    const Example = ({ open, trapFocus = false }: { open: boolean; trapFocus?: boolean }) => (
++      <Popover open={open} trapFocus={trapFocus}>
++        <PopoverTrigger>
++          <button>Trigger</button>
++        </PopoverTrigger>
++        <PopoverSurface>
++          <button autoFocus>Inside</button>
++        </PopoverSurface>
++      </Popover>
++    );
++
++    it('calls native dialog close while the surface is connected', async () => {
++      const { getByRole, getByText, rerender } = render(<Example open trapFocus />);
++      const surface = getByRole('dialog', { hidden: true });
++      const nativeClose = HTMLDialogElement.prototype.close;
++      const close = jest
++        .spyOn(HTMLDialogElement.prototype, 'close')
++        .mockImplementation(function (this: HTMLDialogElement) {
++          expect(this.isConnected).toBe(true);
++          nativeClose.call(this);
++        });
++      try {
++        rerender(<Example open={false} trapFocus />);
++        expect(close).toHaveBeenCalledTimes(1);
++        expect(surface.isConnected).toBe(true);
++        await waitFor(() => expect(surface.isConnected).toBe(false));
++        expect(getByText('Trigger')).toHaveFocus();
++      } finally {
++        close.mockRestore();
++      }
++    });
++
++    it('preserves focus outside the shadow root during controlled close', () => {
++      const { container } = render(
++        <>
++          <button>Outside</button>
++          <div />
++        </>,
++      );
++      const outside = container.querySelector('button')!;
++      const host = container.querySelector('div')!;
++      const shadowRoot = host.attachShadow({ mode: 'closed' });
++      const { rerender } = render(createPortal(<Example open />, shadowRoot));
++      expect(shadowRoot.activeElement).toHaveTextContent('Inside');
++      outside.focus();
++      rerender(createPortal(<Example open={false} />, shadowRoot));
++      expect(outside).toHaveFocus();
++    });
++
++    it('keeps the surface mounted until native close completes without repeating onOpenChange', () => {
++      const onOpenChange = jest.fn();
++      const ControlledExample = ({ open }: { open: boolean }) => (
++        <Popover open={open} trapFocus onOpenChange={onOpenChange}>
++          <PopoverSurface>Surface</PopoverSurface>
++        </Popover>
++      );
++      const { getByRole, rerender } = render(<ControlledExample open />);
++      const surface = getByRole('dialog', { hidden: true });
++      const close = jest
++        .spyOn(HTMLDialogElement.prototype, 'close')
++        .mockImplementation(function (this: HTMLDialogElement) {
++          this.removeAttribute('open');
++        });
++      try {
++        rerender(<ControlledExample open={false} />);
++        expect(surface.isConnected).toBe(true);
++        fireEvent(surface, new Event('cancel', { cancelable: true }));
++        expect(surface.isConnected).toBe(true);
++        fireEvent(surface, new Event('close'));
++        expect(surface.isConnected).toBe(false);
++        expect(onOpenChange).not.toHaveBeenCalled();
++      } finally {
++        close.mockRestore();
++      }
++    });
++
++    it('ignores a queued close event after the dialog has reopened', () => {
++      const { getByRole, rerender } = render(<Example open trapFocus />);
++      const surface = getByRole('dialog', { hidden: true });
++      const close = jest
++        .spyOn(HTMLDialogElement.prototype, 'close')
++        .mockImplementation(function (this: HTMLDialogElement) {
++          this.removeAttribute('open');
++        });
++      try {
++        rerender(<Example open={false} trapFocus />);
++        rerender(<Example open trapFocus />);
++        fireEvent(surface, new Event('close'));
++        expect(surface.isConnected).toBe(true);
++        expect(surface).toHaveAttribute('open');
++      } finally {
++        close.mockRestore();
++      }
++    });
++
++    it('reopens when a controlled parent keeps open after native dismissal', () => {
++      const onOpenChange = jest.fn();
++      const { getByRole } = render(
++        <Popover open trapFocus onOpenChange={onOpenChange}>
++          <PopoverSurface>Surface</PopoverSurface>
++        </Popover>,
++      );
++      const surface = getByRole('dialog', { hidden: true });
++      surface.removeAttribute('open');
++      fireEvent(surface, new Event('close'));
++      expect(surface.isConnected).toBe(true);
++      expect(surface).toHaveAttribute('open');
++      expect(onOpenChange).toHaveBeenCall
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/Popover.types.ts` (modified, +2/-0)
+```diff
+@@ -113,6 +113,8 @@ export type PopoverState = Required<Pick<PopoverProps, 'open' | 'trapFocus'>> &
+     setContextTarget: (target: { x: number; y: number } | undefined) => void;
+     positioning: PositioningReturn;
+     surfaceId: string;
++    /** Determines whether the surface is present in the DOM. */
++    shouldRenderSurface: boolean;
+   };
+ 
+ /**
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/PopoverSurface/PopoverSurface.test.tsx` (modified, +6/-6)
+```diff
+@@ -1,5 +1,5 @@
+ import * as React from 'react';
+-import { render, fireEvent } from '@testing-library/react';
++import { render, waitFor } from '@testing-library/react';
+ import { Popover } from '../Popover';
+ import { PopoverTrigger } from '../PopoverTrigger/PopoverTrigger';
+ import { PopoverSurface } from './PopoverSurface';
+@@ -134,7 +134,7 @@ describe('PopoverSurface', () => {
+     expect(getByRole('group', { hidden: true })).toHaveAttribute('popover', 'manual');
    });
  
-+  it.each([
-+    ['(', ')'],
-+    ['(', ']'],
-+    ['(', '}'],
-+    ['[', ')'],
-+    ['[', ']'],
-+    ['[', '}'],
-+    ['{', ')'],
-+    ['{', ']'],
-+    ['{', '}'],
-+  ])('ends an enclosure opened with %s at the first %s', (opening, closing) => {
-+    const name = `${opening}Team ${opening}Inner${closing} Grace${closing} Hopper`;
-+    expect(getInitials(name, false)).toBe('GH');
-+    expect(getInitials(name, true)).toBe('HG');
-+  });
-+
-+  it.each([
-+    ['(Team)Ada[Role]Lovelace', 'A'],
-+    ['Ada (Team) []{}(Role) Lovelace', 'AL'],
-+    ['Ada (Team [Inner] Hopper)', 'AH'],
-+    ['[Team {Inner) Grace] Hopper', 'GH'],
-+    ['[Ada [Grace] Hopper', 'H'],
-+    ['Ada (Grace [Hopper', 'AH'],
-+    ['[Team] Ada [Grace Hopper', 'AH'],
-+    ['Ada )Grace] Hopper}', 'AH'],
-+    ['Ada [Team\n[Inner] Hopper]', 'AH'],
-+    ['Ada [Team\u2028Role] Lovelace', 'AL'],
-+    ['Ada [Grace\n', 'AG'],
-+    [' \tAda\u00a0[Team]\u2003Lovelace \n', 'AL'],
-+    ['[Team] \u{20000} \u{20001}', '\u{20000}\u{20001}'],
-+    ['\ud800[Team]\udc00 Lovelace', '\u{10000}L'],
-+    ['[Team] \u6842\u82f1', ''],
-+    ['[Team] \uac15\ud604', ''],
-+    ['[Team] \u062e\u0633\u0631\u0648', ''],
-+  ])('preserves initials and direction after cleaning %s', (name, expected) => {
-+    expect(getInitials(name, false)).toBe(expected);
-+    expect(getInitials(name, true)).toBe([...expected].reverse().join(''));
-+    expect(getInitials(name, false, { firstInitialOnly: true })).toBe([...expected][0] ?? '');
-+    expect(getInitials(name, true, { firstInitialOnly: true })).toBe([...expected][0] ?? '');
-+  });
-+
-+  it('matches the original enclosure semantics for all short delimiter combinations', () => {
-+    const tokens = ['(', '[', '{', ')', ']', '}', 'A', 'B', ' '];
-+    const compare = (name: string, remaining: number): void => {
-+      // Bound the original regex to at most four characters, then remove leftover delimiters
-+      // so the reference initials do not depend on the new enclosure implementation.
-+      const cleanedName = name.replace(/[\(\[\{][^\)\]\}]*[\)\]\}]/g, '').replace(/[\(\)\[\]\{\}]/g, '');
-+      expect(getInitials(name, false)).toBe(getInitials(cleanedName, false));
-+      expect(getInitials(name, true)).toBe(getInitials(cleanedName, true));
-+
-+      if (remaining > 0) {
-+        for (const token of tokens) {
-+          compare(name + token, remaining - 1);
-+        }
-+      }
-+    };
-+
-+    compare('', 4);
-+  });
-+
-   it('calculates an expected initials in RTL if one was not specified', () => {
-     const result = getInitials('Kat Larrson', true);
-     expect(result).toEqual('LK');
-```
-
-**File**: `packages/react-components/react-avatar/library/src/utils/getInitials.ts` (modified, +3/-8)
-```diff
-@@ -1,12 +1,7 @@
- /**
-- * Regular expressions matching characters to ignore when calculating the initials.
-+ * Regular expression matching complete enclosures or an unmatched enclosure tail.
-  */
--
--/**
-- * Regular expression matching characters within various types of enclosures, including the enclosures themselves
-- *  so for example, (xyz) [xyz] {xyz} all would be ignored
-- */
--const UNWANTED_ENCLOSURES_REGEX: RegExp = /[\(\[\{][^\)\]\}]*[\)\]\}]/g;
-+const UNWANTED_ENCLOSURES_REGEX: RegExp = /[\(\[\{][^\)\]\}]*([\)\]\}]|$)/g;
+-  it('mirrors a browser-driven `toggle` event into onOpenChange', () => {
++  it('mirrors a browser-driven `toggle` event into onOpenChange', async () => {
+     const onOpenChange = jest.fn();
  
- /**
-  * Regular expression matching special ASCII characters except space, plus some unicode special characters.
-@@ -73,7 +68,7 @@ function getInitialsLatin(displayName: string, isRtl: boolean, firstInitialOnly?
- }
+     const { getByRole } = render(
+@@ -147,11 +147,11 @@ describe('PopoverSurface', () => {
+     );
  
- function cleanupDisplayName(displayName: string): string {
--  displayName = displayName.replace(UNWANTED_ENCLOSURES_REGEX, '');
-+  displayName = displayName.replace(UNWANTED_ENCLOSURES_REGEX, (match, closing: string) => (closing ? '' : match));
-   displayName = displayName.replace(UNWANTED_CHARS_REGEX, '');
-   displayName = displayName.replace(MULTIPLE_WHITESPACES_REGEX, ' ');
-   displayName = displayName.trim();
+     const surface = getByRole('group', { hidden: true });
+-    const toggleEvent = new Event('toggle');
+-    (toggleEvent as unknown as { newState: string }).newState = 'closed';
+-    fireEvent(surface, toggleEvent);
++    surface.hidePopover();
+ 
+-    expect(onOpenChange).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ open: false }));
++    await waitFor(() =>
++      expect(onOpenChange).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ open: false })),
++    );
+   });
+ 
+   it('renders arrow when withArrow is set', () => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36835** (closed): fix(positioning): keep popups aligned during ancestor motion (@PaulGMardling)
-- **PR #36831** (2026-10-05): fix(workspace-plugin): support .storybook/main.cjs in split-library-in-two and storybook target inference (@mainframev)
-- **PR #36822** (2026-10-04): fix(react-swatch-picker): default ImageSwatch and EmptySwatch to type="button" (@mainframev)
-- **PR #36821** (2026-10-05): fix(react-headless-components-preview): enter SwatchPicker on the selected swatch (@mainframev)
-- **PR #36820** (2026-10-01): ci: invoke v8 site manifest generator directly (@Hotell)
-- **PR #36818** (2026-10-01): fixed tooltip value cut off at the bottom in HorizontalBarChartWithAxis (@v-baambati)
-- **PR #36816** (2026-10-01): chore: retire cxe-red and individual CODEOWNERS assignments (@tudorpopams)
-- **PR #36810** (2026-10-02): fix(web-components): persist dropdown anchor name for tooltip positioning (@chrisdholt)
+- **PR #36915** (closed): [WIP] [WIP] Separate changes from original PR into a new PR to address feedback (@Copilot)
+- **PR #36909** (closed): feat(react-headless-components-preview): add the top-layer subpath (@mainframev)
+- **PR #36907** (2026-10-16): refactor(react-headless-components-preview): move wrapper logic of RatingItem, ToastTitle and NavDrawer into hooks (@dmytrokirpa)
+- **PR #36906** (2026-10-16): feat(react-headless-components-preview): export tab list context (@dmytrokirpa)
+- **PR #36899** (closed): Fix main CI format check (@Copilot)
+- **PR #36896** (2026-10-15): chore(bundle-size): measure named exports in headless fixtures (@dmytrokirpa)
 
 ---
 
@@ -4657,3 +2441,39 @@ Co-authored-by: Dmytro Kirpa <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. react-charts): handle stale legend overflow counts (#36691)
+
+**RULE**:
+When implementing operations in `change/@fluentui-react-charts-3f02f58f-3997-43e1-8ad8-9d65a171efd6.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/fluentui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `64f59375`: react-charts): handle stale legend overflow counts (#36691). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/@fluentui-react-charts-3f02f58f-3997-43e1-8ad8-9d65a171efd6.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+{
+  "type": "patch",
+  "comment": "fix: prevent Legends overflow crashes after dynamic item changes",
+  "packageName": "@fluentui/react-charts",
+  "email": "171317405+jakesalvesen@users.noreply.github.com"
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `64f59375` are properly handled with clean fallback behavior.

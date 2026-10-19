@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T00:16:44.816Z",
-  "total_cycles_completed": 2660,
-  "total_learnings_persisted": 2660,
-  "total_rules_promoted": 1686,
+  "last_updated": "2026-10-19T00:22:58.033Z",
+  "total_cycles_completed": 2666,
+  "total_learnings_persisted": 2666,
+  "total_rules_promoted": 1693,
   "history": [
-    {
-      "timestamp": "2026-10-18T21:07:53.422Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:13:50.234Z",
-      "repository": "tusen-ai/naive-ui",
-      "learningId": "learn-github-tusen-ai-naive-ui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:13:52.347Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:13:57.467Z",
-      "repository": "sudheerj/reactjs-interview-questions",
-      "learningId": "learn-github-sudheerj-reactjs-interview-questions",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:14:00.783Z",
-      "repository": "fission/fission",
-      "learningId": "learn-github-fission-fission",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:14:01.779Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T21:14:05.437Z",
       "repository": "Ontos-AI/knowhere",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T00:16:44.816Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:22:45.395Z",
+      "repository": "microsoft/fluentui",
+      "learningId": "learn-github-microsoft-fluentui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:22:45.928Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:22:52.628Z",
+      "repository": "RunanywhereAI/runanywhere-sdks",
+      "learningId": "learn-github-runanywhereai-runanywhere-sdks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:22:52.944Z",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:22:53.758Z",
+      "repository": "krakend/krakend-ce",
+      "learningId": "learn-github-krakend-krakend-ce",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:22:58.033Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

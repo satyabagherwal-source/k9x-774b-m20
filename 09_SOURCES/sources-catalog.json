@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "1e06d33d1b739b8ccd8d4b4bc431cb4e3b33dd5548b4e253673cf84fc71a45d5",
-    "lastHarvestedAt": "2026-10-17T21:03:59.279Z",
+    "contentHash": "5de55e398ba165dd5a4158cac649952351b78db61bb29b152be88704eac24085",
+    "lastHarvestedAt": "2026-10-19T00:22:52.941Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
@@ -3978,5 +3978,55 @@
     "contentHash": "267e218a3d6acf88c2cd22be273dcdb4c9b0070ba0033286f9d541389842a784",
     "lastHarvestedAt": "2026-10-19T00:16:43.018Z",
     "learningId": "learn-github-helixdb-helix-db"
+  },
+  "microsoft-fluentui": {
+    "repository": "microsoft/fluentui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/microsoft/fluentui",
+    "sourceVersion": "f02cfa8f",
+    "license": "NOASSERTION",
+    "contentHash": "55ce1c8809d577dd09d50d317b9bc823f1e9bc9b0145b027252a39b3ed0fe575",
+    "lastHarvestedAt": "2026-10-19T00:22:45.393Z",
+    "learningId": "learn-github-microsoft-fluentui"
+  },
+  "o2sh-onefetch": {
+    "repository": "o2sh/onefetch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/o2sh/onefetch",
+    "sourceVersion": "aeb7a35a",
+    "license": "MIT",
+    "contentHash": "ad5dfe0e568423b421d270981ba4a6d0c58f428f52ce20b291702d6ee25e56d1",
+    "lastHarvestedAt": "2026-10-19T00:22:45.924Z",
+    "learningId": "learn-github-o2sh-onefetch"
+  },
+  "runanywhereai-runanywhere-sdks": {
+    "repository": "RunanywhereAI/runanywhere-sdks",
+    "platform": "github",
+    "sourceUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
+    "sourceVersion": "259521e2",
+    "license": "NOASSERTION",
+    "contentHash": "a69cc8ba29e2fec32ac660b7a4df9b5963a08f1c648a345d86f55449cbf93399",
+    "lastHarvestedAt": "2026-10-19T00:22:52.626Z",
+    "learningId": "learn-github-runanywhereai-runanywhere-sdks"
+  },
+  "krakend-krakend-ce": {
+    "repository": "krakend/krakend-ce",
+    "platform": "github",
+    "sourceUrl": "https://github.com/krakend/krakend-ce",
+    "sourceVersion": "153d87ac",
+    "license": "Apache-2.0",
+    "contentHash": "5837eeffb9679282327164723905c58ae31ddd141737e15a01d5331aa59809f9",
+    "lastHarvestedAt": "2026-10-19T00:22:53.755Z",
+    "learningId": "learn-github-krakend-krakend-ce"
+  },
+  "trailbaseio-trailbase": {
+    "repository": "trailbaseio/trailbase",
+    "platform": "github",
+    "sourceUrl": "https://github.com/trailbaseio/trailbase",
+    "sourceVersion": "58b8411a",
+    "license": "OSL-3.0",
+    "contentHash": "77deab97882f474eaa677f0b9587cfc16a0f4d7ed17c145a3b6514b5503544d3",
+    "lastHarvestedAt": "2026-10-19T00:22:58.030Z",
+    "learningId": "learn-github-trailbaseio-trailbase"
   }
 }

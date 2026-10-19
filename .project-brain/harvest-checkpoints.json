@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:16:44.818Z",
+  "last_updated": "2026-10-19T00:22:58.035Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "1e06d33d1b739b8ccd8d4b4bc431cb4e3b33dd5548b4e253673cf84fc71a45d5",
-      "verified_at": "2026-10-17T21:03:59.282Z",
+      "content_hash": "5de55e398ba165dd5a4158cac649952351b78db61bb29b152be88704eac24085",
+      "verified_at": "2026-10-19T00:22:52.946Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:03:59.282Z"
+      "last_updated": "2026-10-19T00:22:52.946Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -6082,6 +6082,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:16:43.022Z"
+    },
+    "microsoft/fluentui": {
+      "repository": "microsoft/fluentui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-microsoft-fluentui",
+      "content_hash": "55ce1c8809d577dd09d50d317b9bc823f1e9bc9b0145b027252a39b3ed0fe575",
+      "verified_at": "2026-10-19T00:22:45.397Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:22:45.397Z"
+    },
+    "o2sh/onefetch": {
+      "repository": "o2sh/onefetch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-o2sh-onefetch",
+      "content_hash": "ad5dfe0e568423b421d270981ba4a6d0c58f428f52ce20b291702d6ee25e56d1",
+      "verified_at": "2026-10-19T00:22:45.939Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:22:45.939Z"
+    },
+    "RunanywhereAI/runanywhere-sdks": {
+      "repository": "RunanywhereAI/runanywhere-sdks",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-runanywhereai-runanywhere-sdks",
+      "content_hash": "a69cc8ba29e2fec32ac660b7a4df9b5963a08f1c648a345d86f55449cbf93399",
+      "verified_at": "2026-10-19T00:22:52.630Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:22:52.630Z"
+    },
+    "krakend/krakend-ce": {
+      "repository": "krakend/krakend-ce",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-krakend-krakend-ce",
+      "content_hash": "5837eeffb9679282327164723905c58ae31ddd141737e15a01d5331aa59809f9",
+      "verified_at": "2026-10-19T00:22:53.760Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:22:53.760Z"
+    },
+    "trailbaseio/trailbase": {
+      "repository": "trailbaseio/trailbase",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-trailbaseio-trailbase",
+      "content_hash": "77deab97882f474eaa677f0b9587cfc16a0f4d7ed17c145a3b6514b5503544d3",
+      "verified_at": "2026-10-19T00:22:58.035Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:22:58.035Z"
     }
   },
   "repos": {

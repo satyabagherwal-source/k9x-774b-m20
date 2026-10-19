@@ -2690,3 +2690,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-19T00:16:41.854Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `1b278adf` | Multi-dimensional audit evidence | 2026-10-19T00:16:43.018Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `04ee61d8` | Multi-dimensional audit evidence | 2026-10-19T00:16:44.814Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `f02cfa8f` | Multi-dimensional audit evidence | 2026-10-19T00:22:45.393Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `aeb7a35a` | Multi-dimensional audit evidence | 2026-10-19T00:22:45.924Z |
+| `learn-github-runanywhereai-runanywhere-sdks` | `https://github.com/RunanywhereAI/runanywhere-sdks` | `259521e2` | Multi-dimensional audit evidence | 2026-10-19T00:22:52.626Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-19T00:22:52.941Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `153d87ac` | Multi-dimensional audit evidence | 2026-10-19T00:22:53.755Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `58b8411a` | Multi-dimensional audit evidence | 2026-10-19T00:22:58.030Z |
