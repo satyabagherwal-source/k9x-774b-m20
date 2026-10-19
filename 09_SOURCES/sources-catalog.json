@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "4130bf7a9676c5cc3f54a49fbf46d894aeb9738712b7fad78588a4f414cf3d82",
-    "lastHarvestedAt": "2026-10-18T03:34:59.055Z",
+    "contentHash": "1364e0f300639ced1c8abe26198f3cdf9836012395ba1850d21875f15a7dcb14",
+    "lastHarvestedAt": "2026-10-19T13:07:58.645Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "a86a087d",
+    "sourceVersion": "ff0d7e76",
     "license": "Apache-2.0",
-    "contentHash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
-    "lastHarvestedAt": "2026-10-18T22:10:09.778Z",
+    "contentHash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
+    "lastHarvestedAt": "2026-10-19T13:08:01.577Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -8048,5 +8048,15 @@
     "contentHash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
     "lastHarvestedAt": "2026-10-19T13:00:23.450Z",
     "learningId": "learn-github-tableproapp-tablepro"
+  },
+  "twostraws-controlroom": {
+    "repository": "twostraws/ControlRoom",
+    "platform": "github",
+    "sourceUrl": "https://github.com/twostraws/ControlRoom",
+    "sourceVersion": "c8c7d4cf",
+    "license": "MIT",
+    "contentHash": "8f635c1fa2b9c8aa228ea82f8d3c81dc2f20519156a4703773220cf5034d6f1c",
+    "lastHarvestedAt": "2026-10-19T13:08:51.656Z",
+    "learningId": "learn-github-twostraws-controlroom"
   }
 }

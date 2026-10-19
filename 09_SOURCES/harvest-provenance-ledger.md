@@ -3251,3 +3251,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-19T13:00:15.450Z |
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `d931a3d7` | Multi-dimensional audit evidence | 2026-10-19T13:00:23.450Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `a6100edc` | Multi-dimensional audit evidence | 2026-10-19T13:00:30.021Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-19T13:07:58.645Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `ff0d7e76` | Multi-dimensional audit evidence | 2026-10-19T13:08:01.577Z |
+| `learn-github-twostraws-controlroom` | `https://github.com/twostraws/ControlRoom` | `c8c7d4cf` | Multi-dimensional audit evidence | 2026-10-19T13:08:51.656Z |

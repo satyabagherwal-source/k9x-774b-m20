@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T13:00:29.973Z",
-  "total_verified_learnings": 819,
+  "last_updated": "2026-10-19T13:08:51.601Z",
+  "total_verified_learnings": 820,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4092,14 +4092,29 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "a86a087d",
-      "content_hash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
+      "source_version": "ff0d7e76",
+      "content_hash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
         {
           "number": 1763,
           "title": "tasks): wait for cancellation cleanup before scheduler exit (#3256)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2591,
+          "title": "Dedicated-Thread POSIX Advisory Locking for Async Runtimes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2592,
+          "title": "RAII-Scoped Termios Preservation Across Subprocess Execution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2593,
+          "title": "TOCTOU Double-Check Verification on Tracked Environment Inputs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4108,7 +4123,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:10:09.750Z",
+      "verified_at": "2026-10-19T13:08:01.528Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20653,7 +20668,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "4130bf7a9676c5cc3f54a49fbf46d894aeb9738712b7fad78588a4f414cf3d82",
+      "content_hash": "1364e0f300639ced1c8abe26198f3cdf9836012395ba1850d21875f15a7dcb14",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -20716,6 +20731,16 @@
           "number": 1601,
           "title": "First-Last Frame Loop Closure Validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2589,
+          "title": "Temporal Boundary Injection Invariant in Video Diffusion Conditioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2590,
+          "title": "LoRA Weight Injection Invariant Across Heterogeneous Attention Projections",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20735,7 +20760,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-18T03:34:59.017Z",
+      "verified_at": "2026-10-19T13:07:58.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41880,22 +41905,45 @@
     "learn-github-twostraws-controlroom": {
       "learning_id": "learn-github-twostraws-controlroom",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "twostraws-controlroom",
+      "source": "twostraws/ControlRoom",
+      "repository": "twostraws/ControlRoom",
       "slug": "twostraws-controlroom",
       "platform": "github",
       "source_url": "https://github.com/twostraws/ControlRoom",
-      "source_version": "HEAD",
-      "content_hash": "8af342ca2c952105e3fe7aab23299ea0d989a8c276efd14bff98aae3f69161d2",
+      "source_version": "c8c7d4cf",
+      "content_hash": "8f635c1fa2b9c8aa228ea82f8d3c81dc2f20519156a4703773220cf5034d6f1c",
       "dossier_path": "07_PROJECT_LEARNING/twostraws-controlroom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/twostraws-controlroom-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2594,
+          "title": "Retroactive Conformance Isolation Under Strict Concurrency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2595,
+          "title": "MainActor Decoupling for Nonisolated SDK Delegate Callbacks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2596,
+          "title": "CLI Subprocess GUI Boot Separation & Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.117Z"
+      "verified_at": "2026-10-19T13:08:51.592Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-txn2-kubefwd": {
       "learning_id": "learn-github-txn2-kubefwd",
@@ -87345,6 +87393,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T13:00:29.960Z"
+    },
+    "rule-2589": {
+      "learning_id": "rule-2589",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2589,
+      "title": "Temporal Boundary Injection Invariant in Video Diffusion Conditioning",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:07:58.596Z"
+    },
+    "rule-2590": {
+      "learning_id": "rule-2590",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2590,
+      "title": "LoRA Weight Injection Invariant Across Heterogeneous Attention Projections",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:07:58.596Z"
+    },
+    "rule-2591": {
+      "learning_id": "rule-2591",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2591,
+      "title": "Dedicated-Thread POSIX Advisory Locking for Async Runtimes",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "ff0d7e76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:08:01.528Z"
+    },
+    "rule-2592": {
+      "learning_id": "rule-2592",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2592,
+      "title": "RAII-Scoped Termios Preservation Across Subprocess Execution",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "ff0d7e76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:08:01.528Z"
+    },
+    "rule-2593": {
+      "learning_id": "rule-2593",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2593,
+      "title": "TOCTOU Double-Check Verification on Tracked Environment Inputs",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "ff0d7e76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:08:01.528Z"
+    },
+    "rule-2594": {
+      "learning_id": "rule-2594",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2594,
+      "title": "Retroactive Conformance Isolation Under Strict Concurrency",
+      "source_url": "https://github.com/twostraws/ControlRoom",
+      "source_version": "c8c7d4cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:08:51.592Z"
+    },
+    "rule-2595": {
+      "learning_id": "rule-2595",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2595,
+      "title": "MainActor Decoupling for Nonisolated SDK Delegate Callbacks",
+      "source_url": "https://github.com/twostraws/ControlRoom",
+      "source_version": "c8c7d4cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:08:51.592Z"
+    },
+    "rule-2596": {
+      "learning_id": "rule-2596",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2596,
+      "title": "CLI Subprocess GUI Boot Separation & Synchronization",
+      "source_url": "https://github.com/twostraws/ControlRoom",
+      "source_version": "c8c7d4cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:08:51.592Z"
     }
   },
   "aliases": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-L457",
-    "timestamp": "2026-10-19T01:22:46.459Z",
-    "repository": "vlcn-io/cr-sqlite",
-    "learningId": "learn-github-vlcn-io-cr-sqlite",
-    "contentHash": "e4ea73724ff07cb492fb154a5545f37b1d9f37a35acfb11606b45b2332e537b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-SJ18",
-    "timestamp": "2026-10-19T01:28:32.348Z",
-    "repository": "xiaolin/react-image-gallery",
-    "learningId": "learn-github-xiaolin-react-image-gallery",
-    "contentHash": "f6393417fe885ecff3063a41bb1564f8bb2ae6ca291b046ec5b08a8d6b6d83b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-SJ21",
-    "timestamp": "2026-10-19T01:28:32.377Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "16f62570fdfcfa903545e88357d2a381cff668505c04ff70635f61d5edfffbbf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-SK7Z",
     "timestamp": "2026-10-19T01:28:33.887Z",
     "repository": "fujiapple852/trippy",
@@ -7492,6 +7447,51 @@
     "contentHash": "f16f76b97211ce9d291a95d9de9c5ce03355c7dbdd537a10f6ddc4bd09fa06b0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-S0FM",
+    "timestamp": "2026-10-19T13:07:58.642Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "1364e0f300639ced1c8abe26198f3cdf9836012395ba1850d21875f15a7dcb14",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-S2P3",
+    "timestamp": "2026-10-19T13:08:01.575Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-T5C5",
+    "timestamp": "2026-10-19T13:08:51.653Z",
+    "repository": "twostraws/ControlRoom",
+    "learningId": "learn-github-twostraws-controlroom",
+    "contentHash": "8f635c1fa2b9c8aa228ea82f8d3c81dc2f20519156a4703773220cf5034d6f1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

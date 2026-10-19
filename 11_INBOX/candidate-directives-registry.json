@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:20:29.102Z",
+  "last_updated": "2026-10-19T13:07:58.648Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1828,6 +1828,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-dathere-qsv"
+    },
+    {
+      "id": "CD-S0FS",
+      "directive_title": "Rule: Metric Boundary Identity Constraint",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_commit": "hf-pablodaws",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
     }
   ]
 }

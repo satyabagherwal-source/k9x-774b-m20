@@ -3244,3 +3244,6 @@
 | `CYCLE-20261019-I313` | `2026-10-19T13:00:15.447Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`5bcec075...`) |
 | `CYCLE-20261019-I97C` | `2026-10-19T13:00:23.448Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2587` | Yes (`0f23f53a...`) |
 | `CYCLE-20261019-IE9U` | `2026-10-19T13:00:30.018Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2588` | Yes (`f16f76b9...`) |
+| `CYCLE-20261019-S0FM` | `2026-10-19T13:07:58.642Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2589, Rule 2590` | Yes (`1364e0f3...`) |
+| `CYCLE-20261019-S2P3` | `2026-10-19T13:08:01.575Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2591, Rule 2592, Rule 2593` | Yes (`d164219d...`) |
+| `CYCLE-20261019-T5C5` | `2026-10-19T13:08:51.653Z` | `twostraws/ControlRoom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2594, Rule 2595, Rule 2596` | Yes (`8f635c1f...`) |

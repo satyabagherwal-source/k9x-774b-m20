@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T13:00:30.028Z",
+  "last_updated": "2026-10-19T13:08:51.662Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1399,14 +1399,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "4130bf7a9676c5cc3f54a49fbf46d894aeb9738712b7fad78588a4f414cf3d82",
-      "verified_at": "2026-10-18T03:34:59.058Z",
+      "content_hash": "1364e0f300639ced1c8abe26198f3cdf9836012395ba1850d21875f15a7dcb14",
+      "verified_at": "2026-10-19T13:07:58.652Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:34:59.058Z"
+      "last_updated": "2026-10-19T13:07:58.652Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -4309,14 +4309,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
-      "verified_at": "2026-10-18T22:10:09.784Z",
+      "content_hash": "d164219d9a674e9bfaf4d9b4ad513e0bd2aa286504e25dbeb34fc0aa234f97b2",
+      "verified_at": "2026-10-19T13:08:01.583Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:10:09.784Z"
+      "last_updated": "2026-10-19T13:08:01.583Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -12102,6 +12102,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T13:00:23.457Z"
+    },
+    "twostraws/ControlRoom": {
+      "repository": "twostraws/ControlRoom",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-twostraws-controlroom",
+      "content_hash": "8f635c1fa2b9c8aa228ea82f8d3c81dc2f20519156a4703773220cf5034d6f1c",
+      "verified_at": "2026-10-19T13:08:51.661Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T13:08:51.661Z"
     }
   },
   "repos": {

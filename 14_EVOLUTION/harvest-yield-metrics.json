@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T13:00:30.025Z",
-  "total_cycles_completed": 3221,
-  "total_learnings_persisted": 3221,
-  "total_rules_promoted": 2379,
+  "last_updated": "2026-10-19T13:08:51.659Z",
+  "total_cycles_completed": 3224,
+  "total_learnings_persisted": 3224,
+  "total_rules_promoted": 2387,
   "history": [
-    {
-      "timestamp": "2026-10-19T07:10:13.831Z",
-      "repository": "influxdata/influxdb",
-      "learningId": "learn-github-influxdata-influxdb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:10:45.639Z",
-      "repository": "angular/angular",
-      "learningId": "learn-github-angular-angular",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:11:01.374Z",
-      "repository": "devspace-sh/devspace",
-      "learningId": "learn-github-devspace-sh-devspace",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T07:21:24.187Z",
       "repository": "google/embeddinggemma-2",
@@ -1403,6 +1382,27 @@
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:07:58.650Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:08:01.581Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:08:51.659Z",
+      "repository": "twostraws/ControlRoom",
+      "learningId": "learn-github-twostraws-controlroom",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
