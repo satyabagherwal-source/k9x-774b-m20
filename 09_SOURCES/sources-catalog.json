@@ -615,8 +615,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "e277f54fd9b25f4c02cb2e862b7c5232f3abc6f8eaeae3a5be88604ad380dcb6",
-    "lastHarvestedAt": "2026-10-18T00:15:48.001Z",
+    "contentHash": "1f55feb91f8357d92c16cd3c75d5f99f045280c3931bd0643d4895686b0a658f",
+    "lastHarvestedAt": "2026-10-19T06:38:32.410Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf"
   },
   "hf-facebook-sam3": {
@@ -1503,11 +1503,11 @@
     "repository": "pathwaycom/serviette",
     "platform": "github",
     "sourceUrl": "https://github.com/pathwaycom/serviette",
-    "sourceVersion": "beb17f1e",
+    "sourceVersion": "e2a7a09b",
     "license": "MIT",
-    "contentHash": "a24ccc15521ccdc8ffea3d84b4979663af1359492997d219676448250cd025cb",
-    "lastHarvestedAt": "2026-10-14T16:36:22.940Z",
-    "learningId": "learn-github-pathwaycom-serviette-mv8c0rd1"
+    "contentHash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
+    "lastHarvestedAt": "2026-10-19T06:38:45.774Z",
+    "learningId": "learn-github-pathwaycom-serviette"
   },
   "evermind-ai-raven": {
     "repository": "EverMind-AI/Raven",
@@ -6718,5 +6718,45 @@
     "contentHash": "27b83912203b302abe4155641241909ce0237d864350397e332cac11c29ca41b",
     "lastHarvestedAt": "2026-10-19T06:32:44.383Z",
     "learningId": "learn-github-qdrant-qdrant"
+  },
+  "vuetifyjs-vuetify": {
+    "repository": "vuetifyjs/vuetify",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vuetifyjs/vuetify",
+    "sourceVersion": "56872aae",
+    "license": "NOASSERTION",
+    "contentHash": "e7e1656e2e2507f7f13424eeef5a2692129aecd7989ec0048460d79a79adf9e5",
+    "lastHarvestedAt": "2026-10-19T06:38:32.565Z",
+    "learningId": "learn-github-vuetifyjs-vuetify"
+  },
+  "pauljuliusmartinez-jless": {
+    "repository": "PaulJuliusMartinez/jless",
+    "platform": "github",
+    "sourceUrl": "https://github.com/PaulJuliusMartinez/jless",
+    "sourceVersion": "e6cdef71",
+    "license": "MIT",
+    "contentHash": "794da28e84f247c0523a8ddeebc2a9204b371658f547290880d043ca2ff75b53",
+    "lastHarvestedAt": "2026-10-19T06:38:34.733Z",
+    "learningId": "learn-github-pauljuliusmartinez-jless"
+  },
+  "kizitonwose-calendar": {
+    "repository": "kizitonwose/Calendar",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kizitonwose/Calendar",
+    "sourceVersion": "c2711b3c",
+    "license": "MIT",
+    "contentHash": "df70951dd78c5b789e3392f1c108ad01b56c4c5011e05019f7eab0b50e830050",
+    "lastHarvestedAt": "2026-10-19T06:38:39.487Z",
+    "learningId": "learn-github-kizitonwose-calendar"
+  },
+  "open-policy-agent-gatekeeper": {
+    "repository": "open-policy-agent/gatekeeper",
+    "platform": "github",
+    "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
+    "sourceVersion": "180cc830",
+    "license": "Apache-2.0",
+    "contentHash": "753b5f8f12346aa1dfcca38f50b75b0e8c834f1a0f12b6bbf40cfb1adcd5b17c",
+    "lastHarvestedAt": "2026-10-19T06:38:42.029Z",
+    "learningId": "learn-github-open-policy-agent-gatekeeper"
   }
 }

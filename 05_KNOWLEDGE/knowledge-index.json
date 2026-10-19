@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:32:44.341Z",
-  "total_verified_learnings": 687,
+  "last_updated": "2026-10-19T06:38:45.748Z",
+  "total_verified_learnings": 691,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -17388,7 +17388,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "e277f54fd9b25f4c02cb2e862b7c5232f3abc6f8eaeae3a5be88604ad380dcb6",
+      "content_hash": "1f55feb91f8357d92c16cd3c75d5f99f045280c3931bd0643d4895686b0a658f",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -17431,7 +17431,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-18T00:15:47.956Z",
+      "verified_at": "2026-10-19T06:38:32.377Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25069,22 +25069,35 @@
     "learn-github-kizitonwose-calendar": {
       "learning_id": "learn-github-kizitonwose-calendar",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kizitonwose-calendar",
+      "source": "kizitonwose/Calendar",
+      "repository": "kizitonwose/Calendar",
       "slug": "kizitonwose-calendar",
       "platform": "github",
       "source_url": "https://github.com/kizitonwose/Calendar",
-      "source_version": "HEAD",
-      "content_hash": "35ad2d3b36dd3713e672be17c4b08d2f8876455bac844d07ea7657f7916d61f3",
+      "source_version": "c2711b3c",
+      "content_hash": "df70951dd78c5b789e3392f1c108ad01b56c4c5011e05019f7eab0b50e830050",
       "dossier_path": "07_PROJECT_LEARNING/kizitonwose-calendar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kizitonwose-calendar-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2249,
+          "title": "sample project toolbar",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.811Z"
+      "verified_at": "2026-10-19T06:38:39.453Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kkkkhazix-khazix-skills": {
       "learning_id": "learn-github-kkkkhazix-khazix-skills",
@@ -31059,22 +31072,35 @@
     "learn-github-open-policy-agent-gatekeeper": {
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "open-policy-agent-gatekeeper",
+      "source": "open-policy-agent/gatekeeper",
+      "repository": "open-policy-agent/gatekeeper",
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "HEAD",
-      "content_hash": "15899cfc808705072aa1f9afdc421539265260f47c02380d2bb00777b31b4c7e",
+      "source_version": "180cc830",
+      "content_hash": "753b5f8f12346aa1dfcca38f50b75b0e8c834f1a0f12b6bbf40cfb1adcd5b17c",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2250,
+          "title": "scope expansion ingestion controller to audit and webhook operations (#4778)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.822Z"
+      "verified_at": "2026-10-19T06:38:41.995Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-open-policy-agent-opa": {
       "learning_id": "learn-github-open-policy-agent-opa",
@@ -32051,22 +32077,35 @@
     "learn-github-pauljuliusmartinez-jless": {
       "learning_id": "learn-github-pauljuliusmartinez-jless",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pauljuliusmartinez-jless",
+      "source": "PaulJuliusMartinez/jless",
+      "repository": "PaulJuliusMartinez/jless",
       "slug": "pauljuliusmartinez-jless",
       "platform": "github",
       "source_url": "https://github.com/PaulJuliusMartinez/jless",
-      "source_version": "HEAD",
-      "content_hash": "942bd38379163af3c184614c9c314acfc15eda5f8a940f0328ba0cef45ff7eba",
+      "source_version": "e6cdef71",
+      "content_hash": "794da28e84f247c0523a8ddeebc2a9204b371658f547290880d043ca2ff75b53",
       "dossier_path": "07_PROJECT_LEARNING/pauljuliusmartinez-jless-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pauljuliusmartinez-jless-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2248,
+          "title": "Update Arch Linux package URL in README.md (#139)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.001Z"
+      "verified_at": "2026-10-19T06:38:34.699Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-paullecam-react-leaflet": {
       "learning_id": "learn-github-paullecam-react-leaflet",
@@ -40296,22 +40335,35 @@
     "learn-github-vuetifyjs-vuetify": {
       "learning_id": "learn-github-vuetifyjs-vuetify",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vuetifyjs-vuetify",
+      "source": "vuetifyjs/vuetify",
+      "repository": "vuetifyjs/vuetify",
       "slug": "vuetifyjs-vuetify",
       "platform": "github",
       "source_url": "https://github.com/vuetifyjs/vuetify",
-      "source_version": "HEAD",
-      "content_hash": "f9e469ae0f030972350c4434af5c73968346af60c7ab4f9da18b48bc7f07e781",
+      "source_version": "56872aae",
+      "content_hash": "e7e1656e2e2507f7f13424eeef5a2692129aecd7989ec0048460d79a79adf9e5",
       "dossier_path": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2247,
+          "title": "VOtpInput): avoid horizontal overflow in narrow container",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.265Z"
+      "verified_at": "2026-10-19T06:38:32.531Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vxcontrol-pentagi": {
       "learning_id": "learn-github-vxcontrol-pentagi",
@@ -48662,13 +48714,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "pathwaycom/serviette",
       "repository": "pathwaycom/serviette",
-      "slug": "pathwaycom-llm-app",
+      "slug": "pathwaycom-serviette",
       "platform": "github",
-      "source_url": "https://github.com/pathwaycom/llm-app",
+      "source_url": "https://github.com/pathwaycom/serviette",
       "source_version": "e2a7a09b",
-      "content_hash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
-      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md",
+      "content_hash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
+      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
       "promoted_rules": [
         {
           "number": 926,
@@ -48678,7 +48730,7 @@
         {
           "number": 2220,
           "title": "adapt Pathway's contribution guide and template",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48686,7 +48738,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:04:56.166Z",
+      "verified_at": "2026-10-19T06:38:45.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79384,14 +79436,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2220,
       "title": "adapt Pathway's contribution guide and template",
-      "source_url": "https://github.com/pathwaycom/llm-app",
+      "source_url": "https://github.com/pathwaycom/serviette",
       "source_version": "e2a7a09b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T06:04:56.166Z"
+      "verified_at": "2026-10-19T06:38:45.743Z"
     },
     "rule-2221": {
       "learning_id": "rule-2221",
@@ -79756,6 +79808,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:32:44.330Z"
+    },
+    "rule-2247": {
+      "learning_id": "rule-2247",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2247,
+      "title": "VOtpInput): avoid horizontal overflow in narrow container",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "56872aae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:38:32.531Z"
+    },
+    "rule-2248": {
+      "learning_id": "rule-2248",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2248,
+      "title": "Update Arch Linux package URL in README.md (#139)",
+      "source_url": "https://github.com/PaulJuliusMartinez/jless",
+      "source_version": "e6cdef71",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:38:34.699Z"
+    },
+    "rule-2249": {
+      "learning_id": "rule-2249",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2249,
+      "title": "sample project toolbar",
+      "source_url": "https://github.com/kizitonwose/Calendar",
+      "source_version": "c2711b3c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:38:39.453Z"
+    },
+    "rule-2250": {
+      "learning_id": "rule-2250",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2250,
+      "title": "scope expansion ingestion controller to audit and webhook operations (#4778)",
+      "source_url": "https://github.com/open-policy-agent/gatekeeper",
+      "source_version": "180cc830",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:38:41.995Z"
     }
   },
   "aliases": {

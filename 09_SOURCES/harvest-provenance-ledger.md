@@ -3024,3 +3024,9 @@ Every entry in this ledger must capture:
 | `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `efd1689d` | Multi-dimensional audit evidence | 2026-10-19T06:32:37.199Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `fbc97ecf` | Multi-dimensional audit evidence | 2026-10-19T06:32:39.593Z |
 | `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `016542aa` | Multi-dimensional audit evidence | 2026-10-19T06:32:44.383Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-19T06:38:32.410Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `56872aae` | Multi-dimensional audit evidence | 2026-10-19T06:38:32.565Z |
+| `learn-github-pauljuliusmartinez-jless` | `https://github.com/PaulJuliusMartinez/jless` | `e6cdef71` | Multi-dimensional audit evidence | 2026-10-19T06:38:34.733Z |
+| `learn-github-kizitonwose-calendar` | `https://github.com/kizitonwose/Calendar` | `c2711b3c` | Multi-dimensional audit evidence | 2026-10-19T06:38:39.487Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `180cc830` | Multi-dimensional audit evidence | 2026-10-19T06:38:42.029Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/serviette` | `e2a7a09b` | Multi-dimensional audit evidence | 2026-10-19T06:38:45.774Z |

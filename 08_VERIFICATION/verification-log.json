@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-U1IC",
-    "timestamp": "2026-10-18T21:45:46.020Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "877284f1c978c49dae5f06eb0af19d44ffad92d4c9e4065639ae3b725eaeebbc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U64J",
-    "timestamp": "2026-10-18T21:45:52.003Z",
-    "repository": "maotoumao/MusicFree",
-    "learningId": "learn-github-maotoumao-musicfree",
-    "contentHash": "0ba4e4cb27e5502982a2df288877be0a750bb0e1c0da9eb68be9871ed99f0bd3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U874",
-    "timestamp": "2026-10-18T21:45:54.688Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "93fd6b54b31346be57c4ab50d9bca02693f5239c8c9faf559af5fc4d8884f482",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U9NQ",
-    "timestamp": "2026-10-18T21:45:56.582Z",
-    "repository": "ChrispyBacon-dev/DockFlare",
-    "learningId": "learn-github-chrispybacon-dev-dockflare",
-    "contentHash": "b797618d9e50f963605d391e03fb02db43daafffb67dca67e6441f89d687ce59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U9TP",
-    "timestamp": "2026-10-18T21:45:56.797Z",
-    "repository": "pinecone-io/examples",
-    "learningId": "learn-github-pinecone-io-examples",
-    "contentHash": "b343628b520189526e8e0fd34827af945379732376745136d6946cfbe56e015d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-217L",
-    "timestamp": "2026-10-18T21:51:58.881Z",
-    "repository": "DavidHDev/react-bits",
-    "learningId": "learn-github-davidhdev-react-bits",
-    "contentHash": "48ba7500082bde8deef68155f3cbb0b19e7c9bc059576837080e0c213e0b2ea3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-22C4",
     "timestamp": "2026-10-18T21:52:00.340Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7490,6 +7400,96 @@
     "repository": "qdrant/qdrant",
     "learningId": "learn-github-qdrant-qdrant",
     "contentHash": "27b83912203b302abe4155641241909ce0237d864350397e332cac11c29ca41b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V6XJ",
+    "timestamp": "2026-10-19T06:38:32.407Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "1f55feb91f8357d92c16cd3c75d5f99f045280c3931bd0643d4895686b0a658f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V71V",
+    "timestamp": "2026-10-19T06:38:32.563Z",
+    "repository": "vuetifyjs/vuetify",
+    "learningId": "learn-github-vuetifyjs-vuetify",
+    "contentHash": "e7e1656e2e2507f7f13424eeef5a2692129aecd7989ec0048460d79a79adf9e5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V8Q3",
+    "timestamp": "2026-10-19T06:38:34.731Z",
+    "repository": "PaulJuliusMartinez/jless",
+    "learningId": "learn-github-pauljuliusmartinez-jless",
+    "contentHash": "794da28e84f247c0523a8ddeebc2a9204b371658f547290880d043ca2ff75b53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-VCE2",
+    "timestamp": "2026-10-19T06:38:39.482Z",
+    "repository": "kizitonwose/Calendar",
+    "learningId": "learn-github-kizitonwose-calendar",
+    "contentHash": "df70951dd78c5b789e3392f1c108ad01b56c4c5011e05019f7eab0b50e830050",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-VECR",
+    "timestamp": "2026-10-19T06:38:42.027Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "753b5f8f12346aa1dfcca38f50b75b0e8c834f1a0f12b6bbf40cfb1adcd5b17c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-VH8R",
+    "timestamp": "2026-10-19T06:38:45.771Z",
+    "repository": "pathwaycom/serviette",
+    "learningId": "learn-github-pathwaycom-serviette",
+    "contentHash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
