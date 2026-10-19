@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:09:31.106Z",
-  "total_verified_learnings": 958,
+  "last_updated": "2026-10-19T23:15:45.542Z",
+  "total_verified_learnings": 960,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10060,8 +10060,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "78eca881",
-      "content_hash": "ae58ca77e925ec0055a749056dffb5a6b4ce3c72d5711206ee3f5298adc1d99c",
+      "source_version": "3c67eeea",
+      "content_hash": "429bfb38f85cba20a15c101d2667c1b920e7c77d790662430e4cbcf7b3403a1a",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -10094,6 +10094,11 @@
           "number": 2788,
           "title": "ci): make release.yml dry_run side-effect free (#5939)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2884,
+          "title": "telemetry): report inbound stream refusals and evictions in transport_snapshot (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10101,7 +10106,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:10:37.600Z",
+      "verified_at": "2026-10-19T23:15:45.530Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40323,22 +40328,35 @@
     "learn-github-sparrowcode-alertkit": {
       "learning_id": "learn-github-sparrowcode-alertkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sparrowcode-alertkit",
+      "source": "sparrowcode/AlertKit",
+      "repository": "sparrowcode/AlertKit",
       "slug": "sparrowcode-alertkit",
       "platform": "github",
       "source_url": "https://github.com/sparrowcode/AlertKit",
-      "source_version": "HEAD",
-      "content_hash": "f5f588aaa697b154fb6f74168bdc0446145c8a8c3cb3e724d17b902d2cd8fbbf",
+      "source_version": "e8a0208c",
+      "content_hash": "58e6825c5ff9d31bda6ec3185c5aa844517384594b196d209a887f599df000da",
       "dossier_path": "07_PROJECT_LEARNING/sparrowcode-alertkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sparrowcode-alertkit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2883,
+          "title": "Fixed crash when tap for alert.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.650Z"
+      "verified_at": "2026-10-19T23:15:41.209Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-spinabot-brigade": {
       "learning_id": "learn-github-spinabot-brigade",
@@ -57545,20 +57563,35 @@
     "learn-github-unifiedjs-unified": {
       "learning_id": "learn-github-unifiedjs-unified",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unifiedjs/unified",
       "repository": "unifiedjs/unified",
       "slug": "unifiedjs-unified",
       "platform": "github",
       "source_url": "https://github.com/unifiedjs/unified",
-      "source_version": "main",
-      "content_hash": "8a3f44e28870b73fa252d212b18f1976818e7e48a086d7357c507edd2ee5b1d6",
+      "source_version": "dfaf172e",
+      "content_hash": "796254476ff83192d4d90e187c65ada735bfb2ee4c7acaffd79ef23fe930d1fe",
       "dossier_path": "07_PROJECT_LEARNING/unifiedjs-unified-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unifiedjs-unified-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2882,
+          "title": "exception on older browsers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:15:38.974Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rehypejs-rehype": {
       "learning_id": "learn-github-rehypejs-rehype",
@@ -94246,6 +94279,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:09:31.096Z"
+    },
+    "rule-2882": {
+      "learning_id": "rule-2882",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2882,
+      "title": "exception on older browsers",
+      "source_url": "https://github.com/unifiedjs/unified",
+      "source_version": "dfaf172e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:15:38.975Z"
+    },
+    "rule-2883": {
+      "learning_id": "rule-2883",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2883,
+      "title": "Fixed crash when tap for alert.",
+      "source_url": "https://github.com/sparrowcode/AlertKit",
+      "source_version": "e8a0208c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:15:41.209Z"
+    },
+    "rule-2884": {
+      "learning_id": "rule-2884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2884,
+      "title": "telemetry): report inbound stream refusals and evictions in transport_snapshot (",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "3c67eeea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:15:45.530Z"
     }
   },
   "aliases": {

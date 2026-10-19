@@ -3559,3 +3559,6 @@ Every entry in this ledger must capture:
 | `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `afefe5c6` | Multi-dimensional audit evidence | 2026-10-19T23:09:25.203Z |
 | `learn-github-paololeonardi-waterfallgrid` | `https://github.com/paololeonardi/WaterfallGrid` | `c7c08652` | Multi-dimensional audit evidence | 2026-10-19T23:09:28.540Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `62a81997` | Multi-dimensional audit evidence | 2026-10-19T23:09:31.139Z |
+| `learn-github-unifiedjs-unified` | `https://github.com/unifiedjs/unified` | `dfaf172e` | Multi-dimensional audit evidence | 2026-10-19T23:15:39.036Z |
+| `learn-github-sparrowcode-alertkit` | `https://github.com/sparrowcode/AlertKit` | `e8a0208c` | Multi-dimensional audit evidence | 2026-10-19T23:15:41.283Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3c67eeea` | Multi-dimensional audit evidence | 2026-10-19T23:15:45.589Z |

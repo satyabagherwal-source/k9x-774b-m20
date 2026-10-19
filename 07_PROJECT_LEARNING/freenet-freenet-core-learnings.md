@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `78eca881`  
+> **Source Version**: `3c67eeea`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:10:37.398Z  
+> **Timestamp**: 2026-10-19T23:15:45.287Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:10:37.392Z  
+> **Harvest Timestamp**: 2026-10-19T23:15:45.029Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,14 +1738,17 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5944** (2026-10-19): **feat(telemetry): report inbound stream refusals and evictions in transport_snapshot**
+  *Symptoms*: ## Problem  Inbound stream refusals and evictions are counted by reason in `TRANSPORT_METRICS` (`cumulative_inbound_stream_outcomes`), but the only export is the opt-in OTel metric `freenet.transport.inbound_stream_limits`, which almost no peer enables. The central telemetry cannot tell whether honest transfers are being refused fleet-wide. Every peer does send `transport_snapshot`.  Part of #5940  ## Approach  Mirror the `nat_fail_*` shape from #5927:  - A per-period `[AtomicU32; InboundStreamOutcome::COUNT]` in `TransportMetrics`, incremented next to the cumulative counter in `record_inbound_stream_outcome`. Each hot-path write is a single relaxed atomic add. - Six `inbound_stream_<label>` `u32` fields on `TransportSnapshot` and `SnapshotExtras`, read and reset in `period_extras`, and counted in `has_activity`. - The OTel instrument still reads `cumulative_inbound_stream_outcomes()`; it is untouched and never sees the period counters. - Counts only: no addresses or peer identifiers. - The upload uses serde, and the existing `transport_snapshot_json_lists_every_field` test already guards the event-log map in `telemetry.rs`, so that map gained the six keys too. - Like #5927's fields, this changes the bincode layout of the local event log (older records are skipped). - `.claude/rules/transport.md` updated.  ## Testing  - `inbound_stream_outcomes_snapshot_and_reset`: each reason gets a distinct count, shows up in `read_snapshot` and `take_snapshot`, the period counts reset on `
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/39325866560) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
+  > ## ⚠️ Performance Benchmark Regressions Detected  Found 3 benchmark(s) with performance regressions:  - **`level0/crypto/nonce/counter_with_connid`**: +29.755% - **`level0/crypto/nonce/counter`**: +29.252% - **`level0/crypto/nonce/random`**: +28.878%  ### ⚠️ Important: This may be a false positive!  **Common causes of false positives:** 1. **Stale baseline**: If recent PRs improved performance on `main`, this PR (which doesn't include those changes) will show as "regressed" when compared to the new baseline 2. **GitHub runner variance**: Benchmarks run on shared `ubuntu-latest` runners with variable CPU contention 3. **Old baseline**: The baseline might be from an older `main` commit if the cache restore used `restore-keys` fallback  **To verify if this is a real regression:** 1. Check if recent commits on `main` touched transport or benchmark code 2. Merge `main` into your branch and re-run benchmarks 3. Review the baseline age in the "Download main branch baseline" step  > This is in
+
 - **Issue #5943** (2026-10-19): **refactor(transport): classify transport errors and close reasons without UDP details**
   *Symptoms*: ## Problem  The node still reads two of the transport's UDP-specific details across the `PeerConnectionApi` boundary (#5941 lists them in `transport/boundary.rs`):  - It decides whether a transport error ends a connection through `TransportError::is_transient_send_failure`, a predicate named and documented in terms of UDP sends. - It learns why `recv` ended a connection from two out-of-band booleans, `closed_by_idle_timeout()` and `closed_by_stream_refusals()`, and turns them into a `DisconnectReason` with an if-chain.  A second transport would have to mimic both.  ## Approach  Two behaviour-neutral commits:  1. **`TransportError::scope()`**. A new `ErrorScope { Transient, Stream, Connection }`, assigned by an exhaustive match with no default arm. `is_transient()` is `scope() == Transient` and replaces `is_transient_send_failure` at every call site, including the three in `p2p_protoc.rs`. The classification is unchanged: `SendFailed` and `OutboundStreamFailed` are transient, and nothing else is. `OutboundStreamInvalidLength` is labelled `Stream`, as its docs already described it; the transport handles it in its own recv loop. 2. **`CloseReason`**. `PeerConnectionApi` replaces the two flag methods with a single `close_reason() -> Option<CloseReason>`, where `CloseReason` is `IdleTimeout` or `InboundStreamRefusals`. The UDP connection keeps its internal flags (one also drives control flow in `process_inbound`). It reports them through `close_reason_from_flags`, which keeps the 
   **Post-Mortem & Fix Analysis**:
   > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/39308389554) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
   > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/39305080154)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/39305080154)
-
-- **Issue #5941** (2026-10-19): **refactor(transport): narrow the transport API boundary**
-  *Symptoms*: Part of #5940 (transport redesign): narrows the transport's API boundary so a second transport implementation can sit behind it. **No behaviour change.**  ## What changes - `PeerConnectionApi` and its types move to `transport/boundary.rs`. - `send_message(NetMessage)` becomes `send(Vec<u8>)`. Serialization moves up into the network bridge, which runs the same `bincode::serialize` call and records the same message-mix length. - Stream progress and inbound-stream registration become transport-owned traits (`StreamProgressObserver`, `InboundStreamRegistry`). The operations layer implements them by forwarding to its existing methods. - `BroadcastDeliveryOutcome` is renamed to `StreamSendOutcome`.  Outside test code, the transport no longer imports `crate::message` or `crate::operations` types. The one runtime difference is a single `Arc` allocation per streamed send, where the bridge wraps the progress handle.  ## Not in this PR (follow-ups) - Ring location and `SocketAddr`-keyed identity. - Moving the auto-update statics, the simulation hooks and the connection setup behind the boundary. - Neutral stream types. `StreamHandle` and `LockFreeStreamBuffer` still appear in the boundary.  ## Testing - `cargo nextest run -p freenet --lib`: 6885 passed, including the `link_model::r1_tests` WAN gates. - CI simulation suite: 201 passed. - R1/R1b FixedRate on 20 seeds: passed. - fmt and both CI clippy variants are clean.  [AI-assisted - Claude] 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,495 +1765,234 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afb74456` (2026-10-19)
-**Commit Message**: fix(ci): make release.yml dry_run side-effect free (#5939)
+### Incident Patch 1: `3c67eeea` (2026-10-19)
+**Commit Message**: feat(telemetry): report inbound stream refusals and evictions in transport_snapshot (#5944)
 
-**File**: `.github/scripts/check_release_dry_run.py` (added, +1664/-0)
+**File**: `.claude/rules/transport.md` (modified, +8/-2)
 ```diff
-@@ -0,0 +1,1664 @@
-+#!/usr/bin/env python3
-+"""Guard: a workflow's `dry_run` must not be able to push, merge, tag or publish.
-+
-+#5936. `release.yml` had a `dry_run` input described as "show what would be
-+done without publishing". Each mutating step carried its own
-+`if: ${{ !inputs.dry_run }}`, and the version-bump job carried none. So a dry
-+run pushed `release/vX.Y.Z`, opened the real `build: release X.Y.Z` PR and
-+enabled auto-merge on it, landing the bump on `main` through the merge queue:
-+a partial release cut, which also invalidated any soak of the previous `main`.
-+
-+The fix replaces per-step guards with ONE resolved value, and this linter makes
-+that structure the only one that passes:
-+
-+  1. The `validate` job resolves the input once, in its step `id: mode`
-+     (`scripts/resolve_release_mode.sh`), and exports `outputs.live`. Only the
-+     literal input `false` yields `live == 'true'`; anything else is a dry run.
-+  2. `inputs.dry_run` is read NOWHERE else: dotted or indexed, any case, or
-+     through a whole object that carries it (`inputs`, `github.event`,
-+     `github`). A second reader is how the guards drifted apart.
-+  3. Every MUTATING step is gated on `needs.validate.outputs.live == 'true'`,
-+     as a top-level `&&` term of its own `if:` or its job's `if:`, in an
-+     expression with no top-level `||` (`&&` binds tighter, so `a || b && G`
-+     runs without G). A missing or empty output SKIPS the step: fail closed.
-+  4. Every mutating `run:` step also refuses, as the first command of its
-+     own script (only `set -...` may precede it), unless `RELEASE_LIVE`
-+     (wired from the same output) is `true`. So deleting an `if:` turns a dry
-+     run red instead of letting it mutate.
-+  5. Credentials, the rule that makes any gap in the mutation detector below
-+     harmless. In a job a dry run can reach: `actions/checkout` persists no
-+     credential (a stray `git push` cannot authenticate) and gets RELEASE_PAT
-+     only through the live-gated expression `DRY_SAFE_CHECKOUT_TOKEN`; no
-+     step a dry run executes receives RELEASE_PAT at all; and if the job's
-+     token can write, no such step is passed ANY token or secret through an
-+     expression (workflow env, job env, step env/with, or `${{ }}` in `run:`,
-+     in the raw source; a presence test like `secrets.X != ''` is allowed).
-+     Actions' implicit default token for `actions/*` steps is not an
-+     expression and is not counted; with persistence off it stays inside the
-+     action. A dry-run-ONLY job declares read-only `permissions:`, and may
-+     then use its own read-only token. No dry-run job gets `id-token: write`.
-+     A job that pushes when live must persist its credential when live, or
-+     the push fails. YAML anchors and aliases are refused, since an alias can
-+     copy a live step's env into a dry-run step invisibly.
-+  6. Every `needs.J.*` reference names a job in `needs:`, every
-+     `needs.J.outputs.Y` names an output J declares, and every
-+     `steps.S.outputs.Y` names a step `id: S` in the same job whose script
-+     writes `Y=`. A broken reference is silently empty, which on the LIVE path
-+     skips a guarded step or passes an empty argument.
-+  7. Steps the reader cannot place (a `steps:` block it cannot itemise, a
-+     flow-style `steps: [...]` or `- {...}` item, an item with neither `run:`
-+     nor `uses:`) are an error, not a pass.
-+  8. `continue-on-error` is refused (it lets a release pass a failed gate),
-+     and so is comparing with an unquoted boolean (`'true' == true` is false
-+     in Actions).
-+
-+To extend this guard, extend rule 5 (what credential a dry-run step can
-+hold), not the mutation detector: the detector can never be complete.
-+
-+Rule 5 is the guarantee; the mutation detector below is best-effort. Its
-+known gaps (a command it does not recognise) cannot write, because a step
-+that runs in a dry run holds no usable write credential.
-+
-+"Mutating" is decided from the step's source, not from its name: `git push`;
-+`gh pr|release|workflow|run|issue|label|secret|variable|repo|cache` write
-+verbs; `gh api` with a non-GET method, request fields, or a GraphQL `mutation`
-+(or a query read from a file, which cannot be inspected); `cargo publish`
-+without `--dry-run` on that same command; `cargo yank|owner`; `docker|podman
-+push`; `npm publish`; `curl` with a write method or a body; Python
-+`requests.post|put|patch|delete` and `subprocess` argv `["git", "push"]`.
-+Commands are matched in the raw line, quotes included, so `bash -c '...'`,
-+`eval "..."` and `CMD="git push"; $CMD` are all seen; only a line whose
-+command is `echo`/`printf` has its quoted text ignored, so an error message
-+that TELLS the operator to run `gh run rerun` is not a rerun. A `run:` that
-+invokes `scripts/` or `.github/scripts/` files is scanned through them. A
-+`uses:` step is mutating unless its action is on a short read-only allowlist,
-+and a job-level `uses:` (reusable workflow) always is.
-+
-+Escape hatc
+@@ -199,7 +199,11 @@ across DIFFERENT reporters in the same address family, IPv4-mapped v6
+ treated as v4; counts only, never the address; per period, so it resets; a
+ NAT rebinding between two reporters' reports is indistinguishable from
+ EDM), final-ACK timing (`transfers_acked`, `*_transfer_ack_time_ms`) and
+-the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`). Hot
++the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`) and
++inbound stream refusals / evictions by reason (`inbound_stream_<label>`, one
++per `InboundStreamOutcome`; the never-reset twin feeds the opt-in OTel
++`freenet.transport.inbound_stream_limits`, which must not observe the period
++counters). Hot
+ path writes are single relaxed atomics; `SentPacketTracker` keeps an
+ `rto_expiries` count and a bounded per-stream final-ACK watch, both
+ observation only.
+@@ -597,7 +601,9 @@ created from its declared length.
+     the orphan registry.
+   - Every refusal, eviction and refusal-related close is counted by reason
+     in TRANSPORT_METRICS (cumulative_inbound_stream_outcomes, OTel
+-    freenet.transport.inbound_stream_limits).
++    freenet.transport.inbound_stream_limits) and per period in the
++    transport_snapshot inbound_stream_<label> fields. A new reason is added
++    once, in the inbound_stream_outcomes! list; it then needs a snapshot field.
+   - A complete operations stream is retired from streaming_handles and the
+     registry at once, so only its consumers hold the charge.
+   - LockFreeStreamBuffer::insert claims the slot BEFORE reserving bytes, so
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +22/-1)
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +53/-0)
 ```diff
-@@ -286,6 +286,15 @@ jobs:
-       - name: Self-test release canary wiring
-         run: bash scripts/release_canary_wiring_test.sh
- 
-+      # Regression gate for #5936: a `dry_run=true` release run pushed the
-+      # release branch, opened the `build: release` PR and auto-merged the
-+      # version bump into main. Pins that the dry-run resolver fails closed,
-+      # that the linter catches the pre-fix job and likely regressions of the
-+      # real file, and EXECUTES every mutating step of release.yml against
-+      # stubs to prove it refuses (and calls nothing) when not live.
-+      - name: Self-test release dry run
-+        run: bash scripts/release_dry_run_test.sh
+@@ -2785,6 +2785,30 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
+                 "nat_fail_samples_dropped".into(),
+                 serde_json::json!(snapshot.nat_fail_samples_dropped),
+             );
++            m.insert(
++                "inbound_stream_refused_invalid_length".into(),
++                serde_json::json!(snapshot.inbound_stream_refused_invalid_length),
++            );
++            m.insert(
++                "inbound_stream_refused_connection_bytes".into(),
++                serde_json::json!(snapshot.inbound_stream_refused_connection_bytes),
++            );
++            m.insert(
++                "inbound_stream_refused_connection_streams".into(),
++                serde_json::json!(snapshot.inbound_stream_refused_connection_streams),
++            );
++            m.insert(
++                "inbound_stream_closed_too_many_refusals".into(),
++                serde_json::json!(snapshot.inbound_stream_closed_too_many_refusals),
++            );
++            m.insert(
++                "inbound_stream_evicted_idle".into(),
++                serde_json::json!(snapshot.inbound_stream_evicted_idle),
++            );
++            m.insert(
++                "inbound_stream_evicted_age".into(),
++                serde_json::json!(snapshot.inbound_stream_evicted_age),
++            );
+             serde_json::Value::Object(m)
+         }
+         EventKind::InterestSync(interest_sync_event) => {
+@@ -6425,4 +6449,33 @@ mod tests {
+                 .collect();
+         assert_eq!(actual, expected);
+     }
 +
-       # Regression gate for #5221/#5222: auto-update was broken fleet-wide for
-       # TWO releases (v0.2.120, v0.2.121) and nothing noticed, because every
-       # signal was one-sided — the release built, published, installed and ran.
-@@ -337,7 +346,7 @@ jobs:
-       # clean when they landed but were not actually in this list, so nothing
-       # held them to it. `-x` because the two test scripts `source` the canary.
-       - name: Lint install/uninstall scripts (shellcheck)
--        run: shellcheck -x scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh
-+        run: shellcheck -x scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh
-       # The PR-backlog sweep reports stalled PRs (see
-       # .github/workflows/pr-backlog-sweep.yml). Its self-test drives the ABORT
-       # paths -- failed query, empty listing the REST probe contradicts,
-@@ -457,6 +466,18 @@ jobs:
-       - name: Check required-check workflows (no PR path filter, no needs on a required job)
-         run: python3 .github/scripts/check_required_check_path_filters.py .github/workflows
- 
-+      # Self-test the release dry-run linter, then run it. Not diff-scoped, like
-+      # the two above. Guards #5936: release.yml's `dry_run=true` pushed the
-+      # release branch, opened the bump PR and auto-merged it into main, because
-+      # each mutating step carried its own `!inputs.dry_run` guard and one job
-+      # had none. The linter requires every mutating step to be gated on the one
-+      # resolved `needs.validate.outputs.live` and to refuse in its own script.
-+      - name: Release dry-run linter self-test
-+        run: python3 .github/scripts/check_release_dry_run.py --self-test
-+
-+      - name: Check release dry_run cannot push, merge, tag or publish
-+        run: python3 .github/scripts/check_release_dry_run.py .github/workflows
-+
-       - name: Check for banned patterns in new code
-         env:
-           PR_TITLE: ${{ github.event.pull_request.title }}
++    /// The key set is not enough: the event-log JSON must also carry each
++    /// field's VALUE under its own key. The six inbound-stream counts are
++    /// distinct and non-zero so a swapped or mis-keyed one is caught.
++    #[test]
++    fn transport_snapshot_json_carries_inbound_stream_values() {
++        let snapshot = crate::transport::metrics::TransportSnapshot {
++            inbound_stream_refused_invalid_length: 1,
++            inbound_stream_refused_connection_bytes: 2,
++            inbound_stream_refused_connection_streams: 3,
++            inbound_stream_closed_too_many_refusals: 4,
++            inbound_stream_evicted_idle: 5,
++            inbound_stream_evicted_age: 6,
++            ..Default::default()
++        };
++        let reference = serde_json::to_value(&snapshot).unwrap();
++        let json = event_kind_to_json(&super::super::EventKind::TransportSnapshot(snapshot));
++        for (key, expected) in [
++            ("inbound_stream_refused_invalid_length", 1),
++            ("inbound_stream_refused_connection_bytes", 2),
++            ("inbound_stream_refused_connection_streams", 3),
++            ("inbound_stream_closed_too_many_refusals", 4),
++            ("inbound_stream_evicted_idle", 5),
++            ("inbound_stream_evicted_age", 6),
++        ] {
++            assert_eq!(json[key], expected, "event-log value for {key}");
++            assert_eq!(json[key], reference[key], "serde value for {key}");
++        }
++    }
+ }
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +280/-47)
+**File**: `crates/core/src/transport/metrics.rs` (modified, +186/-35)
 ```diff
-@@ -14,7 +14,7 @@ on:
-         type: boolean
-         default: false
-       dry_run:
--        description: 'Dry run - show what would be done without publishing'
-+        description: 'Dry run - compute and package the release, print what would be created, push/merge/tag/publish nothing'
-         required: false
-         type: boolean
-         default: false
-@@ -28,13 +28,33 @@ jobs:
-     name: Validate release inputs
-     runs-on: ubuntu-latest
-     timeout-minutes: 5
-+    # Reads only. Without this the job would hold the workflow's write token,
-+    # in a dry run as much as a live one.
-+    permissions:
-+      contents: read
-     outputs:
-       version: ${{ steps.validate.outputs.version }}
-       fdev_version: ${{ steps.validate.outputs.fdev_version }}
-+      # 'true' ONLY for a live release. Every step that pushes, opens or merges
-+      # a PR, tags or creates a release is gated on
-+      # `needs.validate.outputs.live == 'true'`, so an empty or missing value
-+      # skips it (fail closed). See scripts/resolve_release_mode.sh (#5936).
-+      live: ${{ steps.mode.outputs.live }}
+@@ -35,49 +35,48 @@ use crate::tracing::{TransferDirection, TransferEvent};
+ /// metrics for periodic telemetry snapshots.
+ pub static TRANSPORT_METRICS: LazyLock<TransportMetrics> = LazyLock::new(TransportMetrics::new);
  
-     steps:
-       - name: Checkout code
-         uses: actions/checkout@v7
-+        with:
-+          persist-credentials: false
+-/// Why an inbound stream was refused or evicted. Each has its own counter
+-/// because each has a different remedy.
+-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+-pub(crate) enum InboundStreamOutcome {
++/// Declares [`InboundStreamOutcome`] with its `COUNT`, `ALL` and `label`
++/// generated from the one variant list, so a variant cannot be added without
++/// growing the per-reason counter arrays (indexed by `outcome as usize`).
++macro_rules! inbound_stream_outcomes {
++    ($($(#[$meta:meta])* $variant:ident => $label:literal,)+) => {
++        /// Why an inbound stream was refused or evicted. Each has its own
++        /// counter because each has a different remedy.
++        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
++        pub(crate) enum InboundStreamOutcome {
++            $($(#[$meta])* $variant,)+
++        }
 +
-+      # The ONLY reader of `inputs.dry_run` in this workflow. Rule Lint's
-+      # .github/scripts/check_release_dry_run.py fails a PR that reads it
-+      # anywhere else, or that adds a mutating step without the `live` guard.
-+      - name: Resolve run mode (live or dry run)
-+        id: mode
-+        env:
-+          DRY_RUN_INPUT: ${{ inputs.dry_run }}
-+        run: bash scripts/resolve_release_mode.sh
- 
-       - name: Warn if RELEASE_PAT is not configured
-         env:
-@@ -109,7 +129,7 @@ jobs:
-       # Pinned by scripts/release_canary_wiring_test.sh (assertion 2b-quater),
-       # which fails if a validity probe is re-added or the refusal is removed.
-       - name: Verify the crates.io token before anything is created
--        if: ${{ !inputs.dry_run }}
-+        if: steps.mode.outputs.live == 'true'
-         env:
-           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-         run: |
-@@ -165,19 +185,36 @@ jobs:
-           echo "  freenet: $VERSION"
-           echo "  fdev: $FDEV_VERSION"
- 
-+  # Runs in BOTH modes: the bump is computed and committed locally either way.
-+  # Only a live run pushes it, opens the PR and enables auto-merge (#5936: a
-+  # dry run used to do all three, landing the version bump on main).
-   update_versions:
-     name: Update versions and create PR
-     runs-on: ubuntu-latest
-     timeout-minutes: 10
-     needs: validate
-     outputs:
-       pr_number: ${{ steps.create_pr.outputs.pr_number }}
-+      # Set only in a dry run: the unpushed bump commit, shipped to
-+      # `dry_run_rehearsal` as a git bundle artifact.
-+      dry_run_bump_sha: ${{ steps.dry_run_report.outputs.bump_sha }}
-+    env:
-+      RELEASE_LIVE: ${{ needs.validate.outputs.live }}
- 
-     steps:
-       - name: Checkout code
-         uses: actions/checkout@v7
-         with:
--          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
-+          # Live: RELEASE_PAT when set (coalescing to GITHUB_TOKEN), exactly as
-+          # before, so the push below fires downstream workflows. Dry run: the
-+          # workflow token, used for the fetch only, because no credential is
-+          # persisted to .git/config, so even a `git push` that slipped past
-+          # every guard below cannot authenticate. The job still holds the
-+          # workflow-level write token; Rule Lint forbids handing it, or any
-+          # other secret, to a step that runs in a dry run here (this token
-+          # line is the one exemption).
-+          token: ${{ (needs.validate.outputs.live == 'true' && secrets.RELEASE_PAT) || secrets.GITHUB_TOKEN }}
-+          persist-credentials: ${{ needs.validate.outputs.live == 'true' }}
- 
-       - name: Configure git
-         run: |
-@@ -237,7 +274,8 @@ jobs:
-           cargo update --workspace
-           cargo metadata --format-version 1 --manifest-path apps/freenet-ping/Cargo.toml > /dev/null
- 
--      - name: Create release branch
-+      - name: Commit the version bump locally
-+        id: bump
-         run: |
-           BRANCH="release/v${{ needs.validate.outputs.version }}"
-           git checkout -b "$BRANCH"
-@@ -248,48 +286,208 @@ jobs:
-           - fdev: → ${{ needs.validate.outputs.fdev_version }}
- 
-           🤖 Automated release commit"
--          git push origin "$BRANCH"
--          echo "RELEASE_BRANCH=$BRANCH" >> $GITHUB_ENV
-+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
- 
--      - name: Create Pull Request
--        id: create_pr
--        env:
--          GH_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
--        # NOTE: The PR title MUST start with "build: release " — squash-merge
--        # propagates the title to the merge_group head_commit.message, where
--        # ci.yml's `skip_check` keys off it to decide whether the merge_group
--    
-```
-
-**File**: `AGENTS.md` (modified, +2/-2)
-```diff
-@@ -208,8 +208,8 @@ v0.2.57 release, and they have DIFFERENT remedies:
- 1. **Bump PR gets 0 check-runs.** No `pull_request` event fires, so `ci.yml`
-    never runs and its required checks never turn green. `ci.yml` has no
-    `workflow_dispatch`, so it cannot be started by hand. The old workaround,
--   closing and reopening the PR, breaks `wait_for_pr` polling
--   (`release.yml:285`), whose `release_sha` output `verify_publishable` and
-+   closing and reopening the PR, breaks the polling in `release.yml`'s
-+   `wait_for_pr` job, whose `release_sha` output `verify_publishable` and
-    `create_release` depend on.
- 2. **`release.published` does not fire downstream workflows.** Those DO expose
-    `workflow_dispatch`, so they can be triggered per step by hand.
-```
-
-**File**: `docs/RELEASING.md` (modified, +44/-5)
-```diff
-@@ -432,16 +432,55 @@ Current wire-gated floors:
- When a NEW wire-gated feature first ships (not this one), set its floor to
- **exactly that release version** and freeze it, as described above.
- 
-+## Dry run
++        impl InboundStreamOutcome {
++            /// Every outcome, in declaration order, so `ALL[i] as usize == i`.
++            pub(crate) const ALL: [Self; Self::COUNT] = [$(Self::$variant),+];
++            pub(crate) const COUNT: usize = [$(Self::$variant),+].len();
 +
-+`gh workflow run release.yml --field dry_run=true` rehearses a cut without
-+making one. It resolves the version, commits the bump on the runner, and runs
-+the checkout verifier and `cargo publish -p freenet --dry-run` against that
-+commit in a read-only `dry_run_rehearsal` job. It prints the branch, PR title
-+and body a live run would open, and an approximate changelog. It pushes no
-+branch, opens and merges no PR, and creates no tag or release, so `main` does
-+not move.
-+
-+Every mutating step is gated on the single `needs.validate.outputs.live`
-+value and refuses in its own script when that is not `true`. No step that
-+runs in a dry run is passed `RELEASE_PAT`. The only job that runs in a dry run
-+holding a write-capable token is the bump job (`update_versions`), and the
-+only step given that token is its checkout, which uses it to fetch and
-+persists nothing. `validate` is read-only, `summary` has no permissions, and
-+the rehearsal job is read-only. A presence test such as
-+`secrets.RELEASE_PAT != ''` passes no credential and is allowed. Rule Lint's
-+`.github/scripts/check_release_dry_run.py` and the CI self-test
-+`scripts/release_dry_run_test.sh` fail a PR that breaks any of that (#5936).
-+
-+Caveats:
-+
-+- **Only from a ref that contains #5939** (the fix for #5936). The workflow
-+  file comes from the ref you dispatch. Before that fix a "dry run" pushed
-+  the branch and auto-merged the bump PR, so `--ref` pointing at an older tag
-+  or branch still does.
-+- **It does not exercise the live-only half:** the `CARGO_REGISTRY_TOKEN`
-+  presence check, waiting for the bump PR's merge queue (`wait_for_pr`,
-+  `resolve_release_sha.sh`), GitHub's generated release notes, the tag push
-+  and the release creation, and everything the tag triggers in
-+  `cross-compile.yml` (binaries, Gate A, the crates.io publish). A green dry
-+  run says the bump and the packaging are sound, not that a cut will ship.
-+- Whether a dry run needs the pre-cut preconditions is decided by the
-+  `freenet:release` skill, not here.
-+
- ## What fires when
- 
- ```
- gh workflow run release.yml
--    └─→ release.yml: validate
-+    └─→ release.yml: validate   (resolves dry_run → outputs.live)
-     └─→ release.yml: update_versions
--            └─→ creates "build: release X.Y.Z" PR
--            └─→ ci.yml runs on PR (using RELEASE_PAT scope)
--            └─→ PR auto-merges to main
--    └─→ release.yml: wait_for_pr
-+            └─→ dry run: commits the bump locally, prints what it would
-+                push and bundles the commit; dry_run_rehearsal then verifies
-+                and packages it. Of what follows, only the summary runs
-+            └─→ (live only) creates "build: release X.Y.Z" PR
-+            └─→ (live only) ci.yml runs on PR (using RELEASE_PAT scope)
-+            └─→ (live only) PR auto-merges to main
-+    └─→ release.yml: wait_for_pr   (this and everything below: live only)
-             └─→ resolves the bump PR's merge commit -> RELEASE_SHA
-                 (everything below checks out that exact commit; see #5233)
-     └─→ release.yml: verify_publishable
-```
-
-**File**: `scripts/release_dry_run_test.sh` (added, +714/-0)
-```diff
-@@ -0,0 +1,714 @@
-+#!/usr/bin/env bash
-+# Regression tests for #5936: release.yml's `dry_run=true` was not a dry run.
-+#
-+# The version-bump job had no dry-run guard, so a "dry run" pushed
-+# `release/vX.Y.Z`, opened the real `build: release X.Y.Z` PR and enabled
-+# auto-merge on it, landing the bump on main. Only the tag and release steps
-+# carried their own `if: ${{ !inputs.dry_run }}`.
-+#
-+# The fix resolves the input ONCE (scripts/resolve_release_mode.sh, exported as
-+# `needs.validate.outputs.live`), gates every mutating step on it, and makes
-+# each mutating script refuse on its own when not live.
-+# `.github/scripts/check_release_dry_run.py` enforces that shape and has its own
-+# `--self-test` over synthetic fixtures. This file tests what that cannot:
-+#
-+#   1. the resolver fails closed (only the literal `false` is live);
-+#   2. the linter fires on the REAL pre-fix job, and passes the repo today;
-+#   3. the obvious future regressions of the real file are caught: each is
-+#      applied to a copy of release.yml and the linter must go red;
-+#   4. the job/step topology of BOTH modes, by evaluating every `if:` for
-+#      live and for dry (`--simulate`), so a guard flipped the wrong way --
-+#      which would break a LIVE release -- fails here;
-+#   5. every mutating step of the real release.yml, EXECUTED with stubbed
-+#      git/gh and its real `env:`, refuses before calling anything when not
-+#      live, and when live reaches its command with no empty argument and the
-+#      right expression feeding each argument;
-+#   6. the real non-mutating steps of the dry path (bump, compose, report,
-+#      bundle, rehearsal checkout, verifier) run end to end in throwaway repos;
-+#   7. the linter and this test are wired into CI, and not disabled in place.
-+#
-+# Run manually with: bash scripts/release_dry_run_test.sh
-+
-+set -euo pipefail
-+
-+# The end-to-end section runs real git in throwaway repos. Keep the caller's
-+# git environment out of it: an exported GIT_DIR would aim it at a real repo,
-+# and global signing or hook settings would fail or prompt.
-+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY
-+# An ambient token would satisfy the "every gh call has a GH_TOKEN" checks
-+# vacuously; the steps must supply their own.
-+unset GH_TOKEN GITHUB_TOKEN
-+export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
-+
-+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-+LINTER="$REPO_ROOT/.github/scripts/check_release_dry_run.py"
-+RESOLVER="$REPO_ROOT/scripts/resolve_release_mode.sh"
-+RELEASE_YML="$REPO_ROOT/.github/workflows/release.yml"
-+CI_YML="$REPO_ROOT/.github/workflows/ci.yml"
-+command -v jq > /dev/null || { echo "FAIL - this test needs jq (preinstalled on ubuntu-latest)" >&2; exit 2; }
-+TEST_TMP=$(mktemp -d)
-+trap 'rm -rf "$TEST_TMP"' EXIT
-+
-+FAILURES=0
-+check() {
-+    # check <description> <actual> <expected>
-+    local desc="$1" actual="$2" expected="$3"
-+    if [[ "$actual" == "$expected" ]]; then
-+        echo "ok   - $desc"
-+    else
-+        echo "FAIL - $desc (got '$actual', expected '$expected')" >&2
-+        FAILURES=$((FAILURES + 1))
-+    fi
++            /// Metric label.
++            pub(crate) fn label(self) -> &'static str {
++                match self {
++                    $(Self::$variant => $label,)+
++                }
++            }
++        }
++    };
 +}
 +
-+# --- 1. the resolver ---------------------------------------------------------
++inbound_stream_outcomes! {
+     /// Refused: declared length 0 or above `MAX_STREAM_TOTAL_BYTES`.
+-    RefusedInvalidLength,
++    RefusedInvalidLength => "refused_invalid_length",
+     /// Refused: the connection's byte allowance was full.
+-    RefusedConnectionBytes,
++    RefusedConnectionBytes => "refused_connection_bytes",
+     /// Refused: the connection's stream count was full.
+-    RefusedConnectionStreams,
++    RefusedConnectionStreams => "refused_connection_streams",
+     /// Connection closed: a refused stream could not be remembered, because
+     /// the connection already had as many refused streams outstanding as are
+     /// remembered.
+-    ClosedTooManyRefusals,
++    ClosedTooManyRefusals => "closed_too_many_refusals",
+     /// Evicted: no new data within the idle timeout.
+-    EvictedIdle,
++    EvictedIdle => "evicted_idle",
+     /// Evicted: past its age limit.
+-    EvictedAge,
+-}
+-
+-impl InboundStreamOutcome {
+-    pub(crate) const COUNT: usize = 6;
+-    /// Every outcome, in declaration order, so `ALL[i] as usize == i`.
+-    pub(crate) const ALL: [Self; Self::COUNT] = [
+-        Self::RefusedInvalidLength,
+-        Self::RefusedConnectionBytes,
+-        Self::RefusedConnectionStreams,
+-        Self::ClosedTooManyRefusals,
+-        Self::EvictedIdle,
+-        Self::EvictedAge,
+-    ];
+-
+-    /// Metric label.
+-    pub(crate) fn label(self) -> &'static str {
+-        match self {
+-            Self::RefusedInvalidLength => "refused_invalid_length",
+-            Self::RefusedConnectionBytes => "refused_connection_bytes",
+-            Self::RefusedConnectionStreams => "refused_connection_streams",
+-            Self::ClosedTooManyRefusals => "closed_too_many_refusals",
+-            Self::EvictedIdle => "evicted_idle",
+-            Self::EvictedAge => "evicted_age",
+-        }
+-    }
++    EvictedAge => "evicted_age",
+ }
+ 
+ /// Accumulates transport metrics for periodic reporting.
+@@ -218,6 +217,11 @@ pub struct TransportMetrics {
+     /// and packets dropped because the channel was full (reset each snapshot).
+     inbound_queue_depth_hwm: AtomicU32,
+     inbound_queue_drops: AtomicU64,
 +
-+resolve() {
-+    # resolve <value|__unset__> -> the `live=` value written, plus stdout
-+    local out="$TEST_TMP/mode.out" rc=0
-+    : > "$out"
-+    if [[ "$1" == "__unset__" ]]; then
-+        env -u DRY_RUN_INPUT GITHUB_OUTPUT="$out" bash "$RESOLVER" > "$TEST_TMP/mode.log" 2>&1 || rc=$?
-+    else
-+        DRY_RUN_INPUT="$1" GITHUB_OUTPUT="$out" bash "$RESOLVER" > "$TEST_TMP/mode.log" 2>&1 || rc=$?
-+    fi
-+    [[ "$rc" -eq 0 ]] || { echo "resolver-exit-$rc"; return; }
-+    grep -E '^live=' "$out" | paste -sd, -
-+}
-+
-+check "resolver: dry_run=false is a live run" "$(resolve false)" "live=true"
-+check "resolver: dry_run=true is a dry run" "$(resolve true)" "live=false"
-+check "resolver: an empty input is a dry run (fail closed)" "$(resolve '')" "live=false"
-+check "resolver: an unset input is a dry run (fail closed)" "$(resolve __unset__)" "live=false"
-+check "resolver: 'False' is not 'false', so a dry run" "$(resolve False)" "live=false"
-+resolve '' > /dev/null
-+check "resolver: an unexpected value is reported, not silently accepted" \
-+    "$(grep -c 'Treating this run as a dry run' "$TEST_TMP/mode.log")" "1"
-+
-+# --- 2. the linter against real files ----------------------------------------
-+
-+SELF_RC=0
-+python3 "$LINTER" --self-test > /dev/null 2>&1 || SELF_RC=$?
-+check "linter self-test passes" "$SELF_RC" "0"
-+
-+REPO_RC=0
-+python3 "$LINTER" "$REPO_ROOT/.github/workflows" > "$TEST_TMP/repo.out" 2>&1 || REPO_RC=$?
-+check "linter passes the repo's workflows" "$REPO_RC" "0"
-+[[ "$REPO_RC" -eq 0 ]] || cat "$TEST_TMP/repo.out" >&2
-+
-+# The pre-fix shape, abbreviated from origin/main 9c09d2dbf (the three
-+# mutating steps of the version-bump job are as they were; the rest is cut to
-+# the minimum): guarded tag 
-```
-
-**File**: `scripts/resolve_release_mode.sh` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+#!/usr/bin/env bash
-+# Resolve release.yml's `dry_run` input into the ONE value every mutating step
-+# checks: `live=true` or `live=false` on $GITHUB_OUTPUT.
-+#
-+# Why a single resolved value rather than `if: ${{ !inputs.dry_run }}` on each
-+# step: that is how #5936 happened. Each step carried its own guard, the
-+# version-bump job had none, and a "dry run" pushed a release branch, opened
-+# the `build: release` PR and auto-merged it into main. A guard that has to be
-+# remembered per step is missed by the next edit. Now `inputs.dry_run` is read
-+# HERE ONLY, and every step that pushes, opens a PR, merges, tags or creates a
-+# release is gated on `needs.validate.outputs.live == 'true'`.
-+# `.github/scripts/check_release_dry_run.py` (run by Rule Lint) enforces both.
-+#
-+# FAILS CLOSED. Only the exact string `false` yields a live run. Anything else
-+# (`true`, empty because the input was never wired, a typo) is a dry run, and
-+# a mutating step whose guard reads an empty or missing output is skipped.
-+#
-+# Run manually with:
-+#   DRY_RUN_INPUT=true GITHUB_OUTPUT=/dev/stdout bash scripts/resolve_release_mode.sh
-+# Tests: scripts/release_dry_run_test.sh
-+
-+set -euo pipefail
-+
-+OUTPUT_FILE="${GITHUB_OUTPUT:?GITHUB_OUTPUT is required}"
-+DRY_RUN_INPUT="${DRY_RUN_INPUT-}"
-+
-+if [ "$DRY_RUN_INPUT" = "false" ]; then
-+    echo "live=true" >> "$OUTPUT_FILE"
-+    echo "🚀 LIVE release: this run pushes the bump branch, merges the bump PR, tags and creates the draft release."
-+    exit 0
-+fi
-+
-+echo "live=false" >> "$OUTPUT_FILE"
-+if [ "$DRY_RUN_INPUT" != "true" ]; then
-+    echo "::warning title=Treating this run as a dry run::The dry_run input was '$DRY_RUN_INPUT', not 'true' or 'false'. Refusing to guess that a release was meant, so nothing will be pushed."
-+fi
-+echo "::notice title=DRY RUN::Nothing will be pushed, merged, tagged or released. The version bump is computed and committed locally, packaged with 'cargo publish --dry-run', and what a live run would create is printed instead."
++    /// Inbound streams refused or evicted this period, by reason (reset each
++    /// snapshot). The never-reset twin is `cumulative_inbound_stream_outcomes`,
++    /// which is what the OTel instrument observes.
++    inbound_stream_outcomes: [AtomicU32; InboundStreamOutcome::COUNT],
+ }
+ 
+ /// Period counters for packet loss, retransmission and standalone-ACK
+@@ -456,6 +460,7 @@ impl TransportMetrics {
+             transfer_ack_time_max_ms: AtomicU64::new(0),
+             inbound_queue_depth_hwm: AtomicU32::new(0),
+             inbound_queue_drops: AtomicU64::new(0),
++            inbound_stream_outcomes: Default::default(),
+         }
+     }
+ 
+@@ -940,6 +945,7 @@ impl TransportMetrics {
+     /// Record an inbound stream refused or evicted.
+     pub(crate) fn record_inbound_stream_outcome(&self, outcome: InboundStreamOutcome) {
+         self.cumulative_inbound_stream_outcomes[outcome as usize].fetch_add(1, Ordering::Relaxed);
++        self.inbound_stream_outcomes[outcome as usize].fetch_add(1, Ordering::Relaxed);
+     }
+ 
+     /// Cumulative inbound stream outcomes (refusals and evictions), never
+@@ -1076,6 +1082,26 @@ impl TransportMetrics {
+                 d.samples.lock().clone()
+             },
+             nat_fail_samples_dropped: get32(&d.samples_dropped),
++            inbound_s
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5944** (2026-10-19): feat(telemetry): report inbound stream refusals and evictions in transport_snapshot (@sanity)
 - **PR #5943** (2026-10-19): refactor(transport): classify transport errors and close reasons without UDP details (@sanity)
 - **PR #5941** (2026-10-19): refactor(transport): narrow the transport API boundary (@sanity)
 - **PR #5939** (2026-10-19): fix(ci): make release.yml dry_run side-effect free (@sanity)
 - **PR #5938** (2026-10-19): build: release 0.2.147 (@sanity)
 - **PR #5935** (2026-10-19): test: cut chain-collapse sim runtime and keep ping lockfile in sync (@sanity)
-- **PR #5934** (2026-10-19): fix(transport): validate declared stream lengths (@sanity)
 
 ---
 
@@ -2270,48 +2012,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): make release.yml dry_run side-effect free (#5939)
+## X. telemetry): report inbound stream refusals and evictions in transport_snapshot (
 
 **RULE**:
-When implementing operations in `.github/scripts/check_release_dry_run.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afb74456`: ci): make release.yml dry_run side-effect free (#5939). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c67eeea`: telemetry): report inbound stream refusals and evictions in transport_snapshot (#5944). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/check_release_dry_run.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#!/usr/bin/env python3
-"""Guard: a workflow's `dry_run` must not be able to push, merge, tag or publish.
-
-#5936. `release.yml` had a `dry_run` input described as "show what would be
-done without publishing". Each mutating step carried its own
-`if: ${{ !inputs.dry_run }}`, and the version-bump job carried none. So a dry
-run pushed `release/vX.Y.Z`, opened the real `build: release X.Y.Z` PR and
-enabled auto-merge on it, landing the bump on `main` through the merge queue:
-a partial release cut, which also invalidated any soak of the previous `main`.
-
-The fix replaces per-step guards with ONE resolved value, and this linter makes
-that structure the only one that passes:
-
-  1. The `validate` job resolves the input once, in its step `id: mode`
-     (`scripts/resolve_release_mode.sh`), and exports `outputs.live`. Only the
-     literal input `false` yields `live == 'true'`; anything else is a dry run.
-  2. `inputs.dry_run` is read NOWHERE else: dotted or indexed, any case, or
-     through a whole object that carries it (`inputs`, `github.event`,
-     `github`). A second reader is how the guards drifted apart.
-  3. Every MUTATING step is gated on `needs.validate.outputs.live == 'true'`,
-   
+the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`) and
+inbound stream refusals / evictions by reason (`inbound_stream_<label>`, one
+per `InboundStreamOutcome`; the never-reset twin feeds the opt-in OTel
+`freenet.transport.inbound_stream_limits`, which must not observe the period
+counters). Hot
+    freenet.transport.inbound_stream_limits) and per period in the
+    transport_snapshot inbound_stream_<label> fields. A new reason is added
+    once, in the inbound_stream_outcomes! list; it then needs a snapshot field.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`). Hot
+    freenet.transport.inbound_stream_limits).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afb74456` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c67eeea` are properly handled with clean fallback behavior.

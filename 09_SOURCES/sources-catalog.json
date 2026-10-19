@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "78eca881",
+    "sourceVersion": "3c67eeea",
     "license": "NOASSERTION",
-    "contentHash": "ae58ca77e925ec0055a749056dffb5a6b4ce3c72d5711206ee3f5298adc1d99c",
-    "lastHarvestedAt": "2026-10-19T20:10:37.675Z",
+    "contentHash": "429bfb38f85cba20a15c101d2667c1b920e7c77d790662430e4cbcf7b3403a1a",
+    "lastHarvestedAt": "2026-10-19T23:15:45.589Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -9428,5 +9428,25 @@
     "contentHash": "6ddbcc919fc21e580b87a1b70f26c78da35f46d9e61cb7750d5d6e9e6e3a24e6",
     "lastHarvestedAt": "2026-10-19T23:09:28.540Z",
     "learningId": "learn-github-paololeonardi-waterfallgrid"
+  },
+  "unifiedjs-unified": {
+    "repository": "unifiedjs/unified",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unifiedjs/unified",
+    "sourceVersion": "dfaf172e",
+    "license": "MIT",
+    "contentHash": "796254476ff83192d4d90e187c65ada735bfb2ee4c7acaffd79ef23fe930d1fe",
+    "lastHarvestedAt": "2026-10-19T23:15:39.036Z",
+    "learningId": "learn-github-unifiedjs-unified"
+  },
+  "sparrowcode-alertkit": {
+    "repository": "sparrowcode/AlertKit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sparrowcode/AlertKit",
+    "sourceVersion": "e8a0208c",
+    "license": "MIT",
+    "contentHash": "58e6825c5ff9d31bda6ec3185c5aa844517384594b196d209a887f599df000da",
+    "lastHarvestedAt": "2026-10-19T23:15:41.283Z",
+    "learningId": "learn-github-sparrowcode-alertkit"
   }
 }
