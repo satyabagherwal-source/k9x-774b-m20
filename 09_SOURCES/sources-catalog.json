@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "09ff62d3600250aa7b4a90f23b6055d581fd4a02225cf2681876e680b08bab05",
-    "lastHarvestedAt": "2026-10-17T23:29:55.493Z",
+    "contentHash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
+    "lastHarvestedAt": "2026-10-19T05:06:41.846Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -6028,5 +6028,55 @@
     "contentHash": "895373134a7c8a0bffa01030cdd5974d3ac81c613435efbaf1557dda29778952",
     "lastHarvestedAt": "2026-10-19T04:59:27.314Z",
     "learningId": "learn-github-redisearch-redisearch"
+  },
+  "taiga-family-taiga-ui": {
+    "repository": "taiga-family/taiga-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/taiga-family/taiga-ui",
+    "sourceVersion": "3ae41cf8",
+    "license": "Apache-2.0",
+    "contentHash": "e7a1ad477c19ee0ecac3a95210cb9b5c66a45eabdf1b427d066a66efeea20881",
+    "lastHarvestedAt": "2026-10-19T05:05:32.309Z",
+    "learningId": "learn-github-taiga-family-taiga-ui"
+  },
+  "u-root-u-root": {
+    "repository": "u-root/u-root",
+    "platform": "github",
+    "sourceUrl": "https://github.com/u-root/u-root",
+    "sourceVersion": "abce92f9",
+    "license": "BSD-3-Clause",
+    "contentHash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
+    "lastHarvestedAt": "2026-10-19T05:05:32.540Z",
+    "learningId": "learn-github-u-root-u-root"
+  },
+  "shoutem-ui": {
+    "repository": "shoutem/ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/shoutem/ui",
+    "sourceVersion": "6667fa73",
+    "license": "NOASSERTION",
+    "contentHash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
+    "lastHarvestedAt": "2026-10-19T05:05:36.935Z",
+    "learningId": "learn-github-shoutem-ui"
+  },
+  "databricks-click": {
+    "repository": "databricks/click",
+    "platform": "github",
+    "sourceUrl": "https://github.com/databricks/click",
+    "sourceVersion": "47ff7d1b",
+    "license": "Apache-2.0",
+    "contentHash": "7986d0e4f235c31105077b04a8330ff073271b2f06fa63d13eb2c57331f2e677",
+    "lastHarvestedAt": "2026-10-19T05:05:39.900Z",
+    "learningId": "learn-github-databricks-click"
+  },
+  "clickhouse-clickhouse": {
+    "repository": "ClickHouse/ClickHouse",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
+    "sourceVersion": "110043e5",
+    "license": "Apache-2.0",
+    "contentHash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
+    "lastHarvestedAt": "2026-10-19T05:05:46.160Z",
+    "learningId": "learn-github-clickhouse-clickhouse"
   }
 }

@@ -2940,3 +2940,9 @@ Every entry in this ledger must capture:
 | `learn-github-tiajinsha-jkvideo` | `https://github.com/tiajinsha/JKVideo` | `3592d036` | Multi-dimensional audit evidence | 2026-10-19T04:59:19.912Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `506808b0` | Multi-dimensional audit evidence | 2026-10-19T04:59:22.650Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `e72a7d3f` | Multi-dimensional audit evidence | 2026-10-19T04:59:27.314Z |
+| `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `3ae41cf8` | Multi-dimensional audit evidence | 2026-10-19T05:05:32.309Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `abce92f9` | Multi-dimensional audit evidence | 2026-10-19T05:05:32.540Z |
+| `learn-github-shoutem-ui` | `https://github.com/shoutem/ui` | `6667fa73` | Multi-dimensional audit evidence | 2026-10-19T05:05:36.935Z |
+| `learn-github-databricks-click` | `https://github.com/databricks/click` | `47ff7d1b` | Multi-dimensional audit evidence | 2026-10-19T05:05:39.900Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `110043e5` | Multi-dimensional audit evidence | 2026-10-19T05:05:46.160Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-19T05:06:41.846Z |

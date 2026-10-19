@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-JGPE",
-    "timestamp": "2026-10-18T04:49:46.322Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "28be5130718fff27b121f284153d6b825ba82c0db0a7f6413162c7bde63de049",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-JQGJ",
-    "timestamp": "2026-10-18T04:49:58.963Z",
-    "repository": "Addy0-com/free-open-technical-SEO-crawler",
-    "learningId": "learn-github-addy0-com-free-open-technical-seo-crawler",
-    "contentHash": "150472c3270a9365dfe62cf3f8b9fae60252c3ac0e726d4ea9e63e8e42aa12c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-LNSX",
-    "timestamp": "2026-10-18T04:51:28.833Z",
-    "repository": "MelnixDev/seo-crawl-audit",
-    "learningId": "learn-github-melnixdev-seo-crawl-audit",
-    "contentHash": "b14dd7161951d90edc4ee7f5c1a0747c11af4e74789919cc51773faf1ee402b9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-V6NI",
-    "timestamp": "2026-10-18T04:58:53.166Z",
-    "repository": "ISTIFANO/seo-auditor",
-    "learningId": "learn-github-istifano-seo-auditor",
-    "contentHash": "8e5ffbf50ad6cef575b4e799211ba6ac31e42e6bb76ee776131e7f5311d17880",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-VMIF",
-    "timestamp": "2026-10-18T04:59:13.719Z",
-    "repository": "ISTIFANO/seo-auditor",
-    "learningId": "learn-github-istifano-seo-auditor",
-    "contentHash": "25856b7326db72b881cb1122cb7c814729029c44ddaf6f9a4768eedef68be853",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-VMP3",
-    "timestamp": "2026-10-18T04:59:13.959Z",
-    "repository": "code-forge-io/seo-tools",
-    "learningId": "learn-github-code-forge-io-seo-tools",
-    "contentHash": "46563d110affd5df74ce6c8acff12b26234bf4be3e68950911edbfb7b2f295ec",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-VMW1",
     "timestamp": "2026-10-18T04:59:14.209Z",
     "repository": "hartemyaakoub/seo-toolkit",
@@ -7492,6 +7402,96 @@
     "contentHash": "895373134a7c8a0bffa01030cdd5974d3ac81c613435efbaf1557dda29778952",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-JLAN",
+    "timestamp": "2026-10-19T05:05:32.303Z",
+    "repository": "taiga-family/taiga-ui",
+    "learningId": "learn-github-taiga-family-taiga-ui",
+    "contentHash": "e7a1ad477c19ee0ecac3a95210cb9b5c66a45eabdf1b427d066a66efeea20881",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-JLH3",
+    "timestamp": "2026-10-19T05:05:32.535Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-JOV8",
+    "timestamp": "2026-10-19T05:05:36.932Z",
+    "repository": "shoutem/ui",
+    "learningId": "learn-github-shoutem-ui",
+    "contentHash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-JR5L",
+    "timestamp": "2026-10-19T05:05:39.897Z",
+    "repository": "databricks/click",
+    "learningId": "learn-github-databricks-click",
+    "contentHash": "7986d0e4f235c31105077b04a8330ff073271b2f06fa63d13eb2c57331f2e677",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-JVZI",
+    "timestamp": "2026-10-19T05:05:46.158Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-L2YA",
+    "timestamp": "2026-10-19T05:06:41.842Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

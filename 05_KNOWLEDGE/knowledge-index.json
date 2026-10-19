@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:59:27.265Z",
-  "total_verified_learnings": 622,
+  "last_updated": "2026-10-19T05:06:41.806Z",
+  "total_verified_learnings": 627,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4607,22 +4607,35 @@
     "learn-github-clickhouse-clickhouse": {
       "learning_id": "learn-github-clickhouse-clickhouse",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "clickhouse-clickhouse",
+      "source": "ClickHouse/ClickHouse",
+      "repository": "ClickHouse/ClickHouse",
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "HEAD",
-      "content_hash": "37c2b31b5363b6d45f7727f45494b17b05bd3ca28293617eddfe3ea1e8b1d8d7",
+      "source_version": "110043e5",
+      "content_hash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2161,
+          "title": "Merge pull request #126311 from groeneai/praktika-bedrock-converse-read-timeout",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.324Z"
+      "verified_at": "2026-10-19T05:05:46.112Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-clidey-whodb": {
       "learning_id": "learn-github-clidey-whodb",
@@ -5607,22 +5620,29 @@
     "learn-github-databricks-click": {
       "learning_id": "learn-github-databricks-click",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "databricks-click",
+      "source": "databricks/click",
+      "repository": "databricks/click",
       "slug": "databricks-click",
       "platform": "github",
       "source_url": "https://github.com/databricks/click",
-      "source_version": "HEAD",
-      "content_hash": "a507b36f23206f22cb9574debc05c9440544f85c3f14c12a1c04604d45e920ca",
+      "source_version": "47ff7d1b",
+      "content_hash": "7986d0e4f235c31105077b04a8330ff073271b2f06fa63d13eb2c57331f2e677",
       "dossier_path": "07_PROJECT_LEARNING/databricks-click-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databricks-click-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.517Z"
+      "verified_at": "2026-10-19T05:05:39.842Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-datadog-glommio": {
       "learning_id": "learn-github-datadog-glommio",
@@ -14094,7 +14114,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "09ff62d3600250aa7b4a90f23b6055d581fd4a02225cf2681876e680b08bab05",
+      "content_hash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -14155,6 +14175,21 @@
           "number": 1343,
           "title": "Asymmetric Text Prompt Enhancer Context Routing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2162,
+          "title": "Zero-Allocation Weight Deserialization via Typed Safetensors Memory Maps",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2163,
+          "title": "Symmetrical Dynamic Scaling Invariant for ConvRot / W4A8 Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2164,
+          "title": "CFG-Decoupled Step Count Enforcement for Distilled ODE Trajectories",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14175,7 +14210,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-10-17T23:29:55.458Z",
+      "verified_at": "2026-10-19T05:06:41.794Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34772,22 +34807,35 @@
     "learn-github-shoutem-ui": {
       "learning_id": "learn-github-shoutem-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "shoutem-ui",
+      "source": "shoutem/ui",
+      "repository": "shoutem/ui",
       "slug": "shoutem-ui",
       "platform": "github",
       "source_url": "https://github.com/shoutem/ui",
-      "source_version": "HEAD",
-      "content_hash": "4cd1bf0e8aa27525ce7c3ecbf85b575b0b352b2b9a32480577a867517db227c8",
+      "source_version": "6667fa73",
+      "content_hash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
       "dossier_path": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2160,
+          "title": "Merge pull request #928 from shoutem/hotfix/9.1.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.483Z"
+      "verified_at": "2026-10-19T05:05:36.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-showlab-code2video": {
       "learning_id": "learn-github-showlab-code2video",
@@ -36876,22 +36924,35 @@
     "learn-github-taiga-family-taiga-ui": {
       "learning_id": "learn-github-taiga-family-taiga-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "taiga-family-taiga-ui",
+      "source": "taiga-family/taiga-ui",
+      "repository": "taiga-family/taiga-ui",
       "slug": "taiga-family-taiga-ui",
       "platform": "github",
       "source_url": "https://github.com/taiga-family/taiga-ui",
-      "source_version": "HEAD",
-      "content_hash": "46deb4b870852b1d00f1e662c7789976607c9f156badd20c5d2012241dc912ab",
+      "source_version": "3ae41cf8",
+      "content_hash": "e7a1ad477c19ee0ecac3a95210cb9b5c66a45eabdf1b427d066a66efeea20881",
       "dossier_path": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2158,
+          "title": "layout): `AppBar` align title to start when it overflows on iOS liquid glass (#1",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.833Z"
+      "verified_at": "2026-10-19T05:05:32.214Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -38627,22 +38688,35 @@
     "learn-github-u-root-u-root": {
       "learning_id": "learn-github-u-root-u-root",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "u-root-u-root",
+      "source": "u-root/u-root",
+      "repository": "u-root/u-root",
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "HEAD",
-      "content_hash": "ca5eeea271a4f4baf1da48f3c7a085c3535cc1edcac2c6d33853f8ea44433dc4",
+      "source_version": "abce92f9",
+      "content_hash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2159,
+          "title": "ci: add codespell spell-check workflow and fix typos",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.142Z"
+      "verified_at": "2026-10-19T05:05:32.486Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-u14app-deep-research": {
       "learning_id": "learn-github-u14app-deep-research",
@@ -77498,6 +77572,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:59:27.252Z"
+    },
+    "rule-2158": {
+      "learning_id": "rule-2158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2158,
+      "title": "layout): `AppBar` align title to start when it overflows on iOS liquid glass (#1",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "3ae41cf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:05:32.214Z"
+    },
+    "rule-2159": {
+      "learning_id": "rule-2159",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2159,
+      "title": "ci: add codespell spell-check workflow and fix typos",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "abce92f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:05:32.486Z"
+    },
+    "rule-2160": {
+      "learning_id": "rule-2160",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2160,
+      "title": "Merge pull request #928 from shoutem/hotfix/9.1.1",
+      "source_url": "https://github.com/shoutem/ui",
+      "source_version": "6667fa73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:05:36.868Z"
+    },
+    "rule-2161": {
+      "learning_id": "rule-2161",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2161,
+      "title": "Merge pull request #126311 from groeneai/praktika-bedrock-converse-read-timeout",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "110043e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:05:46.112Z"
+    },
+    "rule-2162": {
+      "learning_id": "rule-2162",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2162,
+      "title": "Zero-Allocation Weight Deserialization via Typed Safetensors Memory Maps",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:06:41.794Z"
+    },
+    "rule-2163": {
+      "learning_id": "rule-2163",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2163,
+      "title": "Symmetrical Dynamic Scaling Invariant for ConvRot / W4A8 Quantization",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:06:41.794Z"
+    },
+    "rule-2164": {
+      "learning_id": "rule-2164",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2164,
+      "title": "CFG-Decoupled Step Count Enforcement for Distilled ODE Trajectories",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:06:41.794Z"
     }
   },
   "aliases": {

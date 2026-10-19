@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:59:27.319Z",
+  "last_updated": "2026-10-19T05:06:41.851Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -573,14 +573,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "09ff62d3600250aa7b4a90f23b6055d581fd4a02225cf2681876e680b08bab05",
-      "verified_at": "2026-10-17T23:29:55.495Z",
+      "content_hash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
+      "verified_at": "2026-10-19T05:06:41.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:29:55.495Z"
+      "last_updated": "2026-10-19T05:06:41.851Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -9157,6 +9157,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:59:27.319Z"
+    },
+    "taiga-family/taiga-ui": {
+      "repository": "taiga-family/taiga-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-taiga-family-taiga-ui",
+      "content_hash": "e7a1ad477c19ee0ecac3a95210cb9b5c66a45eabdf1b427d066a66efeea20881",
+      "verified_at": "2026-10-19T05:05:32.318Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:05:32.318Z"
+    },
+    "u-root/u-root": {
+      "repository": "u-root/u-root",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-u-root-u-root",
+      "content_hash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
+      "verified_at": "2026-10-19T05:05:32.545Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:05:32.545Z"
+    },
+    "shoutem/ui": {
+      "repository": "shoutem/ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-shoutem-ui",
+      "content_hash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
+      "verified_at": "2026-10-19T05:05:36.940Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:05:36.940Z"
+    },
+    "databricks/click": {
+      "repository": "databricks/click",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-databricks-click",
+      "content_hash": "7986d0e4f235c31105077b04a8330ff073271b2f06fa63d13eb2c57331f2e677",
+      "verified_at": "2026-10-19T05:05:39.905Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:05:39.905Z"
+    },
+    "ClickHouse/ClickHouse": {
+      "repository": "ClickHouse/ClickHouse",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-clickhouse-clickhouse",
+      "content_hash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
+      "verified_at": "2026-10-19T05:05:46.165Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:05:46.165Z"
     }
   },
   "repos": {

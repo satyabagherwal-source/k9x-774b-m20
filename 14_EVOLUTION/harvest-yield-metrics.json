@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T04:59:27.317Z",
-  "total_cycles_completed": 2910,
-  "total_learnings_persisted": 2910,
-  "total_rules_promoted": 1941,
+  "last_updated": "2026-10-19T05:06:41.849Z",
+  "total_cycles_completed": 2916,
+  "total_learnings_persisted": 2916,
+  "total_rules_promoted": 1948,
   "history": [
-    {
-      "timestamp": "2026-10-19T01:16:19.149Z",
-      "repository": "ekmas/neobrutalism-components",
-      "learningId": "learn-github-ekmas-neobrutalism-components",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:16:20.324Z",
-      "repository": "vi/websocat",
-      "learningId": "learn-github-vi-websocat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:16:26.803Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:16:28.058Z",
-      "repository": "Qwen/Qwen3.8-27B",
-      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:16:28.952Z",
-      "repository": "sealerio/sealer",
-      "learningId": "learn-github-sealerio-sealer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:16:32.539Z",
-      "repository": "cozodb/cozo",
-      "learningId": "learn-github-cozodb-cozo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T01:22:32.231Z",
       "repository": "elrumordelaluz/reactour",
@@ -1403,6 +1361,48 @@
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:05:32.315Z",
+      "repository": "taiga-family/taiga-ui",
+      "learningId": "learn-github-taiga-family-taiga-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:05:32.543Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:05:36.938Z",
+      "repository": "shoutem/ui",
+      "learningId": "learn-github-shoutem-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:05:39.903Z",
+      "repository": "databricks/click",
+      "learningId": "learn-github-databricks-click",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:05:46.163Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:06:41.849Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
