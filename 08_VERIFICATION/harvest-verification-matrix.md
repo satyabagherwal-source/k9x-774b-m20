@@ -2873,3 +2873,9 @@
 | `CYCLE-20261019-ZE3M` | `2026-10-19T03:53:50.626Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2095` | Yes (`7ac9f43a...`) |
 | `CYCLE-20261019-ZH8K` | `2026-10-19T03:53:54.692Z` | `olric-data/olric` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2096` | Yes (`bd698514...`) |
 | `CYCLE-20261019-0DHO` | `2026-10-19T03:54:36.492Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2097, Rule 2098, Rule 2099` | Yes (`75ce2f70...`) |
+| `CYCLE-20261019-88XH` | `2026-10-19T04:00:43.829Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`2d01ad3a...`) |
+| `CYCLE-20261019-88YQ` | `2026-10-19T04:00:43.874Z` | `shadcn-ui/lint` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2100` | Yes (`99f7cf0b...`) |
+| `CYCLE-20261019-8A7O` | `2026-10-19T04:00:45.492Z` | `ekzhang/rustpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2101` | Yes (`3a406d26...`) |
+| `CYCLE-20261019-8DSQ` | `2026-10-19T04:00:50.138Z` | `thecodingmachine/react-native-boilerplate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2102` | Yes (`bf573b97...`) |
+| `CYCLE-20261019-8GIE` | `2026-10-19T04:00:53.654Z` | `snyk/driftctl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2103` | Yes (`e62b61b5...`) |
+| `CYCLE-20261019-8JTX` | `2026-10-19T04:00:57.957Z` | `lindb/lindb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2104` | Yes (`9839ccb9...`) |

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-supersoni`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T22:57:23.798Z  
+> **Timestamp**: 2026-10-19T04:00:43.678Z  
 > **Learning ID**: `learn-huggingface-supersoniclabs-julia-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/SupersonicLabs/Julia-1](https://huggingface.co/SupersonicLabs/Julia-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T22:57:23.169Z  
+> **Harvest Timestamp**: 2026-10-19T04:00:43.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5674 downloads | 483 likes
+- **Stars / Engagement**: 5748 downloads | 487 likes
 
 ---
 

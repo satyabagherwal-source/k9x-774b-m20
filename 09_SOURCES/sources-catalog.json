@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "c7604653252230e58756a345f12d6e635073ea180b623f9e79b6819bae3076c0",
-    "lastHarvestedAt": "2026-10-17T22:57:23.877Z",
+    "contentHash": "2d01ad3a3b7a2c1293f5d8266622cddb5b2d842ee61c82a96a3ee43192b7dc0a",
+    "lastHarvestedAt": "2026-10-19T04:00:43.832Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -5528,5 +5528,55 @@
     "contentHash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
     "lastHarvestedAt": "2026-10-19T03:54:36.499Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
+  },
+  "shadcn-ui-lint": {
+    "repository": "shadcn-ui/lint",
+    "platform": "github",
+    "sourceUrl": "https://github.com/shadcn-ui/lint",
+    "sourceVersion": "f1c81bda",
+    "license": "MIT",
+    "contentHash": "99f7cf0bb92b14fb8c5e4cfe124190ad1aefb4b89e0df2a8ba07b1e2e497024d",
+    "lastHarvestedAt": "2026-10-19T04:00:43.881Z",
+    "learningId": "learn-github-shadcn-ui-lint"
+  },
+  "ekzhang-rustpad": {
+    "repository": "ekzhang/rustpad",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ekzhang/rustpad",
+    "sourceVersion": "54e4a938",
+    "license": "MIT",
+    "contentHash": "3a406d262bc39421c828b0d66fa1dda09e8aaf6f0b7fe28afd7870a86bed506e",
+    "lastHarvestedAt": "2026-10-19T04:00:45.495Z",
+    "learningId": "learn-github-ekzhang-rustpad"
+  },
+  "thecodingmachine-react-native-boilerplate": {
+    "repository": "thecodingmachine/react-native-boilerplate",
+    "platform": "github",
+    "sourceUrl": "https://github.com/thecodingmachine/react-native-boilerplate",
+    "sourceVersion": "1a8b1d5b",
+    "license": "MIT",
+    "contentHash": "bf573b97bea3344571fe1f202206de9060924e8b00b3f10a24ea222395cc2c1c",
+    "lastHarvestedAt": "2026-10-19T04:00:50.145Z",
+    "learningId": "learn-github-thecodingmachine-react-native-boilerplate"
+  },
+  "snyk-driftctl": {
+    "repository": "snyk/driftctl",
+    "platform": "github",
+    "sourceUrl": "https://github.com/snyk/driftctl",
+    "sourceVersion": "70717f65",
+    "license": "Apache-2.0",
+    "contentHash": "e62b61b5bdeafa181f379594d5457d4328d67f657b7ceadc58894da4b81fc248",
+    "lastHarvestedAt": "2026-10-19T04:00:53.660Z",
+    "learningId": "learn-github-snyk-driftctl"
+  },
+  "lindb-lindb": {
+    "repository": "lindb/lindb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lindb/lindb",
+    "sourceVersion": "612070e1",
+    "license": "Apache-2.0",
+    "contentHash": "9839ccb99f5785fe98d72cb00e3395c26b0850d03bda3030110574adba4178f1",
+    "lastHarvestedAt": "2026-10-19T04:00:57.963Z",
+    "learningId": "learn-github-lindb-lindb"
   }
 }

@@ -2880,3 +2880,9 @@ Every entry in this ledger must capture:
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `d06cb647` | Multi-dimensional audit evidence | 2026-10-19T03:53:50.635Z |
 | `learn-github-olric-data-olric` | `https://github.com/olric-data/olric` | `c49c44a8` | Multi-dimensional audit evidence | 2026-10-19T03:53:54.699Z |
 | `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `f4eb6edb` | Multi-dimensional audit evidence | 2026-10-19T03:54:36.499Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-19T04:00:43.832Z |
+| `learn-github-shadcn-ui-lint` | `https://github.com/shadcn-ui/lint` | `f1c81bda` | Multi-dimensional audit evidence | 2026-10-19T04:00:43.881Z |
+| `learn-github-ekzhang-rustpad` | `https://github.com/ekzhang/rustpad` | `54e4a938` | Multi-dimensional audit evidence | 2026-10-19T04:00:45.495Z |
+| `learn-github-thecodingmachine-react-native-boilerplate` | `https://github.com/thecodingmachine/react-native-boilerplate` | `1a8b1d5b` | Multi-dimensional audit evidence | 2026-10-19T04:00:50.145Z |
+| `learn-github-snyk-driftctl` | `https://github.com/snyk/driftctl` | `70717f65` | Multi-dimensional audit evidence | 2026-10-19T04:00:53.660Z |
+| `learn-github-lindb-lindb` | `https://github.com/lindb/lindb` | `612070e1` | Multi-dimensional audit evidence | 2026-10-19T04:00:57.963Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:54:36.451Z",
-  "total_verified_learnings": 572,
+  "last_updated": "2026-10-19T04:00:57.922Z",
+  "total_verified_learnings": 577,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6846,22 +6846,35 @@
     "learn-github-ekzhang-rustpad": {
       "learning_id": "learn-github-ekzhang-rustpad",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ekzhang-rustpad",
+      "source": "ekzhang/rustpad",
+      "repository": "ekzhang/rustpad",
       "slug": "ekzhang-rustpad",
       "platform": "github",
       "source_url": "https://github.com/ekzhang/rustpad",
-      "source_version": "HEAD",
-      "content_hash": "7de12ea345c363901eefa4b6318bb0a6bf84bb246410109deafffcb8b9f40c5e",
+      "source_version": "54e4a938",
+      "content_hash": "3a406d262bc39421c828b0d66fa1dda09e8aaf6f0b7fe28afd7870a86bed506e",
       "dossier_path": "07_PROJECT_LEARNING/ekzhang-rustpad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ekzhang-rustpad-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2101,
+          "title": "Switch to `wasm-pack build --target bundler` and Vite plugins for loading WebAss",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.756Z"
+      "verified_at": "2026-10-19T04:00:45.435Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-elai950-alerttoast": {
       "learning_id": "learn-github-elai950-alerttoast",
@@ -20755,7 +20768,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "c7604653252230e58756a345f12d6e635073ea180b623f9e79b6819bae3076c0",
+      "content_hash": "2d01ad3a3b7a2c1293f5d8266622cddb5b2d842ee61c82a96a3ee43192b7dc0a",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -20821,7 +20834,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-17T22:57:23.837Z",
+      "verified_at": "2026-10-19T04:00:43.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25447,22 +25460,35 @@
     "learn-github-lindb-lindb": {
       "learning_id": "learn-github-lindb-lindb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lindb-lindb",
+      "source": "lindb/lindb",
+      "repository": "lindb/lindb",
       "slug": "lindb-lindb",
       "platform": "github",
       "source_url": "https://github.com/lindb/lindb",
-      "source_version": "HEAD",
-      "content_hash": "aa2653c348e0167c26931a4db589eab2ec3c043b4e789e0c2e332092a2fc016d",
+      "source_version": "612070e1",
+      "content_hash": "9839ccb99f5785fe98d72cb00e3395c26b0850d03bda3030110574adba4178f1",
       "dossier_path": "07_PROJECT_LEARNING/lindb-lindb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lindb-lindb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2104,
+          "title": "[chore]: rebase v0.3.0_bug_fix (#1025)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.021Z"
+      "verified_at": "2026-10-19T04:00:57.914Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lingodotdev-lingo-dev": {
       "learning_id": "learn-github-lingodotdev-lingo-dev",
@@ -33970,22 +33996,35 @@
     "learn-github-shadcn-ui-lint": {
       "learning_id": "learn-github-shadcn-ui-lint",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "shadcn-ui-lint",
+      "source": "shadcn-ui/lint",
+      "repository": "shadcn-ui/lint",
       "slug": "shadcn-ui-lint",
       "platform": "github",
       "source_url": "https://github.com/shadcn-ui/lint",
-      "source_version": "HEAD",
-      "content_hash": "4799ea13854c378c43c9341f1ca3c60e6c3ddbb47eb71dd0f1a9c3fdde361a6f",
+      "source_version": "f1c81bda",
+      "content_hash": "99f7cf0bb92b14fb8c5e4cfe124190ad1aefb4b89e0df2a8ba07b1e2e497024d",
       "dossier_path": "07_PROJECT_LEARNING/shadcn-ui-lint-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shadcn-ui-lint-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2100,
+          "title": "check components reached through nested namespaces (#107)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.455Z"
+      "verified_at": "2026-10-19T04:00:43.827Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-shadcn-ui-taxonomy": {
       "learning_id": "learn-github-shadcn-ui-taxonomy",
@@ -34962,22 +35001,35 @@
     "learn-github-snyk-driftctl": {
       "learning_id": "learn-github-snyk-driftctl",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "snyk-driftctl",
+      "source": "snyk/driftctl",
+      "repository": "snyk/driftctl",
       "slug": "snyk-driftctl",
       "platform": "github",
       "source_url": "https://github.com/snyk/driftctl",
-      "source_version": "HEAD",
-      "content_hash": "22e05e505bbcbb9086711c981d9ddf2831182be7292a7b68c915be3fbac7154d",
+      "source_version": "70717f65",
+      "content_hash": "e62b61b5bdeafa181f379594d5457d4328d67f657b7ceadc58894da4b81fc248",
       "dossier_path": "07_PROJECT_LEARNING/snyk-driftctl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/snyk-driftctl-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2103,
+          "title": "Merge pull request #1723 from snyk/snyk-fix-6f4c4ccfa841a20ac5611d23ea29c7ff",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.608Z"
+      "verified_at": "2026-10-19T04:00:53.609Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-socialai-tianji-tianji": {
       "learning_id": "learn-github-socialai-tianji-tianji",
@@ -36925,22 +36977,35 @@
     "learn-github-thecodingmachine-react-native-boilerplate": {
       "learning_id": "learn-github-thecodingmachine-react-native-boilerplate",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "thecodingmachine-react-native-boilerplate",
+      "source": "thecodingmachine/react-native-boilerplate",
+      "repository": "thecodingmachine/react-native-boilerplate",
       "slug": "thecodingmachine-react-native-boilerplate",
       "platform": "github",
       "source_url": "https://github.com/thecodingmachine/react-native-boilerplate",
-      "source_version": "HEAD",
-      "content_hash": "74ec98985fb284332c760cf00d24b39aee8e9357debd898de292535def9b5fa1",
+      "source_version": "1a8b1d5b",
+      "content_hash": "bf573b97bea3344571fe1f202206de9060924e8b00b3f10a24ea222395cc2c1c",
       "dossier_path": "07_PROJECT_LEARNING/thecodingmachine-react-native-boilerplate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thecodingmachine-react-native-boilerplate-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2102,
+          "title": "resolve Windows compatibility issues in compile-js plugin (#507)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.949Z"
+      "verified_at": "2026-10-19T04:00:50.091Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-thedaviddias-front-end-checklist": {
       "learning_id": "learn-github-thedaviddias-front-end-checklist",
@@ -75996,6 +76061,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:54:36.443Z"
+    },
+    "rule-2100": {
+      "learning_id": "rule-2100",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2100,
+      "title": "check components reached through nested namespaces (#107)",
+      "source_url": "https://github.com/shadcn-ui/lint",
+      "source_version": "f1c81bda",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:00:43.827Z"
+    },
+    "rule-2101": {
+      "learning_id": "rule-2101",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2101,
+      "title": "Switch to `wasm-pack build --target bundler` and Vite plugins for loading WebAss",
+      "source_url": "https://github.com/ekzhang/rustpad",
+      "source_version": "54e4a938",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:00:45.435Z"
+    },
+    "rule-2102": {
+      "learning_id": "rule-2102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2102,
+      "title": "resolve Windows compatibility issues in compile-js plugin (#507)",
+      "source_url": "https://github.com/thecodingmachine/react-native-boilerplate",
+      "source_version": "1a8b1d5b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:00:50.091Z"
+    },
+    "rule-2103": {
+      "learning_id": "rule-2103",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2103,
+      "title": "Merge pull request #1723 from snyk/snyk-fix-6f4c4ccfa841a20ac5611d23ea29c7ff",
+      "source_url": "https://github.com/snyk/driftctl",
+      "source_version": "70717f65",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:00:53.609Z"
+    },
+    "rule-2104": {
+      "learning_id": "rule-2104",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2104,
+      "title": "[chore]: rebase v0.3.0_bug_fix (#1025)",
+      "source_url": "https://github.com/lindb/lindb",
+      "source_version": "612070e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:00:57.914Z"
     }
   },
   "aliases": {
