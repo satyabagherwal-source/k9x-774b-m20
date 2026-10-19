@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T05:19:12.540Z",
-  "total_cycles_completed": 2928,
-  "total_learnings_persisted": 2928,
-  "total_rules_promoted": 1960,
+  "last_updated": "2026-10-19T05:25:41.718Z",
+  "total_cycles_completed": 2934,
+  "total_learnings_persisted": 2934,
+  "total_rules_promoted": 1968,
   "history": [
-    {
-      "timestamp": "2026-10-19T01:34:47.393Z",
-      "repository": "keenthemes/reui",
-      "learningId": "learn-github-keenthemes-reui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:34:48.925Z",
-      "repository": "svenstaro/miniserve",
-      "learningId": "learn-github-svenstaro-miniserve",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:34:53.548Z",
-      "repository": "founded-labs/react-native-reusables",
-      "learningId": "learn-github-founded-labs-react-native-reusables",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:34:54.403Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:34:57.273Z",
-      "repository": "openyurtio/openyurt",
-      "learningId": "learn-github-openyurtio-openyurt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:35:01.941Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T01:35:03.600Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T05:19:12.540Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:25:25.365Z",
+      "repository": "megh-bari/pattern-craft",
+      "learningId": "learn-github-megh-bari-pattern-craft",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:25:29.088Z",
+      "repository": "golutra/golutra",
+      "learningId": "learn-github-golutra-golutra",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:25:32.793Z",
+      "repository": "gitpoint/git-point",
+      "learningId": "learn-github-gitpoint-git-point",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:25:34.190Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:25:34.751Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:25:41.718Z",
+      "repository": "tursodatabase/libsql",
+      "learningId": "learn-github-tursodatabase-libsql",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

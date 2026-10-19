@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/libsql-libsql-learnings.md`  
+> **Source**: github ([https://github.com/libsql/libsql](https://github.com/libsql/libsql))  
+> **Source Version**: `d8bc862d`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T05:25:41.425Z  
+> **Learning ID**: `learn-github-tursodatabase-libsql`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): tursodatabase/libsql
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/libsql-libsql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/libsql/libsql](https://github.com/libsql/libsql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-07T21:23:07.339Z  
+> **Harvest Timestamp**: 2026-10-19T05:25:41.417Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: libSQL is a fork of SQLite that is both Open Source, and Open Contributions.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17258 stars
+- **Stars / Engagement**: 17279 stars
 
 ---
 
@@ -1346,489 +1360,6 @@ fn add_column(
         "ALTER TABLE \"{table}\" ADD COLUMN \"{name}\" {col_type} {notnull} {dflt
 ```
 
-### Core Architecture Module: `libsql-sqlite3/ext/crr/rs/core/src/backfill.rs`
-```
-use sqlite_nostd::{sqlite3, Connection, Destructor, ManagedStmt, ResultCode};
-extern crate alloc;
-use crate::tableinfo::ColumnInfo;
-use crate::util::get_dflt_value;
-use alloc::format;
-use alloc::string::String;
-use alloc::{vec, vec::Vec};
-use sqlite_nostd as sqlite;
-
-/**
- * Backfills rows in a table with clock values.
- */
-pub fn backfill_table(
-    db: *mut sqlite3,
-    table: &str,
-    pk_cols: &Vec<ColumnInfo>,
-    non_pk_cols: &Vec<ColumnInfo>,
-    is_commit_alter: bool,
-    no_tx: bool,
-) -> Result<ResultCode, ResultCode> {
-    if !no_tx {
-        db.exec_safe("SAVEPOINT backfill")?;
-    }
-
-    let sql = format!(
-        "SELECT {pk_cols} FROM \"{table}\" AS t1
-        EXCEPT SELECT {pk_cols} FROM \"{table}__crsql_pks\" AS t2",
-        table = crate::util::escape_ident(table),
-        pk_cols = pk_cols
-            .iter()
-            .map(|f| format!("\"{}\"", crate::util::escape_ident(&f.name)))
-            .collect::<Vec<_>>()
-            .join(", "),
-    );
-    let stmt = db.prepare_v2(&sql);
-
-    let non_pk_cols_refs = non_pk_cols.iter().collect::<Vec<_>>();
-    let result = match stmt {
-        Ok(stmt) => create_clock_rows_from_stmt(
-            stmt,
-            db,
-            table,
-            pk_cols,
-            &non_pk_cols_refs,
-            is_commit_alter,
-        ),
-        Err(e) => Err(e),
-    };
-
-    if let Err(e) = result {
-        if !no_tx {
-            db.exec_safe("ROLLBACK")?;
-        }
-
-        return Err(e);
-    }
-
-    if let Err(e) = backfill_missing_columns(db, table, pk_cols, non_pk_cols, is_commit_alter) {
-        if !no_tx {
-            db.exec_safe("ROLLBACK")?;
-        }
-
-        return Err(e);
-    }
-
-    if !no_tx {
-        db.exec_safe("RELEASE backfill")
-    } else {
-        Ok(ResultCode::OK)
-    }
-}
-
-/**
-* Given a statement that returns rows in the source table not present
-* in the clock table, create those rows in the clock table.
-*/
-fn create_clock_rows_from_stmt(
-    read_stmt: ManagedStmt,
-    db: *mut sqlite3,
-    table: &str,
-    pk_cols: &Vec<ColumnInfo>,
-    non_pk_cols: &Vec<&ColumnInfo>,
-    is_commit_alter: bool,
-) -> Result<ResultCode, ResultCode> {
-    let select_key = db.prepare_v2(&format!(
-        "SELECT __crsql_key FROM \"{table}__crsql_pks\" WHERE {pk_where_conditions}",
-        table = crate::util::escape_ident(table),
-        pk_where_conditions = crate::util::where_list(pk_cols, None)?
-    ))?;
-    let create_key = db.prepare_v2(&format!(
-        "INSERT INTO \"{table}__crsql_pks\" ({pk_cols}) VALUES ({pk_values}) RETURNING __crsql_key",
-        table = crate::util::escape_ident(table),
-        pk_cols = pk_cols
-            .iter()
-            .map(|f| format!("\"{}\"", crate::util::escape_ident(&f.name)))
-            .collect::<Vec<_>>()
-            .join(", "),
-        pk_values = pk_cols.iter().map(|_| "?").collect::<Vec<_>>().join(", "),
-    ))?;
-    // We do not grab nextdbversion on migration.
-    // The idea is that other nodes will apply the same migration
-    // in the future so if they have already seen this node up
-    // to the current db version then the migration will place them into the correct
-    // state. No need to re-sync post migration.
-    // or-ignore since we do not drop sentinel values during compaction as they act as our metadata
-    // to determine if rows should resurrect on a future insertion event provided by a peer.
-    let sql = format!(
-        "INSERT OR IGNORE INTO \"{table}__crsql_clock\"
-          (key, col_name, col_version, db_version, seq) VALUES
-          (?, ?, 1, {dbversion_getter}, crsql_increment_and_get_seq())",
-        table = crate::util::escape_ident(table),
-        dbversion_getter = if is_commit_alter {
-            "crsql_db_version()"
-        } else {
-            "crsql_next_db_version()"
-        }
-    );
-    let write_stmt = db.prepare_v2(&sql)?;
-
-    while read_stmt.step()? == ResultCode::ROW {
-        let key = get_or_create_key(&select_key, &create_key, pk_cols, &read_stmt)?;
-        write_stmt.bind_int64(1, key)?;
-
-        for col in non_pk_cols.iter() {
-            // We even backfill default values since we can't differentiate between an explicit
-            // reset to a default vs an implicit set to default on create. Do we? I don't think we do set defaults.
-            write_stmt.bind_text(2, &col.name, Destructor::STATIC)?;
-            write_stmt.step()?;
-            write_stmt.reset()?;
-        }
-        if non_pk_cols.len() == 0 {
-            write_stmt.bind_text(2, crate::c::INSERT_SENTINEL, Destructor::STATIC)?;
-            write_stmt.step()?;
-            write_stmt.reset()?;
-        }
-    }
-
-    Ok(ResultCode::OK)
-}
-
-fn get_or_create_key(
-    select_stmt: &ManagedStmt,
-    create_stmt: &ManagedStmt,
-    pk_cols: &Vec<ColumnInfo>,
-    read_stmt: &ManagedStmt,
-) -> Result<sqlite::int64, ResultCode> {
-    for (i, _name) in pk_cols.iter().enumerate() {
-        let value = read_stmt.column_value(i as i32)?;
-        // TODO: ok to bind into to places at once?
-        select_stmt.bind_value(i as i32 + 1, value)?;
-        create_stmt.bind_value(i as i32 + 1, value)?;
-    }
-
-    if let Ok(ResultCode::ROW) = select_stmt.step() {
-        let key = select_stmt.column_int64(0);
-        create_stmt.clear_bindings()?;
-        select_stmt.reset()?;
-        return Ok(key);
-    }
-    select_stmt.reset()?;
-
-    if let Ok(ResultCode::ROW) = create_stmt.step() {
-        let key = create_stmt.column_int64(0);
-        create_stmt.reset()?;
-        return Ok(key);
-    }
-    create_stmt.reset()?;
-
-    return Err(ResultCode::ERROR);
-}
-
-/**
-* For each column, make sure there was a clock table entry.
-* If not, fill the data in for it for each row.
-*
-* Can we optimize and skip cases where it is equivalent to the default value?
-* E.g., adding a new column set to default values should not require a backfill...
-*/
-fn backfill_missing_columns(
-    db: *mut sqlite3,
-    table: &str,
-    pk_cols: &Vec<ColumnInfo>,
-    non_pk_cols: &Vec<ColumnInfo>,
-    is_commit_alter: bool,
-) -> Result<ResultCode, ResultCode> {
-    for non_pk_col in non_pk_cols {
-        fill_column(db, table, pk_cols, &non_pk_col, is_commit_alter)?;
-    }
-
-    Ok(ResultCode::OK)
-}
-
-// This doesn't fill compeltely new columns...
-// Wel... does it not? The on condition x left join should do it.
-fn fill_column(
-    db: *mut sqlite3,
-    table: &str,
-    pk_cols: &Vec<ColumnInfo>,
-    non_pk_col: &ColumnInfo,
-    is_commit_alter: bool,
-) -> Result<ResultCode, ResultCode> {
-    // Only fill rows for which
-    // - a row does not exist for that pk combo _and_ the cid in the clock table.
-    // - the value is not the default value for that column.
-    let dflt_value = get_dflt_value(db, table, &non_pk_col.name)?;
-    let sql = format!(
-        "SELECT {pk_cols} FROM {table} as t1
-          JOIN \"{table}__crsql_pks\" as t2 ON {pk_on_conditions}
-          LEFT JOIN \"{table}__crsql_clock\" as t3 ON t3.key = t2.__crsql_key AND t3.col_name = ?
-          WHERE t3.key IS NULL {dflt_value_condition}",
-        table = crate::util::escape_ident(table),
-        pk_cols = pk_cols
-            .iter()
-            .map(|f| format!("t1.\"{}\"", crate::util::escape_ident(&f.name)))
-            .collect::<Vec<_>>()
-            .join(", "),
-        pk_on_conditions = pk_cols
-            .iter()
-            .map(|f| format!(
-                "t1.\"{}\" = t2.\"{}\"",
-                crate::util::escape_ident(&f.name),
-                crate::util::escape_ident(&f.name)
-            ))
-            .collect::<Vec<_>>()
-            .join(" AND "),
-        dflt_value_condition = if let Some(dflt) = dflt_value {
-            format!("AND t1.\"{}\" IS NOT {}", &non_pk_col.name, dflt)
-        } else {
-            String::from("")
-        },
-    );
-    let read_stmt = db.prepare_v2(&sql)?;
-    read_stmt.bind_text(1, &non_pk_col.name, Destructor::STATIC)?;
-
-    // TODO: rm clone?
-    let non_pk_cols = vec![non_pk_col];
-    create_clock_rows_from_stmt(read_stmt, db, table, pk_cols, &non_pk_cols, is_commit_alter)
-}
-
-```
-
-### Core Architecture Module: `libsql-sqlite3/ext/crr/rs/core/src/bootstrap.rs`
-```
-use core::ffi::{c_char, c_int};
-
-use crate::{consts, tableinfo::TableInfo};
-use alloc::{ffi::CString, format};
-use core::slice;
-use sqlite::{sqlite3, Connection, Destructor, ResultCode};
-use sqlite_nostd as sqlite;
-
-fn uuid() -> [u8; 16] {
-    let mut blob: [u8; 16] = [0; 16];
-    sqlite::randomness(&mut blob);
-    blob[6] = (blob[6] & 0x0f) + 0x40;
-    blob[8] = (blob[8] & 0x3f) + 0x80;
-    blob
-}
-
-#[no_mangle]
-pub extern "C" fn crsql_init_site_id(db: *mut sqlite3, ret: *mut u8) -> c_int {
-    let buffer: &mut [u8] = unsafe { slice::from_raw_parts_mut(ret, 16) };
-    if let Ok(site_id) = init_site_id(db) {
-        buffer.copy_from_slice(&site_id);
-        ResultCode::OK as c_int
-    } else {
-        ResultCode::ERROR as c_int
-    }
-}
-
-fn insert_site_id(db: *mut sqlite3) -> Result<[u8; 16], ResultCode> {
-    let stmt = db.prepare_v2(&format!(
-        "INSERT INTO \"{tbl}\" (site_id, ordinal) VALUES (?, 0)",
-        tbl = consts::TBL_SITE_ID
-    ))?;
-
-    let site_id = uuid();
-    stmt.bind_blob(1, &site_id, Destructor::STATIC)?;
-    stmt.step()?;
-
-    Ok(site_id)
-}
-
-fn create_site_id_and_site_id_table(db: *mut sqlite3) -> Result<[u8; 16], ResultCode> {
-    db.exec_safe(&format!(
-        "CREATE TABLE \"{tbl}\" (site_id BLOB NOT NULL, ordinal INTEGER PRIMARY KEY);
-        CREATE UNIQUE INDEX {tbl}_site_id ON \"{tbl}\" (site_id);",
-        tbl = consts::TBL_SITE_ID
-    ))?;
-
-    insert_site_id(db)
-}
-
-#[no_mangle]
-pub extern "C" fn crsql_init_peer_tracking_table(db: *mut sqlite3) -> c_int {
-    match db.exec_safe("CREATE TABLE IF NOT EXISTS crsql_tracked_peers (\"site_id\" BLOB NOT NULL, \"version\" INTEGER NOT NULL, \"seq\" INTEGER DEFAULT 0, \"tag\" INTEGER, \"event\" INTEGER, PRIMARY KEY (\"site_id\", \"tag\", \"event\")) STRICT;") {
-      Ok(_) => ResultCode::OK as c_int,
-      Err(code) => code as c_int
-    }
-}
-
-fn has_table(db: *mut sqlite3, table_name: &str) -> Result<bool, ResultCode> {
-    let stmt =
-        db.prepare_v2("SELECT 1 FROM sqlite_master WHERE type = 'table' AND tbl_name = ?")?;
-    stmt.bind_text(1, table_name, Destructor::STATIC)?;
-    let tbl_exists_result = stmt.step()?;
-    Ok(tbl_exists_result == ResultCode::ROW)
-}
-
-/**
- * Loads the siteId into memory. If a site id
- * cannot be found for the given database one is created
- * and saved to the site id table.
- */
-fn init_site_id(db: *mut sqlite3) -> Result<[u8; 16], ResultCode> {
-    if !has_table(db, consts::TBL_SITE_ID)? {
-        return create_site_id_and_site_id_table(db);
-    }
-
-    let stmt = db.prepare_v2(&format!(
-        "SELECT site_id FROM \"{}\" WHERE ordinal = 0",
-        consts::TBL_SITE_ID
-    ))?;
-    let result_code = stmt.step()?;
-
-    let ret = if result_code == ResultCode::DONE {
-        insert_site_id(db)?
-    } else {
-        let site_id_from_table = stmt.column_blob(0)?;
-        site_id_from_table.try_into()?
-    };
-
-    Ok(ret)
-}
-
-fn crsql_create_schema_table_if_not_exists(db: *mut sqlite3) -> Result<ResultCode, ResultCode> {
-    db.exec_safe("SAVEPOINT crsql_create_schema_table;")?;
-
-    if let Ok(_) = db.exec_safe(&format!(
-        "CREATE TABLE IF NOT EXISTS \"{}\" (\"key\" TEXT PRIMARY KEY, \"value\" ANY);",
-        consts::TBL_SCHEMA
-    )) {
-        db.exec_safe("RELEASE crsql_create_schema_table;")
-    } else {
-        let _ = db.exec_safe("ROLLBACK");
-        Err(ResultCode::ERROR)
-    }
-}
-
-#[no_mangle]
-pub extern "C" fn crsql_maybe_update_db(db: *mut sqlite3, err_msg: *mut *mut c_char) -> c_int {
-    // No schema table? First time this DB has been opened with this extension.
-    if let Ok(has_schema_table) = has_table(db, consts::TBL_SCHEMA) {
-        if let Err(code) = crsql_create_schema_table_if_not_exists(db) {
-            return code as c_int;
-        }
-        let r = db.exec_safe("SAVEPOINT crsql_maybe_update_db;");
-        if let Err(code) = r {
-            return code as c_int;
-        }
-        if let Ok(_) = maybe_update_db_inner(db, has_schema_table == false, err_msg) {
-            let _ = db.exec_safe("RELEASE crsql_maybe_update_db;");
-            return ResultCode::OK as c_int;
-        } else {
-            let _ = db.exec_safe("ROLLBACK;");
-            return ResultCode::ERROR as c_int;
-        }
-    } else {
-        return ResultCode::ERROR as c_int;
-    }
-}
-
-fn maybe_update_db_inner(
-    db: *mut sqlite3,
-    is_blank_slate: bool,
-    err_msg: *mut *mut c_char,
-) -> Result<ResultCode, ResultCode> {
-    let mut recorded_version: i32 = 0;
-
-    // Completely new DBs need no migrations.
-    // We can set them to the current version.
-    if is_blank_slate {
-        recorded_version = consts::CRSQLITE_VERSION;
-    } else {
-        let stmt =
-            db.prepare_v2("SELECT value FROM crsql_master WHERE key = 'crsqlite_version'")?;
-        let step_result = stmt.step()?;
-        if step_result == ResultCode::ROW {
-            recorded_version = stmt.column_int(0);
-        }
-    }
-
-    if recorded_version < consts::CRSQLITE_VERSION && !is_blank_slate {
-        // todo: return an error message to the user that their version is
-        // not supported
-        let cstring = CString::new(format!("Opening a db created with cr-sqlite version {} is not supported. Upcoming release 0.15.0 is a breaking change.", recorded_version))?;
-        unsafe {
-            (*err_msg) = cstring.into_raw();
-            return Err(ResultCode::ERROR);
-        }
-    }
-
-    // if recorded_version < consts::CRSQLITE_VERSION_0_13_0 {
-    //     update_to_0_13_0(db)?;
-    // }
-
-    // if recorded_version < consts::CRSQLITE_VERSION_0_15_0 {
-    //     update_to_0_15_0(db)?;
-    // }
-
-    // write the db version if we migrated to a new one or we are a blank slate db
-    if recorded_version < consts::CRSQLITE_VERSION || is_blank_slate {
-        let stmt =
-            db.prepare_v2("INSERT OR REPLACE INTO crsql_master VALUES ('crsqlite_version', ?)")?;
-        stmt.bind_int(1, consts::CRSQLITE_VERSION)?;
-        stmt.step()?;
-    }
-
-    Ok(ResultCode::OK)
-}
-
-/**
- * The clock table holds the versions for each column of a given row.
- *
- * These version are set to the dbversion at the time of the write to the
- * column.
- *
- * The dbversion is updated on transaction commit.
- * This allows us to find all columns written in the same transaction
- * albeit with caveats.
- *
- * The caveats being that two partiall overlapping transactions will
- * clobber the full transaction picture given we only keep latest
- * state and not a full causal history.
- *
- * @param tableInfo
- */
-pub fn create_clock_table(
-    db: *mut sqlite3,
-    table_info: &TableInfo,
-    _err: *mut *mut c_char,
-) -> Result<ResultCode, ResultCode> {
-    let pk_list = crate::util::as_identifier_list(&table_info.pks, None)?;
-    let table_name = &table_info.tbl_name;
-
-    db.exec_safe(&format!(
-        "CREATE TABLE IF NOT EXISTS \"{table_name}__crsql_clock\" (
-      key INTEGER NOT NULL,
-      col_name TEXT NOT NULL,
-      col_version INTEGER NOT NULL,
-      db_version INTEGER NOT NULL,
-      site_id INTEGER NOT NULL DEFAULT 0,
-      seq INTEGER NOT NULL,
-      PRIMARY KEY (key, col_name)
-    ) WITHOUT ROWID, STRICT",
-        table_name = crate::util::escape_ident(table_name),
-    ))?;
-
-    db.exec_safe(
-      &format!(
-        "CREATE INDEX IF NOT EXISTS \"{table_name}__crsql_clock_dbv_idx\" ON \"{table_name}__crsql_clock\" (\"db_version\")",
-        table_name = crate::util::escape_ident(table_name),
-      ))?;
-    db.exec_safe(
-      &format!(
-        "CREATE TABLE IF NOT EXISTS \"{table_name}__crsql_pks\" (__crsql_key INTEGER PRIMARY KEY, {pk_list})",
-        table_name = table_name,
-        pk_list = pk_list,
-      )
-    )?;
-    db.exec_safe(
-      &format!(
-        "CREATE UNIQUE INDEX IF NOT EXISTS \"{table_name}__crsql_pks_pks\" ON \"{table_name}__crsql_pks\" ({pk_list})",
-        table_name = table_name,
-        pk_list = pk_list
-      )
-    )
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1840,38 +1371,12 @@ pub fn create_clock_table(
   **Post-Mortem & Fix Analysis**:
   > I'm hitting this specific error trying to integrate with Tauri:  ``` Working offline - data will sync later: sync error: failed to push frame: status=503 Service Unavailable, error={"error":"SQLite error: max_frame_no failed: database is locked"} ```
   > Is this a dupe or a tangent? https://github.com/tursodatabase/libsql/issues/2122
-  > @npearson72 that's a different issue.
 
 - **Issue #2083** (2025-06-24): **Embedded Replica update fails**
   *Symptoms*: When using Embedded Replicas, calling the UPDATE api results in `Hrana 404 "stream not found"`  `@libsql/client: 0.15.7`  Edit: turso dies after a few minutes... even GET requests are 404ing.  Edit2: 0.15.8 did not fix
   **Post-Mortem & Fix Analysis**:
   > My current hypothesis is that we keep a SQL over HTTP connection open for too long in the embedded replica internals and it expires.
   > Can you cut a prerelease with that fix for me to test? And why didn't this happen on Fly.io?
-  > I'm also getting `wal_insert_begin failed` when writing. Is this happening when the `syncInterval` is running and locking the database when I try to write?
-
-- **Issue #2076** (2025-05-29): **Embedded replicas (and offline sync) databases are slow if you set `sync_interval`**
-  *Symptoms*: If you set `sync_interval`, then `sync` calls take as much as time the `sync_interval` value is set to. This issue is observed in JS SDK (https://github.com/tursodatabase/libsql-js) and this doesn't happen in Rust client.   There are two discord users reporting the same and following links also contain reproducers:   https://discord.com/channels/933071162680958986/1374700570514030592  https://discord.com/channels/933071162680958986/1374075561017741312/1375111427890614435
-
-- **Issue #2061** (2025-06-02): **AWS Embedded Replica returns undefined in transactions.**
-  *Symptoms*: Link to repro: https://github.com/khuezy/libsql_bug
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in latest version.
-
-- **Issue #2059** (2025-05-14): **Sync interval not implemented for V2 sync protocol**
-  *Symptoms*: 
-
-- **Issue #2035** (2025-05-14): **Embedded Replica "returning" returns undefined on AWS**
-  *Symptoms*: When using `RETURNING` with Embedded Replicas on the new AWS infra, the query returns no data.  I'm using Drizzle-ORM with this query:  `db.update(table).set({ field: 'value' }).where(...).returning().get()`  With Embedded Replicas off, this returns the updated record; with Embedded Replicas on, this returns undefined.
-  **Post-Mortem & Fix Analysis**:
-  > Yes same here. Glad I found this issue.  
-  > I just double checked. Same for this: `await db.insert(Session).values(session)` The `ResultSet` is empty. 
-  > @Syntarex I think `insert` works. Can you try adding `.returning().get()`, that should return you the created record. I think this only applies to `update` as far as I know.
-
-- **Issue #2026** (2025-04-11): **Embedded replica V2 can sometimes accidentally use WAL push**
-  *Symptoms*: 
-
-- **Issue #2004** (2025-04-01): **Embedded replica write delegation issue**
-  *Symptoms*: There seems to be a problem with write delegation where the parser that determines if we should write locally or remotely gets in a bad state.  Examples of the issue:  https://github.com/tursodatabase/libsql-experimental-python/issues/87  https://discord.com/channels/933071162680958986/1354752676260483112
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1888,81 +1393,61 @@ pub fn create_clock_table(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8fb14f3` (2026-08-11)
-**Commit Message**: ci: install protoc from apt instead of arduino/setup-protoc (#2268)
+### Incident Patch 1: `d9f2f7d8` (2026-10-13)
+**Commit Message**: fix: null sqlite3 handle after close to prevent double-free (#2251) (#2261)
 
-The setup-protoc action downloads protoc via unauthenticated GitHub API
-requests, which share a rate limit across all runners on the same IP and
-intermittently fail with "API rate limit exceeded". Our proto files are
-all plain proto3, so the protobuf-compiler package from the Ubuntu
-archive is sufficient and involves no GitHub API at all.
+## Problem
 
-**File**: `.github/workflows/c-bindings.yml` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ jobs:
-     - uses: dtolnay/rust-toolchain@stable
- 
-     - name: Install Protoc
--      uses: arduino/setup-protoc@v2
-+      run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
- 
-     - name: Set up cargo cache
-       uses: actions/cache@v3
+Closes #2251
+
+The local connection's `sqlite3` handle is `sqlite3_close_v2`'d
+**twice** on teardown. `LibsqlConnection`'s `Drop` calls `disconnect()`,
+then the inner `Connection`'s `Drop` calls it again. Both go through
+`Connection::disconnect` (connection.rs:110). `disconnect()` isn't
+idempotent — the `Arc::get_mut(drop_ref)` guard only checks unique
+ownership (true both times) and doesn't record that the handle was
+already closed.
+
+On Windows this is a hard `STATUS_ACCESS_VIOLATION` (0xC0000005); on
+Linux it doesn't fault (glibc keeps the freed page mapped) but the
+double free is real, as valgrind shows — 800 errors from 1 context at
+800 iterations, one per connection.
+
+## Root Cause
+
+```
+LibsqlConnection::drop -> self.conn.disconnect()   <- first close
+Connection::drop       -> self.disconnect()         <- second close
 ```
 
-**File**: `.github/workflows/golang-bindings.yml` (modified, +1/-1)
+Both calls succeed because `Arc::get_mut(drop_ref)` returns `Some` both
+times (the first close doesn't mark the handle as closed).
+
+## Fix
+
+After calling `sqlite3_close_v2`, set `self.raw` to
+`std::ptr::null_mut()`. This makes `disconnect()` idempotent — the
+second call s
+
+**File**: `libsql/src/local/connection.rs` (modified, +4/-1)
 ```diff
-@@ -42,7 +42,7 @@ jobs:
-       run: sudo apt-get install -y tcl8.6-dev
+@@ -107,7 +107,10 @@ impl Connection {
+     /// Disconnect from the database.
+     pub fn disconnect(&mut self) {
+         if Arc::get_mut(&mut self.drop_ref).is_some() {
+-            unsafe { libsql_sys::ffi::sqlite3_close_v2(self.raw) };
++            unsafe {
++                libsql_sys::ffi::sqlite3_close_v2(self.raw);
++                self.raw = std::ptr::null_mut();
++            };
+         }
+     }
  
-     - name: Install Protoc
--      uses: arduino/setup-protoc@v2
-+      run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
- 
-     - name: Set up cargo cache
-       uses: actions/cache@v3
-```
-
----
-
-### Incident Patch 2: `4ab674d5` (2026-08-11)
-**Commit Message**: ci: install protoc from apt instead of arduino/setup-protoc
-
-The setup-protoc action downloads protoc via unauthenticated GitHub
-API requests, which share a rate limit across all runners on the same
-IP and intermittently fail with "API rate limit exceeded". Our proto
-files are all plain proto3, so the protobuf-compiler package from the
-Ubuntu archive is sufficient and involves no GitHub API at all.
-
-**File**: `.github/workflows/c-bindings.yml` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ jobs:
-     - uses: dtolnay/rust-toolchain@stable
- 
-     - name: Install Protoc
--      uses: arduino/setup-protoc@v2
-+      run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
- 
-     - name: Set up cargo cache
-       uses: actions/cache@v3
-```
-
-**File**: `.github/workflows/golang-bindings.yml` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ jobs:
-       run: sudo apt-get install -y tcl8.6-dev
- 
-     - name: Install Protoc
--      uses: arduino/setup-protoc@v2
-+      run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
- 
-     - name: Set up cargo cache
-       uses: actions/cache@v3
 ```
 
 ---
 
-### Incident Patch 3: `74ab9010` (2026-08-11)
+### Incident Patch 2: `74ab9010` (2026-08-11)
 **Commit Message**: Update cmake crate to fix Windows CI (#2267)
 
 The windows-latest runner image moved to windows-2025-vs2026, which
@@ -2057,7 +1542,7 @@ lockfile to 0.1.58 (pulling in the newer cc and libc it requires).
 
 ---
 
-### Incident Patch 4: `21b17a76` (2026-08-11)
+### Incident Patch 3: `21b17a76` (2026-08-11)
 **Commit Message**: Update cmake crate to fix Windows CI
 
 The windows-latest runner image moved to windows-2025-vs2026, which
@@ -2150,373 +1635,13 @@ the lockfile to 0.1.58 (pulling in the newer cc and libc it requires).
  version = "1.4.2"
 ```
 
----
-
-### Incident Patch 5: `5cdc619d` (2026-06-02)
-**Commit Message**: libsql-server: fix duplicated "the" in doc-comments (#2234)
-
-Two one-line typo fixes for duplicated "the" in `libsql-server`
-doc-comments:
-- `libsql-server/src/main.rs` — "By default, the the period is 30
-seconds." → "By default, the period is 30 seconds."
-- `libsql-server/src/rpc/streaming_exec.rs` — "/// Apply the response to
-the the builder, and return whether..." → "/// Apply the response to the
-builder, ..."
-
-No code/behavior change.
-
-**File**: `libsql-server/src/main.rs` (modified, +1/-1)
-```diff
-@@ -153,7 +153,7 @@ struct Cli {
-     heartbeat_auth: Option<String>,
- 
-     /// The heartbeat time period in seconds.
--    /// By default, the the period is 30 seconds.
-+    /// By default, the period is 30 seconds.
-     #[clap(long, env = "SQLD_HEARTBEAT_PERIOD_S", default_value = "30")]
-     heartbeat_period_s: u64,
- 
-```
-
-**File**: `libsql-server/src/rpc/streaming_exec.rs` (modified, +1/-1)
-```diff
-@@ -206,7 +206,7 @@ impl StreamResponseBuilder {
-     }
- }
- 
--/// Apply the response to the the builder, and return whether the builder need more steps
-+/// Apply the response to the builder, and return whether the builder need more steps
- pub fn apply_program_resp_to_builder<B: QueryResultBuilder>(
-     config: &QueryBuilderConfig,
-     builder: &mut B,
-```
-
----
-
-### Incident Patch 6: `58161459` (2026-05-28)
-**Commit Message**: github: Build the Windows CI job with the MSVC toolchain (#2242)
-
-The Windows job's `cargo build -p libsql --all-features` was being built
-with the `x86_64-pc-windows-gnu` toolchain (MinGW/GCC), set as the
-default host triple by `hecrj/setup-rust-action@v2`. MSVC was never
-exercised. So breaks that only fail under MSVC -- like the SQLite 3.47.0
-`#warning` that errors with C1021 -- compiled green here. We discovered
-the gap when libsql-js (which builds with `--target
-x86_64-pc-windows-msvc`) failed downstream on the same code.
-
-Add `--target x86_64-pc-windows-msvc --release` so the Windows job
-actually compiles the bundled SQLite encryption amalgamation (sqlite3mc)
-with MSVC, and breaks surface in CI.
-
-`cargo clean -p libsql-ffi` runs first so sqlite3mc is rebuilt from
-source rather than restored from a cached target/.
-
-**File**: `.github/workflows/rust.yml` (modified, +7/-4)
-```diff
-@@ -242,11 +242,14 @@ jobs:
-             ~/.cargo/registry/index/
-             ~/.cargo/registry/cache/
-             ~/.cargo/git/db/
--            target/
--          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
--          restore-keys: ${{ runner.os }}-cargo-
-+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-+          restore-keys: ${{ runner.os }}-cargo-registry-
-+      - name: Install x86_64-pc-windows-msvc target
-+        run: rustup target add x86_64-pc-windows-msvc
-       - name: build libsql all features
--        run: cargo build -p libsql --all-features 
-+        run: |
-+          cargo clean -p libsql-ffi
-+          cargo build -p libsql --all-features --release --target x86_64-pc-windows-msvc
- 
-   # test-rust-wasm:
-   #   runs-on: ubuntu-latest
-```
-
----
-
-### Incident Patch 7: `e3f7e8ee` (2026-05-28)
-**Commit Message**: github: Build the Windows CI job with the MSVC toolchain
-
-The Windows job's `cargo build -p libsql --all-features` was being built
-with the `x86_64-pc-windows-gnu` toolchain (MinGW/GCC), set as the default
-host triple by `hecrj/setup-rust-action@v2`. MSVC was never exercised. So
-breaks that only fail under MSVC -- like the SQLite 3.47.0 `#warning` that
-errors with C1021 -- compiled green here. We discovered the gap when
-libsql-js (which builds with `--target x86_64-pc-windows-msvc`) failed
-downstream on the same code.
-
-Add `--target x86_64-pc-windows-msvc --release` so the Windows job
-actually compiles the bundled SQLite encryption amalgamation (sqlite3mc)
-with MSVC, and breaks surface in CI.
-
-`cargo clean -p libsql-ffi` runs first so sqlite3mc is rebuilt from source
-rather than restored from a cached target/.
-
-**File**: `.github/workflows/rust.yml` (modified, +7/-4)
-```diff
-@@ -242,11 +242,14 @@ jobs:
-             ~/.cargo/registry/index/
-             ~/.cargo/registry/cache/
-             ~/.cargo/git/db/
--            target/
--          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
--          restore-keys: ${{ runner.os }}-cargo-
-+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-+          restore-keys: ${{ runner.os }}-cargo-registry-
-+      - name: Install x86_64-pc-windows-msvc target
-+        run: rustup target add x86_64-pc-windows-msvc
-       - name: build libsql all features
--        run: cargo build -p libsql --all-features 
-+        run: |
-+          cargo clean -p libsql-ffi
-+          cargo build -p libsql --all-features --release --target x86_64-pc-windows-msvc
- 
-   # test-rust-wasm:
-   #   runs-on: ubuntu-latest
-```
-
----
-
-### Incident Patch 8: `a6b1de0d` (2026-05-26)
-**Commit Message**: libsql-sqlite3: Sync ext/misc/fileio.c symlink fixes from 3.46.1
-
-The 3.46.1 merge updated shell8.test (adding the symlink extraction
-tests shell8-3.x) and the bundled MultipleCiphers fileio.c, but left
-libsql-sqlite3/ext/misc/fileio.c at 3.44.0. That file is embedded into
-the CLI shell via 'INCLUDE ../ext/misc/fileio.c', so '.ar -x' ran the
-stale writeFile() and the new tests failed with
-'failed to create symlink: link1'.
-
-Bring writeFile() in line with upstream 3.46.1:
-
-  - Skip utimes() on symbolic links. utimes() follows the link to its
-    target; the archive only contains link1 -> file1 (no file1), so the
-    dangling link made utimes() fail and broke the first extraction
-    (shell8-3.2).
-  - unlink(zFile) before symlink() so re-extraction does not fail with
-    EEXIST (shell8-3.3).
-
-**File**: `libsql-sqlite3/ext/misc/fileio.c` (modified, +16/-8)
-```diff
-@@ -372,7 +372,9 @@ static int writeFile(
- #if !defined(_WIN32) && !defined(WIN32)
-   if( S_ISLNK(mode) ){
-     const char *zTo = (const char*)sqlite3_value_text(pData);
--    if( zTo==0 || symlink(zTo, zFile)<0 ) return 1;
-+    if( zTo==0 ) return 1;
-+    unlink(zFile);
-+    if( symlink(zTo, zFile)<0 ) return 1;
-   }else
- #endif
-   {
-@@ -458,13 +460,19 @@ static int writeFile(
-       return 1;
-     }
- #else
--    /* Legacy unix */
--    struct timeval times[2];
--    times[0].tv_usec = times[1].tv_usec = 0;
--    times[0].tv_sec = time(0);
--    times[1].tv_sec = mtime;
--    if( utimes(zFile, times) ){
--      return 1;
-+    /* Legacy unix.
-+    **
-+    ** Do not use utimes() on a symbolic link - it sees through the link and
-+    ** modifies the timestamps on the target. Or fails if the target does
-+    ** not exist.  */
-+    if( 0==S_ISLNK(mode) ){
-+      struct timeval times[2];
-+      times[0].tv_usec = times[1].tv_usec = 0;
-+      times[0].tv_sec = time(0);
-+      times[1].tv_sec = mtime;
-+      if( utimes(zFile, times) ){
-+        return 1;
-+      }
-     }
- #endif
-   }
-```
-
----
-
-### Incident Patch 9: `cc9cfaae` (2026-05-14)
-**Commit Message**: libsql-server: fix duplicated "the" in doc-comments
-
-**File**: `libsql-server/src/main.rs` (modified, +1/-1)
-```diff
-@@ -153,7 +153,7 @@ struct Cli {
-     heartbeat_auth: Option<String>,
- 
-     /// The heartbeat time period in seconds.
--    /// By default, the the period is 30 seconds.
-+    /// By default, the period is 30 seconds.
-     #[clap(long, env = "SQLD_HEARTBEAT_PERIOD_S", default_value = "30")]
-     heartbeat_period_s: u64,
- 
-```
-
-**File**: `libsql-server/src/rpc/streaming_exec.rs` (modified, +1/-1)
-```diff
-@@ -206,7 +206,7 @@ impl StreamResponseBuilder {
-     }
- }
- 
--/// Apply the response to the the builder, and return whether the builder need more steps
-+/// Apply the response to the builder, and return whether the builder need more steps
- pub fn apply_program_resp_to_builder<B: QueryResultBuilder>(
-     config: &QueryBuilderConfig,
-     builder: &mut B,
-```
-
----
-
-### Incident Patch 10: `e4beacaa` (2026-03-25)
-**Commit Message**: Fix typo
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@
- >
- > **libSQL** (this repository) is an open-source fork of SQLite. It extends SQLite with features like embedded replicas and remote access, but inherits SQLite's fundamental limitations such as the single-writer model.
- >
--> **[Turso](https://github.com/tursodatabase/turso) database** is a SQLite-compatible database rewritten from scratch in Rust. It is **not** a fork of SQLite — it is a completely new implementation that goes beyond what any SQLite fork can offer, including concurrent writes and bi-directional sync with offline support. Turso is currently in beta.
-+> **[Turso database](https://github.com/tursodatabase/turso)** is a SQLite-compatible database rewritten from scratch in Rust. It is **not** a fork of SQLite — it is a completely new implementation that goes beyond what any SQLite fork can offer, including concurrent writes and bi-directional sync with offline support. Turso is currently in beta.
- >
- > **If you're starting a new project, you probably want to look into [Turso](https://github.com/tursodatabase/turso).** libSQL is actively maintained, but new features are being developed in Turso.
- 
-```
-
----
-
-### Incident Patch 11: `dda04140` (2026-03-19)
-**Commit Message**: libsql: Fix total_changes accumulation for SQL over HTTP batch execution (#2220)
-
-The batch_inner() updates affected_row_count but never adds it to
-total_changes. Only finalize() did, so total_changes was missing the
-contributions of all intermediate batch/execute operations.
-
-Found while investigating
-https://github.com/tursodatabase/libsql-client-ts/issues/312
-
-**File**: `libsql/src/hrana/stream.rs` (modified, +3/-0)
-```diff
-@@ -163,6 +163,9 @@ where
-                     self.inner
-                         .affected_row_count
-                         .store(result.affected_row_count, Ordering::SeqCst);
-+                    self.inner
-+                        .total_changes
-+                        .fetch_add(result.affected_row_count, Ordering::SeqCst);
-                     if let Some(last_insert_rowid) = result.last_insert_rowid {
-                         self.inner
-                             .last_insert_rowid
-```
-
----
-
-### Incident Patch 12: `eb0fe775` (2026-03-19)
-**Commit Message**: Pin cargo-chef to 0.1.75 to fix Docker build on rustc 1.85.0
-
-cargo-chef 0.1.76+ switched to guppy, which transitively pulls in
-cargo_metadata@0.23.1, cargo-platform@0.3.2, and target-spec@3.5.7,
-all requiring rustc 1.86+.
-
-**File**: `Dockerfile` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ RUN cat rust-toolchain.toml | grep "channel" | awk '{print $3}' | sed 's/\"//g'
-     && rustup update $(cat toolchain.txt) \
-     && rustup default $(cat toolchain.txt) \
-     && rm toolchain.txt rust-toolchain.toml \
--    && cargo install cargo-chef --locked
-+    && cargo install cargo-chef --version 0.1.75 --locked
- 
- FROM chef AS planner
- ARG BUILD_DEBUG=false
-```
-
----
-
-### Incident Patch 13: `3044eb73` (2026-03-19)
-**Commit Message**: Fix Docker build by using --locked for cargo-chef install (#2222)
-
-cargo-chef's transitive dependencies (cargo-platform, cargo_metadata,
-guppy, target-spec) bumped their MSRV to Rust 1.86-1.88, breaking the
-install on our pinned Rust 1.85.0 toolchain. Using --locked forces cargo
-to use cargo-chef's bundled lockfile, which is tested against its
-supported Rust versions.
-
-**File**: `Dockerfile` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ RUN cat rust-toolchain.toml | grep "channel" | awk '{print $3}' | sed 's/\"//g'
-     && rustup update $(cat toolchain.txt) \
-     && rustup default $(cat toolchain.txt) \
-     && rm toolchain.txt rust-toolchain.toml \
--    && cargo install cargo-chef
-+    && cargo install cargo-chef --locked
- 
- FROM chef AS planner
- ARG BUILD_DEBUG=false
-```
-
----
-
-### Incident Patch 14: `46a0527a` (2026-03-19)
-**Commit Message**: Fix Docker build by using --locked for cargo-chef install
-
-cargo-chef's transitive dependencies (cargo-platform, cargo_metadata,
-guppy, target-spec) bumped their MSRV to Rust 1.86-1.88, breaking the
-install on our pinned Rust 1.85.0 toolchain. Using --locked forces
-cargo to use cargo-chef's bundled lockfile, which is tested against
-its supported Rust versions.
-
-**File**: `Dockerfile` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ RUN cat rust-toolchain.toml | grep "channel" | awk '{print $3}' | sed 's/\"//g'
-     && rustup update $(cat toolchain.txt) \
-     && rustup default $(cat toolchain.txt) \
-     && rm toolchain.txt rust-toolchain.toml \
--    && cargo install cargo-chef
-+    && cargo install cargo-chef --locked
- 
- FROM chef AS planner
- ARG BUILD_DEBUG=false
-```
-
----
-
-### Incident Patch 15: `b7cc2b86` (2026-03-18)
-**Commit Message**: libsql: Fix total_changes accumulation for SQL over HTTP batch execution
-
-The batch_inner() updates affected_row_count but never adds it to
-total_changes. Only finalize() did, so total_changes was missing the
-contributions of all intermediate batch/execute operations.
-
-**File**: `libsql/src/hrana/stream.rs` (modified, +3/-0)
-```diff
-@@ -163,6 +163,9 @@ where
-                     self.inner
-                         .affected_row_count
-                         .store(result.affected_row_count, Ordering::SeqCst);
-+                    self.inner
-+                        .total_changes
-+                        .fetch_add(result.affected_row_count, Ordering::SeqCst);
-                     if let Some(last_insert_rowid) = result.last_insert_rowid {
-                         self.inner
-                             .last_insert_rowid
-```
-
 #### Recent Merged Pull Requests:
 - **PR #2274** (2026-08-23): parser: Add support for `ANALYZE` (@avinassh)
 - **PR #2268** (2026-08-11): ci: install protoc from apt instead of arduino/setup-protoc (@penberg)
 - **PR #2267** (2026-08-11): Update cmake crate to fix Windows CI (@penberg)
 - **PR #2262** (closed): A gentle deadlock monitor (@aredridel)
+- **PR #2261** (2026-10-13): fix: null sqlite3 handle after close to prevent double-free (#2251) (@wasim-builds)
 - **PR #2259** (closed): TEST (@LeMikaelF)
-- **PR #2252** (2026-07-01): savepoint forget hook (@jussisaurio)
-- **PR #2249** (closed): Delete CONTRIBUTING.md  file from forked repo (@CJ-cmd-byte)
-- **PR #2248** (2026-06-02): libsql-sqlite3: Make libsql_stmt_interrupt() abort an in-flight step (@penberg)
 
 ---
 
@@ -2530,3 +1655,37 @@ contributions of all intermediate batch/execute operations.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. null sqlite3 handle after close to prevent double-free (#2251) (#2261)
+
+**RULE**:
+When implementing operations in `libsql/src/local/connection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/libsql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d9f2f7d8`: null sqlite3 handle after close to prevent double-free (#2251) (#2261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `libsql/src/local/connection.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+            unsafe {
+                libsql_sys::ffi::sqlite3_close_v2(self.raw);
+                self.raw = std::ptr::null_mut();
+            };
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Anti-pattern to NEVER write (induced failure mode):
+            unsafe { libsql_sys::ffi::sqlite3_close_v2(self.raw) };
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d9f2f7d8` are properly handled with clean fallback behavior.

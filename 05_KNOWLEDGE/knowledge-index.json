@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:19:12.486Z",
-  "total_verified_learnings": 637,
+  "last_updated": "2026-10-19T05:25:41.668Z",
+  "total_verified_learnings": 642,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9358,22 +9358,35 @@
     "learn-github-gitpoint-git-point": {
       "learning_id": "learn-github-gitpoint-git-point",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gitpoint-git-point",
+      "source": "gitpoint/git-point",
+      "repository": "gitpoint/git-point",
       "slug": "gitpoint-git-point",
       "platform": "github",
       "source_url": "https://github.com/gitpoint/git-point",
-      "source_version": "HEAD",
-      "content_hash": "6868008de66924a386a18e6c49d68bd76599d360dff993fde44017f9bc117cbc",
+      "source_version": "3f015344",
+      "content_hash": "68aa32a545a6556aeb80850252807a462a3c32e871618d0bf180a52083d02d89",
       "dossier_path": "07_PROJECT_LEARNING/gitpoint-git-point-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitpoint-git-point-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2179,
+          "title": "provide real safe area view (#911)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.075Z"
+      "verified_at": "2026-10-19T05:25:32.717Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gitui-org-gitui": {
       "learning_id": "learn-github-gitui-org-gitui",
@@ -9716,22 +9729,35 @@
     "learn-github-golutra-golutra": {
       "learning_id": "learn-github-golutra-golutra",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "golutra-golutra",
+      "source": "golutra/golutra",
+      "repository": "golutra/golutra",
       "slug": "golutra-golutra",
       "platform": "github",
       "source_url": "https://github.com/golutra/golutra",
-      "source_version": "HEAD",
-      "content_hash": "edd8470ff75417b571b4e30281e96e98308362dcede4d295f70a971abcb585ae",
+      "source_version": "8b68a141",
+      "content_hash": "23e303a1560d09a0e9a16956adb2b2bef2d517d1ba3b6531ea40694c994d372f",
       "dossier_path": "07_PROJECT_LEARNING/golutra-golutra-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/golutra-golutra-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2178,
+          "title": "完成终端引擎与消息链路阶段性重构，补齐会话创建与语义派发能力，并修复终端稳定性/输入一致性/UI 状态问题",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.120Z"
+      "verified_at": "2026-10-19T05:25:29.021Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gonzalezreal-swift-markdown-ui": {
       "learning_id": "learn-github-gonzalezreal-swift-markdown-ui",
@@ -16808,7 +16834,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "b7b0c5c0f1447101e28c1b66ed69c7aa62978e2d988e6a4118229ee05e7b54a5",
+      "content_hash": "362e0802e85915e31d65213f9cffb448d82ed8fc644d46e49a40b74960370f26",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -16854,6 +16880,21 @@
           "number": 1352,
           "title": "Straight RGBA Diffusion Pipeline De-fringing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2180,
+          "title": "Resolution Bucketing Invariant for Diffusion Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2181,
+          "title": "MoE Router Top-K Scaling Factor Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2182,
+          "title": "RGBA Transparency Prompt Injection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16874,7 +16915,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-10-17T23:39:30.918Z",
+      "verified_at": "2026-10-19T05:25:34.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26038,22 +26079,35 @@
     "learn-github-linkerd-linkerd2": {
       "learning_id": "learn-github-linkerd-linkerd2",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "linkerd-linkerd2",
+      "source": "linkerd/linkerd2",
+      "repository": "linkerd/linkerd2",
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "HEAD",
-      "content_hash": "bd9c3de1209da958fdb3dd1ccff6f200d607f4df88fe0be63875efb47d73789e",
+      "source_version": "b60b8e74",
+      "content_hash": "fbd6ee8c031b2231e38f2741d13560870eedcf2a784d4453572e035ddc70efff",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2183,
+          "title": "build(deps): bump clap_lex from 1.1.0 to 1.1.1 in the clap group (#15686)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.031Z"
+      "verified_at": "2026-10-19T05:25:34.686Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-linkwarden-linkwarden": {
       "learning_id": "learn-github-linkwarden-linkwarden",
@@ -27137,22 +27191,35 @@
     "learn-github-megh-bari-pattern-craft": {
       "learning_id": "learn-github-megh-bari-pattern-craft",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "megh-bari-pattern-craft",
+      "source": "megh-bari/pattern-craft",
+      "repository": "megh-bari/pattern-craft",
       "slug": "megh-bari-pattern-craft",
       "platform": "github",
       "source_url": "https://github.com/megh-bari/pattern-craft",
-      "source_version": "HEAD",
-      "content_hash": "0b5f2bf77d55bae475cf54969a99e685b2abe5f51bc3cbb9e3aea25ba0de6b0d",
+      "source_version": "1550af79",
+      "content_hash": "45854660e2df511be8e93a262cc761579576a02ef70583cd0e1c26f437647132",
       "dossier_path": "07_PROJECT_LEARNING/megh-bari-pattern-craft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/megh-bari-pattern-craft-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2177,
+          "title": "use working star history chart host",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.228Z"
+      "verified_at": "2026-10-19T05:25:25.289Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-meilisearch-meilisearch": {
       "learning_id": "learn-github-meilisearch-meilisearch",
@@ -77977,6 +78044,151 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:19:12.477Z"
+    },
+    "rule-2177": {
+      "learning_id": "rule-2177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2177,
+      "title": "use working star history chart host",
+      "source_url": "https://github.com/megh-bari/pattern-craft",
+      "source_version": "1550af79",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:25.289Z"
+    },
+    "rule-2178": {
+      "learning_id": "rule-2178",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2178,
+      "title": "完成终端引擎与消息链路阶段性重构，补齐会话创建与语义派发能力，并修复终端稳定性/输入一致性/UI 状态问题",
+      "source_url": "https://github.com/golutra/golutra",
+      "source_version": "8b68a141",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:29.021Z"
+    },
+    "rule-2179": {
+      "learning_id": "rule-2179",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2179,
+      "title": "provide real safe area view (#911)",
+      "source_url": "https://github.com/gitpoint/git-point",
+      "source_version": "3f015344",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:32.717Z"
+    },
+    "rule-2180": {
+      "learning_id": "rule-2180",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2180,
+      "title": "Resolution Bucketing Invariant for Diffusion Models",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:34.121Z"
+    },
+    "rule-2181": {
+      "learning_id": "rule-2181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2181,
+      "title": "MoE Router Top-K Scaling Factor Invariant",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:34.121Z"
+    },
+    "rule-2182": {
+      "learning_id": "rule-2182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2182,
+      "title": "RGBA Transparency Prompt Injection Invariant",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:34.121Z"
+    },
+    "rule-2183": {
+      "learning_id": "rule-2183",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2183,
+      "title": "build(deps): bump clap_lex from 1.1.0 to 1.1.1 in the clap group (#15686)",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "b60b8e74",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:34.686Z"
+    },
+    "learn-github-tursodatabase-libsql": {
+      "learning_id": "learn-github-tursodatabase-libsql",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tursodatabase/libsql",
+      "repository": "tursodatabase/libsql",
+      "slug": "libsql-libsql",
+      "platform": "github",
+      "source_url": "https://github.com/libsql/libsql",
+      "source_version": "d8bc862d",
+      "content_hash": "ea1ab1312997054eccc90ebb99eaebc7141e9462aaca14ace220a386df9c01bc",
+      "dossier_path": "07_PROJECT_LEARNING/libsql-libsql-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/libsql-libsql-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2184,
+          "title": "null sqlite3 handle after close to prevent double-free (#2251) (#2261)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T05:25:41.652Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2184": {
+      "learning_id": "rule-2184",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2184,
+      "title": "null sqlite3 handle after close to prevent double-free (#2251) (#2261)",
+      "source_url": "https://github.com/libsql/libsql",
+      "source_version": "d8bc862d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:25:41.653Z"
     }
   },
   "aliases": {

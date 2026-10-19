@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-7ZL3",
-    "timestamp": "2026-10-18T07:28:48.615Z",
-    "repository": "rmax/scrapy-redis",
-    "learningId": "learn-github-rmax-scrapy-redis",
-    "contentHash": "a28d29e471552cb504dfc3e3535e56bf1ca23ee6a63319207e42794a0ad70497",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-80KA",
-    "timestamp": "2026-10-18T07:28:49.882Z",
-    "repository": "cypress-io/cypress",
-    "learningId": "learn-github-cypress-io-cypress",
-    "contentHash": "c49adfb1b1015b3a9bd9137e80ce9eac0eda5d0ebc16a6f3de899c2cbfaf6ee7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-831Z",
-    "timestamp": "2026-10-18T07:28:53.111Z",
-    "repository": "syntax-tree/unist",
-    "learningId": "learn-github-syntax-tree-unist",
-    "contentHash": "53f90625d98f211a5feb631a10ad32024c13495df236ce5927af24d0242e1f1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-86AA",
-    "timestamp": "2026-10-18T07:28:57.298Z",
-    "repository": "scrapinghub/scrapy-poet",
-    "learningId": "learn-github-scrapinghub-scrapy-poet",
-    "contentHash": "a16b28250061973926f37475ed3321af72a72d995fd03c05d72ef95a1c4f77ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-86UT",
-    "timestamp": "2026-10-18T07:28:58.037Z",
-    "repository": "webdriverio/webdriverio",
-    "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "7e931bb5772fc4c38ce5a73941db9269ec7d6ec4496bb1a0b8e5986fc508c774",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-EK82",
-    "timestamp": "2026-10-18T07:33:55.298Z",
-    "repository": "RubenVerborgh/SPARQL.js",
-    "learningId": "learn-github-rubenverborgh-sparql-js",
-    "contentHash": "24c412fc89c11595a4b2e0ade0dc91d4aed7bab10849ddcd33362994f8640955",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-EKIK",
     "timestamp": "2026-10-18T07:33:55.676Z",
     "repository": "syntax-tree/mdast",
@@ -7490,6 +7400,96 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "edb9bc7286c86cb78ced99ea50ad94dcf151d09e8ba07f5448016421d17625cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-95V3",
+    "timestamp": "2026-10-19T05:25:25.359Z",
+    "repository": "megh-bari/pattern-craft",
+    "learningId": "learn-github-megh-bari-pattern-craft",
+    "contentHash": "45854660e2df511be8e93a262cc761579576a02ef70583cd0e1c26f437647132",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-98QE",
+    "timestamp": "2026-10-19T05:25:29.078Z",
+    "repository": "golutra/golutra",
+    "learningId": "learn-github-golutra-golutra",
+    "contentHash": "23e303a1560d09a0e9a16956adb2b2bef2d517d1ba3b6531ea40694c994d372f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9BLF",
+    "timestamp": "2026-10-19T05:25:32.787Z",
+    "repository": "gitpoint/git-point",
+    "learningId": "learn-github-gitpoint-git-point",
+    "contentHash": "68aa32a545a6556aeb80850252807a462a3c32e871618d0bf180a52083d02d89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9CO9",
+    "timestamp": "2026-10-19T05:25:34.185Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "362e0802e85915e31d65213f9cffb448d82ed8fc644d46e49a40b74960370f26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9D3T",
+    "timestamp": "2026-10-19T05:25:34.745Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "fbd6ee8c031b2231e38f2741d13560870eedcf2a784d4453572e035ddc70efff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9IHC",
+    "timestamp": "2026-10-19T05:25:41.712Z",
+    "repository": "tursodatabase/libsql",
+    "learningId": "learn-github-tursodatabase-libsql",
+    "contentHash": "ea1ab1312997054eccc90ebb99eaebc7141e9462aaca14ace220a386df9c01bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

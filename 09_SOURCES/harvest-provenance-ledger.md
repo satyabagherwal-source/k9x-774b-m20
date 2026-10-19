@@ -2958,3 +2958,9 @@ Every entry in this ledger must capture:
 | `learn-github-xinthink-react-native-material-kit` | `https://github.com/xinthink/react-native-material-kit` | `3a1c7a7e` | Multi-dimensional audit evidence | 2026-10-19T05:19:04.317Z |
 | `learn-github-kubeshark-kubeshark` | `https://github.com/kubeshark/kubeshark` | `e27687a8` | Multi-dimensional audit evidence | 2026-10-19T05:19:06.577Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `16917f94` | Multi-dimensional audit evidence | 2026-10-19T05:19:12.530Z |
+| `learn-github-megh-bari-pattern-craft` | `https://github.com/megh-bari/pattern-craft` | `1550af79` | Multi-dimensional audit evidence | 2026-10-19T05:25:25.362Z |
+| `learn-github-golutra-golutra` | `https://github.com/golutra/golutra` | `8b68a141` | Multi-dimensional audit evidence | 2026-10-19T05:25:29.085Z |
+| `learn-github-gitpoint-git-point` | `https://github.com/gitpoint/git-point` | `3f015344` | Multi-dimensional audit evidence | 2026-10-19T05:25:32.789Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-19T05:25:34.187Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `b60b8e74` | Multi-dimensional audit evidence | 2026-10-19T05:25:34.748Z |
+| `learn-github-tursodatabase-libsql` | `https://github.com/libsql/libsql` | `d8bc862d` | Multi-dimensional audit evidence | 2026-10-19T05:25:41.715Z |

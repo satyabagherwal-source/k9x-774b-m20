@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:19:12.543Z",
+  "last_updated": "2026-10-19T05:25:41.721Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -618,14 +618,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "b7b0c5c0f1447101e28c1b66ed69c7aa62978e2d988e6a4118229ee05e7b54a5",
-      "verified_at": "2026-10-17T23:39:30.967Z",
+      "content_hash": "362e0802e85915e31d65213f9cffb448d82ed8fc644d46e49a40b74960370f26",
+      "verified_at": "2026-10-19T05:25:34.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:39:30.967Z"
+      "last_updated": "2026-10-19T05:25:34.193Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -9382,6 +9382,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:19:12.542Z"
+    },
+    "megh-bari/pattern-craft": {
+      "repository": "megh-bari/pattern-craft",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-megh-bari-pattern-craft",
+      "content_hash": "45854660e2df511be8e93a262cc761579576a02ef70583cd0e1c26f437647132",
+      "verified_at": "2026-10-19T05:25:25.367Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:25:25.367Z"
+    },
+    "golutra/golutra": {
+      "repository": "golutra/golutra",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-golutra-golutra",
+      "content_hash": "23e303a1560d09a0e9a16956adb2b2bef2d517d1ba3b6531ea40694c994d372f",
+      "verified_at": "2026-10-19T05:25:29.090Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:25:29.090Z"
+    },
+    "gitpoint/git-point": {
+      "repository": "gitpoint/git-point",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gitpoint-git-point",
+      "content_hash": "68aa32a545a6556aeb80850252807a462a3c32e871618d0bf180a52083d02d89",
+      "verified_at": "2026-10-19T05:25:32.795Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:25:32.795Z"
+    },
+    "linkerd/linkerd2": {
+      "repository": "linkerd/linkerd2",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-linkerd-linkerd2",
+      "content_hash": "fbd6ee8c031b2231e38f2741d13560870eedcf2a784d4453572e035ddc70efff",
+      "verified_at": "2026-10-19T05:25:34.753Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:25:34.753Z"
+    },
+    "tursodatabase/libsql": {
+      "repository": "tursodatabase/libsql",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tursodatabase-libsql",
+      "content_hash": "ea1ab1312997054eccc90ebb99eaebc7141e9462aaca14ace220a386df9c01bc",
+      "verified_at": "2026-10-19T05:25:41.720Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:25:41.720Z"
     }
   },
   "repos": {
