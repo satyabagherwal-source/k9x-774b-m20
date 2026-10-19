@@ -3323,3 +3323,7 @@
 | `CYCLE-20261019-ESQS` | `2026-10-19T15:17:40.228Z` | `adonisjs/core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2649` | Yes (`d76bcf42...`) |
 | `CYCLE-20261019-EXOF` | `2026-10-19T15:17:46.623Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2650` | Yes (`6e55d7a6...`) |
 | `CYCLE-20261019-F55K` | `2026-10-19T15:17:56.312Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2651` | Yes (`b2dcdc3c...`) |
+| `CYCLE-20261019-NM0S` | `2026-10-19T15:24:31.420Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`5b7811ba...`) |
+| `CYCLE-20261019-NM5G` | `2026-10-19T15:24:31.588Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2652` | Yes (`201124e8...`) |
+| `CYCLE-20261019-NR89` | `2026-10-19T15:24:38.169Z` | `productdevbook/port-killer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2653` | Yes (`259bbb2f...`) |
+| `CYCLE-20261019-NY6Z` | `2026-10-19T15:24:47.195Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2654` | Yes (`67d958aa...`) |

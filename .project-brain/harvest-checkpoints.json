@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T15:17:56.321Z",
+  "last_updated": "2026-10-19T15:24:47.210Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1609,14 +1609,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
-      "content_hash": "9ea7dd4a6bdfee89fee83abf67f76d224ac27f2eaa2ac1af9c84cb60f63fd120",
-      "verified_at": "2026-10-18T04:46:34.753Z",
+      "content_hash": "5b7811ba6885ba8b04e3c5116f614d973770f98026a636c9ffc56454f81d95f6",
+      "verified_at": "2026-10-19T15:24:31.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:46:34.753Z"
+      "last_updated": "2026-10-19T15:24:31.431Z"
     },
     "google/vit-base-patch16-224": {
       "repository": "google/vit-base-patch16-224",
@@ -7429,14 +7429,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "948e6556a185bc6d71e4409153e2a692bb6fd9ddbf6446df6dfd54a034ffdb42",
-      "verified_at": "2026-10-19T02:18:32.967Z",
+      "content_hash": "67d958aabc18ff67481b8801eff4dd1fc7355083a934fe547cb418d6309abf0f",
+      "verified_at": "2026-10-19T15:24:47.210Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:18:32.967Z"
+      "last_updated": "2026-10-19T15:24:47.210Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -8764,14 +8764,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vikejs-vike",
-      "content_hash": "5cd7ac015b0f84c768126a0a78b344888cd394d92c1968d5fec3a37cfd1232b1",
-      "verified_at": "2026-10-19T04:27:04.258Z",
+      "content_hash": "201124e8b8a25eb1f8ffee1238a16846dd48fbb174e638cab349da5b6d24608b",
+      "verified_at": "2026-10-19T15:24:31.597Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:27:04.258Z"
+      "last_updated": "2026-10-19T15:24:31.597Z"
     },
     "NVIDIA/cuda-rust": {
       "repository": "NVIDIA/cuda-rust",
@@ -12417,6 +12417,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T15:17:46.630Z"
+    },
+    "productdevbook/port-killer": {
+      "repository": "productdevbook/port-killer",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-productdevbook-port-killer",
+      "content_hash": "259bbb2f69d886cc8a2c99e9f427355cad2a4c15cb4271a0611cfc6b47f49b13",
+      "verified_at": "2026-10-19T15:24:38.178Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T15:24:38.179Z"
     }
   },
   "repos": {

@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "9ea7dd4a6bdfee89fee83abf67f76d224ac27f2eaa2ac1af9c84cb60f63fd120",
-    "lastHarvestedAt": "2026-10-18T04:46:34.750Z",
+    "contentHash": "5b7811ba6885ba8b04e3c5116f614d973770f98026a636c9ffc56454f81d95f6",
+    "lastHarvestedAt": "2026-10-19T15:24:31.423Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "319a369d",
+    "sourceVersion": "e3ab3625",
     "license": "Apache-2.0",
-    "contentHash": "948e6556a185bc6d71e4409153e2a692bb6fd9ddbf6446df6dfd54a034ffdb42",
-    "lastHarvestedAt": "2026-10-19T02:18:32.964Z",
+    "contentHash": "67d958aabc18ff67481b8801eff4dd1fc7355083a934fe547cb418d6309abf0f",
+    "lastHarvestedAt": "2026-10-19T15:24:47.198Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -5763,10 +5763,10 @@
     "repository": "vikejs/vike",
     "platform": "github",
     "sourceUrl": "https://github.com/vikejs/vike",
-    "sourceVersion": "305221a5",
+    "sourceVersion": "4a0a6827",
     "license": "MIT",
-    "contentHash": "5cd7ac015b0f84c768126a0a78b344888cd394d92c1968d5fec3a37cfd1232b1",
-    "lastHarvestedAt": "2026-10-19T04:27:04.253Z",
+    "contentHash": "201124e8b8a25eb1f8ffee1238a16846dd48fbb174e638cab349da5b6d24608b",
+    "lastHarvestedAt": "2026-10-19T15:24:31.591Z",
     "learningId": "learn-github-vikejs-vike"
   },
   "nvidia-cuda-rust": {
@@ -8258,5 +8258,15 @@
     "contentHash": "6e55d7a688605e71e97579e63ef08b558f6b1db01c8a59d56e7218c516ee4f51",
     "lastHarvestedAt": "2026-10-19T15:17:46.625Z",
     "learningId": "learn-github-buresdv-cork"
+  },
+  "productdevbook-port-killer": {
+    "repository": "productdevbook/port-killer",
+    "platform": "github",
+    "sourceUrl": "https://github.com/productdevbook/port-killer",
+    "sourceVersion": "2209b0fd",
+    "license": "MIT",
+    "contentHash": "259bbb2f69d886cc8a2c99e9f427355cad2a4c15cb4271a0611cfc6b47f49b13",
+    "lastHarvestedAt": "2026-10-19T15:24:38.172Z",
+    "learningId": "learn-github-productdevbook-port-killer"
   }
 }

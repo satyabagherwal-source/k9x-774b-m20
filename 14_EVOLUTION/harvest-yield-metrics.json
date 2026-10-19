@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T15:17:56.318Z",
-  "total_cycles_completed": 3300,
-  "total_learnings_persisted": 3300,
-  "total_rules_promoted": 2448,
+  "last_updated": "2026-10-19T15:24:47.203Z",
+  "total_cycles_completed": 3304,
+  "total_learnings_persisted": 3304,
+  "total_rules_promoted": 2451,
   "history": [
-    {
-      "timestamp": "2026-10-19T09:19:17.854Z",
-      "repository": "oceanbase/oceanbase",
-      "learningId": "learn-github-oceanbase-oceanbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:35:20.740Z",
-      "repository": "microsoft/react-native-windows",
-      "learningId": "learn-github-microsoft-react-native-windows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:35:22.648Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:35:27.493Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T09:35:29.450Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T15:17:56.318Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:24:31.428Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:24:31.595Z",
+      "repository": "vikejs/vike",
+      "learningId": "learn-github-vikejs-vike",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:24:38.176Z",
+      "repository": "productdevbook/port-killer",
+      "learningId": "learn-github-productdevbook-port-killer",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:24:47.203Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-462M",
-    "timestamp": "2026-10-19T03:01:34.270Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "d919aecb72c3fc8f054fc499a6b5e320d0079229ac74d1177d788b139b135869",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-49G4",
-    "timestamp": "2026-10-19T03:01:38.644Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "f5484937352b3ba076e04c2c8121b98ed5925cc9ad55af8c7035b26a186f9ac3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-C0LM",
-    "timestamp": "2026-10-19T03:07:40.426Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "c085fa80b263778ee8733a5d2499cde9f005f666f6437ecfcce25b4fca16f693",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-C0QH",
-    "timestamp": "2026-10-19T03:07:40.601Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "4da84ec550af2d1b426ac593931b519e8791e693ffecfb1d49c45db5c2681ddd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-C1KY",
     "timestamp": "2026-10-19T03:07:41.698Z",
     "repository": "smol-rs/smol",
@@ -7490,6 +7430,66 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "b2dcdc3c44902a159b57fc83233eb2190e878329b392e0eb9b2ee995b04c05e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NM0S",
+    "timestamp": "2026-10-19T15:24:31.420Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "5b7811ba6885ba8b04e3c5116f614d973770f98026a636c9ffc56454f81d95f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NM5G",
+    "timestamp": "2026-10-19T15:24:31.588Z",
+    "repository": "vikejs/vike",
+    "learningId": "learn-github-vikejs-vike",
+    "contentHash": "201124e8b8a25eb1f8ffee1238a16846dd48fbb174e638cab349da5b6d24608b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NR89",
+    "timestamp": "2026-10-19T15:24:38.169Z",
+    "repository": "productdevbook/port-killer",
+    "learningId": "learn-github-productdevbook-port-killer",
+    "contentHash": "259bbb2f69d886cc8a2c99e9f427355cad2a4c15cb4271a0611cfc6b47f49b13",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NY6Z",
+    "timestamp": "2026-10-19T15:24:47.195Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "67d958aabc18ff67481b8801eff4dd1fc7355083a934fe547cb418d6309abf0f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

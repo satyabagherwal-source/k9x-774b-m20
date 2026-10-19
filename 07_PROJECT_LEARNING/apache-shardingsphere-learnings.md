@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `319a369d`  
+> **Source Version**: `e3ab3625`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:18:32.836Z  
+> **Timestamp**: 2026-10-19T15:24:46.874Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:18:32.831Z  
+> **Harvest Timestamp**: 2026-10-19T15:24:46.866Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20811 stars
+- **Stars / Engagement**: 20812 stars
 
 ---
 
@@ -1206,15 +1206,15 @@ def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40228** (2026-10-18): **Simplify Python prechecks and policy summary reporting**
+- **Issue #40239** (2026-10-19): **Fix JDBC database null handling and preserve original exceptions**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Result Review Result: Mergeable The Code Correctness Review found no blocking issues.  ### Evidence 232 tests, 64 CLI comparisons, policy validation, and 8 source-read traces passed. Semantic fingerprints are unchanged. Current file hashes match the tested and reviewed candidate.  ### Coverage Standalone local candidate: 30820c7d44f9 → current working tree. Fully covered all 7 files, 21 changed blocks, and the approved precheck behavior boundary. One pair of independent reviews, coordinator reconciliation, and session validation passed, with no disagreements or evidence gaps. The existing Spotless/Checkstyle configuration does not cover these Python files; no RAT check was triggered. CI was not reviewed.
+  > ### Result  Review Result: Mergeable  No blocking issues were found in the current code scope of [PR #40239](https://github.com/apache/shardingsphere/pull/40239).  ### Evidence  - Expected null semantics are preserved for catalog/schema, generated-key column names, and the DistSQL statement database type. - Database removal during failure handling no longer causes a secondary NPE to mask the original error. SQLExceptions retain their identity; generic exception wrapping preserves the cause; dialect mapping still uses the database’s protocol when the database exists. - Existing verification results were validated for reuse: 286 tests, with zero failures, errors, or skipped tests. Current source, configuration, tools, inputs, and complete verification scope were confirmed unchanged.  ### Coverage  - Public PR head: `8c62da6a808477ec12fa268d72eeea0bb6bce25c`; merge-base: `639c9176be0243f2682ebd8502271b1736aba788`. No additional local changes. - Assessment follows the public
 
-- **Issue #40226** (2026-10-18): **Fix nullable SQL normalization in projection matching**
+- **Issue #40235** (2026-10-19): **Bump Groovy to 4.0.33**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence The original SQLUtils method bodies remain unchanged. Null text is rejected before a derived projection is created. Relevant tests and style checks passed.  ### Coverage Reviewed the local task delta against baseline 30820c7d44f9. Covered SQLUtils, ProjectionsContextEngine, and their corresponding tests: 4 files and 18 changed blocks. Reviewed root causes, affected contracts, tests, and execution paths against the approved nullable contract and implementation scope. Both independent assessments agreed after coordinator reconciliation and session validation. No unresolved evidence gaps remain. This conclusion covers code correctness only; CI was not reviewed.
+  > ### Result Review Result: Mergeable No blocking issues or required changes within the authorized scope.  ### Evidence The Java 8/21 baseline and candidate runs each passed 123 ordinary tests. Spotless and RAT passed. Espresso packaging verification passed; runtime compatibility remains unverified. The outdated version label in the distribution LICENSE inventory remains a nonblocking observation.  ### Coverage Standalone local candidate; baseline: 639c9176be0243f2682ebd8502271b1736aba788. The authorized change is limited to pom.xml:102. Coverage includes version management, Groovy and Espresso consumers, relevant tests, packaging, performance sampling, and license metadata. Three discovery lenses, convergence checks, five independent review pairs, and report adjudication were completed. The final two consecutive rounds agreed, and record validation passed. This conclusion covers code correctness only; CI was not reviewed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1231,899 +1231,747 @@ def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11e948a4` (2026-10-18)
-**Commit Message**: Fix firebird batch rls cancel without batch (#40098)
+### Incident Patch 1: `e3ab3625` (2026-10-19)
+**Commit Message**: Fix JDBC database null handling and preserve original exceptions (#40239)
 
-* Reject Firebird op_batch_rls and op_batch_cancel without an open batch
-
-The server checks that the statement has a batch and answers isc_bad_batch_handle otherwise, keeping the connection.
-
-* Keep Firebird transaction usable after op_batch_rls or op_batch_cancel without a batch
-
-Return the isc_bad_batch_handle response from the batch release and cancel executors instead of throwing InvalidBatchHandleException, so the frontend engine does not mark the transaction as failed and a following COMMIT still commits the changes made before, as the Firebird server does.
-
-* Add TODO to restore checkNotNull in Firebird batch release and cancel executors
-
-* Fix CODE_OF_CONDUCT violations in Firebird batch release and cancel tests
-
-* Trigger CI
-
-**File**: `proxy/frontend/dialect/firebird/src/main/java/org/apache/shardingsphere/proxy/frontend/firebird/command/query/batch/FirebirdBatchCancelCommandExecutor.java` (modified, +6/-2)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java` (modified, +7/-3)
 ```diff
-@@ -18,6 +18,8 @@
- package org.apache.shardingsphere.proxy.frontend.firebird.command.query.batch;
- 
- import lombok.RequiredArgsConstructor;
-+import org.apache.shardingsphere.database.exception.firebird.exception.protocol.InvalidBatchHandleException;
-+import org.apache.shardingsphere.database.protocol.firebird.err.FirebirdErrorPacketFactory;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchCancelCommandPacket;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchStatement;
- import org.apache.shardingsphere.database.protocol.firebird.packet.generic.FirebirdGenericResponsePacket;
-@@ -43,9 +45,11 @@ public final class FirebirdBatchCancelCommandExecutor implements CommandExecutor
-     public Collection<DatabasePacket> execute() throws SQLException {
-         FirebirdBatchStatementManager batchStatementManager = FirebirdBatchStatementManager.getInstance();
-         FirebirdBatchStatement batchStatement = batchStatementManager.getBatchStatement(connectionSession.getConnectionId(), packet.getStatementHandle());
--        if (null != batchStatement) {
--            batchStatementManager.resetBatchStatement(batchStatement);
-+        // TODO restore checkNotNull when FirebirdFrontendEngine stops marking the transaction as failed for InvalidBatchHandleException
-+        if (null == batchStatement) {
-+            return Collections.singleton(FirebirdErrorPacketFactory.newInstance(new InvalidBatchHandleException(packet.getStatementHandle())));
+@@ -28,6 +28,7 @@
+ import org.apache.shardingsphere.driver.jdbc.core.statement.StatementManager;
+ import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
+ import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
++import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
+ import org.apache.shardingsphere.infra.session.connection.transaction.TransactionConnectionContext;
+ import org.apache.shardingsphere.sql.parser.statement.core.statement.SQLStatement;
+ import org.apache.shardingsphere.sql.parser.statement.core.statement.type.tcl.CommitStatement;
+@@ -81,7 +82,7 @@ private void checkAllowedSQLStatementWhenTransactionFailed(final SQLStatement sq
+         if (!transactionContext.isExceptionOccur()) {
+             return;
          }
-+        batchStatementManager.resetBatchStatement(batchStatement);
-         return Collections.singleton(new FirebirdGenericResponsePacket());
-     }
- }
+-        DatabaseType databaseType = connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
++        DatabaseType databaseType = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
+         if (new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData().getTransactionOption().isAllowCommitAndRollbackOnlyWhenTransactionFailed()) {
+             ShardingSpherePreconditions.checkState(sqlStatement instanceof CommitStatement || sqlStatement instanceof RollbackStatement,
+                     () -> new SQLFeatureNotSupportedException("Current transaction is aborted, commands ignored until end of transaction block."));
+@@ -96,8 +97,11 @@ protected final void handleAutoCommitAfterExecution(final ShardingSphereConnecti
+     
+     protected final void handleExceptionInTransaction(final ShardingSphereConnection connection, final ShardingSphereMetaData metaData) {
+         if (connection.getDatabaseConnectionManager().getConnectionContext().getTransactionContext().isInTransaction()) {
+-            DatabaseType databaseType = metaData.getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
+-            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData();
++            ShardingSphereDatabase database = metaData.getDatabase(connection.getCurrentDatabaseName());
++            if (null == database) {
++                return;
++            }
++            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(database.getProtocolType()).getDialectDatabaseMetaData();
+             if (dialectDatabaseMetaData.getSchemaOption().getDefaultSchema().isPresent()) {
+                 connection.getDatabaseConnectionManager().getConnectionContext().getTransactionContext().setExceptionOccur(true);
+             }
 ```
 
-**File**: `proxy/frontend/dialect/firebird/src/main/java/org/apache/shardingsphere/proxy/frontend/firebird/command/query/batch/FirebirdBatchReleaseCommandExecutor.java` (modified, +8/-1)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/connection/ShardingSphereConnection.java` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,8 @@
- package org.apache.shardingsphere.proxy.frontend.firebird.command.query.batch;
- 
- import lombok.RequiredArgsConstructor;
-+import org.apache.shardingsphere.database.exception.firebird.exception.protocol.InvalidBatchHandleException;
-+import org.apache.shardingsphere.database.protocol.firebird.err.FirebirdErrorPacketFactory;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchReleaseCommandPacket;
- import org.apache.shardingsphere.database.protocol.firebird.packet.generic.FirebirdGenericResponsePacket;
- import org.apache.shardingsphere.database.protocol.packet.DatabasePacket;
-@@ -40,7 +42,12 @@ public final class FirebirdBatchReleaseCommandExecutor implements CommandExecuto
+@@ -238,7 +238,7 @@ private void checkClose() throws SQLException {
+     }
+     
+     private boolean isSchemaSupportedDatabaseType() {
+-        DatabaseType databaseType = contextManager.getMetaDataContexts().getMetaData().getDatabase(currentDatabaseName).getProtocolType();
++        DatabaseType databaseType = contextManager.getDatabase(currentDatabaseName).getProtocolType();
+         return new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData().getSchemaOption().getDefaultSchema().isPresent();
+     }
+     
+```
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/datasource/metadata/ShardingSphereDatabaseMetaData.java` (modified, +3/-5)
+```diff
+@@ -50,7 +50,7 @@ public final class ShardingSphereDatabaseMetaData extends AdaptedDatabaseMetaDat
+     public ShardingSphereDatabaseMetaData(final ShardingSphereConnection connection) throws SQLException {
+         super(connection.getDatabaseConnectionManager().getRandomConnection().getMetaData());
+         this.connection = connection;
+-        rules = connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getRuleMetaData().getRules();
++        rules = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getRuleMetaData().getRules();
+     }
      
      @Override
-     public Collection<DatabasePacket> execute() throws SQLException {
--        FirebirdBatchStatementManager.getInstance().unregisterBatchStatement(connectionSession.getConnectionId(), packet.getStatementHandle());
-+        FirebirdBatchStatementManager batchStatementManager = FirebirdBatchStatementManager.getInstance();
-+        // TODO restore checkNotNull when FirebirdFrontendEngine stops marking the transaction as failed for InvalidBatchHandleException
-+        if (null == batchStatementManager.getBatchStatement(connectionSession.getConnectionId(), packet.getStatementHandle())) {
-+            return Collections.singleton(FirebirdErrorPacketFactory.newInstance(new InvalidBatchHandleException(packet.getStatementHandle())));
-+        }
-+        batchStatementManager.unregisterBatchStatement(connectionSession.getConnectionId(), packet.getStatementHandle());
-         return Collections.singleton(new FirebirdGenericResponsePacket());
+@@ -231,8 +231,7 @@ private String getActualCatalog(final String catalog) {
+             return null;
+         }
+         // TODO consider get actual catalog by logic catalog rather than random physical datasource's catalog.
+-        ConnectionProperties connectionProps = connection.getContextManager()
+-                .getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getResourceMetaData().getStorageUnits().get(getDataSourceName()).getConnectionProperties();
++        ConnectionProperties connectionProps = connection.getContextManager().getStorageUnits(connection.getCurrentDatabaseName()).get(getDataSourceName()).getConnectionProperties();
+         return connectionProps.getCatalog();
      }
- }
+     
+@@ -241,8 +240,7 @@ private String getActualSchema(final String schema) {
+             return null;
+         }
+         // TODO consider get actual schema by logic catalog rather than random physical datasource's schema.
+-        ConnectionProperties connectionProps = connection.getContextManager()
+-                .getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getResourceMetaData().getStorageUnits().get(getDataSourceName()).getConnectionProperties();
++        ConnectionProperties connectionProps = connection.getContextManager().getStorageUnits(connection.getCurrentDatabaseName()).get(getDataSourceName()).getConnectionProperties();
+         return Optional.ofNullable(connectionProps.getSchema()).map(String::toUpperCase).orElse(null);
+     }
+     
 ```
 
-**File**: `proxy/frontend/dialect/firebird/src/test/java/org/apache/shardingsphere/proxy/frontend/firebird/command/query/batch/FirebirdBatchCancelCommandExecutorTest.java` (modified, +73/-5)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/DistSQLStatementExecutor.java` (modified, +1/-2)
 ```diff
-@@ -17,30 +17,59 @@
+@@ -87,8 +87,7 @@ private void checkTransaction(final DistSQLStatement sqlStatement) {
+     
+     private DistSQLConnectionContext createConnectionContext(final QueryContext queryContext) {
+         DistSQLConnectionContext result = new DistSQLConnectionContext(queryContext, connection.getDatabaseConnectionManager().getConnectionSize(),
+-                connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getProtocolType(),
+-                connection.getDatabaseConnectionManager(), statementManager);
++                connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getProtocolType(), connection.getDatabaseConnectionManager(), statementManager);
+         result.setProcessId(connection.getProcessId());
+         return result;
+     }
+```
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSphereStatement.java` (modified, +24/-12)
+```diff
+@@ -23,6 +23,8 @@
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
+ import org.apache.shardingsphere.database.exception.core.SQLExceptionTransformEngine;
++import org.apache.shardingsphere.database.exception.core.exception.SQLDialectException;
++import org.apache.shardingsphere.database.exception.core.exception.protocol.DatabaseProtocolException;
+ import org.apache.shardingsphere.distsql.statement.DistSQLStatement;
+ import org.apache.shardingsphere.driver.executor.callback.add.StatementAddCallback;
+ import org.apache.shardingsphere.driver.executor.callback.execute.StatementExecuteCallback;
+@@ -40,6 +42,7 @@
+ import org.apache.shardingsphere.infra.binder.context.statement.type.dml.InsertStatementContext;
+ import org.apache.shardingsphere.infra.binder.engine.SQLBindEngine;
+ import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
++import org.apache.shardingsphere.infra.exception.generic.UnknownSQLException;
+ import org.apache.shardingsphere.infra.exception.kernel.syntax.EmptySQLException;
+ import org.apache.shardingsphere.infra.executor.sql.prepare.driver.jdbc.JDBCDriverType;
+ import org.apache.shardingsphere.infra.executor.sql.prepare.driver.jdbc.StatementOption;
+@@ -106,9 +109,10 @@ public ShardingSphereStatement(final ShardingSphereConnection connection, final
+         this.connection = connection;
+         metaData = connection.getContextManager().getMetaDataContexts().getMetaData();
+         statementOption = new StatementOption(resultSetType, resultSetConcurrency, resultSetHoldability);
++        ShardingSphereDatabase currentDatabase = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName());
+         statementManager = new StatementManager();
+         connection.registerStatementManager(statementManager);
+-        driverExecutorFacade = new DriverExecutorFacade(connection, statementOption, statementManager, JDBCDriverType.STATEMENT, metaData.getDatabase(connection.getCurrentDatabaseName()));
++        driverExecutorFacade = new DriverExecutorFacade(connection, statementOption, statementManager, JDBCDriverType.STATEMENT, currentDatabase);
+         distSQLStatementExecutor = new DistSQLStatementExecutor(connection, statementManager, this);
+         batchStatementExecutor = new BatchStatementExecutor(this);
+         statements = new LinkedList<>();
+@@ -133,10 +137,18 @@ public ResultSet executeQuery(final String sql) throws SQLException {
+             // CHECKSTYLE:ON
+             handleExceptionInTransaction(connection, metaData);
+             currentResultSet = null;
+-            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
++            throw toSQLException(ex);
+         }
+     }
+     
++    private SQLException toSQLException(final Exception cause) {
++        if (cause instanceof SQLDialectException && !(cause instanceof DatabaseProtocolException)) {
++            ShardingSphereDatabase usedDatabase = metaData.getDatabase(usedDatabaseName);
++            return null == usedDatabase ? new UnknownSQLException(cause).toSQLException() : SQLExceptionTransformEngine.toSQLException(cause, usedDatabase.getProtocolType());
++        }
++        return SQLExceptionTransformEngine.toSQLException(cause, metaData.getProtocolType());
++    }
++    
+     @Override
+     public int executeUpdate(final String sql) throws SQLException {
+         try {
+@@ -145,7 +157,7 @@ public int executeUpdate(final String sql) throws SQLException {
+         } catch (final RuntimeException | SQLException ex) {
+             // CHECKSTYLE:ON
+             handleExceptionInTransaction(connection, metaData);
+-            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
++            throw toSQLException(ex);
+         }
+     }
+     
+@@ -160,7 +172,7 @@ public int executeUpdate(final String sql, final int autoGeneratedKeys) throws S
+         } catch (final RuntimeException | SQLException ex) {
+             // CHECKSTYLE:ON
+             handleExceptionInTransaction(connection, metaData);
+-            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
++            throw toSQLException(ex);
+         }
+     }
+     
+@@ -173,7 +185,7 @@ public int executeUpdate(final String sql, final int[] columnIndexes) throws SQL
+         } catch (final RuntimeException | SQLException ex) {
+             // CHECKSTYLE:ON
+             handleExceptionInTransaction(connection, metaData);
+-            throw SQLExceptionTransformEngine.toSQLException(ex, metaData.getDatabase(usedDatabaseName).getProtocolType());
++            throw toSQLException(ex);
+         }
+     }
+     
+@@ -186,7 +198,7 @@ public int executeUpdate(final String sql, final String[] columnNames) throws SQ
+         } catch (final RuntimeException | SQLException ex) {
+   
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/connection/ShardingSphereConnectionTest.java` (modified, +184/-0)
+```diff
+@@ -18,10 +18,15 @@
+ package org.apache.shardingsphere.driver.jdbc.core.connection;
  
- package org.apache.shardingsphere.proxy.frontend.firebird.command.query.batch;
- 
-+import io.netty.buffer.Unpooled;
-+import io.netty.channel.ChannelHandlerContext;
-+import io.netty.util.DefaultAttributeMap;
-+import org.apache.shardingsphere.database.connector.core.spi.DatabaseTypedSPILoader;
+ import lombok.SneakyThrows;
++import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.DialectDatabaseMetaData;
 +import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.database.protocol.constant.CommonConstants;
-+import org.apache.shardingsphere.database.protocol.firebird.packet.command.FirebirdCommandPacketType;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchCancelCommandPacket;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchRegistry;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchStatement;
- import org.apache.shardingsphere.database.protocol.firebird.packet.generic.FirebirdGenericResponsePacket;
- import org.apache.shardingsphere.database.protocol.packet.DatabasePacket;
-+import org.apache.shardingsphere.infra.config.props.ConfigurationProperties;
-+import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.rule.RuleMetaData;
-+import org.apache.shardingsphere.infra.metadata.user.Grantee;
++import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
++import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
+ import org.apache.shardingsphere.infra.executor.sql.execute.engine.ConnectionMode;
+ import org.apache.shardingsphere.infra.metadata.database.resource.unit.StorageUnit;
+ import org.apache.shardingsphere.infra.metadata.database.rule.RuleMetaData;
+ import org.apache.shardingsphere.infra.session.connection.ConnectionContext;
 +import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
-+import org.apache.shardingsphere.proxy.backend.context.ProxyContext;
- import org.apache.shardingsphere.proxy.backend.session.ConnectionSession;
-+import org.apache.shardingsphere.proxy.frontend.command.CommandExecutorTask;
-+import org.apache.shardingsphere.proxy.frontend.firebird.command.query.transaction.FirebirdTransactionIdGenerator;
-+import org.apache.shardingsphere.proxy.frontend.spi.DatabaseProtocolFrontendEngine;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.AutoMockExtension;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.StaticMockSettings;
-+import org.apache.shardingsphere.transaction.api.TransactionType;
-+import org.apache.shardingsphere.transaction.rule.TransactionRule;
-+import org.firebirdsql.gds.ISCConstants;
+ import org.apache.shardingsphere.mode.manager.ContextManager;
+ import org.apache.shardingsphere.test.infra.fixture.jdbc.MockedDataSource;
+ import org.apache.shardingsphere.transaction.ConnectionTransaction;
+@@ -30,21 +35,29 @@
+ import org.apache.shardingsphere.transaction.config.TransactionRuleConfiguration;
+ import org.apache.shardingsphere.transaction.rule.TransactionRule;
  import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.extension.ExtendWith;
- import org.mockito.Answers;
-+import org.mockito.ArgumentCaptor;
- import org.mockito.Mock;
--import org.mockito.junit.jupiter.MockitoExtension;
++import org.mockito.MockedConstruction;
+ import org.mockito.internal.configuration.plugins.Plugins;
  
-+import java.nio.charset.StandardCharsets;
-+import java.sql.Connection;
+ import javax.sql.DataSource;
+ import java.sql.Connection;
  import java.sql.SQLException;
- import java.util.Arrays;
- import java.util.Collection;
-+import java.util.Collections;
-+import java.util.Properties;
++import java.sql.SQLFeatureNotSupportedException;
++import java.sql.Savepoint;
+ import java.util.Collections;
+ import java.util.Optional;
+ import java.util.Properties;
  
  import static org.hamcrest.MatcherAssert.assertThat;
  import static org.hamcrest.Matchers.is;
- import static org.hamcrest.Matchers.isA;
--import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
++import static org.hamcrest.Matchers.sameInstance;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertThrows;
  import static org.junit.jupiter.api.Assertions.assertTrue;
-+import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
++import static org.mockito.Mockito.doThrow;
+ import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockConstruction;
 +import static org.mockito.Mockito.never;
-+import static org.mockito.Mockito.times;
-+import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.verify;
  import static org.mockito.Mockito.when;
  
--@ExtendWith(MockitoExtension.class)
-+@ExtendWith(AutoMockExtension.class)
-+@StaticMockSettings(ProxyContext.class)
- class FirebirdBatchCancelCommandExecutorTest {
-     
-     private static final int CONNECTION_ID = 2;
-@@ -53,6 +82,12 @@ class FirebirdBatchCancelCommandExecutorTest {
-     @Mock
-     private FirebirdBatchCancelCommandPacket packet;
-     
-+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-+    private ChannelHandlerContext channelHandlerContext;
-+    
-+    @Mock
-+    private Connection backendConnection;
-+    
-     @Test
-     void assertExecute() throws SQLException {
-         FirebirdBatchRegistry.getInstance().registerConnection(CONNECTION_ID);
-@@ -71,9 +106,42 @@ void assertExecute() throws SQLException {
-     }
-     
-     @Test
--    void assertExecuteWhenBatchNotFound() {
-+    void assertExecuteWhenBatchNotFound() throws SQLException {
-         when(connectionSession.getConnectionId()).thenReturn(CONNECTION_ID);
-         when(packet.getStatementHandle()).thenReturn(STATEMENT_ID);
--        assertDoesNotThrow(() -> new FirebirdBatchCancelCommandExecutor(packet, connectionSession).execute());
-+        Collection<DatabasePacket> actual = new FirebirdBatchCancelCommandExecutor(packet, connectionSession).execute();
-+        assertThat(actual.size(), is(1));
-+        assertThat(((FirebirdGenericResponsePacket) actual.iterator().next()).getErrorCode(), is(ISCConstants.isc_bad_batch_handle));
-+    }
-+    
-+    @Test
-+    void assertExecuteWhenBatchNotFoundInTransaction() throws SQLException {
-+        ConnectionSession transactionSession = createConnectionSessionInTransaction();
-+        int transactionHandle = FirebirdTransactionIdGenerator.getInstance().nextTransactionId(CONNECTION_ID);
-+        DatabaseProtocolFrontendEngine engine = DatabaseTypedSPILoader.getService(DatabaseProtocolFro
-```
-
-**File**: `proxy/frontend/dialect/firebird/src/test/java/org/apache/shardingsphere/proxy/frontend/firebird/command/query/batch/FirebirdBatchReleaseCommandExecutorTest.java` (modified, +78/-2)
-```diff
-@@ -17,28 +17,58 @@
- 
- package org.apache.shardingsphere.proxy.frontend.firebird.command.query.batch;
- 
-+import io.netty.buffer.Unpooled;
-+import io.netty.channel.ChannelHandlerContext;
-+import io.netty.util.DefaultAttributeMap;
-+import org.apache.shardingsphere.database.connector.core.spi.DatabaseTypedSPILoader;
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.database.protocol.constant.CommonConstants;
-+import org.apache.shardingsphere.database.protocol.firebird.packet.command.FirebirdCommandPacketType;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchRegistry;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchReleaseCommandPacket;
- import org.apache.shardingsphere.database.protocol.firebird.packet.command.query.batch.FirebirdBatchStatement;
- import org.apache.shardingsphere.database.protocol.firebird.packet.generic.FirebirdGenericResponsePacket;
- import org.apache.shardingsphere.database.protocol.packet.DatabasePacket;
-+import org.apache.shardingsphere.infra.config.props.ConfigurationProperties;
-+import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
-+import org.apache.shardingsphere.infra.metadata.database.rule.RuleMetaData;
-+import org.apache.shardingsphere.infra.metadata.user.Grantee;
-+import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
-+import org.apache.shardingsphere.proxy.backend.context.ProxyContext;
- import org.apache.shardingsphere.proxy.backend.session.ConnectionSession;
-+import org.apache.shardingsphere.proxy.frontend.command.CommandExecutorTask;
-+import org.apache.shardingsphere.proxy.frontend.firebird.command.query.transaction.FirebirdTransactionIdGenerator;
-+import org.apache.shardingsphere.proxy.frontend.spi.DatabaseProtocolFrontendEngine;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.AutoMockExtension;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.StaticMockSettings;
-+import org.apache.shardingsphere.transaction.api.TransactionType;
-+import org.apache.shardingsphere.transaction.rule.TransactionRule;
-+import org.firebirdsql.gds.ISCConstants;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.extension.ExtendWith;
- import org.mockito.Answers;
-+import org.mockito.ArgumentCaptor;
- import org.mockito.Mock;
--import org.mockito.junit.jupiter.MockitoExtension;
- 
-+import java.nio.charset.StandardCharsets;
-+import java.sql.Connection;
- import java.sql.SQLException;
- import java.util.Collection;
-+import java.util.Collections;
-+import java.util.Properties;
- 
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
- import static org.hamcrest.Matchers.isA;
- import static org.junit.jupiter.api.Assertions.assertNull;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.never;
-+import static org.mockito.Mockito.times;
-+import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
- 
--@ExtendWith(MockitoExtension.class)
-+@ExtendWith(AutoMockExtension.class)
-+@StaticMockSettings(ProxyContext.class)
- class FirebirdBatchReleaseCommandExecutorTest {
-     
-     private static final int CONNECTION_ID = 2;
-@@ -51,6 +81,12 @@ class FirebirdBatchReleaseCommandExecutorTest {
-     @Mock
-     private FirebirdBatchReleaseCommandPacket packet;
-     
-+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-+    private ChannelHandlerContext channelHandlerContext;
-+    
-+    @Mock
-+    private Connection backendConnection;
-+    
-     @Test
-     void assertExecute() throws SQLException {
-         FirebirdBatchRegistry.getInstance().registerConnection(CONNECTION_ID);
-@@ -63,4 +99,44 @@ void assertExecute() throws SQLException {
-         assertNull(FirebirdBatchRegistry.getInstance().getBatchStatement(CONNECTION_ID, STATEMENT_ID));
-         FirebirdBatchRegistry.getInstance().unregisterConnection(CONNECTION_ID);
-     }
-+    
-+    @Test
-+    void assertExecuteWhenBatchNotFound() throws SQLException {
-+        when(connectionSession.getConnectionId()).thenReturn(CONNECTION_ID);
-+        when(packet.getStatementHandle()).thenReturn(STATEMENT_ID);
-+        Collection<DatabasePacket> actual = new FirebirdBatchReleaseCommandExecutor(packet, connectionSession).execute();
-+        assertThat(actual.size(), is(1));
-+        assertThat(((FirebirdGenericResponsePacket) actual.iterator().next()).getErrorCode(), is(ISCConstants.isc_bad_batch_handle));
-+    }
-+    
-+    @Test
-+    void assertExecuteWhenBatchNotFoundInTransaction() throws SQLException {
-+        ConnectionSession transactionSession = createConnectionSessionInTransaction();
-+        int transactionHandle = FirebirdTransactionIdGenerator.getInstance().nextTransactionId(CONNECTION_ID);
-+        DatabaseProtocolFrontendEngine engine = DatabaseTypedSPILoader.getService(DatabaseProtocolFrontendEngine.class, TypedSPILoader.getService(DatabaseType.cl
-```
-
----
-
-### Incident Patch 2: `a4022e94` (2026-10-18)
-**Commit Message**: Fix Firebird OFFSET/FETCH rewrite by visiting limitClause (#39955)
-
-* Fix Firebird OFFSET/FETCH rewrite by visiting limitClause
-
-Firebird select statements that use OFFSET ... ROWS FETCH FIRST ... ROWS ONLY
-were never rewritten, because the pagination information never reached a
-LimitSegment:
-
-- FirebirdDMLStatementVisitor.visitSelectClause handled only firstSkipClause
-  (FIRST n / SKIP n, the Firebird-specific syntax) and ignored the limitClause
-  that selectClause declares in DMLStatement.g4.
-- orderByClause also carried a trailing limitClause?. ANTLR's greedy prediction
-  consumed the clause inside orderByClause, so for a statement with ORDER BY the
-  outer ctx.limitClause() was null. orderByClause is reused by window
-  specifications (OVER (...)) and GROUP_CONCAT(...), where accepting a LIMIT is
-  wrong regardless, and every statement that wants one already declares its own
-  limitClause? (DML / DAL / DDL), so the nested one is removed.
-
-With both changes, SELECT * FROM t_order ORDER BY order_id OFFSET 100000 ROWS
-FETCH FIRST 10 ROWS ONLY parses to a LimitSegment with offset=100000 and
-rowCount=10, and the sharding pagination rewrite can apply.
-
-Anchors in visitLimitClause are 
-
-**File**: `features/sharding/core/pom.xml` (modified, +6/-0)
-```diff
-@@ -139,6 +139,12 @@
-             <version>${project.version}</version>
-             <scope>test</scope>
-         </dependency>
-+        <dependency>
-+            <groupId>org.apache.shardingsphere</groupId>
-+            <artifactId>shardingsphere-database-connector-firebird</artifactId>
-+            <version>${project.version}</version>
-+            <scope>test</scope>
-+        </dependency>
-         <dependency>
-             <groupId>org.apache.shardingsphere</groupId>
-             <artifactId>shardingsphere-test-it-yaml</artifactId>
-```
-
-**File**: `features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/merge/dql/pagination/builder/dialect/FirebirdPaginationDecoratorMergedResultBuilder.java` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one or more
-+ * contributor license agreements.  See the NOTICE file distributed with
-+ * this work for additional information regarding copyright ownership.
-+ * The ASF licenses this file to You under the Apache License, Version 2.0
-+ * (the "License"); you may not use this file except in compliance with
-+ * the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.shardingsphere.sharding.merge.dql.pagination.builder.dialect;
-+
-+import org.apache.shardingsphere.infra.binder.context.segment.select.pagination.PaginationContext;
-+import org.apache.shardingsphere.infra.merge.result.MergedResult;
-+import org.apache.shardingsphere.infra.merge.result.impl.decorator.DecoratorMergedResult;
-+import org.apache.shardingsphere.sharding.merge.dql.pagination.LimitDecoratorMergedResult;
-+import org.apache.shardingsphere.sharding.merge.dql.pagination.builder.PaginationDecoratorMergedResultBuilder;
-+
-+import java.sql.SQLException;
-+
-+/**
-+ * Pagination decorator merged result builder for Firebird.
-+ */
-+public final class FirebirdPaginationDecoratorMergedResultBuilder implements PaginationDecoratorMergedResultBuilder {
-+    
-+    @Override
-+    public DecoratorMergedResult build(final MergedResult mergedResult, final PaginationContext paginationContext) throws SQLException {
-+        return new LimitDecoratorMergedResult(mergedResult, paginationContext);
-+    }
-+    
-+    @Override
-+    public String getDatabaseType() {
-+        return "Firebird";
-+    }
-+}
-```
-
-**File**: `features/sharding/core/src/main/resources/META-INF/services/org.apache.shardingsphere.sharding.merge.dql.pagination.builder.PaginationDecoratorMergedResultBuilder` (modified, +1/-0)
-```diff
-@@ -20,3 +20,4 @@ org.apache.shardingsphere.sharding.merge.dql.pagination.builder.dialect.PostgreS
- org.apache.shardingsphere.sharding.merge.dql.pagination.builder.dialect.OpenGaussPaginationDecoratorMergedResultBuilder
- org.apache.shardingsphere.sharding.merge.dql.pagination.builder.dialect.OraclePaginationDecoratorMergedResultBuilder
- org.apache.shardingsphere.sharding.merge.dql.pagination.builder.dialect.SQLServerPaginationDecoratorMergedResultBuilder
-+org.apache.shardingsphere.sharding.merge.dql.pagination.builder.dialect.FirebirdPaginationDecoratorMergedResultBuilder
-```
-
-**File**: `features/sharding/core/src/test/java/org/apache/shardingsphere/sharding/merge/dql/ShardingDQLResultMergerTest.java` (modified, +26/-0)
-```diff
-@@ -100,6 +100,8 @@ class ShardingDQLResultMergerTest {
-     
-     private final DatabaseType sqlserverDatabaseType = TypedSPILoader.getService(DatabaseType.class, "SQLServer");
-     
-+    private final DatabaseType firebirdDatabaseType = TypedSPILoader.getService(DatabaseType.class, "Firebird");
-+    
-     @Test
-     void assertBuildIteratorStreamMergedResult() throws SQLException {
-         ShardingDQLResultMerger resultMerger = new ShardingDQLResultMerger(mysqlDatabaseType);
-@@ -197,6 +199,30 @@ void assertBuildIteratorStreamMergedResultWithSQLServerOffsetFetch() throws SQLE
-         assertFalse(actual.next());
-     }
-     
-+    @Test
-+    void assertBuildIteratorStreamMergedResultWithFirebirdOffsetFetch() throws SQLException {
-+        ShardingDQLResultMerger resultMerger = new ShardingDQLResultMerger(firebirdDatabaseType);
-+        ShardingSphereDatabase database = mock(ShardingSphereDatabase.class, RETURNS_DEEP_STUBS);
-+        SelectStatement selectStatement = buildSelectStatement(firebirdDatabaseType);
-+        selectStatement = withProjections(selectStatement, new ProjectionsSegment(0, 0));
-+        selectStatement = withLimit(selectStatement, new LimitSegment(0, 0, new NumberLiteralLimitValueSegment(0, 0, 2L), new NumberLiteralLimitValueSegment(0, 0, 2L)));
-+        SelectStatementContext selectStatementContext = new SelectStatementContext(selectStatement, createShardingSphereMetaData(database), "foo_db", Collections.emptyList());
-+        MergedResult actual = resultMerger.merge(createFourQueryResults(), selectStatementContext, createDialectDatabase(firebirdDatabaseType), mock(ConnectionContext.class));
-+        assertTrue(actual.next());
-+        assertTrue(actual.next());
-+        assertFalse(actual.next());
-+    }
-+    
-+    private List<QueryResult> createFourQueryResults() throws SQLException {
-+        List<QueryResult> result = new LinkedList<>();
-+        for (int i = 0; i < 4; i++) {
-+            QueryResult queryResult = createQueryResult();
-+            when(queryResult.next()).thenReturn(true, true, false);
-+            result.add(queryResult);
-+        }
-+        return result;
-+    }
-+    
-     @Test
-     void assertBuildOrderByStreamMergedResult() throws SQLException {
-         ShardingDQLResultMerger resultMerger = new ShardingDQLResultMerger(mysqlDatabaseType);
-```
-
-**File**: `features/sharding/core/src/test/java/org/apache/shardingsphere/sharding/merge/dql/pagination/builder/dialect/FirebirdPaginationDecoratorMergedResultBuilderTest.java` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one or more
-+ * contributor license agreements.  See the NOTICE file distributed with
-+ * this work for additional information regarding copyright ownership.
-+ * The ASF licenses this file to You under the Apache License, Version 2.0
-+ * (the "License"); you may not use this file except in compliance with
-+ * the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.shardingsphere.sharding.merge.dql.pagination.builder.dialect;
-+
-+import org.apache.shardingsphere.database.connector.core.spi.DatabaseTypedSPILoader;
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.infra.binder.context.segment.select.pagination.PaginationContext;
-+import org.apache.shardingsphere.infra.merge.result.MergedResult;
-+import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
-+import org.apache.shardingsphere.sharding.merge.dql.pagination.LimitDecoratorMergedResult;
-+import org.apache.shardingsphere.sharding.merge.dql.pagination.builder.PaginationDecoratorMergedResultBuilder;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.pagination.limit.NumberLiteralLimitValueSegment;
-+import org.junit.jupiter.api.Test;
-+
-+import java.sql.SQLException;
-+import java.util.Collections;
-+
-+import static org.hamcrest.MatcherAssert.assertThat;
-+import static org.hamcrest.Matchers.isA;
-+import static org.mockito.Mockito.mock;
-+
-+class FirebirdPaginationDecoratorMergedResultBuilderTest {
-+    
-+    private final DatabaseType databaseType = TypedSPILoader.getService(DatabaseType.class, "Firebird");
-+    
-+    @Test
-+    void assertBuild() throws SQLException {
-+        PaginationContext paginationContext = new PaginationContext(new NumberLiteralLimitValueSegment(0, 0, 10L), new NumberLiteralLimitValueSegment(0, 0, 10L), Collections.emptyList());
-+        PaginationDecoratorMergedResultBuilder builder = DatabaseTypedSPILoader.getService(PaginationDecoratorMergedResultBuilder.class, databaseType);
-+        assertThat(builder, isA(FirebirdPaginationDecoratorMergedResultBuilder.class));
-+        assertThat(builder.build(mock(MergedResult.class), paginationContext), isA(LimitDecoratorMergedResult.class));
-+    }
-+}
-```
-
-**File**: `parser/sql/engine/dialect/firebird/src/main/antlr4/imports/firebird/BaseRule.g4` (modified, +1/-1)
-```diff
-@@ -389,7 +389,7 @@ subquery
-     ;
- 
- orderByClause
--    : ORDER BY orderByItem (COMMA_ orderByItem)* limitClause?
-+    : ORDER BY orderByItem (COMMA_ orderByItem)*
-     ;
- 
- orderByItem
-```
-
-**File**: `parser/sql/engine/dialect/firebird/src/main/java/org/apache/shardingsphere/sql/parser/engine/firebird/visitor/statement/type/FirebirdDMLStatementVisitor.java` (modified, +48/-5)
-```diff
-@@ -44,8 +44,12 @@
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.InsertValuesClauseContext;
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.JoinSpecificationContext;
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.JoinedTableContext;
-+import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.LimitClauseContext;
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.MergeContext;
-+import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.NumberLiteralsContext;
-+import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.OffsetDefinitionContext;
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.OrderByItemContext;
-+import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.ParameterMarkerContext;
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.ProjectionContext;
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.ProjectionsContext;
- import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.QualifiedShorthandContext;
-@@ -257,11 +261,12 @@ public ASTNode visitSingleTableClause(final SingleTableClauseContext ctx) {
-     
-     @Override
-     public ASTNode visitSelect(final SelectContext ctx) {
-+        WithSegment withSegment = null == ctx.withClause() ? null : (WithSegment) visit(ctx.withClause());
-         SelectStatement result = (SelectStatement) visit(ctx.combineClause());
--        result.addParameterMarkers(getParameterMarkerSegments());
--        if (null != ctx.withClause()) {
--            result = createSelectStatementBuilder(result).with((WithSegment) visit(ctx.withClause())).build();
-+        if (null != withSegment) {
-+            result = createSelectStatementBuilder(result).with(withSegment).build();
-         }
-+        result.addParameterMarkers(getParameterMarkerSegments());
+@@ -140,6 +153,177 @@ private DriverDatabaseConnectionManager mockConnectionManager(final ShardingSphe
          return result;
      }
      
-@@ -334,6 +339,9 @@ public ASTNode visitSelectClause(final SelectClauseContext ctx) {
-         if (null != ctx.havingClause()) {
-             selectStatementBuilder.having((HavingSegment) visit(ctx.havingClause()));
-         }
-+        if (null != ctx.limitClause()) {
-+            selectStatementBuilder.limit((LimitSegment) visit(ctx.limitClause()));
++    @Test
++    void assertRollbackSavepointWithDroppedDatabase() throws SQLException {
++        ContextManager contextManager = mockContextManager();
++        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
++            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
++            mockDroppedDatabase(contextManager, expected);
++            assertThat(assertThrows(UnknownDatabaseException.class, () -> connection.rollback(mock(Savepoint.class))), sameInstance(expected));
 +        }
-         return selectStatementBuilder.build();
-     }
-     
-@@ -352,6 +360,40 @@ public ASTNode visitFirstSkipClause(final FirstSkipClauseContext ctx) {
-         return new LimitSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), offset, rowCount);
-     }
-     
-+    @Override
-+    public ASTNode visitLimitClause(final LimitClauseContext ctx) {
-+        PaginationValueSegment rowCount = null;
-+        PaginationValueSegment offset = null;
-+        if (null != ctx.rowsClause()) {
-+            offset = (PaginationValueSegment) visitLimitValue(ctx.rowsClause().expr(0));
-+            if (ctx.rowsClause().expr().size() > 1) {
-+                rowCount = (PaginationValueSegment) visitLimitValue(ctx.rowsClause().expr(1));
-+            }
-+        } else {
-+            OffsetDefinitionContext offsetDefinition = ctx.offsetDefinition();
-+            if (null != offsetDefinition.offsetClause()) {
-+                offset = (PaginationValueSegment) visitLimitValue(offsetDefinition.offsetClause().limitOffset());
-+            }
-+            if (null != offsetDefinition.fetchClause()) {
-+                rowCount = (PaginationValueSegment) visitLimitValue(offsetDefinition.fetchClause().limitRowCount());
-+            }
-+        }
-+        return new LimitSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), offset, rowCount);
 +    }
 +    
-+    private ASTNode visitLimitValue(final ParserRuleContext ctx) {
-+        if (ctx.getChild(0) instanceof NumberLiteralsContext) {
-+            return new NumberLiteralLimitValueSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), ((NumberLiteralValue) visit(ctx.getChild(0))).getValue().longValue());
++    @Test
++    void assertSetNamedSavepointWithDroppedDatabase() throws SQLException {
++        ContextManager contextManager = mockContextManager();
++        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
++            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
++            mockDroppedDatabase(contextManager, expected);
++            assertThat(assertThrows(UnknownDatabaseException.class, () -> connection.setSavepoint("foo_savepoint")), sameInstance(expected));
 +        }
-+        if (ctx.getChild(0) instanceof ParameterMarkerContext) {
-+            ParameterMarkerSegment result =
-+                    new ParameterMarkerLimitValueSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), ((ParameterMarkerValue) visit(ctx.getChild(0))).getValue());
-+            getParameterMarkerSegments().add(result);
-+            return result;
-+        }
-+        return null;
 +    }
 +    
-     @Override
-     public ASTNode visitFirstValue(final FirstValueContext ctx) {
-         // TODO Add expression support for firstSkipClause
-@@ -615,9 +657,10 @@ public ASTNode visitGroupByClause(final GroupByClauseContext ctx) {
-     
-     @Override
-     public ASTNode visitSubquery(final SubqueryContext ctx) {
-+        WithSegment withSegment = null == ctx.withClause() ? null : (WithSegment) visit(ctx.withClause());
-         SelectStatement result = (SelectStatement) v
++    @Test
++    void assertSetSavepointWithDroppedDatabase() throws SQLException {
++        ContextManager contextManager = mockContextManager();
++        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
++            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
++            mockDroppedDatabase(contextManager, expected);
++            assertThat(assertThrows(UnknownDatabaseException.class, connection::setSavepoint), sameInstance(expected));
++        }
++    }
++    
++    @Test
++    void assertReleaseSavepointWithDroppedDatabase() throws SQLException {
++        ContextManager contextManager = mockContextManager();
++        try (ShardingSphereConnection connection = new ShardingSphereConnection("foo_db", contextManager)) {
++            UnknownDatabaseException expected = new UnknownDatabaseException("foo_db");
++            mockDroppedDatabase(contextManager, expected);
++            assertThat(assertThrows(UnknownDatabaseException.class, () -> connection.releaseSavepoint(mock(Savepoint.class))), sameInstance(expected));
++        }
++    }
++    
++    private void mockDroppedDatabase(final ContextManager contextManager, final UnknownDatabaseException ex) {
++        when(contextManager.getMetaDataContexts().getMetaData().getDatabase("foo_db")).thenReturn(null);
++        when(contextManager.get
 ```
 
-**File**: `test/it/parser/src/main/resources/case/dml/select-pagination.xml` (modified, +126/-0)
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/datasource/metadata/ShardingSphereDatabaseMetaDataTest.java` (modified, +91/-3)
 ```diff
-@@ -2084,6 +2084,35 @@
-         </from>
-     </select>
+@@ -18,10 +18,12 @@
+ package org.apache.shardingsphere.driver.jdbc.core.datasource.metadata;
  
-+    <select sql-case-id="select_pagination_with_offset_and_fetch_firebird">
-+        <limit start-index="22" stop-index="64">
-+            <offset value="100000" start-index="29" stop-index="34" />
-+            <row-count value="10" start-index="53" stop-index="54" />
-+        </limit>
-+        <projections start-index="7" stop-index="7">
-+            <shorthand-projection start-index="7" stop-index="7" />
-+        </projections>
-+        <from start-index="14" stop-index="20">
-+            <simple-table name="t_order" start-index="14" stop-index="20" />
-+        </from>
-+    </select>
-+
-+    <select sql-case-id="select_pagination_with_order_by_offset_and_fetch_firebird">
-+        <limit start-index="40" stop-index="82">
-+            <offset value="100000" start-index="47" stop-index="52" />
-+            <row-count value="10" start-index="71" stop-index="72" />
-+        </limit>
-+        <projections start-index="7" stop-index="7">
-+            <shorthand-projection start-index="7" stop-index="7" />
-+        </projections>
-+        <from start-index="14" stop-index="20">
-+            <simple-table name="t_order" start-index="14" stop-index="20" />
-+        </from>
-+        <order-by>
-+            <column-item name="order_id" start-index="31" stop-index="38" />
-+        </order-by>
-+    </select>
-+
-     <select sql-case-id="select_pagination_with_first_skip_parameters_firebird" parameters="1, 2">
-         <limit start-index="7" stop-index="20">
-             <row-count value="1" parameter-index="0" start-index="13" stop-index="13" />
-@@ -2097,6 +2126,103 @@
-         </from>
-     </select>
+ import org.apache.shardingsphere.database.connector.core.jdbcurl.parser.ConnectionProperties;
++import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
+ import org.apache.shardingsphere.driver.jdbc.core.connection.ShardingSphereConnection;
+ import org.apache.shardingsphere.driver.jdbc.core.resultset.DatabaseMetaDataResultSet;
+ import org.apache.shardingsphere.infra.instance.ComputeNodeInstanceContext;
+ import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
++import org.apache.shardingsphere.infra.metadata.database.resource.unit.StorageUnit;
+ import org.apache.shardingsphere.mode.metadata.MetaDataContexts;
+ import org.apache.shardingsphere.sharding.api.config.ShardingRuleConfiguration;
+ import org.apache.shardingsphere.sharding.api.config.rule.ShardingTableRuleConfiguration;
+@@ -30,6 +32,9 @@
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.ExtendWith;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.Arguments;
++import org.junit.jupiter.params.provider.MethodSource;
+ import org.mockito.Answers;
+ import org.mockito.Mock;
+ import org.mockito.junit.jupiter.MockitoExtension;
+@@ -44,10 +49,14 @@
+ import java.sql.SQLException;
+ import java.sql.Types;
+ import java.util.Collections;
++import java.util.Map;
++import java.util.stream.Stream;
  
-+    <select sql-case-id="select_pagination_with_where_parameter_offset_and_fetch_firebird" parameters="1, 2, 3">
-+        <projections start-index="7" stop-index="7">
-+            <shorthand-projection start-index="7" stop-index="7" />
-+        </projections>
-+        <from start-index="14" stop-index="20">
-+            <simple-table name="t_order" start-index="14" stop-index="20" />
-+        </from>
-+        <where start-index="22" stop-index="38">
-+            <expr>
-+                <binary-operation-expression start-index="28" stop-index="38">
-+                    <left>
-+                        <column name="user_id" start-index="28" stop-index="34" />
-+                    </left>
-+                    <operator>=</operator>
-+                    <right>
-+                        <literal-expression value="1" start-index="38" stop-index="38" />
-+                        <parameter-marker-expression parameter-index="0" start-index="38" stop-index="38" />
-+                    </right>
-+                </binary-operation-expression>
-+            </expr>
-+        </where>
-+        <order-by>
-+            <column-item name="order_id" start-index="49" stop-index="56" />
-+        </order-by>
-+        <limit start-index="58" stop-index="94" literal-start-index="58" literal-stop-index="94">
-+            <offset value="2" parameter-index="1" start-index="65" stop-index="65" literal-start-index="65" literal-stop-index="65" />
-+            <row-count value="3" parameter-index="2" start-index="84" stop-index="84" literal-start-index="84" literal-stop-index="84" />
-+        </limit>
-+    </select>
-+
-+    <select sql-case-id="select_pagination_with_where_parameter_fetch_firebird" parameters="1, 2">
-+        <projections start-index="7" stop-index="7">
-+            <shorthand-projection start-index="7" stop-index="7" />
-+        </projections>
-+        <from start-index="14" stop-index="20">
-+            <simple-table name="t_order" start-index="14" stop-index="20" />
-+        </from>
-+        <where start-index="22" stop-index="38">
-+            <expr>
-+                <binary-operation-expression start-index="28" stop-index="38">
-+                    <left>
-+                        <column name="user_id" start-index="28" stop-index="34" />
-+                    </left>
-+                    <operator>=</operator>
-+                    <right>
-+                        <literal-expression value="1" start-index="38" stop-index="38" />
-+                        <parameter-marker-expression parameter-index="0" start-index="38" stop-index="38" />
-+                    </right>
-+                </binary-operation-expression>
-+            </expr>
-+        </where>
-+        <limit start-index="40" stop-index="62" literal-start-index="40" literal-stop-index="62">
-+            <row-count value="2" parameter-index="1" start-index="52" stop-index="52" literal-start-index="52" literal-stop-index="52" />
-+        </limit>
-+    </select>
-+
-+    <select sql-case-id="select_pagination_with_cte_where_parameter_offset_and_fetch_firebird" parameters="7, 8, 9">
-+        <with start-index="0" stop-index="56">
-+            <common-table-expression name="c" start-index="5" stop-index="56">
-+                <subquery-expression start-index="5" stop-index="56">
-+                    <select>
-+                 
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.is;
+ import static org.hamcrest.Matchers.isA;
++import static org.hamcrest.Matchers.sameInstance;
++import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.when;
+@@ -69,6 +78,9 @@ class ShardingSphereDatabaseMetaDataTest {
+     @Mock
+     private DatabaseMetaData databaseMetaData;
+     
++    @Mock
++    private ConnectionProperties connectionProps;
++    
+     @Mock
+     private ResultSet resultSet;
+     
+@@ -91,9 +103,11 @@ void setUp() throws SQLException {
+         when(shardingSphereConnection.getCurrentDatabaseName()).thenReturn("foo_db");
+         ShardingSphereDatabase database = mock(ShardingSphereDatabase.class, RETURNS_DEEP_STUBS);
+         when(metaDataContexts.getMetaData().getDatabase(shardingSphereConnection.getCurrentDatabaseName())).thenReturn(database);
++        when(shardingSphereConnection.getContextManager().getDatabase("foo_db")).thenReturn(database);
++        Map<String, StorageUnit> storageUnits = database.getResourceMetaData().getStorageUnits();
++        when(shardingSphereConnection.getContextManager().getStorageUnits("foo_db")).thenReturn(storageUnits);
+         ShardingRule shardingRule = mockShardingRule();
+         when(database.getRuleMetaData().getRules()).thenReturn(Collections.singleton(shardingRule));
+-        ConnectionProperties connectionProps = mock(ConnectionProperties.class);
+         when(connectionProps.getCatalog()).thenReturn("test");
+         when(connectionProps.getSchema()).thenReturn("test");
+         when(database.getResourceMetaData().getStorageUnits().get(DATA_SOURCE_NAME).getConnectionProperties()).thenReturn(connectionProps);
+@@ -107,6 +121,23 @@ private ShardingRule mockShardingRule() {
+         return new ShardingRule(ruleConfig, Collections.singletonMap(DATA_SOURCE_NAME, new MockedDataSource()), mock(ComputeNodeInstanceContext.class), Collections.emptyList());
+     }
+     
++    @Test
++    void assertConstructAfterDatabaseRemoval() {
++        UnknownDatabaseException expectedException = new UnknownDatabaseException("foo_db");
++        when(metaDataContexts.getMetaData().getDatabase("foo_db")).thenReturn(null);
++        when(shardingSphereConnection.getContextManager().getDatabase("foo_db")).thenThrow(expectedException);
++        assertThat(assertThrows(UnknownDatabaseException.class, () -> new ShardingSphereDatabaseMetaData(shardingSphereConnection)), sameInstance(expectedException));
++    }
++    
++    @Test
++    void assertConstructWithPhysicalMetadataExceptionAfterDatabaseRemoval() throws SQLException {
++        SQLException expectedException = new SQLException("physical metadata failed");
++        when(connection.getMetaData()).thenThrow(expectedException);
++        when(metaDataContexts.getMetaData().getDatabase("foo_db")).thenReturn(null);
++        when(shardingSphereConnection.getContextManager().getDatabase("foo_db")).thenThrow(new UnknownDatabaseException("foo_db"));
++        assertThat(assertThrows(SQLException.class, () -> new ShardingSphereDatabaseMetaData(shardingSphereConnection)), sameInstance(expectedException));
++    }
++    
+     @Test
+     void assertGetURL() throws SQLException {
+         assertThat(shardingSphereDatabaseMetaData.getURL(), is(databaseMetaData.getURL()));
+@@ -889,10 +920,67 @@ void assertGetSc
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/statement/DistSQLStatementExecutorTest.java` (modified, +70/-1)
+```diff
+@@ -17,18 +17,23 @@
+ 
+ package org.apache.shardingsphere.driver.jdbc.core.statement;
+ 
++import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
++import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
+ import org.apache.shardingsphere.distsql.handler.context.DistSQLConnectionContext;
+ import org.apache.shardingsphere.distsql.handler.engine.query.DistSQLQueryExecuteEngine;
+ import org.apache.shardingsphere.distsql.handler.engine.update.DistSQLUpdateExecuteEngine;
+ import org.apache.shardingsphere.distsql.segment.AlgorithmSegment;
+ import org.apache.shardingsphere.distsql.statement.DistSQLStatement;
++import org.apache.shardingsphere.distsql.statement.type.ral.queryable.QueryableRALStatement;
+ import org.apache.shardingsphere.distsql.statement.type.ral.updatable.LockClusterStatement;
+ import org.apache.shardingsphere.distsql.statement.type.rdl.resource.unit.type.UnregisterStorageUnitStatement;
++import org.apache.shardingsphere.distsql.statement.type.rql.RQLStatement;
+ import org.apache.shardingsphere.distsql.statement.type.rul.sql.ParseStatement;
+ import org.apache.shardingsphere.driver.jdbc.core.connection.ShardingSphereConnection;
+ import org.apache.shardingsphere.infra.exception.generic.UnsupportedSQLOperationException;
+ import org.apache.shardingsphere.infra.merge.result.impl.local.LocalDataQueryResultRow;
+ import org.apache.shardingsphere.infra.session.query.QueryContext;
++import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
+ import org.apache.shardingsphere.mode.exclusive.ExclusiveOperatorEngine;
+ import org.apache.shardingsphere.mode.exclusive.callback.ExclusiveOperationVoidCallback;
+ import org.apache.shardingsphere.mode.manager.ContextManager;
+@@ -50,6 +55,7 @@
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.is;
+ import static org.hamcrest.Matchers.sameInstance;
++import static org.junit.jupiter.api.Assertions.assertNull;
+ import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static org.mockito.ArgumentMatchers.any;
+@@ -68,6 +74,10 @@ class DistSQLStatementExecutorTest {
+     void assertExecuteQuery() throws SQLException {
+         QueryContext queryContext = createQueryContext(new ParseStatement("SELECT 1"));
+         ShardingSphereConnection connection = mock(ShardingSphereConnection.class, RETURNS_DEEP_STUBS);
++        DatabaseType protocolType = TypedSPILoader.getService(DatabaseType.class, "PostgreSQL");
++        when(connection.getCurrentDatabaseName()).thenReturn("foo_db");
++        when(connection.getContextManager().getDatabase("foo_db").getProtocolType()).thenReturn(protocolType);
++        when(connection.getContextManager().getMetaDataContexts().getMetaData().getProtocolType()).thenReturn(TypedSPILoader.getService(DatabaseType.class, "MySQL"));
+         when(connection.getProcessId()).thenReturn("foo_process_id");
+         Statement statement = mock(Statement.class);
+         when(statement.getResultSetType()).thenReturn(ResultSet.TYPE_FORWARD_ONLY);
+@@ -82,6 +92,8 @@ void assertExecuteQuery() throws SQLException {
+                 verify(mockedEngines.constructed().get(0)).executeQuery();
+                 assertThat(actualConnectionContext.get().getQueryContext(), sameInstance(queryContext));
+                 assertThat(actualConnectionContext.get().getProcessId(), is("foo_process_id"));
++                assertThat(actualConnectionContext.get().getProtocolType(), sameInstance(protocolType));
++                assertNull(queryContext.getSqlStatementContext().getSqlStatement().getDatabaseType());
+                 assertTrue(actual.next());
+                 assertThat(actual.getString(1), is("foo_value"));
+             }
+@@ -92,12 +104,53 @@ void assertExecuteQuery() throws SQLException {
+     void assertExecuteUpdate() throws SQLException {
+         QueryContext queryContext = createQueryContext(new UnregisterStorageUnitStatement(Collections.singleton("foo_ds"), false, false));
+         ShardingSphereConnection connection = mock(ShardingSphereConnection.class, RETURNS_DEEP_STUBS);
+-        try (MockedConstruction<DistSQLUpdateExecuteEngine> mockedEngines = mockConstruction(DistSQLUpdateExecuteEngine.class)) {
++        DatabaseType protocolType = TypedSPILoader.getService(DatabaseType.class, "PostgreSQL");
++        when(connection.getCurrentDatabaseName()).thenReturn("foo_db");
++        when(connection.getContextManager().getDatabase("foo_db").getProtocolType()).thenReturn(protocolType);
++        AtomicReference<DistSQLConnectionContext> actualConnectionContext = new AtomicReference<>();
++        try (
++                MockedConstruction<DistSQLUpdateExecuteEngine> mockedEngines = mockConstruction(DistSQLUpdateExecuteEngine.class,
++                        (mock, context) -> actualConnectionContext.set((DistSQLConnectionContext) context.arguments().get(3)))) {
+             new DistSQLStateme
 ```
 
 ---
 
-### Incident Patch 3: `0cbdde72` (2026-10-17)
-**Commit Message**: Refine implementation and review policy with discovery regression cases (#40214)
+### Incident Patch 2: `5983662c` (2026-10-19)
+**Commit Message**: Fix PostgreSQL external corpus loading for inactive psql branches (#40231)
 
-**File**: `.codex/harness/agents/cases.toml` (modified, +488/-2)
+* Fix PostgreSQL external corpus loading for inactive psql branches
+
+* Fix PostgreSQL corpus loading after a matched psql branch
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/external/loader/template/dialect/PostgreSQLExternalTestParameterLoadTemplate.java` (modified, +155/-6)
 ```diff
-@@ -3325,7 +3325,7 @@ required_summary_terms = ["Previous Finding", "Current Status: Withdrawn", "Reas
- forbidden_summary_terms = ["Review Result: Not Mergeable", "Review Result: Review Incomplete", "Current Status: Retained", "Current Status: Changed to Review Incomplete"]
- critical = true
- policy_binding_profile = "review-pr"
--policy_assertions = [{source = "review-pr", statements = ["For a standalone local candidate, use the active task's original working-tree baseline plus only its attributed local commits, index changes, and working-tree changes as the effective candidate. Use the frozen task boundary and task-delta audit as authoritative scope, exclude unrelated local changes, and do not require a public head, GitHub metadata, or public lineage.", "Return every review output as one complete copy-ready Markdown report in a fenced block labelled `markdown`, in both output modes and every review round.", "`Mergeable`: `### Result` with exactly one `Review Result: Mergeable` line and a concise reason; `### Evidence`; `### Coverage`."]}, {source = "review-pr-corrections", statements = ["For standalone local corrections, inherit the main Skill's task baseline, attributed local delta, authorized evidence boundary and selected mode's output contract.", "When correcting a previously reported conclusion, use the selected mode's output contract and begin with:\n\n- `Previous Finding`\n- `Current Status`: `Retained`, `Withdrawn`, or `Changed to Review Incomplete`\n- `Reason`\n\nThen provide the current mode's ordinary result.", "Then provide the current mode's ordinary result.", "Keep exactly one formal `Review Result` line when a formal result is requested."]}]
-+policy_assertions = [{source = "review-pr", statements = ["For a standalone local candidate, use the active task's original working-tree baseline plus only its attributed local commits, index changes, and working-tree changes as the effective candidate. Use the frozen task boundary and task-delta audit as authoritative scope, exclude unrelated local changes, and do not require a public head, GitHub metadata, or public lineage.", "Return every review output as one complete copy-ready Markdown report in a fenced block labelled `markdown`, in both output modes and every review round.", "`Mergeable`: `### Result` with exactly one `Review Result: Mergeable` line and a concise reason; `### Evidence`; `### Coverage`."]}, {source = "review-pr-corrections", statements = ["For standalone local corrections, inherit the main Skill's task baseline, attributed local delta, authorized evidence boundary and selected mode's output contract.", "When correcting a previously reported conclusion, use the selected mode's output contract and begin with:\n\n- `Previous Finding or Conclusion`\n- `Current Status`: `Retained`, `Withdrawn`, or `Changed to Review Incomplete`\n- `Reason`\n\nThen provide the current mode's ordinary result.", "Then provide the current mode's ordinary result.", "Keep exactly one formal `Review Result` line when a formal result is requested."]}]
- required_summary_prefix = "```markdown\n"
+@@ -38,12 +38,15 @@
+ import org.apache.shardingsphere.test.it.sql.parser.external.loader.template.ExternalTestParameterLoadTemplate;
  
- [[cases]]
-@@ -3597,7 +3597,7 @@ required_summary_terms = ["origin=previous-review-miss", "current=change-request
- forbidden_summary_terms = ["origin=introduced-by-latest-commits", "origin=exposed-by-previous-fix", "origin=changed-review-basis", "current=continue-review", "current=mergeable", "current=review-incomplete", "current=needs-discussion", "prior-verdict=evidence"]
- critical = true
- policy_binding_profile = "review-pr"
--policy_assertions = [{source = "review-pr", statements = ["For a proven previous-review miss, contradictory assessments on an unchanged basis, a triggered high-risk review criterion, or an explicit user request for independent review, obtain an independent read-only assessment through this workflow and the Completion Gate using the current basis and complete effective candidate without the previous verdict or an expected finding count.", "Never use a previous Formal Review result as\nevidence or as a conclusion to match.", "If at least one candidate passes the Finding Proof Gate, use `Not Mergeable`\n   with `Feedback Mode: Change Request`."]}, {source = "review-pr-corrections", statements = ["Before changing an overall conclusion, compare the prior and current effective candidates, requirement sources and versions, applicable exceptions, review focus, evidence identities and finding sets; candidate-type or Git revision labels and a different previous verdict do not establish a changed basis.", "Correct a proven earlier error rather than preserving an unsupported previous verdict for consistency.", "`Missed in the previous review`: the problem was already present in the\n  previously reviewed head.", "`Established by a changed review basis`: a proven applicable requirement, selected focus or decisive fact changed and newly supports a finding that the prior basis did not support.", "Prove the classification from the previous and current effectiv
+ import java.nio.CharBuffer;
++import java.util.ArrayDeque;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.Collections;
++import java.util.Deque;
+ import java.util.Iterator;
+ import java.util.List;
++import java.util.Locale;
+ import java.util.Map;
+ import java.util.Map.Entry;
+ import java.util.regex.Matcher;
+@@ -144,8 +147,20 @@ private static final class ScriptReader extends BaseErrorListener {
+         
+         private final List<ScriptStatement> statements = new ArrayList<>();
+         
++        private final Deque<ConditionalBlock> conditionals = new ArrayDeque<>();
++        
+         private final StringBuilder normalizedSQL = new StringBuilder();
+         
++        private int conditionalStart = -1;
++        
++        private int conditionalStatementStart;
++        
++        private int conditionalReplayEnd;
++        
++        private boolean conditionalEchoAll;
++        
++        private boolean conditionalFallback;
++        
+         private int start = -1;
+         
+         private int variableEnd = -1;
+@@ -203,7 +218,14 @@ private Lexer createLexer(final CharStream characters) {
+         }
+         
+         private List<ScriptStatement> read() {
+-            for (Token token = lexer.nextToken(); Token.EOF != token.getType(); token = lexer.nextToken()) {
++            for (Token token = lexer.nextToken();; token = lexer.nextToken()) {
++                if (Token.EOF == token.getType()) {
++                    if (conditionalStart >= 0) {
++                        rewindConditional(input.size());
++                        continue;
++                    }
++                    break;
++                }
+                 markQuotedLines(token);
+                 if (Token.DEFAULT_CHANNEL != token.getChannel()) {
+                     if (start < 0) {
+@@ -222,11 +244,13 @@ private List<ScriptStatement> read() {
+                     start = token.getStartIndex();
+                 }
+                 readBlock(kind, token);
+-                readCopy(kind);
++                if (!isInactive()) {
++                    readCopy(kind);
++                }
+                 previousKind = "IDENTIFIER_".equals(kind) && isJsonObjectConstructor(token) ? "JSON_OBJECT" : kind;
+                 if ("COLON_".equals(kind)) {
+                     unsafe = true;
+-                    if (0 == brackets && 0 == jsonObjectParentheses) {
++                    if (!isInactive() && 0 == brackets && 0 == jsonObjectParentheses) {
+                         readClientVariable(token.getStartIndex());
+                     }
+                 }
+@@ -240,6 +264,18 @@ private List<ScriptStatement> read() {
+             return statements;
+         }
+         
++        private void rewindConditional(final int end) {
++            statements.subList(conditionalStatementStart, statements.size()).clear();
++            reset();
++            conditionals.clear();
++            echoAll = conditionalEchoAll;
++            conditionalReplayEnd = end;
++            Arrays.fill(quotedLines, lineAt(conditionalStart), lineAt(end - 1) + 1, false);
++            lexer.reset();
++            seek(conditionalStart);
++            conditionalStart = -1;
++        }
++        
+         private void markQuotedLines(final Token token) {
+             if (lexer.getLine() > token.getLine()) {
+                 int lastLine = lineAt(token.getStopIndex());
+@@ -284,6 +320,27 @@ private boolean readCommand(final int offset) {
+             int line = lineAt(offset);
+             int end = lineStarts[line] + lines.get(line).length();
+             String command = input.getText(Interval.of(offset + 1, end - 1));
++            String name = command.split("\\s|\\\\", 2)[0];
++            boolean compoundCommand = command.indexOf('\\') >= 0;
++            if (compoundCommand && (!conditionals.isEmpty() || command.contains("\\if"))) {
++                if (conditionalStart >= 0) {
++                    rewindConditional(input.size());
++                    return true;
++                }
++                conditionalReplayEnd = input.size();
++            }
++            if (offset >= conditionalReplayEnd && readConditional(name, command, offset, end, compoundCommand)) {
++                return true;
++            }
++            if (isInactive()) {
++                if (start >= 0) {
++                    submit(offset, end, false);
++                } else {
++                    statements.add(new ScriptStatement("", lines.subList(line, line + 1), false));
++                }
++                seek(Math.min(input.size(), end + 1));
++                return true;
++            }
+             if (command.startsWith(";")) {
+                 unsafe = true;
+                 clientBuffer = true;
+@@ -293,8 +350,6 @@ private boolean readCommand(final int offset) {
+                 seek(offset + 2);
+                 return true;
+     
 ```
 
-**File**: `.codex/harness/agents/test_run.py` (modified, +24/-0)
+**File**: `test/it/parser/src/test/java/org/apache/shardingsphere/test/it/sql/parser/external/loader/template/dialect/PostgreSQLExternalTestParameterLoadTemplateTest.java` (modified, +76/-1)
 ```diff
-@@ -1669,6 +1669,30 @@ def test_create_prompt_does_not_supply_scenario_answers(self) -> None:
-                 self.assertNotIn(answer, prompt)
-         self.assertIn("Preserve exact technical terms", prompt)
- 
-+    def test_create_prompt_excludes_expected_answer_fields(self) -> None:
-+        case = copy.deepcopy(self.case)
-+        case["required_summary_terms"] = ["hidden_required_answer"]
-+        case["forbidden_summary_terms"] = ["hidden_forbidden_answer"]
-+        case["required_summary_term_groups"] = [["hidden_group_answer"]]
-+        case["required_summary_prefix"] = "hidden_prefix_answer"
-+        prompt = run.create_prompt([case], "sha256")
-+        for answer in (
-+                "hidden_required_answer", "hidden_forbidden_answer", "hidden_group_answer", "hidden_prefix_answer"):
-+            with self.subTest(answer=answer):
-+                self.assertNotIn(answer, prompt)
-+
-+    def test_discovery_java_fixture_lengths_include_indentation(self) -> None:
-+        case = run.load_cases(["discovery_07"])[0]
-+        for marker, expected_length in (("A", 199), ("B", 200), ("C", 201)):
-+            with self.subTest(marker=marker):
-+                source = case["prompt"].split(f"```java {marker}\n", 1)[1].split("\n```", 1)[0]
-+                lines = source.splitlines()
-+                self.assertEqual(2, len(lines))
-+                self.assertTrue(lines[0].startswith(" " * 8))
-+                reconstructed = lines[0].rstrip() + " " + lines[1].lstrip()
-+                self.assertEqual(expected_length, len(reconstructed))
-+                self.assertTrue(all(len(line) <= 200 for line in lines))
-+
-     def test_create_prompt_distinguishes_local_checks_from_smoke_actions(self) -> None:
-         prompt = run.create_prompt([self.case], "sha256")
-         self.assertIn("Use `run_local_checks` when the case explicitly asks to run or rerun a focused unit test", prompt)
+@@ -40,7 +40,7 @@ class PostgreSQLExternalTestParameterLoadTemplateTest {
+     private final PostgreSQLExternalTestParameterLoadTemplate template = new PostgreSQLExternalTestParameterLoadTemplate();
+     
+     @ParameterizedTest(name = "{0}")
+-    @MethodSource({"sqlCases", "expectedCases"})
++    @MethodSource({"sqlCases", "expectedCases", "conditionalCases"})
+     void assertLoadSQL(final String name, final String source, final String expectedEcho, final Collection<String> expectedSQL) {
+         List<String> expectedFileContent = expectedEcho.isEmpty() ? Collections.emptyList() : Arrays.asList(expectedEcho.split("\n", -1));
+         Collection<ExternalSQLTestParameter> actual = template.load("sample", Arrays.asList(source.split("\n", -1)), expectedFileContent, "PostgreSQL", "CSV");
+@@ -265,6 +265,81 @@ private static Stream<Arguments> expectedCases() {
+                         Collections.singletonList("SELECT 2;")));
+     }
+     
++    private static Stream<Arguments> conditionalCases() {
++        return Stream.of(
++                Arguments.of("inactive psql regression branch", "\\if true\n  select 'okay';\n  select 'still okay';\n\\else\n  not okay;\n  still not okay\n\\endif\nSELECT 2;", "",
++                        Arrays.asList("select 'okay';", "select 'still okay';", "SELECT 2;")),
++                Arguments.of("inactive unmatched parentheses", "\\if false\nSELECT ((1;\n\\else\nSELECT 2;\n\\endif\nSELECT 3;", "", Arrays.asList("SELECT 2;", "SELECT 3;")),
++                Arguments.of("inactive atomic block", "\\if false\nBEGIN ATOMIC SELECT 1;\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
++                Arguments.of("inactive copy without payload marker", "\\if false\nCOPY foo FROM STDIN;\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
++                Arguments.of("inactive client copy without payload marker", "\\if false\n\\copy foo FROM STDIN\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
++                Arguments.of("inactive command in pending SQL", "\\if false\nSELECT 1 \\g\n\\endif\nSELECT 2;", "", Collections.singletonList("SELECT 2;")),
++                Arguments.of("inactive quoted conditional text", "\\if false\nSELECT 'foo\n\\else\n\\endif\nbar';\n\\else\nSELECT 2;\n\\endif", "", Collections.singletonList("SELECT 2;")),
++                Arguments.of("inactive dollar conditional text", "\\if false\nDO $$\n\\else\n\\endif\n$$;\n\\else\nSELECT 2;\n\\endif", "", Collections.singletonList("SELECT 2;")),
++                Arguments.of("inactive comment conditional text", "\\if false\n/*\n\\else\n\\endif\n*/\n\\else\nSELECT 2;\n\\endif", "", Collections.singletonList("SELECT 2;")),
++                Arguments.of("inactive quoted identifier conditional text", "\\if false\nSELECT \"foo\n\\else\n\\endif\nbar\";\n\\else\nSELECT 2;\n\\endif", "",
++                        Collections.singletonList("SELECT 2;")),
++                Arguments.of("nested inactive branch", "\\if true\n\\if false\nSELECT 1;\n\\else\nSELECT 2;\n\\endif\n\\else\n\\if true\nSELECT 3;\n\\endif\n\\endif\nSELECT 4;", "",
++                        Arrays.asList("SELECT 2;", "SELECT 4;")),
++                Arguments.of("elif selection", "\\if false\nSELECT 1;\n\\elif false\nSELECT 2;\n\\elif true\nSELECT 3;\n\\elif true\nSELECT 4;\n\\else\nSELECT 5;\n\\endif", "",
++                        Collections.singletonList("SELECT 3;")),
++                Arguments.of("unknown elif after matched if", "\\if true\nSELECT 1;\n\\elif :foo\nSELECT 2;\n\\else\nSELECT 3;\n\\endif\nSELECT 4;", "", Arrays.asList("SELECT 1;", "SELECT 4;")),
++                Arguments.of("unknown elif after matched elif", "\\if false\nSELECT 1;\n\\elif true\nSELECT 2;\n\\elif :foo\nSELECT 3;\n\\else\nSELECT 4;\n\\endif\nSELECT 5;", "",
++                        Arrays.asList("SELECT 2;", "SELECT 5;")),
++                Arguments.of("unknown variable condition", "\\if :foo\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
++                Arguments.of("unknown backtick condition", "\\if `foo`\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
++                Arguments.of("ambiguous boolean condition", "\\if o\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
++                Arguments.of("missing boolean condition", "\\if\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
++                Arguments.of("unrecognized boolean condition", "\\if foo\nSELECT 1;\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("SELECT 1;", "SELECT 2;")),
++                Arguments.of("unknown elif condition", "\\if false\nSELECT 1;\n\\elif :foo\nSELECT 2;\n\\else\nSELECT 3;\n\\endif", "", Arrays.asList("SELECT 2;", "SELECT 3;")),
++                Arguments.of("static condition inside unknown block", "\\if :foo\n\\if false\nSELECT 1;\n\\endif\n\\else\nSELECT 2;\n\\endif", "", Arrays.asList("S
 ```
 
-**File**: `.codex/skills/code-implementation/references/rules/implementation.md` (modified, +4/-0)
+---
+
+### Incident Patch 3: `5f28295f` (2026-10-19)
+**Commit Message**: Fix MySQL STRING parameter decoding for numeric columns (#40232)
+
+**File**: `database/protocol/dialect/mysql/src/main/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/MySQLComStmtExecutePacket.java` (modified, +22/-5)
 ```diff
-@@ -23,14 +23,18 @@ Apply this file to every production, test, script, or other implementation artif
- 
- - Treat semantic and contract correctness, correct behavior and module ownership, verified compatibility and real boundaries, and every applicable authority, safety, scope, and architecture gate as prerequisites for each design choice. No design preference may compromise them.
- - Before choosing an implementation, inspect the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.
-+- Before designing state-dependent output, establish the expected result for each supported state from confirmed requirements and consumers, distinguishing an unloaded module, a loaded module without instances, and instances with a zero count when applicable.
-+  Check details, counts, and empty results against those requirements and consumers; the same Java return type does not establish the same data contract.
- - Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change. Prefer direct reuse, then composition or delegation, then an existing extension point. Do not invent a boundary when no maintained precedent exists. If the existing architecture cannot express the required behavior, apply the architecture-change gate before changing it.
- - Second, within the preserved architecture or an explicitly authorized architecture change, use the smallest clear implementation, prioritize local readability over line count, and minimize conceptual surface. Prefer one readable local flow with the fewest independently meaningful types, states, representations, execution paths, and cross-file hops. Consider testability next, then optional extensibility, formal symmetry, or structural completeness. Lower design priorities must not compromise higher ones. Every added line, helper, abstraction, identifier, literal, guard, copy, wrapper, and configuration entry must serve production behavior, a public contract, regression protection, diagnostics, a verified safety requirement, readability, or removal of real duplication. Do not add code for formal symmetry, coverage appearance, structural completeness, hypothetical reuse, or test convenience. Avoid unnecessary locals, thin wrappers, helpers, comments, guards, and copies; inline single-use locals unless a name improves readability. Keep a name, local variable, or extraction when it materially clarifies intent; do not compress code mechanically.
- - A new abstraction must own production behavior, state, or a contract that existing types cannot express and must represent a real, stable variation or boundary. Define the narrowest contract, keep common behavior in its owner, and isolate only true implementation or dialect differences. Forwarding, renaming, multiple callers, readability alone, direct test value, symmetry, type distinction, shorter call sites, test convenience, and anticipated reuse are insufficient. Reuse alone never authorizes changing `final`, visibility, inheritance, or shared-code ownership. Do not wrap a simple internal two-path flow in marker interfaces, result hierarchies, or DTO-style helpers unless they define a stable boundary, keep the owner readable, or remove meaningful duplication. This rule does not bypass the architecture-change gate.
-+  Before adding an interface, SPI, public method, registration mechanism, or bridge, identify why existing capabilities cannot express the confirmed requirement, why the proposed owner owns it, and which confirmed acceptance criterion fails without the addition.
- - Do not introduce package-private top-level helper types by default. Keep a small single-owner helper private and nested; add a top-level helper only when the approved production behavior, state, or contract cannot reasonably be owned by an existing type.
- - Do not add production types, widen visibility, remove `final`, or change constructors or signatures for test convenience. Avoid accumulating multiple nested collaborators inside one owner.
- - Keep only constructors with distinct production semantics or framework, reflection, serialization, or SPI requirements. Update callers explicitly instead of adding convenience or compatibility overloads. Before adding or changing a constructor, inspect nearby production conventions for visibility, Lombok, validation, and tests. Before handoff, scan changed call sites for unused or compatibility-only constructors.
- - Before handoff, inspect every method or constructor parameter added or made unused by the current task. Remove a parameter that the effective candidate does not use and update every in-scope caller unless the signature is required by a public API, override, interface, SPI, reflection, serializati
+@@ -149,17 +149,34 @@ private boolean isBinaryColumnType(final List<MySQLBinaryColumnType> parameterCo
+     }
+     
+     private Object decodeStringParameterValue(final List<MySQLBinaryColumnType> parameterColumnTypes, final int paramIndex, final MySQLBinaryColumnType parameterType, final Object value) {
+-        if (!(value instanceof byte[]) || MySQLBinaryColumnType.STRING != parameterType || !isCharacterColumnType(parameterColumnTypes, paramIndex)) {
++        if (!(value instanceof byte[]) || MySQLBinaryColumnType.STRING != parameterType || !isCharacterOrNumericColumnType(parameterColumnTypes, paramIndex)) {
+             return value;
+         }
+         return new String((byte[]) value, payload.getCharset());
+     }
+     
+-    private boolean isCharacterColumnType(final List<MySQLBinaryColumnType> parameterColumnTypes, final int paramIndex) {
+-        if (paramIndex >= parameterColumnTypes.size()) {
++    private boolean isCharacterOrNumericColumnType(final List<MySQLBinaryColumnType> parameterColumnTypes, final int paramIndex) {
++        MySQLBinaryColumnType columnType = getParameterColumnType(parameterColumnTypes, paramIndex);
++        if (null == columnType) {
+             return false;
+         }
+-        MySQLBinaryColumnType columnType = parameterColumnTypes.get(paramIndex);
+-        return MySQLBinaryColumnType.STRING == columnType || MySQLBinaryColumnType.VAR_STRING == columnType || MySQLBinaryColumnType.VARCHAR == columnType;
++        switch (columnType) {
++            case STRING:
++            case VAR_STRING:
++            case VARCHAR:
++                return true;
++            case TINY:
++            case SHORT:
++            case LONG:
++            case LONGLONG:
++            case INT24:
++            case FLOAT:
++            case DOUBLE:
++            case DECIMAL:
++            case NEWDECIMAL:
++                return true;
++            default:
++                return false;
++        }
+     }
+ }
 ```
 
-**File**: `.codex/skills/coding-standards/SKILL.md` (modified, +2/-1)
+**File**: `database/protocol/dialect/mysql/src/test/java/org/apache/shardingsphere/database/protocol/mysql/packet/command/query/binary/execute/MySQLComStmtExecutePacketTest.java` (modified, +81/-17)
 ```diff
-@@ -66,7 +66,8 @@ Read only the references whose conditions below match the affected files and tas
- - Do not invent rules from preference or nearby code, and do not report pre-existing violations outside task scope.
- - Run the applicable formatting and standards checks required by the repository workflow.
- - Do not run `apply`, `format`, or another file-modifying command unless the current task authority and repository rules authorize every possible write.
--- Do not build a complete file inventory or perform physical-line accounting in this mode.
-+- Do not build a complete file inventory or count physical lines to report audit coverage in this mode.
-+  Measure the length of applicable Java constructs as required by the line-wrapping rules.
+@@ -17,6 +17,7 @@
  
- This mode constrains the current task; it is not a repository-wide audit.
+ package org.apache.shardingsphere.database.protocol.mysql.packet.command.query.binary.execute;
  
-```
-
-**File**: `.codex/skills/coding-standards/references/rules/java-line-wrapping.md` (modified, +10/-6)
-```diff
-@@ -22,17 +22,21 @@ Apply these rules to Java declaration headers, statements, and expressions.
- ## Line-Length Decision
++import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.Unpooled;
+ import org.apache.shardingsphere.database.protocol.mysql.constant.MySQLBinaryColumnType;
+ import org.apache.shardingsphere.database.protocol.mysql.constant.MySQLNewParametersBoundFlag;
+@@ -28,6 +29,7 @@
+ import org.junit.jupiter.params.provider.Arguments;
+ import org.junit.jupiter.params.provider.MethodSource;
  
- - Count every character in the physical line, including its leading indentation.
--- Reconstruct a multi-line declaration header, statement, or expression in normal one-line Java form by removing only layout line breaks and indentation and preserving the tokens and required spaces.
--- Keep the reconstructed form on one physical line when it contains no more than 200 characters.
--- Wrap the reconstructed form only when it would contain more than 200 characters.
-+- Before reconstructing a multi-line construct, identify the complete declaration header, statement, or expression and distinguish layout line breaks from structural line breaks.
- - Do not treat braces and the bodies of classes, methods, control-flow statements, switch rules, or multi-statement lambdas as removable layout line breaks.
- - Do not reconstruct comments, Javadocs, text blocks, or string contents in a way that changes their tokens, content, or semantics.
-+- Reconstruct the complete declaration header, statement, or expression in normal one-line Java form while retaining its first line's actual leading indentation.
-+  Remove only layout line breaks and continuation indentation, preserving the tokens and required spaces.
-+- Keep the reconstructed form on one physical line when it contains no more than 200 characters.
-+- Wrap the reconstructed form only when it would contain more than 200 characters.
- - In Implementation Guidance Mode, apply these rules to every declaration header, statement, or expression added or modified by the task, but do not reformat untouched surrounding code.
- - In Standalone Compliance Audit Mode, apply these rules to every Java declaration header, statement, and expression in the exact audit scope.
- 
- ## Wrapping Forms
- 
--- Use the fewest line breaks that keep every physical line within 200 characters, except for the list, builder, and resource forms defined below.
-+- Apply the specific wrapping forms below before the general rules for line-break count and preceding-line content.
-+- A specific form does not permit layout line breaks when the complete reconstructed form contains no more than 200 characters.
-+- Use the fewest line breaks that keep every physical line within 200 characters, subject to the applicable specific form below.
- - Keep as much complete content as possible on the preceding line and break only at the applicable syntactic boundary.
- - Indent expression continuations by eight additional spaces unless a declaration rule below requires alignment with the first parameter.
- - Keep a closing parenthesis, bracket, or statement terminator on the same line as the last item or expression that it closes.
-@@ -55,6 +59,6 @@ Apply these rules to Java declaration headers, statements, and expressions.
- - Use Checkstyle `LineLength` to detect physical Java lines longer than 200 characters.
- - Do not treat passing Checkstyle as proof that a multi-line construct needed wrapping or used the required wrapping form.
- - Do not treat passing Spotless as proof of compliance because the repository formatter preserves existing wrapped lines.
--- For every multi-line candidate in scope, reconstruct and measure its normal one-line form before deciding whether the line breaks are allowed.
--- Report a construct whose reconstructed form contains no more than 200 characters as a violation and use the reconstructed single line as the minimum correction.
-+- For every multi-line candidate in scope, distinguish structural line breaks from layout line breaks, then reconstruct and measure the complete unit wherever only layout would change.
-+- Report layout line breaks in a construct whose reconstructed form contains no more than 200 characters as a violation and use the reconstructed single line as the minimum correction.
- - When the reconstructed form exceeds 200 characters, verify every physical line, wrapping boundary, continuation indentation, operator position, and closing delimiter against the applicable wrapping form.
-```
-
-**File**: `.codex/skills/review-pr/SKILL.md` (modified, +7/-5)
-```diff
-@@ -46,6 +46,7 @@ incomplete-evidence gaps, and Completion Gate state.
- 
- Record each applicable requirement's source, content version, scope and valid exceptions in readable basis source material; a task-only requirement applies only to its authorized task candidate and must not become a universal repository or public-PR rule.
- Reconstruct those requirements from original user requests and maintained contracts before checking the author's proposed solution, distinguishing author choices and unverified assumptions from confirmed constraints.
-+Do not promote an unverified inference into a requirement for a new interface, SPI, behavior, or test.
- Preserve later user approvals with their actual provenance instead of treating approval of an implementation choice as proof of an original version requirement or of its necessity.
- Keep effective content and delta identity separate from Git revision lineage so equal local and public candidates retain one code-correctness basis.
- 
-@@ -272,6 +273,8 @@ unclear.
- 
- - First classify the local candidate as standalone or as targeting an existing public PR.
- - For a standalone local candidate, use the active task's original working-tree baseline plus only its attributed local commits, index changes, and working-tree changes as the effective candidate. Use the frozen task boundary and task-delta audit as authoritative scope, exclude unrelated local changes, and do not require a public head, GitHub metadata, or public lineage.
-+- Record the current round's authorized files and change intents separately from the full cumulative task-owned candidate and affected behavior and contracts to review.
-+  A narrow fix authorization limits writes without shrinking that review scope or treating earlier task-owned changes as unrelated existing code.
- - For a local candidate targeting an existing PR, use the latest public PR head plus authorized local commits, index changes, and working-tree changes as the effective candidate. Verify with read-only Git that local `HEAD` equals or descends from the public head; if that relationship cannot be established, record the unavailable lineage as an incomplete gap, and if the refs prove divergence, resolve the correct review basis before selecting a verdict.
- - Review a PR-backed local candidate from the public PR merge-base through the working tree, use the union of GitHub files and the authorized local delta, and exclude unrelated local changes.
- - Apply Code Correctness Review through the canonical assessment, including the same proof and completion gates, triggered high-risk criteria, convergence loop, and Formal Decision Contract.
-@@ -280,7 +283,8 @@ unclear.
- 
- ## Multi-Round and Challenged Findings
- 
--Read [review-corrections.md](references/review-corrections.md) for previous feedback, finding-fix commits, or challenged findings. Re-evaluate the latest head, test prior findings against challenger evidence, withdraw unsupported blockers, and classify later findings under that reference.
-+Read [review-corrections.md](references/review-corrections.md) for previous feedback, finding-fix commits, challenged findings, or a disputed overall readiness conclusion.
-+Re-evaluate the latest head, test prior findings against challenger evidence, withdraw unsupported blockers, and classify later findings under that reference.
- 
- ## Output Contract
- 
-@@ -325,7 +329,5 @@ Do not force a formal verdict.
- 
- ### Correction
- 
--Begin with `### Correction`, then `Previous Finding`, `Current Status`
--(`Retained`, `Withdrawn`, or `Changed to Review Incomplete`), and `Reason`.
--Follow with the applicable current result while keeping exactly one formal
--`Review Result` line when a formal result is requested.
-+Begin with `### Correction`, then `Previous Finding or Conclusion`, `Current Status` (`Retained`, `Withdrawn`, or `Changed to Review Incomplete`), and `Reason`.
-+Follow with the applicable current result while keeping exactly one formal `Review Result` line when a formal result is requested.
-```
-
-**File**: `.codex/skills/review-pr/references/review-corrections.md` (modified, +6/-4)
-```diff
-@@ -17,7 +17,7 @@
- 
- # Review Corrections and Multi-Round Review
- 
--Read this reference when review feedback already exists, new commits address previous findings, or an author, maintainer, or user challenges a finding.
-+Read this reference when review feedback already exists, new commits address previous findings, an author, maintainer, or user challenges a finding, or a previous overall readiness conclusion is challenged or disproved.
- 
- ## Multi-Round Review
- 
-@@ -26,7 +26,8 @@ For standalone local corrections, inherit the main Skill's task baseline, attrib
- Do not expose private review notes, local chat iterations, raw inventory, or internal scratch state.
- 
- Before changing an overall conclusion, compare the prior and current effective candidates, requirement sources and versions, applicable exceptions, review focus, evidence identities and finding sets; candidate-type or Git revision labels and a different previous verdict do not establish a changed basis.
--Correct a proven earlier error rather than preserving an unsupported previous verdict for consistency.
-+Correct both unsupported findings and an unsupported overall readiness conclusion, including a previous claim that no issues remain.
-+Do not preserve an unsupported previous verdict for consistency.
- 
- For every prior public finding, classify the latest head as:
- 
-@@ -57,8 +58,9 @@ Classify every finding first reported after an earlier formal review:
- - `Established by a changed review basis`: a proven applicable requirement, selected focus or decisive fact changed and newly supports a finding that the prior basis did not support.
- 
- Prove the classification from the previous and current effective candidates and their applicable requirements, focus and decisive facts.
-+Identify a changed requirement or review scope separately and cite the decision establishing it; a later rejection of an earlier approved design does not by itself prove an earlier code defect.
- Do not describe an earlier-candidate problem as newly introduced.
--For a previous-review miss, acknowledge it directly, rerun the full Completion Gate, and return the complete remaining blocker set rather than publishing only the late finding.
-+For a previous-review miss, acknowledge it directly and inspect the complete effective candidate for the same omitted structure before rerunning the full Completion Gate and returning the complete remaining blocker set.
- 
- ## Challenged Findings
- 
-@@ -82,7 +84,7 @@ Run the final finding audit again before publishing another blocking result.
- 
- When correcting a previously reported conclusion, use the selected mode's output contract and begin with:
- 
--- `Previous Finding`
-+- `Previous Finding or Conclusion`
- - `Current Status`: `Retained`, `Withdrawn`, or `Changed to Review Incomplete`
- - `Reason`
- 
++import java.nio.charset.Charset;
+ import java.nio.charset.StandardCharsets;
+ import java.sql.Date;
+ import java.sql.SQLException;
+@@ -160,28 +162,90 @@ private static Stream<Arguments> stringParameterTypesBoundToBlobColumnsArguments
+     @DisplayName("assertReadParametersWithStringDecoding")
+     @ParameterizedTest(name = "{0}")
+     @MethodSource("stringDecodingArguments")
+-    void assertReadParametersWithStringDecoding(final String name, final MySQLBinaryColumnType parameterType,
+-                                                final List<MySQLBinaryColumnType> parameterColumnTypes, final boolean expectedString) throws SQLException {
+-        byte[] data = createPacketData(parameterType, new byte[]{0x61});
+-        MySQLPacketPayload payload = new MySQLPacketPayload(Unpooled.wrappedBuffer(data), StandardCharsets.UTF_8);
+-        MySQLComStmtExecutePacket actual = new MySQLComStmtExecutePacket(payload, 1);
+-        List<MySQLPreparedStatementParameterType> parameterTypes = actual.getNewParameterTypes();
+-        Object actualValue = actual.readParameters(parameterTypes, Collections.emptySet(), parameterColumnTypes).get(0);
+-        assertThat(actualValue instanceof String, is(expectedString));
+-        if (expectedString) {
+-            assertThat(actualValue, is("a"));
+-            return;
++    void assertReadParametersWithStringDecoding(final String name, final MySQLBinaryColumnType columnType, final String expected, final Charset charset) throws SQLException {
++        ByteBuf buffer = Unpooled.wrappedBuffer(createPacketData(MySQLBinaryColumnType.STRING, expected.getBytes(charset)));
++        try {
++            MySQLComStmtExecutePacket packet = new MySQLComStmtExecutePacket(new MySQLPacketPayload(buffer, charset), 1);
++            Object actual = packet.readParameters(packet.getNewParameterTypes(), Collections.emptySet(), Collections.singletonList(columnType)).get(0);
++            assertThat(actual, isA(String.class));
++            assertThat(actual, is(expected));
++        } finally {
++            buffer.release();
+         }
+-        assertThat((byte[]) actualValue, is(new byte[]{0x61}));
+     }
+     
+     private static Stream<Arguments> stringDecodingArguments() {
+         return Stream.of(
+-                Arguments.of("string-column", MySQLBinaryColumnType.STRING, Collections.singletonList(MySQLBinaryColumnType.STRING), true),
+-                Arguments.of("var-string-column", MySQLBinaryColumnType.STRING, Collections.singletonList(MySQLBinaryColumnType.VAR_STRING), true),
+-                Arguments.of("varchar-column", MySQLBinaryColumnType.STRING, Collections.singletonList(MySQLBinaryColumnType.VARCHAR), true),
+-                Arguments.of("missing-column-type", MySQLBinaryColumnType.STRING, Collections.emptyList(), false),
+-                Arguments.of("blob-parameter-type", MySQLBinaryColumnType.BLOB, Collections.singletonList(MySQLBinaryColumnType.VAR_STRING), false));
++                Arguments.of("string-column", MySQLBinaryColumnType.STRING, "0", StandardCharsets.UTF_8),
++                Arguments.of("var-string-column", MySQLBinaryColumnType.VAR_STRING, "0", StandardCharsets.UTF_8),
++                Arguments.of("varchar-column", MySQLBinaryColumnType.VARCHAR, "0", StandardCharsets.UTF_8),
++                Arguments.of("tiny-column", MySQLBinaryColumnType.TINY, "48", StandardCharsets.UTF_8),
++                Arguments.of("short-column", MySQLBinaryColumnType.SHORT, "48", StandardCharsets.UTF_8),
++                Arguments.of("long-column", MySQLBinaryColumnType.LONG, "48", StandardCharsets.UTF_8),
++                Arguments.of("longlong-column", MySQLBinaryColumnType.LONGLONG, "48", StandardCharsets.UTF_8),
++                Arguments.of("int24-column", MySQLBinaryColumnType.INT24, "48", StandardCharsets.UTF_8),
++                Arguments.of("float-column", MySQLBinaryColumnType.FLOAT, "48", StandardCharsets.UTF_8),
++                Arguments.of("double-column", MySQLBinaryColumnType.DOUBLE, "48", StandardCharsets.UTF_8),
++                Arguments.of("decimal-column", MySQLBinaryColumnType.DECIMAL, "48", StandardCharsets.UTF_8),
++                Arguments.of("newdecimal-column", MySQLBinaryColumnType.NEWDECIMAL, "48", StandardCharsets.UTF_8),
++                Arguments.of("negative-number", MySQLBinaryColumnType.LONGLONG, "-48", StandardCharsets.UTF_8),
++                Arguments.of("fractional-number", MySQLBinaryColumnType.NEWDECIMAL, "48.123456", StandardCharsets.UTF_8),
++                Arg
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40228** (2026-10-18): Simplify Python prechecks and policy summary reporting (@terrymanu)
-- **PR #40226** (2026-10-18): Fix nullable SQL normalization in projection matching (@terrymanu)
-- **PR #40225** (2026-10-18): Fix PostgreSQL parser grammar for database commands and COPY options (@terrymanu)
-- **PR #40224** (2026-10-18): update MCP PostgreSQL E2E image to 18.4-trixie (@terrymanu)
-- **PR #40223** (2026-10-18): Enforce iterative review confirmation and coding completion gates (@terrymanu)
-- **PR #40222** (2026-10-18): Reuse native JaCoCo coverage checks for gen-ut (@terrymanu)
+- **PR #40239** (2026-10-19): Fix JDBC database null handling and preserve original exceptions (@terrymanu)
+- **PR #40235** (2026-10-19): Bump Groovy to 4.0.33 (@terrymanu)
+- **PR #40234** (2026-10-19): Remove OracleParserTest (@iamhucong)
+- **PR #40233** (2026-10-19): Add shared transmission runner tests and reorder Oracle parser helper (@terrymanu)
+- **PR #40232** (2026-10-19): Fix MySQL STRING parameter decoding for numeric columns (@RaigorJiang)
+- **PR #40231** (2026-10-19): Fix PostgreSQL external corpus loading for inactive psql branches (@terrymanu)
 
 ---
 
@@ -2143,34 +1991,36 @@ Anchors in visitLimitClause are
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. firebird batch rls cancel without batch (#40098)
+## X. JDBC database null handling and preserve original exceptions (#40239)
 
 **RULE**:
-When implementing operations in `proxy/frontend/dialect/firebird/src/main/java/org/apache/shardingsphere/proxy/frontend/firebird/command/query/batch/FirebirdBatchCancelCommandExecutor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11e948a4`: firebird batch rls cancel without batch (#40098). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3ab3625`: JDBC database null handling and preserve original exceptions (#40239). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `proxy/frontend/dialect/firebird/src/main/java/org/apache/shardingsphere/proxy/frontend/firebird/command/query/batch/FirebirdBatchCancelCommandExecutor.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import org.apache.shardingsphere.database.exception.firebird.exception.protocol.InvalidBatchHandleException;
-import org.apache.shardingsphere.database.protocol.firebird.err.FirebirdErrorPacketFactory;
-        // TODO restore checkNotNull when FirebirdFrontendEngine stops marking the transaction as failed for InvalidBatchHandleException
-        if (null == batchStatement) {
-            return Collections.singleton(FirebirdErrorPacketFactory.newInstance(new InvalidBatchHandleException(packet.getStatementHandle())));
-        batchStatementManager.resetBatchStatement(batchStatement);
+import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
+        DatabaseType databaseType = connection.getContextManager().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
+            ShardingSphereDatabase database = metaData.getDatabase(connection.getCurrentDatabaseName());
+            if (null == database) {
+                return;
+            }
+            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(database.getProtocolType()).getDialectDatabaseMetaData();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        if (null != batchStatement) {
-            batchStatementManager.resetBatchStatement(batchStatement);
+        DatabaseType databaseType = connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
+            DatabaseType databaseType = metaData.getDatabase(connection.getCurrentDatabaseName()).getProtocolType();
+            DialectDatabaseMetaData dialectDatabaseMetaData = new DatabaseTypeRegistry(databaseType).getDialectDatabaseMetaData();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11e948a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3ab3625` are properly handled with clean fallback behavior.

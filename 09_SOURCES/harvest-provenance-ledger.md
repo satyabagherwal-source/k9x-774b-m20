@@ -3330,3 +3330,7 @@ Every entry in this ledger must capture:
 | `learn-github-adonisjs-core` | `https://github.com/adonisjs/core` | `b808c9eb` | Multi-dimensional audit evidence | 2026-10-19T15:17:40.230Z |
 | `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `e6deae85` | Multi-dimensional audit evidence | 2026-10-19T15:17:46.625Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3ddb21ab` | Multi-dimensional audit evidence | 2026-10-19T15:17:56.315Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T15:24:31.423Z |
+| `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `4a0a6827` | Multi-dimensional audit evidence | 2026-10-19T15:24:31.591Z |
+| `learn-github-productdevbook-port-killer` | `https://github.com/productdevbook/port-killer` | `2209b0fd` | Multi-dimensional audit evidence | 2026-10-19T15:24:38.172Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e3ab3625` | Multi-dimensional audit evidence | 2026-10-19T15:24:47.198Z |
