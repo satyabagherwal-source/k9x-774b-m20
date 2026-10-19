@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-PEY8",
-    "timestamp": "2026-10-18T22:10:09.776Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "c39e0e2d330be3b43ecef33d72c6062c4c7c68c1ffd7106b457da92b99bcf9de",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-PILU",
-    "timestamp": "2026-10-18T22:10:14.514Z",
-    "repository": "pubkey/rxdb",
-    "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "b8cc5892c75c0d8ced4cf396b52070242036d73613daea26f39824d6c8fe5c0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-PLEN",
-    "timestamp": "2026-10-18T22:10:18.143Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "541f946ccf186f4350ad4cd30dd094a07893cc2db35f1326e3fc7884bb82580a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-POOX",
-    "timestamp": "2026-10-18T22:10:22.401Z",
-    "repository": "milvus-io/bootcamp",
-    "learningId": "learn-github-milvus-io-bootcamp",
-    "contentHash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-XDCY",
-    "timestamp": "2026-10-18T22:16:20.962Z",
-    "repository": "watchexec/watchexec",
-    "learningId": "learn-github-watchexec-watchexec",
-    "contentHash": "6de8224ed964d88ff0a18195b68d3b610e97b6217202e5da5a63991f1594ce5b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-XH5M",
-    "timestamp": "2026-10-18T22:16:25.882Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "5da4fba3fc8f52c7866299fc957e5cb2585a9955e07d8fe7dd820936708f680f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-XJOE",
     "timestamp": "2026-10-18T22:16:29.150Z",
     "repository": "kgateway-dev/kgateway",
@@ -7492,6 +7402,96 @@
     "contentHash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ZJ1A",
+    "timestamp": "2026-10-19T07:09:54.334Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "172a6d4a7d23ac850b231e957e53a6dcb8a45f269c75001cd83a4ea9c44b4e0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ZK6B",
+    "timestamp": "2026-10-19T07:09:55.811Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+    "contentHash": "0ec1ab85cdbacd9767489bcb0e523259384aba7982c7278bb8221cd8a2ad049c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ZVP6",
+    "timestamp": "2026-10-19T07:10:10.746Z",
+    "repository": "onejs/one",
+    "learningId": "learn-github-onejs-one",
+    "contentHash": "18e5edd8fccc9cd818c1ec113ac9f55be8f3eae67f3260fc3f6facd228025dc3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ZY2Q",
+    "timestamp": "2026-10-19T07:10:13.826Z",
+    "repository": "influxdata/influxdb",
+    "learningId": "learn-github-influxdata-influxdb",
+    "contentHash": "ee7eb3684b9dd2b68f271fba11e59728a0d9634d89a9c96c6522ee0afd371954",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0MM7",
+    "timestamp": "2026-10-19T07:10:45.631Z",
+    "repository": "angular/angular",
+    "learningId": "learn-github-angular-angular",
+    "contentHash": "8515bfa48c1450fc7544205e5f0fa0e8f424001e10ddee52cc1c40a6bedeffd4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0YRD",
+    "timestamp": "2026-10-19T07:11:01.369Z",
+    "repository": "devspace-sh/devspace",
+    "learningId": "learn-github-devspace-sh-devspace",
+    "contentHash": "b9c7645da4e55ddf4c2e830f7d34cea93289c9fb4cab18087bceb023be198857",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

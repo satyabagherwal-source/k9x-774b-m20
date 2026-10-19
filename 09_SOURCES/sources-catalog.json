@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "090fe1e27d31fa1913f22754bc5ad9185df404de4da2902beb6abaf58df83ce5",
-    "lastHarvestedAt": "2026-10-18T00:32:03.326Z",
+    "contentHash": "0ec1ab85cdbacd9767489bcb0e523259384aba7982c7278bb8221cd8a2ad049c",
+    "lastHarvestedAt": "2026-10-19T07:09:55.813Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -6908,5 +6908,55 @@
     "contentHash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
     "lastHarvestedAt": "2026-10-19T06:59:39.601Z",
     "learningId": "learn-github-nirdiamant-rag_techniques"
+  },
+  "medialab-xan": {
+    "repository": "medialab/xan",
+    "platform": "github",
+    "sourceUrl": "https://github.com/medialab/xan",
+    "sourceVersion": "0b696603",
+    "license": "Unlicense",
+    "contentHash": "172a6d4a7d23ac850b231e957e53a6dcb8a45f269c75001cd83a4ea9c44b4e0d",
+    "lastHarvestedAt": "2026-10-19T07:09:54.340Z",
+    "learningId": "learn-github-medialab-xan"
+  },
+  "onejs-one": {
+    "repository": "onejs/one",
+    "platform": "github",
+    "sourceUrl": "https://github.com/onejs/one",
+    "sourceVersion": "fe273a10",
+    "license": "NOASSERTION",
+    "contentHash": "18e5edd8fccc9cd818c1ec113ac9f55be8f3eae67f3260fc3f6facd228025dc3",
+    "lastHarvestedAt": "2026-10-19T07:10:10.748Z",
+    "learningId": "learn-github-onejs-one"
+  },
+  "influxdata-influxdb": {
+    "repository": "influxdata/influxdb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/influxdata/influxdb",
+    "sourceVersion": "06200ef9",
+    "license": "Apache-2.0",
+    "contentHash": "ee7eb3684b9dd2b68f271fba11e59728a0d9634d89a9c96c6522ee0afd371954",
+    "lastHarvestedAt": "2026-10-19T07:10:13.828Z",
+    "learningId": "learn-github-influxdata-influxdb"
+  },
+  "angular-angular": {
+    "repository": "angular/angular",
+    "platform": "github",
+    "sourceUrl": "https://github.com/angular/angular",
+    "sourceVersion": "e0260db5",
+    "license": "MIT",
+    "contentHash": "8515bfa48c1450fc7544205e5f0fa0e8f424001e10ddee52cc1c40a6bedeffd4",
+    "lastHarvestedAt": "2026-10-19T07:10:45.636Z",
+    "learningId": "learn-github-angular-angular"
+  },
+  "devspace-sh-devspace": {
+    "repository": "devspace-sh/devspace",
+    "platform": "github",
+    "sourceUrl": "https://github.com/devspace-sh/devspace",
+    "sourceVersion": "8ff62607",
+    "license": "Apache-2.0",
+    "contentHash": "b9c7645da4e55ddf4c2e830f7d34cea93289c9fb4cab18087bceb023be198857",
+    "lastHarvestedAt": "2026-10-19T07:11:01.371Z",
+    "learningId": "learn-github-devspace-sh-devspace"
   }
 }

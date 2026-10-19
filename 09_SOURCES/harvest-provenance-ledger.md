@@ -3048,3 +3048,9 @@ Every entry in this ledger must capture:
 | `learn-github-iconoir-icons-iconoir` | `https://github.com/iconoir-icons/iconoir` | `4eae577f` | Multi-dimensional audit evidence | 2026-10-19T06:59:28.883Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `217d799a` | Multi-dimensional audit evidence | 2026-10-19T06:59:31.917Z |
 | `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `84a03d29` | Multi-dimensional audit evidence | 2026-10-19T06:59:39.601Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `0b696603` | Multi-dimensional audit evidence | 2026-10-19T07:09:54.340Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-19T07:09:55.813Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `fe273a10` | Multi-dimensional audit evidence | 2026-10-19T07:10:10.748Z |
+| `learn-github-influxdata-influxdb` | `https://github.com/influxdata/influxdb` | `06200ef9` | Multi-dimensional audit evidence | 2026-10-19T07:10:13.828Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `e0260db5` | Multi-dimensional audit evidence | 2026-10-19T07:10:45.636Z |
+| `learn-github-devspace-sh-devspace` | `https://github.com/devspace-sh/devspace` | `8ff62607` | Multi-dimensional audit evidence | 2026-10-19T07:11:01.371Z |

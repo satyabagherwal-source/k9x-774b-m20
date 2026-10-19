@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T06:59:39.604Z",
-  "total_cycles_completed": 3018,
-  "total_learnings_persisted": 3018,
-  "total_rules_promoted": 2055,
+  "last_updated": "2026-10-19T07:11:01.374Z",
+  "total_cycles_completed": 3024,
+  "total_learnings_persisted": 3024,
+  "total_rules_promoted": 2071,
   "history": [
-    {
-      "timestamp": "2026-10-19T03:20:26.364Z",
-      "repository": "diggerhq/digger",
-      "learningId": "learn-github-diggerhq-digger",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:20:31.489Z",
-      "repository": "pingcap/talent-plan",
-      "learningId": "learn-github-pingcap-talent-plan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:26:38.649Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:26:40.616Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:26:40.671Z",
-      "repository": "bergside/typeui",
-      "learningId": "learn-github-bergside-typeui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:26:45.973Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T03:26:51.432Z",
       "repository": "aquasecurity/tfsec",
@@ -1403,6 +1361,48 @@
       "repository": "NirDiamant/RAG_Techniques",
       "learningId": "learn-github-nirdiamant-rag_techniques",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:09:54.342Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:09:55.815Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:10:10.751Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:10:13.831Z",
+      "repository": "influxdata/influxdb",
+      "learningId": "learn-github-influxdata-influxdb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:10:45.639Z",
+      "repository": "angular/angular",
+      "learningId": "learn-github-angular-angular",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:11:01.374Z",
+      "repository": "devspace-sh/devspace",
+      "learningId": "learn-github-devspace-sh-devspace",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

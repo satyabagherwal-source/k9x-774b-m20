@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:59:39.567Z",
-  "total_verified_learnings": 706,
+  "last_updated": "2026-10-19T07:11:01.343Z",
+  "total_verified_learnings": 711,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1510,20 +1510,45 @@
     "learn-github-angular-angular": {
       "learning_id": "learn-github-angular-angular",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "angular-angular",
+      "source": "angular/angular",
+      "repository": "angular/angular",
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "main",
-      "content_hash": "616c9e22ac2291fda314beed4720a05771f53d2a71a427c9052d1e327f68072a",
+      "source_version": "e0260db5",
+      "content_hash": "8515bfa48c1450fc7544205e5f0fa0e8f424001e10ddee52cc1c40a6bedeffd4",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
-      "promoted_rules": [],
-      "status": "FAILED_OR_UNAVAILABLE",
-      "verification_status": "ERROR",
-      "verified": false,
+      "promoted_rules": [
+        {
+          "number": 2280,
+          "title": "Ephemeral Global State Consumption Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2281,
+          "title": "Synchronous Mutation Protection in Notification Loops",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2282,
+          "title": "Source-Mapped Ast Debug Insertion Hygiene",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T07:10:45.597Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ant-design-ant-design-mobile": {
       "learning_id": "learn-github-ant-design-ant-design-mobile",
@@ -6287,22 +6312,40 @@
     "learn-github-devspace-sh-devspace": {
       "learning_id": "learn-github-devspace-sh-devspace",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "devspace-sh-devspace",
+      "source": "devspace-sh/devspace",
+      "repository": "devspace-sh/devspace",
       "slug": "devspace-sh-devspace",
       "platform": "github",
       "source_url": "https://github.com/devspace-sh/devspace",
-      "source_version": "HEAD",
-      "content_hash": "3fe9b4d6e626649577f9d23309bc8893e314372add66400f36750c3cf09d2810",
+      "source_version": "8ff62607",
+      "content_hash": "b9c7645da4e55ddf4c2e830f7d34cea93289c9fb4cab18087bceb023be198857",
       "dossier_path": "07_PROJECT_LEARNING/devspace-sh-devspace-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/devspace-sh-devspace-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2283,
+          "title": "Ephemeral Subprocess Group Lifecycle Supervision Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2284,
+          "title": "Standard Streams Virtual Network Connection (`net.Conn`) Bridging",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.599Z"
+      "verified_at": "2026-10-19T07:11:01.335Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dicklesworthstone-destructive_command_guard": {
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
@@ -13956,7 +13999,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "090fe1e27d31fa1913f22754bc5ad9185df404de4da2902beb6abaf58df83ce5",
+      "content_hash": "0ec1ab85cdbacd9767489bcb0e523259384aba7982c7278bb8221cd8a2ad049c",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [
@@ -13973,6 +14016,16 @@
         {
           "number": 1387,
           "title": "Normalization Invariant for Turkish Phonetic Ambiguity & Diacritics",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2272,
+          "title": "Invariant Temporal Upsampling Ratio Assertion in Neural Audio Pipeline",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2273,
+          "title": "Multi-Threaded Model Concurrency via Non-Blocking Request Batching (Playhead Pattern)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13994,7 +14047,7 @@
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
       ],
-      "verified_at": "2026-10-18T00:32:03.295Z",
+      "verified_at": "2026-10-19T07:09:55.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23708,22 +23761,45 @@
     "learn-github-influxdata-influxdb": {
       "learning_id": "learn-github-influxdata-influxdb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "influxdata-influxdb",
+      "source": "influxdata/influxdb",
+      "repository": "influxdata/influxdb",
       "slug": "influxdata-influxdb",
       "platform": "github",
       "source_url": "https://github.com/influxdata/influxdb",
-      "source_version": "HEAD",
-      "content_hash": "2714d891e6eae20cc0e1cf9ce381d110fb91af822207cb81ff7e1701f48609af",
+      "source_version": "06200ef9",
+      "content_hash": "ee7eb3684b9dd2b68f271fba11e59728a0d9634d89a9c96c6522ee0afd371954",
       "dossier_path": "07_PROJECT_LEARNING/influxdata-influxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/influxdata-influxdb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2277,
+          "title": "Zero-Allocation Raw Entry Hash Interning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2278,
+          "title": "Timezone Identity Projection Bypass for Storage Pruning Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2279,
+          "title": "Dynamic SELinux Socket Mount-Mask Isolation via Systemd Generators",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.591Z"
+      "verified_at": "2026-10-19T07:10:13.792Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-infracost-infracost": {
       "learning_id": "learn-github-infracost-infracost",
@@ -27629,22 +27705,45 @@
     "learn-github-medialab-xan": {
       "learning_id": "learn-github-medialab-xan",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "medialab-xan",
+      "source": "medialab/xan",
+      "repository": "medialab/xan",
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "HEAD",
-      "content_hash": "c277f4e6b136eddc95ad5d8dba22eb883c61f29757f93973b3b8bceda6816416",
+      "source_version": "0b696603",
+      "content_hash": "172a6d4a7d23ac850b231e957e53a6dcb8a45f269c75001cd83a4ea9c44b4e0d",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2269,
+          "title": "Unchecked Stdout Macro-Level Broken Pipe Trap",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2270,
+          "title": "Guarded Terminal Metric Arithmetic with Saturating Primitives",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2271,
+          "title": "Concretization Constant-Folding Isolation for Fallback Functions",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.223Z"
+      "verified_at": "2026-10-19T07:09:54.302Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-megabit-blazorise": {
       "learning_id": "learn-github-megabit-blazorise",
@@ -31005,22 +31104,45 @@
     "learn-github-onejs-one": {
       "learning_id": "learn-github-onejs-one",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "onejs-one",
+      "source": "onejs/one",
+      "repository": "onejs/one",
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "HEAD",
-      "content_hash": "0ab8fdf584f59b46c216642d51465a5eef56f2a5290ccc216bcd27fb5b586adf",
+      "source_version": "fe273a10",
+      "content_hash": "18e5edd8fccc9cd818c1ec113ac9f55be8f3eae67f3260fc3f6facd228025dc3",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2274,
+          "title": "React Hydration Non-Executable Data Block Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2275,
+          "title": "Mobile VM Loop Closure Environment Decoupling Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2276,
+          "title": "Mixed Module Export Writable Binding Synchronization Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.778Z"
+      "verified_at": "2026-10-19T07:10:10.712Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ongridio-ongrid": {
       "learning_id": "learn-github-ongridio-ongrid",
@@ -80326,6 +80448,230 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:59:39.558Z"
+    },
+    "rule-2269": {
+      "learning_id": "rule-2269",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2269,
+      "title": "Unchecked Stdout Macro-Level Broken Pipe Trap",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "0b696603",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:09:54.302Z"
+    },
+    "rule-2270": {
+      "learning_id": "rule-2270",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2270,
+      "title": "Guarded Terminal Metric Arithmetic with Saturating Primitives",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "0b696603",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:09:54.302Z"
+    },
+    "rule-2271": {
+      "learning_id": "rule-2271",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2271,
+      "title": "Concretization Constant-Folding Isolation for Fallback Functions",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "0b696603",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:09:54.302Z"
+    },
+    "rule-2272": {
+      "learning_id": "rule-2272",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2272,
+      "title": "Invariant Temporal Upsampling Ratio Assertion in Neural Audio Pipeline",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:09:55.779Z"
+    },
+    "rule-2273": {
+      "learning_id": "rule-2273",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2273,
+      "title": "Multi-Threaded Model Concurrency via Non-Blocking Request Batching (Playhead Pattern)",
+      "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "source_version": "hf-canberkkkkkk-ema-lightning",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:09:55.779Z"
+    },
+    "rule-2274": {
+      "learning_id": "rule-2274",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2274,
+      "title": "React Hydration Non-Executable Data Block Rule",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "fe273a10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:10.712Z"
+    },
+    "rule-2275": {
+      "learning_id": "rule-2275",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2275,
+      "title": "Mobile VM Loop Closure Environment Decoupling Rule",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "fe273a10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:10.712Z"
+    },
+    "rule-2276": {
+      "learning_id": "rule-2276",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2276,
+      "title": "Mixed Module Export Writable Binding Synchronization Rule",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "fe273a10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:10.712Z"
+    },
+    "rule-2277": {
+      "learning_id": "rule-2277",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2277,
+      "title": "Zero-Allocation Raw Entry Hash Interning",
+      "source_url": "https://github.com/influxdata/influxdb",
+      "source_version": "06200ef9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:13.792Z"
+    },
+    "rule-2278": {
+      "learning_id": "rule-2278",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2278,
+      "title": "Timezone Identity Projection Bypass for Storage Pruning Preservation",
+      "source_url": "https://github.com/influxdata/influxdb",
+      "source_version": "06200ef9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:13.792Z"
+    },
+    "rule-2279": {
+      "learning_id": "rule-2279",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2279,
+      "title": "Dynamic SELinux Socket Mount-Mask Isolation via Systemd Generators",
+      "source_url": "https://github.com/influxdata/influxdb",
+      "source_version": "06200ef9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:13.792Z"
+    },
+    "rule-2280": {
+      "learning_id": "rule-2280",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2280,
+      "title": "Ephemeral Global State Consumption Invariant",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "e0260db5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:45.597Z"
+    },
+    "rule-2281": {
+      "learning_id": "rule-2281",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2281,
+      "title": "Synchronous Mutation Protection in Notification Loops",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "e0260db5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:45.597Z"
+    },
+    "rule-2282": {
+      "learning_id": "rule-2282",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2282,
+      "title": "Source-Mapped Ast Debug Insertion Hygiene",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "e0260db5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:10:45.597Z"
+    },
+    "rule-2283": {
+      "learning_id": "rule-2283",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2283,
+      "title": "Ephemeral Subprocess Group Lifecycle Supervision Pattern",
+      "source_url": "https://github.com/devspace-sh/devspace",
+      "source_version": "8ff62607",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:11:01.335Z"
+    },
+    "rule-2284": {
+      "learning_id": "rule-2284",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2284,
+      "title": "Standard Streams Virtual Network Connection (`net.Conn`) Bridging",
+      "source_url": "https://github.com/devspace-sh/devspace",
+      "source_version": "8ff62607",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:11:01.335Z"
     }
   },
   "aliases": {
