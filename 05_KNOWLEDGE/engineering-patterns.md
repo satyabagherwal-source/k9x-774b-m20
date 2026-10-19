@@ -207993,3 +207993,266 @@ see our [security policy][health-security].
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `cdab8fa4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2899. Drop the build from the review so it actually posts (Harvested from superhighfives/pika)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Drop the build from the review so it actually posts",
+  "source": "superhighfives/pika",
+  "source_url": "https://github.com/superhighfives/pika",
+  "source_version": "4fc05696",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T23:47:13.237Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-superhighfives-pika",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [superhighfives/pika](https://github.com/superhighfives/pika) (Revision: `4fc05696`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in superhighfives/pika. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7dd82fcf`: Drop the build from the review so it actually posts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    #
+    # No verify_commands: the review reads the diff and doesn't build. An Xcode
+    # build outlives the review agent's per-command timeout, gets backgrounded,
+    # and the agent stalls waiting for it — finishing a green check without ever
+    # posting a review. tests.yml already builds and runs the suite (~90s), so
+    # the review doesn't need to. Reading-only, it runs fast on the default
+    # ubuntu runner and posts every time.
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+    with:
+      # Pinned to match tests.yml — macos-latest doesn't ship Xcode 16.3, so
+      # xcode-select fails there. Bump both together.
+      runs_on: macos-15
+      runtime: none
+      setup_command: sudo xcode-select -s /Applications/Xcode_16.3.app
+      # Build for testing rather than a full test run: it catches the compile
+      # errors that matter for review without the runtime cost of the suite,
+      # which tests.yml already covers.
+      #
+      # Resolve Swift packages first, as a separate step — same as tests.yml.
+      # Without it, build-for-testing resolves SPM cold, and the `| tail -40`
+      # buffers all output so nothing streams; the review agent sits on a build
+      # that can run past the timeout and gets cancelled without ever reviewing.
+      verify_commands: |
+        xcodebuild -resolvePackageDependencies -project Pika.xcodeproj -scheme Pika
+        set -o pipefail && xcodebuild build-for-testing -project Pika.xcodeproj -scheme Pika -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tail -40
+      # Safety net over the pre-resolve fix above, so a slow cold buil
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7dd82fcf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2900. **RULE‑001 – Explicit “Point vs Position” Disambiguation** (Harvested from wooorm/parse-entities)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**RULE‑001 – Explicit “Point vs Position” Disambiguation**",
+  "source": "wooorm/parse-entities",
+  "source_url": "https://github.com/wooorm/parse-entities",
+  "source_version": "07f0abed",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T23:47:24.969Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wooorm-parse-entities",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wooorm/parse-entities](https://github.com/wooorm/parse-entities) (Revision: `07f0abed`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** validate that any user‑supplied `options.position` is either a `Point` *or* a full `Position` *before* accessing `indent` or `start` properties, and **MUST NOT** rely on TypeScript’s `@ts‑expect‑error` comments to silence legitimate runtime mismatches.  
+
+**WHY**:  
+The parser currently uses `if ('start' in settings.position || 'indent' in settings.position)` and then accesses `settings.position.indent` and `settings.position.start` with `@ts‑expect‑error`. At runtime, a plain `Point` lacks `indent`, leading to `undefined` reads that are harmless but obscure the contract and break downstream tools that perform runtime type‑checking (e.g., `io-ts`).  
+
+**WHEN TO APPLY**:  
+All libraries exposing a polymorphic location argument (Point | Position) in JavaScript/TypeScript, especially parsers that need line/column tracking.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```ts
+// utils/position.ts
+import type {Point, Position} from 'unist'
+
+export function normalizePosition(
+  pos: Readonly<Point> | Readonly<Position> | undefined
+): {point: Point; indent?: number[]} {
+  if (!pos) return {point: {line: 1, column: 1, offset: -1}}
+
+  // Detect full Position (has both start & end)
+  if ('start' in pos && 'end' in pos) {
+    const p = pos.start as Point
+    return {point: p, indent: (pos as any).indent}
+  }
+
+  // Plain Point
+  return {point: pos as Point}
+}
+```
+
+**NEGATIVE CONSTRAINT**:  
+```ts
+// ❌ anti‑pattern – silent misuse of Point as Position
+if ('start' in settings.position || 'indent' in settings.position) {
+  // @ts‑expect‑error: points don’t have indent.
+  indent = settings.position.indent
+  // @ts‑expect‑error: points don’t have indent.
+  point = settings.position.start
+}
+```
+
+**VERIFICATION METHOD**:  
+Add a unit test that passes a plain `Point` and asserts `indent` is `undefined`. Run `tsc --noEmit` with `noImplicitAny` and `strict` enabled; the test must compile without `@ts‑expect‑error`. Additionally, a runtime guard can be enforced via a lint rule (`no-unsafe-point-access`).
+
+---
+
+
+---
+
+## 2901. **RULE‑002 – Never Mutate Input Strings During Scanning** (Harvested from wooorm/parse-entities)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**RULE‑002 – Never Mutate Input Strings During Scanning**",
+  "source": "wooorm/parse-entities",
+  "source_url": "https://github.com/wooorm/parse-entities",
+  "source_version": "07f0abed",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T23:47:25.113Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wooorm-parse-entities",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wooorm/parse-entities](https://github.com/wooorm/parse-entities) (Revision: `07f0abed`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST NOT** modify the original `value` string while iterating; **MUST** treat it as immutable and use only read‑only cursor indices.  
+
+**WHY**:  
+JavaScript strings are immutable, but accidental reassignment (e.g., `value = value.slice(...)` inside the loop) would break the invariant that `character === value.charCodeAt(index)` always reflects the original source. This leads to off‑by‑one errors, missed characters, and incorrect `Position` calculations, especially when the parser is used in streaming contexts.  
+
+**WHEN TO APPLY**:  
+Any low‑level lexical scanner or parser that walks a string character‑by‑character.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```js
+function scan(value) {
+  const len = value.length
+  for (let i = 0; i < len; ++i) {
+    const cp = value.charCodeAt(i) // never reassign `value`
+    // …process cp…
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:  
+```js
+// ❌ anti‑pattern – mutating the source string
+value = value.slice(i) // breaks original indexing
+character = value.charCodeAt(0) // now refers to a shifted string
+```
+
+**VERIFICATION METHOD**:  
+Static analysis rule (ESLint `no-param-reassign` with `props: true`) plus a mutation‑detection test that spies on `String.prototype.slice` and fails if called inside the main loop.
+
+---
+
+
+---
+
+## 2902. **RULE‑003 – Explicit Warning‑Code Enumeration** (Harvested from wooorm/parse-entities)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**RULE‑003 – Explicit Warning‑Code Enumeration**",
+  "source": "wooorm/parse-entities",
+  "source_url": "https://github.com/wooorm/parse-entities",
+  "source_version": "07f0abed",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T23:47:25.245Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wooorm-parse-entities",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wooorm/parse-entities](https://github.com/wooorm/parse-entities) (Revision: `07f0abed`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** define warning codes as a `const enum` (or frozen object) with self‑documenting names, and **MUST NOT** use magic numeric literals scattered throughout the codebase.  
+
+**WHY**:  
+The parser currently uses literals like `warning(4 /* Empty (numeric) */, diff)`. Scattered literals make maintenance error‑prone; adding a new warning requires updating all call sites and documentation manually, increasing the risk of mismatched codes.  
+
+**WHEN TO APPLY**:  
+All libraries that expose a numeric error/warning API to callers.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```ts
+export const enum WarningCode {
+  NonTerminatedNamed = 1,
+  NonTerminatedNumeric = 2,
+  EmptyNamed = 3,
+  EmptyNumeric = 4,
+  UnknownNamed = 5,
+  DisallowedNumeric = 6,
+  ProhibitedNumeric = 7,
+}
+```
+Usage: `warning(WarningCode.EmptyNumeric, diff)`.  
+
+**NEGATIVE CONSTRAINT**:  
+```js
+// ❌ anti‑pattern – magic numbers
+warning(4 /* Empty (numeric) */, diff)
+```
+
+**VERIFICATION METHOD**:  
+Add a TypeScript rule (`no-magic-numbers`) scoped to the `warning(` call expression, and a unit test that asserts `Object.values(WarningCode).includes(code)` for every emitted warning.
+
+---

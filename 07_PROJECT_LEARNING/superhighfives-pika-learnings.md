@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
+> **Source**: github ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
+> **Source Version**: `4fc05696`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T23:47:13.090Z  
+> **Learning ID**: `learn-github-superhighfives-pika`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): superhighfives/pika
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:25:21.128Z  
+> **Harvest Timestamp**: 2026-10-19T23:47:12.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: An open-source colour picker app for macOS
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2581 stars
+- **Stars / Engagement**: 2593 stars
 
 ---
 
@@ -47,6 +61,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let notificationCenter = NotificationCenter.default
     let windowCoordinator = WindowCoordinator()
     let statusBarController = StatusBarController()
+
+    #if TARGET_SPARKLE
+        /// Sparkle 2 updater. Created on launch so scheduled update checks start with the app.
+        private(set) lazy var updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: self,
+            userDriverDelegate: nil
+        )
+    #endif
 
     func setupAppMode() {
         var currentMode = Defaults[.appMode].activationPolicy
@@ -100,6 +123,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         LaunchAtLogin.migrateIfNeeded()
         migrateHistoryToPalettes()
         removeUpdatesMenuItemIfNeeded()
+        #if TARGET_SPARKLE
+            // Sparkle 1 persisted the runtime feed URL to user defaults, where Sparkle 2 would
+            // still read it. The feed now comes from `feedURLString(for:)`, so drop the stale copy.
+            updaterController.updater.clearFeedURLFromUserDefaults()
+        #endif
 
         eyedroppers = Eyedroppers()
         setupInterface()
@@ -109,6 +137,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         validateColorSpace()
         showPikaIfConfigured()
         registerGlobalKeyMonitor()
+
+        // Refresh the colour-name list from color.pizza (catalogue + selected list) and cache
+        // it; the eyedroppers rebuild via `.colorNamesUpdated`. Best-effort — falls back to
+        // the bundled default offline.
+        ColorNamesManager.shared.updateOnLaunch()
     }
 
     private func removeUpdatesMenuItemIfNeeded() {
@@ -134,16 +167,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    // KeyboardShortcuts 3.x isolates `onKeyUp(for:action:)` to the main actor, so this
+    // registration must run there too. Its only caller, `applicationDidFinishLaunching`,
+    // is already main-actor isolated.
+    @MainActor
     private func registerTogglePikaShortcut() {
         KeyboardShortcuts.onKeyUp(for: .togglePika) { [] in
             if Defaults[.viewedSplash] {
                 NSApp.sendAction(#selector(AppDelegate.triggerPickForeground), to: nil, from: nil)
             }
         }
+        KeyboardShortcuts.onKeyUp(for: .pickPair) { [] in
+            if Defaults[.viewedSplash] {
+                NSApp.sendAction(#selector(AppDelegate.triggerPickContrast), to: nil, from: nil)
+            }
+        }
+    }
+
+    /// The splash shows on every launch unless the user ticked its (pre-selected) "Don't show
+    /// this again" checkbox — EXCEPT when a new onboarding version hasn't been seen yet, in which
+    /// case it shows once for everyone (see `PikaConstants.currentSplashVersion`).
+    private var shouldShowSplash: Bool {
+        !Defaults[.hideSplashOnLaunch]
+            || Defaults[.lastSeenSplashVersion] < PikaConstants.currentSplashVersion
     }
 
     private func presentSplashIfNeeded() {
-        if !Defaults[.viewedSplash] {
+        // `viewedSplash` still records the first run so the pick shortcuts stay gated until
+        // onboarding is dismissed the first time. `lastSeenSplashVersion` is recorded on
+        // dismissal (`closeSplashWindow`), not here — recording it now would make
+        // `showPikaIfConfigured` reveal the main window behind the splash.
+        if shouldShowSplash {
             openSplashWindow(nil)
             NSApp.activate(ignoringOtherApps: true)
         }
@@ -156,6 +210,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showPikaIfConfigured() {
+        // Pika should only ever appear once the splash has been dismissed. When the splash
+        // is up, defer the main window until `closeSplashWindow` fires; otherwise show it now.
+        guard !shouldShowSplash else { return }
+        presentConfiguredPika()
+    }
+
+    private func presentConfiguredPika() {
         if Defaults[.alwaysShowOnLaunch], !Defaults[.appMode].usesPopover {
             showPika(self)
         }
@@ -184,6 +245,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
 
+            if self.handleCommandKey(event) { return nil }
+
             // In popover mode neither `NSApp.mainMenu.performKeyEquivalent` nor SwiftUI's
             // command-bound `.keyboardShortcut` fire while the popover panel is the key
             // window of an `.accessory` app — only `.keyboardShortcut` bindings attached to
@@ -202,87 +265,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows: Bool) -> Bool {
-        if !hasVisibleWindows {
-            if Defaults[.appMode].usesPopover {
-                statusBarController.showPopover()
-            } else {
-                windowCoordinator.pikaWindow.makeKeyAndOrderFront(self)
-            }
-        }
-        return true
-    }
+    /// ⌘-key handling the menu bar can't provide. Returns true when `event` was consumed.
+    private func handleCommandKey(_ event: NSEvent) -> Bool {
+        guard event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+              let key = event.charactersIgnoringModifiers?.lowercased() else { return false }
 
-    func applicationSupportsSecureRestorableState(_: NSApplication) -> Bool {
-        true
-    }
+        // ⌘N: a hidden alias for Window → "Show Pika" (⌘0). SwiftUI can't hide a menu
 
-    // MARK: - Migration
-
-    private func migrateHistoryToPalettes() {
-        let existing = Defaults[.colorHistory]
-        guard !existing.isEmpty else { return }
-        let history = Palette(id: UUID(), name: nil, pairs: existing, createdAt: Date())
-        var palettes = Defaults[.palettes]
-        if palettes.isEmpty {
-            palettes = [history]
-        } else {
-            palettes[0] = Palette(
-                id: palettes[0].id,
-                name: palettes[0].name,
-                pairs: existing + palettes[0].pairs,
-                createdAt: palettes[0].createdAt
-            )
-        }
-        Defaults[.palettes] = palettes
-        Defaults[.colorHistory] = []
-    }
-}
-
-// MARK: - Window forwarding
-
-extension AppDelegate {
-    @objc func closeSplashWindow() { windowCoordinator.closeSplashWindow() }
-    @objc func togglePopover(_: AnyObject?) { windowCoordinator.togglePopover() }
-
-    @IBAction func openAboutWindow(_: Any?) { windowCoordinator.openAboutWindow() }
-    @IBAction func openHelpWindow(_: Any?) { windowCoordinator.openHelpWindow() }
-    @IBAction func openPreferencesWindow(_: Any?) { windowCoordinator.openPreferencesWindow() }
-    @IBAction func openSplashWindow(_: Any?) { windowCoordinator.openSplashWindow() }
-    @IBAction func showPika(_: Any) { windowCoordinator.showPika() }
-    @IBAction func hidePika(_: Any) { windowCoordinator.hidePika() }
-    @IBAction func showPopover(_: Any) { statusBarController.showPopover() }
-}
-
-// MARK: - Notification dispatch
-
-extension AppDelegate {
-    @IBAction func triggerPickForeground(_: Any) {
-        notificationCenter.post(name: .triggerPickForeground, object: self)
-    }
-
-    @IBAction func triggerPickBackground(_: Any) {
-        notificationCenter.post(name: .triggerPickBackground, object: self)
-    }
-
-    @IBAction func triggerPickContrast(_: Any) {
-        notificationCenter.post(name: .triggerPickForeground, object: self, userInfo: ["chain": true])
-    }
-
-    @IBAction func triggerCopyForeground(_: Any) {
-        notificationCenter.post(name: .triggerCopyForeground, object: self)
-    }
-
-    @IBAction func triggerCopyBackground(_: Any) {
-        notificationCenter.post(name: .triggerCopyBackground, object: self)
-    }
-
-    @IBAction func triggerSystemPickerForeground(_: Any) {
-        notificationCenter.post(name: .triggerSystemPickerForeground, object: self)
-    }
-
-    @IBAction func triggerSystemPickerBackground(_: Any) {
-        notificationCenter.post(name: .trigge
 ```
 
 ### Core Architecture Module: `Pika/ButtonStyles/AppearanceButtonStyle.swift`
@@ -517,13 +506,41 @@ struct SwapButtonStyle: ButtonStyle {
     var ltr = false
     var expanded = false
     var onHoverChange: ((Bool) -> Void)?
+    /// Called when the label actually appears or goes. That trails the hover by `labelDelay`,
+    /// or comes straight away while another label is out (see `LabelWarmth`).
+    var onExpandChange: ((Bool) -> Void)?
+
+    /// How long the pointer rests on a button before its label slides out, the first time.
+    /// Long enough that crossing the buttons, or clicking one, doesn't make them expand; the
+    /// label is there for someone who stops to wonder what the icon does, like a tooltip. Once
+    /// one label has shown, the others show without waiting (see `LabelWarmth`).
+    static let labelDelay: Duration = .seconds(1)
+
+    /// How long a label takes to slide back in, matching the `showText` animation below.
+    static let labelCollapse: Duration = .milliseconds(300)
+
+    /// The labels that are out, or still sliding back in. While any is, hovering another
+    /// button (or the same one again) shows its label with no delay; once every label is back
+    /// to its plain icon, the next hover waits the full `labelDelay`. Shared by every button
+    /// using this style, so it carries across Copy, the system picker and Swap.
+    @MainActor private enum LabelWarmth {
+        private static var open: Set<UUID> = []
+
+        static var delay: Duration { open.isEmpty ? labelDelay : .zero }
+
+        static func opened(_ id: UUID) { open.insert(id) }
+        static func closed(_ id: UUID) { open.remove(id) }
+    }
 
     private struct SwapButtonStyleView: View {
         @Environment(\.colorScheme) var colorScheme: ColorScheme
 
         @State private var isHovered: Bool = false
+        /// This button's identity in `LabelWarmth`'s set of open labels.
+        @State private var warmthID = UUID()
         @State private var hoverTask: Task<Void, Never>?
-        @State private var hoverCooldown: Task<Void, Never>?
+        /// Waits out the label's slide back in before telling `LabelWarmth` it has closed.
+        @State private var collapseTask: Task<Void, Never>?
 
         let configuration: Configuration
         let isVisible: Bool
@@ -531,6 +548,7 @@ struct SwapButtonStyle: ButtonStyle {
         let ltr: Bool
         let expanded: Bool
         let onHoverChange: ((Bool) -> Void)?
+        let onExpandChange: ((Bool) -> Void)?
 
         private var showText: Bool { isHovered || expanded }
 
@@ -577,9 +595,14 @@ struct SwapButtonStyle: ButtonStyle {
             .onHover { hover in
                 onHoverChange?(hover)
                 if hover {
-                    guard hoverCooldown == nil, hoverTask == nil else { return }
+                    // Back on while the label is still sliding in: it counts as open, so this
+                    // reopens it straight away rather than leaving it shut until you leave and
+                    // come back.
+                    collapseTask?.cancel()
+                    collapseTask = nil
+                    guard hoverTask == nil, !isHovered else { return }
                     hoverTask = Task {
-                        try? await Task.sleep(for: .milliseconds(100))
+                        try? await Task.sleep(for: LabelWarmth.delay)
                         guard !Task.isCancelled else { return }
                         isHovered = true
                         hoverTask = nil
@@ -587,12 +610,18 @@ struct SwapButtonStyle: ButtonStyle {
                 } else {
                     hoverTask?.cancel()
                     hoverTask = nil
+                    // Left again after reopening mid-collapse, before the label came back out:
+                    // its collapse was cancelled, so nothing else would take it out of `open`.
+                    guard isHovered else {
+                        LabelWarmth.closed(warmthID)
+                        return
+                    }
                     isHovered = false
-                    hoverCooldown?.cancel()
-                    hoverCooldown = Task {
-                        try? await Task.sleep(for: .milliseconds(150))
+                    collapseTask = Task {
+                        try? await Task.sleep(for: SwapButtonStyle.labelCollapse)
                         guard !Task.isCancelled else { return }
-                        hoverCooldown = nil
+                        LabelWarmth.closed(warmthID)
+                        collapseTask = nil
                     }
                 }
             }
@@ -606,7 +635,25 @@ struct SwapButtonStyle: ButtonStyle {
                 if !visible {
                     hoverTask?.cancel()
                     hoverTask = nil
+                    collapseTask?.cancel()
+                    collapseTask = nil
                     isHovered = false
+                    LabelWarmth.closed(warmthID)
+                }
+            }
+            .onChange(of: isHovered) { _, shown in
+                if shown { LabelWarmth.opened(warmthID) }
+                onExpandChange?(shown)
+            }
+            .onDisappear {
+                collapseTask?.cancel()
+                LabelWarmth.closed(warmthID)
+            }
+            // A click answers the question the label was going to: don't expand after it.
+            .onChange(of: configuration.isPressed) { _, pressed in
+                if pressed {
+                    hoverTask?.cancel()
+                    hoverTask = nil
                 }
             }
         }
@@ -619,7 +666,8 @@ struct SwapButtonStyle: ButtonStyle {
             alt: alt,
             ltr: ltr,
             expanded: expanded,
-            onHoverChange: onHoverChange
+            onHoverChange: onHoverChange,
+            onExpandChange: onExpandChange
         )
     }
 }
@@ -634,6 +682,9 @@ import SwiftUI
 
 extension KeyboardShortcuts.Name {
     static let togglePika = Self("togglePika")
+    // Global, user-rebindable "pick a pair" shortcut (foreground → background chain).
+    // Defaults to ⌥⌘D, matching the in-window menu equivalent it replaces.
+    static let pickPair = Self("pickPair", initial: .init(.d, modifiers: [.command, .option]))
 }
 
 enum PikaConstants {
@@ -643,6 +694,11 @@ enum PikaConstants {
             ? "https://superhighfives.com/releases/pika/betas"
             : "https://superhighfives.com/releases/pika"
     }
+
+    // Bump when a release has onboarding worth re-showing: the splash then appears once for
+    // everyone (even those who ticked "Don't show again") whose `lastSeenSplashVersion` is lower.
+    // v1: the custom (Pro) colour picker.
+    static let currentSplashVersion = 1
 
     static let pikaWebsiteURL = "https://superhighfives.com/pika"
     static let gitHubRepoURL = "https://github.com/superhighfives/pika"
@@ -672,6 +728,7 @@ enum PikaConstants {
     static let ncTriggerCopyData = "triggerCopyData"
     static let ncTriggerPickForeground = "triggerPickForeground"
     static let ncTriggerPickBackground = "triggerPickBackground"
+    static let ncTriggerPickPair = "triggerPickPair"
     static let ncTriggerSystemPickerForeground = "triggerSystemPickerForeground"
     static let ncTriggerSystemPickerBackground = "triggerSystemPickerBackground"
     static let ncTriggerSwap = "triggerSwap"
@@ -697,6 +754,7 @@ enum PikaConstants {
     static let ncExportPalette = "exportPalette"
     static let ncSystemColorChanged = "systemColorChanged"
     static let ncExpandToFit = "expandToFit"
+    static let ncColorNamesUpdated = "colorNamesUpdated"
 
     // Disabled formats for SwiftUI copy format
     static let disabledFormats: [ColorFormat] = [.hex, .hsl, .opengl, .lab, .oklch]
@@ -705,6 +763,9 @@ enum PikaConstants {
 extension Notification.Name {
     static let triggerPickForeground = Notification.Name(PikaConstants.ncTriggerPickForeground)
     static let triggerPickBackground = Notification.Name(PikaConstants.ncTriggerPickBackground)
+    /// Help-grid-only: fired alongside the chained `.triggerPickForeground` post so
+    /// "Pick pair"'s own row highlights instead of piggybacking on "Pick foreground"'s.
+    static let triggerPickPair = Notification.Name(PikaConstants.ncTriggerPickPair)
     static let triggerCopyForeground = Notification.Name(PikaConstants.ncTriggerCopyForeground)
     static let triggerCopyBackground = Notification.Name(PikaConstants.ncTriggerCopyBackground)
     static let triggerCopyText = Notification.Name(PikaConstants.ncTriggerCopyText)
@@ -734,6 +795,7 @@ extension Notification.Name {
     static let exportPalette = Notification.Name(PikaConstants.ncExportPalette)
     static let systemColorChanged = Notification.Name(PikaConstants.ncSystemColorChanged)
     static let expandToFit = Notification.Name(PikaConstants.ncExpandToFit)
+    static let colorNamesUpdated = Notification.Name(PikaConstants.ncColorNamesUpdated)
 }
 
 ```
@@ -802,6 +864,25 @@ enum WindowShadow: String, Codable, CaseIterable {
     var showsShadowAtRest: Bool { self != .never }
 }
 
+enum PickerStyle: String, Codable, CaseIterable, Equatable {
+    case system // NSColorSampler (default, today's behaviour)
+    case custom // Pika-native loupe
+}
+
+enum LoupeTheme: String, Codable, CaseIterable, Equatable {
+    case lens // colour-filled rim engraved with the format + colour name (SF Pro)
+    case badge // white rounded badges hugging the inside edge (monospaced)
+    case card // plain magnifier with a readout card beside it
+
+    var localizedName: String {
+        switch self {
+        case .lens: return PikaText.textLoupeThemeLens
+        case .badge: return PikaText.textLoupeThemeBadge
+        case .card: return PikaText.textLoupeThemeCard
+        }
+    }
+}
+
 enum AppMode: String, Codable, CaseIterable {
     case menubar = "preferences.app.mode.menubar"
     case regular = "preferences.app.mode.regular"
@@ -826,9 +907,21 @@ enum AppMode: String, Codable, CaseIterable {
 extension Defaults.Keys {
     static let colorFormat = Key<ColorFormat>("colorFormat", default: .hex)
     static let viewedSplash = Key<Bool>("viewedSplash", default: false)
+    // The colour-name list to use, keyed to color.pizza's `/v1/lists/`. `default` is the
+    // list bundled at build time as the offline fallback.
+    static let colorNameList = Key<String>("colorNameList", default: "default")
+    // When false, the splash is shown on launch. The splash's pre-selected "Don't show
+    // this again" checkbox sets this to true on dismissal.
+    static let hideSplashOnLaunch = Key<Bool>("hideSplashOnLaunch", default: false)
+    // The `PikaConstants.currentSplashVersion` last shown to the user. Bumping that constant
+    // re-shows the splash once for everyone (even those who ticked "Don't show again"), so a
+    // release with new onboarding gets in front of existing users.
+    static let lastSeenSplashVersion = Key<Int>("lastSeenSplashVersion", default: 0)
     static let hidePikaWhilePicking = Key<Bool>("hidePikaWhilePicking", default: false)
     static let windowShadow = Key<WindowShadow>("windowShadow", default: .always)
     static let pickContrastingColor = Key<Bool>("pickContrastingColor", default: false)
+    static let pickerStyle = Key<PickerStyle>("pickerStyle", default: .system)
+    static let loupeTheme = Key<LoupeTheme>("loupeTheme", default: .lens)
     static let copyColorOnPick = Key<Bool>("copyColorOnPick", default: false)
     static let hideMenuBarIcon = Key<Bool>("hideMenuBarIcon", default: false)
     static let betaUpdates = Key<Bool>("betaUpdates", default: false)
@@ -876,6 +969,29 @@ struct PikaShortcut {
     let modifiers: NSEvent.ModifierFlags
     let action: Selector
     let notificationName: Notification.Name
+    /// True when this shortcut is also registered as a global `KeyboardShortcuts`
+    /// hotkey (see `AppDelegate.registerTogglePikaShortcut`). Such shortcuts fire
+    /// regardless of focus, so the popover local monitor must NOT dispatch them
+    /// again — otherwise the action double-fires. Still shown in the Help grid.
+    let hasGlobalBinding: Bool
+
+    init(
+        title: String,
+        displayKeys: [String],
+        character: String,
+        modifiers: NSEvent.ModifierFlags,
+        action: Selector,
+        notificationName: Notification.Name,
+        hasGlobalBinding: Bool = false
+    ) {
+        self.title = title
+        self.displayKeys = displayKeys
+        self.character = character
+        self.modifiers = modifiers
+        self.action = action
+        self.notificationName = notificationName
+        self.hasGlobalBinding = hasGlobalBinding
+    }
 }
 
 enum PikaShortcuts {
@@ -891,6 +1007,16 @@ enum PikaShortcuts {
             displayKeys: ["⇧", "⌘", "D"], character: "d", modifiers: [.command, .shift],
             action: #selector(AppDelegate.triggerPickBackground),
             notificationName: .triggerPickBackground
+        ),
+        PikaShortcut(
+            title: PikaText.textPickPair,
+            displayKeys: ["⌥", "⌘", "D"], character: "d", modifiers: [.command, .option],
+            action: #selector(AppDelegate.triggerPickContrast),
+            notificationName: .triggerPickPair,
+            // Already bound globally as `KeyboardShortcuts.Name.pickPair`, which
+            // fires regardless of focus — skip local-monitor dispatch to avoid a
+            // double pick (mirrors the menu-accelerator omission in PikaApp.swift).
+            hasGlobalBinding: true
         ),
         PikaShortcut(
             title: PikaText.textCopyForeground,
@@ -996,11 +1122,13 @@ enum PikaShortcuts {
         ),
     ]
 
-    /// Returns the shortcut matching the given key event, if any.
+    /// Returns the shortcut matching the given key event, if any. Shortcuts that
+    /// are also globally bound are excluded — the global hotkey already dispatches
+    /// them regardless of focus, so matching here would double-fire the action.
     static func match(_ event: NSEvent) -> PikaShortcut? {
         let chars = event.charactersIgnoringModifiers?.lowercased() ?? ""
         let mods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        return all.first { $0.character == chars && $0.modifiers == mods }
+        return all.first { $0.character == chars && $0.modifiers == mods && !$0.hasGlobalBinding }
     }
 }
 
@@ -1010,6 +1138,7 @@ enum PikaShortcuts {
 ```
 import Foundation
 
+// swiftlint:disable:next type_body_length
 enum PikaText {
     static let textAppName = NSLocalizedString("app.name", comment: "Pika")
 
@@ -1026,6 +1155,10 @@ enum PikaText {
 
     static let textColorForeground = NSLocalizedString("color.foreground", comment: "Foreground")
     static let textColorBackground = NSLocalizedString("color.background", comment: "Background")
+    static let textColorEditInvalid = NSLocalizedString("color.edit.invalid", comment: "Invalid input")
+    static let textColorOutsideGamut = NSLocalizedString(
+        "color.gamut.outside", comment: "Outside the display's color range"
+    )
     static let textColorPass = NSLocalizedString("color.wcag.pass", comment: "Pass")
     static let textColorFail = NSLocalizedString("color.wcag.fail", comment: "Fail")
     static let textColorRatio = NSLocalizedString("color.ratio", comment: "Contrast Ratio")
@@ -1063,6 +1196,10 @@ enum PikaText {
     static let textHelpSupportOnMAS = NSLocalizedString("help.mas", comment: "Support on the Mac App Store")
 
     static let textMenuAbout = NSLocalizedString("menu.about", comment: "About")
+    static let textMenuShowSplash = NSLocalizedString(
+        "menu.showSplash", value: "Show splash", comment: "Show the welcome splash"
+    )
+    static let textMenuShowPika = NSLocalizedString("menu.showPika", comment: "Show Pika")
     static let textMenuUpdates = NSLocalizedString("menu.updates", comment: "Check for updates")
     static let textMenuPreferences = NSLocalizedString("menu.preferences", comment: "Preferences")
     static let textMenuWebsite = NSLocalizedString("menu.website", comment: "Pika website")
@@ -1089,88 +1226,91 @@ enum PikaText {
     static let textSplashHotkey = NSLocalizedString("splash.launch", comment: "Launch at login")
     static let textSplashStart = NSLocalizedString("splash.start", comment: "Get started")
 
-    /*
-     * About
-     */
-
-    static let textAboutWebsite = NSLocalizedString("app.website", comment: "Website")
-    static let textAboutGitHub = NSLocalizedString("app.github", comment: "GitHub")
-    static let textAboutBy = NSLocalizedString("app.designed", comment: "Designed by")
-    static let textAboutVersion = NSLocalizedString("app.version", comment: "Version")
-    static let textAboutBuild = NSLocalizedString("app.build", comment: "Build")
-    static let textAboutUnknown = NSLocalizedString("app.unknown", comment: "Unknown")
-    static let textAboutMacAppStore = NSLocalizedString("app.store.mas", comment: "Mac App Store")
-    static let textAboutDownloaded = NSLocalizedString("app.store.download", comment: "Downloaded from the internet")
-
-    // APCA Compliance Labels
-    static let textAPCABaseline = NSLocalizedString("color.apca.baseline", comment: "Baseline")
-    static let textAPCAHeadline = NSLocalizedString("color.apca.headline", comment: "Headline")
-    static let textAPCATitle = NSLocalizedString("color.apca.title", comment: "Title")
-    static let textAPCABody = NSLocalizedString("color.apca.body", comment: "Body Text")
-
-    // APCA Tooltips
-    static let textColorAPCA30 = NSLocalizedString("color.apca.30", comment: "APCA ≥30")
-    static let textColorAPCA45 = NSLocalizedString("color.apca.45", comment: "APCA ≥45")
-    static let textColorAPCA60 = NSLocalizedString("color.apca.60", comment: "APCA ≥60")
-    static let textColorAPCA75 = NSLocalizedString("color.apca.75", comment: "APCA ≥75")
-
-    // History
-    static let textHistoryTitle = NSLocalizedString("history.title", comment: "History")
-    static let textHistoryToggle = NSLocalizedString("history.toggle", comment: "Toggle palettes")
-    static let textColorPreviewToggle = NSLocalizedString("color.preview.toggle", comment: "Toggle color preview")
-    static let textComplianceToggle = NSLocalizedString("compliance.toggle", comment: "Toggle compliance")
-    static let textHistoryApplyForeground = NSLocalizedString("history.apply.foreground", comment: "Apply foreground only")
-    static let textHistoryApplyBackground = NSLocalizedString("history.apply.background", comment: "Apply background only")
-    static let textHistoryRemove = NSLocalizedString("history.remove", comment: "Remove from history")
-    static let textHistoryClear = NSLocalizedString("history.clear", comment: "Clear history")
-
-    // Palettes
-    static let textPaletteNew = NSLocalizedString("palette.new", comment: "New palette…")
-    static let textPaletteRename = NSLocalizedString("palette.rename", comment: "Rename palette")
-    static let textPaletteDelete = NSLocalizedString("palette.delete", comment: "Delete palette")
-    static let textPaletteRemoveChip = NSLocalizedString("palette.remove", comment: "Remove from palette")
-    static let textPaletteNamePrompt = NSLocalizedString("palette.name.prompt", comment: "Palette name")
-    static let textPaletteNamePlaceholder = NSLocalizedString("palette.name.placeholder", comment: "My palette")
-    static let textPaletteAddColor = NSLocalizedString("palette.add", comment: "Add to palette")
-    static let textPaletteExport = NSLocalizedString("palette.export", comment: "Export palette")
-    static let textHistoryExport = NSLocalizedString("history.export", comment: "Export color history")
-    static let textHistoryClearConfirm = NSLocalizedString("history.clear.confirm", comment: "Are you sure you want to clear all history?")
-
-    // Keyboard shortcuts
-    static let textPickForeground = NSLocalizedString("color.pick.foreground", comment: "Pick foreground")
-    static let textPickBackground = NSLocalizedString("color.pick.background", comment: "Pick background")
-    static let textPickContrast = NSLocalizedString(
-        "color.pick.contrast",
-        comment: "Pick foreground then background"
+    // Splash setup list (two-column redesign)
+    static let textSplashSetupTitle = NSLocalizedString(
+        "splash.setup.title", value: "Welcome to Pika", comment: "Splash setup heading"
     )
-    static let textCopyForeground = NSLocalizedString("color.copy.foreground", comment: "Copy foreground")
-    static let textCopyBackground = NSLocalizedString("color.copy.background", comment: "Copy background")
-    static let textColorSystemPickerForeground = NSLocalizedString(
-        "color.system.foreground",
-        comment: "Use foreground system color picker"
+    static let textSplashSetupSubtitle = NSLocalizedString(
+        "splash.setup.subtitle", value: "A few quick choices to get you started.",
+        comment: "Splash setup subheading"
     )
-    static let textColorSystemPickerBackground = NSLocalizedString(
-        "color.system.background",
-        comment: "Use background system color picker"
+    static let textSplashShortcutSubtitle = NSLocalizedString(
+        "splash.shortcut.subtitle", value: "Show and hide Pika from anywhere",
+        comment: "Global shortcut row subtitle"
     )
-    static let textColorSystemPickerForegroundSimple = NSLocalizedString(
-        "color.system.foreground.simple",
-        comment: "System foreground"
+    static let textSplashPairSubtitle = NSLocalizedString(
+        "splash.pair.subtitle", value: "Grab a foreground, then a background",
+        comment: "Pick-pair shortcut row subtitle"
     )
-    static let textColorSystemPickerBackgroundSimple = NSLocalizedString(
-        "color.system.background.simple",
-        comment: "System background"
+    static let textSplashLaunchSubtitle = NSLocalizedString(
+        "splash.launch.subtitle", value: "Open Pika when you log in",
+        comment: "Launch at login row subtitle"
     )
-
-    /*
-     * Preferences
-     */
-
-    // General Settings
-    static let textGeneralTitle = NSLocalizedString("preferences.general.title", comment: "General Settings")
-    static let textLaunchDescription = NSLocalizedString(
-        "preferences.launch.description",
-        comment: "La
+    static let textSplashPickerRecommended = NSLocalizedString(
+        "splash.picker.recommended", value: "Recommended", comment: "Custom picker recommended badge"
+    )
+    static let textPickerRequiresScreenRecording = NSLocalizedString(
+        "picker.requiresScreenRecording", value: "Requires Screen Recording",
+        comment: "Pro picker capability note: needs the Screen Recording permission"
+    )
+    static let textPickerGrantAccessibilityButton = NSLocalizedString(
+        "picker.grantAccessibility", value: "Grant Accessibility",
+        comment: "Button to grant the optional Accessibility permission for the Pro picker"
+    )
+    static let textLoupeTheme = NSLocalizedString(
+        "loupe.theme", value: "Loupe style", comment: "Label for the Pro picker loupe theme setting"
+    )
+    static let textLoupeThemeLens = NSLocalizedString(
+        "loupe.theme.lens", value: "Lens", comment: "Loupe theme: coloured rim with engraved text"
+    )
+    static let textLoupeThemeBadge = NSLocalizedString(
+        "loupe.theme.badge", value: "Badge", comment: "Loupe theme: white badges on the inside edge"
+    )
+    static let textLoupeThemeCard = NSLocalizedString(
+        "loupe.theme.card", value: "Card", comment: "Loupe theme: plain magnifier with a readout card beside it"
+    )
+    static let textPickerPermissionsIntro = NSLocalizedString(
+        "picker.permissions.intro", value: "To enable the Pro picker, you’ll need to grant the following permissions:",
+        comment: "Intro line above the Pro picker permission buttons"
+    )
+    static let textPickerPermScreenRecording = NSLocalizedString(
+        "picker.perm.screenRecording", value: "Screen Recording",
+        comment: "Permission pill label: Screen Recording"
+    )
+    static let textPickerPermAccessibility = NSLocalizedString(
+        "picker.perm.accessibility", value: "Accessibility",
+        comment: "Permission pill label: Accessibility"
+    )
+    static let textPickerAccessibilityNote = NSLocalizedString(
+        "picker.accessibilityNote",
+        value: "Optional — lets Escape and arrow-key nudging work while picking over other apps.",
+        comment: "Explains what the optional Accessibility permission adds to the Pro picker"
+    )
+    static let textSplashPickerPermission = NSLocalizedString(
+        "splash.picker.permission", value: "Needs Screen Recording permission",
+        comment: "Custom picker permission note"
+    )
+    static let textSplashPickerFallback = NSLocalizedString(
+        "splash.picker.fallback", value: "Not now? You’ll use the Basic picker.",
+        comment: "Pro picker declined fallback note"
+    )
+    static let textSplashFooter = NSLocalizedString(
+        "splash.footer", value: "You can change all of this in Settings.",
+        comment: "Splash footer note"
+    )
+    static let textSplashDontShowAgain = NSLocalizedString(
+        "splash.dontShowAgain", value: "Don’t show this again",
+        comment: "Splash: pre-selected checkbox to stop showing the splash on launch"
+    )
+    static let textSplashConfirmTitle = NSLocalizedString(
+        "splash.confirm.title", value: "Use Pika’s Pro picker?",
+        comment: "Get started confirmation title when the Basic picker is selected"
+    )
+    static let textSplashConfirmBody = NSLocalizedString(
+        "splash.confirm.body",
+        value: "The Pro picker shows the colour, its format, and live contrast right in the "
+            + "loupe as you pick — a much nicer experience than the macOS sampler. "
+  
 ```
 
 ### Core Architecture Module: `Pika/Extensions/APCACompliance.swift`
@@ -1211,8 +1351,11 @@ extension NSColor {
     }
 
     private func calculateAPCA(with color: NSColor) -> CGFloat {
-        let fgRGB = toRGBAComponents()
-        let bgRGB = color.toRGBAComponents()
+        // APCA is defined over sRGB, like WCAG `luminance`. Reading the selected colour space
+        // scored Display P3 components as if they were sRGB, so the two standards could
+        // disagree on the same pair.
+        let fgRGB = toRGBAComponents(in: .sRGB)
+        let bgRGB = color.toRGBAComponents(in: .sRGB)
 
         // Convert to sRGB components in 0-255 range
         let fg = [fgRGB.r * 255, fgRGB.g * 255, fgRGB.b * 255]
@@ -1275,108 +1418,20 @@ extension NSColor {
 
 ```
 
-### Core Architecture Module: `Pika/Extensions/BindingOnChange.swift`
-```
-import SwiftUI
-
-extension Binding {
-    func onChange(perform: @escaping (Value) -> Void) -> Binding<Value> {
-        Binding(get: {
-            // return wrapped value
-            self.wrappedValue
-        }, set: { newValue in
-            // set new value
-            self.wrappedValue = newValue
-            // call completion
-            perform(newValue)
-        })
-    }
-
-    func onChange(perform: @escaping () -> Void) -> Binding<Value> {
-        Binding(get: {
-            // return wrapped value
-            self.wrappedValue
-        }, set: { newValue in
-            // set new value
-            self.wrappedValue = newValue
-            // call completion
-            perform()
-        })
-    }
-}
-
-```
-
-### Core Architecture Module: `Pika/Extensions/CGFloat+Format.swift`
-```
-import CoreGraphics
-import Foundation
-
-extension CGFloat {
-    /// Formats the value with up to `maxDecimalPlaces` decimal places, stripping trailing zeros.
-    /// e.g. 0.5000 → "0.5", 0.0000 → "0", 56.78 → "56.78"
-    func strippedDecimalString(maxDecimalPlaces: Int) -> String {
-        // Normalize -0.0 to +0.0 to avoid producing "-0" in output.
-        let value: CGFloat = self == 0 ? 0 : self
-        let formatted = String(format: "%.\(maxDecimalPlaces)f", value)
-        guard formatted.contains(".") else { return formatted }
-        var result = formatted
-        while result.hasSuffix("0") { result.removeLast() }
-        if result.hasSuffix(".") { result.removeLast() }
-        return result
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #235** (2026-07-12): **Opening the app never really open the app**
-  *Symptoms*: Is this a bug or intentional behavior?  If you click on the app icon to launch Pika, it never shows up even though it opens. You have to click AGAIN for the UI to appear. Why is that?
+- **Issue #311** (2026-10-19): **Occasionally, Screen Becomes Un-Clickable when Picking a Color / Copying to Clipboard**
+  *Symptoms*: **Describe the bug** Sometimes, picking a color and then clicking to copy to clipboard results in pointer disappearing and screen is totally non-clickable. Have to restart the computer.  **To Reproduce** Steps to reproduce the behavior: 1. Go to Pika window 2. Click on foreground / background picker 3. Pick a color from anywhere on screen 4. Sometimes pointer disappears, cannot click anywhere, cannot use pointer.  **Expected behavior** Should be able to continue clicking / interacting with computer.  **Screenshots** N/A  **Environment (please complete the following information):**  - macOS Golden Gate 27.0.1  - 1.9.0 (Build 97) - Downloaded from the internet  - Apple Silicon  **Additional context** Add any other context about the problem here. 
+
+- **Issue #302** (2026-10-14): **Pika 2.0 and Secondary Displays**
+  *Symptoms*: Pika 2.0 not playing well with secondary displays. At least not in my instance. I have my Macbook closed, with two displays connected. I can use Pika to colour-pick on my **primary** display without issues; works great. But as soon as I try to pick a colour from my secondary display, it fails to pick the colour and locks up. The colour-picker remains visible and follows the mouse, but no longer functions on that display (my mouse can click and operate the apps on that display as if the colour-picker wasn't present. If I then move my mouse to my primary display and click, it correctly picks the colour.   - OS: MacOS 27.0.1  - App Version: 2.0  - Architecture: Macbook M3 Pro, Apple Silicon 
   **Post-Mortem & Fix Analysis**:
-  > Hey @danqing! As Pika is a utility, it doesn't show by default (for example, if you open it with your launch items or you use it with the global shortcut). You can change this in the settings, though:  <img width="692" height="712" alt="Image" src="https://github.com/user-attachments/assets/cb177ea9-1a84-4e11-b38a-9756bfb04f7f" />  Thanks for flagging. 👍 
-  > This is my setting (in the dock). It doesn't open.
-  > Huh, weird! I made a video of the expected behavior (and found a bug with remebering location I'm fixing in `1.8.0`). Is this how you're opening it?  https://github.com/user-attachments/assets/77691230-a374-4b33-8763-6877b795185b
-
-- **Issue #207** (2026-07-23): **Innaccurate hexcodes**
-  *Symptoms*: **Describe the bug** The hexcodes for the colors picked don't seem to be accurate - on Figma, I can set a shape to a certain color, try to pick the color with Pika, and the hexcode Pika gives me is not the one I set myself on Figma. Copying the hexcode from Pika and applying on the Figma shape, it looks slightly darker than the original color. I've tried messing with color format / RGB color space settings to see if I could fix it, but have not been able to.  The problem isn't only on Figma. I've tried pasting the hex codes on [WebAIM](https://webaim.org/resources/contrastchecker/) as well, and their previews of the colors match Figma's, not Pika's.  **To Reproduce** Steps to reproduce the behavior: 1. Open a Figma file (or the WebAIM page) 2. Set a color and take note of its hexcode 3. Pick the color on the screen with Pika 4. Check if the hexcode given by Pika matches the original  **Expected behavior** The hexcode should match.  **Screenshots**  <img width="980" height="642" alt="Image" src="https://github.com/user-attachments/assets/c4d1bfc9-2bd2-4d56-aabc-f56f8b878a69" />  A rectangle on Figma set to the color # DB0B84.  <img width="999" height="602" alt="Image" src="https://github.com/user-attachments/assets/c2cfd873-a5c2-43f9-9df4-a4f508d0d6b6" />  Picking the color with Pika, it gives the hexcode # C92D82 instead.  <img width="985" height="587" alt="Image" src="https://github.com/user-attachments/assets/9f065a0f-18ba-42e8-b386-d8a31cdae289" />  Applying # C92D82 to an
-  **Post-Mortem & Fix Analysis**:
-  > For sure, we can dig into this! If you jump into the Settings, what color profile do you have? Figma uses sRGB:  <img width="596" height="278" alt="Image" src="https://github.com/user-attachments/assets/d2734870-6f8c-4242-bd1e-c18c13ee6e59" />  See if changing the color profile helps, and let me know how you go.
-  > Going to close this one for now, but feel free to reopen.
-
-- **Issue #206** (2026-04-27): **Open Pika on macOS via Dock**
-  *Symptoms*: **Describe the bug** Klicking the icon for Pika in the Dock, the app does not open. Clicking the icon again the app opens.  **To Reproduce** Steps to reproduce the behavior: 1. Klick the icon for Pika in the Dock 2. The app does not appear 3. Klick the icon for Pika again in the Dock, and the app appears  **Expected behavior** Klicking the icon for Pika in the Dock should start the application.  **Environment:** - OS: MacOS Tahoe 26.4.1 (25E253) - App Version: 1.6.0, build 78 - Architecture: Univeral  **Additional context** Clicking the app in the "Aplications" folder, the app opens as expeted. 
-  **Post-Mortem & Fix Analysis**:
-  > Yep, this is a setting:  <img width="276" height="342" alt="Image" src="https://github.com/user-attachments/assets/173b4609-0a90-4d1c-8f8e-fe806e35e52f" />  Let me know if you have any issues with it. 👍
-
-- **Issue #205** (2026-05-09): **Strings don't translate**
-  *Symptoms*: **Describe the bug** When deleting the history, the strings `Cancel` and `Clear` don't translate.  **To Reproduce** Steps to reproduce the behavior: 1. Change your system language setting for instance to Croatian 2. Open Pika 3. Go to History 4. Select a color contrast 5. Select via the contectual menu `Ukloni iz povijesti` (Remove from history) or `Izbriši povijest` (Clear history). 6. In the next window see that the strings `Cancel` and `Clear` do not tranlsate.  **Expected behavior** The strings `Cancel` and `Clear` should translate.  **Screenshots** <img width="478" height="342" alt="Image" src="https://github.com/user-attachments/assets/c67d6d30-f65d-4705-bdd1-5a1a83b7a499" />  **Environment:** - OS: MacOS Tahoe 26.4.1 (25E253) - App Version: 1.6.0, build 78 - Architecture: universal 
-
-- **Issue #204** (2026-05-09): **Enable translations in the apple menu bar**
-  *Symptoms*: **Describe the bug** None of the items in "Apple's" menu bar translate, nor their subitems.  **To Reproduce** Steps to reproduce the behavior: 1. Change your system language setting for intance to Croatian 2. Open Pika 3. See that none of the items in "Apple's" menu bar translate, nor their subitems.  **Expected behavior** All items and their subitems in "Apple's" menu bar should translate.  **Screenshots** <img width="477" height="345" alt="Image" src="https://github.com/user-attachments/assets/b900c758-ddb0-4c98-8d3d-1ce704a9fe28" /> <img width="472" height="346" alt="Image" src="https://github.com/user-attachments/assets/33ec8bdf-0469-4db4-a6b8-f929232368cb" /> <img width="475" height="344" alt="Image" src="https://github.com/user-attachments/assets/70d9984e-8f18-43f6-9848-815087a20bf1" /> <img width="560" height="349" alt="Image" src="https://github.com/user-attachments/assets/4e023fa4-5aed-4dc2-bd14-b087c230bd89" />  **Environment:**  - OS: MacOS Tahoe 26.4.1 (25E253)  - App Version: 1.6.0, build 78  **Additional context** If you implement the menu items and subitems in the "Apple" menu bar, you wouldn't need the extra menu in the top right corner of the app's window - this is just an idea.  <img width="726" height="686" alt="Image" src="https://github.com/user-attachments/assets/a415b2fa-bf06-4fec-8580-21dfe00e7669" /> 
-
-- **Issue #187** (2026-03-14): **Picked colors are not accurate to the source.**
-  *Symptoms*: When picking the color from a source it is not accurate. Tried picking the source using Figma color picker and Pika, and Pika is off by a small margin - not immediately noticeable, but nonetheless unable to trust it.  For example, using the color #OE1829 as the source - exported from affinity, shows up as is, using Figma color picker. But the same source picked with Pika shows up as #111726. Picking a block with #111726 shows up as #121725 - which works out considering the tool is not accurate.  <img width="931" height="601" alt="Image" src="https://github.com/user-attachments/assets/15d1e9f3-cd3e-42f5-a80a-b5e01e7143e4" />  Picking again with Pika, foreground is the source (#0E1829 -> #101828) and the background is Pika picked color (#111726 -> #121725). <img width="1126" height="726" alt="Image" src="https://github.com/user-attachments/assets/722623bd-714a-46a5-97c0-995468d6161a" />   - OS: macOS 26.3 (25D125)  - App Version: 1.4.1-beta1 (been experiencing the same issue with 0.0.5 - which I've been using for over the last two years without updating)  - Architecture: Apple Silicon  This is not a new issue - been experiencing this since the inception of my usage, which is roughly over two years ago with 0.0.5 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for flagging. On it. Will have a beta out shortly which should fix this.
-  > Just pushed a beta for this. Just subscribe to them and update:  <img width="419" height="194" alt="Image" src="https://github.com/user-attachments/assets/9d87d9d9-0868-4091-84eb-786efeb50ae6" />  <img width="471" height="552" alt="Image" src="https://github.com/user-attachments/assets/0fe06343-4352-4843-8858-be77c53d83ea" />  Let me know if it resolves the issue.
-  > <img width="1179" height="799" alt="Image" src="https://github.com/user-attachments/assets/d8b87650-954f-4e32-a4d5-d019da6ddc36" />  It still is appearing differently after updating the app. one small thing, the color that is shown in the app is slightly different from the source and the color it thinks it is. the middle patch is the screenshot of the color taken from the app and placed over the source and pika defined color. hope this is useful somehow
-
-- **Issue #179** (2026-03-02): **brew sha issue**
-  *Symptoms*: Error: SHA-256 mismatch Expected: 3d0b9404f09367a8bd4f3005b2d0943846cefc46e694a9202256e327361e0c0e   Actual: 55a8dc20e491bdfe3fa24692fb8d1af165731861374958e964f857b3fa31616c
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for flagging! Just moved to a new deployment process so there might be some teething issues. Will take a look. 
-  > Great, got a PR to fix on homebrew. Appreciate it.
-
-- **Issue #170** (2026-02-28): **Apple finds 1.4 as suspicious. Must be allowed from System Settings**
-  *Symptoms*: The title says it all.
-  **Post-Mortem & Fix Analysis**:
-  > Yiiiiiiiiiiiiikes. That's not good. Weirdly that didn't happen to me in testing, but I automated a bunch of the deployment so I'm guessing something got missed there.   Will dig into it. Thanks for flagging. 
-  > Fixed. https://github.com/superhighfives/pika/releases/tag/1.4.0  Apologies, and thanks for flagging. Built a new deployment process on a new laptop and didn't have the right keys. It only impacted new downloads (it was the DMG itself, not the app), so added a check to make sure it doesn't happen again. Thank you!
+  > Thanks for flagging, @neatlee! That is... bad. I'm trying to recreate it on my two-screen set up and haven't been able to, so it'd be great to get a screenshot of your settings just to make sure I'm covering the same bases.  It'd be good to add tests for this, too, as a note to self. Keen to get this fixed!
+  > I thiiiiiiink I've found it. Could you check two things in System Settings? Under **Privacy & Security → Accessibility**, is Pika switched on? And under **Desktop & Dock → Mission Control**, is "Displays have separate Spaces" on? My guess is Accessibility is off and separate Spaces is on. There's a possible fix in #303.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1393,75 +1448,7 @@ extension CGFloat {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94647a7c` (2026-08-01)
-**Commit Message**: Fix grammar in comments
-
-Fix grammar in comments
-
-**File**: `Pika/Extensions/NSColor+Lab.swift` (modified, +2/-2)
-```diff
-@@ -19,9 +19,9 @@ extension NSColor {
-      */
- 
-     /**
--     Get the rgb values of this color in opengl format.
-+     Get the RGB values of this color in OpenGL format.
- 
--     - returns: An NSColor as an opengl string.
-+     - returns: An NSColor as an OpenGL string.
-      */
-     func toOpenGLString(style: CopyFormat = .css) -> String {
-         let RGB = toRGBAComponents()
-```
-
----
-
-### Incident Patch 2: `01b87776` (2026-07-31)
-**Commit Message**: Merge pull request #255 from superhighfives/fix/review-drop-build
-
-Drop the build from the review so it actually posts
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +7/-20)
-```diff
-@@ -17,26 +17,13 @@ jobs:
-   review:
-     # Standard lives in superhighfives/control-room so every repo reviews the
-     # same way. Repo-specific rules go in CLAUDE.md.
-+    #
-+    # No verify_commands: the review reads the diff and doesn't build. An Xcode
-+    # build outlives the review agent's per-command timeout, gets backgrounded,
-+    # and the agent stalls waiting for it — finishing a green check without ever
-+    # posting a review. tests.yml already builds and runs the suite (~90s), so
-+    # the review doesn't need to. Reading-only, it runs fast on the default
-+    # ubuntu runner and posts every time.
-     uses: superhighfives/control-room/.github/workflows/review.yml@main
--    with:
--      # Pinned to match tests.yml — macos-latest doesn't ship Xcode 16.3, so
--      # xcode-select fails there. Bump both together.
--      runs_on: macos-15
--      runtime: none
--      setup_command: sudo xcode-select -s /Applications/Xcode_16.3.app
--      # Build for testing rather than a full test run: it catches the compile
--      # errors that matter for review without the runtime cost of the suite,
--      # which tests.yml already covers.
--      #
--      # Resolve Swift packages first, as a separate step — same as tests.yml.
--      # Without it, build-for-testing resolves SPM cold, and the `| tail -40`
--      # buffers all output so nothing streams; the review agent sits on a build
--      # that can run past the timeout and gets cancelled without ever reviewing.
--      verify_commands: |
--        xcodebuild -resolvePackageDependencies -project Pika.xcodeproj -scheme Pika
--        set -o pipefail && xcodebuild build-for-testing -project Pika.xcodeproj -scheme Pika -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tail -40
--      # Safety net over the pre-resolve fix above, so a slow cold build can't get
--      # cancelled mid-review before Claude posts anything.
--      timeout_minutes: 45
-     secrets:
-       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-```
-
----
-
-### Incident Patch 3: `7dd82fcf` (2026-07-31)
+### Incident Patch 1: `7dd82fcf` (2026-07-31)
 **Commit Message**: Drop the build from the review so it actually posts
 
 The review workflow handed Claude an Xcode build-for-testing to run and
@@ -1522,651 +1509,39 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 4: `0923237e` (2026-07-31)
-**Commit Message**: Merge pull request #254 from superhighfives/fix/review-workflow-prewarm-spm
+### Incident Patch 2: `c5805e4c` (2026-07-20)
+**Commit Message**: Serialise @claude runs to avoid concurrent context-fetch races
 
-Pre-resolve SPM in review workflow to stop 30-min timeouts
+Rapid-fire @claude comments spawned concurrent claude.yml runs that raced
+on context assembly, yielding an empty formatted_context and an immediate
+is_error failure. Add a per-issue/PR concurrency group (no cancel — each
+request is distinct and worth completing).
 
-**File**: `.github/workflows/claude-code-review.yml` (modified, +9/-1)
+Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/claude.yml` (modified, +9/-0)
 ```diff
-@@ -27,8 +27,16 @@ jobs:
-       # Build for testing rather than a full test run: it catches the compile
-       # errors that matter for review without the runtime cost of the suite,
-       # which tests.yml already covers.
-+      #
-+      # Resolve Swift packages first, as a separate step — same as tests.yml.
-+      # Without it, build-for-testing resolves SPM cold, and the `| tail -40`
-+      # buffers all output so nothing streams; the review agent sits on a build
-+      # that can run past the timeout and gets cancelled without ever reviewing.
-       verify_commands: |
-+        xcodebuild -resolvePackageDependencies -project Pika.xcodeproj -scheme Pika
-         set -o pipefail && xcodebuild build-for-testing -project Pika.xcodeproj -scheme Pika -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tail -40
--      timeout_minutes: 30
-+      # Safety net over the pre-resolve fix above, so a slow cold build can't get
-+      # cancelled mid-review before Claude posts anything.
-+      timeout_minutes: 45
-     secrets:
-       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+@@ -10,6 +10,15 @@ on:
+   pull_request_review:
+     types: [submitted]
+ 
++# Serialise runs per issue/PR so rapid-fire @claude comments don't spawn
++# concurrent runs that race on context assembly (which yields an empty
++# formatted_context and an immediate is_error failure). Unlike the review
++# workflow we don't cancel in-progress runs — each @claude request is distinct
++# and worth completing.
++concurrency:
++  group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
++  cancel-in-progress: false
++
+ jobs:
+   claude:
+     if: |
 ```
 
 ---
 
-### Incident Patch 5: `d4589b1f` (2026-07-31)
-**Commit Message**: Pre-resolve SPM in review workflow to stop 30-min timeouts
-
-The Claude Code Review job hands the review agent a `xcodebuild
-build-for-testing` to run and report. It resolved Swift packages cold
-inside that build, and `2>&1 | tail -40` buffers all output so nothing
-streams — the agent sat on a build that overran `timeout_minutes: 30`
-and the job got cancelled before any review was posted (e.g. PR #251,
-cancelled at 30m17s with xcodebuild still running as an orphan process).
-
-Resolve packages in a separate step first, mirroring tests.yml (which
-builds in ~90s), and raise the timeout to 45 minutes as a safety net so
-a slow cold build can't get cancelled mid-review.
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +9/-1)
-```diff
-@@ -27,8 +27,16 @@ jobs:
-       # Build for testing rather than a full test run: it catches the compile
-       # errors that matter for review without the runtime cost of the suite,
-       # which tests.yml already covers.
-+      #
-+      # Resolve Swift packages first, as a separate step — same as tests.yml.
-+      # Without it, build-for-testing resolves SPM cold, and the `| tail -40`
-+      # buffers all output so nothing streams; the review agent sits on a build
-+      # that can run past the timeout and gets cancelled without ever reviewing.
-       verify_commands: |
-+        xcodebuild -resolvePackageDependencies -project Pika.xcodeproj -scheme Pika
-         set -o pipefail && xcodebuild build-for-testing -project Pika.xcodeproj -scheme Pika -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tail -40
--      timeout_minutes: 30
-+      # Safety net over the pre-resolve fix above, so a slow cold build can't get
-+      # cancelled mid-review before Claude posts anything.
-+      timeout_minutes: 45
-     secrets:
-       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-```
-
----
-
-### Incident Patch 6: `fe45a88c` (2026-07-29)
-**Commit Message**: Bump version to 1.9.0 (build 97/98)
-
-**File**: `Pika.xcodeproj/project.pbxproj` (modified, +4/-4)
-```diff
-@@ -1266,7 +1266,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 95;
-+				CURRENT_PROJECT_VERSION = 97;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1298,7 +1298,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 95;
-+				CURRENT_PROJECT_VERSION = 97;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1331,7 +1331,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 96;
-+				CURRENT_PROJECT_VERSION = 98;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1364,7 +1364,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 96;
-+				CURRENT_PROJECT_VERSION = 98;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-```
-
----
-
-### Incident Patch 7: `1a07145f` (2026-07-29)
-**Commit Message**: Merge pull request #253 from superhighfives/fix/companion-window-top-clamp
-
-Fix window outline/shadow stretching when dragged to screen top
-
-**File**: `Pika/Services/WindowCoordinator.swift` (modified, +16/-2)
-```diff
-@@ -219,7 +219,7 @@ class WindowCoordinator: NSObject {
-     }
- 
-     private func makeShadowWindow() -> NSWindow {
--        let window = NSWindow(
-+        let window = CompanionWindow(
-             contentRect: shadowFrame(),
-             styleMask: .borderless,
-             backing: .buffered,
-@@ -240,7 +240,7 @@ class WindowCoordinator: NSObject {
-     }
- 
-     private func makeBorderWindow() -> NSWindow {
--        let window = NSWindow(
-+        let window = CompanionWindow(
-             contentRect: borderFrame(),
-             styleMask: .borderless,
-             backing: .buffered,
-@@ -443,6 +443,20 @@ class WindowCoordinator: NSObject {
-     }
- }
- 
-+/// A borderless, decorative companion window (the hairline border and the custom shadow)
-+/// that must be free to extend past the top of the screen. AppKit's default
-+/// `constrainFrameRect(_:to:)` clamps a window so its top edge stays below the menu bar;
-+/// because these companions sit `borderPad`/`shadowPad` *beyond* the main window's frame,
-+/// that clamp pins their top near the screen edge as the main window is dragged upward,
-+/// while their height stays fixed — dragging their bottom edge down and detaching the
-+/// outline/shadow from the window. They ignore mouse events and only trace the main frame,
-+/// so opt out of constraining entirely and let them track it exactly, even off-screen.
-+private final class CompanionWindow: NSWindow {
-+    override func constrainFrameRect(_ frameRect: NSRect, to _: NSScreen?) -> NSRect {
-+        frameRect
-+    }
-+}
-+
- /// Draws the main window's hairline outline for the companion border window. Strokes a
- /// rounded rect matching the window's corner radius, in a colour that adapts to the
- /// current appearance (matching `AdaptiveDivider`).
-```
-
----
-
-### Incident Patch 8: `1bfa8685` (2026-07-28)
-**Commit Message**: Bump version to 1.9.0 (build 95/96)
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `Pika.xcodeproj/project.pbxproj` (modified, +8/-8)
-```diff
-@@ -1266,7 +1266,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 94;
-+				CURRENT_PROJECT_VERSION = 95;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1280,7 +1280,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta3;
-+				MARKETING_VERSION = 1.9.0;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_SPARKLE";
-@@ -1298,7 +1298,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 94;
-+				CURRENT_PROJECT_VERSION = 95;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1312,7 +1312,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta3;
-+				MARKETING_VERSION = 1.9.0;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_SPARKLE;
-@@ -1331,7 +1331,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 91;
-+				CURRENT_PROJECT_VERSION = 96;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1345,7 +1345,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta3;
-+				MARKETING_VERSION = 1.9.0;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_MAS";
-@@ -1364,7 +1364,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 91;
-+				CURRENT_PROJECT_VERSION = 96;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1378,7 +1378,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta3;
-+				MARKETING_VERSION = 1.9.0;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_MAS;
-```
-
----
-
-### Incident Patch 9: `b0a25d69` (2026-07-25)
-**Commit Message**: Document pick/copy format-suffix URL triggers in Help
-
-The pika://pick|copy/<fg|bg>/<format> variants are already supported
-by URLSchemeHandler and documented in the README, but were missing
-from the in-app Help and website. Add them to HelpData with new
-localised descriptions across all nine locales for full parity.
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `Pika/Assets/de.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -448,6 +448,17 @@
- /* Appearance */
- "help.url.group.appearance" = "Erscheinungsbild";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "Vordergrund in bestimmtem Format auswählen";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "Hintergrund in bestimmtem Format auswählen";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "Vordergrund in bestimmtem Format kopieren";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "Hintergrund in bestimmtem Format kopieren";
- /* Set foreground color */
- "help.url.set.foreground" = "Vordergrundfarbe setzen";
- 
-```
-
-**File**: `Pika/Assets/en.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -505,6 +505,17 @@
- /* Appearance */
- "help.url.group.appearance" = "Appearance";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "Pick foreground in a specific format";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "Pick background in a specific format";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "Copy foreground in a specific format";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "Copy background in a specific format";
- /* Set foreground color */
- "help.url.set.foreground" = "Set foreground color";
- 
-```
-
-**File**: `Pika/Assets/es.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -448,6 +448,17 @@
- /* Appearance */
- "help.url.group.appearance" = "Apariencia";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "Seleccionar primer plano en un formato específico";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "Seleccionar segundo plano en un formato específico";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "Copiar primer plano en un formato específico";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "Copiar segundo plano en un formato específico";
- /* Set foreground color */
- "help.url.set.foreground" = "Establecer color de primer plano";
- 
-```
-
-**File**: `Pika/Assets/fr.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -448,6 +448,17 @@
- /* Appearance */
- "help.url.group.appearance" = "Apparence";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "Sélectionner un premier plan dans un format spécifique";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "Sélectionner un arrière-plan dans un format spécifique";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "Copier le premier plan dans un format spécifique";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "Copier l'arrière-plan dans un format spécifique";
- /* Set foreground color */
- "help.url.set.foreground" = "Définir la couleur de premier plan";
- 
-```
-
-**File**: `Pika/Assets/hr.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -481,6 +481,17 @@
- /* Appearance */
- "help.url.group.appearance" = "Izgled";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "Odaberi prednju boju u određenom formatu";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "Odaberi boju pozadine u određenom formatu";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "Kopiraj prednju boju u određenom formatu";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "Kopiraj boju pozadine u određenom formatu";
- /* Set foreground color */
- "help.url.set.foreground" = "Postavi prednju boju";
- 
-```
-
-**File**: `Pika/Assets/ja.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -481,6 +481,17 @@
- /* Appearance */
- "help.url.group.appearance" = "外観";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "指定した形式で前景色をピック";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "指定した形式で背景色をピック";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "指定した形式で前景色をコピー";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "指定した形式で背景色をコピー";
- /* Set foreground color */
- "help.url.set.foreground" = "前景色を設定";
- 
-```
-
-**File**: `Pika/Assets/pl.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -448,6 +448,17 @@
- /* Appearance */
- "help.url.group.appearance" = "Wygląd";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "Wybierz pierwszy plan w określonym formacie";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "Wybierz tło w określonym formacie";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "Kopiuj pierwszy plan w określonym formacie";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "Kopiuj tło w określonym formacie";
- /* Set foreground color */
- "help.url.set.foreground" = "Ustaw kolor pierwszego planu";
- 
-```
-
-**File**: `Pika/Assets/zh-Hans.lproj/Localizable.strings` (modified, +11/-0)
-```diff
-@@ -448,6 +448,17 @@
- /* Appearance */
- "help.url.group.appearance" = "外观";
- 
-+/* Pick foreground in a specific format */
-+"help.url.pick.foreground_format" = "以指定格式选择前景色";
-+
-+/* Pick background in a specific format */
-+"help.url.pick.background_format" = "以指定格式选择背景色";
-+
-+/* Copy foreground in a specific format */
-+"help.url.copy.foreground_format" = "以指定格式复制前景色";
-+
-+/* Copy background in a specific format */
-+"help.url.copy.background_format" = "以指定格式复制背景色";
- /* Set foreground color */
- "help.url.set.foreground" = "设置前景色";
- 
-```
-
----
-
-### Incident Patch 10: `911471ec` (2026-07-25)
-**Commit Message**: Remove stray debug print of App Store lookup response
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `Pika/Extensions/LookUpAPI.swift` (modified, +0/-2)
-```diff
-@@ -31,8 +31,6 @@ final class LookUpAPI {
-         let (data, _) = try await session.data(for: request)
-         let response = try jsonDecoder.decode(LookUpResponse.self, from: data)
- 
--        print(response)
--
-         return response.results.first.map {
-             .init(version: $0.version,
-                   minimumOsVersion: $0.minimumOsVersion,
-```
-
----
-
-### Incident Patch 11: `f1b9d7e6` (2026-07-23)
-**Commit Message**: Bump version to 1.9.0-beta3 (build 94)
-
-**File**: `Pika.xcodeproj/project.pbxproj` (modified, +6/-6)
-```diff
-@@ -1266,7 +1266,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 93;
-+				CURRENT_PROJECT_VERSION = 94;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1280,7 +1280,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta2;
-+				MARKETING_VERSION = 1.9.0-beta3;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_SPARKLE";
-@@ -1298,7 +1298,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 93;
-+				CURRENT_PROJECT_VERSION = 94;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1312,7 +1312,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta2;
-+				MARKETING_VERSION = 1.9.0-beta3;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_SPARKLE;
-@@ -1345,7 +1345,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta2;
-+				MARKETING_VERSION = 1.9.0-beta3;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_MAS";
-@@ -1378,7 +1378,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta2;
-+				MARKETING_VERSION = 1.9.0-beta3;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_MAS;
-```
-
----
-
-### Incident Patch 12: `a784a713` (2026-07-23)
-**Commit Message**: Fix truncated compliance badges in preferences preview tiles
-
-The contrast-standard preview tiles laid their compliance badges out
-compressed at the tile width, so labels truncated ("AA…La…"); the denser
-tiles even scaled *after* laying out compressed, so scaling didn't help.
-Lay the badges out at their full natural width first, then uniformly scale
-down to fit the tile — via a small ScaleToFitWidth helper for the WCAG/APCA
-tiles and a fixed reference width for the Spacer-aligned "both" tile.
-
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `Pika/Views/ComplianceButtons.swift` (modified, +55/-11)
-```diff
-@@ -1,6 +1,39 @@
- import Defaults
- import SwiftUI
- 
-+private struct NaturalWidthKey: PreferenceKey {
-+    static var defaultValue: CGFloat = 0
-+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
-+}
-+
-+/// Renders `content` at its natural (untruncated) width, then uniformly scales it down to
-+/// fit the available width. The preview tiles are narrower than the full compliance badges
-+/// need, and laying the badges out at the tile width just truncates them ("AA…La…"); this
-+/// keeps them whole and legible by shrinking instead.
-+private struct ScaleToFitWidth<Content: View>: View {
-+    var alignment: Alignment = .leading
-+    @ViewBuilder var content: Content
-+    @State private var naturalWidth: CGFloat = 0
-+
-+    private var anchor: UnitPoint { alignment == .center ? .center : .leading }
-+
-+    var body: some View {
-+        GeometryReader { geo in
-+            let scale = naturalWidth > 0 ? min(1, geo.size.width / naturalWidth) : 1
-+            content
-+                .fixedSize()
-+                .background(
-+                    GeometryReader { proxy in
-+                        Color.clear.preference(key: NaturalWidthKey.self, value: proxy.size.width)
-+                    }
-+                )
-+                .scaleEffect(scale, anchor: anchor)
-+                .frame(width: geo.size.width, height: geo.size.height, alignment: alignment)
-+        }
-+        .onPreferenceChange(NaturalWidthKey.self) { naturalWidth = $0 }
-+    }
-+}
-+
- struct CompliancePreviewWCAG: View {
-     @Default(.combineCompliance) var combineCompliance
-     var width: CGFloat
-@@ -14,9 +47,11 @@ struct CompliancePreviewWCAG: View {
-             Button(
-                 action: { combineCompliance = false },
-                 label: {
--                    ComplianceToggleGroup(complianceData: .wcag(wcag), theme: .weight)
--                        .padding(20.0)
--                        .frame(maxWidth: width, maxHeight: .infinity, alignment: .leading)
-+                    ScaleToFitWidth {
-+                        ComplianceToggleGroup(complianceData: .wcag(wcag), theme: .weight)
-+                            .padding(20.0)
-+                    }
-+                    .frame(maxWidth: width, maxHeight: .infinity, alignment: .leading)
-                 }
-             )
-             .buttonStyle(AppearanceButtonStyle(
-@@ -28,9 +63,11 @@ struct CompliancePreviewWCAG: View {
-             Button(
-                 action: { combineCompliance = true },
-                 label: {
--                    ComplianceToggleGroup(complianceData: .wcag(wcag), theme: .contrast)
--                        .padding(20.0)
--                        .frame(maxWidth: width, maxHeight: .infinity, alignment: .leading)
-+                    ScaleToFitWidth {
-+                        ComplianceToggleGroup(complianceData: .wcag(wcag), theme: .contrast)
-+                            .padding(20.0)
-+                    }
-+                    .frame(maxWidth: width, maxHeight: .infinity, alignment: .leading)
-                 }
-             )
-             .buttonStyle(AppearanceButtonStyle(
-@@ -54,9 +91,11 @@ struct CompliancePreviewAPCA: View {
-             title: PikaText.textAppearanceAPCATitle,
-             description: PikaText.textAppearanceAPCADescription
-         ) {
--            ComplianceToggleGroup(complianceData: .apca(apca), theme: .weight)
--                .padding(20.0)
--                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-+            ScaleToFitWidth(alignment: .center) {
-+                ComplianceToggleGroup(complianceData: .apca(apca), theme: .weight)
-+                    .padding(20.0)
-+            }
-+            .frame(maxWidth: .infinity, maxHeight: .infinity)
-         }
-     }
- }
-@@ -94,7 +133,11 @@ struct CompliancePreviewBoth: View {
-     @ViewBuilder
-     private func footerPreview(wcag: NSColor.WCAG, apca: NSColor.APCA, theme: ComplianceToggleGroup.Themes) -> some View {
-         GeometryReader { geometry in
--            let scale = min(1.0, geometry.size.width / 380)
-+            // Lay the row out at its full natural width so the Spacer-aligned badges keep
-+            // their real size, then scale the whole thing down to the tile — otherwise the
-+            // badges compress and truncate at the tile width before the scale is applied.
-+            let reference: CGFloat = 430
-+            let scale = min(1.0, geometry.size.width / reference)
- 
-             VStack(alignment: .leading, spacing: 4.0) {
-                 HStack(spacing: 0) {
-@@ -130,8 +173,9 @@ struct CompliancePreviewBoth: View {
-                 }
-             }
-             .padding(.horizontal, 10.0)
--            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-+            .frame(width: reference, alignment: .leading)
-             .scaleEffect(scale, anchor: .leading)
-+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-         }
-     }
-```
-
----
-
-### Incident Patch 13: `2affb8f3` (2026-07-23)
+### Incident Patch 3: `2affb8f3` (2026-07-23)
 **Commit Message**: Fix picking shadow, add fadeable custom shadow, and rework footer shedding
 
 The "hidden while picking" shadow never worked: every call routed through
@@ -2539,110 +1914,13 @@ until t
  }
 ```
 
----
-
-### Incident Patch 14: `c3b625c0` (2026-07-20)
-**Commit Message**: Bump version to 1.9.0-beta2 (build 93)
-
-**File**: `Pika.xcodeproj/project.pbxproj` (modified, +6/-6)
-```diff
-@@ -1266,7 +1266,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 92;
-+				CURRENT_PROJECT_VERSION = 93;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1280,7 +1280,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta1;
-+				MARKETING_VERSION = 1.9.0-beta2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_SPARKLE";
-@@ -1298,7 +1298,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 92;
-+				CURRENT_PROJECT_VERSION = 93;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1312,7 +1312,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta1;
-+				MARKETING_VERSION = 1.9.0-beta2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_SPARKLE;
-@@ -1345,7 +1345,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta1;
-+				MARKETING_VERSION = 1.9.0-beta2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_MAS";
-@@ -1378,7 +1378,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 1.9.0-beta1;
-+				MARKETING_VERSION = 1.9.0-beta2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_MAS;
-```
-
----
-
-### Incident Patch 15: `c5805e4c` (2026-07-20)
-**Commit Message**: Serialise @claude runs to avoid concurrent context-fetch races
-
-Rapid-fire @claude comments spawned concurrent claude.yml runs that raced
-on context assembly, yielding an empty formatted_context and an immediate
-is_error failure. Add a per-issue/PR concurrency group (no cancel — each
-request is distinct and worth completing).
-
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/claude.yml` (modified, +9/-0)
-```diff
-@@ -10,6 +10,15 @@ on:
-   pull_request_review:
-     types: [submitted]
- 
-+# Serialise runs per issue/PR so rapid-fire @claude comments don't spawn
-+# concurrent runs that race on context assembly (which yields an empty
-+# formatted_context and an immediate is_error failure). Unlike the review
-+# workflow we don't cancel in-progress runs — each @claude request is distinct
-+# and worth completing.
-+concurrency:
-+  group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
-+  cancel-in-progress: false
-+
- jobs:
-   claude:
-     if: |
-```
-
 #### Recent Merged Pull Requests:
-- **PR #271** (2026-10-06): Reopen the main window (⌘0/⌘N, Dock) and accept #/3-digit hex in URLs and paste (@superhighfives)
-- **PR #267** (2026-09-21): chore: update ColorNames.json (@github-actions[bot])
-- **PR #266** (2026-09-14): Use explicit secrets, not secrets: inherit, for control-room review (@superhighfives)
-- **PR #265** (2026-09-14): Switch to secrets: inherit for control-room review workflow (@superhighfives)
-- **PR #264** (2026-09-25): Added refraction effect for macOS 27 app icon (@alexkaessner)
-- **PR #263** (2026-09-14): chore: update ColorNames.json (@github-actions[bot])
-- **PR #262** (2026-09-11): Build Mac App Store releases as arm64 only (@superhighfives)
-- **PR #261** (2026-08-10): Merge #258 and #259 from YuriNachos into 2.0.0 (@superhighfives)
+- **PR #314** (2026-10-19): Split AppDelegate's notification-dispatch actions into their own file (@superhighfives)
+- **PR #312** (2026-10-19): Better documentation: explain the basics, especially WCAG and APCA (@superhighfives)
+- **PR #310** (2026-10-15): Show the next icon label straight away until the buttons hide (@superhighfives)
+- **PR #309** (2026-10-15): Readout and icon button polish (@superhighfives)
+- **PR #308** (2026-10-16): Pika 2.0.1 (@superhighfives)
+- **PR #307** (2026-10-14): Hide the cursor over the loupe when Pika is in the background (@superhighfives)
 
 ---
 
@@ -2656,3 +1934,57 @@ Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Drop the build from the review so it actually posts
+
+**RULE**:
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in superhighfives/pika. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7dd82fcf`: Drop the build from the review so it actually posts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    #
+    # No verify_commands: the review reads the diff and doesn't build. An Xcode
+    # build outlives the review agent's per-command timeout, gets backgrounded,
+    # and the agent stalls waiting for it — finishing a green check without ever
+    # posting a review. tests.yml already builds and runs the suite (~90s), so
+    # the review doesn't need to. Reading-only, it runs fast on the default
+    # ubuntu runner and posts every time.
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+    with:
+      # Pinned to match tests.yml — macos-latest doesn't ship Xcode 16.3, so
+      # xcode-select fails there. Bump both together.
+      runs_on: macos-15
+      runtime: none
+      setup_command: sudo xcode-select -s /Applications/Xcode_16.3.app
+      # Build for testing rather than a full test run: it catches the compile
+      # errors that matter for review without the runtime cost of the suite,
+      # which tests.yml already covers.
+      #
+      # Resolve Swift packages first, as a separate step — same as tests.yml.
+      # Without it, build-for-testing resolves SPM cold, and the `| tail -40`
+      # buffers all output so nothing streams; the review agent sits on a build
+      # that can run past the timeout and gets cancelled without ever reviewing.
+      verify_commands: |
+        xcodebuild -resolvePackageDependencies -project Pika.xcodeproj -scheme Pika
+        set -o pipefail && xcodebuild build-for-testing -project Pika.xcodeproj -scheme Pika -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tail -40
+      # Safety net over the pre-resolve fix above, so a slow cold buil
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7dd82fcf` are properly handled with clean fallback behavior.

@@ -9528,5 +9528,25 @@
     "contentHash": "97cb1b1716bd8e2eb05ea7b431eb3798d99978e1a1136083efa37dab230b7fb9",
     "lastHarvestedAt": "2026-10-19T23:40:55.444Z",
     "learningId": "learn-github-ming1016-swiftpamphletapp"
+  },
+  "superhighfives-pika": {
+    "repository": "superhighfives/pika",
+    "platform": "github",
+    "sourceUrl": "https://github.com/superhighfives/pika",
+    "sourceVersion": "4fc05696",
+    "license": "MIT",
+    "contentHash": "e7a877dd1c0e321993727a261a7a67f98eeac615b1f81023ce2f09248f81ebd8",
+    "lastHarvestedAt": "2026-10-19T23:47:13.375Z",
+    "learningId": "learn-github-superhighfives-pika"
+  },
+  "wooorm-parse-entities": {
+    "repository": "wooorm/parse-entities",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wooorm/parse-entities",
+    "sourceVersion": "07f0abed",
+    "license": "MIT",
+    "contentHash": "51aac50f95d5553e2d4a11d178400c2d3c22b1ab15390dcaadc766325560cf0e",
+    "lastHarvestedAt": "2026-10-19T23:47:25.385Z",
+    "learningId": "learn-github-wooorm-parse-entities"
   }
 }

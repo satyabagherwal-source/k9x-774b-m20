@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T23:40:55.452Z",
+  "last_updated": "2026-10-19T23:47:25.393Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14337,6 +14337,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T23:40:55.451Z"
+    },
+    "superhighfives/pika": {
+      "repository": "superhighfives/pika",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-superhighfives-pika",
+      "content_hash": "e7a877dd1c0e321993727a261a7a67f98eeac615b1f81023ce2f09248f81ebd8",
+      "verified_at": "2026-10-19T23:47:13.383Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:47:13.383Z"
+    },
+    "wooorm/parse-entities": {
+      "repository": "wooorm/parse-entities",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wooorm-parse-entities",
+      "content_hash": "51aac50f95d5553e2d4a11d178400c2d3c22b1ab15390dcaadc766325560cf0e",
+      "verified_at": "2026-10-19T23:47:25.392Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:47:25.392Z"
     }
   },
   "repos": {

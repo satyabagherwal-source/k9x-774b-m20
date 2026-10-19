@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T23:40:55.449Z",
-  "total_cycles_completed": 3544,
-  "total_learnings_persisted": 3544,
-  "total_rules_promoted": 2701,
+  "last_updated": "2026-10-19T23:47:25.389Z",
+  "total_cycles_completed": 3546,
+  "total_learnings_persisted": 3546,
+  "total_rules_promoted": 2705,
   "history": [
-    {
-      "timestamp": "2026-10-19T16:56:06.736Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T16:56:13.270Z",
-      "repository": "EhPanda-Team/EhPanda",
-      "learningId": "learn-github-ehpanda-team-ehpanda",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T17:02:31.409Z",
       "repository": "argoproj/argo-workflows",
@@ -1403,6 +1389,20 @@
       "repository": "ming1016/SwiftPamphletApp",
       "learningId": "learn-github-ming1016-swiftpamphletapp",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T23:47:13.379Z",
+      "repository": "superhighfives/pika",
+      "learningId": "learn-github-superhighfives-pika",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T23:47:25.389Z",
+      "repository": "wooorm/parse-entities",
+      "learningId": "learn-github-wooorm-parse-entities",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

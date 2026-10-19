@@ -3574,3 +3574,5 @@ Every entry in this ledger must capture:
 | `learn-github-pamburus-hl` | `https://github.com/pamburus/hl` | `737b0ddb` | Multi-dimensional audit evidence | 2026-10-19T23:40:50.832Z |
 | `learn-github-remarkjs-remark` | `https://github.com/remarkjs/remark` | `1146b3a2` | Multi-dimensional audit evidence | 2026-10-19T23:40:53.405Z |
 | `learn-github-ming1016-swiftpamphletapp` | `https://github.com/ming1016/SwiftPamphletApp` | `0d07d106` | Multi-dimensional audit evidence | 2026-10-19T23:40:55.444Z |
+| `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `4fc05696` | Multi-dimensional audit evidence | 2026-10-19T23:47:13.375Z |
+| `learn-github-wooorm-parse-entities` | `https://github.com/wooorm/parse-entities` | `07f0abed` | Multi-dimensional audit evidence | 2026-10-19T23:47:25.385Z |

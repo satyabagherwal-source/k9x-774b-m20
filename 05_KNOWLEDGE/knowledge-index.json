@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:40:55.405Z",
-  "total_verified_learnings": 968,
+  "last_updated": "2026-10-19T23:47:25.337Z",
+  "total_verified_learnings": 970,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -41024,22 +41024,35 @@
     "learn-github-superhighfives-pika": {
       "learning_id": "learn-github-superhighfives-pika",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "superhighfives-pika",
+      "source": "superhighfives/pika",
+      "repository": "superhighfives/pika",
       "slug": "superhighfives-pika",
       "platform": "github",
       "source_url": "https://github.com/superhighfives/pika",
-      "source_version": "HEAD",
-      "content_hash": "9eb13c42d119a4d0e85eb6c5ef5af9e7276ef185ced1aa62f076abfdf54b53b5",
+      "source_version": "4fc05696",
+      "content_hash": "e7a877dd1c0e321993727a261a7a67f98eeac615b1f81023ce2f09248f81ebd8",
       "dossier_path": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2899,
+          "title": "Drop the build from the review so it actually posts",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.751Z"
+      "verified_at": "2026-10-19T23:47:13.315Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-superset-sh-superset": {
       "learning_id": "learn-github-superset-sh-superset",
@@ -57850,20 +57863,45 @@
     "learn-github-wooorm-parse-entities": {
       "learning_id": "learn-github-wooorm-parse-entities",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "wooorm/parse-entities",
       "repository": "wooorm/parse-entities",
       "slug": "wooorm-parse-entities",
       "platform": "github",
       "source_url": "https://github.com/wooorm/parse-entities",
-      "source_version": "main",
-      "content_hash": "7256fa42ef9f4007c75dd57e9e686d09ac6a3effc22a1c4daccd28092bd8a3fb",
+      "source_version": "07f0abed",
+      "content_hash": "51aac50f95d5553e2d4a11d178400c2d3c22b1ab15390dcaadc766325560cf0e",
       "dossier_path": "07_PROJECT_LEARNING/wooorm-parse-entities-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wooorm-parse-entities-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2900,
+          "title": "**RULE‑001 – Explicit “Point vs Position” Disambiguation**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2901,
+          "title": "**RULE‑002 – Never Mutate Input Strings During Scanning**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2902,
+          "title": "**RULE‑003 – Explicit Warning‑Code Enumeration**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:47:25.324Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sindresorhus-got": {
       "learning_id": "learn-github-sindresorhus-got",
@@ -94663,6 +94701,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:40:53.357Z"
+    },
+    "rule-2899": {
+      "learning_id": "rule-2899",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2899,
+      "title": "Drop the build from the review so it actually posts",
+      "source_url": "https://github.com/superhighfives/pika",
+      "source_version": "4fc05696",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:47:13.315Z"
+    },
+    "rule-2900": {
+      "learning_id": "rule-2900",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2900,
+      "title": "**RULE‑001 – Explicit “Point vs Position” Disambiguation**",
+      "source_url": "https://github.com/wooorm/parse-entities",
+      "source_version": "07f0abed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:47:25.324Z"
+    },
+    "rule-2901": {
+      "learning_id": "rule-2901",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2901,
+      "title": "**RULE‑002 – Never Mutate Input Strings During Scanning**",
+      "source_url": "https://github.com/wooorm/parse-entities",
+      "source_version": "07f0abed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:47:25.324Z"
+    },
+    "rule-2902": {
+      "learning_id": "rule-2902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2902,
+      "title": "**RULE‑003 – Explicit Warning‑Code Enumeration**",
+      "source_url": "https://github.com/wooorm/parse-entities",
+      "source_version": "07f0abed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:47:25.324Z"
     }
   },
   "aliases": {

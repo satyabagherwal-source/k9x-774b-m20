@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-H7WT",
-    "timestamp": "2026-10-19T07:51:39.341Z",
-    "repository": "neondatabase/neon",
-    "learningId": "learn-github-neondatabase-neon",
-    "contentHash": "cc5037e8502e92d629ceb2404a9ecad08984595613d27adcb2afb89ec705238c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-HAIV",
-    "timestamp": "2026-10-19T07:51:42.727Z",
-    "repository": "necolas/react-native-web",
-    "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-QXKQ",
     "timestamp": "2026-10-19T07:59:12.506Z",
     "repository": "zvec-ai/zvec-grep",
@@ -7492,6 +7462,36 @@
     "contentHash": "97cb1b1716bd8e2eb05ea7b431eb3798d99978e1a1136083efa37dab230b7fb9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-M34S",
+    "timestamp": "2026-10-19T23:47:13.372Z",
+    "repository": "superhighfives/pika",
+    "learningId": "learn-github-superhighfives-pika",
+    "contentHash": "e7a877dd1c0e321993727a261a7a67f98eeac615b1f81023ce2f09248f81ebd8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MCEE",
+    "timestamp": "2026-10-19T23:47:25.382Z",
+    "repository": "wooorm/parse-entities",
+    "learningId": "learn-github-wooorm-parse-entities",
+    "contentHash": "51aac50f95d5553e2d4a11d178400c2d3c22b1ab15390dcaadc766325560cf0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
