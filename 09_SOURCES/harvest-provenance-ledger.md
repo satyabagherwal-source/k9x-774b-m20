@@ -3541,3 +3541,5 @@ Every entry in this ledger must capture:
 | `learn-github-buriy-python-readability` | `https://github.com/buriy/python-readability` | `3e7a8321` | Multi-dimensional audit evidence | 2026-10-19T22:26:44.849Z |
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `98a767c4` | Multi-dimensional audit evidence | 2026-10-19T22:26:46.312Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `175689d8` | Multi-dimensional audit evidence | 2026-10-19T22:26:52.453Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `584df5c8` | Multi-dimensional audit evidence | 2026-10-19T22:32:57.282Z |
+| `learn-github-mazzzystar-queryable` | `https://github.com/mazzzystar/Queryable` | `b95a05a8` | Multi-dimensional audit evidence | 2026-10-19T22:32:57.915Z |

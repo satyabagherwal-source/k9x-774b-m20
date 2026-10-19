@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T22:26:52.457Z",
-  "total_cycles_completed": 3511,
-  "total_learnings_persisted": 3511,
-  "total_rules_promoted": 2658,
+  "last_updated": "2026-10-19T22:32:57.918Z",
+  "total_cycles_completed": 3513,
+  "total_learnings_persisted": 3513,
+  "total_rules_promoted": 2660,
   "history": [
-    {
-      "timestamp": "2026-10-19T15:53:29.930Z",
-      "repository": "EmergeTools/Pow",
-      "learningId": "learn-github-emergetools-pow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:53:32.913Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T15:53:33.241Z",
       "repository": "arangodb/arangodb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-19T22:26:52.457Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T22:32:57.285Z",
+      "repository": "lxml/lxml",
+      "learningId": "learn-github-lxml-lxml",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T22:32:57.918Z",
+      "repository": "mazzzystar/Queryable",
+      "learningId": "learn-github-mazzzystar-queryable",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

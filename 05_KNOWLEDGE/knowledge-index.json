@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:26:52.401Z",
-  "total_verified_learnings": 946,
+  "last_updated": "2026-10-19T22:32:57.857Z",
+  "total_verified_learnings": 948,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -29839,22 +29839,35 @@
     "learn-github-mazzzystar-queryable": {
       "learning_id": "learn-github-mazzzystar-queryable",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mazzzystar-queryable",
+      "source": "mazzzystar/Queryable",
+      "repository": "mazzzystar/Queryable",
       "slug": "mazzzystar-queryable",
       "platform": "github",
       "source_url": "https://github.com/mazzzystar/Queryable",
-      "source_version": "HEAD",
-      "content_hash": "aa1b08e15990f99e8964326e9785ea9490f62ece2c12059b48b8023ba23b77ef",
+      "source_version": "b95a05a8",
+      "content_hash": "04301fa8710f99a3b7ea63fb6bde5313e991b195125ac7df10bcfc637ecd45b2",
       "dossier_path": "07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2859,
+          "title": "IOSurface crash: buffer pooling, batch encoding, GPU resize",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.216Z"
+      "verified_at": "2026-10-19T22:32:57.844Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mcp-use-mcp-use": {
       "learning_id": "learn-github-mcp-use-mcp-use",
@@ -57169,20 +57182,35 @@
     "learn-github-lxml-lxml": {
       "learning_id": "learn-github-lxml-lxml",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lxml/lxml",
       "repository": "lxml/lxml",
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "main",
-      "content_hash": "0a622aea3cbe34592969f42d7a7d7f82c24c8cbd43041907da03e31c02ba5cf0",
+      "source_version": "584df5c8",
+      "content_hash": "b81bad24bc3b002a857b3915dfb242607c92bc1814da98de54ef69774af62a03",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2858,
+          "title": "concurrency issue in threading test.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:32:57.225Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-beautifulsoup-beautifulsoup4": {
       "learning_id": "learn-github-beautifulsoup-beautifulsoup4",
@@ -93678,6 +93706,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:26:52.386Z"
+    },
+    "rule-2858": {
+      "learning_id": "rule-2858",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2858,
+      "title": "concurrency issue in threading test.",
+      "source_url": "https://github.com/lxml/lxml",
+      "source_version": "584df5c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:32:57.225Z"
+    },
+    "rule-2859": {
+      "learning_id": "rule-2859",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2859,
+      "title": "IOSurface crash: buffer pooling, batch encoding, GPU resize",
+      "source_url": "https://github.com/mazzzystar/Queryable",
+      "source_version": "b95a05a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:32:57.844Z"
     }
   },
   "aliases": {

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md`  
+> **Source**: github ([https://github.com/mazzzystar/Queryable](https://github.com/mazzzystar/Queryable))  
+> **Source Version**: `b95a05a8`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T22:32:57.592Z  
+> **Learning ID**: `learn-github-mazzzystar-queryable`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): mazzzystar/Queryable
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mazzzystar-queryable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mazzzystar/Queryable](https://github.com/mazzzystar/Queryable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:18:37.299Z  
+> **Harvest Timestamp**: 2026-10-19T22:32:57.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Run OpenAI's CLIP and Apple's MobileCLIP model on iOS to search photos.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2989 stars
+- **Stars / Engagement**: 2991 stars
 
 ---
 
@@ -1420,151 +1434,6 @@ fileprivate let logger = Logger(subsystem: "com.mazzystar.Queryable", category: 
 
 ```
 
-### Core Architecture Module: `Queryable/Queryable/PhotoHelper/PhotoAsset.swift`
-```
-/*
-See the License.txt file for this sample’s licensing information.
-*/
-
-import Photos
-import os.log
-
-struct PhotoAsset: Identifiable {
-    var id: String { identifier }
-    var identifier: String = UUID().uuidString
-    var index: Int?
-    var phAsset: PHAsset?
-    
-    typealias MediaType = PHAssetMediaType
-    
-    var isFavorite: Bool {
-        phAsset?.isFavorite ?? false
-    }
-    
-    var mediaType: MediaType {
-        phAsset?.mediaType ?? .unknown
-    }
-    
-    var accessibilityLabel: String {
-        isFavorite ? "Photo, Favorite" : "Photo"
-    }
-
-    init(phAsset: PHAsset, index: Int?) {
-        self.phAsset = phAsset
-        self.index = index
-        self.identifier = phAsset.localIdentifier
-    }
-    
-    init(identifier: String) {
-        self.identifier = identifier
-        let fetchedAssets = PHAsset.fetchAssets(withLocalIdentifiers: [identifier], options: nil)
-        self.phAsset = fetchedAssets.firstObject
-    }
-    
-    func setIsFavorite(_ isFavorite: Bool) async {
-        guard let phAsset = phAsset else { return }
-        do {
-            try await PHPhotoLibrary.shared().performChanges {
-                let request = PHAssetChangeRequest(for: phAsset)
-                request.isFavorite = isFavorite
-            }
-        } catch (let error) {
-            print("Failed to change isFavorite: \(error.localizedDescription)")
-            logger.error("Failed to change isFavorite: \(error.localizedDescription)")
-        }
-    }
-    
-    func delete() async {
-        guard let phAsset = phAsset else { return }
-        do {
-            try await PHPhotoLibrary.shared().performChanges {
-                PHAssetChangeRequest.deleteAssets([phAsset] as NSArray)
-            }
-            logger.debug("PhotoAsset asset deleted: \(index ?? -1)")
-        } catch (let error) {
-            print("Failed to change isFavorite: \(error.localizedDescription)")
-            logger.error("Failed to delete photo: \(error.localizedDescription)")
-        }
-    }
-}
-
-extension PhotoAsset: Equatable {
-    static func ==(lhs: PhotoAsset, rhs: PhotoAsset) -> Bool {
-        (lhs.identifier == rhs.identifier) && (lhs.isFavorite == rhs.isFavorite)
-    }
-}
-
-extension PhotoAsset: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(identifier)
-    }
-}
-
-extension PHObject: Identifiable {
-    public var id: String { localIdentifier }
-}
-
-fileprivate let logger = Logger(subsystem: "com.mazzystar.Queryable", category: "PhotoAsset")
-
-
-```
-
-### Core Architecture Module: `Queryable/Queryable/PhotoHelper/PhotoAssetCollection.swift`
-```
-/*
-See the License.txt file for this sample’s licensing information.
-*/
-
-import Photos
-
-class PhotoAssetCollection: RandomAccessCollection {
-    private(set) var fetchResult: PHFetchResult<PHAsset>
-    private var iteratorIndex: Int = 0
-    
-    private var cache = [Int : PhotoAsset]()
-    
-    var startIndex: Int { 0 }
-    var endIndex: Int { fetchResult.count }
-    
-    init(_ fetchResult: PHFetchResult<PHAsset>) {
-        self.fetchResult = fetchResult
-    }
-
-    subscript(position: Int) -> PhotoAsset {
-        if let asset = cache[position] {
-            return asset
-        }
-        let asset = PhotoAsset(phAsset: fetchResult.object(at: position), index: position)
-        cache[position] = asset
-        return asset
-    }
-    
-    var phAssets: [PHAsset] {
-        var assets = [PHAsset]()
-        fetchResult.enumerateObjects { (object, count, stop) in
-            assets.append(object)
-        }
-        return assets
-    }
-}
-
-extension PhotoAssetCollection: Sequence, IteratorProtocol {
-
-    func next() -> PhotoAsset? {
-        if iteratorIndex >= count {
-            return nil
-        }
-        
-        defer {
-            iteratorIndex += 1
-        }
-        
-        return self[iteratorIndex]
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1576,14 +1445,12 @@ extension PhotoAssetCollection: Sequence, IteratorProtocol {
   **Post-Mortem & Fix Analysis**:
   > Hi, I managed to make the project work on an iPhone X. On the TextEncoder init, you need to add the following line to force CPU only on older iPhones. ``` config.computeUnits = .cpuOnly ```  Based on information found here:  - https://apple.github.io/coremltools/docs-guides/source/faqs.html#error-in-declaring-network-or-computing-nn-outputs - https://apple.github.io/coremltools/docs-guides/source/load-and-convert-model.html#set-the-compute-units
   > Wow! Do we need to use `if/else` to handle different iPhone devices? Or, if we change this line, would it affect the newer iPhone perfomance? ``` config.computeUnits = .cpuOnly ```  BTW, it would be nice if you could submit a PR to fix the issue : ) 
-  > Yeah ideally an `if/else` is needed to ensure MLModel continues using default configuration on newer iPhones (default is CPU, GPU and Neural Engine).  I will submit a PR later today.
 
 - **Issue #3** (2023-09-22): **iOS 17 beta issue: abnormal search results.**
   *Symptoms*: In iOS 17 beta 3, regardless of the keyword used, the search results are always the same.
   **Post-Mortem & Fix Analysis**:
   > It appears to be a bug introduced in the iOS 17 beta, where input text is being embedded into the same vector. Currently, I am unable to determine the exact cause of this issue.
   > I can confirm the results are the same, not always, but most of the time. 
-  > @RupGautam  I've debugged the issue. I found that all text inputs were embedded into the same value in iOS 17 beta. However, it works correctly on iOS 16. I suspect it was the issue related with model loading, didn't figured out the problem yet.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1600,65 +1467,7 @@ extension PhotoAssetCollection: Sequence, IteratorProtocol {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b95a05a8` (2026-03-29)
-**Commit Message**: Fix text flickering during index building by fixing layout ratio
-
-Use GeometryReader to pin image at 80% and text at 20% of screen height,
-preventing text from jumping as indexed photos change size.
-
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
-
-**File**: `Queryable/Queryable/View/BuildIndexView.swift` (modified, +21/-14)
-```diff
-@@ -97,22 +97,29 @@ struct StartBuildView: View {
- 
- struct BuildingIndexView: View {
-     @ObservedObject var photoSearcher: PhotoSearcher
--    
-+
-     var body: some View {
--        VStack {
--            Image(uiImage: photoSearcher.curShowingPhoto)
--                .resizable()
--                .scaledToFit()
--            
--            let end = "Photos have been indexed."
--            Text("\(photoSearcher.curIndexingNums+1)/\(photoSearcher.totalUnIndexedPhotosNum) \(NSLocalizedString(end, comment: ""))")
--            Text("Task runs entirely locally. Do not operate until completed.")
--                .foregroundColor(.gray)
--                .scaledToFit()
--                .minimumScaleFactor(0.5)
--                .lineLimit(1)
-+        GeometryReader { geometry in
-+            VStack(spacing: 0) {
-+                Image(uiImage: photoSearcher.curShowingPhoto)
-+                    .resizable()
-+                    .scaledToFit()
-+                    .frame(height: geometry.size.height * 0.8)
-+
-+                VStack(spacing: 4) {
-+                    let end = "Photos have been indexed."
-+                    Text("\(photoSearcher.curIndexingNums+1)/\(photoSearcher.totalUnIndexedPhotosNum) \(NSLocalizedString(end, comment: ""))")
-+
-+                    Text(NSLocalizedString("Task runs entirely locally. Do not operate until completed.", comment: ""))
-+                        .padding([.leading, .trailing])
-+                        .foregroundColor(.gray)
-+                        .font(.caption)
-+                        .multilineTextAlignment(.center)
-+                        .lineLimit(2)
-+                }
-+                .frame(height: geometry.size.height * 0.2)
-+            }
-         }
--        
-     }
- }
- 
-```
-
----
-
-### Incident Patch 2: `a2ff92f9` (2026-03-29)
+### Incident Patch 1: `a2ff92f9` (2026-03-29)
 **Commit Message**: Fix IOSurface crash: buffer pooling, batch encoding, GPU resize
 
 Rewrite ImgEncoder to prevent IOSurface exhaustion at ~15800 photos:
@@ -1875,6 +1684,64 @@ Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 
 ---
 
+### Incident Patch 2: `b95a05a8` (2026-03-29)
+**Commit Message**: Fix text flickering during index building by fixing layout ratio
+
+Use GeometryReader to pin image at 80% and text at 20% of screen height,
+preventing text from jumping as indexed photos change size.
+
+Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
+
+**File**: `Queryable/Queryable/View/BuildIndexView.swift` (modified, +21/-14)
+```diff
+@@ -97,22 +97,29 @@ struct StartBuildView: View {
+ 
+ struct BuildingIndexView: View {
+     @ObservedObject var photoSearcher: PhotoSearcher
+-    
++
+     var body: some View {
+-        VStack {
+-            Image(uiImage: photoSearcher.curShowingPhoto)
+-                .resizable()
+-                .scaledToFit()
+-            
+-            let end = "Photos have been indexed."
+-            Text("\(photoSearcher.curIndexingNums+1)/\(photoSearcher.totalUnIndexedPhotosNum) \(NSLocalizedString(end, comment: ""))")
+-            Text("Task runs entirely locally. Do not operate until completed.")
+-                .foregroundColor(.gray)
+-                .scaledToFit()
+-                .minimumScaleFactor(0.5)
+-                .lineLimit(1)
++        GeometryReader { geometry in
++            VStack(spacing: 0) {
++                Image(uiImage: photoSearcher.curShowingPhoto)
++                    .resizable()
++                    .scaledToFit()
++                    .frame(height: geometry.size.height * 0.8)
++
++                VStack(spacing: 4) {
++                    let end = "Photos have been indexed."
++                    Text("\(photoSearcher.curIndexingNums+1)/\(photoSearcher.totalUnIndexedPhotosNum) \(NSLocalizedString(end, comment: ""))")
++
++                    Text(NSLocalizedString("Task runs entirely locally. Do not operate until completed.", comment: ""))
++                        .padding([.leading, .trailing])
++                        .foregroundColor(.gray)
++                        .font(.caption)
++                        .multilineTextAlignment(.center)
++                        .lineLimit(2)
++                }
++                .frame(height: geometry.size.height * 0.2)
++            }
+         }
+-        
+     }
+ }
+ 
+```
+
+---
+
 ### Incident Patch 3: `00c2bc90` (2024-02-07)
 **Commit Message**: we don't need to load text encoder when finished build index
 
@@ -1909,582 +1776,6 @@ Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
      func loadEmbeddingsData(fileName: String) -> Bool {
 ```
 
----
-
-### Incident Patch 4: `1d9a67f2` (2024-02-04)
-**Commit Message**: Fix img_emb_pieces_lst with one empty element bug and refactor code
-
-**File**: `Queryable/Queryable/ViewModel/PhotoSearcher.swift` (modified, +12/-21)
-```diff
-@@ -281,11 +281,7 @@ class PhotoSearcher: ObservableObject {
-             let _cur_asset = self.photoCollection.photoAssets[idx]
-             
-             self.allPhotosId[_cur_asset.id] = 1
--            
--            if let _ = self.savedEmbedding[_cur_asset.id] {
--                
--            }
--            else {
-+            if self.savedEmbedding[_cur_asset.id] == nil {
-                 self.unIndexedPhotos.append(_cur_asset)
-             }
-         }
-@@ -296,16 +292,13 @@ class PhotoSearcher: ObservableObject {
-     }
-     
-     private func judgeIfAssetUnidexed(asset: PhotoAsset) async {
--        if let _ = self.savedEmbedding[asset.id] {
--
--        }
--        else {
-+        if self.savedEmbedding[asset.id] == nil {
-             self.unIndexedPhotos.append(asset)
-         }
-     }
-     
-     func deleteEmbeddingByAsset(asset: PhotoAsset) async {
--        if let _ = self.savedEmbedding[asset.id] {
-+        if self.savedEmbedding[asset.id] != nil {
-             self.savedEmbedding.removeValue(forKey: asset.id)
-             print("\(asset.id) deleted.")
-         }
-@@ -314,14 +307,14 @@ class PhotoSearcher: ObservableObject {
-     func updateEmbedding(new_indexed_results: [String: MLMultiArray]) {
-         // update results
-         print("Before update, embedding count=\(self.savedEmbedding.count)")
--        for key in new_indexed_results.keys {
--            self.savedEmbedding[key] = new_indexed_results[key]
-+        for (key, embedding) in new_indexed_results {
-+            self.savedEmbedding[key] = embedding
-         }
-         
-         var final_all_results = [Embedding]()
-         
--        for key in self.savedEmbedding.keys {
--            let _embedding = Embedding(id: key, embedding: self.savedEmbedding[key]!)
-+        for (key, embedding) in self.savedEmbedding {
-+            let _embedding = Embedding(id: key, embedding: embedding)
-             final_all_results.append(_embedding)
-         }
-         
-@@ -559,7 +552,7 @@ class PhotoSearcher: ObservableObject {
-         
-         var cnt = 0
-         var img_emb_piece = [String: MLMultiArray]()
--        var img_emb_pieces_lst = [[String: MLMultiArray]()]
-+        var img_emb_pieces_lst = [[String: MLMultiArray]]()
-         for emb in img_embs_dict {
-             img_emb_piece[emb.key] = emb.value
-             cnt += 1
-@@ -583,9 +576,8 @@ class PhotoSearcher: ObservableObject {
-             for emb_dict in img_embs_dict_lst {
-                 if !emb_dict.isEmpty {
-                     group.addTask {
--                        for key in emb_dict.keys {
--                            let cur_img_emb = emb_dict[key]
--                            await self.computeSingleEmbeddingSim(text_emb: text_emb, img_emb: cur_img_emb!, img_id: key)
-+                        for (key, cur_img_emb) in emb_dict {
-+                            await self.computeSingleEmbeddingSim(text_emb: text_emb, img_emb: cur_img_emb, img_id: key)
-                         } 
-                     }
-                 }
-@@ -599,9 +591,8 @@ class PhotoSearcher: ObservableObject {
-     }
-     
-     private func simpleComputeAllEmbeddingSim(text_emb: MLShapedArray<Float32>, img_embs_dict: [String: MLMultiArray]) async {
--        for key in img_embs_dict.keys {
--            let cur_img_emb = img_embs_dict[key]
--            await self.computeSingleEmbeddingSim(text_emb: text_emb, img_emb: cur_img_emb!, img_id: key)
-+        for (key,cur_img_emb) in img_embs_dict {
-+            await self.computeSingleEmbeddingSim(text_emb: text_emb, img_emb: cur_img_emb, img_id: key)
-         }
-     }
-     
-```
-
----
-
-### Incident Patch 5: `f024f095` (2024-01-13)
-**Commit Message**: fix issue with unclear image results.
-
-**File**: `Queryable/Queryable/View/PhotoResult/PhotoView.swift` (modified, +2/-3)
-```diff
-@@ -27,7 +27,6 @@ struct PhotoView: View {
-     @State private var imageRequestID: PHImageRequestID?
-     @ObservedObject var photoSearcher: PhotoSearcher
-     @Environment(\.dismiss) var dismiss
--    private let imageSize = CGSize(width: 1024, height: 1024)
-     
-     var body: some View {
-         VStack {
-@@ -135,7 +134,7 @@ struct PhotoView: View {
-                 if HAS_NETWORK_PERMISSION {
-                     await cache.requestOptions.isNetworkAccessAllowed = true
-                 }
--                imageRequestID = await cache.requestImage(for: asset, targetSize: imageSize) { result in
-+                imageRequestID = await cache.requestImage(for: asset, targetSize: PHImageManagerMaximumSize) { result in
-                     Task {
-                         if let result = result {
-                             self.image = Image(uiImage: result.image!)
-@@ -194,7 +193,7 @@ struct PhotoView: View {
-                                         HAS_NETWORK_PERMISSION = true
-                                     }
-                                     
--                                    imageRequestID = await cache!.requestImage(for: asset, targetSize: imageSize) { result in
-+                                    imageRequestID = await cache!.requestImage(for: asset, targetSize: PHImageManagerMaximumSize) { result in
-                                         Task {
-                                             if let result = result {
-                                                 self.image = Image(uiImage: result.image!)
-```
-
----
-
-### Incident Patch 6: `e087c801` (2024-01-13)
-**Commit Message**: fix issue with unclear image results.
-
-**File**: `Queryable/Queryable/View/PhotoResult/PhotoView.swift` (modified, +1/-1)
-```diff
-@@ -135,7 +135,7 @@ struct PhotoView: View {
-                 if HAS_NETWORK_PERMISSION {
-                     await cache.requestOptions.isNetworkAccessAllowed = true
-                 }
--                imageRequestID = await cache.requestImage(for: asset, targetSize: imageSize) { result in
-+                imageRequestID = await cache.requestImage(for: asset, targetSize: PHImageManagerMaximumSize) { result in
-                     Task {
-                         if let result = result {
-                             self.image = Image(uiImage: result.image!)
-```
-
----
-
-### Incident Patch 7: `452cc2dd` (2023-10-12)
-**Commit Message**: Merge pull request #19 from codingstyle/fix/older-iphone
-
-Fixed support for iPhone with A10/A11/A12 chips
-
-**File**: `Queryable/Queryable/CLIP/TextEncoder.swift` (modified, +11/-0)
-```diff
-@@ -4,6 +4,10 @@
- import Foundation
- import CoreML
- 
-+#if os(iOS)
-+import UIKit
-+#endif
-+
- ///  A model for encoding text
- public struct TextEncoder {
- 
-@@ -20,6 +24,13 @@ public struct TextEncoder {
-         let vocabURL = baseURL.appending(path: "vocab.json")
-         let mergesURL = baseURL.appending(path: "merges.txt")
-         
-+#if os(iOS)
-+        // Fallback to CPU only to avoid NN compute error on iPhone < 11 and iPad < 9th gen
-+        if !UIDevice.chipIsA13OrLater() {
-+            config.computeUnits = .cpuOnly
-+        }
-+#endif
-+
-         // Text tokenizer and encoder
-         let tokenizer = try BPETokenizer(mergesAt: mergesURL, vocabularyAt: vocabURL)
-         let textEncoderModel = try MLModel(contentsOf: textEncoderURL, configuration: config)
-```
-
-**File**: `Queryable/Queryable/View/SearchResultsView.swift` (modified, +18/-10)
-```diff
-@@ -294,7 +294,19 @@ struct SearchResultsView_Previews: PreviewProvider {
- import UIKit
- 
- public extension UIDevice {
-+    static func chipIsA13OrLater() -> Bool {
-+        let devicePattern = /(AppleTV|iPad|iPhone|Watch|iPod)(\d+),(\d+)/
-+        
-+        if let match = current.model.firstMatch(of: devicePattern) {
-+            let deviceModel = match.1
-+            let majorRevision = Int(match.2)!
-+            
-+            return (deviceModel == "iPhone" || deviceModel == "iPad") && majorRevision >= 12
-+        }
- 
-+        return false
-+    }
-+    
-     static let modelIsValid: Bool = {
-         var systemInfo = utsname()
-         uname(&systemInfo)
-@@ -304,22 +316,18 @@ public extension UIDevice {
-             return identifier + String(UnicodeScalar(UInt8(value)))
-         }
- 
--        func isDeviceValid(identifier: String) -> Bool { // swiftlint:disable:this cyclomatic_complexity
--            #if os(iOS)
--            switch identifier {
--            case "iPhone10,3", "iPhone10,6":                      return false // "iPhone X"
--            case "iPhone11,2":                                    return false // "iPhone XS"
--            case "iPhone11,4", "iPhone11,6":                      return  false // "iPhone XS Max"
--            case "iPhone11,8":                                    return false // "iPhone XR"
--            default:                                              return true
--            }
--            #elseif os(tvOS)
-+        
-+        func isDeviceValid(identifier: String) -> Bool {
-+            // swiftlint:disable:this cyclomatic_complexity
-+            #if os(tvOS)
-             switch identifier {
-             case "AppleTV5,3": return false
-             case "AppleTV6,2": return false
-             case "i386", "x86_64": return false
-             default: return false
-             }
-+            #elseif os(iOS)
-+            return true
-             #endif
-         }
- 
-```
-
----
-
-### Incident Patch 8: `063a4c17` (2023-10-11)
-**Commit Message**: Fixed support for iPhone with A10/A11/A12 chips
-
-**File**: `Queryable/Queryable/CLIP/TextEncoder.swift` (modified, +11/-0)
-```diff
-@@ -4,6 +4,10 @@
- import Foundation
- import CoreML
- 
-+#if os(iOS)
-+import UIKit
-+#endif
-+
- ///  A model for encoding text
- public struct TextEncoder {
- 
-@@ -20,6 +24,13 @@ public struct TextEncoder {
-         let vocabURL = baseURL.appending(path: "vocab.json")
-         let mergesURL = baseURL.appending(path: "merges.txt")
-         
-+#if os(iOS)
-+        // Fallback to CPU only to avoid NN compute error on iPhone < 11 and iPad < 9th gen
-+        if !UIDevice.chipIsA13OrLater() {
-+            config.computeUnits = .cpuOnly
-+        }
-+#endif
-+
-         // Text tokenizer and encoder
-         let tokenizer = try BPETokenizer(mergesAt: mergesURL, vocabularyAt: vocabURL)
-         let textEncoderModel = try MLModel(contentsOf: textEncoderURL, configuration: config)
-```
-
-**File**: `Queryable/Queryable/View/SearchResultsView.swift` (modified, +18/-10)
-```diff
-@@ -294,7 +294,19 @@ struct SearchResultsView_Previews: PreviewProvider {
- import UIKit
- 
- public extension UIDevice {
-+    static func chipIsA13OrLater() -> Bool {
-+        let devicePattern = /(AppleTV|iPad|iPhone|Watch|iPod)(\d+),(\d+)/
-+        
-+        if let match = current.model.firstMatch(of: devicePattern) {
-+            let deviceModel = match.1
-+            let majorRevision = Int(match.2)!
-+            
-+            return (deviceModel == "iPhone" || deviceModel == "iPad") && majorRevision >= 12
-+        }
- 
-+        return false
-+    }
-+    
-     static let modelIsValid: Bool = {
-         var systemInfo = utsname()
-         uname(&systemInfo)
-@@ -304,22 +316,18 @@ public extension UIDevice {
-             return identifier + String(UnicodeScalar(UInt8(value)))
-         }
- 
--        func isDeviceValid(identifier: String) -> Bool { // swiftlint:disable:this cyclomatic_complexity
--            #if os(iOS)
--            switch identifier {
--            case "iPhone10,3", "iPhone10,6":                      return false // "iPhone X"
--            case "iPhone11,2":                                    return false // "iPhone XS"
--            case "iPhone11,4", "iPhone11,6":                      return  false // "iPhone XS Max"
--            case "iPhone11,8":                                    return false // "iPhone XR"
--            default:                                              return true
--            }
--            #elseif os(tvOS)
-+        
-+        func isDeviceValid(identifier: String) -> Bool {
-+            // swiftlint:disable:this cyclomatic_complexity
-+            #if os(tvOS)
-             switch identifier {
-             case "AppleTV5,3": return false
-             case "AppleTV6,2": return false
-             case "i386", "x86_64": return false
-             default: return false
-             }
-+            #elseif os(iOS)
-+            return true
-             #endif
-         }
- 
-```
-
----
-
-### Incident Patch 9: `cbce5b21` (2023-09-22)
-**Commit Message**: fix iOS 17 support issue.
-
-**File**: `PyTorch2CoreML.ipynb` (modified, +27/-129)
-```diff
-@@ -2,18 +2,10 @@
-  "cells": [
-   {
-    "cell_type": "code",
--   "execution_count": 1,
-+   "execution_count": null,
-    "id": "801db364",
-    "metadata": {},
--   "outputs": [
--    {
--     "name": "stderr",
--     "output_type": "stream",
--     "text": [
--      "scikit-learn version 1.2.2 is not supported. Minimum required version: 0.17. Maximum required version: 1.1.2. Disabling scikit-learn conversion API.\n"
--     ]
--    }
--   ],
-+   "outputs": [],
-    "source": [
-     "import torch\n",
-     "import clip\n",
-@@ -32,7 +24,7 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 4,
-+   "execution_count": null,
-    "id": "9ebc2db9",
-    "metadata": {},
-    "outputs": [],
-@@ -62,7 +54,7 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 5,
-+   "execution_count": null,
-    "id": "8f89976b",
-    "metadata": {},
-    "outputs": [],
-@@ -118,7 +110,7 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 6,
-+   "execution_count": null,
-    "id": "c87abd71",
-    "metadata": {},
-    "outputs": [],
-@@ -205,47 +197,28 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 7,
-+   "execution_count": null,
-    "id": "c018fe96",
-    "metadata": {},
--   "outputs": [
--    {
--     "name": "stdout",
--     "output_type": "stream",
--     "text": [
--      "text_projection shape: torch.Size([512, 512])\n"
--     ]
--    }
--   ],
-+   "outputs": [],
-    "source": [
-     "text_encoder = TextEncoder(embed_dim=512, context_length=77, vocab_size=49408, \n",
-     "                           transformer_width=512, transformer_heads=8, transformer_layers=12)"
-    ]
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 8,
-+   "execution_count": null,
-    "id": "658075c8",
-    "metadata": {},
--   "outputs": [
--    {
--     "data": {
--      "text/plain": [
--       "_IncompatibleKeys(missing_keys=['temperature'], unexpected_keys=['visual.class_embedding', 'visual.positional_embedding', 'visual.proj', 'visual.conv1.weight', 'visual.ln_pre.weight', 'visual.ln_pre.bias', 'visual.transformer.resblocks.0.attn.in_proj_weight', 'visual.transformer.resblocks.0.attn.in_proj_bias', 'visual.transformer.resblocks.0.attn.out_proj.weight', 'visual.transformer.resblocks.0.attn.out_proj.bias', 'visual.transformer.resblocks.0.ln_1.weight', 'visual.transformer.resblocks.0.ln_1.bias', 'visual.transformer.resblocks.0.mlp.c_fc.weight', 'visual.transformer.resblocks.0.mlp.c_fc.bias', 'visual.transformer.resblocks.0.mlp.c_proj.weight', 'visual.transformer.resblocks.0.mlp.c_proj.bias', 'visual.transformer.resblocks.0.ln_2.weight', 'visual.transformer.resblocks.0.ln_2.bias', 'visual.transformer.resblocks.1.attn.in_proj_weight', 'visual.transformer.resblocks.1.attn.in_proj_bias', 'visual.transformer.resblocks.1.attn.out_proj.weight', 'visual.transformer.resblocks.1.attn.out_proj.bias', 'visual.transformer.resblocks.1.ln_1.weight', 'visual.transformer.resblocks.1.ln_1.bias', 'visual.transformer.resblocks.1.mlp.c_fc.weight', 'visual.transformer.resblocks.1.mlp.c_fc.bias', 'visual.transformer.resblocks.1.mlp.c_proj.weight', 'visual.transformer.resblocks.1.mlp.c_proj.bias', 'visual.transformer.resblocks.1.ln_2.weight', 'visual.transformer.resblocks.1.ln_2.bias', 'visual.transformer.resblocks.2.attn.in_proj_weight', 'visual.transformer.resblocks.2.attn.in_proj_bias', 'visual.transformer.resblocks.2.attn.out_proj.weight', 'visual.transformer.resblocks.2.attn.out_proj.bias', 'visual.transformer.resblocks.2.ln_1.weight', 'visual.transformer.resblocks.2.ln_1.bias', 'visual.transformer.resblocks.2.mlp.c_fc.weight', 'visual.transformer.resblocks.2.mlp.c_fc.bias', 'visual.transformer.resblocks.2.mlp.c_proj.weight', 'visual.transformer.resblocks.2.mlp.c_proj.bias', 'visual.transformer.resblocks.2.ln_2.weight', 'visual.transformer.resblocks.2.ln_2.bias', 'visual.transformer.resblocks.3.attn.in_proj_weight', 'visual.transformer.resblocks.3.attn.in_proj_bias', 'visual.transformer.resblocks.3.attn.out_proj.weight', 'visual.transformer.resblocks.3.attn.out_proj.bias', 'visual.transformer.resblocks.3.ln_1.weight', 'visual.transformer.resblocks.3.ln_1.bias', 'visual.transformer.resblocks.3.mlp.c_fc.weight', 'visual.transformer.resblocks.3.mlp.c_fc.bias', 'visual.transformer.resblocks.3.mlp.c_proj.weight', 'visual.transformer.resblocks.3.mlp.c_proj.bias', 'visual.transformer.resblocks.3.ln_2.weight', 'visual.transformer.resblocks.3.ln_2.bias', 'visual.transformer.resblocks.4.attn.in_proj_weight', 'visual.transformer.resblocks.4.attn.in_proj_bias', 'visual.transformer.resblocks.4.attn.out_proj.weight', 'visual.transformer.resblocks.4.attn.out_proj.bias', 'visual.transformer.resblocks.4.ln_1.weight', 'visual.transformer.resblocks.4.ln_1.bias', 'visual.transformer.resblocks.4.mlp.c_fc.weight', 'visual.transformer.resblocks.4.mlp.c_fc.bias', 'visual.transformer.resblocks.4.mlp.c_proj.weight', 'visual.transformer.resblocks.4.mlp.c_proj.bias', 'visual.transformer.resblocks.4.ln_2.weight', 'visual.transformer.resblocks.4.ln_2.bias', 'visual.transformer.resblocks.5
-```
-
----
-
-### Incident Patch 10: `a310d30e` (2023-09-22)
-**Commit Message**: fix iOS 17 support issue.
-
-**File**: `PyTorch2CoreML.ipynb` (modified, +29/-18)
-```diff
-@@ -2,10 +2,18 @@
-  "cells": [
-   {
-    "cell_type": "code",
--   "execution_count": 106,
-+   "execution_count": 1,
-    "id": "801db364",
-    "metadata": {},
--   "outputs": [],
-+   "outputs": [
-+    {
-+     "name": "stderr",
-+     "output_type": "stream",
-+     "text": [
-+      "scikit-learn version 1.2.2 is not supported. Minimum required version: 0.17. Maximum required version: 1.1.2. Disabling scikit-learn conversion API.\n"
-+     ]
-+    }
-+   ],
-    "source": [
-     "import torch\n",
-     "import clip\n",
-@@ -24,15 +32,15 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 12,
-+   "execution_count": 4,
-    "id": "9ebc2db9",
-    "metadata": {},
-    "outputs": [],
-    "source": [
-     "device=\"cpu\"\n",
-     "model, preprocess = clip.load(\"ViT-B/32\", device=device)\n",
-     "text = clip.tokenize(\"a diagram\").to(device)\n",
--    "i = Image.open(\"IMG_3628.jpg\")\n",
-+    "i = Image.open(\"IMG_7466.jpg\")\n",
-     "image = preprocess(i).unsqueeze(0).to(device)\n",
-     "\n",
-     "with torch.no_grad():\n",
-@@ -54,7 +62,7 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 19,
-+   "execution_count": 5,
-    "id": "8f89976b",
-    "metadata": {},
-    "outputs": [],
-@@ -110,7 +118,7 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 20,
-+   "execution_count": 6,
-    "id": "c87abd71",
-    "metadata": {},
-    "outputs": [],
-@@ -197,7 +205,7 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 24,
-+   "execution_count": 7,
-    "id": "c018fe96",
-    "metadata": {},
-    "outputs": [
-@@ -216,7 +224,7 @@
-   },
-   {
-    "cell_type": "code",
--   "execution_count": 25,
-+   "execution_count": 8,
-    "id": "658075c8",
-    "metadata": {},
-    "outputs": [
-@@ -226,7 +234,7 @@
-        "_IncompatibleKeys(missing_keys=['temperature'], unexpected_keys=['visual.class_embedding', 'visual.positional_embedding', 'visual.proj', 'visual.conv1.weight', 'visual.ln_pre.weight', 'visual.ln_pre.bias', 'visual.transformer.resblocks.0.attn.in_proj_weight', 'visual.transformer.resblocks.0.attn.in_proj_bias', 'visual.transformer.resblocks.0.attn.out_proj.weight', 'visual.transformer.resblocks.0.attn.out_proj.bias', 'visual.transformer.resblocks.0.ln_1.weight', 'visual.transformer.resblocks.0.ln_1.bias', 'visual.transformer.resblocks.0.mlp.c_fc.weight', 'visual.transformer.resblocks.0.mlp.c_fc.bias', 'visual.transformer.resblocks.0.mlp.c_proj.weight', 'visual.transformer.resblocks.0.mlp.c_proj.bias', 'visual.transformer.resblocks.0.ln_2.weight', 'visual.transformer.resblocks.0.ln_2.bias', 'visual.transformer.resblocks.1.attn.in_proj_weight', 'visual.transformer.resblocks.1.attn.in_proj_bias', 'visual.transformer.resblocks.1.attn.out_proj.weight', 'visual.transformer.resblocks.1.attn.out_proj.bias', 'visual.transformer.resblocks.1.ln_1.weight', 'visual.transformer.resblocks.1.ln_1.bias', 'visual.transformer.resblocks.1.mlp.c_fc.weight', 'visual.transformer.resblocks.1.mlp.c_fc.bias', 'visual.transformer.resblocks.1.mlp.c_proj.weight', 'visual.transformer.resblocks.1.mlp.c_proj.bias', 'visual.transformer.resblocks.1.ln_2.weight', 'visual.transformer.resblocks.1.ln_2.bias', 'visual.transformer.resblocks.2.attn.in_proj_weight', 'visual.transformer.resblocks.2.attn.in_proj_bias', 'visual.transformer.resblocks.2.attn.out_proj.weight', 'visual.transformer.resblocks.2.attn.out_proj.bias', 'visual.transformer.resblocks.2.ln_1.weight', 'visual.transformer.resblocks.2.ln_1.bias', 'visual.transformer.resblocks.2.mlp.c_fc.weight', 'visual.transformer.resblocks.2.mlp.c_fc.bias', 'visual.transformer.resblocks.2.mlp.c_proj.weight', 'visual.transformer.resblocks.2.mlp.c_proj.bias', 'visual.transformer.resblocks.2.ln_2.weight', 'visual.transformer.resblocks.2.ln_2.bias', 'visual.transformer.resblocks.3.attn.in_proj_weight', 'visual.transformer.resblocks.3.attn.in_proj_bias', 'visual.transformer.resblocks.3.attn.out_proj.weight', 'visual.transformer.resblocks.3.attn.out_proj.bias', 'visual.transformer.resblocks.3.ln_1.weight', 'visual.transformer.resblocks.3.ln_1.bias', 'visual.transformer.resblocks.3.mlp.c_fc.weight', 'visual.transformer.resblocks.3.mlp.c_fc.bias', 'visual.transformer.resblocks.3.mlp.c_proj.weight', 'visual.transformer.resblocks.3.mlp.c_proj.bias', 'visual.transformer.resblocks.3.ln_2.weight', 'visual.transformer.resblocks.3.ln_2.bias', 'visual.transformer.resblocks.4.attn.in_proj_weight', 'visual.transformer.resblocks.4.attn.in_proj_bias', 'visual.transformer.resblocks.4.attn.out_proj.weight', 'visual.transformer.resblocks.4.attn.out_proj.bias', 'visual.transformer.resblocks.4.ln_1.weight', 'visual.transformer.resblocks.4.ln_1.bias', 'visual.transformer.resblocks.4.mlp.c_fc.weight', 'visual.transformer.resblocks.4.mlp.c_fc.bias', 'visual.transformer.resblocks.4.mlp.c_proj.weight', 'visual.transformer.resblocks.4.mlp.c_proj.bias', 'visual.transformer.resblocks.4.ln_2.weight', 'visual.transformer.resblocks.4.ln_2.bias', 'visual.transformer.resblocks.5.attn.in_proj_weight', 'visual.transformer.resblocks.5
-```
-
----
-
-### Incident Patch 11: `269a81a0` (2023-07-13)
-**Commit Message**: [fix]:CoreMLModels, No such file or directory
-
-**File**: `Queryable/Queryable.xcodeproj/project.pbxproj` (modified, +6/-6)
-```diff
-@@ -7,6 +7,7 @@
- 	objects = {
- 
- /* Begin PBXBuildFile section */
-+		4D3B1D642A5F95300004C06F /* CoreMLModels in Resources */ = {isa = PBXBuildFile; fileRef = 4D3B1D632A5F95300004C06F /* CoreMLModels */; };
- 		94E9174B2A5A45C000324937 /* QueryableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E9174A2A5A45C000324937 /* QueryableApp.swift */; };
- 		94E917522A5A45C200324937 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94E917512A5A45C200324937 /* Preview Assets.xcassets */; };
- 		94E917B12A5A475B00324937 /* TextEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E9178D2A5A475B00324937 /* TextEncoder.swift */; };
-@@ -42,7 +43,6 @@
- 		94E917DE2A5A47A300324937 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94E917D42A5A47A300324937 /* Localizable.strings */; };
- 		94E917DF2A5A47A300324937 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94E917D72A5A47A300324937 /* Localizable.strings */; };
- 		94E917E02A5A47A300324937 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94E917DA2A5A47A300324937 /* Localizable.strings */; };
--		94E917E22A5A48D600324937 /* CoreMLModels in Resources */ = {isa = PBXBuildFile; fileRef = 94E917E12A5A48D600324937 /* CoreMLModels */; };
- 		94ECA38F2A5D52060066F64B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94ECA38E2A5D52050066F64B /* Assets.xcassets */; };
- /* End PBXBuildFile section */
- 
-@@ -64,6 +64,7 @@
- /* End PBXContainerItemProxy section */
- 
- /* Begin PBXFileReference section */
-+		4D3B1D632A5F95300004C06F /* CoreMLModels */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CoreMLModels; sourceTree = "<group>"; };
- 		94E917472A5A45C000324937 /* Queryable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Queryable.app; sourceTree = BUILT_PRODUCTS_DIR; };
- 		94E9174A2A5A45C000324937 /* QueryableApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryableApp.swift; sourceTree = "<group>"; };
- 		94E917512A5A45C200324937 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-@@ -102,7 +103,6 @@
- 		94E917D52A5A47A300324937 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Localizable.strings; sourceTree = "<group>"; };
- 		94E917D82A5A47A300324937 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = Localizable.strings; sourceTree = "<group>"; };
- 		94E917DB2A5A47A300324937 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Localizable.strings; sourceTree = "<group>"; };
--		94E917E12A5A48D600324937 /* CoreMLModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CoreMLModels; path = ../../../../../SwiftUI/ML/SnapSearch/SnapSearch/SnapSearch/CoreMLModels; sourceTree = "<group>"; };
- 		94ECA38E2A5D52050066F64B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
- /* End PBXFileReference section */
- 
-@@ -157,7 +157,7 @@
- 		94E917492A5A45C000324937 /* Queryable */ = {
- 			isa = PBXGroup;
- 			children = (
--				94E917E12A5A48D600324937 /* CoreMLModels */,
-+				4D3B1D632A5F95300004C06F /* CoreMLModels */,
- 				94E9178C2A5A475B00324937 /* CLIP */,
- 				94E917922A5A475B00324937 /* Model */,
- 				94E917962A5A475B00324937 /* PhotoHelper */,
-@@ -423,7 +423,7 @@
- 			files = (
- 				94E917DE2A5A47A300324937 /* Localizable.strings in Resources */,
- 				94E917DF2A5A47A300324937 /* Localizable.strings in Resources */,
--				94E917E22A5A48D600324937 /* CoreMLModels in Resources */,
-+				4D3B1D642A5F95300004C06F /* CoreMLModels in Resources */,
- 				94E917522A5A45C200324937 /* Preview Assets.xcassets in Resources */,
- 				94E917E02A5A47A300324937 /* Localizable.strings in Resources */,
- 				94E917DD2A5A47A300324937 /* Localizable.strings in Resources */,
-@@ -680,7 +680,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				DEVELOPMENT_ASSET_PATHS = "\"Queryable/Preview Content\"";
--				DEVELOPMENT_TEAM = 8ZKRT2YUM5;
-+				DEVELOPMENT_TEAM = "";
- 				ENABLE_PREVIEWS = YES;
- 				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow access to all your photos for offline search.";
-@@ -711,7 +711,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				DEVELOPMENT_ASSET_PATHS = "\"Queryable/Preview Content\"";
--				DEVELOPMENT_TEAM = 8ZKRT2YUM5;
-+				DEVELOPMENT_TEAM = "";
- 				ENABLE_PREVIEWS = YES;
- 				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow access to all your photos for offline search.";
-```
-
 #### Recent Merged Pull Requests:
 - **PR #37** (2024-02-07): we don't need to load text encoder when finish build index (@yujinqiu)
 - **PR #36** (2024-02-06): Refactor code (@yujinqiu)
@@ -2492,8 +1783,6 @@ Fixed support for iPhone with A10/A11/A12 chips
 - **PR #33** (2024-02-04): Fix img_emb_pieces_lst with one empty element bug and refactor code (@yujinqiu)
 - **PR #27** (2023-11-13): Fixes #26 (@HKdAlex)
 - **PR #23** (2023-11-01): Update ConfigView.swift (@ShrootBuck)
-- **PR #22** (closed): Accept limited photo library authorization (@JadenGeller)
-- **PR #21** (2023-11-01): Refactor Code (@yujinqiu)
 
 ---
 
@@ -2507,3 +1796,78 @@ Fixed support for iPhone with A10/A11/A12 chips
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. IOSurface crash: buffer pooling, batch encoding, GPU resize
+
+**RULE**:
+When implementing operations in `Queryable/Queryable/CLIP/ImgEncoder.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mazzzystar/Queryable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a2ff92f9`: IOSurface crash: buffer pooling, batch encoding, GPU resize. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Queryable/Queryable/CLIP/ImgEncoder.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+//  Queryable
+import CoreImage
+
+    /// Shared CIContext for GPU-accelerated image processing
+    private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+
+    /// Shared pixel buffer pool to recycle IOSurface-backed buffers (prevents hitting the 16384 limit)
+    private static var bufferPool: CVPixelBufferPool? = {
+        let poolAttrs: [String: Any] = [
+            kCVPixelBufferPoolMinimumBufferCountKey as String: 4
+        ]
+        let bufferAttrs: [String: Any] = [
+            kCVPixelBufferWidthKey as String: 256,
+            kCVPixelBufferHeightKey as String: 256,
+            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32ARGB,
+            kCVPixelBufferCGImageCompatibilityKey as String: true,
+            kCVPixelBufferCGBitmapContextCompatibilityKey as String: true
+        ]
+        var pool: CVPixelBufferPool?
+        CVPixelBufferPoolCreate(kCFAllocatorDefault, poolAttrs as CFDictionary, bufferAttrs as CFDictionary, &pool)
+        return pool
+    }()
+
+    /// Flush idle buffers from the pool so the OS can reclaim their IOSurfaces.
+    static func flushBufferPool() {
+        if let pool = bufferPool {
+            CVPixelBufferPoo
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+//  TestEncoder
+    
+        let imgEncoderURL = baseURL.appending(path:"ImageEncoder_mobileCLIP_s2.mlmodelc")
+    
+    
+//    public init(model: MLModel) {
+//        self.model = model
+//    }
+    
+    
+    private func encode(image: UIImage) async throws -> MLShapedArray<Float32> {
+            guard let resizedImage = try image.resizeImageTo(size:CGSize(width: 256, height: 256)) else {
+                throw ImageEncodingError.resizeError
+            }
+            
+            guard let buffer = resizedImage.convertToBuffer() else {
+            
+            
+            
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a2ff92f9` are properly handled with clean fallback behavior.

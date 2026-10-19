@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T22:26:52.460Z",
+  "last_updated": "2026-10-19T22:32:57.921Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14007,6 +14007,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T22:26:46.319Z"
+    },
+    "lxml/lxml": {
+      "repository": "lxml/lxml",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lxml-lxml",
+      "content_hash": "b81bad24bc3b002a857b3915dfb242607c92bc1814da98de54ef69774af62a03",
+      "verified_at": "2026-10-19T22:32:57.288Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:32:57.288Z"
+    },
+    "mazzzystar/Queryable": {
+      "repository": "mazzzystar/Queryable",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mazzzystar-queryable",
+      "content_hash": "04301fa8710f99a3b7ea63fb6bde5313e991b195125ac7df10bcfc637ecd45b2",
+      "verified_at": "2026-10-19T22:32:57.921Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:32:57.921Z"
     }
   },
   "repos": {

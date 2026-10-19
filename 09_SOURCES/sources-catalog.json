@@ -9308,5 +9308,25 @@
     "contentHash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
     "lastHarvestedAt": "2026-10-19T22:26:46.312Z",
     "learningId": "learn-github-louis-cfm-coucou"
+  },
+  "lxml-lxml": {
+    "repository": "lxml/lxml",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lxml/lxml",
+    "sourceVersion": "584df5c8",
+    "license": "BSD-3-Clause",
+    "contentHash": "b81bad24bc3b002a857b3915dfb242607c92bc1814da98de54ef69774af62a03",
+    "lastHarvestedAt": "2026-10-19T22:32:57.282Z",
+    "learningId": "learn-github-lxml-lxml"
+  },
+  "mazzzystar-queryable": {
+    "repository": "mazzzystar/Queryable",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mazzzystar/Queryable",
+    "sourceVersion": "b95a05a8",
+    "license": "MIT",
+    "contentHash": "04301fa8710f99a3b7ea63fb6bde5313e991b195125ac7df10bcfc637ecd45b2",
+    "lastHarvestedAt": "2026-10-19T22:32:57.915Z",
+    "learningId": "learn-github-mazzzystar-queryable"
   }
 }
