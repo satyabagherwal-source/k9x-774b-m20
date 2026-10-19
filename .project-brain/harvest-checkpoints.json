@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:22:46.470Z",
+  "last_updated": "2026-10-19T01:28:46.307Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1862,14 +1862,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "9afc1c6ec2b03934df3e7ff61732d6c2f8cf5e2f7b25e5b6641deb4d2095315e",
-      "verified_at": "2026-10-17T21:43:45.182Z",
+      "content_hash": "16f62570fdfcfa903545e88357d2a381cff668505c04ff70635f61d5edfffbbf",
+      "verified_at": "2026-10-19T01:28:32.382Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:43:45.182Z"
+      "last_updated": "2026-10-19T01:28:32.382Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -6832,6 +6832,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:22:46.470Z"
+    },
+    "xiaolin/react-image-gallery": {
+      "repository": "xiaolin/react-image-gallery",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-xiaolin-react-image-gallery",
+      "content_hash": "f6393417fe885ecff3063a41bb1564f8bb2ae6ca291b046ec5b08a8d6b6d83b3",
+      "verified_at": "2026-10-19T01:28:32.358Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:28:32.358Z"
+    },
+    "fujiapple852/trippy": {
+      "repository": "fujiapple852/trippy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-fujiapple852-trippy",
+      "content_hash": "f54a2ce87acb70a815979fc01afceb46616843b4a5ba1b0e290163d1b240aade",
+      "verified_at": "2026-10-19T01:28:33.895Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:28:33.895Z"
+    },
+    "BuilderIO/builder": {
+      "repository": "BuilderIO/builder",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-builderio-builder",
+      "content_hash": "d181a147705fdf37e5c6aa0eaf79db90984e4aa96f1adbacbf05de1d60dbd14c",
+      "verified_at": "2026-10-19T01:28:40.846Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:28:40.846Z"
+    },
+    "gocrane/crane": {
+      "repository": "gocrane/crane",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gocrane-crane",
+      "content_hash": "959600e3281e50c6189fb71fd560cffea0314bb2c00d2fdcf706583c707db306",
+      "verified_at": "2026-10-19T01:28:42.529Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:28:42.529Z"
+    },
+    "AmrDeveloper/GQL": {
+      "repository": "AmrDeveloper/GQL",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-amrdeveloper-gql",
+      "content_hash": "f5d091e1acec458db3483176ccc5445e27fae24f8c225e39d8609ff78e193273",
+      "verified_at": "2026-10-19T01:28:46.307Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:28:46.307Z"
     }
   },
   "repos": {

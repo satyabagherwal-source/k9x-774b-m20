@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:22:46.422Z",
-  "total_verified_learnings": 470,
+  "last_updated": "2026-10-19T01:28:46.270Z",
+  "total_verified_learnings": 474,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1313,22 +1313,35 @@
     "learn-github-amrdeveloper-gql": {
       "learning_id": "learn-github-amrdeveloper-gql",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "amrdeveloper-gql",
+      "source": "AmrDeveloper/GQL",
+      "repository": "AmrDeveloper/GQL",
       "slug": "amrdeveloper-gql",
       "platform": "github",
       "source_url": "https://github.com/AmrDeveloper/GQL",
-      "source_version": "HEAD",
-      "content_hash": "cab50394dea4be24643451321e9d5b615b9e4b5de5e23b4dcd205a0d43528401",
+      "source_version": "3a76cfee",
+      "content_hash": "f5d091e1acec458db3483176ccc5445e27fae24f8c225e39d8609ff78e193273",
       "dossier_path": "07_PROJECT_LEARNING/amrdeveloper-gql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/amrdeveloper-gql-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1974,
+          "title": "out of index panic when groups length is zero",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.770Z"
+      "verified_at": "2026-10-19T01:28:46.265Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-anative-lab-evoagentx": {
       "learning_id": "learn-github-anative-lab-evoagentx",
@@ -3286,22 +3299,35 @@
     "learn-github-builderio-builder": {
       "learning_id": "learn-github-builderio-builder",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "builderio-builder",
+      "source": "BuilderIO/builder",
+      "repository": "BuilderIO/builder",
       "slug": "builderio-builder",
       "platform": "github",
       "source_url": "https://github.com/BuilderIO/builder",
-      "source_version": "HEAD",
-      "content_hash": "311ac2d0d81b5a741ec22077c8c4f63764682ec11467a618afcbd741b3e21587",
+      "source_version": "3678d1e6",
+      "content_hash": "d181a147705fdf37e5c6aa0eaf79db90984e4aa96f1adbacbf05de1d60dbd14c",
       "dossier_path": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1972,
+          "title": "sdks): jsCode context functions, jsCode state reactivity, and bound id in gen2 (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.156Z"
+      "verified_at": "2026-10-19T01:28:40.813Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-buresdv-cork": {
       "learning_id": "learn-github-buresdv-cork",
@@ -8123,22 +8149,35 @@
     "learn-github-fujiapple852-trippy": {
       "learning_id": "learn-github-fujiapple852-trippy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "fujiapple852-trippy",
+      "source": "fujiapple852/trippy",
+      "repository": "fujiapple852/trippy",
       "slug": "fujiapple852-trippy",
       "platform": "github",
       "source_url": "https://github.com/fujiapple852/trippy",
-      "source_version": "HEAD",
-      "content_hash": "4a476aca340375f8fe9a40bc3dc1fac10f0d0d0165878b83a985b49950be3f96",
+      "source_version": "15e61c83",
+      "content_hash": "f54a2ce87acb70a815979fc01afceb46616843b4a5ba1b0e290163d1b240aade",
       "dossier_path": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1971,
+          "title": "bump ratatui from 0.30.1 to 0.30.2",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.000Z"
+      "verified_at": "2026-10-19T01:28:33.861Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-fujibee-agmsg": {
       "learning_id": "learn-github-fujibee-agmsg",
@@ -8821,22 +8860,35 @@
     "learn-github-gocrane-crane": {
       "learning_id": "learn-github-gocrane-crane",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gocrane-crane",
+      "source": "gocrane/crane",
+      "repository": "gocrane/crane",
       "slug": "gocrane-crane",
       "platform": "github",
       "source_url": "https://github.com/gocrane/crane",
-      "source_version": "HEAD",
-      "content_hash": "0b3fd614e20cb37ecd832be16423f1a653524e296f0a4db724cd4a83593802f9",
+      "source_version": "2b0ddae8",
+      "content_hash": "959600e3281e50c6189fb71fd560cffea0314bb2c00d2fdcf706583c707db306",
       "dossier_path": "07_PROJECT_LEARNING/gocrane-crane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocrane-crane-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1973,
+          "title": "oom record sort",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.114Z"
+      "verified_at": "2026-10-19T01:28:42.488Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-goharbor-harbor": {
       "learning_id": "learn-github-goharbor-harbor",
@@ -15257,7 +15309,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "9afc1c6ec2b03934df3e7ff61732d6c2f8cf5e2f7b25e5b6641deb4d2095315e",
+      "content_hash": "16f62570fdfcfa903545e88357d2a381cff668505c04ff70635f61d5edfffbbf",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -15300,7 +15352,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-17T21:43:45.142Z",
+      "verified_at": "2026-10-19T01:28:32.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72813,6 +72865,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:22:46.415Z"
+    },
+    "rule-1971": {
+      "learning_id": "rule-1971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1971,
+      "title": "bump ratatui from 0.30.1 to 0.30.2",
+      "source_url": "https://github.com/fujiapple852/trippy",
+      "source_version": "15e61c83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:28:33.861Z"
+    },
+    "rule-1972": {
+      "learning_id": "rule-1972",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1972,
+      "title": "sdks): jsCode context functions, jsCode state reactivity, and bound id in gen2 (",
+      "source_url": "https://github.com/BuilderIO/builder",
+      "source_version": "3678d1e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:28:40.813Z"
+    },
+    "rule-1973": {
+      "learning_id": "rule-1973",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1973,
+      "title": "oom record sort",
+      "source_url": "https://github.com/gocrane/crane",
+      "source_version": "2b0ddae8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:28:42.488Z"
+    },
+    "rule-1974": {
+      "learning_id": "rule-1974",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1974,
+      "title": "out of index panic when groups length is zero",
+      "source_url": "https://github.com/AmrDeveloper/GQL",
+      "source_version": "3a76cfee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:28:46.265Z"
     }
   },
   "aliases": {

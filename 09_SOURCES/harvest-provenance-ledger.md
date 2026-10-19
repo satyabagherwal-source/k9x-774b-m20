@@ -2752,3 +2752,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T01:22:40.272Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `efdd6a86` | Multi-dimensional audit evidence | 2026-10-19T01:22:42.671Z |
 | `learn-github-vlcn-io-cr-sqlite` | `https://github.com/vlcn-io/cr-sqlite` | `43ab94ca` | Multi-dimensional audit evidence | 2026-10-19T01:22:46.465Z |
+| `learn-github-xiaolin-react-image-gallery` | `https://github.com/xiaolin/react-image-gallery` | `8b7e64c4` | Multi-dimensional audit evidence | 2026-10-19T01:28:32.354Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-19T01:28:32.379Z |
+| `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `15e61c83` | Multi-dimensional audit evidence | 2026-10-19T01:28:33.892Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `3678d1e6` | Multi-dimensional audit evidence | 2026-10-19T01:28:40.843Z |
+| `learn-github-gocrane-crane` | `https://github.com/gocrane/crane` | `2b0ddae8` | Multi-dimensional audit evidence | 2026-10-19T01:28:42.526Z |
+| `learn-github-amrdeveloper-gql` | `https://github.com/AmrDeveloper/GQL` | `3a76cfee` | Multi-dimensional audit evidence | 2026-10-19T01:28:46.304Z |

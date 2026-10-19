@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/amrdeveloper-gql-learnings.md`  
+> **Source**: github ([https://github.com/AmrDeveloper/GQL](https://github.com/AmrDeveloper/GQL))  
+> **Source Version**: `3a76cfee`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T01:28:46.156Z  
+> **Learning ID**: `learn-github-amrdeveloper-gql`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): AmrDeveloper/GQL
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/amrdeveloper-gql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/AmrDeveloper/GQL](https://github.com/AmrDeveloper/GQL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:21:50.110Z  
+> **Harvest Timestamp**: 2026-10-19T01:28:46.152Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: GitQL is a extensible SQL-like query language and SDK to perform queries on various data sources such .git files with supports of most of SQL features such as grouping, ordering and aggregation and window functions and allow customization like user-defined types and functions
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3512 stars
+- **Stars / Engagement**: 3511 stars
 
 ---
 
@@ -1089,373 +1103,6 @@ pub trait Value: DynClone {
     
 ```
 
-### Core Architecture Module: `crates/gitql-core/src/values/boolean.rs`
-```
-use std::any::Any;
-use std::cmp::Ordering;
-
-use gitql_ast::operator::GroupComparisonOperator;
-use gitql_ast::types::boolean::BoolType;
-use gitql_ast::types::DataType;
-
-use super::base::Value;
-use super::integer::IntValue;
-
-#[derive(Clone)]
-pub struct BoolValue {
-    pub value: bool,
-}
-
-impl BoolValue {
-    pub fn new(value: bool) -> Self {
-        BoolValue { value }
-    }
-
-    pub fn new_true() -> Self {
-        BoolValue { value: true }
-    }
-
-    pub fn new_false() -> Self {
-        BoolValue { value: false }
-    }
-}
-
-impl Value for BoolValue {
-    fn literal(&self) -> String {
-        self.value.to_string()
-    }
-
-    fn equals(&self, other: &Box<dyn Value>) -> bool {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return self.value == other_bool.value;
-        }
-        false
-    }
-
-    fn compare(&self, other: &Box<dyn Value>) -> Option<Ordering> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return self.value.partial_cmp(&other_bool.value);
-        }
-        None
-    }
-
-    fn data_type(&self) -> Box<dyn DataType> {
-        Box::new(BoolType)
-    }
-
-    fn as_any(&self) -> &dyn Any {
-        self
-    }
-
-    fn bang_op(&self) -> Result<Box<dyn Value>, String> {
-        Ok(Box::new(BoolValue::new(!self.value)))
-    }
-
-    fn logical_or_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value || other_bool.value)));
-        }
-        Err("Unexpected type to perform `||` with".to_string())
-    }
-
-    fn logical_and_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value && other_bool.value)));
-        }
-        Err("Unexpected type to perform `&&` with".to_string())
-    }
-
-    fn logical_xor_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value ^ other_bool.value)));
-        }
-        Err("Unexpected type to perform `^` with".to_string())
-    }
-
-    fn eq_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value == other_bool.value)));
-        }
-        Err("Unexpected type to perform `=` with".to_string())
-    }
-
-    fn group_eq_op(
-        &self,
-        other: &Box<dyn Value>,
-        group_op: &GroupComparisonOperator,
-    ) -> Result<Box<dyn Value>, String> {
-        if other.is_array_of(|element_type| element_type.is_bool()) {
-            let elements = &other.as_array().unwrap();
-            let mut matches_count = 0;
-            for element in elements.iter() {
-                if self.value == element.as_bool().unwrap() {
-                    matches_count += 1;
-                    if GroupComparisonOperator::Any.eq(group_op) {
-                        break;
-                    }
-                }
-            }
-
-            let result = match group_op {
-                GroupComparisonOperator::All => matches_count == elements.len(),
-                GroupComparisonOperator::Any => matches_count > 0,
-            };
-
-            return Ok(Box::new(BoolValue::new(result)));
-        }
-        Err("Unexpected type to perform `=` with".to_string())
-    }
-
-    fn bang_eq_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value != other_bool.value)));
-        }
-        Err("Unexpected type to perform `!=` with".to_string())
-    }
-
-    fn group_bang_eq_op(
-        &self,
-        other: &Box<dyn Value>,
-        group_op: &GroupComparisonOperator,
-    ) -> Result<Box<dyn Value>, String> {
-        if other.is_array_of(|element_type| element_type.is_bool()) {
-            let elements = &other.as_array().unwrap();
-            let mut matches_count = 0;
-            for element in elements.iter() {
-                if self.value != element.as_bool().unwrap() {
-                    matches_count += 1;
-                    if GroupComparisonOperator::Any.eq(group_op) {
-                        break;
-                    }
-                }
-            }
-
-            let result = match group_op {
-                GroupComparisonOperator::All => matches_count == elements.len(),
-                GroupComparisonOperator::Any => matches_count > 0,
-            };
-
-            return Ok(Box::new(BoolValue::new(result)));
-        }
-        Err("Unexpected type to perform `!=` with".to_string())
-    }
-
-    fn gt_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value & !other_bool.value)));
-        }
-        Err("Unexpected type to perform `>` with".to_string())
-    }
-
-    fn group_gt_op(
-        &self,
-        other: &Box<dyn Value>,
-        group_op: &GroupComparisonOperator,
-    ) -> Result<Box<dyn Value>, String> {
-        if other.is_array_of(|element_type| element_type.is_bool()) {
-            let elements = &other.as_array().unwrap();
-            let mut matches_count = 0;
-            for element in elements.iter() {
-                if self.value & !element.as_bool().unwrap() {
-                    matches_count += 1;
-                    if GroupComparisonOperator::Any.eq(group_op) {
-                        break;
-                    }
-                }
-            }
-
-            let result = match group_op {
-                GroupComparisonOperator::All => matches_count == elements.len(),
-                GroupComparisonOperator::Any => matches_count > 0,
-            };
-
-            return Ok(Box::new(BoolValue::new(result)));
-        }
-        Err("Unexpected type to perform `>` with".to_string())
-    }
-
-    fn gte_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value >= other_bool.value)));
-        }
-        Err("Unexpected type to perform `>=` with".to_string())
-    }
-
-    fn group_gte_op(
-        &self,
-        other: &Box<dyn Value>,
-        group_op: &GroupComparisonOperator,
-    ) -> Result<Box<dyn Value>, String> {
-        if other.is_array_of(|element_type| element_type.is_bool()) {
-            let elements = &other.as_array().unwrap();
-            let mut matches_count = 0;
-            for element in elements.iter() {
-                if self.value >= element.as_bool().unwrap() {
-                    matches_count += 1;
-                    if GroupComparisonOperator::Any.eq(group_op) {
-                        break;
-                    }
-                }
-            }
-
-            let result = match group_op {
-                GroupComparisonOperator::All => matches_count == elements.len(),
-                GroupComparisonOperator::Any => matches_count > 0,
-            };
-
-            return Ok(Box::new(BoolValue::new(result)));
-        }
-        Err("Unexpected type to perform `>=` with".to_string())
-    }
-
-    fn lt_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(!self.value & other_bool.value)));
-        }
-        Err("Unexpected type to perform `<` with".to_string())
-    }
-
-    fn group_lt_op(
-        &self,
-        other: &Box<dyn Value>,
-        group_op: &GroupComparisonOperator,
-    ) -> Result<Box<dyn Value>, String> {
-        if other.is_array_of(|element_type| element_type.is_bool()) {
-            let elements = &other.as_array().unwrap();
-            let mut matches_count = 0;
-            for element in elements.iter() {
-                if !self.value & element.as_bool().unwrap() {
-                    matches_count += 1;
-                    if GroupComparisonOperator::Any.eq(group_op) {
-                        break;
-                    }
-                }
-            }
-
-            let result = match group_op {
-                GroupComparisonOperator::All => matches_count == elements.len(),
-                GroupComparisonOperator::Any => matches_count > 0,
-            };
-
-            return Ok(Box::new(BoolValue::new(result)));
-        }
-        Err("Unexpected type to perform `<` with".to_string())
-    }
-
-    fn lte_op(&self, other: &Box<dyn Value>) -> Result<Box<dyn Value>, String> {
-        if let Some(other_bool) = other.as_any().downcast_ref::<BoolValue>() {
-            return Ok(Box::new(BoolValue::new(self.value <= other_bool.value)));
-        }
-        Err("Unexpected type to perform `<=` with".to_string())
-    }
-
-    fn group_lte_op(
-        &self,
-        other: &Box<dyn Value>,
-        group_op: &GroupComparisonOperator,
-    ) -> Result<Box<dyn Value>, String> {
-        if other.is_array_of(|element_type| element_type.is_bool()) {
-            let elements = &other.as_array().unwrap();
-            let mut matches_count = 0;
-            for element in elements.iter() {
-                if self.value <= element.as_bool().unwrap() {
-                    matches_count += 1;
-                    if GroupComparisonOperator::Any.eq(group_op) {
-                        break;
-                    }
-                }
-            }
-
-            let result = match group_op {
-                GroupComparisonOperator::All => matches_count == elements.len(),
-                GroupComparisonOperator::Any => matches_count > 0,
-            };
-
-            return Ok(Box::new(BoolValue::new(result)));
-        }
-        Err("Unexpected type to perform `<=` with".t
-```
-
-### Core Architecture Module: `crates/gitql-core/src/values/composite.rs`
-```
-use std::any::Any;
-use std::cmp::Ordering;
-use std::collections::HashMap;
-
-use gitql_ast::types::composite::CompositeType;
-use gitql_ast::types::DataType;
-
-use indexmap::IndexMap;
-
-use super::base::Value;
-
-#[derive(Clone)]
-pub struct CompositeValue {
-    pub name: String,
-    pub members: IndexMap<String, Box<dyn Value>>,
-}
-
-impl CompositeValue {
-    pub fn new(name: String, members: IndexMap<String, Box<dyn Value>>) -> Self {
-        CompositeValue { name, members }
-    }
-
-    pub fn empty(name: String) -> Self {
-        CompositeValue {
-            name,
-            members: IndexMap::default(),
-        }
-    }
-
-    pub fn add_member(mut self, name: String, value: Box<dyn Value>) -> Self {
-        self.members.insert(name, value);
-        self
-    }
-}
-
-impl Value for CompositeValue {
-    fn literal(&self) -> String {
-        let mut str = String::new();
-        let last_position = self.members.len() - 1;
-        str += "(";
-        for (pos, member) in self.members.iter().enumerate() {
-            str += &member.1.literal();
-            if pos != last_position {
-                str += ", ";
-            }
-        }
-        str += ")";
-        str
-    }
-
-    fn equals(&self, other: &Box<dyn Value>) -> bool {
-        if let Some(other_composite) = other.as_any().downcast_ref::<CompositeValue>() {
-            return self.name.eq(&other_composite.name)
-                && self.members.eq(&other_composite.members);
-        }
-        false
-    }
-
-    fn compare(&self, _other: &Box<dyn Value>) -> Option<Ordering> {
-        None
-    }
-
-    fn data_type(&self) -> Box<dyn DataType> {
-        let name = self.name.to_string();
-        let mut members: HashMap<String, Box<dyn DataType>> = HashMap::new();
-        for member in self.members.iter() {
-            members.insert(member.0.to_string(), member.1.data_type().clone());
-        }
-        Box::new(CompositeType::new(name, members))
-    }
-
-    fn as_any(&self) -> &dyn Any {
-        self
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1464,52 +1111,12 @@ impl Value for CompositeValue {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #138** (2025-01-12): **Unable to use datetime comparison in WHERE clause**
   *Symptoms*: **Describe the bug** Unable to run a query with a WHERE clause that uses datetime comparison.  **To Reproduce** With the latest version available in winget (0.33.0), running the following query results in an error being thrown: ` gitql -q 'SELECT commit_id, author_name, datetime FROM commits WHERE datetime > "2024-01-01 00:00:00"'`  Error message: ``` [Error]: Operator `>` can't be performed between types `DateTime` and `Text`   --> Location 1:68    | -> | SELECT commit_id, author_name, datetime FROM commits WHERE datetime > "2024-01-01 00:00:00"    |    | -------------------------------------------------------------------^    | ```  **Expected behavior** Query should run correctly.  **Screenshots** ![gitql_datetime_error](https://github.com/user-attachments/assets/80422b29-798a-40a2-b1b2-3529a39d0331)   **GQL (please complete the following information):**  - Version 0.33.0  **Additional context** The version 0.28.0 works. I was unable to install any version between 0.33.0 and 0.28.0 to pinpoint exactly which version introduced this issue. Environment details: OS: Windows 11 (24H2) Shell: Powershell Terminal: Windows Terminal 
-  **Post-Mortem & Fix Analysis**:
-  > Hello @gaurakshay,  Thank you for reporting, it's was a small issue in implicit casting, I fixed it, I will double check other operators and release it soon  Thank you, Amr
-  > Gitql 0.35.0 is released with the fix, a new table and function for diff  https://github.com/AmrDeveloper/GQL/releases/tag/0.35.0  Thank you
 
 - **Issue #117** (2024-09-16): **output of group by**
   *Symptoms*: **Describe the bug** I expected this query to produce 1 row. The ```nushell ❯ ^gitql -q 'select author_name, count(author_name) AS auth_count from commits group by author_name order by count(author_name)' ╭──────────────────┬────────────╮ │ author_name      ┆ auth_count │ ╞══════════════════╪════════════╡ │ Darren Schroeder ┆ 6          │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder ┆ 6          │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder ┆ 6          │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder ┆ 6          │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder ┆ 6          │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder ┆ 6          │ ╰──────────────────┴────────────╯ ``` There are indeed 6 commits, but shouldn't group by only show the aggregate of 1? ```nushell ❯ ^gitql -q 'select author_name from commits' ╭──────────────────╮ │ author_name      │ ╞══════════════════╡ │ Darren Schroeder │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder │ ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤ │ Darren Schroeder │ ╰──────────────────╯ ``` **GQL (please complete the following information):** ❯ ^gitql --version GitQL version 0.27.0 
   **Post-Mortem & Fix Analysis**:
   > Thank you for reporting @fdncred,  This is important to handled
   > It fixed now, you can run the query from issue description and get good result,   Thanks for reporting, i will release it next version
-  > Thanks. I'm trying to integrate into a nushell plugin and was wondering why my code didn't work. Then I tried your cli and found out the results were the same. 🤣 Thanks for working on this. I'll try and test it in the next day or so.
-
-- **Issue #101** (2024-05-19): **`count()` function no longer works on v0.19.0**
-  *Symptoms*: **Describe the bug** Any usage of `count()` results in an error `Function 'count' argument number 0 with type '(some type)' don't match expected type 'Integer'`.  **To Reproduce** Steps to reproduce the behavior: 1. Upgrade to v0.19.0 2. Enter GQL console in any repo 3. Try any `count()`, query, i.e. `select count(commit_id) from commits`  ``` gql > select count(commit_id) from commits [Error]: Function `count` argument number 0 with type `Text` don't match expected type `Integer` => Column 12 to 12,   | 1 | select count(commit_id) from commits   | ------------^   | ```  **Expected behavior** On v0.18.0, this returns the following: ``` gql > select count(commit_id) from commits ╭──────────╮ │ column_2 │ ╞══════════╡ │ 27       │ ╰──────────╯ ```  **Screenshots** N/A (output provided)  **GQL (please complete the following information):**  - v0.19.0 
-  **Post-Mortem & Fix Analysis**:
-  > Hello @SadMachinesP86,  Thank you so much for fast reporting, it fixed now on `0.19.1`  Thank you, Amr
-
-- **Issue #96** (2024-04-12): **SUBSTRING FromUtf8Error**
-  *Symptoms*: **Describe the bug**  Call `SUBSTRING` on CJK chars results in `FromUtf8Error`.   **To Reproduce** Steps to reproduce the behavior:  ```sql SELECT SUBSTRING("这是一个中文句子", 1, 5) AS extract ```  **Expected behavior**  The result should be `这是一个中`.  **GQL (please complete the following information):**  - Version 0.17.0 
-  **Post-Mortem & Fix Analysis**:
-  > Fixed  ![fixed](https://github.com/AmrDeveloper/GQL/assets/23631699/e738c95f-b577-4784-81c9-583d498817f6)  Thank you for reporting, will be on next release 
-
-- **Issue #75** (2024-01-25): **More than two conditions in WHERE results in an error**
-  *Symptoms*: **Describe the bug** More than two conditions in WHERE results in an error.  **To Reproduce** Steps to reproduce the behavior: Execute any statement with more than two conditions in the WHERE section:  ```sql SELECT COUNT(commit_id) FROM commits WHERE datetime >= "2023-01-01 00:00:00" AND email = "myname@mail.com" AND comment like "%merge%" ```  **Expected behavior** The results are returned; all condition are applied.  **Actual behavior** An error: `Unexpected content after the end of 'SELECT' statement`  **Screenshots** ![image](https://github.com/AmrDeveloper/GQL/assets/1544021/742fbbde-5cb3-4ede-ae62-63f13f3373ae)  **GQL (please complete the following information):**  - Version v0.12.0 
-  **Post-Mortem & Fix Analysis**:
-  > Hello @dropsonic,  Thank you for reporting, i solved it now for AND, OR, XOR  Will do more testing and release it in 0.13.0 next friday  Thanks
-  > Fixed and released in `0.13.0`  https://github.com/AmrDeveloper/GQL/releases/tag/0.13.0  Thank you
-
-- **Issue #72** (2024-01-13): **Incorrect expr_type for ArithmeticExpression**
-  *Symptoms*: **Describe the bug**  Incorrect expr_type for ArithmeticExpression  **To Reproduce**  ```rust // https://github.com/AmrDeveloper/GQL/blob/master/crates/gitql-ast/src/expression.rs  let express = ArithmeticExpression {             left: Box::new(NumberExpression {                 value: Value::Integer(1),             }),             operator: ArithmeticOperator::Plus,             right: Box::new(NumberExpression {                 value: Value::Float(1.0),             }),  };   let scope = Enviroment {             globals: Default::default(),             globals_types: Default::default(),             scopes: Default::default(), };  let ret = express.expr_type(&scope); assert_eq!(ret.is_float(), true); // fails ```  **Expected behavior**  ```rust assert_eq!(ret.is_float(), true);  // ret is true ```  **GQL (please complete the following information):**  Version 0.11.0  **Screenshots**  <img width="573" alt="expression.rs" src="https://github.com/AmrDeveloper/GQL/assets/49358172/796d0693-7577-4a1b-ac4b-2f6d914e8815"> 
-  **Post-Mortem & Fix Analysis**:
-  > See: https://github.com/AmrDeveloper/GQL/blob/master/crates/gitql-ast/src/expression.rs  **Incorrect**  ```rust fn expr_type(&self, scope: &Environment) -> DataType {         let lhs = self.left.expr_type(scope);         let rhs = self.left.expr_type(scope);          if lhs.is_int() && rhs.is_int() {             return DataType::Integer;         }          DataType::Float } ```  **Correct**  ```rust let lhs = self.left.expr_type(scope); let rhs = self.right.expr_type(scope); ```
-  > Hello @craftslab,  Thank you for reporting it, i fixed it now  Thank you
-  > Fixed and released on 0.12.0
-
-- **Issue #71** (2024-01-13): **Incorrect equals for DateTime and Time**
-  *Symptoms*: **Describe the bug**  Incorrect equals for DateTime and Time  **To Reproduce**  ```rust // https://github.com/AmrDeveloper/GQL/blob/master/crates/gitql-ast/src/value.rs let value = Value::DateTime(1704890191); let other = Value::DateTime(1704890192); let ret = value.equals(&other); assert_eq!(ret, false); // fails ```  **Expected behavior**  ```rust assert_eq!(ret, false);  // ret is false ```  **GQL (please complete the following information):**  Version 0.11.0  **Screenshots**  <img width="632" alt="screenshots" src="https://github.com/AmrDeveloper/GQL/assets/49358172/b51d9b20-c066-4263-a55c-2fef3c50ad61"> 
-  **Post-Mortem & Fix Analysis**:
-  > See: https://github.com/AmrDeveloper/GQL/blob/master/crates/gitql-ast/src/value.rs  **Incorrect**  ```rust pub fn equals(&self, other: &Self) -> bool {         if self.data_type() != other.data_type() {             return false;         }          match self.data_type() {             DataType::Any => true,             DataType::Text => self.as_text() == other.as_text(),             DataType::Integer => self.as_int() == other.as_int(),             DataType::Float => self.as_float() == other.as_float(),             DataType::Boolean => self.as_bool() == other.as_bool(),             DataType::DateTime => self.as_date() == other.as_date(),             DataType::Date => self.as_date() == other.as_date(),             DataType::Time => self.as_date() == other.as_date(),             DataType::Undefined => true,             DataType::Null => true,             _ => false,         }     } ```  **Expected**  ```rust DataType::DateTime => self.as_date_time() == other.as
-  > Hello @craftslab,  Thank you for reporting, i fixed it now and will release it on `0.12.0` this week  Thank you, Amr Hesham
-  > Fixed and released on 0.12.0
-
-- **Issue #58** (2023-12-17): **First time user:  Application crashes on "SELECT * from commits" on a repo with no commits yet**
-  *Symptoms*: **Describe the bug** Running `select * from commits` on an empty repo with no commits throws exception.  Note: Installed it for the very first time. Installation:  `scoop install gitql`  **To Reproduce** Steps to reproduce the behavior: 1. Create a folder 2. Do `git init` 3. `gitql` 4. `select * from commits`  **Expected behavior** I am not sure what should be the expected behavior since I am using it for the first time. Generally speaking I would expect it to show 0 commits or at least don't crash!  **Screenshots** ![image](https://github.com/AmrDeveloper/GQL/assets/103200610/ecb2e95a-5697-4d5f-b68f-37a68dd597c2)    **GQL (please complete the following information):** GitQL version 0.10.0  **Additional context** OS: Windows ![image](https://github.com/AmrDeveloper/GQL/assets/103200610/db38170b-d751-4e87-9aa7-3c46b57304e8)   
-  **Post-Mortem & Fix Analysis**:
-  > Hello @f0restOfHimalayas,  Thank you for reporting, i have fixed it now and will be released on package managers next week.  Thank you, Amr Hesham
-  > Thank you @AmrDeveloper 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1640,248 +1247,6 @@ Observed empirical fixes and code patches:
      pub tables_fields_types: HashMap<&'static str, Box<dyn DataType>>,
 ```
 
----
-
-### Incident Patch 4: `1a229519` (2025-09-06)
-**Commit Message**: Fix statement kind for QualifyStatement
-
-**File**: `crates/gitql-ast/src/statement.rs` (modified, +1/-1)
-```diff
-@@ -250,7 +250,7 @@ impl Statement for QualifyStatement {
-     }
- 
-     fn kind(&self) -> StatementKind {
--        StatementKind::Where
-+        StatementKind::Qualify
-     }
- }
- 
-```
-
----
-
-### Incident Patch 5: `45f22766` (2025-09-05)
-**Commit Message**: Simplify checking for empty enumber with prefix
-
-**File**: `crates/gitql-parser/src/tokenizer.rs` (modified, +3/-12)
-```diff
-@@ -534,14 +534,11 @@ impl Tokenizer {
- 
-     fn consume_binary_number(&mut self) -> Result<Token, Box<Diagnostic>> {
-         let start_index = self.index;
--        let mut has_digit = false;
--
-         while self.has_next() && self.is_current_char_func(|c| c == '_' || c == '0' || c >= '1') {
-             self.advance();
--            has_digit = true;
-         }
- 
--        if !has_digit {
-+        if start_index == self.index {
-             return Err(
-                 Diagnostic::error("Missing digits after the integer base prefix")
-                     .add_help("Expect at least one binary digits after the prefix 0b")
-@@ -574,15 +571,12 @@ impl Tokenizer {
- 
-     fn consume_octal_number(&mut self) -> Result<Token, Box<Diagnostic>> {
-         let start_index = self.index;
--        let mut has_digit = false;
--
-         while self.has_next() && self.is_current_char_func(|c| c == '_' || ('0'..='8').contains(&c))
-         {
-             self.advance();
--            has_digit = true;
-         }
- 
--        if !has_digit {
-+        if start_index == self.index {
-             return Err(
-                 Diagnostic::error("Missing digits after the integer base prefix")
-                     .add_help("Expect at least one octal digits after the prefix 0o")
-@@ -615,14 +609,11 @@ impl Tokenizer {
- 
-     fn consume_hex_number(&mut self) -> Result<Token, Box<Diagnostic>> {
-         let start_index = self.index;
--        let mut has_digit = false;
--
-         while self.has_next() && self.is_current_char_func(|c| c == '_' || c.is_ascii_hexdigit()) {
-             self.advance();
--            has_digit = true;
-         }
- 
--        if !has_digit {
-+        if start_index == self.index {
-             return Err(
-                 Diagnostic::error("Missing digits after the integer base prefix")
-                     .add_help("Expect at least one hex digits after the prefix 0x")
-```
-
----
-
-### Incident Patch 6: `0983b9a2` (2025-09-05)
-**Commit Message**: Fix consuming tokens when parsing numbers
-
-**File**: `crates/gitql-parser/src/parser.rs` (modified, +8/-2)
-```diff
-@@ -3261,8 +3261,14 @@ fn parse_primary_expression(
-     }
- 
-     match &tokens[*position].kind {
--        TokenKind::Integer(value) => Ok(Box::new(NumberExpr::int(*value))),
--        TokenKind::Float(value) => Ok(Box::new(NumberExpr::float(*value))),
-+        TokenKind::Integer(value) => {
-+            *position += 1;
-+            Ok(Box::new(NumberExpr::int(*value)))
-+        }
-+        TokenKind::Float(value) => {
-+            *position += 1;
-+            Ok(Box::new(NumberExpr::float(*value)))
-+        }
-         TokenKind::Infinity => parse_float_infinity_or_nan_expression(tokens, position),
-         TokenKind::NaN => parse_float_infinity_or_nan_expression(tokens, position),
-         TokenKind::Symbol(_) => parse_symbol_expression(context, env, tokens, position),
-```
-
----
-
-### Incident Patch 7: `1590aee4` (2025-02-19)
-**Commit Message**: Fix parameter name
-
-**File**: `crates/gitql-core/src/environment.rs` (modified, +2/-2)
-```diff
-@@ -89,10 +89,10 @@ impl Environment {
-     pub fn with_window_functions(
-         &mut self,
-         signatures: &HashMap<&'static str, Signature>,
--        aggregation: &HashMap<&'static str, WindowFunction>,
-+        window: &HashMap<&'static str, WindowFunction>,
-     ) {
-         self.window_signatures.extend(signatures.to_owned());
--        self.window_functions.extend(aggregation.to_owned());
-+        self.window_functions.extend(window.to_owned());
-     }
- 
-     /// Register new Modified Types table
-```
-
----
-
-### Incident Patch 8: `a98dcb76` (2025-02-09)
-**Commit Message**: Fix type checker case of variant
-
-**File**: `crates/gitql-ast/src/types/base.rs` (modified, +3/-2)
-```diff
-@@ -20,6 +20,7 @@ use super::range::RangeType;
- use super::text::TextType;
- use super::time::TimeType;
- use super::undefined::UndefType;
-+use super::varargs::VarargsType;
- use super::variant::VariantType;
- 
- dyn_clone::clone_trait_object!(DataType);
-@@ -520,9 +521,9 @@ impl dyn DataType {
-         self.as_any().downcast_ref::<OptionType>().is_some()
-     }
- 
--    /// Return true if this type is [`VariantType`]
-+    /// Return true if this type is [`VarargsType`]
-     pub fn is_varargs(&self) -> bool {
--        self.as_any().downcast_ref::<VariantType>().is_some()
-+        self.as_any().downcast_ref::<VarargsType>().is_some()
-     }
- 
-     /// Return true if this type is [`CompositeType`]
-```
-
-**File**: `crates/gitql-std/src/number/mod.rs` (modified, +3/-7)
-```diff
-@@ -164,14 +164,10 @@ pub fn register_std_number_function_signatures(map: &mut HashMap<&'static str, S
- pub fn numeric_abs(inputs: &[Box<dyn Value>]) -> Box<dyn Value> {
-     let input_type = inputs[0].data_type();
-     if input_type.is_float() {
--        return Box::new(FloatValue {
--            value: inputs[0].as_float().unwrap().abs(),
--        });
-+        let value = inputs[0].as_float().unwrap().abs();
-+        return Box::new(FloatValue::new(value));
-     }
--
--    Box::new(IntValue {
--        value: inputs[0].as_int().unwrap().abs(),
--    })
-+    Box::new(IntValue::new(inputs[0].as_int().unwrap().abs()))
- }
- 
- pub fn numeric_pi(_inputs: &[Box<dyn Value>]) -> Box<dyn Value> {
-```
-
----
-
-### Incident Patch 9: `5f768191` (2025-02-09)
-**Commit Message**: Fix number of required arguments error message
-
-**File**: `crates/gitql-parser/src/type_checker.rs` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@ pub fn check_function_call_arguments(
-     if !has_varargs_parameter && arguments_count > parameters_count {
-         return Err(Diagnostic::error(&format!(
-             "Function `{}` expects `{}` arguments but got `{}`",
--            function_name, arguments_count, parameters_count
-+            function_name, parameters_count, arguments_count
-         ))
-         .with_location(location)
-         .as_boxed());
-```
-
----
-
-### Incident Patch 10: `17381fc3` (2025-01-13)
-**Commit Message**: Fix parseing interval time
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -39,6 +39,7 @@ SELECT 1 + 2
- SELECT LEN("Git Query Language")
- SELECT "One" IN ("One", "Two", "Three")
- SELECT "Git Query Language" LIKE "%Query%"
-+SELECT INTERVAL '1 year 2 mons 3 days 04:05:06.789'
- 
- SET @arr = [1, 2, 3];
- SELECT [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-```
-
-**File**: `crates/gitql-parser/src/parse_interval.rs` (modified, +3/-0)
-```diff
-@@ -133,6 +133,9 @@ fn parse_interval_literal(
-                     }
-                 }
-             }
-+
-+            position += 1;
-+            continue;
-         }
- 
-         return Err(Diagnostic::error("Invalid input syntax for type interval")
-```
-
----
-
-### Incident Patch 11: `cb537e4f` (2025-01-13)
-**Commit Message**: Fix line and column position after consuming single line comment
-
-**File**: `crates/gitql-parser/src/tokenizer.rs` (modified, +2/-0)
-```diff
-@@ -752,6 +752,8 @@ impl Tokenizer {
- 
-         // Advance `\n`
-         self.advance();
-+        self.line_end += 1;
-+        self.column_end = 0;
-     }
- 
-     fn ignore_c_style_comment(&mut self) -> Result<(), Box<Diagnostic>> {
-```
-
 #### Recent Merged Pull Requests:
 - **PR #148** (2026-01-05): Revise setup documentation (@muzimuzhi)
 - **PR #133** (2024-12-01): Add PyQL to README as part of tools built using GitQL SDK (@galenseilis)
@@ -1889,8 +1254,6 @@ Observed empirical fixes and code patches:
 - **PR #130** (2024-11-23): Update setup.md (@galenseilis)
 - **PR #118** (2024-09-11): Add LTO to the Release profile (@zamazan4ik)
 - **PR #108** (closed): doc: install cmake before gitql on windows (@zishon)
-- **PR #92** (2024-03-02): add `weekday` date function #24 (@frectonz)
-- **PR #91** (2024-03-01): add `minute` date function #24 (@frectonz)
 
 ---
 
@@ -1904,3 +1267,70 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. out of index panic when groups length is zero
+
+**RULE**:
+When implementing operations in `crates/gitql-engine/src/engine.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in AmrDeveloper/GQL. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ab3ba7b7`: out of index panic when groups length is zero. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gitql-engine/src/engine.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    if number_of_groups > 0 {
+        let main_group: &mut Group = &mut gitql_object.groups[0];
+
+        // If there are many groups that mean group by is executed before.
+        // must merge each group into only one element
+        if number_of_groups > 1 {
+            for group in gitql_object.groups.iter_mut() {
+                if group.len() > 1 {
+                    group.rows.drain(1..);
+                }
+            gitql_object.flat();
+        }
+        // If it a single group but it select only aggregations function,
+        // should return only first element in the group
+        else if number_of_groups == 1
+            && !select_query.has_group_by_statement
+            && select_query.has_aggregation_function
+            && main_group.len() > 1
+        {
+            main_group.rows.drain(1..);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+    let main_group: &mut Group = &mut gitql_object.groups[0];
+
+    // If there are many groups that mean group by is executed before.
+    // must merge each group into only one element
+    if number_of_groups > 1 {
+        for group in gitql_object.groups.iter_mut() {
+            if group.len() > 1 {
+                group.rows.drain(1..);
+        gitql_object.flat();
+    }
+    // If it a single group but it select only aggregations function,
+    // should return only first element in the group
+    else if number_of_groups == 1
+        && !select_query.has_group_by_statement
+        && select_query.has_aggregation_function
+        && main_group.len() > 1
+    {
+        main_group.rows.drain(1..);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ab3ba7b7` are properly handled with clean fallback behavior.

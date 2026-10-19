@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "9afc1c6ec2b03934df3e7ff61732d6c2f8cf5e2f7b25e5b6641deb4d2095315e",
-    "lastHarvestedAt": "2026-10-17T21:43:45.179Z",
+    "contentHash": "16f62570fdfcfa903545e88357d2a381cff668505c04ff70635f61d5edfffbbf",
+    "lastHarvestedAt": "2026-10-19T01:28:32.379Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -4478,5 +4478,55 @@
     "contentHash": "e4ea73724ff07cb492fb154a5545f37b1d9f37a35acfb11606b45b2332e537b8",
     "lastHarvestedAt": "2026-10-19T01:22:46.465Z",
     "learningId": "learn-github-vlcn-io-cr-sqlite"
+  },
+  "xiaolin-react-image-gallery": {
+    "repository": "xiaolin/react-image-gallery",
+    "platform": "github",
+    "sourceUrl": "https://github.com/xiaolin/react-image-gallery",
+    "sourceVersion": "8b7e64c4",
+    "license": "MIT",
+    "contentHash": "f6393417fe885ecff3063a41bb1564f8bb2ae6ca291b046ec5b08a8d6b6d83b3",
+    "lastHarvestedAt": "2026-10-19T01:28:32.354Z",
+    "learningId": "learn-github-xiaolin-react-image-gallery"
+  },
+  "fujiapple852-trippy": {
+    "repository": "fujiapple852/trippy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/fujiapple852/trippy",
+    "sourceVersion": "15e61c83",
+    "license": "Apache-2.0",
+    "contentHash": "f54a2ce87acb70a815979fc01afceb46616843b4a5ba1b0e290163d1b240aade",
+    "lastHarvestedAt": "2026-10-19T01:28:33.892Z",
+    "learningId": "learn-github-fujiapple852-trippy"
+  },
+  "builderio-builder": {
+    "repository": "BuilderIO/builder",
+    "platform": "github",
+    "sourceUrl": "https://github.com/BuilderIO/builder",
+    "sourceVersion": "3678d1e6",
+    "license": "MIT",
+    "contentHash": "d181a147705fdf37e5c6aa0eaf79db90984e4aa96f1adbacbf05de1d60dbd14c",
+    "lastHarvestedAt": "2026-10-19T01:28:40.843Z",
+    "learningId": "learn-github-builderio-builder"
+  },
+  "gocrane-crane": {
+    "repository": "gocrane/crane",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gocrane/crane",
+    "sourceVersion": "2b0ddae8",
+    "license": "Apache-2.0",
+    "contentHash": "959600e3281e50c6189fb71fd560cffea0314bb2c00d2fdcf706583c707db306",
+    "lastHarvestedAt": "2026-10-19T01:28:42.526Z",
+    "learningId": "learn-github-gocrane-crane"
+  },
+  "amrdeveloper-gql": {
+    "repository": "AmrDeveloper/GQL",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AmrDeveloper/GQL",
+    "sourceVersion": "3a76cfee",
+    "license": "MIT",
+    "contentHash": "f5d091e1acec458db3483176ccc5445e27fae24f8c225e39d8609ff78e193273",
+    "lastHarvestedAt": "2026-10-19T01:28:46.304Z",
+    "learningId": "learn-github-amrdeveloper-gql"
   }
 }
