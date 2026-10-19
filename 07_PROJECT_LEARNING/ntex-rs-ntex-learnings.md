@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
+> **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
+> **Source Version**: `f3aba0ae`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T04:33:59.322Z  
+> **Learning ID**: `learn-github-ntex-rs-ntex`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): ntex-rs/ntex
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:58:37.409Z  
+> **Harvest Timestamp**: 2026-10-19T04:33:59.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2540 stars
+- **Stars / Engagement**: 2542 stars
 
 ---
 
@@ -632,6 +646,299 @@ mod tests {
 
 ```
 
+### Core Architecture Module: `ntex-rt/src/rt/queue.rs`
+```
+//! Run queues of a runtime, shared by the runtime and the tasks.
+use std::borrow::Cow;
+use std::cell::Cell;
+use std::sync::atomic::{AtomicPtr, AtomicU64, Ordering};
+use std::time::{Duration, Instant};
+use std::{fmt, future::Future, io, panic::Location, ptr, sync::Arc};
+
+use crate::handle::{JoinHandle, SpawnLocation};
+use crate::{busy::BusyClock, driver::Notify, metrics::AtomicHistogram};
+
+#[cfg(not(ntex_loom))]
+use std::{
+    sync::atomic::{AtomicBool, AtomicUsize},
+    thread::yield_now,
+};
+
+#[cfg(ntex_loom)]
+use loom::{
+    sync::atomic::{AtomicBool, AtomicUsize},
+    thread::yield_now,
+};
+
+use super::task::{
+    self, LocalQueue, Remote as RemoteTask, RemoteQueue, Runnable as Task, TaskList, task_ref,
+};
+use super::{LOG_TARGET, REPORTED, RuntimeBuilder, TaskStats, ThreadId, current_thread_id};
+
+const MAX_SELF_WAKES: u32 = task::MAX_SELF_WAKES;
+
+/// Remote tasks run per turn, besides `event_interval` overflow tasks.
+const REMOTE_BATCH: usize = 128;
+
+/// The remaining bits count remote publications admitted before shutdown.
+const CLOSED: usize = 1 << (usize::BITS - 1);
+
+#[repr(C)]
+pub(crate) struct RunnableQueue {
+    // read-only, other threads read `id` on every waker operation
+    pub(crate) id: ThreadId,
+    pub(super) handle: Box<dyn Notify>,
+    pub(super) epoch: Instant,
+    self_wake_time: Duration,
+    event_interval: usize,
+    self_wake_limit: u32,
+    // written by other threads
+    _remote: [CacheLine; 0],
+    // set by the first remote `schedule` after `run` cleared it
+    notified: AtomicBool,
+    // closed bit and in-flight remote publications
+    admission: AtomicUsize,
+    pub(super) remote_queue: RemoteQueue,
+    // written by the runtime thread
+    _local: [CacheLine; 0],
+    pub(super) idle: Cell<bool>,
+    // start of the current busy period, valid while not idle
+    pub(super) poll_start: Cell<Instant>,
+    // `poll_start` relative to the epoch, cached in milliseconds
+    self_wake_clock: Cell<Option<u32>>,
+    pub(super) busy: BusyClock,
+    // poll counters, written by the runtime thread only
+    pub(super) polls: AtomicU64,
+    pub(super) polls_again: AtomicU64,
+    pub(super) poll_histogram: AtomicHistogram,
+    // self-wake counter, written by the runtime thread only
+    pub(super) self_wakes: AtomicU64,
+    // spawn location of the running task, null between tasks
+    pub(super) current: AtomicPtr<Location<'static>>,
+    pub(super) local_queue: LocalQueue,
+    // unfinished tasks, dropped with the runtime
+    pub(crate) tasks: TaskList,
+}
+
+/// Aligns the next field to a cache line, 128 bytes covers the adjacent line
+/// prefetcher on x86 and the line size on Apple cores.
+#[derive(Debug)]
+#[repr(align(128))]
+pub(super) struct CacheLine;
+
+unsafe impl Send for RunnableQueue {}
+unsafe impl Sync for RunnableQueue {}
+
+impl RunnableQueue {
+    pub(super) fn new(builder: &RuntimeBuilder, handle: Box<dyn Notify>) -> Self {
+        let now = Instant::now();
+        Self {
+            handle,
+            event_interval: builder.event_interval,
+            id: current_thread_id(),
+            idle: Cell::new(true),
+            poll_start: Cell::new(now),
+            self_wake_clock: Cell::new(None),
+            notified: AtomicBool::new(false),
+            admission: AtomicUsize::new(0),
+            busy: BusyClock::new(),
+            polls: AtomicU64::new(0),
+            polls_again: AtomicU64::new(0),
+            poll_histogram: AtomicHistogram::default(),
+            self_wakes: AtomicU64::new(0),
+            self_wake_limit: builder.self_wake_limit,
+            self_wake_time: builder.self_wake_time,
+            epoch: now,
+            current: AtomicPtr::new(ptr::null_mut()),
+            local_queue: LocalQueue::new(),
+            tasks: TaskList::new(),
+            remote_queue: RemoteQueue::new(),
+            _remote: [],
+            _local: [],
+        }
+    }
+
+    /// Spawns a task on this queue.
+    ///
+    /// # Safety
+    ///
+    /// The caller should ensure the captured lifetime is long enough.
+    /// If `LOCAL` is true, the caller must be on the runtime thread.
+    pub(super) unsafe fn spawn<F: Future, const LOCAL: bool>(
+        self: &Arc<Self>,
+        future: F,
+        location: SpawnLocation,
+    ) -> JoinHandle<F::Output> {
+        JoinHandle::new(unsafe { task::spawn::<_, LOCAL>(future, self, location) })
+    }
+
+    /// Spawns a task on this queue without a join handle.
+    ///
+    /// # Safety
+    ///
+    /// The caller should ensure the captured lifetime is long enough.
+    /// If `LOCAL` is true, the caller must be on the runtime thread.
+    pub(super) unsafe fn spawn_detached<F: Future, const LOCAL: bool>(
+        self: &Arc<Self>,
+        future: F,
+        location: SpawnLocation,
+    ) {
+        unsafe { task::spawn_detached::<_, LOCAL>(future, self, location) }
+    }
+
+    pub(crate) fn schedule_local(&self, runnable: Task) {
+        self.local_queue.push(runnable);
+        if self.idle.get() {
+            // starts a busy period, `awake` does not reset it
+            self.start_busy();
+            // the poll running a task picks up tasks it schedules, a notify
+            // could reenter the runtime and free the running task
+            if self.current.load(Ordering::Relaxed).is_null() {
+                self.notify();
+            }
+        }
+    }
+
+    pub(super) fn notify(&self) {
+        #[cold]
+        fn failed(err: &io::Error) -> ! {
+            log::error!(target: LOG_TARGET, "Failed to notify runtime driver: {err}; aborting");
+            std::process::abort();
+        }
+
+        // Keep responsibility for this wakeup: other producers may already
+        // have coalesced behind it, even if no later submission arrives.
+        while let Err(err) = self.handle.notify() {
+            if err.kind() != io::ErrorKind::Interrupted {
+                failed(&err);
+            }
+        }
+    }
+
+    /// Reserves a publication before a task acquires its remote queue reference.
+    /// `owned` keeps the queue alive if publication releases the caller's reference.
+    pub(crate) fn admit(self: &Arc<Self>, owned: bool) -> Option<RemotePermit<'_>> {
+        let mut state = self.admission.load(Ordering::Acquire);
+        loop {
+            if state & CLOSED != 0 {
+                return None;
+            }
+            if state == CLOSED - 1 {
+                std::process::abort();
+            }
+            match self.admission.compare_exchange_weak(
+                state,
+                state + 1,
+                Ordering::Acquire,
+                Ordering::Acquire,
+            ) {
+                Ok(_) => {
+                    return Some(RemotePermit {
+                        queue: Some(if owned {
+                            Cow::Owned(self.clone())
+                        } else {
+                            Cow::Borrowed(self)
+                        }),
+                    });
+                }
+                Err(v) => state = v,
+            }
+        }
+    }
+
+    pub(super) fn run(&self) -> bool {
+        // cleared before draining the sync queues, a task enqueued after the
+        // drain notifies the driver again
+        if self.notified.load(Ordering::Relaxed) {
+            self.notified.swap(false, Ordering::Acquire);
+        }
+
+        // a running task may schedule into `local_queue`, so it must not be
+        // borrowed across `task.run()`
+        for _ in 0..self.event_interval {
+            if let Some(task) = self.pop_local() {
+                self.run_task(task);
+            } else {
+                break;
+            }
+        }
+
+        let remote_queue = self
+            .remote_queue
+            .drain(self.event_interval, |task| self.run_remote(task));
+
+        // tasks from other threads may schedule local tasks
+        let more_tasks = !self.local_queue.is_empty() || remote_queue;
+        if !more_tasks {
+            self.idle.set(true);
+        }
+        more_tasks
+    }
+
+    fn run_remote(&self, task: RemoteTask) {
+        if let Some(task) = task.into_runnable() {
+            self.run_task(task);
+        }
+    }
+
+    fn run_task(&self, task: Task) {
+        struct Reset<'a>(&'a AtomicPtr<Location<'static>>, *mut Location<'static>);
+
+        impl Drop for Reset<'_> {
+            fn drop(&mut self) {
+                // a task that polls the runtime runs tasks inside its own run
+                self.0.store(self.1, Ordering::Relaxed);
+            }
+        }
+
+        let stats = task_ref(&task);
+        // only the owner writes `current`; no callback can reenter between
+        // saving it and publishing the new location
+        let prev = self.current.load(Ordering::Relaxed);
+        self.current.store(
+            ptr::from_ref(stats.location()).cast_mut(),
+            Ordering::Relaxed,
+        );
+        let wakes = stats.self_wakes();
+        if wakes != 0 {
+            stats.set_self_wakes(0);
+        }
+        let _reset = Reset(&self.current, prev);
+
+        if task.run() {
+            // woken while polled, the task is alive in `local_queue`
+            self.self_wake(stats, wakes);
+        }
+    }
+
+    pub(super) fn self_wake(&self, task: impl TaskStats, wakes: u32) {
+        let total = self.self_wakes.load(Ordering::Relaxed);
+        self.self_wakes
+            .store(total.wrapping_add(1), Ordering::Relaxed);
+
+        let reported = wakes & REPORTED;
+        let count = ((wakes & !REPORTED) + 1).min(MAX_SELF_WAKES);
+        let now = self.self_wake_clock.get().unwrap_or_else(|| {
+            // wraps after 49 days, longer streaks may be measured short
+            #[allow(clippy::cast_possible_truncation)]
+            let now = self
+                .poll_start
+                .get()
+                .saturating_duration_since(self.epoch)
+                .as_millis() as u32;
+            self.self_wake_clock.set(Some(now));
+            now
+        });
+        if count == 1 {
+            task.set_streak_start(now);
+        }
+
+        let wakes = count | reported;
+        if reported == 0
+            && self.self_wake_limit != 0
+ 
+```
+
 ### Core Architecture Module: `ntex-server/src/state.rs`
 ```
 #![allow(clippy::unused_async_trait_impl)]
@@ -722,7 +1029,7 @@ where
 
     #[inline]
     async fn call(&self, req: Req, ctx: Ctx<'_, Self, OtSt>) -> Result<S::Res, S::Error> {
-        ctx.map_state(&self.st).call(&self.s, req).await
+        ctx.map_state(&self.st).call_nowait(&self.s, req).await
     }
 
     #[inline]
@@ -839,24 +1146,21 @@ where
 
     #[inline]
     /// Returns when the pipeline is ready to process requests.
+    ///
+    /// A successful check is consumed by the next call, which then skips
+    /// its own readiness check.
     pub async fn ready(&self, st: &St) -> Result<(), Err> {
         self.api.ready(0, st).await
     }
 
     #[inline]
     /// Waits for readiness, then calls the service with `st`.
+    ///
+    /// The readiness check is skipped if the last pipeline readiness check
+    /// succeeded and no call has started since.
     pub async fn call(&self, req: Req, st: &St) -> Result<Res, Err> {
         let pl = self.binding();
-        self.api.call(pl.idx, req, st, true).await
-    }
-
-    #[inline]
-    /// Calls the service with `st` without checking readiness.
-    ///
-    /// The caller must ensure the pipeline is ready before calling this method.
-    pub async fn call_nowait(&self, req: Req, st: &St) -> Result<Res, Err> {
-        let pl = self.binding();
-        pl.api.call(pl.idx, req, st, false).await
+        self.api.call(pl.idx, req, st).await
     }
 
     #[inline]
@@ -867,6 +1171,9 @@ where
 
     #[inline]
     /// Returns `Ready` when the pipeline is ready to process requests.
+    ///
+    /// A successful check is consumed by the next call, which then skips
+    /// its own readiness check.
     ///
     /// # Panics
     ///
@@ -967,24 +1274,15 @@ where
 {
     #[inline]
     /// Waits for readiness, then calls the service with `st`.
+    ///
+    /// The readiness check is skipped if the last pipeline readiness check
+    /// succeeded and no call has started since.
     pub async fn call(&self, req: Req, st: &St) -> Result<Res, Err> {
         let pl = Binding {
             idx: self.api.reg(),
             api: self.api.as_ref(),
         };
-        pl.api.call(pl.idx, req, st, true).await
-    }
-
-    #[inline]
-    /// Calls the service with `st` without checking readiness.
-    ///
-    /// The caller must ensure the pipeline is ready before calling this method.
-    pub async fn call_nowait(&self, req: Req, st: &St) -> Result<Res, Err> {
-        let pl = Binding {
-            idx: self.api.reg(),
-            api: self.api.as_ref(),
-        };
-        pl.api.call(pl.idx, req, st, false).await
+        pl.api.call(pl.idx, req, st).await
     }
 }
 
@@ -1008,8 +1306,8 @@ impl<St, Req, Res, Err> PipelineInternalApi<Req, Res, Err> for PipelineInternal<
         self.api.ready(idx, &self.st)
     }
 
-    fn call(&self, idx: u32, req: Req, ready: bool) -> BoxFuture<'_, Result<Res, Err>> {
-        self.api.call(idx, req, &self.st, ready)
+    fn call(&self, idx: u32, req: Req) -> BoxFuture<'_, Result<Res, Err>> {
+        self.api.call(idx, req, &self.st)
     }
 
     fn poll_ready(&self, _: &mut Context<'_>) -> Poll<Result<(), Err>> {
@@ -1051,13 +1349,7 @@ trait PipelineStateApi<St, Req, Res, Err> {
     fn reg(&self) -> u32;
     fn unreg(&self, idx: u32);
 
-    fn call<'a>(
-        &'a self,
-        idx: u32,
-        req: Req,
-        st: &'a St,
-        ready: bool,
-    ) -> BoxFuture<'a, Result<Res, Err>>
+    fn call<'a>(&'a self, idx: u32, req: Req, st: &'a St) -> BoxFuture<'a, Result<Res, Err>>
     where
         Req: 'a;
 
@@ -1094,9 +1386,12 @@ where
         Req: 'a,
     {
         Box::pin(async move {
-            Ctx::<'_, S, St>::new(idx, &self.waiters, st)
+            self.waiters.set_ready(false);
+            let result = Ctx::<'_, S, St>::new(idx, &self.waiters, st)
                 .ready(&self.s)
-                .await
+                .await;
+            self.waiters.set_ready(result.is_ok());
+            result
         })
     }
 
@@ -1104,6 +1399,7 @@ where
         Box::pin(async move {
             let pl_state = unsafe { &mut *self.st_runtime.get() };
             *pl_state = RuntimeState::Shutdown;
+            self.waiters.set_ready(false);
 
             Ctx::<'_, S, St>::new(idx, &self.waiters, st)
                 .shutdown(&self.s)
@@ -1111,26 +1407,19 @@ where
         })
     }
 
-    fn call<'a>(
-        &'a self,
-        idx: u32,
-        req: Req,
-        st: &'a St,
-        ready: bool,
-    ) -> BoxFuture<'a, Result<S::Res, S::Error>>
+    fn call<'a>(&'a self, idx: u32, req: Req, st: &'a St) -> BoxFuture<'a, Result<S::Res, S::Error>>
     where
         Req: 'a,
     {
         Box::pin(async move {
-            if ready {
-                Ctx::<'_, S, St>::new(idx, &self.waiters, st)
-                    .call(&self.s, req)
-                    .await
-            } else {
-                Ctx::<'_, S, St>::new(idx, &self.waiters, st)
-                    .call_nowait(&self.s, req)
-                    .await
+            let ctx = Ctx::<'_, S, St>::new(idx, &self.waiters, st);
+            if !self.waiters.take_ready() {
+                let result = ctx.ready(&self.s).await;
+                // the call consumes any readiness reported while it was waiting
+                self.waiters.set_ready(false);
+                result?;
             }
+            ctx.call_nowait(&self.s, req).await
         })
     }
 
@@ -1154,7 +1443,12 @@ where
                 *pl_state = RuntimeState::Readiness(fut);
                 self.poll_ready(cx, st)
             }
-            RuntimeSt
+            RuntimeState::Readiness(fut) => fut.poll(cx, st),
+            RuntimeState::Shutdown => panic!("Pipeline is shutting down"),
+        }
+    }
+
+    fn is_shutdown(&self) -> bool 
 ```
 
 ### Core Architecture Module: `ntex-service/src/state.rs`
@@ -1262,6 +1556,96 @@ where
         }
     })
     .await
+}
+
+#[cfg(test)]
+pub(crate) mod tests {
+    use std::{cell::Cell, cell::RefCell, future::poll_fn, rc::Rc, task::Poll, task::Waker};
+
+    use ntex::channel::oneshot::{self, Receiver, Sender};
+    use ntex::time::{Millis, sleep};
+
+    use crate::{Ctx, Pipeline, Service};
+
+    pub(crate) type Req = (Receiver<()>, Receiver<()>);
+
+    #[derive(Default)]
+    pub(crate) struct State {
+        pub(crate) active: Cell<usize>,
+        pub(crate) max: Cell<usize>,
+        pub(crate) checks: Cell<usize>,
+        waker: RefCell<Option<Waker>>,
+    }
+
+    /// Accepts one call at a time
+    pub(crate) struct Single(pub(crate) Rc<State>);
+
+    impl Service<(), Receiver<()>> for Single {
+        type Res = ();
+        type Error = ();
+
+        async fn ready(&self, _: Ctx<'_, Self>) -> Result<(), ()> {
+            self.0.checks.set(self.0.checks.get() + 1);
+            poll_fn(|cx| {
+                if self.0.active.get() >= 1 {
+                    *self.0.waker.borrow_mut() = Some(cx.waker().clone());
+                    Poll::Pending
+                } else {
+                    Poll::Ready(Ok(()))
+                }
+            })
+            .await
+        }
+
+        async fn call(&self, rx: Receiver<()>, _: Ctx<'_, Self>) -> Result<(), ()> {
+            let st = &self.0;
+            st.active.set(st.active.get() + 1);
+            st.max.set(st.max.get().max(st.active.get()));
+            let _ = rx.await;
+            st.active.set(st.active.get() - 1);
+            if let Some(w) = st.waker.borrow_mut().take() {
+                w.wake();
+            }
+            Ok(())
+        }
+    }
+
+    /// Starts a call; the first sender releases the first step,
+    /// the second sender releases `Single`
+    pub(crate) fn start(pl: &Pipeline<Req, (), ()>) -> (Sender<()>, Sender<()>) {
+        let (tx1, rx1) = oneshot::channel();
+        let (tx2, rx2) = oneshot::channel();
+        let pl = pl.bind();
+        ntex::rt::spawn(async move {
+            let _ = pl.call((rx1, rx2)).await;
+        });
+        (tx1, tx2)
+    }
+
+    pub(crate) async fn tick() {
+        sleep(Millis(20)).await;
+    }
+
+    /// Readiness reported for one call must not be used after another call
+    /// entered the service
+    pub(crate) async fn concurrent_entry(pl: &Pipeline<Req, (), ()>, st: &State) {
+        let (x1, _x2) = start(pl);
+        tick().await; // X: ready, waits in the first step
+        let (z1, z2) = start(pl);
+        let _ = z1.send(());
+        tick().await; // Z enters the service
+        assert_eq!(st.active.get(), 1);
+        let (y1, _y2) = start(pl);
+        tick().await; // Y: readiness check waits for the service
+        let _ = x1.send(());
+        tick().await; // X: waits for the service readiness
+        let _ = z2.send(());
+        tick().await; // Z leaves: Y's check completes, then X enters
+        assert_eq!(st.active.get(), 1);
+        let _ = y1.send(());
+        tick().await; // Y leaves the first step
+        assert_eq!(st.max.get(), 1, "service capacity exceeded");
+    }
 }
 
 ```
@@ -1733,480 +2117,6 @@ impl<E> Inner<E> {
             // wak
 ```
 
-### Core Architecture Module: `ntex-util/src/channel/cell.rs`
-```
-use std::{cell::UnsafeCell, fmt, rc::Rc};
-
-pub(super) struct Cell<T> {
-    inner: Rc<UnsafeCell<T>>,
-}
-
-impl<T> Clone for Cell<T> {
-    fn clone(&self) -> Self {
-        Self {
-            inner: self.inner.clone(),
-        }
-    }
-}
-
-impl<T: fmt::Debug> fmt::Debug for Cell<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.inner.fmt(f)
-    }
-}
-
-impl<T> Cell<T> {
-    pub(super) fn new(inner: T) -> Self {
-        Self {
-            inner: Rc::new(UnsafeCell::new(inner)),
-        }
-    }
-
-    pub(super) fn strong_count(&self) -> usize {
-        Rc::strong_count(&self.inner)
-    }
-
-    pub(super) fn get_ref(&self) -> &T {
-        unsafe { &*self.inner.as_ref().get() }
-    }
-
-    #[allow(clippy::mut_from_ref)]
-    pub(super) fn get_mut(&self) -> &mut T {
-        unsafe { &mut *self.inner.as_ref().get() }
-    }
-}
-
-```
-
-### Core Architecture Module: `ntex-util/src/channel/condition.rs`
-```
-use std::{cell, fmt, future::Future, future::poll_fn, pin::Pin, task::Context, task::Poll};
-
-use slab::Slab;
-
-use super::cell::Cell;
-use crate::task::LocalWaker;
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-/// Result produced by a [`Condition`] waiter.
-pub enum ConditionResult<T> {
-    /// The condition delivered a value.
-    Value(T),
-    /// The condition has been locked and will not deliver more values.
-    Locked,
-    /// The last handle to the condition was dropped.
-    Dropped,
-}
-
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-enum State {
-    Normal,
-    Locked,
-    Dropped,
-}
-
-/// A condition that can wake several waiting tasks at once.
-///
-/// Notifications are not queued. A waiter must have been polled and registered
-/// its waker before [`notify`](Self::notify) is called, otherwise it misses that
-/// value. Use [`notify_and_lock`](Self::notify_and_lock) when no later
-/// notifications should be accepted.
-pub struct Condition<T = ()> {
-    inner: Cell<Inner<T>>,
-}
-
-/// A task waiting for a [`Condition`] notification.
-pub struct Waiter<T = ()> {
-    token: usize,
-    inner: Cell<Inner<T>>,
-}
-
-struct Inner<T> {
-    data: Slab<Option<Item<T>>>,
-    count: usize,
-    state: State,
-}
-
-struct Item<T> {
-    val: cell::Cell<ConditionResult<T>>,
-    waker: LocalWaker,
-}
-
-impl Default for Condition<()> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl<T> Clone for Condition<T> {
-    fn clone(&self) -> Self {
-        let inner = self.inner.clone();
-        inner.get_mut().count += 1;
-        Self { inner }
-    }
-}
-
-impl<T> fmt::Debug for Condition<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Condition")
-            .field("state", &self.inner.get_ref().state)
-            .finish()
-    }
-}
-
-impl<T> Condition<T> {
-    /// Creates an unlocked condition with no waiters.
-    pub fn new() -> Condition<T> {
-        Condition {
-            inner: Cell::new(Inner {
-                data: Slab::new(),
-                count: 1,
-                state: State::Normal,
-            }),
-        }
-    }
-}
-
-impl<T: Clone> Condition<T> {
-    /// Creates a new waiter.
-    ///
-    /// The waiter starts listening when it is first polled, not when this
-    /// method returns.
-    pub fn wait(&self) -> Waiter<T> {
-        let token = self.inner.get_mut().data.insert(None);
-        Waiter {
-            token,
-            inner: self.inner.clone(),
-        }
-    }
-
-    /// Sends `val` to every waiter that is currently being polled.
-    ///
-    /// The value is cloned for each registered waiter. Unpolled waiters do not
-    /// receive it, and the value is not retained for future waiters.
-    pub fn notify(&self, val: T) {
-        let inner = self.inner.get_ref();
-        if inner.state != State::Normal {
-            return;
-        }
-        for (_, item) in &inner.data {
-            if let Some(item) = item
-                && item.waker.wake_checked()
-            {
-                item.val.set(ConditionResult::Value(val.clone()));
-            }
-        }
-    }
-
-    /// Notifies the current waiters and permanently locks the condition.
-    ///
-    /// Registered waiters receive `val`. Later readiness checks return
-    /// [`ConditionResult::Locked`], and later calls to [`notify`](Self::notify)
-    /// do not deliver another value.
-    pub fn notify_and_lock(&self, val: T) {
-        self.notify(val);
-        self.inner.get_mut().state = State::Locked;
-    }
-}
-
-impl<T: Default> Condition<T> {
-    /// Sends `T::default()` to every waiter that is currently being polled.
-    pub fn notify_default(&self) {
-        let inner = self.inner.get_ref();
-        if inner.state != State::Normal {
-            return;
-        }
-        for (_, item) in &inner.data {
-            if let Some(item) = item
-                && item.waker.wake_checked()
-            {
-                item.val.set(ConditionResult::Value(T::default()));
-            }
-        }
-    }
-}
-
-impl<T> Drop for Condition<T> {
-    fn drop(&mut self) {
-        let inner = self.inner.get_mut();
-        inner.count -= 1;
-        if inner.count == 0 {
-            inner.state = State::Dropped;
-            for (_, item) in &inner.data {
-                if let Some(item) = item
-                    && item.waker.wake_checked()
-                {
-                    item.val.set(ConditionResult::Dropped);
-                }
-            }
-        }
-    }
-}
-
-impl<T> Waiter<T> {
-    /// Waits for the next condition result.
-    pub async fn ready(&self) -> ConditionResult<T> {
-        poll_fn(|cx| self.poll_ready(cx)).await
-    }
-
-    /// Polls for the next condition result.
-    ///
-    /// The first poll registers this waiter. While the condition remains
-    /// unlocked, later notifications wake the registered task.
-    pub fn poll_ready(&self, cx: &mut Context<'_>) -> Poll<ConditionResult<T>> {
-        let parent = self.inner.get_mut();
-        let inner = unsafe { parent.data.get_unchecked_mut(self.token) };
-
-        if inner.is_none() {
-            if parent.state == State::Normal {
-                let waker = LocalWaker::default();
-                waker.register(cx.waker());
-                *inner = Some(Item {
-                    waker,
-                    val: cell::Cell::new(ConditionResult::Locked),
-                });
-                return Poll::Pending;
-            }
-        } else {
-            let item = inner.as_mut().unwrap();
-            if !item.waker.register(cx.waker()) {
-                return Poll::Ready(item.val.replace(ConditionResult::Locked));
-            }
-        }
-
-        match parent.state {
-            State::Normal => Poll::Pending,
-            State::Locked => Poll::Ready(ConditionResult::Locked),
-            State::Dropped => Poll::Ready(ConditionResult::Dropped),
-        }
-    }
-}
-
-impl<T> Clone for Waiter<T> {
-    fn clone(&self) -> Self {
-        let token = self.inner.get_mut().data.insert(None);
-        Waiter {
-            token,
-            inner: self.inner.clone(),
-        }
-    }
-}
-
-impl<T> Future for Waiter<T> {
-    type Output = ConditionResult<T>;
-
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        self.get_mut().poll_ready(cx)
-    }
-}
-
-impl<T> fmt::Debug for Waiter<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Waiter").finish()
-    }
-}
-
-impl<T> Drop for Waiter<T> {
-    fn drop(&mut self) {
-        self.inner.get_mut().data.remove(self.token);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::future::lazy;
-
-    #[ntex::test]
-    #[allow(clippy::unit_cmp)]
-    async fn test_condition() {
-        let cond = Condition::<()>::new();
-        let mut waiter = cond.wait();
-        assert_eq!(
-            lazy(|cx| Pin::new(&mut waiter).poll(cx)).await,
-            Poll::Pending
-        );
-        cond.notify_default();
-        assert!(format!("{cond:?}").contains("Condition"));
-        assert!(format!("{waiter:?}").contains("Waiter"));
-        assert_eq!(waiter.await, ConditionResult::Value(()));
-
-        let mut waiter = cond.wait();
-        assert_eq!(
-            lazy(|cx| Pin::new(&mut waiter).poll(cx)).await,
-            Poll::Pending
-        );
-        let mut waiter2 = waiter.clone();
-        assert_eq!(
-            lazy(|cx| Pin::new(&mut waiter2).poll(cx)).await,
-            Poll::Pending
-        );
-
-        drop(cond);
-        assert_eq!(waiter.await, ConditionResult::Dropped);
-        assert_eq!(waiter2.await, ConditionResult::Dropped);
-    }
-
-    #[ntex::test]
-    async fn test_condition_poll() {
-        let cond = Condition::default().clone();
-        let waiter = cond.wait();
-        assert_eq!(lazy(|cx| waiter.poll_ready(cx)).await, Poll::Pending);
-        cond.notify_default();
-        waiter.ready().await;
-
-        let waiter2 = waiter.clone();
-        assert_eq!(lazy(|cx| waiter.poll_ready(cx)).await, Poll::Pending);
-        assert_eq!(lazy(|cx| waiter.poll_ready(cx)).await, Poll::Pending);
-        assert_eq!(lazy(|cx| waiter2.poll_ready(cx)).await, Poll::Pending);
-        assert_eq!(lazy(|cx| waiter2.poll_ready(cx)).await, Poll::Pending);
-
-        drop(cond);
-        assert_eq!(
-            lazy(|cx| waiter.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-        assert_eq!(
-            lazy(|cx| waiter.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-        assert_eq!(
-            lazy(|cx| waiter2.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-        assert_eq!(
-            lazy(|cx| waiter2.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-    }
-
-    #[ntex::test]
-    async fn test_condition_with() {
-        let cond = Condition::<String>::new();
-        let waiter = cond.wait();
-        assert_eq!(lazy(|cx| waiter.poll_ready(cx)).await, Poll::Pending);
-        cond.notify("TEST".into());
-        assert_eq!(
-            waiter.ready().await,
-            ConditionResult::Value("TEST".to_string())
-        );
-
-        let waiter2 = waiter.clone();
-        assert_eq!(lazy(|cx| waiter.poll_ready(cx)).await, Poll::Pending);
-        assert_eq!(lazy(|cx| waiter.poll_ready(cx)).await, Poll::Pending);
-        assert_eq!(lazy(|cx| waiter2.poll_ready(cx)).await, Poll::Pending);
-        assert_eq!(lazy(|cx| waiter2.poll_ready(cx)).await, Poll::Pending);
-
-        drop(cond);
-        assert_eq!(
-            lazy(|cx| waiter.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-        assert_eq!(
-            lazy(|cx| waiter.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-        assert_eq!(
-            lazy(|cx| waiter2.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-        assert_eq!(
-            lazy(|cx| waiter2.poll_ready(cx)).await,
-            Poll::Ready(ConditionResult::Dropped)
-        );
-    }
-
-    #[ntex::test]
-    async fn waiter_future_does_not_require
-```
-
-### Core Architecture Module: `ntex-util/src/channel/inplace.rs`
-```
-//! A futures-aware bounded(1) channel.
-use std::{cell::Cell, fmt, future::poll_fn, task::Context, task::Poll};
-
-use crate::task::LocalWaker;
-
-/// Creates a new futures-aware bounded(1) channel.
-pub fn channel<T>() -> Inplace<T> {
-    Inplace {
-        value: Cell::new(None),
-        rx_task: LocalWaker::new(),
-    }
-}
-
-/// A futures-aware bounded(1) channel.
-pub struct Inplace<T> {
-    value: Cell<Option<T>>,
-    rx_task: LocalWaker,
-}
-
-// The channels do not ever project Pin to the inner T
-impl<T> Unpin for Inplace<T> {}
-
-impl<T> fmt::Debug for Inplace<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Inplace<T>")
-    }
-}
-
-impl<T> Inplace<T> {
-    /// Set a successful result.
-    ///
-    /// If the value is successfully enqueued to be received, then `Ok(())` is
-    /// returned. If the previous value has not been consumed yet, then `Err` is
-    /// returned with the value provided.
-    pub fn send(&self, val: T) -> Result<(), T> {
-        if let Some(v) = self.value.take() {
-            self.value.set(Some(v));
-            Err(val)
-        } else {
-            self.value.set(Some(val));
-            self.rx_task.wake();
-            Ok(())
-        }
-    }
-
-    /// Waits until a value has been sent and takes it.
-    pub async fn recv(&self) -> T {
-        poll_fn(|cx| self.poll_recv(cx)).await
-    }
-
-    /// Polls for a sent value and takes it.
-    pub fn poll_recv(&self, cx: &mut Context<'_>) -> Poll<T> {
-        // If we've got a value, then skip the logic below as we're done.
-        if let Some(val) = self.value.take() {
-            return Poll::Ready(val);
-        }
-
-        // Check if sender is dropped and return error if it is.
-        self.rx_task.register(cx.waker());
-        Poll::Pending
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::future::lazy;
-
-    #[ntex::test]
-    async fn test_inplace() {
-        let ch = channel();
-        assert_eq!(lazy(|cx| ch.poll_recv(cx)).await, Poll::Pending);
-
-        assert!(ch.send(1).is_ok());
-        assert_eq!(ch.send(2), Err(2));
-        assert_eq!(lazy(|cx| ch.poll_recv(cx)).await, Poll::Ready(1));
-
-        assert!(ch.send(1).is_ok());
-        assert_eq!(ch.recv().await, 1);
-        assert!(format!("{ch:?}").contains("Inplace"));
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2234,1759 +2144,784 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59c95399` (2026-10-05)
-**Commit Message**: Keep memory of up to 64 completed call futures
+### Incident Patch 1: `be59d0e7` (2026-10-18)
+**Commit Message**: Finish runtime shutdown even if task cleanup panics, closing remote admission and cancelling remaining tasks before resuming the first panic. Log and suppress secondary cleanup panics, preserving any already-unwinding panic
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `ntex-rt/CHANGES.md` (modified, +4/-0)
 ```diff
-@@ -63,7 +63,7 @@ ntex-net = "4.2.0"
- ntex-router = "2.1.0"
- ntex-rt = "4.1.0"
- ntex-server = "4.2.0"
--ntex-service = "5.1.0"
-+ntex-service = "5.2.0"
- ntex-tls = "4.2.0"
- ntex-util = "4.2.1"
- urly = "1.0.1"
-```
-
-**File**: `ntex-service/CHANGES.md` (modified, +3/-1)
-```diff
-@@ -1,9 +1,11 @@
- # Changes
+@@ -17,6 +17,10 @@
+   errors instead of silently leaving queued tasks stranded. Explicit
+   `Handle::notify()` calls continue to return errors to the caller
  
--## [Unreleased]
-+## [5.2.0] - 2026-10-05
- 
- * Reuse pipeline call future memory instead of allocating it for every call
- 
-+* Keep memory of up to 64 completed call futures, concurrent pipeline calls reuse it as well
++* Finish runtime shutdown even if task cleanup panics, closing remote admission
++  and cancelling remaining tasks before resuming the first panic. Log and
++  suppress secondary cleanup panics, preserving any already-unwinding panic
 +
- ## [5.1.0] - 2026-09-30
- 
- * Fix use-after-free when a pipeline is dropped with pending readiness or shutdown future
-```
-
-**File**: `ntex-service/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-service"
--version = "5.1.0"
-+version = "5.2.0"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "ntex service"
- keywords = ["network", "framework", "async", "futures"]
-```
-
-**File**: `ntex-service/src/pl_inner.rs` (modified, +132/-23)
-```diff
-@@ -321,49 +321,104 @@ impl<R> Future for CallFuture<'_, R> {
-     }
- }
- 
--/// Keeps memory of the last completed call future.
--#[derive(Default)]
--pub(crate) struct CallCache(cell::Cell<Option<(NonNull<u8>, Layout)>>);
-+/// Max number of call future blocks kept by a [`CallCache`].
-+const CALL_CACHE_MAX_BLOCKS: usize = 64;
-+
-+/// Max total size of call future blocks kept by a [`CallCache`].
-+const CALL_CACHE_MAX_BYTES: usize = 256 * 1024;
-+
-+/// Keeps memory of completed call futures.
-+///
-+/// Free blocks form a LIFO list, each block stores a pointer to the next one.
-+/// All blocks share the same layout.
-+pub(crate) struct CallCache {
-+    head: cell::Cell<Option<NonNull<u8>>>,
-+    layout: cell::Cell<Layout>,
-+    len: cell::Cell<usize>,
-+}
-+
-+impl Default for CallCache {
-+    fn default() -> Self {
-+        Self {
-+            head: cell::Cell::new(None),
-+            layout: cell::Cell::new(Layout::new::<()>()),
-+            len: cell::Cell::new(0),
-+        }
-+    }
-+}
- 
- impl CallCache {
-     fn alloc(&self, layout: Layout) -> NonNull<u8> {
--        match self.0.take() {
--            Some((ptr, l)) if l == layout => ptr,
--            cached => {
--                if let Some((ptr, l)) = cached {
--                    // SAFETY: `ptr` was allocated with layout `l`
--                    unsafe { dealloc(ptr.as_ptr(), l) };
--                }
--                // SAFETY: `layout` has non-zero size
--                NonNull::new(unsafe { alloc(layout) }).unwrap_or_else(|| handle_alloc_error(layout))
--            }
-+        if layout == self.layout.get()
-+            && let Some(ptr) = self.head.get()
-+        {
-+            // SAFETY: cached blocks start with a pointer to the next free block
-+            let next = unsafe { ptr.cast::<Option<NonNull<u8>>>().as_ptr().read_unaligned() };
-+            self.head.set(next);
-+            self.len.set(self.len.get() - 1);
-+            ptr
-+        } else {
-+            // SAFETY: `layout` has non-zero size
-+            NonNull::new(unsafe { alloc(layout) }).unwrap_or_else(|| handle_alloc_error(layout))
-         }
-     }
- 
-     /// # Safety
-     ///
-     /// `ptr` must be allocated with `layout` by the global allocator and must not be used afterwards
-     unsafe fn release(&self, ptr: NonNull<u8>, layout: Layout) {
--        if let Some((ptr, l)) = self.0.replace(Some((ptr, layout))) {
--            // SAFETY: `ptr` was allocated with layout `l`
--            unsafe { dealloc(ptr.as_ptr(), l) };
-+        if layout != self.layout.get() {
-+            self.clear();
-+            self.layout.set(layout);
-+        }
-+
-+        let len = self.len.get();
-+        if layout.size() >= size_of::<Option<NonNull<u8>>>()
-+            && len < CALL_CACHE_MAX_BLOCKS
-+            && (len + 1) * layout.size() <= CALL_CACHE_MAX_BYTES
-+        {
-+            // SAFETY: the block is not used anymore and is large enough for a pointer
-+            unsafe {
-+                ptr.cast::<Option<NonNull<u8>>>()
-+                    .as_ptr()
-+                    .write_unaligned(self.head.get());
-+            }
-+            self.head.set(Some(ptr));
-+            self.len.set(len + 1);
-+        } else {
-+            // SAFETY: `ptr` was allocated with `layout`
-+            unsafe { dealloc(ptr.as_ptr(), layout) };
-         }
-     }
- 
-+    fn clear(&self) {
-+        let layout = self.layout.get();
-+        while let Some(ptr) = self.head.get() {
-+            // SAFETY: cached blocks start with a pointer to the next free block
-+            // and were allocated with `layout`
-+            unsafe {
-+                self.head
-+                    .set(ptr.cast::<Option<NonNull<u8>>>().as_ptr().read_unaligned());
-+                dealloc(ptr.as_ptr(), layout);
-+            }
-+        }
-+        self.len.set(0);
-+    }
-+
-     #[cfg(test)]
-     fn cached(&self) -> Option<NonNull<u8>> {
--        let item = self.0.take();
--        self.0.set(item);
--        item.map(|(ptr, _)| ptr)
-+        self.head.get()
-+    }
-+
-+    #[cfg(test)]
-+    fn len(&self) -> usize {
-+        self.len.get()
-     }
- }
- 
- impl Drop for CallCache {
-     fn drop(&mut self) {
--        if let Some((ptr, l)) = self.0.take() {
--            // SAFETY: `ptr` was allocated with layout `l`
--            unsafe { dealloc(ptr.as_ptr(), l) };
--        }
-+        self.clear();
-     }
- }
- 
-@@ -481,9 +536,63 @@ mod tests {
-         assert_eq!(pl.calls.cached(), Some(b1));
-         drop(fut2);
-         assert_eq!(pl.calls.cached(), Some(b2));
-+        assert_eq!(pl.calls.len(), 2);
- 
-         let fut = pl.call(0, Rc::new(4), false);
-         assert_eq!(block(&fut), b2);
-+        let fut2 = pl.call(0, Rc::new(5), false);
-+        assert_eq!(block(&fut2), b1);
-+        assert_eq!(pl.calls.len(), 0);
-+    }
-+
-+    #[test]
-+    fn miri_call_future_reuses_concurrent_memory() {
-+        let mut cx = Context::from_waker(Waker::noop());
-+        let pl = echo();
-+
-+        let futs: Vec<_> = (0..4).map(|i| pl.call(0, Rc::new(i), false)).collect();
-+       
-```
-
-**File**: `urly/CHANGES.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # Changes
- 
--## [1.0.1] - Unreleased
-+## [1.0.1] - 2026-10-05
- 
- * Add `const fn Url::new()`, same as `Url::default()`
+ * Skip the thread-local owner lookup when spawning through `Runtime`,
+   while `Handle` spawning still selects the local or remote queue dynamically
  
 ```
 
----
-
-### Incident Patch 2: `ccb84bd4` (2026-10-04)
-**Commit Message**: Build absolute-form and CONNECT request urls without an intermediate String
-
-**File**: `ntex/CHANGES.md` (modified, +5/-0)
+**File**: `ntex-rt/src/rt/mod.rs` (modified, +50/-6)
 ```diff
-@@ -23,6 +23,11 @@
- * http/2: Response headers are sent from the pooled response head, the header map is
-   not reallocated per response
- 
-+* http/2: Build absolute-form and CONNECT request urls without an intermediate `String`
-+
-+* Pooled request heads and web requests release the request uri and headers, so they
-+  do not keep the connection read buffer alive
-+
- * http/1: Request heads are not decoded during write back-pressure, request payload is
-   still read
- 
-```
-
-**File**: `ntex/src/http/h2/service.rs` (modified, +65/-10)
-```diff
-@@ -14,7 +14,7 @@ use crate::http::{DateService, Method, Request, Response, StatusCode, Version};
- use crate::io::{Filter, Io, IoBoxed, IoRef, types};
- use crate::service::pipeline::{Pipeline, PipelineBinding, PipelineFactory};
- use crate::service::{Ctx, IntoServiceFactory, RequestState, Service, ServiceFactory};
--use crate::util::{Bytes, HashMap};
-+use crate::util::{Bytes, BytesMut, HashMap};
- 
- use super::{DefaultControlService, payload::Payload, payload::PayloadSender};
- 
-@@ -597,19 +597,12 @@ fn request_uri(pseudo: &h2::frame::PseudoHeaders) -> Option<(Method, Url)> {
-             if authority.host().is_empty() || authority.userinfo().is_some() {
-                 return None;
-             }
--            Url::try_from(format!("//{authority}")).ok()?
-+            Url::try_from(concat(&["//", authority.as_str()])).ok()?
-         }
-         (_, Some("*")) if method == Method::OPTIONS => Url::from_static("*"),
-         (Some(authority), Some(path)) if path.starts_with('/') => {
-             let scheme = Scheme::new(pseudo.scheme.as_ref()?.as_str()).ok()?;
--            let mut uri = String::with_capacity(
--                scheme.as_str().len() + 3 + authority.as_str().len() + path.len(),
--            );
--            uri.push_str(scheme.as_str());
--            uri.push_str("://");
--            uri.push_str(authority.as_str());
--            uri.push_str(path);
--            Url::try_from(uri).ok()?
-+            Url::try_from(concat(&[scheme.as_str(), "://", authority.as_str(), path])).ok()?
-         }
-         (None, Some(path)) if path.starts_with('/') => {
-             let uri = if path.starts_with("//") {
-@@ -629,6 +622,29 @@ fn request_uri(pseudo: &h2::frame::PseudoHeaders) -> Option<(Method, Url)> {
-     Some((method, uri))
- }
- 
-+/// Concatenates `pieces` into a buffer that `Url` reuses if the result is
-+/// normalized, short strings are stored inline without allocation.
-+fn concat(pieces: &[&str]) -> Bytes {
-+    const INLINE: usize = 23;
-+
-+    let len = pieces.iter().map(|p| p.len()).sum::<usize>();
-+    if len <= INLINE {
-+        let mut buf = [0u8; INLINE];
-+        let mut pos = 0;
-+        for p in pieces {
-+            buf[pos..pos + p.len()].copy_from_slice(p.as_bytes());
-+            pos += p.len();
-+        }
-+        Bytes::copy_from_slice(&buf[..len])
-+    } else {
-+        let mut buf = BytesMut::with_capacity(len);
-+        for p in pieces {
-+            buf.extend_from_slice(p.as_bytes());
-+        }
-+        buf.freeze()
-+    }
-+}
-+
- /// Checks the case-insensitive `100-continue` expectation, see RFC 9110 section 10.1.1
- fn expect_continue(headers: &HeaderMap) -> bool {
-     headers.get_all(header::EXPECT).any(|value| {
-@@ -692,6 +708,14 @@ mod tests {
-         pseudo.authority = Some("bad authority".into());
-         assert!(request_uri(&pseudo).is_none());
- 
-+        // inline and heap buffers
-+        for authority in ["a.io:1", "very-long-host-name.example.com:8443"] {
-+            pseudo.authority = Some(authority.into());
-+            let (_, uri) = request_uri(&pseudo).unwrap();
-+            assert_eq!(uri.authority().unwrap(), authority);
-+            assert_eq!(uri.to_string(), format!("//{authority}"));
-+        }
-+
-         // absolute form requires the scheme
-         pseudo.method = Some(Method::GET);
-         pseudo.authority = Some("example.com".into());
-@@ -701,6 +725,27 @@ mod tests {
-         let (_, uri) = request_uri(&pseudo).unwrap();
-         assert_eq!(uri.to_string(), "https://example.com/path");
- 
-+        // 23 bytes are stored inline, 24 bytes on the heap
-+        for path in ["/123", "/1234", "/api/v1/users/1?fields=name,email"] {
-+            pseudo.path = Some(path.into());
-+            let (_, uri) = request_uri(&pseudo).unwrap();
-+            assert_eq!(uri.to_string(), format!("https://example.com{path}"));
-+        }
-+        // the buffer is normalized if needed
-+        pseudo.scheme = Some("HTTPS".into());
-+        pseudo.authority = Some("Example.COM".into());
-+        pseudo.path = Some("/a/./b/../c".into());
-+        let (_, uri) = request_uri(&pseudo).unwrap();
-+        assert_eq!(uri.to_string(), "https://example.com/a/c");
-+        pseudo.path = Some("/a/./b/../c/long-enough-for-the-heap".into());
-+        let (_, uri) = request_uri(&pseudo).unwrap();
-+        assert_eq!(
-+            uri.to_string(),
-+            "https://example.com/a/c/long-enough-for-the-heap"
-+        );
-+        pseudo.authority = Some("example.com".into());
-+        pseudo.path = Some("/path".into());
-+
-         pseudo.scheme = Some("ht/tp".into());
-         assert!(request_uri(&pseudo).is_none());
-         pseudo.scheme = Some("https".into());
-@@ -736,4 +781,14 @@ mod tests {
-         let (_, uri) = request_uri(&pseudo).unwrap();
-         assert_eq!(uri.path(), "*");
-     }
-+
-+    #[test]
-+    fn test_concat() {
-+        assert_eq!(concat(&[]), "");
-+        assert_eq!(concat(&["//", "a.io"]), "//a.io");
-+        let inline = "x".repeat(23);
-+        assert_eq!(concat(&[&i
-```
-
-**File**: `ntex/src/http/message.rs` (modified, +11/-1)
-```diff
-@@ -103,7 +103,7 @@ impl Default for RequestHead {
-         RequestHead {
-             id: 0,
-             io: CurrentIo::None,
--            uri: Url::default(),
-+            uri: Url::new(),
-             method: Method::default(),
-             version: Version::HTTP_11,
-             headers: HeaderMap::with_capacity(16),
-@@ -117,6 +117,9 @@ impl Default for RequestHead {
- impl Head for RequestHead {
-     fn clear(&mut self) {
-         self.io = CurrentIo::None;
-+        // the uri and headers may share the connection read buffer, a pooled
-+        // head must not keep it alive
-+        self.uri = Url::new();
-         self.flags = Flags::empty();
-         self.version = Version::HTTP_11;
-         self.headers.clear();
-@@ -446,6 +449,13 @@ impl<T: Head> Message<T> {
-             .unwrap_or_else(|| Rc::new(T::default()));
-         Message { head }
-     }
-+
-+    /// Clears the head, so a cached message does not hold request data.
-+    pub(crate) fn clear(&mut self) {
-+        if let Some(head) = Rc::get_mut(&mut self.head) {
-+            head.clear();
-+        }
-+    }
- }
- 
- impl Message<ResponseHead> {
-```
-
-**File**: `ntex/src/http/test.rs` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ impl TestRequest {
-     pub fn builder() -> TestRequest {
-         TestRequest(Some(Inner {
-             method: Method::GET,
--            uri: Url::default(),
-+            uri: Url::new(),
-             version: Version::HTTP_11,
-             headers: HeaderMap::new(),
-             #[cfg(feature = "cookie")]
-```
-
-**File**: `ntex/src/web/config.rs` (modified, +6/-2)
-```diff
-@@ -1,5 +1,7 @@
- use std::{any::Any, any::TypeId, cell::UnsafeCell, net::SocketAddr, rc::Rc};
- 
-+use urly::Url;
-+
- use crate::service::cfg::{CfgContext, Configuration};
- use crate::{router::ResourceDef, util::ByteString, util::HashMap};
- 
-@@ -153,8 +155,10 @@ pub(crate) fn put_request(id: usize, pool_size: usize, req: &mut Rc<HttpRequestI
-             if cache.len() < pool_size
-                 && let Some(inner) = Rc::get_mut(req)
-             {
--                inner.head.remove_io();
--                inner.head.extensions.borrow_mut().clear();
-+                // the head and the path may share the connection read buffer,
-+                // a pooled request must not keep it alive
-+                inner.head.clear();
-+                inner.path.set(Url::new());
-                 cache.push(req.clone());
-             }
-         });
-```
-
-**File**: `ntex/src/web/test.rs` (modified, +1/-1)
-```diff
-@@ -365,7 +365,7 @@ impl Default for TestRequest {
-         TestRequest {
-             req: HttpTestRequest::default(),
-             rmap: ResourceMap::new(ResourceDef::new("")),
--            path: Path::new(Url::default()),
-+            path: Path::new(Url::new()),
-             peer_addr: None,
-             state: (),
-             config: WebAppConfig::new(),
-```
-
-**File**: `ntex/src/ws/client.rs` (modified, +1/-1)
-```diff
-@@ -91,7 +91,7 @@ impl WsClient<Base> {
-                 };
-                 (uri, err)
-             }
--            Err(err) => (Url::default(), Some(WsConfigError::from(err))),
-+            Err(err) => (Url::new(), Some(WsConfigError::from(err))),
-         };
- 
-         let cfg = cfg.into();
-```
-
----
-
-### Incident Patch 3: `a9e6ae60` (2026-10-03)
-**Commit Message**: Dropping an Io while its filter chain is in use panics
-
-**File**: `ntex-io/CHANGES.md` (modified, +3/-0)
-```diff
-@@ -5,6 +5,9 @@
- * `Io::take()` is unsafe, the filter and `IoRef` borrowed from the `Io` were freed with
-   the returned `Io`
- 
-+* Dropping an `Io` while its filter chain is in use panics, the connection is closed and
-+  the filter is leaked; previously the filter was freed while in use
-+
- * Filter chain buffers are stored inline, a connection without a filter layer no longer
-   allocates a buffer list, write buffers are accessed without moving them out
- 
-```
-
-**File**: `ntex-io/src/filterptr.rs` (modified, +88/-9)
-```diff
-@@ -134,6 +134,15 @@ impl FilterPtr {
-         }
-     }
- 
-+    /// Replaces the filter with `NullFilter` without dropping it.
-+    ///
-+    /// The filter is neither read nor moved, so it may be in use.
-+    pub(crate) fn leak(&self) {
-+        // SAFETY: the old value is overwritten without being read, a `Box`
-+        // holding the filter is not touched while the filter is borrowed
-+        unsafe { ptr::write(self.0.get(), Repr::default()) }
-+    }
-+
-     pub(crate) fn drop_filter<F>(&self) {
-         if let Repr::Filter(ptr, _) = self.as_ref() {
-             if !ptr.is_null() {
-@@ -399,10 +408,16 @@ mod tests {
-         AddFilter,
-         MapFilter,
-         Seal,
-+        Drop,
-     }
- 
-     impl Change {
--        const ALL: [Change; 3] = [Change::AddFilter, Change::MapFilter, Change::Seal];
-+        const ALL: [Change; 4] = [
-+            Change::AddFilter,
-+            Change::MapFilter,
-+            Change::Seal,
-+            Change::Drop,
-+        ];
- 
-         /// The result is leaked: without the check it would be dropped while
-         /// the filter is in use.
-@@ -414,6 +429,15 @@ mod tests {
-                 })),
-                 Change::MapFilter => mem::forget(io.map_filter(|f| f)),
-                 Change::Seal => mem::forget(io.seal()),
-+                Change::Drop => drop(io),
-+            }
-+        }
-+
-+        fn message(self) -> &'static str {
-+            if let Change::Drop = self {
-+                "Io is dropped while its filter is in use"
-+            } else {
-+                "filter chain is changed while it is in use"
-             }
-         }
-     }
-@@ -429,18 +453,15 @@ mod tests {
-             }));
-             if let Err(e) = &res {
-                 let msg = e.downcast_ref::<String>().unwrap();
--                assert!(
--                    msg.contains("filter chain is changed while it is in use"),
--                    "{msg}"
--                );
-+                assert!(msg.contains(change.message()), "{msg}");
-             }
-             result.set(Some(res.is_err()));
-         }));
-         panicked
-     }
- 
--    /// The filter chain cannot be changed from code run by the connection
--    /// while it holds references into the chain.
-+    /// The filter chain cannot be changed, nor its `Io` dropped, from code run
-+    /// by the connection while it holds references into the chain.
-     #[test]
-     fn change_while_lent_panics() {
-         type Enter = fn(&crate::IoRef, &Hook);
-@@ -472,12 +493,15 @@ mod tests {
-                 let panicked = arm(io, change, &slot);
-                 enter(&ioref, &slot);
-                 assert_eq!(panicked.get(), Some(true), "{change:?} from {name}");
-+                if let Change::Drop = change {
-+                    assert!(!ioref.is_active(), "{name}");
-+                }
-             }
-         }
-     }
- 
--    /// The filter chain cannot be changed from the filters while they
--    /// process input or output, or report readiness.
-+    /// The filter chain cannot be changed, nor its `Io` dropped, from the
-+    /// filters while they process input or output, or report readiness.
-     #[ntex::test]
-     async fn change_from_filter_panics() {
-         for change in Change::ALL {
-@@ -519,10 +543,65 @@ mod tests {
-                     ntex_util::time::sleep(ntex_util::time::Millis(10)).await;
-                 }
-                 assert_eq!(panicked.get(), Some(true), "{change:?} from {trigger}");
-+                if let Change::Drop = change {
-+                    assert!(!ioref.is_active(), "{trigger}");
-+                }
-             }
-         }
-     }
- 
-+    /// An `Io` dropped while its filter is in use leaks the filter, the
-+    /// connection is closed and the filter chain no longer runs.
-+    #[test]
-+    fn drop_while_lent_leaks_filter() {
-+        let p = Rc::new(Cell::new(0));
-+        let slot = Hook::default();
-+        let io = Io::from(IoTestWrapper)
-+            .add_filter(HookFilter {
-+                hook: slot.clone(),
-+                at: At::Any,
-+            })
-+            .add_filter(DropFilter { p: p.clone() });
-+        let ioref = io.get_ref();
-+        let panicked = arm(io, Change::Drop, &slot);
-+        assert!(ioref.query::<u8>().get().is_none());
-+        assert_eq!(panicked.get(), Some(true));
-+        assert!(!ioref.is_active());
-+        assert_eq!(p.get(), 0);
-+
-+        let ran = Rc::new(Cell::new(false));
-+        let r = ran.clone();
-+        *slot.borrow_mut() = Some(Box::new(move || r.set(true)));
-+        assert!(ioref.query::<u8>().get().is_none());
-+        assert!(!ran.get());
-+
-+        drop(ioref);
-+        assert_eq!(p.get(), 0);
-+    }
-+
-+    /// An `Io` dropped while unwinding from its filter does not panic again,
-+    /// that would abort.
-+    #[test]
-+    fn drop_while_lent_unwinding() {
-+        let slot = Hook::default();
-+        let io = Io::from(IoTestWrapper).add_filter(HookFilter {
-+            hook: slot.clone(),
-+            at: At::Any,
-+        });
-+        let ioref = 
-```
-
-**File**: `ntex-io/src/io.rs` (modified, +33/-17)
-```diff
-@@ -1203,26 +1203,35 @@ impl<F> Drop for Io<F> {
-         let st = self.st();
-         self.stop_timer();
- 
--        if st.filter.is_set() {
--            // filter is unsafe and must be dropped explicitly,
--            // and won't be dropped without special attention
--            if !st.flags.is_closed() {
--                log::trace!("{}: Io is dropped, terminate connection", st.tag());
--            }
-+        // code run by the filter chain dropped the `Io`, the filter is in use
-+        let in_use = st.filter.is_set() && st.buffer.is_borrowed();
- 
--            if st.write_outstanding() == 0 {
--                // Everything the application wrote has reached the transport,
--                // so the connection can end with a normal FIN and the peer
--                // sees a clean end of stream.
--                st.terminate_connection(None);
--            } else {
--                // Output is still buffered and the filter chain is about to go
--                // away, so it can never be delivered. Abort instead, so that
--                // the peer cannot mistake a truncated stream for a complete
--                // one.
-+        if st.filter.is_set() {
-+            if in_use {
-+                // the filter cannot be dropped, it is leaked
-                 st.force_close_connection();
-+                st.filter.leak();
-+            } else {
-+                // filter is unsafe and must be dropped explicitly,
-+                // and won't be dropped without special attention
-+                if !st.flags.is_closed() {
-+                    log::trace!("{}: Io is dropped, terminate connection", st.tag());
-+                }
-+
-+                if st.write_outstanding() == 0 {
-+                    // Everything the application wrote has reached the transport,
-+                    // so the connection can end with a normal FIN and the peer
-+                    // sees a clean end of stream.
-+                    st.terminate_connection(None);
-+                } else {
-+                    // Output is still buffered and the filter chain is about to go
-+                    // away, so it can never be delivered. Abort instead, so that
-+                    // the peer cannot mistake a truncated stream for a complete
-+                    // one.
-+                    st.force_close_connection();
-+                }
-+                st.filter.drop_filter::<F>();
-             }
--            st.filter.drop_filter::<F>();
- 
-             // Nothing can consume buffered input or deliver buffered output
-             // anymore, but the state may outlive the `Io` for a while, held by
-@@ -1236,6 +1245,13 @@ impl<F> Drop for Io<F> {
-         }
- 
-         IoManager::unregister(self.io_ref());
-+
-+        // a panic while unwinding would abort
-+        assert!(
-+            !in_use || std::thread::panicking(),
-+            "{}: Io is dropped while its filter is in use",
-+            st.tag()
-+        );
-     }
- }
- 
-```
-
----
-
-### Incident Patch 4: `19f4719f` (2026-10-03)
-**Commit Message**: Fix test_listen_rustls test on windows
-
-**File**: `ntex/tests/web_httpserver.rs` (modified, +1/-5)
-```diff
-@@ -474,11 +474,7 @@ async fn test_listen_rustls() {
-     let (srv, sys) = rx.recv().unwrap();
- 
-     let client = client().await;
--    let response = client
--        .get(format!("https://localhost:{}", addr.port()))
--        .send()
--        .await
--        .unwrap();
-+    let response = client.get(format!("https://{addr}")).send().await.unwrap();
-     assert!(response.status().is_success());
- 
-     srv.stop(false).await;
-```
-
----
-
-### Incident Patch 5: `763a8bd6` (2026-10-03)
-**Commit Message**: Reuse pipeline call future memory instead of allocating it for every call
-
-**File**: `ntex-service/CHANGES.md` (modified, +4/-0)
-```diff
-@@ -1,5 +1,9 @@
- # Changes
- 
-+## [Unreleased]
-+
-+* Reuse pipeline call future memory instead of allocating it for every call
-+
- ## [5.1.0] - 2026-09-30
- 
- * Fix use-after-free when a pipeline is dropped with pending readiness or shutdown future
-```
-
-**File**: `ntex-service/src/pipeline.rs` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- use std::{fmt, future, pin::Pin, task::Context, task::Poll};
- 
--use crate::pl_inner::PipelineApi;
--use crate::{IntoService, Service, ServiceCaller, util::BoxFuture};
-+use crate::pl_inner::{CallFuture, PipelineApi};
-+use crate::{IntoService, Service, ServiceCaller};
- 
- pub use crate::pl_factory::PipelineFactory;
- pub use crate::pl_state::{PipelineState, PipelineStateBinding};
-@@ -199,7 +199,7 @@ impl<Req, Res, Err> Clone for PipelineBinding<Req, Res, Err> {
- /// the request is passed to the service as usual.
- pub struct PipelineCall<Req, Res, Err> {
-     // `fut` borrows from `pl`, so it must be declared (and dropped) first
--    fut: BoxFuture<'static, Result<Res, Err>>,
-+    fut: CallFuture<'static, Result<Res, Err>>,
-     #[allow(dead_code)]
-     pl: PipelineBinding<Req, Res, Err>,
- }
-```
-
-**File**: `ntex-service/src/pl_inner.rs` (modified, +210/-5)
-```diff
-@@ -1,4 +1,5 @@
--use std::{cell, future::Future, pin::Pin, ptr, rc::Rc, task::Context, task::Poll};
-+use std::alloc::{Layout, alloc, dealloc, handle_alloc_error};
-+use std::{cell, future::Future, pin::Pin, ptr, ptr::NonNull, rc::Rc, task::Context, task::Poll};
- 
- use crate::{Ctx, Service, ctx::WaitersRef, util::BoxFuture};
- 
-@@ -18,6 +19,7 @@ impl<Req, Res, Err> PipelineApi<Req, Res, Err> {
-             st,
-             waiters: WaitersRef::new(),
-             st_runtime: cell::UnsafeCell::new(RuntimeState::New),
-+            calls: CallCache::default(),
-         }))
-     }
- 
-@@ -39,7 +41,7 @@ impl<Req, Res, Err> PipelineApi<Req, Res, Err> {
-         self.0.ready(idx)
-     }
- 
--    pub(crate) fn call(&self, idx: u32, req: Req, ready: bool) -> BoxFuture<'_, Result<Res, Err>> {
-+    pub(crate) fn call(&self, idx: u32, req: Req, ready: bool) -> CallFuture<'_, Result<Res, Err>> {
-         self.0.call(idx, req, ready)
-     }
- 
-@@ -69,6 +71,7 @@ struct PipelineInner<S: Service<St, Req>, St, Req> {
-     st: St,
-     st_runtime: cell::UnsafeCell<RuntimeState<S::Error>>,
-     waiters: WaitersRef,
-+    calls: CallCache,
- }
- 
- impl<S: Service<St, Req>, St, Req> Drop for PipelineInner<S, St, Req> {
-@@ -95,7 +98,7 @@ pub(crate) trait PipelineInternalApi<Req, Res, Err> {
- 
-     fn ready(&self, idx: u32) -> BoxFuture<'_, Result<(), Err>>;
- 
--    fn call(&self, idx: u32, req: Req, ready: bool) -> BoxFuture<'_, Result<Res, Err>>;
-+    fn call(&self, idx: u32, req: Req, ready: bool) -> CallFuture<'_, Result<Res, Err>>;
- 
-     fn poll_ready(&self, cx: &mut Context<'_>) -> Poll<Result<(), Err>>;
- 
-@@ -126,8 +129,8 @@ where
-         })
-     }
- 
--    fn call(&self, idx: u32, req: Req, ready: bool) -> BoxFuture<'_, Result<S::Res, S::Error>> {
--        Box::pin(async move {
-+    fn call(&self, idx: u32, req: Req, ready: bool) -> CallFuture<'_, Result<S::Res, S::Error>> {
-+        CallFuture::new_in(&self.calls, async move {
-             if ready {
-                 Ctx::<'_, S, St>::new(idx, &self.waiters, &self.st)
-                     .call(&self.s, req)
-@@ -253,6 +256,117 @@ where
-     }
- }
- 
-+// ======================== CallFuture ============================
-+
-+/// Heap allocated service call future.
-+///
-+/// Futures created with [`CallFuture::new_in`] return their memory to a
-+/// [`CallCache`] on drop, so subsequent calls can reuse it.
-+pub(crate) struct CallFuture<'a, R> {
-+    fut: NonNull<dyn Future<Output = R> + 'a>,
-+    cache: Option<&'a CallCache>,
-+}
-+
-+impl<'a, R> CallFuture<'a, R> {
-+    fn new_in<F>(cache: &'a CallCache, fut: F) -> Self
-+    where
-+        F: Future<Output = R> + 'a,
-+    {
-+        if size_of::<F>() == 0 {
-+            return Self::boxed(Box::pin(fut));
-+        }
-+        let ptr = cache.alloc(Layout::new::<F>()).cast::<F>();
-+        // SAFETY: `ptr` is valid for writes of `F`
-+        unsafe { ptr.as_ptr().write(fut) };
-+        Self {
-+            fut: ptr,
-+            cache: Some(cache),
-+        }
-+    }
-+
-+    pub(crate) fn boxed(fut: BoxFuture<'a, R>) -> Self {
-+        // SAFETY: the future is not moved out of its allocation, it is
-+        // polled pinned and dropped in place
-+        let fut = Box::into_raw(unsafe { Pin::into_inner_unchecked(fut) });
-+        Self {
-+            // SAFETY: `Box::into_raw` never returns null
-+            fut: unsafe { NonNull::new_unchecked(fut) },
-+            cache: None,
-+        }
-+    }
-+}
-+
-+impl<R> Drop for CallFuture<'_, R> {
-+    fn drop(&mut self) {
-+        // SAFETY: `fut` points to a valid future that is owned by `self`
-+        unsafe {
-+            if let Some(cache) = self.cache {
-+                let layout = Layout::for_value(self.fut.as_ref());
-+                ptr::drop_in_place(self.fut.as_ptr());
-+                cache.release(self.fut.cast(), layout);
-+            } else {
-+                drop(Box::from_raw(self.fut.as_ptr()));
-+            }
-+        }
-+    }
-+}
-+
-+impl<R> Future for CallFuture<'_, R> {
-+    type Output = R;
-+
-+    #[inline]
-+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<R> {
-+        // SAFETY: the future is heap allocated and never moves until it is dropped
-+        unsafe { Pin::new_unchecked(&mut *self.fut.as_ptr()) }.poll(cx)
-+    }
-+}
-+
-+/// Keeps memory of the last completed call future.
-+#[derive(Default)]
-+pub(crate) struct CallCache(cell::Cell<Option<(NonNull<u8>, Layout)>>);
-+
-+impl CallCache {
-+    fn alloc(&self, layout: Layout) -> NonNull<u8> {
-+        match self.0.take() {
-+            Some((ptr, l)) if l == layout => ptr,
-+            cached => {
-+                if let Some((ptr, l)) = cached {
-+                    // SAFETY: `ptr` was allocated with layout `l`
-+                    unsafe { dealloc(ptr.as_ptr(), l) };
-+                }
-+                // SAFETY: `layout` has non-zero size
-+                NonNull::new(unsafe { alloc(layout) }).unwrap_or_else(|| handle_alloc_error(layout))
-+            }
-+        }
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// `ptr` must be
-```
-
-**File**: `ntex-service/src/pl_state.rs` (modified, +3/-3)
-```diff
-@@ -3,7 +3,7 @@ use std::{cell, fmt, future, pin::Pin, ptr, rc::Rc, task::Context, task::Poll};
- use crate::{Ctx, IntoService, Service, ctx::WaitersRef, util::BoxFuture};
- 
- use crate::pipeline::PipelineBinding;
--use crate::pl_inner::{PipelineApi, PipelineInternalApi};
-+use crate::pl_inner::{CallFuture, PipelineApi, PipelineInternalApi};
- 
- /// Execution container for a service whose state is supplied per operation.
+@@ -88,6 +88,10 @@ pub(crate) fn current_thread_id() -> ThreadId {
+ /// This is a thread-local runtime and cannot be sent to other threads, use
+ /// [`Handle`] to spawn tasks from other threads.
  ///
-@@ -208,8 +208,8 @@ impl<St, Req, Res, Err> PipelineInternalApi<Req, Res, Err> for PipelineInternal<
-         self.api.ready(idx, &self.st)
++/// Dropping the runtime cancels its tasks. If cleanup panics, shutdown finishes
++/// before the first panic is resumed. Secondary cleanup panics are logged and
++/// suppressed, including when the runtime is dropped during an existing unwind.
++///
+ /// ```compile_fail
+ /// fn assert_send<T: Send>() {}
+ /// assert_send::<ntex_rt::Runtime>();
+@@ -837,20 +841,38 @@ impl RunnableQueue {
+ 
+     /// Drops the futures of all tasks, also of tasks waiting on a waker.
+     fn shutdown(&self) {
+-        // dropped futures may wake or spawn tasks
+-        loop {
+-            self.clear();
+-            if !self.tasks.close_first() {
+-                break;
++        fn cleanup(f: impl Fn(), first_panic: &mut Option<Box<dyn std::any::Any + Send>>) {
++            while let Err(payload) = std::panic::catch_unwind(std::panic::AssertUnwindSafe(&f)) {
++                if first_panic.is_none() && !std::thread::panicking() {
++                    *first_panic = Some(payload);
++                } else {
++                    suppress_cleanup_panic(payload);
++                }
+             }
+         }
++
++        let mut first_panic = None;
++        // Each entry is removed or completed before its cleanup can unwind.
++        // Retry the phase so remaining and callback-generated work is drained.
++        cleanup(
++            || loop {
++                self.clear();
++                if !self.tasks.close_first() {
++                    break;
++                }
++            },
++            &mut first_panic,
++        );
+         self.admission.fetch_or(CLOSED, Ordering::AcqRel);
+         // A reserved task may not have entered the MPSC queue yet.
+         while self.admission.load(Ordering::Acquire) != CLOSED {
+             yield_now();
+         }
+         // All admitted publications are linked; rejected ones cannot enqueue.
+-        self.clear();
++        cleanup(|| self.clear(), &mut first_panic);
++        if let Some(payload) = first_panic {
++            std::panic::resume_unwind(payload);
++        }
      }
  
--    fn call(&self, idx: u32, req: Req, ready: bool) -> BoxFuture<'_, Result<Res, Err>> {
--        self.api.call(idx, req, &self.st, ready)
-+    fn call(&self, idx: u32, req: Req, ready: bool) -> CallFuture<'_, Result<Res, Err>> {
-+        CallFuture::boxed(self.api.call(idx, req, &self.st, ready))
+     /// The runtime is dropped, its tasks never run.
+@@ -863,6 +885,28 @@ impl RunnableQueue {
      }
+ }
  
-     fn poll_ready(&self, _: &mut Context<'_>) -> Poll<Result<(), Err>> {
-```
-
----
-
-### Incident Patch 6: `5c695596` (2026-10-02)
-**Commit Message**: Io::poll_recv_decode() reports a dispatcher timeout and write back-pressure before decoding
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ urly = { path = "urly" }
- ntex = "4.0.0-beta.15"
- ntex-bytes = "1.10.0"
- ntex-codec = "2.0.0"
--ntex-dispatcher = "4.1.0"
-+ntex-dispatcher = "4.2.0"
- ntex-error = "3.0.0"
- ntex-h2 = "4.1.0"
- ntex-http = "1.3.0"
-```
-
-**File**: `ntex-dispatcher/CHANGES.md` (modified, +4/-1)
-```diff
-@@ -1,10 +1,13 @@
- # Changes
- 
--## [4.1.1] - 2026-10-02
-+## [4.2.0] - Unreleased
- 
- * Keep the keep-alive timer armed while a frame is read or handled instead of
-   registering it again for every frame
- 
-+* Decode input received together with a read timer expiry before handling the timeout, the
-+  frame is dispatched and frame read progress is counted
-+
- ## [4.1.0] - 2026-10-01
- 
- * Add `Dispatcher::max_inflight()`, limits concurrent service calls
-```
-
-**File**: `ntex-dispatcher/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-dispatcher"
--version = "4.1.0"
-+version = "4.2.0"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "Utilities for abstracting io streams dispatcher"
- keywords = ["network", "framework", "async", "futures"]
-```
-
-**File**: `ntex-dispatcher/src/lib.rs` (modified, +44/-2)
-```diff
-@@ -278,6 +278,37 @@ where
-                                         return Poll::Pending;
-                                     }
-                                 }
-+                                Err(RecvError::Timeout) if inner.timers.active != Timer::Write => {
-+                                    // input received together with a read timer wins over
-+                                    // its expiry, the buffered input is decoded first
-+                                    match inner.shared.io.decode_item(&inner.shared.codec) {
-+                                        Ok(decoded) => {
-+                                            let timer = inner.timers.active;
-+                                            inner.update_timer(&decoded);
-+                                            if let Some(el) = decoded.item {
-+                                                (DispatchItem::Item(el), true)
-+                                            } else {
-+                                                // a timer armed for the received input has
-+                                                // not expired
-+                                                if inner.timers.active == timer
-+                                                    && let Err(ctl) = inner.handle_timeout()
-+                                                {
-+                                                    inner.st = inner.stop(ctl);
-+                                                }
-+                                                continue;
-+                                            }
-+                                        }
-+                                        Err(err) => {
-+                                            log::trace!(
-+                                                "{}: Decoder error, stopping dispatcher: {:?}",
-+                                                inner.shared.io.tag(),
-+                                                err
-+                                            );
-+                                            inner.st = inner.stop(Reason::Decoder(err));
-+                                            continue;
-+                                        }
-+                                    }
-+                                }
-                                 Err(RecvError::Timeout) => {
-                                     if let Err(ctl) = inner.handle_timeout() {
-                                         inner.st = inner.stop(ctl);
-@@ -2165,10 +2196,21 @@ mod tests {
-         delay: Millis,
-         data: Arc<Mutex<RefCell<Vec<usize>>>>,
-     ) -> Dispatcher<BCodec, ()> {
--        let io = Io::new(
-+        keepalive_io_dispatcher(keepalive_io(server), delay, data)
-+    }
-+
-+    fn keepalive_io(server: IoTest) -> Io {
-+        Io::new(
-             server,
-             SharedCfg::new("TEST").add(IoConfig::new().set_keepalive_timeout(Seconds(1))),
--        );
-+        )
-+    }
-+
-+    fn keepalive_io_dispatcher(
-+        io: Io,
-+        delay: Millis,
-+        data: Arc<Mutex<RefCell<Vec<usize>>>>,
-+    ) -> Dispatcher<BCodec, ()> {
-         Dispatcher::new(
-             io,
-             BCodec(8),
-```
-
-**File**: `ntex-io/CHANGES.md` (modified, +6/-0)
-```diff
-@@ -1,5 +1,11 @@
- # Changes
- 
-+## [Unreleased]
-+
-+* `Io::poll_recv_decode()` reports a dispatcher timeout and write back-pressure before
-+  decoding, the decode result was dropped with the error. Neither is reported once the
-+  connection is closing, buffered input is decoded before `PeerGone`
-+
- ## [4.1.0] - 2026-10-01
- 
- * The read buffer cache checks only the most recently released buffer instead of
-```
-
-**File**: `ntex-io/src/io.rs` (modified, +87/-7)
-```diff
-@@ -925,9 +925,14 @@ impl<F> Io<F> {
-     /// returns `Ok` with `item` set to `None` after arranging for `cx` to be
-     /// woken when progress is possible.
-     ///
--    /// An error return does not register the waker. A successfully decoded item
--    /// takes precedence over timeout, backpressure, and peer-disconnect status
--    /// observed during the same poll.
-+    /// An error return does not register the waker. While the connection is
-+    /// open, an expired dispatcher timer and then active write backpressure are
-+    /// reported before the read buffer is decoded, so an error never follows a
-+    /// decode attempt and `Decoded` is never lost. The caller decides whether
-+    /// input received together with a timeout is decoded first, see
-+    /// [`IoRef::decode_item`](crate::IoRef::decode_item). Once the connection
-+    /// is closing neither is reported, the buffered input is decoded and
-+    /// `RecvError::PeerGone` is returned when no item is left.
-     ///
-     /// When the codec needs more input this goes through
-     /// [`poll_read_more`](Self::poll_read_more), which releases read
-@@ -943,6 +948,15 @@ impl<F> Io<F> {
-         let st = self.st();
-         st.flags.unset_read_ready();
- 
-+        let closed = st.flags.is_stopping() || st.flags.is_terminating();
-+        if !closed {
-+            if st.flags.check_dispatcher_timeout() {
-+                return Err(RecvError::Timeout);
-+            } else if st.flags.is_wr_backpressure() {
-+                return Err(RecvError::WriteBackpressure);
++#[cold]
++fn suppress_cleanup_panic(payload: Box<dyn std::any::Any + Send>) {
++    fn discard(result: std::thread::Result<()>) {
++        if let Err(payload) = result {
++            // Do not recursively run arbitrary destructors after disposal or
++            // logging itself panics. Standard message payloads are safe to drop.
++            if payload.is::<&'static str>() || payload.is::<String>() {
++                drop(payload);
++            } else {
++                std::mem::forget(payload);
 +            }
 +        }
-+
-         let decoded = self
-             .decode_item(codec)
-             .map_err(|err| RecvError::Decoder(err))?;
-@@ -951,10 +965,6 @@ impl<F> Io<F> {
-             Ok(decoded)
-         } else if st.flags.is_stopping() || st.flags.is_terminating() {
-             Err(RecvError::PeerGone(st.error()))
--        } else if st.flags.check_dispatcher_timeout() {
--            Err(RecvError::Timeout)
--        } else if st.flags.is_wr_backpressure() {
--            Err(RecvError::WriteBackpressure)
-         } else {
-             match self.poll_read_more(cx) {
-                 Poll::Pending | Poll::Ready(Ok(Some(()))) => {
-@@ -4135,6 +4145,76 @@ mod tests {
-         assert_eq!(err, "invalid frame");
-     }
- 
-+    /// An expired timer is reported before decoding, the buffered input is
-+    /// left for the next attempt.
-+    #[ntex::test]
-+    async fn poll_recv_decode_reports_timeout_before_decoding() {
-+        let (client, server) = IoTest::create();
-+        client.remote_buffer_cap(1024);
-+        let io = Io::new(server, SharedCfg::new("SRV"));
-+
-+        client.write("data");
-+        sleep(Millis(25)).await;
-+        io.st().notify_timeout();
-+
-+        let res = lazy(|cx| io.poll_recv_decode(&BytesCodec, cx)).await;
-+        assert!(matches!(res, Err(RecvError::Timeout)));
-+        assert_eq!(io.st().buffer.read_dst_size(), 4);
-+
-+        let decoded = lazy(|cx| io.poll_recv_decode(&BytesCodec, cx))
-+            .await
-+            .unwrap();
-+        assert_eq!(decoded.item.unwrap(), "data");
-+        assert_eq!((decoded.consumed, decoded.remains), (4, 0));
 +    }
 +
-+    /// Write backpressure is reported before decoding, the buffered input is
-+    /// left for the next attempt.
-+    #[ntex::test]
-+    async fn poll_recv_decode_reports_write_backpressure_before_decoding() {
-+        let (client, server) = IoTest::create();
-+        client.remote_buffer_cap(1024);
-+        let io = Io::new(server, SharedCfg::new("SRV"));
++    discard(std::panic::catch_unwind(|| {
++        log::error!("Panic during runtime cleanup suppressed to preserve the original panic");
++    }));
++    discard(std::panic::catch_unwind(std::panic::AssertUnwindSafe(
++        || drop(payload),
++    )));
++}
 +
-+        client.write("data");
-+        sleep(Millis(25)).await;
-+        io.st().flags.set_wr_backpressure();
-+
-+        let res = lazy(|cx| io.poll_recv_decode(&BytesCodec, cx)).await;
-+        assert!(matches!(res, Err(RecvError::WriteBackpressure)));
-+        assert_eq!(io.st().buffer.read_dst_size(), 4);
-+
-+        io.flush(false).await.unwrap();
-+        let decoded = lazy(|cx| io.poll_recv_decode(&BytesCodec, cx))
-+            .await
-+            .unwrap();
-+        assert_eq!(decoded.item.unwrap(), "data");
-+    }
-+
-+    /// A closing connection reports neither an expired timer nor write
-+    /// backpressure, the buffered input is decoded before the disconnect.
-+    #[ntex::test]
-+    async fn poll_recv_decode_closing_decodes_buffered_input() {
-+        let (client, server) = IoTest::create();
-+        client.remote_buffer_cap(1024);
-+        let io = Io::new(server, SharedCfg::new("SRV"));
-+
-+        client.write("data");
-+        sleep(Millis(25)).await;
-+        io.close();
-+        sleep(Millis(25)).await;
-+        io.st().notify_timeout();
-+        io.st().flags.set_wr_backpressure();
-+
-+        let decoded = lazy(|cx| io.poll_recv_decode(&BytesCodec, cx))
-+            .await
-+            .unwrap();
-+        assert_eq!(decoded.item.unwrap(), "data");
-+
-+        let res = lazy(|cx| io.poll_recv_decode(&BytesCodec, cx)).await;
-+        assert!(matches!(res, Err(RecvError::PeerGone(None))));
-+    }
-+
-     #[ntex::test]
-     async fn poll_flush
-```
-
-**File**: `ntex/CHANGES.md` (modified, +8/-0)
-```diff
-@@ -1,5 +1,13 @@
- # Changes
- 
-+## [Unreleased]
-+
-+* http/1: Request heads are not decoded during write back-pressure, request payload is
-+  still read
-+
-+* http/1: Fix headers read rate undercounting bytes consumed by a partial request head
-+  decode
-+
- ## [4.0.0-beta.14] - 2026-10-01
- 
- * Migrate to `ntex-service` 5 and its typed service state model. Service
-```
-
-**File**: `ntex/src/http/h1/dispatcher.rs` (modified, +182/-33)
-```diff
-@@ -238,11 +238,30 @@ where
-             log::trace!("{}: Trying to read http message", self.io.tag());
-             self.release_write_timer();
- 
--            let buffered = self.io.with_read_dst(|buf| buf.len()) as u32;
--            self.timers.headers_buffered(buffered);
-+            let (result, timeout) = match self.io.poll_recv_decode(&self.codec, cx) {
-+                // a request head received together with a read timer wins over
-+                // its expiry, the buffered input is decoded first
-+                Err(RecvError::Timeout)
-+                    if !self.timers.active.is_write() && self.timers.active != Timer::Idle =>
-+                {
-+                    let result = self.io.decode_item(&self.codec);
-+                    (result.map_err(RecvError::Decoder), true)
-+                }
-+                result => (result, false),
-+            };
- 
--            let result = match self.io.poll_recv_decode(&self.codec, cx) {
-+            let result = match result {
-                 Ok(decoded) => {
-+                    self.timers.headers_decoded(
-+                        (decoded.consumed + decoded.remains) as u32,
-+                        decoded.remains as u32,
-+                    );
-+                    if timeout && decoded.item.is_none() {
-+                        match self.headers_timeout(&decoded) {
-+                            Ok(()) => continue,
-+                            Err(st) => return Poll::Ready(st),
-+                        }
-+                    }
-                     if let Some(st) = self.update_hdrs_timer(&decoded) {
-                         return Poll::Ready(st);
-                     }
-@@ -306,30 +325,10 @@ where
-                         } else {
-                             continue;
-                         }
--                    } else if self.timers.active == Timer::Idle {
-+                    } else {
-                         // expiry of the keep-alive timer left armed for the
-                         // previous request
-                         continue;
--                    } else if self.timers.active == Timer::Headers {
--                        if let Err(err) = self.handle_timeout() {
--                            log::trace!("{}: Slow request timeout", self.io.tag());
--                            self.ctl_proto_err(err)
--                        } else {
--                            continue;
--                        }
--                    } else if self.start_headers_timer(
--                        self.codec.is_reading_hdrs(),
--                        buffered,
--                        self.io.with_read_dst(|buf| buf.len()) as u32,
--                    ) {
--                        // a partial request head wins over keep-alive or client timeout
--                        continue;
--                    } else if self.timers.active == Timer::ClientTimeout {
--                        log::trace!("{}: Client timeout, no request", self.io.tag());
--                        self.ctl_proto_err(ProtocolError::SlowRequestTimeout)
--                    } else {
--                        log::trace!("{}: Keep-alive timeout, close connection", self.io.tag());
--                        self.ctl_keepalive(true)
-                     }
-                 }
-             };
-@@ -560,14 +559,38 @@ where
-             Poll::Ready(bstream::Status::Ready) => {
-                 // read request payload
-                 let mut updated = false;
-+                let mut pending = None;
-                 self.release_write_timer();
--                loop {
--                    let buffered = self.io.with_read_dst(|buf| buf.len());
--                    let Some((payload_codec, sender)) = self.payload.as_mut() else {
--                        break;
-+                while let Some((payload_codec, sender)) = self.payload.as_mut() {
-+                    let result = if pending.is_some() {
-+                        self.io
-+                            .decode_item(payload_codec)
-+                            .map_err(RecvError::Decoder)
-+                    } else {
-+                        self.io.poll_recv_decode(payload_codec, cx)
-+                    };
-+                    let result = match result {
-+                        // the request payload is read regardless of write
-+                        // backpressure, and payload received together with a
-+                        // read timer wins over its expiry, the buffered input
-+                        // is decoded first
-+                        Err(err @ RecvError::WriteBackpressure) => {
-+                            pending = Some(err);
-+                            continue;
-+                        }
-+                        Err(err @ RecvError::Timeout) if !self.timers.active.is_write() => {
-+                            pending = Some(err);
-+                            continue;
-+                        }
-+                        Ok(decoded) if decoded.item.is_none() && pending.is_some() => {
-+                            // the decode att
-```
-
----
-
-### Incident Patch 7: `d00a4948` (2026-10-02)
-**Commit Message**: Fix compatibility (#1072)
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -55,7 +55,7 @@ ntex-h2 = "4.1.0"
- ntex-http = "1.3.0"
- ntex-io = "4.1.0"
- ntex-macros = "4.0.0"
--ntex-net = "4.1.0"
-+ntex-net = "4.1.1"
- ntex-router = "2.0.0"
- ntex-rt = "4.1.0"
- ntex-server = "4.2.0"
-@@ -65,7 +65,7 @@ ntex-util = "4.2.0"
- 
- ntex-io-uring = "0.8.7150"
- ntex-httparse = "2.2.0"
--ntex-polling = "3.11.2"
-+ntex-polling = "4.0.0"
- 
- async-channel = "2"
- async-task = "4.5.0"
-```
-
-**File**: `ntex-net/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-net"
--version = "4.1.0"
-+version = "4.1.1"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "ntexwork utils for ntex framework"
- keywords = ["network", "framework", "async", "futures"]
-```
-
----
-
-### Incident Patch 8: `8f219cda` (2026-09-30)
-**Commit Message**: More fixes (#1063)
-
-* Reading pauses while output a filter produced during read processing
-* HTTP/1 server keeps reading the request payload after the response is sent until the payload completes
-* HTTP/1 '101 Switching Protocols' response body is sent without framing
-* openssl: reading does not report already buffered output as output produced by reading
-* read_more and read_notify should lift the new pause
-* HTTP/1 dispatcher observes a connection failure while the response body is pending
-* openssl: do not drop application data when a write reports WANT_READ during a handshake
-* HTTP/1 server rejects an asterisk-form request target
-* polling: shut the socket down inline
-* Output a filter holds back
-* HTTP/1 server rejects an authority-form request target for methods
-* HTTP/1 server accepts an authority-form request target
-* HTTP/1 dispatcher drops an idle streaming response body and closes the connection when the client half-closes it
-* Bytes, String, Json and Form extractors return a single-chunk body without copying
-* Compress::default() negotiates only encodings the encoder supports
-* Response body encoder stops after the end of the body stream
-* Update migration guide
-* Io::
-
-**File**: `.github/workflows/checks.yml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ jobs:
-         with:
-           toolchain: stable
-       - run:
--          cargo check --tests --all --no-default-features --features="ntex/neon,ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
-+          cargo check --tests --all --no-default-features --features="ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
- 
-   clippy-polling:
-     name: Clippy (neon)
-```
-
-**File**: `.github/workflows/cov.yml` (modified, +3/-7)
-```diff
-@@ -42,19 +42,15 @@ jobs:
-         run: cargo +nightly llvm-cov nextest --no-report --retries=3 --all --no-default-features --features="ntex/neon-uring,ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
- 
-       - name: Code coverage (tokio)
--        uses: nick-fields/retry@v3
--        with:
--          timeout_minutes: 10
--          max_attempts: 3
--          retry_on: error
--          command: cargo +nightly llvm-cov test --no-report --doctests --all --no-default-features --features="ntex/tokio,ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
-+        timeout-minutes: 10
-+        run: cargo +nightly llvm-cov nextest --no-report --retries=3 --all --no-default-features --features="ntex/tokio,ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
- 
-       - name: Code coverage (compio)
-         timeout-minutes: 10
-         run: cargo +nightly llvm-cov nextest --no-report --retries=3 --all --no-default-features --features="ntex/compio,ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
- 
-       - name: Generate coverage report
--        run: cargo +nightly llvm-cov report --doctests --lcov --output-path lcov.info
-+        run: cargo +nightly llvm-cov report --lcov --output-path lcov.info
- 
-       - name: Upload coverage to Codecov
-         uses: codecov/codecov-action@v5
-```
-
-**File**: `.github/workflows/miri.yml` (modified, +7/-0)
-```diff
-@@ -33,12 +33,19 @@ jobs:
-         run: cargo miri test -p ntex-bytes
- 
-       - name: Run Miri (bytes, big-endian)
-+        continue-on-error: true
-         run: cargo miri test -p ntex-bytes --target s390x-unknown-linux-gnu
- 
-       - name: Run Miri (ntex-service::cfg)
-         # Run all of your tests inside of Miri interpreter
-         run: cargo miri test -p ntex-service -- --test "cfg::tests::"
- 
-+      - name: Run Miri (ntex-service::pipeline)
-+        # Pipelines are self-referential, which Stacked Borrows rejects
-+        env:
-+          MIRIFLAGS: -Zmiri-disable-stacked-borrows
-+        run: cargo miri test -p ntex-service -- --test "miri_"
-+
-       - name: Run Miri (ntex-io)
-         # Run all of your tests inside of Miri interpreter
-         run: cargo miri test -p ntex-io -- --test "miri_"
-```
-
-**File**: `.github/workflows/windows.yml` (modified, +4/-4)
-```diff
-@@ -74,15 +74,15 @@ jobs:
-           Get-ChildItem C:\vcpkg\installed\x64-windows\bin
-           Get-ChildItem C:\vcpkg\installed\x64-windows\lib
- 
--      - name: Clippy (neon-iocp)
-+      - name: Clippy (neon)
-         if: matrix.version == 'stable'
-         run: |
--          cargo clippy --all --no-default-features --features="ntex/neon-iocp,ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
-+          cargo clippy --all --no-default-features --features="ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
- 
--      - name: Run tests (neon-iocp)
-+      - name: Run tests (neon)
-         timeout-minutes: 10
-         run: |
--          cargo nextest run --retries=3 --all --no-default-features --no-fail-fast --features="ntex/neon-iocp,ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
-+          cargo nextest run --retries=3 --all --no-default-features --no-fail-fast --features="ntex/cookie,ntex/url,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
- 
-       - name: Run tests (tokio)
-         timeout-minutes: 10
-```
-
-**File**: `Cargo.toml` (modified, +3/-16)
-```diff
-@@ -18,14 +18,6 @@ members = [
-   "ntex-util",
- ]
- 
--[workspace.package]
--authors = ["ntex contributors <team@ntex.rs>"]
--repository = "https://github.com/ntex-rs/ntex"
--documentation = "https://docs.rs/ntex/"
--license = "MIT OR Apache-2.0"
--edition = "2024"
--rust-version = "1.97"
--
- [workspace.lints.rust]
- async_fn_in_trait = { level = "allow", priority = -1 }
- unknown_lints = { level = "allow", priority = -1 }
-@@ -54,14 +46,14 @@ ntex-macros = { path = "ntex-macros" }
- ntex-util = { path = "ntex-util" }
- 
- #ntex-h2 = { path = "../dev/ntex-h2" }
--ntex-h2 = { git = "https://github.com/ntex-rs/ntex-h2.git", branch = "refine-api" }
-+ntex-h2 = { git = "https://github.com/ntex-rs/ntex-h2.git" }
- 
- [workspace.dependencies]
- ntex = "4.0.0-beta.14"
- ntex-bytes = "1.10.0"
- ntex-codec = "2.0.0"
- ntex-dispatcher = "4.1.0"
--ntex-error = "2.7.0"
-+ntex-error = "3.0.0"
- ntex-h2 = "4.1.0"
- ntex-http = "1.2.0"
- ntex-io = "4.1.0"
-@@ -70,7 +62,7 @@ ntex-net = "4.1.0"
- ntex-router = "2.0.0"
- ntex-rt = "4.0.0"
- ntex-server = "4.2.0"
--ntex-service = "5.0.1"
-+ntex-service = "5.1.0"
- ntex-tls = "4.1.0"
- ntex-util = "4.2.0"
- 
-@@ -85,11 +77,9 @@ backtrace = "0.3.76"
- bytes = "1.11.0"
- bincode = "1.3.3"
- base64 = "0.22"
--cookie = "0.18"
- coo-kie = { version = "0.18", package = "cookie" }
- core_affinity = "0.8"
- bitflags = "2"
--cfg_aliases = "0.2.1"
- cfg-if = "1.0.0"
- crossbeam-channel = "0.5.8"
- crossbeam-queue = "0.3.8"
-@@ -113,7 +103,6 @@ log = "0.4"
- mime = "0.3"
- nix = "0.31.3"
- oneshot = { version = "0.2.1", features = ["std", "async"] }
--openssl = "0.10"
- tls_openssl = { version = "0.10", package = "openssl" }
- openssl-sys = "0.9"
- foreign-types-shared = "0.1"
-@@ -127,7 +116,6 @@ rand = "0.9"
- regex = { version = "1.11", default-features = false, features = ["std"] }
- rustls-pemfile = "2"
- tls_rustls = { version = "0.23", package = "rustls", default-features = false }
--nohash-hasher = "0.2.0"
- nanorand = { version = "0.8", default-features = false, features = [
-     "std",
-     "wyrand",
-@@ -152,7 +140,6 @@ time = "0.3.54"
- thiserror = "2"
- tok-io = { version = "1", package = "tokio", default-features = false }
- webpki-roots = "1.0"
--url = "2.5.2"
- url-pkg = { version = "2.5.2", package = "url" }
- uuid = { version = "1.19", features = ["v7"] }
- 
-```
-
-**File**: `README.md` (modified, +1/-2)
-```diff
-@@ -66,9 +66,8 @@ Alternative runtimes and native reactors can be selected with Cargo features:
- | --- | --- |
- | `tokio` | Tokio local runtime and I/O driver |
- | `compio` | Compio runtime and completion-based I/O |
--| `neon-polling` | Native runtime with the polling reactor |
-+| `neon-polling` | Native runtime with the polling reactor on Unix |
- | `neon-uring` | Native runtime with `io_uring` on Linux |
--| `neon-iocp` | Native runtime with IOCP on Windows |
- 
- Enable at most one runtime or native-reactor selection feature. For example:
- 
-```
-
-**File**: `docs/3-state.md` (modified, +2/-1)
-```diff
-@@ -182,7 +182,8 @@ async fn main() {
- Use `Pipeline` when one state value should remain attached to the service. Use
- `PipelineState` when the same service and readiness machinery must operate with
- a state selected by each caller. `PipelineState::bind_state()` can attach an
--owned state value and produce a normal `PipelineBinding`.
-+owned state value and produce a normal `PipelineBinding`, the state type must
-+implement `Clone`.
- 
- ## Carrying state with a request
- 
-```
-
-**File**: `docs/4-runtime.md` (modified, +7/-4)
-```diff
-@@ -66,11 +66,11 @@ selects an I/O reactor based on the current platform:
- 
- You can select a specific native reactor through a Cargo feature:
- 
--- `neon-polling` selects the polling reactor.
--- `neon-uring` selects the `io_uring` reactor on Linux.
--- `neon-iocp` selects the IOCP reactor on Windows.
-+- `neon-polling` selects the polling reactor on Unix platforms.
-+- `neon-uring` selects the `io_uring` reactor. It is available only on Linux.
- 
--The reactor-selection features are intended to be mutually exclusive.
-+The reactor-selection features are intended to be mutually exclusive. Windows
-+always uses IOCP and has no reactor-selection feature.
- 
- For example, to use the polling reactor:
- 
-@@ -174,6 +174,9 @@ You can customize how the system's root future is driven by implementing the
- [`Runner`](https://docs.rs/ntex-rt/latest/ntex_rt/trait.Runner.html) trait:
- 
- ```rust
-+use std::any::Any;
-+use ntex::rt::BlockFuture;
-+
- trait Runner: Send + Sync + 'static {
-     fn block_on(&self, fut: BlockFuture) -> Result<(), Box<dyn Any + Send>>;
+ pub(crate) struct RemotePermit<'a> {
+     queue: Option<Cow<'a, Arc<RunnableQueue>>>,
  }
 ```
 
+**File**: `ntex-rt/src/rt/raw.rs` (modified, +3/-1)
+```diff
+@@ -583,7 +583,9 @@ impl Drop for Completed {
+         };
+         if thread::panicking() {
+             // a second panic would abort
+-            let _ = catch_unwind(AssertUnwindSafe(notify));
++            if let Err(payload) = catch_unwind(AssertUnwindSafe(notify)) {
++                super::suppress_cleanup_panic(payload);
++            }
+         } else {
+             notify();
+         }
+```
+
+**File**: `ntex-rt/src/rt/raw_tests.rs` (modified, +293/-22)
+```diff
+@@ -51,6 +51,22 @@ impl Drop for Token {
+     }
+ }
+ 
++struct OnDrop<F: FnOnce()>(Option<F>);
++
++impl<F: FnOnce()> Drop for OnDrop<F> {
++    fn drop(&mut self) {
++        self.0.take().unwrap()();
++    }
++}
++
++fn pending_with_drop(f: impl FnOnce()) -> impl Future<Output = ()> {
++    let hook = OnDrop(Some(f));
++    async move {
++        let _hook = hook;
++        std::future::pending::<()>().await;
++    }
++}
++
+ #[derive(Default)]
+ struct CountWaker(AtomicUsize);
+ 
+@@ -940,36 +956,291 @@ fn shutdown_drops_pending() {
+ fn shutdown_drop_wakes_and_spawns() {
+     // a dropped future wakes a pending task and spawns a task, the runtime
+     // drops both
+-    struct OnDrop(Option<Box<dyn FnOnce()>>);
++    for panics in [false, true] {
++        let rt = new_rt();
++        let queue = Arc::downgrade(&rt.queue);
++        let (p1, p2) = (Probe::default(), Probe::default());
++        let t1 = spawn(&rt, p1.future(Res::Pending));
++        one_local(&rt).run();
++        let w1 = p1.waker();
++        let q = rt.queue.clone();
++        let fut2 = p2.future(Res::Pending);
++        let t0 = spawn(
++            &rt,
++            pending_with_drop(move || {
++                w1.wake();
++                unsafe { raw::spawn_detached::<_, false>(fut2, &q, Location::caller()) };
++                assert!(!panics, "reentrant cleanup panic");
++            }),
++        );
++        one_local(&rt).run();
++        assert_eq!(catch_unwind(AssertUnwindSafe(|| drop(rt))).is_err(), panics);
++        p1.check(1, 1, 0);
++        p2.check(0, 1, 0);
++        assert!(t0.is_finished() && t1.is_finished());
++        drop((t0, t1));
++        assert!(queue.upgrade().is_none(), "task alive");
++    }
++}
++
++#[test]
++fn shutdown_continues_after_panics() {
++    // Local queue, pending task list, and remote queue cleanup.
++    for path in 0..3 {
++        let rt = new_rt();
++        let handle = rt.handle();
++        let queue = Arc::downgrade(&rt.queue);
++        let owner = thread::current().id();
++        let drops = Counter::default();
++        let panics = Counter::default();
++        let mut tasks = Vec::new();
++        for panics_on_drop in [true, false, true] {
++            let (drops, panics) = (drops.clone(), panics.clone());
++            let fut = pending_with_drop(move || {
++                assert_eq!(thread::current().id(), owner);
++                drops.inc();
++                if panics_on_drop {
++                    std::panic::panic_any(panics.0.fetch_add(1, Ordering::SeqCst));
++                }
++            });
++            let task = if path == 2 {
++                let queue = rt.queue.clone();
++                on_thread(move || unsafe {
++                    raw::spawn::<_, false>(fut, &queue, Location::caller())
++                })
++            } else {
++                let task = spawn(&rt, fut);
++                if path == 1 {
++                    one_local(&rt).run();
++                }
++                task
++            };
++            tasks.push(task);
++        }
++        let payload = catch_unwind(AssertUnwindSafe(|| drop(rt))).unwrap_err();
++        assert_eq!(*payload.downcast::<usize>().unwrap(), 0);
++        assert_eq!(drops.get(), 3);
++        assert_eq!(panics.get(), 2);
++        assert!(handle.queue.is_closed());
++        for mut task in tasks {
++            assert!(task.is_finished());
++            assert!(matches!(join(&mut task), Poll::Ready(None)));
++        }
++
++        for remote in [false, true] {
++            let p = Probe::default();
++            let (h, fut) = (handle.clone(), p.future(Res::Ready));
++            let submit = move || h.spawn(fut);
++            let task = if remote { on_thread(submit) } else { submit() };
++            assert!(task.is_finished());
++            p.check(0, 1, 0);
++        }
++        drop(handle);
++        assert!(queue.upgrade().is_none(), "task alive");
++    }
++}
++
++#[test]
++fn shutdown_completion_panics() {
++    struct PanicWake {
++        drops: bool,
++        calls: Counter,
++    }
++    impl std::task::Wake for PanicWake {
++        fn wake(self: Arc<Self>) {
++            assert!(!self.drops, "detached awaiter was woken");
++            self.calls.inc();
++            panic!("completion panic");
++        }
++    }
++    impl Drop for PanicWake {
++        fn drop(&mut self) {
++            if self.drops {
++                self.calls.inc();
++                panic!("completion panic");
++            }
++        }
++    }
++
++    for (future_panics, drop_waker) in [(false, false), (false, true), (true, false), (true, true)]
++    {
++        let rt = new_rt();
++        let queue = Arc::downgrade(&rt.queue);
++        let drops = Counter::default();
++        let calls = Counter::default();
++        let d = drops.clone();
++        let owner = thread::current().id();
++        let local = std::rc::Rc::new(());
++        let mut task = Some(spawn(
++            &rt,
++            pending_with_drop(move || {
++                assert_eq!(thread::current().id(), owner);
++                drop(local);
++           
+```
+
 ---
 
-### Incident Patch 9: `7e8e49c8` (2026-09-15)
-**Commit Message**: Update names and fix InternalError impl (#1028)
+### Incident Patch 2: `36604e51` (2026-10-18)
+**Commit Message**: Fix a deadlock when ServerConfiguration::incoming_cpu() submits an item to the same server
 
-**File**: `Cargo.toml` (modified, +3/-3)
+**File**: `ntex-server/CHANGES.md` (modified, +6/-2)
 ```diff
-@@ -54,8 +54,7 @@ ntex-macros = { path = "ntex-macros" }
- ntex-util = { path = "ntex-util" }
+@@ -79,14 +79,18 @@
+   use `Server::status_changed()`
  
- [workspace.dependencies]
--ntex = "4.0.0-beta.12"
--ntex-macros = "4.0.0-beta.6"
-+ntex = "4.0.0-beta.13"
+ * `Server::process()` accepts items only while the server is `Ready`. A server paused
+-  with `Server::pause()` stays paused when workers become available, and resuming a
+-  server without available workers no longer resumes the listeners
++  with `Server::pause()` stays paused when workers become available or restart, and
++  resuming a server without available workers no longer resumes the listeners
  
- ntex-bytes = "1.9.0"
- ntex-codec = "1.2.1"
-@@ -64,10 +63,11 @@ ntex-error = "2.6.0"
- ntex-h2 = "4.0.0"
- ntex-http = "1.2.0"
- ntex-io = "4.0.0"
-+ntex-macros = "4.0.0"
- ntex-net = "4.0.0"
- ntex-router = "1.1.0"
- ntex-rt = "3.17.1"
--ntex-server = "4.0.0"
-+ntex-server = "4.1.0"
- ntex-service = "5.0.0"
- ntex-tls = "4.0.0"
- ntex-util = "4.0.0"
-```
-
-**File**: `ntex-macros/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-macros"
--version = "4.0.0-beta.6"
-+version = "4.0.0"
- description = "ntex proc macros"
- readme = "README.md"
- authors = ["ntex contributors <team@ntex.rs>"]
-```
-
-**File**: `ntex-server/CHANGES.md` (modified, +6/-0)
-```diff
-@@ -1,5 +1,11 @@
- # Changes
+ * Fix `Worker::wait_for_status()` missing status changes when several clones of a
+   worker wait at the same time. Each clone now observes every change
  
-+## [4.1.0] - 2026-09-14
+ * Fix the signal handling task keeping a stopped server and its factory alive
+ 
++* Fix a deadlock when `ServerConfiguration::incoming_cpu()` submits an item to the same
++  server. The callback no longer runs under the server's routing lock, an item submitted
++  while the callback runs, by itself or by another thread, is sent without its CPU
 +
-+* Move ServerAppConfig to root
-+
-+* Rename `build_with_config()` helper
-+
- ## [4.0.0] - 2026-09-14
+ ## [4.2.0] - 2026-10-01
  
- * Refactor server state creation process
-```
-
-**File**: `ntex-server/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-server"
--version = "4.0.0"
-+version = "4.1.0"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "Server for ntex framework"
- keywords = ["network", "framework", "async", "futures"]
+ * Fix worker restart after a service panic on runtimes that catch task panics (compio, tokio);
 ```
 
 **File**: `ntex-server/src/lib.rs` (modified, +2/-0)
 ```diff
-@@ -15,10 +15,12 @@ mod manager;
- pub mod net;
- mod pool;
- mod server;
-+mod state;
- mod wrk;
- 
- pub use self::pool::WorkerPool;
- pub use self::server::Server;
-+pub use self::state::{NoConfig, ServerAppConfig};
- pub use self::wrk::{Worker, WorkerStatus, WorkerStop};
- 
- /// Worker id
+@@ -94,6 +94,8 @@ pub trait ServerConfiguration: Send + Clone + 'static {
+     ///
+     /// Called on the thread that submits the item with [`Server::process`],
+     /// e.g. the accept thread of a network server.
++    /// Calls are not concurrent. An item submitted while the method runs,
++    /// e.g. by the method itself, is sent without its incoming CPU.
+     fn incoming_cpu(&self, item: &Self::Item) -> Option<usize> {
+         let _ = item;
+         None
 ```
 
-**File**: `ntex-server/src/net/builder.rs` (modified, +1/-2)
+**File**: `ntex-server/src/manager.rs` (modified, +146/-54)
 ```diff
-@@ -6,12 +6,11 @@ use ntex_service::{IntoService, Service, cfg::SharedCfg};
- use ntex_util::time::Millis;
- use socket2::{Domain, SockAddr, Socket, Type};
+@@ -1,4 +1,4 @@
+-use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
++use std::sync::{Arc, Mutex, MutexGuard, PoisonError, TryLockError};
+ use std::{cell::Cell, cell::RefCell, collections::VecDeque, fmt, pin::pin, rc::Rc};
  
--use crate::{Server, WorkerPool};
-+use crate::{NoConfig, Server, ServerAppConfig, WorkerPool};
- 
- use super::accept::AcceptLoop;
- use super::config::ServiceConfig;
- use super::factory::{self, FactoryServiceType};
--use super::state::{NoConfig, ServerAppConfig};
- use super::{Connection, ServerStatus, StreamServer, Token, socket::Listener};
- 
- /// Streaming service builder
-```
-
-**File**: `ntex-server/src/net/mod.rs` (modified, +4/-4)
-```diff
-@@ -9,15 +9,15 @@ mod config;
- mod factory;
- mod service;
- mod socket;
--mod state;
- mod test;
- 
-+pub use crate::{NoConfig, ServerAppConfig};
-+
- pub use self::accept::{AcceptLoop, AcceptNotify, AcceptorCommand};
- pub use self::builder::{ServerBuilder, bind_addr, create_tcp_listener};
- pub use self::config::{ServiceConfig, ServiceRuntime};
- pub use self::service::StreamServer;
- pub use self::socket::{Connection, Stream};
--pub use self::state::{NoConfig, ServerAppConfig};
- pub use self::test::{TestServer, TestServerBuilder, build_test_server, test_server};
- 
- pub type Server = crate::Server<Connection>;
-@@ -50,8 +50,8 @@ pub fn build() -> ServerBuilder {
-     ServerBuilder::default()
+ use async_channel::{Receiver, Sender, unbounded};
+@@ -42,7 +42,7 @@ struct Inner<F: ServerConfiguration> {
+     factory: F,
+     cfg: WorkerPool,
+     shared: Arc<ServerShared>,
+-    router: Arc<Mutex<Router<F::Item>>>,
++    router: Arc<Routing<F::Item>>,
+     /// All running workers, including unavailable ones.
+     workers: RefCell<Vec<Worker<F::Item>>>,
+     /// Paused with [`Server::pause`].
+@@ -57,37 +57,75 @@ struct Inner<F: ServerConfiguration> {
+     cmd: Sender<ServerCommand<F::Item>>,
  }
  
--/// Start server with state building process
--pub fn build_with_cfg<Cfg>(state: Cfg) -> ServerBuilder<Cfg>
-+/// Start server with configuration
-+pub fn build_with_config<Cfg>(state: Cfg) -> ServerBuilder<Cfg>
- where
-     Cfg: ServerAppConfig,
- {
+-/// Workers that receive new items, and their load balancer.
++/// Sends items to the workers.
+ ///
+ /// Shared by the command loop, which adds and removes workers, and the
+ /// [`Server`] handles, which send items to the workers on the submitting
+ /// thread, e.g. the accept thread.
++pub(crate) struct Routing<T> {
++    router: Mutex<Router<T>>,
++    /// Called without holding the router's lock, so it can take time or
++    /// submit items to the server.
++    incoming_cpu: Mutex<IncomingCpu<T>>,
++}
++
++/// Workers that receive new items, and their load balancer.
+ pub(crate) struct Router<T> {
+     workers: Vec<Worker<T>>,
+     balancer: Balancer,
+-    incoming_cpu: IncomingCpu<T>,
+     /// The server is stopping, items are not sent to workers.
+     closed: bool,
+ }
+ 
+ /// See [`ServerConfiguration::incoming_cpu`].
+ type IncomingCpu<T> = Box<dyn Fn(&T) -> Option<usize> + Send>;
+ 
+-impl<T> Router<T> {
+-    pub(crate) fn lock(router: &Mutex<Self>) -> MutexGuard<'_, Self> {
+-        router.lock().unwrap_or_else(PoisonError::into_inner)
++impl<T> Routing<T> {
++    fn new(balancer: Balancer, capacity: usize, incoming_cpu: IncomingCpu<T>) -> Self {
++        Routing {
++            router: Mutex::new(Router {
++                workers: Vec::with_capacity(capacity),
++                balancer,
++                closed: false,
++            }),
++            incoming_cpu: Mutex::new(incoming_cpu),
++        }
++    }
++
++    pub(crate) fn lock(&self) -> MutexGuard<'_, Router<T>> {
++        self.router.lock().unwrap_or_else(PoisonError::into_inner)
+     }
+ 
+     /// Sends `item` to a worker, returns it if no worker is available.
+-    pub(crate) fn dispatch(&mut self, mut item: T, metrics: &Metrics) -> Result<(), T> {
+-        if self.closed || self.workers.is_empty() {
+-            return Err(item);
+-        }
+-        let cpu = if self.balancer.uses_incoming_cpu(&self.workers) {
+-            (self.incoming_cpu)(&item)
++    pub(crate) fn dispatch(&self, item: T, metrics: &Metrics) -> Result<(), T> {
++        let uses_cpu = {
++            let mut r = self.lock();
++            if r.closed || r.workers.is_empty() {
++                return Err(item);
++            }
++            let r = &mut *r;
++            r.balancer.uses_incoming_cpu(&r.workers)
++        };
++        // the callback is busy if it submits the item to this server, or
++        // another thread runs it, the item is sent without its cpu
++        let cpu = if uses_cpu {
++            match self.incoming_cpu.try_lock() {
++                Ok(f) => f(&item),
++                Err(TryLockError::Poisoned(f)) => f.into_inner()(&item),
++                Err(TryLockError::WouldBlock) => None,
++            }
+         } else {
+             None
+         };
++        self.lock().dispatch(item, cpu, metrics)
++    }
++}
++
++impl<T> Router<T> {
++    fn dispatch(&mut self, mut item: T, cpu: Option<usize>, metrics: &Metrics) -> Result<(), T> {
++        if self.closed {
++            return Err(item);
++        }
+         while !self.workers.is_empty() {
+             let (idx, local) = self.balancer.select(&self.workers, cpu);
+             match self.workers[idx].send(item) {
+@@ -110,11 +148,12 @@ impl<T> Router<T> {
+     }
+ }
+ 
+-impl<T> fmt::Debug for Router<T> {
++impl<T> fmt::Debug for Routing<T> {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+-        f.debug_struct("Router")
+-            .field("workers", &self.workers.len())
+-            .field("closed", &self.closed)
++        let r = self.lock();
++        f.debug_struct("Routing")
++            .field("workers", &r.workers.len())
++            .field("closed", &r.closed)
+             .finish_non_exhaustive()
+     }
+ }
+@@ -129,12 +168,11 @@ impl<F: ServerConfiguration> ServerManager<F> {
+         let no_signals = cfg.no_signals;
+         let shared = Arc::new(ServerShared::new(Metrics::new(cfg.num)));
+         let f = factory.clone();
+-        let router = Arc::new(Mutex::new(Router {
+-            workers: Vec::with_capacity(cfg.num),
+-            balancer: Balancer::new(cfg.balancing),
+-            incoming_cpu: Box::new(move |item| f.incoming_cpu(item)),
+-            closed: false,
+-        }));
++        let router = Arc::new(Routing::new(
++            Balancer::new(cfg.balancing),
++            cfg.num,
 ```
 
-**File**: `ntex-server/src/net/service.rs` (modified, +1/-2)
+**File**: `ntex-server/src/server.rs` (modified, +5/-5)
 ```diff
-@@ -3,11 +3,10 @@ use std::{fmt, io, sync::Arc};
- use ntex_service::{Ctx, Service, cfg::SharedCfg};
- use ntex_util::{HashMap, future::join_all, services::Counter};
+@@ -1,13 +1,13 @@
+ #![allow(clippy::missing_panics_doc)]
+-use std::sync::{Arc, Mutex, atomic::AtomicU64, atomic::Ordering};
++use std::sync::{Arc, atomic::AtomicU64, atomic::Ordering};
+ use std::task::{Context, Poll, ready};
+ use std::{future::Future, io, pin::Pin};
  
--use crate::ServerConfiguration;
-+use crate::{ServerAppConfig, ServerConfiguration};
+ use async_channel::Sender;
+ use event_listener::Event;
+ use ntex_rt::signals::Signal;
  
- use super::accept::{AcceptNotify, AcceptorCommand};
- use super::factory::{FactoryServiceType, NetService};
--use super::state::ServerAppConfig;
- use super::{MAX_CONNS_COUNTER, Token, socket::Connection};
+-use crate::manager::{Router, ServerCommand};
++use crate::manager::{Routing, ServerCommand};
+ use crate::{ServerStatus, metrics::Metrics};
  
- /// Net streaming server
+ #[derive(Debug)]
+@@ -56,7 +56,7 @@ fn status(val: u64) -> ServerStatus {
+ #[derive(Debug)]
+ pub struct Server<T> {
+     shared: Arc<ServerShared>,
+-    router: Arc<Mutex<Router<T>>>,
++    router: Arc<Routing<T>>,
+     cmd: Sender<ServerCommand<T>>,
+     stop: Option<oneshot::AsyncReceiver<()>>,
+ }
+@@ -72,7 +72,7 @@ impl<T> Server<T> {
+     pub(crate) fn new(
+         cmd: Sender<ServerCommand<T>>,
+         shared: Arc<ServerShared>,
+-        router: Arc<Mutex<Router<T>>>,
++        router: Arc<Routing<T>>,
+     ) -> Self {
+         Server {
+             cmd,
+@@ -108,7 +108,7 @@ impl<T> Server<T> {
+         if self.shared.status() != ServerStatus::Ready {
+             return Err(item);
+         }
+-        let item = match Router::lock(&self.router).dispatch(item, &self.shared.metrics) {
++        let item = match self.router.dispatch(item, &self.shared.metrics) {
+             Ok(()) => return Ok(()),
+             Err(item) => item,
+         };
+```
+
+**File**: `ntex-server/src/status.rs` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++/// Server status.
++///
++/// Returned by [`Server::status`](crate::Server::status) and
++/// [`Server::status_changed`](crate::Server::status_changed). The server
++/// accepts new items, and network listeners accept connections, only while
++/// the status is [`Ready`](ServerStatus::Ready).
++#[non_exhaustive]
++#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
++pub enum ServerStatus {
++    /// No worker has become available yet.
++    Starting,
++    /// Workers are available and the server accepts new items.
++    Ready,
++    /// The server has been paused with [`Server::pause`](crate::Server::pause).
++    ///
++    /// The server stays paused until [`Server::resume`](crate::Server::resume)
++    /// is called, even if workers restart or become available.
++    Paused,
++    /// No worker is available, e.g. all workers are restarting or not ready.
++    ///
++    /// The server becomes ready again once a worker is available.
++    Unavailable,
++    /// The server is stopping its workers.
++    Stopping,
++    /// The server has stopped. This status is final.
++    Stopped,
++}
++
++impl ServerStatus {
++    pub(crate) const fn from_u8(val: u8) -> Self {
++        match val {
++            0 => ServerStatus::Starting,
++            1 => ServerStatus::Ready,
++            2 => ServerStatus::Paused,
++            3 => ServerStatus::Unavailable,
++            4 => ServerStatus::Stopping,
++            _ => ServerStatus::Stopped,
++        }
++    }
++
++    pub(crate) const fn as_u8(self) -> u8 {
++        match self {
++            ServerStatus::Starting => 0,
++            ServerStatus::Ready => 1,
++            ServerStatus::Paused => 2,
++            ServerStatus::Unavailable => 3,
++            ServerStatus::Stopping => 4,
++            ServerStatus::Stopped => 5,
++        }
++    }
++}
+```
+
+**File**: `ntex-server/src/wrk.rs` (modified, +5/-0)
+```diff
+@@ -172,6 +172,11 @@ impl<T> Worker<T> {
+         self.cpus.get().map_or(&[], |cpus| cpus)
+     }
+ 
++    #[cfg(test)]
++    pub(crate) fn set_cpus(&self, cpus: &[usize]) {
++        let _ = self.cpus.set(cpus.into());
++    }
++
+     #[inline]
+     /// Sends a message to the worker.
+     ///
+```
+
+**File**: `ntex-server/tests/pool.rs` (modified, +32/-0)
+```diff
+@@ -717,6 +717,38 @@ async fn pool_signals_release_stopped_server() {
+     assert!(released, "the stopped server's factory is still alive");
+ }
+ 
++/// A paused server stays paused while a failed worker is restarted.
++#[ntex::test]
++async fn pool_pause_survives_worker_restart() {
++    let c = Counters::default();
++    let mut cfg = Cfg::new(&c);
++    cfg.panic_on = Some(1);
++    let srv = pool().workers(1).run(cfg);
++    wait_status(&srv, ServerStatus::Ready).await;
++    assert_eq!(c.resume.load(Relaxed), 1);
++
++    assert_eq!(srv.process(1), Ok(()));
++    srv.pause().await;
++    assert_eq!(srv.status(), ServerStatus::Paused);
++
++    for _ in 0..200 {
++        if c.created.load(Relaxed) == 2 {
++            break;
++        }
++        sleep(Millis(10)).await;
++    }
++    assert_eq!(c.created.load(Relaxed), 2, "the worker is not restarted");
++    sleep(Millis(100)).await;
++    assert_eq!(srv.status(), ServerStatus::Paused);
++    assert_eq!(c.resume.load(Relaxed), 1);
++    assert_eq!(srv.process(2), Err(2));
++
++    srv.resume().await;
++    assert_eq!(srv.status(), ServerStatus::Ready);
++    assert_eq!(c.resume.load(Relaxed), 2);
++    srv.stop(true).await;
++}
++
+ /// A paused server stays paused when workers become available, and a server
+ /// without available workers does not become ready when it is resumed.
+ #[ntex::test]
+```
+
+---
+
+### Incident Patch 3: `bfdbb0ce` (2026-10-18)
+**Commit Message**: iocp: reject handler registration during construction or dispatch with an explicit panic instead of losing registrations
+
+**File**: `ntex-net/CHANGES.md` (modified, +3/-0)
+```diff
+@@ -3,6 +3,9 @@
+ 
+ ## [4.6.0] - Unreleased
+ 
++* iocp: reject handler registration during construction or dispatch with an
++  explicit panic instead of losing registrations
++
+ * iocp: cancel abandoned connection attempts promptly while retaining operation
+   memory until Windows delivers the completion
+ 
+```
+
+**File**: `ntex-net/src/iocp/reactor.rs` (modified, +109/-2)
+```diff
+@@ -108,13 +108,21 @@ impl Reactor {
+         DriverType::Iocp
+     }
+ 
+-    /// Register updates handler
++    /// Registers a reactor handler.
++    ///
++    /// # Panics
++    ///
++    /// Panics if called during handler construction or completion dispatch,
++    /// including notification and tick callbacks.
+     pub(crate) fn register<F>(&self, f: F)
+     where
+         F: FnOnce(ReactorApi) -> Box<dyn Handler>,
+     {
++        let mut handlers = self
++            .handlers
++            .take()
++            .expect("Cannot register an IOCP handler during registration or dispatch");
+         let hnd = self.hid.get() + 1;
+-        let mut handlers = self.handlers.take().unwrap_or_default();
+         handlers.push(f(ReactorApi {
+             hnd,
+             reactor: self.reactor.clone(),
+@@ -570,8 +578,107 @@ impl Handler for Dummy {
+ 
+ #[cfg(test)]
+ mod tests {
++    use std::panic::{AssertUnwindSafe, catch_unwind};
++    use std::rc::{Rc, Weak};
++
+     use super::*;
+ 
++    fn assert_registration_rejected(reactor: &Reactor) {
++        let called = Cell::new(false);
++        let id = reactor.hid.get();
++        let result = catch_unwind(AssertUnwindSafe(|| {
++            reactor.register(|_| {
++                called.set(true);
++                Box::new(Dummy)
++            });
++        }));
++        assert!(result.is_err(), "reentrant registration was accepted");
++        assert!(!called.get(), "reentrant handler factory was called");
++        assert_eq!(reactor.hid.get(), id, "rejection changed the handler ID");
++    }
++
++    #[test]
++    fn register_rejects_nested_factory() {
++        let reactor = Reactor::new().unwrap();
++        reactor.register(|api| {
++            assert_eq!(api.hnd, 1);
++            assert_registration_rejected(&reactor);
++            Box::new(Dummy)
++        });
++        reactor.register(|api| {
++            assert_eq!(api.hnd, 2);
++            Box::new(Dummy)
++        });
++        let handlers = reactor.handlers.take().unwrap();
++        assert_eq!(handlers.len(), 3);
++        reactor.handlers.set(Some(handlers));
++    }
++
++    #[test]
++    fn register_rejects_dispatch_callbacks() {
++        struct Reentrant {
++            reactor: Weak<Reactor>,
++            calls: Rc<Cell<usize>>,
++        }
++
++        impl Reentrant {
++            fn reject(&self) {
++                assert_registration_rejected(&self.reactor.upgrade().unwrap());
++                self.calls.set(self.calls.get() + 1);
++            }
++        }
++
++        impl Handler for Reentrant {
++            fn completed(&mut self, _: u32, _: io::Result<usize>, _: *mut Overlapped) {
++                self.reject();
++            }
++
++            fn notified(&mut self, _: usize, _: u32) {
++                self.reject();
++            }
++
++            fn tick(&mut self) {
++                self.reject();
++            }
++        }
++
++        let reactor = Rc::new(Reactor::new().unwrap());
++        let calls = Rc::new(Cell::new(0));
++        reactor.register(|_| {
++            Box::new(Reentrant {
++                reactor: Rc::downgrade(&reactor),
++                calls: calls.clone(),
++            })
++        });
++        let mut ov = Overlapped::new(1, 0);
++        reactor.poll_completions(&[
++            OVERLAPPED_ENTRY {
++                lpOverlapped: &raw mut ov.base,
++                ..OVERLAPPED_ENTRY::default()
++            },
++            OVERLAPPED_ENTRY {
++                lpCompletionKey: notify_key(1, 0).unwrap(),
++                ..OVERLAPPED_ENTRY::default()
++            },
++        ]);
++        assert_eq!(calls.get(), 3);
++
++        let done = Completions::default();
++        let ticks = Rc::new(Cell::new(0));
++        reactor.register(|api| {
++            assert_eq!(api.hnd, 2);
++            Box::new(Recorder(done.clone(), ticks.clone()))
++        });
++        let mut ov = Overlapped::new(2, 7);
++        ov.base.InternalHigh = 11;
++        reactor.poll_completions(&[OVERLAPPED_ENTRY {
++            lpOverlapped: &raw mut ov.base,
++            ..OVERLAPPED_ENTRY::default()
++        }]);
++        assert_eq!(*done.borrow(), [(7, Ok(11))]);
++        assert_eq!(ticks.get(), 1);
++    }
++
+     /// Socket completion errors have the same kind as synchronous socket errors.
+     #[test]
+     fn socket_completion_error_kind() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1084** (2026-10-05): Update test (@fafhrd91)
-- **PR #1083** (2026-10-05): Urly parse (@fafhrd91)
-- **PR #1082** (2026-10-05): Handle filter readiness (@fafhrd91)
-- **PR #1081** (2026-10-05): Prepare release (@fafhrd91)
-- **PR #1080** (2026-10-05): Various http optimizations (@fafhrd91)
-- **PR #1079** (2026-10-04): Prepera net release (@fafhrd91)
-- **PR #1078** (2026-10-04): Prepare releases (@fafhrd91)
-- **PR #1077** (2026-10-04): Replace http::Uri with urly::Url (@fafhrd91)
+- **PR #1141** (2026-10-18): Server improvements (@fafhrd91)
+- **PR #1140** (2026-10-18): Async task improvements (@fafhrd91)
+- **PR #1139** (2026-10-18): Bytes fixes (@fafhrd91)
+- **PR #1138** (2026-10-18): Replace async-task with custom implementation (@fafhrd91)
+- **PR #1137** (2026-10-17): Use a zero-sized schedule function for neon tasks (@fafhrd91)
+- **PR #1136** (2026-10-17): Fix compio `JoinHandle` never completing when it is polled on another thread (@fafhrd91)
 
 ---
 
@@ -4000,3 +2935,37 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Finish runtime shutdown even if task cleanup panics, closing remote admission an
+
+**RULE**:
+When implementing operations in `ntex-rt/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `be59d0e7`: Finish runtime shutdown even if task cleanup panics, closing remote admission and cancelling remaining tasks before resuming the first panic. Log and suppress secondary cleanup panics, preserving any already-unwinding panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex-rt/CHANGES.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+* Finish runtime shutdown even if task cleanup panics, closing remote admission
+  and cancelling remaining tasks before resuming the first panic. Log and
+  suppress secondary cleanup panics, preserving any already-unwinding panic
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `be59d0e7` are properly handled with clean fallback behavior.

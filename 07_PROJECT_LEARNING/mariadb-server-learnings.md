@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
+> **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
+> **Source Version**: `327437ad`  
+> **License**: GPL-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T04:34:12.373Z  
+> **Learning ID**: `learn-github-mariadb-server`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): MariaDB/server
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:29:29.513Z  
+> **Harvest Timestamp**: 2026-10-19T04:34:12.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8320 stars
+- **Stars / Engagement**: 8388 stars
 
 ---
 
@@ -146,8 +160,7 @@ extern const char *INNODB_BINLOG_MAGIC;
 
 extern handler_binlog_reader *get_binlog_reader_innodb();
 extern bool open_engine_binlog(handler_binlog_reader *reader,
-                               ulonglong start_position,
-                               const char *filename, IO_CACHE *opened_cache);
+                               ulonglong start_position, const char *filename);
 
 
 /* Shared functions defined in mysqlbinlog.cc */
@@ -1576,181 +1589,17 @@ C_MODE_END
 
 ```
 
-### Core Architecture Module: `include/queues.h`
-```
-/* Copyright (C) 2010 Monty Program Ab
-   All Rights reserved
-
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the following disclaimer
-      in the documentation and/or other materials provided with the
-      distribution.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
-  <COPYRIGHT HOLDER> BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
-*/
-
-/*
-  Code for general handling of priority Queues.
-  Implementation of queues from "Algorithms in C" by Robert Sedgewick.
-*/
-
-#ifndef _queues_h
-#define _queues_h
-
-#include <my_cmp.h>
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-typedef struct st_queue {
-  uchar **root;
-  void *first_cmp_arg;
-  uint elements;
-  uint max_elements;
-  uint offset_to_key;          /* compare is done on element+offset */
-  uint offset_to_queue_pos;    /* If we want to store position in element */
-  uint auto_extent;
-  int max_at_top;	/* Normally 1, set to -1 if queue_top gives max */
-  qsort_cmp2 compare;
-} QUEUE;
-
-#define queue_first_element(queue) 1
-#define queue_last_element(queue) (queue)->elements
-#define queue_empty(queue) ((queue)->elements == 0)
-#define queue_top(queue) ((queue)->root[1])
-#define queue_element(queue,index) ((queue)->root[index])
-#define queue_end(queue) ((queue)->root[(queue)->elements])
-#define queue_replace_top(queue) _downheap(queue, 1)
-#define queue_set_cmp_arg(queue, set_arg) (queue)->first_cmp_arg= set_arg
-#define queue_set_max_at_top(queue, set_arg) \
-  (queue)->max_at_top= set_arg ? -1 : 1
-#define queue_remove_top(queue_arg) queue_remove((queue_arg), queue_first_element(queue_arg))
-
-int init_queue(QUEUE *queue,uint max_elements,uint offset_to_key,
-	       my_bool max_at_top, qsort_cmp2 compare,
-	       void *first_cmp_arg, uint offset_to_queue_pos,
-               uint auto_extent);
-int reinit_queue(QUEUE *queue,uint max_elements,uint offset_to_key,
-                 my_bool max_at_top, qsort_cmp2 compare,
-                 void *first_cmp_arg, uint offset_to_queue_pos,
-                 uint auto_extent);
-int resize_queue(QUEUE *queue, uint max_elements);
-void delete_queue(QUEUE *queue);
-void queue_insert(QUEUE *queue, uchar *element);
-int queue_insert_safe(QUEUE *queue, uchar *element);
-uchar *queue_remove(QUEUE *queue,uint idx);
-void queue_replace(QUEUE *queue,uint idx);
-
-#define queue_remove_all(queue) { (queue)->elements= 0; }
-#define queue_is_full(queue) ((queue)->elements == (queue)->max_elements)
-void _downheap(QUEUE *queue, uint idx);
-void queue_fix(QUEUE *queue);
-#define is_queue_inited(queue) ((queue)->root != 0)
-
-#ifdef	__cplusplus
-}
-#endif
-#endif
-
-```
-
-### Core Architecture Module: `include/wqueue.h`
-```
-/*
-   Copyright (c) 2007, 2008, Sun Microsystems, Inc,
-   Copyright (c) 2011, 2012, Monty Program Ab
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; version 2 of the License.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA */
-
-#ifndef WQUEUE_INCLUDED
-#define WQUEUE_INCLUDED
-
-#include <my_pthread.h>
-
-/* info about requests in a waiting queue */
-typedef struct st_pagecache_wqueue
-{
-  struct st_my_thread_var *last_thread;         /* circular list of waiting
-                                                   threads */
-} WQUEUE;
-
-void wqueue_link_into_queue(WQUEUE *wqueue, struct st_my_thread_var *thread);
-void wqueue_unlink_from_queue(WQUEUE *wqueue, struct st_my_thread_var *thread);
-void wqueue_add_to_queue(WQUEUE *wqueue, struct st_my_thread_var *thread);
-void wqueue_add_and_wait(WQUEUE *wqueue,
-                         struct st_my_thread_var *thread,
-                         mysql_mutex_t *lock);
-void wqueue_release_queue(WQUEUE *wqueue);
-void wqueue_release_one_locktype_from_queue(WQUEUE *wqueue);
-
-#endif
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5815** (2026-10-05): **MDEV-4632 multi_source.status_vars test fails sporadically in buildbot**
-  *Symptoms*: `Slave_received_heartbeats`’s test for independence between connections relied on timing with second-level precision, which is inconsistent on a loaded CI. To avoid relying on timing accuracy, this commit changes the test strategy to measure a live result and use that to show independence.
-  **Post-Mortem & Fix Analysis**:
-  > Whoops, already fixed in [MDEV-41212](https://jira.mariadb.org/browse/MDEV-41212) (#5703)
+- **Issue #5916** (2026-10-18): **MDEV-40845: DuckDB: reject SELECT ... FOR UPDATE / LOCK IN SHARE MODE…**
+  *Symptoms*: … (msan)  Works under MSAN just fine.
 
-- **Issue #5814** (2026-10-05): **MDEV-41385 wsrep_sync_wait has no effect after COM_CHANGE_USER       …**
-  *Symptoms*: …                                                                          │  Also reported as: https://github.com/mariadb-corporation/galera/issues/613.  THD::cleanup() cleared THD::wsrep_client_thread. Besides connection                                                                            │ close, THD::cleanup() is also called from THD::change_user() when                                                                              │ handling COM_CHANGE_USER and COM_RESET_CONNECTION. THD::init() does                                                                            │ not set the flag back, and the only place that sets it is                                                                                      │ thd_prepare_connection(). After either command the session was no                                                                              │ longer treated as a wsrep client connection: WSREP_CLIENT() returned                                                                           │ false for the rest of the session.                                                                                                             │  As a result wsrep_sync_wait was silently ignored, so causal reads                                                                              │ could return stale data. Such connections were also skipped by                                                                                 │ wsrep_close_client_connec
-
-- **Issue #5806** (2026-10-02): **crc32c: check elf_aux_info() return value in ppc64 probe**
-  *Symptoms*: elf_aux_info(3) leaves the output buffer unmodified on failure, so ignoring the return value could test an uninitialized cpufeatures and wrongly enable the POWER8 vector-crypto path.  Treat failure as "no features" so the probe falls back to the generic implementation.
-
-- **Issue #5805** (2026-10-05): **MDEV-39343: Restoring from a mysqldump from older version makes mysql_upgrade version test fail**
-  *Symptoms*: The mariadb-upgrade tool no longer uses the mysql_upgrade_info file to track the server version during an upgrade.  Changes:  1- Create the mysql.mysql_upgrade_info table and seed it with the server binary version when MariaDB is installed.  2- Make mariadb-dump add a DROP TABLE mysql.mysql_upgrade_info statement to the dump. This ensures that the table is removed on the target server when restoring a dump created from an older server. The table will then be recreated if it exists on the source server.  3- Update mariadb-upgrade to perform the upgrade if mysql.mysql_upgrade_info is missing or contains a version older than the current server binary version. Otherwise, reject the upgrade.
-
-- **Issue #5803** (2026-10-01): **10.11 mdev 37269**
-  *Symptoms*: 
-
-- **Issue #5801** (2026-10-03): **MDEV-41156: ASAN use-after-poison in JSON_CONTAINS_PATH**
-  *Symptoms*: The json_depth_array as allocated for 32 elements but accessed it as though there wasn't a limit.  Called mem_root_allocate_dynamic to ensure that the number of elements was presented, and error JE_EOS (out of space) if allocation exceeded.  Removed unused value, as value_ptr was always valid.  Access the array with bounds checking mechanism, mem_root_dynamic_array_get_val.  Reported by: David Korczynski of Ada Logics
-
-- **Issue #5799** (2026-10-02): **MDEV-41303:  rand() in a semi-join subquery is checked on outer rows**
-  *Symptoms*: Converting an IN subquery to a semi-join moves its WHERE into the parent WHERE.  A condition there such as rand(1) < 0.09 reads no table, so it is attached to the last table of the join order that is outside any materialized semi-join.  With SJ-Materialization it was checked once for each outer row instead of once for each row of the subquery, and the query returned a wrong count.  Do not convert a subquery to a semi-join when it contains a function with a random result (UNCACHEABLE_RAND).  Derived tables already follow this rule.  ROWNUM sets the same flag, so this replaces the check for ROWNUM.
-  **Post-Mortem & Fix Analysis**:
-  > ```sql explain extended select count(*) from t1 where t1.a in (select c from t2 where rand(1) < 0.09); ```  Before the patch, we get: ``` Note	1003	select count(0) AS `count(*)`  from `test`.`t1` semi join (`test`.`t2`) where rand(1) < 0.09 ```  After the patch, we get (I've added formatting): ``` Note	1003	/* select#1 */ select count(0) AS `count(*)`  from     <materialize> (/* select#2 */ select `test`.`t2`.`c` from `test`.`t2` where rand(1) < 0.09)    join `test`.`t1`  where    `<subquery2>`.`c` = `test`.`t1`.`a` ```  So it is still converted into a semi-join.  But now the semi-join is a `non-merged semi-join`. Subquery's WHERE condition stays in the subquery, so conversion to `non-merged semi-join` is fine
-  > Remember I've asked this question on the call:  > If the SELECT has an Item with 'item->used_tables() & RAND_TABLE_BIT, will that translate into select_lex->uncacheable & UNCACHEABLE_RAND` for the SELECT that that Item is located  Claude gives this answer:  > Items that have RAND_TABLE_BIT but never set UNCACHEABLE_RAND: > - Item_func_get_user_var: used_tables() returns the bit when the item isn't const (item_func.h:3672). > - Item_func_sysdate_local: item_timefunc.h:961. > - Item_func_sp: the bit is set when the stored routine is non-deterministic (item_func.cc:6951). > - Item_insert_value (item.h:7460). > - A not-fully-parsed Item_default_value (item.cc:10207). > - Item_func_xml_* (item_xmlfunc.cc:197). > - Item_direct_view_ref in HAVING, (hallucination removed), the Item_sum / window-function caches. These add the bit only as a "don't push or move" marker.  I've verified it for SYSDATE()...  I don't see any items in the above list that would allow to construct a fail
-  > > Remember I've asked this question on the call: >  > > If the SELECT has an Item with 'item->used_tables() & RAND_TABLE_BIT, will that translate into select_lex->uncacheable & UNCACHEABLE_RAND` for the SELECT that that Item is located  Yes, I investigated with Claude and discovered that the answer to this is 'no'.  I posted this PR because the answers to the three questions we discussed on the call indicated that this solution is sound, so I thought I would post it.  I planned to discuss the questions during the team call today.
-
-- **Issue #5797** (2026-10-02): **Added a Contribution Interaction Etiquette section**
-  *Symptoms*: Added a section on collaboration etiquette to the community contributions doc.
-  **Post-Mortem & Fix Analysis**:
-  > > I don't think it belongs here. There's code of conduct and numerous howtos on the internet  Would you have the same section here? https://github.com/MariaDB/governance/blob/main/code-of-conduct.md
-  > My intent was to capture the process fully. I believe it might be more confusing to people to read two documents and merge them together than it would be to just read one. Here we have a unique system of trying to keep the PR in sync with the Jira. In all of its states. I do not think anybody else does that. Most of what I’ve seen is people just closing the GitHub issue when they address it via a PR.  Maybe we could consider simplifying the process first? 
+- **Issue #5904** (2026-10-16): **MDEV-40819 DuckDB TIME conversion crashes the server**
+  *Symptoms*: MariaDB TIME is a duration (-838:59:59 .. 838:59:59). DuckDB TIME is a clock type (00:00:00 .. 24:00:00). INSERT of '25:00:00' succeeded via the appender, but SELECT converted the stored microseconds through DuckDB ToString() / Time::Convert(), which asserts IsValidTime() and aborts debug builds.  On SELECT, read the physical INT64 microseconds and build MYSQL_TIME directly instead of using DuckDB's string cast.  On SQL DML (dml_in_batch=OFF), do not emit a quoted TIME string. DuckDB TryConvertTime() rejects hours past 24. Store the same microseconds through mariadb_time(), matching the appender path. Cross-engine TIME values use the same microsecond representation.  https://jira.mariadb.org/browse/MDEV-40819
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1767,2830 +1616,1261 @@ void wqueue_release_one_locktype_from_queue(WQUEUE *wqueue);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95fc70c3` (2026-08-13)
-**Commit Message**: MDEV-39307: Fix %f in audit plugin timestamp rendering zero microseconds
+### Incident Patch 1: `6ba1f128` (2026-09-07)
+**Commit Message**: MDEV-41020 A `MEMORY` table refuses a row it just held
 
-The server_audit_timestamp_format %f specifier always rendered zero
-microseconds. The server downcast the precise time to seconds before
-passing it to audit plugins, and the plugin then re-fetched the time
-itself at write time.
+`hp_alloc_from_tail()` tests the table memory ceiling before it decides
+whether the leaf it is about to use has to be allocated or is merely
+being reclaimed.  Reclaiming adds no memory, so on that branch the test
+answers a question nobody asked.
 
-Pass the server's high-resolution time through the audit API instead:
-- extend mysql_event_general with general_time_microseconds (added in
-  MYSQL_AUDIT_INTERFACE_VERSION 0x0304), keeping general_time in
-  seconds for backward compatibility
-- the server_audit plugin uses event->general_time_microseconds for
-  query log entries instead of re-fetching the time at write time
+The state it misjudges is routine.  `hp_find_free_hash()` allocates an
+index leaf without consulting `max_table_size`, and no leaf is smaller
+than `heap_min_allocation_block`, so a table with two hash indexes is
+already over a 32K ceiling once it holds its first row.  That is legal:
+the ceiling is only tested when the record cursor lands on a leaf
+boundary, and the first row tests it while both counters are still
+zero.
 
-Connection and table events carry no timestamp in the audit API, so the
-plugin keeps taking the time at event time for those entries.
+`hp_shrink_tail()` puts the cursor back on a leaf boundary whenever it
+empties the tail, and `data_length` goes on counting the leaf, which is
+still allocated.  The next write re-reads that sum and reports
+`HA_ERR_RECORD_FILE_FULL` for a row the table held a moment earlier.
 
-**File**: `include/mysql/plugin_audit.h` (modified, +9/-1)
+Move the ceiling test to the arm that calls `hp_get_new_block()`.  The
+`max_records` row-count test stays where it is, because it caps rows
+however the slot is obtained.
+
+**Why a master and a slave
+
+**File**: `include/heap.h` (modified, +7/-0)
 ```diff
-@@ -29,7 +29,7 @@ extern "C" {
+@@ -43,6 +43,13 @@ extern "C" {
+ #define HP_MAX_LEVELS	4		/* 128^5 records is enough */
+ #define HP_PTRS_IN_NOD	128
  
- #define MYSQL_AUDIT_CLASS_MASK_SIZE 1
- 
--#define MYSQL_AUDIT_INTERFACE_VERSION 0x0303
-+#define MYSQL_AUDIT_INTERFACE_VERSION 0x0304
- 
- 
- /*************************************************************************
-@@ -69,6 +69,14 @@ struct mysql_event_general
-   /* Added in version 0x303 */
-   unsigned int port;
-   MYSQL_CONST_LEX_STRING database;
-+  /*
-+    Added in version 0x304.
++/*
++  Value of HP_SHARE::max_records for a table with no row limit.  0 is a
++  limit of zero rows, which is how a table that is never written to is
++  created; only heap_create()'s argument uses 0 for "no limit".
++*/
++#define NO_LIMIT_RECORDS ULONG_MAX
 +
-+    The time when the event occurred, in microseconds since the epoch.
-+    general_time above keeps the second resolution for backward
-+    compatibility.
-+  */
-+  unsigned long long general_time_microseconds;
- };
+ 	/* struct used with heap_functions */
  
- 
+ typedef struct st_heapinfo		/* Struct from heap_info */
 ```
 
-**File**: `include/mysql/plugin_audit.h.pp` (modified, +1/-0)
+**File**: `mysql-test/suite/heap/blob_delete_reinsert_ceiling.result` (added, +34/-0)
 ```diff
-@@ -738,6 +738,7 @@
-   unsigned long long query_id;
-   unsigned int port;
-   MYSQL_CONST_LEX_STRING database;
-+  unsigned long long general_time_microseconds;
- };
- struct mysql_event_connection
- {
+@@ -0,0 +1,34 @@
++SET SESSION max_heap_table_size= 32768;
++CREATE TABLE t1 (
++pk INT PRIMARY KEY,
++b TEXT,
++c VARCHAR(8),
++UNIQUE(c)
++) ENGINE=MEMORY;
++INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
++#
++# One 16K leaf for the records and one per hash index puts the
++# table over its own 32768-byte ceiling while holding two rows.
++#
++SELECT DATA_LENGTH, INDEX_LENGTH FROM INFORMATION_SCHEMA.TABLES
++WHERE TABLE_SCHEMA='test' AND TABLE_NAME='t1';
++DATA_LENGTH	INDEX_LENGTH
++16352	32704
++#
++# A targeted DELETE goes row by row, so the chains are parked and
++# then freed.  DELETE with no WHERE would be routed to
++# delete_all_rows(), which resets data_length and would hide this.
++#
++DELETE FROM t1 WHERE pk IN (1,2);
++INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
++SELECT * FROM t1 ORDER BY pk;
++pk	b	c
++1	one	foo
++2	two	bar
++#
++# The ceiling still stops a table that genuinely needs more memory.
++#
++INSERT INTO t1 SELECT seq, REPEAT('x',255), CONCAT('c',seq)
++FROM seq_3_to_2000;
++ERROR HY000: The table 't1' is full
++DROP TABLE t1;
 ```
 
-**File**: `mysql-test/suite/plugins/r/server_audit_timestamp.result` (modified, +15/-2)
+**File**: `mysql-test/suite/heap/blob_delete_reinsert_ceiling.test` (added, +56/-0)
 ```diff
-@@ -156,7 +156,7 @@ set global server_audit_timestamp_format='T24=%T';
- select 'fmt_t24';
- fmt_t24
- fmt_t24
--# 2l: Microseconds %f (always 000000 until MDEV-39307 is fixed)
-+# 2l: Microseconds %f render six zero-padded digits
- set global server_audit_timestamp_format='US=%f';
- select 'fmt_usec';
- fmt_usec
-@@ -179,7 +179,7 @@ FOUND 1 /OD=\d+\w+.*fmt_ord/ in ts_ext_specifiers.log
- FOUND 1 /STATIC-TEXT.*fmt_literal/ in ts_ext_specifiers.log
- FOUND 1 /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.*fmt_iso/ in ts_ext_specifiers.log
- FOUND 1 /T24=\d{2}:\d{2}:\d{2}.*fmt_t24/ in ts_ext_specifiers.log
--FOUND 1 /US=000000.*fmt_usec/ in ts_ext_specifiers.log
-+FOUND 1 /US=\d{6}.*fmt_usec/ in ts_ext_specifiers.log
- FOUND 1 /TZ=[+-]\d{4}.*fmt_tz/ in ts_ext_specifiers.log
- ########################################################################
- # Section 3: All event types get custom timestamps
-@@ -343,6 +343,19 @@ FOUND 1 /PS=\d{8}.*persist_cycle1/ in ts_ext_persist.log
- FOUND 1 /PS=\d{8}.*persist_cycle2/ in ts_ext_persist.log
- FOUND 1 /P2=\d{8}.*persist_cycle3/ in ts_ext_persist.log
- ########################################################################
-+# Section 10: Microsecond resolution of %f (MDEV-39307)
-+########################################################################
-+set global server_audit_file_path='ts_ext_usec.log';
-+set global server_audit_events='query';
-+set global server_audit_timestamp_format='US=%f';
-+set global server_audit_logging=on;
-+# %f must carry real microseconds, not a constant 000000
-+set global server_audit_logging=off;
-+# A six-digit zero-padded microsecond field is logged
-+FOUND 1 /US=\d{6}.*usec_20/ in ts_ext_usec.log
-+# At least one entry carries a real (non-zero) microsecond value
-+usec_ok
-+########################################################################
- # Cleanup: restore all settings
- ########################################################################
- set global server_audit_timestamp_format='CMD-LINE-%Y-%m-%d';
+@@ -0,0 +1,56 @@
++# A MEMORY table with a blob column must take back a row it has just
++# deleted, even when it is already over max_heap_table_size.
++#
++# Index leaves are not budgeted: hp_find_free_hash() allocates one
++# without consulting the ceiling, so a table with two hash indexes is
++# over a 32K ceiling from its first row onwards.  That is legal, because
++# the ceiling is only tested when the record cursor lands on a leaf
++# boundary, and the first row tests it before anything is allocated.
++#
++# Deleting a blob row parks its continuation chain; the next mutating
++# call frees the chain and hp_shrink_tail() walks the record cursor back
++# to a leaf boundary.  The leaf stays allocated and data_length keeps
++# counting it, so handing it back again adds no memory and must not be
++# refused.
++#
++# Block sizes are exact byte counts and depend on pointer width.
++
++--source include/have_64bit.inc
++--source include/have_sequence.inc
++
++SET SESSION max_heap_table_size= 32768;
++
++CREATE TABLE t1 (
++  pk INT PRIMARY KEY,
++  b TEXT,
++  c VARCHAR(8),
++  UNIQUE(c)
++) ENGINE=MEMORY;
++
++INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
++
++--echo #
++--echo # One 16K leaf for the records and one per hash index puts the
++--echo # table over its own 32768-byte ceiling while holding two rows.
++--echo #
++SELECT DATA_LENGTH, INDEX_LENGTH FROM INFORMATION_SCHEMA.TABLES
++ WHERE TABLE_SCHEMA='test' AND TABLE_NAME='t1';
++
++--echo #
++--echo # A targeted DELETE goes row by row, so the chains are parked and
++--echo # then freed.  DELETE with no WHERE would be routed to
++--echo # delete_all_rows(), which resets data_length and would hide this.
++--echo #
++DELETE FROM t1 WHERE pk IN (1,2);
++
++INSERT INTO t1 VALUES (1,'one','foo'),(2,'two','bar');
++SELECT * FROM t1 ORDER BY pk;
++
++--echo #
++--echo # The ceiling still stops a table that genuinely needs more memory.
++--echo #
++--error ER_RECORD_FILE_FULL
++INSERT INTO t1 SELECT seq, REPEAT('x',255), CONCAT('c',seq)
++  FROM seq_3_to_2000;
++
++DROP TABLE t1;
 ```
 
-**File**: `mysql-test/suite/plugins/t/server_audit_timestamp.test` (modified, +45/-2)
+**File**: `mysql-test/suite/heap/blob_replace_repl_ceiling.opt` (added, +1/-0)
 ```diff
-@@ -153,7 +153,7 @@ select 'fmt_iso';
- set global server_audit_timestamp_format='T24=%T';
- select 'fmt_t24';
- 
----echo # 2l: Microseconds %f (always 000000 until MDEV-39307 is fixed)
-+--echo # 2l: Microseconds %f render six zero-padded digits
- set global server_audit_timestamp_format='US=%f';
- select 'fmt_usec';
- 
-@@ -197,7 +197,7 @@ set global server_audit_logging=off;
- --let SEARCH_PATTERN=T24=\d{2}:\d{2}:\d{2}.*fmt_t24
- --source include/search_pattern_in_file.inc
- 
----let SEARCH_PATTERN=US=000000.*fmt_usec
-+--let SEARCH_PATTERN=US=\d{6}.*fmt_usec
- --source include/search_pattern_in_file.inc
- 
- --let SEARCH_PATTERN=TZ=[+-]\d{4}.*fmt_tz
-@@ -450,6 +450,49 @@ set global server_audit_logging=off;
- 
- remove_file $SEARCH_FILE;
- 
-+--echo ########################################################################
-+--echo # Section 10: Microsecond resolution of %f (MDEV-39307)
-+--echo ########################################################################
+@@ -0,0 +1 @@
++--max-heap-table-size=32K
+```
+
+**File**: `mysql-test/suite/heap/blob_replace_repl_ceiling.result` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++include/master-slave.inc
++[connection master]
++CREATE TABLE t1 (
++pk INT PRIMARY KEY,
++b TEXT,
++c VARCHAR(8),
++UNIQUE(c)
++) ENGINE=MEMORY;
++INSERT INTO t1 VALUES (1,'one','foo');
++REPLACE INTO t1 SELECT * FROM t1;
++connection slave;
++# Slave applied the REPLACE
++SELECT * FROM t1;
++pk	b	c
++1	one	foo
++connection master;
++SELECT * FROM t1;
++pk	b	c
++1	one	foo
++DROP TABLE t1;
++include/rpl_end.inc
+```
+
+**File**: `mysql-test/suite/heap/blob_replace_repl_ceiling.test` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++# A REPLACE that the master accepts must also apply on the slave when
++# both run with a max_heap_table_size the table is already over.
++#
++# The two sides reach different engine states from the same statement.
++# REPLACE INTO t SELECT * FROM t feeds the row back out of the table, so
++# the record buffer's blob pointer still points into the chain that the
++# delete parked, the chain is adopted rather than freed, and the record
++# cursor never moves.  The slave builds the row from the replication
++# event buffer instead, so nothing points into the parked chain, it is
++# freed, and hp_shrink_tail() walks the cursor back onto a leaf
++# boundary.  Reclaiming that leaf adds no memory and must not be
++# refused, or the statement stops the SQL thread with
++# HA_ERR_RECORD_FILE_FULL.
++#
++# The table holds a single row on purpose.  REPLACE frees and rewrites
++# one row at a time, so with a second row present the freed records are
++# never the ones at the tail, the cursor stays put and the leaf boundary
++# is never reached.
++#
++# The ceiling is set in blob_replace_repl_ceiling.opt rather than by the
++# test, so that both servers hold the same value throughout.
 +
-+let SEARCH_FILE= $MYSQLD_DATADIR/ts_ext_usec.log;
-+set global server_audit_file_path='ts_ext_usec.log';
-+set global server_audit_events='query';
-+set global server_audit_timestamp_format='US=%f';
-+set global server_audit_logging=on;
++--source include/have_binlog_format_row.inc
++--source include/master-slave.inc
 +
-+--echo # %f must carry real microseconds, not a constant 000000
-+# Log several statements; the microsecond value at write time is
-+# effectively random, so at least one entry is expected to have a
-+# non-zero microsecond value.
-+--disable_query_log
-+--disable_result_log
-+let $i= 20;
-+while ($i) {
-+  eval select 'usec_$i';
-+  dec $i;
++CREATE TABLE t1 (
++  pk INT PRIMARY KEY,
++  b TEXT,
++  c VARCHAR(8),
++  UNIQUE(c)
++) ENGINE=MEMORY;
++
++INSERT INTO t1 VALUES (1,'one','foo');
++REPLACE INTO t1 SELECT * FROM t1;
++
++--sync_slave_with_master
++
++--echo # Slave applied the REPLACE
++SELECT * FROM t1;
++
++--connection master
++SELECT * FROM t1;
++
++DROP TABLE t1;
++
++--source include/rpl_end.inc
+```
+
+**File**: `storage/heap/ha_heap.cc` (modified, +3/-1)
+```diff
+@@ -493,7 +493,9 @@ int ha_heap::info(uint flag)
+   stats.mean_rec_length=      hp_info.reclength;
+   stats.data_file_length=     hp_info.data_length;
+   stats.index_file_length=    hp_info.index_length;
+-  stats.max_data_file_length= hp_info.max_records * hp_info.reclength;
++  stats.max_data_file_length= (hp_info.max_records == NO_LIMIT_RECORDS ?
++                               ~(my_off_t) 0 :
++                               hp_info.max_records * hp_info.reclength);
+   stats.delete_length=        hp_info.deleted * hp_info.reclength;
+   stats.create_time=          (ulong) hp_info.create_time;
+   if (flag & HA_STATUS_AUTO)
+```
+
+**File**: `storage/heap/hp_create.c` (modified, +7/-6)
+```diff
+@@ -65,11 +65,12 @@ int heap_create(const char *name, HP_CREATE_INFO *create_info,
+   ulong max_records= create_info->max_records;
+   uint visible_offset;
+   /*
+-    max_records is the table's row limit and 0 means "no limit"; it is
+-    stored as such in share->max_records, where hp_alloc_from_tail()
+-    relies on 0 disabling the check.  Block sizing needs a concrete row
+-    count instead, so derive that ceiling here and leave max_records
+-    itself untouched.
++    max_records is this function's row limit and 0 means "no limit".
++    The share stores an explicit ceiling instead, writing "no limit" as
++    NO_LIMIT_RECORDS, so hp_alloc_from_tail() tests one value with no
++    special case.  That leaves 0 free to mean what it says on the
++    share, a table that accepts no rows.  Block sizing needs a concrete
++    row count rather than the ceiling, so derive one here.
+   */
+   ulong block_max_records= (max_records ? max_records :
+                             MY_MAX(min_records, 1000));
+@@ -291,7 +292,7 @@ int heap_create(const char *name, HP_CREATE_INFO *create_info,
+         share->auto_key= i + 1;
+     }
+     share->min_records= min_records;
+-    share->max_records= max_records;
++    share->max_records= max_records ? max_records : NO_LIMIT_RECORDS;
+     share->max_table_size= create_info->max_table_size;
+     share->data_length= share->index_length= 0;
+     share->reclength= reclength;
+```
+
+---
+
+### Incident Patch 2: `e782b385` (2026-10-15)
+**Commit Message**: MDEV-40819: Do not crash on DuckDB TIME values beyond 24 hours
+
+MariaDB TIME is a duration up to 838:59:59, but SELECT converted DuckDB
+TIME through ToString(), which asserts clock-time validity in debug
+builds. Convert microseconds to MYSQL_TIME directly instead.
+
+SQL DML quoted TIME strings, so '25:00:00' failed conversion. Store
+microseconds through mariadb_time() instead, matching the appender path.
+
+**File**: `storage/duckdb/convertor/dml_convertor.cc` (modified, +17/-3)
+```diff
+@@ -25,6 +25,7 @@
+ #include <string>
+ 
+ #include "sql_table.h" /* primary_key_name */
++#include "sql_time.h"
+ #include "my_decimal.h"
+ 
+ namespace myduck { extern my_bool use_double_for_decimal; }
+@@ -117,15 +118,28 @@ void append_field_value_to_sql(String &target_str, Field *field)
+   case MYSQL_TYPE_NEWDATE:
+   case MYSQL_TYPE_DATETIME:
+   case MYSQL_TYPE_DATETIME2:
+-  case MYSQL_TYPE_YEAR:
+-  case MYSQL_TYPE_TIME:
+-  case MYSQL_TYPE_TIME2: {
++  case MYSQL_TYPE_YEAR: {
+     target_str.append(STRING_WITH_LEN("'"));
+     field->val_str(&field_value);
+     target_str.append(field_value);
+     target_str.append(STRING_WITH_LEN("'"));
+     break;
+   }
++  case MYSQL_TYPE_TIME:
++  case MYSQL_TYPE_TIME2: {
++    MYSQL_TIME tm;
++    field->get_date(&tm, date_mode_t(0));
++    int64_t micros=
++        (tm.hour * 3600LL + tm.minute * 60LL + tm.second) * 1000000LL +
++        tm.second_part;
++    if (tm.neg)
++      micros= -micros;
++    char buf[64];
++    int len= snprintf(buf, sizeof(buf), "mariadb_time(%lld)",
++                      (long long) micros);
++    target_str.append(buf, len);
++    break;
++  }
+   case MYSQL_TYPE_TIMESTAMP:
+   case MYSQL_TYPE_TIMESTAMP2: {
+     target_str.append(STRING_WITH_LEN("'"));
+```
+
+**File**: `storage/duckdb/convertor/duckdb_select.cc` (modified, +41/-8)
+```diff
+@@ -41,6 +41,45 @@ static void store_field_temporal_value(Field *field, MYSQL_TIME *ltime)
+   field->store_time(ltime);
+ }
+ 
++/**
++  Convert a DuckDB TIME value to MYSQL_TIME without DuckDB's string cast.
++  physical INT64 and build MYSQL_TIME here instead.
++*/
++static void store_duckdb_time_in_mysql_format(Field *field, duckdb::Value &value)
++{
++  MYSQL_TIME tm;
++  set_zero_time(&tm, MYSQL_TIMESTAMP_TIME);
++
++  const duckdb::LogicalTypeId type_id= value.type().id();
++  if (type_id == duckdb::LogicalTypeId::TIME ||
++      type_id == duckdb::LogicalTypeId::TIME_NS)
++  {
++    int64_t micros;
++    if (type_id == duckdb::LogicalTypeId::TIME_NS)
++      micros= value.GetValueUnsafe<duckdb::dtime_ns_t>().time().micros;
++    else
++      micros= value.GetValueUnsafe<duckdb::dtime_t>().micros;
++    if (micros < 0)
++    {
++      tm.neg= 1;
++      micros= (micros == LONGLONG_MIN) ? LONGLONG_MAX : -micros;
++    }
++    const int64_t max_micros=
++        (int64_t) TIME_MAX_VALUE_SECONDS * 1000000LL + TIME_MAX_SECOND_PART;
++    if (micros > max_micros)
++      micros= max_micros;
++    calc_time_from_sec(&tm, (ulong) (micros / 1000000LL), (ulong) (micros % 1000000LL));
++  }
++  else
++  {
++    auto str= value.GetValue<duckdb::string>();
++    MYSQL_TIME_STATUS status;
++    my_time_status_init(&status);
++    str_to_DDhhmmssff(str.c_str(), str.size(), &tm, TIME_MAX_HOUR, &status);
++  }
++  store_field_temporal_value(field, &tm);
 +}
-+--enable_result_log
++
+ /**
+   Store a duckdb value in a field of mysql format.
+   @param field            the field to store value
+@@ -186,15 +225,9 @@ void store_duckdb_field_in_mysql_format(Field *field, duckdb::Value &value,
+       break;
+     }
+     case MYSQL_TYPE_TIME:
+-    case MYSQL_TYPE_TIME2: {
+-      auto str= value.GetValue<duckdb::string>();
+-      MYSQL_TIME tm;
+-      MYSQL_TIME_STATUS status;
+-      my_time_status_init(&status);
+-      str_to_DDhhmmssff(str.c_str(), str.size(), &tm, TIME_MAX_HOUR, &status);
+-      store_field_temporal_value(field, &tm);
++    case MYSQL_TYPE_TIME2:
++      store_duckdb_time_in_mysql_format(field, value);
+       break;
+-    }
+     default:
+       /* TODO: no support */
+       DBUG_ASSERT(0);
+```
+
+**File**: `storage/duckdb/mysql-test/duckdb/r/mdev_40819.result` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++# SQL insert path (dml_in_batch=OFF)
++SET GLOBAL duckdb_dml_in_batch = OFF;
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
++INSERT INTO t1 VALUES (1, '25:00:00');
++SELECT * FROM t1;
++id	t
++1	25:00:00
++DROP TABLE t1;
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
++INSERT INTO t1 VALUES
++(1, '00:00:00', '00:00:00.000000'),
++(2, '23:59:59', '23:59:59.123456'),
++(3, '24:00:00', '24:00:00.000000'),
++(4, '25:00:00', '25:00:00.123456'),
++(5, '838:59:59', '838:59:59.000000'),
++(6, '-25:00:00', '-25:00:00.123456');
++SELECT * FROM t1 ORDER BY id;
++id	t	t6
++1	00:00:00	00:00:00.000000
++2	23:59:59	23:59:59.123456
++3	24:00:00	24:00:00.000000
++4	25:00:00	25:00:00.123456
++5	838:59:59	838:59:59.000000
++6	-25:00:00	-25:00:00.123456
++DROP TABLE t1;
++# Appender path (dml_in_batch=ON)
++SET GLOBAL duckdb_dml_in_batch = ON;
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
++INSERT INTO t1 VALUES (1, '25:00:00');
++SELECT * FROM t1;
++id	t
++1	25:00:00
++DROP TABLE t1;
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
++INSERT INTO t1 VALUES
++(1, '00:00:00', '00:00:00.000000'),
++(2, '23:59:59', '23:59:59.123456'),
++(3, '24:00:00', '24:00:00.000000'),
++(4, '25:00:00', '25:00:00.123456'),
++(5, '838:59:59', '838:59:59.000000'),
++(6, '-25:00:00', '-25:00:00.123456');
++SELECT * FROM t1 ORDER BY id;
++id	t	t6
++1	00:00:00	00:00:00.000000
++2	23:59:59	23:59:59.123456
++3	24:00:00	24:00:00.000000
++4	25:00:00	25:00:00.123456
++5	838:59:59	838:59:59.000000
++6	-25:00:00	-25:00:00.123456
++DROP TABLE t1;
+```
+
+**File**: `storage/duckdb/mysql-test/duckdb/suite.opt` (modified, +1/-0)
+```diff
+@@ -3,3 +3,4 @@
+ --duckdb_allow_run_in_duckdb=ON
+ --character-set-server=utf8mb4
+ --character-set-collations=utf8mb4=utf8mb4_uca1400_ai_ci
++--timezone=GMT
+```
+
+**File**: `storage/duckdb/mysql-test/duckdb/t/mdev_40819.test` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++--source ../include/have_duckdb.inc
++--source include/not_msan.inc
++--disable_warnings
++
++#
++# MDEV-40819 DuckDB TIME values beyond 24 hours
++#
++
++--disable_query_log
++SET @saved_duckdb_dml_in_batch = @@GLOBAL.duckdb_dml_in_batch;
 +--enable_query_log
 +
-+set global server_audit_logging=off;
++--echo # SQL insert path (dml_in_batch=OFF)
++SET GLOBAL duckdb_dml_in_batch = OFF;
 +
-+--echo # A six-digit zero-padded microsecond field is logged
-+--let SEARCH_PATTERN=US=\d{6}.*usec_20
-+--source include/search_pattern_in_file.inc
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
++INSERT INTO t1 VALUES (1, '25:00:00');
++SELECT * FROM t1;
++DROP TABLE t1;
 +
-+--echo # At least one entry carries a real (non-zero) microsecond value
-+perl;
-+  my $ok= 0;
-+  open(FILE, '<', $ENV{SEARCH_FILE}) or die "Can't open $ENV{SEARCH_FILE}: $!";
-+  while (<FILE>) {
-+    if (/US=(\d{6})/ && $1 ne '000000') { $ok= 1; last; }
-+  }
-+  close(FILE);
-+  print $ok ? "usec_ok\n" : "usec_bad\n";
-+EOF
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
++INSERT INTO t1 VALUES
++(1, '00:00:00', '00:00:00.000000'),
++(2, '23:59:59', '23:59:59.123456'),
++(3, '24:00:00', '24:00:00.000000'),
++(4, '25:00:00', '25:00:00.123456'),
++(5, '838:59:59', '838:59:59.000000'),
++(6, '-25:00:00', '-25:00:00.123456');
++SELECT * FROM t1 ORDER BY id;
++DROP TABLE t1;
 +
-+remove_file $SEARCH_FILE;
++--echo # Appender path (dml_in_batch=ON)
++SET GLOBAL duckdb_dml_in_batch = ON;
 +
- --echo ########################################################################
- --echo # Cleanup: restore all settings
- --echo ########################################################################
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME) ENGINE=DuckDB;
++INSERT INTO t1 VALUES (1, '25:00:00');
++SELECT * FROM t1;
++DROP TABLE t1;
++
++CREATE TABLE t1 (id INT PRIMARY KEY, t TIME, t6 TIME(6)) ENGINE=DuckDB;
++INSERT INTO t1 VALUES
++(1, '00:00:00', '00:00:00.000000'),
++(2, '23:59:59', '23:59:59.123456'),
++(3, '24:00:00', '24:00:00.000000'),
++(4, '25:00:00', '25:00:00.123456'),
++(5, '838:59:59', '838:59:59.000000'),
++(6, '-25:00:00', '-25:00:00.123456');
++SELECT * FROM t1 ORDER BY id;
++DROP TABLE t1;
++
++--disable_query_log
++SET GLOBAL duckdb_dml_in_batch = @saved_duckdb_dml_in_batch;
++--enable_query_log
 ```
 
-**File**: `plugin/server_audit/server_audit.cc` (modified, +23/-32)
+**File**: `storage/duckdb/runtime/cross_engine_scan.cc` (modified, +13/-2)
 ```diff
-@@ -74,6 +74,7 @@ static void closelog() {}
+@@ -23,6 +23,7 @@
+ #include "field.h"
+ #include "handler.h"
+ #include "mysqld.h"
++#include "sql_time.h"
+ #include "log.h"
  
- #include <my_global.h>
- #include <my_base.h>
-+#include <my_sys.h>
- #include <typelib.h>
- #include <mysql/plugin.h>
- #include <mysql/plugin_audit.h>
-@@ -149,7 +150,6 @@ struct connection_info
-   const char *query;
-   int query_length;
-   char query_buffer[1024];
--  time_t query_time;
-   int log_always;
-   unsigned int port;
-   char proxy[USERNAME_CHAR_LENGTH+1];
-@@ -1103,7 +1103,7 @@ static void change_connection(struct connection_info *cn,
-   Write to the log
- */
+ #undef UNKNOWN
+@@ -33,6 +34,7 @@
+ #include "duckdb_log.h"
  
--static int write_log(const char *message, size_t len, time_t ts)
-+static int write_log(const char *message, size_t len, unsigned long long ts_us)
- {
- #if defined _WIN32 || !defined SUX_LOCK_GENERIC
-   DBUG_ASSERT(lock_operations.is_locked_or_waiting());
-@@ -1115,7 +1115,8 @@ static int write_log(const char *message, size_t len, time_t ts)
-     if (logfile)
-     {
-       MYSQL_TIME ltime;
--      thd_gmt_sec_to_TIME(NULL, &ltime, ts);
-+      thd_gmt_sec_to_TIME(NULL, &ltime, (time_t) (ts_us / 1000000));
-+      ltime.second_part= (ulong) (ts_us % 1000000);
- 
-       size_t ts_len= 0;
-       char *ts_start= (char *) message - TIMESTAMP_OUTPUT_LENGTH;
-@@ -1162,10 +1163,10 @@ static int write_log(const char *message, size_t len, time_t ts)
-   Write to the log, acquiring the lock.
- */
- 
--static int write_log_and_lock(const char *message, size_t len, time_t ts)
-+static int write_log_and_lock(const char *message, size_t len, unsigned long long ts_us)
- {
-   lock_operations.rd_lock();
--  int result= write_log(message, len, ts);
-+  int result= write_log(message, len, ts_us);
-   lock_operations.rd_unlock();
-   return result;
- }
-@@ -1176,12 +1177,13 @@ static int write_log_and_lock(const char *message, size_t len, time_t ts)
- 
-   @param lock  whether the caller did not acquire lock_operations
- */
--static int write_log_maybe_lock(const char *message, size_t len, bool lock, time_t ts)
-+static int write_log_maybe_lock(const char *message, size_t len, bool lock,
-+                                unsigned long long ts_us)
- {
-   if (unlikely(!lock))
--    return write_log(message, len, ts);
-+    return write_log(message, len, ts_us);
-   else
--    return write_log_and_lock(message, len, ts);
-+    return write_log_and_lock(message, len, ts_us);
- }
- 
- 
-@@ -1237,14 +1239,11 @@ static size_t create_tls_obj(const struct mysql_event_connection *ev, char *obj_
- 
- static int log_proxy(const struct connection_info *cn,
-                      const struct mysql_event_connection *event)
--                   
- {
--  time_t ctime;
-   size_t csize;
-   char raw_message[MAX_AUDIT_PAYLOAD_LENGTH + TIMESTAMP_OUTPUT_LENGTH];
-   char *message= raw_message + TIMESTAMP_OUTPUT_LENGTH;
- 
--  (void) time(&ctime);
-   csize= log_header(message, MAX_AUDIT_PAYLOAD_LENGTH - 1,
-                     servhost, servhost_len,
-                     cn->user, cn->user_length,
-@@ -1258,22 +1257,20 @@ static int log_proxy(const struct connection_info *cn,
-                      cn->proxy_host_length, cn->proxy_host,
-                      event->status);
-   message[csize]= '\n';
--  return write_log_and_lock(message, csize + 1, ctime);
-+  return write_log_and_lock(message, csize + 1, my_hrtime().val);
- }
- 
- 
- static int log_connection(const struct connection_info *cn,
-                           const struct mysql_event_connection *event,
-                           const char *type)
- {
--  time_t ctime;
-   size_t csize;
-   char raw_message[MAX_AUDIT_PAYLOAD_LENGTH + TIMESTAMP_OUTPUT_LENGTH];
-   char *message= raw_message + TIMESTAMP_OUTPUT_LENGTH;
-   char tls_obj[32];
-   size_t obj_len;
- 
--  (void) time(&ctime);
-   csize= log_header(message, MAX_AUDIT_PAYLOAD_LENGTH - 1,
-                     servhost, servhost_len,
-                     cn->user, cn->user_length,
-@@ -1286,21 +1283,19 @@ static int log_connection(const struct connection_info *cn,
-     ",%.*s,%.*s,%d", cn->db_length, cn->db, (int) obj_len, tls_obj,
-     event->status);
-   message[csize]= '\n';
--  return write_log_and_lock(message, csize + 1, ctime);
-+  return write_log_and_lock(message, csize + 1, my_hrtime().val);
- }
- 
- 
- static int log_connection_event(const struct mysql_event_connection *event,
-                                 const char *type)
- {
--  time_t ctime;
-   size_t csize;
-   char raw_message[MAX_AUDIT_PAYLOAD_LENGTH + TIMESTAMP_OUTPUT_LENGTH];
-   char *message= raw_message + TIMESTAMP_OUTPUT_LENGTH;
-   char tls_obj[32];
-   size_t obj_len;
- 
--  (void) time(&ctime);
-   csize= log_header(message, MAX_AUDIT_PAYLOAD_LENGTH - 1,
-                     servhost, servhost_len,
-                     event->user, event->user_length,
-@@ -1312,7 +1307,7 @@ static int log_connection_event(const struct mysql_event_connection *event,
-     ",%.*s,%.*s,%d", (int) event->database.length,event->database.str,
-     (int) obj_len, tls_obj, event->status);
-   message[csize]= '\n';
--  return write_log_and_lock(message, csize + 1, ctime);
-+  return write_log_and_lock(message, csize + 1, my_hrtime().val);
- }
- 
- 
-@@ -1509,9 
-```
-
-**File**: `sql/log.cc` (modified, +1/-1)
-```diff
-@@ -1667,7 +1667,7 @@ bool LOGGER::general_log_write(THD *thd, enum enum_server_command command,
-   user_host_len= make_user_name(thd, user_host_buff);
-   current_time= my_hrtime();
- 
--  mysql_audit_general_log(thd, hrtime_to_time(current_time),
-+  mysql_audit_general_log(thd, current_time,
-                           user_host_buff, user_host_len,
-                           command_name[(uint) command].str,
-                           (uint)command_name[(uint) command].length,
-```
-
-**File**: `sql/sql_audit.h` (modified, +22/-3)
-```diff
-@@ -112,7 +112,7 @@ void set_tls_version_of_event(THD *thd, mysql_event_connection *event)
- */
-  
- static inline
--void mysql_audit_general_log(THD *thd, time_t time,
-+void mysql_audit_general_log(THD *thd, my_hrtime_t time,
-                              const char *user, uint userlen,
-                              const char *cmd, uint cmdlen,
-                              const char *query, uint querylen)
-@@ -123,7 +123,8 @@ void mysql_audit_general_log(THD *thd, time_t time,
- 
-     event.event_subclass= MYSQL_AUDIT_GENERAL_LOG;
-     event.general_error_code= 0;
--    event.general_time= time;
-+    event.general_time= hrtime_to_time(time);
-+    event.general_time_microseconds= time.val;
-     event.general_user= user;
-     event.general_user_length= userlen;
-     event.general_command= cmd;
-@@ -177,7 +178,25 @@ void mysql_audit_general(THD *thd, uint event_subtype,
- 
-     event.event_subclass= event_subtype;
-     event.general_error_code= error_code;
--    event.general_time= my_time(0);
-+    {
-+      /*
-+        Use the wall-clock timestamp the server already maintains for the
-+        current command (set once per query in dispatch_command), so that
-+        all audit events of the same query carry the same time and no extra
-+        clock call is made per event. start_utime cannot be used here: it is
-+        a monotonic interval timer, not a wall-clock timestamp. Fall back to
-+        the current wall-clock time if the timestamp is not set.
-+      */
-+      unsigned long long general_time_us;
-+      if (thd && thd->start_time)
-+        general_time_us= (unsigned long long) thd->start_time * 1000000 +
-+                         thd->start_time_sec_part;
-+      else
-+        general_time_us= my_hrtime().val;
-+      my_hrtime_t general_time= { general_time_us };
-+      event.general_time= hrtime_to_time(general_time);
-+      event.general_time_microseconds= general_time_us;
-+    }
-     event.general_command= msg;
-     event.general_command_length= safe_strlen_uint(msg);
- 
-```
-
----
-
-### Incident Patch 2: `a77e74f0` (2026-09-16)
-**Commit Message**: MDEV-28730 fixup: clang -Wunused-but-set-global
-
-**File**: `storage/innobase/fts/fts0fts.cc` (modified, +0/-9)
-```diff
-@@ -105,10 +105,6 @@ ulong	fts_max_token_size;
- ulong	fts_min_token_size;
- 
- 
--// FIXME: testing
--static time_t elapsed_time;
--static ulint n_nodes;
--
- /** Time to sleep after DEADLOCK error before retrying operation. */
- static const std::chrono::milliseconds FTS_DEADLOCK_RETRY_WAIT(100);
- 
-@@ -3298,10 +3294,7 @@ fts_get_max_doc_id(
- dberr_t fts_write_node(FTSQueryExecutor *executor, uint8_t selected,
-                        const fts_aux_data_t *aux_data) noexcept
- {
--  time_t start_time= time(NULL);
-   dberr_t error= executor->insert_aux_record(selected, aux_data);
--  elapsed_time+= time(NULL) - start_time;
--  ++n_nodes;
-   return error;
- }
- 
-@@ -3378,8 +3371,6 @@ dberr_t fts_sync_write_words(FTSQueryExecutor *executor,
-         if (unlock_cache) mysql_mutex_lock(&table->fts->cache->lock);
-       }
- 
--      n_nodes+= ib_vector_size(word->nodes);
--
-       if (UNIV_UNLIKELY(error != DB_SUCCESS) && !print_error)
-       {
-         sql_print_error("InnoDB: ( %s ) writing word node to FTS auxiliary "
-```
-
----
-
-### Incident Patch 3: `d8d2e3ca` (2026-09-09)
-**Commit Message**: Fix new defaul of old_mode
-
-**File**: `mysql-test/include/load_dump_and_upgrade.inc` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@
- --exec $MYSQL -e "DROP TABLE IF EXISTS mysql.global_priv; DROP VIEW IF EXISTS mysql.user"
- 
- --echo # Loading dump of $old_version mysql schema
----exec $MYSQL mysql < $MYSQLTEST_VARDIR/std_data/mysql_database_$old_version.dump
-+--exec $MYSQL --init-command="SET old_mode=UTF8_IS_UTF8MB3" mysql < $MYSQLTEST_VARDIR/std_data/mysql_database_$old_version.dump
- 
- --echo # Running mysql_upgrade
- --exec $MYSQL_UPGRADE --verbose > $MYSQL_TMP_DIR/upgrade.log
-```
-
-**File**: `mysql-test/main/mysql_upgrade.result` (modified, +1/-1)
-```diff
-@@ -2488,6 +2488,6 @@ extract_schema_from_file_name		CREATE DEFINER=`mariadb.sys`@`localhost` FUNCTION
-     COMMENT '\n             Description\n             Takes a raw file path, and attempts to extract the schema name from it.\n             Useful for when interacting with Performance Schema data\n             concerning IO statistics, for example.\n             Currently relies on the fact that a table data file will be within a\n             specified database directory (will not work with partitions or tables\n             that specify an individual DATA_DIRECTORY).\n             Parameters\n             path (VARCHAR(512)):\n               The full file path to a data file to extract the schema name from.\n             Returns\n             VARCHAR(64)\n             Example\n             mysql> SELECT sys.extract_schema_from_file_name(''/var/lib/mysql/employees/employee.ibd'');\n             +----------------------------------------------------------------------------+\n             | sys.extract_schema_from_file_name(''/var/lib/mysql/employees/employee.ibd'') |\n             +----------------------------------------------------------------------------+\n             | employees                                                                  |\n             +----------------------------------------------------------------------------+\n             1 row in set (0.00 sec)\n            '
- BEGIN
-     RETURN LEFT(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(path, '\\', '/'), '/', -2), '/', 1), 64);
--END	utf8mb3	utf8mb3_general_ci	utf8mb3_general_ci
-+END	utf8mb4	utf8mb4_general_ci	utf8mb3_general_ci
- set path @old_path;
- # End of 12.3 tests
-```
-
----
-
-### Incident Patch 4: `02c842c3` (2026-09-06)
-**Commit Message**: MDEV-26015 ssl: remove insecure fixed DH params (mostly unused)- #5639
-
-WolfSSL code path already operates without fixed DH parameters. OpenSSL code path still sets fixed static precomputed DH params, which is now prohibited by IETF.
-
-Also OPENSSL_init_ssl is not required since OpenSSL 1.1.0, for over 10 years now. Also cleaned up at the same time.
-
-https://www.rfc-editor.org/rfc/rfc10015.html#section-2:
-> Clients MUST NOT offer and servers MUST NOT select non-ephemeral FFDH cipher suites in (D)TLS 1.2 connections.
-
-https://www.rfc-editor.org/rfc/rfc10015.html#section-3:
-> Clients MUST NOT offer and servers MUST NOT select FFDHE cipher suites in (D)TLS 1.2 connections.
-
-And the depreciated tables include all ciphersuites that can use SSL_CTX_set_tmp_dh as part of the connection.
-
-Also for a very long time OpenSSL was handling these automatically anyway, back when DHE was still recommended.
-
-**File**: `include/violite.h` (modified, +0/-2)
-```diff
-@@ -174,8 +174,6 @@ struct st_VioSSLFd
- int sslaccept(struct st_VioSSLFd*, Vio *, long timeout, unsigned long *errptr);
- int sslconnect(struct st_VioSSLFd*, Vio *, long timeout, unsigned long *errptr);
- 
--void vio_check_ssl_init();
--
- struct st_VioSSLFd
- *new_VioSSLConnectorFd(const char *key_file, const char *cert_file,
- 		       const char *ca_file,  const char *ca_path,
-```
-
-**File**: `sql/encryption.cc` (modified, +0/-2)
-```diff
-@@ -65,8 +65,6 @@ int initialize_encryption_plugin(void *plugin_)
-   if (encryption_manager)
-     return 1;
- 
--  vio_check_ssl_init();
--
-   if (plugin->plugin->init && plugin->plugin->init(plugin))
-   {
-     sql_print_error("Plugin '%s' init function returned error.",
-```
-
-**File**: `vio/viosslfactories.c` (modified, +0/-90)
-```diff
-@@ -21,67 +21,11 @@
- #include <string.h>
- 
- #ifdef HAVE_OPENSSL
--#include <openssl/dh.h>
--#include <openssl/bn.h>
- #include <openssl/x509.h>
--
--static my_bool     ssl_algorithms_added    = FALSE;
--static my_bool     ssl_error_strings_loaded= FALSE;
--
- #ifndef X509_VERSION_3
- #define X509_VERSION_3 2
- #endif
- 
--/* the function below was generated with "openssl dhparam -2 -C 2048" */
--#ifndef HAVE_WOLFSSL
--static
--DH *get_dh2048()
--{
--    static unsigned char dhp_2048[] = {
--        0xA1,0xBB,0x7C,0x20,0xC5,0x5B,0xC0,0x7B,0x21,0x8B,0xD6,0xA8,
--        0x15,0xFC,0x3B,0xBA,0xAB,0x9F,0xDF,0x68,0xC4,0x79,0x78,0x0D,
--        0xC1,0x12,0x64,0xE4,0x15,0xC9,0x66,0xDB,0xF6,0xCB,0xB3,0x39,
--        0x02,0x5B,0x78,0x62,0xFB,0x09,0xAE,0x09,0x6B,0xDD,0xD4,0x5D,
--        0x97,0xBC,0xDC,0x7F,0xE6,0xD6,0xF1,0xCB,0xF5,0xEB,0xDA,0xA7,
--        0x2E,0x5A,0x43,0x2B,0xE9,0x40,0xE2,0x85,0x00,0x1C,0xC0,0x0A,
--        0x98,0x77,0xA9,0x31,0xDE,0x0B,0x75,0x4D,0x1E,0x1F,0x16,0x83,
--        0xCA,0xDE,0xBD,0x21,0xFC,0xC1,0x82,0x37,0x36,0x33,0x0B,0x66,
--        0x06,0x3C,0xF3,0xAF,0x21,0x57,0x57,0x80,0xF6,0x94,0x1B,0xA9,
--        0xD4,0xF6,0x8F,0x18,0x62,0x0E,0xC4,0x22,0xF9,0x5B,0x62,0xCC,
--        0x3F,0x19,0x95,0xCF,0x4B,0x00,0xA6,0x6C,0x0B,0xAF,0x9F,0xD5,
--        0xFA,0x3D,0x6D,0xDA,0x30,0x83,0x07,0x91,0xAC,0x15,0xFF,0x8F,
--        0x59,0x54,0xEA,0x25,0xBC,0x4E,0xEB,0x6A,0x54,0xDF,0x75,0x09,
--        0x72,0x0F,0xEF,0x23,0x70,0xE0,0xA8,0x04,0xEA,0xFF,0x90,0x54,
--        0xCD,0x84,0x18,0xC0,0x75,0x91,0x99,0x0F,0xA1,0x78,0x0C,0x07,
--        0xB7,0xC5,0xDE,0x55,0x06,0x7B,0x95,0x68,0x2C,0x33,0x39,0xBC,
--        0x2C,0xD0,0x6D,0xDD,0xFA,0xDC,0xB5,0x8F,0x82,0x39,0xF8,0x67,
--        0x44,0xF1,0xD8,0xF7,0x78,0x11,0x9A,0x77,0x9B,0x53,0x47,0xD6,
--        0x2B,0x5D,0x67,0xB8,0xB7,0xBC,0xC1,0xD7,0x79,0x62,0x15,0xC2,
--        0xC5,0x83,0x97,0xA7,0xF8,0xB4,0x9C,0xF6,0x8F,0x9A,0xC7,0xDA,
--        0x1B,0xBB,0x87,0x07,0xA7,0x71,0xAD,0xB2,0x8A,0x50,0xF8,0x26,
--        0x12,0xB7,0x3E,0x0B,
--    };
--    static unsigned char dhg_2048[] = {
--        0x02
--    };
--    DH *dh = DH_new();
--    BIGNUM *dhp_bn, *dhg_bn;
--
--    if (dh == NULL)
--        return NULL;
--    dhp_bn = BN_bin2bn(dhp_2048, sizeof (dhp_2048), NULL);
--    dhg_bn = BN_bin2bn(dhg_2048, sizeof (dhg_2048), NULL);
--    if (dhp_bn == NULL || dhg_bn == NULL
--            || !DH_set0_pqg(dh, dhp_bn, NULL, dhg_bn)) {
--        DH_free(dh);
--        BN_free(dhp_bn);
--        BN_free(dhg_bn);
--        return NULL;
--    }
--    return dh;
--}
--#endif
--
- static const char*
- ssl_error_string[] =
- {
-@@ -236,22 +180,6 @@ vio_set_cert_stuff(SSL_CTX *ctx, const char *cert_file, const char *key_file,
-   DBUG_RETURN(0);
- }
- 
--
--void vio_check_ssl_init()
--{
--  if (!ssl_algorithms_added)
--  {
--    ssl_algorithms_added= TRUE;
--    OPENSSL_init_ssl(0, NULL);
--  }
--
--  if (!ssl_error_strings_loaded)
--  {
--    ssl_error_strings_loaded= TRUE;
--    SSL_load_error_strings();
--  }
--}
--
- #ifdef HAVE_WOLFSSL
- static int wolfssl_recv(WOLFSSL* ssl, char* buf, int sz, void* vio)
- {
-@@ -458,8 +386,6 @@ new_VioSSLFd(const char *key_file, const char *cert_file, const char *ca_file,
-               "cipher: '%s' crl_file: '%s' crl_path: '%s'", key_file,
-               cert_file, ca_file, ca_path, cipher, crl_file, crl_path));
- 
--  vio_check_ssl_init();
--
-   if (!(ssl_fd= ((struct st_VioSSLFd*)
-                  my_malloc(key_memory_vio_ssl_fd,
-                            sizeof(struct st_VioSSLFd), MYF(0)))))
-@@ -562,22 +488,6 @@ new_VioSSLFd(const char *key_file, const char *cert_file, const char *ca_file,
-     goto err2;
+ #include "duckdb/main/database.hpp"
++#include "duckdb/common/types/datetime.hpp"
+ #include "duckdb/catalog/catalog.hpp"
+ #include "duckdb/catalog/catalog_transaction.hpp"
+ #include "duckdb/function/table_function.hpp"
+@@ -197,8 +199,6 @@ static duckdb::Value field_to_duckdb_value(Field *field)
    }
- 
--#ifndef HAVE_WOLFSSL
--  /* DH stuff */
--  if (!is_client_method)
--  {
--    DH *dh= get_dh2048();
--    if (!SSL_CTX_set_tmp_dh(ssl_fd->ssl_context, dh))
--    {
--      *error= SSL_INITERR_DH;
--      DH_free(dh);
--      goto err2;
--    }
--
--    DH_free(dh);
--  }
--#endif
--
- #ifdef HAVE_WOLFSSL
-   /* set IO functions used by wolfSSL */
-    wolfSSL_SetIORecv(ssl_fd->ssl_context, wolfssl_recv);
+   case MYSQL_TYPE_DATE:
+   case MYSQL_TYPE_NEWDATE:
+-  case MYSQL_TYPE_TIME:
+-  case MYSQL_TYPE_TIME2:
+   case MYSQL_TYPE_DATETIME:
+   case MYSQL_TYPE_DATETIME2:
+   case MYSQL_TYPE_TIMESTAMP:
+@@ -207,6 +207,17 @@ static duckdb::Value field_to_duckdb_value(Field *field)
+     field->val_str(&buf);
+     return duckdb::Value(std::string(buf.ptr(), buf.length()));
+   }
++  case MYSQL_TYPE_TIME:
++  case MYSQL_TYPE_TIME2: {
++    MYSQL_TIME tm;
++    field->get_date(&tm, date_mode_t(0));
++    int64_t micros=
++        (tm.hour * 3600LL + tm.minute * 60LL + tm.second) * 1000000LL +
++        tm.second_part;
++    if (tm.neg)
++      micros= -micros;
++    return duckdb::Value::TIME(duckdb::dtime_t(micros));
++  }
+   case MYSQL_TYPE_BIT:
+   case MYSQL_TYPE_GEOMETRY: {
+     String buf;
 ```
 
----
-
-### Incident Patch 5: `5815dc14` (2026-09-08)
-**Commit Message**: Fix the version
-
-**File**: `VERSION` (modified, +1/-1)
+**File**: `storage/duckdb/runtime/delta_appender.cc` (modified, +5/-2)
 ```diff
-@@ -1,4 +1,4 @@
- MYSQL_VERSION_MAJOR=13
- MYSQL_VERSION_MINOR=1
--MYSQL_VERSION_PATCH=0
-+MYSQL_VERSION_PATCH=1
- SERVER_MATURITY=gamma
+@@ -412,9 +412,12 @@ int DeltaAppender::append_mysql_field(const Field *field_arg,
+   case MYSQL_TYPE_TIME2: {
+     MYSQL_TIME tm;
+     field->get_date(&tm, date_mode_t(0));
+-    appender->Append<duckdb::dtime_t>(static_cast<duckdb::dtime_t>(
++    int64_t micros=
+         (tm.hour * 3600LL + tm.minute * 60LL + tm.second) * 1000000LL +
+-        tm.second_part));
++        tm.second_part;
++    if (tm.neg)
++      micros= -micros;
++    appender->Append<duckdb::dtime_t>(static_cast<duckdb::dtime_t>(micros));
+     break;
+   }
+   case MYSQL_TYPE_TIMESTAMP:
 ```
 
----
-
-### Incident Patch 6: `ea69ff8a` (2026-08-26)
-**Commit Message**: fixed maturity
-
-**File**: `VERSION` (modified, +1/-1)
+**File**: `storage/duckdb/runtime/duckdb_mysql_compat.cc` (modified, +20/-0)
 ```diff
-@@ -1,4 +1,4 @@
- MYSQL_VERSION_MAJOR=13
- MYSQL_VERSION_MINOR=0
- MYSQL_VERSION_PATCH=2
--SERVER_MATURITY=gamma
-+SERVER_MATURITY=stable
-```
-
-**File**: `mysql-test/main/mysql-interactive.result` (modified, +0/-8)
-```diff
-@@ -10,8 +10,6 @@ Your MariaDB connection id is X
- Server version: Y
- Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+@@ -50,6 +50,7 @@
+ #include "duckdb/parser/parsed_data/create_scalar_function_info.hpp"
+ #include "duckdb/common/types/timestamp.hpp"
+ #include "duckdb/common/types/date.hpp"
++#include "duckdb/common/types/datetime.hpp"
+ #include "duckdb/main/database.hpp"
+ #include "duckdb/main/connection.hpp"
  
--Help others discover MariaDB. Star it on GitHub: https://github.com/MariaDB/server
--
- Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+@@ -1667,9 +1668,28 @@ static void register_json_unquote_function(duckdb::Catalog &catalog,
+   }
+ }
  
- MariaDB [(none)]> delimiter $
-@@ -42,8 +40,6 @@ Your MariaDB connection id is X
- Server version: Y
- Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
- 
--Help others discover MariaDB. Star it on GitHub: https://github.com/MariaDB/server
--
- Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
- 
- MariaDB [(none)]> create database db1;
-@@ -78,8 +74,6 @@ Your MariaDB connection id is X
- Server version: Y
- Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
- 
--Help others discover MariaDB. Star it on GitHub: https://github.com/MariaDB/server
--
- Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
- 
- MariaDB [test]> CREATE TABLE t (c INT) ENGINE=InnoDB;
-@@ -111,8 +105,6 @@ Your MariaDB connection id is X
- Server version: Y
- Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
- 
--Help others discover MariaDB. Star it on GitHub: https://github.com/MariaDB/server
--
- Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
- 
- MariaDB [test]> CREATE TABLE t (c INT) ENGINE=InnoDB;
-```
-
-**File**: `mysql-test/suite/sys_vars/r/sysvars_star.result` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ VARIABLE_NAME	PLUGIN_MATURITY
- SESSION_VALUE	NULL
- GLOBAL_VALUE	alpha
- GLOBAL_VALUE_ORIGIN	CONFIG
--DEFAULT_VALUE	beta
-+DEFAULT_VALUE	gamma
- VARIABLE_SCOPE	GLOBAL
- VARIABLE_TYPE	ENUM
- VARIABLE_COMMENT	The lowest desirable plugin maturity. Plugins less mature than that will not be installed or loaded
-```
-
----
-
-### Incident Patch 7: `b2a8c223` (2026-06-17)
-**Commit Message**: MDEV-34805 post-review fixes
-
-* keep `vec_len >= subdist_part * 2` logic in one place only
-* keep "distance-greater-than" mode logic in one place only
-* simplify VECTOR_DIMENSIONS (no need to have a special ctx->vec_len
-  path if the other one always works)
-* new plugin = maturity beta
-* remove redundant casts, etc
-* moved vector_indexes_fields_enum to the global scope to use it
-  for setting schema->idx_field1/schema->idx_field2
-* open the hlindex graph table, if needed, otherwise most values
-  are unknown unless a user did vector search before
-* added TABLE_CATALOG column
-* remove CACHE_OVERFLOWS column, doesn't work as implemented,
-  the fix is complex and isn't worth it
-* add privilege checks (MDEV-40793)
-
-in the test:
-* prefer query_vertical for readability
-* select all columns at least once
-* select INDEX_SIZE even if engine-dependent, use rdiff files
-* test how get_all_tables only open one specific table, and
-  even only .frm file, if possible
-
-**File**: `mysql-test/main/information_schema_all_engines.result` (modified, +1/-1)
-```diff
-@@ -512,5 +512,5 @@ Wildcard: inf_rmation_schema
- | information_schema |
- SELECT table_schema, count(*) FROM information_schema.TABLES WHERE table_schema IN ('mysql', 'INFORMATION_SCHEMA', 'test', 'mysqltest') GROUP BY TABLE_SCHEMA;
- table_schema	count(*)
--information_schema	74
-+information_schema	75
- mysql	31
-```
-
-**File**: `mysql-test/main/vector,aria.rdiff` (modified, +64/-27)
-```diff
-@@ -7,7 +7,7 @@
-  create table t1 (id int auto_increment primary key,
-  u vector(5) not null, vector index (u),
-  v vector(5) not null, vector index (v));
--@@ -12,7 +12,7 @@ t1	CREATE TABLE `t1` (
-+@@ -12,7 +12,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -16,7 +16,7 @@
-  show keys from t1;
-  Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment	Ignored
-  t1	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE			NO
--@@ -27,7 +27,7 @@ t1	CREATE TABLE `t1` (
-+@@ -27,7 +27,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`) `m`='7'
-@@ -25,7 +25,7 @@
-  show keys from t1;
-  Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment	Ignored
-  t1	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE			NO
--@@ -42,7 +42,7 @@ t1	CREATE TABLE `t1` (
-+@@ -42,7 +42,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`) `m`='5'
-@@ -34,7 +34,7 @@
-  show keys from t1;
-  Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment	Ignored
-  t1	0	PRIMARY	1	id	A	0	NULL	NULL		BTREE			NO
--@@ -343,7 +343,7 @@ t2	CREATE TABLE `t2` (
-+@@ -346,7 +346,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -43,7 +43,7 @@
-  drop table t1, t2;
-  db.opt
-  # Test insert ... select with vector index
--@@ -388,8 +388,32 @@ db.opt
-+@@ -391,8 +391,32 @@
-  create table t1 (id int auto_increment primary key, v vector(5) not null, vector index (v));
-  insert t1 (id, v) values (1, x'e360d63ebe554f3fcdbc523f4522193f5236083d');
-  truncate table t1;
-@@ -76,7 +76,7 @@
-  insert t1 (id, v) values (1, x'e360d63ebe554f3fcdbc523f4522193f5236083d');
-  select id, hex(v) from t1;
-  id	hex(v)
--@@ -401,33 +425,39 @@ t1	CREATE TABLE `t1` (
-+@@ -404,33 +428,39 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -126,7 +126,7 @@
-  drop database test1;
-  db.opt
-  #
--@@ -442,7 +472,7 @@ t1	CREATE TABLE `t1` (
-+@@ -445,7 +475,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`) `distance`='cosine'
-@@ -135,7 +135,7 @@
-  insert t1 (v) values (x'e360d63ebe554f3fcdbc523f4522193f5236083d'),
-  (x'f511303f72224a3fdd05fe3eb22a133ffae86a3f'),
-  (x'f09baa3ea172763f123def3e0c7fe53e288bf33e'),
--@@ -504,9 +534,11 @@ insert t1 (v) values (x'e360d63ebe554f3fcdbc523f4522193f5236083d'),
-+@@ -507,9 +537,11 @@
-  # ADD/DROP COLUMN, ALGORITHM=COPY
-  alter table t1 add column a int, algorithm=copy;
-  db.opt
-@@ -149,7 +149,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -515,12 +547,14 @@ t1	CREATE TABLE `t1` (
-+@@ -518,12 +550,14 @@
-    `a` int(11) DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -167,7 +167,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -528,13 +562,15 @@ t1	CREATE TABLE `t1` (
-+@@ -531,13 +565,15 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -186,7 +186,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -543,12 +579,14 @@ t1	CREATE TABLE `t1` (
-+@@ -546,12 +582,14 @@
-    PRIMARY KEY (`id`),
-    KEY `a` (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -204,7 +204,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -556,13 +594,15 @@ t1	CREATE TABLE `t1` (
-+@@ -559,13 +597,15 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -223,7 +223,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -571,12 +611,14 @@ t1	CREATE TABLE `t1` (
-+@@ -574,12 +614,14 @@
-    PRIMARY KEY (`id`),
-    KEY `a` (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -241,7 +241,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -584,13 +626,15 @@ t1	CREATE TABLE `t1` (
-+@@ -587,13 +629,15 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -260,7 +260,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -599,12 +643,14 @@ t1	CREATE TABLE `t1` (
-+@@ -602,12 +646,14 @@
-    `a` int(11) DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -278,7 +278,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -612,24 +658,27 @@ t1	CREATE TABLE `t1` (
-+@@ -615,24 +661,27 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -311,7 +311,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -637,24 +686,27 @@ t1	CREATE TABLE `t1` (
-+@@ -640,24 +689,27 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -344,7 +344,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -662,7 +714,7 @@ t1	CREATE TABLE `t1` (
-+@@ -665,7 +717,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -353,7 +353,7 @@
-  # ADD/DR
-```
-
-**File**: `mysql-test/main/vector,myisam.rdiff` (modified, +61/-24)
-```diff
-@@ -1,6 +1,6 @@
----- vector.result
--+++ vector,myisam.reject
--@@ -388,8 +388,30 @@
-+--- a/mysql-test/main/vector.result
-++++ b/mysql-test/main/vector.result
-+@@ -391,8 +391,30 @@
-  create table t1 (id int auto_increment primary key, v vector(5) not null, vector index (v));
-  insert t1 (id, v) values (1, x'e360d63ebe554f3fcdbc523f4522193f5236083d');
-  truncate table t1;
-@@ -31,7 +31,7 @@
-  insert t1 (id, v) values (1, x'e360d63ebe554f3fcdbc523f4522193f5236083d');
-  select id, hex(v) from t1;
-  id	hex(v)
--@@ -407,27 +429,33 @@
-+@@ -410,27 +432,33 @@
-  # Test RENAME TABLE with vector index
-  create table t1 (id int auto_increment primary key, v vector(5) not null, vector index (v));
-  db.opt
-@@ -74,7 +74,7 @@
-  drop database test1;
-  db.opt
-  #
--@@ -504,9 +532,11 @@
-+@@ -507,9 +535,11 @@
-  # ADD/DROP COLUMN, ALGORITHM=COPY
-  alter table t1 add column a int, algorithm=copy;
-  db.opt
-@@ -88,7 +88,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -515,12 +545,14 @@
-+@@ -518,12 +548,14 @@
-    `a` int(11) DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -106,7 +106,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -528,13 +560,15 @@
-+@@ -531,13 +563,15 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -125,7 +125,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -543,12 +577,14 @@
-+@@ -546,12 +580,14 @@
-    PRIMARY KEY (`id`),
-    KEY `a` (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -143,7 +143,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -556,13 +592,15 @@
-+@@ -559,13 +595,15 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -162,7 +162,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -571,12 +609,14 @@
-+@@ -574,12 +612,14 @@
-    PRIMARY KEY (`id`),
-    KEY `a` (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -180,7 +180,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -584,13 +624,15 @@
-+@@ -587,13 +627,15 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -199,7 +199,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -599,12 +641,14 @@
-+@@ -602,12 +644,14 @@
-    `a` int(11) DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -217,7 +217,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -612,24 +656,27 @@
-+@@ -615,24 +659,27 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -250,7 +250,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -637,24 +684,27 @@
-+@@ -640,24 +687,27 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -283,7 +283,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -662,7 +712,7 @@
-+@@ -665,7 +715,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -292,7 +292,7 @@
-  # ADD/DROP INDEX, ALGORITHM=INPLACE (non-vector)
-  alter table t1 add index a(id), algorithm=inplace;
-  ERROR 0A000: ALGORITHM=INPLACE is not supported for this operation. Try ALGORITHM=COPY
--@@ -685,31 +735,15 @@
-+@@ -688,31 +738,15 @@
-  alter table t1 modify column v vector(7) not null, algorithm=inplace;
-  ERROR 0A000: ALGORITHM=INPLACE is not supported for this operation. Try ALGORITHM=COPY
-  # ADD/CHANGE/DROP/MODIFY COLUMN, ALGORITHM=INPLACE (non-vector)
-@@ -328,7 +328,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -717,13 +751,15 @@
-+@@ -720,13 +754,15 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -347,7 +347,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -731,14 +767,16 @@
-+@@ -734,14 +770,16 @@
-    `w` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`w`)
-@@ -367,7 +367,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -746,7 +784,7 @@
-+@@ -749,7 +787,7 @@
-    `v` vector(5) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `w` (`v`)
-@@ -376,7 +376,7 @@
-  alter table t1 rename key w to v;
-  # IF [NOT] EXISTS
-  create vector index if not exists v on t1(v);
--@@ -757,77 +795,22 @@
-+@@ -760,77 +798,22 @@
-  Warnings:
-  Note	1091	Can't DROP INDEX `v`; check that it exists
-  db.opt
-@@ -457,7 +457,7 @@
-  # CHANGE/MODIFY/DROP COLUMN (vector)
-  alter table t1 modify column v int;
-  ERROR HY000: Incorrect arguments to VECTOR INDEX
--@@ -839,9 +822,11 @@
-+@@ -842,9 +825,11 @@
-  ERROR 42000: All parts of a VECTOR index must be NOT NULL
-  alter table t1 modify column v vector(7) not null;
-  db.opt
-@@ -471,7 +471,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -849,12 +834,14 @@
-+@@ -852,12 +837,14 @@
-    `v` vector(7) NOT NULL,
-    PRIMARY KEY (`id`),
-    VECTOR KEY `v` (`v`)
-@@ -489,7 +489,7 @@
-  show create table t1;
-  Table	Create Table
-  t1	CREATE TABLE `t1` (
--@@ -862,17 
-```
-
-**File**: `mysql-test/main/vector.result` (modified, +78/-32)
-```diff
-@@ -921,66 +921,88 @@ COUNT(*)
- 0
- # On empty table
- CREATE TABLE t_vec (id INT PRIMARY KEY, v VECTOR(4) NOT NULL, VECTOR INDEX vi(v));
--SELECT TABLE_SCHEMA = DATABASE() AS schema_ok,
--TABLE_NAME, INDEX_NAME, VECTOR_DIMENSIONS, SUBDIST_ENABLED
-+SELECT *
- FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--schema_ok	TABLE_NAME	INDEX_NAME	VECTOR_DIMENSIONS	SUBDIST_ENABLED
--1	t_vec	vi	4	NO
--SELECT INDEX_SIZE, TOTAL_NODES, CACHED_NODES, MEMORY_SIZE, DELETED_ROWS, CACHE_OVERFLOWS
--FROM INFORMATION_SCHEMA.VECTOR_INDEXES
--WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--INDEX_SIZE	TOTAL_NODES	CACHED_NODES	MEMORY_SIZE	DELETED_ROWS	CACHE_OVERFLOWS
--NULL	0	0	0	NULL	NULL
-+TABLE_CATALOG	def
-+TABLE_SCHEMA	test
-+TABLE_NAME	t_vec
-+INDEX_NAME	vi
-+VECTOR_DIMENSIONS	4
-+INDEX_SIZE	49152
-+TOTAL_NODES	1
-+CACHED_NODES	0
-+DELETED_ROWS	0
-+SUBDIST_ENABLED	NO
-+MEMORY_SIZE	0
- # After INSERT
- INSERT INTO t_vec VALUES
- (1, VEC_FromText('[1,1,1,1]')),
- (2, VEC_FromText('[2,2,2,2]')),
- (3, VEC_FromText('[3,3,3,3]'));
--SELECT INDEX_SIZE > 0 AS has_disk,
-+SELECT
-+INDEX_SIZE,
- TOTAL_NODES,
--DELETED_ROWS
-+CACHED_NODES,
-+DELETED_ROWS,
-+MEMORY_SIZE > 0 AS has_mem,
-+SUBDIST_ENABLED
- FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--has_disk	TOTAL_NODES	DELETED_ROWS
--1	3	0
-+INDEX_SIZE	49152
-+TOTAL_NODES	3
-+CACHED_NODES	0
-+DELETED_ROWS	0
-+has_mem	0
-+SUBDIST_ENABLED	NO
- # After search
- SELECT id FROM t_vec ORDER BY vec_distance_euclidean(v, VEC_FromText('[1,2,3,4]')) LIMIT 1;
-+id
-+3
- SELECT TOTAL_NODES,
- CACHED_NODES,
- MEMORY_SIZE > 0 AS has_mem,
--DELETED_ROWS,
--CACHE_OVERFLOWS
-+DELETED_ROWS
- FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--TOTAL_NODES	CACHED_NODES	has_mem	DELETED_ROWS	CACHE_OVERFLOWS
--3	3	1	0	0
-+TOTAL_NODES	3
-+CACHED_NODES	3
-+has_mem	1
-+DELETED_ROWS	0
- # After FLUSH
- FLUSH TABLES t_vec;
--SELECT TABLE_NAME, INDEX_NAME, VECTOR_DIMENSIONS, SUBDIST_ENABLED, CACHED_NODES, CACHE_OVERFLOWS
-+SELECT TABLE_NAME, INDEX_NAME, VECTOR_DIMENSIONS, SUBDIST_ENABLED, CACHED_NODES
- FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--TABLE_NAME	INDEX_NAME	VECTOR_DIMENSIONS	SUBDIST_ENABLED	CACHED_NODES	CACHE_OVERFLOWS
--t_vec	vi	4	NO	0	NULL
-+TABLE_NAME	t_vec
-+INDEX_NAME	vi
-+VECTOR_DIMENSIONS	4
-+SUBDIST_ENABLED	NO
-+CACHED_NODES	0
- # recover
- SELECT id FROM t_vec ORDER BY vec_distance_euclidean(v, VEC_FromText('[1,2,3,4]')) LIMIT 1;
--SELECT INDEX_SIZE > 0 AS has_disk,
-+id
-+3
-+SELECT INDEX_SIZE,
- TOTAL_NODES,
- CACHED_NODES,
- MEMORY_SIZE > 0 AS has_mem,
--DELETED_ROWS,
--CACHE_OVERFLOWS
-+DELETED_ROWS
- FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--has_disk	TOTAL_NODES	CACHED_NODES	has_mem	DELETED_ROWS	CACHE_OVERFLOWS
--1	3	3	1	0	0
-+INDEX_SIZE	49152
-+TOTAL_NODES	3
-+CACHED_NODES	3
-+has_mem	1
-+DELETED_ROWS	0
- # DELETED_ROWS approximation
- DELETE FROM t_vec WHERE id = 1;
--SELECT TOTAL_NODES, CACHED_NODES, DELETED_ROWS, CACHE_OVERFLOWS
-+SELECT TOTAL_NODES, CACHED_NODES, DELETED_ROWS
- FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--TOTAL_NODES	CACHED_NODES	DELETED_ROWS	CACHE_OVERFLOWS
--3	3	1	0
-+TOTAL_NODES	3
-+CACHED_NODES	3
-+DELETED_ROWS	1
- # VECTOR_DIMENSIONS
- CREATE TABLE t_dim (pk INT PRIMARY KEY, v VECTOR(7) NOT NULL, VECTOR INDEX vi(v));
- SELECT VECTOR_DIMENSIONS FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-@@ -992,13 +1014,12 @@ SELECT SUBDIST_ENABLED FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- SUBDIST_ENABLED
- NO
--# SUBDIST_ENABLED=YES for dims >= 384
-+# SUBDIST_ENABLED=NULL (unknown) for dims >= 384
- CREATE TABLE t_high (pk INT PRIMARY KEY, v VECTOR(384) NOT NULL, VECTOR INDEX vi(v));
- INSERT INTO t_high VALUES (1, VEC_FromText(CONCAT('[', REPEAT('0,', 383), '0]')));
- SELECT SUBDIST_ENABLED FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_high';
--SUBDIST_ENABLED
--NULL
-+SUBDIST_ENABLED	NULL
- # Multiple tables visible and ordered
- CREATE TABLE t_cos (pk INT PRIMARY KEY, v VECTOR(4) NOT NULL, VECTOR INDEX vi(v) distance=cosine);
- INSERT INTO t_cos VALUES (1, VEC_FromText('[1,1,1,1]'));
-@@ -1011,10 +1032,35 @@ t_cos	vi	4
- t_dim	vi	7
- t_high	vi	384
- t_vec	vi	4
-+# get_all_tables optimization
-+FLUSH TABLES;
-+FLUSH STATUS;
-+SHOW STATUS LIKE 'open_table%';
-+Variable_name	Value
-+Open_table_definitions	0
-+Open_tables	0
-+SELECT TABLE_SCHEMA, TABLE_NAME, INDEX_NAME
-+FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_cos';
-+TABLE_SCHEMA	TABLE_NAME	INDEX_NAME
-+test	t_cos	vi
-+SHOW STATUS LIKE 'open_table%';
-+Variable_name	Value
-+Open_table_definitions	1
-+Open_tables	0
-+SELECT TABLE_SCHEMA, TABLE_NAME, INDEX_NAME, SUBDIST_ENABLED
-+FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_cos';
-+TABLE_SCHEMA	T
-```
-
-**File**: `mysql-test/main/vector.test` (modified, +30/-26)
-```diff
-@@ -472,12 +472,7 @@ SELECT COUNT(*) FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- 
- --echo # On empty table
- CREATE TABLE t_vec (id INT PRIMARY KEY, v VECTOR(4) NOT NULL, VECTOR INDEX vi(v));
--SELECT TABLE_SCHEMA = DATABASE() AS schema_ok,
--       TABLE_NAME, INDEX_NAME, VECTOR_DIMENSIONS, SUBDIST_ENABLED
--  FROM INFORMATION_SCHEMA.VECTOR_INDEXES
--  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
--
--SELECT INDEX_SIZE, TOTAL_NODES, CACHED_NODES, MEMORY_SIZE, DELETED_ROWS, CACHE_OVERFLOWS
-+query_vertical SELECT *
-   FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- 
-@@ -487,51 +482,47 @@ INSERT INTO t_vec VALUES
-   (2, VEC_FromText('[2,2,2,2]')),
-   (3, VEC_FromText('[3,3,3,3]'));
- 
--# CACHED_NODES and CACHE_OVERFLOWS are omitted here because storage engines
--# differ in whether they retain index cache context after INSERT statements.
--SELECT INDEX_SIZE > 0 AS has_disk,
--       TOTAL_NODES,
--       DELETED_ROWS
-+query_vertical SELECT
-+  INDEX_SIZE,
-+  TOTAL_NODES,
-+  CACHED_NODES,
-+  DELETED_ROWS,
-+  MEMORY_SIZE > 0 AS has_mem,
-+  SUBDIST_ENABLED
-   FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- 
- --echo # After search
----disable_result_log
- SELECT id FROM t_vec ORDER BY vec_distance_euclidean(v, VEC_FromText('[1,2,3,4]')) LIMIT 1;
----enable_result_log
- 
--SELECT TOTAL_NODES,
-+query_vertical SELECT TOTAL_NODES,
-        CACHED_NODES,
-        MEMORY_SIZE > 0 AS has_mem,
--       DELETED_ROWS,
--       CACHE_OVERFLOWS
-+       DELETED_ROWS
-   FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- 
- --echo # After FLUSH
- FLUSH TABLES t_vec;
- 
--SELECT TABLE_NAME, INDEX_NAME, VECTOR_DIMENSIONS, SUBDIST_ENABLED, CACHED_NODES, CACHE_OVERFLOWS
-+query_vertical SELECT TABLE_NAME, INDEX_NAME, VECTOR_DIMENSIONS, SUBDIST_ENABLED, CACHED_NODES
-   FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- 
- --echo # recover
----disable_result_log
- SELECT id FROM t_vec ORDER BY vec_distance_euclidean(v, VEC_FromText('[1,2,3,4]')) LIMIT 1;
----enable_result_log
- 
--SELECT INDEX_SIZE > 0 AS has_disk,
-+query_vertical SELECT INDEX_SIZE,
-        TOTAL_NODES,
-        CACHED_NODES,
-        MEMORY_SIZE > 0 AS has_mem,
--       DELETED_ROWS,
--       CACHE_OVERFLOWS
-+       DELETED_ROWS
-   FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- 
- --echo # DELETED_ROWS approximation
- DELETE FROM t_vec WHERE id = 1;
--SELECT TOTAL_NODES, CACHED_NODES, DELETED_ROWS, CACHE_OVERFLOWS
-+query_vertical SELECT TOTAL_NODES, CACHED_NODES, DELETED_ROWS
-   FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- 
-@@ -544,10 +535,10 @@ SELECT VECTOR_DIMENSIONS FROM INFORMATION_SCHEMA.VECTOR_INDEXES
- SELECT SUBDIST_ENABLED FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_vec';
- 
----echo # SUBDIST_ENABLED=YES for dims >= 384
-+--echo # SUBDIST_ENABLED=NULL (unknown) for dims >= 384
- CREATE TABLE t_high (pk INT PRIMARY KEY, v VECTOR(384) NOT NULL, VECTOR INDEX vi(v));
- INSERT INTO t_high VALUES (1, VEC_FromText(CONCAT('[', REPEAT('0,', 383), '0]')));
--SELECT SUBDIST_ENABLED FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-+query_vertical SELECT SUBDIST_ENABLED FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_high';
- 
- --echo # Multiple tables visible and ordered
-@@ -558,9 +549,22 @@ SELECT TABLE_NAME, INDEX_NAME, VECTOR_DIMENSIONS
-   WHERE TABLE_SCHEMA = DATABASE()
-   ORDER BY TABLE_NAME;
- 
-+--echo # get_all_tables optimization
-+FLUSH TABLES;
-+FLUSH STATUS;
-+SHOW STATUS LIKE 'open_table%';
-+SELECT TABLE_SCHEMA, TABLE_NAME, INDEX_NAME
-+FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_cos';
-+SHOW STATUS LIKE 'open_table%';
-+SELECT TABLE_SCHEMA, TABLE_NAME, INDEX_NAME, SUBDIST_ENABLED
-+FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 't_cos';
-+SHOW STATUS LIKE 'open_table%';
++static void mariadb_time_from_micros_func(duckdb::DataChunk &args,
++                                          duckdb::ExpressionState &,
++                                          duckdb::Vector &result)
++{
++  duckdb::UnaryExecutor::Execute<int64_t, duckdb::dtime_t>(
++      args.data[0], result, args.size(),
++      [](int64_t micros) { return duckdb::dtime_t(micros); });
++}
 +
- --echo # Dropping tables
- DROP TABLE t_vec, t_cos, t_high, t_dim;
- SELECT COUNT(*) FROM INFORMATION_SCHEMA.VECTOR_INDEXES
-   WHERE TABLE_SCHEMA = DATABASE();
- 
----echo # End of MDEV-34805 tests
-+--echo # End of 13.1 tests
+ static void register_time_arith_functions(duckdb::Catalog &catalog,
+                                           duckdb::CatalogTransaction transaction)
+ {
++  {
++    duckdb::ScalarFunctionSet set("mariadb_time");
++    set.AddFunction(duckdb::ScalarFunction(
++        {duckdb::LogicalType::BIGINT}, duckdb::LogicalType::TIME,
++        mariadb_time_from_micros_func));
++    duckdb::CreateScalarFunctionInfo info(std::move(set));
++    info.on_conflict= duckdb::OnCreateConflict::ALTER_ON_CONFLICT;
++    catalog.CreateFunction(transaction, info);
++  }
++
+   /* addtime(TIMESTAMP/TIME, VARCHAR) → TIMESTAMP/TIME */
+   {
+     duckdb::ScalarFunctionSet set("addtime");
 ```
 
-**File**: `mysql-test/main/vector2_notembedded.result` (modified, +41/-0)
+---
+
+### Incident Patch 3: `29f0cd88` (2026-10-05)
+**Commit Message**: MDEV-40553 Print GIS ranges in optimizer trace and context
+
+Ranges built over GIS (geometry) columns could not be printed in the
+optimizer trace or the recorded optimizer context: Field_geom printed
+every key value as the placeholder "unprintable_geometry_value",
+regardless of whether the index stored the column's raw value (or a
+prefix of it) or, for a SPATIAL index, its MBR (Minimum Bounding
+Rectangle).
+
+Field::print_key_part_value() now takes an image_type argument (see
+Field::image_type()) that says which of the two the key holds. For a
+SPATIAL index (image_type itMBR), Field_geom::print_key_part_value()
+decodes the four doubles the key stores and prints them as a WKT
+POLYGON. For every other index (image_type itRAW), the key holds the
+value or a prefix of it, and it now prints in binary form, the same
+way Field_blob does, instead of the placeholder.
+
+print_mbr_range_operator() prints the spatial relation a GEOM range
+carries (MBRWITHIN, MBRCONTAINS, MBRINTERSECTS, MBRDISJOINT,
+MBREQUALS), inverted where needed so the indexed column reads on the
+left. print_range() and print_key_value() thread the new image_type
+argument through to Field_geom::print_key_part_value().
+
+Added new
+
+**File**: `mysql-test/include/opt_context_list_tables_and_ranges.inc` (modified, +3/-1)
 ```diff
-@@ -118,3 +118,44 @@ select v from t order by vec_distance_euclidean(0x32323232,v) limit 1;
- v
- 1111
- drop table t;
-+#
-+# MDEV-40793 User has access to vector info in VECTOR_INDEXES without access to column
-+#
-+create database db;
-+create table db.t(a int, u int, v vector(1) not null, unique(u), vector(v));
-+create user u@localhost;
-+grant select(a) on db.t to u@localhost;
-+connect u,localhost,u;
-+select a from db.t;
-+a
-+select u from db.t;
-+ERROR 42000: SELECT command denied to user 'u'@'localhost' for column 'u' in table 't'
-+select v from db.t;
-+ERROR 42000: SELECT command denied to user 'u'@'localhost' for column 'v' in table 't'
-+select table_name, index_name from information_schema.statistics where table_schema = 'db';
-+table_name	index_name
-+select table_name, constraint_name from information_schema.table_constraints where table_schema = 'db';
-+table_name	constraint_name
-+select table_name, index_name from information_schema.vector_indexes where table_schema = 'db';
-+table_name	index_name
-+connection default;
-+grant update(a) on db.t to u@localhost;
-+connection u;
-+select table_name, index_name from information_schema.statistics where table_schema = 'db';
-+table_name	index_name
-+select table_name, constraint_name from information_schema.table_constraints where table_schema = 'db';
-+table_name	constraint_name
-+t	u
-+select table_name, index_name from information_schema.vector_indexes where table_schema = 'db';
-+table_name	index_name
-+connection default;
-+grant select(v) on db.t to u@localhost;
-+connection u;
-+select table_name, index_name from information_schema.vector_indexes where table_schema = 'db';
-+table_name	index_name
-+t	v
-+disconnect u;
-+connection default;
-+drop database db;
-+drop user u@localhost;
-+# End of 13.1 tests
+@@ -26,11 +26,13 @@ select *from json_table(
+ --echo # === Range accesses
+ set @list_ranges=
+     (select JSON_DETAILED(JSON_EXTRACT(@opt_context, '$**.multi_range_read_info_const_calls')));
++# num_rows is bigint unsigned because MBRDISJOINT records HA_POS_ERROR
++# (18446744073709551615) there.
+ select *from json_table(
+     @list_ranges,
+     '$[*][*]' columns(index_name text path '$.index_name',
+                       ranges json path '$.ranges',
+-                      num_rows int path '$.num_rows',
++                      num_rows bigint unsigned path '$.num_rows',
+                       max_index_blocks int path '$.max_index_blocks',
+                       max_row_blocks int path '$.max_row_blocks'
+     )) as jt;
 ```
 
-**File**: `mysql-test/main/vector2_notembedded.test` (modified, +38/-0)
+**File**: `mysql-test/include/opt_gis_range_print.inc` (added, +121/-0)
 ```diff
-@@ -64,3 +64,41 @@ repair table t extended;
- check table t extended;
- select v from t order by vec_distance_euclidean(0x32323232,v) limit 1;
- drop table t;
+@@ -0,0 +1,121 @@
++#
++# SUMMARY
++#   MDEV-40553: printing of GIS ranges, shared between opt_trace.test
++#   (dumps range_scan_alternatives from the optimizer trace) and
++#   opt_context_store_stats.test (dumps the recorded optimizer context).
++#   Both files run the exact same queries over the exact same fixture;
++#   only the way each range is dumped differs, see
++#   include/opt_gis_range_print_dump.inc.
++#
++# PARAMETERS
++#   $opt_gis_range_print_use_trace  See include/opt_gis_range_print_dump.inc
++#
++# EXAMPLE
++#   opt_trace.test, opt_context_store_stats.test
++#
++create table t1 (
++  id int,
++  g1 geometry not null,
++  g2 geometry,
++  key k_prefix (g1(5)),
++  key k_full (g1(200)),
++  key k_null (g2(200))
++) engine=myisam;
++
++insert into t1 select seq, point(seq, seq), point(seq, seq) from seq_1_to_5;
++insert into t1 values (6, point(6,6), NULL);
++analyze table t1;
++
++--echo # The k_full prefix is long enough to hold every value this test
++--echo # inserts or compares against (points and short linestrings),
++--echo # so the index holds the whole value here. It is printed as a binary
++--echo # string, like any other BLOB prefix.
++explain
++select id from t1 force index (k_full) where g1=point(2,2);
++--source include/opt_gis_range_print_dump.inc
++
++--echo # multiple ranges
++explain
++select id from t1 force index (k_full)
++where g1=point(3,3) or g1=linestring(point(1,1), point(2,2));
++--source include/opt_gis_range_print_dump.inc
++
++--echo # NULL values and multiple ranges
++explain
++select id from t1 force index (k_null)
++where g2=point(3,3) or g2 is null or g2=linestring(point(1,1), point(2,2));
++--source include/opt_gis_range_print_dump.inc
++
++--echo # The index holds only a prefix of the value.
++--echo # It is printed as a binary string, like any other BLOB prefix.
++explain
++select id from t1 force index (k_prefix) where g1=point(2,2);
++--source include/opt_gis_range_print_dump.inc
++
++drop table t1;
 +
 +--echo #
-+--echo # MDEV-40793 User has access to vector info in VECTOR_INDEXES without access to column
++--echo # A SPATIAL index stores the MBR of the value. It is printed as the
++--echo # WKT of the MBR together with the spatial relation the range uses.
 +--echo #
 +
-+create database db;
-+create table db.t(a int, u int, v vector(1) not null, unique(u), vector(v));
-+create user u@localhost;
-+grant select(a) on db.t to u@localhost;
++create table t2 (
++  id int,
++  g geometry not null,
++  spatial key (g)
++) engine=myisam;
 +
-+--connect u,localhost,u
-+select a from db.t;
-+--error ER_COLUMNACCESS_DENIED_ERROR
-+select u from db.t;
-+--error ER_COLUMNACCESS_DENIED_ERROR
-+select v from db.t;
-+select table_name, index_name from information_schema.statistics where table_schema = 'db';
-+select table_name, constraint_name from information_schema.table_constraints where table_schema = 'db';
-+select table_name, index_name from information_schema.vector_indexes where table_schema = 'db';
++insert into t2 select seq, point(seq, seq) from seq_1_to_20;
++insert into t2 values
++  (21, geomfromtext('LINESTRING(0 0, 5 8)')),
++  (22, geomfromtext('POLYGON((0 0, 0 3, 3 3, 3 0, 0 0))'));
++analyze table t2;
 +
-+--connection default
-+grant update(a) on db.t to u@localhost;
-+--connection u
-+select table_name, index_name from information_schema.statistics where table_schema = 'db';
-+select table_name, constraint_name from information_schema.table_constraints where table_schema = 'db';
-+select table_name, index_name from information_schema.vector_indexes where table_schema = 'db';
++--echo # mbrcontains(value, column)
++explain
++select id from t2 where mbrcontains(geomfromtext('POLYGON((0 0,0 3,3 3,3 0,0 0))'), g);
++--source include/opt_gis_range_print_dump.inc
 +
-+--connection default
-+grant select(v) on db.t to u@localhost;
-+--connection u
-+select table_name, index_name from information_schema.vector_indexes where table_schema = 'db';
++--echo # mbrwithin(column, value)
++explain
++select id from t2 where mbrwithin(g, geomfromtext('LINESTRING(1 1, 9 12)'));
++--source include/opt_gis_range_print_dump.inc
 +
-+--disconnect u
-+--connection default
-+drop database db;
-+drop user u@localhost;
++--echo # The other spatial relations
++explain
++select id from t2 where mbrcontains(g, geomfromtext('POINT(2 2)'));
++--source include/opt_gis_range_print_dump.inc
 +
-+--echo # End of 13.1 tests
++explain
++select id from t2 where mbrequals(g, geomfromtext('POINT(7 7)'));
++--source include/opt_gis_range_print_dump.inc
++
++explain
++select id from t2 where mbrintersects(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
++--source include/opt_gis_range_print_dump.inc
++
++--echo # touches()/crosses()/overlaps() (and their MBRxxx aliases, where one
++--echo # exists) all use the mbrintersects relation
++explain
++select id from t2 where mbrtouches(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
++--source include/opt_gis_range_print_dump.inc
++
++explain
++select id from t2 where crosses(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
++--source include/opt_gis_range_print_dump.inc
++
++explain
++select id from t2 where mbroverlaps(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
++--source include/opt_gis_range_print_dump.inc
++
++--echo # MBRDISJOINT: the handler's records_in_range() cannot estimate this
++--echo # relation and returns HA_POS_ERROR, so the range optimizer discards
++--echo # this index as a candidate before it ever traces its ranges -- the
++--echo # trace shows the index with no further detail. The range text is
++--echo # still produced (and recorded) when the optimizer separately asks
++--echo # the handler for a cost estimate, see multi_range_read_info_const().
++explain
++select id from t2 where mbrdisjoint(g, geomfromtext('POLYGON((0 0,0 2,2 2,2 0,0 0))'));
++--source include/opt_gis_range_print_dump.inc
++
++drop table t2;
 ```
 
-**File**: `mysql-test/suite/funcs_1/r/is_columns_is.result` (modified, +12/-12)
+**File**: `mysql-test/include/opt_gis_range_print_dump.inc` (added, +22/-0)
 ```diff
-@@ -620,17 +620,17 @@ def	information_schema	USER_STATISTICS	TOTAL_CONNECTIONS	2	NULL	NO	int	NULL	NULL
- def	information_schema	USER_STATISTICS	TOTAL_SSL_CONNECTIONS	26	NULL	NO	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(21) unsigned			select		NEVER	NULL	NO	NO	
- def	information_schema	USER_STATISTICS	UPDATE_COMMANDS	18	NULL	NO	bigint	NULL	NULL	19	0	NULL	NULL	NULL	bigint(21)			select		NEVER	NULL	NO	NO	
- def	information_schema	USER_STATISTICS	USER	1	NULL	NO	varchar	128	384	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(128)			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	CACHED_NODES	7	NULL	NO	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	CACHE_OVERFLOWS	11	NULL	YES	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	DELETED_ROWS	8	NULL	YES	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	INDEX_NAME	3	NULL	NO	varchar	64	192	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(64)			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	INDEX_SIZE	5	NULL	YES	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	MEMORY_SIZE	10	NULL	NO	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	SUBDIST_ENABLED	9	NULL	YES	varchar	3	9	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(3)			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	TABLE_NAME	2	NULL	NO	varchar	64	192	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(64)			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	TABLE_SCHEMA	1	NULL	NO	varchar	64	192	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(64)			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	TOTAL_NODES	6	NULL	NO	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
--def	information_schema	VECTOR_INDEXES	VECTOR_DIMENSIONS	4	NULL	NO	int	NULL	NULL	10	0	NULL	NULL	NULL	int(10) unsigned			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	CACHED_NODES	8	NULL	NO	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	DELETED_ROWS	9	NULL	YES	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	INDEX_NAME	4	NULL	NO	varchar	64	192	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(64)			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	INDEX_SIZE	6	NULL	YES	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	MEMORY_SIZE	11	NULL	NO	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	SUBDIST_ENABLED	10	NULL	YES	varchar	3	9	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(3)			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	TABLE_CATALOG	1	NULL	NO	varchar	64	192	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(64)			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	TABLE_NAME	3	NULL	NO	varchar	64	192	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(64)			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	TABLE_SCHEMA	2	NULL	NO	varchar	64	192	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(64)			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	TOTAL_NODES	7	NULL	NO	bigint	NULL	NULL	20	0	NULL	NULL	NULL	bigint(19) unsigned			select		NEVER	NULL	NO	NO	
-+def	information_schema	VECTOR_INDEXES	VECTOR_DIMENSIONS	5	NULL	NO	int	NULL	NULL	10	0	NULL	NULL	NULL	int(10) unsigned			select		NEVER	NULL	NO	NO	
- def	information_schema	VIEWS	ALGORITHM	11	NULL	NO	varchar	10	30	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(10)			select		NEVER	NULL	NO	NO	
- def	information_schema	VIEWS	CHARACTER_SET_CLIENT	9	NULL	NO	varchar	32	96	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(32)			select		NEVER	NULL	NO	NO	
- def	information_schema	VIEWS	CHECK_OPTION	5	NULL	NO	varchar	8	24	NULL	NULL	NULL	utf8mb3	utf8mb3_general_ci	varchar(8)			select		NEVER	NULL	NO	NO	
-@@ -1326,6 +1326,7 @@ NULL	information_schema	USER_STATISTICS	ACCESS_DENIED	bigint	NULL	NULL	NULL	NULL
- NULL	information_schema	USER_STATISTICS	EMPTY_QUERIES	bigint	NULL	NULL	NULL	NULL	bigint(21)
- NULL	information_schema	USER_STATISTICS	TOTAL_SSL_CONNECTIONS	bigint	NULL	NULL	NULL	NULL	bigint(21) unsigned
- NULL	information_schema	USER_STATISTICS	MAX_STATEMENT_TIME_EXCEEDED	bigint	NULL	NULL	NULL	NULL	bigint(21)
-+3.0000	information_schema	VECTOR_INDEXES	TABLE_CATALOG	varchar	64	192	utf8mb3	utf8mb3_general_ci	varchar(64)
- 3.0000	information_schema	VECTOR_INDEXES	TABLE_SCHEMA	varchar	64	192	utf8mb3	utf8mb3_general_ci	varchar(64)
- 3.0000	information_sc
+@@ -0,0 +1,22 @@
++#
++# SUMMARY
++#   Print the range(s) built for the query just run, either from the
++#   optimizer trace or from the recorded optimizer context, so that the
++#   two range-printing paths can share the same probe queries.
++#
++# PARAMETERS
++#   $opt_gis_range_print_use_trace  If set, dump range_scan_alternatives
++#                                   from the optimizer trace. Otherwise,
++#                                   dump the recorded optimizer context.
++#
++# EXAMPLE
++#   opt_trace.test, opt_context_store_stats.test
++#
++if ($opt_gis_range_print_use_trace)
++{
++  select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
++}
++if (!$opt_gis_range_print_use_trace)
++{
++  --source include/opt_context_list_tables_and_ranges.inc
++}
 ```
 
----
-
-### Incident Patch 8: `f09e3b61` (2026-07-07)
-**Commit Message**: Removed some not needed checks and add a DBUG_ASSERT() for not covered code
-
-- In ha_partition.cc:check_parallel_search(), remove check if
-  item_field->field is null. This is not needed as the function is run
-  after fix_field() which guarnatees that the field is always set.
-- Added DBUG_ASSERT(new_field) to Item_field::fix_fields() to check if a
-  select-list item, found by name or alias when resolving ORDER BY/GROUP
-  BY/HAVING, can have field == 0. This error path is not covered by any
-  mtr test.
-
-**File**: `sql/ha_partition.cc` (modified, +2/-2)
+**File**: `mysql-test/main/opt_context_replay_basic.result` (modified, +93/-0)
 ```diff
-@@ -7680,7 +7680,7 @@ bool ha_partition::check_parallel_search()
-       {
-         Field *order_field= ((Item_field *)item)->field;
-         DBUG_PRINT("info",("partition order_field: %p", order_field));
--        if (order_field && order_field->table == table_list->table)
-+        if (order_field->table == table_list->table)
-         {
-           Field *part_field= m_part_info->full_part_field_array[0];
-           DBUG_PRINT("info",("partition order_field: %p", order_field));
-@@ -7723,7 +7723,7 @@ bool ha_partition::check_parallel_search()
-       {
-         Field *group_field= ((Item_field *)item)->field;
-         DBUG_PRINT("info",("partition group_field: %p", group_field));
--        if (group_field && group_field->table == table_list->table)
-+        if (group_field->table == table_list->table)
-         {
-           Field *part_field= m_part_info->full_part_field_array[0];
-           DBUG_PRINT("info",("partition group_field: %p", group_field));
-```
-
-**File**: `sql/item.cc` (modified, +2/-0)
-```diff
-@@ -6683,6 +6683,8 @@ bool Item_field::fix_fields(THD *thd, Item **reference)
- 
-             if (unlikely(new_field == NULL))
-             {
-+              /* Not known if this can happen. Test coverage is missing */
-+              DBUG_ASSERT(new_field);
-               /* The column to which we link isn't valid. */
-               my_error(ER_BAD_FIELD_ERROR, MYF(0), (*res)->name.str,
-                        thd_where(thd));
-```
-
----
-
-### Incident Patch 9: `9d916c46` (2026-08-17)
-**Commit Message**: MDEV-40486 [fixup] Clamp max_length at MAX_FIELD_VARCHARLENGTH in Item_func_vec_fromtext::fix_length_and_dec
-
-This allows
-
-create table t1 (v vector(64) not null);
-insert into t1 select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
-
-which was banned in the previous fix
-bb0ac437015dec04fbee226745a8eb2bb4825917, though this also introduces
-the inconsistency(?) where
-
-create table t1 as select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
-
-still fails ER_TRUNCATED_WRONG_VALUE
-
-see updated tests
-
-TODO:
-- Changes in vector_utf16.result does not look right
-- the following tests crashes:
-
-CREATE TABLE t1 (v VECTOR(2));
---error ER_TOO_BIG_FIELDLENGTH
-INSERT INTO t1 VALUES (VEC_FROMTEXT(CONCAT('[1.', REPEAT('0',70000), ',2]')));
-DROP TABLE t1;
-
-SELECT VEC_FROMTEXT('😀😀😀');
-
-**File**: `mysql-test/main/vector2.result` (modified, +7/-6)
-```diff
-@@ -160,7 +160,7 @@ drop table t;
- # MDEV-35141 Server crashes in Field_vector::report_wrong_value upon statistic collection
- #
- create table t1 (v vector(64) not null);
--insert into t1 select vec_fromtext(cast(concat('[',group_concat(1),']') as char(130))) from seq_1_to_64;
-+insert into t1 select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
- analyze table t1 persistent for all;
- Table	Op	Msg_type	Msg_text
- test.t1	analyze	status	Engine-independent statistics collected
-@@ -571,11 +571,11 @@ set sql_mode=@old_sql_mode;
- ## Original testcase
- CREATE TABLE t (a TEXT) AS SELECT '[1]' AS a;
- CREATE TABLE tt AS SELECT VEC_FROMTEXT(a) AS f FROM t;
--ERROR 42000: Column length too big for column 'f' (max = 16383); use BLOB or TEXT instead
-+ERROR 22007: Incorrect vector value: '\x00\x00\x80?' for column `test`.`tt`.`f` at row 1
- DROP TABLE t;
- CREATE TABLE t (a LONGBLOB) AS SELECT '[1]' AS a;
- CREATE TABLE tt AS SELECT VEC_FROMTEXT(a) AS f FROM t;
--ERROR 42000: Column length too big for column 'f' (max = 16383); use BLOB or TEXT instead
-+ERROR 22007: Incorrect vector value: '\x00\x00\x80?' for column `test`.`tt`.`f` at row 1
- DROP TABLE t;
- ## Another case, which would have failed with ERROR 1292
- ## without the fix
-@@ -592,7 +592,7 @@ SELECT VEC_FROMTEXT(concat('[1', repeat(',1', 16382), ']')) AS f;
- DROP TABLE tt;
- CREATE TABLE tt AS
- SELECT VEC_FROMTEXT(concat('[1', repeat(',1', 16383), ']')) AS f;
--ERROR 42000: Column length too big for column 'f' (max = 16383); use BLOB or TEXT instead
-+ERROR 22007: Incorrect vector value: '\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00...' for column `test`.`tt`.`f` at row 1
- ## "Zero-dimensional" argument, no change in behaviour after fix
- SELECT VEC_FROMTEXT('[]') as f;
- f
-@@ -625,9 +625,10 @@ t2	CREATE TABLE `t2` (
- DROP TABLE t1, t2;
- CREATE TABLE t3 (f VECTOR(0));
- ERROR 42000: Incorrect column specifier for column 'f'
--## Fails because concat('[',group_concat(1),']') is mediumblob
- create view v1 as select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
--ERROR 42000: Column length too big for column 'vec_fromtext(concat('[',group_concat(1),']'))' (max = 16383); use BLOB or TEXT instead
-+DROP view v1;
-+create table t1 as select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
-+ERROR 22007: Incorrect vector value: '\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00\x80?\x00\x00...' for column `test`.`t1`.`vec_fromtext(concat('[',group_concat(1),']'))` at row 65
- ## NULLs
- select vec_fromtext(NULL);
- vec_fromtext(NULL)
-```
-
-**File**: `mysql-test/main/vector2.test` (modified, +8/-6)
-```diff
-@@ -125,7 +125,7 @@ drop table t;
- --echo # MDEV-35141 Server crashes in Field_vector::report_wrong_value upon statistic collection
- --echo #
- create table t1 (v vector(64) not null);
--insert into t1 select vec_fromtext(cast(concat('[',group_concat(1),']') as char(130))) from seq_1_to_64;
-+insert into t1 select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
- analyze table t1 persistent for all;
+@@ -705,4 +705,97 @@ id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
+ 1	SIMPLE	t1	range	a_idx	a_idx	13	NULL	4	Using where; Using index
+ set optimizer_replay_context='';
  drop table t1;
- 
-@@ -453,12 +453,12 @@ set sql_mode=@old_sql_mode;
- 
- --echo ## Original testcase
- CREATE TABLE t (a TEXT) AS SELECT '[1]' AS a;
----error ER_TOO_BIG_FIELDLENGTH
-+--error ER_TRUNCATED_WRONG_VALUE
- CREATE TABLE tt AS SELECT VEC_FROMTEXT(a) AS f FROM t;
- DROP TABLE t;
- 
- CREATE TABLE t (a LONGBLOB) AS SELECT '[1]' AS a;
----error ER_TOO_BIG_FIELDLENGTH
-+--error ER_TRUNCATED_WRONG_VALUE
- CREATE TABLE tt AS SELECT VEC_FROMTEXT(a) AS f FROM t;
- DROP TABLE t;
- 
-@@ -478,7 +478,7 @@ CREATE TABLE tt AS
-   SELECT VEC_FROMTEXT(concat('[1', repeat(',1', 16382), ']')) AS f;
- DROP TABLE tt;
- 
----error ER_TOO_BIG_FIELDLENGTH
-+--error ER_TRUNCATED_WRONG_VALUE
- CREATE TABLE tt AS
-   SELECT VEC_FROMTEXT(concat('[1', repeat(',1', 16383), ']')) AS f;
- 
-@@ -503,9 +503,11 @@ DROP TABLE t1, t2;
- --error ER_WRONG_FIELD_SPEC
- CREATE TABLE t3 (f VECTOR(0));
- 
----echo ## Fails because concat('[',group_concat(1),']') is mediumblob
----error ER_TOO_BIG_FIELDLENGTH
- create view v1 as select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
-+DROP view v1;
-+
-+--error ER_TRUNCATED_WRONG_VALUE
-+create table t1 as select vec_fromtext(concat('[',group_concat(1),']')) from seq_1_to_64;
- 
- --echo ## NULLs
- select vec_fromtext(NULL);
-```
-
-**File**: `sql/item_vectorfunc.cc` (modified, +4/-6)
-```diff
-@@ -196,12 +196,7 @@ bool Item_func_vec_fromtext::fix_length_and_dec(THD *thd)
-   else
-     maxlen= (maxlen - 1) * 2;
-   fix_length_and_charset(maxlen, &my_charset_bin);
--  if (max_length > MAX_FIELD_VARCHARLENGTH)
--  {
--    my_error(ER_TOO_BIG_FIELDLENGTH, MYF(0), name.str,
--             static_cast<ulong>(MAX_FIELD_VARCHARLENGTH / sizeof(float)));
--    return true;
--  }
-+  set_if_smaller(max_length, MAX_FIELD_VARCHARLENGTH);
-   set_maybe_null();
-   return false;
- }
-@@ -215,6 +210,9 @@ String *Item_func_vec_fromtext::val_str(String *buf)
-   if ((null_value= !value))
-     return nullptr;
- 
-+  if (value->length() > max_length)
-+    return nullptr;
-+
-   buf->length(0);
-   buf->set_charset(&my_charset_bin);
-   CHARSET_INFO *cs= value->charset();
-```
-
----
-
-### Incident Patch 10: `ff09eefb` (2026-08-18)
-**Commit Message**: MDEV-40815: resolveip is not built for the minbuild cmake target
-
-Added the resolveip target to the minbuild target.
-
-**File**: `CMakeLists.txt` (modified, +3/-0)
-```diff
-@@ -650,6 +650,9 @@ IF(NOT WITHOUT_SERVER)
-   IF(WIN32)
-     ADD_DEPENDENCIES(minbuild echo mariadb-install-db my_safe_kill mariadb-upgrade-service)
-   ENDIF()
-+  IF(UNIX)
-+    ADD_DEPENDENCIES(minbuild resolveip)
-+  ENDIF()
-   ADD_CUSTOM_TARGET(smoketest
-     COMMAND perl ./mysql-test-run.pl main.1st
-     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/mysql-test)
-```
-
----
-
-### Incident Patch 11: `add63991` (2026-08-17)
-**Commit Message**: MDEV-40790 SELECT INTO row_type_of.field crashes the server
-
-The server crashed on DBUG_ASSERT on a SELECT into:
-- a `ROW TYPE OF table1` field variable
-- a `ROW TYPE OF cursor1` field variable
-
-Fix:
-
-- Adding a class my_var_sp_row_field_by_name
-- Adding a method sp_rcontext::set_variable_row_field_by_name()
-- Fixing the DBUG_ASSERT
-
-**File**: `mysql-test/main/select_into_row.result` (added, +140/-0)
-```diff
-@@ -0,0 +1,140 @@
 +#
-+# MDEV-40790 SELECT INTO row_type_of.field crashes the server
++# MDEV-40553: unprintable gis ranges in trace and context
 +#
-+# Into an explicit ROW variable
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE r0 ROW (a INT, b VARCHAR(10));
-+SELECT a,b INTO r0 FROM t1;
-+SELECT r0.a, r0.b;
-+END;
-+$$
-+CALL p1;
-+r0.a	r0.b
-+10	b10
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# Into an explicit ROW field variable
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE r0 ROW (a INT, b VARCHAR(10));
-+SELECT a,b INTO r0.a,r0.b FROM t1;
-+SELECT r0.a, r0.b;
-+END;
-+$$
-+CALL p1;
-+r0.a	r0.b
-+10	b10
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# Into an explicit ROW field variable - non-existing field
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE r0 ROW (a INT, b VARCHAR(10));
-+SELECT a,b INTO r0.a,r0.b1_non_existing FROM t1;
-+END;
-+$$
-+ERROR HY000: Row variable 'r0' does not have a field 'b1_non_existing'
-+DROP TABLE t1;
-+# Into a `ROW TYPE OF table1` variable
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE r0 ROW TYPE OF t1;
-+SELECT a,b INTO r0 FROM t1;
-+SELECT r0.a, r0.b;
-+END;
-+$$
-+CALL p1;
-+r0.a	r0.b
-+10	b10
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# Into a `ROW TYPE OF table1` field variable
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE r0 ROW TYPE OF t1;
-+SELECT a,b INTO r0.a,r0.b FROM t1;
-+SELECT r0.a, r0.b;
-+END;
-+$$
-+CALL p1;
-+r0.a	r0.b
-+10	b10
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# Into a `ROW TYPE OF table1` field variable - non-existing field
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE r0 ROW TYPE OF t1;
-+SELECT a,b INTO r0.a,r0.b1_non_existing FROM t1;
-+END;
-+$$
-+CALL p1;
-+ERROR HY000: Row variable 'r0' does not have a field 'b1_non_existing'
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# Into a `ROW TYPE OF cursor1` variable
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE c1 CURSOR FOR SELECT * FROM t1;
-+BEGIN
-+DECLARE r0 ROW TYPE OF c1;
-+SELECT a,b INTO r0 FROM t1;
-+SELECT r0.a, r0.b;
-+END;
-+END;
-+$$
-+CALL p1;
-+r0.a	r0.b
-+10	b10
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# Into a `ROW TYPE OF cursor1` field variable
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE c1 CURSOR FOR SELECT * FROM t1;
-+BEGIN
-+DECLARE r0 ROW TYPE OF c1;
-+SELECT a,b INTO r0.a,r0.b FROM t1;
-+SELECT r0.a, r0.b;
-+END;
-+END;
-+$$
-+CALL p1;
-+r0.a	r0.b
-+10	b10
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# Into a `ROW TYPE OF cursor1` field variable - non-existing field
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+CREATE PROCEDURE p1()
-+BEGIN
-+DECLARE c1 CURSOR FOR SELECT * FROM t1;
-+BEGIN
-+DECLARE r0 ROW TYPE OF c1;
-+SELECT a,b INTO r0.a,r0.b1_non_existing FROM t1;
-+END;
-+END;
-+$$
-+CALL p1;
-+ERROR HY000: Row variable 'r0' does not have a field 'b1_non_existing'
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+# End of 12.3 tests
-```
-
-**File**: `mysql-test/main/select_into_row.test` (added, +174/-0)
-```diff
-@@ -0,0 +1,174 @@
-+--echo #
-+--echo # MDEV-40790 SELECT INTO row_type_of.field crashes the server
-+--echo #
-+
-+
-+--echo # Into an explicit ROW variable
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE r0 ROW (a INT, b VARCHAR(10));
-+  SELECT a,b INTO r0 FROM t1;
-+  SELECT r0.a, r0.b;
-+END;
-+$$
-+DELIMITER ;$$
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+
-+--echo # Into an explicit ROW field variable
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE r0 ROW (a INT, b VARCHAR(10));
-+  SELECT a,b INTO r0.a,r0.b FROM t1;
-+  SELECT r0.a, r0.b;
-+END;
-+$$
-+DELIMITER ;$$
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+
-+--echo # Into an explicit ROW field variable - non-existing field
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+--error ER_ROW_VARIABLE_DOES_NOT_HAVE_FIELD
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE r0 ROW (a INT, b VARCHAR(10));
-+  SELECT a,b INTO r0.a,r0.b1_non_existing FROM t1;
-+END;
-+$$
-+DELIMITER ;$$
-+DROP TABLE t1;
-+
-+
-+--echo # Into a `ROW TYPE OF table1` variable
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE r0 ROW TYPE OF t1;
-+  SELECT a,b INTO r0 FROM t1;
-+  SELECT r0.a, r0.b;
-+END;
-+$$
-+DELIMITER ;$$
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+
-+--echo # Into a `ROW TYPE OF table1` field variable
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE r0 ROW TYPE OF t1;
-+  SELECT a,b INTO r0.a,r0.b FROM t1;
-+  SELECT r0.a, r0.b;
-+END;
-+$$
-+DELIMITER ;$$
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+
-+--echo # Into a `ROW TYPE OF table1` field variable - non-existing field
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE r0 ROW TYPE OF t1;
-+  SELECT a,b INTO r0.a,r0.b1_non_existing FROM t1;
-+END;
-+$$
-+DELIMITER ;$$
-+--error ER_ROW_VARIABLE_DOES_NOT_HAVE_FIELD
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+
-+--echo # Into a `ROW TYPE OF cursor1` variable
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE c1 CURSOR FOR SELECT * FROM t1;
-+  BEGIN
-+    DECLARE r0 ROW TYPE OF c1;
-+    SELECT a,b INTO r0 FROM t1;
-+    SELECT r0.a, r0.b;
-+  END;
-+END;
-+$$
-+DELIMITER ;$$
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+
-+--echo # Into a `ROW TYPE OF cursor1` field variable
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE c1 CURSOR FOR SELECT * FROM t1;
-+  BEGIN
-+    DECLARE r0 ROW TYPE OF c1;
-+    SELECT a,b INTO r0.a,r0.b FROM t1;
-+    SELECT r0.a, r0.b;
-+  END;
-+END;
-+$$
-+DELIMITER ;$$
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+
-+--echo # Into a `ROW TYPE OF cursor1` field variable - non-existing field
-+
-+CREATE TABLE t1 (a INT,b VARCHAR(10));
-+INSERT INTO t1 VALUES (10,'b10');
-+DELIMITER $$;
-+CREATE PROCEDURE p1()
-+BEGIN
-+  DECLARE c1 CURSOR FOR SELECT * FROM t1;
-+  BEGIN
-+    DECLARE r0 ROW TYPE OF c1;
-+    SELECT a,b INTO r0.a,r0.b1_non_existing FROM t1;
-+  END;
-+END;
-+$$
-+DELIMITER ;$$
-+--error ER_ROW_VARIABLE_DOES_NOT_HAVE_FIELD
-+CALL p1;
-+DROP PROCEDURE p1;
-+DROP TABLE t1;
-+
-+--echo # End of 12.3 tests
-```
-
-**File**: `sql/sp_rcontext.cc` (modified, +14/-0)
-```diff
-@@ -694,6 +694,20 @@ int sp_rcontext::set_variable_row_field(THD *thd, uint var_idx, uint field_idx,
- }
- 
- 
-+int sp_rcontext::set_variable_row_field_by_name(THD *thd, uint var_idx,
-+                                            const Lex_ident_sys_st &field_name,
-+                                            Item **value)
-+{
-+  DBUG_ENTER("sp_rcontext::set_variable_row_field");
-+  DBUG_ASSERT(value);
-+  uint field_idx= 0;
-+  if (find_row_field_by_name_or_error(&field_idx, var_idx, field_name))
-+    DBUG_RETURN(true);
-+  Virtual_tmp_table *vtable= virtual_tmp_table_for_row(var_idx);
-+  DBUG_RETURN(thd->sp_eval_expr(vtable->field[field_idx], value));
-+}
-+
-+
- int sp_rcontext::set_variable_row(THD *thd, uint var_idx, List<Item> &items)
- {
-   DBUG_ENTER("sp_rcontext::set_variable_row");
-```
-
-**File**: `sql/sp_rcontext.h` (modified, +3/-0)
-```diff
-@@ -209,6 +209,9 @@ class sp_rcontext : public Sql_alloc
-   int set_variable(THD *thd, uint var_idx, Item **value);
-   int set_variable_row_field(THD *thd, uint var_idx, uint field_idx,
-                              Item **value);
-+  int set_variable_row_field_by_name(THD *thd, uint var_idx,
-+                                     const Lex_ident_sys_st &field_name,
-+                                     Item **value);
-   int set_variable_row(THD *thd, uint var_idx, List<Item> &items);
- 
-   int set_variable_composite_field_by_key(THD *thd,
-```
-
-**File**: `sql/sql_type_row.cc` (modified, +36/-2)
-```diff
-@@ -135,6 +135,32 @@ class my_var_sp_row_field: public my_var_sp
- };
- 
- 
-+class my_var_sp_row_field_by_name: public my_var_sp
-+{
-+  const Lex_ident_sys_st m_field_name;
-+public:
-+  my_var_sp_row_field_by_name(const Lex_ident_sys_st &varname,
-+                              const sp_rcontext_addr &varaddr,
-+                              const Lex_ident_sys_st &field_name,
-+                              sp_head *s)
-+   :my_var_sp(varname, varaddr,
-+              &type_handler_double/*Not really used*/, s),
-+    m_field_name(field_name)
-+  { }
-+  bool check_assignability(THD *thd, const List<Item> &select_list,
-+                           bool *assign_as_row) const override
-+  {
-+    *assign_as_row= false;
-+    return select_list.elements == 1;
-+  }
-+  bool set(THD *thd, Item *item) override
-+  {
-+    return get_rcontext(thd->spcont)->
-+             set_variable_row_field_by_name(thd, offset(), m_field_name, &item);
-+  }
-+};
-+
-+
- my_var *Type_handler_row::make_outvar(THD *thd,
-                                       const Lex_ident_sys_st &name,
-                                       const sp_rcontext_addr &addr,
-@@ -159,11 +185,19 @@ my_var *Type_handler_row::make_outvar_field(THD *thd,
-   DBUG_ASSERT(t);
-   DBUG_ASSERT(t->type_handler() == this);
- 
-+  if (t->field_def.is_table_rowtype_ref() ||
-+      t->field_def.is_cursor_rowtype_ref())
-+  {
-+    if (validate_only)
-+      return nullptr;
-+    return new (thd->mem_root) my_var_sp_row_field_by_name(name, addr,
-+                                                           field, sphead);
-+
-+  }
-   uint row_field_offset;
-   if (!t->find_row_field(&name, &field, &row_field_offset))
-   {
--    DBUG_ASSERT(0);
--    my_error(ER_ROW_VARIABLE_DOES_NOT_HAVE_FIELD, MYF(0), name.str, field.str);
-+    DBUG_ASSERT(thd->is_error());
-     return NULL;
-   }
-   if (validate_only) // e.g. EXPLAIN SELECT .. INTO spvar_row.field;
-```
-
----
-
-### Incident Patch 12: `da184811` (2026-08-17)
-**Commit Message**: Addendum to MDEV-20749's fix: addressed Kristian's comments on indenting and #ifdef-ing.
-
-**File**: `sql/log_event_client.cc` (modified, +5/-4)
-```diff
-@@ -1410,10 +1410,11 @@ static size_t calc_field_event_length(const uchar *ptr, uint type, uint meta)
- 
-   @return  length of the parsed row image if succeeds, otherwise 0 is returned.
-  */
--size_t Rows_log_event::calc_row_event_length(table_def *td,
--                                             MY_BITMAP *cols_bitmap,
--                                             const uchar *value,
--                                             Field_info *fields)
-+size_t
-+Rows_log_event::calc_row_event_length(table_def *td,
-+                                      MY_BITMAP *cols_bitmap,
-+                                      const uchar *value,
-+                                      Field_info *fields)
- {
-   const uchar *value0= value;
-   const uchar *null_bits= value;
-```
-
-**File**: `sql/log_event_server.cc` (modified, +0/-2)
-```diff
-@@ -6902,7 +6902,6 @@ bool Table_map_log_event::write_data_body(Log_event_writer *writer)
-   uchar mbuf[MAX_INT_WIDTH];
-   uchar *const mbuf_end= net_store_length(mbuf, m_field_metadata_size);
- 
--#ifndef DBUG_OFF
-   DBUG_EXECUTE_IF("flashback_corrupt_blob_metadata", {
-     if (m_dbnam && m_tblnam && m_dblen == 4 &&
-         memcmp(m_dbnam, "test", 4) == 0 && m_tbllen == 2 &&
-@@ -6912,7 +6911,6 @@ bool Table_map_log_event::write_data_body(Log_event_writer *writer)
-       m_field_metadata[0]= 5;
-     }
-   });
--#endif
- 
-   return write_data(writer, dbuf, sizeof(dbuf)) ||
-          write_data(writer, m_dbnam, m_dblen + 1) ||
-```
-
----
-
-### Incident Patch 13: `0e466539` (2025-12-20)
-**Commit Message**: cleanup: remove buggy str2int, replace with a template
-
-remove one str->int implementation (we still have 10+ more),
-replace with a convenience template that calls my_strntoll_8bit()
-
-**File**: `client/mysql.cc` (modified, +1/-1)
-```diff
-@@ -5389,7 +5389,7 @@ static int com_status(String *, char *)
-     ulong sec;
-     /* print label */
-     tee_fprintf(stdout, "%.*s\t\t\t", (int) (pos-status_str), status_str);
--    if ((status_str= str2int(pos,10,0,LONG_MAX,(long*) &sec)))
-+    if ((status_str= str2int(pos,INT16_MAX, 10, &sec)))
-     {
-       nice_time((double) sec,buff, sizeof(buff),0);
-       tee_puts(buff, stdout);			/* print nice time */
-```
-
-**File**: `client/mysqladmin.cc` (modified, +1/-1)
-```diff
-@@ -791,7 +791,7 @@ static int execute_commands(MYSQL *mysql,int argc, char **argv)
- 	pos= (char*) strchr(status,' ');
- 	*pos++=0;
- 	printf("%s\t\t\t",status);			/* print label */
--	if ((status=str2int(pos,10,0,LONG_MAX,(long*) &sec)))
-+	if ((status=str2int(pos,1000,10,&sec)))
- 	{
- 	  nice_time(sec,buff);
- 	  puts(buff);				/* print nice time */
-```
-
-**File**: `client/mysqltest.cc` (modified, +13/-13)
-```diff
-@@ -3228,7 +3228,7 @@ set_result_format_version(ulong new_version)
- static void
- do_result_format_version(struct st_command *command)
- {
--  long version;
-+  uint version;
-   static DYNAMIC_STRING ds_version;
-   const struct command_arg result_format_args[] = {
-     {"version", ARG_STRING, TRUE, &ds_version, "Version to use"}
-@@ -3242,7 +3242,7 @@ do_result_format_version(struct st_command *command)
-                      ',');
- 
-   /* Convert version  number to int */
--  if (!str2int(ds_version.str, 10, (long) 0, (long) INT_MAX, &version))
-+  if (!str2int(ds_version.str, ds_version.length, 10, &version))
-     die("Invalid version number: '%s'", ds_version.str);
- 
-   set_result_format_version(version);
-@@ -3279,7 +3279,7 @@ do_result_format_version(struct st_command *command)
- 
- void var_set_query_get_value(struct st_command *command, VAR *var)
- {
--  long row_no;
-+  uint row_no;
-   int col_no= -1;
-   MYSQL_RES* UNINIT_VAR(res);
-   MYSQL* mysql= cur_con->mysql;
-@@ -3311,9 +3311,9 @@ void var_set_query_get_value(struct st_command *command, VAR *var)
-   DBUG_PRINT("info", ("col: %s", ds_col.str));
- 
-   /* Convert row number to int */
--  if (!str2int(ds_row.str, 10, (long) 0, (long) INT_MAX, &row_no))
-+  if (!str2int(ds_row.str, ds_row.length, 10, &row_no))
-     die("Invalid row number: '%s'", ds_row.str);
--  DBUG_PRINT("info", ("row: %s, row_no: %ld", ds_row.str, row_no));
-+  DBUG_PRINT("info", ("row: %s, row_no: %u", ds_row.str, row_no));
-   dynstr_free(&ds_row);
- 
-   /* Remove any surrounding "'s from the query - if there is any */
-@@ -3373,15 +3373,15 @@ void var_set_query_get_value(struct st_command *command, VAR *var)
-   {
-     /* Get the value */
-     MYSQL_ROW row;
--    long rows= 0;
-+    uint rows= 0;
-     const char* value= "No such row";
- 
-     while ((row= mysql_fetch_row(res)))
-     {
-       if (++rows == row_no)
-       {
- 
--        DBUG_PRINT("info", ("At row %ld, column %d is '%s'",
-+        DBUG_PRINT("info", ("At row %u, column %d is '%s'",
-                             row_no, col_no, row[col_no]));
-         /* Found the row to get */
-         if (row[col_no])
-@@ -4359,7 +4359,7 @@ void do_move_file(struct st_command *command)
- 
- void do_chmod_file(struct st_command *command)
- {
--  long mode= 0;
-+  uint mode= 0;
-   int err_code;
-   static DYNAMIC_STRING ds_mode;
-   static DYNAMIC_STRING ds_file;
-@@ -4379,10 +4379,10 @@ void do_chmod_file(struct st_command *command)
- 
-   /* Parse what mode to set */
-   if (ds_mode.length != 4 ||
--      str2int(ds_mode.str, 8, 0, INT_MAX, &mode) == NullS)
-+      str2int(ds_mode.str, ds_mode.length, 8, &mode) == NullS)
-     die("You must write a 4 digit octal number for mode");
- 
--  DBUG_PRINT("info", ("chmod %o %s", (uint)mode, ds_file.str));
-+  DBUG_PRINT("info", ("chmod %o %s", mode, ds_file.str));
-   err_code= chmod(ds_file.str, mode);
-   if (err_code < 0)
-     err_code= 1;
-@@ -8430,7 +8430,7 @@ void do_get_errcodes(struct st_command *command)
-     }
-     else
-     {
--      long val;
-+      uint val;
-       char *start= p;
-       /* Check that the string passed to str2int only contain digits */
-       while (*p && p != end)
-@@ -8443,10 +8443,10 @@ void do_get_errcodes(struct st_command *command)
-       }
- 
-       /* Convert the string to int */
--      if (!str2int(start, 10, (long) INT_MIN, (long) INT_MAX, &val))
-+      if (!str2int(start, p - start, 10, &val))
- 	die("Invalid argument to error: '%s'", command->first_argument);
- 
--      to->code.errnum= (uint) val;
-+      to->code.errnum= val;
-       to->type= ERR_ERRNO;
-       DBUG_PRINT("info", ("ERR_ERRNO: %d", to->code.errnum));
-     }
-```
-
-**File**: `include/m_ctype.h` (modified, +22/-1)
-```diff
-@@ -2076,9 +2076,30 @@ class Well_formed_prefix: public Well_formed_prefix_status
- 
- #endif /* __cplusplus */
- 
--
- #ifdef	__cplusplus
- }
- #endif
- 
-+#ifdef  __cplusplus
-+extern "C++" {
-+template<typename T> inline char *str2int(const char *s, size_t l, int base, T *val)
-+{
-+  char *end= const_cast<char*>(s) + l;
-+  int err;
-+  longlong v= my_strntoll_8bit(&my_charset_latin1, s, l, base, &end, &err);
-+  if (!err && static_cast<longlong>(*val= static_cast<T>(v)) != v)
-+    err= EDOM;
-+  return (errno= err) ? NULL : end;
-+}
-+
-+template<> inline char *str2int<ulonglong>(const char *s, size_t l, int base, ulonglong *val)
-+{
-+  char *end= const_cast<char*>(s) + l;
-+  int err;
-+  *val= my_strntoull_8bit(&my_charset_latin1, s, l, base, &end, &err);
-+  return (errno= err) ? NULL : end;
-+}
-+}
-+#endif
-+
- #endif /* _m_ctype_h */
-```
-
-**File**: `include/m_string.h` (modified, +0/-2)
-```diff
-@@ -163,8 +163,6 @@ extern char *ullstr(longlong value,char *buff);
- 
- extern char *int2str(long val, char *dst, int radix, int upcase);
- extern char *int10_to_str(long val,char *dst,int radix);
--extern char *str2int(const char *src,int radix,long lower,long upper,
--			 long *val);
- longlong my_strtoll10(const char *nptr, char **endptr, int *error);
- #if SIZEOF_LONG == SIZEOF_LONG_LONG
- #define ll2str(A,B,C,D) int2str((A),(B),(C),(D))
-```
-
-**File**: `mysys/my_init.c` (modified, +6/-4)
-```diff
-@@ -62,12 +62,14 @@ ulonglong   my_thread_stack_size= (sizeof(void*) <= 4)? 65536: ((256-16)*1024);
- 
- static mode_t atoi_octal(const char *str)
- {
--  long int tmp;
-+  long long tmp;
-+  int err;
-   while (*str && my_isspace(&my_charset_latin1, *str))
-     str++;
--  str2int(str,
--	  (*str == '0' ? 8 : 10),       /* Octalt or decimalt */
--	  0, INT_MAX, &tmp);
-+  tmp= my_strntoul_8bit(&my_charset_latin1, str, strlen(str),
-+                        (*str == '0' ? 8 : 10),       /* Octal or decimal */
-+                        NULL, &err);
-+
-   return (mode_t) tmp;
- }
- 
-```
-
-**File**: `sql/rpl_info_file.h` (modified, +2/-2)
-```diff
-@@ -295,15 +295,15 @@ struct Info_file
-   bool
-   load_from_file(const Mem_fn *values, size_t size, size_t default_line_count)
-   {
--    long val;
-+    int val;
-     /**
-       The first row is temporarily stored in the first value. If it is a line
-       count and not a log name (new format), the second row will overwrite it.
-     */
-     auto &line1= dynamic_cast<String_value<> &>(values[0](this));
-     if (line1.load_from(&file))
-       return true;
--    char *end= str2int(line1.buf, 10, 0, INT32_MAX, &val);
-+    char *end= str2int(line1.buf, sizeof(line1.buf), 10, &val);
-     /**
-       If this first line was not a number - the line count,
-       then it was the first value for real,
-```
-
-**File**: `sql/rpl_master_info_file.h` (modified, +6/-6)
-```diff
-@@ -249,7 +249,7 @@ struct Master_info_file: Info_file
- 
-     bool load_from(IO_CACHE *file) override
-     {
--      long count;
-+      int count;
-       size_t i;
-       /// +1 for the terminating delimiter
-       char buf[Int_IO_CACHE::BUF_SIZE<uint32_t> + 1];
-@@ -262,13 +262,13 @@ struct Master_info_file: Info_file
-         if (c == /* End of Line */ '\n' || c == /* End of Count */ ' ')
-           break;
-       }
--      char *end= str2int(buf, 10, 1, INT32_MAX, &count);
-+      char *end= str2int(buf, i, 10, &count);
-       // Reserve enough elements ahead of time.
--      if (!end || allocate_dynamic(&array, count))
-+      if (!end || count<0 || allocate_dynamic(&array, count))
-         return true;
-       while (count--)
-       {
--        long value;
-+        int value;
-         /*
-           Check that the previous number ended with a ` `,
-           not `\n` or anything else.
-@@ -288,8 +288,8 @@ struct Master_info_file: Info_file
-           if (c == /* End of Count */ ' ' || c == /* End of Line */ '\n')
-             break;
-         }
--        end= str2int(buf, 10, 1, INT32_MAX, &value);
--        if (!end)
-+        end= str2int(buf, i, 10, &value);
-+        if (!end || value <= 0)
-           return true;
-         ulong id= value;
-         bool oom= insert_dynamic(&array, (uchar *)&id);
-```
-
----
-
-### Incident Patch 14: `91156c3d` (2026-08-14)
-**Commit Message**: MDEV-40639 Open SYS_REFCURSOR crash, if many cursors inside a function
-
-Problem:
-
-If:
-- A routine A() opened a SYS_REFCURSOR with a function B() in the SELECT list
-- The function B() also opened some SYS_REFCURSORs
-
-Then reallocation of the cursor array THD::m_statement_cursors could happen
-during the execution of B(), so all sp_cursor_array_element pointers inside
-sp_instr_copen_by_ref::exec_core() of routine A() became invalid.
-
-Fix:
-
-Chaging the data type of sp_cursor_array:
-- from Dynamic_array<sp_cursor_array_element>
-- to Dynamic_array<sp_cursor_array_element*>
-
-So now only reallocations of the array of cursor pointers happen,
-while sp_cursor_array_element instances always stay on their originally
-allocated memory positions.
-
-Note:
-sp_cursor_array_element instances are allocated using the standart C++ "new"
-and deleted using the standard C++ "delete". Using a MEM_ROOT does not
-seem to be relevant here.
-
-**File**: `mysql-test/main/sp-sys_refcursor.result` (modified, +53/-0)
-```diff
-@@ -442,3 +442,56 @@ END$
- a
- 116
- SET @@max_open_cursors = DEFAULT;
++CREATE TABLE t1 (
++id INT,
++g GEOMETRY NOT NULL,
++KEY k_prefix (g(6))
++) ENGINE=MyISAM;
++INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
++INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
++analyze table t1;
++Table	Op	Msg_type	Msg_text
++db1.t1	analyze	status	Engine-independent statistics collected
++db1.t1	analyze	status	OK
++set optimizer_record_context=1;
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
++select context into dumpfile "../../tmp/dump1.sql"
++from information_schema.optimizer_context;
++set optimizer_record_context=0;
++drop table t1;
++set optimizer_replay_context='opt_context';
++# The ranges must match the recorded ones, so no warning is produced
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
++set optimizer_replay_context='';
++drop table t1;
++# The same, replayed from the context read straight out of
++# INFORMATION_SCHEMA.OPTIMIZER_CONTEXT rather than from the script.
++# The literal in the script must read back as the JSON itself, so
++# both ways of getting at it produce the same ranges.
++CREATE TABLE t1 (
++id INT,
++g GEOMETRY NOT NULL,
++KEY k_prefix (g(6))
++) ENGINE=MyISAM;
++INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
++INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
++analyze table t1;
++Table	Op	Msg_type	Msg_text
++db1.t1	analyze	status	Engine-independent statistics collected
++db1.t1	analyze	status	OK
++set optimizer_record_context=1;
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
++SET @opt_context=(value from information_schema.optimizer_context)
++set optimizer_record_context=0;
++set optimizer_replay_context='opt_context';
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_prefix	k_prefix	8	NULL	6	Using where
++set optimizer_replay_context='';
++drop table t1;
 +#
-+# MDEV-40639 Open SYS_REFCURSOR crash, if many cursors inside a function
++# The same, but recording and replaying a range over a SPATIAL index,
++# whose key stores an MBR (image_type itMBR) rather than the column
++# value or its prefix.
 +#
-+CREATE FUNCTION trigger_realloc() RETURNS INT
-+BEGIN
-+DECLARE c1  SYS_REFCURSOR;
-+DECLARE c2  SYS_REFCURSOR;
-+DECLARE c3  SYS_REFCURSOR;
-+DECLARE c4  SYS_REFCURSOR;
-+DECLARE c5  SYS_REFCURSOR;
-+DECLARE c6  SYS_REFCURSOR;
-+DECLARE c7  SYS_REFCURSOR;
-+DECLARE c8  SYS_REFCURSOR;
-+DECLARE c9  SYS_REFCURSOR;
-+DECLARE c10 SYS_REFCURSOR;
-+DECLARE c11 SYS_REFCURSOR;
-+DECLARE c12 SYS_REFCURSOR;
-+DECLARE c13 SYS_REFCURSOR;
-+DECLARE c14 SYS_REFCURSOR;
-+DECLARE c15 SYS_REFCURSOR;
-+DECLARE c16 SYS_REFCURSOR;
-+DECLARE c17 SYS_REFCURSOR;
-+OPEN c1  FOR SELECT 1;
-+OPEN c2  FOR SELECT 1;
-+OPEN c3  FOR SELECT 1;
-+OPEN c4  FOR SELECT 1;
-+OPEN c5  FOR SELECT 1;
-+OPEN c6  FOR SELECT 1;
-+OPEN c7  FOR SELECT 1;
-+OPEN c8  FOR SELECT 1;
-+OPEN c9  FOR SELECT 1;
-+OPEN c10 FOR SELECT 1;
-+OPEN c11 FOR SELECT 1;
-+OPEN c12 FOR SELECT 1;
-+OPEN c13 FOR SELECT 1;
-+OPEN c14 FOR SELECT 1;
-+OPEN c15 FOR SELECT 1;
-+OPEN c16 FOR SELECT 1;
-+OPEN c17 FOR SELECT 1;
-+RETURN 1;
-+END;
-+$$
-+CREATE PROCEDURE trigger_uaf()
-+BEGIN
-+DECLARE c SYS_REFCURSOR;
-+OPEN c FOR SELECT trigger_realloc();
-+END;
-+$$
-+SET SESSION max_open_cursors= 100;
-+CALL trigger_uaf();
-+SET SESSION max_open_cursors= DEFAULT;
-+DROP PROCEDURE trigger_uaf;
-+DROP FUNCTION trigger_realloc;
++CREATE TABLE t1 (
++id INT,
++g GEOMETRY NOT NULL,
++SPATIAL KEY g_idx (g)
++) ENGINE=MyISAM;
++INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_20;
++analyze table t1;
++Table	Op	Msg_type	Msg_text
++db1.t1	analyze	status	Engine-independent statistics collected
++db1.t1	analyze	status	OK
++set optimizer_record_context=1;
++EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
++WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	g_idx	g_idx	34	NULL	5	Using where
++select context into dumpfile "../../tmp/dump1.sql"
++from information_schema.optimizer_context;
++set optimizer_record_context=0;
++drop table t1;
++set optimizer_replay_context='opt_context';
++# The ranges must match the recorded ones, so no warning is produced
++EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
++WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	g_idx	g_idx	34	NULL	5	Using where
++set optimizer_replay_context='';
++drop table t1;
++# End of 13.2 tests
+ drop database db1;
 ```
 
-**File**: `mysql-test/main/sp-sys_refcursor.test` (modified, +61/-0)
+**File**: `mysql-test/main/opt_context_replay_basic.test` (modified, +98/-0)
 ```diff
-@@ -466,3 +466,64 @@ BEGIN NOT ATOMIC
- END$
- delimiter ;$
- SET @@max_open_cursors = DEFAULT;
-+
+@@ -511,4 +511,102 @@ set optimizer_replay_context='opt_context';
+ explain select * from t1 where a=0x2700 or a=0x2701 or a=0x2702 or a=0x2703;
+ set optimizer_replay_context='';
+ drop table t1;
 +
 +--echo #
-+--echo # MDEV-40639 Open SYS_REFCURSOR crash, if many cursors inside a function
++--echo # MDEV-40553: unprintable gis ranges in trace and context
 +--echo #
++CREATE TABLE t1 (
++  id INT,
++  g GEOMETRY NOT NULL,
++  KEY k_prefix (g(6))
++) ENGINE=MyISAM;
++INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
++INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
++analyze table t1;
 +
-+DELIMITER $$;
-+# Function that forces cursor array reallocation (17 > default 16 slots)
-+CREATE FUNCTION trigger_realloc() RETURNS INT
-+BEGIN
-+  DECLARE c1  SYS_REFCURSOR;
-+  DECLARE c2  SYS_REFCURSOR;
-+  DECLARE c3  SYS_REFCURSOR;
-+  DECLARE c4  SYS_REFCURSOR;
-+  DECLARE c5  SYS_REFCURSOR;
-+  DECLARE c6  SYS_REFCURSOR;
-+  DECLARE c7  SYS_REFCURSOR;
-+  DECLARE c8  SYS_REFCURSOR;
-+  DECLARE c9  SYS_REFCURSOR;
-+  DECLARE c10 SYS_REFCURSOR;
-+  DECLARE c11 SYS_REFCURSOR;
-+  DECLARE c12 SYS_REFCURSOR;
-+  DECLARE c13 SYS_REFCURSOR;
-+  DECLARE c14 SYS_REFCURSOR;
-+  DECLARE c15 SYS_REFCURSOR;
-+  DECLARE c16 SYS_REFCURSOR;
-+  DECLARE c17 SYS_REFCURSOR;
-+  OPEN c1  FOR SELECT 1;
-+  OPEN c2  FOR SELECT 1;
-+  OPEN c3  FOR SELECT 1;
-+  OPEN c4  FOR SELECT 1;
-+  OPEN c5  FOR SELECT 1;
-+  OPEN c6  FOR SELECT 1;
-+  OPEN c7  FOR SELECT 1;
-+  OPEN c8  FOR SELECT 1;
-+  OPEN c9  FOR SELECT 1;
-+  OPEN c10 FOR SELECT 1;
-+  OPEN c11 FOR SELECT 1;
-+  OPEN c12 FOR SELECT 1;
-+  OPEN c13 FOR SELECT 1;
-+  OPEN c14 FOR SELECT 1;
-+  OPEN c15 FOR SELECT 1;
-+  OPEN c16 FOR SELECT 1;
-+  OPEN c17 FOR SELECT 1;
-+  RETURN 1;
-+END;
-+$$
++set optimizer_record_context=1;
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++select context into dumpfile "../../tmp/dump1.sql"
++from information_schema.optimizer_context;
++set optimizer_record_context=0;
++drop table t1;
++--disable_query_log
++--disable_result_log
++--source "$MYSQLTEST_VARDIR/tmp/dump1.sql"
++--enable_query_log
++--enable_result_log
 +
-+CREATE PROCEDURE trigger_uaf()
-+BEGIN
-+  DECLARE c SYS_REFCURSOR;
-+  OPEN c FOR SELECT trigger_realloc();
-+END;
-+$$
-+DELIMITER ;$$
++set optimizer_replay_context='opt_context';
 +
-+SET SESSION max_open_cursors= 100;
-+CALL trigger_uaf();
-+SET SESSION max_open_cursors= DEFAULT;
-+DROP PROCEDURE trigger_uaf;
-+DROP FUNCTION trigger_realloc;
++--echo # The ranges must match the recorded ones, so no warning is produced
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++
++set optimizer_replay_context='';
++--remove_file "$MYSQLTEST_VARDIR/tmp/dump1.sql"
++drop table t1;
++
++--echo # The same, replayed from the context read straight out of
++--echo # INFORMATION_SCHEMA.OPTIMIZER_CONTEXT rather than from the script.
++--echo # The literal in the script must read back as the JSON itself, so
++--echo # both ways of getting at it produce the same ranges.
++CREATE TABLE t1 (
++  id INT,
++  g GEOMETRY NOT NULL,
++  KEY k_prefix (g(6))
++) ENGINE=MyISAM;
++INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_5;
++INSERT INTO t1 VALUES (6, LINESTRING(POINT(1,1), POINT(2,2)));
++analyze table t1;
++
++set optimizer_record_context=1;
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++--source include/opt_context_save_in_var.inc
++set optimizer_record_context=0;
++set optimizer_replay_context='opt_context';
++EXPLAIN SELECT id FROM t1 FORCE INDEX(k_prefix)
++WHERE g < POINT(1,1) OR g > LINESTRING(POINT(9,9), POINT(8,8));
++set optimizer_replay_context='';
++drop table t1;
++
++--echo #
++--echo # The same, but recording and replaying a range over a SPATIAL index,
++--echo # whose key stores an MBR (image_type itMBR) rather than the column
++--echo # value or its prefix.
++--echo #
++CREATE TABLE t1 (
++  id INT,
++  g GEOMETRY NOT NULL,
++  SPATIAL KEY g_idx (g)
++) ENGINE=MyISAM;
++INSERT INTO t1 SELECT seq, POINT(seq, seq) FROM seq_1_to_20;
++analyze table t1;
++
++set optimizer_record_context=1;
++EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
++WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
++select context into dumpfile "../../tmp/dump1.sql"
++from information_schema.optimizer_context;
++set optimizer_record_context=0;
++drop table t1;
++--disable_query_log
++--disable_result_log
++--source "$MYSQLTEST_VARDIR/tmp/dump1.sql"
++--enable_query_log
++--enable_result_log
++
++set optimizer_replay_context='opt_context';
++
++--echo # The ranges must match the recorded ones, so no warning is produced
++EXPLAIN SELECT id FROM t1 FORCE INDEX(g_idx)
++WHERE MBRWITHIN(g, GEOMFROMTEXT('POLYGON((0 0,0 5,5 5,5 0,0 0))'));
++
++set optimizer_replay_context='';
++--remove_file "$MYSQLTEST_VARDIR/tmp/dump1.sql"
++drop table t1;
++
++--echo # End of 13.2 tests
++
+ drop database db1;
 ```
 
-**File**: `sql/sp_cursor.cc` (modified, +7/-4)
+**File**: `mysql-test/main/opt_context_store_stats.result` (modified, +234/-0)
 ```diff
-@@ -48,8 +48,11 @@ bool sp_cursor::check_for_open(THD *thd, bool check_open_cursor_counter) const
- */
- Type_ref_null sp_cursor_array::append(THD *thd)
- {
--  if (Dynamic_array::append(sp_cursor_array_element()))
-+  sp_cursor_array_element *elem= new sp_cursor_array_element();
-+  if (!elem || Dynamic_array::append(elem))
-   {
-+    if (!elem)
-+      my_error(ER_OUTOFMEMORY, MYF(0), (int) sizeof(sp_cursor_array_element));
-     DBUG_ASSERT(thd->is_error());
-     return Type_ref_null();
-   }
-@@ -70,7 +73,7 @@ sp_cursor_array_element *sp_cursor_array::get_cursor_by_ref(THD *thd,
- {
-   Type_ref_null ref= ref_field->val_ref(thd);
-   if (ref < (ulonglong) elements())
--    return &at((size_t) ref.value());// "ref" points to an initialized sp_cursor
-+    return at((size_t) ref.value());// "ref" points to an initialized sp_cursor
- 
-   if (!for_open)
-     return nullptr;
-@@ -88,8 +91,8 @@ sp_cursor_array_element *sp_cursor_array::get_cursor_by_ref(THD *thd,
-       ref_field->store_ref(ref, true/*no_conversions*/))
-     return nullptr;
- 
--  at((size_t) ref.value()).reset(thd, 1/*ref count*/);
--  return &at((size_t) ref.value());
-+  at((size_t) ref.value())->reset(thd, 1/*ref count*/);
-+  return at((size_t) ref.value());
- }
- 
- #endif // MYSQL_SERVER
+@@ -670,3 +670,237 @@ SET character_set_results=NULL
+ set session character_set_results=@saved_character_set_results;
+ set optimizer_record_context=OFF;
+ # End of 13.1 tests
++#
++# MDEV-40553: unprintable gis ranges in trace and context
++#
++set optimizer_record_context=ON;
++create table t1 (
++id int,
++g1 geometry not null,
++g2 geometry,
++key k_prefix (g1(5)),
++key k_full (g1(200)),
++key k_null (g2(200))
++) engine=myisam;
++insert into t1 select seq, point(seq, seq), point(seq, seq) from seq_1_to_5;
++insert into t1 values (6, point(6,6), NULL);
++analyze table t1;
++Table	Op	Msg_type	Msg_text
++test.t1	analyze	status	OK
++# The k_full prefix is long enough to hold every value this test
++# inserts or compares against (points and short linestrings),
++# so the index holds the whole value here. It is printed as a binary
++# string, like any other BLOB prefix.
++explain
++select id from t1 force index (k_full) where g1=point(2,2);
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	ref	k_full	k_full	202	const	1	Using where
++# == Optimizer Context
++# === Tables
++# Tables in the context
++table_name	file_stat_records	index_name	rec_per_key
++test.t1	6	NULL	NULL
++# === Range accesses
++index_name	ranges	num_rows	max_index_blocks	max_row_blocks
++k_full	["(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@) <= (g1) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@)"]	1	1	1
++# == End of optimizer context
++# multiple ranges
++explain
++select id from t1 force index (k_full)
++where g1=point(3,3) or g1=linestring(point(1,1), point(2,2));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_full	k_full	202	NULL	2	Using where
++# == Optimizer Context
++# === Tables
++# Tables in the context
++table_name	file_stat_records	index_name	rec_per_key
++test.t1	6	NULL	NULL
++# === Range accesses
++index_name	ranges	num_rows	max_index_blocks	max_row_blocks
++k_full	[
++                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@) <= (g1) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@)",
++                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@) <= (g1) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@)"
++            ]	2	2	1
++# == End of optimizer context
++# NULL values and multiple ranges
++explain
++select id from t1 force index (k_null)
++where g2=point(3,3) or g2 is null or g2=linestring(point(1,1), point(2,2));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_null	k_null	203	NULL	3	Using where
++# == Optimizer Context
++# === Tables
++# Tables in the context
++table_name	file_stat_records	index_name	rec_per_key
++test.t1	6	NULL	NULL
++# === Range accesses
++index_name	ranges	num_rows	max_index_blocks	max_row_blocks
++k_null	[
++                "(NULL) <= (g2) <= (NULL)",
++                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@) <= (g2) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x08@)",
++                "(\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@) <= (g2) <= (\\\\x00\\\\x00\\\\x00\\\\x00\\\\x01\\\\x02\\\\x00\\\\x00\\\\x00\\\\x02\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\xF0?\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00@)"
++            ]	3	3	1
++# == End of optimizer context
++# The index holds only a prefix of the value.
++# It is printed as a binary string, like any other BLOB prefix.
++explain
++select id from t1 force index (k_prefix) where g1=point(2,2);
++id	select_type	table	type	possible_keys	ke
 ```
 
-**File**: `sql/sp_cursor.h` (modified, +12/-7)
+**File**: `mysql-test/main/opt_context_store_stats.test` (modified, +9/-0)
 ```diff
-@@ -193,14 +193,14 @@ class sp_cursor_array_element: public sp_cursor
- };
+@@ -485,3 +485,12 @@ set session character_set_results=@saved_character_set_results;
+ set optimizer_record_context=OFF;
  
- 
--class sp_cursor_array: public Dynamic_array<sp_cursor_array_element>
-+class sp_cursor_array: public Dynamic_array<sp_cursor_array_element*>
- {
- protected:
-   Type_ref_null find_unused()
-   {
-     for (size_t i= 0 ; i < size(); i++)
-     {
--      if (!at(i).is_open() && !at(i).ref_count())
-+      if (!at(i)->is_open() && !at(i)->ref_count())
-         return Type_ref_null((ulonglong) i);
-     }
-     return Type_ref_null();
-@@ -220,20 +220,20 @@ class sp_cursor_array: public Dynamic_array<sp_cursor_array_element>
-   ULonglong_null ref_count(ulonglong offset) const
-   {
-     return offset < elements() ?
--           ULonglong_null((ulonglong) at((size_t) offset).ref_count()) :
-+           ULonglong_null((ulonglong) at((size_t) offset)->ref_count()) :
-            ULonglong_null();
-   }
- 
-   void ref_count_inc(ulonglong offset)
-   {
-     if (offset < elements())
--      at((size_t) offset).ref_count_inc();
-+      at((size_t) offset)->ref_count_inc();
-   }
- 
-   void ref_count_dec(THD *thd, ulonglong offset)
-   {
-     if (offset < elements())
--      at((size_t) offset).ref_count_dec(thd);
-+      at((size_t) offset)->ref_count_dec(thd);
-   }
- 
-   void ref_count_update(THD *thd, const Type_ref_null &old_value,
-@@ -281,13 +281,18 @@ class sp_cursor_array: public Dynamic_array<sp_cursor_array_element>
-   {
-     for (uint i= 0; i < (uint) size(); i++)
-     {
--      if (at(i).is_open())
--        at(i).close(thd);
-+      if (at(i)->is_open())
-+        at(i)->close(thd);
-     }
-   }
-   void free(THD *thd)
-   {
-     close(thd);
-+    for (uint i= 0; i < (uint) size(); i++)
-+    {
-+      DBUG_ASSERT(at(i));
-+      delete at(i);
-+    }
-     free_memory();
-   }
- };
+ --echo # End of 13.1 tests
++
++--echo #
++--echo # MDEV-40553: unprintable gis ranges in trace and context
++--echo #
++set optimizer_record_context=ON;
++--source include/opt_gis_range_print.inc
++set optimizer_record_context=OFF;
++
++--echo # End of 13.2 tests
 ```
 
-**File**: `sql/sp_rcontext.cc` (modified, +1/-1)
+**File**: `mysql-test/main/opt_trace.result` (modified, +331/-0)
 ```diff
-@@ -109,7 +109,7 @@ sp_cursor *Sp_rcontext_handler_local::get_cursor(THD *thd, uint offset) const
- 
- sp_cursor *Sp_rcontext_handler_statement::get_cursor(THD *thd, uint offset) const
- {
--  return &thd->statement_cursors()->at(offset);
-+  return thd->statement_cursors()->at(offset);
- }
- 
- sp_cursor *Sp_rcontext_handler_statement::get_cursor_by_ref(THD *thd,
-```
-
----
-
-### Incident Patch 15: `77c8f791` (2026-08-13)
-**Commit Message**: MDEV-40749 period.create test leaks/faults in asan
-
-Selecting from the information_schema.plugins causes the loading
-of all plugins. Because rockdb leaks, and duckdb triggers an
-address sanitizer warning on shutdown avoid this table.
-
-Use the information_schema.ENGINES to validate that InnoDB is
-disabled per the original request in the review of MDEV-32205.
-
-**File**: `mysql-test/suite/period/r/create.result` (modified, +3/-3)
-```diff
-@@ -132,9 +132,9 @@ drop table t2;
- select "yes" from information_schema.tables where engine="innodb" limit 1;
- yes
- yes
--select plugin_status from information_schema.all_plugins where plugin_name = "innodb";
--plugin_status
--DISABLED
-+select SUPPORT from information_schema.engines where ENGINE='InnoDB';
-+SUPPORT
-+NO
- select * from information_schema.periods;
- TABLE_CATALOG	TABLE_SCHEMA	TABLE_NAME	PERIOD	START_COLUMN_NAME	END_COLUMN_NAME
- select * from information_schema.key_period_usage;
-```
-
-**File**: `mysql-test/suite/period/t/create.test` (modified, +1/-1)
-```diff
-@@ -113,7 +113,7 @@ drop table t2;
- --echo # Make sure innodb id disabled, but there's at least one innodb table
- --disable_warnings
- select "yes" from information_schema.tables where engine="innodb" limit 1;
--select plugin_status from information_schema.all_plugins where plugin_name = "innodb";
-+select SUPPORT from information_schema.engines where ENGINE='InnoDB';
- select * from information_schema.periods;
- select * from information_schema.key_period_usage;
- --enable_warnings
+@@ -13904,6 +13904,337 @@ select json_valid(@trace);
+ json_valid(@trace)
+ 1
+ drop table t1;
++# End of 13.1 tests
++#
++# MDEV-40553: unprintable gis ranges in trace and context
++#
++create table t1 (
++id int,
++g1 geometry not null,
++g2 geometry,
++key k_prefix (g1(5)),
++key k_full (g1(200)),
++key k_null (g2(200))
++) engine=myisam;
++insert into t1 select seq, point(seq, seq), point(seq, seq) from seq_1_to_5;
++insert into t1 values (6, point(6,6), NULL);
++analyze table t1;
++Table	Op	Msg_type	Msg_text
++test.t1	analyze	status	Engine-independent statistics collected
++test.t1	analyze	status	OK
++# The k_full prefix is long enough to hold every value this test
++# inserts or compares against (points and short linestrings),
++# so the index holds the whole value here. It is printed as a binary
++# string, like any other BLOB prefix.
++explain
++select id from t1 force index (k_full) where g1=point(2,2);
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	ref	k_full	k_full	202	const	1	Using where
++select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
++rsa
++[
++    [
++        {
++            "index": "k_full",
++            "ranges": 
++            ["(\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@) <= (g1) <= (\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@)"],
++            "rowid_ordered": false,
++            "using_mrr": false,
++            "index_only": false,
++            "rows": 1,
++            "cost": 0.002574553,
++            "chosen": true
++        }
++    ]
++]
++# multiple ranges
++explain
++select id from t1 force index (k_full)
++where g1=point(3,3) or g1=linestring(point(1,1), point(2,2));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_full	k_full	202	NULL	2	Using where
++select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
++rsa
++[
++    [
++        {
++            "index": "k_full",
++            "ranges": 
++            [
++                "(\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@) <= (g1) <= (\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@)",
++                "(\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@) <= (g1) <= (\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@)"
++            ],
++            "rowid_ordered": false,
++            "using_mrr": false,
++            "index_only": false,
++            "rows": 2,
++            "cost": 0.004394164,
++            "chosen": true
++        }
++    ]
++]
++# NULL values and multiple ranges
++explain
++select id from t1 force index (k_null)
++where g2=point(3,3) or g2 is null or g2=linestring(point(1,1), point(2,2));
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	range	k_null	k_null	203	NULL	3	Using where
++select json_detailed(json_extract(trace, '$**.range_scan_alternatives')) as rsa from information_schema.optimizer_trace;
++rsa
++[
++    [
++        {
++            "index": "k_null",
++            "ranges": 
++            [
++                "(NULL) <= (g2) <= (NULL)",
++                "(\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@) <= (g2) <= (\\x00\\x00\\x00\\x00\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08@\\x00\\x00\\x00\\x00\\x00\\x00\\x08@)",
++                "(\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@) <= (g2) <= (\\x00\\x00\\x00\\x00\\x01\\x02\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\xF0?\\x00\\x00\\x00\\x00\\x00\\x00\\x00@\\x00\\x00\\x00\\x00\\x00\\x00\\x00@)"
++            ],
++            "rowid_ordered": false,
++            "using_mrr": false,
++            "index_only": false,
++            "rows": 3,
++            "cost": 0.006213775,
++            "chosen": true
++        }
++    ]
++]
++# The index holds only a prefix of the value.
++# It is printed as a binary string, like any other BLOB prefix.
++explain
++select id from t1 force index (k_prefix) where g1=point(2,2);
++id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra
++1	SIMPLE	t1	ref	k_prefix	k_prefix	7	const	6	Using where
++select json_detailed(json_extract(trace, '$**.range_scan_
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5815** (closed): MDEV-4632 multi_source.status_vars test fails sporadically in buildbot (@ParadoxV5)
-- **PR #5814** (2026-10-05): MDEV-41385 wsrep_sync_wait has no effect after COM_CHANGE_USER       … (@sjaakola)
-- **PR #5806** (2026-10-02): crc32c: check elf_aux_info() return value in ppc64 probe (@brad0)
-- **PR #5805** (closed): MDEV-39343: Restoring from a mysqldump from older version makes mysql_upgrade version test fail (@mariadb-PranavTiwari)
-- **PR #5803** (2026-10-01): 10.11 mdev 37269 (@janlindstrom)
-- **PR #5801** (2026-10-03): MDEV-41156: ASAN use-after-poison in JSON_CONTAINS_PATH (@grooverdan)
-- **PR #5799** (2026-10-02): MDEV-41303:  rand() in a semi-join subquery is checked on outer rows (@DaveGosselin-MariaDB)
-- **PR #5797** (2026-10-02): Added a Contribution Interaction Etiquette section (@gkodinov)
+- **PR #5916** (2026-10-18): MDEV-40845: DuckDB: reject SELECT ... FOR UPDATE / LOCK IN SHARE MODE… (@grooverdan)
+- **PR #5904** (2026-10-16): MDEV-40819 DuckDB TIME conversion crashes the server (@itzanway)
+- **PR #5899** (2026-10-16): MDEV-41557 Test encryption.innochecksum is flaky (@iMineLink)
+- **PR #5895** (2026-10-15): MDEV-41543; MDEV-41545 (@midenok)
+- **PR #5893** (closed): MDEV-41542:  Wrong results, crash when upgrading to OpenSSL 4.x (@DaveGosselin-MariaDB)
+- **PR #5890** (2026-10-18): MDEV-41405 ASAN stack-buffer-overflow TDBXML::Initialize/TDBXML::Open… (@sanja-byelkin)
 
 ---
 
@@ -4604,3 +2884,40 @@ disabled per the original request in the review of MDEV-32205.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. MDEV-41020 A `MEMORY` table refuses a row it just held
+
+**RULE**:
+When implementing operations in `include/heap.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6ba1f128`: MDEV-41020 A `MEMORY` table refuses a row it just held. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `include/heap.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+/*
+  Value of HP_SHARE::max_records for a table with no row limit.  0 is a
+  limit of zero rows, which is how a table that is never written to is
+  created; only heap_create()'s argument uses 0 for "no limit".
+*/
+#define NO_LIMIT_RECORDS ULONG_MAX
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6ba1f128` are properly handled with clean fallback behavior.

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-XV9W",
-    "timestamp": "2026-10-18T03:08:59.924Z",
-    "repository": "datalab-to/indra-ocr",
-    "learningId": "learn-huggingface-datalab-to-indra-ocr",
-    "contentHash": "bb3baee6e16978513debf5d5ac74d9482453c639dbec0820bcbc616f1762fcd6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-1YST",
-    "timestamp": "2026-10-18T03:12:11.117Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "776b78ea8cc89c29e528318122b07c783c98fe5747e265ba4bda41757d454d19",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-6325",
-    "timestamp": "2026-10-18T03:15:23.261Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "cfc60bd9ac56e16ce20f982c7c63d2edc9b5024f967d16a3efc5e6d742e4e8d1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-ABPW",
-    "timestamp": "2026-10-18T03:18:41.108Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-    "contentHash": "e02678ba7a24e737bdaad9927f5c7a8921542846fd00f2f7ec7a872fffc1415a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-EWYB",
-    "timestamp": "2026-10-18T03:22:15.251Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "49d9ff1eb8593947411f332f112ca13d8b1dc0d673c7c6611f67719f0f5b1acf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-ITQT",
-    "timestamp": "2026-10-18T03:25:17.717Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "8cd0ea9beccb29994dc646531e918f20bc49acf42c94ca95a89dde125e6ba384",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-N0LJ",
     "timestamp": "2026-10-18T03:28:33.223Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7492,6 +7402,96 @@
     "contentHash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EZR3",
+    "timestamp": "2026-10-19T04:33:58.143Z",
+    "repository": "typestack/routing-controllers",
+    "learningId": "learn-github-typestack-routing-controllers",
+    "contentHash": "11ebf75dd3d5ae18a6aaaeda5aaaf92b2078d8b4bf579c280042c66e347cb4c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EZZQ",
+    "timestamp": "2026-10-19T04:33:58.454Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F0U9",
+    "timestamp": "2026-10-19T04:33:59.553Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "8ecb40f671cee4444228ac62a1864e464ce444e069e65dfa5f1cfb46a5e02624",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F50M",
+    "timestamp": "2026-10-19T04:34:04.966Z",
+    "repository": "learnapollo/learnapollo",
+    "learningId": "learn-github-learnapollo-learnapollo",
+    "contentHash": "ad8a3fd9f8c6933185b025c6fa6f8aea738562d422c8f89488e4a592b005bd87",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F6Y7",
+    "timestamp": "2026-10-19T04:34:07.471Z",
+    "repository": "someengineering/fixinventory",
+    "learningId": "learn-github-someengineering-fixinventory",
+    "contentHash": "7b2e4a3222d2c140aafdcfab15c3da1bf5dbc8c031ae8ff397c263d74622518d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-FAWD",
+    "timestamp": "2026-10-19T04:34:12.589Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

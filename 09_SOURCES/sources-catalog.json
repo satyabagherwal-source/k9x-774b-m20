@@ -425,8 +425,8 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "a33c5aa391c22452700dda7757d6a04706f5e3d542df2c5fb005c4ca303c0606",
-    "lastHarvestedAt": "2026-10-17T23:13:35.136Z",
+    "contentHash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
+    "lastHarvestedAt": "2026-10-19T04:33:58.456Z",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
@@ -5778,5 +5778,55 @@
     "contentHash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
     "lastHarvestedAt": "2026-10-19T04:27:56.556Z",
     "learningId": "learn-github-nvidia-cuda-rust"
+  },
+  "typestack-routing-controllers": {
+    "repository": "typestack/routing-controllers",
+    "platform": "github",
+    "sourceUrl": "https://github.com/typestack/routing-controllers",
+    "sourceVersion": "bf6fbfdc",
+    "license": "MIT",
+    "contentHash": "11ebf75dd3d5ae18a6aaaeda5aaaf92b2078d8b4bf579c280042c66e347cb4c0",
+    "lastHarvestedAt": "2026-10-19T04:33:58.151Z",
+    "learningId": "learn-github-typestack-routing-controllers"
+  },
+  "ntex-rs-ntex": {
+    "repository": "ntex-rs/ntex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ntex-rs/ntex",
+    "sourceVersion": "f3aba0ae",
+    "license": "Apache-2.0",
+    "contentHash": "8ecb40f671cee4444228ac62a1864e464ce444e069e65dfa5f1cfb46a5e02624",
+    "lastHarvestedAt": "2026-10-19T04:33:59.558Z",
+    "learningId": "learn-github-ntex-rs-ntex"
+  },
+  "learnapollo-learnapollo": {
+    "repository": "learnapollo/learnapollo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/learnapollo/learnapollo",
+    "sourceVersion": "dea1677e",
+    "license": "MIT",
+    "contentHash": "ad8a3fd9f8c6933185b025c6fa6f8aea738562d422c8f89488e4a592b005bd87",
+    "lastHarvestedAt": "2026-10-19T04:34:04.972Z",
+    "learningId": "learn-github-learnapollo-learnapollo"
+  },
+  "someengineering-fixinventory": {
+    "repository": "someengineering/fixinventory",
+    "platform": "github",
+    "sourceUrl": "https://github.com/someengineering/fixinventory",
+    "sourceVersion": "21183338",
+    "license": "Apache-2.0",
+    "contentHash": "7b2e4a3222d2c140aafdcfab15c3da1bf5dbc8c031ae8ff397c263d74622518d",
+    "lastHarvestedAt": "2026-10-19T04:34:07.477Z",
+    "learningId": "learn-github-someengineering-fixinventory"
+  },
+  "mariadb-server": {
+    "repository": "MariaDB/server",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MariaDB/server",
+    "sourceVersion": "327437ad",
+    "license": "GPL-2.0",
+    "contentHash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
+    "lastHarvestedAt": "2026-10-19T04:34:12.595Z",
+    "learningId": "learn-github-mariadb-server"
   }
 }

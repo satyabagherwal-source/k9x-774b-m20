@@ -2910,3 +2910,9 @@ Every entry in this ledger must capture:
 | `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `305221a5` | Multi-dimensional audit evidence | 2026-10-19T04:27:04.253Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-19T04:27:25.285Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `82f195be` | Multi-dimensional audit evidence | 2026-10-19T04:27:56.556Z |
+| `learn-github-typestack-routing-controllers` | `https://github.com/typestack/routing-controllers` | `bf6fbfdc` | Multi-dimensional audit evidence | 2026-10-19T04:33:58.151Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-19T04:33:58.456Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `f3aba0ae` | Multi-dimensional audit evidence | 2026-10-19T04:33:59.558Z |
+| `learn-github-learnapollo-learnapollo` | `https://github.com/learnapollo/learnapollo` | `dea1677e` | Multi-dimensional audit evidence | 2026-10-19T04:34:04.972Z |
+| `learn-github-someengineering-fixinventory` | `https://github.com/someengineering/fixinventory` | `21183338` | Multi-dimensional audit evidence | 2026-10-19T04:34:07.477Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `327437ad` | Multi-dimensional audit evidence | 2026-10-19T04:34:12.595Z |

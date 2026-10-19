@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:27:56.562Z",
+  "last_updated": "2026-10-19T04:34:12.601Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -513,14 +513,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
-      "content_hash": "a33c5aa391c22452700dda7757d6a04706f5e3d542df2c5fb005c4ca303c0606",
-      "verified_at": "2026-10-17T23:13:35.139Z",
+      "content_hash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
+      "verified_at": "2026-10-19T04:33:58.462Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:13:35.139Z"
+      "last_updated": "2026-10-19T04:33:58.462Z"
     },
     "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -8782,6 +8782,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:27:56.562Z"
+    },
+    "typestack/routing-controllers": {
+      "repository": "typestack/routing-controllers",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-typestack-routing-controllers",
+      "content_hash": "11ebf75dd3d5ae18a6aaaeda5aaaf92b2078d8b4bf579c280042c66e347cb4c0",
+      "verified_at": "2026-10-19T04:33:58.158Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:33:58.158Z"
+    },
+    "ntex-rs/ntex": {
+      "repository": "ntex-rs/ntex",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ntex-rs-ntex",
+      "content_hash": "8ecb40f671cee4444228ac62a1864e464ce444e069e65dfa5f1cfb46a5e02624",
+      "verified_at": "2026-10-19T04:33:59.564Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:33:59.564Z"
+    },
+    "learnapollo/learnapollo": {
+      "repository": "learnapollo/learnapollo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-learnapollo-learnapollo",
+      "content_hash": "ad8a3fd9f8c6933185b025c6fa6f8aea738562d422c8f89488e4a592b005bd87",
+      "verified_at": "2026-10-19T04:34:04.978Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:34:04.978Z"
+    },
+    "someengineering/fixinventory": {
+      "repository": "someengineering/fixinventory",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-someengineering-fixinventory",
+      "content_hash": "7b2e4a3222d2c140aafdcfab15c3da1bf5dbc8c031ae8ff397c263d74622518d",
+      "verified_at": "2026-10-19T04:34:07.483Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:34:07.483Z"
+    },
+    "MariaDB/server": {
+      "repository": "MariaDB/server",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mariadb-server",
+      "content_hash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
+      "verified_at": "2026-10-19T04:34:12.600Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:34:12.600Z"
     }
   },
   "repos": {

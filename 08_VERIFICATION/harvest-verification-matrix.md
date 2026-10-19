@@ -2903,3 +2903,9 @@
 | `CYCLE-20261019-64DZ` | `2026-10-19T04:27:04.247Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2124, Rule 2125, Rule 2126` | Yes (`5cd7ac01...`) |
 | `CYCLE-20261019-6KM7` | `2026-10-19T04:27:25.279Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2127, Rule 2128` | Yes (`0b184096...`) |
 | `CYCLE-20261019-78QU` | `2026-10-19T04:27:56.550Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2129, Rule 2130, Rule 2131` | Yes (`1b69e032...`) |
+| `CYCLE-20261019-EZR3` | `2026-10-19T04:33:58.143Z` | `typestack/routing-controllers` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2132` | Yes (`11ebf75d...`) |
+| `CYCLE-20261019-EZZQ` | `2026-10-19T04:33:58.454Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`dabc2b00...`) |
+| `CYCLE-20261019-F0U9` | `2026-10-19T04:33:59.553Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2133` | Yes (`8ecb40f6...`) |
+| `CYCLE-20261019-F50M` | `2026-10-19T04:34:04.966Z` | `learnapollo/learnapollo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2134` | Yes (`ad8a3fd9...`) |
+| `CYCLE-20261019-F6Y7` | `2026-10-19T04:34:07.471Z` | `someengineering/fixinventory` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2135` | Yes (`7b2e4a32...`) |
+| `CYCLE-20261019-FAWD` | `2026-10-19T04:34:12.589Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2136` | Yes (`47b04a06...`) |

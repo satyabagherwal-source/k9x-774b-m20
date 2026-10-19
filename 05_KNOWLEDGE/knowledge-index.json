@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:27:56.512Z",
-  "total_verified_learnings": 597,
+  "last_updated": "2026-10-19T04:34:12.552Z",
+  "total_verified_learnings": 602,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -15998,7 +15998,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "a33c5aa391c22452700dda7757d6a04706f5e3d542df2c5fb005c4ca303c0606",
+      "content_hash": "dabc2b00b83bc92de530699bc677ba4c13468a0d0d660f7dbd96227a5622fb4a",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [
@@ -16031,7 +16031,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-10-17T23:13:35.102Z",
+      "verified_at": "2026-10-19T04:33:58.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25402,22 +25402,35 @@
     "learn-github-learnapollo-learnapollo": {
       "learning_id": "learn-github-learnapollo-learnapollo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "learnapollo-learnapollo",
+      "source": "learnapollo/learnapollo",
+      "repository": "learnapollo/learnapollo",
       "slug": "learnapollo-learnapollo",
       "platform": "github",
       "source_url": "https://github.com/learnapollo/learnapollo",
-      "source_version": "HEAD",
-      "content_hash": "10e39a31c231eb6bd35fb8799e346cfc0dc66b5161b13943a9d58b63346073ce",
+      "source_version": "dea1677e",
+      "content_hash": "ad8a3fd9f8c6933185b025c6fa6f8aea738562d422c8f89488e4a592b005bd87",
       "dossier_path": "07_PROJECT_LEARNING/learnapollo-learnapollo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/learnapollo-learnapollo-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2134,
+          "title": "Fixing typo in iOS tutorial Exercice 5",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.981Z"
+      "verified_at": "2026-10-19T04:34:04.918Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-learnsyslab-gym-pybullet-drones": {
       "learning_id": "learn-github-learnsyslab-gym-pybullet-drones",
@@ -26431,22 +26444,35 @@
     "learn-github-mariadb-server": {
       "learning_id": "learn-github-mariadb-server",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mariadb-server",
+      "source": "MariaDB/server",
+      "repository": "MariaDB/server",
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "HEAD",
-      "content_hash": "75fc54787a14259683f2e64b918e7e39efd907c0109ad62e001a47aa2f84edfd",
+      "source_version": "327437ad",
+      "content_hash": "47b04a06e25339ad0d25a3d451cb68f4dc291d9c031981c067ba772004496d93",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2136,
+          "title": "MDEV-41020 A `MEMORY` table refuses a row it just held",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.153Z"
+      "verified_at": "2026-10-19T04:34:12.545Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-markmead-hyperui": {
       "learning_id": "learn-github-markmead-hyperui",
@@ -29497,22 +29523,35 @@
     "learn-github-ntex-rs-ntex": {
       "learning_id": "learn-github-ntex-rs-ntex",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ntex-rs-ntex",
+      "source": "ntex-rs/ntex",
+      "repository": "ntex-rs/ntex",
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "HEAD",
-      "content_hash": "eb8277f25bcfba69887e295f66fc16c11ae8a928cea1be0890b56f11448882d1",
+      "source_version": "f3aba0ae",
+      "content_hash": "8ecb40f671cee4444228ac62a1864e464ce444e069e65dfa5f1cfb46a5e02624",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2133,
+          "title": "Finish runtime shutdown even if task cleanup panics, closing remote admission an",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.698Z"
+      "verified_at": "2026-10-19T04:33:59.508Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
@@ -35390,22 +35429,35 @@
     "learn-github-someengineering-fixinventory": {
       "learning_id": "learn-github-someengineering-fixinventory",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "someengineering-fixinventory",
+      "source": "someengineering/fixinventory",
+      "repository": "someengineering/fixinventory",
       "slug": "someengineering-fixinventory",
       "platform": "github",
       "source_url": "https://github.com/someengineering/fixinventory",
-      "source_version": "HEAD",
-      "content_hash": "05b242d22141c3294f89b5f664ffa4582f3a5884e6339582aa3706595e3ead75",
+      "source_version": "21183338",
+      "content_hash": "7b2e4a3222d2c140aafdcfab15c3da1bf5dbc8c031ae8ff397c263d74622518d",
       "dossier_path": "07_PROJECT_LEARNING/someengineering-fixinventory-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/someengineering-fixinventory-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2135,
+          "title": "[fix][fix] Update license to match Trove classifier (#2322)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.625Z"
+      "verified_at": "2026-10-19T04:34:07.427Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sorintlab-stolon": {
       "learning_id": "learn-github-sorintlab-stolon",
@@ -38281,22 +38333,35 @@
     "learn-github-typestack-routing-controllers": {
       "learning_id": "learn-github-typestack-routing-controllers",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "typestack-routing-controllers",
+      "source": "typestack/routing-controllers",
+      "repository": "typestack/routing-controllers",
       "slug": "typestack-routing-controllers",
       "platform": "github",
       "source_url": "https://github.com/typestack/routing-controllers",
-      "source_version": "HEAD",
-      "content_hash": "96e0f551b8d1f69948353a0c405bbacb67a05916bea4fa262182734399a8bdc8",
+      "source_version": "bf6fbfdc",
+      "content_hash": "11ebf75dd3d5ae18a6aaaeda5aaaf92b2078d8b4bf579c280042c66e347cb4c0",
       "dossier_path": "07_PROJECT_LEARNING/typestack-routing-controllers-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typestack-routing-controllers-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2132,
+          "title": "build(deps): bump qs, express and body-parser (#1539)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.130Z"
+      "verified_at": "2026-10-19T04:33:58.082Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-typewhisper-typewhisper-mac": {
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
@@ -76808,6 +76873,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:27:56.505Z"
+    },
+    "rule-2132": {
+      "learning_id": "rule-2132",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2132,
+      "title": "build(deps): bump qs, express and body-parser (#1539)",
+      "source_url": "https://github.com/typestack/routing-controllers",
+      "source_version": "bf6fbfdc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:33:58.082Z"
+    },
+    "rule-2133": {
+      "learning_id": "rule-2133",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2133,
+      "title": "Finish runtime shutdown even if task cleanup panics, closing remote admission an",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "f3aba0ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:33:59.508Z"
+    },
+    "rule-2134": {
+      "learning_id": "rule-2134",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2134,
+      "title": "Fixing typo in iOS tutorial Exercice 5",
+      "source_url": "https://github.com/learnapollo/learnapollo",
+      "source_version": "dea1677e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:34:04.918Z"
+    },
+    "rule-2135": {
+      "learning_id": "rule-2135",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2135,
+      "title": "[fix][fix] Update license to match Trove classifier (#2322)",
+      "source_url": "https://github.com/someengineering/fixinventory",
+      "source_version": "21183338",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:34:07.427Z"
+    },
+    "rule-2136": {
+      "learning_id": "rule-2136",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2136,
+      "title": "MDEV-41020 A `MEMORY` table refuses a row it just held",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "327437ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:34:12.545Z"
     }
   },
   "aliases": {
