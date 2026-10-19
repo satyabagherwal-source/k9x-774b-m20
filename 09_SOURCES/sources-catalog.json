@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "8a94401a7249f47bedfd116031ef6607580eb01c047f9e9205a7592a54c9ff9b",
-    "lastHarvestedAt": "2026-10-18T03:51:23.841Z",
+    "contentHash": "1f6b0ef778225ee4d04e5ec69bfe4b3c1f987fa3405a0a4e71025ff2bf2ad5bb",
+    "lastHarvestedAt": "2026-10-19T13:43:23.068Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -8098,5 +8098,15 @@
     "contentHash": "d532f2e078699b798d455f990d1b018237eaaff2b92d897bc41fbd5ae17a88fb",
     "lastHarvestedAt": "2026-10-19T13:37:14.871Z",
     "learningId": "learn-github-apppear-chartview"
+  },
+  "lottie-react-native-lottie-react-native": {
+    "repository": "lottie-react-native/lottie-react-native",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lottie-react-native/lottie-react-native",
+    "sourceVersion": "7ac5e96c",
+    "license": "Apache-2.0",
+    "contentHash": "af403d4af6d39a91e05a4b0cc4c4b359f82a7ef289d7f7f3ba6155a92bbefc29",
+    "lastHarvestedAt": "2026-10-19T13:43:20.412Z",
+    "learningId": "learn-github-lottie-react-native-lottie-react-native"
   }
 }

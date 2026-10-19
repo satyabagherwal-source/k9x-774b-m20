@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T13:37:22.136Z",
-  "total_verified_learnings": 824,
+  "last_updated": "2026-10-19T13:43:23.040Z",
+  "total_verified_learnings": 825,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -28265,22 +28265,35 @@
     "learn-github-lottie-react-native-lottie-react-native": {
       "learning_id": "learn-github-lottie-react-native-lottie-react-native",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lottie-react-native-lottie-react-native",
+      "source": "lottie-react-native/lottie-react-native",
+      "repository": "lottie-react-native/lottie-react-native",
       "slug": "lottie-react-native-lottie-react-native",
       "platform": "github",
       "source_url": "https://github.com/lottie-react-native/lottie-react-native",
-      "source_version": "HEAD",
-      "content_hash": "93124e7316d49b5d0baaaea7a27ba767598042512dc1a3cf13d73014d9def6b3",
+      "source_version": "7ac5e96c",
+      "content_hash": "af403d4af6d39a91e05a4b0cc4c4b359f82a7ef289d7f7f3ba6155a92bbefc29",
       "dossier_path": "07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lottie-react-native-lottie-react-native-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2611,
+          "title": "require React Native 0.84, upgrade react-native-test-app to 5.4.7 and fix iOS ci",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.082Z"
+      "verified_at": "2026-10-19T13:43:20.366Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-louis-cfm-coucou": {
       "learning_id": "learn-github-louis-cfm-coucou",
@@ -51604,7 +51617,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "8a94401a7249f47bedfd116031ef6607580eb01c047f9e9205a7592a54c9ff9b",
+      "content_hash": "1f6b0ef778225ee4d04e5ec69bfe4b3c1f987fa3405a0a4e71025ff2bf2ad5bb",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -51627,6 +51640,16 @@
           "number": 1303,
           "title": "Sampling Parameter Metadata Embedding Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2612,
+          "title": "Quantization-Aware Distillation (QAD) Necessity for Low-Bit Edge Deployment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2613,
+          "title": "Metadata-Embedded Sampling Invariants for Reproducible Inference",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51634,7 +51657,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T03:51:23.797Z",
+      "verified_at": "2026-10-19T13:43:23.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87803,6 +87826,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T13:37:10.216Z"
+    },
+    "rule-2611": {
+      "learning_id": "rule-2611",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2611,
+      "title": "require React Native 0.84, upgrade react-native-test-app to 5.4.7 and fix iOS ci",
+      "source_url": "https://github.com/lottie-react-native/lottie-react-native",
+      "source_version": "7ac5e96c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:43:20.366Z"
+    },
+    "rule-2612": {
+      "learning_id": "rule-2612",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2612,
+      "title": "Quantization-Aware Distillation (QAD) Necessity for Low-Bit Edge Deployment",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:43:23.033Z"
+    },
+    "rule-2613": {
+      "learning_id": "rule-2613",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2613,
+      "title": "Metadata-Embedded Sampling Invariants for Reproducible Inference",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:43:23.033Z"
     }
   },
   "aliases": {

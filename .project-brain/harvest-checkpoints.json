@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T13:37:22.192Z",
+  "last_updated": "2026-10-19T13:43:23.073Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2359,14 +2359,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "8a94401a7249f47bedfd116031ef6607580eb01c047f9e9205a7592a54c9ff9b",
-      "verified_at": "2026-10-18T03:51:23.844Z",
+      "content_hash": "1f6b0ef778225ee4d04e5ec69bfe4b3c1f987fa3405a0a4e71025ff2bf2ad5bb",
+      "verified_at": "2026-10-19T13:43:23.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:51:23.844Z"
+      "last_updated": "2026-10-19T13:43:23.073Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -12177,6 +12177,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T13:37:14.879Z"
+    },
+    "lottie-react-native/lottie-react-native": {
+      "repository": "lottie-react-native/lottie-react-native",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lottie-react-native-lottie-react-native",
+      "content_hash": "af403d4af6d39a91e05a4b0cc4c4b359f82a7ef289d7f7f3ba6155a92bbefc29",
+      "verified_at": "2026-10-19T13:43:20.416Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T13:43:20.416Z"
     }
   },
   "repos": {

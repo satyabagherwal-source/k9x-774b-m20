@@ -3271,3 +3271,5 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `ab8dc9ad` | Multi-dimensional audit evidence | 2026-10-19T13:37:10.274Z |
 | `learn-github-apppear-chartview` | `https://github.com/AppPear/ChartView` | `df0b2641` | Multi-dimensional audit evidence | 2026-10-19T13:37:14.871Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `c5b932db` | Multi-dimensional audit evidence | 2026-10-19T13:37:22.184Z |
+| `learn-github-lottie-react-native-lottie-react-native` | `https://github.com/lottie-react-native/lottie-react-native` | `7ac5e96c` | Multi-dimensional audit evidence | 2026-10-19T13:43:20.412Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-19T13:43:23.068Z |

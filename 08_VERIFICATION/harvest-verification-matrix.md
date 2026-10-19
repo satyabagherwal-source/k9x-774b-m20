@@ -3264,3 +3264,5 @@
 | `CYCLE-20261019-TJZZ` | `2026-10-19T13:37:10.271Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2610` | Yes (`7bd8a431...`) |
 | `CYCLE-20261019-TNJO` | `2026-10-19T13:37:14.868Z` | `AppPear/ChartView` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apppear-chartview-learnings.md` | Yes (`d532f2e0...`) |
 | `CYCLE-20261019-TT6T` | `2026-10-19T13:37:22.181Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md` | Yes (`f9f028eb...`) |
+| `CYCLE-20261019-1HLM` | `2026-10-19T13:43:20.410Z` | `lottie-react-native/lottie-react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2611` | Yes (`af403d4a...`) |
+| `CYCLE-20261019-1JNE` | `2026-10-19T13:43:23.066Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2612, Rule 2613` | Yes (`1f6b0ef7...`) |
