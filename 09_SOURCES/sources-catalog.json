@@ -2473,10 +2473,10 @@
     "repository": "cosscom/coss",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/coss",
-    "sourceVersion": "5b5d4962",
+    "sourceVersion": "674fd511",
     "license": "AGPL-3.0",
-    "contentHash": "a9f64282826ba0477cae0eb3f25f939cd923adac443b34e043634b46d4a45fc3",
-    "lastHarvestedAt": "2026-10-18T21:39:32.243Z",
+    "contentHash": "10c091f6c93d75167fa4484108e5a619c9f07236a799d35e7b5e68276a6e31e7",
+    "lastHarvestedAt": "2026-10-19T19:22:19.072Z",
     "learningId": "learn-github-cosscom-coss"
   },
   "sharkdp-bat": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "82f195be",
+    "sourceVersion": "a25a5857",
     "license": "Apache-2.0",
-    "contentHash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
-    "lastHarvestedAt": "2026-10-19T04:27:56.556Z",
+    "contentHash": "08ae60d95ba70bb7bf98bd6b6434266e3667b3200447b9797977db999a2aea45",
+    "lastHarvestedAt": "2026-10-19T19:22:19.901Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -8738,5 +8738,25 @@
     "contentHash": "d3057e67cd5310c5a98b5fb55f1000e362ce98eb79b2709a819782adfb21718b",
     "lastHarvestedAt": "2026-10-19T19:16:04.347Z",
     "learningId": "learn-github-seabdulbasit-musicapp-kmp"
+  },
+  "berkaycubuk-kitsune": {
+    "repository": "berkaycubuk/kitsune",
+    "platform": "github",
+    "sourceUrl": "https://github.com/berkaycubuk/kitsune",
+    "sourceVersion": "f6bd4da3",
+    "license": "MIT",
+    "contentHash": "a6cf6290b3095535df9a5ebe02e5c93f8a17a80f4f07dda8301d5988fad8d869",
+    "lastHarvestedAt": "2026-10-19T19:22:21.438Z",
+    "learningId": "learn-github-berkaycubuk-kitsune"
+  },
+  "touchlab-droidconkotlin": {
+    "repository": "touchlab/DroidconKotlin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/touchlab/DroidconKotlin",
+    "sourceVersion": "27f3e87c",
+    "license": "Apache-2.0",
+    "contentHash": "5373cafddf8d705d290b4f4b955dd00eff26bc20614e226633bc92c515639f1a",
+    "lastHarvestedAt": "2026-10-19T19:22:24.331Z",
+    "learningId": "learn-github-touchlab-droidconkotlin"
   }
 }

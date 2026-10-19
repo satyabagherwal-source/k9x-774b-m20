@@ -3447,3 +3447,7 @@ Every entry in this ledger must capture:
 | `learn-github-seabdulbasit-musicapp-kmp` | `https://github.com/SEAbdulbasit/MusicApp-KMP` | `3048f024` | Multi-dimensional audit evidence | 2026-10-19T19:16:04.347Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `132027d0` | Multi-dimensional audit evidence | 2026-10-19T19:16:06.406Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `ecf9b6a9` | Multi-dimensional audit evidence | 2026-10-19T19:16:09.301Z |
+| `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `674fd511` | Multi-dimensional audit evidence | 2026-10-19T19:22:19.072Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `a25a5857` | Multi-dimensional audit evidence | 2026-10-19T19:22:19.901Z |
+| `learn-github-berkaycubuk-kitsune` | `https://github.com/berkaycubuk/kitsune` | `f6bd4da3` | Multi-dimensional audit evidence | 2026-10-19T19:22:21.438Z |
+| `learn-github-touchlab-droidconkotlin` | `https://github.com/touchlab/DroidconKotlin` | `27f3e87c` | Multi-dimensional audit evidence | 2026-10-19T19:22:24.331Z |

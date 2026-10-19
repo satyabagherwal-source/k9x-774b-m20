@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T19:16:09.305Z",
-  "total_cycles_completed": 3417,
-  "total_learnings_persisted": 3417,
-  "total_rules_promoted": 2566,
+  "last_updated": "2026-10-19T19:22:24.335Z",
+  "total_cycles_completed": 3421,
+  "total_learnings_persisted": 3421,
+  "total_rules_promoted": 2570,
   "history": [
-    {
-      "timestamp": "2026-10-19T12:54:08.081Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:00:15.454Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:00:23.454Z",
-      "repository": "TableProApp/TablePro",
-      "learningId": "learn-github-tableproapp-tablepro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:00:30.025Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T13:07:58.650Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T19:16:09.305Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:22:19.076Z",
+      "repository": "cosscom/coss",
+      "learningId": "learn-github-cosscom-coss",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:22:19.905Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:22:21.442Z",
+      "repository": "berkaycubuk/kitsune",
+      "learningId": "learn-github-berkaycubuk-kitsune",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:22:24.335Z",
+      "repository": "touchlab/DroidconKotlin",
+      "learningId": "learn-github-touchlab-droidconkotlin",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

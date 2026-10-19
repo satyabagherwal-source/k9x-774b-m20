@@ -1167,12 +1167,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
-    "name": "VectifyAI/PageIndex",
+    "name": "PageIndex",
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T06:19:09.706Z",
-    "lastVerified": "2026-10-19T06:19:09.706Z",
+    "lastChecked": "2026-10-19T19:22:26.934Z",
+    "lastVerified": "2026-10-19T19:22:26.934Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
@@ -1181,7 +1181,8 @@
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "50a71b68"
   },
   "nolabs-ai-nono": {
     "name": "nolabs-ai/nono",
@@ -1253,22 +1254,21 @@
     "revisionIdentifier": "180cc830"
   },
   "cosscom-coss": {
-    "name": "coss",
+    "name": "cosscom/coss",
     "officialUrl": "https://github.com/cosscom/coss",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T08:20:57.674Z",
-    "lastVerified": "2026-10-19T08:20:57.674Z",
+    "lastChecked": "2026-10-19T19:22:17.662Z",
+    "lastVerified": "2026-10-19T19:22:17.662Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cosscom-coss",
-    "contentHash": "a9f64282826ba0477cae0eb3f25f939cd923adac443b34e043634b46d4a45fc3",
+    "contentHash": "10c091f6c93d75167fa4484108e5a619c9f07236a799d35e7b5e68276a6e31e7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5b5d4962"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "skeletonlabs-skeleton": {
     "name": "skeleton",
@@ -1701,12 +1701,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "devspace-sh-devspace": {
-    "name": "devspace-sh/devspace",
+    "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T07:08:32.571Z",
-    "lastVerified": "2026-10-19T07:08:32.571Z",
+    "lastChecked": "2026-10-19T19:22:21.977Z",
+    "lastVerified": "2026-10-19T19:22:21.977Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-devspace-sh-devspace",
@@ -1715,7 +1715,8 @@
     "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8ff62607"
   },
   "react-hook-form-react-hook-form": {
     "name": "react-hook-form/react-hook-form",
@@ -8861,14 +8862,14 @@
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T04:26:00.979Z",
-    "lastVerified": "2026-10-19T04:26:00.979Z",
+    "lastChecked": "2026-10-19T19:22:19.542Z",
+    "lastVerified": "2026-10-19T19:22:19.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 13,
+    "contentHash": "08ae60d95ba70bb7bf98bd6b6434266e3667b3200447b9797977db999a2aea45",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -18303,8 +18304,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T18:55:13.272Z",
-    "lastVerified": "2026-10-19T18:55:13.272Z",
+    "lastChecked": "2026-10-19T19:22:29.343Z",
+    "lastVerified": "2026-10-19T19:22:29.343Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -18744,14 +18745,15 @@
     "officialUrl": "https://github.com/touchlab/DroidconKotlin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-04T20:24:07.274Z",
-    "lastVerified": "2026-10-04T20:24:07.274Z",
+    "lastChecked": "2026-10-19T19:22:23.967Z",
+    "lastVerified": "2026-10-19T19:22:23.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 13,
+    "learningId": "learn-github-touchlab-droidconkotlin",
+    "contentHash": "5373cafddf8d705d290b4f4b955dd00eff26bc20614e226633bc92c515639f1a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -23064,12 +23066,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T16:24:49.353Z",
-    "lastVerified": "2026-10-19T16:24:49.353Z",
+    "lastChecked": "2026-10-19T19:22:24.471Z",
+    "lastVerified": "2026-10-19T19:22:24.471Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -23078,7 +23080,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "508b0013"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",
@@ -25435,13 +25438,21 @@
     "lastVerified": "2026-10-18T06:29:09.763283Z"
   },
   "berkaycubuk-kitsune": {
-    "name": "kitsune",
+    "name": "berkaycubuk/kitsune",
     "officialUrl": "https://github.com/berkaycubuk/kitsune",
-    "lastChecked": "2026-10-18T06:55:35.697040Z",
-    "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T06:55:35.697040Z",
-    "harvestStatus": "VERIFIED",
-    "tier": "TIER_2_CRAWLING_PARSING_INFRASTRUCTURE"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-19T19:22:21.080Z",
+    "lastVerified": "2026-10-19T19:22:21.080Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-berkaycubuk-kitsune",
+    "contentHash": "a6cf6290b3095535df9a5ebe02e5c93f8a17a80f4f07dda8301d5988fad8d869",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "manojahi-serpiq": {
     "name": "serpiq",
@@ -26444,8 +26455,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T19:16:11.832Z",
-    "lastVerified": "2026-10-19T19:16:11.832Z",
+    "lastChecked": "2026-10-19T19:22:29.358Z",
+    "lastVerified": "2026-10-19T19:22:29.358Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

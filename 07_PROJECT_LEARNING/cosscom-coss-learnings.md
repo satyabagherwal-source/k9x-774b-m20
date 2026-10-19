@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
-> **Source Version**: `5b5d4962`  
+> **Source Version**: `674fd511`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:39:32.068Z  
+> **Timestamp**: 2026-10-19T19:22:18.723Z  
 > **Learning ID**: `learn-github-cosscom-coss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:39:30.340Z  
+> **Harvest Timestamp**: 2026-10-19T19:22:17.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1518,6 +1518,104 @@ export const getWebhookDeliveryRoute = createRoute({
     404: deliveryNotFound,
 ```
 
+### Core Architecture Module: `apps/api/src/routes/webhook-events.ts`
+```
+import { sendTestWebhookEvent } from "@coss/email";
+import {
+  CreateTestWebhookEventRequest,
+  WebhookTestEventObject,
+  type WebhookTestEventOutput,
+} from "@coss/email/test-event-schemas";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { requireApiKey } from "../middleware/api-key.ts";
+import { upgradeRequestBody } from "../middleware/api-version.ts";
+import { rateLimit } from "../middleware/rate-limit.ts";
+import type { AppEnv } from "../types.ts";
+import { commonErrors, errorDoc, jsonDoc } from "./docs.ts";
+
+export const createTestWebhookEventRoute = createRoute({
+  method: "post",
+  path: "/webhook_events/test",
+  operationId: "createTestWebhookEvent",
+  tags: ["Webhook endpoints"],
+  summary: "Send a test event",
+  description:
+    "Sends a sample event of a type to the environment's enabled endpoints subscribed to it and " +
+    "its open listeners (`coss listen`), exactly as a real one is sent: same body, signature, " +
+    "retries and log lines. `coss trigger` calls it. Sandbox environments only. The ids in the " +
+    "sample are made up (pass real ones in `data` for a handler that looks them up), and nothing " +
+    "marks the event as a test: your handler takes it like the real thing. When nothing is " +
+    "subscribed, the event goes nowhere and isn't kept.",
+  security: [{ bearerAuth: [] }],
+  middleware: [
+    requireApiKey({ webhook: ["create"] }),
+    rateLimit("api.write"),
+    upgradeRequestBody("POST /v1/webhook_events/test"),
+  ],
+  request: {
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateTestWebhookEventRequest } },
+    },
+  },
+  responses: {
+    200: jsonDoc("The event that was sent, and to how many receivers.", WebhookTestEventObject),
+    400: errorDoc("The body is not valid JSON (`invalid_json`)."),
+    413: errorDoc("The request body is larger than 5 MB (`payload_too_large`)."),
+    415: errorDoc("The body is not sent as `application/json` (`unsupported_media_type`)."),
+    ...commonErrors,
+    403: errorDoc(
+      "The API key lacks the `webhook:create` permission, its organization is suspended, or it " +
+        "belongs to a live environment (`sandbox_only`).",
+    ),
+    422: errorDoc(
+      "The body failed validation (`validation_error`), the type only reaches live environments " +
+        "(`live_only_event_type`: `domain.*`, `account.*`, `billing.*`), or `data` doesn't fit the " +
+        "type (`invalid_test_event`, with `issues`; unknown fields included).",
+    ),
+  },
+});
+
+export function createWebhookEventRoutes(): OpenAPIHono<AppEnv> {
+  const router = new OpenAPIHono<AppEnv>();
+
+  router.openapi(createTestWebhookEventRoute, async (c) => {
+    const body = c.req.valid("json");
+    const { organizationId, environmentId, mode } = c.var.auth;
+    const result = await sendTestWebhookEvent({
+      organizationId,
+      environmentId,
+      mode,
+      type: body.type,
+      data: body.data,
+    });
+    const { id, object, type, created_at, data } = result.event;
+    return c.json(
+      {
+        object: "webhook_test_event" as const,
+        // The latest shape (checked against the type's schema by sendTestWebhookEvent), labelled
+        // with the request's version: response versioning renders it as an endpoint on that
+        // version receives it.
+        event: {
+          id,
+          object,
+          type,
+          api_version: c.var.apiVersion,
+          created_at,
+          data,
+        } as WebhookTestEventOutput["event"],
+        endpoints: result.endpoints,
+        listeners: result.listeners,
+      },
+      200,
+    );
+  });
+
+  return router;
+}
+
+```
+
 ### Core Architecture Module: `apps/api/src/routes/webhook-listeners.ts`
 ```
 import { WEBHOOK_EVENT_TYPES } from "@coss/email/schemas";
@@ -1743,155 +1841,19 @@ export function createWebhookListenerRoutes(deps: {
 
 ```
 
-### Core Architecture Module: `apps/mobile/src/app/(app)/[org]/projects/[project]/[env]/hooks/[applicationId]/endpoints/[endpointId].tsx`
-```
-import { formatRetentionDays, RETENTION_DAYS } from "@coss/retention";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { Send } from "lucide-react-native";
-import { Alert } from "../../../../../../../../../components/alert";
-import { Badge, StatusDot } from "../../../../../../../../../components/badge";
-import { PagedPanel } from "../../../../../../../../../components/paged";
-import { ListRow, Panel, SpecItem, SpecList } from "../../../../../../../../../components/panel";
-import {
-  ErrorState,
-  Loading,
-  PageIntro,
-  Screen,
-} from "../../../../../../../../../components/screen";
-import { WebButton } from "../../../../../../../../../components/web-button";
-import { formatAgo, formatDateTime } from "../../../../../../../../../lib/format";
-import { useHookEndpoint } from "../../../../../../../../../lib/queries";
-import { endpointStatus, HOOK_DELIVERY_STATUS } from "../../../../../../../../../lib/status";
-import { type EnvironmentParams, environmentPath } from "../../../../../../../../../lib/web";
-
-// DISABLE_FAILING_ENDPOINT_AFTER_MS in @coss/webhooks/engine.
-const DISABLED_AFTER_DAYS = 5;
-
-export default function HookEndpointScreen() {
-  const { applicationId, endpointId, ...params } = useLocalSearchParams<
-    EnvironmentParams & { applicationId: string; endpointId: string }
-  >();
-  const query = useHookEndpoint(params, applicationId, endpointId);
-  if (query.isPending) return <Loading />;
-  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
-  const first = query.data.pages[0];
-  if (!first) return <Loading />;
-  const { application, endpoint, last_recovery } = first;
-  const deliveries = query.data.pages.flatMap((page) => page.deliveries.data);
-  const [tone, label] = endpointStatus(endpoint);
-  return (
-    <Screen
-      onRefresh={() => void query.refetch()}
-      refreshing={query.isRefetching && !query.isFetchingNextPage}
-    >
-      <Stack.Screen
-        options={{
-          title: "Endpoint",
-          headerRight: () => (
-            <WebButton
-              path={`${environmentPath(params)}/hooks/${application.id}/endpoints/${endpoint.id}`}
-            />
-          ),
-        }}
-      />
-      <PageIntro
-        description={endpoint.description ?? undefined}
-        meta={
-          <Badge variant="outline">
-            <StatusDot label={label} tone={tone} />
-          </Badge>
-        }
-        mono
-        title={endpoint.url}
-      />
-      {!endpoint.enabled && endpoint.disabled_reason === "failing" ? (
-        <Alert
-          description={`Every delivery to this endpoint failed for ${DISABLED_AFTER_DAYS} days, so coss.com disabled it${endpoint.disabled_at ? ` on ${formatDateTime(endpoint.disabled_at)}` : ""}. Enable it again once its receiver works, then recover what it missed.`}
-          title="Disabled after repeated failures"
-          tone="error"
-        />
-      ) : null}
-      {endpoint.enabled && endpoint.failing_since ? (
-        <Alert
-          description={`If no delivery succeeds for ${DISABLED_AFTER_DAYS} days, coss.com disables the endpoint.`}
-          title={`Failing since ${formatDateTime(endpoint.failing_since)}`}
-          tone="warning"
-        />
-      ) : null}
-      <Panel title="Details">
-        <SpecList>
-          <SpecItem label="Application">{application.name}</SpecItem>
-          <SpecItem label="Event types">
-            {endpoint.filter_types.length === 0 ? "All" : endpoint.filter_types.join(", ")}
-          </SpecItem>
-          <SpecItem label="Rate limit" mono>
-            {endpoint.rate_limit_per_second ? `${endpoint.rate_limit_per_second}/s` : "Default"}
-          </SpecItem>
-          <SpecItem label="Created" mono>
-            {formatDateTime(endpoint.created_at)}
-          </SpecItem>
-          {last_recovery ? (
-            <SpecItem label="Last recovery" mono>
-              {`${formatDateTime(last_recovery.created_at)} · ${last_recovery.requeued} requeued${last_recovery.running ? ", running" : ""}`}
-            </SpecItem>
-          ) : null}
-        </SpecList>
-      </Panel>
-      <PagedPanel
-        description={`Failed deliveries are retried for about a day (8 attempts). Kept for ${formatRetentionDays(RETENTION_DAYS.hookMessages)}.`}
-        empty={{
-          icon: Send,
-          title: "No deliveries yet",
-          description: "Messages sent to this endpoint's application show up here.",
-        }}
-        items={deliveries}
-        olderLabel="Older deliveries"
-        query={query}
-        render={(delivery) => {
-          const [deliveryTone, deliveryLabel] = HOOK_DELIVERY_STATUS[delivery.status] ?? [
-            "neutral",
-            delivery.status,
-          ];
-          return (
-            <ListRow
-              detail={formatAgo(delivery.created_at)}
-              href={{
-                pathname:
-                  "/[org]/projects/[project]/[env]/hooks/[applicationId]/messages/[messageId]",
-                params: {
-                  ...params,
-                  applicationId: application.id,
-                  messageId: delivery.message_id,
-                },
-              }}
-              key={delivery.id}
-              leading={<StatusDot tone={deliveryTone} />}
-              subtitle={`${deliveryLabel} · ${delivery.attempt_count} attempts · ${delivery.last_status_code ? `HTTP ${delivery.last_status_code}` : (delivery.last_error ?? "—")}`}
-              title={delivery.message_id}
-            />
-          );
-        }}
-        title="Recent deliveries"
-      />
-    </Screen>
-  );
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #134** (2026-10-17): **Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover**
-  *Symptoms*: coss.com/shipyard was still berthd.app's page dropped into coss.com's shell: a dithered harbour, a chapter per feature with a video loop, and its own stylesheet and scripts. This rebuilds it the way coss.com's landing page is built: one ruled sheet, `SectionHead`s, coss ui buttons, and isometric line drawings on the drafting grid, with Shipyard's amber lamp as its one colour.  ![The motion: the hero's parts drop in, a feature drawing scrolls in, and lifts on hover](https://raw.githubusercontent.com/cosscom/shipyard/f135a712f9fe798d2cfab0d3a0c182f6a922aa3a/coss-shipyard-landing/motion.gif)  ## What's on the page  - **Hero**, with a drawing of a closed laptop linked over ssh to a tray of boxes running agents (devl and gpu lit, old-vps offline), and the agents it works with. - **Six features**, each with its own drawing: Start, Watch it work, See the page, Loop until green, Review, From your phone. They cover what the app does today (runs and attempts, Review, Browser/Preview with visual diffs, the phone app), where the old page had themes and tab groups. - **Close the laptop**: an illustrative night's log beside the boxes, still lit. - **The rest of the yard**: automations, kits, database, Leadline, Linear, secrets, plugins and themes, each linked to its guide (the database guide isn't in these docs yet, so that one is plain). - **Install**: the box's line with Copy, and three steps. The header gains Changelog.  ## How it moves  - `components/shipyard/drawings.tsx` draws on `is
-
-- **Issue #133** (2026-10-16): **Add, then move, the crowd-opinionated landing page**
-  *Symptoms*: ## Summary  The `/crowd-opinionated-source-software` manifesto page for coss.com, built here and then moved: it is the front page of the hub (https://github.com/cosscom/hub, its own repository and app, later `hub.coss.com`). What this PR leaves on coss.com:  - `apps/site`: the page, its illustrations and the click-to-play YouTube embed are gone; `/crowd-opinionated-source-software` 301s to `https://hub.coss.com`; the sitemap drops it; the CSP frames nothing again (`frame-src 'none'`, no YouTube origins). - `apps/site/src/components/sign-up-button.tsx`: a `label` prop (used by the page while it lived here; harmless to keep). - `apps/site/DESIGN.md`: the page's motion exception removed.  The hub itself (projects and profiles in GitHub's layout without code, Prompt Requests, threads on coss ui's chat, its own Better Auth accounts, Devin as the factory) is in `cosscom/hub`, with coss ui vendored.  ## Test plan  - [x] `bun run lint`, `SKIP_ENV_VALIDATION=1 bun run typecheck`, `bun run --cwd apps/site test` - [ ] CI  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01TyanHNMS6D6bdJAdToZUVH 
+- **Issue #146** (2026-10-19): **Release: sign and notarize the CLI's macOS executables**
+  *Symptoms*: ## Summary  This signs and notarizes the CLI's macOS executables in CI, so a copy downloaded with a browser opens without Gatekeeper's warning. It's off until the repository variable `CLI_MACOS_NOTARIZE` is `true`; until then releases ship the ad-hoc signed builds as they do today.  - **`cli-binaries-notarize`** is a new `release.yml` job that runs after the build:   - It runs on a macOS runner, in the new `apple` environment (deployable from `main` only).   - It imports the Developer ID certificate into a keychain of its own and runs `packages/cli/scripts/notarize.ts`.   - The script re-signs both darwin executables with the hardened runtime and the JIT entitlements Bun documents for compiled executables. Before submitting, it checks the signature has the runtime flag, a Developer ID authority and a secure timestamp.   - It submits each executable to Apple with `notarytool --wait`. If Apple rejects one, it prints Apple's log.   - It archives them again with a new `SHA256SUMS` and replaces the build artifact.   - A bare executable can't be stapled, so Gatekeeper checks the notarization online. - **Smoke tests** wait for notarization when it's on and test the notarized builds. On macOS, a new step marks the executable quarantined, as a browser download is, and runs it. - **Job conditions:** a skipped notarize job must not skip the smoke tests or the release, so `cli-binaries-smoke` and `cli-binaries-release` now have explicit `always()` conditions. - **Docs:** the AGENTS.md "C
   **Post-Mortem & Fix Analysis**:
-  > opening in https://github.com/cosscom/hub instead
+  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6474">ENG-6474</a></p>
+
+- **Issue #145** (2026-10-19): **Scoped API keys: full access, sending, read only or custom permissions**
+  *Symptoms*: ## Summary  API keys can now be created with **Full access**, **Sending access** (`email:send` only), **Read only** (every `read` permission) or **Custom** (any mix of the catalog's permissions).  Every route already declared its permission and every key already stored `apikey.permissions`; what was missing was a way to choose them, and a way to tell full keys from restricted ones.  - **`environment_api_key.access`** (`full` | `restricted`, migration `0080`). Existing keys become `full`.   - Full-access keys are checked against the current `API_KEY_PERMISSIONS` on every request, so they get new products' permissions without a migration.   - Restricted keys hold exactly what they were created with. This replaces the per-product `apikey.permissions` backfills (`0004`…`0077`), which would have widened restricted keys. `AGENTS.md`'s "Add a product" recipe now says never to backfill.   - The column defaults to `full` because migrations run before the rollout: dashboard tasks still running old code insert bindings without it, and old code only made full keys. - **`@coss/auth/api-key-permissions`** (client-safe) holds:   - a label, product group and description for every resource and action;   - the presets, plus validation (known permissions only, at least one) and summaries.   - A test fails if `API_KEY_PERMISSIONS` gains a permission without a label. - **Dashboard**   - The create dialog adds an access choice and a per-product permission checklist for Custom.   - The keys table h
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1908,1417 +1870,1258 @@ export default function HookEndpointScreen() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b5d4962` (2026-10-17)
-**Commit Message**: Merge pull request #134 from cosscom/shipyard-landing-catalog
+### Incident Patch 1: `e13f0e45` (2026-10-19)
+**Commit Message**: coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render
 
-Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover
+The API renders a template's draft (or a published version) as a send would,
+without sending: POST /v1/email_templates/{id}/render with locale and
+variables (sample_variables by default), coss.email.templates.render() in the
+SDK. renderTemplateForSend and the preview share renderVersion.
 
-**File**: `apps/site/AGENTS.md` (modified, +1/-1)
+The CLI gets coss domains list|add|get|verify (records as a table or BIND
+zone-file lines; verify --wait checks every 10 s until verified, reading
+instead of retrying a throttled check) and coss templates list|pull|push|
+preview: a folder per template (template.json + <locale>.subject.txt/.html/
+.txt), push finds templates by alias (creating missing ones), skips unchanged
+drafts, shows problems by file:line:column, --publish and --watch; preview
+renders with sample values plus --var, --open/--output for the HTML.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/cli-domains-templates.md` (added, +6/-0)
 ```diff
-@@ -30,7 +30,7 @@ the macro API, `staticSource` and code-usage APIs are recent.
- | `src/components/mdx.tsx`, `src/components/docs-table.tsx` | MDX components: coss ui's docs typography (headings with anchor links, lists, tables, inline code, `Callout` as a coss ui `Alert`, `Cards`/`Card` as linked cards) over Fumadocs' content pipeline (`pre` is Fumadocs' `CodeBlock` with Shiki/Twoslash output, `CodeBlockTabs` for ` ```package-install `, `Steps`/`Step`, `Tabs`/`Tab`). `DocsTable` & co. are shared with the generated plan, rate and retention tables. |
- | `src/app/(home)`, `src/components/home/` | The landing page (a "parts catalog": isometric drawings in `iso.tsx`, the agent prompt (`copy-prompt.tsx`), the catalog in `parts.ts`; design rules in [DESIGN.md](./DESIGN.md)), the pricing page, the legal pages and `SiteFooter`. |
- | `src/app/(home)/pricing`, `src/components/pricing/`, `src/lib/pricing.ts` | `/pricing`: plan cards, an email bill estimator (a client island rating with `@coss/billing/engine`'s `chargeRange`, so it matches invoices), usage rate cards, the plan comparison (`planRows()`, shared with the billing guide's `<PlanTable />`) and an FAQ. Every price, limit and allowance comes from `@coss/billing/catalog`. |
--| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/runtime.tsx`, `src/lib/shipyard.ts`, `public/shipyard/assets/` | `/shipyard`: Shipyard's landing page as it was at berthd.app (moved from the coss ui repository's `apps/shipyard`), in its own route group with its own header links (`SHIPYARD_LINKS`). The page is static markup styled by `landing.css` (scoped to `.shipyard-landing`, its own tokens; the segment's layout loads Cal Sans from `@coss/ui/fonts` for the headlines and JetBrains Mono); the harbour, the night loop, the chapters' loops and line scenes are plain scripts in `public/shipyard/assets` (same-origin, so the CSP allows them) that `LandingRuntime` appends after the first paint and redraws on theme changes. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases, and the docs link to the `cosscom/shipyard` repository until they move here. |
-+| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/{drawings,stage,copy-line}.tsx`, `src/lib/shipyard.ts` | `/shipyard`: Shipyard's landing page, drawn like the coss.com catalog (one ruled sheet, `SectionHead`s, `.drafting-grid` behind drawings) in its own route group with its own header links (`SHIPYARD_LINKS`). The drawings are `drawings.tsx`: isometric line art on `iso.tsx`'s projection and `--iso-*` faces, with Shipyard's one amber lamp; `landing.css` styles them and their motion, the one place on coss.com besides the manifesto where drawings move: each sits in a `Stage` (a client island) whose parts (`.part`, staggered by `--i`) drop in when it scrolls into view, groups marked `.lift` rise on hover, lamps breathe and wires march; without script or with `prefers-reduced-motion` the drawing is simply there. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases. `public/shipyard/assets` keeps only the harbour paintings and the night loop, for the coss.com landing page's banner (`harbour.tsx`). |
- | `content/shipyard/`, `src/lib/shipyard-docs.ts`, `src/app/(shipyard)/shipyard/docs`, `src/components/shipyard/docs/`, `src/lib/shipyard/`, `public/shipyard/shots/` | `/shipyard/docs`: Shipyard's docs (moved with the landing page; the Markdown is the `cosscom/shipyard` repository's `docs/`). Their own `defineDocs` collection (`shipyard` in `collections.ts`, with its own `applyMdxPreset` so its rehype plugins never touch coss's docs: `rehype-reference.ts` makes the reference tables linkable, `rehype-nowrap-tokens.ts` keeps inline code from wrapping inside a flag), `loader` (`shipyardSource`, base `/shipyard/docs`) and search index (`/shipyard/docs/search.json`, which its `SiteShell`'s ⌘K menu searches), out of coss's sidebar, search and `/llms.txt`. The pages render in the same `DocsLayoutFrame`/`DocsPageFrame` as `/docs` (every folder of the tree is a sidebar group, since none is a root). MDX gets the site's components (coss ui callouts and cards included) plus Shipyard's (`getShipyardMDXComponents`): diagrams, the line scenes (`scenes.tsx`, a copy of the app's drawings), screenshots (`<Shot name>`: `public/shipyard/shots/<name>-{light,dark}.webp`, sizes in `shots.json`) and the stage; their styles are the three stylesheets the docs layout imports. Internal links in the pages are absolute (`/shipyard/docs/…`). |
- | `src/app/(calendar)/kloq`, `src/lib/calendar.ts`, `src/lib/calendar/`, `src/components/calendar/`, `src/styles/calendar.css`, `packages/kloq` | `/kloq`: kloq (moved from the `cosscom/calendar` repository, which was built to be served below `/calendar`): the landing page, the live demo (`/kloq/demo`, localStorage-backed), the five tools (`/
-```
-
-**File**: `apps/site/DESIGN.md` (modified, +4/-0)
-```diff
-@@ -45,6 +45,10 @@ The exception is `/crowd-opinionated-source-software`, a manifesto rather than a
- illustration (`src/components/coss-landing/`, client islands on `motion`) that starts when it scrolls into view,
- loops gently, stays grayscale and holds its final frame under `prefers-reduced-motion`.
- 
-+Shipyard's page (`/shipyard`) is the other exception: its drawings (`src/components/shipyard/drawings.tsx`)
-+drop in part by part when they scroll into view, lift on hover, and carry Shipyard's one amber lamp; all of it
-+stops under `prefers-reduced-motion`.
+@@ -0,0 +1,6 @@
++---
++"coss": minor
++"coss-cli": minor
++---
 +
- ## Copy
++`coss.email.templates.render(template, { version, locale, variables })` renders a template's draft (or a published version) as a send would, without sending (`POST /v1/email_templates/{id}/render`). The CLI gets `coss domains list|add|get|verify` (DNS records as a table or zone-file lines with `--format bind`; `verify --wait` follows the domain until it's verified) and templates as code: `coss templates list|pull|push|preview` (a folder per template, `push --watch` and `--publish`, `preview --var … --open`).
+```
+
+**File**: `apps/api/openapi.json` (modified, +389/-0)
+```diff
+@@ -2758,6 +2758,104 @@
+           }
+         ]
+       },
++      "RenderedEmailTemplate": {
++        "type": "object",
++        "properties": {
++          "object": {
++            "type": "string",
++            "enum": [
++              "email_template_render"
++            ]
++          },
++          "template_id": {
++            "type": "string"
++          },
++          "version": {
++            "type": [
++              "integer",
++              "null"
++            ],
++            "description": "The version rendered; `null` for the draft."
++          },
++          "locale": {
++            "type": "string",
++            "description": "The locale rendered."
++          },
++          "subject": {
++            "type": "string"
++          },
++          "html": {
++            "type": [
++              "string",
++              "null"
++            ]
++          },
++          "text": {
++            "type": [
++              "string",
++              "null"
++            ]
++          }
++        },
++        "required": [
++          "object",
++          "template_id",
++          "version",
++          "locale",
++          "subject",
++          "html",
++          "text"
++        ],
++        "examples": [
++          {
++            "object": "email_template_render",
++            "template_id": "etpl_01k7c8m4q2f3e9v6t5r1n0p8yz",
++            "version": null,
++            "locale": "en",
++            "subject": "Welcome, Ada",
++            "html": "<p>Hi Ada, thanks for signing up!</p>",
++            "text": null
++          }
++        ]
++      },
++      "RenderEmailTemplateRequest": {
++        "type": "object",
++        "properties": {
++          "version": {
++            "type": "integer",
++            "minimum": 1,
++            "description": "A published version to render. Default: the draft."
++          },
++          "locale": {
++            "type": "string",
++            "maxLength": 35,
++            "description": "The locale to render, e.g. \"pt-BR\". Falls back to the language (\"pt\"), then to the default locale, as sends do.",
++            "examples": [
++              "en"
++            ]
++          },
++          "variables": {
++            "type": "object",
++            "additionalProperties": {},
++            "examples": [
++              {
++                "first_name": "Ada"
++              }
++            ],
++            "description": "Values by variable name, checked as a send checks them. Default: `sample_variables`."
++          }
++        },
++        "additionalProperties": false,
++        "description": "What to render: nothing is sent or stored.",
++        "examples": [
++          {
++            "locale": "en",
++            "variables": {
++              "first_name": "Ada"
++            }
++          }
++        ]
++      },
+       "EmailTemplateVersionList": {
+         "type": "object",
+         "properties": {
+@@ -23094,6 +23192,297 @@
+         }
+       }
+     },
++    "/v1/email_templates/{id}/render": {
++      "post": {
++        "operationId": "renderEmailTemplate",
++        "tags": [
++          "Email templates"
++        ],
++        "summary": "Render a template",
++        "description": "Renders the draft (or a published `version`) with `variables`, exactly as a send would, and returns the subject, HTML and text: a preview, nothing is sent or stored. Without `variables` it renders the version's `sample_variables`.",
++        "security": [
++          {
++            "bearerAuth": []
++          }
++        ],
++        "parameters": [
++          {
++            "schema": {
++              "type": "string",
++              "description": "The template's id or alias.",
++              "examples": [
++                "etpl_01k7c8m4q2f3e9v6t5r1n0p8yz"
++              ]
++            },
++            "required": true,
++            "description": "The template's id or alias.",
++            "name": "id",
++            "in": "path"
++          },
++          {
++            "$ref": "#/components/parameters/CossVersion"
++          }
++        ],
++        "requestBody": {
++          "required": true,
++          "content": {
++            "application/json": {
++              "schema": {
++                "$ref": "#/components/schemas/RenderEmailTemplateRequest"
++              }
++            }
++          }
++        },
++        "responses": {
++          "200": {
++            "description": "The rendered template.",
++            "headers": {
++              "X-Request-Id": {
++                "description": "Unique id of this request. Include it when contacting support.",
++                "schema": {
++                  "type": "string",
++                  "examples": [
++                    "req_01k7c8m4q2f3e9v6t5r1n0p8yz"
++                  ]
++                }
++              },
++              "Coss-Version": {
++                "description": "The API version this response is rendered in.",
++                "schema": {
++                  "type": "string",
++                  "examples": [
++                    "2026-10-10"
++                  ]
++    
+```
+
+**File**: `apps/api/src/routes/email-templates.ts` (modified, +57/-0)
+```diff
+@@ -7,6 +7,7 @@ import {
+   pageEmailTemplates,
+   pageTemplateVersions,
+   publishTemplateDraft,
++  renderEmailTemplate,
+   requireEmailTemplate,
+   restoreTemplateVersion,
+   saveTemplateDraft,
+@@ -28,6 +29,8 @@ import {
+   ListEmailTemplatesQuery,
+   ListEmailTemplateVersionsQuery,
+   PublishEmailTemplateRequest,
++  RenderEmailTemplateRequest,
++  RenderedEmailTemplateObject,
+   UpdateEmailTemplateDraftRequest,
+   UpdateEmailTemplateRequest,
+ } from "@coss/email/schemas";
+@@ -270,6 +273,43 @@ export const publishEmailTemplateRoute = createRoute({
+   },
+ });
  
- - **Assertive and authoritative.** coss.com is the foundation apps are built on: write every product as
++export const renderEmailTemplateRoute = createRoute({
++  method: "post",
++  path: "/email_templates/{id}/render",
++  operationId: "renderEmailTemplate",
++  tags: [TAG],
++  summary: "Render a template",
++  description:
++    "Renders the draft (or a published `version`) with `variables`, exactly as a send would, " +
++    "and returns the subject, HTML and text: a preview, nothing is sent or stored. Without " +
++    "`variables` it renders the version's `sample_variables`.",
++  security: [{ bearerAuth: [] }],
++  middleware: [
++    requireApiKey({ emailTemplate: ["read"] }),
++    rateLimit("api.read"),
++    upgradeRequestBody("POST /v1/email_templates/{id}/render"),
++  ],
++  request: {
++    params: EmailTemplateIdParams,
++    body: {
++      required: true,
++      content: { "application/json": { schema: RenderEmailTemplateRequest } },
++    },
++  },
++  responses: {
++    200: jsonDoc("The rendered template.", RenderedEmailTemplateObject),
++    ...bodyErrors,
++    ...commonErrors,
++    404: templateNotFound,
++    422: errorDoc(
++      "The body failed validation (`validation_error`), the draft has problems " +
++        "(`template_invalid`, see `issues`), the variables don't match its declarations " +
++        "(`invalid_template_variables`), it has no such version (`template_version_not_found`), " +
++        "or it doesn't render (`template_render_failed`).",
++    ),
++  },
++});
++
+ export const listEmailTemplateVersionsRoute = createRoute({
+   method: "get",
+   path: "/email_templates/{id}/versions",
+@@ -429,6 +469,23 @@ export function createEmailTemplateRoutes(): OpenAPIHono<AppEnv> {
+     return c.json(toEmailTemplateVersionObject(version), 200);
+   });
+ 
++  router.openapi(renderEmailTemplateRoute, async (c) => {
++    const { id } = c.req.valid("param");
++    const rendered = await renderEmailTemplate(scope(c), id, c.req.valid("json"));
++    return c.json(
++      {
++        object: "email_template_render" as const,
++        template_id: rendered.template.id,
++        version: rendered.template.version,
++        locale: rendered.template.locale,
++        subject: rendered.subject,
++        html: rendered.html,
++        text: rendered.text,
++      },
++      200,
++    );
++  });
++
+   router.openapi(listEmailTemplateVersionsRoute, async (c) => {
+     const { id } = c.req.valid("param");
+     const query = c.req.valid("query");
 ```
 
-**File**: `apps/site/Dockerfile` (modified, +1/-1)
+**File**: `apps/api/test/app.test.ts` (modified, +2/-0)
 ```diff
-@@ -52,7 +52,7 @@ ENV NODE_ENV=production \
- WORKDIR /app
- COPY --from=build /repo/apps/site/.next/standalone ./
- COPY --from=build /repo/apps/site/.next/static ./apps/site/.next/static
--# The standalone output leaves public/ out (Shipyard's landing page assets, under /shipyard/assets).
-+# The standalone output leaves public/ out (Shipyard's harbour and docs screenshots, under /shipyard).
- COPY --from=build /repo/apps/site/public ./apps/site/public
- # Next writes its cache under .next at runtime; everything else stays root-owned and read-only.
- RUN mkdir -p apps/site/.next/cache && chown node:node apps/site/.next/cache
+@@ -194,6 +194,7 @@ describe("GET /openapi.json", () => {
+       "/v1/email_templates/{id}",
+       "/v1/email_templates/{id}/draft",
+       "/v1/email_templates/{id}/publish",
++      "/v1/email_templates/{id}/render",
+       "/v1/email_templates/{id}/versions",
+       "/v1/email_templates/{id}/versions/{version}",
+       "/v1/email_templates/{id}/versions/{version}/restore",
+@@ -459,6 +460,7 @@ describe("GET /openapi.json", () => {
+       ["get /v1/email_templates/{id}/draft", "getEmailTemplateDraft"],
+       ["put /v1/email_templates/{id}/draft", "updateEmailTemplateDraft"],
+       ["post /v1/email_templates/{id}/publish", "publishEmailTemplate"],
++      ["post /v1/email_templates/{id}/render", "renderEmailTemplate"],
+       ["get /v1/email_templates/{id}/versions", "listEmailTemplateVersions"],
+       ["get /v1/email_templates/{id}/versions/{version}", "getEmailTemplateVersion"],
+       ["post /v1/email_templates/{id}/versions/{version}/restore", "restoreEmailTemplateVersion"],
 ```
 
-**File**: `apps/site/public/shipyard/assets/clips.js` (removed, +0/-191)
+**File**: `apps/api/test/cli-contract.test.ts` (modified, +52/-3)
 ```diff
-@@ -1,191 +0,0 @@
--// The chapters' loops and line scenes.
--//
--// A [data-clip] figure holds its poster (an <img> with its size, so nothing
--// moves; its src waits for the page to load, so it never competes with the
--// hero). Near the viewport it gets its muted loop, which plays while in view
--// and pauses out of it, when the tab is hidden, or behind the film. Under
--// reduced motion or Save-Data the posters stay, and no video loads.
--//
--// [data-views] is a switch over several loops: each plays once and hands on to
--// the next, until a choice is made, after which the chosen one loops.
--//
--// The line scenes come in after the page has loaded, and pause offscreen and
--// while the tab is hidden, as in the app.
--(() => {
--  const root = document.documentElement;
--  const still = matchMedia("(prefers-reduced-motion: reduce)");
--  const saveData = navigator.connection?.saveData === true;
--
--  // The line scenes, into their slots (assets/scenes.json, from the app's
--  // drawings by scripts/scenes.mjs).
--  const slots = document.querySelectorAll("[data-scene]");
--  if (slots.length)
--    fetch(
--      `${document.querySelector("[data-base]")?.getAttribute("data-base") ?? ""}/assets/scenes.json`,
--    )
--      .then((r) => r.json())
--      .then((scenes) => {
--        const io =
--          "IntersectionObserver" in window &&
--          new IntersectionObserver((entries) => {
--            for (const e of entries)
--              e.target.toggleAttribute("data-off", !e.isIntersecting);
--          });
--        for (const slot of slots) {
--          if (!scenes[slot.dataset.scene]) continue;
--          slot.innerHTML = scenes[slot.dataset.scene];
--          if (io) io.observe(slot.firstElementChild);
--        }
--      })
--      .catch(() => {});
--  const hidden = () =>
--    root.toggleAttribute("data-berth-hidden", document.hidden);
--  document.addEventListener("visibilitychange", hidden);
--  hidden();
--
--  const figs = [...document.querySelectorAll("[data-clip]")];
--  if (!figs.length || !("IntersectionObserver" in window)) return;
--  const state = new Map(
--    figs.map((f) => [f, { near: false, seen: false, video: null }]),
--  );
--  const film = document.getElementById("film");
--
--  const make = (fig) => {
--    const s = state.get(fig);
--    const v = document.createElement("video");
--    for (const a of [
--      "muted",
--      "playsinline",
--      "disablepictureinpicture",
--      "disableremoteplayback",
--    ])
--      v.setAttribute(a, "");
--    v.muted = v.defaultMuted = v.playsInline = true;
--    v.loop = !fig.closest("[data-views]:not([data-chosen])");
--    v.preload = "auto";
--    v.tabIndex = -1;
--    v.setAttribute("aria-hidden", "true");
--    v.poster = fig.querySelector("img").src;
--    v.src = fig.dataset.clip;
--    v.addEventListener("playing", () => fig.classList.add("playing"));
--    v.addEventListener("ended", () =>
--      fig.dispatchEvent(new Event("clip:ended", { bubbles: true })),
--    );
--    v.addEventListener("error", () => {
--      v.remove();
--      s.video = null;
--      s.failed = true;
--    });
--    fig.append(v);
--    s.video = v;
--  };
--
--  // No loop loads before the page has, so none competes with the hero.
--  let ready = false;
--  const update = (fig) => {
--    const s = state.get(fig);
--    // Its poster, once the page has loaded and it's near.
--    const img = fig.querySelector("img[data-src]");
--    if (img && ready && (s.near || s.seen)) {
--      img.src = img.dataset.src;
--      img.removeAttribute("data-src");
--    }
--    const on =
--      ready &&
--      !still.matches &&
--      !saveData &&
--      !s.failed &&
--      !fig.hasAttribute("aria-hidden");
--    if (on && (s.near || s.seen) && !s.video) make(fig);
--    if (!s.video) return;
--    if (on && s.seen && !document.hidden && !film?.open)
--      s.video.play().catch(() => {});
--    else s.video.pause();
--  };
--  const all = () => figs.forEach(update);
--
--  // Near: load. In view: play.
--  const nearIO = new IntersectionObserver(
--    (entries) => {
--      for (const e of entries) {
--        state.get(e.target).near = e.isIntersecting;
--        update(e.target);
--      }
--    },
--    { rootMargin: "400px 0px" },
--  );
--  const seenIO = new IntersectionObserver(
--    (entries) => {
--      for (const e of entries) {
--        state.get(e.target).seen = e.isIntersecting;
--        update(e.target);
--      }
--    },
--    { threshold: 0.2 },
--  );
--  for (const f of figs) {
--    nearIO.observe(f);
--    seenIO.observe(f);
--  }
--  const go = () => {
--    ready = true;
--    all();
--  };
--  const idle = () =>
--    window.requestIdleCallback
--      ? requestIdleCallback(go, { timeout: 2000 })
--      : setTimeout(go, 300);
--  if (document.readyState === "complete") idle();
--  else addEventListener("load", idle, { once: true });
--  document.addEventListener("visibilitychange", all);
--  still.addEventListener("change", all);
--  film?.addEventListener("close", all);
--  document
--    .querySelector("[data-film]")
--    ?.addEventLi
+@@ -1,10 +1,11 @@
+ /**
+  * Contract test: the published `coss-cli` (built dist, on the built `coss` SDK) against the real
+  * app, in process: sign in with a key, send a simulated bounce and wait for it, and forward the
+- * environment's webhook events to a local receiver with `coss listen`.
++ * environment's webhook events to a local receiver with `coss listen`; add and verify a domain;
++ * keep templates as files (pull, edit, push, publish, preview).
+  */
+ import { describe, expect, test } from "bun:test";
+-import { mkdtempSync, readFileSync } from "node:fs";
++import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ import { runDueHookDeliveries } from "@coss/hooks";
+@@ -15,7 +16,7 @@ import { createTestTenant } from "@coss/tenancy/testing";
+ import { webhookReceiver } from "@coss/webhooks/testing";
+ import { verifyWebhook } from "coss";
+ import { type CliIo, run } from "coss-cli";
+-import { createTestApp, type TestApp } from "./helpers.ts";
++import { apiRequest, createTestApp, type TestApp, uniqueDomainName } from "./helpers.ts";
+ 
+ function toRequest(input: string | URL | Request, init?: RequestInit): Request {
+   return input instanceof Request ? new Request(input, init) : new Request(String(input), init);
+@@ -54,6 +55,7 @@ function cliIo(
+       void signal;
+     },
+     openBrowser: async () => false,
++    watch: () => undefined,
+     readStdin: async () => opts.stdin ?? "",
+     prompt: async () => answers.shift() ?? "",
+     hostname: () => "contract-test",
+@@ -344,6 +346,53 @@ describe("coss-cli against the API", () => {
+     expect(objects.slice(1).map((object) => object.id)).toEqual([later]);
+   });
+ 
++  test("domains: add, verify --wait; templates: pull, edit, push --publish, preview", async () => {
++    const tenant = await createTestTenant();
++    const { app } = createTestApp();
++    const cli = cliIo(app, { answers: [tenant.liveKey] });
++    expect(await run(["login", "--manual"], cli.io)).toBe(0);
++    const last = () => JSON.parse(cli.stdout().trim().split("\n").at(-1) ?? "{}");
++
++    const name = uniqueDomainName();
++    expect(await run(["domains", "add", name, "--format", "bind"], cli.io)).toBe(0);
++    expect(cli.stdout()).toContain(`; ${name}: the DNS records coss.com needs`);
++    expect(cli.stdout()).toMatch(/\._domainkey\..+\t3600\tIN\tCNAME\t.+\.$/m);
++    expect(await run(["domains", "verify", name, "--wait", "--json"], cli.io)).toBe(0);
++    expect(last()).toMatchObject({ name, status: "verified", can_send: true });
++
++    const created = await apiRequest(app, "POST", "/v1/email_templates", {
++      key: tenant.liveKey,
++      body: {
++        name: "Welcome",
++        alias: "welcome",
++        variables: [{ name: "first_name", type: "string" }],
++        sample_variables: { first_name: "Ada" },
++        contents: [{ locale: "en", subject: "Welcome, {{first_name}}", text: "Hi {{first_name}}" }],
++      },
++    });
++    expect(created.status).toBe(200);
++    const dir = join(cli.io.configDir, "templates");
++    expect(await run(["templates", "pull", "--dir", dir], cli.io)).toBe(0);
++    expect(readFileSync(join(dir, "welcome", "en.txt"), "utf8")).toBe("Hi {{first_name}}");
++    // Unchanged files save nothing; an edit is saved and published.
++    expect(await run(["templates", "push", "--dir", dir], cli.io)).toBe(0);
++    expect(cli.stdout()).toContain("welcome: unchanged");
++    writeFileSync(join(dir, "welcome", "en.html"), "<p>Hello {{first_name}}</p>");
++    expect(await run(["templates", "push", "--dir", dir, "--publish", "--json"], cli.io)).toBe(0);
++    expect(last()).toMatchObject({ saved: true, revision: 2, published_version: 1 });
++
++    expect(
++      await run(["templates", "preview", "welcome", "--var", "first_name=Grace", "--json"], cli.io),
++    ).toBe(0);
++    expect(last()).toMatchObject({
++      object: "email_template_render",
++      version: null,
++      subject: "Welcome, Grace",
++      html: "<p>Hello Grace</p>",
++      text: "Hi Grace",
++    });
++  });
++
+   test("listen forwards the environment's events to a local server, signed, and logs them", async () => {
+     const tenant = await createTestTenant();
+     const { app, dispatch } = createTestApp();
 ```
 
-**File**: `apps/site/public/shipyard/assets/harbour.js` (removed, +0/-201)
+**File**: `apps/api/test/contract-types.ts` (modified, +8/-0)
 ```diff
-@@ -1,201 +0,0 @@
--// The harbour, drawn as the app's Labs home draws it: the painting with a
--// halftone grain (an ordered Bayer dither of its lightness, strongest on
--// edges and in gradients), dissolving dot by dot into the page. Night in dark
--// mode. Each band renders once per size on a small canvas, one dot per 2 CSS
--// px, scaled up with hard pixels; nothing runs in between.
--//
--// A band is any [data-harbour] element with a <canvas>:
--//   data-day, data-night   the paintings
--//   data-fade              where it dissolves: "bottom" (default), "top" or "both"
--//   data-night-only        always the night painting (the closing harbour)
--//   data-position          the painting's vertical position, 0 to 1 (0.42)
--//   data-lazy              drawn when it nears the viewport, not before
--// Without this script the plain painting shows, faded by CSS.
--(() => {
--  const bands = [...document.querySelectorAll("[data-harbour]")];
--  if (!bands.length) return;
--  const CELL = 2;
--  const LEVELS = 6;
--  const FADE = 0.42;
--  const BAYER8 = [
--    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
--    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
--    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
--    23, 61, 29, 53, 21,
--  ].map((v) => (v + 0.5) / 64);
--  const dark = matchMedia("(prefers-color-scheme: dark)");
--  // Night is the site's theme (the "dark" class on <html>, by the header's
--  // switch or the system); the page says when it changes with a berth:theme
--  // event.
--  const pageNight = () => document.documentElement.classList.contains("dark");
--  // Where the lighthouse's lamp is in the painting, as a fraction of it.
--  const LAMP = [0.094, 0.457];
--
--  const hex = (s) => {
--    s = s.trim();
--    const m = s.match(/^#([\da-f]{6})$/i);
--    if (m)
--      return [0, 2, 4].map((i) => Number.parseInt(m[1].slice(i, i + 2), 16));
--    return (s.match(/[\d.]+/g) ?? [0, 0, 0]).slice(0, 3).map(Number);
--  };
--
--  for (const band of bands) {
--    const canvas = band.querySelector("canvas");
--    const beam = band.querySelector(".beam");
--    const fade = band.dataset.fade ?? "bottom";
--    const nightOnly = "nightOnly" in band.dataset;
--    const position = Number(band.dataset.position ?? 0.42);
--    const isNight = () => nightOnly || pageNight();
--    let size = "";
--    let timer = 0;
--    let pending = false;
--    let near = !("lazy" in band.dataset);
--
--    const draw = async (force) => {
--      if (!near) return;
--      if (document.hidden) return void (pending = true);
--      pending = false;
--      const w = Math.ceil(band.clientWidth / CELL);
--      const h = Math.ceil(band.clientHeight / CELL);
--      const night = isNight();
--      const key = `${w}x${h}${night}`;
--      if (!w || !h || (key === size && !force)) return;
--      const img = new Image();
--      img.src = night ? band.dataset.night : band.dataset.day;
--      try {
--        await img.decode();
--      } catch {
--        return;
--      }
--      size = key;
--      canvas.width = w;
--      canvas.height = h;
--      canvas.style.width = `${w * CELL}px`;
--      canvas.style.height = `${h * CELL}px`;
--      const ctx = canvas.getContext("2d", { willReadFrequently: true });
--      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
--      const dw = img.naturalWidth * scale;
--      const dh = img.naturalHeight * scale;
--      // Drawn small, then up: the brushwork softens to its forms, so the
--      // grain is the dither's, not the paint's.
--      const soft = document.createElement("canvas");
--      soft.width = Math.max(1, Math.round(w * 0.6));
--      soft.height = Math.max(1, Math.round(h * 0.6));
--      const sctx = soft.getContext("2d");
--      sctx.imageSmoothingQuality = "high";
--      // On a narrow screen the lighthouse, at the left, stays in view.
--      const across = Number(
--        band.dataset.across ?? (band.clientWidth < 700 ? 0.08 : 0.5),
--      );
--      sctx.drawImage(
--        img,
--        (w - dw) * across * 0.6,
--        (h - dh) * position * 0.6,
--        dw * 0.6,
--        dh * 0.6,
--      );
--      if (beam) {
--        beam.style.left = `${((w - dw) * across + dw * LAMP[0]) * CELL}px`;
--        beam.style.top = `${((h - dh) * position + dh * LAMP[1]) * CELL}px`;
--      }
--      ctx.imageSmoothingQuality = "high";
--      ctx.clearRect(0, 0, w, h);
--      ctx.drawImage(soft, 0, 0, w, h);
--      soft.width = soft.height = 0;
--      const frame = ctx.getImageData(0, 0, w, h);
--      const bg = hex(
--        getComputedStyle(band).getPropertyValue("--bg") ||
--          getComputedStyle(document.body).backgroundColor,
--      );
--      dither(frame, night ? 0.3 : 0.04, bg, fade);
--      ctx.putImageData(frame, 0, 0);
--      band.classList.add("drawn");
--      band.dispatchEvent(
--        new CustomEvent("harbour:drawn", {
--          detail: {
--            w: w * CELL,
--            h: h * CELL,
--            dw: dw * CELL
+@@ -121,6 +121,8 @@ import type {
+   ReceivedEmailSummary,
+   ReceivedEmailWebhookEvent,
+   ReceivingDomainObject,
++  RenderEmailTemplateRequest,
++  RenderedEmailTemplateObject,
+   RescheduleEmailRequest,
+   SendEmailBatchRequest,
+   SendEmailRequest,
+@@ -274,6 +276,7 @@ import type {
+   PollWebhookListenerParams,
+   PublishEmailTemplateParams,
+   RecoverWebhookEndpointParams,
++  RenderEmailTemplateParams,
+   RescheduleEmailParams,
+   RiskFeedbackParams,
+   RollWebhookEndpointSecretParams,
+@@ -344,6 +347,7 @@ import type {
+   ReceivedEmailSummary as SdkReceivedEmailSummary,
+   ReceivedEmailWebhookEvent as SdkReceivedEmailWebhookEvent,
+   ReceivingDomain as SdkReceivingDomain,
++  RenderedEmailTemplate as SdkRenderedEmailTemplate,
+   Reputation as SdkReputation,
+   ReputationCheck as SdkReputationCheck,
+   RiskAssessment as SdkRiskAssessment,
+@@ -520,6 +524,10 @@ export type Contract = [
+   Assert<MutuallyAssignable<z.output<typeof EmailTemplateObject>, SdkEmailTemplate>>,
+   Assert<MutuallyAssignable<z.output<typeof EmailTemplateList>, List<SdkEmailTemplate>>>,
+   Assert<MutuallyAssignable<z.output<typeof EmailTemplateVersionObject>, SdkEmailTemplateVersion>>,
++  Assert<MutuallyAssignable<z.input<typeof RenderEmailTemplateRequest>, RenderEmailTemplateParams>>,
++  Assert<
++    MutuallyAssignable<z.output<typeof RenderedEmailTemplateObject>, SdkRenderedEmailTemplate>
++  >,
+   Assert<
+     MutuallyAssignable<z.output<typeof EmailTemplateVersionList>, List<SdkEmailTemplateVersion>>
+   >,
 ```
 
-**File**: `apps/site/public/shipyard/assets/hero-loop.js` (removed, +0/-232)
+**File**: `apps/api/test/email-templates.test.ts` (modified, +66/-0)
 ```diff
-@@ -1,232 +0,0 @@
--// The harbour at night, alive: the launch film's seamless loop (the night
--// painting with the agents' lights on the water), in the hero's band.
--//
--// Only at night (the site's dark theme); the day keeps the
--// dithered painting. Nothing loads until the page has, and nothing at all for
--// reduced motion or Save-Data: the still harbour stays. The loop comes in from
--// its first frame (the poster) over the drawn harbour, in the same box, so
--// nothing moves; it dissolves into the page through the same 2 px Bayer dots
--// as assets/harbour.js draws, and pauses when hidden or scrolled away.
--//
--// Its frames are drawn on a canvas, cropped as the painting is, from a video
--// kept a pixel wide under it: a canvas is never the page's largest paint, so
--// the loop arriving late can't make the hero's LCP late.
--//
--//   data-loop          the loop's sources, in order (MP4, then WebM)
--//   data-loop-poster   its first frame
--(() => {
--  const band = document.querySelector(".hero [data-harbour][data-loop]");
--  if (!band || !("IntersectionObserver" in window)) return;
--  const root = document.documentElement;
--  const dark = matchMedia("(prefers-color-scheme: dark)");
--  const still = matchMedia("(prefers-reduced-motion: reduce)");
--  const night = () => root.classList.contains("dark");
--  const saveData = navigator.connection?.saveData === true;
--  // The same matrix, cell, fade and framing as the drawn harbour, so the dots
--  // and the lighthouse line up.
--  const CELL = 2;
--  const FADE = 0.42;
--  const POSITION = 0.42;
--  const BAYER8 = [
--    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
--    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
--    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
--    23, 61, 29, 53, 21,
--  ].map((v) => (v + 0.5) / 64);
--
--  let started = false;
--  let loop = null;
--  let video = null;
--  let canvas = null;
--  let ctx = null;
--  let poster = null;
--  let shown = false;
--  let inView = true;
--  let maskUrl = "";
--  let maskSize = "";
--  let timer = 0;
--  let frame = 0;
--
--  const wanted = () => started && night() && !still.matches && !saveData;
--
--  // A frame (or the poster) over the whole canvas, as object-fit: cover, at
--  // the painting's position: the lighthouse kept in view on a narrow screen.
--  const paint = (src, sw, sh) => {
--    if (!ctx || !sw || !sh) return;
--    const cw = canvas.width;
--    const ch = canvas.height;
--    const s = Math.max(cw / sw, ch / sh);
--    const across = band.clientWidth < 700 ? 0.08 : 0.5;
--    ctx.drawImage(
--      src,
--      (cw - sw * s) * across,
--      (ch - sh * s) * POSITION,
--      sw * s,
--      sh * s,
--    );
--  };
--  const paintNow = () => {
--    if (video?.readyState >= 2)
--      paint(video, video.videoWidth, video.videoHeight);
--    else if (poster?.naturalWidth)
--      paint(poster, poster.naturalWidth, poster.naturalHeight);
--  };
--
--  // Each new frame of the video, as it's shown.
--  const tick = () => {
--    paint(video, video.videoWidth, video.videoHeight);
--    frame = video.requestVideoFrameCallback
--      ? video.requestVideoFrameCallback(tick)
--      : requestAnimationFrame(tick);
--  };
--  const stopTicking = () => {
--    if (!frame) return;
--    if (video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(frame);
--    else cancelAnimationFrame(frame);
--    frame = 0;
--  };
--
--  // The canvas at the band's size (up to 2 device pixels a CSS pixel), and the
--  // dissolve as an alpha mask: the lower part of the band, row by row, keeps
--  // fewer of its 2 px dots.
--  const size = () => {
--    const W = band.clientWidth;
--    const H = band.clientHeight;
--    const key = `${W}x${H}`;
--    if (!loop || !W || !H || key === maskSize) return;
--    maskSize = key;
--    const dpr = Math.min(2, devicePixelRatio || 1);
--    canvas.width = Math.round(W * dpr);
--    canvas.height = Math.round(H * dpr);
--    paintNow();
--    const m = document.createElement("canvas");
--    m.width = W;
--    m.height = H;
--    const mctx = m.getContext("2d");
--    const img = mctx.createImageData(W, H);
--    const d = img.data;
--    const h = Math.ceil(H / CELL);
--    const foot = h * FADE;
--    for (let Y = 0; Y < H; Y++) {
--      const y = Math.floor(Y / CELL);
--      let keep = y > h - foot ? 1 - (y - (h - foot)) / foot : 1;
--      keep = keep * keep * (3 - 2 * keep);
--      const rowB = ((y + 3) & 7) * 8;
--      for (let X = 0; X < W; X++) {
--        if (BAYER8[rowB + ((Math.floor(X / CELL) + 5) & 7)] < keep)
--          d[(Y * W + X) * 4 + 3] = 255;
--      }
--    }
--    mctx.putImageData(img, 0, 0);
--    m.toBlob((blob) => {
--      if (!blob || !loop) return;
--      const old = maskUrl;
--      maskUrl = URL.createObjectURL(blob);
--      loop.style.setProperty("--mask", `url("${maskUrl}")`);
--      if (old) setTimeout(() => URL.revokeObjectURL(old), 1000);
--    });
--  };
--
--  const build = () => {
--    loop = document.createElemen
+@@ -7,6 +7,7 @@ import type {
+   EmailTemplateObjectOutput,
+   EmailTemplateVersionListOutput,
+   EmailTemplateVersionObjectOutput,
++  RenderedEmailTemplateObjectOutput,
+ } from "@coss/email/schemas";
+ import { createTestTenant, type TestTenant } from "@coss/tenancy/testing";
+ import {
+@@ -276,6 +277,71 @@ describe("/v1/email_templates", () => {
+     });
+   });
+ 
++  test("renders the draft or a version without sending", async () => {
++    const tenant = await createTestTenant();
++    const { app, dispatch } = createTestApp();
++    const key = tenant.sandboxKey;
++    const template = await createTemplate(app, key, { ...TEMPLATE, alias: "welcome" });
++    const render = (body: object, ref = "welcome") =>
++      apiRequest(app, "POST", `/v1/email_templates/${ref}/render`, { key, body });
++
++    // The draft, with its sample variables.
++    expect(await json<RenderedEmailTemplateObjectOutput>(await render({}))).toEqual({
++      object: "email_template_render",
++      template_id: template.id,
++      version: null,
++      locale: "en",
++      subject: "Welcome, Ada",
++      html: "<p>Hi Ada</p>",
++      text: null,
++    });
++    expect(
++      await json<RenderedEmailTemplateObjectOutput>(
++        await render({ locale: "de-AT", variables: { first_name: "Grace", items: [] } }),
++      ),
++    ).toMatchObject({ locale: "de", subject: "Willkommen, Grace", text: "Hallo Grace" });
++
++    await json(
++      await apiRequest(app, "POST", `/v1/email_templates/${template.id}/publish`, {
++        key,
++        body: {},
++      }),
++    );
++    await json(
++      await apiRequest(app, "PUT", `/v1/email_templates/${template.id}/draft`, {
++        key,
++        body: { contents: [{ locale: "en", subject: "{{nope}}", text: "x" }] },
++      }),
++    );
++    // A published version still renders; the broken draft is refused like a publish.
++    expect(
++      await json<RenderedEmailTemplateObjectOutput>(await render({ version: 1 })),
++    ).toMatchObject({
++      version: 1,
++      subject: "Welcome, Ada",
++    });
++    expect(await errorOf(await render({}))).toMatchObject({
++      code: "template_invalid",
++      issues: [{ path: "contents.en.subject" }],
++    });
++    expect(await errorOf(await render({ version: 1, variables: {} }))).toMatchObject({
++      code: "invalid_template_variables",
++      param: "variables.first_name",
++    });
++    expect(await errorOf(await render({ version: 9 }))).toMatchObject({
++      code: "template_version_not_found",
++      param: "version",
++    });
++    expect((await render({}, "missing")).status).toBe(404);
++
++    // Nothing was sent.
++    await dispatch();
++    const emails = await json<{ data: unknown[] }>(
++      await apiRequest(app, "GET", "/v1/emails", { key }),
++    );
++    expect(emails.data).toEqual([]);
++  });
++
+   test("keeps templates in their environment and refuses taken aliases", async () => {
+     const tenant = await createTestTenant();
+     const { app } = createTestApp();
 ```
 
-**File**: `apps/site/public/shipyard/assets/scenes.css` (removed, +0/-555)
+**File**: `apps/api/test/sdk-contract.test.ts` (modified, +15/-0)
 ```diff
-@@ -1,555 +0,0 @@
--/* Copied from app/src/components/art/scenes.css by site/scripts/scenes.mjs:
--   the app's line scenes, for the chapters' markers. The page maps
--   --muted-foreground and --warning to its own tokens (styles.css, .scene). */
--
--/* Scenes: Shipyard's small line drawings for quiet states (scenes.tsx). Lines
--   take currentColor (muted by default); the one amber point is the logo's
--   dot, from the theme's --warning, so every theme draws them right.
--
--   Motion rules: transforms and opacity only; slow (4s and up, except rain);
--   a pixel or two, a few degrees at most; every loop seamless. Animations
--   start a beat apart through --ba-delay, pause offscreen, while the window
--   is hidden, behind an open dialog, and after a few loops, and stop under
--   reduced motion. */
--
--.berth-art {
--  color: var(--muted-foreground);
--  overflow: visible;
--}
--
--/* Elements that turn about a point name it in the scene's coordinates. */
--.berth-art .ba-sweep,
--.berth-art .ba-gull,
--.berth-art .ba-float,
--.berth-art .ba-ripple,
--.berth-art .ba-weed,
--.berth-art .ba-needle,
--.berth-art .ba-ping,
--.berth-art .ba-swing,
--.berth-art .ba-throw,
--.berth-art .ba-settle {
--  transform-box: view-box;
--}
--
--/* Water: a wave slides by whole periods of its curve and dashes, then repeats. */
--.berth-art .ba-wave {
--  animation: ba-drift var(--ba-d, 8s) linear infinite;
--}
--
--.berth-art .ba-wave.ba-rev {
--  animation-direction: reverse;
--}
--
--@keyframes ba-drift {
--  from {
--    transform: translateX(0);
--  }
--  to {
--    transform: translateX(var(--ba-x, -12px));
--  }
--}
--
--/* The buoy bobs and leans on the swell. */
--.berth-art .ba-buoy {
--  transform-box: fill-box;
--  transform-origin: 50% 85%;
--  animation: ba-bob 4.4s ease-in-out infinite;
--}
--
--.berth-art .ba-buoy.ba-slow {
--  animation-duration: 6.4s;
--}
--
--@keyframes ba-bob {
--  0%,
--  100% {
--    transform: translateY(-0.6px) rotate(-5deg);
--  }
--  50% {
--    transform: translateY(0.9px) rotate(4deg);
--  }
--}
--
--/* An amber glint on the water, breathing with the light above it. */
--.berth-art .ba-glint {
--  transform-box: fill-box;
--  transform-origin: center;
--  animation: ba-glint 4.4s ease-in-out infinite;
--}
--
--@keyframes ba-glint {
--  0%,
--  100% {
--    opacity: 0.22;
--    transform: scaleX(0.75);
--  }
--  50% {
--    opacity: 0.42;
--    transform: scaleX(1.1);
--  }
--}
--
--/* A boat rides the swell, a little slower than a buoy would. */
--.berth-art .ba-ride {
--  transform-box: fill-box;
--  transform-origin: 50% 90%;
--  animation: ba-ride 5.2s ease-in-out infinite;
--}
--
--@keyframes ba-ride {
--  0%,
--  100% {
--    transform: translateY(-0.4px) rotate(-1.4deg);
--  }
--  50% {
--    transform: translateY(0.6px) rotate(1.2deg);
--  }
--}
--
--/* Under sail: pitching on the swell and edging forward, then easing back. */
--.berth-art .ba-sail {
--  transform-box: fill-box;
--  transform-origin: 50% 92%;
--  animation: ba-sail 4.8s ease-in-out infinite;
--}
--
--@keyframes ba-sail {
--  0%,
--  100% {
--    transform: translate(-0.6px, -0.4px) rotate(-1.8deg);
--  }
--  50% {
--    transform: translate(0.8px, 0.6px) rotate(1.4deg);
--  }
--}
--
--/* The wake streams back from the stern, a dash at a time. */
--.berth-art .ba-wake {
--  animation: ba-wake 2.4s linear infinite;
--}
--
--@keyframes ba-wake {
--  from {
--    transform: translateX(0);
--  }
--  to {
--    transform: translateX(-10px);
--  }
--}
--
--/* Offline: the buoy's light turns slowly, as if looking for the box. */
--.berth-art .ba-beacon {
--  animation: ba-beacon 3.6s ease-in-out infinite;
--}
--
--@keyframes ba-beacon {
--  0%,
--  100% {
--    opacity: 0.3;
--  }
--  50% {
--    opacity: 1;
--  }
--}
--
--.berth-art .ba-fog {
--  animation: ba-fog 12s ease-in-out infinite alternate;
--}
--
--.berth-art .ba-fog.ba-rev {
--  animation-duration: 16s;
--  animation-direction: alternate-reverse;
--}
--
--@keyframes ba-fog {
--  from {
--    transform: translateX(-5px);
--  }
--  to {
--    transform: translateX(5px);
--  }
--}
--
--/* Lighthouse: the beam sweeps out and back, brightest as it faces you; the
--   lamp and the glint where it lands keep time. */
--.berth-art .ba-sweep {
--  animation: ba-sweep 7s ease-in-out infinite alternate;
--}
--
--@keyframes ba-sweep {
--  0% {
--    transform: rotate(-7deg) scaleX(0.86);
--    opacity: 0.45;
--  }
--  50% {
--    transform: rotate(0deg) scaleX(1);
--    opacity: 1;
--  }
--  100% {
--    transform: rotate(6deg) scaleX(0.88);
--    opacity: 0.5;
--  }
--}
--
--.berth-art .ba-lamp {
--  animation: ba-lamp 3.5s ease-in-out infinite alternate;
--}
--
--@keyframes ba-lamp {
--  from {
--    opacity: 0.7;
--  }
--  to {
--    opacity: 1;
--  }
--}
--
--.berth-art .ba-glint.ba-sync {
--  animation-duration: 7s;
--}
--
--/* Dawn: the sun lifts a little over the horizon, then settles. */
--.berth-art .ba-rise {
--  animation: ba-rise 10s ease-in-out infinite alternate;
--}
--
--@keyframes ba-rise {
--  from {
--    transform: translateY(1.8px);
--  }
--  to {
--    transform: translateY(-1.2px);
--  }
--}
--
--/* Gulls glide, a wingbeat now and then. */
--.berth-art .ba-gu
-```
-
-**File**: `apps/site/public/shipyard/assets/scenes.json` (removed, +0/-8)
-```diff
-@@ -1,8 +0,0 @@
--{
--  "setting-out": "<svg aria-hidden=\"true\" data-scene=\"setting-out\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-setting-out-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-setting-out-fg)\"></rect></mask></defs><defs><linearGradient id=\"sc-setting-out-wg\" gradientUnits=\"userSpaceOnUse\" x1=\"34\" x2=\"90\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.7\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-wake\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"160\" height=\"80\"><rect x=\"0\" y=\"0\" width=\"160\" height=\"80\" fill=\"url(#sc-setting-out-wg)\"></rect></mask></defs><g opacity=\"0.4\"><g stroke=\"currentColor\"><path d=\"M8 36 H26\" stroke-width=\"2.8\"></path><path d=\"M11 38 V48 M22 38 V48\" stroke-width=\"2.4\"></path><path d=\"M11 51.5 V60 M22 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g mask=\"url(#sc-setting-out-wake)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-wake\" d=\"M30 51.6 Q 60 51.2 96 49.6\" stroke-dasharray=\"5 5\" opacity=\"0.55\"></path><path class=\"ba-wake\" style=\"--ba-delay:-0.8s\" d=\"M30 56.4 Q 60 55.6 96 51\" stroke-dasharray=\"3 7\" opacity=\"0.32\"></path></g><g class=\"ba-sail\" stroke=\"currentColor\"><path d=\"M84 43 H126 L119.6 49.8 H88.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"2.2\"></path><path d=\"M100 43 V22.4\" stroke-width=\"1.6\"></path><path d=\"M98.4 23.6 V40.6 H85.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"1.6\"></path><path d=\"M101.8 24.6 L120.6 40.6 H101.8 Z\" fill=\"currentColor\" fill-opacity=\"0.05\" stroke-width=\"1.5\"></path><circle cx=\"100\" cy=\"20.4\" r=\"2.5\" fill=\"var(--warning)\" stroke=\"none\"></circle></g><g mask=\"url(#sc-setting-out-fade)\" stroke=\"currentColor\"><path d=\"M-12 49.4 q3 -1.3 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.72\" stroke-width=\"1.4\" class=\"ba-wave\" style=\"--ba-d:7s;--ba-x:-12px\"></path><path d=\"M-12 55.6 q3 -1.1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.42\" stroke-width=\"1.4\" stroke-dasharray=\"16 8\" class=\"ba-wave ba-rev\" style=\"--ba-d:11s;--ba-x:-24px\"></path><path d=\"M-12 61.599999999999994 q3 -1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.22\" stroke-width=\"1.4\" stroke-dasharray=\"6 10 14 6\" class=\"ba-wave\" style=\"--ba-d:15s;--ba-x:-36px\"></path></g></svg>",
--  "signal": "<svg aria-hidden=\"true\" data-scene=\"signal\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-signal-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-signal-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-signal-fg)\"></rect></mask></defs><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g><g transform=\"translate(160 0) scale(-1 1)\"><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M37 34.6 V26.6 M123 34.6 V26.6\"></path></g><g class=\"ba-lift\" mask=\"url(#sc-signal-fade)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-fog\" d=\"M52 29 H108\" stroke-dasharray=\"12 7\" opacity=\"0.32\"></path><path class=\"ba-fog ba-rev\" d=\"M58 34 H102\" stroke-dasharray=\"7 8\" opacity=\"0.2\"></path></g><path class=\
+@@ -182,6 +182,21 @@ describe("coss SDK against the API", () => {
+     expect(updated.data?.revision).toBe(2);
+     const published = await coss.email.templates.publish("receipt", { revision: 2 });
+     expect(published.data).toMatchObject({ version: 1, revision: 2 });
++    const rendered = await coss.email.templates.render("receipt", {
++      version: 1,
++      locale: "fr-CA",
++      variables: { first_name: "Ada", items: [] },
++    });
++    expect(rendered.error).toBeNull();
++    expect(rendered.data).toEqual({
++      object: "email_template_render",
++      template_id: created.data?.id ?? "",
++      version: 1,
++      locale: "fr",
++      subject: "Votre reçu, Ada",
++      html: null,
++      text: "Merci !",
++    });
+ 
+     const sent = await coss.email.send({
+       from: "Acme <billing@acme.com>",
 ```
 
 ---
 
-### Incident Patch 2: `c920f6f7` (2026-10-17)
-**Commit Message**: Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover
+### Incident Patch 2: `ab7b5959` (2026-10-19)
+**Commit Message**: Merge pull request #143 from cosscom/build-a-no-content
 
-coss.com/shipyard was still berthd.app's page dropped into coss.com's shell:
-a dithered harbour, a chapter per feature with a video loop, and its own
-stylesheet and scripts. It is now built the way coss.com's landing page is:
-one ruled sheet, section heads with the description beside the heading,
-coss ui buttons, and isometric line drawings on the drafting grid, with
-Shipyard's amber lamp as its one colour.
+Email: content storage, a per-environment no-content-storage mode
 
-- The page: the hero and a drawing of a closed laptop linked over ssh to a
-  tray of boxes running agents; the agents it works with; six features
-  (Start, Watch it work, See the page, Loop until green, Review, From your
-  phone), each with a drawing; Close the laptop, with a night's log; the
-  rest of the yard (automations, kits, database, Leadline, Linear, secrets,
-  plugins, themes), linked to their guides; and the install line with three
-  steps. The header gains Changelog.
-- The drawings (components/shipyard/drawings.tsx) use iso.tsx's projection
-  and the --iso-* faces, so light and dark come from the site's tokens. Each
-  sits in a Stage (a small client island) whose p
-
-**File**: `apps/site/AGENTS.md` (modified, +1/-1)
+**File**: `.changeset/content-storage.md` (added, +5/-0)
 ```diff
-@@ -30,7 +30,7 @@ the macro API, `staticSource` and code-usage APIs are recent.
- | `src/components/mdx.tsx`, `src/components/docs-table.tsx` | MDX components: coss ui's docs typography (headings with anchor links, lists, tables, inline code, `Callout` as a coss ui `Alert`, `Cards`/`Card` as linked cards) over Fumadocs' content pipeline (`pre` is Fumadocs' `CodeBlock` with Shiki/Twoslash output, `CodeBlockTabs` for ` ```package-install `, `Steps`/`Step`, `Tabs`/`Tab`). `DocsTable` & co. are shared with the generated plan, rate and retention tables. |
- | `src/app/(home)`, `src/components/home/` | The landing page (a "parts catalog": isometric drawings in `iso.tsx`, the agent prompt (`copy-prompt.tsx`), the catalog in `parts.ts`; design rules in [DESIGN.md](./DESIGN.md)), the pricing page, the legal pages and `SiteFooter`. |
- | `src/app/(home)/pricing`, `src/components/pricing/`, `src/lib/pricing.ts` | `/pricing`: plan cards, an email bill estimator (a client island rating with `@coss/billing/engine`'s `chargeRange`, so it matches invoices), usage rate cards, the plan comparison (`planRows()`, shared with the billing guide's `<PlanTable />`) and an FAQ. Every price, limit and allowance comes from `@coss/billing/catalog`. |
--| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/runtime.tsx`, `src/lib/shipyard.ts`, `public/shipyard/assets/` | `/shipyard`: Shipyard's landing page as it was at berthd.app (moved from the coss ui repository's `apps/shipyard`), in its own route group with its own header links (`SHIPYARD_LINKS`). The page is static markup styled by `landing.css` (scoped to `.shipyard-landing`, its own tokens; the segment's layout loads Cal Sans from `@coss/ui/fonts` for the headlines and JetBrains Mono); the harbour, the night loop, the chapters' loops and line scenes are plain scripts in `public/shipyard/assets` (same-origin, so the CSP allows them) that `LandingRuntime` appends after the first paint and redraws on theme changes. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases, and the docs link to the `cosscom/shipyard` repository until they move here. |
-+| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/{drawings,stage,copy-line}.tsx`, `src/lib/shipyard.ts` | `/shipyard`: Shipyard's landing page, drawn like the coss.com catalog (one ruled sheet, `SectionHead`s, `.drafting-grid` behind drawings) in its own route group with its own header links (`SHIPYARD_LINKS`). The drawings are `drawings.tsx`: isometric line art on `iso.tsx`'s projection and `--iso-*` faces, with Shipyard's one amber lamp; `landing.css` styles them and their motion, the one place on coss.com besides the manifesto where drawings move: each sits in a `Stage` (a client island) whose parts (`.part`, staggered by `--i`) drop in when it scrolls into view, groups marked `.lift` rise on hover, lamps breathe and wires march; without script or with `prefers-reduced-motion` the drawing is simply there. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases. `public/shipyard/assets` keeps only the harbour paintings and the night loop, for the coss.com landing page's banner (`harbour.tsx`). |
- | `content/shipyard/`, `src/lib/shipyard-docs.ts`, `src/app/(shipyard)/shipyard/docs`, `src/components/shipyard/docs/`, `src/lib/shipyard/`, `public/shipyard/shots/` | `/shipyard/docs`: Shipyard's docs (moved with the landing page; the Markdown is the `cosscom/shipyard` repository's `docs/`). Their own `defineDocs` collection (`shipyard` in `collections.ts`, with its own `applyMdxPreset` so its rehype plugins never touch coss's docs: `rehype-reference.ts` makes the reference tables linkable, `rehype-nowrap-tokens.ts` keeps inline code from wrapping inside a flag), `loader` (`shipyardSource`, base `/shipyard/docs`) and search index (`/shipyard/docs/search.json`, which its `SiteShell`'s ⌘K menu searches), out of coss's sidebar, search and `/llms.txt`. The pages render in the same `DocsLayoutFrame`/`DocsPageFrame` as `/docs` (every folder of the tree is a sidebar group, since none is a root). MDX gets the site's components (coss ui callouts and cards included) plus Shipyard's (`getShipyardMDXComponents`): diagrams, the line scenes (`scenes.tsx`, a copy of the app's drawings), screenshots (`<Shot name>`: `public/shipyard/shots/<name>-{light,dark}.webp`, sizes in `shots.json`) and the stage; their styles are the three stylesheets the docs layout imports. Internal links in the pages are absolute (`/shipyard/docs/…`). |
- | `src/app/(calendar)/kloq`, `src/lib/calendar.ts`, `src/lib/calendar/`, `src/components/calendar/`, `src/styles/calendar.css`, `packages/kloq` | `/kloq`: kloq (moved from the `cosscom/calendar` repository, which was built to be served below `/calendar`): the landing page, the live demo (`/kloq/demo`, localStorage-backed), the five tools (`/
-```
-
-**File**: `apps/site/DESIGN.md` (modified, +4/-0)
-```diff
-@@ -45,6 +45,10 @@ The exception is `/crowd-opinionated-source-software`, a manifesto rather than a
- illustration (`src/components/coss-landing/`, client islands on `motion`) that starts when it scrolls into view,
- loops gently, stays grayscale and holds its final frame under `prefers-reduced-motion`.
- 
-+Shipyard's page (`/shipyard`) is the other exception: its drawings (`src/components/shipyard/drawings.tsx`)
-+drop in part by part when they scroll into view, lift on hover, and carry Shipyard's one amber lamp; all of it
-+stops under `prefers-reduced-motion`.
+@@ -0,0 +1,5 @@
++---
++"coss": minor
++---
 +
- ## Copy
++Content storage: `coss.email.storage` (`get`, `update`) switches an environment to `content_storage: "discard"`, which keeps each email's subject, body, headers, template variables and attachment filenames only until it is sent, fails or is canceled. Emails have `content_storage` (`mode` and `discarded_at`); `EmailContentStorage`, `ContentStorageMode`, `StorageSettings` and `UpdateStorageSettingsParams` are exported.
+```
+
+**File**: `apps/api/openapi.json` (modified, +564/-6)
+```diff
+@@ -513,6 +513,9 @@
+               "null"
+             ],
+             "description": "The broadcast the email is part of; `null` for any other email."
++          },
++          "content_storage": {
++            "$ref": "#/components/schemas/EmailContentStorage"
+           }
+         },
+         "required": [
+@@ -541,7 +544,8 @@
+           "scheduled_at",
+           "batch_id",
+           "template",
+-          "broadcast_id"
++          "broadcast_id",
++          "content_storage"
+         ],
+         "examples": [
+           {
+@@ -594,7 +598,11 @@
+             "scheduled_at": null,
+             "batch_id": null,
+             "template": null,
+-            "broadcast_id": null
++            "broadcast_id": null,
++            "content_storage": {
++              "mode": "store",
++              "discarded_at": null
++            }
+           }
+         ]
+       },
+@@ -815,6 +823,38 @@
+           }
+         ]
+       },
++      "EmailContentStorage": {
++        "type": "object",
++        "properties": {
++          "mode": {
++            "type": "string",
++            "enum": [
++              "store",
++              "discard"
++            ],
++            "description": "The environment's content storage when the email was sent. With `discard`, the subject, `html`, `text`, `headers`, template variables and attachment filenames are cleared once the email is sent, fails or is canceled."
++          },
++          "discarded_at": {
++            "type": [
++              "string",
++              "null"
++            ],
++            "format": "date-time",
++            "description": "When the content was cleared; `null` while it is kept. A cleared email has an empty `subject`, `html` and `text` `null` and no `headers`."
++          }
++        },
++        "required": [
++          "mode",
++          "discarded_at"
++        ],
++        "examples": [
++          {
++            "mode": "store",
++            "discarded_at": null
++          }
++        ],
++        "description": "Whether coss.com keeps the email's content after sending it."
++      },
+       "SendEmailRequest": {
+         "type": "object",
+         "properties": {
+@@ -1158,7 +1198,11 @@
+                 "scheduled_at": null,
+                 "batch_id": "batch_01k8d0n6x5f3w2e1r9t7y4u6i8",
+                 "template": null,
+-                "broadcast_id": null
++                "broadcast_id": null,
++                "content_storage": {
++                  "mode": "store",
++                  "discarded_at": null
++                }
+               }
+             ],
+             "created_at": "2026-10-10T12:00:00.000Z"
+@@ -1275,7 +1319,11 @@
+                 "sent_at": "2026-10-10T12:00:01.000Z",
+                 "scheduled_at": null,
+                 "batch_id": null,
+-                "template": null
++                "template": null,
++                "content_storage": {
++                  "mode": "store",
++                  "discarded_at": null
++                }
+               }
+             ],
+             "has_more": false
+@@ -1436,6 +1484,9 @@
+               "null"
+             ],
+             "description": "The broadcast the email is part of; `null` for any other email."
++          },
++          "content_storage": {
++            "$ref": "#/components/schemas/EmailContentStorage"
+           }
+         },
+         "required": [
+@@ -1460,7 +1511,8 @@
+           "scheduled_at",
+           "batch_id",
+           "template",
+-          "broadcast_id"
++          "broadcast_id",
++          "content_storage"
+         ],
+         "description": "An email without its content. Retrieve the email for `html`, `text`, `headers` and `attachments`.",
+         "examples": [
+@@ -1508,7 +1560,11 @@
+             "sent_at": "2026-10-10T12:00:01.000Z",
+             "scheduled_at": null,
+             "batch_id": null,
+-            "template": null
++            "template": null,
++            "content_storage": {
++              "mode": "store",
++              "discarded_at": null
++            }
+           }
+         ]
+       },
+@@ -8280,6 +8336,69 @@
+           }
+         ]
+       },
++      "StorageSettings": {
++        "type": "object",
++        "properties": {
++          "object": {
++            "type": "string",
++            "enum": [
++              "storage_settings"
++            ]
++          },
++          "content_storage": {
++            "type": "string",
++            "enum": [
++              "store",
++              "discard"
++            ],
++            "description": "`store` (the default) keeps each email's content (subject, body, headers, template variables, attachment filenames) for the email retention period. `discard` keeps it only until the email is sent, fails or is canceled; its metadata (addresses, tags, category, status, recipients, events) is kept as usual."
++          },
++          "updated_at": {
++            "type": [
++              "string",
++              "null"
++            ],
++            "format": "date-time",
++            "description": "When the setting last chan
+```
+
+**File**: `apps/api/src/middleware/request-log.ts` (modified, +41/-2)
+```diff
+@@ -1,10 +1,13 @@
++import { getStorageSettings } from "@coss/email";
+ import {
++  EMAIL_CONTENT_KEYS,
+   type LogWriter,
+   loggedRequestHeaders,
+   loggedResponseHeaders,
+   redactBody,
+ } from "@coss/logs";
+ import type { RefusedKeyContext } from "@coss/tenancy";
++import type { Context } from "hono";
+ import { createMiddleware } from "hono/factory";
+ import type { AppEnv } from "../types.ts";
  
- - **Assertive and authoritative.** coss.com is the foundation apps are built on: write every product as
+@@ -55,6 +58,37 @@ const CAPABILITY_RESPONSES = [/^\/v1\/contacts\/[^/]+\/preference_links$/];
+ const STATELESS_LOOKUPS = ["/v1/risk/email/check", "/v1/risk/ip/check"];
+ const CONTENT_REQUESTS = ["/v1/risk/content/classify", ...STATELESS_LOOKUPS];
+ 
++/**
++ * Requests and responses that carry emails' content (sends, batches, reads, cancel, reschedule):
++ * their subjects, bodies, headers, template variables and attachment filenames are redacted (the
++ * log would otherwise keep what the email itself doesn't) when an email they answer with was sent
++ * without content storage (`markEmailContent`, from the email's own snapshot: a read or an
++ * idempotent replay after switching back to `store`), or when the environment's content storage
++ * is `discard` now (requests refused before any email exists).
++ */
++const EMAIL_CONTENT_PATHS = /^\/v1\/emails(\/|$)/;
++
++/** Marks the request as answering with an email sent without content storage, if one is. */
++export function markEmailContent(
++  c: Context<AppEnv>,
++  emails: readonly { content_storage: { mode: string } }[],
++): void {
++  if (emails.some((email) => email.content_storage.mode === "discard")) {
++    c.set("discardsEmailContent", true);
++  }
++}
++
++async function contentKeysFor(
++  path: string,
++  auth: { organizationId: string; environmentId: string },
++  marked: boolean,
++): Promise<readonly string[] | undefined> {
++  if (!EMAIL_CONTENT_PATHS.test(path)) return undefined;
++  if (marked) return EMAIL_CONTENT_KEYS;
++  const { contentStorage } = await getStorageSettings(auth);
++  return contentStorage === "discard" ? EMAIL_CONTENT_KEYS : undefined;
++}
++
+ function keepsRequestBody(path: string): boolean {
+   return !CONTENT_REQUESTS.includes(path);
+ }
+@@ -163,12 +197,17 @@ export function requestLog(writer: LogWriter) {
+     const responseHeaders = loggedResponseHeaders(response.headers);
+     const { requestId, clientIp } = c.var;
+     const search = new URL(c.req.url).search;
++    const marked = c.get("discardsEmailContent") === true;
+ 
+     void (async () => {
+       const [requestJson, responseJson] = await Promise.all([
+         requestText?.then(parseJson, () => undefined),
+         responseCopy ? readJson(responseCopy) : undefined,
+       ]);
++      const content =
++        requestJson === undefined && responseJson === undefined
++          ? undefined
++          : await contentKeysFor(path, auth, marked);
+       const error = (responseJson as ErrorEnvelope | undefined)?.error;
+       const { resourceType, resourceId } = resourceOf(path, responseJson);
+       writer.write({
+@@ -196,11 +235,11 @@ export function requestLog(writer: LogWriter) {
+           request: {
+             ...(search ? { query: search.slice(1) } : {}),
+             headers: requestHeaders,
+-            ...(requestJson === undefined ? {} : { body: redactBody(requestJson) }),
++            ...(requestJson === undefined ? {} : { body: redactBody(requestJson, { content }) }),
+           },
+           response: {
+             headers: responseHeaders,
+-            ...(responseJson === undefined ? {} : { body: redactBody(responseJson) }),
++            ...(responseJson === undefined ? {} : { body: redactBody(responseJson, { content }) }),
+           },
+           ...(typeof error?.type === "string" ? { error_type: error.type } : {}),
+         },
 ```
 
-**File**: `apps/site/Dockerfile` (modified, +1/-1)
+**File**: `apps/api/src/routes/emails.ts` (modified, +10/-0)
 ```diff
-@@ -52,7 +52,7 @@ ENV NODE_ENV=production \
- WORKDIR /app
- COPY --from=build /repo/apps/site/.next/standalone ./
- COPY --from=build /repo/apps/site/.next/static ./apps/site/.next/static
--# The standalone output leaves public/ out (Shipyard's landing page assets, under /shipyard/assets).
-+# The standalone output leaves public/ out (Shipyard's harbour and docs screenshots, under /shipyard).
- COPY --from=build /repo/apps/site/public ./apps/site/public
- # Next writes its cache under .next at runtime; everything else stays root-owned and read-only.
- RUN mkdir -p apps/site/.next/cache && chown node:node apps/site/.next/cache
+@@ -29,6 +29,7 @@ import { notFound } from "../errors.ts";
+ import { requireApiKey } from "../middleware/api-key.ts";
+ import { upgradeRequestBody } from "../middleware/api-version.ts";
+ import { rateLimit, rateLimitError } from "../middleware/rate-limit.ts";
++import { markEmailContent } from "../middleware/request-log.ts";
+ import type { AppEnv } from "../types.ts";
+ import { billingErrorDoc, commonErrors, errorDoc, jsonDoc, requestIdHeader } from "./docs.ts";
+ import {
+@@ -419,6 +420,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+         // A matching replay (queued or completed) needs no quota. This lookup cannot create or dispatch a send.
+         const replay = await emailService.replay(input);
+         if (replay) {
++          markEmailContent(c, [replay]);
+           c.header("Idempotent-Replayed", "true");
+           return c.json(replay, 202);
+         }
+@@ -439,6 +441,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+         throw error;
+       }
+       const { email, replayed } = result;
++      markEmailContent(c, [email]);
+       // A replay sent nothing new (an SDK retry reuses its Idempotency-Key).
+       if (replayed) {
+         await c.var.rateLimiter.refund(quota);
+@@ -471,6 +474,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+       if (!decision.allowed) {
+         const replay = await emailService.replayBatch(input);
+         if (replay) {
++          markEmailContent(c, replay.data);
+           c.header("Idempotent-Replayed", "true");
+           return c.json(replay, 202);
+         }
+@@ -490,6 +494,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+         throw error;
+       }
+       const { batch, replayed } = result;
++      markEmailContent(c, batch.data);
+       if (replayed) {
+         await c.var.rateLimiter.refund(quota);
+         c.header("Idempotent-Replayed", "true");
+@@ -506,6 +511,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+     const { organizationId, environmentId } = c.var.auth;
+     const batch = await getEmailBatch({ organizationId, environmentId, id });
+     if (!batch) throw notFound("No batch with this id exists in this API key's environment.");
++    markEmailContent(c, batch.data);
+     return c.json(batch, 200);
+   });
+ 
+@@ -515,6 +521,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+     // Malformed, unknown, other-environment and other-organization ids are all `null`.
+     const email = await getEmail({ organizationId, environmentId, id });
+     if (!email) throw notFound("No email with this id exists in this API key's environment.");
++    markEmailContent(c, [email]);
+     return c.json(email, 200);
+   });
+ 
+@@ -535,13 +542,15 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+       createdBefore: query.created_before ? new Date(query.created_before) : undefined,
+       before: query.after,
+     });
++    markEmailContent(c, page.data);
+     return c.json({ object: "list" as const, data: page.data, has_more: page.hasMore }, 200);
+   });
+ 
+   router.openapi(cancelEmailRoute, async (c) => {
+     const { id } = c.req.valid("param");
+     const { organizationId, environmentId } = c.var.auth;
+     const email = await emailService.cancel({ organizationId, environmentId, emailId: id });
++    markEmailContent(c, [email]);
+     await recordApiAudit(c, {
+       action: "email.canceled",
+       target: { type: "email", id: email.id },
+@@ -564,6 +573,7 @@ export function createEmailRoutes(emailService: EmailService): OpenAPIHono<AppEn
+       target: { type: "email", id: email.id },
+       metadata: { scheduled_at: email.scheduled_at },
+     });
++    markEmailContent(c, [email]);
+     return c.json(email, 200);
+   });
+ 
 ```
 
-**File**: `apps/site/public/shipyard/assets/clips.js` (removed, +0/-191)
+**File**: `apps/api/src/routes/storage-settings.ts` (added, +95/-0)
 ```diff
-@@ -1,191 +0,0 @@
--// The chapters' loops and line scenes.
--//
--// A [data-clip] figure holds its poster (an <img> with its size, so nothing
--// moves; its src waits for the page to load, so it never competes with the
--// hero). Near the viewport it gets its muted loop, which plays while in view
--// and pauses out of it, when the tab is hidden, or behind the film. Under
--// reduced motion or Save-Data the posters stay, and no video loads.
--//
--// [data-views] is a switch over several loops: each plays once and hands on to
--// the next, until a choice is made, after which the chosen one loops.
--//
--// The line scenes come in after the page has loaded, and pause offscreen and
--// while the tab is hidden, as in the app.
--(() => {
--  const root = document.documentElement;
--  const still = matchMedia("(prefers-reduced-motion: reduce)");
--  const saveData = navigator.connection?.saveData === true;
--
--  // The line scenes, into their slots (assets/scenes.json, from the app's
--  // drawings by scripts/scenes.mjs).
--  const slots = document.querySelectorAll("[data-scene]");
--  if (slots.length)
--    fetch(
--      `${document.querySelector("[data-base]")?.getAttribute("data-base") ?? ""}/assets/scenes.json`,
--    )
--      .then((r) => r.json())
--      .then((scenes) => {
--        const io =
--          "IntersectionObserver" in window &&
--          new IntersectionObserver((entries) => {
--            for (const e of entries)
--              e.target.toggleAttribute("data-off", !e.isIntersecting);
--          });
--        for (const slot of slots) {
--          if (!scenes[slot.dataset.scene]) continue;
--          slot.innerHTML = scenes[slot.dataset.scene];
--          if (io) io.observe(slot.firstElementChild);
--        }
--      })
--      .catch(() => {});
--  const hidden = () =>
--    root.toggleAttribute("data-berth-hidden", document.hidden);
--  document.addEventListener("visibilitychange", hidden);
--  hidden();
--
--  const figs = [...document.querySelectorAll("[data-clip]")];
--  if (!figs.length || !("IntersectionObserver" in window)) return;
--  const state = new Map(
--    figs.map((f) => [f, { near: false, seen: false, video: null }]),
--  );
--  const film = document.getElementById("film");
--
--  const make = (fig) => {
--    const s = state.get(fig);
--    const v = document.createElement("video");
--    for (const a of [
--      "muted",
--      "playsinline",
--      "disablepictureinpicture",
--      "disableremoteplayback",
--    ])
--      v.setAttribute(a, "");
--    v.muted = v.defaultMuted = v.playsInline = true;
--    v.loop = !fig.closest("[data-views]:not([data-chosen])");
--    v.preload = "auto";
--    v.tabIndex = -1;
--    v.setAttribute("aria-hidden", "true");
--    v.poster = fig.querySelector("img").src;
--    v.src = fig.dataset.clip;
--    v.addEventListener("playing", () => fig.classList.add("playing"));
--    v.addEventListener("ended", () =>
--      fig.dispatchEvent(new Event("clip:ended", { bubbles: true })),
--    );
--    v.addEventListener("error", () => {
--      v.remove();
--      s.video = null;
--      s.failed = true;
--    });
--    fig.append(v);
--    s.video = v;
--  };
--
--  // No loop loads before the page has, so none competes with the hero.
--  let ready = false;
--  const update = (fig) => {
--    const s = state.get(fig);
--    // Its poster, once the page has loaded and it's near.
--    const img = fig.querySelector("img[data-src]");
--    if (img && ready && (s.near || s.seen)) {
--      img.src = img.dataset.src;
--      img.removeAttribute("data-src");
--    }
--    const on =
--      ready &&
--      !still.matches &&
--      !saveData &&
--      !s.failed &&
--      !fig.hasAttribute("aria-hidden");
--    if (on && (s.near || s.seen) && !s.video) make(fig);
--    if (!s.video) return;
--    if (on && s.seen && !document.hidden && !film?.open)
--      s.video.play().catch(() => {});
--    else s.video.pause();
--  };
--  const all = () => figs.forEach(update);
--
--  // Near: load. In view: play.
--  const nearIO = new IntersectionObserver(
--    (entries) => {
--      for (const e of entries) {
--        state.get(e.target).near = e.isIntersecting;
--        update(e.target);
--      }
--    },
--    { rootMargin: "400px 0px" },
--  );
--  const seenIO = new IntersectionObserver(
--    (entries) => {
--      for (const e of entries) {
--        state.get(e.target).seen = e.isIntersecting;
--        update(e.target);
--      }
--    },
--    { threshold: 0.2 },
--  );
--  for (const f of figs) {
--    nearIO.observe(f);
--    seenIO.observe(f);
--  }
--  const go = () => {
--    ready = true;
--    all();
--  };
--  const idle = () =>
--    window.requestIdleCallback
--      ? requestIdleCallback(go, { timeout: 2000 })
--      : setTimeout(go, 300);
--  if (document.readyState === "complete") idle();
--  else addEventListener("load", idle, { once: true });
--  document.addEventListener("visibilitychange", all);
--  still.addEventListener("change", all);
--  film?.addEventListener("close", all);
--  document
--    .querySelector("[data-film]")
--    ?.addEventLi
+@@ -0,0 +1,95 @@
++import { getStorageSettings, toStorageSettingsObject, updateStorageSettings } from "@coss/email";
++import { StorageSettings, UpdateStorageSettingsRequest } from "@coss/email/schemas";
++import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
++import { recordApiAudit } from "../audit.ts";
++import { requireApiKey } from "../middleware/api-key.ts";
++import { upgradeRequestBody } from "../middleware/api-version.ts";
++import { rateLimit } from "../middleware/rate-limit.ts";
++import type { AppEnv } from "../types.ts";
++import { commonErrors, errorDoc, jsonDoc } from "./docs.ts";
++
++// Like tracking settings: the setting changes what later sends of the environment keep, so it
++// needs `email:send` rather than a permission of its own (and existing keys need no backfill).
++const READ = requireApiKey({ email: ["read"] });
++const WRITE = requireApiKey({ email: ["send"] });
++
++const SCOPE_NOTE =
++  "Settings belong to the API key's own environment: a `coss_test_…` key only ever changes " +
++  "sandbox settings. Emails keep the setting that applied when they were sent.";
++
++export const getStorageSettingsRoute = createRoute({
++  method: "get",
++  path: "/storage_settings",
++  operationId: "getStorageSettings",
++  tags: ["Content storage"],
++  summary: "Retrieve storage settings",
++  description:
++    "Whether coss.com keeps the content of the environment's emails (`content_storage: " +
++    '"store"`, the default) or only until each email is sent, fails or is canceled ' +
++    `(\`"discard"\`). ${SCOPE_NOTE}`,
++  security: [{ bearerAuth: [] }],
++  middleware: [READ, rateLimit("api.read")],
++  responses: {
++    200: jsonDoc("The environment's storage settings.", StorageSettings),
++    ...commonErrors,
++  },
++});
++
++export const updateStorageSettingsRoute = createRoute({
++  method: "patch",
++  path: "/storage_settings",
++  operationId: "updateStorageSettings",
++  tags: ["Content storage"],
++  summary: "Update storage settings",
++  description:
++    'With `content_storage: "discard"`, emails sent from now on keep their subject, body, ' +
++    "headers, template variables and attachment filenames only until they are sent, fail or " +
++    "are canceled (scheduled emails keep them until their time comes); request logs never " +
++    "keep them. Their metadata (addresses, tags, category, status, recipients, events) is kept " +
++    `as usual. ${SCOPE_NOTE}`,
++  security: [{ bearerAuth: [] }],
++  middleware: [WRITE, rateLimit("api.write"), upgradeRequestBody("PATCH /v1/storage_settings")],
++  request: {
++    body: {
++      required: true,
++      content: { "application/json": { schema: UpdateStorageSettingsRequest } },
++    },
++  },
++  responses: {
++    200: jsonDoc("The environment's storage settings.", StorageSettings),
++    400: errorDoc("The body is not valid JSON (`invalid_json`)."),
++    413: errorDoc("The request body is larger than 5 MB (`payload_too_large`)."),
++    415: errorDoc("The body is not sent as `application/json` (`unsupported_media_type`)."),
++    ...commonErrors,
++    422: errorDoc("The body failed validation (`validation_error`, see `issues`)."),
++  },
++});
++
++export function createStorageSettingsRoutes(): OpenAPIHono<AppEnv> {
++  const router = new OpenAPIHono<AppEnv>();
++
++  router.openapi(getStorageSettingsRoute, async (c) => {
++    const { organizationId, environmentId } = c.var.auth;
++    const settings = await getStorageSettings({ organizationId, environmentId });
++    return c.json(toStorageSettingsObject(settings), 200);
++  });
++
++  router.openapi(updateStorageSettingsRoute, async (c) => {
++    const { organizationId, environmentId } = c.var.auth;
++    const { content_storage } = c.req.valid("json");
++    const settings = await updateStorageSettings(
++      { organizationId, environmentId },
++      { contentStorage: content_storage },
++    );
++    // The key's environment always exists while the key authenticates.
++    if (!settings) throw new Error(`Environment ${environmentId} not found.`);
++    await recordApiAudit(c, {
++      action: "storage_settings.updated",
++      target: { type: "environment", id: environmentId },
++      metadata: { content_storage },
++    });
++    return c.json(toStorageSettingsObject(settings), 200);
++  });
++
++  return router;
++}
 ```
 
-**File**: `apps/site/public/shipyard/assets/harbour.js` (removed, +0/-201)
+**File**: `apps/api/src/routes/v1.ts` (modified, +2/-0)
 ```diff
-@@ -1,201 +0,0 @@
--// The harbour, drawn as the app's Labs home draws it: the painting with a
--// halftone grain (an ordered Bayer dither of its lightness, strongest on
--// edges and in gradients), dissolving dot by dot into the page. Night in dark
--// mode. Each band renders once per size on a small canvas, one dot per 2 CSS
--// px, scaled up with hard pixels; nothing runs in between.
--//
--// A band is any [data-harbour] element with a <canvas>:
--//   data-day, data-night   the paintings
--//   data-fade              where it dissolves: "bottom" (default), "top" or "both"
--//   data-night-only        always the night painting (the closing harbour)
--//   data-position          the painting's vertical position, 0 to 1 (0.42)
--//   data-lazy              drawn when it nears the viewport, not before
--// Without this script the plain painting shows, faded by CSS.
--(() => {
--  const bands = [...document.querySelectorAll("[data-harbour]")];
--  if (!bands.length) return;
--  const CELL = 2;
--  const LEVELS = 6;
--  const FADE = 0.42;
--  const BAYER8 = [
--    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
--    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
--    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
--    23, 61, 29, 53, 21,
--  ].map((v) => (v + 0.5) / 64);
--  const dark = matchMedia("(prefers-color-scheme: dark)");
--  // Night is the site's theme (the "dark" class on <html>, by the header's
--  // switch or the system); the page says when it changes with a berth:theme
--  // event.
--  const pageNight = () => document.documentElement.classList.contains("dark");
--  // Where the lighthouse's lamp is in the painting, as a fraction of it.
--  const LAMP = [0.094, 0.457];
--
--  const hex = (s) => {
--    s = s.trim();
--    const m = s.match(/^#([\da-f]{6})$/i);
--    if (m)
--      return [0, 2, 4].map((i) => Number.parseInt(m[1].slice(i, i + 2), 16));
--    return (s.match(/[\d.]+/g) ?? [0, 0, 0]).slice(0, 3).map(Number);
--  };
--
--  for (const band of bands) {
--    const canvas = band.querySelector("canvas");
--    const beam = band.querySelector(".beam");
--    const fade = band.dataset.fade ?? "bottom";
--    const nightOnly = "nightOnly" in band.dataset;
--    const position = Number(band.dataset.position ?? 0.42);
--    const isNight = () => nightOnly || pageNight();
--    let size = "";
--    let timer = 0;
--    let pending = false;
--    let near = !("lazy" in band.dataset);
--
--    const draw = async (force) => {
--      if (!near) return;
--      if (document.hidden) return void (pending = true);
--      pending = false;
--      const w = Math.ceil(band.clientWidth / CELL);
--      const h = Math.ceil(band.clientHeight / CELL);
--      const night = isNight();
--      const key = `${w}x${h}${night}`;
--      if (!w || !h || (key === size && !force)) return;
--      const img = new Image();
--      img.src = night ? band.dataset.night : band.dataset.day;
--      try {
--        await img.decode();
--      } catch {
--        return;
--      }
--      size = key;
--      canvas.width = w;
--      canvas.height = h;
--      canvas.style.width = `${w * CELL}px`;
--      canvas.style.height = `${h * CELL}px`;
--      const ctx = canvas.getContext("2d", { willReadFrequently: true });
--      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
--      const dw = img.naturalWidth * scale;
--      const dh = img.naturalHeight * scale;
--      // Drawn small, then up: the brushwork softens to its forms, so the
--      // grain is the dither's, not the paint's.
--      const soft = document.createElement("canvas");
--      soft.width = Math.max(1, Math.round(w * 0.6));
--      soft.height = Math.max(1, Math.round(h * 0.6));
--      const sctx = soft.getContext("2d");
--      sctx.imageSmoothingQuality = "high";
--      // On a narrow screen the lighthouse, at the left, stays in view.
--      const across = Number(
--        band.dataset.across ?? (band.clientWidth < 700 ? 0.08 : 0.5),
--      );
--      sctx.drawImage(
--        img,
--        (w - dw) * across * 0.6,
--        (h - dh) * position * 0.6,
--        dw * 0.6,
--        dh * 0.6,
--      );
--      if (beam) {
--        beam.style.left = `${((w - dw) * across + dw * LAMP[0]) * CELL}px`;
--        beam.style.top = `${((h - dh) * position + dh * LAMP[1]) * CELL}px`;
--      }
--      ctx.imageSmoothingQuality = "high";
--      ctx.clearRect(0, 0, w, h);
--      ctx.drawImage(soft, 0, 0, w, h);
--      soft.width = soft.height = 0;
--      const frame = ctx.getImageData(0, 0, w, h);
--      const bg = hex(
--        getComputedStyle(band).getPropertyValue("--bg") ||
--          getComputedStyle(document.body).backgroundColor,
--      );
--      dither(frame, night ? 0.3 : 0.04, bg, fade);
--      ctx.putImageData(frame, 0, 0);
--      band.classList.add("drawn");
--      band.dispatchEvent(
--        new CustomEvent("harbour:drawn", {
--          detail: {
--            w: w * CELL,
--            h: h * CELL,
--            dw: dw * CELL
+@@ -25,6 +25,7 @@ import { createRiskConfigRoutes } from "./risk-config.ts";
+ import { createRiskLimitRoutes } from "./risk-limits.ts";
+ import { createRiskLookupRoutes } from "./risk-lookups.ts";
+ import { createSegmentRoutes } from "./segments.ts";
++import { createStorageSettingsRoutes } from "./storage-settings.ts";
+ import { createSuppressionRoutes } from "./suppressions.ts";
+ import { createTopicRoutes } from "./topics.ts";
+ import { createTrackingSettingsRoutes } from "./tracking-settings.ts";
+@@ -69,6 +70,7 @@ export function createV1Router(deps: V1Dependencies): OpenAPIHono<AppEnv> {
+   v1.route("/", createWebhookEventRoutes());
+   v1.route("/", createSuppressionRoutes());
+   v1.route("/", createTrackingSettingsRoutes());
++  v1.route("/", createStorageSettingsRoutes());
+   v1.route(
+     "/",
+     createContactRoutes({
 ```
 
-**File**: `apps/site/public/shipyard/assets/hero-loop.js` (removed, +0/-232)
+**File**: `apps/api/src/types.ts` (modified, +5/-0)
 ```diff
-@@ -1,232 +0,0 @@
--// The harbour at night, alive: the launch film's seamless loop (the night
--// painting with the agents' lights on the water), in the hero's band.
--//
--// Only at night (the site's dark theme); the day keeps the
--// dithered painting. Nothing loads until the page has, and nothing at all for
--// reduced motion or Save-Data: the still harbour stays. The loop comes in from
--// its first frame (the poster) over the drawn harbour, in the same box, so
--// nothing moves; it dissolves into the page through the same 2 px Bayer dots
--// as assets/harbour.js draws, and pauses when hidden or scrolled away.
--//
--// Its frames are drawn on a canvas, cropped as the painting is, from a video
--// kept a pixel wide under it: a canvas is never the page's largest paint, so
--// the loop arriving late can't make the hero's LCP late.
--//
--//   data-loop          the loop's sources, in order (MP4, then WebM)
--//   data-loop-poster   its first frame
--(() => {
--  const band = document.querySelector(".hero [data-harbour][data-loop]");
--  if (!band || !("IntersectionObserver" in window)) return;
--  const root = document.documentElement;
--  const dark = matchMedia("(prefers-color-scheme: dark)");
--  const still = matchMedia("(prefers-reduced-motion: reduce)");
--  const night = () => root.classList.contains("dark");
--  const saveData = navigator.connection?.saveData === true;
--  // The same matrix, cell, fade and framing as the drawn harbour, so the dots
--  // and the lighthouse line up.
--  const CELL = 2;
--  const FADE = 0.42;
--  const POSITION = 0.42;
--  const BAYER8 = [
--    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36,
--    14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41,
--    51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55,
--    23, 61, 29, 53, 21,
--  ].map((v) => (v + 0.5) / 64);
--
--  let started = false;
--  let loop = null;
--  let video = null;
--  let canvas = null;
--  let ctx = null;
--  let poster = null;
--  let shown = false;
--  let inView = true;
--  let maskUrl = "";
--  let maskSize = "";
--  let timer = 0;
--  let frame = 0;
--
--  const wanted = () => started && night() && !still.matches && !saveData;
--
--  // A frame (or the poster) over the whole canvas, as object-fit: cover, at
--  // the painting's position: the lighthouse kept in view on a narrow screen.
--  const paint = (src, sw, sh) => {
--    if (!ctx || !sw || !sh) return;
--    const cw = canvas.width;
--    const ch = canvas.height;
--    const s = Math.max(cw / sw, ch / sh);
--    const across = band.clientWidth < 700 ? 0.08 : 0.5;
--    ctx.drawImage(
--      src,
--      (cw - sw * s) * across,
--      (ch - sh * s) * POSITION,
--      sw * s,
--      sh * s,
--    );
--  };
--  const paintNow = () => {
--    if (video?.readyState >= 2)
--      paint(video, video.videoWidth, video.videoHeight);
--    else if (poster?.naturalWidth)
--      paint(poster, poster.naturalWidth, poster.naturalHeight);
--  };
--
--  // Each new frame of the video, as it's shown.
--  const tick = () => {
--    paint(video, video.videoWidth, video.videoHeight);
--    frame = video.requestVideoFrameCallback
--      ? video.requestVideoFrameCallback(tick)
--      : requestAnimationFrame(tick);
--  };
--  const stopTicking = () => {
--    if (!frame) return;
--    if (video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(frame);
--    else cancelAnimationFrame(frame);
--    frame = 0;
--  };
--
--  // The canvas at the band's size (up to 2 device pixels a CSS pixel), and the
--  // dissolve as an alpha mask: the lower part of the band, row by row, keeps
--  // fewer of its 2 px dots.
--  const size = () => {
--    const W = band.clientWidth;
--    const H = band.clientHeight;
--    const key = `${W}x${H}`;
--    if (!loop || !W || !H || key === maskSize) return;
--    maskSize = key;
--    const dpr = Math.min(2, devicePixelRatio || 1);
--    canvas.width = Math.round(W * dpr);
--    canvas.height = Math.round(H * dpr);
--    paintNow();
--    const m = document.createElement("canvas");
--    m.width = W;
--    m.height = H;
--    const mctx = m.getContext("2d");
--    const img = mctx.createImageData(W, H);
--    const d = img.data;
--    const h = Math.ceil(H / CELL);
--    const foot = h * FADE;
--    for (let Y = 0; Y < H; Y++) {
--      const y = Math.floor(Y / CELL);
--      let keep = y > h - foot ? 1 - (y - (h - foot)) / foot : 1;
--      keep = keep * keep * (3 - 2 * keep);
--      const rowB = ((y + 3) & 7) * 8;
--      for (let X = 0; X < W; X++) {
--        if (BAYER8[rowB + ((Math.floor(X / CELL) + 5) & 7)] < keep)
--          d[(Y * W + X) * 4 + 3] = 255;
--      }
--    }
--    mctx.putImageData(img, 0, 0);
--    m.toBlob((blob) => {
--      if (!blob || !loop) return;
--      const old = maskUrl;
--      maskUrl = URL.createObjectURL(blob);
--      loop.style.setProperty("--mask", `url("${maskUrl}")`);
--      if (old) setTimeout(() => URL.revokeObjectURL(old), 1000);
--    });
--  };
--
--  const build = () => {
--    loop = document.createElemen
+@@ -26,5 +26,10 @@ export type AppEnv = {
+      * `requireApiKey`.
+      */
+     apiVersion: string;
++    /**
++     * Set by the email routes when they answer with an email sent without content storage: the
++     * request log then redacts the request's and response's content (`markEmailContent`).
++     */
++    discardsEmailContent: boolean;
+   };
+ };
 ```
 
-**File**: `apps/site/public/shipyard/assets/scenes.css` (removed, +0/-555)
+**File**: `apps/api/test/app.test.ts` (modified, +5/-1)
 ```diff
-@@ -1,555 +0,0 @@
--/* Copied from app/src/components/art/scenes.css by site/scripts/scenes.mjs:
--   the app's line scenes, for the chapters' markers. The page maps
--   --muted-foreground and --warning to its own tokens (styles.css, .scene). */
--
--/* Scenes: Shipyard's small line drawings for quiet states (scenes.tsx). Lines
--   take currentColor (muted by default); the one amber point is the logo's
--   dot, from the theme's --warning, so every theme draws them right.
--
--   Motion rules: transforms and opacity only; slow (4s and up, except rain);
--   a pixel or two, a few degrees at most; every loop seamless. Animations
--   start a beat apart through --ba-delay, pause offscreen, while the window
--   is hidden, behind an open dialog, and after a few loops, and stop under
--   reduced motion. */
--
--.berth-art {
--  color: var(--muted-foreground);
--  overflow: visible;
--}
--
--/* Elements that turn about a point name it in the scene's coordinates. */
--.berth-art .ba-sweep,
--.berth-art .ba-gull,
--.berth-art .ba-float,
--.berth-art .ba-ripple,
--.berth-art .ba-weed,
--.berth-art .ba-needle,
--.berth-art .ba-ping,
--.berth-art .ba-swing,
--.berth-art .ba-throw,
--.berth-art .ba-settle {
--  transform-box: view-box;
--}
--
--/* Water: a wave slides by whole periods of its curve and dashes, then repeats. */
--.berth-art .ba-wave {
--  animation: ba-drift var(--ba-d, 8s) linear infinite;
--}
--
--.berth-art .ba-wave.ba-rev {
--  animation-direction: reverse;
--}
--
--@keyframes ba-drift {
--  from {
--    transform: translateX(0);
--  }
--  to {
--    transform: translateX(var(--ba-x, -12px));
--  }
--}
--
--/* The buoy bobs and leans on the swell. */
--.berth-art .ba-buoy {
--  transform-box: fill-box;
--  transform-origin: 50% 85%;
--  animation: ba-bob 4.4s ease-in-out infinite;
--}
--
--.berth-art .ba-buoy.ba-slow {
--  animation-duration: 6.4s;
--}
--
--@keyframes ba-bob {
--  0%,
--  100% {
--    transform: translateY(-0.6px) rotate(-5deg);
--  }
--  50% {
--    transform: translateY(0.9px) rotate(4deg);
--  }
--}
--
--/* An amber glint on the water, breathing with the light above it. */
--.berth-art .ba-glint {
--  transform-box: fill-box;
--  transform-origin: center;
--  animation: ba-glint 4.4s ease-in-out infinite;
--}
--
--@keyframes ba-glint {
--  0%,
--  100% {
--    opacity: 0.22;
--    transform: scaleX(0.75);
--  }
--  50% {
--    opacity: 0.42;
--    transform: scaleX(1.1);
--  }
--}
--
--/* A boat rides the swell, a little slower than a buoy would. */
--.berth-art .ba-ride {
--  transform-box: fill-box;
--  transform-origin: 50% 90%;
--  animation: ba-ride 5.2s ease-in-out infinite;
--}
--
--@keyframes ba-ride {
--  0%,
--  100% {
--    transform: translateY(-0.4px) rotate(-1.4deg);
--  }
--  50% {
--    transform: translateY(0.6px) rotate(1.2deg);
--  }
--}
--
--/* Under sail: pitching on the swell and edging forward, then easing back. */
--.berth-art .ba-sail {
--  transform-box: fill-box;
--  transform-origin: 50% 92%;
--  animation: ba-sail 4.8s ease-in-out infinite;
--}
--
--@keyframes ba-sail {
--  0%,
--  100% {
--    transform: translate(-0.6px, -0.4px) rotate(-1.8deg);
--  }
--  50% {
--    transform: translate(0.8px, 0.6px) rotate(1.4deg);
--  }
--}
--
--/* The wake streams back from the stern, a dash at a time. */
--.berth-art .ba-wake {
--  animation: ba-wake 2.4s linear infinite;
--}
--
--@keyframes ba-wake {
--  from {
--    transform: translateX(0);
--  }
--  to {
--    transform: translateX(-10px);
--  }
--}
--
--/* Offline: the buoy's light turns slowly, as if looking for the box. */
--.berth-art .ba-beacon {
--  animation: ba-beacon 3.6s ease-in-out infinite;
--}
--
--@keyframes ba-beacon {
--  0%,
--  100% {
--    opacity: 0.3;
--  }
--  50% {
--    opacity: 1;
--  }
--}
--
--.berth-art .ba-fog {
--  animation: ba-fog 12s ease-in-out infinite alternate;
--}
--
--.berth-art .ba-fog.ba-rev {
--  animation-duration: 16s;
--  animation-direction: alternate-reverse;
--}
--
--@keyframes ba-fog {
--  from {
--    transform: translateX(-5px);
--  }
--  to {
--    transform: translateX(5px);
--  }
--}
--
--/* Lighthouse: the beam sweeps out and back, brightest as it faces you; the
--   lamp and the glint where it lands keep time. */
--.berth-art .ba-sweep {
--  animation: ba-sweep 7s ease-in-out infinite alternate;
--}
--
--@keyframes ba-sweep {
--  0% {
--    transform: rotate(-7deg) scaleX(0.86);
--    opacity: 0.45;
--  }
--  50% {
--    transform: rotate(0deg) scaleX(1);
--    opacity: 1;
--  }
--  100% {
--    transform: rotate(6deg) scaleX(0.88);
--    opacity: 0.5;
--  }
--}
--
--.berth-art .ba-lamp {
--  animation: ba-lamp 3.5s ease-in-out infinite alternate;
--}
--
--@keyframes ba-lamp {
--  from {
--    opacity: 0.7;
--  }
--  to {
--    opacity: 1;
--  }
--}
--
--.berth-art .ba-glint.ba-sync {
--  animation-duration: 7s;
--}
--
--/* Dawn: the sun lifts a little over the horizon, then settles. */
--.berth-art .ba-rise {
--  animation: ba-rise 10s ease-in-out infinite alternate;
--}
--
--@keyframes ba-rise {
--  from {
--    transform: translateY(1.8px);
--  }
--  to {
--    transform: translateY(-1.2px);
--  }
--}
--
--/* Gulls glide, a wingbeat now and then. */
--.berth-art .ba-gu
+@@ -258,6 +258,7 @@ describe("GET /openapi.json", () => {
+       "/v1/segments",
+       "/v1/segments/{id}",
+       "/v1/segments/{id}/contacts",
++      "/v1/storage_settings",
+       "/v1/suppressions",
+       "/v1/suppressions/check",
+       "/v1/suppressions/export",
+@@ -450,7 +451,8 @@ describe("GET /openapi.json", () => {
+             String(route).includes("webhook") ||
+             String(route).includes("log_drains") ||
+             String(route).includes("/risk/") ||
+-            String(route).includes("tracking_settings"),
++            String(route).includes("tracking_settings") ||
++            String(route).includes("storage_settings"),
+         ),
+     ).toEqual([
+       ["post /v1/email_templates", "createEmailTemplate"],
+@@ -496,6 +498,8 @@ describe("GET /openapi.json", () => {
+       ["delete /v1/tracking_settings/default", "deleteTrackingDefault"],
+       ["patch /v1/tracking_settings/categories/{category}", "updateTrackingCategory"],
+       ["delete /v1/tracking_settings/categories/{category}", "deleteTrackingCategory"],
++      ["get /v1/storage_settings", "getStorageSettings"],
++      ["patch /v1/storage_settings", "updateStorageSettings"],
+       ["post /v1/log_drains", "createLogDrain"],
+       ["get /v1/log_drains", "listLogDrains"],
+       ["get /v1/log_drains/{id}", "getLogDrain"],
 ```
 
-**File**: `apps/site/public/shipyard/assets/scenes.json` (removed, +0/-8)
+---
+
+### Incident Patch 3: `997e0172` (2026-10-19)
+**Commit Message**: coss-cli: wait for every write before exiting; fix the merged docs and tests
+
+The compiled binary reported writableLength 0 while a pipe still had output
+queued, so a busy `coss api --paginate | …` lost its tail on exit: every
+write is now tracked until its callback. Code spans split across lines broke
+the CLI docs page's MDX, and the trigger test now awaits complete().
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/site/content/docs/(tools)/cli.mdx` (modified, +14/-13)
 ```diff
-@@ -1,8 +0,0 @@
--{
--  "setting-out": "<svg aria-hidden=\"true\" data-scene=\"setting-out\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-setting-out-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-setting-out-fg)\"></rect></mask></defs><defs><linearGradient id=\"sc-setting-out-wg\" gradientUnits=\"userSpaceOnUse\" x1=\"34\" x2=\"90\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.7\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-setting-out-wake\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"160\" height=\"80\"><rect x=\"0\" y=\"0\" width=\"160\" height=\"80\" fill=\"url(#sc-setting-out-wg)\"></rect></mask></defs><g opacity=\"0.4\"><g stroke=\"currentColor\"><path d=\"M8 36 H26\" stroke-width=\"2.8\"></path><path d=\"M11 38 V48 M22 38 V48\" stroke-width=\"2.4\"></path><path d=\"M11 51.5 V60 M22 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g mask=\"url(#sc-setting-out-wake)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-wake\" d=\"M30 51.6 Q 60 51.2 96 49.6\" stroke-dasharray=\"5 5\" opacity=\"0.55\"></path><path class=\"ba-wake\" style=\"--ba-delay:-0.8s\" d=\"M30 56.4 Q 60 55.6 96 51\" stroke-dasharray=\"3 7\" opacity=\"0.32\"></path></g><g class=\"ba-sail\" stroke=\"currentColor\"><path d=\"M84 43 H126 L119.6 49.8 H88.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"2.2\"></path><path d=\"M100 43 V22.4\" stroke-width=\"1.6\"></path><path d=\"M98.4 23.6 V40.6 H85.4 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke-width=\"1.6\"></path><path d=\"M101.8 24.6 L120.6 40.6 H101.8 Z\" fill=\"currentColor\" fill-opacity=\"0.05\" stroke-width=\"1.5\"></path><circle cx=\"100\" cy=\"20.4\" r=\"2.5\" fill=\"var(--warning)\" stroke=\"none\"></circle></g><g mask=\"url(#sc-setting-out-fade)\" stroke=\"currentColor\"><path d=\"M-12 49.4 q3 -1.3 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.72\" stroke-width=\"1.4\" class=\"ba-wave\" style=\"--ba-d:7s;--ba-x:-12px\"></path><path d=\"M-12 55.6 q3 -1.1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.42\" stroke-width=\"1.4\" stroke-dasharray=\"16 8\" class=\"ba-wave ba-rev\" style=\"--ba-d:11s;--ba-x:-24px\"></path><path d=\"M-12 61.599999999999994 q3 -1 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0\" opacity=\"0.22\" stroke-width=\"1.4\" stroke-dasharray=\"6 10 14 6\" class=\"ba-wave\" style=\"--ba-d:15s;--ba-x:-36px\"></path></g></svg>",
--  "signal": "<svg aria-hidden=\"true\" data-scene=\"signal\" viewBox=\"0 16 160 52\" class=\"berth-art\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><linearGradient id=\"sc-signal-fg\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"></stop><stop offset=\"0.18\" stop-color=\"#fff\"></stop><stop offset=\"0.82\" stop-color=\"#fff\"></stop><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"0\"></stop></linearGradient><mask id=\"sc-signal-fade\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"-20\" width=\"160\" height=\"120\"><rect x=\"0\" y=\"-20\" width=\"160\" height=\"120\" fill=\"url(#sc-signal-fg)\"></rect></mask></defs><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g><g transform=\"translate(160 0) scale(-1 1)\"><g stroke=\"currentColor\"><path d=\"M8 36 H42\" stroke-width=\"2.8\"></path><path d=\"M14 38 V48 M32 38 V48\" stroke-width=\"2.4\"></path><path d=\"M14 51.5 V60 M32 51.5 V60\" stroke-width=\"2.4\" opacity=\"0.26\"></path></g></g><g stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M37 34.6 V26.6 M123 34.6 V26.6\"></path></g><g class=\"ba-lift\" mask=\"url(#sc-signal-fade)\" stroke=\"currentColor\" stroke-width=\"1.4\"><path class=\"ba-fog\" d=\"M52 29 H108\" stroke-dasharray=\"12 7\" opacity=\"0.32\"></path><path class=\"ba-fog ba-rev\" d=\"M58 34 H102\" stroke-dasharray=\"7 8\" opacity=\"0.2\"></path></g><path class=\
+@@ -159,8 +159,8 @@ coss webhooks retry whep_01k7c8m4q2f3e9v6t5r1n0p8yz whdel_01k7c8m4q2f3e9v6t5r1n0
+ `coss webhooks list` shows the environment's endpoints with their URL, state (enabled, failing,
+ disabled) and event types. `coss webhooks deliveries <endpoint>` lists an endpoint's deliveries,
+ newest first, with the last status code and error; filter with `--status pending|succeeded|failed`
+-or `--event <event id>`, and show up to `--limit 100` (default 20). `coss webhooks retry <endpoint>
+-<delivery>` sends a finished delivery once more, within seconds. Each takes `--json`.
++or `--event <event id>`, and show up to `--limit 100` (default 20).
++`coss webhooks retry <endpoint> <delivery>` sends a finished delivery once more, within seconds. Each takes `--json`.
+ 
+ ## Send test emails
+ 
+@@ -189,8 +189,8 @@ coss emails diagnose --to ada@example.com
+ ```
+ 
+ `coss emails list` shows the environment's emails, newest first, with where each one stands: its
+-status until it was handed to the provider, then its recipients' (`delivered`, `2 delivered, 1
+-bounced`). Filter by `--to`, `--status`, `--recipient-status`, free text (`-q`), `--category`,
++status until it was handed to the provider, then its recipients' (`delivered`,
++`2 delivered, 1 bounced`). Filter by `--to`, `--status`, `--recipient-status`, free text (`-q`), `--category`,
+ `--batch <id>` and creation time (`--since`, `--until`); `--limit` sets how many (20 by default,
+ read page by page). `--json` prints one email per line.
+ 
+@@ -235,19 +235,19 @@ coss hooks portal acme --open
+ ```
+ 
+ - `coss hooks apps list` and `coss hooks apps create <name>` (`--uid`, `--metadata key=value`)
+-  manage applications; `coss hooks event-types list` (`--archived`) and `coss hooks event-types
+-  create <name>` (`--description`, `--schema`, `--example`, each JSON inline, `@file` or `-` for
++  manage applications; `coss hooks event-types list` (`--archived`) and
++  `coss hooks event-types create <name>` (`--description`, `--schema`, `--example`, each JSON inline, `@file` or `-` for
+   stdin) the event types. Lists show 50 (`--limit`, up to 100).
+-- `coss hooks endpoints list <app>` shows each endpoint's state; `coss hooks endpoints add <app>
+-  --url <url>` (`--types`, `--description`, `--rate-limit`) prints the new endpoint's signing
++- `coss hooks endpoints list <app>` shows each endpoint's state;
++  `coss hooks endpoints add <app> --url <url>` (`--types`, `--description`, `--rate-limit`) prints the new endpoint's signing
+   secret, the only time it's shown.
+ - `coss hooks send <app> <event-type>` sends a message: the payload is `--data` (a JSON object)
+   with `-F name=value` (JSON values, `@file`) and `-f name=value` (strings) on top, or, with none
+   of them, the event type's first example. `--idempotency-key` sends it once only.
+ - `coss hooks deliveries <app>` lists deliveries, newest first, of every endpoint or one
+   (`--endpoint`), or of one message (`--message`), by `--status` (pending, succeeded, failed);
+-  `coss hooks attempts <app> <delivery>` shows each HTTP request of one, and `coss hooks retry <app>
+-  <delivery>` queues a finished one for another attempt.
++  `coss hooks attempts <app> <delivery>` shows each HTTP request of one, and
++  `coss hooks retry <app> <delivery>` queues a finished one for another attempt.
+ - `coss hooks portal <app>` prints a link that signs in to the application's
+   [portal](/docs/hooks/portal) (`--open` opens it, `--read-only`, `--expires-in <seconds>`). Anyone
+   with the link is signed in until it expires.
+@@ -276,9 +276,10 @@ coss risk lists add block domain evil.example --expires 30d --note "spam wave"
+ - `coss risk assessments` lists assessments by `--decision`, `--event`, `--user` and `--review`
+   (`open` is the review queue); `coss risk feedback <assessment> --outcome legitimate|fraud|abuse`
+   (`--note`) reports what the user turned out to be.
+-- `coss risk lists list` (`--list allow|block`, `--type`), `coss risk lists add <allow|block>
+-  <email|domain|ip|asn|country|user> <value>` (`--note`, `--expires` as `7d`, `12h` or a time) and
+-  `coss risk lists remove <entry>` manage the allow and block lists.
++- `coss risk lists list` (`--list allow|block`, `--type`),
++  `coss risk lists add <allow|block> <email|domain|ip|asn|country|user> <value>` (`--note`,
++  `--expires` as `7d`, `12h` or a time) and `coss risk lists remove <entry>` manage the allow and
++  block lists.
+ 
+ ## Receive emails
+ 
+```
+
+**File**: `packages/cli/src/cli.ts` (modified, +3/-11)
+```diff
+@@ -1,17 +1,9 @@
+ #!/usr/bin/env node
+-import { nodeIo } from "./io.ts";
++import { flushOutput, nodeIo } from "./io.ts";
+ import { run } from "./run.ts";
+ 
+-/** Resolves once everything written to `stream` so far has reached the OS (pipes are async). */
+-function flushed(stream: NodeJS.WriteStream): Promise<void> {
+-  return new Promise((resolve) => {
+-    if (stream.writableLength === 0) return resolve();
+-    // Writes complete in order: this one's callback comes after every earlier one's.
+-    stream.write("", () => resolve());
+-  });
+-}
+-
+ process.exitCode = await run(process.argv.slice(2), nodeIo());
+-await Promise.all([flushed(process.stdout), flushed(process.stderr)]);
++// Pipes are asynchronous: exiting before every write has reached the OS would cut output short.
++await flushOutput();
+ // Commands end their own work; don't wait on keep-alive sockets or stdin.
+ process.exit();
+```
+
+**File**: `packages/cli/src/io.ts` (modified, +31/-2)
+```diff
+@@ -171,6 +171,35 @@ function readTerminalLine(secret: boolean): Promise<string> {
+   });
+ }
+ 
++/** Writes not yet handed to the OS: the bin waits for them before it exits. */
++const pending = new Set<Promise<void>>();
++
++/**
++ * A stream whose every write is tracked until its callback. `writableLength` isn't enough: the
++ * compiled (Bun) binary reports 0 while a pipe still has output queued, and exiting then cut a
++ * busy `coss api --paginate | …` short.
++ */
++function tracked(stream: NodeJS.WriteStream): OutputStream {
++  return {
++    get isTTY() {
++      return stream.isTTY;
++    },
++    write(chunk) {
++      const written = new Promise<void>((resolve) => {
++        // Called with an error too (a closed pipe): nothing more will be written either way.
++        stream.write(chunk, () => resolve());
++      });
++      pending.add(written);
++      void written.then(() => pending.delete(written));
++    },
++  };
++}
++
++/** Resolves once every write so far has reached the OS. */
++export async function flushOutput(): Promise<void> {
++  while (pending.size > 0) await Promise.all(pending);
++}
++
+ /** The real process: its environment, streams, network and signals. */
+ export function nodeIo(): CliIo {
+   const controller = new AbortController();
+@@ -185,8 +214,8 @@ export function nodeIo(): CliIo {
+   }
+   return {
+     env: process.env,
+-    stdout: process.stdout,
+-    stderr: process.stderr,
++    stdout: tracked(process.stdout),
++    stderr: tracked(process.stderr),
+     stdinIsTTY: process.stdin.isTTY === true,
+     fetch: (input, init) => globalThis.fetch(input, init),
+     now: () => new Date(),
+```
+
+**File**: `packages/cli/test/trigger.test.ts` (modified, +5/-4)
+```diff
+@@ -102,11 +102,12 @@ describe("coss trigger", () => {
+     );
+   });
+ 
+-  test("completes the event types a sandbox environment can test", () => {
+-    const types = complete(COMMANDS, ["trigger", "email.b"]);
++  test("completes the event types a sandbox environment can test", async () => {
++    const io = testIo();
++    const types = await complete(COMMANDS, ["trigger", "email.b"], io);
+     expect(types).toEqual(["email.bounced"]);
+-    expect(complete(COMMANDS, ["trigger", "billing."])).toEqual([]);
+-    expect(complete(COMMANDS, ["trigger", "risk."])).toEqual([
++    expect(await complete(COMMANDS, ["trigger", "billing."], io)).toEqual([]);
++    expect(await complete(COMMANDS, ["trigger", "risk."], io)).toEqual([
+       "risk.assessment.review",
+       "risk.assessment.reviewed",
+     ]);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #134** (2026-10-17): Shipyard: the landing page is drawn like the coss.com catalog, its drawings moving on scroll and hover (@sean-brydon)
-- **PR #132** (2026-10-16): Admin console: Deploys page polls faster, and each run gets its own page (@pumfleet)
-- **PR #131** (2026-10-16): Docs: fill the marketing gaps in the shared pages (@pumfleet)
-- **PR #130** (2026-10-16): Version packages (@github-actions[bot])
-- **PR #129** (2026-10-16): Framework mail drivers: coss/laravel, coss-rails and coss-django (@pumfleet)
-- **PR #128** (2026-10-16): Fix main's CI: restore bun.lock after #126 (@pumfleet)
+- **PR #146** (2026-10-19): Release: sign and notarize the CLI's macOS executables (@pumfleet)
+- **PR #145** (2026-10-19): Scoped API keys: full access, sending, read only or custom permissions (@pumfleet)
+- **PR #143** (2026-10-19): Email: content storage, a per-environment no-content-storage mode (@pumfleet)
+- **PR #142** (2026-10-19): Version packages (@github-actions[bot])
+- **PR #141** (2026-10-19): coss-cli: command registry, coss api, and the CLI roadmap (emails, inbox, domains, templates, trigger, webhooks, init, hooks, risk, binaries) (@pumfleet)
+- **PR #140** (2026-10-19): Infra: turn on Domain Connect in production (@pumfleet)
 
 ---
 
@@ -3338,28 +3141,33 @@ Shipyard's amber lamp as its one colour.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #134 from cosscom/shipyard-landing-catalog
+## X. coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render
 
 **RULE**:
-When implementing operations in `apps/site/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/cli-domains-templates.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b5d4962`: Merge pull request #134 from cosscom/shipyard-landing-catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e13f0e45`: coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/site/AGENTS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/cli-domains-templates.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/{drawings,stage,copy-line}.tsx`, `src/lib/shipyard.ts` | `/shipyard`: Shipyard's landing page, drawn like the coss.com catalog (one ruled sheet, `SectionHead`s, `.drafting-grid` behind drawings) in its own route group with its own header links (`SHIPYARD_LINKS`). The drawings are `drawings.tsx`: isometric line art on `iso.tsx`'s projection and `--iso-*` faces, with Shipyard's one amber lamp; `landing.css` styles them and their motion, the one place on coss.com besides the manifesto where drawings move: each sits in a `Stage` (a client island) whose parts (`.part`, staggered by `--i`) drop in when it scrolls into view, groups marked `.lift` rise on hover, lamps breathe and wires march; without script or with `prefers-reduced-motion` the drawing is simply there. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases. `public/shipyard/assets` keeps only the harbour paintings and the night loop, for the coss.com landing page's banner (`harbour.tsx`). |
+---
+"coss": minor
+"coss-cli": minor
+---
+
+`coss.email.templates.render(template, { version, locale, variables })` renders a template's draft (or a published version) as a send would, without sending (`POST /v1/email_templates/{id}/render`). The CLI gets `coss domains list|add|get|verify` (DNS records as a table or zone-file lines with `--format bind`; `verify --wait` follows the domain until it's verified) and templates as code: `coss templates list|pull|push|preview` (a folder per template, `push --watch` and `--publish`, `preview --var … --open`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-| `src/app/(shipyard)/shipyard/(home)`, `src/components/shipyard/runtime.tsx`, `src/lib/shipyard.ts`, `public/shipyard/assets/` | `/shipyard`: Shipyard's landing page as it was at berthd.app (moved from the coss ui repository's `apps/shipyard`), in its own route group with its own header links (`SHIPYARD_LINKS`). The page is static markup styled by `landing.css` (scoped to `.shipyard-landing`, its own tokens; the segment's layout loads Cal Sans from `@coss/ui/fonts` for the headlines and JetBrains Mono); the harbour, the night loop, the chapters' loops and line scenes are plain scripts in `public/shipyard/assets` (same-origin, so the CSP allows them) that `LandingRuntime` appends after the first paint and redraws on theme changes. `SHIPYARD` holds its copy, paths and outbound links: downloads, the live demo and the box's install line stay on berthd.app / GitHub releases, and the docs link to the `cosscom/shipyard` repository until they move here. |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b5d4962` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e13f0e45` are properly handled with clean fallback behavior.

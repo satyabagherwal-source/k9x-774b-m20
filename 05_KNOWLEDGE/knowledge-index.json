@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:16:09.264Z",
-  "total_verified_learnings": 889,
+  "last_updated": "2026-10-19T19:22:24.268Z",
+  "total_verified_learnings": 891,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5762,14 +5762,19 @@
       "slug": "cosscom-coss",
       "platform": "github",
       "source_url": "https://github.com/cosscom/coss",
-      "source_version": "5b5d4962",
-      "content_hash": "a9f64282826ba0477cae0eb3f25f939cd923adac443b34e043634b46d4a45fc3",
+      "source_version": "674fd511",
+      "content_hash": "10c091f6c93d75167fa4484108e5a619c9f07236a799d35e7b5e68276a6e31e7",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
       "promoted_rules": [
         {
           "number": 1734,
           "title": "Merge pull request #134 from cosscom/shipyard-landing-catalog",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2767,
+          "title": "coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5778,7 +5783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:39:32.205Z",
+      "verified_at": "2026-10-19T19:22:18.998Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32923,8 +32928,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "82f195be",
-      "content_hash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
+      "source_version": "a25a5857",
+      "content_hash": "08ae60d95ba70bb7bf98bd6b6434266e3667b3200447b9797977db999a2aea45",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -32942,6 +32947,11 @@
           "number": 2131,
           "title": "Context-Synchronized Asynchronous Resource Deallocation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2768,
+          "title": "cuda-device): run mbarrier init on one linear thread (#1349)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32949,7 +32959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:27:56.505Z",
+      "verified_at": "2026-10-19T19:22:19.829Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42279,22 +42289,35 @@
     "learn-github-touchlab-droidconkotlin": {
       "learning_id": "learn-github-touchlab-droidconkotlin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "touchlab-droidconkotlin",
+      "source": "touchlab/DroidconKotlin",
+      "repository": "touchlab/DroidconKotlin",
       "slug": "touchlab-droidconkotlin",
       "platform": "github",
       "source_url": "https://github.com/touchlab/DroidconKotlin",
-      "source_version": "HEAD",
-      "content_hash": "78805a30a41594609b5ae6e84b4654da090dcd4b4a8b150d3efdcab56837732c",
+      "source_version": "27f3e87c",
+      "content_hash": "5373cafddf8d705d290b4f4b955dd00eff26bc20614e226633bc92c515639f1a",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-droidconkotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-droidconkotlin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2770,
+          "title": "the uncaught exception when syncing conferences (#244) (#245)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.018Z"
+      "verified_at": "2026-10-19T19:22:24.251Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-touchlab-kampkit": {
       "learning_id": "learn-github-touchlab-kampkit",
@@ -55637,20 +55660,35 @@
     "learn-github-berkaycubuk-kitsune": {
       "learning_id": "learn-github-berkaycubuk-kitsune",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "berkaycubuk/kitsune",
       "repository": "berkaycubuk/kitsune",
       "slug": "berkaycubuk-kitsune",
       "platform": "github",
       "source_url": "https://github.com/berkaycubuk/kitsune",
-      "source_version": "main",
-      "content_hash": "1e6fae1b9b0df6275a7bcdd7dd313fb4c863a2418b3924617a80c12f6315bebb",
+      "source_version": "f6bd4da3",
+      "content_hash": "a6cf6290b3095535df9a5ebe02e5c93f8a17a80f4f07dda8301d5988fad8d869",
       "dossier_path": "07_PROJECT_LEARNING/berkaycubuk-kitsune-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/berkaycubuk-kitsune-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2769,
+          "title": "build processes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:22:21.368Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-manojahi-serpiq": {
       "learning_id": "learn-github-manojahi-serpiq",
@@ -91428,6 +91466,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:16:09.256Z"
+    },
+    "rule-2767": {
+      "learning_id": "rule-2767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2767,
+      "title": "coss-cli: domains and templates as code; POST /v1/email_templates/{id}/render",
+      "source_url": "https://github.com/cosscom/coss",
+      "source_version": "674fd511",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:22:18.998Z"
+    },
+    "rule-2768": {
+      "learning_id": "rule-2768",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2768,
+      "title": "cuda-device): run mbarrier init on one linear thread (#1349)",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "a25a5857",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:22:19.830Z"
+    },
+    "rule-2769": {
+      "learning_id": "rule-2769",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2769,
+      "title": "build processes",
+      "source_url": "https://github.com/berkaycubuk/kitsune",
+      "source_version": "f6bd4da3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:22:21.368Z"
+    },
+    "rule-2770": {
+      "learning_id": "rule-2770",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2770,
+      "title": "the uncaught exception when syncing conferences (#244) (#245)",
+      "source_url": "https://github.com/touchlab/DroidconKotlin",
+      "source_version": "27f3e87c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:22:24.251Z"
     }
   },
   "aliases": {
