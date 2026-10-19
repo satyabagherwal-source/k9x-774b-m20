@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `05440e1f`  
+> **Source Version**: `0f3842c4`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:07:36.580Z  
+> **Timestamp**: 2026-10-19T12:01:13.522Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:07:36.197Z  
+> **Harvest Timestamp**: 2026-10-19T12:01:13.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -940,673 +940,527 @@ export function QueueDlqTab({ topic, dlqEntry }: QueueDlqTabProps) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b58595d5` (2026-10-12)
-**Commit Message**: fix(engine): prevent deadlocks in stream trigger cleanup (#2297)
+### Incident Patch 1: `c424b247` (2026-10-19)
+**Commit Message**: fix(compose): stop workers that outlive compose; add iii ps and iii kill (#2329)
 
-**File**: `engine/src/workers/stream/trigger.rs` (modified, +89/-7)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +16/-116)
 ```diff
-@@ -34,6 +34,8 @@ pub struct StreamTriggerConfig {
-     pub condition_function_id: Option<String>,
- }
+@@ -171,15 +171,6 @@ version = "1.0.104"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
  
-+// When both stream registry locks are needed, acquire stream_triggers_by_name
-+// before stream_triggers, matching StreamWorker::invoke_triggers.
- pub struct StreamTriggers {
-     pub join_triggers: Arc<RwLock<HashSet<Trigger>>>,
-     pub leave_triggers: Arc<RwLock<HashSet<Trigger>>>,
-@@ -100,13 +102,14 @@ impl TriggerRegistrator for StreamWorker {
-                             condition_function_id = %stream_trigger.condition_function_id.clone().unwrap_or_default(),
-                             "{} Stream trigger", "[REGISTERED]".green());
- 
--                        stream_triggers_by_name
--                            .write()
--                            .await
-+                        // Publish both indexes together in dispatch's lock order.
-+                        let mut by_name = stream_triggers_by_name.write().await;
-+                        let mut triggers_map = stream_triggers.write().await;
-+                        by_name
-                             .entry(stream_trigger.stream_name.clone().unwrap())
-                             .or_insert_with(Vec::new)
-                             .push(trigger.id.clone());
--                        let _ = stream_triggers.write().await.insert(
-+                        let _ = triggers_map.insert(
-                             trigger.id.clone(),
-                             StreamTrigger {
-                                 trigger,
-@@ -144,11 +147,14 @@ impl TriggerRegistrator for StreamWorker {
-             if trigger.trigger_type == STREAM_TRIGGER_TYPE {
-                 let trigger_id = trigger.id.clone();
- 
--                // Remove from main triggers map
--                if let Some(removed_trigger) = stream_triggers.write().await.remove(&trigger_id) {
-+                // Lock the name index first, as dispatch does. Holding the map
-+                // writer while waiting for this index deadlocks with a dispatch
-+                // reader holding the index while waiting for the map.
-+                let mut by_name = stream_triggers_by_name.write().await;
-+                let mut triggers_map = stream_triggers.write().await;
-+                if let Some(removed_trigger) = triggers_map.remove(&trigger_id) {
-                     // Remove from stream_name index
-                     if let Some(stream_name_key) = removed_trigger.config.stream_name {
--                        let mut by_name = stream_triggers_by_name.write().await;
-                         if let Some(trigger_ids) = by_name.get_mut(&stream_name_key) {
-                             trigger_ids.retain(|id| id != &trigger_id);
-                             if trigger_ids.is_empty() {
-@@ -470,6 +476,82 @@ mod tests {
-         assert_eq!(ids, &vec!["stream-2".to_string()]);
-     }
- 
-+    #[tokio::test]
-+    async fn test_stream_sets_and_trigger_cleanup_do_not_deadlock() {
-+        use std::time::Duration;
-+
-+        use crate::{
-+            function::FunctionResult,
-+            workers::stream::structs::{StreamGetInput, StreamSetInput},
-+        };
-+
-+        let module = setup();
-+        let trigger = make_trigger(
-+            "stream-lock-order",
-+            STREAM_TRIGGER_TYPE,
-+            "fn::on_stream_event",
-+            serde_json::json!({"stream_name": "chat"}),
-+        );
-+        module.register_trigger(trigger.clone()).await.unwrap();
-+
-+        // Queue cleanup's map writer first. Tokio's write-preferring RwLock
-+        // then queues the set's map reader behind it. Before the fix, set holds
-+        // the name-index read lock and cleanup holds the map write lock: each
-+        // waits for the other, even though the adapter has finished writing.
-+        let map_reader = module.triggers.stream_triggers.read().await;
-+        let mut cleanup = module.unregister_trigger(trigger);
-+        assert!(futures::poll!(cleanup.as_mut()).is_pending());
-+
-+        let mut set = Box::pin(module.set(StreamSetInput {
-+            stream_name: "chat".into(),
-+            group_id: "g".into(),
-+            item_id: "i".into(),
-+            data: serde_json::json!({"value": 1}),
-+        }));
-+        assert!(futures::poll!(set.as_mut()).is_pending());
-+
-+        // Reads bypass trigger dispatch and still see the committed mutation.
-+        let get = tokio::time::timeout(
-+            Duration::from_secs(1),
-+            module.get(StreamGetInput {
-+                stream_name: "chat".into(),
-+                group_id: "g".into(),
-+                item_id: "i".into(),
-+            }),
-+        )
-+        .await
-+        .expect("stream get must remain available");
-+        assert!(matches!(get, FunctionResult::Success(Some(value)) if value["value"] == 1));
-+
-+        // The locks are global: even a stream with no matching triggers waits.
-+        let mut unrelated_set = Box::pin(module.set(StreamSetInput {
-+            stream_name: "unrelated".into(),
-+            group_id: "g".into(),
-+  
-```
-
----
-
-### Incident Patch 2: `604ad0fa` (2026-10-12)
-**Commit Message**: fix(engine): prevent metric storage lock-order deadlocks (#2296)
-
-**File**: `engine/src/workers/observability/metrics.rs` (modified, +3/-2)
-```diff
-@@ -747,6 +747,7 @@ impl RollupStorage {
- 
- /// Time-indexed metric storage with efficient range queries
- pub struct TimeIndexedMetricStorage {
-+    // When both indexes are locked, lock time before name; both guards keep the indexes coherent.
-     /// Primary storage: timestamp -> metrics
-     metrics_by_time: std::sync::RwLock<std::collections::BTreeMap<u64, Vec<StoredMetric>>>,
-     /// Secondary index: name -> timestamps (for name+time queries)
-@@ -911,8 +912,8 @@ impl TimeIndexedMetricStorage {
-     }
- 
-     pub fn get_metrics_by_name(&self, name: &str) -> Vec<StoredMetric> {
--        let by_name = self.metrics_by_name.read().unwrap();
-         let by_time = self.metrics_by_time.read().unwrap();
-+        let by_name = self.metrics_by_name.read().unwrap();
- 
-         if let Some(timestamps) = by_name.get(name) {
-             timestamps
-@@ -931,8 +932,8 @@ impl TimeIndexedMetricStorage {
-         start_ns: u64,
-         end_ns: u64,
-     ) -> Vec<StoredMetric> {
--        let by_name = self.metrics_by_name.read().unwrap();
-         let by_time = self.metrics_by_time.read().unwrap();
-+        let by_name = self.metrics_by_name.read().unwrap();
- 
-         if let Some(timestamps) = by_name.get(name) {
-             timestamps
-```
-
----
-
-### Incident Patch 3: `c72082eb` (2026-10-14)
-**Commit Message**: (MOT-5377) fix: negotiate TCP_NODELAY between the engine and Rust workers (#2325)
-
-**File**: `docs/next/reference/engine-protocol.mdx` (modified, +8/-0)
-```diff
-@@ -43,6 +43,14 @@ registrations it holds in memory (each `RegisterFunction`, `RegisterTrigger`, an
- metadata (runtime, version, OS, PID, isolation, optional `namespace`, and an optional one-line
- `description`), which the engine acknowledges with a `RegisterWorkerResult`.
- 
-+The engine answers every request on the worker listener (`/`, `/otel`, `/ws/channels/{id}`),
-+including the WebSocket upgrade, with an `x-iii-capabilities` response header: optional transport
-+capabilities as comma-separated tokens. Clients ignore tokens they do not know. `tcp-nodelay` means
-+the engine's end of the socket has `TCP_NODELAY` set, so the worker may disable Nagle on its end too.
-+A worker must not disable Nagle without this token: with Nagle on the engine's end only, a worker
-+that answers immediately leaves the engine's next small frame waiting for the worker's delayed ACK
-+(~40 ms on Linux), which is slower than keeping Nagle on both ends. Older engines send no header.
-+
- The connection is bidirectional from that point on: the engine pushes `InvokeFunction` frames at the
- worker, and the worker pushes `InvocationResult`, additional registrations, or unregistrations back.
- 
-```
-
-**File**: `docs/next/reference/engine-protocol.mdx.skill.md` (modified, +8/-0)
-```diff
-@@ -41,6 +41,14 @@ registrations it holds in memory (each `RegisterFunction`, `RegisterTrigger`, an
- metadata (runtime, version, OS, PID, isolation, optional `namespace`, and an optional one-line
- `description`), which the engine acknowledges with a `RegisterWorkerResult`.
- 
-+The engine answers every request on the worker listener (`/`, `/otel`, `/ws/channels/{id}`),
-+including the WebSocket upgrade, with an `x-iii-capabilities` response header: optional transport
-+capabilities as comma-separated tokens. Clients ignore tokens they do not know. `tcp-nodelay` means
-+the engine's end of the socket has `TCP_NODELAY` set, so the worker may disable Nagle on its end too.
-+A worker must not disable Nagle without this token: with Nagle on the engine's end only, a worker
-+that answers immediately leaves the engine's next small frame waiting for the worker's delayed ACK
-+(~40 ms on Linux), which is slower than keeping Nagle on both ends. Older engines send no header.
-+
- The connection is bidirectional from that point on: the engine pushes `InvokeFunction` frames at the
- worker, and the worker pushes `InvocationResult`, additional registrations, or unregistrations back.
- 
-```
-
-**File**: `engine/src/workers/worker/mod.rs` (modified, +118/-8)
-```diff
-@@ -19,8 +19,8 @@ use std::{
- use axum::{
-     Router,
-     extract::{ConnectInfo, State, ws::WebSocketUpgrade},
--    http::{HeaderMap, Uri},
--    response::IntoResponse,
-+    http::{HeaderMap, HeaderName, HeaderValue, Uri},
-+    response::{IntoResponse, Response},
-     routing::get,
- };
- use colored::Colorize;
-@@ -29,6 +29,7 @@ use hyper_util::{
-     rt::{TokioIo, TokioTimer},
-     service::TowerToHyperService,
- };
-+use iii_sdk::protocol::{ENGINE_CAPABILITIES_HEADER, ENGINE_CAPABILITY_TCP_NODELAY};
- use schemars::JsonSchema;
- use serde::{Deserialize, Serialize};
- use serde_json::Value;
-@@ -152,11 +153,7 @@ impl Worker for WorkerManager {
-             .map_err(|err| crate::workers::traits::bind_address_error(&addr, err))?;
-         tracing::info!("Engine listening on address: {}", addr.purple());
- 
--        let app = Router::new()
--            .route("/", get(ws_handler))
--            .route("/otel", get(otel_ws_handler))
--            .route("/ws/channels/{channel_id}", get(channel_ws_upgrade))
--            .with_state(state);
-+        let app = worker_router(state);
- 
-         let handshake_timeout = Duration::from_millis(config.handshake_timeout_ms);
-         let handle = tokio::spawn(async move {
-@@ -191,7 +188,8 @@ impl Worker for WorkerManager {
-             let mut make_service = app.into_make_service_with_connect_info::<SocketAddr>();
-             loop {
-                 let (stream, peer) = tokio::select! {
--                    res = listener.accept() => match res {
-+                    // Through accept_worker_connection: it sets TCP_NODELAY (MOT-5377).
-+                    res = accept_worker_connection(&listener) => match res {
-                         Ok(conn) => conn,
-                         Err(err) => {
-                             // ECONNABORTED/RESET are normal client churn;
-@@ -304,6 +302,46 @@ fn is_connection_error(e: &io::Error) -> bool {
-     )
- }
- 
-+/// Routes of the worker listener. Every response lists the engine's transport
-+/// capabilities in [`ENGINE_CAPABILITIES_HEADER`]: the accept loop sets
-+/// `TCP_NODELAY` on every connection, so workers may disable Nagle on their
-+/// end too. Workers wait for this before doing so, because Nagle on the
-+/// engine's end alone is slower than on both ends (MOT-5377).
-+///
-+/// The header is static, so this router must only be served through
-+/// [`accept_worker_connection`], which sets the `TCP_NODELAY` it promises.
-+fn worker_router(state: AppState) -> Router {
-+    Router::new()
-+        .route("/", get(ws_handler))
-+        .route("/otel", get(otel_ws_handler))
-+        .route("/ws/channels/{channel_id}", get(channel_ws_upgrade))
-+        .layer(axum::middleware::map_response(advertise_capabilities))
-+        .with_state(state)
-+}
-+
-+// `from_static` is a const fn, so an invalid name or value fails the build.
-+const CAPABILITIES_HEADER: HeaderName = HeaderName::from_static(ENGINE_CAPABILITIES_HEADER);
-+const CAPABILITIES: HeaderValue = HeaderValue::from_static(ENGINE_CAPABILITY_TCP_NODELAY);
-+
-+async fn advertise_capabilities(mut response: Response) -> Response {
-+    response
-+        .headers_mut()
-+        .insert(CAPABILITIES_HEADER, CAPABILITIES);
-+    response
-+}
-+
-+/// Accepts a worker, channel or `/otel` connection with `TCP_NODELAY` set:
-+/// their small frames must not wait for the peer's delayed ACK (MOT-5377).
-+async fn accept_worker_connection(
-+    listener: &TcpListener,
-+) -> io::Result<(tokio::net::TcpStream, SocketAddr)> {
-+    let (stream, peer) = listener.accept().await?;
-+    if let Err(err) = stream.set_nodelay(true) {
-+        tracing::debug!(peer = %peer, error = ?err, "set_nodelay failed; small writes may stall");
-+    }
-+    Ok((stream, peer))
-+}
-+
- async fn shutdown_signal() -> anyhow::Result<()> {
-     #[cfg(unix)]
-     {
-@@ -384,6 +422,78 @@ crate::register_worker!(
- mod tests {
-     use super::*;
- 
-+    /// Serves the real worker router on an ephemeral port. Uses `axum::serve`,
-+    /// not the production hyper loop: `accept_worker_connection` (the
-+    /// `TCP_NODELAY` half) has its own test.
-+    async fn serve_worker_router() -> SocketAddr {
-+        // Engine::new() and the worker connection handler build metrics, which
-+        // require GLOBAL_METER. Under nextest each test is its own process, so
-+        // initialize the default (noop) meter here instead of relying on a
-+        // sibling test.
-+        crate::workers::observability::metrics::ensure_default_meter();
-+        let (shutdown_tx, shutdown_rx) = tokio::sync::watch::channel(false);
-+        let state = AppState {
-+            engine: Arc::new(Engine::new()),
-+            config: Arc::new(WorkerManagerConfig::default()),
-+            shutdown_rx,
-+        };
-+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let address = listener.local_addr().unwrap();
-+        tokio::spawn(async move {
-+            let _shutdown_tx = shutdown_tx;
-+            let app = worker_router(state).into_make_service_with_connect
-```
-
-**File**: `engine/tests/compose_daemon_e2e.rs` (modified, +62/-22)
-```diff
-@@ -1969,6 +1969,56 @@ containers:
-     daemon.shutdown().await;
- }
- 
-+fn has_log_line(entries: &[Value], stream: &str, message: &str) -> bool {
-+    entries
-+        .iter()
-+        .any(|entry| entry["stream"] == stream && entry["message"] == message)
-+}
-+
-+/// Follows `compose::logs` for the `queue` container from `cursor` until every
-+/// `(stream, message)` in `wanted` has been returned, or 10 s pass. A long poll
-+/// answers on the first new line, and stdout and stderr are captured by
-+/// separate readers, so lines a worker writes together can arrive in
-+/// different responses.
-+async fn follow_queue_logs(
-+    port: u16,
-+    file: &std::path::Path,
-+    mut cursor: Value,
-+    wanted: &[(&str, &str)],
-+) -> Vec<Value> {
-+    let mut entries = Vec::new();
-+    let deadline = tokio::time::Instant::now() + Duration::from_secs(10);
-+    while !wanted
-+        .iter()
-+        .all(|(stream, message)| has_log_line(&entries, stream, message))
-+        && tokio::time::Instant::now() < deadline
-+    {
-+        let after = call(
-+            port,
-+            "compose::logs",
-+            json!({
-+                "file": file.to_str().unwrap(),
-+                "container": "queue",
-+                "cursors": { "queue": cursor },
-+                "tail": 10,
-+                "wait_ms": 2_000,
-+            }),
-+        )
-+        .await
-+        .expect("compose::logs should continue after its cursor");
-+        let batch = &after["containers"][0];
-+        entries.extend(
-+            batch["entries"]
-+                .as_array()
-+                .expect("log entries")
-+                .iter()
-+                .cloned(),
-+        );
-+        cursor = batch["cursor"].clone();
-+    }
-+    entries
-+}
-+
- #[tokio::test(flavor = "multi_thread")]
- async fn logs_continue_from_a_cursor_after_the_worker_is_ready() {
-     isolate_state();
-@@ -2033,33 +2083,23 @@ containers:
-     let cursor = before["containers"][0]["cursor"].clone();
- 
-     std::fs::write(&emit, "now").expect("release worker output");
--    let after = call(
-+    let entries = follow_queue_logs(
-         port,
--        "compose::logs",
--        json!({
--            "file": file.to_str().unwrap(),
--            "container": "queue",
--            "cursors": { "queue": cursor },
--            "tail": 10,
--            "wait_ms": 2_000,
--        }),
-+        &file,
-+        cursor,
-+        &[
-+            ("stdout", "output after ready"),
-+            ("stderr", "error after ready"),
-+        ],
-     )
--    .await
--    .expect("compose::logs should continue after its cursor");
--    let entries = after["containers"][0]["entries"]
--        .as_array()
--        .expect("log entries");
-+    .await;
-     assert!(
--        entries.iter().any(|entry| {
--            entry["stream"] == "stdout" && entry["message"] == "output after ready"
--        }),
--        "stdout after readiness was not returned: {after}"
-+        has_log_line(&entries, "stdout", "output after ready"),
-+        "stdout after readiness was not returned: {entries:?}"
-     );
-     assert!(
--        entries.iter().any(|entry| {
--            entry["stream"] == "stderr" && entry["message"] == "error after ready"
--        }),
--        "stderr after readiness was not returned: {after}"
-+        has_log_line(&entries, "stderr", "error after ready"),
-+        "stderr after readiness was not returned: {entries:?}"
-     );
- 
-     worker.shutdown_async().await;
-```
-
-**File**: `sdk/packages/rust/iii/src/channels.rs` (modified, +46/-10)
-```diff
-@@ -5,11 +5,12 @@ use futures_util::{SinkExt, StreamExt};
- use serde::{Deserialize, Serialize};
- use serde_json::Value;
- use tokio::sync::Mutex;
-+use tokio_tungstenite::tungstenite::Message as WsMessage;
- use tokio_tungstenite::tungstenite::client::IntoClientRequest;
- use tokio_tungstenite::tungstenite::http::{HeaderName, HeaderValue, Request};
--use tokio_tungstenite::{connect_async, tungstenite::Message as WsMessage};
- 
- use crate::error::Error;
-+use crate::transport::{self, WsConnectResult, WsStream};
- 
- #[derive(Debug, Clone, Serialize, Deserialize, Default, schemars::JsonSchema)]
- #[serde(rename_all = "lowercase")]
-@@ -32,14 +33,16 @@ pub enum ChannelItem {
-     Binary(Vec<u8>),
- }
- 
--type WsWriter = futures_util::stream::SplitSink<
--    tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>,
--    WsMessage,
-->;
-+type WsWriter = futures_util::stream::SplitSink<WsStream, WsMessage>;
- 
--type WsReader = futures_util::stream::SplitStream<
--    tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>,
-->;
-+type WsReader = futures_util::stream::SplitStream<WsStream>;
-+
-+/// Opens a channel end with its handshake headers (see [`handshake_headers`]).
-+/// Channel frames are often small (HTTP bodies, control messages), so
-+/// `TCP_NODELAY` is negotiated like on the worker connection.
-+async fn connect_channel(url: &str, headers: &HashMap<String, String>) -> WsConnectResult {
-+    transport::connect(handshake_request(url, headers)?, None).await
-+}
- 
- /// Handshake headers for an engine connection: the caller's, plus
- /// `Authorization: Bearer $III_TOKEN` when the variable is set and not blank.
-@@ -151,7 +154,8 @@ impl ChannelWriter {
-         if guard.is_some() {
-             return Ok(());
-         }
--        let (stream, _) = connect_async(handshake_request(&self.url, &self.headers)?).await?;
-+        // Through connect_channel: it negotiates TCP_NODELAY (MOT-5377).
-+        let (stream, _) = connect_channel(&self.url, &self.headers).await?;
-         let (writer, _reader) = stream.split();
-         *guard = Some(writer);
-         Ok(())
-@@ -230,7 +234,8 @@ impl ChannelReader {
-         if guard.is_some() {
-             return Ok(());
-         }
--        let (stream, _) = connect_async(handshake_request(&self.url, &self.headers)?).await?;
-+        // Through connect_channel: it negotiates TCP_NODELAY (MOT-5377).
-+        let (stream, _) = connect_channel(&self.url, &self.headers).await?;
-         let (_writer, reader) = stream.split();
-         *guard = Some(reader);
-         Ok(())
-@@ -474,3 +479,34 @@ mod tests {
-         assert_eq!(urlencoded(""), "");
-     }
- }
-+
-+#[cfg(test)]
-+mod nodelay_tests {
-+    use super::*;
-+    use crate::transport::test_engine;
-+
-+    async fn channel_nodelay(advertise: bool) -> bool {
-+        let (address, server) = test_engine::spawn(advertise).await;
-+        let url = format!("ws://{address}/ws/channels/test?direction=read");
-+        let (stream, _) = tokio::time::timeout(
-+            std::time::Duration::from_secs(5),
-+            connect_channel(&url, &HashMap::new()),
-+        )
-+        .await
-+        .unwrap()
-+        .unwrap();
-+        let nodelay = test_engine::nodelay(&stream);
-+        drop(server.await.unwrap());
-+        nodelay
-+    }
-+
-+    #[tokio::test]
-+    async fn channel_socket_has_tcp_nodelay_when_engine_advertises_it() {
-+        assert!(channel_nodelay(true).await);
-+    }
-+
-+    #[tokio::test]
-+    async fn channel_socket_keeps_nagle_when_engine_does_not_advertise_it() {
-+        assert!(!channel_nodelay(false).await);
-+    }
-+}
-```
-
-**File**: `sdk/packages/rust/iii/src/iii.rs` (modified, +52/-15)
-```diff
-@@ -343,10 +343,7 @@ use tokio::{
- };
- #[cfg(test)]
- use tokio_tungstenite::connect_async;
--use tokio_tungstenite::{
--    connect_async_with_config,
--    tungstenite::{Message as WsMessage, Utf8Bytes, protocol::WebSocketConfig},
--};
-+use tokio_tungstenite::tungstenite::{Message as WsMessage, Utf8Bytes, protocol::WebSocketConfig};
- use uuid::Uuid;
- 
- const SDK_VERSION: &str = env!("CARGO_PKG_VERSION");
-@@ -364,6 +361,7 @@ use crate::{
-         TriggerRequest, TriggerRequestWithMetadata, UnregisterTriggerMessage,
-         UnregisterTriggerTypeMessage, WORKER_NAMESPACE_CONFLICT,
-     },
-+    transport::{self, WsConnectResult, WsStream},
-     triggers::{Trigger, TriggerConfig, TriggerHandler},
-     types::{
-         Channel, RemoteFunctionData, RemoteFunctionHandlerWithMetadata, RemoteTriggerTypeData,
-@@ -905,10 +903,7 @@ enum Outbound {
- type PendingInvocation = oneshot::Sender<Result<Value, Error>>;
- 
- // WebSocket transmitter type alias
--type WsTx = futures_util::stream::SplitSink<
--    tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>,
--    WsMessage,
-->;
-+type WsTx = futures_util::stream::SplitSink<WsStream, WsMessage>;
- 
- /// Inject trace context headers for outbound messages.
- fn inject_trace_headers() -> (Option<String>, Option<String>) {
-@@ -2154,6 +2149,14 @@ impl IIIClient {
-             .map_err(|_| Error::NotConnected)
-     }
- 
-+    /// Opens the worker connection; `TCP_NODELAY` is negotiated with the
-+    /// engine (see `transport::connect`).
-+    async fn connect_socket(&self) -> WsConnectResult {
-+        let headers = handshake_headers(self.inner.headers.lock_or_recover().clone());
-+        let request = handshake_request(&self.inner.address, &headers)?;
-+        transport::connect(request, Some(Self::receive_config())).await
-+    }
-+
-     async fn run_connection(&self, mut rx: mpsc::UnboundedReceiver<Outbound>) {
-         let mut queue: Vec<PreparedEnvelope> = Vec::new();
-         let mut has_connected_before = false;
-@@ -2166,17 +2169,12 @@ impl IIIClient {
-                 IIIConnectionState::Connecting
-             });
- 
--            let headers = handshake_headers(self.inner.headers.lock_or_recover().clone());
+-[[package]]
+-name = "arbitrary"
+-version = "1.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
+-dependencies = [
+- "derive_arbitrary",
+-]
 -
-             // Cap the whole connect (TCP + TLS + WS upgrade): a stalled
-             // socket otherwise wedges this loop forever and the worker sits
-             // in Reconnecting with zero functions registered engine-side
-             // (MOT-3857).
--            let connect_result = tokio::time::timeout(t.connect_timeout, async {
--                let request = handshake_request(&self.inner.address, &headers)?;
--                connect_async_with_config(request, Some(Self::receive_config()), false).await
--            })
--            .await;
-+            let connect_result =
-+                tokio::time::timeout(t.connect_timeout, self.connect_socket()).await;
+ [[package]]
+ name = "arc-swap"
+ version = "1.9.1"
+@@ -1076,12 +1067,6 @@ dependencies = [
+  "unicode-xid",
+ ]
  
-             match connect_result {
-                 Ok(Ok((stream, _))) => {
-@@ -4471,3 +4469,42 @@ mod tests {
-         assert!(without_ns.namespace.is_none());
+-[[package]]
+-name = "constant_time_eq"
+-version = "0.3.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
+-
+ [[package]]
+ name = "convert_case"
+ version = "0.10.0"
+@@ -1150,21 +1135,6 @@ dependencies = [
+  "libc",
+ ]
+ 
+-[[package]]
+-name = "crc"
+-version = "3.4.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5eb8a2a1cd12ab0d987a5d5e825195d372001a4094a0376319d5a0ad71c1ba0d"
+-dependencies = [
+- "crc-catalog",
+-]
+-
+-[[package]]
+-name = "crc-catalog"
+-version = "2.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "217698eaf96b4a3f0bc4f3662aaa55bdf913cd54d7204591faa790070c6d0853"
+-
+ [[package]]
+ name = "crc32fast"
+ version = "1.5.0"
+@@ -1366,7 +1336,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e0b1fab2ae45819af2d0731d60f2afe17227ebb1a1538a236da84c93e9a60162"
+ dependencies = [
+  "dispatch2",
+- "nix 0.31.2",
++ "nix 0.31.3",
+  "windows-sys 0.61.2",
+ ]
+ 
+@@ -1477,12 +1447,6 @@ version = "0.1.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "092966b41edc516079bdf31ec78a2e0588d1d0c08f78b91d8307215928642b2b"
+ 
+-[[package]]
+-name = "deflate64"
+-version = "0.1.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ac6b926516df9c60bfa16e107b21086399f8285a44ca9711344b9e553c5146e2"
+-
+ [[package]]
+ name = "defmt"
+ version = "0.3.100"
+@@ -1572,17 +1536,6 @@ dependencies = [
+  "serde_core",
+ ]
+ 
+-[[package]]
+-name = "derive_arbitrary"
+-version = "1.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e567bd82dcff979e4b03460c307b3cdc9e96fde3d73bed1496d2bc75d9dd62a"
+-dependencies = [
+- "proc-macro2",
+- "quote",
+- "syn 2.0.117",
+-]
+-
+ [[package]]
+ name = "derive_builder"
+ version = "0.20.2"
+@@ -2182,11 +2135,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "r-efi 5.3.0",
+  "wasip2",
+- "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -2850,14 +2801,15 @@ dependencies = [
+  "iii-sdk",
+  "indexmap 2.14.0",
+  "jsonschema",
+- "nix 0.31.2",
++ "nix 0.31.3",
+  "reqwest 0.12.28",
+  "schemars 0.8.22",
+  "semver",
+  "serde",
+  "serde_json",
+  "serde_yaml",
+  "sha2",
++ "sysinfo 0.38.4",
+  "tar",
+  "tempfile",
+  "thiserror 2.0.18",
+@@ -2946,7 +2898,7 @@ dependencies = [
+  "iii-shell-proto",
+  "iii-supervisor",
+  "libc",
+- "nix 0.31.2",
++ "nix 0.31.3",
+  "regex",
+  "tempfile",
+  "thiserror 2.0.18",
+@@ -3641,27 +3593,6 @@ version = "0.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
+ 
+-[[package]]
+-name = "lzma-rs"
+-version = "0.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "297e814c836ae64db86b36cf2a557ba54368d03f6afcd7d947c266692f71115e"
+-dependencies = [
+- "byteorder",
+- "crc",
+-]
+-
+-[[package]]
+-name = "lzma-sys"
+-version = "0.1.20"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5fda04ab3764e6cde78b9974eec4f779acaba7c4e84b36eca3cf77c581b85d27"
+-dependencies = [
+- "cc",
+- "libc",
+- "pkg-config",
+-]
+-
+ [[package]]
+ name = "machineid-rs"
+ version = "1.2.4"
+@@ -4054,9 +3985,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "nix"
+-version = "0.31.2"
++version = "0.31.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5d6d0705320c1e6ba1d912b5e37cf18071b6c2e9b7fa8215a1e8a7651966f5d3"
++checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
+ dependencies = [
+  "bitflags 2.11.1",
+  "cfg-if",
+@@ -6827,6 +6758,12 @@ dependencies = [
+  "thiserror 2.0.18",
+ ]
+ 
++[[package]]
++name = "typed-path"
++version = "0.12.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
++
+ [[package]]
+ name = "typenum"
+ version = "1.20.0"
+@@ -7942,15 +7879,6 @@ version = "0.8.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
+ 
+-[[package]]
+-name = "xz2"
+-version = "0.1.7"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "388c44dc09d76f1536602ead6d325eb532f5c122f17782bd57fb47baeeb767e2
+```
+
+**File**: `crates/iii-compose/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -52,6 +52,9 @@ semver = { workspace = true }
+ # One managed engine owns a project's compose namespace at a time. The kernel-backed
+ # lock is released automatically if the foreground compose process crashes.
+ fslock = "0.2"
++# `iii ps` reads other processes' command lines and environments, which every
++# platform exposes differently.
++sysinfo = "0.38"
+ 
+ # Teardown signals whole process groups, which std cannot express.
+ [target.'cfg(unix)'.dependencies]
+```
+
+**File**: `crates/iii-compose/src/daemon.rs` (modified, +9/-0)
+```diff
+@@ -800,6 +800,15 @@ impl Daemon {
+             .collect()
      }
- }
-+
-+#[cfg(test)]
-+mod nodelay_tests {
-+    use super::*;
-+    use crate::transport::test_engine;
-+
-+    /// Connects through `connect_socket` to a stand-in engine and reports
-+    /// whether the client socket ended up with `TCP_NODELAY`.
-+    async fn client_nodelay(headers: Option<HashMap<String, String>>, advertise: bool) -> bool {
-+        let (address, server) = test_engine::spawn(advertise).await;
-+        let client = IIIClient::new(&format!("ws://{address}"));
-+        if let Some(headers) = headers {
-+            client.set_headers(headers);
-+        }
-+        let (stream, _) = tokio::time::timeout(Duration::from_secs(5), client.connect_socket())
+ 
++    /// The compose file of every loaded project, for `compose::ps`.
++    pub(crate) async fn project_files(&self) -> Vec<std::path::PathBuf> {
++        self.loaded()
 +            .await
-+            .unwrap()
-+            .unwrap();
-+        let nodelay = test_engine::nodelay(&stream);
-+        drop(server.await.unwrap());
-+        nodelay
++            .iter()
++            .map(|project| project.file_path().to_path_buf())
++            .collect()
 +    }
 +
-+    #[tokio::test]
-+    async fn worker_socket_has_tcp_nodelay_when_engine_advertises_it() {
-+        assert!(client_nodelay(None, true).await);
-+    }
+     /// Every project this daemon knows, for `compose::list`.
+     pub async fn list(&self) -> Vec<serde_json::Value> {
+         let projects: Vec<Arc<Project>> = self.loaded().await;
+```
+
+**File**: `crates/iii-compose/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -41,6 +41,7 @@ mod parallelism;
+ pub mod process;
+ pub mod process_title;
+ pub mod project;
++pub mod ps;
+ pub mod registry;
+ pub mod remote;
+ pub mod report;
+```
+
+**File**: `crates/iii-compose/src/process/mod.rs` (modified, +5/-0)
+```diff
+@@ -18,6 +18,8 @@
+ 
+ use std::{process::ExitStatus, time::Duration};
+ 
++#[cfg(unix)]
++pub mod reaper;
+ #[cfg(unix)]
+ pub mod unix;
+ #[cfg(windows)]
+@@ -34,6 +36,9 @@ pub use windows::{
+     spawn_supervised_piped_with_stdin,
+ };
+ 
++/// Present in the environment of compose's reaper process; see `reaper`.
++pub const REAPER_ENV: &str = "III_COMPOSE_REAPER";
 +
-+    #[tokio::test]
-+    async fn worker_socket_with_headers_has_tcp_nodelay_when_engine_advertises_it() {
-+        let headers = HashMap::from([("x-test".into(), "nodelay".into())]);
-+        assert!(client_nodelay(Some(headers), true).await);
-+    }
+ /// Fingerprint that distinguishes a live process from a recycled PID.
+ ///
+ /// Serialized into the daemon's durable state, so the variant names are part of
+```
+
+**File**: `crates/iii-compose/src/process/reaper.rs` (added, +192/-0)
+```diff
+@@ -0,0 +1,192 @@
++// Copyright Motia LLC and/or licensed to Motia LLC under one or more
++// contributor license agreements. Licensed under the Elastic License 2.0;
++// you may not use this file except in compliance with the Elastic License 2.0.
++// This software is patent protected. We welcome discussions - reach out at team@iii.dev
++// See LICENSE and PATENTS files for details.
 +
-+    #[tokio::test]
-+    async fn worker_socket_keeps_nagle_when_engine_does_not_advertise_it() {
-+        assert!(!client_nodelay(None, false).await);
++//! Ties every supervised process group to the life of this process.
++//!
++//! Children lead their own process groups so a terminal's Ctrl+C reaches
++//! compose alone and compose can stop them in dependency order. The cost of
++//! that isolation was that nothing stopped them when compose died without
++//! running its teardown: SIGKILL, a panic, a second Ctrl+C. They kept running
++//! with no owner, reconnecting to an engine that was gone, until somebody
++//! found them by hand.
++//!
++//! The reaper closes that gap from outside. It is a small process of its own
++//! whose stdin is a pipe that only this process holds open. Each spawned group
++//! is announced on it, and withdrawn when this process lets go of the handle.
++//! When the pipe reaches EOF, which the kernel guarantees however this process
++//! ends, the reaper stops every group still announced and exits.
++//!
++//! Opt-in: the host binary names the program that runs [`run`] through
++//! [`set_program`]. Without it nothing is spawned and supervision behaves as it
++//! always did.
++
++use std::{
++    collections::BTreeMap,
++    ffi::OsString,
++    io::{BufRead, Write},
++    path::PathBuf,
++    sync::{Mutex, OnceLock},
++    time::{Duration, Instant},
++};
++
++use nix::sys::signal::Signal;
++
++use super::{
++    BirthIdentity, DEFAULT_STOP_GRACE,
++    unix::{group_has_members, is_running, is_same_process, signal_group},
++};
++
++/// Present in the environment of the process that should run [`run`].
++pub const ENV: &str = super::REAPER_ENV;
++
++static PROGRAM: OnceLock<(PathBuf, Vec<OsString>)> = OnceLock::new();
++static PIPE: OnceLock<Option<Mutex<std::process::ChildStdin>>> = OnceLock::new();
++
++/// Names the program that runs [`run`] when started with [`ENV`] set.
++pub fn set_program(program: PathBuf, args: Vec<OsString>) {
++    let _ = PROGRAM.set((program, args));
++}
++
++/// Whether this process was started to be a reaper.
++pub fn requested() -> bool {
++    std::env::var_os(ENV).is_some()
++}
++
++/// Starts the reaper if the host enabled it. Called before every spawn, so the
++/// pipe exists before any child is forked and no child can inherit its write
++/// end in the moment before it is marked close-on-exec.
++pub(crate) fn ensure() {
++    pipe();
++}
++
++/// Announces a group this process now owns.
++pub(crate) fn announce(pgid: i32, birth: &BirthIdentity) {
++    let birth = match birth {
++        BirthIdentity::StartTime(start) => start.to_string(),
++        BirthIdentity::Unavailable => "-".to_string(),
++    };
++    send(&format!("+{pgid} {birth}\n"));
++}
++
++/// Withdraws a group this process no longer owns: it was stopped, or handed
++/// back to the daemon that really owns it.
++pub(crate) fn withdraw(pgid: i32) {
++    send(&format!("-{pgid}\n"));
++}
++
++fn send(line: &str) {
++    if let Some(pipe) = pipe() {
++        // A reaper that died early answers EPIPE. Supervision itself still
++        // works; only the safety net is gone.
++        let _ = pipe
++            .lock()
++            .unwrap_or_else(|poisoned| poisoned.into_inner())
++            .write_all(line.as_bytes());
 +    }
 +}
++
++fn pipe() -> Option<&'static Mutex<std::process::ChildStdin>> {
++    PIPE.get_or_init(|| {
++        use std::os::unix::process::CommandExt;
++
++        let (program, args) = PROGRAM.get()?;
++        let mut child = std::process::Command::new(program)
++            .arg0("iii-compose-reaper")
++            .args(args)
++            .env(ENV, "1")
++            .stdin(std::process::Stdio::piped())
++            .stdout(std::process::Stdio::null())
++            .stderr(std::process::Stdio::null())
++            // Its own group: the Ctrl+C meant for compose must not end it
++            // before compose has had the chance to stop anything.
++            .process_group(0)
++            .spawn()
++            .ok()?;
++        Some(Mutex::new(child.stdin.take()?))
++    })
++    .as_ref()
++}
++
++/// The reaper's whole life: track announcements until the owner's end of the
++/// pipe closes, stop what is still announced, exit.
++pub fn run() -> ! {
++    // Terminal signals belong to compose. The reaper ends on EOF only.
++    unsafe {
++        let _ = nix::sys::signal::signal(Signal::SIGINT, nix::sys::signal::SigHandler::SigIgn);
++        let _ = nix::sys::signal::signal(Signal::SIGHUP, nix::sys::signal::SigHandler::SigIgn);
++    }
++    serve(std::io::stdin().lock(), DEFAULT_STOP_GRACE);
++    std::process::exit(0)
++}
++
++/// Reads announcements until EOF, then stops every group still announced.
++///
++/// Counted, not set: a project reopened in place adopts a group before the
++/// handle it replaces is dropped, and that 
 ```
 
-**File**: `sdk/packages/rust/iii/src/lib.rs` (modified, +1/-0)
+**File**: `crates/iii-compose/src/process/unix.rs` (modified, +14/-1)
 ```diff
-@@ -7,6 +7,7 @@ pub mod iii;
- pub mod protocol;
- pub mod stream_provider;
- pub mod structs;
-+mod transport;
- pub mod triggers;
- pub mod types;
+@@ -102,6 +102,7 @@ fn spawn_supervised_inner(
+             .stderr(std::process::Stdio::piped());
+     }
  
++    super::reaper::ensure();
+     let mut child = spawn_retrying_text_file_busy(&mut command)?;
+     let output = ChildOutput {
+         stdout: child.stdout.take(),
+@@ -120,11 +121,13 @@ fn spawn_supervised_inner(
+         let _ = tx.send(Some(status.unwrap_or_else(|_| exited_unknown())));
+     });
+ 
++    let birth = birth_identity(pid);
++    super::reaper::announce(pid as i32, &birth);
+     Ok((
+         Supervised {
+             pid,
+             pgid: pid as i32,
+-            birth: birth_identity(pid),
++            birth,
+             exit: ExitSource::Reaped(exit),
+         },
+         output,
+@@ -169,6 +172,7 @@ impl Supervised {
+         if !is_same_process(pid, recorded) {
+             return None;
+         }
++        super::reaper::announce(pid as i32, recorded);
+         Some(Supervised {
+             pid,
+             pgid: pid as i32,
+@@ -288,6 +292,15 @@ impl Supervised {
+     }
+ }
+ 
++/// Holding the handle is owning the group: while it lives, the reaper stops the
++/// group if this process dies without doing so itself. Letting go hands it
++/// back, which is what `abandon` relies on for children of another daemon.
++impl Drop for Supervised {
++    fn drop(&mut self) {
++        super::reaper::withdraw(self.pgid);
++    }
++}
++
+ /// Whether any process still belongs to the group. Signal 0 to a group answers
+ /// ESRCH when it is empty.
+ pub fn group_has_members(pgid: i32) -> bool {
 ```
 
-**File**: `sdk/packages/rust/iii/src/protocol.rs` (modified, +13/-0)
+**File**: `crates/iii-compose/src/project.rs` (modified, +34/-0)
 ```diff
-@@ -15,6 +15,19 @@ pub const WORKER_NAMESPACE_CONFLICT: &str = "WORKER_NAMESPACE_CONFLICT";
- /// functions. Mirrors the engine constant of the same name.
- pub const FUNCTION_NAMESPACE_CONFLICT: &str = "FUNCTION_NAMESPACE_CONFLICT";
+@@ -731,8 +731,20 @@ impl Project {
+     /// other child, which is what `down` walks. Leaving it out was a silent
+     /// leak: `stop_one` returns early on a key it does not hold, so teardown
+     /// reported success over a process that kept running and kept its name.
++    ///
++    /// Survivors are adopted only from a compose process that is still alive:
++    /// this one, reopening the project in place, or another that is about to
++    /// refuse this one (see [`Project::abandon`]). A survivor of a compose that
++    /// is gone was left behind by a crash, and keeping it would keep whatever
++    /// configuration it started with; it is stopped and started fresh instead.
+     async fn reconcile_recovered(&self) {
+         let mut inner = self.inner.lock().await;
++        let owner_alive = inner
++            .state
++            .owner
++            .as_ref()
++            .is_some_and(crate::state::Owner::is_alive);
++        let mut left_behind = Vec::new();
+         let recorded: Vec<(String, crate::state::ChildRecord)> = inner
+             .state
+             .containers
+@@ -743,6 +755,7 @@ impl Project {
+         for (key, record) in recorded {
+             match reconcile(&record) {
+                 Reconciliation::Adopt => match Supervised::adopt(record.pid, &record.birth) {
++                    Some(child) if !owner_alive => left_behind.push((key.clone(), child)),
+                     Some(child) => {
+                         daemon_line(
+                             &self.project_namespace,
+@@ -801,6 +814,27 @@ impl Project {
+             }
+         }
  
-+/// Response header in which the engine lists optional transport capabilities
-+/// on every worker-listener response, including the WebSocket upgrade, as
-+/// comma-separated tokens. Workers ignore tokens they do not know.
-+pub const ENGINE_CAPABILITIES_HEADER: &str = "x-iii-capabilities";
++        if !left_behind.is_empty() {
++            let grace = self.file.read().await.stop_timeout;
++            futures::future::join_all(left_behind.iter().map(|(_, child)| child.stop(grace))).await;
++            for (key, child) in &left_behind {
++                daemon_line(
++                    &self.project_namespace,
++                    &format!(
++                        "{key} (pid {}) outlived the compose that started it; stopped it",
++                        child.pid
++                    ),
++                    Tone::Warn,
++                );
++                if let Some(entry) = inner.state.containers.get_mut(key) {
++                    entry.status = ChildStatus::Stopped;
++                }
++            }
++        }
++        if !owner_alive {
++            inner.state.owner = Some(crate::state::Owner::current());
++        }
 +
-+/// Capability token: the engine's end of the connection has `TCP_NODELAY`, so
-+/// the worker may disable Nagle on its end too (MOT-5377). A worker must not
-+/// disable it without this token: Nagle on the engine's end alone is slower
-+/// than on both ends. The token describes the engine's own socket: behind a
-+/// proxy that forwards the header, the worker's peer is the proxy, which
-+/// should then set `TCP_NODELAY` on its side too (nginx and Envoy do).
-+pub const ENGINE_CAPABILITY_TCP_NODELAY: &str = "tcp-nodelay";
-+
- /// Routing action for [`TriggerRequest`]. Determines how the engine handles
- /// the invocation.
- ///
+         let state = inner.state.clone();
+         drop(inner);
+         let _ = self.store.save(&state);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2333** (closed): chore(deps): bump the npm-minor-and-patch group across 1 directory with 51 updates (@dependabot[bot])
+- **PR #2329** (2026-10-19): fix(compose): stop workers that outlive compose; add iii ps and iii kill (@sergiofilhowz)
 - **PR #2326** (2026-10-14): fix(observability): enforce trace sampling and keep archive writes bounded (@guibeira)
 - **PR #2325** (2026-10-14): (MOT-5377) fix: negotiate TCP_NODELAY between the engine and Rust workers (@guibeira)
 - **PR #2320** (2026-10-14): feat(website): show JEV instead of judge in the custom harness demo (@arihantcodes)
 - **PR #2319** (closed): feat(website): show JEV instead of judge in the custom harness demo (@arihantcodes)
-- **PR #2317** (2026-10-14): fix(python): infer schemas for bare dict and list annotations (@1aifanatic)
-- **PR #2316** (2026-10-14): fix(engine): release WebSocket buffers retained by queued HTTP bodies (@guibeira)
 
 ---
 
@@ -1626,56 +1480,80 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): prevent deadlocks in stream trigger cleanup (#2297)
+## X. compose): stop workers that outlive compose; add iii ps and iii kill (#2329)
 
 **RULE**:
-When implementing operations in `engine/src/workers/stream/trigger.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b58595d5`: engine): prevent deadlocks in stream trigger cleanup (#2297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c424b247`: compose): stop workers that outlive compose; add iii ps and iii kill (#2329). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/src/workers/stream/trigger.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// When both stream registry locks are needed, acquire stream_triggers_by_name
-// before stream_triggers, matching StreamWorker::invoke_triggers.
-                        // Publish both indexes together in dispatch's lock order.
-                        let mut by_name = stream_triggers_by_name.write().await;
-                        let mut triggers_map = stream_triggers.write().await;
-                        by_name
-                        let _ = triggers_map.insert(
-                // Lock the name index first, as dispatch does. Holding the map
-                // writer while waiting for this index deadlocks with a dispatch
-                // reader holding the index while waiting for the map.
-                let mut by_name = stream_triggers_by_name.write().await;
-                let mut triggers_map = stream_triggers.write().await;
-                if let Some(removed_trigger) = triggers_map.remove(&trigger_id) {
-    #[tokio::test]
-    async fn test_stream_sets_and_trigger_cleanup_do_not_deadlock() {
-        use std::time::Duration;
+ "nix 0.31.3",
+ "nix 0.31.3",
+ "sysinfo 0.38.4",
+ "nix 0.31.3",
+version = "0.31.3"
+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
+[[package]]
+name = "typed-path"
+version = "0.12.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
 
-        use crate::{
-            function::FunctionResult,
-            workers::stream::structs::{StreamGetInput, StreamSetInput},
-        };
-
-    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        stream_triggers_by_name
-                            .write()
-                            .await
-                        let _ = stream_triggers.write().await.insert(
-                // Remove from main triggers map
-                if let Some(removed_trigger) = stream_triggers.write().await.remove(&trigger_id) {
-                        let mut by_name = stream_triggers_by_name.write().await;
+[[package]]
+name = "arbitrary"
+version = "1.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
+dependencies = [
+ "derive_arbitrary",
+]
+
+[[package]]
+name = "constant_time_eq"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
+
+[[package]]
+name = "crc"
+version = "3.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5eb8a2a1cd12ab0d987a5d5e825195d372001a4094a0376319d5a0ad71c1ba0d"
+dependencies = [
+ "crc-catalog",
+]
+
+[[package]]
+name = "crc-catalog"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "217698eaf96b4a3f0bc4f3662aaa55bdf913cd54d7204591faa790070c6d0853"
+
+ "nix 0.31.2",
+[[package]]
+name = "deflate64"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac6b926516df9c60bfa16e107b21086399f8285a44ca9711344b9e553c5146e2"
+
+[[package]]
+name = "derive_arbitrary"
+version = "1.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e567bd8
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b58595d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c424b247` are properly handled with clean fallback behavior.

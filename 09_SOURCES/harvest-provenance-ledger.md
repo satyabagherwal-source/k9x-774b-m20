@@ -3219,3 +3219,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T11:54:55.691Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `308b6b87` | Multi-dimensional audit evidence | 2026-10-19T11:54:59.082Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7453abcc` | Multi-dimensional audit evidence | 2026-10-19T11:55:00.441Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T12:01:12.231Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `0f3842c4` | Multi-dimensional audit evidence | 2026-10-19T12:01:13.825Z |
+| `learn-github-swiftkickmobile-swiftmessages` | `https://github.com/SwiftKickMobile/SwiftMessages` | `c0ff6c65` | Multi-dimensional audit evidence | 2026-10-19T12:01:20.189Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `a73b3fc5` | Multi-dimensional audit evidence | 2026-10-19T12:01:23.016Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `469455b1` | Multi-dimensional audit evidence | 2026-10-19T12:01:26.084Z |

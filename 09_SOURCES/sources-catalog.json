@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "1b13745c562f1f85cca1e24657f3edfd52829e292510dd612e7de44d67d1ce84",
-    "lastHarvestedAt": "2026-10-18T03:02:32.093Z",
+    "contentHash": "822baacfe573fdb23b9ec39c72e03b309e13e8e59d1b7efa55201474ed0e11b1",
+    "lastHarvestedAt": "2026-10-19T12:01:12.231Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "05440e1f",
+    "sourceVersion": "0f3842c4",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "bca81c00e5d56878c8c17f8bc3be13e7306121661ba435c991b2ed8d810ca32a",
-    "lastHarvestedAt": "2026-10-18T21:07:36.772Z",
+    "contentHash": "a7bc617c19bc841383f7c9075580b3fba62e804083c5ce4ea451cd5ec153af8e",
+    "lastHarvestedAt": "2026-10-19T12:01:13.825Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "08b6eada",
+    "sourceVersion": "469455b1",
     "license": "Apache-2.0",
-    "contentHash": "64fe942bcbf83d68d5310ecffbf8ed423234868b2d1b1c7e1c8a0ec549a7d14b",
-    "lastHarvestedAt": "2026-10-19T08:41:18.318Z",
+    "contentHash": "b9f40e159ce83b57426eae530adf3e56856e6fcfb67ad5ffc7e0cc19148844da",
+    "lastHarvestedAt": "2026-10-19T12:01:26.084Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "713cf6cb",
+    "sourceVersion": "a73b3fc5",
     "license": "NOASSERTION",
-    "contentHash": "215c4a9be72fe77073c7be80c3353dcf8e55dbfd1f38ee158e46f34f09cb9bd9",
-    "lastHarvestedAt": "2026-10-18T23:39:14.616Z",
+    "contentHash": "c3cbd3427e22c86036fb80822b5a6626881432ab45717058fdb6636e5aca1105",
+    "lastHarvestedAt": "2026-10-19T12:01:23.016Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -7948,5 +7948,15 @@
     "contentHash": "be2ad43ee00be30a9eaae2d4d33444447718aea98448f3490966e3851a8b05b5",
     "lastHarvestedAt": "2026-10-19T11:54:50.397Z",
     "learningId": "learn-github-mochidiffusion-mochidiffusion"
+  },
+  "swiftkickmobile-swiftmessages": {
+    "repository": "SwiftKickMobile/SwiftMessages",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SwiftKickMobile/SwiftMessages",
+    "sourceVersion": "c0ff6c65",
+    "license": "MIT",
+    "contentHash": "04f0fd24d4883e60422a7c9b70413f5be362e2231525a58cc36fc524bf325339",
+    "lastHarvestedAt": "2026-10-19T12:01:20.189Z",
+    "learningId": "learn-github-swiftkickmobile-swiftmessages"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:55:00.396Z",
-  "total_verified_learnings": 809,
+  "last_updated": "2026-10-19T12:01:26.025Z",
+  "total_verified_learnings": 810,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4875,8 +4875,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "08b6eada",
-      "content_hash": "64fe942bcbf83d68d5310ecffbf8ed423234868b2d1b1c7e1c8a0ec549a7d14b",
+      "source_version": "469455b1",
+      "content_hash": "b9f40e159ce83b57426eae530adf3e56856e6fcfb67ad5ffc7e0cc19148844da",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -4899,6 +4899,11 @@
           "number": 2435,
           "title": "Fail-Safe Ephemeral Execution Target Lifecycle Pattern",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2564,
+          "title": "cilium, docs: update Maglev reassignment claims",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4906,7 +4911,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:41:18.267Z",
+      "verified_at": "2026-10-19T12:01:26.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18774,7 +18779,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "1b13745c562f1f85cca1e24657f3edfd52829e292510dd612e7de44d67d1ce84",
+      "content_hash": "822baacfe573fdb23b9ec39c72e03b309e13e8e59d1b7efa55201474ed0e11b1",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "promoted_rules": [
@@ -18840,7 +18845,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
       ],
-      "verified_at": "2026-10-18T03:02:32.053Z",
+      "verified_at": "2026-10-19T12:01:12.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24384,14 +24389,19 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "05440e1f",
-      "content_hash": "bca81c00e5d56878c8c17f8bc3be13e7306121661ba435c991b2ed8d810ca32a",
+      "source_version": "0f3842c4",
+      "content_hash": "a7bc617c19bc841383f7c9075580b3fba62e804083c5ce4ea451cd5ec153af8e",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
         {
           "number": 1702,
           "title": "engine): prevent deadlocks in stream trigger cleanup (#2297)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2561,
+          "title": "compose): stop workers that outlive compose; add iii ps and iii kill (#2329)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -24400,7 +24410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:07:36.730Z",
+      "verified_at": "2026-10-19T12:01:13.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26320,14 +26330,19 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "713cf6cb",
-      "content_hash": "215c4a9be72fe77073c7be80c3353dcf8e55dbfd1f38ee158e46f34f09cb9bd9",
+      "source_version": "a73b3fc5",
+      "content_hash": "c3cbd3427e22c86036fb80822b5a6626881432ab45717058fdb6636e5aca1105",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
         {
           "number": 1862,
           "title": "Merge pull request #5027 from PetrusZ/fix/security",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2563,
+          "title": "Merge pull request #5028 from huanghongbo-hhb/fix/aws-ecr-credential-cache-inval",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26336,7 +26351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:39:14.573Z",
+      "verified_at": "2026-10-19T12:01:22.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39427,22 +39442,35 @@
     "learn-github-swiftkickmobile-swiftmessages": {
       "learning_id": "learn-github-swiftkickmobile-swiftmessages",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "swiftkickmobile-swiftmessages",
+      "source": "SwiftKickMobile/SwiftMessages",
+      "repository": "SwiftKickMobile/SwiftMessages",
       "slug": "swiftkickmobile-swiftmessages",
       "platform": "github",
       "source_url": "https://github.com/SwiftKickMobile/SwiftMessages",
-      "source_version": "HEAD",
-      "content_hash": "ffaf5ee540ed73bf341fd2a2cfa7d080a1fc2f5c4398019604bd17d3b65619a9",
+      "source_version": "c0ff6c65",
+      "content_hash": "04f0fd24d4883e60422a7c9b70413f5be362e2231525a58cc36fc524bf325339",
       "dossier_path": "07_PROJECT_LEARNING/swiftkickmobile-swiftmessages-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/swiftkickmobile-swiftmessages-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2562,
+          "title": "Introduce SwiftMessagesHideAction and Environment Key for SwiftUI (#574)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.779Z"
+      "verified_at": "2026-10-19T12:01:20.120Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-swiftuix-swiftuix": {
       "learning_id": "learn-github-swiftuix-swiftuix",
@@ -86727,6 +86755,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:55:00.383Z"
+    },
+    "rule-2561": {
+      "learning_id": "rule-2561",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2561,
+      "title": "compose): stop workers that outlive compose; add iii ps and iii kill (#2329)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "0f3842c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:01:13.766Z"
+    },
+    "rule-2562": {
+      "learning_id": "rule-2562",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2562,
+      "title": "Introduce SwiftMessagesHideAction and Environment Key for SwiftUI (#574)",
+      "source_url": "https://github.com/SwiftKickMobile/SwiftMessages",
+      "source_version": "c0ff6c65",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:01:20.120Z"
+    },
+    "rule-2563": {
+      "learning_id": "rule-2563",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2563,
+      "title": "Merge pull request #5028 from huanghongbo-hhb/fix/aws-ecr-credential-cache-inval",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "a73b3fc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:01:22.946Z"
+    },
+    "rule-2564": {
+      "learning_id": "rule-2564",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2564,
+      "title": "cilium, docs: update Maglev reassignment claims",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "469455b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:01:26.013Z"
     }
   },
   "aliases": {
