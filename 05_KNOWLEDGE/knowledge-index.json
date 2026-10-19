@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:16:47.364Z",
-  "total_verified_learnings": 873,
+  "last_updated": "2026-10-19T18:23:26.603Z",
+  "total_verified_learnings": 875,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7669,14 +7669,19 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "16917f94",
-      "content_hash": "edb9bc7286c86cb78ced99ea50ad94dcf151d09e8ba07f5448016421d17625cd",
+      "source_version": "c9698a3f",
+      "content_hash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
         {
           "number": 2176,
           "title": "Correctly tag memory for blocks of the database file (#26517)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2741,
+          "title": "Batch the Ready To Merge fixes on top of #27371 (#27390)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7685,7 +7690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:19:12.477Z",
+      "verified_at": "2026-10-19T18:23:26.591Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38432,22 +38437,35 @@
     "learn-github-shifthackz-stable-diffusion-kmp": {
       "learning_id": "learn-github-shifthackz-stable-diffusion-kmp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "shifthackz-stable-diffusion-kmp",
+      "source": "ShiftHackZ/Stable-Diffusion-KMP",
+      "repository": "ShiftHackZ/Stable-Diffusion-KMP",
       "slug": "shifthackz-stable-diffusion-kmp",
       "platform": "github",
       "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
-      "source_version": "HEAD",
-      "content_hash": "0fc8cabd38119c106b8426ca55a14248de31e7d3fcf923341b0c8d5c240d4d07",
+      "source_version": "4b060c7e",
+      "content_hash": "ae1ed764fb7487d67f8c64b6207bb63c5497531d4897faeff9a31ba8e0355d9d",
       "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2740,
+          "title": "Merge release 1.1.2 fixes back into develop",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.477Z"
+      "verified_at": "2026-10-19T18:23:17.761Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-shopify-react-native-skia": {
       "learning_id": "learn-github-shopify-react-native-skia",
@@ -55115,20 +55133,29 @@
     "learn-github-lifesciforge-seo-auditor": {
       "learning_id": "learn-github-lifesciforge-seo-auditor",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LifeSciForge/seo-auditor",
       "repository": "LifeSciForge/seo-auditor",
       "slug": "lifesciforge-seo-auditor",
       "platform": "github",
       "source_url": "https://github.com/LifeSciForge/seo-auditor",
-      "source_version": "cb5dbfbf17",
-      "content_hash": "ceefe809948b53c02577f199fc3fedb0b5b2254739d79c8a0f310756272ee00f",
+      "source_version": "cb5dbfbf",
+      "content_hash": "b449175ffddc7bf850273d9301515876c3d680e20f4e453f1f30de93d762f8f7",
       "dossier_path": "07_PROJECT_LEARNING/lifesciforge-seo-auditor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lifesciforge-seo-auditor-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:12:57.837Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T18:23:15.378Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -90775,6 +90802,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:16:47.356Z"
+    },
+    "rule-2740": {
+      "learning_id": "rule-2740",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2740,
+      "title": "Merge release 1.1.2 fixes back into develop",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "4b060c7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:23:17.761Z"
+    },
+    "rule-2741": {
+      "learning_id": "rule-2741",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2741,
+      "title": "Batch the Ready To Merge fixes on top of #27371 (#27390)",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "c9698a3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:23:26.591Z"
     }
   },
   "aliases": {

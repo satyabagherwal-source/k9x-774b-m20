@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `16917f94`  
+> **Source Version**: `c9698a3f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:19:12.300Z  
+> **Timestamp**: 2026-10-19T18:23:26.380Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:19:12.292Z  
+> **Harvest Timestamp**: 2026-10-19T18:23:26.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is an analytical in-process SQL database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42253 stars
+- **Stars / Engagement**: 42273 stars
 
 ---
 
@@ -2019,11 +2019,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #27440** (2026-10-18): **[Backport v2.0] Serialize array-slice operator expressions with open bounds properly**
-  *Symptoms*: Backport of https://github.com/duckdb/duckdb/pull/27120
+- **Issue #27478** (2026-10-19): **Introduce `PEGRuleId` (Parser performance 3/N)**
+  *Symptoms*: Fix #27290   Here's the third part of the performance improvements made by @lnkuiper, focusing on the transformer this time. After https://github.com/duckdb/duckdb/pull/27395 and https://github.com/duckdb/duckdb/pull/27393  Biggest performance improvement (and code line diff) comes from converting the rule names to an ID (which was also done in https://github.com/duckdb/duckdb/pull/27290)   Furthermore (AI written):  **Reclaiming transform scratch memory.** A transform frame needs a process object and buffers for its children's results. Those used to be carved out of the same arena as the results themselves, and an arena can only free memory by rewinding, which would have destroyed live results sitting between the scratch allocations. Scratch memory therefore grew with the total number of frames in a parse. Processes and child buffers now live in a second arena owned by the transformer; each frame records that arena's position when it is pushed and rewinds to it when it finishes or unwinds. Scratch memory now follows the live frame depth, which is where the RSS reductions below come from. Results keep their lifetime unchanged.  **Frame storage.** The frame stack is a `vector` with reserved capacity that siblings reuse, instead of a `deque`-backed `std::stack` that allocated and released blocks as the depth oscillated. Frames hold arena pointers only, so a reallocating vector can move them safely; the driver reacquires the top frame after each step. A vector is inspectable in 
 
-- **Issue #27437** (2026-10-19): **Bump aws to latest main**
-  *Symptoms*: 
+- **Issue #27477** (2026-10-19): **String sorting performance**
+  *Symptoms*: Sorting variable-size keys repeatedly compares bytes that are already known to be equal, and external merges can retain consumed heap blocks longer than needed.  This PR: * Skips the inline prefix during heap comparisons. * Destroys heap blocks more eagerly.  Improves in-memory and larger-than-memory string sorting performance by roughly 30% for ~100-byte keys with a ~50-byte common prefix.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2040,401 +2040,611 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71f90a8f` (2026-10-16)
-**Commit Message**: Correctly tag memory for blocks of the database file (#26517)
+### Incident Patch 1: `aeb4387c` (2026-10-19)
+**Commit Message**: Batch the Ready To Merge fixes on top of #27371 (#27390)
 
-DuckDB accounts buffer pool memory per owner, and `duckdb_memory()`
-reports that breakdown, but every block read from the database file is
-counted under `BASE_TABLE` whatever it belongs to. A checkpoint also
-moves memory that was correctly tagged `ART_INDEX` or `METADATA` into
-`BASE_TABLE`. So once data has been checkpointed, the breakdown cannot
-tell how much of the buffer pool indexes, metadata or long strings hold,
-and it shifts with every checkpoint. For example, after a restart,
-scanning a column of 10 KB strings shows its overflow string blocks
-under `BASE_TABLE` (2 GB for 200k such strings) and nothing under
-`OVERFLOW_STRINGS`.
+Batches the fork PRs labeled `Ready To Merge` in
+https://github.com/Robinho-MR/duckdb/pulls on top of #27371 (`Merge
+v2.0-cyanoptera into main`).
 
-**File**: `src/execution/index/fixed_size_buffer.cpp` (modified, +1/-1)
+The commits of each PR are cherry-picked on top of the head of #27371
+(`cyanoptera-to-main-20261016`), so this PR also shows the commits of
+#27371 until that PR is merged. Where a PR conflicted with equivalent or
+newer changes already in #27371, the version in #27371 was kept (and,
+for BETWEEN, ENUM casts and `list_resize`, the PR commits are adapted
+accordingly).
+
+## Changes applied on top of #27371 (47 PRs)
+
+- Robinho-MR/duckdb#4: Canonicalize dangling symlinks when attaching
+database files
+- Robinho-MR/duckdb#12: Raise a binder error when checkpointing a
+catalog without storage
+- Robinho-MR/duckdb#13: Do not duplicate large operands when binding
+BETWEEN
+- Robinho-MR/duckdb#19: Do not let the optimizer remove ENUM casts that
+change semantics
+- Robinho-MR/duckdb#22: Keep rows with a NULL unique key in ON CONFLICT
+and INSERT OR IGNORE
+- Robinho-MR/duckdb#33: Delete rows that are matched multiple times only
+once
+- Robinho-MR/duckdb#44: Reject COPY TO the file of an attached databas
+
+**File**: `extension/core_functions/aggregate/algebraic/avg.cpp` (modified, +1/-1)
 ```diff
-@@ -63,7 +63,7 @@ FixedSizeBuffer::FixedSizeBuffer(BlockManager &block_manager, const idx_t segmen
-     : block_manager(block_manager), readers(0), segment_count(segment_count), allocation_size(allocation_size),
-       dirty(false), vacuum(false), loaded(false), block_pointer(block_pointer) {
- 	D_ASSERT(block_pointer.IsValid());
--	block_handle = block_manager.RegisterBlock(block_pointer.block_id);
-+	block_handle = block_manager.RegisterBlock(block_pointer.block_id, MemoryTag::ART_INDEX);
- 	D_ASSERT(block_handle->BlockId() < MAXIMUM_BLOCK);
- }
- 
+@@ -321,7 +321,7 @@ AggregateFunction GetAverageAggregate(PhysicalType type) {
+ unique_ptr<FunctionData> BindDecimalAvg(BindAggregateFunctionInput &input) {
+ 	auto &function = input.GetBoundFunction();
+ 	auto &arguments = input.GetArguments();
+-	auto decimal_type = arguments[0]->GetReturnType();
++	auto decimal_type = BindDecimalArgument(input.GetClientContext(), arguments[0], "avg");
+ 	function.ReplaceImplementation(GetAverageAggregate(decimal_type.InternalType()));
+ 	function.SetName("avg");
+ 	function.GetArguments()[0] = decimal_type;
 ```
 
-**File**: `src/include/duckdb/storage/block_manager.hpp` (modified, +9/-4)
+**File**: `extension/core_functions/aggregate/distributive/sum.cpp` (modified, +1/-1)
 ```diff
-@@ -9,7 +9,9 @@
- #pragma once
- 
- #include "duckdb/common/common.hpp"
-+#include "duckdb/common/enums/memory_tag.hpp"
- #include "duckdb/common/mutex.hpp"
-+#include "duckdb/common/optional.hpp"
- #include "duckdb/common/optional_idx.hpp"
- #include "duckdb/common/unordered_map.hpp"
- #include "duckdb/common/query_context.hpp"
-@@ -101,18 +103,21 @@ class BlockManager {
- 	//! Truncate the underlying database file after a checkpoint
- 	virtual void Truncate();
- 
--	//! Register a block with the given block id in the base file
--	shared_ptr<BlockHandle> RegisterBlock(block_id_t block_id);
-+	//! Register a block with the given block id in the base file, an already registered block must have the same tag
-+	shared_ptr<BlockHandle> RegisterBlock(block_id_t block_id, MemoryTag tag = MemoryTag::BASE_TABLE);
- 	//! Convert an existing in-memory buffer into a persistent disk-backed block
- 	//! If mode is set to destructive (default) - the old_block will be destroyed as part of this method
- 	//! This can only be safely used when there is no other (lingering) usage of old_block
- 	//! If there is concurrent usage of the block elsewhere - use the THREAD_SAFE mode which creates an extra copy
-+	//! The new block keeps the memory tag of old_block, unless a tag is given
- 	shared_ptr<BlockHandle> ConvertToPersistent(QueryContext context, block_id_t block_id,
- 	                                            shared_ptr<BlockHandle> old_block, BufferHandle old_handle,
--	                                            ConvertToPersistentMode mode = ConvertToPersistentMode::DESTRUCTIVE);
-+	                                            ConvertToPersistentMode mode = ConvertToPersistentMode::DESTRUCTIVE,
-+	                                            optional<MemoryTag> tag = nullopt);
- 	shared_ptr<BlockHandle> ConvertToPersistent(QueryContext context, block_id_t block_id,
- 	                                            shared_ptr<BlockHandle> old_block,
--	                                            ConvertToPersistentMode mode = ConvertToPersistentMode::DESTRUCTIVE);
-+	                                            ConvertToPersistentMode mode = ConvertToPersistentMode::DESTRUCTIVE,
-+	                                            optional<MemoryTag> tag = nullopt);
- 
- 	void UnregisterPersistentBlock(BlockHandle &block);
- 	//! UnregisterBlock, only accepts non-temporary block ids
+@@ -481,7 +481,7 @@ AggregateFunction GetDecimalSumAggregate(PhysicalType type) {
+ unique_ptr<FunctionData> BindDecimalSum(BindAggregateFunctionInput &input) {
+ 	auto &function = input.GetBoundFunction();
+ 	auto &arguments = input.GetArguments();
+-	auto decimal_type = arguments[0]->GetReturnType();
++	auto decimal_type = BindDecimalArgument(input.GetClientContext(), arguments[0], "sum");
+ 	function.ReplaceImplementation(GetDecimalSumAggregate(decimal_type.InternalType()));
+ 	function.SetName("sum");
+ 	function.GetArguments()[0] = decimal_type;
 ```
 
-**File**: `src/storage/buffer/block_manager.cpp` (modified, +7/-6)
+**File**: `extension/core_functions/include/core_functions/aggregate/sum_helpers.hpp` (modified, +18/-0)
 ```diff
-@@ -37,7 +37,7 @@ shared_ptr<BlockHandle> BlockManager::TryGetBlock(block_id_t block_id) {
- 	return entry->second.lock();
- }
+@@ -15,6 +15,7 @@
+ #include "duckdb/function/aggregate_state.hpp"
+ #include "duckdb/function/aggregate_state_layout.hpp"
+ #include "duckdb/common/operator/cast_operators.hpp"
++#include "duckdb/planner/expression/bound_cast_expression.hpp"
+ #include <type_traits>
+ #include <utility>
  
--shared_ptr<BlockHandle> BlockManager::RegisterBlock(block_id_t block_id) {
-+shared_ptr<BlockHandle> BlockManager::RegisterBlock(block_id_t block_id, MemoryTag tag) {
- 	lock_guard<mutex> lock(blocks_lock);
- 	// check if the block already exists
- 	auto entry = blocks.find(block_id);
-@@ -46,21 +46,22 @@ shared_ptr<BlockHandle> BlockManager::RegisterBlock(block_id_t block_id) {
- 		auto existing_ptr = entry->second.lock();
- 		if (existing_ptr) {
- 			//! it hasn't! return it
-+			D_ASSERT(existing_ptr->GetMemory().GetMemoryTag() == tag);
- 			return existing_ptr;
- 		}
+@@ -269,4 +270,21 @@ struct BaseSumOperation {
  	}
- 	// create a new block pointer for this block
--	auto result = make_shared_ptr<BlockHandle>(*this, block_id, MemoryTag::BASE_TABLE);
-+	auto result = make_shared_ptr<BlockHandle>(*this, block_id, tag);
- 	// register the block pointer in the set of blocks as a weak pointer
- 	blocks[block_id] = weak_ptr<BlockHandle>(result);
- 	return result;
- }
+ };
  
- shared_ptr<BlockHandle> BlockManager::ConvertToPersistent(QueryContext context, block_id_t block_id,
-                                                           shared_ptr<BlockHandle> old_block, BufferHandle old_handle,
--                                                          ConvertToPersistentMode mode) {
-+                                                          ConvertToPersistentMode mode, optional<MemoryTag> tag) {
- 	// register a block with the new block id
--	auto new_block = RegisterBlock(block_id);
-+	auto new_block = RegisterBlock(block_id, tag.value_or(old_block->GetMemory().GetMemoryTag()));
- 	D_ASSERT(new_block->GetMemory().GetState() == BlockState::BLOCK_UNLOADED);
- 	D_ASSERT(new_block->GetMemory().GetReaders() == 0);
- 
-@@ -119,10 +120,10 @@ shared_ptr<BlockHandle> BlockManager::ConvertToPersistent(QueryContext context,
- 
- shared_ptr<BlockHandle> BlockManager::ConvertToPersistent(QueryContext context, block_id_t block_id,
-                                                           shared_ptr<BlockHandle> old_block,
--                                                          ConvertToPersistentMode mode) {
-+                                                          ConvertToPersistentMode mode, optional<MemoryTag> tag) {
- 	// pin the old block to ensure we have it loaded in memory
- 	auto handle = buffer_manager.Pin(old_block);
--	return ConvertToPersistent(context, block_id, std::move(old_block), std::move(handle), mode);
-+	return ConvertToPersistent(context, block_id, std::move(old_block), std::move(handle), mode, tag);
- }
- 
- void BlockManager::UnregisterBlock(block_id_t id) {
++//! The DECIMAL overloads can be selected for non-DECIMAL arguments (e.g. through named arguments) - the bind runs
++//! before the argument is cast, so cast it to the DECIMAL type that represents its values here
++inline LogicalType BindDecimalArgument(ClientContext &context, unique_ptr<Expression> &argument,
++                                       const string &function_name) {
++	auto type = argument->GetReturnType();
++	if (type.id() == LogicalTypeId::DECIMAL) {
++		return type;
++	}
++	uint8_t width, scale;
++	if (!type.GetDecimalProperties(width, scale)) {
++		throw BinderException("%s: cannot compute the DECIMAL aggregate of type %s", function_name, type.ToString());
++	}
++	auto decimal_type = LogicalType::DECIMAL(width, scale);
++	argument = BoundCastExpression::AddCastToType(context, std::move(argument), decimal_type);
++	return decimal_type;
++}
++
+ } // namespace duckdb
 ```
 
-**File**: `src/storage/checkpoint/write_overflow_strings_to_disk.cpp` (modified, +2/-2)
+**File**: `extension/core_functions/include/core_functions/scalar/string_characters.hpp` (added, +55/-0)
 ```diff
-@@ -37,7 +37,7 @@ shared_ptr<BlockHandle> UncompressedStringSegmentState::GetHandle(BlockManager &
- 		throw DataCorruptionException(
- 		    "Corrupted uncompressed string segment: overflow string block is not owned by the segment");
- 	}
--	auto result = manager.RegisterBlock(block_id);
-+	auto result = manager.RegisterBlock(block_id, MemoryTag::OVERFLOW_STRINGS);
- 	handles.insert(make_pair(block_id, result));
- 	return result;
- }
-@@ -50,7 +50,7 @@ void UncompressedStringSegmentState::RegisterBlock(BlockManager &manager_p, bloc
- 		                        block_id);
- 	}
- 	auto &manager = block_manager ? *block_manager : manager_p;
--	auto result = manager.RegisterBlock(block_id);
-+	auto result = manager.RegisterBlock(block_id, MemoryTag::OVERFLOW_STRINGS);
- 	handles.insert(make_pair(block_id, std::move(result)));
- 	on_disk_blocks.push_back(block_id);
- 	on_disk_block_set.insert(block_id);
-```
-
-**File**: `src/storage/metadata/metadata_manager.cpp` (modified, +1/-1)
-```diff
-@@ -203,7 +203,7 @@ void MetadataManager::AddAndRegisterBlock(unique_lock<mutex> &block_lock, Metada
- 		throw InternalException("AddAndRegisterBlock called with a transient block id");
- 	}
- 	block_lock.unlock();
--	block.block = block_manager.RegisterBlock(block.block_id);
-+	block.block = block_manager.RegisterBlock(block.block_id, MemoryTag::METADATA);
- 	block_lock.lock();
- 	AddBlock(block_lock, std::move(block), true);
- }
-```
-
-**File**: `src/storage/table/column_segment.cpp` (modified, +3/-1)
-```diff
-@@ -266,7 +266,9 @@ void ColumnSegment::ConvertToPersistent(QueryContext context, optional_ptr<Block
- 		// Non-constant block: write the block to disk.
- 		// The block data already exists in memory, so we alter the metadata,
- 		// which ensures that the buffer points to an on-disk block.
--		block = block_manager->ConvertToPersistent(context, block_id, std::move(block));
-+		// transient segments are tagged IN_MEMORY_TABLE, once written they are part of the base table
-+		block = block_manager->ConvertToPersistent(context, block_id, std::move(block),
-+		                                           ConvertToPersistentMode::DESTRUCTIVE, MemoryTag::BASE_TABLE);
- 		return;
- 	}
- 
-```
-
-**File**: `test/configs/force_storage_restart.json` (modified, +6/-0)
-```diff
-@@ -127,6 +127,12 @@
-         "test/sql/storage/metadata/full_table_metadata_reuse_v7.test"
-       ]
-     },
-+    {
-+      "reason": "Test checks which blocks stay loaded between statements",
-+      "paths": [
-+        "test/sql/storage/test_persistent_block_memory_tags.test"
-+      ]
-+    },
-     {
-       "reason": "Test asserts on same-process/before-checkpoint plan state (e.g. exact count before a checkpoint); force_restart checkpoints and restarts after every statement, so that intermediate state never exists.",
-       "paths": [
-```
-
-**File**: `test/sql/index/art/storage/test_art_checkpoint_retains_clean_buffers.test` (modified, +23/-0)
-```diff
-@@ -42,6 +42,18 @@ INSERT INTO checkpoint_trigger VALUES(0);
- statement ok
- CHECKPOINT;
- 
-+# the blocks written by the checkpoint stay cached as ART_INDEX memory, restart so that all buffers start on disk
-+restart
+@@ -0,0 +1,55 @@
++//===----------------------------------------------------------------------===//
++//                         DuckDB
++//
++// core_functions/scalar/string_characters.hpp
++//
++//
++//===----------------------------------------------------------------------===//
 +
-+statement ok
-+SET threads=1;
++#pragma once
 +
-+statement ok
-+SET checkpoint_threshold='1TB';
++#include "duckdb/common/types/string_type.hpp"
++#include "duckdb/common/vector.hpp"
++#include "utf8proc_wrapper.hpp"
 +
-+statement ok
-+SET debug_verify_blocks=true;
++namespace duckdb {
 +
- query TT
- EXPLAIN ANALYZE SELECT k FROM art WHERE k=hash(42);
- ----
-@@ -56,6 +68,11 @@ statement ok
- CREATE TEMP TABLE warm_memory AS
- SELECT memory_usage_bytes FROM duckdb_memory() WHERE tag='ART_INDEX';
- 
-+# a checkpoint that rewrites the loaded buffers grows the file
-+statement ok
-+CREATE TEMP TABLE warm_blocks AS
-+SELECT total_blocks FROM pragma_database_size() WHERE database_name = current_database();
-+
- query I
- SELECT memory_usage_bytes > 0 FROM warm_memory;
- ----
-@@ -75,6 +92,12 @@ FROM duckdb_memory() WHERE tag='ART_INDEX';
- ----
- 1
- 
-+query I
-+SELECT total_blocks = (SELECT total_blocks FROM warm_blocks)
-+FROM pragma_database_size() WHERE database_name = current_database();
-+----
-+1
-+
- endloop
- 
- query TT
-```
-
----
-
-### Incident Patch 2: `9b095f41` (2026-10-18)
-**Commit Message**: ALTER TABLE ADD PRIMARY KEY: check the key columns for NULLs under the append lock (#26920)
-
-Fixes #26067.
-
-`ALTER TABLE ADD PRIMARY KEY` builds the index from a scan of the table
-and checks the scanned keys and the transaction's local storage for
-NULLs. A row another transaction commits after the scan is never
-checked, so a NULL inserted concurrently can remain in the key column
-once the ALTER commits.
-
-**The change**
-The `DataTable` that takes over the table with the new constraint holds
-the parent's append lock, so no other transaction can commit rows into
-the table while it is created. It already verifies a new NOT NULL
-constraint over all committed rows there, but skipped UNIQUE
-constraints, which is how a primary key is stored. For a primary key it
-now verifies NOT NULL on the key columns.
-
-**Verification**
-- `test/sql/alter/add_pk/test_add_pk_concurrent_null.test` races `ALTER
-TABLE t ADD PRIMARY KEY (id)` on a 100,000-row table against `INSERT
-INTO t VALUES (NULL)` from another connection with `concurrentforeach`,
-10 times with a different delay before the insert, and checks that no
-NULL is left when the primary key was added. It fails in every run
-without the change (10 of
-
-**File**: `src/storage/data_table.cpp` (modified, +8/-0)
-```diff
-@@ -1,4 +1,6 @@
- #include "duckdb/storage/data_table.hpp"
-+#include "duckdb/planner/constraints/bound_not_null_constraint.hpp"
-+#include "duckdb/planner/constraints/bound_unique_constraint.hpp"
- #include "duckdb/planner/binder.hpp"
- #include "duckdb/storage/table/data_table_info.hpp"
- #include "duckdb/transaction/commit_state.hpp"
-@@ -174,6 +176,12 @@ DataTable::DataTable(ClientContext &context, DataTable &parent, BoundConstraint
- 
- 	if (constraint.type != ConstraintType::UNIQUE) {
- 		VerifyNewConstraint(local_storage, parent, constraint);
-+	} else if (constraint.Cast<BoundUniqueConstraint>().is_primary_key) {
-+		// the key columns become NOT NULL: verify them under the append lock, including rows committed concurrently
-+		for (auto &key : constraint.Cast<BoundUniqueConstraint>().keys) {
-+			BoundNotNullConstraint not_null(key);
-+			VerifyNewConstraint(local_storage, parent, not_null);
++//! Whether the string only consists of ASCII characters, i.e. every byte is a character
++inline bool StringIsAscii(const string_t &str) {
++	auto data = str.GetData();
++	for (idx_t i = 0; i < str.GetSize(); i++) {
++		if (static_cast<unsigned char>(data[i]) >= 0x80) {
++			return false;
 +		}
- 	}
- 	local_storage.MoveStorage(parent, *this);
- 	parent.version = DataTableVersion::ALTERED;
++	}
++	return true;
++}
++
++//! The characters (code points) of a UTF-8 string - a byte that is not valid UTF-8 is a character of its own
++inline vector<int32_t> GetStringCharacters(const string_t &str) {
++	vector<int32_t> result;
++	auto data = str.GetData();
++	auto len = str.GetSize();
++	result.reserve(len);
++	idx_t pos = 0;
++	while (pos < len) {
++		auto byte = static_cast<unsigned char>(data[pos]);
++		if (byte < 0x80) {
++			result.push_back(byte);
++			pos++;
++			continue;
++		}
++		int sz = 1;
++		auto codepoint = Utf8Proc::UTF8ToCodepoint(data + pos, sz, len - pos);
++		if (codepoint < 0 || sz <= 0) {
++			result.push_back(byte);
++			pos++;
++			continue;
++		}
++		result.push_back(codepoint);
++		pos += UnsafeNumericCast<idx_t>(sz);
++	}
++	return result;
++}
++
++} // namespace duckdb
 ```
 
-**File**: `test/sql/alter/add_pk/test_add_pk_concurrent_null.test` (added, +42/-0)
+**File**: `extension/core_functions/scalar/date/make_date.cpp` (modified, +3/-8)
 ```diff
-@@ -0,0 +1,42 @@
-+# name: test/sql/alter/add_pk/test_add_pk_concurrent_null.test
-+# description: A NULL committed while ADD PRIMARY KEY builds its index must not end up in the key column
-+# group: [add_pk]
+@@ -75,17 +75,12 @@ struct MakeTimeOperator {
+ 		if (!std::isfinite(static_cast<double>(ss))) {
+ 			throw ConversionException("Time out of range: seconds must be a finite number");
+ 		}
+-		// Have to check this separately because safe casting of DOUBLE => INT32 can round.
+-		int32_t ss_32 = 0;
+-		if (ss < 0 || ss > Interval::SECS_PER_MINUTE) {
+-			ss_32 = Cast::Operation<SS, int32_t>(ss);
+-		} else {
+-			ss_32 = LossyNumericCast<int32_t>(ss);
+-		}
++		// Truncate the seconds: safe casting of DOUBLE => INT32 rounds.
++		auto ss_32 = Cast::Operation<SS, int32_t>(std::floor(ss));
+ 		auto micros = LossyNumericCast<int32_t>(std::round((ss - ss_32) * Interval::MICROS_PER_SEC));
+ 
+ 		if (!Time::IsValidTime(hh_32, mm_32, ss_32, micros)) {
+-			throw ConversionException("Time out of range: %d:%d:%d.%d", hh_32, mm_32, ss_32, micros);
++			throw ConversionException("Time out of range: %d:%d:%d.%06d", hh_32, mm_32, ss_32, micros);
+ 		}
+ 		return Time::FromTime(hh_32, mm_32, ss_32, micros);
+ 	}
+```
+
+**File**: `extension/core_functions/scalar/string/damerau_levenshtein.cpp` (modified, +15/-7)
+```diff
+@@ -1,4 +1,5 @@
+ #include "core_functions/scalar/string_functions.hpp"
++#include "core_functions/scalar/string_characters.hpp"
+ #include "duckdb/common/map.hpp"
+ #include "duckdb/common/vector.hpp"
+ 
+@@ -7,14 +8,13 @@ namespace duckdb {
+ // Using Lowrance-Wagner (LW) algorithm: https://doi.org/10.1145%2F321879.321880
+ // Can't calculate as trivial modification to levenshtein algorithm
+ // as we need to potentially know about earlier in the string
+-static idx_t DamerauLevenshteinDistance(const string_t &source, const string_t &target) {
++template <class T>
++static idx_t DamerauLevenshteinDistance(const T *source_str, idx_t source_len, const T *target_str, idx_t target_len) {
+ 	// costs associated with each type of edit, to aid readability
+ 	constexpr uint8_t COST_SUBSTITUTION = 1;
+ 	constexpr uint8_t COST_INSERTION = 1;
+ 	constexpr uint8_t COST_DELETION = 1;
+ 	constexpr uint8_t COST_TRANSPOSITION = 1;
+-	const auto source_len = source.GetSize();
+-	const auto target_len = target.GetSize();
+ 
+ 	// If one string is empty, the distance equals the length of the other string
+ 	// either through target_len insertions
+@@ -25,17 +25,14 @@ static idx_t DamerauLevenshteinDistance(const string_t &source, const string_t &
+ 		return source_len * COST_DELETION;
+ 	}
+ 
+-	const auto source_str = source.GetData();
+-	const auto target_str = target.GetData();
+-
+ 	// larger than the largest possible value:
+ 	const auto inf = source_len * COST_DELETION + target_len * COST_INSERTION + 1;
+ 	// minimum edit distance from prefix of source string to prefix of target string
+ 	// same object as H in LW paper (with indices offset by 1)
+ 	vector<vector<idx_t>> distance(source_len + 2, vector<idx_t>(target_len + 2, inf));
+ 	// keeps track of the largest string indices of source string matching each character
+ 	// same as DA in LW paper
+-	map<char, idx_t> largest_source_chr_matching;
++	map<T, idx_t> largest_source_chr_matching;
+ 
+ 	// initialise row/column corresponding to zero-length strings
+ 	// partial string -> empty requires a deletion for each character
+@@ -83,6 +80,17 @@ static idx_t DamerauLevenshteinDistance(const string_t &source, const string_t &
+ 	return distance[source_len + 1][target_len + 1];
+ }
+ 
++//! The distance between the characters of the strings - not their bytes
++static idx_t DamerauLevenshteinDistance(const string_t &source, const string_t &target) {
++	if (StringIsAscii(source) && StringIsAscii(target)) {
++		return DamerauLevenshteinDistance(source.GetData(), source.GetSize(), target.GetData(), target.GetSize());
++	}
++	auto source_chars = GetStringCharacters(source);
++	auto target_chars = GetStringCharacters(target);
++	return DamerauLevenshteinDistance(source_chars.data(), source_chars.size(), target_chars.data(),
++	                                  target_chars.size());
++}
 +
-+# a large table per attempt
-+require vector_size 512
+ static int64_t DamerauLevenshteinScalarFunction(Vector &result, const string_t source, const string_t target) {
+ 	return (int64_t)DamerauLevenshteinDistance(source, target);
+ }
+```
+
+**File**: `extension/core_functions/scalar/string/hamming.cpp` (modified, +13/-6)
+```diff
+@@ -1,15 +1,14 @@
+ #include "core_functions/scalar/string_functions.hpp"
++#include "core_functions/scalar/string_characters.hpp"
+ #include "duckdb/common/vector_operations/vector_operations.hpp"
+ 
+ #include <ctype.h>
+ #include <algorithm>
+ 
+ namespace duckdb {
+ 
+-static int64_t MismatchesScalarFunction(Vector &result, const string_t str, string_t tgt) {
+-	idx_t str_len = str.GetSize();
+-	idx_t tgt_len = tgt.GetSize();
+-
++template <class T>
++static int64_t Mismatches(const T *str_str, idx_t str_len, const T *tgt_str, idx_t tgt_len) {
+ 	if (str_len != tgt_len) {
+ 		throw InvalidInputException("Mismatch Function: Strings must be of equal length!");
+ 	}
+@@ -18,8 +17,6 @@ static int64_t MismatchesScalarFunction(Vector &result, const string_t str, stri
+ 	}
+ 
+ 	idx_t mismatches = 0;
+-	auto str_str = str.GetData();
+-	auto tgt_str = tgt.GetData();
+ 
+ 	for (idx_t idx = 0; idx < str_len; ++idx) {
+ 		if (str_str[idx] != tgt_str[idx]) {
+@@ -29,6 +26,16 @@ static int64_t MismatchesScalarFunction(Vector &result, const string_t str, stri
+ 	return (int64_t)mismatches;
+ }
+ 
++//! The number of positions at which the characters of the strings differ - not their bytes
++static int64_t MismatchesScalarFunction(Vector &result, const string_t str, string_t tgt) {
++	if (StringIsAscii(str) && StringIsAscii(tgt)) {
++		return Mismatches(str.GetData(), str.GetSize(), tgt.GetData(), tgt.GetSize());
++	}
++	auto str_chars = GetStringCharacters(str);
++	auto tgt_chars = GetStringCharacters(tgt);
++	return Mismatches(str_chars.data(), str_chars.size(), tgt_chars.data(), tgt_chars.size());
++}
 +
-+loop attempt 0 10
-+
-+statement ok
-+CREATE OR REPLACE TABLE t (id INTEGER);
-+
-+statement ok
-+INSERT INTO t SELECT i FROM range(1, 100001) tbl(i);
-+
-+concurrentforeach task alter insert
-+
-+onlyif task=alter
-+statement maybe
-+ALTER TABLE t ADD PRIMARY KEY (id);
-+----
-+
-+# delay the insert by a varying amount, so it lands at different points of the index build
-+onlyif task=insert
-+statement ok
-+SELECT sum(i) FROM range(${attempt} * 2000) tbl(i);
-+
-+onlyif task=insert
-+statement maybe
-+INSERT INTO t VALUES (NULL);
-+----
-+
-+endloop
-+
-+# either the primary key was not added, or no NULL is left in its column
-+query I
-+SELECT (SELECT count(*) FROM t WHERE id IS NULL) = 0
-+    OR (SELECT count(*) FROM duckdb_constraints() WHERE table_name = 't' AND constraint_type = 'PRIMARY KEY') = 0;
-+----
-+true
-+
-+endloop
+ static void MismatchesFunction(DataChunk &args, ExpressionState &state, Vector &result) {
+ 	const auto &str_vec = args.data[0];
+ 	const auto &tgt_vec = args.data[1];
+```
+
+**File**: `extension/core_functions/scalar/string/jaccard.cpp` (modified, +22/-5)
+```diff
+@@ -1,6 +1,8 @@
+ #include "duckdb/common/map.hpp"
+ #include "duckdb/common/vector_operations/vector_operations.hpp"
+ #include "core_functions/scalar/string_functions.hpp"
++#include "core_functions/scalar/string_characters.hpp"
++#include "duckdb/common/unordered_set.hpp"
+ 
+ #include <bitset>
+ #include <ctype.h>
+@@ -27,13 +29,28 @@ static double JaccardSimilarity(const string_t &str, const string_t &txt) {
+ 	if (str.GetSize() < 1 || txt.GetSize() < 1) {
+ 		throw InvalidInputException("Jaccard Function: An argument too short!");
+ 	}
+-	std::bitset<MAX_SIZE> m_str, m_txt;
++	idx_t size_intersect;
++	idx_t size_union;
++	if (StringIsAscii(str) && StringIsAscii(txt)) {
++		std::bitset<MAX_SIZE> m_str, m_txt;
+ 
+-	m_str = GetSet(str);
+-	m_txt = GetSet(txt);
++		m_str = GetSet(str);
++		m_txt = GetSet(txt);
+ 
+-	idx_t size_intersect = (m_str & m_txt).count();
+-	idx_t size_union = (m_str | m_txt).count();
++		size_intersect = (m_str & m_txt).count();
++		size_union = (m_str | m_txt).count();
++	} else {
++		// the sets of characters - not of bytes
++		auto str_chars = GetStringCharacters(str);
++		auto txt_chars = GetStringCharacters(txt);
++		unordered_set<int32_t> str_set(str_chars.begin(), str_chars.end());
++		unordered_set<int32_t> txt_set(txt_chars.begin(), txt_chars.end());
++		size_intersect = 0;
++		for (auto &character : str_set) {
++			size_intersect += txt_set.count(character);
++		}
++		size_union = str_set.size() + txt_set.size() - size_intersect;
++	}
+ 
+ 	return static_cast<double>(size_intersect) / static_cast<double>(size_union);
+ }
 ```
 
 ---
 
-### Incident Patch 3: `4e4c2cdb` (2026-10-18)
-**Commit Message**: Test RETURN_STATS null_count for a NULL struct inside a list (#26893)
+### Incident Patch 2: `11d8b08f` (2026-10-19)
+**Commit Message**: Fix async stream abort deadlock with completion refill (#27399)
 
-Stacked on #26846: only the last commit is new here. Merge #26846 first,
-or review the two together.
+Abort can hold `submission_lock` while waiting for a write completion
+that needs the same lock to refill the queue. Release the lock after
+discarding pending writes, before draining completions.
 
-RETURN_STATS takes the `null_count` of a leaf column from the sum of its
-footer `null_count` over the column chunks. #26846 fixes the double
-count of a NULL struct inside a list in the footer, which also fixes
-RETURN_STATS, as asked on #26846. The review of #26538 reported this
-example:
+Adds a bounded regression that fails before the fix and passes afterward
+(11 assertions), including a check that deferred writes stay discarded.
+The async suite also passes with #25918 applied: 52 tests, 408
+assertions.
 
-```sql
-COPY (SELECT [NULL, {'a': 1}] AS l) TO 'f.parquet' (RETURN_STATS);
--- "l"."element"."a": null_count=2, num_values=2 before #26846, null_count=1 after
+Closes #27398.
+
+**File**: `src/common/serializer/async_write_queue.cpp` (modified, +3/-1)
+```diff
+@@ -1604,7 +1604,7 @@ void ManagedAsyncWriteStreamQueue::Close() {
+ 
+ void ManagedAsyncWriteStreamQueue::AbortWrites() {
+ 	std::exception_ptr error;
+-	lock_guard<mutex> submission_guard(submission_lock);
++	unique_lock<mutex> submission_guard(submission_lock);
+ 	idx_t discarded_bytes;
+ 	shared_ptr<const ErrorData> local_error_ref;
+ 	{
+@@ -1621,6 +1621,8 @@ void ManagedAsyncWriteStreamQueue::AbortWrites() {
+ 		local_error_ref = local_error;
+ 	}
+ 	write_queue->DiscardExternalPendingBytes(discarded_bytes);
++	// After closing and discarding, release the lock before draining completions that may be waiting to refill.
++	submission_guard.unlock();
+ 	try {
+ 		write_queue->AbortWrites();
+ 	} catch (...) {
 ```
 
-**The change**
-`test/sql/copy/return_stats.test` gains two cases:
-- the example above;
-- a column with NULL lists, NULL struct elements and NULL fields,
-written as two row groups, so the counts are also checked after
-accumulating across row groups: `ls` 410 of 4096, `ls.element` 4915 of
-11058, `ls.element.a` 7782 of 11468.
-
-**Verification**
-- Without the writer change of #26846, the test fails at the first new
-case. With it, `return_stats.test` passes.
-
-**File**: `test/sql/copy/return_stats.test` (modified, +15/-0)
+**File**: `src/include/duckdb/common/serializer/async_write_queue.hpp` (modified, +2/-0)
 ```diff
-@@ -375,3 +375,18 @@ query IIIIIII
- COPY nested_nan_rg TO '{TEST_DIR}/nested_nan_rg.parquet' (FORMAT PARQUET, ROW_GROUP_SIZE 2048, SHREDDING {v: 'DOUBLE'}, RETURN_STATS);
- ----
- <REGEX>:.*nested_nan_rg.parquet	4096	<REGEX>:\d+	<REGEX>:\d+	<REGEX>:{'"l"'={null_count=0, num_values=4096}, '"l"."element"'={column_size_bytes=\d+, has_nan=true, max=4095.0, max_is_exact=true, min=1.0, min_is_exact=true, nan_count=5, null_count=0, num_values=4096}, '"s"'={null_count=0, num_values=4096}, '"s"."x"'={column_size_bytes=\d+, has_nan=true, max=4095.0, max_is_exact=true, min=1.0, min_is_exact=true, nan_count=1, null_count=0, num_values=4096}, '"v"'={null_count=0, num_values=4096}, '"v"."metadata"'={column_size_bytes=\d+, max=010000, max_is_exact=true, min=010000, min_is_exact=true, null_count=0, num_values=4096, variant_type='STRUCT\(metadata BLOB, "value" BLOB, typed_value DOUBLE\)'}, '"v"."typed_value"'={column_size_bytes=\d+, has_nan=true, max=4095.0, max_is_exact=true, min=0.0, min_is_exact=true, nan_count=2, null_count=0, num_values=4096}, '"v"."value"'={column_size_bytes=\d+, null_count=4096, num_values=4096}}	NULL	{row_group_count=2}
+@@ -331,6 +331,8 @@ class ManagedAsyncWriteQueue : private AsyncWriteTarget {
+ //! V1 is a contiguous logical write queue: each RegisterWrite offset must match the next expected offset.
+ //! Callers are responsible for assigning offsets and externally serializing RegisterWrite calls.
+ class ManagedAsyncWriteStreamQueue : private AsyncWriteTarget {
++	friend class ManagedAsyncWriteQueueTest;
 +
-+# a NULL struct inside a list counts once in the null_count of its fields
-+query IIIIIII
-+COPY (SELECT [NULL, {'a': 1}] AS l) TO '{TEST_DIR}/list_struct_null.parquet' (RETURN_STATS);
-+----
-+<REGEX>:.*list_struct_null.parquet	1	<REGEX>:\d+	<REGEX>:\d+	<REGEX>:{'"l"'={null_count=0, num_values=1}, '"l"."element"'={null_count=1, num_values=2}, '"l"."element"."a"'={column_size_bytes=\d+, max=1, max_is_exact=true, min=1, min_is_exact=true, null_count=1, num_values=2}}	NULL	{row_group_count=1}
+ public:
+ 	//! Whether registering a payload may schedule an async drain request immediately.
+ 	enum class ScheduleMode : uint8_t { ALLOW, DEFER };
+```
+
+**File**: `test/common/test_async_file_writer.cpp` (modified, +126/-0)
+```diff
+@@ -44,6 +44,33 @@ class ManagedAsyncWriteQueueTest {
+ 		lock_guard<mutex> guard(queue.lock);
+ 		return queue.pending_bytes;
+ 	}
++	static ManagedAsyncWriteQueue &UnderlyingQueue(ManagedAsyncWriteStreamQueue &queue) {
++		return *queue.write_queue;
++	}
 +
-+# NULL lists, NULL struct elements and NULL fields, accumulated over row groups
-+statement ok
-+CREATE TABLE list_struct_nulls AS SELECT CASE WHEN i % 10 = 0 THEN NULL ELSE [NULL, {'a': i}, CASE WHEN i % 3 = 0 THEN NULL ELSE {'a': NULL} END] END ls FROM range(4096) t(i);
++	static bool IsClosed(ManagedAsyncWriteQueue &queue) {
++		lock_guard<mutex> guard(queue.lock);
++		return queue.closed;
++	}
 +
-+query IIIIIII
-+COPY list_struct_nulls TO '{TEST_DIR}/list_struct_nulls.parquet' (ROW_GROUP_SIZE 2048, RETURN_STATS);
-+----
-+<REGEX>:.*list_struct_nulls.parquet	4096	<REGEX>:\d+	<REGEX>:\d+	<REGEX>:{'"ls"'={null_count=410, num_values=4096}, '"ls"."element"'={null_count=4915, num_values=11058}, '"ls"."element"."a"'={column_size_bytes=\d+, max=4095, max_is_exact=true, min=1, min_is_exact=true, null_count=7782, num_values=11468}}	NULL	{row_group_count=2}
++	static idx_t PendingBytes(ManagedAsyncWriteStreamQueue &queue) {
++		annotated_lock_guard<annotated_mutex> guard(queue.lock);
++		return queue.pending_bytes;
++	}
++
++	static bool TryCompletionRefill(ManagedAsyncWriteStreamQueue &queue) {
++		// Bound the wait so the broken lock order fails instead of hanging this completion.
++		auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
++		while (!queue.submission_lock.try_lock()) {
++			if (std::chrono::steady_clock::now() >= deadline) {
++				return false;
++			}
++			std::this_thread::yield();
++		}
++		queue.submission_lock.unlock();
++		queue.SchedulePendingWritesInternal();
++		return true;
++	}
+ };
+ 
+ } // namespace duckdb
+@@ -727,6 +754,35 @@ class BlockingAsyncWriteTarget : public AsyncWriteTarget {
+ 	bool release_writes = false;
+ };
+ 
++class SequentialAsyncWriteStreamTarget : public ManagedAsyncWriteStreamTarget {
++public:
++	SequentialAsyncWriteStreamTarget(BlockingAsyncWriteTarget &target_p, bool local_file_p)
++	    : target(target_p), local_file(local_file_p) {
++	}
++
++	FileWriteMode GetWriteMode() override {
++		return FileWriteMode::SEQUENTIAL;
++	}
++
++	bool IsLocalFile() override {
++		return local_file;
++	}
++
++	void Write(data_ptr_t, idx_t, idx_t) override {
++		throw InternalException("Unexpected positional write to sequential test target");
++	}
++
++	void Write(data_ptr_t buffer, idx_t size) override {
++		target.Write(buffer, size, offset);
++		offset += size;
++	}
++
++private:
++	BlockingAsyncWriteTarget &target;
++	const bool local_file;
++	idx_t offset = 0;
++};
++
+ class BlockingAsyncTaskState {
+ public:
+ 	bool WaitForStarted(idx_t count) {
+@@ -959,6 +1015,76 @@ TEST_CASE("ManagedAsyncWriteQueue accepts non-contiguous positional writes", "[a
+ 	REQUIRE(saw_second);
+ }
+ 
++TEST_CASE("ManagedAsyncWriteStreamQueue abort permits an in-flight completion refill", "[async_write_queue]") {
++	DuckDB db(nullptr);
++	auto con = CreateConnectionWithAsyncThreads(db);
++	BlockingAsyncWriteTarget target;
++	target.ReleaseWrites();
++	SequentialAsyncWriteStreamTarget stream_target(target, true);
++	ManagedAsyncWriteStreamQueue queue(*con->context, stream_target);
++	auto &underlying_queue = ManagedAsyncWriteQueueTest::UnderlyingQueue(queue);
++	REQUIRE(underlying_queue.IsAsync());
++	mutex completion_lock;
++	std::condition_variable completion_cv;
++	bool completion_entered = false;
++	bool release_completion = false;
++	atomic<bool> completion_released {false};
++	atomic<bool> refill_finished {false};
++	// Stand in for a completion that already selected a refill before the stream was closed.
++	auto completion = [&](idx_t, idx_t, optional_ptr<const ErrorData>) {
++		{
++			unique_lock<mutex> guard(completion_lock);
++			completion_entered = true;
++			completion_cv.notify_all();
++			completion_released =
++			    completion_cv.wait_for(guard, std::chrono::seconds(5), [&]() { return release_completion; });
++		}
++		if (completion_released) {
++			refill_finished = ManagedAsyncWriteQueueTest::TryCompletionRefill(queue);
++		}
++	};
++	underlying_queue.RegisterWrite(AsyncWriteRequest(make_uniq<StringAsyncWriteBuffer>("abc"), 0, completion));
++	bool entered_completion;
++	{
++		unique_lock<mutex> guard(completion_lock);
++		entered_completion =
++		    completion_cv.wait_for(guard, std::chrono::seconds(5), [&]() { return completion_entered; });
++	}
++
++	queue.RegisterWrite(make_uniq<StringAsyncWriteBuffer>("pending"), 0,
++	                    ManagedAsyncWriteStreamQueue::ScheduleMode::DEFER);
++	auto pending_bytes = ManagedAsyncWriteQueueTest::PendingBytes(queue);
++
++	string abort_error;
++	std::thread abort_thread([&]() { abort_error = CaptureException([&]() { queue.AbortWrites(); }); });
++	// Closing the underlying queue follows closing the stream and discarding its pending writes.
++	auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
++	bool underlying_closed = false;
++	while (std::chrono::steady_clock::now() < deadline) {
++		if (ManagedAsyncWriteQueueTest::IsClosed(underlying_queue)) {
++			underlying_closed = true;
++			break;
++		}
++		std::this_thread::yield();
++	}
++	{
++		lock_guard<mutex> guard(completion_lock);
++		release_completion = true;
++		completion_cv.notify_all();
++	}
++	abort_thread.join();
++
++	REQUIRE(entered_completion);
++	REQUIRE(underlying_closed);
++	REQUIRE(completion_released);
++	REQUIRE(refill_finished);
++	REQUIRE(pending_bytes == 7);
++	REQUIRE(abort_error.empty());
++	REQUIRE(ManagedAsyncWriteQueueTest::PendingBytes(queue) == 0);
++	REQUIRE(ManagedAsyncWriteQueueTest::ExternalPendingBytes(underlying_queue) == 0);
++	REQUIRE(target.write_sizes == vector<idx_t> {3});
++}
++
+ TEST_CASE("Ma
+```
+
+---
+
+### Incident Patch 3: `2569474e` (2026-10-19)
+**Commit Message**: Skip full validity words when computing the FixedSizeAllocator layout (#27443)
+
+Hi team when I was doing benchmark on DuckDB transactions I found
+`FixedSizeAllocator` could be a bottleneck.
+
+TLDR: we could allocate bitmask and segments at once on
+FixedSizedAllocator construction, instead of one at a time.
+
+In the current implementation, the first `INSERT` or `DELETE` of a write
+transaction on a table with a primary key creates transaction-local
+index storage: `LocalTableStorage` creates an empty copy of every ART
+index, a local delete index and (for non-deferred constraints) a local
+append index ([code ref
+1](https://github.com/duckdb/duckdb/blob/16917f94f9e0c0a0fc8be84d55edc10e712e4666/src/storage/index_entry.cpp#L111-L128)).
+Every new ART constructs one `FixedSizeAllocator` per node type ([code
+ref
+2](https://github.com/duckdb/duckdb/blob/16917f94f9e0c0a0fc8be84d55edc10e712e4666/src/execution/index/art/art.cpp#L129-L139)).
+
+The `FixedSizeAllocator` constructor computes the layout of a buffer:
+how many `validity_t` bitmask values it needs (`bitmask_count`) and how
+many segments fit (`available_segments_per_buffer`) ([code ref
+3](https://github.com/duckdb/duckdb/blob/16917f94f9e0c0
+
+**File**: `src/execution/index/fixed_size_allocator.cpp` (modified, +11/-6)
+```diff
+@@ -20,21 +20,26 @@ FixedSizeAllocator::FixedSizeAllocator(const idx_t segment_size, BlockManager &b
+ 
+ 	// calculate how many segments fit into one buffer (available_segments_per_buffer)
+ 
+-	idx_t bits_per_value = sizeof(validity_t) * 8;
+-	idx_t byte_count = 0;
++	const idx_t block_size = block_manager.GetBlockSize();
++	const idx_t bits_per_value = sizeof(validity_t) * 8;
+ 
+-	bitmask_count = 0;
+-	available_segments_per_buffer = 0;
++	// each full validity_t value is followed by bits_per_value segments: skip all of them at once
++	const idx_t full_value_bytes = sizeof(validity_t) + bits_per_value * segment_size;
++	const idx_t full_value_count = block_size / full_value_bytes;
++	idx_t byte_count = full_value_count * full_value_bytes;
+ 
+-	while (byte_count < block_manager.GetBlockSize()) {
++	bitmask_count = full_value_count;
++	available_segments_per_buffer = full_value_count * bits_per_value;
++
++	while (byte_count < block_size) {
+ 		if (!bitmask_count || (bitmask_count * bits_per_value) % available_segments_per_buffer == 0) {
+ 			// we need to add another validity_t value to the bitmask, to allow storing another
+ 			// bits_per_value segments on a buffer
+ 			bitmask_count++;
+ 			byte_count += sizeof(validity_t);
+ 		}
+ 
+-		auto remaining_bytes = block_manager.GetBlockSize() - byte_count;
++		auto remaining_bytes = block_size - byte_count;
+ 		auto remaining_segments = MinValue(remaining_bytes / segment_size, bits_per_value);
+ 
+ 		if (remaining_segments == 0) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27440** (2026-10-18): [Backport v2.0] Serialize array-slice operator expressions with open bounds properly (@Maxxen)
-- **PR #27437** (2026-10-19): Bump aws to latest main (@carlopi)
-- **PR #27432** (2026-10-18): Bump httpfs, remove patches, duckdb_settings(include_all:=true) (@carlopi)
-- **PR #27427** (2026-10-18): Add external workflow, and enable for lance (@carlopi)
-- **PR #27420** (closed): Do not read a full buffer into the shrunk JSON auto-detect buffer (@louie-duck)
-- **PR #27412** (2026-10-18): Fix remapped external access: follow up (@carlopi)
+- **PR #27478** (2026-10-19): Introduce `PEGRuleId` (Parser performance 3/N) (@Dtenwolde)
+- **PR #27477** (2026-10-19): String sorting performance (@lnkuiper)
+- **PR #27476** (2026-10-19): Bump httpfs (@lnkuiper)
+- **PR #27469** (2026-10-19): [AUTOMATED_BUMP] Bump multiple extensions (fixup) (@carlopi)
+- **PR #27467** (closed): [AUTOMATED_BUMP] Bump multiple extensions (@duckdblabs-bot)
+- **PR #27443** (2026-10-19): Skip full validity words when computing the FixedSizeAllocator layout (@dentiny)
 
 ---
 
@@ -2454,28 +2664,28 @@ case. With it, `return_stats.test` passes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Correctly tag memory for blocks of the database file (#26517)
+## X. Batch the Ready To Merge fixes on top of #27371 (#27390)
 
 **RULE**:
-When implementing operations in `src/execution/index/fixed_size_buffer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `extension/core_functions/aggregate/algebraic/avg.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71f90a8f`: Correctly tag memory for blocks of the database file (#26517). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aeb4387c`: Batch the Ready To Merge fixes on top of #27371 (#27390). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/execution/index/fixed_size_buffer.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension/core_functions/aggregate/algebraic/avg.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	block_handle = block_manager.RegisterBlock(block_pointer.block_id, MemoryTag::ART_INDEX);
+	auto decimal_type = BindDecimalArgument(input.GetClientContext(), arguments[0], "avg");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-	block_handle = block_manager.RegisterBlock(block_pointer.block_id);
+	auto decimal_type = arguments[0]->GetReturnType();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71f90a8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aeb4387c` are properly handled with clean fallback behavior.

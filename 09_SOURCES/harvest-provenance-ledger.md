@@ -3415,3 +3415,6 @@ Every entry in this ledger must capture:
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `27897c11` | Multi-dimensional audit evidence | 2026-10-19T18:16:43.313Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `be87581d` | Multi-dimensional audit evidence | 2026-10-19T18:16:43.439Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `d67db71a` | Multi-dimensional audit evidence | 2026-10-19T18:16:47.400Z |
+| `learn-github-lifesciforge-seo-auditor` | `https://github.com/LifeSciForge/seo-auditor` | `cb5dbfbf` | Multi-dimensional audit evidence | 2026-10-19T18:23:15.441Z |
+| `learn-github-shifthackz-stable-diffusion-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `4b060c7e` | Multi-dimensional audit evidence | 2026-10-19T18:23:17.831Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `c9698a3f` | Multi-dimensional audit evidence | 2026-10-19T18:23:26.664Z |

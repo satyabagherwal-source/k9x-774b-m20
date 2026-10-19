@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "16917f94",
+    "sourceVersion": "c9698a3f",
     "license": "MIT",
-    "contentHash": "edb9bc7286c86cb78ced99ea50ad94dcf151d09e8ba07f5448016421d17625cd",
-    "lastHarvestedAt": "2026-10-19T05:19:12.530Z",
+    "contentHash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
+    "lastHarvestedAt": "2026-10-19T18:23:26.664Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -8578,5 +8578,25 @@
     "contentHash": "d6bb2304accded2fcfd519fb46ebce09f78752ebfbee0d5a5d026bb514edcd0a",
     "lastHarvestedAt": "2026-10-19T18:16:38.836Z",
     "learningId": "learn-github-rickclephas-kmp-nativecoroutines"
+  },
+  "lifesciforge-seo-auditor": {
+    "repository": "LifeSciForge/seo-auditor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/LifeSciForge/seo-auditor",
+    "sourceVersion": "cb5dbfbf",
+    "license": "MIT",
+    "contentHash": "b449175ffddc7bf850273d9301515876c3d680e20f4e453f1f30de93d762f8f7",
+    "lastHarvestedAt": "2026-10-19T18:23:15.441Z",
+    "learningId": "learn-github-lifesciforge-seo-auditor"
+  },
+  "shifthackz-stable-diffusion-kmp": {
+    "repository": "ShiftHackZ/Stable-Diffusion-KMP",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+    "sourceVersion": "4b060c7e",
+    "license": "AGPL-3.0",
+    "contentHash": "ae1ed764fb7487d67f8c64b6207bb63c5497531d4897faeff9a31ba8e0355d9d",
+    "lastHarvestedAt": "2026-10-19T18:23:17.831Z",
+    "learningId": "learn-github-shifthackz-stable-diffusion-kmp"
   }
 }
