@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T14:02:24.443Z",
-  "total_cycles_completed": 3250,
-  "total_learnings_persisted": 3250,
-  "total_rules_promoted": 2408,
+  "last_updated": "2026-10-19T14:08:46.059Z",
+  "total_cycles_completed": 3255,
+  "total_learnings_persisted": 3255,
+  "total_rules_promoted": 2412,
   "history": [
-    {
-      "timestamp": "2026-10-19T07:59:32.945Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:06:47.923Z",
-      "repository": "ouch-org/ouch",
-      "learningId": "learn-github-ouch-org-ouch",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:06:57.590Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:06:58.676Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:07:01.887Z",
-      "repository": "joreilly/PeopleInSpace",
-      "learningId": "learn-github-joreilly-peopleinspace",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T08:07:12.106Z",
       "repository": "assistant-ui/assistant-ui",
@@ -1403,6 +1368,41 @@
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:08:33.389Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:08:33.666Z",
+      "repository": "primer/react",
+      "learningId": "learn-github-primer-react",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:08:40.592Z",
+      "repository": "GitLiveApp/firebase-kotlin-sdk",
+      "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:08:42.535Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:08:46.059Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

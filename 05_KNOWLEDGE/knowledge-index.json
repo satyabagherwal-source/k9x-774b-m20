@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:02:24.395Z",
-  "total_verified_learnings": 828,
+  "last_updated": "2026-10-19T14:08:46.009Z",
+  "total_verified_learnings": 829,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9686,8 +9686,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "f1928ea4",
-      "content_hash": "925dc84c838f2ecc8a6a8ebf2c2ea467c01ec6e826b48e2dfdcca7bc065a7ae6",
+      "source_version": "0b1c364b",
+      "content_hash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -9705,6 +9705,11 @@
           "number": 2521,
           "title": "test: make legacy_snapshot_survives_restore_and_get_secret deterministic (#5933)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2620,
+          "title": "build: release 0.2.147 (#5938)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9712,7 +9717,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:08:17.042Z",
+      "verified_at": "2026-10-19T14:08:45.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10167,22 +10172,35 @@
     "learn-github-gitliveapp-firebase-kotlin-sdk": {
       "learning_id": "learn-github-gitliveapp-firebase-kotlin-sdk",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gitliveapp-firebase-kotlin-sdk",
+      "source": "GitLiveApp/firebase-kotlin-sdk",
+      "repository": "GitLiveApp/firebase-kotlin-sdk",
       "slug": "gitliveapp-firebase-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
-      "source_version": "HEAD",
-      "content_hash": "ecb7ce2569fb1a16090e7b037713436a689fc7b1204c9251c96ebc4d5cf56c69",
+      "source_version": "077d6624",
+      "content_hash": "0239078f748964f2082a690958455360673b5b14194a3fa6d2b4739d2c3255a0",
       "dossier_path": "07_PROJECT_LEARNING/gitliveapp-firebase-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitliveapp-firebase-kotlin-sdk-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2618,
+          "title": "Revert kotlinx-coroutines to 1.10.2 and pin against 1.11.x",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.065Z"
+      "verified_at": "2026-10-19T14:08:40.514Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gitoxidelabs-gitoxide": {
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
@@ -11779,14 +11797,19 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "44fcc131",
-      "content_hash": "794d66c61da7c04070985de894c9faf2471e8e92305b69e653c0ab74aa0f2dc7",
+      "source_version": "8a97fe6c",
+      "content_hash": "cdc71bab3b2a0455d7a94eb4497e4667d7e0889335e259c156320f524022274a",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
         {
           "number": 1984,
           "title": "Make `version` command show diagnostics in JSON format when `-json` is supplied.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2619,
+          "title": "command/test: Avoid panic when testing schema w/ deprecated values (#39406)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11795,7 +11818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:41:16.256Z",
+      "verified_at": "2026-10-19T14:08:42.474Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34883,14 +34906,14 @@
       "platform": "github",
       "source_url": "https://github.com/primer/react",
       "source_version": "7f96c0d5",
-      "content_hash": "4da84ec550af2d1b426ac593931b519e8791e693ffecfb1d49c45db5c2681ddd",
+      "content_hash": "983fea079868ffb48f4d0051ebe84fc08255dee58bdd4779c8572e7d7c5f5391",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
         {
           "number": 2053,
           "title": "FormControl): prevent duplicate input rendering in horizontal layout (#8508)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34898,7 +34921,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:07:40.557Z",
+      "verified_at": "2026-10-19T14:08:33.608Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51878,7 +51901,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "72ad35f73607d507a0498fbf0e03084273643c188f83ce3955995a003db09793",
+      "content_hash": "9e615231ec3452b3c7c5dbe42ca5acbef9a2bcb762d6f5a8bf1b0ce17ea59e06",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "promoted_rules": [
@@ -51903,7 +51926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:04:57.498Z",
+      "verified_at": "2026-10-19T14:08:33.331Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80001,7 +80024,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T03:07:40.557Z"
+      "verified_at": "2026-10-19T14:08:33.608Z"
     },
     "rule-2054": {
       "learning_id": "rule-2054",
@@ -87968,6 +87991,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:02:06.976Z"
+    },
+    "rule-2618": {
+      "learning_id": "rule-2618",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2618,
+      "title": "Revert kotlinx-coroutines to 1.10.2 and pin against 1.11.x",
+      "source_url": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
+      "source_version": "077d6624",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:08:40.514Z"
+    },
+    "rule-2619": {
+      "learning_id": "rule-2619",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2619,
+      "title": "command/test: Avoid panic when testing schema w/ deprecated values (#39406)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "8a97fe6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:08:42.474Z"
+    },
+    "rule-2620": {
+      "learning_id": "rule-2620",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2620,
+      "title": "build: release 0.2.147 (#5938)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "0b1c364b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:08:45.996Z"
     }
   },
   "aliases": {

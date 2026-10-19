@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-TBJ7",
-    "timestamp": "2026-10-19T01:57:08.899Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "1aaa21c2ac8575bbb66af2b94dd9749aeb8483c7879201c61948d074481e6541",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-TCLW",
-    "timestamp": "2026-10-19T01:57:10.292Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "acb6deeda8e73084afab21d76519d5a0b5e38ab78d93b4795d98b741c531329c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-TD9H",
-    "timestamp": "2026-10-19T01:57:11.141Z",
-    "repository": "sqlpage/SQLPage",
-    "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-11UQ",
-    "timestamp": "2026-10-19T02:03:09.602Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "0f81bc6a120235821aac5432b5a8985eef46f3e2e368d21d0d6117f6229ba210",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-11YX",
-    "timestamp": "2026-10-19T02:03:09.753Z",
-    "repository": "DouyinFE/semi-design",
-    "learningId": "learn-github-douyinfe-semi-design",
-    "contentHash": "ca1d5a34ddaf55ba7f8240a1bcc1bdfedc3ad6f344b94375beb8b27fbbae2481",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-12U9",
     "timestamp": "2026-10-19T02:03:10.881Z",
     "repository": "pimalaya/himalaya",
@@ -7492,6 +7417,81 @@
     "contentHash": "50bb721f645b855f5455f40027994574dbd91ef9918bd192617aa7c85996c99e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XX0M",
+    "timestamp": "2026-10-19T14:08:33.382Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "9e615231ec3452b3c7c5dbe42ca5acbef9a2bcb762d6f5a8bf1b0ce17ea59e06",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XX8B",
+    "timestamp": "2026-10-19T14:08:33.659Z",
+    "repository": "primer/react",
+    "learningId": "learn-github-primer-react",
+    "contentHash": "983fea079868ffb48f4d0051ebe84fc08255dee58bdd4779c8572e7d7c5f5391",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Y2KP",
+    "timestamp": "2026-10-19T14:08:40.585Z",
+    "repository": "GitLiveApp/firebase-kotlin-sdk",
+    "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
+    "contentHash": "0239078f748964f2082a690958455360673b5b14194a3fa6d2b4739d2c3255a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Y42P",
+    "timestamp": "2026-10-19T14:08:42.529Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "cdc71bab3b2a0455d7a94eb4497e4667d7e0889335e259c156320f524022274a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Y6SK",
+    "timestamp": "2026-10-19T14:08:46.052Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

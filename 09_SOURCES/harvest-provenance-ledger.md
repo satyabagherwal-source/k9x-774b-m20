@@ -3280,3 +3280,8 @@ Every entry in this ledger must capture:
 | `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `6ba9aead` | Multi-dimensional audit evidence | 2026-10-19T13:55:51.614Z |
 | `learn-github-mohamedrejeb-calf` | `https://github.com/MohamedRejeb/Calf` | `af388bd3` | Multi-dimensional audit evidence | 2026-10-19T14:02:07.035Z |
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-19T14:02:24.439Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-19T14:08:33.385Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `7f96c0d5` | Multi-dimensional audit evidence | 2026-10-19T14:08:33.662Z |
+| `learn-github-gitliveapp-firebase-kotlin-sdk` | `https://github.com/GitLiveApp/firebase-kotlin-sdk` | `077d6624` | Multi-dimensional audit evidence | 2026-10-19T14:08:40.588Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `8a97fe6c` | Multi-dimensional audit evidence | 2026-10-19T14:08:42.532Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0b1c364b` | Multi-dimensional audit evidence | 2026-10-19T14:08:46.055Z |

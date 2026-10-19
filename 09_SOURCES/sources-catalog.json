@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "72ad35f73607d507a0498fbf0e03084273643c188f83ce3955995a003db09793",
-    "lastHarvestedAt": "2026-10-18T04:04:57.540Z",
+    "contentHash": "9e615231ec3452b3c7c5dbe42ca5acbef9a2bcb762d6f5a8bf1b0ce17ea59e06",
+    "lastHarvestedAt": "2026-10-19T14:08:33.385Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "f1928ea4",
+    "sourceVersion": "0b1c364b",
     "license": "NOASSERTION",
-    "contentHash": "925dc84c838f2ecc8a6a8ebf2c2ea467c01ec6e826b48e2dfdcca7bc065a7ae6",
-    "lastHarvestedAt": "2026-10-19T11:08:17.097Z",
+    "contentHash": "0aaba765874ff84e83187a760a169da34fff19525c6f856243eb18e62d1825d3",
+    "lastHarvestedAt": "2026-10-19T14:08:46.055Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "44fcc131",
+    "sourceVersion": "8a97fe6c",
     "license": "NOASSERTION",
-    "contentHash": "794d66c61da7c04070985de894c9faf2471e8e92305b69e653c0ab74aa0f2dc7",
-    "lastHarvestedAt": "2026-10-19T01:41:16.313Z",
+    "contentHash": "cdc71bab3b2a0455d7a94eb4497e4667d7e0889335e259c156320f524022274a",
+    "lastHarvestedAt": "2026-10-19T14:08:42.532Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -5135,8 +5135,8 @@
     "sourceUrl": "https://github.com/primer/react",
     "sourceVersion": "7f96c0d5",
     "license": "MIT",
-    "contentHash": "4da84ec550af2d1b426ac593931b519e8791e693ffecfb1d49c45db5c2681ddd",
-    "lastHarvestedAt": "2026-10-19T03:07:40.606Z",
+    "contentHash": "983fea079868ffb48f4d0051ebe84fc08255dee58bdd4779c8572e7d7c5f5391",
+    "lastHarvestedAt": "2026-10-19T14:08:33.662Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {
@@ -8138,5 +8138,15 @@
     "contentHash": "419d3d442472aad117a32529c76f708541d6cb66c5424dfe7e39679022a365f0",
     "lastHarvestedAt": "2026-10-19T14:02:07.035Z",
     "learningId": "learn-github-mohamedrejeb-calf"
+  },
+  "gitliveapp-firebase-kotlin-sdk": {
+    "repository": "GitLiveApp/firebase-kotlin-sdk",
+    "platform": "github",
+    "sourceUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
+    "sourceVersion": "077d6624",
+    "license": "Apache-2.0",
+    "contentHash": "0239078f748964f2082a690958455360673b5b14194a3fa6d2b4739d2c3255a0",
+    "lastHarvestedAt": "2026-10-19T14:08:40.588Z",
+    "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk"
   }
 }

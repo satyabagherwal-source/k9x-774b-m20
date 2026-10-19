@@ -3273,3 +3273,8 @@
 | `CYCLE-20261019-HL8B` | `2026-10-19T13:55:51.611Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2616` | Yes (`bf72827b...`) |
 | `CYCLE-20261019-PMWO` | `2026-10-19T14:02:07.032Z` | `MohamedRejeb/Calf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2617` | Yes (`419d3d44...`) |
 | `CYCLE-20261019-Q0C4` | `2026-10-19T14:02:24.436Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`50bb721f...`) |
+| `CYCLE-20261019-XX0M` | `2026-10-19T14:08:33.382Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`9e615231...`) |
+| `CYCLE-20261019-XX8B` | `2026-10-19T14:08:33.659Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2053` | Yes (`983fea07...`) |
+| `CYCLE-20261019-Y2KP` | `2026-10-19T14:08:40.585Z` | `GitLiveApp/firebase-kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2618` | Yes (`0239078f...`) |
+| `CYCLE-20261019-Y42P` | `2026-10-19T14:08:42.529Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2619` | Yes (`cdc71bab...`) |
+| `CYCLE-20261019-Y6SK` | `2026-10-19T14:08:46.052Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2620` | Yes (`0aaba765...`) |
