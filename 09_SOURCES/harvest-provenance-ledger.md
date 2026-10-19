@@ -3236,3 +3236,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T12:20:13.987Z |
 | `learn-github-dimillian-icecubesapp` | `https://github.com/Dimillian/IceCubesApp` | `98098b9c` | Multi-dimensional audit evidence | 2026-10-19T12:20:19.291Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9d3b1ffd` | Multi-dimensional audit evidence | 2026-10-19T12:20:29.098Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-19T12:26:32.183Z |
+| `learn-github-milanvarady-applite` | `https://github.com/milanvarady/Applite` | `cf9712ae` | Multi-dimensional audit evidence | 2026-10-19T12:26:38.068Z |

@@ -3229,3 +3229,5 @@
 | `CYCLE-20261019-2M1S` | `2026-10-19T12:20:13.984Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`c17a3552...`) |
 | `CYCLE-20261019-2Q54` | `2026-10-19T12:20:19.288Z` | `Dimillian/IceCubesApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2571` | Yes (`915b744f...`) |
 | `CYCLE-20261019-2XPJ` | `2026-10-19T12:20:29.095Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`61e0fa41...`) |
+| `CYCLE-20261019-APV8` | `2026-10-19T12:26:32.180Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`4855a6ab...`) |
+| `CYCLE-20261019-AUEP` | `2026-10-19T12:26:38.065Z` | `milanvarady/Applite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2572` | Yes (`05f1271a...`) |

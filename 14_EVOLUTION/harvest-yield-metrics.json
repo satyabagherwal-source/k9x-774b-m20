@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:20:29.103Z",
-  "total_cycles_completed": 3206,
-  "total_learnings_persisted": 3206,
-  "total_rules_promoted": 2360,
+  "last_updated": "2026-10-19T12:26:38.072Z",
+  "total_cycles_completed": 3208,
+  "total_learnings_persisted": 3208,
+  "total_rules_promoted": 2361,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:52:02.743Z",
-      "repository": "radix-ui/primitives",
-      "learningId": "learn-github-radix-ui-primitives",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:52:03.476Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:52:08.555Z",
       "repository": "futurice/pepperoni-app-kit",
@@ -1403,6 +1389,20 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:26:32.188Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:26:38.072Z",
+      "repository": "milanvarady/Applite",
+      "learningId": "learn-github-milanvarady-applite",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

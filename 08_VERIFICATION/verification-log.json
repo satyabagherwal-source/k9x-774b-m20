@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-19P3",
-    "timestamp": "2026-10-19T01:07:20.535Z",
-    "repository": "kubeshop/botkube",
-    "learningId": "learn-github-kubeshop-botkube",
-    "contentHash": "a81f98da9e46b9d738e44e7511fe107e485fbd1908b7b6e83b4321e52e6c53a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-1BFC",
-    "timestamp": "2026-10-19T01:07:22.776Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "acbac9df81e079289f53388f8cd7000fd2889c0bf9adb5a9321a72fa227dd8de",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-1DAA",
     "timestamp": "2026-10-19T01:07:25.186Z",
     "repository": "skyzh/mini-lsm",
@@ -7492,6 +7462,36 @@
     "contentHash": "61e0fa41c78b6eb84e2f8eaaad06af6a3ec421f0028dcf1ee601da634712cac3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-APV8",
+    "timestamp": "2026-10-19T12:26:32.180Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "4855a6ab31257fda802d9b91978ffcfa260876eefed6475a4670ca4ee2c51b76",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-AUEP",
+    "timestamp": "2026-10-19T12:26:38.065Z",
+    "repository": "milanvarady/Applite",
+    "learningId": "learn-github-milanvarady-applite",
+    "contentHash": "05f1271aa33a715bb2c41d1468fca2f256d0746a2b100ac64292910f0fdc0878",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

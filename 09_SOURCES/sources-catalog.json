@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "cfc60bd9ac56e16ce20f982c7c63d2edc9b5024f967d16a3efc5e6d742e4e8d1",
-    "lastHarvestedAt": "2026-10-18T03:15:23.263Z",
+    "contentHash": "4855a6ab31257fda802d9b91978ffcfa260876eefed6475a4670ca4ee2c51b76",
+    "lastHarvestedAt": "2026-10-19T12:26:32.183Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -7988,5 +7988,15 @@
     "contentHash": "915b744f052f2855b470bc62c121f84c4bef65cd8a0c5b8c1bc6e861d069326d",
     "lastHarvestedAt": "2026-10-19T12:20:19.291Z",
     "learningId": "learn-github-dimillian-icecubesapp"
+  },
+  "milanvarady-applite": {
+    "repository": "milanvarady/Applite",
+    "platform": "github",
+    "sourceUrl": "https://github.com/milanvarady/Applite",
+    "sourceVersion": "cf9712ae",
+    "license": "MIT",
+    "contentHash": "05f1271aa33a715bb2c41d1468fca2f256d0746a2b100ac64292910f0fdc0878",
+    "lastHarvestedAt": "2026-10-19T12:26:38.068Z",
+    "learningId": "learn-github-milanvarady-applite"
   }
 }
