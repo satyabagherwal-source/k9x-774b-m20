@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:10:01.413Z",
-  "total_verified_learnings": 888,
+  "last_updated": "2026-10-19T19:16:09.264Z",
+  "total_verified_learnings": 889,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10142,14 +10142,19 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "217d799a",
-      "content_hash": "9840000f513a42fe73f0a5f953fe9f2aae6696c3a050bbe479d48ca1524ab4a0",
+      "source_version": "132027d0",
+      "content_hash": "0a83c9b8a5af395eb7f724fc23e357244a9f50ff12c74ef7b971ba39077fab16",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
         {
           "number": 2267,
           "title": "[GEP-28] Increase SpecTimeout for gardenadm restore e2e test (#16004)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2765,
+          "title": "[GEP-28] Adapt E2E tests to promote self-hosted `Shoot` to `Seed` and create hos",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10158,7 +10163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:59:31.873Z",
+      "verified_at": "2026-10-19T19:16:06.359Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32639,8 +32644,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "c8832db4",
-      "content_hash": "d171b1761c47c672f7d34c898b905b85c39a236771dab64c5722cfec82c8d104",
+      "source_version": "ecf9b6a9",
+      "content_hash": "0c7329c6bccdc62f877faf3a976099612d85f39abc5501d04b3de97bcfd62db8",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -32663,6 +32668,11 @@
           "number": 2672,
           "title": "cli): keep --log-file output under --silent (#2159)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2766,
+          "title": "policy): add `rtk_state` group (#2155)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32670,7 +32680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:18:20.265Z",
+      "verified_at": "2026-10-19T19:16:09.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37992,22 +38002,35 @@
     "learn-github-seabdulbasit-musicapp-kmp": {
       "learning_id": "learn-github-seabdulbasit-musicapp-kmp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "seabdulbasit-musicapp-kmp",
+      "source": "SEAbdulbasit/MusicApp-KMP",
+      "repository": "SEAbdulbasit/MusicApp-KMP",
       "slug": "seabdulbasit-musicapp-kmp",
       "platform": "github",
       "source_url": "https://github.com/SEAbdulbasit/MusicApp-KMP",
-      "source_version": "HEAD",
-      "content_hash": "b6fb5c0b0fb499cf8b3e88fb678ac55c946a99d7e9cb4d9d0e297dc7114c6718",
+      "source_version": "3048f024",
+      "content_hash": "d3057e67cd5310c5a98b5fb55f1000e362ce98eb79b2709a819782adfb21718b",
       "dossier_path": "07_PROJECT_LEARNING/seabdulbasit-musicapp-kmp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seabdulbasit-musicapp-kmp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2764,
+          "title": "Enhance player with onClose output handling, apply padding adjustments, text ove",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.414Z"
+      "verified_at": "2026-10-19T19:16:04.300Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sealerio-sealer": {
       "learning_id": "learn-github-sealerio-sealer",
@@ -91363,6 +91386,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:10:01.394Z"
+    },
+    "rule-2764": {
+      "learning_id": "rule-2764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2764,
+      "title": "Enhance player with onClose output handling, apply padding adjustments, text ove",
+      "source_url": "https://github.com/SEAbdulbasit/MusicApp-KMP",
+      "source_version": "3048f024",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:16:04.300Z"
+    },
+    "rule-2765": {
+      "learning_id": "rule-2765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2765,
+      "title": "[GEP-28] Adapt E2E tests to promote self-hosted `Shoot` to `Seed` and create hos",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "132027d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:16:06.359Z"
+    },
+    "rule-2766": {
+      "learning_id": "rule-2766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2766,
+      "title": "policy): add `rtk_state` group (#2155)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "ecf9b6a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:16:09.256Z"
     }
   },
   "aliases": {

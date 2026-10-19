@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `c8832db4`  
+> **Source Version**: `ecf9b6a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:18:20.093Z  
+> **Timestamp**: 2026-10-19T19:16:09.061Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:18:20.087Z  
+> **Harvest Timestamp**: 2026-10-19T19:16:09.054Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2970,175 +2970,349 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd33b4d9` (2026-10-19)
-**Commit Message**: fix(cli): keep --log-file output under --silent (#2159)
+### Incident Patch 1: `ecf9b6a9` (2026-10-19)
+**Commit Message**: feat(policy): add `rtk_state` group (#2155)
 
---silent set the tracing filter to "off" for every subscriber, so the
---log-file / NONO_LOG_FILE subscriber wrote nothing. The log file now
-uses the verbosity / RUST_LOG filter. Only the stderr subscriber is
-muted.
+Grant agents read-write access to `~/.local/share/rtk` so `rtk` can
+persist its history.db and recall.db state inside the sandbox.
 
-The file filter is resolved before RUST_LOG is exported as "off" for
-subprocesses, so a silent run without RUST_LOG still logs at "warn".
+Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
 
-Fixes #2158
-
-Signed-off-by: sreyas-endor <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-cli/src/cli_bootstrap.rs` (modified, +67/-10)
+**File**: `crates/nono-cli/data/policy.json` (modified, +8/-0)
 ```diff
-@@ -43,6 +43,10 @@ pub(crate) fn init_internal_entrypoint_tracing() {
- }
- 
- pub(crate) fn init_tracing(cli: &Cli) {
-+    // Resolve the log file filter before RUST_LOG is exported below. Under
-+    // `--silent` the export is "off", which must not reach the log file.
-+    let file_filter = tracing_filter(cli, true);
-+
-     // Export the resolved CLI verbosity into RUST_LOG (unless already set) so it
-     // propagates to internal re-exec subprocesses — notably the command-mediation
-     // child launcher, which forwards RUST_LOG and inits its own subscriber. This
-@@ -62,7 +66,7 @@ pub(crate) fn init_tracing(cli: &Cli) {
-         Some(path) => match SharedFileMakeWriter::new(path) {
-             Ok(writer) => {
-                 tracing_subscriber::fmt()
--                    .with_env_filter(tracing_filter(cli))
-+                    .with_env_filter(file_filter)
-                     .with_target(false)
-                     .with_ansi(false)
-                     .with_writer(writer)
-@@ -75,35 +79,43 @@ pub(crate) fn init_tracing(cli: &Cli) {
-                     err
-                 );
-                 tracing_subscriber::fmt()
--                    .with_env_filter(tracing_filter(cli))
-+                    .with_env_filter(tracing_filter(cli, false))
-                     .with_target(false)
-                     .with_writer(io::stderr)
-                     .init();
-             }
-         },
-         None => {
-             tracing_subscriber::fmt()
--                .with_env_filter(tracing_filter(cli))
-+                .with_env_filter(tracing_filter(cli, false))
-                 .with_target(false)
-                 .with_writer(io::stderr)
-                 .init();
-         }
+@@ -404,6 +404,14 @@
+         ]
+       }
+     },
++    "rtk_state": {
++      "description": "rtk - history database and persisted state",
++      "allow": {
++        "readwrite": [
++          "~/.local/share/rtk"
++        ]
++      }
++    },
+     "mise_manager": {
+       "description": "Mise - dev tools, env vars, task runner",
+       "allow": {
+```
+
+**File**: `crates/nono-cli/src/policy.rs` (modified, +23/-0)
+```diff
+@@ -5088,6 +5088,29 @@ mod tests {
+         );
      }
- }
- 
--fn tracing_filter(cli: &Cli) -> EnvFilter {
--    cli_log_override(cli)
--        .map(EnvFilter::new)
--        .unwrap_or_else(|| {
--            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
--        })
-+// `--silent` only mutes terminal output. An explicit log file keeps the
-+// verbosity / RUST_LOG filter.
-+fn tracing_filter(cli: &Cli, to_file: bool) -> EnvFilter {
-+    let level = if to_file {
-+        cli_verbosity_level(cli)
-+    } else {
-+        cli_log_override(cli)
-+    };
-+    level.map(EnvFilter::new).unwrap_or_else(|| {
-+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
-+    })
- }
- 
- fn cli_log_override(cli: &Cli) -> Option<&'static str> {
-     if cli.silent {
-         return Some("off");
-     }
-+    cli_verbosity_level(cli)
-+}
- 
-+fn cli_verbosity_level(cli: &Cli) -> Option<&'static str> {
-     match cli_verbosity(cli) {
-         0 => None,
-         1 => Some("info"),
-@@ -195,10 +207,55 @@ impl Write for SharedFileWriter {
- 
- #[cfg(test)]
- mod tests {
--    use super::SharedFileMakeWriter;
-+    use super::{SharedFileMakeWriter, tracing_filter};
-+    use crate::cli::Cli;
-+    use crate::test_env::{ENV_LOCK, EnvVarGuard};
-+    use clap::Parser;
-     use std::io::{Read, Write};
-     use tracing_subscriber::fmt::writer::MakeWriter;
  
 +    #[test]
-+    fn silent_mutes_stderr_filter_but_not_log_file_filter() {
-+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
-+        let env = EnvVarGuard::set_all(&[("RUST_LOG", "nono_proxy::audit=info")]);
-+
-+        let cli = Cli::parse_from([
-+            "nono",
-+            "--silent",
-+            "--log-file",
-+            "/tmp/nono.log",
-+            "run",
-+            "--allow",
-+            ".",
-+            "echo",
-+            "hi",
-+        ]);
-+        assert_eq!(tracing_filter(&cli, false).to_string(), "off");
-+        assert_eq!(
-+            tracing_filter(&cli, true).to_string(),
-+            "nono_proxy::audit=info"
++    fn test_rtk_state_group_grants_history_data_dir() {
++        let json = crate::config::embedded::embedded_policy_json();
++        let policy = load_policy(json).expect("parse policy.json");
++        let group = policy
++            .groups
++            .get("rtk_state")
++            .expect("rtk_state group must exist");
++        let allow = group
++            .allow
++            .as_ref()
++            .expect("rtk_state must have allow block");
++        assert!(
++            allow.readwrite.contains(&"~/.local/share/rtk".to_string()),
++            "rtk_state must grant read-write access to ~/.local/share/rtk \
++             so rtk can update history.db"
 +        );
-+
-+        env.remove("RUST_LOG");
-+        assert_eq!(tracing_filter(&cli, false).to_string(), "off");
-+        assert_eq!(tracing_filter(&cli, true).to_string(), "warn");
-+
-+        let cli = Cli::parse_from([
-+            "nono",
-+            "--silent",
-+            "--log-file",
-+            "/tmp/nono.log",
-+            "run",
-+            "-vv",
-+            "--allow",
-+            ".",
-+            "echo",
-+            "hi",
-+        ]);
-+        assert_eq!(tracing_filter(&cli, false).to_string(), "off");
-+        assert_eq!(tracing_filter(&cli, true).to_string(), "debug");
++        assert!(
++            allow.read.is_empty() && allow.write.is_empty(),
++            "rtk_state grants read-write only: history.db needs both to persist"
++        );
 +    }
 +
      #[test]
-     fn shared_file_make_writer_appends_output() {
-         let temp_dir = tempfile::tempdir().expect("tempdir");
+     fn test_snap_linux_group_includes_snap_mount_paths() {
+         let json = crate::config::embedded::embedded_policy_json();
 ```
 
-**File**: `docs/cli/usage/flags.mdx` (modified, +2/-0)
+**File**: `docs/cli/features/profiles-groups.mdx` (modified, +2/-0)
 ```diff
-@@ -11,6 +11,8 @@ These options work with all commands.
+@@ -739,6 +739,8 @@ Groups use a structured allow/deny taxonomy:
  
- Suppress all nono output (banner, summary, status messages). Only the executed command's output will be shown.
+ - **`opencode_linux`** — OpenCode binary directory (Landlock requires directory read to execute binaries) ([source](https://github.com/nolabs-ai/nono/blob/main/crates/nono-cli/data/policy.json#L395))
  
-+Logs still go to the file set by `--log-file` or `NONO_LOG_FILE`. Only terminal output is suppressed.
++- **`rtk_state`** — rtk history database and persisted state under `~/.local/share/rtk` ([source](https://github.com/nolabs-ai/nono/blob/main/crates/nono-cli/data/policy.json#L407))
 +
- ```bash
- nono -s run --allow-cwd -- my-agent
- nono --silent why --path ~/.ssh/id_rsa --op read
+ - **`vscode_macos`** — Visual Studio Code configuration and extension directories for macOS ([source](https://github.com/nolabs-ai/nono/blob/main/crates/nono-cli/data/policy.json#L538))
+ 
+ - **`vscode_linux`** — Visual Studio Code configuration and extension directories for Linux ([source](https://github.com/nolabs-ai/nono/blob/main/crates/nono-cli/data/policy.json#L548))
+```
+
+---
+
+### Incident Patch 2: `31bceede` (2026-10-19)
+**Commit Message**: chore(deps): bump the sigstore group across 1 directory with 2 updates (#2160)
+
+* chore(deps): bump the sigstore group across 1 directory with 2 updates
+
+Bumps the sigstore group with 2 updates in the / directory: [sigstore-sign](https://github.com/sigstore/sigstore-rust) and [sigstore-verify](https://github.com/sigstore/sigstore-rust).
+
+
+Updates `sigstore-sign` from 0.14.0 to 0.15.0
+- [Release notes](https://github.com/sigstore/sigstore-rust/releases)
+- [Changelog](https://github.com/sigstore/sigstore-rust/blob/main/release-plz.toml)
+- [Commits](https://github.com/sigstore/sigstore-rust/compare/sigstore-sign-v0.14.0...sigstore-sign-v0.15.0)
+
+Updates `sigstore-verify` from 0.14.0 to 0.15.0
+- [Release notes](https://github.com/sigstore/sigstore-rust/releases)
+- [Changelog](https://github.com/sigstore/sigstore-rust/blob/main/release-plz.toml)
+- [Commits](https://github.com/sigstore/sigstore-rust/compare/sigstore-verify-v0.14.0...sigstore-verify-v0.15.0)
+
+---
+updated-dependencies:
+- dependency-name: sigstore-sign
+  dependency-version: 0.15.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: sigstore
+- dependency-name: sigstore-verify
+ 
+
+**File**: `Cargo.lock` (modified, +36/-82)
+```diff
+@@ -3205,16 +3205,6 @@ dependencies = [
+  "windows-link",
+ ]
+ 
+-[[package]]
+-name = "pem"
+-version = "3.0.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1d30c53c26bc5b31a98cd02d20f25a7c8567146caf63ed593a9d87b2775291be"
+-dependencies = [
+- "base64 0.22.1",
+- "serde_core",
+-]
+-
+ [[package]]
+ name = "pem"
+ version = "4.0.0"
+@@ -3532,20 +3522,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "22f6172bdec972074665ed81ed53b71da00bfc44b65a753cfde883ec4c702a1a"
+ dependencies = [
+  "libc",
+- "rand_chacha 0.3.1",
++ "rand_chacha",
+  "rand_core 0.6.4",
+ ]
+ 
+-[[package]]
+-name = "rand"
+-version = "0.9.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b9ef1d0d795eb7d84685bca4f72f3649f064e6641543d3a8c415898726a57b41"
+-dependencies = [
+- "rand_chacha 0.9.0",
+- "rand_core 0.9.5",
+-]
+-
+ [[package]]
+ name = "rand"
+ version = "0.10.3"
+@@ -3567,16 +3547,6 @@ dependencies = [
+  "rand_core 0.6.4",
+ ]
+ 
+-[[package]]
+-name = "rand_chacha"
+-version = "0.9.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb"
+-dependencies = [
+- "ppv-lite86",
+- "rand_core 0.9.5",
+-]
+-
+ [[package]]
+ name = "rand_core"
+ version = "0.6.4"
+@@ -3586,15 +3556,6 @@ dependencies = [
+  "getrandom 0.2.17",
+ ]
+ 
+-[[package]]
+-name = "rand_core"
+-version = "0.9.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c"
+-dependencies = [
+- "getrandom 0.3.4",
+-]
+-
+ [[package]]
+ name = "rand_core"
+ version = "0.10.1"
+@@ -3625,7 +3586,7 @@ version = "0.14.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8774e05a7d0de114588e6a28fe7e71694b82614ed569d86d8b389dfbc98b8ad8"
+ dependencies = [
+- "pem 4.0.0",
++ "pem",
+  "ring",
+  "rustls-pki-types",
+  "time",
+@@ -4133,9 +4094,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "serde_json_canonicalizer"
+-version = "0.3.2"
++version = "0.4.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fe52319a927259afbfa5180c5157cd8167edfd3e8c254f9558c7fef44c5649f2"
++checksum = "87f7bb64f8c7e9f783fdfe883b5fe93a90bee1597c63705baa91842c5f698620"
+ dependencies = [
+  "ryu-js",
+  "serde",
+@@ -4280,27 +4241,27 @@ dependencies = [
+ 
+ [[package]]
+ name = "sigstore-bundle"
+-version = "0.14.0"
++version = "0.15.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a74b758235084c8baee7869e6073702b04d42d1efbd55b7042a43dca3a27f15e"
++checksum = "0ec07aba431df2345a4f703218e442f1f80ac192bf64f19777d9fb4ad1259851"
+ dependencies = [
+  "jiff",
+- "serde_json",
+  "sigstore-types",
+  "thiserror",
+ ]
+ 
+ [[package]]
+ name = "sigstore-crypto"
+-version = "0.14.0"
++version = "0.15.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "62ee2920d66400eef83fe543bff02c3ac5ea9a59ff864d365dd746ada4c8fc4c"
++checksum = "5cf3186b87f0bfbe7e2968e844d5e8053d36e9106601a0fe988aa5be928c314a"
+ dependencies = [
+  "aws-lc-rs",
+  "const-oid 0.9.6",
+  "der 0.7.10",
+  "futures-io",
+  "jiff",
++ "rustls-pki-types",
+  "sigstore-types",
+  "spki 0.7.3",
+  "thiserror",
+@@ -4309,9 +4270,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "sigstore-fulcio"
+-version = "0.14.0"
++version = "0.15.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bfbe414259548b8a990dde9002327ec69bade9a22ea8efe34cc4abadd9a5711d"
++checksum = "879f2005719c82c063a8fc83d5e97ca4c4bff35b04645bf7ab497d959a1016e5"
+ dependencies = [
+  "reqwest",
+  "serde",
+@@ -4324,9 +4285,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "sigstore-merkle"
+-version = "0.14.0"
++version = "0.15.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f64415f7d91620a3fce3f89f5955997e7104d863c12f36bf0dcbad1b258cf584"
++checksum = "1a73aee6f9218b08736804d848d70971297d8a1842860bb2db3c16ca1c53c98b"
+ dependencies = [
+  "sigstore-crypto",
+  "sigstore-types",
+@@ -4335,15 +4296,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "sigstore-oidc"
+-version = "0.14.0"
++version = "0.15.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "867627ae30c0abc85e79362548cab2256b70ac06932e8f0bd5a060acebfd584b"
++checksum = "cf57758e72b921877242a86e7cd37ce6cf06c58c539a52a1ff4065833cefb14c"
+ dependencies = [
+  "ambient-id",
+- "base64 0.22.1",
++ "base64 0.23.1",
+  "jiff",
+  "open",
+- "rand 0.9.5",
++ "rand 0.10.3",
+  "reqwest",
+  "serde",
+  "serde_json",
+@@ -4357,11 +4318,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "sigstore-rekor"
+-version = "0.14.0"
++version = "0.15.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b17fdd6fd9070f6779b117594582b9d2b4d9a9339d1b2f57711ad10f6a0cc0c8"
++checksum = "7944b186fea86436f865540901f0afbd7fa48568ff5f2f4e8b9e27ae758771fc"
+ dependencies = [
+- "base64 0.22.1",
++ "base64 0.23.1",
+  "hex",
+  "jiff",
+  "reqwest",
+@@ -4374,11 +4335,10 @@ dependencies = 
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -34,8 +34,8 @@ zeroize = { version = "1", features = ["alloc", "serde"] }
+ # Sigstore signing and verification. Keep these on the same release line;
+ # Dependabot groups sigstore-* updates so API and dependency-graph migrations
+ # arrive together.
+-sigstore-sign = "0.14.0"
+-sigstore-verify = { version = "0.14.0", default-features = false }
++sigstore-sign = "0.15.0"
++sigstore-verify = { version = "0.15.0", default-features = false }
+ 
+ # Hashing
+ sha2 = "0.11"
+```
+
+**File**: `crates/nono/src/trust/bundle.rs` (modified, +6/-10)
+```diff
+@@ -221,16 +221,12 @@ pub fn verify_bundle_keyed(
+     trusted_root: &TrustedRoot,
+     artifact_path: &Path,
+ ) -> Result<SigstoreVerificationResult> {
+-    sigstore_verify::verify_with_key(
+-        artifact_bytes,
+-        bundle,
+-        public_key,
+-        &PublicKeyVerificationPolicy::default(),
+-        trusted_root,
+-    )
+-    .map_err(|e| NonoError::TrustVerification {
+-        path: artifact_path.display().to_string(),
+-        reason: format!("{e}"),
++    let policy = PublicKeyVerificationPolicy::new(public_key.clone());
++    sigstore_verify::verify(artifact_bytes, bundle, &policy, trusted_root).map_err(|e| {
++        NonoError::TrustVerification {
++            path: artifact_path.display().to_string(),
++            reason: format!("{e}"),
++        }
+     })
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2162** (2026-10-19): chore(deps): bump the routine-rust group with 5 updates (@dependabot[bot])
 - **PR #2161** (2026-10-19): chore(deps): bump cachix/install-nix-action from 31.11.1 to 31.11.2 in the routine-actions group (@dependabot[bot])
+- **PR #2160** (2026-10-19): chore(deps): bump the sigstore group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #2159** (2026-10-19): fix(cli): keep --log-file output under --silent (@sreyas-endor)
+- **PR #2155** (2026-10-19): feat(policy): add `rtk_state` group (@jpds)
 - **PR #2153** (2026-10-19): docs(cli): document network.listen_port_range in profiles-groups (@LuckVd)
-- **PR #2151** (2026-10-19): fix(policy): enable Nix runtime and cache/channel access (@jpds)
-- **PR #2150** (2026-10-19): docs(neps): add NEP 0007 for remote supervisor decisions over vsock (@lukehinds)
 
 ---
 
@@ -3158,65 +3332,35 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): keep --log-file output under --silent (#2159)
+## X. policy): add `rtk_state` group (#2155)
 
 **RULE**:
-When implementing operations in `crates/nono-cli/src/cli_bootstrap.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/data/policy.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd33b4d9`: cli): keep --log-file output under --silent (#2159). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecf9b6a9`: policy): add `rtk_state` group (#2155). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/cli_bootstrap.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/data/policy.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Resolve the log file filter before RUST_LOG is exported below. Under
-    // `--silent` the export is "off", which must not reach the log file.
-    let file_filter = tracing_filter(cli, true);
-
-                    .with_env_filter(file_filter)
-                    .with_env_filter(tracing_filter(cli, false))
-                .with_env_filter(tracing_filter(cli, false))
-// `--silent` only mutes terminal output. An explicit log file keeps the
-// verbosity / RUST_LOG filter.
-fn tracing_filter(cli: &Cli, to_file: bool) -> EnvFilter {
-    let level = if to_file {
-        cli_verbosity_level(cli)
-    } else {
-        cli_log_override(cli)
-    };
-    level.map(EnvFilter::new).unwrap_or_else(|| {
-        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
-    })
-    cli_verbosity_level(cli)
-}
-fn cli_verbosity_level(cli: &Cli) -> Option<&'static str> {
-    use super::{SharedFileMakeWriter, tracing_filter};
-    use crate::cli::Cli;
-    use crate::test_env::{ENV_LOCK, EnvVarGuard};
-    use clap::Parser;
-    #[test]
-    fn silent_mutes_stderr_filter_but_not_log_file_filter() {
-        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
-        let env =
+    "rtk_state": {
+      "description": "rtk - history database and persisted state",
+      "allow": {
+        "readwrite": [
+          "~/.local/share/rtk"
+        ]
+      }
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    .with_env_filter(tracing_filter(cli))
-                    .with_env_filter(tracing_filter(cli))
-                .with_env_filter(tracing_filter(cli))
-fn tracing_filter(cli: &Cli) -> EnvFilter {
-    cli_log_override(cli)
-        .map(EnvFilter::new)
-        .unwrap_or_else(|| {
-            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("warn"))
-        })
-    use super::SharedFileMakeWriter;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd33b4d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecf9b6a9` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-JVZI",
-    "timestamp": "2026-10-19T05:05:46.158Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-L2YA",
-    "timestamp": "2026-10-19T05:06:41.842Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "84ab996a4e1bad043f04e3cda07cba3721f16b82606afbbf788a4c26f085c705",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-STN7",
-    "timestamp": "2026-10-19T05:12:43.027Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "5680c250967c7929220be8a36312cded6d3cc0399d311c7354f104956559ee28",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-STUS",
     "timestamp": "2026-10-19T05:12:43.300Z",
     "repository": "dockview/dockview",
@@ -7490,6 +7445,51 @@
     "repository": "badoo/Reaktive",
     "learningId": "learn-github-badoo-reaktive",
     "contentHash": "237eae6d9b7ce7848ab98521d42feb6aa8468fcae2550098b4e4f4d6dbab114b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XDVD",
+    "timestamp": "2026-10-19T19:16:04.345Z",
+    "repository": "SEAbdulbasit/MusicApp-KMP",
+    "learningId": "learn-github-seabdulbasit-musicapp-kmp",
+    "contentHash": "d3057e67cd5310c5a98b5fb55f1000e362ce98eb79b2709a819782adfb21718b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XFGJ",
+    "timestamp": "2026-10-19T19:16:06.403Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "0a83c9b8a5af395eb7f724fc23e357244a9f50ff12c74ef7b971ba39077fab16",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-XHOZ",
+    "timestamp": "2026-10-19T19:16:09.299Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "0c7329c6bccdc62f877faf3a976099612d85f39abc5501d04b3de97bcfd62db8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

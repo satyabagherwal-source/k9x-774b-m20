@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `217d799a`  
+> **Source Version**: `132027d0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:59:31.720Z  
+> **Timestamp**: 2026-10-19T19:16:06.174Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:59:31.715Z  
+> **Harvest Timestamp**: 2026-10-19T19:16:06.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3475 stars
+- **Stars / Engagement**: 3476 stars
 
 ---
 
@@ -726,14 +726,11 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16025** (2026-10-18): **Enable 'duplicatemarkers' kube-api-linter**
-  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area dev-productivity /kind enhancement  **What this PR does / why we need it**: Enables the `duplicatemarkers` sub-linter of kube-api-linter. It reports a marker (`+kubebuilder:...` or `+k8s:...`) when another marker on the same API field or type parses to the same identifier, arguments, and payload — i.e. semantically identical, independent of raw text
+- **Issue #16031** (2026-10-19): **update k8s conformance info to 1.36**
+  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area documentation /kind enhancement  **What this PR does / why we need it**: Update k8s conformance info to 1.36  **Which issue(s) this PR fixes**: Fixes https://github.com/gardener/gardener/issues/14653  **Special notes for your reviewer**:  **Release note**: <!-- Write your release note: 1. Enter your release note in the below block. 2. If no release note is required, just w
 
-- **Issue #16024** (2026-10-18): **Update module github.com/docker/cli to v29.9.1+incompatible**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/docker/cli](https://redirect.github.com/docker/cli) | `v29.8.2+incompatible` → `v29.9.1+incompatible` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fdocker%2fcli/v29.9.1+incompatible?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fdocker%2fcli/v29.8.2+incompatible/v29.9.1+incompatible?slim=true) |  ---  ### Release Notes  <details> <summary>docker/cli (github.com/docker/cli)</summary>  ### [`v29.9.1+incompatible`](https://redirect.github.com/docker/cli/compare/v29.9.0...v29.9.1)  [Compare Source](https://redirect.github.com/docker/cli/compare/v29.9.0...v29.9.1)  ### [`v29.9.0+incompatible`](https://redirect.github.com/docker/cli/compare/v29.8.2...v29.9.0)  [Compare Source](https://redirect.github.com/docker/cli/compare/v29.8.2...v29.9.0)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want
-  **Post-Mortem & Fix Analysis**:
-  > @benzaidfoued: adding LGTM is restricted to approvers and reviewers in OWNERS files.  <details>  In response to [this](https://github.com/gardener/gardener/pull/16024#pullrequestreview-5557498425):  >   Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?title=Prow%20issue:) repository. </details>
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16024#pullrequestreview-5557498425" title="Approved">benzaidfoued</a>*, *<a href="https://github.com/gardener/gardener/pull/16024#pullrequestreview-5560090616" title="Approved">marc1404</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [marc1404]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+- **Issue #16026** (2026-10-19): **Update module github.com/golangci/golangci-lint/v2 to v2.15.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/golangci/golangci-lint/v2](https://redirect.github.com/golangci/golangci-lint) | `v2.14.0` → `v2.15.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgolangci%2fgolangci-lint%2fv2/v2.15.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgolangci%2fgolangci-lint%2fv2/v2.14.0/v2.15.0?slim=true) |  ---  ### Release Notes  <details> <summary>golangci/golangci-lint (github.com/golangci/golangci-lint/v2)</summary>  ### [`v2.15.0`](https://redirect.github.com/golangci/golangci-lint/blob/HEAD/CHANGELOG.md#v2150)  [Compare Source](https://redirect.github.com/golangci/golangci-lint/compare/v2.14.0...v2.15.0)  *Released on 2026-10-16*  1. Linters new features or changes    - `errcheck`: from 1.20.0 to 1.30.0    - `exhaustive`: from 0.13.0 to 0.15.0 (⚠️ changes)    - `gocognit`: from 1.2.1 to 1.3.0    - `golines`: from 0.15.0 to 0.16.0    - `govet-modernize`: from 0.50.0 to 0.52.0    - `loggercheck`: from 0.12.0 to 0.13.0    - `predeclared`: from 0.2.2 to 0.3.0    - `wrapcheck`: from 2.12.0 to 2.13.0 2. Linters bug fixes    - `bidichk`: from 0.3.3 to 0.3.4    - `canonicalheader`: from [`a25c71c`](https://redirect.github.com/golangci/golangci-lint/commit/a25c71c521f6) to [`e18e5c5`](https://redirect.github.com/gol
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -750,232 +747,622 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad06f45b` (2026-10-15)
-**Commit Message**: [GEP-28] Increase SpecTimeout for gardenadm restore e2e test (#16004)
+### Incident Patch 1: `132027d0` (2026-10-19)
+**Commit Message**: [GEP-28] Adapt E2E tests to promote self-hosted `Shoot` to `Seed` and create hosted `Shoot` on top for managed infrastructure scenario (#16019)
 
-Increase SpecTimeout for gardenadm restore e2e test
+* Adjust admission to allow self hosted shoots with managed infra to specify a primary DNS provider
 
-This spec runs `gardenadm connect`, then waits for the Shoot to be
-reconciled and for the ShootState to be created. Under load this
-sequence occasionally exceeds the 5-minute SpecTimeout, causing flaky
-failures. Bump it to 10 minutes to give the connect-and-reconcile flow
-more headroom.
+Signed-off-by: Marcel Boehm <[REDACTED_EMAIL]>
+
+* Expand tests for managed infra to test seed promotion + running hosted shoot
+
+Signed-off-by: Marcel Boehm <[REDACTED_EMAIL]>
+
+* Use `connect` scenarion for `gardenadm-down`
+
+This runs garden-down and operator-down, so it fully tests the teardown as well
+
+Signed-off-by: Marcel Boehm <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Marcel Boehm <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +2/-0)
+```diff
+@@ -403,6 +403,8 @@ test-e2e-local-gardenadm-managed-infra-bootstrap: $(GINKGO)
+ 	./hack/test-e2e-local.sh gardenadm --procs=1 --label-filter="managed-infra && bootstrap" ./test/e2e/gardenadm/...
+ test-e2e-local-gardenadm-managed-infra-connect: $(GINKGO)
+ 	./hack/test-e2e-local.sh gardenadm --procs=1 --label-filter="managed-infra && connect" ./test/e2e/gardenadm/...
++test-e2e-local-gardenadm-managed-infra-seed: $(GINKGO)
++	./hack/test-e2e-local.sh gardenadm --procs=1 --label-filter="managed-infra && (seed || hosted-shoot)" ./test/e2e/gardenadm/...
+ test-e2e-local-gardenadm-unmanaged-infra-initjoin: $(GINKGO)
+ 	./hack/test-e2e-local.sh gardenadm --procs=1 --label-filter="unmanaged-infra && initjoin" ./test/e2e/gardenadm/...
+ test-e2e-local-gardenadm-unmanaged-infra-connect: $(GINKGO)
+```
+
+**File**: `hack/ci-e2e-kind-gardenadm-managed-infra.sh` (modified, +7/-2)
+```diff
+@@ -16,8 +16,10 @@ clamp_mss_to_pmtu
+ trap "
+   ( export_artifacts_host_services; export_artifacts_infra; export_artifacts_load_balancers )
+   ( export KUBECONFIG=$KUBECONFIG_RUNTIME_CLUSTER; export_artifacts 'gardener-local'; export_resource_yamls_for garden )
+-  ( [[ -s $KUBECONFIG_VIRTUAL_GARDEN_CLUSTER ]] && { export KUBECONFIG=$KUBECONFIG_VIRTUAL_GARDEN_CLUSTER; export cluster_name='virtual-garden'; export_resource_yamls_for seeds shoots; } || true )
+-  ( make gardenadm-down SCENARIO=managed-infra )
++  ( [[ -s $KUBECONFIG_SELFHOSTEDSHOOT_CLUSTER ]] && { export KUBECONFIG=$KUBECONFIG_SELFHOSTEDSHOOT_CLUSTER; export_artifacts_for_cluster 'self-hosted-shoot'; export_resource_yamls_for garden; } || true )
++  ( [[ -s $KUBECONFIG_VIRTUAL_GARDEN_CLUSTER ]] && { export KUBECONFIG=$KUBECONFIG_VIRTUAL_GARDEN_CLUSTER; export cluster_name='virtual-garden'; export_resource_yamls_for seeds shoots managedseeds controllerinstallations; } || true )
++  ( [[ -s $KUBECONFIG_SELFHOSTEDSHOOT_CLUSTER ]] && make seed-down KUBECONFIG=$KUBECONFIG_SELFHOSTEDSHOOT_CLUSTER || true )
++  ( make gardenadm-down SCENARIO=connect )
+   ( make kind-down )
+ " EXIT
+ 
+@@ -27,3 +29,6 @@ make test-e2e-local-gardenadm-managed-infra-bootstrap
+ 
+ make gardenadm-up SCENARIO=connect
+ make test-e2e-local-gardenadm-managed-infra-connect
++
++make seed-up KUBECONFIG="$KUBECONFIG_SELFHOSTEDSHOOT_CLUSTER"
++make test-e2e-local-gardenadm-managed-infra-seed
+```
+
+**File**: `plugin/pkg/shoot/dns/admission.go` (modified, +6/-0)
+```diff
+@@ -399,6 +399,12 @@ func checkPrimaryDNSProvider(shoot *core.Shoot, defaultDomains []string) field.E
+ 
+ 	var allErrs field.ErrorList
+ 	if isDefaultDomain(*dns.Domain, defaultDomains) {
++		// Self-hosted shoots with managed infrastructure need a primary provider during gardenadm bootstrap,
++		// when the Garden's default domain credentials are not available yet.
++		if helper.IsShootSelfHosted(shoot.Spec.Provider.Workers) && helper.HasManagedInfrastructure(shoot) {
++			return nil
++		}
++
+ 		for i, provider := range dns.Providers {
+ 			if ptr.Deref(provider.Primary, false) {
+ 				allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "dns", "providers").Index(i).Child("primary"), provider.Primary, "primary dns provider must not be set when default domain is used"))
+```
+
+**File**: `plugin/pkg/shoot/dns/admission_test.go` (modified, +32/-0)
+```diff
+@@ -695,6 +695,38 @@ var _ = Describe("dns", func() {
+ 				))
+ 			})
+ 
++			Context("self-hosted shoot using a default domain with a primary provider", func() {
++				BeforeEach(func() {
++					Expect(kubeInformerFactory.Core().V1().Secrets().Informer().GetStore().Add(defaultDomainSecret)).To(Succeed())
++					Expect(coreInformerFactory.Core().V1beta1().Projects().Informer().GetStore().Add(project)).To(Succeed())
++					Expect(coreInformerFactory.Core().V1beta1().Seeds().Informer().GetStore().Add(seed)).To(Succeed())
++
++					shootDomain := fmt.Sprintf("%s.%s.%s", shoot.Name, project.Name, domain)
++					shoot.Spec.DNS.Domain = &shootDomain
++					shoot.Spec.DNS.Providers = []core.DNSProvider{{Type: new(providerType), Primary: new(true)}}
++					shoot.Spec.Provider.Workers = []core.Worker{{ControlPlane: &core.WorkerControlPlane{}}}
++					shoot.Spec.CredentialsBindingName = new("cloud-credentials")
++				})
++
++				It("should allow a self-hosted shoot with managed infrastructure to retain its primary provider", func() {
++					attrs := admission.NewAttributesRecord(shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++
++					Expect(admissionHandler.Validate(ctx, attrs, nil)).To(Succeed())
++				})
++
++				It("should still forbid a primary provider without a self-hosted control plane", func() {
++					shoot.Spec.Provider.Workers = nil
++
++					attrs := admission.NewAttributesRecord(shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++					err := admissionHandler.Validate(ctx, attrs, nil)
++					Expect(err).To(BeInvalidError())
++					Expect(getErrorList(err)).To(ContainElement(PointTo(MatchFields(IgnoreExtras, Fields{
++						"Field":  Equal("spec.dns.providers[0].primary"),
++						"Detail": ContainSubstring("primary dns provider must not be set when default domain is used"),
++					}))))
++				})
++			})
++
+ 			It("should allow because the default domain was allowed for the shoot", func() {
+ 				Expect(kubeInformerFactory.Core().V1().Secrets().Informer().GetStore().Add(defaultDomainSecret)).To(Succeed())
+ 				Expect(coreInformerFactory.Core().V1beta1().Projects().Informer().GetStore().Add(project)).To(Succeed())
+```
+
+**File**: `test/e2e/gardenadm/common.go` (modified, +98/-0)
+```diff
+@@ -31,6 +31,7 @@ import (
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+ 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
+ 	resourcesv1alpha1 "github.com/gardener/gardener/pkg/apis/resources/v1alpha1"
++	seedmanagementv1alpha1 "github.com/gardener/gardener/pkg/apis/seedmanagement/v1alpha1"
+ 	"github.com/gardener/gardener/pkg/client/kubernetes"
+ 	"github.com/gardener/gardener/pkg/component/networking/istio"
+ 	"github.com/gardener/gardener/pkg/controllerutils"
+@@ -41,6 +42,7 @@ import (
+ 	secretsutils "github.com/gardener/gardener/pkg/utils/secrets"
+ 	. "github.com/gardener/gardener/pkg/utils/test/matchers"
+ 	e2egardener "github.com/gardener/gardener/test/e2e/gardener"
++	"github.com/gardener/gardener/test/utils/access"
+ 	shootoperation "github.com/gardener/gardener/test/utils/shoots/operation"
+ )
+ 
+@@ -71,6 +73,102 @@ func ItShouldCreateGardenClient(gardenClientSet *kubernetes.Interface) {
+ 	})
+ }
+ 
++// ItShouldPromoteSelfHostedShootToSeed verifies that the self-hosted shoot can be promoted to a seed.
++func ItShouldPromoteSelfHostedShootToSeed(gardenClientSet, shootClientSet *kubernetes.Interface, shoot *gardencorev1beta1.Shoot) {
++	GinkgoHelper()
++
++	Context("self-hosted shoot -> seed promotion", Ordered, Label("seed"), func() {
++		ItShouldCreateShootClient(shootClientSet)
++		ItShouldCreateGardenClient(gardenClientSet)
++
++		It("should ensure the ManagedSeed is healthy", func(ctx SpecContext) {
++			managedSeed := &seedmanagementv1alpha1.ManagedSeed{ObjectMeta: metav1.ObjectMeta{Name: shoot.Name, Namespace: shoot.Namespace}}
++			Eventually(ctx, func(g Gomega) {
++				g.Expect((*gardenClientSet).Client().Get(ctx, client.ObjectKeyFromObject(managedSeed), managedSeed)).To(Succeed())
++				g.Expect(health.CheckManagedSeed(managedSeed)).To(Succeed())
++			}).Should(Succeed())
++		}, SpecTimeout(5*time.Minute))
++
++		It("should ensure the Seed is healthy", func(ctx SpecContext) {
++			seed := &gardencorev1beta1.Seed{ObjectMeta: metav1.ObjectMeta{Name: shoot.Name}}
++			Eventually(ctx, func(g Gomega) {
++				g.Expect((*gardenClientSet).Client().Get(ctx, client.ObjectKeyFromObject(seed), seed)).To(Succeed())
++				g.Expect(health.CheckSeed(seed, seed.Status.Gardener)).To(Succeed())
++			}).Should(Succeed())
++		}, SpecTimeout(5*time.Minute))
++
++		It("should ensure the seed gardenlet runs in the garden namespace", func(ctx SpecContext) {
++			Eventually(ctx, func(g Gomega) []corev1.Pod {
++				podList := &corev1.PodList{}
++				g.Expect((*shootClientSet).Client().List(ctx, podList, client.InNamespace("garden"), client.MatchingLabels{"app": "gardener", "role": "gardenlet"})).To(Succeed())
++				return podList.Items
++			}).ShouldNot(BeEmpty())
++		}, SpecTimeout(2*time.Minute))
++	})
++}
++
++// ItShouldCreateHostedShootOnPromotedSeed verifies that a hosted shoot can be created, used and deleted on the promoted seed.
++func ItShouldCreateHostedShootOnPromotedSeed(gardenClientSet *kubernetes.Interface) {
++	GinkgoHelper()
++
++	Context("hosted shoot on promoted seed", Ordered, Label("hosted-shoot"), func() {
++		var s *e2egardener.ShootContext
++
++		ItShouldCreateGardenClient(gardenClientSet)
++
++		It("should setup the test context", func() {
++			hostedShoot := e2egardener.DefaultShoot("e2e-gardenadm")
++			s = (&e2egardener.TestContext{
++				GardenClientSet: *gardenClientSet,
++				GardenClient:    (*gardenClientSet).Client(),
++				GardenKomega:    New((*gardenClientSet).Client()),
++			}).ForShoot(hostedShoot)
++		})
++
++		It("should create the hosted shoot", func(ctx SpecContext) {
++			Eventually(ctx, func() error {
++				return s.GardenClient.Create(ctx, s.Shoot)
++			}).Should(Succeed())
++		}, SpecTimeout(time.Minute))
++
++		It("should wait for the hosted shoot to be reconciled and healthy", func(ctx SpecContext) {
++			Eventually(ctx, func(g Gomega) {
++				g.Expect(s.GardenKomega.Get(s.Shoot)()).To(Succeed())
++				completed, reason := shootoperation.ReconciliationSuccessful(s.Shoot)
++				g.Expect(completed).To(BeTrue(), reason)
++			}).WithPolling(30 * time.Second).Should(Succeed())
++		}, SpecTimeout(30*time.Minute))
++
++		It("should initialize the shoot client", func(ctx SpecContext) {
++			Eventually(ctx, func() error {
++				clientSet, err := access.CreateShootClientFromAdminKubeconfig(ctx, s.GardenClientSet, s.Shoot)
++				if err != nil {
++					return err
++				}
++				s.WithShootClientSet(clientSet)
++				return nil
++			}).Should(Succeed())
++		}, SpecTimeout(time.Minute))
++
++		It("should verify shoot access using admin kubeconfig", func(ctx SpecContext) {
++			Eventually(ctx, s.ShootKomega.List(&corev1.NamespaceList{})).Should(Succeed())
++		}, SpecTimeout(time.Minute))
++
++		It("should delete the hosted shoot", func(ctx SpecContext) {
++			Eventually(ctx, func(g Gomega) {
++				g.Expect(gardenerutils.ConfirmDeletion(ctx, s.GardenClient, s.Shoot)).To(Succeed())
++				g.Expect(s.GardenClient.Delete(ctx, s.Shoot)).To(Succeed())
++			}).Should(Succeed())
++		}, SpecTimeout(time.Minute))
++
++		It("sho
+```
+
+**File**: `test/e2e/gardenadm/managedinfra/gardenadm.go` (modified, +6/-4)
+```diff
+@@ -51,7 +51,9 @@ var _ = Describe("gardenadm managed infrastructure scenario tests", Label("garde
+ 	)
+ 
+ 	var (
+-		shoot = &gardencorev1beta1.Shoot{ObjectMeta: metav1.ObjectMeta{Name: shootName, Namespace: shootNamespace}}
++		shoot           = &gardencorev1beta1.Shoot{ObjectMeta: metav1.ObjectMeta{Name: shootName, Namespace: shootNamespace}}
++		shootClientSet  kubernetes.Interface
++		gardenClientSet kubernetes.Interface
+ 	)
+ 
+ 	runInMachine := func(ctx context.Context, ordinal int, cmd ...string) (*gbytes.Buffer, *gbytes.Buffer, error) {
+@@ -373,9 +375,6 @@ var _ = Describe("gardenadm managed infrastructure scenario tests", Label("garde
+ 
+ 	Context("gardenadm connect", Ordered, Label("connect"), func() {
+ 		var (
+-			shootClientSet  kubernetes.Interface
+-			gardenClientSet kubernetes.Interface
+-
+ 			clusterAdminStaticToken string
+ 		)
+ 
+@@ -419,4 +418,7 @@ var _ = Describe("gardenadm managed infrastructure scenario tests", Label("garde
+ 		gardenadm.ItShouldVerifyAfterConnect(&gardenClientSet, shoot, runInMachine)
+ 		gardenadm.ItShouldBeReconciledByGardenlet(&gardenClientSet, &shootClientSet, shoot, clusterAdminStaticToken, runInMachine, runInNode)
+ 	})
++
++	gardenadm.ItShouldPromoteSelfHostedShootToSeed(&gardenClientSet, &shootClientSet, shoot)
++	gardenadm.ItShouldCreateHostedShootOnPromotedSeed(&gardenClientSet)
+ })
+```
+
+**File**: `test/e2e/gardenadm/unmanagedinfra/gardenadm.go` (modified, +2/-92)
+```diff
+@@ -17,21 +17,14 @@ import (
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+-	. "sigs.k8s.io/controller-runtime/pkg/envtest/komega"
+ 
+ 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+-	seedmanagementv1alpha1 "github.com/gardener/gardener/pkg/apis/seedmanagement/v1alpha1"
+ 	"github.com/gardener/gardener/pkg/client/kubernetes"
+-	gardenerutils "github.com/gardener/gardener/pkg/utils/gardener"
+ 	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
+-	"github.com/gardener/gardener/pkg/utils/kubernetes/health"
+ 	secretsutils "github.com/gardener/gardener/pkg/utils/secrets"
+ 	. "github.com/gardener/gardener/pkg/utils/test/matchers"
+ 	"github.com/gardener/gardener/test/e2e/gardenadm"
+-	e2egardener "github.com/gardener/gardener/test/e2e/gardener"
+-	"github.com/gardener/gardener/test/utils/access"
+-	shootoperation "github.com/gardener/gardener/test/utils/shoots/operation"
+ )
+ 
+ var _ = Describe("gardenadm unmanaged infrastructure scenario tests", Label("gardenadm", "unmanaged-infra"), func() {
+@@ -212,91 +205,8 @@ var _ = Describe("gardenadm unmanaged infrastructure scenario tests", Label("gar
+ 			gardenadm.ItShouldBeReconciledByGardenlet(&gardenClientSet, &shootClientSet, shoot, clusterAdminStaticToken, RunInMachine, RunInNode)
+ 		})
+ 
+-		Context("self-hosted shoot -> seed promotion", Ordered, Label("seed"), func() {
+-			gardenadm.ItShouldCreateShootClient(&shootClientSet)
+-			gardenadm.ItShouldCreateGardenClient(&gardenClientSet)
+-
+-			It("should ensure the ManagedSeed is healthy", func(ctx SpecContext) {
+-				managedSeed := &seedmanagementv1alpha1.ManagedSeed{ObjectMeta: metav1.ObjectMeta{Name: shootName, Namespace: shootNamespace}}
+-				Eventually(ctx, func(g Gomega) {
+-					g.Expect(gardenClientSet.Client().Get(ctx, client.ObjectKeyFromObject(managedSeed), managedSeed)).To(Succeed())
+-					g.Expect(health.CheckManagedSeed(managedSeed)).To(Succeed())
+-				}).Should(Succeed())
+-			}, SpecTimeout(5*time.Minute))
+-
+-			It("should ensure the Seed is healthy", func(ctx SpecContext) {
+-				seed := &gardencorev1beta1.Seed{ObjectMeta: metav1.ObjectMeta{Name: shootName}}
+-				Eventually(ctx, func(g Gomega) {
+-					g.Expect(gardenClientSet.Client().Get(ctx, client.ObjectKeyFromObject(seed), seed)).To(Succeed())
+-					g.Expect(health.CheckSeed(seed, seed.Status.Gardener)).To(Succeed())
+-				}).Should(Succeed())
+-			}, SpecTimeout(5*time.Minute))
+-
+-			It("should ensure the seed gardenlet runs in the garden namespace", func(ctx SpecContext) {
+-				Eventually(ctx, func(g Gomega) []corev1.Pod {
+-					podList := &corev1.PodList{}
+-					g.Expect(shootClientSet.Client().List(ctx, podList, client.InNamespace("garden"), client.MatchingLabels{"app": "gardener", "role": "gardenlet"})).To(Succeed())
+-					return podList.Items
+-				}).ShouldNot(BeEmpty())
+-			}, SpecTimeout(2*time.Minute))
+-		})
+-
+-		Context("hosted shoot on promoted seed", Ordered, Label("hosted-shoot"), func() {
+-			var s *e2egardener.ShootContext
+-
+-			gardenadm.ItShouldCreateGardenClient(&gardenClientSet)
+-
+-			It("should setup the test context", func() {
+-				hostedShoot := e2egardener.DefaultShoot("e2e-gardenadm")
+-				s = (&e2egardener.TestContext{
+-					GardenClientSet: gardenClientSet,
+-					GardenClient:    gardenClientSet.Client(),
+-					GardenKomega:    New(gardenClientSet.Client()),
+-				}).ForShoot(hostedShoot)
+-			})
+-
+-			It("should create the hosted shoot", func(ctx SpecContext) {
+-				Eventually(ctx, func() error {
+-					return s.GardenClient.Create(ctx, s.Shoot)
+-				}).Should(Succeed())
+-			}, SpecTimeout(time.Minute))
+-
+-			It("should wait for the hosted shoot to be reconciled and healthy", func(ctx SpecContext) {
+-				Eventually(ctx, func(g Gomega) {
+-					g.Expect(s.GardenKomega.Get(s.Shoot)()).To(Succeed())
+-					completed, reason := shootoperation.ReconciliationSuccessful(s.Shoot)
+-					g.Expect(completed).To(BeTrue(), reason)
+-				}).WithPolling(30 * time.Second).Should(Succeed())
+-			}, SpecTimeout(30*time.Minute))
+-
+-			It("should initialize the shoot client", func(ctx SpecContext) {
+-				Eventually(ctx, func() error {
+-					clientSet, err := access.CreateShootClientFromAdminKubeconfig(ctx, s.GardenClientSet, s.Shoot)
+-					if err != nil {
+-						return err
+-					}
+-					s.WithShootClientSet(clientSet)
+-					return nil
+-				}).Should(Succeed())
+-			}, SpecTimeout(time.Minute))
+-
+-			It("should verify shoot access using admin kubeconfig", func(ctx SpecContext) {
+-				Eventually(ctx, s.ShootKomega.List(&corev1.NamespaceList{})).Should(Succeed())
+-			}, SpecTimeout(time.Minute))
+-
+-			It("should delete the hosted shoot", func(ctx SpecContext) {
+-				Eventually(ctx, func(g Gomega) {
+-					g.Expect(gardenerutils.ConfirmDeletion(ctx, s.GardenClient, s.Shoot)).To(Succeed())
+-					g.Expect(s.GardenClient.Delete(ctx, s.Shoot)).To(Succeed())
+-				}).Should(S
+```
+
+---
+
+### Incident Patch 2: `9966bec8` (2026-10-19)
+**Commit Message**: [GEP-28] `gardenadm restore`: Delete stale etcd member Leases during gardenadm restore (#16022)
+
+`gardenadm restore`: Delete stale etcd member Leases during gardenadm restore
+
+Clears restored etcd member Leases and derived Etcd.Status.Members so
+etcd-druid proceeds instead of deadlocking in its PreSync remove-member
+hook against the not-yet-running managed etcd.
 
 Signed-off-by: Ismail Alidzhikov <[REDACTED_EMAIL]>
 Co-authored-by: Dimitar Kostadinov <[REDACTED_EMAIL]>
 
-**File**: `test/e2e/gardenadm/unmanagedinfra/restore.go` (modified, +1/-1)
+**File**: `pkg/gardenadm/botanist/flow.go` (modified, +7/-2)
 ```diff
-@@ -105,7 +105,7 @@ var _ = Describe("gardenadm unmanaged infrastructure control plane restoration t
- 			Eventually(ctx, func() error {
- 				return gardenClientSet.Client().Get(ctx, client.ObjectKeyFromObject(shootState), shootState)
- 			}).Should(Succeed())
--		}, SpecTimeout(5*time.Minute))
-+		}, SpecTimeout(10*time.Minute))
+@@ -17,8 +17,7 @@ import (
+ const TaskGroupCleanUpStaleRestoredResources flow.TaskID = "TaskGroupCleanUpStaleRestoredResources"
  
- 		It("should seed a workload ConfigMap whose survival proves the etcd data was restored", func(ctx SpecContext) {
- 			// Seeded before the disaster and asserted after recovery to prove the etcd data survived. Creation is
+ // CleanUpStaleRestoredResourcesTaskGroup returns the flow.TaskGroup that cleans up the stale resources restored from the
+-// ETCD snapshot during `gardenadm restore`: it deletes the stale gardener-node-agent OperatingSystemConfig Secret and
+-// deletes the prior control plane Node together with the Pods that were running on it.
++// ETCD snapshot during `gardenadm restore`.
+ //
+ // clientSet is a pointer because the control plane client set is not yet initialized while the graph is being built; the
+ // tasks dereference it only from within their Fn (i.e. at flow run time), after the connection has been established.
+@@ -53,6 +52,12 @@ func (b *GardenadmBotanist) CleanUpStaleRestoredResourcesTaskGroup(clientSet *ku
+ 			return b.ForceDeletePriorNodePods(ctx, (*clientSet).Client(), priorNodeName)
+ 		},
+ 	})
++	_ = g.Add(flow.Task{
++		Name: "Deleting stale etcd member Leases",
++		Fn: func(ctx context.Context) error {
++			return b.DeleteStaleEtcdMemberLeases(ctx, (*clientSet).Client())
++		},
++	})
+ 
+ 	return g
+ }
 ```
 
----
-
-### Incident Patch 2: `49e38037` (2026-10-16)
-**Commit Message**: [GEP-28] Fix `OperatingSystemConfig` reconcile-annotation race in `DeployOperatingSystemConfigWithStaticPods` (#16014)
-
-`DeployOperatingSystemConfigWithStaticPods` calls `DeployOperatingSystemConfig`
-(which sets `operation=reconcile` on the OSC) and then immediately patches
-additional files for the static control plane pods. The patch uses the in-memory
-OSC object from `Deploy()` as the merge-from base, which still carries the
-`operation=reconcile` annotation. If the extension controller clears the
-annotation between the two writes, the merge diff for the annotation is a no-op
-and the extension never reconciles the updated file set.
-
-Fix by calling `Wait()` between `Deploy()` and the additional-files patch so the
-in-memory base always reflects the live state (annotation already removed) and
-the patch reliably re-adds it.
-
-Assisted-by: Claude <[REDACTED_EMAIL]>
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-**File**: `pkg/gardenlet/operation/botanist/staticpods.go` (modified, +12/-0)
+**File**: `pkg/gardenadm/botanist/restore.go` (modified, +48/-0)
 ```diff
-@@ -290,6 +290,18 @@ func (b *Botanist) DeployOperatingSystemConfigWithStaticPods(ctx context.Context
- 		return nil, "", fmt.Errorf("failed deploying OperatingSystemConfig resource: %w", err)
- 	}
+@@ -9,12 +9,16 @@ import (
+ 	"fmt"
+ 	"time"
  
-+	// Wait for the OperatingSystemConfig (without the additional static pod files) to be reconciled before patching
-+	// the additional files. This avoids a race where the extension controller clears the operation=reconcile annotation
-+	// between Deploy() and the subsequent patch: without this Wait(), the merge-from base in the patch still carries
-+	// the annotation (set by Deploy()), so the diff is a no-op for the annotation and the extension never sees the
-+	// updated file set. Skipped during `gardenadm init` (useBootstrapEtcd=true) where no extension controller is
-+	// running — the GNA applies the OSC locally, so no external controller can clear the annotation.
-+	if !useBootstrapEtcd {
-+		if err := b.Shoot.Components.Extensions.OperatingSystemConfig.Wait(ctx); err != nil {
-+			return nil, "", fmt.Errorf("failed waiting for OperatingSystemConfig to be ready before patching static pod files: %w", err)
++	druidcorev1alpha1 "github.com/gardener/etcd-druid/api/core/v1alpha1"
++	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
++	coordinationv1 "k8s.io/api/coordination/v1"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 
+ 	"github.com/gardener/gardener/pkg/api/indexer"
+ 	resourcesv1alpha1 "github.com/gardener/gardener/pkg/apis/resources/v1alpha1"
++	"github.com/gardener/gardener/pkg/component/etcd/etcd"
+ 	"github.com/gardener/gardener/pkg/gardenlet/operation/botanist"
+ 	"github.com/gardener/gardener/pkg/utils/flow"
+ 	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
+@@ -120,3 +124,47 @@ func (b *GardenadmBotanist) FinalizeGardenerNodeAgentManagedResource(ctx context
+ 
+ 	return nil
+ }
++
++// DeleteStaleEtcdMemberLeases deletes the stale etcd member Leases restored from the ETCD snapshot and clears the
++// derived Etcd.Status.Members, so etcd-druid sees an empty member set and proceeds. Otherwise its PreSync
++// remove-etcd-member hook dials the recorded member endpoint, which is not up yet on a fresh restore (only the
++// bootstrap etcd on 127.0.0.1 is), and the reconcile deadlocks before scaling up the managed etcd.
++//
++// The restored etcd-druid ValidatingWebhookConfiguration is deleted first: it guards these Lease deletions with
++// FailurePolicy=Fail but is unreachable while druid is down. The init flow's druid bootstrap recreates it.
++//
++// Only member Leases are targeted (via druidcorev1alpha1.GetMemberLeaseNames), never the snapshot Leases that
++// etcd-backup-restore depends on. No-op when nothing exists.
++func (b *GardenadmBotanist) DeleteStaleEtcdMemberLeases(ctx context.Context, realClient client.Client) error {
++	webhookConfig := &admissionregistrationv1.ValidatingWebhookConfiguration{ObjectMeta: metav1.ObjectMeta{Name: etcd.Druid}}
++	b.Logger.Info("Deleting etcd-druid ValidatingWebhookConfiguration", "validatingWebhookConfiguration", client.ObjectKeyFromObject(webhookConfig))
++	if err := realClient.Delete(ctx, webhookConfig); client.IgnoreNotFound(err) != nil {
++		return fmt.Errorf("failed deleting etcd-druid ValidatingWebhookConfiguration %s: %w", client.ObjectKeyFromObject(webhookConfig), err)
++	}
++
++	etcdList := &druidcorev1alpha1.EtcdList{}
++	if err := realClient.List(ctx, etcdList, client.InNamespace(b.Shoot.ControlPlaneNamespace)); err != nil {
++		return fmt.Errorf("failed listing Etcds: %w", err)
++	}
++
++	for _, etcd := range etcdList.Items {
++		for _, leaseName := range druidcorev1alpha1.GetMemberLeaseNames(&etcd) {
++			lease := &coordinationv1.Lease{ObjectMeta: metav1.ObjectMeta{Name: leaseName, Namespace: etcd.Namespace}}
++			b.Logger.Info("Deleting stale etcd member Lease", "lease", client.ObjectKeyFromObject(lease))
++			if err := realClient.Delete(ctx, lease); client.IgnoreNotFound(err) != nil {
++				return fmt.Errorf("failed deleting etcd member Lease %s: %w", client.ObjectKeyFromObject(lease), err)
++			}
++		}
++
++		if len(etcd.Status.Members) > 0 {
++			patch := client.MergeFrom(etcd.DeepCopy())
++			etcd.Status.Members = nil
++			b.Logger.Info("Clearing stale Etcd status members", "etcd", client.ObjectKeyFromObject(&etcd))
++			if err := realClient.Status().Patch(ctx, &etcd, patch); err != nil {
++				return fmt.Errorf("failed clearing status members of Etcd %s: %w", client.ObjectKeyFromObject(&etcd), err)
++			}
 +		}
 +	}
 +
- 	controlPlaneWorkerPool := v1beta1helper.ControlPlaneWorkerPoolForShoot(b.Shoot.GetInfo().Spec.Provider.Workers)
- 	if controlPlaneWorkerPool == nil {
- 		return nil, "", fmt.Errorf("failed fetching the control plane worker pool for the shoot")
++	return nil
++}
 ```
 
----
-
-### Incident Patch 3: `0600b6dc` (2026-10-15)
-**Commit Message**: Update module go.opentelemetry.io/otel/trace to v1.47.0 (#15895)
-
-* Update module go.opentelemetry.io/otel/trace to v1.47.0
-
-Signed-off-by: gardener-ci-robot <[REDACTED_EMAIL]>
-
-* Run make tidy
-
----------
-
-Signed-off-by: gardener-ci-robot <[REDACTED_EMAIL]>
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +4/-4)
+**File**: `pkg/gardenadm/botanist/restore_test.go` (modified, +130/-0)
 ```diff
-@@ -55,7 +55,7 @@ require (
- 	github.com/spf13/pflag v1.0.10
- 	github.com/spf13/viper v1.21.0
- 	github.com/texttheater/golang-levenshtein v1.0.1
--	go.opentelemetry.io/otel/trace v1.46.0
-+	go.opentelemetry.io/otel/trace v1.47.0
- 	go.uber.org/goleak v1.3.0
- 	go.uber.org/mock v0.6.0
- 	go.uber.org/zap v1.28.0
-@@ -325,7 +325,7 @@ require (
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.69.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
--	go.opentelemetry.io/otel v1.46.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.21.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
-@@ -337,8 +337,8 @@ require (
- 	go.opentelemetry.io/otel/exporters/stdout/stdoutlog v0.21.0 // indirect
- 	go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.45.0 // indirect
--	go.opentelemetry.io/otel/log v0.21.0 // indirect
--	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
- 	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
- 	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
- 	go.opentelemetry.io/otel/sdk/metric v1.46.0 // indirect
+@@ -5,9 +5,12 @@
+ package botanist
+ 
+ import (
++	druidcorev1alpha1 "github.com/gardener/etcd-druid/api/core/v1alpha1"
+ 	"github.com/go-logr/logr"
+ 	. "github.com/onsi/ginkgo/v2"
+ 	. "github.com/onsi/gomega"
++	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
++	coordinationv1 "k8s.io/api/coordination/v1"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+@@ -174,4 +177,131 @@ var _ = Describe("Restore", func() {
+ 			Expect(fakeClient.Get(ctx, client.ObjectKeyFromObject(mr), &resourcesv1alpha1.ManagedResource{})).To(BeNotFoundError())
+ 		})
+ 	})
++
++	Describe("#DeleteStaleEtcdMemberLeases", func() {
++		var (
++			etcdClient client.Client
++
++			etcdMain   *druidcorev1alpha1.Etcd
++			etcdEvents *druidcorev1alpha1.Etcd
++
++			mainMemberLease   *coordinationv1.Lease
++			eventsMemberLease *coordinationv1.Lease
++			deltaSnapLease    *coordinationv1.Lease
++			fullSnapLease     *coordinationv1.Lease
++
++			webhookConfig *admissionregistrationv1.ValidatingWebhookConfiguration
++		)
++
++		etcd := func(name, memberAddress string, withMembers bool) *druidcorev1alpha1.Etcd {
++			e := &druidcorev1alpha1.Etcd{
++				ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: oscSecretNamespace},
++				Spec: druidcorev1alpha1.EtcdSpec{
++					Replicas:                         1,
++					ExternallyManagedMemberAddresses: []string{memberAddress},
++				},
++			}
++			if withMembers {
++				e.Status.Members = []druidcorev1alpha1.EtcdMemberStatus{{
++					Name:   druidcorev1alpha1.GetMemberNameFromAddress(e, memberAddress),
++					Role:   new(druidcorev1alpha1.EtcdRoleLeader),
++					Status: druidcorev1alpha1.EtcdMemberStatusReady,
++					Reason: "member is ready",
++				}}
++			}
++			return e
++		}
++
++		lease := func(name string) *coordinationv1.Lease {
++			return &coordinationv1.Lease{ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: oscSecretNamespace}}
++		}
++
++		BeforeEach(func() {
++			// Status().Patch on the Etcd requires the status subresource to be registered on the fake client.
++			etcdClient = fakeclient.NewClientBuilder().
++				WithScheme(kubernetes.SeedScheme).
++				WithStatusSubresource(&druidcorev1alpha1.Etcd{}).
++				Build()
++
++			etcdMain = etcd("etcd-main", "172.18.0.9", true)
++			etcdEvents = etcd("etcd-events", "172.18.0.9", true)
++
++			// Member leases: etcd-druid derives these from ExternallyManagedMemberAddresses (etcd-<name>-<address>).
++			mainMemberLease = lease(druidcorev1alpha1.GetMemberLeaseNames(etcdMain)[0])
++			eventsMemberLease = lease(druidcorev1alpha1.GetMemberLeaseNames(etcdEvents)[0])
++			// Snapshot leases that etcd-backup-restore depends on - must be retained.
++			deltaSnapLease = lease("etcd-main-delta-snap")
++			fullSnapLease = lease("etcd-main-full-snap")
++
++			webhookConfig = &admissionregistrationv1.ValidatingWebhookConfiguration{ObjectMeta: metav1.ObjectMeta{Name: "etcd-druid"}}
++		})
++
++		It("should succeed and delete the webhook config when no Etcd resources exist", func(ctx SpecContext) {
++			Expect(etcdClient.Create(ctx, webhookConfig)).To(Succeed())
++
++			Expect(b.DeleteStaleEtcdMemberLeases(ctx, etcdClient)).To(Succeed())
++
++			Expect(etcdClient.Get(ctx, client.ObjectKeyFromObject(webhookConfig), &admissionregistrationv1.ValidatingWebhookConfiguration{})).To(BeNotFoundError())
++		})
++
++		It("should succeed when nothing exists", func(ctx SpecContext) {
++			Expect(b.DeleteStaleEtcdMemberLeases(ctx, etcdClient)).To(Succeed())
++		})
++
++		It("should delete the member Leases, retain the snapshot Leases, and clear the status members", func(ctx SpecContext) {
++			Expect(etcdClient.Create(ctx, etcdMain)).To(Succeed())
++			Expect(etcdClient.Create(ctx, etcdEvents)).To(Succeed())
++			Expect(etcdClient.Status().Update(ctx, etcdMain)).To(Succeed())
++			Expect(etcdClient.Status().Update(ctx, etcdEvents)).To(Succeed())
++			Expect(etcdClient.Create(ctx, mainMemberLease)).To(Succeed())
++			Expect(etcdClient.Create(ctx, eventsMemberLease)).To(Succeed())
++			Expect(etcdClient.Create(ctx, deltaSnapLease)).To(Succeed())
++			Expect(etcdClient.Create(ctx, fullSnapLease)).To(Succeed())
++			Expect(etcdClient.Create(ctx, webhookConfig)).To(Succeed())
++
++			Expect(b.DeleteStaleEtcdMemberLeases(ctx, etcdClient)).To(Succeed())
++
++			By("The etcd-druid ValidatingWebhookConfiguration is deleted")
++			Expect(etcdClient.Get(ctx, client.ObjectKeyFromObject(webhookConfig), &admissionregistrationv1.ValidatingWebhookConfiguration{})).To(BeNotFoundError())
++
++			By("Member Leases are deleted")
++			Expect(etcdClient.Get(ctx, client.ObjectKeyFromObject(mainMemberLease), &coordinationv1.Lease{})).To(BeNotFoundError())
++			Expect(etcdClient.Get(ctx, client.ObjectKeyFromObject(eventsMemberLease), &coordinationv1.Lease{})).To(BeNotFoundError())
++
++			By("Snapshot Leases are retained")
++			Expect(etcdClient.Get(ctx, client.ObjectKeyFromObject(deltaSnapLease), &coordinationv1.Lease{})).To(Succeed())
++			Expect(etcdClient.Get(ctx, client.ObjectKeyFromObject(fullSnapLe
 ```
 
-**File**: `go.sum` (modified, +8/-8)
+**File**: `pkg/gardenadm/cmd/restore/restore.go` (modified, +1/-1)
 ```diff
-@@ -841,8 +841,8 @@ go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.
- go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.69.0/go.mod h1:3jnStNwSufK+f5ktjL4EPcwtig4rtd81NS70lqHuXl8=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 h1:3g7B90UzBltIDKq1/5mrTGxTnOFDV0ICOhLoxiZ8jlg=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0/go.mod h1:Ef8SuTh59BT7+ofpDxN9z+yOlc4t2GjLmKDgYNJL/NU=
--go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
--go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0 h1:WseeVYf5dJZTsyPiyW5L14k5qsSibqXAMTSiFEDiWr0=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0/go.mod h1:SiLZnQS6Qk2eCpvr2CH/XMAOa64TWGXxEZJZCpD2Lmc=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.21.0 h1:fvNHGyo3CdRv/DQveXqhqBxnKTDyRaC5sMSQxilX/A0=
-@@ -865,10 +865,10 @@ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.44.0 h1:hqxVTu/GtBF+vJ
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.44.0/go.mod h1:z5fVEF4X5v0ESvlJqBrrFlBVoj5EQuefZpzsu7R+x5Q=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.45.0 h1:lsA/S1bxgdbyFGkTj+3meEdJ6ADVU7QoFstV6MXgE68=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.45.0/go.mod h1:L7u+MirGoB1bjeLH66+xDykF4RC8C3RN7lIFpBiewUo=
--go.opentelemetry.io/otel/log v0.21.0 h1:SLsVDGmtyBrdw8/a2Z0bOIxou/+bN4z56GebH7T0LvA=
--go.opentelemetry.io/otel/log v0.21.0/go.mod h1:iReetQrZL9Wyg84cCkOoCmqDHS5RCFfyxC7J+r8fn8g=
--go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
--go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/metric/x v0.68.0 h1:TA/cBT23D3MnxYPwHL7YFOdYGdx0A0v+s7Mzotpd1dU=
- go.opentelemetry.io/otel/metric/x v0.68.0/go.mod h1:agudOmvWhwUTjgibWDzxD2PoWYnpw5Ht5jISYOD2Hd4=
- go.opentelemetry.io/otel/sdk v1.46.0 h1:h5CNQQjEbuQXY/JfZtgt3i7HVFV3aHPO2OAwO2eTYPI=
-@@ -879,8 +879,8 @@ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//
- go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
- go.opentelemetry.io/otel/sdk/metric v1.46.0 h1:0piZ26EG4RBfebb2jhDH6ERCYHoVWduc3kLgPCwSnSE=
- go.opentelemetry.io/otel/sdk/metric v1.46.0/go.mod h1:I1PbKrdVc8Qu8HYVDNtqVIwLwjNrhsV/uFuxfwg8mO4=
--go.opentelemetry.io/otel/trace v1.46.0 h1:OULy7ccdJnZtJ0UDYFOIGaCmiWzJ8Vi2G/Rsu60qs1c=
--go.opentelemetry.io/otel/trace v1.46.0/go.mod h1:J7GAXweO77XSFkB/rmAqk9D6ihszhFjLU+d9WuUxDLI=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
-```
-
-**File**: `hack/tools/go.mod` (modified, +4/-3)
-```diff
-@@ -371,12 +371,13 @@ require (
- 	go.opentelemetry.io/contrib/detectors/gcp v1.46.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
--	go.opentelemetry.io/otel v1.46.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 // indirect
--	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
- 	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
- 	go.opentelemetry.io/otel/sdk/metric v1.46.0 // indirect
--	go.opentelemetry.io/otel/trace v1.46.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.uber.org/mock v0.6.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
-```
-
-**File**: `hack/tools/go.sum` (modified, +8/-6)
-```diff
-@@ -817,24 +817,26 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.7
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0/go.mod h1:dylvB+ZiiwMvsDij9O84Uy7SijLgHMX4mbkncds+4Sw=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 h1:3g7B90UzBltIDKq1/5mrTGxTnOFDV0ICOhLoxiZ8jlg=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0/go.mod h1:Ef8SuTh59BT7+ofpDxN9z+yOlc4t2GjLmKDgYNJL/NU=
--go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
--go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 h1:OFnwLJr+pF3iHrlGSzbxyuo6/6HyBlnlN1CWEJmBVcw=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0/go.mod h1:716wFneO0ov19A2beH5hjfh9AK5z/VWNAtDijp1Y0/g=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 h1:w53CDeOA/Kurp7yRsegSr6pbbr759dOvJ+yNmWM6Hxs=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0/go.mod h1:BOmGMCbAtvcJiSJ+hLuhgPLdDbimnraSl8irz3iY8sY=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.44.0 h1:hqxVTu/GtBF+vJ8d1fzW7fRxZFvgoDjWcxwwCaFDYpU=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.44.0/go.mod h1:z5fVEF4X5v0ESvlJqBrrFlBVoj5EQuefZpzsu7R+x5Q=
--go.opentelemetry.io/otel/metric v1.46.0 h1:yBnkXvgV7AXFILZc5K6IZe/CBFF3OS7BJ8ov6/lj0K8=
--go.opentelemetry.io/otel/metric v1.46.0/go.mod h1:iPmdWqifKUdzziPkvvzIJXITl56fQx2mGM/DHLB3/2o=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/metric/x v0.68.0 h1:TA/cBT23D3MnxYPwHL7YFOdYGdx0A0v+s7Mzotpd1dU=
- go.opentelemetry.io/otel/metric/x v0.68.0/go.mod h1:agudOmvWhwUTjgibWDzxD2PoWYnpw5Ht5jISYOD2Hd4=
- go.opentelemetry.io/otel/sdk v1.46.0 h1:h5CNQQjEbuQXY/JfZtgt3i7HVFV3aHPO2OAwO2eTYPI=
- go.opentelemetry.io/otel/sdk v1.46.0/go.mod h1:GAERFXFt5SYCEB+YiKUbMBeza6UaDH7GmGOZEfh2gSM=
- go.opentelemetry.io/otel/sdk/metric v1.46.0 h1:0piZ26EG4RBfebb2jhDH6ERCYHoVWduc3kLgPCwSnSE=
- go.opentelemetry.io/otel/sdk/metric v1.46.0/go.mod h1:I1PbKrdVc8Qu8HYVDNtqVIwLwjNrhsV/uFuxfwg8mO4=
--go.opentelemetry.io/otel/trace v1.46.0 h1:OULy7ccdJnZtJ0UDYFOIGaCmiWzJ8Vi2G/Rsu60qs1c=
--go.opentelemetry.io/otel/trace v1.46.0/go.mod h1:J7GAXweO77XSFkB/rmAqk9D6ihszhFjLU+d9WuUxDLI=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -88,7 +88,7 @@ func run(ctx context.Context, opts *Options) error {
+ 	// connection to the control plane is established and before the bootstrap secrets are imported.
+ 	b, err := initcmd.BootstrapControlPlane(ctx, initOpts, opts.BackupDataPath, opts.PriorNodeName, true)
+ 	if err != nil {
+-		return fmt.Errorf("failed to bootstrap control plane (1st recovery phase): %w", err)
++		return fmt.Errorf("failed to bootstrap control plane: %w", err)
+ 	}
+ 
+ 	if err := initcmd.RunInitFlow(ctx, b, initOpts); err != nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16031** (2026-10-19): update k8s conformance info to 1.36 (@ary1992)
+- **PR #16026** (2026-10-19): Update module github.com/golangci/golangci-lint/v2 to v2.15.0 (@renovate[bot])
 - **PR #16025** (2026-10-18): Enable 'duplicatemarkers' kube-api-linter (@DobromirNPeev)
 - **PR #16024** (2026-10-18): Update module github.com/docker/cli to v29.9.1+incompatible (@renovate[bot])
-- **PR #16017** (2026-10-17): Update dependency gardener/alpine-iptables to v3.24.2 (@renovate[bot])
-- **PR #16015** (2026-10-16): [GEP-28] `gardenadm`: Print version to stderr at the start of every command invocation (@rfranzke)
-- **PR #16014** (2026-10-16): [GEP-28] Fix `OperatingSystemConfig` reconcile-annotation race in `DeployOperatingSystemConfigWithStaticPods` (@rfranzke)
-- **PR #16012** (2026-10-17): Update dependency gardener/alpine-conntrack to v3.24.2 (@renovate[bot])
+- **PR #16023** (2026-10-19): Update istio to v1.29.9 (@renovate[bot])
+- **PR #16022** (2026-10-19): [GEP-28] `gardenadm restore`: Delete stale etcd member Leases during gardenadm restore (@ialidzhikov)
 
 ---
 
@@ -995,28 +1382,29 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [GEP-28] Increase SpecTimeout for gardenadm restore e2e test (#16004)
+## X. [GEP-28] Adapt E2E tests to promote self-hosted `Shoot` to `Seed` and create hos
 
 **RULE**:
-When implementing operations in `test/e2e/gardenadm/unmanagedinfra/restore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad06f45b`: [GEP-28] Increase SpecTimeout for gardenadm restore e2e test (#16004). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `132027d0`: [GEP-28] Adapt E2E tests to promote self-hosted `Shoot` to `Seed` and create hosted `Shoot` on top for managed infrastructure scenario (#16019). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/gardenadm/unmanagedinfra/restore.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		}, SpecTimeout(10*time.Minute))
+test-e2e-local-gardenadm-managed-infra-seed: $(GINKGO)
+	./hack/test-e2e-local.sh gardenadm --procs=1 --label-filter="managed-infra && (seed || hosted-shoot)" ./test/e2e/gardenadm/...
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		}, SpecTimeout(5*time.Minute))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad06f45b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `132027d0` are properly handled with clean fallback behavior.

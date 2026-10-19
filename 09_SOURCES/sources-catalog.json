@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "c8832db4",
+    "sourceVersion": "ecf9b6a9",
     "license": "Apache-2.0",
-    "contentHash": "d171b1761c47c672f7d34c898b905b85c39a236771dab64c5722cfec82c8d104",
-    "lastHarvestedAt": "2026-10-19T16:18:20.318Z",
+    "contentHash": "0c7329c6bccdc62f877faf3a976099612d85f39abc5501d04b3de97bcfd62db8",
+    "lastHarvestedAt": "2026-10-19T19:16:09.301Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "217d799a",
+    "sourceVersion": "132027d0",
     "license": "Apache-2.0",
-    "contentHash": "9840000f513a42fe73f0a5f953fe9f2aae6696c3a050bbe479d48ca1524ab4a0",
-    "lastHarvestedAt": "2026-10-19T06:59:31.917Z",
+    "contentHash": "0a83c9b8a5af395eb7f724fc23e357244a9f50ff12c74ef7b971ba39077fab16",
+    "lastHarvestedAt": "2026-10-19T19:16:06.406Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -8728,5 +8728,15 @@
     "contentHash": "237eae6d9b7ce7848ab98521d42feb6aa8468fcae2550098b4e4f4d6dbab114b",
     "lastHarvestedAt": "2026-10-19T19:10:01.481Z",
     "learningId": "learn-github-badoo-reaktive"
+  },
+  "seabdulbasit-musicapp-kmp": {
+    "repository": "SEAbdulbasit/MusicApp-KMP",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SEAbdulbasit/MusicApp-KMP",
+    "sourceVersion": "3048f024",
+    "license": "MIT",
+    "contentHash": "d3057e67cd5310c5a98b5fb55f1000e362ce98eb79b2709a819782adfb21718b",
+    "lastHarvestedAt": "2026-10-19T19:16:04.347Z",
+    "learningId": "learn-github-seabdulbasit-musicapp-kmp"
   }
 }
