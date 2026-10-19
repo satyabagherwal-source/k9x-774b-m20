@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "cedde4622e8e1655b00dc2435a44fa86057a9abb4baae6b674404c2c06a7a9ce",
-    "lastHarvestedAt": "2026-10-18T01:55:42.492Z",
+    "contentHash": "44142b9c6079a220639bf6021753b01381fafdc215596357233579abd5fa606d",
+    "lastHarvestedAt": "2026-10-19T10:03:36.551Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {
@@ -7618,5 +7618,25 @@
     "contentHash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
     "lastHarvestedAt": "2026-10-19T09:54:33.391Z",
     "learningId": "learn-github-infiniflow-infinity"
+  },
+  "astral-sh-ruff": {
+    "repository": "astral-sh/ruff",
+    "platform": "github",
+    "sourceUrl": "https://github.com/astral-sh/ruff",
+    "sourceVersion": "ef6d36ac",
+    "license": "MIT",
+    "contentHash": "c803e4c64c08955784c4606ff1334636c08075c5502ab85bc3bcfc471d43f960",
+    "lastHarvestedAt": "2026-10-19T10:03:38.931Z",
+    "learningId": "learn-github-astral-sh-ruff"
+  },
+  "touchlab-kampkit": {
+    "repository": "touchlab/KaMPKit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/touchlab/KaMPKit",
+    "sourceVersion": "4af02006",
+    "license": "Apache-2.0",
+    "contentHash": "6809f2f82f2309298e634d1f29414d7f5219e60b690741c4b4c2827f17e75647",
+    "lastHarvestedAt": "2026-10-19T10:03:42.815Z",
+    "learningId": "learn-github-touchlab-kampkit"
   }
 }

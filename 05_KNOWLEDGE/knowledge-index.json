@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T09:54:44.250Z",
-  "total_verified_learnings": 777,
+  "last_updated": "2026-10-19T10:03:42.756Z",
+  "total_verified_learnings": 779,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2704,22 +2704,35 @@
     "learn-github-astral-sh-ruff": {
       "learning_id": "learn-github-astral-sh-ruff",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "astral-sh-ruff",
+      "source": "astral-sh/ruff",
+      "repository": "astral-sh/ruff",
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "HEAD",
-      "content_hash": "eb4a8a67bb073f3163e1acd04b86b43946f386328354c47aafc833275f56477e",
+      "source_version": "ef6d36ac",
+      "content_hash": "c803e4c64c08955784c4606ff1334636c08075c5502ab85bc3bcfc471d43f960",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2482,
+          "title": "[ty] Avoid crashes when negating recursive aliases (#29429)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.954Z"
+      "verified_at": "2026-10-19T10:03:38.876Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-astral-sh-uv": {
       "learning_id": "learn-github-astral-sh-uv",
@@ -40471,22 +40484,35 @@
     "learn-github-touchlab-kampkit": {
       "learning_id": "learn-github-touchlab-kampkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "touchlab-kampkit",
+      "source": "touchlab/KaMPKit",
+      "repository": "touchlab/KaMPKit",
       "slug": "touchlab-kampkit",
       "platform": "github",
       "source_url": "https://github.com/touchlab/KaMPKit",
-      "source_version": "HEAD",
-      "content_hash": "bffd4830283e213ee77793413a41dfe6bba35b5e0d3eab60711625e8234c5d2b",
+      "source_version": "4af02006",
+      "content_hash": "6809f2f82f2309298e634d1f29414d7f5219e60b690741c4b4c2827f17e75647",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-kampkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-kampkit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2483,
+          "title": "[RND-227] Update APP_BUILD.md file",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.021Z"
+      "verified_at": "2026-10-19T10:03:42.745Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-touchlab-kermit": {
       "learning_id": "learn-github-touchlab-kermit",
@@ -51954,7 +51980,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "cedde4622e8e1655b00dc2435a44fa86057a9abb4baae6b674404c2c06a7a9ce",
+      "content_hash": "44142b9c6079a220639bf6021753b01381fafdc215596357233579abd5fa606d",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "promoted_rules": [],
@@ -51963,7 +51989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T01:55:42.456Z",
+      "verified_at": "2026-10-19T10:03:36.498Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84963,6 +84989,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T09:54:33.334Z"
+    },
+    "rule-2482": {
+      "learning_id": "rule-2482",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2482,
+      "title": "[ty] Avoid crashes when negating recursive aliases (#29429)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "ef6d36ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:03:38.876Z"
+    },
+    "rule-2483": {
+      "learning_id": "rule-2483",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2483,
+      "title": "[RND-227] Update APP_BUILD.md file",
+      "source_url": "https://github.com/touchlab/KaMPKit",
+      "source_version": "4af02006",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:03:42.745Z"
     }
   },
   "aliases": {

@@ -3147,3 +3147,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `86db4607` | Multi-dimensional audit evidence | 2026-10-19T09:54:29.803Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `5d27942c` | Multi-dimensional audit evidence | 2026-10-19T09:54:33.391Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T09:54:44.313Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-19T10:03:36.551Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `ef6d36ac` | Multi-dimensional audit evidence | 2026-10-19T10:03:38.931Z |
+| `learn-github-touchlab-kampkit` | `https://github.com/touchlab/KaMPKit` | `4af02006` | Multi-dimensional audit evidence | 2026-10-19T10:03:42.815Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T09:54:44.319Z",
+  "last_updated": "2026-10-19T10:03:42.823Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2628,14 +2628,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "cedde4622e8e1655b00dc2435a44fa86057a9abb4baae6b674404c2c06a7a9ce",
-      "verified_at": "2026-10-18T01:55:42.495Z",
+      "content_hash": "44142b9c6079a220639bf6021753b01381fafdc215596357233579abd5fa606d",
+      "verified_at": "2026-10-19T10:03:36.557Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:55:42.495Z"
+      "last_updated": "2026-10-19T10:03:36.557Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -11471,6 +11471,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T09:54:33.397Z"
+    },
+    "astral-sh/ruff": {
+      "repository": "astral-sh/ruff",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-astral-sh-ruff",
+      "content_hash": "c803e4c64c08955784c4606ff1334636c08075c5502ab85bc3bcfc471d43f960",
+      "verified_at": "2026-10-19T10:03:38.937Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:03:38.937Z"
+    },
+    "touchlab/KaMPKit": {
+      "repository": "touchlab/KaMPKit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-touchlab-kampkit",
+      "content_hash": "6809f2f82f2309298e634d1f29414d7f5219e60b690741c4b4c2827f17e75647",
+      "verified_at": "2026-10-19T10:03:42.822Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:03:42.822Z"
     }
   },
   "repos": {

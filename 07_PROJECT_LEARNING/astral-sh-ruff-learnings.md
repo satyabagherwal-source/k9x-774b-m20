@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
+> **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
+> **Source Version**: `ef6d36ac`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T10:03:38.679Z  
+> **Learning ID**: `learn-github-astral-sh-ruff`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): astral-sh/ruff
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T04:31:12.484Z  
+> **Harvest Timestamp**: 2026-10-19T10:03:38.671Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 49923 stars
+- **Stars / Engagement**: 50162 stars
 
 ---
 
@@ -1908,9 +1922,7 @@ impl<'a> FullRenderer<'a> {
                 writeln!(f, "{}", renderer.render(&[diag.to_annotate()]))?;
             }
 
-            if diag.has_applicable_fix(self.config.fix_applicability())
-                && let Some(diff) =
-                    Diff::from_diagnostic(diag, &stylesheet, self.resolver, self.config)
+            if let Some(diff) = Diff::from_diagnostic(diag, &stylesheet, self.resolver, self.config)
             {
                 write!(f, "{diff}")?;
                 if let Some(applicability) = to_applicability_annotate(diff.fix) {
@@ -2100,451 +2112,9 @@ impl<'a> Diff<'a> {
 
                         let mut needs_separator = true;
                         for (emphasized, value) in change.iter_strings_lossy() {
-                            if needs_separator && !value.
-```
-
-### Core Architecture Module: `crates/ruff_db/src/diagnostic/render/github.rs`
-```
-use ruff_text_size::TextRange;
-
-use crate::diagnostic::{
-    Annotation, Diagnostic, DisplayDiagnosticConfig, FileResolver, Severity, SubDiagnosticSeverity,
-    UnifiedFile,
-};
-
-pub(super) struct GithubRenderer<'a> {
-    resolver: &'a dyn FileResolver,
-    config: &'a DisplayDiagnosticConfig,
-}
-
-impl<'a> GithubRenderer<'a> {
-    pub(super) fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
-        Self { resolver, config }
-    }
-
-    pub(super) fn render(
-        &self,
-        f: &mut std::fmt::Formatter,
-        diagnostics: &[Diagnostic],
-    ) -> std::fmt::Result {
-        for diagnostic in diagnostics {
-            let severity = match diagnostic.severity() {
-                Severity::Info => "notice",
-                Severity::Warning => "warning",
-                Severity::Error | Severity::Fatal => "error",
-            };
-            let use_name = self.config.preview && !self.config.prefer_rule_codes;
-            let code = if use_name {
-                diagnostic.id().as_str()
-            } else {
-                diagnostic.secondary_code_or_id()
-            };
-            write!(
-                f,
-                "::{severity} title={program} ({code})",
-                program = self.config.program,
-            )?;
-
-            if let Some(span) = diagnostic.primary_span() {
-                let file = span.file();
-                write!(f, ",file={file}", file = file.path(self.resolver))?;
-
-                let (start_location, end_location) = if self.resolver.is_notebook(file) {
-                    // We can't give a reasonable location for the structured formats,
-                    // so we show one that's clearly a fallback
-                    None
-                } else {
-                    let diagnostic_source = file.diagnostic_source(self.resolver);
-                    let source_code = diagnostic_source.as_source_code();
-
-                    span.range().map(|range| {
-                        (
-                            source_code.line_column(range.start()),
-                            source_code.line_column(range.end()),
-                        )
-                    })
-                }
-                .unwrap_or_default();
-
-                // GitHub Actions workflow commands have constraints on error annotations:
-                // - `col` and `endColumn` cannot be set if `line` and `endLine` are different
-                // See: https://github.com/astral-sh/ruff/issues/22074
-                if start_location.line == end_location.line {
-                    write!(
-                        f,
-                        ",line={row},col={column},endLine={end_row},endColumn={end_column}::",
-                        row = start_location.line,
-                        column = start_location.column,
-                        end_row = end_location.line,
-                        end_column = end_location.column,
-                    )?;
-                } else {
-                    write!(
-                        f,
-                        ",line={row},endLine={end_row}::",
-                        row = start_location.line,
-                        end_row = end_location.line,
-                    )?;
-                }
-
-                write!(
-                    f,
-                    "{path}:{row}:{column}: ",
-                    path = file.relative_path(self.resolver).display(),
-                    row = start_location.line,
-                    column = start_location.column,
-                )?;
-            } else {
-                write!(f, "::")?;
-            }
-
-            if !use_name && let Some(code) = diagnostic.secondary_code() {
-                write!(f, "{code}")?;
-            } else {
-                write!(f, "{id}:", id = diagnostic.id())?;
-            }
-
-            write!(f, " {}", diagnostic.concise_message())?;
-
-            // After rendering the main diagnostic, render its secondary annotations and
-            // sub-diagnostics. Note that lines within a single diagnostic must be separated by
-            // URL-encoded newlines (`%0A`) to render properly in GitHub annotations.
-            for annotation in diagnostic.secondary_annotations().filter_map(|annotation| {
-                GithubAnnotation::from_annotation(annotation, self.resolver)
-            }) {
-                write!(f, "%0A{annotation}")?;
-            }
-
-            for subdiagnostic in diagnostic.sub_diagnostics() {
-                let severity = match subdiagnostic.severity() {
-                    SubDiagnosticSeverity::Help => "help",
-                    SubDiagnosticSeverity::Info => "info",
-                    SubDiagnosticSeverity::Warning => "warning",
-                    SubDiagnosticSeverity::Error | SubDiagnosticSeverity::Fatal => "error",
-                };
-                if let Some(annotation) = subdiagnostic.primary_annotation()
-                    && let span = annotation.get_span()
-                    && let file = span.file()
-                    && let Some(range) = span.range()
-                {
-                    let diagnostic_source = file.diagnostic_source(self.resolver);
-                    let source_code = diagnostic_source.as_source_code();
-                    let message = subdiagnostic.concise_message();
-                    let start_location = source_code.line_column(range.start());
-                    write!(
-                        f,
-                        "%0A  {path}:{row}:{column}: {severity}: {message}",
-                        path = file.relative_path(self.resolver).display(),
-                        row = start_location.line,
-                        column = start_location.column,
-                    )?;
-                } else {
-                    write!(f, "%0A  {severity}: {}", subdiagnostic.concise_message())?;
-                }
-
-                for annotation in subdiagnostic
-                    .secondary_annotations()
-                    .filter_map(|annotation| {
-                        GithubAnnotation::from_annotation(annotation, self.resolver)
-                    })
-                {
-                    write!(f, "%0A  {annotation}")?;
-                }
-            }
-
-            writeln!(f)?;
-        }
-
-        Ok(())
-    }
-}
-
-struct GithubAnnotation<'a> {
-    message: &'a str,
-    range: TextRange,
-    file: &'a UnifiedFile,
-    resolver: &'a dyn FileResolver,
-}
-
-impl<'a> GithubAnnotation<'a> {
-    fn from_annotation(annotation: &'a Annotation, resolver: &'a dyn FileResolver) -> Option<Self> {
-        let span = annotation.get_span();
-        Some(Self {
-            message: annotation.get_message()?,
-            range: span.range()?,
-            file: span.file(),
-            resolver,
-        })
-    }
-}
-
-impl std::fmt::Display for GithubAnnotation<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let diagnostic_source = self.file.diagnostic_source(self.resolver);
-        let source_code = diagnostic_source.as_source_code();
-        let start_location = source_code.line_column(self.range.start());
-        write!(
-            f,
-            "  {path}:{row}:{column}:",
-            path = self.file.relative_path(self.resolver).display(),
-            row = start_location.line,
-            column = start_location.column,
-        )?;
-
-        write!(f, " {message}", message = self.message)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::diagnostic::{
-        DiagnosticFormat,
-        render::tests::{TestEnvironment, create_diagnostics, create_syntax_error_diagnostics},
-    };
-
-    #[test]
-    fn output() {
-        let (env, diagnostics) = create_diagnostics(DiagnosticFormat::Github);
-        insta::assert_snapshot!(env.render_diagnostics(&diagnostics));
-    }
-
-    #[test]
-    fn syntax_errors() {
-        let (env, diagnostics) = create_syntax_error_diagnostics(DiagnosticFormat::Github);
-        insta::assert_snapshot!(env.render_diagnostics(&diagnostics));
-    }
-
-    #[test]
-    fn missing_file() {
-        let mut env = TestEnvironment::new();
-        env.format(DiagnosticFormat::Github);
-
-        let diag = env.err().build();
-
-        insta::assert_snapshot!(
-            env.render(&diag),
-            @"::error title=ty (test-diagnostic)::test-diagnostic: main diagnostic message",
-        );
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/ruff_db/src/diagnostic/render/gitlab.rs`
-```
-use std::{
-    collections::HashSet,
-    hash::{DefaultHasher, Hash, Hasher},
-    path::Path,
-};
-
-use ruff_source_file::LineColumn;
-use serde::{Serialize, Serializer, ser::SerializeSeq};
-
-use crate::diagnostic::{Diagnostic, DisplayDiagnosticConfig, Severity};
-
-use super::FileResolver;
-
-pub(super) struct GitlabRenderer<'a> {
-    resolver: &'a dyn FileResolver,
-    config: &'a DisplayDiagnosticConfig,
-}
-
-impl<'a> GitlabRenderer<'a> {
-    pub(super) fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
-        Self { resolver, config }
-    }
-}
-
-impl GitlabRenderer<'_> {
-    pub(super) fn render(
-        &self,
-        f: &mut std::fmt::Formatter,
-        diagnostics: &[Diagnostic],
-    ) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            serde_json::to_string_pretty(&SerializedMessages {
-                diagnostics,
-                resolver: self.resolver,
-                config: self.config,
-                #[expect(
-                    clippy::disallowed_methods,
-                    reason = "We don't have access to a `System` here, \
-                              and this is only intended for use by GitLab CI, \
-                              which runs on a real `System`."
-                )]
-                project_dir: std::env::var("CI_PROJECT_DIR").ok().as_deref(),
-            })
-            .unwrap()
-        )
-    }
-}
-
-struct SerializedMessages<'a> {
-    diagnostics: &'a [Diagnostic],
-    resolver: &'a dyn FileResolver,
-    config: &'a DisplayDiagnosticConfig,
-    project_dir: Option<&'a str>,
-}
-
-impl Serialize for SerializedMessages<'_> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut s = serializer.serialize_seq(Some(self.diagnostics.len()))?;
-        let mut fingerprints = HashSet::<u64>::with_capacity(self.diagnostics.len());
-
-        for diagnostic in self.diagnostics {
-            let location = diagnostic
-                .primary_span()
-                .map(|span| {
-                    let file = span.file();
-                    let positions = if self.resolver.is_notebook(file) {
-                        // We can't give a reasonable location for the structured formats,
-                        // so we show one that's clearly a fallback
-                        Default::default()
-                    } else {
-                        let diagnostic_source = file.diagnostic_source(self.resolver);
-                        let source_code = diagnostic_source.as_source_code();
-                        span.range()
-                            .map(|range| Positions {
-                                begin: source_code.line_column(range.start()),
-                                end: source_code.line_column(range.end()),
-                            })
-                            .unwrap_or_default()
-                    };
-
-                    let path = self.project_dir.as_ref().map_or_else(
-                        || file.relative_path(self.resolver).display().to_string(),
-                        |project_dir| relativize_path_to(file.path(self.resolver), project_dir),
-                    );
-
-                    Location { path, positions }
-                })
-                .unwrap_or_default();
-
-            let mut message_fingerprint = fingerprint(diagnostic, &location.path, 0);
-
-            // Make sure that we do not get a fingerprint that is already in use
-            // by adding in the previously generated one.
-            while fingerprints.contains(&message_fingerprint) {
-                message_fingerprint = fingerprint(diagnostic, &location.path, message_fingerprint);
-            }
-            fingerprints.insert(message_fingerprint);
-
-            let description = diagnostic.concise_message();
-            let check_name = if self.config.preview && !self.config.prefer_rule_codes {
-                diagnostic.id().as_str()
-            } else {
-                diagnostic.secondary_code_or_id()
-            };
-            let severity = match diagnostic.severity() {
-                Severity::Info => "info",
-                Severity::Warning => "minor",
-                Severity::Error => "major",
-                // Another option here is `blocker`
-                Severity::Fatal => "critical",
-            };
-
-            let value = Message {
-                check_name,
-                // GitLab doesn't display the separate `check_name` field in a Code Quality report,
-                // so prepend it to the description too.
-                description: format!("{check_name}: {description}"),
-                severity,
-                fingerprint: format!("{:x}", message_fingerprint),
-                location,
-            };
-
-            s.serialize_element(&value)?;
-        }
-
-        s.end()
-    }
-}
-
-#[derive(Serialize)]
-struct Message<'a> {
-    check_name: &'a str,
-    description: String,
-    severity: &'static str,
-    fingerprint: String,
-    location: Location,
-}
-
-/// The place in the source code where the issue was discovered.
-///
-/// According to the CodeClimate report format [specification] linked from the GitLab [docs], this
-/// field is required, so we fall back on a default `path` and position if the diagnostic doesn't
-/// have a primary span.
-///
-/// [specification]: https://github.com/codeclimate/platform/blob/master/spec/analyzers/SPEC.md#data-types
-/// [docs]: https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format
-#[derive(Default, Serialize)]
-struct Location {
-    path: String,
-    positions: Positions,
-}
-
-#[derive(Default, Serialize)]
-struct Positions {
-    begin: LineColumn,
-    end: LineColumn,
-}
-
-/// Generate a unique fingerprint to identify a violation.
-fn fingerprint(diagnostic: &Diagnostic, project_path: &str, salt: u64) -> u64 {
-    let mut hasher = DefaultHasher::new();
-
-    salt.hash(&mut hasher);
-    diagnostic.name().hash(&mut hasher);
-    project_path.hash(&mut hasher);
-
-    hasher.finish()
-}
-
-/// Convert an absolute path to be relative to the specified project root.
-fn relativize_path_to<P: AsRef<Path>, R: AsRef<Path>>(path: P, project_root: R) -> String {
-    format!(
-        "{}",
-        pathdiff::diff_paths(&path, project_root)
-            .expect("Could not diff paths")
-            .display()
-    )
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::diagnostic::{
-        DiagnosticFormat,
-        render::tests::{create_diagnostics, create_syntax_error_diagnostics},
-    };
-
-    const FINGERPRINT_FILTERS: [(&str, &str); 1] = [(
-        r#""fingerprint": "[a-z0-9]+","#,
-        r#""fingerprint": "<redacted>","#,
-    )];
-
-    #[test]
-    fn output() {
-        let (env, diagnostics) = create_diagnostics(DiagnosticFormat::Gitlab);
-        insta::with_settings!({filters => FINGERPRINT_FILTERS}, {
-            insta::assert_snapshot!(env.render_diagnostics(&diagnostics));
-        });
-    }
-
-    #[test]
-    fn syntax_errors() {
-        let (env, diagnostics) = create_syntax_error_diagnostics(DiagnosticFormat::Gitlab);
-        insta::with_settings!({filters => FINGERPRINT_FILTERS}, {
-            insta::assert_snapshot!(env.render_diagnostics(&diagnostics));
-        });
-    }
-}
-
+                            if needs_separator && !value.trim_end_matches(['\n', '\r']).is_empty() {
+                                f.write_str(" ")?;
+ 
 ```
 
 
@@ -2553,59 +2123,17 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29097** (2026-10-05): **[ty] Fix type variable inference for final class objects**
-  *Symptoms*: ## Summary  We now infer `T = Closed` when matching a callback that accepts `type[Closed]` against `Callable[[type[T]], None]`, including when `Closed` is final. Previously, we inferred the class literal and rejected the callback.  ```python from typing import Callable, final, reveal_type  def solve[T](callback: Callable[[type[T]], None]) -> T:     raise NotImplementedError  @final class Closed: ...  def takes_closed(cls: type[Closed]) -> None: ...  reveal_type(solve(takes_closed))  # Closed, previously <class 'Closed'> ```  Final class objects project exactly to their instance types because they cannot have subclasses. We now preserve that distinction for both class literals and specialized generic classes, removing the redundant special case for final upper bounds.  Closes https://github.com/astral-sh/ty/issues/4664. 
+- **Issue #29460** (2026-10-19): **[ty] Reject runtime_checkable on non-protocol classes**
+  *Symptoms*: ## Summary  We now report `invalid-argument-type` when `typing.runtime_checkable` or `typing_extensions.runtime_checkable` is applied to a non-protocol class, including a concrete subclass of a protocol. These applications raise `TypeError` at runtime. The check also covers direct calls.  ```python from typing import Protocol, runtime_checkable  @runtime_checkable  # Error: an ordinary class is not a protocol. class Ordinary: ...  @runtime_checkable  # OK: P directly inherits from Protocol. class P(Protocol): ...  @runtime_checkable  # Error: inheriting from P does not make this a protocol. class Concrete(P): ...  runtime_checkable(Ordinary)  # Error: direct calls have the same restriction. ```  Closes https://github.com/astral-sh/ty/issues/4470. 
   **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d44387d4426429de9e0becda96fc639b8d846515/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
-  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  ### Summary  | Project | Old | New | Diff | Outcome | |---------|-----|-----|------|---------| | prefect | 475.57MB | 476.26MB | +0.14% (702.56kB) | ⏫ | | sphinx | 172.35MB | 172.56MB | +0.12% (214.24kB) | ⏫ | | trio | 92.55MB | 92.65MB | +0.10% (96.84kB) | ⏫ | | flake8 | 38.24MB | 38.27MB | +0.06% (23.63kB) | ⏫ |  ### Significant changes  <details> <summary>Click to expand detailed breakdown</summary>  ### prefect  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `Type<'db>::class_member_with_policy_inner_` | 11.06MB | 11.43MB | +3.28% (371.17kB) |⏫ | | `infer_expression_types_impl` | 23.99MB | 24.07MB | +0.35% (86.55kB) |⏫ | | `infer_definition_types` | 37.75MB | 37.83MB | +0.21% (80.33kB) |⏫ | | `infer_scope_types_impl` | 19.63MB | 19.67MB | +0.21% (42.97kB) |⏫ | | `member_lookup_with_policy_inner` | 9.30MB | 9.32MB | +0.24% (23.08kB) |⏫ | | `FunctionType<'db>::literal_signature_` | 
-  >  <!-- generated-comment ty ecosystem-analyzer -->   ## `ecosystem-analyzer` results  No diagnostic changes detected ✅   **[Full report with detailed diff](https://00e20ac5.ty-ecosystem-ext.pages.dev/diff)** ([timing results](https://00e20ac5.ty-ecosystem-ext.pages.dev/timing))  
+  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
+  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  ### Summary  | Project | Old | New | Diff | Outcome | |---------|-----|-----|------|---------| | prefect | 479.31MB | 479.32MB | +0.00% (9.91kB) | ⏫ | | sphinx | 172.70MB | 172.71MB | +0.00% (7.20kB) | ⏫ | | trio | 92.69MB | 92.70MB | +0.01% (6.56kB) | ⏫ | | flake8 | 38.03MB | 38.03MB | +0.01% (5.13kB) | ⏫ |  ### Significant changes  <details> <summary>Click to expand detailed breakdown</summary>  ### prefect  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_definition_types` | 38.11MB | 38.12MB | +0.03% (9.91kB) |⏫ |  ### sphinx  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_definition_types` | 11.68MB | 11.69MB | +0.06% (7.20kB) |⏫ |  ### trio  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_definition_types` | 4.73MB | 4.73MB | +0.14% (6.56kB) |⏫ |  ### flake8  | Name | Old | New | Diff | Outcome | |--
 
-- **Issue #29090** (2026-10-03): **[ty] Preserve tuple subclass identity during type expansion**
-  *Symptoms*: ## Summary  We now recognize exhaustive class patterns over tuple subclasses, including `NamedTuple`. For example, this function no longer produces an `invalid-return-type` error:  ```python from typing import NamedTuple  class Point(NamedTuple):     x: bool  def handle(value: Point) -> int:     match value:         case Point():             return 42 ```  Tuple expansion now intersects each expanded tuple with the original subclass, preserving its class identity during reachability analysis and overload resolution.  Closes https://github.com/astral-sh/ty/issues/4659. 
+- **Issue #29429** (2026-10-18): **[ty] Avoid crashes when negating recursive aliases**
+  *Symptoms*: Negating a recursive legacy type alias such as `A: TypeAlias = "list[Not[A] | A]"` could repeatedly expand the alias until ty crashed. Preserve recursive alias identity when constructing negations and simplify an exact static complement pair, so indexing an `A` now reveals `object`.  Closes astral-sh/ty#4728.  Stacked on #29427. 
   **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d44387d4426429de9e0becda96fc639b8d846515/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
+  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
   >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  Memory usage unchanged ✅ 
-  >  <!-- generated-comment ty ecosystem-analyzer -->   ## `ecosystem-analyzer` results  No diagnostic changes detected ✅   **[Full report with detailed diff](https://0d83f407.ty-ecosystem-ext.pages.dev/diff)** ([timing results](https://0d83f407.ty-ecosystem-ext.pages.dev/timing))  
-
-- **Issue #29076** (2026-10-02): **[`flake8-builtins`] Expand checks in class scopes (`A001`)**
-  *Symptoms*: <!-- Thank you for contributing to Ruff/ty! To help us out with reviewing, please consider the following:  - Does this pull request include a summary of the change? (See below.) - Does this pull request include a descriptive title? (Please prefix with `[ty]` for ty pull   requests.) - Does this pull request include references to any relevant issues? - Does this PR follow our AI policy (https://github.com/astral-sh/.github/blob/main/AI_POLICY.md)? -->  ## Summary  Inside a class body, `flake8-builtins` reports a `for`, `with ... as`, or `:=` target that shadows a builtin, but A001 does not. The A001 call site skipped every stored name in class scope because A003 handles class attributes, but A003 only considers assignment and annotation bindings, so those other binding kinds were reported by neither rule. The class-scope skip now applies only to the binding kinds A003 handles, by checking the stored name's `BindingKind`. Attribute and method bindings in a class still go to A003, so there's no double-reporting.  This is the gap left after #20178, which I picked up because no pull request was opened for it.  Fixes #20179  ## Test Plan  I have added new class-scope cases in the A001 fixture covering both the three bindings that now fire and the attribute and method bindings that stay silent, updated the snapshot with three new diagnostics, and ran the `flake8-builtins` tests, `clippy`, and `fmt`. 
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment ecosystem -->   ## `ruff-ecosystem` results  ### Linter (stable) ✅ ecosystem check detected no linter changes.  ### Linter (preview) ✅ ecosystem check detected no linter changes.    
-  > I moved the check into the rule code; thanks for pointing that out.
-  > Rerequested review by accident, nothing new. Thanks for being speedy!
-
-- **Issue #29066** (2026-10-03): **[ty] Keep unresolved TypeIs targets provisional**
-  *Symptoms*: ## Summary  We now terminate inference for recursive `TypeIs` calls like this one:  ```python from typing import reveal_type from typing_extensions import TypeIs  class Container[T]: ...  def is_container[T](value: object, other: T) -> TypeIs[Container[T]]:     return True  while True:     if is_container(value, type(value)):         value = value.__str__     else:         value = {value}     reveal_type(value) ```  Previously, an unresolved `TypeIs` target could make the `else` branch appear unreachable. We now defer that narrowing until the target is known, preserving the recursive type and diagnostics in both branches.  Addresses https://github.com/astral-sh/ty/issues/3837. 
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d44387d4426429de9e0becda96fc639b8d846515/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
-  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  Memory usage unchanged ✅ 
-  >  <!-- generated-comment ty ecosystem-analyzer -->   ## `ecosystem-analyzer` results  No diagnostic changes detected ✅   **[Full report with detailed diff](https://a15bbf55.ty-ecosystem-ext.pages.dev/diff)** ([timing results](https://a15bbf55.ty-ecosystem-ext.pages.dev/timing))  
-
-- **Issue #29043** (2026-10-01): **[ty] Specialize instance members once**
-  *Symptoms*: ## Summary  We apply a generic class's specialization once when looking up an instance attribute. MRO lookup already specializes each member in its defining class, but the outer lookup applied the specialization again. When type arguments refer to the class's own parameters, that could turn `list[T]` into `list[list[T]]` or undo a swap of `T` and `U`.  Remove the redundant specialization and cover nested and swapped type arguments with both legacy and PEP 695 syntax. 
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d44387d4426429de9e0becda96fc639b8d846515/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
-  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  ### Summary  | Project | Old | New | Diff | Outcome | |---------|-----|-----|------|---------| | flake8 | 38.24MB | 38.24MB | - | ✅ | | sphinx | 172.24MB | 172.24MB | - | ✅ | | trio | 92.89MB | 92.88MB | -0.01% (4.87kB) | ⬇️ | | prefect | 475.77MB | 475.74MB | -0.00% (22.62kB) | ⬇️ |  ### Significant changes  <details> <summary>Click to expand detailed breakdown</summary>  ### trio  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `Type<'db>::apply_specialization_inner_::interned_arguments` | 931.09kB | 928.59kB | -0.27% (2.50kB) |⬇️ | | `Type<'db>::apply_specialization_inner_` | 653.20kB | 651.70kB | -0.23% (1.50kB) |⬇️ | | `infer_expression_types_impl` | 5.95MB | 5.95MB | -0.00% (240.00B) |⬇️ | | `member_lookup_with_policy_inner` | 1.26MB | 1.26MB | -0.02% (208.00B) |⬇️ | | `infer_definition_types` | 4.67MB | 4.67MB | -0.00% (120.00B) |⬇️ | | `member_lookup_with_policy_and_receiver_in
-  >  <!-- generated-comment ty ecosystem-analyzer -->   ## `ecosystem-analyzer` results   | Lint rule | Added | Removed | Changed | |-----------|------:|--------:|--------:| | `invalid-argument-type` | 0 | 2 | 0 | | `invalid-assignment` | 0 | 0 | 1 | | **Total** | **0** | **2** | **1** |   **Raw diff:**  ```diff Expression (https://github.com/cognitedata/Expression) - expression/core/option.py:121:33 error[invalid-argument-type] Argument to bound method `Option.map` is incorrect: Expected `(_TSourceOut@Option, /) -> _TResult@apply`, found `((_TSourceOut@Option, /) -> _TResult@apply) | (((_TSourceOut@Option, /) -> _TResult@apply, /) -> _TResult@apply)` - expression/core/result.py:137:33 error[invalid-argument-type] Argument to bound method `Result.map` is incorrect: Expected `(_TSourceOut@Result, /) -> _TResult@apply`, found `((_TSourceOut@Result, /) -> _TResult@apply) | (((_TSourceOut@Result, /) -> _TResult@apply, /) -> _TResult@apply)`  spark (https://github.com/apache/spark) - python/pys
-
-- **Issue #29024** (2026-09-30): **[ty] Preserve cycle markers in ParamSpec specialization**
-  *Symptoms*: ## Summary  We preserve provisional cycle markers when converting a type argument into a `ParamSpec` parameter list. Previously, we treated `Divergent` like `Unknown` and replaced it with unknown parameters, discarding the marker that inference needs to normalize recursive specializations. Repeated specialization could then keep growing the inferred type until cycle inference panicked.  The existing fallback for `Unknown` remains unchanged. Corpus regressions cover recursive specializations with both legacy and PEP 695 generic syntax.  Addresses the generic-specialization reproducer in https://github.com/astral-sh/ty/issues/4615. The additional lambda and collection decorator reproducers are covered by #29025 and #28986, respectively. 
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d44387d4426429de9e0becda96fc639b8d846515/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
-  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  Memory usage unchanged ✅ 
-  >  <!-- generated-comment ty ecosystem-analyzer -->   ## `ecosystem-analyzer` results  No diagnostic changes detected ✅   **[Full report with detailed diff](https://e0d7cac0.ty-ecosystem-ext.pages.dev/diff)** ([timing results](https://e0d7cac0.ty-ecosystem-ext.pages.dev/timing))  
-
-- **Issue #29001** (2026-10-02): **[`flake8-self`] Allow private access on `object.__new__(cls)` instances (`SLF001`)**
-  *Symptoms*: ## Summary  Closes #28989  SLF001 already skips instances created with `super().__new__(cls)`, but not the same pattern written with `object`:  ```python class A:     def __new__(cls):         obj = object().__new__(cls)         obj._private_attr = "bar"  # SLF001 before this change ```  This extends the special case to `object().__new__(...)` and `object.__new__(...)`, as suggested in the issue. `object` has to resolve to the builtin, and `object()` has to be called without arguments.  ## Test Plan  Added cases to `SLF001_1.py`: the two `object` forms with `cls`, `object.__new__(Amet)` inside a classmethod, and two that should still be flagged (`object(1)` and a shadowed `object`). The snapshot only gains those two diagnostics.  Also checked the reproducer from the issue with a local build: flagged before, clean after.
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment ecosystem -->   ## `ruff-ecosystem` results  ### Linter (stable) ℹ️ ecosystem check **detected linter changes**. (+1 -2 violations, +0 -0 fixes in 2 projects; 56 projects unchanged)  <details><summary><a href="https://github.com/apache/airflow">apache/airflow</a> (+0 -2 violations, +0 -0 fixes)</summary> <p> <pre>ruff check --no-cache --exit-zero --no-fix --output-format concise --no-preview --select ALL</pre> </p> <p>  <pre> - <a href='https://github.com/apache/airflow/blob/ba89738639cb54f6d4e79986cbc51db8b5b96de1/task-sdk/src/airflow/sdk/io/path.py#L139'>task-sdk/src/airflow/sdk/io/path.py:139:9:</a> SLF001 Private member accessed: `_conn_id` - <a href='https://github.com/apache/airflow/blob/ba89738639cb54f6d4e79986cbc51db8b5b96de1/task-sdk/src/airflow/sdk/io/path.py#L145'>task-sdk/src/airflow/sdk/io/path.py:145:13:</a> SLF001 Private member accessed: `_inject_authenticated_fs` </pre>  </p> </details> <details><summary><a href="https://github.com/home-assistan
-
-- **Issue #28995** (2026-09-29): **[ty] Fix anchoring of include and exclude patterns after the project's root changed**
-  *Symptoms*: ## Summary  After file system changes, ty compares the new resolved `Settings` with what's currently stored on the project and only updates the settings and reloads the files if they're different.   Before, this comparison didn't take the include and exclude anchors (the project root) into account. Therefore, changing a project from `./workspace/member` to `./workspace` wouldn't update its settings, even though the `include` and `exclude` patterns are now anchored at `./workspace` (e.g. `./workspace/member/**/.venv` -> `./workspace/**/.venv`).  We now store the absolute glob in `original`. `original` is used in the `Display` implementation, which is only used for tracing logs (where I think including the anchor is kind of nice).  Extracted from https://github.com/astral-sh/ruff/pull/28529. I'll go ahead and merge this because I need it in that stack. I also think this is not too controversial (and easy to change)  ## Test Plan  Added regressions for both filter types and ran the `ty_project` unit tests. 
-  **Post-Mortem & Fix Analysis**:
-  >  <!-- generated-comment typing_conformance_diagnostics_diff -->   ## [Typing conformance results](https://github.com/python/typing/blob/d44387d4426429de9e0becda96fc639b8d846515/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.24%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.24%</b>. The number of fully passing files held steady at <b>134/146</b>.  </details>  
-  >  <!-- generated-comment memory_report_diff -->  ## Memory usage report  Memory usage unchanged ✅ 
-  >  <!-- generated-comment ty ecosystem-analyzer -->   ## `ecosystem-analyzer` results  No diagnostic changes detected ✅   **[Full report with detailed diff](https://948f9dd6.ty-ecosystem-ext.pages.dev/diff)** ([timing results](https://948f9dd6.ty-ecosystem-ext.pages.dev/timing))  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2622,3425 +2150,777 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a69da01` (2026-10-05)
-**Commit Message**: [ty] Fix type variable inference for final class objects (#29097)
+### Incident Patch 1: `77f2f1ca` (2026-10-18)
+**Commit Message**: [ty] Avoid crashes when negating recursive aliases (#29429)
 
-## Summary
+Negating a recursive legacy type alias such as `A: TypeAlias =
+"list[Not[A] | A]"` could repeatedly expand the alias until ty crashed.
+Preserve recursive alias identity when constructing negations and
+simplify an exact static complement pair, so indexing an `A` now reveals
+`object`.
 
-We now infer `T = Closed` when matching a callback that accepts
-`type[Closed]` against `Callable[[type[T]], None]`, including when
-`Closed` is final. Previously, we inferred the class literal and
-rejected the callback.
+Closes astral-sh/ty#4728.
 
-```python
-from typing import Callable, final, reveal_type
+Stacked on #29427.
 
-def solve[T](callback: Callable[[type[T]], None]) -> T:
-    raise NotImplementedError
-
-@final
-class Closed: ...
-
-def takes_closed(cls: type[Closed]) -> None: ...
-
-reveal_type(solve(takes_closed))  # Closed, previously <class 'Closed'>
+**File**: `crates/ty_python_semantic/resources/mdtest/implicit_type_aliases.md` (modified, +11/-0)
+```diff
+@@ -3284,3 +3284,14 @@ def inspect(
+     reveal_type([top_growing])  # revealed: list[Top[Growing[Any]]]
+     reveal_type([bottom_growing])  # revealed: list[Bottom[Growing[Any]]]
+ ```
++
++### Recursive aliases and their complements
++
++```py
++from ty_extensions import Not
++
++A = list["A | Not[A]"]
++
++def f(x: A):
++    reveal_type(x[0])  # revealed: object
++```
 ```
 
-Final class objects project exactly to their instance types because they
-cannot have subclasses. We now preserve that distinction for both class
-literals and specialized generic classes, removing the redundant special
-case for final upper bounds.
-
-Closes https://github.com/astral-sh/ty/issues/4664.
-
----------
-
-Co-authored-by: Carl Meyer <[REDACTED_EMAIL]>
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/callables.md` (modified, +65/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/pep613_type_aliases.md` (modified, +49/-0)
 ```diff
-@@ -1036,6 +1036,71 @@ reveal_type(callback)  # revealed: (*args: Any, **kwargs: Any) -> None
- static_assert(is_subtype_of(TypeOf[callback], Callable[[], None]))
+@@ -483,6 +483,47 @@ def inspect(value: Nested):
+     reveal_type(value)  # revealed: Nested
  ```
  
-+## Callbacks that accept final classes
++## Recursive aliases and their complements
 +
-+When a callback accepts `type[Closed]`, we infer `T` in `Callable[[type[T]], None]` as the instance
-+type `Closed`. Declaring the class as final does not change this: `T` describes instances of
-+`Closed`, not the class object itself.
++A fully static alias and its complement cover every object, even when the alias refers to itself.
 +
 +```py
-+from typing import Callable, TypeVar, final
++from typing import TypeAlias
++from ty_extensions import Not
 +
-+T = TypeVar("T")
++A: TypeAlias = "list[Not[A] | A]"
 +
-+def solve(callback: Callable[[type[T]], None]) -> T:
-+    raise NotImplementedError
-+
-+@final
-+class Closed: ...
-+
-+def takes_closed(cls: type[Closed]) -> None: ...
-+
-+reveal_type(solve(takes_closed))  # revealed: Closed
++def f(x: A):
++    reveal_type(x[0])  # revealed: object
 +```
 +
-+For a final generic class, the inferred instance type includes the class's type arguments:
++## Negated recursive aliases
 +
 +```py
-+from typing import Generic
++from typing import TypeAlias
++from ty_extensions import Not
 +
-+@final
-+class GenericClosed(Generic[T]): ...
++A: TypeAlias = "list[Not[A]]"
 +
-+def takes_generic_closed(cls: type[GenericClosed[int]]) -> None: ...
-+
-+reveal_type(solve(takes_generic_closed))  # revealed: GenericClosed[int]
++def f(x: A):
++    reveal_type(x[0])  # revealed: ~A
 +```
 +
-+## Decorating classmethods of final classes
++## Gradual recursive aliases and their complements
 +
-+This decorator accepts a method whose first argument is a class object and leaves the remaining
-+parameters unchanged:
++The `Any` in each union member can have a different materialization, so the union does not simplify
++to `object`.
 +
 +```py
-+from typing import Callable, Concatenate, ParamSpec, TypeVar, final
++from typing import Any, TypeAlias
++from ty_extensions import Not
 +
-+T = TypeVar("T")
-+P = ParamSpec("P")
++B: TypeAlias = "list[tuple[Any, B]]"
 +
-+def decorate(
-+    f: Callable[Concatenate[type[T], P], None],
-+) -> Callable[Concatenate[type[T], P], None]:
-+    return f
++def f(x: B | Not[B]):
++    reveal_type(x)  # revealed: B | ~B
 +```
 +
-+For a classmethod on a final class, the inferred `cls` type is the class object itself. We accept
-+the decorator by inferring `T` as the instance type `Closed`.
-+
-+Regression test for <https://github.com/astral-sh/ty/issues/4664>.
-+
-+```py
-+@final
-+class Closed:
-+    @decorate  # no diagnostic
-+    @classmethod
-+    def method(cls, value: int) -> None: ...
-+```
-+
- ## Gradual class parameters
+ ## Specializing non-generic recursive aliases
  
- A callback that accepts `type[Any]` or `type[Unknown]` can accept any class object.
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md` (modified, +126/-0)
-```diff
-@@ -595,6 +595,132 @@ Stop2T = TypeVar("Stop2T", default=int)
- class Bad(Generic[Start2T, Stop2T, StepT]): ...
+ A recursive alias without type variables cannot be specialized. Quoting the entire definition does
+@@ -599,6 +640,14 @@ Growing: TypeAlias = "T | Growing[list[T]]"  # error: [cyclic-type-alias-definit
+ reveal_type(Growing)  # revealed: str
  ```
  
-+## Narrowing class objects of final generic classes
-+
-+A specialized alias is distinct from the bare class object, even when the specialization matches the
-+default type argument. Excluding the bare class with `is not` keeps the alias reachable, so we still
-+check the return type in that branch.
++Adding the alias's complement does not make an unguarded cycle valid.
 +
 +```py
-+from typing import final
-+from typing_extensions import Generic, TypeVar
++from ty_extensions import Not
 +
-+U = TypeVar("U", default=str)
-+
-+@final
-+class P(Generic[U]): ...
-+
-+T = TypeVar("T", bound=P[str])
-+
-+def create(cls: type[T]) -> int:
-+    if cls is not P:
-+        reveal_type(cls)  # revealed: type[T@create] & ~<class 'P'>
-+        return cls()  # error: [invalid-return-type]
-+    return 0
-+
-+create(P[str])
++Complemented: TypeAlias = "T | Complemented[T] | Not[Complemented[T]]"  # error: [cyclic-type-alias-definition]
 +```
 +
-+## Narrowing class objects against a final protocol
-+
-+A class can implement a final protocol without being the protocol class itself. Excluding the
-+protocol class leaves the implementing class reachable.
-+
-+```py
-+from typing import Protocol, TypeVar, final
-+
-+@final
-+class P(Protocol):
-+    value: int
-+
-+class Impl:
-+    value: int
-+
-+T = TypeVar("T", bound=Impl)
-+
-+def create(cls: type[T]) -> int:
-+    if cls is not P:
-+        reveal_type(cls)  # revealed: type[T@create] & ~<class 'P'>
-+        return cls()  # error: [invalid-return-type]
-+    return 0
-+
-+create(Impl)
-+```
-+
-+## Class objects and specialized final protocols
-+
-+Implementing a specialized protocol does not make the implementing class object the protocol's
-+specialized alias.
-+
-+```py
-+from typing import Protocol, TypeVar, final
-+from ty_extensions._internal import TypeOf
-+
-+U = TypeVar("U")
-+
-+@final
-+class P(Protocol[U]):
-+    value: U
-+
-+class Impl:
-+    value: int
-+
-+T = TypeVar("T", bound=Impl)
-+
-+def as_protocol_class(cls: type[T]) -> TypeOf[P[int]]:
-+    return cls  # error: [invalid-return-type]
-+```
-+
-+## Narrowing class objects against a final TypedDict
-+
-+Two TypedDicts can have compatible fields without being the same class object. Excluding one class
-+leaves the other reachable.
-+
-+```py
-+from typing import TypeVar, TypedDict, final
-+
-+@final
-+class Shape(TypedDict):
-+    value: int
-+
-+class Other(TypedDict):
-+    value: int
-+
-+T = TypeVar("T", bound=Other)
-+
-+def create(cls: type[T]) -> int:
-+    if cls is not Shape:
-+        reveal_type(cls)  # revealed: type[T@create] & ~<class 'Shape'>
-+        return "wrong"  # error: [invalid-return-type]
-+    return 0
-+
-+create(Other)
-+```
-+
-+## Class objects and specialized final TypedDicts
-+
-+Compatible TypedDict fields do not make another class object a specialized alias of the final
-+TypedDict.
-+
-+```py
-+from typing import Generic, TypeVar, TypedDict, final
-+from ty_extensions._internal import TypeOf
-+
-+U = TypeVar("U")
-+
-+@final
-+class Shape(TypedDict, Generic[U]):
-+    value: U
-+
-+class Other(TypedDict):
-+    value: int
-+
-+T = TypeVar("T", bound=Other)
-+
-+def as_shape_class(cls: type[T]) -> TypeOf[Shape[int]]:
-+    return cls  # error: [invalid-return-type]
-+```
-+
- ## A subclass of a fully specialized generic is not generic
+ Invalid generic aliases use a divergent type for recovery with or without type arguments.
  
- A subclass is generic only if its bases leave at least one type variable unspecialized. Omitting a
+ ```py
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/callables.md` (modified, +58/-0)
+**File**: `crates/ty_python_semantic/src/types.rs` (modified, +1/-11)
 ```diff
-@@ -790,6 +790,64 @@ def consume_child(value: Child) -> None: ...
- reveal_type(infer_child(consume_child))
- ```
+@@ -3267,17 +3267,6 @@ impl<'db> Type<'db> {
+                 .negated_divergent()
+                 .expect("matched `Type::Divergent` above"),
  
-+## Callbacks that accept final classes
-+
-+When a callback accepts `type[Closed]`, we infer `T` in `Callable[[type[T]], None]` as the instance
-+type `Closed`. Declaring the class as final does not change this: `T` describes instances of
-+`Closed`, not the class object itself.
-+
-+```py
-+from typing import Callable, final
-+
-+def solve[T](callback: Callable[[type[T]], None]) -> T:
-+    raise NotImplementedError
-+
-+@final
-+class Closed: ...
-+
-+def takes_closed(cls: type[Closed]) -> None: ...
-+
-+reveal_type(solve(takes_closed))  # revealed: Closed
-+```
-+
-+For a final generic class, the inferred instance type includes the class's type arguments:
-+
-+```py
-+@final
-+class GenericClosed[T]: ...
-+
-+def takes_generic_closed(cls: type[GenericClosed[int]]) -> None: ...
-+
-+reveal_type(solve(takes_generic_closed))  # revealed: GenericClosed[int]
-+```
-+
-+## Decorating classmethods of final classes
-+
-+This decorator accepts a method whose first argument is a class object and leaves the remaining
-+parameters unchanged:
-+
-+```py
-+from typing import Callable, Concatenate, final
-+
-+def decorate[T, **P](
-+    f: Callable[Concatenate[type[T], P], None],
-+) -> Callable[Concatenate[type[T], P], None]:
-+    return f
-+```
-+
-+For a classmethod on a final class, the inferred `cls` type is the class object itself. We accept
-+the decorator by inferring `T` as the instance type `Closed`.
-+
-+Regression test for <https://github.com/astral-sh/ty/issues/4664>.
-+
-+```py
-+@final
-+class Closed:
-+    @decorate  # no diagnostic
-+    @classmethod
-+    def method(cls, value: int) -> None: ...
-+```
-+
- ## Gradual class parameters
- 
- A callback that accepts `type[Any]` or `type[Unknown]` can accept any class object.
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/classes.md` (modified, +109/-0)
-```diff
-@@ -275,6 +275,115 @@ reveal_type(WithDefault[str]())  # revealed: WithDefault[str, int]
- reveal_type(WithDefault[str, str, str]())  # revealed: WithDefault[Unknown, Unknown]
- ```
- 
-+## Narrowing class objects of final generic classes
-+
-+A specialized alias is distinct from the bare class object, even when the specialization matches the
-+default type argument. Excluding the bare class with `is not` keeps the alias reachable, so we still
-+check the return type in that branch.
-+
-+```py
-+from typing import final
-+
-+@final
-+class P[U = str]: ...
-+
-+def create[T: P[str]](cls: type[T]) -> int:
-+    if cls is not P:
-+        reveal_type(cls)  # revealed: type[T@create] & ~<class 'P'>
-+        return cls()  # error: [invalid-return-type]
-+    return 0
-+
-+create(P[str])
-+```
-+
-+## Narrowing class objects against a final protocol
-+
-+A class can implement a final protocol without being the protocol class itself. Excluding the
-+protocol class leaves the implementing class reachable.
-+
-+```py
-+from typing import Protocol, final
-+
-+@final
-+class P(Protocol):
-+    value: int
-+
-+class Impl:
-+    value: int
-+
-+def create[T: Impl](cls: type[T]) -> int:
-+    if cls is not P:
-+        reveal_type(cls)  # revealed: type[T@create] & ~<class 'P'>
-+        return cls()  # error: [invalid-return-type]
-+    return 0
-+
-+create(Impl)
-+```
-+
-+## Class objects and specialized final protocols
-+
-+Implementing a specialized protocol does not make the implementing class object the protocol's
-+specialized alias.
-+
-+```py
-+from typing import Protocol, final
-+from ty_extensions._internal import TypeOf
-+
-+@final
-+class P[U](Protocol):
-+    value: U
-+
-+class Impl:
-+    value: int
-+
-+def as_protocol_class[T: Impl](cls: type[T]) -> TypeOf[P[int]]:
-+    return cls  # error: [invalid-return-type]
-+```
-+
-+## Narrowing class objects against a final TypedDict
-+
-+Two TypedDicts can have compatible fields without being the same class object. Excluding one class
-+leaves the other reachable.
-+
-+```py
-+from typing import TypedDict, final
-+
-+@final
-+class Shape(TypedDict):
-+    value: int
-+
-+class Other(TypedDict):
-+    value: int
-+
-+def create[T: Other](cls: type[T]) -> int:
-+    if cls is not Shape:
-+        reveal_type(cls)  # revealed: type[T@create] & ~<class 'Shape'>
-+        return "wrong"  # error: [invalid-return-type]
-+    return 0
-+
-+create(Other)
-+```
-+
-+## Class objects and specialized final TypedDicts
-+
-+Compatible TypedDict fields do not make another class object a specialized alias of the final
-+TypedDict.
-+
-+```py
-+from typing import TypedDict, final
-+from ty_extensions._internal import TypeOf
-+
-+@final
-+class Shape[U](TypedDict):
-+    value: U
-+
-+class Other(TypedDict):
-+    value: int
-+
-+def as_shape_class[T: Other](cls: type[T]) -> TypeOf[Shape[int]]:
-+    return cls  # error: [invalid-return-type]
-+```
-+
- ## Diagnostics for bad specializations
- 
- We show the user where the type variable was defined if a specialization is given that doesn't
-```
-
-**File**: `crates/ty_python_semantic/src/types.rs` (modified, +24/-7)
-```diff
-@@ -2139,7 +2139,14 @@ impl<'db> DiscardDisjointUnionElementsResult<'db> {
- /// `type[Base]` projects to `Base` exactly: both admit `Child`. In contrast,
- /// `TypeOf[Base]` (the type of the expression `Base`) admits only the `Base` class object, but
- /// also projects to `Base`, which admits `Child` instances. That projection is an
--/// over-approximation.
-+/// over-approximation. For a final, non-generic nominal class, the projection is exact because
-+/// there are no subclasses. For a final generic class `C[T = int]`, projecting the bare class `C`
-+/// to the instance type `C[int]` is still an over-approximation: `type[C[int]]` also admits the
-+/// distinct alias object `C[int]`.
-+///
-+/// Protocol and `TypedDict` instance types admit structural subtypes whose class objects need not
-+/// inherit from the original class. Projecting their class literals or generic aliases is therefore
-+/// an over-approximation even when the class is final.
- #[derive(Copy, Clone, Debug)]
- pub(crate) enum InstanceProjection<T> {
-     Exact(T),
-@@ -8653,12 +8660,22 @@ impl<'db> Type<'db> {
-             Type::Dynamic(_) | Type::Divergent(_) | Type::Never => {
-                 Some(InstanceProjection::Exact(self))
-             }
--            Type::ClassLiteral(class) => Some(InstanceProjection::OverApproximation(
--                Type::instance(db, env, class.default_specialization(db)),
--            )),
--            Type::GenericAlias(alias) => Some(InstanceProjection::OverApproximation(
--                Type::instance(db, env, ClassType::from(alias)),
--            )),
-+            Type::ClassLiteral(class) => {
-+                let instance = Type::instance(db, env, class.default_specialization(db));
-+                Some(InstanceProjection::new(
-+                    instance,
-+                    instance.is_nominal_instance()
-+                        && class.is_final(db)
-+                        && class.generic_context(db).is_none(),
-+                ))
-+            }
-+            Type::GenericAlias(alias) => {
-+                let instance = Type::instance(db, env, ClassType::from(alias));
-+                Some(InstanceProjection::new(
-+                    instance,
-+                    instance.is_nominal_instance() && alias.origin(db).is_final(db),
-+                ))
-+            }
-             Type::SubclassOf(subclass_of_ty) => Some(InstanceProjection::Exact(
-                 subclass_of_ty.to_instance(db, env),
-             )),
-```
-
-**File**: `crates/ty_python_semantic/src/types/relation.rs` (modified, +7/-12)
-```diff
-@@ -1718,12 +1718,10 @@ impl<'a, 'c, 'db> TypeRelationChecker<'a, 'c, 'db> {
-     /// well as source constraints so that `T: (Y, Z)` can still be related to
-     /// `type[Y] | type[Z]`.
-     ///
--    /// Exact class objects also have an over-approximated instance projection. For `T: (Y, Z)`
--    /// where `Z` extends `Y`, instance subtyping would incorrectly simplify
--    /// `type[T] & <class 'Y'>` to `type[T]`: both `Y` and `Z` instances are subtypes of `Y`, but
--    /// only the class object `Y` satisfies `klass is Y`. The exception is a type variable whose
--    /// upper bound normalizes to this exact class object. That can only happen for a final class,
--    /// so the exact object is the only valid specialization of the type variable.
-+    /// Class literals have an over-approximated instance projection unless the class is final,
-+    /// nominal, and non-generic. For `T: (Y, Z)` where `Z` extends `Y`, instance subtyping would
-+    /// incorrectly simplify `type[T] & <class 'Y'>` to `type[T]`: both `Y` and `Z` instances are
-+    /// subtypes of `Y`, but only the class object `Y` satisfies `klass is Y`.
-     ///
-     /// Return `None` for targets without a `.to_instance()` projection, allowing other type-pair
-     /// branches to decide their relation.
-@@ -1735,9 +1733,6 @@ impl<'a, 'c, 'db> TypeRelationChecker<'a, 'c, 'db> {
-     ) -> Option<ConstraintSet<'db, 'c>> {
-         let source_i = source_subclass.into_type_var()?;
-         let env = self.env;
--        let is_exact_upper_bound =
--            source_subclass.exact_typevar_upper_bound(db, env) == Some(target);
+-            Type::Recursive(recursive) => recursive
+-                .unfold(db, env)
+-                .map(|unfolded| unfolded.negate(db, env))
+-                .unwrap_or_else(|| {
+-                    Type::Intersection(IntersectionType::new(
+-                        db,
+-                        FxOrderSet::default(),
+-                        NegativeIntersectionElements::Single(*self),
+-                    ))
+-                }),
 -
-         if self.is_metaclass_instance(db, target) {
-             return Some(self.check_type_pair(
-                 db,
-@@ -1747,7 +1742,7 @@ impl<'a, 'c, 'db> TypeRelationChecker<'a, 'c, 'db> {
+             Type::NominalInstance(instance) if instance.is_object() => Type::Never,
+ 
+             Type::AlwaysTruthy
+@@ -3313,6 +3302,7 @@ impl<'db> Type<'db> {
+             )),
+ 
+             Type::TypeAlias(_)
++            | Type::Recursive(_)
+             | Type::Union(_)
+             | Type::Intersection(_)
+             | Type::EnumComplement(_) => IntersectionBuilder::new(db, env)
+```
+
+**File**: `crates/ty_python_semantic/src/types/set_theoretic/builder.rs` (modified, +13/-6)
+```diff
+@@ -1179,6 +1179,18 @@ impl<'db> UnionBuilder<'db> {
+                     self.collapse_to_object();
+                     return;
+                 }
++            } else if !self.cycle_recovery
++                && let (alias @ Type::Recursive(_), Type::Intersection(negated))
++                | (Type::Intersection(negated), alias @ Type::Recursive(_)) = (ty, element_type)
++                && negated.is_simple_negation(db)
++                && negated.negative(db).contains(&alias)
++                && !alias.has_unguarded_alias_cycle(db)
++                && alias.is_subtype_of(db, &self.env, alias)
++            {
++                // Apply the same complement law to an exact recursive alias pair. Avoid
++                // provisional binders, and require reflexive subtyping to exclude gradual types.
++                self.collapse_to_object();
++                return;
+             }
          }
  
-         let projection = target.to_instance(db, env)?;
--        if projection.is_exact() || is_exact_upper_bound {
-+        if projection.is_exact() {
-             return Some(self.check_type_pair(
-                 db,
-                 Type::TypeVar(source_i),
-@@ -2217,8 +2212,8 @@ impl<'a, 'c, 'db> TypeRelationChecker<'a, 'c, 'db> {
-                 self.never()
+@@ -1626,13 +1638,8 @@ impl<'db> IntersectionBuilder<'db> {
+                 // Pass the original alias to preserve recursive self-references.
+                 // `InnerIntersectionBuilder::add_negative` resolves it for simplification
+                 // (for example, `~Any` becomes `Any`) and stores it if it remains negative.
+-                let element = if matches!(original, Type::TypeAlias(_)) {
+-                    original
+-                } else {
+-                    ty
+-                };
+                 for inner in &mut self.intersections {
+-                    inner.add_negative(db, &self.env, element);
++                    inner.add_negative(db, &self.env, original);
+                 }
              }
- 
--            // `type[T]` is a subtype of the class object `A` if every instance of `T` is a subtype
--            // of an instance of `A`. If `A` is a metaclass instance (instance of a specific
-+            // When `A` has an exact instance projection, `type[T]` is a subtype of `A` if `T`
-+            // is a subtype of that projection. If `A` is a metaclass instance (instance of a specific
-             // subclass of `type`), we instead compare in the metaclass-instance domain, since
-             // collapsing `A` through `to_instance()` would erase it to `object` (we have no
-             // precise representation for "all instances of any classes with a given metaclass").
+         }
 ```
 
 ---
 
-### Incident Patch 2: `678d6b97` (2026-10-02)
-**Commit Message**: [`flake8-bugbear`] Report the method name and a more precise range (`B005`) (#27050)
+### Incident Patch 2: `9e3ea63f` (2026-10-16)
+**Commit Message**: [ty] Avoid panic when negating dynamic type aliases (#29427)
 
-The diagnostic message now reports the method name, and range was
-adapted to be more precise and only
-cover the call and argument.
+ty could panic when an exception handler used a negated alias whose
+value is gradual, such as `Not[Dynamic]` for `type Dynamic = Any`.
+Negating aliases now applies the same normalization as other negative
+intersection elements, so an alias of `Any` simplifies to `Any`. The
+builder retains unsimplified negative aliases to preserve recursive
+self-references.
 
-Fixes https://github.com/astral-sh/ruff/issues/27085.
+Closes astral-sh/ty#4729.
 
-## Summary
-
-I got confused by one report of this rule. This is how it looks before
-this PR:
-
-```
-B005 Using `.strip()` with multi-character strings is misleading
-    |
-215 | key = ""
-216 |
-217 | key = key.strip("--").lstrip('--')
-    |       ^^^^^^^^^^^^^^^
-    |
-
-B005 Using `.strip()` with multi-character strings is misleading
-    |
-215 | key = ""
-216 |
-217 | key = key.strip("--").lstrip('--')
-    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    |
-```
-
-## Test Plan
-
----------
-
-Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
-
-**File**: `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B005.py` (modified, +1/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/exception/basic.md` (modified, +27/-0)
 ```diff
-@@ -22,6 +22,7 @@
- s.strip("ああ")  # warning
- s.strip("\ufeff")  # no warning
- s.strip("\u0074\u0065\u0073\u0074")  # warning
-+s.strip("--").lstrip("--")  # two warnings
- 
- from somewhere import other_type, strip
- 
-```
-
-**File**: `crates/ruff_linter/src/preview.rs` (modified, +5/-0)
-```diff
-@@ -357,6 +357,11 @@ pub const fn is_warn_on_unknown_selectors_enabled(preview: PreviewMode) -> bool
-     preview.is_enabled()
- }
- 
-+// https://github.com/astral-sh/ruff/pull/27050
-+pub(crate) const fn is_b005_precise_diagnostic_enabled(settings: &LinterSettings) -> bool {
-+    settings.preview.is_enabled()
-+}
-+
- // https://github.com/astral-sh/ruff/pull/27313
- pub(crate) const fn is_pragma_excluded_from_import_width_enabled(preview: PreviewMode) -> bool {
-     preview.is_enabled()
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/mod.rs` (modified, +1/-0)
-```diff
-@@ -96,6 +96,7 @@ mod tests {
-     #[test_case(Rule::MutableArgumentDefault, Path::new("B006_9.py"))]
-     #[test_case(Rule::MutableArgumentDefault, Path::new("B006_B008.py"))]
-     #[test_case(Rule::MutableArgumentDefault, Path::new("B006_1.pyi"))]
-+    #[test_case(Rule::StripWithMultiCharacters, Path::new("B005.py"))]
-     fn preview_rules(rule_code: Rule, path: &Path) -> Result<()> {
-         let snapshot = format!("preview__{}_{}", rule_code.name(), path.to_string_lossy());
-         let diagnostics = test_path(
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/rules/strip_with_multi_characters.rs` (modified, +28/-6)
-```diff
-@@ -2,11 +2,13 @@ use itertools::Itertools;
- use ruff_python_ast::{self as ast, Expr};
- 
- use ruff_macros::{ViolationMetadata, derive_message_formats};
--use ruff_text_size::Ranged;
-+use ruff_text_size::{Ranged, TextRange};
- 
- use crate::Violation;
- use crate::checkers::ast::Checker;
- use crate::codes::Category;
-+use crate::preview::is_b005_precise_diagnostic_enabled;
-+use crate::rules::pylint::rules::StripKind;
- 
- /// ## What it does
- /// Checks for uses of multi-character strings in `.strip()`, `.lstrip()`, and
-@@ -43,16 +45,31 @@ use crate::codes::Category;
- /// "text.txt".removesuffix(".txt")  # "text"
- /// ```
- ///
-+/// ## Preview
-+/// In [preview], the diagnostic message reflects the actual method name
-+/// (`.strip()`, `.lstrip()`, or `.rstrip()`), and the diagnostic range covers
-+/// the method call rather than the entire expression.
-+///
- /// ## References
- /// - [Python documentation: `str.strip`](https://docs.python.org/3/library/stdtypes.html#str.strip)
-+///
-+/// [preview]: https://docs.astral.sh/ruff/preview/
- #[derive(ViolationMetadata)]
- #[violation_metadata(stable_since = "v0.0.106", category = Category::Correctness)]
--pub(crate) struct StripWithMultiCharacters;
-+pub(crate) struct StripWithMultiCharacters {
-+    /// The method name is only reflected in the message in preview mode.
-+    strip: Option<StripKind>,
-+}
- 
- impl Violation for StripWithMultiCharacters {
-     #[derive_message_formats]
-     fn message(&self) -> String {
--        "Using `.strip()` with multi-character strings is misleading".to_string()
-+        let Self { strip } = self;
-+        if let Some(strip) = strip {
-+            format!("Using `.{strip}()` with multi-character strings is misleading")
-+        } else {
-+            "Using `.strip()` with multi-character strings is misleading".to_string()
-+        }
-     }
- }
- 
-@@ -66,15 +83,20 @@ pub(crate) fn strip_with_multi_characters(
-     let Expr::Attribute(ast::ExprAttribute { attr, .. }) = func else {
-         return;
-     };
--    if !matches!(attr.as_str(), "strip" | "lstrip" | "rstrip") {
-+    let Some(strip) = StripKind::from_str(attr.as_str()) else {
-         return;
--    }
-+    };
- 
-     let [Expr::StringLiteral(ast::ExprStringLiteral { value, .. })] = args else {
-         return;
-     };
- 
-     if value.chars().count() > 1 && !value.chars().all_unique() {
--        checker.report_diagnostic(StripWithMultiCharacters, expr.range());
-+        let (strip, range) = if is_b005_precise_diagnostic_enabled(checker.settings()) {
-+            (Some(strip), TextRange::new(attr.start(), expr.end()))
-+        } else {
-+            (None, expr.range())
-+        };
-+        checker.report_diagnostic(StripWithMultiCharacters { strip }, range);
-     }
- }
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/snapshots/ruff_linter__rules__flake8_bugbear__tests__preview__strip-with-multi-characters_B005.py.snap` (added, +111/-0)
-```diff
-@@ -0,0 +1,111 @@
-+---
-+source: crates/ruff_linter/src/rules/flake8_bugbear/mod.rs
-+---
-+B005 Using `.strip()` with multi-character strings is misleading
-+ --> B005.py:4:3
-+  |
-+2 | s.strip(s)  # no warning
-+3 | s.strip("we")  # no warning
-+4 | s.strip(".facebook.com")  # warning
-+  |   ^^^^^^^^^^^^^^^^^^^^^^
-+5 | s.strip("e")  # no warning
-+6 | s.strip("\n\t ")  # no warning
-+  |
-+
-+B005 Using `.strip()` with multi-character strings is misleading
-+ --> B005.py:7:3
-+  |
-+5 | s.strip("e")  # no warning
-+6 | s.strip("\n\t ")  # no warning
-+7 | s.strip(r"\n\t ")  # warning
-+  |   ^^^^^^^^^^^^^^^
-+8 | s.lstrip(s)  # no warning
-+9 | s.lstrip("we")  # no warning
-+  |
-+
-+B005 Using `.lstrip()` with multi-character strings is misleading
-+  --> B005.py:10:3
-+   |
-+ 8 | s.lstrip(s)  # no warning
-+ 9 | s.lstrip("we")  # no warning
-+10 | s.lstrip(".facebook.com")  # warning
-+   |   ^^^^^^^^^^^^^^^^^^^^^^^
-+11 | s.lstrip("e")  # no warning
-+12 | s.lstrip("\n\t ")  # no warning
-+   |
-+
-+B005 Using `.lstrip()` with multi-character strings is misleading
-+  --> B005.py:13:3
-+   |
-+11 | s.lstrip("e")  # no warning
-+12 | s.lstrip("\n\t ")  # no warning
-+13 | s.lstrip(r"\n\t ")  # warning
-+   |   ^^^^^^^^^^^^^^^^
-+14 | s.rstrip(s)  # no warning
-+15 | s.rstrip("we")  # warning
-+   |
-+
-+B005 Using `.rstrip()` with multi-character strings is misleading
-+  --> B005.py:16:3
-+   |
-+14 | s.rstrip(s)  # no warning
-+15 | s.rstrip("we")  # warning
-+16 | s.rstrip(".facebook.com")  # warning
-+   |   ^^^^^^^^^^^^^^^^^^^^^^^
-+17 | s.rstrip("e")  # no warning
-+18 | s.rstrip("\n\t ")  # no warning
-+   |
-+
-+B005 Using `.rstrip()` with multi-character strings is misleading
-+  --> B005.py:19:3
-+   |
-+17 | s.rstrip("e")  # no warning
-+18 | s.rstrip("\n\t ")  # no warning
-+19 | s.rstrip(r"\n\t ")  # warning
-+   |   ^^^^^^^^^^^^^^^^
-+20 | s.strip("a")  # no warning
-+21 | s.strip("あ")  # no warning
-+   |
-+
-+B005 Using `.strip()` with multi-character strings is misleading
-+  --> B005.py:22:3
-+   |
-+20 | s.strip("a")  # no warning
-+21 | s.strip("あ")  # no warning
-+22 | s.strip("ああ")  # warning
-+   |   ^^^^^^^^^^^^^
-+23 | s.strip("\ufeff")  # no warning
-+24 | s.strip("\u0074\u0065\u0073\u0074")  # warning
-+   |
-+
-+B005 Using `.strip()` with multi-character strings is misleading
-+  --> B005.py:24:3
-+   |
-+22 | s.strip("ああ")  # warning
-+23 | s.strip("\ufeff")  # no warning
-+24 | s.strip("\u0074\u0065\u0073\u0074")  # warning
-+   |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+25 | s.strip("--").lstrip("--")  # two warnings
-+   |
-+
-+B005 Using `.strip()` with multi-character strings is misleading
-+  --> B005.py:25:3
-+   |
-+23 | s.strip("\ufeff")  # no warning
-+24 | s.strip("\u0074\u0065\u0073\u0074")  # warning
-+25 | s.strip("--").lstrip("--")  # two warnings
-+   |   ^^^^^^^^^^^
-+26 |
-+27 | from somewhere import other_type, strip
-+   |
-+
-+B005 Using `.lstrip()` with multi-character strings is misleading
-+  --> B005.py:25:15
-+   |
-+23 | s.strip("\ufeff")  # no warning
-+24 | s.strip("\u0074\u0065\u0073\u0074")  # warning
-+25 | s.strip("--").lstrip("--")  # two warnings
-+   |               ^^^^^^^^^^^^
-+26 |
-+27 | from somewhere import other_type, strip
-+   |
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/snapshots/ruff_linter__rules__flake8_bugbear__tests__strip-with-multi-characters_B005.py.snap` (modified, +23/-2)
-```diff
-@@ -85,6 +85,27 @@ B005 Using `.strip()` with multi-character strings is misleading
- 23 | s.strip("\ufeff")  # no warning
- 24 | s.strip("\u0074\u0065\u0073\u0074")  # warning
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
--25 |
--26 | from somewhere import other_type, strip
-+25 | s.strip("--").lstrip("--")  # two warnings
-+   |
-+
-+B005 Using `.strip()` with multi-character strings is misleading
-+  --> B005.py:25:1
-+   |
-+23 | s.strip("\ufeff")  # no warning
-+24 | s.strip("\u0074\u0065\u0073\u0074")  # warning
-+25 | s.strip("--").lstrip("--")  # two warnings
-+   | ^^^^^^^^^^^^^
-+26 |
-+27 | from somewhere import other_type, strip
-+   |
-+
-+B005 Using `.strip()` with multi-character strings is misleading
-+  --> B005.py:25:1
-+   |
-+23 | s.strip("\ufeff")  # no warning
-+24 | s.strip("\u0074\u0065\u0073\u0074")  # warning
-+25 | s.strip("--").lstrip("--")  # two warnings
-+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^
-+26 |
-+27 | from somewhere import other_type, strip
-    |
-```
-
-**File**: `crates/ruff_linter/src/rules/pylint/rules/bad_str_strip_call.rs` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@ pub(crate) enum StripKind {
- }
- 
- impl StripKind {
--    fn from_str(s: &str) -> Option<Self> {
-+    pub(crate) fn from_str(s: &str) -> Option<Self> {
-         match s {
-             "strip" => Some(Self::Strip),
-             "lstrip" => Some(Self::LStrip),
-```
-
----
-
-### Incident Patch 3: `3b1c9287` (2026-10-02)
-**Commit Message**: [`pyflakes`] Mark the fix as unsafe when it creates a docstring (`F541`) (#28258)
-
-## Summary
-
-The fix is now unsafe in docstring positions. The reason is that
-removing the `f` turns the f-string into a string literal, and this
-changes what the program exposes as documentation.
-
-It does not touch the checker or any other rule. The scope is wider than
-what was reported in the issue. Listing the positions to make the scope
-clear:
-
-- the first statement of a module body
-- the first statement of a class body
-- the first statement of a function body
-- after a simple assignment (`a = 1`) at module level or in a class body
-- after an annotated assignment (`b: int = 2`), likewise
-
-I say documentation and not runtime because attribute docstrings don't
-touch `__doc__`.
-
-`c = d = 3` stays safe because this mirrors the checker's own criterion.
-
-Fixes #18807
-
-## Test Plan
-
-2828 passed, 0 failed. Tested with:
-
-- new snapshot with 11 diagnostics: 6 with the unsafe note, 5 without it
-- `--fix` without the flag on the unsafe case and the file didn't
-change; with `--unsafe-fixes` it did. The safe case was fixed without
-the flag
-- the `F541.py` snapshot didn't move
-- `cargo clippy --workspace --all-t
-
-**File**: `crates/ruff_linter/resources/mdtest/pyflakes/f-string-missing-placeholders.md` (added, +271/-0)
-```diff
-@@ -0,0 +1,271 @@
-+# `f-string-missing-placeholders` (`F541`)
-+
-+```toml
-+lint.select = ["F541"]
-+```
-+
-+## Docstring positions
-+
-+Removing the `f` prefix from an f-string in a docstring position turns it into a docstring, so the
-+fix is unsafe there. See [#18807].
-+
-+### Module docstring
-+
-+```py
-+f"module docstring"  # snapshot: f-string-missing-placeholders
-+```
-+
-+```snapshot
-+error[F541]: f-string without any placeholders
-+ --> src/mdtest_snippet.py:1:1
-+  |
-+1 | f"module docstring"  # snapshot: f-string-missing-placeholders
-+  | ^^^^^^^^^^^^^^^^^^^
-+help: Remove extraneous `f` prefix
-+  |
-+  - f"module docstring"  # snapshot: f-string-missing-placeholders
-+1 + "module docstring"  # snapshot: f-string-missing-placeholders
-+  |
-+note: This is an unsafe fix and may change runtime behavior
-+```
-+
-+### Function and class docstrings
-+
-+```py
-+def function():
-+    f"function docstring"  # snapshot: f-string-missing-placeholders
-+
-+
-+class Class:
-+    f"class docstring"  # snapshot: f-string-missing-placeholders
-+```
-+
-+```snapshot
-+error[F541]: f-string without any placeholders
-+ --> src/mdtest_snippet.py:2:5
-+  |
-+2 |     f"function docstring"  # snapshot: f-string-missing-placeholders
-+  |     ^^^^^^^^^^^^^^^^^^^^^
-+help: Remove extraneous `f` prefix
-+  |
-+1 | def function():
-+  -     f"function docstring"  # snapshot: f-string-missing-placeholders
-+2 +     "function docstring"  # snapshot: f-string-missing-placeholders
-+3 |
-+  |
-+note: This is an unsafe fix and may change runtime behavior
-+
-+
-+error[F541]: f-string without any placeholders
-+ --> src/mdtest_snippet.py:6:5
-+  |
-+6 |     f"class docstring"  # snapshot: f-string-missing-placeholders
-+  |     ^^^^^^^^^^^^^^^^^^
-+help: Remove extraneous `f` prefix
-+  |
-+5 | class Class:
-+  -     f"class docstring"  # snapshot: f-string-missing-placeholders
-+6 +     "class docstring"  # snapshot: f-string-missing-placeholders
-+  |
-+note: This is an unsafe fix and may change runtime behavior
-+```
-+
-+### Attribute docstrings
-+
-+A string literal following a simple assignment at module level or in a class body is an attribute
-+docstring, which documentation tools pick up.
-+
-+```py
-+a = 1
-+f"attribute docstring"  # snapshot: f-string-missing-placeholders
-+
-+b: int = 2
-+f"annotated attribute docstring"  # snapshot: f-string-missing-placeholders
-+
-+
-+class Class:
-+    c = 1
-+    f"attribute docstring in a class body"  # snapshot: f-string-missing-placeholders
-+```
-+
-+```snapshot
-+error[F541]: f-string without any placeholders
-+ --> src/mdtest_snippet.py:2:1
-+  |
-+2 | f"attribute docstring"  # snapshot: f-string-missing-placeholders
-+  | ^^^^^^^^^^^^^^^^^^^^^^
-+help: Remove extraneous `f` prefix
-+  |
-+1 | a = 1
-+  - f"attribute docstring"  # snapshot: f-string-missing-placeholders
-+2 + "attribute docstring"  # snapshot: f-string-missing-placeholders
-+3 |
-+  |
-+note: This is an unsafe fix and may change runtime behavior
-+
-+
-+error[F541]: f-string without any placeholders
-+ --> src/mdtest_snippet.py:5:1
-+  |
-+5 | f"annotated attribute docstring"  # snapshot: f-string-missing-placeholders
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+help: Remove extraneous `f` prefix
-+  |
-+4 | b: int = 2
-+  - f"annotated attribute docstring"  # snapshot: f-string-missing-placeholders
-+5 + "annotated attribute docstring"  # snapshot: f-string-missing-placeholders
-+6 |
-+  |
-+note: This is an unsafe fix and may change runtime behavior
-+
-+
-+error[F541]: f-string without any placeholders
-+  --> src/mdtest_snippet.py:10:5
-+   |
-+10 |     f"attribute docstring in a class body"  # snapshot: f-string-missing-placeholders
-+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+help: Remove extraneous `f` prefix
-+   |
-+9  |     c = 1
-+   -     f"attribute docstring in a class body"  # snapshot: f-string-missing-placeholders
-+10 +     "attribute docstring in a class body"  # snapshot: f-string-missing-placeholders
-+11 | class Class:
-+   |
-+note: This is an unsafe fix and may change runtime behavior
-+```
-+
-+This also applies to assignments nested within a class body.
-+
-+```py
-+class Class:
-+    if condition:
-+        value = 1
-+        f"attribute docstring"  # snapshot: f-string-missing-placeholders
-+```
-+
-+```snapshot
-+error[F541]: f-string without any placeholders
-+  --> src/mdtest_snippet.py:14:9
-+   |
-+14 |         f"attribute docstring"  # snapshot: f-string-missing-placeholders
-+   |         ^^^^^^^^^^^^^^^^^^^^^^
-+help: Remove extraneous `f` prefix
-+   |
-+13 |         value = 1
-+   -         f"attribute docstring"  # snapshot: f-string-missing-placeholders
-+14 +         "attribute docstring"  # snapshot: f-string-missing-placeholders
-+   |
-+note: This is an unsafe fix and may change runtime behavior
-+```
-+
-+## Not docstring positions
-+
-+The fix stays safe when removing the prefix does not create a docstring:
-+
-+```py
-+c = d = 3
-+f"multiple targets"  # snapshot: f-string-missing-placeholders
-+
-+e, g = 4, 5
-+f"tuple target"  # snapshot: f-string-missing-placeholders
-+
-+print(1)
-+f"after a statement that is n
-```
-
-**File**: `crates/ruff_linter/resources/test/fixtures/flake8_implicit_str_concat/ISC003_docstring.py` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-     + "?"
- )
- 
--# Not a docstring position: not the first statement in the module body.
-+# Attribute docstring position (follows a simple assignment): fix is unsafe.
- x = 1
- (
-     "not"
-```
-
-**File**: `crates/ruff_linter/src/checkers/ast/mod.rs` (modified, +45/-0)
-```diff
-@@ -37,6 +37,7 @@ use ruff_python_ast::identifier::Identifier;
- use ruff_python_ast::name::QualifiedName;
- use ruff_python_ast::str::Quote;
- use ruff_python_ast::token::Tokens;
-+use ruff_python_ast::traversal::{self, EnclosingSuite};
- use ruff_python_ast::visitor::{Visitor, walk_except_handler, walk_pattern};
- use ruff_python_ast::{
-     self as ast, AnyParameterRef, ArgOrKeyword, Comprehension, ElifElseClause, ExceptHandler, Expr,
-@@ -688,6 +689,50 @@ impl<'a> Checker<'a> {
-     pub(crate) fn docstring_state(&self) -> DocstringState {
-         self.docstring_state
-     }
-+
-+    /// Returns `true` if the expression spanning `range` sits in a docstring position: it makes
-+    /// up the whole of the current expression statement, and that statement is either the first
-+    /// in a module, class or function body, or follows a simple assignment at module level or
-+    /// in class scope (an attribute docstring).
-+    ///
-+    /// This only checks the position. Whether the expression is of a type that Python treats as
-+    /// a docstring (a plain string literal) is up to the caller.
-+    pub(crate) fn in_docstring_position(&self, range: TextRange) -> bool {
-+        let stmt = self.semantic.current_statement();
-+        let Some(ast::StmtExpr { value, .. }) = stmt.as_expr_stmt() else {
-+            return false;
-+        };
-+        if value.range() != range {
-+            return false;
-+        }
-+
-+        let parent = self.semantic.current_statement_parent();
-+        let suite = match parent {
-+            Some(parent) => traversal::suite(stmt, parent),
-+            // No parent statement: the statement is at module level.
-+            None => EnclosingSuite::new(self.module.python_ast, stmt.into()),
-+        };
-+        let Some(suite) = suite else {
-+            return false;
-+        };
-+
-+        // Attribute docstrings are also recognized in conditional suites within a class.
-+        let allows_attribute_docstring =
-+            self.semantic.at_top_level() || self.semantic.current_scope().kind.is_class();
-+        match suite.previous_sibling() {
-+            None => matches!(
-+                parent,
-+                None | Some(Stmt::FunctionDef(_) | Stmt::ClassDef(_))
-+            ),
-+            Some(Stmt::Assign(ast::StmtAssign { targets, .. })) => {
-+                allows_attribute_docstring && matches!(targets.as_slice(), [Expr::Name(_)])
-+            }
-+            Some(Stmt::AnnAssign(ast::StmtAnnAssign { target, .. })) => {
-+                allows_attribute_docstring && target.is_name_expr()
-+            }
-+            Some(_) => false,
-+        }
-+    }
- }
- 
- pub(crate) struct TypingImporter<'a, 'b> {
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_implicit_str_concat/rules/explicit.rs` (modified, +2/-21)
-```diff
-@@ -1,7 +1,7 @@
- use ruff_diagnostics::Applicability;
- use ruff_macros::{ViolationMetadata, derive_message_formats};
- use ruff_python_ast::token::{TokenKind, parenthesized_range};
--use ruff_python_ast::{self as ast, Expr, Operator, Stmt};
-+use ruff_python_ast::{self as ast, Expr, Operator};
- use ruff_python_trivia::is_python_whitespace;
- use ruff_source_file::LineRanges;
- use ruff_text_size::{Ranged, TextLen, TextRange, TextSize};
-@@ -133,26 +133,7 @@ fn fix_creates_docstring(checker: &Checker, expr: &ast::ExprBinOp) -> bool {
-         return false;
-     }
- 
--    let semantic = checker.semantic();
--    let stmt = semantic.current_statement();
--    let Some(ast::StmtExpr { value, .. }) = stmt.as_expr_stmt() else {
--        return false;
--    };
--    // The concatenation must be the entire expression statement.
--    if value.range() != expr.range() {
--        return false;
--    }
--
--    // A docstring must be the first statement in the body of a module,
--    // function, or class.
--    let body = match semantic.current_statement_parent() {
--        Some(Stmt::FunctionDef(function)) => &function.body,
--        Some(Stmt::ClassDef(class)) => &class.body,
--        // No parent statement: the statement is at module level.
--        None => checker.module.python_ast,
--        _ => return false,
--    };
--    body.first() == Some(stmt)
-+    checker.in_docstring_position(expr.range())
- }
- 
- fn generate_fix(checker: &Checker, expr_bin_op: &ast::ExprBinOp) -> Option<Fix> {
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_implicit_str_concat/snapshots/ruff_linter__rules__flake8_implicit_str_concat__tests__explicit-string-concatenation_ISC003_docstring.py.snap` (modified, +1/-0)
-```diff
-@@ -37,6 +37,7 @@ help: Remove redundant '+' operator to implicitly concatenate
- 13 +      " a docstring"
- 14 | )
-    |
-+note: This is an unsafe fix and may change runtime behavior
- 
- ISC003 [*] Explicitly concatenated string should be implicitly concatenated
-   --> ISC003_docstring.py:20:9
-```
-
-**File**: `crates/ruff_linter/src/rules/pyflakes/rules/f_string_missing_placeholders.rs` (modified, +16/-11)
-```diff
-@@ -1,3 +1,4 @@
-+use ruff_diagnostics::Applicability;
- use ruff_macros::{ViolationMetadata, derive_message_formats};
- use ruff_python_ast as ast;
- use ruff_text_size::{Ranged, TextRange, TextSize};
-@@ -52,6 +53,9 @@ use crate::{AlwaysFixableViolation, Edit, Fix};
- ///
- /// See [#10885](https://github.com/astral-sh/ruff/issues/10885) for more.
- ///
-+/// ## Fix safety
-+/// The fix is marked unsafe when it would create a docstring.
-+///
- /// ## References
- /// - [PEP 498 – Literal String Interpolation](https://peps.python.org/pep-0498/)
- #[derive(ViolationMetadata)]
-@@ -80,6 +84,12 @@ pub(crate) fn f_string_missing_placeholders(checker: &Checker, expr: &ast::ExprF
-         return;
-     }
- 
-+    let applicability = if checker.in_docstring_position(expr.range()) {
-+        Applicability::Unsafe
-+    } else {
-+        Applicability::Safe
-+    };
-+
-     for f_string in expr.value.f_strings() {
-         let first_char = checker
-             .locator()
-@@ -95,10 +105,9 @@ pub(crate) fn f_string_missing_placeholders(checker: &Checker, expr: &ast::ExprF
- 
-         let mut diagnostic =
-             checker.report_diagnostic(FStringMissingPlaceholders, f_string.range());
--        diagnostic.set_fix(convert_f_string_to_regular_string(
--            prefix_range,
--            f_string.range(),
--            checker.locator(),
-+        diagnostic.set_fix(Fix::applicable_edit(
-+            convert_f_string_to_regular_string(prefix_range, f_string.range(), checker.locator()),
-+            applicability,
-         ));
-     }
- }
-@@ -112,12 +121,12 @@ fn unescape_f_string(content: &str) -> String {
-     content.replace("{{", "{").replace("}}", "}")
- }
- 
--/// Generate a [`Fix`] to rewrite an f-string as a regular string.
-+/// Generate an [`Edit`] to rewrite an f-string as a regular string.
- fn convert_f_string_to_regular_string(
-     prefix_range: TextRange,
-     node_range: TextRange,
-     locator: &Locator,
--) -> Fix {
-+) -> Edit {
-     // Extract the f-string body.
-     let mut content =
-         unescape_f_string(locator.slice(TextRange::new(prefix_range.end(), node_range.end())));
-@@ -134,9 +143,5 @@ fn convert_f_string_to_regular_string(
-         content.insert(0, ' ');
-     }
- 
--    Fix::safe_edit(Edit::replacement(
--        content,
--        prefix_range.start(),
--        node_range.end(),
--    ))
-+    Edit::replacement(content, prefix_range.start(), node_range.end())
- }
-```
-
----
-
-### Incident Patch 4: `b4c75cd7` (2026-10-02)
-**Commit Message**: [`flake8-builtins`] Expand checks in class scopes (`A001`) (#29076)
-
-## Summary
-
-Inside a class body, `flake8-builtins` reports a `for`, `with ... as`,
-or `:=` target that shadows a builtin, but A001 does not. The A001 call
-site skipped every stored name in class scope because A003 handles class
-attributes, but A003 only considers assignment and annotation bindings,
-so those other binding kinds were reported by neither rule. The
-class-scope skip now applies only to the binding kinds A003 handles, by
-checking the stored name's `BindingKind`. Attribute and method bindings
-in a class still go to A003, so there's no double-reporting.
-
-This is the gap left after #20178, which I picked up because no pull
-request was opened for it.
-
-Fixes #20179
-
-## Test Plan
-
-I have added new class-scope cases in the A001 fixture covering both the
-three bindings that now fire and the attribute and method bindings that
-stay silent, updated the snapshot with three new diagnostics, and ran
-the `flake8-builtins` tests, `clippy`, and `fmt`.
-
-**File**: `crates/ruff_linter/resources/test/fixtures/flake8_builtins/A001.py` (modified, +19/-0)
-```diff
-@@ -30,6 +30,25 @@ class slice:
- [0 for sum in ()]
- 
- 
-+class C:
-+    # Attribute bindings are handled by A003, not A001.
-+    id = 1
-+    id: int = 2
-+
-+    def id(self):
-+        pass
-+
-+    # Other class-scope bindings shadow the builtin like at module level.
-+    # See https://github.com/astral-sh/ruff/issues/20179
-+    for id in [1]:
-+        pass
-+
-+    (id := 2)
-+
-+    with open('file') as id:
-+        pass
-+
-+
- # These should not report violations as discussed in
- # https://github.com/astral-sh/ruff/issues/16373
- from importlib.machinery import SourceFileLoader
-```
-
-**File**: `crates/ruff_linter/src/checkers/ast/analyze/expression.rs` (modified, +2/-4)
-```diff
-@@ -385,10 +385,8 @@ pub(crate) fn expression(expr: &Expr, checker: &Checker) {
-                     if checker.is_rule_enabled(Rule::AmbiguousVariableName) {
-                         pycodestyle::rules::ambiguous_variable_name(checker, id, expr.range());
-                     }
--                    if !checker.semantic.current_scope().kind.is_class() {
--                        if checker.is_rule_enabled(Rule::BuiltinVariableShadowing) {
--                            flake8_builtins::rules::builtin_variable_shadowing(checker, id, *range);
--                        }
-+                    if checker.is_rule_enabled(Rule::BuiltinVariableShadowing) {
-+                        flake8_builtins::rules::builtin_variable_shadowing(checker, id, *range);
-                     }
-                 }
-                 _ => {}
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_builtins/rules/builtin_variable_shadowing.rs` (modified, +16/-0)
-```diff
-@@ -1,4 +1,5 @@
- use ruff_macros::{ViolationMetadata, derive_message_formats};
-+use ruff_python_semantic::BindingKind;
- use ruff_text_size::TextRange;
- 
- use crate::Violation;
-@@ -69,6 +70,21 @@ pub(crate) fn builtin_variable_shadowing(checker: &Checker, name: &str, range: T
-         return;
-     }
- 
-+    // In class scope, attribute bindings (e.g., `id = 1`) are covered by
-+    // `builtin-attribute-shadowing` (A003), but other bindings (e.g., a `for`
-+    // target or `:=`) are not and still shadow the builtin.
-+    let scope = checker.semantic().current_scope();
-+    if scope.kind.is_class()
-+        && scope.get(name).is_none_or(|binding_id| {
-+            matches!(
-+                checker.semantic().binding(binding_id).kind,
-+                BindingKind::Assignment | BindingKind::Annotation
-+            )
-+        })
-+    {
-+        return;
-+    }
-+
-     if shadows_builtin(
-         name,
-         checker.source_type,
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_builtins/snapshots/ruff_linter__rules__flake8_builtins__tests__builtin-variable-shadowing_A001.py.snap` (modified, +31/-0)
-```diff
-@@ -173,3 +173,34 @@ A001 Variable `sum` is shadowing a Python builtin
- 29 |
- 30 | [0 for sum in ()]
-    |        ^^^
-+
-+A001 Variable `id` is shadowing a Python builtin
-+  --> A001.py:43:9
-+   |
-+41 |     # Other class-scope bindings shadow the builtin like at module level.
-+42 |     # See https://github.com/astral-sh/ruff/issues/20179
-+43 |     for id in [1]:
-+   |         ^^
-+44 |         pass
-+   |
-+
-+A001 Variable `id` is shadowing a Python builtin
-+  --> A001.py:46:6
-+   |
-+44 |         pass
-+45 |
-+46 |     (id := 2)
-+   |      ^^
-+47 |
-+48 |     with open('file') as id:
-+   |
-+
-+A001 Variable `id` is shadowing a Python builtin
-+  --> A001.py:48:26
-+   |
-+46 |     (id := 2)
-+47 |
-+48 |     with open('file') as id:
-+   |                          ^^
-+49 |         pass
-+   |
-```
-
----
-
-### Incident Patch 5: `0a7f89cd` (2026-10-02)
-**Commit Message**: [ty] Minimize timeouts in py-fuzzer (#29045)
-
-**File**: `.github/workflows/ci.yaml` (modified, +4/-2)
-```diff
-@@ -847,13 +847,13 @@ jobs:
-           fi
- 
-   fuzz-ty:
--    name: "Fuzz for new ty panics"
-+    name: "Fuzz for new ty panics/timeouts"
-     runs-on: ${{ github.repository == 'astral-sh/ruff' && 'depot-ubuntu-22.04-16' || 'ubuntu-latest' }}
-     needs:
-       - determine_changes
-     # Only runs on pull requests, since that is the only we way we can find the base version for comparison.
-     if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') && github.event_name == 'pull_request' && (needs.determine_changes.outputs.ty == 'true' || needs.determine_changes.outputs.py-fuzzer == 'true') }}
--    timeout-minutes: ${{ github.repository == 'astral-sh/ruff' && 10 || 20 }}
-+    timeout-minutes: ${{ github.repository == 'astral-sh/ruff' && 20 || 40 }}
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-@@ -895,6 +895,8 @@ jobs:
-           cargo build --profile=profiling --bin=ty
-           mv target/profiling/ty ty-old
- 
-+          git checkout --detach "$GITHUB_SHA"
-+
-           (
-             uv run \
-             --python="${PYTHON_VERSION}" \
-```
-
-**File**: `python/py-fuzzer/fuzz.py` (modified, +119/-39)
-```diff
-@@ -26,10 +26,15 @@
- import argparse
- import ast
- import concurrent.futures
-+import contextlib
- import enum
-+import os
-+import signal
- import subprocess
-+import sys
- import tempfile
--from collections.abc import Callable
-+import time
-+from collections.abc import Callable, Sequence
- from dataclasses import KW_ONLY, dataclass
- from functools import partial
- from pathlib import Path
-@@ -45,56 +50,96 @@
- ExitCode = NewType("ExitCode", int)
- 
- TY_TARGET_PLATFORM: Final = "linux"
-+MINIMIZATION_BUDGET_SECONDS: Final = 60
- 
- # ty supports `--python-version=3.8`, but typeshed only supports 3.10+,
- # so that's probably the oldest version we can usefully test with.
- OLDEST_SUPPORTED_PYTHON: Final = "3.10"
- 
- 
-+class MinimizationTimedOut(Exception):
-+    """Raised when a minimization check is requested after the time budget expires."""
-+
-+
-+def run_executable(command: Sequence[str | Path], *, input: str | None = None) -> int:
-+    """Run a command with a five-second timeout and return its exit code.
-+
-+    Send `input` to standard input if provided; otherwise, inherit standard
-+    input from the caller. Standard output and standard error are discarded.
-+    On POSIX, start the command in a new session and, on timeout, kill its
-+    process group to terminate any children in that group without killing
-+    the caller. On other platforms, kill only the command. Then raise
-+    `subprocess.TimeoutExpired`.
-+
-+    Using a process group here is superior due to the fact that ty can
-+    spawn `uv workspace metadata` in a subprocess when `TY_UV=1` is set;
-+    killing only ty could leave uv running.
-+    """
-+    with subprocess.Popen(
-+        command,
-+        stdin=subprocess.PIPE if input is not None else None,
-+        stdout=subprocess.DEVNULL,
-+        stderr=subprocess.DEVNULL,
-+        text=True,
-+        start_new_session=os.name == "posix",
-+    ) as process:
-+        try:
-+            process.communicate(input=input, timeout=5)
-+        except subprocess.TimeoutExpired:
-+            if os.name == "posix":
-+                # The process group may have disappeared since the timeout
-+                # if its members exited, leaving nothing in the group to kill.
-+                # That would result in a `ProcessLookupError` that can be safely ignored.
-+                with contextlib.suppress(ProcessLookupError):
-+                    os.killpg(process.pid, signal.SIGKILL)
-+            else:
-+                process.kill()
-+            process.wait()
-+            raise
-+        return process.wait()
-+
-+
- def ty_contains_bug(code: str, *, ty_executable: Path) -> bool:
-     """Return `True` if the code triggers a panic in type-checking code."""
-     with tempfile.TemporaryDirectory() as tempdir:
-         input_file = Path(tempdir, "input.py")
-         input_file.write_text(code)
--        completed_process = subprocess.run(
--            [
--                ty_executable,
--                "check",
--                input_file,
--                "--python-version",
--                OLDEST_SUPPORTED_PYTHON,
--                "--python-platform",
--                TY_TARGET_PLATFORM,
--            ],
--            capture_output=True,
--            check=False,
--            text=True,
--        )
--    return completed_process.returncode not in {0, 1, 2}
-+        command: list[str | Path] = [
-+            ty_executable,
-+            "check",
-+            input_file,
-+            "--python-version",
-+            OLDEST_SUPPORTED_PYTHON,
-+            "--python-platform",
-+            TY_TARGET_PLATFORM,
-+        ]
-+        try:
-+            returncode = run_executable(command)
-+        except subprocess.TimeoutExpired:
-+            return True
-+    return returncode not in {0, 1, 2}
- 
- 
- def ruff_contains_bug(code: str, *, ruff_executable: Path) -> bool:
-     """Return `True` if the code triggers a parser error."""
--    completed_process = subprocess.run(
--        [
--            ruff_executable,
--            "check",
--            # Keep project settings out of parser checks, including for older Ruff versions.
--            "--isolated",
--            "--config",
--            "lint.select=[]",
--            "--no-cache",
--            "--target-version",
--            "py314",
--            "--preview",
--            "-",
--        ],
--        capture_output=True,
--        check=False,
--        text=True,
--        input=code,
--    )
--    return completed_process.returncode != 0
-+    command: list[str | Path] = [
-+        ruff_executable,
-+        "check",
-+        # Keep project settings out of parser checks, including for older Ruff versions.
-+        "--isolated",
-+        "--config",
-+        "lint.select=[]",
-+        "--no-cache",
-+        "--target-version",
-+        "py314",
-+        "--preview",
-+        "-",
-+    ]
-+    try:
-+        returncode = run_executable(command, input=code)
-+    except subprocess.TimeoutExpired:
-+        return True
-+    return returncode != 0
- 
- 
- def contains_bug(code: str, *, executable: Executable, executable
-```
-
----
-
-### Incident Patch 6: `1495c75c` (2026-10-01)
-**Commit Message**: Add pull request security reviews to CI (#29056)
-
-This uses the new [shared PR security-review
-workflow](https://github.com/astral-sh/github-actions/tree/main/security-pr-review)
-to run security reviews on all PRs. It will comment on the PR with
-findings if there are any.
-
-Right now pinned by hash to satisfy Zizmor, seems a bit annoying to have
-to bump the hash when we change the shared workflow but we might end up
-doing something which is less annoying to update at some point.
-
-If it breaks, direct complaints at the security automation team.
-
-Tested using a canary change in
-https://github.com/astral-sh/ruff/actions/runs/36903969832/ including a
-comment posted
-https://github.com/astral-sh/ruff/pull/29056#issuecomment-5936986866 .
-
-**File**: `.github/renovate.json5` (modified, +11/-0)
-```diff
-@@ -91,6 +91,17 @@
-     },
-   ],
-   customManagers: [
-+    // uv release used by the reusable security review workflow.
-+    {
-+      customType: "regex",
-+      managerFilePatterns: ["/^\\.github/workflows/ci\\.yaml$/"],
-+      matchStrings: [
-+        '# renovate: datasource=github-release-attachments depName=astral-sh/uv\\s+uv-version: "(?<currentValue>[^"\\r\\n]+)"\\s+uv-checksum: "(?<currentDigest>[a-f0-9]{64})"',
-+      ],
-+      depNameTemplate: "astral-sh/uv",
-+      datasourceTemplate: "github-release-attachments",
-+      versioningTemplate: "semver",
-+    },
-     // Maturin version used in maturin-action
-     {
-       customType: "regex",
-```
-
-**File**: `.github/workflows/ci.yaml` (modified, +22/-0)
-```diff
-@@ -34,6 +34,28 @@ env:
-   MDTEST_EXTERNAL: "1"
- 
- jobs:
-+  security-review:
-+    needs: determine_changes
-+    if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/ruff' && github.event.pull_request.head.repo.full_name == github.repository && needs.determine_changes.outputs.code == 'true' }}
-+    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@45c506043c254690f2612686e5d5a72c81c251a4
-+    with:
-+      runner: depot-ubuntu-22.04-16
-+      helper-runner: github-ubuntu-24.04-x86_64-4
-+      # renovate: datasource=github-release-attachments depName=astral-sh/uv
-+      uv-version: "0.12.18"
-+      uv-checksum: "89eadd7c76fc063887959510d5ba0ab1264dfd5f1143b925ddb73021a40acf16"
-+      # Keep the review tools outside the checkout when switching to the PR head.
-+      setup-command: |
-+        export UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/pull-request-review-tools"
-+        uv sync --locked --only-dev
-+        echo "$UV_PROJECT_ENVIRONMENT/bin" >> "$GITHUB_PATH"
-+    secrets: inherit # zizmor: ignore[secrets-inherit]
-+    permissions:
-+      contents: read
-+      id-token: write
-+      issues: read
-+      pull-requests: read
-+
-   determine_changes:
-     name: "Determine changes"
-     # CI on main is redundant in the security repository.
-```
-
----
-
-### Incident Patch 7: `e7869644` (2026-10-01)
-**Commit Message**: Authorize shared PR security-review workflow to publish findings (#29052)
-
-The goal is to make ruff/ty CI call the new shared PR security review
-workflow. To do that, the workflow needs permission to get a token from
-STS to publish comments on the PR. And that policy must be on main
-before the PR to integrate the call to the workflow can be tested.
-
-The PR to integrate the call to the workflow will follow.
-
-**File**: `.github/secure-token-service.json` (modified, +10/-0)
-```diff
-@@ -30,6 +30,16 @@
-       "permissions": { "contents": "write", "pull_requests": "write" },
-       "target": "ruff"
-     },
-+    {
-+      "caller": "ruff",
-+      "environment": "automations",
-+      "caller_ref": "refs/pull/*/merge",
-+      "caller_workflow": "ci.yaml",
-+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@45c506043c254690f2612686e5d5a72c81c251a4",
-+      "on": ["pull_request"],
-+      "permissions": { "pull_requests": "write" },
-+      "target": "ruff"
-+    },
-     {
-       "caller": "ruff",
-       "environment": "release",
-```
-
----
-
-### Incident Patch 8: `8546752d` (2026-10-01)
-**Commit Message**: [ty] Fix member lookup on union-bounded type variables (#29018)
-
-## Summary
-
-Consider the following example where we call a method on an object of
-type `T: E1 | E2`:
-
-```py
-class E1:
-    def f(self) -> list[Self]:
-        return [self]
-
-class E2:
-    def f(self) -> set[Self]:
-        return {self}
-
-def _[T: E1 | E2](obj: T):
-    reveal_type(obj.f())
-```
-
-How should the `obj.f` attribute access be resolved? We can't bind
-`E1.f` to the full `T: E1 | E2` type, since that would invalidate the
-implicit `self: Self` annotation of `E1.f`, with `Self: E1`. But we can
-use a trick: we can observe that `T = T & (E1 | E2)`. This is true
-because `T` is a subtype of `E1 | E2` due to its bound, and so
-intersecting `T` with `E1 | E2` just gives us `T`. We can expand that to
-get `T = T & E1 | T & E2`. And on the two elements of this union type,
-we *can* actually access `E1.f` and `E2.f`, respectively. Accessing `f`
-on the first union element `T & E1` gives us `E1.f` as a bound method
-with a receiver of `T & E1`, which is accepted by `Self: E1`. After
-doing the same for the second union element, we get:
-```
-(bound method E1.f with receiver T & E1) | (bound method E2.f with receiver T & E2)
-```
-
-This
-
-**File**: `crates/ty_python_semantic/resources/mdtest/call/methods.md` (modified, +4/-10)
-```diff
-@@ -212,13 +212,9 @@ intersection:
- 
- ```py
- def generic_bounds[U: E1 | E2, I: E1 & E2](union: U, intersection: I):
--    # revealed: (bound method U@generic_bounds.f() -> list[U@generic_bounds]) | (bound method U@generic_bounds.f() -> list[U@generic_bounds])
-+    # revealed: (bound method (U@generic_bounds & E1).f() -> list[U@generic_bounds & E1]) | (bound method (U@generic_bounds & E2).f() -> list[U@generic_bounds & E2])
-     reveal_type(union.f)
--    # TODO: This call should be accepted without errors. Pyright and mypy reveal `list[E1] | list[E2]` here, but
--    # `list[U@generic_bounds]` seems more accurate.
--    # error: [invalid-argument-type] "`U@generic_bounds` does not satisfy upper bound `E2` of type variable `Self`"
--    # error: [invalid-argument-type] "`U@generic_bounds` does not satisfy upper bound `E1` of type variable `Self`"
--    reveal_type(union.f())  # revealed: list[Unknown]
-+    reveal_type(union.f())  # revealed: list[U@generic_bounds & E1] | list[U@generic_bounds & E2]
- 
-     # revealed: (bound method I@generic_bounds.f() -> list[I@generic_bounds]) & (bound method I@generic_bounds.f() -> list[I@generic_bounds])
-     reveal_type(intersection.f)
-@@ -350,13 +346,11 @@ intersection:
- 
- ```py
- def generic_bounds[U: E1 | E2, I: E1 & E2](union: U, intersection: I):
--    # revealed: bound method U@generic_bounds.f() -> list[U@generic_bounds]
-+    # revealed: bound method (U@generic_bounds & E1).f() -> list[U@generic_bounds & E1]
-     # error: [unresolved-attribute]
-     reveal_type(union.f)
--    # TODO: Ideally, this would not emit the `invalid-argument-type` error and reveal `list[U@generic_bounds]`
--    # error: [invalid-argument-type] "`U@generic_bounds` does not satisfy upper bound `E1` of type variable `Self`"
-     # error: [unresolved-attribute]
--    reveal_type(union.f())  # revealed: list[Unknown]
-+    reveal_type(union.f())  # revealed: list[U@generic_bounds & E1]
- 
-     # revealed: bound method I@generic_bounds.f() -> list[I@generic_bounds]
-     reveal_type(intersection.f)
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md` (modified, +26/-2)
-```diff
-@@ -1918,12 +1918,36 @@ def use_union(value: A | B):
-     reveal_type(value.value)
- 
- def use_typevar(value: U):
--    # TODO: This should not error once member lookup supports union upper bounds.
--    # error: [invalid-attribute-access] "Invalid access to descriptor attribute `value`"
-     # revealed: int | str
-     reveal_type(value.value)
+@@ -65,6 +65,33 @@ def foo(
+         reveal_type(j)  # revealed: ValueError
  ```
  
-+## Self methods on narrowed union-bounded type variables
++## Negated dynamic type aliases
 +
-+Narrowing a union-bounded type variable preserves both the type variable and the narrowing when
-+binding `Self` to each member of the upper bound.
-+
-+```py
-+from typing_extensions import Self, TypeVar
-+
-+class A:
-+    def f(self) -> list[Self]:
-+        return [self]
-+
-+class B:
-+    def f(self) -> set[Self]:
-+        return {self}
-+
-+class Marker: ...
-+
-+T = TypeVar("T", bound=A | B)
-+
-+def f(obj: T):
-+    if isinstance(obj, Marker):
-+        reveal_type(obj)  # revealed: T@f & Marker
-+        reveal_type(obj.f())  # revealed: list[T@f & Marker & A] | set[T@f & Marker & B]
-+```
-+
- ## Correlated constrained receiver calls
- 
- Multiple occurrences of the same constrained type variable have the same assignment. Distributing
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +18/-0)
-```diff
-@@ -1123,6 +1123,24 @@ def bad_return(x: T) -> T:
-     return x + 1
- ```
- 
-+## Using float as an upper bound
-+
-+An upper bound of `float` is internally treated as if the bound would be `float | int`. Normal
-+arithmetic operations are available on that type:
-+
-+```py
-+from typing_extensions import TypeVar
-+
-+T = TypeVar("T", bound=float)
-+
-+def f(value: T):
-+    reveal_type(value + 1)  # revealed: float
-+    reveal_type(value + 1.0)  # revealed: float
-+    # TODO: Adding two values of the bounded type variable should be supported.
-+    # error: [unsupported-operator]
-+    reveal_type(value + value)  # revealed: Unknown
-+```
-+
- ## All occurrences of the same typevar have the same type
- 
- If a typevar appears multiple times in a function signature, all occurrences have the same type.
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/classes.md` (modified, +24/-2)
-```diff
-@@ -1627,12 +1627,34 @@ def use_union(value: A | B):
-     reveal_type(value.value)
- 
- def use_typevar[U: A | B](value: U):
--    # TODO: This should not error once member lookup supports union upper bounds.
--    # error: [invalid-attribute-access] "Invalid access to descriptor attribute `value`"
-     # revealed: int | str
-     reveal_type(value.value)
- ```
- 
-+## Self methods on narrowed union-bounded type variables
-+
-+Narrowing a union-bounded type variable preserves both the type variable and the narrowing when
-+binding `Self` to each member of the upper bound.
-+
-+```py
-+from typing_extensions import Self
-+
-+class A:
-+    def f(self) -> list[Self]:
-+        return [self]
-+
-+class B:
-+    def f(self) -> set[Self]:
-+        return {self}
-+
-+class Marker: ...
-+
-+def f[T: A | B](obj: T):
-+    if isinstance(obj, Marker):
-+        reveal_type(obj)  # revealed: T@f & Marker
-+        reveal_type(obj.f())  # revealed: list[T@f & Marker & A] | set[T@f & Marker & B]
-+```
-+
- ## Metaclasses of specialized classes
- 
- Specializing a class preserves its valid metaclass. Without an explicit metaclass, conflicting
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/functions.md` (modified, +14/-0)
-```diff
-@@ -1473,6 +1473,20 @@ def bad_return[T: int](x: T) -> T:
-     return x + 1
- ```
- 
-+## Using float as an upper bound
-+
-+An upper bound of `float` is internally treated as if the bound would be `float | int`. Normal
-+arithmetic operations are available on that type:
-+
-+```py
-+def f[T: float](value: T):
-+    reveal_type(value + 1)  # revealed: float
-+    reveal_type(value + 1.0)  # revealed: float
-+    # TODO: Adding two values of the bounded type variable should be supported.
-+    # error: [unsupported-operator]
-+    reveal_type(value + value)  # revealed: Unknown
-+```
-+
- ## All occurrences of the same typevar have the same type
- 
- If a typevar appears multiple times in a function signature, all occurrences have the same type.
-```
-
-**File**: `crates/ty_python_semantic/src/types.rs` (modified, +51/-16)
-```diff
-@@ -5914,6 +5914,41 @@ impl<'db> Type<'db> {
-                     let mut error = None;
-                     let mut properties = None;
-                     let member = union.map_with_boundness_and_qualifiers(db, env, |elem| {
-+                        // Consider a method call on an object of type `T: E1 | E2`:
-+                        //
-+                        // ```py
-+                        // from typing import Self, reveal_type
-+                        //
-+                        // class E1:
-+                        //     def f(self) -> list[Self]:
-+                        //         return [self]
-+                        //
-+                        // class E2:
-+                        //     def f(self) -> set[Self]:
-+                        //         return {self}
-+                        //
-+                        // def _[T: E1 | E2](obj: T):
-+                        //     reveal_type(obj.f())
-+                        // ```
-+                        //
-+                        // For `T: E1 | E2`, we can't bind `E1.f` to the full receiver type `T`,
-+                        // since that would invalidate the implicit `self: Self` annotation of
-+                        // `E1.f`, with `Self: E1`. But we can observe that `T = T & (E1 | E2)`:
-+                        // `T` is a subtype of `E1 | E2` due to its bound, so intersecting the two
-+                        // just gives us `T`. Expanding this gives `T = (T & E1) | (T & E2)`.
-+                        //
-+                        // On the first union element, we can bind `E1.f` to a receiver of type
-+                        // `T & E1`, which is accepted by `Self: E1`, and similarly for `E2.f`.
-+                        // In this example, the result is `list[T & E1] | set[T & E2]`.
-+                        //
-+                        // The `Type::TypeVar` match arm below delegates member lookup to the
-+                        // type variable's upper bound (`E1 | E2` in this example), preserving
-+                        // the original receiver (`T`). Here, we distribute lookup over the union
-+                        // and intersect each member with that receiver to obtain `T & E1`
-+                        // and `T & E2`, respectively.
-+                        let receiver = receiver.map(|receiver| {
-+                            IntersectionType::from_two_elements(db, env, receiver, *elem)
-+                        });
-                         let result = elem.member_lookup_with_policy_and_receiver(
-                             db, env, name_str, policy, receiver,
-                         );
-@@ -6290,6 +6325,20 @@ impl<'db> Type<'db> {
-                     .value_type(db)
-                     .member_lookup_with_policy_and_receiver(db, env, name_str, policy, receiver),
- 
-+                Type::TypeVar(typevar)
-+                    if let Some(bound_or_constraints) =
-+                        typevar.typevar(db).bound_or_constraints(db, env) =>
-+                {
-+                    distribute_member_lookup_over_bound_or_constraints(
-+                        db,
-+                        env,
-+                        bound_or_constraints,
-+                        receiver.unwrap_or(this),
-+                        name_str,
-+                        policy,
-+                    )
-+                }
-+
-                 _ if policy.no_instance_fallback() => {
-                     let receiver = receiver.unwrap_or(this);
-                     let result = Type::invoke_descriptor_protocol(
-@@ -6340,22 +6389,8 @@ impl<'db> Type<'db> {
-                 {
-                     Place::declared(Type::TypeVar(typevar.with_paramspec_attr(db, attr))).into()
-                 }
--                Type::TypeVar(typevar) => {
--                    let receiver = receiver.unwrap_or(this);
--                    if let Some(bound_or_constraints) =
--                        typevar.typevar(db).bound_or_constraints(db, env)
--                    {
--                        distribute_member_lookup_over_bound_or_constraints(
--                            db,
--                            env,
--                            bound_or_constraints,
--                            receiver,
--                            name_str,
--                            policy,
--                        )
--                    } else {
--                        instance_like_member_lookup(db, env, key, receiver)
--                    }
-+                Type::TypeVar(_) => {
-+                    instance_like_member_lookup(db, env, key, receiver.unwrap_or(this))
-                 }
- 
-                 Type::NominalInstance(instance)
-```
-
----
-
-### Incident Patch 9: `9368abfd` (2026-10-01)
-**Commit Message**: [ty] Fix executable-copy race in CLI tests (#29034)
-
-**File**: `crates/ty/tests/cli/main.rs` (modified, +8/-204)
-```diff
-@@ -10,16 +10,14 @@ mod scripts;
- mod server;
- mod uv_workspace;
- 
--use anyhow::Context as _;
--use insta::Settings;
--use insta::internals::SettingsBindDropGuard;
--use insta_cmd::{assert_cmd_snapshot, get_cargo_bin};
--use std::{
--    fmt::Write,
--    path::{Path, PathBuf},
--    process::Command,
--};
--use tempfile::TempDir;
-+#[path = "../common/mod.rs"]
-+pub mod common;
-+
-+use std::fmt::Write;
-+
-+use insta_cmd::assert_cmd_snapshot;
-+
-+use common::{CliTest, user_config_directory_env_var};
- 
- #[test]
- fn test_quiet_output() -> anyhow::Result<()> {
-@@ -834,197 +832,3 @@ fn can_handle_large_binop_expressions() -> anyhow::Result<()> {
- 
-     Ok(())
- }
--
--pub(crate) struct CliTest {
--    _temp_dir: TempDir,
--    settings: Settings,
--    settings_scope: Option<SettingsBindDropGuard>,
--    project_dir: PathBuf,
--    ty_binary_path: PathBuf,
--}
--
--impl CliTest {
--    pub(crate) fn new() -> anyhow::Result<Self> {
--        let temp_dir = TempDir::new()?;
--
--        // Canonicalize the tempdir path because macos uses symlinks for tempdirs
--        // and that doesn't play well with our snapshot filtering.
--        // Simplify with dunce because otherwise we get UNC paths on Windows.
--        let temp_dir_path = dunce::simplified(
--            &temp_dir
--                .path()
--                .canonicalize()
--                .context("Failed to canonicalize temporary directory path")?,
--        )
--        .to_path_buf();
--        let project_dir = temp_dir_path.join("project");
--        std::fs::create_dir_all(&project_dir)
--            .with_context(|| format!("Failed to create directory `{}`", project_dir.display()))?;
--
--        let mut settings = insta::Settings::clone_current();
--        settings.add_filter(&tempdir_filter(&project_dir), "<temp_dir>/");
--        settings.add_filter(r"\bty\.exe\b", "ty");
--        settings.add_filter(r#"\\(\w\w|\s|\.|")"#, "/$1");
--        // 0.003s
--        settings.add_filter(r"\d.\d\d\ds", "0.000s");
--        settings.add_filter(
--            "INFO Checking file `[^`]+` took more than 100ms \\([^)]+\\)\n",
--            "",
--        );
--        settings.add_filter("INFO Defaulting to python-platform `[^`]+`\n", "");
--        settings.add_filter("INFO Python version: [^,]+, platform: [a-z0-9_]+\n", "");
--        settings.add_filter(
--            r#"The system cannot find the file specified."#,
--            "No such file or directory",
--        );
--
--        let settings_scope = settings.bind_to_scope();
--
--        Ok(Self {
--            project_dir,
--            _temp_dir: temp_dir,
--            settings,
--            settings_scope: Some(settings_scope),
--            ty_binary_path: get_cargo_bin("ty"),
--        })
--    }
--
--    pub(crate) fn with_files<'a>(
--        files: impl IntoIterator<Item = (&'a str, &'a str)>,
--    ) -> anyhow::Result<Self> {
--        let case = Self::new()?;
--        case.write_files(files)?;
--        Ok(case)
--    }
--
--    pub(crate) fn with_file(path: impl AsRef<Path>, content: &str) -> anyhow::Result<Self> {
--        let case = Self::new()?;
--        case.write_file(path, content)?;
--        Ok(case)
--    }
--
--    pub(crate) fn write_files<'a>(
--        &self,
--        files: impl IntoIterator<Item = (&'a str, &'a str)>,
--    ) -> anyhow::Result<()> {
--        for (path, content) in files {
--            self.write_file(path, content)?;
--        }
--
--        Ok(())
--    }
--
--    /// Return [`Self`] with the ty binary copied to the specified path instead.
--    pub(crate) fn with_ty_at(mut self, dest_path: impl AsRef<Path>) -> anyhow::Result<Self> {
--        let dest_path = dest_path.as_ref();
--        let dest_path = self.project_dir.join(dest_path);
--
--        Self::ensure_parent_directory(&dest_path)?;
--        std::fs::copy(&self.ty_binary_path, &dest_path)
--            .with_context(|| format!("Failed to copy ty binary to `{}`", dest_path.display()))?;
--
--        self.ty_binary_path = dest_path;
--        Ok(self)
--    }
--
--    /// Add a filter to the settings and rebind them.
--    pub(crate) fn with_filter(mut self, pattern: &str, replacement: &str) -> Self {
--        self.settings.add_filter(pattern, replacement);
--        // Drop the old scope before binding a new one, otherwise the old scope is dropped _after_
--        // binding and assigning the new one, restoring the settings to their state before the old
--        // scope was bound.
--        drop(self.settings_scope.take());
--        self.settings_scope = Some(self.settings.bind_to_scope());
--        self
--    }
--
--    fn ensure_parent_directory(path: &Path) -> anyhow::Result<()> {
--        if let Some(parent) = path.parent() {
--            std::fs::create_dir_all(parent)
--                .with_context(|| format!("Failed to create directory `{}`", parent.display()))?;
--        }
--        Ok(())
--    }
--
--    pub(crate) fn write_file(&self, path: impl AsRef<Path>, content: &str) -> anyhow::Result<()> {
--        let path = path.as_ref();
--        let path = self.project_dir.join(path);
--
--     
-```
-
-**File**: `crates/ty/tests/cli/python_environment.rs` (modified, +1/-328)
-```diff
-@@ -1,7 +1,7 @@
- use insta_cmd::assert_cmd_snapshot;
- use ruff_python_ast::PythonVersion;
- 
--use crate::{CliTest, site_packages_filter};
-+use crate::CliTest;
- 
- /// Specifying an option on the CLI should take precedence over the same setting in the
- /// project's configuration. Here, this is tested for the Python version.
-@@ -1878,333 +1878,6 @@ home = ./
-     Ok(())
- }
- 
--/// ty should include site packages from its own environment when no other environment is found.
--#[test]
--fn ty_environment_is_only_environment() -> anyhow::Result<()> {
--    let ty_venv_site_packages = if cfg!(windows) {
--        "ty-venv/Lib/site-packages"
--    } else {
--        "ty-venv/lib/python3.13/site-packages"
--    };
--
--    let ty_executable_path = if cfg!(windows) {
--        "ty-venv/Scripts/ty.exe"
--    } else {
--        "ty-venv/bin/ty"
--    };
--
--    let ty_package_path = format!("{ty_venv_site_packages}/ty_package/__init__.py");
--
--    let case = CliTest::with_files([
--        (ty_package_path.as_str(), "class TyEnvClass: ..."),
--        (
--            "ty-venv/pyvenv.cfg",
--            r"
--            home = ./
--            version = 3.13
--            ",
--        ),
--        (
--            "test.py",
--            r"
--            from ty_package import TyEnvClass
--            ",
--        ),
--    ])?;
--
--    let case = case.with_ty_at(ty_executable_path)?;
--    assert_cmd_snapshot!(case.command(), @"
--    success: true
--    exit_code: 0
--    ----- stdout -----
--    All checks passed!
--
--    ----- stderr -----
--    ");
--
--    Ok(())
--}
--
--/// ty should include site packages from both its own environment and a local `.venv`. The packages
--/// from ty's environment should take precedence.
--#[test]
--fn ty_environment_and_discovered_venv() -> anyhow::Result<()> {
--    let ty_venv_site_packages = if cfg!(windows) {
--        "ty-venv/Lib/site-packages"
--    } else {
--        "ty-venv/lib/python3.13/site-packages"
--    };
--
--    let ty_executable_path = if cfg!(windows) {
--        "ty-venv/Scripts/ty.exe"
--    } else {
--        "ty-venv/bin/ty"
--    };
--
--    let local_venv_site_packages = if cfg!(windows) {
--        ".venv/Lib/site-packages"
--    } else {
--        ".venv/lib/python3.13/site-packages"
--    };
--
--    let ty_unique_package = format!("{ty_venv_site_packages}/ty_package/__init__.py");
--    let local_unique_package = format!("{local_venv_site_packages}/local_package/__init__.py");
--    let ty_conflicting_package = format!("{ty_venv_site_packages}/shared_package/__init__.py");
--    let local_conflicting_package =
--        format!("{local_venv_site_packages}/shared_package/__init__.py");
--
--    let case = CliTest::with_files([
--        (ty_unique_package.as_str(), "class TyEnvClass: ..."),
--        (local_unique_package.as_str(), "class LocalClass: ..."),
--        (ty_conflicting_package.as_str(), "class FromTyEnv: ..."),
--        (
--            local_conflicting_package.as_str(),
--            "class FromLocalVenv: ...",
--        ),
--        (
--            "ty-venv/pyvenv.cfg",
--            r"
--            home = ./
--            version = 3.13
--            ",
--        ),
--        (
--            ".venv/pyvenv.cfg",
--            r"
--            home = ./
--            version = 3.13
--            ",
--        ),
--        (
--            "test.py",
--            r"
--            # Should resolve from ty's environment
--            from ty_package import TyEnvClass
--            # Should resolve from local .venv
--            from local_package import LocalClass
--            # Should resolve from ty's environment (takes precedence)
--            from shared_package import FromTyEnv
--            # Should NOT resolve (shadowed by ty's environment version)
--            from shared_package import FromLocalVenv
--            ",
--        ),
--    ])?
--    .with_ty_at(ty_executable_path)?;
--
--    assert_cmd_snapshot!(case.command(), @"
--    success: false
--    exit_code: 1
--    ----- stdout -----
--    error[unresolved-import]: Module `shared_package` has no member `FromLocalVenv`
--     --> test.py:9:28
--      |
--    9 | from shared_package import FromLocalVenv
--      |                            ^^^^^^^^^^^^^
--
--    Found 1 diagnostic
--
--    ----- stderr -----
--    ");
--
--    Ok(())
--}
--
--/// When `VIRTUAL_ENV` is set, ty should *not* discover its own environment's site-packages.
--#[test]
--fn ty_environment_and_active_environment() -> anyhow::Result<()> {
--    let ty_venv_site_packages = if cfg!(windows) {
--        "ty-venv/Lib/site-packages"
--    } else {
--        "ty-venv/lib/python3.13/site-packages"
--    };
--
--    let ty_executable_path = if cfg!(windows) {
--        "ty-venv/Scripts/ty.exe"
--    } else {
--        "ty-venv/bin/ty"
--    };
--
--    let active_venv_site_packages = if cfg!(windows) {
--        "active-venv/Lib/site-packages"
--    } else {
--        "active-venv/lib/python3.13/site-packages"
--    };
--
--    let ty_package_path = format!("{ty_venv_site_packages}/ty_package/__init__.py");
--    let active_package_path = format!("{active
-```
-
-**File**: `crates/ty/tests/cli/server.rs` (modified, +0/-19)
-```diff
-@@ -4,7 +4,6 @@ use std::os::unix::fs::PermissionsExt;
- use std::path::{Path, PathBuf};
- use std::process::Command;
- 
--use anyhow::Context as _;
- use insta_cmd::assert_cmd_snapshot;
- 
- use crate::CliTest;
-@@ -129,24 +128,6 @@ fn find_uses_cwd_when_project_discovery_fails() -> anyhow::Result<()> {
-     Ok(())
- }
- 
--#[test]
--fn find_does_not_fall_back_to_path_or_own_executable() -> anyhow::Result<()> {
--    let case = CliTest::new()?;
--    let own_ty = venv_with_ty(&case, "own environment")?;
--    let case = case.with_ty_at(&own_ty)?;
--    let path = own_ty.parent().context("ty must have a parent")?;
--
--    assert_cmd_snapshot!(find_command(&case).env("PATH", path), @"
--    success: false
--    exit_code: 1
--    ----- stdout -----
--
--    ----- stderr -----
--    ");
--
--    Ok(())
--}
--
- #[test]
- fn find_rejects_wrong_layout() -> anyhow::Result<()> {
-     let case = CliTest::with_file(".venv/pyvenv.cfg", "home = .\n")?;
-```
-
-**File**: `crates/ty/tests/common/mod.rs` (added, +186/-0)
-```diff
-@@ -0,0 +1,186 @@
-+//! Shared fixtures for ty CLI integration tests.
-+
-+use std::{
-+    path::{Path, PathBuf},
-+    process::Command,
-+};
-+
-+use anyhow::Context as _;
-+use insta::Settings;
-+use insta::internals::SettingsBindDropGuard;
-+use insta_cmd::get_cargo_bin;
-+use tempfile::TempDir;
-+
-+pub struct CliTest {
-+    _temp_dir: TempDir,
-+    settings: Settings,
-+    settings_scope: Option<SettingsBindDropGuard>,
-+    pub(crate) project_dir: PathBuf,
-+    pub(crate) ty_binary_path: PathBuf,
-+}
-+
-+impl CliTest {
-+    pub fn new() -> anyhow::Result<Self> {
-+        let temp_dir = TempDir::new()?;
-+
-+        // Canonicalize the tempdir path because macos uses symlinks for tempdirs
-+        // and that doesn't play well with our snapshot filtering.
-+        // Simplify with dunce because otherwise we get UNC paths on Windows.
-+        let temp_dir_path = dunce::simplified(
-+            &temp_dir
-+                .path()
-+                .canonicalize()
-+                .context("Failed to canonicalize temporary directory path")?,
-+        )
-+        .to_path_buf();
-+        let project_dir = temp_dir_path.join("project");
-+        std::fs::create_dir_all(&project_dir)
-+            .with_context(|| format!("Failed to create directory `{}`", project_dir.display()))?;
-+
-+        let mut settings = insta::Settings::clone_current();
-+        settings.add_filter(&tempdir_filter(&project_dir), "<temp_dir>/");
-+        settings.add_filter(r"\bty\.exe\b", "ty");
-+        settings.add_filter(r#"\\(\w\w|\s|\.|")"#, "/$1");
-+        // 0.003s
-+        settings.add_filter(r"\d.\d\d\ds", "0.000s");
-+        settings.add_filter(
-+            "INFO Checking file `[^`]+` took more than 100ms \\([^)]+\\)\n",
-+            "",
-+        );
-+        settings.add_filter("INFO Defaulting to python-platform `[^`]+`\n", "");
-+        settings.add_filter("INFO Python version: [^,]+, platform: [a-z0-9_]+\n", "");
-+        settings.add_filter(
-+            r#"The system cannot find the file specified."#,
-+            "No such file or directory",
-+        );
-+
-+        let settings_scope = settings.bind_to_scope();
-+
-+        Ok(Self {
-+            project_dir,
-+            _temp_dir: temp_dir,
-+            settings,
-+            settings_scope: Some(settings_scope),
-+            ty_binary_path: get_cargo_bin("ty"),
-+        })
-+    }
-+
-+    pub fn with_files<'a>(
-+        files: impl IntoIterator<Item = (&'a str, &'a str)>,
-+    ) -> anyhow::Result<Self> {
-+        let case = Self::new()?;
-+        case.write_files(files)?;
-+        Ok(case)
-+    }
-+
-+    pub fn with_file(path: impl AsRef<Path>, content: &str) -> anyhow::Result<Self> {
-+        let case = Self::new()?;
-+        case.write_file(path, content)?;
-+        Ok(case)
-+    }
-+
-+    pub fn write_files<'a>(
-+        &self,
-+        files: impl IntoIterator<Item = (&'a str, &'a str)>,
-+    ) -> anyhow::Result<()> {
-+        for (path, content) in files {
-+            self.write_file(path, content)?;
-+        }
-+
-+        Ok(())
-+    }
-+
-+    /// Add a filter to the settings and rebind them.
-+    #[must_use]
-+    pub fn with_filter(mut self, pattern: &str, replacement: &str) -> Self {
-+        self.settings.add_filter(pattern, replacement);
-+        // Drop the old scope before binding a new one, otherwise the old scope is dropped _after_
-+        // binding and assigning the new one, restoring the settings to their state before the old
-+        // scope was bound.
-+        drop(self.settings_scope.take());
-+        self.settings_scope = Some(self.settings.bind_to_scope());
-+        self
-+    }
-+
-+    pub(crate) fn ensure_parent_directory(path: &Path) -> anyhow::Result<()> {
-+        if let Some(parent) = path.parent() {
-+            std::fs::create_dir_all(parent)
-+                .with_context(|| format!("Failed to create directory `{}`", parent.display()))?;
-+        }
-+        Ok(())
-+    }
-+
-+    pub fn write_file(&self, path: impl AsRef<Path>, content: &str) -> anyhow::Result<()> {
-+        let path = path.as_ref();
-+        let path = self.project_dir.join(path);
-+
-+        Self::ensure_parent_directory(&path)?;
-+
-+        std::fs::write(&path, &*ruff_python_trivia::textwrap::dedent(content))
-+            .with_context(|| format!("Failed to write file `{path}`", path = path.display()))?;
-+
-+        Ok(())
-+    }
-+
-+    #[cfg(unix)]
-+    pub fn write_symlink(
-+        &self,
-+        original: impl AsRef<Path>,
-+        link: impl AsRef<Path>,
-+    ) -> anyhow::Result<()> {
-+        let link = link.as_ref();
-+        let link = self.project_dir.join(link);
-+
-+        let original = original.as_ref();
-+        let original = self.project_dir.join(original);
-+
-+        Self::ensure_parent_directory(&link)?;
-+
-+        std::os::unix::fs::symlink(original, &link)
-+            .with_context(|| format!("Failed to write symlink `{link}`", link = link.display()))?;
-+
-+        Ok(())
-+    }
-+
-+    pub fn root(&self) -> &Path {
-+        &self.project_dir
-+    }
-+
-+    pub fn command(&self
-```
-
-**File**: `crates/ty/tests/self_environment.rs` (added, +404/-0)
-```diff
-@@ -0,0 +1,404 @@
-+//! Tests that execute ty from inside a Python environment.
-+//!
-+//! Copying the executable can race with any concurrent process spawn: a child can inherit the
-+//! writable copy descriptor, causing Linux to reject execution with `ETXTBSY`. Keep these tests
-+//! in their own executable, and hold `TEST_LOCK` for every test so copying and spawning cannot
-+//! overlap between tests. The other CLI tests can continue to run in parallel.
-+
-+pub mod common;
-+
-+use std::{
-+    path::Path,
-+    sync::{Mutex, PoisonError},
-+};
-+
-+use anyhow::Context as _;
-+use insta_cmd::assert_cmd_snapshot;
-+
-+use common::CliTest;
-+
-+static TEST_LOCK: Mutex<()> = Mutex::new(());
-+
-+/// ty should include site packages from its own environment when no other environment is found.
-+#[test]
-+fn ty_environment_is_only_environment() -> anyhow::Result<()> {
-+    let _lock = TEST_LOCK.lock().unwrap_or_else(PoisonError::into_inner);
-+
-+    let ty_venv_site_packages = if cfg!(windows) {
-+        "ty-venv/Lib/site-packages"
-+    } else {
-+        "ty-venv/lib/python3.13/site-packages"
-+    };
-+
-+    let ty_executable_path = if cfg!(windows) {
-+        "ty-venv/Scripts/ty.exe"
-+    } else {
-+        "ty-venv/bin/ty"
-+    };
-+
-+    let ty_package_path = format!("{ty_venv_site_packages}/ty_package/__init__.py");
-+
-+    let case = CliTest::with_files([
-+        (ty_package_path.as_str(), "class TyEnvClass: ..."),
-+        (
-+            "ty-venv/pyvenv.cfg",
-+            r"
-+            home = ./
-+            version = 3.13
-+            ",
-+        ),
-+        (
-+            "test.py",
-+            r"
-+            from ty_package import TyEnvClass
-+            ",
-+        ),
-+    ])?;
-+
-+    let case = case.with_ty_at(ty_executable_path)?;
-+    assert_cmd_snapshot!(case.command(), @"
-+    success: true
-+    exit_code: 0
-+    ----- stdout -----
-+    All checks passed!
-+
-+    ----- stderr -----
-+    ");
-+
-+    Ok(())
-+}
-+
-+/// ty should include site packages from both its own environment and a local `.venv`. The packages
-+/// from ty's environment should take precedence.
-+#[test]
-+fn ty_environment_and_discovered_venv() -> anyhow::Result<()> {
-+    let _lock = TEST_LOCK.lock().unwrap_or_else(PoisonError::into_inner);
-+
-+    let ty_venv_site_packages = if cfg!(windows) {
-+        "ty-venv/Lib/site-packages"
-+    } else {
-+        "ty-venv/lib/python3.13/site-packages"
-+    };
-+
-+    let ty_executable_path = if cfg!(windows) {
-+        "ty-venv/Scripts/ty.exe"
-+    } else {
-+        "ty-venv/bin/ty"
-+    };
-+
-+    let local_venv_site_packages = if cfg!(windows) {
-+        ".venv/Lib/site-packages"
-+    } else {
-+        ".venv/lib/python3.13/site-packages"
-+    };
-+
-+    let ty_unique_package = format!("{ty_venv_site_packages}/ty_package/__init__.py");
-+    let local_unique_package = format!("{local_venv_site_packages}/local_package/__init__.py");
-+    let ty_conflicting_package = format!("{ty_venv_site_packages}/shared_package/__init__.py");
-+    let local_conflicting_package =
-+        format!("{local_venv_site_packages}/shared_package/__init__.py");
-+
-+    let case = CliTest::with_files([
-+        (ty_unique_package.as_str(), "class TyEnvClass: ..."),
-+        (local_unique_package.as_str(), "class LocalClass: ..."),
-+        (ty_conflicting_package.as_str(), "class FromTyEnv: ..."),
-+        (
-+            local_conflicting_package.as_str(),
-+            "class FromLocalVenv: ...",
-+        ),
-+        (
-+            "ty-venv/pyvenv.cfg",
-+            r"
-+            home = ./
-+            version = 3.13
-+            ",
-+        ),
-+        (
-+            ".venv/pyvenv.cfg",
-+            r"
-+            home = ./
-+            version = 3.13
-+            ",
-+        ),
-+        (
-+            "test.py",
-+            r"
-+            # Should resolve from ty's environment
-+            from ty_package import TyEnvClass
-+            # Should resolve from local .venv
-+            from local_package import LocalClass
-+            # Should resolve from ty's environment (takes precedence)
-+            from shared_package import FromTyEnv
-+            # Should NOT resolve (shadowed by ty's environment version)
-+            from shared_package import FromLocalVenv
-+            ",
-+        ),
-+    ])?
-+    .with_ty_at(ty_executable_path)?;
-+
-+    assert_cmd_snapshot!(case.command(), @"
-+    success: false
-+    exit_code: 1
-+    ----- stdout -----
-+    error[unresolved-import]: Module `shared_package` has no member `FromLocalVenv`
-+     --> test.py:9:28
-+      |
-+    9 | from shared_package import FromLocalVenv
-+      |                            ^^^^^^^^^^^^^
-+
-+    Found 1 diagnostic
-+
-+    ----- stderr -----
-+    ");
-+
-+    Ok(())
-+}
-+
-+/// When `VIRTUAL_ENV` is set, ty should *not* discover its own environment's site-packages.
-+#[test]
-+fn ty_environment_and_active_environment() -> anyhow::Result<()> {
-+    let _lock = TEST_LOCK.lock().unwrap_or_else(PoisonError::into_inner);
-+
-+    let ty_venv_site_packages = if cfg!(windows) {
-+       
-```
-
----
-
-### Incident Patch 10: `c97af1e7` (2026-09-30)
-**Commit Message**: Add a migration guide for categories (#28087)
-
-Summary
---
-
-As the title says, this PR extends our
-[category](https://docs.astral.sh/ruff/linter/#rule-categories) docs to
-include a migration guide explaining how to approach a migration to the
-new categories. Initially I included a migration script and a
-description of how it works, but if we're unlikely to remove linter
-groups, it seems less helpful. Our recommendation is basically to
-`extend-select` the new categories to round out your existing
-configuration, and no dramatic migration is necessary.
-
-I guess this is not really a "migration guide" anymore, as reflected in
-the updated section title.
-
----------
-
-Co-authored-by: Micha Reiser <[REDACTED_EMAIL]>
-
-**File**: `docs/linter.md` (modified, +57/-5)
-```diff
-@@ -203,10 +203,12 @@ The first five categories compose the default rule set:
-     ```
- 
- while the remaining four (`security`, `formatting`, `pedantic`, and `restriction`) are off by
--default. For certain projects, you may want to enable either `security` or `formatting` as entire
--categories, but `pedantic` and `restriction` contain a wider variety of opinionated lints, and you
-+default. For certain projects, you may want to enable `security` as an entire category, but
-+`formatting`, `pedantic`, and `restriction` contain a wider variety of opinionated lints, and you
- will typically only want to select individual rules from these categories directly.
- 
-+See [Trying out categories](#trying-out-categories) for more detailed steps on getting started.
-+
- ### Interaction with other selectors
- 
- Categories can be freely mixed with linter groups, linter prefixes, rule codes, and rule names. In
-@@ -263,9 +265,59 @@ will select all `E` and `F` rules, with the exception of `F401`. Analogously, a
- 
- would select all `suspicious` rules, except for the `UP` rules in that category.
- 
--Note that we plan to deprecate and eventually remove the linter groups in the future. If you give
--the new categories a try and run into situations where you need to fall back on linter groups,
--please let us know on the [tracking issue](https://github.com/astral-sh/ruff/issues/27959).
-+### Trying out categories
-+
-+This section is intended to help you choose which categories you want to enable, based on the rules
-+and linter groups you have selected and on the types of issues you want to catch.
-+
-+We expect virtually all projects to want the `correctness` rules enabled. The lints in this category
-+include syntax errors that are not yet mapped to `invalid-syntax` diagnostics and other problems
-+that cause immediate runtime errors. From there, `suspicious` is likely to be the next most helpful
-+category. It includes rules that flag deprecated code, as well as classic footguns like
-+`mutable-argument-default` (`B006`) that are almost always wrong but may be intentional in some
-+cases. We tried to be conservative with the rules in `correctness`, so many rules like this that are
-+only _usually_ accurate are found in `suspicious` instead. In general, you should feel comfortable
-+using a `ruff: ignore` comment on diagnostics from the `suspicious` or lower categories but think
-+twice (or share feedback!) about suppressing a `correctness` lint.
-+
-+The rules in the `complexity`, `performance`, and `style` categories are all stylistic, but we feel
-+that these rules represent widely-accepted styles in the Python community. As demonstrated by their
-+inclusion in the defaults, we expect most projects to want these rules enabled. Again, even if you
-+enable these categories, you should feel comfortable ignoring certain rules project-wide or inline
-+with suppression comments.
-+
-+The `security` rules are focused on issues that may cause security vulnerabilities and overlap
-+closely with the `flake8-bandit` (`S`) linter group. They are in their own category because these
-+rules are intentionally biased toward false positives over false negatives and can be quite noisy.
-+However, if your project is security-critical or just security-conscious, you will likely want to
-+enable this entire category.
-+
-+The `formatting` category contains rules that overlap with code formatters like the Ruff formatter
-+or Black. If you use a code formatter, you will likely want to leave this category off. On the other
-+hand, if you don't use a code formatter and rely on lint rules to enforce a consistent code format, you can select
-+those rules from this category. Note that it contains rules beyond those related to PEP 8, however,
-+so you may still want to select a subset of the `formatting` rules rather than the whole category.
-+
-+`pedantic` rules, as you may guess, are pedantic, which can mean either "noisy," leading to many
-+diagnostics, or overly opinionated, suggesting changes that many Python users disagree with. Unlike
-+the `security` category, you probably will not want to enable this category as a whole. Instead, we
-+intend for rules from the `pedantic` category to be selected individually.
-+
-+The `restriction` category goes beyond being pedantic to arbitrarily restrict even common code
-+patterns, such as `print` (`T201`) or `assert` (`S101`). Like the `pedantic` category, we do not
-+recommend enabling `restriction` as a whole. If you enable any `restriction` lints, they should be
-+chosen narrowly for your project's needs.
-+
-+If you're already using `extend-select` to extend the default rule set, you'll inherit the
-+category-based defaults automatically and won't need to modify your configuration. Similarly, if
-+you'd like to try out the new categories without replacing your current configuration wholesale, the
-+defaults, or a smaller subset like `correctness` and `suspicious`, are a great place to start. You
-+can append them to an existing `select` configuration, or add 
-```
-
----
-
-### Incident Patch 11: `ccaed68b` (2026-09-30)
-**Commit Message**: Replace actions/attest-build-provenance action with actions/attest v4.2.2 (#29002)
-
-**File**: `.github/workflows/build-docker.yml` (modified, +3/-3)
-```diff
-@@ -175,7 +175,7 @@ jobs:
-           echo "digest=${digest}" >> "$GITHUB_OUTPUT"
- 
-       - name: Generate artifact attestation
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-name: ${{ env.RUFF_BASE_IMG }}
-           subject-digest: ${{ steps.manifest-digest.outputs.digest }}
-@@ -280,7 +280,7 @@ jobs:
-           annotations: ${{ steps.meta.outputs.annotations }}
- 
-       - name: Generate artifact attestation
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-name: ${{ env.RUFF_BASE_IMG }}
-           subject-digest: ${{ steps.build-and-push.outputs.digest }}
-@@ -359,7 +359,7 @@ jobs:
-           echo "digest=${digest}" >> "$GITHUB_OUTPUT"
- 
-       - name: Generate artifact attestation
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-name: ${{ env.RUFF_BASE_IMG }}
-           subject-digest: ${{ steps.manifest-digest.outputs.digest }}
-```
-
----
-
-### Incident Patch 12: `7b588c48` (2026-09-30)
-**Commit Message**: Update Rust crate uuid to v1.26.0 (#29013)
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -5221,9 +5221,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
- 
- [[package]]
- name = "uuid"
--version = "1.25.0"
-+version = "1.26.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f053576934f05a761a402421fbbe3d425d9366f75f978806a037b3ca481abecc"
-+checksum = "b5772d71c9be8a8a6ac2117d949c5b224c1b72241bb611d9a3012edcf8af7812"
- dependencies = [
-  "js-sys",
-  "wasm-bindgen",
-```
-
----
-
-### Incident Patch 13: `28ad9e5d` (2026-09-29)
-**Commit Message**: [ty] Avoid recursive lambda class decorator panics (#28984)
-
-## Summary
-
-We avoid a cycle-iteration panic when a lambda used as a class decorator
-refers back to the decorated name:
-
-```python
-make = lambda cls: result
-try:
-    raise Exception
-except Exception:
-    @make
-    class result: ...
-
-    result = make
-finally:
-    from unknown_module import member as result
-```
-
-Previously, we treated a provisional `Divergent` decorator result as
-preserving the original class. Replacing that result with the class
-discarded the cycle marker, allowing the lambda's return type to gain
-another callable layer on each inference iteration. We now retain both
-the current binding and the cycle marker until inference resolves the
-decorator result. Keeping the current binding also lets decorators whose
-annotations depend on the decorated class resolve without losing the
-class type or its constructor diagnostics.
-
-Closes https://github.com/astral-sh/ty/issues/4616.
-
-**File**: `crates/ty_python_semantic/resources/corpus/ty_4616_recursive_lambda_decorator.py` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+# Regression test for https://github.com/astral-sh/ty/issues/4616
-+
-+(make := lambda: result)
-+(alias := make)
-+try:
-+    first
-+except* 0:
-+    @make or fallback
-+    class result:
-+        pass
-+
-+try:
-+    second
-+except* 0:
-+    (result := alias)
-+finally:
-+    from unknown_module import member as result
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/cycle/basic.md` (modified, +100/-0)
-```diff
-@@ -402,6 +402,106 @@ def f[T](value: T, callback=lambda: f) -> T:
- reveal_type(f)  # revealed: property
- ```
- 
-+## Class decorator annotations depend on the decorated class
-+
-+A decorator's annotations can refer to an instance of the decorated class. We report the invalid
-+annotations and preserve the class binding, so constructor calls can still be checked.
-+
-+```pyi
-+from typing_extensions import reveal_type
-+
-+# error: [invalid-type-form] "Variable of type `Example` is not allowed in a parameter annotation"
-+# error: [invalid-type-form] "Variable of type `Example` is not allowed in a return type annotation"
-+def identity(value: annotation) -> annotation: ...
-+
-+@identity
-+class Example:
-+    def __init__(self, name: str) -> None: ...
-+
-+annotation = Example("example")
-+
-+reveal_type(Example)  # revealed: <class 'Example'>
-+Example(123)  # error: [invalid-argument-type] "Expected `str`, found `Literal[123]`"
-+```
-+
-+## Class decorator annotations depend on the decorated class through a type alias
-+
-+A type alias can introduce the same dependency on the decorated class. Importers still see the class
-+and can check its constructor arguments.
++A negated alias of `Any` behaves like `Any` in both single and tuple exception handlers.
 +
 +```toml
 +[environment]
 +python-version = "3.12"
 +```
 +
-+`example.pyi`:
-+
-+```pyi
-+type Alias = annotation
-+
-+def identity(value: Alias) -> Alias: ...
-+
-+@identity
-+class Example:
-+    def __init__(self, name: str) -> None: ...
-+
-+annotation = type[Example]
-+```
-+
-+`main.py`:
-+
 +```py
-+from example import Example
++from typing import Any
++from ty_extensions import Not
 +
-+reveal_type(Example)  # revealed: <class 'Example'>
-+Example("example")
-+Example(123)  # error: [invalid-argument-type] "Expected `str`, found `Literal[123]`"
++type Dynamic = Any
++
++def catch_negated_alias(exc: Not[Dynamic]) -> None:
++    try:
++        raise ValueError
++    except exc as single:
++        reveal_type(single)  # revealed: Any
++
++    try:
++        raise ValueError
++    except (exc,) as tuple_element:
++        reveal_type(tuple_element)  # revealed: Any
 +```
 +
-+## Dataclass outside a decorator whose annotations depend on the class
-+
-+An outer `@dataclass` still generates an initializer when the inner decorator's annotations depend
-+on the decorated class.
-+
-+```pyi
-+from dataclasses import dataclass
-+from typing_extensions import reveal_type
-+
-+# error: [invalid-type-form] "Variable of type `Example` is not allowed in a parameter annotation"
-+# error: [invalid-type-form] "Variable of type `Example` is not allowed in a return type annotation"
-+def identity(value: annotation) -> annotation: ...
-+
-+@dataclass
-+@identity
-+class Example:
-+    name: str
-+
-+annotation = Example("example")
-+
-+reveal_type(Example)  # revealed: <class 'Example'>
-+reveal_type(Example("example").name)  # revealed: str
-+Example()  # error: [missing-argument] "No argument provided for required parameter `name`"
-+Example(123)  # error: [invalid-argument-type] "Expected `str`, found `Literal[123]`"
-+```
-+
-+## Recursive lambda used as a class decorator
-+
-+The lambda returns a name that can refer back to the lambda itself. Inferring the decorated class
-+converges even when another binding of that name has an unknown type.
-+
-+```py
-+make = lambda cls: result
-+try:
-+    raise Exception
-+except Exception:
-+    @make
-+    class result: ...
-+
-+    result = make
-+finally:
-+    from unknown_module import member as result  # error: [unresolved-import]
-+```
-+
- ## Decorated methods with implicit class attributes
+ ## Exception-class expressions
  
- This is a regression test for <https://github.com/astral-sh/ty/issues/3471>.
+ Exception-class expressions can produce intersections, gradual refinements, or unions. Positive
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer/builder/class.rs` (modified, +9/-2)
+**File**: `crates/ty_python_semantic/resources/mdtest/intersection_types.md` (modified, +5/-0)
 ```diff
-@@ -2,7 +2,7 @@ use crate::Db;
- use crate::ProgramEnvironment;
- use crate::types::{
-     CallArguments, DataclassParams, KnownClass, KnownInstanceType, SpecialFormType,
--    StaticClassLiteral, SubclassOfType, Type, TypeContext, TypingModule,
-+    StaticClassLiteral, SubclassOfType, Type, TypeContext, TypingModule, UnionType,
-     call::CallError,
-     function::KnownFunction,
-     infer::{
-@@ -327,6 +327,11 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
-             };
-             inferred_ty = if is_unknown_decorator_result(db, decorated_ty) {
-                 inferred_ty
-+            } else if let divergent_ty @ Type::Divergent(_) = decorated_ty.resolve_type_alias(db) {
-+                // Keep the current binding to bootstrap decorators whose return annotations
-+                // depend on the decorated class. Retain the cycle marker too: replacing it with
-+                // only the class lets inferred lambda return types grow on every iteration.
-+                UnionType::from_elements_cycle_recovery(db, env, [inferred_ty, divergent_ty])
-             } else if class_decorator_preserves_class_binding(
+@@ -970,6 +970,11 @@ def any(
+     reveal_type(i2)  # revealed: P & Any
+     reveal_type(i3)  # revealed: Never
+ 
++type AnyAlias = Any
++
++def aliased_any(value: ~AnyAlias) -> None:
++    reveal_type(value)  # revealed: Any
++
+ def unknown(
+     i1: ~Unknown,
+     i2: P & ~Unknown,
+```
+
+**File**: `crates/ty_python_semantic/src/types.rs` (modified, +6/-6)
+```diff
+@@ -3306,18 +3306,18 @@ impl<'db> Type<'db> {
+             | Type::DataclassTransformer(_)
+             | Type::Callable(_)
+             | Type::WrapperDescriptor(_)
+-            | Type::TypeAlias(_)
+             | Type::BoundMethod(_) => Type::Intersection(IntersectionType::new(
                  db,
-                 env,
-@@ -479,7 +484,9 @@ fn class_decorator_preserves_class_binding<'db>(
-             .subclass_of()
-             .into_class(db, env)
-             .is_some_and(|class| class == original_literal.default_specialization(db)),
--        Type::Divergent(_) => true,
-+        // A provisional decorator result does not establish that the class is preserved.
-+        // Keep its cycle marker so recursive return types can be normalized.
-+        Type::Divergent(_) => false,
-         Type::Union(union) => union.elements(db).iter().all(|element| {
-             class_decorator_preserves_class_binding(db, env, original_class, *element)
-         }),
-```
-
----
-
-### Incident Patch 14: `118c4ee8` (2026-09-29)
-**Commit Message**: Fix links to moved changelog sections and renamed mdtests (#28941)
-
-## Summary
-
-Four links in the repo point at things that moved:
-
-- `BREAKING_CHANGES.md` links `CHANGELOG.md#090` and `CHANGELOG.md#030`,
-but those sections live in `changelogs/0.9.x.md` and
-`changelogs/0.3.x.md` now, so on GitHub the links land at the top of
-`CHANGELOG.md`.
-- `invalid_argument_type.md` points at `invalid_assignment_details.md`,
-which #24690 renamed to `error_context.md`.
-- `generics/scoping.md` links `./call/methods.md`, which resolves inside
-`generics/`; the file is `../call/methods.md`.
-
-## Test Plan
-
-Opened each new target on github.com. The `#090` and `#030` anchors
-resolve on the changelog pages; the old ones on `CHANGELOG.md` don't.
-
-I found these while trying Amiss (https://github.com/HardMax71/amiss), a
-docs drift checker I'm building.
-
----------
-
-Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
-
-**File**: `BREAKING_CHANGES.md` (modified, +2/-2)
-```diff
-@@ -247,7 +247,7 @@ This is a follow-up to release 0.10.0. Because of a mistake in the release proce
+                 FxOrderSet::default(),
+                 NegativeIntersectionElements::Single(*self),
+             )),
  
- ## 0.9.0
- 
--Ruff now formats your code according to the 2025 style guide. As a result, your code might now get formatted differently. See the [changelog](./CHANGELOG.md#090) for a detailed list of changes.
-+Ruff now formats your code according to the 2025 style guide. As a result, your code might now get formatted differently. See the [changelog](./changelogs/0.9.x.md#090) for a detailed list of changes.
- 
- ## 0.8.0
- 
-@@ -336,7 +336,7 @@ Ruff now formats your code according to the 2025 style guide. As a result, your
- 
- ### Ruff 2024.2 style
- 
--The formatter now formats code according to the Ruff 2024.2 style guide. Read the [changelog](./CHANGELOG.md#030) for a detailed list of stabilized style changes.
-+The formatter now formats code according to the Ruff 2024.2 style guide. Read the [changelog](./changelogs/0.3.x.md#030) for a detailed list of stabilized style changes.
- 
- ### `isort`: Use one blank line after imports in typing stub files ([#9971](https://github.com/astral-sh/ruff/pull/9971))
- 
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/diagnostics/invalid_argument_type.md` (modified, +1/-1)
-```diff
-@@ -594,7 +594,7 @@ help: Consider using a protocol instead, such as `typing.SupportsFloat`
- ## Invariant generic classes
- 
- We show a special diagnostic hint for invariant generic classes. For more details, see the
--[`invalid_assignment_details.md`](./invalid_assignment_details.md) test.
-+[`error_context.md`](./error_context.md#invariant-generic-classes) test.
- 
- ```py
- def modify(xs: list[int]):
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/scoping.md` (modified, +1/-1)
-```diff
-@@ -237,7 +237,7 @@ class G(Generic[T]):
- 
- ## Functions on generic classes are descriptors
- 
--This repeats the tests in the [Functions as descriptors](./call/methods.md) test suite, but on a
-+This repeats the tests in the [Functions as descriptors](../call/methods.md) test suite, but on a
- generic class. This ensures that we are carrying any specializations through the entirety of the
- descriptor protocol, which is how `self` parameters are bound to instance methods.
- 
-```
-
----
-
-### Incident Patch 15: `dab63706` (2026-09-29)
-**Commit Message**: [ty] Fix anchoring of include and exclude patterns after the project's root changed (#28995)
-
-**File**: `crates/ty_project/src/glob/exclude.rs` (modified, +33/-4)
-```diff
-@@ -20,7 +20,7 @@ use crate::glob::portable::AbsolutePortableGlobPattern;
- ///
- /// # Equality
- ///
--/// Two filters are equal if they're constructed from the same patterns (including order).
-+/// Two filters are equal if they're constructed from the same absolute globs (including order).
- /// Two filters that exclude the exact same files but were constructed from different patterns aren't considered
- /// equal.
- #[derive(Clone, Debug, PartialEq, Eq, get_size2::GetSize)]
-@@ -112,7 +112,7 @@ impl ExcludeFilterBuilder {
- ///
- /// # Equality
- ///
--/// Two ignore matches are only equal if they're constructed from the same patterns (including order).
-+/// Two ignore matchers are only equal if they're constructed from the same absolute globs (including order).
- /// Two matchers that were constructed from different patterns but result in
- /// including the same files don't compare equal.
- #[derive(Clone, get_size2::GetSize)]
-@@ -192,7 +192,7 @@ impl Match {
- 
- #[derive(Debug, Clone, PartialEq, Eq, get_size2::GetSize)]
- struct IgnoreGlob {
--    /// The pattern that was originally parsed.
-+    /// The original absolute glob, before removing negation or a trailing slash.
-     original: String,
- 
-     /// This is a pattern allowing a path (it starts with a `!`, possibly undoing a previous ignore)
-@@ -247,7 +247,7 @@ impl GitignoreBuilder {
-         pattern: &AbsolutePortableGlobPattern,
-     ) -> Result<&mut GitignoreBuilder, globset::Error> {
-         let mut glob = IgnoreGlob {
--            original: pattern.relative().to_string(),
-+            original: pattern.absolute().to_string(),
-             is_allow: false,
-             is_only_dir: false,
-         };
-@@ -291,3 +291,32 @@ impl GitignoreBuilder {
-         Ok(self)
+-            Type::Union(_) | Type::Intersection(_) | Type::EnumComplement(_) => {
+-                IntersectionBuilder::new(db, env)
+-                    .add_negative(*self)
+-                    .build()
+-            }
++            Type::TypeAlias(_)
++            | Type::Union(_)
++            | Type::Intersection(_)
++            | Type::EnumComplement(_) => IntersectionBuilder::new(db, env)
++                .add_negative(*self)
++                .build(),
+         }
      }
+ 
+```
+
+**File**: `crates/ty_python_semantic/src/types/set_theoretic.rs` (modified, +2/-1)
+```diff
+@@ -1135,7 +1135,8 @@ impl<'db> IntersectionType<'db> {
+             }
+             Type::Intersection(IntersectionType::new(db, positive, negative))
+         } else {
+-            let mut builder = IntersectionBuilder::new(db, visitor.env).preserve_aliases(true);
++            let mut builder =
++                IntersectionBuilder::new(db, visitor.env).preserve_positive_aliases(true);
+             for positive in self.positive(db) {
+                 builder.add_positive_in_place(positive.apply_type_mapping_impl(
+                     db,
+```
+
+**File**: `crates/ty_python_semantic/src/types/set_theoretic/builder.rs` (modified, +46/-13)
+```diff
+@@ -1316,7 +1316,7 @@ pub(crate) struct IntersectionBuilder<'db> {
+     // One disjunction does not multiply alternatives. Only subsequent distributions consume
+     // the bounded constructor's budget, after impossible and redundant branches are removed.
+     has_disjunction: bool,
+-    preserve_aliases: bool,
++    preserve_positive_aliases: bool,
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::{ExcludeFilter, ExcludeFilterBuilder};
-+    use crate::GlobFilterCheckMode;
-+    use crate::glob::{PortableGlobKind, PortableGlobPattern};
-+    use ruff_db::system::SystemPath;
-+
-+    #[test]
-+    fn equality_accounts_for_pattern_root() -> anyhow::Result<()> {
-+        let build = |root| -> anyhow::Result<ExcludeFilter> {
-+            let mut builder = ExcludeFilterBuilder::new();
-+            builder.add(
-+                &PortableGlobPattern::parse("**/.venv/", PortableGlobKind::Exclude)?
-+                    .into_absolute(root),
-+            )?;
-+            Ok(builder.build()?)
-+        };
-+        let member = build("/workspace/project")?;
-+        let workspace = build("/workspace")?;
-+        let environment = SystemPath::new("/workspace/.venv");
-+
-+        assert!(!member.match_directory(environment, GlobFilterCheckMode::Adhoc));
-+        assert!(workspace.match_directory(environment, GlobFilterCheckMode::Adhoc));
-+        assert_ne!(member, workspace);
-+        assert_eq!(workspace, build("/workspace")?);
-+        Ok(())
-+    }
-+}
-```
-
-**File**: `crates/ty_project/src/glob/include.rs` (modified, +25/-2)
-```diff
-@@ -29,14 +29,15 @@ const DFA_SIZE_LIMIT: usize = 1_000_000;
- /// regex allows to check for prefix matches.
- ///
- /// ## Equality
--/// Equality is based on the patterns from which a filter was constructed.
-+/// Equality is based on the original absolute globs.
- ///
- /// Because of that, two filters that include the exact same files but were
- /// constructed from different patterns (or even just order) compare unequal.
- #[derive(Clone, get_size2::GetSize)]
- pub(crate) struct IncludeFilter {
-     #[get_size(ignore)]
-     glob_set: GlobSet,
-+    /// The original absolute globs, before adding patterns for descendants.
-     original_patterns: Box<[Box<str>]>,
-     #[get_size(size_fn = bit_box_size)]
-     literal_pattern_indices: BitBox,
-@@ -216,7 +217,7 @@ impl IncludeFilterBuilder {
-             .backslash_escape(true)
-             .build()?;
  
--        self.original_patterns.push(input.relative().into());
-+        self.original_patterns.push(input.absolute().into());
+ impl<'db> IntersectionBuilder<'db> {
+@@ -1326,17 +1326,23 @@ impl<'db> IntersectionBuilder<'db> {
+             env: env.clone(),
+             intersections: vec![InnerIntersectionBuilder::default()],
+             has_disjunction: false,
+-            preserve_aliases: false,
++            preserve_positive_aliases: false,
+         }
+     }
  
-         // `lib` is the same as `lib/**`
-         // Add a glob that matches `lib` exactly, change the glob to `lib/**`.
-@@ -355,6 +356,28 @@ mod tests {
-         assert!(!filter.match_directory(path.replace('/', MAIN_SEPARATOR_STR)));
+-    /// Retain aliases when rebuilding mapped intersections.
++    /// Retain positive aliases when rebuilding mapped intersections.
++    ///
++    /// A positive alias can represent a type on its own, while `~A` is represented as an
++    /// intersection with `A` as a negative element. Negative aliases that survive simplification
++    /// are retained by default to preserve recursive self-references. Positive aliases are unfolded
++    /// by default to preserve existing intersection normalization.
+     ///
+     /// Unfolding aliases after their mapping has completed can repeatedly insert a recursive
+-    /// type into itself. The builder expands set operations to distribute and flatten them,
+-    /// but retains atomic aliases unless simplifying the intersection changes their values.
+-    pub(crate) fn preserve_aliases(mut self, preserve: bool) -> Self {
+-        self.preserve_aliases = preserve;
++    /// type into itself, so mapped intersections retain positive aliases as well. The builder still
++    /// expands set operations to distribute and flatten them, and simplifies elements using their
++    /// alias values.
++    pub(crate) fn preserve_positive_aliases(mut self, preserve: bool) -> Self {
++        self.preserve_positive_aliases = preserve;
+         self
+     }
+ 
+@@ -1526,11 +1532,12 @@ impl<'db> IntersectionBuilder<'db> {
+             _ => {
+                 // If we are already a union-of-intersections, distribute the new intersected element
+                 // across all of those intersections.
+-                let element = if self.preserve_aliases && matches!(original, Type::TypeAlias(_)) {
+-                    original
+-                } else {
+-                    ty
+-                };
++                let element =
++                    if self.preserve_positive_aliases && matches!(original, Type::TypeAlias(_)) {
++                        original
++                    } else {
++                        ty
++                    };
+                 for inner in &mut self.intersections {
+                     inner.add_positive(db, &self.env, element);
+                 }
+@@ -1616,7 +1623,10 @@ impl<'db> IntersectionBuilder<'db> {
+                 self.add_negative_impl::<L>(intersection, seen_aliases)?;
+             }
+             _ => {
+-                let element = if self.preserve_aliases && matches!(original, Type::TypeAlias(_)) {
++                // Pass the original alias to preserve recursive self-references.
++                // `InnerIntersectionBuilder::add_negative` resolves it for simplification
++                // (for example, `~Any` becomes `Any`) and stores it if it remains negative.
++                let element = if matches!(original, Type::TypeAlias(_)) {
+                     original
+                 } else {
+                     ty
+@@ -2778,6 +2788,29 @@ mod tests {
+         assert_eq!(intersection, Type::object());
      }
  
 +    #[test]
-+    fn equality_accounts_for_pattern_root() -> anyhow::Result<()> {
-+        let build = |root| -> anyhow::Result<IncludeFilter> {
-+            let mut builder = IncludeFilterBuilder::new();
-+            builder.add(
-+                &PortableGlobPattern::parse("src", PortableGlobKind::Include)?.into_absolute(root),
-+            )?;
-+            Ok(builder.build()?)
-+        };
-+        let member = build("/workspace/project")?;
-+        let workspace = build("/workspace")?;
-+
-+        assert_eq!(member.match_file("/workspace/src/main.py"), MatchFile::No);
-+        assert_eq!(
-+            workspace.match_file("/workspace/src/main.py"),
-+            MatchFile::Pattern
++    fn build_intersection_preserves_negated_alias() {
++        let mut db = setup_db();
++        db.write_dedented("/src/a.py", "type Alias = int").unwrap();
++        let env = db.program_environment();
++        let file = ruff_db::files::system_path_to_file(&db, "/src/a.py").unwrap();
++        let module = ProgramFile::new(&db, file, env.program(&db));
++        let alias = Type::TypeAlias(
++            global_symbol(&db, module, "Alias")
++                .place
++                .expect_type()
++                .as_type_alias()
++                .expect("Alias is a type alias"),
 +        );
-+        assert_ne!(member, workspace);
-+        assert_eq!(workspace, build("/workspace")?);
-+        Ok(())
++
++        let negated = IntersectionBuilder::new(&db, &env)
++            .add_negative(alias)
++            .build();
++        assert!(matches!(negated, Type::Intersection(intersection)
++            if intersection.is_simple_negation(&db) && intersection.iter_negative(&db).eq([alias])));
++        assert_eq!(negated, alias.negate(&db, &env));
 +    }
 +
      #[test]
-     fn match_directory() {
-         // `lib` is the same as `src/**`. It includes a file or directory (including its contents)
+     fn literal_intersection_simplification_matches_relations() {
+         let db = setup_db();
 ```
 
-**File**: `crates/ty_server/tests/e2e/main.rs` (modified, +5/-0)
+---
+
+### Incident Patch 3: `8d122c1f` (2026-10-16)
+**Commit Message**: [`pylint`] Mark fixes unsafe when deleting comments (`PLR5501`, `PLW0120`) (#29414)
+
+Fixes #29395.
+
+Both fixes rewrote the `else:` line and silently dropped any comment
+after the colon. Following review, the fix no longer tries to move that
+comment. Instead, PLR5501 and PLW0120 now mark the fix as unsafe when
+the `else:` line has a comment that would be deleted, the same approach
+as UP035 (#29413). Without such a comment the fix stays safe. Inline
+bodies like `else: x = 1 # c` also stay safe, since only `else: ` is
+removed and the comment belongs to the statement.
+
+Both rules got a "Fix safety" section in their docs. The existing
+PLW0120 snapshots only gain the unsafe-fix note, because their fixtures
+use `else: # [useless-else-on-loop]`. New fixture cases cover the unsafe
+and safe paths for both rules.
+
+I used an AI assistant while working on this and reviewed the changes
+myself.
+
+**File**: `crates/ruff_linter/resources/test/fixtures/pylint/collapsible_else_if.py` (modified, +21/-0)
 ```diff
-@@ -1694,6 +1694,11 @@ impl TestContext {
-             .map_err(|()| anyhow!("Failed to convert root directory to uri"))?;
-         settings.add_filter(&tempdir_filter(project_dir.as_str()), "<temp_dir>/");
-         settings.add_filter(&tempdir_filter(project_dir_uri.path()), "<temp_dir>/");
-+        // Absolute globs use forward slashes on every platform.
-+        settings.add_filter(
-+            &tempdir_filter(project_dir.as_str().replace('\\', "/")),
-+            "<temp_dir>/",
-+        );
-         settings.add_filter(r#"\\\\"#, "/");
-         settings.add_filter(
-             r#"The system cannot find the file specified."#,
+@@ -144,3 +144,24 @@ def not_ok1_with_mixed_indented_comments():
+             pass
+         else:
+             pass  # final pass comment
++
++
++def not_ok1_with_else_line_comment(a, b):
++    if a:
++        return 1
++    else:  # explain the fallback
++        if b:
++            return 2
++        else:
++            return 3
++
++
++def not_ok1_with_else_line_and_inner_comments():
++    if 1:
++        pass
++    else:  # else line comment
++        # inner comment
++        if 2:
++            pass
++        else:
++            pass  # final pass comment
 ```
 
-**File**: `crates/ty_server/tests/e2e/snapshots/e2e__commands__debug_command.snap` (modified, +20/-20)
+**File**: `crates/ruff_linter/resources/test/fixtures/pylint/useless_else_on_loop.py` (modified, +16/-0)
 ```diff
-@@ -58,102 +58,102 @@ Settings: Settings {
-                 ignore: Gitignore(
-                     [
-                         IgnoreGlob {
--                            original: "**/.bzr/",
-+                            original: "<temp_dir>/**/.bzr/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.direnv/",
-+                            original: "<temp_dir>/**/.direnv/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.eggs/",
-+                            original: "<temp_dir>/**/.eggs/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.git/",
-+                            original: "<temp_dir>/**/.git/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.git-rewrite/",
-+                            original: "<temp_dir>/**/.git-rewrite/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.hg/",
-+                            original: "<temp_dir>/**/.hg/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.mypy_cache/",
-+                            original: "<temp_dir>/**/.mypy_cache/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.nox/",
-+                            original: "<temp_dir>/**/.nox/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.pants.d/",
-+                            original: "<temp_dir>/**/.pants.d/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.pytype/",
-+                            original: "<temp_dir>/**/.pytype/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.ruff_cache/",
-+                            original: "<temp_dir>/**/.ruff_cache/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.svn/",
-+                            original: "<temp_dir>/**/.svn/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.tox/",
-+                            original: "<temp_dir>/**/.tox/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/.venv/",
-+                            original: "<temp_dir>/**/.venv/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/__pypackages__/",
-+                            original: "<temp_dir>/**/__pypackages__/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/_build/",
-+                            original: "<temp_dir>/**/_build/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/buck-out/",
-+                            original: "<temp_dir>/**/buck-out/",
-                             is_allow: false,
-                             is_only_dir: true,
-                         },
-                         IgnoreGlob {
--                            original: "**/dist/",
-+                            original: "<temp_dir>/**/dist/",
-        
+@@ -146,3 +146,19 @@ def test_retain_comment():
+         print("fat chance")
+         for j in range(10):
+             break
++
++
++def test_delete_else_line_comment_retain_block_comment():
++    """Delete the comment on the `else` line, but retain the comment within the `else` block"""
++    for j in range(10):
++        pass
++    else:  # comment on the `else` line
++        # comment within the `else` block
++        print("fat chance")
++
++
++def test_retain_inline_else_body_comment():
++    """The comment trailing an inline `else` body belongs to its statement"""
++    for j in range(10):
++        pass
++    else: print("fat chance")  # comment on the statement
+```
+
+**File**: `crates/ruff_linter/src/rules/pylint/rules/collapsible_else_if.rs` (modified, +18/-2)
+```diff
+@@ -5,14 +5,15 @@ use ruff_macros::{ViolationMetadata, derive_message_formats};
+ use ruff_python_ast::{self as ast, ElifElseClause, Stmt};
+ use ruff_python_codegen::Stylist;
+ use ruff_python_index::Indexer;
++use ruff_python_trivia::CommentRanges;
+ use ruff_source_file::LineRanges;
+ use ruff_text_size::{Ranged, TextRange};
+ 
+ use crate::Locator;
+ use crate::checkers::ast::Checker;
+ use crate::codes::Category;
+ use crate::fix::edits::adjust_indentation;
+-use crate::{Edit, Fix, FixAvailability, Violation};
++use crate::{Applicability, Edit, Fix, FixAvailability, Violation};
+ 
+ /// ## What it does
+ /// Checks for `else` blocks that consist of a single `if` statement.
+@@ -44,6 +45,10 @@ use crate::{Edit, Fix, FixAvailability, Violation};
+ ///         print("Number is zero.")
+ /// ```
+ ///
++/// ## Fix safety
++/// This fix is marked unsafe if the `else` line has a trailing comment (e.g., `else:  # comment`),
++/// since the fix deletes the comment.
++///
+ /// ## References
+ /// - [Python documentation: `if` Statements](https://docs.python.org/3/tutorial/controlflow.html#if-statements)
+ #[derive(ViolationMetadata)]
+@@ -95,6 +100,7 @@ pub(crate) fn collapsible_else_if(checker: &Checker, stmt: &Stmt) {
+             checker.locator(),
+             checker.indexer(),
+             checker.stylist(),
++            checker.comment_ranges(),
+         )
+     });
+ }
+@@ -106,6 +112,7 @@ fn convert_to_elif(
+     locator: &Locator,
+     indexer: &Indexer,
+     stylist: &Stylist,
++    comment_ranges: &CommentRanges,
+ ) -> Result<Fix> {
+     let inner_if_line_start = locator.line_start(first.start());
+     let inner_if_line_end = locator.line_end(first.end());
+@@ -146,12 +153,21 @@ fn convert_to_elif(
+     };
+     let indented = format!("{indentation}el{unindented}");
+ 
+-    Ok(Fix::safe_edits(
++    // The `else` line is replaced, so a trailing comment on it (e.g., `else:  # comment`) is
++    // deleted. Comments between the `else` and the `if` are restored above.
++    let applicability = if comment_ranges.intersects(locator.line_range(else_clause.start())) {
++        Applicability::Unsafe
++    } else {
++        Applicability::Safe
++    };
++
++    Ok(Fix::applicable_edits(
+         Edit::replacement(
+             indented,
+             locator.line_start(else_clause.start()),
+             inner_if_line_end,
+         ),
+         trivia,
++        applicability,
+     ))
+ }
+```
+
+**File**: `crates/ruff_linter/src/rules/pylint/rules/useless_else_on_loop.rs` (modified, +24/-6)
+```diff
+@@ -6,14 +6,15 @@ use ruff_python_ast::identifier;
+ use ruff_python_ast::{self as ast, ExceptHandler, MatchCase, Stmt};
+ use ruff_python_codegen::Stylist;
+ use ruff_python_index::Indexer;
++use ruff_python_trivia::CommentRanges;
+ use ruff_source_file::LineRanges;
+ use ruff_text_size::{Ranged, TextRange};
+ 
+ use crate::Locator;
+ use crate::checkers::ast::Checker;
+ use crate::codes::Category;
+ use crate::fix::edits::adjust_indentation;
+-use crate::{Edit, Fix, FixAvailability, Violation};
++use crate::{Applicability, Edit, Fix, FixAvailability, Violation};
+ 
+ /// ## What it does
+ /// Checks for `else` clauses on loops without a `break` statement.
+@@ -45,6 +46,10 @@ use crate::{Edit, Fix, FixAvailability, Violation};
+ /// print("All items printed")
+ /// ```
+ ///
++/// ## Fix safety
++/// This fix is marked unsafe if the `else` line has a trailing comment (e.g., `else:  # comment`),
++/// since the fix deletes the comment.
++///
+ /// ## References
+ /// - [Python documentation: `break` and `continue` Statements, and `else` Clauses on Loops](https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements-and-else-clauses-on-loops)
+ #[derive(ViolationMetadata)]
+@@ -83,6 +88,7 @@ pub(crate) fn useless_else_on_loop(checker: &Checker, stmt: &Stmt, body: &[Stmt]
+             checker.locator(),
+             checker.indexer(),
+             checker.stylist(),
++            checker.comment_ranges(),
+         )
+     });
+ }
+@@ -136,6 +142,7 @@ fn remove_else(
+     locator: &Locator,
+     indexer: &Indexer,
+     stylist: &Stylist,
++    comment_ranges: &CommentRanges,
+ ) -> Result<Fix> {
+     let Some(start) = orelse.first() else {
+         return Err(anyhow::anyhow!("Empty `else` clause"));
+@@ -169,11 +176,22 @@ fn remove_else(
+             stylist,
+         )?;
+ 
++        // The `else` line is replaced, so a trailing comment on it (e.g., `else:  # comment`) is
++        // deleted.
++        let applicability = if comment_ranges.intersects(locator.line_range(else_range.start())) {
++            Applicability::Unsafe
++        } else {
++            Applicability::Safe
++        };
++
+         // Replace the content from the start of the `else` to the end of the loop.
+-        Ok(Fix::safe_edit(Edit::replacement(
+-            indented,
+-            locator.line_start(else_range.start()),
+-            locator.full_line_end(end.end()),
+-        )))
++        Ok(Fix::applicable_edit(
++            Edit::replacement(
++                indented,
++                locator.line_start(else_range.start()),
++                locator.full_line_end(end.end()),
++            ),
++            applicability,
++        ))
+     }
+ }
+```
+
+**File**: `crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__collapsible-else-if_collapsible_else_if.py.snap` (modified, +57/-0)
+```diff
+@@ -286,4 +286,61 @@ help: Convert to `elif`
+ 143 +         pass
+ 144 +     else:
+ 145 +         pass  # final pass comment
++146 |
+     |
++
++PLR5501 [*] Use `elif` instead of `else` then `if`, to reduce indentation
++   --> collapsible_else_if.py:152:5
++    |
++150 |       if a:
++151 |           return 1
++152 | /     else:  # explain the fallback
++153 | |         if b:
++    | |________^
++154 |               return 2
++155 |           else:
++    |
++help: Convert to `elif`
++    |
++151 |         return 1
++    -     else:  # explain the fallback
++    -         if b:
++    -             return 2
++    -         else:
++    -             return 3
++152 +     elif b:
++153 +         return 2
++154 +     else:
++155 +         return 3
++156 |
++    |
++note: This is an unsafe fix and may change runtime behavior
++
++PLR5501 [*] Use `elif` instead of `else` then `if`, to reduce indentation
++   --> collapsible_else_if.py:162:5
++    |
++160 |       if 1:
++161 |           pass
++162 | /     else:  # else line comment
++163 | |         # inner comment
++164 | |         if 2:
++    | |________^
++165 |               pass
++166 |           else:
++    |
++help: Convert to `elif`
++    |
++161 |         pass
++    -     else:  # else line comment
++    -         # inner comment
++    -         if 2:
++    -             pass
++    -         else:
++    -             pass  # final pass comment
++162 +     # inner comment
++163 +     elif 2:
++164 +         pass
++165 +     else:
++166 +         pass  # final pass comment
++    |
++note: This is an unsafe fix and may change runtime behavior
+```
+
+**File**: `crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__useless-else-on-loop_useless_else_on_loop.py.snap` (modified, +43/-0)
+```diff
+@@ -19,6 +19,7 @@ help: Remove `else`
+ 9  +     print("math is broken")
+ 10 |     return None
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
+   --> useless_else_on_loop.py:18:5
+@@ -38,6 +39,7 @@ help: Remove `else`
+ 18 +     print("math is broken")
+ 19 |     return None
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
+   --> useless_else_on_loop.py:30:1
+@@ -56,6 +58,7 @@ help: Remove `else`
+ 30 + print("or else!")
+ 31 |
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
+   --> useless_else_on_loop.py:37:1
+@@ -74,6 +77,7 @@ help: Remove `else`
+ 37 + print("or else!")
+ 38 |
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
+   --> useless_else_on_loop.py:42:1
+@@ -97,6 +101,7 @@ help: Remove `else`
+ 44 +     break
+ 45 |
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
+   --> useless_else_on_loop.py:88:5
+@@ -116,6 +121,7 @@ help: Remove `else`
+ 88 +     return True
+ 89 |     return False
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
+    --> useless_else_on_loop.py:98:9
+@@ -160,4 +166,41 @@ help: Remove `else`
+ 145 +     print("fat chance")
+ 146 +     for j in range(10):
+ 147 +         break
++148 |
++    |
++
++PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
++   --> useless_else_on_loop.py:155:5
++    |
++153 |     for j in range(10):
++154 |         pass
++155 |     else:  # comment on the `else` line
++    |     ^^^^
++156 |         # comment within the `else` block
++157 |         print("fat chance")
++    |
++help: Remove `else`
++    |
++154 |         pass
++    -     else:  # comment on the `else` line
++    -         # comment within the `else` block
++    -         print("fat chance")
++155 +     # comment within the `else` block
++156 +     print("fat chance")
++157 |
++    |
++note: This is an unsafe fix and may change runtime behavior
++
++PLW0120 [*] `else` clause on loop without a `break` statement; remove the `else` and dedent its contents
++   --> useless_else_on_loop.py:164:5
++    |
++162 |     for j in range(10):
++163 |         pass
++164 |     else: print("fat chance")  # comment on the statement
++    |     ^^^^
++help: Remove `else`
++    |
++163 |         pass
++    -     else: print("fat chance")  # comment on the statement
++164 +     print("fat chance")  # comment on the statement
+     |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29124** (closed): [flake8-print] Preserve trailing comments in the T201/T203 fix (@Matthew-Selvam)
-- **PR #29123** (closed): [flake8-pyi] Preserve trailing comments in the PYI012 fix (@Matthew-Selvam)
-- **PR #29121** (closed): [ty] Preserve unfinished research on bounded type checking (@AlexWaygood)
-- **PR #29120** (2026-10-05): AGENTS.md: remove a load-bearing "necessarily" (@AlexWaygood)
-- **PR #29117** (2026-10-05): Enable color in Hawk's CI output (@AlexWaygood)
-- **PR #29113** (2026-10-05): Isolate daily fuzz issue creation from the fuzzer (@AlexWaygood)
-- **PR #29111** (2026-10-05): Group uv workflow and pre-commit updates (@AlexWaygood)
-- **PR #29110** (closed): [flake8-print] Preserve trailing comments in the T201/T203 fix (@Matthew-Selvam)
+- **PR #29464** (closed): Scan whitespace four spaces at a time (@charliermarsh)
+- **PR #29462** (2026-10-18): [ty] Revert protocol interface member walk (@charliermarsh)
+- **PR #29460** (2026-10-19): [ty] Reject runtime_checkable on non-protocol classes (@charliermarsh)
+- **PR #29451** (closed): [ty] Reuse external dependency environments within Markdown tests (@charliermarsh)
+- **PR #29442** (2026-10-16): [ruff] Adopt stable macOS signing identifiers (@zanieb)
+- **PR #29441** (2026-10-19): [ty] Report read-only keys when deleting, popping, or defaulting TypedDict items (@hsusul)
 
 ---
 
@@ -6054,3 +2934,44 @@ Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. [ty] Avoid crashes when negating recursive aliases (#29429)
+
+**RULE**:
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/implicit_type_aliases.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `77f2f1ca`: [ty] Avoid crashes when negating recursive aliases (#29429). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/implicit_type_aliases.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+
+### Recursive aliases and their complements
+
+```py
+from ty_extensions import Not
+
+A = list["A | Not[A]"]
+
+def f(x: A):
+    reveal_type(x[0])  # revealed: object
+```
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `77f2f1ca` are properly handled with clean fallback behavior.

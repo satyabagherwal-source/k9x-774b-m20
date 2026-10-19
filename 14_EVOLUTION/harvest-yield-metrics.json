@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T09:54:44.317Z",
-  "total_cycles_completed": 3117,
-  "total_learnings_persisted": 3117,
-  "total_rules_promoted": 2268,
+  "last_updated": "2026-10-19T10:03:42.819Z",
+  "total_cycles_completed": 3120,
+  "total_learnings_persisted": 3120,
+  "total_rules_promoted": 2270,
   "history": [
-    {
-      "timestamp": "2026-10-19T05:12:43.309Z",
-      "repository": "dockview/dockview",
-      "learningId": "learn-github-dockview-dockview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:12:44.899Z",
-      "repository": "kubearmor/KubeArmor",
-      "learningId": "learn-github-kubearmor-kubearmor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:12:49.518Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T05:12:52.308Z",
       "repository": "open-policy-agent/opa",
@@ -1403,6 +1382,27 @@
       "repository": "meta-llama/Meta-Llama-3-8B",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:03:36.555Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:03:38.935Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:03:42.819Z",
+      "repository": "touchlab/KaMPKit",
+      "learningId": "learn-github-touchlab-kampkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

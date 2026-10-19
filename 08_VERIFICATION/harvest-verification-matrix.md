@@ -3140,3 +3140,6 @@
 | `CYCLE-20261019-V6ZS` | `2026-10-19T09:54:29.800Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2480` | Yes (`f9b796a2...`) |
 | `CYCLE-20261019-V9RG` | `2026-10-19T09:54:33.388Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2481` | Yes (`b684a7b3...`) |
 | `CYCLE-20261019-VI6V` | `2026-10-19T09:54:44.311Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`21b756bc...`) |
+| `CYCLE-20261019-6WV8` | `2026-10-19T10:03:36.548Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`44142b9c...`) |
+| `CYCLE-20261019-6YPC` | `2026-10-19T10:03:38.928Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2482` | Yes (`c803e4c6...`) |
+| `CYCLE-20261019-71P8` | `2026-10-19T10:03:42.812Z` | `touchlab/KaMPKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2483` | Yes (`6809f2f8...`) |
