@@ -2719,3 +2719,10 @@
 | `CYCLE-20261019-KWGF` | `2026-10-19T00:54:36.879Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1942` | Yes (`016f8b44...`) |
 | `CYCLE-20261019-KXZC` | `2026-10-19T00:54:38.856Z` | `go-eagle/eagle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1943` | Yes (`52b7bf79...`) |
 | `CYCLE-20261019-L2KH` | `2026-10-19T00:54:44.801Z` | `Qovery/Replibyte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1944` | Yes (`1ca8d20f...`) |
+| `CYCLE-20261019-SZI7` | `2026-10-19T01:00:54.079Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`e97674d0...`) |
+| `CYCLE-20261019-SZIV` | `2026-10-19T01:00:54.103Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1945` | Yes (`d6a782a2...`) |
+| `CYCLE-20261019-T0X2` | `2026-10-19T01:00:55.910Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1946` | Yes (`56563132...`) |
+| `CYCLE-20261019-T4S1` | `2026-10-19T01:01:00.913Z` | `berty/berty` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1947` | Yes (`9db3cfcb...`) |
+| `CYCLE-20261019-T6HT` | `2026-10-19T01:01:03.137Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1948` | Yes (`752611a5...`) |
+| `CYCLE-20261019-TADS` | `2026-10-19T01:01:08.176Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1949` | Yes (`0e33af44...`) |
+| `CYCLE-20261019-TBUT` | `2026-10-19T01:01:10.085Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`c448bb78...`) |

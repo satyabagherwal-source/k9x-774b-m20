@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T00:35:11.486Z",
+  "last_updated": "2026-10-19T01:01:10.091Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1663,6 +1663,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-gluesql-gluesql"
+    },
+    {
+      "id": "CD-TBUZ",
+      "directive_title": "compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid com",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "a46af5dd",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     }
   ]
 }

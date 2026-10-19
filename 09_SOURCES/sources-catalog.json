@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "33f425a2826e9b4b542328a4733a03a0772758eca6c28d441504588837ca6e5f",
-    "lastHarvestedAt": "2026-10-17T21:26:50.689Z",
+    "contentHash": "e97674d03be98f88584f8e724f662224450ce54ace846d8a5c79889abd53650d",
+    "lastHarvestedAt": "2026-10-19T01:00:54.083Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "a0ad5379",
+    "sourceVersion": "a46af5dd",
     "license": "MIT",
-    "contentHash": "0acbcd6567e87bbffa91ef6c10cd06ec6dc19270a7371e277ef3e0a30232e9fb",
-    "lastHarvestedAt": "2026-10-18T23:20:41.818Z",
+    "contentHash": "c448bb78b2baa7f4c3e912a38f95d73527b6bfeb566a5fa55eefee1a6cbc6404",
+    "lastHarvestedAt": "2026-10-19T01:01:10.088Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4278,5 +4278,55 @@
     "contentHash": "1ca8d20fefe83951368ddacbd436584b3df18be1d9d603829f2152189807d893",
     "lastHarvestedAt": "2026-10-19T00:54:44.807Z",
     "learningId": "learn-github-qovery-replibyte"
+  },
+  "lingui-js-lingui": {
+    "repository": "lingui/js-lingui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lingui/js-lingui",
+    "sourceVersion": "b0355f26",
+    "license": "MIT",
+    "contentHash": "d6a782a296c53a3178a65c13f75dc5965dae5bdb9788cba4d72e16c907fd6bcc",
+    "lastHarvestedAt": "2026-10-19T01:00:54.109Z",
+    "learningId": "learn-github-lingui-js-lingui"
+  },
+  "nasiko-labs-nasiko": {
+    "repository": "Nasiko-Labs/nasiko",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
+    "sourceVersion": "50b0a34e",
+    "license": "NOASSERTION",
+    "contentHash": "56563132cee8029d5de4ccb541348e6cbcdc21f2efd46be5c9c115473532b3c5",
+    "lastHarvestedAt": "2026-10-19T01:00:55.916Z",
+    "learningId": "learn-github-nasiko-labs-nasiko"
+  },
+  "berty-berty": {
+    "repository": "berty/berty",
+    "platform": "github",
+    "sourceUrl": "https://github.com/berty/berty",
+    "sourceVersion": "e4ea1d8b",
+    "license": "NOASSERTION",
+    "contentHash": "9db3cfcb0b2b3ddc0b5124cfdfe6210f60728f2874756b4b89d4bc0f41713ea5",
+    "lastHarvestedAt": "2026-10-19T01:01:00.919Z",
+    "learningId": "learn-github-berty-berty"
+  },
+  "agent-field-agentfield": {
+    "repository": "Agent-Field/agentfield",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Agent-Field/agentfield",
+    "sourceVersion": "2f5583e5",
+    "license": "Apache-2.0",
+    "contentHash": "752611a5081be51e52e11f076092853817428336ca1cd8deca4690e042f22804",
+    "lastHarvestedAt": "2026-10-19T01:01:03.144Z",
+    "learningId": "learn-github-agent-field-agentfield"
+  },
+  "typedb-typedb": {
+    "repository": "typedb/typedb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/typedb/typedb",
+    "sourceVersion": "5da9d2b9",
+    "license": "MPL-2.0",
+    "contentHash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
+    "lastHarvestedAt": "2026-10-19T01:01:08.182Z",
+    "learningId": "learn-github-typedb-typedb"
   }
 }

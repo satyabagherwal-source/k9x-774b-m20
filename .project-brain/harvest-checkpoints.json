@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:54:44.812Z",
+  "last_updated": "2026-10-19T01:01:10.094Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -169,14 +169,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-3b",
-      "content_hash": "33f425a2826e9b4b542328a4733a03a0772758eca6c28d441504588837ca6e5f",
-      "verified_at": "2026-10-17T21:26:50.692Z",
+      "content_hash": "e97674d03be98f88584f8e724f662224450ce54ace846d8a5c79889abd53650d",
+      "verified_at": "2026-10-19T01:00:54.090Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:26:50.692Z"
+      "last_updated": "2026-10-19T01:00:54.090Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
@@ -3584,14 +3584,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "0acbcd6567e87bbffa91ef6c10cd06ec6dc19270a7371e277ef3e0a30232e9fb",
-      "verified_at": "2026-10-18T23:20:41.824Z",
+      "content_hash": "c448bb78b2baa7f4c3e912a38f95d73527b6bfeb566a5fa55eefee1a6cbc6404",
+      "verified_at": "2026-10-19T01:01:10.094Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:20:41.824Z"
+      "last_updated": "2026-10-19T01:01:10.094Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -6532,6 +6532,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:54:44.812Z"
+    },
+    "lingui/js-lingui": {
+      "repository": "lingui/js-lingui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lingui-js-lingui",
+      "content_hash": "d6a782a296c53a3178a65c13f75dc5965dae5bdb9788cba4d72e16c907fd6bcc",
+      "verified_at": "2026-10-19T01:00:54.114Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:00:54.114Z"
+    },
+    "Nasiko-Labs/nasiko": {
+      "repository": "Nasiko-Labs/nasiko",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nasiko-labs-nasiko",
+      "content_hash": "56563132cee8029d5de4ccb541348e6cbcdc21f2efd46be5c9c115473532b3c5",
+      "verified_at": "2026-10-19T01:00:55.921Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:00:55.921Z"
+    },
+    "berty/berty": {
+      "repository": "berty/berty",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-berty-berty",
+      "content_hash": "9db3cfcb0b2b3ddc0b5124cfdfe6210f60728f2874756b4b89d4bc0f41713ea5",
+      "verified_at": "2026-10-19T01:01:00.924Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:01:00.924Z"
+    },
+    "Agent-Field/agentfield": {
+      "repository": "Agent-Field/agentfield",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-agent-field-agentfield",
+      "content_hash": "752611a5081be51e52e11f076092853817428336ca1cd8deca4690e042f22804",
+      "verified_at": "2026-10-19T01:01:03.148Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:01:03.148Z"
+    },
+    "typedb/typedb": {
+      "repository": "typedb/typedb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-typedb-typedb",
+      "content_hash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
+      "verified_at": "2026-10-19T01:01:08.187Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:01:08.187Z"
     }
   },
   "repos": {

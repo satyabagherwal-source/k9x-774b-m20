@@ -2726,3 +2726,10 @@ Every entry in this ledger must capture:
 | `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `26b49ecd` | Multi-dimensional audit evidence | 2026-10-19T00:54:36.885Z |
 | `learn-github-go-eagle-eagle` | `https://github.com/go-eagle/eagle` | `b1301b09` | Multi-dimensional audit evidence | 2026-10-19T00:54:38.862Z |
 | `learn-github-qovery-replibyte` | `https://github.com/Qovery/Replibyte` | `5504db91` | Multi-dimensional audit evidence | 2026-10-19T00:54:44.807Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-19T01:00:54.083Z |
+| `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `b0355f26` | Multi-dimensional audit evidence | 2026-10-19T01:00:54.109Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `50b0a34e` | Multi-dimensional audit evidence | 2026-10-19T01:00:55.916Z |
+| `learn-github-berty-berty` | `https://github.com/berty/berty` | `e4ea1d8b` | Multi-dimensional audit evidence | 2026-10-19T01:01:00.919Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `2f5583e5` | Multi-dimensional audit evidence | 2026-10-19T01:01:03.144Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `5da9d2b9` | Multi-dimensional audit evidence | 2026-10-19T01:01:08.182Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a46af5dd` | Multi-dimensional audit evidence | 2026-10-19T01:01:10.088Z |

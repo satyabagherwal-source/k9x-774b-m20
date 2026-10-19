@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:54:44.765Z",
-  "total_verified_learnings": 450,
+  "last_updated": "2026-10-19T01:01:10.044Z",
+  "total_verified_learnings": 455,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -508,22 +508,35 @@
     "learn-github-agent-field-agentfield": {
       "learning_id": "learn-github-agent-field-agentfield",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "agent-field-agentfield",
+      "source": "Agent-Field/agentfield",
+      "repository": "Agent-Field/agentfield",
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "HEAD",
-      "content_hash": "fe818e451a6817574a576ffab145145ad88f9822763502b8ffb926fa0d964373",
+      "source_version": "2f5583e5",
+      "content_hash": "752611a5081be51e52e11f076092853817428336ca1cd8deca4690e042f22804",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1948,
+          "title": "sdk/python): make memory exists() detect a missing key (#1106)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.608Z"
+      "verified_at": "2026-10-19T01:01:03.093Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-agent-field-swe-af": {
       "learning_id": "learn-github-agent-field-swe-af",
@@ -2798,22 +2811,35 @@
     "learn-github-berty-berty": {
       "learning_id": "learn-github-berty-berty",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "berty-berty",
+      "source": "berty/berty",
+      "repository": "berty/berty",
       "slug": "berty-berty",
       "platform": "github",
       "source_url": "https://github.com/berty/berty",
-      "source_version": "HEAD",
-      "content_hash": "8154c5d774e53fa4d77c1810e81e5751e641154703ffbc9d08d6d5553d340aeb",
+      "source_version": "e4ea1d8b",
+      "content_hash": "9db3cfcb0b2b3ddc0b5124cfdfe6210f60728f2874756b4b89d4bc0f41713ea5",
       "dossier_path": "07_PROJECT_LEARNING/berty-berty-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/berty-berty-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1947,
+          "title": "Merge pull request #5262 from berty/dependabot/npm_and_yarn/berty-bridge-expo/sh",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.065Z"
+      "verified_at": "2026-10-19T01:01:00.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bethington-ghidra-mcp": {
       "learning_id": "learn-github-bethington-ghidra-mcp",
@@ -2903,8 +2929,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "a0ad5379",
-      "content_hash": "0acbcd6567e87bbffa91ef6c10cd06ec6dc19270a7371e277ef3e0a30232e9fb",
+      "source_version": "a46af5dd",
+      "content_hash": "c448bb78b2baa7f4c3e912a38f95d73527b6bfeb566a5fa55eefee1a6cbc6404",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -2924,7 +2950,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:20:41.779Z",
+      "verified_at": "2026-10-19T01:01:10.031Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24599,22 +24625,35 @@
     "learn-github-lingui-js-lingui": {
       "learning_id": "learn-github-lingui-js-lingui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lingui-js-lingui",
+      "source": "lingui/js-lingui",
+      "repository": "lingui/js-lingui",
       "slug": "lingui-js-lingui",
       "platform": "github",
       "source_url": "https://github.com/lingui/js-lingui",
-      "source_version": "HEAD",
-      "content_hash": "126376dc0dc16f09cf3e1a36b461a224b31c5ce8f358b584c40b833e011967fc",
+      "source_version": "b0355f26",
+      "content_hash": "d6a782a296c53a3178a65c13f75dc5965dae5bdb9788cba4d72e16c907fd6bcc",
       "dossier_path": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1945,
+          "title": "cli): don't compile twice per change in watch mode without --debounce (#2722)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.028Z"
+      "verified_at": "2026-10-19T01:00:54.052Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-linkerd-linkerd2": {
       "learning_id": "learn-github-linkerd-linkerd2",
@@ -27442,22 +27481,35 @@
     "learn-github-nasiko-labs-nasiko": {
       "learning_id": "learn-github-nasiko-labs-nasiko",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nasiko-labs-nasiko",
+      "source": "Nasiko-Labs/nasiko",
+      "repository": "Nasiko-Labs/nasiko",
       "slug": "nasiko-labs-nasiko",
       "platform": "github",
       "source_url": "https://github.com/Nasiko-Labs/nasiko",
-      "source_version": "HEAD",
-      "content_hash": "e2b6287647c47f8fb1a38b9b58e5a49873c80b0f8daad105e9ee4ff11fe2b8e4",
+      "source_version": "50b0a34e",
+      "content_hash": "56563132cee8029d5de4ccb541348e6cbcdc21f2efd46be5c9c115473532b3c5",
       "dossier_path": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1946,
+          "title": "failing ee tests",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.559Z"
+      "verified_at": "2026-10-19T01:00:55.865Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nativescript-nativescript": {
       "learning_id": "learn-github-nativescript-nativescript",
@@ -36365,22 +36417,35 @@
     "learn-github-typedb-typedb": {
       "learning_id": "learn-github-typedb-typedb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "typedb-typedb",
+      "source": "typedb/typedb",
+      "repository": "typedb/typedb",
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "HEAD",
-      "content_hash": "3e9fd53516a24307508e9f6962d4043d172dd4fa3585e3190767d4f30813a642",
+      "source_version": "5da9d2b9",
+      "content_hash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1949,
+          "title": "Add regression test for recursive functions crashing with \"WouldBlock\" (#8016)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.127Z"
+      "verified_at": "2026-10-19T01:01:08.132Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-typestack-routing-controllers": {
       "learning_id": "learn-github-typestack-routing-controllers",
@@ -72174,6 +72239,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:54:44.758Z"
+    },
+    "rule-1945": {
+      "learning_id": "rule-1945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1945,
+      "title": "cli): don't compile twice per change in watch mode without --debounce (#2722)",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "b0355f26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:00:54.052Z"
+    },
+    "rule-1946": {
+      "learning_id": "rule-1946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1946,
+      "title": "failing ee tests",
+      "source_url": "https://github.com/Nasiko-Labs/nasiko",
+      "source_version": "50b0a34e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:00:55.865Z"
+    },
+    "rule-1947": {
+      "learning_id": "rule-1947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1947,
+      "title": "Merge pull request #5262 from berty/dependabot/npm_and_yarn/berty-bridge-expo/sh",
+      "source_url": "https://github.com/berty/berty",
+      "source_version": "e4ea1d8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:01:00.868Z"
+    },
+    "rule-1948": {
+      "learning_id": "rule-1948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1948,
+      "title": "sdk/python): make memory exists() detect a missing key (#1106)",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "2f5583e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:01:03.093Z"
+    },
+    "rule-1949": {
+      "learning_id": "rule-1949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1949,
+      "title": "Add regression test for recursive functions crashing with \"WouldBlock\" (#8016)",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "5da9d2b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:01:08.132Z"
     }
   },
   "aliases": {

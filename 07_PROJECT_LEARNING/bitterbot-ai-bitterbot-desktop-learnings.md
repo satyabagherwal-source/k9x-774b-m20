@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `a0ad5379`  
+> **Source Version**: `a46af5dd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:20:41.641Z  
+> **Timestamp**: 2026-10-19T01:01:09.967Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:20:41.635Z  
+> **Harvest Timestamp**: 2026-10-19T01:01:09.959Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,562 +1799,213 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0ad5379` (2026-10-18)
-**Commit Message**: feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (#273)
+### Incident Patch 1: `a46af5dd` (2026-10-19)
+**Commit Message**: feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (#274)
 
-* feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command
+* feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute
 
-Every memory index is now written under an embedding profile (provider,
-model, model digest, dimensions, normalisation, truncation, chunking,
-chunker version), recorded in the index meta and compared on every sync.
-A provider or model change keeps its existing automatic safe reindex. A
-change under the same model name (digest, dimensions, processing, chunker)
-puts the index on hold: no vector is written, vector search pauses, and
-`bitterbot memory migrate-embeddings` (or `memory index --force`) rebuilds
-under the new profile. Local GGUF providers hash the file for the digest;
-a loopback OpenAI-compatible endpoint asks Ollama for its manifest digest.
+The agent may now submit a paid_usdc compute job on an owner turn when
+compute.paid.enabled is on and the coordinator offers paid work; the job
+stops at awaiting_payment and its quote becomes a review hold. Nothing the
+agent can call funds it.
 
-The `pool` embedding provider wraps the node's provider (same id and
-model, so no index key changes) and may run a batch on a pool worker when
-the worker's pinned digest equals the local profile, the content's
-governance class permits that pool's trust (confidential: local only;
+Funding runs through one path, approveComputeFunding in
+src/compute/awareness/payment.ts: re-quote, bind to the quote hash the
+approver saw, already-funded and in-flight guards from the compute ledger,
+mint an approval token (refusing agent and internal origins, chat replies,
+backend-mode internal connections, missing operator.admin/approvals scope,
+paid off, per-job and rolling daily caps), verify it without consuming,
+then call the backend's fund() inside the spend gate as an rpc spend. The
+backend's signer verifies and consumes the token itself. Every exit is a
+row in compute_payment_events and a consideration; doctor reports the week
+under "Compute payments" and treats an agent-origin refusal as an error.
 
+Surfaces: compute.quote (operator.read) and 
 
-**File**: `docs/cli/memory.md` (modified, +3/-0)
+**File**: `docs/cli/compute.md` (added, +51/-0)
 ```diff
-@@ -31,6 +31,8 @@ bitterbot memory search "release checklist"
- bitterbot memory status --agent main
- bitterbot memory index --agent main --verbose
- bitterbot memory backfill-embeddings --agent main
-+bitterbot memory migrate-embeddings
-+bitterbot memory migrate-embeddings --yes
- bitterbot memory forget fact_0f3c... --preview
- bitterbot memory forget fact_0f3c... --yes
- bitterbot memory edit fact_0f3c... "The deploy endpoint is api2.acme.com." --yes
-@@ -54,6 +56,7 @@ Notes:
- - `memory status --deep --index` runs a reindex if the store is dirty.
- - `memory index --verbose` prints per-phase details (provider, model, sources, batch activity).
- - `memory status` includes any extra paths configured via `memorySearch.extraPaths`.
-+- `memory migrate-embeddings` rebuilds the index under the current embedding profile after a change the index cannot absorb silently: the model's weights changed under the same name (an Ollama tag pulled again, a GGUF replaced), its dimensions changed, or the chunker changed. Until then the index is on hold (no new vectors, vector search paused, keyword search working). Without `--yes` it prints the conflict and changes nothing; `--json` prints the plan. See [compute](/tools/compute#when-the-model-changes).
- - `memory backfill-embeddings` embeds and indexes crystals stored with placeholder embeddings (extracted facts, scratch notes, handover briefs) so they become searchable through both vector and keyword channels. The gateway also runs this automatically (bounded) at the end of each sync cycle; the command exists to clear a large backlog on demand. Use `--limit <n>` to cap chunks embedded per batch.
- 
- ## Owner controls
-```
-
-**File**: `docs/tools/compute.md` (modified, +88/-5)
-```diff
-@@ -11,10 +11,10 @@ title: "compute"
- 
- The `compute` tool is how the agent knows that this node can run batches of
- work on compute pools, and what those pools are doing right now. It is the
--first piece of PLAN-57 (compute awareness). This release ships the
--read-only half: the agent can look, estimate and report. Submitting work
--from the agent and the live state block in the prompt tail follow in later
--releases.
-+agent-facing half of PLAN-57 (compute awareness): the agent can look,
-+estimate, report, start work and be told when it finishes. The node-facing
-+half, memory embeddings routed to a pool under an egress policy, is described
-+at the end of this page.
- 
- ## When the tool exists
- 
-@@ -163,6 +163,82 @@ succeeds and says the link failed rather than pretending.
- Oversized results (`result` above 20,000 characters) are written to
- `<workspace>/compute/<job id>.json` (mode 0600) and the path is returned.
- 
-+## Embeddings on the pool
+@@ -0,0 +1,51 @@
++---
++summary: "CLI reference for `bitterbot compute` (quote and approve paid compute jobs)"
++read_when:
++  - A paid compute job is waiting for payment and you want to fund it from the terminal
++  - You want to see what a paid job would cost before approving it
++title: "compute"
++---
 +
-+The node's own memory system is the daily consumer of compute: every chunk it
-+indexes is embedded. With `compute.embeddings.provider: pool` (the default)
-+an embedding batch may run on a pool worker instead of this machine, under
-+three rules the code enforces. None of them is a prompt instruction, and the
-+agent cannot change any of them.
++# `bitterbot compute`
 +
-+**Same computation, or nothing.** Every memory index is written under an
-+embedding profile: provider, model, the model's content digest, dimensions,
-+normalisation, truncation and chunking rules. The profile is stored on the
-+index and compared on every sync. A pool worker is eligible only when its
-+pinned model digest equals the local one, and the result it returns is
-+checked again on receipt: vector count, digest, dimensions and the worker's
-+reported processing rules. Any mismatch puts that worker in cooldown
-+(`compute.embeddings.cooldownMs`, default five minutes), runs the batch
-+locally, and writes a ledger row saying why. There is never a per-batch mix.
++The owner's terminal surface for paid compute (PLAN-57). The agent can
++quote and, where paid compute is enabled, submit a paid job; only you can
++fund one. These commands hold an admin connection to the gateway, and the
++funding is bound to that connection.
 +
-+In practice this means pool embeddings work when the node embeds through a
-+local Ollama (an OpenAI-compatible `remote.baseUrl` on localhost) and the pool
-+workers pin the same Ollama model; the digest is read from Ollama's manifest.
-+A node on the bundled GGUF model hashes that file as its digest, which no
-+Ollama worker matches, so its batches stay local by construction. Remote APIs
-+report no digest and never route.
++Related:
 +
-+**Egress by governance class.** Each pool carries the owner's trust level:
-+`local` (this machine), `trusted` (set with `compute.pools.<id>.trust:
-+trusted`), or `untrusted` (the default for every other pool, including
-+collectives). Each input carries the same governance class the memory row
-+gets, raised by what the text says:
++- The agent's tool and the paid path: [compute](/tools/compute)
++- Holds in the review queue: [Action review](/tools/action-review)
 +
-+| class          | may run on                    |
-+| -------------- | ----------------------------- |
-+| `confidential` | this machine only             |
-+| `personal`     | this machine or trusted pools |
-+| `normal`       | any pool                      |
-+
-+Session transcripts are `personal` unless `compute.egress.transcriptsDefaultClass`
-+says otherwise, so they stay on this machine or on machines you trust. A batch
-+is split by class and each part is routed under its own ceiling. Inputs with
-+no known class count as `personal`. Queries always run locally.
-+
-+**Nothing waits on the pool.** Routing is deterministic: among eligible,
-+permitted workers not in cooldown, the pool is chosen when a GPU worker's
-+measured estimate beats the local estimate by `compute.embeddings.marginMs`
-+(default 500). Until local has one measured batch, nothing routes. A pool
-+batch that exceeds `compute.embeddings.timeoutMs` (default 60 s) is cancelled
-+and run locally. Pool jobs are recorded with origin `internal`: they never
-+appear in the state block and never wake the agent, except once after ten
-+consecutive fallbacks, when the block says local embedding is in effect.
-+
-+Every routed sub-batch lands in the compute ledger
-+(`~/.bitterbot/compute/deliveries.sqlite`, table `compute_embedding_batches`):
-+route, pool, worker, trust, class, items, profile, job id, duration, and the
-+fallback reason. `bitterbot doctor` summarises the last week under "Compute
-+embeddings": a policy violation row is an error (the guard ran the batch
-+locally, but the router disagreed with the policy); mismatch cooldowns and a
-+high fallback share are warnings.
-+
-+### When the model changes
-+
-+A provider or model change is handled as before: the index is rebuilt
-+automatically under the new model. A change under the same model name (an
-+Ollama tag pulled again with new weights, a GGUF replaced in place, a chunker
-+change) is different: the index goes on hold. No new vector is written,
-+vector search is paused (keyword search keeps working), `bitterbot memory
-+status` shows the conflict, and the log says so once. Rebuild with:
++## Commands
 +
 +```bash
-+bitterbot memory migrate-embeddings          # shows what changed, changes nothing
-+bitterbot memory migrate-embeddings --yes 
++bitterbot compute quote <jobId>            # what the job is waiting for
++bitterbot compute approve <jobId>          # show the quote; nothing funded
++bitterbot compute approve <jobId> --yes    # fund it at the quoted amount
++```
++
++`quote` prints the amount, the payee, how long the quote is valid, whether
++the agent's hold for this job is pending in the review queue, and whether
++the paid path or the per-job cap would refuse it.
++
++`approve` without `--yes` prints the same and stops with "Nothing funded".
++With `--yes` it calls `compute.approve`, which mints the approval token for
++this job and exact quote, funds the job through the spend gate and settles
++the pending hold, if any. The transaction hash is printed.
++
++Every command takes `--url`, `--token`, `--password`, `--timeout <ms>` and
++`--json`.
++
++## What can refuse
++
++The signer, not the CLI, decides. It refuses when paid compute is off
++(`compute.paid.enabled`), when the quote is above
++`compute.paid.maxUsdcPerJob` or would exceed `compute.paid.maxUsdcPerDay`,
++when the coordinator now quotes something other than what you looked at,
++when the job was already funded or another approval is funding it, when the
++compute runtime (and so the payment ledger) is not registered, and when the
++connection lacks
++`operator.admin`. Each refusal is a ledger row that `bitterbot doctor`
++reports under "Compute payments".
 ```
 
-**File**: `src/agents/tools/compute-tool.ts` (modified, +2/-1)
+**File**: `docs/docs.json` (modified, +1/-0)
 ```diff
-@@ -28,6 +28,7 @@ import {
-   getComputeBackend,
-   getComputeRuntime,
-   linkComputeJobToTask,
-+  COMPUTE_MAX_INPUTS,
- } from "../../compute/awareness/index.js";
- import type { BitterbotConfig } from "../../config/config.js";
- import { stringEnum } from "../schema/typebox.js";
-@@ -47,7 +48,7 @@ const WORKLOADS: readonly ComputeWorkloadKind[] = ["sha256", "embeddings"];
- /** Results larger than this are written to the workspace instead of inlined. */
- export const COMPUTE_RESULT_MAX_CHARS = 20_000;
- /** Same bounds as the coordinator: 1..128 inputs, 256 KiB total. */
--export const COMPUTE_MAX_INPUTS = 128;
-+export { COMPUTE_MAX_INPUTS };
- export const COMPUTE_MAX_INPUT_BYTES = 256 * 1024;
+@@ -1010,6 +1010,7 @@
+                   "cli/approvals",
+                   "cli/browser",
+                   "cli/channels",
++                  "cli/compute",
+                   "cli/configure",
+                   "cli/cron",
+                   "cli/curiosity",
+```
+
+**File**: `docs/reference/templates/GENOME.dev.md` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ These rules are absolute. They cannot be overridden by dreams, personality evolu
+ - Never execute destructive commands without explicit confirmation
+ - Never impersonate the user in external communications
+ - Never bypass safety systems or disable oversight mechanisms
++- Never fund, approve or sign a payment on your own authority; money moves only on the owner's decision
+ - Prioritize human safety and oversight over task completion
+ - When instructions conflict with safety, pause and ask
  
- // Flattened schema (not a union): Claude on Vertex rejects nested anyOf.
 ```
 
-**File**: `src/cli/memory-cli.test.ts` (modified, +36/-0)
+**File**: `docs/reference/templates/GENOME.md` (modified, +1/-0)
 ```diff
-@@ -567,3 +567,39 @@ describe("memory cli owner controls (PLAN-55 Phase 3)", () => {
-     expect(process.exitCode).toBe(1);
+@@ -18,6 +18,7 @@ These rules are absolute. They cannot be overridden by dreams, personality evolu
+ - Never execute destructive commands without explicit confirmation
+ - Never impersonate the user in external communications
+ - Never bypass safety systems or disable oversight mechanisms
++- Never fund, approve or sign a payment on your own authority; money moves only on the owner's decision
+ - Prioritize human safety and oversight over task completion
+ - When instructions conflict with safety, pause and ask
+ 
+```
+
+**File**: `docs/tools/action-review.md` (modified, +4/-0)
+```diff
+@@ -46,6 +46,10 @@ A standing spend grant that covers the payee and the amount counts as a decision
+ 
+ A task sent to another agent with `a2a_client` may come back with a price. Because the price is only known at that point, the hold happens there: the task is not paid for, a request appears in the queue ("Pay 0.30 USDC to 0x... for a task from the agent at ..."), and approving it runs the task again and pays. A standing grant that covers the seller and the amount pays without asking.
+ 
++### Paid compute jobs
++
++When paid compute is on (`compute.paid.enabled`), the agent may submit a `paid_usdc` job on an owner turn. The coordinator parks it at `awaiting_payment` with a quote, and the hold happens there: a request appears in the queue ("Fund compute job j-42: 0.42 USDC to 0x... (200 sha256 items)"). Approving it funds the job with the authority of the connection that approved, which the signer checks: a connection without `operator.approvals` or `operator.admin` is refused, and so is the node's own internal connection. A chat reply (`/approve`) cannot approve one of these at all: the request is turned away and the hold stays pending for you to decide in the Control UI. `bitterbot compute approve <job>` funds the same job from the terminal and settles the hold. See [Paid jobs and who pays](/tools/compute#paid-jobs-and-who-pays).
++
+ ### What is not held
+ 
+ Payouts of money already owed to other people (skill royalties, bounty rewards) go out without waiting for you. They pass through the same spend gate as everything else: the per-transaction and daily limits apply, each one is recorded, and you get a notice when a batch goes out or when one is waiting because it is above your per-transaction limit.
+```
+
+**File**: `docs/tools/compute.md` (modified, +99/-14)
+```diff
+@@ -60,7 +60,7 @@ names the actions, and sets four rules:
+    is not a proof; `redundant` means a second worker agreed.
+ 3. Personal and confidential memory never leaves this machine.
+ 4. The agent may quote a paid job; only the owner funds it. A paid job waits
+-   at `awaiting_payment` until the owner approves it in the Compute tab or
++   at `awaiting_payment` until the owner approves it in the Control UI or
+    on the command line.
+ 
+ The section carries no numbers, so it sits in the cached part of the prompt
+@@ -133,16 +133,19 @@ use (those jobs are recorded with origin `internal`).
+ On an owner turn, and only when the node's backend supports it, the tool
+ also offers:
+ 
+-| action   | what it does                                                                                                                                                                                                                                                                                                              |
+-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+-| `submit` | run a batch on a `private` pool or a `collective` project: `mode`, `scope` (pool or project id), `workload`, `inputs` (1 to 128 strings, 256 KiB total), and for embeddings `model` and `model_digest`. Optional `task_id` links the job to a long-horizon task; optional `reason` is recorded on it. Returns the job id. |
+-| `cancel` | cancel a job this agent started. `job_id`. Jobs started by the owner or by the memory system cannot be cancelled from here.                                                                                                                                                                                               |
++| action   | what it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
++| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
++| `submit` | run a batch on a `private` pool or a `collective` project: `mode`, `scope` (pool or project id), `workload`, `inputs` (1 to 128 strings, 256 KiB total), and for embeddings `model` and `model_digest`. Optional `task_id` links the job to a long-horizon task; optional `reason` is recorded on it. Returns the job id. Where paid compute is enabled, `mode: paid_usdc` with `max_cost_usdc` and no `scope` submits a paid job that waits for the owner (see [Paid jobs](#paid-jobs-and-who-pays)). |
++| `cancel` | cancel a job this agent started. `job_id`. Jobs started by the owner or by the memory system cannot be cancelled from here.                                                                                                                                                                                                                                                                                                                                                                            |
+ 
+ Rules the code enforces, not the prompt:
+ 
+ - Non-owner turns get a refusal before anything reaches the coordinator.
+-- `paid` and `paid_usdc` are rejected. The agent can quote a paid job with
+-  `estimate`; only the owner submits and funds paid work.
++- `paid` (credits) is rejected. `paid_usdc` is accepted only when
++  `compute.paid.enabled` is on and the coordinator offers paid work to this
++  node; the job then stops at `awaiting_payment` and the owner decides (see
++  [Paid jobs](#paid-jobs-and-who-pays)). Otherwise the agent can quote a
++  paid job with `estimate` and nothing more.
+ - Inputs are validated gateway-side (count, size, embedding model present)
+   before the coordinator sees them; the coordinator's limits are the second
+   line.
+@@ -239,12 +242,81 @@ bitterbot memory migrate-embeddings --yes    # rebuilds under the new profile
+ `bitterbot memory index --force` does the same rebuild. Both re-embed every
+ chunk, so on a large index expect the same time a
+```
+
+**File**: `scripts/check-payment-paths.mjs` (modified, +4/-0)
+```diff
+@@ -34,6 +34,10 @@ const SPEND_ALLOW = new Set([
+   "src/gateway/server-methods/wallet.ts", // the wallet gateway RPC (pay_for_resource)
+   "src/memory/manager.ts", // PLAN-8 revenue/bounty payout dispatch (markPaymentProcessed)
+   "src/payments/ap2/gate.ts", // the spend gate: wraps the service's two paying methods
++  // PLAN-57 §4.8: the one path that funds a paid compute job. The call is on a
++  // wallet returned by gatedWallet(), so the gate records and limits it; the
++  // wallet underneath is the backend's fund() behind a verified approval token.
++  "src/compute/awareness/payment.ts",
+ ]);
+ 
+ // Pattern C (PLAN-53 C0): a wallet that pays must be one the spend gate
+```
+
+**File**: `src/agents/system-prompt.compute.test.ts` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@ describe("compute section in the system prompt", () => {
+     expect(prompt).toContain("never guess counts");
+     expect(prompt).toContain("shape_only_trusted_worker");
+     expect(prompt).toContain("Personal and confidential memory never leaves this machine");
+-    expect(prompt).toContain("only the owner funds it");
++    expect(prompt).toContain("You cannot fund, approve or sign a payment");
    });
- });
-+
-+describe("memory migrate-embeddings", () => {
-+  it("shows the hold and changes nothing without --yes, then migrates with --yes", async () => {
-+    const { registerMemoryCli } = await import("./memory-cli.js");
-+    const { defaultRuntime } = await import("../runtime.js");
-+    const migrate = vi.fn(async () => {});
-+    let held = true;
-+    const manager = {
-+      sync: vi.fn(async () => {}),
-+      status: () => ({ provider: "local", chunks: 12 }),
-+      embeddingMigrationPlan: () => ({
-+        hold: held ? { conflicts: ["model digest aaaa -> bbbb"], stored: {} } : null,
-+        current: { provider: "local", model: "m", modelDigest: "sha256:bbbb", dimensions: 3 },
-+      }),
-+      migrateEmbeddingProfile: migrate.mockImplementation(async () => {
-+        held = false;
-+      }),
-+      close: vi.fn(async () => {}),
-+    };
-+    getMemorySearchManager.mockResolvedValue({ manager });
-+    const log = vi.spyOn(defaultRuntime, "log").mockImplementation(() => {});
-+    const program = new Command();
-+    program.name("test");
-+    registerMemoryCli(program);
-+    await program.parseAsync(["memory", "migrate-embeddings"], { from: "user" });
-+    expect(log).toHaveBeenCalledWith(expect.stringContaining("model digest aaaa -> bbbb"));
-+    expect(log).toHaveBeenCalledWith(expect.stringContaining("Re-run with --yes"));
-+    expect(migrate).not.toHaveBeenCalled();
-+    await program.parseAsync(["memory", "migrate-embeddings", "--yes"], { from: "user" });
-+    expect(migrate).toHaveBeenCalledTimes(1);
-+    expect(log).toHaveBeenCalledWith(expect.stringContaining("Embedding migration complete"));
-+    log.mockClear();
-+    await program.parseAsync(["memory", "migrate-embeddings"], { from: "user" });
-+    expect(log).toHaveBeenCalledWith(expect.stringContaining("Nothing to migrate"));
-+  });
-+});
-```
-
-**File**: `src/cli/memory-cli.ts` (modified, +128/-0)
-```diff
-@@ -432,6 +432,26 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
-       if (status.vector.dims) {
-         lines.push(`${label("Vector dims")} ${info(String(status.vector.dims))}`);
-       }
-+      if (status.embeddingProfile) {
-+        const p = status.embeddingProfile;
-+        lines.push(
-+          `${label("Embedding profile")} ${info(
-+            [
-+              p.modelDigest ? p.modelDigest.slice(0, 19) : "no digest",
-+              p.dimensions ? `${p.dimensions} dims` : "dims unknown",
-+              p.normalise,
-+              `routing ${status.computeRouting ?? "local"}`,
-+            ].join(", "),
-+          )}`,
-+        );
-+      }
-+      if (status.embeddingHold) {
-+        lines.push(
-+          `${label("Embedding hold")} ${warn(
-+            `${status.embeddingHold.conflicts.join("; ")}. Run: bitterbot memory migrate-embeddings`,
-+          )}`,
-+        );
-+      }
-       if (status.vector.extensionPath) {
-         lines.push(`${label("Vector path")} ${info(shortenHomePath(status.vector.extensionPath))}`);
-       }
-@@ -1004,6 +1024,114 @@ export function registerMemoryCli(program: Command) {
-       }
-     });
  
-+  memory
-+    .command("migrate-embeddings")
-+    .description(
-+      "Rebuild the index under the current embedding profile (after a model digest, dimension or chunker change)",
-+    )
-+    .option("--agent <id>", "Agent id (default: default agent)")
-+    .option("--yes", "Rebuild without asking", false)
-+    .option("--json", "Print JSON")
-+    .action(async (opts: { agent?: string; yes?: boolean; json?: boolean }) => {
-+      const cfg = loadConfig();
-+      const agentIds = resolveAgentIds(cfg, opts.agent);
-+      for (const agentId of agentIds) {
-+        await withManager<MemoryManager>({
-+          getManager: () => getMemorySearchManager({ cfg, agentId }),
-+          onMissing: (error) => defaultRuntime.log(error ?? "Memory search disabled."),
-+          onCloseError: (err) =>
-+            defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
-+          close: async (manager) => {
-+            await manager.close?.();
-+          },
-+          run: async (manager) => {
-+            if (!manager.embeddingMigrationPlan || !manager.migrateEmbeddingProfile) {
-+              defaultRuntime.log("Memory backend does not support embedding migration.");
-+              return;
-+            }
-+            // A sync resolves the live profile and detects the hold without writing anything while held.
-+            try {
-+              await manager.sync?.({ reason: "migrate-embeddings-plan" });
-+            } catch (err) {
-+              defaultRuntime.error(`Could not read the index: ${formatErrorMessage(err)}`);
-+              process.exitCode = 1;
-+              return;
-+            }
-+            const plan = manager.embeddingMigrationPlan();
-+            const status = manager.status();
-+            if (opts.json && !opts.yes) {
-+              defaultRuntime.log(JSON.stringify({ agentId, plan, chunks: status.chunks }, null, 2));
-+              return;
-+            }
-+            if (!plan.hold) {
-+              const current = plan.current;
-+              const describe = current
-+                ? [
-+                    `${current.provider}/${current.model}`,
-+                    current.modelDigest ? current.modelDigest.slice(0, 19) : null,
-+                    current.dimensions ? `${current.dimensions} dims` : null,
-+                  ]
-+                    .filter(Boolean)
-+                    .join(", ")
-+                : null;
-+              defaultRuntime.log(
-+                `Nothing to migrate (${agentId}): the index already carries the live embedding profile${describe ? ` (${describe})` : ""}.`,
-+              );
-+              if (!opts.yes) {
-+                return;
-+              }
-+              defaultRuntime.log("--yes given: rebuilding anyway.");
-+            } else {
-+              defaultRuntime.log(
-+                [
-+                  `Embedding profile changed under the same model (${agentId}):`,
-+                  ...plan.hold.conflicts.map((c) => `  - ${c}`),
-+                  `The index is on hold: no new vectors are written and vector search is paused.`,
-+                  `Migration rebuilds the index (${status.chunks ?? 0} chunks re-embedded) under the new profile; the old index serves until the swap.`,
-+                ].join("\n"),
-+              );
-+              if (!opts.yes) {
-+                defaultRuntime.log("Nothing changed. Re-run with --yes to migrate.");
-+                return;
-+              }
-+            }
-+            const startedAt = Date.now();
-+            try {
-+              await withProgressTotals(
-+                { label: "Migrating embeddings…", total: 0 },
-+                async (update) => {
-+                  await manager.migrateEmbeddingProfile!({
-+                    progress: (u) =>
-+                      update({
-+                        completed: u.complete
-```
-
-**File**: `src/commands/doctor-compute.test.ts` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+import { describe, expect, it } from "vitest";
-+import { ComputeDeliveryStore } from "../compute/awareness/deliveries.js";
-+import type { BitterbotConfig } from "../config/config.js";
-+import { collectComputeEmbeddingResults, summarise } from "./doctor-compute.js";
-+
-+function summaryOf(
-+  rows: Array<Partial<Parameters<ReturnType<ComputeDeliveryStore["ledger"]>["record"]>[0]>>,
-+) {
-+  const store = ComputeDeliveryStore.inMemory();
-+  try {
-+    for (const r of rows) {
-+      store.ledger().record({
-+        ts: 1000,
-+        route: "local",
-+        poolId: null,
-+        workerId: null,
-+        trust: null,
-+        cls: "normal",
-+        items: 1,
-+        profileKey: "p",
-+        jobId: null,
-+        durationMs: 100,
-+        reason: null,
-+        receiptHash: null,
-+        ...r,
-+      });
-+    }
-+    return store.ledger().summary(0);
-+  } finally {
-+    store.close();
-+  }
-+}
-+
-+describe("doctor: compute embeddings", () => {
-+  it("is quiet when compute is off, local-only, or has no ledger", () => {
-+    expect(
-+      collectComputeEmbeddingResults({ compute: { enabled: false } } as BitterbotConfig)[0],
-+    ).toMatchObject({ level: "info" });
-+    expect(
-+      collectComputeEmbeddingResults({
-+        compute: { embeddings: { provider: "local" } },
-+      } as BitterbotConfig)[0],
-+    ).toMatchObject({ level: "info" });
-+    expect(
-+      collectComputeEmbeddingResults({} as BitterbotConfig, { dbPath: "/nonexistent/x.sqlite" })[0]
-+        ?.message,
-+    ).toContain("No compute ledger yet");
-+    expect(summarise(summaryOf([]))[0]?.message).toContain("No embedding batches");
-+  });
-+
-+  it("reports totals, flags policy violations as errors and mismatches as warnings", () => {
-+    const results = summarise(
-+      summaryOf([
-+        { route: "pool", poolId: "lab", workerId: "gpu-1", trust: "trusted", items: 40 },
-+        {
-+          route: "fallback",
-+          poolId: "lab",
-+          workerId: "gpu-1",
-+          trust: "trusted",
-+          reason: "digest_mismatch",
-+        },
-+        {
-+          route: "fallback",
-+          poolId: "lab",
-+          workerId: "gpu-1",
-+          trust: "trusted",
-+          reason: "policy_violation",
-+          cls: "personal",
-+        },
-+        { route: "local", items: 3 },
-+      ]),
-+    );
-+    expect(results[0]).toMatchObject({ level: "ok" });
-+    expect(results[0]!.message).toContain("4 batches, 45 items");
-+    expect(results.find((r) => r.level === "error")?.message).toContain("policy violation");
-+    expect(results.find((r) => r.message.includes("digest mismatch"))?.level).toBe("warn");
-+    expect(results.find((r) => r.message.includes("fell back to local"))?.level).toBe("warn");
-+  });
-+});
-```
-
-**File**: `src/commands/doctor-compute.ts` (added, +124/-0)
-```diff
-@@ -0,0 +1,124 @@
-+/**
-+ * PLAN-57 §4.6: what the compute embedding ledger says about the last week.
-+ * Reads `<state>/compute/deliveries.sqlite` only; no coordinator call.
-+ *
-+ * Findings: a policy violation row (content offered to a pool its class
-+ * forbids) is an error even though the content never shipped, because it
-+ * means the router and the guard disagreed. A high fallback share is a
-+ * warning: the pool is costing time, not saving it. Mismatch cooldowns name
-+ * the worker whose model drifted.
-+ */
-+
-+import fsSync from "node:fs";
-+import { ComputeDeliveryStore, resolveComputeDbPath } from "../compute/awareness/index.js";
-+import type { ComputeLedgerSummary } from "../compute/awareness/ledger.js";
-+import type { BitterbotConfig } from "../config/config.js";
-+import {
-+  type CheckResult,
-+  error,
-+  info,
-+  ok,
-+  renderSectionQuietIfAllInfo,
-+  warn,
-+} from "./doctor-check.js";
-+
-+const SECTION = "Compute embeddings";
-+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-+
-+export async function runComputeEmbeddingChecks(cfg: BitterbotConfig): Promise<void> {
-+  renderSectionQuietIfAllInfo(SECTION, collectComputeEmbeddingResults(cfg));
-+}
-+
-+export function collectComputeEmbeddingResults(
-+  cfg: BitterbotConfig,
-+  opts?: { dbPath?: string; now?: number },
-+): CheckResult[] {
-+  if (cfg.compute?.enabled === false) {
-+    return [info("Compute is disabled (compute.enabled: false).")];
-+  }
-+  if (cfg.compute?.embeddings?.provider === "local") {
-+    return [info("Embedding routing is local only (compute.embeddings.provider: local).")];
-+  }
-+  const dbPath = opts?.dbPath ?? resolveComputeDbPath();
-+  if (dbPath !== ":memory:" && !fsSync.existsSync(dbPath)) {
-+    return [info("No compute ledger yet: no pool has been registered on this node.")];
-+  }
-+  let summary: ComputeLedgerSummary;
-+  try {
-+    const store = ComputeDeliveryStore.open(dbPath);
-+    try {
-+      summary = store.ledger().summary((opts?.now ?? Date.now()) - WEEK_MS);
-+    } finally {
-+      store.close();
-+    }
-+  } catch (err) {
-+    return [
-+      warn(`Compute ledger could not be read: ${err instanceof Error ? err.message : String(err)}`),
-+    ];
-+  }
-+  return summarise(summary);
-+}
-+
-+export function summarise(s: ComputeLedgerSummary): CheckResult[] {
-+  if (s.batches === 0) {
-+    return [info("No embedding batches routed in the last 7 days.")];
-+  }
-+  const results: CheckResult[] = [];
-+  const pool = s.byRoute.pool;
-+  const fb = s.byRoute.fallback;
-+  const attempts = pool.batches + fb.batches;
-+  results.push(
-+    ok(
-+      `Last 7 days: ${s.batches} batches, ${s.items} items. Pool ${pool.batches} (${pool.items} items), local ${s.byRoute.local.batches}, fallback ${fb.batches}.` +
-+        (s.poolItemsPerSecond && s.localItemsPerSecond
-+          ? ` Throughput pool ${s.poolItemsPerSecond}/s vs local ${s.localItemsPerSecond}/s.`
-+          : ""),
-+    ),
-+  );
-+  if (s.policyViolations > 0) {
-+    results.push(
-+      error(
-+        `${s.policyViolations} policy violation(s) recorded: content was routed to a pool its governance class forbids. The guard ran the batch locally and nothing shipped, but the router disagreed with the policy. Report this.`,
-+      ),
-+    );
-+  }
-+  const mismatches = [
-+    "digest_mismatch",
-+    "dimension_mismatch",
-+    "processing_mismatch",
-+    "count_mismatch",
-+  ]
-+    .map((k) => [k, s.fallbacksByReason[k] ?? 0] as const)
-+    .filter(([, n]) => n > 0);
-+  for (const [reason, n] of mismatches) {
-+    results.push(
-+      warn(
-+        `${n} batch(es) came back with a ${reason.replace("_", " ")} and were re-run locally; the worker is in cooldown. A pool worker's pinned model must equal the local embedding profile (same digest, dimensions, no truncation).`,
-+      ),
-+    );
-+  }
-+  const timeouts = s.fallbacksByReason.timeout ?? 0;
-+  const errors = s.fallbacksByReason.error ?? 0;
-+  if (attempts > 0 && fb.batches / attempts > 0.25) {
-+    results.push(
-+      warn(
-+        `${fb.batches} of ${attempts} pool attempts fell back to local (${timeouts} timeouts, ${errors} errors). The pool is slower than it looks; raise compute.embeddings.marginMs or check the workers.`,
-+      ),
-+    );
-+  } else if (fb.batches > 0) {
-+    results.push(
-+      info(
-+        `${fb.batches} fallback(s): ${Object.entries(s.fallbacksByReason)
-+          .map(([k, v]) => `${k} ${v}`)
-+          .join(", ")}.`,
-+      ),
-+    );
-+  }
-+  const egress = Object.entries(s.poolByClassTrust);
-+  if (egress.length > 0) {
-+    results.push(
-+      info(`Pool batches by class and trust: ${egress.map(([k, v]) => `${k} ${v}`).join(", ")}.`),
-+    );
-+  }
-+  return results;
-+}
-```
-
-**File**: `src/commands/doctor.ts` (modified, +2/-0)
-```diff
-@@ -41,6 +41,7 @@ import { runCanvasChecks } from "./doctor-canvas.js";
- import { runChannelsChecks } from "./doctor-channels.js";
- import { error, info, renderSection, setDoctorJsonMode, warn } from "./doctor-check.js";
- import { doctorShellCompletion } from "./doctor-completion.js";
-+import { runComputeEmbeddingChecks } from "./doctor-compute.js";
- import { loadAndMaybeMigrateDoctorConfig } from "./doctor-config-flow.js";
- import { runControlUiChecks } from "./doctor-control-ui.js";
- import { runEconomyChecks } from "./doctor-economy.js";
-@@ -328,6 +329,7 @@ async function runDoctor(
- 
-   noteWorkspaceStatus(cfg);
-   await runMemorySearchChecks(cfg);
-+  await runComputeEmbeddingChecks(cfg);
- 
-   // Check and fix shell completion
-   await doctorShellCompletion(runtime, prompter, {
+   it("is absent in minimal (subagent) mode", () => {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #274** (2026-10-19): feat(compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (@VGIL77)
 - **PR #273** (2026-10-18): feat(compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (@VGIL77)
 - **PR #272** (2026-10-18): feat(compute): PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage (@VGIL77)
 - **PR #270** (2026-10-18): feat(compute): PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery (@VGIL77)
 - **PR #268** (2026-10-18): feat(compute): PLAN-57 Phase 0, the read-only compute tool and its prompt section (@VGIL77)
 - **PR #266** (2026-10-17): ci(installer): run the PATH and sudo steps in test mode against the local fake releases (@VGIL77)
-- **PR #265** (2026-10-17): feat(installer): put ~/.local/bin on PATH, show download progress, no fresh-install prompt, refuse sudo not root (@VGIL77)
 
 ---
 
@@ -2374,23 +2025,53 @@ governance class permits that pool's trust (confidential: local only;
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an e
+## X. compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid com
 
 **RULE**:
-When implementing operations in `docs/cli/memory.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/cli/compute.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0ad5379`: compute): PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command (#273). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a46af5dd`: compute): PLAN-57 Phase 4, payment authority enforced at the signer for paid compute (#274). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/memory.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/compute.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-bitterbot memory migrate-embeddings
-bitterbot memory migrate-embeddings --yes
-- `memory migrate-embeddings` rebuilds the index under the current embedding profile after a change the index cannot absorb silently: the model's weights changed under the same name (an Ollama tag pulled again, a GGUF replaced), its dimensions changed, or the chunker changed. Until then the index is on hold (no new vectors, vector search paused, keyword search working). Without `--yes` it prints the conflict and changes nothing; `--json` prints the plan. See [compute](/tools/compute#when-the-model-changes).
+---
+summary: "CLI reference for `bitterbot compute` (quote and approve paid compute jobs)"
+read_when:
+  - A paid compute job is waiting for payment and you want to fund it from the terminal
+  - You want to see what a paid job would cost before approving it
+title: "compute"
+---
+
+# `bitterbot compute`
+
+The owner's terminal surface for paid compute (PLAN-57). The agent can
+quote and, where paid compute is enabled, submit a paid job; only you can
+fund one. These commands hold an admin connection to the gateway, and the
+funding is bound to that connection.
+
+Related:
+
+- The agent's tool and the paid path: [compute](/tools/compute)
+- Holds in the review queue: [Action review](/tools/action-review)
+
+## Commands
+
+```bash
+bitterbot compute quote <jobId>            # what the job is waiting for
+bitterbot compute approve <jobId>          # show the quote; nothing funded
+bitterbot compute approve <jobId> --yes    # fund it at the quoted amount
+```
+
+`quote` prints the amount, the payee, how long the quote is valid, whether
+the agent's hold for this job is pending in the review queue, and whether
+the paid path or the per-job cap would refuse it.
+
+`approve` without `--yes` prints the same and stop
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2400,4 +2081,4 @@ bitterbot memory migrate-embeddings --yes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0ad5379` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a46af5dd` are properly handled with clean fallback behavior.

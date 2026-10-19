@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
+> **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
+> **Source Version**: `2f5583e5`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T01:01:02.923Z  
+> **Learning ID**: `learn-github-agent-field-agentfield`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Agent-Field/agentfield
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:15:08.167Z  
+> **Harvest Timestamp**: 2026-10-19T01:01:02.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2605 stars
+- **Stars / Engagement**: 2613 stars
 
 ---
 
@@ -1377,306 +1391,6 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 
 ```
 
-### Core Architecture Module: `control-plane/internal/core/services/package_service.go`
-```
-// agentfield/internal/core/services/package_service.go
-package services
-
-import (
-	"context"
-	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
-	"sync"
-	"time"
-
-	"github.com/Agent-Field/agentfield/control-plane/internal/core/domain"
-	"github.com/Agent-Field/agentfield/control-plane/internal/core/interfaces"
-	"github.com/Agent-Field/agentfield/control-plane/internal/packages"
-	"github.com/fatih/color"
-	"gopkg.in/yaml.v3"
-)
-
-// DefaultPackageService implements the PackageService interface
-type DefaultPackageService struct {
-	registryStorage       interfaces.RegistryStorage
-	fileSystem            interfaces.FileSystemAdapter
-	agentfieldHome        string
-	stopForReinstall      func(string) (packages.ReinstallState, error)
-	restartAfterReinstall func(string, packages.ReinstallState) error
-}
-
-// NewPackageService creates a new package service instance
-func NewPackageService(
-	registryStorage interfaces.RegistryStorage,
-	fileSystem interfaces.FileSystemAdapter,
-	agentfieldHome string,
-) interfaces.PackageService {
-	return &DefaultPackageService{
-		registryStorage: registryStorage,
-		fileSystem:      fileSystem,
-		agentfieldHome:  agentfieldHome,
-	}
-}
-
-// InstallPackage installs a package from the given source
-func (ps *DefaultPackageService) InstallPackage(source string, options domain.InstallOptions) error {
-	_, err := ps.InstallPackageWithResult(source, options)
-	return err
-}
-
-// InstallPackageWithResult installs a package and reports the package name
-// selected by the installer. For superseded packages this is the final
-// successor, including when it replaces an existing package under the same
-// name.
-func (ps *DefaultPackageService) InstallPackageWithResult(source string, options domain.InstallOptions) (string, error) {
-	installedName, err := ps.installOne(source, options)
-	if err != nil {
-		return "", err
-	}
-
-	// The --path selector targets a subdirectory of THIS source only. Node
-	// dependencies are their own installable sources, so never carry the selector
-	// into recursive dependency installs.
-	depOptions := options
-	depOptions.Path = ""
-	depOptions.ExpectedPackageName = ""
-	depOptions.BeforeReplace = nil
-	if err := ps.installNodeDependencies(installedName, depOptions, map[string]bool{installedName: true}); err != nil {
-		return "", err
-	}
-	return installedName, nil
-}
-
-// installOne installs a single package from a git URL or local path.
-func (ps *DefaultPackageService) installOne(source string, options domain.InstallOptions) (string, error) {
-	// Check if it's a Git URL (GitHub, GitLab, Bitbucket, etc.)
-	if packages.IsGitURL(source) {
-		installer := &packages.GitInstaller{
-			AgentFieldHome: ps.agentfieldHome,
-			Verbose:        options.Verbose,
-			Subdir:         options.Path,
-			ExpectedName:   options.ExpectedPackageName,
-			BeforeReplace:  options.BeforeReplace,
-		}
-		if err := installer.InstallFromGit(source, options.Force); err != nil {
-			return "", err
-		}
-		return installer.InstalledName(), nil
-	}
-
-	// Handle local package installation
-	return ps.installLocalPackageWithName(source, options.Path, options.Force, options.Verbose)
-}
-
-// installedNames returns the set of currently-installed package names.
-func (ps *DefaultPackageService) installedNames() map[string]bool {
-	names := map[string]bool{}
-	registry, err := ps.loadRegistryDirect()
-	if err != nil {
-		return names
-	}
-	for name := range registry.Installed {
-		names[name] = true
-	}
-	return names
-}
-
-// installNodeDependencies installs the node-to-node dependencies declared by
-// packageName, recursively.
-//
-// `visited` holds every package this install pass has already walked, and it is
-// what terminates a dependency cycle. The already-installed check below cannot
-// do that on its own: it only knows a dependency's name for `af://registry/…`
-// refs, and a forced install — which every update is — reinstalls whatever is
-// already there. So a cycle expressed with bare git URLs or local paths has
-// nothing else stopping it.
-func (ps *DefaultPackageService) installNodeDependencies(packageName string, options domain.InstallOptions, visited map[string]bool) error {
-	registry, err := ps.loadRegistryDirect()
-	if err != nil {
-		return nil // base install already succeeded; don't fail on dep discovery
-	}
-
-	for name, pkg := range registry.Installed {
-		if name != packageName {
-			continue
-		}
-		metadata, err := packages.ParsePackageMetadata(pkg.Path)
-		if err != nil {
-			continue
-		}
-		for _, dep := range metadata.Dependencies.Nodes {
-			depSource, depName := resolveNodeRef(dep)
-			if depName != "" && ps.isPackageInstalled(depName) {
-				continue // already present — also handles cycles
-			}
-			fmt.Printf("\n%s Installing node dependency: %s\n", ps.blue("→"), dep)
-			installedName, err := ps.installOne(depSource, options)
-			if err != nil {
-				fmt.Printf("%s Failed to install node dependency %s: %v\n", ps.statusError(), dep, err)
-				continue
-			}
-			if visited[installedName] {
-				continue // a cycle: this pass has already walked that package
-			}
-			visited[installedName] = true
-			// Recurse for the dependency's own node deps.
-			if err := ps.installNodeDependencies(installedName, options, visited); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-// resolveNodeRef maps a node dependency reference to an installable source and,
-// when known, the resulting package name. Supported forms:
-//
-//	af://registry/<name>[@version]  -> https://github.com/Agent-Field/<name>
-//	https://github.com/org/repo      -> used as-is
-//	<git url> / <local path>         -> used as-is
-func resolveNodeRef(ref string) (source string, name string) {
-	const afPrefix = "af://registry/"
-	if strings.HasPrefix(ref, afPrefix) {
-		spec := strings.TrimPrefix(ref, afPrefix)
-		if at := strings.Index(spec, "@"); at >= 0 {
-			spec = spec[:at] // drop version constraint (not yet enforced)
-		}
-		spec = strings.TrimSuffix(spec, "/")
-		return "https://github.com/Agent-Field/" + spec, spec
-	}
-	return ref, ""
-}
-
-// installLocalPackage installs a package from a local source path. When subdir is
-// non-empty (the --path selector) the package root is resolved to
-// <sourcePath>/<subdir>, which must contain an agentfield-package.yaml; that
-// subdirectory is what gets validated, copied, and installed. Resolution happens
-// before any copy or registry mutation, so a bad selector fails cleanly.
-func (ps *DefaultPackageService) installLocalPackage(sourcePath string, subdir string, force bool, verbose bool) error {
-	_, err := ps.installLocalPackageWithName(sourcePath, subdir, force, verbose)
-	return err
-}
-
-func (ps *DefaultPackageService) installLocalPackageWithName(sourcePath string, subdir string, force bool, verbose bool) (string, error) {
-	if strings.TrimSpace(subdir) != "" {
-		resolved, err := packages.ResolvePackageSubdir(sourcePath, subdir)
-		if err != nil {
-			return "", err
-		}
-		sourcePath = resolved
-	}
-
-	// Get package name first for better messaging
-	metadata, err := ps.parsePackageMetadata(sourcePath)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse package metadata: %w", err)
-	}
-
-	fmt.Printf("Installing %s...\n", metadata.Name)
-
-	// 1. Validate source package
-	spinner := ps.newSpinner("Validating package structure")
-	spinner.Start()
-	if err := ps.validatePackage(sourcePath); err != nil {
-		spinner.Error("Package validation failed")
-		return "", fmt.Errorf("package validation failed: %w", err)
-	}
-	spinner.Success("Package structure validated")
-
-	// 2. Check if already installed
-	replacing := ps.isPackageInstalled(metadata.Name)
-	if !force && replacing {
-		return "", fmt.Errorf("package %s already installed (use --force to reinstall)", metadata.Name)
-	}
-	reinstallState := packages.ReinstallState{}
-	if force && replacing {
-		stop := ps.stopForReinstall
-		if stop == nil {
-			stop = func(name string) (packages.ReinstallState, error) {
-				return packages.StopPackageForReinstall(context.Background(), ps.agentfieldHome, name)
-			}
-		}
-		reinstallState, err = stop(metadata.Name)
-		if err != nil {
-			return "", fmt.Errorf("failed to stop %s before reinstall: %w", metadata.Name, err)
-		}
-	}
-
-	// 3. Copy package to global location
-	destPath := filepath.Join(ps.agentfieldHome, "packages", metadata.Name)
-	spinner = ps.newSpinner("Setting up environment")
-	spinner.Start()
-	if err := ps.copyPackage(sourcePath, destPath); err != nil {
-		spinner.Error("Failed to copy package")
-		return "", fmt.Errorf("failed to copy package: %w", err)
-	}
-	spinner.Success("Environment configured")
-
-	// 4. Install dependencies
-	spinner = ps.newSpinner("Installing dependencies")
-	spinner.Start()
-	if err := ps.installDependencies(destPath, metadata); err != nil {
-		spinner.Error("Failed to install dependencies")
-		return "", fmt.Errorf("failed to install dependencies: %w", err)
-	}
-	spinner.Success("Dependencies installed")
-
-	// 5. Update installation registry
-	if err := ps.updateRegistry(metadata, sourcePath, destPath); err != nil {
-		return "", fmt.Errorf("failed to update registry: %w", err)
-	}
-	if reinstallState.WasRunning {
-		restart := ps.restartAfterReinstall
-		if restart == nil {
-			restart = func(name string, state packages.ReinstallState) error {
-				return packages.RestartPackageAfterReinstall(ps.agentfieldHome, name, state)
-			}
-		}
-		if err := restart(metadata.Name, reinstallState); err != nil {
-			return "", fmt.Errorf("failed to restart %s after reinstall: %w", metadata.Name, err)
-		}
-	}
-
-	fmt.Printf("%s Installed %s v%s\n", ps.green(ps.statusSuccess()), ps.bold(metadata.Name), ps.gray(metadata.Version))
-	fmt.Printf("  %s %s\n", ps.gray("Location:"), destPath)
-
-	// 6. Check for required environment variables and provide guidance
-	ps.checkEnvironmentVariables(metadata)
-
-	fmt.Printf("\n%s %s\n", ps.blue("→"), ps.bold(fmt.Sprintf("Run: af run %s", metadata.Name)))
-
-	return metadata.Name, nil
-}
-
-// UninstallPackage removes an installed package
-func (ps *DefaultPackageService) UninstallPackage(name string) error {
-	return ps.uninstallPackage(name, false) // Default to non-force
-}
-
-// uninstallPackage remove
-```
-
-### Core Architecture Module: `control-plane/internal/core/services/server_url.go`
-```
-package services
-
-import "os"
-
-// resolveServerURL returns the control plane URL from env vars or default.
-func resolveServerURL() string {
-	if v := os.Getenv("AGENTFIELD_SERVER"); v != "" {
-		return v
-	}
-	if v := os.Getenv("AGENTFIELD_SERVER_URL"); v != "" {
-		return v
-	}
-	return "http://localhost:8080"
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1685,53 +1399,9 @@ func resolveServerURL() string {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #1094** (2026-10-03): **test(sdk): verify Windows batch probe end-to-end and harden cmd.exe branch**
   *Symptoms*: Real Windows verification for `batchProbeInvocation` plus batch-path hardening. This supersedes the never-merged Windows test prepared for PR #1075, whose fix branch was overtaken by the environment-token template that landed on main in a different change.  ## Real Windows verification  A new win32-only end-to-end test in `sdk/typescript/tests/harness_doctor.test.ts`:  - Creates a directory whose name contains a space under the OS temp dir and writes a real `probe.cmd` inside it that echoes a unique marker, its own path, and its arguments. - Resolves the shim through `PATH`/`PATHEXT` using the actual `findExecutable` (via a `codex.cmd` shim that forwards to `probe.cmd`). - Calls `harnessDoctor`, which invokes `defaultVersionProbe`, exercising the real `batchProbeInvocation` path with the actual `execFile` (mock passthrough to `vi.importActual`, restored after) — so `cmd.exe` genuinely executes with `/d /v:off /s /c` and the fixed `%AGENTFIELD_PROBE_ARG_*%` token template. - Asserts the marker, the full spaced path, and the `--version` argument come back, and the health result is `usable: true` with no `version_probe_failed` issue. - Skipped on non-Windows hosts, so Linux CI is unaffected.  A narrow `windows-latest` Node 20 job in `.github/workflows/sdk-typescript.yml` runs only `tests/harness_doctor.test.ts` and is wired into the existing required-checks aggregate.  ## Batch-path hardening  - `defaultVersionProbe` batch and non-batch paths now use explicit, separate `execFile
-  **Post-Mortem & Fix Analysis**:
-  > ## Performance  | SDK | Memory | Δ | Latency | Δ | Tests | Status | |-----|--------|---|---------|---|-------|--------| | TS | 352 B | - | 1.57 µs | -21% | ✓ | ✓ |  ✓ No regressions detected 
-  > ## 📊 Coverage gate  Thresholds from [`.coverage-gate.toml`](../../.coverage-gate.toml): per-surface ≥ **84%**, aggregate ≥ **85%**, max per-surface regression ≤ **1.0 pp**, max aggregate regression ≤ **0.50 pp**.  | Surface | Current | Baseline | Δ | | | --- | ---: | ---: | ---: | :---: | | `control-plane` | 87.90% | 87.40% | ↑ +0.50 pp | 🟡 | | `sdk-go` | 93.30% | 92.00% | ↑ +1.30 pp | 🟢 | | `sdk-python` | 94.72% | 93.73% | ↑ +0.99 pp | 🟢 | | `sdk-typescript` | 91.86% | 90.42% | ↑ +1.44 pp | 🟢 | | `web-ui` | 84.77% | 84.79% | ↓ -0.02 pp | 🟡 | | **aggregate** | **85.92%** | **85.75%** | **↑ +0.17 pp** | 🟡 |  ### ✅ Gate passed  No surface regressed past the allowed threshold and the aggregate stayed above the floor.  <!-- Sticky Pull Request Commentcoverage-gate -->
-  > ## 📐 Patch coverage gate  Threshold: **80%** on lines this PR touches vs `origin/main` (from `.coverage-gate.toml:thresholds.min_patch`).  | Surface | Touched lines | Patch coverage | Status | | --- | ---: | ---: | :---: | | `control-plane` | 0 | — | ➖ no changes | | `sdk-go` | 0 | — | ➖ no changes | | `sdk-python` | 0 | — | ➖ no changes | | `sdk-typescript` | 17 | **88.00%** | ✅ | | `web-ui` | 0 | — | ➖ no changes |  ### ✅ Patch gate passed  Every surface whose lines were touched by this PR has patch coverage at or above the threshold.  <!-- Sticky Pull Request Commentpatch-coverage-gate -->
 
-- **Issue #1075** (2026-09-29): **fix(sdk): probe harness binaries as argv, not a cmd.exe command string**
-  *Symptoms*: Fixes CodeQL alerts 60, 61, 62 on `sdk/typescript/src/harness/availability.ts`, without opening #63 in their place.  ## What changed  `defaultVersionProbe` runs `<binary> --version` for `harnessDoctor()`. Node refuses to spawn `.cmd`/`.bat` without a shell (CVE-2024-27980), so on Windows those shims go through `cmd.exe`.  - **Original (main):** a quoted `cmd.exe /d /s /c ""<path>" "--version""` line. It was safe from injection, but it concatenated the resolved path into the command string, which is what CodeQL flagged. A `%VAR%` in a path was also expanded. - **Earlier heads of this PR:** `cmd.exe /d /c <path> --version` as separate argv elements. This cleared #60–#62 but raised #63, and it let cmd.exe re-parse the path. **A directory named `paren) & echo PWNED2 (x` ran the injected command.** Paths containing `&`, `^` or `;,=` failed the probe. - **Now (2a6ed6b0):** the `/c` line is a fixed template, `""%AGENTFIELD_PROBE_ARG_0%" "%AGENTFIELD_PROBE_ARG_1%""`. The path and args are set in the child's environment. cmd.exe expands each variable once, after it has split the line, so every metacharacter in the path stays literal. No path data reaches the command string. `/v:off` keeps `!` literal. The non-batch path (`execFile(bin, args)`) is unchanged.  ## Verification  Real `cmd.exe` (Windows 11 26200, Node 22.0.0), via each version's actual `harnessDoctor` bundled with esbuild, against a `.cmd` shim in each directory:  | shim directory | main | previous head 5711218 | this head
-  **Post-Mortem & Fix Analysis**:
-  > ## Performance  | SDK | Memory | Δ | Latency | Δ | Tests | Status | |-----|--------|---|---------|---|-------|--------| | TS | 346 B | -1% | 1.90 µs | -5% | ✓ | ✓ |  ✓ No regressions detected 
-  > ## 📊 Coverage gate  Thresholds from [`.coverage-gate.toml`](../../.coverage-gate.toml): per-surface ≥ **84%**, aggregate ≥ **85%**, max per-surface regression ≤ **1.0 pp**, max aggregate regression ≤ **0.50 pp**.  | Surface | Current | Baseline | Δ | | | --- | ---: | ---: | ---: | :---: | | `control-plane` | 87.90% | 87.40% | ↑ +0.50 pp | 🟡 | | `sdk-go` | 93.30% | 92.00% | ↑ +1.30 pp | 🟢 | | `sdk-python` | 94.72% | 93.73% | ↑ +0.99 pp | 🟢 | | `sdk-typescript` | 91.84% | 90.42% | ↑ +1.42 pp | 🟢 | | `web-ui` | 84.76% | 84.79% | ↓ -0.03 pp | 🟡 | | **aggregate** | **85.92%** | **85.75%** | **↑ +0.17 pp** | 🟡 |  ### ✅ Gate passed  No surface regressed past the allowed threshold and the aggregate stayed above the floor.  <!-- Sticky Pull Request Commentcoverage-gate -->
-  > ## 📐 Patch coverage gate  Threshold: **80%** on lines this PR touches vs `origin/main` (from `.coverage-gate.toml:thresholds.min_patch`).  | Surface | Touched lines | Patch coverage | Status | | --- | ---: | ---: | :---: | | `control-plane` | 0 | — | ➖ no changes | | `sdk-go` | 0 | — | ➖ no changes | | `sdk-python` | 0 | — | ➖ no changes | | `sdk-typescript` | 8 | **100.00%** | ✅ | | `web-ui` | 0 | — | ➖ no changes |  ### ✅ Patch gate passed  Every surface whose lines were touched by this PR has patch coverage at or above the threshold.  <!-- Sticky Pull Request Commentpatch-coverage-gate -->
-
-- **Issue #1059** (2026-09-21): **Stale execution reaper times out a parent right after its child completes**
-  *Symptoms*: ## Summary  The stale execution reaper can mark a running parent execution as timed out in the short gap between its child finishing and the parent reporting its own result. The parent's later success callback is then rejected with HTTP 409 because the execution is already terminal.  ## How it happens  1. A parent execution calls a child and waits. While it waits, the parent's own `updated_at` does not change. 2. `MarkStaleExecutions` and `MarkStaleWorkflowExecutions` skip a stale parent only while it has a child in `running`, `pending` or `queued` (plus `waiting` for workflows):    ```sql    AND NOT EXISTS (        SELECT 1 FROM executions c        WHERE c.parent_execution_id = e.execution_id          AND c.status IN ('running', 'pending', 'queued')    )    ``` 3. When the child posts `succeeded`, that guard disappears at once. Nothing refreshes the parent's activity time. 4. The parent needs some time, measured at roughly 50–600 ms, to receive the child result and post its own status. 5. If the cleanup tick lands in that window and the parent's `updated_at` is older than the stale threshold, the parent and its workflow are set to `timeout` with `execution timed out (no activity)`. 6. The parent's real `succeeded` callback gets a 409.  Code: `control-plane/internal/storage/execution_records.go`, `MarkStaleExecutions` and `MarkStaleWorkflowExecutions`.  #1046 (`78215f17`) doesn't cover this. That fix protects a workflow whose own execution activity clock advances. Here the pa
-  **Post-Mortem & Fix Analysis**:
-  > ## Triage  **Classification:** bug ✓ **Suggested labels:** bug  **Likely affected files:** - ./reasoners/webhook_router.py (matched: out, out, out, out) - ./.env.example (matched: example) - ./main.py (matched: main)  ---  _Triage by github-buddy_  <!-- github-buddy:triage:v1 -->
-  > Hi. I would like to work on this. Is this issue available for me to pick up?
-
-- **Issue #1047** (2026-09-19): **bug: workflow stale-sweeper reaps active executions on a frozen clock**
-  *Symptoms*: ## Report  The workflow cleanup query reads `workflow_executions.updated_at`, while heartbeat and status writes update `executions.updated_at`. During a leaf wait, the execution timestamp moves and the workflow timestamp stays old. The cleanup query can therefore reap a workflow whose paired execution is still active.  We saw this in four coder runs. Each was reaped 10 to 13 minutes after starting on a 10-minute fuse. Heartbeats were arriving every 90 seconds. One run was reaped 57 seconds after its latest heartbeat. File commits continued after the reap, and the late completion updates returned HTTP 409 because the records were already terminal.  [#1040](https://github.com/Agent-Field/agentfield/issues/1040) is related, but the cause differs. That issue involved timezone comparison. This issue involves the workflow timestamp remaining unchanged during a leaf wait.  ## Proposed change  When a workflow has a paired active execution, require both activity timestamps to be older than the stale cutoff before reaping it. Recent activity on either row should keep the workflow alive. A workflow with no paired active execution should retain the existing cleanup behavior.  ## Working implementation  [#1046](https://github.com/Agent-Field/agentfield/pull/1046) implements the query-side version of this proposal. It joins the workflow row to its paired active execution, compares both `COALESCE` activity timestamps with the cutoff, and keeps the existing terminal-state synchronization.  T
-  **Post-Mortem & Fix Analysis**:
-  > ## Triage  **Classification:** bug ✓ **Suggested labels:** bug  **Likely affected files:** - ./reasoners/helpers.py (matched: per)  ---  _Triage by github-buddy_  <!-- github-buddy:triage:v1 -->
-  > Fixed and merged upstream, closing this.  - #1046 changes the workflow reaper to consult the execution activity clock instead of the frozen workflow timestamp. - #1051, merged 2026-09-18, rebinds the transactional prepares and guards the stale retry path. - #1062, merged 2026-09-19, mirrors the reaper parent/child and approval guards into the retry path.  The four reaped coder runs in the report were 10 to 13 minutes into a 10 minute fuse with heartbeats arriving every 90 seconds, which is the frozen-clock path #1046 removes. Reopen if the same pattern shows up on a current build.
-
-- **Issue #1040** (2026-09-06): **[Control Plane] SQLite cleanup can time out fresh executions with non-UTC timestamps**
-  *Symptoms*:    ## Summary     When AgentField uses local SQLite storage on a host with a non-UTC timezone, the execution-cleanup reaper can mark a fresh, active execution as timed out.     The affected rows contain timestamps with a local timezone offset, while the cleanup cutoff is generated in  UTC. SQLite can compare these timestamp values lexicographically as text instead of comparing the represented  instants.     ## Observed behavior     A disposable SWE-AF planning run on AgentField `v0.1.138-rc.9` was marked with:     ```text    execution timed out (no activity)  ```   The configured stale timeout was 30 minutes, but the execution was marked timed out approximately 108 seconds  after it started. Later successful status callbacks were rejected with HTTP 409 because the execution had already  become terminal.   Example values from the affected path:   ```text    stored updated_at: 2026-09-03 06:52:18.193275-05:00    UTC equivalent:    2026-09-03 11:52:18.193275Z    cleanup cutoff:    2026-09-03 11:24:05+00:00  ```   The stored timestamp is newer than the cutoff by instant, so it should not be considered stale. However, the  textual comparison evaluates incorrectly:   ```sql    SELECT      '2026-09-03 06:52:18.193275-05:00'      <=      '2026-09-03 11:24:05+00:00';    -- 1     SELECT      julianday('2026-09-03 06:52:18.193275-05:00')      <=      julianday('2026-09-03 11:24:05+00:00');    -- 0  ```   ## Likely cause   The stale-selection queries use:   ```sql    COALESCE(updated_at,
-  **Post-Mortem & Fix Analysis**:
-  > ## Triage  **Classification:** bug ✓ **Suggested labels:** bug  **Likely affected files:** - ./reasoners/webhook_router.py (matched: out, out, out, out, reasoner) - ./.env.example (matched: example) - ./reasoners/models.py (matched: reasoner) - ./reasoners/__init__.py (matched: reasoner) - ./reasoners/conversational.py (matched: reasoner)  ---  _Triage by github-buddy_  <!-- github-buddy:triage:v1 -->
-
-- **Issue #1034** (2026-09-09): **[Python SDK] Trouble with cross agent pydantic (un)marshalling**
-  *Symptoms*: ## Describe the bug  <!-- A clear and concise description of what the bug is. --> Sometimes complex pydantic models in reasoners and skills and multiple arguments can cause the inputs paramters to become a simple `dict`, forcing pydantic model coercion.   And a side note: sometimes the parameters being put inside `TYPE_CHECK` blocks also builds properly but crash during deployment.   ## Steps to reproduce  Using parameters like:   - `item: PydanticModel1 | PydanticModel2 | None = None` - `items: list[PydanticModel1] | list[PydanticModel2] | None = None` - `maybe_empty_sequence: Sequence[PydanticModel1 | None] = []`  In most cases, those fall through and crash during runtime. Nested JSON under the `input` can cause this as well.   Using the new RUFF 0.16 UP rules might have to do with this since it prefers using `list[model] | None` instead of `Optional[List[model]]` on newer python versions  ## Expected behavior  <!-- Describe what you expected to happen. --> Inputs and outputs always recursively validate if they are a pydantic model, inputs are ensured to be an instance of the model / dataclass. Outputs survives roundrip losslessly    ## Screenshots / Logs  <!-- If applicable, add screenshots or logs to help explain the problem. -->  ## Environment  - Control plane version: 0.1.127 - SDK version (if applicable): 0.1.130 - Deployment environment (local, docker, kubernetes, etc.):  ## Additional context  <!-- Add any other context about the problem here. --> Another side note:
-  **Post-Mortem & Fix Analysis**:
-  > ## Triage  **Classification:** bug ✓ **Suggested labels:** bug  **Likely affected files:** - ./reasoners/models.py (matched: models, reasoners, model, model, model) - ./reasoners/helpers.py (matched: reasoners, help) - ./cla-signatures.json (matched: json) - ./reasoners/__init__.py (matched: reasoners) - ./reasoners/conversational.py (matched: reasoners)  ---  _Triage by github-buddy_  <!-- github-buddy:triage:v1 -->
-
-- **Issue #987** (2026-09-21): **[Control Plane] Kubernetes new deployments causes every in-flight run to fail and never recover**
-  *Symptoms*: ## Describe the bug  <!-- A clear and concise description of what the bug is. --> When there's a reasoner that is acting like an orchestrator, and can take 5-10 minutes to complete, it has a high chance of destroying the entire run (which is composed by multiple reasoners and skills) with the "in-flight reasoner cannot be revived" error.  The only workaround is to re-run the same entrypoint reasoner with the same inputs and start again. Happily, when this is done, the run will blast through until the step where it got killed due the persisted intermediary steps and the 1h cache that is enabled.  ## Steps to reproduce  1. Go to '...' 2. Run '...' 3. See error  ## Expected behavior  <!-- Describe what you expected to happen. -->  When a reasoner or skill gets killed, there should be a way to restart the root run, keeping the same execution ID so the external consumers don't need to implement any sort of retries or re-submission.  It's a trade-off for the immutability and deterministic behavior that is expected when you call the same reasoner with the same input, but generates different execution / run IDS, should be an opt-in flag  ## Screenshots / Logs  <!-- If applicable, add screenshots or logs to help explain the problem. -->  ## Environment  - Control plane version: 0.1.127 - SDK version (if applicable): Python SDK - Deployment environment (local, docker, kubernetes, etc.): Kubernetes  ## Additional context  <!-- Add any other context about the problem here. --> 
-  **Post-Mortem & Fix Analysis**:
-  > ## Triage  **Classification:** bug ✓ **Suggested labels:** bug  **Likely affected files:** - ./reasoners/helpers.py (matched: reasoner, reasoners, reasoner, reasoner, reasoner, reasoner, help) - ./reasoners/models.py (matched: reasoner, reasoners, reasoner, reasoner, reasoner, reasoner) - ./reasoners/__init__.py (matched: reasoner, reasoners, reasoner, reasoner, reasoner, reasoner) - ./reasoners/conversational.py (matched: reasoner, reasoners, reasoner, reasoner, reasoner, reasoner) - ./reasoners/repo_config.py (matched: reasoner, reasoners, reasoner, reasoner, reasoner, reasoner)  ---  _Triage by github-buddy_  <!-- github-buddy:triage:v1 -->
-  > Where this stands after v0.1.137 (released yesterday):  The root cause is fixed. Re-registration used to synchronously fail every non-terminal execution for the agent id, so under `maxSurge` the new pod killed the old pod's still-running work. Now executions carry the `instance_id` that dispatched them, the reap is scoped to the departing instance and deferred by `AGENTFIELD_AGENT_DRAIN_GRACE` (default 60s) — a completion arriving inside that window wins — and dispatch to a pod that just announced shutdown is held for `AGENTFIELD_AGENT_RESTART_GRACE` and retried on the replacement instead of 503ing (#1004). All three SDKs drain in-flight reasoners under `AGENTFIELD_SHUTDOWN_TIMEOUT` (#1000, #1006), and `af server` itself drains on SIGTERM (#1010, #1011).  Two things you need to set for 5–10 minute orchestrators, because the defaults are sized for short reasoners: - `AGENTFIELD_AGENT_DRAIN_GRACE` ≥ the longest reasoner you want to protect (e.g. `15m`). The reap fires that long after the
-  > Yes agree on all 3 @AbirAbbas GTG 
-
-- **Issue #986** (2026-09-21): **[Control Plane] Execution queue doesn't behave like a queue**
-  *Symptoms*: ## Describe the bug  <!-- A clear and concise description of what the bug is. -->  When the max parallel executions are reached, any new exec async request will hard fail instead of returning an execution ID and queueing it to be executed. This forces to use an external queueing solution (Redis / Durable) just for making sure a burst of 300 requests don't bring everything down, which happens quite often and the AF CP get's killed and the pod is evicted then restarted.  ## Steps to reproduce  1. Go to '...' 2. Run '...' 3. See error  ## Expected behavior  <!-- Describe what you expected to happen. -->  ## Screenshots / Logs  <!-- If applicable, add screenshots or logs to help explain the problem. -->  ## Environment  - Control plane version: 0.1.127 - SDK version (if applicable): - Deployment environment (local, docker, kubernetes, etc.): Kubernetes  ## Additional context  <!-- Add any other context about the problem here. --> 
-  **Post-Mortem & Fix Analysis**:
-  > ## Triage  **Classification:** bug ✓ **Suggested labels:** bug  **Likely affected files:** - ./reasoners/helpers.py (matched: help)  ---  _Triage by github-buddy_  <!-- github-buddy:triage:v1 -->
-  > Shipping state, then the design question.  v0.1.137 (#1001) fixes the part that was making bursts destructive: a rejected async execute no longer writes anything — the per-agent gate and the queue check run before the payload blob and the two execution rows — 429 and 503 carry `Retry-After` plus a `retry_after` field, the async pool drains on shutdown (queued and in-flight jobs get a terminal `control_plane_shutdown` instead of staying `running` forever), and workers default to `max(NumCPU, 16)` with a 1024-deep queue, so ~1040 async executions are admitted before the first 503 — a much larger window than 0.1.127 had. Knobs: `AGENTFIELD_EXEC_ASYNC_WORKERS`, `AGENTFIELD_EXEC_ASYNC_QUEUE_CAPACITY`, `AGENTFIELD_MAX_EXECUTE_BODY_BYTES`. One thing worth setting now: `AGENTFIELD_MAX_CONCURRENT_PER_AGENT` (default 0 = unlimited), because with it unset the burst lands in your agent pod rather than at the control plane.  #1033 finishes the contract: the sync, restart and MCP lanes also gate bef
-  > @pocesar Thanks !   Yes, I would prioritize bounded rejections first as immediate work and lets add a milestone for queue, actually potentially letting us even add priority and other scheduling ideas in modular way to control at constrained time which gets pulled in. @AbirAbbas can you scope a rough milestone for this? 
+- **Issue #1086** (2026-10-15): **Legacy /reasoners/:id and /skills/:id never create the executions row, so status callbacks 404**
+  *Symptoms*: The legacy `POST /api/v1/reasoners/:id` and `/api/v1/skills/:id` endpoints (`control-plane/internal/handlers/reasoners.go`, around line 285) send `X-Execution-ID` to the agent but only persist a `workflow_executions` row; nothing ever writes the matching `executions` row. The normal execute path writes it before dispatch (`execute_prepare.go:247`), triggers and ARD do the same.  Effect: when an agent posts `PUT /api/v1/executions/:id/status` for one of these executions, the control plane can't find it. Since #1080 that's a 404 (before it was a 500).  - Go agents: the row never appears, so the callback is lost with or without retries (and since #1081 the Go SDK no longer retries 404). - Python agents: a background workflow event creates the row a little later, so the first callback races it (404, then 200 once the event lands). Python still retries 404 for ~15s, which is what papers over this today.  Found while reviewing #1080 and #1081. Fix shape: persist the execution row before dispatch on these endpoints, or route them through the normal execute controller. Until this is fixed, the Python and TypeScript SDKs should keep treating 404 on status callbacks as retryable. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1748,328 +1418,526 @@ func resolveServerURL() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5df74966` (2026-10-01)
-**Commit Message**: fix(events): cache non-duplicate status events so A→B→A flips are not dropped (#1079)
+### Incident Patch 1: `2460793d` (2026-10-17)
+**Commit Message**: fix(sdk/python): make memory exists() detect a missing key (#1106)
 
-**File**: `control-plane/internal/events/node_events.go` (modified, +24/-6)
+* fix(sdk/python): make memory exists() detect a missing key
+
+MemoryClient.exists() called get() and reported True whenever it did not
+raise. get() answers the control plane's deliberate 404 for an absent key
+with the caller's default instead of raising, so exists() returned True for
+every key as long as the backend was reachable, and the scoped, global and
+MemoryInterface surfaces inherited that answer. #966 documented the behavior
+and left the implementation fix for its own PR.
+
+Decide presence against a private sentinel passed as get()'s default: a
+stored value -- including a falsy one such as None, 0 or "" -- means True,
+a 404 means False, and a transport or backend failure still means False.
+get()'s default-on-404 contract is unchanged. This matches the TypeScript
+sibling, which decides presence from the returned value rather than from
+"did not raise". The four docstrings #966 rewrote now state the real
+behavior again.
+
+Refs #966
+
+* docs(sdk/python): state the real memory exists() contract in Agent.memory
+
+#966 recorded the exists() limitation in five places: the four docstrings in
+memory.py and the exists bul
+
+**File**: `sdk/python/agentfield/agent.py` (modified, +2/-3)
 ```diff
-@@ -263,6 +263,10 @@ func (bus *NodeEventBus) shouldFilterEvent(event NodeEvent) bool {
- 	return false
- }
- 
-+// nodePresenceCacheKey is the deduplication cache key prefix shared by
-+// NodeOnline and NodeOffline events.
-+const nodePresenceCacheKey = "node_presence"
-+
- // lastEventCache stores recent events for deduplication
- var lastEventCache = make(map[string]NodeEvent)
- var lastEventCacheMutex sync.RWMutex
-@@ -283,8 +287,13 @@ func (bus *NodeEventBus) isDuplicateStatusEvent(event NodeEvent) bool {
- 		return false
- 	}
- 
--	// Create cache key
-+	// Create cache key. Online and offline share one key per node, so going
-+	// offline and back online inside the window is compared against the
-+	// offline event rather than the earlier online one.
- 	cacheKey := fmt.Sprintf("%s:%s", event.Type, event.NodeID)
-+	if event.Type == NodeOnline || event.Type == NodeOffline {
-+		cacheKey = fmt.Sprintf("%s:%s", nodePresenceCacheKey, event.NodeID)
-+	}
- 
- 	lastEventCacheMutex.Lock()
- 	defer lastEventCacheMutex.Unlock()
-@@ -293,15 +302,24 @@ func (bus *NodeEventBus) isDuplicateStatusEvent(event NodeEvent) bool {
- 	if lastEvent, exists := lastEventCache[cacheKey]; exists {
- 		// Check if events are too close in time (within 1 second)
- 		if time.Since(lastEvent.Timestamp) < 1*time.Second {
--			// For status events, also check if the actual status changed
--			if event.Type == NodeUnifiedStatusChanged || event.Type == NodeStatusUpdated || event.Type == NodeHealthChanged {
--				return bus.compareStatusEventData(lastEvent, event)
-+			switch event.Type {
-+			case NodeUnifiedStatusChanged, NodeStatusUpdated, NodeHealthChanged:
-+				// For status events, also check if the actual status changed
-+				if bus.compareStatusEventData(lastEvent, event) {
-+					return true
-+				}
-+			case NodeOnline, NodeOffline:
-+				if lastEvent.Type == event.Type {
-+					return true
-+				}
-+			default:
-+				return true // Other events are considered duplicates if within 1 second
- 			}
--			return true // Other events are considered duplicates if within 1 second
- 		}
- 	}
- 
--	// Cache this event
-+	// Cache this event, including a changed status inside the window, so the
-+	// next event is compared against the status subscribers last received.
- 	lastEventCache[cacheKey] = event
- 
- 	// Clean up old cache entries (keep only last 50 per event type)
+@@ -1638,9 +1638,8 @@ async def get_conversation_summary() -> dict:
+               Read a value; with `scope=None` this is the hierarchical lookup above
+             - `await app.memory.set(key, data, scope=None, scope_id=None)`: Store a value
+             - `await app.memory.delete(key, scope=None, scope_id=None)`: Remove a value
+-            - `await app.memory.exists(key)`: Present, but it answers True for any key
+-              as long as the backend is reachable; compare
+-              `await app.memory.get(key, sentinel)` against a sentinel instead
++            - `await app.memory.exists(key)`: True when the key is stored in any
++              reachable scope, False when it is absent or the lookup itself failed
+             - `await app.memory.set_vector(key, embedding, metadata=None)`: Store an embedding
+             - `await app.memory.delete_vector(key)`: Remove an embedding
+             - `await app.memory.similarity_search(query_embedding, top_k=10, filters=None,
 ```
 
-**File**: `control-plane/internal/events/node_events_dedupe_test.go` (modified, +67/-0)
+**File**: `sdk/python/agentfield/memory.py` (modified, +21/-18)
 ```diff
-@@ -151,6 +151,73 @@ func TestNodeEventBusDuplicateStatusEvent(t *testing.T) {
- 	})
- }
+@@ -385,24 +385,26 @@ async def exists(
+         """
+         Check if a memory key exists.
  
-+func TestNodeEventBusDuplicateStatusEventFlipBack(t *testing.T) {
-+	// A status that flips and flips back inside the window must not be
-+	// compared against the first status, or the flip back is dropped and
-+	// subscribers are left on the intermediate status.
-+	for _, eventType := range []NodeEventType{NodeStatusUpdated, NodeHealthChanged} {
-+		t.Run(string(eventType), func(t *testing.T) {
-+			resetNodeEventTestState(t)
-+			bus := GlobalNodeEventBus
-+
-+			for _, status := range []string{"active", "inactive", "active"} {
-+				event := NodeEvent{Type: eventType, NodeID: "node-flip", Status: status, Timestamp: time.Now()}
-+				require.False(t, bus.isDuplicateStatusEvent(event), "status %q was filtered", status)
-+			}
-+
-+			repeat := NodeEvent{Type: eventType, NodeID: "node-flip", Status: "active", Timestamp: time.Now()}
-+			require.True(t, bus.isDuplicateStatusEvent(repeat))
-+		})
-+	}
-+
-+	t.Run("online and offline", func(t *testing.T) {
-+		resetNodeEventTestState(t)
-+		bus := GlobalNodeEventBus
-+
-+		for _, eventType := range []NodeEventType{NodeOnline, NodeOffline, NodeOnline} {
-+			event := NodeEvent{Type: eventType, NodeID: "node-flip", Timestamp: time.Now()}
-+			require.False(t, bus.isDuplicateStatusEvent(event), "%s was filtered", eventType)
-+		}
-+
-+		repeat := NodeEvent{Type: NodeOnline, NodeID: "node-flip", Timestamp: time.Now()}
-+		require.True(t, bus.isDuplicateStatusEvent(repeat))
-+	})
-+
-+	t.Run("other status events keep the one second window", func(t *testing.T) {
-+		resetNodeEventTestState(t)
-+		bus := GlobalNodeEventBus
-+
-+		first := NodeEvent{Type: NodeStateTransition, NodeID: "node-flip", Status: "running", Timestamp: time.Now()}
-+		require.False(t, bus.isDuplicateStatusEvent(first))
-+
-+		second := first
-+		second.Timestamp = time.Now()
-+		require.True(t, bus.isDuplicateStatusEvent(second))
-+	})
-+}
-+
-+func TestPublishDeliversOnlineAfterQuickOfflineFlap(t *testing.T) {
-+	resetNodeEventTestState(t)
-+
-+	ch := GlobalNodeEventBus.Subscribe("flap-test")
-+	defer GlobalNodeEventBus.Unsubscribe("flap-test")
-+
-+	PublishNodeOnline("node-flap", nil)
-+	PublishNodeHealthChanged("node-flap", "active", nil)
-+	PublishNodeOffline("node-flap", nil)
-+	PublishNodeHealthChanged("node-flap", "inactive", nil)
-+	PublishNodeOnline("node-flap", nil)
-+	PublishNodeHealthChanged("node-flap", "active", nil)
-+
-+	var got []string
-+	for i := 0; i < 6; i++ {
-+		event := receiveNodeEvent(t, ch)
-+		got = append(got, string(event.Type)+":"+event.Status)
-+	}
-+	require.Equal(t, "node_online:online", got[4], got)
-+	require.Equal(t, "node_health_changed:active", got[5], got)
-+}
-+
- func TestNodeEventBusCleanupEventCache(t *testing.T) {
- 	resetNodeEventTestState(t)
+-        Known limitation: ``get`` returns ``default`` rather than raising when the
+-        key is absent, so this answers ``True`` for any key as long as the memory
+-        backend is reachable. Only a transport or backend failure yields ``False``.
+-        For a real existence test, compare ``get(key, sentinel)`` against a
+-        sentinel of your own.
++        ``get`` answers the control plane's 404 with its ``default`` rather than
++        raising, so presence is decided against a private sentinel: a stored value
++        — including a falsy one such as ``None``, ``0`` or ``""`` — means ``True``,
++        while a missing key means ``False``. A transport or backend failure also
++        yields ``False``.
  
+         Args:
+             key: The memory key
+             scope: Optional explicit scope override
+ 
+         Returns:
+-            True unless the lookup itself failed.
++            True when the key is stored, False when it is absent or the lookup
++            itself failed.
+         """
++        missing = object()
+         try:
+-            await self.get(key, scope=scope, scope_id=scope_id)
+-            return True
++            value = await self.get(key, default=missing, scope=scope, scope_id=scope_id)
+         except Exception:
+             return False
++        return value is not missing
+ 
+     async def delete(
+         self, key: str, scope: Optional[str] = None, scope_id: Optional[str] = None
+@@ -581,8 +583,8 @@ async def get(self, key: str, default: Any = None) -> Any:
+     async def exists(self, key: str) -> bool:
+         """Check if a key exists in this specific scope.
+ 
+-        Carries the same limitation as ``MemoryClient.exists``: it answers ``True``
+-        whenever the backend is reachable.
++        Delegates to ``MemoryClient.exists``, so a key this scope has never stored
++        reads as ``False``; see there for the falsy-value and failure semantics.
+         """
+         return await self.memory_client.exists(
+             key, scope=self.scope, scope_id=self.scope_id
+@@ -679,8 +681,8 @@ async def get(self, key: str, default: Any = None) -> Any:
+     async def exists(self, key: str) -> bool:
+         """Check if a key exists in global scope.
+ 
+-        Carries the same limitation as ``MemoryClient.exists``: it answers ``True``
+-        whenever the backend is reachable.
++        Delegates to ``MemoryClient.exists``, so a key never stored in global scope
++        reads as ``False``; see there for the falsy-value and failure semantics.
+         """
+         return await self.memory_client.exists(key, scope="global")
+ 
+@@ -933,17 +935,18 @@ async def exists(self, key: str) -> bool:
+         """
+         Check if a memory key exists in any scope.
+ 
+-        Known limitation: this answers ``True`` for any key as long as the memory
+-        backend is reachable - a missing key is not distinguished from a stored one
+-        (see ``MemoryClient.exists``). Compare
+-        ``await app.memory.get(key, sentinel)`` against a sentinel of your own
+-        instead.
++        Delegates to ``MemoryClient.exists``, which walks the same
++        ``workflow -> session -> actor -> global`` precedence as ``get``: a key
++        stored in any reachable scope reads as ``True``, a key that was never
++        stored reads as ``False``, and a transport or backend failure also reads
++        as ``False``.
+ 
+         Args:
+             key: The memory key
+ 
+         Returns:
+-            True unless the lookup itself failed.
++            True when the key is stored, False when it is absent or the lookup
++            itself failed.
+         """
+         return await self.memory_client.exists(key)
+ 
+```
+
+**File**: `sdk/python/tests/test_memory_client_core.py` (modified, +75/-0)
+```diff
+@@ -240,6 +240,81 @@ async def request(self, method, url, params=None, headers=None, timeout=None):
+     assert result == ["a", "b"]
+ 
+ 
++@pytest.mark.unit
++@pytest.mark.asyncio
++async def test_exists_is_false_when_the_control_plane_returns_404(
++    memory_client, monkeypatch
++):
++    # The control plane answers a missing key with 404 (handlers/memory.go) and
++    # get() turns that into its default instead of raising, so "did not raise"
++    # cannot mean "is stored".
++    class NotFoundResponse:
++        status_code = 404
++
++        def raise_for_status(self):
++            return None
++
++        def json(self):
++            return {}
++
++    async def fake_request(method, url, json=None, headers=None, timeout=None):  # type: ignore[override]
++        assert url.endswith("/memory/get")
++        return NotFoundResponse()
++
++    monkeypatch.setattr(memory_client, "_async_request", fake_request)
++
++    assert await memory_client.exists("never-stored") is False
++
++
++@pytest.mark.unit
++@pytest.mark.asyncio
++async def test_exists_is_true_for_a_stored_falsy_value(memory_client, monkeypatch):
++    # A stored null/0/"" is present; only the 404 means missing.
++    class StoredNullResponse:
++        status_code = 200
++
++        def raise_for_status(self):
++            return None
++
++        def json(self):
++            return {"data": "null"}
++
++    async def fake_request(method, url, json=None, headers=None, timeout=None):  # type: ignore[override]
++        return StoredNullResponse()
++
++    monkeypatch.setattr(memory_client, "_async_request", fake_request)
++
++    assert await memory_client.exists("stored-null") is True
++
++
++@pytest.mark.unit
++@pytest.mark.asyncio
++async def test_scoped_exists_is_false_for_a_missing_key(memory_client, monkeypatch):
++    # The scoped/global/interface surfaces delegate here, so a missing key must
++    # read as absent through them too.
++    class NotFoundResponse:
++        status_code = 404
++
++        def raise_for_status(self):
++            return None
++
++        def json(self):
++            return {}
++
++    captured: dict[str, Any] = {}
++
++    async def fake_request(method, url, json=None, headers=None, timeout=None):  # type: ignore[override]
++        captured["json"] = json
++        return NotFoundResponse()
++
++    monkeypatch.setattr(memory_client, "_async_request", fake_request)
++
++    scoped = ScopedMemoryClient(memory_client, "session", "sess-1", event_client=None)
++
++    assert await scoped.exists("never-stored") is False
++    assert captured["json"]["scope"] == "session"  # type: ignore[index]
++
++
+ @pytest.mark.unit
+ @pytest.mark.asyncio
+ async def test_exists_handles_errors(memory_client, monkeypatch):
 ```
 
 ---
 
-### Incident Patch 2: `4a87b1ca` (2026-10-01)
-**Commit Message**: fix(sdk/go): stop retrying execution status callbacks on non-retryable 4xx (#1081)
+### Incident Patch 2: `ef721281` (2026-10-15)
+**Commit Message**: fix(control-plane): write the executions row for legacy reasoner and skill calls (#1099)
 
-**File**: `sdk/go/agent/agent.go` (modified, +7/-0)
+* fix(control-plane): write the executions row for legacy reasoner and skill calls
+
+ExecuteReasonerHandler and ExecuteSkillHandler (POST /reasoners/:id and
+/skills/:id) sent X-Execution-ID to the agent but never created the
+executions row, so the agent's POST /api/v1/executions/:id/status
+callback hit UpdateExecutionRecord with no row and got a 404.
+
+Both handlers now create the row (status running) right after the input
+is marshalled, before the serverless branch and before dispatch. The
+shape matches the normal execute path in execute_prepare.go. A failed
+insert is logged and the call continues, so the legacy endpoints gain
+no new failure mode.
+
+persistWorkflowExecution, which every terminal exit of both handlers
+already calls, now also copies status, error, result, completed_at and
+duration onto the executions row. A row the agent's own callback has
+already made terminal is left untouched.
+
+Tests: two handler tests check the row exists while the agent is being
+called and ends as succeeded. A third test runs the legacy reasoner
+endpoint and the real status callback handler on LocalStorage; t
+
+**File**: `control-plane/internal/handlers/coverage_handlers_90_test.go` (modified, +4/-0)
 ```diff
-@@ -1801,6 +1801,13 @@ func (a *Agent) postExecutionStatus(ctx context.Context, callbackURL string, pay
- 				return nil
- 			}
- 			lastErr = fmt.Errorf("status update returned %d", resp.StatusCode)
-+			if !isTransientPollStatus(resp.StatusCode) {
-+				// A client error such as 404 (unknown execution) or 409
-+				// (terminal status conflict) will not change on a resend,
-+				// so fail fast instead of backing off.
-+				cancel()
-+				return lastErr
-+			}
- 		}
- 		cancel()
- 		if attempt < 4 {
+@@ -69,6 +69,10 @@ func (s *persistWorkflowExecutionStore) StoreWorkflowExecution(ctx context.Conte
+ 	return s.err
+ }
+ 
++func (s *persistWorkflowExecutionStore) UpdateExecutionRecord(ctx context.Context, executionID string, update func(*types.Execution) (*types.Execution, error)) (*types.Execution, error) {
++	return nil, s.err
++}
++
+ func TestWorkflowExecutionEventHelpersCoverage(t *testing.T) {
+ 	now := time.Date(2026, 4, 8, 12, 0, 0, 0, time.UTC)
+ 	parentExecutionID := "parent-exec"
 ```
 
-**File**: `sdk/go/agent/post_execution_status_test.go` (added, +76/-0)
+**File**: `control-plane/internal/handlers/empty_input_test.go` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,76 @@
-+package agent
+@@ -31,6 +31,14 @@ func (s *reasonerTestStorage) GetAgent(ctx context.Context, id string) (*types.A
+ 	return nil, nil
+ }
+ 
++func (s *reasonerTestStorage) CreateExecutionRecord(ctx context.Context, execution *types.Execution) error {
++	return nil
++}
 +
-+import (
-+	"context"
-+	"fmt"
-+	"io"
-+	"log"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
-+	"testing"
++func (s *reasonerTestStorage) UpdateExecutionRecord(ctx context.Context, executionID string, update func(*types.Execution) (*types.Execution, error)) (*types.Execution, error) {
++	return update(nil)
++}
++
+ func (s *reasonerTestStorage) StoreWorkflowExecution(ctx context.Context, execution *types.WorkflowExecution) error {
+ 	if execution != nil {
+ 		copy := *execution
+```
+
+**File**: `control-plane/internal/handlers/reasoners.go` (modified, +147/-20)
+```diff
+@@ -24,12 +24,122 @@ type ExecuteReasonerRequest struct {
+ 	Context map[string]interface{} `json:"context,omitempty"`
+ }
+ 
++// legacyPersistTimeout bounds the final writes of a legacy call.
++const legacyPersistTimeout = 5 * time.Second
++
++// legacyPersistContext returns the context for the final writes of a legacy
++// call. It keeps the request's values but not its cancellation: a caller that
++// hangs up after dispatch must not leave the execution running with no
++// completion time.
++func legacyPersistContext(ctx context.Context) (context.Context, context.CancelFunc) {
++	return context.WithTimeout(context.WithoutCancel(ctx), legacyPersistTimeout)
++}
++
+ func persistWorkflowExecution(ctx context.Context, storageProvider storage.StorageProvider, execution *types.WorkflowExecution) {
+-	if err := storageProvider.StoreWorkflowExecution(ctx, execution); err != nil {
++	persistCtx, cancel := legacyPersistContext(ctx)
++	defer cancel()
++	if err := storageProvider.StoreWorkflowExecution(persistCtx, execution); err != nil {
++		logger.Logger.Error().
++			Err(err).
++			Str("execution_id", execution.ExecutionID).
++			Msg("failed to persist workflow execution state")
++	}
++	finalizeLegacyExecutionRecord(persistCtx, storageProvider, execution)
++}
++
++// persistLegacyAcknowledgement records a legacy call the agent answered with
++// HTTP 202. The reasoner is still running in the background and its status
++// callback or workflow event completes the execution later, so neither row
++// is made terminal here.
++func persistLegacyAcknowledgement(ctx context.Context, storageProvider storage.StorageProvider, execution *types.WorkflowExecution) {
++	persistCtx, cancel := legacyPersistContext(ctx)
++	defer cancel()
++	if err := storageProvider.StoreWorkflowExecution(persistCtx, execution); err != nil {
+ 		logger.Logger.Error().
+ 			Err(err).
+ 			Str("execution_id", execution.ExecutionID).
+ 			Msg("failed to persist workflow execution state")
++		return
++	}
++
++	// A callback that landed before the 202 found no workflow row to update.
++	// Copy its outcome over now, so the row just written is not left running.
++	current, err := storageProvider.GetExecutionRecord(persistCtx, execution.ExecutionID)
++	if err != nil || current == nil || !types.IsTerminalExecutionStatus(current.Status) {
++		return
++	}
++	if err := storageProvider.UpdateWorkflowExecution(persistCtx, execution.ExecutionID, func(wf *types.WorkflowExecution) (*types.WorkflowExecution, error) {
++		if wf == nil {
++			return nil, fmt.Errorf("workflow execution %s not found", execution.ExecutionID)
++		}
++		if types.IsTerminalExecutionStatus(wf.Status) {
++			return wf, nil
++		}
++		wf.Status = current.Status
++		wf.StatusReason = current.StatusReason
++		wf.ErrorMessage = current.ErrorMessage
++		wf.OutputData = current.ResultPayload
++		wf.OutputSize = len(current.ResultPayload)
++		wf.CompletedAt = current.CompletedAt
++		wf.DurationMS = current.DurationMS
++		wf.UpdatedAt = time.Now()
++		return wf, nil
++	}); err != nil {
++		logger.Logger.Warn().
++			Err(err).
++			Str("execution_id", execution.ExecutionID).
++			Msg("failed to sync workflow execution with an early status callback")
++	}
++}
++
++// createLegacyExecutionRecord writes the executions row for a legacy
++// /reasoners or /skills call before it is dispatched, so the agent's
++// status callback (POST /api/v1/executions/:id/status) finds it.
++func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
++	exec := &types.Execution{
++		ExecutionID:       wfExec.ExecutionID,
++		RunID:             wfExec.WorkflowID,
++		ParentExecutionID: wfExec.ParentExecutionID,
++		AgentNodeID:       wfExec.AgentNodeID,
++		ReasonerID:        wfExec.ReasonerID,
++		NodeID:            wfExec.AgentNodeID,
++		Status:            string(types.ExecutionStatusRunning),
++		InputPayload:      json.RawMessage(wfExec.InputData),
++		SessionID:         wfExec.SessionID,
++		ActorID:           wfExec.ActorID,
++		StartedAt:         wfExec.StartedAt,
++		CreatedAt:         wfExec.CreatedAt,
++		UpdatedAt:         wfExec.UpdatedAt,
++	}
++	if err := storageProvider.CreateExecutionRecord(ctx, exec); err != nil {
++		logger.Logger.Error().
++			Err(err).
++			Str("execution_id", wfExec.ExecutionID).
++			Msg("failed to create execution record for legacy call")
++	}
++}
++
++// finalizeLegacyExecutionRecord copies the outcome of a legacy call onto its
++// executions row, unless the agent's own status callback already made it terminal.
++func finalizeLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
++	_, err := storageProvider.UpdateExecutionRecord(ctx, wfExec.ExecutionID, func(current *types.Execution) (*types.Execution, error) {
++		if current == nil || types.IsTerminalExecutionStatus(current.Status) {
++			// Returning nil leaves the row as it is.
++			return nil, nil
++		}
++		current.Status = wfExec.Status
++		current.ErrorMessage = wfExec.ErrorMessage
++		current.R
+```
+
+**File**: `control-plane/internal/handlers/reasoners_test.go` (modified, +524/-0)
+```diff
+@@ -7,10 +7,13 @@ import (
+ 	"io"
+ 	"net/http"
+ 	"net/http/httptest"
++	"path/filepath"
+ 	"strings"
+ 	"testing"
 +	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func newStatusCallbackAgent(client *http.Client) *Agent {
-+	return &Agent{
-+		cfg:        Config{Token: "token-123"},
-+		httpClient: client,
-+		logger:     log.New(io.Discard, "", 0),
-+	}
-+}
-+
-+func TestPostExecutionStatusDoesNotRetryNonRetryableClientErrors(t *testing.T) {
-+	// The control plane answers 400 for a bad payload, 404 for an unknown
-+	// execution and 409 for a conflicting terminal status. Sending the same
-+	// callback again cannot succeed, so it must fail after one attempt instead
-+	// of retrying for about 15s.
-+	for _, code := range []int{
-+		http.StatusBadRequest,
-+		http.StatusUnauthorized,
-+		http.StatusForbidden,
-+		http.StatusNotFound,
-+		http.StatusConflict,
-+	} {
-+		t.Run(fmt.Sprint(code), func(t *testing.T) {
-+			var attempts atomic.Int32
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				attempts.Add(1)
-+				http.Error(w, http.StatusText(code), code)
-+			}))
-+			defer server.Close()
-+
-+			start := time.Now()
-+			err := newStatusCallbackAgent(server.Client()).postExecutionStatus(context.Background(), server.URL, []byte(`{"status":"succeeded"}`))
-+
-+			require.Error(t, err)
-+			assert.Contains(t, err.Error(), fmt.Sprint(code))
-+			assert.Equal(t, int32(1), attempts.Load())
-+			assert.Less(t, time.Since(start), 500*time.Millisecond)
-+		})
-+	}
-+}
-+
-+func TestPostExecutionStatusRetriesTransientClientErrors(t *testing.T) {
-+	for _, code := range []int{http.StatusRequestTimeout, http.StatusTooManyRequests} {
-+		t.Run(fmt.Sprint(code), func(t *testing.T) {
-+			var attempts atomic.Int32
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				if attempts.Add(1) == 1 {
-+					http.Error(w, http.StatusText(code), code)
-+					return
-+				}
-+				w.WriteHeader(http.StatusNoContent)
-+			}))
-+			defer server.Close()
-+
-+			err := newStatusCallbackAgent(server.Client()).postExecutionStatus(context.Background(), server.URL, []byte(`{"status":"succeeded"}`))
-+
-+			require.NoError(t, err)
-+			assert.Equal(t, int32(2), attempts.Load())
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `e447e0b2` (2026-10-01)
-**Commit Message**: fix(control-plane): return 404 for status callbacks on unknown executions (#1080)
-
-**File**: `control-plane/internal/handlers/execute.go` (modified, +10/-1)
-```diff
-@@ -634,6 +634,11 @@ func (c *executionController) handleBatchStatus(ctx *gin.Context) {
- // like a server fault.
- var errTerminalStatusConflict = errors.New("terminal status conflict")
  
-+// errExecutionNotFound marks a callback for an execution the store does not
-+// have. Storage hands the updater a nil execution rather than an error for an
-+// unknown ID, so the handler relies on this to answer 404 instead of 500.
-+var errExecutionNotFound = errors.New("execution not found")
-+
- func (c *executionController) handleStatusUpdate(ctx *gin.Context) {
- 	reqCtx := ctx.Request.Context()
- 	executionID := ctx.Param("execution_id")
-@@ -675,7 +680,7 @@ func (c *executionController) handleStatusUpdate(ctx *gin.Context) {
- 	updated, err := c.store.UpdateExecutionRecord(reqCtx, executionID, func(current *types.Execution) (*types.Execution, error) {
- 		terminalNoop = false
- 		if current == nil {
--			return nil, fmt.Errorf("execution %s not found", executionID)
-+			return nil, fmt.Errorf("execution %s: %w", executionID, errExecutionNotFound)
- 		}
+ 	"github.com/Agent-Field/agentfield/control-plane/internal/events"
++	"github.com/Agent-Field/agentfield/control-plane/internal/services"
+ 	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
+ 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
  
- 		// Guard: executions in "waiting" state can only transition to
-@@ -792,6 +797,10 @@ func (c *executionController) handleStatusUpdate(ctx *gin.Context) {
- 			ctx.JSON(http.StatusConflict, gin.H{"error": fmt.Sprintf("failed to update execution: %v", err)})
- 			return
- 		}
-+		if errors.Is(err, errExecutionNotFound) {
-+			ctx.JSON(http.StatusNotFound, gin.H{"error": "execution not found"})
-+			return
-+		}
- 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to update execution: %v", err)})
- 		return
- 	}
-```
-
-**File**: `control-plane/internal/handlers/execute_status_update_test.go` (modified, +22/-0)
-```diff
-@@ -372,6 +372,28 @@ func TestUpdateExecutionStatusHandler_NotFound(t *testing.T) {
- 	}
+@@ -376,3 +379,524 @@ func TestExecuteReasonerHandler_ServerlessPayloadAndHeaderPropagation(t *testing
+ 	require.Equal(t, "session-1", execCtx["session_id"])
+ 	require.NotEmpty(t, execCtx["execution_id"])
  }
- 
-+func TestUpdateExecutionStatusHandler_UnknownExecutionIsNotFoundWithLocalStorage(t *testing.T) {
++
++func (s *reasonerHandlerStorage) GetExecutionRecord(ctx context.Context, executionID string) (*types.Execution, error) {
++	return s.exec.GetExecutionRecord(ctx, executionID)
++}
++
++func (s *reasonerHandlerStorage) UpdateExecutionRecord(ctx context.Context, executionID string, update func(*types.Execution) (*types.Execution, error)) (*types.Execution, error) {
++	return s.exec.UpdateExecutionRecord(ctx, executionID, update)
++}
++
++type legacyDispatchObservation struct {
++	executionID string
++	record      *types.Execution
++}
++
++// legacyRowAgent returns a stub agent that captures the executions row as it
++// exists while the control plane is dispatching to it.
++func legacyRowAgent(t *testing.T, store *reasonerHandlerStorage, observed chan<- legacyDispatchObservation) *httptest.Server {
++	t.Helper()
++	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		executionID := r.Header.Get("X-Execution-ID")
++		rec, err := store.GetExecutionRecord(r.Context(), executionID)
++		if err != nil {
++			rec = nil
++		}
++		observed <- legacyDispatchObservation{executionID: executionID, record: rec}
++		w.Header().Set("Content-Type", "application/json")
++		_, _ = w.Write([]byte(`{"ok":true}`))
++	}))
++}
++
++func TestExecuteReasonerHandler_CreatesExecutionRowBeforeDispatch(t *testing.T) {
 +	gin.SetMode(gin.TestMode)
-+	// The real storage hands the updater a nil execution for an unknown ID
-+	// instead of returning an error, so this goes through the same path as a
-+	// deployed control plane.
-+	store, _ := setupTestStorage(t)
-+	payloads := services.NewFilePayloadStore(t.TempDir())
++
++	store := newReasonerHandlerStorage(nil)
++	observed := make(chan legacyDispatchObservation, 1)
++	agentServer := legacyRowAgent(t, store, observed)
++	defer agentServer.Close()
++	store.agent = newReasonerAgent(agentServer.URL)
 +
 +	router := gin.New()
-+	router.PUT("/api/v1/executions/:execution_id/status", UpdateExecutionStatusHandler(store, payloads, nil, 90*time.Second))
++	router.POST("/reasoners/:reasoner_id", ExecuteReasonerHandler(store))
 +
-+	req := httptest.NewRequest(http.MethodPut, "/api/v1/executions/exec-does-not-exist/status", strings.NewReader(`{"status": "succeeded"}`))
++	req := httptest.NewRequest(http.MethodPost, "/reasoners/node-1.ping", strings.NewReader(`{"input":{"q":1}}`))
++	req.Header.Set("Content-Type", "application/json")
++	req.Header.Set("X-Workflow-ID", "wf-legacy")
++	resp := httptest.NewRecorder()
++	router.ServeHTTP(resp, req)
++	require.Equal(t, http.StatusOK, resp.Code)
++
++	obs := <-observed
++	require.NotEmpty(t, obs.executionID)
++	require.NotNil(t, obs.record, "executions row must exist while the agent is being called")
++	require.Equal(t, string(types.ExecutionStatusRunning), obs.record.Status)
++	require.Equal(t, "wf-legacy", obs.record.RunID)
++	require.Equal(t, "node-1", obs.record.AgentNodeID)
++	require.Equal(t, "ping", obs.record.ReasonerID)
++	require.JSONEq(t, `{"q":1}`, string(obs.record.InputPayload))
++
++	final, err := store.GetExecutionRecord(context.Background(), obs.executionID)
++	require.NoError(t, err)
++	require.NotNil(t, final)
++	require.Equal(t, string(types.ExecutionStatusSucceeded), final.Status)
++	require.JSONEq(t, `{"ok":true}`, string(final.ResultPayload))
++	require.NotNil(t, final.CompletedAt)
++}
++
++func TestExecuteSkillHandler_CreatesExecutionRowBeforeDispatch(t *testing.T) {
++	gin.SetMode(gin.TestMode)
++
++	store := newReasonerHandlerStorage(nil)
++	observed := make(chan legacyDispatchObservation, 1)
++	agentServer := legacyRowAgent(t, store, observed)
++	defer agentServer.Close()
++	agent := newReasonerAgent(agentServer.URL)
++	agent.Skills = []types.SkillDefinition{{ID: "ping"}}
++	store.agent = agent
++
++	router := gin.New()
++	router.POST("/skills/:skill_id", ExecuteSkillHandler(store))
++
++	req := httptest.NewRequest(http.MethodPost, "/skills/node-1.ping", strings.NewReader(`{"input":{"q":1}}`))
 +	req.Header.Set("Content-Type", "application/json")
 +	resp := httptest.NewRecorder()
 +	router.ServeHTTP(resp, req)
++	require.Equal(t, http.StatusOK, resp.Code)
 +
-+	require.Equal(t, http.StatusNotFound, resp.Code, resp.Body.String())
-+	var errorResp map[string]interface{}
-+	require.NoError(t, json.Unmarshal(resp.Body.Bytes(), &errorResp))
-+	require.Contains(t, strings.ToLower(errorResp["error"].(string)), "not found")
++	obs := <-observed
++	require.NotEmpty(t, obs.executionID)
++	require.NotNil(t, obs.record, "executions row must exist while the agent is being called")
++	require.Equal(t, string(types.ExecutionStatusRunning), obs.record.Status)
++	require.Equal(t, "ping", obs.record.ReasonerID)
++
++	final, err := store.GetExecutionRecord(context.Background(), obs.executionID)
++	require.NoError(t, err)
++	require.NotNil(t, final)
++	require.Equal(t, string(types.ExecutionStatusSucceeded), final.Status)
 +}
 +
- func TestUpdateExecutionStatusHandler_ProgressUpdate(t *testing.T) {
- 	gin.SetMode(gin.TestMode)
- 
++// TestExecuteReasonerHandler_AgentStatusCallbackFindsExecution reproduces #1086
++// end to end on the real local storage: while the legacy endpoint is
++// dispatching, the agent posts its status callback to the real
++// UpdateExecutionStatusHandler. Without the executions row that callback is a
++// 404. The legacy handler must also keep the terminal status the agent
++// repor
 ```
 
 ---
 
-### Incident Patch 4: `e960677b` (2026-10-01)
+### Incident Patch 3: `e960677b` (2026-10-01)
 **Commit Message**: fix(sdk/python): parse AGENTFIELD_ASYNC boolean flags with the repo's env vocabulary (#1082)
 
 AsyncConfig.from_environment() read all five boolean feature flags with
@@ -2260,3851 +2128,13 @@ Use the vocab
 +    assert client.async_config.enable_event_stream is True
 ```
 
----
-
-### Incident Patch 5: `b675e2d4` (2026-10-01)
-**Commit Message**: fix(sdk/python): keep rate limiter jitter off the global random state (#1078)
-
-_calculate_backoff_delay called random.seed(self._container_seed + attempt)
-before drawing jitter, which reseeds the module-level generator shared by the
-whole host process. Every rate-limit retry therefore reset the application's
-random stream to a value derived from HOSTNAME and the pid, so all later
-random.random()/choice()/shuffle()/sample() calls in the process returned a
-repeatable sequence instead of continuing the stream the caller seeded.
-
-It also degraded the SDK's own jitter: rate_limiter.py is the only module that
-seeds the global generator, but client.py:1295 (_next_poll_interval) and
-harness/_runner.py:415 and :423 (transient-error backoff) draw from it, so one
-rate-limited LLM call made their poll intervals and backoff delays a
-deterministic function of the container seed -- identical across containers
-that share a hostname/pid shape, which is exactly the synchronisation jitter
-exists to prevent.
-
-Draw from a private random.Random instance instead. The returned jitter is
-bit-identical (verified across 240 seed/attempt/range combinations by
-comparing float.hex()), because CPython's module-l
-
-**File**: `sdk/python/agentfield/rate_limiter.py` (modified, +6/-3)
-```diff
-@@ -146,10 +146,13 @@ def _calculate_backoff_delay(
-             base_delay = min(self.base_delay * (2**attempt), self.max_delay)
- 
-         # Add container-specific jitter to distribute load
--        # Use container seed to ensure consistent but distributed jitter
--        random.seed(self._container_seed + attempt)
-+        # Use container seed to ensure consistent but distributed jitter.
-+        # Seeded on a private Random instance, never on the module-level one:
-+        # random.seed() here would overwrite the host process's random stream
-+        # on every retry.
-+        rng = random.Random(self._container_seed + attempt)
-         jitter_range = base_delay * self.jitter_factor
--        jitter = random.uniform(-jitter_range, jitter_range)
-+        jitter = rng.uniform(-jitter_range, jitter_range)
- 
-         # Ensure minimum delay and apply jitter
-         delay = max(0.1, base_delay + jitter)
-```
-
-**File**: `sdk/python/tests/test_rate_limiter_core.py` (modified, +48/-0)
-```diff
-@@ -97,6 +97,54 @@ def test_calculate_backoff_applies_jitter_and_max_cap():
-     assert delay == pytest.approx(expected_delay)
- 
- 
-+@pytest.mark.unit
-+def test_calculate_backoff_leaves_global_random_state_alone():
-+    """A backoff must not hijack the host process's global random stream."""
-+    limiter = StatelessRateLimiter(base_delay=0.5, jitter_factor=0.3, max_delay=1.0)
-+    limiter._container_seed = 42
-+
-+    random.seed(20260929)
-+    untouched = [random.random() for _ in range(3)]
-+
-+    random.seed(20260929)
-+    limiter._calculate_backoff_delay(4)
-+    after_backoff = [random.random() for _ in range(3)]
-+
-+    assert after_backoff == untouched
-+
-+
-+@pytest.mark.unit
-+@pytest.mark.asyncio
-+async def test_execute_with_retry_leaves_global_random_state_alone(monkeypatch):
-+    """The public retry path keeps caller randomness intact across attempts."""
-+    limiter = StatelessRateLimiter(max_retries=2, base_delay=0.01, jitter_factor=0.25)
-+    limiter._container_seed = 7
-+    sleeps = []
-+
-+    async def fake_sleep(delay):
-+        sleeps.append(delay)
-+
-+    monkeypatch.setattr("agentfield.rate_limiter.asyncio.sleep", fake_sleep)
-+
-+    attempts = {"count": 0}
-+
-+    async def flaky_call():
-+        attempts["count"] += 1
-+        if attempts["count"] < 3:
-+            raise DummyHTTPError()
-+        return "ok"
-+
-+    random.seed(1234)
-+    untouched = [random.random() for _ in range(3)]
-+
-+    random.seed(1234)
-+    result = await limiter.execute_with_retry(flaky_call)
-+
-+    assert result == "ok"
-+    assert len(sleeps) == 2
-+    assert [random.random() for _ in range(3)] == untouched
-+
-+
- @pytest.mark.unit
- def test_extract_retry_after_uses_attribute_fallback():
-     limiter = StatelessRateLimiter()
-```
-
----
-
-### Incident Patch 6: `bf118593` (2026-09-29)
-**Commit Message**: fix(sdk): probe harness binaries as argv, not a cmd.exe command string (#1075)
-
-* fix(sdk): probe harness binaries as argv, not cmd.exe /c
-
-CodeQL alerts 60, 61, and 62 flag defaultVersionProbe for building a
-cmd.exe /c command line from a resolved binary path. Pass that path as
-an execFile argv element instead. PATHEXT resolution is unchanged.
-
-Assisted-by: CodeAF (grok-4.7)
-Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
-
-* fix(sdk): run Windows batch probes as separate cmd.exe argv
-
-Node rejects execFile of a .cmd or .bat (CVE-2024-27980). Keep cmd.exe
-as the interpreter for those shims only, and pass /d, /s, /c, the
-resolved path, and the version args as separate argv elements.
-
-Assisted-by: CodeAF (grok-4.7)
-Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
-
-* fix(sdk): drop cmd /s from the Windows batch version probe
-
-Node quotes an argv element that contains spaces. cmd /s then strips the
-outer quotes of the whole line and splits C:\Program Files\.... Pass
-/d /c and the resolved path as separate argv elements, with no /s and
-no joined command string.
-
-Assisted-by: CodeAF (grok-4.7)
-Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
-
-* fix(sdk): pass Windows batch probe paths through the child env
-
-
-**File**: `sdk/typescript/src/harness/availability.ts` (modified, +34/-11)
-```diff
-@@ -195,26 +195,49 @@ function isWindowsBatchFile(command: string): boolean {
-     && WINDOWS_BATCH_EXTENSIONS.has(path.extname(command).toLowerCase());
- }
- 
--/** Quote one token for a `cmd.exe /s /c` line; the whole line gets outer quotes. */
--function quoteCmdToken(value: string): string {
--  return `"${value.replace(/"/g, '""')}"`;
-+const BATCH_PROBE_ENV_PREFIX = 'AGENTFIELD_PROBE_ARG_';
-+
-+/**
-+ * Build a `cmd.exe` invocation for a `.cmd`/`.bat` shim. Node refuses to spawn
-+ * batch files without a shell (CVE-2024-27980), so they have to go through
-+ * cmd.exe. The `/c` line is a fixed template of `%VAR%` references; the path
-+ * and arguments travel in the child's environment. cmd.exe expands each
-+ * variable once, after it has split the line, and the template quotes every
-+ * reference, so `&`, `^`, `(`, `%` and spaces in a path stay literal. Passing
-+ * the path as a bare argv element instead breaks on `&` and `(x86)` because
-+ * cmd.exe without `/s` drops the quotes Node adds.
-+ */
-+function batchProbeInvocation(command: string[]): {
-+  file: string;
-+  args: string[];
-+  env: NodeJS.ProcessEnv;
-+} {
-+  const env: NodeJS.ProcessEnv = { ...process.env };
-+  const tokens = command.map((value, index) => {
-+    const name = `${BATCH_PROBE_ENV_PREFIX}${index}`;
-+    env[name] = value;
-+    return `"%${name}%"`;
-+  });
-+  return {
-+    file: process.env.ComSpec ?? 'cmd.exe',
-+    // /s strips only the outermost quote pair, leaving each "%VAR%" quoted.
-+    // /v:off keeps ! in a path literal even if delayed expansion is enabled.
-+    args: ['/d', '/v:off', '/s', '/c', `"${tokens.join(' ')}"`],
-+    env,
-+  };
- }
- 
- async function defaultVersionProbe(command: string[]): Promise<string> {
-   const { execFile } = await import('node:child_process');
-   return new Promise((resolve, reject) => {
--    // Node refuses to spawn batch files without a shell (CVE-2024-27980), so
--    // Windows .cmd/.bat shims run through cmd.exe. The /s outer-quote form
--    // keeps resolved paths containing spaces intact.
-     const batch = isWindowsBatchFile(command[0]);
--    const file = batch ? (process.env.ComSpec ?? 'cmd.exe') : command[0];
--    const args = batch
--      ? ['/d', '/s', '/c', `"${command.map(quoteCmdToken).join(' ')}"`]
--      : command.slice(1);
-+    const { file, args, env } = batch
-+      ? batchProbeInvocation(command)
-+      : { file: command[0], args: command.slice(1), env: process.env };
-     execFile(
-       file,
-       args,
--      { timeout: 2_000, windowsHide: true, windowsVerbatimArguments: batch },
-+      { timeout: 2_000, windowsHide: true, windowsVerbatimArguments: batch, env },
-       (error, stdout, stderr) => {
-         if (error) {
-           reject(error);
-```
-
-**File**: `sdk/typescript/tests/harness_doctor.test.ts` (modified, +19/-4)
-```diff
-@@ -207,21 +207,36 @@ describe('harness provider availability', () => {
-     expect(health).toMatchObject({ version: 'opencode 1.0.0', usable: true, issues: [] });
-   });
- 
--  it('routes Windows batch shims through cmd.exe for the default version probe', async () => {
-+  it('keeps a Windows batch shim path out of the cmd.exe command line', async () => {
-+    // Locks the invocation contract only. The mock does not execute cmd.exe.
-     const platform = Object.getOwnPropertyDescriptor(process, 'platform');
-     Object.defineProperty(process, 'platform', { value: 'win32', configurable: true });
-     mockExecFileOutput('codex-cli 9.9.9\n');
-+    const shim = 'C:\\Program Files (x86)\\R&D ^%x%!\\npm\\codex.cmd';
- 
-     try {
-       const [health] = await harnessDoctor(['codex'], {
-         env: {},
--        resolveBinary: () => 'C:\\Program Files\\npm\\codex.cmd',
-+        resolveBinary: () => shim,
-       });
- 
-       expect(execFileMock).toHaveBeenCalledWith(
-         process.env.ComSpec ?? 'cmd.exe',
--        ['/d', '/s', '/c', '""C:\\Program Files\\npm\\codex.cmd" "--version""'],
--        expect.objectContaining({ windowsHide: true, windowsVerbatimArguments: true }),
-+        [
-+          '/d',
-+          '/v:off',
-+          '/s',
-+          '/c',
-+          '""%AGENTFIELD_PROBE_ARG_0%" "%AGENTFIELD_PROBE_ARG_1%""',
-+        ],
-+        expect.objectContaining({
-+          windowsHide: true,
-+          windowsVerbatimArguments: true,
-+          env: expect.objectContaining({
-+            AGENTFIELD_PROBE_ARG_0: shim,
-+            AGENTFIELD_PROBE_ARG_1: '--version',
-+          }),
-+        }),
-         expect.any(Function)
-       );
-       expect(health).toMatchObject({ version: 'codex-cli 9.9.9', usable: true, issues: [] });
-```
-
----
-
-### Incident Patch 7: `8805c960` (2026-09-25)
-**Commit Message**: fix(sdk/python): skip schema output dir for schema-free harness runs (#1072)
-
-HarnessRunner.run() allocated the per-run .agentfield-out-* directory
-before dispatching the provider even when schema is None. That directory
-only ever holds .agentfield_output.json (#684, #891), and every consumer
-of it is already inside an `if schema is not None` guard, so a text-only
-run paid a filesystem write it never read back. When the project root
-could not accept one — a read-only mount, an immutable CI workspace — a
-plain permission_mode="plan" call failed during setup, before the coding
-agent was invoked at all.
-
-Allocate the directory only for schema-bearing runs. Their per-run
-isolation and cleanup are unchanged, so concurrent runs sharing one cwd
-still cannot overwrite or delete each other's output.
-
-Refs #684, #891
-
-**File**: `sdk/python/agentfield/harness/_runner.py` (modified, +12/-9)
-```diff
-@@ -294,15 +294,18 @@ async def run(
-         # project_dir, or cwd when project_dir is unset. Besides keeping the file
-         # inside the agent root, this prevents concurrent runs sharing one cwd
-         # from overwriting or deleting each other's fixed output filename.
--        resolved_project_dir = options.get("project_dir")
--        if isinstance(resolved_project_dir, str) and resolved_project_dir:
--            base_dir = resolved_project_dir
--        else:
--            base_dir = resolved_cwd
--        os.makedirs(base_dir, exist_ok=True)
--        temp_output_dir: Optional[str] = tempfile.mkdtemp(
--            prefix=".agentfield-out-", dir=base_dir
--        )
-+        # A schema-free run never writes or reads that file, so it must not need
-+        # a writable root either: allocating one unconditionally aborted
-+        # text-only permission_mode="plan" dispatches before the provider ran.
-+        temp_output_dir: Optional[str] = None
-+        if schema is not None:
-+            resolved_project_dir = options.get("project_dir")
-+            if isinstance(resolved_project_dir, str) and resolved_project_dir:
-+                base_dir = resolved_project_dir
-+            else:
-+                base_dir = resolved_cwd
-+            os.makedirs(base_dir, exist_ok=True)
-+            temp_output_dir = tempfile.mkdtemp(prefix=".agentfield-out-", dir=base_dir)
-         output_dir = temp_output_dir
- 
-         # schema_mode selects how the agent is asked to produce the output:
-```
-
-**File**: `sdk/python/tests/test_harness_runner.py` (modified, +33/-0)
-```diff
-@@ -240,6 +240,39 @@ async def test_run_without_schema_returns_plain_harness_result(tmp_path):
-     assert result.session_id == "sess-1"
- 
- 
-+@pytest.mark.asyncio
-+async def test_run_without_schema_does_not_require_writable_project_dir(tmp_path):
-+    """A schema-free run must reach the provider without allocating artifacts.
-+
-+    The per-run ``.agentfield-out-*`` directory only exists to hold the schema
-+    output file (#684, #891). Allocating it unconditionally aborted a text-only
-+    ``permission_mode="plan"`` run during setup, before the provider was ever
-+    dispatched, whenever the project root could not be written to.
-+    """
-+    blocker = tmp_path / "blocker.txt"
-+    blocker.write_text("not a directory", encoding="utf-8")
-+    # Cannot be created on any platform: its parent is a regular file.
-+    unwritable_root = blocker / "project"
-+
-+    provider = MockProvider([RawResult(result="plan text")])
-+    runner = HarnessRunner()
-+
-+    with patch("agentfield.harness._runner.build_provider", return_value=provider):
-+        result = await runner.run(
-+            "hello",
-+            provider="codex",
-+            permission_mode="plan",
-+            cwd=str(tmp_path),
-+            project_dir=str(unwritable_root),
-+        )
-+
-+    assert provider.call_count == 1, "schema-free run must dispatch the provider"
-+    assert result.is_error is False
-+    assert result.result == "plan text"
-+    assert result.parsed is None
-+    assert list(tmp_path.glob(".agentfield-out-*")) == []
-+
-+
- @pytest.mark.asyncio
- async def test_run_with_schema_injects_prompt_suffix_and_parses_output(tmp_path):
-     provider = FileWritingProvider(json.dumps({"name": "ok", "count": 1}))
-```
-
----
-
-### Incident Patch 8: `2f41660b` (2026-09-21)
-**Commit Message**: fix(control-plane): don't reap a parent whose child just finished (#1059) (#1063)
-
-* fix(control-plane): don't reap a parent whose child just finished
-
-Closes #1059. The stale reaper could time out a running parent in the
-brief window (~50-600ms) between its child reaching a terminal state and
-the parent posting its own result. The parent's own updated_at does not
-move while it waits on the child, and the existing guard only skipped a
-parent while it had a non-terminal child. The moment the child posted
-succeeded, the guard vanished and nothing refreshed the parent's clock,
-so the reaper could mark the parent (and its workflow) timeout, and the
-parent's real success callback was then rejected with HTTP 409.
-
-Fix (issue's Option 1, query-contained): in MarkStaleExecutions and
-MarkStaleWorkflowExecutions, also skip a parent when a child reached a
-terminal state after the cutoff (COALESCE(c.completed_at, c.updated_at)
-> cutoff). A child that finished long before the cutoff no longer
-shields the parent, so genuinely stuck parents are still reaped and
-orphan cleanup keeps working.
-
-Timeout children are excluded from the shield (c.status != 'timeout'):
-the reaper's own kills set a recent
-
-**File**: `control-plane/internal/storage/execution_records.go` (modified, +79/-15)
-```diff
-@@ -31,6 +31,23 @@ func (ls *LocalStorage) staleTimestampExpr(col string) string {
- 	return "julianday(" + col + ")"
- }
- 
-+// childTerminalRecencyExpr returns an expression for "the later of a child's
-+// control-plane record time (updated_at) and its agent-reported completion
-+// time (completed_at)". completed_at is stored verbatim from the agent, so on a
-+// skewed agent clock or a callback that took a while to land it can already be
-+// older than the cutoff at the moment the control plane writes the terminal row
-+// (issue #1059 review). updated_at is the control plane's own write clock, so
-+// taking the maximum shields the parent whenever EITHER clock says the child
-+// finished after the cutoff. On the executions table a terminal row's
-+// updated_at is frozen (terminal->terminal is rejected), so this cannot shield
-+// indefinitely.
-+func (ls *LocalStorage) childTerminalRecencyExpr() string {
-+	if ls.requireSQLDB().Mode() == "postgres" {
-+		return "GREATEST(COALESCE(c.completed_at, c.updated_at), COALESCE(c.updated_at, c.completed_at))"
-+	}
-+	return "MAX(julianday(COALESCE(c.completed_at, c.updated_at)), julianday(COALESCE(c.updated_at, c.completed_at)))"
-+}
-+
- // maxNodesForDepthCalc caps the number of executions for which we compute DAG depth to avoid heavy queries.
- const maxNodesForDepthCalc = 1000
- 
-@@ -1180,11 +1197,17 @@ func parseTimeString(value string) (time.Time, error) {
- // non-terminal child are skipped. A parent's own updated_at stops moving while
- // it waits, so without this a long child call — one agent doing many minutes of
- // work in a single request — reaps its whole ancestor chain even though real
--// work is happening. Deliberately no recency test on the child: the chain
--// unwinds bottom-up instead. If work genuinely stops, the leaf goes stale and
--// is reaped first, which makes its parent childless and eligible on the next
--// sweep, and so on up. Nothing is stuck forever; it just takes one sweep per
--// level.
-+// work is happening.
-+//
-+// A child that reached a terminal state after the cutoff also shields its parent
-+// for one stale window, covering the brief gap between a child reporting success
-+// and the parent posting its own result (issue #1059). timeout children are
-+// excluded from this so the reaper's own kills cannot perpetuate a shield.
-+// Consequence: a non-timeout child that just finished delays its parent's reap
-+// by up to one stale window, so the bottom-up chain unwind can take a stale
-+// window per level rather than a single sweep. Nothing is stuck forever — a
-+// child that finished before the cutoff no longer shields, so the chain always
-+// drains.
- // The conditional UPDATE re-evaluates the staleness predicates so a row that
- // gains activity after selection is left alone.
- func (ls *LocalStorage) MarkStaleExecutions(ctx context.Context, staleAfter time.Duration, limit int) (int, error) {
-@@ -1205,6 +1228,14 @@ func (ls *LocalStorage) markStaleExecutions(ctx context.Context, staleAfter time
- 	tsExpr := ls.staleTimestampExpr("COALESCE(updated_at, created_at, started_at)")
- 	executionUpdateTSExpr := ls.staleTimestampExpr("COALESCE(e.updated_at, e.created_at, e.started_at)")
- 	cutoffExpr := ls.staleTimestampExpr("?")
-+	// A child that reached a terminal state after the cutoff also shields its
-+	// parent. When a child finishes, the parent needs a brief window (~50-600ms)
-+	// to receive the result and post its own status; the parent's own updated_at
-+	// does not move while it waits. Without this the reaper can time the parent
-+	// out in that window, and the parent's real success callback then gets a 409.
-+	// A child that finished long before the cutoff no longer shields the parent,
-+	// so a genuinely stuck parent is still reaped (see issue #1059).
-+	childRecencyTSExpr := ls.childTerminalRecencyExpr()
- 	rows, err := db.QueryContext(ctx, `
- 		SELECT execution_id, started_at
- 		FROM executions e
-@@ -1213,10 +1244,13 @@ func (ls *LocalStorage) markStaleExecutions(ctx context.Context, staleAfter time
- 		  AND NOT EXISTS (
- 		      SELECT 1 FROM executions c
- 		      WHERE c.parent_execution_id = e.execution_id
--		        AND c.status IN ('running', 'pending', 'queued')
-+		        AND (
-+		            c.status IN ('running', 'pending', 'queued')
-+		            OR (c.status != 'timeout' AND `+childRecencyTSExpr+` > `+cutoffExpr+`)
-+		        )
- 		  )
- 		ORDER BY `+tsExpr+` ASC
--		LIMIT ?`, cutoff, limit)
-+		LIMIT ?`, cutoff, cutoff, limit)
- 	if err != nil {
- 		return 0, fmt.Errorf("query stale executions: %w", err)
- 	}
-@@ -1264,7 +1298,10 @@ func (ls *LocalStorage) markStaleExecutions(ctx context.Context, staleAfter time
- 		  AND NOT EXISTS (
- 		      SELECT 1 FROM executions c
- 		      WHERE c.parent_execution_id = e.execution_id
--		        AND c.status IN ('running', 'pending', 'queued')
-+		        AND (
-+		            c.status IN ('running', 'pending', 'queued')
-+		            OR (c.status != 'timeout' AND `+childRecencyTSExpr+` > `+cutoffExpr+`
-```
-
-**File**: `control-plane/internal/storage/retry_stale_test.go` (modified, +35/-2)
-```diff
-@@ -669,15 +669,17 @@ func TestRetryStaleWorkflowExecutions_TerminalChildDoesNotShieldParent(t *testin
- 	backdateExecutionUpdatedAt(t, ls, "executions", parentID, staleAt)
- 
- 	const childID = "exec-retry-terminal-child"
--	childWorkflow := retryTestWorkflow(childID, now)
-+	// The child finished long before the cutoff (staleAt), so it is not live
-+	// work and must not shield its stale parent from the retry sweep.
-+	childWorkflow := retryTestWorkflow(childID, staleAt)
- 	childWorkflow.Status = "succeeded"
- 	childWorkflow.ParentExecutionID = strPtr(parentID)
- 	require.NoError(t, ls.StoreWorkflowExecution(ctx, childWorkflow))
- 
- 	retried, err := ls.RetryStaleWorkflowExecutions(ctx, 30*time.Minute, 3, 100)
- 	require.NoError(t, err)
- 	require.Equal(t, []string{parentID}, retried,
--		"a terminal child is not live work and must not shield its stale parent")
-+		"a long-finished terminal child is not live work and must not shield its stale parent")
- 
- 	parent, err := ls.GetWorkflowExecution(ctx, parentID)
- 	require.NoError(t, err)
-@@ -693,6 +695,37 @@ func TestRetryStaleWorkflowExecutions_TerminalChildDoesNotShieldParent(t *testin
- 	require.Equal(t, "succeeded", child.Status, "the terminal child must stay terminal")
- }
- 
-+// TestRetryStaleWorkflowExecutions_RecentlyFinishedChildShieldsParent guards
-+// the retry half of issue #1059: the retry sweep runs before both reapers when
-+// max_retries > 0, so without the recent-terminal-child shield it resets a
-+// live parent to pending in the brief window between a child reporting success
-+// and the parent posting its own result.
-+func TestRetryStaleWorkflowExecutions_RecentlyFinishedChildShieldsParent(t *testing.T) {
-+	ls, ctx := setupRetryTestStorage(t)
-+	now := time.Now().UTC()
-+	staleAt := now.Add(-2 * time.Hour)
-+
-+	const parentID = "exec-retry-parent-recent-child"
-+	require.NoError(t, ls.StoreWorkflowExecution(ctx, retryTestWorkflow(parentID, staleAt)))
-+	require.NoError(t, ls.CreateExecutionRecord(ctx, retryTestExecution(parentID, staleAt)))
-+	backdateExecutionUpdatedAt(t, ls, "executions", parentID, staleAt)
-+
-+	const childID = "exec-retry-recent-child"
-+	childWorkflow := retryTestWorkflow(childID, now) // just succeeded
-+	childWorkflow.Status = "succeeded"
-+	childWorkflow.ParentExecutionID = strPtr(parentID)
-+	require.NoError(t, ls.StoreWorkflowExecution(ctx, childWorkflow))
-+
-+	retried, err := ls.RetryStaleWorkflowExecutions(ctx, 30*time.Minute, 3, 100)
-+	require.NoError(t, err)
-+	require.Empty(t, retried, "parent must not be retried while its child only just finished")
-+
-+	parent, err := ls.GetWorkflowExecution(ctx, parentID)
-+	require.NoError(t, err)
-+	require.Equal(t, "running", parent.Status)
-+	require.Equal(t, 0, parent.RetryCount)
-+}
-+
- // TestRetryStaleWorkflowExecutions_BatchReportsOnlyMovedCandidates covers the
- // batch accounting contract: when one sweep selects several stale candidates
- // and only some of them lose their paired execution to a heartbeat between the
-```
-
-**File**: `control-plane/internal/storage/stale_execution_parent_test.go` (modified, +155/-4)
-```diff
-@@ -96,10 +96,10 @@ func TestMarkStaleExecutions_UnwindsChainBottomUp(t *testing.T) {
- 	require.Equal(t, "timeout", executionStatus(t, ls, "exec-build"))
- }
- 
--// TestMarkStaleExecutions_TerminalChildDoesNotShieldParent: only a
--// *non-terminal* child protects a parent. A finished child must not keep a
--// genuinely stuck parent alive.
--func TestMarkStaleExecutions_TerminalChildDoesNotShieldParent(t *testing.T) {
-+// TestMarkStaleExecutions_LongFinishedChildDoesNotShieldParent: a child that
-+// reached a terminal state *before* the cutoff no longer protects a genuinely
-+// stuck parent, so orphan cleanup keeps working (issue #1059 acceptance).
-+func TestMarkStaleExecutions_LongFinishedChildDoesNotShieldParent(t *testing.T) {
- 	ls, ctx := setupTestLocalStorage(t)
- 	now := time.Now().UTC()
- 
-@@ -115,6 +115,10 @@ func TestMarkStaleExecutions_TerminalChildDoesNotShieldParent(t *testing.T) {
- 		ParentExecutionID: strPtr("exec-build"),
- 	}
- 	require.NoError(t, ls.CreateExecutionRecord(ctx, done))
-+	// The child finished an hour ago — well before the 30-minute cutoff — so it
-+	// must not shield the stuck parent. CreateExecutionRecord stamps updated_at
-+	// at "now", so backdate it to make the completion genuinely old.
-+	backdateExecutionUpdatedAt(t, ls, "executions", "exec-done", now.Add(-time.Hour))
- 
- 	reaped, err := ls.MarkStaleExecutions(ctx, 30*time.Minute, 100)
- 	require.NoError(t, err)
-@@ -123,6 +127,63 @@ func TestMarkStaleExecutions_TerminalChildDoesNotShieldParent(t *testing.T) {
- 	require.Equal(t, "succeeded", executionStatus(t, ls, "exec-done"), "terminal child untouched")
- }
- 
-+// TestMarkStaleExecutions_RecentlyFinishedChildShieldsParent guards issue #1059:
-+// a child that reached a terminal state *after* the cutoff protects its parent
-+// during the brief window between the child reporting success and the parent
-+// posting its own result. Without this the parent is timed out mid-flight and
-+// its real success callback is rejected with HTTP 409.
-+func TestMarkStaleExecutions_RecentlyFinishedChildShieldsParent(t *testing.T) {
-+	ls, ctx := setupTestLocalStorage(t)
-+	now := time.Now().UTC()
-+
-+	// Parent is stale by its own clock (idle 1h while it waited on the child).
-+	newRunningExecution(t, ls, "exec-build", "", time.Hour)
-+	// Child just succeeded (updated_at ~= now, well after the 30-minute cutoff).
-+	done := &types.Execution{
-+		ExecutionID:       "exec-done",
-+		RunID:             "run-parented",
-+		AgentNodeID:       "agent-1",
-+		ReasonerID:        "reasoner-1",
-+		NodeID:            "node-1",
-+		Status:            "succeeded",
-+		StartedAt:         now.Add(-2 * time.Hour),
-+		ParentExecutionID: strPtr("exec-build"),
-+	}
-+	require.NoError(t, ls.CreateExecutionRecord(ctx, done))
-+
-+	reaped, err := ls.MarkStaleExecutions(ctx, 30*time.Minute, 100)
-+	require.NoError(t, err)
-+	require.Equal(t, 0, reaped, "parent must survive while its child only just finished")
-+	require.Equal(t, "running", executionStatus(t, ls, "exec-build"))
-+}
-+
-+// TestMarkStaleExecutions_TimeoutChildDoesNotShieldParent: a child the reaper
-+// itself timed out must not shield its parent, even though its timeout is
-+// recent — otherwise a reaped leaf would keep its stuck ancestor alive and the
-+// bottom-up unwind (one level per sweep) would stall.
-+func TestMarkStaleExecutions_TimeoutChildDoesNotShieldParent(t *testing.T) {
-+	ls, ctx := setupTestLocalStorage(t)
-+	now := time.Now().UTC()
-+
-+	newRunningExecution(t, ls, "exec-build", "", time.Hour)
-+	timedOut := &types.Execution{
-+		ExecutionID:       "exec-timeout",
-+		RunID:             "run-parented",
-+		AgentNodeID:       "agent-1",
-+		ReasonerID:        "reasoner-1",
-+		NodeID:            "node-1",
-+		Status:            "timeout",
-+		StartedAt:         now.Add(-2 * time.Hour),
-+		ParentExecutionID: strPtr("exec-build"),
-+	}
-+	require.NoError(t, ls.CreateExecutionRecord(ctx, timedOut))
-+
-+	reaped, err := ls.MarkStaleExecutions(ctx, 30*time.Minute, 100)
-+	require.NoError(t, err)
-+	require.Equal(t, 1, reaped)
-+	require.Equal(t, "timeout", executionStatus(t, ls, "exec-build"))
-+}
-+
- // TestMarkStaleExecutions_UnrelatedStuckExecutionStillReaped: the new skip is
- // scoped to actual parents — an unrelated stuck execution is still collected in
- // the same sweep as a protected chain.
-@@ -139,3 +200,93 @@ func TestMarkStaleExecutions_UnrelatedStuckExecutionStillReaped(t *testing.T) {
- 	require.Equal(t, "timeout", executionStatus(t, ls, "exec-orphan"))
- 	require.Equal(t, "running", executionStatus(t, ls, "exec-build"))
- }
-+
-+// workflowStatus returns the current status of a workflow_executions row.
-+func workflowStatus(t *testing.T, ls *LocalStorage, id string) string {
-+	t.Helper()
-+	wf, err := ls.GetWorkflowExecution(t.Context(), id)
-+	require.NoError(t, err)
-+	return wf.Status
-+}
-+
-+// TestMarkStaleWorkflowExecutions_RecentlyFinishedChildShieldsParent is the
-+// workflow-table half of the issue #1059 fix: a parent workflow that is stale
-+// by its own clock must not be reaped
-```
-
----
-
-### Incident Patch 9: `00c8844e` (2026-09-21)
-**Commit Message**: fix(sdk/python): stop the structured log stdout write from blocking the event loop (#1066)
-
-* feat(sdk/python): add a bounded, non-blocking stdout writer for log lines
-
-A single daemon thread drains a bounded FIFO of (stream, line) pairs.
-Deferral only engages where it can help — the caller is on a running event
-loop and the destination has a real file descriptor — so synchronous callers
-and in-memory captures keep writing inline and stay immediately visible.
-
-Under back-pressure the queue discards its oldest pending lines instead of
-blocking the producer, and the writer emits one log.dropped record per
-destination naming the count, so loss is never silent. An atexit drain
-bounded by AGENTFIELD_LOG_QUEUE_FLUSH_SECONDS covers normal shutdown, and an
-at-fork hook gives the child fresh state.
-
-Refs #985
-
-Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-
-* fix(sdk/python): stop the structured log mirror from blocking the event loop
-
-_emit_structured_record printed inline on the calling thread, which in an
-agent node is the event loop, into the _TeeTextIO wrapper over a real pipe.
-A consumer that stops draining that pipe froze the whole loop for the
-duration — heartbeats, i
-
-**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +3/-0)
-```diff
-@@ -200,6 +200,9 @@ AGENTFIELD_CONNECTOR_CAP_DID_MANAGEMENT=false
- 
- - `AGENTFIELD_LOGS_ENABLED` (default: `true`): Enables Python, Go, and TypeScript agent-node stdout/stderr capture and the `/agentfield/v1/logs` endpoint. This controls capture, not control-plane execution-log dispatch.
- - `AGENTFIELD_LOG_STDOUT` (read by Python, Go, and TypeScript; default: on): Controls whether structured execution records are mirrored to stdout as JSON. Set to `0`, `false`, `no`, or `off` (case-insensitive, surrounding whitespace ignored) to suppress the mirror; control-plane dispatch continues unchanged for records carrying an execution ID. Any other value — including `1`, `true`, `yes`, an unset variable and a set-but-empty one — keeps the mirror on, so a typo cannot silently drop log output. All three SDKs skip control-plane dispatch for a record with no execution id, so such records are stdout-only and disabling the mirror drops them entirely. Because the node-log ring behind `GET /agentfield/v1/logs` is fed by the process's captured stdout, disabling the mirror also removes structured records from that ring.
-+- `AGENTFIELD_LOG_QUEUE` (Python only; default: on): Defers SDK logger writes to a dedicated writer when logging from a running event loop to stdout backed by a real file descriptor. Set to `0`, `false`, `no`, or `off` (case-insensitive, surrounding whitespace ignored) to restore inline synchronous writes; any other value, including an unset or set-but-empty value, keeps deferral enabled. Calls outside a running event loop and writes to captures such as `StringIO` remain inline unless an SDK log backlog already exists. Structured and human-readable SDK logger lines share the FIFO and retain their relative order, but ordering between those lines and a user's own bare `print()` calls is not guaranteed.
-+- `AGENTFIELD_LOG_QUEUE_SIZE` (Python only; default: `1024` lines): Maximum number of pending SDK logger lines. Integers below 1 are clamped to 1 and non-integers use the default. When stdout back-pressure fills the queue, the oldest pending lines are discarded without blocking the producer; once a later line can be written to the same output destination, a structured `log.dropped` warning reports the number discarded for that destination.
-+- `AGENTFIELD_LOG_QUEUE_FLUSH_SECONDS` (Python only; default: `2.0` seconds): Bounds the interpreter-exit wait for pending SDK logger lines. Negative values are clamped to zero; invalid and non-finite values use the default. A permanently stalled stdout therefore cannot hang normal interpreter shutdown. `os._exit()` bypasses Python's exit handlers and this flush; use `AGENTFIELD_LOG_QUEUE=false` when a process requires inline writes before such an exit.
- - `AGENTFIELD_LOG_TRUNCATE` (Python default: `200` characters): Truncates human-readable plain log messages and visible plain-log payloads. It does not truncate structured records.
- - `AGENTFIELD_LOG_PAYLOADS` (Python default: `false`): Shows payloads in human-readable plain logs when `true`. Structured execution attributes are unaffected.
- - `AGENTFIELD_LOG_MAX_LINE_BYTES` (default: `16384`): Maximum process-log line size in bytes. Python clamps every integer below 256 (including zero and negatives) to 256; Go and TypeScript instead reject values below 256 and use the 16384-byte default. Python and Go reject non-integers, while TypeScript prefix-parses them (`512abc` becomes `512`). Thus a value of `100` yields an effective cap of 256 in Python and 16384 in Go and TypeScript: in those two SDKs there is no minimum, only a rejection *upward* to the default, so asking for a smaller cap silently gives you a 64x larger one. In Python this cap applies both to the stdout/stderr tee feeding `/agentfield/v1/logs` and to structured-mirror elision; the mirror elides attributes, then the message or entire record as needed so the complete JSON envelope remains valid JSON within the cap.
-```
-
-**File**: `sdk/python/README.md` (modified, +1/-0)
-```diff
-@@ -187,6 +187,7 @@ for mount layout, `call_local`, error behavior, and limitations.
- ## Logging
- 
- - `AGENTFIELD_LOG_STDOUT` controls the on-by-default structured JSON mirror. Set it to `0`, `false`, `no`, or `off` to disable the mirror; execution-scoped records still dispatch to the control plane.
-+- `AGENTFIELD_LOG_QUEUE` controls the Python SDK's bounded stdout writer queue. It is enabled by default for real-fd writes made from a running event loop; see the environment-variable reference for queue sizing, overflow, shutdown, and opt-out details.
- - `AGENTFIELD_LOG_MAX_LINE_BYTES` defaults to 16384 bytes and clamps any integer below 256 to 256. It limits both captured stdout/stderr lines and structured-mirror records; non-integers use the default.
- - `AGENTFIELD_LOGS_ENABLED` controls stdout/stderr capture and the node logs endpoint only, not control-plane execution-log dispatch.
- - `AGENTFIELD_LOG_LEVEL` controls human-readable Python SDK logging and defaults to `WARNING`.
-```
-
-**File**: `sdk/python/agentfield/log_writer.py` (added, +302/-0)
-```diff
-@@ -0,0 +1,302 @@
-+"""Bounded, non-blocking stdout writer for SDK log lines."""
-+
-+from __future__ import annotations
-+
-+import asyncio
-+import atexit
-+import json
-+import math
-+import os
-+import queue
-+import sys
-+import threading
-+import time
-+from datetime import datetime, timezone
-+from typing import Any, Dict, Optional, TextIO, Tuple, cast
-+
-+
-+_DEFAULT_QUEUE_SIZE = 1024
-+_DEFAULT_FLUSH_SECONDS = 2.0
-+_FALSE_VALUES = ("0", "false", "no", "off")
-+
-+_state_lock = threading.Lock()
-+_queue: "queue.Queue[Optional[Tuple[TextIO, str]]]" = queue.Queue(
-+    maxsize=_DEFAULT_QUEUE_SIZE
-+)
-+_worker: Optional[threading.Thread] = None
-+_dropped: Dict[TextIO, int] = {}
-+_active = False
-+
-+
-+def _queue_enabled() -> bool:
-+    value = os.getenv("AGENTFIELD_LOG_QUEUE", "true").strip().lower()
-+    return value not in _FALSE_VALUES
-+
-+
-+def _queue_size() -> int:
-+    raw = os.getenv("AGENTFIELD_LOG_QUEUE_SIZE", str(_DEFAULT_QUEUE_SIZE))
-+    try:
-+        return max(1, int(raw, 10))
-+    except ValueError:
-+        return _DEFAULT_QUEUE_SIZE
-+
-+
-+def _flush_seconds() -> float:
-+    raw = os.getenv("AGENTFIELD_LOG_QUEUE_FLUSH_SECONDS", str(_DEFAULT_FLUSH_SECONDS))
-+    try:
-+        value = float(raw)
-+    except ValueError:
-+        return _DEFAULT_FLUSH_SECONDS
-+    if not math.isfinite(value):
-+        return _DEFAULT_FLUSH_SECONDS
-+    return max(0.0, value)
-+
-+
-+def _has_real_fileno(stream: TextIO) -> bool:
-+    try:
-+        return isinstance(stream.fileno(), int)
-+    except Exception:
-+        return False
-+
-+
-+def _has_running_loop() -> bool:
-+    try:
-+        asyncio.get_running_loop()
-+    except RuntimeError:
-+        return False
-+    return True
-+
-+
-+def _write_line(stream: TextIO, line: str) -> bool:
-+    try:
-+        stream.write(line + "\n")
-+        stream.flush()
-+    except Exception:
-+        return False
-+    return True
-+
-+
-+def _drop_marker(count: int) -> str:
-+    timestamp = (
-+        datetime.now(timezone.utc)
-+        .isoformat(timespec="milliseconds")
-+        .replace("+00:00", "Z")
-+    )
-+    return json.dumps(
-+        {
-+            "ts": timestamp,
-+            "level": "warning",
-+            "source": "sdk.python.logger",
-+            "event_type": "log.dropped",
-+            "message": (f"dropped {count} structured log lines (stdout back-pressure)"),
-+            "attributes": {"dropped": count},
-+            "system_generated": True,
-+        },
-+        separators=(",", ":"),
-+    )
-+
-+
-+def _worker_main(
-+    work_queue: "queue.Queue[Optional[Tuple[TextIO, str]]]",
-+) -> None:
-+    global _active, _worker
-+
-+    current = threading.current_thread()
-+    try:
-+        while True:
-+            item = work_queue.get()
-+            if item is None:
-+                work_queue.task_done()
-+                return
-+
-+            stream, line = item
-+            dropped = 0
-+            with _state_lock:
-+                _active = True
-+                dropped = _dropped.pop(stream, 0)
-+
-+            try:
-+                if dropped and not _write_line(stream, _drop_marker(dropped)):
-+                    with _state_lock:
-+                        _dropped[stream] = _dropped.get(stream, 0) + dropped
-+                _write_line(stream, line)
-+            except Exception:
-+                # The worker is deliberately immortal for ordinary failures.
-+                pass
-+            finally:
-+                with _state_lock:
-+                    _active = False
-+                work_queue.task_done()
-+    except Exception:
-+        # Queue and marker failures must not escape the daemon thread either.
-+        pass
-+    finally:
-+        with _state_lock:
-+            _active = False
-+            if _worker is current:
-+                _worker = None
-+
-+
-+def _start_worker_locked(
-+    work_queue: "queue.Queue[Optional[Tuple[TextIO, str]]]",
-+) -> bool:
-+    global _worker
-+
-+    if _worker is not None and _worker.is_alive():
-+        return True
-+
-+    worker = threading.Thread(
-+        target=_worker_main,
-+        args=(work_queue,),
-+        name="agentfield-log-writer",
-+        daemon=True,
-+    )
-+    _worker = worker
-+    try:
-+        worker.start()
-+    except Exception:
-+        _worker = None
-+        return False
-+    return True
-+
-+
-+def _refresh_queue_locked() -> None:
-+    global _queue
-+
-+    configured_size = _queue_size()
-+    worker_alive = _worker is not None and _worker.is_alive()
-+    if (
-+        not worker_alive
-+        and _queue.unfinished_tasks == 0
-+        and _queue.maxsize != configured_size
-+    ):
-+        _queue = queue.Queue(maxsize=configured_size)
-+
-+
-+def emit_line(line: str, stream: Optional[TextIO] = None) -> None:
-+    """Write one line, deferring real-fd writes made from an event loop."""
-+    resolved_stream = stream if stream is not None else cast(TextIO, sys.stdout)
-+    if not _queue_enabled() or not _has_real_fileno(resolved_stream):
-+        _write_line(resolved_stream, line)
-+        return
-+
-+    running_loop = _has_running_loop()
-
-```
-
-**File**: `sdk/python/agentfield/logger.py` (modified, +37/-4)
-```diff
-@@ -11,12 +11,12 @@
- import json
- import logging
- import os
--import sys
- import threading
- from datetime import datetime, timezone
- from enum import Enum
- from typing import TYPE_CHECKING, Any, Dict, Optional
- 
-+from . import log_writer
- from .execution_context import ExecutionContext, get_current_context
- 
- if TYPE_CHECKING:
-@@ -44,13 +44,46 @@ class LogLevel(Enum):
-     ERROR = "ERROR"
- 
- 
-+class _UncontendedHandlerLock:
-+    """A no-op stand-in for ``logging.Handler``'s serialization lock.
-+
-+    ``Handler.handle()`` holds that lock across ``emit()``. A synchronous
-+    thread blocked inline on a stalled stdout would therefore hold it for the
-+    length of the stall and block an event-loop caller before it ever reached
-+    the bounded writer — the exact stall this module exists to remove. The
-+    writer serializes stdout itself, so the handler needs no lock of its own.
-+
-+    ``None`` is not usable here: Python 3.13 changed ``handle()`` from
-+    ``acquire()``/``release()`` (which skip a falsy lock) to ``with
-+    self.lock:``, which raises ``TypeError`` on ``None``.
-+    """
-+
-+    def acquire(self, blocking: bool = True, timeout: float = -1) -> bool:
-+        return True
-+
-+    def release(self) -> None:
-+        pass
-+
-+    def __enter__(self) -> "_UncontendedHandlerLock":
-+        return self
-+
-+    def __exit__(self, *exc_info: Any) -> bool:
-+        return False
-+
-+    def _at_fork_reinit(self) -> None:
-+        pass
-+
-+
- class _DynamicStdoutHandler(logging.Handler):
-     """A handler that resolves stdout at emit time so a later tee sees logs."""
- 
-+    def createLock(self) -> None:
-+        """Let the shared writer serialize without blocking event-loop callers."""
-+        self.lock = _UncontendedHandlerLock()  # type: ignore[assignment]
-+
-     def emit(self, record: logging.LogRecord) -> None:
-         try:
--            sys.stdout.write(self.format(record) + self.terminator)
--            sys.stdout.flush()
-+            log_writer.emit_line(self.format(record))
-         except Exception:
-             # Logging is always best-effort and must not fail SDK callers.
-             self.handleError(record)
-@@ -192,7 +225,7 @@ def _emit_structured_record(self, record: Dict[str, Any]) -> Dict[str, Any]:
-         try:
-             if self._stdout_mirror_enabled():
-                 line = self._bounded_mirror_line(record)
--                print(line, file=sys.stdout, flush=True)
-+                log_writer.emit_line(line)
-         except Exception:
-             # Broken stdout and capture-ring contention must never affect execution.
-             pass
-```
-
-**File**: `sdk/python/agentfield/node_logs.py` (modified, +30/-3)
-```diff
-@@ -211,6 +211,7 @@ def isatty(self) -> bool:
- 
- _global_ring: Optional[ProcessLogRing] = None
- _tee_installed = False
-+_installed_tees: List[_TeeTextIO] = []
- 
- 
- def logs_enabled() -> bool:
-@@ -243,16 +244,42 @@ def get_ring() -> ProcessLogRing:
- 
- def install_stdio_tee() -> None:
-     """Replace sys.stdout/sys.stderr with tees into the process log ring."""
--    global _tee_installed
-+    global _installed_tees, _tee_installed
-     if _tee_installed or not logs_enabled():
-         return
-     ring = get_ring()
-     ml = max_line_bytes()
--    sys.stdout = _TeeTextIO("stdout", cast(TextIO, sys.__stdout__), ring, ml)
--    sys.stderr = _TeeTextIO("stderr", cast(TextIO, sys.__stderr__), ring, ml)
-+    stdout_tee = _TeeTextIO("stdout", cast(TextIO, sys.__stdout__), ring, ml)
-+    stderr_tee = _TeeTextIO("stderr", cast(TextIO, sys.__stderr__), ring, ml)
-+    _installed_tees = [stdout_tee, stderr_tee]
-+    sys.stdout = stdout_tee
-+    sys.stderr = stderr_tee
-     _tee_installed = True
- 
- 
-+def _after_fork_child() -> None:
-+    """Replace locks whose owning threads do not survive into a fork child."""
-+    global _follow_lock, _follow_queues
-+
-+    rings: List[ProcessLogRing] = []
-+    for tee in _installed_tees:
-+        tee._write_lock = threading.Lock()
-+        tee._buf = ""
-+        if all(tee._ring is not ring for ring in rings):
-+            rings.append(tee._ring)
-+    if _global_ring is not None and all(_global_ring is not ring for ring in rings):
-+        rings.append(_global_ring)
-+    for ring in rings:
-+        ring._lock = threading.Lock()
-+
-+    _follow_lock = threading.Lock()
-+    _follow_queues = []
-+
-+
-+if hasattr(os, "register_at_fork"):
-+    os.register_at_fork(after_in_child=_after_fork_child)
-+
-+
- def verify_internal_bearer(authorization_header: Optional[str]) -> bool:
-     token = os.getenv("AGENTFIELD_AUTHORIZATION_INTERNAL_TOKEN", "").strip()
-     if not token:
-```
-
-**File**: `sdk/python/tests/test_log_writer.py` (added, +571/-0)
-```diff
-@@ -0,0 +1,571 @@
-+import asyncio
-+import io
-+import json
-+import os
-+import tempfile
-+import threading
-+from typing import TextIO
-+
-+import pytest
-+
-+from agentfield import log_writer
-+from agentfield.logger import AgentFieldLogger
-+
-+
-+@pytest.fixture(autouse=True)
-+def reset_log_writer(monkeypatch):
-+    log_writer.shutdown(1.0)
-+    monkeypatch.delenv("AGENTFIELD_LOG_QUEUE", raising=False)
-+    monkeypatch.delenv("AGENTFIELD_LOG_QUEUE_SIZE", raising=False)
-+    monkeypatch.delenv("AGENTFIELD_LOG_QUEUE_FLUSH_SECONDS", raising=False)
-+    try:
-+        yield
-+    finally:
-+        log_writer.shutdown(1.0)
-+
-+
-+def _emit_deferred(*lines: str, stream: TextIO) -> None:
-+    async def emit() -> None:
-+        for line in lines:
-+            log_writer.emit_line(line, stream)
-+        await asyncio.sleep(0)
-+
-+    asyncio.run(emit())
-+
-+
-+class _BlockingStream:
-+    def __init__(self, stream: TextIO) -> None:
-+        self.stream = stream
-+        self.started = threading.Event()
-+        self.release = threading.Event()
-+
-+    def fileno(self) -> int:
-+        return self.stream.fileno()
-+
-+    def write(self, value: str) -> int:
-+        if not self.started.is_set():
-+            self.started.set()
-+            if not self.release.wait(2.0):
-+                raise TimeoutError("test stream was not released")
-+        return self.stream.write(value)
-+
-+    def flush(self) -> None:
-+        self.stream.flush()
-+
-+
-+class _BrokenStream:
-+    def __init__(self, fd: int) -> None:
-+        self.fd = fd
-+
-+    def fileno(self) -> int:
-+        return self.fd
-+
-+    def write(self, value: str) -> int:
-+        raise BrokenPipeError("closed")
-+
-+    def flush(self) -> None:
-+        raise BrokenPipeError("closed")
-+
-+
-+class _WriteStartedStream:
-+    def __init__(self, stream: TextIO) -> None:
-+        self.stream = stream
-+        self.started = threading.Event()
-+
-+    def fileno(self) -> int:
-+        return self.stream.fileno()
-+
-+    def write(self, value: str) -> int:
-+        self.started.set()
-+        return self.stream.write(value)
-+
-+    def flush(self) -> None:
-+        self.stream.flush()
-+
-+
-+class _MarkerFailingStream(_BlockingStream):
-+    def __init__(self, stream: TextIO) -> None:
-+        super().__init__(stream)
-+        self.marker_failed = False
-+
-+    def write(self, value: str) -> int:
-+        if not self.started.is_set():
-+            self.started.set()
-+            if not self.release.wait(2.0):
-+                raise TimeoutError("test stream was not released")
-+        if '"event_type":"log.dropped"' in value and not self.marker_failed:
-+            self.marker_failed = True
-+            raise BrokenPipeError("first marker write fails")
-+        return self.stream.write(value)
-+
-+
-+class _RecordingStream:
-+    def __init__(self, stream: TextIO) -> None:
-+        self.stream = stream
-+        self.writes: list[str] = []
-+        self.flushes = 0
-+
-+    def fileno(self) -> int:
-+        return self.stream.fileno()
-+
-+    def write(self, value: str) -> int:
-+        self.writes.append(value)
-+        return self.stream.write(value)
-+
-+    def flush(self) -> None:
-+        self.flushes += 1
-+        self.stream.flush()
-+
-+
-+@pytest.mark.unit
-+def test_full_pipe_does_not_stall_event_loop():
-+    # C1: a blocked real stdout fd cannot block producers or the event loop.
-+    read_fd, write_fd = os.pipe()
-+    os.set_blocking(write_fd, False)
-+    while True:
-+        try:
-+            os.write(write_fd, b"x" * 65536)
-+        except BlockingIOError:
-+            break
-+    os.set_blocking(write_fd, True)
-+    stream = os.fdopen(write_fd, "w", buffering=1, encoding="utf-8")
-+
-+    async def emit_with_watchdog() -> tuple[float, float]:
-+        loop = asyncio.get_running_loop()
-+        started = loop.time()
-+        worst_lag = 0.0
-+
-+        async def watchdog() -> None:
-+            nonlocal worst_lag
-+            target = loop.time()
-+            for _ in range(5):
-+                target += 0.01
-+                await asyncio.sleep(max(0.0, target - loop.time()))
-+                worst_lag = max(worst_lag, loop.time() - target)
-+
-+        async def producer() -> None:
-+            for index in range(32):
-+                log_writer.emit_line(f"queued-{index}", stream)
-+            await asyncio.sleep(0)
-+
-+        await asyncio.gather(producer(), watchdog())
-+        return loop.time() - started, worst_lag
-+
-+    elapsed, worst_lag = asyncio.run(emit_with_watchdog())
-+    assert log_writer.flush(0.01) is False
-+
-+    output = bytearray()
-+
-+    def drain() -> None:
-+        while b"queued-31\n" not in output:
-+            chunk = os.read(read_fd, 65536)
-+            if not chunk:
-+                return
-+            output.extend(chunk)
-+
-+    reader = threading.Thread(target=drain, daemon=True)
-+    reader.start()
-+    try:
-+        assert log_writer.flush(2.0) is True
-+        reader.join(2.0)
-+        assert not reader.is_alive()
-+    finally:
-+        stream.close()
-+        os.close(read_
-```
-
-**File**: `sdk/python/tests/test_logger.py` (modified, +69/-13)
-```diff
-@@ -1,6 +1,9 @@
-+import asyncio
- import io
- import json
- import logging
-+import sys
-+import tempfile
- import threading
- import time
- from unittest.mock import Mock
-@@ -17,6 +20,59 @@
- )
- 
- 
-+@pytest.mark.unit
-+def test_structured_record_from_loop_is_deferred_until_writer_drains(monkeypatch):
-+    class BlockingStream:
-+        def __init__(self, stream):
-+            self.stream = stream
-+            self.started = threading.Event()
-+            self.release = threading.Event()
-+
-+        def fileno(self):
-+            return self.stream.fileno()
-+
-+        def write(self, value):
-+            self.started.set()
-+            assert self.release.wait(2.0)
-+            return self.stream.write(value)
-+
-+        def flush(self):
-+            self.stream.flush()
-+
-+    monkeypatch.delenv("AGENTFIELD_LOG_STDOUT", raising=False)
-+    with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as target:
-+        stream = BlockingStream(target)
-+        with monkeypatch.context() as context:
-+            context.setattr("sys.stdout", stream)
-+            logger = AgentFieldLogger("structured.stdout.writer")
-+
-+            async def emit() -> None:
-+                logger._emit_structured_record({"event_type": "test"})
-+
-+            asyncio.run(emit())
-+            assert stream.started.wait(1.0)
-+            target.seek(0)
-+            assert target.read() == ""
-+
-+            stream.release.set()
-+            assert logger_module.log_writer.flush(1.0) is True
-+
-+        target.seek(0)
-+        assert json.loads(target.read()) == {"event_type": "test"}
-+
-+
-+@pytest.mark.unit
-+def test_structured_record_disabled_does_not_call_log_writer(monkeypatch):
-+    emit_line = Mock()
-+    monkeypatch.setenv("AGENTFIELD_LOG_STDOUT", "false")
-+    monkeypatch.setattr(logger_module.log_writer, "emit_line", emit_line)
-+    logger = AgentFieldLogger("structured.stdout.writer-disabled")
-+
-+    logger._emit_structured_record({"event_type": "test"})
-+
-+    emit_line.assert_not_called()
-+
-+
- @pytest.mark.unit
- def test_structured_stdout_can_be_disabled(monkeypatch, capsys):
-     monkeypatch.setenv("AGENTFIELD_LOG_STDOUT", "false")
-@@ -287,7 +343,7 @@ def test_structured_mirror_is_bounded_valid_json_and_cp_receives_full_record(
- ):
-     monkeypatch.setenv("AGENTFIELD_LOG_MAX_LINE_BYTES", "512")
-     stream = io.StringIO()
--    monkeypatch.setattr(logger_module.sys, "stdout", stream)
-+    monkeypatch.setattr(sys, "stdout", stream)
-     logger = AgentFieldLogger("bounded-structured")
-     dispatch = Mock()
-     monkeypatch.setattr(logger, "_dispatch_to_cp", dispatch)
-@@ -317,7 +373,7 @@ def test_structured_mirror_is_bounded_valid_json_and_cp_receives_full_record(
- def test_structured_mirror_elides_oversized_message(monkeypatch):
-     monkeypatch.setenv("AGENTFIELD_LOG_MAX_LINE_BYTES", "512")
-     stream = io.StringIO()
--    monkeypatch.setattr(logger_module.sys, "stdout", stream)
-+    monkeypatch.setattr(sys, "stdout", stream)
- 
-     AgentFieldLogger("oversized-message").log_execution(
-         "λ" * 4000, event_type="test.oversized-message"
-@@ -333,7 +389,7 @@ def test_structured_mirror_elides_oversized_message(monkeypatch):
- def test_structured_mirror_elides_oversized_non_dict_attributes(monkeypatch):
-     monkeypatch.setenv("AGENTFIELD_LOG_MAX_LINE_BYTES", "512")
-     stream = io.StringIO()
--    monkeypatch.setattr(logger_module.sys, "stdout", stream)
-+    monkeypatch.setattr(sys, "stdout", stream)
-     logger = AgentFieldLogger("non-dict-attributes")
-     record = logger._build_execution_record(
-         message="kept", level="INFO", event_type="test.non-dict"
-@@ -351,7 +407,7 @@ def test_structured_mirror_elides_oversized_non_dict_attributes(monkeypatch):
- @pytest.mark.unit
- def test_structured_mirror_many_large_attributes_stays_fast(monkeypatch):
-     monkeypatch.setenv("AGENTFIELD_LOG_MAX_LINE_BYTES", "4000")
--    monkeypatch.setattr(logger_module.sys, "stdout", io.StringIO())
-+    monkeypatch.setattr(sys, "stdout", io.StringIO())
-     attributes = {f"key-{index}": "x" * 50_000 for index in range(200)}
- 
-     start = time.perf_counter()
-@@ -368,7 +424,7 @@ def test_structured_mirror_serializes_large_string_payload_at_most_once(monkeypa
-     budget = 16384
-     monkeypatch.setenv("AGENTFIELD_LOG_MAX_LINE_BYTES", str(budget))
-     stream = io.StringIO()
--    monkeypatch.setattr(logger_module.sys, "stdout", stream)
-+    monkeypatch.setattr(sys, "stdout", stream)
-     calls = []
-     real_dumps = logger_module.json.dumps
- 
-@@ -416,7 +472,7 @@ def __len__(self):
- 
-     monkeypatch.setenv("AGENTFIELD_LOG_MAX_LINE_BYTES", "16384")
-     stream = io.StringIO()
--    monkeypatch.setattr(logger_module.sys, "stdout", stream)
-+    monkeypatch.setattr(sys, "stdout", stream)
-     record = {
-         "message": "bounded",
-         "attributes": {
-@@ -440,7 +496,7 @@ def __len__(self):
- def test_structured_mirror_non_string_attribute_keys_have_exact_sizes(monkeypatch):
-     monkeypatch.setenv("AGENTFIELD_LOG_MAX_LINE_BYTES", "512")
-     stream = io.
-```
-
-**File**: `sdk/python/tests/test_node_logs.py` (modified, +79/-0)
-```diff
-@@ -7,9 +7,11 @@
- import asyncio
- import io
- import json
-+import os
- import queue
- import sys
- import threading
-+import time
- 
- import pytest
- 
-@@ -338,6 +340,83 @@ async def test_async_idle_follower_cancels_without_a_log_or_worker_thread(monkey
- 
- 
- class TestTeeTextIO:
-+    @pytest.mark.skipif(not hasattr(os, "fork"), reason="requires os.fork")
-+    def test_fork_child_resets_tee_ring_and_follower_locks(self, monkeypatch):
-+        import agentfield.node_logs as nl
-+
-+        ring = ProcessLogRing(max_bytes=1024 * 1024)
-+        tee = _TeeTextIO("stdout", io.StringIO(), ring, max_line_bytes=1024)
-+        tee._buf = "parent-partial"
-+        monkeypatch.setattr(nl, "_global_ring", ring)
-+        monkeypatch.setattr(nl, "_installed_tees", [tee])
-+        monkeypatch.setattr(nl, "_follow_queues", [queue.Queue()])
-+
-+        old_tee_lock = tee._write_lock
-+        old_ring_lock = ring._lock
-+        old_follow_lock = nl._follow_lock
-+        holding = threading.Event()
-+        release = threading.Event()
-+
-+        def hold_tee_lock() -> None:
-+            with old_tee_lock:
-+                holding.set()
-+                release.wait(5.0)
-+
-+        holder = threading.Thread(target=hold_tee_lock, daemon=True)
-+        holder.start()
-+        assert holding.wait(1.0)
-+
-+        read_fd, write_fd = os.pipe()
-+        pid = os.fork()
-+        if pid == 0:  # pragma: no cover - assertions happen in the parent
-+            os.close(read_fd)
-+            child_result = b"error"
-+            child_exit = 1
-+            try:
-+                locks_reset = (
-+                    tee._write_lock is not old_tee_lock
-+                    and ring._lock is not old_ring_lock
-+                    and nl._follow_lock is not old_follow_lock
-+                    and nl._follow_queues == []
-+                    and tee._buf == ""
-+                )
-+                if locks_reset:
-+                    tee.write("child-line\n")
-+                    locks_reset = ring.tail(1)[0].line == "child-line"
-+                child_result = b"ok" if locks_reset else b"not-reset"
-+                child_exit = 0 if locks_reset else 1
-+            except BaseException:
-+                pass
-+            try:
-+                os.write(write_fd, child_result)
-+            finally:
-+                os.close(write_fd)
-+                os._exit(child_exit)
-+
-+        os.close(write_fd)
-+        release.set()
-+        holder.join(1.0)
-+        assert not holder.is_alive()
-+
-+        deadline = time.monotonic() + 3.0
-+        status = None
-+        while status is None and time.monotonic() < deadline:
-+            waited_pid, waited_status = os.waitpid(pid, os.WNOHANG)
-+            if waited_pid == pid:
-+                status = waited_status
-+                break
-+            time.sleep(0.01)
-+        if status is None:
-+            os.kill(pid, 9)
-+            os.waitpid(pid, 0)
-+            os.close(read_fd)
-+            pytest.fail("fork child deadlocked on an inherited tee lock")
-+
-+        child_result = os.read(read_fd, 64)
-+        os.close(read_fd)
-+        assert os.waitstatus_to_exitcode(status) == 0
-+        assert child_result == b"ok"
-+
-     def test_concurrent_complete_lines_are_not_interleaved_or_duplicated(self):
-         original = io.StringIO()
-         ring = ProcessLogRing(max_bytes=16 * 1024 * 1024)
-```
-
----
-
-### Incident Patch 10: `c5407ca1` (2026-09-19)
-**Commit Message**: fix(storage): mirror reaper parent/child and approval guards in stale retry (#1062)
-
-* issue/reaper-retry-child-guard: mirror reaper parent/child and approval guards in stale retry
-
-* chore(reaper-retry-child-guard): checkpoint uncommitted issue work
-
-**File**: `control-plane/internal/storage/execution_records.go` (modified, +12/-0)
-```diff
-@@ -1605,6 +1605,12 @@ func (ls *LocalStorage) retryStaleWorkflowExecutions(ctx context.Context, staleA
- 		  AND w.retry_count < ?
- 		  AND `+workflowTSExpr+` <= `+cutoffExpr+`
- 		  AND (e.execution_id IS NULL OR `+executionTSExpr+` <= `+cutoffExpr+`)
-+		  AND COALESCE(w.approval_status, '') != 'pending'
-+		  AND NOT EXISTS (
-+		      SELECT 1 FROM workflow_executions c
-+		      WHERE c.parent_execution_id = w.execution_id
-+		        AND c.status IN ('running', 'pending', 'queued', 'waiting')
-+		  )
- 		ORDER BY `+workflowTSExpr+` ASC
- 		LIMIT ?`, maxRetries, cutoff, cutoff, limit)
- 	if err != nil {
-@@ -1666,6 +1672,12 @@ func (ls *LocalStorage) retryStaleWorkflowExecutions(ctx context.Context, staleA
- 		            AND e.status IN ('running', 'pending', 'queued', 'waiting')
- 		            AND `+executionTSExpr+` <= `+cutoffExpr+`
- 		      )
-+		  )
-+		  AND COALESCE(w.approval_status, '') != 'pending'
-+		  AND NOT EXISTS (
-+		      SELECT 1 FROM workflow_executions c
-+		      WHERE c.parent_execution_id = w.execution_id
-+		        AND c.status IN ('running', 'pending', 'queued', 'waiting')
- 		  )`)
- 	if err != nil {
- 		return nil, fmt.Errorf("prepare retry statement: %w", err)
-```
-
-**File**: `control-plane/internal/storage/retry_stale_test.go` (modified, +154/-0)
-```diff
-@@ -539,6 +539,160 @@ func TestRetryStaleWorkflowExecutions_TerminalPairedExecutionStillRetried(t *tes
- 		"the terminal execution half must keep its committed timestamp")
- }
- 
-+// TestStaleParentWithLiveChildIsSparedByReaperAndRetry is the regression for
-+// the reaper's parent/child guard leaking into the retry sweep: a parent whose
-+// own workflow and execution clocks are stale while it waits on a live child
-+// must be spared by MarkStaleWorkflowExecutions and, equally, by
-+// RetryStaleWorkflowExecutions. Without the child guard in the retry, the
-+// parent is reset to pending and its paired execution is dragged back to
-+// pending while the child is still working.
-+func TestStaleParentWithLiveChildIsSparedByReaperAndRetry(t *testing.T) {
-+	ls, ctx := setupRetryTestStorage(t)
-+	now := time.Now().UTC()
-+	staleAt := now.Add(-2 * time.Hour)
-+
-+	// Parent: both clocks are two hours stale, so absent the child guard it is
-+	// a candidate for both sweeps.
-+	const parentID = "exec-parent-live-child"
-+	require.NoError(t, ls.StoreWorkflowExecution(ctx, retryTestWorkflow(parentID, staleAt)))
-+	require.NoError(t, ls.CreateExecutionRecord(ctx, retryTestExecution(parentID, staleAt)))
-+	backdateExecutionUpdatedAt(t, ls, "executions", parentID, staleAt)
-+
-+	// Child: created now, still running, and parented to the parent. Its
-+	// activity is what must shield the parent.
-+	const childID = "exec-child-live"
-+	childWorkflow := retryTestWorkflow(childID, now)
-+	childWorkflow.ParentExecutionID = strPtr(parentID)
-+	require.NoError(t, ls.StoreWorkflowExecution(ctx, childWorkflow))
-+
-+	childExecution := retryTestExecution(childID, now)
-+	childExecution.ParentExecutionID = strPtr(parentID)
-+	require.NoError(t, ls.CreateExecutionRecord(ctx, childExecution))
-+
-+	parentBefore, err := ls.GetWorkflowExecution(ctx, parentID)
-+	require.NoError(t, err)
-+	childBefore, err := ls.GetWorkflowExecution(ctx, childID)
-+	require.NoError(t, err)
-+	childExecutionBefore, err := ls.GetExecutionRecord(ctx, childID)
-+	require.NoError(t, err)
-+
-+	reaped, err := ls.MarkStaleWorkflowExecutions(ctx, 30*time.Minute, 100)
-+	require.NoError(t, err)
-+	require.Equal(t, 0, reaped, "a live child must shield its parent from the reaper")
-+
-+	retried, err := ls.RetryStaleWorkflowExecutions(ctx, 30*time.Minute, 3, 100)
-+	require.NoError(t, err)
-+	require.Empty(t, retried, "a live child must shield its parent from the retry sweep")
-+
-+	parent, err := ls.GetWorkflowExecution(ctx, parentID)
-+	require.NoError(t, err)
-+	require.Equal(t, "running", parent.Status)
-+	require.Equal(t, 0, parent.RetryCount)
-+	require.Nil(t, parent.ErrorMessage)
-+	require.Nil(t, parent.CompletedAt)
-+	require.True(t, parent.UpdatedAt.Equal(parentBefore.UpdatedAt),
-+		"the parent must keep its committed updated_at")
-+
-+	parentExecution, err := ls.GetExecutionRecord(ctx, parentID)
-+	require.NoError(t, err)
-+	require.Equal(t, "running", parentExecution.Status)
-+
-+	child, err := ls.GetWorkflowExecution(ctx, childID)
-+	require.NoError(t, err)
-+	require.Equal(t, "running", child.Status)
-+	require.Equal(t, 0, child.RetryCount)
-+	require.Nil(t, child.CompletedAt)
-+	require.True(t, child.UpdatedAt.Equal(childBefore.UpdatedAt), "the child must be untouched")
-+
-+	childExecutionAfter, err := ls.GetExecutionRecord(ctx, childID)
-+	require.NoError(t, err)
-+	require.Equal(t, "running", childExecutionAfter.Status)
-+	require.True(t, childExecutionAfter.UpdatedAt.Equal(childExecutionBefore.UpdatedAt),
-+		"the child execution must be untouched")
-+}
-+
-+// TestRetryStaleWorkflowExecutions_ApprovalStatusGuard pins the approval half
-+// of the mirrored guard pair: a stale workflow whose approval is still pending
-+// must be spared by the retry sweep exactly as the reaper spares it, while a
-+// stale workflow whose approval has been decided ('approved') remains a valid
-+// retry candidate. Every other fixture in this file has a NULL approval_status
-+// and is retried, which already covers the empty-string COALESCE branch.
-+func TestRetryStaleWorkflowExecutions_ApprovalStatusGuard(t *testing.T) {
-+	ls, ctx := setupRetryTestStorage(t)
-+	now := time.Now().UTC()
-+	staleAt := now.Add(-2 * time.Hour)
-+
-+	pending := retryTestWorkflow("exec-retry-approval-pending", staleAt)
-+	pending.ApprovalStatus = strPtr("pending")
-+	require.NoError(t, ls.StoreWorkflowExecution(ctx, pending))
-+
-+	approved := retryTestWorkflow("exec-retry-approval-approved", staleAt)
-+	approved.ApprovalStatus = strPtr("approved")
-+	require.NoError(t, ls.StoreWorkflowExecution(ctx, approved))
-+
-+	pendingBefore, err := ls.GetWorkflowExecution(ctx, pending.ExecutionID)
-+	require.NoError(t, err)
-+
-+	retried, err := ls.RetryStaleWorkflowExecutions(ctx, 30*time.Minute, 3, 100)
-+	require.NoError(t, err)
-+	require.Equal(t, []string{approved.ExecutionID}, retried,
-+		"only the decided-approval workflow may be retried; the pending one must be spared")
-+
-+	pendingAfter, err := ls.GetWorkflowExecution(ctx, pending.ExecutionID)
-+	require.NoError(t, err)
-+	require.Eq
-```
-
----
-
-### Incident Patch 11: `44d1022a` (2026-09-18)
-**Commit Message**: fix(security): close open Dependabot vulnerability alerts (#1055)
-
-* fix(security): close open Dependabot vulnerability alerts
-
-Bump vulnerable dependencies across the monorepo to patched releases:
-
-- next 15.5.25 + sharp 0.35.4 (rag evaluation UI RCE / libheif)
-- js-yaml 4.3.2 (empty merge-source CPU DoS)
-- fast-uri 3.1.7 (host confusion / SSRF)
-- google.golang.org/grpc v1.83.2 (xDS authority DoS)
-- browserslist 4.28.9 + baseline-browser-mapping 2.11.23
-- hono 4.13.7 (toSSG path traversal)
-- qs 6.16.0 (arrayLimit / isBuffer DoS)
-- vitest / @vitest/mocker 4.1.11 (redirect mock path traversal)
-
-Regenerated affected npm/pnpm lockfiles and go.sum.
-
-Co-authored-by: Santosh kumar <[REDACTED_EMAIL]>
-
-* fix(security): regenerate npm lockfiles for npm ci sync
-
-Full npm install (not package-lock-only) so control-plane web client
-and desktop locks include all transitive deps required by npm ci.
-
-Co-authored-by: Santosh kumar <[REDACTED_EMAIL]>
-
-* fix(security): close remaining Dependabot alerts
-
-- @humanfs/node 0.16.8 (pnpm lock still had 0.16.7 symlink copy)
-- postcss-selector-parser 6.1.4 (pnpm lock still had 6.1.2 AST DoS)
-- @ai-sdk/provider-utils 4.0.51 including v5/v6 aliases (resource 
-
-**File**: `control-plane/go.mod` (modified, +7/-7)
-```diff
-@@ -28,10 +28,10 @@ require (
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0
- 	go.opentelemetry.io/otel/sdk v1.44.0
- 	go.opentelemetry.io/otel/trace v1.44.0
--	golang.org/x/crypto v0.52.0
--	golang.org/x/term v0.43.0
-+	golang.org/x/crypto v0.55.0
-+	golang.org/x/term v0.45.0
- 	golang.org/x/time v0.15.0
--	google.golang.org/grpc v1.83.1
-+	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.11
- 	gopkg.in/yaml.v3 v3.0.1
- 	gorm.io/driver/postgres v1.5.11
-@@ -109,10 +109,10 @@ require (
- 	go.uber.org/atomic v1.9.0 // indirect
- 	go.uber.org/multierr v1.9.0 // indirect
- 	golang.org/x/arch v0.15.0 // indirect
--	golang.org/x/net v0.55.0 // indirect
--	golang.org/x/sync v0.20.0 // indirect
--	golang.org/x/sys v0.45.0 // indirect
--	golang.org/x/text v0.37.0 // indirect
-+	golang.org/x/net v0.58.0 // indirect
-+	golang.org/x/sync v0.22.0 // indirect
-+	golang.org/x/sys v0.47.0 // indirect
-+	golang.org/x/text v0.41.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect
-```
-
-**File**: `control-plane/go.sum` (modified, +18/-18)
-```diff
-@@ -240,38 +240,38 @@ go.uber.org/multierr v1.9.0 h1:7fIwc/ZtS0q++VgcfqFDxSBZVv/Xo49/SYnDFupUwlI=
- go.uber.org/multierr v1.9.0/go.mod h1:X2jQV1h+kxSjClGpnseKVIxpmcjrj7MNnI0bnlfKTVQ=
- golang.org/x/arch v0.15.0 h1:QtOrQd0bTUnhNVNndMpLHNWrDmYzZ2KDqSrEymqInZw=
- golang.org/x/arch v0.15.0/go.mod h1:JmwW7aLIoRUKgaTzhkiEFxvcEiQGyOg9BMonBJUS7EE=
--golang.org/x/crypto v0.52.0 h1:RMs7fP2rXdep0CftQlK8Uf+kibLm7qkCcradZWYz988=
--golang.org/x/crypto v0.52.0/go.mod h1:1QgfPxDqh0T2M/elOJtp9RvuR95kVjir0e6/BvEmGbc=
-+golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
-+golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
- golang.org/x/exp v0.0.0-20231108232855-2478ac86f678 h1:mchzmB1XO2pMaKFRqk/+MV3mgGG96aqaPXaMifQU47w=
- golang.org/x/exp v0.0.0-20231108232855-2478ac86f678/go.mod h1:zk2irFbV9DP96SEBUUAy67IdHUaZuSnrz1n472HUCLE=
--golang.org/x/mod v0.35.0 h1:Ww1D637e6Pg+Zb2KrWfHQUnH2dQRLBQyAtpr/haaJeM=
--golang.org/x/mod v0.35.0/go.mod h1:+GwiRhIInF8wPm+4AoT6L0FA1QWAad3OMdTRx4tFYlU=
--golang.org/x/net v0.55.0 h1:bcvxaJn3e1U6InsFWt1JUq1aSjnRxLzT2rtD2KfkDF8=
--golang.org/x/net v0.55.0/go.mod h1:L5U2KuzuOe1lY7Z+aWVIKK6qEeJXnXV9yzGA+WCHJww=
--golang.org/x/sync v0.20.0 h1:e0PTpb7pjO8GAtTs2dQ6jYa5BWYlMuX047Dco/pItO4=
--golang.org/x/sync v0.20.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
-+golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
-+golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
-+golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
-+golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
- golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.45.0 h1:dO4czNzziLiiXplLQgBCEpCvXQ3dnkn0SdaZSYdQ+FY=
--golang.org/x/sys v0.45.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
--golang.org/x/term v0.43.0 h1:S4RLU2sB31O/NCl+zFN9Aru9A/Cq2aqKpTZJ6B+DwT4=
--golang.org/x/term v0.43.0/go.mod h1:lrhlHNdQJHO+1qVYiHfFKVuVioJIheAc3fBSMFYEIsk=
--golang.org/x/text v0.37.0 h1:Cqjiwd9eSg8e0QAkyCaQTNHFIIzWtidPahFWR83rTrc=
--golang.org/x/text v0.37.0/go.mod h1:a5sjxXGs9hsn/AJVwuElvCAo9v8QYLzvavO5z2PiM38=
-+golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
-+golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
-+golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
-+golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
-+golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
- golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
- golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
--golang.org/x/tools v0.44.0 h1:UP4ajHPIcuMjT1GqzDWRlalUEoY+uzoZKnhOjbIPD2c=
--golang.org/x/tools v0.44.0/go.mod h1:KA0AfVErSdxRZIsOVipbv3rQhVXTnlU6UhKxHd1seDI=
-+golang.org/x/tools v0.48.0 h1:3+hClM1aLL5mjMKm5ovokw9epgRXPuu2tILgismM6RE=
-+golang.org/x/tools v0.48.0/go.mod h1:08xX0orndb/F7jJxGDicx061tyd5pcMto75YMAXr6lk=
- gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
- gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
- google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa h1:Kjn0N0tCrDgiAFW+lGO4JZ3ck44CehvJQMAwj9QF0G8=
- google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:q4lMZS6kskjT5HvCPrnnypcDPVJqT/f4nfxmkE7gryY=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa h1:mZHHdPZl0dbGHCflZgAq/Q468DWVFcU2whhB2KAo8fk=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
--google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=
--google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
-+google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
-+google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
- google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
- google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
-```
-
-**File**: `control-plane/web/client/package-lock.json` (modified, +87/-79)
-```diff
-@@ -64,7 +64,7 @@
-                 "@types/react": "^19.1.2",
-                 "@types/react-dom": "^19.1.2",
-                 "@vitejs/plugin-react": "^6.0.1",
--                "@vitest/coverage-v8": "^4.1.8",
-+                "@vitest/coverage-v8": "^4.1.11",
-                 "autoprefixer": "^10.4.21",
-                 "eslint": "^9.25.0",
-                 "eslint-plugin-react-hooks": "^5.2.0",
-@@ -77,7 +77,7 @@
-                 "typescript": "~5.8.3",
-                 "typescript-eslint": "^8.30.1",
-                 "vite": "^8.0.16",
--                "vitest": "^4.1.8"
-+                "vitest": "^4.1.11"
-             }
-         },
-         "node_modules/@adobe/css-tools": {
-@@ -482,17 +482,17 @@
-             }
-         },
-         "node_modules/@deck.gl/widgets": {
--            "version": "9.2.2",
--            "resolved": "https://registry.npmjs.org/@deck.gl/widgets/-/widgets-9.2.2.tgz",
--            "integrity": "sha512-CuXRMHlLU+3YJjbicxp84BtIks4dLVXm2txIwUQPHqZ99zSI30SQgnhHUOJi5tJMODLD26HaQaZo0Jp3Z+sRbQ==",
-+            "version": "9.2.11",
-+            "resolved": "https://registry.npmjs.org/@deck.gl/widgets/-/widgets-9.2.11.tgz",
-+            "integrity": "sha512-90HWlQPsiRyTPWR4aYfLwnYDrJdHG2mqCzRcyMUKewWBNQLu4upB//l4ewIkUeXXCzAprjjVeRnNb7wdYj2CXQ==",
-             "license": "MIT",
-             "peer": true,
-             "dependencies": {
-                 "preact": "^10.17.0"
-             },
-             "peerDependencies": {
-                 "@deck.gl/core": "~9.2.0",
--                "@luma.gl/core": "~9.2.2"
-+                "@luma.gl/core": "~9.2.6"
-             }
-         },
-         "node_modules/@emnapi/core": {
-@@ -1366,9 +1366,9 @@
-             "license": "MIT"
-         },
-         "node_modules/@luma.gl/core": {
--            "version": "9.2.4",
--            "resolved": "https://registry.npmjs.org/@luma.gl/core/-/core-9.2.4.tgz",
--            "integrity": "sha512-oYuHlpvd4e6E4hre7I7gnmCtcTDdpgREnumgjcPTe8VVsimnYM2P+vBqdOE7AUlOHDS8r//7YxM2bFvlDkcM8w==",
-+            "version": "9.2.6",
-+            "resolved": "https://registry.npmjs.org/@luma.gl/core/-/core-9.2.6.tgz",
-+            "integrity": "sha512-d8KcH8ZZcjDAodSN/G2nueA9YE2X8kMz7Q0OxDGpCww6to1MZXM3Ydate/Jqsb5DDKVgUF6yD6RL8P5jOki9Yw==",
-             "license": "MIT",
-             "dependencies": {
-                 "@math.gl/types": "^4.1.0",
-@@ -3508,9 +3508,9 @@
-             }
-         },
-         "node_modules/@testing-library/dom": {
--            "version": "10.4.1",
--            "resolved": "https://registry.npmjs.org/@testing-library/dom/-/dom-10.4.1.tgz",
--            "integrity": "sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==",
-+            "version": "10.4.2",
-+            "resolved": "https://registry.npmjs.org/@testing-library/dom/-/dom-10.4.2.tgz",
-+            "integrity": "sha512-yzr2S9HyAIdhz2/6qHgbs665Q7PKVcDF05vsOlHPxG1mo36gKVesdYVeDLnXgfjJ03CrKRk08knc6+E/9m8v2Q==",
-             "dev": true,
-             "license": "MIT",
-             "peer": true,
-@@ -4149,14 +4149,14 @@
-             }
-         },
-         "node_modules/@vitest/coverage-v8": {
--            "version": "4.1.8",
--            "resolved": "https://registry.npmjs.org/@vitest/coverage-v8/-/coverage-v8-4.1.8.tgz",
--            "integrity": "sha512-lt3kovsyHwYe00wq4D1ti0Z974fWj4NLp6siqiyEufUpyFwK9Yhi7rBhac9JL5aA0zoMrJqc4vYPZRUnI7l7nw==",
-+            "version": "4.1.11",
-+            "resolved": "https://registry.npmjs.org/@vitest/coverage-v8/-/coverage-v8-4.1.11.tgz",
-+            "integrity": "sha512-8MVGEFnJIcdGjcbfKmeq8z0pZHH0JlVtoVZH9Q/qwUp6wyFnEJUBMrw9DCaj+ra3vShGmhavjalMIhPNxZAUcw==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
-                 "@bcoe/v8-coverage": "^1.0.2",
--                "@vitest/utils": "4.1.8",
-+                "@vitest/utils": "4.1.11",
-                 "ast-v8-to-istanbul": "^1.0.0",
-                 "istanbul-lib-coverage": "^3.2.2",
-                 "istanbul-lib-report": "^3.0.1",
-@@ -4170,8 +4170,8 @@
-                 "url": "https://opencollective.com/vitest"
-             },
-             "peerDependencies": {
--                "@vitest/browser": "4.1.8",
--                "vitest": "4.1.8"
-+                "@vitest/browser": "4.1.11",
-+                "vitest": "4.1.11"
-             },
-             "peerDependenciesMeta": {
-                 "@vitest/browser": {
-@@ -4180,16 +4180,16 @@
-             }
-         },
-         "node_modules/@vitest/expect": {
--            "version": "4.1.8",
--            "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.8.tgz",
--            "integrity": "sha512-h3nDO677RDLEGlBxyQ5CW8RlMThSKSRLUePLOx09gNIWRL40edgA1GCZSZgf1W55MFAG6/Sw14KeaAnqv0NKdQ==",
-+            "version": "4.1.11",
-+            "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.11.tgz",
-+            "integrity": "sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDi
-```
-
-**File**: `control-plane/web/client/package.json` (modified, +14/-6)
-```diff
-@@ -69,7 +69,7 @@
-         "@types/react": "^19.1.2",
-         "@types/react-dom": "^19.1.2",
-         "@vitejs/plugin-react": "^6.0.1",
--        "@vitest/coverage-v8": "^4.1.8",
-+        "@vitest/coverage-v8": "^4.1.11",
-         "autoprefixer": "^10.4.21",
-         "eslint": "^9.25.0",
-         "eslint-plugin-react-hooks": "^5.2.0",
-@@ -82,26 +82,34 @@
-         "typescript": "~5.8.3",
-         "typescript-eslint": "^8.30.1",
-         "vite": "^8.0.16",
--        "vitest": "^4.1.8"
-+        "vitest": "^4.1.11"
-     },
-     "overrides": {
--        "js-yaml": "4.3.1",
-+        "js-yaml": "4.3.2",
-+        "browserslist": "4.28.9",
-+        "baseline-browser-mapping": "2.11.23",
-         "nanoid": "3.3.18",
-         "esbuild": "0.28.1",
-         "ws": "8.21.0",
-         "brace-expansion@1": "1.1.18",
-         "brace-expansion@2": "2.1.4",
--        "postcss": "$postcss"
-+        "postcss": "$postcss",
-+        "@humanfs/node": "0.16.8",
-+        "postcss-selector-parser": "6.1.4"
-     },
-     "pnpm": {
-         "overrides": {
--            "js-yaml": "4.3.1",
-+            "js-yaml": "4.3.2",
-+            "browserslist": "4.28.9",
-+            "baseline-browser-mapping": "2.11.23",
-             "nanoid": "3.3.18",
-             "esbuild": "0.28.1",
-             "ws": "8.21.0",
-             "brace-expansion@1": "1.1.18",
-             "brace-expansion@2": "2.1.4",
--            "postcss": "8.5.25"
-+            "postcss": "8.5.25",
-+            "@humanfs/node": "0.16.8",
-+            "postcss-selector-parser": "6.1.4"
-         }
-     }
- }
-```
-
-**File**: `control-plane/web/client/pnpm-lock.yaml` (modified, +361/-334)
-```diff
-@@ -4,6 +4,19 @@ settings:
-   autoInstallPeers: true
-   excludeLinksFromLockfile: false
- 
-+overrides:
-+  js-yaml: 4.3.2
-+  browserslist: 4.28.9
-+  baseline-browser-mapping: 2.11.23
-+  nanoid: 3.3.18
-+  esbuild: 0.28.1
-+  ws: 8.21.0
-+  brace-expansion@1: 1.1.18
-+  brace-expansion@2: 2.1.4
-+  postcss: 8.5.25
-+  '@humanfs/node': 0.16.8
-+  postcss-selector-parser: 6.1.4
-+
- importers:
- 
-   .:
-@@ -13,7 +26,7 @@ importers:
-         version: 4.0.0(@hookform/resolvers@3.10.0(react-hook-form@7.72.1(react@19.2.8)))(react-hook-form@7.72.1(react@19.2.8))(react@19.2.8)
-       '@autoform/shadcn':
-         specifier: ^1.0.1
--        version: 1.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(jiti@1.21.7)(postcss@8.5.25)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@7.2.0)(tailwindcss@3.4.17)(typescript@5.8.3)(yaml@2.8.3)
-+        version: 1.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(jiti@1.21.7)(postcss@8.5.25)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@3.4.17)(typescript@5.8.3)(yaml@2.8.3)
-       '@autoform/zod':
-         specifier: ^5.0.0
-         version: 5.0.0(zod@4.3.6)
-@@ -121,7 +134,7 @@ importers:
-         version: 5.6.0(react@19.2.8)
-       react-markdown:
-         specifier: ^10.1.0
--        version: 10.1.0(@types/react@19.1.13)(react@19.2.8)(supports-color@7.2.0)
-+        version: 10.1.0(@types/react@19.1.13)(react@19.2.8)
-       react-router:
-         specifier: ^8.3.0
-         version: 8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-@@ -130,7 +143,7 @@ importers:
-         version: 2.15.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-       remark-gfm:
-         specifier: ^4.0.1
--        version: 4.0.1(supports-color@7.2.0)
-+        version: 4.0.1
-       sonner:
-         specifier: ^2.0.7
-         version: 2.0.7(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-@@ -170,30 +183,30 @@ importers:
-         version: 19.1.9(@types/react@19.1.13)
-       '@vitejs/plugin-react':
-         specifier: ^6.0.1
--        version: 6.0.1(vite@8.0.16(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3))
-+        version: 6.0.1(vite@8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3))
-       '@vitest/coverage-v8':
--        specifier: ^4.1.8
--        version: 4.1.8(vitest@4.1.8)
-+        specifier: ^4.1.11
-+        version: 4.1.11(vitest@4.1.11)
-       autoprefixer:
-         specifier: ^10.4.21
-         version: 10.4.21(postcss@8.5.25)
-       eslint:
-         specifier: ^9.25.0
--        version: 9.36.0(jiti@1.21.7)(supports-color@7.2.0)
-+        version: 9.36.0(jiti@1.21.7)
-       eslint-plugin-react-hooks:
-         specifier: ^5.2.0
--        version: 5.2.0(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))
-+        version: 5.2.0(eslint@9.36.0(jiti@1.21.7))
-       eslint-plugin-react-refresh:
-         specifier: ^0.4.19
--        version: 0.4.20(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))
-+        version: 0.4.20(eslint@9.36.0(jiti@1.21.7))
-       globals:
-         specifier: ^16.0.0
-         version: 16.4.0
-       jsdom:
-         specifier: ^26.1.0
--        version: 26.1.0(supports-color@7.2.0)
-+        version: 26.1.0
-       postcss:
--        specifier: ^8.5.25
-+        specifier: 8.5.25
-         version: 8.5.25
-       tailwindcss:
-         specifier: ^3.4.17
-@@ -206,13 +219,13 @@ importers:
-         version: 5.8.3
-       typescript-eslint:
-         specifier: ^8.30.1
--        version: 8.44.0(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.8.3)
-+        version: 8.44.0(eslint@9.36.0(jiti@1.21.7))(typescript@5.8.3)
-       vite:
-         specifier: ^8.0.16
--        version: 8.0.16(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3)
-+        version: 8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3)
-       vitest:
--        specifier: ^4.1.8
--        version: 4.1.8(@types/node@24.5.2)(@vitest/coverage-v8@4.1.8)(jsdom@26.1.0(supports-color@7.2.0))(vite@8.0.16(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3))
-+        specifier: ^4.1.11
-+        version: 4.1.11(@types/node@24.5.2)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0)(vite@8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3))
- 
- packages:
- 
-@@ -345,158 +358,158 @@ packages:
-   '@emnapi/wasi-threads@1.2.1':
-     resolution: {integrity: sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==}
- 
--  '@esbuild/aix-ppc64@0.27.7':
--    resolution: {integrity: sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==}
-+  '@esbuild/aix-ppc64@0.28.1':
-+    resolution: {integrity: sha512-Svl7tq8k/08+p6CXPpRjQ1fKX+1odH/BQbb48fV6fj3CWHhsoIOoY87w1oHXm0qEpkIK3ZfVgp0hed3XBXzXMQ==}
-     engines: {node: '>=18'}
-     cpu: [ppc64]
-     os: [aix]
- 
--  '@esbuild/android-arm64@0.27.7':
--    resolution: {integrity: sha512-62dPZHpIXzvChfvfLJow3q5dDtiNMkwiRzPylSCfriLvZeq0a1bWChrGx/BbUbPwOrsWKMn8idSllklzBy+dgQ==}
-+  '@esbuild/andro
-```
-
-**File**: `desktop/package-lock.json` (modified, +156/-224)
-```diff
-@@ -9,7 +9,7 @@
-       "version": "0.1.0",
-       "dependencies": {
-         "@lobehub/icons-static-svg": "^1.94.0",
--        "js-yaml": "^4.3.1",
-+        "js-yaml": "^4.3.2",
-         "motion": "^12.42.2"
-       },
-       "devDependencies": {
-@@ -25,7 +25,7 @@
-         "react-dom": "^18.3.1",
-         "typescript": "^5.7.2",
-         "vite": "^6.0.5",
--        "vitest": "^3.0.5"
-+        "vitest": "4.1.11"
-       }
-     },
-     "node_modules/@babel/code-frame": {
-@@ -747,9 +747,9 @@
-       }
-     },
-     "node_modules/@electron/windows-sign/node_modules/fs-extra": {
--      "version": "11.3.6",
--      "resolved": "https://registry.npmjs.org/fs-extra/-/fs-extra-11.3.6.tgz",
--      "integrity": "sha512-w8ZNZr2mKIc7qeNaQ9AVPT1+iFaI+Avd4xudVOvdDJ8VytREi1Ft5Ih7hd9jjehod8vAM5GMsfQ/TpPf4EyoEA==",
-+      "version": "11.4.0",
-+      "resolved": "https://registry.npmjs.org/fs-extra/-/fs-extra-11.4.0.tgz",
-+      "integrity": "sha512-EQsFzMUJkCKGr1ePqlYADkIUmHW1s3ZXr5Yqy6wbGrfUCphpl2maM/kyOIRA2HpP3AaFQTZXD4ldjek+nccddA==",
-       "dev": true,
-       "license": "MIT",
-       "optional": true,
-@@ -1814,6 +1814,13 @@
-         "url": "https://github.com/sindresorhus/is?sponsor=1"
-       }
-     },
-+    "node_modules/@standard-schema/spec": {
-+      "version": "1.1.0",
-+      "resolved": "https://registry.npmjs.org/@standard-schema/spec/-/spec-1.1.0.tgz",
-+      "integrity": "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==",
-+      "dev": true,
-+      "license": "MIT"
-+    },
-     "node_modules/@szmarczak/http-timer": {
-       "version": "4.0.6",
-       "resolved": "https://registry.npmjs.org/@szmarczak/http-timer/-/http-timer-4.0.6.tgz",
-@@ -2029,39 +2036,40 @@
-       }
-     },
-     "node_modules/@vitest/expect": {
--      "version": "3.2.7",
--      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-3.2.7.tgz",
--      "integrity": "sha512-E8eBXaKibuvH2pSZErOjdVb5vF4PbKYcrnluBTYxEk1l/VhhwZg1kZQsdtjq+CsF5CFydf2Rdkz7jDHKSisi3w==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.11.tgz",
-+      "integrity": "sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-+        "@standard-schema/spec": "^1.1.0",
-         "@types/chai": "^5.2.2",
--        "@vitest/spy": "3.2.7",
--        "@vitest/utils": "3.2.7",
--        "chai": "^5.2.0",
--        "tinyrainbow": "^2.0.0"
-+        "@vitest/spy": "4.1.11",
-+        "@vitest/utils": "4.1.11",
-+        "chai": "^6.2.2",
-+        "tinyrainbow": "^3.1.0"
-       },
-       "funding": {
-         "url": "https://opencollective.com/vitest"
-       }
-     },
-     "node_modules/@vitest/mocker": {
--      "version": "3.2.7",
--      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-3.2.7.tgz",
--      "integrity": "sha512-Trr0hYO9CM3Wj6ksWHRhK9IZpIY6wTMO5u/MqXurMxT57sWBaOPEtP3Oq60ihZuh5JsiagKfz95OcxdEP6dBrA==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.11.tgz",
-+      "integrity": "sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@vitest/spy": "3.2.7",
-+        "@vitest/spy": "4.1.11",
-         "estree-walker": "^3.0.3",
--        "magic-string": "^0.30.17"
-+        "magic-string": "^0.30.21"
-       },
-       "funding": {
-         "url": "https://opencollective.com/vitest"
-       },
-       "peerDependencies": {
-         "msw": "^2.4.9",
--        "vite": "^5.0.0 || ^6.0.0 || ^7.0.0-0"
-+        "vite": "^6.0.0 || ^7.0.0 || ^8.0.0"
-       },
-       "peerDependenciesMeta": {
-         "msw": {
-@@ -2073,71 +2081,68 @@
-       }
-     },
-     "node_modules/@vitest/pretty-format": {
--      "version": "3.2.7",
--      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-3.2.7.tgz",
--      "integrity": "sha512-KUHlwqVu0sRlhCdyPdQ/wBoTfRahjUky1MubOmYw9fWfIZy1gNoHpuaaQBPAaMaVYdQYHJLurzj8ECCj5OwTqA==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.11.tgz",
-+      "integrity": "sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "tinyrainbow": "^2.0.0"
-+        "tinyrainbow": "^3.1.0"
-       },
-       "funding": {
-         "url": "https://opencollective.com/vitest"
-       }
-     },
-     "node_modules/@vitest/runner": {
--      "version": "3.2.7",
--      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-3.2.7.tgz",
--      "integrity": "sha512-sB9y4ovltoQP+WaUPwmSxO9WIg9Ig694Di5PalVPsYHklAdE027mehpWF2SQSVq+k6sFgaivbTjTJwZLSHbedA==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.11.tgz",
-+      "integrity": "sha
-```
-
-**File**: `desktop/package.json` (modified, +3/-3)
-```diff
-@@ -75,7 +75,7 @@
-   },
-   "dependencies": {
-     "@lobehub/icons-static-svg": "^1.94.0",
--    "js-yaml": "^4.3.1",
-+    "js-yaml": "^4.3.2",
-     "motion": "^12.42.2"
-   },
-   "devDependencies": {
-@@ -91,10 +91,10 @@
-     "react-dom": "^18.3.1",
-     "typescript": "^5.7.2",
-     "vite": "^6.0.5",
--    "vitest": "^3.0.5"
-+    "vitest": "4.1.11"
-   },
-   "overrides": {
--    "fast-uri": "3.1.5",
-+    "fast-uri": "3.1.7",
-     "nanoid": "3.3.18",
-     "postcss": "8.5.25",
-     "undici": "6.28.0",
-```
-
-**File**: `examples/benchmarks/100k-scale/mastra-bench/package-lock.json` (modified, +35/-24)
-```diff
-@@ -45,9 +45,9 @@
-       }
-     },
-     "node_modules/@ai-sdk/provider": {
--      "version": "3.0.10",
--      "resolved": "https://registry.npmjs.org/@ai-sdk/provider/-/provider-3.0.10.tgz",
--      "integrity": "sha512-Q3BZ27qfpYqnCYGvE3vt+Qi6LGOF9R5Nmzn+9JoM1lCRsD9mYaIhfJLkSunN48nfGXJ6n+XNV0J/XVpqGQl7Dw==",
-+      "version": "3.0.16",
-+      "resolved": "https://registry.npmjs.org/@ai-sdk/provider/-/provider-3.0.16.tgz",
-+      "integrity": "sha512-9Av6kg0t/IN/dcYAAmEJ4B9OPhcEJqwSR+GfHEA8olRkindXpUHadc3p3cyvgFUQFTVm1G5thtsmgZ9yVb2w3A==",
-       "license": "Apache-2.0",
-       "dependencies": {
-         "json-schema": "^0.4.0"
-@@ -58,35 +58,37 @@
-     },
-     "node_modules/@ai-sdk/provider-utils-v5": {
-       "name": "@ai-sdk/provider-utils",
--      "version": "4.0.27",
--      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-4.0.27.tgz",
--      "integrity": "sha512-ubkAJ+xODouwtmN1tYlvTPphH1hPOBfZaEQe8U7skGvFAnIRs9PPpsq57bC2+Ky/MB4yzhd6YOsxTAx9sGpazw==",
-+      "version": "4.0.51",
-+      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-4.0.51.tgz",
-+      "integrity": "sha512-ukLTs9x1Xm6lxSIwbJIxYQxbZHmVeIczNntARZrBcOa6pjdBhqeZnATNnJMHa7M9dZ8Ji5NJbpKpvz7o5XyBtg==",
-       "license": "Apache-2.0",
-       "dependencies": {
--        "@ai-sdk/provider": "3.0.10",
-+        "@ai-sdk/provider": "3.0.16",
-         "@standard-schema/spec": "^1.1.0",
--        "eventsource-parser": "^3.0.8"
-+        "eventsource-parser": "^3.0.8",
-+        "undici": "^6.28.0"
-       },
-       "engines": {
--        "node": ">=18"
-+        "node": ">=18.17"
-       },
-       "peerDependencies": {
-         "zod": "^3.25.76 || ^4.1.8"
-       }
-     },
-     "node_modules/@ai-sdk/provider-utils-v6": {
-       "name": "@ai-sdk/provider-utils",
--      "version": "4.0.27",
--      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-4.0.27.tgz",
--      "integrity": "sha512-ubkAJ+xODouwtmN1tYlvTPphH1hPOBfZaEQe8U7skGvFAnIRs9PPpsq57bC2+Ky/MB4yzhd6YOsxTAx9sGpazw==",
-+      "version": "4.0.51",
-+      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-4.0.51.tgz",
-+      "integrity": "sha512-ukLTs9x1Xm6lxSIwbJIxYQxbZHmVeIczNntARZrBcOa6pjdBhqeZnATNnJMHa7M9dZ8Ji5NJbpKpvz7o5XyBtg==",
-       "license": "Apache-2.0",
-       "dependencies": {
--        "@ai-sdk/provider": "3.0.10",
-+        "@ai-sdk/provider": "3.0.16",
-         "@standard-schema/spec": "^1.1.0",
--        "eventsource-parser": "^3.0.8"
-+        "eventsource-parser": "^3.0.8",
-+        "undici": "^6.28.0"
-       },
-       "engines": {
--        "node": ">=18"
-+        "node": ">=18.17"
-       },
-       "peerDependencies": {
-         "zod": "^3.25.76 || ^4.1.8"
-@@ -1429,9 +1431,9 @@
-       "license": "MIT"
-     },
-     "node_modules/fast-uri": {
--      "version": "3.1.5",
--      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.5.tgz",
--      "integrity": "sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==",
-+      "version": "3.1.7",
-+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
-+      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
-       "funding": [
-         {
-           "type": "github",
-@@ -1636,9 +1638,9 @@
-       }
-     },
-     "node_modules/hono": {
--      "version": "4.12.34",
--      "resolved": "https://registry.npmjs.org/hono/-/hono-4.12.34.tgz",
--      "integrity": "sha512-GqXJqY/xJkJmuloTrnV1ZEXG3fqte+VjkUqoRNZXcrUidiUOP4fMSIHHY4tsqZBK++kVyWmt/AAfSUuy57/eSA==",
-+      "version": "4.13.7",
-+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.7.tgz",
-+      "integrity": "sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=16.9.0"
-@@ -1801,9 +1803,9 @@
-       }
-     },
-     "node_modules/js-yaml": {
--      "version": "4.3.1",
--      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.1.tgz",
--      "integrity": "sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==",
-+      "version": "4.3.2",
-+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz",
-+      "integrity": "sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==",
-       "funding": [
-         {
-           "type": "github",
-@@ -3325,6 +3327,15 @@
-         "url": "https://opencollective.com/express"
-       }
-     },
-+    "node_modules/undici": {
-+      "version": "6.28.1",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.28.1.tgz",
-+      "integrity": "sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==",
-+      "license": "MIT",
-+      "engines": {
-+        "node": ">=18.17"
-+      }
-+    },
-     "node_modules/undici-types": {
-       "version": "6.21.0",
-       "r
-```
-
----
-
-### Incident Patch 12: `887a3b99` (2026-09-18)
-**Commit Message**: fix(storage): rebind postgres tx prepares and guard stale retries (#1051)
-
-* fix(storage): rebind transactional prepares and guard stale retries
-
-* test(storage): verify stale reapers against live PostgreSQL
-
-Adds connection-backed PostgreSQL coverage for the transactional prepare
-rebinding and the paired-execution staleness guard:
-
-- reproduce the pre-fix failure at the SQL level (SQLSTATE 42601)
-- assert the reaper UPDATE statements reach the driver rebound to $n
-- drive MarkStaleExecutions, MarkStaleWorkflowExecutions and
-  RetryStaleWorkflowExecutions end to end so a row stale on both clocks is
-  reaped while a workflow whose paired execution is still fresh survives
-- cover the guard's status filter (a terminal paired execution does not
-  shield a stale workflow)
-
-Live tests are gated on POSTGRES_TEST_URL, refuse non-loopback hosts, and
-create a throwaway database per test.
-
-* fix(storage): recheck execution staleness between retry statements
-
-RetryStaleWorkflowExecutions repeated the activity predicate in its
-workflow UPDATE, but the paired execution UPDATE still only rechecked
-status. A heartbeat committing between the two statements was
-overwritten, dragging a live execution
-
-**File**: `control-plane/internal/storage/coverage_misc_helpers_test.go` (modified, +114/-0)
-```diff
-@@ -3,8 +3,10 @@ package storage
- import (
- 	"context"
- 	"database/sql"
-+	"database/sql/driver"
- 	"errors"
- 	"path/filepath"
-+	"sync"
- 	"testing"
- 
- 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
-@@ -17,11 +19,123 @@ type testRollbacker struct {
- 	rollbacks int
- }
- 
-+type prepareCaptureState struct {
-+	mu      sync.Mutex
-+	queries []string
-+}
-+
-+type prepareCaptureConnector struct {
-+	state *prepareCaptureState
-+}
-+
-+type prepareCaptureDriver struct{}
-+
-+type prepareCaptureConn struct {
-+	state *prepareCaptureState
-+}
-+
-+type prepareCaptureTx struct{}
-+
-+type prepareCaptureStmt struct{}
-+
-+func (prepareCaptureConnector) Driver() driver.Driver {
-+	return prepareCaptureDriver{}
-+}
-+
-+func (c prepareCaptureConnector) Connect(context.Context) (driver.Conn, error) {
-+	return &prepareCaptureConn{state: c.state}, nil
-+}
-+
-+func (prepareCaptureDriver) Open(string) (driver.Conn, error) {
-+	return nil, errors.New("prepare capture driver requires a connector")
-+}
-+
-+func (c *prepareCaptureConn) recordPrepare(query string) driver.Stmt {
-+	c.state.mu.Lock()
-+	c.state.queries = append(c.state.queries, query)
-+	c.state.mu.Unlock()
-+	return prepareCaptureStmt{}
-+}
-+
-+func (c *prepareCaptureConn) Prepare(query string) (driver.Stmt, error) {
-+	return c.recordPrepare(query), nil
-+}
-+
-+func (c *prepareCaptureConn) PrepareContext(_ context.Context, query string) (driver.Stmt, error) {
-+	return c.recordPrepare(query), nil
-+}
-+
-+func (*prepareCaptureConn) Close() error { return nil }
-+
-+func (*prepareCaptureConn) Begin() (driver.Tx, error) {
-+	return prepareCaptureTx{}, nil
-+}
-+
-+func (prepareCaptureTx) Commit() error   { return nil }
-+func (prepareCaptureTx) Rollback() error { return nil }
-+
-+func (prepareCaptureStmt) Close() error  { return nil }
-+func (prepareCaptureStmt) NumInput() int { return -1 }
-+func (prepareCaptureStmt) Exec([]driver.Value) (driver.Result, error) {
-+	return driver.RowsAffected(0), nil
-+}
-+func (prepareCaptureStmt) Query([]driver.Value) (driver.Rows, error) {
-+	return nil, errors.New("prepare capture query not supported")
-+}
-+
-+func (s *prepareCaptureState) preparedQueries() []string {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	return append([]string(nil), s.queries...)
-+}
-+
- func (r *testRollbacker) Rollback() error {
- 	r.rollbacks++
- 	return r.err
- }
- 
-+func TestSQLTxPrepareRebindsByMode(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		mode string
-+		want []string
-+	}{
-+		{
-+			name: "postgres",
-+			mode: "postgres",
-+			want: []string{"SELECT $1", "UPDATE items SET name = $1"},
-+		},
-+		{
-+			name: "sqlite",
-+			mode: "local",
-+			want: []string{"SELECT ?", "UPDATE items SET name = ?"},
-+		},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			state := &prepareCaptureState{}
-+			rawDB := sql.OpenDB(prepareCaptureConnector{state: state})
-+			t.Cleanup(func() { _ = rawDB.Close() })
-+
-+			rawTx, err := rawDB.Begin()
-+			require.NoError(t, err)
-+			tx := newSQLTx(rawTx, test.mode)
-+
-+			stmt, err := tx.PrepareContext(context.Background(), "SELECT ?")
-+			require.NoError(t, err)
-+			require.NoError(t, stmt.Close())
-+
-+			stmt, err = tx.Prepare("UPDATE items SET name = ?")
-+			require.NoError(t, err)
-+			require.NoError(t, stmt.Close())
-+			require.NoError(t, tx.Rollback())
-+
-+			require.Equal(t, test.want, state.preparedQueries())
-+		})
-+	}
-+}
-+
- func TestStorageHelperCoverage(t *testing.T) {
- 	t.Run("error types format messages", func(t *testing.T) {
- 		require.Equal(
-```
-
-**File**: `control-plane/internal/storage/execution_records.go` (modified, +106/-15)
-```diff
-@@ -1573,8 +1573,15 @@ func (ls *LocalStorage) markAgentExecutionsOrphaned(ctx context.Context, agentNo
- 
- // RetryStaleWorkflowExecutions finds stale workflow executions that haven't exceeded
- // maxRetries and resets both workflow_executions and executions back to "pending"
--// so the paired records stay in sync for the retry path.
-+// so the paired records stay in sync for the retry path. The candidate predicates
-+// are repeated in both conditional updates, so activity after selection — including
-+// a heartbeat landing between the workflow and execution statements — prevents a retry.
-+// A candidate is only committed and reported as retried when both records move.
- func (ls *LocalStorage) RetryStaleWorkflowExecutions(ctx context.Context, staleAfter time.Duration, maxRetries int, limit int) ([]string, error) {
-+	return ls.retryStaleWorkflowExecutions(ctx, staleAfter, maxRetries, limit, nil)
-+}
-+
-+func (ls *LocalStorage) retryStaleWorkflowExecutions(ctx context.Context, staleAfter time.Duration, maxRetries int, limit int, afterCandidateSelection func()) ([]string, error) {
- 	if limit <= 0 || maxRetries <= 0 {
- 		return nil, nil
- 	}
-@@ -1584,17 +1591,22 @@ func (ls *LocalStorage) RetryStaleWorkflowExecutions(ctx context.Context, staleA
- 
- 	cutoff := time.Now().UTC().Add(-staleAfter)
- 	db := ls.requireSQLDB()
--	tsExpr := ls.staleTimestampExpr("COALESCE(updated_at, created_at, started_at)")
-+	workflowTSExpr := ls.staleTimestampExpr("COALESCE(w.updated_at, w.created_at, w.started_at)")
-+	executionTSExpr := ls.staleTimestampExpr("COALESCE(e.updated_at, e.created_at, e.started_at)")
- 	cutoffExpr := ls.staleTimestampExpr("?")
- 
- 	rows, err := db.QueryContext(ctx, `
--		SELECT execution_id
--		FROM workflow_executions
--		WHERE status IN ('running', 'pending', 'queued')
--		  AND retry_count < ?
--		  AND `+tsExpr+` <= `+cutoffExpr+`
--		ORDER BY `+tsExpr+` ASC
--		LIMIT ?`, maxRetries, cutoff, limit)
-+		SELECT w.execution_id
-+		FROM workflow_executions w
-+		LEFT JOIN executions e
-+		  ON e.execution_id = w.execution_id
-+		 AND e.status IN ('running', 'pending', 'queued', 'waiting')
-+		WHERE w.status IN ('running', 'pending', 'queued')
-+		  AND w.retry_count < ?
-+		  AND `+workflowTSExpr+` <= `+cutoffExpr+`
-+		  AND (e.execution_id IS NULL OR `+executionTSExpr+` <= `+cutoffExpr+`)
-+		ORDER BY `+workflowTSExpr+` ASC
-+		LIMIT ?`, maxRetries, cutoff, cutoff, limit)
- 	if err != nil {
- 		return nil, fmt.Errorf("query retriable workflow executions: %w", err)
- 	}
-@@ -1616,6 +1628,12 @@ func (ls *LocalStorage) RetryStaleWorkflowExecutions(ctx context.Context, staleA
- 		return nil, nil
- 	}
- 
-+	// Package tests use this seam to make the candidate-selection-to-update
-+	// interleaving deterministic; production callers leave it nil.
-+	if afterCandidateSelection != nil {
-+		afterCandidateSelection()
-+	}
-+
- 	tx, err := db.BeginTx(ctx, nil)
- 	if err != nil {
- 		return nil, fmt.Errorf("begin retry transaction: %w", err)
-@@ -1626,34 +1644,68 @@ func (ls *LocalStorage) RetryStaleWorkflowExecutions(ctx context.Context, staleA
- 	retryReason := "auto-retry after stale timeout"
- 
- 	workflowStmt, err := tx.PrepareContext(ctx, `
--		UPDATE workflow_executions
-+		UPDATE workflow_executions AS w
- 		SET status = 'pending',
- 		    retry_count = retry_count + 1,
- 		    error_message = ?,
- 		    completed_at = NULL,
- 		    updated_at = ?
--		WHERE execution_id = ? AND status IN ('running', 'pending', 'queued')`)
-+		WHERE w.execution_id = ?
-+		  AND w.status IN ('running', 'pending', 'queued')
-+		  AND w.retry_count < ?
-+		  AND `+workflowTSExpr+` <= `+cutoffExpr+`
-+		  AND (
-+		      NOT EXISTS (
-+		          SELECT 1 FROM executions e
-+		          WHERE e.execution_id = w.execution_id
-+		            AND e.status IN ('running', 'pending', 'queued', 'waiting')
-+		      )
-+		      OR EXISTS (
-+		          SELECT 1 FROM executions e
-+		          WHERE e.execution_id = w.execution_id
-+		            AND e.status IN ('running', 'pending', 'queued', 'waiting')
-+		            AND `+executionTSExpr+` <= `+cutoffExpr+`
-+		      )
-+		  )`)
- 	if err != nil {
- 		return nil, fmt.Errorf("prepare retry statement: %w", err)
- 	}
- 	defer workflowStmt.Close()
- 
-+	// The execution update repeats the staleness predicate: a heartbeat can
-+	// land between the workflow guard above and this statement, and the fresh
-+	// execution must not be dragged back to pending.
- 	executionStmt, err := tx.PrepareContext(ctx, `
--		UPDATE executions
-+		UPDATE executions AS e
- 		SET status = 'pending',
- 		    error_message = ?,
- 		    completed_at = NULL,
- 		    duration_ms = NULL,
- 		    updated_at = ?
--		WHERE execution_id = ? AND status IN ('running', 'pending', 'queued')`)
-+		WHERE e.execution_id = ?
-+		  AND e.status IN ('running', 'pending', 'queued')
-+		  AND `+executionTSExpr+` <= `+cutoffExpr)
- 	if err != nil {
- 		return nil, fmt.Errorf("prepare execution retry statement: %w", err)
- 	}
- 	defer executionStmt.Close()
- 
-+	// Each candidate is wrapped in a savepoint so it can be undone
-```
-
-**File**: `control-plane/internal/storage/postgres_stale_reaper_live_test.go` (added, +668/-0)
-```diff
-@@ -0,0 +1,668 @@
-+package storage
-+
-+import (
-+	"context"
-+	"database/sql"
-+	"database/sql/driver"
-+	"encoding/json"
-+	"fmt"
-+	"net"
-+	"os"
-+	"strings"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
-+	"github.com/jackc/pgx/v5"
-+	"github.com/jackc/pgx/v5/pgconn"
-+	"github.com/jackc/pgx/v5/stdlib"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// These tests exercise the stale reapers against a real PostgreSQL server.
-+// They are gated on POSTGRES_TEST_URL, the same variable the rest of the
-+// storage suite uses, and connect only to a loopback host. Each test creates
-+// its own throwaway database so rows never leak between tests.
-+
-+// livePostgresConnConfig reads POSTGRES_TEST_URL and refuses anything that is
-+// not a loopback server, so a stray staging DSN can never be touched.
-+func livePostgresConnConfig(t *testing.T) *pgx.ConnConfig {
-+	t.Helper()
-+
-+	dsn := strings.TrimSpace(os.Getenv("POSTGRES_TEST_URL"))
-+	if dsn == "" {
-+		t.Skip("POSTGRES_TEST_URL not set, skipping live postgres tests")
-+	}
-+
-+	cfg, err := pgx.ParseConfig(dsn)
-+	require.NoError(t, err, "parse POSTGRES_TEST_URL")
-+
-+	host := cfg.Host
-+	if host == "" {
-+		host = "localhost"
-+	}
-+	ip := net.ParseIP(host)
-+	require.Truef(t,
-+		strings.EqualFold(host, "localhost") || (ip != nil && ip.IsLoopback()),
-+		"live postgres tests refuse non-loopback host %q", host)
-+	return cfg
-+}
-+
-+// livePostgresStorage spins up an isolated database on the live server and
-+// returns a Postgres-backed LocalStorage pointed at it.
-+func livePostgresStorage(t *testing.T) (*LocalStorage, context.Context) {
-+	t.Helper()
-+
-+	cfg := livePostgresConnConfig(t)
-+	ctx := context.Background()
-+
-+	dbName := fmt.Sprintf("af_reaper_live_%d_%d", time.Now().UnixNano(), os.Getpid())
-+
-+	admin, err := sql.Open("pgx", cfg.ConnString())
-+	require.NoError(t, err)
-+	_, err = admin.ExecContext(ctx, "CREATE DATABASE "+dbName)
-+	_ = admin.Close()
-+	require.NoError(t, err, "create throwaway database %s", dbName)
-+
-+	t.Cleanup(func() {
-+		drop, dropErr := sql.Open("pgx", cfg.ConnString())
-+		if dropErr != nil {
-+			return
-+		}
-+		defer drop.Close()
-+		_, _ = drop.ExecContext(context.Background(), "DROP DATABASE IF EXISTS "+dbName+" WITH (FORCE)")
-+	})
-+
-+	storageCfg := StorageConfig{
-+		Mode: "postgres",
-+		Postgres: PostgresStorageConfig{
-+			Host:     cfg.Host,
-+			Port:     int(cfg.Port),
-+			User:     cfg.User,
-+			Password: cfg.Password,
-+			Database: dbName,
-+			SSLMode:  "disable",
-+		},
-+	}
-+	ls := NewPostgresStorage(PostgresStorageConfig{})
-+	require.NoError(t, ls.Initialize(ctx, storageCfg), "initialize postgres storage")
-+	t.Cleanup(func() { _ = ls.Close(context.Background()) })
-+
-+	return ls, ctx
-+}
-+
-+// preparedSQLRecorder wraps a real PostgreSQL connector and records every SQL
-+// string handed to the driver's prepare path. That string is the post-rebind
-+// text, so it is the exact statement PostgreSQL would parse.
-+type preparedSQLRecorder struct {
-+	inner driver.Connector
-+	mu    sync.Mutex
-+	sql   []string
-+}
-+
-+func (r *preparedSQLRecorder) record(query string) {
-+	r.mu.Lock()
-+	r.sql = append(r.sql, query)
-+	r.mu.Unlock()
-+}
-+
-+func (r *preparedSQLRecorder) prepared() []string {
-+	r.mu.Lock()
-+	defer r.mu.Unlock()
-+	return append([]string(nil), r.sql...)
-+}
-+
-+func (r *preparedSQLRecorder) Connect(ctx context.Context) (driver.Conn, error) {
-+	conn, err := r.inner.Connect(ctx)
-+	if err != nil {
-+		return nil, err
-+	}
-+	return &recordingConn{Conn: conn, recorder: r}, nil
-+}
-+
-+func (r *preparedSQLRecorder) Driver() driver.Driver { return recordingDriver{recorder: r} }
-+
-+type recordingDriver struct{ recorder *preparedSQLRecorder }
-+
-+func (d recordingDriver) Open(string) (driver.Conn, error) {
-+	return d.recorder.Connect(context.Background())
-+}
-+
-+type recordingConn struct {
-+	driver.Conn
-+	recorder *preparedSQLRecorder
-+}
-+
-+func (c *recordingConn) Prepare(query string) (driver.Stmt, error) {
-+	c.recorder.record(query)
-+	return c.Conn.Prepare(query)
-+}
-+
-+func (c *recordingConn) PrepareContext(ctx context.Context, query string) (driver.Stmt, error) {
-+	c.recorder.record(query)
-+	if pc, ok := c.Conn.(driver.ConnPrepareContext); ok {
-+		return pc.PrepareContext(ctx, query)
-+	}
-+	return c.Conn.Prepare(query)
-+}
-+
-+func (c *recordingConn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
-+	if b, ok := c.Conn.(driver.ConnBeginTx); ok {
-+		return b.BeginTx(ctx, opts)
-+	}
-+	return c.Conn.Begin()
-+}
-+
-+// livePreparedRecorder opens a recorder-backed *sql.DB for the same throwaway
-+// database as ls and swaps it in, returning a restore func.
-+func livePreparedRecorder(t *testing.T, cfg *pgx.ConnConfig) (*preparedSQLRecorder, *sql.DB) {
-+	t.Helper()
-+	connector := stdlib.GetConnector(*cfg)
-+	recorder := &preparedSQLRecorder{inner: connector}
-+	db := sql.OpenDB(recorder)
-+	return recorder, db
-+}
-+
-+func liveConfigForDatabase(t *testing.T, dbName string) *pgx.ConnConfig {
-+	t.Helper()
-+	cfg := livePostgre
-```
-
-**File**: `control-plane/internal/storage/retry_stale_test.go` (modified, +663/-0)
-```diff
-@@ -3,6 +3,7 @@ package storage
- import (
- 	"context"
- 	"encoding/json"
-+	"fmt"
- 	"path/filepath"
- 	"strings"
- 	"testing"
-@@ -13,6 +14,98 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+// Interleaving inventory for RetryStaleWorkflowExecutions.
-+//
-+// A candidate is a workflow row W and its paired execution row E. The sweep
-+// selects candidates and then, inside one transaction, updates W and then E
-+// with each candidate wrapped in a savepoint. The windows are:
-+//
-+//  1. Activity lands on E before selection. E is no longer stale, the selection
-+//     predicate drops the candidate, and neither row moves. Covered by
-+//     TestRetryStaleWorkflowExecutions_ExecutionActivityProtectsWorkflow and
-+//     TestRetryStaleWorkflowExecutions_FreshNonUTCTimestampNotRetried.
-+//  2. Activity lands on W before selection. W is no longer stale, the selection
-+//     predicate drops the candidate. Covered by TestRetryStaleWorkflowExecutions
-+//     (fresh workflow fixture).
-+//  3. Activity lands on W or E after selection but before the transaction's
-+//     first statement. The workflow UPDATE repeats the selection predicates, so
-+//     it matches zero rows and the candidate is skipped without a savepoint.
-+//     Covered by ..._ActivityAfterSelectionSkipsUpdate (E) and
-+//     ..._WorkflowActivityAfterSelectionSkipsUpdate (W).
-+//  4. Activity lands on E after the workflow UPDATE and before the execution
-+//     UPDATE. The execution UPDATE matches zero rows, the recheck sees an
-+//     active execution that is no longer stale, and the whole candidate is
-+//     rolled back to its savepoint: W untouched, retry_count unchanged, id
-+//     absent from the returned set, and E keeps the fresh heartbeat. Covered by
-+//     ..._HeartbeatBetweenStatementsSparesExecution on SQLite and live
-+//     PostgreSQL, and at batch level by ..._BatchReportsOnlyMovedCandidates.
-+//  5. E becomes terminal or waiting between selection and the execution UPDATE.
-+//     No running/pending/queued paired record is left, so the pre-existing
-+//     workflow-only recovery path applies: only W moves and E is never
-+//     modified. Terminal is covered by ..._TerminalPairedExecutionStillRetried;
-+//     the waiting variant reaches the same branch because the execution UPDATE
-+//     deliberately excludes 'waiting' (see commit c73dc4d1). Treating a
-+//     terminal execution as "no live work" is the documented contract that the
-+//     fix preserves.
-+//  6. A heartbeat on E lands after the execution UPDATE but before commit. The
-+//     update holds E's row lock on PostgreSQL, so the heartbeat serialises
-+//     behind the commit and applies to the pending row from outside the call;
-+//     the call cannot lose a heartbeat it has not yet observed.
-+//  7. A statement fails or the context is cancelled mid-batch. defer
-+//     rollbackTx discards every candidate, so no half-moved pair can survive;
-+//     the returned error is authoritative over the returned ids. The invariant
-+//     is "nothing commits", so it needs no interleaving proof beyond the
-+//     deferred rollback.
-+//
-+// MarkStaleWorkflowExecutions has a different shape: once its workflow guard
-+// has passed, its workflow UPDATE and its executions sync UPDATE both run, and
-+// the sync UPDATE carries no staleness predicate. A heartbeat that lands
-+// between the two statements is therefore overwritten by the sync, leaving
-+// both rows terminal together. The pair never splits (the consistency property
-+// this inventory tracks); the lost heartbeat is a pre-existing false-positive
-+// window in the reaper's sync mirror, unchanged by the retry fix and out of
-+// scope here.
-+//
-+// Helpers shared by the regressions below.
-+
-+// retryTestWorkflow builds a stale-eligible workflow row whose timestamps are
-+// exactly the supplied instant so tests can assert that a skipped candidate
-+// keeps its committed updated_at.
-+func retryTestWorkflow(id string, updatedAt time.Time) *types.WorkflowExecution {
-+	return &types.WorkflowExecution{
-+		WorkflowID:          "wf-" + id,
-+		ExecutionID:         id,
-+		AgentFieldRequestID: "req-" + id,
-+		AgentNodeID:         "agent-retry",
-+		ReasonerID:          "reasoner-retry",
-+		Status:              "running",
-+		StartedAt:           updatedAt,
-+		InputData:           json.RawMessage(`{}`),
-+		OutputData:          json.RawMessage(`{}`),
-+		RetryCount:          0,
-+		CreatedAt:           updatedAt,
-+		UpdatedAt:           updatedAt,
-+	}
-+}
-+
-+// retryTestExecution builds the paired legacy row. CreateExecutionRecord
-+// stamps created_at/updated_at to now, so callers backdate updated_at when the
-+// fixture must look stale.
-+func retryTestExecution(id string, startedAt time.Time) *types.Execution {
-+	return &types.Execution{
-+		ExecutionID:  id,
-+		RunID:        "run-" + id,
-+		AgentNodeID:  "agent-retry",
-+		ReasonerID:   "reasoner-retry",
-+		NodeID:       "agent-retry",
-+		Status:       "running",
-+		StartedAt:    startedAt,
-+		CreatedAt
-```
-
-**File**: `control-plane/internal/storage/sql_helpers.go` (modified, +11/-0)
-```diff
-@@ -150,3 +150,14 @@ func (tx *sqlTx) QueryRowContext(ctx context.Context, query string, args ...inte
- func (tx *sqlTx) QueryRow(query string, args ...interface{}) *sql.Row {
- 	return tx.Tx.QueryRow(tx.rebind(query), args...)
- }
-+
-+// Both preparation methods must rebind here: callers can use either the
-+// context-aware or deprecated API, and the embedded *sql.Tx methods would
-+// otherwise send ? placeholders directly to PostgreSQL.
-+func (tx *sqlTx) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
-+	return tx.Tx.PrepareContext(ctx, tx.rebind(query))
-+}
-+
-+func (tx *sqlTx) Prepare(query string) (*sql.Stmt, error) {
-+	return tx.Tx.Prepare(tx.rebind(query))
-+}
-```
-
----
-
-### Incident Patch 13: `7a1714e5` (2026-09-18)
-**Commit Message**: fix(sdk/go): return isolated session definitions (#1044)
-
-* fix(sdk/go): return isolated session definitions
-
-* fix(sdk/go): distinguish overlapping slice views
-
-**File**: `sdk/go/agent/session.go` (modified, +99/-1)
-```diff
-@@ -1,5 +1,7 @@
- package agent
- 
-+import "reflect"
-+
- type SessionDefinition struct {
- 	Name          string         `json:"name"`
- 	Provider      string         `json:"provider"`
-@@ -107,7 +109,103 @@ func (a *Agent) RegisterSession(name string, provider string, transport string,
- func (a *Agent) SessionDefinitions() []SessionDefinition {
- 	sessions := make([]SessionDefinition, 0, len(a.sessions))
- 	for _, session := range a.sessions {
--		sessions = append(sessions, session)
-+		sessions = append(sessions, cloneSessionDefinition(session))
- 	}
- 	return sessions
- }
-+
-+func cloneSessionDefinition(session SessionDefinition) SessionDefinition {
-+	cloned := session
-+	cloned.Modalities = append([]string(nil), session.Modalities...)
-+	cloned.Tools = append([]string(nil), session.Tools...)
-+	cloned.Tags = append([]string(nil), session.Tags...)
-+	cloned.ProposedTags = append([]string(nil), session.ProposedTags...)
-+	cloned.ApprovedTags = append([]string(nil), session.ApprovedTags...)
-+	cloned.Metadata = cloneSessionMetadata(session.Metadata)
-+	if session.TurnDetection != nil {
-+		config := *session.TurnDetection
-+		config.Threshold = cloneSessionPointer(config.Threshold)
-+		config.PrefixPaddingMS = cloneSessionPointer(config.PrefixPaddingMS)
-+		config.SilenceDurationMS = cloneSessionPointer(config.SilenceDurationMS)
-+		config.CreateResponse = cloneSessionPointer(config.CreateResponse)
-+		config.InterruptResponse = cloneSessionPointer(config.InterruptResponse)
-+		cloned.TurnDetection = &config
-+	}
-+	return cloned
-+}
-+
-+func cloneSessionPointer[T any](value *T) *T {
-+	if value == nil {
-+		return nil
-+	}
-+	cloned := *value
-+	return &cloned
-+}
-+
-+type sessionMetadataCopyReference struct {
-+	kind   reflect.Kind
-+	typeOf reflect.Type
-+	ptr    uintptr
-+	length int
-+	cap    int
-+}
-+
-+// cloneSessionMetadata recursively copies maps and slices stored in metadata.
-+// It keeps a copy of each encountered reference so cyclic metadata remains
-+// detached without recursing forever. Other kinds are returned unchanged.
-+func cloneSessionMetadata(metadata map[string]any) map[string]any {
-+	if metadata == nil {
-+		return nil
-+	}
-+	return cloneSessionMetadataValue(
-+		reflect.ValueOf(metadata),
-+		make(map[sessionMetadataCopyReference]reflect.Value),
-+	).Interface().(map[string]any)
-+}
-+
-+func cloneSessionMetadataValue(value reflect.Value, copied map[sessionMetadataCopyReference]reflect.Value) reflect.Value {
-+	switch value.Kind() {
-+	case reflect.Interface:
-+		if value.IsNil() {
-+			return reflect.Zero(value.Type())
-+		}
-+		cloned := cloneSessionMetadataValue(value.Elem(), copied)
-+		result := reflect.New(value.Type()).Elem()
-+		result.Set(cloned)
-+		return result
-+	case reflect.Map:
-+		if value.IsNil() {
-+			return reflect.Zero(value.Type())
-+		}
-+		ref := sessionMetadataCopyReference{kind: value.Kind(), typeOf: value.Type(), ptr: value.Pointer()}
-+		if existing, found := copied[ref]; found {
-+			return existing
-+		}
-+		result := reflect.MakeMapWithSize(value.Type(), value.Len())
-+		copied[ref] = result
-+		iter := value.MapRange()
-+		for iter.Next() {
-+			result.SetMapIndex(iter.Key(), cloneSessionMetadataValue(iter.Value(), copied))
-+		}
-+		return result
-+	case reflect.Slice:
-+		if value.IsNil() {
-+			return reflect.Zero(value.Type())
-+		}
-+		ref := sessionMetadataCopyReference{
-+			kind: value.Kind(), typeOf: value.Type(), ptr: value.Pointer(),
-+			length: value.Len(), cap: value.Cap(),
-+		}
-+		if existing, found := copied[ref]; found {
-+			return existing
-+		}
-+		result := reflect.MakeSlice(value.Type(), value.Len(), value.Len())
-+		copied[ref] = result
-+		for i := 0; i < value.Len(); i++ {
-+			result.Index(i).Set(cloneSessionMetadataValue(value.Index(i), copied))
-+		}
-+		return result
-+	default:
-+		return value
-+	}
-+}
-```
-
-**File**: `sdk/go/agent/session_test.go` (modified, +150/-0)
-```diff
-@@ -6,6 +6,63 @@ import (
- 	"testing"
- )
- 
-+func TestAgentSessionDefinitionsDetachesTurnDetection(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, provider, transport string
-+		config                    *TurnDetection
-+	}{
-+		{name: "defaults", provider: "openai", transport: "webrtc"},
-+		{name: "explicit zero and false", provider: "openai", transport: "websocket", config: &TurnDetection{
-+			Type: "server_vad", Threshold: turnDetectionTestPtr(0.0),
-+			PrefixPaddingMS: turnDetectionTestPtr(0), SilenceDurationMS: turnDetectionTestPtr(0),
-+			CreateResponse: turnDetectionTestPtr(false), InterruptResponse: turnDetectionTestPtr(false),
-+		}},
-+		{name: "semantic", provider: "openai", transport: "webrtc", config: &TurnDetection{Type: "semantic_vad", Eagerness: "low"}},
-+		{name: "no turn detection", provider: "openrouter", transport: "audio_turns"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			a, err := New(Config{NodeID: "support", Version: "v1"})
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			var opts []SessionOption
-+			if tc.config != nil {
-+				opts = append(opts, WithSessionTurnDetection(*tc.config))
-+			}
-+			if err := a.RegisterSession("voice", tc.provider, tc.transport, opts...); err != nil {
-+				t.Fatal(err)
-+			}
-+			want, err := json.Marshal(a.sessions["voice"].TurnDetection)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			snapshot := a.SessionDefinitions()[0]
-+			if config := snapshot.TurnDetection; config != nil {
-+				config.Type = "mutated"
-+				config.Eagerness = "mutated"
-+				if config.Threshold != nil {
-+					*config.Threshold = 1
-+				}
-+				if config.PrefixPaddingMS != nil {
-+					*config.PrefixPaddingMS = 999
-+				}
-+				if config.SilenceDurationMS != nil {
-+					*config.SilenceDurationMS = 999
-+				}
-+				*config.CreateResponse = !*config.CreateResponse
-+				*config.InterruptResponse = !*config.InterruptResponse
-+			}
-+			got, err := json.Marshal(a.SessionDefinitions()[0].TurnDetection)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if string(got) != string(want) {
-+				t.Fatalf("snapshot mutation changed registered session: got %s, want %s", got, want)
-+			}
-+		})
-+	}
-+}
-+
- func TestAgentRegisterSessionStoresExplicitDefinition(t *testing.T) {
- 	a, err := New(Config{NodeID: "support", Version: "v1"})
- 	if err != nil {
-@@ -50,6 +107,99 @@ func TestAgentRegisterSessionRejectsInvalidTransport(t *testing.T) {
- 	}
- }
- 
-+func TestAgentSessionDefinitionsReturnsDefensiveSnapshots(t *testing.T) {
-+	a, err := New(Config{NodeID: "support", Version: "v1"})
-+	if err != nil {
-+		t.Fatalf("New returned error: %v", err)
-+	}
-+
-+	metadata := map[string]any{
-+		"origin": "registry",
-+		"nested": map[string]any{
-+			"labels": []any{"original", map[string]any{"owner": "support"}},
-+		},
-+		"typedLabels": []string{"voice"},
-+	}
-+	if err := a.RegisterSession(
-+		"voice",
-+		"openai",
-+		"webrtc",
-+		WithSessionModalities("audio"),
-+		WithSessionTools("support.resolve_voice_turn"),
-+		WithSessionTags("voice"),
-+		WithSessionMetadata(metadata),
-+	); err != nil {
-+		t.Fatalf("RegisterSession returned error: %v", err)
-+	}
-+	registered := a.sessions["voice"]
-+	registered.ApprovedTags = []string{"approved"}
-+	a.sessions["voice"] = registered
-+
-+	snapshot := a.SessionDefinitions()
-+	snapshot[0].Tools[0] = "mutated-tool"
-+	snapshot[0].Modalities[0] = "mutated-modality"
-+	snapshot[0].Tags[0] = "mutated-tag"
-+	snapshot[0].ProposedTags[0] = "mutated-proposed-tag"
-+	snapshot[0].ApprovedTags[0] = "mutated-approved-tag"
-+	snapshot[0].Metadata["origin"] = "mutated-origin"
-+	nested := snapshot[0].Metadata["nested"].(map[string]any)
-+	labels := nested["labels"].([]any)
-+	labels[0] = "mutated-label"
-+	labels[1].(map[string]any)["owner"] = "mutated-owner"
-+	snapshot[0].Metadata["typedLabels"].([]string)[0] = "mutated-typed-label"
-+
-+	secondSnapshot := a.SessionDefinitions()
-+	session := secondSnapshot[0]
-+	if session.Tools[0] != "support.resolve_voice_turn" {
-+		t.Errorf("tools = %#v, want original values", session.Tools)
-+	}
-+	if session.Modalities[0] != "audio" {
-+		t.Errorf("modalities = %#v, want original values", session.Modalities)
-+	}
-+	if session.Tags[0] != "voice" || session.ProposedTags[0] != "voice" || session.ApprovedTags[0] != "approved" {
-+		t.Errorf("tags = %#v proposed=%#v approved=%#v, want original values", session.Tags, session.ProposedTags, session.ApprovedTags)
-+	}
-+	if session.Metadata["origin"] != "registry" {
-+		t.Errorf("metadata origin = %#v, want registry", session.Metadata["origin"])
-+	}
-+	gotNested := session.Metadata["nested"].(map[string]any)
-+	gotLabels := gotNested["labels"].([]any)
-+	if gotLabels[0] != "original" || gotLabels[1].(map[string]any)["owner"] != "support" {
-+		t.Errorf("nested metadata = %#v, want original values", gotNested)
-+	}
-+	if session.Metadata["typedLabels"].([]string)[0] != "voice" {
-+		t.Errorf("typed metadata slice = %#v, want original values", session.Metadata["typedLabels"])
-+	}
-+}
-+
-+func TestAgentSessionDefinitionsPreservesOverlappingSliceLengths(t *test
-```
-
----
-
-### Incident Patch 14: `9e692298` (2026-09-15)
-**Commit Message**: fix(sessions): expose turn detection and barge-in configuration across SDKs (#1056)
-
-* fix(sessions): expose validated turn detection across SDKs
-
-Signed-off-by: WANG Qingmin <[REDACTED_EMAIL]>
-
-* test(sessions): cover config parsing and invalid offer targets
-
-Signed-off-by: WANG Qingmin <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: WANG Qingmin <[REDACTED_EMAIL]>
-
-**File**: `control-plane/internal/cli/session.go` (modified, +5/-0)
-```diff
-@@ -31,6 +31,7 @@ type sessionToolOptions struct {
- }
- 
- type sessionOfferOptions struct {
-+	target       string
- 	provider     string
- 	transport    string
- 	sdpSource    string
-@@ -113,6 +114,7 @@ func newSessionOfferCommand() *cobra.Command {
- 	}
- 	cmd.Flags().StringVar(&opts.provider, "provider", "", "Explicit session provider")
- 	cmd.Flags().StringVar(&opts.transport, "transport", "", "Explicit session transport")
-+	cmd.Flags().StringVar(&opts.target, "target", "", "Registered <node>.<session> whose turn detection settings to use")
- 	cmd.Flags().StringVar(&opts.sdpSource, "sdp", "", "SDP offer as inline text, @path, or - for stdin; defaults to stdin")
- 	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "raw", "Output format: raw, json, pretty, yaml")
- 	return cmd
-@@ -133,6 +135,9 @@ func runSessionOffer(ctx context.Context, sessionID string, opts *sessionOfferOp
- 	if strings.TrimSpace(opts.transport) != "" {
- 		values.Set("transport", opts.transport)
- 	}
-+	if strings.TrimSpace(opts.target) != "" {
-+		values.Set("target", opts.target)
-+	}
- 	path := "/api/v1/session-instances/" + url.PathEscape(sessionID) + "/realtime-offer"
- 	if encoded := values.Encode(); encoded != "" {
- 		path += "?" + encoded
-```
-
-**File**: `control-plane/internal/cli/session_test.go` (modified, +2/-0)
-```diff
-@@ -77,6 +77,7 @@ func TestRunSessionOfferPostsSDPAndWritesRawAnswer(t *testing.T) {
- 		require.Equal(t, "/api/v1/session-instances/sess-1/realtime-offer", r.URL.Path)
- 		require.Equal(t, "openai", r.URL.Query().Get("provider"))
- 		require.Equal(t, "webrtc", r.URL.Query().Get("transport"))
-+		require.Equal(t, "support.voice", r.URL.Query().Get("target"))
- 		gotContentType = r.Header.Get("Content-Type")
- 		gotAPIKey = r.Header.Get("X-API-Key")
- 		body, err := io.ReadAll(r.Body)
-@@ -90,6 +91,7 @@ func TestRunSessionOfferPostsSDPAndWritesRawAnswer(t *testing.T) {
- 	var stdout bytes.Buffer
- 	err := runSessionOffer(context.Background(), "sess-1", &sessionOfferOptions{
- 		provider:     "openai",
-+		target:       "support.voice",
- 		transport:    "webrtc",
- 		sdpSource:    "v=0\r\noffer\r\n",
- 		outputFormat: "raw",
-```
-
-**File**: `control-plane/internal/handlers/sessions.go` (modified, +68/-18)
-```diff
-@@ -77,29 +77,48 @@ func StartSessionHandler(store storage.StorageProvider) gin.HandlerFunc {
- 			return
- 		}
- 
-+		turnDetection, err := types.ParseSessionTurnDetection(capability.Provider, capability.Transport, definition.TurnDetection)
-+		if err != nil {
-+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-+			return
-+		}
-+
- 		sessionID := "sess_" + time.Now().UTC().Format("20060102_150405") + "_" + shortRandom()
- 		model := firstNonEmptySession(req.Model, definition.Model)
- 		voice := firstNonEmptySession(req.Voice, definition.Voice)
-+		// The offer endpoint is stateless. Carry the registered target in its
-+		// returned URL so the next request can resolve and validate its config.
-+		offerQuery := url.Values{
-+			"target":    {nodeID + "." + sessionName},
-+			"provider":  {capability.Provider},
-+			"transport": {capability.Transport},
-+		}
-+		if model != "" {
-+			offerQuery.Set("model", model)
-+		}
-+		if voice != "" {
-+			offerQuery.Set("voice", voice)
-+		}
- 		c.JSON(http.StatusCreated, gin.H{
--			"session_id":   sessionID,
--			"target":       nodeID + "." + sessionName,
--			"provider":     capability.Provider,
--			"transport":    capability.Transport,
--			"model":        model,
--			"voice":        voice,
--			"modalities":   definition.Modalities,
--			"tags":         definition.ApprovedTags,
--			"tool_targets": sessionToolTargets(nodeID, definition.Tools),
--			"offer_url":    fmt.Sprintf("/api/v1/session-instances/%s/realtime-offer", url.PathEscape(sessionID)),
--			"tool_url":     fmt.Sprintf("/api/v1/session-instances/%s/tools/{tool}", url.PathEscape(sessionID)),
--			"created_at":   time.Now().UTC().Format(time.RFC3339Nano),
-+			"turn_detection": turnDetection,
-+			"session_id":     sessionID,
-+			"target":         nodeID + "." + sessionName,
-+			"provider":       capability.Provider,
-+			"transport":      capability.Transport,
-+			"model":          model,
-+			"voice":          voice,
-+			"modalities":     definition.Modalities,
-+			"tags":           definition.ApprovedTags,
-+			"tool_targets":   sessionToolTargets(nodeID, definition.Tools),
-+			"offer_url":      fmt.Sprintf("/api/v1/session-instances/%s/realtime-offer", url.PathEscape(sessionID)) + "?" + offerQuery.Encode(),
-+			"tool_url":       fmt.Sprintf("/api/v1/session-instances/%s/tools/{tool}", url.PathEscape(sessionID)),
-+			"created_at":     time.Now().UTC().Format(time.RFC3339Nano),
- 		})
- 	}
- }
- 
- func SessionRealtimeOfferHandler(store storage.StorageProvider) gin.HandlerFunc {
- 	return func(c *gin.Context) {
--		_ = store
- 		provider := strings.TrimSpace(c.Query("provider"))
- 		transport := strings.TrimSpace(c.Query("transport"))
- 		if provider == "" || transport == "" {
-@@ -120,6 +139,33 @@ func SessionRealtimeOfferHandler(store storage.StorageProvider) gin.HandlerFunc
- 			c.JSON(http.StatusBadRequest, gin.H{"error": "webrtc realtime offers currently require provider=openai"})
- 			return
- 		}
-+		var rawTurnDetection json.RawMessage
-+		model, voice := c.Query("model"), c.Query("voice")
-+		if _, supplied := c.Request.URL.Query()["target"]; supplied {
-+			target := c.Query("target")
-+			nodeID, sessionName, ok := splitSessionTarget(target)
-+			if !ok {
-+				c.JSON(http.StatusBadRequest, gin.H{"error": "session target must be <node>.<session>"})
-+				return
-+			}
-+			definition, found := lookupSessionDefinition(c, store, nodeID, sessionName)
-+			if !found {
-+				return
-+			}
-+			if types.NormalizeSessionTransportValue(definition.Provider) != "openai" ||
-+				types.NormalizeSessionTransportValue(definition.Transport) != "webrtc" {
-+				c.JSON(http.StatusBadRequest, gin.H{"error": "registered session must use provider=openai transport=webrtc for realtime offers"})
-+				return
-+			}
-+			rawTurnDetection = definition.TurnDetection
-+			model = firstNonEmptySession(model, definition.Model)
-+			voice = firstNonEmptySession(voice, definition.Voice)
-+		}
-+		turnDetection, err := types.ParseSessionTurnDetection("openai", "webrtc", rawTurnDetection)
-+		if err != nil {
-+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-+			return
-+		}
- 		if strings.TrimSpace(os.Getenv("OPENAI_API_KEY")) == "" {
- 			c.JSON(http.StatusBadGateway, gin.H{"error": "OPENAI_API_KEY is required for provider=openai transport=webrtc"})
- 			return
-@@ -133,8 +179,9 @@ func SessionRealtimeOfferHandler(store storage.StorageProvider) gin.HandlerFunc
- 			c.Request.Context(),
- 			sessionPathID(c),
- 			string(sdp),
--			firstNonEmptySession(c.Query("model"), "gpt-realtime-2"),
--			firstNonEmptySession(c.Query("voice"), "marin"),
-+			firstNonEmptySession(model, "gpt-realtime-2"),
-+			firstNonEmptySession(voice, "marin"),
-+			turnDetection,
- 		)
- 		if err != nil {
- 			c.JSON(http.StatusBadGateway, gin.H{
-@@ -269,7 +316,7 @@ func sessionToolTargets(nodeID string, tools []string) map[string]string {
- 	return targets
- }
- 
--func createOpenAIRealtimeCall(ctx context.Context, sessionID string, sdp string, model string, voice string) (string, error) {
-+func createOpenAIRealtime
-```
-
-**File**: `control-plane/internal/handlers/sessions_test.go` (modified, +161/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"io"
- 	"net/http"
- 	"net/http/httptest"
-+	"net/url"
- 	"strings"
- 	"testing"
- 	"time"
-@@ -277,6 +278,10 @@ func TestSessionRealtimeOfferHandlerCallsRealtimeProvider(t *testing.T) {
- 	require.Len(t, gotSafetyID, 32)
- 	require.Contains(t, gotSession, `"model":"gpt-test"`)
- 	require.Contains(t, gotSession, `"voice":"cedar"`)
-+	var config map[string]interface{}
-+	require.NoError(t, json.Unmarshal([]byte(gotSession), &config))
-+	input := config["audio"].(map[string]interface{})["input"].(map[string]interface{})
-+	require.Equal(t, true, input["turn_detection"].(map[string]interface{})["interrupt_response"])
- }
- 
- func TestSessionRealtimeOfferHandlerSurfacesProviderErrors(t *testing.T) {
-@@ -403,3 +408,159 @@ func sessionTestAgent() *types.AgentNode {
- 		}},
- 	}
- }
-+
-+// Exercise the complete metadata -> start -> offer -> provider boundary, rather
-+// than just checking that a new field exists in the registration response.
-+func TestSessionTurnDetectionReachesProvider(t *testing.T) {
-+	gin.SetMode(gin.TestMode)
-+	t.Setenv("OPENAI_API_KEY", "test-key")
-+	original := http.DefaultClient.Transport
-+	t.Cleanup(func() { http.DefaultClient.Transport = original })
-+	for _, tc := range []struct{ name, config, expected string }{
-+		{"legacy defaults", "", `{"type":"server_vad","threshold":0.5,"prefix_padding_ms":300,"silence_duration_ms":500,"create_response":true,"interrupt_response":true}`},
-+		{"custom server", `{"type":"server_vad","threshold":0,"prefix_padding_ms":0,"silence_duration_ms":750,"create_response":false,"interrupt_response":false}`, `{"type":"server_vad","threshold":0,"prefix_padding_ms":0,"silence_duration_ms":750,"create_response":false,"interrupt_response":false}`},
-+		{"semantic", `{"type":"semantic_vad","eagerness":"low"}`, `{"type":"semantic_vad","eagerness":"low","create_response":true,"interrupt_response":true}`},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			agent := sessionTestAgent()
-+			raw := agent.Metadata.Custom["sessions"].([]interface{})[0].(map[string]interface{})
-+			raw["model"], raw["voice"] = "gpt-vad-test", "cedar"
-+			if tc.config != "" {
-+				raw["turn_detection"] = json.RawMessage(tc.config)
-+			}
-+			store := &nodeRESTStorageStub{agent: agent}
-+			router := gin.New()
-+			router.POST("/api/v1/session-targets/:target/start", StartSessionHandler(store))
-+			router.POST("/api/v1/session-instances/:session_id/realtime-offer", SessionRealtimeOfferHandler(store))
-+			start := httptest.NewRecorder()
-+			router.ServeHTTP(start, httptest.NewRequest(http.MethodPost, "/api/v1/session-targets/support.voice/start", strings.NewReader(`{}`)))
-+			require.Equal(t, http.StatusCreated, start.Code, start.Body.String())
-+			var result struct {
-+				OfferURL      string          `json:"offer_url"`
-+				TurnDetection json.RawMessage `json:"turn_detection"`
-+			}
-+			require.NoError(t, json.Unmarshal(start.Body.Bytes(), &result))
-+			require.JSONEq(t, tc.expected, string(result.TurnDetection))
-+			calls := 0
-+			http.DefaultClient.Transport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
-+				calls++
-+				require.NoError(t, req.ParseMultipartForm(1<<20))
-+				require.Equal(t, "v=0\r\noffer\r\n", req.FormValue("sdp"))
-+				var config struct {
-+					Model string `json:"model"`
-+					Audio struct {
-+						Output struct {
-+							Voice string `json:"voice"`
-+						} `json:"output"`
-+						Input struct {
-+							TurnDetection json.RawMessage `json:"turn_detection"`
-+						} `json:"input"`
-+					} `json:"audio"`
-+				}
-+				require.NoError(t, json.Unmarshal([]byte(req.FormValue("session")), &config))
-+				require.JSONEq(t, tc.expected, string(config.Audio.Input.TurnDetection))
-+				require.Equal(t, "gpt-vad-test", config.Model)
-+				require.Equal(t, "cedar", config.Audio.Output.Voice)
-+				return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: io.NopCloser(strings.NewReader("answer"))}, nil
-+			})
-+			if tc.name == "semantic" {
-+				// CLI offers identify the target without repeating model/voice.
-+				offerURL, err := url.Parse(result.OfferURL)
-+				require.NoError(t, err)
-+				query := offerURL.Query()
-+				query.Del("model")
-+				query.Del("voice")
-+				offerURL.RawQuery = query.Encode()
-+				result.OfferURL = offerURL.String()
-+			}
-+			offer := httptest.NewRecorder()
-+			router.ServeHTTP(offer, httptest.NewRequest(http.MethodPost, result.OfferURL, strings.NewReader("v=0\r\noffer\r\n")))
-+			require.Equal(t, http.StatusOK, offer.Code, offer.Body.String())
-+			require.Equal(t, 1, calls)
-+		})
-+	}
-+}
-+
-+func TestStartSessionRejectsInvalidTurnDetection(t *testing.T) {
-+	for _, config := range []string{
-+		`{}`, `{"Type":"server_vad"}`, `{"type":"semantic_vad","eagerness":""}`, `{"type":"client_vad"}`, `{"type":"server_vad","threshold":2}`,
-+		`{"type":"server_vad","silence_duration_ms":-1}`, `{"type":"server_vad","prefix_padding_ms":1.5}`,
-+		`{"type":"server_vad","create_response":"false"}`, `{"type":"server_vad","interrupt_response":nu
-```
-
-**File**: `control-plane/pkg/types/session_turn_detection.go` (added, +120/-0)
-```diff
-@@ -0,0 +1,120 @@
-+package types
-+
-+import (
-+	"bytes"
-+	"encoding/json"
-+	"fmt"
-+	"math"
-+)
-+
-+// TurnDetection configures OpenAI Realtime input audio. Nil options use defaults.
-+// Pointer fields preserve explicit false and zero values during JSON serialization.
-+type TurnDetection struct {
-+	Type              string   `json:"type"`
-+	Threshold         *float64 `json:"threshold,omitempty"`
-+	PrefixPaddingMS   *int     `json:"prefix_padding_ms,omitempty"`
-+	SilenceDurationMS *int     `json:"silence_duration_ms,omitempty"`
-+	CreateResponse    *bool    `json:"create_response,omitempty"`
-+	InterruptResponse *bool    `json:"interrupt_response,omitempty"`
-+	Eagerness         string   `json:"eagerness,omitempty"`
-+}
-+
-+// NormalizeTurnDetection validates options and returns an independent config with
-+// automatic responses and barge-in enabled unless explicitly disabled.
-+func NormalizeTurnDetection(provider, transport string, config *TurnDetection) (*TurnDetection, error) {
-+	if provider != "openai" || (transport != "webrtc" && transport != "websocket") {
-+		if config != nil {
-+			return nil, fmt.Errorf("turn_detection requires provider=openai and transport=webrtc or websocket")
-+		}
-+		return nil, nil
-+	}
-+	result := TurnDetection{Type: "server_vad"}
-+	if config != nil {
-+		result = *config
-+	}
-+	switch result.Type {
-+	case "server_vad":
-+		if result.Eagerness != "" {
-+			return nil, fmt.Errorf("turn_detection.eagerness is unsupported for server_vad")
-+		}
-+		threshold := 0.5
-+		if result.Threshold != nil {
-+			threshold = *result.Threshold
-+		}
-+		if math.IsNaN(threshold) || math.IsInf(threshold, 0) || threshold < 0 || threshold > 1 {
-+			return nil, fmt.Errorf("turn_detection.threshold must be a finite number between 0 and 1")
-+		}
-+		padding, silence := 300, 500
-+		if result.PrefixPaddingMS != nil {
-+			padding = *result.PrefixPaddingMS
-+		}
-+		if result.SilenceDurationMS != nil {
-+			silence = *result.SilenceDurationMS
-+		}
-+		if padding < 0 || silence < 0 {
-+			return nil, fmt.Errorf("turn_detection durations must be non-negative integers")
-+		}
-+		result.Threshold, result.PrefixPaddingMS, result.SilenceDurationMS = &threshold, &padding, &silence
-+	case "semantic_vad":
-+		if result.Threshold != nil || result.PrefixPaddingMS != nil || result.SilenceDurationMS != nil {
-+			return nil, fmt.Errorf("turn_detection threshold and durations are unsupported for semantic_vad")
-+		}
-+		if result.Eagerness == "" {
-+			result.Eagerness = "auto"
-+		}
-+		switch result.Eagerness {
-+		case "auto", "low", "medium", "high":
-+		default:
-+			return nil, fmt.Errorf("turn_detection.eagerness must be auto, low, medium, or high")
-+		}
-+	default:
-+		return nil, fmt.Errorf("turn_detection.type must be server_vad or semantic_vad")
-+	}
-+	create, interrupt := true, true
-+	if result.CreateResponse != nil {
-+		create = *result.CreateResponse
-+	}
-+	if result.InterruptResponse != nil {
-+		interrupt = *result.InterruptResponse
-+	}
-+	result.CreateResponse, result.InterruptResponse = &create, &interrupt
-+	return &result, nil
-+}
-+
-+// ParseSessionTurnDetection validates untrusted registration metadata before any
-+// provider request. Raw JSON preserves unknown fields so they cannot be ignored.
-+func ParseSessionTurnDetection(provider, transport string, raw json.RawMessage) (*TurnDetection, error) {
-+	raw = bytes.TrimSpace(raw)
-+	if len(raw) == 0 || bytes.Equal(raw, []byte("null")) {
-+		return NormalizeTurnDetection(provider, transport, nil)
-+	}
-+	var fields map[string]json.RawMessage
-+	if err := json.Unmarshal(raw, &fields); err != nil {
-+		return nil, fmt.Errorf("turn_detection must be an object: %w", err)
-+	}
-+	var config TurnDetection
-+	decoder := json.NewDecoder(bytes.NewReader(raw))
-+	decoder.DisallowUnknownFields()
-+	if err := decoder.Decode(&config); err != nil {
-+		return nil, fmt.Errorf("invalid turn_detection: %w", err)
-+	}
-+	for key, value := range fields {
-+		switch key {
-+		case "type", "threshold", "prefix_padding_ms", "silence_duration_ms", "create_response", "interrupt_response", "eagerness":
-+		default:
-+			return nil, fmt.Errorf("unknown turn_detection field %q", key)
-+		}
-+		if bytes.Equal(bytes.TrimSpace(value), []byte("null")) {
-+			return nil, fmt.Errorf("turn_detection.%s must not be null", key)
-+		}
-+	}
-+	if _, ok := fields["eagerness"]; ok {
-+		if config.Type != "semantic_vad" {
-+			return nil, fmt.Errorf("turn_detection.eagerness is unsupported for %s", config.Type)
-+		}
-+		if config.Eagerness == "" {
-+			return nil, fmt.Errorf("turn_detection.eagerness must be auto, low, medium, or high")
-+		}
-+	}
-+	return NormalizeTurnDetection(provider, transport, &config)
-+}
-```
-
-**File**: `control-plane/pkg/types/session_turn_detection_test.go` (added, +124/-0)
-```diff
-@@ -0,0 +1,124 @@
-+package types
-+
-+import (
-+	"encoding/json"
-+	"math"
-+	"strings"
-+	"testing"
-+)
-+
-+func turnDetectionTestPtr[T any](v T) *T { return &v }
-+
-+func TestNormalizeTurnDetectionDefaultsAndOverrides(t *testing.T) {
-+	for _, transport := range []string{"webrtc", "websocket"} {
-+		config, err := NormalizeTurnDetection("openai", transport, nil)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		if config.Type != "server_vad" || *config.Threshold != 0.5 || *config.PrefixPaddingMS != 300 ||
-+			*config.SilenceDurationMS != 500 || !*config.CreateResponse || !*config.InterruptResponse {
-+			t.Fatalf("unexpected defaults: %+v", config)
-+		}
-+	}
-+	input := &TurnDetection{Type: "server_vad", Threshold: turnDetectionTestPtr(0.0),
-+		PrefixPaddingMS: turnDetectionTestPtr(0), SilenceDurationMS: turnDetectionTestPtr(750),
-+		CreateResponse: turnDetectionTestPtr(false), InterruptResponse: turnDetectionTestPtr(false)}
-+	config, err := NormalizeTurnDetection("openai", "webrtc", input)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	*input.Threshold = 1
-+	*input.InterruptResponse = true
-+	serialized, err := json.Marshal(config)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	expected := `{"type":"server_vad","threshold":0,"prefix_padding_ms":0,"silence_duration_ms":750,"create_response":false,"interrupt_response":false}`
-+	if string(serialized) != expected {
-+		t.Fatalf("got %s, want %s", serialized, expected)
-+	}
-+	semantic, err := NormalizeTurnDetection("openai", "webrtc", &TurnDetection{Type: "semantic_vad"})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	serialized, err = json.Marshal(semantic)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	expected = `{"type":"semantic_vad","create_response":true,"interrupt_response":true,"eagerness":"auto"}`
-+	if string(serialized) != expected {
-+		t.Fatalf("got %s, want %s", serialized, expected)
-+	}
-+}
-+
-+func TestNormalizeTurnDetectionRejectsInvalidOptions(t *testing.T) {
-+	for _, input := range []TurnDetection{
-+		{}, {Type: "client_vad"},
-+		{Type: "server_vad", Threshold: turnDetectionTestPtr(1.1)},
-+		{Type: "server_vad", Threshold: turnDetectionTestPtr(math.NaN())},
-+		{Type: "server_vad", Threshold: turnDetectionTestPtr(math.Inf(1))},
-+		{Type: "server_vad", PrefixPaddingMS: turnDetectionTestPtr(-1)},
-+		{Type: "server_vad", SilenceDurationMS: turnDetectionTestPtr(-1)},
-+		{Type: "server_vad", Eagerness: "low"},
-+		{Type: "semantic_vad", Threshold: turnDetectionTestPtr(0.0)},
-+		{Type: "semantic_vad", PrefixPaddingMS: turnDetectionTestPtr(0)},
-+		{Type: "semantic_vad", SilenceDurationMS: turnDetectionTestPtr(0)},
-+		{Type: "semantic_vad", Eagerness: "urgent"},
-+	} {
-+		if _, err := NormalizeTurnDetection("openai", "webrtc", &input); err == nil {
-+			t.Fatalf("accepted invalid config: %+v", input)
-+		}
-+	}
-+	if _, err := NormalizeTurnDetection("openrouter", "audio_turns", &TurnDetection{Type: "server_vad"}); err == nil {
-+		t.Fatal("accepted VAD for openrouter")
-+	}
-+	if config, err := NormalizeTurnDetection("openrouter", "audio_turns", nil); err != nil || config != nil {
-+		t.Fatalf("changed openrouter defaults: %+v, %v", config, err)
-+	}
-+}
-+
-+func TestParseSessionTurnDetection(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, provider, transport, raw, expected, wantError string
-+	}{
-+		{name: "omitted", provider: "openai", transport: "webrtc", expected: `{"type":"server_vad","threshold":0.5,"prefix_padding_ms":300,"silence_duration_ms":500,"create_response":true,"interrupt_response":true}`},
-+		{name: "null", provider: "openai", transport: "webrtc", raw: " null ", expected: `{"type":"server_vad","threshold":0.5,"prefix_padding_ms":300,"silence_duration_ms":500,"create_response":true,"interrupt_response":true}`},
-+		{name: "server explicit zero and false", provider: "openai", transport: "webrtc", raw: `{"type":"server_vad","threshold":0,"prefix_padding_ms":0,"silence_duration_ms":0,"create_response":false,"interrupt_response":false}`, expected: `{"type":"server_vad","threshold":0,"prefix_padding_ms":0,"silence_duration_ms":0,"create_response":false,"interrupt_response":false}`},
-+		{name: "semantic", provider: "openai", transport: "websocket", raw: `{"type":"semantic_vad","eagerness":"low"}`, expected: `{"type":"semantic_vad","create_response":true,"interrupt_response":true,"eagerness":"low"}`},
-+		{name: "other provider omitted", provider: "openrouter", transport: "audio_turns", expected: `null`},
-+		{name: "other provider configured", provider: "openrouter", transport: "audio_turns", raw: `{"type":"server_vad"}`, wantError: "requires provider=openai"},
-+		{name: "malformed JSON", provider: "openai", transport: "webrtc", raw: `{`, wantError: "must be an object"},
-+		{name: "array", provider: "openai", transport: "webrtc", raw: `[]`, wantError: "must be an object"},
-+		{name: "missing type", provider: "openai", transport: "webrtc", raw: `{}`, wantError: "turn_detection.type"},
-+		{name: "unknown field", provider: "openai", transport: "webrtc", raw: `{"type":"server_vad","typo":true}`, wantErr
-```
-
-**File**: `control-plane/pkg/types/types.go` (modified, +13/-11)
-```diff
-@@ -248,17 +248,19 @@ type SkillDefinition struct {
- 
- // SessionDefinition defines a realtime session ingress provided by an agent node.
- type SessionDefinition struct {
--	Name         string                 `json:"name"`
--	Provider     string                 `json:"provider"`
--	Transport    string                 `json:"transport"`
--	Model        string                 `json:"model,omitempty"`
--	Modalities   []string               `json:"modalities,omitempty"`
--	Voice        string                 `json:"voice,omitempty"`
--	Tools        []string               `json:"tools,omitempty"`
--	Metadata     map[string]interface{} `json:"metadata,omitempty"`
--	Tags         []string               `json:"tags,omitempty"`
--	ProposedTags []string               `json:"proposed_tags,omitempty"`
--	ApprovedTags []string               `json:"approved_tags,omitempty"`
-+	// Keep raw options until validation so unknown or malformed fields are rejected explicitly.
-+	TurnDetection json.RawMessage        `json:"turn_detection,omitempty"`
-+	Name          string                 `json:"name"`
-+	Provider      string                 `json:"provider"`
-+	Transport     string                 `json:"transport"`
-+	Model         string                 `json:"model,omitempty"`
-+	Modalities    []string               `json:"modalities,omitempty"`
-+	Voice         string                 `json:"voice,omitempty"`
-+	Tools         []string               `json:"tools,omitempty"`
-+	Metadata      map[string]interface{} `json:"metadata,omitempty"`
-+	Tags          []string               `json:"tags,omitempty"`
-+	ProposedTags  []string               `json:"proposed_tags,omitempty"`
-+	ApprovedTags  []string               `json:"approved_tags,omitempty"`
- }
- 
- // HydrateAgentSessions copies session definitions from metadata.custom.sessions
-```
-
-**File**: `docs/session-turn-detection.md` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+# Session turn detection and interruption
-+
-+OpenAI sessions accept `turn_detection` in Python and TypeScript, and
-+`WithSessionTurnDetection` in Go. It is supported with explicit
-+`provider="openai"` and `transport="webrtc"` or `"websocket"`. Supplying it for
-+OpenRouter `audio_turns` is an error; AgentField does not switch providers or
-+transports.
-+
-+Omitting the configuration enables interruptible server VAD:
-+
-+```json
-+{
-+  "type": "server_vad",
-+  "threshold": 0.5,
-+  "prefix_padding_ms": 300,
-+  "silence_duration_ms": 500,
-+  "create_response": true,
-+  "interrupt_response": true
-+}
-+```
-+
-+These defaults also apply to older OpenAI registrations without this field.
-+An explicitly supplied object must specify `type`. Missing optional fields use
-+mode-specific defaults; explicit `false` and `0` are preserved.
-+
-+## Python
-+
-+```python
-+from agentfield import Agent
-+
-+app = Agent("support")
-+
-+@app.session(
-+    "voice",
-+    provider="openai",
-+    transport="webrtc",
-+    turn_detection={
-+        "type": "server_vad",
-+        "threshold": 0.6,
-+        "silence_duration_ms": 700,
-+        "interrupt_response": True,
-+    },
-+)
-+async def voice(session):
-+    pass
-+```
-+
-+`ServerVAD`, `SemanticVAD`, and the `TurnDetection` union are exported for type
-+annotations. The decorator validates the dictionary when the session is declared.
-+
-+## TypeScript
-+
-+```typescript
-+import { Agent } from '@agentfield/sdk';
-+
-+const app = new Agent({ nodeId: 'support' });
-+app.session('voice', {
-+  provider: 'openai',
-+  transport: 'webrtc',
-+  turn_detection: {
-+    type: 'semantic_vad',
-+    eagerness: 'low',
-+    interrupt_response: true
-+  }
-+}, async (session) => {});
-+```
-+
-+`TurnDetection` is an exported discriminated union. Runtime validation also
-+rejects invalid values supplied by JavaScript or external configuration.
-+
-+## Go
-+
-+```go
-+interrupt := false
-+silence := 700
-+err := app.RegisterSession("voice", "openai", "webrtc",
-+    agent.WithSessionTurnDetection(agent.TurnDetection{
-+        Type:              "server_vad",
-+        SilenceDurationMS: &silence,
-+        InterruptResponse: &interrupt,
-+    }),
-+)
-+```
-+
-+Optional numeric and boolean fields are pointers so an unset field can be
-+distinguished from an explicit zero or false. `RegisterSession` returns a
-+validation error before updating the registry.
-+
-+## Supported options
-+
-+| Option | Modes | Default | Validation |
-+| --- | --- | --- | --- |
-+| `type` | Both | `server_vad` when config is omitted | `server_vad` or `semantic_vad`; required in an explicit object |
-+| `threshold` | Server | `0.5` | Finite number from 0 to 1 |
-+| `prefix_padding_ms` | Server | `300` | Non-negative integer milliseconds |
-+| `silence_duration_ms` | Server | `500` | Non-negative integer milliseconds |
-+| `eagerness` | Semantic | `auto` | `auto`, `low`, `medium`, or `high` |
-+| `create_response` | Both | `true` | Boolean; automatically respond after a detected turn |
-+| `interrupt_response` | Both | `true` | Boolean; interrupt an ongoing response when speech starts |
-+
-+Server-only fields cannot be supplied with semantic VAD, and `eagerness` cannot
-+be supplied with server VAD. Unknown fields, invalid values, and null field values
-+are rejected. Setting both response flags to `false` keeps speech detection
-+active while leaving response creation and cancellation to the client.
-+
-+## Control-plane connection
-+
-+Start the registered session with
-+`POST /api/v1/session-targets/<node>.<session>/start`, then POST the raw SDP offer
-+to the returned `offer_url` with `Content-Type: application/sdp`. Preserve its
-+query parameters: they identify the registered target, provider, transport,
-+model, and voice. The start response also includes the resolved `turn_detection`.
-+
-+The offer endpoint re-reads the registered target and validates its configuration
-+before contacting OpenAI. It sends the resolved options under
-+`session.audio.input.turn_detection` in the multipart session configuration.
-+This is a stateless lookup, so a registration change between start and offer is
-+reflected when the offer is submitted. There is no session database migration.
-+
-+The CLI can select the same registered configuration:
-+
-+```sh
-+agentfield session offer <session_id> --provider openai --transport webrtc \
-+  --target support.voice --sdp @offer.sdp
-+```
-+
-+Legacy direct offers without a target keep working and use the interruptible
-+server-VAD defaults. Clients constructing offer URLs themselves must include
-+`target=<node>.<session>` to use author-defined settings. The existing offer
-+endpoint remains WebRTC-only; accepting WebSocket registration metadata does
-+not add a WebSocket connection adapter.
-+
-+See [OpenAI's VAD guide](https://developers.openai.com/api/docs/guides/realtime-vad)
-+for the provider's turn detection and interruption behavior.
-```
-
----
-
-### Incident Patch 15: `10aa43c0` (2026-09-10)
-**Commit Message**: fix(go-sdk): make harness schema path tests OS-portable (#1049)
-
-TestOutputPath and TestSchemaPath asserted hardcoded Unix path
-separators (/tmp/...), so they failed on Windows where filepath.Join
-produces backslash separators. Assert against filepath.Join with the
-existing filename constants so the expected value is computed the same
-way the production code computes it.
-
-Go SDK CI runs only on ubuntu-latest, so these failures surfaced only
-in local Windows development. The change is a no-op on Linux (Join
-yields the identical string) and a fix on Windows.
-
-**File**: `sdk/go/harness/schema_test.go` (modified, +3/-3)
-```diff
-@@ -11,12 +11,12 @@ import (
- )
- 
- func TestOutputPath(t *testing.T) {
--	assert.Equal(t, "/tmp/.agentfield_output.json", OutputPath("/tmp"))
--	assert.Equal(t, "foo/.agentfield_output.json", OutputPath("foo"))
-+	assert.Equal(t, filepath.Join("/tmp", outputFilename), OutputPath("/tmp"))
-+	assert.Equal(t, filepath.Join("foo", outputFilename), OutputPath("foo"))
- }
- 
- func TestSchemaPath(t *testing.T) {
--	assert.Equal(t, "/tmp/.agentfield_schema.json", SchemaPath("/tmp"))
-+	assert.Equal(t, filepath.Join("/tmp", schemaFilename), SchemaPath("/tmp"))
- }
- 
- func TestBuildPromptSuffix_SmallSchema(t *testing.T) {
-```
-
 #### Recent Merged Pull Requests:
+- **PR #1106** (2026-10-17): fix(sdk/python): make memory exists() detect a missing key (@remote-controlled-man)
+- **PR #1105** (2026-10-17): fix(sdk/python): report a provider-confirmed zero cost instead of unknown (@remote-controlled-man)
+- **PR #1102** (2026-10-15): feat(sdk/go/ai): support IO Intelligence (io.net) provider (@smiraldr)
+- **PR #1100** (2026-10-14): fix(sdk/python): let AsyncConfig env flags fall back to the class default (@remote-controlled-man)
+- **PR #1099** (2026-10-15): fix(control-plane): write the executions row for legacy reasoner and skill calls (@theluckystrike)
 - **PR #1096** (2026-10-05): Telemetry updates (@santoshkumarradha)
-- **PR #1094** (2026-10-03): test(sdk): verify Windows batch probe end-to-end and harden cmd.exe branch (@santoshkumarradha)
-- **PR #1085** (2026-10-01): chore(deps): bump the uv group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #1084** (2026-10-01): chore(deps): bump the npm_and_yarn group across 2 directories with 2 updates (@dependabot[bot])
-- **PR #1083** (2026-10-01): chore(deps): bump pyjwt from 2.13.0 to 2.15.0 in /sdk/python in the uv group across 1 directory (@dependabot[bot])
-- **PR #1082** (2026-10-01): fix(sdk/python): parse AGENTFIELD_ASYNC boolean flags with the repo's env vocabulary (@remote-controlled-man)
-- **PR #1081** (2026-10-01): fix(sdk/go): stop retrying execution status callbacks on non-retryable 4xx (@Bdysj)
-- **PR #1080** (2026-10-01): fix(control-plane): return 404 for status callbacks on unknown executions (@Bdysj)
 
 ---
 
@@ -6118,3 +2148,37 @@ yields the identical string) and a fix on Windows.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. sdk/python): make memory exists() detect a missing key (#1106)
+
+**RULE**:
+When implementing operations in `sdk/python/agentfield/agent.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2460793d`: sdk/python): make memory exists() detect a missing key (#1106). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/agent.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+            - `await app.memory.exists(key)`: True when the key is stored in any
+              reachable scope, False when it is absent or the lookup itself failed
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+            - `await app.memory.exists(key)`: Present, but it answers True for any key
+              as long as the backend is reachable; compare
+              `await app.memory.get(key, sentinel)` against a sentinel instead
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2460793d` are properly handled with clean fallback behavior.
