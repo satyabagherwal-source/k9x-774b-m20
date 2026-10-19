@@ -2898,3 +2898,9 @@ Every entry in this ledger must capture:
 | `learn-github-pytest-dev-pytest-testinfra` | `https://github.com/pytest-dev/pytest-testinfra` | `04cccc39` | Multi-dimensional audit evidence | 2026-10-19T04:13:19.391Z |
 | `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `b29703a4` | Multi-dimensional audit evidence | 2026-10-19T04:13:20.949Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `7fcb3b54` | Multi-dimensional audit evidence | 2026-10-19T04:13:25.261Z |
+| `learn-github-adonisjs-core` | `https://github.com/adonisjs/core` | `ed6bb1fa` | Multi-dimensional audit evidence | 2026-10-19T04:19:27.687Z |
+| `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `a186d461` | Multi-dimensional audit evidence | 2026-10-19T04:19:28.570Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-19T04:19:32.765Z |
+| `learn-github-apsl-react-native-keyboard-aware-scroll-view` | `https://github.com/APSL/react-native-keyboard-aware-scroll-view` | `9eee405f` | Multi-dimensional audit evidence | 2026-10-19T04:19:33.512Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `ee6cfba9` | Multi-dimensional audit evidence | 2026-10-19T04:19:36.475Z |
+| `learn-github-apache-incubator-pegasus` | `https://github.com/apache/incubator-pegasus` | `75015467` | Multi-dimensional audit evidence | 2026-10-19T04:19:41.185Z |

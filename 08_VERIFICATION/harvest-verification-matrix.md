@@ -2891,3 +2891,9 @@
 | `CYCLE-20261019-OFX5` | `2026-10-19T04:13:19.385Z` | `pytest-dev/pytest-testinfra` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2111` | Yes (`b9fdf644...`) |
 | `CYCLE-20261019-OH4D` | `2026-10-19T04:13:20.941Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2112` | Yes (`d9722151...`) |
 | `CYCLE-20261019-OKG9` | `2026-10-19T04:13:25.257Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2113` | Yes (`0607bd8a...`) |
+| `CYCLE-20261019-WC3L` | `2026-10-19T04:19:27.681Z` | `adonisjs/core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2114` | Yes (`1533dc79...`) |
+| `CYCLE-20261019-WCS7` | `2026-10-19T04:19:28.567Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2115` | Yes (`87cc93ba...`) |
+| `CYCLE-20261019-WG0N` | `2026-10-19T04:19:32.759Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2116, Rule 2117, Rule 2118` | Yes (`64e030ce...`) |
+| `CYCLE-20261019-WGLI` | `2026-10-19T04:19:33.510Z` | `APSL/react-native-keyboard-aware-scroll-view` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2119` | Yes (`294c3c54...`) |
+| `CYCLE-20261019-WIVP` | `2026-10-19T04:19:36.469Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2120` | Yes (`cfa1e84b...`) |
+| `CYCLE-20261019-WMIJ` | `2026-10-19T04:19:41.179Z` | `apache/incubator-pegasus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2121` | Yes (`2ea802c8...`) |

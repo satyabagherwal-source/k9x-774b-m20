@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-FQY4",
-    "timestamp": "2026-10-18T02:26:54.892Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "f4616de61edf1b5905a8809344a2268c15d1f65560f731532dfeaa16d6951d27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-JU4X",
-    "timestamp": "2026-10-18T02:30:05.649Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "ef8c851881b016d9e130a7868b61c33182c6a03a17b5cb6f5c0faeaffeef94c3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-QBE3",
-    "timestamp": "2026-10-18T02:35:07.947Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "1a0e892df7841a690198f9db99ea0844417f6be61239e381c91a141c91eb9374",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-UP72",
-    "timestamp": "2026-10-18T02:38:32.462Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "99edbc2d0c2d13fc49a8df3cd84cf318162aea1addeb6948e531c5e37e54f424",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-YFMK",
-    "timestamp": "2026-10-18T02:41:26.684Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "f3ac8f53b12a4e66ed08f2634998fc3ce14412aa1196f42a5ee588f881b97435",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-2KM3",
-    "timestamp": "2026-10-18T02:44:39.771Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "decf145398b33111f7b4bcaaf3f4025eb45068f276aeb7ac00e7e1eaa2c3f1d6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-7ARG",
     "timestamp": "2026-10-18T02:48:20.284Z",
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7490,6 +7400,96 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "0607bd8addebb63fb1c370798bfb1c5c83f3aa40e275ca8c376f66eadbb03abc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WC3L",
+    "timestamp": "2026-10-19T04:19:27.681Z",
+    "repository": "adonisjs/core",
+    "learningId": "learn-github-adonisjs-core",
+    "contentHash": "1533dc79dbebb014348484a3c0ade535619cd4df896a787c3f0b96bd84437399",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WCS7",
+    "timestamp": "2026-10-19T04:19:28.567Z",
+    "repository": "mlua-rs/mlua",
+    "learningId": "learn-github-mlua-rs-mlua",
+    "contentHash": "87cc93baa62ce94a395dae6dc2c5b10f9b5f03cd3df3c7583ca97a46b5243656",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WG0N",
+    "timestamp": "2026-10-19T04:19:32.759Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "64e030ceefe8c05ba1d7e0df14f12fb2d387dabffb5b00af2289c1105869ae99",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WGLI",
+    "timestamp": "2026-10-19T04:19:33.510Z",
+    "repository": "APSL/react-native-keyboard-aware-scroll-view",
+    "learningId": "learn-github-apsl-react-native-keyboard-aware-scroll-view",
+    "contentHash": "294c3c54738164b00f93019ffae8f9948ccdc8e1c26880f7f194d937415844c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WIVP",
+    "timestamp": "2026-10-19T04:19:36.469Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "cfa1e84bbe07914d606e2f4e8ac509c763038ab9a51c04dad4fba5b42901c696",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WMIJ",
+    "timestamp": "2026-10-19T04:19:41.179Z",
+    "repository": "apache/incubator-pegasus",
+    "learningId": "learn-github-apache-incubator-pegasus",
+    "contentHash": "2ea802c850c5df17f702d9a433a90b984f8b48a04ddc885ede4083cff13735b8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
