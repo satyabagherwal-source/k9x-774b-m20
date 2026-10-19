@@ -415,8 +415,8 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "3efb3455deb90fa3180b17801383e4c6e009adf5f772f169ed70297080b50a1a",
-    "lastHarvestedAt": "2026-10-17T23:10:12.800Z",
+    "contentHash": "0b1840965baf93ea9bd803f80f7edd92dcf09fe4b2855360b10e966388fdada9",
+    "lastHarvestedAt": "2026-10-19T04:27:25.285Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -5728,5 +5728,55 @@
     "contentHash": "2ea802c850c5df17f702d9a433a90b984f8b48a04ddc885ede4083cff13735b8",
     "lastHarvestedAt": "2026-10-19T04:19:41.185Z",
     "learningId": "learn-github-apache-incubator-pegasus"
+  },
+  "benoitvallon-react-native-nw-react-calculator": {
+    "repository": "benoitvallon/react-native-nw-react-calculator",
+    "platform": "github",
+    "sourceUrl": "https://github.com/benoitvallon/react-native-nw-react-calculator",
+    "sourceVersion": "4f9628fa",
+    "license": "MIT",
+    "contentHash": "fc2c5cbd24d611d1e4084cb74a83a393e88b37728df2e8fcfeacd6d2bc8eebfa",
+    "lastHarvestedAt": "2026-10-19T04:26:06.750Z",
+    "learningId": "learn-github-benoitvallon-react-native-nw-react-calculator"
+  },
+  "cycloidio-terracognita": {
+    "repository": "cycloidio/terracognita",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cycloidio/terracognita",
+    "sourceVersion": "802bd4b5",
+    "license": "MIT",
+    "contentHash": "16e59c59c215a271c97568b987a3044de4343e550d47c1bd29674726118e1cce",
+    "lastHarvestedAt": "2026-10-19T04:26:09.473Z",
+    "learningId": "learn-github-cycloidio-terracognita"
+  },
+  "activeloopai-deeplake": {
+    "repository": "activeloopai/deeplake",
+    "platform": "github",
+    "sourceUrl": "https://github.com/activeloopai/deeplake",
+    "sourceVersion": "f432041f",
+    "license": "Apache-2.0",
+    "contentHash": "e1658e54aba666147f5a92f67f15804483b5bac346acc3b1e205de87f4e89c55",
+    "lastHarvestedAt": "2026-10-19T04:26:13.661Z",
+    "learningId": "learn-github-activeloopai-deeplake"
+  },
+  "vikejs-vike": {
+    "repository": "vikejs/vike",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vikejs/vike",
+    "sourceVersion": "305221a5",
+    "license": "MIT",
+    "contentHash": "5cd7ac015b0f84c768126a0a78b344888cd394d92c1968d5fec3a37cfd1232b1",
+    "lastHarvestedAt": "2026-10-19T04:27:04.253Z",
+    "learningId": "learn-github-vikejs-vike"
+  },
+  "nvidia-cuda-rust": {
+    "repository": "NVIDIA/cuda-rust",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
+    "sourceVersion": "82f195be",
+    "license": "Apache-2.0",
+    "contentHash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
+    "lastHarvestedAt": "2026-10-19T04:27:56.556Z",
+    "learningId": "learn-github-nvidia-cuda-rust"
   }
 }

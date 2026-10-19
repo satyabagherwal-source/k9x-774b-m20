@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T03:26:51.431Z",
+  "last_updated": "2026-10-19T04:26:06.754Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1729,6 +1729,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-aquasecurity-tfsec"
+    },
+    {
+      "id": "CD-4W0Y",
+      "directive_title": "Empirical Invariant Guard in index.android.js",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "benoitvallon/react-native-nw-react-calculator",
+      "source_commit": "4f9628fa",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-benoitvallon-react-native-nw-react-calculator"
     }
   ]
 }

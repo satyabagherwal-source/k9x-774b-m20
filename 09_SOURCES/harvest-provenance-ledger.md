@@ -2904,3 +2904,9 @@ Every entry in this ledger must capture:
 | `learn-github-apsl-react-native-keyboard-aware-scroll-view` | `https://github.com/APSL/react-native-keyboard-aware-scroll-view` | `9eee405f` | Multi-dimensional audit evidence | 2026-10-19T04:19:33.512Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `ee6cfba9` | Multi-dimensional audit evidence | 2026-10-19T04:19:36.475Z |
 | `learn-github-apache-incubator-pegasus` | `https://github.com/apache/incubator-pegasus` | `75015467` | Multi-dimensional audit evidence | 2026-10-19T04:19:41.185Z |
+| `learn-github-benoitvallon-react-native-nw-react-calculator` | `https://github.com/benoitvallon/react-native-nw-react-calculator` | `4f9628fa` | Multi-dimensional audit evidence | 2026-10-19T04:26:06.750Z |
+| `learn-github-cycloidio-terracognita` | `https://github.com/cycloidio/terracognita` | `802bd4b5` | Multi-dimensional audit evidence | 2026-10-19T04:26:09.473Z |
+| `learn-github-activeloopai-deeplake` | `https://github.com/activeloopai/deeplake` | `f432041f` | Multi-dimensional audit evidence | 2026-10-19T04:26:13.661Z |
+| `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `305221a5` | Multi-dimensional audit evidence | 2026-10-19T04:27:04.253Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-19T04:27:25.285Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `82f195be` | Multi-dimensional audit evidence | 2026-10-19T04:27:56.556Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:19:41.190Z",
+  "last_updated": "2026-10-19T04:27:56.562Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -498,14 +498,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "3efb3455deb90fa3180b17801383e4c6e009adf5f772f169ed70297080b50a1a",
-      "verified_at": "2026-10-17T23:10:12.803Z",
+      "content_hash": "0b1840965baf93ea9bd803f80f7edd92dcf09fe4b2855360b10e966388fdada9",
+      "verified_at": "2026-10-19T04:27:25.290Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:10:12.803Z"
+      "last_updated": "2026-10-19T04:27:25.290Z"
     },
     "fastino/GLiNER2.5-Decide": {
       "repository": "fastino/GLiNER2.5-Decide",
@@ -8707,6 +8707,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:19:41.190Z"
+    },
+    "benoitvallon/react-native-nw-react-calculator": {
+      "repository": "benoitvallon/react-native-nw-react-calculator",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-benoitvallon-react-native-nw-react-calculator",
+      "content_hash": "fc2c5cbd24d611d1e4084cb74a83a393e88b37728df2e8fcfeacd6d2bc8eebfa",
+      "verified_at": "2026-10-19T04:26:06.757Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:26:06.757Z"
+    },
+    "cycloidio/terracognita": {
+      "repository": "cycloidio/terracognita",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cycloidio-terracognita",
+      "content_hash": "16e59c59c215a271c97568b987a3044de4343e550d47c1bd29674726118e1cce",
+      "verified_at": "2026-10-19T04:26:09.478Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:26:09.478Z"
+    },
+    "activeloopai/deeplake": {
+      "repository": "activeloopai/deeplake",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-activeloopai-deeplake",
+      "content_hash": "e1658e54aba666147f5a92f67f15804483b5bac346acc3b1e205de87f4e89c55",
+      "verified_at": "2026-10-19T04:26:13.666Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:26:13.666Z"
+    },
+    "vikejs/vike": {
+      "repository": "vikejs/vike",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vikejs-vike",
+      "content_hash": "5cd7ac015b0f84c768126a0a78b344888cd394d92c1968d5fec3a37cfd1232b1",
+      "verified_at": "2026-10-19T04:27:04.258Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:27:04.258Z"
+    },
+    "NVIDIA/cuda-rust": {
+      "repository": "NVIDIA/cuda-rust",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nvidia-cuda-rust",
+      "content_hash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
+      "verified_at": "2026-10-19T04:27:56.562Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:27:56.562Z"
     }
   },
   "repos": {

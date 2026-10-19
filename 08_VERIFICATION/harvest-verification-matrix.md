@@ -2897,3 +2897,9 @@
 | `CYCLE-20261019-WGLI` | `2026-10-19T04:19:33.510Z` | `APSL/react-native-keyboard-aware-scroll-view` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2119` | Yes (`294c3c54...`) |
 | `CYCLE-20261019-WIVP` | `2026-10-19T04:19:36.469Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2120` | Yes (`cfa1e84b...`) |
 | `CYCLE-20261019-WMIJ` | `2026-10-19T04:19:41.179Z` | `apache/incubator-pegasus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2121` | Yes (`2ea802c8...`) |
+| `CYCLE-20261019-4W0R` | `2026-10-19T04:26:06.747Z` | `benoitvallon/react-native-nw-react-calculator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/benoitvallon-react-native-nw-react-calculator-learnings.md` | Yes (`fc2c5cbd...`) |
+| `CYCLE-20261019-4Y4F` | `2026-10-19T04:26:09.471Z` | `cycloidio/terracognita` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2122` | Yes (`16e59c59...`) |
+| `CYCLE-20261019-51CN` | `2026-10-19T04:26:13.655Z` | `activeloopai/deeplake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2123` | Yes (`e1658e54...`) |
+| `CYCLE-20261019-64DZ` | `2026-10-19T04:27:04.247Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2124, Rule 2125, Rule 2126` | Yes (`5cd7ac01...`) |
+| `CYCLE-20261019-6KM7` | `2026-10-19T04:27:25.279Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2127, Rule 2128` | Yes (`0b184096...`) |
+| `CYCLE-20261019-78QU` | `2026-10-19T04:27:56.550Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2129, Rule 2130, Rule 2131` | Yes (`1b69e032...`) |

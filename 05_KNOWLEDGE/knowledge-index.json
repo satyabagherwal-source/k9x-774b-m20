@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:19:41.142Z",
-  "total_verified_learnings": 592,
+  "last_updated": "2026-10-19T04:27:56.512Z",
+  "total_verified_learnings": 597,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -275,22 +275,35 @@
     "learn-github-activeloopai-deeplake": {
       "learning_id": "learn-github-activeloopai-deeplake",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "activeloopai-deeplake",
+      "source": "activeloopai/deeplake",
+      "repository": "activeloopai/deeplake",
       "slug": "activeloopai-deeplake",
       "platform": "github",
       "source_url": "https://github.com/activeloopai/deeplake",
-      "source_version": "HEAD",
-      "content_hash": "7c3cb2b5816b64a7dae9e5e0cf4bfc5fc1a023bcf70b4d0c0dc16ce62055a57f",
+      "source_version": "f432041f",
+      "content_hash": "e1658e54aba666147f5a92f67f15804483b5bac346acc3b1e205de87f4e89c55",
       "dossier_path": "07_PROJECT_LEARNING/activeloopai-deeplake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/activeloopai-deeplake-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2123,
+          "title": "Fixed failure on parallel ingestion.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.537Z"
+      "verified_at": "2026-10-19T04:26:13.608Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-activepieces-activepieces": {
       "learning_id": "learn-github-activepieces-activepieces",
@@ -2989,22 +3002,29 @@
     "learn-github-benoitvallon-react-native-nw-react-calculator": {
       "learning_id": "learn-github-benoitvallon-react-native-nw-react-calculator",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "benoitvallon-react-native-nw-react-calculator",
+      "source": "benoitvallon/react-native-nw-react-calculator",
+      "repository": "benoitvallon/react-native-nw-react-calculator",
       "slug": "benoitvallon-react-native-nw-react-calculator",
       "platform": "github",
       "source_url": "https://github.com/benoitvallon/react-native-nw-react-calculator",
-      "source_version": "HEAD",
-      "content_hash": "7aebaa2a686cb573cc63b8dfca1acb45cca9ff045255009f98924d5ef7e8657b",
+      "source_version": "4f9628fa",
+      "content_hash": "fc2c5cbd24d611d1e4084cb74a83a393e88b37728df2e8fcfeacd6d2bc8eebfa",
       "dossier_path": "07_PROJECT_LEARNING/benoitvallon-react-native-nw-react-calculator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/benoitvallon-react-native-nw-react-calculator-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.054Z"
+      "verified_at": "2026-10-19T04:26:06.699Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bergside-typeui": {
       "learning_id": "learn-github-bergside-typeui",
@@ -5275,22 +5295,35 @@
     "learn-github-cycloidio-terracognita": {
       "learning_id": "learn-github-cycloidio-terracognita",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cycloidio-terracognita",
+      "source": "cycloidio/terracognita",
+      "repository": "cycloidio/terracognita",
       "slug": "cycloidio-terracognita",
       "platform": "github",
       "source_url": "https://github.com/cycloidio/terracognita",
-      "source_version": "HEAD",
-      "content_hash": "46dcb2a906177ed8f318b851d8bdef3a66ec05eba0e7363afa2105290386d0a8",
+      "source_version": "802bd4b5",
+      "content_hash": "16e59c59c215a271c97568b987a3044de4343e550d47c1bd29674726118e1cce",
       "dossier_path": "07_PROJECT_LEARNING/cycloidio-terracognita-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cycloidio-terracognita-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2122,
+          "title": "azurerm: add azurerm_network_interface_security_group_association resource",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.451Z"
+      "verified_at": "2026-10-19T04:26:09.413Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-czlonkowski-n8n-mcp": {
       "learning_id": "learn-github-czlonkowski-n8n-mcp",
@@ -11433,7 +11466,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "3efb3455deb90fa3180b17801383e4c6e009adf5f772f169ed70297080b50a1a",
+      "content_hash": "0b1840965baf93ea9bd803f80f7edd92dcf09fe4b2855360b10e966388fdada9",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -11597,6 +11630,16 @@
           "number": 1556,
           "title": "Generation Stop‑Token Coverage",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2127,
+          "title": "Hybrid SSM-Attention KV-Cache Memory Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2128,
+          "title": "Multi-Token EOS Sentinel Array Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11617,7 +11660,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-17T23:10:12.772Z",
+      "verified_at": "2026-10-19T04:27:25.231Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29541,22 +29584,45 @@
     "learn-github-nvidia-cuda-rust": {
       "learning_id": "learn-github-nvidia-cuda-rust",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nvidia-cuda-rust",
+      "source": "NVIDIA/cuda-rust",
+      "repository": "NVIDIA/cuda-rust",
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "HEAD",
-      "content_hash": "e205396d3f95f4212fffad493441c33284ff3c06f461e6729a1c981de6999ebd",
+      "source_version": "82f195be",
+      "content_hash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2129,
+          "title": "Zero-Safe Device Memory Serialization Invariant (`DeviceCopy` Rejection of Sum Types)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2130,
+          "title": "Multi-Address-Space Aggregate Pointer Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2131,
+          "title": "Context-Synchronized Asynchronous Resource Deallocation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.715Z"
+      "verified_at": "2026-10-19T04:27:56.505Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nvidia-nemoclaw": {
       "learning_id": "learn-github-nvidia-nemoclaw",
@@ -38756,22 +38822,45 @@
     "learn-github-vikejs-vike": {
       "learning_id": "learn-github-vikejs-vike",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vikejs-vike",
+      "source": "vikejs/vike",
+      "repository": "vikejs/vike",
       "slug": "vikejs-vike",
       "platform": "github",
       "source_url": "https://github.com/vikejs/vike",
-      "source_version": "HEAD",
-      "content_hash": "c7aa61a29520a3750d9ea56e3c07f175e4d6179b66f3cea1f4e6fe450e82a893",
+      "source_version": "305221a5",
+      "content_hash": "5cd7ac015b0f84c768126a0a78b344888cd394d92c1968d5fec3a37cfd1232b1",
       "dossier_path": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2124,
+          "title": "Signal-Aware Child Subsystem Teardown in Dev Server Runners",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2125,
+          "title": "Client-Side Chunk Fetch Failure Infinite-Loop Circuit Breaker",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2126,
+          "title": "Asynchronous Config Invalidation Guard Against Dev Server Lifecycle Deadlocks",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.230Z"
+      "verified_at": "2026-10-19T04:27:04.200Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vinceanalytics-vince": {
       "learning_id": "learn-github-vinceanalytics-vince",
@@ -76579,6 +76668,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:19:41.135Z"
+    },
+    "rule-2122": {
+      "learning_id": "rule-2122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2122,
+      "title": "azurerm: add azurerm_network_interface_security_group_association resource",
+      "source_url": "https://github.com/cycloidio/terracognita",
+      "source_version": "802bd4b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:26:09.413Z"
+    },
+    "rule-2123": {
+      "learning_id": "rule-2123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2123,
+      "title": "Fixed failure on parallel ingestion.",
+      "source_url": "https://github.com/activeloopai/deeplake",
+      "source_version": "f432041f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:26:13.608Z"
+    },
+    "rule-2124": {
+      "learning_id": "rule-2124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2124,
+      "title": "Signal-Aware Child Subsystem Teardown in Dev Server Runners",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "305221a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:04.200Z"
+    },
+    "rule-2125": {
+      "learning_id": "rule-2125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2125,
+      "title": "Client-Side Chunk Fetch Failure Infinite-Loop Circuit Breaker",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "305221a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:04.200Z"
+    },
+    "rule-2126": {
+      "learning_id": "rule-2126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2126,
+      "title": "Asynchronous Config Invalidation Guard Against Dev Server Lifecycle Deadlocks",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "305221a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:04.200Z"
+    },
+    "rule-2127": {
+      "learning_id": "rule-2127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2127,
+      "title": "Hybrid SSM-Attention KV-Cache Memory Barrier",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:25.231Z"
+    },
+    "rule-2128": {
+      "learning_id": "rule-2128",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2128,
+      "title": "Multi-Token EOS Sentinel Array Enforcement",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:25.231Z"
+    },
+    "rule-2129": {
+      "learning_id": "rule-2129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2129,
+      "title": "Zero-Safe Device Memory Serialization Invariant (`DeviceCopy` Rejection of Sum Types)",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "82f195be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:56.505Z"
+    },
+    "rule-2130": {
+      "learning_id": "rule-2130",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2130,
+      "title": "Multi-Address-Space Aggregate Pointer Normalization",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "82f195be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:56.505Z"
+    },
+    "rule-2131": {
+      "learning_id": "rule-2131",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2131,
+      "title": "Context-Synchronized Asynchronous Resource Deallocation Invariant",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "82f195be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:27:56.505Z"
     }
   },
   "aliases": {
