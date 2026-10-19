@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:46:36.262Z",
-  "total_verified_learnings": 933,
+  "last_updated": "2026-10-19T21:52:49.500Z",
+  "total_verified_learnings": 935,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7503,14 +7503,19 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "def84b48",
-      "content_hash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
+      "source_version": "298be28e",
+      "content_hash": "979e9bc5fb9326f40bf332a126856289e45cf72258d5fe2eb5f54dd71b62a015",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
         {
           "number": 2257,
           "title": "ci: cache builds and cancel superseded PR runs (#685)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2833,
+          "title": "windows): fall back to verified Npcap SDK mirror (#692)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7519,7 +7524,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:52:03.419Z",
+      "verified_at": "2026-10-19T21:52:45.126Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45339,22 +45344,35 @@
     "learn-github-yannickl-dynamiccolor": {
       "learning_id": "learn-github-yannickl-dynamiccolor",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "yannickl-dynamiccolor",
+      "source": "yannickl/DynamicColor",
+      "repository": "yannickl/DynamicColor",
       "slug": "yannickl-dynamiccolor",
       "platform": "github",
       "source_url": "https://github.com/yannickl/DynamicColor",
-      "source_version": "HEAD",
-      "content_hash": "8be769be9fa25004cba060a974d1f026e12f630ed50d81a4a89829185e3d34b4",
+      "source_version": "cf7c6eed",
+      "content_hash": "b7565f002012e0ff7cd134b4c6b758bcd91f7b94de81556847a4998e96e55cb6",
       "dossier_path": "07_PROJECT_LEARNING/yannickl-dynamiccolor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yannickl-dynamiccolor-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2835,
+          "title": "version numbers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.443Z"
+      "verified_at": "2026-10-19T21:52:49.484Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-yattee-yattee": {
       "learning_id": "learn-github-yattee-yattee",
@@ -56842,22 +56860,36 @@
     "learn-github-scrapy-plugins-scrapy-zyte-api": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-zyte-api",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapy-plugins/scrapy-zyte-api",
       "repository": "scrapy-plugins/scrapy-zyte-api",
       "slug": "scrapy-plugins-scrapy-zyte-api",
       "platform": "github",
       "source_url": "https://github.com/scrapy-plugins/scrapy-zyte-api",
-      "source_version": "main",
-      "content_hash": "2a3c0e89c8672fecbd85fdecd57246ef7dc644a9c80de9f7382c7a75c59eeb0d",
+      "source_version": "681d1450",
+      "content_hash": "63d5124d0b6b8dacf2e14668ec5e3050670118f417113fe60284c04d75f0d3b8",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
       "promoted_rules": [
-        "Rule 1629"
+        "Rule 1629",
+        {
+          "number": 2834,
+          "title": "Merge pull request #328 from AdrianAtZyte/session-close-deadlock",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:52:46.339Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jina-ai-reader": {
       "learning_id": "learn-github-jina-ai-reader",
@@ -93072,6 +93104,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:46:36.247Z"
+    },
+    "rule-2833": {
+      "learning_id": "rule-2833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2833,
+      "title": "windows): fall back to verified Npcap SDK mirror (#692)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "298be28e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:52:45.126Z"
+    },
+    "rule-2834": {
+      "learning_id": "rule-2834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2834,
+      "title": "Merge pull request #328 from AdrianAtZyte/session-close-deadlock",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-zyte-api",
+      "source_version": "681d1450",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:52:46.339Z"
+    },
+    "rule-2835": {
+      "learning_id": "rule-2835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2835,
+      "title": "version numbers",
+      "source_url": "https://github.com/yannickl/DynamicColor",
+      "source_version": "cf7c6eed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:52:49.484Z"
     }
   },
   "aliases": {

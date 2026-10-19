@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "def84b48",
+    "sourceVersion": "298be28e",
     "license": "Apache-2.0",
-    "contentHash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
-    "lastHarvestedAt": "2026-10-19T06:52:03.473Z",
+    "contentHash": "979e9bc5fb9326f40bf332a126856289e45cf72258d5fe2eb5f54dd71b62a015",
+    "lastHarvestedAt": "2026-10-19T21:52:45.193Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -9178,5 +9178,25 @@
     "contentHash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
     "lastHarvestedAt": "2026-10-19T21:46:36.309Z",
     "learningId": "learn-github-signerlabs-shipswift"
+  },
+  "scrapy-plugins-scrapy-zyte-api": {
+    "repository": "scrapy-plugins/scrapy-zyte-api",
+    "platform": "github",
+    "sourceUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
+    "sourceVersion": "681d1450",
+    "license": "BSD-3-Clause",
+    "contentHash": "63d5124d0b6b8dacf2e14668ec5e3050670118f417113fe60284c04d75f0d3b8",
+    "lastHarvestedAt": "2026-10-19T21:52:46.406Z",
+    "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api"
+  },
+  "yannickl-dynamiccolor": {
+    "repository": "yannickl/DynamicColor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yannickl/DynamicColor",
+    "sourceVersion": "cf7c6eed",
+    "license": "MIT",
+    "contentHash": "b7565f002012e0ff7cd134b4c6b758bcd91f7b94de81556847a4998e96e55cb6",
+    "lastHarvestedAt": "2026-10-19T21:52:49.566Z",
+    "learningId": "learn-github-yannickl-dynamiccolor"
   }
 }

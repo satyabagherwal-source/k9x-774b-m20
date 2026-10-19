@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:46:36.317Z",
+  "last_updated": "2026-10-19T21:52:49.573Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10294,14 +10294,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
-      "verified_at": "2026-10-19T06:52:03.479Z",
+      "content_hash": "979e9bc5fb9326f40bf332a126856289e45cf72258d5fe2eb5f54dd71b62a015",
+      "verified_at": "2026-10-19T21:52:45.200Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:52:03.479Z"
+      "last_updated": "2026-10-19T21:52:45.200Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -13812,6 +13812,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:46:36.316Z"
+    },
+    "scrapy-plugins/scrapy-zyte-api": {
+      "repository": "scrapy-plugins/scrapy-zyte-api",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapy-plugins-scrapy-zyte-api",
+      "content_hash": "63d5124d0b6b8dacf2e14668ec5e3050670118f417113fe60284c04d75f0d3b8",
+      "verified_at": "2026-10-19T21:52:46.414Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:52:46.414Z"
+    },
+    "yannickl/DynamicColor": {
+      "repository": "yannickl/DynamicColor",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yannickl-dynamiccolor",
+      "content_hash": "b7565f002012e0ff7cd134b4c6b758bcd91f7b94de81556847a4998e96e55cb6",
+      "verified_at": "2026-10-19T21:52:49.573Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:52:49.573Z"
     }
   },
   "repos": {

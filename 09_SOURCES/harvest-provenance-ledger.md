@@ -3518,3 +3518,6 @@ Every entry in this ledger must capture:
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `969b91d7` | Multi-dimensional audit evidence | 2026-10-19T21:38:27.412Z |
 | `learn-github-scrapy-plugins-scrapy-deltafetch` | `https://github.com/scrapy-plugins/scrapy-deltafetch` | `a8caf39d` | Multi-dimensional audit evidence | 2026-10-19T21:46:02.671Z |
 | `learn-github-signerlabs-shipswift` | `https://github.com/signerlabs/ShipSwift` | `3341a192` | Multi-dimensional audit evidence | 2026-10-19T21:46:36.309Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `298be28e` | Multi-dimensional audit evidence | 2026-10-19T21:52:45.193Z |
+| `learn-github-scrapy-plugins-scrapy-zyte-api` | `https://github.com/scrapy-plugins/scrapy-zyte-api` | `681d1450` | Multi-dimensional audit evidence | 2026-10-19T21:52:46.406Z |
+| `learn-github-yannickl-dynamiccolor` | `https://github.com/yannickl/DynamicColor` | `cf7c6eed` | Multi-dimensional audit evidence | 2026-10-19T21:52:49.566Z |
