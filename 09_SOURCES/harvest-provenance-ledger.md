@@ -2934,3 +2934,9 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `cdfb3c2f` | Multi-dimensional audit evidence | 2026-10-19T04:53:03.478Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-19T04:53:04.073Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `59ba69c5` | Multi-dimensional audit evidence | 2026-10-19T04:53:09.255Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-19T04:59:12.618Z |
+| `learn-github-guokaigdg-animal-island-ui` | `https://github.com/guokaigdg/animal-island-ui` | `a412c55b` | Multi-dimensional audit evidence | 2026-10-19T04:59:12.774Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `b3297558` | Multi-dimensional audit evidence | 2026-10-19T04:59:15.870Z |
+| `learn-github-tiajinsha-jkvideo` | `https://github.com/tiajinsha/JKVideo` | `3592d036` | Multi-dimensional audit evidence | 2026-10-19T04:59:19.912Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `506808b0` | Multi-dimensional audit evidence | 2026-10-19T04:59:22.650Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `e72a7d3f` | Multi-dimensional audit evidence | 2026-10-19T04:59:27.314Z |

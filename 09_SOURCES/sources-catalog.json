@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "bf57c37fe6cbcc79c1038ad115efe735dc6c20658422eda8a3e621c51d131536",
-    "lastHarvestedAt": "2026-10-17T23:26:28.286Z",
+    "contentHash": "09d0775021775e405b416a701b512590d0a3c6d5e0c45bb93f29b137957789d0",
+    "lastHarvestedAt": "2026-10-19T04:59:12.618Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -5978,5 +5978,55 @@
     "contentHash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
     "lastHarvestedAt": "2026-10-19T04:53:09.255Z",
     "learningId": "learn-github-genkit-ai-genkit"
+  },
+  "guokaigdg-animal-island-ui": {
+    "repository": "guokaigdg/animal-island-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/guokaigdg/animal-island-ui",
+    "sourceVersion": "a412c55b",
+    "license": "MIT",
+    "contentHash": "d4f23b780bcaff0747c77d47d475b3afca296f4fe0e231e99e0123b2bcd87022",
+    "lastHarvestedAt": "2026-10-19T04:59:12.774Z",
+    "learningId": "learn-github-guokaigdg-animal-island-ui"
+  },
+  "nezhahq-nezha": {
+    "repository": "nezhahq/nezha",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nezhahq/nezha",
+    "sourceVersion": "b3297558",
+    "license": "Apache-2.0",
+    "contentHash": "5c521165bc3d081d1dbc9b53c47f4bccaa8f46aab1729ac318ebd21002877226",
+    "lastHarvestedAt": "2026-10-19T04:59:15.870Z",
+    "learningId": "learn-github-nezhahq-nezha"
+  },
+  "tiajinsha-jkvideo": {
+    "repository": "tiajinsha/JKVideo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tiajinsha/JKVideo",
+    "sourceVersion": "3592d036",
+    "license": "MIT",
+    "contentHash": "ebe5fd1e7190ac4bb1fc91362781f206b3f46877c254355c885c9870c879eb44",
+    "lastHarvestedAt": "2026-10-19T04:59:19.912Z",
+    "learningId": "learn-github-tiajinsha-jkvideo"
+  },
+  "juicedata-juicefs": {
+    "repository": "juicedata/juicefs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/juicedata/juicefs",
+    "sourceVersion": "506808b0",
+    "license": "Apache-2.0",
+    "contentHash": "2e2fb36f4ffd66abff5be9f87b11bf1c6f4bd791df6b87342c39e3778e4b2ee8",
+    "lastHarvestedAt": "2026-10-19T04:59:22.650Z",
+    "learningId": "learn-github-juicedata-juicefs"
+  },
+  "redisearch-redisearch": {
+    "repository": "RediSearch/RediSearch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/RediSearch/RediSearch",
+    "sourceVersion": "e72a7d3f",
+    "license": "NOASSERTION",
+    "contentHash": "895373134a7c8a0bffa01030cdd5974d3ac81c613435efbaf1557dda29778952",
+    "lastHarvestedAt": "2026-10-19T04:59:27.314Z",
+    "learningId": "learn-github-redisearch-redisearch"
   }
 }

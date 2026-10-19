@@ -2927,3 +2927,9 @@
 | `CYCLE-20261019-3JHT` | `2026-10-19T04:53:03.473Z` | `rook/rook` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rook-rook-learnings.md` | Yes (`76958713...`) |
 | `CYCLE-20261019-3JYB` | `2026-10-19T04:53:04.067Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2149, Rule 2150, Rule 2151` | Yes (`1c72a561...`) |
 | `CYCLE-20261019-3NY9` | `2026-10-19T04:53:09.249Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2152` | Yes (`69cfb975...`) |
+| `CYCLE-20261019-BGBR` | `2026-10-19T04:59:12.615Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`09d07750...`) |
+| `CYCLE-20261019-BGFZ` | `2026-10-19T04:59:12.767Z` | `guokaigdg/animal-island-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2153` | Yes (`d4f23b78...`) |
+| `CYCLE-20261019-BIU0` | `2026-10-19T04:59:15.864Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2154` | Yes (`5c521165...`) |
+| `CYCLE-20261019-BLY9` | `2026-10-19T04:59:19.905Z` | `tiajinsha/JKVideo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2155` | Yes (`ebe5fd1e...`) |
+| `CYCLE-20261019-BO2G` | `2026-10-19T04:59:22.648Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2156` | Yes (`2e2fb36f...`) |
+| `CYCLE-20261019-BRNV` | `2026-10-19T04:59:27.307Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2157` | Yes (`89537313...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:53:09.224Z",
-  "total_verified_learnings": 617,
+  "last_updated": "2026-10-19T04:59:27.265Z",
+  "total_verified_learnings": 622,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10175,22 +10175,35 @@
     "learn-github-guokaigdg-animal-island-ui": {
       "learning_id": "learn-github-guokaigdg-animal-island-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "guokaigdg-animal-island-ui",
+      "source": "guokaigdg/animal-island-ui",
+      "repository": "guokaigdg/animal-island-ui",
       "slug": "guokaigdg-animal-island-ui",
       "platform": "github",
       "source_url": "https://github.com/guokaigdg/animal-island-ui",
-      "source_version": "HEAD",
-      "content_hash": "6c081846e2d26a72f439152abb1b530f42e7a190803eee47fd490672c0bddd86",
+      "source_version": "a412c55b",
+      "content_hash": "d4f23b780bcaff0747c77d47d475b3afca296f4fe0e231e99e0123b2bcd87022",
       "dossier_path": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2153,
+          "title": "count-up): cancel a pending repeat when a zero-duration run ends",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.217Z"
+      "verified_at": "2026-10-19T04:59:12.710Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gusye1234-nano-graphrag": {
       "learning_id": "learn-github-gusye1234-nano-graphrag",
@@ -19431,7 +19444,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "bf57c37fe6cbcc79c1038ad115efe735dc6c20658422eda8a3e621c51d131536",
+      "content_hash": "09d0775021775e405b416a701b512590d0a3c6d5e0c45bb93f29b137957789d0",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
@@ -19496,7 +19509,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-10-17T23:26:28.249Z",
+      "verified_at": "2026-10-19T04:59:12.558Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24090,22 +24103,35 @@
     "learn-github-juicedata-juicefs": {
       "learning_id": "learn-github-juicedata-juicefs",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "juicedata-juicefs",
+      "source": "juicedata/juicefs",
+      "repository": "juicedata/juicefs",
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "HEAD",
-      "content_hash": "d84e87da8cfc2a159e006b9148be09f8ac5674cea9a5f83b788e113068e78cb9",
+      "source_version": "506808b0",
+      "content_hash": "2e2fb36f4ffd66abff5be9f87b11bf1c6f4bd791df6b87342c39e3778e4b2ee8",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2156,
+          "title": "windows: fixed git clone panic. (#7696)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.739Z"
+      "verified_at": "2026-10-19T04:59:22.579Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jundizhou-easy-stock": {
       "learning_id": "learn-github-jundizhou-easy-stock",
@@ -29248,22 +29274,35 @@
     "learn-github-nezhahq-nezha": {
       "learning_id": "learn-github-nezhahq-nezha",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nezhahq-nezha",
+      "source": "nezhahq/nezha",
+      "repository": "nezhahq/nezha",
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "HEAD",
-      "content_hash": "88e87c6360f34822aa97b0b8f3b90b6c80151e41225520b741ae28cb3b85b68a",
+      "source_version": "b3297558",
+      "content_hash": "5c521165bc3d081d1dbc9b53c47f4bccaa8f46aab1729ac318ebd21002877226",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2154,
+          "title": "nat): strip only dashboard-issued Authorization credentials at NAT ingress",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.628Z"
+      "verified_at": "2026-10-19T04:59:15.803Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ng-zorro-ng-zorro-antd": {
       "learning_id": "learn-github-ng-zorro-ng-zorro-antd",
@@ -33152,22 +33191,35 @@
     "learn-github-redisearch-redisearch": {
       "learning_id": "learn-github-redisearch-redisearch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "redisearch-redisearch",
+      "source": "RediSearch/RediSearch",
+      "repository": "RediSearch/RediSearch",
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "HEAD",
-      "content_hash": "703709b5fe73ef29a7ed20cc31859be09d17430dea8eed238163ed65b200e5cb",
+      "source_version": "e72a7d3f",
+      "content_hash": "895373134a7c8a0bffa01030cdd5974d3ac81c613435efbaf1557dda29778952",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2157,
+          "title": "[MOD-17680] Fix crashes in CONTAINS and suffix TAG queries on macOS x86_64 (#119",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.248Z"
+      "verified_at": "2026-10-19T04:59:27.252Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-relatedcode-progresshud": {
       "learning_id": "learn-github-relatedcode-progresshud",
@@ -37637,22 +37689,35 @@
     "learn-github-tiajinsha-jkvideo": {
       "learning_id": "learn-github-tiajinsha-jkvideo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tiajinsha-jkvideo",
+      "source": "tiajinsha/JKVideo",
+      "repository": "tiajinsha/JKVideo",
       "slug": "tiajinsha-jkvideo",
       "platform": "github",
       "source_url": "https://github.com/tiajinsha/JKVideo",
-      "source_version": "HEAD",
-      "content_hash": "db470ae2e6af7c756137257615ffbf00a3db486bbb1434ac7c4be8586fa209ce",
+      "source_version": "3592d036",
+      "content_hash": "ebe5fd1e7190ac4bb1fc91362781f206b3f46877c254355c885c9870c879eb44",
       "dossier_path": "07_PROJECT_LEARNING/tiajinsha-jkvideo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tiajinsha-jkvideo-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2155,
+          "title": "login() 改为延迟后台拉取头像，修复 getFollowedLiveRooms 并发问题",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.973Z"
+      "verified_at": "2026-10-19T04:59:19.847Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tiger-ai-lab-theoremexplainagent": {
       "learning_id": "learn-github-tiger-ai-lab-theoremexplainagent",
@@ -77363,6 +77428,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:53:09.219Z"
+    },
+    "rule-2153": {
+      "learning_id": "rule-2153",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2153,
+      "title": "count-up): cancel a pending repeat when a zero-duration run ends",
+      "source_url": "https://github.com/guokaigdg/animal-island-ui",
+      "source_version": "a412c55b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:59:12.710Z"
+    },
+    "rule-2154": {
+      "learning_id": "rule-2154",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2154,
+      "title": "nat): strip only dashboard-issued Authorization credentials at NAT ingress",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "b3297558",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:59:15.803Z"
+    },
+    "rule-2155": {
+      "learning_id": "rule-2155",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2155,
+      "title": "login() 改为延迟后台拉取头像，修复 getFollowedLiveRooms 并发问题",
+      "source_url": "https://github.com/tiajinsha/JKVideo",
+      "source_version": "3592d036",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:59:19.847Z"
+    },
+    "rule-2156": {
+      "learning_id": "rule-2156",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2156,
+      "title": "windows: fixed git clone panic. (#7696)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "506808b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:59:22.579Z"
+    },
+    "rule-2157": {
+      "learning_id": "rule-2157",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2157,
+      "title": "[MOD-17680] Fix crashes in CONTAINS and suffix TAG queries on macOS x86_64 (#119",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "e72a7d3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:59:27.252Z"
     }
   },
   "aliases": {

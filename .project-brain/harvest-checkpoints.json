@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:53:09.259Z",
+  "last_updated": "2026-10-19T04:59:27.319Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1832,14 +1832,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "bf57c37fe6cbcc79c1038ad115efe735dc6c20658422eda8a3e621c51d131536",
-      "verified_at": "2026-10-17T23:26:28.288Z",
+      "content_hash": "09d0775021775e405b416a701b512590d0a3c6d5e0c45bb93f29b137957789d0",
+      "verified_at": "2026-10-19T04:59:12.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:26:28.288Z"
+      "last_updated": "2026-10-19T04:59:12.624Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",
@@ -9082,6 +9082,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:53:09.259Z"
+    },
+    "guokaigdg/animal-island-ui": {
+      "repository": "guokaigdg/animal-island-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-guokaigdg-animal-island-ui",
+      "content_hash": "d4f23b780bcaff0747c77d47d475b3afca296f4fe0e231e99e0123b2bcd87022",
+      "verified_at": "2026-10-19T04:59:12.779Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:59:12.779Z"
+    },
+    "nezhahq/nezha": {
+      "repository": "nezhahq/nezha",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nezhahq-nezha",
+      "content_hash": "5c521165bc3d081d1dbc9b53c47f4bccaa8f46aab1729ac318ebd21002877226",
+      "verified_at": "2026-10-19T04:59:15.875Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:59:15.875Z"
+    },
+    "tiajinsha/JKVideo": {
+      "repository": "tiajinsha/JKVideo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tiajinsha-jkvideo",
+      "content_hash": "ebe5fd1e7190ac4bb1fc91362781f206b3f46877c254355c885c9870c879eb44",
+      "verified_at": "2026-10-19T04:59:19.918Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:59:19.918Z"
+    },
+    "juicedata/juicefs": {
+      "repository": "juicedata/juicefs",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-juicedata-juicefs",
+      "content_hash": "2e2fb36f4ffd66abff5be9f87b11bf1c6f4bd791df6b87342c39e3778e4b2ee8",
+      "verified_at": "2026-10-19T04:59:22.655Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:59:22.655Z"
+    },
+    "RediSearch/RediSearch": {
+      "repository": "RediSearch/RediSearch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-redisearch-redisearch",
+      "content_hash": "895373134a7c8a0bffa01030cdd5974d3ac81c613435efbaf1557dda29778952",
+      "verified_at": "2026-10-19T04:59:27.319Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:59:27.319Z"
     }
   },
   "repos": {

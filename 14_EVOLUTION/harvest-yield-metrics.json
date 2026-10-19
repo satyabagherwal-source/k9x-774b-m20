@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T04:53:09.257Z",
-  "total_cycles_completed": 2904,
-  "total_learnings_persisted": 2904,
-  "total_rules_promoted": 1936,
+  "last_updated": "2026-10-19T04:59:27.317Z",
+  "total_cycles_completed": 2910,
+  "total_learnings_persisted": 2910,
+  "total_rules_promoted": 1941,
   "history": [
-    {
-      "timestamp": "2026-10-19T01:07:12.878Z",
-      "repository": "mfontanini/presenterm",
-      "learningId": "learn-github-mfontanini-presenterm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:07:18.061Z",
-      "repository": "ritz078/transform",
-      "learningId": "learn-github-ritz078-transform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:07:20.540Z",
-      "repository": "kubeshop/botkube",
-      "learningId": "learn-github-kubeshop-botkube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:07:22.785Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:07:25.195Z",
-      "repository": "skyzh/mini-lsm",
-      "learningId": "learn-github-skyzh-mini-lsm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T01:10:30.848Z",
-      "repository": "PaulLeCam/react-leaflet",
-      "learningId": "learn-github-paullecam-react-leaflet",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T01:16:19.149Z",
       "repository": "ekmas/neobrutalism-components",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T04:53:09.257Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:59:12.622Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:59:12.777Z",
+      "repository": "guokaigdg/animal-island-ui",
+      "learningId": "learn-github-guokaigdg-animal-island-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:59:15.873Z",
+      "repository": "nezhahq/nezha",
+      "learningId": "learn-github-nezhahq-nezha",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:59:19.916Z",
+      "repository": "tiajinsha/JKVideo",
+      "learningId": "learn-github-tiajinsha-jkvideo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:59:22.653Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T04:59:27.317Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

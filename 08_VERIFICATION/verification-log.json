@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-U6A4",
-    "timestamp": "2026-10-18T04:30:06.412Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "80b0091a47f0e1c9a033ecc5a94a8d90df0818bdac6b58b91b65c0ac76893c74",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-YAEB",
-    "timestamp": "2026-10-18T04:33:18.371Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "4691a500aef8ee82a4200e9268d5f9c62b5b0f14265c654256140588ff8c028e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-2MU5",
-    "timestamp": "2026-10-18T04:36:41.117Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "778e4158d25dc8dbfcd04c8f1c7d282697c49316e05e1fa6894af96434f7e1ea",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-6ML0",
-    "timestamp": "2026-10-18T04:39:47.412Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "b4003197f6c2d4c692477de068cb4cb99a018fff9f17a9bfbec6758981fabad1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-AWWW",
-    "timestamp": "2026-10-18T04:43:07.424Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "bdbc13d6af9f2384ee0c40d4b030ca1cb2a499ab1c82d36321acd9a6658cf142",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-FCVV",
-    "timestamp": "2026-10-18T04:46:34.747Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "9ea7dd4a6bdfee89fee83abf67f76d224ac27f2eaa2ac1af9c84cb60f63fd120",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-JGPE",
     "timestamp": "2026-10-18T04:49:46.322Z",
     "repository": "google/vit-base-patch16-224",
@@ -7490,6 +7400,96 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BGBR",
+    "timestamp": "2026-10-19T04:59:12.615Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "09d0775021775e405b416a701b512590d0a3c6d5e0c45bb93f29b137957789d0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BGFZ",
+    "timestamp": "2026-10-19T04:59:12.767Z",
+    "repository": "guokaigdg/animal-island-ui",
+    "learningId": "learn-github-guokaigdg-animal-island-ui",
+    "contentHash": "d4f23b780bcaff0747c77d47d475b3afca296f4fe0e231e99e0123b2bcd87022",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BIU0",
+    "timestamp": "2026-10-19T04:59:15.864Z",
+    "repository": "nezhahq/nezha",
+    "learningId": "learn-github-nezhahq-nezha",
+    "contentHash": "5c521165bc3d081d1dbc9b53c47f4bccaa8f46aab1729ac318ebd21002877226",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BLY9",
+    "timestamp": "2026-10-19T04:59:19.905Z",
+    "repository": "tiajinsha/JKVideo",
+    "learningId": "learn-github-tiajinsha-jkvideo",
+    "contentHash": "ebe5fd1e7190ac4bb1fc91362781f206b3f46877c254355c885c9870c879eb44",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BO2G",
+    "timestamp": "2026-10-19T04:59:22.648Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "2e2fb36f4ffd66abff5be9f87b11bf1c6f4bd791df6b87342c39e3778e4b2ee8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BRNV",
+    "timestamp": "2026-10-19T04:59:27.307Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "895373134a7c8a0bffa01030cdd5974d3ac81c613435efbaf1557dda29778952",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
