@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `b1d0fa51`  
+> **Source Version**: `e855796c`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:35:00.325Z  
+> **Timestamp**: 2026-10-19T22:56:19.568Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:35:00.020Z  
+> **Harvest Timestamp**: 2026-10-19T22:56:19.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40323 stars
+- **Stars / Engagement**: 40351 stars
 
 ---
 
@@ -1495,1147 +1495,1083 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1d0fa51` (2026-10-19)
-**Commit Message**: fix(langchain): preserve conversation text, roles and tool history (#6275)
+### Incident Patch 1: `c476a318` (2026-10-19)
+**Commit Message**: Fix/cross process recovery (#6281)
 
-* fix(langchain): retain Responses text blocks
+* fix(queuefs): continuously recover stale cache messages
 
-(cherry picked from commit 83702c766fdcdc78c557143ff9ff4abfb400759d)
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+* fix(pathlock): retire released cross-process handoffs
 
-* fix(langchain): preserve generic ChatMessage roles
+* docs(api): cover model probe and bot session controls
 
-(cherry picked from commit cecca479f135efdf18cc64d404afe0436613e178)
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+* test(plugin): isolate TRAE CN auto-detection
 
-* fix(langchain): restore completed tool parts that carry their input
+* test(api): skip fs copy setup without embedding secrets
 
-Motivation: OpenVikingChatMessageHistory dropped a completed ToolPart that
-stores call id, name, input and output in one part. The part became a
-ToolMessage, and restore_openviking_messages() discarded it because no
-pending call had registered its id. A session holding only that part
-restored as [] (no exception).
-
-Approach: when a completed part has a tool_id and a nonempty tool_input,
-openviking_message_to_langchain() also emits the tool call on the AIMessage.
-restore_openviking_messages() drops calls whose id is already active from an
-earlier pending call, so no duplicate call is added. Result-only parts (no
-input) keep the existing orphan handling. A stored empty tool_input ({}) is
-treated as no input and is not r
-
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/client.py` (modified, +27/-8)
+**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +10/-0)
 ```diff
-@@ -814,7 +814,9 @@ def extract_message_text(content: Any) -> str:
-             if isinstance(block, str):
-                 chunks.append(block)
-             elif isinstance(block, dict):
--                if block.get("type") == "text" and isinstance(block.get("text"), str):
-+                if block.get("type") in ("text", "input_text", "output_text") and isinstance(
-+                    block.get("text"), str
-+                ):
-                     chunks.append(block["text"])
-                 elif isinstance(block.get("content"), str):
-                     chunks.append(block["content"])
-@@ -824,15 +826,32 @@ def extract_message_text(content: Any) -> str:
-     return str(content)
+@@ -1578,6 +1578,16 @@ return redis.call("HGET", KEYS[1], ARGV[2])
  
- 
-+def get_message_role(message: Any) -> str:
-+    """Normalize conversation role aliases, preserving typed-message precedence."""
-+
-+    if isinstance(message, dict):
-+        role = message.get("type") or message.get("role")
-+    else:
-+        role = getattr(message, "type", None) or getattr(message, "role", None)
-+    if role in ("chat", "ChatMessageChunk"):
-+        role = message.get("role") if isinstance(message, dict) else getattr(message, "role", None)
-+    if role in ("human", "user", "HumanMessageChunk"):
-+        return "user"
-+    if role in ("system", "developer", "SystemMessageChunk"):
-+        return "system"
-+    if role in ("ai", "assistant", "AIMessageChunk"):
-+        return "assistant"
-+    return str(role or "")
-+
-+
- def get_latest_user_text(messages: Iterable[Any]) -> str:
-     for message in reversed(list(messages)):
--        role = getattr(message, "type", None) or getattr(message, "role", None)
--        if isinstance(message, dict):
--            role = message.get("type") or message.get("role")
--            content = message.get("content")
--        else:
--            content = getattr(message, "content", "")
--        if role in {"human", "user"}:
-+        if get_message_role(message) == "user":
-+            content = (
-+                message.get("content")
-+                if isinstance(message, dict)
-+                else getattr(message, "content", "")
-+            )
-             text = extract_message_text(content).strip()
-             if text:
-                 return text
+         assert_eq!(adopted.lease.lock_paths, vec!["/local/account-a/a"]);
+         second.release(&adopted).await.unwrap();
++        tokio::time::timeout(Duration::from_secs(2), async {
++            loop {
++                if first.observe().await.active_locks == 0 {
++                    break;
++                }
++                tokio::time::sleep(Duration::from_millis(10)).await;
++            }
++        })
++        .await
++        .expect("producer must forget a released cross-manager handoff");
+         let legacy = PathLockHandoffRef {
+             lease_ref: None,
+             owner_id: "owner-a".to_string(),
 ```
 
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/messages.py` (modified, +90/-19)
+**File**: `crates/ragfs/src/lock/manager.rs` (modified, +132/-5)
 ```diff
-@@ -14,14 +14,15 @@
-         BaseMessage,
-         HumanMessage,
-         SystemMessage,
-+        ToolCall,
-         ToolMessage,
-     )
- except ImportError as exc:  # pragma: no cover - exercised by optional import path
-     from langchain_openviking.client import missing_dependency
- 
-     raise missing_dependency("langchain", "langchain-core") from exc
- 
--from langchain_openviking.client import extract_message_text
-+from langchain_openviking.client import extract_message_text, get_message_role
- 
- OPENVIKING_CONTEXT_MARKER = "<openviking_context>"
- LANGCHAIN_SUMMARIZATION_SOURCE = "summarization"
-@@ -96,13 +97,14 @@ def langchain_message_to_openviking(
-             }
-         ]
- 
--    if isinstance(message, SystemMessage):
-+    role = get_message_role(message)
-+    if role == "system":
-         return []
- 
-     text = extract_message_text(getattr(message, "content", ""))
-     if not text:
-         return []
--    role = "user" if getattr(message, "type", "") == "human" else "assistant"
-+    role = "user" if role == "user" else "assistant"
-     return [{"role": role, "parts": [{"type": "text", "text": text}]}]
- 
- 
-@@ -116,15 +118,27 @@ def openviking_message_to_langchain(message: dict[str, Any]) -> list[BaseMessage
-         return [HumanMessage(content=text)]
- 
-     tool_calls = []
-+    tool_call_ids: set[str] = set()
-     tool_messages = []
-     for part in parts:
-         if part.get("type") != "tool":
-             continue
-         tool_id = str(part.get("tool_id") or "")
-         tool_name = str(part.get("tool_name") or "")
-         status = str(part.get("tool_status") or "")
--        has_output = part.get("tool_output") is not None
--        is_completed_result = has_output or status in {"completed", "error"}
-+        is_completed_result = _has_tool_result(part)
-+        if not is_completed_result or (
-+            tool_id and tool_name and part.get("tool_input") is not None
-+        ):
-+            if not tool_id or tool_id not in tool_call_ids:
-+                tool_calls.append(
-+                    {
-+                        "id": tool_id,
-+                        "name": tool_name,
-+                        "args": _tool_args(part.get("tool_input")),
-+                    }
-+                )
-+                tool_call_ids.add(tool_id)
-         if is_completed_result:
-             tool_messages.append(
-                 ToolMessage(
-@@ -134,14 +148,6 @@ def openviking_message_to_langchain(message: dict[str, Any]) -> list[BaseMessage
-                     status="error" if status == "error" else "success",
-                 )
-             )
--        else:
--            tool_calls.append(
--                {
--                    "id": tool_id,
--                    "name": tool_name,
--                    "args": _tool_args(part.get("tool_input")),
--                }
--            )
- 
-     messages: list[BaseMessage] = []
-     if text or tool_calls or not tool_messages:
-@@ -155,28 +161,93 @@ def openviking_message_to_langchain(message: dict[str, Any]) -> list[BaseMessage
- 
- 
- def restore_openviking_messages(messages: Sequence[dict[str, Any]]) -> list[BaseMessage]:
--    """Restore a valid LangChain message sequence from OpenViking session messages."""
-+    """Restore LangChain history, matching tool results to recorded calls."""
- 
-     restored: list[BaseMessage] = []
--    active_tool_call_ids: set[str] = set()
-+    active_tool_calls: dict[str, ToolCall] = {}
-+    completed_tool_calls: dict[str, tuple[ToolCall, ToolMessage]] = {}
-     for message in messages:
--        for langchain_message in openviking_message_to_langchain(message):
-+        converted = openviking_message_to_langchain(message)
-+        pending_call_ids = {
-+            str(part.get("tool_id") or "")
-+            for part in message.get("parts") or []
-+            if part.get("type") == "tool" and not _has_tool_result(part)
-+        }
-+        converted_calls = {
-+            str(call.get("id") or ""): call
-+            for item in converted
-+            if isinstance(item, AIMessage)
-+            for call in item.tool_calls
-+        }
-+        converted_results: dict[str, ToolMessage] = {}
-+        for item in converted:
-+            if isinstance(item, ToolMessage):
-+                converted_results.setdefault(item.tool_call_id, item)
-+        completed_here: set[str] = set()
-+        # Complete earlier calls before any new assistant text or calls.
-+        for result in converted_results.values():
-+            pending = active_tool_calls.get(result.tool_call_id)
-+            # Different arguments or names describe a new call that reused the ID.
-+            if pending is not None and converted_calls.get(result.tool_call_id, pending) == pending:
-+                restored.append(result)
-+                completed_tool_calls[result.tool_call_id] = (
-+                    active_tool_calls.pop(result.tool_call_id),
-+                    result,
-+                )
-+                completed_here.add(result.tool_call_id)
-+        for langchain_messa
-```
-
-**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_integration.py` (modified, +364/-42)
-```diff
-@@ -1,6 +1,7 @@
- from __future__ import annotations
- 
- import json
-+from copy import deepcopy
- from types import MappingProxyType
- from typing import Any
- 
-@@ -12,8 +13,12 @@
- 
- from langchain_core.messages import (
-     AIMessage,
-+    ChatMessage,
-+    ChatMessageChunk,
-     HumanMessage,
-+    HumanMessageChunk,
-     SystemMessage,
-+    SystemMessageChunk,
-     ToolMessage,
-     convert_to_openai_messages,
- )
-@@ -29,6 +34,7 @@
-     OpenVikingContextMiddleware,
-     OpenVikingRetriever,
-     OpenVikingSessionContextAssembler,
-+    OpenVikingSessionRecorder,
-     OpenVikingStore,
-     create_openviking_tools,
-     with_openviking_context,
-@@ -38,6 +44,7 @@
-     apply_commit_policy,
-     call_openviking,
-     ensure_client,
-+    get_latest_user_text,
- )
- from langchain_openviking.history import (
-     langchain_message_to_openviking,
-@@ -789,41 +796,81 @@ def test_in_memory_openviking_client_batch_add_messages_records_messages():
-     assert client.sessions["batch-session"][1]["created_at"] == "2026-05-26T00:00:00+00:00"
- 
- 
--def test_chat_message_history_preserves_tool_parts():
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("asynchronous", [False, True])
-+@pytest.mark.parametrize(
-+    "second_query,new_turn,second_output",
-+    [
-+        ("deployment", True, "deployment notes found."),
-+        ("Tokyo", True, "Tokyo notes found."),
-+        ("Tokyo", False, "Tokyo notes found."),
-+        ("deployment", False, "done"),
-+        ("deployment", False, "deployment notes found."),
-+        ("deployment", False, None),
-+    ],
-+)
-+async def test_chat_message_history_preserves_tool_parts(
-+    asynchronous, second_query, new_turn, second_output
-+):
-     client = InMemoryOpenVikingClient()
--    history = OpenVikingChatMessageHistory(session_id="history-session", client=client)
--
--    history.add_messages(
--        [
--            HumanMessage(content="Find deployment notes."),
--            AIMessage(
--                content="Searching.",
--                tool_calls=[
--                    {
--                        "id": "call-1",
--                        "name": "viking_find",
--                        "args": {"query": "deployment"},
--                    }
--                ],
--            ),
--            ToolMessage(
--                content="Azure deployment notes found.",
--                tool_call_id="call-1",
--                name="viking_find",
--            ),
--        ]
-+    history = OpenVikingChatMessageHistory(
-+        session_id="history-session", client=client, async_client=client
-     )
- 
-+    messages = []
-+    outputs = ["deployment notes found.", second_output]
-+    for index, (query, output) in enumerate(
-+        zip(("deployment", second_query), outputs, strict=True)
-+    ):
-+        if index == 0 or new_turn:
-+            messages.append(HumanMessage(content=f"Find {query} notes."))
-+        messages.extend(
-+            [
-+                AIMessage(
-+                    content="Searching.",
-+                    tool_calls=[
-+                        {
-+                            "id": "call-1",
-+                            "name": "viking_find",
-+                            "args": {"query": query},
+@@ -521,28 +521,62 @@ impl PathLockManager {
+                         continue;
+                     };
+                     let lock_paths = entry.lease.lock_paths.clone();
+-                    let mut all_ok = true;
++                    let pending_handoff = entry.pending_handoff;
++                    let mut any_ok = false;
++                    let mut released_handoff_paths = Vec::new();
+                     for lp in &lock_paths {
+                         match refresh_provider
+                             .refresh_token(lp, &owner.owner_id, now_ns)
+                             .await
+                         {
+                             Ok(true) => {
++                                any_ok = true;
+                                 debug!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, "pathlock lease automatically refreshed");
+                             }
+                             Ok(false) => {
+-                                all_ok = false;
+-                                warn!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, "pathlock lease automatic refresh failed");
++                                if pending_handoff {
++                                    // A different process may have adopted and released this
++                                    // handoff. Its completed release makes the producer's
++                                    // local reference obsolete. Do not remove the provider
++                                    // token: another process may own it or have released it.
++                                    released_handoff_paths.push(lp.clone());
++                                } else {
++                                    warn!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, "pathlock lease automatic refresh failed");
++                                }
+                             }
+                             Err(error) => {
+-                                all_ok = false;
+                                 warn!(lease_ref = %lease_ref, owner_id = %owner.owner_id, lock_path = %lp, error = %error, "pathlock lease automatic refresh failed");
+                             }
+                         }
+                     }
+-                    if all_ok {
++                    if any_ok {
+                         owner_registry.touch(&lease_ref);
+                     }
++                    for lock_path in released_handoff_paths {
++                        let is_last_path =
++                            owner_registry.entries.get(&lease_ref).is_some_and(|entry| {
++                                entry.lease.lock_paths.iter().all(|path| path == &lock_path)
++                            });
++                        if is_last_path {
++                            if let Err(error) = refresh_registry.unpublish(&lease_ref, &owner) {
++                                error!(
++                                    lease_ref = %lease_ref,
++                                    owner_id = %owner.owner_id,
++                                    error = %error,
++                                    "failed to forget released pathlock handoff"
++                                );
++                                continue;
++                            }
 +                        }
-+                    ],
-+                ),
-+            ]
-+        )
-+        if output is not None:
-+            messages.append(ToolMessage(content=output, tool_call_id="call-1", name="viking_find"))
-+    try:
-+        if asynchronous:
-+            await history.aadd_messages(messages)
-+            restored = await history.aget_messages()
-+        else:
-+            history.add_messages(messages)
-+            restored = history.messages
-+    finally:
-+        await history.aclose()
-+
-     stored = client.sessions["history-session"]
-     assert stored[1]["parts"][1]["type"] == "tool"
--    assert stored[2]["parts"][0]["tool_output"] == "Azure deployment notes found."
-+    assert stored[2]["parts"][0]["tool_output"] == "deployment notes found."
- 
--    restored = history.messages
-+    assert [type(message) for message in restored] == (
-+        [HumanMessage, AIMessage, ToolMessage]
-+        + ([HumanMessage] if new_turn else [])
-+        + [AIMessage]
-+        + ([ToolMessage] if second_output is not None else [])
-+    )
-     restored_ai_messages = [message for message in restored if isinstance(message, AIMessage)]
-     restored_tool_messages = [message for message in restored if isinstance(message, ToolMessage)]
--    assert len(restored_ai_messages) == 1
--    assert len(restored_ai_messages[0].tool_calls) == 1
--    assert len(restored_tool_messages) == 1
-+    assert [message.tool_calls for message in restored_ai_messages] == [
-+        [{"id": "call-1", "name": "viking_find", "args": {"query": query}, "type": "tool_call"}]
-+        for query in ("deployment", second_query)
-+    ]
-+    expected_outputs = [output for output in outputs if output is not None]
-+    assert [message.tool_call_id for message in restored_tool_messages] == ["call-1"] * len(
-+        expected_
-```
-
-**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_recording.py` (modified, +47/-0)
-```diff
-@@ -1,5 +1,6 @@
- from __future__ import annotations
- 
-+import asyncio
- from typing import Any
- 
- import pytest
-@@ -25,6 +26,7 @@
-     OpenVikingRecordResult,
-     OpenVikingSessionRecorder,
- )
-+from langchain_openviking.client import get_latest_user_text
- from langchain_openviking.messages import OPENVIKING_CONTEXT_MARKER
- 
- 
-@@ -804,3 +806,48 @@ def commit_session(self, session_id: str, **kwargs: Any) -> dict[str, Any]:
-     ]
-     assert client.sessions["middleware-commit-retry"] == []
-     assert len(client.archives["middleware-commit-retry"][0]["messages"]) == 2
-+
-+
-+@pytest.mark.parametrize("asynchronous", [False, True])
-+@pytest.mark.parametrize(
-+    "message,expected",
-+    [
-+        (HumanMessage([{"type": "input_text", "text": "deployment west"}]), "deployment west"),
-+        (AIMessage([{"type": "output_text", "text": "remembered"}]), "remembered"),
-+        (
-+            HumanMessage(
-+                [
-+                    {"type": "input_image", "image_url": "https://example.invalid/chart.png"},
-+                    {"type": "input_text", "text": "chart caption"},
-+                    {"type": "text", "text": "second line"},
-+                ]
-+            ),
-+            "chart caption\nsecond line",
-+        ),
-+        (HumanMessage([{"type": "text", "text": "standard"}]), "standard"),
-+        (AIMessage("plain"), "plain"),
-+        (HumanMessage([{"type": ["text"], "text": "ignored"}]), ""),
-+        (HumanMessage([{"type": {}, "text": "ignored"}]), ""),
-+    ],
-+)
-+def test_recorder_preserves_responses_text(message, expected, asynchronous):
-+    client = InMemoryOpenVikingClient()
-+    client.create_session("responses")
-+    recorder = OpenVikingSessionRecorder(client=client)
-+    if asynchronous:
-+        result = asyncio.run(recorder.arecord("responses", [message]))
-+    else:
-+        result = recorder.record("responses", [message])
-+    assert result.messages_written == 1
-+    assert client.sessions["responses"][0]["parts"] == [{"type": "text", "text": expected}]
-+
-+
-+def test_responses_text_used_for_recall_and_tool_output():
-+    user = HumanMessage([{"type": "input_text", "text": "new question"}])
-+    assert get_latest_user_text([HumanMessage("old question"), user]) == "new question"
-+    tool = ToolMessage([{"type": "output_text", "text": "tool result"}], tool_call_id="call-1")
-+    client = InMemoryOpenVikingClient()
-+    client.create_session("tools")
-+    recorder = OpenVikingSessionRecorder(client=client)
-+    recorder.record("tools", [tool])
-+    assert client.sessions["tools"][0]["parts"][0]["tool_output"] == "tool result"
-```
-
-**File**: `openviking/message/message.py` (modified, +1/-1)
-```diff
-@@ -123,7 +123,7 @@ def _part_to_dict(self, part: Part) -> dict:
-                 "skill_uri": part.skill_uri,
-                 "tool_status": part.tool_status,
-             }
--            if part.tool_input:
-+            if part.tool_input is not None:
-                 d["tool_input"] = part.tool_input
-             if part.tool_output:
-                 d["tool_output"] = part.tool_output
-```
-
-**File**: `openviking/session/retention.py` (modified, +2/-2)
-```diff
-@@ -154,7 +154,7 @@ def _truncate_message_group(
- 
-     Durable messages are never mutated. Text/context bodies and tool outputs are
-     the only fields shortened. Tool IDs, names and result pairing remain intact;
--    oversized tool inputs are replaced only when their fixed serialized cost
-+    oversized tool inputs are omitted only when their fixed serialized cost
-     would otherwise make the whole atomic Step impossible to return.
-     """
-     if token_budget <= 0 or not messages:
-@@ -186,7 +186,7 @@ def _truncate_message_group(
-             for part in message.parts:
-                 if not isinstance(part, ToolPart) or not part.tool_input:
-                     continue
--                part.tool_input = {}
-+                part.tool_input = None
-                 truncated_ids.add(message.id)
-                 if _message_tokens(cloned) <= token_budget:
-                     break
-```
-
-**File**: `sdk/python/openviking_sdk/message.py` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ def normalize_part(part: Union[Dict[str, Any], MessagePart, Any]) -> Dict[str, A
-             "tool_output_externalized_reason",
-         ):
-             value = getattr(part, field, None)
--            if value:
-+            if value or (field == "tool_input" and value is not None):
-                 payload[field] = value
-         for field in (
-             "duration_ms",
-```
-
-**File**: `sdk/python/tests/test_async_client_behaviors.py` (modified, +4/-3)
-```diff
-@@ -145,7 +145,8 @@ async def test_async_http_client_sends_message_semantics_and_turn_retention():
- 
- 
- @pytest.mark.asyncio
--async def test_async_http_client_normalizes_message_part_objects():
-+@pytest.mark.parametrize("tool_input", [None, {}, {"query": "OpenViking"}])
-+async def test_async_http_client_normalizes_message_part_objects(tool_input):
-     client = AsyncHTTPClient(url="http://localhost:1933")
-     fake_http = SimpleNamespace(post=AsyncMock(return_value=object()))
-     client._http = fake_http
-@@ -165,7 +166,7 @@ async def test_async_http_client_normalizes_message_part_objects():
-             ToolPart(
-                 tool_id="call-1",
-                 tool_name="search",
--                tool_input={"query": "OpenViking"},
-+                tool_input=tool_input,
-                 tool_status="completed",
-                 duration_ms=12.5,
-                 prompt_tokens=42,
-@@ -202,7 +203,7 @@ async def test_async_http_client_normalizes_message_part_objects():
-                     "type": "tool",
-                     "tool_id": "call-1",
-                     "tool_name": "search",
--                    "tool_input": {"query": "OpenViking"},
-+                    **({"tool_input": tool_input} if tool_input is not None else {}),
-                     "tool_status": "completed",
-                     "duration_ms": 12.5,
-                     "prompt_tokens": 42,
-```
-
----
-
-### Incident Patch 2: `a9c21c2f` (2026-10-19)
-**Commit Message**: fix(compile): isolate account locks and stop stalled review loops (#6133)
-
-* fix(bot): align compile execution with model configuration
-
-* fix(bot): close SDK streaming responses
-
-* fix(compile): restore bounded execution and fallback semantics
-
-* fix(compile): reject missing authenticated account IDs
-
-* fix(compile): enforce minimum call and assignment budgets
-
-* fix(compile): fall back after consecutive reader failures
-
-* fix(compile): give assignments twice the model timeout
-
-**File**: `bot/tests/test_bot_provider_thinking.py` (modified, +4/-1)
-```diff
-@@ -1,4 +1,5 @@
- from types import SimpleNamespace
-+from unittest.mock import MagicMock
- 
- import pytest
- from vikingbot.providers.vlm_adapter import VLMProviderAdapter
-@@ -183,7 +184,9 @@ async def chunks():
-                     usage=None,
-                 )
- 
--            return chunks()
-+            response = MagicMock()
-+            response.__aenter__.return_value = chunks()
-+            return response
- 
-     vlm = SimpleNamespace(
-         provider="volcengine",
-```
-
-**File**: `bot/tests/test_bot_vlm_credentials.py` (modified, +8/-2)
-```diff
-@@ -10,6 +10,7 @@
- 
- from openviking.models.vlm import MultiCredentialVLM
- from openviking.models.vlm.backends.litellm_vlm import LiteLLMVLMProvider
-+from openviking.models.vlm.retry_vlm import RetryVLM
- 
- 
- def _write_config(tmp_path, monkeypatch, data):
-@@ -149,7 +150,7 @@ def test_bot_inherits_root_vlm_credentials_when_agents_model_is_omitted(tmp_path
- 
- 
- @pytest.mark.parametrize("bot_override", [False, True], ids=["inherited-model", "bot-model"])
--def test_agent_max_tokens_reaches_provider(tmp_path, monkeypatch, bot_override):
-+def test_agent_generation_settings_reach_provider(tmp_path, monkeypatch, bot_override):
-     agents = {"max_tokens": 8192}
-     if bot_override:
-         agents.update(provider="openai", model="bot-model", api_key="bot-key")
-@@ -162,13 +163,15 @@ def test_agent_max_tokens_reaches_provider(tmp_path, monkeypatch, bot_override):
-                 "model": "root-model",
-                 "api_key": "root-key",
-                 "max_tokens": 4096,
-+                "thinking": False,
-             },
-             "bot": {"agents": agents},
-         },
-     )
-     provider = _make_provider(config)
-     assert config.agents.inherits_root_vlm() is (not bot_override)
-     assert provider._vlm.max_tokens == 8192
-+    assert provider._vlm.thinking is bot_override
- 
- 
- def test_explicit_bot_model_uses_bot_credentials_instead_of_root(tmp_path, monkeypatch):
-@@ -248,6 +251,7 @@ def test_bot_credentials_without_outer_model_use_bot_chain(tmp_path, monkeypatch
-         {
-             "vlm": {
-                 "model": "root-primary",
-+                "thinking": False,
-                 "credentials": [
-                     {
-                         "id": "root-primary",
-@@ -264,6 +268,7 @@ def test_bot_credentials_without_outer_model_use_bot_chain(tmp_path, monkeypatch
-     provider = _make_provider(config)
- 
-     assert config.agents.inherits_root_vlm() is False
-+    assert provider._vlm.thinking is True
-     assert config.agents.model == ""
-     assert isinstance(provider._vlm, MultiCredentialVLM)
-     assert provider._vlm._credential_ids == ["bot-primary", "bot-backup"]
-@@ -353,7 +358,8 @@ def test_explicit_litellm_provider_uses_vlm_adapter(tmp_path, monkeypatch):
-     provider = _make_provider(config)
- 
-     assert isinstance(provider, VLMProviderAdapter)
--    assert isinstance(provider._vlm, LiteLLMVLMProvider)
-+    assert isinstance(provider._vlm, RetryVLM)
-+    assert isinstance(provider._vlm.inner, LiteLLMVLMProvider)
-     assert provider._vlm.model == "openrouter/openai/gpt-4o-mini"
- 
- 
-```
-
-**File**: `bot/tests/test_bot_vlm_streaming.py` (modified, +17/-3)
-```diff
-@@ -1,8 +1,10 @@
- from types import SimpleNamespace
-+from unittest.mock import MagicMock
- 
- import pytest
- from vikingbot.providers.vlm_adapter import VLMProviderAdapter
- 
-+from openviking.models.model_error import ModelError, ModelErrorKind
- from openviking.models.vlm import FailoverVLM, MultiCredentialVLM, OpenAIVLM, VolcEngineVLM
- 
- 
-@@ -23,7 +25,9 @@ async def generate():
-                     raise chunk
-                 yield chunk
- 
--        return generate()
-+        response = MagicMock()
-+        response.__aenter__.return_value = generate()
-+        return response
- 
- 
- def stream_chunk(
-@@ -112,20 +116,25 @@ async def test_vlm_adapter_streams_openai_content_deltas():
- 
- @pytest.mark.asyncio
- async def test_vlm_adapter_streams_with_credential_failover_before_first_delta():
--    primary_completions = FakeCompletions(error=RuntimeError("status 429: rate limit"))
-+    primary_completions = FakeCompletions(
-+        error=ModelError(ModelErrorKind.RATE_LIMIT_ERROR, "Rate limit exceeded")
-+    )
-     backup_completions = FakeCompletions(chunks=[stream_chunk("backup", finish_reason="stop")])
-     primary = VolcEngineVLM(
-         {
-             "provider": "volcengine",
-             "model": "primary-model",
-             "api_key": "primary-key",
-+            "max_retries": 0,
-         }
-     )
-     backup = VolcEngineVLM(
-         {
-             "provider": "volcengine",
-             "model": "backup-model",
-             "api_key": "backup-key",
-+            "thinking": True,
-+            "reasoning_effort": "low",
-         }
-     )
-     attach_client(primary, primary_completions)
-@@ -149,6 +158,7 @@ async def test_vlm_adapter_streams_with_credential_failover_before_first_delta()
-     assert events[-1].response.content == "backup"
-     assert len(primary_completions.calls) == 1
-     assert backup_completions.calls[0]["model"] == "backup-model"
-+    assert backup_completions.calls[0]["reasoning_effort"] == "low"
-     assert credentials.active_credential_id == "backup"
- 
- 
-@@ -178,7 +188,10 @@ async def test_vlm_adapter_streams_with_legacy_primary_backup_failover():
- @pytest.mark.asyncio
- async def test_credential_stream_does_not_replay_after_a_visible_delta():
-     primary_completions = FakeCompletions(
--        chunks=[stream_chunk("partial"), RuntimeError("status 429: rate limit")]
-+        chunks=[
-+            stream_chunk("partial"),
-+            ModelError(ModelErrorKind.RATE_LIMIT_ERROR, "Rate limit exceeded"),
-+        ]
-     )
-     backup_completions = FakeCompletions(chunks=[stream_chunk("duplicate", finish_reason="stop")])
-     primary = OpenAIVLM({"provider": "openai", "model": "primary-model", "api_key": "primary-key"})
-@@ -202,4 +215,5 @@ async def test_credential_stream_does_not_replay_after_a_visible_delta():
-     assert events[0].content == "partial"
-     assert events[-1].type == "response"
-     assert events[-1].response.finish_reason == "error"
-+    assert len(primary_completions.calls) == 1
-     assert backup_completions.calls == []
-```
-
-**File**: `bot/tests/test_compile_execution.py` (added, +106/-0)
-```diff
-@@ -0,0 +1,106 @@
-+"""Core regressions for account isolation and advisory Compile execution."""
-+
-+import asyncio
-+from collections import Counter
-+from types import SimpleNamespace
-+from unittest.mock import AsyncMock
-+
-+import pytest
-+from vikingbot.compile import review
-+from vikingbot.compile.models import CompileLimits
-+from vikingbot.compile.pipeline_io import JsonModel, ModelCallLimitError
-+from vikingbot.compile.plan import Contract, Node, ReviewDecision
-+from vikingbot.compile.service import BotCompileService
-+from vikingbot.config.schema import Config
-+from vikingbot.providers.base import LLMResponse, ToolCallRequest
-+
-+
-+@pytest.mark.parametrize(
-+    "mode,account,peak", [("api_key", "b", 2), ("api_key", "a", 1), ("dev", "b", 1)]
-+)
-+async def test_target_locks_follow_effective_account(tmp_path, mode, account, peak):
-+    config = Config(storage_workspace=str(tmp_path))
-+    config.ov_server.set_effective_auth_mode(mode)
-+    service = BotCompileService(agent_loop=SimpleNamespace(config=config))
-+    active = highest = 0
-+
-+    async def execute(*args):
-+        nonlocal active, highest
-+        active += 1
-+        highest = max(highest, active)
-+        await asyncio.sleep(0)
-+        active -= 1
-+
-+    service._execute_task = execute
-+    request = SimpleNamespace(to="viking://resources/wiki")
-+    await asyncio.gather(
-+        service._run_task("a", request, {"account_id": "a", "user_id": "alice"}),
-+        service._run_task("b", request, {"account_id": account, "user_id": "bob"}),
-+    )
-+    assert highest == peak
-+
-+
-+@pytest.mark.parametrize("failure", ["model", "record", "cancel"])
-+async def test_review_failures_preserve_plan_and_cancellation(failure):
-+    contract = Contract(extract={"instructions": "Copy", "execution": "direct", "output": "files"})
-+    decision = ReviewDecision(
-+        action="revise", contract=contract, plan="p.finalize(mapped, into=target)"
-+    )
-+
-+    async def ask(*args, **kwargs):
-+        args[4](decision)
-+        if failure != "record":
-+            error = asyncio.CancelledError() if failure == "cancel" else OSError("Review failed")
-+            raise error
-+        return decision
-+
-+    runtime = SimpleNamespace(
-+        contract=contract,
-+        model=SimpleNamespace(ask=ask),
-+        files=SimpleNamespace(put=AsyncMock()),
-+        resources=SimpleNamespace(name="read_skill_resource"),
-+        failures=[],
-+        metrics=Counter(),
-+    )
-+    if failure == "record":
-+        runtime.files.put.side_effect = OSError("Record failed")
-+    args = (runtime, Node("mapped", "map", "sources", task="extract"), [], "", set(), 0, "", {})
-+    if failure == "cancel":
-+        with pytest.raises(asyncio.CancelledError):
-+            await review.run(*args)
-+    else:
-+        assert await review.run(*args) is None
-+    assert runtime.contract is contract
-+
-+
-+def response(name, arguments):
-+    """Return one scripted reader or final-result tool call."""
-+    return LLMResponse(None, [ToolCallRequest("call", name, arguments, 0)])
-+
-+
-+@pytest.mark.parametrize("case", ["repeat", "progress", "error"])
-+async def test_direct_reads_stop_repetition_but_allow_progress(case):
-+    offsets = [n // 2 for n in range(102)] if case == "progress" else list(range(4))
-+    files = SimpleNamespace(put=AsyncMock())
-+    responses = [response("read", {"offset": n}) for n in offsets]
-+    responses.append(response("emit", {"action": "continue"}))
-+    provider = SimpleNamespace(thinking=True, chat=AsyncMock(side_effect=responses))
-+    model = JsonModel(provider, "test", 0, files, CompileLimits(), {}, Counter())
-+    reader = SimpleNamespace(
-+        name="read", description="", parameters={}, execute=AsyncMock(return_value="x")
-+    )
-+    if case == "progress":
-+        reader.execute.side_effect = [f"chunk{n}" for n in offsets]
-+    if case == "error":
-+        reader.execute.side_effect = [
-+            error(f"request_id={i}")
-+            for i, error in enumerate((OSError, ValueError, TimeoutError, PermissionError))
-+        ]
-+    result = model.direct("map", "", {}, ReviewDecision, None, "test", readers={"read": reader})
-+    if case == "progress":
-+        assert (await result).action == "continue"
-+    else:
-+        with pytest.raises(ModelCallLimitError, match="made no progress|failed repeatedly"):
-+            await result
-+    assert provider.chat.await_count == (len(offsets) + 1 if case == "progress" else 4)
-+    assert provider.chat.await_args.kwargs["thinking"] is False
-```
-
-**File**: `bot/vikingbot/compile/entry.py` (modified, +11/-2)
-```diff
-@@ -4,9 +4,10 @@
- 
- from pydantic import Field
- 
-+from openviking.models.model_error import ModelErrorKind, model_error_kind
- from vikingbot.compile import file_ops
- from vikingbot.compile.ops.common import payload
--from vikingbot.compile.pipeline_io import ModelCallError
-+from vikingbot.compile.pipeline_io import ModelCallError, ModelCallLimitError
- from vikingbot.compile.results import FileResponse, Group
- 
- 
-@@ -55,7 +56,15 @@ def validate(response):
- 
-     try:
-         response = await runtime.model.ask("compile", system, data, EntryResponse, validate)
--    except (ModelCallError, ValueError):
-+    except ModelCallError as exc:
-+        runtime.direct_output_format = None
-+        if not isinstance(exc, ModelCallLimitError) and model_error_kind(exc) not in {
-+            ModelErrorKind.INPUT_TOO_LARGE,
-+            ModelErrorKind.TRANSIENT_NETWORK_ERROR,
-+        }:
-+            raise
-+        return None
-+    except ValueError:
-         runtime.direct_output_format = None
-         return None
-     if response.needs_pipeline or any(
-```
-
-**File**: `bot/vikingbot/compile/models.py` (modified, +0/-4)
-```diff
-@@ -37,10 +37,6 @@ class CompileLimits(BaseModel):
-     agent_iterations: int = 120
-     # Per-child model/tool rounds, including draft checks and submission; parent budget is separate.
-     subagent_iterations: int = Field(default=70, ge=1)
--    # Wall-clock limits include provider capacity waits, transport retries and tool reads.
--    pipeline_call_seconds: float = Field(default=600, gt=0)
--    pipeline_plan_seconds: float = Field(default=600, gt=0)
--    pipeline_agent_seconds: float = Field(default=1200, gt=0)
-     # Per-task Map workers, also used for Resource source subagents.
-     source_concurrency: int = Field(default=6, ge=1)
-     # Per-task Shuffle routing workers and embedding batches.
-```
-
-**File**: `bot/vikingbot/compile/pipeline_io.py` (modified, +56/-29)
-```diff
-@@ -103,7 +103,11 @@ def retry_allowed(failures: Counter, error: str) -> bool:
- 
- 
- class ModelCallError(OSError):
--    """A model timeout or provider failure; output validation errors remain separate."""
-+    """A failed model request or stalled read loop; output validation errors remain separate."""
-+
-+
-+class ModelCallLimitError(ModelCallError):
-+    """A local deadline or no-progress limit allows direct generation to use the pipeline."""
- 
- 
- class TaskFiles:
-@@ -228,20 +232,20 @@ def __init__(self, provider, model, temperature, files, limits, usage, metrics):
-         self.identity.update(
-             batch_target_chars=self.budget, output_reserve_tokens=self.output_tokens
-         )
--        self.identity["thinking"] = {"compile": True}
-+        self.identity["thinking"] = {
-+            "map": False,
-+            "route": False,
-+            "reduce": False,
-+            "combine": False,
-+        }
-         underlying = getattr(provider, "_provider", provider)
-         backend = getattr(underlying, "_vlm", underlying)
-+        backend = getattr(backend, "primary", backend)
-+        self.timeout = getattr(backend, "timeout", 600.0)
-         self.identity["backend_settings"] = {
-             name: getattr(backend, name, None)
-             for name in ("model", "thinking", "temperature", "max_tokens", "reasoning_effort")
-         }
--        # Explicit Ark configuration controls direct generation without changing other stages.
--        self.identity["reasoning_effort"] = (
--            {"compile": backend.reasoning_effort}
--            if getattr(backend, "provider", None) == "volcengine"
--            and getattr(backend, "reasoning_effort", None) is not None
--            else {}
--        )
-         configured_tokens = self.identity["backend_settings"]["max_tokens"]
-         self.max_tokens = (
-             configured_tokens
-@@ -276,12 +280,17 @@ async def call(self, stage, messages, tools, *, max_tokens):
-         self.metrics[f"{stage}_calls"] += 1
-         number = self.metrics[f"{stage}_calls"]
-         started = time.monotonic()
-+        seconds = max(600, self.timeout)
-+        thinking = self.identity["thinking"].get(stage.split("_", 1)[0])
-         report = {
-             "stage": stage,
-             "call": number,
-             "max_tokens": max_tokens,
--            "timeout_seconds": self.limits.pipeline_call_seconds,
--            "thinking": self.identity["thinking"].get(stage, False),
-+            "timeout_seconds": seconds,
-+            "thinking": thinking
-+            if thinking is not None
-+            else self.identity["backend_settings"]["thinking"],
-+            "reasoning_effort": self.identity["backend_settings"]["reasoning_effort"],
-             "message_chars": sum(len(json.dumps(m, ensure_ascii=False)) for m in messages),
-             "tool_schema_chars": len(json.dumps(tools, ensure_ascii=False)),
-             "tool_result_chars": sum(
-@@ -295,19 +304,14 @@ async def call(self, stage, messages, tools, *, max_tokens):
-             json.dumps([messages, tools], ensure_ascii=False), text_type="mixed"
-         )
-         try:
--            completion_overrides = {}
--            if stage in self.identity["reasoning_effort"]:
--                report["reasoning_effort"] = self.identity["reasoning_effort"][stage]
--                completion_overrides["reasoning_effort"] = report["reasoning_effort"]
--            async with asyncio.timeout(self.limits.pipeline_call_seconds):
-+            async with asyncio.timeout(seconds):
-                 response = await self.provider.chat(
-                     messages=messages,
-                     tools=tools,
-                     model=self.model,
-                     temperature=self.temperature,
-                     max_tokens=max_tokens,
--                    thinking=report["thinking"],
--                    **completion_overrides,
-+                    thinking=thinking,
-                 )
-             report.update(
-                 finish_reason=response.finish_reason,
-@@ -331,8 +335,8 @@ async def call(self, stage, messages, tools, *, max_tokens):
-             return response
-         except TimeoutError as exc:
-             report["error"] = "TimeoutError"
--            raise ModelCallError(
--                f"{stage}: model call wall-clock budget exhausted ({self.limits.pipeline_call_seconds:g}s)"
-+            raise ModelCallLimitError(
-+                f"{stage}: model call wall-clock budget exhausted ({seconds:g}s)"
-             ) from exc
-         except Exception as exc:
-             report["error"] = type(exc).__name__
-@@ -356,21 +360,20 @@ async def ask(
-         agent=False,
-         readers=None,
-     ) -> R:
--        """Bound an assignment; readers adds scoped tools for direct calls without widening worker access."""
--        seconds = (
--            self.limits.pipeline_plan_seconds
--            if stage in {"plan", "review"}
--            else self.limits.pipeline_agent_seconds
--        )
-+        """Bound each assignment to twice
-```
-
-**File**: `bot/vikingbot/compile/review.py` (modified, +16/-8)
-```diff
-@@ -2,9 +2,12 @@
- 
- from __future__ import annotations
- 
-+import asyncio
- import json
- from dataclasses import asdict
- 
-+from loguru import logger
-+
- from vikingbot.agent.tools.base import Tool
- from vikingbot.compile import file_ops
- from vikingbot.compile.plan import PLANNING_RULES, ReviewDecision, parse_plan
-@@ -175,12 +178,7 @@ async def execute(self, tool_context=None, index=0, member=None, offset=0, limit
- 
- 
- async def run(runtime, node, outputs, remaining_plan, completed_names, revisions, prompt, context):
--    """Return an accepted decision and parsed suffix, or None to retain the existing plan.
--
--    Only future configurations may change; output format and scope meanings remain fixed.
--    Invalid decisions get up to three repairs per review; exhausted or model/read failures
--    are recorded. Cancellation and diagnostic-write failures propagate; the contract stays fixed.
--    """
-+    """Return a validated revision or None; cancellation propagates."""
-     record = {}
-     accepted = None
-     try:
-@@ -245,8 +243,18 @@ def validate_decision(decision):
-         )
-         record["decision"] = decision.model_dump(exclude_none=True)
-         record["status"] = "accepted" if accepted else "continued"
--    except (OSError, ValueError, TypeError) as exc:
-+    except Exception as exc:
-+        if asyncio.current_task().cancelling():
-+            raise asyncio.CancelledError() from exc
-+        accepted = None
-         record.update(status="rejected", error=str(exc)[:800])
-         runtime.metrics["review_rejections"] += 1
--    await runtime.files.put(f"reviews/{node.name}", record)
-+        logger.warning("Compile stage review {} failed: {}", node.name, exc)
-+    try:
-+        await runtime.files.put(f"reviews/{node.name}", record)
-+    except Exception as exc:
-+        if asyncio.current_task().cancelling():
-+            raise asyncio.CancelledError() from exc
-+        logger.warning("Compile stage review {} record write failed: {}", node.name, exc)
-+        return None
-     return accepted
-```
-
----
-
-### Incident Patch 3: `e7812740` (2026-10-19)
-**Commit Message**: fix(langchain): extract text blocks in viking_store (#6070)
-
-* fix(langchain): extract text blocks in viking_store
-
-* test(langchain): align integration imports with package lint context
-
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/tools.py` (modified, +5/-1)
-```diff
-@@ -25,6 +25,7 @@
-     call_openviking,
-     compact_json,
-     ensure_client,
-+    extract_message_text,
-     item_value,
-     iter_result_items,
-     stringify,
-@@ -683,7 +684,10 @@ def _normalize_messages(messages: str | list[dict[str, Any]]) -> list[dict[str,
++                        owner_registry.remove_path(&lease_ref, &lock_path);
++                        if is_last_path {
++                            debug!(
++                                lease_ref = %lease_ref,
++                                owner_id = %owner.owner_id,
++                                "forgot locally released pathlock handoff"
++                            );
++                        }
++                    }
                  }
-             )
-             continue
--        content = str(message.get("content", ""))
-+        raw_content = message.get("content", "")
-+        content = (
-+            extract_message_text(raw_content) if isinstance(raw_content, list) else str(raw_content)
-+        )
-         if role == "tool":
-             normalized.append(
-                 {
+                 let stale_cutoff =
+                     Instant::now() - Duration::from_secs_f64(refresh_config.lock_expire_secs * 2.0);
+@@ -2712,6 +2746,99 @@ mod tests {
+         assert!(mgr.release(&adopted).await.is_ok());
+     }
+ 
++    #[tokio::test]
++    async fn pending_handoff_is_forgotten_after_cross_manager_release() {
++        let fs = Arc::new(MemFileSystem::new());
++        fs.mkdir("/data", 0o755).await.unwrap();
++        fs.mkdir("/data/sub", 0o755).await.unwrap();
++        let provider = Arc::new(crate::lock::provider::MemoryPathLockProvider::new());
++        let config = PathLockConfig {
++            lock_expire_secs: 0.3,
++            ..PathLockConfig::default()
++        };
++        let producer = PathLockManager::new(fs.clone(), provider.clone(), config.clone());
++        let consumer = PathLockManager::new(fs, provider.clone(), config);
++        let lease = producer
++            .acquire_tree("/data/sub", Duration::ZERO, None)
++            .await
++            .unwrap();
++        let lock_path = lease.lease.lock_paths[0].clone();
++        let handoff = producer.to_handoff(&lease);
++        producer.handoff(&lease).await.unwrap();
++
++        let adopted = consumer.adopt(&handoff).await.unwrap();
++    
 ```
 
-**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_integration.py` (modified, +78/-1)
+**File**: `crates/ragfs/src/plugins/queuefs/cache_backend.rs` (modified, +234/-48)
 ```diff
-@@ -10,7 +10,13 @@
- pytest.importorskip("langgraph")
- pytest.importorskip("langchain_openviking")
+@@ -1,10 +1,11 @@
+ use super::backend::{Message, QueueState, StoredMessage};
+ use super::cache_protocol::{
+     heartbeat_key, instance_key_prefix, last_enqueue_time_from_pending_payloads, queue_key_prefix,
+-    queue_names_key, unix_secs, QueueKeys, ACK_SCRIPT, CLEAR_SCRIPT, CREATE_QUEUE_SCRIPT,
+-    DEQUEUE_SCRIPT, ENQUEUE_SCRIPT, HEARTBEAT_INTERVAL_SECS, HEARTBEAT_TTL_SECS,
+-    LIST_UNACKED_SCRIPT, PEEK_SCRIPT, RECOVER_STALE_SCRIPT, REMOVE_QUEUE_SCRIPT,
+-    STARTUP_RECOVERY_SWEEPS, STATUS_SCRIPT,
++    queue_names_key, recovery_leader_key, unix_secs, QueueKeys, ACK_SCRIPT,
++    ACQUIRE_RECOVERY_LEADER_SCRIPT, CLEAR_SCRIPT, CREATE_QUEUE_SCRIPT, DEQUEUE_SCRIPT,
++    ENQUEUE_SCRIPT, HEARTBEAT_INTERVAL_SECS, HEARTBEAT_TTL_SECS, LIST_UNACKED_SCRIPT, PEEK_SCRIPT,
++    RECOVERY_INTERVAL_SECS, RECOVERY_LEADER_TTL_SECS, RECOVER_STALE_SCRIPT,
++    RELEASE_RECOVERY_LEADER_SCRIPT, REMOVE_QUEUE_SCRIPT, STATUS_SCRIPT,
+ };
+ use crate::cache_runtime::{
+     CacheError, CacheOperation, CacheRuntime, Expiration, ScriptDefinition, ScriptRequest,
+@@ -17,7 +18,6 @@ use std::sync::Arc;
+ use std::time::{Duration, SystemTime, UNIX_EPOCH};
+ use tokio::sync::{watch, Mutex};
+ use tokio::task::JoinHandle;
+-use tokio::time::Instant;
+ use uuid::Uuid;
  
--from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
-+from langchain_core.messages import (
-+    AIMessage,
-+    HumanMessage,
-+    SystemMessage,
-+    ToolMessage,
-+    convert_to_openai_messages,
-+)
- from langchain_core.runnables import RunnableLambda
- from langgraph.store.base import PutOp
- from openviking_sdk.errors import InvalidArgumentError
-@@ -177,6 +183,77 @@ def test_create_openviking_tools_exposes_common_viking_primitives():
-     assert "VikingDB is internal vector/index storage" in health
+ const CREATE_QUEUE_ID: &str = "queuefs.create_queue.v1";
+@@ -30,6 +30,8 @@ const LIST_UNACKED_ID: &str = "queuefs.list_unacked.v1";
+ const ACK_ID: &str = "queuefs.ack.v1";
+ const CLEAR_ID: &str = "queuefs.clear.v1";
+ const RECOVER_STALE_ID: &str = "queuefs.recover_stale.v1";
++const ACQUIRE_RECOVERY_LEADER_ID: &str = "queuefs.acquire_recovery_leader.v1";
++const RELEASE_RECOVERY_LEADER_ID: &str = "queuefs.release_recovery_leader.v1";
  
+ const SCRIPT_DEFINITIONS: &[ScriptDefinition] = &[
+     ScriptDefinition {
+@@ -72,8 +74,35 @@ const SCRIPT_DEFINITIONS: &[ScriptDefinition] = &[
+         id: RECOVER_STALE_ID,
+         redis_lua: RECOVER_STALE_SCRIPT,
+     },
++    ScriptDefinition {
++        id: ACQUIRE_RECOVERY_LEADER_ID,
++        redis_lua: ACQUIRE_RECOVERY_LEADER_SCRIPT,
++    },
++    ScriptDefinition {
++        id: RELEASE_RECOVERY_LEADER_ID,
++        redis_lua: RELEASE_RECOVERY_LEADER_SCRIPT,
++    },
+ ];
  
-+@pytest.mark.parametrize("role", ["user", "assistant", "system", "tool"])
-+@pytest.mark.parametrize("text_format", ["string", "block"])
-+def test_viking_store_normalizes_langchain_text_blocks(role: str, text_format: str):
-+    content = [
-+        {"type": "text", "text": "Remember cobalt deployment."},
-+        {"type": "text", "text": "中文确认"},
-+    ]
-+    messages = {
-+        "user": HumanMessage(content=content),
-+        "assistant": AIMessage(content=content),
-+        "system": SystemMessage(content=content),
-+        "tool": ToolMessage(content=content, tool_call_id="call-normal", name="ordinary_tool"),
++#[derive(Clone, Copy)]
++struct BackgroundTiming {
++    heartbeat_interval: Duration,
++    heartbeat_ttl: Duration,
++    recovery_interval: Duration,
++    recovery_leader_ttl: Duration,
++}
++
++impl Default for BackgroundTiming {
++    fn default() -> Self {
++        Self {
++            heartbeat_interval: Duration::from_secs(HEARTBEAT_INTERVAL_SECS),
++            heartbeat_ttl: Duration::from_secs(HEARTBEAT_TTL_SECS),
++            recovery_interval: Duration::from_secs(RECOVERY_INTERVAL_SECS),
++            recovery_leader_ttl: Duration::from_secs(RECOVERY_LEADER_TTL_SECS),
++        }
 +    }
-+    wire = convert_to_openai_messages([messages[role]], text_format=text_format)
-+    client = InMemoryOpenVikingClient()
-+    store = create_openviking_tools(client=client, tool_names=["viking_store"])[0]
++}
 +
-+    result = json.loads(
-+        store.invoke({"session_id": "text-blocks", "messages": wire, "commit": False})
-+    )
+ pub(super) struct CacheQueueStorage {
+     runtime: Arc<CacheRuntime>,
+     key_prefix: String,
+@@ -87,6 +116,14 @@ pub(super) struct CacheQueueStorage {
+ 
+ impl CacheQueueStorage {
+     pub(super) async fn open(runtime: Arc<CacheRuntime>, key_prefix: String) -> Result<Self> {
++        Self::open_with_timing(runtime, key_prefix, BackgroundTiming::default()).await
++    }
 +
-+    assert result["messages_added"] == 1
-+    stored = client.sessions["text-blocks"][0]
-+    assert stored["role"] == ("assistant" if role in {"system", "tool"} else role)
-+    part = stored["parts"][0]
++    async fn open_with_timing(
++        runtime: Arc<CacheRuntime>,
++        key_prefix: String,
++        timing: BackgroundTiming,
++    ) -> Result<Self> {
+         runtime
+             .require_operations(&[
+                 CacheOperation::Set,
+@@ -106,19 +143,22 @@ impl CacheQueueStorage {
+         }
+         let instance_id = Uuid::new_v4().to_string();
+         let heartbeat = heartbeat_key(&key_prefix, &instance_id);
+-        refresh_heartbeat(&runtime, &heartbeat).await?;
++        refresh_heartbeat(&runtime, &heartbeat, timing.heartbeat_ttl).await?;
+ 
+         let (heartbeat_stop, heartbeat_receiver) = watch::channel(false);
+         let heartbeat_task = tokio::spawn(run_heartbeat(
+             Arc::clone(&runtime),
+             heartbeat,
+             heartbeat_receiver,
++            timing,
+         ));
+         let (recovery_stop, recovery_receiver) = watch::channel(false);
+-        let recovery_task = tokio::spawn(run_startup_recovery(
++        let recovery_task = tokio::spawn(run_continuous_recovery(
+             Arc::clone(&runtime),
+             key_prefix.clone(),
++            instance_id.clone(),
+             recovery_receiver,
++            timing,
+         ));
+ 
+         Ok(Self {
+@@ -354,10 +394,7 @@ impl CacheQueueStorage {
+             )
+             .await?;
+         if matches!(value, ScriptValue::Null) {
+-            return Err(Error::NotFound(format!(
+-                "queue '{}' not found",
+-                queue_name
+-            )));
++            return Err(Error::NotFound(format!("queue '{}' not found", queue_name)));
+         }
+         let ScriptValue::Array(values) = value else {
+             return Err(invalid_result("queue status", value));
+@@ -499,13 +536,18 @@ impl Drop for CacheQueueStorage {
+     }
+ }
+ 
+-async fn run_heartbeat(runtime: Arc<CacheRuntime>, key: String, mut stop: watch::
+```
+
+**File**: `crates/ragfs/src/plugins/queuefs/cache_protocol.rs` (modified, +24/-1)
+```diff
+@@ -4,7 +4,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
+ 
+ pub(super) const HEARTBEAT_TTL_SECS: u64 = 30;
+ pub(super) const HEARTBEAT_INTERVAL_SECS: u64 = 10;
+-pub(super) const STARTUP_RECOVERY_SWEEPS: usize = 3;
++pub(super) const RECOVERY_INTERVAL_SECS: u64 = 10;
++pub(super) const RECOVERY_LEADER_TTL_SECS: u64 = 30;
+ 
+ pub(super) const CREATE_QUEUE_SCRIPT: &str = r#"
+ if redis.call('SADD', KEYS[1], ARGV[1]) == 0 then
+@@ -156,6 +157,24 @@ end
+ return recovered
+ "#;
+ 
++pub(super) const ACQUIRE_RECOVERY_LEADER_SCRIPT: &str = r#"
++if redis.call('SET', KEYS[1], ARGV[1], 'NX', 'PX', ARGV[2]) then
++    return 1
++end
++if redis.call('GET', KEYS[1]) == ARGV[1] then
++    redis.call('PEXPIRE', KEYS[1], ARGV[2])
++    return 1
++end
++return 0
++"#;
++
++pub(super) const RELEASE_RECOVERY_LEADER_SCRIPT: &str = r#"
++if redis.call('GET', KEYS[1]) == ARGV[1] then
++    return redis.call('DEL', KEYS[1])
++end
++return 0
++"#;
++
+ pub(super) struct QueueKeys {
+     pub(super) meta: String,
+     pub(super) pending: String,
+@@ -195,6 +214,10 @@ pub(super) fn heartbeat_key(key_prefix: &str, instance_id: &str) -> String {
+     format!("{}{instance_id}:alive", instance_key_prefix(key_prefix))
+ }
+ 
++pub(super) fn recovery_leader_key(key_prefix: &str) -> String {
++    format!("{}recovery:leader", queue_key_prefix(key_prefix))
++}
++
+ pub(super) fn unix_secs(time: SystemTime) -> u64 {
+     time.duration_since(UNIX_EPOCH)
+         .unwrap_or_default()
+```
+
+**File**: `docs/en/api/01-overview.md` (modified, +3/-0)
+```diff
+@@ -491,6 +491,7 @@ This catalog follows the routes actually mounted by the server. Each group headi
+ |--------|------|-------------|
+ | GET | `/api/v1/admin/configuration` | Get explicit Cluster runtime configuration |
+ | PATCH | `/api/v1/admin/configuration` | Update Cluster runtime configuration |
++| POST | `/api/v1/admin/configuration/test-model` | Test a draft model or embedding connection without saving it |
+ | POST | `/api/v1/admin/restart` | Request a graceful restart of a supported server process (ROOT only) |
+ | GET | `/api/v1/admin/accounts/{account_id}/configuration` | Get explicit Account runtime configuration |
+ | PATCH | `/api/v1/admin/accounts/{account_id}/configuration` | Update Account runtime configuration |
+@@ -582,6 +583,8 @@ When the gateway runs inside the server, use the server's port; when it runs sta
+ | POST | `/bot/v1/chat` | Non-streaming VikingBot chat |
+ | POST | `/bot/v1/chat/stream` | Streaming VikingBot chat |
+ | POST | `/bot/v1/feedback` | Submit feedback for a VikingBot answer |
++| POST | `/bot/v1/sessions/{session_id}/interrupt` | Interrupt an active or queued VikingBot session |
++| POST | `/bot/v1/sessions/{session_id}/steer` | Send additional input to an active streaming session |
+ | POST | `/bot/v1/compile` | Retired; returns migration guidance for the new endpoint |
+ | GET | `/bot/v1/compile/{task_id}` | Retired; returns Task API migration guidance |
+ | POST | `/bot/v1/compile/{task_id}/cancel` | Retired; returns Task cancellation API migration guidance |
+```
+
+**File**: `docs/en/api/08-admin.md` (modified, +50/-0)
+```diff
+@@ -539,6 +539,56 @@ Draft previews (`source=file&dry_run=true`) accept optional VLM/Embedding form `
+ other sections remain editable through the complete file.
+ File reads and previews return `form_readonly: true` when the document contains dollar signs, Windows `%VAR%` references, or escaped dollar/percent signs. Model form data is omitted and form patches are rejected. Use file mode to edit the original text, including quoted and unquoted environment references. Validation follows startup expansion of the original text; saves do not serialize the document. CLI startup arguments are reapplied during validation, as during restart.
+ 
++#### Draft Model Connection Test
++
++ROOT can test a draft VLM or Embedding connection without saving or publishing
++the submitted settings. This private Studio endpoint is intentionally hidden
++from the generated OpenAPI schema and always returns `Cache-Control: no-store`.
++
++```http
++POST /api/v1/admin/configuration/test-model
++Content-Type: application/json
++X-API-Key: <root-api-key>
++```
++
++| Field | Type | Required | Default | Description |
++|-------|------|----------|---------|-------------|
++| `kind` | string | Yes | - | `vlm` or `embedding` |
++| `config` | object | Yes | - | Draft provider credential or endpoint fields to test |
++| `fallback` | object | No | `{}` | Existing effective configuration used for omitted non-secret fields |
++| `thinking` | boolean | No | `null` | VLM thinking-mode override for the probe |
++| `mode` | string | No | `dense` | Embedding mode: `dense`, `sparse`, or `hybrid` |
++
++```bash
++curl -X POST http://localhost:1933/api/v1/admin/configuration/test-model \
++  -H "Content-Type: application/json" \
++  -H "X-API-Key: <root-api-key>" \
++  -d '{
++    "kind": "vlm",
++    "config": {
++      "provider": "openai",
++      "api_key": "draft-key"
++    },
++    "fallback": {
++      "model": "gpt-4.1"
++    }
++  }'
++```
++
++**Response Example**
++
++```json
++{
++  "status": "ok",
++  "result": {
++    "ok": true,
++    "ms": 120
++  }
++}
++```
++
++The endpoint redacts provider errors and does not persist the submitted draft.
++
+ #### Server Restart
+ 
+ Only ROOT can restart a single-worker `openviking-server` CLI process.
+```
+
+**File**: `docs/en/api/24-vikingbot.md` (modified, +61/-0)
+```diff
+@@ -179,6 +179,67 @@ curl -X POST http://localhost:1933/bot/v1/feedback \
+ 
+ A missing target response returns `404`. Rating feedback without `feedback_score` returns a request validation error.
+ 
++### interrupt_session()
++
++Interrupt an active or queued Bot session. OpenViking forwards the authenticated
++Account and User identity to the local VikingBot Gateway.
++
++```http
++POST /bot/v1/sessions/{session_id}/interrupt
++```
++
++**HTTP API**
++
++```bash
++curl -X POST http://localhost:1933/bot/v1/sessions/session-id/interrupt \
++  -H "X-API-Key: your-key"
++```
++
++**Response Example**
++
++The response body is forwarded from VikingBot. A typical response is:
++
++```json
++{
++  "interrupted": true
++}
++```
++
++### steer_session()
++
++Append user input to an active streaming Bot session. OpenViking strips any
++client-supplied `openviking_connection` and attaches the authenticated
++OpenViking connection before forwarding the request.
++
++```http
++POST /bot/v1/sessions/{session_id}/steer
++Content-Type: application/json
++```
++
++| Field | Type | Required | Description |
++|-------|------|----------|-------------|
++| `message` | string | Yes | Additional user input for the active session |
++| `openviking_connection` | object | No | Ignored when supplied by the client; OpenViking attaches the authenticated connection |
++
++**HTTP API**
++
++```bash
++curl -X POST http://localhost:1933/bot/v1/sessions/session-id/steer \
++  -H "Content-Type: application/json" \
++  -H "X-API-Key: your-key" \
++  -d '{"message":"Continue with the next step"}'
++```
++
++**Response Example**
++
++The response body is forwarded from VikingBot. A typical response is:
++
++```json
++{
++  "accepted": true
++}
++```
++
+ ## Client Scope
+ 
+ The standard OpenViking Python, TypeScript, and Go SDKs do not currently wrap the Bot proxy. Chat is available through the `ov` CLI and HTTP. The VikingBot Gateway also exposes Session and Channel APIs; see the [VikingBot documentation](https://github.com/volcengine/OpenViking/blob/main/bot/README.md#http-api).
+```
+
+**File**: `docs/en/guides/01-configuration.md` (modified, +1/-1)
+```diff
+@@ -1492,7 +1492,7 @@ Notes:
+ - All Redis reads go to the primary. Replica reads are not configurable.
+ - `tls_insecure_skip_verify=true` requires `rediss://` endpoints.
+ - QueueFS cache keys use `{service_name}:ov:*`; use different service names for deployments sharing one Redis cluster.
+-- Redis backend runs three bounded `recover_stale` sweeps in a dedicated startup recovery thread at startup, 30 seconds, and 60 seconds to cover the heartbeat-expiry window after a container restart; it does not run long-lived periodic recovery.
++- Cache instances renew a 30-second heartbeat every 10 seconds. One live instance per QueueFS cache namespace holds a token-checked 30-second leader lease and scans for stale `processing` messages every 10 seconds. If that instance stops, another instance takes over after the lease expires; a normal shutdown removes its heartbeat so recovery can begin immediately.
+ - If both `storage.agfs.queuefs.db_path` and legacy `storage.agfs.queue_db_path` are set, `storage.agfs.queuefs.db_path` wins.
+ - If QueueFS backend is `memory`, any `db_path` or legacy `queue_db_path` is ignored.
+ 
+```
+
+---
+
+### Incident Patch 2: `e855796c` (2026-10-19)
+**Commit Message**: fix(gateway): stop duplicate recall and new sessions for DSH and tool-less side requests (#6295)
+
+**File**: `docs/en/gateway/10-overview-and-requests.md` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ Every record has one type. The type decides whether the request searches memory
+ | --- | --- | --- |
+ | New message | A request whose last message is a new user message | Searched once, earlier memory replayed; the turn is saved |
+ | Tool step | The same turn continuing, for example with tool results | Earlier memory replayed; saved with its turn |
+-| Housekeeping | Title, summary, compaction, suggestion and permission-check requests | Earlier memory replayed; never saved |
++| Housekeeping | Title, summary, compaction, suggestion and permission-check requests; once a conversation has sent client tools, a separate request in it with neither tools nor earlier replies, such as Claude Code summarizing a fetched page | Earlier memory replayed; never saved |
+ | Sub-agent | Requests from a client's sub-agents | Earlier memory replayed; never saved |
+ | Token count | Token-counting requests (`/gateway/v1/messages/count_tokens`) | Earlier memory replayed, so the count matches what is actually sent |
+ | Forwarded | Requests passed through unchanged, without memory: other endpoints, Responses requests that rely on provider-side state, compressed or unreadable bodies | None |
+```
+
+**File**: `docs/zh/gateway/10-overview-and-requests.md` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ description: 读懂 Studio 中 OpenViking 网关的“概览”和“请求日
+ | --- | --- | --- |
+ | 新消息 | 最后一条是新用户消息的请求 | 检索一次，并放回之前的记忆；这一轮会被保存 |
+ | 工具步骤 | 同一轮的延续，例如带着工具结果继续 | 放回之前的记忆；随所在轮次一起保存 |
+-| 辅助请求 | 生成标题、摘要、压缩、建议和权限检查的请求 | 放回之前的记忆；从不保存 |
++| 辅助请求 | 生成标题、摘要、压缩、建议和权限检查的请求；对话带过客户端工具后，同一对话里不带工具、也不带之前回复的单独请求，例如 Claude Code 汇总抓取的网页 | 放回之前的记忆；从不保存 |
+ | 子 Agent | 客户端的子 Agent 发出的请求 | 放回之前的记忆；从不保存 |
+ | Token 计数 | token 计数请求（`/gateway/v1/messages/count_tokens`） | 放回之前的记忆，计数才和实际发送的内容一致 |
+ | 直接转发 | 原样转发、不带记忆的请求：其他接口、依赖服务商端状态的 Responses 请求、压缩过或无法解析的请求体 | 无 |
+```
+
+**File**: `openviking_gateway/client-rules.json` (modified, +7/-1)
+```diff
+@@ -27,6 +27,12 @@
+     "You are a helpful AI assistant tasked with summarizing",
+     "Generate a concise.{0,40}title",
+     "Create a short.{0,40}title",
+-    "You are a permission classifier"
++    "You are a permission classifier",
++    "Generate the session title from"
++  ],
++  "noise_patterns": [
++    "\\A\\s*Attached image\\(s\\) from tool result:\\s*\\Z",
++    "\\A\\s*Current runtime context\\. This snapshot supersedes earlier runtime-context snapshots\\.[\\s\\S]*",
++    "\\A\\s*Time sampled while preparing turn \\d+, step \\d+: [\\s\\S]*"
+   ]
+ }
+```
+
+**File**: `openviking_gateway/kernel.py` (modified, +12/-0)
+```diff
+@@ -214,6 +214,18 @@ async def prepare(
+         upstream = next((u for u in upstreams if u["id"] == root["upstream_id"]), upstream)
+         policy = Policy.model_validate(root["policy"])
+         kind, anchor = classify(body, headers, messages)
++        if body.get("tools"):
++            if (K.CLIENT_TOOLS, "") not in records:
++                await self.store.replay.put(scope, sid, K.CLIENT_TOOLS, "", {})
++        elif (
++            kind == "user"
++            and (K.CLIENT_TOOLS, "") in records
++            and not any(adapter.is_reply(m) for m in messages)
++        ):
++            # Clients such as Claude Code send side requests, like summarizing a fetched
++            # page, under the conversation's session header: a fresh exchange without
++            # tools. A turn of the conversation itself resends its replies.
++            kind = "auxiliary"
+         disabled = (K.DISABLED, "") in records
+         if plugin and not disabled:
+             await self.store.replay.put(scope, sid, K.DISABLED, "", {"reason": "plugin_present"})
+```
+
+**File**: `openviking_gateway/protocols.py` (modified, +24/-0)
+```diff
+@@ -21,6 +21,11 @@
+ PLUGIN_TAGS = tuple(_RULES["plugin_tags"])
+ NOISE_TAGS = tuple(_RULES["noise_tags"])
+ AUXILIARY_PATTERNS = tuple(_RULES["auxiliary_patterns"])
++# Whole messages clients write on the user's behalf: pi-ai's label for a tool result's
++# images, which it sends as a user message after the tool result, and DSH's runtime and
++# time snapshots, which DSH can append mid-turn. Each is a message of its own, so a
++# snapshot pattern takes the rest of the text. Anchored, so other text fails at once.
++NOISE_PATTERNS = tuple(re.compile(p) for p in _RULES["noise_patterns"])
+ # re.I tries a pattern at every offset; plain ASCII patterns (no escapes, sets or flags),
+ # lowercased, get re's literal search instead, the same match unless the text has one of
+ # the only letters where lower() and re.I differ against ASCII (checked in the tests).
+@@ -38,6 +43,8 @@ def clean_text(text: str) -> str:
+     for tag in NOISE_TAGS:
+         text = re.sub(rf"<{tag}\b[^>]*>[\s\S]*?</{tag}>", " ", text, flags=re.I)
+     text = re.sub(r"^\s*\[Subagent Context\][^\n]*", "", text, flags=re.M)
++    for pattern in NOISE_PATTERNS:
++        text = pattern.sub("", text)
+     return text.replace("\0", "").strip()
+ 
+ 
+@@ -101,6 +108,21 @@ def text_content(message: dict) -> str:
+     return ""
+ 
+ 
++def canonical_arguments(value: Any) -> Any:
++    """Tool-call arguments as compact JSON in their own key order, else unchanged.
++
++    Clients such as pi-ai parse the arguments a reply streamed and send them back
++    re-serialized, so an upstream that spaces its JSON never matches its own reply.
++    Numbers keep their JSON spelling, so ``30.0`` and ``30`` still differ.
++    """
++    if not isinstance(value, str):
++        return value
++    try:
++        return orjson.dumps(orjson.loads(value)).decode()
++    except orjson.JSONDecodeError:
++        return value
++
++
+ def normalize(value: Any) -> Any:
+     if isinstance(value, list):
+         return [
+@@ -123,6 +145,8 @@ def normalize(value: Any) -> Any:
+             for k, v in value.items()
+             if k != "cache_control"
+         }
++        if "arguments" in out:
++            out["arguments"] = canonical_arguments(out["arguments"])
+         if "content" in out:
+             content = out["content"]
+             if isinstance(content, list) and len(content) == 1 and isinstance(content[0], dict):
+```
+
+**File**: `openviking_gateway/records.py` (modified, +2/-0)
+```diff
+@@ -12,6 +12,8 @@ class RecordKind(str, Enum):
+     # The gateway tools frozen for the session, and the one-way switch that turns them off.
+     TOOLS = "tools"
+     TOOLS_CLOSED = "tools_closed"
++    # The session's client sent tools of its own, which its turns then always carry.
++    CLIENT_TOOLS = "client_tools"
+     HIDDEN = "hidden"
+     REPLACEMENT = "replacement"
+     # The session whose model produced the reply ending at the anchor.
+```
+
+**File**: `tests/gateway/test_kernel.py` (modified, +94/-0)
+```diff
+@@ -18,6 +18,7 @@
+     LOWERED_AUXILIARY,
+     REI_CASE_EXCEPTIONS,
+     auxiliary,
++    canonical_arguments,
+     classify,
+     client_openviking_tools,
+     normalize,
+@@ -698,6 +699,99 @@ def test_client_openviking_tools_outside_tool_list():
+     assert not client_openviking_tools({"tools": None, "mcp_servers": None}, OV_NAMES)
+ 
+ 
++def test_tool_arguments_compact_in_their_own_order():
 +    assert (
-+        part["tool_output" if role == "tool" else "text"] == "Remember cobalt deployment.\n中文确认"
++        canonical_arguments('{"b": 1, "a": ["x", {"c": null}]}') == '{"b":1,"a":["x",{"c":null}]}'
 +    )
-+    if role == "tool":
-+        assert part["tool_id"] == "call-normal"
-+        assert part["tool_name"] == "ordinary_tool"
-+        assert part["tool_status"] == "completed"
++    assert canonical_arguments('{"q": "\\u84dd"}') == '{"q":"蓝"}'
++    # Partial or free-form arguments, and the parsed objects some protocols carry, stay as sent.
++    for value in ('{"b": 1', "pwd", {"b": 1}, None):
++        assert canonical_arguments(value) == value
 +
 +
-+@pytest.mark.parametrize("content", [None, False, 0])
-+def test_viking_store_preserves_scalar_content(content: Any):
-+    client = InMemoryOpenVikingClient()
-+    store = create_openviking_tools(client=client, tool_names=["viking_store"])[0]
++def test_text_clients_add_for_the_user_is_not_a_user_turn():
++    # As DSH sends a turn over Chat Completions: the runtime-context snapshot follows the
++    # prompt, and pi-ai sends a tool result's image as a user message after the tool result.
++    prompt = {"role": "user", "content": "Read red.png"}
++    snapshot = {
++        "role": "user",
++        "content": "Current runtime context. This snapshot supersedes earlier runtime-context "
++        'snapshots.\n\nCurrent working directory: "/work".',
++    }
++    call = {"id": "1", "type": "function", "function": {"name": "read", "arguments": "{}"}}
++    image = {
++        "role": "user",
++        "content": [
++            {"type": "text", "text": "Attached image(s) from tool result:"},
++            {"type": "image_url", "image_url": {"url": "data:image/png;base64,AAAA"}},
++        ],
++    }
++    turn = [prompt, snapshot]
++    assert classify({}, {}, turn) == ("user", 0)
++    turn += [
++        {"role": "assistant", "content": None, "tool_calls": [call]},
++        {"role": "tool", "tool_call_id": "1", "content": "(see attached image)"},
++        image,
++    ]
++    assert classify({}, {}, turn) == ("continuation", 0)
++    # DSH's time context, appended before a step once ten minutes have passed.
++    time = "Time sampled while preparing turn 1, step 4: 2026-10-19T17:02:11+08:00[Asia/Shanghai]"
++    turn += [
++        {"role": "user", "content": time + "\nElapsed since the preceding step context: 10m 2s."}
++    ]
++    assert classify({}, {}, turn) == ("continuation", 0)
++    # The user quoting the label is still the user.
++    quoted = {"role": "user", "content": 'Why does it say "Attached image(s) from tool result:"?'}
++    assert classify({}, {}, [*turn, quoted])[0] == "user"
++    title = {
++        "role": "user",
++        "content": 'Generate the session title from this JSON array:\n[{"seq":8}]',
++    }
++    assert classify({}, {}, [title])[0] == "auxiliary"
 +
-+    store.invoke(
-+        {
-+            "session_id": "scalar",
-+            "messages": [{"role": "user", "content": content}],
-+            "commit": False,
++
++async def test_tool_less_request_in_a_session_with_client_tools_is_auxiliary(
++    setup_kernel, credential, policy
++):
++    kernel, _, viking, _ = setup_kernel
++    policy = {**policy, "show_recall": True}
++
++    def body(text, tools=()):
++        return {
++            "model": "m",
++            "max_tokens": 64,
++            "messages": [{"role": "user", "content": text}],
++            **({"tools": list(tools)} if tools else {}),
 +        }
++
++    bash = {"name": "Bash", "input_schema": {"type": "object"}}
++    # A helper request may come first; until the client sends tools, nothing changes.
++    first = await prepare(kernel, body("Say hi"), credential, policy, "anthropic")
++    assert first.kind == "user"
++    main = await prepare(
++        kernel, body("Deploy the blue cluster", [bash]), credential, policy, "anthropic"
 +    )
++    assert main.kind == "user" and main.reply_lead
++    # Claude Code summarizes a fetched page under the conversation's session header.
++    page = body("Web page content:\n---\nExample Domain\n---\n\nWhat is the title?")
++    side = await prepare(kernel, page, credential, policy, "anthropic")
++    assert side.kind == "auxiliary" and not side.reply_lead
++    assert not context_blocks(side.body["messages"][0]) and len(viking.recalls) == 2
++    # The conversation's own turn with tools switched off resends its replies and is a turn.
++    off = body("Deploy the blue cluster")
++    off["messages"] += [
++        {"role": "assistant", "content": "Which region?"},
++        {"role": "user", "content": "Singapore"},
++    ]
++    assert (await prepare(kernel, off, credential, policy, "anthropic")).kind == "user"
++    assert len(viking.recalls) == 3
++    # A session that never sent client tools, such as one-shot SDK questions, recalls each time.
++    for question in ("Where do I deploy?", "Who owns the cluster?"):
++        sdk = await prepare(kernel, body(question), credential, policy, "anthropic", session="sdk")
++        assert sdk.kind == "user"
++    assert len(viking.recalls) == 5
 +
-+    assert client.sessions["scalar"][0]["parts"] == [{"type": "text", "text": str(content)}]
 +
-+
-+@pytest.mark.parametrize("role", ["user", "system", "tool"])
-+def test_viking_store_preserves_native_parts(role: str):
-+    client = InMemoryOpenVikingClient()
-+    store = create_openviking_tools(client=client, tool_names=["viking_store"])[0]
-+    parts = [{"type": "text", "text": "explicit parts control"}]
-+
-+    store.invoke(
-+        {
-+            "session_id": "native-parts",
-+            "messages": [
-+                {"role": role, "content": [{"type": "text", "text": "unused"}], "parts": parts}
-+            ],
-+            "commit": False,
-+        }
+ def test_capture_pairs_tools_and_strips_noise():
+     messages = [
+         {"role": "user", "content": "<system-reminder>noise</system-reminder>please deploy"},
+```
+
+**File**: `tests/gateway/test_reply_inheritance.py` (modified, +39/-0)
+```diff
+@@ -163,6 +163,45 @@ async def test_anonymous_client_tool_handoff_keeps_the_session_and_captures_the_
+     assert len(set(viking.write_sessions)) == 1
+ 
+ 
++@pytest.mark.parametrize("protocol", ["chat", "responses"])
++async def test_resent_call_matches_its_reply_whatever_its_json_spacing(
++    setup_kernel, credential, policy, protocol
++):
++    # Ark's DeepSeek streams spaced arguments; pi-ai, as in DSH, resends them compact.
++    kernel, _, _, _ = setup_kernel
++    policy.update(recall=False)
++    field = "input" if protocol == "responses" else "messages"
++    question = {"role": "user", "content": "Weather in Paris?"}
++    body = {
++        "model": "model",
++        field: [question],
++        **({"store": False} if protocol == "responses" else {}),
++    }
++    first = await kernel.prepare(body, protocol, {}, credential, {"id": "upstream"}, policy)
++    reply, _ = client_call_reply(protocol)
++    if protocol == "chat":
++        function = reply["choices"][0]["message"]["tool_calls"][0]["function"]
++    else:
++        function = reply["output"][0]
++    function["arguments"] = '{"city": "Paris"}'
++    capture = ResponseCapture(protocol)
++    capture.nonstream(reply)
++    await kernel.completed(first, credential, capture)
++    call, result = tool_handoff(protocol)
++    if protocol == "responses":
++        item = {**reply["output"][0], "arguments": '{"city":"Paris"}'}
++        call, result = item, {"type": "function_call_output", "call_id": "c1", "output": "Sunny"}
++    continued = await kernel.prepare(
++        {**body, field: [question, call, result]},
++        protocol,
++        {},
++        credential,
++        {"id": "upstream"},
++        policy,
 +    )
-+
-+    stored = client.sessions["native-parts"][0]
-+    assert stored["role"] == ("assistant" if role in {"system", "tool"} else role)
-+    assert stored["parts"] == parts
++    assert continued.session == first.session and continued.kind == "continuation"
 +
 +
- def test_create_openviking_tools_uses_peer_id_only_for_message_attribution():
-     client = InMemoryOpenVikingClient(
-         {"viking://~/memories/profile.md": "The peer likes LangGraph agents."}
+ def tool_handoff(protocol):
+     if protocol == "chat":
+         call = {
+```
+
+---
+
+### Incident Patch 3: `b51cba42` (2026-10-19)
+**Commit Message**: Fix/remove case only conflict check (#6298)
+
+* feat(parser): configure download temp directory
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* fix(parser): allow case-only filenames in local artifacts
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* fix(config): place parser temp dir under parsers
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* fix(parser): route all parser temp files to configured dir
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+**File**: `docs/en/configuration/01-server.md` (modified, +11/-0)
+```diff
+@@ -196,6 +196,9 @@ Search and Find requests default to `limit: 10`; override the limit on each API
+     "parse_output": {
+       "mode": "agfs"
+     }
++  },
++  "parsers": {
++    "download_temp_dir": "/data/openviking/parser-tmp"
+   }
+ }
+ ```
+@@ -219,6 +222,14 @@ The same worker must commit the required bytes to the formal resource tree befor
+ enqueueing downstream work. Artifacts are temporary and are removed after the
+ content commit; provision `local_root` with enough space for concurrent imports.
+ 
++### `parsers`
++
++| Field | Type / common values | Default | Purpose |
++|---|---|---|---|
++| `download_temp_dir` | path or `null` | system temp directory | Temporary directory for built-in parser downloads, Git checkouts, and archive extraction |
++
++When configured, parsers create temporary directories with prefixes such as `ov_git_` and `ov_zip_` below this directory. When unset, the system temporary directory is used.
++
+ ## Queue Worker Settings
+ 
+ ### `queue_workers.external_parse`
+```
+
+**File**: `docs/zh/configuration/01-server.md` (modified, +11/-0)
+```diff
+@@ -196,6 +196,9 @@ Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 
+     "parse_output": {
+       "mode": "agfs"
+     }
++  },
++  "parsers": {
++    "download_temp_dir": "/data/openviking/parser-tmp"
+   }
+ }
+ ```
+@@ -218,6 +221,14 @@ Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 
+ 必须在下游任务入队前把所需字节提交到正式资源树。产物会在内容提交后清理；
+ 请为 `local_root` 预留足够空间以容纳并发导入。
+ 
++### `parsers`
++
++| 字段 | 类型 / 常用值 | 默认值 | 作用 |
++|---|---|---|---|
++| `download_temp_dir` | 路径或 `null` | 系统临时目录 | 内置 parser 下载文件、Git checkout 和压缩包解压使用的临时目录 |
++
++配置后，parser 会在该目录下创建带有 `ov_git_`、`ov_zip_` 等前缀的临时目录；未配置时继续使用系统临时目录。
++
+ ## 队列 Worker 配置
+ 
+ ### `queue_workers.external_parse`
+```
+
+**File**: `openviking/parse/accessors/feishu_accessor.py` (modified, +18/-4)
+```diff
+@@ -26,6 +26,7 @@
+ 
+ from openviking.parse.base import format_table_to_markdown
+ from openviking.parse.feishu_import import FeishuImportPlan, recursive_wiki
++from openviking.parse.temp import get_parser_download_temp_dir
+ from openviking.utils.exceptions import error_code_from_http_status
+ from openviking_cli.exceptions import InvalidArgumentError, OpenVikingError
+ from openviking_cli.utils.logger import get_logger
+@@ -505,7 +506,11 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
+                 )
+ 
+             if doc_type == "folder":
+-                temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_folder_"))
++                temp_dir = Path(
++                    tempfile.mkdtemp(
++                        prefix="ov_feishu_folder_", dir=get_parser_download_temp_dir()
++                    )
++                )
+                 plan = self._new_import_plan(temp_dir, kwargs)
+                 plan.source_url = source_str
+                 skipped_items: list[dict[str, Any]] = []
+@@ -541,7 +546,11 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
+                 )
+ 
+             if doc_type == "wiki" and recursive_wiki(kwargs):
+-                temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_wiki_"))
++                temp_dir = Path(
++                    tempfile.mkdtemp(
++                        prefix="ov_feishu_wiki_", dir=get_parser_download_temp_dir()
++                    )
++                )
+                 plan = self._new_import_plan(temp_dir, kwargs)
+                 plan.source_url = source_str
+                 skipped_items: list[dict[str, Any]] = []
+@@ -621,7 +630,9 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
+             }
+ 
+             if downloaded_images:
+-                temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_"))
++                temp_dir = Path(
++                    tempfile.mkdtemp(prefix="ov_feishu_", dir=get_parser_download_temp_dir())
++                )
+                 markdown_path = temp_dir / "document.md"
+                 markdown_path.write_text(markdown_content, encoding="utf-8")
+                 for rel_path, image_bytes in downloaded_images.items():
+@@ -637,6 +648,7 @@ async def _access(self, source: Union[str, Path], **kwargs) -> LocalResource:
+                     suffix=".md",
+                     prefix="ov_feishu_",
+                     delete=False,
++                    dir=get_parser_download_temp_dir(),
+                     encoding="utf-8",
+                 )
+                 temp_file.write(markdown_content)
+@@ -1530,7 +1542,9 @@ def _write_temp_drive_file(
+             content_type,
+             filename_hint=filename_hint,
+         )
+-        temp_dir = Path(tempfile.mkdtemp(prefix="ov_feishu_file_"))
++        temp_dir = Path(
++            tempfile.mkdtemp(prefix="ov_feishu_file_", dir=get_parser_download_temp_dir())
++        )
+         path = temp_dir / filename
+         path.write_bytes(content)
+         return path
+```
+
+**File**: `openviking/parse/accessors/git_accessor.py` (modified, +6/-1)
+```diff
+@@ -35,6 +35,7 @@
+     parse_git_http_auth_config,
+     raise_git_auth_error,
+ )
++from openviking.parse.temp import get_parser_download_temp_dir
+ from openviking_cli.utils.logger import get_logger
+ 
+ from .base import DataAccessor, LocalResource, SourceType
+@@ -113,7 +114,11 @@ async def access(self, source: Union[str, Path], **kwargs) -> LocalResource:
+ 
+         try:
+             # Create local temp directory (non-blocking)
+-            temp_local_dir = await asyncio.to_thread(tempfile.mkdtemp, prefix="ov_git_")
++            temp_local_dir = await asyncio.to_thread(
++                tempfile.mkdtemp,
++                prefix="ov_git_",
++                dir=get_parser_download_temp_dir(),
++            )
+             logger.info(f"[GitAccessor] Created local temp dir for git: {temp_local_dir}")
+ 
+             # Fetch content (Clone or Extract)
+```
+
+**File**: `openviking/parse/accessors/http_accessor.py` (modified, +6/-1)
+```diff
+@@ -24,6 +24,7 @@
+ from urllib.parse import unquote, urlparse
+ 
+ from openviking.parse.base import lazy_import
++from openviking.parse.temp import get_parser_download_temp_dir
+ from openviking.parse.parsers.constants import CODE_EXTENSIONS
+ from openviking.parse.parsers.media.constants import (
+     AUDIO_EXTENSIONS,
+@@ -626,7 +627,11 @@ async def _download_url(
+                 # Create temp file after GET headers/content have had a chance
+                 # to refine detection. This avoids routing extensionless signed
+                 # URLs as HTML when HEAD is rejected by object storage.
+-                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=ext)
++                temp_file = tempfile.NamedTemporaryFile(
++                    delete=False,
++                    suffix=ext,
++                    dir=get_parser_download_temp_dir(),
++                )
+                 temp_path = temp_file.name
+                 temp_file.close()
+ 
+```
+
+**File**: `openviking/parse/accessors/web_feed_accessor.py` (modified, +6/-1)
+```diff
+@@ -37,6 +37,7 @@
+ from urllib.robotparser import RobotFileParser
+ 
+ from openviking.parse.base import lazy_import
++from openviking.parse.temp import get_parser_download_temp_dir
+ from openviking.utils.network_guard import build_httpx_request_validation_hooks
+ from openviking_cli.utils.logger import get_logger
+ 
+@@ -288,7 +289,11 @@ async def access(self, source: Union[str, Path], **kwargs) -> LocalResource:
+         include = kwargs.get("include")
+         exclude = kwargs.get("exclude")
+ 
+-        temp_dir = await asyncio.to_thread(tempfile.mkdtemp, prefix="ov_webfeed_")
++        temp_dir = await asyncio.to_thread(
++            tempfile.mkdtemp,
++            prefix="ov_webfeed_",
++            dir=get_parser_download_temp_dir(),
++        )
+         try:
+             client_kwargs = _build_httpx_client_kwargs(request_validator, cfg["request_timeout"])
+             httpx = lazy_import("httpx")
+```
+
+**File**: `openviking/parse/accessors/web_importer.py` (modified, +4/-1)
+```diff
+@@ -12,6 +12,7 @@
+ from urllib.parse import unquote, urlsplit, urlunsplit
+ 
+ from openviking.parse.accessors.http_accessor import HTTPAccessor
++from openviking.parse.temp import get_parser_download_temp_dir
+ from openviking.parse.accessors.web_crawler import CrawlConfig, ScrapyWebCrawler
+ from openviking.parse.accessors.web_feed_accessor import (
+     FeedEntry,
+@@ -98,7 +99,9 @@ async def import_to_directory(
+                 raise FailedPreconditionError(message)
+             raise RuntimeError(message)
+ 
+-        temp_root = Path(tempfile.mkdtemp(prefix="ov_web_"))
++        temp_root = Path(
++            tempfile.mkdtemp(prefix="ov_web_", dir=get_parser_download_temp_dir())
++        )
+         temp_dir = temp_root / _host_name(root_url)
+         try:
+             temp_dir.mkdir(parents=True, exist_ok=True)
+```
+
+**File**: `openviking/parse/output.py` (modified, +0/-14)
+```diff
+@@ -430,18 +430,6 @@ def _resolve(self, ref: ParseArtifactRef, rel_path: str) -> Path:
+             raise ValueError(f"resolved path escapes the artifact root: {rel_path}")
+         return target
+ 
+-    @staticmethod
+-    def _check_case_conflict(target: Path) -> None:
+-        parent = target.parent
+-        if not parent.is_dir():
+-            return
+-        lower = target.name.casefold()
+-        for existing in parent.iterdir():
+-            if existing.name != target.name and existing.name.casefold() == lower:
+-                raise ValueError(
+-                    f"case-only name conflict: {target.name} vs existing {existing.name}"
+-                )
+-
+     async def create_artifact(self, *, root_type: str = "dir") -> ParseArtifactRef:
+         if root_type not in _ROOT_TYPES:
+             raise ValueError(f"root_type must be one of {sorted(_ROOT_TYPES)}")
+@@ -462,7 +450,6 @@ async def write_bytes(self, ref: ParseArtifactRef, rel_path: str, content: bytes
+ 
+         def _write() -> None:
+             target.parent.mkdir(parents=True, exist_ok=True)
+-            self._check_case_conflict(target)
+             target.write_bytes(content)
+ 
+         await asyncio.to_thread(_write)
+@@ -508,7 +495,6 @@ async def move_file(
+ 
+         def _move() -> None:
+             target.parent.mkdir(parents=True, exist_ok=True)
+-            self._check_case_conflict(target)
+             shutil.move(str(source), str(target))
+ 
+         await asyncio.to_thread(_move)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6300** (2026-10-19): fix(storage): 修复写入锁交接竞态并精简协调逻辑 (@qin-ptr)
+- **PR #6299** (closed): fix(storage): 修复写入锁交接竞态并精简协调逻辑 (@qin-ctx)
+- **PR #6298** (2026-10-19): Fix/remove case only conflict check (@zhoujh01)
+- **PR #6295** (2026-10-19): fix(gateway): stop duplicate recall and new sessions for DSH and tool-less side requests (@t0saki)
 - **PR #6294** (2026-10-19): docs: refresh WeChat group QR code (@ZaynJarvis)
-- **PR #6291** (2026-10-19): docs: refresh WeChat group QR code (@ZaynJarvis)
-- **PR #6275** (2026-10-19): fix(langchain): preserve conversation text, roles and tool history (@ehz0ah)
-- **PR #6270** (2026-10-19): perf(session): 减少消息写入和 Session 接口的重复读取 (@qin-ctx)
-- **PR #6267** (2026-10-19): fix(gateway): read cache usage from every upstream form and warn about long conversations missing the cache (@t0saki)
-- **PR #6265** (2026-10-19): fix(tasks): 移除文件任务存储的统一 I/O 限流 (@qin-ptr)
+- **PR #6292** (2026-10-19): fix(studio): localize remaining UI text and enforce i18n checks (@yufeng201)
 
 ---
 
@@ -2655,61 +2591,37 @@ treated as no input and is not r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. langchain): preserve conversation text, roles and tool history (#6275)
+## X. Fix/cross process recovery (#6281)
 
 **RULE**:
-When implementing operations in `integrations/frameworks/langchain/src/langchain_openviking/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ragfs/src/lock/cache_provder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1d0fa51`: langchain): preserve conversation text, roles and tool history (#6275). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c476a318`: Fix/cross process recovery (#6281). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `integrations/frameworks/langchain/src/langchain_openviking/client.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs/src/lock/cache_provder.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                if block.get("type") in ("text", "input_text", "output_text") and isinstance(
-                    block.get("text"), str
-                ):
-def get_message_role(message: Any) -> str:
-    """Normalize conversation role aliases, preserving typed-message precedence."""
-
-    if isinstance(message, dict):
-        role = message.get("type") or message.get("role")
-    else:
-        role = getattr(message, "type", None) or getattr(message, "role", None)
-    if role in ("chat", "ChatMessageChunk"):
-        role = message.get("role") if isinstance(message, dict) else getattr(message, "role", None)
-    if role in ("human", "user", "HumanMessageChunk"):
-        return "user"
-    if role in ("system", "developer", "SystemMessageChunk"):
-        return "system"
-    if role in ("ai", "assistant", "AIMessageChunk"):
-        return "assistant"
-    return str(role or "")
-
-
-        if get_message_role(message) == "user":
-            content = (
-                message.get("content")
-                if isinstance(message, dict)
-                else getattr(message, "content", "")
-            )
+        tokio::time::timeout(Duration::from_secs(2), async {
+            loop {
+                if first.observe().await.active_locks == 0 {
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(10)).await;
+            }
+        })
+        .await
+        .expect("producer must forget a released cross-manager handoff");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-                if block.get("type") == "text" and isinstance(block.get("text"), str):
-        role = getattr(message, "type", None) or getattr(message, "role", None)
-        if isinstance(message, dict):
-            role = message.get("type") or message.get("role")
-            content = message.get("content")
-        else:
-            content = getattr(message, "content", "")
-        if role in {"human", "user"}:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1d0fa51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c476a318` are properly handled with clean fallback behavior.

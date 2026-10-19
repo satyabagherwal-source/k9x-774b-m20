@@ -3541,3 +3541,7 @@
 | `CYCLE-20261019-AAW1` | `2026-10-19T22:42:04.321Z` | `relatedcode/ProgressHUD` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2866, Rule 2867` | Yes (`1c4f1c94...`) |
 | `CYCLE-20261019-JW02` | `2026-10-19T22:49:31.586Z` | `hmlongco/Factory` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2868` | Yes (`9bdb925f...`) |
 | `CYCLE-20261019-KVM7` | `2026-10-19T22:50:17.743Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2869, Rule 2870` | Yes (`2b7d2a46...`) |
+| `CYCLE-20261019-SCG6` | `2026-10-19T22:56:06.150Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2871` | Yes (`b37cb849...`) |
+| `CYCLE-20261019-SESD` | `2026-10-19T22:56:09.181Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2872` | Yes (`f6279e9b...`) |
+| `CYCLE-20261019-SGXG` | `2026-10-19T22:56:11.956Z` | `kitlangton/Hex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2873` | Yes (`eae923ce...`) |
+| `CYCLE-20261019-SMY7` | `2026-10-19T22:56:19.759Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2874` | Yes (`99f6e08b...`) |

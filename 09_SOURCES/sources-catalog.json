@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "b1d0fa51",
+    "sourceVersion": "e855796c",
     "license": "AGPL-3.0",
-    "contentHash": "5ffa7d9bd78dcc536158dc47133b3f5db8406cd44bda4fd8372bddc1abbf83c1",
-    "lastHarvestedAt": "2026-10-19T10:35:00.496Z",
+    "contentHash": "99f6e08bd14a9d20036de23a015b7be99b91afd9dd31b73c8c8a73b214d5177f",
+    "lastHarvestedAt": "2026-10-19T22:56:19.762Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -4233,10 +4233,10 @@
     "repository": "rsuite/rsuite",
     "platform": "github",
     "sourceUrl": "https://github.com/rsuite/rsuite",
-    "sourceVersion": "c43333c5",
+    "sourceVersion": "296ec338",
     "license": "MIT",
-    "contentHash": "5a0fca2a1ce14882ceffc87e2c55f40fee4baefec1cb9cb0bfb41430605d7691",
-    "lastHarvestedAt": "2026-10-19T12:07:40.584Z",
+    "contentHash": "b37cb849500b3ff360920d55c195fbc3c4bf504f9764bdff4c99c4483265dd7c",
+    "lastHarvestedAt": "2026-10-19T22:56:06.153Z",
     "learningId": "learn-github-rsuite-rsuite"
   },
   "kuberwastaken-claurst": {
@@ -9368,5 +9368,25 @@
     "contentHash": "2b7d2a4689449d525df9b72ab632594df6229683a7c3e6d5a916ab5567f53904",
     "lastHarvestedAt": "2026-10-19T22:50:17.746Z",
     "learningId": "learn-github-fb55-htmlparser2"
+  },
+  "inikulin-parse5": {
+    "repository": "inikulin/parse5",
+    "platform": "github",
+    "sourceUrl": "https://github.com/inikulin/parse5",
+    "sourceVersion": "43d8ca05",
+    "license": "MIT",
+    "contentHash": "f6279e9ba6f68e3fda1718e0f3de44d7177b6cfdcbc4638f6cb4b8c334a6689a",
+    "lastHarvestedAt": "2026-10-19T22:56:09.183Z",
+    "learningId": "learn-github-inikulin-parse5"
+  },
+  "kitlangton-hex": {
+    "repository": "kitlangton/Hex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kitlangton/Hex",
+    "sourceVersion": "3e300721",
+    "license": "MIT",
+    "contentHash": "eae923ce66c4184db4915f73fbcf669cf6be5f7ad1b49ee4093f3cb56b2e8942",
+    "lastHarvestedAt": "2026-10-19T22:56:11.959Z",
+    "learningId": "learn-github-kitlangton-hex"
   }
 }

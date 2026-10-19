@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source**: github ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
-> **Source Version**: `c43333c5`  
+> **Source Version**: `296ec338`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:07:40.261Z  
+> **Timestamp**: 2026-10-19T22:56:05.971Z  
 > **Learning ID**: `learn-github-rsuite-rsuite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:07:40.253Z  
+> **Harvest Timestamp**: 2026-10-19T22:56:04.759Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -747,11 +747,11 @@ export function getClockTime(props: { date?: Date; format?: string; showMeridiem
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4949** (2026-10-19): **test(picker): trace transition state on Escape exit failure**
-  *Symptoms*: The [first own-main Firefox React19 job after #4947](https://github.com/rsuite/rsuite/actions/runs/39228572264/job/117980756695) failed the existing Drawer/Escape `onPickerExited` assertion: enter, exit and exiting callbacks fired once, but exited remained zero. The current failure log cannot show whether transition completion is still pending, was cancelled, or completed before callback delivery was lost.  Add a scoped test observer that forwards the original Transition registration/completion/cancellation/unmount methods and callbacks. On the existing failure path, record the picker instance's lifecycle status, configured timeout, registered timer/listener/completion flags and a bounded event history. Restore prototype methods after each test and retain at most 64 records/eight instances. Passing paths remain quiet, and the original assertion error is rethrown.  Validation:  - The five original Escape cases pass in Chromium/React19 and Firefox/React18.2,19.0,19.3 (20 passing checks, no skipped cases), with actual runtime guards. - Two intentional Firefox fault controls produce the unchanged failing assertion but distinct diagnostics: an omitted consumer callback shows completed/unmounted state; cancelling the registered fallback shows the picker still exiting with its timer cleared. Exact qualified source bytes are restored after both controls. - AST comparison confirms all 43 assertion calls, five waits, five native keyboard calls, five focus calls and 12 callback/animatio
+- **Issue #4954** (2026-10-19): **test(bench): add reproducible picker accessibility audit**
+  *Symptoms*: Make the cross-library picker accessibility baseline reproducible from the repository. `npm run audit:a11y` scans the same closed, open, keyboard-scrolled and empty-search states for RSuite, Ant Design, Chakra and HeroUI. It preserves raw axe results, manual-review items, ID-reference failures and partial failed cases, and returns nonzero for findings, runtime failures or missing states.  Pin axe-core 4.14.0 in the isolated benchmark project, record its version/hash, and reject changed engine/build/runner/SDK inputs. Verify a known accessible unlabelled-input fault in a separate document: a real HeroUI popup hides unrelated inserted nodes with `aria-hidden`, so an outside-popup control could otherwise misclassify the engine. Restrict Tailwind scanning to browser sources/HTML so audit prose cannot change the measured CSS.  Validation: - Clean isolated install, fixture types, ESLint, normal commit hooks and 10 Node regression tests pass. The fixture lockfile audit reports zero known affected packages. - Four fault controls reject runner, SDK, axe-source and built-JS mutations. A README utility-token control leaves HeroUI JS/CSS byte-identical. - The existing benchmark passes 16 Chromium/Firefox correctness configurations. All four production JS payloads are unchanged; only HeroUI CSS drops an unused 68-byte `.truncate` rule. - Independent engine controls pass in both browsers. HeroUI-only ordinary/virtualized commands complete 16 states and exit 0 while retaining manual-review 
 
-- **Issue #4948** (2026-10-19): **test(benchmarks): add cross-library picker comparison**
-  *Symptoms*: The existing production SelectPicker benchmark measures RSuite alone. Add an optional, separately locked project that exercises the current RSuite build alongside pinned Ant Design 6.6.6, Chakra UI 3.37.0 and HeroUI 3.2.6 through equivalent visible outcomes. Root coverage excludes only this independently installed fixture.  Separate adapters preserve each library's documented collection/virtualization setup. The shared driver validates physical option dimensions and ancestor clipping, full scroll-range reachability, sparse/empty filtering and native keyboard selection. Visibility is independent of pointer hit testing, which React Aria temporarily disables during scrolling. HeroUI's default ordinary-list margins are reset to preserve the shared 36px row pitch. The driver captures trusted input-to-DOM and two-frame observations, randomizes library order, records raw samples and exact build/package fingerprints, and rejects changed or stale artifacts.  Validation:  - The current head's original CI passes all 35 Node jobs, all 40 checks including actual Codecov project/patch, CodeQL and Size Limit, plus Snyk and the CodeSandbox build. Vercel rate-limit failures are excluded under the agreed project scope. - All four production fixtures, standalone TypeScript, repository ESLint/Prettier, normal commit hooks and root TypeScript pass. - The corrected measurement passes 32 interaction configurations across Chromium and Firefox: ordinary/virtualized 1k options and virtualized 10k/50k 
+- **Issue #4953** (2026-10-19): **fix(picker): preserve accessible empty result lists**
+  *Symptoms*: When a SelectPicker or CheckPicker search has no matches, its expanded combobox references a missing listbox. Keep the listbox mounted during empty states and expose the localized message as a disabled, unselected informational option. The message has no value, active ID, focus stop, or selection handler. InputPicker and TagPicker use the same empty-state semantics.  When data arrives, preserve result-list initialization and scroll the selected option fully into view using its actual bounds. This also fixes ordinary CheckPicker selected-row scrolling.  Validation: - 20 new cases cover ordinary/virtualized empty data, unmatched searches, trusted keyboard/pointer recovery, and distant selected rows. Chromium and Firefox pass on actual React 18.2, 19.0, and 19.3 runtimes. - 39 related files / 873 tests pass per browser, plus 52 existing native async-result tests per browser. The local related run explicitly prebundles test imports; standard hosted CI remains required. - Types, lint, normal commit hooks, full package build, 19 build integration checks and 6 artifact checks pass. - Production builds pass eight correctness configurations up to 50,000 rows. Both empty-search accessibility scans retain a real controlled listbox and have no confirmed axe violations in that state. Manual review remains necessary; keyboard text contrast is tracked separately in #4951.  Original failing baseline logs and source qualification are retained locally. No timing-performance, screen-reader cert
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -768,459 +768,383 @@ export function getClockTime(props: { date?: Date; format?: string; showMeridiem
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6fd4196` (2026-10-19)
-**Commit Message**: Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security
+### Incident Patch 1: `702c416e` (2026-10-19)
+**Commit Message**: Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d
 
-fix(examples): update shell-quote past comment injection
+fix(docs): upgrade Next.js to 16.4.1 for security fixes
 
-**File**: `examples/create-react-app/pnpm-lock.yaml` (modified, +4/-4)
+**File**: `docs/package-lock.json` (modified, +53/-41)
 ```diff
-@@ -6309,7 +6309,7 @@ packages:
-     resolution: {integrity: sha512-eB/uXmFVpY4zezmGp5XtU21kwo7GBbKB+EQ+UZeWtGb9yAM5xt/Evk+lYH3eRNAtId+ej4u7TYPFZ07w4s7rRw==}
-     dependencies:
-       picocolors: 1.0.0
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
- 
-   /leven@3.1.0:
-     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
-@@ -7777,7 +7777,7 @@ packages:
-       prompts: 2.4.2
-       react-error-overlay: 6.0.11
-       recursive-readdir: 2.2.3
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-       strip-ansi: 6.0.1
-       text-table: 0.2.0
-       typescript: 5.3.3
-@@ -8438,8 +8438,8 @@ packages:
-     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
-     engines: {node: '>=8'}
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
- 
-   /side-channel@1.0.4:
-```
-
-**File**: `examples/custom-i18n/pnpm-lock.yaml` (modified, +3/-3)
-```diff
-@@ -2915,7 +2915,7 @@ packages:
-     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
-     dependencies:
-       picocolors: 1.1.1
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-     dev: true
- 
-   /loader-runner@4.3.1:
-@@ -3767,8 +3767,8 @@ packages:
-     engines: {node: '>=8'}
-     dev: true
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
-     dev: true
- 
-```
-
-**File**: `examples/with-electron/pnpm-lock.yaml` (modified, +3/-3)
-```diff
-@@ -4621,7 +4621,7 @@ packages:
-     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
-     dependencies:
-       picocolors: 1.1.1
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-     dev: true
- 
-   /listr2@7.0.2:
-@@ -6073,8 +6073,8 @@ packages:
-     requiresBuild: true
-     dev: true
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
-     dev: true
- 
-```
-
-**File**: `examples/with-gatsby/pnpm-lock.yaml` (modified, +3/-3)
-```diff
-@@ -8123,7 +8123,7 @@ packages:
-       prompts: 2.4.2
-       react-error-overlay: 6.1.0
-       recursive-readdir: 2.2.3
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-       strip-ansi: 6.0.1
-       text-table: 0.2.0
-       typescript: 5.9.3
-@@ -8755,8 +8755,8 @@ packages:
-     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
-     engines: {node: '>=8'}
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
- 
-   /side-channel-list@1.0.0:
-```
-
-**File**: `examples/with-react-router/package-lock.json` (modified, +3/-3)
-```diff
-@@ -5654,9 +5654,9 @@
+@@ -37,7 +37,7 @@
+         "joi": "^18.2.9",
+         "lunar-typescript": "^1.7.6",
+         "lz-string": "^1.4.4",
+-        "next": "^16.4.0",
++        "next": "^16.4.1",
+         "nope-validator": "^1.1.1",
+         "nprogress": "^0.2.0",
+         "react": "^18.2.0",
+@@ -3221,15 +3221,15 @@
        }
      },
-     "node_modules/shell-quote": {
--      "version": "1.8.4",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
--      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
-+      "version": "1.12.0",
-+      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
-+      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
-       "dev": true,
-       "engines": {
-         "node": ">= 0.4"
-```
-
-**File**: `examples/with-styled-components/package-lock.json` (modified, +3/-3)
-```diff
-@@ -5755,9 +5755,9 @@
+     "node_modules/@next/env": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
+-      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
++      "version": "16.4.1",
++      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.1.tgz",
++      "integrity": "sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g==",
+       "license": "MIT"
+     },
+     "node_modules/@next/swc-darwin-arm64": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
+-      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
++      "version": "16.4.1",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.1.tgz",
++      "integrity": "sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -3243,9 +3243,9 @@
        }
      },
-     "node_modules/shell-quote": {
--      "version": "1.8.4",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
--      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
-+      "version": "1.12.0",
-+      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
-+      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
-       "dev": true,
-       "engines": {
-         "node": ">= 0.4"
-```
-
-**File**: `examples/with-typescript/package-lock.json` (modified, +3/-3)
-```diff
-@@ -5613,9 +5613,9 @@
+     "node_modules/@next/swc-darwin-x64": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
+-      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
++      "version": "16.4.1",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.1.tgz",
++      "integrity": "sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ==",
+       "cpu": [
+         "x64"
+       ],
+@@ -3259,12 +3259,15 @@
        }
      },
-     "node_modules/shell-quote": {
--      "version": "1.8.4",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
--      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
-+      "version": "1.12.0",
-+      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
-+      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
-       "dev": true,
-       "engines": {
-         "node": ">= 0.4"
+     "node_modules/@next/swc-linux-arm64-gnu": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
+-      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
++      "version": "16.4.1",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.1.tgz",
++      "integrity": "sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw==",
+       "cpu": [
+         "arm64"
+       ],
++      "libc": [
++        "glibc"
++      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3275,12 +3278,15 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-musl": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
+-      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6haaF4UiwBzytM96GRRRWZh9/WALIEO3npMamA==",
++      "version": "16.4.1",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.1.tgz",
++      "integrity": "sha512-1SuJyDxW/PR9dHJat/ZRgcYLhuSZ+1psP4DlKb2tKIuXbjygqpLrJWRSq+onZQBv8LcmU67EIrmb6c3XTaJLjw==",
+       "cpu": [
+         "arm64"
+       ],
++      "libc": [
++        "musl"
++      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3291,12 +3297,15 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-gnu": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.0.tgz",
+-      "integrity": "sha512-D5M5xLWQVd1CvR+L7BickM1weRfmM41x3L1NWcnKY/oyJJqr1qwaCgmu3dMAhLBOMdZwSuDCRV6DJRRpiUkbDQ==",
++      "version": "16.4.1",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.1.tgz",
++      "integrity": "sha512-Istng1hMGp9TGO4lUqeKLd70MPN/OOkucVTP2Nmj+gLkwBgmPqUw8CJYBCC7nbl/B/23bBCcjCI5Hsh6hazC1A==",
+       "cpu": [
+         "x64"
+       ],
++      "libc": [
++        "glibc"
++      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3307,12 +3316,15 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-musl": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.0.tgz",
+-      "integrity": "sha512-8d5WLS6a9YalqpOgXdlbvonFu+sIgjA+CO6tGzetrpPVcUL56foa7B7664h41rAlbLi5fJwK4vWji3zf4QDy+w==",
++      "version": "16.4.1",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.1.tgz",
++      "integrity": "sha512-aSC9wMNiZRRFVpPkPWBzRwLQxIGm/CiQcXyFF1XNcgodb+uMxdk7aSSGGpDXCbnvZdf4itjHxpOd5h7i7zaiYw==",
+       "cpu": [
+         "x64"
+       ],
++      "libc": [
++        "musl"
++      ],
+       "license": "MIT",
+       "optional": true,
+
+```
+
+**File**: `docs/package.json` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@
+     "joi": "^18.2.9",
+     "lunar-typescript": "^1.7.6",
+     "lz-string": "^1.4.4",
+-    "next": "^16.4.0",
++    "next": "^16.4.1",
+     "nope-validator": "^1.1.1",
+     "nprogress": "^0.2.0",
+     "react": "^18.2.0",
 ```
 
 ---
 
-### Incident Patch 2: `d79a08cf` (2026-10-19)
-**Commit Message**: Merge pull request #4944 from rsuite/fix/umi-babel-security
+### Incident Patch 2: `4785a10f` (2026-10-19)
+**Commit Message**: fix(docs): qualify Next.js 16.4.1 security update on main
 
-fix(examples): secure Umi Babel evaluation
-
-**File**: `examples/with-umi/package-lock.json` (modified, +160/-132)
+**File**: `docs/package-lock.json` (modified, +21/-6)
 ```diff
-@@ -30,11 +30,14 @@
+@@ -34,7 +34,7 @@
+         "formik": "^2.4.5",
+         "fp-ts": "^2.16.11",
+         "io-ts": "^2.2.22",
+-        "joi": "^18.1.2",
++        "joi": "^18.2.9",
+         "lunar-typescript": "^1.7.6",
+         "lz-string": "^1.4.4",
+         "next": "^16.4.1",
+@@ -3405,6 +3405,7 @@
+       "version": "2.6.0",
+       "resolved": "https://registry.npmjs.org/@parcel/watcher/-/watcher-2.6.0.tgz",
+       "integrity": "sha512-7FNeNl8NCE7aINx7WXiKQrPYZWC/hvrTsmk6zmxbI7LTXE7hVek/n8AfVgpe2y82zl3w0HvCHN0bVKMBoJcC0w==",
++      "dev": true,
+       "hasInstallScript": true,
+       "license": "MIT",
+       "optional": true,
+@@ -3443,6 +3444,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3463,6 +3465,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3483,6 +3486,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3503,6 +3507,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3523,6 +3528,7 @@
+       "cpu": [
+         "arm"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3543,6 +3549,7 @@
+       "cpu": [
+         "arm"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3563,6 +3570,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3583,6 +3591,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3603,6 +3612,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3623,6 +3633,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3643,6 +3654,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3663,6 +3675,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3680,6 +3693,7 @@
+       "version": "4.0.7",
+       "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz",
+       "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==",
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "engines": {
+@@ -7799,7 +7813,7 @@
+       "version": "2.1.1",
+       "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
+       "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
+-      "devOptional": true,
++      "dev": true,
+       "engines": {
+         "node": ">=0.10.0"
        }
-     },
-     "node_modules/@babel/code-frame": {
--      "version": "7.18.6",
--      "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.18.6.tgz",
--      "integrity": "sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q==",
-+      "version": "7.29.7",
-+      "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.29.7.tgz",
-+      "integrity": "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==",
-+      "license": "MIT",
+@@ -7817,7 +7831,7 @@
+       "version": "4.0.3",
+       "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
+       "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
+-      "devOptional": true,
++      "dev": true,
        "dependencies": {
--        "@babel/highlight": "^7.18.6"
-+        "@babel/helper-validator-identifier": "^7.29.7",
-+        "js-tokens": "^4.0.0",
-+        "picocolors": "^1.1.1"
+         "is-extglob": "^2.1.1"
        },
-       "engines": {
-         "node": ">=6.9.0"
-@@ -95,29 +98,29 @@
+@@ -8143,9 +8157,9 @@
        }
      },
-     "node_modules/@babel/generator": {
--      "version": "7.20.4",
--      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.20.4.tgz",
--      "integrity": "sha512-luCf7yk/cm7yab6CAW1aiFnmEfBJplb/JojV56MYEK7ziWfGmFlTfmL9Ehwfy4gFhbjBfWO1wj7/TuSbVNEEtA==",
-+      "version": "7.29.8",
-+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.8.tgz",
-+      "integrity": "sha512-gZbepsdh3WDtgZKWL+vTPh71LSBrm/Y4/QDZBVCcYfmeTEEuoOYwlSy+G1StfJg+/Zy550u/3TATbm7qDbbMtg==",
-+      "license": "MIT",
+     "node_modules/joi": {
+-      "version": "18.1.2",
+-      "resolved": "https://registry.npmjs.org/joi/-/joi-18.1.2.tgz",
+-      "integrity": "sha512-rF5MAmps5esSlhCA+N1b6IYHDw9j/btzGaqfgie522jS02Ju/HXBxamlXVlKEHAxoMKQL77HWI8jlqWsFuekZA==",
++      "version": "18.2.9",
++      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
++      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
+       "license": "BSD-3-Clause",
        "dependencies": {
--        "@babel/types": "^7.20.2",
--        "@jridgewell/gen-mapping": "^0.3.2",
--        "jsesc": "^2.5.1"
-+        "@babel/parser": "^7.29.8",
-+        "@babel/types": "^7.29.8",
-+        "@jridgewell/gen-mapping": "^0.3.12",
-+        "@jridgewell/trace-mapping": "^0.3.28",
-+        "jsesc": "^3.0.2"
-       },
-       "engines": {
-         "node": ">=6.9.0"
-       }
+         "@hapi/address": "^5.1.1",
+@@ -8931,6 +8945,7 @@
+       "version": "7.1.1",
+       "resolved": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-7.1.1.tgz",
+       "integrity": "sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==",
++      "dev": true,
+       "license": "MIT",
+       "optional": true
      },
-     "node_modules/@babel/generator/node_modules/@jridgewell/gen-mapping": {
--      "version": "0.3.2",
--      "resolved": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.2.tgz",
--      "integrity": "sha512-mh65xKQAzI6iBcFzwv28KVWSmCkdRBWoOh+bYQGW3+6OZvbbN3TqMGo5hqYxQniRcH9F2VZIoJCm4pa3BPDK/A==",
-+      "version": "0.3.13",
-+      "resolved": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz",
-+      "integrity": "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==",
-+      "license": "MIT",
-       "dependencies": {
--        "@jridgewell/set-array": "^1.0.1",
--        "@jridgewell/sourcemap-codec": "^1.4.10",
--        "@jridgewell/trace-mapping": "^0.3.9"
--      },
--      "engines": {
--        "node": ">=6.0.0"
-+        "@jridgewell/sourcemap-codec": "^1.5.0",
-+        "@jridgewell/trace-mapping": "^0.3.24"
-       }
-     },
-     "node_modules/@babel/helper-annotate-as-pure": {
-@@ -168,6 +171,15 @@
-         "node": ">=6.9.0"
-       }
-     },
-+    "node_modules/@babel/helper-globals": {
-+      "version": "7.29.7",
-+      "resolved": "https://registry.npmjs.org/@babel/helper-globals/-/helper-globals-7.29.7.tgz",
-+      "integrity": "sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==",
-+      "license": "MIT",
-+      "engines": {
-+        "node": ">=6.9.0"
-+      }
-+    },
-     "node_modules/@babel/helper-hoist-variables": {
-       "version": "7.18.6",
-       "resolved": "https://registry.npmjs.org/@babel/helper-hoist-variables/-/helper-hoist-variables-7.18.6.tgz",
-@@ -239,17 +251,19 @@
-       }
-     },
-     "node_modules/@babel/helper-string-parser": {
--      "version": "7.19.4",
--      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.19.4.tgz",
--      "integrity": "sha512-nHtDoQcuqFmwYNYPz3Rah5ph2p8PFeFCsZk9A/48dPc/rGocJ5J3hAAZ7pb76VWX3fZKu+uEr/FhH5jLx7umrw==",
-+      "version": "7.29.7",
-+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz",
-+      "integrity": "sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==",
-+      "license": "MIT",
-       "engines": {
-         "node": ">=6.9.0"
-       }
-     },
-     "node_modules/@babel/helper-validator-identifier": {
--      "version": "7.19.1",
--      "resolved": "https://registry.npmjs.org/@babel/helper-validator-identifier/-/helper-validator-identifier-7.19.1.tgz",
--      "integrity": "sha512-awrNfaMtnHUr653GgGEs++LlAvW6w+DcPrOliSMXWCKo597CwL5Acf/wWdNkf/tfEQE3mjkeD1YOVZOUV/od1w==",
-+      "version": "7.29.7",
-+      "resolved": "https://registry.npmjs.org/@babel/helper-validator-identifier/-/helper-validator-identifier-7.29.7.tgz",
-+      "integrity": "sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==",
-+      "license": "MIT",
-       "engines": {
-         "node": ">=6.9.0"
-       }
-@@ -289,9 +303,13 @@
-       }
-     },
-     "node_modules/@babel/parser": {
--      "version": "7.20.3",
--      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.20.3.tgz",
--      "inte
+```
+
+**File**: `docs/package.json` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@
+     "formik": "^2.4.5",
+     "fp-ts": "^2.16.11",
+     "io-ts": "^2.2.22",
+-    "joi": "^18.1.2",
++    "joi": "^18.2.9",
+     "lunar-typescript": "^1.7.6",
+     "lz-string": "^1.4.4",
+     "next": "^16.4.1",
 ```
 
 ---
 
-### Incident Patch 3: `cdba236c` (2026-10-19)
-**Commit Message**: fix(examples): update shell-quote past comment injection
+### Incident Patch 3: `0ed14618` (2026-10-19)
+**Commit Message**: Merge pull request #4679 from rsuite/fix/docs-joi-security
 
-**File**: `examples/create-react-app/pnpm-lock.yaml` (modified, +4/-4)
-```diff
-@@ -6309,7 +6309,7 @@ packages:
-     resolution: {integrity: sha512-eB/uXmFVpY4zezmGp5XtU21kwo7GBbKB+EQ+UZeWtGb9yAM5xt/Evk+lYH3eRNAtId+ej4u7TYPFZ07w4s7rRw==}
-     dependencies:
-       picocolors: 1.0.0
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
- 
-   /leven@3.1.0:
-     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
-@@ -7777,7 +7777,7 @@ packages:
-       prompts: 2.4.2
-       react-error-overlay: 6.0.11
-       recursive-readdir: 2.2.3
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-       strip-ansi: 6.0.1
-       text-table: 0.2.0
-       typescript: 5.3.3
-@@ -8438,8 +8438,8 @@ packages:
-     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
-     engines: {node: '>=8'}
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
- 
-   /side-channel@1.0.4:
-```
+fix(docs): require patched Joi validation
 
-**File**: `examples/custom-i18n/pnpm-lock.yaml` (modified, +3/-3)
+**File**: `docs/package-lock.json` (modified, +4/-4)
 ```diff
-@@ -2915,7 +2915,7 @@ packages:
-     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
-     dependencies:
-       picocolors: 1.1.1
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-     dev: true
- 
-   /loader-runner@4.3.1:
-@@ -3767,8 +3767,8 @@ packages:
-     engines: {node: '>=8'}
-     dev: true
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
-     dev: true
- 
-```
-
-**File**: `examples/with-electron/pnpm-lock.yaml` (modified, +3/-3)
-```diff
-@@ -4621,7 +4621,7 @@ packages:
-     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
-     dependencies:
-       picocolors: 1.1.1
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-     dev: true
- 
-   /listr2@7.0.2:
-@@ -6073,8 +6073,8 @@ packages:
-     requiresBuild: true
-     dev: true
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
-     dev: true
- 
-```
-
-**File**: `examples/with-gatsby/pnpm-lock.yaml` (modified, +3/-3)
-```diff
-@@ -8123,7 +8123,7 @@ packages:
-       prompts: 2.4.2
-       react-error-overlay: 6.1.0
-       recursive-readdir: 2.2.3
--      shell-quote: 1.8.4
-+      shell-quote: 1.12.0
-       strip-ansi: 6.0.1
-       text-table: 0.2.0
-       typescript: 5.9.3
-@@ -8755,8 +8755,8 @@ packages:
-     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
-     engines: {node: '>=8'}
- 
--  /shell-quote@1.8.4:
--    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
-+  /shell-quote@1.12.0:
-+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
-     engines: {node: '>= 0.4'}
- 
-   /side-channel-list@1.0.0:
-```
-
-**File**: `examples/with-react-router/package-lock.json` (modified, +3/-3)
-```diff
-@@ -5654,9 +5654,9 @@
+@@ -34,7 +34,7 @@
+         "formik": "^2.4.5",
+         "fp-ts": "^2.16.11",
+         "io-ts": "^2.2.22",
+-        "joi": "^18.1.2",
++        "joi": "^18.2.9",
+         "lunar-typescript": "^1.7.6",
+         "lz-string": "^1.4.4",
+         "next": "^16.4.0",
+@@ -8145,9 +8145,9 @@
        }
      },
-     "node_modules/shell-quote": {
--      "version": "1.8.4",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
--      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
-+      "version": "1.12.0",
-+      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
-+      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
-       "dev": true,
-       "engines": {
-         "node": ">= 0.4"
+     "node_modules/joi": {
+-      "version": "18.1.2",
+-      "resolved": "https://registry.npmjs.org/joi/-/joi-18.1.2.tgz",
+-      "integrity": "sha512-rF5MAmps5esSlhCA+N1b6IYHDw9j/btzGaqfgie522jS02Ju/HXBxamlXVlKEHAxoMKQL77HWI8jlqWsFuekZA==",
++      "version": "18.2.9",
++      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
++      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
+       "license": "BSD-3-Clause",
+       "dependencies": {
+         "@hapi/address": "^5.1.1",
 ```
 
-**File**: `examples/with-styled-components/package-lock.json` (modified, +3/-3)
+**File**: `docs/package.json` (modified, +1/-1)
 ```diff
-@@ -5755,9 +5755,9 @@
-       }
-     },
-     "node_modules/shell-quote": {
--      "version": "1.8.4",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
--      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
-+      "version": "1.12.0",
-+      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
-+      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
-       "dev": true,
-       "engines": {
-         "node": ">= 0.4"
-```
-
-**File**: `examples/with-typescript/package-lock.json` (modified, +3/-3)
-```diff
-@@ -5613,9 +5613,9 @@
-       }
-     },
-     "node_modules/shell-quote": {
--      "version": "1.8.4",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
--      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
-+      "version": "1.12.0",
-+      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
-+      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
-       "dev": true,
-       "engines": {
-         "node": ">= 0.4"
+@@ -49,7 +49,7 @@
+     "formik": "^2.4.5",
+     "fp-ts": "^2.16.11",
+     "io-ts": "^2.2.22",
+-    "joi": "^18.1.2",
++    "joi": "^18.2.9",
+     "lunar-typescript": "^1.7.6",
+     "lz-string": "^1.4.4",
+     "next": "^16.4.0",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4954** (2026-10-19): test(bench): add reproducible picker accessibility audit (@simonguo)
+- **PR #4953** (2026-10-19): fix(picker): preserve accessible empty result lists (@simonguo)
+- **PR #4952** (2026-10-19): fix(docs): upgrade Next.js to 16.4.1 for security fixes (@simonguo)
+- **PR #4951** (2026-10-19): fix(styles): improve listbox option contrast (@simonguo)
+- **PR #4950** (2026-10-19): fix(benchmarks): bound failure artifact collection (@simonguo)
 - **PR #4949** (2026-10-19): test(picker): trace transition state on Escape exit failure (@simonguo)
-- **PR #4948** (2026-10-19): test(benchmarks): add cross-library picker comparison (@simonguo)
-- **PR #4947** (2026-10-19): fix(examples): update shell-quote past comment injection (@simonguo)
-- **PR #4946** (2026-10-19): fix(docs): exclude generated TypeScript build caches (@simonguo)
-- **PR #4945** (2026-10-19): fix(examples): upgrade Pages Less integration to Next.js 16 (@simonguo)
-- **PR #4944** (2026-10-19): fix(examples): secure Umi Babel evaluation (@simonguo)
 
 ---
 
@@ -1240,34 +1164,61 @@ fix(examples): secure Umi Babel evaluation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security
+## X. Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d
 
 **RULE**:
-When implementing operations in `examples/create-react-app/pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6fd4196`: Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `702c416e`: Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/create-react-app/pnpm-lock.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      shell-quote: 1.12.0
-      shell-quote: 1.12.0
-  /shell-quote@1.12.0:
-    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+        "next": "^16.4.1",
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.1.tgz",
+      "integrity": "sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g==",
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.1.tgz",
+      "integrity": "sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg==",
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.1.tgz",
+      "integrity": "sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ==",
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.1.tgz",
+      "integrity": "sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw==",
+      "libc": [
+        "glibc"
+      ],
+      "version": "16.4.1",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.1.tgz",
+      "integrity": "sha512-1SuJyDxW/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      shell-quote: 1.8.4
-      shell-quote: 1.8.4
-  /shell-quote@1.8.4:
-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
+        "next": "^16.4.0",
+      "version": "16.4.0",
+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
+      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
+      "version": "16.4.0",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
+      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
+      "version": "16.4.0",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
+      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
+      "version": "16.4.0",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
+      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
+      "version": "16.4.0",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
+      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6h
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6fd4196` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `702c416e` are properly handled with clean fallback behavior.

@@ -3548,3 +3548,7 @@ Every entry in this ledger must capture:
 | `learn-github-relatedcode-progresshud` | `https://github.com/relatedcode/ProgressHUD` | `25471d6e` | Multi-dimensional audit evidence | 2026-10-19T22:42:04.323Z |
 | `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `2a306bcd` | Multi-dimensional audit evidence | 2026-10-19T22:49:31.588Z |
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `dd306fa1` | Multi-dimensional audit evidence | 2026-10-19T22:50:17.746Z |
+| `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `296ec338` | Multi-dimensional audit evidence | 2026-10-19T22:56:06.153Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `43d8ca05` | Multi-dimensional audit evidence | 2026-10-19T22:56:09.183Z |
+| `learn-github-kitlangton-hex` | `https://github.com/kitlangton/Hex` | `3e300721` | Multi-dimensional audit evidence | 2026-10-19T22:56:11.959Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `e855796c` | Multi-dimensional audit evidence | 2026-10-19T22:56:19.762Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:50:17.688Z",
-  "total_verified_learnings": 952,
+  "last_updated": "2026-10-19T22:56:19.721Z",
+  "total_verified_learnings": 954,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -27071,22 +27071,35 @@
     "learn-github-kitlangton-hex": {
       "learning_id": "learn-github-kitlangton-hex",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kitlangton-hex",
+      "source": "kitlangton/Hex",
+      "repository": "kitlangton/Hex",
       "slug": "kitlangton-hex",
       "platform": "github",
       "source_url": "https://github.com/kitlangton/Hex",
-      "source_version": "HEAD",
-      "content_hash": "777aff81ea91b243a5785249db153478e2fc2406fa38bd9016e9a5fe004e326d",
+      "source_version": "3e300721",
+      "content_hash": "eae923ce66c4184db4915f73fbcf669cf6be5f7ad1b49ee4093f3cb56b2e8942",
       "dossier_path": "07_PROJECT_LEARNING/kitlangton-hex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kitlangton-hex-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2873,
+          "title": "Overhaul audio engine lifecycle: route-change recovery, sleep suspension, teardo",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.808Z"
+      "verified_at": "2026-10-19T22:56:11.905Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kizitonwose-calendar": {
       "learning_id": "learn-github-kizitonwose-calendar",
@@ -37752,8 +37765,8 @@
       "slug": "rsuite-rsuite",
       "platform": "github",
       "source_url": "https://github.com/rsuite/rsuite",
-      "source_version": "c43333c5",
-      "content_hash": "5a0fca2a1ce14882ceffc87e2c55f40fee4baefec1cb9cb0bfb41430605d7691",
+      "source_version": "296ec338",
+      "content_hash": "b37cb849500b3ff360920d55c195fbc3c4bf504f9764bdff4c99c4483265dd7c",
       "dossier_path": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "promoted_rules": [
@@ -37766,6 +37779,11 @@
           "number": 2565,
           "title": "Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2871,
+          "title": "Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37773,7 +37791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:07:40.514Z",
+      "verified_at": "2026-10-19T22:56:06.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54390,8 +54408,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "b1d0fa51",
-      "content_hash": "5ffa7d9bd78dcc536158dc47133b3f5db8406cd44bda4fd8372bddc1abbf83c1",
+      "source_version": "e855796c",
+      "content_hash": "99f6e08bd14a9d20036de23a015b7be99b91afd9dd31b73c8c8a73b214d5177f",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -54409,6 +54427,11 @@
           "number": 2499,
           "title": "langchain): preserve conversation text, roles and tool history (#6275)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2874,
+          "title": "Fix/cross process recovery (#6281)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54416,7 +54439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:35:00.458Z",
+      "verified_at": "2026-10-19T22:56:19.713Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57378,20 +57401,35 @@
     "learn-github-inikulin-parse5": {
       "learning_id": "learn-github-inikulin-parse5",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "inikulin/parse5",
       "repository": "inikulin/parse5",
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "main",
-      "content_hash": "4b1d4c448b373386a391cf743637ee3ceb5c52427c6cad9c12d15767d3210ec8",
+      "source_version": "43d8ca05",
+      "content_hash": "f6279e9ba6f68e3fda1718e0f3de44d7177b6cfdcbc4638f6cb4b8c334a6689a",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2872,
+          "title": "parser): match only HTML elements in the \"any other end tag\" step",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:56:09.145Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-fb55-css-select": {
       "learning_id": "learn-github-fb55-css-select",
@@ -93979,6 +94017,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:50:17.677Z"
+    },
+    "rule-2871": {
+      "learning_id": "rule-2871",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2871,
+      "title": "Merge pull request #4952 from rsuite/snyk-fix-a51e950723bcb6544aa413cc8fc8a68d",
+      "source_url": "https://github.com/rsuite/rsuite",
+      "source_version": "296ec338",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:56:06.113Z"
+    },
+    "rule-2872": {
+      "learning_id": "rule-2872",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2872,
+      "title": "parser): match only HTML elements in the \"any other end tag\" step",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "43d8ca05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:56:09.145Z"
+    },
+    "rule-2873": {
+      "learning_id": "rule-2873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2873,
+      "title": "Overhaul audio engine lifecycle: route-change recovery, sleep suspension, teardo",
+      "source_url": "https://github.com/kitlangton/Hex",
+      "source_version": "3e300721",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:56:11.905Z"
+    },
+    "rule-2874": {
+      "learning_id": "rule-2874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2874,
+      "title": "Fix/cross process recovery (#6281)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "e855796c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:56:19.713Z"
     }
   },
   "aliases": {

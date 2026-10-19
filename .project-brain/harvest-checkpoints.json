@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T22:50:17.753Z",
+  "last_updated": "2026-10-19T22:56:19.768Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2539,14 +2539,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "5ffa7d9bd78dcc536158dc47133b3f5db8406cd44bda4fd8372bddc1abbf83c1",
-      "verified_at": "2026-10-19T10:35:00.500Z",
+      "content_hash": "99f6e08bd14a9d20036de23a015b7be99b91afd9dd31b73c8c8a73b214d5177f",
+      "verified_at": "2026-10-19T22:56:19.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:35:00.500Z"
+      "last_updated": "2026-10-19T22:56:19.767Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -6469,14 +6469,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rsuite-rsuite",
-      "content_hash": "5a0fca2a1ce14882ceffc87e2c55f40fee4baefec1cb9cb0bfb41430605d7691",
-      "verified_at": "2026-10-19T12:07:40.590Z",
+      "content_hash": "b37cb849500b3ff360920d55c195fbc3c4bf504f9764bdff4c99c4483265dd7c",
+      "verified_at": "2026-10-19T22:56:06.157Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:07:40.590Z"
+      "last_updated": "2026-10-19T22:56:06.157Z"
     },
     "Kuberwastaken/claurst": {
       "repository": "Kuberwastaken/claurst",
@@ -14097,6 +14097,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T22:50:17.753Z"
+    },
+    "inikulin/parse5": {
+      "repository": "inikulin/parse5",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-inikulin-parse5",
+      "content_hash": "f6279e9ba6f68e3fda1718e0f3de44d7177b6cfdcbc4638f6cb4b8c334a6689a",
+      "verified_at": "2026-10-19T22:56:09.189Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:56:09.189Z"
+    },
+    "kitlangton/Hex": {
+      "repository": "kitlangton/Hex",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kitlangton-hex",
+      "content_hash": "eae923ce66c4184db4915f73fbcf669cf6be5f7ad1b49ee4093f3cb56b2e8942",
+      "verified_at": "2026-10-19T22:56:11.963Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:56:11.963Z"
     }
   },
   "repos": {
